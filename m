@@ -1,144 +1,278 @@
-Return-Path: <linux-kernel+bounces-581081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926C2A75A43
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 16:01:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76482A75A93
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 17:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1676B1662AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 14:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0EF63A8BAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 15:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F6A1D514E;
-	Sun, 30 Mar 2025 14:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC8D1D5178;
+	Sun, 30 Mar 2025 15:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XUC/4PuY"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFEzN1Gi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E111288B1;
-	Sun, 30 Mar 2025 14:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D146B5;
+	Sun, 30 Mar 2025 15:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743343261; cv=none; b=Ynm78eEi9dPxlbeN15ZKP6r+PJTSzCEvPKnf6IQH7y3qqSbO6wmf/LxTlF3gmVn63OJXZ8V9Jph2PBJyVZy527yn3Mx2NZ/BU7d1yELLiyji5o5JFNOEYE4vAC+yda/CQotyLgQU8MVgid7o1jz656XMBxaB7rONLrfPBXhHeSI=
+	t=1743347950; cv=none; b=BQvI+ncZ7RH5emYizxK8cgf60aL8zB50B/VZOMc7Lp7+YNBMPR3FIiXBqijE8hSyN+P/YbG3+t/o8I6/ZXoS3vQ0X5NyXPBd9XpkpfNq3AQZZ8iXOAavclwdCjcW/riqkQOSqT/xF47EKUTaOo/VagB/n0aIw2vNfs4nUxjhsVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743343261; c=relaxed/simple;
-	bh=wi+LA1O4Z14BJNn/fKaFSqytvWpIfpYOMUYZx3QPyCE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GiaOdS8+jnqOV5RMRxE2VExQftTH8E5trLf0uzALJC98J88d2RubU+VPaqp0g8UQ9yDelnA/iEHaHbrROwqts60I3e3BUALBn6txVl2TTvTVoYSNRCsQPXHoaOhUaLhjfbViyH3ehvBY0yceyQb0zgSRKXKHCzxNHMheZ0QDPSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=XUC/4PuY; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743343258;
-	bh=wi+LA1O4Z14BJNn/fKaFSqytvWpIfpYOMUYZx3QPyCE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=XUC/4PuYSVRRexyB8oHo03Xu+wOhzPbEjJrzBj/A4Rfg6p+88ufyskSaWDwvoz3WW
-	 LuRnMXNtaASHwcscmTh7aQ57IfN9NJsgQulN2uEk2N+6ovUhza0L1GdIDFYZYcaq9P
-	 6pcehefE7e5u0hOcgx1UELCHiseBHlUjVopIw2AI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 8B5A01C030D;
-	Sun, 30 Mar 2025 10:00:57 -0400 (EDT)
-Message-ID: <3f140c076c3756e84d515b81ee9eeeaf13ca4b42.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/6] Extend freeze support to suspend and hibernate
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com,
- rafael@kernel.org,  djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org, mingo@redhat.com,  will@kernel.org,
- boqun.feng@gmail.com
-Date: Sun, 30 Mar 2025 10:00:56 -0400
-In-Reply-To: <20250330-heimweg-packen-b73908210f79@brauner>
-References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
-	 <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
-	 <12ce8c18f4e16b1de591cbdfb8f6e7844e42807b.camel@HansenPartnership.com>
-	 <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
-	 <20250330-heimweg-packen-b73908210f79@brauner>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743347950; c=relaxed/simple;
+	bh=wWJH4qthvkKah4YoqMVuhDK4KUnv3vBmdbn04K2tkuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nbd6gY5NmeblS7Coeaw8QPd+u6Z6y6Ah7E5F62ZF2n2u4c/vGNMM/rU9oRY9EuOKeUEAN2vhUbd1v2oMDMb7daVaweBt7ccpkOIbq2h/Vgq0APQS373JSuZpSSjPAukY3j5PfGEzaJiiddE9Z4amZPzySzhhcBhZtIT9N8ji4/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFEzN1Gi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD169C4CEDD;
+	Sun, 30 Mar 2025 15:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743347949;
+	bh=wWJH4qthvkKah4YoqMVuhDK4KUnv3vBmdbn04K2tkuA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tFEzN1GiLSrwOpa2ZB8BO622EMiTuDYsB1EePUfU13nl3uuEWDnhcIo+znFBIcRRo
+	 oAVVSjbIgmu5LkJcT3CTZ4vzrhNDCH2aV9jd15vzOWryZNnWOFyank4RoRZ7xw0IuU
+	 +iY4rws1AapbwFqaSkZ5E+3ipli6w8YRWUAHzgUHR+dQMIkJJvAXzjAuVWLv9T/8r+
+	 P+cupzIjtdJZK1+2fALxFRfn4lj8J7Zg+zBnf/fewgut+xSQh2Cxb6xLv7B34oWPZi
+	 HIU6PHQFaC+sO978kccFkxh4Rrkmku4IFI6h5/x3v0+wyAdI2r2XQJ2X85kWZgywIi
+	 KYJAO9N+io/sg==
+Date: Tue, 17 Sep 2024 12:19:20 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Esteban Blanc <eblanc@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Jonathan Corbet
+ <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 4/6] iio: adc: ad4030: add support for ad4630-24 and
+ ad4630-16
+Message-ID: <20240917121920.75e7edba@jic23-huawei>
+In-Reply-To: <2b319d9453f4fe8842e4c306d9e2071ad031c0e7.camel@gmail.com>
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+	<20240822-eblanc-ad4630_v1-v1-4-5c68f3327fdd@baylibre.com>
+	<20240826102748.4be0b642@jic23-huawei>
+	<D452E2M75XCM.13OQGAPJ7JJ4A@baylibre.com>
+	<0a4e7fe39cf36774b28c86f6baab5ef8c20e3d6b.camel@gmail.com>
+	<D4567LFFTYJQ.2YC5OODKOVPNB@baylibre.com>
+	<84961c1f857dfc8498c41ac97235a037111ed6d5.camel@gmail.com>
+	<20240914122529.14759e63@jic23-huawei>
+	<2b319d9453f4fe8842e4c306d9e2071ad031c0e7.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2025-03-30 at 10:33 +0200, Christian Brauner wrote:
-[...]
-> > I found the systemd bug
+On Mon, 16 Sep 2024 08:12:24 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+
+> On Sat, 2024-09-14 at 12:25 +0100, Jonathan Cameron wrote:
+> > On Fri, 13 Sep 2024 15:46:17 +0200
+> > Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+> >  =20
+> > > On Fri, 2024-09-13 at 12:55 +0000, Esteban Blanc wrote: =20
+> > > > On Fri Sep 13, 2024 at 10:18 AM UTC, Nuno S=C3=A1 wrote:=C2=A0  =20
+> > > > > On Fri, 2024-09-13 at 09:55 +0000, Esteban Blanc wrote:=C2=A0  =20
+> > > > > > On Mon Aug 26, 2024 at 9:27 AM UTC, Jonathan Cameron wrote:=C2=
+=A0  =20
+> > > > > > > On Thu, 22 Aug 2024 14:45:20 +0200
+> > > > > > > Esteban Blanc <eblanc@baylibre.com> wrote:=C2=A0  =20
+> > > > > > > > +static const unsigned long ad4630_channel_masks[] =3D {
+> > > > > > > > +	/* Differential only */
+> > > > > > > > +	BIT(0) | BIT(2),
+> > > > > > > > +	/* Differential with common byte */
+> > > > > > > > +	GENMASK(3, 0),=C2=A0  =20
+> > > > > > > The packing of data isn't going to be good. How bad to shuffle
+> > > > > > > to put the two small channels next to each other?
+> > > > > > > Seems like it means you will want to combine your deinterleave
+> > > > > > > and channel specific handling above, which is a bit fiddly but
+> > > > > > > not much worse than current code.=C2=A0  =20
+> > > > > >=20
+> > > > > > I can do it since that was what I had done in the RFC in the fi=
+rst place.
+> > > > > > Nuno asked for in this email
+> > > > > > https://lore.kernel.org/r/0036d44542f8cf45c91c867f0ddd7b45d1904=
+d6b.camel@gmail.com/
+> > > > > > :
+> > > > > > =C2=A0  =20
+> > > > > > > > > * You're pushing the CM channels into the end. So when we=
+ a 2 channel
+> > > > > > > > > device
+> > > > > > > > > we'll have:=C2=A0  =20
+> > > > > > =C2=A0  =20
+> > > > > > > > > in_voltage0 - diff
+> > > > > > > > > in_voltage1 - diff
+> > > > > > > > > in_voltage2 - CM associated with chan0
+> > > > > > > > > in_voltage0 - CM associated with chan1
+> > > > > > > > >=20
+> > > > > > > > > I think we could make it so the CM channel comes right af=
+ter the
+> > > > > > > > > channel
+> > > > > > > > > where
+> > > > > > > > > it's data belongs too. So for example, odd channels would=
+ be CM
+> > > > > > > > > channels
+> > > > > > > > > (and
+> > > > > > > > > labels could also make sense).=C2=A0  =20
+> > > > > >=20
+> > > > > > So that's what I did here :D
+> > > > > >=20
+> > > > > > For the software side off things here it doesn't change a lot o=
+f things
+> > > > > > since we have to manipulate the data anyway, putting the extra =
+byte at the
+> > > > > > end or in between is no extra work.
+> > > > > > For the offload engine however, it should be easier to ask for =
+24 bits
+> > > > > > then 8 bits for each channel as it would return two u32 per "ha=
+rdware
+> > > > > > channel".
+> > > > > >=20
+> > > > > > In order to avoid having two different layouts, I was kind of s=
+old by
+> > > > > > Nuno's idea of having the CM in between each diff channel.
+> > > > > > =C2=A0  =20
+> > > > >=20
+> > > > > Tbh, I was not even thinking about the layout when I proposed the
+> > > > > arrangement.
+> > > > > Just
+> > > > > made sense to me (from a logical point of view) to have them toge=
+ther as they
+> > > > > relate
+> > > > > to the same physical channel. FWIW, we're also speaking bytes in =
+here so not
+> > > > > sure
+> > > > > if
+> > > > > it's that important (or bad).=C2=A0  =20
+> > > >=20
+> > > > The best we can do (if we managed to do it HDL wise) is to reorder =
+the
+> > > > data to get both CM byte in a single u32 after the 2 u32 of both di=
+ff
+> > > > channel. That would be 3 u32 instead of 4. =20
 > >=20
-> > https://github.com/systemd/systemd/issues/36888
+> > Entirely up to you. :) =20
+> > > > =C2=A0  =20
+> > >=20
+> > > We are starting to see more and more devices that do stuff like this.=
+ Have one
+> > > physical channel that reflects in more than one IIO channel. For SW b=
+uffering
+> > > it's
+> > > not really a big deal but for HW buffering it's not ideal.=20
+> > >=20
+> > > I feel that at some point we should think about having a way to map a=
+ channel
+> > > scan
+> > > element (being kind of a virtual scan element) into the storage_bits =
+of another
+> > > one.
+> > > So in this case, one sample (for one channel) would be the 32bits and=
+ things
+> > > should
+> > > work the same either in SW or HW buffering.
+> > >=20
+> > > That said, it's probably easier said than done in practice :) =20
+> >=20
+> > Yeah. That could get ugly fast + All existing userspace will fail to ha=
+ndle it
+> > so I'm not keen. Maybe it's doable if we assume the 'virtual channels' =
+are all
+> > meta data we don't mind loosing with existing software stacks and define
+> > a non overlapping ABI to identify the metadata.=C2=A0 Still smells bad =
+to me so
+> > I'll take quite a bit of convincing! =20
 >=20
-> I don't think that's a systemd bug.
+> Naturally it would have to be done in a way that drivers not defining the=
+ "special"
+> scan elements would not be affected.
 
-Heh, well I have zero interest in refereeing a turf war between systemd
-and dracut over mismatched expectations.  The point for anyone who
-wants to run hibernate tests is that until they both sort this out the
-bug can be fixed by removing the system identifier check from systemd-
-hibernate-resume-generator.
+It's worse than that - it would need be defined so userspace running
+against the devices with the special channels would have to work without
+knowing anything about them. So we couldn't do the really nasty thing
+of setting scan_index the same for both of them with same storage size and
+different shifts and real_bits.  That would be the sort of things that might
+crash userspace code.
 
-> > And hacked around it, so I can confirm a simple hibernate/resume
-> > works provided the sd_start_write() patches are applied (and the
-> > hooks are plumbed in to pm).
-> >=20
-> > There is an oddity: the systemd-journald process that would usually
-> > hang hibernate in D wait goes into R but seems to be hung and can't
-> > be killed by the watchdog even with a -9.=C2=A0 It's stack trace says
-> > it's still stuck in sb_start_write:
-> >=20
-> > [<0>] percpu_rwsem_wait.constprop.10+0xd1/0x140
-> > [<0>] ext4_page_mkwrite+0x3c1/0x560 [ext4]
-> > [<0>] do_page_mkwrite+0x38/0xa0
-> > [<0>] do_wp_page+0xd5/0xba0
-> > [<0>] __handle_mm_fault+0xa29/0xca0
-> > [<0>] handle_mm_fault+0x16a/0x2d0
-> > [<0>] do_user_addr_fault+0x3ab/0x810
-> > [<0>] exc_page_fault+0x68/0x150
-> > [<0>] asm_exc_page_fault+0x22/0x30
-> >=20
-> > So I think there's something funny going on in thaw.
+Driver effects are less of an issue than ABI breakage - or even just
+ABI a userspace author would not expect.
+
 >=20
-> My uneducated guess is that it's probably an issue with ext4 freezing
-> and unfreezing. xfs stops workqueues after all writes and pagefault
-> writers have stopped. This is done in ->sync_fs() when it's called
-> from freeze_super(). They are restarted when ->unfreeze_fs is called.
+> >=20
+> > Adding something to clearly 'associate' multiple related channels would=
+ be fine
+> > as that wouldn't change the data interpretation, just provide more info=
+ on top.
+> > Kind of a structured _label=20
+> >=20
+> > Maybe a _channelgroup attribute?=C2=A0=C2=A0 Would be const and all the=
+ channels with
+> > the same index would reflect that they were measured on same 'thing'.
+> > Typically thing might be a pin or differential pair, but we might be me=
+asuring
+> > different types of signals - e.g. current and power.
+> >  =20
+>=20
+> Sounds reasonable but I think the tricky part is always to have a sane wa=
+y of saying
+> that multiple scan elements relate to just one storage_bits so we could s=
+ay something
+> like (taking this as example):
+>=20
+> scan0: //diff channel which describing the physical HW in terms of real s=
+ize
+>  .storage_bits =3D 32
+>  .real_bits =3D 24
+>  .shift =3D 8
+>=20
+> scan1: //CM data
+>  //.storage - relates to scan0 so should add nothing to the sample size i=
+f both
+> enabled
+>  .real_bits =3D 8
+>=20
+Indeed - I get the concept, but don't like it.=20
+In general it's a dead end for general purpose channels - because of that
+pile of legacy userspace.  It 'might' just about be acceptable for 'meta da=
+ta' channels
+or where we are adding significant new interface for functionality purposes=
+ (e.g.
+when we did the newer DMA buffer stuff).
 
-It is possible, but I note that if I do
+> Likely not what you meant but one thing I took from your '_channelgroup' =
+idea was to
+> have something similar to extended_info maybe with a small top level desc=
+ription and
+> then an array of channels (that would form the group/aggregated channel).=
+ Only on the
+> top level description we would be allowed to define the size of the scan =
+element (in
+> case of buffering). Still seems tricky to me :).
 
-fsfreeze --freeze /
+Yeah.  The channel group thing was for normal naturally aligned packing, not
+data backed tighter than that.
 
-I can produce exactly the above stack trace in systemd-journald, but if
-I unfreeze root it continues on normally.  Thus I think this is some
-type of bad interaction with the process freezing that goes on in
-hibernate.  I'm going to see if I can replicate using the cgroup
-freezer.
+>=20
+> Anyways, Right now, I have no time for something like this but eventually=
+ would like
+> to try something. But if someone wants to propose something sooner, pleas=
+e :)
 
-> But for ext4 in ->sync_fs() the rsv_conversion_wq is flushed. I think
-> that should be safe to do but I'm not sure if there can't be other
-> work coming in on it before the actual freeze call. Jan will be able
-> to explain this a lot better. I don't have time today to figure out
-> what this does.
+*looks doubtful*  Maybe I can be convinced.  We'll see.
 
-Understood.  The above is for Jan if he'd like to think about it.
-
-Regards,
-
-James
+Jonathan
+>=20
+> - Nuno S=C3=A1=20
+>=20
 
 
