@@ -1,113 +1,160 @@
-Return-Path: <linux-kernel+bounces-577724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23B8A720CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:29:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D1AA720D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8E2188CC71
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C0017B0AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4C25F7AD;
-	Wed, 26 Mar 2025 21:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147481F460E;
+	Wed, 26 Mar 2025 21:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y0tBBETj"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bjP8F5De";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AwnQi8Av"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296184430
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 21:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F59364D;
+	Wed, 26 Mar 2025 21:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743024572; cv=none; b=muae3vpkXs7I2rkhC6WMZVwOTgkAXnb5+t9GGVZ12lMXCvrctuBL+oV8H2/r2KDRUDv2uK4ulRb32C/oHeT/3eaXhJ9imx2HcRuWu2cAtanrU4QER2O8HAwImyQfQxfhL31T9/hbEAZknxEJuWHRwPsfuqGFofOpqcbwXFj1elo=
+	t=1743024799; cv=none; b=SE+u95wH4pL9e5YFgtb2+bI+deDau4dHwpLzTKltt8ejB96oxfKRdUyYRk3Wc1/lDa5pbBVwWj2jKvifyb/wEBkS2fPofTqF2vwTa2UXbsahNuKDc3ZCehOtK3MfGblTo0ORIDBf0A/gc26WH9kjJg4OFwMgIApf4K0eRXMDxpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743024572; c=relaxed/simple;
-	bh=U/QNVHD9GlOlEUG/VEeH8nSY88NV88yWPEcw1EmM+oA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JQVJmAN6g0cqfJYy3z6OTkivFYRdvPE3m9dP2uAjrsHthmYjnzz2UlYoKENHVC9jkV36hvVhqvlHLTf77dQVSUFDgwWPC9wKB9g33mhkQbeTcd+9PPnOnV59pEPcYHhe1qZrio1IgTZlb8dwyuPz7Th5xfqGB0EmwJ1YIW/dNAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--colinmitchell.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y0tBBETj; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--colinmitchell.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2254e500a73so4356295ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743024570; x=1743629370; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ePkkCPe4N3YuNMZ8IiEAqlfQIXgkmbf4lUcWGQ8Jt4=;
-        b=y0tBBETj3d3Thh3EOpMYmJ4uimEeCT8wwPsEtW3ECGT//KldJCNS+wtqjQF/Ep6UuY
-         wa8O5SOtMq16N6N9QqSSO2PhGnZDAZvuMnyL3nslMUvT4dd1yCv0+Z58ahsEgVV7q1my
-         qrvknF1yFTKgjV3d9vfOLT5L7PxqO7bXxM7PRpaiUzbIHzSVKq/BI6+BtiFLSXGoDYnp
-         vd35kJfoEnr3vVJu/kGF+4h6wJ41/Gg84yyZeIPdj48luq3b2CV9sVpInHCghbpsthiC
-         YT/XA0jIaIvn2cFXcOiwdQ/z/OYlUNsj0eA5D//wak0Uznl+cfcVzXSuizhhTw4IaK+l
-         ITuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743024570; x=1743629370;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ePkkCPe4N3YuNMZ8IiEAqlfQIXgkmbf4lUcWGQ8Jt4=;
-        b=MXeRI+Yo4TBBizdm46FKRvtPqVchun8GICLn7CYwBO/ipvl71zDM43Hf1w+lmYO6XX
-         f0+BkjU2+xD8RywI1achykw/hzsZd8/1YTr7LDBXK151Asrw57OWWvshEk5kq1dWOwOm
-         ARTKwlv+qzOsFqrXoRxFGy58qqVBXNcn6VfA2zKjexvc2cjJB8xDWM1GmZOXSn0hfnHx
-         gTg4stzdWmum7kOJjR3dM4piz0ru6WMkTXNxexFX/skf/UQleINnesbk8A1Sz9mPW2Fj
-         R5DnrkNXp4IZW36tZPJIajFp4LKSoJBYPeN9nytVTtBTW5gF6kmc8xFyTLcRSgBxidE0
-         qOeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbAGJ4vjktgHENVHItox7fjv4dzJqxyvo7sdMr7y6JoEf9fchj/BvZsX1PhggkWkjkhJcQmVGzovcbFfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwESLR1dOecQLp7n80Qpo18MZlGNG1djDDnjW4xu3kjHer/lLDp
-	+lrdw0BxyvsbAY2MKRgAVVf0s2Iro/yOOzLiYNMgc0ykYakLBBWZsiCmT5gCHZyvkl1XzAQjyqX
-	qKqKAqY3rMYqcFp1TXkVmLduXSF36CA==
-X-Google-Smtp-Source: AGHT+IECHrGH2YtJBZxqnBaK0vvOGtBKjm36ZJE+wsbQNbDv3xVBnCGsaqDsSmtRCMheHW1Yz5R+mY6VPSt//Quts2Qu
-X-Received: from pfbb8.prod.google.com ([2002:a05:6a00:ac88:b0:739:3659:ad9])
- (user=colinmitchell job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:2290:b0:736:3c6a:be02 with SMTP id d2e1a72fcca58-739610373e4mr1354749b3a.11.1743024570397;
- Wed, 26 Mar 2025 14:29:30 -0700 (PDT)
-Date: Wed, 26 Mar 2025 14:29:28 -0700
-In-Reply-To: <526df712-6091-4b04-97d5-9007789dc750@intel.com>
+	s=arc-20240116; t=1743024799; c=relaxed/simple;
+	bh=n0XOhzwZhLMH2flKOyxecwEG6knDVr7RLXRZpv66m3M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KAxiW6Bobl/U1wT0oJmS0ctOw2D3816kn0GPDnsGeeVGgqn66ZuvLw9o0VFeFwR2/XP3mfrSlSXG2BxZjv9eiHBphp7ILgv05GXIDBzfswxf5xq1d08GhKzf4jIW0TaydlgtHQ756ZVBhAh3MQ3ydWugwbAHIDiM06tgto+azTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bjP8F5De; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AwnQi8Av; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7A49A114025C;
+	Wed, 26 Mar 2025 17:33:16 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Wed, 26 Mar 2025 17:33:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1743024796;
+	 x=1743111196; bh=V11GpFRgrx+bJA6y0MdeOFUCy+2rHUwQfLFe2+VIqUA=; b=
+	bjP8F5Deb7eqk6BLVZ/6CLWDZXm35A94h7W7llt4Gogkw6fLudNGI2IfOwCJpeOe
+	wBlqklqiMAoZx1ANnGvyZN0HAFBgyT9t0DIhEE1CrX9gibfAR5N2r9r2VHgmMDvj
+	GI2Kh8AvSssAeHcTaBQ9q3SpKX8PGzMqyaIwbqq3UA9bbBh2+fHsIBZKa7z3kSe5
+	C9tfDOiTQmjJngbQC0eDlGCNiml4h0PtDj1I58glbQ6HqBJtivecGz3Dz0YKb42o
+	aXrBb5sn+d3TI/z8zyIeig4jT/nbcV5wcakOGPK3ybR2wMFJirADtTns2N9AfJMn
+	0r9UpA5vqgCXrDSMXCRQog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743024796; x=
+	1743111196; bh=V11GpFRgrx+bJA6y0MdeOFUCy+2rHUwQfLFe2+VIqUA=; b=A
+	wnQi8AvOqS/oAftEXVEpCFYyBiT11YkQXcxMYn0BFzvdIwPxRq8XI4qS6yDLKED2
+	M86WSymNPB9s9BADMHwBFPzfVYc3bmZR3YvoBAwsGmOXR+1F13orTyP1XUWDYCIV
+	6SktEEWIKiFSSr42H74Xjz+wEOuyKkHaerxHCWSyzy0gVCyIwTL5AnBw5s4w1LPJ
+	wPOQYA72U7IaO2px5LE+Z7fXh3vkJH2LY7I+o7tdm1wh2FX+mHf1dF6wu/9gC1R4
+	YsHhibrRaWRG6THTsSBDd/EwRfZPd+3VjLO32Pz4GC1i+JQbM+P0h+L3ehf4rnKO
+	zWDCJaXFbVcMJLCCxw01Q==
+X-ME-Sender: <xms:nHLkZ3M3byighQQOy66pX5liMZcOUE6NR9d-rB9V2HMv0u5UdjDJ-Q>
+    <xme:nHLkZx8KJkNMC909x4gjRreDV_EkFYp7ZypSJOXeSYenazKy85C3J9tXdr6TrcR2H
+    _jOYzCIHxK3fmskCDI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeiiedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
+    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepkedvuefhiedtueeijeevtdeiieejfeelveff
+    feelkeeiteejffdvkefgteeuhffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopehnrghthhgr
+    nheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqd
+    hfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
+    hgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:nHLkZ2SBPvJgaTVO3C911doo3vgUt3hYSweHgcSws2cISobTpilO5A>
+    <xmx:nHLkZ7tb8JFPcaCKDpE2234LHjy127Nb6vg8TtM909FQkWQknDGQ-g>
+    <xmx:nHLkZ_fUaAxqVM06dwBe-_5z55213jEMCCuvFiCz3Z0pJRxz6bFK3w>
+    <xmx:nHLkZ30zk352AboL6vneGonNaZrv1AWKZi9SEioktsOAOEQRmdaIDw>
+    <xmx:nHLkZ25z-ixpgWXFGYMWx5OWc6EoGxy792E7PRvr8a4MqMed1HzjYVrZ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2D7422220072; Wed, 26 Mar 2025 17:33:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <526df712-6091-4b04-97d5-9007789dc750@intel.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250326212928.2360063-1-colinmitchell@google.com>
-Subject: Re: [PATCH 0/6] x86/microcode: Support for Intel Staging Feature
-From: Colin Mitchell <colinmitchell@google.com>
-To: dave.hansen@intel.com
-Cc: bp@alien8.de, chang.seok.bae@intel.com, colinmitchell@google.com, 
-	dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-ThreadId: Tcd9fae1fedaeca94
+Date: Wed, 26 Mar 2025 22:32:39 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jann Horn" <jannh@google.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ "Nathan Chancellor" <nathan@kernel.org>
+Message-Id: <8ec475fb-9972-45d9-8fd2-9406ed3862ec@app.fastmail.com>
+In-Reply-To: 
+ <CAG48ez0ZahF98zN+qKrizDC8MBM7CM=WMBOzk7ybr55Er37=pA@mail.gmail.com>
+References: <31097083-a444-4bd1-8722-d8b7c4b7a43a@app.fastmail.com>
+ <CAG48ez0ZahF98zN+qKrizDC8MBM7CM=WMBOzk7ybr55Er37=pA@mail.gmail.com>
+Subject: Re: [GIT PULL] asm-generic changes for 6.15
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> On 2/28/25 14:52, Borislav Petkov wrote:
-> You can't load any microcode anymore if you've disabled the legacy method
-> too.
+On Wed, Mar 26, 2025, at 22:08, Jann Horn wrote:
+> On Wed, Mar 26, 2025 at 8:43=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
+wrote:
+>> The following changes since commit 2014c95afecee3e76ca4a56956a936e232=
+83f05b:
+>>
+>>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+>>
+>> are available in the Git repository at:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.gi=
+t tags/asm-generic-6.15
+>>
+>> for you to fetch changes up to ece69af2ede103e190ffdfccd9f9ec850606ab=
+5e:
+>>
+>>   rwonce: handle KCSAN like KASAN in read_word_at_a_time() (2025-03-2=
+5 17:50:38 +0100)
+> [...]
+>> Jann Horn (1):
+>>       rwonce: handle KCSAN like KASAN in read_word_at_a_time()
+>
+> Uh, sorry about this...
+>
+> Nathan Chancellor just pointed out that my commit "rwonce: handle
+> KCSAN like KASAN in read_word_at_a_time()" breaks the arm64 build when
+> LTO is enabled (<https://lore.kernel.org/all/20250326203926.GA10484@ax=
+162/>).
+> I just posted a patch that undoes the buggy part of my patch at
+> <https://lore.kernel.org/r/20250326-rwaat-fix-v1-1-600f411eaf23@google=
+.com>.
+>
+> @Linus: Sorry for throwing a spanner in the works here... maybe you
+> should only pull up to the commit before mine (luckily mine's the last
+> in the stack, and it's not important), or wait for Arnd to give his
+> opinion.
 
-Staging, if I've read the code correctly here, is only used for late loading.
-There is performance reason to use staging for early kernel microcode 
-loading pre-SMP. Therefore, if staging perpetually fails, it can be applied
-without staging on the next reboot.
+I've already tagged a tags/asm-generic-6.15-2 with your fix included
+and the same tag description.
 
-> On 2/28/25 15:23, Dave Hansen wrote:
-> You seem to be saying that you'd rather be (for instance) insecure
-> running old microcode than have the latency blip from a legacy microcode
-> load.
-> What action would you take if a staging-load fails? Retry again a few
-> times? Go back to the CPU vendor and get a new image? Or just ignore it?
+I don't think it's worth doing a partial pull here.
 
-That's correct, but the latency tradeoff scales with the platform specific
-size of the microcode patch. I'd prefer to have a more deterministic
-update path and believe the potential latency blip would be significant
-enough to justify the option.
+Linus, if you have already pulled the tags/asm-generic-6.15 tag,
+I suggest you just apply the fix directly yourself, otherwise
+you can use the tags/asm-generic-6.15-2 tag instead, or hold off
+for today and wait for me to send a new pull request after
+I get an ok from Nathan.
 
-Adding configuration would allow me to handle the error as needed.
-A retry loop would be a first step but I could also look to migrate VMs
-off the machine if the platform specific latency blip would negatively 
-affect sensitive guest VMs. While an ideal solution imo would then
-allow me to force legacy loading, I could also settle with it being done
-through a reboot where early boot would already skip staging.
-
+     Arnd
 
