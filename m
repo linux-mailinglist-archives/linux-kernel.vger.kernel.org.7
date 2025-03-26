@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-577803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBC4A726D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:04:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833FEA726DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100C0188E9CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0871898095
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685FF23FC4B;
-	Wed, 26 Mar 2025 23:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D43826463C;
+	Wed, 26 Mar 2025 23:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aYbkrPBV"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="nSyy96jW"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9DD19644B;
-	Wed, 26 Mar 2025 23:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2541E5028C;
+	Wed, 26 Mar 2025 23:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743030290; cv=none; b=ocNhLyaOGyLyvCp4ZnvswN3lSzjWODBiLk2woPmKKwkfStV+oyQ3K+uTfidQt56j9J9h2LOpMiSr9zyRs6VT/o16fx0AzIzFFgoSrYnBhm4GjCdRymOstDxq8gUcn255EsDttD5nNa2eXrsKEY747V1SUQt4489/9sxztvXjgbo=
+	t=1743030504; cv=none; b=jNrkaD1kv8obJ98zjSYDalcxv2iOYbw43YCybEE+dYVAzBXHfbsJlbs3qNtSVNJCpbu6Dhf8ys7/G16JOPsWPqv+6ca91of5bJCXPb8mFIctx04hrkgXrpYrglVm1XtG/uXetmlC+0dgQTYMA1SnGHvW43jXUhB5pxd7dRJ0WqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743030290; c=relaxed/simple;
-	bh=lu0985pnAiWIeLqiiXNJyyeE3/4K9/7b88UOr7N8zC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NeY9c5tX6pVzgs9lLMxMuZKXKN9mlc7cJA06nErRlCx4S6tzTb9felFqiIzXzh0tCkQcHZi9z3L6jfQ3jFbgLqVYKgmjTkgOLpU4SWteezoZR2YS/QOcSukq1NzlGmTBPz2OJb32v2V8854tJNtRARvfx0FgGOn3q4WnQc89hTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aYbkrPBV; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso987852f8f.1;
-        Wed, 26 Mar 2025 16:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1743030287; x=1743635087; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G1Db4+giVOhxRRsgeVFOY4J55f6l7WCs95jCreUUDT4=;
-        b=aYbkrPBVn/XMIAFeb2dfpqq8KLWfH0dnDpQ0qgHiWTix4h0gyoPTy+Pa4LCPAd1ojJ
-         401VBsHHt7r101DuKjbboYoGmYHvtvwKxhnS2eaBntLCyPYvAmeJPECk9UAUEJLRPSZG
-         aXtwNW5kPOq1StwpoHgAiByZMOQMZA34FPlWRTBIBqC5AgP4du5BQ6YfVma96/opSX/8
-         bvwIF4SHnUIyYtVtsAeFVpWjfVMig2ouKQmOiMDKP5E54YS1vVX8YtzpzszbFbr3j0Ii
-         Ym4UbmOIdCA6N4Mz82NZd286rWKevb7HrCYco5r/YKJsczhI/QpZSCIBfP7vMgDjFkUr
-         1VJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743030287; x=1743635087;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1Db4+giVOhxRRsgeVFOY4J55f6l7WCs95jCreUUDT4=;
-        b=n/MwUfV0PAcivbASyRi98aNd5D0uu+JxpNY6NdMwS5Lc1ORYNiWNPVpL3nbd99kk92
-         TWBYDaxQDIHLTCqx7uckEWxLlJwFzlTQTUi1JRSLVJmx0LwwlvxX9N9LohjljmDYi9cy
-         jXSqbVGfCIkFDDHLcbYnLuNl7ut/5kS0en1aKb7Q06/hQMEkPUHoxAh9XX43x48HZdlT
-         VZIEupQutlDCPxloWPmwnLZjsA8XhE65vTEbHTpSw86TzF7WUZozl8gXkBKiybQ9CWzW
-         hDF1hC2bYh9xsisI5uQE6zk0VMMumKaMZeD0co3K3HgiyfwEx8CRy0udepy3zXNYO6rJ
-         Fv1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUa7lk1pz/fPwhGs5JIPWcjrri2CTrAzZK+ZGYJ8uNeRkbFV6wv3MOppTvL31V/n8McMS8gszFI@vger.kernel.org, AJvYcCWe+lBGtldHJP8cSPjQ6Sl6ujrUcTMUnfxICx3+5v1yWv/tUth7Ahsk4s7N+GLUntgIVznTLbDop/pSlsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/wog5iEysEwilqPR91p6S/zdn5SymjjyR/e/yoAXU29RAej7q
-	lLbA7aELIwW8m/Lu0vjEou5U2oj016EPiiAksivoKcHlZ5FLqMM=
-X-Gm-Gg: ASbGncs9dIlqy2STCfzlpCkmQxYs1msdgAK4r+IbSCe1MYc/yY9dTlkoRW/38hXppfU
-	VwTSMHcPs1PPoig/BLQhWGK+4k7xZyKmDoyNtk/Aw4X7H8fx6FWOMvY3tusLAAQZTFJdOQeAcVg
-	Th6OYve/tugTEBHWX8ccycVOv15irm9LczfB7T9Sosk0caxyIQ10AkVLqSWt+ccqm94z04aPcLJ
-	PtCnd/KJWGpxOesRKXvC0umPcRSELxt9y0CBWmhb9qBgv3p7Kp35bWH/T1eBCeHpSzkAp8EoJDj
-	Q9Do3vPrQzz/QbZG6Ve6bZkGtYn80wi/Tl+LIZgJFCuliyvaoHsCCEeUQSOfwtb/W5NIYOxFQyj
-	J59iceIhClKeg7MpbbfQG
-X-Google-Smtp-Source: AGHT+IEYCg6JrwvA9ri9z4o/+GNt/2rRyXIUH7v3Awan8sMK7hJCRKxqpK5ZlWFLSeEigUNOVXrQJg==
-X-Received: by 2002:a5d:6d01:0:b0:390:f9d0:5e7 with SMTP id ffacd0b85a97d-39ad14f7f07mr1284508f8f.13.1743030287279;
-        Wed, 26 Mar 2025 16:04:47 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057a21.dip0.t-ipconnect.de. [91.5.122.33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39ad0c6bae8sm1940263f8f.68.2025.03.26.16.04.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 16:04:44 -0700 (PDT)
-Message-ID: <d3ca01f7-08a1-4725-9007-b6d127de0b1d@googlemail.com>
-Date: Thu, 27 Mar 2025 00:04:42 +0100
+	s=arc-20240116; t=1743030504; c=relaxed/simple;
+	bh=X4S/7dZElRQ2b6/lLtsy6EQGCbSHCEn9feN9sZrfxEo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=m0xnGdKk4nDla0fkFl1rnUVNLN65IZbeVhiV5y62PMSAdNWj0LLSndfhmMFQXk/ePGPFqgpBQCHbNKOH0okXbgcmQCpNKsHo+aUpDb+qiKKwv8U1elW9jz7sYLVBpj3HrhPJZTOwyFJfQfwRvVF+KAhGy3G5DRDh2kyEvCHn0cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=nSyy96jW; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [127.0.0.1] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 0DCA01669CD;
+	Thu, 27 Mar 2025 00:08:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1743030493;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X4S/7dZElRQ2b6/lLtsy6EQGCbSHCEn9feN9sZrfxEo=;
+	b=nSyy96jWQX1INa/o7HHsVcLizeqeBbkFXicTR06X/YXc++3wLrYzgJYA/q1VamnffnYvv3
+	cEGhlmjglTnPYPRtRWbyU5KHbA7Pijuy698eACoyzZ59kYSvB4mFo4vzVBHg7bwy+am8Mi
+	H66y/uBKKcSTbSs1XZ8Vi9wFIDLmTas=
+Date: Wed, 26 Mar 2025 23:08:13 +0000
+From: David Heidelberg <david@ixit.cz>
+To: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>,
+ =?ISO-8859-1?Q?J=E9r=F4me_Pouiller?= <jerome.pouiller@silabs.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>,
+ Mailing List <devicetree-spec@vger.kernel.org>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
+In-Reply-To: <bfb7433131cb9aeebc75666f86a67a6c71521229.camel@sipsolutions.net>
+References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz> <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net> <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com> <bfb7433131cb9aeebc75666f86a67a6c71521229.camel@sipsolutions.net>
+Message-ID: <4B465FA3-E6B5-4EB1-A712-0C8874402FCE@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.13 000/119] 6.13.9-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250325122149.058346343@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250325122149.058346343@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Am 25.03.2025 um 13:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.13.9 release.
-> There are 119 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> I can do that, but I suppose it's 6=2E16 material at this point=2E
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Hi Johannes=2E=20
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+I assume you meant 6=2E15?=20
+This patchset should mainly clarify where these properties can be used and=
+ address incorrect warnings regarding device-tree verification=2E=20
 
+David
 
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+> johannes
 
