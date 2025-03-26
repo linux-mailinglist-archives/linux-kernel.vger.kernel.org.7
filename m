@@ -1,94 +1,172 @@
-Return-Path: <linux-kernel+bounces-577746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C731A7210C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:56:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D90AA7221E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E561A16985C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:56:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 319CF189674D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABB2265601;
-	Wed, 26 Mar 2025 21:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00EA25A2CF;
+	Wed, 26 Mar 2025 22:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6xHN67M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ehIwNvUZ"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEE0264FAE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 21:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AD11B040D;
+	Wed, 26 Mar 2025 22:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743026158; cv=none; b=c5pPOVLvsYZF4stcb0eOk15mUkgc0wkWRJNsB01slH/T/qjIejYzoMUNVsDhvt5O4An5eNLsGA0pW1QB0C30vuaAyKf+YVFS2IvOj0y/iK0j036+84F8T/IAyVLIVstrQpooAWFXntnbTBzGoQhShIEMJtMkbpd07b373GEDI0E=
+	t=1743026778; cv=none; b=fIs/6oAgX/q15BL4N01pzI0W/9P+X9AkSWsLUvMdiXn4aT5X+ErwZ2rOhXbK3gdoQBJzjjwV1DdEQCo47KWzhvNwi/1EZgy305570Py17glIbskDevsV/73qom0H1gbZPz+pamdJIo0A2hdy+owI6OGJedF010iBMz4ZFoHOlkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743026158; c=relaxed/simple;
-	bh=/wl5mv0P6SicGkmS9UB05MMQjCKZA3KBnf+P3Gic6hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fufCNGDjdWHE+dYWAebcwAWOTqYsed+nqULjySj6Pn9Gzcf8vilgTQbYNUVkgL094IM33ME9+I9tbEa9JNwUTPG2h2RWfklKkzXdgYM4Qi/+BpNYzex069m+rp0y936KG24Nusq95mHHdL/zRXKvTvOo1JkzVRkShn9EdmF0RhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6xHN67M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751C4C4CEED;
-	Wed, 26 Mar 2025 21:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743026157;
-	bh=/wl5mv0P6SicGkmS9UB05MMQjCKZA3KBnf+P3Gic6hk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W6xHN67MzzGrD8xstgl/imo7G9ZP+0QaNz5OowUpWXukDgjR5foFlyr5G0wyUJhWz
-	 fvrJTMEoe42j/iZFSSgTSiMY4Ltxx8/QYMpvTky93Djl6wT0qsqsZqvewt+kz9YXoT
-	 N8peYZNtWs5TxSlmd55pErLsTLTfeV4ryfUJkvLugwV6xrko0qFHNFa8zLcsGwBJ7n
-	 aEdKY2CUpXmiS57J/PaIKS/4Kbtgmum0V/XPrD6L/uAoSkWEBFyCQppP789LfHYs3O
-	 1tY5QgMue9XXJ+xJ84rnTcyS6x8jRszEc/6ZypkyrUPqdlK4Od2ybbkhoIBwrLTxQZ
-	 QaTQaMUtXf7bQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Peter Xu <peterx@redhat.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] MAINTAINERS: mm: add entry for secretmem
-Date: Wed, 26 Mar 2025 23:55:41 +0200
-Message-ID: <20250326215541.1809379-5-rppt@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250326215541.1809379-1-rppt@kernel.org>
-References: <20250326215541.1809379-1-rppt@kernel.org>
+	s=arc-20240116; t=1743026778; c=relaxed/simple;
+	bh=wBUZtm7tQMfLpH6iDp+77aS8r5MvIGZkKqcqaUwCPlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MnznXBBkgJMDY4LR+nIU2hlBPA+gFf1vV9oSjGiIKNA389xgl3JbeNjzUsM3bhwXcRo0XlwiFq3GafNUFmoeAQCEP7BmMmbqj2dkHaoUT2MOI6oG9KsFa5ld95orDIpovZCvpOlYOaluL1vOMKY3dwyeHIWYCWA7Z2PIBQZX9Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ehIwNvUZ; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id xYjetXqeFG2llxYjhtb0U8; Wed, 26 Mar 2025 22:56:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1743026200;
+	bh=Hkg1tTedGB+Nrzuw+UGSEvgfhzz7DWhq6NfPcD6jls0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ehIwNvUZRrYlyHrVPoKyhA9+6FelPnghZEwndDyTk9A7kX5ZiDyZT8xOF9MYv5AxH
+	 MJlqH6+TnWRuEC+VLGvnUFpwpoPkS957gtuI1Db/64vG1VT0s+n5oyRUEaa1Sy9ZeE
+	 sjLRmqegaUeObIO47DnC7Z6aI1y2gh6x49WfYR52riStnVUkv+ZtstQrZg0NEZMuLZ
+	 kYE9LlZxQeBgxRmLZw1CVWiqFYaUEeko2/SFASpYW01pxMjnbvtk5FH/5A/Ke0Zxqu
+	 MsNghiRcYtxVGichRbfu5nWMZQwUUAA6qLQFxMOGkI2IYsr3GtozA6PSHx2dhKnPjR
+	 U+bmi2yH/2OHw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 26 Mar 2025 22:56:40 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <08f1177f-6623-46ff-8936-5b628326d8bf@wanadoo.fr>
+Date: Wed, 26 Mar 2025 22:56:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
+To: Ming Yu <a0282524688@gmail.com>, tmyu0@nuvoton.com, lee@kernel.org,
+ linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
+ mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+ jdelvare@suse.com, alexandre.belloni@bootlin.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250225081644.3524915-1-a0282524688@gmail.com>
+ <20250225081644.3524915-5-a0282524688@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250225081644.3524915-5-a0282524688@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Le 25/02/2025 à 09:16, Ming Yu a écrit :
+> This driver supports Socket CANFD functionality for NCT6694 MFD
+> device based on USB interface.
+> 
+> Signed-off-by: Ming Yu <a0282524688@gmail.com>
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 882fa62bcb28..e3dfc4c34086 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15218,6 +15218,14 @@ F:	mm/numa.c
- F:	mm/numa_emulation.c
- F:	mm/numa_memblks.c
- 
-+MEMORY MANAGEMENT - SECRETMEM
-+M:	Andrew Morton <akpm@linux-foundation.org>
-+M:	Mike Rapoport <rppt@kernel.org>
-+L:	linux-mm@kvack.org
-+S:	Maintained
-+F:	include/linux/secretmem.h
-+F:	mm/secretmem.c
-+
- MEMORY MANAGEMENT - USERFAULTFD
- M:	Andrew Morton <akpm@linux-foundation.org>
- R:	Peter Xu <peterx@redhat.com>
--- 
-2.47.2
+> +static int nct6694_can_probe(struct platform_device *pdev)
+> +{
+> +	const struct mfd_cell *cell = mfd_get_cell(pdev);
+> +	struct nct6694 *nct6694 = dev_get_drvdata(pdev->dev.parent);
+> +	struct nct6694_can_priv *priv;
+> +	struct net_device *ndev;
+> +	int ret, irq, can_clk;
+> +
+> +	irq = irq_create_mapping(nct6694->domain,
+> +				 NCT6694_IRQ_CAN0 + cell->id);
+> +	if (!irq)
+> +		return irq;
 
+Should irq_dispose_mapping() be caled in the error handling path and in 
+the remove function?
+
+> +
+> +	ndev = alloc_candev(sizeof(struct nct6694_can_priv), 1);
+> +	if (!ndev)
+> +		return -ENOMEM;
+> +
+> +	ndev->irq = irq;
+> +	ndev->flags |= IFF_ECHO;
+> +	ndev->dev_port = cell->id;
+> +	ndev->netdev_ops = &nct6694_can_netdev_ops;
+> +	ndev->ethtool_ops = &nct6694_can_ethtool_ops;
+> +
+> +	priv = netdev_priv(ndev);
+> +	priv->nct6694 = nct6694;
+> +	priv->ndev = ndev;
+> +
+> +	can_clk = nct6694_can_get_clock(priv);
+> +	if (can_clk < 0) {
+> +		ret = dev_err_probe(&pdev->dev, can_clk,
+> +				    "Failed to get clock\n");
+> +		goto free_candev;
+> +	}
+> +
+> +	INIT_WORK(&priv->tx_work, nct6694_can_tx_work);
+> +
+> +	priv->can.state = CAN_STATE_STOPPED;
+> +	priv->can.clock.freq = can_clk;
+> +	priv->can.bittiming_const = &nct6694_can_bittiming_nominal_const;
+> +	priv->can.data_bittiming_const = &nct6694_can_bittiming_data_const;
+> +	priv->can.do_set_mode = nct6694_can_set_mode;
+> +	priv->can.do_get_berr_counter = nct6694_can_get_berr_counter;
+> +	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK |
+> +		CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_BERR_REPORTING |
+> +		CAN_CTRLMODE_FD | CAN_CTRLMODE_FD_NON_ISO;
+> +
+> +	ret = can_rx_offload_add_manual(ndev, &priv->offload,
+> +					NCT6694_NAPI_WEIGHT);
+> +	if (ret) {
+> +		dev_err_probe(&pdev->dev, ret, "Failed to add rx_offload\n");
+> +		goto free_candev;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +	SET_NETDEV_DEV(priv->ndev, &pdev->dev);
+> +
+> +	ret = register_candev(priv->ndev);
+> +	if (ret)
+> +		goto rx_offload_del;
+> +
+> +	return 0;
+> +
+> +rx_offload_del:
+> +	can_rx_offload_del(&priv->offload);
+> +free_candev:
+> +	free_candev(ndev);
+> +	return ret;
+> +}
+> +
+> +static void nct6694_can_remove(struct platform_device *pdev)
+> +{
+> +	struct nct6694_can_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	unregister_candev(priv->ndev);
+> +	can_rx_offload_del(&priv->offload);
+> +	free_candev(priv->ndev);
+> +}
+
+...
+
+CJ
 
