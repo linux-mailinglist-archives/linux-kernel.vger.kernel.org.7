@@ -1,268 +1,207 @@
-Return-Path: <linux-kernel+bounces-577821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D81A72716
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:36:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD41EA72718
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A542189CBD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DBC189D050
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663191D5ADD;
-	Wed, 26 Mar 2025 23:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5967A17F4F6;
+	Wed, 26 Mar 2025 23:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4gG70e9"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGlA5Eph"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5289264F8A;
-	Wed, 26 Mar 2025 23:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD861C84D3;
+	Wed, 26 Mar 2025 23:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743032154; cv=none; b=pKG6gsy04geC/RdBAamn5pYaErF4qNgGZ+Pmnp/kqaz6a1Rx+k/evv3hXnMRpLVeBULvGrgX3u0b3xwhF1yihkTO91zjO6cjcAXrxwF54D4G9DAjGzYllOqtkrwIP8gaqC+FZ2kZKsgSbjMfp0F0P5zTvv3xkMqq91M0YV0UptI=
+	t=1743032184; cv=none; b=CIX9CXEKrvc8fWOj1mgUo3+eNiWkzIm3lCqLkt0vftfhYq6pdx7u0eYaItUNMhpYNVcHQWxpJ+sdahwLi9Y9WElsmLtyUJxXd5VdBOC+bfL1GOxzeM1WLskncbhyKp1t0Eov6YYBE0f4PlXxTcPakivoC5qeYXZfGp+XnuX/CPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743032154; c=relaxed/simple;
-	bh=aaP5jjL1QpF5Nj21o9Xb0lF9G3T0YoMhm8JsQ1WNWVU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SebclYdcl/pMFL67SQ6S/J5OchrcYu5l6BkY53aBhejSfaISckB9bqhp5hC8Wa7y65psfOl8+JTDXmuP20KRWGMB2W6jHYioxy/ECzaSUo69qtUEBt1n61F2vUkEk5u5EWcqOQrF0SOnkyCo9ddLDJhVegb3lAM700Y5vButNy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4gG70e9; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1743032184; c=relaxed/simple;
+	bh=I+1BD2iYpQhpy2hk/q4oXZ4zeqFgT+Bzn8cSp5yDDcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNBPhmbLDjZM14P9WzKJ/e1RVuNPVambK26kUO6JV90F4BzklVSj+L/JJYaxFWFVbQj5tCOIOKISlNOMehnQthW4quchf9rMTUZ4MOSXe6+zWrM+RX5Gjxn1jaklxZBpHuU2igSKiJflRZsUbw33Ls1T8IAwqD1EJkYrrjZi1aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGlA5Eph; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso267930f8f.2;
-        Wed, 26 Mar 2025 16:35:52 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43690d4605dso2733415e9.0;
+        Wed, 26 Mar 2025 16:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743032151; x=1743636951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7GVOqH2dtb9yz9XSZOrN5yDH4kiqYTHV4lLBUZDoMkU=;
-        b=c4gG70e9mqVteghtXEbd41WjIF91Kv+CutxcYqCSZibH/QMoCPIcH9AJd6K5taxRjA
-         9ayko0n8EzzFEjG4Ua+n9XbELAgXjjAHIWvmB2uH6xFDZQv23caYPOMrmBikc7gC9d5l
-         nenhowVJseTkzOMPFP3Eyi2JYnSVUiewo683VWyUdzj8z5fLb0SjM9ToGML6U9Btxg/l
-         XVe0EASzo6uAC2Z3PCc5XowXupAt0WQpz3LUSGsBMDYieZiHnS2TGSQ7QgXRT5XkaYXa
-         oGJgm1+8T3iPF3a2mfPgIDnggSXT1r4qD9wJoclfDWc7Q8JTeevnxX0f6FX2xcHwLkeS
-         bhwg==
+        d=gmail.com; s=20230601; t=1743032181; x=1743636981; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gpxRnuJVIVSr8pBWj81ZRvp6VQfzrOyG3qUhDElcCg=;
+        b=XGlA5Eph4n+jRvpy6VsFtSbbxW6gIOkhxwqCAcNte1IrGTTZ6fQAO81s/QJcOcmyjV
+         ayLNQUyG6ZZL88LaYGX1mKwWZThn6YQxCPU9iDhhVDiLTKuZWoXkRhguDU9Q3OVPFejq
+         LdeV7Lux8pKxaBM5+MHWYSRWtreAROTmiCiwILmfBDOXUzbLLQgzdaw3G6LFn2D61vlC
+         qcTB+mRla7j0Ppu6yOcbHgcZHuqCEKJxt7gwlSJ99DRQVBqLkaWMr1CjcQN5efHL6f55
+         InQAFSeKbZ1nb5LI7cBcfwol7BRimH9rTKaaqP4fFNqqFOBWFTvew+PlC+Nvnf+uUsJN
+         JqsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743032151; x=1743636951;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7GVOqH2dtb9yz9XSZOrN5yDH4kiqYTHV4lLBUZDoMkU=;
-        b=E29ZYJljNmc4dGUFjOJijmFzr2JbPhUE4ZVJRhdWumS1XvUENoju8bRpBK/0f9rLtv
-         3Aajxq4691ZOdgML9/CXUzoWdYH4tCnsOAThks3tjH+q1NkHb5bB8Y3If0WbvnUY4LQW
-         J2IAjbEpxO+IoFSdekzhlanuLseOg1gi5xKaAsKz25Y7JUg7DETVo0Gj2yIymGYKeN01
-         RnwiJTJM6O6uBo3jyldfXPZbTu7IKwMlcy9I6iOXKRxMwiJvuRDN9olCnb8sCE/NseJm
-         DsFOWoeGeYwEWZn1k5Q7Sb5xagXJZH7f5Npwd5oByJgaejfvgOx2igMVE4bKtCft8GxW
-         IGhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU97o1lKmiF2bleZE+4Ko8zO/BF0VeR8L1JtBaxiLPNzH79j4TYNjSfpg69M4oYOy/9f0U5OjKO71kHe8G4@vger.kernel.org, AJvYcCVRzyEKVM02xYc3GhYlUytQf0mpskf0BdjBBAbbg+dmkIl+96Qa9UiycjqQ2C62nyOHeeoRVCwE@vger.kernel.org, AJvYcCXtAxdQhwYRstdy70on7BKEC7CoYAJVaunFLC9YwtasCx0AAet6u/uqc+mxvnrsLu8NH71e1Swgz3TQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/3Do2qGHQKfta7Z+REnMipel3CQSQWogRafX7KbTz0f0nr71f
-	N+kmG7BVUaKhljnWB6vzQF2df1X/d5AiKtBk000cOgNhby0qK5NCBQ5UTg==
-X-Gm-Gg: ASbGnctQGA54uv+gBGBIUcPXOdgN9yZmUKP/dcyWCSVy8L8HHvuWoYYR3Ttpk70inJz
-	kpC3hZZB5Kz1Aw1DY/qTimp8Kz0XLnmA/ckKKZASvfrX3wbeFE+tuWtTCEk0j5P0y/I3tPbMyDb
-	GEv8U2sfjAKUaNIVHwlYTlEyDY88yf4wdySX/SqjwOVILdKfOjWLqb3Dbd5UVB3oE3C+byIE0q1
-	BrI+/WjIHk51SCl+EsibRm2t0DPdIGlmVOXsvj4fdS7cQHtXcXjsc/oLPmykIgNI9OrE2Veg3NW
-	opf/rx2Bbz7RTxUgBb1VGh1Gz5eyT3ybmkGNGLWjux8ZsPBjaHlU38tf39XyazxnO5TympyMH7x
-	w5VH59+VW4x58qQ==
-X-Google-Smtp-Source: AGHT+IFOa8WBGjFsJmHmRWSTbNPfcCi7DBXbnYepm+dNeI31EeMdbL+3WWzWWeVUU99LlcbWl2kQPQ==
-X-Received: by 2002:a05:6000:1ace:b0:391:29f:4f70 with SMTP id ffacd0b85a97d-39ad17544e8mr1002400f8f.3.1743032150980;
-        Wed, 26 Mar 2025 16:35:50 -0700 (PDT)
-Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f99579bsm18390328f8f.19.2025.03.26.16.35.49
+        d=1e100.net; s=20230601; t=1743032181; x=1743636981;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+gpxRnuJVIVSr8pBWj81ZRvp6VQfzrOyG3qUhDElcCg=;
+        b=sYeY9qojZaMN75NJ2jIh52vKkvvUim9xHmyMuQJvX9UXGtvWd/gFpcdsBwzCJ7YSC2
+         IYhmklzba68Q0Svv/HLrxlOUCqbuEPwLXnAUtYUYOFZnYrGz+1Y9rOxyS/JWDM9tqr3I
+         56BFXhsa14/xc7zjBU+Rq5J225wM1phSWE/7KJttKyx5UT6dDNKiAL5OAL2RaaBpxLlb
+         PNxzzQQtzqiEq469RUz8EiGlrTajXL1k+k5x9K1Hxta4RrzCpxdrQovMhc376yTWmjoC
+         9KMjr6/UxieP3bT1cbfl/sFSEnQoBS27n6S7bcPM8dXqdBSP1SuJMoVz2CvFkWvA8/xv
+         IoMA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+X6P0hTXliIYKUitm1c8LuLfqYZSNX8SNIbJtGyI4r5OAjNIqQ1ZR7Ll3g37VehdzyNQeA/8uA9OL9VY=@vger.kernel.org, AJvYcCXc5cZ5B/QDYyx9Vq4n9WagTw9qsQcgVYE2qVXhOiydSQsyiHkAfJ0SPvPRz1RQN1kjeL/3aL7eOqS3x9V4kbmxXOuf@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf9lEenTj9hHv/egqmvMG2zpJ7Gu51Y4rFXglVztBiPqwQiw23
+	elELXMaACN4cD+oPW3Kb5s3O83vMlIvR9MWLbBdQun7TUyFaiZAL
+X-Gm-Gg: ASbGnctP5KJsLDNHxRAl4Lnv2ThRKyNWI4WnpzhVudtNg9Vgg1aLNdMvUocfqBfcRCg
+	4dGL5STcFHMzl2knDNGFiAx9wb8usWQrYAjOKrEyofBWjrMnMznXIcu70sp3YdeEOqhhAn4yogb
+	yYNSHWLtXqYb0si1AO+tRJzHerGXo1NsSG1oaM6uNZMTf8eFd3d06K3FmH+6f8ODYeY4UfsL5o4
+	6rMNoJvgyAN6WmxGnePhgk4sGd/0YK35tmctTtax1sos4Wq/UALzJbv3aG0/nIrXDIzUrXhV7ln
+	0ScFntOOd7zVyB3k48s8O/4HHiOOMJZN9zDDvwRWDVU1XT97o8LCIjhSBB64
+X-Google-Smtp-Source: AGHT+IFz0F2wc1aL46ik2E1XpPNYlbJYtT9XpCftxWi2JDIsiQu5DLWnXHZ0BlYk5pj9NjT8WdVWRw==
+X-Received: by 2002:a05:600c:4e56:b0:43d:bb9:ad00 with SMTP id 5b1f17b1804b1-43d850fd05amr11243815e9.15.1743032180778;
+        Wed, 26 Mar 2025 16:36:20 -0700 (PDT)
+Received: from f (cst-prg-80-192.cust.vodafone.cz. [46.135.80.192])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39ad32bd464sm71193f8f.57.2025.03.26.16.36.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 16:35:50 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Eric Woudstra <ericwouds@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next RFC PATCH v3 4/4] dt-bindings: net: Document support for Aeonsemi PHYs
-Date: Thu, 27 Mar 2025 00:35:04 +0100
-Message-ID: <20250326233512.17153-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250326233512.17153-1-ansuelsmth@gmail.com>
-References: <20250326233512.17153-1-ansuelsmth@gmail.com>
+        Wed, 26 Mar 2025 16:36:19 -0700 (PDT)
+Date: Thu, 27 Mar 2025 00:36:07 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>, 
+	David Rientjes <rientjes@google.com>, Jani Nikula <jani.nikula@intel.com>, 
+	Sweet Tea Dorminy <sweettea@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Greg Thelen <gthelen@google.com>
+Subject: Re: [PATCH] mm: use per-numa-node atomics instead of percpu_counters
+Message-ID: <evqxyt5dkkervut7q4ea4dnykcz75lxx2wvqyg2lq7m3ptam3c@53ao37tlhytk>
+References: <20250325221550.396212-1-sweettea-kernel@dorminy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250325221550.396212-1-sweettea-kernel@dorminy.me>
 
-Document support for Aeonsemi PHYs and the requirement of a firmware to
-correctly work. Also document the max number of LEDs supported and what
-PHY ID expose when no firmware is loaded.
+On Tue, Mar 25, 2025 at 06:15:49PM -0400, Sweet Tea Dorminy wrote:
+> From: Sweet Tea Dorminy <sweettea@google.com>
+> 
+> This was a result of f1a7941243c1 ("mm: convert mm's rss stats into
+> percpu_counter") [1].  Previously, the memory error was bounded by
+> 64*nr_threads pages, a very livable megabyte. Now, however, as a result of
+> scheduler decisions moving the threads around the CPUs, the memory error could
+> be as large as a gigabyte.
+> 
+> This is a really tremendous inaccuracy for any few-threaded program on a
+> large machine and impedes monitoring significantly. These stat counters are
+> also used to make OOM killing decisions, so this additional inaccuracy could
+> make a big difference in OOM situations -- either resulting in the wrong
+> process being killed, or in less memory being returned from an OOM-kill than
+> expected.
+> 
+> Finally, while the change to percpu_counter does significantly improve the
+> accuracy over the previous per-thread error for many-threaded services, it does
+> also have performance implications - up to 12% slower for short-lived processes
+> and 9% increased system time in make test workloads [2].
+> 
+> A previous attempt to address this regression by Peng Zhang [3] used a hybrid
+> approach with delayed allocation of percpu memory for rss_stats, showing
+> promising improvements of 2-4% for process operations and 6.7% for page
+> faults.
+> 
+> This RFC takes a different direction by replacing percpu_counters with a
+> more efficient set of per-NUMA-node atomics. The approach:
+> 
+> - Uses one atomic per node up to a bound to reduce cross-node updates.
+> - Keeps a similar batching mechanism, with a smaller batch size.
+> - Eliminates the use of a spin lock during batch updates, bounding stat
+>   update latency.
+> - Reduces percpu memory usage and thus thread startup time.
+> 
+> Most importantly, this bounds the total error to 32 times the number of NUMA
+> nodes, significantly smaller than previous error bounds.
+> 
+> On a 112-core machine, lmbench showed comparable results before and after this
+> patch.  However, on a 224 core machine, performance improvements were
+> significant over percpu_counter:
+> - Pagefault latency improved by 8.91%
+> - Process fork latency improved by 6.27%
+> - Process fork/execve latency improved by 6.06%
+> - Process fork/exit latency improved by 6.58%
+> 
+> will-it-scale also showed significant improvements on these machines.
+> 
 
-Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
-AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
-AS21210PB1 that all register with the PHY ID 0x7500 0x9410 on C45
-registers before the firmware is loaded.
+The problem on fork/exec/exit stems from back-to-back trips to the
+per-cpu allocator every time a mm is allocated/freed (which happens for
+each of these syscalls) -- they end up serializing on the same global
+spinlock.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../bindings/net/aeonsemi,as21xxx.yaml        | 122 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 2 files changed, 123 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+On the alloc side this is mm_alloc_cid() followed by percpu_counter_init_many().
 
-diff --git a/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml b/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
-new file mode 100644
-index 000000000000..69eb29dc4d7b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
-@@ -0,0 +1,122 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/aeonsemi,as21xxx.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Aeonsemi AS21XXX Ethernet PHY
-+
-+maintainers:
-+  - Christian Marangi <ansuelsmth@gmail.com>
-+
-+description: |
-+  Aeonsemi AS21xxx Ethernet PHYs requires a firmware to be loaded to actually
-+  work. The same firmware is compatible with various PHYs of the same family.
-+
-+  A PHY with not firmware loaded will be exposed on the MDIO bus with ID
-+  0x7500 0x7500 or 0x7500 0x9410 on C45 registers.
-+
-+  This can be done and is implemented by OEM in 2 different way:
-+    - Attached SPI flash directly to the PHY with the firmware. The PHY
-+      will self load the firmware in the presence of this configuration.
-+    - Manually provided firmware loaded from a file in the filesystem.
-+
-+  Each PHY can support up to 5 LEDs.
-+
-+  AS2xxx PHY Name logic:
-+
-+  AS21x1xxB1
-+      ^ ^^
-+      | |J: Supports SyncE/PTP
-+      | |P: No SyncE/PTP support
-+      | 1: Supports 2nd Serdes
-+      | 2: Not 2nd Serdes support
-+      0: 10G, 5G, 2.5G
-+      5: 5G, 2.5G
-+      2: 2.5G
-+
-+allOf:
-+  - $ref: ethernet-phy.yaml#
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - ethernet-phy-id7500.9410
-+          - ethernet-phy-id7500.9402
-+          - ethernet-phy-id7500.9412
-+          - ethernet-phy-id7500.9422
-+          - ethernet-phy-id7500.9432
-+          - ethernet-phy-id7500.9442
-+          - ethernet-phy-id7500.9452
-+          - ethernet-phy-id7500.9462
-+          - ethernet-phy-id7500.9472
-+          - ethernet-phy-id7500.9482
-+          - ethernet-phy-id7500.9492
-+  required:
-+    - compatible
-+
-+properties:
-+  reg:
-+    maxItems: 1
-+
-+  firmware-name:
-+    description: specify the name of PHY firmware to load
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: ethernet-phy-id7500.9410
-+then:
-+  required:
-+    - firmware-name
-+else:
-+  properties:
-+    firmware-name: false
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    mdio {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        ethernet-phy@1f {
-+            compatible = "ethernet-phy-id7500.9410",
-+                         "ethernet-phy-ieee802.3-c45";
-+
-+            reg = <31>;
-+            firmware-name = "as21x1x_fw.bin";
-+
-+            leds {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                led@0 {
-+                    reg = <0>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <0>;
-+                    default-state = "keep";
-+                };
-+
-+                led@1 {
-+                    reg = <1>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+                    default-state = "keep";
-+                };
-+            };
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a2df6d221bd..59a863dd3b70 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -649,6 +649,7 @@ AEONSEMI PHY DRIVER
- M:	Christian Marangi <ansuelsmth@gmail.com>
- L:	netdev@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
- F:	drivers/net/phy/as21xxx.c
- 
- AF8133J THREE-AXIS MAGNETOMETER DRIVER
--- 
-2.48.1
+Even if you eliminate the counters for rss, you are still paying for CID. While
+this scales better than the stock kernel, it still leaves perf on the table.
 
+Per our discussion on IRC there is WIP to eliminate both cases by
+caching the state in mm. This depends on adding a dtor for SLUB to undo
+the work in ctor. Harry did the work on that front, this is not
+submitted to -next though.
+
+There is a highly-inefficient sanity-check loop in check_mm(). Instead
+of walking the entire list 4 times with toggling interrupts in-between,
+it can do the walk once.
+
+So that's for the fork/execve/exit triplets.
+
+As for the page fault latency, your patch adds atomics to the fast path.
+Even absent any competition for cachelines with other CPUs this will be
+slower to execute than the current primitive. I suspect you are
+observing a speed up with your change because you end up landing in the
+slowpath a lot and that sucker is globally serialized on a spinlock --
+this has to hurt.
+
+Per my other message in the thread, and a later IRC discussion, this is
+fixable with adding intermediate counters, in the same spirit you did here.
+
+I'll note though that numa nodes can be incredibly core-y and that
+granularity may be way too coarse.
+
+That aside there are globally-locked lists mms are cycling in and out of
+which also can get the "stay there while cached" treatment.
+
+All in all I claim that:
+1. fork/execve/exit tests will do better than they are doing with your
+patch if going to the percpu allocator gets eliminated altogether (in
+your patch it is not for mm_alloc_cid() and the freeing counterpart),
+along with unscrewing the loop in check_mm().
+2. fault handling will be faster than it is with your patch *if*
+something like per-numa state gets added for the slowpath -- the stock
+fast path is faster than yours, the stock slowpath is way slower. you
+can get the best of both worlds on this one.
+
+Hell, it may be your patch as is can be easily repurposed to
+decentralize the main percpu counter? I mean perhaps there is no need
+for any fancy hierarchical structure.
+
+I can commit to providing a viable patch for sorting out the
+fork/execve/exit side, but it is going to take about a week. You do have
+a PoC in the meantime (too ugly to share publicly :>).
+
+So that's my take on it. Note I'm not a maintainer of any of this, but I
+did some work on the thing in the past.
 
