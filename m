@@ -1,154 +1,113 @@
-Return-Path: <linux-kernel+bounces-577779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3ECA7258A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:41:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF219A725A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F8918989BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:41:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A2B7A2EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405D72620D6;
-	Wed, 26 Mar 2025 22:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E55263F59;
+	Wed, 26 Mar 2025 22:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NH+DuR3B"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvHzBxHm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29FC82899;
-	Wed, 26 Mar 2025 22:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBBD1F55FB;
+	Wed, 26 Mar 2025 22:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743028847; cv=none; b=OwSYe5wrJ6SwI6jYT7OISCUguZHBcGwTUWxkCQK1vxbL/moAcmLYrjKeltDp68vtahPmmSXSClUN1HQbTZFF9eDyUNMldAS/y+3gO64i+kdNq9XD44gd79WP1JHu/qDIaIMXqVCQPW5TA5Lj6ltUhsWuxSmZWM2lvGeIzQARNqY=
+	t=1743028894; cv=none; b=JFs2lfS/2aKrLn6DzykUFuzXRz84vXsayqjLxmqddbnl6dwtDe6mqveSxyqPmjU2vhS/38dkLQ8UKD53/UskLMFTjEr40c0m4bINIezVfePDJ1EpNGJRbZN3q9yQ3gDntTeK+MV41QD3/P9K7XEojenzk4Cfk62+oYowrTcujTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743028847; c=relaxed/simple;
-	bh=L9A15sjzLr1fEWncr19j20ydfM7A+gAYG8NML9w9nKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N39AOSb7aczcv4AGyHXFZ1SF76xfN6n7s5Xjknxi7pYn8Yk+IlJpYknhRNuPxkm1bSteJB0cF0XfqU49NLUGzsgSLn9kqK3nMKpKUTe2IFGAf8UPcwUs24oC2sqejv6JcbRgZKK5Ng8e6yMm1MIHqlXcekpaUDjcHXfruFMBuCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NH+DuR3B; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac289147833so65407466b.2;
-        Wed, 26 Mar 2025 15:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743028844; x=1743633644; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XV50vEzrK1pDVZvoneCyBVVV/DstYz+cH9XtIlryO4Y=;
-        b=NH+DuR3B77N95lDmvkKyCTdyYKoUYwxfOWOwicKKsuMEnZmDNJdlHFpokrFGn/Vcrj
-         mIQdvA1zul5a06JlkuGLIwfDQOdNUNCZgPWWwettTh9C3PLsMqBFqd78IGLv4KnBRoDh
-         tbVAVcRsN11XCta0OsI8T1RSaYUrLhoE05x7s3wbJraG4qF5WhstNYr3R9CSysgFGb/6
-         oZhLsohhsKoq7TtrpsCY6tUEvrc7RZS6cOkx8XcPVGvZ8zNVzMO/krIPzYjGYu6bTcgH
-         dGFGiW8jmPbQ+HHmLU+D4X5U/268rW1wUUNQt3+ten2XJLgkR0lwACvC/gQUJqyek6wt
-         uWbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743028844; x=1743633644;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XV50vEzrK1pDVZvoneCyBVVV/DstYz+cH9XtIlryO4Y=;
-        b=Os7Rh1wMF/vHnvlYEpKXz25WhwzDMCFXmiPg3wmgmby3x/pVfMXXpXFb2XNghDHgp8
-         bBqJWbo29QdOizlktfvUN5nEkCrNRRL75rT3UwR+PTXa/OHZlwtMG27jViFlzno/0Ovl
-         42d4O4ocnbRS3GnDTyQpE59aBdIJL3Q6Uq6r+hiFx1pMvk14YOlmCso7n29MwkQ4ddZ4
-         qGcoqkCPcyY0PAELyLMep/G/rBFC1RXIAJcYuQrKUV+wvRU+BYBuw3Ni16MU9roluBKZ
-         sHN9FeFqu6El1KDrkLKt0RVMGyQKWInx+KvE0YCLrTH9Lh5xK7b1JHcjMrhxcXE4MncT
-         8ZJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSAtq2caXIGWB3lDg9GmnSuJcSSdHL8nq+y9ccWvdHkYiVVppDiKRCe9yn5HrrT/Tqo9BYDsekfe/+e08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc0pNBnbVPFhbY84SPiasrrTGomDITAurzuP74ULM955PTdvTC
-	31G0QcuePR4UUTP2DALpqBW4LLzvF87/Y04QuiLYQi2wXDXBAFDPDFu78Q==
-X-Gm-Gg: ASbGnct+riHarBXGKqxtlJSAkbfQZP1y1rUkiWPuxYS+5VkA3xoT7ljEwmmLxJmSwJX
-	AwLhmaDKSrwMZn300L9sd1cNCYH9msnm0oWmLznGkbpc67jLsPfeHeHNAygmKnTZ35aBpj7calf
-	nL/7PyVeM3SfSjfTTdh5nB6zDB2iYDazoswCVB1IPYq8rrDgh6pkfpUwy7+pLuPLVVVEiT5CpoU
-	rTaODhL/S00Nb93mzHCVCKEHYMaiQXWVEWGSa5n7BSSvDKP3BMcvAoToypCO/AUb3jlnLFyNbHv
-	lWU5UX5RZDIMuzKV4C18UG7Z+2PxelRol+l3bq/cw1SBTPmPMEaWpg==
-X-Google-Smtp-Source: AGHT+IG61eFdSVp6Z+C4dXoYNCupfDKO+csq0BW5TxID1dFzHv41/oAlZoAKK+Xkv1PEo0FJyclu3g==
-X-Received: by 2002:a17:907:6e90:b0:ac2:b1e2:4b85 with SMTP id a640c23a62f3a-ac6fae493e7mr86588866b.3.1743028843907;
-        Wed, 26 Mar 2025 15:40:43 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.233.207])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef869f72sm1095396766b.32.2025.03.26.15.40.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 15:40:43 -0700 (PDT)
-Message-ID: <e5fb965e-25a4-4f72-bc68-17ccd1fba794@gmail.com>
-Date: Wed, 26 Mar 2025 22:41:31 +0000
+	s=arc-20240116; t=1743028894; c=relaxed/simple;
+	bh=lqViN5Eu7Ch/V4e0CAlSLoRL5PM7JT6zJCd7tWfuf80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkGreby/UYhZZq6Ahm4MEEVB6ugeNwEjZ6OQu5MUeJDRF3gU2c+HqRGBcugeGCM8VMxNMR/krXOmISM/kf1UBvCeVBcmoKyL3rkWrCCKiG29laaYm/ElB0ncz0UM47zIsY60URE+vVz2T3ndsqQIsyOf1OiG2tMWNRzJ+Jp6/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvHzBxHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62AF2C4CEE2;
+	Wed, 26 Mar 2025 22:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743028893;
+	bh=lqViN5Eu7Ch/V4e0CAlSLoRL5PM7JT6zJCd7tWfuf80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cvHzBxHmPy+Ul3xEP3SsXt4oVcY/0S4iEmX1MGmr50C+EAefcC7FOo8Og7euEjkuI
+	 YaqXLva51MPq3l0kn8mFBkKsDeFNKBO8D0QYhyhnCQu02bAVcMgi5h0pp2LnX72WeG
+	 caLUbA3pTrvBQUMCughZnEV0ndl+PpICOKScEMTBCYEEpCrHVFVCohLKWql6ri18O7
+	 668wEV8hvp23gOBzlljdqQV2DR5LpXgrshg6N+eFybKyagiqdfhbTjg5zK3gap1OZJ
+	 JT9/kYySWOg7HGgYM0k3xX5DFdPbxUnuzaVzz7BurWd7vdsVp4KPOaV6xPAFY/+uKK
+	 lggK61WcaNcUQ==
+Date: Wed, 26 Mar 2025 17:41:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Remo Senekowitsch <remo@buenzli.dev>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 01/10] rust: Move property_present to property.rs
+Message-ID: <20250326224132.GA2958946-robh@kernel.org>
+References: <20250326171411.590681-1-remo@buenzli.dev>
+ <20250326171411.590681-2-remo@buenzli.dev>
+ <20250326205106.GB2787672-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
-To: Jens Axboe <axboe@kernel.dk>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250325143943.1226467-1-csander@purestorage.com>
- <5b6b20d7-5230-4d30-b457-4d69c1bb51d4@gmail.com>
- <CADUfDZoo11vZ3Yq-6y4zZNNoyE+YnSSa267hOxQCvH66vM1njQ@mail.gmail.com>
- <9770387a-9726-4905-9166-253ec02507ff@kernel.dk>
- <CADUfDZr0FgW4O3bCtq=Yez2cHz799=Tfud6uA6SHEGT4hdwxiA@mail.gmail.com>
- <570272b0-4d96-4e98-bf73-e313cc49918c@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <570272b0-4d96-4e98-bf73-e313cc49918c@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326205106.GB2787672-robh@kernel.org>
 
-On 3/26/25 17:31, Jens Axboe wrote:
-> On 3/26/25 11:23 AM, Caleb Sander Mateos wrote:
->> On Wed, Mar 26, 2025 at 10:05?AM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 3/26/25 11:01 AM, Caleb Sander Mateos wrote:
->>>> On Wed, Mar 26, 2025 at 2:59?AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>>>
->>>>> On 3/25/25 14:39, Caleb Sander Mateos wrote:
->>>>>> Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
->>>>>> track whether io_send_zc() has already imported the buffer. This flag
->>>>>> already serves a similar purpose for sendmsg_zc and {read,write}v_fixed.
->>>>>
->>>>> It didn't apply cleanly to for-6.15/io_uring-reg-vec, but otherwise
->>>>> looks good.
->>>>
->>>> It looks like Jens dropped my earlier patch "io_uring/net: import
->>>> send_zc fixed buffer before going async":
->>>> https://lore.kernel.org/io-uring/20250321184819.3847386-3-csander@purestorage.com/T/#u
->>>> .
->>>> Not sure why it was dropped. But this change is independent, I can
->>>> rebase it onto the current for-6.15/io_uring-reg-vec if desired.
->>>
->>> Mostly just around the discussion on what we want to guarantee here. I
->>> do think that patch makes sense, fwiw!
->>
->> I hope the approach I took for the revised NVMe passthru patch [1] is
->> an acceptable compromise: the order in which io_uring issues
->> operations isn't guaranteed, but userspace may opportunistically
->> submit operations in parallel with a fallback path in case of failure.
->> Viewed this way, I think it makes sense for the kernel to allow the
->> operation using the fixed buffer to succeed even if it goes async,
->> provided that it doesn't impose any burden on the io_uring
->> implementation. I dropped the "Fixes" tag and added a paragraph to the
->> commit message clarifying that io_uring doesn't guarantee this
->> behavior, it's just an optimization.
->>
->> [1]: https://lore.kernel.org/io-uring/20250324200540.910962-4-csander@purestorage.com/T/#u
+On Wed, Mar 26, 2025 at 03:51:06PM -0500, Rob Herring wrote:
+> On Wed, Mar 26, 2025 at 06:13:40PM +0100, Remo Senekowitsch wrote:
+> > Not all property-related APIs can be exposed directly on a device.
+> > For example, iterating over child nodes of a device will yield
+> > fwnode_handle. Thus, in order to access properties on these child nodes,
+> > the APIs has to be duplicated on a fwnode as they are in C.
 > 
-> It is, I already signed off on that one, I think it's just waiting for
-> Keith to get queued up. Always a bit tricky during the merge window,
-> particularly when it ends up depending on multiple branches. But should
-> go in for 6.15.
+> s/has/have/
 > 
-> When you have time, resending the net one would be useful. I do think
-> that one makes sense too.
+> > 
+> > A related discussion can be found on the R4L Zulip[1].
+> > 
+> > [1] https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/DS90UB954.20driver.20done.2C.20ready.20to.20upstream.3F/near/505415697
+> 
+> Useful below the '---', but I don't think we want to keep this link 
+> forever. And who knows how long it will be valid? The commit msg needs 
+> to stand on its own, and I think it does.
+> 
+> > 
+> > Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
+> > ---
+> >  rust/helpers/helpers.c  |  1 +
+> >  rust/helpers/property.c | 13 ++++++++
+> >  rust/kernel/device.rs   |  7 ----
+> >  rust/kernel/lib.rs      |  1 +
+> >  rust/kernel/property.rs | 73 +++++++++++++++++++++++++++++++++++++++++
+> >  5 files changed, 88 insertions(+), 7 deletions(-)
+> >  create mode 100644 rust/helpers/property.c
+> >  create mode 100644 rust/kernel/property.rs
 
-If that's about "io_uring/net: import send_zc fixed buffer before going
-async" please don't, because the next second you'll be arguing that
-it's a regression to change it and so it's essentially uapi, and we
-end up with 2 step prep with semantics nobody ever will be able to
-sanely describe, not without listing all the cases where it can fail.
+Also, property.rs needs to be added to MAINTAINERS. I guess it goes 
+under driver core with Greg.
 
--- 
-Pavel Begunkov
-
+Rob
 
