@@ -1,151 +1,100 @@
-Return-Path: <linux-kernel+bounces-577804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE3CA726DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:08:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7A1A726E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0B718978D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:08:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88791757F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6789A25E835;
-	Wed, 26 Mar 2025 23:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F245F25DB10;
+	Wed, 26 Mar 2025 23:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="S+CytnhC"
-Received: from mail-oo1-f97.google.com (mail-oo1-f97.google.com [209.85.161.97])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HzrXwAEA"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7A0219E8F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F08524EAAA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743030503; cv=none; b=JRy2I/50egRJwMRwGuPXVL3gDFtimnV13VbYRnr92Rk2gcwvedJ6z6L5EU4cjD9QqmtgSvPG9HfFalCagaDk0zC5vrjITRRuIjzfgeTXx8A9qS1HyqZn7Ua80ntRXP0NIzwkiXHPyWNsYIwSpDYgvyNomFGTbca6FiWbJ9SjCnw=
+	t=1743030620; cv=none; b=e4UvCmQDOu76rVf9p3INPNl8emXYIBH5H1dl/AFmKIks59sAQrvaHhv/UYZJivAAP+iPEhM9HTIFBibe5E9WrG7a9dOye4qTUldmFoU7m8I86Uqm3fTMAQgE9WAArBaXUeIZKvQJ66YviMtZ/1tQiydRjjkmU5c5I8DVE+qIK5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743030503; c=relaxed/simple;
-	bh=UIucPY8Hw6s1pIjj0T40L+yyxKLaVSlySiCPpLn2cd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZaxbWpH3cB1/KATEK+TP/O9bIcHmt2UJdX3GlSWDzF9VFHbHXorJ4oCSFy1hsonbPFCiu3xUZjLIXjqY8p6a0W9NiRW1PjfzZgjnd1XKM/NaV08TRjpUh/V+AQWpxZ/9r1AsjFoNip51s2KoB0YeOs3ldFDIC4t5/ziXPzfHA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=S+CytnhC; arc=none smtp.client-ip=209.85.161.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oo1-f97.google.com with SMTP id 006d021491bc7-601ad30bc0cso927909eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:08:21 -0700 (PDT)
+	s=arc-20240116; t=1743030620; c=relaxed/simple;
+	bh=wc3YVGgFFPukQsTfiZoZotgv1qZ6Vpg2i6m4XEs2Ox0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RuybuzMJDN2IjRUjc15ZF+eG1U/6VLMCL+nlwbPGYEQ565avJEMugRVdWwOSW7IIjVALM4/pnaHiRQ2wFxrVYH02Q+GO+EeyqVwvD0mI+GgWkTxhbR9pVOoBAzgcdNwwyIvbEmoH90KhftLaZVi2KgyiELi/ErnDDOfsqIoKP5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HzrXwAEA; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e50bae0f5bso4313a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 16:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743030501; x=1743635301; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8rVT5gyP0OGTon/Wq3WnQYduId/TZ40NupCn3Es6UaA=;
-        b=S+CytnhCujIqDOAGDu6jJWVwbefFUYR5QQE+QDd86pIuWCDioun9cgd9ZiHBxLEvmK
-         9QG3drlbcLV6Ce94OMqta6qurINg8+hLrlu+E9+j9Kysi07LevrA3aUwVRPbL5jc8/Jp
-         qPDoPa+bC9dwblkw/thRI11KCLH84Jvw7SdOrdvsRo88uD7w003kqNNHFvMEZoiDzImu
-         YFD3LZJTrIDJcfBPq8sIFf9vAwRmSbDnzCcVNOVceBnNxny1JWpJZr1J2JaeNRjxw/3f
-         jU7SH/Kd2nR8bbPSUwl0cuvZVjIQ8XyDosUPYl2/fDPOO4VOaJEondV5GCn/1ZS3zapb
-         9Ykg==
+        d=google.com; s=20230601; t=1743030616; x=1743635416; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wc3YVGgFFPukQsTfiZoZotgv1qZ6Vpg2i6m4XEs2Ox0=;
+        b=HzrXwAEAd8qIa3565GAgICokY3cP83CrowpXWpznKOGKgB0Xb1SbBaptqv6HwODUSX
+         9L+gTr9lIenTqpm07FYsOjlaF+7jNxUXGvNkNCnG1v3Bqlaq0OA0xFWk4VMO+QXhc/kf
+         IzZGZVUm0RDW2ugslZ0/vewyqxV35STNqePh5xrwp0zZBiX5x40XYk/X7oqwAhE17JY9
+         EakLZ2aAwAyn5IaYcuhbCet0h2NJUu8IS+JirbhNG/HfAWE8oNej26/aKyWP48AL0LiO
+         yQbEsE79my1WnOi7iXbTYcK4yOv1ZeSk6NIFAIK/nqsr9JxJ705TE7RNJ/8v65jk0V7n
+         5qgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743030501; x=1743635301;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8rVT5gyP0OGTon/Wq3WnQYduId/TZ40NupCn3Es6UaA=;
-        b=Yk8WKTFiIxtwMc1yxM1cXvrG8kQBtq+QX+d1yCyoA9r5atihpUq5WykmejQTJncTwN
-         vOSOP/1trNhkd1jRsnmopYQ8hOvGX2Q6xsKBwLP1MG3GZrSkzmVOZy4ddkTbPlQwD3TV
-         NAVKJLX4DkRZ54dIz1nM+uZU7hISpT5Opz02NKy0HbepjpKxg9GsjHGQ88z1fandWirg
-         QcF/sjW2cdKVzbKeooT1IqTYB2VfMZViEFy0kHKQHAoEt2RDzmcUj+cwV9IDcjL9UW0R
-         Aw2GYfjOmYS0pUR/3TX38A5j1yPrUxup/XCjjnD5xQEhkxcCF0fBwPDb4/KLco8NTIdq
-         oGEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpiz/rZSEx391Nep6Bb4cE+bGG4jVKUlTKnEtQy5l+zloRQrdtQe12Wh5qokWGGIg6Ckt/s6TNNmjSQ8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzipdkpCjqdNHD9F/8KK8TF7A6w/4LIEKEqPa8zrmNx6bN18ONC
-	2dasmbaHze+ybHe3DTK8ao0H5vWKU8lMuKvQODoNUqnuxy+WERu4WTpk/wZuQNSZx1tUv6u3Tsb
-	b35+Pb8/+C2ZF42WjRdU3LV9v7rE6O6lE
-X-Gm-Gg: ASbGncuX4puvirIfyvaOrNmGuq3bjiWz+zRhPXybV+NiRILWhHkCdH9NQ59vwuR59RT
-	IFCta4URKPfrex7+SD4wppIgc4x+tAuMhB8EHXr3hJCgZdqP7d7FLgNmV8p8w/CBPdeBTGS8yKQ
-	LZ0NQ+PzkYSiI2ODx+XB6Xxh4rrgZxWTrFqD3jIPI4luUxgntKh0DnZI46bfXXrTVU9zweVqH2s
-	HDr+HPztSkoJPCWBPb2JRo4gOKcFMGXLnoENAXPBJ5/gUSEUYT9dOaWYOxSG6qj7GFT9pEQ0TMb
-	ESekhRWIYa8ecFLOpPtvkTn1/1npK5yY1lIiWuNFQLCBHHwc0Q==
-X-Google-Smtp-Source: AGHT+IEPeX5QO7+np0lHt1JqQH6URXpDSCirYyHJkWTJBvVF0t+eQSx2Y6evgmmZSMAjZEj8DhgivwD6H6cm
-X-Received: by 2002:a05:6870:2a45:b0:2c1:d516:66c1 with SMTP id 586e51a60fabf-2c826ccb975mr3678918fac.12.1743030500879;
-        Wed, 26 Mar 2025 16:08:20 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-2c77f0ab523sm496151fac.37.2025.03.26.16.08.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 16:08:20 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [IPv6:2620:125:9007:640:7:70:36:0])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 25C4C340199;
-	Wed, 26 Mar 2025 17:08:19 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 153F7E40310; Wed, 26 Mar 2025 17:08:19 -0600 (MDT)
-Date: Wed, 26 Mar 2025 17:08:19 -0600
-From: Uday Shankar <ushankar@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] ublk: improve handling of saturated queues when ublk
- server exits
-Message-ID: <Z+SI4x+0J52rCJpN@dev-ushankar.dev.purestorage.com>
-References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
- <20250325-ublk_timeout-v1-4-262f0121a7bd@purestorage.com>
- <Z-OS2_J7o0NKHWmj@fedora>
- <Z+Q/SNmX+DpVQ5ir@dev-ushankar.dev.purestorage.com>
- <Z+RN+CPnWO69aJD5@dev-ushankar.dev.purestorage.com>
+        d=1e100.net; s=20230601; t=1743030616; x=1743635416;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wc3YVGgFFPukQsTfiZoZotgv1qZ6Vpg2i6m4XEs2Ox0=;
+        b=bCp9ylSfUKeOSr3WSKYRe16w4Uq2JfXZnmgu/5xT7jX/qHbSAnrE8ih87LkaJPryNr
+         T3CzUa01xJ2CLnax2dUflToZdKJsXsgPSZDl38LfdL3ZWnZd0cLmNPijhwlLmgBW6a6L
+         cvI9zwBzri+YX5JoHR/E2MnZoiv3pNmAe3Ux6rZYqXuPbRko6gjcutTEnNmuclFwKXYP
+         Z8tuWZJPXNpiXK3LU2z+/EDMhpQTgUtmVu2Rcj6hEymXwst6FyiSLcBgvJD7PTgQ/3h5
+         ikRVSyLYMB7y2bGSCb2swOyWUpQhav9BRJOcCFojhGHODEmD5r+BMHNS1l/uLDDO4wGT
+         4yHg==
+X-Gm-Message-State: AOJu0YxBdrsQSjOAPw2Rr9Zt5R1Fb/I/1ejtUFM38lPSYPC+yZmMVaE5
+	yL9eghf6T0nCUHf15hLao/6eaCPf6KIevyQTmuJs9h6B8Cy6QfbJo4zcuahI+RdAfA7HOhZorJj
+	vA3ZRIBvMPbwgD2itC9FxjC8j3ltLdvyh+wjq
+X-Gm-Gg: ASbGncvLBjAa2X2KuKrT5SYemL0Zq5fuNN0J97snewV/YCNdNLceYMUwE6aro/x0FW3
+	Bl92Ck+ErsVuwUqdC/VpvI5d2il+VS6BuYl41JTS4rA+Mwald6hufOcdxee01jrr5o4VfVqyRRs
+	4KsXgbL1V4gwypEdg00OfJJkvG/X9BW/EI80hGU6akVO77ABFAllIxMaw/5kwEXx8GQg==
+X-Google-Smtp-Source: AGHT+IFXisS9wWdRUt0uNNuJQt+0RNkIIqbbbT66/cypXTYdXu3uR8mrjkMlVz/TrIZZwushzUnqd5yPMxkuIjOcxew=
+X-Received: by 2002:aa7:c954:0:b0:5dc:ccb4:cb11 with SMTP id
+ 4fb4d7f45d1cf-5edaae205aamr22369a12.4.1743030616016; Wed, 26 Mar 2025
+ 16:10:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z+RN+CPnWO69aJD5@dev-ushankar.dev.purestorage.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 27 Mar 2025 00:09:40 +0100
+X-Gm-Features: AQ5f1JqVjr6tTcBF7w0LwsC86zQrBaocMPZS2--LfQfER88FYjnvupdq9_ZCZqQ
+Message-ID: <CAG48ez2jj8KxxYG8-chkkzxiw-CLLK6MoSR6ajfCE6PyYyEZ=A@mail.gmail.com>
+Subject: does software KASAN not instrument READ_ONCE() on arm64 with LTO?
+To: Will Deacon <will@kernel.org>, kasan-dev <kasan-dev@googlegroups.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Mar 26, 2025 at 12:56:56PM -0600, Uday Shankar wrote:
-> On Wed, Mar 26, 2025 at 11:54:16AM -0600, Uday Shankar wrote:
-> > > ublk_abort_requests() should be called only in case of queue dying,
-> > > since ublk server may open & close the char device multiple times.
-> > 
-> > Sure that is technically possible, however is any real ublk server doing
-> > this? Seems like a strange thing to do, and seems reasonable for the
-> > driver to transition the device to the nosrv state (dead or recovery,
-> > depending on flags) when the char device is closed, since in this case,
-> > no one can be handling I/O anymore.
-> 
-> I see ublksrv itself is doing this :(
-> 
-> /* Wait until ublk device is setup by udev */
-> static void ublksrv_check_dev(const struct ublksrv_ctrl_dev_info *info)
-> {
-> 	unsigned int max_time = 1000000, wait = 0;
-> 	char buf[64];
-> 
-> 	snprintf(buf, 64, "%s%d", "/dev/ublkc", info->dev_id);
-> 
-> 	while (wait < max_time) {
-> 		int fd = open(buf, O_RDWR);
-> 
-> 		if (fd > 0) {
-> 			close(fd);
-> 			break;
-> 		}
-> 
-> 		usleep(100000);
-> 		wait += 100000;
-> 	}
-> }
-> 
-> This seems related to some failures in ublksrv tests
+Hi!
 
-Actually this is the only issue I'm seeing - after patching this up in
-ublksrv, make T=generic test appears to pass - I don't see any logs
-indicating failures, and no kernel panics.
+I just realized - arm64 redefines __READ_ONCE() to use inline assembly
+instead of a volatile load, and ASAN is designed to not instrument asm
+statement operands (not even memory operands).
+(I think I may have a years-old LLVM patch somewhere that changes
+that, but I vaguely recall being told once that that's an intentional
+design decision. I might be misremembering that though...)
 
-So the question is, does this patch break existing ublk servers? It does
-break ublksrv as shown above, but I think one could argue that the above
-code is just testing for file existence, and it's a bit weird to do that
-by opening and closing the file (especially given that it's a device
-special file). It can be patched to just use access or something
-instead.
+So because __READ_ONCE() does not call anything like
+instrument_read(), I think instrumentation-based KASAN in LTO arm64
+builds probably doesn't cover READ_ONCE() accesses?
 
+A quick test seems to confirm this: https://godbolt.org/z/8oYfaExYf
 
