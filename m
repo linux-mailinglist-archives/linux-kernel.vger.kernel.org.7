@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-577768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD005A723F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:31:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5847A72447
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97663B20D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:30:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41062178383
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190571B5EA4;
-	Wed, 26 Mar 2025 22:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01845255E34;
+	Wed, 26 Mar 2025 22:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mccaYWhh"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsHxzSXK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8814430;
-	Wed, 26 Mar 2025 22:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6FF4430;
+	Wed, 26 Mar 2025 22:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743028239; cv=none; b=ZCZkToUsTFwv2B7l183KCXoT7em++8FClD2ehCAG9FRedAU3MMY6xYc7sMJX4bHW2IEBEAgvELLWuy1hywHq5xyNgRaYTdkybnoOxv3QfdkyZ5kBeClksxIfq1icdHuUqqj/SJx3h3jxuoPF2RfBBIUiaMw90kA7yuBgnaqxnXM=
+	t=1743028402; cv=none; b=KkYE1mKeCWf1AEijSqSZ2mG1c5qQXWABsuLflw5BezDYhxmkFat7lt7rhauxGN7Njz7dx6Xjk19I6lJ2yNgKf1CyoQ7xrUs796s+93SvHsNSXPJ7sJ6w1onwZJURXeBsrjs2fbaFewOFjBXgCInAxBFKZQrx18cpNjFCS8eucOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743028239; c=relaxed/simple;
-	bh=tuEwC67X2K6KPMrZGkJtbrLf5Sp30oMIKRWl3wkeBGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KYumlpbjGJRq0PdE5QUuAj11D0rensIwE2H8Lt/bEySGx/C4lkauM1g8458EPcF3Ax/FAK8SJ9Cv+2MwgmmujSsvt2CKQYZIBCTxVBcMuShXWmtL0vpt51zEXDk300F21XeeE192ZDBKgAU55vKhpRCn+utYogShAICl9zLFLAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mccaYWhh; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso623178a12.2;
-        Wed, 26 Mar 2025 15:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743028236; x=1743633036; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Mb5LQqfnEcJgziIU9UWtOckujfFuIn52pCw2YFX8Sg=;
-        b=mccaYWhhCXB6RdUNvZkWuKBelZN9bkD7zcEIzwdxHeid2pqzRTyLjh7A0/W7c4adow
-         21MN0i6Tc2Q2QBrFRtGBWV1KEuzkFBXBCXVUIdHMNFOYPIsYx/FRTg7g3zGOgC3l7aVH
-         7PaFTzCITU5YZYBod3oLIZktuHShXBzxHaDSnKg5/AjYIZsn8h5/Akw4VZRNzF/riPhG
-         JgmfTMYU+W8w9dbMUcgigiBEC/5deqKArNgXhIvBAlIkW19YrJ/m4+RFcHod29VNdKFW
-         JTK+41LsHrGDPlFmtaO89zRMVH/PP0hDSKzNJXpkzobbBv0Tnnpq3jSdVkS2QW3fuqkC
-         mbtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743028236; x=1743633036;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Mb5LQqfnEcJgziIU9UWtOckujfFuIn52pCw2YFX8Sg=;
-        b=u7ZPZcp32Qj4oqdEOTE5JcVrt80jVEC9h3748dPuxNv4pleK5Zuf6b4OKsDkeZXxoG
-         TYpu5Fvw5XBLDHFFtmvpNRVNkR+kzRTk7eaM0MIMNApP0L76v7t5nv3fN5sY9J45w6A8
-         nI56Ywoqsb4y4pbp2zUsNqZUNVOIK3fNyqrKYbZUN2GvkXxho3ajBvuwoUHSZKfKf6+X
-         DOV9+eUF1kNxPJH8H3mifC1e+CS9UKon8AlLbUkaVVVwl5NY08wmfB5+nD02GE5LdR1l
-         6mBj9GIr+4eMfmpOfk1vOWkArIuUPWkyhrVN/sNF7pM2Z1yNtNL70Bt2vGG3kfSeYrG6
-         tN9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUAyEYXsfVMZB508xbAFe8gOwcMjwumdwebdOM6eN9GVjZIpMoeB4bDQ41V1GjSEc9SZ/ei/DJOrDgwZbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7dx35wdMnxS4EBqcZpKocrngj/iuO64knCKH9ZudSINf2Gmnt
-	F9sw/q8R4/daKoE/5/inM1tZW3n99Zm4W7bGkbuLVM6TmQ0dp+kb
-X-Gm-Gg: ASbGnctBuz4+FgIUOsIkwGbK2umMNFj1ExdxV1TK6OUEd+b2+HPxenwW8721qjCP1JP
-	waETWEUS4Z210+nDHO3c7PiuT2Oz+5mAyaaNeST4qV2E2Si4YXqILjyH/RKc3LCzquueOPMd7tf
-	BU/zchvOIvABleR3likXEh7Rtx4qH7n5q6aBCWRy5IBTqvAp6Z6QDwLNMalEqt/ozkGQFXVXVls
-	qzwe9P/28PCR/icY/fkxfu2mxPU2uYgoywiyt+PSi2gqA1cLdTwW3GkWvdGAgXOqdqw3w3BWQPF
-	w/UAU+7HU8qhtb/VUL51tVRY94VVkkUHGEoTqodgx/UOOGl/SNKFLGOXeiXhkGYr
-X-Google-Smtp-Source: AGHT+IE8tsEYj2xepuB3HQp5nRkqZ5nof2dW3KzPEr1y2H9FbJdUbIxwbLPu5rhoAsFm9A0igk2QaQ==
-X-Received: by 2002:a05:6402:2813:b0:5e7:8501:8c86 with SMTP id 4fb4d7f45d1cf-5ed8ec1e7eamr1106620a12.22.1743028235838;
-        Wed, 26 Mar 2025 15:30:35 -0700 (PDT)
-Received: from [192.168.8.100] ([85.255.233.207])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccf687fbsm9987978a12.4.2025.03.26.15.30.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 15:30:35 -0700 (PDT)
-Message-ID: <d1bf1b35-126d-4484-8bb5-0a720717ad78@gmail.com>
-Date: Wed, 26 Mar 2025 22:31:23 +0000
+	s=arc-20240116; t=1743028402; c=relaxed/simple;
+	bh=ISqhImE6eYwjv1Cg06qLnLLs52vZAesQPPWVCd4N+64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SO7eiXlbIVPC7nRdE9Y5H9k0cVdompVdsl+gBZABG1IrhojocLrSaNPEp6WTfmQIPWjyKLgFhlU5qgvNyefDs3vDf2BG6aGruT/5kM7dwiFBzfR7dwTonTEfUjd1tmbqEnfPhLyRROAhFmHDe9UsTlmwLgZpwqI6A9QzJHkLLsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsHxzSXK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB6FC4CEE2;
+	Wed, 26 Mar 2025 22:33:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743028401;
+	bh=ISqhImE6eYwjv1Cg06qLnLLs52vZAesQPPWVCd4N+64=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=NsHxzSXKDXPzF/dGzhQdtG+24ZPYDCYiX6Y3Pm7VA030tuRzWvsSQV253s/XPD7eU
+	 B63G8fs6MmYqxI5KFV5UWADoUqbh8VPszJNls+jZ67zcluKeU7rv0MPJGXqmXcUOIp
+	 p4EFgf8+PtsHb+3Z+zc7nKU3hDr12AXw1C8SZYtfvoRcHFoU+K7VJvLFSLY2yc5Auo
+	 QVoj0Vm0krlyYQ8vQ+6yjGyueYqjKP3zAEPIfT52z9M3Dg+tOyqHGT+WIQ2nBbYM2d
+	 OcDQMEKxvlS9HdcvwCpRUuxlVAlCfMWBEEOshbca2vLKgnvZF+x+uJnAz37JwswlgJ
+	 +91qQiOSrsVmA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4CC77CE0C2A; Wed, 26 Mar 2025 15:33:21 -0700 (PDT)
+Date: Wed, 26 Mar 2025 15:33:21 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH 1/3] rcu: Replace magic number with meaningful constant
+ in rcu_seq_done_exact()
+Message-ID: <eeda52c2-5397-4aad-ad01-ca04e5b0b80f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250324170156.469763-1-joelagnelf@nvidia.com>
+ <20250324170156.469763-2-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
-To: Jens Axboe <axboe@kernel.dk>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250325143943.1226467-1-csander@purestorage.com>
- <5b6b20d7-5230-4d30-b457-4d69c1bb51d4@gmail.com>
- <CADUfDZoo11vZ3Yq-6y4zZNNoyE+YnSSa267hOxQCvH66vM1njQ@mail.gmail.com>
- <9770387a-9726-4905-9166-253ec02507ff@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <9770387a-9726-4905-9166-253ec02507ff@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324170156.469763-2-joelagnelf@nvidia.com>
 
-On 3/26/25 17:05, Jens Axboe wrote:
-> On 3/26/25 11:01 AM, Caleb Sander Mateos wrote:
->> On Wed, Mar 26, 2025 at 2:59?AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>>
->>> On 3/25/25 14:39, Caleb Sander Mateos wrote:
->>>> Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
->>>> track whether io_send_zc() has already imported the buffer. This flag
->>>> already serves a similar purpose for sendmsg_zc and {read,write}v_fixed.
->>>
->>> It didn't apply cleanly to for-6.15/io_uring-reg-vec, but otherwise
->>> looks good.
->>
->> It looks like Jens dropped my earlier patch "io_uring/net: import
->> send_zc fixed buffer before going async":
->> https://lore.kernel.org/io-uring/20250321184819.3847386-3-csander@purestorage.com/T/#u
->> .
->> Not sure why it was dropped. But this change is independent, I can
->> rebase it onto the current for-6.15/io_uring-reg-vec if desired.
+On Mon, Mar 24, 2025 at 01:01:53PM -0400, Joel Fernandes wrote:
+> The rcu_seq_done_exact() function checks if a grace period has completed by
+> comparing sequence numbers. It includes a guard band to handle sequence number
+> wraparound, which was previously expressed using the magic number calculation
+> '3 * RCU_SEQ_STATE_MASK + 1'.
 > 
-> Mostly just around the discussion on what we want to guarantee here. I
-> do think that patch makes sense, fwiw!
+> This magic number is not immediately obvious in terms of what it represents.
 > 
->>> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
->>
->> Thanks!
->>
->>>
->>>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
->>>> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
->>>
->>> Note for the future, it's a good practice to put your sob last.
->>
->> Okay. Is the preferred order of tags documented anywhere? I ran
->> scripts/checkpatch.pl, but it didn't have any complaints.
+> Instead, the reason we need this tiny guardband is because of the lag between
+> the setting of rcu_state.gp_seq_polled and root rnp's gp_seq in rcu_gp_init().
 > 
-> I think that one is minor, as it's not reordering with another SOB. Eg
-> mine would go below it anyway. But you definitely should always include
-> a list of what changed since v1 when posting v2, and so forth. Otherwise
-> you need to find the old patch and compare them to see what changed.
-> Just put it below the --- line in the email.
+> This guardband needs to be at least 2 GPs worth of counts, to avoid recognizing
+> the newly started GP as completed immediately, due to the following sequence
+> which arises due to the delay between update of rcu_state.gp_seq_polled and
+> root rnp's gp_seq:
+> 
+> rnp->gp_seq = rcu_state.gp_seq = 0
+> 
+>     CPU 0                                           CPU 1
+>     -----                                           -----
+>     // rcu_state.gp_seq = 1
+>     rcu_seq_start(&rcu_state.gp_seq)
+>                                                     // snap = 8
+>                                                     snap = rcu_seq_snap(&rcu_state.gp_seq)
+>                                                     // Two full GP differences
+>                                                     rcu_seq_done_exact(&rnp->gp_seq, snap)
+>     // rnp->gp_seq = 1
+>     WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
+> 
+> This can happen due to get_state_synchronize_rcu_full() sampling
+> rcu_state.gp_seq_polled, however the poll_state_synchronize_rcu_full()
+> sampling the root rnp's gp_seq. The delay between the update of the 2
+> counters occurs in rcu_gp_init() during which the counters briefly go
+> out of sync.
+> 
+> Make the guardband explictly 2 GPs. This improves code readability and
+> maintainability by making the intent clearer as well.
+> 
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Minor, yes. But to answer why, because it's normally chronological.
-By default I read it as Suggested-by was added later and not by the
-patch author, which nobody cares too much about, but that's why Jens
-mentions ordering b/w sob of other people.
+One concern is that a small error anywhere in the code could cause this
+minimal guard band to be too small.  This is not a problem for some
+use cases (rcu_barrier() just does an extra operation, and normal grace
+periods are protected from forever-idle CPUs by ->gpwrap), but could be
+an issue on 32-bit systems for user of polled RCU grace periods.
 
--- 
-Pavel Begunkov
+In contrast, making the guard band a bit longer than it needs to be
+has little or no downside.
 
+							Thanx, Paul
+
+> ---
+>  kernel/rcu/rcu.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> index eed2951a4962..5e1ee570bb27 100644
+> --- a/kernel/rcu/rcu.h
+> +++ b/kernel/rcu/rcu.h
+> @@ -57,6 +57,9 @@
+>  /* Low-order bit definition for polled grace-period APIs. */
+>  #define RCU_GET_STATE_COMPLETED	0x1
+>  
+> +/* A complete grace period count */
+> +#define RCU_SEQ_GP (RCU_SEQ_STATE_MASK + 1)
+> +
+>  extern int sysctl_sched_rt_runtime;
+>  
+>  /*
+> @@ -162,7 +165,7 @@ static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
+>  {
+>  	unsigned long cur_s = READ_ONCE(*sp);
+>  
+> -	return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (3 * RCU_SEQ_STATE_MASK + 1));
+> +	return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_GP));
+>  }
+>  
+>  /*
+> -- 
+> 2.43.0
+> 
 
