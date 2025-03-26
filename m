@@ -1,127 +1,241 @@
-Return-Path: <linux-kernel+bounces-577782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8F6A725B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:42:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B17EA725CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 23:42:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485DE3B3F9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772713ABE0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6654C263F31;
-	Wed, 26 Mar 2025 22:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD07263F46;
+	Wed, 26 Mar 2025 22:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ReQC449N"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JP4mWlL7"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2062.outbound.protection.outlook.com [40.107.20.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9849F263F20
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 22:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743028915; cv=none; b=R++OWC+Yxo7N8seH4xHhMil5H6pIAHIVH/FM9X4HY+1rBRBF0EaVe5NUKIeYj5uCzrKrLJVsa+Os/3n9YOqNnL1Vh3CaPtRe0UNu5gsD7Z0QKST2xXzZSa5y3vpi85ag5mKqX1LXS+FVx5wQh0sqtIhBPqHLxQAhUewujjDgEvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743028915; c=relaxed/simple;
-	bh=tmaH+3YPGuLoi/3X44ITjHuWcR3F46JKpcVfWvhcJH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQbzOU3GBdaEPPXbfVsM8SeCPV0FF6St/lKLHpuk4kHBXuGxSFx13HDl889EO95itusXUlrRl6UMH3aDKYFi0Q9/EheD27SaYeGmXSe8wNfmynn1Ls/SyALycz6fXsg3KRAPeR8P43ak4cANFu26Ug7q+Sp+eMlaOMIrsLjOSOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ReQC449N; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso71935566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743028911; x=1743633711; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HIsAwdBBYfPSxKw2X4bvTfKKiRWcts7FEK1QYHHkrFs=;
-        b=ReQC449NseeJGhn8J693F2P3b7fqk9SnwnfmxR+xZcFHmKCxfuAQrIBfYAS5xoDtdy
-         e8Q1kaRj4dNWBKHwx1iENTruqAdSUblNpfw/5JGwKulBOMYcZtzD+zNelKv+rEGEYnB9
-         prjwRkrfJBCUMq0eFHk+fHFd0bg8ILjqllqww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743028911; x=1743633711;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HIsAwdBBYfPSxKw2X4bvTfKKiRWcts7FEK1QYHHkrFs=;
-        b=IL264VUYaiqG7Gw6P2Lseer8QPLVqBgj7Y5ktcfHQCT+iHH3LzBTrAyihqu+XolBcR
-         awIm1OVujS/LfwmAEwcJ5PM3gvQUPAR8Qhta7KJMvfXlwJZYTyNeCQf0zUzwa1XXpqor
-         rjKIfGNGcHUSnw2wbzemTWjYFmScCG1XomOy/ulQLxTrmrZt8i40y+9kQp5i5+DZRjvo
-         +CtACJgQknz5KH7XSb9a0oyRxqSW50IEpXqKQ6v8C/YkBezLg93pt55UmbYOi0ZCYibQ
-         vuACAVJm5nck72N7m7QDyo/xvHxEJX2jvQLuskPLrUL45GEKRZniJwvpBUePUWFdaEV0
-         Ay0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWMQgVSzFApwQ68sXlgaWq0/kmX+YHQHbzHfFhs7Qpw4mOFKgV7mKOTTBr4BSC1hM4yMUr95CPaSLl8Jhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbnzISVf4L6/Z22n+/n0qTP4eikyIfHc6b2XQMjnvTfKbDLN9M
-	ZOUlMzt6CTCk2tzy2zbeQ8Zc201AeH8YBa0iJgbLe52g6FZLM1A3T7yJOrtYU0DKqlGKHj/twhz
-	JCwo=
-X-Gm-Gg: ASbGncuI9Xf9PwZdBnKYhjrutA0bWlUJ4LHCghnMgVcWRzWVE40MhYdD6fLX/OV0d3t
-	tyh0MQjtreh2D3V0q9TgHunrr76A8PFhMXtpt8G3OZeE2bdBH7MUQA/0lw1yThFCBquXvmT6YjM
-	BtHQcdooarrVUd1Mx+jR1JgMN7wqQTAOzwOeJeMqPzcLrNB+1vGwfOxQZNjL2eOZH2TBa3hxupn
-	n+sxBOvMt6AJG4gde1oDRDblVe1q7J8tf41U+UJIIwEZwwqdcGNwYwYCMTrT4zcx2YklJM1kMR4
-	tCIuubIckVNpX1aw7t8KDJendYTHqfU0CT0RrV0zRObLNaT7rnctGWx5WSlUzOyi/JtSzDMWioE
-	uOZEjkFdEPAWlEIfXNQKU/FRLz/36kQ==
-X-Google-Smtp-Source: AGHT+IFtKBPkZB+ucSjvx1Uq1Gzfj0n+kYeEVrzugD+zG1tL+47DYWup9Vl4Ww3lDMOuBKpuoEJwvQ==
-X-Received: by 2002:a17:907:9611:b0:ac2:7d72:c2aa with SMTP id a640c23a62f3a-ac6fb1bd18dmr94542266b.51.1743028911522;
-        Wed, 26 Mar 2025 15:41:51 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8d39basm1103587366b.44.2025.03.26.15.41.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 15:41:50 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso71930566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 15:41:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWGdvQdqy/g4Mgt6tUNzd2WuMLOizcJ3PK1nLBIZ+fb2jMBWrrhGe0kUcSK6mYZAGl+IVuXs+Z0uIEky+A=@vger.kernel.org
-X-Received: by 2002:a17:907:d1a:b0:ac4:3d4:50b with SMTP id
- a640c23a62f3a-ac6faf4bc92mr92400166b.32.1743028910518; Wed, 26 Mar 2025
- 15:41:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450E01F55FB;
+	Wed, 26 Mar 2025 22:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743028952; cv=fail; b=eVtRlCPeXwgDo8g41x6KELT2sowwUn6Hm+NuPb6thaoEqQYLeNqhLUFW32lTALjgSEmUXJxOKhAIKqokOE+GnGS80fS7+5EPkXB/VscTAlsTE9j8j9JJH2CY6O4S18bGt7gfCgXrfOvZNvmorAqi32h3D6MrdPykgqF59rDWs/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743028952; c=relaxed/simple;
+	bh=Z/jQibqQgXhoVzlhtJftYQtNoMHVxlhwDQqJcbj2Qdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MjE/HIzHxjknaoYxTERjTbFxd3l2vJw6j5OM9hE6mIBfyyWxT5DaDGKlxGoMwItgXzntFio1INbulKGafXPvQBfzpcuCDmMRdVUVXD7mVSinWi2mRvrd5dKyxuI5S5lMG3wg4olO8NPdStVYMMe7nn5kIiR4yP1arkClwKOKgxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JP4mWlL7; arc=fail smtp.client-ip=40.107.20.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hl4FPWFaRg7Q79SeILrfDNrpkw4qDXgrCeZkitV3ZCICg53bgz7LUXpkBV7pUU+2cXuPZVSp0/TjeAMF1rCTlbWvNIohLSoESq0bAGDotQSqERDUjbriZe13SkFYmEqQb1FWRKj9xWa8KzDnKhJWKeSdvjPTCOqvU1wY5Ftvw2hGl3TtCN9S9mL0P6G8QrJkA3DEGEUJykA9bnBtQzrjNeK3C38CnqzsD7iC1YhZVP3O5jYwgI6nh0qGszArKwn/qyMWV+Xu74/8dO24RK6rNi5z/nXsZOYf4PG/kzelIxHB6/hWHdYNvVNawTxic+Ep4yNNNVQO9qFk0zY45NgGHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3DEte1MqOvvJHIUWP6MKi5Zln/qwBjFHKa+9xCNEt+0=;
+ b=NTIupBOWsexHfSuxaVlZuC7/FHjLhVmYjQERQi8E12sImKGSzD/hm47Deun3FE3hkctcHrXWdHlZUbYrSAnY+KPEYvlV2TCzQi0b6TuHA06T4ffo5GXS0nB20zZhvttL8OrwXisV2Vc/JLMxur3aMX01On1gc9MTe9Z4Rl2xIFaZrh8uyvjBcZwV39gU21RSbyGaTWAsMtZUAaFttDGXbawmmpEdtWhK+TgLXI1tgpUoAl8LAv7qu0RoM8p9PkMtNkI5Y19Yia1g36heuYJN4gtOsiM+s2T+eiC7PMfNJDRsg+Aq6eZdImm912UF/JIeUerIIQfloxHUaWlFZtU3CQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3DEte1MqOvvJHIUWP6MKi5Zln/qwBjFHKa+9xCNEt+0=;
+ b=JP4mWlL7KojSG6G5wKnOixVmGd9yIWRJqJNIgZL75+BIDq/UBlEfi16roYStNBEJ90+0tf+vxayC/O9gr9QA7yAz8+YiEKKcCaTvHV0dTN4xTFI4q43xe3JpMLusT+rzUU2WUFu1DdSXtBeI97jyQ0a6bd/IUxNpgP6hvzdz0ZowEZBA5jOj+CkHsibw465Kkt7g6V2mqSxp/c0hVpQKZWbUVIsOTGRk59QhqOH0P43gQIvTf2lnfvaqe6qEvt/thcjk4Z8wPiqeDYcmAUPHdiZeqmtAAdhPual1IB/eKyp026gsbIESZ1ZyuTxLvFhh64gjoFgxWc0R6gfeKM0gPQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from GV1PR04MB9071.eurprd04.prod.outlook.com (2603:10a6:150:22::11)
+ by VI0PR04MB10781.eurprd04.prod.outlook.com (2603:10a6:800:26c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
+ 2025 22:42:26 +0000
+Received: from GV1PR04MB9071.eurprd04.prod.outlook.com
+ ([fe80::b7f2:1d0:6b6a:ba58]) by GV1PR04MB9071.eurprd04.prod.outlook.com
+ ([fe80::b7f2:1d0:6b6a:ba58%4]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
+ 22:42:24 +0000
+From: Han Xu <han.xu@nxp.com>
+To: Han Xu <han.xu@nxp.com>,
+	Mark Brown <broonie@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Volker Haspel <volker.haspel@linutronix.de>
+Cc: stable@vger.kernel.org,
+	Kevin Hao <haokexin@gmail.com>,
+	linux-spi@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: fsl-qspi: use devm function instead of driver remove
+Date: Wed, 26 Mar 2025 17:41:51 -0500
+Message-Id: <20250326224152.2147099-1-han.xu@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH7P220CA0034.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:32b::7) To GV1PR04MB9071.eurprd04.prod.outlook.com
+ (2603:10a6:150:22::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326-rwaat-fix-v1-1-600f411eaf23@google.com> <4b412238-b20a-4346-bf67-f31df0a9f259@app.fastmail.com>
-In-Reply-To: <4b412238-b20a-4346-bf67-f31df0a9f259@app.fastmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Mar 2025 15:41:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wikuhxhdSEgqb-Lkb2ibQM_hAHR1Cu7yxg-gHZu1NF+ug@mail.gmail.com>
-X-Gm-Features: AQ5f1JrEsmQAOCm7pL6ucQGxLbFedCV1cucSaJ5TtT64ECZtdWuo9mNf3TsYhHg
-Message-ID: <CAHk-=wikuhxhdSEgqb-Lkb2ibQM_hAHR1Cu7yxg-gHZu1NF+ug@mail.gmail.com>
-Subject: Re: [PATCH] rwonce: fix crash by removing READ_ONCE() for unaligned read
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jann Horn <jannh@google.com>, Marco Elver <elver@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9071:EE_|VI0PR04MB10781:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e7204ac-88e6-423e-b700-08dd6cb77a2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iA+MTURxp/x/c1pV0lv/MhSRWAXE09uP6CvNIxeiCfeveDhdojBBX21K8lMI?=
+ =?us-ascii?Q?7uFVuLGVf4+D9ZpOh4Sos2/WHLSnYdHctj07R2vGHYyr8ZG7rAHYTg3wZmOz?=
+ =?us-ascii?Q?MNYmWnuXtFlNeo9jsb4MMBwdi8mw/4/+q0Zw0OdEOgsDXdRt0yrML0LY4cRl?=
+ =?us-ascii?Q?uE0ZcKV7plAklQjHVB07e4aDvrpWPZ46Hx0PqhZKMu4snlRC3PfsO1OgU1iU?=
+ =?us-ascii?Q?15hG6wwue9esGSW17zMEf1CNviX4NVfeyCNS//gkyoiRE4LZuVWzMhAsdsFL?=
+ =?us-ascii?Q?oZHG9OoXCMQ/ltvZpZAJq/o4kf+NskvOvt2vST8j9KegLJDMvsPFiGXPvvc9?=
+ =?us-ascii?Q?MIajqwz95gnCEl54uK+GqE5oTMzPN6DAJ6pc8+sGlqrC6at/dAxie2vPZPNt?=
+ =?us-ascii?Q?Pk3m7v/wqE5KBf0KyJKsU4PywMl2djUmLFKi3Mlwb3zjPvHSX6zX7SofbxGu?=
+ =?us-ascii?Q?fYHxcvAP4iNjjJTA3FJcjPcgjP0rcOiAt/v4KjnBINII9y15a1wutNE6hKR/?=
+ =?us-ascii?Q?x+19EKPTKgPnMKP5zz6aCA74RzxsntGqNJezAHkgsl97hQo3aJOsvBExFRPS?=
+ =?us-ascii?Q?MRNADQ4qXhWZMtV69xZPNhUXcGYY8hzxxmlZabWlPYgJFTx8aD5xkUw5hzlr?=
+ =?us-ascii?Q?dFz+La1vYx7jwWwUnVEnFZMlQFClcY8njesBhEv8/Rz5J9mxPJwNP6S/y+6K?=
+ =?us-ascii?Q?3MeHAFw3+xVEUnMviHxhbDPJce8wW6Fk2iUGBvliNp+C0MS+rh2145gxz2TL?=
+ =?us-ascii?Q?4dNuY70IOhaUSB7eQrifR55+7BC7NtVTX/TUi6u5R4lBxAEiJ+gy5l3pgzGR?=
+ =?us-ascii?Q?d6PIT2Pnjn84BX4kS6w2whiKpBdz+b45QI1lP+4RYlAN1kVx28MOq5ru1Cs8?=
+ =?us-ascii?Q?6ZXTbsmM8BghFLlYs1AzKSUX/PMSJ5b88uumofDXrpUdKmpaTS89G8qZAwIR?=
+ =?us-ascii?Q?BuuOhFTFKDOXU+puacMXQKp7s9thXQbMrGz1RPJIy6yztnrg1WSVcuNNQqzi?=
+ =?us-ascii?Q?P7OKRd0+1/YswIt2fBhHd5zmg+66ft9F+t8WP2DCGaFDwj0VZ4SYHa7LBCkn?=
+ =?us-ascii?Q?sQxcMIFvR42CxfXuV23sKBPOJq6+LMFFd7/C0bfgQwoifKoeathP+N+V4u4D?=
+ =?us-ascii?Q?YfGzGOqDwDVqeRgco1FpeKclF6cPDGSXV9rvVdAziodY0fEt1rrFQmBA9RoK?=
+ =?us-ascii?Q?Kva3PV14Q2SI5/5Fbcj+JyFVY4NssIz7LdDnTRasE+8HbdL9iQy6W49u+hyp?=
+ =?us-ascii?Q?NcVy99VmDAbhwEbxEFh6k0JrLDTvf1E+ETtfih2vgxHDtO5gVpTLXMJBXHcM?=
+ =?us-ascii?Q?Bic734OS9V4XivjHzWtx+ma4E8J7LofS+9LHk6992wJIxVJvRcghBQ9hFyuc?=
+ =?us-ascii?Q?Gz57rhpnZl6hmBULmFHf8re/fFLwJ3PMJKuMqNZdm/1DsrXuuQcAQuzh/ka7?=
+ =?us-ascii?Q?H1t5JXZPfuOzBDdg2K/UxM62R86tWK+R?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9071.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1f/WgDOUQ5dWb4Ab+8NOOLbmLpm5EHKwuP01XGyullFkYs4kji6PjjTz+pva?=
+ =?us-ascii?Q?s7U8+3eZy2mgsuB7fcj0XBm2JoI2oFedYN72FKs/C/3zniqIRaWjwv5imTPv?=
+ =?us-ascii?Q?qLUUq7vqfwd9C5c33VCdHf0BRfOuMLXxEyC1ptE3Iz64zNatygTgmWglopXp?=
+ =?us-ascii?Q?M+2vOSvQczH6SUA6JvFcEZIxfNW1HaJYMwXXwbnNZr+34mVaoUqUw6pVSxSc?=
+ =?us-ascii?Q?MPecQXOxq72FMyHx2E24BRV/D7XMaPBrFxgBCcWUZpaeVTp5plz9f9wnyMxj?=
+ =?us-ascii?Q?/TyCCQuexGhkeNb1Ih6/PxQ3QPFCwqkW90lrE7yaZX3ECzqV3GifjpK/3ou9?=
+ =?us-ascii?Q?ojjNpjul6Ky+MWWNhY0lQ/WOne8bYakkbRIa9DNfIyQ9iM2tjxR9WuXRGr0u?=
+ =?us-ascii?Q?wCGVjzHvRG1xSt+gUtzEHij5oTcbvumLqUJ3dgAg0G8HmzkjFfkeeEu1XToP?=
+ =?us-ascii?Q?5u681qXiDS0/UXDb4ewJ5gZ5VbneHlLHcUl8LBzT6tCi0ItjayONNtaHFk9Q?=
+ =?us-ascii?Q?NRRWIzWosS6DyiYqxEWjYW+laoyL/TucoslejWeymSGXhXF6K62I/wcfw855?=
+ =?us-ascii?Q?4Yomkp/cF38Z7L52nO27mAqkUwlWKB1UVVxTj8Cw9j0m6pUXKbh/dkaPuCGq?=
+ =?us-ascii?Q?2RNMjhAC8ofiG3H94QINfr00Ui9u7iIPVtDldSkDEHwaICTJLPdQQhe5/imS?=
+ =?us-ascii?Q?r5wLCMA1gmTQDKX6PwNTyc243ZjZv0ayFm8Ntn0e28qKWfUMlH5kimcOQGNW?=
+ =?us-ascii?Q?E+MdHMw3e8tqg8Is/af78sc1K5sxtrPHWp7ikEpKQPzeVz5vvZLC6PY9gaQS?=
+ =?us-ascii?Q?kAjBV1f9NeGtYothJZl2SdILdC6I8BJlYrW7UbaRbGvKSAZeHNZzlc6BT9L1?=
+ =?us-ascii?Q?Ygaicqb+uR5OUrSFZq72zHmTp1+lOwhQixfwOwIMLzdcWu+LhY3u4S4pnJML?=
+ =?us-ascii?Q?lcXXQimDClYypCcVdS/qIeaUH+OqORN1HarIHO990uH2th4vWCbwdTj3rCbC?=
+ =?us-ascii?Q?6IGD6mJd6zqr34DMuJVj4Mv1wZ+Jmg0SMz3oM2EzP190UdEp1d8+mrA3mA7A?=
+ =?us-ascii?Q?GJAje5Jh2bcQUVRp1l6YQ9qYj/VcOwbVzD7hxxjAlBxPsmgCiLWAPUl2AJv9?=
+ =?us-ascii?Q?FFiyDGQI7V3y4uErIikfFxf1H+dmx2R2jRIRcZANZfjkXjTkZ5maarUGZk/E?=
+ =?us-ascii?Q?suJOXY2SROAar5HJ6beVD46BvXZlaas5NL7iOF8khRYFzDsRqxnHwpEA3h1E?=
+ =?us-ascii?Q?Tk4BTAnBJL0T17dM0yXr1ArxaKVyXN1OOIpLRDb4PygGrDQ3QGISpWzAFYR8?=
+ =?us-ascii?Q?p86sD6nx3kk06PLt3x1BUYBW2+z4XpxurVM2x1i7QmiGk/pkOhyoAQ+YF6eW?=
+ =?us-ascii?Q?P/kpSeg9zOI0D52skbBiw3hLt14s5XJcoMJ8ir90VYZFcxdRZMd12V1GAB/W?=
+ =?us-ascii?Q?9YZKw9mSiuG8ZNT6jZb188wokC87p4Hgo5a36qNFPX4yJ5jOY9J+E+RWed1n?=
+ =?us-ascii?Q?MdKEJkHeeJOGBV84X+tYQ8Dcjsdz3tYslhEoScqlHrAzoCMFXFwwJIAmbjnH?=
+ =?us-ascii?Q?4c2b5JQAdjz4CAd7TgetLLt9QudU+6DdlYLEyT9h?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e7204ac-88e6-423e-b700-08dd6cb77a2a
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9071.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 22:42:24.2982
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MWNnQjjwuhlP1jjolgWpMmLAn7JtQr30kw+IGhDpbOFXtfsZsiFYrtdZKT6KfIOs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10781
 
-On Wed, 26 Mar 2025 at 14:24, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> I've applied this on top of the asm-generic branch, but I just sent
-> the pull request with the regression to Linus an hour ago.
->
-> I'll try to get a new pull request out tomorrow.
+Driver use devm APIs to manage clk/irq/resources and register the spi
+controller, but the legacy remove function will be called first during
+device detach and trigger kernel panic. Drop the remove function and use
+devm_add_action_or_reset() for driver cleanup to ensure the release
+sequence.
 
-I will ignore that pull request, and wait for your updated one.
+Trigger kernel panic on i.MX8MQ by
+echo 30bb0000.spi >/sys/bus/platform/drivers/fsl-quadspi/unbind
 
-That said, this whole thing worries me. The fact that the compiler
-magically makes READ_ONCE() require alignment that it normally doesn't
-require seems like a bug waiting to happen somewhere else.
+Cc: stable@vger.kernel.org
+Fixes: 8fcb830a00f0 ("spi: spi-fsl-qspi: use devm_spi_register_controller")
+Reported-by: Kevin Hao <haokexin@gmail.com>
+Signed-off-by: Han Xu <han.xu@nxp.com>
+---
+ drivers/spi/spi-fsl-qspi.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-Because I do think that we might want READ_ONCE() on unaligned data in
-general. Should said places generally use "get_unaligned()"? Sure. And
-are unaligned accesses potentially non-atomic anyway because of
-hardware? Also sure.
+diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
+index 355e6a39fb418..5c59fddb32c1b 100644
+--- a/drivers/spi/spi-fsl-qspi.c
++++ b/drivers/spi/spi-fsl-qspi.c
+@@ -844,6 +844,19 @@ static const struct spi_controller_mem_caps fsl_qspi_mem_caps = {
+ 	.per_op_freq = true,
+ };
+ 
++static void fsl_qspi_cleanup(void *data)
++{
++	struct fsl_qspi *q = data;
++
++	/* disable the hardware */
++	qspi_writel(q, QUADSPI_MCR_MDIS_MASK, q->iobase + QUADSPI_MCR);
++	qspi_writel(q, 0x0, q->iobase + QUADSPI_RSER);
++
++	fsl_qspi_clk_disable_unprep(q);
++
++	mutex_destroy(&q->lock);
++}
++
+ static int fsl_qspi_probe(struct platform_device *pdev)
+ {
+ 	struct spi_controller *ctlr;
+@@ -934,6 +947,10 @@ static int fsl_qspi_probe(struct platform_device *pdev)
+ 
+ 	ctlr->dev.of_node = np;
+ 
++	ret = devm_add_action_or_reset(dev, fsl_qspi_cleanup, q);
++	if (ret)
++		goto err_destroy_mutex;
++
+ 	ret = devm_spi_register_controller(dev, ctlr);
+ 	if (ret)
+ 		goto err_destroy_mutex;
+@@ -953,19 +970,6 @@ static int fsl_qspi_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static void fsl_qspi_remove(struct platform_device *pdev)
+-{
+-	struct fsl_qspi *q = platform_get_drvdata(pdev);
+-
+-	/* disable the hardware */
+-	qspi_writel(q, QUADSPI_MCR_MDIS_MASK, q->iobase + QUADSPI_MCR);
+-	qspi_writel(q, 0x0, q->iobase + QUADSPI_RSER);
+-
+-	fsl_qspi_clk_disable_unprep(q);
+-
+-	mutex_destroy(&q->lock);
+-}
+-
+ static int fsl_qspi_suspend(struct device *dev)
+ {
+ 	return 0;
+@@ -1003,7 +1007,6 @@ static struct platform_driver fsl_qspi_driver = {
+ 		.pm =   &fsl_qspi_pm_ops,
+ 	},
+ 	.probe          = fsl_qspi_probe,
+-	.remove		= fsl_qspi_remove,
+ };
+ module_platform_driver(fsl_qspi_driver);
+ 
+-- 
+2.34.1
 
-But one reason for READ_ONCE() isn't for some kind of hardware
-atomicity, it is to avoid any ToCToU issues due to compilers doing bad
-things.
-
-And then this seems to be a serious issue with the whole "READ_ONCE()
-now requires alignment that it didn't require before".
-
-Put another way: I wonder what other cases may lurk around this all...
-
-           Linus
 
