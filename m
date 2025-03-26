@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-577700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3F9A72086
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:11:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B4DA72097
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 22:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3796317A0F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB677A6BC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 21:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BA425F7AD;
-	Wed, 26 Mar 2025 21:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D12263C6D;
+	Wed, 26 Mar 2025 21:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwqtnQ3U"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nGcnQnUb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B82749659
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 21:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854D25EFAE;
+	Wed, 26 Mar 2025 21:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743023499; cv=none; b=gx0XlzoPZ9aU1nYBv/hbXfou2TmWfLG5XL/K0M8MCsSVmvA545qtx2dKvk/ml6Y81lvvFqR2mKZfy4ZSXWU3x3SYe7DtI7DuyVajFraj7FUBFU4MgESr1nbrLl4fW1ucIZuaREnvUXMSHOUZYNNhva/ykMx/KD+E+QYNWUU4uTk=
+	t=1743023585; cv=none; b=Ox3oZuvIOJ88JPUAeK+jR8TmG1ilrsEcfLEi4RzX9EGfq9kz4eqQUUrow6KQdgUs5L0X+OA4tEiQuKSEvK2EzGg3msLabxc9Ab2YHVzsEmAEkWfOzC0bZ+K+h9GmC7AqB0Tc0/3LmUZOjNFdNSn+edrwayShQnvT2+wrgnaIbTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743023499; c=relaxed/simple;
-	bh=DZXrdqc+VEpRE2lIne3ziRcrT+tDB7NoQbmTHhMMVwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F15FaVjGR89ss2Wu2qZJRwFkLOqcEVRQFC3CI8SzThBaou8QZf1+i1PF/SAp8bBCWR9r+a2DRiFAE6Om/PrT8NxXG/lntaXxm4IC+r5bEcU0uxSyvMC7tGYZHe0sut22V2Oy2jPje2pxbhmNhRX+i7ubX1TXXcbYVWLepv5uHa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwqtnQ3U; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so2681405e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 14:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743023496; x=1743628296; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ADWf6svSkXJlABZrsXSNaYONnC7bUNNzGtHknmI+bTw=;
-        b=QwqtnQ3U9MvRBjwJlwy1IOf0ky1Of/k+rvqy0cs4pRYKA2sb3uksCdcQ022GVO6zLF
-         6nB6bPhehuvQlVb0nfTO1gqTW4MLVLQTXbwJu2L9tx3sP5vQ3VPFv/tPBMiKJjTKxUge
-         I7NgUihisQXwC1B8D4JGuFw7MYDwGiH+7iLFsMEygZUFAW5Q2H6rYXFZy9wBI/4Oyte7
-         323AXOojJokfuE2c7d0jZiH+sZFfK6INVGqDvNF8JjVqJWfuqw3wrKDBP7Dnpo9b4M3t
-         Q91pChmMGTLdoALGnuluFKT/knpiF2yVnS0c5gYYc16Yw8n71IF6RKoUNQHk6SexCDbT
-         59oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743023496; x=1743628296;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ADWf6svSkXJlABZrsXSNaYONnC7bUNNzGtHknmI+bTw=;
-        b=MUTsDPc1sxd54Op6Dg2dk9VrkV0XUcoC1P2GQPENBCJ/pV/cMoWtYMuz1mg25mpDyC
-         wPi69/ZY+Umnf/aSVOPSqw0VqotBbyyI4FajuLRKniDfJoJq6Wh3wiFVJKPD1Agg7kh/
-         XMik+13FkZHjlvy9qPCSjVHTGgSZKQMf0KEQmXi+YDwIUP+kogVJ38sygR00gzns8ZZ8
-         GHQnQSfQDNbwKU/2n3nbPQKMMA8c0n8gZ/bCvR/epbfv8/Hu6tfRtnK/SmytJytBBfhp
-         sJ6SP2sgAo1EjR53BHIFd9BdeUMtJndVZzOUE7hdiATAiWCKNBqyIf2QfX2ZCgkE/nvF
-         QZQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+wyKpJG6JxQsqqGNsYu4fQk99NpeNclbjjCsXk4nd3+rVCLxuoy9WmEEDRXAv05+eNBlK8cqubYUVvsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm3QJ92j0tpHV8ZCd873OhltvdMPCZzR2BDzcuu+VJCsW01/Vh
-	7MyRtgj4IhcfwzllMV0TEaGPFJ47g7zbXhVtAmRhGI/v0HZ/v24fFam+TA==
-X-Gm-Gg: ASbGnctXfePUuU7UApafbMUntBVbgHj3ZOhKzFc12n01561qQbrpKbBI7PZBFtYYlrv
-	xpVRbTmdX8KsQ8gk2E84L8JaC2vLjJ/xVI4O8bJoBkvyDryoWoRO+V9qY4gVFenS4UF4l5RGEi/
-	wcHQc9UL1jmD1ibIrQRphWVdoR9cuuFgCqPNYzR9z4ezuIFU6Bi7qN+lRSAhfD/gyHgeyiSzKsA
-	aIU9MXxFOkqvJr7HOimBdOLNHxlPUTIPP0ImpOooECDaiup+oHyowA63RGTM+QXJ487+YKcDXi+
-	MNVjZdz+myQoN5HgJikpX6cI/2r/HIa8K1/4A+1w+529MtajMvDolh1g7SGO
-X-Google-Smtp-Source: AGHT+IGkUCkr1x6x9IgRq8UbgNXMDAJO1+RXsn6Pk+rx1bb+mTleAvrVTcY/EHJLBdEflDljB3MD/g==
-X-Received: by 2002:a05:600c:190b:b0:43c:f81d:f with SMTP id 5b1f17b1804b1-43d84f94cbemr8231035e9.8.1743023495136;
-        Wed, 26 Mar 2025 14:11:35 -0700 (PDT)
-Received: from f (cst-prg-80-192.cust.vodafone.cz. [46.135.80.192])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b25c9sm17676643f8f.42.2025.03.26.14.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 14:11:34 -0700 (PDT)
-Date: Wed, 26 Mar 2025 22:11:23 +0100
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Benjamin Segall <bsegall@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [tip:timers/core] [posix]  1535cb8028:
- stress-ng.epoll.ops_per_sec 36.2% regression
-Message-ID: <6sn76aya225pqikijue5uv5h3lyqk262hc6ru3vemn7xofdftd@sw7gith52xh7>
-References: <202503241406.5c9cb80a-lkp@intel.com>
- <87pli4z02w.ffs@tglx>
+	s=arc-20240116; t=1743023585; c=relaxed/simple;
+	bh=5jWkqYMQktVqP8qOq/0MmNQviI3gDyOwiaFmvYdX8os=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X2YoWeIBo8RrUnOL8z6KEvz9VZ/QS5oiAQ6EJRfK6sApDrQIqIiu7ZJk9L9gr+0ZnmNOszE6ZSni6Tb9IM+8IL/CGcY9AoZF3NI/h4UWpJ+Xub/UsVaPaIHmKMZJC1Waf9WFwwHwJ35iA2Ujgd/QwWYPOCgeSo8uDPtw9acpU/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nGcnQnUb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1743023579;
+	bh=ZQOqMzTB9Nw9yW5ORLIgV5ky4yrSJVWQWRiTkHfEQTo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nGcnQnUbdKgVNcJ/YekuZlMTd2xTmuy4RDbppKmSj/0Tf0E2xN/8aiUvRQwEnoJzF
+	 oWr8t3gg4J2Y4veTVN1vtuYAjhbfcnQ/qzsEQLwzKs3/8hwrGAEVgYlIblZUxeHVge
+	 u2qTLOyXSlZNR9r2Bo3GXBgeChxPvjSE0aqVZRUkCdOEVGpXDpI7B6FHspeRcZcZol
+	 bCdcjdamN2WLYU24jO3y0AmlKq+ZzYAukBX92xQaeOKFsW+8ZXy1Y+W9jqtvpAV0Ud
+	 JNkK+42zsyyPklxWz1cMmt+bvwWye7osZl1f9acU3xl3nIUqyDM93tBSLclN0ZtkrH
+	 hl3+RMfvQfIDg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZNKJC5Phnz4x8Z;
+	Thu, 27 Mar 2025 08:12:59 +1100 (AEDT)
+Date: Thu, 27 Mar 2025 08:12:57 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the drivers-x86 tree
+Message-ID: <20250327081257.74074ee6@canb.auug.org.au>
+In-Reply-To: <20250325172326.2037bd6c@canb.auug.org.au>
+References: <20250325172326.2037bd6c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87pli4z02w.ffs@tglx>
+Content-Type: multipart/signed; boundary="Sig_/8f5lmWg88ed/5K1F.o_Um6E";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Mar 26, 2025 at 09:07:51AM +0100, Thomas Gleixner wrote:
-> On Mon, Mar 24 2025 at 14:39, kernel test robot wrote:
-> > kernel test robot noticed a 36.2% regression of stress-ng.epoll.ops_per_sec on:
-> >
-> > commit: 1535cb80286e6fbc834f075039f85274538543c7 ("posix-timers: Improve hash table performance")
-> > https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git timers/core
-> >
-[snip]
-> > | testcase: change | stress-ng: stress-ng.epoll.ops_per_sec 124.9% improvement                       |
-> 
-> How on earth can this commit result in both a 36% regression and a 25%
-> improvement with the same test?
-> 
-> Unfortunately I can't reproduce any of it. I checked the epoll test
-> source and it uses a posix timer, but that commit makes the hash less
-> contended so there is zero explanation.
-> 
+--Sig_/8f5lmWg88ed/5K1F.o_Um6E
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The short summary is:
-1. your change is fine
-2. stress-ng is doing seriously weird stuff here resulting in the above
-3. there may or may not be something the scheduler can do to help
+Hi all,
 
-for the regression stats are saying:
-feb864ee99a2d8a2 1535cb80286e6fbc834f075039f
----------------- ---------------------------
-         %stddev     %change         %stddev
-             \          |                \
-      5.97 ± 56%     +35.8       41.74 ± 24%  mpstat.cpu.all.idle%
-      0.86 ±  3%      -0.3        0.51 ± 11%  mpstat.cpu.all.irq%
-      0.10 ±  3%      +2.0        2.11 ± 13%  mpstat.cpu.all.soft%
-     92.01 ±  3%     -37.7       54.27 ± 18%  mpstat.cpu.all.sys%
-      1.06 ±  3%      +0.3        1.37 ±  8%  mpstat.cpu.all.usr%
-     27.83 ± 38%     -84.4%       4.33 ± 31%  mpstat.max_utilization.seconds
+On Tue, 25 Mar 2025 17:23:26 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> The following commits are also in the mm-nonmm-stable tree as different
+> commits (but the same patches):
+>=20
+>   96b8f4658b70 ("platform/x86/amd/pmf: convert timeouts to secs_to_jiffie=
+s()")
+>   b3e8dc1143b9 ("platform/x86: thinkpad_acpi: convert timeouts to secs_to=
+_jiffies()")
+>=20
+> These are commits
+>=20
+>   8ba1b428cf1a ("platform/x86/amd/pmf: convert timeouts to secs_to_jiffie=
+s()")
+>   66644d80a4f9 ("platform/x86: thinkpad_acpi: convert timeouts to secs_to=
+_jiffies()")
+>=20
+> in the mm-nonmm-stable tree.
 
-As in system time went down and idle went up.
+Those driver-x86 commits are now in Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell
 
-Your patch must have a side effect where it messes with some of the
-timings between workers.
+--Sig_/8f5lmWg88ed/5K1F.o_Um6E
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-However, there is a possibility the scheduler may be doing something
-better here -- the testcase spawned as is has wildly unstable
-performance, literally orders of magnitude difference between runs and
-tons of idle and it stabilizes if I use a taskset.
+-----BEGIN PGP SIGNATURE-----
 
-In an attempt to narrow it down I tried with few workers:
-taskset --cpu-list 1,2 stress-ng --timeout 10 --times --verify --metrics --no-rand-seed --epoll 1
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfkbdkACgkQAVBC80lX
+0GwaEAf+NiVTtNT7ZrgqU1/yM+RhgstqDw9gx7oWuLMOTDD5Dt8IZqacAK5kj1ED
+XfI3/2Rj/9KvrVtqZGdDC2wxmhI1/tpeoxd2aXKk9QM7qSlfOZix3eXYkNgYnACL
+x+V88t659LYGREMflNEIbOajvfEPFwWnEsUDSMwiYw/WxDrjy4uf4CA4wv6Rw883
+exAHQR0xtiw5mV7cCcmbfNfiYTBajESVd3rHr21rpyM6yrSTRBtFkU5hOa92Comr
+dDjRa1kZ2pSAlb2CzhCQYxVDtFWA5jWT75L9BFS117vscUlfVenFAL3sRCAD/Ht5
+Lj94wBaBQ3tcvoD2yIbpY0nspLmvrg==
+=aBu6
+-----END PGP SIGNATURE-----
 
---epoll 1 spawns two worker threads and both are bound to only execute
-on cores 1 and 2.
-
-With this I consistently see high CPU usage and total executed ops
-hanging around 190k.  Sample time output:
-1.31s user 18.67s system 199% cpu 10.02s (10.023) total
-
-If I whack the taskset or extend it to 1,2,3,4:
-taskset --cpu-list 1,2,3,4 stress-ng --timeout 10 --times --verify --metrics --no-rand-seed --epoll 1
-
-... I'm back to non-nensical perf, all the way down to 18k ops/s on the
-lower end and over 200k on the higher one.
-
-Sample time outputs in consecutive runs:
-0.02s user 0.38s system 3% cpu 10.06s (10.060) total
-0.34s user 4.59s system 48% cpu 10.13s (10.132) total
-
-As in during the first run this spent almost the entire time off CPU.
-During the second one it only used about a quarter of CPU time it could.
-
-The testcase is doing a lot of weird stuff, including calling yield()
-for every loop iteration. On top of that if the other worker does not
-win the race there is also a sleep of 0.1s thrown in. I commented these
-suckers out and weird anomalies persisted.
-
-All that said, I'm not going to further look into it. Was curious wtf
-though hence the write up.
+--Sig_/8f5lmWg88ed/5K1F.o_Um6E--
 
