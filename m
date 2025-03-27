@@ -1,187 +1,295 @@
-Return-Path: <linux-kernel+bounces-578251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F54AA72D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:03:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD169A72D3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C57F163B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5421B3AD060
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27B20E026;
-	Thu, 27 Mar 2025 10:01:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4C320E00F;
+	Thu, 27 Mar 2025 10:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bn9K0wAH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B224C20D4E9
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208FF12CDA5;
+	Thu, 27 Mar 2025 10:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743069692; cv=none; b=W8nWNgDYc/xsBHpd80/k3rIwV0HChYIxKUbbE+juIt1GKrVoV46bPo3WIwcsMbE3Ckc+hVhE2OJTYFWRnG9CNSGmZwyqYNRf6Frru6wNJL/a1b/YxqKHNdlYE4NICI42LNMW7O6bZq3yv6LDUW5/ZUNqDqQYJRjAp6xFGzsRwPA=
+	t=1743069781; cv=none; b=rdzsUGO6RCHUufiEba0fJgyE4xrAdo54omq7K6ZRCst3/jx/t0BJoxjr4XS2LQjup4NRgyYXDI4ZuzV5RujLpY8d8kRV6FjWUJll5n6JangVwMOglTXHUQOnK9U2u467absWMa4RmqN2iSRfjlvpgJSzFzKUAxsprcTfka5fo0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743069692; c=relaxed/simple;
-	bh=j1u/b6iCpo77sQix5aePB/OgDjxe3cQtEhK8F+Ct0bs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Mz/asg6WEIFztL6SV6U6fqDteRuHvTFSu4DpkMv9UjEB7F1xFZruH7dymamjEqr8DAIfWPm4PmV/tUj7Iw17BccmJqwv2ubR5AX5Ln6yJP/lKXn1LU5khbBSABMtsC2Xv6rs45OSay2nofDyTXxEytoy+eFFRPIFfG3oljSEjqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b3882febso6767915ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:01:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743069690; x=1743674490;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9FCTDFjot83WRhacSWxYLmYj5o4MLFgu3vOAVYbujYg=;
-        b=Eyyjz5DIBHwfJCF0sNbyvsUEIjyJQ709a8PV9S3QyhkYtjwQ1javQY9y5pqcMDY+bF
-         a5z21kDNE90ER0IXVhF4+gPU+MRDgsgkWp9/DHSgYVYSoa1gxZ4PF1qkC8q7jD/1aIO3
-         Z7JUTYIV/oPvhZaAmp2YoEC/bywyoRSPZ/GDZD5CDQm9gHOWfSdslIxBLa2seIhLGcrN
-         MnQXO5PgoiRgPfO64f3Tcv3fHCJ51+jITW7NOY6Rqc2Q/SzlaaZzbFpehyChvhWgsWge
-         SQ+UViDrzm4IiqJLfN5p00RVydc/H66N5oKgKnc8mthbqUFfF6vsICWhoIg0F96FX/RS
-         2Y3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWmsA6Srwwp8/IMesVGTYV/CBBhrpUEDWBDuSGqfM9GNjk9ODegtpSaDIywlpsc68MBUt+oUtMKhFwA9P8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzqXwJ6/4Wqt7vKIGjoy3auuzbdV44pD+QcQJ+9kH90vnfefVH
-	I2FvsUd27iMAT7rRtwaa7Wn5bDLfQNj3C7JnwXtQESFB6BCwPumcC0MqdJb2UZD4c8NCK0s3u4m
-	QY2zxwd0aXm4JXWI0Ivx//HyNXYMgbiA8TarlFXklRvwTV5VQixWaGkM=
-X-Google-Smtp-Source: AGHT+IFoLzbWRAGxKnp3Q6LF8u6vpecr4X5rw2S7Dfi5RcsMZULrf0k/LG9uP0ha6SzXHmOTVZxaiPIg6mVyBWNbag8BbF2FfSyj
+	s=arc-20240116; t=1743069781; c=relaxed/simple;
+	bh=Gbc2oOpUSKnap5FWQr2QLytGLwySKwbBDX/9Os98M4A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WeKcfJEGyj0krF9uY6ISKgTtbUiseWFjkqhd/eSJxKGW4LygfmgMeme4giXD6sIXy8ma/a9ESho1kztZMvUfYsRGxz6XwsTfV+Ec6Z/eam2dccBRWonQee2c24aYy4+uU7XSH49f/Py6xcjE/XZ/snbK2fOhM1BKQRJ+ECyq6SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bn9K0wAH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jFfq005967;
+	Thu, 27 Mar 2025 10:02:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UO9wZaxTql4XgovHoi9zU4
+	y3avUC6S/+JVf0xjZbnuI=; b=bn9K0wAHoUF6ot0OVY559ZzH1lGUdTfxsDVGap
+	Ty+XMLjOkENNQYBO+nmmj7jdRmD2/V/ZW3GlHopDpcotfHf9FAc5SBmlj4XAsOzc
+	dpsDU3JTmvUfQJp9BGLHDiFwiDWv6xuKgjBPqPRbxrs20Is7NGZAlgDWDkq/AUdI
+	fdFN94V2Q5AWX9wRNQ0bRemD8zewpBfXVxfRoMbozR8I6syGYwlBGsdw3TsrCHgn
+	ZQ57XugViLOt+lttLvh1zr/9wj4nNaOw3Z8iEHYhMzWExXOHYC5FQw1+TdE3YAcy
+	Tn8/Hdvvu6IsMWZxL2goV+VyZzaz3fIBQ1D1KQFsPllNmwIQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m7nf4ueg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 10:02:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52RA2t4k010011
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 10:02:55 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Mar 2025 03:02:52 -0700
+From: Imran Shaik <quic_imrashai@quicinc.com>
+Date: Thu, 27 Mar 2025 15:32:27 +0530
+Subject: [PATCH v6] clk: qcom: Add support for Camera Clock Controller on
+ QCS8300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2192:b0:3d3:eeec:89f3 with SMTP id
- e9e14a558f8ab-3d5ccdd5473mr31428105ab.13.1743069689682; Thu, 27 Mar 2025
- 03:01:29 -0700 (PDT)
-Date: Thu, 27 Mar 2025 03:01:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e521f9.050a0220.2f068f.0026.GAE@google.com>
-Subject: [syzbot] [net?] kernel BUG in skbprio_enqueue
-From: syzbot <syzbot+a3422a19b05ea96bee18@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250327-qcs8300-mm-patches-v6-1-b3fbde2820a6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIADIi5WcC/22Nyw6CMBBFf4XM2jFtoSCu/A/DgkwHmQWvFhsN4
+ d+tJO5cnpPcczcI7IUDXLMNPEcJMo0JylMG1Lfjg1FcYjDKWJUbhQuFS64UDgPO7Uo9B7SsOyL
+ tyqouIA1nz528jui9SdxLWCf/Pj6i/dpfTv/LRYsaa1dZ7Souau5uy1NIRjrTNECz7/sHgix5I
+ bYAAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: R0B_0A8dURBrd0G1kltG9LHnn5_hrvFg
+X-Proofpoint-GUID: R0B_0A8dURBrd0G1kltG9LHnn5_hrvFg
+X-Authority-Analysis: v=2.4 cv=IMMCChvG c=1 sm=1 tr=0 ts=67e52250 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=GX2mzFjyc8Gkx4eyK_sA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxscore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 mlxlogscore=999 adultscore=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270068
 
-Hello,
+The QCS8300 Camera clock controller is a derivative of SA8775P, but has
+few additional clocks and offset differences. Hence, add support for
+QCS8300 Camera clock controller by extending the SA8775P CamCC.
 
-syzbot found the following issue on:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+---
+This patch series add support for GPUCC, CAMCC and VIDEOCC on Qualcomm
+QCS8300 platform.
 
-HEAD commit:    f6e0150b2003 Merge tag 'mtd/for-6.15' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a14a4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=46a07195688b794b
-dashboard link: https://syzkaller.appspot.com/bug?extid=a3422a19b05ea96bee18
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109e343f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1037abb0580000
+Changes in v6:
+- Use device_is_compatible() as per Stephen's review comment.
+- Link to v5: https://lore.kernel.org/r/20250321-qcs8300-mm-patches-v5-1-9d751d7e49ef@quicinc.com
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f6e0150b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7ade4c34c9b1/vmlinux-f6e0150b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1fe37b97ec9d/bzImage-f6e0150b.xz
+Changes in v5:
+- Subset of this patch series is alreday applied, but CamCC driver patch
+is not picked yet. Hence resend the CamCC driver patch.
+- Link to v4: https://lore.kernel.org/all/20250109-qcs8300-mm-patches-new-v4-0-63e8ac268b02@quicinc.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a3422a19b05ea96bee18@syzkaller.appspotmail.com
+Changes in v4:
+- Updated the commit text as per the comment from Bjorn.
+- Fixed the CamCC QDSS clock offset.
+- Link to v3: https://lore.kernel.org/all/20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com/
 
-------------[ cut here ]------------
-kernel BUG at net/sched/sch_skbprio.c:127!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5396 Comm: kworker/0:11 Not tainted 6.14.0-syzkaller-03565-gf6e0150b2003 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: mld mld_ifc_work
-RIP: 0010:skbprio_enqueue+0x1123/0x1150 net/sched/sch_skbprio.c:127
-Code: 4c 89 fe e8 df 18 28 fb 4c 8b 6c 24 10 48 ba 00 00 00 00 00 fc ff df e9 87 f5 ff ff e8 76 2c b6 f7 90 0f 0b e8 6e 2c b6 f7 90 <0f> 0b 89 f9 80 e1 07 80 c1 03 38 c1 7c 88 e8 aa 58 1e f8 eb 81 89
-RSP: 0018:ffffc9000d9de960 EFLAGS: 00010293
-RAX: ffffffff8a0d4a22 RBX: 0000000000000002 RCX: ffff88801ed8a440
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000001
-RBP: 0000000000000000 R08: ffffffff8a0d41e8 R09: 0000000000000000
-R10: ffff888043706c80 R11: ffffed10086e0d92 R12: ffff8880493798c0
-R13: ffff888049378000 R14: 000000000000008e R15: ffff888049379dc0
-FS:  0000000000000000(0000) GS:ffff88808c824000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb035bc92f0 CR3: 000000000e938000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- qdisc_enqueue include/net/sch_generic.h:850 [inline]
- tbf_enqueue+0x362/0x6e0 net/sched/sch_tbf.c:258
- dev_qdisc_enqueue+0x4b/0x290 net/core/dev.c:4008
- __dev_xmit_skb net/core/dev.c:4104 [inline]
- __dev_queue_xmit+0xf13/0x3f60 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd5/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x560/0x9c0 net/ipv4/ip_tunnel_core.c:82
- udp_tunnel_xmit_skb+0x264/0x3c0 net/ipv4/udp_tunnel_core.c:173
- geneve_xmit_skb drivers/net/geneve.c:916 [inline]
- geneve_xmit+0x2119/0x2c30 drivers/net/geneve.c:1039
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b80/0x3f60 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip6_finish_output2+0x128c/0x17e0 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
- ip6_finish_output+0x421/0x840 net/ipv6/ip6_output.c:226
- NF_HOOK+0xa0/0x440 include/linux/netfilter.h:314
- mld_sendpack+0x84a/0xdb0 net/ipv6/mcast.c:1868
- mld_send_cr net/ipv6/mcast.c:2169 [inline]
- mld_ifc_work+0x7d9/0xd90 net/ipv6/mcast.c:2702
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:skbprio_enqueue+0x1123/0x1150 net/sched/sch_skbprio.c:127
-Code: 4c 89 fe e8 df 18 28 fb 4c 8b 6c 24 10 48 ba 00 00 00 00 00 fc ff df e9 87 f5 ff ff e8 76 2c b6 f7 90 0f 0b e8 6e 2c b6 f7 90 <0f> 0b 89 f9 80 e1 07 80 c1 03 38 c1 7c 88 e8 aa 58 1e f8 eb 81 89
-RSP: 0018:ffffc9000d9de960 EFLAGS: 00010293
-RAX: ffffffff8a0d4a22 RBX: 0000000000000002 RCX: ffff88801ed8a440
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000001
-RBP: 0000000000000000 R08: ffffffff8a0d41e8 R09: 0000000000000000
-R10: ffff888043706c80 R11: ffffed10086e0d92 R12: ffff8880493798c0
-R13: ffff888049378000 R14: 000000000000008e R15: ffff888049379dc0
-FS:  0000000000000000(0000) GS:ffff88808c824000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb035bc92f0 CR3: 000000000e938000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Changes in v3:
+- Added new GPUCC and CAMCC binding headers for QCS8300 as per the review comments
+- Updated the new bindings header files for GPUCC and CAMCC drivers.
+- Added the R-By tags received in v2.
+- Link to v2: https://lore.kernel.org/r/20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com
 
+Changes in v2:
+- Updated commit text details in bindings patches as per the review comments.
+- Sorted the compatible order and updated comment in VideoCC driver patch as per the review comments.
+- Added the R-By tags received in V1.
+- Link to v1: https://lore.kernel.org/r/20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com
+---
+ drivers/clk/qcom/camcc-sa8775p.c | 103 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 98 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/qcom/camcc-sa8775p.c b/drivers/clk/qcom/camcc-sa8775p.c
+index 11bd2e234811..50e5a131261b 100644
+--- a/drivers/clk/qcom/camcc-sa8775p.c
++++ b/drivers/clk/qcom/camcc-sa8775p.c
+@@ -10,7 +10,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ 
+-#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
++#include <dt-bindings/clock/qcom,qcs8300-camcc.h>
+ 
+ #include "clk-alpha-pll.h"
+ #include "clk-branch.h"
+@@ -1681,6 +1681,24 @@ static struct clk_branch cam_cc_sm_obs_clk = {
+ 	},
+ };
+ 
++static struct clk_branch cam_cc_titan_top_accu_shift_clk = {
++	.halt_reg = 0x131f0,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x131f0,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_titan_top_accu_shift_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_xo_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct gdsc cam_cc_titan_top_gdsc = {
+ 	.gdscr = 0x131bc,
+ 	.en_rest_wait_val = 0x2,
+@@ -1775,6 +1793,7 @@ static struct clk_regmap *cam_cc_sa8775p_clocks[] = {
+ 	[CAM_CC_SLEEP_CLK_SRC] = &cam_cc_sleep_clk_src.clkr,
+ 	[CAM_CC_SLOW_AHB_CLK_SRC] = &cam_cc_slow_ahb_clk_src.clkr,
+ 	[CAM_CC_SM_OBS_CLK] = &cam_cc_sm_obs_clk.clkr,
++	[CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK] = NULL,
+ 	[CAM_CC_XO_CLK_SRC] = &cam_cc_xo_clk_src.clkr,
+ 	[CAM_CC_QDSS_DEBUG_XO_CLK] = &cam_cc_qdss_debug_xo_clk.clkr,
+ };
+@@ -1811,6 +1830,7 @@ static const struct qcom_cc_desc cam_cc_sa8775p_desc = {
+ };
+ 
+ static const struct of_device_id cam_cc_sa8775p_match_table[] = {
++	{ .compatible = "qcom,qcs8300-camcc" },
+ 	{ .compatible = "qcom,sa8775p-camcc" },
+ 	{ }
+ };
+@@ -1841,10 +1861,83 @@ static int cam_cc_sa8775p_probe(struct platform_device *pdev)
+ 	clk_lucid_evo_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
+ 	clk_lucid_evo_pll_configure(&cam_cc_pll5, regmap, &cam_cc_pll5_config);
+ 
+-	/* Keep some clocks always enabled */
+-	qcom_branch_set_clk_en(regmap, 0x13194); /* CAM_CC_CAMNOC_XO_CLK */
+-	qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_GDSC_CLK */
+-	qcom_branch_set_clk_en(regmap, 0x13208); /* CAM_CC_SLEEP_CLK */
++	if (device_is_compatible(&pdev->dev, "qcom,qcs8300-camcc")) {
++		cam_cc_camnoc_axi_clk_src.cmd_rcgr = 0x13154;
++		cam_cc_camnoc_axi_clk.halt_reg = 0x1316c;
++		cam_cc_camnoc_axi_clk.clkr.enable_reg = 0x1316c;
++		cam_cc_camnoc_dcd_xo_clk.halt_reg = 0x13174;
++		cam_cc_camnoc_dcd_xo_clk.clkr.enable_reg = 0x13174;
++
++		cam_cc_csi0phytimer_clk_src.cmd_rcgr = 0x15054;
++		cam_cc_csi1phytimer_clk_src.cmd_rcgr = 0x15078;
++		cam_cc_csi2phytimer_clk_src.cmd_rcgr = 0x15098;
++		cam_cc_csid_clk_src.cmd_rcgr = 0x13134;
++
++		cam_cc_mclk0_clk_src.cmd_rcgr = 0x15000;
++		cam_cc_mclk1_clk_src.cmd_rcgr = 0x1501c;
++		cam_cc_mclk2_clk_src.cmd_rcgr = 0x15038;
++
++		cam_cc_fast_ahb_clk_src.cmd_rcgr = 0x13104;
++		cam_cc_slow_ahb_clk_src.cmd_rcgr = 0x1311c;
++		cam_cc_xo_clk_src.cmd_rcgr = 0x131b8;
++		cam_cc_sleep_clk_src.cmd_rcgr = 0x131d4;
++
++		cam_cc_core_ahb_clk.halt_reg = 0x131b4;
++		cam_cc_core_ahb_clk.clkr.enable_reg = 0x131b4;
++
++		cam_cc_cpas_ahb_clk.halt_reg = 0x130f4;
++		cam_cc_cpas_ahb_clk.clkr.enable_reg = 0x130f4;
++		cam_cc_cpas_fast_ahb_clk.halt_reg = 0x130fc;
++		cam_cc_cpas_fast_ahb_clk.clkr.enable_reg = 0x130fc;
++
++		cam_cc_csi0phytimer_clk.halt_reg = 0x1506c;
++		cam_cc_csi0phytimer_clk.clkr.enable_reg = 0x1506c;
++		cam_cc_csi1phytimer_clk.halt_reg = 0x15090;
++		cam_cc_csi1phytimer_clk.clkr.enable_reg = 0x15090;
++		cam_cc_csi2phytimer_clk.halt_reg = 0x150b0;
++		cam_cc_csi2phytimer_clk.clkr.enable_reg = 0x150b0;
++		cam_cc_csid_clk.halt_reg = 0x1314c;
++		cam_cc_csid_clk.clkr.enable_reg = 0x1314c;
++		cam_cc_csid_csiphy_rx_clk.halt_reg = 0x15074;
++		cam_cc_csid_csiphy_rx_clk.clkr.enable_reg = 0x15074;
++		cam_cc_csiphy0_clk.halt_reg = 0x15070;
++		cam_cc_csiphy0_clk.clkr.enable_reg = 0x15070;
++		cam_cc_csiphy1_clk.halt_reg = 0x15094;
++		cam_cc_csiphy1_clk.clkr.enable_reg = 0x15094;
++		cam_cc_csiphy2_clk.halt_reg = 0x150b4;
++		cam_cc_csiphy2_clk.clkr.enable_reg = 0x150b4;
++
++		cam_cc_mclk0_clk.halt_reg = 0x15018;
++		cam_cc_mclk0_clk.clkr.enable_reg = 0x15018;
++		cam_cc_mclk1_clk.halt_reg = 0x15034;
++		cam_cc_mclk1_clk.clkr.enable_reg = 0x15034;
++		cam_cc_mclk2_clk.halt_reg = 0x15050;
++		cam_cc_mclk2_clk.clkr.enable_reg = 0x15050;
++		cam_cc_qdss_debug_xo_clk.halt_reg = 0x1319c;
++		cam_cc_qdss_debug_xo_clk.clkr.enable_reg = 0x1319c;
++
++		cam_cc_titan_top_gdsc.gdscr = 0x131a0;
++
++		cam_cc_sa8775p_clocks[CAM_CC_CCI_3_CLK] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_CCI_3_CLK_SRC] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_CSI3PHYTIMER_CLK] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_CSI3PHYTIMER_CLK_SRC] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_CSIPHY3_CLK] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_MCLK3_CLK] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_MCLK3_CLK_SRC] = NULL;
++		cam_cc_sa8775p_clocks[CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK] =
++				&cam_cc_titan_top_accu_shift_clk.clkr;
++
++		/* Keep some clocks always enabled */
++		qcom_branch_set_clk_en(regmap, 0x13178); /* CAM_CC_CAMNOC_XO_CLK */
++		qcom_branch_set_clk_en(regmap, 0x131d0); /* CAM_CC_GDSC_CLK */
++		qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_SLEEP_CLK */
++	} else {
++		/* Keep some clocks always enabled */
++		qcom_branch_set_clk_en(regmap, 0x13194); /* CAM_CC_CAMNOC_XO_CLK */
++		qcom_branch_set_clk_en(regmap, 0x131ec); /* CAM_CC_GDSC_CLK */
++		qcom_branch_set_clk_en(regmap, 0x13208); /* CAM_CC_SLEEP_CLK */
++	}
+ 
+ 	ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_sa8775p_desc, regmap);
+ 
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 73b8c1dbc2508188e383023080ce6a582ff5f279
+change-id: 20250320-qcs8300-mm-patches-5e1fcc1d6794
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Imran Shaik <quic_imrashai@quicinc.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
