@@ -1,134 +1,212 @@
-Return-Path: <linux-kernel+bounces-578909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4398DA73A62
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:29:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF1DA73A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB043B5C0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:28:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D27397A4A29
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D465217F30;
-	Thu, 27 Mar 2025 17:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44E6218EB1;
+	Thu, 27 Mar 2025 17:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="P574VVFL"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zGykoCHF"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C828453E23;
-	Thu, 27 Mar 2025 17:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6D41C8634
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 17:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743096526; cv=none; b=uEhNDDoc6sOWCnF1BPCNErgZ4y12+0sBsDswrc9SEQiFoFcpiXiI+96j7+K1EAVtMGcF4P+EMriz37LT18j5luJRw46BZlZoad9sdS/c6Wd0hZenPADzJgDtQEjOtVu4/85G5nsSeXzm89z6+5ZHU5CmjKsvfGujM9EEHOzLfls=
+	t=1743096582; cv=none; b=LF0+b7/9gzMXLhELkolSwxuwEZ8uF6Xe6sfZGW6enV+lj/1nJqC15HGhj+EfgelQbsgbvOQiDsTH8jwFRPqyR3iCWEPc+/qOpCAR8gHz/zwZe+lS6i4y3p8nW7RYOdUjTi3BUbW0LDmLClE9N/mQFBUSM6R7FRmgFB+WlMpd+9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743096526; c=relaxed/simple;
-	bh=m/KjN2TK9DC6QJRxDx0XiqFQ1tXNoM6xFIpl8JXP8yc=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EBYid3smeZ0u9jTEm00rNxdK0zAcAZqSx26lzcNV5SqpuNEeLTNTnirbgllgJJAHXmLbb9u3Am09Oy8QXexhsQejxMLSHkWM8PJwUFK8Gdr7TKAIQ9z3NdK+9Z3hCKCwDoKR5eEzdEN2O6n0eEwTeOUKSRw8T9zb+/PyHdfEcCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=P574VVFL; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1743096582; c=relaxed/simple;
+	bh=OZOUMn7eWVEe+quoJzHzusizR9zi54OhgtUY1wqnIkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGLlgbY3JS48iS2VvUC4wWnR29ruBWGJpGmXrQcX2Qq798J+xdhRUiaFLe3jZHPag9K6OlwkifibkYSfZp0X4JIvt0PBThNejSq1DfZxmZrUDCR3P/gKrcCLmw3haB5dsuAWI3PH++5ErB0MsLeqaHSqPtIffcrhGetmgTOtesU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zGykoCHF; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224341bbc1dso27427555ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1743096525; x=1774632525;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=xSuF/YbxgWCWLj2Pm2m2fnuZ8qcDIDPazYI7pzm5ruM=;
-  b=P574VVFLLihRrLrYqkhjeg1fhqYasvZyAx97Q4qwAa1XE2jIQT9Zwshf
-   6mKdA22g2NKLos5QL0rXhOpLclFyzO/xDMiDfwox+bpzIVfdmZkTNs80w
-   3cMtr+ynbhhJIRCjBV7zDlAQvs90tKfkCKmy8gzTgXwvetM6TsyV/UWjp
-   o=;
-X-IronPort-AV: E=Sophos;i="6.14,281,1736812800"; 
-   d="scan'208";a="35764312"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 17:28:43 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:63978]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.62.254:2525] with esmtp (Farcaster)
- id 5fc1b816-d2cf-4e8d-a1ff-9170cc525ffa; Thu, 27 Mar 2025 17:28:42 +0000 (UTC)
-X-Farcaster-Flow-ID: 5fc1b816-d2cf-4e8d-a1ff-9170cc525ffa
-Received: from EX19D020UWC001.ant.amazon.com (10.13.138.157) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 27 Mar 2025 17:28:41 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D020UWC001.ant.amazon.com (10.13.138.157) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Thu, 27 Mar 2025 17:28:41 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-c4413280.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Thu, 27 Mar 2025 17:28:41 +0000
-Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-pdx-all-2c-c4413280.us-west-2.amazon.com (Postfix) with ESMTP id 3538AA04D5;
-	Thu, 27 Mar 2025 17:28:41 +0000 (UTC)
-Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id BF36651B7; Thu, 27 Mar 2025 17:28:40 +0000 (UTC)
-From: Pratyush Yadav <ptyadav@amazon.de>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Changyuan Lyu <changyuanl@google.com>, <linux-kernel@vger.kernel.org>,
-	<graf@amazon.com>, <akpm@linux-foundation.org>, <luto@kernel.org>,
-	<anthony.yznaga@oracle.com>, <arnd@arndb.de>, <ashish.kalra@amd.com>,
-	<benh@kernel.crashing.org>, <bp@alien8.de>, <catalin.marinas@arm.com>,
-	<dave.hansen@linux.intel.com>, <dwmw2@infradead.org>,
-	<ebiederm@xmission.com>, <mingo@redhat.com>, <jgowans@amazon.com>,
-	<corbet@lwn.net>, <krzk@kernel.org>, <rppt@kernel.org>,
-	<mark.rutland@arm.com>, <pbonzini@redhat.com>, <pasha.tatashin@soleen.com>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <robh+dt@kernel.org>,
-	<robh@kernel.org>, <saravanak@google.com>,
-	<skinsburskii@linux.microsoft.com>, <rostedt@goodmis.org>,
-	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, <usama.arif@bytedance.com>,
-	<will@kernel.org>, <devicetree@vger.kernel.org>, <kexec@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>,
-	<linux-mm@kvack.org>, <x86@kernel.org>
-Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory preservation
-In-Reply-To: <Z+VTHs0lp4TSA9L9@nvidia.com>
-References: <20250320015551.2157511-1-changyuanl@google.com>
-	<20250320015551.2157511-10-changyuanl@google.com>
-	<mafs0y0wqrdsq.fsf@amazon.de> <Z+VTHs0lp4TSA9L9@nvidia.com>
-Date: Thu, 27 Mar 2025 17:28:40 +0000
-Message-ID: <mafs0tt7eqt6f.fsf@amazon.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=linaro.org; s=google; t=1743096579; x=1743701379; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xUAnTAtDNuNnJIdSSQ+Rk9ZfVSwofE0KN7R4UOP1qhM=;
+        b=zGykoCHFQPArIFXkw7/cqDhWopIJKCzoJDZQo8VeFRWwdgralGhrO85LVSys/keiwA
+         C2pCPo5TcsVuql02vgUuuERcoXCBYfA1wXcXI5JaixleBVOVH2mj3JnLPuKouQbSCUfG
+         hO+5wZxLaphMo8FOpeELjXzJmBYiwmHa6k2Yzv3xXN4Fv4noUvLoMuT44P6EqAipg5/0
+         krsmPUBQXngU4UY4F7MkxjNmc4s7tBuMMheSjOJ5/grgCjiRG3fiLWuFSpKqHwC9QjzX
+         1WL3O3f0b4IJfCE1cIK/wyv/kkztjPpByYkRKd2nhLeIkz+UvrPwx5xEJKUnKzRU5bKB
+         7KiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743096579; x=1743701379;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUAnTAtDNuNnJIdSSQ+Rk9ZfVSwofE0KN7R4UOP1qhM=;
+        b=c3e4n9tpZLhLMi3Xr2iJWGnGHzyEUor6okmW2IbqC1ay7vM9ZUdR5DBa/rpRp7rfFo
+         DPj9GhTG5S8A6pk5x8k4Y7FD+wbWulj9RV9aZZOiIP2dnSfjDCteZXu/NIEd8RnNxs3R
+         AR+6AQt1YEQ1wRdoP8LoEtNzADbFnfoCfYOknu4DwwfU/e3APETPixdq9RVvkIctWYJa
+         LT3KXPXMgHD/r7IIl1q8LRH6fjWkHnkVpFUdGl85b2J3yuZYZaAo2AeJwy94w+Fi3hOF
+         eByOlmk7hcaB6C9TEGF7FyPumyaoOl6MXoZ3shCMbQFfBthj7tpAbxkN/ohz05T/iZe8
+         nCNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhWWytvVej22RsohK9NrvwW7hCdvE71AL06EYRk/6wbScUnbHGHz29oBccztjQfpWE03DghinLgPMMsOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6cyyMZdNMFKy6XVIhXOrQ/fNxlHGLIuba6H1Y/JaZS+2Qrds8
+	vlWiy2aDP7uaGGVE0O0JcHou1Uhb/Dqwe4vSgIlemwgbJgCt//2jJl1M5zyZ4A==
+X-Gm-Gg: ASbGncv+YeMXzRHaQov9OOf8kx+KzLCwCD6L0JD3qonhxq5FhVqZ0awxBFYf1m6Icmh
+	FMpIg+RJvPF8IzNlVmBmrc1SoJFjGzy9/J+u74/58gAmxBkEhgM2TVUzv1FZNl0072v6y1LRryk
+	Qyf9d2W06dc8imZmuRhJyPbCjzi8EKW4iVam/U2mgPJwbaY2XX51IZWxvjUW+JFZhpl3IoVmOZl
+	cS5gwR5MoE+TPomV7v/nkH5sQELMZwEDR7pBqunrmaJ25oJpjFY3Wm08vD2dVcCarQVcJaT3jz+
+	jkmbYID1erWZaRgsH/8yFNEMzAZIsu/rYprVyiBoJUB8UcUmyB4sn2w=
+X-Google-Smtp-Source: AGHT+IGq9WA9Mg+aD9Pf6gxE2w7nofLRKq3e9u+4e1o+z4k8xCGL05Lgi/yGgHNUkZz6Z+X/JLWE9w==
+X-Received: by 2002:a05:6a20:2589:b0:1fd:e9c8:cf3b with SMTP id adf61e73a8af0-1fea2f4c4e7mr10560727637.30.1743096579450;
+        Thu, 27 Mar 2025 10:29:39 -0700 (PDT)
+Received: from thinkpad ([120.60.71.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970deeea2sm81237b3a.21.2025.03.27.10.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 10:29:39 -0700 (PDT)
+Date: Thu, 27 Mar 2025 22:59:30 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: george.moussalem@outlook.com
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nitheesh Sekar <quic_nsekar@quicinc.com>, Varadarajan Narayanan <quic_varada@quicinc.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Praveenkumar I <quic_ipkumar@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	20250317100029.881286-1-quic_varada@quicinc.com, 20250317100029.881286-2-quic_varada@quicinc.com, 
+	Sricharan R <quic_srichara@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v7 5/6] arm64: dts: qcom: ipq5018: Add PCIe related nodes
+Message-ID: <vmka3ediym33gjwy6vztxn25j2gwfeeht3s3nbx3ozinuz2k7n@7nho6bfvsuo5>
+References: <20250326-ipq5018-pcie-v7-0-e1828fef06c9@outlook.com>
+ <20250326-ipq5018-pcie-v7-5-e1828fef06c9@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250326-ipq5018-pcie-v7-5-e1828fef06c9@outlook.com>
 
-On Thu, Mar 27 2025, Jason Gunthorpe wrote:
+On Wed, Mar 26, 2025 at 12:10:59PM +0400, George Moussalem via B4 Relay wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> 
+> Add phy and controller nodes for a 2-lane Gen2 and
+> a 1-lane Gen2 PCIe bus. IPQ5018 has 8 MSI SPI interrupts and
+> one global interrupt.
+> 
+> NOTE: the PCIe controller supports gen3, yet the phy is limited to gen2.
+> 
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi | 246 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 244 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> index 8914f2ef0bc47fda243b19174f77ce73fc10757d..9f695f0d9c6b7f29c4564977cadd6a78b55a044f 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> @@ -147,6 +147,40 @@ usbphy0: phy@5b000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		pcie1_phy: phy@7e000{
+> +			compatible = "qcom,ipq5018-uniphy-pcie-phy";
+> +			reg = <0x0007e000 0x800>;
+> +
+> +			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+> +
+> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
+> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
+> +
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			num-lanes = <1>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie0_phy: phy@86000{
+> +			compatible = "qcom,ipq5018-uniphy-pcie-phy";
+> +			reg = <0x00086000 0x800>;
+> +
+> +			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+> +
+> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
+> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
+> +
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			num-lanes = <2>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		tlmm: pinctrl@1000000 {
+>  			compatible = "qcom,ipq5018-tlmm";
+>  			reg = <0x01000000 0x300000>;
+> @@ -170,8 +204,8 @@ gcc: clock-controller@1800000 {
+>  			reg = <0x01800000 0x80000>;
+>  			clocks = <&xo_board_clk>,
+>  				 <&sleep_clk>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&pcie0_phy>,
+> +				 <&pcie1_phy>,
+>  				 <0>,
+>  				 <0>,
+>  				 <0>,
+> @@ -387,6 +421,214 @@ frame@b128000 {
+>  				status = "disabled";
+>  			};
+>  		};
+> +
+> +		pcie1: pcie@80000000 {
+> +			compatible = "qcom,pcie-ipq5018";
+> +			reg = <0x80000000 0xf1d>,
+> +			      <0x80000f20 0xa8>,
+> +			      <0x80001000 0x1000>,
+> +			      <0x00078000 0x3000>,
+> +			      <0x80100000 0x1000>,
+> +			      <0x0007b000 0x1000>;
+> +			reg-names = "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "parf",
+> +				    "config",
+> +				    "mhi";
+> +			device_type = "pci";
+> +			linux,pci-domain = <0>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			/*
+> +			 * In IPQ5018, the PCIe controller supports gen3,
 
-> On Thu, Mar 27, 2025 at 10:03:17AM +0000, Pratyush Yadav wrote:
->
->> Of course, with the current linked list structure, this cannot work. But
->> I don't see why we need to have it. I think having a page-table like
->> structure would be better -- only instead of having PTEs at the lowest
->> levels, you have the bitmap.
->
-> Yes, but there is a trade off here of what I could write in 30 mins
-> and what is maximally possible :) The xarray is providing a page table
-> implementation in a library form.
->
-> I think this whole thing can be optimized, especially the
-> memblock_reserve side, but the idea here is to get started and once we
-> have some data on what the actual preservation workload is then
-> someone can optimize this.
->
-> Otherwise we are going to be spending months just polishing this one
-> patch without any actual data on where the performance issues and hot
-> spots actually are.
+nit: no need to mention IPQ5018.
 
-The memblock_reserve side we can optimize later, I agree. But the memory
-preservation format is ABI and I think that is worth spending a little
-more time on. And I don't think it should be that much more complex than
-the current format.
-
-I want to hack around with it, so I'll give it a try over the next few
-days and see what I can come up with.
+- Mani
 
 -- 
-Regards,
-Pratyush Yadav
+மணிவண்ணன் சதாசிவம்
 
