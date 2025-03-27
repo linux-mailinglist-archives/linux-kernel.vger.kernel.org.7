@@ -1,140 +1,113 @@
-Return-Path: <linux-kernel+bounces-578145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55329A72B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:27:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E59A72B86
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E6D18834AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E521892BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1292320550C;
-	Thu, 27 Mar 2025 08:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F84207A15;
+	Thu, 27 Mar 2025 08:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvyEGtYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="h33hU/l4"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722DE2054F5;
-	Thu, 27 Mar 2025 08:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734EA20764B;
+	Thu, 27 Mar 2025 08:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743064035; cv=none; b=syQrqPMJGolOrWBqCyyBeOv0JH/v8CDt8UmzEQVtS0rOIebmwXI0vbFwCi3bKrNFu5HiSyUQIDEIjjqFEUsLJWWPcNRB4XwCHQXEUybVPoLZdrMqLuYr6m6nwZ2c8sqVMoGu1z5LoIfKlDb1OitDVvkJwJ0EPHvn4mJFRG2rTHM=
+	t=1743064232; cv=none; b=l+Vsdhxcf/ZorfaBi5loEqDjVRPvmXVdzHDhT1ImlUcJB59pvindPa6AyqI2OEy7CS6KSvkVFhGwPJJ2k0XlCqcpM3dj03+kYzu2zwLOIr/J8zCRFhmGV9C0NxlfZxpc8G0RzHpTrxn3CCs3EgVHN/ZAgblUS6+SjTt+Bg+oOVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743064035; c=relaxed/simple;
-	bh=O2dsz57EQNAAlhHCV6qrZBFPCi/fpl9rjvv/zSxm5bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0DDWjpABgq5zflXqWdY5BJXulV7r1O4AeFM8Up+Jcx7biQbmQrKlul6lGSRMsYGtzAtLweOag/7AujFgurqu2/VbA2rX1A3MjJS260UeTg4RNPMF2ajmLVfQ8HflbEXcEq/aGflRmU0WdxwHMyR5n1KYDIUnnn3MgRph+7fxZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvyEGtYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FDBEC4CEEB;
-	Thu, 27 Mar 2025 08:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743064034;
-	bh=O2dsz57EQNAAlhHCV6qrZBFPCi/fpl9rjvv/zSxm5bw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvyEGtYspj3FjLl+rx4VvuJIIntOO1ATjFIYJTtBSVG9/SDVQi9ayxx+U8wFQCAId
-	 geejMNqt4F23xXE66FSksslElI0yZeXG2ICanr7li2KojBdEXWCSu1D475shoHV2bm
-	 8Rk4k6NYq5sDqHS4l9BIy/sQPGke1z80pYcTlKNKaM5dsUjNVSPCnNTBUGTXSg2Uw6
-	 X8xzkgXeYfsbvjtkGq/Rsy65NbFYeAwdj88PLMVv8wJwGza7hNaRDyiqzLuMgNpPwu
-	 sdXqVCYPnzKuSWrdCykKLwCkgf1Cmoai2n76FBspHxWq1b8Jts+SlhODtxKCfE7XT3
-	 fiaQuYCjEVVSA==
-Date: Thu, 27 Mar 2025 09:27:12 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-tip-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
- theoretical divide-by-zero in pwm_mediatek_config()
-Message-ID: <scvpqpsqlprw5aezendymnhyqmtbwi7belfbnrpjg66joqckrt@2ythe544ujpk>
-References: <fb56444939325cc173e752ba199abd7aeae3bf12.1742852847.git.jpoimboe@kernel.org>
- <174289169184.14745.2432058307739232322.tip-bot2@tip-bot2>
- <4avdt2nru6cpypssyw5chxiuadh74qcobfboopwsske2ycr565@qnb6utlyxuj4>
- <5i7cbgl7vza4bktquqbr7mvkrypbzmoeoys76wpzo4efmwze32@uwasrdhgsejo>
+	s=arc-20240116; t=1743064232; c=relaxed/simple;
+	bh=KiHi053QWRNWU2KsjEHYFN94kS2d/rNecMtACLhRtck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FFVvxvimKR5yqLWMA32YkApr910RK0FoQWIS2gzH4rNSxyi2jbNtVqWXAhHmV8Sx5Sb9JQvaPFn478F0gY6l6n725iVLf5SN45kUZt/y+BfoJ0dL1skyo+fTQPfCPfOk27Q0lCzHGynP9sM8y8VaxW0N4xMEZa1OQu6E1aevfXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=h33hU/l4; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5oYpX010674;
+	Thu, 27 Mar 2025 09:30:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=RwQA9b/mWaVp+3r4CodO9C
+	jopcR6rVnhFumfJnY0gE0=; b=h33hU/l4STScdpRVI9zvhixwzWwfXEZJVEOENO
+	smat1YitnZ6UnS2mtrUyF5nL5sVArlpOIrWzRcZHSZksDK2dj8w4Mi5/U8ES9Mt3
+	qcQnIoFj6fj3oktYTwC92EKiPvft/BpMeiNtztYd1xcUIOCKnsNOaivtgmfWYdi9
+	RG4UrurOwopaOgOdKPPXdeFWfF9kuMQJfCrrRDMVDm7Z2A2aojsg1GV5ZJ/TgCC4
+	im0p22kz1d+1YI2YsdKSpekXg1u7sqf/5srwtsAV8eVZzZ6/+YS9brKPSbmY1iZf
+	0MR9GH3SCGmyBfVhCirUAKRbBG6A2ixlF22RUzPFLbXoCvEg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45mwrb2c4a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 09:30:05 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 012A640096;
+	Thu, 27 Mar 2025 09:28:58 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9D6A28329EE;
+	Thu, 27 Mar 2025 09:27:32 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
+ 2025 09:27:32 +0100
+Received: from localhost (10.252.3.68) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
+ 2025 09:27:32 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2 0/2] stm32-rproc: Add firmware-name DT property support
+Date: Thu, 27 Mar 2025 09:27:19 +0100
+Message-ID: <20250327082721.641278-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4wbxf4mrb4xhozgj"
-Content-Disposition: inline
-In-Reply-To: <5i7cbgl7vza4bktquqbr7mvkrypbzmoeoys76wpzo4efmwze32@uwasrdhgsejo>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+
+Add flexibility by supporting the optional "firmware-name" property.
+
+This allows specifying in the device tree the firmware that needs to
+be loaded on boot, if the "st,auto-boot" DT property is set.
+
+Arnaud Pouliquen (2):
+  dt-bindings: remoteproc: stm32-rproc: Add firmware-name property
+  drivers: remoteproc: stm32_rproc: Allow to specify firmware default
+    name
+
+ .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml    | 4 ++++
+ drivers/remoteproc/stm32_rproc.c                          | 8 +++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
 
---4wbxf4mrb4xhozgj
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
- theoretical divide-by-zero in pwm_mediatek_config()
-MIME-Version: 1.0
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+-- 
+2.25.1
 
-Hello Josh,
-
-On Wed, Mar 26, 2025 at 10:44:04PM -0700, Josh Poimboeuf wrote:
-> On Wed, Mar 26, 2025 at 11:35:28AM +0100, Uwe Kleine-K=F6nig wrote:
-> > I wonder a bit about procedures here. While I like that warnings that
-> > pop up in drivers/pwm (and elsewhere) are cared for, I think that the
-> > sensible way to change warning related settings is to make it hard to
-> > enable them first (harder than "depends on !COMPILE_TEST" "To avoid
-> > breaking bots too badly") and then work on the identified problems
-> > before warning broadly. The way chosen here instead seems to be enabling
-> > the warning immediately and then post fixes to the warnings and merge
-> > them without respective maintainer feedback in less than 12 hours.
->=20
-> Actually, this type of warning has existed for years.  Nothing in the
-> recent objtool patches enabled it.
-
-Yes, I understood that the recent patch only made the warning fatal.
-
-> I only discovered this particular one a few days ago.  I suspect it only
-> exists with newer compilers.
->=20
-> > I fail to reproduce the warning here for an x86_64 build on
-> > 1e26c5e28ca5. I have:
-> >=20
-> >         $ grep -E 'CONFIG_(CLK|PWM_MEDIATEK|OBJTOOL_WERROR)\>' .config
-> >         CONFIG_PWM_MEDIATEK=3Dm
-> >         CONFIG_OBJTOOL_WERROR=3Dy
-> >=20
-> > and the build works fine for me and there is no warning about
-> > drivers/pwm/pwm-mediatek.o. What am I missing?
->=20
-> Sorry, I should have given more details about that.  It was likely
-> something with KCOV and/or UBSAN, though I can't seem to recreate it at
-> the moment either :-/
-
-The combination "existed for years" + "discovered a few days ago" +
-needs particular combination of .config and toolchain makes me believe
-the right way to fix is a medium priority patch via the maintainer of
-the affected driver. I don't see the urgency to justify the current
-procedure.
-
-I don't know what the current merge plan is, but if you want to merge it
-through the pwm tree, I'm willing to take it. I wouldn't create a pull
-request just for that before 6.15, but send it along if something more
-urgent pops up.
-
-Best regards
-Uwe
-
---4wbxf4mrb4xhozgj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmflC90ACgkQj4D7WH0S
-/k6H6AgAhhNyd0NgRCpP+bQ0Vwsgx5bBnxOGyeTz2Q+MGlo8XbOMY6V7r14k92WA
-Y8ISsVZ20VTwaC7b2DctospsFpRgE3Kv/DEVnb+KungCHzgEPvRy2JcmE23u0YrI
-nCllrXxtj3LsZ1EVyKijlDgpUEbjYY4HjeZUtEf1C+1QtPl0DwPMKFgm0gGnQmKi
-NhlwLYosPPquMThnLT4RWnt29pqbvTiMmm2mgdi0jqdVwYHfF1J2eG2Z68DI2p94
-7JumIGFKdhsbwCOMRlU0QMvI1cBnmtoce3oeUw2GgO5wkxJPoLvvJ5kJT92ATsos
-GhRQ/PlU1l3xgrjJa/WvY+ELD5XRyQ==
-=lErp
------END PGP SIGNATURE-----
-
---4wbxf4mrb4xhozgj--
 
