@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-579267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBD2A74160
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:05:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54788A74164
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90447189817C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:06:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59FB17051F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069C01E8358;
-	Thu, 27 Mar 2025 23:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99371E1DF0;
+	Thu, 27 Mar 2025 23:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kEX+jo99"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FLbtod8/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FEE1E1E0A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6CA1C84AE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743116737; cv=none; b=uz9GuA767UIJ28ReXUyRO/RWrSY8tJIqWCeB5v/rRcIjM42OUiodTiRdRYn/R5F5sC7MwGo6ZxhRK5rDp+l3o4HO0bnEBoCjxcL/oPUMeSyrYBAurQZGJQhJ41LpxBocZ66pRDcc3qRpKgZueyb5LwkerMzMIQZowfsoVTm6cd4=
+	t=1743116807; cv=none; b=K/AEXvhK8hA5SNANDF330Q3WWm5R1Am/vMazIxXlMsRBj0tPTg9+SO48iNK3nbx5yQlmCPMuT8ru31AHx3ot6n4NWjjU7CsWTfDvorByh+f4bexGELH/QqkcLm1qTKTN9LtDRIp58/MWVU0AigT49BLmGBwwe8iQlVio+bJHEUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743116737; c=relaxed/simple;
-	bh=u7ZDKvtT4hs1CYe7KiMi83zvkdUdVvfFErbJM6pAGXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SfGNITjABGpHJtAAzaHq3A8z2nfE5TUbzOVoUHaUFTrl+ka4THP6cFz17QBcoLC+rrduadMFbM0H5YesA9faX+phlAWAwJJIJIp6uV3HmuA3ndJver3a1AKzgCJbqAZXbGirnNx9OY0aAqrGiA6jU+osj3r2wQMHZQa/Rat8UDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kEX+jo99; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RLNN9h010442;
-	Thu, 27 Mar 2025 23:05:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=j3Njc
-	Gv1JSYvnCYGX3BdR9Mcr/HGCCCZbFP4dwVX9Vc=; b=kEX+jo998x110sH+nhO0n
-	2CbwpHv9jkUWf/AK+HjOYL+fQPJImQKcP8kmuG9Vcl8HpuVR3liyqMxMMfg0cZWN
-	nmN8mFEMMn79m6N4dFzwoCH6DVbMQyHqtrcxw/WCEwqKI83XNMCUsqLH8popC97y
-	K2UD/vH9FcAT6Xlt5bJSd92nsJ/oKbgT8Gup1Pibeg/mlwGoEtbrkWKiM6q1C3Sw
-	MHDo0MORHKqOeOodd79TlfpyUmKqt88vOhTwdMmMRgQz2LgbKQF94b9XufUVKQBq
-	lmbOqmjbJJhsDmInrZiUMDLcwg/EP5EUMK7J2+0qRIxYFYjSm87T8BuyQ+w3Hjip
-	Q==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45hn875nd0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Mar 2025 23:05:25 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52RLwVrq022844;
-	Thu, 27 Mar 2025 23:05:24 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45jjcha7wj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Mar 2025 23:05:24 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52RN5HQZ033345;
-	Thu, 27 Mar 2025 23:05:23 GMT
-Received: from bostrovs-home.us.oracle.com (bostrovs-home.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.198])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45jjcha7sa-3;
-	Thu, 27 Mar 2025 23:05:23 +0000
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, tglx@linutronix.de, mingo@redhat.com,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH v2 2/2] x86/microcode/AMD: Clean the cache if update did not load microcode
-Date: Thu, 27 Mar 2025 19:05:03 -0400
-Message-ID: <20250327230503.1850368-3-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250327230503.1850368-1-boris.ostrovsky@oracle.com>
-References: <20250327230503.1850368-1-boris.ostrovsky@oracle.com>
+	s=arc-20240116; t=1743116807; c=relaxed/simple;
+	bh=Jg0lay9DQTanzPgGVu0GDPUwJJjKFNGOTQpAD6wb1LU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbe8JRoFRYBA4Wc1q7D4mKNXIk4/KKqoMNqInfR0Di/lpO0RecrobO+1FH1bAygRhFbqjmLUkhLzUwVjIdc2rO+D6cVr9o/StnKumcJnc7kGrNeAVgmGgInGpeU/I2VeLg2TWD5pVgULc9JTCMqn/M8IoFJ0vwDk6oe+tP8x05M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FLbtod8/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57E5D3DA;
+	Fri, 28 Mar 2025 00:04:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743116694;
+	bh=Jg0lay9DQTanzPgGVu0GDPUwJJjKFNGOTQpAD6wb1LU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FLbtod8/qhWpgj251QPTnmeCPBgmLYhkvNKL3C8DvdM9NmjpjMCJGIDAJCw9AhQnl
+	 Nx2RAVQ37idvF4rViSSvA7i3IlltNWvibGwdyJb06oSoXyr41UGNRJcQNiPpmGy18D
+	 pNp3d6ht1KaEwOedYgcULuxNsBgppRE5MNDpLCYI=
+Date: Fri, 28 Mar 2025 01:06:19 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Vishal Sagar <vishal.sagar@amd.com>,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v4 11/11] drm: xlnx: zynqmp: Add support for XVUY2101010
+Message-ID: <20250327230619.GF16629@pendragon.ideasonboard.com>
+References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
+ <20250326-xilinx-formats-v4-11-322a300c6d72@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_05,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
- adultscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2503270156
-X-Proofpoint-GUID: CUcefQI1OGRO47q26K8P7GSoeQBLjty7
-X-Proofpoint-ORIG-GUID: CUcefQI1OGRO47q26K8P7GSoeQBLjty7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250326-xilinx-formats-v4-11-322a300c6d72@ideasonboard.com>
 
-If microcode did not get loaded there is no reason to keep it in the cache.
-Moreover, if loading failed it will not be possible to load an earlier
-version of microcode since failed version will always be selected from
-the cache on next reload attempt.
+Hi Tomi,
 
-Since failed version is not easily avaialble at this point just clean the
-whole cache. It will be rebuilt later if needed.
+Thank you for the patch.
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/kernel/cpu/microcode/amd.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Wed, Mar 26, 2025 at 03:22:54PM +0200, Tomi Valkeinen wrote:
+> Add support for XVUY2101010 format.
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> index ce685dfbf31f..79f58e06f38f 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> @@ -322,6 +322,11 @@ static const struct zynqmp_disp_format avbuf_vid_fmts[] = {
+>  		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YV24_10,
+>  		.swap		= false,
+>  		.sf		= scaling_factors_101010,
+> +	}, {
+> +		.drm_fmt	= DRM_FORMAT_XVUY2101010,
+> +		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_VID_YUV444_10,
+> +		.swap		= false,
+> +		.sf		= scaling_factors_101010,
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index b61028cf5c8a..57bd61f9c69b 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -1171,11 +1171,18 @@ static void microcode_fini_cpu_amd(int cpu)
- 	uci->mc = NULL;
- }
- 
-+static void finalize_late_load_amd(int result)
-+{
-+	if (result)
-+		cleanup();
-+}
-+
- static struct microcode_ops microcode_amd_ops = {
- 	.request_microcode_fw	= request_microcode_amd,
- 	.collect_cpu_info	= collect_cpu_info_amd,
- 	.apply_microcode	= apply_microcode_amd,
- 	.microcode_fini_cpu	= microcode_fini_cpu_amd,
-+	.finalize_late_load	= finalize_late_load_amd,
- 	.nmi_safe		= true,
- };
- 
+I'll have to trust your word on this, the documentation is just too
+wrong in too many places to trust it. Assuming you've tested this
+format,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  	},
+>  };
+>  
+
 -- 
-2.43.5
+Regards,
 
+Laurent Pinchart
 
