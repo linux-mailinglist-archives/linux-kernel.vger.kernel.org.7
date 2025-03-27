@@ -1,252 +1,143 @@
-Return-Path: <linux-kernel+bounces-578550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAFCA7337B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:39:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B3FA73372
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6FC01632A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC55C177C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DB021516D;
-	Thu, 27 Mar 2025 13:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12D21577A;
+	Thu, 27 Mar 2025 13:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oIuTPQr4"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="U+qpCpQl"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E9821577C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1CF2628D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743082697; cv=none; b=jSj3nSYhsYM5y6N0q8ezu1VWJ7bOVBaK2ugnYwM97ZGMBv9VqiE3xHdcVdq0QQK00EVo8bNUgRBOe89e3THxhnDHT5VjnvB0fX5R9L1V4AsY42BOuTu8azMTBDquBUjF/XRlYR0+8msUnz9ivrp2ISq6iI5rHiObffhELAemXpQ=
+	t=1743082678; cv=none; b=WFCPuB/A/W6SDhyZF9Nw3MP5xoFljVGReZmFlbs8W/RRUS5VZFSeXrtVDyi4/zmangVcF5AEzWl0sC66GA6zS+fcWtws1GXnsQjkLv/QKrXzd5L02gytWJyD5K5XSofIWAOC/ooZfYaFV5kfndiIjia0MHr70YnWqsrOMp20DHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743082697; c=relaxed/simple;
-	bh=kIIRNRsBasgXeAvgGmKLFKBXnbMcQtaA2EQf2AEY3So=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jk0ImA3h4iLda2LKBBZAbOlbPpgoCNpn4/SMCZP2hx4+W/4w7dfrG5MejeM+HkES3p+bWpZT79/ViM1aJYu0pUeFADgWFxW+RKlpZmYqO6xaU2kbaf+orcMNEtz0I/X/HVlnTr6tG8gbHl9s3xRWXAhMMj/i1sH0cg8kaGhRCVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oIuTPQr4; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5498c5728aeso7913e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:38:14 -0700 (PDT)
+	s=arc-20240116; t=1743082678; c=relaxed/simple;
+	bh=rNpkBOwnMCPWFZfsYTHfrSwgwbesakBRwmXpFNBrqPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NFwFXczSvtvN6bpy87bUHVPKwnf0ORZCoXtrFxlhMTKHFeuAFOAKw4K1YmmkNRVjT9cQhGqYuZ6Cv3yZ3ByrFW9vgqoxT7ooRPLWX6sLdhwYMKGmKgsKnQcdha7Dzw7tD3tZ96ky3Hx+6rUJdHCt97AO0IcM2sOaGbbq3mHl8sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=U+qpCpQl; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72c1425fbfcso549424a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743082692; x=1743687492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3I6kidT8yoyCNPF/vMyXkNYcuQny2fArQtHsJ+2nUIY=;
-        b=oIuTPQr4QqqFwixub5fa3X32MADwbIyqkrp0ks+mJv2UFOvoUtsvl966bTsmFehcaY
-         eOtwatJiKDpi7/hlemrj/aqjiG70SkBmaGzqtSX1p2n84BUux+RRU/G2ZP2yjfZXTDy1
-         zC1GW9+rI8hS4GE7ci0q0ymgzDEryOjJmTpp1I0ka8oBmlwLRYiuOM4RKFsfzpDpvHzv
-         wApvvtpwOPe/uYRAZMdJUQbXMH1eIqdW7NofZ1oNHQAo/C/rdZsdb5vdXW3ni/bMG/rq
-         Tz/Xzp3lYkeAXEsdpYRJSlzYH9t7lQufpzx/Vket5gwQcgnyRAvFDJCcWgG08/HT7QMM
-         Uf4g==
+        d=broadcom.com; s=google; t=1743082675; x=1743687475; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3wxyBBTTSrkvsCaZeCA7/ggKBG5c60nfjq62fS6D1b8=;
+        b=U+qpCpQlR5YQYn7yo7Zin+8vuGOVW7OKk9V8Ee5NM2/TxdvsgWGEIvjtUYMGpxrazC
+         er/PP+44oiQ0QJZMeqV9X/uAERUPusiR11Y9oUdrWXpGrR5sB8f4j/luO9xQKl1fkhSM
+         8zBuZzTpS4pgDPOjnOoyDCeGGh+QCP5bCSjTw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743082692; x=1743687492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3I6kidT8yoyCNPF/vMyXkNYcuQny2fArQtHsJ+2nUIY=;
-        b=sld6mxxWUFLK9lCo7MDfsWYaldZETrpMYnw3WoPNxEo2nGn2U154CiZITl7cZehvwj
-         r+37SniFu9A0B5V0axFPr2arB9K8RJHlRwbqkGZ5S2tVBznbetUE0ijno9L9sRu++c48
-         P719OrDt99r09l3s4u6X6conHM4RQcqdKJ3uicWfvqtfPIEEFuaEnLR9VlYZDsPsK8fl
-         zzNbZ+TVmmvNSfrxzfnKfBLaIj+mOBMe2iD1IZ1qjUxWEBYiLfboJOLDoZnnMVnRc+Gy
-         jfH4cQeoDEZ55bQ+Y94VJzB1okFNsWWioenTa2kgwcVXKUXCQjwPdaU0NaVN0VsLGalY
-         QYSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8aRq4Ju9KTjk9M6u4V8n/4bZEui5D1WuFEzGxTOXuVPnegMQgBoOgjftLR6NXkxdLiWXbswXyDtymnrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9hUQr5v6I866xxXzmBlbwjkaYXkIP4TGjfFAkcNO8pIN1zK6c
-	cHikAHZ5uUyLXrMJBPxsZBtz2eBjfW7LZnw8NKcvrRd5ntqv+S51tjF16ubtocl78yztwG9jayL
-	ai+xd2KXxE8P9ruyHGItZjOyaSMkLKco4aN8r
-X-Gm-Gg: ASbGncuppcmD7vT6dBWc3sNh7GIo6+9b3AVjWD8d8Aj75Q5RfVwd/utHFwqBY/8ucW7
-	vKcC9pOwdjUr87uK6YnNEGO/3Qnj5K3ZLGrirbVW9H7PspGgI2MP2Bro6F91IVwORO/Ha+1NMnW
-	xxoeYbS2qy3M715O0edCrbDWL7OdI=
-X-Google-Smtp-Source: AGHT+IG6DwR/h1hseW+7qTgS+WfavwNgWJNajwGW+BUDRmh8Zg28wiVit57ecvcqd2quEurKXBnbllnrF4W1FOLRxq8=
-X-Received: by 2002:a05:6512:3259:b0:542:6b39:1d57 with SMTP id
- 2adb3069b0e04-54b04672ef8mr130900e87.3.1743082692126; Thu, 27 Mar 2025
- 06:38:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743082675; x=1743687475;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wxyBBTTSrkvsCaZeCA7/ggKBG5c60nfjq62fS6D1b8=;
+        b=E2kZQffR+3bhw9zcpreL+U1uet6ZdGz8Vc1dRSNiVmFsx4HrF0qzXjd99e7HX+XYQZ
+         I+VLq8a9VZmJ5709MJsq95PouyDG30v+L1kSZ4xXCuio/FayjWKtgS4iLoJc1XE5ddqD
+         RklG73MnVU3/doAhDd3+P8G8FPO8GhUcsFt3eiOgjAplTrLr15geLV7MUJnSfFdA26C5
+         Edvdlbc9ZjtlMpvge/uatzWdK2MC/CZx47aRLX4l+4IRa53imdB7QnWaFrgmoMuNgXku
+         f9hrgfi5SxXUXJ6ORp3x5VAHHf7YpBxfQg5fmCrVzewRw7jMYXcZUAa/K4WaoraehIUl
+         AKIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+RFA/zqNiBlXeMDuV2pSqircR9a/OPLEmNYYuitU45Q/v3xwMOX6f4NqQZYDsc4OAuP9+YUmaHERO/C4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6TZjHf5tldeWAQebrs1d5EhbgqW0T2tUDxl8iW9ROHV4Uguz8
+	lOlv5WF7kmLIbEG9kpqDph1MiNu/WYbBBpBQS0NaLlaxMm0xXk7cXPSIV8bbUQ==
+X-Gm-Gg: ASbGncvECShx2V6r+1hiy4us0FBtmAC3fTWFUYrn8zFvNlld8XGjRgiFBeUf/7RCeDz
+	N+D1iuctcOvKwlxVlFv8W2KX7wmggwXRIJSUXlSNN8Uz4kQiCDr4ALbneXgi1A+EYvH0yLbRtnS
+	XWgJunXBRZiqkCxFhmITfT/15HLVzvUKwms9FEAh56XOg1Wf/kX6w2SNqP2X/E7algUcaGtBxXG
+	/dLBd7aUYFUsK3yUfU6aXVlEVCelsRUH+NeLRIyYf1RMwd0SOqc3yRwBAXP+Q5X1ow29sQ29LD6
+	xfo30YbDTWtv7EHa3SzDjlDCTr09nwC1luNKR31rv4EMhPJSB0Ot1x2care+YPlIWYfozujfBq9
+	MleO7nG5tBHf5TtL75wI=
+X-Google-Smtp-Source: AGHT+IF4H/7m44xIg91Kx87ImIg9fG9O3Q1piBM60Cx9fFO6GaxY44DBRx234/cHw34SJRHt6L7wMg==
+X-Received: by 2002:a05:6808:3010:b0:3fa:cf11:1493 with SMTP id 5614622812f47-3fefa4e04c4mr2018817b6e.1.1743082675422;
+        Thu, 27 Mar 2025 06:37:55 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf6bd300sm2798281b6e.6.2025.03.27.06.37.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 06:37:54 -0700 (PDT)
+Message-ID: <f3c4e4db-b755-4075-8263-0274f4583863@broadcom.com>
+Date: Thu, 27 Mar 2025 06:37:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324031758.865242-1-khtsai@google.com> <20250326230111.e4jn3jy2xx2lrote@synopsys.com>
-In-Reply-To: <20250326230111.e4jn3jy2xx2lrote@synopsys.com>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Thu, 27 Mar 2025 21:37:44 +0800
-X-Gm-Features: AQ5f1Jr6Jvsxqs-qzrtxsHRpqIbJn4OSyozSZIdMsZf8d3jJM3fkvYIeG7rreZo
-Message-ID: <CAKzKK0o_a+MSeatqJRXwcPLkHiakxaieMRE6q=8dcoGsA7Pmqg@mail.gmail.com>
-Subject: Re: [PATCH v2] usb: dwc3: Abort suspend on soft disconnect failure
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4,net] net: phy: broadcom: Correct BCM5221 PHY model detection
+To: Jim Liu <jim.t90615@gmail.com>, JJLIU0@nuvoton.com, andrew@lunn.ch,
+ hkallweit1@gmail.com, kuba@kernel.org, linux@armlinux.org.uk,
+ edumazet@google.com, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, giulio.benetti+tekvox@benettiengineering.com,
+ bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+References: <20250327062942.3597402-1-JJLIU0@nuvoton.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250327062942.3597402-1-JJLIU0@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 27, 2025 at 7:01=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsys=
-.com> wrote:
->
-> On Mon, Mar 24, 2025, Kuen-Han Tsai wrote:
-> > When dwc3_gadget_soft_disconnect() fails, dwc3_suspend_common() keeps
-> > going with the suspend, resulting in a period where the power domain is
-> > off, but the gadget driver remains connected.  Within this time frame,
-> > invoking vbus_event_work() will cause an error as it attempts to access
-> > DWC3 registers for endpoint disabling after the power domain has been
-> > completely shut down.
-> >
-> > Abort the suspend sequence when dwc3_gadget_suspend() cannot halt the
-> > controller and proceeds with a soft connect.
-> >
-> > Fixes: c8540870af4c ("usb: dwc3: gadget: Improve dwc3_gadget_suspend()
->
-> Keep Fixes tag in a single line. I think this issue goes further back,
-> perhaps the Fixes tag better reference here?
->
-> 9f8a67b65a49 ("usb: dwc3: gadget: fix gadget suspend/resume")
 
-Fixed! I really appreciate your patience with this and the detailed code re=
-view!
 
-Sent out the v3 patch.
-https://lore.kernel.org/linux-usb/20250327133233.2566528-1-khtsai@google.co=
-m/
+On 3/26/2025 11:29 PM, Jim Liu wrote:
+> Correct detect condition is applied to the entire 5221 family of PHYs.
+> 
+> Fixes: 3abbd0699b67 ("net: phy: broadcom: add support for BCM5221 phy")
+> Signed-off-by: Jim Liu <jim.t90615@gmail.com>
+> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Thanks,
-Kuen-Han
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
->
-> Thanks,
-> Thinh
->
-> > and dwc3_gadget_resume()")
-> > CC: stable@vger.kernel.org
-> > Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
-> > ---
-> >
-> > Kernel panic - not syncing: Asynchronous SError Interrupt
-> > Workqueue: events vbus_event_work
-> > Call trace:
-> >  dump_backtrace+0xf4/0x118
-> >  show_stack+0x18/0x24
-> >  dump_stack_lvl+0x60/0x7c
-> >  dump_stack+0x18/0x3c
-> >  panic+0x16c/0x390
-> >  nmi_panic+0xa4/0xa8
-> >  arm64_serror_panic+0x6c/0x94
-> >  do_serror+0xc4/0xd0
-> >  el1h_64_error_handler+0x34/0x48
-> >  el1h_64_error+0x68/0x6c
-> >  readl+0x4c/0x8c
-> >  __dwc3_gadget_ep_disable+0x48/0x230
-> >  dwc3_gadget_ep_disable+0x50/0xc0
-> >  usb_ep_disable+0x44/0xe4
-> >  ffs_func_eps_disable+0x64/0xc8
-> >  ffs_func_set_alt+0x74/0x368
-> >  ffs_func_disable+0x18/0x28
-> >  composite_disconnect+0x90/0xec
-> >  configfs_composite_disconnect+0x64/0x88
-> >  usb_gadget_disconnect_locked+0xc0/0x168
-> >  vbus_event_work+0x3c/0x58
-> >  process_one_work+0x1e4/0x43c
-> >  worker_thread+0x25c/0x430
-> >  kthread+0x104/0x1d4
-> >  ret_from_fork+0x10/0x20
-> >
-> > ---
-> > Changelog:
-> >
-> > v2:
-> > - move declarations in separate lines
-> > - add the Fixes tag
-> >
-> >  drivers/usb/dwc3/core.c   |  9 +++++++--
-> >  drivers/usb/dwc3/gadget.c | 22 +++++++++-------------
-> >  2 files changed, 16 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > index 66a08b527165..1cf1996ae1fb 100644
-> > --- a/drivers/usb/dwc3/core.c
-> > +++ b/drivers/usb/dwc3/core.c
-> > @@ -2388,6 +2388,7 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
-pm_message_t msg)
-> >  {
-> >       u32 reg;
-> >       int i;
-> > +     int ret;
-> >
-> >       if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
-> >               dwc->susphy_state =3D (dwc3_readl(dwc->regs, DWC3_GUSB2PH=
-YCFG(0)) &
-> > @@ -2406,7 +2407,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
-pm_message_t msg)
-> >       case DWC3_GCTL_PRTCAP_DEVICE:
-> >               if (pm_runtime_suspended(dwc->dev))
-> >                       break;
-> > -             dwc3_gadget_suspend(dwc);
-> > +             ret =3D dwc3_gadget_suspend(dwc);
-> > +             if (ret)
-> > +                     return ret
-> >               synchronize_irq(dwc->irq_gadget);
-> >               dwc3_core_exit(dwc);
-> >               break;
-> > @@ -2441,7 +2444,9 @@ static int dwc3_suspend_common(struct dwc3 *dwc, =
-pm_message_t msg)
-> >                       break;
-> >
-> >               if (dwc->current_otg_role =3D=3D DWC3_OTG_ROLE_DEVICE) {
-> > -                     dwc3_gadget_suspend(dwc);
-> > +                     ret =3D dwc3_gadget_suspend(dwc);
-> > +                     if (ret)
-> > +                             return ret;
-> >                       synchronize_irq(dwc->irq_gadget);
-> >               }
-> >
-> > diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-> > index 89a4dc8ebf94..316c1589618e 100644
-> > --- a/drivers/usb/dwc3/gadget.c
-> > +++ b/drivers/usb/dwc3/gadget.c
-> > @@ -4776,26 +4776,22 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
-> >       int ret;
-> >
-> >       ret =3D dwc3_gadget_soft_disconnect(dwc);
-> > -     if (ret)
-> > -             goto err;
-> > -
-> > -     spin_lock_irqsave(&dwc->lock, flags);
-> > -     if (dwc->gadget_driver)
-> > -             dwc3_disconnect_gadget(dwc);
-> > -     spin_unlock_irqrestore(&dwc->lock, flags);
-> > -
-> > -     return 0;
-> > -
-> > -err:
-> >       /*
-> >        * Attempt to reset the controller's state. Likely no
-> >        * communication can be established until the host
-> >        * performs a port reset.
-> >        */
-> > -     if (dwc->softconnect)
-> > +     if (ret && dwc->softconnect) {
-> >               dwc3_gadget_soft_connect(dwc);
-> > +             return ret;
-> > +     }
-> >
-> > -     return ret;
-> > +     spin_lock_irqsave(&dwc->lock, flags);
-> > +     if (dwc->gadget_driver)
-> > +             dwc3_disconnect_gadget(dwc);
-> > +     spin_unlock_irqrestore(&dwc->lock, flags);
-> > +
-> > +     return 0;
-> >  }
-> >
-> >  int dwc3_gadget_resume(struct dwc3 *dwc)
-> > --
-> > 2.49.0.395.g12beb8f557-goog
-> >
+Thanks!
+-- 
+Florian
+
 
