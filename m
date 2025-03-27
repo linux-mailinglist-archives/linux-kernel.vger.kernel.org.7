@@ -1,205 +1,325 @@
-Return-Path: <linux-kernel+bounces-578561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CCBA73394
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:49:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF230A733A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDA7162140
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E9A1898AC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CF5215799;
-	Thu, 27 Mar 2025 13:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCjxdSSk"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71661215F6B;
+	Thu, 27 Mar 2025 13:54:53 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACC41482E7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5EF20CCEA;
+	Thu, 27 Mar 2025 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743083335; cv=none; b=OQquShX8LeZqte8GNXJHqRX5+1FBIu53eRwuhK/rFXPUQK61OFN1A78zi1YlNxjaP9YngFbFM3UgQsFLZbdvBDYUoH8vJZ3UT9W8H2SdKJQju4Bvl94Bcg34M/kuziHxN5TuuR1aNls/kU4oT4jUpWMIY8NEtJ+HD0dMomGoW4E=
+	t=1743083692; cv=none; b=FW7rWicCocFJNch8gY1793XtixMeO0SfvUrzEiZhe6ZfQ6xEal1LMY4VgYOOgl3YanRlSN0LRxhLnZ6FctPvgKyI8bBbTo0y+EBFa+UXs48ws2YgYUX0E6hIFUHF0bSbiFllGTBivEG0qnTl00sl0TSjoThkovCQfgdgSqimF7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743083335; c=relaxed/simple;
-	bh=BqIn0wrCuMc2UTLXaPpGz2GzyQ5thvKd6jrL79PHxhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UvyZcnqkGYMMPobYqjyJy2Hh1PSHY07jF1a1angET4fakU9jsikOM2mIDSB2uBPxcVeaL1zqBCqHRFOHLJqtfR8R+J4SXYnG7BuqzHXZkTsfpPLfoVmO0WwGVikYBPkWLwcNK5ZrNOk8yv5rs6WFgE0+EFZiluEzpkoM4YBD25k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCjxdSSk; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso1585100a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743083331; x=1743688131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1cShwsASNWb4Jp35AHxvP4AtgmKCcX2D/cSekQMeipE=;
-        b=iCjxdSSktNi92j53Ac6qIfvL7jclxo14Vo3V4dcz5dkpNtk1JoBY6s5xG5w+I3Q2Jw
-         HF3YESee+o4RHonkMbeHk+qCnnKkEVu1DxmsGft2R0BWlAMElXlWaoayIQrvogKylbdy
-         GB9N78hS+jSGnCJZIgYsezQ40ZAT5/E6Vv1PfrqL9E7t7LStJM4FuTorxSGUf/U6bcic
-         sgUFf4xAL27ZlGYoHimLodc68QKwEqsFjbdnGP/RJuc77agLqX0lZ2Wm8u6kGc81kzf1
-         RzyuhCeJhbCWr1k2+3Cba5KLdcW7FJrm7Opdcr+jRLjVEes4GMS7BFcHj7gItj5mx1nk
-         aW5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743083331; x=1743688131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1cShwsASNWb4Jp35AHxvP4AtgmKCcX2D/cSekQMeipE=;
-        b=ED4nniqFU9ofnFAB4ax6n88gq/5dZ2L9PdJ5jLjDb9uZxljaoX3Y/POWbBjQ2O0K4k
-         ZjgLfnnl4SIiMsm9mza9c3jk978fcs5OHjhv9ovnofS6fl2B5+3LvUVQWJA6H0Rfk8tT
-         Wz9W0MwJlMYTLcN7FXOwYD0BF1X+Ay9GN9FvSoKfmULheO4FJN3gHaj5IPZBXHscgRHj
-         9WxGcg4Kp9cIR7fwiEWVZQLfyYUwiAlG0Cq4GzFR0oKKymmnGln2QqY8DSZ7Ap6hL632
-         XWt6daxBFX+CBRHiIU1WMiHwQS1X8NT+oEgH3Hsuk6jqbwALiCgTv86Ns0QEERHOshpW
-         R56w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFmbTvK0fBpplrnR2uVFyRiWWkeJKk7RVvPd2cNQXGnWNEGN/Bb8B+o7LE03WnUuqgVjLZAtMRdYPFIDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3JhzOO9f5tbfaYXb4IpOEVC0DNZPTcob/sEhW4GYEfNuq1+T+
-	7gQjIpfabs0sGY+rlV6L033f0uE4FDHyhp+bVTqUKvv832JGLXIgBgZ5bnv0nXxpqD23PeLgCu5
-	SmbNGifv41wutPigb95WdRnfHcIk=
-X-Gm-Gg: ASbGncs/HAdzB+IgDUpU2Ixs6HboDLQ7u1xd989vCP1eXZFJv0YKfDdfRSzmWXsZXgt
-	lxVhDAssayDiDk2S4oGODhtgQJbSrbulHkal/09k5YrfiojuAw2/0MkNre6bHF4n7EYrnnG4VAJ
-	11FmJOG3mmMwCiULlga8i+UJFq
-X-Google-Smtp-Source: AGHT+IG8tThHD6jWDTQjmnm+9IMPz27ZM/JzO/RcyOsJuWqSoOf5JkHpUl0R3AKSFEsEeRwFhBe+mP74VNwy9s7sHk4=
-X-Received: by 2002:a05:6402:5187:b0:5ec:922f:7a02 with SMTP id
- 4fb4d7f45d1cf-5ed8e496a71mr3793788a12.10.1743083331045; Thu, 27 Mar 2025
- 06:48:51 -0700 (PDT)
+	s=arc-20240116; t=1743083692; c=relaxed/simple;
+	bh=BxqCn8pY2A7yg8NNsx1eEw/G6X+czZQ/r8E3bVMCuow=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlxylrV8GMSmPxEnOyp8Iwem7nJ4EaYUUpae9mK7vDILoVkUXcIjeeOk+jBJdFAbSP43bqdQAFZutw6zh5ifoCpqQdQMnoDe3dcRHOPhgpN87IWuPW8+/hQ09vPvZsaqxaaUhRcPBUTw8fcl0bQSgxVOJ6WGvGhj4eyNSl62Uvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZNlWZ4qxkz4f3kFW;
+	Thu, 27 Mar 2025 21:54:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A0A861A0E9A;
+	Thu, 27 Mar 2025 21:54:41 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl+fWOVnR7LpHg--.9389S4;
+	Thu, 27 Mar 2025 21:54:41 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: mtkaczyk@kernel.org,
+	linux-raid@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC v2] mdadm: add support for new lockless bitmap
+Date: Thu, 27 Mar 2025 21:48:53 +0800
+Message-Id: <20250327134853.1069356-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202503241406.5c9cb80a-lkp@intel.com> <87pli4z02w.ffs@tglx>
- <6sn76aya225pqikijue5uv5h3lyqk262hc6ru3vemn7xofdftd@sw7gith52xh7>
- <CANn89iKjCgmxtiLeVAiXODHbbR7=gYYi5cfAS1hS5qn+z=-o1Q@mail.gmail.com>
- <877c4azyez.ffs@tglx> <CANn89iKAkio9wm73RNi9+KngNaS+Au2oaf0Tz9xOd+QEhFSkyw@mail.gmail.com>
- <CANn89i+nAN+p-qRypKxB4ESohXkKVPmHuV_m86j3DPv6_+C=oQ@mail.gmail.com>
- <87v7ruycfz.ffs@tglx> <CANn89iJvxYsF0Y9jH+Oa2=akrydR8qbWAMbz_S6YZQMSe=2QWQ@mail.gmail.com>
- <87jz8ay5rh.ffs@tglx> <CANn89i+r-k-2UNtnyWC6PaJmO_R6Wc6UROgeoir5BmgVV8wDqQ@mail.gmail.com>
- <CAGudoHHVJWeRWPyArnYnJERPR2gyU0PzBTwx=wWKnCemry45Nw@mail.gmail.com> <CANn89iLGof+T6Ksp56vTXpwKdn60cJ7FWrm-Y-3TNmCNW+Hq_A@mail.gmail.com>
-In-Reply-To: <CANn89iLGof+T6Ksp56vTXpwKdn60cJ7FWrm-Y-3TNmCNW+Hq_A@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 27 Mar 2025 14:48:37 +0100
-X-Gm-Features: AQ5f1JpKomRkGYmjsgSFzFHODlirXHVWlwC4ZRc4JNJcxh6kNbtiGglHymgUuI8
-Message-ID: <CAGudoHE_K4iBHSNjKEPuQxJJ-cNx_8f74dou7qdEb58Pc4eKBQ@mail.gmail.com>
-Subject: Re: [tip:timers/core] [posix] 1535cb8028: stress-ng.epoll.ops_per_sec
- 36.2% regression
-To: Eric Dumazet <edumazet@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Benjamin Segall <bsegall@google.com>, Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnCl+fWOVnR7LpHg--.9389S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxtFWfZFykGFyxZF1kZr15CFg_yoW3XF1DpF
+	42vr95Cr1rGrs3Wwnrt34kuFWrtw1vyFnFkrZ7Zw4akF1FqrnIvF1rGF1UA3s3Wrs5Ja42
+	9Fn8Kw18u3y7XrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Mar 27, 2025 at 2:44=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Thu, Mar 27, 2025 at 2:43=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
- wrote:
-> >
-> > On Thu, Mar 27, 2025 at 2:17=E2=80=AFPM Eric Dumazet <edumazet@google.c=
-om> wrote:
-> > >
-> > > On Thu, Mar 27, 2025 at 2:14=E2=80=AFPM Thomas Gleixner <tglx@linutro=
-nix.de> wrote:
-> > > >
-> > > > On Thu, Mar 27 2025 at 12:37, Eric Dumazet wrote:
-> > > > > On Thu, Mar 27, 2025 at 11:50=E2=80=AFAM Thomas Gleixner <tglx@li=
-nutronix.de> wrote:
-> > > > >> Cute. How much bloat does it cause?
-> > > > >
-> > > > > This would expand 'struct ucounts' by 192 bytes on x86, if the pa=
-tch
-> > > > > was actually working :)
-> > > > >
-> > > > > Note sure if it is feasible without something more intrusive like
-> > > >
-> > > > I'm not sure about the actual benefit. The problem is that parallel
-> > > > invocations which access the same ucount still will run into conten=
-tion
-> > > > of the cache line they are modifying.
-> > > >
-> > > > For the signal case, all invocations increment rlimit[SIGPENDING], =
-so
-> > > > putting that into a different cache line does not buy a lot.
-> > > >
-> > > > False sharing is when you have a lot of hot path readers on some ot=
-her
-> > > > member of the data structure, which happens to share the cache line=
- with
-> > > > the modified member. But that's not really the case here.
-> > >
-> > > We applications stressing all the counters at the same time (from
-> > > different threads)
-> > >
-> > > You seem to focus on posix timers only :)
-> >
-> > Well in that case:
-> > (gdb) ptype /o struct ucounts
-> > /* offset      |    size */  type =3D struct ucounts {
-> > /*      0      |      16 */    struct hlist_node {
-> > /*      0      |       8 */        struct hlist_node *next;
-> > /*      8      |       8 */        struct hlist_node **pprev;
-> >
-> >                                    /* total size (bytes):   16 */
-> >                                } node;
-> > /*     16      |       8 */    struct user_namespace *ns;
-> > /*     24      |       4 */    kuid_t uid;
-> > /*     28      |       4 */    atomic_t count;
-> > /*     32      |      96 */    atomic_long_t ucount[12];
-> > /*    128      |     256 */    struct {
-> > /*      0      |       8 */        atomic_long_t val;
-> >                                } rlimit[4];
-> >
-> >                                /* total size (bytes):  384 */
-> >                              }
-> >
-> > This comes from malloc. Given 384 bytes of size it is going to be
-> > backed by a 512-byte sized buffer -- that's a clear cut waste of 128
-> > bytes.
-> >
-> > It is plausible creating a 384-byte sized slab for kmalloc would help
-> > save memory overall (not just for this specific struct), but that
-> > would require extensive testing in real workloads. I think Google is
-> > in position to do it on their fleet and android? fwiw Solaris and
-> > FreeBSD do have slabs of this size and it does save memory over there.
-> > I understand it is a tradeoff, hence I'm not claiming this needs to be
-> > added. I do claim it does warrant evaluation, but I wont blame anyone
-> > for not wanting to do dig into it.
-> >
-> > The other option is to lean into it. In this case I point out the
-> > refcount shares the cacheline with some of the limits and that it
-> > could be moved to a dedicated line while still keeping the struct <
-> > 512 bytes, thus not spending more memory on allocation. the refcount
-> > changes less frequently than limits themselves so it's not a big deal,
-> > but it can be adjusted "for free" if you will.
-> >
-> > while here I would probably change the name of the field. A reference
-> > counter named "count" in a struct named "ucounts", followed by an
-> > "ucount" array is rather unpleasing. How about s/count/refcount?
->
->
-> How many 'struct ucounts' are in use in a typical host ?
->
-> Compared to other costs, this seems pure noise to me.
+From: Yu Kuai <yukuai3@huawei.com>
 
-I did not claim this is going to increase memory usage in a significant man=
-ner.
+A new major number 6 is used for the new bitmap.
 
-I claim regardless of this change a 384-byte slab for kmalloc may be
-saving memory and this bit may be enough of an excuse to evaluate it,
-should someone be interested.
+Noted that for the kernel that doesn't support lockless bitmap, create
+such array will fail:
 
-Apart from that I claim that if the 512-byte is going to be used to
-back the 384 bytes used by the struct, the patch can trivially move
-the refcount to a dedicated cacheline to avoid some of the bouncing
-and still fit in the 512-byte allocation. I see no reason to not do
-it.
+md0: invalid bitmap file superblock: unrecognized superblock version.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+Changes in v2:
+ - add support for Incremental mode;
+ - use sysfs API bitmap_version to notify kernel to use llbitmap;
+
+ Assemble.c    |  5 +++++
+ Create.c      |  8 +++++++-
+ Grow.c        |  3 ++-
+ Incremental.c | 34 ++++++++++++++++++++++++++++++++++
+ bitmap.h      |  8 ++++++--
+ mdadm.c       |  9 ++++++++-
+ mdadm.h       |  2 ++
+ super1.c      | 14 ++++++++++++++
+ 8 files changed, 78 insertions(+), 5 deletions(-)
+
+diff --git a/Assemble.c b/Assemble.c
+index f8099cd3..5d46379d 100644
+--- a/Assemble.c
++++ b/Assemble.c
+@@ -1029,6 +1029,11 @@ static int start_array(int mdfd,
+ 	int i;
+ 	unsigned int req_cnt;
+ 
++	if (st->ss->get_bitmap_version &&
++	    st->ss->get_bitmap_version(st) == BITMAP_MAJOR_LOCKLESS &&
++	    sysfs_set_str(content, NULL, "bitmap_version", "llbitmap"))
++		    return 1;
++
+ 	if (content->journal_device_required && (content->journal_clean == 0)) {
+ 		if (!c->force) {
+ 			pr_err("Not safe to assemble with missing or stale journal device, consider --force.\n");
+diff --git a/Create.c b/Create.c
+index fd6c9215..a85c0419 100644
+--- a/Create.c
++++ b/Create.c
+@@ -541,6 +541,8 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 			pr_err("At least 2 nodes are needed for cluster-md\n");
+ 			return 1;
+ 		}
++	} else if (s->btype == BitmapLockless) {
++		major_num = BITMAP_MAJOR_LOCKLESS;
+ 	}
+ 
+ 	memset(&info, 0, sizeof(info));
+@@ -1182,7 +1184,8 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 	 * to stop another mdadm from finding and using those devices.
+ 	 */
+ 
+-	if (s->btype == BitmapInternal || s->btype == BitmapCluster) {
++	if (s->btype == BitmapInternal || s->btype == BitmapCluster ||
++	    s->btype == BitmapLockless) {
+ 		if (!st->ss->add_internal_bitmap) {
+ 			pr_err("internal bitmaps not supported with %s metadata\n",
+ 				st->ss->name);
+@@ -1194,6 +1197,9 @@ int Create(struct supertype *st, struct mddev_ident *ident, int subdevs,
+ 			pr_err("Given bitmap chunk size not supported.\n");
+ 			goto abort_locked;
+ 		}
++		if (s->btype == BitmapLockless &&
++		    sysfs_set_str(&info, NULL, "bitmap_version", "llbitmap") < 0)
++			goto abort_locked;
+ 	}
+ 
+ 	if (sysfs_init(&info, mdfd, NULL)) {
+diff --git a/Grow.c b/Grow.c
+index cc1be6cc..3905f64c 100644
+--- a/Grow.c
++++ b/Grow.c
+@@ -383,7 +383,8 @@ int Grow_addbitmap(char *devname, int fd, struct context *c, struct shape *s)
+ 		free(mdi);
+ 	}
+ 
+-	if (s->btype == BitmapInternal || s->btype == BitmapCluster) {
++	if (s->btype == BitmapInternal || s->btype == BitmapCluster ||
++	    s->btype == BitmapLockless) {
+ 		int rv;
+ 		int d;
+ 		int offset_setable = 0;
+diff --git a/Incremental.c b/Incremental.c
+index 228d2bdd..de2edecb 100644
+--- a/Incremental.c
++++ b/Incremental.c
+@@ -552,6 +552,40 @@ int Incremental(struct mddev_dev *devlist, struct context *c,
+ 			if (d->disk.state & (1<<MD_DISK_REMOVED))
+ 				remove_disk(mdfd, st, sra, d);
+ 
++		if (st->ss->get_bitmap_version) {
++			if (st->sb == NULL) {
++				dfd = dev_open(devname, O_RDONLY);
++				if (dfd < 0) {
++					rv = 1;
++					goto out;
++				}
++
++				rv = st->ss->load_super(st, dfd, NULL);
++				close(dfd);
++				dfd = -1;
++				if (rv) {
++					pr_err("load super failed %d\n", rv);
++					goto out;
++				}
++			}
++
++			if (st->ss->get_bitmap_version(st) == BITMAP_MAJOR_LOCKLESS) {
++				if (sra == NULL) {
++					sra = sysfs_read(mdfd, NULL, (GET_DEVS | GET_STATE |
++								    GET_OFFSET | GET_SIZE));
++					if (!sra) {
++						pr_err("can't read mdinfo\n");
++						rv = 1;
++						goto out;
++					}
++				}
++
++				rv = sysfs_set_str(sra, NULL, "bitmap_version", "llbitmap");
++				if (rv)
++					goto out;
++			}
++		}
++
+ 		if ((sra == NULL || active_disks >= info.array.working_disks) &&
+ 		    trustworthy != FOREIGN)
+ 			rv = ioctl(mdfd, RUN_ARRAY, NULL);
+diff --git a/bitmap.h b/bitmap.h
+index 7b1f80f2..3a08cf60 100644
+--- a/bitmap.h
++++ b/bitmap.h
+@@ -13,6 +13,7 @@
+ #define BITMAP_MAJOR_HI 4
+ #define	BITMAP_MAJOR_HOSTENDIAN 3
+ #define	BITMAP_MAJOR_CLUSTERED 5
++#define	BITMAP_MAJOR_LOCKLESS 6
+ 
+ #define BITMAP_MINOR 39
+ 
+@@ -139,8 +140,11 @@ typedef __u16 bitmap_counter_t;
+ 
+ /* use these for bitmap->flags and bitmap->sb->state bit-fields */
+ enum bitmap_state {
+-	BITMAP_ACTIVE = 0x001, /* the bitmap is in use */
+-	BITMAP_STALE  = 0x002  /* the bitmap file is out of date or had -EIO */
++        BITMAP_STALE       = 1,  /* the bitmap file is out of date or had -EIO */
++        BITMAP_WRITE_ERROR = 2, /* A write error has occurred */
++        BITMAP_FIRST_USE   = 3,
++        BITMAP_DAEMON_BUSY = 4,
++        BITMAP_HOSTENDIAN  =15,
+ };
+ 
+ /* the superblock at the front of the bitmap file -- little endian */
+diff --git a/mdadm.c b/mdadm.c
+index 1fd4dcba..7a64fba2 100644
+--- a/mdadm.c
++++ b/mdadm.c
+@@ -56,6 +56,12 @@ static mdadm_status_t set_bitmap_value(struct shape *s, struct context *c, char
+ 		return MDADM_STATUS_SUCCESS;
+ 	}
+ 
++	if (strcmp(val, "lockless") == 0) {
++		s->btype = BitmapLockless;
++		pr_info("Experimental lockless bitmap, use at your own disk!\n");
++		return MDADM_STATUS_SUCCESS;
++	}
++
+ 	if (strcmp(val, "clustered") == 0) {
+ 		s->btype = BitmapCluster;
+ 		/* Set the default number of cluster nodes
+@@ -1251,7 +1257,8 @@ int main(int argc, char *argv[])
+ 			pr_err("--bitmap is required for consistency policy: %s\n",
+ 			       map_num_s(consistency_policies, s.consistency_policy));
+ 			exit(2);
+-		} else if ((s.btype == BitmapInternal || s.btype == BitmapCluster) &&
++		} else if ((s.btype == BitmapInternal || s.btype == BitmapCluster ||
++			    s.btype == BitmapLockless) &&
+ 			   s.consistency_policy != CONSISTENCY_POLICY_BITMAP &&
+ 			   s.consistency_policy != CONSISTENCY_POLICY_JOURNAL) {
+ 			pr_err("--bitmap is not compatible with consistency policy: %s\n",
+diff --git a/mdadm.h b/mdadm.h
+index 77705b11..cc21e0d3 100644
+--- a/mdadm.h
++++ b/mdadm.h
+@@ -607,6 +607,7 @@ enum bitmap_type {
+ 	BitmapNone,
+ 	BitmapInternal,
+ 	BitmapCluster,
++	BitmapLockless,
+ 	BitmapUnknown,
+ };
+ 
+@@ -1202,6 +1203,7 @@ extern struct superswitch {
+ 	int (*add_internal_bitmap)(struct supertype *st, int *chunkp,
+ 				   int delay, int write_behind,
+ 				   unsigned long long size, int may_change, int major);
++	int (*get_bitmap_version)(struct supertype *st);
+ 	/* Perform additional setup required to activate a bitmap.
+ 	 */
+ 	int (*set_bitmap)(struct supertype *st, struct mdinfo *info);
+diff --git a/super1.c b/super1.c
+index fe3c4c64..caa2569d 100644
+--- a/super1.c
++++ b/super1.c
+@@ -2487,6 +2487,14 @@ static __u64 avail_size1(struct supertype *st, __u64 devsize,
+ 	return 0;
+ }
+ 
++static int get_bitmap_version1(struct supertype *st)
++{
++	struct mdp_superblock_1 *sb = st->sb;
++	bitmap_super_t *bms = (bitmap_super_t *)(((char *)sb) + MAX_SB_SIZE);
++
++	return __le32_to_cpu(bms->version);
++}
++
+ static int
+ add_internal_bitmap1(struct supertype *st,
+ 		     int *chunkp, int delay, int write_behind,
+@@ -2650,6 +2658,11 @@ add_internal_bitmap1(struct supertype *st,
+ 		bms->cluster_name[len - 1] = '\0';
+ 	}
+ 
++	/* kernel will initialize bitmap */
++	if (major == BITMAP_MAJOR_LOCKLESS) {
++		bms->state = __cpu_to_le32(1 << BITMAP_FIRST_USE);
++		bms->sectors_reserved = __le32_to_cpu(room);
++	}
+ 	*chunkp = chunk;
+ 	return 0;
+ }
+@@ -3025,6 +3038,7 @@ struct superswitch super1 = {
+ 	.avail_size = avail_size1,
+ 	.add_internal_bitmap = add_internal_bitmap1,
+ 	.locate_bitmap = locate_bitmap1,
++	.get_bitmap_version = get_bitmap_version1,
+ 	.write_bitmap = write_bitmap1,
+ 	.free_super = free_super1,
+ #if __BYTE_ORDER == BIG_ENDIAN
+-- 
+2.39.2
+
 
