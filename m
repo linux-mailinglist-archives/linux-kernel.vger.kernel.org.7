@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-578332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54E1A72E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:51:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE62A72E33
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209413BD579
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5A03B847C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FB320FA91;
-	Thu, 27 Mar 2025 10:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B2320FAB2;
+	Thu, 27 Mar 2025 10:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RBkw9r1W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CKdrdXBe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kYIX/XN0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CKdrdXBe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kYIX/XN0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443520E708;
-	Thu, 27 Mar 2025 10:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A098D20FAA1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743072552; cv=none; b=lq2T2ioHW2AXOgWzVqBXpVVjjAJHzSV5ntejYDx7kx6Pw7i4GPTZkITkGmgtmmlhkjXY0Jh2FpxExX7ZQPvdRTqpys0rJ5Kue/LdDdSFxzUS61YtgBZ943AZ8oNVNTBH6fnMrBr1q6Rn1gnHOM/NtSsqfYZFZ2wNL2trXSfMTR8=
+	t=1743072580; cv=none; b=NToGu9/2DCQCUskhU91weugy2VylfFDSXtcrxkwuWF1wnXy6ySTS0QHEtMcN//uOTJJaWS3RfxFhG4ozt5XAjsl3dv2vu+FHyiiy0gzkZIsadpnlwIn/RDKD0xcL62Mz//bmDlBwqU2qbcAOn+aDAX/73u93ThB5YO2evDjxq0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743072552; c=relaxed/simple;
-	bh=P3x1nC7kSQVvmwQm9Ec9eNMVj34oIiVnU6SzBUoQOaM=;
+	s=arc-20240116; t=1743072580; c=relaxed/simple;
+	bh=bZp6+qoWUwtsAHkj3pA5HDm49A4zRsnAPTdR/T+G4vY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RoUt8iF/TJlB51HquPTaQPs8kUi6NzazhKa5xa7e0b5whCb0wtCTDdWkEn27ar0JL0z/h7R371F7vakMS0kJ/FzHxSEC9CPkrY11buknsCJ1l3O2HMz2nh9z+SbV7MnlFCWj9WNhOQNjI/YkVZ9tbOiewa8oiXzJ9i8R1+d0h+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RBkw9r1W; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743072551; x=1774608551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P3x1nC7kSQVvmwQm9Ec9eNMVj34oIiVnU6SzBUoQOaM=;
-  b=RBkw9r1W+hLGSvhZjwmHk4ALFh6Vyfllm4OfYjE72K2B2Pkk9Wv0KWN7
-   qXjl8eskl4EIkHR3i/hU3sVJGTKA6wgw//sQcP/VX5YRid2TAleMEyQYs
-   NQceqGDavyzL7cYDOW7hBObeA7DargmjLlohtzCQW6Q7h/qZJ/WxFhPg3
-   VRDdNK6DvJz5hIpoTvvbXZmu3CpICvsLfhFvNuAlhtw9n2gFq3gwnCfGg
-   /21juPh1ThcnTD3GU+t0+K4wmu+GPAZYg0ojktVZiyZEn8np45A6lbOsq
-   rcN+RaymDhHZ6ZMBpK9K5pzULzPHxkEyoiCYH0FI+xzFNpZEmVIHcfnXd
-   A==;
-X-CSE-ConnectionGUID: zfYcrfCYRzyNcqeTlttrMw==
-X-CSE-MsgGUID: FNO3cuOsQ4qXw7KNEQPnDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44286117"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="44286117"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:49:10 -0700
-X-CSE-ConnectionGUID: tjidnPEJTvGDfz226/1LtQ==
-X-CSE-MsgGUID: 92b+NNZ4TeedXS7yQPAKgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="125617787"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:49:07 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id F037C1201BC;
-	Thu, 27 Mar 2025 12:49:03 +0200 (EET)
-Date: Thu, 27 Mar 2025 10:49:03 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
-	ribalda@chromium.org, benjamin.gaignard@collabora.com,
-	viro@zeniv.linux.org.uk, bartosz.golaszewski@linaro.org,
-	hljunggr@cisco.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] media: v4l2-dev: fix error handling in
- __video_register_device()
-Message-ID: <Z-UtHzeewV-CvzfD@kekkonen.localdomain>
-References: <20250319080248.1746847-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLBXiCIDfLfir2NWvYcky9YDsCEaohUm3kAm2YAXXNFF6ri2s/NOysUU8oqzc/IXtKRQYIfLuOSUZ25dpPyFcHlR05GV+HZ8caeZf+t2aLrJsKseGjnm1DXyt9t6zCE3ouEXDBvl6Ghw2Qg8RpbzGkO1ll1Cujv7SAEux+Km/vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CKdrdXBe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kYIX/XN0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CKdrdXBe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kYIX/XN0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 994052118F;
+	Thu, 27 Mar 2025 10:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743072576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoUJssoAdrvJqWgjZFCmV+8e3DtgaI0aJxl0KKpj6HM=;
+	b=CKdrdXBeuKC5pYXqiD4CspdJUO9MJd4q+LdpQAyzshpCKMWIpIsxJu2fx4BNXLxZ7g3IaP
+	HfY6uJzr8XfkTne9zw/DloPb2t3/uQ3mHyKoUlJZhX1oUjRCTIYEqTFE9NqF+txg17j17J
+	sfAVyK8djuaM80D/w1fueR5Vt7z6990=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743072576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoUJssoAdrvJqWgjZFCmV+8e3DtgaI0aJxl0KKpj6HM=;
+	b=kYIX/XN07hRZqeTrySQ3zv2ha7V/7iFcN7cKr3U+WRKkVOfQSjquIYmC41sgsbpYDRNB12
+	mhoUd80KUVV3zNAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CKdrdXBe;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="kYIX/XN0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743072576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoUJssoAdrvJqWgjZFCmV+8e3DtgaI0aJxl0KKpj6HM=;
+	b=CKdrdXBeuKC5pYXqiD4CspdJUO9MJd4q+LdpQAyzshpCKMWIpIsxJu2fx4BNXLxZ7g3IaP
+	HfY6uJzr8XfkTne9zw/DloPb2t3/uQ3mHyKoUlJZhX1oUjRCTIYEqTFE9NqF+txg17j17J
+	sfAVyK8djuaM80D/w1fueR5Vt7z6990=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743072576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoUJssoAdrvJqWgjZFCmV+8e3DtgaI0aJxl0KKpj6HM=;
+	b=kYIX/XN07hRZqeTrySQ3zv2ha7V/7iFcN7cKr3U+WRKkVOfQSjquIYmC41sgsbpYDRNB12
+	mhoUd80KUVV3zNAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7D8D139D4;
+	Thu, 27 Mar 2025 10:49:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3wgIIT4t5WcBHAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 27 Mar 2025 10:49:34 +0000
+Date: Thu, 27 Mar 2025 11:49:28 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+	david@redhat.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+	ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process
+ large folios
+Message-ID: <Z-UtOF97qjcm4Hgu@localhost.localdomain>
+References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
+ <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,27 +103,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250319080248.1746847-1-make24@iscas.ac.cn>
+In-Reply-To: <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
+X-Rspamd-Queue-Id: 994052118F
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,google.com,infradead.org,redhat.com,gmail.com,arm.com,nvidia.com,kvack.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Wed, Mar 19, 2025 at 04:02:48PM +0800, Ma Ke wrote:
-> Once device_register() failed, we should call put_device() to
-> decrement reference count for cleanup. Or it could cause memory leak.
-> And move callback function v4l2_device_release() and v4l2_device_get()
-> before put_device().
-> 
-> As comment of device_register() says, 'NOTE: _Never_ directly free
-> @dev after calling this function, even if it returned an error! Always
-> use put_device() to give up the reference initialized in this function
-> instead.'
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: dc93a70cc7f9 ("V4L/DVB (9973): v4l2-dev: use the release callback from device instead of cdev")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On Wed, Mar 26, 2025 at 11:38:11AM +0800, Baolin Wang wrote:
+> @@ -118,16 +120,31 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>  		walk->action = ACTION_AGAIN;
+>  		return 0;
+>  	}
+> -	for (; addr != end; ptep++, addr += PAGE_SIZE) {
+> +	for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
+>  		pte_t pte = ptep_get(ptep);
+>  
+> +		step = 1;
+>  		/* We need to do cache lookup too for pte markers */
+>  		if (pte_none_mostly(pte))
+>  			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
+>  						 vma, vec);
+> -		else if (pte_present(pte))
+> -			*vec = 1;
+> -		else { /* pte is a swap entry */
+> +		else if (pte_present(pte)) {
+> +			if (pte_batch_hint(ptep, pte) > 1) {
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+AFAIU, you will only batch if the CONT_PTE is set, but that is only true for arm64,
+and so we lose the ability to batch in e.g: x86 when we have contiguous
+entries, right?
+
+So why not have folio_pte_batch take care of it directly without involving
+pte_batch_hint here?
 
 -- 
-Sakari Ailus
+Oscar Salvador
+SUSE Labs
 
