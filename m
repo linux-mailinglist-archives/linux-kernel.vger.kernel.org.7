@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-578060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A873DA72A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:40:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7ACA72A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABFB188F623
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6B9168902
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DD91B6D08;
-	Thu, 27 Mar 2025 06:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dk0yZ6Aa"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CE41C5D55;
+	Thu, 27 Mar 2025 06:43:37 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799E218C03D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E407E1B4223;
+	Thu, 27 Mar 2025 06:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743057613; cv=none; b=FTwCLZy2aUNAsvHxs748HL9lUDEAQrO1gR1Fh0rL1YWEuSYRbN19tLWWBJBgFtS3jFbCWUQ6ZJkaa+5pfOOnXLAhB9Vw8XQegmTMmUmowpNvH27loN3K6mS5nklquce/mghwj1qwyWjgnPnUhRrVZytqxbSbZNf1a6R+22N3COs=
+	t=1743057817; cv=none; b=Xg7oVMkh6OwMELO0ABMohgCPSHv20gJGxnZgH7au5sMnpdjbaZKkde1BCd4dvaMq+aMveQYc81XJCwhjB/KWW4PJZanhFXmGXseU+OMPzIwQCnyT0gOaoqAav67OYhWJBSh5mCQoGZ5+0kP17w4Z0IAQBf75KcCfbGg/jD3juUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743057613; c=relaxed/simple;
-	bh=hVhB3pfbSavGJmn5ih9KdVU6u//4aoMC7TEHsPVQVmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ijFyUT63sGObShgEnVbtVozOlK30YoFpfMPtVBXt47iPyuU7AJeUTsHvI8QLlA3Gu59UPO5VUvEiA/NcP+mhRsJg+cAajoIcjUDZRqjDysrf9wRl7xzetUGc5oKGBqQ5j8CXA+NN4IQMNXKsnu6KMGlvCZe7ZfYDbCtt8Cndvdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dk0yZ6Aa; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47692b9d059so9336411cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743057609; x=1743662409; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVhB3pfbSavGJmn5ih9KdVU6u//4aoMC7TEHsPVQVmw=;
-        b=dk0yZ6Aa82hg8NmF9O1fmtmCK2X6oC4v2KOK/2AVdwGNwKP8mM93iAPmD/gdWmj4UE
-         zmt5KPaqr58u3nPs9e9zZVVg8pxmoKjHcgXLhs0gbTlyOJ1RMdtZad3Fon9h27XPgfME
-         itrYlUpqC+ZH5uN2EtykDmhxCY+h72RuuRKaET/DfEI3BJvhI5bTlsgpnq4FIpRvAGoM
-         qk521t4It5l+kreUOV4S5B4boxJczjiOOVlzUdIADyLMAHd8vVNlZVpQz0VhVXUUBrII
-         ohZstWRc+iaxc9RirbL2vVhAV5V84EJY1IKi007cpk2Z5CLEvOovJi5DXz0wPRQJh4wX
-         YbrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743057609; x=1743662409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hVhB3pfbSavGJmn5ih9KdVU6u//4aoMC7TEHsPVQVmw=;
-        b=TR6KJI9iwjvOusi2o1xVl2fUF5zJ1xJCS3fwyVBkqvHdpsuZSaoINAY9qKauRV3KNg
-         z+IqM6qXsQVqKcz67MlGhqvDKs4LiA65N6cu4l3O+hdBerA1dFT3yloVlJlzSwDhF/2j
-         OHEKtYrQmWVWyiBjSklqzK3qeclgcALcLOnIS9ngOP2CizMpW5o20fFpdxosfx6qcVyq
-         otOiUYi1X1bAyx/Rodokn8lCswSfBLu2fMfIc9GqlGKbuoMYV2TM4EOcKLfHPlmAeTdU
-         ++B2eydjdT6OszIv8uUqN8A278fxitavcAYaj6WbYP7tv4AVWlGEs74MUbBymP8hYci7
-         zcYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKrIFoFfaVSK94wINLbp4cAHA5dEpDfLba6gXzYo82jtlTZxIQ5cYW/5ZIRj78QN5PnY5t1IUPTQ5qXec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQiq4rgH34cHrcXTeDmFy8DJw062IS7St1LwSi8Ma6jfCnRgIB
-	vazSEjWUWDD5fX969ts2m2tkiO+VdeuJV1uXmfmDcx5vk88gxsV9tAJH2wqEy/JZh2eAre74q77
-	Jb0w9IgGm61aBoMoyHEy1JP/Cd8MZ0bwyqabr
-X-Gm-Gg: ASbGnctyzv81/yWI4IoJO1ssSfvuKpnRp+biw+4TWoWr8rs23GRjaXTXgbcxJgI2UHh
-	K/uosyOWQc6RrbMkpYYzxzWomIDXil4TlTB0MFC8hSMvYEcV2uyZByCq9mlDpp9gh2tDuRgqkyn
-	33k+5jSUHyNZ6LPyrb+DqEAM02NKM=
-X-Google-Smtp-Source: AGHT+IEM0+rxaQ5zCqmBUxN4zvMYmyJ5g+nu3EDBzsma/EgV6CrhhJPxV6MT8hz+Jt9uHg2FWusC7jJC8D1fgCu1IYM=
-X-Received: by 2002:a05:622a:5145:b0:476:a4eb:10a5 with SMTP id
- d75a77b69052e-4776e0abbbcmr42147561cf.12.1743057608966; Wed, 26 Mar 2025
- 23:40:08 -0700 (PDT)
+	s=arc-20240116; t=1743057817; c=relaxed/simple;
+	bh=f4b9jYPlNOcvvmoM1IsldN4W9AdyvTeOpguC+L375SQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b+3Q6lU5043qH8GsN0NtBejDKZzd1uQjtzeJvm6AX+bzJqvnwpOPnWqOlMpr/PcdMqaq13aiZDPGmY8V27Ka1EIpGMBGPQuBVW02BVlyzJ3WpF17uYspgj6m1xB20loAL3ADYnm3Dt2+0bWQ882jPFz/R2MUpfg1lQ62ykal+uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R4xmtH029344;
+	Thu, 27 Mar 2025 06:43:22 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45hm68nkjw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 27 Mar 2025 06:43:22 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 26 Mar 2025 23:43:21 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 26 Mar 2025 23:43:19 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+79340d79a8ed013a2313@syzkaller.appspotmail.com>
+CC: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <mailhol.vincent@wanadoo.fr>,
+        <mkl@pengutronix.de>, <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] can: ucan: the memory allocated to ctl_msg_buffer is one byte less
+Date: Thu, 27 Mar 2025 14:43:18 +0800
+Message-ID: <20250327064319.3001956-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67e46af0.050a0220.2f068f.000e.GAE@google.com>
+References: <67e46af0.050a0220.2f068f.000e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327015827.2729554-1-wangliang74@huawei.com>
- <CANn89iJn5gARyEPHeYxZxERpERdNKMngMcP1BbKrW9ebxB-tRw@mail.gmail.com> <df2d0ac0-c80e-4511-9303-3ee773c73a22@huawei.com>
-In-Reply-To: <df2d0ac0-c80e-4511-9303-3ee773c73a22@huawei.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 27 Mar 2025 07:39:58 +0100
-X-Gm-Features: AQ5f1JrtUReUuY-3assA0nRUX3KVWYXbt4WVNWESX6MNVW1HNkE5q-S8tpom3HE
-Message-ID: <CANn89iJdThGoaVc3LbucK_QGe1akNzmd5YOhMqmshwh_RfOn+A@mail.gmail.com>
-Subject: Re: [PATCH net] ipv6: sit: fix skb_under_panic with overflowed needed_headroom
-To: Wang Liang <wangliang74@huawei.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, kuniyu@amazon.com, yuehaibing@huawei.com, 
-	zhangchangzhong@huawei.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: bd_2SMv_7sAArr9UeUPQ6R24tB7yRjyZ
+X-Authority-Analysis: v=2.4 cv=etjfzppX c=1 sm=1 tr=0 ts=67e4f38a cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=Vs1iUdzkB0EA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=wvkD4opxYNpvLhmYr9gA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: bd_2SMv_7sAArr9UeUPQ6R24tB7yRjyZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=842 priorityscore=1501 spamscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2503270042
 
-On Thu, Mar 27, 2025 at 7:33=E2=80=AFAM Wang Liang <wangliang74@huawei.com>=
- wrote:
->
->
->
-> You can get the report in
-> https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D106b6b34880000
+When executing strscpy to copy data from ctl_msg_buffer->raw to firmware_str,
+the length of the raw is sizeof(union ucan_ctl_payload) + 1, which is larger
+than the one byte allocated to ctl_msg_buffer.
 
-Well, please provide the most accurate stack trace with symbols in
-your patch then ?
+Fixes: 7fdaf8966aae ("can: ucan: use strscpy() to instead of strncpy()")
+Reported-by: syzbot+79340d79a8ed013a2313@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=79340d79a8ed013a2313
+Tested-by: syzbot+79340d79a8ed013a2313@syzkaller.appspotmail.com
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ drivers/net/can/usb/ucan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you spent time reproducing the issue and providing your stack
-trace, please add the symbols.
+diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
+index 39a63b7313a4..97c6cfa2d011 100644
+--- a/drivers/net/can/usb/ucan.c
++++ b/drivers/net/can/usb/ucan.c
+@@ -1399,7 +1399,7 @@ static int ucan_probe(struct usb_interface *intf,
+ 
+ 	/* Prepare Memory for control transfers */
+ 	ctl_msg_buffer = devm_kzalloc(&udev->dev,
+-				      sizeof(union ucan_ctl_payload),
++				      sizeof(union ucan_ctl_payload) + 1,
+ 				      GFP_KERNEL);
+ 	if (!ctl_msg_buffer) {
+ 		dev_err(&udev->dev,
+-- 
+2.43.0
+
 
