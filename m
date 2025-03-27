@@ -1,165 +1,159 @@
-Return-Path: <linux-kernel+bounces-579140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33A3A74009
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC92A7400F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C8168133
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DCF16807B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6CE1D54E9;
-	Thu, 27 Mar 2025 21:09:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C26B1CAA82;
+	Thu, 27 Mar 2025 21:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wx4LvZnW"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F4E1C8634
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 21:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A0226289
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 21:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743109790; cv=none; b=sZGuUkLqxwV49vL/J3MAmmUHD22Vtw1AIm9T4LKclS8aXQ1BlAJjuCvdcAPJDBKDQvTrDxaNlGL0wu4L5yYpos9ZNjib+nZOeURFxPwZfJ6oAQH6LaZn5IYFzyaAjsUZpyBb7ZM0G4zxSiJgQvWmn3HserWYy1o265urnpM85H4=
+	t=1743109864; cv=none; b=qmku83rw8lDpkDdHfrW9wic2GCVPa10MhJJWwZ0U26gfMS7xjT6NfefR+WH8iMNAkCnHtTRo7uPKZfJmyTPFougkDpluPMMJa6NtFjN8o/pZYrZPSx+O1tbAWv/6+I5Z3qj/HrsfnYDlEpqkR28BciTR7RzmIkodNqjrv3UVzLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743109790; c=relaxed/simple;
-	bh=M6bOB2W4KFApHRRQTkgd2Zid7opiPfzU4DH+P6AV2hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HMc841rX9CR8fHK4HZeN9BE87Quf44jgYYiygq80FJd3KSSNqQcRBj9xGvcbGyP3hkNBMBZIumdGKMKdWNNhdnwdiKKs3k1PKlQhOysDhrHWySDgxI8tLB3iPaXjsGdKaByYfX/EdMJzhIc15fTgl3NXe3iU5lBYtQRUgr9i4uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2ED6C4CEE8;
-	Thu, 27 Mar 2025 21:09:48 +0000 (UTC)
-Date: Thu, 27 Mar 2025 17:10:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Feng Yang <yangfeng@kylinos.cn>, Jiapeng Chong
- <jiapeng.chong@linux.alibaba.com>
-Subject: [GIT PULL] ring-buffer: Updates for v6.15
-Message-ID: <20250327171037.032bf7e7@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743109864; c=relaxed/simple;
+	bh=m58IZxPeb5RHGpNeKyz0PkJCqdyCQwYkqyJiYGBY2tU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MGXcU6y07TOjz2wQ/b+iO0bEYRiBBNebxQPmn1Ufa5MxJoOllwUA4yb+0e+OBTro3LU9PCM+GTYCoWukpBDsp0XG6njxdLHJSsg4dAloLd7aNzaWjymmdtTZjJBgMOcfCl4IEOyGwhxXSHHvn6TeT9SQMk/gU2flI+SoTg9/5OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wx4LvZnW; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22580c9ee0aso32503725ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743109862; x=1743714662; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p+8Mafd2UtcajhG07+jp866mDzieO4XMMoteXJ6/4LQ=;
+        b=wx4LvZnWcoxj/QUrdOCnIk5FE0jInjaVcMjIE/aQB6YFOb1dwgLg7eZY5B7ZZZF9nN
+         THJ89CGd0f31aO6JEpg8JxUld3punyksP/QJ6pp0LTSXdKoMBLTcFEHfyXxuUQFmEjJn
+         nD22lJav4fwaWJFBRf983zHyabDbTsDkOoG2FgwQxPYF/m829VFBe83PocnXiGlMz4oU
+         IcX9/IL4PkjWFCWMe/l/yegeedUKybzbIrriaD5z71b8E3JAuEg09mtBqNU0nH0PPh5D
+         bYqBnM/bfM48JXvR2rMxeC0+apxMAvJ76kqB68XCTX0wLsG6TadA9MSxAKNnsENj7plu
+         LROA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743109862; x=1743714662;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p+8Mafd2UtcajhG07+jp866mDzieO4XMMoteXJ6/4LQ=;
+        b=N2Ixq9QOyBf5CJYANI/DA5jOp06iHqNo06vJHo0g+zwTqTCvrsMHsraA8cfHADsWK0
+         Opwkf4jqNzjNcQLetqTwjim9suB3t1N2RZKonjsTyQxXrpa9YgCpU61wNjV0mq8igQ/A
+         +PTVNsFt2q7vFRyMv89oTPoanUR6lHdTpnVR/iVCWGmFAZXXEhUgKXNnuPmaysvIGZGf
+         JGv0FNoGBxfx6JrL2NHa6FAHeYKpBRYyT30u2aeWGbvQ8eNU3d6qUvTXM4+YP/0VAkwC
+         NknFp7PbmVzZcTeEPuXTgHjs6V2yoSVdCEgpvXX/DYsHTMJ1W2DgAKiytJPRI+OnSP6E
+         oRPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUK0RmurHD3akWymVDK+SpHMevNeA9HY+P2xucX3r9G6FWK4430DS6ElW2sw+uwOQaZbOaK+flfIXyLpwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr1nnNDvJ2uqWdkLCyVqDq0iIabNP8TiPuURH9tE578RDPejOM
+	bppeIUFc+0jyq+E/1rxTDWcAnpvUjPDv5H65q/NSd2VvQMlXZqYUPn2crbomIg==
+X-Gm-Gg: ASbGncuvorZaUM9Vd76VfDI6KC68svaea9/gI6KMmJoveZDfYACXCIfKO5FUyzt+E5Q
+	pRS0MYfASHMLTaLL2uuRDM2qxm9gO8EucMjrXsU3gxVHpoVcmkiZ1WEABs17SAIC8tU5lL7+qtJ
+	EM28uzQtRJUkwBb0uPBtQ+vy+CRbgwoWyxiwl+992oMk8v8ZIL8FyE3PiG2ltzOn77nK+CjU0kF
+	kLCTM3l9ek6LBxVuw5jpFNn0nLLPKkJ5pQcgj068SWzuffhzCKLBUhTjFLcKO59yQnaYmxrXsaA
+	pfQ8K0sTeU0xS7BSBMXqetj4ysKMPBcpnwFVGnET1fXINLbaC84vrRoqzGlJvtA7xmagyIrFZ/a
+	lr+GApT1rD+ylU87PEK6o8oQmByNw
+X-Google-Smtp-Source: AGHT+IF5IvRZ+cIdtxE3619ORvawAtNSiXfuslCR5mL4uIrKM+QdqjqahBHj0QcOi3VXn8DYETZOZw==
+X-Received: by 2002:a17:902:e948:b0:220:e338:8d2 with SMTP id d9443c01a7336-2280485b0f8mr85602175ad.21.1743109862032;
+        Thu, 27 Mar 2025 14:11:02 -0700 (PDT)
+Received: from ynaffit-andsys.c.googlers.com (49.77.125.34.bc.googleusercontent.com. [34.125.77.49])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eec6f86sm4641855ad.5.2025.03.27.14.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 14:11:01 -0700 (PDT)
+From: "Tiffany Y. Yang" <ynaffit@google.com>
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Arve =?utf-8?B?SGo=?=
+ =?utf-8?B?w7hubmV2w6Vn?=
+ <arve@android.com>,  Todd Kjos <tkjos@android.com>,  Martijn Coenen
+ <maco@android.com>,  Joel Fernandes <joel@joelfernandes.org>,  Christian
+ Brauner <brauner@kernel.org>,  Suren Baghdasaryan <surenb@google.com>,
+  linux-kernel@vger.kernel.org,  kernel-team@android.com
+Subject: Re: [PATCH v2] binder: use buffer offsets in debug logs
+In-Reply-To: <Z-MV_KoW2w9F0HZw@google.com> (Carlos Llamas's message of "Tue,
+	25 Mar 2025 20:45:48 +0000")
+References: <20250324180716.1012478-3-ynaffit@google.com>
+	<Z-Go6qOLxT0ZfxyD@google.com>
+	<dbx8v7ryym9o.fsf@ynaffit-start.c.googlers.com>
+	<Z-MV_KoW2w9F0HZw@google.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 27 Mar 2025 21:11:00 +0000
+Message-ID: <dbx8h63eji1n.fsf@ynaffit-andsys.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Carlos Llamas <cmllamas@google.com> writes:
 
-Linus,
+> On Tue, Mar 25, 2025 at 12:41:39AM +0000, Tiffany Y. Yang wrote:
+>> Carlos Llamas <cmllamas@google.com> writes:
+>> 
+>> > On Mon, Mar 24, 2025 at 06:07:18PM +0000, Tiffany Y. Yang wrote:
+>> >> Identify buffer addresses using vma offsets instead of full user
+>> >> addresses in debug logs.
+>> >> 
+>> >> Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
+>> >> ---
+>> >>  drivers/android/binder.c | 31 ++++++++++++++++---------------
+>> >>  1 file changed, 16 insertions(+), 15 deletions(-)
+>> >> 
+>> >> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+>> >> index d1aa6d24450a..994ae205aa07 100644
+>> >> --- a/drivers/android/binder.c
+>> >> +++ b/drivers/android/binder.c
+>> >> @@ -3261,20 +3261,20 @@ static void binder_transaction(struct binder_proc *proc,
+>> >>  
+>> >>  	if (reply)
+>> >>  		binder_debug(BINDER_DEBUG_TRANSACTION,
+>> >> -			     "%d:%d BC_REPLY %d -> %d:%d, data %016llx-%016llx size %lld-%lld-%lld\n",
+>> >> +			     "%d:%d BC_REPLY %d -> %d:%d, buffer offset %lx-%lx size %lld-%lld-%lld\n",
+>> >>  			     proc->pid, thread->pid, t->debug_id,
+>> >>  			     target_proc->pid, target_thread->pid,
+>> >> -			     (u64)tr->data.ptr.buffer,
+>> >> -			     (u64)tr->data.ptr.offsets,
+>> >> +			     (unsigned long)tr->data.ptr.buffer - proc->alloc.buffer,
+>> >> +			     (unsigned long)tr->data.ptr.offsets - proc->alloc.buffer,
+>> >
+>> > These could be pointers to anywhere in user memory, not necessarily the
+>> > alloc->buffer. So there will be cases where this substraction doesn't
+>> > make sense. However, you are correct that we shouldn't log these addrs
+>> > so maybe just don't? wdyt?
+>> >
+>> 
+>> Ah, in that case I think it makes sense to remove them here. What
+>> do you think about printing the full buffer and offsets values in cases
+>> where we would print a binder_user_error or binder_transaction_error
+>> instead. Ideally, I would try to limit this to cases when the data or
+>> offsets ptr is invalid / copy would fail. Ostensibly this wouldn't
+>> reveal dangerous information about the user address space because the
+>> print statements would only happen when the data wasn't where it was
+>> supposed to be and it would help with debugging, but I'm not sure if
+>> this line of thought makes sense...
+>
+> My 2 cents...
+>
+> I'm sure there will be a _few_ exceptions in which having the pointers
+> from binder_transaction_data logged would aid debugging. However, this
+> won't be info that most users care about. In practice, logging an error
+> with "invalid buffer/offsets pointer" message is enough.
+>
+> There are _other_ pointers that users do care about when debugging, such
+> as binder_ptr_cookie but not these. So I think is better if we don't log
+> them at all, as calculating an "offset" is not possible either.
 
-ring-buffer updates for v6.15
-
-- Allow persistent ring buffer to be memory mapped
-
-  The user space memory mapping used virt_to_page() to get the page from
-  the virtual address of the ring buffer. This worked because the ring
-  buffer was created via alloc_page() and friends. The persistent ring
-  buffer is created from reserved memory at boot up and created via vmap().
-  The page can not be retrieved by virt_to_page() for vmap() memory, but
-  it can be from vmalloc_to_page(). Use that for the persistent memory
-  and this allows it to be memory mapped by user space.
-
-- Restructure the persistent memory to have a "scratch" area
-
-  Instead of hard coding the KASLR offset in the persistent memory
-  by the ring buffer, push that work up to the callers of the persistent
-  memory as they are the ones that need this information. The offsets
-  and such is not important to the ring buffer logic and it should
-  not be part of that.
-
-  A scratch pad is now created when the caller allocates a ring buffer
-  from persistent memory by stating how much memory it needs to save.
-
-- Allow where modules are loaded to be saved in the new scratch pad
-
-  Save the addresses of modules when they are loaded into the persistent
-  memory scratch pad.
-
-- A new module_for_each_mod() helper function was created
-
-  With the acknowledgment of the module maintainers a new module helper
-  function was created to iterate over all the currently loaded modules.
-  This has a callback to be called for each module. This is needed for
-  when tracing is started in the persistent buffer and the currently loaded
-  modules need to be saved in the scratch area.
-
-- Expose the last boot information where the kernel and modules were loaded
-
-  The last_boot_info file is updated to print out the addresses of where
-  the kernel "_text" location was loaded from a previous boot, as well
-  as where the modules are loaded. If the buffer is recording the current
-  boot, it only prints "# Current" so that it does not expose the KASLR
-  offset of the currently running kernel.
-
-- Allow the persistent ring buffer to be released (freed)
-
-  To have this in production environments, where the kernel command line can
-  not be changed easily, the ring buffer needs to be freed when it is not
-  going to be used. The memory for the buffer will always be allocated at
-  boot up, but if the system isn't going to enable tracing, the memory needs
-  to be freed. Allow it to be freed and added back to the kernel memory
-  pool.
-
-- Allow stack traces to print the function names in the persistent buffer
-
-  Now that the modules are saved in the persistent ring buffer, if the same
-  modules are loaded, the printing of the function names will examine the
-  saved modules. If the module is found in the scratch area and is also
-  loaded, then it will do the offset shift and use kallsyms to display the
-  function name. If the address is not found, it simply displays the address
-  from the previous boot in hex.
-
-
-Please pull the latest trace-ringbuffer-v6.15 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-ringbuffer-v6.15
-
-Tag SHA1: baf5165f33ce4620c17fb927a0bd94fdfc548146
-Head SHA1: f20423262b368ff860373d28050f0c4b65e82973
-
-
-Feng Yang (1):
-      ring-buffer: Fix bytes_dropped calculation issue
-
-Jiapeng Chong (1):
-      ring-buffer: Remove the unused variable bmeta
-
-Masami Hiramatsu (Google) (5):
-      mm/memblock: Add reserved memory release function
-      tracing: Freeable reserved ring buffer
-      tracing: Fix a compilation error without CONFIG_MODULES
-      tracing: Skip update_last_data() if cleared and remove active check for save_mod()
-      tracing: Show last module text symbols in the stacktrace
-
-Steven Rostedt (12):
-      ring-buffer: Allow persistent ring buffers to be mmapped
-      ring-buffer: Use kaslr address instead of text delta
-      ring-buffer: Add buffer meta data for persistent ring buffer
-      ring-buffer: Add ring_buffer_meta_scratch()
-      tracing: Have persistent trace instances save KASLR offset
-      module: Add module_for_each_mod() function
-      tracing: Have persistent trace instances save module addresses
-      tracing: Show module names and addresses of last boot
-      tracing: Update modules to persistent instances when loaded
-      ring-buffer: Have parameter to virt_addr_valid() cast to pointer
-      tracing: Initialize scratch_size to zero to prevent UB
-      tracing: Use _text and the kernel offset in last_boot_info
-
-----
- include/linux/mm.h          |   1 +
- include/linux/module.h      |   6 +
- include/linux/ring_buffer.h |   8 +-
- kernel/module/main.c        |  13 ++
- kernel/trace/ring_buffer.c  | 296 ++++++++++++++++++++-------------
- kernel/trace/trace.c        | 393 +++++++++++++++++++++++++++++++++++++++++---
- kernel/trace/trace.h        |  24 ++-
- kernel/trace/trace_events.c |  40 +++--
- kernel/trace/trace_output.c |   4 +-
- mm/memblock.c               |  66 ++++++--
- 10 files changed, 681 insertions(+), 170 deletions(-)
----------------------------
+This makes sense to me! I'll drop them and send out another patch.
 
