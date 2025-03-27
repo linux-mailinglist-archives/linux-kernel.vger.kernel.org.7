@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-578697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0802A73552
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:07:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B826A73555
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02DE1889046
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0FC07A57EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30651154C17;
-	Thu, 27 Mar 2025 15:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEF617A316;
+	Thu, 27 Mar 2025 15:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQh0KIvA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSXbMLBE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC8114A0B7;
-	Thu, 27 Mar 2025 15:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B88F1531E1;
+	Thu, 27 Mar 2025 15:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743088018; cv=none; b=WsSLPJAvg0CDdthQ9fMr5hqM9OIQHOnaCLC3J6B+NpI03Bi93HZ5lwjlhl5ILm/E1QTR4cZsC2oPZW3xYqJMSlJ5v6a8C3TuYcUpIUz6edOXWP93LchHtBAiK4B7mQtZQxgDhJ4iZtaIakRXoM59EAoIX8HUIXUTM+LaxiJJgaY=
+	t=1743088031; cv=none; b=ZijesDbApHxpvCVxR4ugOkPYEczyFDrdAVrtOsrpUSPTFKtWsSE8CpI6QVIqmrJ/p5g55DvdCtMKqgzbuZGnTALZ2qjO2gmmjuWy7GId+H/S1+qBsdpItx+fS9qmUfhAqv55DQrhBpHTPRvcnhFNtJyzDypfriGIBKhbI3rMIKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743088018; c=relaxed/simple;
-	bh=vnz0gNM+HdXIJH3M8cd9DH0u3q3YnsIMhkwztLO7+bY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teNzBQ/V3XDou+hZeh4tupkUQPxS0W+yHtuNBec4wXht0B+GmiA1FACpStfVeY9EGwSsHBNiCap7oz1u6kGvvrj/WDXVvHX/0x65ktW7/s3SmkCv/pAZ0XdjfbZ6JgFrCXpUoT817W8UkZit782t6VqcXlGN7fdF+EJMs/Zyw/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQh0KIvA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 401D7C4CEDD;
-	Thu, 27 Mar 2025 15:06:57 +0000 (UTC)
+	s=arc-20240116; t=1743088031; c=relaxed/simple;
+	bh=51uq9eze4L0yb3fWEg/O1lotH1bGxuQ1g1XhMDNXqSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxGJk3KKuvop/TzLQbXDDQAqFIYGzgwYyjsELuMaUgwZg68m/dGKGGZN1lXol0xtvo7WAreKoGqM3dNXUFH0LFfTJq7UbwyeBGQnyGqMr7+rgoCMQRx6es5T/c/cfJr6l0i7N1X2krpioYAKvAc/3wtUEpMs+URfte2dlFWbCLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSXbMLBE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6A7C4CEDD;
+	Thu, 27 Mar 2025 15:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743088017;
-	bh=vnz0gNM+HdXIJH3M8cd9DH0u3q3YnsIMhkwztLO7+bY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rQh0KIvA2XJUJEbG/1PZz3M2mi+/+suo2rJYNNVC1UjturOB8kQIY5hioe2pN6t0J
-	 jXDjO+uJDlI4izLHWos47bfjmXIvFlTn9TCn0KKYdH3wf5Vf9KOzfzooHtiOqKNp7Z
-	 Tesbb2j1U/SqUCYOr5OWGPOqreF1hD1GVz+MIMtxnesbXA9834CxI03eBFxq8pYcF0
-	 S0As7FBmh4Bm5NUMf6Ftd16hMQp4SymtgZIqcqiYT6SXkXV8jo7GxcqH8J6FwQ0dVa
-	 szc+pGmNR2hhLb1gjdpTUbjWZMStlEMzW9zHfRL2ncVf0ytU4TBSnzoAMjHEbZTMT5
-	 iCt1HiuCGlFqA==
-Date: Thu, 27 Mar 2025 17:06:53 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	linux-integrity@vger.kernel.org, Sumit Garg <sumit.garg@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Make chip->{status,cancel,req_canceled} opt
-Message-ID: <Z-VpjSZSMOk73_Dg@kernel.org>
-References: <20250326161838.123606-1-jarkko@kernel.org>
- <exzxzomw7wcobjuoje37x6i2ta54xzx5ho74t3atd7g74xltlb@ymw2pn3yo27b>
- <Z-VRWy8jLkA0cpow@kernel.org>
- <56428ff1ac4355482df881e6226518c2a62beb6d.camel@HansenPartnership.com>
- <Z-Vn91fADShpp65e@kernel.org>
+	s=k20201202; t=1743088030;
+	bh=51uq9eze4L0yb3fWEg/O1lotH1bGxuQ1g1XhMDNXqSc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iSXbMLBEnWqyo1w44382sB69tdotdy4QPKzL8c7TL8er/utSyeNBKrHmd5bmRwZJH
+	 F2jKk2s16JcCQCnA/NS7G+E/8Y+HlcM4vUMdOIWemTmbYSaEYtK0IdYHrNayGR84EC
+	 Q9STaO5pERCBsvVy/4sxbnQDidBN0CIENtQVs/e69kZOSNjxYzAA26u41uRskmQ1b3
+	 /ZCy+oH6IXexwtGK0+VIDTtBigNaAyaCcwT9PWQJd4hr2nFZGpGK6nC1kw3MoYy08t
+	 LcXHwu+z6sCUAxp2KKxxjBDaI8hgFyD3dmfC/bzGnIyarg1k9NoeTgXjV08eOgUvXW
+	 rEVt3HMgy865A==
+Message-ID: <9ad5d838-19d5-4557-b028-0ad88be60b8b@kernel.org>
+Date: Thu, 27 Mar 2025 15:07:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-Vn91fADShpp65e@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: dt-bindings: Add OmniVision OV02C10
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, robh@kernel.org,
+ hdegoede@redhat.com, mchehab@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250324171508.GA668235-robh@kernel.org>
+ <20250326150114.71401-1-bryan.odonoghue@linaro.org>
+ <W8_0Ch2J0PWJ5pKHojZjFbM8huvxWlaWajtl_uhQF3UszGH_O8WTRZdQxh_eHs2JzLOx7CCxx01UZDHPQqAyCA==@protonmail.internalid>
+ <1dd46a9e-e97d-415a-9e33-67ee234c4bac@kernel.org>
+ <0de575dc-5afb-40fb-be30-99906d0e493b@linaro.org>
+ <c1959f95-9ee1-4597-b6ec-fbedc8a872db@kernel.org>
+ <afae182f-b264-4b57-acd7-2c2cf090e1ad@linaro.org>
+ <JdPoQXJoHcHuLJ-32TBarKN302TbQtmjhY6VC-GEBWlERJj-eDKKj7QdAPl22deMA1SFCSnN-3AfPoLreqANFw==@protonmail.internalid>
+ <da93bf6c-b4bc-4c4f-9373-583fbd0c031c@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bod@kernel.org>
+In-Reply-To: <da93bf6c-b4bc-4c4f-9373-583fbd0c031c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 27, 2025 at 05:00:11PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Mar 27, 2025 at 10:12:36AM -0400, James Bottomley wrote:
-> > On Thu, 2025-03-27 at 15:23 +0200, Jarkko Sakkinen wrote:
-> > > On Thu, Mar 27, 2025 at 10:58:00AM +0100, Stefano Garzarella wrote:
-> > [...]
-> > > > > @@ -65,6 +89,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> > > > > *chip, void *buf, size_t bufsiz)
-> > > > > 	ssize_t len = 0;
-> > > > > 	u32 count, ordinal;
-> > > > > 	unsigned long stop;
-> > > > > +	u8 status;
-> > > > 
-> > > > Why move `status` out of the do/while block?
-> > > 
-> > > I'm not a huge fan of stack allocations inside blocks, unless there
-> > > is a particular reason to do so.
-> > 
-> > The move to scope based locking and freeing in cleanup.h necessitates
-> > using scope based variables as well, so they're something we all have
-> > to embrace.  They're also useful to tell the compiler when it can
-> > reclaim the variable and they often create an extra stack frame that
-> > allows the reclaim to be effective (even if the compiler can work out
-> > where a variable is no longer reference, the space can't be reclaimed
-> > if it's in the middle of an in-use stack frame).  I'd say the rule of
-> > thumb should be only do something like this if it improves readability
-> > or allows you to remove an additional block from the code.
+On 27/03/2025 07:09, Krzysztof Kozlowski wrote:
+> On 26/03/2025 18:34, Bryan O'Donoghue wrote:
+>>>
+>>> I meant bindings are exactly the same, unless I missed something.
+>>> Devices are similar enough as well.
+>>>
+>>>> Seems simpler to me to have two separate files ?
+>>>
+>>> Not really, more files to maintain, more trivialities to fix if we
+>>> decide to change something in all bindings (e.g. style).
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> Hmm, so we have two in-flight series and one yaml file.
+>>
+>> OK, I'll drop this patch and add ov02c10 to the ov02e10 yaml as you suggest.
+>>
+>> So long as the yaml file goes in first, the order of application of the
+>> ov02c10/ov02e10 drivers won't matter and can be fixed with a cherry-pick.
+> You can combine the series or add here a dependency.
 > 
-> Reclaiming here is only shift in the frame pointer, nothing to do with
-> reclaiming resources or freeing locks. Consolidating value state into
-> single location does improve readability as far as I'm concerned.
+> Best regards,
+> Krzysztof
 
-Anyhow, I reverted that change given the feedback :-)
+So just in terms of sequencing, are you happy for us to merge ovo2c10 
+and then do ov02e10 ?
 
-Since I'm late sending PR, I'll put this patch to my 6.15 PR.
+Since I have a bunch of driver work to do on ov02e10 I think this would 
+make sense.
 
-BR, Jarkko
+---
+bod
 
