@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-578651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BF8A734D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:43:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C995EA734DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1D8189C59C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC94189AFEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D9D219306;
-	Thu, 27 Mar 2025 14:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD8218EA2;
+	Thu, 27 Mar 2025 14:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="gEpkGrBa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="g3Srv2QM"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DEGZ1kDp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Kv7Xr2NN"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723E3219300;
-	Thu, 27 Mar 2025 14:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8019621A42C;
+	Thu, 27 Mar 2025 14:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743086530; cv=none; b=j/xsFsargs2azsWbt/fLyOBDoL7nYkRxN7+ik6X7fmsCei0FNkTUFM90oqYAWgqwP8Ptp03OaOelDAlOL8SbJSDyNP7RSrS3hDDKcK/Je0I63h4uFLpY6zTvGqUG3YwWntOBrKhj18q2gR6ILSLfRMNfxl+yyG1dRbmBxNhzYMY=
+	t=1743086536; cv=none; b=VNqdbzNZYATpCm1vxPkfssao0x1Fe06UJNqDTLel71N4uaDVuCIW+Vn1ZDDVkpjfSFq+22Mo/A0Qu0WJWmIuBnddqR+B27UY0Ea5LJlhyp90ybMhD3eUP7/KJi8fZ+cV4ejisWI+Zv06cjZgvnASGvKMHiu1qv5xhegCRNdHkOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743086530; c=relaxed/simple;
-	bh=gkHKHE1m9kjM7oZ16R737lHgMEJGmwrBW0Gjtbmewa8=;
+	s=arc-20240116; t=1743086536; c=relaxed/simple;
+	bh=xgfSMByKcbji7aWh8I6gCHTwWvN5zOwylGHfEdIZuQ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ERe+P/TNMYy8s3RY2YErSNa/Kh0lLIdM28qDbMa2/8auJRWFP3r/5CFhTTuGhiejG35YMX+xHSaea1UjVx1KY0EqiB12Vd1yH7eU7EiX4kgx4IZo3qbsFzOZgFXDdj8PwkKKeo36C6e74sDQNcYnwzHAS/fbAoNiDcb7VMZdLfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=gEpkGrBa; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=g3Srv2QM reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version; b=NA33yei4aVNV+NEmzJm9SS9x6pkCm1olZMGcDD+RPKdGc83mGSj42pguonjO4YyQg7GQ48nhjpfA8BdRz8YilAeAFvhVaIUo27GF3cy3mGm6bur2tFcYvfXLt0czg8LiZEaP3Mat+R5b3UoE0I/EFKjcF6Jw+1/O9lsB9r5On6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DEGZ1kDp; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Kv7Xr2NN reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1743086528; x=1774622528;
+  t=1743086535; x=1774622535;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Dyd/G8UMS5Ev3nFa2e+b6IUVKqcLbE0qETb17ejIM0U=;
-  b=gEpkGrBarrP4NBcp7mw/LfFiOyTDoN4Xx5RDCwg0KMTte3l3ncoQNyJW
-   TcQA4skQeoTpmL9gb6VytOfK6LQk1I1EVNfGp1j7APqLKcagYSxkCaSb7
-   A4fSBFcYwy/ZUhBtmSEMXJUAjoHPIvsQNMVo2ZQZnkMSNd6hQ3OLrmBer
-   MzQtf7iMvZFzBl5edkfz6xbCW+bk8Wa2mI+JAgq+x8zDUBCUlAeBvCdyD
-   wyBZ/EsFW0N/dHU+Sks5KbGb8ZlOhUGzVYWSYOKj0fBzag7m7jOfKlejJ
-   ATS39fk77npjEBgowYnCw4z9fZuTnprCsHZQktO3RiMRT+ghu8bPpzF6C
+  bh=6YNfkmjBEpl78C8o+VXKeiiZ5HsFlTCVKYcfoP2BLoQ=;
+  b=DEGZ1kDpbRYJbdCTX/CsMuQy/EKUzAjGKXXA+TpNSIHD3mYy5BbaxN7D
+   0R2k5qB7p2NNtdtI9b/HXVpFwSU6jw5kEifRRlm/v40JwmDxDImUmV9Fx
+   tBd5X2C8HWRyl4dbrG6CAHv5bGNxw9ohAc5MjgaxOmmvj78OvDNLT/2JM
+   7SCjaQ53OVGXUBuyRvMGFzRTgDW8efrpzKe2O+AfUJKcyMBIljTx+FKt3
+   vExf54RxokbzyCOQWNw+T/bKs6hSnaSSUyysK7jFHrv0V78YpQn3Zlr5j
+   5/CVeWXeHNWVlFHDbD8lhBOCjVQTNGhd3FXlBZz+3qHf0R1+ZhimSnjkf
    g==;
-X-CSE-ConnectionGUID: qfX6IfFPQe+8zvf4J8TqAg==
-X-CSE-MsgGUID: KDUy227MTOSbKnd+SqhOhw==
+X-CSE-ConnectionGUID: Br8qnwf0Qq60ESe56KU3NQ==
+X-CSE-MsgGUID: BLyB5sCWQPKYXU1SEfhd7w==
 X-IronPort-AV: E=Sophos;i="6.14,280,1736809200"; 
-   d="scan'208";a="43199521"
+   d="scan'208";a="43199529"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 27 Mar 2025 15:42:06 +0100
-X-CheckPoint: {67E563BE-1A-2417938-F0170C2B}
-X-MAIL-CPID: 273C908C772B6A21BDF104E7C9935432_2
-X-Control-Analysis: str=0001.0A006368.67E563C5.0040,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 88B3E16C181;
-	Thu, 27 Mar 2025 15:42:01 +0100 (CET)
+  by mx1.tq-group.com with ESMTP; 27 Mar 2025 15:42:14 +0100
+X-CheckPoint: {67E563C5-2A-2417938-F0170C2B}
+X-MAIL-CPID: 75030C97507DB47327ED4CC8C6056591_2
+X-Control-Analysis: str=0001.0A006378.67E563BF.0005,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B671E16C181;
+	Thu, 27 Mar 2025 15:42:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1743086522;
+	s=dkim; t=1743086529;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Dyd/G8UMS5Ev3nFa2e+b6IUVKqcLbE0qETb17ejIM0U=;
-	b=g3Srv2QMwXPymym/Pr7o1MzFNhKRCvNDDcUgOALwTOYU5lFKRo5yhyQ6Kvdo033G+Yt5mf
-	BROZdQTHQ+BI4JnGyQX9zk5afgAwxU6e3hCSXUh/X3e3Wxz0WiIzNWO98xwWm0Hw1+6f97
-	UMPKotXvDF8n+yT/qDSBP2JfhUei3htdQ6nzd5RwaI8iyCOTOIE10GJxFE0cEj1TMwpAXZ
-	uTp54TKGPRoR9DFIihNura7uGzqcxHyX15jFuUPhhva+BiPUAEDUM/ZClXbekI0LNmN+Zy
-	dx+4LmwGhr2AGfZVJ+nxJ7b1oGFaUaKrAJUxaNk+sLfdLwvXwPLQ5ZKbw6wPMA==
+	bh=6YNfkmjBEpl78C8o+VXKeiiZ5HsFlTCVKYcfoP2BLoQ=;
+	b=Kv7Xr2NNYpuS7yGBvdEV7vx+l+Oz1rICsQjR1xUZSTZBoprZZWoXuH2ToqgyP9K6LxPv7o
+	nyzwSiSxb9fceQXmxwFSGz1lDCzK2mcqkoxgPrY4X156MGYmGQSeOMZiohmC5Iknng7UH/
+	tjN6uf35QC4YSk8Y+oNJcanzxvk5VwpDAeVt7cNz0CIh8jwHlTLxF2EufXqOPcxto0rks6
+	3SIe8ddk98a7KHJ1Kvr8rejmjHt11gbqAUWdwZvreye/kQCG4zPFJrDt2Jq5j3VQy9//av
+	dHl5gb71ZXYPvAEuaJq3/kodRPrv6Av9aK+N8XO1w0EcNtkoVH4weOU+7J0L1w==
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Shawn Guo <shawnguo@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -76,9 +76,9 @@ Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] ARM: dts: ls1021a-tqmals1021a: Add overlay for CDTech FC21 RGB display
-Date: Thu, 27 Mar 2025 15:41:11 +0100
-Message-ID: <20250327144118.504260-6-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 6/7] ARM: dts: ls1021a-tqmals1021a: Add overlay for CDTech DC44 RGB display
+Date: Thu, 27 Mar 2025 15:41:12 +0100
+Message-ID: <20250327144118.504260-7-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250327144118.504260-1-alexander.stein@ew.tq-group.com>
 References: <20250327144118.504260-1-alexander.stein@ew.tq-group.com>
@@ -91,34 +91,36 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This adds an overlay for the supported RGB display CDTech FC21.
+This adds an overlay for the supported RGB display CDTech DC44.
 DCU graphics chain is configured accordingly.
 
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
  arch/arm/boot/dts/nxp/ls/Makefile             |  2 +
- ...-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso | 56 +++++++++++++++++++
- 2 files changed, 58 insertions(+)
- create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso
+ ...-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso | 55 +++++++++++++++++++
+ 2 files changed, 57 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso
 
 diff --git a/arch/arm/boot/dts/nxp/ls/Makefile b/arch/arm/boot/dts/nxp/ls/Makefile
-index 7f96de6f80224..7b97b718ebc16 100644
+index 7b97b718ebc16..53240b04c9688 100644
 --- a/arch/arm/boot/dts/nxp/ls/Makefile
 +++ b/arch/arm/boot/dts/nxp/ls/Makefile
-@@ -9,5 +9,7 @@ dtb-$(CONFIG_SOC_LS1021A) += \
+@@ -9,7 +9,9 @@ dtb-$(CONFIG_SOC_LS1021A) += \
  
  ls1021a-tqmls1021a-mbls1021a-hdmi-dtbs += ls1021a-tqmls1021a-mbls1021a.dtb ls1021a-tqmls1021a-mbls1021a-hdmi.dtbo
  ls1021a-tqmls1021a-mbls1021a-lvds-tm070jvhg33-dtbs += ls1021a-tqmls1021a-mbls1021a.dtb ls1021a-tqmls1021a-mbls1021a-lvds-tm070jvhg33.dtbo
-+ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21-dtbs += ls1021a-tqmls1021a-mbls1021a.dtb ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtbo
++ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44-dtbs += ls1021a-tqmls1021a-mbls1021a.dtb ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtbo
+ ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21-dtbs += ls1021a-tqmls1021a-mbls1021a.dtb ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtbo
  dtb-$(CONFIG_SOC_LS1021A) += ls1021a-tqmls1021a-mbls1021a-hdmi.dtb
  dtb-$(CONFIG_SOC_LS1021A) += ls1021a-tqmls1021a-mbls1021a-lvds-tm070jvhg33.dtb
-+dtb-$(CONFIG_SOC_LS1021A) += ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtb
-diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso
++dtb-$(CONFIG_SOC_LS1021A) += ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtb
+ dtb-$(CONFIG_SOC_LS1021A) += ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtb
+diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso
 new file mode 100644
-index 0000000000000..31494d9d09f8f
+index 0000000000000..146d45601f693
 --- /dev/null
-+++ b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso
-@@ -0,0 +1,56 @@
++++ b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso
+@@ -0,0 +1,55 @@
 +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
 +/*
 + * Copyright 2013-2014 Freescale Semiconductor, Inc.
@@ -148,7 +150,7 @@ index 0000000000000..31494d9d09f8f
 +};
 +
 +&display {
-+	compatible = "cdtech,s070pws19hp-fc21";
++	compatible = "cdtech,s070swv29hg-dc44";
 +	status = "okay";
 +};
 +
@@ -174,7 +176,6 @@ index 0000000000000..31494d9d09f8f
 +&panel_in {
 +	remote-endpoint = <&dcu_out>;
 +};
-+
 -- 
 2.43.0
 
