@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-578677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28965A7351A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:57:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79B4A7350E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8107173FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794F8172B3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F7021A44F;
-	Thu, 27 Mar 2025 14:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312BA218AA2;
+	Thu, 27 Mar 2025 14:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JmJh0QTm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCfR81V5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEEC218E81
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6305C603;
+	Thu, 27 Mar 2025 14:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087367; cv=none; b=lPL0XQmm3r8JctHxdugshZsFYtvcIvILALfhSpQ06KM1ERDkjr303dRy04fdKcLgGNo8q4qDjd2Nx+jA07XiHJEAsbtVnzPJ79ZYntT7yt8rGHXzifHQ3eMNBMU95PbGvr6u+ypeTuNT8tQF6qrZMZvUhlgoeJ78nPnYU1W6AnQ=
+	t=1743087349; cv=none; b=gLoCpjL9e0la1E2Z4VvmZEJaNv2PQhVpETMf542KsN9lgw2rXR9g6icMQHnfryJwsFF+7qGY8WQTXbxvw7eDV5TaTpR1g4Ci144Jc1YCNFh6d/WlFWWo8SUlsvJIL1GycdxU4FvZJ+IYTePsLpq22ORlXAah4NBL7Njv4iSyIMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087367; c=relaxed/simple;
-	bh=G/LOUd/2xefq/+K9tkawZjMsn5YeytPryd54sCiSKhI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EXf8ZO7bOYUI6TjZDEQZmuudHMqyd8DZTMpDhbylz5bzzd08+LPLTcg5QMQM1oDoDEBDE4T8+or+05EnouxcwvDlV8+bC3GcCJX/q8CnuWgBAAVTUBY4+3Q6SUgZP5fubr7Q8afKsLH5CBmZNJLmw0TG5i3DuYQaqZVS8pgt5m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JmJh0QTm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743087365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ol/1honC/kq9bsbo+vJ/yLdgWul5QcmvruhVbpK4p80=;
-	b=JmJh0QTmd1tJXd+cXQ2JTxnKGBsDs4cse5u+ajIi4ExJhtXE37NusKs0J3T5Mdbw7NHxCp
-	Pn3J8lFUsaH+n49e2Maxq5gD/XMyUv7tNo5WmGGGO2IQ/FGV4kxekVA9SErRrpijE9QyMa
-	j/vvzj3aPB32sf++8jRbMo8RQZQqqAY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-235-EKEiDDACOgemo9ZOIFIKBA-1; Thu,
- 27 Mar 2025 10:55:58 -0400
-X-MC-Unique: EKEiDDACOgemo9ZOIFIKBA-1
-X-Mimecast-MFC-AGG-ID: EKEiDDACOgemo9ZOIFIKBA_1743087357
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5ABE180025A;
-	Thu, 27 Mar 2025 14:55:56 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3ADC180A803;
-	Thu, 27 Mar 2025 14:55:54 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 27 Mar 2025 10:55:42 -0400
-Subject: [PATCH v2 4/4] drm/panel/panel-simple: Use the new allocation in
- place of devm_kzalloc()
+	s=arc-20240116; t=1743087349; c=relaxed/simple;
+	bh=O+fF0T1K8ENoKQc8U/kUz5mudOhbJ4KqLrmWLy8Gx68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvFFZI8OBCmraWbvvZeDLOHZVwiHyDxQvrhcP6KbghyLDzUOAmLvVvvNMTf6V990dpoWf15tN/mw90sT3STZJTubMmURbAmEEhLceZBFAYkDsDAahoM/UfcMlx44ZGKejKAjhnfy3MbicN4TMxw0HEqqFLjqimkfL2bHslD0Rl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCfR81V5; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743087348; x=1774623348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O+fF0T1K8ENoKQc8U/kUz5mudOhbJ4KqLrmWLy8Gx68=;
+  b=jCfR81V5Z3Ya9pBfIEPAdBOJ2waHOATlVLW/g1MQ7lxrCkrg8GlkKztI
+   RaEKYU+25DRHDAGTH0EvDxj31nlQ82oZuuy7B3OHr6ukicFetuGR06X39
+   W8FGtuPGBWYUyFpLbz/xRpKVDHIw52S2vpRJHm1fFBEhwFmZj2FM8apVD
+   O9ARy3DFRc3/F9Brnz7AjImabtMXNmkntD4PvFh/G+5VDyAr6YIqzufY7
+   NZxHaBz0itJQe+fErLhhiymK1qDmGHY0kEvUemt339HMoDl7o/H59bBaC
+   NUskM5IXc28OUZq7KNyL57qm8R5NC1s8w6/sM2/yxIv6PutymZtO18Zf3
+   A==;
+X-CSE-ConnectionGUID: fYYDA3tTQc6GOZb4oV+2zg==
+X-CSE-MsgGUID: 38b+GzfqRoeApe8vHzNaPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44342591"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="44342591"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 07:55:47 -0700
+X-CSE-ConnectionGUID: w6/uUPDzQ22W/58VoYQrmA==
+X-CSE-MsgGUID: mbijv60mSXS2SPK0EiC98g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="130231181"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 27 Mar 2025 07:55:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 64B461CA; Thu, 27 Mar 2025 16:55:43 +0200 (EET)
+Date: Thu, 27 Mar 2025 16:55:43 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCHv2] thunderbolt: do not double dequeue a request
+Message-ID: <20250327145543.GC3152277@black.fi.intel.com>
+References: <20250327114222.100293-1-senozhatsky@chromium.org>
+ <20250327133756.GA3152277@black.fi.intel.com>
+ <vxocwwtfwg3tmjm62kcz33ypsg22afccd2ua5jqymbxaxwcigf@nnydc53vu3gv>
+ <20250327142038.GB3152277@black.fi.intel.com>
+ <jdupmjvntywimlzlhvq3rfsiwmlox6ssdtdncfe3mmo3wonzta@qwlb3wuosv66>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250327-b4-panel-refcounting-v2-4-b5f5ca551f95@redhat.com>
-References: <20250327-b4-panel-refcounting-v2-0-b5f5ca551f95@redhat.com>
-In-Reply-To: <20250327-b4-panel-refcounting-v2-0-b5f5ca551f95@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743087343; l=1372;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=G/LOUd/2xefq/+K9tkawZjMsn5YeytPryd54sCiSKhI=;
- b=INfqMQVpmbSyOot5SD8bv0Vt72aecl6YWRzOF337aaRi/r7Rds33RF0OavdjAOp6dK9hYW3ba
- rhH6/+FkgsdBL6h4kIN3ztWTaH886/oxxvkvggaF+i23h0GIGqidW5H
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <jdupmjvntywimlzlhvq3rfsiwmlox6ssdtdncfe3mmo3wonzta@qwlb3wuosv66>
 
-Start using the new helper that does the refcounted
-allocations.
+Hi,
 
-v2: check error condition (Luca)
+On Thu, Mar 27, 2025 at 11:37:35PM +0900, Sergey Senozhatsky wrote:
+> On (25/03/27 16:20), Mika Westerberg wrote:
+> > > On (25/03/27 15:37), Mika Westerberg wrote:
+> > > > > Another possibility can be tb_cfg_request_sync():
+> > > > > 
+> > > > > tb_cfg_request_sync()
+> > > > >  tb_cfg_request()
+> > > > >   schedule_work(&req->work) -> tb_cfg_request_dequeue()
+> > > > >  tb_cfg_request_cancel()
+> > > > >   schedule_work(&req->work) -> tb_cfg_request_dequeue()
+> > > > 
+> > > > Not sure about this one because &req->work will only be scheduled once the
+> > > > second schedule_work() should not queue it again (as far as I can tell).
+> > > 
+> > > If the second schedule_work() happens after a timeout, that's what
+> > > !wait_for_completion_timeout() does, then the first schedule_work()
+> > > can already execute the work by that time, and then we can schedule
+> > > the work again (but the request is already dequeued).  Am I missing
+> > > something?
+> > 
+> > schedule_work() does not schedule the work again if it is already
+> > scheduled.
+> 
+> Yes, if it's scheduled.  If it's already executed then we can schedule
+> again.
+> 
+> 	tb_cfg_request_sync() {
+> 	 tb_cfg_request()
+> 	   schedule_work()
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+This point it runs tb_cfg_request_work() which then calls the callback
+(tb_cfg_request_complete()) before it dequeues so "done" is completed.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 6ba600f97aa4c8daae577823fcf17ef31b0eb46f..df718c4a86cb7dc0cd126e807d33306e5a21d8a0 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -579,9 +579,10 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 	u32 bus_flags;
- 	int err;
- 
--	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
--	if (!panel)
--		return -ENOMEM;
-+	panel = devm_drm_panel_alloc(dev, struct panel_simple, base,
-+				     &panel_simple_funcs, desc->connector_type);
-+	if (IS_ERR(panel))
-+		return PTR_ERR(panel);
- 
- 	panel->desc = desc;
- 
-@@ -694,8 +695,6 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 	pm_runtime_set_autosuspend_delay(dev, 1000);
- 	pm_runtime_use_autosuspend(dev);
- 
--	drm_panel_init(&panel->base, dev, &panel_simple_funcs, connector_type);
--
- 	err = drm_panel_of_backlight(&panel->base);
- 	if (err) {
- 		dev_err_probe(dev, err, "Could not find backlight\n");
+> 	                        executes tb_cfg_request_dequeue
 
--- 
-2.48.1
+> 	 wait_for_completion_timeout()
 
+so this will return > 0 as "done" completed..
+
+> 	   schedule_work()
+> 	                        executes tb_cfg_request_dequeue again
+
+..and we don't call this one.
+
+> 	}
+> 
+> I guess there can be enough delay (for whatever reason, not only
+> wait_for_completion_timeout(), but maybe also preemption) between
+> two schedule_work calls?
+> 
+> > > The 0xdead000000000122 deference is a LIST_POISON on x86_64, which
+> > > is set explicitly in list_del(), so I'd say I'm fairly confident
+> > > that we have a double list_del() in tb_cfg_request_dequeue().
+> > 
+> > Yes, I agree but since I have not seen any similar reports (sans what I saw
+> > ages ago), I would like to be sure the issue you see is actually fixed with
+> > the patch (and that there are no unexpected side-effects). ;-)
+> 
+> Let me see what I can do (we don't normally apply patches that
+> were not in the corresponding subsystem tree).
+> 
+> In the meantime, do you have a subsystem/driver tree that is exposed
+> to linux-next?  If so, would be cool if you can pick up the patch so
+> that it can get some extra testing via linux-next.
+
+Yes I do, see [1] but it does not work like that. First you should make
+sure you patch works by testing it yourself and then we can pick it up for
+others to test.
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git/
 
