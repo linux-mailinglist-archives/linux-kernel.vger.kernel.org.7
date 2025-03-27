@@ -1,136 +1,133 @@
-Return-Path: <linux-kernel+bounces-578061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD51DA72A42
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:43:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C263A72A51
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12B61655E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9C5174ED4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADA31ACEA6;
-	Thu, 27 Mar 2025 06:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fv0oQY6M"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9719827455
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF01C84B1;
+	Thu, 27 Mar 2025 06:59:06 +0000 (UTC)
+Received: from invmail.skhynix.com (exvmail.skhynix.com [166.125.252.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E761C6889
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743057813; cv=none; b=QicAczCHWqGuYu2F7mit8Cchlcwb0RfmRfyd3lCmeb7aJM24CPnRZjMM2xf8K5S3rn3WyTNxaK89GqrVrGzy+nK+TgmlW9Z1k0ZCGYQXeKdQYefi4zpX6n7pyT682Sfpp3LlAIw/fjvg5ddxa0KwsBkfSO4sb/1LwKit7/DSNl0=
+	t=1743058745; cv=none; b=RkbNS5MfO2O1O7P645hTD4PQPZZdbkxxDafy7YYMAHKhSJIJtndXtyrjISTvW65GOCQNgT2+YRvqyOLhF1z8h86l8vbZBPcSjUl55RXy+BrwPh0oMna6BUrlQbHVmmxki3WFILIR/C2n0PZ+gpzjNyMH5F/VLIt9Z5h1MMqjABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743057813; c=relaxed/simple;
-	bh=n66ybPgUp9VVv9SCPEE/AWLxGlIns+SPIQDz3xX2DrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PCnG+iEOXRbrkUnymXFKdHYM4PlkR2XPcarUxGxT7KDHXGLRUS9PTzTIV4Wnm7mkLnKovIFzZpgUj3TFJq/5Z5VLa0sk7VjCXq9eHv4+ToY8P5ahFb0QIRRR8OtXNiMfUa2MZFfZvIz+CpYCHUBFW5+kUeYNQEyWtxU3NB4wV7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fv0oQY6M; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4394944f161so842505e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743057810; x=1743662610; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OYQRSLDDu+9ncKrO0EiMnXhUcVzXwRWAsy/yjivhkeY=;
-        b=Fv0oQY6MfOYO0BM4jEWedguN1GIXw7kOXy/uUE+YULsGq4yUBRc1/RDWzXW+km8yGl
-         v1rA5kw8bz1euS75OoREt9N+LOMFZUJq4yld0CdBcySWwxfofyRbEM/oR4J1xsFsUc6M
-         3TCgJnrzImNkuy3ENBoMdiW5VU8h6hDGxcjUKdIZp0zYPNyK6e/P5AP5cJdURQfaF2KK
-         4/P68NnXdXZu7SMLNpTPVZfE7T1p4VJDLJqdY1S+fvkuUUA8zkAFvwQ4EU95XFZ8lXgV
-         SKmQengc5MvikqoAa7kwL/PGQ3LMMAfUhVTUDHMrdrrorlljSIai+q8cmAcUB6EQHsu2
-         pXcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743057810; x=1743662610;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OYQRSLDDu+9ncKrO0EiMnXhUcVzXwRWAsy/yjivhkeY=;
-        b=ddEBNGjYecbmCCXueMDm4je4hVdEVvIQo0JxdPSDSpejidYiToHClh9KhXXsBUrKux
-         FpoTjCTJ62mH1NEwPpplf9HTHuPDA+6J1c22k+aiY2q/qpDZwah9dQ9nt/bC5xldQBoe
-         FdRixd2kjS+aUcWMf+DYi96YZldQIFW4q+VCih6lRW/93nuJQ9UZoF8HVG437Ga/Bp7u
-         E/eJsuUtUo6+np0nG8qzTnXq5TQAuF3F/bUK3lAirR73ITTY1UIoALQ6YHaCwOoc8MBh
-         0UotU40hOq/eBo7smnC0FUsjk67hQhzGDnhjqU/an8qPXSkmdMySPgPl6vbZHNHJ4gCd
-         SPzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL/WhWdkRSG07vnVwJV3EGrL8ftqqreo8b+AaV3ibTXptNHiOtaoecUMielLgIYk4+F5vDWvDUTro7H7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsc9GeXcvLCu5GtnTS2yN0qyiA+QJbKLdRhlHlrtkB0YpaT6Hf
-	fRNXX3sTR0lYB7Sj17dq7D8FDufwqKgGYnU7yyRW486/gCaZkO8fu++MiaM0k7o=
-X-Gm-Gg: ASbGncvNDaYwa1IjpS0Zezk1R9uaNoSoqymldN3V4rk3/ux/6r26k19g2XJTt1qHV1v
-	alxinmmKjOv+v8YMNtIKmtRNInt9JixRRfPF/pEKoUd9TtsRXQPXM7MJbZxcMuWsoI0qc8m6Kfx
-	EGU95mToHXxGL5Ccm3R8r0VBljgeKxgdrWALhzaipDL6nmOHXyu8hDwBy9r8XKSdQcjDXE9iKbz
-	beoJeYWkFKMvBOqIeYP3iDFYkyZ9VL7U1Znmp11HVyKDv76YA35tD0x1w8wKTuQQQI8npPCFx8t
-	j71bEwc8XSTEV16epacnoarng6QPkrjRVfziokBYVqWwIs4r5U52QcCLNGatdQ==
-X-Google-Smtp-Source: AGHT+IG7uoZZ4cy3JAa+yLXGMZkwdOi8KblqHkzfjjsnlqCUlO76I+Ifh2Yz3Zl2jw/WLzCs0lckWA==
-X-Received: by 2002:a5d:47c3:0:b0:382:4e71:1a12 with SMTP id ffacd0b85a97d-39ad2ada142mr343227f8f.1.1743057809776;
-        Wed, 26 Mar 2025 23:43:29 -0700 (PDT)
-Received: from [10.202.112.30] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4d5f5sm121269285ad.79.2025.03.26.23.43.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 23:43:29 -0700 (PDT)
-Message-ID: <faef812f-0adc-4a46-951a-5453927c2819@suse.com>
-Date: Thu, 27 Mar 2025 14:43:26 +0800
+	s=arc-20240116; t=1743058745; c=relaxed/simple;
+	bh=qilFpGbta7/gcGLItWMYaKO9y4dlnH2ag6LWOQTDfyM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uk/VOibQTqINTTvXlsjGQR0+ko+hDf9FyM2qiJ5zSu8pw02kIsQ3wTT/qlfFZEXUe4U1Y+GBOxQvH1sgVhkNYrtVhjUjcUti/hyZrTCJZSmcctZXGbJNBKHR5C/raOVKWTmZtduvbeNl+QDEuvWMR4QjGtKfivqMmNpt5uEG824=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc4e-97bff70000022046-14-67e4f3a7d992
+Received: from hymail21.hynixad.com (10.156.135.51) by hymail23.hynixad.com
+ (10.156.135.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Thu, 27 Mar
+ 2025 15:43:51 +0900
+Received: from hymail21.hynixad.com ([10.156.135.51]) by hymail21.hynixad.com
+ ([10.156.135.51]) with mapi id 15.02.1544.014; Thu, 27 Mar 2025 15:43:51
+ +0900
+From: =?utf-8?B?7KCV7JqU7ZWcKEpPVU5HIFlPSEFOKSBNb2JpbGUgQUU=?=
+	<yohan.joung@sk.com>
+To: Chao Yu <chao@kernel.org>, Yohan Joung <jyh429@gmail.com>,
+	"jaegeuk@kernel.org" <jaegeuk@kernel.org>, "daeho43@gmail.com"
+	<daeho43@gmail.com>
+CC: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	=?utf-8?B?6rmA7ZWE7ZiEKEtJTSBQSUxIWVVOKSBNb2JpbGUgQUU=?= <pilhyun.kim@sk.com>
+Subject: RE: [External Mail] Re: [PATCH] f2fs: prevent the current section
+ from being selected as a victim during garbage collection
+Thread-Topic: [External Mail] Re: [PATCH] f2fs: prevent the current section
+ from being selected as a victim during garbage collection
+Thread-Index: AQHbnt3fELlyoJQ1W0qLIYQiUdi4aLOGhdAQ
+Date: Thu, 27 Mar 2025 06:43:50 +0000
+Message-ID: <2d95428375bd4a5592516bb6cefe4592@sk.com>
+References: <20250326141428.280-1-yohan.joung@sk.com>
+ <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
+In-Reply-To: <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
+Accept-Language: ko-KR, en-US
+Content-Language: ko-KR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: fixing global bitmap allocating failure for
- discontig type
-To: joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- gautham.ananthakrishna@oracle.com
-References: <20250327062209.19201-1-heming.zhao@suse.com>
-From: Heming Zhao <heming.zhao@suse.com>
-Content-Language: en-US
-In-Reply-To: <20250327062209.19201-1-heming.zhao@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsXC9ZZnke7yz0/SDVpa5C0u75rD5sDo8XmT
+	XABjFJdNSmpOZllqkb5dAlfGpKPb2AtmyFes+X2UuYFxg1wXIyeHhICJxKKpD9m6GLk4hATe
+	MErca1rLCOEsYJQ4c2AhUIaDg00gVGLrcnaQuIjAVEaJq/uPM4M4zAIvGSX2XX8D5ggLtDFK
+	vDl8iRGirJ1R4v7cB6wgS0QEjCRWrd7GDGKzCKhKnLyxhB3E5hUwlTi6ZjYTiC0kkCmx6+R+
+	sBpOATuJxh0rWUBWMwrISly9JgMSZhYQl1j89RozxN0CEkv2nIeyRSVePv7HClIuIaAocXer
+	FIjJLKApsX6XPkSnosSU7odQSwUlTs58wgLRKSlxcMUNlgmMYrOQLJiF0D0LSfcsJN0LGFlW
+	MQpn5pXlJmbm6BVnZ1TmZVboJefnbmIERsmy2j9+Oxi/XAg+xCjAwajEw5vA8SRdiDWxrLgy
+	9xCjBAezkgiv5BWgEG9KYmVValF+fFFpTmrxIUZpDhYlcV6jb+UpQgLpiSWp2ampBalFMFkm
+	Dk6pBkYh2b273nlfMV68tF99/Vpxox2OCstqpb5euHTkVlHldY7gbe/Xm/z5fNIk+N6/uS0h
+	G+UtpzzOXzvlp+oisZi61SxSvzknz+L8N7EjMtSQzX5O8O+Qu2xisUyTapikhKSf+s23bL6R
+	/GmO7xy+EI8AQyFGvpDQ03yqHs8XMyr6Z0pvL32ceECJpTgj0VCLuag4EQC1SHXAjgIAAA==
 
-Hello list,
-
-I wrote this patch based on Gautham's patch code logic. Because I lack a
-test script to verify this patch, this patch only passes compilation.
-
-btw, another topic (unrelated to this bug) is that ocfs2-test fails to run
-on the latest Linux distributions (e.g., openSUSE Tumbleweed). I am focusing
-on fixing this problem, but it requires some time. I have created a personal
-repository [1]. Once I finish the verification process for ocfs2-test, I will
-submit a PR to the upstream GitHub repository [2] (the suse-py3 branch).
-
-[1]: https://build.opensuse.org/package/show/home:hmzhao:branches:network:ha-clustering:Factory/ocfs2-test
-[2]: https://github.com/markfasheh/ocfs2-test
-
-- Heming
-
-On 3/27/25 14:22, Heming Zhao wrote:
-> The commit 4eb7b93e0310 ("ocfs2: improve write IO performance when
-> fragmentation is high") introduced a regression. In the discontiguous
-> extent allocation case, ocfs2_cluster_group_search() is comparing with
-> the wrong target length, which causes allocation failure.
-> 
-> Call stack:
-> ocfs2_mkdir()
->   ocfs2_reserve_new_inode()
->    ocfs2_reserve_suballoc_bits()
->     ocfs2_block_group_alloc()
->      ocfs2_block_group_alloc_discontig()
->       __ocfs2_claim_clusters()
->        ocfs2_claim_suballoc_bits()
->         ocfs2_search_chain()
->          ocfs2_cluster_group_search()
-> 
-> Reported-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-> Fixes: 4eb7b93e0310 ("ocfs2: improve write IO performance when fragmentation is high")
-> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-> ---
->   fs/ocfs2/suballoc.c | 14 +++++++++++---
->   fs/ocfs2/suballoc.h |  1 +
->   2 files changed, 12 insertions(+), 3 deletions(-)
->
+PiBGcm9tOiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJj
+aCAyNywgMjAyNSAzOjAyIFBNDQo+IFRvOiBZb2hhbiBKb3VuZyA8anloNDI5QGdtYWlsLmNvbT47
+IGphZWdldWtAa2VybmVsLm9yZzsgZGFlaG80M0BnbWFpbC5jb20NCj4gQ2M6IGNoYW9Aa2VybmVs
+Lm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IGxpbnV4LQ0KPiBr
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyDsoJXsmpTtlZwoSk9VTkcgWU9IQU4pIE1vYmlsZSBBRSA8
+eW9oYW4uam91bmdAc2suY29tPg0KPiBTdWJqZWN0OiBbRXh0ZXJuYWwgTWFpbF0gUmU6IFtQQVRD
+SF0gZjJmczogcHJldmVudCB0aGUgY3VycmVudCBzZWN0aW9uDQo+IGZyb20gYmVpbmcgc2VsZWN0
+ZWQgYXMgYSB2aWN0aW0gZHVyaW5nIGdhcmJhZ2UgY29sbGVjdGlvbg0KPiANCj4gT24gMy8yNi8y
+NSAyMjoxNCwgWW9oYW4gSm91bmcgd3JvdGU6DQo+ID4gV2hlbiBzZWxlY3RpbmcgYSB2aWN0aW0g
+dXNpbmcgbmV4dF92aWN0aW1fc2VnIGluIGEgbGFyZ2Ugc2VjdGlvbiwgdGhlDQo+ID4gc2VsZWN0
+ZWQgc2VjdGlvbiBtaWdodCBhbHJlYWR5IGhhdmUgYmVlbiBjbGVhcmVkIGFuZCBkZXNpZ25hdGVk
+IGFzIHRoZQ0KPiA+IG5ldyBjdXJyZW50IHNlY3Rpb24sIG1ha2luZyBpdCBhY3RpdmVseSBpbiB1
+c2UuDQo+ID4gVGhpcyBiZWhhdmlvciBjYXVzZXMgaW5jb25zaXN0ZW5jeSBiZXR3ZWVuIHRoZSBT
+SVQgYW5kIFNTQS4NCj4gDQo+IEhpLCBkb2VzIHRoaXMgZml4IHlvdXIgaXNzdWU/DQoNClRoaXMg
+aXMgYW4gaXNzdWUgdGhhdCBhcmlzZXMgd2hlbiBkaXZpZGluZyANCmEgbGFyZ2Ugc2VjdGlvbiBp
+bnRvIHNlZ21lbnRzIGZvciBnYXJiYWdlIGNvbGxlY3Rpb24uDQpjYXVzZWQgYnkgdGhlIGJhY2tn
+cm91bmQgR0MgKGdhcmJhZ2UgY29sbGVjdGlvbikgdGhyZWFkIGluIGxhcmdlIHNlY3Rpb24NCmYy
+ZnNfZ2ModmljdGltX3NlY3Rpb24pIC0+IGYyZnNfY2xlYXJfcHJlZnJlZV9zZWdtZW50cyh2aWN0
+aW1fc2VjdGlvbiktPiANCmN1cnNlYyh2aWN0aW1fc2VjdGlvbikgLT4gZjJmc19nYyh2aWN0aW1f
+c2VjdGlvbiBieSBuZXh0X3ZpY3RpbV9zZWcpDQoNCkJlY2F1c2UgdGhlIGNhbGwgc3RhY2sgaXMg
+ZGlmZmVyZW50LCANCkkgdGhpbmsgdGhhdCBpbiBvcmRlciB0byBoYW5kbGUgZXZlcnl0aGluZyBh
+dCBvbmNlLCANCndlIG5lZWQgdG8gYWRkcmVzcyBpdCB3aXRoaW4gZG9fZ2FyYmFnZV9jb2xsZWN0
+LCANCm9yIG90aGVyd2lzZSBpbmNsdWRlIGl0IG9uIGJvdGggc2lkZXMuIFdoYXQgZG8geW91IHRo
+aW5rPw0KDQpbMzAxNDYuMzM3NDcxXVsgVDEzMDBdIEYyRlMtZnMgKGRtLTU0KTogSW5jb25zaXN0
+ZW50IHNlZ21lbnQgKDcwOTYxKSB0eXBlIFswLCAxXSBpbiBTU0EgYW5kIFNJVA0KWzMwMTQ2LjM0
+NjE1MV1bIFQxMzAwXSBDYWxsIHRyYWNlOg0KWzMwMTQ2LjM0NjE1Ml1bIFQxMzAwXSAgZHVtcF9i
+YWNrdHJhY2UrMHhlOC8weDEwYw0KWzMwMTQ2LjM0NjE1N11bIFQxMzAwXSAgc2hvd19zdGFjaysw
+eDE4LzB4MjgNClszMDE0Ni4zNDYxNThdWyBUMTMwMF0gIGR1bXBfc3RhY2tfbHZsKzB4NTAvMHg2
+Yw0KWzMwMTQ2LjM0NjE2MV1bIFQxMzAwXSAgZHVtcF9zdGFjaysweDE4LzB4MjgNClszMDE0Ni4z
+NDYxNjJdWyBUMTMwMF0gIGYyZnNfc3RvcF9jaGVja3BvaW50KzB4MWMvMHgzYw0KWzMwMTQ2LjM0
+NjE2NV1bIFQxMzAwXSAgZG9fZ2FyYmFnZV9jb2xsZWN0KzB4NDFjLzB4MjcxYw0KWzMwMTQ2LjM0
+NjE2N11bIFQxMzAwXSAgZjJmc19nYysweDI3Yy8weDgyOA0KWzMwMTQ2LjM0NjE2OF1bIFQxMzAw
+XSAgZ2NfdGhyZWFkX2Z1bmMrMHgyOTAvMHg4OGMNClszMDE0Ni4zNDYxNjldWyBUMTMwMF0gIGt0
+aHJlYWQrMHgxMWMvMHgxNjQNClszMDE0Ni4zNDYxNzJdWyBUMTMwMF0gIHJldF9mcm9tX2Zvcmsr
+MHgxMC8weDIwDQoNCnN0cnVjdCBjdXJzZWdfaW5mbyA6IDB4ZmZmZmZmODAzZjk1ZTgwMCB7DQoJ
+c2Vnbm8gICAgICAgIDogMHgxMTUzMSA6IDcwOTYxDQp9DQoNCnN0cnVjdCBmMmZzX3NiX2luZm8g
+OiAweGZmZmZmZjg4MTFkMTIwMDAgew0KCW5leHRfdmljdGltX3NlZ1swXSA6IDB4MTE1MzEgOiA3
+MDk2MQ0KfQ0KDQo+IA0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mMmZzLWRldmVs
+LzIwMjUwMzI1MDgwNjQ2LjMyOTE5NDctMi0NCj4gY2hhb0BrZXJuZWwub3JnDQo+IA0KPiBUaGFu
+a3MsDQo+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9oYW4gSm91bmcgPHlvaGFuLmpvdW5n
+QHNrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZnMvZjJmcy9nYy5jIHwgNCArKysrDQo+ID4gIDEgZmls
+ZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L2djLmMgYi9mcy9mMmZzL2djLmMgaW5kZXgNCj4gPiAyYjhmOTIzOWJlZGUuLjRiNWQxOGUzOTVl
+YiAxMDA2NDQNCj4gPiAtLS0gYS9mcy9mMmZzL2djLmMNCj4gPiArKysgYi9mcy9mMmZzL2djLmMN
+Cj4gPiBAQCAtMTkyNiw2ICsxOTI2LDEwIEBAIGludCBmMmZzX2djKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgc3RydWN0DQo+IGYyZnNfZ2NfY29udHJvbCAqZ2NfY29udHJvbCkNCj4gPiAgCQln
+b3RvIHN0b3A7DQo+ID4gIAl9DQo+ID4NCj4gPiArCWlmIChfX2lzX2xhcmdlX3NlY3Rpb24oc2Jp
+KSAmJg0KPiA+ICsJCQlJU19DVVJTRUMoc2JpLCBHRVRfU0VDX0ZST01fU0VHKHNiaSwgc2Vnbm8p
+KSkNCj4gPiArCQlnb3RvIHN0b3A7DQo+ID4gKw0KPiA+ICAJc2VnX2ZyZWVkID0gZG9fZ2FyYmFn
+ZV9jb2xsZWN0KHNiaSwgc2Vnbm8sICZnY19saXN0LCBnY190eXBlLA0KPiA+ICAJCQkJZ2NfY29u
+dHJvbC0+c2hvdWxkX21pZ3JhdGVfYmxvY2tzLA0KPiA+ICAJCQkJZ2NfY29udHJvbC0+b25lX3Rp
+bWUpOw0KDQo=
 
