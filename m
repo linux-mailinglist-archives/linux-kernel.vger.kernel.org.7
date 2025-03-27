@@ -1,224 +1,281 @@
-Return-Path: <linux-kernel+bounces-578434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66079A73194
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:02:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1595A731AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139241899039
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6C61899194
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BD92135DF;
-	Thu, 27 Mar 2025 12:01:51 +0000 (UTC)
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2090.outbound.protection.outlook.com [40.107.117.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266C320F097;
+	Thu, 27 Mar 2025 12:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="ghDmfPG2"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48140849;
-	Thu, 27 Mar 2025 12:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743076910; cv=fail; b=mwvv/9bq+J98q0DUvzQLrtOcggbvkEKs+N6xbMTITTmqDkLqSXdPL0aNw2ODf36g0hBzZaV85MR3058JBnCHAdLGITJDxOvSEq/HiIdUMJS8Lm2aeLBx7GX+MdLROIbrJwxDrH4YoxBkEnrLDlFDidGRnqnWx8sVXogUaxawuKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743076910; c=relaxed/simple;
-	bh=yrwrn0jL+sBwcPqOow7a8hnt8md8e8KHHUpn3p31ec0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cj6kE5/N6s7GEMVa7i/nyst3N5PhI8ZfVEIRxTmUc6KeUVFZtnzAJ4tUO0G9P8+u+Ns9tBek28oBNGir8x8k3w9VL3SDas9nCAYR5fEBABWLYnFSNxL4aSZHMLeJPggL6IxI4qiS+9lW/UU/wmsUWcTE80gSZa+tVwaUJfFAlyo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.117.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pk/vTBR6pckHZLlHabfDuITsE3g8BKM7y2GDaOi3zTG7o9ggDTOIWhhIPpHoIS0leu7nSbO/B+5q06dFDstMQ4OA7h4MGD50/Bm7kdgJaxMEl4MF8+sugEGQQet+tHtwYoQtMV6HSAoK+nk+ohZoxCUPVhRZ0BampPsjffikIte8I70fZhDrQSADJWjNp4dQ12qTP5Bt7djOLTKWIks2aSz06P5CVeSUQwiUSFvyGpTMqIqSZ7tuuL4tfMC8HVC9U6hQkQk8I1S2dFD8Kt9ZSFNet8POpElcKCa7AKBSmG9Q7Lu5YAa2UufgBudiOW/Hb1gtBB1Keqt1PmpywG7tow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ltzRY6kvgMTMrTnMuHWA+ZRL10M2sh0vLjKg654iAeU=;
- b=vmGVNdqtNLNWxd8FjEDw0sfMAvv/E3/ACD+GcYo/hAwf/KOTgjuzUWua3Pmu7GbmzQyVAIsOPQfgzEhZCSc9gPorctiVrf+2DGGF15m/VNiMFyHosZh9Ym+gRUEcqkKVXomzEuYQGkDj6wQDaJLAUDgUI7TkdHZD6cLI9r4SbTHy0GQl4qokx+g2j6EJtsaTI1vghkACPwREJpZag1AxCrrJhfbLjouqkOr3cBcsks63eK0NBRnp5I/xyZu5csMCchdAL1eyDHOgQuHeVnv2kHKnKb0+kLVIIEc7TmXV/PvCPzNM2ljglz8/whCswvFvdKXN/w9hw8rKmQGrMBNxyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYAPR01CA0129.jpnprd01.prod.outlook.com (2603:1096:404:2d::21)
- by SEYPR06MB6949.apcprd06.prod.outlook.com (2603:1096:101:1e4::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 12:01:41 +0000
-Received: from TY2PEPF0000AB84.apcprd03.prod.outlook.com
- (2603:1096:404:2d:cafe::c8) by TYAPR01CA0129.outlook.office365.com
- (2603:1096:404:2d::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Thu,
- 27 Mar 2025 12:01:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB84.mail.protection.outlook.com (10.167.253.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Thu, 27 Mar 2025 12:01:39 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 2571F4160CA0;
-	Thu, 27 Mar 2025 20:01:39 +0800 (CST)
-Message-ID: <71c6ba9b-adc3-4ca7-84b1-bbcb074d1f0f@cixtech.com>
-Date: Thu, 27 Mar 2025 20:01:39 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9401B960
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743076994; cv=none; b=e3bc5GymMmqJKaPicUIb7zTxrJjqvM8VbEHA5sd8SWqzXgSwTnmkZjNjJ7DpcVXlcqQT1tjsLqJ13jFqnAEtVvtByZV9mWUmmjwvtUbnB9GXcV2YX5fz/rCmdG31CjwuapCYEH65YD0jTjoR4gfJPSxWbfWz+DRFMHLRpsszeCI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743076994; c=relaxed/simple;
+	bh=UJkKSf7fQMEVOKFZamgTNbbKX0+pYHquQYAtDvyOvnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ICnnHeIJZXE0s2DslAYVL+j1RsNXfDNIbaJO3JJMHNmfe5tlOyNaEWS28Zh4YRoGTVg0nblo3xYJ4Xq2wSJmSAb2pCAjylCbeybcYBQlPwZRboHT6EdXBtdMG3Zpq8FXIXMZy+PuXc6xjYy/hPiilqrBDNpqBdWWBDxTNtOcgqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=ghDmfPG2; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743076939; x=1743681739; i=spasswolf@web.de;
+	bh=SM1POh9VV3k0zWrqccD5VWDOjF1RncipJvSoxJViC/g=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ghDmfPG2X/yTzwS3cAxo1t9omIZslCGC6qRb9iOd/Na9V2c6etxsU46/anZL54rM
+	 fFYPqT+7kgnRo4g5YOpD2brWvtwwYQaZMyCVlSOWh9dhcPh04MAoiQ83DNZPIyG+7
+	 gNnf19MEvZbdqe/5/VgHnwsszuglGkSa6tCdg7Vo1BrM/Z+X/Oi6VYGaHjmI4/6u3
+	 Q3K0RDUD5/n5tlEmp/pB63XJ7Ih+VFyz4hYtz241kgXA36BodEJXvAF8IvzAunt+W
+	 PmQJLZjFv1YPz+sd+R3Mzn5+XyP9ZENFemLV0BPna670NPI6CYh4fLwwCAuJLpGSr
+	 ifZhUdH3FE7BohYBvQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
+ (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MSZHv-1tZKEt3IHR-00ShLe; Thu, 27 Mar 2025 13:02:18 +0100
+From: Bert Karwatzki <spasswolf@web.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Balbir Singh <balbirs@nvidia.com>,
+	Kees Cook <kees@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	linux-kernel@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org
+Subject: [PATCH v0] kernel: resource: add devm_request_free_mem_region_from_end()
+Date: Thu, 27 Mar 2025 13:02:15 +0100
+Message-ID: <20250327120216.14083-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: Z-UuHkUPy60e1GWM@gmail.com
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] PCI: cadence: Add header support for PCIe next
- generation controllers
-To: Manikandan Karunakaran Pillai <mpillai@cadence.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
- <kw@linux.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
- <20250327111127.2947944-1-mpillai@cadence.com>
- <CH2PPF4D26F8E1CE94EC3F4A0D6B9849818A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <CH2PPF4D26F8E1CE94EC3F4A0D6B9849818A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB84:EE_|SEYPR06MB6949:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0f8572b-ebde-4b1b-bc39-08dd6d272231
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVhwNm40QTlnKzdwdWFJb01kdzFMQWhac3hETi80YVhYdmk3bWRFVjd0WjFx?=
- =?utf-8?B?REE1aFREWTI1Q0F0UTJ4RnhHZ1pwRjRtMnVobmdlcnZoYnpUR2F4VHVNNERk?=
- =?utf-8?B?ZmRKM0x1ZHl4T1VMcUl2UXI0U1poM205UjdTUVRJWWppcVdGNDNpMUtGNTJ2?=
- =?utf-8?B?N3JBRmdVelFFRWF4ZmMzRDE1WnhFZ3VyclVwU3RMb2lQTFkrRnFjaStpRmVl?=
- =?utf-8?B?QW1TcVIxSDJraS8xRnVyVDVWQXFvRWMrWFc4Yk1FamhTWUpkU0MrWVkrSk9X?=
- =?utf-8?B?UXgzL3d4MlZRcmtDeDZSQ3M2bzlPYUlBekwzU2pyUFJFZzJSOE84SkVrNGdL?=
- =?utf-8?B?RXZNcU9LWGxpeFhVTzhlYkFkRG9MQml1ZXNmMjM4eFFwWjRycXZaZVBPdlN1?=
- =?utf-8?B?MVdaUXhIaEthR1RVaGtsQmE2ZGkxT0JLNnI4QUo2WEdpTFFMZGtUc0ZkR3Bl?=
- =?utf-8?B?eTVyUS9remE4WXdEbDR4NWpGV0FJWjZmMDlkdmQrY2x3OEVCOHJPWUNSZDR4?=
- =?utf-8?B?S0I4cENzUTBqcnZEQ1cyKzJTbnpsREdDYUpHWjJwQzZJVktiVzg2Q1gyQTQ0?=
- =?utf-8?B?OEdtRFpBbThuQm5GaUdLWDhzdVMzVlQrUXU1MUZqK0RQajFveEVvMDVEU1Uz?=
- =?utf-8?B?RXNaRnBSVUR2QzI4VWpFWmpWWGJJdWZJREtqdlNLNlVDQTN2aTJESEdvSHBP?=
- =?utf-8?B?QmhaMEVOWjdCdy9LdlBQS0NvUEJjazNqUXJjTW4xRU5abFNnZUl5R1J3REdI?=
- =?utf-8?B?ZW52UXdvTDVxL2VseGN5eWwwcWMxeVJxRFlTb1Y2TDFpT1lYTW1rcmJONis0?=
- =?utf-8?B?K3NMTkVkUjFTU01wbDl0RjNzcHVYaktqWlF5RHlHRmZiMFdvVFpoSjVVKytQ?=
- =?utf-8?B?RVo5K1hsTFR5djNzZmNtVTJhVEZJZ0lxZE83aHVrNjluK1lVSlBlempjOS9u?=
- =?utf-8?B?c3VxVjJvU1RkT2RBL2lPZjE1Vm9rTGhnZ2plY3c0dkxJSmI3SldnLzBobWE2?=
- =?utf-8?B?U0h0RWxkOWlIc0tVMjQyVTIxUC9Ba25tZDFSUTFtQ2lXcHJrbERJaktudXhx?=
- =?utf-8?B?QWowVUx4RHQxWXNDaEFmdDR3UmRvMDZVZjFjQm9OYU9SaHJaRWptTHdWTUdi?=
- =?utf-8?B?eWx4NWFSbWhvRDF1KzhMRG5pZkpnOEFqTkh1YlYrL1FLa0tSeDNuWEVxTGFO?=
- =?utf-8?B?OWdVN04rNnIyTVM0bHVoUjY1WU9WL1RxeUdRQzN6bXpGMzFKMlVZZXBvakZo?=
- =?utf-8?B?bWtRcTUrWjdCYks5RWtLaXU1Z1dFVXYwUFY3RlA3OUdoVEN0bGZINlM2NDlj?=
- =?utf-8?B?K094Z1pJWmcvS0ZKL1B1STJKYUgybXV5dDczZFh1UE5KVjdvbTZPYUVBdjUw?=
- =?utf-8?B?Mjl0WWtKUEtMMXZxZVBqYW1oZmw0OU0yWGJsRWhYcDVCZC8wenl0TXdCcStj?=
- =?utf-8?B?RTdaUTY5a09yaHdYaGpHYy93VWY3bWJCd1Q5dVBYTGRzS2wvRlJObUUxY3Iw?=
- =?utf-8?B?L0xIV3plNVRkNlNvUkpPNW5yNUd2L2cyb0YxWTJ0SGEwd0tBaEZyNGdwM2Nl?=
- =?utf-8?B?MytyVXFweTV4azY1MzdPbHZ1OTVlS2ZrNlRlVk1ZWkdoTkZKa0RkenE3VVQ5?=
- =?utf-8?B?VzArRHBUQXg4S2lNS2dFek9wSEpndTlVdUJGa1oyQk9tVll6VXkzaHBYdSt1?=
- =?utf-8?B?N3EvNkJEalJzdGR4TnBuRUg2SHA2TUFtTHRrdC9JcEJxc0FxK05JRmVIYXhG?=
- =?utf-8?B?UFFJemxSb3p1aXZVYlA5dDM2OVk0bFZCdEx1TXAyRndWc05ZY3NFaWZGZWNh?=
- =?utf-8?B?L0RubzFscFJRcGk5N1lVeU5tZWp4c2pnMXRTYXVHYlFlaWdwR0pMSG5iK0U0?=
- =?utf-8?B?S2F0VDJrU0p5U0FhdUNJbVFPWE83RmVpejNjb2djNDl3elJaZjJDb20vVUJw?=
- =?utf-8?B?dkNubjRMeDFwSjZkNXFuLzc5UFFmckJxNGFVQjhEVm5Sc2Vkb2gzdEpMc3hx?=
- =?utf-8?Q?SVx8j7+9d0LgYqc4QjJzClNpK4ZPGc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 12:01:39.9283
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0f8572b-ebde-4b1b-bc39-08dd6d272231
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB84.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6949
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zUDI+gfzkTnaGlpjaw/Mi3OTj7Gliv+9usoAh1T1d3UUIYx0K53
+ NxOTzwzE6QDKdfMpytVP+TqEqPFrU0n8kwx88EwhECN0A3vPCmsknvyDmUUU7zuHpJ/yk+j
+ s5aP+CF1KAob+Q2mi2hvn7aOCpML5V6d9It/ItXJ9Os8GrDj40Ayt4JaMd8gPQDglaqzDpN
+ eNPNYcupJ9auwgAjbhkPQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U12YhXUhwvM=;GefW0zbxDptGhDwtcP8xpktjuKv
+ /If+yDumaiZS5a1SiLZ103nNh9Fmde7WSW2XFr5/0ju/3iGCc0Lt0OmrRPpso2S3X04sz8gtz
+ Yv7tBV/OYb+GShCCu0+LyeRLculBS+evmO2QXs7WKvz+Y6WEyUob2IX3SqPUdsexiiO2XhBWV
+ CUENkTdx8bU7PU/B0cFewQMaEgbwf5EXS3tFcmEN65AMB1W1qmt0BYcOZ3ioqUW5pPPZMG/Au
+ Ar8OXa7pDkm2xfPlKQBjfV6tGytEllKbqCd9lNtD0+U8AQkD/+oIzkfMo7izNq2AGyoqL7EWi
+ +waQPelDKsW2wTrxu8dCyYY8alf/SisJEzyRdiqenBKhDo98LH4ZNTDAKzqHQ+qTS7KhfGhRA
+ d2XgI/MR97AL0InkRGrfADNaz9JS0S5bZgFDmcYIqCoOW4bZ+vh9Tlz8V09+V4gtuVICkOgqb
+ /iLULL5VzyTlz0y54onV8au5i198M7MGCfWRdyhc/K1rpWVmIpnD9c9bYFUCw31SuCOcloXA+
+ o2qUmCMKJgcGLoqjSMg8lk4C7DQG1ZOuwt2uZogm8ExehqeWbJwFhuErZH0H1Jfup47VV5YQ0
+ NuRD2a/5uEPVAFwaKrs7OClxKNv1tWPu5O4mNawcJJEgHIuMzb3U8IivcsoqkwQ7L+ryU7zKK
+ pvPUTwyoqyZbTp6SzRrZf3OyI8WpXnC3Nwqn8iXLjqqTM7YACEGucjV3Hj1OrGdLT/ee8/dID
+ GdzMI4AA80mzfZRGWvcmhrrvg+I3LCuC7HgEWAC/2LScEmav05xq2deWl6h0d85hxxDVxT/oc
+ 47el1CxY1pkMKm1Who2LwAjTnMmFAive1jPMSkNPZBFE1rhauAYW0lM2F78khefz49jcjlsKS
+ Nzyzs77CZi8kzRGjB97GcmuPO3Hnubz5cfsp0E7+/dxjXQCtZAFZ/M3TebtT6dUIOIN/MTruZ
+ /eeCeA9g3ztcjevUk2nrk7etriUUHuTV0TDXwPhPof8fHvhYscTZGd8h74ObmcPzdBqCGormB
+ XoiHYvpPWP7VFLW5LJfyFaVYfEFFKwXsB5iEGi7ZzdY336NfoZKNKwYcf0bROZBYHdszH23E3
+ OPvydcWP0C+6oOhE/nds6FxCoyfysXBFLQkyMSu4C3A1Tj8iaCxUyvhoqunNnToHJCIUnnOj1
+ I33MOCEoJwtr0dA814oym+8l7eOQLvdHss8LJQR1uqHEFICjyN2k7XnngBdgTXf6Jt5bB8FGy
+ WMX4cgbRS31vcOuVKel4EJn6aao6tMiCviLkeBiIJRRwOQOCQOZ+1fzOHaIMcN8zJCvTk23/f
+ eJ45Kgz7s9l3LNfZXEbmBmYfUq3J7Gckc0r2b44YUcAXFbGV97cTk4XQ/Uuht+6AFzmT8zFYU
+ wmbC9IYVE2JGzgAgRrUrJiZIQkA9abBfQ8jbNbVCeIdSlz72PJwzMp0AM8m/ll549FDZfrMdK
+ 28IESxEqkvfILUvW6LPUX7bKCI5s=
 
+devm_request_free_mem_region() places resources at the end of the
+physical address space, DIRECT_MAP_PHYSMEM_END. If the the dma mask
+of a pci device is smaller than DIRECT_MAP_PHSYMEM_END then this
+resource is not dma accessible by the device which can cause the
+device to fallback to using 32bit dma which can lead to severe
+performance impacts.
 
+This adds the devm_request_free_mem_region_from_end() function which
+allows to select the endpoint from which to place the resource
+independently from DIRECT_MAP_PHYSMEM_END.
 
-On 2025/3/27 19:26, Manikandan Karunakaran Pillai wrote:
-> +/*
-> + * High Performance Architecture(HPA) PCIe controller register
-> + */
-> +#define CDNS_PCIE_HPA_IP_REG_BANK              0x01000000
-> +#define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK     0x01003C00
-> +#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON     0x01020000
-> +/*
-> + * Address Translation Registers(HPA)
-> + */
-> +#define CDNS_PCIE_HPA_AXI_SLAVE                 0x03000000
-> +#define CDNS_PCIE_HPA_AXI_MASTER                0x03002000
+Link: https://lore.kernel.org/all/20250322122351.3268-1-spasswolf@web.de/
 
+Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+=2D--
+ drivers/gpu/drm/amd/amdkfd/kfd_migrate.c |  3 ++-
+ include/linux/ioport.h                   |  3 +++
+ kernel/resource.c                        | 31 ++++++++++++++++++------
+ 3 files changed, 28 insertions(+), 9 deletions(-)
 
-Hi Manikandan,
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/am=
+d/amdkfd/kfd_migrate.c
+index d05d199b5e44..e1942fef3637 100644
+=2D-- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+@@ -1042,7 +1042,8 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *a=
+dev)
+ 		pgmap->range.end =3D adev->gmc.aper_base + adev->gmc.aper_size - 1;
+ 		pgmap->type =3D MEMORY_DEVICE_COHERENT;
+ 	} else {
+-		res =3D devm_request_free_mem_region(adev->dev, &iomem_resource, size);
++		res =3D devm_request_free_mem_region_from_end(adev->dev,
++				&iomem_resource, size, dma_get_mask(adev->dev));
+ 		if (IS_ERR(res))
+ 			return PTR_ERR(res);
+ 		pgmap->range.start =3D res->start;
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 5385349f0b8a..a9a765721ab4 100644
+=2D-- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -407,6 +407,9 @@ walk_iomem_res_desc(unsigned long desc, unsigned long =
+flags, u64 start, u64 end,
 
-I have replied to your email in Cadence case, and our design engineer 
-has also explained it. Please provide a way for us, as Cadence 
-customers, to modify it ourselves. Please think about it.
+ struct resource *devm_request_free_mem_region(struct device *dev,
+ 		struct resource *base, unsigned long size);
++struct resource *devm_request_free_mem_region_from_end(struct device *dev=
+,
++		struct resource *base, unsigned long size,
++		resource_size_t seek_end);
+ struct resource *request_free_mem_region(struct resource *base,
+ 		unsigned long size, const char *name);
+ struct resource *alloc_free_mem_region(struct resource *base,
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 12004452d999..82f40407c02d 100644
+=2D-- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1875,12 +1875,14 @@ EXPORT_SYMBOL(resource_list_free);
+ #endif
 
-Please kindly follow up HPA's patch CC to my email address, thank you 
-very much.
+ static resource_size_t gfr_start(struct resource *base, resource_size_t s=
+ize,
+-				 resource_size_t align, unsigned long flags)
++				 resource_size_t align, resource_size_t seek_end,
++				 unsigned long flags)
+ {
+ 	if (flags & GFR_DESCENDING) {
+ 		resource_size_t end;
 
-V1 patch:
-https://patchwork.kernel.org/project/linux-pci/patch/CH2PPF4D26F8E1CDE19710828C0186B13EEA2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com/
+ 		end =3D min_t(resource_size_t, base->end, DIRECT_MAP_PHYSMEM_END);
++		end =3D min_t(resource_size_t, end, seek_end);
+ 		return end - size + 1;
+ 	}
 
+@@ -1920,8 +1922,8 @@ static void remove_free_mem_region(void *_res)
+ static struct resource *
+ get_free_mem_region(struct device *dev, struct resource *base,
+ 		    resource_size_t size, const unsigned long align,
+-		    const char *name, const unsigned long desc,
+-		    const unsigned long flags)
++		    resource_size_t seek_end, const char *name,
++		    const unsigned long desc, const unsigned long flags)
+ {
+ 	resource_size_t addr;
+ 	struct resource *res;
+@@ -1946,7 +1948,7 @@ get_free_mem_region(struct device *dev, struct resou=
+rce *base,
+ 	}
 
-Communication history:
+ 	write_lock(&resource_lock);
+-	for (addr =3D gfr_start(base, size, align, flags);
++	for (addr =3D gfr_start(base, size, align, seek_end, flags);
+ 	     gfr_continue(base, addr, align, flags);
+ 	     addr =3D gfr_next(addr, align, flags)) {
+ 		if (__region_intersects(base, addr, size, 0, IORES_DESC_NONE) !=3D
+@@ -2021,17 +2023,30 @@ struct resource *devm_request_free_mem_region(stru=
+ct device *dev,
+ 	unsigned long flags =3D GFR_DESCENDING | GFR_REQUEST_REGION;
 
-Can you change this part of the code to look like this?
+ 	return get_free_mem_region(dev, base, size, GFR_DEFAULT_ALIGN,
+-				   dev_name(dev),
++				   DIRECT_MAP_PHYSMEM_END, dev_name(dev),
+ 				   IORES_DESC_DEVICE_PRIVATE_MEMORY, flags);
+ }
+ EXPORT_SYMBOL_GPL(devm_request_free_mem_region);
 
-#define CDNS_PCIE_HPA_IP_REG_BANK(a)              (a)
-#define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK(a)     (a)
-#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON(a)     (a)
-#define CDNS_PCIE_HPA_AXI_SLAVE(a)                (a)
-#define CDNS_PCIE_HPA_AXI_MASTER(a)               (a)
++struct resource *devm_request_free_mem_region_from_end(struct device *dev=
+,
++		struct resource *base, unsigned long size,
++		resource_size_t seek_end)
++{
++	unsigned long flags =3D GFR_DESCENDING | GFR_REQUEST_REGION;
++
++	return get_free_mem_region(dev, base, size, GFR_DEFAULT_ALIGN,
++				   seek_end, dev_name(dev),
++				   IORES_DESC_DEVICE_PRIVATE_MEMORY, flags);
++}
++EXPORT_SYMBOL_GPL(devm_request_free_mem_region_from_end);
++
+ struct resource *request_free_mem_region(struct resource *base,
+ 		unsigned long size, const char *name)
+ {
+ 	unsigned long flags =3D GFR_DESCENDING | GFR_REQUEST_REGION;
 
+-	return get_free_mem_region(NULL, base, size, GFR_DEFAULT_ALIGN, name,
++	return get_free_mem_region(NULL, base, size, GFR_DEFAULT_ALIGN,
++				   DIRECT_MAP_PHYSMEM_END, name,
+ 				   IORES_DESC_DEVICE_PRIVATE_MEMORY, flags);
+ }
+ EXPORT_SYMBOL_GPL(request_free_mem_region);
+@@ -2055,8 +2070,8 @@ struct resource *alloc_free_mem_region(struct resour=
+ce *base,
+ 	/* Default of ascending direction and insert resource */
+ 	unsigned long flags =3D 0;
 
+-	return get_free_mem_region(NULL, base, size, align, name,
+-				   IORES_DESC_NONE, flags);
++	return get_free_mem_region(NULL, base, size, align, DIRECT_MAP_PHYSMEM_E=
+ND,
++				   name, IORES_DESC_NONE, flags);
+ }
+ EXPORT_SYMBOL_GPL(alloc_free_mem_region);
+ #endif /* CONFIG_GET_FREE_REGION */
+=2D-
+2.49.0
 
-The offset we designed is: (Cixtech)
-#define CDNS_PCIE_HPA_IP_REG_BANK 0x1000
-#define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK 0x4c00
-#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON 0xf000
-#define CDNS_PCIE_HPA_AXI_SLAVE 0x9000
-#define CDNS_PCIE_HPA_AXI_MASTER 0xb000
-#define CDNS_PCIE_HPA_AXI_HLS_REGISTERS 0xc000
-#define CDNS_PCIE_HPA_DTI_REGISTERS 0xd000
-#define CDNS_PCIE_HPA_AXI_RAS_REGISTERS 0xe000
-#define CDNS_PCIE_HPA_DMA_BASE 0xf400
-#define CDNS_PCIE_HPA_DMA_COMMON_BASE 0xf800
+One of the problems (I'm sure there are more ...) with this patch is that
+it uses dma_get_mask(adev->dev) as the endpoint from which to place the
+memory, but dma_get_mask(adev->dev) returns the dma mask of the discrete
+GPU, but what actually is needed to avoid the bug would be the dma mask
+of the built-in GPU. In my case both are equal (44bits), but I'm not
+sure if they are equal in all cases.
 
+> So this patch does the trick for Bert, and I'm wondering what the best
+> fix here would be overall, because it's a tricky situation.
+>
+> Am I correct in assuming that with enough physical memory this bug
+> would trigger, with and without nokaslr?
 
-The original register bank consumed at least 48MB address space which is
-begin from 0x0000_0000 to 0x03020000. Because there is unoccupied
-address space between every two register banks , our hardware remaps the
-registers to a smaller address space which means the register bank
-offset address is changed by custormer. So, we cannot utilise the common
-code directly without rewriting the function.
+I think the bug triggers as soon as DIRECT_MAP_PHYSMEM_END is bigger
+then the dma mask of the integrated GPU.
 
+> I *think* the best approach going forward would be to add the above
+> quirk the the x86 memory setup code, but also issue a kernel warning at
+> that point with all the relevant information included, so that the
+> driver's use_dma32 bug can at least be indicated?
+>
+> That might also trigger for other systems, because if this scenario is
+> so spurious, I doubt it's the only affected driver ...
+>
+> Thanks,
+>
+>	Ingo
 
-We submit and pull a Cadence case: #46872873
+Or one could make the endpoint from which the memory resource will be
+placed selectable.
 
-
-Reply from Cadence case Manikandan:
-Another option I can propose is to pass these values through the DTS
-file … (Hopefully that would be lesser changes)
-
-Hans:
-I agree to get it through the DTS attribute, please modify it, so as to
-be more flexible. This offset value may be modified when RTL is integrated.
-
-
-Best regards,
-Hans
+Bert Karwatzki
 
