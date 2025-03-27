@@ -1,197 +1,113 @@
-Return-Path: <linux-kernel+bounces-579189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75B1A7409D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:13:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9108FA740A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91930189DF60
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF0517AE17
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9F1DE3B3;
-	Thu, 27 Mar 2025 22:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924C11DDC20;
+	Thu, 27 Mar 2025 22:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="RfneHWSi"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JKtNFBuz"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861B1D5ADA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727DC28366
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743113614; cv=none; b=hKnSvTOOK1iFPq2V8bF8/Xexi78EnOmW/r2DJ7VENfdaQ68JRJWl6ly4gKav7D7HKrit5I2zRSFO+Pf+zU/JGrcuS0KLbi2s+CGOZ873SumWHE9VuO5NkyUXFNJGRYX1IaJz3mZL69EjUeokP5ZPlIncxFA6Kl2ShsOGCe5YEw4=
+	t=1743113795; cv=none; b=JznYooi+2VlejgpvrFHfk5+BoTTLvdenCZEy9XGJ1bj24LOpwTuYEMOrymcowQmKwyai+kMA9q0cq2TpM+OYnYmF0ROa/tMHKeEHjAM4zzv04UCBzAxTUujSV/9p3dL8V/BvkcZ9HjfmktERv04TH+eYgbbbeQRpO4MN8sgwxUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743113614; c=relaxed/simple;
-	bh=TYGJ8FnfsKT1SKjoZWBosa8mBZ3KjzthRNE8P8nvecE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bIAah5K23301+d+d087IX0jf8Aiv8RZT41PyVh8I8os6E13zRcGTZ2TB4WwqZDp1AQEgn0ppAKnoxy1Fur2rDLDkdUCUBkAVveYVtHzlTNUM53J5Ocr57mL+jrTNyAveKDyo8GxCx09l6o4uG5zofcjgDDlRQx1cWpTnltb9hu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=RfneHWSi; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=rq2gsk3pfvay7fg5nyq3ghjsg4.protonmail; t=1743113609; x=1743372809;
-	bh=Vrk6CcpdVcblD8Yoi4uM8XudDIG9EgjbDWgg5W2/PO0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=RfneHWSiAyNxultd7Fssx0bbLRtJdVbBqsZJz5oD6qD2GsbQ4/36TWrpLy7lg+DmF
-	 vnlER0HAcssPgET0HTb9yNDxki7tEztPSH0C8H67N0XPwy+gZ5WPbq2qCtQ1eENQPU
-	 kOnGYplP6tb3H4rtk29pwmRMCS+7s+FUcGx5PhMAr0lDOuWfLKDneKOrlEvWAFlLOD
-	 ZKXQkFuKl2U1Wg5B2xRsUOnmUFtHUGK38R/UbIZATR7RBxqKrAlbLOCJHbYXGQN5dv
-	 GPE9uqewuMZymcnHSm0Xzu1EsICI8eYZMERYJRwmRIsRkK/LbcTptqGpefovzTB26o
-	 BEe/cCRP+vMxA==
-Date: Thu, 27 Mar 2025 22:13:22 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] rust: clarify the language unstable features in use
-Message-ID: <D8RE79BLHK7K.1ZM2N5RBYGUY8@proton.me>
-In-Reply-To: <20250327211302.286313-1-ojeda@kernel.org>
-References: <20250327211302.286313-1-ojeda@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 57039260adb80c49be970e0c87108b8ac94d43c1
+	s=arc-20240116; t=1743113795; c=relaxed/simple;
+	bh=fUh5GtfQfAAlwST5jSRPJgKqT0/rr26Ag5vsqVYRX5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hVd6Sb3ybJ96zk1c03ZrWlgn8jENH3X/Kg2v82Zt7SfNB/8tYX5FDN4WuBKXs8HqTVM1hNWD5yoNIEeYvR2ORfu8gqwuuC0IH6nuOSuK0RB/RbFsuhD3VjwHRliqZ1G6yFAqOOuBAz3J7b77K9xCPdJMchnky8Tr54JvYIfhmtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JKtNFBuz; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3f6a92f2328so827066b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1743113792; x=1743718592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BUptK6otSzyjdHzI4oMLC0OqmBTlOuKhDoyHAoxCs+4=;
+        b=JKtNFBuzRQTGLnosCcD0sF4fHNh+yyvM6OgTRRPAoeqhsqoYCXVdNi+Bh7w9AhVXxE
+         tr0EknKwA7kCRoxQNFMBSeM5HfW+IIsrheGxCHMJGcQpdaXSZEesDX2Tmk+WrRdYrBoh
+         wPAFcEPEfjrfhrgCgUYnN3aPBV7vS2tpmzH+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743113792; x=1743718592;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BUptK6otSzyjdHzI4oMLC0OqmBTlOuKhDoyHAoxCs+4=;
+        b=RODXFoiK7zouhVBzUPVtHAE34qMFJVJsIVe6U+2aKqbEnCtjnnL9TtnotJULz3f2Yh
+         f8Y+bIzdy5/luGrE1vsH/JuswZxKEqhwG77YUpLxapOY6+Smf/5ebrrXZ7jF8Sx4Smez
+         rFDh9gRy/wAjFAgXDr0wPN0ik+yjw0JP8uS4XVt7ocBM+YXJjAQmAno4ZzBDCOlibk/9
+         Cd3od0joXeF1mIZJqFybTHC4GP8lL3x6HzNoD+izYADuXGXn2m7ITva1mgGLATln2BCC
+         tKgCfAkUmt0EVK5aHXjzwRt7E5ylkQco+rmRMOTQrbQi1u92RMnVyGK5AAEZO7y24mLw
+         fE6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURRmk7k18tn5BbvKGzBQ02+YbjU8xJlkLT+VrsJJDmaoAIlN98bBInwQvRfw5zla811BZjPoSAdCEk/JE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym65b4a/dzqWkyPzD+T9xUaxN8Qtx0BbvHl379ROOOI9DsmwkC
+	HOgcXxwI7Pa36oP3kId2/XeEq/olrjvXhIeaopKmzDudd+D9m9tmvn1flkY1hw==
+X-Gm-Gg: ASbGncus2luLSs2P6JqNXIe6UK++OEVgSVXFQVrO2qHnEGkf+lOzcNd8uxeL8LiIPVx
+	teZU0OBjOxT2ptR1ECPSTFgeERxO2pcJhkc+z2Tl00rXHE5Fdr1yCfVdSSK6dkPQ4cNWbO1aPOn
+	gOnKjpsVyZ/GX6nBvwCYp9GfmwbDhHVb6W9bPppFIpVkfxSMFVO5DE5xswloOCLQ7npkNHpKK81
+	Ga0UtuFr/88Ja6p9+lkyf7BseWrl4zNlvJJ8aW4fpvCBRkEkoFM7syw6zY5Oh3arMZhqjVwzBz5
+	X6/Gv7ly2TqOfBTlHjrxrmFUV0tvEFQayCmnf/SeVKWFKrcnttwANxozAIruweQ3EvP1k/HJqu3
+	PwkF6abtzXL1FZ+yS43d2Dg==
+X-Google-Smtp-Source: AGHT+IFe9UwBGyHMUR53G94gdFaI8rhRZjDtkIMFykUA6r0ba851ZkOMzNTzDnJ9RtmV6lkufrRjbg==
+X-Received: by 2002:a05:6808:3a15:b0:3f4:bc5:d47a with SMTP id 5614622812f47-3ff05f39b4dmr330200b6e.13.1743113792272;
+        Thu, 27 Mar 2025 15:16:32 -0700 (PDT)
+Received: from stbirv-lnx-1.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ff051680a8sm105031b6e.1.2025.03.27.15.16.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 15:16:31 -0700 (PDT)
+From: justin.chen@broadcom.com
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: florian.fainelli@broadcom.com,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	jassisinghbrar@gmail.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	Justin Chen <justin.chen@broadcom.com>
+Subject: [PATCH 0/2] mailbox: Add support for bcm74110 mailbox
+Date: Thu, 27 Mar 2025 15:16:26 -0700
+Message-Id: <20250327221628.651042-1-justin.chen@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu Mar 27, 2025 at 10:13 PM CET, Miguel Ojeda wrote:
-> We track the details of which Rust features we use at our usual "live
-> list" [1] (and its sub-lists), but in light of a discussion in the LWN
-> article [2], it would help to clarify it in the source code.
->
-> In particular, we are very close to rely only on stable Rust language-wis=
-e
-> -- essentially only two language features remain (including the `kernel`
-> crate).
->
-> Thus add some details in both the feature list of the `kernel` crate as
-> well as the list of allowed features.
->
-> This does not over every single feature, and there are quite a few
-> non-language features that we use too. To have the full picture, please
-> refer to [1].
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/2 [1]
-> Link: https://lwn.net/Articles/1015409/ [2]
-> Suggested-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+From: Justin Chen <justin.chen@broadcom.com>
 
-LGTM, so:
+The bcm74110 mailbox driver is used to communicate with
+a co-processor for various power management and firmware
+related tasks.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Justin Chen (2):
+  mailbox: Add support for bcm74110 mailbox
+  dt-bindings: mailbox: Add devicetree binding for bcm74110 mbox
 
-And left two suggestions below.
+ .../bindings/mailbox/brcm,bcm74110-mbox.yaml  |  68 ++
+ drivers/mailbox/Kconfig                       |  10 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/bcm74110-mailbox.c            | 661 ++++++++++++++++++
+ 4 files changed, 741 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/brcm,bcm74110-mbox.yaml
+ create mode 100644 drivers/mailbox/bcm74110-mailbox.c
 
-> ---
->  rust/kernel/lib.rs     | 27 ++++++++++++++++++++-------
->  scripts/Makefile.build |  8 ++++++++
->  2 files changed, 28 insertions(+), 7 deletions(-)
->
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index ba0f3b0297b2..660a3ab6f9d4 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -12,21 +12,34 @@
->  //! do so first instead of bypassing this crate.
-> =20
->  #![no_std]
-> -#![feature(arbitrary_self_types)]
-> -#![cfg_attr(CONFIG_RUSTC_HAS_COERCE_POINTEE, feature(derive_coerce_point=
-ee))]
-> -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized=
-))]
-> -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_=
-dyn))]
-> -#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
-> +
-> +// Please see https://github.com/Rust-for-Linux/linux/issues/2 for detai=
-ls on
-> +// the unstable features in use.
-> +
-> +// Stable since Rust 1.79.0.
->  #![feature(inline_const)]
-> +
-> +// Stable since Rust 1.81.0.
->  #![feature(lint_reasons)]
-> -// Stable in Rust 1.82
-> +
-> +// Stable since Rust 1.82.0.
->  #![feature(raw_ref_op)]
-> -// Stable in Rust 1.83
-> +
-> +// Stable since Rust 1.83.0.
->  #![feature(const_maybe_uninit_as_mut_ptr)]
->  #![feature(const_mut_refs)]
->  #![feature(const_ptr_write)]
->  #![feature(const_refs_to_cell)]
-> =20
-> +// Expected to become stable.
-> +#![feature(arbitrary_self_types)]
-> +
-> +// `feature(derive_coerce_pointee)` is the one expected to become stable=
-.
-> +#![cfg_attr(CONFIG_RUSTC_HAS_COERCE_POINTEE, feature(derive_coerce_point=
-ee))]
-> +#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized=
-))]
-> +#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_=
-dyn))]
-> +#![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
-
-Does it make sense to add another comment in front of these three along
-the lines of:
-
-    // Before Rust 1.82.0 `feature(derive_coerce_pointee)` doesn't exist, s=
-o enable the predecessor
-    // features.
-
-> +
->  // Ensure conditional compilation based on the kernel configuration work=
-s;
->  // otherwise we may silently break things like initcall handling.
->  #[cfg(not(CONFIG_RUST))]
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 56be83024851..41a640990cfa 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -226,6 +226,14 @@ $(obj)/%.lst: $(obj)/%.c FORCE
->  # Compile Rust sources (.rs)
->  # ----------------------------------------------------------------------=
------
-> =20
-> +# The features in this list are the ones allowed for non-`rust/` code.
-> +#
-> +#   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
-> +#   - Stable since Rust 1.82.0: `feature(asm_const)`, `feature(raw_ref_o=
-p)`.
-> +#   - Stable since Rust 1.87.0: `feature(asm_goto)`.
-
-Probably a good idea to add:
-
-    #   - Expected to become stable: `arbitrary_self_types`.
-
----
-Cheers,
-Benno
-
-> +#
-> +# Please see https://github.com/Rust-for-Linux/linux/issues/2 for detail=
-s on
-> +# the unstable features in use.
->  rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_=
-reasons,raw_ref_op
-> =20
->  # `--out-dir` is required to avoid temporaries being created by `rustc` =
-in the
->
-> base-commit: e6ea10d5dbe082c54add289b44f08c9fcfe658af
-
+-- 
+2.34.1
 
 
