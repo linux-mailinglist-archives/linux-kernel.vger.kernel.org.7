@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-578671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79B4A7350E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:55:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FEEA7351E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:57:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794F8172B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07393B99E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312BA218AA2;
-	Thu, 27 Mar 2025 14:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1997821A428;
+	Thu, 27 Mar 2025 14:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCfR81V5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CEW2RmAJ"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6305C603;
-	Thu, 27 Mar 2025 14:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81075218AC3;
+	Thu, 27 Mar 2025 14:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087349; cv=none; b=gLoCpjL9e0la1E2Z4VvmZEJaNv2PQhVpETMf542KsN9lgw2rXR9g6icMQHnfryJwsFF+7qGY8WQTXbxvw7eDV5TaTpR1g4Ci144Jc1YCNFh6d/WlFWWo8SUlsvJIL1GycdxU4FvZJ+IYTePsLpq22ORlXAah4NBL7Njv4iSyIMA=
+	t=1743087367; cv=none; b=pLGfpLYLkNXpoESTw9VJNozcmErCLyuIOMdKc1kDaavIyR1ejSnncU3M1QPYZ5Cqs0ItIqhg3e8Y1/ybmCi4IsKC7kEaVNMEcEjUyorOQ3Z0ninQylUMMNZfAzr2q9EN1+WZioumGMFH3NxtnnnvGDTpHS6+gzNtFPcgUyhWfr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087349; c=relaxed/simple;
-	bh=O+fF0T1K8ENoKQc8U/kUz5mudOhbJ4KqLrmWLy8Gx68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvFFZI8OBCmraWbvvZeDLOHZVwiHyDxQvrhcP6KbghyLDzUOAmLvVvvNMTf6V990dpoWf15tN/mw90sT3STZJTubMmURbAmEEhLceZBFAYkDsDAahoM/UfcMlx44ZGKejKAjhnfy3MbicN4TMxw0HEqqFLjqimkfL2bHslD0Rl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCfR81V5; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743087348; x=1774623348;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O+fF0T1K8ENoKQc8U/kUz5mudOhbJ4KqLrmWLy8Gx68=;
-  b=jCfR81V5Z3Ya9pBfIEPAdBOJ2waHOATlVLW/g1MQ7lxrCkrg8GlkKztI
-   RaEKYU+25DRHDAGTH0EvDxj31nlQ82oZuuy7B3OHr6ukicFetuGR06X39
-   W8FGtuPGBWYUyFpLbz/xRpKVDHIw52S2vpRJHm1fFBEhwFmZj2FM8apVD
-   O9ARy3DFRc3/F9Brnz7AjImabtMXNmkntD4PvFh/G+5VDyAr6YIqzufY7
-   NZxHaBz0itJQe+fErLhhiymK1qDmGHY0kEvUemt339HMoDl7o/H59bBaC
-   NUskM5IXc28OUZq7KNyL57qm8R5NC1s8w6/sM2/yxIv6PutymZtO18Zf3
-   A==;
-X-CSE-ConnectionGUID: fYYDA3tTQc6GOZb4oV+2zg==
-X-CSE-MsgGUID: 38b+GzfqRoeApe8vHzNaPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44342591"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="44342591"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 07:55:47 -0700
-X-CSE-ConnectionGUID: w6/uUPDzQ22W/58VoYQrmA==
-X-CSE-MsgGUID: mbijv60mSXS2SPK0EiC98g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="130231181"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 27 Mar 2025 07:55:44 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 64B461CA; Thu, 27 Mar 2025 16:55:43 +0200 (EET)
-Date: Thu, 27 Mar 2025 16:55:43 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCHv2] thunderbolt: do not double dequeue a request
-Message-ID: <20250327145543.GC3152277@black.fi.intel.com>
-References: <20250327114222.100293-1-senozhatsky@chromium.org>
- <20250327133756.GA3152277@black.fi.intel.com>
- <vxocwwtfwg3tmjm62kcz33ypsg22afccd2ua5jqymbxaxwcigf@nnydc53vu3gv>
- <20250327142038.GB3152277@black.fi.intel.com>
- <jdupmjvntywimlzlhvq3rfsiwmlox6ssdtdncfe3mmo3wonzta@qwlb3wuosv66>
+	s=arc-20240116; t=1743087367; c=relaxed/simple;
+	bh=/grcYqbyYZQ5Vwrz2k3XVB96o14jNKChWN67TCZobuU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=qaTBwnoEmTtUSpRCGPTTsLYOIavYUPWhWa9mTpI2jZhQ8LNubyJIkDQ50YBvkEk6MurYX/NyrV7jvIIjaG52772YRkbkb5srfGkpcKtf2pEMtzFpbp5JMBZ2/jp5mYIMPvDAucB+dKVuhVBekSSPjkNg2SPxSa91sVTE//ygzTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CEW2RmAJ; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CA2A8442C2;
+	Thu, 27 Mar 2025 14:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743087355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/grcYqbyYZQ5Vwrz2k3XVB96o14jNKChWN67TCZobuU=;
+	b=CEW2RmAJ0ZDIzcNCEGfqG12mMeklqkwNJKpzCSlg6383UsHweJQM18ErERVBaRnbRDiGie
+	Y7Ozeul3aVRs7XMAaBZTsKjhxCP9iXsJUJgx4cjfPqP4iGavMfaB2qDnQXDRSv0EDtV8Fm
+	16EdXjq/0Nj/GW2ZB2OLb0tSumrEwK+EEi4ZL5Vel9p/PmA0ItmJ5cfcX2LYoUPb04vcJr
+	kNqCv/yd/62DMcUWBXv9yv9ghC9WKt6sYUcWSkYTid/Lgzgnudv36zCZpXt+LObqISONbG
+	ZGSDXoVYRhfSjNaETztUFouCkasuhDQIjuoCcjBBiMoBjwfqES17kC9jtLA5uA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <jdupmjvntywimlzlhvq3rfsiwmlox6ssdtdncfe3mmo3wonzta@qwlb3wuosv66>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 27 Mar 2025 15:55:52 +0100
+Message-Id: <D8R4WB208RUL.14XIUFIVV416O@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH net-next 02/13] dt-bindings: net: cdns,macb: allow
+ tsu_clk without tx_clk
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexandre Ghiti" <alex@ghiti.fr>, "Samuel Holland"
+ <samuel.holland@sifive.com>, "Richard Cochran" <richardcochran@gmail.com>,
+ "Russell King" <linux@armlinux.org.uk>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-mips@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Rob Herring" <robh@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
+ <20250321-macb-v1-2-537b7e37971d@bootlin.com>
+ <20250324163001.GA272324-robh@kernel.org>
+In-Reply-To: <20250324163001.GA272324-robh@kernel.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieekjedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkhffuvefvofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeluefgiefgtdegfeehjeetteevveejkefgiedtkeefteejgfdvkeffgeejhfduieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvjedprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhto
+ hepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi,
+On Mon Mar 24, 2025 at 5:30 PM CET, Rob Herring wrote:
+> On Fri, Mar 21, 2025 at 08:09:33PM +0100, Th=C3=A9o Lebrun wrote:
+>> Allow providing tsu_clk without a tx_clk as both are optional.
+>
+> Why? Is there some new h/w? Where's the compatible for it. Or this fixes=
+=20
+> some existing user? Which one?
 
-On Thu, Mar 27, 2025 at 11:37:35PM +0900, Sergey Senozhatsky wrote:
-> On (25/03/27 16:20), Mika Westerberg wrote:
-> > > On (25/03/27 15:37), Mika Westerberg wrote:
-> > > > > Another possibility can be tb_cfg_request_sync():
-> > > > > 
-> > > > > tb_cfg_request_sync()
-> > > > >  tb_cfg_request()
-> > > > >   schedule_work(&req->work) -> tb_cfg_request_dequeue()
-> > > > >  tb_cfg_request_cancel()
-> > > > >   schedule_work(&req->work) -> tb_cfg_request_dequeue()
-> > > > 
-> > > > Not sure about this one because &req->work will only be scheduled once the
-> > > > second schedule_work() should not queue it again (as far as I can tell).
-> > > 
-> > > If the second schedule_work() happens after a timeout, that's what
-> > > !wait_for_completion_timeout() does, then the first schedule_work()
-> > > can already execute the work by that time, and then we can schedule
-> > > the work again (but the request is already dequeued).  Am I missing
-> > > something?
-> > 
-> > schedule_work() does not schedule the work again if it is already
-> > scheduled.
-> 
-> Yes, if it's scheduled.  If it's already executed then we can schedule
-> again.
-> 
-> 	tb_cfg_request_sync() {
-> 	 tb_cfg_request()
-> 	   schedule_work()
+I encountered this while supporting a new compatible yes:
+mobileye,eyeq5-gem.
 
-This point it runs tb_cfg_request_work() which then calls the callback
-(tb_cfg_request_complete()) before it dequeues so "done" is completed.
+But this is more about relaxing unneeded requirements: the previous
+bindings said "if you provide a tsu_clk, please provide a tx_clk". That
+constraint can be removed as there is no relation inbetween tx_clk and
+tsu_clk.
 
-> 	                        executes tb_cfg_request_dequeue
+So I'd describe that as a semantic fix of the dt-bindings, that happens
+to be useful for our newly introduced compatible.
 
-> 	 wait_for_completion_timeout()
+Or am I mistaken? In any case, I should expand the commit message.
 
-so this will return > 0 as "done" completed..
+Thanks,
 
-> 	   schedule_work()
-> 	                        executes tb_cfg_request_dequeue again
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-..and we don't call this one.
-
-> 	}
-> 
-> I guess there can be enough delay (for whatever reason, not only
-> wait_for_completion_timeout(), but maybe also preemption) between
-> two schedule_work calls?
-> 
-> > > The 0xdead000000000122 deference is a LIST_POISON on x86_64, which
-> > > is set explicitly in list_del(), so I'd say I'm fairly confident
-> > > that we have a double list_del() in tb_cfg_request_dequeue().
-> > 
-> > Yes, I agree but since I have not seen any similar reports (sans what I saw
-> > ages ago), I would like to be sure the issue you see is actually fixed with
-> > the patch (and that there are no unexpected side-effects). ;-)
-> 
-> Let me see what I can do (we don't normally apply patches that
-> were not in the corresponding subsystem tree).
-> 
-> In the meantime, do you have a subsystem/driver tree that is exposed
-> to linux-next?  If so, would be cool if you can pick up the patch so
-> that it can get some extra testing via linux-next.
-
-Yes I do, see [1] but it does not work like that. First you should make
-sure you patch works by testing it yourself and then we can pick it up for
-others to test.
-
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git/
 
