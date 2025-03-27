@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-578753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F960A7360D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:52:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A031DA73610
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B471895BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE5F174F72
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278791A3177;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F70B1A5BAF;
 	Thu, 27 Mar 2025 15:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzXYDf5W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCpSSHb3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707BE19B3EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998F719C56C;
 	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743090759; cv=none; b=ek7b1NxRQAVZSJxpQKoc1+5p1uEk1f1QPf5VCE1xGvgfCb0Gcs2qqjpfNk4uopTs1qSHTO5o80fM6GynfP8pNvaUvWu4vFKsT+A/gFyHr+94rw/8Gj1cc7pkQeOlLmCtp19O21IwGY+hXra0+QWhJ5nJXXelN/QB3iH5LlnYiR8=
+	t=1743090759; cv=none; b=Jr3Ul3wvmXUT0aXSyrIrN+AZnyVfn4+jXJYSKSYRuwPVVL/0/1qUSaBJdy1jZ/qwqbwzQO4zgiZ7aCpnkt6lDbYD0OudLcOHJNDJ+Ry7tzGc+0ghaZ0k+mdN8JhszMqTeHztNsLaM5mrUWbEYF5uSIGZlIhqE5QJztbKFwSaI0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743090759; c=relaxed/simple;
-	bh=PzRZADRzEuijueVkCqt3ZlpSUYrgKBPKl6nIf/RYyME=;
+	bh=92utogQMcwhyWlhaiUB3hy+r80GTGj6Hs9VRyEAjh0I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Oa0mHrZxh9MmGji8OJL7TJdWQUGpTjx5mWA6aNO/pt0IS/GMubi6uZUFT+AvNCzv0QZVcHbrhc0fNOTUzEmxkuvc7U1oozSgW2fI8dPPxgys5exVW1Y7LnLmce5uGjqVd5zGXNywDCliLGDgv2GdDsfcM9A7MEbzbyPL2CAkWrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzXYDf5W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0E59CC4CEE5;
+	 In-Reply-To:To:Cc; b=ss7HQYLJ6yYyPfhwmux3RHLtS0fV3mQRQOCEO9JjlQxR0unEDQmIsvUkMg8nDTHUgPRA3RrZ56oMPxlRULa4sXD7nejqqlL01h7ENexa+uYi8xYNXED7LV3eRAQNAJXn3+MjlJnBlT/wC01qmEnkxS0anIGcbk9P7PRPp+RjCU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCpSSHb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26219C4CEEE;
 	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1743090759;
-	bh=PzRZADRzEuijueVkCqt3ZlpSUYrgKBPKl6nIf/RYyME=;
+	bh=92utogQMcwhyWlhaiUB3hy+r80GTGj6Hs9VRyEAjh0I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bzXYDf5W0vuDYoXNM2nDvVThJh2vj/61892S+bDRQc1Ck0FJGXiBZgpAyQxm1M23e
-	 kcwT5DU1LOnkRe2f94HmvzXHL9w3sREdMu9H6aZKTrUYYdkdBtrTaM3hUBDdFu6mkS
-	 7+TU/EkanYnBQtLX4p/NSpvfF/xmH/x33xkXbU/6pfAnncOp5wXvJlhQxMXloyMddp
-	 MyxF+PTLjZoUH/ynYWehpIB/zFoB6QFzjfV8f8k8ihBIk7zQx/bRaBsNwWQCqoD6Pp
-	 UZrZxce2HD0WB8gFtYdsj4k/KEyvpkzE1eBjtRi9zE3iD8VZPfmMe+qqtol46nEyvo
-	 FtkRdOqp6sBMw==
+	b=XCpSSHb3NdcgaiFzTSYONFfwnr4wvcqNw2EgU5/lLW1d8sMWo8LFjHQq+j5mTklcT
+	 eGqFy+02XgezExvtefCnk42WN5NS0XzAh9L3wOanBTgQRvXPM7s3BflyxHsuQ1Vj8P
+	 V4C2ucDMbMfFjls4+AksTu/0loCn4MLlT6jJYK1eoIM24ZRRzvs9GB0pBPR3o2XjHz
+	 fWAj02nz3Vrp7QPLBka3jIC4n/R7kjiFxYYXna+0YgoOCVk5lSJP+hl4hS6bCeoi2n
+	 8ty5Jm29454FbypCwoeh1jv2632c/wSnKahd+DbZMOnWy2Nm2/dizAondPyjaqdPHH
+	 6WapKyQZ4IBjg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EDAC36013;
-	Thu, 27 Mar 2025 15:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F32C36011;
+	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
 From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Thu, 27 Mar 2025 16:52:37 +0100
-Subject: [PATCH v3 2/8] arm64: dts: imx8mp: Add pinctrl config definitions
+Date: Thu, 27 Mar 2025 16:52:38 +0100
+Subject: [PATCH v3 3/8] MAINTAINERS: add maintainer for the Ka-Ro tx8p-ml81
+ COM module
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250327-initial_display-v3-2-4e89ea1676ab@gocontroll.com>
+Message-Id: <20250327-initial_display-v3-3-4e89ea1676ab@gocontroll.com>
 References: <20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com>
 In-Reply-To: <20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -66,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  Maud Spierings <maudspierings@gocontroll.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743090757; l=1855;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743090757; l=938;
  i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=z8kax1Z8Rt5R5zrqgQhjYmqWGcylyxJuzA+qptS0r3Y=;
- b=MFpf0P1ysKsaRzFGmcUSr1ybUT56O1owbtlTS0l5JTJH+iNElla6j8L0WeAbV3oNF5nlGGkbz
- 3GQKUKXpLwDByV4VwrV/LUIIoj4a2wAbtYmHSvNKftHKcM/Yo+yx3FY
+ bh=KWBmWJYZAEU0seHj0jSXyh4vIhNFeNg5DppjC874JB8=;
+ b=q/UBBL+LYJA5pcGDSuTQs40AloieOXHbAumcVf25yCzVjg/H2s2t+1xoMynKT5f2gRuEDJ5Xy
+ n1+YUlByj8yCbS1MwzsKrs77zpdgVDBOHmJgkbaqCwiUoY7+lAGBD7+
 X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
  pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
 X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
@@ -80,61 +81,34 @@ Reply-To: maudspierings@gocontroll.com
 
 From: Maud Spierings <maudspierings@gocontroll.com>
 
-Currently to configure each IOMUXC_SW_PAD_CTL_PAD the raw value of this
-register is written in the dts, these values are not obvious. Add defines
-which describe the fields of this register which can be or-ed together to
-produce readable settings.
+Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
+module bindings.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+This support is not officially done by Ka-Ro electronics, if they at
+some point will supporting mainline, this should be changed to them.
+
 Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 ---
-This patch has already been sent in a different group of patches: [1]
-It was requested there to submit it along with a user, this series also
-includes some users for it.
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[1]: https://lore.kernel.org/all/20250218-pinctrl_defines-v2-2-c554cad0e1d2@gocontroll.com/
----
- arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h | 27 ++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-index 0fef066471ba607be02d0ab15da5a048a8a213a7..34a6d3090926b8d9d7c96d1b0b01be0ed05cbd27 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h
-@@ -6,6 +6,33 @@
- #ifndef __DTS_IMX8MP_PINFUNC_H
- #define __DTS_IMX8MP_PINFUNC_H
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 322ee00547f6e494a96d2495092f72148da22bd0..f8ad2c1023016d7f72cccff880e3753d71d635b2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12752,6 +12752,12 @@ S:	Maintained
+ F:	Documentation/hwmon/k8temp.rst
+ F:	drivers/hwmon/k8temp.c
  
-+/* Drive Strength */
-+#define MX8MP_DSE_X1 0x0
-+#define MX8MP_DSE_X2 0x4
-+#define MX8MP_DSE_X4 0x2
-+#define MX8MP_DSE_X6 0x6
++KA-RO TX8P COM MODULE
++M:	Maud Spierings <maudspierings@gocontroll.com>
++L:	devicetree@vger.kernel.org
++S:	Maintained
++F:	arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi
 +
-+/* Slew Rate */
-+#define MX8MP_FSEL_FAST 0x10
-+#define MX8MP_FSEL_SLOW 0x0
-+
-+/* Open Drain */
-+#define MX8MP_ODE_ENABLE 0x20
-+#define MX8MP_ODE_DISABLE 0x0
-+
-+#define MX8MP_PULL_DOWN 0x0
-+#define MX8MP_PULL_UP 0x40
-+
-+/* Hysteresis */
-+#define MX8MP_HYS_CMOS 0x0
-+#define MX8MP_HYS_SCHMITT 0x80
-+
-+#define MX8MP_PULL_ENABLE 0x100
-+#define MX8MP_PULL_DISABLE 0x0
-+
-+/* SION force input mode */
-+#define MX8MP_SION 0x40000000
-+
- /*
-  * The pin function ID is a tuple of
-  * <mux_reg conf_reg input_reg mux_mode input_val>
+ KASAN
+ M:	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+ R:	Alexander Potapenko <glider@google.com>
 
 -- 
 2.49.0
