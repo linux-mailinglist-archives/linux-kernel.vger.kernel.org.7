@@ -1,93 +1,162 @@
-Return-Path: <linux-kernel+bounces-578831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DADFA736FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:38:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A842A736E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E15189C5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E23BC7BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC57D1A00D1;
-	Thu, 27 Mar 2025 16:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gOi6g9wK"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7145019F111;
+	Thu, 27 Mar 2025 16:35:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AA11A8F84
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AED219ADBA
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093489; cv=none; b=P+XGqo4+aE7cvUrt5fzaARQGU2MflJGRcBOTxYG0/ilpSlw2jWiJumGxNBF0YiqPeVpCUB4DI3pvQ76FBeoOZEbEfhcRiNUbSj4DRD2cuZfU5YcvqUe+gd1jZmtvTAwqQaL9r40mihMxKKtnvA7eh01dX77h6bZR9tOwhFgN4HI=
+	t=1743093340; cv=none; b=l/jQ+mSKP8tBf1SscaQyNxytfsDv3mAi6lbM9LThvgZfl2a+NLW4IlVrZz2tqhdO9C1OxDGv6YoJJmiu18S2ytKEfQ4yWd/Z3pLrDXQUcjxIetr/97/Is5K5G9tJ2Lt10KpyktJ7fbjiTpRjbQjmM3yCxVUoptgKGEsvUYDyON0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093489; c=relaxed/simple;
-	bh=ESzt2enLXYt23xY8ttSN/ZcELiO4gL9UAIgPB3r5q/c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K0BMQlyf1WkgfD3ulSKKU3NzkYyzEHYo/ElpfvzrZ6+1YKH+5Mt65KIV4k3s23UIcMlV8itxpWmYZLEh7TkR1BtE4PF0MZSH9EA0eC4N1+cLASMaRiOSYItxyOAiO83PrN/g9DNwa1Kfg076wYUc8s76C3z7J/SSfL9Jdd8bDtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gOi6g9wK; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743093482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Z51hX2ubcFhMKJ5by2u7YjCKZ3Nzr1b3Lq1PylQ9GKA=;
-	b=gOi6g9wKrGSV5UH/x54wg6WFP3jRV9kCC53qdcKuyEwOYsTNbTvmY/kgEf70GSTgtes9jT
-	RMIMsSF91b+mRVbfbms+jIBn14Dhmv3Skw6Jkb1GSznvz7Zm9v/3dJkyHjEwThs4pylu3s
-	DUepdIINJzrmUGd3pr5cqru3B+DW/LM=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH] smccc: kvm_guest: Align with DISCOVER_IMPL_CPUS ABI
-Date: Thu, 27 Mar 2025 09:36:15 -0700
-Message-Id: <20250327163613.2516073-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1743093340; c=relaxed/simple;
+	bh=iTp4tbpI8UCm5iTaOGfyS1gbiah4e8hQmVgQc4UYKGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bI1EKnJEY01o5NzoIxj8/eSJeB+ukK8kauw+db5vU+dSjFEEF8xDzId0+1ReNW2cz+hNTI8LqMOEnz0GnKuxYxz8Oa/qyyI6Ty/s5Y/vbHtUx/GhjMNhkJQBzDxzogWGk49HXiXH8NmCMoKl+p8AFdDmTXo0C3J2c9MS1iXkjsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D34C4CEDD;
+	Thu, 27 Mar 2025 16:35:37 +0000 (UTC)
+Date: Thu, 27 Mar 2025 12:36:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Douglas Raillard
+ <douglas.raillard@arm.com>, Gabriele Paoloni <gpaoloni@redhat.com>, Hengqi
+ Chen <hengqi.chen@gmail.com>, Huang Shijie <shijie@os.amperecomputing.com>,
+ Petr Mladek <pmladek@suse.com>, Ran Xiaokai <ran.xiaokai@zte.com.cn>,
+ Siddarth G <siddarthsgml@gmail.com>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas.weissschuh@linutronix.de>, Zhouyi Zhou <zhouzhouyi@gmail.com>
+Subject: [GIT PULL] tracing: Updates for v6.15
+Message-ID: <20250327123626.4ecb15ab@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The ABI of the hypercall requires that R2 and R3 are 0. Explicitly pass
-0 for these parameters.
 
-Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Fixes: 86edf6bdcf05 ("smccc/kvm_guest: Enable errata based on implementation CPUs")
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
- drivers/firmware/smccc/kvm_guest.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Linus,
 
-diff --git a/drivers/firmware/smccc/kvm_guest.c b/drivers/firmware/smccc/kvm_guest.c
-index 5767aed25cdc..ac2d3cf8a776 100644
---- a/drivers/firmware/smccc/kvm_guest.c
-+++ b/drivers/firmware/smccc/kvm_guest.c
-@@ -95,7 +95,7 @@ void  __init kvm_arm_target_impl_cpu_init(void)
- 
- 	for (i = 0; i < max_cpus; i++) {
- 		arm_smccc_1_1_invoke(ARM_SMCCC_VENDOR_HYP_KVM_DISCOVER_IMPL_CPUS_FUNC_ID,
--				     i, &res);
-+				     i, 0, 0, &res);
- 		if (res.a0 != SMCCC_RET_SUCCESS) {
- 			pr_warn("Discovering target implementation CPUs failed\n");
- 			goto mem_free;
+tracing updates for v6.15:
 
-base-commit: 369c0122682c4468a69f2454614eded71c5348f3
--- 
-2.39.5
+- Add option traceoff_after_boot
 
+  In order to debug kernel boot, it sometimes is helpful to enable tracing
+  via the kernel command line. Unfortunately, by the time the login prompt
+  appears, the trace is overwritten by the init process and other user space
+  start up applications. Adding a "traceoff_after_boot" will disable tracing
+  when the kernel passes control to init which will allow developers to be
+  able to see the traces that occurred during boot.
+
+- Clean up the mmflags macros that display the GFP flags in trace events
+
+  The macros to print the GFP flags for trace events had a bit of
+  duplication. The code was restructured to remove duplication and in the
+  process it also adds some flags that were missed before.
+
+- Removed some dead code and scripts/draw_functrace.py
+
+  draw_functrace.py hasn't worked in years and as nobody complained
+  about it, remove it.
+
+- Constify struct event_trigger_ops
+
+  The event_trigger_ops is just a structure that has function pointers that
+  are assigned when the variables are created. These variables should all be
+  constants.
+
+- Other minor clean ups and fixes
+
+
+Please pull the latest trace-v6.15 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-v6.15
+
+Tag SHA1: 4c87918f84af7697d58a1f243ebe96de405791d9
+Head SHA1: e0344f9564f5847dc20e245fbea67a4b262ee659
+
+
+Christophe JAILLET (2):
+      tracing/user_events: Slightly simplify user_seq_show()
+      tracing: Constify struct event_trigger_ops
+
+Douglas Raillard (3):
+      tracing: Align synth event print fmt
+      tracing: Ensure module defining synth event cannot be unloaded while =
+tracing
+      tracing: Fix synth event printk format for str fields
+
+Gabriele Paoloni (1):
+      tracing: fix return value in __ftrace_event_enable_disable for TRACE_=
+REG_UNREGISTER
+
+Hengqi Chen (1):
+      tracing: Remove orphaned event_trace_printk
+
+Huang Shijie (1):
+      tracepoint: Print the function symbol when tracepoint_debug is set
+
+Petr Mladek (1):
+      tracing: gfp: vsprintf: Do not print "none" when using %pGg printf fo=
+rmat
+
+Ran Xiaokai (1):
+      tracing/osnoise: Fix possible recursive locking for cpus_read_lock()
+
+Siddarth G (1):
+      tracing: Replace strncpy with memcpy for fixed-length substring copy
+
+Steven Rostedt (5):
+      tracing: Add traceoff_after_boot option
+      tracing: gfp: Remove duplication of recording GFP flags
+      tracing: Update MAINTAINERS file to include tracepoint.c
+      scripts/tracing: Remove scripts/tracing/draw_functrace.py
+      tracing: Do not use PERF enums when perf is not defined
+
+Thomas Wei=C3=9Fschuh (1):
+      tracing/user_events: Don't use %pK through printk
+
+Zhouyi Zhou (1):
+      ring-buffer: Fix typo in comment about header page pointer
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |   9 ++
+ MAINTAINERS                                     |   1 +
+ include/linux/trace_events.h                    |  18 ----
+ include/trace/events/mmflags.h                  |  41 ++------
+ kernel/trace/ring_buffer.c                      |   2 +-
+ kernel/trace/trace.c                            |  11 ++
+ kernel/trace/trace.h                            |   4 +-
+ kernel/trace/trace_eprobe.c                     |   6 +-
+ kernel/trace/trace_events.c                     |   4 +-
+ kernel/trace/trace_events_hist.c                |  20 ++--
+ kernel/trace/trace_events_synth.c               |  40 +++++++-
+ kernel/trace/trace_events_trigger.c             |  38 +++----
+ kernel/trace/trace_events_user.c                |   7 +-
+ kernel/trace/trace_osnoise.c                    |   1 -
+ kernel/tracepoint.c                             |   2 +-
+ scripts/tracing/draw_functrace.py               | 129 --------------------=
+----
+ 16 files changed, 108 insertions(+), 225 deletions(-)
+ delete mode 100755 scripts/tracing/draw_functrace.py
+---------------------------
 
