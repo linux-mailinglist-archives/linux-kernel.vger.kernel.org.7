@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-578531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDEDA7334A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:22:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1C4A73358
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823423AD68E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB0F188F748
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ECB21771A;
-	Thu, 27 Mar 2025 13:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3020215186;
+	Thu, 27 Mar 2025 13:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ETwnPzJe"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sCHktAAQ"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B506215186
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727BF21506B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743081643; cv=none; b=CeQjmNGc2VHzZAH23ttF0dsIIiBw+DHLfEbQh0Na8YY7i2XqOeV/KQPNUlKWsearRrnMnRy3rHtiCA00VmEX/zgXPYrWKd48B6ICgwUaPSSAbsepKvlWF70b7yj36SHWZsY0Zrhkw48k/2MawW2u2yHZnPjJDF2IQDR88hp/3hk=
+	t=1743082028; cv=none; b=m5rHOrH0z2KFY6ZzLk/uK2h0e6DHZq5Oylm7JK9Ll3aQq/SLFT8jI5djav0AuQ3/qOfFvHVgfLNaVaAu0xkfx65yp42yoN3QBcjKfkdYFaffaQfhcfFy2NDyZuBJ6TqxpfU5zzLPII56yZp+ELfVp+aQGvqjlI5X5QE4gjC+oP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743081643; c=relaxed/simple;
-	bh=VAC3jQYsjcnCVrZPAH4JIcMHqf1bqzRC+I0sVF5JOrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfbTVAtuKsotXsAXETcnT9Lf0aOVdGoK2tOZhu/zRCaLjEsAHfLjtdaDWI9Ft4s8fvQAZNtDhICeQZtyLunfzx1NmcK1X717F3nkoIZyIID1F31PMiec5DoihiR8ZDugnE/4NdESvxdORFqhornK5M7UF2ZxyNbXCldXSvu78hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ETwnPzJe; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so9405835e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:20:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743081640; x=1743686440; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VAC3jQYsjcnCVrZPAH4JIcMHqf1bqzRC+I0sVF5JOrQ=;
-        b=ETwnPzJebUhQSnpmL8nYgyp+8ZngjFOqQN61z7BX5cBWAsA4+a8CevIS4++y95u391
-         RSnp4i56dPfb7m0euFbFTJUiYMGuVGs3Lp0OgQkQzIF/z5wvdHbm60x9VMJQ4S33oOVA
-         WoSkCKkB68Y203K5dN28Ep8Icz6vKj+5HmenxUuVM68W2Zf4C6ztkw1VL4q3ovItUHqk
-         4yYGSKrfwQ4OmK/1qpKYd6iS71/GJaGikvITVv//62zg5Gvl5grACwk6rmXYieGgXSbg
-         wg42ROMLWszGM9gK6Wyv06s1m6yQBIGvQ/NWB4kHC0VCVTk053k7wrAzZQxVi96NmXj8
-         JofA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743081640; x=1743686440;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VAC3jQYsjcnCVrZPAH4JIcMHqf1bqzRC+I0sVF5JOrQ=;
-        b=E+A552tTyZSHuh5fWsG528J9ajgLNh1fN7BipbwxxUNp3nTluiUyTBTT/eHWHtroat
-         P2E4Mum8bCtdi97plpeWpCKSyXMaSiojosASsSlUzy6xAFf1wiHyRC8VIYjSxucbu3Gz
-         wkdl5ErgShPz/IMJwhA4AouUOuI1wnC59ZWTUm4jr+ocbpC7MXKNhyTPLODVCJNoieRe
-         v1E3415dXSMMR9Rv80rTKldgVDjruauPpYZcgPUtQzEmVx2H77h5n6jU/42tQXuAJ+U3
-         O6BxCodS9tD8r9jeJA3x/TYsuUkIzo9WHmjWrEZN1EZ/QCMkXlqZc7HnZmEeaoWHGrlB
-         dlIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWemHr99kNtWee5xgdljyJlUVBfiW3SbzFNcAvZ3LCXcUihC1WOLf2xw3QuYmqbWRGBg/yO8BRNR7DuNzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRAmQVLZOgd12Eva8KWZFyFuqPSCxngKv/ZCLBgMfQmp61n8W4
-	hpan+cKiG+ucQYxAhEneZ7NuovKZpwP80UHJBNsl2kf7D6J+yI/2QyMVuc5sCoWzN/cdGxpf7E8
-	pHUtz3sEctIj12Xoi2uxYLdisSMgItZEYoEvqKw==
-X-Gm-Gg: ASbGncvH5FFmYX2BUcFortlb1gg2eaUNKz/mtlt8uBqg3WAX9295l+Yzfi3YG4LRHg/
-	f1CBltNns6bEHr5Mm4jqVn9OF7mDffR67yANZFC+dU/5FTAOPl8XV4UUg7XrDdaenh57oWBXP6w
-	qPIAJ7uk4n+9NzuuNXda39qMGh8GJtjOsFq163Qw+6k78jD96C/29JGGw0Hb1Wt6BRjIvImA==
-X-Google-Smtp-Source: AGHT+IG3iVxfp4ue+UFXysXvz6DKi4QxLJqDrwxZD58TmfbCfjnNN1Hj7KqR62wJRNud2cz8gFthkm8XWf3losuWT5Q=
-X-Received: by 2002:a05:600c:4e12:b0:43c:e8a5:87a with SMTP id
- 5b1f17b1804b1-43d84fba8afmr37682355e9.16.1743081640372; Thu, 27 Mar 2025
- 06:20:40 -0700 (PDT)
+	s=arc-20240116; t=1743082028; c=relaxed/simple;
+	bh=5k6rqNGPiuhS9+h0L+ZMHxF4b7f+7c8CGV87z80J/54=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eXeVB6tbU3OkzhSpzl1n41IZDQBD+BOtj3LC0vJ7Z5+m9wi5zN6e1GtlmkfIq2RkvoRIy1rOB7Wg14VcTnqke5+MgOTT2xzalMwVBWHK6F5juCCFmBDBpYT/Azgv5zTyCw9iwWO5nMP4fwlB8CX5PY7WaQDCJnauw49ZxV7doxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=sCHktAAQ; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1743081649;
+	bh=5k6rqNGPiuhS9+h0L+ZMHxF4b7f+7c8CGV87z80J/54=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sCHktAAQb0k5/uqypds4IN9qqtc89DrDYUEgn65EUrVvCYLAiNLoq6mwKfznC0hYv
+	 e3sfLXx7D0ZsTSXBP5RW6ymArFxdijJpi2jjwp6UoTRonc8Fd8TfWqt4f0el4n8PDj
+	 4qMwIm7wDK1StA8h0L6K8mn/bynO9wUqnQT4cf4F7GNb6hfEnd77A45Xg1HNvk9fRy
+	 Cd9z+kkw2HO8v0zRdG0aiECuho3gIc7N2re9J2CSTm+WbcVW7VrYp+LKsLJdhocHGN
+	 eHYqHha8oxrPbch4oirhCSk5HD4KuT9hIfQDmQ/4bPopkptO1fU9jKWKiPJcGuyYD6
+	 XfM4R8CWzvg/A==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4ZNkmx2H2VzhrY;
+	Thu, 27 Mar 2025 09:20:49 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Michael Jeanson <mjeanson@efficios.com>
+Subject: [RFC PATCH 1/1] rseq: Eliminate useless task_work on execve
+Date: Thu, 27 Mar 2025 09:20:41 -0400
+Message-Id: <20250327132041.1548426-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org>
- <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-2-e9bc7c9d30cc@linaro.org> <Z+UDlXFKbmxCECp9@linaro.org>
-In-Reply-To: <Z+UDlXFKbmxCECp9@linaro.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Thu, 27 Mar 2025 13:20:29 +0000
-X-Gm-Features: AQ5f1Jrcx5M9VC1f4LvGyufiYg8Yl8JGFp1ql4ekPmK5Li1CNGcCqmgS2hBtMTc
-Message-ID: <CACr-zFBRC1ZGTqX_RDERk3k52hJ=kunN6Lw6Qs-5djttfTJ3ZA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: x1e78100-t14s: add hpd gpio to
- LCD panel
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, Rui Miguel Silva <rui.silva@linaro.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Abel,
+Eliminate a useless task_work on execve by moving the call to
+rseq_set_notify_resume() from sched_mm_cid_after_execve() to the error
+path of bprm_execve(),
 
-On Thu, 27 Mar 2025 at 07:51, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> On 25-03-25 19:21:27, Christopher Obbard wrote:
-> > The eDP panel has an HPD GPIO. Describe it in the devicetree.
-> >
-> > Unfortunately I cannot test this on the non-OLED model since I
-> > only have access to the model with OLED (which also uses the
-> > HPD GPIO).
-> >
-> > I believe this could be split into two patches; one adding the
-> > pinctrl node and one adding the hpd gpio to the T14s devicetree.
-> > But I will wait for your comments on this ;-).
->
-> You should definitely drop these two paragraphs entirely from the commit
-> message. Maybe add them to the cover letter.
+The call to rseq_set_notify_resume() from sched_mm_cid_after_execve() is
+pointless in the success case, because rseq_execve() will clear the rseq
+pointer before returning to userspace.
 
-Of course; I will do so in v3.
-But hey, it made you both reply, so in a way my comment did work ;-).
+sched_mm_cid_after_execve() is called from both the success and error
+paths of bprm_execve(). The call to rseq_set_notify_resume() is needed
+on error because the mm_cid may have changed.
 
-Cheers!
+Reported-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Michael Jeanson <mjeanson@efficios.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/exec.c           | 3 ++-
+ kernel/sched/core.c | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Chris
+diff --git a/fs/exec.c b/fs/exec.c
+index 506cd411f4ac..35ee689ec00a 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1861,10 +1861,10 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 		goto out;
+ 
+ 	sched_mm_cid_after_execve(current);
++	rseq_execve(current);
+ 	/* execve succeeded */
+ 	current->fs->in_exec = 0;
+ 	current->in_execve = 0;
+-	rseq_execve(current);
+ 	user_events_execve(current);
+ 	acct_update_integrals(current);
+ 	task_numa_free(current, false);
+@@ -1881,6 +1881,7 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 		force_fatal_sig(SIGSEGV);
+ 
+ 	sched_mm_cid_after_execve(current);
++	rseq_set_notify_resume(t);
+ 	current->fs->in_exec = 0;
+ 	current->in_execve = 0;
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 042351c7afce..e59a4e2a6453 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10652,7 +10652,6 @@ void sched_mm_cid_after_execve(struct task_struct *t)
+ 		smp_mb();
+ 		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, t, mm);
+ 	}
+-	rseq_set_notify_resume(t);
+ }
+ 
+ void sched_mm_cid_fork(struct task_struct *t)
+-- 
+2.39.5
+
 
