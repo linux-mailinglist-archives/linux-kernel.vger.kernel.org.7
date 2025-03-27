@@ -1,202 +1,196 @@
-Return-Path: <linux-kernel+bounces-578668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9201FA73501
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:52:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434DDA73507
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4588188334B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08BEA3B1747
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D54218AAF;
-	Thu, 27 Mar 2025 14:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D664218823;
+	Thu, 27 Mar 2025 14:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbqqRtBG"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AZH+IX0z"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2049.outbound.protection.outlook.com [40.107.21.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5957A217F34;
-	Thu, 27 Mar 2025 14:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087126; cv=none; b=mFu0giv7VphMghZS7vceHOBSleH8kh3adFb6VnAZSOW8k7I9lfYF15bPLo0obj0bbG5krlRpZwUoMvMRroBGqxkpIgleyNl5C6KJx2Y1X8ObqjPGxgP2qiWX/t2p3hTFmpb9ebgov0M1TtS8heq0QJQkfqmRC1JQhnFq2NYQRM8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087126; c=relaxed/simple;
-	bh=ulbvVnd77hM9vOG8fiI1yJo51l2mFcG5ZH2o5D+8nyY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cCneDAUDdDr/axfn/BuTqS3wxz4vK13GFg37KMQVdyPguQAQ+PhDEQvQ7Q2+lhF2LcUqRoqT1B3rgSNcB23sgCiJrbWnfvS3Bgg0kw+AnUCOcOpe5uZx98iQ1p8HFdxmjO7A79Xiaruwai+D6Os/mcJlypbhn+YxRjuNJR0E7BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbqqRtBG; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6e8f8657f29so8058766d6.3;
-        Thu, 27 Mar 2025 07:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743087124; x=1743691924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6F0q/kxgMh4HTjwgKMB6A+5VY81dq/P/Rx36ntiQZRI=;
-        b=SbqqRtBGoMkMQk6nJZVodpugEMKmk3ZaM4p7DrZt2GNxQIeV6JHuKXCltOwvisf4gU
-         g9T6cemu0f0EHIF2X7fS81adn+gBK4FRuj1lrmCKFbMDyXiCxrJIEQXJmvbjnqqcmiC1
-         /Zg/UgLffAMwx+sMh6aAkqbJ9SNI5U9K2WEMpAOxnZgK54Bh6h36K4Otdr9I2LjTcaZX
-         HkZiGqfb86DPli/QXFUe/mLvivMQFm/EVGyt5aUxQggLpBZO1uUI+3MNZgQ2QsMQ8HCN
-         YoQevocBjjgZqQAnqNvobBfJMjEy0H8s/tl3mgZ2lwTzlh69Ef3PWSwO6QVlfxadKp4i
-         ZmDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743087124; x=1743691924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6F0q/kxgMh4HTjwgKMB6A+5VY81dq/P/Rx36ntiQZRI=;
-        b=QytrbIiUCZ2je3gkm1+pYnLsdeH547hZI/WA80G0xxpIM4oDMtNy/1cCnjAzXyNZc2
-         5ZkH4k/0Ymy0s+wT5Lb+tD29vX7QMpi8Kf9SUzw8vN7RXbp3Pch6Q7MLHMB25IgaN2p0
-         7LU/hZE5PhcSGID6qKmtRnwKbeTfL/IWd9ymtvXTncnHnkwuLx2PTcqnGiJlmnJ2EKnW
-         5oOSiDsOVFfYJ7Rsl681zmGp559H3oQ9r0hrtQTMumyjh7vXN67aobCBqjaT2AFBybCC
-         1hWEP8qq//eHVpQ3IFpl+5KoX8d8JRH0jIEXQPG7y4JF9/QlsSN6zTpHxsG5V+AqGpW+
-         h81Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPxJr1ZFhQQvZ3+Z4hJSSwEhSdFOWnkuYVHIOpUMfDmkgi6spapEowLg+mpWInxRKUywJweqRqO/Y83AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtUPMZwEtpve60YEsA+Y931hMZlqOlwk7ffBaauGmZpzkrAZgr
-	RdFB+JZBPf4EM2ZrW+vHIIhMnz5thBH18SOBbVrVsgr/c1cz/SvH8H4mFlS7
-X-Gm-Gg: ASbGncv6V9nt1mhbyHUPJ9LOaIxL+d4djziEo3p3AkSi7Nu39DpvUujffVoee5+rs5Q
-	lQ9K8YJTmOnMaT6pivgKJfG8WPq89Vm2mLs7boFltPSEBiOHcRBevQX0z2lcboR8yMYtX0pvM4e
-	1SVoOSC7zSJ2bkl/0ndG9DyEP/8zbO3uiFIpYth/ES9C1bvmv6wCg8jAhuv60FMvdxXKPJ7yl5x
-	hsQlWua1+Q8FHtmcu4hyfjTU/r1htPWtm3/f8dhnB0egvNTEL88ZSTYfA1e1177YoqN3eGRnWJM
-	VTWleY+SSFib668d7AHoaKYL8c/ZhT116riBpVlZAh4n8/p4cy8uMh7YLfLuWeY6nO23hgYSMwf
-	7gDdmhtMpKZOtjcSy5pZprW4Yka+Jm2/TduI=
-X-Google-Smtp-Source: AGHT+IEoG/2aSIZRRI3VLRjKxgjxIVKISbF3fSEXZY9id3JPyrhW2IqRCw1GyMaQcZXfUYjfPwUUVA==
-X-Received: by 2002:a05:6214:1d02:b0:6e8:f4e2:26ef with SMTP id 6a1803df08f44-6ed23904822mr59197876d6.31.1743087123789;
-        Thu, 27 Mar 2025 07:52:03 -0700 (PDT)
-Received: from localhost.localdomain (219.sub-174-198-10.myvzw.com. [174.198.10.219])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eec965a40bsm181656d6.61.2025.03.27.07.52.01
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 27 Mar 2025 07:52:03 -0700 (PDT)
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@kernel.org,
-	akpm@linux-foundation.org,
-	peterz@infradead.org,
-	vbabka@suse.cz,
-	bigeasy@linutronix.de,
-	rostedt@goodmis.org,
-	mhocko@suse.com,
-	shakeel.butt@linux.dev,
-	linux-mm@kvack.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9105C603;
+	Thu, 27 Mar 2025 14:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743087279; cv=fail; b=D3gUSJxV582KVJqkq7/unsgFMort2X8loX1xQGx7zrBYoUBcC2386s4uC31t2wGh4OiKSYN4pOh4k/o4PyTCPeMicUBdZToRM+2YGy5Yj/5RhbD+NpuNdUJNlWzqgZfSIrVjFrUMpO/CfA/8i5ikxbWEvTgLTjrVKPV7RgzbDgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743087279; c=relaxed/simple;
+	bh=roBkvOWTgntirok/vsVxTFgMp63zvAJlAR3hulIMgxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rgZ2BdE219lQI+XVU3sRLFfItDpHG2uTmI+j552AVk33IDb+Hik8kDCtcoVQwwWMEsxWkNSpHDpbLQvYOv9p2YtTiQFUnmKuiwLDNL6Nj0PIR54K7b9VWzCnBgQ+Ka0TUeabXVALyg3U27vODek+Jro1OhWOk88XRjhtvrLzC6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AZH+IX0z; arc=fail smtp.client-ip=40.107.21.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LTZNBDHPF+2mggurhPC1bye2Wg2jo/TtxHZeSRXmwRzU8BpyxDMIG9pggv2MsrMfpGPbk8gy/sBudrcJ4m2qOsltZ8QCp/ZzPFB6OOtqjl+WbiJ2aJlVgnEFvBtNmC4WIEZ9Vj4gEmmLEBLNXxNyted2j3lXj287nklg1Bs+V7gSVHAahWu1lLXx61NnuQFH2FLmEAQE0DtCKjvbCm881SajhQ9RXGM+WH+/1NG72UHPsvJKdd7jjw7b38g4hWFPxhjvGH3OQPmEQsj62SBeCCxUxpBQ0H1SPxjtb65spziTFY7pmizChlCKWyGOllEo5eCUPLBD0t8sfnVBjd0yaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Chom+sX2K5AAtsNRjBWUk1C7AeCEdMBCVsAVsHaa9U=;
+ b=vXPB4J4NHcaEAwZWNEOLKHqmUm/YqlXSsP74sqQvdPCD48bvuRwc+Ni0pjop3zZEaX1FHLxRA8uq5x5zowcAnHHtpingFTn/OAL0YDnbb9AxtGpnr3JA7sVZ2gYfGxAvck1oG2tJJ7sXISE9foI9bGXShzZ3mTwATQpNp1iCOIXBr5yflqeZmNkpCd3uAI0RNcgoIJQOMiW16yKLSqANYqFHFoIRzmeSjK2NMA5P3MtL6Tl4iVz0tyqIXD4S8FCnSBVGsY4wNwX7gCslxHTMODf0xcxgvf3JNxvIKOQjIYR/a3A9bv+/FerDsT9ulgbgOq4sVLCax05pwMX50oVh+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Chom+sX2K5AAtsNRjBWUk1C7AeCEdMBCVsAVsHaa9U=;
+ b=AZH+IX0zHA66jE0hYp6BPTypgN3gxFNHWCQScqv962lVlo2nmOanNYqGPH0YSC4b9elhd2p/5Ph+p1c86PlV6UGSyi2croVNHjqRg1rvm78TjvAD5fqBCBeTxhUqmXDqkvTuh9dSej7T0SNEgxopbGd/GG3OQ1Dv29zLgioULFlUge5r5bwtzQL1tNNHgchtnJ4rus1Q1TOwLoHRf+9D+AZS/fWOXBnINw33eN7wALMzpI1JDUJYHTBt2xH4N1Sfssj8xEB/ULvFU01JY0PSi4ianz4Eqjd2/qY3MiStoSelJ5DEBBNqDKwN0W21IzMYyFmwa6c5Ir6S6+bDJuujOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB9462.eurprd04.prod.outlook.com (2603:10a6:102:2aa::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
+ 2025 14:54:34 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Thu, 27 Mar 2025
+ 14:54:33 +0000
+Date: Thu, 27 Mar 2025 10:54:26 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Introduce try_alloc_pages for 6.15
-Date: Thu, 27 Mar 2025 10:51:59 -0400
-Message-Id: <20250327145159.99799-1-alexei.starovoitov@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+Subject: Re: [PATCH 0/7] TQMLS102xA: New display overlays and small fixes
+Message-ID: <Z+VmonrbclCB3zVh@lizhi-Precision-Tower-5810>
+References: <20250327144118.504260-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327144118.504260-1-alexander.stein@ew.tq-group.com>
+X-ClientProxiedBy: PH7P223CA0004.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:510:338::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB9462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f31e8ec-b324-419f-e6b8-08dd6d3f491b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OSgixyna3T53uYH0isZIRkfbLbN1QwI+uDqvNnB1qoAvQiN49+0sgH98qgeq?=
+ =?us-ascii?Q?+dn7qhaVCTvaphj+LHZaZsv9xEOoxzTZTCBTlapRVvt5pWzUuSj6SxJrAhrA?=
+ =?us-ascii?Q?4d92vwMBomlYKnDYefOAhQp+cMRL0XLg0b6Ob7zhwu7FyoycPZGqkzjpEVwu?=
+ =?us-ascii?Q?iCWQYlRctzqEgvbAFEWcV9Vzg3mCx8GYcJWzq9DUqgTCKGEvPbN1+nWv8OWm?=
+ =?us-ascii?Q?mRqDurW7ClrUWj9O3EmlzeE1gqFW00/i7QG4dCkw2o12RQfyAAqjoeE7KkAL?=
+ =?us-ascii?Q?8goZkGo1shKIIHaaUp187E0TU58bOeqOsIn9lAsjr2babnux8rnuBipIt9p7?=
+ =?us-ascii?Q?WvYtu26YJ93Mcsdt/dcJvjYBIZz2FJH6iUeuaLjAspRTQ9s8SF6y6DLtMHNn?=
+ =?us-ascii?Q?3rFpPAWlsOU0TgXEcz3MHiTL91tYrpqRgNJybF9Q4DIXcYcVBjfFSgAXt5rl?=
+ =?us-ascii?Q?nwNDrbZixybA8Swulc/vkUVzOpUwo7JQ+Aa3UUpRelISfVhVaRiJZuqgV+8V?=
+ =?us-ascii?Q?F9qJupXWduMpUncAy/Jrw16XP2fOyru0UNMo0Xhyj9lCftsJ4M9UPYypX3wM?=
+ =?us-ascii?Q?dHKi7mrzJM+eK0g5ool464aYz/phzUVXsQEyG+HwSaL+TfCcFJ8XcxMlQxOw?=
+ =?us-ascii?Q?5lxSWihVVUMY8SjTHj9t17b0JKCa1x7yPDZpP4OUBexqf9nt/6mb8pqaY+h8?=
+ =?us-ascii?Q?+7SZ1gxJpD3KW1gzCZsFbunZ1vEFcbsPZFCjPJ3T1FzG7oeP9qa5d4Wd++zt?=
+ =?us-ascii?Q?sMY3GDzNa8zw20aW8upbxEZCknopyxeLNJPvzVljeT8wLzSjCTr+B9TPPJUq?=
+ =?us-ascii?Q?wO+3L8YITqde7owcRqQJ2GMbGJX0r+g6aQYaNfMV6e12DQT/YyghDd0e+QGu?=
+ =?us-ascii?Q?0++MYwmbkmpqiqY4gHMR9oqm63xpGHpXOETuntNOZGDRmbH4t/FWtiLt3MMM?=
+ =?us-ascii?Q?iqcjZG99SAvGozR7vyPLwe8ftv3thQK+GUROgvsCstDTV4b/qbC2HsuM6Xt+?=
+ =?us-ascii?Q?fIvkSepuc2tcyT8bCQ437U3KYaVVmoQweqOpwYYlXT++FuqLW9wKVAzYZHxe?=
+ =?us-ascii?Q?6fpem7nMW8FYNnHO9AbZzmMtZG+iP2WKOEbuupWmaqei58c7oLEgICTmXhhR?=
+ =?us-ascii?Q?HVrM2dlvmzjGduvDawphl9qbZtcCWDpTifPro8YZ/dCPrREGeuXqsT8QTpgr?=
+ =?us-ascii?Q?9b1vZb4gt99h0V9Ceu5e2qK1IZeBwoGfk6YPIidHraGAlbJa5tORS9LJkhpL?=
+ =?us-ascii?Q?WDuskig57HhYbQkKxhR2osGEm0R47JPkxvpLN/RcQ4yvJ2qXP8E46oQ36XBe?=
+ =?us-ascii?Q?5v1jNC395+4FOuqh+Zj1ugCK61xdSo6YTJdGtHLi0PDvCoeaMQ8ioiKlhg8l?=
+ =?us-ascii?Q?uN5PDx+I6RNmfXra2r7RZ//NRfFxEROHIsdmGvcskk9w3gMrDIdaxj6RyBRE?=
+ =?us-ascii?Q?pN4wtwO31o6p+1JwAFTKkrab5A8L1zGk?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YqesTSGY5h6+10oPuVI6DKsNsUrY2aA2pMxrvegShEeAbkVQfk9RttxNXV3d?=
+ =?us-ascii?Q?DitFm0vwu3o/J3qTK4A8GW09Ek4r+REvgcov2b4KEyMnrwHipfwalT2C6sMT?=
+ =?us-ascii?Q?ve3q6Ckox38o/EEjguAB92bLAdS9LFNUHEw+KrT+hHgqm6wlMbPcU2qyeCzW?=
+ =?us-ascii?Q?t0WTg8+/MvrpgYJ4VLPXdw7ckEzOa+q1nDxEm1onRjOkgKIiSdtRse/VVOUG?=
+ =?us-ascii?Q?f/1vO6XiPr7wbYgCaxKJyaxSzErEEg/d6GXSYPZY8HpJmDUENAeFMMY5pwhJ?=
+ =?us-ascii?Q?1ESu+/hgqEODzWH6bHxMZfYs5mYVEqqaN5g+Ouuj0VxYWb+kFAYJjxdgMT5R?=
+ =?us-ascii?Q?AWacrXOBtv8rCME4oTeEPZnmuZPbAOg55optjcpm4x4+oABGMLc4M7n+VcML?=
+ =?us-ascii?Q?92KpDXf56nnTlDhPRjrmrtMPqvsavNh2zSoTb5GBOjxG3hPDIw9Emhmt7CNE?=
+ =?us-ascii?Q?D2C/5VdrRp6lzy7OORRE9GpK3VIcLvHqI40w1GC5OZzAkMEwCEPvzrtHYOtM?=
+ =?us-ascii?Q?+M38hMQKEEe8u+TPZGJH0eBwX8XEXKhn3F6bu4dX3cqno9stLYRLgWtjCNVA?=
+ =?us-ascii?Q?/WFS+JNHGsuLSFVeFYT82ZZfxVr+ndFisxc6n4pQmc1W+p50vNK29saMiG5r?=
+ =?us-ascii?Q?qPyATQzqmDke8+BDlJybJOHAtEV+sdO996wGertNbj/2ZHF8MjezSzP8mlNu?=
+ =?us-ascii?Q?zmnEidCs2dxRF7nOWUn8Z2nJMQTj0WfxBuRPMvi8xAB1waRpFu6WmK4KlPnF?=
+ =?us-ascii?Q?j/+hoTecqMdeo766M3/NBMKzxUzQgNsgB+ueYqVYpvzKXc9Q1BnYtXN3Jgcl?=
+ =?us-ascii?Q?KRFrT3S8p8yoW+Ye4AfDX1oYBUqU6bW5b88XPStcWUJ95MQQG6SPTeUmlJlz?=
+ =?us-ascii?Q?KodvC7Yq6hyJL6ihEDQjAfFPiYpxLlz7hWzZiEi1AG6zweMWkJe+MR/ltGUl?=
+ =?us-ascii?Q?BryGAfxwgA3A8MTjQWpjSF9UWkbGVa9MSrebc9KndPT+BqnIbsRyVPvcIx8N?=
+ =?us-ascii?Q?L95cvm0UU6MnIE6LIeKTmJVmyBzGBouuoZcvNPJyHtTHAwpJqrbcIui/TAP7?=
+ =?us-ascii?Q?w18vvZ4qWlvxwrkrpOrcyXn+XUUgqMWU8MdA8q2ZAcDb7cNdyAr1nDLr02Q0?=
+ =?us-ascii?Q?OJNrH6s8itkIeTiqPYbnzgFVJP0uywWMnAnTLqj42vrkNOdZQAmP7odLyhBg?=
+ =?us-ascii?Q?S6YRf4eUbq+GM5KtZHrRWTtKsnb7lhAZ8z/mH39qDO+vLCN+rmb70U/q9rIy?=
+ =?us-ascii?Q?w0Upz08XLDfS6USoew9BB7XuuezU6tkYkNXNILufxQ3JFnGhcGODKVB9ZVUE?=
+ =?us-ascii?Q?7gXnVTkkLvaPx1wi5uTCDFZfqqAAGrYJNKHER9fsAE38FNOcXdruTUXUQOqY?=
+ =?us-ascii?Q?IPOakIrLSibAOOuBKirhQ7/vv04yir3HROHduQxu73wKtWGfIuYLlzbzZh+T?=
+ =?us-ascii?Q?d+ucLyOShnXxJQxPVBT3yUVVYeJXZD2Jt28gfS40aalH/qsuPrSgHT2BDVUR?=
+ =?us-ascii?Q?lFiFtnXA4/4ic5su0kWZCUV5bbTKXNju/SYhaA0wNIxcPOeYyZ2vvhMPpong?=
+ =?us-ascii?Q?frKCef/5BDMlxkUehe5gJ/Tjf9DBjm3KeGSzHGp/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f31e8ec-b324-419f-e6b8-08dd6d3f491b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 14:54:33.5585
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fByDzVDXDD6T18mv/vWgSFYx0x2D3JVpNm3Hj8GAfPiw0OG/e3oK4ahGXR+k6OW3HhrhFwKbgcxGtnVcRZfD+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9462
 
-Hi Linus,
+On Thu, Mar 27, 2025 at 03:41:06PM +0100, Alexander Stein wrote:
+> Hi,
+>
+> this series adds several display overlays for HDMI, LVDS and RGB displays.
+> Additionally it fixes the license header and updates the sound card model
+> name similar to i.MX based platforms by TQ.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Next time please cc imx@lists.linux.dev for layerscape platform change.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git tags/bpf_try_alloc_pages
-
-for you to fetch changes up to f90b474a35744b5d43009e4fab232e74a3024cae:
-
-  mm: Fix the flipped condition in gfpflags_allow_spinning() (2025-03-15 11:18:19 -0700)
-
-----------------------------------------------------------------
-Please pull after main MM changes.
-
-The pull includes work from Sebastian, Vlastimil and myself
-with a lot of help from Michal and Shakeel.
-This is a first step towards making kmalloc reentrant to get rid
-of slab wrappers: bpf_mem_alloc, kretprobe's objpool, etc.
-These patches make page allocator safe from any context.
-
-Vlastimil kicked off this effort at LSFMM 2024:
-https://lwn.net/Articles/974138/
-and we continued at LSFMM 2025:
-https://lore.kernel.org/all/CAADnVQKfkGxudNUkcPJgwe3nTZ=xohnRshx9kLZBTmR_E1DFEg@mail.gmail.com/
-
-Why:
-SLAB wrappers bind memory to a particular subsystem
-making it unavailable to the rest of the kernel.
-Some BPF maps in production consume Gbytes of preallocated
-memory. Top 5 in Meta: 1.5G, 1.2G, 1.1G, 300M, 200M.
-Once we have kmalloc that works in any context BPF map
-preallocation won't be necessary.
-
-How:
-Synchronous kmalloc/page alloc stack has multiple
-stages going from fast to slow:
-cmpxchg16 -> slab_alloc -> new_slab -> alloc_pages ->
-rmqueue_pcplist -> __rmqueue.
-rmqueue_pcplist was already relying on trylock.
-This set changes rmqueue_bulk/rmqueue_buddy to attempt
-a trylock and return ENOMEM if alloc_flags & ALLOC_TRYLOCK.
-Then it wraps this functionality into try_alloc_pages() helper.
-We make sure that the logic is sane in PREEMPT_RT.
-End result: try_alloc_pages()/free_pages_nolock() are
-safe to call from any context.
-try_kmalloc() for any context with similar trylock
-approach will follow. It will use try_alloc_pages()
-when slab needs a new page.
-Though such try_kmalloc/page_alloc() is an opportunistic
-allocator, this design ensures that the probability of
-successful allocation of small objects (up to one
-page in size) is high.
-
-Even before we have try_kmalloc(), we already use
-try_alloc_pages() in BPF arena implementation and it's
-going to be used more extensively in BPF.
-
-Once the set was applied to bpf-next we ran into two
-two small conflicts with MM tree as reported by Stephen:
-https://lore.kernel.org/bpf/20250311120422.1d9a8f80@canb.auug.org.au/
-https://lore.kernel.org/bpf/20250312145247.380c2aa5@canb.auug.org.au/
-
-So Andrew suggested to keep thing as-is instead of moving
-patchset between the trees before merge window:
-https://lore.kernel.org/all/20250317132710.fbcde1c8bb66f91f36e78c89@linux-foundation.org/
-
-Note "locking/local_lock: Introduce localtry_lock_t" patch is
-later used in Vlastimil's sheaves and in Shakeel's changes.
-
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-----------------------------------------------------------------
-Alexei Starovoitov (6):
-      mm, bpf: Introduce try_alloc_pages() for opportunistic page allocation
-      mm, bpf: Introduce free_pages_nolock()
-      memcg: Use trylock to access memcg stock_lock.
-      mm, bpf: Use memcg in try_alloc_pages().
-      bpf: Use try_alloc_pages() to allocate pages for bpf needs.
-      Merge branch 'bpf-mm-introduce-try_alloc_pages'
-
-Sebastian Andrzej Siewior (1):
-      locking/local_lock: Introduce localtry_lock_t
-
-Vlastimil Babka (1):
-      mm: Fix the flipped condition in gfpflags_allow_spinning()
-
- include/linux/bpf.h                 |   2 +-
- include/linux/gfp.h                 |  23 ++++
- include/linux/local_lock.h          |  70 +++++++++++++
- include/linux/local_lock_internal.h | 146 ++++++++++++++++++++++++++
- include/linux/mm_types.h            |   4 +
- include/linux/mmzone.h              |   3 +
- kernel/bpf/arena.c                  |   5 +-
- kernel/bpf/syscall.c                |  23 +++-
- lib/stackdepot.c                    |  10 +-
- mm/internal.h                       |   1 +
- mm/memcontrol.c                     |  53 +++++++---
- mm/page_alloc.c                     | 203 +++++++++++++++++++++++++++++++++---
- mm/page_owner.c                     |   8 +-
- 13 files changed, 509 insertions(+), 42 deletions(-)
+Frank
+>
+> Best regards,
+> Alexander
+>
+> Alexander Stein (7):
+>   ARM: dts: ls1021a-tqmals1021a: Fix license
+>   ARM: dts: ls1021a-tqmals1021a: Add vcc-supply for spi-nor
+>   ARM: dts: ls1021a-tqmals1021a: Add HDMI overlay
+>   ARM: dts: ls1021a-tqmals1021a: Add LVDS overlay for Tianma TM070JVGH33
+>   ARM: dts: ls1021a-tqmals1021a: Add overlay for CDTech FC21 RGB display
+>   ARM: dts: ls1021a-tqmals1021a: Add overlay for CDTech DC44 RGB display
+>   ARM: dts: ls1021a-tqmals1021a: change sound card model name
+>
+>  arch/arm/boot/dts/nxp/ls/Makefile             |  9 +++
+>  .../ls/ls1021a-tqmls1021a-mbls1021a-hdmi.dtso | 32 +++++++++++
+>  ...tqmls1021a-mbls1021a-lvds-tm070jvhg33.dtso | 47 ++++++++++++++++
+>  ...-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso | 55 ++++++++++++++++++
+>  ...-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso | 56 +++++++++++++++++++
+>  .../nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts   |  5 +-
+>  .../boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi   |  3 +-
+>  7 files changed, 204 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-hdmi.dtso
+>  create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-lvds-tm070jvhg33.dtso
+>  create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-dc44.dtso
+>  create mode 100644 arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a-rgb-cdtech-fc21.dtso
+>
+> --
+> 2.43.0
+>
 
