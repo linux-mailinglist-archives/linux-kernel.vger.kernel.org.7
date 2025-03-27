@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-579291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C76A74198
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:50:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855BFA74199
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE7DB3BF23E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:49:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F1C7A86DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC2E1EFF84;
-	Thu, 27 Mar 2025 23:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F421F2C52;
+	Thu, 27 Mar 2025 23:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ri7E7Cel"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QqW3Nm9s"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCA01E51EF
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940CC1EB5F8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743119348; cv=none; b=EyiSF08Si/I2Sh77xH5UD5vA6wyB+VlZI7O5djOdt+1j7jZstDDxmNxjnbai/gM0eQ4M578OCmAZdw6vi/Hu69sflQxNDFLderMHBzCs3ACUoQKrY8oeInSrg0qucXmrmXow4WRoXQn+KDC0v0kiWSlURiiTKjcYtcEjfMkzoXU=
+	t=1743119349; cv=none; b=sv412k1amup4DgrOOAcDnns1JnPVB4cRDSgTE3oSvsXZz4+xpupFGtvin+rcD+aUCJ2ZvgACucqbnXRztPIx+aqidwpJOxthe8EFgT22vFy3QcfesbIJxlaX0x1dssGnrXg9nMqglLekLFCY8Da4gmJKO4LnC5TqOJYS1ZNjvsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743119348; c=relaxed/simple;
-	bh=7xuzZW2SqsDXU4zjPwI8U9yRxCTuvO3b39KZjUIDomI=;
+	s=arc-20240116; t=1743119349; c=relaxed/simple;
+	bh=A3O1dUKmIFuVaH825Y+VuzOrdI2MI1HzpdnxKXVvGdw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SqvREG2LX+zsm/rCKTNBER/E+uKftAuqSQ6J6GXLET2408aTSxVNYJzA3O/8occRpt6qQwD5KTfQp7q6Jaw84+hmWecrUIr9zV3lQY3O8A+K6j0eBVmnu85Xd4BvhP6BmGm+b/yBg2ivqZ3WUGFs6BDYyWnVuR4LMNSkqUaaxpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ri7E7Cel; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=bbr6L7itRxCKQ3kqypBcfKemv/66MMVCwO1b69mKZ/VgnRXBUDTokm2YFGNzy83Fk9HOrxRA4khD7CQt4pZDbfD3RMpB4F1Q8hlEBgJcPQ765u9bezRy5TxofSMCmW5g7q2IvFOAtWgmADQ/XSmJ0cerfy7O3y/Vtg7riVt04Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QqW3Nm9s; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743119346; x=1774655346;
+  t=1743119348; x=1774655348;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7xuzZW2SqsDXU4zjPwI8U9yRxCTuvO3b39KZjUIDomI=;
-  b=Ri7E7Cel2lt5C+EKuTGQwAXsfU3PjeWqiWJRhG+5c1hqvyshApez/W83
-   A31FjYeEiFqnJ8OBArzNWdHSQXFa07PueiRgXs2PHDZOjgPQGVz5ivyqj
-   1HLr/Qwj9xf8+W7B0WqGHlPaXTirWPMrwBO+iYeegFoLhup9c1rxI3nUp
-   ApSs6ZJes25hiFPkq+2zrwaz3iPMJVZTyCWUKu2Mot9qzNwUbq/4QHMzA
-   L518Eg02akcVlG/4ahJdcAIa2D/B0jMksVbU7GWhAvq9tkGi262KosEAv
-   NGIortuoKU5ZcoW+JjTHue7ExtYh190t/pXHK+S0I2LVyrx3/pC+mj3SJ
-   w==;
-X-CSE-ConnectionGUID: 0AacVKE4Qu+HL113RSG+mA==
-X-CSE-MsgGUID: Gpl5T9IzT32cX7qWCQB+Lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627969"
+  bh=A3O1dUKmIFuVaH825Y+VuzOrdI2MI1HzpdnxKXVvGdw=;
+  b=QqW3Nm9sp6zjTb9Eh+PfKxf7Trm657oHQXzCpxdMDK4i/lNRE4KN2BQP
+   UDSLURSb4EQNrDot/eOMAOoN0ky1VJ+XAAIWdlfLYsFHaZdv7rSq5E9Gq
+   /IjXTTGEmxTjvTKRtVtdFUu24BuwW3GN0CW/TiSN/kAoYBjDutfR775zA
+   gfKcy918jzBvSMNSeU9UFOfuLmuiKokPRu9NX+9SDBU7nZc/T8lRGFwJt
+   NPL4PH4CRWGtGJVD8LC2HcTy+8Rnrng7IxNm9DnPtMtZSrwFRS/Im6iVP
+   qrNn/pDXsvREicAqqQ563Gi8cXv77wyYLHtygwJWdM0vazVOyFhPIV0nm
+   Q==;
+X-CSE-ConnectionGUID: DTHHjLJwT/SrRSEUvbCgkA==
+X-CSE-MsgGUID: iRXBtmPWRpqHfopFg5ib5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627978"
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="43627969"
+   d="scan'208";a="43627978"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
   by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:06 -0700
-X-CSE-ConnectionGUID: hlCx5Ep1RzqDemWLjN/Y4Q==
-X-CSE-MsgGUID: /mVI/4q0RuCuJqWcB/y1Aw==
+X-CSE-ConnectionGUID: ih1UoK6lRQe+aHr+xwxxQg==
+X-CSE-MsgGUID: AwOdvOnjSLG9tgZz5Sn2ag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="130150512"
+   d="scan'208";a="130150516"
 Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:05 -0700
+  by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:06 -0700
 From: Sohil Mehta <sohil.mehta@intel.com>
 To: x86@kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -76,9 +76,9 @@ Cc: Borislav Petkov <bp@alien8.de>,
 	Tony Luck <tony.luck@intel.com>,
 	Xin Li <xin@zytor.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/9] x86/nmi: Fix comment in unknown NMI handling
-Date: Thu, 27 Mar 2025 23:46:25 +0000
-Message-ID: <20250327234629.3953536-6-sohil.mehta@intel.com>
+Subject: [PATCH 6/9] x86/nmi: Improve and relocate NMI handler comments
+Date: Thu, 27 Mar 2025 23:46:26 +0000
+Message-ID: <20250327234629.3953536-7-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250327234629.3953536-1-sohil.mehta@intel.com>
 References: <20250327234629.3953536-1-sohil.mehta@intel.com>
@@ -90,43 +90,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The comment in unknown NMI handling is incorrect and misleading. There
-is no longer a restriction on having a single Unknown NMI handler. Also,
-nmi_handle() does not use the 'b2b' parameter anymore.
+Some of the comments in the default NMI handling code are out of place
+or inadequate. Move them to the appropriate locations and update them as
+needed.
 
-The changes that made the comment outdated are:
+Move the comment related to CPU-specific NMIs closer to the actual code.
+Also, add more details about how back-to-back NMIs are detected since
+that isn't immediately obvious.
 
-commit 0d443b70cc92 ("x86/platform: Remove warning message for duplicate
-NMI handlers")
-
-commit bf9f2ee28d47 ("x86/nmi: Remove the 'b2b' parameter from
-nmi_handle()")
-
-Remove the old comment and update it to reflect the current intention.
+Opportunistically, replace an #ifdef section in the vicinity with an
+IS_ENABLED() check to make the code easier to read.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- arch/x86/kernel/nmi.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/kernel/nmi.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index cdfb3864d59a..2a07c9adc6a6 100644
+index 2a07c9adc6a6..59ed74ec010e 100644
 --- a/arch/x86/kernel/nmi.c
 +++ b/arch/x86/kernel/nmi.c
-@@ -327,10 +327,9 @@ unknown_nmi_error(unsigned char reason, struct pt_regs *regs)
- 	int handled;
+@@ -359,17 +359,18 @@ static noinstr void default_do_nmi(struct pt_regs *regs)
+ 	bool b2b = false;
  
  	/*
--	 * Use 'false' as back-to-back NMIs are dealt with one level up.
--	 * Of course this makes having multiple 'unknown' handlers useless
--	 * as only the first one is ever run (unless it can actually determine
--	 * if it caused the NMI)
-+	 * As a last resort, let the "unknown" handlers make a
-+	 * best-effort attempt to figure out if they can claim
-+	 * responsibility for this Unknown NMI.
+-	 * CPU-specific NMI must be processed before non-CPU-specific
+-	 * NMI, otherwise we may lose it, because the CPU-specific
+-	 * NMI can not be detected/processed on other CPUs.
+-	 */
+-
+-	/*
+-	 * Back-to-back NMIs are interesting because they can either
+-	 * be two NMI or more than two NMIs (any thing over two is dropped
+-	 * due to NMI being edge-triggered).  If this is the second half
+-	 * of the back-to-back NMI, assume we dropped things and process
+-	 * more handlers.  Otherwise reset the 'swallow' NMI behaviour
++	 * Back-to-back NMIs are detected by comparing the RIP of the
++	 * current NMI with that of the previous NMI. If it is the same,
++	 * it is assumed that the CPU did not have a chance to jump back
++	 * into a non-NMI context and execute code in between the two
++	 * NMIs.
++	 *
++	 * They are interesting because even if there are more than two,
++	 * only a maximum of two can be detected (anything over two is
++	 * dropped due to NMI being edge-triggered). If this is the
++	 * second half of the back-to-back NMI, assume we dropped things
++	 * and process more handlers. Otherwise, reset the 'swallow' NMI
++	 * behavior.
  	 */
- 	handled = nmi_handle(NMI_UNKNOWN, regs);
+ 	if (regs->ip == __this_cpu_read(last_nmi_rip))
+ 		b2b = true;
+@@ -383,6 +384,11 @@ static noinstr void default_do_nmi(struct pt_regs *regs)
+ 	if (microcode_nmi_handler_enabled() && microcode_nmi_handler())
+ 		goto out;
+ 
++	/*
++	 * CPU-specific NMI must be processed before non-CPU-specific
++	 * NMI, otherwise we may lose it, because the CPU-specific
++	 * NMI can not be detected/processed on other CPUs.
++	 */
+ 	handled = nmi_handle(NMI_LOCAL, regs);
+ 	__this_cpu_add(nmi_stats.normal, handled);
  	if (handled) {
+@@ -419,13 +425,14 @@ static noinstr void default_do_nmi(struct pt_regs *regs)
+ 			pci_serr_error(reason, regs);
+ 		else if (reason & NMI_REASON_IOCHK)
+ 			io_check_error(reason, regs);
+-#ifdef CONFIG_X86_32
++
+ 		/*
+ 		 * Reassert NMI in case it became active
+ 		 * meanwhile as it's edge-triggered:
+ 		 */
+-		reassert_nmi();
+-#endif
++		if (IS_ENABLED(CONFIG_X86_32))
++			reassert_nmi();
++
+ 		__this_cpu_add(nmi_stats.external, 1);
+ 		raw_spin_unlock(&nmi_reason_lock);
+ 		goto out;
 -- 
 2.43.0
 
