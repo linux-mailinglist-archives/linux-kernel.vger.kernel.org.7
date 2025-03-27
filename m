@@ -1,168 +1,130 @@
-Return-Path: <linux-kernel+bounces-578064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8337A72A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:53:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5A1A72A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8E17A51A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FBB1896904
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80E21C84D3;
-	Thu, 27 Mar 2025 06:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0ED1C8634;
+	Thu, 27 Mar 2025 06:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MZB1yeTF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=quanta-corp-partner-google-com.20230601.gappssmtp.com header.i=@quanta-corp-partner-google-com.20230601.gappssmtp.com header.b="VnXUtEUl"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82821C6889
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C91C700B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743058408; cv=none; b=mfdLMoHqp6/QLhFF+psVWMIHuPZmFW0pUl7Icy1pc+aqUNiKCubdM8bjrWwvAsCcGU6RJbQJQ4aRbAdmDHcnEe30ybj5DdMPDpkjOhkjckDjjzQ/wMBskCpU+TB/gEDd2wMRXuQ/jP8KiguNgZkQNyywBzVclKRJCEMQLEGuvyo=
+	t=1743058796; cv=none; b=L2l5b/yoBTeQyIcccOb52xOX/Io+98Ds7AZFcKAiiLR4/iL4wo7LoFYxVlykr5zXULz2d7Y1iLiLwI3TF/25PQh0z3cOO6z1CjWnjOn4FyYHrrOK+AzASLt98CCJr4UbTrwSgS8zI5VB/X3XebjVWL2NK0IjojS4J29YDJNJspE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743058408; c=relaxed/simple;
-	bh=gmjJJW9kLnwVf4ojgXk72+SIvB4JBqU2VPR6QGUBIts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DMY9fX4vcYvdx242G23N0RJdHmRGIw0zQiYrrDnna/vt2w2KMuM9Wah/9mUz9AQXwyfZhy4MBr3IKToIIo0l8Hbv3PYaEvN52l3RG9ta+3dCqbvLKzX2+F8CMzAC7bklRue42PTiRKOj77zSjLFWeKaf4zfEwTpFK68GzhEhtBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MZB1yeTF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43938828d02so1329255e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:53:25 -0700 (PDT)
+	s=arc-20240116; t=1743058796; c=relaxed/simple;
+	bh=mZk1/g6K9/xfZWWHQNM53p/aOxDqD8e73imdnMmnNKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mYTur1qRIwKs/loSLx6sbd9aUIHIduL1PTNV3pciK7wprBlpaHMKhRc92yDarM6FvWG/vRgM35hNK9N4TfOF+9PmZ5nWX4EO9GZjURpWkSnJgF7NKQfSmq3+3IISlnmcorfsP852tiA8slGNcaHutS8SwKH2QFGWa5qjJnEZTkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=quanta.corp-partner.google.com; spf=pass smtp.mailfrom=quanta.corp-partner.google.com; dkim=pass (2048-bit key) header.d=quanta-corp-partner-google-com.20230601.gappssmtp.com header.i=@quanta-corp-partner-google-com.20230601.gappssmtp.com header.b=VnXUtEUl; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=quanta.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quanta.corp-partner.google.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so3572045a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743058404; x=1743663204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t1PDL49wsR8t3oK5tOwSBTXVuxib+JRofPTqoaO+MbY=;
-        b=MZB1yeTFQ8mRh0f5GXjlgMS+V+spjjP/SjhnbjzqHy6MA6QSjU6U5SRApZAajA1vtU
-         +wi050IkNGHrSHwng8FVrTrfpjGxGWu4UpL/xnGnsdtS/TWTFskxFHQ4m33dUKHh+Cz7
-         01RcmbIXS5pstDtVkENM2DJ7wUUTl/mG+JIptU07a/BducP3i5tyQDLBgV2bHY1G7IyW
-         VDVSm912HCmshkF/qx6xlyYy/d4qL2f2D5/zvxxMLzE4564KZVuqILXBSaCjJ1T84QYL
-         fX+Z4wW+oE6I9GpZAMfpGmNbfLyowAKloTD1BPGSfF48sDlGE1qnz9NbOLLfxBJ5/CmW
-         QpHg==
+        d=quanta-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1743058793; x=1743663593; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4to77tfN2Uh/XXo3c+lIPR6s2qFb1tp5+3tSOChySQ=;
+        b=VnXUtEUlnYuZngItHJzLd29wQYqVA++VmxZQ9jp6kUwqM4aH5hOOuEUfBVpVgZLBXv
+         Vu9Coi2+QDT14EXvOJON6YozB6X+CX3/OQSiAQINcQP9FA/kuMmb6WbKTtDiwwWnKc5x
+         tL6YrVe6Zj9SPcDwDsxw6qPczRaOpHJrpjl9rrc5uYOSKDA5tedZDM3k3FErjvEJHrJ2
+         xVTlsfPJpAUuCrKH0+phS5oS0CLGJRnquUFB0bh472/VOhmCSQ6EGvEXvkrcSwXHwBty
+         gp8ECYpP7J/+5i16BRI4d5Dy5mo9Bato5TfVDp65nU4nXvRQNqN3jhZ8oLZvRsuRsZ5Y
+         ZllA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743058404; x=1743663204;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1PDL49wsR8t3oK5tOwSBTXVuxib+JRofPTqoaO+MbY=;
-        b=IdUc42d9XmxTiFvLHD2GJ41+UK9CYBHt4hAmxKWsvTnf51v9FwsLV9+JBIkPshL4Jk
-         +x2zcr9T72XxxGS1cVMACc/f+bXTP7OMedtIPS0zefqC0t8h39sUUhk5n1044Qxmz6S9
-         wEbziDWQqySQwP6yj5DI2B8PLlr1xlnSh9dMXba50utGbcjEBO5HC21cxZeiej65cuWL
-         zMN+UC+22sGmoDryzIZE8aEhHlrqwdv3e1NOxCz5fYt6KrD5GGvKU1hRmFz+upe67lxA
-         qvXAlgf8HyS09l4MnhmbNNzKWVUShNRvO39NFMPCuLCD/IgWfU4z5CqiHz28VSltiew3
-         U3yQ==
-X-Gm-Message-State: AOJu0YwOABAPJisNMQQMHx1sygIo6UtkdzPgLZXa3mz02M3CDow4BqU1
-	ZmnRDF6msUR8g4T0VE7gfH4roPDYvGI1eGVZ1dYHsk6kf8ILfz2Y/sfYeNd9DSk=
-X-Gm-Gg: ASbGncun8Pa+NdqIwJiHZBoUANtD7bf36I8b5mdr8LFMuxVzMZJSnvhwmneauZepqNw
-	ogE7s+WVo6vC6ksZyggdPbg0yocFLkyW9mZQWmacj3AOSjgtlj8km4aze8pn17ao0sDJEGWGrmR
-	4vzl9R13+WOwBLS3yxtS6/hheEE9p4dK4QEeQ09ecyaGPWN7ifSvd/jbWJYK5VhAKOm6A+VDlhv
-	GbrKDQ+r6IyEV5KKx9vMXU46QEEPKHNVyEeHCU3U2y1WNxqdFXrDx9DLfIHZp7yD/CGofnnhHwE
-	A5AjDQfdEMNu2Ccrq7p94tc4knwlo8T8UiLDPGItlyNircxr7mI=
-X-Google-Smtp-Source: AGHT+IEdkz6q64rsYV3VZmc/ZfV6ChqPaq/S6W1mt38Hq+RVFgHVVbpHCU3NX5s/6fNrItFngbvoXQ==
-X-Received: by 2002:a5d:47c7:0:b0:38d:be5e:b2a7 with SMTP id ffacd0b85a97d-39ad2b19b7fmr398048f8f.10.1743058403991;
-        Wed, 26 Mar 2025 23:53:23 -0700 (PDT)
-Received: from [10.202.112.30] ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f45e9esm121332185ad.88.2025.03.26.23.53.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 23:53:23 -0700 (PDT)
-Message-ID: <bcce4e5c-d739-4b1c-86bd-d165ec0780be@suse.com>
-Date: Thu, 27 Mar 2025 14:53:20 +0800
+        d=1e100.net; s=20230601; t=1743058793; x=1743663593;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L4to77tfN2Uh/XXo3c+lIPR6s2qFb1tp5+3tSOChySQ=;
+        b=LPHWQrNAf6+uVpKbSBMs/73EsMbs0qEY94joAQ72Z9iO5opVH2DiVWrcuPUx6KLbNu
+         aEznZwW5rAPEFdCkY0RM+UUzupFKTxufdw+9rwdkN9GA9IoC8CkNzYwSBJQ65+zaeDnV
+         ZoGuzQBrOBWG1GCedWy5oS30IsxfijAXksSJsKYs6Pwbgb8T4ZyMJT6jxwUXwOlzv4Kv
+         0obccrAgCXaTtwFXh+Z8K4/zK0xP/hEDKkJ0aH47NcU8c8tMnWgEpCNa7qb6Xm6qE+CP
+         LkbKBno5/oDGucT5vf7L8e3e3ZE64t3vXVxfzcF4Iw3VlCge65YhKcOdKhgfH1ilw558
+         hn7A==
+X-Gm-Message-State: AOJu0Ywpv4wfV7hkGWlxW3w35ySgaPcxI+9eJPzbTeWVbYpWcs0aSUft
+	PSYQ8mQ9kz1CgkAFQSbaEBxG+Ddwq+W9flt7j/dwvFpBlOsJOS6ypRXgflhXnZv+2sUVcVYcA23
+	GHgE=
+X-Gm-Gg: ASbGnct9iOp8xbuRVJvHNp5N12XxnTx1MqobmY6bUfi3mRzG2djztBs3a2tuUDgmeVk
+	ms3vhS9gOacvBNIzITZX1cnoGae4rLPRAXxc4MWzQNbuuLzBI852IA4dU5BbUCQo9VpUm9SErQV
+	YIWSJSX/IwB2dRWJrtQX5JDqmpMcz0HXs0fiXM7ZgWJY2aNO001G6TvW0VlWsOAC1Chbq8tssqM
+	vl5pjHnqEzeX9uYHBfpxBdG/R7eGLUN95OX3OQfEiQnrO49RlfF5XPwPRD69Af8KlcIYylk7DNC
+	uoCHHfxsb2CQIn6LXd5XkeJfRSCpSnM4AaTmn2it8nHwtfA8xRvlPV4FcLzNF++ZMBgFf3Gcdlw
+	6laA9TY7ZosXzMAZwLkwVs5EmC9IZW7BtDNAn1D3NxxmBghw643a6ujo28mz99ugkFHaCohtp9s
+	OGehMBuC/xlKxqLQ==
+X-Google-Smtp-Source: AGHT+IHnETWyyanBiU2twDZ1VaieT35/Fur+NGUXFQac0h6cHFF/+Ft9G2H9gQIlqjGEPWZaiJQG1A==
+X-Received: by 2002:a05:6a00:35c3:b0:736:aea8:c9b7 with SMTP id d2e1a72fcca58-739514c4fc8mr11981390b3a.2.1743058793466;
+        Wed, 26 Mar 2025 23:59:53 -0700 (PDT)
+Received: from localhost.localdomain (2001-b400-e33a-bfe3-6468-2896-023a-3689.emome-ip6.hinet.net. [2001:b400:e33a:bfe3:6468:2896:23a:3689])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fe33d0sm13513053b3a.70.2025.03.26.23.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 23:59:53 -0700 (PDT)
+From: Ken Lin <kenlin5@quanta.corp-partner.google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: groeck@chromium.org,
+	Benson Leung <bleung@chromium.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	chrome-platform@lists.linux.dev,
+	linux-media@vger.kernel.org
+Subject: [PATCH] [v2] media: platform: cros-ec: Add Moxie to the match table
+Date: Thu, 27 Mar 2025 14:59:00 +0800
+Message-Id: <20250327145729.1.I04b964661552ce532dbefd1ee5999fb0a0641a07@changeid>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/1] ocfs2: fix write IO performance improvement for
- high fragmentation
-To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
- "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ocfs2-devel@lists.linux.dev" <ocfs2-devel@lists.linux.dev>,
- Rajesh Sivaramasubramaniom <rajesh.sivaramasubramaniom@oracle.com>,
- Junxiao Bi <junxiao.bi@oracle.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <20250324054851.2509325-1-gautham.ananthakrishna@oracle.com>
- <199205d8-20fb-463d-9065-8021b3cf7cb8@suse.com>
- <DS7PR10MB48784AA2A065605733B79499F7A12@DS7PR10MB4878.namprd10.prod.outlook.com>
-From: Heming Zhao <heming.zhao@suse.com>
-Content-Language: en-US
-In-Reply-To: <DS7PR10MB48784AA2A065605733B79499F7A12@DS7PR10MB4878.namprd10.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 3/27/25 14:21, Gautham Ananthakrishna wrote:
-> HI Heming,
-> 
-> Sharing the test suite may not be practical (it has shell scripts, python and C binaries). However, I can take a look into your patch and run a quick test.
-> 
-> Thanks,
-> Gautham.
-> 
+The Google Moxie device uses the same approach as the Google Brask
+which enables the HDMI CEC via the cros-ec-cec driver.
 
-Thank you for your quick reply and willingness to help.
+           Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+           Mauro Carvalho Chehab <mchehab@kernel.org>,
+           Reka Norman <rekanorman@chromium.org>,
+           Stefan Adolfsson <sadolfsson@chromium.org>,
 
-- Heming
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-> *From:* Heming Zhao <heming.zhao@suse.com>
-> *Sent:* Thursday, March 27, 2025 11:39 AM
-> *To:* Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>; joseph.qi@linux.alibaba.com <joseph.qi@linux.alibaba.com>
-> *Cc:* linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; ocfs2-devel@lists.linux.dev <ocfs2-devel@lists.linux.dev>; Rajesh Sivaramasubramaniom <rajesh.sivaramasubramaniom@oracle.com>; Junxiao Bi <junxiao.bi@oracle.com>; akpm@linux-foundation.org <akpm@linux-foundation.org>
-> *Subject:* Re: [PATCH RFC 1/1] ocfs2: fix write IO performance improvement for high fragmentation
-> Hello Gautham,
-> 
-> Thanks for locating the issue and submitting a patch.
-> Is it possible to share your test case for this bug?
-> 
-> The key of this bug is ocfs2_cluster_group_search() comparing with wrong
-> bits size. I have another fix for this bug and will send it to this mailing
-> list later.
-> 
-> Thanks,
-> Heming
-> 
-> On 3/24/25 13:48, Gautham Ananthakrishna wrote:
->> The commit 4eb7b93e03101fd3f35e69affe566e4b1e3e3dca caused a regression
->> in our test suite in discontig extent tests. Upon troubleshooting I found
->> The following issues.
->> 
->> 1. The function ocfs2_cluster_group_search() was called for discontig allocations
->> as well. But it checks only the contiguous bits 'bg_contig_free_bits'.
->> It hit the ENOSPC in the following case in one of the tests.
->> 
->> ocfs2_mkdir()
->>   ocfs2_reserve_new_inode()
->>    ocfs2_reserve_suballoc_bits()
->>     ocfs2_block_group_alloc()
->>      ocfs2_block_group_alloc_discontig()
->>       __ocfs2_claim_clusters()
->>        ocfs2_claim_suballoc_bits()
->>         ocfs2_search_chain()
->>          ocfs2_cluster_group_search()
->> 
->> Looked like the commit did not consider discontig searches. To fix this,
->> I have split ocfs2_cluster_group_search() into *_common(), *_contig() and
->> *_discontig()
->> 
->> 2. That commit enforced ocfs2_cluster_group_search() to search only the
->> 'bits_wanted' number of bits whereas ocfs2_block_group_find_clear_bits()
->> fills the best available size and the function ocfs2_cluster_group_search()
->> itself is supposed to search 'min_bits' at the minimum and need not be
->> 'bits_wanted' always.
->> 
->> Fixed the above issues in this patch.
->> This patch fixes 4eb7b93e03101fd3f35e69affe566e4b1e3e3dca
->> 
->> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
->> ---
->>   fs/ocfs2/suballoc.c | 146 ++++++++++++++++++++++++++++----------------
->>   1 file changed, 95 insertions(+), 51 deletions(-)
->> 
+Signed-off-by: Ken Lin <kenlin5@quanta.corp-partner.google.com>
+---
+
+Change in v2:
+ - modify commit messages
+---
+ drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+index 12b73ea0f31d..1de5799a0579 100644
+--- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
++++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+@@ -329,6 +329,8 @@ static const struct cec_dmi_match cec_dmi_match_table[] = {
+ 	{ "Google", "Dexi", "0000:00:02.0", port_db_conns },
+ 	/* Google Dita */
+ 	{ "Google", "Dita", "0000:00:02.0", port_db_conns },
++	/* Google Moxie */
++	{ "Google", "Moxie", "0000:00:02.0", port_b_conns },
+ };
+ 
+ static struct device *cros_ec_cec_find_hdmi_dev(struct device *dev,
+-- 
+2.25.1
 
 
