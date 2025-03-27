@@ -1,115 +1,188 @@
-Return-Path: <linux-kernel+bounces-578887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FD5A73A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:10:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE03A73A10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E4F189A1CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C4A3ABCDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8BC191F89;
-	Thu, 27 Mar 2025 17:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4F11ACEDE;
+	Thu, 27 Mar 2025 17:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKfcIwuY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEQLxS/n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B38EEA9
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 17:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5654BEEA9;
+	Thu, 27 Mar 2025 17:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743095367; cv=none; b=q2Z9zSVcXiOftNhyMi3NjjUPvOfH0Y/03+BD1nS4MWPfglkFTCuO/R0aGKxmlcrbzqbmsHpUwXj0kM5bmVzEwk3X0yCoXG/S90Z/Pzio1tqx+YR0sM3sA9zdzSuudYx+n1AOIPUdrj4fQe7MUPOWsEsDiLdMFK2FUvrAq0M2U0E=
+	t=1743095389; cv=none; b=SUTniq2lW3S+XDH5aeZFHb71LhPeulJllOnTEKQRuu3fR4xWDDZpRLJ9JhuaTZUFdv/x2cHBjolzJ9QgwA7PmHe6gFa/biNE2CmQLR+U9HFWZNM1UAEy8tVO01Q+fQ4YhkY11+fGnOR0y5+mQKG/qSPH9ohZc/rH2d4azHYa/ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743095367; c=relaxed/simple;
-	bh=swxS27j2Fa45SOvPHd+RoddyF7ldkMEgTwYmbkFWlwk=;
+	s=arc-20240116; t=1743095389; c=relaxed/simple;
+	bh=Pq+zALyw588VAt6NtNfDCmcZbC+k3NO3/ZEZKdgCxP0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQl7Xaspb0r6CVETJbDAcsKjLSOfv8FaDtKmAwgPg2Z3trQUrZveRA1bHDDglLwe+XMeDjEygi0/j/V8Rzi+ndme+eEN/7AXK+QZ2CBo/wEmDvVmPDeGM1EMhFdPb0YbI9pHOL3cMhNFlDPWsisDYfTmj+EAxwBCpLRWPgJa2lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKfcIwuY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5127CC4CEE8;
-	Thu, 27 Mar 2025 17:09:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=txXV2Eng+T6IDfuo9asWcPbc4+juFJt79IISqXOQGdABzauI7diF0ue3wcADiIu6gL99zXmVs58j1YURUYof6KKV9ip3wYW0keB/6EQ46QU2VWcsNrPdAd8bXPmoDQyNxyXo9Yzk+EWB/UNk/Sp3Fzi2uRNLDaOFc+gU22nSXlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEQLxS/n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B89D5C4CEDD;
+	Thu, 27 Mar 2025 17:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743095366;
-	bh=swxS27j2Fa45SOvPHd+RoddyF7ldkMEgTwYmbkFWlwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKfcIwuYLSWu6SIS+zAgq+j7q4AmeDas+TDkYLuddr/scs1SGy9m3fPrISmVYsI4Z
-	 +dXikxyLeAiuSZ0Gb0Vjdeb/KyU3Uatb3ahhMEG3cQjltcbWBKrjojSFglTF+ix5pt
-	 6Jg3UcF8Te9P1YcqaiUYtuAs8fmZkhNF0cimG6/CAzLhg0GERAhps8RwM3lYpvErJy
-	 78YPpWlQrqv4FM/I2gi9r3HXfMnV/50q8I+CUpWogZ0BlKFpVdFjopC1O2sLOw3n8B
-	 DOs6cjbs7ZanvyxkaNE9TibB9v+3h83hjzX48rVgx1wgx4pT9skTdbdOGNdP+H+13s
-	 ZyJV/Hyquy7fg==
-Date: Thu, 27 Mar 2025 07:09:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: Fix missing rq lock in scx_bpf_cpuperf_set()
-Message-ID: <Z-WGRetAL9tSPEkv@slm.duckdns.org>
-References: <20250325140021.73570-1-arighi@nvidia.com>
- <Z-SasIwx5hINm1sf@slm.duckdns.org>
- <Z-UEkJfkkBBKqCyU@gpd3>
- <Z-UgI3dSwcLa-CRC@gpd3>
+	s=k20201202; t=1743095388;
+	bh=Pq+zALyw588VAt6NtNfDCmcZbC+k3NO3/ZEZKdgCxP0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=AEQLxS/nHAYxmhnzSTZ6R6cbRmvi6tfES+hBEoaUASwXWZSknMl/YIjxQNDVcs2sT
+	 Iw9DV3acGeL9GIte9UFmG46+P0nALeF7Ehj0ZUKQOa66erH/56BBkAM7WLH4CXcLfF
+	 4CXZ7D9MgJnuwLf6NxD/ZJBkNY6JbEAVJoYpgcNyNzIKRe7ZkbsTaR3wmCZnkaVndx
+	 YQNinf7Z12puhAtV+b1ryQjjJ4dXCmhFLJcxua/HtWSd/MKzGicPj9K6SuXc3QA5Aa
+	 RMo9toQMucqcy+4EfUVfu8agUwvNX+QMYqggD2oOz630hqQsTuybdpK1Cc7JXQ3wQM
+	 3lstQiFr0glIw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 59A4DCE0A70; Thu, 27 Mar 2025 10:09:48 -0700 (PDT)
+Date: Thu, 27 Mar 2025 10:09:48 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rcu: Replace magic number with meaningful constant
+ in rcu_seq_done_exact()
+Message-ID: <e47e5611-36de-4d12-9c07-57aa2a885299@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250324170156.469763-1-joelagnelf@nvidia.com>
+ <20250324170156.469763-2-joelagnelf@nvidia.com>
+ <eeda52c2-5397-4aad-ad01-ca04e5b0b80f@paulmck-laptop>
+ <DDDD275D-1017-4189-9A8A-578021A33B4A@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z-UgI3dSwcLa-CRC@gpd3>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DDDD275D-1017-4189-9A8A-578021A33B4A@nvidia.com>
 
-Hello,
+On Wed, Mar 26, 2025 at 10:42:52PM +0000, Joel Fernandes wrote:
+> 
+> 
+> > On Mar 26, 2025, at 6:33 PM, Paul E. McKenney <paulmck@kernel.org> wrote:
+> > 
+> > ﻿On Mon, Mar 24, 2025 at 01:01:53PM -0400, Joel Fernandes wrote:
+> >> The rcu_seq_done_exact() function checks if a grace period has completed by
+> >> comparing sequence numbers. It includes a guard band to handle sequence number
+> >> wraparound, which was previously expressed using the magic number calculation
+> >> '3 * RCU_SEQ_STATE_MASK + 1'.
+> >> 
+> >> This magic number is not immediately obvious in terms of what it represents.
+> >> 
+> >> Instead, the reason we need this tiny guardband is because of the lag between
+> >> the setting of rcu_state.gp_seq_polled and root rnp's gp_seq in rcu_gp_init().
+> >> 
+> >> This guardband needs to be at least 2 GPs worth of counts, to avoid recognizing
+> >> the newly started GP as completed immediately, due to the following sequence
+> >> which arises due to the delay between update of rcu_state.gp_seq_polled and
+> >> root rnp's gp_seq:
+> >> 
+> >> rnp->gp_seq = rcu_state.gp_seq = 0
+> >> 
+> >>    CPU 0                                           CPU 1
+> >>    -----                                           -----
+> >>    // rcu_state.gp_seq = 1
+> >>    rcu_seq_start(&rcu_state.gp_seq)
+> >>                                                    // snap = 8
+> >>                                                    snap = rcu_seq_snap(&rcu_state.gp_seq)
+> >>                                                    // Two full GP differences
+> >>                                                    rcu_seq_done_exact(&rnp->gp_seq, snap)
+> >>    // rnp->gp_seq = 1
+> >>    WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
+> >> 
+> >> This can happen due to get_state_synchronize_rcu_full() sampling
+> >> rcu_state.gp_seq_polled, however the poll_state_synchronize_rcu_full()
+> >> sampling the root rnp's gp_seq. The delay between the update of the 2
+> >> counters occurs in rcu_gp_init() during which the counters briefly go
+> >> out of sync.
+> >> 
+> >> Make the guardband explictly 2 GPs. This improves code readability and
+> >> maintainability by making the intent clearer as well.
+> >> 
+> >> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> > 
+> > One concern is that a small error anywhere in the code could cause this
+> > minimal guard band to be too small.  This is not a problem for some
+> > use cases (rcu_barrier() just does an extra operation, and normal grace
+> > periods are protected from forever-idle CPUs by ->gpwrap), but could be
+> > an issue on 32-bit systems for user of polled RCU grace periods.
+> 
+> Could you provide more details of the usecase (sequence of steps) causing an issue for 32 bit polled RCU users? I am not able to see how this patch can affect them.
+> 
+> > 
+> > In contrast, making the guard band a bit longer than it needs to be
+> > has little or no downside.
+> 
+> Making it 3 GP instead of 2 should be ok with me as long as we document it but at least it will not be a magic number based on an equation. I feel we should not put random magic numbers which is more dangerous since it is hard to explain (and hence debug — just my 2 cents).
 
-On Thu, Mar 27, 2025 at 10:53:39AM +0100, Andrea Righi wrote:
-...
-> > Hm... that's right, it looks like this requires a bit more work than
-> > expected, but saving the currently locked rq might be helpful also for
-> > other kfuncs, I'll take a look at this.
-> 
-> What if we lock the rq in the scx_kf_allowed_if_unlocked() case, and for
-> all the other cases we ignore locking if rq == this_rq(). If we need to
-> operate on a different rq than the current one we could either defer the
-> work or just trigger an ops error. Something like:
-> 
-> 	if (scx_kf_allowed_if_unlocked()) {
-> 		rq_lock_irqsave(rq, &rf);
-> 		update_rq_clock(rq);
-> 	} else if (rq != this_rq()) {
-> 		// defer work or ops error
-> 		return;
-> 	}
-> 
-> 	lockdep_assert_rq_held(rq);
-> 	rq->scx.cpuperf_target = perf;
-> 	cpufreq_update_util(rq, 0);
-> 
-> 	if (scx_kf_allowed_if_unlocked())
-> 		rq_unlock_irqrestore(rq, &rf);
-> 
-> AFAICS all the current scx schedulers call scx_bpf_cpuperf_set() from
-> ops.running(), ops.tick() or ops.init(), so even with the ops error we
-> should cover all the existent cases.
-> 
-> The only unsupported scenario is calling scx_bpf_cpuperf_set() from
-> ops.enqueue() / ops.select_cpu(), but maybe we could add the deferred work
-> later to handle that if needed.
+Apologies, I was getting ahead of us on this one.
 
-balance_one() can be called from a sibling CPU when core sched is enabled,
-so ttwu isn't the only path where this_rq() test wouldn't work. Even if we
-plug all the existing holes and make it work, it feels a bit too fragile to
-me. It's something which can easily break inadvertently and cause subtle
-failures.
+That third (and maybe also a fourth) grace period becomes important if
+we start getting memory contention on rcu_state.gp_seq, in which case
+we would want the polled grace periods to look at the leaf rcu_node
+structure's gp_seq, which would introduce extra slop.
 
-If we don't want to do locked rq tracking, we can always use
-schedule_deferred() when any rq is locked too. That's a bit more expensive
-tho.
+For now, for this patch, assuming you guys promise to remember this
+should such memory contention prove problematic:
 
-Thanks.
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
--- 
-tejun
+							Thanx, Paul
+
+> Thanks.
+> 
+> > 
+> >                            Thanx, Paul
+> > 
+> >> ---
+> >> kernel/rcu/rcu.h | 5 ++++-
+> >> 1 file changed, 4 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> >> index eed2951a4962..5e1ee570bb27 100644
+> >> --- a/kernel/rcu/rcu.h
+> >> +++ b/kernel/rcu/rcu.h
+> >> @@ -57,6 +57,9 @@
+> >> /* Low-order bit definition for polled grace-period APIs. */
+> >> #define RCU_GET_STATE_COMPLETED    0x1
+> >> 
+> >> +/* A complete grace period count */
+> >> +#define RCU_SEQ_GP (RCU_SEQ_STATE_MASK + 1)
+> >> +
+> >> extern int sysctl_sched_rt_runtime;
+> >> 
+> >> /*
+> >> @@ -162,7 +165,7 @@ static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
+> >> {
+> >>    unsigned long cur_s = READ_ONCE(*sp);
+> >> 
+> >> -    return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (3 * RCU_SEQ_STATE_MASK + 1));
+> >> +    return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_GP));
+> >> }
+> >> 
+> >> /*
+> >> --
+> >> 2.43.0
+> >> 
 
