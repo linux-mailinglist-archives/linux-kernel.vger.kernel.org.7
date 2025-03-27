@@ -1,62 +1,88 @@
-Return-Path: <linux-kernel+bounces-578850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A047A73741
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:47:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85A8A73733
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA827189FF37
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E66188F2B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02940215791;
-	Thu, 27 Mar 2025 16:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D920F08F;
+	Thu, 27 Mar 2025 16:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tX86Jgoq"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQrmitgn"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679D51FFC41;
-	Thu, 27 Mar 2025 16:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BFB1CAA67;
+	Thu, 27 Mar 2025 16:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093876; cv=none; b=sK0ITZZ7L5JQcyFQV75q/+g6t9/pm17eK3iBhWSF5gZkSzPB5Jpiu1qYDbdHYu667H55SYsqNdIH8Ae7kFpMHztA+n96bPA2aDb6ucBP93bVoYb39FrrfdobqRCA2hm95LhetIKr5XqPREioIMB49z24TfCU2NH6XYJwIkWBSfQ=
+	t=1743093825; cv=none; b=GwuU8RPH9TyDto3RTX+yGAto4Pp+NoL2EZIq5r/FU3nloNChRCYXOy0Znu2sPriboAFg9MJzgWz14wTo2dFZU44ydisvIdODuG0/CDy1ocaoycG8i9SQLBUWxxZ8Y4nz/FbRmSAEa/BFwzrp305eOePJdZVa+jdTcc7whV2TwjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093876; c=relaxed/simple;
-	bh=FYGZZN5Z6khOmuwpDcsQ3OWEngqKDEy0XbKFM3ueaLs=;
+	s=arc-20240116; t=1743093825; c=relaxed/simple;
+	bh=TnJVCFD64o69mN5Hh/YDo52i9+KO2ogrvXQQhM53668=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMJq/IE92DABcehW9ZXgTaGbunePB1uzHSqo/mBBiDFcuDHhS1Y458rHGo2feYrY+XuwXAYKpciqM7M0N/mnWFa0RiJX1nlue/E04pLyVkVJvOEfWA+Yu2hZBeKEmcBmz6l+vaAiI5qEHQFYQ7uk5Lq9R6IcxtcDclfT0TT+TUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tX86Jgoq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MoCqLC0IyhHguklsqlEzr9OrpUUFrOWDPdsoNryKYDU=; b=tX86Jgoq24bhniWrtEPXpkd536
-	cUmSpefVNuw5pC1Od8arup43Wnt7+0HRYOZoanyEQdX0oJU2QGL5xfloxkFz8kRQrsp5qXMswzpcm
-	6N4x9LAKCqKwO8lowZUyg7JMY6pDkmDBvJoHIbH+vZK5Eftv03kMbr4oEon5AzyL5LhEdcON3/zXA
-	ORGXhYuo5+I7eAubmfHcetoSzGNeQPVaTZQ2nCwjJ+3LPw9wiJeF3PnIZvz1oAInLzJaTKHfCth7z
-	BLYHE3Kib6e5E7PS7n7ICBAU0KNrjkVE3ee8WJjXwWefDYjcgEz9JHDntUS/0mP8NIoRsj+4aMDGm
-	vac/ZHUQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txqLG-0000000DMCf-0N50;
-	Thu, 27 Mar 2025 16:44:30 +0000
-Date: Thu, 27 Mar 2025 16:44:29 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Message-ID: <Z-WAbWfZzG1GA-4n@casper.infradead.org>
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1RWYJpi4QwztXpYEF3Rzni2pJrkNBsVEEf+59FPgGsfe2MMr0byDNEyta26tWHLq6/S7brq1pj07QsTRMOWwzQE8/xI/Z3+9/xcfUSwIvRUzk9RNaiktA6mLU6K0v7B0HX2fzaIfvUYc4fj11Pve3tYipP4DAnOKnS0ga0uTCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PQrmitgn; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-226185948ffso27773185ad.0;
+        Thu, 27 Mar 2025 09:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743093823; x=1743698623; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lb1+R66+rUYGnBLRmPtMSXkNrgkfnJRiAlwP5fnx9QU=;
+        b=PQrmitgnryitbBrE41o4Jw4BNAWfwmNIbw2mUGgLVyCgjWinbr9zI35MCG8yHgTy5V
+         FJeqzRFGNKGggMWl60PBLIN2Gd7bRsUcSHAC6mxAa2UVbvvXFo/48PPJIMNsNxlPYDgU
+         Jwlj3trHsPa3Hb8bkn+89elH7JeW4Vl1QAExR/tyvZMeqBhcA/6FPwx12AwqPG8aVV0G
+         1FlvB01ggSEG79VpocRAAbqrtcAHN63/t71gp49K0Gst/sRxU8Bzae8D5AZW+BF1FmyQ
+         ZQflXLsgiUZW3Bj3yIoFwebt6pBQjp6dRLobtbXYmvi4EuqBDnwSinERq22uLXSk4GHo
+         l4iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743093823; x=1743698623;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lb1+R66+rUYGnBLRmPtMSXkNrgkfnJRiAlwP5fnx9QU=;
+        b=s/UdkaTBT80xqtX2NXN/X2A3QqHC0euIPBB4VE+05hkI+KOkPgwazH+Yq00CF7mFGf
+         HmS+HRhKsGQtrHnkdDe5/Nqtt54obMnTs6j9t1X/B+sQ0wRCKlImJLVa/4nJ2xOZJb+b
+         5PeuhHCjQMUOQqU5wk+gGF8qmk4KiYPZ2RKWDgAdtX/0/lsNee6gavHIUuG/0cHl4yJb
+         AN29SbuxdToqFNRVxInIFaUFU4Ox0AESay9VAHXQILd9hZTTEIb/sAa12aiARt0FSQiD
+         ESdavRtY/QZIwGIo4GeDHeMrge5NdujFyR3GuYfngvUeeW+g7exBIEi7jYj1vGdNBdMQ
+         JplA==
+X-Forwarded-Encrypted: i=1; AJvYcCUq+YkB4UZbBKgIuB/P+4lb5kaukPFr29anSCOShwfxcnTcE6BqNIOKzTeoiwqL/JOpazp2TozVU6iOyVio@vger.kernel.org, AJvYcCUuN1hXhpSP3fnDj1sIqOq3zvPiKuJBSGmAfjilpbQZAwzvIiLlv3brFNs0vQiFpWaf0YYYzpq7hHE=@vger.kernel.org, AJvYcCWl3uNLg6D9FTzA10f+LojatytekmfekaCB57vnDxyhBZi8WpiNBI5GkSXhLTsz5aulj6sTlLC/4a55@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbKt+yDvwR/8zMVaNWD5RQCEetKfyHdwhjIE1Hr+13CadC3Wo/
+	jgsCv6pOSHA10ai1QvfRFW3kadjLY8rOZvhU/53EGu26nG8C0TG7
+X-Gm-Gg: ASbGnctBFYxUcMvtjppTqzVx2Jo6OgF2f2wRekiRkcdf6Os0IRYVmJLYCwhvXl1o1iv
+	7EBolyJVqDAiaQ/HxRcd3MGzQbDOrgfG9HqB5crtGjkVxYvPdO0Udj0QxCyfx+Wb4EyWirKAkuh
+	xrT6wA8PGgZHq77D64ieYXiXjBZM/OEdKazPGKEtimYJruLnmYM/I4b5vkrmXNKb1z13PBEjgEw
+	5BlK/3jewRMhmH4bDDYdwMJ/ldtQL20C3jzbDfm7I0B9fieW8JLwGz77fVqHUOQnpdBBPzokCoa
+	emQAg6pOwASnVgPqTcm+gNseDQzsHofkA9vOLnRl8KFS6mDCOD5FVA==
+X-Google-Smtp-Source: AGHT+IG9qnhCTor+SGyDKWAUyClWNk4AWFZpE4cZ+MxMyD0oepgvr5ve7N3BBCEMLaVTfMHbgN6Pew==
+X-Received: by 2002:a05:6a00:194d:b0:736:476b:fcd3 with SMTP id d2e1a72fcca58-739610d1e18mr7478554b3a.24.1743093822611;
+        Thu, 27 Mar 2025 09:43:42 -0700 (PDT)
+Received: from localhost ([2804:30c:b03:ee00:e0b8:a8b8:44aa:8d0b])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af93ba10863sm87262a12.74.2025.03.27.09.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 09:43:41 -0700 (PDT)
+Date: Thu, 27 Mar 2025 13:44:44 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	corbet@lwn.net
+Subject: Re: [PATCH v3 2/4] Documentation: iio: ad4000: Add new supported
+ parts
+Message-ID: <Z-WAfEIvsWTr5Q_v@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1742992305.git.marcelo.schmitt@analog.com>
+ <bb57e4452cb6bf9f644c0ea2c248d4b72ecc65b8.1742992305.git.marcelo.schmitt@analog.com>
+ <ab73f7d5-77fb-4264-ab4a-03ee78aeee06@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,43 +91,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250327160700.1147155-1-ryan.roberts@arm.com>
+In-Reply-To: <ab73f7d5-77fb-4264-ab4a-03ee78aeee06@baylibre.com>
 
-On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
-> So let's special-case the read(ahead) logic for executable mappings. The
-> trade-off is performance improvement (due to more efficient storage of
-> the translations in iTLB) vs potential read amplification (due to
-> reading too much data around the fault which won't be used), and the
-> latter is independent of base page size. I've chosen 64K folio size for
-> arm64 which benefits both the 4K and 16K base page size configs and
-> shouldn't lead to any read amplification in practice since the old
-> read-around path was (usually) reading blocks of 128K. I don't
-> anticipate any write amplification because text is always RO.
+On 03/27, David Lechner wrote:
+> On 3/26/25 8:25 AM, Marcelo Schmitt wrote:
+> > Commit <c3948d090080> ("iio: adc: ad4000: Add support for PulSAR devices"),
+> > extended the ad4000 driver supports many single-channel PulSAR devices.
+> > 
+> > Update IIO ad4000 documentation with the extra list of supported devices.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> Don't forget to pick up tags. I already gave my:
 
-Is there not also the potential for wasted memory due to ELF alignment?
-Kalesh talked about it in the MM BOF at the same time that Ted and I
-were discussing it in the FS BOF.  Some coordination required (like
-maybe Kalesh could have mentioned it to me rathere than assuming I'd be
-there?)
+Oops, sorry. My bad.
+I've picked them now.
 
-> +#define arch_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
-
-I don't think the "arch" really adds much value here.
-
-#define exec_folio_order()	get_order(SZ_64K)
-
-> +#ifndef arch_exec_folio_order
-> +/*
-> + * Returns preferred minimum folio order for executable file-backed memory. Must
-> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
-> + * preference and mm will not special-case executable memory in the pagecache.
-> + */
-> +static inline int arch_exec_folio_order(void)
-> +{
-> +	return -1;
-> +}
-
-This feels a bit fragile.  I often expect to be able to store an order
-in an unsigned int.  Why not return 0 instead?
-
+> 
+> 
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
+> 
+Thanks,
+Marcelo
 
