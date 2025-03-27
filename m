@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-578272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D965CA72D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:12:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A062BA72D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F441887154
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F273A7F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627CF20E027;
-	Thu, 27 Mar 2025 10:11:32 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5968A20E037;
+	Thu, 27 Mar 2025 10:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IW8atlC/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F27C20DD64
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19C820E01D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743070292; cv=none; b=DaH5R4bvx9eYWzVu864rsoHw/qp6vHk+klFL+R5Ny5HFXK8AAjHPfznGJCUkhMFJtWbn3bCfLz1PW0dnmDxBR9PldKk+e/9QiTtrXKcIA0lcG7tmuDRCYsx+Ab8TxJC9qUq73+QECqcehohodUZ1Hp8/3DlhcHUh/rRVUYL15Ow=
+	t=1743070306; cv=none; b=aWsA6EhpXuof0xtNHKxgHxJLjmo2danzdrR/tAhvdS/PkFCqD9VFXm0SV/XuvJjH+kGdw3W6pBp8xDstv2mpExJPmt/IZKjgg/kkQ4kFuw/+w2RnBK/7uFY43F3M9E+VwYh1casACDGnOnBdN3y3ElxFJixeJCvtOdnwcToZglI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743070292; c=relaxed/simple;
-	bh=mh8mxc7xkwF3GzKx9RFVG5s75OVH4KYLbVgPP2yKX+0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i0e7zUNFEVYhIjkC7X5L/kzQa8AFX9nCZ3jyILvm4DyjYvyyrvFFq9qSGk5OFCdkC7bmtsDFk+US6Jfe3QTGfvhKE5IEqCAMDREIQN9I0qo0W42ykl1pUA49ga0N3kLsD2F3XcFAqnGGUIVxPcR3FbpUtJQQgfYoqQ95MOpXtbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d443811ed2so13348755ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:11:30 -0700 (PDT)
+	s=arc-20240116; t=1743070306; c=relaxed/simple;
+	bh=lmxrzIS+d76Qh3zL9kdazJJMQfZpNeJz82hwqqtwmOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LduImw6wqxpf6Pc2OWblKfzGq31ehdM8vBdVvCnDkYwQdg1J3YxrbAbulgFpT27BUX8ftmN5SaAMHdgW1x7S7FawjOMk7Fg8T9eAManGtGE8KKxRYXuEWh5mVN9DQ5Q5Fryn3URneZnwtiLIP3vsz1bZ/MKDYyJQtx7KV9BZxbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IW8atlC/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jaix003117
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:11:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=v9Zn3NFoa6qbW13srYFRWI0q
+	FLJJSbYP/Owvwt3xu9A=; b=IW8atlC/ZbCqtLPdmVzYR7QaIKAQHk6HlAPOhO4W
+	q0Q9QyyxoZmdkoyJ4YKOFFDndYGN55NsprSTh+IlEfYhzpE60HmbXgBu3QceAYUF
+	19PUEMEWhme3G+WxsCNFBEIjA+fKL14fVor9ymQqp9XnVRx44+/8mHNmX+NcyDH4
+	YWtK+Y+hUeiFKgcVXBOxBgPnHf2S/NqZ8hO+ZQzWi/L+RZHfi8wqqa+xLzerHDH8
+	3cavsP072EH6sEj2hObuL3hwCgT08HY1x2oAQX/PKfHWHtA6T+2z9j2yRFIQs0uC
+	IRnJ/q6KbR7NczWZX7u3RRNVM8+lS/0x+OiPoDnvfZ0rsw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m0xdwryr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:11:42 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5e2a31f75so225787385a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:11:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743070289; x=1743675089;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P4vd34mksmrGkcPb8UoyRb6EpdkySIXEbcVIfIkuwRk=;
-        b=E8nddi9oZ8fV12p3wagL+4AzPSSITFK+VOY/r/0clsKDDCCXFxUvLKg13ckgf/wYyh
-         tM3oLESogOWGEEjetanokuUO7H5qEpybTLGXyBkZDpPcKtQSANcwC+m/uJVsxR9dx489
-         EXd/6fYc8t7RcsDWMm0+UgfqCzI7wUrMXbcIeIE160IPZDRB3lFOXeViTlQWayJcCrG5
-         vZky2JODSZS+zNRS7m5V2lAhHGeVZIe4PbvKnP9bDICJR3UT1oTxuVONs6LRtFS13NpZ
-         1GxuHftdxXYf6pwoxB+OV8CkwlnjuzAmTFIv6zrU0uJfPqrfAziWwDtLKjZbZSZM7zJP
-         P1HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcGiAso5ldojLvzwW2YMlBNkBJy3KvvxdQSFoh7jusnTlsPtb06vzDaUM/J3OteNebhIsYvtrFHJ6wc8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpsZsrEm3DsRjZVp2XDIqH1cC5+lxh/MIlAA6xudu/FV+WGPyM
-	8+gOGGFyVaTyUPiGxeaBJstZJL9vObt3fKw+/gqMnUQM9Ampg7flsVhz2yCn+sQc3Iqh2TciX7u
-	BJ8vhlyjMgIS9DSjBCSkjUBBZP6p9XLBn8647e9GqZxqVXvRrG8QNrfc=
-X-Google-Smtp-Source: AGHT+IG6PgXq81OiO0E6EEtzwKRmlWkzkJfSUJUPrAagLFRwK/E6ZWJoBi7QjGbrbdEct5hGUJvhYVgRqcdh7o2zn71qESAPNh+v
+        d=1e100.net; s=20230601; t=1743070302; x=1743675102;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v9Zn3NFoa6qbW13srYFRWI0qFLJJSbYP/Owvwt3xu9A=;
+        b=UfOjdglf8Jcgu/Tuk2HZLieyAnmgWC3/VVsOmhcs4Ee1R1m1/omDv1VArFGT3vfvA3
+         82aPOXyBhsqaVxgtVpjkGOd9OkDDuu15Z2YgFCOI3KlN/zmpmB0Dg/dZAeK8ifSxL/rM
+         kv8BlX8DfEryAaQIy+e1A7/qowLWsAcvS2FMsZ7AI14clwYRcZAQi1RcmvE+dwBTA7tN
+         nRrlk9yHBApVwUBF9FkVz3p2LwKZkLrfJxRZ4UdloE1rwTS3b414is/MxbW8Ax/AHfPX
+         eiS6WNzdZ2OSFf8v5vtP8hdeEMshS5MzYEsancQISKRASjc+cgeEn7wXmcd7gK4SeBZ7
+         kpRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcnRubzKpJFJN4gmxTO3fS+yTC8DUId7KbBM7R15Yn5hE3yTUTtQxEeUhH1gl7J4Yj+DbCJ0TfSNWoaac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK2V6rsyzMMUM98wcaLTDXIQKUmYRsSz0UllkCwLvM6+eFfOZy
+	pzRoTUV/K8xINzXhhB+NXg1HMtoZzkm5r/aAHqQ+sRqHWmh5v6ABeGB694a4cQjrl6umXAczmNZ
+	YAjPO7ZU8grWHZwkCAPUN1FHCfw///9HGTGxqlwuv6K6Z1gV3sKjhNGp9AKJ8Tdo=
+X-Gm-Gg: ASbGncuc/c6B80zzvZVvO2/YztrczJDSq5YJB8R+AW7iMtRsl16MqcftSWPP0nM501G
+	Sc5gF9d64VX1LeqVNVEJGl6qzto4KYFfQg7iPK2jizbWOiXCWIHHYMXuaYiwgczJj2+1/tVOxJ3
+	LJ1O7wgGdEdfLUcG91cxaoBHP1BC4uXOokU2tEJof7im9rAOV1g/PZg06lHf3HDUYh4ha0xiCAH
+	QgsoQ2QSPB8ALAdeyFtiDv6OMbiNExOszsGwPRkl8LHD0QnPRvwGl6rixFenm/PJ9f6+EznJtVv
+	ZkViz8pBwSWXHD246rh4885AE0LjTWzyxctPc5sDQCZzqLIFmsKRAZ5fRoMFqrDJwA9aU3FTA3p
+	5D/w=
+X-Received: by 2002:a05:620a:2914:b0:7c5:6140:734f with SMTP id af79cd13be357-7c5ed9f4dd6mr490782885a.18.1743070301845;
+        Thu, 27 Mar 2025 03:11:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6t2DqPJhmH7olRi6YdWjzEC6o9DeKuF8NojAtig4n9I6xDbgHy0ROgN2hW3aSNsHavREJnA==
+X-Received: by 2002:a05:620a:2914:b0:7c5:6140:734f with SMTP id af79cd13be357-7c5ed9f4dd6mr490777485a.18.1743070301405;
+        Thu, 27 Mar 2025 03:11:41 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7c18ecsm24091031fa.23.2025.03.27.03.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 03:11:39 -0700 (PDT)
+Date: Thu, 27 Mar 2025 12:11:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org,
+        Marc Gonzalez <mgonzalez@freebox.fr>,
+        Dmitry Baryshkov <lumag@kernel.org>, Arnaud Vrac <avrac@freebox.fr>,
+        Sayali Lokhande <quic_sayalil@quicinc.com>,
+        Xin Liu <quic_liuxin@quicinc.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 09/12] arm64: dts: qcom: sm6350-pdx213: Wire up USB
+ regulators
+Message-ID: <5votyeeny5k7dyozzhksaeskvcut3z6zvp7nh6qilcjhxjx7hp@zfrwhyzoaoc2>
+References: <20250327-topic-more_dt_bindings_fixes-v2-0-b763d958545f@oss.qualcomm.com>
+ <20250327-topic-more_dt_bindings_fixes-v2-9-b763d958545f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164c:b0:3d4:6dcf:d8f5 with SMTP id
- e9e14a558f8ab-3d5ccdc1f92mr33182915ab.1.1743070289383; Thu, 27 Mar 2025
- 03:11:29 -0700 (PDT)
-Date: Thu, 27 Mar 2025 03:11:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e52451.050a0220.2f068f.0027.GAE@google.com>
-Subject: [syzbot] [kernel?] KMSAN: uninit-value in timerqueue_del
-From: syzbot <syzbot+d5e61dcfda08821a226d@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327-topic-more_dt_bindings_fixes-v2-9-b763d958545f@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: XFUX3NCTC1Fq7OEHM9hVgQ_nYRL-5W-W
+X-Proofpoint-GUID: XFUX3NCTC1Fq7OEHM9hVgQ_nYRL-5W-W
+X-Authority-Analysis: v=2.4 cv=Q43S452a c=1 sm=1 tr=0 ts=67e5245e cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=iXEU_j0xfCFYBHAbzAYA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=630 malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270069
 
-Hello,
+On Thu, Mar 27, 2025 at 02:47:11AM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Wire up the regulators based on the downstream release to appease the
+> devicetree checker.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6350-sony-xperia-lena-pdx213.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
 
-syzbot found the following issue on:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-HEAD commit:    1e1ba8d23dae Merge tag 'timers-clocksource-2025-03-26' of ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1357abb0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=887673359f1a92bf
-dashboard link: https://syzkaller.appspot.com/bug?extid=d5e61dcfda08821a226d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/721f329c0fc6/disk-1e1ba8d2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4bc26a0ed6a7/vmlinux-1e1ba8d2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/09d5f4dc3101/bzImage-1e1ba8d2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d5e61dcfda08821a226d@syzkaller.appspotmail.com
-
-ffff88813fc04fc0: ffff88813115aac8 (0xffff88813115aac8)
-ffff88813fc04fc8: 0000000000000000 ...
-ffff88813fc04fe8: ffff88813115aab8 (0xffff88813115aab8)
-ffff88813fc04ff0: ffffffff904ecdee (instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline])
-ffff88813fc04ff0: ffffffff904ecdee (sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1049)
-ffff88813fc04ff8: ffff88813115aaa8 (0xffff88813115aaa8)
-BUG: KMSAN: uninit-value in rb_next+0x200/0x210 lib/rbtree.c:505
- rb_next+0x200/0x210 lib/rbtree.c:505
- rb_erase_cached include/linux/rbtree.h:124 [inline]
- timerqueue_del+0xee/0x1a0 lib/timerqueue.c:57
- __remove_hrtimer kernel/time/hrtimer.c:1123 [inline]
- __run_hrtimer kernel/time/hrtimer.c:1771 [inline]
- __hrtimer_run_queues+0x3b7/0xe40 kernel/time/hrtimer.c:1855
- hrtimer_interrupt+0x41b/0xb10 kernel/time/hrtimer.c:1917
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0xa7/0x420 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1049
-
-Local variable set_tid.i created at:
- __do_sys_clone3 kernel/fork.c:3098 [inline]
- __se_sys_clone3+0x60/0x590 kernel/fork.c:3093
- __ia32_sys_clone3+0x6b/0xa0 kernel/fork.c:3093
-
-CPU: 0 UID: 0 PID: 13379 Comm: syz.1.2969 Not tainted 6.14.0-syzkaller-03576-g1e1ba8d23dae #0 PREEMPT(undef) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
