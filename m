@@ -1,371 +1,322 @@
-Return-Path: <linux-kernel+bounces-578882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85019A738B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BDEA73905
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BEA1897BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2AF41898EAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C441AA1D5;
-	Thu, 27 Mar 2025 17:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC811DFF8;
+	Thu, 27 Mar 2025 17:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wwot9T12"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2047.outbound.protection.outlook.com [40.107.22.47])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pquV8/Lv"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8682FF9FE;
-	Thu, 27 Mar 2025 17:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743095243; cv=fail; b=pkA5bVWlEJOmd4J+VYNyROJuGBHdWhpqv+9RdQGS1zqq/nzFk9daLCDp7EJIQ5sMvSl57Rye+zo56Y7QoIhHSCppLfKRKPNx0GMqixArsJ/CYXsqn0yPk8fYHNtT55cJggzf/+vm580b5OG8NR2u8pyXn99bBL1k2qZxeDohg3I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743095243; c=relaxed/simple;
-	bh=Cu0Jg1t3xKCHsVVCuo2J6g0cS9lKBPXyEsmFAy8vGZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y+IXr7tBtfETM5q290h/E40uE94cTYDrWQCowa8zx2OXFDJba4GTs9h+eZN4S162DuWrMb5IaubCArWGjdAZz2NbvTAXZJ2hdaPzrhw6UpSDd0z6P9+DoTXi+krYAN22GFWtAFbVYIPr9a/McyxU6doR4RV7/G3Os8FUvcpNYUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Wwot9T12; arc=fail smtp.client-ip=40.107.22.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RzK8RMZiR4zsIhJAlX+0Jed8TQTMP6PZcBzZ+EjYyCuCSU4EoJI30ajoalIAayPSNIPEOyTl9SL0Eyt5d7bjSUXaVWh+233YBvRvMGh9+NcAHZqe9FCdHdNDMnMMMNQF8tEvporoboYesm68IGUL6Gz4PP8GqdKpSOFbbnB6+gdu7Xt1LF2TCpF1N24QTd2OFeesCTivD/woEXfW5Qth3RPSNsJVZzHtQk9O8ulJr1LcsF/itYiNywW/uyapHb4yab/KcGi9WFZPsgPcQIROxO8/mDuipk09TtU40NOvjfXh1LIQX+rty2JvAz/RJlIVfaSKy5LgBzlzIcTiu4nd5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nDXaNWv8H2h/VvqupCJWUq+3Mm9108S3he+tKJCxoQE=;
- b=cn+Wu96XXyhj8XSkV9LWYVZGFiDt0kiMeF8HpMY0anW7d2DWiwlhWAb553NlICN1WYR3fwu2boLrQzazg70RWUqhi7I0HVtZMxvLZugDNzjqw1LQ0wV2Ib189sKxt7clJtbmTmTV4JbNuz7yjSip7xNIjAOriPlGQlVZeCvqPLOfneSJhDufD911/am4dvmZ5TVKTdbGSNV12T3cKG8ofOF+VgcPgrDmOP18ikTqXRcb8wuelJdevxZllq4+pbECKnjlfMSLc10ZTVq4MC9G/+rhLROSjwhD1Jor80BGJSJVu/EduFh61duvsZqu/UhbgK3YHHr4Y9m/NaSqafXN4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nDXaNWv8H2h/VvqupCJWUq+3Mm9108S3he+tKJCxoQE=;
- b=Wwot9T12uomXZKnwKWXePaABAem1yEzlQNbpWpKN0Xle2q19I8z3CHFhbmTyHqDazFV7WOyfixeUb0Wpf68vl03/amSuFMSoCnSIv8+QnwTd8bIlZnW1a/v7eo29gWnVkVq1wCnqgFQhpaXzYpzo/eAfipgZ+ovUg3PFoCDjAXlhU53o0aHOF1y5vVabfSlJFz/HZo6WdrNHS7NlTMQ1Zf5hgSGNKCQcmXXwRSiz17iHJ8uAU0j6DBSBtWFzQoecbd+obR+u4y1jsf1x8OE+m5uQktkki2/AXDeiQqgQ98poXpXoiMXmRlrdokejCMnPcuY96zCgBm/YVHCTG++PoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8921.eurprd04.prod.outlook.com (2603:10a6:20b:408::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 17:07:17 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.8534.040; Thu, 27 Mar 2025
- 17:07:17 +0000
-Date: Thu, 27 Mar 2025 13:07:08 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: ziniu.wang_1@nxp.com
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, haibo.chen@nxp.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev, linux-mmc@vger.kernel.org,
-	s32@nxp.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: host: sdhci-esdhc-imx: save tuning value for the
- card which keep power in suspend
-Message-ID: <Z+WFvMXKo8Vg18r3@lizhi-Precision-Tower-5810>
-References: <20250325094330.2242646-1-ziniu.wang_1@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325094330.2242646-1-ziniu.wang_1@nxp.com>
-X-ClientProxiedBy: BYAPR07CA0046.namprd07.prod.outlook.com
- (2603:10b6:a03:60::23) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942EF1B0437;
+	Thu, 27 Mar 2025 17:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743095249; cv=none; b=LMxZEqSG8yvHe4iFZO8cBPc5p8OasA8k/GARZiprt8tBVAhwxU9fgvVw2xU78ymCnQV0ALf5jhcf48+U6Be0pvKk9evZuL7BM3Zkb8MnzoyvjbefuaeLOK/7pbxBOWnub3VrTHTWtLJIL93E6dn6G1+g3eiAjRU6iJasUUjsv4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743095249; c=relaxed/simple;
+	bh=eIXFtol+0vZBbIYFckLTPfC2WG9dNrHXYKkM9EBg79A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=b52IFeDjfE7TBjDsrsr30ccnunHwPuDudveZVoiBTuL9dkRcZK4mLDz2tan0W4Bo+XL6EKs6v67QeA1RA/zNv+zlFOff+x7OdopsZO5wpsxji/PcbYDXUFCYNwbfUfydIRJ1BIQZQVH3j4E7356r8vrOjJp5UR1/szx2QgmXPcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pquV8/Lv; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6E20B4424E;
+	Thu, 27 Mar 2025 17:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743095239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UdhTLdNrpirrNqXWYpfQ6mk/u/0zez3SEY7a+4LtZhQ=;
+	b=pquV8/LvdCRSxF1toX4HU3e4N4ii7PO8LWLGS+EgcwbdcmadVNBPmg5Nf/azep1I0TZUIE
+	m/nnZlbO7I1ftRSXTmW+JI+AwbHWQiMBEWgYlUip+F7xF5XXhHqIW5FRGxkD8EmvG49Y1s
+	ednGhlGdPjkrxnYTdXROvmp6wLAAPv+yRAyZx4oR6biquHn4qRlp7V/QdsI6Fdz/JHqRhx
+	Czhn71bpeZpnq4UBjrkXkMtrAQmgqUJ3tUWvZ2lGJE2Je1WGMP2WvyHVKPYPhUyLI5scod
+	OjFzxi+gCgnjgZksfgD+049BKcvlUgDPOXp5WlXi0MSBZMUAf9p7asMmoLDI5A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8921:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5e81019-f10c-44ca-54f1-08dd6d51d3e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BnrnMm/zOWrCsBg6R+7SZk4Dp8LtJZ2Wwoj3I31hdGs5W4IGLZI1P4tr24fo?=
- =?us-ascii?Q?WdD3sC7IQLIxTlMKLOQV8BllOweeqkoHeaFW8i2AtQ6J7kvMO7wKnHEH+7QN?=
- =?us-ascii?Q?iyUcDSpmgS0zqVUdRjFV3F1eazbL5HVC2iBijFl7tPgba5K4NysQIYXcGg3V?=
- =?us-ascii?Q?13WmilMSRtBEQXOygHrfovjs/rBAM3F5TkE9R9tNUFzTKG53ZSabwiPDCakp?=
- =?us-ascii?Q?DkO6ldkT8bPw3QpojKQqLa/T0gULUmgymOulHQmSjia6jsIGUGaw6t4Sia1p?=
- =?us-ascii?Q?eBejbjk28YAxw87CT03vcv5vFk1H6VDxBbec8DZISoCcHTYRFbUVUZcGFpBo?=
- =?us-ascii?Q?YhK/SdmC8AA5ASinob3KbHvCuAfSc4NkUnb/kMM2Flt7T9KGBS6s5/UI+E9r?=
- =?us-ascii?Q?zS1iUq6wAlBBjdwBi3VG0l5BELbOrWn7lbeNzy8HvlU6OyasO3kTpvhKUnIa?=
- =?us-ascii?Q?dvyc8MXKa2Kec8LJXJrFgU7GwD3bPYwn4TJecLdWnLKvyvDMoEV28OJUeby0?=
- =?us-ascii?Q?B08C0NYaC+TmRo9NEHK+bmoOGz+lP595ksiEsbVNEmOC+asRcN9Dzorf6T1O?=
- =?us-ascii?Q?PVIeW8hETtfh+kyOO6pzeAE1VGVEBlLkMyQJuGMhyB8cg5XEZRQ4pwTprO5A?=
- =?us-ascii?Q?Q0q4nXIvYzbzzJpnHohpke2iQ88YGYNQT+zJSnQbxGIF+QKZKYxtcNM5owNV?=
- =?us-ascii?Q?95jWxuXJdE30nE6wJCL2HAlPvnCndRmI/OOnTMLDNh86Z6tqZBESsnpGxOkP?=
- =?us-ascii?Q?tG+clK4I2J8gGn1uqMKvMZruF8tVheiydbLCsf0/ZJfJ7RSap6vfDigVeHLF?=
- =?us-ascii?Q?5MI074ACjiFDUceVX7XIBcHjEF6xvAMPNOrVVIRAHj5RtJzt1xxPygXszYp0?=
- =?us-ascii?Q?SreFxqbirvxVtNz7AOQRqjZzAHdSmFrab3m0fiG+9eJgMf3ku7UFvnB8F0I0?=
- =?us-ascii?Q?VMTgUdDRIQIUczkLq0wuQ7TTviC9jI/4M8MWccDubiIi0NqpqlCqVZI8HCNL?=
- =?us-ascii?Q?5MKFJjnya9zW8C/A7myJIUQbJqqbiJfP44hjpS3uYDPrsidOYWvR8Ii9m9ds?=
- =?us-ascii?Q?MC9DYvs/m/JWSkZvq/HM0bCIsBGlQC1frdtUE87diPkN1DB93sTlGuwesOCr?=
- =?us-ascii?Q?OsvoPIWB5DJ+iN0EQ7FkEPoJXpzHefIGHFW1xX0dw59tWAuUIY5Fu9pDV9X7?=
- =?us-ascii?Q?bjGuaal48g/yII/YffI5PPMGtNNlHKuizeps2D6834oNFFCn4xmwlmaqYxks?=
- =?us-ascii?Q?JQqm90oeorZri+1KqpK+Kc/SeFrN8M8AF19DHo5NmSCyrGr7StoWtgT/9tb7?=
- =?us-ascii?Q?N+oucMBqaYA9C500JZlpLgndaD/6wweheeqIsYoPFnajytU6vTjzFwcT5AAH?=
- =?us-ascii?Q?bP46e+es4TQLPjMj95jmECxT30EQyToiluUPfRXRf3PD0YcS1qIieRCRt/Jr?=
- =?us-ascii?Q?lBcH3f7Pcdd/MA/S63LJ0p3Jq+RpHexT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bhGEOFpyYpby/XOwWidrKDkR75Hn/kbwP0hq0CeQ4GPLIOUzJCZIxRb7fSzy?=
- =?us-ascii?Q?M389THoWU2PA8o/SLYWtWBphW01FUBcxIW923XDVzPCTe7F5sPrr7VcO9x9h?=
- =?us-ascii?Q?CRfXW0ikpTz1f05SgQuhz3YfChiQc9tZD2aUObHFpWPlsZssUklexKGArJnY?=
- =?us-ascii?Q?hHM/7IkEZANPmLjRLrikqyaPceQ5NIgjeigNCVcpTuMDW8dcD1/VCgoOYfxd?=
- =?us-ascii?Q?xcaTFRGvgc/4kvhWPZxREhm92o7rkrMgxgA9Rq3iSbm7U+LNbggmfRaTTiG4?=
- =?us-ascii?Q?JhYo1PsO9NdgC9Gp2Q9VQIBKUAOZ95pMb69BRghkgbnZqd6aJlUljP5JL3+7?=
- =?us-ascii?Q?aMf69wqmnt4ADFdKWoziqPccowNwoOG0R6zIVmlcKPPlg7CIEP/rgkhhaCMR?=
- =?us-ascii?Q?kSwq6KYcXuq+zfgSMdK0w7th8gIs/InsPCv5O9PQVq8vdWQHqk3tabVEtxHE?=
- =?us-ascii?Q?PlwBpHZmZnWFLNRm5eG5PLjRHLaZsa4qUfjewdvpKrObXL85ReATrW6ivHe1?=
- =?us-ascii?Q?F47ERk4dsynWTZ3CxObwPOfwkykoksGGsuECsIeDC8boPp06+PNX32BkOO3h?=
- =?us-ascii?Q?6hX+WEJlUYI/EfGQ587xJ6Oh7KExq6lOs46g2b4HR+CCRsmbVKOSAj6kKPA6?=
- =?us-ascii?Q?OgzQ721GS1CsfiOGubgUbGKmfwyIL9PITvJ7lq/byGB+CsSunvlwx8w6Zs6Y?=
- =?us-ascii?Q?qiAtL4O64OhHqG/C0VylhKyhhvD6X+VkzwMOago67rEMAvIc3jvPHkx5j8/D?=
- =?us-ascii?Q?ByzftGBBfqiX8yiANfRqExa9RcxxQBPogVEIKslu1HCFfz8LLt5fVyJ7C8Ax?=
- =?us-ascii?Q?1ytXmYQnfKU8kKBa9btkS8VPO7mwez181q0jgtBqspf43G0l2WEtGzGcuUan?=
- =?us-ascii?Q?3E/iH8/qXdH8gcDfUNZPUrxKXhNsr9dtVxWiyb6fk8HlIrMA+ujudVumNvsP?=
- =?us-ascii?Q?veoc2/FDC7MuiYe7blwOW1MFK40Srdgxz/6L9w1tPpZoBGUU+uiAOFkGOfpo?=
- =?us-ascii?Q?Cm0Q1i1ta//9A/Akq7ekhjubWyNNcvWR+6H8GsYVwsT2Q++Sx3+by8xqVFuv?=
- =?us-ascii?Q?LtQ+5E0AOYpupgtvznaEbRo7T/oG4Clb+1lIEyW3jqt6FtHe8nyOmPdZzNSk?=
- =?us-ascii?Q?BgKSCxhhHXd87UecfKRUsoalXso8L0T8jHzp1EeL9q8Uh+FXYkVMWSMyL/wN?=
- =?us-ascii?Q?OBPvWYwSYLlJYVt1xuJLgyV8jhweYy8BKAzWbXLqAyrfSLA0rsid4TFG8GgN?=
- =?us-ascii?Q?jO7vclKPd4MjACbzlKBJpxg8KOjrK69mtvLSVaYSU1Ti9iLa3UBEwciP3DBK?=
- =?us-ascii?Q?Y3sWcR8KAEDMZiXGJO2KP+pS6Ureuqjy67TRGoPlEflPed+n4mBPbtYmF/CB?=
- =?us-ascii?Q?CgAgcco2ZVsTipqq+Ai+Zn7SuX1XGTKkn3+QDKd3RMPdSiQ8LR+IJVOF9S39?=
- =?us-ascii?Q?fVK1MSjEUBgU5/vCFQTw9wmLtwdyXweIpyoBctaZBWzUPO+ucqD4wlydedN2?=
- =?us-ascii?Q?D7P9dCuqnNKdZp1jhhafnIOC4vqLSWUVhlOhM2QmlMERxQqH53E4U3DPTjVX?=
- =?us-ascii?Q?3Ek/f+2XlHjYyg+h1jyfW+hvTZVDhC27tYBAlXBW?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5e81019-f10c-44ca-54f1-08dd6d51d3e7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 17:07:17.4354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ME4bLcXVU+p3ZRiqsGbjxjz1UkSKsXlSiGW95GpORYVAHARyJdpQiIsLyQFwKWdAazRLGYOxJDIZ2aLW/VTgsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8921
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 27 Mar 2025 18:07:13 +0100
+Message-Id: <D8R7OVRDZF3J.3FH8JD5J0AWWF@bootlin.com>
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Samuel Holland" <samuel.holland@sifive.com>,
+ "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+ <linux-riscv@lists.infradead.org>, "linux-mips@vger.kernel.org"
+ <linux-mips@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Katakam, Harini" <harini.katakam@amd.com>, "Andrew Lunn"
+ <andrew@lunn.ch>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH net-next 07/13] net: macb: move HW IP alignment value to
+ macb_config
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
+ <20250321-macb-v1-7-537b7e37971d@bootlin.com>
+ <45b3e613-90c6-4499-b50b-383106172184@lunn.ch>
+ <D8OOPAXK16CI.3TE75O760JRSL@bootlin.com>
+ <967fcb66-6a64-4e97-8293-a38b0ef1bc01@lunn.ch>
+ <SJ2PR12MB8739A1E03E116F9D6A312EB99EA62@SJ2PR12MB8739.namprd12.prod.outlook.com>
+In-Reply-To: <SJ2PR12MB8739A1E03E116F9D6A312EB99EA62@SJ2PR12MB8739.namprd12.prod.outlook.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieekleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefvhffuofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeigfelffeuffetteetuddufffghefhudeuteeigeekteevgeeileejgfdvffelheenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvledprhgtphhtthhopehhrghrihhnihdrkhgrthgrkhgrmhesrghmugdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpt
+ hhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Mar 25, 2025 at 05:43:30PM +0800, ziniu.wang_1@nxp.com wrote:
-> From: Luke Wang <ziniu.wang_1@nxp.com>
+Hello Harini, Andrew,
+
+On Wed Mar 26, 2025 at 6:01 AM CET, Katakam, Harini wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 >
-> For some SoCs like imx6ul(l/z) and imx7d, during system PM, usdhc will
-> totally power off, so the internal tuning status will lost. Here add
-> save/restore the tuning value for any command after system resume back
-> when re-tuning hold.
+> Hi Theo,
 >
-> The tipical case is for the SDIO WIFI which contain flag MMC_PM_KEEP_POWER,
-
-tipical? most like typo typical, you can run
-./scripts/checkpatch.pl -g HEAD --strict --codespell
-
-
-> it means this device will keep power during system PM. To save power, WIFI
-> will switch to 1 bit mode, and switch back to 4 bit mode when resume back.
-> According to spec, tuning command do not support in 1 bit mode. So when
-> send cmd52 to switch back to 4 bit mode, need to hold re-tuning. But this
-> cmd52 still need a correct sample point, otherwise will meet command CRC
-> error, so need to keep the previous tuning value.
-
-AI tuned commit message as reference.
-
-"For SoCs like i.MX6UL(L/Z) and i.MX7D, USDHC powers off completely during
-system power management (PM), causing the internal tuning status to be lost.
-To address this, save and restore the tuning value for any command issued
-after system resume when re-tuning is held.
-
-A typical case involves SDIO WiFi devices with the MMC_PM_KEEP_POWER flag,
-which retain power during system PM. To conserve power, WiFi switches to
-1-bit mode and restores 4-bit mode upon resume. As per the specification,
-tuning commands are not supported in 1-bit mode. When sending CMD52 to
-restore 4-bit mode, re-tuning must be held. However, CMD52 still requires
-a correct sample point to avoid CRC errors, necessitating preservation of
-the previous tuning value."
-
+>> -----Original Message-----
+>> From: Andrew Lunn <andrew@lunn.ch>
+>> Sent: Tuesday, March 25, 2025 12:06 AM
+>> To: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+>> Cc: Andrew Lunn <andrew+netdev@lunn.ch>; David S. Miller
+>> <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinsk=
+i
+>> <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Rob Herring
+>> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Doole=
+y
+>> <conor+dt@kernel.org>; Nicolas Ferre <nicolas.ferre@microchip.com>; Clau=
+diu
+>> Beznea <claudiu.beznea@tuxon.dev>; Paul Walmsley
+>> <paul.walmsley@sifive.com>; Palmer Dabbelt <palmer@dabbelt.com>; Albert =
+Ou
+>> <aou@eecs.berkeley.edu>; Alexandre Ghiti <alex@ghiti.fr>; Samuel Holland
+>> <samuel.holland@sifive.com>; Richard Cochran <richardcochran@gmail.com>;
+>> Russell King <linux@armlinux.org.uk>; Thomas Bogendoerfer
+>> <tsbogend@alpha.franken.de>; Vladimir Kondratiev
+>> <vladimir.kondratiev@mobileye.com>; Gregory CLEMENT
+>> <gregory.clement@bootlin.com>; netdev@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+>> riscv@lists.infradead.org; linux-mips@vger.kernel.org; Thomas Petazzoni
+>> <thomas.petazzoni@bootlin.com>; Tawfik Bayouk <tawfik.bayouk@mobileye.co=
+m>
+>> Subject: Re: [PATCH net-next 07/13] net: macb: move HW IP alignment valu=
+e to
+>> macb_config
+>>
+>> On Mon, Mar 24, 2025 at 06:49:05PM +0100, Th=C3=A9o Lebrun wrote:
+>> > Hello Andrew,
+>> >
+>> > On Fri Mar 21, 2025 at 10:06 PM CET, Andrew Lunn wrote:
+>> > > On Fri, Mar 21, 2025 at 08:09:38PM +0100, Th=C3=A9o Lebrun wrote:
+>> > >> The controller does IP alignment (two bytes).
+>> > >
+>> > > I'm a bit confused here. Is this hard coded, baked into the silicon?
+>> > > It will always do IP alignment? It cannot be turned off?
+>> >
+>> > Yes, the alignment is baked inside the silicon.
+>> > I looked but haven't seen any register to configure the alignment.
+>> >
+>> > Sorry the commit message isn't clear, it needs improvements.
+>> >
+>> > >>  skb_reserve(skb, NET_IP_ALIGN);
+>> > >
+>> > > Why not just replace this with
+>> > >
+>> > >         skb_reserve(skb, 2);
+>> >
+>> > On arm64, NET_IP_ALIGN=3D0. I don't have HW to test, but the current
+>> > code is telling us that the silicon doesn't do alignment on those:
+>>
+>> This is part of the confusion. You say the hardware does alignment, and =
+then say it
+>> does not....
+>>
+>> >    skb =3D netdev_alloc_skb(...);
+>> >    paddr =3D dma_map_single(..., skb->data, ...);
+>> >    macb_set_addr(..., paddr);
+>> >
+>> >    // arm   =3D> NET_IP_ALIGN=3D2 =3D> silicon does alignment
+>> >    // arm64 =3D> NET_IP_ALIGN=3D0 =3D> silicon doesn't do alignment
+>> >    skb_reserve(skb, NET_IP_ALIGN);
+>> >
+>> > The platform we introduce is the first one where the silicon alignment
+>> > (0 bytes) is different from the NET_IP_ALIGN value (MIPS, 2 bytes).
+>>
+>> This is starting to make it clearer. So the first statement that the con=
+troller does IP
+>> alignment (two bytes) is not the full story. I would start there, explai=
+n the full story,
+>> otherwise readers get the wrong idea.
+>>
+>> > >>     Compatible             |  DTS folders              |  hw_ip_ali=
+gn
+>> > >>    ------------------------|---------------------------|-----------=
+-----
+>> > >>    cdns,at91sam9260-macb   | arch/arm/                 | 2
+>> > >>    cdns,macb               | arch/{arm,riscv}/         | NET_IP_ALI=
+GN
+>> > >>    cdns,np4-macb           | NULL                      | NET_IP_ALI=
+GN
+>> > >>    cdns,pc302-gem          | NULL                      | NET_IP_ALI=
+GN
+>> > >>    cdns,gem                | arch/{arm,arm64}/         | NET_IP_ALI=
+GN
+>> > >>    cdns,sam9x60-macb       | arch/arm/                 | 2
+>> > >>    atmel,sama5d2-gem       | arch/arm/                 | 2
+>> > >>    atmel,sama5d29-gem      | arch/arm/                 | 2
+>> > >>    atmel,sama5d3-gem       | arch/arm/                 | 2
+>> > >>    atmel,sama5d3-macb      | arch/arm/                 | 2
+>> > >>    atmel,sama5d4-gem       | arch/arm/                 | 2
+>> > >>    cdns,at91rm9200-emac    | arch/arm/                 | 2
+>> > >>    cdns,emac               | arch/arm/                 | 2
+>> > >>    cdns,zynqmp-gem         | *same as xlnx,zynqmp-gem* | 0
+>> > >>    cdns,zynq-gem           | *same as xlnx,zynq-gem*   | 2
+>> > >>    sifive,fu540-c000-gem   | arch/riscv/               | 2
+>> > >>    microchip,mpfs-macb     | arch/riscv/               | 2
+>> > >>    microchip,sama7g5-gem   | arch/arm/                 | 2
+>> > >>    microchip,sama7g5-emac  | arch/arm/                 | 2
+>> > >>    xlnx,zynqmp-gem         | arch/arm64/               | 0
+>> > >>    xlnx,zynq-gem           | arch/arm/                 | 2
+>> > >>    xlnx,versal-gem         | NULL                      | NET_IP_ALI=
+GN
 >
-> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 90 +++++++++++++++++++++++++++++-
->  1 file changed, 88 insertions(+), 2 deletions(-)
+> Thanks for the patch. xlnx,versal-gem is arm64 and NET_IP_ALIGN is 0.
 >
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index ff78a7c6a04c..d3ac5f38a9eb 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -81,6 +81,9 @@
->  #define  ESDHC_TUNE_CTRL_STEP		1
->  #define  ESDHC_TUNE_CTRL_MIN		0
->  #define  ESDHC_TUNE_CTRL_MAX		((1 << 7) - 1)
-> +#define ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_MASK		0x7f000000
+> AFAIK, IP alignment is controlled by the register field " receive buffer =
+offset "
+> in the NW config register. The only exception is when " gem_pbuf_rsc " i.=
+e.
+> receive coalescing is enabled in the RTL in the IP. In that case, the Cad=
+enc
+> specification states that these bits are ignored.
+> So to summarize, if RSC is not enabled (see bit 26 of designcfg_debug6),
+> then the current implementation works for all architectures i.e. these tw=
+o
+> statements are in sync:
+> config |=3D MACB_BF(RBOF, NET_IP_ALIGN);  /* Make eth data aligned */
+> skb_reserve(skb, NET_IP_ALIGN);
+>
+> Hope this helps simplify the patch (and also fill up the table that Andre=
+w suggested)
 
-Use GEN_MASK
+Well, big thanks! That'll make the patch much simpler. Either EyeQ5
+is the first compatible with RSC enabled, or others with RSC enabled
+have NET_IP_ALIGN=3D0.
 
-> +#define ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_SHIFT	24
-> +#define ESDHC_TUNE_CTRL_STATUS_DLY_CELL_SET_PRE_SHIFT	8
->
->  /* strobe dll register */
->  #define ESDHC_STROBE_DLL_CTRL		0x70
-> @@ -235,6 +238,7 @@ struct esdhc_platform_data {
->  	unsigned int tuning_step;       /* The delay cell steps in tuning procedure */
->  	unsigned int tuning_start_tap;	/* The start delay cell point in tuning procedure */
->  	unsigned int strobe_dll_delay_target;	/* The delay cell for strobe pad (read clock) */
-> +	unsigned int saved_tuning_delay_cell;	/* save the value of tuning delay cell */
->  };
->
->  struct esdhc_soc_data {
-> @@ -1057,7 +1061,7 @@ static void esdhc_reset_tuning(struct sdhci_host *host)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-> -	u32 ctrl;
-> +	u32 ctrl, tuning_ctrl;
->  	int ret;
->
->  	/* Reset the tuning circuit */
-> @@ -1071,6 +1075,16 @@ static void esdhc_reset_tuning(struct sdhci_host *host)
->  			writel(0, host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
->  		} else if (imx_data->socdata->flags & ESDHC_FLAG_STD_TUNING) {
->  			writel(ctrl, host->ioaddr + ESDHC_MIX_CTRL);
-> +			/*
-> +			 * enable the std tuning just in case it cleared in
-> +			 * sdhc_esdhc_tuning_restore.
-> +			 */
-> +			tuning_ctrl = readl(host->ioaddr + ESDHC_TUNING_CTRL);
-> +			if (!(tuning_ctrl & ESDHC_STD_TUNING_EN)) {
-> +				tuning_ctrl |= ESDHC_STD_TUNING_EN;
-> +				writel(tuning_ctrl, host->ioaddr + ESDHC_TUNING_CTRL);
-> +			}
-> +
->  			ctrl = readl(host->ioaddr + SDHCI_AUTO_CMD_STATUS);
->  			ctrl &= ~ESDHC_MIX_CTRL_SMPCLK_SEL;
->  			ctrl &= ~ESDHC_MIX_CTRL_EXE_TUNE;
-> @@ -1149,7 +1163,8 @@ static void esdhc_prepare_tuning(struct sdhci_host *host, u32 val)
->  	reg |= ESDHC_MIX_CTRL_EXE_TUNE | ESDHC_MIX_CTRL_SMPCLK_SEL |
->  			ESDHC_MIX_CTRL_FBCLK_SEL;
->  	writel(reg, host->ioaddr + ESDHC_MIX_CTRL);
-> -	writel(val << 8, host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-> +	writel(val << ESDHC_TUNE_CTRL_STATUS_DLY_CELL_SET_PRE_SHIFT,
-> +				host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
+Below is what the patch could look like for V2.
+ - We detect at probe if the HW is RSC-capable.
+ - If it isn't, we keep the code the same.
+ - If it is, that means the alignment feature isn't available.
+   We can't respect our arch alignment request.
 
-FIELD_PREP ?
+That removes all the macb_config->hw_ip_align mess. Much better.
 
->  	dev_dbg(mmc_dev(host->mmc),
->  		"tuning with delay 0x%x ESDHC_TUNE_CTRL_STATUS 0x%x\n",
->  			val, readl(host->ioaddr + ESDHC_TUNE_CTRL_STATUS));
-> @@ -1569,6 +1584,58 @@ static void sdhci_esdhc_imx_hwinit(struct sdhci_host *host)
->  	}
->  }
->
-> +static void sdhc_esdhc_tuning_save(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-> +	u32 reg;
-> +
-> +	/*
-> +	 * SD/eMMC do not need this tuning save because it will re-init
-> +	 * after system resume back.
-> +	 * Here save the tuning delay value for SDIO device since it may
-> +	 * keep power during system PM. And for usdhc, only SDR50 and
-> +	 * SDR104 mode for SDIO devide need to do tuning, and need to
-> +	 * save/restore.
-> +	 */
-> +	if ((host->timing == MMC_TIMING_UHS_SDR50) ||
-> +			(host->timing == MMC_TIMING_UHS_SDR104)) {
-> +		reg = readl(host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-> +		reg = (reg & ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_MASK) >>
-> +				ESDHC_TUNE_CTRL_STATUS_TAP_SEL_PRE_SHIFT;
+Note: I tried checking if the RBOF field is read-only when the "receive
+buffer offset" isn't available but it isn't.
 
-FILED_GET?
+-
 
-Frank
+diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cad=
+ence/macb.h
+index d8ee7878e144..478152f70563 100644
+--- a/drivers/net/ethernet/cadence/macb.h
++++ b/drivers/net/ethernet/cadence/macb.h
+@@ -525,6 +525,8 @@
+ /* Bitfields in DCFG6. */
+ #define GEM_PBUF_LSO_OFFSET        27
+ #define GEM_PBUF_LSO_SIZE       1
++#define GEM_PBUF_RSC_OFFSET        26
++#define GEM_PBUF_RSC_SIZE       1
+ #define GEM_PBUF_CUTTHRU_OFFSET       25
+ #define GEM_PBUF_CUTTHRU_SIZE         1
+ #define GEM_DAW64_OFFSET        23
+@@ -736,6 +738,7 @@
+ #define MACB_CAPS_NEED_TSUCLK         BIT(10)
+ #define MACB_CAPS_QUEUE_DISABLE       BIT(11)
+ #define MACB_CAPS_NO_LSO        BIT(12)
++#define MACB_CAPS_RSC_CAPABLE         BIT(13)
+ #define MACB_CAPS_PCS           BIT(24)
+ #define MACB_CAPS_HIGH_SPEED       BIT(25)
+ #define MACB_CAPS_CLK_HW_CHG       BIT(26)
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/etherne=
+t/cadence/macb_main.c
+index db8da8590fe0..51e82d66403b 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -1329,8 +1329,19 @@ static void gem_rx_refill(struct macb_queue *queue)
+         dma_wmb();
+         macb_set_addr(bp, desc, paddr);
 
-> +		imx_data->boarddata.saved_tuning_delay_cell = reg;
-> +	}
-> +}
-> +
-> +static void sdhc_esdhc_tuning_restore(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
-> +	u32 reg;
-> +
-> +	if ((host->timing == MMC_TIMING_UHS_SDR50) ||
-> +			(host->timing == MMC_TIMING_UHS_SDR104)) {
-> +		/*
-> +		 * restore the tuning delay value actually is a
-> +		 * manual tuning method, so clear the standard
-> +		 * tuning enable bit here. Will set back this
-> +		 * ESDHC_STD_TUNING_EN in esdhc_reset_tuning()
-> +		 * when trigger re-tuning.
-> +		 */
-> +		reg = readl(host->ioaddr + ESDHC_TUNING_CTRL);
-> +		reg &= ~ESDHC_STD_TUNING_EN;
-> +		writel(reg, host->ioaddr + ESDHC_TUNING_CTRL);
-> +
-> +		reg = readl(host->ioaddr + ESDHC_MIX_CTRL);
-> +		reg |= ESDHC_MIX_CTRL_SMPCLK_SEL | ESDHC_MIX_CTRL_FBCLK_SEL;
-> +		writel(reg, host->ioaddr + ESDHC_MIX_CTRL);
-> +
-> +		writel(imx_data->boarddata.saved_tuning_delay_cell <<
-> +				ESDHC_TUNE_CTRL_STATUS_DLY_CELL_SET_PRE_SHIFT,
-> +				host->ioaddr + ESDHC_TUNE_CTRL_STATUS);
-> +	}
-> +}
-> +
->  static void esdhc_cqe_enable(struct mmc_host *mmc)
->  {
->  	struct sdhci_host *host = mmc_priv(mmc);
-> @@ -1900,6 +1967,15 @@ static int sdhci_esdhc_suspend(struct device *dev)
->  	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
->  		mmc_retune_needed(host->mmc);
->
-> +	/*
-> +	 * For the device need to keep power during system PM, need
-> +	 * to save the tuning delay value just in case the usdhc
-> +	 * lost power during system PM.
-> +	 */
-> +	if (mmc_card_keep_power(host->mmc) &&
-> +			(esdhc_is_usdhc(imx_data)))
-> +		sdhc_esdhc_tuning_save(host);
-> +
->  	ret = sdhci_suspend_host(host);
->  	if (ret)
->  		return ret;
-> @@ -1916,6 +1992,8 @@ static int sdhci_esdhc_suspend(struct device *dev)
->  static int sdhci_esdhc_resume(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct pltfm_imx_data *imx_data = sdhci_pltfm_priv(pltfm_host);
->  	int ret;
->
->  	ret = pinctrl_pm_select_default_state(dev);
-> @@ -1929,6 +2007,14 @@ static int sdhci_esdhc_resume(struct device *dev)
->  	if (ret)
->  		return ret;
->
-> +	/*
-> +	 * restore the saved tuning delay value for the device which keep
-> +	 * power during system PM.
-> +	 */
-> +	if (mmc_card_keep_power(host->mmc) &&
-> +			(esdhc_is_usdhc(imx_data)))
-> +		sdhc_esdhc_tuning_restore(host);
-> +
->  	if (host->mmc->caps2 & MMC_CAP2_CQE)
->  		ret = cqhci_resume(host->mmc);
->
-> --
-> 2.34.1
->
+-        /* Properly align Ethernet header. */
+-        skb_reserve(skb, NET_IP_ALIGN);
++        /* Properly align Ethernet header.
++         *
++         * Hardware can add dummy bytes if asked using the RBOF
++         * field inside the NCFGR register. That feature isn't
++         * available if hardware is RSC capable.
++         *
++         * We cannot fallback to doing the 2-byte shift before
++         * DMA mapping because the address field does not allow
++         * setting the low 2/3 bits.
++         * It is 3 bits if HW_DMA_CAP_PTP.
++         */
++        if (!(bp->caps & MACB_CAPS_RSC_CAPABLE))
++           skb_reserve(skb, NET_IP_ALIGN);
+      } else {
+         desc->ctrl =3D 0;
+         dma_wmb();
+@@ -2788,7 +2799,9 @@ static void macb_init_hw(struct macb *bp)
+   macb_set_hwaddr(bp);
+
+   config =3D macb_mdc_clk_div(bp);
+-  config |=3D MACB_BF(RBOF, NET_IP_ALIGN); /* Make eth data aligned */
++  /* Make eth data aligned. If RSC capable, that offset is ignored. */
++  if (!(bp->caps & MACB_CAPS_RSC_CAPABLE))
++     config |=3D MACB_BF(RBOF, NET_IP_ALIGN);
+   config |=3D MACB_BIT(DRFCS);    /* Discard Rx FCS */
+   if (bp->caps & MACB_CAPS_JUMBO)
+      config |=3D MACB_BIT(JFRAME);   /* Enable jumbo frames */
+@@ -4109,6 +4122,8 @@ static void macb_configure_caps(struct macb *bp,
+      dcfg =3D gem_readl(bp, DCFG2);
+      if ((dcfg & (GEM_BIT(RX_PKT_BUFF) | GEM_BIT(TX_PKT_BUFF))) =3D=3D 0)
+         bp->caps |=3D MACB_CAPS_FIFO_MODE;
++     if (GEM_BFEXT(PBUF_RSC, gem_readl(bp, DCFG6)))
++        bp->caps |=3D MACB_CAPS_RSC_CAPABLE;
+      if (gem_has_ptp(bp)) {
+         if (!GEM_BFEXT(TSU, gem_readl(bp, DCFG5)))
+            dev_err(&bp->pdev->dev,
+
+Thanks Andrew & Harini,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
