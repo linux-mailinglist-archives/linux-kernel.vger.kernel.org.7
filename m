@@ -1,98 +1,82 @@
-Return-Path: <linux-kernel+bounces-578832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC036A7370A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:40:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704CFA7372A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECB7F7A7DB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A724E3BF01A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0371AC42B;
-	Thu, 27 Mar 2025 16:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6511AC42B;
+	Thu, 27 Mar 2025 16:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3ztZUCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="daT0k6ta"
+Received: from smtpdh19-1.aruba.it (smtpdh19-1.aruba.it [62.149.155.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24C11586C8;
-	Thu, 27 Mar 2025 16:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C411A00D1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093496; cv=none; b=B0U3pFaTMUZbcTtQuJqlvdvvtddR/ZxU1fWlf8ru+GbxgImEKrsa+UkJCkH5XpCh4uRlQMrx0eqatsMJ77bgoS6alxS47EgkjLOvDW/grntskReNcxOujBjJD15eO8N2eSp47VAi+MQR5cfKdx6Gip2wl/f+lAc9rYHjRKfp43M=
+	t=1743093724; cv=none; b=PNa0P/k6+BYfdbV703sHv1MaYawCvAczeBOStC7nKzxOiQct1HmnSZ/ZMf0NJqUtoMC2WjPbuo2bwervAMbkHfFTiUpT7jYa7R42KFYHIX1O+XD2m2KMaC6z2+jSIt4fQmNHKm+iV6Zqtpi1w8zjTsZ6wMO9Ys4D1S7GVZx7Wac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093496; c=relaxed/simple;
-	bh=NvC16u1aqR/2KG04a8f4N6Xoq/iI1HOtNPpUepOa0Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2AJ9EB+13Trywv+FbxUzuZQ14zAe1jmB+z6+F0eeHUCsRXHaKySKVH3yHQ6L7yCq8yjNv/W+NQm1tYpgLosrF9T+Y7TDzZ8Y0l2Q9PZ6u2lyn7os1N5hLlVaGOvcNc8haPis72fYz2LojKaboAnZ8Hlpnt4LZT4YKTTi7Dx/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3ztZUCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15777C4CEE8;
-	Thu, 27 Mar 2025 16:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743093496;
-	bh=NvC16u1aqR/2KG04a8f4N6Xoq/iI1HOtNPpUepOa0Ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o3ztZUCEsTgAufZFIr54bxgGmr3liOeSSxSNHer94WsXcmqD6VkiFMJpgxN4qBDpI
-	 BtOIwp8CLI6Ri4PDU0wPxHZv5eCUfsEgY7UXGM0/Ipj1Quhx6WA8bn+cnuw5/RSjpN
-	 bGulEuC72O8WOwISAx5IXkbmdCIw4BWmhGMyjjoQINgPphdojzU37IE9tM1hJf4cHc
-	 O4CLk/OaeYXzHinKCDM+z/NZ/ltVO6XamoCGyi9f6WXu+dYHBuxHbEWcS2uYtUzd9Q
-	 XeWV1DkJRBHxTNFVnGvmccUeI6FFgZYGXMTEfcfvg4P/nF4X5H6d7Hs+9tSjt4MFvc
-	 v8so7ojzrKQSA==
-Date: Thu, 27 Mar 2025 16:38:11 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: stm32-rproc: Add
- firmware-name property
-Message-ID: <20250327-defiant-quicksand-83cfdd8cf8d8@spud>
-References: <20250327082721.641278-1-arnaud.pouliquen@foss.st.com>
- <20250327082721.641278-2-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1743093724; c=relaxed/simple;
+	bh=bXMcNx8osEeEPQYirw53krVK4HRxHdx1PySAzx3HRpY=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Cc:Content-Type; b=J/F4BSKnH11WeVFS8yNTT+OGqJywirB8/siFTlWNQPQ/+lsLTfuqnAl+LWfraJGLsrSxp9w2EdGRB5DzGYBEPFwJb/2bm+j3D2AqQOLfnDV2kB1jXClHbKxvMnmHz9yrIyglF6oINSzuaOQiJ10UQVn4usK8rt8vnaQef4HUv8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=daT0k6ta; arc=none smtp.client-ip=62.149.155.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.58] ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id xqFmt74pWvoVFxqFmtfKpE; Thu, 27 Mar 2025 17:38:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1743093530; bh=bXMcNx8osEeEPQYirw53krVK4HRxHdx1PySAzx3HRpY=;
+	h=Date:MIME-Version:From:To:Subject:Content-Type;
+	b=daT0k6ta4kuV4wQ9xA82ldUP6q/zo0eCFchrw8Wpq/DyRhGxke9MOg+QvfZ1qZG9Y
+	 KDTGvQbh/tF3b3CTkAC486kzhD2scyz7A7jERH85nxNzxL9BeZn9uYgIvamS34Gx3I
+	 FO+pxQnt7ZkzUXI3BdSuX4kG3sWyUVehf8WIE1R3AP+N+RaksBb2t4H6Ye8yfkzJqk
+	 1FlJwzqiULIMtyQeSgeY0U4USExC+M9OQsyygZ/lnbrvZJSoYSmqg0YyW1UWTPk3eW
+	 IqycRMmivIt/LS+5Reti0jTKeg5YIgw5DpH4I8wzkYhQ7kiVHiThpqTyYPqf4cwV/M
+	 FN0bMrXLc0S0g==
+Message-ID: <0e203dd8-f506-4537-b002-50bf689e3cdf@enneenne.com>
+Date: Thu, 27 Mar 2025 17:38:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ytieV3SLIaVgIcdG"
-Content-Disposition: inline
-In-Reply-To: <20250327082721.641278-2-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla Thunderbird
+From: Rodolfo Giometti <giometti@enneenne.com>
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+Subject: RFC: nvmem-tool
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfH+XyI6z1ZU8XA4ocGsfTe2gUsqZml2iYlkKgViPECh7mlfzIjxGW+A9Op1reNyM8rhLmLmlRjdPUBsrsEkjuVNkSS1zuMxUUAvencvXWzD8xW+LInzJ
+ 0ULiWJpowXKsjGVYQiPoZpz2ukgGB/LiRPCpIa1mZdmzp5ob+sJGzcLY0Bi6pn+17byyNQkfd68kRSC9Zi45zStDsVdQdhwXBB6+1+Fx5QtFqgjHH/e+IUaU
+ aAi4NZmtHQsaUZtz5yFldQ==
 
+Hello,
 
---ytieV3SLIaVgIcdG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+in order to detect and easily manage NVMEM devices, I wrote this little tool:
 
-On Thu, Mar 27, 2025 at 09:27:20AM +0100, Arnaud Pouliquen wrote:
-> Add the 'firmware-name' property to the remote processor binding
-> to allow specifying the default firmware name in the device tree.
->=20
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+      https://github.com/giometti/nvmem-tool
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+It is still in an alpha stage (it supports legacy and fixed layouts only), but 
+it's quite functional, and I'd like to know your opinion about it.
 
---ytieV3SLIaVgIcdG
-Content-Type: application/pgp-signature; name="signature.asc"
+Ciao,
 
------BEGIN PGP SIGNATURE-----
+Rodolfo
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+V+8wAKCRB4tDGHoIJi
-0rA7AP9JyUbjLOakoM+hJBNcmQksv1MkDD5pE8noBMWu3qQ68AEAsjA4jPrHo7Co
-a14daJ3eTuSb4JbviHqOsCWo9L2j0As=
-=9SvW
------END PGP SIGNATURE-----
-
---ytieV3SLIaVgIcdG--
+-- 
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
