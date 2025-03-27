@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-578210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2967BA72C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:35:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C957EA72C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:36:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091AF16C58A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:35:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C06FD7A4EC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1B020CCDE;
-	Thu, 27 Mar 2025 09:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZmw8cvb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A221CAA85;
-	Thu, 27 Mar 2025 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D2520D4ED;
+	Thu, 27 Mar 2025 09:35:51 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E8120C46C;
+	Thu, 27 Mar 2025 09:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743068092; cv=none; b=LKwUqnZ+UDRs8jeKup0H3BNlZ6/lFWHa9ytSkqltaefbf0MpHgelrlYvgjpoFip4uX4Hsxh2zxF46YryDxwEGq0wgRb8vXz+iAK5+Sc8jucB4EGFnZy87yL37UZHtqAPmWGTtFYhc+2xZ1XzWArT9Ly9CBHnkzBogYd6/+s1Gw8=
+	t=1743068150; cv=none; b=e4enWTqwxMpsqPBxJa40jYd5Q7Fi44yN3gQwPr76JWpNIACPnRFT4BKxyqXwSr+zhQsWx/5dm7IajWQ9wPhqv5a0kYtr4JFuQwJgUAH1asagg6Fshb9zEkfVQeaUEyKHPor/uggDRgdno7iMRuhfrPSEvdDsQoXQilDghfTcYhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743068092; c=relaxed/simple;
-	bh=feahf2RlNjMG7TuzyyRQ7CAEtCk2y5mQ9bTEbE1vmSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pQIHt9zDG2qKEPHEeMImNiYYfIDEzFoEZcXYmit+Wu6DbiFTbhoGe/70K39ylr95EOUpMS/Z4Uckid3Z3QNGjkCF26l+L5E71ditO/2MND6iCY+SfoMi4haeK1WCNWFai3mcw2ANRfWVwsN5rRjqgkdeGkE1qRO4kZnZvPWOswY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZmw8cvb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so736461e87.1;
-        Thu, 27 Mar 2025 02:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743068089; x=1743672889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cwthd6DvDSuYnlEHZsEaCsrecTV0g5QhuogV3nNKmcI=;
-        b=cZmw8cvbRWqSHx/74Ffc3gs+P6O/to6eG3xun2W4/JMbm0WyPJr0q+0bOz6uLFj/v9
-         nVW5Y3myodnqA4OBGpTj+FivqN8DDqz94LwOmIg4GjWwoDn4wIn5WQuNXT/cf9P6dOJg
-         P9GzTKGTMRRdNqL1LbyB8mk9zc6mC88lH++TCOZ0LMkfPMaDsxaKeUyXxqYNDTkcBI6I
-         c8Nox71k6pnBmsO22tp+Wog93NePFJirp0KN8iL2u4qDls0jvabxa46zFS8L481UQmi7
-         Hrewuv6YyLTpU3ZLY6QZkN06kl2fFDJh9cFyquGSm3eSyFs1rH6ABCpQXCDFqGzwz5fF
-         TG8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743068089; x=1743672889;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cwthd6DvDSuYnlEHZsEaCsrecTV0g5QhuogV3nNKmcI=;
-        b=IF4jO4UnGSYF8zFfmEQ/R6Xu4Inm4uHsZYpjDLnEV7kxGsDxU97rNLnHHcfX7RWRjq
-         dUh9DOFgW/kJhSec4nt73xMfC5I+pEkGnrFqRC3j4s1/eC/KMp8l2z4O4H+c4paYwfe7
-         XJp0ioMtPPJVeNH66MSwmlSSoIJ547F9vMaKDxfQQVdW4C0KQRiAao25MQyM5P1gaYzg
-         5sEsivwsCQjZbE2x0VlsD2k3MCdlrQOm2fg9FQZg4Dn0Hr2+JwOY8wPBmyU6pmqGdbRZ
-         eelgVUUQvmUIxVaen4ZzcunVv7kfed7Tg6w3HRZqF28ruccSgTB3iTuAlld2oiiBk16T
-         q1qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ7Xq9awTZ8bif5UjzNDog95tKPBJfjV1t68JomRxQqTS4lNGkBc5hU6N3Ve9gUrbX7o/n3NRk5vA9@vger.kernel.org, AJvYcCWq8rrgEzOyakdN34ZpzAIgWRaV0xowl07XUE9Yl71oE8ytc6wFAAIcZOV1HlD4dbfyHrml/IsvciuTFPE=@vger.kernel.org, AJvYcCXFETA2Cuqd0soz/W1x1+wMU3lu2w4UDvaSrvcIkN2qG5Jfxxa8MqyLC3VG2RNBhW29/9IbEcUc@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx7lBXhnt5RV8bsH2Z2y2t/a5g9NBt0vRCdy0tMCRcqaeVQBGh
-	FiWKdNXzZmNeq/woSI3mvmtpg3VCDwjKfJLP/nKuImJtafrbF/nQ
-X-Gm-Gg: ASbGncusxeFgLf8DIR0XvV/WSNDISi7eAI5mLlbFsXSa5fvxEEMiSiUK3Wfg5mvQAwd
-	RS5DZcHxhUhPf7PU80XSWzkLdqtpKl6DTcNoqGYuP9rmV2QDve0l7HrEiRktJoyYfJE1t6+PUH2
-	T7dyuFlr8FscQyMFkoFlf4rStZae0Nww1bBd/qLUMIf4XssWrje25UdsWYCK+LsOlQPiwgPoD1v
-	cAiJQLlWa9FWQfA0P1kKHUthjWsqdiVFfS1GZhVBqkTI5VSct8ZzZBNYGjBRrHEO+ioVKl5f5DQ
-	OtFmrLGBFOHXbekePHxT2hQo0SwaCeu04M2cCfiscQkXg5YG0UHrfiErDGngFw==
-X-Google-Smtp-Source: AGHT+IFwgZ6kYC8A0WndQ549KjcP1lam1V9gB0x42xLQC3LqdXyaaWkYCCa3Vu+K+wV3jCMbpRX8xg==
-X-Received: by 2002:a05:6512:15a6:b0:549:8f47:e67d with SMTP id 2adb3069b0e04-54b012435a4mr969722e87.34.1743068088708;
-        Thu, 27 Mar 2025 02:34:48 -0700 (PDT)
-Received: from foxbook (adtt243.neoplus.adsl.tpnet.pl. [79.185.231.243])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad646931esm2034295e87.42.2025.03.27.02.34.46
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 27 Mar 2025 02:34:47 -0700 (PDT)
-Date: Thu, 27 Mar 2025 10:34:43 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: "Rangoju, Raju" <raju.rangoju@amd.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@intel.com,
- mathias.nyman@linux.intel.com, stable@vger.kernel.org
-Subject: Re: [PATCH v4] usb: xhci: quirk for data loss in ISOC transfers
-Message-ID: <20250327103443.682f4cd1@foxbook>
-In-Reply-To: <bb78e164-f24f-49d2-b560-24d097cb2827@amd.com>
-References: <20250326074736.1a852cbc@foxbook>
-	<bb78e164-f24f-49d2-b560-24d097cb2827@amd.com>
+	s=arc-20240116; t=1743068150; c=relaxed/simple;
+	bh=emluPB/+HEfLfthucSGOJgpzoeP68z4bxCiL6U9VHEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMycQxcbHTg/dkkzzNtDys90jfyMZu0RG3ORPXvDgWTAuPdmrdia5XAR110zT2SJQy2YlZvnfkmIDh89AUNWhFzP0IeLCZCN/UUVrz0ooVsYeQ1GAt+YRzUyV9TUC7vy3kd0ODIoCgSVqJ1WoViPz5NntfhRz6kDlrr6mZ/4YCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
+Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
+	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwAHDqbSG+VnAJebDg--.1646S2;
+	Thu, 27 Mar 2025 17:35:14 +0800 (CST)
+Received: from localhost (unknown [123.150.8.50])
+	by mail (Coremail) with SMTP id AQAAfwA3PorQG+VnhkxXAA--.797S2;
+	Thu, 27 Mar 2025 17:35:12 +0800 (CST)
+Date: Thu, 27 Mar 2025 17:34:54 +0800
+From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Gregory Price <gourry@gourry.net>, lsf-pc@lists.linux-foundation.org,
+	linux-mm@kvack.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
+Message-ID: <Z+Ubvvrj9DovVs71@phytium.com.cn>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+ <20250313165539.000001f4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313165539.000001f4@huawei.com>
+X-CM-TRANSID:AQAAfwA3PorQG+VnhkxXAA--.797S2
+X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQACAWfkXV4FHAAHsc
+Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
+	1236@phytium.com.cn;
+X-Coremail-Antispam: 1Uk129KBjvdXoWruFWDtrWfWF13GrW8uw4rKrg_yoWDtFc_ur
+	s5Cw1kG3ykWF1Igan7Krs7trWfCa48Cr4xuaySqFnIk345JrZ5GaykAr95Kw45GFsFyryD
+	Cr10qw1S9wnI9jkaLaAFLSUrUUUU8b8apTn2vfkv8UJUUUU8wcxFpf9Il3svdxBIdaVrnU
+	Uv73VFW2AGmfu7jjvjm3AaLaJ3UjIYCTnIWjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRUUUUU
+	UUUU=
 
-On Thu, 27 Mar 2025 12:08:53 +0530, Rangoju, Raju wrote:
-> > What if there is an ISOC IN endpoint with 64ms ESIT? I haven't yet
-> > seen such a slow isoc endpoint, but I think they are allowed by the
-> > spec. Your changelog suggests any periodic IN endpoint can trigger
-> > this bug. 
+On Thu, Mar 13, 2025 at 04:55:39PM +0000, Jonathan Cameron wrote:
+> > 
+> > Basically, the heuristic is as follows:
+> > 1) Add one NUMA node per Proximity Domain described in SRAT
 > 
-> If such an endpoint is implemented, it could theoretically contribute
-> to scheduling conflicts similar to those caused by INT endpoints in
-> this context. However, our observations and testing on affected
-> platforms primarily involved periodic IN endpoints with service
-> intervals greater than 32ms interfering with ISOC OUT endpoints.
+>     if it contains, memory, CPU or generic initiator. 
 
-In such case it would make sense to drop the check for
-usb_endpoint_xfer_int(&ep->desc)
-and rely on existing (xfer_int || xfer_isoc) in the outer 'if'.
+In the future, srat.c would add one seperate NUMA node for each
+Generic Port in SRAT.
 
-> I'm not completely sure about this corner case if HS OUT endpoints
-> can inadvertently get affected when co-existing with long-interval
-> LS/FS IN endpoints. Our IP vendor confirmed that LS/FS devices are
-> not affected.
+System firmware should know the performance characteristics between
+CPU/GI to the GP, and the static HMAT should include this coordinate.
 
-There is also a third case of a FS device behind an external HS hub.
-The device will look like FS to this code here, but the xHC will need
-to schedule HS transactions to service it.
+Is my understanding right?
 
-Regards,
-Michal
+Yuquan
+
+> 
+> > 2) If the SRAT describes all memory described by all CFMWS
+> >    - do not create nodes for CFMWS
+> > 3) If SRAT does not describe all memory described by CFMWS
+> >    - create a node for that CFMWS
+> > 
+> > Generally speaking, you will see one NUMA node per Host bridge, unless
+> > inter-host-bridge interleave is in use (see Section 4 - Interleave).
+> 
+> I just love corners: QoS concerns might mean multiple CFMWS and hence
+> multiple nodes per host bridge (feel free to ignore this one - has
+> anyone seen this in the wild yet?)  Similar mess for properties such
+> as persistence, sharing etc.
+> 
+> J
+> 
+
 
