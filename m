@@ -1,135 +1,203 @@
-Return-Path: <linux-kernel+bounces-578056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FCDA72A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:36:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A348A72A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56FCF188E644
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C84A5173159
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711C21B87FD;
-	Thu, 27 Mar 2025 06:36:17 +0000 (UTC)
-Received: from mail78-60.sinamail.sina.com.cn (mail78-60.sinamail.sina.com.cn [219.142.78.60])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1955A1A8F60;
+	Thu, 27 Mar 2025 06:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eVJ6fsiX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBE2156C79
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B21F8462;
+	Thu, 27 Mar 2025 06:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743057377; cv=none; b=UBRKKJswFX0VnwtcTzMK2x1N2FICsNodtHPzwFGG2/UQOKIC6YoWkjyGbM9gY6Xzd/aFf+boQiBDZDGX30dsmOdwVwY7F3whWOqri5BNZEVxX0KyLupvYt1e2mKNpI7KRti4K8pOk6u0zJfIn5LTN0WjKXVym5BjmlOqX0fiV80=
+	t=1743057555; cv=none; b=lv9ugIy0Bs3Vjb+Iyn5UdlEVK6LbEkqkdRCwU2EKKyh8m8hF00ER1nfCyCIKqTaB3OKjX1GdUVHj2HfUyvhUpaVuRLQtR63iptzw0wYc1so6A3XCc2GPkW2gstgweDNQG1h1qGYw8aOWqfMcIl8pJ49Y1jxPtP90IjImLkPZC6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743057377; c=relaxed/simple;
-	bh=EaqZroNrajfsDoZLAmk+2BuuAgDA4cJ8IjLDOVAYics=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=CacyOGg5ubkaYh/R1zpJcpAjQhe4sHLaM4dkX8ElRDT+dgs0spX+2p0VAI/IhuzwaLP0pM4mRE/IuaDjpspKTITJ+qkAMhzTBwhVau+o86XkqSPSJbRBzJuxc4/gpkqaUX2/tYR5zTdD408T+neoySr6MPFoh4ATznQ5hPpYjCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=219.142.78.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.159.108.242])
-	by sina.net (10.185.250.30) with ESMTP
-	id 67E4F1B3000042DA; Thu, 27 Mar 2025 14:35:35 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: 0BE0B00AA8F340EF8CC11D2EFEE4DCE6
-X-SMAIL-UIID: 0BE0B00AA8F340EF8CC11D2EFEE4DCE6-20250327-143535
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: broonie@kernel.org,
-	robh@kernel.org,
-	tiwai@suse.com,
-	devicetree@vger.kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	krzk+dt@kernel.org
-Cc: amadeuszx.slawinski@linux.intel.com,
-	krzk@kernel.org,
-	Zhang Yi <zhangyi@everest-semi.com>
-Subject: [RESEND v5 2/2] ASoC: dt-bindings: Add Everest ES8389 audio CODEC
-Date: Thu, 27 Mar 2025 14:35:31 +0800
-Message-Id: <20250327063531.47005-3-zhangyi@everest-semi.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250327063531.47005-1-zhangyi@everest-semi.com>
-References: <20250327063531.47005-1-zhangyi@everest-semi.com>
+	s=arc-20240116; t=1743057555; c=relaxed/simple;
+	bh=69OQaw6iHmI2FOTiSUfyqaKpDYawQwEdgTz/BtuItFU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UnZPAROWqzGNBXG/i7VlnLRxasl6/7kxaad6NP6JCMPMLXiP7PWUQ/mgrhqo1sJF5Pzq8x65vcbvAOX3VN+hevlhlEBUkb2fPkV1gjxiyvnsrfF+FvOOhTZpgQx+9gGxV4migcbZYFUMAgcB9Sx45axbld1/w3nxZEVzyO/+BTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eVJ6fsiX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jFRM010171;
+	Thu, 27 Mar 2025 06:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=tRR6RWBz3+WGQMy2m7+wW7R5uDZSyow8ksYYa8vdJaQ=; b=eV
+	J6fsiXOnomcW3hw75M/J5q8GjBNwaWT8/sx1kkGnY6+14ElO/Q10Ag2xX4/XL1hQ
+	gh41WB3R1SfdM+W16tZkz27U7cK8vdvVw6Pl9AFwWXIRq/3KOjErmsVUW0EcY7wi
+	b8WgnoxnS77b4zD8wdH7nRRgZB/IX6FP9WlHn34BsIXkOJZaJdJ4PtESSTmFMHmx
+	Bfn6BnTyTAT89VOawZWJ5h/JEqIyFGD3GLF70/e7qjDNlpfifLcNwUaMRZW0rLit
+	LZ1IPzObZGfIYUvMLR62JJtsGZCabqqm9LEZaZNtkS874fkkiOKRzqn3uh6tmek1
+	poi4X5H5JW0PNt0KcVOw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcyfjt6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 06:38:20 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52R6cJ8i024019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 06:38:19 GMT
+Received: from stor-berry.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 26 Mar 2025 23:38:19 -0700
+From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+To: <quic_cang@quicinc.com>, <bvanassche@acm.org>, <avri.altman@wdc.com>,
+        <peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
+        <minwoo.im@samsung.com>, <adrian.hunter@intel.com>,
+        <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/1] scsi: ufs: core: Removed ufshcd_wb_presrv_usrspc_keep_vcc_on()
+Date: Wed, 26 Mar 2025 23:38:07 -0700
+Message-ID: <9ff613809e88496b5802a2d45984d2a8dddf92dd.1743057420.git.quic_nguyenb@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e4f25c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=T9f8hDbICis96D9fBvkA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 5mkk4etoXAyKzCA9xz83EFD-BI6GJuOV
+X-Proofpoint-GUID: 5mkk4etoXAyKzCA9xz83EFD-BI6GJuOV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
+ spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270041
 
-Add device tree binding documentation for Everest ES8389 which
-is different from ES8388
+Merge the ufshcd_wb_presrv_usrspc_keep_vcc_on() function
+into ufshcd_wb_need_flush(). The "_keep_vcc_on" part of the
+function name is misleading. The function definition may be
+deviated from its original intention. This is a small function
+only invoked by the ufshcd_wb_need_flush(). To improve the
+readability, remove this function and merge its content
+into its caller. There is no change to the functionality.
 
-Signed-off-by: Zhang Yi <zhangyi@everest-semi.com>
+Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
 ---
- .../bindings/sound/everest,es8389.yaml        | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/everest,es8389.yaml
+ drivers/ufs/core/ufshcd.c | 53 +++++++++++++++++++----------------------------
+ 1 file changed, 21 insertions(+), 32 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8389.yaml b/Documentation/devicetree/bindings/sound/everest,es8389.yaml
-new file mode 100644
-index 000000000000..a673df485ab3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/everest,es8389.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/everest,es8389.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 4e1e214..b9272b1 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6083,32 +6083,6 @@ int ufshcd_wb_toggle_buf_flush(struct ufs_hba *hba, bool enable)
+ 	return ret;
+ }
+ 
+-static bool ufshcd_wb_presrv_usrspc_keep_vcc_on(struct ufs_hba *hba,
+-						u32 avail_buf)
+-{
+-	u32 cur_buf;
+-	int ret;
+-	u8 index;
+-
+-	index = ufshcd_wb_get_query_index(hba);
+-	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+-					      QUERY_ATTR_IDN_CURR_WB_BUFF_SIZE,
+-					      index, 0, &cur_buf);
+-	if (ret) {
+-		dev_err(hba->dev, "%s: dCurWriteBoosterBufferSize read failed %d\n",
+-			__func__, ret);
+-		return false;
+-	}
+-
+-	if (!cur_buf) {
+-		dev_info(hba->dev, "dCurWBBuf: %d WB disabled until free-space is available\n",
+-			 cur_buf);
+-		return false;
+-	}
+-	/* Let it continue to flush when available buffer exceeds threshold */
+-	return avail_buf < hba->vps->wb_flush_threshold;
+-}
+-
+ static void ufshcd_wb_force_disable(struct ufs_hba *hba)
+ {
+ 	if (ufshcd_is_wb_buf_flush_allowed(hba))
+@@ -6152,9 +6126,9 @@ static bool ufshcd_is_wb_buf_lifetime_available(struct ufs_hba *hba)
+ 
+ static bool ufshcd_wb_need_flush(struct ufs_hba *hba)
+ {
+-	int ret;
+-	u32 avail_buf;
++	u32 avail_buf, cur_buf;
+ 	u8 index;
++	int ret;
+ 
+ 	if (!ufshcd_is_wb_allowed(hba))
+ 		return false;
+@@ -6165,15 +6139,13 @@ static bool ufshcd_wb_need_flush(struct ufs_hba *hba)
+ 	}
+ 
+ 	/*
+-	 * The ufs device needs the vcc to be ON to flush.
+ 	 * With user-space reduction enabled, it's enough to enable flush
+ 	 * by checking only the available buffer. The threshold
+ 	 * defined here is > 90% full.
+ 	 * With user-space preserved enabled, the current-buffer
+ 	 * should be checked too because the wb buffer size can reduce
+ 	 * when disk tends to be full. This info is provided by current
+-	 * buffer (dCurrentWriteBoosterBufferSize). There's no point in
+-	 * keeping vcc on when current buffer is empty.
++	 * buffer (dCurrentWriteBoosterBufferSize).
+ 	 */
+ 	index = ufshcd_wb_get_query_index(hba);
+ 	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+@@ -6188,7 +6160,24 @@ static bool ufshcd_wb_need_flush(struct ufs_hba *hba)
+ 	if (!hba->dev_info.b_presrv_uspc_en)
+ 		return avail_buf <= UFS_WB_BUF_REMAIN_PERCENT(10);
+ 
+-	return ufshcd_wb_presrv_usrspc_keep_vcc_on(hba, avail_buf);
++	index = ufshcd_wb_get_query_index(hba);
++	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++				      QUERY_ATTR_IDN_CURR_WB_BUFF_SIZE,
++				      index, 0, &cur_buf);
++	if (ret) {
++		dev_err(hba->dev, "%s: dCurWriteBoosterBufferSize read failed %d\n",
++			__func__, ret);
++		return false;
++	}
 +
-+title: Everest ES8389 audio CODEC
++	if (!cur_buf) {
++		dev_info(hba->dev, "dCurWBBuf: %d WB disabled until free-space is available\n",
++			 cur_buf);
++		return false;
++	}
 +
-+maintainers:
-+  - Michael Zhang <zhangyi@everest-semi.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: everest,es8389
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: clock for master clock (MCLK)
-+
-+  clock-names:
-+    items:
-+      - const: mclk
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#sound-dai-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      es8389: codec@10 {
-+        compatible = "everest,es8389";
-+        reg = <0x10>;
-+        #sound-dai-cells = <0>;
-+      };
-+    };
++	/* Let it continue to flush when available buffer exceeds threshold */
++	return avail_buf < hba->vps->wb_flush_threshold;
+ }
+ 
+ static void ufshcd_rpm_dev_flush_recheck_work(struct work_struct *work)
 -- 
-2.17.1
+2.7.4
 
 
