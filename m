@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-579294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4288A7419A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:50:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FC1A7419C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF723BEFF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38993BF3DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841BB1F4160;
-	Thu, 27 Mar 2025 23:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842681F4C90;
+	Thu, 27 Mar 2025 23:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibWw2Qmz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIwu6QQ7"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F43B1EF362
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933E1F099B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743119349; cv=none; b=RfSHWuWQ9vt9EPVs9n/oIfJnI6YoYfz6bsuQXASeNhBM8wcbPWcvm9CGU5g+JpcbozqdEcUqLvQ1j7fcD4WOc+Uy5Swor3tu6FknBkh+P3sP5bpKISukZ8HIKKTdymM8jyYkb7UkLk+1vMVoTYhmbayahGHIcFFZ68kFIjnpHRU=
+	t=1743119350; cv=none; b=YWrFyRjYpxcSiGkFF8UBluZ2pYGeulA7Dc5IcN1buCvgFwLJ0VUkFcZg1sGfzA7zTrUCtDsq5xWm9OeR42//PGT1bnwMuL+GBNrYScyruxPUtRDX9oRfD4bzM84jICizCYxuHaWp/pdrhJ8LhUwDwJMUlU8g4lbXDV4+uhqw52E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743119349; c=relaxed/simple;
-	bh=/CgPMf8wtEuea1xGS63wyhGK02cSK32ve8/CqT0Th04=;
+	s=arc-20240116; t=1743119350; c=relaxed/simple;
+	bh=VfaXKtN83UCKXqTetLMi6KmG0sbuDIPOw3k0Gwy1EjU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JV+2XP4WHgu6fc0lFZnzeX1J8DIaMyFHSYXMlzZP1pTN7LIqZl9gDqwUWftiR4CkiBgTNjKMD+U3IkwvV1Io8kRSt2/B7e2H8hmWHT6qlsdrf3D2Q8DSMF54PS/aus6eJOg6neiSSV/Jvb01ZuAgnrkPyNgcGKFGMA90VM8jllM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibWw2Qmz; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=ai7nOfCUfAjrlTSIhX2Qdchf4+z32ick7KzvzM1khwMJEd9/UOtStEB89O/j75aeDWmPkYrm0O3/8ocwCs951WA9wOrXVSr++93gzcHrsgP6ymUsD0QrqRWrMsZ6A3WK3xSyIbRUi2KH1KppNxx613GoQIZwUopxncSsp0o7zIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIwu6QQ7; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743119348; x=1774655348;
+  t=1743119349; x=1774655349;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/CgPMf8wtEuea1xGS63wyhGK02cSK32ve8/CqT0Th04=;
-  b=ibWw2QmzfRfg9/A2IQXq7mRxgLcCyqcBAcbx5vFKPSOESkevnhBrq3ZC
-   yKx7K+dPDkQbvymapDFyTABTuzZB7S4a4g5F/Ws82NZyLO259GrggX6uL
-   XCzXj65llw3O0BcMlVU48H43Eg3UMEpRZ7rR9Ifa2Ogq9raQ/jNwRGYcH
-   C/qtSqXYN53XyX3EWp2u8PpZbI10MGI0HCevuKHG++KJHE+CbJrNz78YJ
-   OykGOu0gFmsHaeNsRxze847dwN7h5dpgRU1MFl5KMjq8m0zrP66tqA9L4
-   5uEI9Q7MqIu65WKTnW0wds1YsjAHcLWbZJjwyY+utiTHFrHqKzpgyihQ2
-   Q==;
-X-CSE-ConnectionGUID: 0fUKbC4LQI+AcmiysGUKUg==
-X-CSE-MsgGUID: Qv2rCQLdSD+BW9C7yZb+vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627988"
+  bh=VfaXKtN83UCKXqTetLMi6KmG0sbuDIPOw3k0Gwy1EjU=;
+  b=iIwu6QQ7QNKrhOPZ2xSqJARkgYXBd3irat+ZTwdk1100wDb9NoLTgZ0v
+   1tMWca/pqeneMspVqTKGgKxZmxiH9jlI5OiOJsEL+kiHQiFnHuFHuSdaG
+   q5yzGHCdyZXlqtOY3SVTbk+TteB1mepy9c2JO5yStNageXyFwvryXppi0
+   nPM96ALAEmoZPFe1GXOTcxpch14hTQLv6CV8BxUyZuykBDrHoaExBXY9L
+   RD6040bezJuyRipxk9zSLHMe/bPUg4Chesq2VSCRU4imBQQH8BHki8FqO
+   0sPGO44+McqosZ9uo2M0ZA3DfW8zQN+W32W+H7DbhFuR+x0Wj45HShv6t
+   A==;
+X-CSE-ConnectionGUID: 1oETKyeQQ0y8sXzFAOq/dQ==
+X-CSE-MsgGUID: li+FO+AGSlCxaUl2O79Hbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627997"
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="43627988"
+   d="scan'208";a="43627997"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:07 -0700
-X-CSE-ConnectionGUID: KOC1Jhe2Ttm0iHNQtjWLqw==
-X-CSE-MsgGUID: hWLMyaizRIiC4tkj3ptVCg==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:08 -0700
+X-CSE-ConnectionGUID: ZM1lalVuStWkW10SjCIn7A==
+X-CSE-MsgGUID: iEDfi0/IQ7CVaEDpZKHoLg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="130150522"
+   d="scan'208";a="130150528"
 Received: from sohilmeh.sc.intel.com ([172.25.103.65])
   by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:07 -0700
 From: Sohil Mehta <sohil.mehta@intel.com>
@@ -76,9 +76,9 @@ Cc: Borislav Petkov <bp@alien8.de>,
 	Tony Luck <tony.luck@intel.com>,
 	Xin Li <xin@zytor.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] x86/nmi: Improve NMI header documentation
-Date: Thu, 27 Mar 2025 23:46:27 +0000
-Message-ID: <20250327234629.3953536-8-sohil.mehta@intel.com>
+Subject: [PATCH 8/9] x86/nmi: Clean up NMI selftest
+Date: Thu, 27 Mar 2025 23:46:28 +0000
+Message-ID: <20250327234629.3953536-9-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250327234629.3953536-1-sohil.mehta@intel.com>
 References: <20250327234629.3953536-1-sohil.mehta@intel.com>
@@ -90,109 +90,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-NMI handlers can be registered by various subsystems, including drivers.
-However, the interface for registering and unregistering such handlers
-is not clearly documented. In the future, the interface may need to be
-extended to identify the source of the NMI.
+The expected_testcase_failures variable in the NMI selftest has never
+been set since its introduction. Remove this unused variable along with
+the related checks to simplify the code.
 
-Add documentation to make the current API more understandable and easier
-to use.
+While at it, replace printk() with the corresponding pr_{cont,info}()
+calls. Also, get rid of the superfluous testname wrapper and the
+redundant file path comment.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- arch/x86/include/asm/nmi.h      | 43 ++++++++++++++++++++++++++++++++-
- arch/x86/include/asm/x86_init.h |  1 +
- 2 files changed, 43 insertions(+), 1 deletion(-)
+ arch/x86/kernel/nmi_selftest.c | 52 +++++++++++-----------------------
+ 1 file changed, 16 insertions(+), 36 deletions(-)
 
-diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
-index f85aea7bf7f1..79d88d12c8fb 100644
---- a/arch/x86/include/asm/nmi.h
-+++ b/arch/x86/include/asm/nmi.h
-@@ -20,8 +20,20 @@ extern int unknown_nmi_panic;
- extern int panic_on_unrecovered_nmi;
- extern int panic_on_io_nmi;
+diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
+index e93a8545c74d..a010e9d062bf 100644
+--- a/arch/x86/kernel/nmi_selftest.c
++++ b/arch/x86/kernel/nmi_selftest.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * arch/x86/kernel/nmi-selftest.c
+- *
+  * Testsuite for NMI: IPIs
+  *
+  * Started by Don Zickus:
+@@ -30,7 +28,6 @@ static DECLARE_BITMAP(nmi_ipi_mask, NR_CPUS) __initdata;
  
-+/* NMI handler flags */
- #define NMI_FLAG_FIRST	1
+ static int __initdata testcase_total;
+ static int __initdata testcase_successes;
+-static int __initdata expected_testcase_failures;
+ static int __initdata unexpected_testcase_failures;
+ static int __initdata unexpected_testcase_unknowns;
  
-+/**
-+ * enum - NMI types.
-+ * @NMI_LOCAL:    Local NMI, CPU-specific NMI generated by the Local APIC.
-+ * @NMI_UNKNOWN:  Unknown NMI, the source of the NMI may not be identified.
-+ * @NMI_SERR:     System Error NMI, typically triggered by PCI errors.
-+ * @NMI_IO_CHECK: I/O Check NMI, related to I/O errors.
-+ * @NMI_MAX:      Maximum value for NMI types.
-+ *
-+ * NMI types are used to categorize NMIs and to dispatch them to the
-+ * appropriate handler.
-+ */
- enum {
- 	NMI_LOCAL=0,
- 	NMI_UNKNOWN,
-@@ -30,6 +42,7 @@ enum {
- 	NMI_MAX
- };
+@@ -120,26 +117,22 @@ static void __init dotest(void (*testcase_fn)(void), int expected)
+ 		unexpected_testcase_failures++;
  
-+/* NMI handler return values */
- #define NMI_DONE	0
- #define NMI_HANDLED	1
+ 		if (nmi_fail == FAILURE)
+-			printk(KERN_CONT "FAILED |");
++			pr_cont("FAILED |");
+ 		else if (nmi_fail == TIMEOUT)
+-			printk(KERN_CONT "TIMEOUT|");
++			pr_cont("TIMEOUT|");
+ 		else
+-			printk(KERN_CONT "ERROR  |");
++			pr_cont("ERROR  |");
+ 		dump_stack();
+ 	} else {
+ 		testcase_successes++;
+-		printk(KERN_CONT "  ok  |");
++		pr_cont("  ok  |");
+ 	}
+-	testcase_total++;
++	pr_cont("\n");
  
-@@ -43,6 +56,25 @@ struct nmiaction {
- 	const char		*name;
- };
++	testcase_total++;
+ 	reset_nmi();
+ }
  
-+/**
-+ * register_nmi_handler - Register a handler for a specific NMI type
-+ * @t:    NMI type (e.g. NMI_LOCAL)
-+ * @fn:   The NMI handler
-+ * @fg:   Flags associated with the NMI handler
-+ * @n:    Name of the NMI handler
-+ * @init: Optional __init* attributes for struct nmiaction
-+ *
-+ * Adds the provided handler to the list of handlers for the specified
-+ * NMI type. Handlers flagged with NMI_FLAG_FIRST would be executed first.
-+ *
-+ * Sometimes the source of an NMI can't be reliably determined which
-+ * results in an NMI being tagged as "unknown". Register an additional
-+ * handler using the NMI type - NMI_UNKNOWN to handle such cases. The
-+ * caller would get one last chance to assume responsibility for the
-+ * NMI.
-+ *
-+ * Return: 0 on success, or an error code on failure.
-+ */
- #define register_nmi_handler(t, fn, fg, n, init...)	\
- ({							\
- 	static struct nmiaction init fn##_na = {	\
-@@ -56,7 +88,16 @@ struct nmiaction {
+-static inline void __init print_testname(const char *testname)
+-{
+-	printk("%12s:", testname);
+-}
+-
+ void __init nmi_selftest(void)
+ {
+ 	init_nmi_testsuite();
+@@ -147,38 +140,25 @@ void __init nmi_selftest(void)
+         /*
+ 	 * Run the testsuite:
+ 	 */
+-	printk("----------------\n");
+-	printk("| NMI testsuite:\n");
+-	printk("--------------------\n");
++	pr_info("----------------\n");
++	pr_info("| NMI testsuite:\n");
++	pr_info("--------------------\n");
  
- int __register_nmi_handler(unsigned int, struct nmiaction *);
+-	print_testname("remote IPI");
++	pr_info("%12s:", "remote IPI");
+ 	dotest(remote_ipi, SUCCESS);
+-	printk(KERN_CONT "\n");
+-	print_testname("local IPI");
++
++	pr_info("%12s:", "local IPI");
+ 	dotest(local_ipi, SUCCESS);
+-	printk(KERN_CONT "\n");
  
--void unregister_nmi_handler(unsigned int, const char *);
-+/**
-+ * unregister_nmi_handler - Unregister a handler for a specific NMI type
-+ * @type: NMI type (e.g. NMI_LOCAL)
-+ * @name: Name of the NMI handler used during registration
-+ *
-+ * Removes the handler associated with the specified NMI type from the
-+ * NMI handler list. The "name" is used as a lookup key to identify the
-+ * handler.
-+ */
-+void unregister_nmi_handler(unsigned int type, const char *name);
+ 	cleanup_nmi_testsuite();
  
- void set_emergency_nmi_handler(unsigned int type, nmi_handler_t handler);
- 
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 213cf5379a5a..36698cc9fb44 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -292,6 +292,7 @@ struct x86_hyper_runtime {
-  * @set_wallclock:		set time back to HW clock
-  * @is_untracked_pat_range	exclude from PAT logic
-  * @nmi_init			enable NMI on cpus
-+ * @get_nmi_reason		get the reason an NMI was received
-  * @save_sched_clock_state:	save state for sched_clock() on suspend
-  * @restore_sched_clock_state:	restore state for sched_clock() on resume
-  * @apic_post_init:		adjust apic if needed
++	pr_info("--------------------\n");
+ 	if (unexpected_testcase_failures) {
+-		printk("--------------------\n");
+-		printk("BUG: %3d unexpected failures (out of %3d) - debugging disabled! |\n",
++		pr_info("BUG: %3d unexpected failures (out of %3d) - debugging disabled! |\n",
+ 			unexpected_testcase_failures, testcase_total);
+-		printk("-----------------------------------------------------------------\n");
+-	} else if (expected_testcase_failures && testcase_successes) {
+-		printk("--------------------\n");
+-		printk("%3d out of %3d testcases failed, as expected. |\n",
+-			expected_testcase_failures, testcase_total);
+-		printk("----------------------------------------------------\n");
+-	} else if (expected_testcase_failures && !testcase_successes) {
+-		printk("--------------------\n");
+-		printk("All %3d testcases failed, as expected. |\n",
+-			expected_testcase_failures);
+-		printk("----------------------------------------\n");
+ 	} else {
+-		printk("--------------------\n");
+-		printk("Good, all %3d testcases passed! |\n",
++		pr_info("Good, all %3d testcases passed! |\n",
+ 			testcase_successes);
+-		printk("---------------------------------\n");
+ 	}
++	pr_info("-----------------------------------------------------------------\n");
+ }
 -- 
 2.43.0
 
