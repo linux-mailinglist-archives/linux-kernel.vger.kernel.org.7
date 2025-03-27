@@ -1,89 +1,139 @@
-Return-Path: <linux-kernel+bounces-578421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04444A730C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:49:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0FBA730A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2041891566
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:47:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84297A4731
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3712F2135C7;
-	Thu, 27 Mar 2025 11:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8DE2144B8;
+	Thu, 27 Mar 2025 11:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="il2Jx2u+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3F6144304;
-	Thu, 27 Mar 2025 11:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743076031; cv=none; b=K79PJ31OiJ4q1WK5sic2MuWul5u1VCCrpfi3q/DZJPhPZ5x5OaBwHoU509w44tgyDdaV/3efkpXEvlOcf7jdQQ0pewoW86kMi5jxxID32pamGoNBckcurt4yFY1z44JqU0VaMpUdhMb9gXqSP02LzbQBK6GKQUMQSx9krhfCQM0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743076031; c=relaxed/simple;
-	bh=kSdwXpxCX7RhwYUTyzoT1ZWlicm1uvWqw4brkcU7tbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSeWS5u/FhIzMmvHGoQkqyGGD/UxKG74LLs13UPxAQ1T4dQ0rVQC7v2piBZOclmySdOA6J14KNbQA5HgWFGrelfj8JcUdtTQP3UXdE7/NU+m2pgJkQPn4pb1F8Vw0gg8dZFJLJkKcTYCuSTaA/9HdTXkueQFffzSye0MmVrNye8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=il2Jx2u+; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=qrpe8txb61wqy1P8MLVoBIkRkcteytpXmgLZG0cVFOY=;
-	b=il2Jx2u+2CE6Z8Tko273bXDzFAk4Hq4iSWcoXYNyB38+xB94M8TFunF2+MzlQu
-	04FGzP0fCoGjnMIxiNtY/hYqWDCnwtbZOv6xERMWse51N7znjJxMe9taFeql/vyF
-	I+ua3I3uWwz8fy+9SBEYqTAezEfNHFIPCO615tvC4wIvU=
-Received: from [192.168.5.16] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3l3yQOuVnhaJ1AA--.12270S2;
-	Thu, 27 Mar 2025 19:46:25 +0800 (CST)
-Message-ID: <af42c4fb-925a-4c3f-b54e-a07dff8bb168@163.com>
-Date: Thu, 27 Mar 2025 19:46:24 +0800
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="SskbvwwL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CAD1F94A;
+	Thu, 27 Mar 2025 11:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743076040; cv=pass; b=SeqcAABftSAbl94jcaHm1eVuaLQMhKhJgI992RKQe1Q8/utJRQf4h2GcSwWkHuWDJTyn2jzdAojiR7BuhYfth1jIsukDk3ewRBL1LUj0WgHpgjOGrndjIXa5hXoC0m1YAEej7HMDIqHeQ7D84F/3ZyH+NnS8aozKgHl+q4EqX9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743076040; c=relaxed/simple;
+	bh=B0F6xvi62XtdN3jBvAHF73z3nzzlNq+vFLwDxvr3n8E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=GzZxD+lMfhfODMuV1MmLXzAksAAt5gEAhVWl5GxrRSAbt2mLufwb96v8i6hKoD1UyWVbG7YAJCX+fBrqDNktC7BY4qxr/AuGtODRXjdhlwOOuoUn7/VFiN/mbS1Uzm199X9i1Usft6CYVbUcdRfjhbKAcV0nbhT7fHsM9yG5ciE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=SskbvwwL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743076014; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TWV2T4aqmLJ5IEWBHY4MzW82t7Ka7fPOFMqOx0NIfUeBUOs7dWiz03iYWU4dRRE5qY75XvxRM8ATxvIsfztXJw44Bx8EamfBgOIpZHfy8moTO4gjX2ZJCrS2HksTnOTJKpZ5prPTvGKOD9byHD0pI+PR1ivJxnMYYDl1UHCIPkI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743076014; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lEHkj5Yx4zM0auDPQ9llr7Y10Y+yqKkLT+9PKE6Q5jY=; 
+	b=aOcZAmnTye+W/wF+AxWbjzCaza0bajpLQIrIFZWqWJ/Yll+pta/ut3mD9yLohZN3w2PKqE1bPoas3R7/eDp81XWxNc/XjNWzxCE+sVYxjbJNE39zbd7GAamiLF/fI7nZ6prQLpO+m/QdQDNV/vfXkur48jt3WXZMJNz7BQzyvM0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743076014;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=lEHkj5Yx4zM0auDPQ9llr7Y10Y+yqKkLT+9PKE6Q5jY=;
+	b=SskbvwwLDDSsfOmdShIC1FZ8qtVJ+DK/Mn1rO0yyZejsb8QPvvdkxISL99xNu5lY
+	ZOTE39UJDSc1b4TxRLAXqFGMH1xGJyXoNti2Ss7uPBNoJeUle8k/tNG9/GAYdwMi8OO
+	yzsCLOzJHkra8ZQP8sNCVXUunLiCkY7u/zgHv0ew=
+Received: by mx.zohomail.com with SMTPS id 1743076013029441.6226911590842;
+	Thu, 27 Mar 2025 04:46:53 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iomap: Rename iomap_last_written_block to
- iomap_first_unchanged_block
-To: Christoph Hellwig <hch@infradead.org>
-Cc: cem@kernel.org, djwong@kernel.org, brauner@kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20250327055706.3668207-1-chizhiling@163.com>
- <Z-Up3xt1q9swlhv_@infradead.org>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <Z-Up3xt1q9swlhv_@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3l3yQOuVnhaJ1AA--.12270S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw1UKr4xZF4fKr1UKFW3ZFb_yoW3Xwb_ur
-	W0qr1kCF1vqFs0vF4DuF4fJFZaqa1UW348XrW5Jrs7X34fCFZrJF15ur9avr4DGa1Sy3Z8
-	Gr409F129r129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRizBT7UUUUU==
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBgAsdnWfk5UUKaQADsI
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
+ abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <f22cbd85-1896-4842-8746-d74ee160ab3c@sirena.org.uk>
+Date: Thu, 27 Mar 2025 08:46:29 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ lgirdwood@gmail.com,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D9ADCA08-C3B3-4964-BDB9-E62A2C7DE85F@collabora.com>
+References: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
+ <a98eb789-4c49-4607-ad15-76e260888d64@sirena.org.uk>
+ <0698A75E-D43C-4D02-B734-BFE1B3CC5D34@collabora.com>
+ <f22cbd85-1896-4842-8746-d74ee160ab3c@sirena.org.uk>
+To: Mark Brown <broonie@kernel.org>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On 2025/3/27 18:35, Christoph Hellwig wrote:
-> On Thu, Mar 27, 2025 at 01:57:06PM +0800, Chi Zhiling wrote:
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> This renames iomap_last_written_block() to iomap_first_unchanged_block()
->> to better reflect its actual behavior of finding the first unmodified
->> block after partial writes, improving code readability.
-> 
-> Does it?  I it used in the context of a write operation where uncached
-> is not exactly well define.  I'm not a native speaker, but I don't see
-> an improvement here (then again I picked the current name, so I might be
-> biassed).
+Hi Mark,
 
-Okay, actually 'last_written_block' also makes sense, it's just that it 
-returns the end of the last written block, not the beginning
+> On 27 Mar 2025, at 08:32, Mark Brown <broonie@kernel.org> wrote:
+>=20
+> On Wed, Mar 26, 2025 at 04:49:26PM -0300, Daniel Almeida wrote:
+>>> On 26 Mar 2025, at 15:56, Mark Brown <broonie@kernel.org> wrote:
+>=20
+>>>> +    /// Disables the regulator.
+>>>> +    pub fn disable(self) -> Result<Regulator> {
+>>>> +        // Keep the count on `regulator_get()`.
+>>>> +        let regulator =3D ManuallyDrop::new(self);
+>=20
+>>> This looks like user code could manually call it which feels like =
+asking
+>>> for trouble?
+>=20
+>> Yes, user code can call this. My understanding is that drivers may =
+want to
+>> disable the regulator at runtime, possibly to save power when the =
+device is
+>> idle?
+>=20
+>> What trouble are you referring to?
+>=20
+> My understanding was that the enable was done by transforming a
+> Regulator into an EnabledRegulator but if you can explicitly call
+> disable() on an EnabledRegulator without destroying it then you've got
+> an EnabledRegulator which isn't actually enabled.  Perhaps it's not
+> clear to me how the API should work?
 
+No, you misunderstood a bit, but that=E2=80=99s on me, I should have =
+included examples.
 
-thanks,
-Chi Zhiling
+> +impl EnabledRegulator {
+
+> +    /// Disables the regulator.
+> +    pub fn disable(self) -> Result<Regulator>=20
+
+disable() consumes EnabledRegulator to return Regulator.
+
+Any function that takes 'self' by value (i.e.: =E2=80=9Cself" instead of =
+=E2=80=9C&self=E2=80=9D )
+effectively kills it. So, in that sense, disable() performs a conversion
+between the two types after calling regulator_disable().
+
+=E2=80=94 Daniel
+
 
 
