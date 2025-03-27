@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-578745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645ACA735E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:47:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1205A735ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B2B3B4A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84DB4174AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125DB19C569;
-	Thu, 27 Mar 2025 15:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0DB19C552;
+	Thu, 27 Mar 2025 15:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XO6E1K9K"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnD8f7xo"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F25190692
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07D9155312;
+	Thu, 27 Mar 2025 15:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743090416; cv=none; b=IfXowbPpy3lhfE8D2vprI4DzFGfMWlpo96rFRDcjELjVmec4+L1lzZEIhrwIDdvqlMhk4YbL0g2Jky+Cvx+XY7KNoIizwChXzzp9RxdTdCP/ttcFt9XcZhJ14aWF8RYlV7DzpoePFlVt1tXdR+tsZM+qwlvqfNqgWfgQHsBGTXs=
+	t=1743090544; cv=none; b=Nmtp3vLxYwC0obl2e1SCIEBn00M/HJa0YGU/V9c3TgDTli26PtbfnsKLhegQKc5NECTM7t/Iq9V6YeMHZgVv+dBT0wgvPmRGURSjfrP7iiiCKc4gZ7DJchq9rJ28PWJlGMPOQvTLw7jvQzV1FdsCfW4c25sd4NyUNaHkgqAl3HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743090416; c=relaxed/simple;
-	bh=LPH7fmB2piYJTlMhDGZnc6I3l1pOMgZFoEBi543qq+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzjiFAg/Totdb48nuu1tNSFhMurqVsIBpjTeT1pwlaub0pGY1UlWC9+WBB80FS9VMKhD+KIdM0Vh/V4RqqezAAb977M19IbV9FYbgzpecNl2UZO5UvlBo3qHnGvqgO6yaD5aba4IOQ42QV6kL7iwsYcf9laGOmwLS6trmEDLGb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XO6E1K9K; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so8950665e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:46:52 -0700 (PDT)
+	s=arc-20240116; t=1743090544; c=relaxed/simple;
+	bh=6Sw1U/81t5H2tzYbP443kQVD2Ls/gE+4Ieuwol5b9AI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mb9KkOXv7s+9YjH3g7OBGVzl2LcmKluAk1eveJOKaOFkj+MwlFo06d7JVk+K4F1FUwf8DAWI/UY2b+HdOCzz+uSm7DQhKYhjaX3JH4o+JoMmeFnL8Ym9hrdT+c19+AfvhxhDv7QpSSLKMp/mQH+Dvniqhzm5Md2fb/ORwBOx6Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnD8f7xo; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22409077c06so38588165ad.1;
+        Thu, 27 Mar 2025 08:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743090411; x=1743695211; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743090542; x=1743695342; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tA2zJWv1o+75nzP8/krgasVJF7/Bs9xLeh0TRybxqLI=;
-        b=XO6E1K9KBKFAlkpvoa6b0HjQWU6bAXd8PE2o4jWs5h21l+Ayfus4yWTQYC0Tf23w/3
-         oZdXcrQBVP2Gznv5foI/iIsk0dvsWLRJk7k4ouCuVy7/MxLuOvjnEtcpUHx8t47JJgSE
-         iKdMXxQKJuXD/wul5EuiFJxBiqb0/KvDF0xN5wU1v3S0MKxjLlOz5gHcUDQYP5YqX6Ic
-         Q3O6ZsFT3e9lEI/KbdfDEEhDT+lE3ui27Q+VGwr+epSUva1m87kWp8QGqrH0tx3wpL8w
-         hTep97GrN9dw79lU/XvF0mlw4ffv/TBS9UTYAPKOFbXQrJ8GmXYHWfT7bPLyOZ3vJgLB
-         uquQ==
+        bh=R+WkWznMaXIwTB3ZZo2m17BC/os/l608815ZqRblsww=;
+        b=EnD8f7xogjZlaqPZr7tL58uCHSkLszVzk/avMu0OY10P6TohMaD+Xb5DqvDo2GGA6J
+         zz6oAovtl9XvhIajeN380iPomrZ7UWq4EBb2XhZ2lPYoEcIWW20049UNSnY64Ae7sJus
+         PV+81jAHHJOcR3qs4TNdNFkvwrCKfy1tZNF7YPJgRXv8Ugp+vxdJeMpoRYffu690voBh
+         tF59+Y/OMw0Df7nGauoiQFMYN0FpD5C9dd6QaphSMbMnKmGXjF+kwA+XMqfVLrwfpO/S
+         zNKaiSo5/InTMMtcFDA4IKp+gGSsyeGQWfF1/7g2rRpgRqxZFJSnpZ9W7XPqTDZ9+iLV
+         uzRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743090411; x=1743695211;
+        d=1e100.net; s=20230601; t=1743090542; x=1743695342;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tA2zJWv1o+75nzP8/krgasVJF7/Bs9xLeh0TRybxqLI=;
-        b=HCyYC/qaKvHREMipNa7imfGUdpTrCTDCTwNwQswzYIe7ikRRGELngvOkHyvIy7UIJy
-         M05mxf6f3CC8TaEYqv6+ErEt5XdeyFShhfyf7A9PW/BlSFs7gmUBKXfq8yEkW0zOfFhe
-         m/WQK5QIcWSwL4lYVZ0wbt5KktMfCAu/danWgXegCSwvnAl8pgz4CVV3QnV0xxsiDi+l
-         TUchmGwxPWE76nIclzmxwRG/iYy4j2QNdfP8+UBkDowwh5MSCAet4RXwAuP8ue5WHJqu
-         7F4vs6jbxSZqomg7Xwjvb2l8shFOEvEpC9OAfTU32hA8ZP7e/7L4z0202ASjgZ8jMSdj
-         Duzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJzYLdgZIRGSa/U9jmjYsWY4kzW36Ez0kBIkfToVXU8rMlHa+H1VcFPxPsPVp72n16WQGXMwZHneIbW44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt7gnYxp8iqoWFtnxCJFGUQxQmJ5fBW2Gdh6qAIZOcBUlaFhSv
-	3QtHFbtkKWbjDq2DsBgG8PX/kiXluaaFfoEi7zaIXp3ib4CYKwhY6bblDkZBsfo=
-X-Gm-Gg: ASbGncsUnhtZOFI6BhNeQ4T0zihJjUGtXW9bY6MVE51JQotbdF7a6XhpQy17slrWSW1
-	qMXQhue2wcmCbOAzeSO9/gYGfAVcKmk7/itwOMoF/ZODuDq81lQPjOxGPhRlO+lanmpYYB8mzlp
-	iBSRZQ4AOCe1Iw1yWxozfeQJtgZNboolqGQaly5b8eKMVxpHzVUmY5cnviwri6nFzgBrJWGcBqa
-	F/pqHfYKHhMkR0NCVnKekNmyJZSifdweuEnk5aj9oEyZ77r3Zyw1xuesuRYO8f5AscZ+Xmuf52A
-	RkXUp0gd37zg9g3Hpbq8yBP6I52PVeiATokhdWl2s/cenESzTgx9Ma1m/E9hTaYeH9c=
-X-Google-Smtp-Source: AGHT+IEQdOD49ykeAMjyB/w/AZwjJja6wbJrFyDzakLR4KdkXKrN6xLOpUaq5nSdkDLMVtpBUCPPHg==
-X-Received: by 2002:a05:600c:458e:b0:43c:e9d0:9ee5 with SMTP id 5b1f17b1804b1-43d84fc181emr43722905e9.18.1743090411433;
-        Thu, 27 Mar 2025 08:46:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:c7c:7213:c700:e992:6869:474c:a63f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedde6sm41768545e9.5.2025.03.27.08.46.50
+        bh=R+WkWznMaXIwTB3ZZo2m17BC/os/l608815ZqRblsww=;
+        b=Dlr+YEkHOjJqGmLfaMLMkaVCzz2tUbb0FmqNyKaX6wKXiKaXnKSEJRuMTm7QTxqlke
+         30kl38bTpjDPt4T3PJDDJMiOppgLw9f5LDG6SJYiaGi740srvewnCFPEPmYVOD+sOlIC
+         UiyVY6q0XUjS/m4BvXDCQll3p1D60K9Z/tIycjD1ioz0E4/iPsJSUetHxAGmAH3YTRQa
+         H6/yA+drOWtCmgqeqZbMfhyGIc5H3umNHaKZIbgLHGHIzh+HLdBwcY4L9hqh7ZiU8WaO
+         QZJa2K0o73xoa6mPxSHTA19W/L++nnypo6EiNETerUEWbpEeN6LJMUbOKdspAreUeO4u
+         hwcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAj3u9Kswb8QuHYU4OGBe03AUj01M6TpsVwUDv0c6QNvJI/IS0pUjmXzZnljNk4j/arlAr9bMYlJbk2r0=@vger.kernel.org, AJvYcCVd5sy/pFAa6h3cti1b8o40M1C/78QwKuc5sG99/eTSpTNV0NwzV7PgbJqOzP+KkJYaLMlcERd5UyT9M44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrKqh8mluIIPJNR3ej/A1/4IDxumd+LiXKGcoyiHlNcp+tWHqV
+	UafETEAjZvTB4iuFpe71NOQ+SllcP4iVcVDtIIt63Y9j0rE/BYWp
+X-Gm-Gg: ASbGnctX3ew3AXbCuRUZIDQX8n3AAl3HX4afQ30mMuoAtsW5hHF83iXeneZ4UbmQXEU
+	Qdf8x2ninWmyjzSqnotp5BJbp1PYM3y1Ow5R54LNF0RaUVfBZJZMiV3cPfnCNZZqKKdFBH8b4TN
+	7Y0hgyoZfaOM3GDde9NRR3DJHLCdMfewZf87HtysHML/GrH7dSchFUPAE6lwNk2U9nUtagI0Pe1
+	Fe4jhq+TW7+FpYFrfwuQCVKojjovE+GURtakHUfwGK5t3WxKMtjWXjlNVPgo/cn7oXthGvSTY0O
+	HVDF2gMQIViPK212UE3Ckb1/ztSXUr2QYe8G8m+xoxY+QOFCrsNP5kpSt8n/QFNxqdaUJd3cyvu
+	tr8Gr3Wx+qWVkXr/zn4U=
+X-Google-Smtp-Source: AGHT+IF7lVVDeWONYnV60fwShndweA3eQmej77IbeLpBdfzNQHqiYnWKtVJhAFL9WRt9+k+RKBEwHw==
+X-Received: by 2002:a17:902:d2d0:b0:224:76f:9e45 with SMTP id d9443c01a7336-22804840efdmr53269545ad.21.1743090541726;
+        Thu, 27 Mar 2025 08:49:01 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1df032sm962005ad.175.2025.03.27.08.49.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 08:46:51 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: broonie@kernel.org,
-	srinivas.kandagatla@linaro.org,
-	linux-sound@vger.kernel.org
-Cc: lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org,
-	pierre-louis.bossart@linux.dev,
-	vkoul@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	dmitry.baryshkov@oss.qualcomm.com
-Subject: [PATCH] ASoC: qdsp6: q6asm-dai: fix q6asm_dai_compr_set_params error path
-Date: Thu, 27 Mar 2025 15:46:50 +0000
-Message-ID: <20250327154650.337404-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.47.2
+        Thu, 27 Mar 2025 08:49:00 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v2] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
+Date: Thu, 27 Mar 2025 08:48:57 -0700
+Message-ID: <20250327154858.52308-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,106 +96,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In case of attempts to compress playback something, for instance,
-when audio routing is not set up correctly, the audio DSP is left in
-inconsistent state because we are not doing the correct things in
-the error path of q6asm_dai_compr_set_params().
+From: Rob Clark <robdclark@chromium.org>
 
-So, when routing is not set up and compress playback is attempted
-the following errors are present (simplified log):
+Add support for exporting a dma_fence fd for a specific point on a
+timeline.  This is needed for vtest/vpipe[1][2] to implement timeline
+syncobj support, as it needs a way to turn a point on a timeline back
+into a dma_fence fd.  It also closes an odd omission from the syncobj
+UAPI.
 
-q6routing routing: Routing not setup for MultiMedia-1 Session
-q6asm-dai dais: Stream reg failed ret:-22
-q6asm-dai dais: ASoC error (-22): at snd_soc_component_compr_set_params()
-on 17300000.remoteproc:glink-edge:apr:service@7:dais
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
+[2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/805
 
-After setting the correct routing the compress playback will always fail:
+v2: Add DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE
 
-q6asm-dai dais: cmd = 0x10db3 returned error = 0x9
-q6asm-dai dais: DSP returned error[9]
-q6asm-dai dais: q6asm_open_write failed
-q6asm-dai dais: ASoC error (-22): at snd_soc_component_compr_set_params()
-on 17300000.remoteproc:glink-edge:apr:service@7:dais
-
-0x9 here means "Operation is already processed". The CMD_OPEN here was
-sent the second time hence DSP responds that it was already done.
-
-Turns out the CMD_CLOSE should be sent after the q6asm_open_write()
-succeeded but something failed after that, for instance, routing
-setup.
-
-Fix this by slightly reworking the error path in
-q6asm_dai_compr_set_params().
-
-Tested on QRB5165 RB5 and SDM845 RB3 boards.
-
-Cc: stable@vger.kernel.org
-Fixes: 5b39363e54cc ("ASoC: q6asm-dai: prepare set params to accept profile change")
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- sound/soc/qcom/qdsp6/q6asm-dai.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_syncobj.c | 18 +++++++++++++-----
+ include/uapi/drm/drm.h        |  2 ++
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-index 045100c94352..a400c9a31fea 100644
---- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-@@ -892,9 +892,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
- 
- 		if (ret < 0) {
- 			dev_err(dev, "q6asm_open_write failed\n");
--			q6asm_audio_client_free(prtd->audio_client);
--			prtd->audio_client = NULL;
--			return ret;
-+			goto open_err;
- 		}
- 	}
- 
-@@ -903,7 +901,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
- 			      prtd->session_id, dir);
- 	if (ret) {
- 		dev_err(dev, "Stream reg failed ret:%d\n", ret);
--		return ret;
-+		goto q6_err;
- 	}
- 
- 	ret = __q6asm_dai_compr_set_codec_params(component, stream,
-@@ -911,7 +909,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
- 						 prtd->stream_id);
- 	if (ret) {
- 		dev_err(dev, "codec param setup failed ret:%d\n", ret);
--		return ret;
-+		goto q6_err;
- 	}
- 
- 	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
-@@ -920,12 +918,21 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
- 
- 	if (ret < 0) {
- 		dev_err(dev, "Buffer Mapping failed ret:%d\n", ret);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto q6_err;
- 	}
- 
- 	prtd->state = Q6ASM_STREAM_RUNNING;
- 
- 	return 0;
-+
-+q6_err:
-+	q6asm_cmd(prtd->audio_client, prtd->stream_id, CMD_CLOSE);
-+
-+open_err:
-+	q6asm_audio_client_free(prtd->audio_client);
-+	prtd->audio_client = NULL;
-+	return ret;
+diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+index 4f2ab8a7b50f..bc57d6f1a22e 100644
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -762,7 +762,7 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
  }
  
- static int q6asm_dai_compr_set_metadata(struct snd_soc_component *component,
+ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+-					int handle, int *p_fd)
++					int handle, u64 point, int *p_fd)
+ {
+ 	int ret;
+ 	struct dma_fence *fence;
+@@ -772,7 +772,7 @@ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+ 	if (fd < 0)
+ 		return fd;
+ 
+-	ret = drm_syncobj_find_fence(file_private, handle, 0, 0, &fence);
++	ret = drm_syncobj_find_fence(file_private, handle, point, 0, &fence);
+ 	if (ret)
+ 		goto err_put_fd;
+ 
+@@ -869,6 +869,9 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
+ 				   struct drm_file *file_private)
+ {
+ 	struct drm_syncobj_handle *args = data;
++	unsigned valid_flags = DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE |
++			       DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE;
++	u64 point = 0;
+ 
+ 	if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ))
+ 		return -EOPNOTSUPP;
+@@ -876,13 +879,18 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
+ 	if (args->pad)
+ 		return -EINVAL;
+ 
+-	if (args->flags != 0 &&
+-	    args->flags != DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
++	if (args->flags != 0 && (args->flags & ~valid_flags))
+ 		return -EINVAL;
+ 
++	if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE)
++		point = args->point;
++
+ 	if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
+ 		return drm_syncobj_export_sync_file(file_private, args->handle,
+-						    &args->fd);
++						    point, &args->fd);
++
++	if (args->point)
++		return -EINVAL;
+ 
+ 	return drm_syncobj_handle_to_fd(file_private, args->handle,
+ 					&args->fd);
+diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+index 7fba37b94401..c71a8f4439f2 100644
+--- a/include/uapi/drm/drm.h
++++ b/include/uapi/drm/drm.h
+@@ -912,6 +912,8 @@ struct drm_syncobj_handle {
+ 
+ 	__s32 fd;
+ 	__u32 pad;
++
++	__u64 point;
+ };
+ 
+ struct drm_syncobj_transfer {
 -- 
-2.47.2
+2.49.0
 
 
