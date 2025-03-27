@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-578429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12B6A73140
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:56:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37341A73151
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06711890C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:56:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4251A7A38E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F242135BD;
-	Thu, 27 Mar 2025 11:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E702135AC;
+	Thu, 27 Mar 2025 11:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="JpIE6Y+1"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KdUG0aH3"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D87E82899;
-	Thu, 27 Mar 2025 11:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B3D20E310
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 11:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743076598; cv=none; b=ctbC3h1/duG9EQRNdMPh6JHMcInOHUDwMvYZU40zPHszmRjQIdQIwuZg0shXzQgm21Xq3tPPyMTIIaZhzELxo4d1pClkl3k4pDdoCZAIEwVoXbWtM1lZFKRWDqzys9GgiOIFwXTXLrOujCcnpR6VQV89PM+ipgiQrwujcT30Zsk=
+	t=1743076655; cv=none; b=X9SRjhP7B5O/aOCHmgeG5OcZvu8mXzgXuxtbrBP/ChF36gG1gjS8fpWlHgSsGCaaVXRLpkaq/hbk9tw4pgAw2RQoyvfR9jbsOpMueRlyyNgzRA9IkmCWP6nBI4h3hEvOK2w0V880VTJL6bEU2J9ZTLT2i/qXNPZOE9r4hgDVzMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743076598; c=relaxed/simple;
-	bh=JqNoGpDZMpdGpjjIIyFPNugOaRil30Ig20t2hFZZh14=;
+	s=arc-20240116; t=1743076655; c=relaxed/simple;
+	bh=AL7gJ87a2UA6E+40BaZ+E4mdcf+6HZXsmDjrJ7tBF8w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5fZ1clpzMIxKCyjX6ADPDH46O8Kpb5/mn+NuTgugC5Skms0kuLsCzuZklm5li+P6Oj34deNJzMGna7PLO2onPfKrCaSDU+cNU6ifCvavpecie4pqB9Mae/3EzLsQm4vM0vrzpPa2tobQeI5iPdGC5q08AV8hWC4dTjErZZbuLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=JpIE6Y+1; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZNhvl2ptHzlpkbG;
-	Thu, 27 Mar 2025 11:56:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1743076593; x=1745668594; bh=J0svyj8py/sA2SHp7NuyHlYK
-	G4FlhF/w8aZRngyNxsE=; b=JpIE6Y+1HUvxFVMemZEuWYW4X/so/27rXT3IT70e
-	lV0yEebRHFGawFJTg0ppYV82orvT3adfszCfperJv+acpk6lCc9TTWMes4h2+Hm0
-	/NO/+s4DqC7MtyNj94jI5OPOCVgrMH7f6LIwJHNHBilTGnQwCn9ikiBGmp5xLKcd
-	Ac19199lHXSI/8qS5nuEmegU+qlrO/bxUyzTte+v3E5LwdY85Nwm3kRUuCZC3sJg
-	484sKcmB6eNoL6Chz9O0ZK6Ro6CNVzeIF9cDEYUMeMjHGItA6ogfbgua8FWIP8CC
-	0a3jJ1OdphLM3cYCW03YOGc6PwmT9hfrqSoHavZVFl9B3g==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id qZSZvcHf-mBU; Thu, 27 Mar 2025 11:56:33 +0000 (UTC)
-Received: from [10.47.187.167] (unknown [91.223.100.87])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZNhvW0m0Yzlmm8F;
-	Thu, 27 Mar 2025 11:56:21 +0000 (UTC)
-Message-ID: <4a5efc8e-ec61-40c8-9b36-59e185b0fdd5@acm.org>
-Date: Thu, 27 Mar 2025 07:56:15 -0400
+	 In-Reply-To:Content-Type; b=jA61VGeeWoQ+G2vwrxN1Pw4rOPI3ojtoZ/38ud5klWERVVlCLY0zmezAfXi6+cqp4gPOTWDRBY5QP8tg37KR3duh/oo4MATwlaQVpid1fqIgopbe6YZ76gDT+Ev9I7Rhcs1898IWmzLaDoCPop1RHO8gNyVdz2zVezBZh0+Epdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KdUG0aH3; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c5aecec8f3so159060885a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 04:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743076652; x=1743681452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xpSvo5VpDe+5C3l3q6WN5wiD27fFfcYVq0S4jyx0P6k=;
+        b=KdUG0aH36qKf4ZKce21gUhCKT3ZUf2WNoOC0rZa2gRbutluZ0jCSFAmnnC+61A2sd0
+         Njdrt1Nj2fXg43CLfCF44LW9ef95MhDEJWEEmBMehuOBXiRYdTiM30rWbtrMY/aWEGLd
+         rYjBgTZlgpvZjm8HkNrGAcL/EbG9VgKscRinhah3bTwjaG8M50uvOVXNokIPSnt+2lkx
+         mhlCuyeeTnoP/Xsk0vjebjmQA7seF6lSHIkFYpP3gnAknC14p/N9vvbD+gURC8OIj2bA
+         LqbmNtn1g9Wn3vq/xXgwbUBfBwXSqyhktBciKekra4S/rYXgxaWVSGCpYbJtPZPWTipD
+         /eJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743076652; x=1743681452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xpSvo5VpDe+5C3l3q6WN5wiD27fFfcYVq0S4jyx0P6k=;
+        b=f9RdQ66yJz/GYPx8kMvJXrV7uF0rcWemZt1WRj4cobEdGbYwc0e3j2XEy7Tghg1g2w
+         ejT368052mwGvdxIOmEbc32J8lYtS/UniA+B6WvJ12iT8dSNsuHTqgcPUP5uSDBXNgP/
+         VrhyOFxKPID1vpG3hHSCcZGmNdPYQU6RVgDREu/xhcrFnpdM8ClsFB7ICgLSs1rh4iO2
+         dDzYErKHK8+VxFuDsQVYJxCTjYJsokKrcHvEWVdtJ/MBChqITbUsWtxaV1pYUSUgwQ8v
+         EK4svPICNa/P5+TOfhW7JExNoh/IzrmeKgmVE2DHmg/O5uVXbqYiV2ZN3I3/fh0tXH+R
+         G4jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgO6Q0OyBzNziDU5T3P6UYKxNnPpTqS7zxYEbqu5BIG6k/purG8GesrtE+lC0Auzcgo1HO8cXuIVpEe3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTg/8AT8n8BTUR2md0ODAO66AHU9BIomHFNiZ8YzW+A+1gAfPG
+	90N7NHUNNnisZ+LRak0+FQSx46s3zo4NYDZm9mZwOLOh+SQZ2jTdZ/pDzydEXio=
+X-Gm-Gg: ASbGncvF52YGgMQ5VlVHpQT0qtlYiyTdWoLdfRLu7inSxhnv+c+x7fsZMU6xms0WxHY
+	tTRQ/pU3YNO9X+DWJxpYA8Q1+4PLPxArtPJRUuQPpjNXio+8AXK3S9LszBa/RhIq8gs1FSdGy5Y
+	/YcqgPkxd4SfkNPNCTiOV6usa2VSi/oyES2pkxBG+Kjf4duSDIxBB2SOcVb3ZgQt1N+w3hB6LrK
+	HA9c4qLU+VFzjzmyIPKn3wBv+23fL7rATyThoNZlbuOr3qs43JFusCgc3pkr3pOV36BNsEEDGk5
+	V2fmrrK2ZXxFnteK2E9NgbYWvXkKQVsJPGWkraI=
+X-Google-Smtp-Source: AGHT+IHXYc+blwEc+1Jk6K0qq58ubOvP6uoSjfLzJ99a9D1oWzuzwHQ5UPYlNMHK61Rbx4L/GoX0BA==
+X-Received: by 2002:a05:6214:19e1:b0:6e8:90eb:e591 with SMTP id 6a1803df08f44-6ed238b72cdmr40938446d6.24.1743076652436;
+        Thu, 27 Mar 2025 04:57:32 -0700 (PDT)
+Received: from [172.20.6.96] ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3f0003c6sm79108206d6.120.2025.03.27.04.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 04:57:31 -0700 (PDT)
+Message-ID: <2853aff5-9056-4950-a796-d3e19a0f0c5d@kernel.dk>
+Date: Thu, 27 Mar 2025 05:57:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,75 +80,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/2] ufs: core: delegate the interrupt service
- routine to a threaded irq handler
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250326-topic-ufs-use-threaded-irq-v2-0-7b3e8a5037e6@linaro.org>
- <20250326-topic-ufs-use-threaded-irq-v2-2-7b3e8a5037e6@linaro.org>
+Subject: Re: [PATCH 1/2] mtip32xx: Remove unnecessary PCI function calls
+To: Philipp Stanner <phasta@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>,
+ David Lechner <dlechner@baylibre.com>, Philipp Stanner
+ <pstanner@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Yang Yingliang <yangyingliang@huawei.com>, Zijun Hu
+ <quic_zijuhu@quicinc.com>, Hannes Reinecke <hare@suse.de>,
+ Al Viro <viro@zeniv.linux.org.uk>, Li Zetao <lizetao1@huawei.com>,
+ Anuj Gupta <anuj20.g@samsung.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250327110707.20025-2-phasta@kernel.org>
+ <20250327110707.20025-3-phasta@kernel.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250326-topic-ufs-use-threaded-irq-v2-2-7b3e8a5037e6@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250327110707.20025-3-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/26/25 4:36 AM, Neil Armstrong wrote:
- > When MCQ & Interrupt Aggregation are supported, the interrupt
- > are directly handled in the "hard" interrupt routine to
- > keep IOPs high since queues handling is done in separate
- > per-queue interrupt routines.
+On 3/27/25 5:07 AM, Philipp Stanner wrote:
+> pcim_iounmap_regions() is deprecated. Moreover, it is not necessary to
+> call it in the driver's remove() function or if probe() fails, since it
+> does cleanup automatically on driver detach.
+> 
+> Remove all calls to pcim_iounmap_regions().
 
-The above explanation suggests that I/O completions are handled by the
-modified interrupt handler. This is not necessarily the case. With MCQ,
-I/O completions are either handled by dedicated interrupts or by the
-legacy interrupt handler.
+Acked-by: Jens Axboe <axboe@kernel.dk>
 
-> Reported bandwidth is not affected on various tests.
+-- 
+Jens Axboe
 
-This kind of patch can only affect command completion latency but not
-the bandwidth, isn't it?
-
-> +/**
-> + * ufshcd_intr - Main interrupt service routine
-> + * @irq: irq number
-> + * @__hba: pointer to adapter instance
-> + *
-> + * Return:
-> + *  IRQ_HANDLED     - If interrupt is valid
-> + *  IRQ_WAKE_THREAD - If handling is moved to threaded handled
-> + *  IRQ_NONE        - If invalid interrupt
-> + */
-> +static irqreturn_t ufshcd_intr(int irq, void *__hba)
-> +{
-> +	struct ufs_hba *hba = __hba;
-> +
-> +	/*
-> +	 * Move interrupt handling to thread when MCQ is not supported
-> +	 * or when Interrupt Aggregation is not supported, leading to
-> +	 * potentially longer interrupt handling.
-> +	 */
-> +	if (!is_mcq_supported(hba) || !ufshcd_is_intr_aggr_allowed(hba))
-> +		return IRQ_WAKE_THREAD;
-> +
-> +	/* Directly handle interrupts since MCQ handlers does the hard job */
-> +	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-> +				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
-> +}
-
-Where has ufshcd_is_intr_aggr_allowed() been defined? I can't find this
-function.
-
-For the MCQ case, this patch removes the loop from around
-ufshcd_sl_intr() without explaining in the patch description why this 
-change has been made. Please explain all changes in the patch
-description.
-
-Thanks,
-
-Bart.
 
