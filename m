@@ -1,163 +1,286 @@
-Return-Path: <linux-kernel+bounces-578822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D875A736E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:35:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398FDA73717
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B73E1797FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6801717B8F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3241A3A8D;
-	Thu, 27 Mar 2025 16:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CB41CB51F;
+	Thu, 27 Mar 2025 16:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="FblBuMa7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0J6ljeyg"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D83F19D07E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BC21A8F63;
+	Thu, 27 Mar 2025 16:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093352; cv=none; b=F42VJ250Wy1pmpJimFCHrFqH7tcWU+KwKa3UvhPB6DUmbuWoVRCIEkSL+c70L/LrvHXXP2NiMr5FkftJmJC0/YdsPWnFlok9DP5dUuVERPIQGgk5qf9OB99aVoj5LqoIFh0ZfIU3X4bO64gQ4TJifgHGF4o6LKauU3XG8Thv8rM=
+	t=1743093592; cv=none; b=GaCDoas+N163fLpGlIiLvLGl7b+wPMCN2tXP9k7cLhadKk+Z9NAIBgJs5MetxfdjVS7x9Xo2u3RGdzK1jOYm59rk5iSqxiWDk9OZNTkcWFxnx2nJE7BMXCaUdWritaQ8NuyNpjSo8D2nDOIAURuZc07ZxiAf/xnINXHSByiJ49k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093352; c=relaxed/simple;
-	bh=eX7fgUh0Or+r6nCoeg2ASG+YN/fSSE0v52AVH35g1rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTJhXLgobLgta2uiq93PjJz3MjA7dDAoliqAoMEA98R4I+/UTy3Sf+elu7Smuj53jFO1xNMw39oc2cf3z+l93voP4YmeFsieguKJBMucg1yy85K3iNUej111fn9o5XbAZECpBRk+tVcHmM+sg+9RyVI7hgLDjmMC2wKDspQ0oo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=FblBuMa7; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso4427279a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1743093348; x=1743698148; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0w6uuCADAEtLYg3qcYN8l4lvMJUAkHjqpfFuC5QFZE=;
-        b=FblBuMa7VolDTLsDkBI50xhxyjoDbN5jUQXs9Yc65+g/5S4t/BVIBgxLsO7AhdPyaI
-         E4GgByhhujo5G2rSNZFH9dLYG7tVKOF3Bp8ahQLwNYkLPA3Z9NTOWDaynd+RBX/TUpd6
-         aK6Zzk90YWjwv9mMSySIqR4OxfWOzKDppHsSA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743093348; x=1743698148;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w0w6uuCADAEtLYg3qcYN8l4lvMJUAkHjqpfFuC5QFZE=;
-        b=Yc928ULD0YIK01aVQEAG6UvyyodQ5KJqoV0gmJ+G2b6KBjEwdWyR9EFMl6NsjsHaIw
-         AnCdC/+enHZ2rq3hkpeTc2Rf9NB52BZ6wAGBoMAB0j/11/cA4vStZ0vEKeoSuLi7M658
-         sCjL0LZ7NO8PquuN00a6PiYRUFnWmGzS37lxQE019R5p8FeyKJhSc+7F4L7b569zzlyU
-         UoS+yr1hQV1RIWSm3WXsQPFiWmJ3X6lrOgY6EvoXxjCAL0xtSTUxrEpJ1Q+poZjah+5j
-         SOq9gdyTMWtEXOAU/9oaNTfy276Kde415kX6i4/0tPxvP/D/npaYNKSAA3s1L4EGh5GG
-         v3CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWXw1rGycXckVbW2i5UleoTVadNQQKVOd33lvOik/2A/R9toYwmkZUmvlXduJliPpr4eVg4Rk8P9pAx/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXXY4jDMfRYvPcAYLSY1jmfA7bwZ7Fq6uPBs1dY07aX/lGk7Wl
-	s1nC7Gj7SST80LEXximd6Zyk373vV20LWJ8qgQphsPrASUfF01PYkrx6G7QhQBE=
-X-Gm-Gg: ASbGncshQVwZpFVkaUUbptAT0pSTBJptvms3kGSUgr1xDpR7siziSDdyg8ciE5CuYcK
-	e2OHEHvqhBvQOutPkQKp5aKBq3TWXS7/IaIyvfbVBFb5TpqMFY+0BmHXCb7SEVppCWoXTtURI/j
-	4DWzMCZLHN8wzk3DxNxI6EUGZOnLeBArjgX0suUNY365igwFPfA9X8nwB7JyJBDmjAnwdSuyake
-	mSWSNK4L1x4cVYTooNfvq3U2H95arh8UgtJMNSB+hG/T/cCkJM/wUKfSkChYWodPGh/Y3ApnXNn
-	Eay5+UXqPMxvejpByvCd8xsnXFQaWaO75LVNs+a3XK0sHXLuNA==
-X-Google-Smtp-Source: AGHT+IHEvJFXsIv1KX0tOnrc1aD6jz56SsUPbPYvgNk+VtOonHYfrD/l+1uybG5HnmfkDNHxapuKvg==
-X-Received: by 2002:a05:6402:90b:b0:5e5:9c04:777 with SMTP id 4fb4d7f45d1cf-5edbf31f039mr799501a12.6.1743093347754;
-        Thu, 27 Mar 2025 09:35:47 -0700 (PDT)
-Received: from localhost ([84.78.159.3])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5edc16aae16sm54762a12.13.2025.03.27.09.35.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 09:35:47 -0700 (PDT)
-Date: Thu, 27 Mar 2025 17:35:46 +0100
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: bhelgaas@google.com, tglx@linutronix.de, jgross@suse.com,
-	pstanner@redhat.com, andriy.shevchenko@linux.intel.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH] PCI/MSI: Fix x86 VMs crash due to dereferencing NULL
-Message-ID: <Z-V-YkXwHQsqUBnm@macbook.local>
-References: <20250327162155.11133-1-Ashish.Kalra@amd.com>
+	s=arc-20240116; t=1743093592; c=relaxed/simple;
+	bh=3+yFQl9MsrLmluPFUbyma5Bg/7hcDryJ/eM8UMUsSso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g5mpbsuYwy/aBEovry6oTVBmbPJwtvVDhfH6aWWvgGyTSYxb8s1tqbpkCM+tTCADH0Es35YRbhhkwgrbtUa0jwvSGAicDHVWHBKxjWdG5wZvJTj1aHkTmjmjmijQPfproWbv8QKR4ZTHzQKb6MSLVfw7s99pa12uLQ57aD9gCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0J6ljeyg; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDilnT022015;
+	Thu, 27 Mar 2025 17:39:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	az0YCnmeyySHfJgjCSLhzolXq61fHw4p+GQsMO6NSxk=; b=0J6ljeygU3qcaI8y
+	8bWZLLYh00LdEbVFMd0OSckS8S7TmA+OfQCtQHY4HQRDzlMiisrqZG3YiV8KrS2f
+	cYKnrklharMXLL8knqJ2FQLppd50N9/I2D/kyUmOMcuKUHBMnacOvVNC+tEzjZxt
+	8N730tIwORhnQcYHGb3xlQ3k+ofQjCVXXOd/t49N8khu0laJ6WRFeZf4lAGFTkKF
+	HIJliiEMGa+BsNBhlD+iOAoXGiXoD0jV6Mt+2KLdYze/Z+bihwY/Mp+9H5NQ+2gO
+	UOa+FbHYUwhdX3senU1hGgScRih6j/CiikhlL2UU9H/lnlaIQeUCyKv3ehNzCRUf
+	35vwVA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j91sucg4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 17:39:18 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9C88E40045;
+	Thu, 27 Mar 2025 17:38:01 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 55A6890429F;
+	Thu, 27 Mar 2025 17:36:02 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
+ 2025 17:36:02 +0100
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 27 Mar
+ 2025 17:36:00 +0100
+Message-ID: <30d13179-66fc-4856-ac70-af051ec5fe8f@foss.st.com>
+Date: Thu, 27 Mar 2025 17:36:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250327162155.11133-1-Ashish.Kalra@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/8] iio: trigger: stm32-lptimer: add support for
+ stm32mp25
+To: Jonathan Cameron <jic23@kernel.org>, <lee@kernel.org>
+CC: <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>, <robh@kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
+ <20250314171451.3497789-4-fabrice.gasnier@foss.st.com>
+ <20250315125615.065a2e74@jic23-huawei>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250315125615.065a2e74@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_02,2025-03-26_02,2024-11-22_01
 
-On Thu, Mar 27, 2025 at 04:21:55PM +0000, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
+On 3/15/25 13:56, Jonathan Cameron wrote:
+> On Fri, 14 Mar 2025 18:14:46 +0100
+> Fabrice Gasnier <fabrice.gasnier@foss.st.com> wrote:
 > 
-> Moving pci_msi_ignore_mask to per MSI domain flag is causing a panic
-> with SEV-SNP VMs under KVM while booting and initializing virtio-scsi
-> driver as below :
+>> From: Olivier Moysan <olivier.moysan@foss.st.com>
+>>
+>> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
+>> this new HW variant. Add new trigger definitions that can be used by the
+>> stm32 analog-to-digital converter. Use compatible data to identify them.
+>>
+>> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 > 
-> ...
-> [    9.854554] virtio_scsi virtio1: 4/0/0 default/read/poll queues
-> [    9.855670] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> [    9.856840] #PF: supervisor read access in kernel mode
-> [    9.857695] #PF: error_code(0x0000) - not-present page
-> [    9.858501] PGD 0 P4D 0
-> [    9.858501] Oops: Oops: 0000 [#1] SMP NOPTI
-> [    9.858501] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-next-20250326-snp-host-f2a41ff576cc #379 VOLUNTARY
-> [    9.858501] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
-> [    9.858501] RIP: 0010:msix_prepare_msi_desc+0x3c/0x90
-> [    9.858501] Code: 89 f0 48 8b 52 20 66 81 4e 4c 01 01 c7 46 04 01 00 00 00 8b 8f b4 03 00 00 48 89 e5 89 4e 50 48 8b b7 b0 09 00 00 48 89 70 58 <8b> 0a 81 e1 00 00 40 00 75 25 0f b6 50 4d d0 ea 83 f2 01 83 e2 01
-> [    9.858501] RSP: 0018:ffffa37f4002b898 EFLAGS: 00010202
-> [    9.858501] RAX: ffffa37f4002b8c8 RBX: ffffa37f4002b8c8 RCX: 0000000000000017
-> [    9.858501] RDX: 0000000000000000 RSI: ffffa37f400b5000 RDI: ffff984802524000
-> [    9.858501] RBP: ffffa37f4002b898 R08: 0000000000000002 R09: ffffa37f4002b854
-> [    9.858501] R10: 0000000000000004 R11: 0000000000000018 R12: ffff984802924000
-> [    9.858501] R13: ffff984802524000 R14: ffff9848025240c8 R15: 0000000000000000
-> [    9.858501] FS:  0000000000000000(0000) GS:ffff984bae657000(0000) knlGS:0000000000000000
-> [    9.858501] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    9.858501] CR2: 0000000000000000 CR3: 000800003c260000 CR4: 00000000003506f0
-> [    9.858501] Call Trace:
-> [    9.858501]  <TASK>
-> [    9.858501]  msix_setup_interrupts+0x10e/0x290
-> [    9.858501]  __pci_enable_msix_range+0x2ce/0x470
-> [    9.858501]  pci_alloc_irq_vectors_affinity+0xb2/0x110
-> [    9.858501]  vp_find_vqs_msix+0x228/0x530
-> [    9.858501]  vp_find_vqs+0x41/0x290
-> [    9.858501]  ? srso_return_thunk+0x5/0x5f
-> [    9.858501]  ? __dev_printk+0x39/0x80
-> [    9.858501]  ? srso_return_thunk+0x5/0x5f
-> [    9.858501]  ? _dev_info+0x6f/0x90
-> [    9.858501]  vp_modern_find_vqs+0x1c/0x70
-> [    9.858501]  virtscsi_init+0x2d2/0x340
-> [    9.858501]  ? __pfx_default_calc_sets+0x10/0x10
-> [    9.858501]  virtscsi_probe+0x135/0x3c0
-> [    9.858501]  virtio_dev_probe+0x1b6/0x2a0
-> ...
-> ...
-> [    9.934826] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+> How do you want this to merge?   If it's going through mfd because
+> of dependencies, then
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > 
-> This is happening as x86 VMs only have x86_vector_domain (irq_domain)
-> created by native_create_pci_msi_domain() and that does not have an
-> associated msi_domain_info. Thus accessing msi_domain_info causes a
-> kernel NULL pointer dereference during msix_setup_interrupts() and
-> breaks x86 VMs.
-> 
-> In comparison, for native x86, there is irq domain hierarchy created
-> by interrupt remapping logic either by AMD IOMMU (AMD-IR) or Intel
-> DMAR (DMAR-MSI) and they have an associated msi_domain_info, so
-> moving pci_msi_ignore_mask to a per MSI domain flag works for
-> native x86.
-> 
-> Also, Hyper-V and Xen x86 VMs create "virtual" irq domains
-> (XEN-MSI) or (HV-PCI-MSI) with their associated msi_domain_info,
-> and they can also access pci_msi_ignore_mask as per MSI domain flag.
-> 
-> Fixes: c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag")
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> I haven't checked if there are any dependencies so shout if I should
+> pick this up directly for next cycle.
 
-Sorry for the breakage.  Already fixed upstream by commit:
+Hi Jonathan, Lee,
 
-3ece3e8e5976 ("PCI/MSI: Handle the NOMASK flag correctly for all PCI/MSI backends")
+There's no build dependency, but the dt-bindings that adds the
+compatible string.
 
-From Thomas.
+Perhaps Lee can pick it up along with the mfd bindings and driver ?
 
-Regards, Roger.
+I'm not sure what the most suitable option is.
+
+Best Regards,
+Fabrice
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+>> ---
+>> Changes in v4:
+>> - Jonathan's comment: simplify infrastructure by keeping
+>>   devm_iio_trigger_register. Don't need to cast compatible data.
+>> ---
+>>  drivers/iio/trigger/stm32-lptimer-trigger.c   | 75 ++++++++++++++-----
+>>  include/linux/iio/timer/stm32-lptim-trigger.h |  9 +++
+>>  2 files changed, 67 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/iio/trigger/stm32-lptimer-trigger.c b/drivers/iio/trigger/stm32-lptimer-trigger.c
+>> index f1e18913236a..3dcc8d2fe093 100644
+>> --- a/drivers/iio/trigger/stm32-lptimer-trigger.c
+>> +++ b/drivers/iio/trigger/stm32-lptimer-trigger.c
+>> @@ -16,16 +16,43 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/property.h>
+>>  
+>> -/* List Low-Power Timer triggers */
+>> -static const char * const stm32_lptim_triggers[] = {
+>> -	LPTIM1_OUT,
+>> -	LPTIM2_OUT,
+>> -	LPTIM3_OUT,
+>> +/* Maximum triggers + one trailing null entry to indicate the end of array */
+>> +#define MAX_TRIGGERS 3
+>> +
+>> +struct stm32_lptim_cfg {
+>> +	const char * const (*triggers)[MAX_TRIGGERS];
+>> +	unsigned int nb_triggers;
+>> +};
+>> +
+>> +/* List Low-Power Timer triggers for H7, MP13, MP15 */
+>> +static const char * const stm32_lptim_triggers[][MAX_TRIGGERS] = {
+>> +	{ LPTIM1_OUT,},
+>> +	{ LPTIM2_OUT,},
+>> +	{ LPTIM3_OUT,},
+>> +};
+>> +
+>> +/* List Low-Power Timer triggers for STM32MP25 */
+>> +static const char * const stm32mp25_lptim_triggers[][MAX_TRIGGERS] = {
+>> +	{ LPTIM1_CH1, LPTIM1_CH2, },
+>> +	{ LPTIM2_CH1, LPTIM2_CH2, },
+>> +	{ LPTIM3_CH1,},
+>> +	{ LPTIM4_CH1,},
+>> +	{ LPTIM5_OUT,},
+>> +};
+>> +
+>> +static const struct stm32_lptim_cfg stm32mp15_lptim_cfg = {
+>> +	.triggers = stm32_lptim_triggers,
+>> +	.nb_triggers = ARRAY_SIZE(stm32_lptim_triggers),
+>> +};
+>> +
+>> +static const struct stm32_lptim_cfg stm32mp25_lptim_cfg = {
+>> +	.triggers = stm32mp25_lptim_triggers,
+>> +	.nb_triggers = ARRAY_SIZE(stm32mp25_lptim_triggers),
+>>  };
+>>  
+>>  struct stm32_lptim_trigger {
+>>  	struct device *dev;
+>> -	const char *trg;
+>> +	const char * const *triggers;
+>>  };
+>>  
+>>  static int stm32_lptim_validate_device(struct iio_trigger *trig,
+>> @@ -56,22 +83,33 @@ EXPORT_SYMBOL(is_stm32_lptim_trigger);
+>>  
+>>  static int stm32_lptim_setup_trig(struct stm32_lptim_trigger *priv)
+>>  {
+>> -	struct iio_trigger *trig;
+>> +	const char * const *cur = priv->triggers;
+>> +	int ret;
+>>  
+>> -	trig = devm_iio_trigger_alloc(priv->dev, "%s", priv->trg);
+>> -	if  (!trig)
+>> -		return -ENOMEM;
+>> +	while (cur && *cur) {
+>> +		struct iio_trigger *trig;
+>>  
+>> -	trig->dev.parent = priv->dev->parent;
+>> -	trig->ops = &stm32_lptim_trigger_ops;
+>> -	iio_trigger_set_drvdata(trig, priv);
+>> +		trig = devm_iio_trigger_alloc(priv->dev, "%s", *cur);
+>> +		if  (!trig)
+>> +			return -ENOMEM;
+>>  
+>> -	return devm_iio_trigger_register(priv->dev, trig);
+>> +		trig->dev.parent = priv->dev->parent;
+>> +		trig->ops = &stm32_lptim_trigger_ops;
+>> +		iio_trigger_set_drvdata(trig, priv);
+>> +
+>> +		ret = devm_iio_trigger_register(priv->dev, trig);
+>> +		if (ret)
+>> +			return ret;
+>> +		cur++;
+>> +	}
+>> +
+>> +	return 0;
+>>  }
+>>  
+>>  static int stm32_lptim_trigger_probe(struct platform_device *pdev)
+>>  {
+>>  	struct stm32_lptim_trigger *priv;
+>> +	struct stm32_lptim_cfg const *lptim_cfg;
+>>  	u32 index;
+>>  
+>>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>> @@ -81,17 +119,20 @@ static int stm32_lptim_trigger_probe(struct platform_device *pdev)
+>>  	if (device_property_read_u32(&pdev->dev, "reg", &index))
+>>  		return -EINVAL;
+>>  
+>> -	if (index >= ARRAY_SIZE(stm32_lptim_triggers))
+>> +	lptim_cfg = device_get_match_data(&pdev->dev);
+>> +
+>> +	if (index >= lptim_cfg->nb_triggers)
+>>  		return -EINVAL;
+>>  
+>>  	priv->dev = &pdev->dev;
+>> -	priv->trg = stm32_lptim_triggers[index];
+>> +	priv->triggers = lptim_cfg->triggers[index];
+>>  
+>>  	return stm32_lptim_setup_trig(priv);
+>>  }
+>>  
+>>  static const struct of_device_id stm32_lptim_trig_of_match[] = {
+>> -	{ .compatible = "st,stm32-lptimer-trigger", },
+>> +	{ .compatible = "st,stm32-lptimer-trigger", .data = &stm32mp15_lptim_cfg },
+>> +	{ .compatible = "st,stm32mp25-lptimer-trigger", .data = &stm32mp25_lptim_cfg},
+>>  	{},
+>>  };
+>>  MODULE_DEVICE_TABLE(of, stm32_lptim_trig_of_match);
+>> diff --git a/include/linux/iio/timer/stm32-lptim-trigger.h b/include/linux/iio/timer/stm32-lptim-trigger.h
+>> index a34dcf6a6001..ce3cf0addb2e 100644
+>> --- a/include/linux/iio/timer/stm32-lptim-trigger.h
+>> +++ b/include/linux/iio/timer/stm32-lptim-trigger.h
+>> @@ -14,6 +14,15 @@
+>>  #define LPTIM1_OUT	"lptim1_out"
+>>  #define LPTIM2_OUT	"lptim2_out"
+>>  #define LPTIM3_OUT	"lptim3_out"
+>> +#define LPTIM4_OUT	"lptim4_out"
+>> +#define LPTIM5_OUT	"lptim5_out"
+>> +
+>> +#define LPTIM1_CH1	"lptim1_ch1"
+>> +#define LPTIM1_CH2	"lptim1_ch2"
+>> +#define LPTIM2_CH1	"lptim2_ch1"
+>> +#define LPTIM2_CH2	"lptim2_ch2"
+>> +#define LPTIM3_CH1	"lptim3_ch1"
+>> +#define LPTIM4_CH1	"lptim4_ch1"
+>>  
+>>  #if IS_REACHABLE(CONFIG_IIO_STM32_LPTIMER_TRIGGER)
+>>  bool is_stm32_lptim_trigger(struct iio_trigger *trig);
+> 
 
