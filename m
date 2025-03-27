@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-578665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0140CA734FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:50:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336BAA734FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D7A3AF0AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F92189026A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ABB218ACC;
-	Thu, 27 Mar 2025 14:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED126218826;
+	Thu, 27 Mar 2025 14:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="F7orR4wr"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="TOWGc3eW"
+Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501DA218823
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE7217F31
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087016; cv=none; b=MNZ2DDMFGWY3YondPvr82HlQEPjEIfP4fWjRrFp6fjQmm1VGXtlvwZKCKvYJ+2J0Jr3EA2VOSePMMYg7W8pEbriN8bJ2yIY6rzl3UiiYB47InCgokNY2Bfv3wl3ewoYHPtLWvLUvml9RzSo3qHcuOuYJSuN/gGmkaQrlfb/LcSQ=
+	t=1743087104; cv=none; b=LHjmYkhhm40GFhihZaOHVEl4pO+nS4CapRpYTH2MV3gyl3zohdmUTHF+GodDFswx+JkGy2xQu7moGNSBdosayAhEql3jINMmju/I5MGl2tHSTBggcy1hl/rRy2thxC7doQn6OdvEeM6qBeLAJOhSlF+73dUl78EAGBwdBPnMkZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087016; c=relaxed/simple;
-	bh=ixowdw3/tBH1MKs5lErEbKIY7YjR630dlJ2HH1jf3qA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EkCf9wExebre757eJtpi8WIL5wNhP4NbYGN3aWBhScBYHEx+lfC9ZXEDnif655xcp6Qn73EWpQfKgHO4xFA327wjZ/mc2f8S19FCBl6iT0+Rb4MOSWvgVImplwXO64YAwX7Pq4gFUAm8e2oegaPlVGaGk/qph1/zoKDz2b3VP4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=F7orR4wr; arc=none smtp.client-ip=109.224.244.18
+	s=arc-20240116; t=1743087104; c=relaxed/simple;
+	bh=jFY6/9yxtTShwRhi8aGD1r33YUrFs2oJ27jagdR8Dpk=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uy3PFg10QAsQrDcrf2FCp9OcP1DmC2H0/eoYKOJjTh9Lr+Bkfo5zFdnjULL+cBmpCucHsfLj9WVfgKBngcCkrHjhVAWBtz8X3OY4SW3sZ402hNmXdVlM/1L1tJA5vriBTHnswN8ojLb+yhp8TooIqjFB1clI2YZcXfGxhSh6JQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=TOWGc3eW; arc=none smtp.client-ip=109.224.244.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1743087012; x=1743346212;
-	bh=ixowdw3/tBH1MKs5lErEbKIY7YjR630dlJ2HH1jf3qA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	s=protonmail3; t=1743087100; x=1743346300;
+	bh=5aQI5GkKTceApRtAP68NzR/aWmFWlKkk+99MRVZEmXA=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=F7orR4wrE72aQbPzGmqnOiPkwLePLaUAq4hPaWMjLJbCKtYm5dh8xp6Lmoitsj4LV
-	 6JCrlez0LOVkt6Z9jEyXpK0aVInXdigdYSs5sKhDmwJ5kJN9ifeZQMqRWTquwNET+b
-	 Lt6ykNIK5x7xQe1jGRjLbOdEK4Ryj9VQarDojJkTGlb51btIh1mBa6UiZv03akXgHx
-	 DqdSpKEcp2NIRbsxjsWq7q5X/4duIwh1HX0nGbkAblXOOVGhR9XfFZRGiroX+AFqtG
-	 XulK3+1GK1NP0RqWlZU9yBq3iyovituBGDJ0Cs10lJRr/IiIOGnVXfLSdyq0ndZdpH
-	 GWPOOp9O1xs/A==
-Date: Thu, 27 Mar 2025 14:50:09 +0000
+	b=TOWGc3eWuabcLp6rBjuWHYHrsDi+qHTetGi59vh6rH02QkScnwLzqmYAFM7InHGwO
+	 8RPXfpLvRwZlL9oTll0txC/GAb4dniORM4ustf7fYw4QhdvKCxoZpbPJJYWhV3bxQ0
+	 cB4KT9aG7EauVVapiGhkSLYbh397y7k4x+RpPZAbFLhPQVOwERIJiAji6g41kvAarF
+	 f1ZvJCzATPo4cqj7CxjQ8h58ybGz0FvS95UGG7keswbEo+hLukvUZw7VQkRlYY48ci
+	 UZW20BDkkbK6r/FYT7dJS0aUhz//mSJahyFj22TXLrWKtH/OhJpTsD0P1OSj3xEH1X
+	 +GoT6Pri6jc7Q==
+Date: Thu, 27 Mar 2025 14:51:36 +0000
 To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
 From: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-Cc: mmpgouride@gmail.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH v2 2/2] bcachefs: replace memcpy with memcpy_and_pad for jset_entry_log->d buff
-Message-ID: <20250327144956.1974622-3-nicolescu.roxana@protonmail.com>
-In-Reply-To: <20250327144956.1974622-1-nicolescu.roxana@protonmail.com>
-References: <20250327144956.1974622-1-nicolescu.roxana@protonmail.com>
+Subject: Re: [[PATCH v2] 0/2] Use memcpy_and_pad for jset_entry_log->d init
+Message-ID: <B_oQnAzbHuX7dGVA98YTNgereEetK1r5pIJGI00DhsxRK4fD7WEuyZB9U2cuquiKlL3l5xeS5tU-srIwazCDGk55cE13AubE7MTGrtqobSk=@protonmail.com>
+In-Reply-To: <20250327125235.1958273-1-nicolescu.roxana@protonmail.com>
+References: <20250327125235.1958273-1-nicolescu.roxana@protonmail.com>
 Feedback-ID: 136600343:user:proton
-X-Pm-Message-ID: 47f30f9e3d6a452ed1ff7232a536c31303ac39d8
+X-Pm-Message-ID: 53e0bb9476d3a97a9496a511465e1e722f443760
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,73 +60,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-This was achieved before by zero-ing out the source buffer and then
-copying the bytes into the destination buffer. This can also be done with
-memcpy_and_pad which will zero out only the destination buffer if its
-size is bigger than the size of the source buffer. This is already used in
-the same way in journal_transaction_name().
+On Thursday, March 27th, 2025 at 1:52 PM, Roxana Nicolescu <nicolescu.roxan=
+a@protonmail.com> wrote:
 
-Moreover, zero-ing the source buffer was done twice, first in
-__bch2_fs_log_msg() and then in bch2_trans_log_msg(). And this method
-may also require allocating some extra memory for the source buffer.
+> This replaces the depracated usage of strncpy with memcpy_and_pad when
+> used for initializing the d buffer of the struct jset_entry_log.
+>=20
+> The other 2 usage of memcpy were also replaced by memcpy_and_pad.
+>=20
+> Changes since v1:
+> - since the dest buffer is not required to be NULL-terminated,
+> memcpy_and_pad is used instead of strscpy. This adds zeros at the end
+> of the buffer if there's extra room.
+> - the same mechanism was done before in both __bch2_fs_log_msg() and
+> bch2_trans_log_msg by zero-ing out the src buffer. The second patch
+> replaces that logic with memcpy_and_pad to provide uniformity.
+>=20
+> Roxana Nicolescu (2):
+> bcachefs: replace strncpy() with memcpy_and_pad in
+> journal_transaction_name
+> bcachefs: replace memcpy with memcpy_and_pad for jset_entry_log->d
+>=20
+> buff
+>=20
+> fs/bcachefs/btree_trans_commit.c | 3 ++-
+> fs/bcachefs/btree_update.c | 8 +++-----
+> 2 files changed, 5 insertions(+), 6 deletions(-)
+>=20
+> --
+> 2.34.1
 
-In conclusion, using memcpy_and_pad is better even tough the result is
-the same because it brings uniformity with what's already used in
-journal_transaction_name, it avoids code duplication and reallocating
-extra memory.
-
-Signed-off-by: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
----
- fs/bcachefs/btree_update.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/bcachefs/btree_update.c b/fs/bcachefs/btree_update.c
-index 13d794f201a5..97495b79ca93 100644
---- a/fs/bcachefs/btree_update.c
-+++ b/fs/bcachefs/btree_update.c
-@@ -826,7 +826,6 @@ int bch2_btree_bit_mod_buffered(struct btree_trans *tra=
-ns, enum btree_id btree,
- int bch2_trans_log_msg(struct btree_trans *trans, struct printbuf *buf)
- {
- =09unsigned u64s =3D DIV_ROUND_UP(buf->pos, sizeof(u64));
--=09prt_chars(buf, '\0', u64s * sizeof(u64) - buf->pos);
-=20
- =09int ret =3D buf->allocation_failure ? -BCH_ERR_ENOMEM_trans_log_msg : 0=
-;
- =09if (ret)
-@@ -839,7 +838,7 @@ int bch2_trans_log_msg(struct btree_trans *trans, struc=
-t printbuf *buf)
-=20
- =09struct jset_entry_log *l =3D container_of(e, struct jset_entry_log, ent=
-ry);
- =09journal_entry_init(e, BCH_JSET_ENTRY_log, 0, 1, u64s);
--=09memcpy(l->d, buf->buf, buf->pos);
-+=09memcpy_and_pad(l->d, u64s * sizeof(u64), buf->buf, buf->pos, 0);
- =09return 0;
- }
-=20
-@@ -852,7 +851,6 @@ __bch2_fs_log_msg(struct bch_fs *c, unsigned commit_fla=
-gs, const char *fmt,
- =09prt_vprintf(&buf, fmt, args);
-=20
- =09unsigned u64s =3D DIV_ROUND_UP(buf.pos, sizeof(u64));
--=09prt_chars(&buf, '\0', u64s * sizeof(u64) - buf.pos);
-=20
- =09int ret =3D buf.allocation_failure ? -BCH_ERR_ENOMEM_trans_log_msg : 0;
- =09if (ret)
-@@ -865,7 +863,7 @@ __bch2_fs_log_msg(struct bch_fs *c, unsigned commit_fla=
-gs, const char *fmt,
-=20
- =09=09struct jset_entry_log *l =3D (void *) &darray_top(c->journal.early_j=
-ournal_entries);
- =09=09journal_entry_init(&l->entry, BCH_JSET_ENTRY_log, 0, 1, u64s);
--=09=09memcpy(l->d, buf.buf, buf.pos);
-+=09=09memcpy_and_pad(l->d, u64s * sizeof(u64), buf.buf, buf.pos, 0);
- =09=09c->journal.early_journal_entries.nr +=3D jset_u64s(u64s);
- =09} else {
- =09=09ret =3D bch2_trans_commit_do(c, NULL, NULL, commit_flags,
---=20
-2.34.1
-
-
+Please ignore this patchset, the patch title is wrong. It has extra bracket=
+s. 
 
