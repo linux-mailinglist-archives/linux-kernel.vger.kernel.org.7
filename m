@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-578441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30771A731F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:07:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0763A73201
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0941F7A187A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:06:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336A417043B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06792139A1;
-	Thu, 27 Mar 2025 12:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07002139D7;
+	Thu, 27 Mar 2025 12:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="g4FxEEYM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkdaAKts"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A574D1B960;
-	Thu, 27 Mar 2025 12:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743077260; cv=pass; b=KddnBlPuItczT0EIaNSX+tkE7IXcevug3/dxKZMq3/QUuEYMoibwaBVgj+bkUrUE5UAq5AffSNQZ5fPj62Z7EJRqVXDEoUHo3wVsVoo9MDjmhLflS7OGPbaiWA5+5Ms8U5drr3Hhig28j7dkEPlbLrhLsALC5buaUTBQmZYiHLk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743077260; c=relaxed/simple;
-	bh=BynpB61EpozAYgAFVJ1O9n90cvcD7/Y7nukc6SQNUno=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Y2LSK/XmvyHH6Jj8YjscoutomHSK7X3/XixFcPlO3lvpJ/naKW3nHigsCc4cOh1qRVYb9z7Ui0JSc+fMEOArMJTSW+EL7gbItOfwKOP+m7VeXI0gGeXs2wkdWfcuNUUTqUx3zAjgpdYFT9WeV+Gt0rO6Q9md/kaMyQpq6mESw4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=g4FxEEYM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743077238; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=csFEIdcdIilbpYzxAHcCzAuwSXyxT0KX2uIlwxfZaBHIiT5pzNi1yDklJzP5bWRNLJLJ4q4iZEzNQTLKGKZdtOKJZAwc/S/Tq+ARZef3mwvKI0ldQSLVMnIatLhEqtxZvXCxsxO218HVVirfB/NrpQ0Nj0rqz1BUdbukbqvlUS8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743077238; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=BynpB61EpozAYgAFVJ1O9n90cvcD7/Y7nukc6SQNUno=; 
-	b=hKoHeLLAgMK4RxenLeK4kX/RiZvvnYtoxXlPf2pVzL7FN/IdNmMAtOtEImPzJagOmm3X4uP6Bnr/5F5TBuG8Zb4CLJyx4LkpymqbpJC92hMsQtUUDJJRyzy8uHF59Fgq2KRYd0ifZJ0Zw4AyqfwMILzsPewXmDlGLPInQWKJGD8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743077238;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=BynpB61EpozAYgAFVJ1O9n90cvcD7/Y7nukc6SQNUno=;
-	b=g4FxEEYMvw4rWm0fvpr9QGu0YyhGR2+l9Ide6UFgL3K6FCFy2ZCnfu37fmfEdfNz
-	RcFL5HmACgl+Pg12aC6YG9RRPihZA9L4hSsExms4G+xlx9sHs9ksV2+MbTmUZS1+hBT
-	HdSSwoxjfUozuQKgl6Sw9I7j2W3sOKbDFCVPwLvU=
-Received: by mx.zohomail.com with SMTPS id 174307723515972.65411109826118;
-	Thu, 27 Mar 2025 05:07:15 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51052135D5;
+	Thu, 27 Mar 2025 12:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743077275; cv=none; b=gEF69U+D3CBWShkE89uWtMJC576Ek3dqBGOPXrejVUNH7r6OKDyBUVOV6gkhljQE3+kr9ecNfsOxVpFt46R9X47cRMEER8d/Y5ktk/LgmB4DWPsU2nEaMMsYDyzqpkgjzOUXQW4OBnz0TWYD/MJGFwxL1GErAbTdWoRLPi6YnL8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743077275; c=relaxed/simple;
+	bh=519U2OQ/+1rta3Dez4qIvxm1n885bLvavCe6L2uxsU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EU5Y4znpBmDfs7QemhFmqO1QArIhZ7XgQa45BwtNAba/5AWgEHD4QR5WOicEYpuMY6oajwUTOM3RCO9kDGhxyOv9K1Ddy2Nxn0dTZMA/mVtG0mcozZKnEfaCTneoAwf5CN+AfaSL/3ubTPDPbuzSoaiE+RPhzmozvrLoA9cIeHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkdaAKts; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so5935425e9.0;
+        Thu, 27 Mar 2025 05:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743077272; x=1743682072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xYMicfXbcFjaRvlgGEEWj3AN7DRkydm+iBbtjMU7d70=;
+        b=AkdaAKts4/TjwC360UQ8pS83hkrdY5xzjMOA3oUlHK8cjTUA8mU/OjLsGvPSIZTPed
+         U/7FUrgv1kPv7/8YfxOZnDGOAXNjq32QZe5sgVwiwpFAqnCqu9MiDiMOF7ibAamuU13y
+         DYUOm7KKOY6AxUvQs9cyNbb4jp9XzzQ3WXGxQ/BgqDC+qoGFekBxjHDKTPAW7UfTKud4
+         ce5LCwDIbqjJY0msH27HwXXIXkhbgl6k1rnRJGQIGPd7G4Dezw/XC7NJkg8Pwu+p3d9o
+         UQ6kxIGGOe9+WjILVmmdqz6eocaGN2pLNZEKdI59RTWPwJFEHGZXUF9FAOVj3bIJBnp4
+         kyMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743077272; x=1743682072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xYMicfXbcFjaRvlgGEEWj3AN7DRkydm+iBbtjMU7d70=;
+        b=bLa4GNa4EO6DJd47Fmqj3INwcvdrcn56EAyoXESiZX8f86cwfpROnwoWS3ThRkHNbb
+         K0HWIjkdXCi+kStJPoQF9BMNXDI7HtgSmK6vBaf1hTHHcmv73OP2iUU2Ra+m+Tw9dn9n
+         wKlYx/HeOL1g6ovWk8kZMEII/Jc1jVhEx9oEYL7w3Lhw74nKhRVhuDsqvvCnht6dd3ZH
+         JQS/3mk+jHIL2g9Jpe3bvtwWhnrrdrIIF0i0h8HXcGs3bct5+TSVw8dsg59vI0GS06Lp
+         oZmYF/wdvbChLHu0QKItLRyifeUHA2QS+C3LPjTU0g5YJASmncN+D5ZYDSyzkCKZVQXP
+         vU5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWmNk803iMIvgocaxgLYw/qm7vdT93IZk4K8evnZ297HLappNlV4tXQp+GipOLs+0+wD02zUiEVxHhQZxs=@vger.kernel.org, AJvYcCXmDLolwzreI5fpP5EZGj8BuTTrjL7161+kSGY4btP1qW5QxakexECS/at7v3Fp+5nWyjYGV/wMBjOf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDqWVLtcnerijNdN5wrhgZeUzaQwNCcZ5eM8XGsJaiBFa6z0R0
+	05yPMw0YSp+a55szE6/hEKjNRcBamt9OoTafP5udjiSJ1mfENt5D
+X-Gm-Gg: ASbGncveqaJRm9NyomHI7Pv7MxfgWe7jgHRvDlWgHdro+PbEUzgnkeHtZOsnqXNRHdp
+	pvpd4hRLK5t/+BU6+PGH2FLbrwrwnmhds3YLn6qDWb6ZCBsCefyMb7mUmPIt/WeeaHRj8L8IfIG
+	kYdBFdFoBhpaZmCI7SrS7VjLbHLFg1DCgFBEP+K0e5CP7PQxbwyJMX6dA/lBX1KWAIqhwwYatsS
+	x0dBHciJcqbpq2gGxhyYmbuZlwwaU8Pu2tj9Rvnligi9Hwq28MIBR3ubZy9TgHOZZxIZWowVBFW
+	bWG16VUxjhgWLXkoz9b0A34jaL9LRt783UKTs+sxAtwmSLAYS88KMs/JXSEHg6fg7iPw4g==
+X-Google-Smtp-Source: AGHT+IGo/KrZHv6B3BMa3Gew6orDF/gZsSa7aFb0TXd+WFiObDDzY8c9Iud5MWCZJnNeGvpLg/iYUg==
+X-Received: by 2002:a05:600c:1d0f:b0:43d:209:21fd with SMTP id 5b1f17b1804b1-43d85097759mr30175765e9.30.1743077271728;
+        Thu, 27 Mar 2025 05:07:51 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:c36b:2e01:9e11:8d7d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e6ac9bsm35109955e9.12.2025.03.27.05.07.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 05:07:51 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-usb@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/3] usb: renesas_usbhs: Reorder clock handling
+Date: Thu, 27 Mar 2025 12:07:34 +0000
+Message-ID: <20250327120737.230041-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
- abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <Z-U7ggqQAVq1IIJi@pollux>
-Date: Thu, 27 Mar 2025 09:06:59 -0300
-Cc: Mark Brown <broonie@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- lgirdwood@gmail.com,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7EE7F737-3DD8-45A4-8451-A6BF92F453BC@collabora.com>
-References: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
- <a98eb789-4c49-4607-ad15-76e260888d64@sirena.org.uk>
- <0698A75E-D43C-4D02-B734-BFE1B3CC5D34@collabora.com>
- <f22cbd85-1896-4842-8746-d74ee160ab3c@sirena.org.uk>
- <D9ADCA08-C3B3-4964-BDB9-E62A2C7DE85F@collabora.com>
- <Z-U7ggqQAVq1IIJi@pollux>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Hi All,
 
-> On 27 Mar 2025, at 08:50, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On Thu, Mar 27, 2025 at 08:46:29AM -0300, Daniel Almeida wrote:
->> Any function that takes 'self' by value (i.e.: =E2=80=9Cself" instead =
-of =E2=80=9C&self=E2=80=9D )
->> effectively kills it.
->=20
-> I'm sure Daniel didn't mean it that way, but to avoid confusion, I =
-want to
-> clarify that a function that takes `self` as argument not necessarily =
-results in
-> `self` being destroyed. It could be moved into some other structure, =
-directly
-> returned by the same function etc.
->=20
-> It's just that if the functions lets `self` go out of scope, then it's
-> destroyed.
->=20
+This patch series reorders clock handling in probe path and fixes
+trivial typo's.
 
-True, I found it easier to explain the current code by simplifying the =
-story a
-bit to fit the function we are discussing, but what Danilo said is what =
-is
-actually correct.
+Cheers,
+Prabhakar
 
-=E2=80=94 Daniel=
+Lad Prabhakar (3):
+  usb: renesas_usbhs: Correct function reference in comment
+  usb: renesas_usbhs: Fix typo in comment
+  usb: renesas_usbhs: Reorder clock handling and power management in
+    probe
+
+ drivers/usb/renesas_usbhs/common.c | 54 ++++++++++++++++++++++--------
+ 1 file changed, 40 insertions(+), 14 deletions(-)
+
+-- 
+2.49.0
+
 
