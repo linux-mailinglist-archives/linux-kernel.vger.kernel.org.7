@@ -1,224 +1,479 @@
-Return-Path: <linux-kernel+bounces-578881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711F8A737AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:05:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEBEA738D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED40E3A5277
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3AD1897E26
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375101AE01C;
-	Thu, 27 Mar 2025 17:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0BC161302;
+	Thu, 27 Mar 2025 17:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxiKJVCT"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZzQuCNzE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E212A1DFF8;
-	Thu, 27 Mar 2025 17:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D2D1AC892;
+	Thu, 27 Mar 2025 17:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743095106; cv=none; b=l14jVdW0OxdiQlSBDEXwkhY28lRAUC2UI1J+zgxYnfFJgrh33EuFjMiFXsWf4BS7agw87w3y87UJsOiPzomuHkwXEG9pomutTcyBTi8+0ZJT5RcimINOi7xe+ZaUir36J6J2GSN8nZl7/fCo87HYxJyi0pNMYbQEGEIGYnSBGuI=
+	t=1743095247; cv=none; b=qngFHRDoI4ICngmPgAlRiAMkz3UA7T9AJdJQbCa9rGdbLHSS7X+p56QQRMMQKCfJZwZDJPbyCLQaEo81P2f6/L9x9F9lPAdtC1AyIwvUJgcNlKNbMVC9N+91fqM0qW8Bp2AvD+lOwBUox0yxr9eF7MAVI2fzuosIMB44dx/ADV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743095106; c=relaxed/simple;
-	bh=UCukrpff5csPN5PME//Bu0ltX0l7g8zKWFio8g/DdbY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTX9/1VfD6phQoHhQx+yM4No9svbpYq3iZDKD26BHRSTZrSRU3dhB44ldAQNGyyGD9rTsEtyDlNaWeEA41JVFPjfV4TK4TJ7YEMjFo7t3050LULM+IFi7gznJ6dPgwiyfk9R81Znk1sqMAjlTYZfGFpafXLrNGIIxXKvDz0k3PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxiKJVCT; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so1068808276.0;
-        Thu, 27 Mar 2025 10:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743095104; x=1743699904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
-        b=YxiKJVCTbmMWGGZuNMlQEqbWHb9FNVxRXKeFy5ubU7oTK9uJwrlPNj9NSmmF+kO3VZ
-         JK7JCFKiZ9+zIWTi3FfHGwzKSd2Mw++laRUzHd1tlI6hSEYncn7/q3U0cyyAYaqAY9lm
-         UlIug5GZgAD9CILLlqNk4L73TYPTlYUGWghAw5wRR0UcPBj0oz4EGUyphdlaMUP4MxKc
-         OvAXUn/v5zKMl2DwTWFvBdqDXJEH+v/p0po0fTGfCI+5DLOYfm3oFiPGn60qjVjXl7qd
-         muBGXzQLhVMN8Zu29rWTtwqOOKz3PD2W/3GSuGbcWP91x2xDMxIhM2L2AoYYrFK8LtNq
-         L2lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743095104; x=1743699904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gIMP4nmwgubN4Pys5aTU2WlwnqqvwCpJ2MLL4ep//RA=;
-        b=MtUirJQH/p2iGyVu9F0RM44rnAepzX8pQYXdfsoNAev2N+ibizOiuYmItHN1jB7DT9
-         /9iUxj2mXzBSLA2lwfek/mHNBHt9OoIcPWG9DOZzVPgLydyDEJ1wMIHbda4FhyK+p1qA
-         xllOuXr+HawBBAIxMg8XHxoleizo1wqJ9At63rmYzV4F/SKuz9FzMD/8jANK9d/2X0xo
-         fqwfth5lWPDBBOkFTrkpMpq9iCUI1stc6DzUVwRLJ+1PFOhLL0ayvznNikh/Rpz6eyPT
-         8Rz8EJ6YM/ZndeYMmv2xQCy0Hb6eC48Sy+h01gZlCgAxUcRviXX3DREC/qZcyrBXbZxr
-         d4Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVGm8hDhbAt84eVVTi/gyU62fpLti0BlTYd2oFmvkZywUbm6KfJKRKBZ5AHzgWm5jO/asLhg5yGAnSY@vger.kernel.org, AJvYcCW+4QbNGNwXTL0GbOBJyYxHUiGv+eDGnrCQ3WDf2p/nvTEfVn/lOl+c8OvXSBlW8/5UwXc0yaOb@vger.kernel.org, AJvYcCWR5GA3ICUYUDVJ90RjwCTuMQY+QBoi8fWn0MPiGi421ZiHkO7JU4Rv6C3oPwC3wshuQGj1UnT0uPxaZmfd@vger.kernel.org, AJvYcCXZ0+NG9s5cK5kp7d/U6VhAWJGEIZosW0QlRVwpf2zfY8vPFfv/XD+SH0/KjpwHv1Ic1Jye22LzWBm6m6xs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFjIwoYcvzK5dvIpcOa/ra2//VbPW/nNVLsQz1CeXL2LLodhuH
-	6ojqECDKJ4BIX2r8E4oOAaJwmgYZuBl0vZ46d87TZYwoWR23rHTibBM8wwt+tZBN0stF4ZoLX3c
-	wF4TOQpNYIQWMTmvWXUAwZV5/Or4=
-X-Gm-Gg: ASbGncvIEukiOXZXhF/tUnv01k/iqM17MzL6Op4rnrqx4vaeejgUYg/HhvuU4/IdW+f
-	5kAGbPYIbueV+gPOFIk3Yzua/zZgXhKneZk5g/n0+uN6GE24+V3wF+7NqyzKE+qwKAQxyQK/TZU
-	x+H5N/cp9xxmBri/HomCmkqBXvGRXuqIvteUScz4p11i4Yo0eXaF3PAMI=
-X-Google-Smtp-Source: AGHT+IE0V4W9RPbFnppqS3nJN9J9jxtEhxV4mELuux5c5aERSjVw4aOfjObJ5DON3dZ9u7fr2lGONyc2RPHgBUOPdqI=
-X-Received: by 2002:a05:6902:478b:b0:e58:aa00:ffd5 with SMTP id
- 3f1490d57ef6-e69435eb3d5mr5861203276.4.1743095103548; Thu, 27 Mar 2025
- 10:05:03 -0700 (PDT)
+	s=arc-20240116; t=1743095247; c=relaxed/simple;
+	bh=e2ZR1na0kfPg1TOS8cY2zXA6oRZpojV4SKCF71wlszI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9GQDTzaglXbtcRk+I+f5cQw5ip4qyVmkuypIghLNi8aYxIJXYmSkrbu1HJfxaAVyUJg/RufCa5kIjphjZCVkuzsvZFExSEX5L9oFeBiMcWXxqiMBhroVQR0ALZBGS86d501oI5snwkQKO+qv9E5oCCpDz9zPlV8qvqxL86uu0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZzQuCNzE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D84BE446;
+	Thu, 27 Mar 2025 18:05:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743095134;
+	bh=e2ZR1na0kfPg1TOS8cY2zXA6oRZpojV4SKCF71wlszI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZzQuCNzE28zwLZIiVc4DmqtswkYsJeK9e6YOtJHXX4u1UhFfg0T6FXJuUDisi+zWx
+	 XxqY/iFp9Xj0Y1lfNwEvKeia+7zlnyrdvzFAj3EGl+bQzjmGychnSTLIlTdLGLcscc
+	 zkuXl1tDCVjcI8+3Ux1wpjsBj1qRtIm5gAlBSp1c=
+Date: Thu, 27 Mar 2025 19:06:59 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 11/17] media: rzg2l-cru: Add register mapping support
+Message-ID: <20250327170659.GD4861@pendragon.ideasonboard.com>
+References: <20250303160834.3493507-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250303160834.3493507-12-tommaso.merciai.xr@bp.renesas.com>
+ <TY3PR01MB113467D4C0BE9691A6E4630C786D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <Z9LJFCBbqbdlDP8k@tom-desktop>
+ <20250327101554.GA18306@pendragon.ideasonboard.com>
+ <Z-WAsxVJ1QpDa8fx@tom-desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326154349.272647840@linuxfoundation.org> <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
-In-Reply-To: <CA+G9fYsRQub2qq0ePDs6aBAc+0qHRGwH_WPsTfhcwkviD1eH1w@mail.gmail.com>
-From: Leah Rumancik <leah.rumancik@gmail.com>
-Date: Thu, 27 Mar 2025 10:04:52 -0700
-X-Gm-Features: AQ5f1JoUWc8i3RgAxN3mjRbk-tD1j9a8iUSQkbDB7BjyLErxq3tg2jL0zFBfxIE
-Message-ID: <CACzhbgQ=TU-C=MvU=fNRwZuFKBRgnrXzQZw15HVci_vT5w8O7Q@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc2 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z-WAsxVJ1QpDa8fx@tom-desktop>
 
-This is fixed by
+On Thu, Mar 27, 2025 at 05:45:39PM +0100, Tommaso Merciai wrote:
+> Hi Laurent,
+> 
+> Thanks for your comment.
+> 
+> On Thu, Mar 27, 2025 at 12:15:54PM +0200, Laurent Pinchart wrote:
+> > Hi Tommaso,
+> > 
+> > Thanks for being patient (and reminding me about this). Apparently,
+> > Embedded World is bad for e-mail backlogs.
+> 
+> I can imagine.
+> I skipped the EW this year, hope you had fun there :)
+> No worries.
+> 
+> > 
+> > On Thu, Mar 13, 2025 at 01:01:24PM +0100, Tommaso Merciai wrote:
+> > > On Wed, Mar 12, 2025 at 01:37:25PM +0000, Biju Das wrote:
+> > > > On 03 March 2025 16:08, Tommaso Merciai wrote:
+> > > > > 
+> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > 
+> > > > > Prepare for adding support for RZ/G3E and RZ/V2HP SoCs, which have a CRU-IP that is mostly identical
+> > > > > to RZ/G2L but with different register offsets and additional registers. Introduce a flexible register
+> > > > > mapping mechanism to handle these variations.
+> > > > > 
+> > > > > Define the `rzg2l_cru_info` structure to store register mappings and pass it as part of the OF match
+> > > > > data. Update the read/write functions to check out-of-bound accesses and use indexed register offsets
+> > > > > from `rzg2l_cru_info`, ensuring compatibility across different SoC variants.
+> > > > > 
+> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> > > > > ---
+> > > > > Changes since v2:
+> > > > >  - Implemented new rzg2l_cru_write/read() that now are checking out-of-bound
+> > > > >    accesses as suggested by LPinchart.
+> > > > >  - Fixed AMnMBxADDRL() and AMnMBxADDRH() as suggested by LPinchart.
+> > > > >  - Update commit body
+> > > > > 
+> > > > >  .../platform/renesas/rzg2l-cru/rzg2l-core.c   | 46 ++++++++++++-
+> > > > >  .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 66 ++++++++++---------
+> > > > >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  4 ++
+> > > > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 58 ++++++++++++++--
+> > > > >  4 files changed, 139 insertions(+), 35 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > index eed9d2bd0841..abc2a979833a 100644
+> > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> > > > > @@ -22,6 +22,7 @@
+> > > > >  #include <media/v4l2-mc.h>
+> > > > > 
+> > > > >  #include "rzg2l-cru.h"
+> > > > > +#include "rzg2l-cru-regs.h"
+> > > > > 
+> > > > >  static inline struct rzg2l_cru_dev *notifier_to_cru(struct v4l2_async_notifier *n)  { @@ -269,6
+> > > > > +270,9 @@ static int rzg2l_cru_probe(struct platform_device *pdev)
+> > > > > 
+> > > > >  	cru->dev = dev;
+> > > > >  	cru->info = of_device_get_match_data(dev);
+> > > > > +	if (!cru->info)
+> > > > > +		return dev_err_probe(dev, -EINVAL,
+> > > > > +				     "Failed to get OF match data\n");
+> > > > > 
+> > > > >  	irq = platform_get_irq(pdev, 0);
+> > > > >  	if (irq < 0)
+> > > > > @@ -317,8 +321,48 @@ static void rzg2l_cru_remove(struct platform_device *pdev)
+> > > > >  	rzg2l_cru_dma_unregister(cru);
+> > > > >  }
+> > > > > 
+> > > > > +static const u16 rzg2l_cru_regs[] = {
+> > > > > +	[CRUnCTRL] = 0x0,
+> > > > > +	[CRUnIE] = 0x4,
+> > > > > +	[CRUnINTS] = 0x8,
+> > > > > +	[CRUnRST] = 0xc,
+> > > > > +	[AMnMB1ADDRL] = 0x100,
+> > > > > +	[AMnMB1ADDRH] = 0x104,
+> > > > > +	[AMnMB2ADDRL] = 0x108,
+> > > > > +	[AMnMB2ADDRH] = 0x10c,
+> > > > > +	[AMnMB3ADDRL] = 0x110,
+> > > > > +	[AMnMB3ADDRH] = 0x114,
+> > > > > +	[AMnMB4ADDRL] = 0x118,
+> > > > > +	[AMnMB4ADDRH] = 0x11c,
+> > > > > +	[AMnMB5ADDRL] = 0x120,
+> > > > > +	[AMnMB5ADDRH] = 0x124,
+> > > > > +	[AMnMB6ADDRL] = 0x128,
+> > > > > +	[AMnMB6ADDRH] = 0x12c,
+> > > > > +	[AMnMB7ADDRL] = 0x130,
+> > > > > +	[AMnMB7ADDRH] = 0x134,
+> > > > > +	[AMnMB8ADDRL] = 0x138,
+> > > > > +	[AMnMB8ADDRH] = 0x13c,
+> > > > > +	[AMnMBVALID] = 0x148,
+> > > > > +	[AMnMBS] = 0x14c,
+> > > > > +	[AMnAXIATTR] = 0x158,
+> > > > > +	[AMnFIFOPNTR] = 0x168,
+> > > > > +	[AMnAXISTP] = 0x174,
+> > > > > +	[AMnAXISTPACK] = 0x178,
+> > > > > +	[ICnEN] = 0x200,
+> > > > > +	[ICnMC] = 0x208,
+> > > > > +	[ICnMS] = 0x254,
+> > > > > +	[ICnDMR] = 0x26c,
+> > > > > +};
+> > > > > +
+> > > > > +static const struct rzg2l_cru_info rzgl2_cru_info = {
+> > > > > +	.regs = rzg2l_cru_regs,
+> > > > > +};
+> > > > > +
+> > > > >  static const struct of_device_id rzg2l_cru_of_id_table[] = {
+> > > > > -	{ .compatible = "renesas,rzg2l-cru", },
+> > > > > +	{
+> > > > > +		.compatible = "renesas,rzg2l-cru",
+> > > > > +		.data = &rzgl2_cru_info,
+> > > > > +	},
+> > > > >  	{ /* sentinel */ }
+> > > > >  };
+> > > > >  MODULE_DEVICE_TABLE(of, rzg2l_cru_of_id_table); diff --git a/drivers/media/platform/renesas/rzg2l-
+> > > > > cru/rzg2l-cru-regs.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+> > > > > index 1c9f22118a5d..86c320286246 100644
+> > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+> > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+> > > > > @@ -10,71 +10,77 @@
+> > > > > 
+> > > > >  /* HW CRU Registers Definition */
+> > > > > 
+> > > > > -/* CRU Control Register */
+> > > > > -#define CRUnCTRL			0x0
+> > > > >  #define CRUnCTRL_VINSEL(x)		((x) << 0)
+> > > > > 
+> > > > > -/* CRU Interrupt Enable Register */
+> > > > > -#define CRUnIE				0x4
+> > > > >  #define CRUnIE_EFE			BIT(17)
+> > > > > 
+> > > > > -/* CRU Interrupt Status Register */
+> > > > > -#define CRUnINTS			0x8
+> > > > >  #define CRUnINTS_SFS			BIT(16)
+> > > > > 
+> > > > > -/* CRU Reset Register */
+> > > > > -#define CRUnRST				0xc
+> > > > >  #define CRUnRST_VRESETN			BIT(0)
+> > > > > 
+> > > > >  /* Memory Bank Base Address (Lower) Register for CRU Image Data */
+> > > > > -#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
+> > > > > +#define AMnMBxADDRL(x)			(AMnMB1ADDRL + (x) * 2)
+> > > > > 
+> > > > >  /* Memory Bank Base Address (Higher) Register for CRU Image Data */
+> > > > > -#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
+> > > > > +#define AMnMBxADDRH(x)			(AMnMB1ADDRH + (x) * 2)
+> > > > > 
+> > > > > -/* Memory Bank Enable Register for CRU Image Data */
+> > > > > -#define AMnMBVALID			0x148
+> > > > >  #define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
+> > > > > 
+> > > > > -/* Memory Bank Status Register for CRU Image Data */
+> > > > > -#define AMnMBS				0x14c
+> > > > >  #define AMnMBS_MBSTS			0x7
+> > > > > 
+> > > > > -/* AXI Master Transfer Setting Register for CRU Image Data */
+> > > > > -#define AMnAXIATTR			0x158
+> > > > >  #define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
+> > > > >  #define AMnAXIATTR_AXILEN		(0xf)
+> > > > > 
+> > > > > -/* AXI Master FIFO Pointer Register for CRU Image Data */
+> > > > > -#define AMnFIFOPNTR			0x168
+> > > > >  #define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
+> > > > >  #define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
+> > > > > 
+> > > > > -/* AXI Master Transfer Stop Register for CRU Image Data */
+> > > > > -#define AMnAXISTP			0x174
+> > > > >  #define AMnAXISTP_AXI_STOP		BIT(0)
+> > > > > 
+> > > > > -/* AXI Master Transfer Stop Status Register for CRU Image Data */
+> > > > > -#define AMnAXISTPACK			0x178
+> > > > >  #define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
+> > > > > 
+> > > > > -/* CRU Image Processing Enable Register */
+> > > > > -#define ICnEN				0x200
+> > > > >  #define ICnEN_ICEN			BIT(0)
+> > > > > 
+> > > > > -/* CRU Image Processing Main Control Register */
+> > > > > -#define ICnMC				0x208
+> > > > >  #define ICnMC_CSCTHR			BIT(5)
+> > > > >  #define ICnMC_INF(x)			((x) << 16)
+> > > > >  #define ICnMC_VCSEL(x)			((x) << 22)
+> > > > >  #define ICnMC_INF_MASK			GENMASK(21, 16)
+> > > > > 
+> > > > > -/* CRU Module Status Register */
+> > > > > -#define ICnMS				0x254
+> > > > >  #define ICnMS_IA			BIT(2)
+> > > > > 
+> > > > > -/* CRU Data Output Mode Register */
+> > > > > -#define ICnDMR				0x26c
+> > > > >  #define ICnDMR_YCMODE_UYVY		(1 << 4)
+> > > > > 
+> > > > > +enum rzg2l_cru_common_regs {
+> > > > > +	CRUnCTRL,	/* CRU Control */
+> > > > > +	CRUnIE,		/* CRU Interrupt Enable */
+> > > > > +	CRUnINTS,	/* CRU Interrupt Status */
+> > > > > +	CRUnRST, 	/* CRU Reset */
+> > > > > +	AMnMB1ADDRL,	/* Bank 1 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB1ADDRH,	/* Bank 1 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB2ADDRL,    /* Bank 2 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB2ADDRH,    /* Bank 2 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB3ADDRL,    /* Bank 3 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB3ADDRH,    /* Bank 3 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB4ADDRL,    /* Bank 4 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB4ADDRH,    /* Bank 4 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB5ADDRL,    /* Bank 5 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB5ADDRH,    /* Bank 5 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB6ADDRL,    /* Bank 6 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB6ADDRH,    /* Bank 6 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB7ADDRL,    /* Bank 7 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB7ADDRH,    /* Bank 7 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMB8ADDRL,    /* Bank 8 Address (Lower) for CRU Image Data */
+> > > > > +	AMnMB8ADDRH,    /* Bank 8 Address (Higher) for CRU Image Data */
+> > > > > +	AMnMBVALID,	/* Memory Bank Enable for CRU Image Data */
+> > > > > +	AMnMBS,		/* Memory Bank Status for CRU Image Data */
+> > > > > +	AMnAXIATTR,	/* AXI Master Transfer Setting Register for CRU Image Data */
+> > > > > +	AMnFIFOPNTR,	/* AXI Master FIFO Pointer for CRU Image Data */
+> > > > > +	AMnAXISTP,	/* AXI Master Transfer Stop for CRU Image Data */
+> > > > > +	AMnAXISTPACK,	/* AXI Master Transfer Stop Status for CRU Image Data */
+> > > > > +	ICnEN,		/* CRU Image Processing Enable */
+> > > > > +	ICnMC,		/* CRU Image Processing Main Control */
+> > > > > +	ICnMS,		/* CRU Module Status */
+> > > > > +	ICnDMR,		/* CRU Data Output Mode */
+> > > > > +	RZG2L_CRU_MAX_REG,
+> > > > > +};
+> > > > > +
+> > > > >  #endif /* __RZG2L_CRU_REGS_H__ */
+> > > > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > > > > index 8b898ce05b84..00c3f7458e20 100644
+> > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > > > > @@ -80,6 +80,10 @@ struct rzg2l_cru_ip_format {
+> > > > >  	bool yuv;
+> > > > >  };
+> > > > > 
+> > > > > +struct rzg2l_cru_info {
+> > > > > +	const u16 *regs;
+> > > > > +};
+> > > > > +
+> > > > >  /**
+> > > > >   * struct rzg2l_cru_dev - Renesas CRU device structure
+> > > > >   * @dev:		(OF) device
+> > > > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > index cd69c8a686d3..792f0df51a4b 100644
+> > > > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > > > > @@ -42,16 +42,66 @@ struct rzg2l_cru_buffer {
+> > > > >  /* -----------------------------------------------------------------------------
+> > > > >   * DMA operations
+> > > > >   */
+> > > > > -static void rzg2l_cru_write(struct rzg2l_cru_dev *cru, u32 offset, u32 value)
+> > > > > +static void __rzg2l_cru_write(struct rzg2l_cru_dev *cru, u32 offset,
+> > > > > +u32 value)
+> > > > >  {
+> > > > > -	iowrite32(value, cru->base + offset);
+> > > > > +	const u16 *regs = cru->info->regs;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * CRUnCTRL is a first register on all CRU supported SoCs so validate
+> > > > > +	 * rest of the registers have valid offset being set in cru->info->regs.
+> > > > > +	 */
+> > > > > +	if (WARN_ON(offset >= RZG2L_CRU_MAX_REG) ||
+> > > > > +	    WARN_ON(offset != CRUnCTRL && regs[offset] == 0))
+> > > > > +		return;
+> > > > > +
+> > > > > +	iowrite32(value, cru->base + regs[offset]); }
+> > > > > +
+> > > > > +static u32 __rzg2l_cru_read(struct rzg2l_cru_dev *cru, u32 offset) {
+> > > > > +	const u16 *regs = cru->info->regs;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * CRUnCTRL is a first register on all CRU supported SoCs so validate
+> > > > > +	 * rest of the registers have valid offset being set in cru->info->regs.
+> > > > > +	 */
+> > > > > +	if (WARN_ON(offset >= RZG2L_CRU_MAX_REG) ||
+> > > > > +	    WARN_ON(offset != CRUnCTRL && regs[offset] == 0))
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	return ioread32(cru->base + regs[offset]);
+> > > > >  }
+> > > > > 
+> > > > > -static u32 rzg2l_cru_read(struct rzg2l_cru_dev *cru, u32 offset)
+> > > > > +static inline void
+> > > > > +__rzg2l_cru_write_constant(struct rzg2l_cru_dev *cru, u32 offset, u32 value)
+> > > > >  {
+> > > > > -	return ioread32(cru->base + offset);
+> > > > > +	const u16 *regs = cru->info->regs;
+> > > > > +
+> > > > > +	BUILD_BUG_ON(offset >= RZG2L_CRU_MAX_REG);
+> > > > > +
+> > > > > +	iowrite32(value, cru->base + regs[offset]);
+> > > >
+> > > > Do you need this code as the purpose is to test compile time constant and
+> > > > It won't execute at run time?
+> > 
+> > Biju, I'm not sure to understan this comment.
+> > __rzg2l_cru_write_constant() is called at runtime, with a compile-time
+> > constant offset. The BUILD_BUG_ON() verifies at compile time that the
+> > offset is valid, causing compilation errors if it isn't.
+> > 
+> > __rzg2l_cru_write(), on the other hand, is called when the offset is not
+> > known at compile time, because it's computed dynamically. That's a small
+> > subset of the calls. It needs to check the offset at runtime for
+> > overflows.
+> > 
+> > What do you mean by "won't execute at runtime", and what code do you
+> > think is not needed ?
+> > 
+> > > It was suggested in a previous review.
+> > > 
+> > > I've done some investigation on the above bot issue here.
+> > > Using __always_inline for constant read/write issue seems solved.
+> > > 
+> > > I found this link: https://www.kernel.org/doc/local/inline.html
+> > > 
+> > > But tbh I'm not finding an example into the kernel that use both 
+> > > BUILD_BUG_ON and  __always_inline.
+> > > 
+> > > Laurent what do you think about? Do you have some hints?
+> > > Thanks in advance.
+> > 
+> > Do you mean that the compile-time assertions are caused by
+> > __rzg2l_cru_write_constant() not being inlined ?
+> 
+> Seems yes.
+> Using __always_inline seems to solve the issue reported by the bot test.
+> 
+> > The function could be
+> > marked as __always_inline I suppose. Or the BUILD_BUG_ON() check could
+> > be moved to the rzg2l_cru_write() macro.
+> 
+> Mmm not sure that I completely got this way.
+> 
+> Actually we have:
+> 
+> #define rzg2l_cru_write(cru, offset, value) \
+> 	(__builtin_constant_p(offset) ? \
+> 	 __rzg2l_cru_write_constant(cru, offset, value) : \
+> 	 __rzg2l_cru_write(cru, offset, value))
+> 
+> And BUILD_BUG_ON() can only be user on constant offset.
 
-https://lore.kernel.org/all/20250321010112.3386403-1-leah.rumancik@gmail.co=
-m/T/
+There seems to be quite a few examples of usage of __always_inline with
+BUILD_BUG_ON(), so we can go that way. Otherwise, you could write
+something like (untested)
 
-but I'm waiting on an ACK. Let me do some nagging :)
+#define rzg2l_cru_write(cru, offset, value)				\
+({									\
+	u32 __offset = (offset);					\
+	if (__builtin_constant_p(__offset)) {				\
+		BUILD_BUG_ON(__offset >= RZG2L_CRU_MAX_REG);		\
+		__rzg2l_cru_write_constant(cru, __offset, value);	\
+	} else {							\
+		__rzg2l_cru_write(cru, __offset, value));		\
+	}								\
+})
 
-- leah
+> > > > >  }
+> > > > > 
+> > > > > +static inline u32
+> > > > > +__rzg2l_cru_read_constant(struct rzg2l_cru_dev *cru, u32 offset) {
+> > > > > +	const u16 *regs = cru->info->regs;
+> > > > > +
+> > > > > +	BUILD_BUG_ON(offset >= RZG2L_CRU_MAX_REG);
+> > > > > +
+> > > > > +	return ioread32(cru->base + regs[offset]); 
+> > > > 
+> > > > Do you need this code as the purpose is to test compile time constant and
+> > > > It won't execute at run time?
+> > > > 
+> > > > Not sure, maybe adding an entry with MAX_ID in LUT,
+> > > > that will avoid buffer overflows and you can take out
+> > > > All out of bound array checks?
+> > > > 
+> > > > Cheers,
+> > > > Biju
+> > > > 
+> > > > }
+> > > > > +
+> > > > > +#define rzg2l_cru_write(cru, offset, value) \
+> > > > > +	(__builtin_constant_p(offset) ? \
+> > > > > +	 __rzg2l_cru_write_constant(cru, offset, value) : \
+> > > > > +	 __rzg2l_cru_write(cru, offset, value))
+> > > > > +
+> > > > > +#define rzg2l_cru_read(cru, offset) \
+> > > > > +	(__builtin_constant_p(offset) ? \
+> > > > > +	 __rzg2l_cru_read_constant(cru, offset) : \
+> > > > > +	 __rzg2l_cru_read(cru, offset))
+> > > > > +
+> > > > >  /* Need to hold qlock before calling */  static void return_unused_buffers(struct rzg2l_cru_dev *cru,
+> > > > >  				  enum vb2_buffer_state state)
 
+-- 
+Regards,
 
-
-On Thu, Mar 27, 2025 at 5:50=E2=80=AFAM Naresh Kamboju
-<naresh.kamboju@linaro.org> wrote:
->
-> On Wed, 26 Mar 2025 at 21:15, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.132 release.
-> > There are 197 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 28 Mar 2025 15:43:27 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patc=
-h-6.1.132-rc2.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> Regressions on arm, arm64, mips, powerpc builds failed with gcc-13 and
-> clang the stable-rc 6.1.132-rc1 and 6.1.132-rc2.
->
-> First seen on the 6.1.132-rc1
->  Good: v6.1.131
->  Bad: Linux 6.1.132-rc1 and Linux 6.1.132-rc2
->
-> * arm, build
->   - clang-20-davinci_all_defconfig
->   - clang-nightly-davinci_all_defconfig
->   - gcc-13-davinci_all_defconfig
->   - gcc-8-davinci_all_defconfig
->
-> * arm64, build
->   - gcc-12-lkftconfig-graviton4
->   - gcc-12-lkftconfig-graviton4-kselftest-frag
->   - gcc-12-lkftconfig-graviton4-no-kselftest-frag
->
-> * mips, build
->   - gcc-12-malta_defconfig
->   - gcc-8-malta_defconfig
->
-> * powerpc, build
->   - clang-20-defconfig
->   - clang-20-ppc64e_defconfig
->   - clang-nightly-defconfig
->   - clang-nightly-ppc64e_defconfig
->   - gcc-13-defconfig
->   - gcc-13-ppc64e_defconfig
->   - gcc-13-ppc6xx_defconfig
->   - gcc-8-defconfig
->   - gcc-8-ppc64e_defconfig
->   - gcc-8-ppc6xx_defconfig
->
-> Regression Analysis:
->  - New regression? yes
->  - Reproducibility? Yes
->
-> Build regression: arm arm64 mips powerpc xfs_alloc.c 'mp' undeclared
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> ## Build log
-> fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
-> fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use
-> in this function); did you mean 'tp'?
->  2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
->       |                                                   ^~
->
->
-> ## Source
-> * Kernel version: 6.1.132-rc2
-> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-=
-stable-rc.git
-> * Git sha: f5ad54ef021f6fb63ac97b3dec5efa9cc1a2eb51
-> * Git describe: v6.1.131-198-gf5ad54ef021f
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/
->
-> ## Build
-> * Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1=
-.y/build/v6.1.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-1=
-2-lkftconfig-graviton4-kselftest-frag/log
-> * Build history:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
-graviton4-kselftest-frag/history/
-> * Build details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1=
-.131-198-gf5ad54ef021f/testrun/27785617/suite/build/test/gcc-12-lkftconfig-=
-graviton4-kselftest-frag/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
-wNctsyhQzf1j7dvt6nHemP5/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2urSwNctsyhQzf1j7d=
-vt6nHemP5/config
->
-> ## Steps to reproduce
->  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-12 \
->     --kconfig https://storage.tuxsuite.com/public/linaro/lkft/builds/2urS=
-wNctsyhQzf1j7dvt6nHemP5/config
-> debugkernel dtbs dtbs-legacy headers kernel kselftest modules
->  - tuxmake --runtime podman --target-arch arm --toolchain clang-20
-> --kconfig davinci_all_defconfig LLVM=3D1 LLVM_IAS=3D1
->
->
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+Laurent Pinchart
 
