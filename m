@@ -1,144 +1,189 @@
-Return-Path: <linux-kernel+bounces-579137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCE9A74001
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:13:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EDDA7400C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999631B62E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09461883FC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0DA1DE4D9;
-	Thu, 27 Mar 2025 21:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6FA1DC997;
+	Thu, 27 Mar 2025 21:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kkm2litp"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gP3oo9ty"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224C41CCB21;
-	Thu, 27 Mar 2025 21:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61EB1CAA82;
+	Thu, 27 Mar 2025 21:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743109595; cv=none; b=fARKbSeTJ8/45Ai7mR25GFooVQztkSWusmdY4kCBtWskO60FJ+Ag227n2gd3KtLW32JBOiOBCvDFym/liGH/Gk2Q7vqc/hklLiU1I4DCcjSKb+KiyZIVSSJKaxwNx5JxfcL3xf7IiuPPdutzBgFRoYKBkfX5JCoRuefiDRV8aYo=
+	t=1743109696; cv=none; b=b5JyKJfI6WRRz5lwa5uqpRbVD8/lT9RrqR4awdiOhGLBWgCTKldlC6T39bGc4FLaXRPhQ1U/tEibDCVxydlu8Tgzfc+TQmcVBiLjMSQD9CePk+AB5N1VkXnFMWmEhBDz5M00b4oNwgogTFKJ32/frzI29aITm+j4Jv5rTcztbos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743109595; c=relaxed/simple;
-	bh=GLqglL9v23gJuG69hfxF1A3fwXDbnmKCTJK5LlaQ9fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QEiXXZssRmxGpTgF3jRiQtt6VK6g4Cl8DgLRZ3Dnwn8lq7aNQ5gVlcH9GwTGOK1dam5RSgrNlKtZrUy4xAyParb77+8+sfTgBoXbDclRffJsWr92BYXAeAKli0/IFHqmCXmWL8T6B2uenJ5vcE7MJx3DtbnFQfSKDNJKYey4Tmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kkm2litp; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1743109696; c=relaxed/simple;
+	bh=77EkUVszkmEbzEqLes/Nu+IUfijxLgcQ8T1ZcfYFY7U=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=GnmHrC9HI7o0Hul1wSOlZFwdAgj/1UmSqU2J+LmF4H78IhU7tz4QFQzbz3+9tSiINSPjSqpWlmUdEY4BpTEgc17DxQGLxY8PFZy7PDwBxwB+N1dHmWmnWB6+g+qO5W0SOR74kAD1xdgM+shB53ujx91Rys/cbtV1Zzijb6U7kZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gP3oo9ty; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso11174885e9.0;
-        Thu, 27 Mar 2025 14:06:33 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c5c815f8efso140548885a.2;
+        Thu, 27 Mar 2025 14:08:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743109592; x=1743714392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743109693; x=1743714493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JFrrEKOtsin+8uVvD5v18PtpdZsRPpaDruCArBuJl1k=;
-        b=Kkm2litpaQ0gLSLmjnPKXuOxEHmTgt7X+ucU14TgE+Aw/CmeiSK1s9jAKuDfv3kKBy
-         +gHUaOA5l1MtjuzLB3Lat+OaTOj1p2jWLe0WbWOCPF3up6tb2a6N0bn9hmk93nBy0as5
-         zC+3pWlFwXiS9VxewszNANbqzfCF/Nlnz/Wq50xo0xJQdaNJ16pYsX6Vk8+81l2S+Hrg
-         Y5ejOGGq91ElguZc3MNBuQJEj3qIRmOPnY6o/GBwaAykpi67SeuQrmqlFrqGdyWNtpOz
-         VkUQ9eFajvm5b2GKlbSH+WlZAEQRcAAQiiOFjuH3Z2oqlRr9O86ntGL24G1YCouwM4g4
-         wM+Q==
+        bh=oeu2JB+mx0KaM2uQS9V3X+ku0XSSDucc01lT5oToDO8=;
+        b=gP3oo9ty4TFP+UspnqsJydjriYdfe+LbvqH6E1q9uPQ8v2WlY/+iE6JFfZ4ywHSYdr
+         YmVWg/1Xzv9GnyTCtyjLmdEgQyJ7+cz5ewJyrYeXOwECdSBuatBbh63YWavDyInRns7z
+         GvPXNvJd+4qTZKiwStGkWRZJ15i2GNLmkvkIK3XXfsByrLsqjdOtbQ9jpJ7h6idqlxqF
+         B8G1FId07s7AbjZIVKaBpOfrHHRccq9Bv6iDf1u46Wh6RRun6VZd8j4El5PRLwryjEgT
+         IrkB2AYQXTAZMsAPK/lBdnng5+CbR+hC8h9gL1Q2meNJ9FBAJn70dEhO1PQGNesvvAiV
+         iitA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743109592; x=1743714392;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JFrrEKOtsin+8uVvD5v18PtpdZsRPpaDruCArBuJl1k=;
-        b=dlfpE8CFrAyNmY0xWUZYPgfrlccYh04z7JNTh9Uz4UuNL8JyeXH/qH0AiowhC1xONI
-         6EHbKuA/Q25unW3stsV7Zwaj5pDGxkRBdk9oMwZyRGerHCWzwrbDU2oOxo7O0lHOS32Q
-         VMHkEAYzqi1Jgj9Flp64CxmFv8LzM4Y0p+a3yOqCKYB4yU/oZudQ+52FYe1PxfPa8Zr/
-         MQczIm9DUOSpCYVw+e9tcu/qp1RZSx8UYbzEKqxDRpVDlBNQXqQQ3KrO6ueBg0SnuDqE
-         pCrigiP+6CIFNhxKJUSV5K8H/UocWDRskRpgk1ANg20Z7gAopBt7VTfSMu6aPqkQi5SR
-         fMOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU03O20HeGKVC1/LSTPYV8yjwTjim//txTmSJWlruYwi9K33/fb5F5/F9tV6E+ZnJugywfrQCBoUiqS4TzjwDUF@vger.kernel.org, AJvYcCU8nmgKiFW0WywIIZdXePrafSwJ8rtX6CwOOYkGHAAjAqIPR19LnrEzWf9WZ64E0GiiBurSqto5pVXLVQo=@vger.kernel.org, AJvYcCUAnWhglOdTHw6g0tNmrthtL6Hcqi/u/o/iPiQyRXo2B0Z8oovXGzTi2u++YjnYujcZZWHJZQEOA8TLiBs8@vger.kernel.org, AJvYcCUUxxURu1mJm6KA0o2acp9uVMOg8f1c5qU9mQT83d982Rjf0rC4Rc2a7LnsTS7Wwyl8NUGLXsl7gt0tGw==@vger.kernel.org, AJvYcCUhGUEt0rvairnw0z5niNDLn5Z5SbM4xnr5Z+x4t1UBVNaF2TjmJAE7Rgi9oEM39CwKELRoZFYWRFIoY42Y7QQEmqW2@vger.kernel.org, AJvYcCUp88RW1e3Xfwjp4kRfV7di1O/MnE0yESPwf9M0ZorBHd33ng+qvcdZMCjmYJOvNIn/1ses2dZK1opznE95@vger.kernel.org, AJvYcCV5IgPu43ZaC8mjK5NLpsSuJqfJDnFTBo/Sl/9x+HzTeB5S/aA86u0r6rA6nFByZnGVXSSl/VnTJXMxRw==@vger.kernel.org, AJvYcCVCxjhH5xAGiYUUXrMnUHlZRqQHEZyJ/RDZrSr+Uh+yawD8i5Aua4I0BqqTRtX7r0W2Cqwz/26Xtt+wL3vRog==@vger.kernel.org, AJvYcCVqd5XuAEcnnZgaDhXhCW9P6hpB1mfJoWosJfQHbPuryMzY5z5BDnnSmGrV7QWnqBkhfr1ZQf0c+RBC@vger.kernel.org, AJvY
- cCWSfOWumUpZu2absMG0N6+iQriIERlSoa3vRvUBZOiF3BlWIsyxuZhmAKc7KoqN0JDn5b4=@vger.kernel.org, AJvYcCWnXMjYcYFiXz/Fqshp0EnTFzS/EW33ey+YRXP2xhlSp2HVGrg/XEjyxFU4/5drvgqHviBE@vger.kernel.org, AJvYcCX1wOPJ68qoOL5Ka/LuBbbx5PfJU+1dpMR6uFXsMXbV2xZ1MeIWcfo0Zfz+akrAY6y98X+fmLCY@vger.kernel.org, AJvYcCX35mqW0E735dB7FMYMXjK7nCwXHSJcJm/gf5q2kjDtzkT+3FN+A9Rqq96U0DUH8YE6BdGdQwySXXAz@vger.kernel.org, AJvYcCXFXnwlHh0EcaT8A/cCSIgKg+zpCwTnCb4XpRaWUMbi4XqE/tfkDq6aIS+Roz+oWMHUK09Tny2cQZUna0c=@vger.kernel.org, AJvYcCXMkD5aWcsyREYDPWOxMweObii9/uOsDsi/laVUJzeU0v/iGTAcBf4F/C3q7Fh9dAYtJATe+fzpRl80VTQ=@vger.kernel.org, AJvYcCXgO4iUj6g68aVSmHi+0JU2B4zVRo7os36L4eRs//ciGd1Om5toAsxqIaYO85qpyf/NcLsisgUuRQ9vRdpO@vger.kernel.org, AJvYcCXwesdZbEqz2OBK0NvLd31E2XWE6Xrb7mqlk0+0YUURxxgXfxlJLajXfM8V5oe530nCgKU2NKYOozmtOAlSBdCbZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiSJvo39Wz7u6Ea1UTi+5uZ3ewG2dKwgA1ggl19j4WgW5ECz4J
-	Ea5VEEM0rxLtvW1bAgxcgEGvU7cAUPH/wDrI7meAoYGnm2QEKT+j
-X-Gm-Gg: ASbGncujgRpcj4OijFlrTCTg7ebhGT1gcQz5C4MlqpvYZa3jaabiRrDOpDJfKm3R+61
-	bEbMepDF+m4cwX3NkysWmqCDFpDiEbtzmlpS0deJlhTrPB+a+xunk1XrCBU9ieAVl3WrUYrl8SW
-	pHrz3iPeuLpYicZgKFjV1l3aVvLr9bOgBPd/i/vXxdTout04d2GGJsEKyG4v9e6EYd5WdXUrZrB
-	DV9TZc84aqlWSr5+T6CDdOTOpZ131yM1M4WB+bKNw3gMnRWPDqSz5jlD+2gPG51UJn4Ny0jstLU
-	roHGEk2GWz2nUCq+TwITjTEogSmXbCtWmbL5f2Hq0WyVdSNAhMlSrQsKO1G3zs5akgsZXRINA9s
-	ApFIpuJ4=
-X-Google-Smtp-Source: AGHT+IF3JVFu2jCYFxmmspP8DgX1SusdSEIsW7Os+9zvssuS6MfQig2v8nl6xgtDIG4B7nUqszDWww==
-X-Received: by 2002:a05:600c:4e05:b0:43d:26e3:f2f6 with SMTP id 5b1f17b1804b1-43d84f5e5bcmr60988395e9.5.1743109592161;
-        Thu, 27 Mar 2025 14:06:32 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82dedc2dsm49307315e9.2.2025.03.27.14.06.27
+        d=1e100.net; s=20230601; t=1743109693; x=1743714493;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oeu2JB+mx0KaM2uQS9V3X+ku0XSSDucc01lT5oToDO8=;
+        b=t4zG7fMo+WQCG8JenCweaQ6dCtyV/ABdZ5rlrGjUtlE5oijGi8DFNbDelkqvPnc/7U
+         FR2QnsByPhww5eUTWWESdSpt2iGSsm2Iak9K4npCQPjN2QgOR2w2CfWPAaBr2UeAU8UK
+         +toS65AOlf8rcVPL+SXe3fShWzPo22uIKfTuYac2BkxnCpGPg4jPyiU7pKRXwNW+lVDz
+         qAjf1dcwIjbG5cdkddQZeLUzsyMDKIQKxPTJBIKtYozs1V9DiO3F+/EqEZKzn/5Nspgk
+         R9Ijs35LQCo3y5lIl+N/XxrFqrmuq5vvgf9Al0usIGTHi2bG+53auCJHSGUPsT9mtMu7
+         RGqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI3RXLEQkrn1vVxyClySNkev0eALxmxywtWpkvk37E062nl4sUhinEPVH4CwtVadZN8n8mMu/5@vger.kernel.org, AJvYcCUX3pND8KU6MB2SEqrMMixzWLGKlyUaoaqBMVqRAsHcuWke9NFZ6s3tx5QmFNRzwQI+QA2VULj3+y97oO2i@vger.kernel.org, AJvYcCVsIO08x5k3NH2RQpSUaxLoXxbq+oWKayzc0DBHBE+8fqh5LJeRk3cHN608kAW5GCoMNOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc0VjIhohcR/77w3sJBIMQ6ttRZqAyaxfrLrGszaWaJC3fASnN
+	kJiYDQ1rA4KQJ80CiuQiHiRErdc2E+feCOOLmTJwxuC4hbpFWYTn
+X-Gm-Gg: ASbGncukutCckL10DbZEdCCKhCSOnrlb40IJwQ7qli7uXgvaaMzO+XingGYCwU2ZNGI
+	IDwYVA8k3O6QwdIw7LYNeE4+7MygVsZ80LFX/SbItA3TDHqGpmtc4IIoADd/skabSAJiKQsfdS/
+	E6gMccQoid0pEwAFPK0BJy4kwHWXGPDtOgVXvHhtEB751GfndhBu5ld94GAIbEjau0+Bn/8T6as
+	3hc0o2sYUiu2XR2jrnvpwaeDQPE8j0vm1/3TeprNC3wk1WN0vrDTwCiGK1Gvm19IONmplu3bkkn
+	zVzsECY4Zbw8sbktoIzd4A7FxtJmhP6KxIF4TVJRsa/Tp1ZC+ZnYQj0Z6kamdQqYRa22r7OR7/y
+	gcCjNH7CzqjfW54vT6ML9cQ==
+X-Google-Smtp-Source: AGHT+IGnG+gkYq6LUwDQr86gdBbLjdQ0dJkNas97bDnCLuL3B3wsSnncWxC+52muYTlWqmYhefrvbw==
+X-Received: by 2002:a05:620a:2492:b0:7c5:ad3c:8478 with SMTP id af79cd13be357-7c5ed9f4f9cmr685043085a.16.1743109693366;
+        Thu, 27 Mar 2025 14:08:13 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f76aacf9sm33654685a.54.2025.03.27.14.08.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 14:06:31 -0700 (PDT)
-Date: Thu, 27 Mar 2025 21:06:25 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: guoren@kernel.org
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org,
- torvalds@linux-foundation.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, anup@brainfault.org, atishp@atishpatra.org,
- oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, will@kernel.org,
- mark.rutland@arm.com, brauner@kernel.org, akpm@linux-foundation.org,
- rostedt@goodmis.org, edumazet@google.com, unicorn_wang@outlook.com,
- inochiama@outlook.com, gaohan@iscas.ac.cn, shihua@iscas.ac.cn,
- jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com,
- wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com,
- dsterba@suse.com, mingo@redhat.com, peterz@infradead.org,
- boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn,
- leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com,
- samuel.holland@sifive.com, yongxuan.wang@sifive.com,
- luxu.kernel@bytedance.com, david@redhat.com, ruanjinjie@huawei.com,
- cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn,
- ardb@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, bpf@vger.kernel.org,
- linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, maple-tree@lists.infradead.org,
- linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
- kernel-self with ILP32 ABI
-Message-ID: <20250327210625.7a3021d0@pumpkin>
-In-Reply-To: <20250325121624.523258-1-guoren@kernel.org>
-References: <20250325121624.523258-1-guoren@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Thu, 27 Mar 2025 14:08:12 -0700 (PDT)
+Date: Thu, 27 Mar 2025 17:08:12 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, 
+ netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com, 
+ andrew+netdev@lunn.ch, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ hawk@kernel.org, 
+ john.fastabend@gmail.com, 
+ linux-kernel@vger.kernel.org, 
+ Jiayuan Chen <jiayuan.chen@linux.dev>, 
+ syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, 
+ bpf@vger.kernel.org
+Message-ID: <67e5be3c65de3_10636329488@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250327134122.399874-1-jiayuan.chen@linux.dev>
+References: <20250327134122.399874-1-jiayuan.chen@linux.dev>
+Subject: Re: [PATCH net v1] net: Fix tuntap uninitialized value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025 08:15:41 -0400
-guoren@kernel.org wrote:
-
-> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+Jiayuan Chen wrote:
+> Then tun/tap allocates an skb, it additionally allocates a prepad size
+> (usually equal to NET_SKB_PAD) but leaves it uninitialized.
 > 
-> Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
-> but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
-> for construction to reduce cache & memory footprint (Compared to
-> kernel-lp64-abi, kernel-rv64ilp32-abi decreased the used memory by
-> about 20%, as shown in "free -h" in the following demo.)
-...
+> bpf_xdp_adjust_head() may move skb->data forward, which may lead to an
+> issue.
+> 
+> Since the linear address is likely to be allocated from kmem_cache, it's
+> unlikely to trigger a KMSAN warning. We need some tricks, such as forcing
+> kmem_cache_shrink in __do_kmalloc_node, to reproduce the issue and trigger
+> a KMSAN warning.
+> 
+> Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@google.com/T/
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+>  drivers/net/tun.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index f75f912a0225..111f83668b5e 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -1463,6 +1463,7 @@ static struct sk_buff *tun_alloc_skb(struct tun_file *tfile,
+>  	if (!skb)
+>  		return ERR_PTR(err);
+>  
+> +	memset(skb->data, 0, prepad);
+>  	skb_reserve(skb, prepad);
+>  	skb_put(skb, linear);
+>  	skb->data_len = len - linear;
 
-Why on earth would you want to run a 64bit application on a 32bit kernel.
-IIRC the main justification for 64bit was to get a larger address space.
+Is this specific to the tun device?
 
-Now you might want to compile a 32bit (ILP32) system that actually
-runs in 64bit mode (c/f x32) so that 64bit maths (long long) is
-more efficient - but that is a different issue.
-(I suspect you'd need to change the process switch code to save
-all 64bits of the registers - but maybe not much else??)
+This happens in generic (skb) xdp.
 
-	David
+The stackdump shows a napi poll call stack
+
+    bpf_prog_run_generic_xdp+0x13ff/0x1a30 net/core/dev.c:4782
+    netif_receive_generic_xdp+0x639/0x910 net/core/dev.c:4845
+    do_xdp_generic net/core/dev.c:4904 [inline]
+    __netif_receive_skb_core+0x290f/0x6360 net/core/dev.c:5310
+    __netif_receive_skb_one_core net/core/dev.c:5487 [inline]
+    __netif_receive_skb+0xc8/0x5d0 net/core/dev.c:5603
+    process_backlog+0x45a/0x890 net/core/dev.c:5931
+
+Since this is syzbot, the skb will have come from a tun device,
+seemingly with IFF_NAPI, and maybe IFF_NAPI_FRAGS.
+
+But relevant to bpf_xdp_adjust_head is how the xdp metadata
+was setup with xdp_prepare_buff, which here is called from
+bpf_prog_run_generic_xdp:
+
+        /* The XDP program wants to see the packet starting at the MAC
+         * header.
+         */
+        mac_len = skb->data - skb_mac_header(skb);
+        hard_start = skb->data - skb_headroom(skb);
+
+        /* SKB "head" area always have tailroom for skb_shared_info */
+        frame_sz = (void *)skb_end_pointer(skb) - hard_start;
+        frame_sz += SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+
+        rxqueue = netif_get_rxqueue(skb);
+        xdp_init_buff(xdp, frame_sz, &rxqueue->xdp_rxq);
+        xdp_prepare_buff(xdp, hard_start, skb_headroom(skb) - mac_len,
+                         skb_headlen(skb) + mac_len, true);
+
+> @@ -1621,6 +1622,7 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	buf = (char *)page_address(alloc_frag->page) + alloc_frag->offset;
+> +	memset(buf, 0, pad);
+>  	copied = copy_page_from_iter(alloc_frag->page,
+>  				     alloc_frag->offset + pad,
+>  				     len, from);
+> -- 
+> 2.47.1
+> 
+
+
 
