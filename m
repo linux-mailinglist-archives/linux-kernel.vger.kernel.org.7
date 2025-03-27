@@ -1,240 +1,212 @@
-Return-Path: <linux-kernel+bounces-578759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D70A73615
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:54:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD86A73618
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 758117A7B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31861189D9B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D90217704;
-	Thu, 27 Mar 2025 15:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9B71A0B08;
+	Thu, 27 Mar 2025 15:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVeqBQ7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zS8Gooq0"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25221A08B5;
-	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC9819F120
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743090760; cv=none; b=APfph7SR6CIBubopJ5X582YRIxuGXK/AcoUAbr19jBynXlnxJ6KL8k4FlZjYzQ4av//Mg3586Py0Tbh+cRcvz+YwHRoxhBmJenOhYjxlTkxNLQQfFCSPIjvuTycLqbUjrRcBUl9dILiY7kL3KQ03rpLagDpqPHdnJsdrGojo1Dk=
+	t=1743090806; cv=none; b=F5+C2SBWbsGMGq00x2czk7ZK5Sf8MIUquzedfcvzUmYfOBuIfR8lHX4PhdtoYYJfam0whgp6QTNdmh01TDpy1SdILUPWiibhb6IE0H4nsz5chzyLI+ZGWef3kXMUoLe70ip+D/4gK2UHJKUVXEUKHp0INB3StlWmHslm9ofW7J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743090760; c=relaxed/simple;
-	bh=I35W15s5Rynhg/n2VEFMk+cVf2MEJd14a4MY6yNr4Pk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OugDNXeTITKTX/uexqN6Mndgmlzb6cAjDBoRezCf4+/faGLZZNFL46CtJNEYjULNQN7gPuSGjmNQqRqTXOPL4LbVdqzWbpU8G+Z+pFwSHm0bhyjFhsSeu0sH/6eJGyEpOGMQNI2vfUHriqPbgoIJ+FnMvTlrTx76FJXycSXDa/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVeqBQ7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9573FC4CEFD;
-	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743090759;
-	bh=I35W15s5Rynhg/n2VEFMk+cVf2MEJd14a4MY6yNr4Pk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=GVeqBQ7e91zMZ5/Y+WhmT7JWuMxYc6D1prEr18ewfeEXm52XzQ98n68i+iBkvfN26
-	 PfwInR5PqD5Fyqi1godYbpsc11N87+A/ervbBefCFc3Xcvvt0VuHvWM+svkIeRTrj4
-	 R4ArYjwXM27iVWVYihZzlFMzbiYImq8QyOByJg0YRwpiQOVqNXW+TAdOBu+sODFZPi
-	 STqNs++in7W1DPT8ANQoXZdR1iQ53I0t6TJZrHEfcUdVoKoaYs4ifLgwsMb91BB3a3
-	 FyCmwc7Y2NjNdYpvjjmwb+St5C5LsZ+kgb7mGAu64QwEZm1/YnHtA2RVsEBqVQmhIj
-	 C0CMm+7+m4mlg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CACFC36010;
-	Thu, 27 Mar 2025 15:52:39 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Thu, 27 Mar 2025 16:52:43 +0100
-Subject: [PATCH v3 8/8] arm64: dts: freescale: Add the BOE av123z7m-n17
- variant of the Moduline Display
+	s=arc-20240116; t=1743090806; c=relaxed/simple;
+	bh=aZI0D9GByNS5niy1zG4DskkgaZ8o9N1YGuTSEvk42eE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFRHlD1oC+DO1uTxMfRNYUA1JZZUYAJcRH04IO6HwZgL6BIhbT1p44tBjrg5KwTUA1L3CS0huGwc+FooWI05Do258JRfaiWnRkQ9pPx64bfdd1e8FSpj6c3CE+RIvV5o2+Uqfznj+WpvJFGliX9unkzRrOV+jLWKRGtc2lkh3fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zS8Gooq0; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so7783805e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743090801; x=1743695601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tPWPL7yKTAtHpN1GHn1lwbAF2Bxssj4X5B+0T4l0yZA=;
+        b=zS8Gooq08D4tUgk+wHsCFwNDiCiLYi6fvV33yAcYX5MLip6vsYcqiXWXHu5USx7Tyv
+         xT2o08RNyfDKI8Wc3INXuaHBx113BNTJ1jnY+beZFianwEXdH/Byxv8h/3x0mf/ABZjw
+         H2EXTikR3PwkvheNahDYIanMq4ZggPx2wASppHVm98jGO1S5SgcV4DupkcSFNqsf2Fvt
+         h/5jiBbPrcX7sdvCWOjT0R9mq0s3QsEbunibAiZwNRvazAZm1MF3mjjsRZZp9MpnpBkk
+         ZMzc0bWPFMIp1BGaFIdymvc3LEFMzwRcj3LlMbZvjw4msm78JfaQxNIosHD9sE1vAvZP
+         BbAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743090801; x=1743695601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tPWPL7yKTAtHpN1GHn1lwbAF2Bxssj4X5B+0T4l0yZA=;
+        b=HjLEMzdYVUwPbeCwft4EX11eMXvZSEsN+IkE3uMIUopi/MlbaU4f1ZeiHoMajN3xhF
+         OFUpDXa2RFCVeSHle626mifnU/bDI6JSQQjePAPSGo4GKC1VmLnZICeFIGXzMivnONWE
+         kI/cJncUGKwgycZNx7xHhQ537t7c3U9qjiyT/uqaRKlMp/Dko8NTXcUTRFxwyVpwGrxY
+         l1/iizyWzos6gu0nhb4YX2lsfWdo3+mjbj+qz63Pl7pJ1l5E+CP1zYq4u5C6kFcRFNEQ
+         1YmjC8xOnxCbvHSuYjeFifbRtf9S8MeTc/Uz6+rHeMkKdhdqrs1I2utp4PTaQ6Hxe94r
+         B6uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU93+uioFaQ4ebAXHheBst7tV6998TBro562wGvxy/Jl3uStbG98a17NAi3idAxYqbbaujWD95YMjdyAYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCgYxvihxJ3r/sKVUHaHU2P2dWyPo+X/q+AuaGnwBOgVFxemiS
+	Cy79lu/xiyY9CRjvGtVu8G3cw1F7gzTC9rrZCU3vuOYC0l0RS9x/LqXJLMtIEOU=
+X-Gm-Gg: ASbGncvDpfyMeXA5GvvtEGcR6DzvoOvbOcYg+n2d4TJZGjtfitcXekDGoi9vfGZyM5T
+	Zz9TnRlCbht3jCwjXpFnKGLZfYfqaGSa1SUCGYxcxzOtyyOnDSdq9dtOnQXT/cuDMop8GUVdEmb
+	2bhdbBowMK81AVq4J0wXxRAQktu5Y3WB1j9mDiurmRU3Yx90760HeMdRINNEr9Dv6n92cxYpwzl
+	InqIL4+VdL1ziYT+KXfvBhjs17tYMPDgRMcN6umVruyFjs9ENkgws5LiuerKQ7hEkpRDdzrqBew
+	anABy0kclf8IAOpiBAn06fAGxVRgMPWuV7ZjtLCwKICjzoFPLwRCd1dDkycB1iJbN8ccC7MvPw=
+	=
+X-Google-Smtp-Source: AGHT+IF0rsorn2DDVURJzAnXZcks95g4PPd1N+aY2Afsm9tUg7aUDyfar1m2VXFCygEcTyP952h82g==
+X-Received: by 2002:a05:600c:1e16:b0:43c:f680:5c2e with SMTP id 5b1f17b1804b1-43d8e6c0616mr7183295e9.13.1743090801523;
+        Thu, 27 Mar 2025 08:53:21 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39acf3a9105sm5001550f8f.101.2025.03.27.08.53.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 08:53:19 -0700 (PDT)
+Message-ID: <e7c3ea4a-1103-46ff-aa9a-bc0da3bdf1b2@linaro.org>
+Date: Thu, 27 Mar 2025 15:53:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: qdsp6: q6asm-dai: fix q6asm_dai_compr_set_params
+ error path
+To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org,
+ linux-sound@vger.kernel.org
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ krzysztof.kozlowski@linaro.org, pierre-louis.bossart@linux.dev,
+ vkoul@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com
+References: <20250327154650.337404-1-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250327154650.337404-1-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250327-initial_display-v3-8-4e89ea1676ab@gocontroll.com>
-References: <20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com>
-In-Reply-To: <20250327-initial_display-v3-0-4e89ea1676ab@gocontroll.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743090757; l=3566;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=YMjOUoNCYJh9lEvif2+fl8SJFUv1GDzRxvcU2IcAvY0=;
- b=l8OXEChyuymPHCHLpQr47DGGXr4dN6ex5G3Zrf00MjXETLsbn9aih6VmJnTSr33lqYUyWHQAd
- rqnj7gb9UzQBagPTwWgzNl4tpuuihBOG/Ump39bOHxEF1MXsCqZfnhs
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
-
-From: Maud Spierings <maudspierings@gocontroll.com>
-
-Add the BOE av123z7m-n17 variant of the Moduline Display, this variant
-comes with a 12.3" 1920x720 display.
-
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-
----
-Currently the backlight driver is not available, this will be upstreamed
-in a future patch series. It is a Maxim max25014atg.
----
- ...tx8p-ml81-moduline-display-106-av123z7m-n17.dts | 133 +++++++++++++++++++++
- 1 file changed, 133 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dts b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..129c69598f38566460efb271628c1d1e10eb2a85
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dts
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2025 GOcontroll B.V.
-+ * Author: Maud Spierings <maudspierings@gocontroll.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mp-tx8p-ml81-moduline-display-106.dtsi"
-+
-+/ {
-+	model = "GOcontroll Moduline Display with BOE av123z7m-n17 display";
-+
-+	panel {
-+		compatible = "boe,av123z7m-n17";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_panel>;
-+		enable-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
-+		power-supply = <&reg_3v3_per>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+
-+				panel_in0: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+
-+				panel_in1: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	bridge@2d { /* sn65dsi85 */
-+		compatible = "ti,sn65dsi84";
-+		reg = <0x2d>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lvds_bridge>;
-+		enable-gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
-+		vcc-supply = <&reg_1v8_per>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				dsi_lvds_bridge_in: endpoint {
-+					remote-endpoint = <&mipi_dsi_out>;
-+					data-lanes = <1 2 3 4>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				lvds0_out: endpoint {
-+					remote-endpoint = <&panel_in1>;
-+				};
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+
-+				lvds1_out: endpoint {
-+					remote-endpoint = <&panel_in0>;
-+				};
-+			};
-+		};
-+	};
-+
-+	/* max25014 @ 0x6f */
-+};
-+
-+&lcdif1 {
-+	status = "okay";
-+};
-+
-+&mipi_dsi {
-+	samsung,esc-clock-frequency = <12000000>;
-+	/*
-+	 * burst has to be at least 2x dsi clock that the sn65dsi85 expects
-+	 * display pixelclock * bpp / lanes / 2 = dsi clock
-+	 * 88.000.000 * 24 / 4 / 2 = 264.000.000
-+	 * range gets rounded up to 265.000.000 - 270.000.000
-+	 * 267.500.000 * 2 = 535.000.000
-+	 */
-+	samsung,burst-clock-frequency = <535000000>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			mipi_dsi_out: endpoint {
-+				remote-endpoint = < &dsi_lvds_bridge_in>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl_lvds_bridge: lvdsbridgegrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_TXD2__GPIO4_IO14 /* COM pin 113 */
-+			MX8MP_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_panel: panelgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07 /* COM pin 157 */
-+			MX8MP_DSE_X1
-+			MX8MP_IOMUXC_GPIO1_IO09__GPIO1_IO09 /* COM pin 159 */
-+			MX8MP_DSE_X1
-+		>;
-+	};
-+};
-
--- 
-2.49.0
 
 
+
+On 27/03/2025 15:46, Alexey Klimov wrote:
+> In case of attempts to compress playback something, for instance,
+> when audio routing is not set up correctly, the audio DSP is left in
+> inconsistent state because we are not doing the correct things in
+> the error path of q6asm_dai_compr_set_params().
+> 
+> So, when routing is not set up and compress playback is attempted
+> the following errors are present (simplified log):
+> 
+> q6routing routing: Routing not setup for MultiMedia-1 Session
+> q6asm-dai dais: Stream reg failed ret:-22
+> q6asm-dai dais: ASoC error (-22): at snd_soc_component_compr_set_params()
+> on 17300000.remoteproc:glink-edge:apr:service@7:dais
+> 
+> After setting the correct routing the compress playback will always fail:
+> 
+> q6asm-dai dais: cmd = 0x10db3 returned error = 0x9
+> q6asm-dai dais: DSP returned error[9]
+> q6asm-dai dais: q6asm_open_write failed
+> q6asm-dai dais: ASoC error (-22): at snd_soc_component_compr_set_params()
+> on 17300000.remoteproc:glink-edge:apr:service@7:dais
+> 
+> 0x9 here means "Operation is already processed". The CMD_OPEN here was
+> sent the second time hence DSP responds that it was already done.
+> 
+> Turns out the CMD_CLOSE should be sent after the q6asm_open_write()
+> succeeded but something failed after that, for instance, routing
+> setup.
+> 
+> Fix this by slightly reworking the error path in
+> q6asm_dai_compr_set_params().
+> 
+> Tested on QRB5165 RB5 and SDM845 RB3 boards.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5b39363e54cc ("ASoC: q6asm-dai: prepare set params to accept profile change")
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+
+thanks for the patch,
+
+This is now pretty much inline with what we have in non-compressed patch.
+
+LGTM.
+
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+--srini
+>   sound/soc/qcom/qdsp6/q6asm-dai.c | 19 +++++++++++++------
+>   1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+> index 045100c94352..a400c9a31fea 100644
+> --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
+> +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+> @@ -892,9 +892,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
+>   
+>   		if (ret < 0) {
+>   			dev_err(dev, "q6asm_open_write failed\n");
+> -			q6asm_audio_client_free(prtd->audio_client);
+> -			prtd->audio_client = NULL;
+> -			return ret;
+> +			goto open_err;
+>   		}
+>   	}
+>   
+> @@ -903,7 +901,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
+>   			      prtd->session_id, dir);
+>   	if (ret) {
+>   		dev_err(dev, "Stream reg failed ret:%d\n", ret);
+> -		return ret;
+> +		goto q6_err;
+>   	}
+>   
+>   	ret = __q6asm_dai_compr_set_codec_params(component, stream,
+> @@ -911,7 +909,7 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
+>   						 prtd->stream_id);
+>   	if (ret) {
+>   		dev_err(dev, "codec param setup failed ret:%d\n", ret);
+> -		return ret;
+> +		goto q6_err;
+>   	}
+>   
+>   	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
+> @@ -920,12 +918,21 @@ static int q6asm_dai_compr_set_params(struct snd_soc_component *component,
+>   
+>   	if (ret < 0) {
+>   		dev_err(dev, "Buffer Mapping failed ret:%d\n", ret);
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto q6_err;
+>   	}
+>   
+>   	prtd->state = Q6ASM_STREAM_RUNNING;
+>   
+>   	return 0;
+> +
+> +q6_err:
+> +	q6asm_cmd(prtd->audio_client, prtd->stream_id, CMD_CLOSE);
+> +
+> +open_err:
+> +	q6asm_audio_client_free(prtd->audio_client);
+> +	prtd->audio_client = NULL;
+> +	return ret;
+>   }
+>   
+>   static int q6asm_dai_compr_set_metadata(struct snd_soc_component *component,
 
