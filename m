@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-578868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAC2A73781
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:57:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C721DA73776
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5736A7A2EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACAF17526E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9483921A431;
-	Thu, 27 Mar 2025 16:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371C9218EA1;
+	Thu, 27 Mar 2025 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdIOa/Zy"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tl2kjLTy"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0812E2192EC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2F21CAB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743094636; cv=none; b=sX0kWt3snt7+zYkwdxelyl8Poa9YIWALuq/8t/AwZVEH/1cGpR7qJJ0WnmcwL5IuKfL1NexWUzEw88PxDVtCA1SpGCYIaWfYSFWlQNfP6qfAaF63PxHCR5lCWfS3WHmZJEvJtboMUREZlgqwPci1f2ewLDIbHwVyoK7Fk6VnEjQ=
+	t=1743094631; cv=none; b=tiLpH67ChN1ZWWaw1j9rA8NJ8fnQK5afrxdwCRc6pawOTfUecO2E+uzrn4gdvVJi2DqMYJbu5YuwhKI1b3p4L6YMGhTkeellT+NnaqTmyMQVurjn0+jpsE/BQ1/rdeXb3H7FMWGpPzRapFJouo6Lv6hYW3l+YKQRtCN44FguJ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743094636; c=relaxed/simple;
-	bh=TXeF8ENNskUDGwF3cvjKoqijZfLRyaaJUxKZNZISbrw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ihmjGW/9u+EXJZ+fxYmMwuSvnD4eWD8EZlkhJMjc5fBX/pcbUUIXd+HmSyUw5sQSzr0CEPncUHItEwJcy0NPP5fHvKENKiW1PP03GBAq8wcxeGacg8PtdljcS67tpyCayQwRa4/nzukYpTJISCclXVMs8O+Le7H8XG6whv6zbbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdIOa/Zy; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1743094631; c=relaxed/simple;
+	bh=qj8jPAUQG15kiy/2pnBbudNpRkOrU+khB9NIZvl+qoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQiqXFOU54aynOQ7ZfMFgLYf4953+8YwkkGHVJuA4PfMB96drT7eHoEdfSxPaqR625QCFiKFWZ/H5GB72tcerCW2cPAOB/ylemF4zGeKNkcoWnd19B1N2GqB/NGE9Lmm338FzSxp2eQQgKC+dNZxP5imy04d+5JICIz17n9HshA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tl2kjLTy; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso13739225e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:57:13 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225df540edcso48236995ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743094632; x=1743699432; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mluwDyuart7Fj/8nHrivAiHFnq6wOhPI8aN7mFHwSpU=;
-        b=bdIOa/ZyVvN7XE9qD/TFdW644k1A7Avrc2HqPeLfRTb0MT5Rygzt939L54GWCzK1oU
-         gqbPIAKFbmbz/RRITSIdjzO/V9KkCRj0n0nafJlABPYYK5KkUiRQsza1nU+iPIsZ6KLH
-         W7I0UXOT56wVTuaZ5LYlamy7eO6lRdhHjg7vbWAJCot8DmInGU5YfXG5DfvfKEG6LZ0Z
-         eKHwoo09oLPvjsNGrnZJwdkpxzq28oSD3Yn21LZjwnpACgnkvZak18yKC7ss3iToP9re
-         uyWKVnJV/q67biLOMne4xFLB/ph8gMJ2pc3luYq2rDGgjhqQ/Il6TNTUFM1NSFu6DZEn
-         n8nA==
+        d=linaro.org; s=google; t=1743094628; x=1743699428; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qxgqM8SruWplrfrQ7ieYBgizc+YY6It5QEvSwAgx9mQ=;
+        b=Tl2kjLTyfrEyJMeC7YZTnVaP2dg2mJ3hE09FemMot0wnchu0kSZ8APlDCGEKfuLjEq
+         6/+UvvYYIl3KJV6MTCT5uARqxs5c10IWlgrNL8ygiOGyntqMGw7SEBg7VbMnGT2L7irc
+         0PoLGT1//Ryordx2FHkdCf3Dm3py03ai05jyDTkaX1H1Bp22f3NcWkUafBIVgl64ks5f
+         ecfWdL4Qrqkub1WxvIPod3fldv/kDlLyujOqhVdRFEKxMLxh/fdg6ABoaEpgvUpvDwdP
+         beGI82GFEeShNfiqrcQHvy78swyluiMzI3MCfhyRfAh2ALntoYsjWR6KT4VWFG9dYcrM
+         9tzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743094632; x=1743699432;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mluwDyuart7Fj/8nHrivAiHFnq6wOhPI8aN7mFHwSpU=;
-        b=uDn1xx8T2FZo0dqiw25Yrfkt8Zmp50TRYbGBQU6OflPuWL5O1bMnwkpm6Zdak0a5Y+
-         uiyCtR7lgt7zCO2yzNMhr53YKJPuIQlnfWX7Qs1MVAQaZcLqSCz2DDraa1GnHZiI2Kie
-         E6yJnTGCs4tonhOb22MldrI9l2pd/H8oqygAmTXDg6b9onLmZuR8/A4+PKYwASpfIdlz
-         Av2xrhe00vsnqmKaHv0l8ikfPU9wxU8PX3iyrtJXCsT0RMY6qTvOhmHwQpP1rg4UjHg5
-         70AgXdxKc+3jP5nFpxizwhJJJ5JFFQ9bt/8iXuo0en+zWAX1Uqyxr80ioi5AF4PmQIpl
-         +rfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO96JFbe0UcBg5S7/jP+oPWvRGgiEE5UMxvv+ftOgAJtuJJagxtN0zBkABHpg5VdAoahbr7vMlIHa775o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX/kMl9RbvrkjQeGP+erJ883kWnoSADnVSYmPSPT5wEbhltgdj
-	m+QPbqcP+1T3eZZ6JiRh+6sjSNiudD530NlSjOaq53WkXH1xFvbHa1bWG1LMfus=
-X-Gm-Gg: ASbGncsL1jQvYrEevKjGpJZQ86PVJQivTJXLl1rKi7yOjpEhmlyqNNkDJCSv8C1bGkO
-	BsYCi9yShdaPxPobprsxwnXR/HvkDF8d0Krz3f3VmRB4nZ6M742qWOS4C446+sI387T8w2lLqj4
-	6jiLbw9UG2NcDjZWTzrifgaw4o5X6L5JBFGyZK0N5ZzNFW3VTWEkorpbv+h43i9/kyrzTpL59lv
-	8DV3LuZ45eZrzEWMxGE6ENMLz/e3Hz7+nXToMBtneGFrGm/onBcxMqw0mhDJ5Rr/cN3KmsKxbwX
-	IwkKnLj8VEX3oDvu4MIIauUZ4MH21VeNDgzAq184S6Q2h1YIlUzaio9j
-X-Google-Smtp-Source: AGHT+IHFKLKUDx3bf/Nrud35EUvZz/B+9hO5Z7cPlEtAREYQimYT1rwW5U9Kqesuzw76jBJ90BPzbw==
-X-Received: by 2002:a05:600c:1ca4:b0:43c:e7a7:aea0 with SMTP id 5b1f17b1804b1-43d850937a4mr37060565e9.26.1743094632171;
-        Thu, 27 Mar 2025 09:57:12 -0700 (PDT)
-Received: from localhost ([2a00:23c8:b70a:ae01:9cf7:b69:fc50:980f])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d8fcd78bdsm605275e9.24.2025.03.27.09.57.11
+        d=1e100.net; s=20230601; t=1743094628; x=1743699428;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxgqM8SruWplrfrQ7ieYBgizc+YY6It5QEvSwAgx9mQ=;
+        b=O6gAEkfl6zzvg3etG5glyaPQpF+Fto2CM9d9zwd5LsLGj/SQXuP/fBAeLbqO2ulTKw
+         VDkZDua9rm7go1OCy8MTeyBvRlOUMRFbScTt2xmQPbZNQ2l9hHSY0NdFylbXse5yCCgq
+         j0u+/SwZU0Xm8LhSANCY1UiQVfxn9lTRx4Pn+/fiDMCLDsGb7GjzjEZpHElc/ecF0Kt4
+         gz80epmEEIAzgY8MshoeVXGDiVckp4mut4i8lsZnRbEqEy9dk6gCzMS4Auc+uu5WYFY/
+         gV/kRsedaaXHtwgEZw7I/DgLyn3svUhaht5sBfMOfJRsUMousCI34FIejjtj8QYlD8cQ
+         HOEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdT+YQjnwIfS2Leb6gwP5UVrxehKhjhXP+734UC9hMv2I9UUFtJ7UGnkgtK+mm3Q26Gt+XP5xaark5oGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjZvhGSHL+B4k1DgwhItHarg57khxWXXEv5Cyp5K/LYWNwTqY7
+	LbQSlx46tmy90duofafSAiHGKqHz8ENYkqmlBZWkCrO+OVVvJCINWhj+fkbjhkfMIKbT1h0wSoQ
+	=
+X-Gm-Gg: ASbGncuY3ZYS8byzuXrCRXXx1vBShDC997UZJWk8ih7xi2WOWUE26pAeiDNOSoTJWea
+	7bzdJEkw/6dgEuqgM77liPkqJIaFp6i80j5iTmWDjtHjnDQw7OhOI5YqZoWpIsLb3kVkmgvhFfc
+	PBr9bQCNnmpoAbB9JmLUWb9DCIlrt9FKJknhx1+Hl3iAF1vu4/jGX4ZqO890Vi1py2sHG3IUd70
+	EnOtITNQlANjndtH9DOVTiCDgQ0/ynuQUkmpn0Jx5EyD2/TA1GLewJjuxODvt4g+s93y0eNA8TS
+	mFu3tkyF3ToRC+PZjUgluF+ZchVwxtVU1UUTu+FsPokSPk/ETechU/o=
+X-Google-Smtp-Source: AGHT+IFa8BISCQR44KkE/pAAyn25h9KnAx0099iiC8NJuHQ8ReFXl65yHnBsP9aSbAHzgngKtkgWQw==
+X-Received: by 2002:a05:6a21:9986:b0:1f3:26ae:7792 with SMTP id adf61e73a8af0-1feb1b18caemr902546637.18.1743094628393;
+        Thu, 27 Mar 2025 09:57:08 -0700 (PDT)
+Received: from thinkpad ([120.60.71.118])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93ba1b22bsm101854a12.77.2025.03.27.09.57.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 09:57:11 -0700 (PDT)
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Thu, 27 Mar 2025 16:56:54 +0000
-Subject: [PATCH v3 2/2] arm64: dts: qcom: x1e78100-t14s-oled: add eDP panel
+        Thu, 27 Mar 2025 09:57:07 -0700 (PDT)
+Date: Thu, 27 Mar 2025 22:27:03 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, 
+	bhelgaas@google.com, jingoohan1@gmail.com, thomas.richard@bootlin.com, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v6 1/5] PCI: Introduce generic capability search functions
+Message-ID: <xvu4vmk5gxhf5gkftgiycm5ler3vawesgw6zirw5bhba2kqxzt@sytribs5ir6u>
+References: <20250323164852.430546-1-18255117159@163.com>
+ <20250323164852.430546-2-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-2-45d5f2747398@linaro.org>
-References: <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org>
-In-Reply-To: <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
- Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
- devicetree@vger.kernel.org, 
- Christopher Obbard <christopher.obbard@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1042;
- i=christopher.obbard@linaro.org; h=from:subject:message-id;
- bh=TXeF8ENNskUDGwF3cvjKoqijZfLRyaaJUxKZNZISbrw=;
- b=owEBbQKS/ZANAwAKAWNNxPBocEb4AcsmYgBn5YNmkynQR9xvi5h2y8w6vWoFbs76NuH1fvz3i
- GskKbStz7eJAjMEAAEKAB0WIQTxi9yLbCX5CqI9UXRjTcTwaHBG+AUCZ+WDZgAKCRBjTcTwaHBG
- +IU8D/9yokKbCBHJN+OPAwndry40zJ/POSNc0542KHetrFdYUYQNLJzpj+YwBDOg+ovXAlySkjv
- WqrBOtvZnNHXpYybHU77l230G3Z9owCEFgpi8c2H6TGFv8VVQDzpKMTArj5qDmmOGLwlII20wBS
- hdgH2mhdFyBx9xb6KMy9IasCepzg1DR4jsu1Iu+LLrjIdnmSSjkUyZoCc5aCFwdAaqnNnzh/TqG
- Uc4pFerI8OvSRuc8WpJ6iWi/DdK5nTSQQRERqe6kYQDtUmcga7zdmTXPUCZUWwI6jV//jCnF9W3
- ple//Q4Hk+Jymi3iDcn0vCeC6LY7XC2EzEx5ZO8IGqCG4oDN9AHKvDg3UeyX9uHlm+AnnBTgL2O
- Avcl6rzFfKy5fbORpQ+Yt/vN0jY0ODr3mgUwr7xvAmWufAukixJ37en5GXleNq1OPtGlenM4l9r
- mgRUoFAZ79HgLuSIrww+N1xBaOQL2Yf1BuPiI1IF4LH9rcwh1haHNfOkgk7GEvgbQB9IO93C/Yo
- q4j133sKZhDstXmrqe7Ss37XSFumsIc6Zw4HBnHJnL7LT6GtTESqSzryB6LkGizHUeJ4KGzN6nq
- LpL0l1PWqjsBt++CINaQf1/AZ9PzRUKK4jUPi3tLIqA8Tr/f6vf8J2BcCZ9kr3APVeKpr/xiU2u
- lpGwSoVvsSi1YcQ==
-X-Developer-Key: i=christopher.obbard@linaro.org; a=openpgp;
- fpr=F18BDC8B6C25F90AA23D5174634DC4F0687046F8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250323164852.430546-2-18255117159@163.com>
 
-Add the Samsung ATNA40YK20 eDP panel to the device tree for the
-Snapdragon T14s OLED model.
+On Mon, Mar 24, 2025 at 12:48:48AM +0800, Hans Zhang wrote:
+> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
+> duplicate logic for scanning PCI capability lists. This creates
+> maintenance burdens and risks inconsistencies.
+> 
+> To resolve this:
+> 
+> Add pci_host_bridge_find_*capability() in pci-host-helpers.c, accepting
+> controller-specific read functions and device data as parameters.
+> 
+> This approach:
+> - Centralizes critical PCI capability scanning logic
+> - Allows flexible adaptation to varied hardware access methods
+> - Reduces future maintenance overhead
+> - Aligns with kernel code reuse best practices
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+> Changes since v5:
+> https://lore.kernel.org/linux-pci/20250321163803.391056-2-18255117159@163.com
+> 
+> - If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
+>   the kernel's .text section even if it's known already at compile time
+>   that they're never going to be used (e.g. on x86).
+> 
+> - Move the API for find capabilitys to a new file called
+>   pci-host-helpers.c.
+> 
+> Changes since v4:
+> https://lore.kernel.org/linux-pci/20250321101710.371480-2-18255117159@163.com
+> 
+> - Resolved [v4 1/4] compilation warning.
+> - The patch commit message were modified.
+> ---
+>  drivers/pci/controller/Kconfig            | 17 ++++
+>  drivers/pci/controller/Makefile           |  1 +
+>  drivers/pci/controller/pci-host-helpers.c | 98 +++++++++++++++++++++++
+>  drivers/pci/pci.h                         |  7 ++
+>  4 files changed, 123 insertions(+)
+>  create mode 100644 drivers/pci/controller/pci-host-helpers.c
+> 
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index 9800b7681054..0020a892a55b 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -132,6 +132,23 @@ config PCI_HOST_GENERIC
+>  	  Say Y here if you want to support a simple generic PCI host
+>  	  controller, such as the one emulated by kvmtool.
+>  
+> +config PCI_HOST_HELPERS
+> +	bool
+> +	prompt "PCI Host Controller Helper Functions" if EXPERT
 
-Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+User is not required to select this Kconfig option so that his driver can build.
+Please make this symbol invisible to user and make it selected by the required
+controller drivers only.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-index be65fafafa736a0401a5872c40f69cb20cfbbd90..9a5197dcb2651c22f89e98cf523682bff17e22c3 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-@@ -10,3 +10,11 @@ / {
- 	compatible = "lenovo,thinkpad-t14s-oled", "lenovo,thinkpad-t14s",
- 		     "qcom,x1e78100", "qcom,x1e80100";
- };
-+
-+&panel {
-+	compatible = "samsung,atna40yk20", "samsung,atna33xc20";
-+	enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&edp_bl_en>, <&edp_hpd_n_default>;
-+	pinctrl-names = "default";
-+};
+- Mani
 
 -- 
-2.49.0
-
+மணிவண்ணன் சதாசிவம்
 
