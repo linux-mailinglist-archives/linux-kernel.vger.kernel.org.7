@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-578134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8D5A72B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:16:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA99A72B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4366178D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629DB18891F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60B4200114;
-	Thu, 27 Mar 2025 08:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61516204691;
+	Thu, 27 Mar 2025 08:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kN80WkkY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7/NNwFk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F47E1FFC48;
-	Thu, 27 Mar 2025 08:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BFF2045AC;
+	Thu, 27 Mar 2025 08:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743063323; cv=none; b=COVbxFSm4Vqy8Ltixax35pwHD0LMRQmdMhM1bo6kkKPRksTI7K+UwKpJv5rf1aK49YMglfxPB4+IF88zYJ4YipmNgdYo4vTqpU8ZIHYLWy0zAdBMeR2b++6eJv7IZbZX2LPpKjCAepXlNmGYaYXyknsY/pRVTW22urcyA0HXXOA=
+	t=1743063507; cv=none; b=WaysRs1VKXnYNia9uL4p28GLtv6n6b5nxFVQDR40gut7s+bOq0HobXa0FYV2UWrQO53LDIvPlVM9TTK7vVkSwilqi+N/Q7FAMmVI8LwHjPxiIV6IRAL/Ff5796bs4Hs/ezUFEZh5c+VxnJAFksNgZADiY1EGnMW1Jn+Xj3z0leQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743063323; c=relaxed/simple;
-	bh=9PgcpZ/esO8INWaHTNIYzHKUcxhITaDwP+ZHht7YxcM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l54V0LNM3pOmAkjOxQTkPeXdN62DvSFCHq7VmZkXguTj/FacDw2fV/ymYHxUp5d+vku4sXm/4e0Tdp/fwgZWdwy66Ip7LgOlupTFi/Ja7Q0NbeLm1ewmo3q1m7uGxI67IwLsedB6rna4mM2Ai7XPDxlmCkD2jNyC2pG04noRqsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kN80WkkY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 217D4C4AF09;
-	Thu, 27 Mar 2025 08:15:22 +0000 (UTC)
+	s=arc-20240116; t=1743063507; c=relaxed/simple;
+	bh=jAZ1aKuhdSPivDH8Se4rgDcAqAGbxcmhAiCOummgWF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfE5lmP8QOF5UMoZJNT3EYkhgxCVC7KY96ibuZ95dFKdFjF6dYUq9zjtaHX7MBu29H0PTG24GfLz0ovaE39r8iAMbkWPjrDArxH1Q9AoEtz03bA+BX7pedwRYlLAZ4zup4+TLrAMTtFk5priwza8095Eey424sSLeL5dnvgdVqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7/NNwFk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D72FC4CEDD;
+	Thu, 27 Mar 2025 08:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743063322;
-	bh=9PgcpZ/esO8INWaHTNIYzHKUcxhITaDwP+ZHht7YxcM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kN80WkkYt4/TjO/Zu1shRNEzCG0QNS7grNgvpXUv+HxUXqD6UK97w9H6EWT2DCgTG
-	 cs9XKSW20hQGZydiUIsxe844jcUKkAPBfvKnVt+HAjlzUgsdvaLF8/KiYeypC9dBjJ
-	 hrs3VWO4pejTqeZweR1qBlzT3qG7B14b38rFngUwdmvFTLhNjfY+179AA2vsZ2CRXw
-	 L036VSY0TMHyWUs0A96rpXhdMrW3GzGdSKk7Hjkm2sa2Rrj+zwZi+1Guyy9RpsyShX
-	 jXuHnNm/w6wFLZTr+yxOwKs6C+Y7m4okQwsb2TVTIiKccIeZBuS5iktMf6dRR5YTPA
-	 u3M9LRVCdhqRw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bee1cb370so6949591fa.1;
-        Thu, 27 Mar 2025 01:15:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWbmuOJbuN8bOe48mP9RDZ5lKh6IMg6ESaL/fj8CB9cqBMXd9j6CuuuFuH9McKc0ZR8dl+cZo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPKqOOuOmUkEvc6N4TjAftwxCZKvBb4g4rpf5jvfdTyEaNokEl
-	MHW543BcG+QNVxLUa8MGj5M/czxZED7bDDOcqzpMs/9VFieL3mlRy5Tg6TNTA7L3WebIYnD6O98
-	/jUTWMzwhQ/Auy58g7t2FDRpLMbk=
-X-Google-Smtp-Source: AGHT+IGkw8DaYd4Eu5NEbusC5ONevkWWyvGlPYa9uF267c64a1SDfB9oFxUUIQo+/5FzHdRWEcPrx38Io9KtoibvkTU=
-X-Received: by 2002:a05:651c:388:b0:30b:f15f:1c02 with SMTP id
- 38308e7fff4ca-30dc5decb2fmr9982021fa.18.1743063320450; Thu, 27 Mar 2025
- 01:15:20 -0700 (PDT)
+	s=k20201202; t=1743063507;
+	bh=jAZ1aKuhdSPivDH8Se4rgDcAqAGbxcmhAiCOummgWF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7/NNwFk+7OT5vU/PYfWPBuoLXygjli9p5Bl8O/9+RFzdRsfdqosm5h5t4ecxubqG
+	 tID34AUl1elZh8H43WnUFb2QSZJJrtDIPxgi+KEzwaYXFD4BW6i+mGt4WeLUvv2SBu
+	 SJbN5nS0DZp2ah3y7bOVWPxNzsHuJC7KRtIOzfX8o6AU7CENuNItF4F7Etw08lOg7V
+	 aAYVkK0UzuhvJsBrKk0z2XMY3DmV1uPhOiLAuB5NY08tHs+G0Lv5fVqZGG6tD4EKpu
+	 izUfiKe2qgC8qKUO7Yp4/hAHdbe+kC30gL6RmRYVrrzIydAtYu+8aQKzUV3IuHXQIk
+	 OhCiQhbqN28Mg==
+Date: Thu, 27 Mar 2025 09:18:23 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Marc Gonzalez <mgonzalez@freebox.fr>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Arnaud Vrac <avrac@freebox.fr>, 
+	Sayali Lokhande <quic_sayalil@quicinc.com>, Xin Liu <quic_liuxin@quicinc.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 01/12] dt-bindings: soc: qcom,rpmh-rsc: Limit
+ power-domains requirement
+Message-ID: <20250327-noisy-dogfish-of-advertising-69bb05@krzk-bin>
+References: <20250327-topic-more_dt_bindings_fixes-v2-0-b763d958545f@oss.qualcomm.com>
+ <20250327-topic-more_dt_bindings_fixes-v2-1-b763d958545f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326200918.125743-1-ebiggers@kernel.org>
-In-Reply-To: <20250326200918.125743-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 27 Mar 2025 09:15:09 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHCJQ4-KAPpWFA-rqjogbebUP8Y=NKrdEB1ZmSbKG3bdg@mail.gmail.com>
-X-Gm-Features: AQ5f1JrIWn7OOFzH7s-batV_zW2_biAisG1z_ayEXTgeejni4X1t4_knp6dOK9A
-Message-ID: <CAMj1kXHCJQ4-KAPpWFA-rqjogbebUP8Y=NKrdEB1ZmSbKG3bdg@mail.gmail.com>
-Subject: Re: [PATCH] arm64/crc-t10dif: fix use of out-of-scope array in crc_t10dif_arch()
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	stable@vger.kernel.org, David Binderman <dcb314@hotmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250327-topic-more_dt_bindings_fixes-v2-1-b763d958545f@oss.qualcomm.com>
 
-On Wed, 26 Mar 2025 at 21:09, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Fix a silly bug where an array was used outside of its scope.
->
+On Thu, Mar 27, 2025 at 02:47:03AM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Certain platforms (such as Chrome SDM845 and SC7180 with a TF-A running
+> as secure firmware) do not have a OSI-mode capable PSCI implementation.
+> 
+> That in turn means the PSCI-associated power domain which represents the
+> system's power state can't provide enough feedback to the RSC device.
+> 
+> Don't require power-domains on platforms where this may be the case.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../bindings/soc/qcom/qcom,rpmh-rsc.yaml           | 24 ++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
 
-Yeah - mea culpa.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-And the fact that we exit with a tail call means buf[] may be
-deallocated by the time crc_t10dif_generic() refers to it - I'm
-surprised this didn't already break in testing, but I suppose no tail
-call is issued for other reasons.
+Best regards,
+Krzysztof
+
 
