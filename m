@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-578260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55132A72D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:07:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB5DA72D73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E4E3AFED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4CF188ED33
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8C120E6E3;
-	Thu, 27 Mar 2025 10:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C015020E709;
+	Thu, 27 Mar 2025 10:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZXa4fS2M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJSCEIfE"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFB920E00F;
-	Thu, 27 Mar 2025 10:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F35320DD6D;
+	Thu, 27 Mar 2025 10:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743070005; cv=none; b=II+RWmcHhwgfDrhIwRA8Q6ddQRH2v/MZg+SGRwUEJR5WRzfA775Ptjq8CJkn/O38YZZaUcbByVgqIUi04p/9Iz/a2y3HvGlih4Eg4JV7jgkSlExMP9S/R0zBejCxOcO1NI9gxVS5l+i88lQ+CgeZqCcqGBdiXbDsatVktNlmgug=
+	t=1743070114; cv=none; b=m7lamWdrtX92skpJV0/lRUA0nl6ECuLvjffN685dJbSfBSqGLpTLaLKvAAqorBszi64G1WsVZJ5HrmEbLHZxqcNuVFWquSjXpR9GvCgXKUdIMH+mzY1fhSgZNpDYJkFnU+bHVZDSsUa/sf0h5PKfoHW1a8yb3BOS3ey+Q4TZ5uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743070005; c=relaxed/simple;
-	bh=WF3Fld+lGvupAXqi63L7DLt2+LWPf+rJb6n8QFnRLrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASku/cZGXDUW0iQ79/abLOtPmZys49VljAjhIw8CDZEET1oW84Gva5dGyWy3PDzZ5V/YGm5FvStT/I2UxJTtbZ8tbzsSE/t1LPSRDZk4SVdfQn0ExjIxJSi1Egehg8GnqmOplTJ5c5+Ucg/RPgrVbWcrXu2AQHRr9k8AAYuloZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZXa4fS2M; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743070004; x=1774606004;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WF3Fld+lGvupAXqi63L7DLt2+LWPf+rJb6n8QFnRLrc=;
-  b=ZXa4fS2M+Wa2UrklzNSSHgMVkLQYAr/ruZpPPhrw+OQR45uIE6voxDMk
-   9Uqfw+vp5I6rXh64Qc9za4sAs727oLSeKJEAkYtvBvMS4BU1DD/vO16AO
-   +BkuEt4wQ7JDO0R6Dlw6D2ZjadxYarlly97sw0aqC2K+GIHiDZlcL2VrG
-   dtI8GcdBKES78gHIeP7uE3fMDWOkWVCacDPEOL5dwKPvBWPw9yISxVq8f
-   YzHasVKUBokb3OSX4Zdmnul7UIuYvGaD69DALsif5UvW51b2EpUG4jQNS
-   n32T5M0m+IrWLUX0ErQD2v7H/Hn8fe54tvR8/qx5MEkPdBeaPuQ/9QHA7
-   A==;
-X-CSE-ConnectionGUID: AqEIzt1ETya9qY5kh3vg+g==
-X-CSE-MsgGUID: vLKKLZ84T42LkyTqco8Cuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="61786916"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="61786916"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:06:43 -0700
-X-CSE-ConnectionGUID: F/y7YVltS62i2PrHscdY8A==
-X-CSE-MsgGUID: 47YQatJ4R1uk9aZMo2zfMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="125609989"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:06:40 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 142A711F99F;
-	Thu, 27 Mar 2025 12:06:37 +0200 (EET)
-Date: Thu, 27 Mar 2025 10:06:37 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: kieran.bingham@ideasonboard.com, Shravan.Chippa@microchip.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Julien Massot <julien.massot@collabora.com>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Mikhail Rudenko <mike.rudenko@gmail.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Luis Garcia <git@luigi311.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] media: i2c: imx334: Enable runtime PM before
- sub-device registration
-Message-ID: <Z-UjLSsATevtLT2k@kekkonen.localdomain>
-References: <20250310071751.151382-1-tarang.raval@siliconsignals.io>
- <20250310071751.151382-7-tarang.raval@siliconsignals.io>
+	s=arc-20240116; t=1743070114; c=relaxed/simple;
+	bh=kGOiF7Kdzqr09ZSlwoEaSoMgDnnbDbf/Sl9R/vGqW1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KovtC6ugOBl8v72PT1V1oUiz9ZIL+TCT/FQUR8jBxtBdfj9qOO15a+/Mt5VOind7sd1JoAgIR8I8UooxQGum1uQDZUONOtVgZd0l5UOXond586YYxAXo9iPd3Jf7ym+HMt+CP2GeGKZ7CFI5Jj5LnDvRluKxB3ZBEpv6wxh+rQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJSCEIfE; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3912c09be7dso405516f8f.1;
+        Thu, 27 Mar 2025 03:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743070111; x=1743674911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nM1sZ0NoIXmTU8K4jfk38nEGpUUVD3E4cfdS1FIxod0=;
+        b=JJSCEIfEcXG4IC9ZhbBy/CBfkidQQQD0t1GgnNXQRgnnAtk1KsKgrL0i1ATJeNlHOM
+         k5zj9Bs6qk0h98PSAY9zttGNR6Crs5sX8DekT0TfiHM5+sy6iaixjwgUz96Dnqd77M38
+         +bwn05X83bnKQrIQX2JKt7rIY11hLdHKoYcGkPxbXIALhCXJv9xcZ194vUq312UE74CV
+         djUVCf0bXsM3npD+ZePJjEmxAW0xLTViROz3FeFsplMhR7qDaKnVbSzBIVFEqSxOeoXw
+         ODykgmkqkqX3qA8Sf8iyig3a4/PNBAEx8Km1CUjNxOmheDWCn9rTTJZezd2d8bddcl0Q
+         tDPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743070111; x=1743674911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nM1sZ0NoIXmTU8K4jfk38nEGpUUVD3E4cfdS1FIxod0=;
+        b=EwRc8fgsesz3SYzV+nADhULA2nuqba3OEB9tkRoDrSJ/JUtiA2o2CtmOxiQU1Uy3QN
+         cfnqBHHluCVjs+OfTRni1/uBLzYg5oI3EPyGB7p+s4oUgWKeiNSBXqx22qPGzxIxpj2V
+         RlDH6q3KqdnYTV7+6EdY6/vj8wVzrCBhbYdbgxQuSQCQxgaPjW3Uhu5KzemyCJgvg5Dc
+         D3wmA8tcfaosLHtNWvWG5bxRMvEZuaQffdVG4N/Pq9PiM2fQmu2mwFDGODANWGL756cb
+         dsj+dg/Ok+nC7DOY7EVGT+m086Nx9w0Ec480XC6+b+2RivXQArn3TXOOxHLo9jdH4vDb
+         OXQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtWitYNV2e2QY9yAG38spoJjqfi552WTRw9lIAb0XpGKr8mYPXfdRQqG3XNKsGalxO0ww=@vger.kernel.org, AJvYcCWa3ygB/fydFlLpuWw2LWJsFTazfsrEl879lRghQDu2TQ/ccOHKjh2PF6Ad7GgcU/s+dLumjOORfOCRjcBD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMU4wZV1JsfwKpCoovg3lzcJnPtzqWridMOsTbP+InAfLvEMs6
+	V1zHuGXDckrJ+zgw+nIeD1TgfyWpldynEQznJ25addy4LnFz9376jgA/1KvziOU=
+X-Gm-Gg: ASbGnctsxEQB7WBZvMxiFFTcDO5M+LA0lh9lrfPmqXVQAnqtCDqIjr89BfTCMIeuBmQ
+	bUHTxeeykq/FxrByasIGqr9qW9gqrOpXWbchWikSeaixWn7z2ZZ8t/2DcrvRq91xK2i/IgB0vpE
+	1GM4R2gaw45viD46P4dNuOvg2cgS0MkqXIdAApjKW1fgyhTd/okSzUHx86JYYKTM01EC8QgK4bR
+	vUxn5EEoCExa/3+/iLfR7VCrmECLCiik6YvZou6dtI2bhDJYNEdkkHfPqEcA3xpeyhGWRhqFiSp
+	4Hiase/Tpn1tRXbn4ewP9qVoBPbXRTOFDxgrpi23yOXwq4x2Ot/O6q8ZUb3UpuIZvZkvENTv294
+	=
+X-Google-Smtp-Source: AGHT+IFwkIcNiFv7KGqFfNNkvJNpxPHOHo5FlCVKImXKzz1I4N/bdJ/AV1z2pTR1Q2AMb4Vnm+ORCg==
+X-Received: by 2002:a05:6000:2a2:b0:390:d6b0:b89 with SMTP id ffacd0b85a97d-39ad1783fa5mr2336879f8f.50.1743070110646;
+        Thu, 27 Mar 2025 03:08:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:f41:90e5:5f20:8d7c:3c00:5765:53ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a6326sm19000288f8f.29.2025.03.27.03.08.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 03:08:30 -0700 (PDT)
+From: Mateusz Bieganski <bieganski.gm@gmail.com>
+To: 
+Cc: bieganski.gm@gmail.com,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [LIBRARY] (libbpf)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] libbpf: fix multi-uprobe attach not working with dynamic symbols
+Date: Thu, 27 Mar 2025 11:07:33 +0100
+Message-Id: <20250327100733.27881-1-bieganski.gm@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310071751.151382-7-tarang.raval@siliconsignals.io>
+Content-Transfer-Encoding: 8bit
 
-Hi Tarang,
+ENOENT is incorrectly propagated to caller, if requested symbol is
+present in dynamic linker symbol table and not present in symbol table.
 
-On Mon, Mar 10, 2025 at 12:47:48PM +0530, Tarang Raval wrote:
-> Runtime PM is fully initialized before calling
-> v4l2_async_register_subdev_sensor(). Moving the runtime PM initialization
-> earlier prevents potential access to an uninitialized or powered-down device.
-> 
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->  drivers/media/i2c/imx334.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> index ffa39bb317f7..8964d60324e2 100644
-> --- a/drivers/media/i2c/imx334.c
-> +++ b/drivers/media/i2c/imx334.c
-> @@ -1295,6 +1295,9 @@ static int imx334_probe(struct i2c_client *client)
->  		goto error_handler_free;
->  	}
->  
-> +	pm_runtime_set_active(imx334->dev);
-> +	pm_runtime_enable(imx334->dev);
-> +
->  	ret = v4l2_async_register_subdev_sensor(&imx334->sd);
->  	if (ret < 0) {
->  		dev_err(imx334->dev,
-> @@ -1302,8 +1305,6 @@ static int imx334_probe(struct i2c_client *client)
->  		goto error_media_entity;
->  	}
->  
-> -	pm_runtime_set_active(imx334->dev);
-> -	pm_runtime_enable(imx334->dev);
+Signed-off-by: Mateusz Bieganski <bieganski.gm@gmail.com>
+---
+ tools/lib/bpf/elf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Please also change error handling accordingly.
-
-Btw. the remove function calls pm_runtime_suspended() that does nothing
-(use pm_runtime_set_suspended() instead). Could you add a patch to fix it?
-
->  	pm_runtime_idle(imx334->dev);
->  
->  	return 0;
-
+diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
+index 823f83ad819c..41839ef5bc97 100644
+--- a/tools/lib/bpf/elf.c
++++ b/tools/lib/bpf/elf.c
+@@ -439,8 +439,10 @@ int elf_resolve_syms_offsets(const char *binary_path, int cnt,
+ 		struct elf_sym *sym;
+ 
+ 		err = elf_sym_iter_new(&iter, elf_fd.elf, binary_path, sh_types[i], st_type);
+-		if (err == -ENOENT)
++		if (err == -ENOENT) {
++			err = 0;
+ 			continue;
++		}
+ 		if (err)
+ 			goto out;
+ 
 -- 
-Regards,
+2.39.5
 
-Sakari Ailus
 
