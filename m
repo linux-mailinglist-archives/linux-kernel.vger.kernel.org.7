@@ -1,142 +1,92 @@
-Return-Path: <linux-kernel+bounces-577931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794EDA728A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 03:09:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4821A728C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 03:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB71176267
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 02:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6CC3BDB24
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 02:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D437E105;
-	Thu, 27 Mar 2025 02:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="d72qPCjL"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513AC83CC7;
+	Thu, 27 Mar 2025 02:21:19 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98CF40849
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 02:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DF2664C6;
+	Thu, 27 Mar 2025 02:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743041355; cv=none; b=bnH4cj0ZY2MhJ35wdSra9QkVGGfbSTwZ48GWTp43ios5lcfamChx9jGxx4G0aXk03NwwL680pN7u1zj6BO45f7fKeRhcwNtgFvBXnlRfeyvIlKIp4EUtLjFfHIa4yA6eonU2YC9S1qqVkZkGdrOAJhCE+2eG9nMw0t2BX8bZmwA=
+	t=1743042079; cv=none; b=dQTSZOeINuv9bjT9Gp5myd1Ob75Ow7F0aVzt2b0FiolCs9s5WYOsp/eunopJjr8SRS17XYR6GEbRwqCsYCO6EY6AzcXgv63uuM9eLv5/p5AMYJWn8ROCS+h/IBoMl6dBhpU3+zTNFtu4uXqpbKOiY3BpG/M5pVGFJvVjiWWp2Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743041355; c=relaxed/simple;
-	bh=5spy1yKHVXpEg3P9hBw5222af7PjVTx5S03lVn/BFcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIUc3IoFU3Ea+DtCkr52SxBum1N3axcH0Wor2yuvll7TweT8tUXBWC7SO6uk51Dx5Mtyznvz5kiM8uZDL4D07MXgpcfiIup+n2JriGVLcf9WLu+lfs6T3psHCfPPqfgY1oHNPLR++HNb19Lu5CiK6OKVKTwU43tWll+DdIwI1Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=d72qPCjL; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c542ffec37so56610985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 19:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1743041353; x=1743646153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=79cx+8ACjWKrZ89232rtiJEaOIGqZ26RyTWzZJhy7rQ=;
-        b=d72qPCjLXFg2ujvQP06HaAQ35FvR0/ewvXDWnrEBS/+4q3UDIvnftbcSJxI37Q821r
-         Zdys61KDWeIYIzhIu8CRfwY49coWuRiQA+5cgXQ6KgPvvMGwWsagvwByPgsQfq9pvhYq
-         ZpL4w2tYaVIXn4Ui9wcD9NFE1hDPTbyHSYzcdLfKkisW5PDrvImO3p2/0NLhljYrmSK0
-         o48ld+BkRNJEmYkdfCHay3G4utW6HpnjBRp1X8DQHZVolLv3Ww9KAvv+PDsb5WDhQViM
-         8OyNwysFWyb006TOAfSfryGbzdYGRBdKJRj0COyFBmnOLb7lASrCmIZwe1YXRdeqiL+/
-         rzBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743041353; x=1743646153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=79cx+8ACjWKrZ89232rtiJEaOIGqZ26RyTWzZJhy7rQ=;
-        b=pnWNfLvuqZjlbhk271VgW+yYyg97NokpHLW8H9k4fBDnnEJtWaE1klyO5gLwb5DXqI
-         oKiMQElEzNGeIKZq13+nGaw8nbLVt6+d7kC/QZO/wjbox9X2KNdP4ILrCG53B5doOcDU
-         BxQYzApeQVzu844/dgZJ+sT23Ovpc02eZl3tF+s5U598UhLX0zeflO3x6gwnbCM3Krat
-         e4bBwsOrOvt29081WtaGz2b6nJqGV+jV3fDvgu9KUPRKdA6EeMDzjvq8mYajJSlrwYpz
-         C29QV/9OPN5M6uedtA/CWNWq/AohPlI74Rr3cMpqvBGhhca8AHwIDkRp4F+65PUfXVcw
-         JExA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0NCnMYCBV0AJxbp7QEc+/ZULJyFnzZFqFraQLZ2EvyFd+SkuhwgbNalU/on9zi2644bA2mGwk8TzGqYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVCduL2CXRqVaiPyLoKo0/8IjTcUcybX7aQ/OVwT3GJOURTrxV
-	EKLEch+J9SHH44yCk2+DgFipWwWEC4yOQKE7Jq3Bbv2PYGKdfmmCqqM8uAm/yQ==
-X-Gm-Gg: ASbGncunWwnIM/UNGwpoMTJUvdvTD6lv9Q+A+5xlJDySzwYQK9hjI00O9X3+BqSjx/l
-	CePMPJc2N8b9243fdi5qZdnpCh4pItRvMPNxsSVq+MfOqAd0PF2Xeq6URF/4D31LJCAXg7OML59
-	BqegswmL6/6WGlM3HYGyjy4mob5xr0vIANnnko2Nt9YSe7BkgCbnzpHKwv1mZKvCj1Pwsg6AdYb
-	0i6Ngd1L511oyt6muC2roa0FR6BU9kSXhPtAJtgwBtIkCvM9oBSGeNbvcelaDBkAt7SwyC9Q+ye
-	EXwKA0UlejaRkacYhUtqVqNwCNCPj8Yb0fw+OI3hHXjc/SbZWayOtn9E
-X-Google-Smtp-Source: AGHT+IFnqxtiuuABbBZmtaPkF+aX7XG7GD0zxD8mthtjaohOMNrpHGKcsX6ZEzPbik1dgKeWFmUp+Q==
-X-Received: by 2002:a05:620a:1a28:b0:7c5:47d3:10c2 with SMTP id af79cd13be357-7c5eda81867mr304509085a.52.1743041352647;
-        Wed, 26 Mar 2025 19:09:12 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::419f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92cfe65sm835006885a.28.2025.03.26.19.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 19:09:12 -0700 (PDT)
-Date: Wed, 26 Mar 2025 22:09:09 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] usb: ehci-fsl: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <1e82761e-8554-4168-8feb-561abbe49f7e@rowland.harvard.edu>
-References: <Z-R9BcnSzrRv5FX_@kspp>
+	s=arc-20240116; t=1743042079; c=relaxed/simple;
+	bh=t3d4FIUWGHItNNs3ti+ImF4oUMn5pF1neCbLNlVx5GY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VAnHHA1v2XweGO1tcH672LE1ubd6QRpMPwHkehSiCyI4uqi7CGCaIq0rZwPbaTV4OZ6sgBmtJWhkH6yrTMeGUCR1h/soBCr56M85EFAxrv9i8V7I9IxKra/sx9wjRQwID8uuedxo/nDlFpFMMFISLRFQdcV1j9/6v3hxNioA7Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAB3rgYStuRnOCYaAg--.28374S2;
+	Thu, 27 Mar 2025 10:21:06 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: shuah@kernel.org,
+	brauner@kernel.org,
+	amir73il@gmail.com
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] selftests/filesystems: remove duplicate sys/types.h header
+Date: Thu, 27 Mar 2025 10:13:01 +0800
+Message-Id: <20250327021301.1596533-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-R9BcnSzrRv5FX_@kspp>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB3rgYStuRnOCYaAg--.28374S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrGrWDtF18uF15ur4DXF13Arb_yoWxXwb_A3
+	y7Arn7ZrWDAFyqy3WfX3Z09F1kCw43Wr4rXF45uF13tF1UJFWDWFs8Wr1qv3WYg398Kry3
+	Za1kWrW3Wr15GjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kK
+	e7AKxVWUAVWUtwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUqfO7UUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Wed, Mar 26, 2025 at 04:17:41PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Move the conflicting declaration to the end of the structure. Notice
-> that `struct ehci_hcd` is a flexible structure --a structure that
-> contains a flexible-array member.
-> 
-> Fix the following warning:
-> 
-> drivers/usb/host/ehci-fsl.c:414:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/usb/host/ehci-fsl.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-> index 26f13278d4d6..c720d55f4982 100644
-> --- a/drivers/usb/host/ehci-fsl.c
-> +++ b/drivers/usb/host/ehci-fsl.c
-> @@ -411,12 +411,13 @@ static int ehci_fsl_setup(struct usb_hcd *hcd)
->  }
->  
->  struct ehci_fsl {
-> -	struct ehci_hcd	ehci;
-> -
->  #ifdef CONFIG_PM
->  	/* Saved USB PHY settings, need to restore after deep sleep. */
->  	u32 usb_ctrl;
->  #endif
-> +
-> +	/* Must be last --ends in a flexible-array member. */
-> +	struct ehci_hcd	ehci;
->  };
->  
->  #ifdef CONFIG_PM
+Remove duplicate header which is included twice.
 
-While the sentiment is laudable, this mechanical change simply will not 
-work.  The driver was written incorrectly to begin with, and the change 
-will probably break it.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ tools/testing/selftests/filesystems/utils.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'll try to find time soon to create a proper fix.  In short, the 
-usb_ctrl field should have been stored in the .priv flex member of the 
-ehci_hcd structure all along, and the .extra_priv_size member of 
-ehci_fsl_overrides should have been set to the size of this u32 field, 
-not the size of the entire ehci_fsl structure.
+diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/selftests/filesystems/utils.c
+index e553c89c5b19..06419bf4ba19 100644
+--- a/tools/testing/selftests/filesystems/utils.c
++++ b/tools/testing/selftests/filesystems/utils.c
+@@ -3,7 +3,6 @@
+ #define _GNU_SOURCE
+ #endif
+ #include <fcntl.h>
+-#include <sys/types.h>
+ #include <dirent.h>
+ #include <grp.h>
+ #include <linux/limits.h>
+-- 
+2.25.1
 
-Alan Stern
 
