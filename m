@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-578330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBCFA72E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:49:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E54E1A72E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927FD188B126
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209413BD579
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0436F20F062;
-	Thu, 27 Mar 2025 10:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FB320FA91;
+	Thu, 27 Mar 2025 10:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fUFbo3Aa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1oG29ihQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RBkw9r1W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121FE20E310;
-	Thu, 27 Mar 2025 10:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D443520E708;
+	Thu, 27 Mar 2025 10:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743072527; cv=none; b=tdSFDyHrc+nfZ5PMdv5BnShbhEF1/G9Ohg4m9ePRc2oWEr41WnXKg9C2I1VNtdZo7LQXAlNuoxrPiCIwUAmw+hmjI+P/PBBjYNTNRtDPjxz3v+HWijFnCI7zxz0cbtUV6Z/Wjp9bvGkjpSe4NBFqWHy8g04SZNLkvTM8rGjBVzs=
+	t=1743072552; cv=none; b=lq2T2ioHW2AXOgWzVqBXpVVjjAJHzSV5ntejYDx7kx6Pw7i4GPTZkITkGmgtmmlhkjXY0Jh2FpxExX7ZQPvdRTqpys0rJ5Kue/LdDdSFxzUS61YtgBZ943AZ8oNVNTBH6fnMrBr1q6Rn1gnHOM/NtSsqfYZFZ2wNL2trXSfMTR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743072527; c=relaxed/simple;
-	bh=rqiLxa3LoJityHTuB4MjjQsNYv2rE6IlF2K5fEOK4UM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XGG2P0R6KuZaYeuo00+xQ0r5fpAUci7s7xQ/ADponLP/hfZ+j6M4r50d0u7X+zqhvKzBBuZBGyUQAxw/2KKgErv/ELaOJtJvUhrMvycrLgzOJVpvTJYaX5o98OGj8BcdRZxrqqxOmCs1s9xKWWn85tQHW2GCzDxJhTePl4lubRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fUFbo3Aa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1oG29ihQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743072524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LAeMRv1C0Anp07/ivFTaDKaXblAFGG1c20rodL/9wK0=;
-	b=fUFbo3AauL8FJJoNRFAWfroTkAx2uqqHm5QWCOzzVlGq5TlJiu2In3zWIOa2NGXrSZbwO2
-	HQtapq8XnQ0CM4sEXcB/YsOsPX2ALH5M/Q28GUmYdo355VX3PFi4fyWsdipk+2rTe4JWgN
-	BvOeNllyodMlo3Ls0eupbSUBc9ZV+wCFz+k7YeHxGqe2460kOuLJPNgYRP2GRXwgGpE3LS
-	ismiYaA/Dh1sm/srICBjlzYXRZ9vw8oD8CKdyraQaaQdbslK+R/oqPjZDZpVGPdGnPAjN0
-	kBhyWCpsmgpqtw65KLx4ii3eIKsb42pwsqICIoZtaF8QUP0WN3moIQrSmCI1bA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743072524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LAeMRv1C0Anp07/ivFTaDKaXblAFGG1c20rodL/9wK0=;
-	b=1oG29ihQMjn1bVUJNrwK3isHy/Dn9egfQtT/YhP1g18lWkeG8uUJCnNSP1+M8wFgQXpDuf
-	wtY7/lWNRddEpIBQ==
-To: Sean Christopherson <seanjc@google.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
- bp@alien8.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
- x86@kernel.org, hpa@zytor.com, peterz@infradead.org, pbonzini@redhat.com,
- kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
- naveen.rao@amd.com
-Subject: Re: [RFC v2 13/17] x86/apic: Handle EOI writes for SAVIC guests
-In-Reply-To: <Z92dqEhfj1GG6Fxb@google.com>
-References: <20250226090525.231882-1-Neeraj.Upadhyay@amd.com>
- <20250226090525.231882-14-Neeraj.Upadhyay@amd.com> <87cyea2xxi.ffs@tglx>
- <Z92dqEhfj1GG6Fxb@google.com>
-Date: Thu, 27 Mar 2025 11:48:43 +0100
-Message-ID: <87y0wqycj8.ffs@tglx>
+	s=arc-20240116; t=1743072552; c=relaxed/simple;
+	bh=P3x1nC7kSQVvmwQm9Ec9eNMVj34oIiVnU6SzBUoQOaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoUt8iF/TJlB51HquPTaQPs8kUi6NzazhKa5xa7e0b5whCb0wtCTDdWkEn27ar0JL0z/h7R371F7vakMS0kJ/FzHxSEC9CPkrY11buknsCJ1l3O2HMz2nh9z+SbV7MnlFCWj9WNhOQNjI/YkVZ9tbOiewa8oiXzJ9i8R1+d0h+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RBkw9r1W; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743072551; x=1774608551;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P3x1nC7kSQVvmwQm9Ec9eNMVj34oIiVnU6SzBUoQOaM=;
+  b=RBkw9r1W+hLGSvhZjwmHk4ALFh6Vyfllm4OfYjE72K2B2Pkk9Wv0KWN7
+   qXjl8eskl4EIkHR3i/hU3sVJGTKA6wgw//sQcP/VX5YRid2TAleMEyQYs
+   NQceqGDavyzL7cYDOW7hBObeA7DargmjLlohtzCQW6Q7h/qZJ/WxFhPg3
+   VRDdNK6DvJz5hIpoTvvbXZmu3CpICvsLfhFvNuAlhtw9n2gFq3gwnCfGg
+   /21juPh1ThcnTD3GU+t0+K4wmu+GPAZYg0ojktVZiyZEn8np45A6lbOsq
+   rcN+RaymDhHZ6ZMBpK9K5pzULzPHxkEyoiCYH0FI+xzFNpZEmVIHcfnXd
+   A==;
+X-CSE-ConnectionGUID: zfYcrfCYRzyNcqeTlttrMw==
+X-CSE-MsgGUID: FNO3cuOsQ4qXw7KNEQPnDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44286117"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="44286117"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:49:10 -0700
+X-CSE-ConnectionGUID: tjidnPEJTvGDfz226/1LtQ==
+X-CSE-MsgGUID: 92b+NNZ4TeedXS7yQPAKgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="125617787"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:49:07 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id F037C1201BC;
+	Thu, 27 Mar 2025 12:49:03 +0200 (EET)
+Date: Thu, 27 Mar 2025 10:49:03 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
+	ribalda@chromium.org, benjamin.gaignard@collabora.com,
+	viro@zeniv.linux.org.uk, bartosz.golaszewski@linaro.org,
+	hljunggr@cisco.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] media: v4l2-dev: fix error handling in
+ __video_register_device()
+Message-ID: <Z-UtHzeewV-CvzfD@kekkonen.localdomain>
+References: <20250319080248.1746847-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319080248.1746847-1-make24@iscas.ac.cn>
 
-On Fri, Mar 21 2025 at 10:11, Sean Christopherson wrote:
-> On Fri, Mar 21, 2025, Thomas Gleixner wrote:
->> 
->> Congrats. You managed to re-implement find_last_bit() in the most
->> incomprehesible way.
->
-> Heh, having burned myself quite badly by trying to use find_last_bit() to get
-> pending/in-service IRQs in KVM code...
->
-> Using find_last_bit() doesn't work because the ISR chunks aren't contiguous,
-> they're 4-byte registers at 16-byte strides.
+On Wed, Mar 19, 2025 at 04:02:48PM +0800, Ma Ke wrote:
+> Once device_register() failed, we should call put_device() to
+> decrement reference count for cleanup. Or it could cause memory leak.
+> And move callback function v4l2_device_release() and v4l2_device_get()
+> before put_device().
+> 
+> As comment of device_register() says, 'NOTE: _Never_ directly free
+> @dev after calling this function, even if it returned an error! Always
+> use put_device() to give up the reference initialized in this function
+> instead.'
+> 
+> Found by code review.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: dc93a70cc7f9 ("V4L/DVB (9973): v4l2-dev: use the release callback from device instead of cdev")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Which is obvious to solve with trivial integer math:
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-      bit = vector + 32 * (vector / 32);
-
-ergo
-
-     vector = bit - 16 * (bit / 32);
-
-No?
-
-> That said, copy+pasting the aforementioned KVM code is absurd.  Please extract
-> KVM's find_highest_vector() to common code.
-
-No. Reimplement this with find_last_bit() and the trivial adjustment
-above and remove find_highest_vector() as there is no point to
-proliferate a bad reimplementation of find_last_bit().
-
-Thanks,
-
-        tglx
-
-
+-- 
+Sakari Ailus
 
