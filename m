@@ -1,102 +1,194 @@
-Return-Path: <linux-kernel+bounces-578084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4692A72A85
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:25:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC03A72A8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:27:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A77818935F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64CBC3B8BDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2D1F418A;
-	Thu, 27 Mar 2025 07:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFPMiyMf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F361F4194;
+	Thu, 27 Mar 2025 07:27:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F91F417F;
-	Thu, 27 Mar 2025 07:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4251A8F60
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743060273; cv=none; b=X2dBf+ouUW5IpZJtPF6mcTGrj+MDlOWoI80nAvWs+rL01pN9rAbIfSZUiCUzEhWmwkwhfAMi1By/DMf8LPX/4fxKtmAmVXAvwtOX9IUyXgA51ZlYQWlb4hPxGgQ17OWWYwluqPsR5YM89nbNsnFfeHKgGBP73YW/LtM5samyWlo=
+	t=1743060425; cv=none; b=bRxeFJNQbm2+Hb90SXgLhqvyHENQV00IEZ2mOfPxoV55sDdGJxT2ruGQ39zFdSFC5DVDhMP7Vw3dTdKobzs7yGU3SE24poLOMgDEdPxcMuoyF+qYDE7h9focz1Z/utG6fTp5MrUY542RT/MYcswblcvdQAUyFWajGUZXugWlV0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743060273; c=relaxed/simple;
-	bh=5mrwyUBbs/sowRee6ww7D8l8zGKZjFYwwpbZCZuTpyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKQMEHcnhJ3aV7f67336621Eu+FFjiU2hvwCe0JqEU0Vbb5bm1kn6CugB6MVBKPUFrix0xBKH7wudAs1ZWttmuGq9ifqjI/iLBEFSBjJdsygD9a/36RjV6uA720gu+ZI2T1+DGvQ4/2CJVIb35SggHfKSKkW6iBL2mDAWAdryE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFPMiyMf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82CAC4CEDD;
-	Thu, 27 Mar 2025 07:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743060272;
-	bh=5mrwyUBbs/sowRee6ww7D8l8zGKZjFYwwpbZCZuTpyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFPMiyMfUlF2cyye8jxucDWiIAR05b92rsW7clbWkzitfcClfE0VrjRC4PK8sO8Tx
-	 AcHIORFD0ieHPtvUOTXnTg23a+wlVrzJC0E7tNQa8Ebx2JwbiZWUj8kFNAMUzHyjK7
-	 Lfv5nCGL+Y/jDPKv6nLuYo0nRxP2upNojGSVjUPPDqe9qY4k2Y89EBZcp9ROV58AMF
-	 uLbEOKXH6zCcIh0aTo9AOGN5bgQe4OjOTeSBEs7EEshdULmVEuIkG6UueyW5B3xlpB
-	 XTV5cIO71M69VMOtWHcFJ81f1CwBMb2d9FrSREhdCcpQ4BVe1JkZq8O4xsM/qEI2ib
-	 ShqIlh4acZeSQ==
-Date: Thu, 27 Mar 2025 08:24:27 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] locking: lockdep: Decrease nr_unused_locks if lock
- unused in zap_class()
-Message-ID: <Z-T9K80wB4xw99jR@gmail.com>
-References: <20250326180831.510348-1-boqun.feng@gmail.com>
+	s=arc-20240116; t=1743060425; c=relaxed/simple;
+	bh=SlSr7LL+S0brwxbGfN02TQCW0xMSGMKoJXz+VSuYhI8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qK87GmH+2NCCR5vqaUCOsIxfuA2Mz6RynklQbux6hUMKlo40166KnhfxuRllMUJARpDBLLegHos8meh0wl952bvjm8RYnwkzi54hAVnm0O6RgI0hjRJbn9Oa7pkKxAZ6ruUbIyaQ/sOX6zwQs78E5VidezqUS0ALP1vzkqtpyZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d2b3a2f2d4so11449755ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 00:27:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743060423; x=1743665223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/WoHedPeMHaA6VoihoOnnHUrJi8os8wVa7ir3zsn+cg=;
+        b=N2AVdxU1y+SWG91yUh0Ln7UWKsSCbxu910Qo+r62aW0upXRJb6585CkBLfrvGQLdRl
+         yVA0cCHX3rZQal32bEyD+n0EOXkKnOYAD73t/bZFAsWDpRQ1McYgqy5oV46QUM3vB4Dl
+         Jm9G9wJdEpkCsN5rO/9Xz5y0lg5VsPQUNHYg+5+GIejWBnXknkzgVxZxnUibiw2iQraX
+         q8WiOUED57NAVoPXJ3C659k9bb5cCcs12uc+cRHMoWZYvVDcfbNOvklyaXPwAjd0q91h
+         qtdNLgJODSMIPoSZVgLSVmvzArj37sMVPfoE28HkwsTTg3j5L26cvSSxfZQZYKoPVNTh
+         HCsw==
+X-Gm-Message-State: AOJu0YyZar4SK20CTfGXPM/L2O0dmMufbh1BlbcacT98KpFSLjb9WwQy
+	so7qlxvwKOfDKJQ60V7TR3n2LXKUhrohCr0HqAzDdIIQGKP7tald27t/fNY59gzH5YZGlTFHykF
+	lFOy8VSvuOgEJKOKJaZQSfsIDF739J+Woq53FEhfDdhpiLF4ZMzXiyiw=
+X-Google-Smtp-Source: AGHT+IGpNfx6kIH/XLP2/JTD3hFLigVJIvt9L2/XfdFiJJ9EFjE54Nq3EbVowShsW8VQOJdlkBSz74ilqQhGWaz3qoTnZJ7DrmC4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326180831.510348-1-boqun.feng@gmail.com>
+X-Received: by 2002:a05:6e02:320e:b0:3d4:3d5d:cf7e with SMTP id
+ e9e14a558f8ab-3d5cce28260mr29423645ab.16.1743060422970; Thu, 27 Mar 2025
+ 00:27:02 -0700 (PDT)
+Date: Thu, 27 Mar 2025 00:27:02 -0700
+In-Reply-To: <20250326175222.135974-1-richard120310@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e4fdc6.050a0220.2f068f.0023.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_crc_append
+ (2)
+From: syzbot <syzbot+79e4e34c2a37d5a9c1f7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, richard120310@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in bch2_extent_crc_append
+
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): check_allocations... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): done starting filesystem
+=====================================================
+BUG: KMSAN: uninit-value in variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
+BUG: KMSAN: uninit-value in extent_entry_type fs/bcachefs/extents.h:59 [inline]
+BUG: KMSAN: uninit-value in extent_entry_bytes fs/bcachefs/extents.h:68 [inline]
+BUG: KMSAN: uninit-value in extent_entry_u64s fs/bcachefs/extents.h:81 [inline]
+BUG: KMSAN: uninit-value in bch2_extent_crc_append+0x7c2/0x830 fs/bcachefs/extents.c:593
+ variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
+ extent_entry_type fs/bcachefs/extents.h:59 [inline]
+ extent_entry_bytes fs/bcachefs/extents.h:68 [inline]
+ extent_entry_u64s fs/bcachefs/extents.h:81 [inline]
+ bch2_extent_crc_append+0x7c2/0x830 fs/bcachefs/extents.c:593
+ init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:729
+ bch2_write_extent fs/bcachefs/io_write.c:1073 [inline]
+ __bch2_write+0x54a9/0x8490 fs/bcachefs/io_write.c:1487
+ bch2_write+0xc98/0x1af0 fs/bcachefs/io_write.c:1659
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2687
+ filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+ file_write_and_wait_range+0x6f2/0x7b0 mm/filemap.c:797
+ bch2_fsync+0xb6/0x510 fs/bcachefs/fs-io.c:228
+ vfs_fsync_range+0x1f9/0x260 fs/sync.c:187
+ generic_write_sync include/linux/fs.h:2970 [inline]
+ bch2_write_iter+0x4dce/0x50f0 fs/bcachefs/fs-io-buffered.c:1072
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xb34/0x1540 fs/read_write.c:679
+ ksys_write+0x240/0x4b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:739
+ x64_sys_call+0x3161/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ bch2_extent_crc_pack+0x686/0x6b0 fs/bcachefs/extents.c:549
+ bch2_extent_crc_append+0x645/0x830 fs/bcachefs/extents.c:591
+ init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:729
+ bch2_write_extent fs/bcachefs/io_write.c:1073 [inline]
+ __bch2_write+0x54a9/0x8490 fs/bcachefs/io_write.c:1487
+ bch2_write+0xc98/0x1af0 fs/bcachefs/io_write.c:1659
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2687
+ filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:422 [inline]
+ file_write_and_wait_range+0x6f2/0x7b0 mm/filemap.c:797
+ bch2_fsync+0xb6/0x510 fs/bcachefs/fs-io.c:228
+ vfs_fsync_range+0x1f9/0x260 fs/sync.c:187
+ generic_write_sync include/linux/fs.h:2970 [inline]
+ bch2_write_iter+0x4dce/0x50f0 fs/bcachefs/fs-io-buffered.c:1072
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xb34/0x1540 fs/read_write.c:679
+ ksys_write+0x240/0x4b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:739
+ x64_sys_call+0x3161/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_frozen_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4762
+ alloc_pages_mpol+0x4cd/0x890 mm/mempolicy.c:2270
+ alloc_frozen_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2341
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x23a/0x1110 mm/slub.c:2587
+ new_slab mm/slub.c:2640 [inline]
+ ___slab_alloc+0x1287/0x3540 mm/slub.c:3826
+ __slab_alloc mm/slub.c:3916 [inline]
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ kmem_cache_alloc_noprof+0x84e/0xe10 mm/slub.c:4171
+ mempool_alloc_slab+0x36/0x50 mm/mempool.c:559
+ mempool_init_node+0x202/0x4d0 mm/mempool.c:217
+ mempool_init_noprof+0x57/0x70 mm/mempool.c:246
+ bioset_init+0x279/0xb30 block/bio.c:1707
+ bch2_fs_fs_io_buffered_init+0x4a/0xc0 fs/bcachefs/fs-io-buffered.c:1084
+ bch2_fs_alloc fs/bcachefs/super.c:934 [inline]
+ bch2_fs_open+0x5654/0x5ba0 fs/bcachefs/super.c:2064
+ bch2_fs_get_tree+0x98a/0x24e0 fs/bcachefs/fs.c:2190
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 6792 Comm: syz.0.16 Not tainted 6.14.0-rc5-syzkaller-00016-g48a5eed9ad58 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+=====================================================
 
 
-* Boqun Feng <boqun.feng@gmail.com> wrote:
+Tested on:
 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index b15757e63626..686546d52337 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -6264,6 +6264,9 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
->  		hlist_del_rcu(&class->hash_entry);
->  		WRITE_ONCE(class->key, NULL);
->  		WRITE_ONCE(class->name, NULL);
-> +		/* class allocated but not used, -1 in nr_unused_locks */
-> +		if (class->usage_mask == 0)
-> +			debug_atomic_dec(nr_unused_locks);
+commit:         48a5eed9 Merge tag 'devicetree-fixes-for-6.14-2' of gi..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17864a4c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d47ea4b9912d894
+dashboard link: https://syzkaller.appspot.com/bug?extid=79e4e34c2a37d5a9c1f7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Nit: capitalization in comments should follow the style of the 
-surrounding code - ie. I did the change below.
-
-Thanks,
-
-	Ingo
-
-======================>
- kernel/locking/lockdep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 686546d52337..58d78a33ac65 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6264,7 +6264,7 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 		hlist_del_rcu(&class->hash_entry);
- 		WRITE_ONCE(class->key, NULL);
- 		WRITE_ONCE(class->name, NULL);
--		/* class allocated but not used, -1 in nr_unused_locks */
-+		/* Class allocated but not used, -1 in nr_unused_locks */
- 		if (class->usage_mask == 0)
- 			debug_atomic_dec(nr_unused_locks);
- 		nr_lock_classes--;
+Note: no patches were applied.
 
