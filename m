@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-579103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923ABA73FA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:01:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FAFA73FBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603BB18913C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:59:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 848C0189880A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383D21F8BBD;
-	Thu, 27 Mar 2025 20:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE7A1FBE83;
+	Thu, 27 Mar 2025 20:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFnzJJ+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWm3rxVg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A31F8726
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4952D1F8908
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743108905; cv=none; b=m8zfAtp/QHcfBNjylkjey3AzOzs7HR5QoZYPFM6/eocJXu+TIpHPs5J82NHv2L8xgk0CY0vyFCD+4Y4cdFCSHG4atQfSnJgm1vn9I4vRpEq6f1sxaxoOEpGBGHAmroZha5pSVgfxFhtHWvT47Ns7MMQp5veNveF90vcxEVolh9g=
+	t=1743108908; cv=none; b=MuZoGM5mR8xG8Lr2QSTd7YMoIlUqsquafailycpA3fg381PxqKZmuX3LF40Fp+QU4Gr//RMht5OaGnhab+W5p6N9tmnXGO9nuQHW6mkHQimwN4jpx3mKUr5p+eW9BSWfTtnfWbGjOSDWtJtyoGKJ7cd/LdMirBoxY5KPoUgXCKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743108905; c=relaxed/simple;
-	bh=5xR7PRjLVC0Rruw4fQdXxcv3j63d8tKbS7U0OIHAEdc=;
+	s=arc-20240116; t=1743108908; c=relaxed/simple;
+	bh=QMoqbm619+cOnBL7LihbZxCj1fqr6rQXTP8fguEZuoA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JAmrkQtl+iCeZ4dmq/8QkEXhSE48H6BNaG1aj2M6yRholuMOC6nX///3ybWi0zyF4zyNCYdgS65r5I7gw1yj0my7E5dNGDMfVJ/+bKLCFsDWEJxFzRbE8CwsGEo36LD9JeFRnxDLNZZJuQvCb7uKncmq/VuGpZL4kWtyBGps4k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFnzJJ+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388A7C4CEEE;
-	Thu, 27 Mar 2025 20:55:03 +0000 (UTC)
+	 MIME-Version; b=rc2E+9IhuOcMKf+CNrNeJF03XQ/2+/x+EBtKjIaYT3dOwX4VCK3dY79hvZL8R0FX4dZtaJLnknPlOfg0kLrsApl+Ij1MmklymWw4YwB+FtrXG45FiP341+GEeBtg0je/3EGORy8Os0fjbQc2DeLmUqjNk26MpNfdrk2i2Bb/3dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWm3rxVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D18C4CEEE;
+	Thu, 27 Mar 2025 20:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743108905;
-	bh=5xR7PRjLVC0Rruw4fQdXxcv3j63d8tKbS7U0OIHAEdc=;
+	s=k20201202; t=1743108907;
+	bh=QMoqbm619+cOnBL7LihbZxCj1fqr6rQXTP8fguEZuoA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PFnzJJ+WXfUIrXgkkfWjx9SDH++Rr66vRKKz4J7q39s0eahecIeWcIP45mHAJyG1E
-	 HCUvyCmySIkTdDV1w1rLmZRxZ9AUGJuu56resBA/jlICip9K6EJhlgKTg1LLgjp3+K
-	 RdTl3IZ9WJzioREzug3fr8+ZbeemZ3MSGJOxtsvzFAU0nsxmaJqaY2A0AGnO7YVLnb
-	 UJY5wlPcU9x6mspVCOu9pkkgqOfDiVSPLxDwHYX91QhLAPCnMpJ1PQCjp4GVw/Wx8I
-	 j1GDWExVLK+uHxC21UuX5wgDemOXIcSYypGQdUhXnO3l6htLZtpOxRGGdRlq8d45Mv
-	 cRijaSx1lPEVA==
+	b=hWm3rxVgWeJTd10oVyFZMMZrHgpbmW+4A8j6D7Puu0V4hC5LgTr1UDwUlnB3SFzu4
+	 4pjU2ivsMqab+ADydjcwsGsirkX5QGpQOwdooZUvkumuaXAxhbnaMonGikTRqbnuoR
+	 +/bS1+8Uegbv9AriN/nEaRZfsN7dPrH9SSavM9pj0vgCLy+dJ5wlSEloyglIgdXdMB
+	 oJ8rxw4sXSdpYgFWYArOOLh+MT/QCKl5hVAktzJEOQFCXzr7f7APJKw9jQkmt8zHID
+	 MY0fnBMfQO87Zo+QJBk1WSuqyimVXlTCxV96OZgdnYrxhe3RTSoUnKK4Pky+P2kLFX
+	 EqRDG8XQAbr7g==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -48,9 +48,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 27/41] x86/alternatives: Remove the tp_vec indirection
-Date: Thu, 27 Mar 2025 21:53:40 +0100
-Message-ID: <20250327205355.378659-28-mingo@kernel.org>
+Subject: [PATCH 28/41] x86/alternatives: Rename 'try_get_desc()' to 'try_get_tp_array()'
+Date: Thu, 27 Mar 2025 21:53:41 +0100
+Message-ID: <20250327205355.378659-29-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250327205355.378659-1-mingo@kernel.org>
 References: <20250327205355.378659-1-mingo@kernel.org>
@@ -62,91 +62,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-At this point we are always working out of an uptodate
-tp_array, there's no need for text_poke_int3_handler()
-to read via the int3_vec indirection - remove it.
-
-This simplifies the code:
-
-   1 file changed, 5 insertions(+), 15 deletions(-)
+This better reflects what the underlying code is doing,
+there's no 'descriptor' indirection anymore.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+ arch/x86/kernel/alternative.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index cf3bcaa97957..3baef1827f3c 100644
+index 3baef1827f3c..4b5ab9002e07 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2466,15 +2466,6 @@ struct text_poke_int3_loc {
- 	u8 old;
- };
+@@ -2476,7 +2476,7 @@ static struct text_poke_int3_array {
+ static DEFINE_PER_CPU(atomic_t, int3_refs);
  
--struct text_poke_int3_vec {
--	int nr_entries;
--	struct text_poke_int3_loc *vec;
--};
--
--static DEFINE_PER_CPU(atomic_t, int3_refs);
--
--static struct text_poke_int3_vec int3_vec;
--
- #define TP_ARRAY_NR_ENTRIES_MAX (PAGE_SIZE / sizeof(struct text_poke_int3_loc))
- 
- static struct text_poke_int3_array {
-@@ -2482,15 +2473,17 @@ static struct text_poke_int3_array {
- 	struct text_poke_int3_loc vec[TP_ARRAY_NR_ENTRIES_MAX];
- } tp_array;
- 
-+static DEFINE_PER_CPU(atomic_t, int3_refs);
-+
  static __always_inline
--struct text_poke_int3_vec *try_get_desc(void)
-+struct text_poke_int3_array *try_get_desc(void)
+-struct text_poke_int3_array *try_get_desc(void)
++struct text_poke_int3_array *try_get_tp_array(void)
  {
  	atomic_t *refs = this_cpu_ptr(&int3_refs);
  
- 	if (!raw_atomic_inc_not_zero(refs))
- 		return NULL;
+@@ -2530,7 +2530,7 @@ noinstr int text_poke_int3_handler(struct pt_regs *regs)
+ 	 */
+ 	smp_rmb();
  
--	return &int3_vec;
-+	return &tp_array;
- }
+-	desc = try_get_desc();
++	desc = try_get_tp_array();
+ 	if (!desc)
+ 		return 0;
  
- static __always_inline void put_desc(void)
-@@ -2519,7 +2512,7 @@ static __always_inline int patch_cmp(const void *key, const void *elt)
- 
- noinstr int text_poke_int3_handler(struct pt_regs *regs)
- {
--	struct text_poke_int3_vec *desc;
-+	struct text_poke_int3_array *desc;
- 	struct text_poke_int3_loc *tp;
- 	int ret = 0;
- 	void *ip;
-@@ -2529,7 +2522,7 @@ noinstr int text_poke_int3_handler(struct pt_regs *regs)
- 
- 	/*
- 	 * Having observed our INT3 instruction, we now must observe
--	 * int3_vec with non-zero refcount:
-+	 * tp_array with non-zero refcount:
- 	 *
- 	 *	int3_refs = 1		INT3
- 	 *	WMB			RMB
-@@ -2633,12 +2626,9 @@ static void text_poke_int3_batch(struct text_poke_int3_loc *tp, unsigned int nr_
- 	WARN_ON_ONCE(tp != tp_array.vec);
+@@ -2627,7 +2627,7 @@ static void text_poke_int3_batch(struct text_poke_int3_loc *tp, unsigned int nr_
  	WARN_ON_ONCE(nr_entries != tp_array.nr_entries);
  
--	int3_vec.vec = tp;
--	int3_vec.nr_entries = nr_entries;
--
  	/*
- 	 * Corresponds to the implicit memory barrier in try_get_desc() to
--	 * ensure reading a non-zero refcount provides up to date int3_vec data.
-+	 * ensure reading a non-zero refcount provides up to date tp_array data.
+-	 * Corresponds to the implicit memory barrier in try_get_desc() to
++	 * Corresponds to the implicit memory barrier in try_get_tp_array() to
+ 	 * ensure reading a non-zero refcount provides up to date tp_array data.
  	 */
  	for_each_possible_cpu(i)
- 		atomic_set_release(per_cpu_ptr(&int3_refs, i), 1);
 -- 
 2.45.2
 
