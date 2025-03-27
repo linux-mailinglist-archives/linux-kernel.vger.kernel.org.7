@@ -1,227 +1,130 @@
-Return-Path: <linux-kernel+bounces-578785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AB2A7365A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:09:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8528A73668
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84D9D1887E0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58F3174D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA90219D086;
-	Thu, 27 Mar 2025 16:09:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF2D1A01B9;
+	Thu, 27 Mar 2025 16:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="gF+WV++Z"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B42C18FC67
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7029F7E9;
+	Thu, 27 Mar 2025 16:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743091768; cv=none; b=M9PeJvBLOgujfZB6UQ+lQBZTMuKmxA8aDmmnqruSbPxTDWeqPN+MMgAInlR9JNqDaGRXaTq1eV6x84z1ND4F2j3MXnOsjdlOwq+ni+kvvvK9Ns2UV4HC1AOJCsOItPMeiSbVqPyRZlRIKSlG9sMo2J5D4ZcXS1BNxwtJTBYGfXA=
+	t=1743091899; cv=none; b=gJbeL/3alAVE3M4afOsOkTXJN/IgrzXrPzU9EX95sWdXKHvVE0VZQvQWipjyBnGVvJI+bgLJKJfRGoEqg4Tff8nLF9I1lIxtn/I27zgKKrtIuqiN4m3jMYLNGrsHGd0adRIgI/btQNs8C4z2sFweRLYeRossZq8tdf9pY584C3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743091768; c=relaxed/simple;
-	bh=z3Rhqg6LSTkbAFMpvd+8a0+zUM1cNOyijg5cPUAPzgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nFNBtsnCs3ruQk8N0jIOi/8jTG/W6CVuWw0apQG7220IAxq8mXzFgvMuw4bZRT4NKigJltAH2ygg6ybVmB1TAhoJ4HvRJEE9W34qlW4kfXs4R4tSUaNgkRnayBzm4fCWpN85c1Y3hAi9ohS8816mHApdSIG8CPJJ3ScStTmjmz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46967C4CEDD;
-	Thu, 27 Mar 2025 16:09:27 +0000 (UTC)
-Date: Thu, 27 Mar 2025 12:10:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu 
- <mhiramat@kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar 
- <tglozar@redhat.com>
-Subject: [GIT PULL v2] latency tracing: Updates for 6.15
-Message-ID: <20250327121016.183e2f05@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743091899; c=relaxed/simple;
+	bh=BzzrJ79e4VaP/rWh74LJKOWYu9gwJBEyiYSvS2rW33s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ifKkzrdXfKKrl2QN29u4HIMWOioJ6mk4RhV3c4J6BX47uuY/C3S6TQGKmuClVYTZiqI6dTSrToF/6IFKJf3QJnzfrj9DQqf4YcNw/oKWy/LpfwyEEzRtRU1Mj84F0U9FSwNcaEIRAuVq7MQrgy1J5jtOkeV87RQUacP69skl8fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=gF+WV++Z; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 364C4A0BF9;
+	Thu, 27 Mar 2025 17:11:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=Cfcxu0sFDt25T4HE+Z+C
+	QUKV/MoRpGB/hgvYzRHCAGI=; b=gF+WV++Z6x+CTx8iHxNPG6AW8cN06hUy3NXR
+	A5rWWYT1XYCcytzTkQvRJLRAs9AoiFvMROELzM7ICCBy7Ep+GvIE/TpO3mIsdYlR
+	WDWT9Bdewa7JwON1oT34SkEaiU5Pc08DIxMtrfPzDO/HI7ZhRcggRbOw0sh19Q33
+	KEtIZEPYEJlNCb3BYYBaSVrD3+FvOhqfmDRWdVrbLT0oes5a7nLyUM++Amnewh5y
+	6iDiP7uhhF0EEZpqLhN1kyzX99LIOMbJV33D4GeT+MR0QHFo4fDsHixRZLwpsLNh
+	gw459/KQV+V8l/Rq+yfaUFF4RMmnXGY6bf7TUWmDkn6kpWxwE/BLlesksxh8fxEr
+	tOnF2EX+oirKYTfHure+/+quqUP9GmTVDBh5Pp0s76jr8y0oC16G7menfczU8kvA
+	YZ26mnlkle4XkE3TbiCrHiq+sQJMtqc4YAKjnRI0JdLqnZG0yBirktXNy2phjt4Y
+	Ak/OtR1AudC1GHpuvQMWyc+apm2F6HXjHA3z+rSB7RBK8N+3t7ysFuNYyFVnzR1/
+	eOjGxWrf8qnBojyZA6DBcwA/n+RDN5lOV+Mi3rpDGb+IEuD6DZsAZk+XhD3HyjWM
+	GCBrcwFhh0PJWFFjxsY5W0WPQ9DAsOC9ep1CFjSEeaZG6Xg/RuZOItOLpD6Hrio6
+	kO8psU4=
+Message-ID: <bcf363db-8fff-4fb1-b29e-300f7b8bc090@prolan.hu>
+Date: Thu, 27 Mar 2025 17:11:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] pm: runtime: Add new devm functions
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Varshini
+ Rajendran" <varshini.rajendran@microchip.com>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Mark Brown <broonie@kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Len
+ Brown" <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, "Alexander
+ Dahl" <ada@thorsis.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Pavel Machek <pavel@kernel.org>
+References: <20250317093445.361821-1-csokas.bence@prolan.hu>
+ <20250317093445.361821-2-csokas.bence@prolan.hu>
+ <CAJZ5v0hJZBxU6SSq9C8gp2peETFWu0jbhrM82B5GvQkVXPR+9Q@mail.gmail.com>
+ <3e6d7071-1ba9-484c-9dcb-c5da6ad1ffe3@prolan.hu>
+ <CAJZ5v0jka2r9PaKsF0FE2qJaFfnVNGd8sZRE6Aay-Ugpzot44w@mail.gmail.com>
+ <d926d2c2-8cc9-4a71-b8ca-b5f03ac9afb8@prolan.hu>
+ <CAJZ5v0iS20uPhqNOnkj36rTBGQF3fecF6Hq4JU4=wz4pSzrFyg@mail.gmail.com>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <CAJZ5v0iS20uPhqNOnkj36rTBGQF3fecF6Hq4JU4=wz4pSzrFyg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D948526C7764
 
+Hi,
 
-Linus,
+On 2025. 03. 27. 15:14, Rafael J. Wysocki wrote:
+> /-- devm_pm_runtime_get_noresume()
+> |   /-- devm_{pm_runtime_set_active() + pm_runtime_enable() (in this order)}
+> |   |   pm_runtime_use_autosuspend()
+> |   |
+> |   |   Note that the device cannot be suspended here unless its
+> runtime PM usage
+> |   |   counter is dropped, in which it would need to be bumped up
+> again later to
+> |   |   retain the balance.
+> |   |
+> |   \-> pm_runtime_disable() + pm_runtime_set_suspended() (in this order)
+> \-> pm_runtime_put_noidle()
 
-Latency tracing changes for v6.15:
+Ah, so basically what I've done originally, just calling 
+`devm_pm_runtime_get_noresume()` _first_ instead of _last_, right?
 
-- Add some trace events to osnoise and timerlat sample generation
+> And pm_runtime_dont_use_autosuspend() is not really necessary after
+> disabling runtime PM.
 
-  This adds more information to the osnoise and timerlat tracers as well as
-  allows BPF programs to be attached to these locations to extract even more
-  data.
+It was done this way in devm_pm_runtime_enable() already, see commit 
+b4060db9251f ("PM: runtime: Have devm_pm_runtime_enable() handle 
+pm_runtime_dont_use_autosuspend()"). I didn't change anything 
+behaviourally there.
 
-- Fix to DECLARE_TRACE_CONDITION() macro
+> Also, I think that the driver could be fixed without introducing the
+> new devm_ stuff which would be way simpler, so why don't you do that
+> and then think about devm_?
 
-  It wasn't used but now will be and it happened to be broken causing the
-  build to fail.
+Sure, I could quick-fix this, go through all the possible error paths 
+and whatnot and ref-count in my head, but it doesn't fix the underlying 
+problem: in order to properly use PM, you have to do a bunch of calls in 
+some set order, then undo them in reverse order on error and remove -- 
+exactly the thing devm was designed for, and exactly the thing where 
+it's easy for a human to forget one case by accident. Thus I prefer to 
+use the *real* solution, devm.
 
-- Add scheduler specification monitors to runtime verifier (RV)
+Bence
 
-  This is a continuation of Daniel Bristot's work.
-
-  RV allows monitors to run and react concurrently. Running the cumulative
-  model is equivalent to running single components using the same
-  reactors, with the advantage that it's easier to point out which
-  specification failed in case of error.
-
-  This update introduces nested monitors to RV, in short, the sysfs
-  monitor folder will contain a monitor named sched, which is nothing but
-  an empty container for other monitors. Controlling the sched monitor
-  (enable, disable, set reactors) controls all nested monitors.
-
-  The following scheduling monitors are added:
-
-  * sco: scheduling context operations
-      Monitor to ensure sched_set_state happens only in thread context
-  * tss: task switch while scheduling
-      Monitor to ensure sched_switch happens only in scheduling context
-  * snroc: set non runnable on its own context
-      Monitor to ensure set_state happens only in the respective task's context
-  * scpd: schedule called with preemption disabled
-      Monitor to ensure schedule is called with preemption disabled
-  * snep: schedule does not enable preempt
-      Monitor to ensure schedule does not enable preempt
-  * sncid: schedule not called with interrupt disabled
-      Monitor to ensure schedule is not called with interrupt disabled
-
-
-Please pull the latest trace-latency-v6.15-2 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-latency-v6.15-2
-
-Tag SHA1: 13f322eed7a7d11a944574e8ba4744be1ad560af
-Head SHA1: 4bb5d82b66002b770f8917d68ab4fbefcb7f5f9b
-
-
-Gabriele Monaco (12):
-      tracing: Fix DECLARE_TRACE_CONDITION
-      rv: Add license identifiers to monitor files
-      sched: Add sched tracepoints for RV task model
-      rv: Add option for nested monitors and include sched
-      rv: Add sco and tss per-cpu monitors
-      rv: Add snroc per-task monitor
-      rv: Add scpd, snep and sncid per-cpu monitors
-      tools/rv: Add support for nested monitors
-      verification/dot2k: Add support for nested monitors
-      Documentation/rv: Add docs for the sched monitors
-      tools/rv: Allow rv list to filter for container
-      Documentation/rv: Add sched pages to the indices
-
-Tomas Glozar (1):
-      trace/osnoise: Add trace events for samples
-
-----
- Documentation/tools/rv/index.rst                   |   1 +
- Documentation/tools/rv/rv-mon-sched.rst            |  69 ++++++
- Documentation/trace/rv/index.rst                   |   1 +
- Documentation/trace/rv/monitor_sched.rst           | 171 ++++++++++++++
- include/linux/rv.h                                 |   4 +-
- include/linux/sched.h                              |  16 ++
- include/trace/define_trace.h                       |   7 +
- include/trace/events/osnoise.h                     |  96 ++++++++
- include/trace/events/sched.h                       |  13 ++
- kernel/sched/core.c                                |  23 +-
- kernel/trace/rv/Kconfig                            |   7 +
- kernel/trace/rv/Makefile                           |   7 +
- kernel/trace/rv/monitors/sched/Kconfig             |  11 +
- kernel/trace/rv/monitors/sched/sched.c             |  38 +++
- kernel/trace/rv/monitors/sched/sched.h             |   3 +
- kernel/trace/rv/monitors/sco/Kconfig               |  14 ++
- kernel/trace/rv/monitors/sco/sco.c                 |  88 +++++++
- kernel/trace/rv/monitors/sco/sco.h                 |  47 ++++
- kernel/trace/rv/monitors/sco/sco_trace.h           |  15 ++
- kernel/trace/rv/monitors/scpd/Kconfig              |  15 ++
- kernel/trace/rv/monitors/scpd/scpd.c               |  96 ++++++++
- kernel/trace/rv/monitors/scpd/scpd.h               |  49 ++++
- kernel/trace/rv/monitors/scpd/scpd_trace.h         |  15 ++
- kernel/trace/rv/monitors/sncid/Kconfig             |  15 ++
- kernel/trace/rv/monitors/sncid/sncid.c             |  96 ++++++++
- kernel/trace/rv/monitors/sncid/sncid.h             |  49 ++++
- kernel/trace/rv/monitors/sncid/sncid_trace.h       |  15 ++
- kernel/trace/rv/monitors/snep/Kconfig              |  15 ++
- kernel/trace/rv/monitors/snep/snep.c               |  96 ++++++++
- kernel/trace/rv/monitors/snep/snep.h               |  49 ++++
- kernel/trace/rv/monitors/snep/snep_trace.h         |  15 ++
- kernel/trace/rv/monitors/snroc/Kconfig             |  14 ++
- kernel/trace/rv/monitors/snroc/snroc.c             |  85 +++++++
- kernel/trace/rv/monitors/snroc/snroc.h             |  47 ++++
- kernel/trace/rv/monitors/snroc/snroc_trace.h       |  15 ++
- kernel/trace/rv/monitors/tss/Kconfig               |  14 ++
- kernel/trace/rv/monitors/tss/tss.c                 |  91 ++++++++
- kernel/trace/rv/monitors/tss/tss.h                 |  47 ++++
- kernel/trace/rv/monitors/tss/tss_trace.h           |  15 ++
- kernel/trace/rv/monitors/wip/Kconfig               |   2 +
- kernel/trace/rv/monitors/wip/wip.c                 |   2 +-
- kernel/trace/rv/monitors/wip/wip.h                 |   1 +
- kernel/trace/rv/monitors/wwnr/Kconfig              |   2 +
- kernel/trace/rv/monitors/wwnr/wwnr.c               |   2 +-
- kernel/trace/rv/monitors/wwnr/wwnr.h               |   1 +
- kernel/trace/rv/rv.c                               | 154 +++++++++++--
- kernel/trace/rv/rv.h                               |   4 +
- kernel/trace/rv/rv_reactors.c                      |  28 ++-
- kernel/trace/rv/rv_trace.h                         |   6 +
- kernel/trace/trace_osnoise.c                       |  55 ++---
- tools/verification/dot2/dot2k                      |  27 ++-
- tools/verification/dot2/dot2k.py                   |  80 +++++--
- tools/verification/dot2/dot2k_templates/Kconfig    |   3 +
- tools/verification/dot2/dot2k_templates/main.c     |   4 +-
- .../dot2/dot2k_templates/main_container.c          |  38 +++
- .../dot2/dot2k_templates/main_container.h          |   3 +
- tools/verification/models/sched/sco.dot            |  18 ++
- tools/verification/models/sched/scpd.dot           |  18 ++
- tools/verification/models/sched/sncid.dot          |  18 ++
- tools/verification/models/sched/snep.dot           |  18 ++
- tools/verification/models/sched/snroc.dot          |  18 ++
- tools/verification/models/sched/tss.dot            |  18 ++
- tools/verification/rv/include/in_kernel.h          |   2 +-
- tools/verification/rv/include/rv.h                 |   3 +-
- tools/verification/rv/src/in_kernel.c              | 256 ++++++++++++++++-----
- tools/verification/rv/src/rv.c                     |  38 +--
- 66 files changed, 2137 insertions(+), 166 deletions(-)
- create mode 100644 Documentation/tools/rv/rv-mon-sched.rst
- create mode 100644 Documentation/trace/rv/monitor_sched.rst
- create mode 100644 kernel/trace/rv/monitors/sched/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sched/sched.c
- create mode 100644 kernel/trace/rv/monitors/sched/sched.h
- create mode 100644 kernel/trace/rv/monitors/sco/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sco/sco.c
- create mode 100644 kernel/trace/rv/monitors/sco/sco.h
- create mode 100644 kernel/trace/rv/monitors/sco/sco_trace.h
- create mode 100644 kernel/trace/rv/monitors/scpd/Kconfig
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd.c
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd.h
- create mode 100644 kernel/trace/rv/monitors/scpd/scpd_trace.h
- create mode 100644 kernel/trace/rv/monitors/sncid/Kconfig
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
- create mode 100644 kernel/trace/rv/monitors/sncid/sncid_trace.h
- create mode 100644 kernel/trace/rv/monitors/snep/Kconfig
- create mode 100644 kernel/trace/rv/monitors/snep/snep.c
- create mode 100644 kernel/trace/rv/monitors/snep/snep.h
- create mode 100644 kernel/trace/rv/monitors/snep/snep_trace.h
- create mode 100644 kernel/trace/rv/monitors/snroc/Kconfig
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc.c
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc.h
- create mode 100644 kernel/trace/rv/monitors/snroc/snroc_trace.h
- create mode 100644 kernel/trace/rv/monitors/tss/Kconfig
- create mode 100644 kernel/trace/rv/monitors/tss/tss.c
- create mode 100644 kernel/trace/rv/monitors/tss/tss.h
- create mode 100644 kernel/trace/rv/monitors/tss/tss_trace.h
- create mode 100644 tools/verification/dot2/dot2k_templates/main_container.c
- create mode 100644 tools/verification/dot2/dot2k_templates/main_container.h
- create mode 100644 tools/verification/models/sched/sco.dot
- create mode 100644 tools/verification/models/sched/scpd.dot
- create mode 100644 tools/verification/models/sched/sncid.dot
- create mode 100644 tools/verification/models/sched/snep.dot
- create mode 100644 tools/verification/models/sched/snroc.dot
- create mode 100644 tools/verification/models/sched/tss.dot
----------------------------
 
