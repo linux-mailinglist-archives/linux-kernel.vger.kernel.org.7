@@ -1,185 +1,152 @@
-Return-Path: <linux-kernel+bounces-579192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2176FA740AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331FFA740AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE0D27A662A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:15:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E6677A81C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577701DF27E;
-	Thu, 27 Mar 2025 22:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF36D1DF250;
+	Thu, 27 Mar 2025 22:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ElRHVLsS"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="jic0rZP8"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263741DE3C2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD161C6FED;
+	Thu, 27 Mar 2025 22:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743113797; cv=none; b=vA7gD/oAIgybytS2Bn5eSZ4N2hADUtqnuTgeEJigd0ZkKor43j0UJFmO8/hKGQyy6bvORrziSbyfZ/fccgQKl2aiQObKylPB3/3QunOmB4vEEYHWBeZXGOt7fhO6Ry0Fswvj/Rg6j8IiNLMv09Y8+rzFFsvhYgEok1vjWMQ7n+k=
+	t=1743113842; cv=none; b=G7FH4APpwoFIt39hWpKwVT41nGngMPqn3ay4dGCKTbaDfd+CQn17ZNGv3qLGovtplAHY5gmUrAtz5L5hsa1a3H4ERJfGiLX8fSGMKI+e6cCErpjtYZr6RYCaTU3eLqCVI8lrzfHfyQczX4ceN+IuMNiWJZqmjOR5U+5WfoEvyvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743113797; c=relaxed/simple;
-	bh=c3pZ7RooU49GV/zbRYr6GKjwFAEK7W9UC8fTibTT5V8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AmLLRC1DhJReGrm1NemuFQtKWJnsoAwXcs2MoFx2CQAKRo6T0GDZk9uDqIvy2E+IcH/xGkk3lOo5lyjH3Dk7c5LKsA4fzXkmhKruzK0+5D+yDkbEhG1CZbHHBrojp4gEldv6r1W1Uwuv5LMAQ/x8Lw+6KW8UA/3fpjrRiwxnBgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ElRHVLsS; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3feaedb39e9so407324b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1743113795; x=1743718595; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pWnjsfzqeuRQjE5CuEy27r/cM16vobPuEqBqdK86nRY=;
-        b=ElRHVLsSiITSonlYxI8xsck5Gn304Ps/jkNHY8LpW5QkbXMYqCqo/+wO1sOJw5IE/7
-         wUOOKaxmZ6ELpXBK5jVg3nRHifPIOvIX5aRwtWp2vz22OysRwV1eIkSP41D3Q6ujl1xc
-         tBY8HO9xHZ88EAITcrE02suapZmCy3SWhK3ww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743113795; x=1743718595;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pWnjsfzqeuRQjE5CuEy27r/cM16vobPuEqBqdK86nRY=;
-        b=Mr4Ob5LhBCRZKMAP4cMg48IhC1LMVKOtoFBB60FgyUNRlHVjdWL9aV5zfNWG0n5DzY
-         rN7Rhz8eFNdWHWR6DPEoH7NDzGJxs4JF4l9cLY3tkJM1ngQ9QqOa3AbND2QxwaK2njBN
-         jLoAiP37/gsV0SF+syCOVMbAhiRsg+/rukSnBJgEsjQhVf6qx11wFzBZfgTTyapt5E+H
-         4iqoN3gc/Li6gksM87Z3qmGPFern0F5oMYxclby78be9/+Re3/04YT7HAQdxfckYHBID
-         djun33fRU1FlV5hjVKu6dzkkGTxKUGSvrW92ZD4XZUVJkXq0pFeyc3vjDXZLKJmApGaF
-         psCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXQqOv2RSG/Ty5+VIPv41hRSQU740+ezgafoFvzn+SpDK4XwOvjShHNbXWztzESFtocw+m4nMvfCVMwOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybz6yy446Zwj00W6+tKyftIrcHGKb183KY1LoPflP4URz7ZxLM
-	CXjye6s9EVqLXNqL+OohDHXZl+ltFqQKLGbR68/qe98bjJR9gsaNd3gerV8bbl8fu4CCdJf1e+Q
-	=
-X-Gm-Gg: ASbGncv6qEqsx/EwCApfif8l9i6230D6d9cWHt2U54lDog3oRl/JeXtXzljqbZ0kYMD
-	wGGGkY3HzfHvgQeXcM9bBQwPkI7m+tUAyGCcyknlwc3ElBlE31a+OBlhkH3oHkrXk0g/RfbSWqQ
-	lIP/FGU7H7P1JBr21fNs8cBw2ExALnEWudQnQTG3rGGrMy+oQvKNU+gqFtn8lRZWtHZX1KeGOap
-	wOOaVlFLZAVqynDgPjTt6Fxwu6z1eSE6vE4+KF75aYaXGIkTm/i61kyiC4sx2AZqiVZ+citCcO7
-	bS3Hfk3sy6scAJJXt+0xmyHS1gHg1sP05Z7GT1W0l8pQp7NuOV8IBLt/jDMrsdCZX4hfZTOyE7e
-	eIKDeJvFSAGMSOmBt1xVBFA==
-X-Google-Smtp-Source: AGHT+IHJe1kJJUaMvRyIpRfNMnixffqNiUdPbooQgfaLtzes3Umk6/URZ+Q1RCthW4bU3XakDncbfA==
-X-Received: by 2002:a05:6808:201d:b0:3f9:d5a2:89a6 with SMTP id 5614622812f47-3fefa62d72cmr2809117b6e.35.1743113795004;
-        Thu, 27 Mar 2025 15:16:35 -0700 (PDT)
-Received: from stbirv-lnx-1.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3ff051680a8sm105031b6e.1.2025.03.27.15.16.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 15:16:34 -0700 (PDT)
-From: justin.chen@broadcom.com
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: florian.fainelli@broadcom.com,
-	conor+dt@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	jassisinghbrar@gmail.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	Justin Chen <justin.chen@broadcom.com>
-Subject: [PATCH 2/2] dt-bindings: mailbox: Add devicetree binding for bcm74110 mbox
-Date: Thu, 27 Mar 2025 15:16:28 -0700
-Message-Id: <20250327221628.651042-3-justin.chen@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250327221628.651042-1-justin.chen@broadcom.com>
-References: <20250327221628.651042-1-justin.chen@broadcom.com>
+	s=arc-20240116; t=1743113842; c=relaxed/simple;
+	bh=89psVsuhmLnpB0D1Kli4UHQLPn+imufHphtlmAmXIs0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yj1jiFYyPNoKQl+l+O+b07F1z86xYEMDAGueip+THKLPuwU85vKsUxH0oxueoiDnTWO/XfUV6VjTXd+EbMJgeTElPUnDAhNwoyIC+ZhiRge+GXJQEkZWqdADZ8GFqTU0feCecPqyzxNL8C0Xs6JKcrIiwXO6mqx+EPYVBwe2GEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=jic0rZP8; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1743113838; x=1743373038;
+	bh=pOr0DNwW22udl+QjNXdk6JXxuaFTQiZdJAYlJD9wBnM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=jic0rZP8jIRDUlYJVFn/WyH0SzSXhx/zI69q9kX7QeIHgrcfENJqk0J8WRHjnVLi8
+	 NYQ1OQjEs2l7GGNjObJEnLrPxDYndr08EDpfs5TYJPPr+lShwi3LeLeDuagfKMTX0v
+	 UXJnlwsDLJtsylUVLqPjRLZYRG8dDGGuGYSii/uS3sv0xX1IDXSgSC7+Wz31lLkvL2
+	 5BnTTLJTUPFluto7iYwREkzHvpTxJGSFCr0IhBxuyRScrQ9B5ClXkGkU0BdIv7WVEx
+	 65PCUwy1qRK0ngPc/CSLFvWJ2GfvoP8cmalbSSqimzg1t97SUicTxDSvJk0LsHlwll
+	 zekMJyBpIF4Pg==
+Date: Thu, 27 Mar 2025 22:17:13 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v7 7/7] rust: enable `clippy::ref_as_ptr` lint
+Message-ID: <D8REA6VW7QFS.Y5195VX38USO@proton.me>
+In-Reply-To: <CAJ-ks9n3BdKkfCpMXhE8M8Sx4B5rASoNvbmA4zPU3rmPQwZCiQ@mail.gmail.com>
+References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com> <CAJ-ks9nKT2PUDm6=b4AB1QUWwwvcqPn7Vz60=c0B+uFMZrqPew@mail.gmail.com> <D8QDOBUM6NF0.CGJY7ZA5KD9S@proton.me> <CAJ-ks9ntTxBM=c5nUZWGv3MoRt-LveBchn-c1Xy-DGap7fLVRA@mail.gmail.com> <D8QI804Q3DAS.2BV4WSL81H52Z@proton.me> <CAJ-ks9mA5QDeZ3EvOD3THayFt4TtDysgm0jp2aiSF2mQCrhWiQ@mail.gmail.com> <D8QJMH5UR6VG.2OT5MXJJQU5QT@proton.me> <CAJ-ks9m96vf_HxttuopuC_UfNGJbHHNdEGS2er6nZZG38pe3HQ@mail.gmail.com> <CAJ-ks9n3BdKkfCpMXhE8M8Sx4B5rASoNvbmA4zPU3rmPQwZCiQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 82a53baabf13e0ce95fda485724e51f17f7c7368
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Justin Chen <justin.chen@broadcom.com>
+On Thu Mar 27, 2025 at 8:44 PM CET, Tamir Duberstein wrote:
+> On Thu, Mar 27, 2025 at 10:15=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+>> On Wed, Mar 26, 2025 at 6:15=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> > On Wed Mar 26, 2025 at 11:09 PM CET, Tamir Duberstein wrote:
+>> > > On Wed, Mar 26, 2025 at 5:09=E2=80=AFPM Benno Lossin <benno.lossin@p=
+roton.me> wrote:
+>> > >> On Wed Mar 26, 2025 at 8:06 PM CET, Tamir Duberstein wrote:
+>> > >> > On Wed, Mar 26, 2025 at 1:36=E2=80=AFPM Benno Lossin <benno.lossi=
+n@proton.me> wrote:
+>> > >> >> On Wed Mar 26, 2025 at 5:57 PM CET, Tamir Duberstein wrote:
+>> > >> >> >
+>> > >> >> > Yeah, we should do this - but again: not relevant in this disc=
+ussion.
+>> > >> >>
+>> > >> >> I think it's pretty relevant.
+>> > >> >
+>> > >> > It's not relevant because we're no longer talking about transmuti=
+ng
+>> > >> > pointer to pointer. The two options are:
+>> > >> > 1. transmute reference to reference.
+>> > >> > 2. coerce reference to pointer, `as` cast pointer to pointer (tri=
+ggers
+>> > >> > `ptr_as_ptr`), reborrow pointer to reference.
+>> > >> >
+>> > >> > If anyone can help me understand why (2) is better than (1), I'd
+>> > >> > certainly appreciate it.
+>> > >>
+>> > >> I am very confident that (2) is correct. With (1) I'm not sure (see
+>> > >> above), so that's why I mentioned it.
+>> > >
+>> > > Can you help me understand why you're confident about (2) but not (1=
+)?
+>> >
+>> > My explanation from above explains why I'm not confident about (1):
+>> >
+>> >     For ptr-to-int transmutes, I know that they will probably remove
+>> >     provenance, hence I am a bit cautious about using them for ptr-to-=
+ptr or
+>> >     ref-to-ref.
+>> >
+>> > The reason I'm confident about (2) is that that is the canonical way t=
+o
+>> > cast the type of a reference pointing to an `!Sized` value.
+>>
+>> Do you have a citation, other than the transmute doc?
 
-Add devicetree YAML binding for brcmstb bcm74110 mailbox used
-for communicating with a co-processor.
+Not that I am aware of anything.
 
-Signed-off-by: Justin Chen <justin.chen@broadcom.com>
+> Turns out this appeases clippy:
+>
+> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+> index 80a9782b1c6e..7a6fc78fc314 100644
+> --- a/rust/kernel/uaccess.rs
+> +++ b/rust/kernel/uaccess.rs
+> @@ -240,9 +240,10 @@ pub fn read_raw(&mut self, out: &mut
+> [MaybeUninit<u8>]) -> Result {
+>      /// Fails with [`EFAULT`] if the read happens on a bad address,
+> or if the read goes out of
+>      /// bounds of this [`UserSliceReader`]. This call may modify
+> `out` even if it returns an error.
+>      pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
+> +        let out: *mut [u8] =3D out;
+>          // SAFETY: The types are compatible and `read_raw` doesn't
+> write uninitialized bytes to
+>          // `out`.
+> -        let out =3D unsafe { &mut *(out as *mut [u8] as *mut
+> [MaybeUninit<u8>]) };
+> +        let out =3D unsafe { &mut *(out as *mut [MaybeUninit<u8>]) };
+>          self.read_raw(out)
+>      }
+
+Seems like your email client auto-wrapped that :(
+
+> Benno, would that work for you? Same in str.rs, of course.
+
+For this specific case, I do have a `cast_slice_mut` function I
+mentioned in the other thread, but that is still stuck in the untrusted
+data series, I hope that it's ready tomorrow or maybe next week. I'd
+prefer if we use that (since its implementation also doesn't use `as`
+casts :). But if you can't wait, then the above is fine.
+
 ---
- .../bindings/mailbox/brcm,bcm74110-mbox.yaml  | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/brcm,bcm74110-mbox.yaml
-
-diff --git a/Documentation/devicetree/bindings/mailbox/brcm,bcm74110-mbox.yaml b/Documentation/devicetree/bindings/mailbox/brcm,bcm74110-mbox.yaml
-new file mode 100644
-index 000000000000..139728a35303
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/brcm,bcm74110-mbox.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mailbox/brcm,bcm74110-mbox.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM74110 Mailbox Driver
-+
-+maintainers:
-+  - Justin Chen <justin.chen@broadcom.com>
-+  - Florian Fainelli <florian.fainelli@broadcom.com>
-+
-+description: Broadcom mailbox driver first introduced with 74110
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm74110-mbox
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  "#mbox-cells":
-+    const: 2
-+    description:
-+      The first cell is channel type and second cell is shared memory slot
-+
-+  brcm,mbox_tx:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Mailbox transmit doorbell
-+
-+  brcm,mbox_rx:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Mailbox receive doorbell
-+
-+  brcm,mbox_shmem:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    maxItems: 2
-+    description: Mailbox shared memory region and size
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - "#mbox-cells"
-+  - brcm,mbox_tx
-+  - brcm,mbox_rx
-+  - brcm,mbox_shmem
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+        brcm_pmc_mailbox: brcm_pmc_mailbox@a552000 {
-+                #mbox-cells = <2>;
-+                compatible = "brcm,bcm74110-mbox";
-+                reg = <0xa552000 0x1100>;
-+                brcm,mbox_tx = <0x6>;
-+                brcm,mbox_rx = <0x7>;
-+                brcm,mbox_shmem = <0x3000 0x400>;
-+                interrupts = <0x0 0x67 0x4>;
-+                interrupt-parent = <&intc>;
-+        };
--- 
-2.34.1
+Cheers,
+Benno
 
 
