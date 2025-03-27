@@ -1,181 +1,125 @@
-Return-Path: <linux-kernel+bounces-578700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89E6A73559
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:07:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF4FA7355B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338C91892FFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB2F16F4E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904715B554;
-	Thu, 27 Mar 2025 15:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D3B170A23;
+	Thu, 27 Mar 2025 15:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gzxjZOXz"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvPjxZ4W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D12187858
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD891531E1;
+	Thu, 27 Mar 2025 15:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743088034; cv=none; b=QXr9hUTk4yPGYw2i56LtPNNi+YCWhVZcOP+MswRXLF8nvo/27P21pKhPngnmxtb3MNnJ/UX9NwnJmB/A/ld0H/Z7nK/D3l1Hak6wRS++8fj5f/ACr3+JgwjL3aB5lL9F5gWsHtL2rMOKhkwNcvfA2vWe9BxDI9i4G9MAR92lNLw=
+	t=1743088024; cv=none; b=ib9g9asQeS8HfyKKX1HTPta0PUey2ZDTXojzuKQuX2dX/SpAgZPJkocLYuuFdFAhqCd4jPHG+viUNWIK5z3EOOvMm72KwAlP8SFFgg+IXPVr9aqufSMlpHap1xixRdKao1J6vOxbVT3oK3nx4tvMYo40HNqmQOWn3g2hYqG/pWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743088034; c=relaxed/simple;
-	bh=zoa2RpDaagu57Lnd7or/nYYPOHJtaZ/Umw0bS3l6BCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hCKNaRCKI9Mkz624T5b5BRri/9C9ZuKGQf2X+bvK8Y/iqPLWIoziPuj1r+rgv8GPnzTdVqj8xrhyvgxc8OhDeT+/FMfFcQ88Rn3wS4nfB76I2yx3SkQ2XeAcjeCFQaYA14tGwJOAFvy6qsfAiFu7v3mtCxG0LfnEAk6ASvtlRu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gzxjZOXz; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDUDfZ030057;
-	Thu, 27 Mar 2025 15:07:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=5t2FuT
-	Ucf8lDWMstNFGFYUYddh7v205+ujjI5wCPz2U=; b=gzxjZOXzHjHbP5KEKbbBp/
-	7D/RUZAXYy1y+pgNcwpQI295nobvcx9aZ+rTmSdlJn97YAtFQearaBPdeUV+FqpP
-	1QmLWyLFafd8l6bPROKMnrSdhJopDh3hAGEuJzpUZFR16/ikPrzp8vIkkgSkGHRh
-	drUdijaJtzjaEZy6v7Ycz6WPLwvZhJpWbsUClW5rEXKtaorYa2Js/By7bxi1HJyb
-	CYZo9z7pAAQtaqQFGmBz+tzISIIM6ZxNe9eVwP4izmKXdWIeTyuylhTkOxwCWrlO
-	ChiSKNFYHmhI2LeFzDY2pfQJJHcojF7s3/Hw6gfZ0zHxBB8FBUaiFGa9pXFsVo6w
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45my29bc97-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 15:07:06 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDJFvn005801;
-	Thu, 27 Mar 2025 15:07:05 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ja82nkfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 15:07:05 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52RF74f021168646
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Mar 2025 15:07:05 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A455E58059;
-	Thu, 27 Mar 2025 15:07:04 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 355215805C;
-	Thu, 27 Mar 2025 15:07:02 +0000 (GMT)
-Received: from [9.43.55.88] (unknown [9.43.55.88])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 27 Mar 2025 15:07:01 +0000 (GMT)
-Message-ID: <38653c58-a5c4-496f-9b52-e7bc3e447423@linux.ibm.com>
-Date: Thu, 27 Mar 2025 20:36:55 +0530
+	s=arc-20240116; t=1743088024; c=relaxed/simple;
+	bh=x2reJLSWX+cp6sO7ytQo1ksI0rQfspbr+6o7HOUNB40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ltjHEKoVNGdq91HySTTVCvo7oRxli4iTJKvNJt2yeVspI6LrQ53KEEXkeq9MYDtMU3akCDC/aj5MSUeS1IEx328fECUQhJFYa9Gn4CFLaUyxzfN2dl8x0AEUsJ+cd92KeELPCZ2UrRRVfEp+hiIjqtT75iUDpAE6yRyuyFRtdfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvPjxZ4W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FF8C4CEED;
+	Thu, 27 Mar 2025 15:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743088023;
+	bh=x2reJLSWX+cp6sO7ytQo1ksI0rQfspbr+6o7HOUNB40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TvPjxZ4WPE8fn4uMNzBS71aFmbc+E0akaCOweiWDtj4B4BSxvhFNBP/GUJsF7K0Bc
+	 5bBfuZAu7/OYvPgg+fOVoNgfR11+PXaOmO0cVPzebKJT+uPqusteAaH4SbzKcG1sAi
+	 EJcZbptYF416kPlpzl3DVa9i+ER1anCEfGDcwvmKQ40+s8+iv+z1D+5Q5MzzZJNDuk
+	 RZnb96mnSrgSQwiyceQy8KBeCbE607nxE9iJgFESF9Pm1WBpXE/1nyjXvlJJxVGC4k
+	 S5MxjmI2VwxLq2P3Y6J8rwrR2X2W6QCQlGX9nE0WI4/qED9Zcpiiccoysu/Tttr0DN
+	 8ymAAsDMMmcpw==
+Date: Thu, 27 Mar 2025 15:06:57 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <93581b77-7126-4d93-bc65-e1bc24f1ba77@sirena.org.uk>
+References: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
+ <opip2gbm6tpjqnx4hqk4mghbkhv7egexeqs5ukfn7oz3mm7nev@y7qffwz5ckdz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [main-line]Build warnings on PowerPC system
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <61cf556c-4947-4bd6-af63-892fc0966dad@linux.ibm.com>
- <8797a1c4-dc58-4a85-bc51-a3d4131e7930@linux.ibm.com>
- <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CRp_ufsxd0MvTwnIpfsd0DTLVNXI-OtO
-X-Proofpoint-ORIG-GUID: CRp_ufsxd0MvTwnIpfsd0DTLVNXI-OtO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503270102
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8amVInRnHjhg5JCD"
+Content-Disposition: inline
+In-Reply-To: <opip2gbm6tpjqnx4hqk4mghbkhv7egexeqs5ukfn7oz3mm7nev@y7qffwz5ckdz>
+X-Cookie: Multics is security spelled sideways.
 
 
+--8amVInRnHjhg5JCD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 3/27/25 7:31 PM, Venkat Rao Bagalkote wrote:
-> 
-> On 27/03/25 7:22 pm, Madhavan Srinivasan wrote:
->>
->> On 3/27/25 12:33 AM, Venkat Rao Bagalkote wrote:
->>> Greetings!!!
->>>
->>> I see below build warnings while compiling mainline kernel on IBM Power9 system.
->>>
->>> Repo Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
->>>
->>> Head Commit: f6e0150b2003fb2b9265028a618aa1732b3edc8f
->>>
->>> Attached is the .config.
->>>
->>> Machine: IBM Power9
->>>
->>> gcc version 11.5.0
->> What is the ld version in your system.
-> 
-> Please find the ld version below.
-> 
-> GNU ld version 2.35.2-59.el9
+On Thu, Mar 27, 2025 at 02:46:30PM +0100, Sebastian Reichel wrote:
+> On Wed, Mar 26, 2025 at 03:39:33PM -0300, Daniel Almeida wrote:
 
+> > +    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
+> > +        // SAFETY: It is safe to call `regulator_get()`, on a device pointer
+> > +        // received from the C code.
+> > +        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
 
-ah ok that explains. Kindly can you try with this patch and let us know whether 
-this fixes the warning in your setup
+> I think it's worth discussing using regulator_get() VS
+> regulator_get_optional(). We somehow ended up with the C regulator
+> API being more or less orthogonal to other in-kernel C APIs (clocks,
+> gpio, reset, LED) with the _optional suffixed version returning
+> -ENODEV for a missing regulator (and thus needing explicit handling)
+> and the normal version creating a dummy regulator (and a warning).
 
+regulator was first here...
 
-diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-index 1db60fe13802..09ceb5a42d81 100755
---- a/arch/powerpc/boot/wrapper
-+++ b/arch/powerpc/boot/wrapper
-@@ -235,7 +235,7 @@ fi
- # suppress some warnings in recent ld versions
- nowarn="-z noexecstack"
- if ! ld_is_lld; then
--       if [ "$LD_VERSION" -ge "$(echo 2.39 | ld_version)" ]; then
-+       if [ "$LD_VERSION" -ge "$(echo 2.35 | ld_version)" ]; then
-                nowarn="$nowarn --no-warn-rwx-segments"
-        fi
- fi
+> Considering the Rust API is new, it would be possible to let the
+> Rust get() function call regulator_get_optional() instead and then
+> introduce something like get_or_dummy() to call the normal
+> regulator_get() C function.
 
+> I see reasons in favor and against this. I just want to make sure it
+> has been considered before the API is being used, which makes it a
+> lot harder to change.
 
-> 
-> 
-> Regards,
-> 
-> Venkat.
-> 
->>
->> Reason for asking is that currently with
->>
->> commit  579aee9fc594a ("powerpc: suppress some linker warnings in recent linker versions")
->>
->> ld version greater than >2.39, this warning is being suppressed.
->>
->> Maddy
->>
->>>
->>> Warnings:
->>>
->>> ld: warning: arch/powerpc/boot/zImage.epapr has a LOAD segment with RWX permissions
->>> ld: warning: arch/powerpc/boot/zImage.pseries has a LOAD segment with RWX permissions
->>>
->>>
->>> If you happen to fix this, please add below tag.
->>>
->>>
->>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->>>
->>>
->>> Regards,
->>>
->>> Venkat.
+Unless rust somehow magically allows devices to work without power this
+would just be broken.
 
+--8amVInRnHjhg5JCD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflaZAACgkQJNaLcl1U
+h9DDaAf+J6/JAUsghoQCNC12ESMZbImBjWXjl+SJNvREj/BjI2u5hMzpJDz+EKOT
+/X4JXo4rlL0g3o2y27JH4KyCRp39gVEOT2um6VgPcUnBgZSgdrO5pt3LpBTXUhvr
+FgkBvrs9a+sRuOSZ3tqwK/uaStKS99ZV1dMgVyZPz3hCPSHJjclQ4eOgxxg/qRTR
+DBCGUV93I4n1vlU4ur2C64C5hiojeXdtqBejJ1z8eHzzfkFqPa5iSlNPFPo3ynZZ
+jOwM31Kn83EiVOe4L61gwHXd7CNZLGD9UPk0SaSiHFi7JlWjuYwrkZGdlhtoXyew
+Hyv+QotIRtURu9fyoHIglt24g+4t8g==
+=Z0Ik
+-----END PGP SIGNATURE-----
+
+--8amVInRnHjhg5JCD--
 
