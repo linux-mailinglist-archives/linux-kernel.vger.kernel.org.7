@@ -1,133 +1,208 @@
-Return-Path: <linux-kernel+bounces-578065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C263A72A51
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D724A72A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9C5174ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:59:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF50175FF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF01C84B1;
-	Thu, 27 Mar 2025 06:59:06 +0000 (UTC)
-Received: from invmail.skhynix.com (exvmail.skhynix.com [166.125.252.79])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E761C6889
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743058745; cv=none; b=RkbNS5MfO2O1O7P645hTD4PQPZZdbkxxDafy7YYMAHKhSJIJtndXtyrjISTvW65GOCQNgT2+YRvqyOLhF1z8h86l8vbZBPcSjUl55RXy+BrwPh0oMna6BUrlQbHVmmxki3WFILIR/C2n0PZ+gpzjNyMH5F/VLIt9Z5h1MMqjABk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743058745; c=relaxed/simple;
-	bh=qilFpGbta7/gcGLItWMYaKO9y4dlnH2ag6LWOQTDfyM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uk/VOibQTqINTTvXlsjGQR0+ko+hDf9FyM2qiJ5zSu8pw02kIsQ3wTT/qlfFZEXUe4U1Y+GBOxQvH1sgVhkNYrtVhjUjcUti/hyZrTCJZSmcctZXGbJNBKHR5C/raOVKWTmZtduvbeNl+QDEuvWMR4QjGtKfivqMmNpt5uEG824=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc4e-97bff70000022046-14-67e4f3a7d992
-Received: from hymail21.hynixad.com (10.156.135.51) by hymail23.hynixad.com
- (10.156.135.53) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Thu, 27 Mar
- 2025 15:43:51 +0900
-Received: from hymail21.hynixad.com ([10.156.135.51]) by hymail21.hynixad.com
- ([10.156.135.51]) with mapi id 15.02.1544.014; Thu, 27 Mar 2025 15:43:51
- +0900
-From: =?utf-8?B?7KCV7JqU7ZWcKEpPVU5HIFlPSEFOKSBNb2JpbGUgQUU=?=
-	<yohan.joung@sk.com>
-To: Chao Yu <chao@kernel.org>, Yohan Joung <jyh429@gmail.com>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>, "daeho43@gmail.com"
-	<daeho43@gmail.com>
-CC: "linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	=?utf-8?B?6rmA7ZWE7ZiEKEtJTSBQSUxIWVVOKSBNb2JpbGUgQUU=?= <pilhyun.kim@sk.com>
-Subject: RE: [External Mail] Re: [PATCH] f2fs: prevent the current section
- from being selected as a victim during garbage collection
-Thread-Topic: [External Mail] Re: [PATCH] f2fs: prevent the current section
- from being selected as a victim during garbage collection
-Thread-Index: AQHbnt3fELlyoJQ1W0qLIYQiUdi4aLOGhdAQ
-Date: Thu, 27 Mar 2025 06:43:50 +0000
-Message-ID: <2d95428375bd4a5592516bb6cefe4592@sk.com>
-References: <20250326141428.280-1-yohan.joung@sk.com>
- <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
-In-Reply-To: <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
-Accept-Language: ko-KR, en-US
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D5E1C6FE7;
+	Thu, 27 Mar 2025 06:44:55 +0000 (UTC)
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2131.outbound.protection.outlook.com [40.107.255.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A2B1C5D55;
+	Thu, 27 Mar 2025 06:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743057894; cv=fail; b=ripupQ7UgIQurNZhG2iKHp4l/GpFdDq7dEt7kUd5tye/yZhKvG0O4hKhEu0QLP8XSJ9NG3vnyu24C3tClDuwUCq49fKVENDQtodSO2VEKL2Hwuy/I8CrKSAvLhFFnsPmbVZhg20926TsvoN9cbcQM2tAvHVjQFRFyEHAdYfjkBA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743057894; c=relaxed/simple;
+	bh=D55nfZ+kkO/Wbg/HwMhmQKcA7oOInAsljWkqxi4rKSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qItW+tpTgirOJmqSU57E9YWTMNiMrQ/vaCWajqOUT01/fHSptr+c1hxmbYcpROU8A1ZvmfYZfFnJJCWpWU8hBGvKK638VBvz0vPFrWo5sWzdfOkfnjvhSw0Y3Q2FF2fABZpvuLW86x9/dh/D6OPvaP8Bl608zQSJUNaJYecHBz8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.255.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rd0Ov+za62JG1v2T7jH8c/J9SEYp+shZAhwH9rNhOIwRNznhAEUGjnxSuXCr15N0Flpsd9JP/yIZ2K8/56mRKY0d9LmgmIH3NX2NQJLEiUQZJWF6eukh87ILudFnufo/7JZFWFdB3ywXe9Dj2DIMiY4PzGWlqVloCf2+2mzseLq1iUZ/4XqYdI7gmt1hNdC2xhXQ/8/2twNyY1xapLl0l7MbVgeZkxYD+6fY1tDDHr7LnMCktHk8cXLtI8zYla7MjsoLP5T3ecaDM0u81Xcd09H2Q/McTgn0TPWhvJdLzApDuzjOsVYzguhHwFc/bWYnTxVfQqgzCo07ny2o8zsgMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KoxM2ZNUDoGOajPL7E9zX71F/k1SrQyTzShSOlrjhfs=;
+ b=bOvpI/d13toJPML/sNuy4qcGToaxxbPpGOvJMIWXDAmpkkQgXaZIIAQux3qmevxIK3S8rwxu7nzjRgds1Fos3Z0zaMgm4q3cqckyk1a8Ya/OrAdeUoL3chkEkqVlyYWxG9YSn84SQg9wvUPW0IqmaYiWEeu9pMXHzP5tf+yogus/BneyT/e+Xpru6HB6oJMMKJ635YIrbvpHkUQ+D0shuK+FY9CL+YqhWDnQ9cjlwtD32MSLaLGaOMseLbCe3ff395HqI518b7ZaSc2bOG5T+Bdjdf3LIVeEy3xd4VowgDgI3//yVIuKV1dvMQ214snRdQfx3uu+I6E2ShY/bGhH0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TYCP286CA0166.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c6::17)
+ by SE2PPF444A52B44.apcprd06.prod.outlook.com (2603:1096:108:1::7ce) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 27 Mar
+ 2025 06:44:45 +0000
+Received: from TY2PEPF0000AB84.apcprd03.prod.outlook.com
+ (2603:1096:400:3c6:cafe::55) by TYCP286CA0166.outlook.office365.com
+ (2603:1096:400:3c6::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Thu,
+ 27 Mar 2025 06:44:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB84.mail.protection.outlook.com (10.167.253.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 27 Mar 2025 06:44:44 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 8DB8B4160CA0;
+	Thu, 27 Mar 2025 14:44:43 +0800 (CST)
+Date: Thu, 27 Mar 2025 14:44:38 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com, marcin@juszkiewicz.com.pl,
+	kajetan.puchalski@arm.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Fugang Duan <fugang.duan@cixtech.com>
+Subject: Re: [PATCH v5 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
+ support
+Message-ID: <Z-Tz1moMNozx23k6@nchen-desktop>
+References: <20250324062420.360289-1-peter.chen@cixtech.com>
+ <20250324062420.360289-6-peter.chen@cixtech.com>
+ <865xjxmlgl.wl-maz@kernel.org>
+ <Z-Nz0DU441Wwj1i4@nchen-desktop>
+ <861pukm9yd.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsXC9ZZnke7yz0/SDVpa5C0u75rD5sDo8XmT
-	XABjFJdNSmpOZllqkb5dAlfGpKPb2AtmyFes+X2UuYFxg1wXIyeHhICJxKKpD9m6GLk4hATe
-	MErca1rLCOEsYJQ4c2AhUIaDg00gVGLrcnaQuIjAVEaJq/uPM4M4zAIvGSX2XX8D5ggLtDFK
-	vDl8iRGirJ1R4v7cB6wgS0QEjCRWrd7GDGKzCKhKnLyxhB3E5hUwlTi6ZjYTiC0kkCmx6+R+
-	sBpOATuJxh0rWUBWMwrISly9JgMSZhYQl1j89RozxN0CEkv2nIeyRSVePv7HClIuIaAocXer
-	FIjJLKApsX6XPkSnosSU7odQSwUlTs58wgLRKSlxcMUNlgmMYrOQLJiF0D0LSfcsJN0LGFlW
-	MQpn5pXlJmbm6BVnZ1TmZVboJefnbmIERsmy2j9+Oxi/XAg+xCjAwajEw5vA8SRdiDWxrLgy
-	9xCjBAezkgiv5BWgEG9KYmVValF+fFFpTmrxIUZpDhYlcV6jb+UpQgLpiSWp2ampBalFMFkm
-	Dk6pBkYh2b273nlfMV68tF99/Vpxox2OCstqpb5euHTkVlHldY7gbe/Xm/z5fNIk+N6/uS0h
-	G+UtpzzOXzvlp+oisZi61SxSvzknz+L8N7EjMtSQzX5O8O+Qu2xisUyTapikhKSf+s23bL6R
-	/GmO7xy+EI8AQyFGvpDQ03yqHs8XMyr6Z0pvL32ceECJpTgj0VCLuag4EQC1SHXAjgIAAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <861pukm9yd.wl-maz@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB84:EE_|SE2PPF444A52B44:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ba70125-c3bc-48f0-1819-08dd6cfadc5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?a4EnfEdQsXhigYOqHPsWFedCJZvyZ8L9doWrlm+h7gvb5HjXX40usbGDrQ+v?=
+ =?us-ascii?Q?myu2NSHRiba5adVuqPARUo7oJ4qssfvZlqCcylr/NNpw0aYoZk16ye2G7wNX?=
+ =?us-ascii?Q?UA1oR/k4AcwJBfU5eqH9hreTRIoZSh9dA9O9W8ZkRHaKrutKbhu7Xh1fgf4Z?=
+ =?us-ascii?Q?MfjJaXRRnDi5RnXGARimVqFq46qLPzsov3O5hmrVU1xHUMy+Fkfdto02cDKO?=
+ =?us-ascii?Q?6UgWk43QaxE+zvokpXi3nxIYt1qMx94NDnjl3EqYfcpqJ0crbIB/dg2k9Ibk?=
+ =?us-ascii?Q?sqUi4hJkAk5r6pL8lLZpC/UKwNaGfta9evlPuX2syHVLaAZFvN5sWOkrf/+8?=
+ =?us-ascii?Q?mGK+mYiL7LprA8wAI+NBfbyd0GQIPkaR0mnW5axlZbEpC5U00mTObFgztQR+?=
+ =?us-ascii?Q?mqSvKXcwSFVmrSELilOOcn/1+AG02mkv+r+reQHydSb36/OO1OTG1hpqY+++?=
+ =?us-ascii?Q?3TSErg6mBWTlvgBScc9tLOEy1/qEkKnyvfiSly1ytbqEHlnBBYmpWx1VtC0x?=
+ =?us-ascii?Q?QlPDFfs3MXbcYHKXptLaMD6q+VP/X9B3GLU2lvJxwPaNRImzriiYHwMR2Gnn?=
+ =?us-ascii?Q?5Iw8PrHetdVQVAwHC47hnfdFy09IePfMgT64TTZPibN3yRrMuBBfN3dl6+KO?=
+ =?us-ascii?Q?LjfmhrIdDsNy1QnOI9eh7p6NVimas6wOYfKZwYFnaeqjnDqL9XySMsyKL9rZ?=
+ =?us-ascii?Q?j+QOBUg329oZHQPHm55y56lZin3oVcASZixVJpYd7EESv0rcHIe2o3D8FcbA?=
+ =?us-ascii?Q?OBOgZZGEr/e30e1QS4xCPMsgCHQ0pqk617kr5ItemRcbKqG8LW9zQLFoUZ1e?=
+ =?us-ascii?Q?1NojtVmobWIgyCnTUm4iI4r8JrGxlAV/APqw8n/1sO+Y88184w5y4t74oMcA?=
+ =?us-ascii?Q?3cI7juMoF/ChBGBkvJv26JxGtRyhlN6/BmVrIIAjxDaaZUVAIvkG7Gyya6NH?=
+ =?us-ascii?Q?8SVfriRwzU50c9Ovnq039RGG+RV4KcWmVtvLmH+RsFmWgGtv0OY4x98cUST8?=
+ =?us-ascii?Q?4L/LH9oZJ94fegKR7zCQ9HIg3vs8lqaKaQaMNDIz/fELE87Eg/06QINkJx7P?=
+ =?us-ascii?Q?0Z5oOx1GCIpgUDJVau7CGfs5cx3SphYptnQHdl1zL2X5w12VXU5rpA4Vs7iE?=
+ =?us-ascii?Q?VaGUMca1YXAynBSXMbE7VhggeJ2eGNegmMjvMIGZG+E7/uLZVIGCBcBpNehE?=
+ =?us-ascii?Q?FTE6Ara6+bnXLoUPhVjLQEII4rhN2+hRb4K3GWgLWtYCNA100+Ssj6/DUBh5?=
+ =?us-ascii?Q?tJgN0RR03LhTvU2lRIdxzINDIdlrSdujoADSJGR5v6olpLvkaTMz8YxevWQz?=
+ =?us-ascii?Q?/CJvvBx4B8HxHOpmjbr5DnTk2V/V+L0sg79vA88beCskrxji0Fu27VYoQ9E9?=
+ =?us-ascii?Q?aXdGh7lcnNoXJutm65N2V7Any3mB3CjIMUS1dbrBmaUOS1xeK38fEmx80NJB?=
+ =?us-ascii?Q?uw5W/7VUGmQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7416014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 06:44:44.8558
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba70125-c3bc-48f0-1819-08dd6cfadc5b
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB84.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2PPF444A52B44
 
-PiBGcm9tOiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJj
-aCAyNywgMjAyNSAzOjAyIFBNDQo+IFRvOiBZb2hhbiBKb3VuZyA8anloNDI5QGdtYWlsLmNvbT47
-IGphZWdldWtAa2VybmVsLm9yZzsgZGFlaG80M0BnbWFpbC5jb20NCj4gQ2M6IGNoYW9Aa2VybmVs
-Lm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IGxpbnV4LQ0KPiBr
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyDsoJXsmpTtlZwoSk9VTkcgWU9IQU4pIE1vYmlsZSBBRSA8
-eW9oYW4uam91bmdAc2suY29tPg0KPiBTdWJqZWN0OiBbRXh0ZXJuYWwgTWFpbF0gUmU6IFtQQVRD
-SF0gZjJmczogcHJldmVudCB0aGUgY3VycmVudCBzZWN0aW9uDQo+IGZyb20gYmVpbmcgc2VsZWN0
-ZWQgYXMgYSB2aWN0aW0gZHVyaW5nIGdhcmJhZ2UgY29sbGVjdGlvbg0KPiANCj4gT24gMy8yNi8y
-NSAyMjoxNCwgWW9oYW4gSm91bmcgd3JvdGU6DQo+ID4gV2hlbiBzZWxlY3RpbmcgYSB2aWN0aW0g
-dXNpbmcgbmV4dF92aWN0aW1fc2VnIGluIGEgbGFyZ2Ugc2VjdGlvbiwgdGhlDQo+ID4gc2VsZWN0
-ZWQgc2VjdGlvbiBtaWdodCBhbHJlYWR5IGhhdmUgYmVlbiBjbGVhcmVkIGFuZCBkZXNpZ25hdGVk
-IGFzIHRoZQ0KPiA+IG5ldyBjdXJyZW50IHNlY3Rpb24sIG1ha2luZyBpdCBhY3RpdmVseSBpbiB1
-c2UuDQo+ID4gVGhpcyBiZWhhdmlvciBjYXVzZXMgaW5jb25zaXN0ZW5jeSBiZXR3ZWVuIHRoZSBT
-SVQgYW5kIFNTQS4NCj4gDQo+IEhpLCBkb2VzIHRoaXMgZml4IHlvdXIgaXNzdWU/DQoNClRoaXMg
-aXMgYW4gaXNzdWUgdGhhdCBhcmlzZXMgd2hlbiBkaXZpZGluZyANCmEgbGFyZ2Ugc2VjdGlvbiBp
-bnRvIHNlZ21lbnRzIGZvciBnYXJiYWdlIGNvbGxlY3Rpb24uDQpjYXVzZWQgYnkgdGhlIGJhY2tn
-cm91bmQgR0MgKGdhcmJhZ2UgY29sbGVjdGlvbikgdGhyZWFkIGluIGxhcmdlIHNlY3Rpb24NCmYy
-ZnNfZ2ModmljdGltX3NlY3Rpb24pIC0+IGYyZnNfY2xlYXJfcHJlZnJlZV9zZWdtZW50cyh2aWN0
-aW1fc2VjdGlvbiktPiANCmN1cnNlYyh2aWN0aW1fc2VjdGlvbikgLT4gZjJmc19nYyh2aWN0aW1f
-c2VjdGlvbiBieSBuZXh0X3ZpY3RpbV9zZWcpDQoNCkJlY2F1c2UgdGhlIGNhbGwgc3RhY2sgaXMg
-ZGlmZmVyZW50LCANCkkgdGhpbmsgdGhhdCBpbiBvcmRlciB0byBoYW5kbGUgZXZlcnl0aGluZyBh
-dCBvbmNlLCANCndlIG5lZWQgdG8gYWRkcmVzcyBpdCB3aXRoaW4gZG9fZ2FyYmFnZV9jb2xsZWN0
-LCANCm9yIG90aGVyd2lzZSBpbmNsdWRlIGl0IG9uIGJvdGggc2lkZXMuIFdoYXQgZG8geW91IHRo
-aW5rPw0KDQpbMzAxNDYuMzM3NDcxXVsgVDEzMDBdIEYyRlMtZnMgKGRtLTU0KTogSW5jb25zaXN0
-ZW50IHNlZ21lbnQgKDcwOTYxKSB0eXBlIFswLCAxXSBpbiBTU0EgYW5kIFNJVA0KWzMwMTQ2LjM0
-NjE1MV1bIFQxMzAwXSBDYWxsIHRyYWNlOg0KWzMwMTQ2LjM0NjE1Ml1bIFQxMzAwXSAgZHVtcF9i
-YWNrdHJhY2UrMHhlOC8weDEwYw0KWzMwMTQ2LjM0NjE1N11bIFQxMzAwXSAgc2hvd19zdGFjaysw
-eDE4LzB4MjgNClszMDE0Ni4zNDYxNThdWyBUMTMwMF0gIGR1bXBfc3RhY2tfbHZsKzB4NTAvMHg2
-Yw0KWzMwMTQ2LjM0NjE2MV1bIFQxMzAwXSAgZHVtcF9zdGFjaysweDE4LzB4MjgNClszMDE0Ni4z
-NDYxNjJdWyBUMTMwMF0gIGYyZnNfc3RvcF9jaGVja3BvaW50KzB4MWMvMHgzYw0KWzMwMTQ2LjM0
-NjE2NV1bIFQxMzAwXSAgZG9fZ2FyYmFnZV9jb2xsZWN0KzB4NDFjLzB4MjcxYw0KWzMwMTQ2LjM0
-NjE2N11bIFQxMzAwXSAgZjJmc19nYysweDI3Yy8weDgyOA0KWzMwMTQ2LjM0NjE2OF1bIFQxMzAw
-XSAgZ2NfdGhyZWFkX2Z1bmMrMHgyOTAvMHg4OGMNClszMDE0Ni4zNDYxNjldWyBUMTMwMF0gIGt0
-aHJlYWQrMHgxMWMvMHgxNjQNClszMDE0Ni4zNDYxNzJdWyBUMTMwMF0gIHJldF9mcm9tX2Zvcmsr
-MHgxMC8weDIwDQoNCnN0cnVjdCBjdXJzZWdfaW5mbyA6IDB4ZmZmZmZmODAzZjk1ZTgwMCB7DQoJ
-c2Vnbm8gICAgICAgIDogMHgxMTUzMSA6IDcwOTYxDQp9DQoNCnN0cnVjdCBmMmZzX3NiX2luZm8g
-OiAweGZmZmZmZjg4MTFkMTIwMDAgew0KCW5leHRfdmljdGltX3NlZ1swXSA6IDB4MTE1MzEgOiA3
-MDk2MQ0KfQ0KDQo+IA0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mMmZzLWRldmVs
-LzIwMjUwMzI1MDgwNjQ2LjMyOTE5NDctMi0NCj4gY2hhb0BrZXJuZWwub3JnDQo+IA0KPiBUaGFu
-a3MsDQo+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9oYW4gSm91bmcgPHlvaGFuLmpvdW5n
-QHNrLmNvbT4NCj4gPiAtLS0NCj4gPiAgZnMvZjJmcy9nYy5jIHwgNCArKysrDQo+ID4gIDEgZmls
-ZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZz
-L2djLmMgYi9mcy9mMmZzL2djLmMgaW5kZXgNCj4gPiAyYjhmOTIzOWJlZGUuLjRiNWQxOGUzOTVl
-YiAxMDA2NDQNCj4gPiAtLS0gYS9mcy9mMmZzL2djLmMNCj4gPiArKysgYi9mcy9mMmZzL2djLmMN
-Cj4gPiBAQCAtMTkyNiw2ICsxOTI2LDEwIEBAIGludCBmMmZzX2djKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwgc3RydWN0DQo+IGYyZnNfZ2NfY29udHJvbCAqZ2NfY29udHJvbCkNCj4gPiAgCQln
-b3RvIHN0b3A7DQo+ID4gIAl9DQo+ID4NCj4gPiArCWlmIChfX2lzX2xhcmdlX3NlY3Rpb24oc2Jp
-KSAmJg0KPiA+ICsJCQlJU19DVVJTRUMoc2JpLCBHRVRfU0VDX0ZST01fU0VHKHNiaSwgc2Vnbm8p
-KSkNCj4gPiArCQlnb3RvIHN0b3A7DQo+ID4gKw0KPiA+ICAJc2VnX2ZyZWVkID0gZG9fZ2FyYmFn
-ZV9jb2xsZWN0KHNiaSwgc2Vnbm8sICZnY19saXN0LCBnY190eXBlLA0KPiA+ICAJCQkJZ2NfY29u
-dHJvbC0+c2hvdWxkX21pZ3JhdGVfYmxvY2tzLA0KPiA+ICAJCQkJZ2NfY29udHJvbC0+b25lX3Rp
-bWUpOw0KDQo=
+> >
+> > On 25-03-25 10:52:10, Marc Zyngier wrote:
+> > > > +     timer {
+> > > > +             compatible = "arm,armv8-timer";
+> > > > +             interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
+> > > > +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW 0>,
+> > > > +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW 0>,
+> > > > +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW 0>,
+> > > > +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW 0>,
+> > > > +                          <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW 0>;
+> > > > +     };
+> > > > +};
+> > >
+> > > I don't think there is anything wrong here, but it is also a pretty
+> > > useless DT. There isn't even a UART to interact with the machine and
+> > > find out whether it has actually booted.
+> > >
+> >
+> > UEFI uses the same UART, so we could see all kernel boot logs until
+> > switch to use kernel UART driver for printk. If you would like boot
+> > to the console at initramfs, just add uart node like patchset v1.
+> 
+> What's the point in upstreaming something that requires extra changes
+> just to boot it? It only outlines these patches are not useful as they
+> stand.
+> 
+> >
+> > > I reckon this should be part of the initial DT, as this otherwise
+> > > serves little purpose.
+> > >
+> >
+> > Without this initial support, we can't add some base drivers, like
+> > mailbox. The dt_binding_check will report warnings/errors [1].
+> 
+> Of course you can. You just add additional patches to this series,
+> making it something that is actually useful. So far, this series only
+> serves as marketing material.
+> 
+> > Full UART support depends on clock, clock control needs mailbox
+> > to talk with FW using SCMI protocol.
+> 
+> Then do it. You obviously have existing DT support for it already.
+> 
+> > There is no any support for CIX SoC, so we had to add one small step by
+> > step.
+> 
+> No, you are deliberately choosing to make this platform useless.
+> 
+> That's a bit sad, and a waste of everybody's time.
+> 
+
+Hi Marc,
+
+Thanks for your interesting of our platform, and your comments
+help us a lot. But I don't think it wastes reviewers and maintainers
+time, a clean patch set saves everyone's time during upstream process.
+
+For how to organize the patch set for SoC, Krzysztof gave good summary
+at [1]. We are going on upstream [2], this patch set is just a start
+and base but not like you said for marketing purpose.
+
+[1] https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c858ee3724c83c
+[2] https://lore.kernel.org/lkml/20250325101807.2202758-1-guomin.chen@cixtech.com/
+
+-- 
+
+Best regards,
+Peter
 
