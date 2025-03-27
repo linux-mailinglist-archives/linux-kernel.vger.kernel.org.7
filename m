@@ -1,221 +1,223 @@
-Return-Path: <linux-kernel+bounces-578435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EC1A731A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4E4A731B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5CAB189915D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37244189985E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AFF2135D0;
-	Thu, 27 Mar 2025 12:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="WTUYiAle"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010064.outbound.protection.outlook.com [52.101.228.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ECD2139DC;
+	Thu, 27 Mar 2025 12:03:24 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2130.outbound.protection.outlook.com [40.107.215.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3201B960;
-	Thu, 27 Mar 2025 12:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56C01B960;
+	Thu, 27 Mar 2025 12:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.130
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743076982; cv=fail; b=BV+Mr2aqZ3W9OBa9TOPu/W6hHDD5HflijpSDblvKo7K3dsUsvS5VKf3fB+ZvGRO1M0Vb/AhtvK3plkyIVFAEEHATOD5ZTUH0qWRpbSnYtHCA31mw9IeVezIDJDw1IAYPYFifq/k2JJyZQq2aRFAe9iRlOXamfmtPpYotjx4BM6Q=
+	t=1743077003; cv=fail; b=k6dHno3ZUPD/HjdpF7vqTFU/LgUAOGRh+Y0BA+dsluP4UMSLF/c63VnZ7nKLfVIuM5zH+Pm82jZr4yWyPTiyWeoMIFR1lhj8oGoknkCb4ck48uGf6F0wppWBI7adLhWCPhIIkwbT0UXwTx2ekmGaO4ZzMTTEYwfdbYut4Cp/2v0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743076982; c=relaxed/simple;
-	bh=S6IC1RVqNB8+JYRk6UfbWtQD4TW7iVwdtlUp82I6fQM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ShHRNL6X7FXxC12c5nyMXjnRAlrgMnRySvMeB+LLFk92ZoLloPRKTeNCqU/b1yf+X7XUKpK4GvbdtsYtLHmGa0PpiwFzHQvengswBpt0wtrciWwPXTfWg6urtd7qJA2F7OC5zutJMRv1QrkGQfT4qEXmQZwqgll43wPgHX7GEOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=WTUYiAle; arc=fail smtp.client-ip=52.101.228.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1743077003; c=relaxed/simple;
+	bh=D/W/astpbBbKyIPRIDsrctk7V5FpM5GrerEWPMld8nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WCaySPQ0D/K6riJM2O19wxV3QUPeuErorexnhgejAbI10+7Uht5CibcyK8FlxqDL35lphbhtKz0izYjvycOLgPybIYjew8sWQn+Yr9AHmCmDOIttlu2NuE8z+U4jO84r5xrvjhBuu04O1eOE6gfnl19IqRwp1tC69CnAvs91DvE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yWve8/w7YCsOUsM/cjYqf5Ev7Cw8o5yEwSWSci4qqDkh6J+KwoIgoczIFFu0zmL4sUDch1CNnRmBCppIaCQy7M1ULXOGEpXldSblV0Nm4ukHR0OY1w0tvDp65h1yhdhI6+5AEYmEhsZpGQS9tYl7Pr2oj/JO4bc9WCtzQYfPnWsWnMaFd3gmtHgQwuEsrW0Dieb0swIXL4NBifTPedPweXV359iaoUujL0cDRZg5mRZEUWjtNpflnMPuk7ym0os+W9QLyGFNjpdljFKozdMoamsioAv7C/xUlMIStgLELMiIUZV0E9sw5V3aHKFv2/MLv5VONUu7fvQ4lgBtQX0CvA==
+ b=pmXN1TFkzaGrNMYWnTtUVDJb5PoaALezVNV6XGBFVUoYUe04S+W0xn2hTtCLt1ILzFeWeTmxZL+gz87jfdmxu3sn3QPxx03VjhXzlWSV5cNNVSC5eXrNVwNc6g1VLjL9e319m9o8KNcFedNYmr3OmwAd0KybaoSj/W8x1njcqyZbfExgk5Odp+qSC/GaVhEOuTaPfFydX2t79GRLsXY593b6YSYAZrDLwT6DWAahOsLLCTU+b3lIWmOCla+wOcjoygt75L9Ghwoatnb2tWbS8mJWeXJycey+RKkiMTjKm7Ck7xXAz/+uU3U2WmySXfkpByXaiL/JXMge+X030qZUPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S6IC1RVqNB8+JYRk6UfbWtQD4TW7iVwdtlUp82I6fQM=;
- b=doluisz8TOj8U/0q2GpoRdsJUp1AofR2xC6zaAYvYO+2Ww3PouYNTdAQ+BaFiy5BPbfZRgqH9xjIbN5sO1zIgLnpcY7zN4o3Ba+60y7XzZyaryJt9I24ksILXKlZv4LPTIBJ3U+nfBKxLtiWwYQsxLsPM6uxvwG4ZeWRCVNXE4crId6pQhkJVZ09QS9DlvZL0JfOUzcXgzHuQpuOpqEDM/gHtmVT6YKghomZn5GC/vv5PyBEXOpQ0fRNI/upViYMlQKEddu8Evg8OXFhElCXPP8EiJIR9o3Eu3haJgzvi2psFxOOjxxDshm7sICbMADsn9jVFvtGyylHgqLCOiiDKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S6IC1RVqNB8+JYRk6UfbWtQD4TW7iVwdtlUp82I6fQM=;
- b=WTUYiAlezYODYqNHFMYrNqDuMXFzr7AkUuv3cXp8hnnaYyHMYwp4yKVp9drbNF0Gl59ruST5fWLSY5cPtElxroZdiJsr4BSMuF88bdzPYKtL31BXIBv311L+uqFu2DlqOyW04i8dSn1OnjKhQ1Q4aZXDFdB0cQzlwKOsjzsVSYU=
-Received: from OSAPR01MB2772.jpnprd01.prod.outlook.com (2603:1096:604:4::9) by
- OSYPR01MB5464.jpnprd01.prod.outlook.com (2603:1096:604:83::8) with Microsoft
+ bh=YK0UPQ+t29BshZMNuF1EQBj9+yFNiQVI6nMsmuCRGf0=;
+ b=yn6+X/lmZYTjuepFDvSOZFB5Z9Bi22CkZe+9XzOrTHRhHKkygLS/Ud+EgHTCjF+zEmIZlu4zbbxaH1/JF8JhZyn5M4NSvmSXhcCWqzCJI93KeGHOUA3oaP/IKxphi148eA3yFheQ9aTypnd1WWuM5tEBl6W6IpE+BQ1URIAlh0rsKFmpgH7UvUgUesHzRSVJi9RVfqjlrYPG38f9rWqtCTlJ+CAOqbaIttJZKiYsZ1JkY7BtFnx8SndiXtvwaMgpCOLwwb4r6eyWJFEz/yh7Wy/Rvygl4K+z0BthshOcaLc2TSJmbUmCer9BC8Q6i86yjPDO5IcfBgcsrkIFy7ISFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2P153CA0007.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::8) by
+ KL1PR06MB7049.apcprd06.prod.outlook.com (2603:1096:820:120::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
+ 2025 12:03:18 +0000
+Received: from SG2PEPF000B66CD.apcprd03.prod.outlook.com
+ (2603:1096:4:140:cafe::3a) by SI2P153CA0007.outlook.office365.com
+ (2603:1096:4:140::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.13 via Frontend Transport; Thu,
+ 27 Mar 2025 12:03:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CD.mail.protection.outlook.com (10.167.240.27) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8583.27; Thu, 27 Mar 2025 12:02:56 +0000
-Received: from OSAPR01MB2772.jpnprd01.prod.outlook.com
- ([fe80::7280:12fa:872f:e753]) by OSAPR01MB2772.jpnprd01.prod.outlook.com
- ([fe80::7280:12fa:872f:e753%5]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 12:02:56 +0000
-From: John Madieu <john.madieu.xa@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "conor+dt@kernel.org" <conor+dt@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>, "rui.zhang@intel.com"
-	<rui.zhang@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "lukasz.luba@arm.com" <lukasz.luba@arm.com>
-Subject: RE: [PATCH v3 1/6] soc: renesas: rz-sysc: add syscon/regmap support
-Thread-Topic: [PATCH v3 1/6] soc: renesas: rz-sysc: add syscon/regmap support
-Thread-Index: AQHblYIGivVFYFKgUECiS3DWld6hrrN3cxkAgA9/YWA=
-Date: Thu, 27 Mar 2025 12:02:56 +0000
-Message-ID:
- <OSAPR01MB2772364A3736EC6C737634F2FFA12@OSAPR01MB2772.jpnprd01.prod.outlook.com>
-References: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
- <20250315081225.92118-2-john.madieu.xa@bp.renesas.com>
- <CAMuHMdXWGLUzJFKdDR3hLf0iOoKzb15fNQmvzZZQq-a8e6cxfQ@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdXWGLUzJFKdDR3hLf0iOoKzb15fNQmvzZZQq-a8e6cxfQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSAPR01MB2772:EE_|OSYPR01MB5464:EE_
-x-ms-office365-filtering-correlation-id: 2660a8c8-842f-46d2-30ef-08dd6d274f98
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?V0xUemtkRmQvUFIrYTF0WFlaWUVZOTUwVXNab0l0WEZKT1o4c2tpR2x1UitI?=
- =?utf-8?B?VTVYVmNUcEpiOXdMc0RRSERSZmQ2UitEaUFyQzVOLzdFSHpMOWpuMkJ0SkU4?=
- =?utf-8?B?TVZibENkRWtXL0VzekV3YXJWc3ZqcXJVak9VY1hPOEpYQ1VLSGl4U0YyR0k4?=
- =?utf-8?B?Y2xtcC9jdEpSQys1MGxBQXYxMWVEdXhIVElzNExyWnR5SGRzd29JblJ5amNz?=
- =?utf-8?B?Uk5JWTRRRVZnV3MwTGZTMERWVXVsL29KYmRGMFQzYnBTbjdzSnRWVEZEZ1lJ?=
- =?utf-8?B?eHpoNklWQWxvbFdmeVNIbko4MGJSU0tUdnB3NTdkODI5Njg2Z2dEekRodk1t?=
- =?utf-8?B?UHdMRmNObXNIZVVaVWxXUkhGWlVyQmgxeldXaGRlNUphajBDd2NFQlJLaFFp?=
- =?utf-8?B?cDZ6dC9YbmRsTFlBdGR0NTJ5VktMbE5zOU5ac2swU2s0RCtwNktmU3RRYSts?=
- =?utf-8?B?SmgzNjdEa0R5bUNGKzJhRFRMeHFoU3BlV3doMFRNamljVUxyNGpqRDFSSHoy?=
- =?utf-8?B?VVhRZmNCRDFmYUZoS256K3BFbWdueUNpZ2pETXFaS053ekx0V01vWG1sOGV0?=
- =?utf-8?B?Zlo1Qlp3U3NaSmxKU1dzejlOVFRxWnlhRzZ2ejNXN2krS2VEYmZnbXhTazNj?=
- =?utf-8?B?czZUdDRrUVBNR0tpNGkwYUloYU1ESmI5SlVBUklqR3hCOHk2WUt0R0lOTmhu?=
- =?utf-8?B?RHEwWlRjOHdOSmNucHJNakpSc0ZGUGg3eGJJazQ5MFpZTHRyYTYvN1gyRitE?=
- =?utf-8?B?R2NvYW5WSm1TZ3hEWEtkck1HcnR3SWJ1Y0swdlN3WExwOTNhMDJGSFZWaXlQ?=
- =?utf-8?B?bFZqMlNvVEdTa085RTNZK0J3ZVdnQXdxRFR1NzB6NTlvMVRmT3kwY09jeHB3?=
- =?utf-8?B?cUptaEcwMFJoRnVQZm9ZWWlwb3NKZ2lhRlZleHNkRURsUFJJMC9nS0kzdUR0?=
- =?utf-8?B?OUJoK1VPUklZMXBaYi9XUDRSMGE1NHk5cUQ3RStTaGdsZno0QW1rNDh1WTdQ?=
- =?utf-8?B?d2tRYUVjUjJDNlVtc29hVFlzUlFld3NodkU5cjR0M2R0S01adkR2Y2V5OFZs?=
- =?utf-8?B?OVkxQUhQYzd5MGt2UnRvZ0VrSlBiYklkaXc0dys1NjRJbGRpMEtRZDZuTkV1?=
- =?utf-8?B?Yk1wUHFGeGdPV1lSY0F5cERRZjg5c2xaQjFhK2JjcVlmY3hSM1pRaW8yRjZR?=
- =?utf-8?B?QXBkZW0rT1FKQ3JvNHdpMG5PVlRENDFTL2FGYWFyK2lmU3JGQ1Vqc1NEcjlh?=
- =?utf-8?B?RmQ1NjFsUWxPcXU2TGpwejZPY2RyUHkrQzhGalFka2UydHZEVDVZNjU1c2JR?=
- =?utf-8?B?aHpFeDh0UmthTlZqMThmaVhmcFZEYjRjZHFOTTJ0cEcyalVkWHFOcGZjSzdE?=
- =?utf-8?B?ak5hL0EyaElQVjVmT2lJTkVHTkloSzVySWtNOHpzZVJMMFhDWHJ2SkhQU2J0?=
- =?utf-8?B?cEJ1Y2YyQkNtQkRETDJ4UEJZcTd4WU15djI5NXQ1b3FNeHpmaVpnUGEyMTBQ?=
- =?utf-8?B?K1VZTFp0cXllNDdGOCtUc2tHSlZhWjFKSUcrdGxRQ3dGNUtCVEJuR1dsajNm?=
- =?utf-8?B?WWFONUJQdkVmMk9PSzBSajdQSHlSWm5DNTJnb2h6YXpITFNTdXFEV1E2eVV3?=
- =?utf-8?B?cnF6djRLZUJscjUyZHh3WWkzUGFaLzBHdjJBdGN3Qy9jQk5PM3lIT2lVMVB5?=
- =?utf-8?B?VCsyY0c2emowZWJva2tSMWJiMGRHT2s2VUVUSzhnUzZLZ0JEcFdEbkRuS084?=
- =?utf-8?B?YURnc1d6L2dsZ28vbDY0L1FNb25LZUc4a2tpWnJPR1FEdk5PVmxhSGdFSnI4?=
- =?utf-8?B?eEpkMW5ma3Byd2xtQTZPbmJTMlZWY0lVVjJOck1FakwzQm1LU3BDcFJVZ3Fn?=
- =?utf-8?B?VVFjWUNHZ3hmd1FxZEZXM3NpT2ExaVQ2RnNXVEpWSXVJYTlGWUM5c0t6elRB?=
- =?utf-8?Q?7VT8YWKKXYKpmCK0lPynP1TlGENT4Oox?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB2772.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WHpwL0s0UXhUQWlGRTZZWXA4cDRLWUdRdno4dnhXL3hMbU5uK1lLMWc2K2V1?=
- =?utf-8?B?Z0JiRlllMzlpd1R0dUR2Rlp4QlhrY3o0TmYyeHgwTzBGUXB3OXp0MTlrYzdI?=
- =?utf-8?B?WklxTytsSkdtcmNVYTQwZnI5ZnYxUUZDU21KNGY4dDVuU3VvSkU3RzN6bThU?=
- =?utf-8?B?RzFDaWo0Z3RiTThJS2lqM3ZtWmdIMWtDNzZ3OFkrcTl1RUEvZU4vT2NmQUVo?=
- =?utf-8?B?bEc4Z2RmMk91RGJzeG1wSk5EMG1KdmViZVU4c0pEQjRGM2ZSNndCMUpnWTNZ?=
- =?utf-8?B?MVYzQjFpS2s5TTNhTklkVTB1ZURpK2hnT0xnT0dmMDhnWm5MMk9oU1QzTFky?=
- =?utf-8?B?aUxrbnJlZEhVT2hXZWVwWCtKL0E4Y0RkaG81eldrV1o4SlRWMXA0WVdKTkJm?=
- =?utf-8?B?SFQ0VjR6U0ltMmxQY24zT1prZGkzdERTcWprSEJnaWVIWTRQMkZvazY0cWQ4?=
- =?utf-8?B?NGM3Y29JenNrdkZadDlzanVlNzJ2cGcwNHZjVmsyZmh3Yk5YcXFhUGFtaWRZ?=
- =?utf-8?B?RTd5YkEvMnhQSXEvOURTU3lidHhoTXF6QjVQbWVLNENuSG1WRmhIYXR0NmJV?=
- =?utf-8?B?RUpZVWxGSU5kOHRUQmoxTzJwT1NnWG5xVzNYWFpKTW5sYkVLQ2FGRmYxcWVk?=
- =?utf-8?B?MVFuUVFvcGJRRXhDM2o4cWdDWDJybWZvZlNCR05sTWZuTFRvSlNoWEl1L2tj?=
- =?utf-8?B?NTVnNFZXSWFTbitnQnpiWEFlU053OHQ3dkpXblZ0dnNjNk01YnVIcHhKRVRh?=
- =?utf-8?B?RFNkd0xkYkkzZDNjUE1zK1NkT0M5WTNCN0JCUndmZlpzMm9CZUJ1UElkRzZn?=
- =?utf-8?B?K2RBVXI4N1BadUZSMzBUVE5TVkl6NEhPL2d2b0dIQnN6d29oT3o4SkEweWsw?=
- =?utf-8?B?cXpzNXp5ak84djZISmlUYXFacTltdG9CTWxOVzduQkt0SFlGTjJ1dDlndHY1?=
- =?utf-8?B?NmlWUXlhdWVOUmN3aStzKzljcDVZQ2VraFlrZ1hydStDNVc0UXRpU09KMFQr?=
- =?utf-8?B?NFFwYU9kSk1JM09oWHVEczhTVXlReXZuR3ZsWTRuRXozdDkweVlXS3kwaHJz?=
- =?utf-8?B?OHJWSTBNMjZoSUtuTU4vVk1zNmc1UERtekYwQ3RTSDNRbmpFVmtNSzBpM0Qz?=
- =?utf-8?B?ZXdHdFRuWjhBSnFNblNiQUxMazUwcHowS25HbmlzMHM1N29pallaNldadXNP?=
- =?utf-8?B?R1hjeFgwMHlMSXRoRVZyWkdwcjhMTzRDakFZYzVQdUlZK1FHL1ErRFE5MjJ0?=
- =?utf-8?B?VlhSMUxmOTNkejJBZE8xMWZTWWd4TUFlOVpWdENkd0lBN200d3g3aWJjdTY2?=
- =?utf-8?B?aUpKaitVU1JVOHVwZVptQTYwakQ3SEVsTjR1WkI0eElMMVpiZ29UK01ZVDlp?=
- =?utf-8?B?SXF5aW1YVHdYMHE0bXhuQ2syVHpKR09acTQvMG4zb2FhVG1KcWVnQTdrcis4?=
- =?utf-8?B?cnFFazRoUzB3T3M1NW82R2JzMkQ5UGVLQmJhSmRMeGg5UGV4WU5XRnE1ZWZo?=
- =?utf-8?B?LzhJbVJlOG1OczV3TG1HZ1BTZEZrYzAxbjdiZFp4RUgzblR0MEZMVS9VUkdU?=
- =?utf-8?B?YTBqMFNnWkFjOTRkYyt0Vm5CL3BPcUw4YTdiVmZmdjNsTzJBNVd3QmlzZFk5?=
- =?utf-8?B?cXdnakE5NW9NakwrL3dNYTdicDM0dmYwTWdhTjdQZDRSVlpBSE13alJ0bmFx?=
- =?utf-8?B?U0lnVGM1S1kzeXE5RHBSL1BPeU9UOTlmNFplTEQxZjNXNFlzY0dmU0RiMENN?=
- =?utf-8?B?V1krREFHaGFQZWpqVGVvWVN3d3huMGZQTWF2SGxqdkVmSEFJeWNkclYzSFor?=
- =?utf-8?B?OElTQnRBSTB5UlBXclZybUhMa3k3OTlwc0tOSGlZTGI3SzNDaGFFQXpSM1hP?=
- =?utf-8?B?bmJ0Y0dEYVAyNTNYdFQyVjM0Nll1a0grOVJldHVhVEZ6Rmh0ejZXRXVicisr?=
- =?utf-8?B?QlY2Z0g3dS9rWnRUMG9Td3E2MkkzcXFPZ3VTblpOdkpIdVF6cEtvU2lYei9N?=
- =?utf-8?B?WU8yYjhIZE81V0Q1Vit4V1kxOXR4NlBtQ3liWXEzcHQ3cGdoT1praEs3Tmx3?=
- =?utf-8?B?ZXZoRlpQakJBWW9JS3I4YlZ1cEZ0MWNnd1N6TUFFU1ova0EwZENWMEZnWGQw?=
- =?utf-8?B?Nk1qeXY1U3h0WEp0NGdGWEdDQmZ0RVg4SW1GbkZCZS8vYWpkVnQ2KzlqSTdM?=
- =?utf-8?B?QUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 15.20.8534.20 via Frontend Transport; Thu, 27 Mar 2025 12:03:16 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id DF25B4160CA0;
+	Thu, 27 Mar 2025 20:03:15 +0800 (CST)
+Message-ID: <ab7817d8-c998-48e1-8349-596c043d9db4@cixtech.com>
+Date: Thu, 27 Mar 2025 20:03:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB2772.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2660a8c8-842f-46d2-30ef-08dd6d274f98
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2025 12:02:56.2730
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Enhance the PCIe controller driver
+To: Manikandan Karunakaran Pillai <mpillai@cadence.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Milind Parab <mparab@cadence.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250327105429.2947013-1-mpillai@cadence.com>
+ <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CD:EE_|KL1PR06MB7049:EE_
+X-MS-Office365-Filtering-Correlation-Id: 985b5fc2-93bf-4fc6-0771-08dd6d275bbe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WnFmUGJLSGVMMjJCNWhsZkFDNDl0SkhGZmJzODVvQlArMXpwMkJUV3Y5ZmhK?=
+ =?utf-8?B?V2h1bFZncHZha2E5QUw1MFJGMnBwanZ4bHlTRGIvdjlQcGgxVDl6WUlSZkp5?=
+ =?utf-8?B?REptaTVPdUh1MC9wQ3dhZ1lPYkw1eGJuMml6NGVjVnZtdXFPTjUydUhNaGRG?=
+ =?utf-8?B?NVBON2JEWEEyWHRLNjl0WDhLZU9pYUwyMXo1eDJKb2VrMm5aRkZYNHFVM0Fl?=
+ =?utf-8?B?WVFpUFBDSC9QV0lSdEJFWWJ2ZitwaGxpelpYUzh5TkVzdDB0L1N0TDZXNkh2?=
+ =?utf-8?B?VjhhcWswc2g5R1FWcllaNVk4UVd4OHU1OG5pajNCQTI0UlRJbTg3N2VqWmdR?=
+ =?utf-8?B?Y29JV2swRE1EcWN5T0NrRGdzaStLZ1Ura2RMUnJpZEhuaEUwNWxKRFQyOEk0?=
+ =?utf-8?B?UC9ZWVFwQTFWdFRmeFNKeFhrQjBrNU9Jc29JTVBFRkZJVDVPL3NQZ244TWJ6?=
+ =?utf-8?B?MHIwbnFXL1NQcndLdmM0ZzNqSDZOMEhTc1FNbFZEalZSbFQrOE81dXM0c0VH?=
+ =?utf-8?B?Z3hkSEE4ZU8wS3dzMXFQMW0wZWg4UmdJQ1Vmem9XSlNXYVFRbEZBS3JhMzY0?=
+ =?utf-8?B?VnlnTy96bWJOZmJXTHpuT283MlVDSlkwT3h6d0xpK29XejlRa2ZNNGNSQlNm?=
+ =?utf-8?B?TzN5QUJobkZ3Q01BNSs1bVhuQ0YyU25reHF0Mk5kNzhmTzhnbUlNZDNMY25v?=
+ =?utf-8?B?V3k3TGVFSkdhV2FSeE93Tlo1SHhRWXhnd1FmWXBWd01IY28xSWYyZ29veDZn?=
+ =?utf-8?B?aWtoTkR4andpZ3paZEhLWjFUcWRVaElpV2pWNUhwSDU3QndEUlRrdE13OUlW?=
+ =?utf-8?B?UWtpdWc1MGhvdzNLQnNKL29zUTNuS2twR3g4VU53MUpLaThXOGdlY2dNTStz?=
+ =?utf-8?B?d2FrY3hJZWNwWjVUN2hXTUY2NjN6UW96a3N1MThVVXE5ZjVYcFRSblMvUWJL?=
+ =?utf-8?B?L1cyR2dyWFY4UUFCNTdIcjduMjRqM2tjMTVWVUh3QW5zR1JEL3NtSG1NU0Jw?=
+ =?utf-8?B?MkxsSE5aQkxnTnF3b2srNE81a0llRFBhM2hwUVg1UHVIOTN3MWR5d01Ia3py?=
+ =?utf-8?B?TmpJSjU3ZFlkbElnMFZxeHlzajFlbUJxT0wwNkFVWmlJUHV0Zzl5T2tvSGZy?=
+ =?utf-8?B?T1FCN0JVandudytyNDBmZmphTGoxQkZDYS85MjNJK1U2YnMrbHZvcXN6RlFs?=
+ =?utf-8?B?cVN4Mit2bmdoNjNzTkF0cVRNZTdCek5rOGExV3VmZlQrWnVhOEtlYTFQd0R2?=
+ =?utf-8?B?cFA3MDNNOW9mVVFnb1FSaVd4SXh2cXlQbXgzRnRBYm5VaEMvY0tQaFlCUTdP?=
+ =?utf-8?B?WkFSMTVFdG5OOWpyMlpESlplVmpoZU10Um94aXRBZDBBV0wzeSsxdGNHZmNR?=
+ =?utf-8?B?a1BlNVdiWCtNU1FvWlB2TXNoVXFvYXJoWUd0UkU5MUw3dzIybHc5dXMyUnF0?=
+ =?utf-8?B?YUlJOFBYL2dQOGRiRzI3dGRPaUp0K2FkelJQTE14RG92cUhrVVNvUXRMc1lO?=
+ =?utf-8?B?VThxdjl4TXVHVk9nSkV3ZzVMVjNaSnFXTXpUMmJMck5RZHRmZGxreDlTQThW?=
+ =?utf-8?B?T1llTFNHcFZtbG90R0VWemhkbmluTXdMajlQaXhnYXdjdXl2eUkwanl2VnJn?=
+ =?utf-8?B?U1REUkU3cUtQK1JNK0xrcTZsVFptb3pMZHdpcUh5OFRZbzlOTUxzS2ZjWTNH?=
+ =?utf-8?B?WnhpMTBEdFZBYWxQVGUveSs0Z2VEVm9BcFhzM25sR1p5WFlrNmRBdlZOdkxX?=
+ =?utf-8?B?S2dBcHdrR0ZYdkxNWWpPM3hUUCtWMDJGVWNYbFRUNXV2WHJZTzFoK2lWSXhk?=
+ =?utf-8?B?SDNDdDdCcDVzTzAybUtPd2RjNnYxVU51OE5IeFNnclc4MXpkSG8yTEpTODFB?=
+ =?utf-8?B?cHh5ZGZWT0M5UzU1MXB0MmJhUG5nR1M1c0pXR3BmbHAvNWIzcTVzNm1zY3hN?=
+ =?utf-8?B?bEQ5OHR3NEhQS0xvQmhWQ2s4Z1VoN2xjei9EZXRwaktlTVJxNjA4YVV1T1Z5?=
+ =?utf-8?Q?vQHUeX4JNh1zagFnTJ6UQDH5yxtgmE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 12:03:16.5092
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9BYA4sXVeRf+sc1WInpPMVfvi02WUvJJ/V1Id9DxkwrJY/4XZKv3kDyqubUUoiKN+M+6F20Ww8ybBdHiDoZW4g7IPZ263skOC95zcfDGOC0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSYPR01MB5464
+X-MS-Exchange-CrossTenant-Network-Message-Id: 985b5fc2-93bf-4fc6-0771-08dd6d275bbe
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CD.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7049
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBvbmNlIG1vcmUgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiAtLS0t
-LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0
-QGxpbnV4LW02OGsub3JnPg0KPiBTZW50OiBNb25kYXksIE1hcmNoIDE3LCAyMDI1IDQ6MTMgUE0N
-Cj4gVG86IEpvaG4gTWFkaWV1IDxqb2huLm1hZGlldS54YUBicC5yZW5lc2FzLmNvbT4NCj4gU3Vi
-amVjdDogUmU6IFtQQVRDSCB2MyAxLzZdIHNvYzogcmVuZXNhczogcnotc3lzYzogYWRkIHN5c2Nv
-bi9yZWdtYXANCj4gc3VwcG9ydA0KPiANCj4gT24gU2F0LCAxNSBNYXIgMjAyNSBhdCAwOToxMiwg
-Sm9obiBNYWRpZXUgPGpvaG4ubWFkaWV1LnhhQGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToNCj4g
-PiBUaGUgUlovRzNFIHN5c3RlbSBjb250cm9sbGVyIGhhcyB2YXJpb3VzIHJlZ2lzdGVycyB0aGF0
-IGNvbnRyb2wgb3INCj4gPiByZXBvcnQgc29tZSBwcm9wZXJ0aWVzIHNwZWNpZmljIHRvIGluZGl2
-aWR1YWwgSVBzLiBUaGUgcmVnbWFwIGlzDQo+ID4gcmVnaXN0ZXJlZCBhcyBhIHN5c2NvbiBkZXZp
-Y2UgdG8gYWxsb3cgdGhlc2UgSVAgZHJpdmVycyB0byBhY2Nlc3MgdGhlDQo+ID4gcmVnaXN0ZXJz
-IHRocm91Z2ggdGhlIHJlZ21hcCBBUEkuDQo+ID4NCj4gPiBBcyBvdGhlciBSWiBTb0NzIG1pZ2h0
-IGhhdmUgY3VzdG9tIHJlYWQvd3JpdGUgY2FsbGJhY2tzIG9yDQo+ID4gbWF4LW9mZnNldHMsIGxl
-dCdzIHJlZ2lzdGVyIGEgY3VzdG9tIHJlZ21hcCBjb25maWd1cmF0aW9uLg0KPiA+DQo+ID4gU2ln
-bmVkLW9mZi1ieTogSm9obiBNYWRpZXUgPGpvaG4ubWFkaWV1LnhhQGJwLnJlbmVzYXMuY29tPg0K
-PiANCj4gPiAtLS0gYS9kcml2ZXJzL3NvYy9yZW5lc2FzL3J6LXN5c2MuYw0KPiA+ICsrKyBiL2Ry
-aXZlcnMvc29jL3JlbmVzYXMvcnotc3lzYy5jDQo+ID4gQEAgLTYsOCArNiwxMCBAQA0KPiA+ICAg
-Ki8NCj4gPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4
-L21mZC9zeXNjb24uaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+ID4gICNpbmNsdWRl
-IDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5o
-Pg0KPiA+ICAjaW5jbHVkZSA8bGludXgvc3lzX3NvYy5oPg0KPiA+DQo+ID4gICNpbmNsdWRlICJy
-ei1zeXNjLmgiDQo+ID4gQEAgLTgxLDYgKzgzLDE0IEBAIHN0YXRpYyBpbnQgcnpfc3lzY19zb2Nf
-aW5pdChzdHJ1Y3Qgcnpfc3lzYyAqc3lzYywNCj4gY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCAq
-bWF0DQo+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiAgfQ0KPiA+DQo+ID4gK3N0YXRpYyBzdHJ1
-Y3QgcmVnbWFwX2NvbmZpZyByel9zeXNjX3JlZ21hcCA9IHsNCj4gDQo+IFdBUk5JTkc6IHN0cnVj
-dCByZWdtYXBfY29uZmlnIHNob3VsZCBub3JtYWxseSBiZSBjb25zdA0KPiANCj4gQWJvcnRpbmcg
-cmV2aWV3LCBuZXcgdmVyc2lvbiBoYXMgYmVlbiBwb3N0ZWQuLi4NCg0KU2luY2UgSSBzZW50IGEg
-djQgd2hpbGUgeW91IHdlcmUgcmV2aWV3aW5nIHRoaXMgdjMsIEkndmUgcmVjZWl2ZWQNClJiIHRh
-Z3Mgb24gdHdvIHBhdGNoZXMgZnJvbSBLcnp5c3p0b2Ygb24gdGhlIHY0Lg0KDQpJJ2xsIHRoZW4g
-c2VuZCBhIHY1IHdoaWNoIHdvdWxkIGluY2x1ZGUgdGhpcyB3YXJuaW5nIGZpeCBhcyB3ZWxsIGFz
-DQp0aGUgUmIgdGFncyBJJ3ZlIHJlY2VpdmVkLiBJIGhvcGUgdGhpcyBpcyBPayBmb3IgeW91Lg0K
-DQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAg
-IEdlZXJ0DQo+IA0KDQpSZWdhcmRzLA0KSm9obg0K
+Hi Manikandan,
+
+You should update your patch to V2, not no version at all.
+
+Best regards,
+Hans
+
+On 2025/3/27 18:59, Manikandan Karunakaran Pillai wrote:
+> EXTERNAL EMAIL
+> 
+> Enhances the exiting Cadence PCIe controller drivers to support second
+> generation PCIe controller also referred as HPA(High Performance
+> Architecture) controllers.
+> 
+> The patch set enhances the Cadence PCIe driver for the new high
+> performance architecture changes. The "compatible" property in DTS
+> is added with  more strings to support the new platform architecture
+> and the register maps that change with it. The driver read register
+> and write register functions take the updated offset stored from the
+> platform driver to access the registers. The driver now supports
+> the legacy and HPA architecture, with the legacy code being changed
+> minimal. The TI SoC continues to be supported with the changes
+> incorporated. The changes are also in tune with how multiple platforms
+> are supported in related drivers.
+> 
+> Patch 1/7 - DTS related changes for property "compatible"
+> Patch 2/7 - Updates the header file with relevant register offsets and
+>              bit definitions
+> Patch 3/7 - Platform related code changes
+> Patch 4/7 - PCIe EP related code changes
+> Patch 5/7 - Header file is updated with register offsets and updated
+>              read and write register functions
+> Patch 6/7 - Support for multiple arch by using registered callbacks
+> Patch 7/7 - TIJ72X board is updated to use the new approach
+> 
+> Comments from the earlier patch submission on the same enhancements are
+> taken into consideration. The previous submitted patch links is
+> https://lore.kernel.org/lkml/CH2PPF4D26F8E1C205166209F012D4F3A81A2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com/
+> 
+> The scripts/checkpatch.pl has been run on the patches with and without
+> --strict. With the --strict option, 4 checks are generated on 1 patch
+> (patch 0002 of the series), which can be ignored. There are no code
+> fixes required for these checks. The rest of the 'scripts/checkpatch.pl'
+> is clean.
+> 
+> The changes are tested on TI platforms. The legacy controller changes are
+> tested on an TI J7200 EVM and HPA changes are planned for on an FPGA
+> platform available within Cadence.
+> 
+> Manikandan K Pillai (7):
+>    dt-bindings: pci: cadence: Extend compatible for new platform
+>      configurations
+>    PCI: cadence: Add header support for PCIe next generation controllers
+>    PCI: cadence: Add platform related architecture and register
+>      information
+>    PCI: cadence: Add support for PCIe Endpoint HPA controllers
+>    PCI: cadence: Update the PCIe controller register address offsets
+>    PCI: cadence: Add callback functions for Root Port and EP controller
+>    PCI: cadence: Update support for TI J721e boards
+> 
+>   .../bindings/pci/cdns,cdns-pcie-ep.yaml       |  12 +-
+>   .../bindings/pci/cdns,cdns-pcie-host.yaml     | 119 +++++-
+>   drivers/pci/controller/cadence/pci-j721e.c    |   8 +
+>   .../pci/controller/cadence/pcie-cadence-ep.c  | 184 +++++++--
+>   .../controller/cadence/pcie-cadence-host.c    | 264 ++++++++++--
+>   .../controller/cadence/pcie-cadence-plat.c    | 145 +++++++
+>   drivers/pci/controller/cadence/pcie-cadence.c | 217 +++++++++-
+>   drivers/pci/controller/cadence/pcie-cadence.h | 380 +++++++++++++++++-
+>   8 files changed, 1259 insertions(+), 70 deletions(-)
+> 
+> --
+> 2.27.0
+> 
+> 
 
