@@ -1,194 +1,206 @@
-Return-Path: <linux-kernel+bounces-578078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D3DA72A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D1AA72A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CD21737A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7081F173F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD8B156228;
-	Thu, 27 Mar 2025 07:15:09 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3391D515B;
+	Thu, 27 Mar 2025 07:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfmlQaWl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0E61CAA65
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DFC1CDA2D;
+	Thu, 27 Mar 2025 07:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743059708; cv=none; b=TDeC9FUShXj7JH+Coz689ypL9tMQONBCnP6crjjBtqaX4kudOb6gOX08//Yn3Sf0FlSqJh0b6lPRpHWSgs3ACpMcwxkGU+tgQmpT42LX3P9e18V8eb5FA0V+CHihOINCW1VF7GWV9MolGsbwds6uBHJhpBonc3vAegtrjlu0vvs=
+	t=1743059802; cv=none; b=SA0CshNoqBgHFBJIs5fQZG8iz8fzxu7PTFuxAO9+Z63lnpbwzxpmH4ykjKyVVv9xrXqSiipVQR/vTZeCabxcL+ZReXccqAucs0fR2KhUfpF4jcNxigZaw9RX+oDTl20ilUw5J5U3hPmisAy4zxYusXuh9mKitbZeFvpTahsTguI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743059708; c=relaxed/simple;
-	bh=vUsbsneOIQNhPvObjLo3k9eEMmxR3W65UdRsJX4aTLA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S/DkWyPXEfmKzNGxFsXCSUu9f+B7i0z/Xn3mGBqSub0LG/TlfmT1ppiMObZd8RhP4Kxtawc1NVb2fWYaJ7sqmjdoQe/wrqmME8DXGDHjMBxiwoi1jB40vp0fGrBNuuhpy4RLrLNy6luM3vaexKq2PHrgl5WeO4qnxM2/3xStvwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ce3bbb2b9dso7437595ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 00:15:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743059705; x=1743664505;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m3jFukFw5kbdJVf+8SSk6SnTx7uEFVXMJjmX56YAztw=;
-        b=sSDkRBypz2SA2bIyHYqgPRGHseM4VN4Hd/hZrLkfho8PzEo9XG8NkoQIqdKLSkgG3G
-         QsWewpjMDwnAmOhI5qlxVy2S/6T4++BuYAE478mFFn29ScB81qV0HbRTHRlGS5tNUx8s
-         MzAs+mEmjgnvyl7SD3hpZVqHHSv5FL80bIwAhUr90ELzWZVcNDft9rOc7Lfn/7bE+8Ax
-         An5a268aA9qSImHTc9oh8bmy7QSRqnM0tkZni20aI5MAMhR+viRvkHk4yULLUVPg/SfJ
-         yxF8+dLtuqS3LADfkU+kHhYGKoeZk+bKQKC5FOeVakbUIejSnvNefSGDuNg/so0QwmC8
-         N23Q==
-X-Gm-Message-State: AOJu0Yy5QDgb07e0UBgTX6ISjSRp7qy07gyzxxgAo3w2G3omjVDos7BD
-	8QA/JEdPdXVuS2yMq8xkhk/3+D6VNbpG4DIWWp6PNpEKe+s8o3kA2wtHh+cWWYUIo2+nMR4k9Ii
-	iHzbH1P2e5Lf0Hhzty8poqrQO8YW6q82Cu5sWpLbLGeQaTdBuaZmNCgc=
-X-Google-Smtp-Source: AGHT+IGfk21rSXNs2Ui+2sD+lov5uEq12PH7eZ0Kw9HqH9+NmErwTX918QIMYGE0KxNhaRcr6eDssyrfJJ8RXBoH/2nsRpM0NOso
+	s=arc-20240116; t=1743059802; c=relaxed/simple;
+	bh=6MsLFXJTO1nHRU7fxYGjWw4YNdH3bXJp7NDPTR8FanM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IDH6DQK2Eb62eQrkGCqlIcatdPIOJ7N8SOzCKgJFNeB3YuvUIPM59mdhlELFr5X3Nh2z9rttSFILZCZQu1OS2C6p0ImHTGyXlM7G4QAUzStlrc5AM+fXz4UOctYiwnL+KQlAEoa+Wqg7pzz+V2sFUVzfgcOje1mLsU7cWKk/NUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfmlQaWl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE92AC4CEDD;
+	Thu, 27 Mar 2025 07:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743059801;
+	bh=6MsLFXJTO1nHRU7fxYGjWw4YNdH3bXJp7NDPTR8FanM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rfmlQaWlXP/aVoSXq9kgeLjNE7tRfLq0IHl/9h0PxFlaiIZ6J3yq1FMzN7FuS0v3v
+	 TBr8wJwKxrN1uA85rwpEXdytFMKbfAiLfZQmHY30vWG/+5k2yNZzReX3LcVUxOOdvt
+	 rbEGrSXoTriIViqdSIiJExP4BREY3TTpRPgEWbZ+Lm8PMe5vKWzxDM5K+eth+//smd
+	 wjKF8A3z/0xGem/0wwl9DZfoIpXx5o50RbdPRKFVY1Lo2q//m+mnAI8v4eRnwdt6BX
+	 eT0QjWJwkvwTbD6r2rC200BgzcxSNQ7s7yStryWKepIOQBdLXrDthNzK8CT3PUep3+
+	 3c9qpSlN1vPPw==
+Message-ID: <e43b1a00-b221-413b-a36a-3a65e17f800f@kernel.org>
+Date: Thu, 27 Mar 2025 08:16:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1f86:b0:3d0:10ec:cc36 with SMTP id
- e9e14a558f8ab-3d5ccdd4421mr26810125ab.11.1743059705052; Thu, 27 Mar 2025
- 00:15:05 -0700 (PDT)
-Date: Thu, 27 Mar 2025 00:15:05 -0700
-In-Reply-To: <20250326141712.91732-1-richard120310@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e4faf9.050a0220.2f068f.0022.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_crc_append
- (2)
-From: syzbot <syzbot+79e4e34c2a37d5a9c1f7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, richard120310@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/6] arm64: dts: cix: add initial CIX P1(SKY1) dts
+ support
+To: Peter Chen <peter.chen@cixtech.com>, Marc Zyngier <maz@kernel.org>
+Cc: soc@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com,
+ marcin@juszkiewicz.com.pl, kajetan.puchalski@arm.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Fugang Duan <fugang.duan@cixtech.com>
+References: <20250324062420.360289-1-peter.chen@cixtech.com>
+ <20250324062420.360289-6-peter.chen@cixtech.com>
+ <865xjxmlgl.wl-maz@kernel.org> <Z-Nz0DU441Wwj1i4@nchen-desktop>
+ <861pukm9yd.wl-maz@kernel.org> <Z-Tz1moMNozx23k6@nchen-desktop>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z-Tz1moMNozx23k6@nchen-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in bch2_extent_crc_append
-
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): check_allocations... done
-bcachefs (loop0): going read-write
-bcachefs (loop0): done starting filesystem
-=====================================================
-BUG: KMSAN: uninit-value in variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
-BUG: KMSAN: uninit-value in extent_entry_type fs/bcachefs/extents.h:59 [inline]
-BUG: KMSAN: uninit-value in extent_entry_bytes fs/bcachefs/extents.h:68 [inline]
-BUG: KMSAN: uninit-value in extent_entry_u64s fs/bcachefs/extents.h:81 [inline]
-BUG: KMSAN: uninit-value in bch2_extent_crc_append+0x7c2/0x830 fs/bcachefs/extents.c:593
- variable__ffs arch/x86/include/asm/bitops.h:251 [inline]
- extent_entry_type fs/bcachefs/extents.h:59 [inline]
- extent_entry_bytes fs/bcachefs/extents.h:68 [inline]
- extent_entry_u64s fs/bcachefs/extents.h:81 [inline]
- bch2_extent_crc_append+0x7c2/0x830 fs/bcachefs/extents.c:593
- init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:729
- bch2_write_extent fs/bcachefs/io_write.c:1073 [inline]
- __bch2_write+0x54a9/0x8490 fs/bcachefs/io_write.c:1487
- bch2_write+0xc98/0x1af0 fs/bcachefs/io_write.c:1659
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
- bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:652
- do_writepages+0x427/0xc30 mm/page-writeback.c:2687
- filemap_fdatawrite_wbc mm/filemap.c:388 [inline]
- __filemap_fdatawrite_range mm/filemap.c:421 [inline]
- file_write_and_wait_range+0x6f2/0x7b0 mm/filemap.c:796
- bch2_fsync+0xb6/0x510 fs/bcachefs/fs-io.c:228
- vfs_fsync_range+0x1f9/0x260 fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- bch2_write_iter+0x4dce/0x50f0 fs/bcachefs/fs-io-buffered.c:1072
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xb34/0x1540 fs/read_write.c:679
- ksys_write+0x240/0x4b0 fs/read_write.c:731
- __do_sys_write fs/read_write.c:742 [inline]
- __se_sys_write fs/read_write.c:739 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:739
- x64_sys_call+0x3161/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- bch2_extent_crc_pack+0x686/0x6b0 fs/bcachefs/extents.c:549
- bch2_extent_crc_append+0x645/0x830 fs/bcachefs/extents.c:591
- init_append_extent+0x466/0x1050 fs/bcachefs/io_write.c:729
- bch2_write_extent fs/bcachefs/io_write.c:1073 [inline]
- __bch2_write+0x54a9/0x8490 fs/bcachefs/io_write.c:1487
- bch2_write+0xc98/0x1af0 fs/bcachefs/io_write.c:1659
- closure_queue include/linux/closure.h:270 [inline]
- closure_call include/linux/closure.h:432 [inline]
- bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
- bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:652
- do_writepages+0x427/0xc30 mm/page-writeback.c:2687
- filemap_fdatawrite_wbc mm/filemap.c:388 [inline]
- __filemap_fdatawrite_range mm/filemap.c:421 [inline]
- file_write_and_wait_range+0x6f2/0x7b0 mm/filemap.c:796
- bch2_fsync+0xb6/0x510 fs/bcachefs/fs-io.c:228
- vfs_fsync_range+0x1f9/0x260 fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- bch2_write_iter+0x4dce/0x50f0 fs/bcachefs/fs-io-buffered.c:1072
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xb34/0x1540 fs/read_write.c:679
- ksys_write+0x240/0x4b0 fs/read_write.c:731
- __do_sys_write fs/read_write.c:742 [inline]
- __se_sys_write fs/read_write.c:739 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:739
- x64_sys_call+0x3161/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_frozen_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4763
- alloc_pages_mpol+0x4cd/0x890 mm/mempolicy.c:2270
- alloc_frozen_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2341
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab+0x23a/0x1110 mm/slub.c:2587
- new_slab mm/slub.c:2640 [inline]
- ___slab_alloc+0x1287/0x3540 mm/slub.c:3826
- __slab_alloc mm/slub.c:3916 [inline]
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- kmem_cache_alloc_noprof+0x84e/0xe10 mm/slub.c:4171
- mempool_alloc_slab+0x36/0x50 mm/mempool.c:559
- mempool_init_node+0x202/0x4d0 mm/mempool.c:217
- mempool_init_noprof+0x57/0x70 mm/mempool.c:246
- bioset_init+0x279/0xb30 block/bio.c:1707
- bch2_fs_fs_io_buffered_init+0x4a/0xc0 fs/bcachefs/fs-io-buffered.c:1084
- bch2_fs_alloc fs/bcachefs/super.c:934 [inline]
- bch2_fs_open+0x5654/0x5ba0 fs/bcachefs/super.c:2065
- bch2_fs_get_tree+0x98a/0x24e0 fs/bcachefs/fs.c:2190
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
- path_mount+0x742/0x1f10 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6726 Comm: syz.0.16 Not tainted 6.14.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-=====================================================
+On 27/03/2025 07:44, Peter Chen wrote:
+>>>
+>>> On 25-03-25 10:52:10, Marc Zyngier wrote:
+>>>>> +     timer {
+>>>>> +             compatible = "arm,armv8-timer";
+>>>>> +             interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
+>>>>> +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW 0>,
+>>>>> +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW 0>,
+>>>>> +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW 0>,
+>>>>> +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW 0>,
+>>>>> +                          <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW 0>;
+>>>>> +     };
+>>>>> +};
+>>>>
+>>>> I don't think there is anything wrong here, but it is also a pretty
+>>>> useless DT. There isn't even a UART to interact with the machine and
+>>>> find out whether it has actually booted.
+>>>>
+>>>
+>>> UEFI uses the same UART, so we could see all kernel boot logs until
+>>> switch to use kernel UART driver for printk. If you would like boot
+>>> to the console at initramfs, just add uart node like patchset v1.
+>>
+>> What's the point in upstreaming something that requires extra changes
+>> just to boot it? It only outlines these patches are not useful as they
+>> stand.
+>>
+>>>
+>>>> I reckon this should be part of the initial DT, as this otherwise
+>>>> serves little purpose.
+>>>>
+>>>
+>>> Without this initial support, we can't add some base drivers, like
+>>> mailbox. The dt_binding_check will report warnings/errors [1].
+>>
+>> Of course you can. You just add additional patches to this series,
+>> making it something that is actually useful. So far, this series only
+>> serves as marketing material.
+>>
+>>> Full UART support depends on clock, clock control needs mailbox
+>>> to talk with FW using SCMI protocol.
+>>
+>> Then do it. You obviously have existing DT support for it already.
+>>
+>>> There is no any support for CIX SoC, so we had to add one small step by
+>>> step.
+>>
+>> No, you are deliberately choosing to make this platform useless.
+>>
+>> That's a bit sad, and a waste of everybody's time.
+>>
+> 
+> Hi Marc,
+> 
+> Thanks for your interesting of our platform, and your comments
+> help us a lot. But I don't think it wastes reviewers and maintainers
+> time, a clean patch set saves everyone's time during upstream process.
+> 
+> For how to organize the patch set for SoC, Krzysztof gave good summary
+> at [1]. We are going on upstream [2], this patch set is just a start
+> and base but not like you said for marketing purpose.
 
 
-Tested on:
+I do not think I suggested in [1] to ever send new SoC containing only
+CPUs and interrupt controller, without even serial. My instruction [1]
+was how to organize it. The DTS can be even fully complete, see the
+upstreaming example I have been using all the time - Qualcomm SM8650:
 
-commit:         38fec10e Linux 6.14
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=10036de4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b250f29c9561410d
-dashboard link: https://syzkaller.appspot.com/bug?extid=79e4e34c2a37d5a9c1f7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+https://lore.kernel.org/all/20231124-topic-sm8650-upstream-dt-v4-0-e402e73cc5f0@linaro.org/
 
-Note: no patches were applied.
+Entire SoC sent to mailing list on the day one of public release of that
+flagship Qualcomm SoC. The SoC DTSI and board DTS have almost complete
+picture, except few trickier pieces... but it even has full display and
+GPU! Plus, as I explained on my email on samsung-soc, that DTS/DTSI
+patchset references all other bindings with their state, so SoC
+maintainers can understand what is the overall progress and what will be
+the result in DT schema checks, if they apply the patchset.
+
+The minimum, absolute minimum submission is with the serial nodes. I
+would prefer to have some storage or any other interface as well, but
+that's fine.
+
+
+> 
+> [1] https://lore.kernel.org/linux-samsung-soc/CADrjBPq_0nUYRABKpskRF_dhHu+4K=duPVZX==0pr+cjSL_caQ@mail.gmail.com/T/#m2d9130a1342ab201ab49670fa6c858ee3724c83c
+> [2] https://lore.kernel.org/lkml/20250325101807.2202758-1-guomin.chen@cixtech.com/
+> 
+
+
+Best regards,
+Krzysztof
 
