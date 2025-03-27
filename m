@@ -1,116 +1,191 @@
-Return-Path: <linux-kernel+bounces-579241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4798A74103
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:44:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC328A7410D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8A0168A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3C4169E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F741DE4D4;
-	Thu, 27 Mar 2025 22:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B361E1DED;
+	Thu, 27 Mar 2025 22:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RBG0ChBg"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCY3hxiD"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E07125B2;
-	Thu, 27 Mar 2025 22:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898D125B2;
+	Thu, 27 Mar 2025 22:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743115433; cv=none; b=PscQhSeICctr3LawXSLWHq2MJQdN5W31gTJ5I87pZH1kx/JFPyrX2yPdBYt0YxKqJVfePYDS6QaBf0dQ+nwx/QYTPbV1dYioRAnVSh6D+y6j6fdwiTOA2NJuH1oi5mAlUC2seipktMZg7Rik+xGPXZDGBr06zm+GKhPDaYwXQaQ=
+	t=1743115564; cv=none; b=jMlCjwt3ADQlc0rZrIiMUUlGprR0VUgZuUQ/rr+dbD3uq1gIbB93Z3vUYjXfC4EDLADIzn95oX92lEigGkicGg6k6BlsiRfGxMNxHoXhIX1obY05mIxumESxCONnzxgOu/pskXmE/37I+2bqERvSi3+50kiq4i0bCXfGbGc3RvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743115433; c=relaxed/simple;
-	bh=FckN3QymhbhxJN9d9tbdEVXZu8tXYQOqhTy7OnTj3Ao=;
-	h=Message-ID:From:Subject:Date:To:Cc; b=qWa5WbgYjB1EP2UYZ3rSeOV/r5C+N1nnKBmbh20cLRTdakIPD8CA5OwzYl/JdEjLPBeUTOwTeFgPACgEd+Z4GxVIAVznLUK3+OuXaNnPHxe36FE+gvkg+PIO+UbjX+8Ubgz1lBg9Nnu57EeWOzeyGX6LKoNRcwsosfEARJOJCH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RBG0ChBg; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 33E491140092;
-	Thu, 27 Mar 2025 18:43:51 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Thu, 27 Mar 2025 18:43:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1743115431; x=1743201831; bh=pdFss1M2T3cKLSiYMFrAjNaqs540
-	4L0Oi9UHUbecIW4=; b=RBG0ChBgJs52L9KTzKT/ltezVkYuUk14bdlyjnnQl3a2
-	WEDHP71mYH6NdllpSE0q9gRA68jyA3fkpw+yFBu2g3MV4gCXPAcchovvvpFjvfsn
-	V3jsYaM0IUGwtEVPlfYBcf2GuxMxt4uImI6B/fpbVTY8mKGO4lniMyOMOG62tYVd
-	RxGGaXR3i9tLQ5QTMPFI3HwytCh0DX3XdT4WvyTMUnIj4VEq1HOQqxgLqutJbhbi
-	NP8k/hVQd8B/pjAXkOH+KgA/gkDcY2J0I9d5YlGqDlh1Xp1KX5KJrhjucVS9YyIY
-	BvoDBSTevVeUuLEDdSNIyJjc4jVIzHOIrKt5VyP07A==
-X-ME-Sender: <xms:ptTlZz8q4U5nL_ovIeU6M91b6Rzh1W92zhWXgzYFuDeVLDxDVXwaWw>
-    <xme:ptTlZ_uy3b2h5Fa05qfoPIDuzwwckW2YD_vxDoCcrt5l1fni371hngucVdmI7DKUa
-    c66oGzfN-W613bX32c>
-X-ME-Received: <xmr:ptTlZxAP96blRc4V83netzAJCekTi30u9wcuzhFd8xna7KZUzO9J1ctnEGjEEBDDHq9oXiljyaW6rmvrsCmZt-63Lnlbg5kbdxI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieelieegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkffhufffvfevsedttdertddttddtnecuhfhr
-    ohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorh
-    hgqeenucggtffrrghtthgvrhhnpeehffdukeetffdutedvffffheegtdetkeekfeevgfei
-    tefhvedvtdelhfduudettdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgt
-    phhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlih
-    hnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmieekkheslhhish
-    htshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ptTlZ_c1XRbMwjUWicpwc1pe4VCku-FLRVc83esq7K71ZrY8Lh7LGg>
-    <xmx:ptTlZ4OoI3Jk8DuFs8GPJC0M8wj7rBkUir7kryToW6R6pu7t1-0J0A>
-    <xmx:ptTlZxkOPxb6pl3Tjl0Fxc80AX_TxJbhpbEIXn0Fq7VkUDSmiUG-_g>
-    <xmx:ptTlZysILT_ChyovtghwGUst5r1g3SRM0hjs-50qGVyAazUZ54PvQQ>
-    <xmx:p9TlZ9q9J366utRD4lXA8Mjuijqj6QHrdiIYg6TzjesKgJuSuXj0DmxD>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Mar 2025 18:43:49 -0400 (EDT)
-Message-ID: <cover.1743115195.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH v3 0/3] m68k: Bug fix and cleanup for framebuffer debug console
-Date: Fri, 28 Mar 2025 09:39:55 +1100
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org,
-    linux-m68k@lists.linux-m68k.org,
-    stable@vger.kernel.org
+	s=arc-20240116; t=1743115564; c=relaxed/simple;
+	bh=KUqEm5MnoAUzKHmKnlVh1eJvguqmc7pQUCkCF/Bg8gQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=chQk4cWuaI1dgr3hUpn66IoQgt96NMotxxc9dgvAECovd7sMJaF3ekFXSwkvN38rv1Emrp52R+cEQuKPuIoqvmhy8xxbeOojZ4VF0Do8/YOpUKLy3Swv6fMPjEOM3l97t0vTdekJtoeRZKbh5dkoqq87OBYw1ZyMRdSIN4e5Nyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCY3hxiD; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39ac56756f6so1155932f8f.2;
+        Thu, 27 Mar 2025 15:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743115560; x=1743720360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iadl/X2QlPSCcfkOvJqcMDrid10XKLM+kB+mM4Kp2q0=;
+        b=QCY3hxiDqJDzPS17Q+tK8KX7TzUZDYV1b3ladZNcaTsiDnpzY9oJIILWBUvgX0h9ZD
+         au6N9jQ/zj1mtfc8zhnKv03Oq+yWcc6ELo0WllU2LYNNUtGGX5SB48QHsxNIN1GT7f5Z
+         7BNJdk7l7EgoxeMaF1a3yM3++WHP2kMYYUYLGjKba/WPC5hRQzU5h2PGksHs9fgm8RKc
+         dmdl+4lnZXc92kYx38V/uQok3aYH9iWC19Qo8alV1g9511tGWjgk/BSRcNd+DFWcgQBQ
+         /dVVVq3dpSyKoH0Tmx/XvOn0XyAbHony60WVYnu9McfjpsgiYvjYfdn9js24F2V8iB+C
+         VGqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743115560; x=1743720360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iadl/X2QlPSCcfkOvJqcMDrid10XKLM+kB+mM4Kp2q0=;
+        b=QkeYMwV6jMSqUAHRM803ZzOPkPBTNitndcMmva0EzLhkvxZ9ltGMraj534PtJuD7Ka
+         aZY0f7CJrhA6q3y4fc45O83iw2jxRc1Jw8Nq5aIRPn2fRkpQpARhY6ogVwUrcuboNvHt
+         DJADbq2z+VM64Vp0VuiGSqHJoopo13QWdqpGTXpGmYw484vM5TrGTuCGc/731Y7zTtg5
+         JwH9cZ3sb0V4JE1z0GYPpRS3L+QBWcY66AZIgBDptn1pDrE+p0lUdABeFR0lIAciDgY8
+         97cyYrgvcH9BdDqWYX0ue/XWeTAVIelbBq+0hhcq9XcPgyBBNCUhcNaWgMr8vz+ZgRBo
+         EvAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVX7/QIH4KkDtkqMfBhEAFGFKwCDOAPtlspgXuQXU8DGn13FNUdMNPo8BQvjoRf0qgBYy/r2KQY@vger.kernel.org, AJvYcCWgRDk1oSl5tlwXZN/EYuTymUFEAlEApHcN5MzMhtPQ2UO5S6n7Ojcu7W6/fDb0cqI0ZUo/jPgJwJhJ@vger.kernel.org, AJvYcCWj0fNo1l6sUlR6MbfbH1k6GPY7e65jk1PZae5DGEeFlC55LhCut8F32ibB6/q/9ZLReDtfBdhrU7hd119u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Tai6x7dF0mGIaggm3TTS3St7ZJ+3Nk+oGA8ZJzWCx5dsvASr
+	r0fNfTpeJj5ESuxR9l55CwKkatyQAmDP11zR8zdMsKSbar5BMsfE
+X-Gm-Gg: ASbGncuw4fyYS4IxrIx3GBUN7wMwCjmVhXV72+XTP8pNW/JCkf40KzzVUlhfaAlfFiZ
+	5vLd+N1C2uRF/JiAWnuzcvFvt/1LpyHTte3JeYfWmANtYOeM9As82t6McXpxhV55PixrU6Epc4X
+	NZtA/ehVONmYM3C33J2cYztqspMCemGkrJITFLt5bFKM1xpctgbS5NtpzCeywuQEyab3WmaYI92
+	XCKDbGGBON1s66kF/orSyOaHFMYUcPbbpG0y3EU5JMDKI2UB1adolvsSAjOFHRrvc3kzqaLENFi
+	iyrD1EUvtcOF7geheaBBqr5RrSR3h5vb7kqruveFDmESGGhdBBudIt+LaDHKfUEX/b/Nu9HE+Wq
+	GvOkDqBlvlYNv/pa+WbcNsdd0
+X-Google-Smtp-Source: AGHT+IHG6b2pXNoI79W9j+T6uUy15MIOUaloxrlYtXSIowcduSIPRTMiiVzMI/VB6P4xxuOiUrbFzQ==
+X-Received: by 2002:a5d:5989:0:b0:391:47d8:de23 with SMTP id ffacd0b85a97d-39ad175bcacmr5363249f8f.31.1743115560231;
+        Thu, 27 Mar 2025 15:46:00 -0700 (PDT)
+Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c0b6588dbsm789476f8f.2.2025.03.27.15.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 15:45:59 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Andrei Botila <andrei.botila@oss.nxp.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next RFC PATCH v4 0/6] net: phy: Add support for new Aeonsemi PHYs
+Date: Thu, 27 Mar 2025 23:45:11 +0100
+Message-ID: <20250327224529.814-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This series has a bug fix for the early bootconsole as well as some
-related efficiency improvements and cleanup.
+Add support for new Aeonsemi 10G C45 PHYs. These PHYs intergate an IPC
+to setup some configuration and require special handling to sync with
+the parity bit. The parity bit is a way the IPC use to follow correct
+order of command sent.
 
-The relevant code is subject to CONSOLE_DEBUG, which is presently only
-used with CONFIG_MAC. To test this series (in qemu-system-m68k, for example)
-it's helpful to enable CONFIG_EARLY_PRINTK and
-CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER and boot with
-kernel parameters 'console=ttyS0 earlyprintk keep_bootcon'.
+Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
+AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
+AS21210PB1 that all register with the PHY ID 0x7500 0x7500
+before the firmware is loaded.
 
----
-Changed since v1: 
- - Solved problem with line wrap while scrolling.
- - Added two additional patches.
+The big special thing about this PHY is that it does provide
+a generic PHY ID in C45 register that change to the correct one
+one the firmware is loaded.
 
-Changed since v2:
- - Adopted addq and subq as suggested by Andreas.
+In practice:
+- MMD 0x7 ID 0x7500 0x9410 -> FW LOAD -> ID 0x7500 0x9422
 
+To handle this, we operate on .match_phy_device where
+we check the PHY ID, if the ID match the generic one,
+we load the firmware and we return 0 (PHY driver doesn't
+match). Then PHY core will try the next PHY driver in the list
+and this time the PHY is correctly filled in and we register
+for it.
 
-Finn Thain (3):
-  m68k: Fix lost column on framebuffer debug console
-  m68k: Avoid pointless recursion in debug console rendering
-  m68k: Remove unused "cursor home" code from debug console
+To help in the matching and not modify part of the PHY device
+struct, .match_phy_device is extended to provide also the
+current phy_driver is trying to match for. This add the
+extra benefits that some other PHY can simplify their
+.match_phy_device OP.
 
- arch/m68k/kernel/head.S | 73 +++++++++++++++++++++--------------------
- 1 file changed, 37 insertions(+), 36 deletions(-)
+Changes v4:
+- Add Reviewed-by tag
+- Better handle PHY ID scan in as21xxx
+- Also simplify nxp driver and fix .match_phy_device
+Changes v3:
+- Correct typo intergate->integrate
+- Try to reduce to 80 column (where possible... define become
+  unreasable if split)
+- Rework to new .match_phy_device implementation
+- Init active_low_led and fix other minor smatch war
+- Drop inline tag (kbot doesn't like it but not reported by checkpatch???)
+Changes v2:
+- Move to RFC as net-next closed :(
+- Add lock for IPC command
+- Better check size values from IPC
+- Add PHY ID for all supported PHYs
+- Drop .get_feature (correct values are exported by standard
+  regs)
+- Rework LED event to enum
+- Update .yaml with changes requested (firmware-name required
+  for generic PHY ID)
+- Better document C22 in C45
+- Document PHY name logic
+- Introduce patch to load PHY 2 times
+
+Christian Marangi (6):
+  net: phy: pass PHY driver to .match_phy_device OP
+  net: phy: bcm87xx: simplify .match_phy_device OP
+  net: phy: nxp-c45-tja11xx: simplify .match_phy_device OP
+  net: phy: introduce genphy_match_phy_device()
+  net: phy: Add support for Aeonsemi AS21xxx PHYs
+  dt-bindings: net: Document support for Aeonsemi PHYs
+
+ .../bindings/net/aeonsemi,as21xxx.yaml        |  122 ++
+ MAINTAINERS                                   |    7 +
+ drivers/net/phy/Kconfig                       |   12 +
+ drivers/net/phy/Makefile                      |    1 +
+ drivers/net/phy/as21xxx.c                     | 1067 +++++++++++++++++
+ drivers/net/phy/bcm87xx.c                     |   14 +-
+ drivers/net/phy/icplus.c                      |    6 +-
+ drivers/net/phy/marvell10g.c                  |   12 +-
+ drivers/net/phy/micrel.c                      |    6 +-
+ drivers/net/phy/nxp-c45-tja11xx.c             |   35 +-
+ drivers/net/phy/nxp-tja11xx.c                 |    6 +-
+ drivers/net/phy/phy_device.c                  |   52 +-
+ drivers/net/phy/realtek/realtek_main.c        |   27 +-
+ drivers/net/phy/teranetics.c                  |    3 +-
+ include/linux/phy.h                           |    6 +-
+ 15 files changed, 1310 insertions(+), 66 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+ create mode 100644 drivers/net/phy/as21xxx.c
 
 -- 
-2.45.3
+2.48.1
 
 
