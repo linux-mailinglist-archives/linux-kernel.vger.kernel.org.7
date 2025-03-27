@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-579289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B987DA74195
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:49:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A535A74197
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEBE3BEC75
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFCA1740D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5941E8358;
-	Thu, 27 Mar 2025 23:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903FE1F1818;
+	Thu, 27 Mar 2025 23:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dIRSalCz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I6eZhLdS"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C781A5BA6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409151E1E03
 	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743119346; cv=none; b=cUErvtdi84KsWYMiISWQgX48QmVo0tzNtI1p4CZpZTYdjGLXC8whmodilREqSSvqY0/q3G9wInosOUft9DKfsgYmwa3NKg1uWH9ef01rJwY52a3JP/LLA5NR4frndeopjEML94bT/tyAP2GGvh3QmS91Ip/76zYXlAh+NxuS7YQ=
+	t=1743119348; cv=none; b=HtbwGExzFwqIIIt5Cly/8t6KZpAsgvD8vFfS94SqrpxmqhQkN5jLSmWUv1yR5hoYcgNCzBuUblNth90xmyFmjaxua5Ta+qGthZhd4kq30xdArae+vdnpVbCP707TqhQA54MmEnRXCAOTGUpY9O6aDTxCjeox9naGv/uWIs7ejP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743119346; c=relaxed/simple;
-	bh=Nbs5X6LrhWq1Vf1cQU+PLBU2rtkH4GXKZv1AkHkQAlw=;
+	s=arc-20240116; t=1743119348; c=relaxed/simple;
+	bh=Xa985hyTVi3zPlwFGGC/p+nUAm9XjSASU+XjfFJsLDo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FImGD60Qi9jUui4sliil9CwAJpKfBjxlbOXATxeAMOkAFRPDcJouvr1lN3I0eKXfVmC735k43ub9SNQo6BrhYZyFYzwLmEgppWvC2zIy4G3hs9Yszxwkh2wg5hQF6PufIE2XQQ7h06l3m6AOnbvps/i+dXLbBZ72BVkZCfkdYfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dIRSalCz; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=uJi2ZI2Oy0vmG9x8Lw7yvvbvDYhXKq8LymulZ/28+aVXLDAszOEtSmfpbPxzPRBo3gTuLbCeyiVaSjfz+w5bdXnZvYdrbeO1P3yu+TlUPj1SeF5iyyaINEXGxVA3opgyuRtWUhzK7CQq5yz/KRNrKB8damKU/a3+FHJDYB+z5Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I6eZhLdS; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743119345; x=1774655345;
+  t=1743119346; x=1774655346;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Nbs5X6LrhWq1Vf1cQU+PLBU2rtkH4GXKZv1AkHkQAlw=;
-  b=dIRSalCzigblxOrKlu40mrulUyRqF0aTHyq3xzdsgU+PzXk/aYxhoxhw
-   oM2UwPDZyk4ON/54jZi3bh6U6RqvfL7nGfVRbaJUDnHYgEFudyOKK7v0d
-   zXePVwk24NJDZaXo0mOLK0ZUe8lK7R39thik2dtWV17TYShAuBUkayl84
-   0E6fOUTsGyK5aCTsHRfIWrB8QCsFYKRg+PN5XOWm1JgAeuIFpONrVOugw
-   2HRh+lSXlWX71orrtyqlfvND8bIIwB9udMFplBJIKOgnr83i2crHB/tY3
-   lG92VC7fHg+lCu97LET1lmWa/Ajt5vitvomkY01CjypkEQ2aLN/ocqQR9
-   Q==;
-X-CSE-ConnectionGUID: txFfy2+JS7avwUZb5WPOjQ==
-X-CSE-MsgGUID: vgEgxaEKRei6BndQZt7wdQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627944"
+  bh=Xa985hyTVi3zPlwFGGC/p+nUAm9XjSASU+XjfFJsLDo=;
+  b=I6eZhLdSkfPn5FHw/21RYUD+NMwPziHA1gKDF3P3PJaGd6B+4XOSQOEt
+   XbAPtcCEZCwZgur+64OO1UnVn4IOqTlGyO/K+vjNH73ngJE+/pmwXFSOg
+   o7mAsbzrHBjEMFRbQEEneGJKbF+Ip6ZTmPE286FIT2GqOC9YDMSEIYNbc
+   cMoBAz7VVDxlEl+DrXMa9hOcbfbcbJDQtX0w2HR6Q5rRZnaX16GFO9kXN
+   +ToDY9pYxxexV7H3Eyd0Y+QhykkA+H8jrq+bOQ/XL/T5ybmHDg99l9kaX
+   NQwxd9W9rMT2xqZcRLXmHlTyqYW+aAqCcNggHioiatnBvgTMcriivBnjQ
+   A==;
+X-CSE-ConnectionGUID: AKMSDGKiSN6ztgMRzc3Z/g==
+X-CSE-MsgGUID: x2cYFZEuRoaFwdjPtCEIvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627952"
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="43627944"
+   d="scan'208";a="43627952"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:03 -0700
-X-CSE-ConnectionGUID: KztX+AkOTFqbOyG3DIGQnw==
-X-CSE-MsgGUID: umq3vZ2tTvSV7FCUBX1bQg==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:04 -0700
+X-CSE-ConnectionGUID: Px/1vkkUSveQc0G5MFfmLw==
+X-CSE-MsgGUID: QcY37n7uQr+fK9U6ILkzUA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="130150473"
+   d="scan'208";a="130150502"
 Received: from sohilmeh.sc.intel.com ([172.25.103.65])
   by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:03 -0700
 From: Sohil Mehta <sohil.mehta@intel.com>
@@ -76,9 +76,9 @@ Cc: Borislav Petkov <bp@alien8.de>,
 	Tony Luck <tony.luck@intel.com>,
 	Xin Li <xin@zytor.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] x86/nmi: Consolidate NMI panic variables
-Date: Thu, 27 Mar 2025 23:46:22 +0000
-Message-ID: <20250327234629.3953536-3-sohil.mehta@intel.com>
+Subject: [PATCH 3/9] x86/nmi: Use a macro to initialize NMI descriptors
+Date: Thu, 27 Mar 2025 23:46:23 +0000
+Message-ID: <20250327234629.3953536-4-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250327234629.3953536-1-sohil.mehta@intel.com>
 References: <20250327234629.3953536-1-sohil.mehta@intel.com>
@@ -90,76 +90,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit feeaf5512947 ("x86: Move sysctls into arch/x86")
-recently moved the sysctl handling of panic_on_unrecovered_nmi and
-panic_on_io_nmi to x86-specific code. These variables no longer need to
-be declared in the generic header file.
+The NMI descriptors for each NMI type are stored in an array. However,
+they are currently initialized using raw numbers, which makes it
+difficult to understand the code.
 
-Relocate the variable definitions and declarations closer to where they
-are used. This makes all the NMI panic options consistent and easier to
-track.
+Introduce a macro to initialize the NMI descriptors using the NMI type
+enum values to make the code more readable.
+
+No functional change.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- arch/x86/include/asm/nmi.h  | 2 ++
- arch/x86/kernel/dumpstack.c | 2 --
- arch/x86/kernel/nmi.c       | 3 +++
- include/linux/panic.h       | 2 --
- 4 files changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/kernel/nmi.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/include/asm/nmi.h b/arch/x86/include/asm/nmi.h
-index 9cf96cce02fc..f85aea7bf7f1 100644
---- a/arch/x86/include/asm/nmi.h
-+++ b/arch/x86/include/asm/nmi.h
-@@ -17,6 +17,8 @@ extern void release_evntsel_nmi(unsigned int);
- #endif /* CONFIG_X86_LOCAL_APIC */
- 
- extern int unknown_nmi_panic;
-+extern int panic_on_unrecovered_nmi;
-+extern int panic_on_io_nmi;
- 
- #define NMI_FLAG_FIRST	1
- 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 91639d1e4ec2..4abc9153e8a4 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -23,8 +23,6 @@
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
- 
--int panic_on_unrecovered_nmi;
--int panic_on_io_nmi;
- static int die_counter;
- 
- static struct pt_regs exec_summary_regs;
 diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index 9a95d00f1423..671d846ed620 100644
+index 671d846ed620..6a5dc35522c8 100644
 --- a/arch/x86/kernel/nmi.c
 +++ b/arch/x86/kernel/nmi.c
-@@ -91,6 +91,9 @@ static DEFINE_PER_CPU(struct nmi_stats, nmi_stats);
- static int ignore_nmis __read_mostly;
+@@ -49,27 +49,20 @@ struct nmi_desc {
+ 	struct list_head head;
+ };
  
- int unknown_nmi_panic;
-+int panic_on_unrecovered_nmi;
-+int panic_on_io_nmi;
+-static struct nmi_desc nmi_desc[NMI_MAX] = 
+-{
+-	{
+-		.lock = __RAW_SPIN_LOCK_UNLOCKED(&nmi_desc[0].lock),
+-		.head = LIST_HEAD_INIT(nmi_desc[0].head),
+-	},
+-	{
+-		.lock = __RAW_SPIN_LOCK_UNLOCKED(&nmi_desc[1].lock),
+-		.head = LIST_HEAD_INIT(nmi_desc[1].head),
+-	},
+-	{
+-		.lock = __RAW_SPIN_LOCK_UNLOCKED(&nmi_desc[2].lock),
+-		.head = LIST_HEAD_INIT(nmi_desc[2].head),
+-	},
+-	{
+-		.lock = __RAW_SPIN_LOCK_UNLOCKED(&nmi_desc[3].lock),
+-		.head = LIST_HEAD_INIT(nmi_desc[3].head),
+-	},
++#define NMI_DESC_INIT(type) { \
++	.lock = __RAW_SPIN_LOCK_UNLOCKED(&nmi_desc[type].lock), \
++	.head = LIST_HEAD_INIT(nmi_desc[type].head), \
++}
+ 
++static struct nmi_desc nmi_desc[NMI_MAX] = {
++	NMI_DESC_INIT(NMI_LOCAL),
++	NMI_DESC_INIT(NMI_UNKNOWN),
++	NMI_DESC_INIT(NMI_SERR),
++	NMI_DESC_INIT(NMI_IO_CHECK),
+ };
+ 
++#define nmi_to_desc(type) (&nmi_desc[type])
 +
- /*
-  * Prevent NMI reason port (0x61) being accessed simultaneously, can
-  * only be used in NMI handler.
-diff --git a/include/linux/panic.h b/include/linux/panic.h
-index 54d90b6c5f47..b0ec89a9a966 100644
---- a/include/linux/panic.h
-+++ b/include/linux/panic.h
-@@ -20,8 +20,6 @@ extern bool panic_triggering_all_cpu_backtrace;
- extern int panic_timeout;
- extern unsigned long panic_print;
- extern int panic_on_oops;
--extern int panic_on_unrecovered_nmi;
--extern int panic_on_io_nmi;
- extern int panic_on_warn;
+ struct nmi_stats {
+ 	unsigned int normal;
+ 	unsigned int unknown;
+@@ -107,8 +100,6 @@ static int __init setup_unknown_nmi_panic(char *str)
+ }
+ __setup("unknown_nmi_panic", setup_unknown_nmi_panic);
  
- extern unsigned long panic_on_taint;
+-#define nmi_to_desc(type) (&nmi_desc[type])
+-
+ static u64 nmi_longest_ns = 1 * NSEC_PER_MSEC;
+ 
+ static int __init nmi_warning_debugfs(void)
 -- 
 2.43.0
 
