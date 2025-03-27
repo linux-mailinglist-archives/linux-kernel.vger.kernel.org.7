@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-578582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E299A733E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF99A733FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572433A7B53
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB97B7A739C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8F2217653;
-	Thu, 27 Mar 2025 14:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B95D218584;
+	Thu, 27 Mar 2025 14:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlNePcCL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="NKbxoAz9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06667212B00;
-	Thu, 27 Mar 2025 14:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743084429; cv=none; b=X1wfx+Mya4jtSuy3mbRYGjWqapbIimyyV8d9GRk+eZn1Ww406CHyXOOAOieL8xPFVSRlCFvtAjRYQtZZsbpIon2aKcD/e06zENFehxmN3NZumQg6GQ/14zYA/5e9XIZiSeJSS7xk/WItNgogO3BjPo6rdmfS71dhw/oO3gxOTpE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743084429; c=relaxed/simple;
-	bh=ylAWPbcULtSaZe34dKWVThPXcBtGPQIYkRD3zXK0jv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZtfpTP5Rj0VuFUppJ19K81u+GBLwPYglV11pi8wp42Xwn7etmrOMeSNKg+FCM4ptTBbuyHm0SQ13BC03iaYRUT+KIP0G64p7JifEwQpC5aWamcVU9e5Z4GUyz8qrFyx2MBX5Kv/WMkBYs0ICtK1xtN1ahKveHsYXF7LXVEpZiYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlNePcCL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E0CC4CEEA;
-	Thu, 27 Mar 2025 14:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743084428;
-	bh=ylAWPbcULtSaZe34dKWVThPXcBtGPQIYkRD3zXK0jv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JlNePcCLfToBC2V80buwbF7hDm4cODW591JUZKXC7jYOsbBYiLE3imKkGNI8oMDuv
-	 aMcE1Pg4wpXRcR/WL/KlNcz4cVY7kyahY/rNM976Ke/WDaIlCCu1mzsa4jlJoUEw2r
-	 D06695KHjfWkSZSZis1fG20XslUzL2qo+FzqN9DVsZkm3q8e9sK+qfLdFkhTxTVWAU
-	 gs1Apq/l6ay9uP/nMwuPDhtS6lkzNDrVIZN8Z4kZ+nito8NSZ/+9JNEkgXumk27O1/
-	 45lahgHvDPnm4IsxX4eQW2oRWEtZSo/w7Q+m9b6xHrvUcZyhImnR9hsU6g7RXdYgWS
-	 xQbvUdMWftaCQ==
-Date: Thu, 27 Mar 2025 14:07:04 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org
-Subject: Re: [PATCH V1] spi: Add support for Double Transfer Rate (DTR) mode
-Message-ID: <f3115251-8fa9-4019-8fb0-145daf32cfa2@sirena.org.uk>
-References: <20250326083954.3338597-1-quic_msavaliy@quicinc.com>
- <40db39ef-7ef3-4720-9c85-ccfe1c11c299@sirena.org.uk>
- <c89603b7-b70c-4b55-ac87-f84ce5be2c6c@quicinc.com>
- <3aa2c190-ce4d-4805-943b-f65e98ce762c@sirena.org.uk>
- <8435b037-8b54-401a-b4f6-b4b497c4c3eb@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA7621770C;
+	Thu, 27 Mar 2025 14:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743084642; cv=pass; b=k1rFxJNS6fvdRj8J28UOKwtppW5NJ6O92Sw5VLVSbo0XsPu3Xom3MsO7YcP/zTnbuLs+Z78LP7Ppcffqwz0DwV9M8awp4M0KNLyl33mDJ0Tr03aEL4kSaDg5VXIWHQ8qSWZ8DbymOYg0qnbgxIuHALWAigJTcwwxGGQ4D/lT8uY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743084642; c=relaxed/simple;
+	bh=2I0jbfIOFyC3rlWREtZbP7iXGq5fytZU/yKAbJ6gRyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VVtaANuyJ0O6S4HEzbsUmOExwYiRsX2ndUzHhV5ptcyWpQDW/r+CeLxb/ah8hnwQGu7RfgiE0Ob2hPWsqfsL6kBMYy/C+6vuenvLq7KJo7wb+eVjeVnWYgdqpHC6orWckCd/JNXjs3RMR+3oPpoC00x6ZBE1PcwsZ+5med5y/98=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=NKbxoAz9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743084607; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ix4ekuq6nF7aEqJgbNhX2cWRTGmSr2Eqjx1KwqwhAbVyOKNaBy7XZJoqDEynY/E52nSekItdp6qGyMtT/feSyufrswTcbZd4atwHeBGmqNFmW1VXivC9kWDJm09/Aqn42RrIS6uYybChK3W8j5ukB+JTQZHJ0SumZCNp3K6yjRY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743084607; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=n6bkGovYDWEwPMuhmGO3/APdXBLQXfsjmkhnXRHkumk=; 
+	b=IM1TyO7xLEJ1k1z0dlAlCttU+hcU+NDiy3hoc6NAUugupIcapU1/mEpJCZlV6znDeB+3Y3Ca//YJtxwbEt7OLb+l6ziJaBkPI4EjzHmDgjHGDH6cWEFYxAgUpLgSfbS4X/QFArnMF+ZJIJ/Sr1zmWlraTPKL65M4G8GK6tRtw3A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743084607;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=n6bkGovYDWEwPMuhmGO3/APdXBLQXfsjmkhnXRHkumk=;
+	b=NKbxoAz9ZYyZbmjeP4irPQN8c5DHrGlePcnyfvXsLD+vG5SJbV+qJI2xyMfRX4q1
+	ZzbvNr6LEvTpNxCsOtWSK4+MsHXYjfQ4DW2apwLrCnNFKLZ0uKyg4dNFdkd6Hkpd69m
+	BPPKZY6Ie4TGNlXoqVdXlDHUCx1n0qH7HJdAvDj8=
+Received: by mx.zohomail.com with SMTPS id 1743084604813824.3329284862294;
+	Thu, 27 Mar 2025 07:10:04 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: ?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v3 0/4] Panthor BO tagging and GEMS debug display
+Date: Thu, 27 Mar 2025 14:08:33 +0000
+Message-ID: <20250327140845.105962-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UgfMhIpRC9osdcao"
-Content-Disposition: inline
-In-Reply-To: <8435b037-8b54-401a-b4f6-b4b497c4c3eb@quicinc.com>
-X-Cookie: Multics is security spelled sideways.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
+
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
+To test this functionality from UM, please refer to this Mesa patch series:
+
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34224
+
+Changelog:
+ v3:
+  - Replaced kfree() with kfree_const() when freeing a bo label
+  - Rearranged functions for delaing with GEMs list adding and deleting
+  - Changed Kernel BO labelling format not to include quotes
+  - Return error in labelling ioctl when string length is too long
 
 
---UgfMhIpRC9osdcao
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
+  drm/panthor: Display heap chunk entries in DebugFS GEMS file
 
-On Thu, Mar 27, 2025 at 03:33:15PM +0530, Mukesh Kumar Savaliya wrote:
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  66 ++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.c    | 158 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.h    |  60 +++++++++
+ drivers/gpu/drm/panthor/panthor_heap.c   |   3 +
+ include/uapi/drm/panthor_drm.h           |  19 +++
+ 7 files changed, 322 insertions(+)
 
-> IIUC, It comes to the point of first identifying if it's in context of QSPI
-> controller or SPI controller right ?
-
-> Identify if SPI/QSPI controller has this capability using dtr_caps =
-> true/false. Then check if it's supporting SDR/DDR mode. Can we then
-> introduce below struct to first mark capability as true/false and then
-> process dtr_mode ?
-
-> if not supported (dtr_caps = false), then don't care dtr_mode.
-
-We should complain if the device requsted anything the controller can't
-support.
-
-> struct spi_caps {
-> 	bool dtr_mode;
-> 	bool dtr_caps;
-> };
-
-The controller capabilities are currently mainly advertised via the
-SPI_CONTROLLER_ flags but adding some bools also works, some things
-already do use that.  I'm not sure we need to wrap things in a further
-struct though.
-
---UgfMhIpRC9osdcao
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflW4cACgkQJNaLcl1U
-h9DO7gf9GK9kaZ7F5byJPJNQeOitCwqJBmRUPfkO3oVkQLL0DGjU/ckyHfNcq/27
-Iv3KniQ2oZAEqO9UpGcOY7fjEl+e1eb+aDyEBGHBZnrJbqVbaAmB4dBH4PYu/zRm
-F/u8ibgorqythriUu1YW8nTxg81x5sHZhNvLR9geyXyKrMrIXYoZJ/T8bAfnDpKo
-EdBKdh3Skcj830O+HytvyPNcZDBKZQc2kMGPMh1qnGNKQc0GIa/oGOQ7g6vXcRjz
-i+e8CScGMdLsDc0yp9t46TA/NF0TMNVo2N6bPrPSe9425vmOBz8fiN7kqnpxP/5g
-1cdoovWzMFF/PNqGxnOkRHJDMbXTdg==
-=rjSg
------END PGP SIGNATURE-----
-
---UgfMhIpRC9osdcao--
+--
+2.48.1
 
