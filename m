@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-577969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50DEA72912
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 04:24:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0265FA72916
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 04:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE93E178712
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 03:24:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6357189D4CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 03:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20AD24B28;
-	Thu, 27 Mar 2025 03:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AD31B6D01;
+	Thu, 27 Mar 2025 03:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKIVlDks"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfBiy6+1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F39B1B0437
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA0D9479
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743045836; cv=none; b=ZhhT3vqt5maqJUPCT3+JMQ84Pb3QvbqtIN7l3r6gJgjNboeWrt6F4o1baP4eSYf+xtwfsKylkNRUwtanQN1hQEHEO9PcQSZEiieJyu31VQOEffqDKtb6gKYEeCgF24igac0CMuGduQcdgLsOy5cAZF8d3n+owlfqJHhvggHycls=
+	t=1743045837; cv=none; b=T5Xnc+RqTTYgHOP2R0rfLNg5xyai43kEeBqllorm2PoyADSPnyVL8mztdewjGG/ZW0ErvKhou9LMnqTALlfxNc8QumNcC5lRKaFlyjRvamObXod99/+1QquJwfqjTe9AZG1FD3hbkNAWG2nhZkwqRj7C46J4OfRfCQJfTUbjBhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743045836; c=relaxed/simple;
-	bh=0Z+krIl+/zQYEwjG0OKDq23wYFASD/qtkJxmur+n0hk=;
+	s=arc-20240116; t=1743045837; c=relaxed/simple;
+	bh=RwEjkDL2fS+r4oZqYYE//W3MjrsqbkHSq0YLkJXBptE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oVd2yxpooAWT9/SDqpyvNamLTqUDbNqI+LtfNIP5D/NWsguYpOWhSzcbo8Q5oHRpZLxv710TdW/mjgG8oys3bRmnPd51XM2xsH09OXob3GfUw49iONZtDrPPWvhq3wN3n3OOsX8+urrIAzq7LJ9dAPT3NQ0MziYB8XxdAAGlm9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKIVlDks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBB6C4CEDD;
-	Thu, 27 Mar 2025 03:23:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KxMoF5HnVczOn2+iQaC3Bdcd4VnBSKFQVcFozUbM9/tXBl41+GR4/xBYLGrgvs9zCqrsa5CDgxc6vbs+dzBo6lkJZBT1w73HqeI/pU5fj/nnKyor0q/E+coPph8/afU4jN8o78Rn3X4e1eeN+q5n/V28RTAPwNs5BUZWLjMGmS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfBiy6+1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F24EC4CEDD;
+	Thu, 27 Mar 2025 03:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743045835;
-	bh=0Z+krIl+/zQYEwjG0OKDq23wYFASD/qtkJxmur+n0hk=;
+	s=k20201202; t=1743045837;
+	bh=RwEjkDL2fS+r4oZqYYE//W3MjrsqbkHSq0YLkJXBptE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OKIVlDksSvYxBczefAjURc8P10kXnp2ZJbkVZgE7HDzRSkujUtWAGwVBF233EQI+O
-	 jcvaWK/tDrJ85gMIGcgr4kCT+0NqN7/+g+iXSX3VB9yjgpdUOC1lK6JNg86cH0t/S8
-	 JqNbMd34ymWgSkWulmDOapT5YVjq/p0hWV1lG6AVoW+iQQStKLUW4Wdbucb692zk6N
-	 fkFyjYBuqZGAm+sa48Xja9onPuw6finTR64EcVuCXZIG420aFm4e8wKVwByRe3C0Nc
-	 qwCYTz6u4KQiXvQCLA8WVAszXXKCVv+PhAbkIS29F6gJzFf4ZnOHKLBD/8t0/bkRGW
-	 /jJ7isU0h3IjQ==
+	b=PfBiy6+1GmzF/BqmKCCWlR13h6NguFPkm3sM+7+FlleTXyuJxyoj3AFeUyOR7v/fj
+	 v6OKmtuDErcHnw1224ySWVr3UdRU7yeDXqdRsKpSIB+tnN3JmOKrLBQz0yzWoFQMHG
+	 tMEqWtHQb4uyuKtKcZQtgk5uk+ppjhv0y+qCtMrjw/vSIXU2igbHNKcJm7/JVYaJ8V
+	 J9qoqHfP+/sYWiCOoHg4SLkxb10fSx6oTouP4NiLuOD+0lZ6xZ/FKE2aoOsXO6ZTfH
+	 xmQJ6g+s6KdyK6uV6SJwx2JLw+WbvbDhqHm5jelp+XJ1Ws2OXlwWKNPw/dgsjO3uhO
+	 A76zyL6AVPRlQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34226380AAFD;
-	Thu, 27 Mar 2025 03:24:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2BA380AAFD;
+	Thu, 27 Mar 2025 03:24:34 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] riscv: Call secondary mmu notifier when flushing the tlb
+Subject: Re: [PATCH] riscv: remove redundant CMDLINE_FORCE check
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <174304587200.1549280.10533939486464142848.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Mar 2025 03:24:32 +0000
-References: <20250113142424.30487-1-alexghiti@rivosinc.com>
-In-Reply-To: <20250113142424.30487-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
+ <174304587325.1549280.12018226648442560841.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Mar 2025 03:24:33 +0000
+References: <20250114-rebund-v1-1-5632b2d54d6c@gmail.com>
+In-Reply-To: <20250114-rebund-v1-1-5632b2d54d6c@gmail.com>
+To: Zixian Zeng <sycamoremoon376@gmail.com>
 Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, samuel.holland@sifive.com, ajones@ventanamicro.com,
- aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, cleger@rivosinc.com
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
 by Alexandre Ghiti <alexghiti@rivosinc.com>:
 
-On Mon, 13 Jan 2025 15:24:24 +0100 you wrote:
-> This is required to allow the IOMMU driver to correctly flush its own
-> TLB.
+On Tue, 14 Jan 2025 00:30:20 +0800 you wrote:
+> Drop redundant CMDLINE_FORCE check as it's already done in
+> function early_init_dt_scan_chosen().
 > 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> Reviewed-by: Clément Léger <cleger@rivosinc.com>
+> Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
 > ---
+> ---
+>  arch/riscv/kernel/setup.c | 5 -----
+>  1 file changed, 5 deletions(-)
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4] riscv: Call secondary mmu notifier when flushing the tlb
-    https://git.kernel.org/riscv/c/d9be2b9b6049
+  - riscv: remove redundant CMDLINE_FORCE check
+    https://git.kernel.org/riscv/c/eac5b138814a
 
 You are awesome, thank you!
 -- 
