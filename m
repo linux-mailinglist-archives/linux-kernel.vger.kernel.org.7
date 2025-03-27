@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-578842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B7AA73729
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:42:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A879AA7372B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225E63BD5D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2773517BC1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFD31C878A;
-	Thu, 27 Mar 2025 16:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CA51C8FB4;
+	Thu, 27 Mar 2025 16:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gl1VHmPA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKzFd5Q1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228E219CC0A;
-	Thu, 27 Mar 2025 16:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6301A00D1;
+	Thu, 27 Mar 2025 16:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093715; cv=none; b=X8/HHO+GoZY1rwG/BbtZIykcYt0ayaIj4FHw7jXJWCgLYN/5VAVNcHb0jpvcux8hd5dZxAaLReMFSYjr/RbArsWBXkbJIHJeUMW/Tlw0f7v/ywTkdin0cQBQ7gQOK566UpfM1xcFKWQnjRvH3A3uC+bzcmmYtoy1CdbZlKLKUpY=
+	t=1743093753; cv=none; b=tXZRHtA93wC0mjovTAaIXTaKypQmJsPjvBw90c4C9/UpR9mkQvN5wEDluyzNwPLM58NTG7XUrAFBt7tEP8/LnkFV5kyDVMV2SznV1R4/pcSBXJHvYMTa+HXzvURlVWyJmMEY1ObL7R9VzHcOc8ym9K662rhdifp7Iq1AxUAmLfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093715; c=relaxed/simple;
-	bh=cgDvoTMdFl8uJCZb28WudBmYP1cge1/0I+1+v6MpP9E=;
+	s=arc-20240116; t=1743093753; c=relaxed/simple;
+	bh=QyH77tECH3lylpaKyou3K7E3snQSAJIhR+N1IUAgi74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBNjL+VgZfJglw2LgEpfYeADnLTMhwCXdUdt2+j2rVuLBAL4q7XK+w81yobNgrMjaDX3fML0UXqSUsufiBGk6y7Wg8cs2WcsfGGYbQQ30uB6scA2rwB+msxfu4/AmXEeLBTBtijF89XPJuaZb4g5uk+8fdfDCmd9Iuo3a7YRRtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gl1VHmPA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609EBC4CEDD;
-	Thu, 27 Mar 2025 16:41:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fhk82+sqdwCfgcc9QDtwT4IlEtlN1XKMcNPp48ygD2QFnL9JjmtCPLHVwQzyb7h49UzTkIgJcRiHcFKW1ad+VaPnVhFKmnfnC8ivGUNgEair0buqs44jkFJQWKH8Z/Qrk0R4M0gDWBwiwN16jm4306FEzxUQZX0aj5UWmwsGjIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKzFd5Q1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A43C4CEDD;
+	Thu, 27 Mar 2025 16:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743093714;
-	bh=cgDvoTMdFl8uJCZb28WudBmYP1cge1/0I+1+v6MpP9E=;
+	s=k20201202; t=1743093752;
+	bh=QyH77tECH3lylpaKyou3K7E3snQSAJIhR+N1IUAgi74=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gl1VHmPArr+Oc1d64A5bGcyj8lgREvZPSDTk3D/n0Bo1JqkK0pB6dtHmX4+2V4PuL
-	 2HDKE4IrSaqHzobn6atrf8G3IVE6Hk5ZybBurAtmZu2ECnvTi8vgVWuCGKBskXN18n
-	 BPSZJ2u23RK1MJJ+i86DWhz8OVQNV7uRZkTx7EA0dLLQyGclYgqF/h7VSWKl08RVea
-	 c3LDx0b3F1FBPSZ8YaB1esfGOwuiIHilQwAVhtPUTbj/liVjJ1g4NSxLtIDAnCzt0+
-	 Pt6g6rtRmttd8PEdH6ZuE7Nc24EtIG3pz5AfOMeLP28TuuaRBJ8aN80hBOWIEsisX7
-	 Ntj08FKtZQnRg==
-Date: Thu, 27 Mar 2025 09:41:52 -0700
+	b=eKzFd5Q1gv6S4vMmsJlrOy8tVOkL3QoYdYVyoWXZHR8rCdqsBWNeeoThrTDPKrGJ/
+	 P5hUtgsIfH7HMHZ+nIjVS7TmPSu5MyENL7uXNuY+3bENEclSCwoovuR8sw2LLD3yGM
+	 ZSspOavMRFSBPPiIk6/tb+EiVNiSSwGhkxX2GSMMVuf2mBqebTQ0HUCCVcEp5pGKDl
+	 en0jKCEWsM3Iier9NbtVzy6sk32xNuDkMe25Edq32hyl8M7ZfZY4O//VjuRCr7SkBB
+	 98Hoxh9L5YNeAyyvTewGFzzuPyxUmYEAnW8R5XjRlmQ9hMh6WALQYW0Ny0k4GYZ/xL
+	 LPt97A7IHKojA==
+Date: Thu, 27 Mar 2025 09:42:31 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
 	stable@vger.kernel.org, David Binderman <dcb314@hotmail.com>
-Subject: Re: [PATCH] arm64/crc-t10dif: fix use of out-of-scope array in
+Subject: Re: [PATCH] arm/crc-t10dif: fix use of out-of-scope array in
  crc_t10dif_arch()
-Message-ID: <20250327164152.GC1425@sol.localdomain>
-References: <20250326200918.125743-1-ebiggers@kernel.org>
+Message-ID: <20250327164231.GD1425@sol.localdomain>
+References: <20250326200812.125574-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,20 +57,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250326200918.125743-1-ebiggers@kernel.org>
+In-Reply-To: <20250326200812.125574-1-ebiggers@kernel.org>
 
-On Wed, Mar 26, 2025 at 01:09:18PM -0700, Eric Biggers wrote:
+On Wed, Mar 26, 2025 at 01:08:12PM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
 > Fix a silly bug where an array was used outside of its scope.
 > 
-> Fixes: 2051da858534 ("arm64/crc-t10dif: expose CRC-T10DIF function through lib")
+> Fixes: 1684e8293605 ("arm/crc-t10dif: expose CRC-T10DIF function through lib")
 > Cc: stable@vger.kernel.org
 > Reported-by: David Binderman <dcb314@hotmail.com>
 > Closes: https://lore.kernel.org/r/AS8PR02MB102170568EAE7FFDF93C8D1ED9CA62@AS8PR02MB10217.eurprd02.prod.outlook.com
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
->  arch/arm64/lib/crc-t10dif-glue.c | 4 +---
+>  arch/arm/lib/crc-t10dif-glue.c | 4 +---
 >  1 file changed, 1 insertion(+), 3 deletions(-)
 
 Applied to https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
