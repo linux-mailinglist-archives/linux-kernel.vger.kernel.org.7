@@ -1,147 +1,181 @@
-Return-Path: <linux-kernel+bounces-578696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC056A7355A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:08:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89E6A73559
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706DF880ADB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338C91892FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DEE015573F;
-	Thu, 27 Mar 2025 15:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8904715B554;
+	Thu, 27 Mar 2025 15:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PjBW2NkD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gzxjZOXz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE4D148857
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D12187858
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087985; cv=none; b=dimFZJWOZDuXyCSiTk16sq8bBlSh+y+baGjsmEHWiW+AOLyrTXUoUM7U9VUOHgmqwoKtq3GPvqKK+SVpfh4nu4FeBK/FZ8lztoaO9hYBtCdo/2zuwvCqzPPAZNyN+E1JiZi0BJmsSmheLKd0x/ZBNTMkJ8wndAQsAonwDo0Wek8=
+	t=1743088034; cv=none; b=QXr9hUTk4yPGYw2i56LtPNNi+YCWhVZcOP+MswRXLF8nvo/27P21pKhPngnmxtb3MNnJ/UX9NwnJmB/A/ld0H/Z7nK/D3l1Hak6wRS++8fj5f/ACr3+JgwjL3aB5lL9F5gWsHtL2rMOKhkwNcvfA2vWe9BxDI9i4G9MAR92lNLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087985; c=relaxed/simple;
-	bh=oL7hddb8pSaL/X5YLvbgpsuKPSqXlv5kikYSpG3nZB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxC2H47lntgjDDBv8cs1Eyn729STNviKNAdDwr4BbltKOhny2kqWDeuU6XOMDQldPijajI6nooHrWtS9FW5zDP/qcMIVimGLgT5CixEez1Kjjonj4t4/GWQJXuJbAw11zbdmo87eZEPTlehwAmTUXfM6tIYuqg0591MifwL6Xyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PjBW2NkD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RF5Lpo002244
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:06:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=RKFntSHCTGPKcQhIqy1arMAJ
-	cgI7btxBYC/rwfIx7Vg=; b=PjBW2NkDyXAwzk32YYPee/g+NfnL3lhxpNyU00TQ
-	zsa38pBFNK7Q2lTp27z/CQZbNWUi+syhvS1hC59mgfH2QMPc6WElPh7/Rtj9rCdP
-	7EpV/AuwgrNFeRKFNabTzHuGxdUapLQBAsgF6/y3uZgiuuYnkI4DQO1aUScj3fi3
-	HRYFsRITcz9u8V5ONlgka1Ypy9f0+U8rxBJb9B/hDPgV8j8t+N7xKE1cNUW1jVbM
-	R94k4zrLbzlisAAmzCqh+A1y1NyXA9dxKNhg39hbO+vjQwVgmIiHvUzWeph93cuP
-	8hYdebfv7gS/EYbV608WazLXNta71iB1c78G78VdgP3BHQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m0xdxkdr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:06:22 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c54767e507so183616685a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:06:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743087982; x=1743692782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RKFntSHCTGPKcQhIqy1arMAJcgI7btxBYC/rwfIx7Vg=;
-        b=sKEgsumPfuQCVIrrEC8BN4pBNekKki7Idz0jrJwe+khvPYYelXGijXhuKbBo+59HP+
-         9Q3MMnHLQr3//G9Bf7jgaMUg9kvWpOtfCFL1gKXRyrQWefKsHeH5pBucpZqAgoeMl6mI
-         udejhcaAsGqsk3gpDsDaSODVsFvkgaGY9kW761l7y/EITPzlqg2swJrxh/D2GZHyljJQ
-         99aYMbitaVU2/xrdnosVm94roF7itLTHhb0SbIEisKnzkoHY8dU/X1OVPB3wJ6wJoCk4
-         rNK3gP3bJ6kMumuRc3pTVJMYY7l0XD9sRRg1jIC7RnP3sA6mjCxsrP+2OqbCSnzyrE7k
-         qP2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXv0VpcuSNy9L1CrmUtFb47odyt38s23wDjY3MdoaCreUvo1oKDBycH8sIsTL/AWuOH/OoE2lW11piS+ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFug+n+3L0f/ueRl/HGa73cwgxISxqLo76BY4QQ6Ft0/oGcnw7
-	oBKggFaSOP8xIljdlrARKMIdsyMfyw0yw+JsLCxP0rtHrXnbOX+uLzwiGiSmFKwAeLSDQO02+Gz
-	uL21/6QRl6rCDyb1R+dAyjLLQCU0s4JkRlZeonjJJEhgGBzmRuhvQpRoYeH9BVt8=
-X-Gm-Gg: ASbGncsx1zizrMmqf5qMNOsIU872VA4J3FEAsvGaMHUUsK2ImMnAZYzpUGoB83Cw7EG
-	X+0XcBZKrjIf9znUTeNruE7pm97rVnHJzQ4aF34/ROeiR27xnuVO7un3m2vgkFiyn7xTXNANhJq
-	n2NltblQiEA+hEkAP02QIIAXNkx0SGn52VKCsjnE0Gu9shMscV9aPmPqxI9L1ly46ZiQC6S7x2i
-	kQY5KWoGPyYADJNSdZ9HFQzlUWZgxaPFu5kjwMgDTQP5A6V0ok/sW8C0EdzTaAfi41kOPC74ifx
-	b9RfkHqjxcsmvNdPiWpOE3QPzR3fhbGcY9EkJlPk0CnSBKm893XA1U3iDSqF6bUG36EoKeZZBfP
-	33eI=
-X-Received: by 2002:a05:620a:2492:b0:7c5:ad3c:8478 with SMTP id af79cd13be357-7c5ed9f4f9cmr517569885a.16.1743087981677;
-        Thu, 27 Mar 2025 08:06:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhuNSAPU6HEIo9bahrZTEHK4yVoTqrYVjH2/T9oNoAmTxgLhnWKjqSSISPHOseE28eYCJQuw==
-X-Received: by 2002:a05:620a:2492:b0:7c5:ad3c:8478 with SMTP id af79cd13be357-7c5ed9f4f9cmr517565685a.16.1743087981179;
-        Thu, 27 Mar 2025 08:06:21 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64fbe00sm2106702e87.146.2025.03.27.08.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 08:06:20 -0700 (PDT)
-Date: Thu, 27 Mar 2025 17:06:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v3 10/18] clk: qcom: camcc-sm8550: Move PLL & clk
- configuration to really probe
-Message-ID: <ycplfyrtunsp6k2cuszsynljihk5obhzl3bau6lt7geouabuwh@ssbbduiaz5nm>
-References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
- <20250327-videocc-pll-multi-pd-voting-v3-10-895fafd62627@quicinc.com>
+	s=arc-20240116; t=1743088034; c=relaxed/simple;
+	bh=zoa2RpDaagu57Lnd7or/nYYPOHJtaZ/Umw0bS3l6BCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hCKNaRCKI9Mkz624T5b5BRri/9C9ZuKGQf2X+bvK8Y/iqPLWIoziPuj1r+rgv8GPnzTdVqj8xrhyvgxc8OhDeT+/FMfFcQ88Rn3wS4nfB76I2yx3SkQ2XeAcjeCFQaYA14tGwJOAFvy6qsfAiFu7v3mtCxG0LfnEAk6ASvtlRu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gzxjZOXz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDUDfZ030057;
+	Thu, 27 Mar 2025 15:07:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5t2FuT
+	Ucf8lDWMstNFGFYUYddh7v205+ujjI5wCPz2U=; b=gzxjZOXzHjHbP5KEKbbBp/
+	7D/RUZAXYy1y+pgNcwpQI295nobvcx9aZ+rTmSdlJn97YAtFQearaBPdeUV+FqpP
+	1QmLWyLFafd8l6bPROKMnrSdhJopDh3hAGEuJzpUZFR16/ikPrzp8vIkkgSkGHRh
+	drUdijaJtzjaEZy6v7Ycz6WPLwvZhJpWbsUClW5rEXKtaorYa2Js/By7bxi1HJyb
+	CYZo9z7pAAQtaqQFGmBz+tzISIIM6ZxNe9eVwP4izmKXdWIeTyuylhTkOxwCWrlO
+	ChiSKNFYHmhI2LeFzDY2pfQJJHcojF7s3/Hw6gfZ0zHxBB8FBUaiFGa9pXFsVo6w
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45my29bc97-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 15:07:06 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDJFvn005801;
+	Thu, 27 Mar 2025 15:07:05 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ja82nkfg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 15:07:05 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52RF74f021168646
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Mar 2025 15:07:05 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A455E58059;
+	Thu, 27 Mar 2025 15:07:04 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 355215805C;
+	Thu, 27 Mar 2025 15:07:02 +0000 (GMT)
+Received: from [9.43.55.88] (unknown [9.43.55.88])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Mar 2025 15:07:01 +0000 (GMT)
+Message-ID: <38653c58-a5c4-496f-9b52-e7bc3e447423@linux.ibm.com>
+Date: Thu, 27 Mar 2025 20:36:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250327-videocc-pll-multi-pd-voting-v3-10-895fafd62627@quicinc.com>
-X-Proofpoint-ORIG-GUID: 4xRUa4kscsG5vAuvqTSI1pZQaG43pUCz
-X-Proofpoint-GUID: 4xRUa4kscsG5vAuvqTSI1pZQaG43pUCz
-X-Authority-Analysis: v=2.4 cv=Q43S452a c=1 sm=1 tr=0 ts=67e5696e cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=OU1JASuMovj745rkUKUA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22 a=TjNXssC_j7lpFel5tvFf:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [main-line]Build warnings on PowerPC system
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <61cf556c-4947-4bd6-af63-892fc0966dad@linux.ibm.com>
+ <8797a1c4-dc58-4a85-bc51-a3d4131e7930@linux.ibm.com>
+ <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CRp_ufsxd0MvTwnIpfsd0DTLVNXI-OtO
+X-Proofpoint-ORIG-GUID: CRp_ufsxd0MvTwnIpfsd0DTLVNXI-OtO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1015
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503270103
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0
+ spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503270102
 
-On Thu, Mar 27, 2025 at 03:22:30PM +0530, Jagadeesh Kona wrote:
-> Camera PLLs on SM8550 require both MMCX and MXC rails to be kept ON to
-> configure the PLLs properly. Hence move runtime power management, PLL
-> configuration and enabling critical clocks to qcom_cc_really_probe() which
-> ensures all required power domains are in enabled state before configuring
-> the PLLs or enabling the clocks.
+
+
+On 3/27/25 7:31 PM, Venkat Rao Bagalkote wrote:
 > 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
->  drivers/clk/qcom/camcc-sm8550.c | 81 ++++++++++++++++++++---------------------
->  1 file changed, 40 insertions(+), 41 deletions(-)
+> On 27/03/25 7:22 pm, Madhavan Srinivasan wrote:
+>>
+>> On 3/27/25 12:33 AM, Venkat Rao Bagalkote wrote:
+>>> Greetings!!!
+>>>
+>>> I see below build warnings while compiling mainline kernel on IBM Power9 system.
+>>>
+>>> Repo Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+>>>
+>>> Head Commit: f6e0150b2003fb2b9265028a618aa1732b3edc8f
+>>>
+>>> Attached is the .config.
+>>>
+>>> Machine: IBM Power9
+>>>
+>>> gcc version 11.5.0
+>> What is the ld version in your system.
 > 
+> Please find the ld version below.
+> 
+> GNU ld version 2.35.2-59.el9
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
--- 
-With best wishes
-Dmitry
+ah ok that explains. Kindly can you try with this patch and let us know whether 
+this fixes the warning in your setup
+
+
+diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+index 1db60fe13802..09ceb5a42d81 100755
+--- a/arch/powerpc/boot/wrapper
++++ b/arch/powerpc/boot/wrapper
+@@ -235,7 +235,7 @@ fi
+ # suppress some warnings in recent ld versions
+ nowarn="-z noexecstack"
+ if ! ld_is_lld; then
+-       if [ "$LD_VERSION" -ge "$(echo 2.39 | ld_version)" ]; then
++       if [ "$LD_VERSION" -ge "$(echo 2.35 | ld_version)" ]; then
+                nowarn="$nowarn --no-warn-rwx-segments"
+        fi
+ fi
+
+
+> 
+> 
+> Regards,
+> 
+> Venkat.
+> 
+>>
+>> Reason for asking is that currently with
+>>
+>> commit  579aee9fc594a ("powerpc: suppress some linker warnings in recent linker versions")
+>>
+>> ld version greater than >2.39, this warning is being suppressed.
+>>
+>> Maddy
+>>
+>>>
+>>> Warnings:
+>>>
+>>> ld: warning: arch/powerpc/boot/zImage.epapr has a LOAD segment with RWX permissions
+>>> ld: warning: arch/powerpc/boot/zImage.pseries has a LOAD segment with RWX permissions
+>>>
+>>>
+>>> If you happen to fix this, please add below tag.
+>>>
+>>>
+>>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>>>
+>>>
+>>> Regards,
+>>>
+>>> Venkat.
+
 
