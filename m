@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-579295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FC1A7419C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:51:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD293A7419B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38993BF3DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFD4173AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842681F4C90;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2D51F4C92;
 	Thu, 27 Mar 2025 23:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIwu6QQ7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZBCtt59"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933E1F099B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E5E1F09BC
 	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743119350; cv=none; b=YWrFyRjYpxcSiGkFF8UBluZ2pYGeulA7Dc5IcN1buCvgFwLJ0VUkFcZg1sGfzA7zTrUCtDsq5xWm9OeR42//PGT1bnwMuL+GBNrYScyruxPUtRDX9oRfD4bzM84jICizCYxuHaWp/pdrhJ8LhUwDwJMUlU8g4lbXDV4+uhqw52E=
+	t=1743119351; cv=none; b=k28cEJDJzsbEi250VrL1UyGOZlORh+TKwVLmTnDetOfr1+JzG8eV7jIBBOyCX6/3gMW4WvMxPUwraEbde2slB9pzWfOPciqfKWNH2Ga2ETpl69gvrkgZWde8lLUTaeb9JnusEXOdlEK+s764wN3EdSIGZ+GvFoNPXTQUtnQgSMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743119350; c=relaxed/simple;
-	bh=VfaXKtN83UCKXqTetLMi6KmG0sbuDIPOw3k0Gwy1EjU=;
+	s=arc-20240116; t=1743119351; c=relaxed/simple;
+	bh=MR8twPfmwPOgnhxtbclzwNWhcYrDxLKr2aX8SrCIJAI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ai7nOfCUfAjrlTSIhX2Qdchf4+z32ick7KzvzM1khwMJEd9/UOtStEB89O/j75aeDWmPkYrm0O3/8ocwCs951WA9wOrXVSr++93gzcHrsgP6ymUsD0QrqRWrMsZ6A3WK3xSyIbRUi2KH1KppNxx613GoQIZwUopxncSsp0o7zIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIwu6QQ7; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version; b=E5FIWZunxdxAatwkpPukQncsiv85Q5ATsbO5dLCD6yLghbLjylkC7sSSXjOAGb8yY5byeKgDOpo94uCedPaq691+uG/HBHQdG15olBF9M4IENOjKnovLzjvCJgd2lriAqTDQCXj2oAL96TcCvGgu4T/wuARr4k/r6qCb63qNx1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZBCtt59; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1743119349; x=1774655349;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=VfaXKtN83UCKXqTetLMi6KmG0sbuDIPOw3k0Gwy1EjU=;
-  b=iIwu6QQ7QNKrhOPZ2xSqJARkgYXBd3irat+ZTwdk1100wDb9NoLTgZ0v
-   1tMWca/pqeneMspVqTKGgKxZmxiH9jlI5OiOJsEL+kiHQiFnHuFHuSdaG
-   q5yzGHCdyZXlqtOY3SVTbk+TteB1mepy9c2JO5yStNageXyFwvryXppi0
-   nPM96ALAEmoZPFe1GXOTcxpch14hTQLv6CV8BxUyZuykBDrHoaExBXY9L
-   RD6040bezJuyRipxk9zSLHMe/bPUg4Chesq2VSCRU4imBQQH8BHki8FqO
-   0sPGO44+McqosZ9uo2M0ZA3DfW8zQN+W32W+H7DbhFuR+x0Wj45HShv6t
-   A==;
-X-CSE-ConnectionGUID: 1oETKyeQQ0y8sXzFAOq/dQ==
-X-CSE-MsgGUID: li+FO+AGSlCxaUl2O79Hbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43627997"
+  bh=MR8twPfmwPOgnhxtbclzwNWhcYrDxLKr2aX8SrCIJAI=;
+  b=mZBCtt59xRD807AqS+1CyZS2aIgtH2VetvAmICPhSAY5epaYnPJK178Y
+   ZKoYGZbLS1zdNbboPxTzXf/GD+/qS6FKH2UYxBbaiXir+uxK75XkpfcR9
+   a0Gd9D57PNwLJY8Hkvvdks4sY/YoManXhGZY84DT+nu5R3VhBPBprrotk
+   Mv6VsMKTgB9lyO3tsMyAO0w8+fsFV9fb7Rd1ZIX7OVgCgw8lUD4ZJeA5x
+   fncTEp3oie9WphX/7wvlF4OByWw5Ym6LEhUZ29zmpYSDSCflIlARrh2X7
+   zXWfQyxfRhIz4sCupBo8Mvpm4PiensVO+qYc56jn8UeGvSJ29424YKYjs
+   Q==;
+X-CSE-ConnectionGUID: 0HHU+d3DSr6PDi9DK/Iwfg==
+X-CSE-MsgGUID: zQMY+bZ/SD6bGHze3g0KEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="43628006"
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="43627997"
+   d="scan'208";a="43628006"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:08 -0700
-X-CSE-ConnectionGUID: ZM1lalVuStWkW10SjCIn7A==
-X-CSE-MsgGUID: iEDfi0/IQ7CVaEDpZKHoLg==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:49:09 -0700
+X-CSE-ConnectionGUID: aJQlTitZSIKyxKdK1eutAw==
+X-CSE-MsgGUID: FhCuL0ujRQu7eJ2Hx+/DxQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="130150528"
+   d="scan'208";a="130150537"
 Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:07 -0700
+  by orviesa003.jf.intel.com with ESMTP; 27 Mar 2025 16:49:08 -0700
 From: Sohil Mehta <sohil.mehta@intel.com>
 To: x86@kernel.org,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -76,9 +76,9 @@ Cc: Borislav Petkov <bp@alien8.de>,
 	Tony Luck <tony.luck@intel.com>,
 	Xin Li <xin@zytor.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] x86/nmi: Clean up NMI selftest
-Date: Thu, 27 Mar 2025 23:46:28 +0000
-Message-ID: <20250327234629.3953536-9-sohil.mehta@intel.com>
+Subject: [PATCH 9/9] x86/nmi: Improve NMI duration console print
+Date: Thu, 27 Mar 2025 23:46:29 +0000
+Message-ID: <20250327234629.3953536-10-sohil.mehta@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250327234629.3953536-1-sohil.mehta@intel.com>
 References: <20250327234629.3953536-1-sohil.mehta@intel.com>
@@ -90,121 +90,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The expected_testcase_failures variable in the NMI selftest has never
-been set since its introduction. Remove this unused variable along with
-the related checks to simplify the code.
-
-While at it, replace printk() with the corresponding pr_{cont,info}()
-calls. Also, get rid of the superfluous testname wrapper and the
-redundant file path comment.
+Convert the last remaining printk() in nmi.c to pr_info(). Along with
+it, use timespec macros to calculate the NMI handler duration.
 
 Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 ---
- arch/x86/kernel/nmi_selftest.c | 52 +++++++++++-----------------------
- 1 file changed, 16 insertions(+), 36 deletions(-)
+ arch/x86/kernel/nmi.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/nmi_selftest.c b/arch/x86/kernel/nmi_selftest.c
-index e93a8545c74d..a010e9d062bf 100644
---- a/arch/x86/kernel/nmi_selftest.c
-+++ b/arch/x86/kernel/nmi_selftest.c
-@@ -1,7 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * arch/x86/kernel/nmi-selftest.c
-- *
-  * Testsuite for NMI: IPIs
-  *
-  * Started by Don Zickus:
-@@ -30,7 +28,6 @@ static DECLARE_BITMAP(nmi_ipi_mask, NR_CPUS) __initdata;
+diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
+index 59ed74ec010e..be93ec7255bf 100644
+--- a/arch/x86/kernel/nmi.c
++++ b/arch/x86/kernel/nmi.c
+@@ -119,12 +119,12 @@ static void nmi_check_duration(struct nmiaction *action, u64 duration)
  
- static int __initdata testcase_total;
- static int __initdata testcase_successes;
--static int __initdata expected_testcase_failures;
- static int __initdata unexpected_testcase_failures;
- static int __initdata unexpected_testcase_unknowns;
+ 	action->max_duration = duration;
  
-@@ -120,26 +117,22 @@ static void __init dotest(void (*testcase_fn)(void), int expected)
- 		unexpected_testcase_failures++;
+-	remainder_ns = do_div(duration, (1000 * 1000));
+-	decimal_msecs = remainder_ns / 1000;
++	/* Convert duration from nsec to msec */
++	remainder_ns = do_div(duration, NSEC_PER_MSEC);
++	decimal_msecs = remainder_ns / NSEC_PER_USEC;
  
- 		if (nmi_fail == FAILURE)
--			printk(KERN_CONT "FAILED |");
-+			pr_cont("FAILED |");
- 		else if (nmi_fail == TIMEOUT)
--			printk(KERN_CONT "TIMEOUT|");
-+			pr_cont("TIMEOUT|");
- 		else
--			printk(KERN_CONT "ERROR  |");
-+			pr_cont("ERROR  |");
- 		dump_stack();
- 	} else {
- 		testcase_successes++;
--		printk(KERN_CONT "  ok  |");
-+		pr_cont("  ok  |");
- 	}
--	testcase_total++;
-+	pr_cont("\n");
- 
-+	testcase_total++;
- 	reset_nmi();
+-	printk_ratelimited(KERN_INFO
+-		"INFO: NMI handler (%ps) took too long to run: %lld.%03d msecs\n",
+-		action->handler, duration, decimal_msecs);
++	pr_info_ratelimited("INFO: NMI handler (%ps) took too long to run: %lld.%03d msecs\n",
++			    action->handler, duration, decimal_msecs);
  }
  
--static inline void __init print_testname(const char *testname)
--{
--	printk("%12s:", testname);
--}
--
- void __init nmi_selftest(void)
- {
- 	init_nmi_testsuite();
-@@ -147,38 +140,25 @@ void __init nmi_selftest(void)
-         /*
- 	 * Run the testsuite:
- 	 */
--	printk("----------------\n");
--	printk("| NMI testsuite:\n");
--	printk("--------------------\n");
-+	pr_info("----------------\n");
-+	pr_info("| NMI testsuite:\n");
-+	pr_info("--------------------\n");
- 
--	print_testname("remote IPI");
-+	pr_info("%12s:", "remote IPI");
- 	dotest(remote_ipi, SUCCESS);
--	printk(KERN_CONT "\n");
--	print_testname("local IPI");
-+
-+	pr_info("%12s:", "local IPI");
- 	dotest(local_ipi, SUCCESS);
--	printk(KERN_CONT "\n");
- 
- 	cleanup_nmi_testsuite();
- 
-+	pr_info("--------------------\n");
- 	if (unexpected_testcase_failures) {
--		printk("--------------------\n");
--		printk("BUG: %3d unexpected failures (out of %3d) - debugging disabled! |\n",
-+		pr_info("BUG: %3d unexpected failures (out of %3d) - debugging disabled! |\n",
- 			unexpected_testcase_failures, testcase_total);
--		printk("-----------------------------------------------------------------\n");
--	} else if (expected_testcase_failures && testcase_successes) {
--		printk("--------------------\n");
--		printk("%3d out of %3d testcases failed, as expected. |\n",
--			expected_testcase_failures, testcase_total);
--		printk("----------------------------------------------------\n");
--	} else if (expected_testcase_failures && !testcase_successes) {
--		printk("--------------------\n");
--		printk("All %3d testcases failed, as expected. |\n",
--			expected_testcase_failures);
--		printk("----------------------------------------\n");
- 	} else {
--		printk("--------------------\n");
--		printk("Good, all %3d testcases passed! |\n",
-+		pr_info("Good, all %3d testcases passed! |\n",
- 			testcase_successes);
--		printk("---------------------------------\n");
- 	}
-+	pr_info("-----------------------------------------------------------------\n");
- }
+ static int nmi_handle(unsigned int type, struct pt_regs *regs)
 -- 
 2.43.0
 
