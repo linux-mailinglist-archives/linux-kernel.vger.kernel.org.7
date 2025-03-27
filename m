@@ -1,169 +1,174 @@
-Return-Path: <linux-kernel+bounces-578820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDEBA736E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:35:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61088A736EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D221895389
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2AD81797C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B74819ADBA;
-	Thu, 27 Mar 2025 16:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Es4wJgpW"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDFE1A841B;
+	Thu, 27 Mar 2025 16:35:56 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52789165F16
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC9D1A83FB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093305; cv=none; b=VaL1xfg7+T+yymVZZr15PZYwe37nkfepsDHmVVIZ1fbnHDiklRfEztH6iHFytBIgazWaVMphcB/ZeQ+DkRDtoxeK5yxaG9PRB7QL895wBDYhObOP9ok1T0CsIgU7MYYI1J22nkcuTTWvs8vpPVtT7uAxi8sGUMx0E48iiiH91bI=
+	t=1743093356; cv=none; b=TsFrlhpeGr0mT9TNFi+6wJO8z/XWF3fz/Zdu7C7pHpHTMQA7ybx9IZHCQgFBhghFmc+7QnEq+/pjvkDHyc0x0saqkNMm1aN38Cg0mxUxg8YbWUp5pZqhYCFECna49C2Np+GHX8roQlhEMCts4GAwFvHti+mn+OLUCb5pHgysYtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093305; c=relaxed/simple;
-	bh=yrLrJ07jSyEkRNOIGSnIx6UIH6SW0uwq2gx5Xt6MpTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eH2b6Thk4kMQhtFlHLAaZLdO8De/2wglV7pjQ+qWs9yF/NbGqUXuhd4stT9V9pHyqaEq9wEdMwEq6zTXmqEtezaKvXSadbPQ59Cu1JfGypD1LODVOIuK6uNJATF+NRgxO/yu80E0uvjMZeYqyiBVptpwTRjwfBFIiLZB9dybpjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Es4wJgpW; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso11763695e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1743093301; x=1743698101; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GGjDGhXvhOctDrW1nI1udXGMONQSxA0lH5by2Ntn0tg=;
-        b=Es4wJgpWTP8jzV/2d74v1syhkB6P/YbPKpMSQpi+7LHCy3AmT1Hdh+jh8vz4xdzbUp
-         2TLKwxYc81UpK8LTlzqTw5tLbjKtsxOrkbAXhZB5v31/tl+UH60puHzPQJ9SMSvpRHLG
-         TgbP+GOmJCIPLWmiPdTNy2PJnCEhAYJB3Ss+eM7HNNNePe1AzN+O6VFGCaL1wmyrPsEG
-         Ged4/X6chrEGM9B8V9FLwpuNzpyoeYwVMmJb1HLh5ahDDeR4o4ouM/6T/+xDKj4JR00r
-         Zhd7HBSIFYaNzZ5xB7DbfadSmxhwgTkKjRLE+cquz6cvQs8jsZIIESTMYDDYfFhsnyBr
-         PVqw==
+	s=arc-20240116; t=1743093356; c=relaxed/simple;
+	bh=w6fKN+ar7K8CvoopsWGztq3OYFTh8KIxp+iQRUs10/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XuInc6Vn13vliHkkykWLvb7Cy0ZiB75cYJfw9zaB6ovhyww/tcugCUDOCNFUV4oG48+TdM2X2U6DXdDOIGsnc0hhsFzTchEcr4/uteAqECf9q5GXSnH5L5po3j7XxFWCRoy/D7nIeQoI7ETqRxiqPaWbXl8wLb6Tv9y/muxbnVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86d69774081so589970241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:35:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743093301; x=1743698101;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GGjDGhXvhOctDrW1nI1udXGMONQSxA0lH5by2Ntn0tg=;
-        b=mGLfI7G9FBDG40Ymspn6P8fXRW1pRCGqKm7PGOXYkOBGDCv6ts0gV14apHWzhdM+VY
-         lMj1j//MZsxQV81jgVRTaPHP0Ce/qeOyCPIa0WOGTocFU582FTYLJYJQQkivAgtWg39Y
-         oZT6ff1tLA0wBKtFfaDB4yPt3ixgRo/1vX1XYjLWPbKxsGWC2DF55ECroavdvKgX/eDa
-         4xA96v2wtVRpcoM2XfYT69yOL7hy2sMO4yDtY3GM246TKs+nM7wUjAAu/bCTJq2zxtwc
-         SJY5cUY0Qqi+YZ80cNpi03qTREOhfhGtjsSFhljYse6db1nVPERqdrdbPLr4yft51BAb
-         dQ5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUZpggXEvQ2aqZI537Ek1UNTf1jreaBGM5sxPjgeVVtmmqwWNvaE7GhdZRNh38aXYFAEm7rQJSAKfm5Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCqKFDZlBuGRHmuvgHrXq72hZPiiwXHgdUKvj5N2HgA/W9okT2
-	VD1eQJwmoGC19dvROmzz7kMTC76XRrSD5YFPrQrUzUskqKM5+Z3yClQuj9ygq1M=
-X-Gm-Gg: ASbGncusvaxKD0MQ949IWssddMBWZHjZ2jFFlGHuWc+HA8PxtkgwXnol6U4scd4B/tG
-	cnCJgE8bJTu/db1cG1ucEi059Z7U5+/42MyHI189gfzd1OXZmudtKpqBXVtQV7W4/b29KyEkKNA
-	txYIF4Ri1L81ajCcXQRcIoXSklK+dSmGlqcvlKFboFtmhzipxdk+tYgkRMOiZb2J3IZnDsl3hVw
-	WUQOmkWnPNMIGbI35ZhhxNOQ4aSDG11m2EYw687ArpPIu+9ZfuknQ/RpLV5V2Q6AsYhyLG+PkOj
-	O+f42QpxMtATRFDRMZUeoFVpZt/OomKtFBVSE+c44WwaSZFsPP3evhUBr8IGoIsh
-X-Google-Smtp-Source: AGHT+IGawtvFBb4fS5ToIj7CyXU2x5hbH3B/DoIrPXE5LcvhbfIugmJW/IZ0c8unwGyuVy6PG4hKmQ==
-X-Received: by 2002:a05:600c:3ba1:b0:43c:ef55:f1e8 with SMTP id 5b1f17b1804b1-43d84fb5ffdmr36069095e9.13.1743093301462;
-        Thu, 27 Mar 2025 09:35:01 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d7ae6a206sm39611675e9.0.2025.03.27.09.35.00
+        d=1e100.net; s=20230601; t=1743093352; x=1743698152;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ibdtL0f3H8DnAPyEw/T+T3QYX14z3U6slG7wOxVtOcQ=;
+        b=YWKSy3R3NCRNp3cWX9yz8HsqlZd2Ofw2nezvI7WCn0iImLlQg8a0wHcQtUI/erAoCP
+         OdKxZZml9CnHdJWhA4l+zKs9EmPr8XIMiHDjNjaVccGKgAQail1osn4dUz6Qyyi+65/V
+         u+Dg0faLDYa3dhmg6jPoWpzO0ghv03vI92D+7mq/CPpFuKsjB1hRQGdv24FBgVZvfbbs
+         RxtyFsoDYsWHubzmGVAwMZNxs5GjJZR5nRF/8cyZAIFMwUdr7eMB6zkXBTk2QyJQ9F7f
+         3hCE0nuB6/tCUCnucPmpKm4NVVSXCDoAxhJwLPrkA90Fac+hClnjS6PHRQ90knvWjQLl
+         eA1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVbcD6SgxfUz2JIpwkTTZmK8rJFfAoWbmCzhM6Hg8GU7b5mxzVH0bOb7F4BXpuH8fGI+ephL31OCI4T/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmMdGZk5kh33qsbmf+5oc+Slqsa8L/MCWXm70bo++sl9ypwz0S
+	dLuzl8owO3rUbvJ+vltaLwZOIlpwLh26L27t5SjbAfLUG/SPaKG7MESnBL76HbM=
+X-Gm-Gg: ASbGncv4w6G+K4IY07spuNBCENGE6fP7r2Cl0H0tscBeIHc5atvhSMqw+gXDWYlhoyB
+	f/KvymwEOBUz5DkKqIOXPHusMZSv4fVXrOiXsmi4+8Hsht0ZtRYivFy/TFXySudVOSAlYd5zwfG
+	H6zVmRxJT3fAtLlyyhtxtkjQ6PK712BH43GwTNQgu/WfU5kUvmfOlsuSbW/wfLEfrkdRXsZhCdz
+	R+QMsLteADfZHEwyTKlNhjj+n/BlbmgXwqJMrAuf2uAYKUfyAzU8GwnQFmEnG3W/vUVr3SLqELL
+	58w9BGyy5mCKfr/VHsGqXDvK6V+o4VOlIizauHzN/DsNwIWEOgtHL4xitxfspi9lTveZj8l2HxB
+	2RvXpGr0=
+X-Google-Smtp-Source: AGHT+IE0iQAhqo7QIDfW20P0nxcWLW8HpMG0h6PIAInmRslCCodU9/zdPY9AGCozxxtEGrVvDg8JJA==
+X-Received: by 2002:a05:6122:c83:b0:520:60c2:3fd with SMTP id 71dfb90a1353d-52600920e5dmr3986964e0c.3.1743093352133;
+        Thu, 27 Mar 2025 09:35:52 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5260e7f09dasm29973e0c.19.2025.03.27.09.35.51
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 09:35:00 -0700 (PDT)
-Message-ID: <a66f3c88-0fe7-4e9c-83cd-1fe4bca8b14e@tuxon.dev>
-Date: Thu, 27 Mar 2025 18:34:59 +0200
+        Thu, 27 Mar 2025 09:35:51 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86d69774081so589939241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:35:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6kLHiiEDTSViV3Ggt8aPAxOPpsYNZbswoRDl9eZuumHve3HNmEbX1dHPhiZpJY0LdQh6VGshpOqH9/cI=@vger.kernel.org
+X-Received: by 2002:a05:6122:1d48:b0:520:5a87:6708 with SMTP id
+ 71dfb90a1353d-5260071fe18mr3630874e0c.0.1743093351421; Thu, 27 Mar 2025
+ 09:35:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] iio: rzg2l_adc: Cleanups for rzg2l_adc driver
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, gregkh@linuxfoundation.org
-References: <20250324122627.32336-1-claudiu.beznea.uj@bp.renesas.com>
- <20250327153845.6ab73574@jic23-huawei>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250327153845.6ab73574@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
+ <20250326-xilinx-formats-v4-3-322a300c6d72@ideasonboard.com>
+ <CAMuHMdXM1B1c=62EpcuUdpdpaBRZSJLXb1GBB0egzp7Fyeo5-w@mail.gmail.com>
+ <b195971c-52e6-463e-a440-83dde4346e65@ideasonboard.com> <20250327112009.6b4dc430@eldfell>
+ <b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com> <20250327175842.130c0386@eldfell>
+In-Reply-To: <20250327175842.130c0386@eldfell>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Mar 2025 17:35:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
+X-Gm-Features: AQ5f1JpeqSn4PpS1s7kqwyEJE-2D6rFE_STOfuC_nMbBosIVwkbb55ssK1rcc48
+Message-ID: <CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
+Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
+To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Vishal Sagar <vishal.sagar@amd.com>, 
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Jonathan,
+Hi Pekka,
 
-On 27.03.2025 17:38, Jonathan Cameron wrote:
-> On Mon, 24 Mar 2025 14:26:25 +0200
-> Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> 
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Hi,
->>
->> Series adds some cleanups for the RZ/G2L ADC driver after the support
->> for the RZ/G3S SoC.
-> 
-> This doesn't address Dmitry's comment or highlight the outstanding
-> question he had to Greg KH on v3.  
-> I appreciate you want to get this fixed but I'd rather we got
-> it 'right' first time!
+On Thu, 27 Mar 2025 at 16:59, Pekka Paalanen
+<pekka.paalanen@haloniitty.fi> wrote:
+> On Thu, 27 Mar 2025 16:21:16 +0200
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+> > On 27/03/2025 11:20, Pekka Paalanen wrote:
+> > > On Wed, 26 Mar 2025 15:55:18 +0200
+> > > Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> wrote:
+> > >> On 26/03/2025 15:52, Geert Uytterhoeven wrote:
+> > >>> On Wed, 26 Mar 2025 at 14:23, Tomi Valkeinen
+> > >>> <tomi.valkeinen@ideasonboard.com> wrote:
+> > >>>> Add greyscale Y8 format.
+> > >>>>
+> > >>>> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > >>>
+> > >>> Thanks for your patch!
+> > >>>
+> > >>>> --- a/include/uapi/drm/drm_fourcc.h
+> > >>>> +++ b/include/uapi/drm/drm_fourcc.h
+> > >>>> @@ -405,6 +405,9 @@ extern "C" {
+> > >>>>    #define DRM_FORMAT_YUV444      fourcc_code('Y', 'U', '2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
+> > >>>>    #define DRM_FORMAT_YVU444      fourcc_code('Y', 'V', '2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
+> > >>>>
+> > >>>> +/* Greyscale formats */
+> > >>>> +
+> > >>>> +#define DRM_FORMAT_Y8          fourcc_code('G', 'R', 'E', 'Y')  /* 8-bit Y-only */
+> > >>>
+> > >>> This format differs from e.g. DRM_FORMAT_R8, which encodes
+> > >>> the number of bits in the FOURCC format. What do you envision
+> > >>> for e.g. DRM_FORMAT_Y16? fourcc_code('G', 'R', '1', '6')?
+> > >>
+> > >> I wanted to use the same fourcc as on V4L2 side. Strictly speaking it's
+> > >> not required, but different fourccs for the same formats do confuse.
+> > >>
+> > >> So, generally speaking, I'd pick an existing fourcc from v4l2 side if
+> > >> possible, and if not, invent a new one.
+> > >
+> > > what's the actual difference between DRM_FORMAT_R8 and DRM_FORMAT_Y8?
+> > >
+> > > Is the difference that when R8 gets expanded to RGB, it becomes (R, 0,
+> > > 0), but Y8 gets expanded to (c1 * Y, c2 * Y, c3 * Y) where c1..c3 are
+> > > defined by MatrixCoefficients (H.273 terminology)?
+> > >
+> > > That would be my intuitive assumption following how YCbCr is handled.
+> > > Is it obvious enough, or should there be a comment to that effect?
+> >
+> > You raise an interesting point. Is it defined how a display driver, that
+> > supports R8 as a format, shows R8 on screen? I came into this in the
+> > context of grayscale formats, so I thought R8 would be handled as (R, R,
+> > R) in RGB. But you say (R, 0, 0), which... also makes sense.
+>
+> That is a good question too. I based my assumption on OpenGL behavior
+> of R8.
+>
+> Single channel displays do exist I believe, but being single-channel,
+> expansion on the other channels is likely meaningless. Hm, but for the
+> KMS color pipeline, it would be meaningful, like with a CTM.
+> Interesting.
+>
+> I don't know. Maybe Geert does?
 
-My bad. As there was no input on platform bus patch I though this is not
-the desired way of going forward. Sorry for that.
+I did some digging, and was a bit surprised that it was you who told
+me to use R8 instead of Y8?
+https://lore.kernel.org/all/20220202111954.6ee9a10c@eldfell
 
-> 
-> Also, please make sure to +CC anyone who engaged with an earlier version.
+Gr{oetje,eeting}s,
 
-Ok, will do it.
+                        Geert
 
-> 
-> For reference of Greg if he sees this, Dmitry was expressing view that
-> the fix belongs in the bus layer not the individual drivers.
-> FWIW that feels like the right layer to me as well.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-To me, too.
-
-Thank you,
-Claudiu
-
-> 
-> https://lore.kernel.org/all/Z8k8lDxA53gUJa0n@google.com/#t
-> 
-> Jonathan
-> 
-> 
-> 
->>
->> Thank you,
->> Claudiu Beznea
->>
->> Changes in v4:
->> - open the devres group in its own function and rename the
->>   rzg2l_adc_probe() to rzg2l_adc_probe_helper() to have simpler code
->> - collected tags
->>
->> Changes in v3:
->> - in patch 2/2 use a devres group for all the devm resources
->>   acquired in the driver's probe
->>
->> Changes in v2:
->> - updated cover letter
->> - collected tags
->> - updated patch 1/2 to drop devres APIs from the point the
->>   runtime PM is enabled
->>
->> Claudiu Beznea (2):
->>   iio: adc: rzg2l_adc: Open a devres group
->>   iio: adc: rzg2l: Cleanup suspend/resume path
->>
->>  drivers/iio/adc/rzg2l_adc.c | 67 +++++++++++++++++++++++++------------
->>  1 file changed, 45 insertions(+), 22 deletions(-)
->>
-> 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
