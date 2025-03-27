@@ -1,188 +1,202 @@
-Return-Path: <linux-kernel+bounces-578962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE188A73DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:24:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32CBA73DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43CA018879A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4041789D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE921ADA2;
-	Thu, 27 Mar 2025 18:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF06A21ABD7;
+	Thu, 27 Mar 2025 18:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mhgu00dm"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2047.outbound.protection.outlook.com [40.107.21.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FxL29nS7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PADoBgQQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z9rVN75L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JARxz34o"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F9121ABA4;
-	Thu, 27 Mar 2025 18:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743099818; cv=fail; b=p79yE1oBkfOOnfyxJxAJOM4ng004Pl/c0+CIFtIoNzZPizMfqcoDPwhx0xc+Qks6KT42PE9ADmKWZID9o2QFc3+hZMaCBx+pXcxCsC1qzvPx1lXqf2lHM2lxzB/1Zxe+FpKQj0tVNiknIeW4+hXkLhLYzBMCOomjWOLnEpFIgeo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743099818; c=relaxed/simple;
-	bh=rwgQBsN7ko5nXFT19+iUfPe45HMeHIzNrOz0z8cPR1w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pSl2vI6pS+RWJ5oqU4hWpIgIKVjxMr1JgchxL7kozrkWigosa7nJbu/H/7JINmxTy2j6KgCdf4ayphad3CwAwXfCoDtdoqNR4AN8kK+7WxQ5zjWQlOvOWNmbHJumuvYvm3C720nZteAO/3otFSN+55Z2JWVkdyd8GfNKGiwJDvU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mhgu00dm; arc=fail smtp.client-ip=40.107.21.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tHOfKPpuOCnQiljCS+8PP6pFYAElhjZVgBCCwAckYoFF4g0RwVjrKlE5JvD5YUdfnoGgqxdVq3QaMztyPFqGkEUy9BZKnT9VrhM3JvGr4yE2/eISHh8Rtjb+xOhtes6kgsSV/1b/JcKhmn5D6l49UkkjUT9OL4YrfFiKHJr9gqMyr2cyAVuvvE6C256Gyn5oGuFnJKPsqHuLTHk7vbxnFtg7cWkcQP0rT4Gyy/8W08YFArao3DUQYyVeATmkURRUtjU3/lwac49BO3vSWTUi2KPuqRxRiYx5QrMleyABfEda4LqsTtlJE8qeRjgHoqIAKbzT0k1wgYuirhLj0GGtjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qo1g78UzGzCThxiWw1+ZyMCMy4AvP+xQ5WJ61rFFDeM=;
- b=TBFJpiD7JW9J+e6qWayqdxY9BNQMS3moGhMFmpaeeFKdIK7gJITqn0IoP7DVz6Q6nTpNmkeddelmEnm0aoxHwdCRDGRaXnldCCBJaaoxhkr78j0YVmRCZrVddvI5LWuJgxteSEkuGjgrdnlxGhZnEdjAm+UOhEzuHeJ+0eQdaUPUv4wkYsqGMvwxGWxq8ZjuEzgq1rCd/LewJz5dY/ORBs05pfTZrAk8CpV/+LHZkJCkD73bdGE42XYymKwcalxu5YF0120zKLBbIxv2daapUq8U9HdJ/ebUvES8j/0SA58KHQfFI24yvA/tr1O2es0eJqQdvyJWk+6yu6gsBQDDTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qo1g78UzGzCThxiWw1+ZyMCMy4AvP+xQ5WJ61rFFDeM=;
- b=mhgu00dmW1mqTAxwW+dIwh9lnPdea3L5vGlizbv8GwGLJMvcuWwjJpx8OmVy9NNdvbM1pqNBMH9dPXePxLvMv+TIaRp0fFmi/Kb0RnnM8qw+Fy5UyWHxFnWg6zgqxopTIIGnojW1qiu7OEfFcXF6lXQF4k4dDWzRGDkCkNn3orl3/4fu0TgUqi/+e8pKXG+i7dL2C4Io4zG9CnSKFCSWpxCpf/4eOPFZCiNb6gFSABDSJmiSrGwnPgj39INCA1KiN901mAR5UXjBZ3/0AMjJRB09/6nBBNkto+pPj4X5wG8pwIR/QfVbTk/yhYBVRDNkatx4mW5aIFuZX6VAG6uBTg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
- by DB8PR04MB7131.eurprd04.prod.outlook.com (2603:10a6:10:fd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 18:23:33 +0000
-Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
- ([fe80::a2bf:4199:6415:f299%4]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 18:23:33 +0000
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com
-Subject: [PATCH v1 2/2] Bluetooth: btnxpuart: Add an error message if FW dump trigger fails
-Date: Thu, 27 Mar 2025 23:55:23 +0530
-Message-Id: <20250327182523.524534-2-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250327182523.524534-1-neeraj.sanjaykale@nxp.com>
-References: <20250327182523.524534-1-neeraj.sanjaykale@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:3:18::21) To AS4PR04MB9692.eurprd04.prod.outlook.com
- (2603:10a6:20b:4fe::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD7516EB7C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 18:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743099934; cv=none; b=OtCiCeTJqtMghQ9NfrKIEm24B2qburpwM0q5LyzJ1tj8sNXEDoJkQswE1Bbc58YdX7TDKI/TPF/Vz+2pmD2VCVWm3u9/SUWHXGERNJ+bH3VU2PTkMEvZ7/euBArgXVrFqB0zpVkg+QSDm7fu4p1SwdbAdWmW2CNiXQVYtkwHVHQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743099934; c=relaxed/simple;
+	bh=UAC3261gOaNLgFP2SMdn+a9WtsZ1/k1eK6D9YvdxkKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bP/qlQdxmFoQ6IvkHNpTFuf7ahLb98F6zw4co3r/xnqW/LD9txRiEh7cGDLwhEunAxWFXOfCSFs4vhXgbYh++FR6ppf4hwoEv4phNgO1d1OK3gJO89N9awkxFS8ciQxIhz17bCROpqoP75bT3vpLx1dvXsm6iuMwEQuQPBNr44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FxL29nS7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PADoBgQQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z9rVN75L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JARxz34o; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D9733211A2;
+	Thu, 27 Mar 2025 18:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743099931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGOvXhiHYsnoUOyAcDl4yjW0IYOxH0t8y7wWIceT9X0=;
+	b=FxL29nS7E/mK5apTXtR9onTKKiGgWGxFDcqZg6Siu5uFy2L0L21sJ2x/jOYRe8nlt9JzSQ
+	ubm6WNU3SiuiZx8emHkMvKTorKoSB/KM8VrqtSxRyzXQ9OkjAjjp1/5l22SaxApT09np6F
+	V6+0DptLJ4gWZOjbhi32ChFjiK3e46A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743099931;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGOvXhiHYsnoUOyAcDl4yjW0IYOxH0t8y7wWIceT9X0=;
+	b=PADoBgQQWHWFsS9p5n2Lirtb/Ys2EW88XmfCte+MNQa1QpTNGZWc4E0HqI+4lmFPtNle2s
+	48wGcJNTvP1mBhDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743099930; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGOvXhiHYsnoUOyAcDl4yjW0IYOxH0t8y7wWIceT9X0=;
+	b=Z9rVN75LKUUMG+k8+9hmw1E52vNBhigYs/YWnG7Q2AFjq0oFX3WNFYpDm7carodRmnWwsc
+	Z9K5XDtmlrTXggxOlzEBsEYwYo2oh3kaiITuMp1EZwR8ktB95s+kr489SmyRKwnN4fi6kU
+	/ryuYicNoHGN8MwaVbWJeUuRMjbKIpE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743099930;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGOvXhiHYsnoUOyAcDl4yjW0IYOxH0t8y7wWIceT9X0=;
+	b=JARxz34oIx/8RY+SgRAAG2adGmag2bXRMwP3Z2/YlXTISbX5399mnxkdzDs1/RPytFvBLK
+	Ck2h0o7ZiK9R+uBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CDB04139D4;
+	Thu, 27 Mar 2025 18:25:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oQEwMhqY5WfjKwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 27 Mar 2025 18:25:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5F597A082A; Thu, 27 Mar 2025 19:25:30 +0100 (CET)
+Date: Thu, 27 Mar 2025 19:25:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, 
+	Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>, 
+	Ritesh Harjani <ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: Make block validity check resistent to sb bh
+ corruption
+Message-ID: <4pgphzbzkwdkr5dwjhignsvbhwspavmz7ursalyy5nv7gjmztw@ebzz3sjiqxg4>
+References: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|DB8PR04MB7131:EE_
-X-MS-Office365-Filtering-Correlation-Id: a2ec8793-b4de-438d-64c5-08dd6d5c7b55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CRrzzbGXXov+0ASlWK5LP02iWGywp8m4/cFFj2uVVeDMmVMafeYi74qJlF5i?=
- =?us-ascii?Q?UBjcwGco7coVEKN6unUzASYDAO0yBOss5lB72fjyjJyacjWFdocxDMMWlpxc?=
- =?us-ascii?Q?5xHox0rYnFV20pwYN1q63wu6iMKou7SIzmjDMu/U22obBOnWEdS+Qn8d9kDZ?=
- =?us-ascii?Q?IM5KZJQ10iHHwhgXznkvDjYTxR2w5sV0hV1Z4M0Uqlzgm5ILSksQPQLQ0RMI?=
- =?us-ascii?Q?zj6gcoWYHzAKDfewYOkYlyomV3Rr8V21ZbDrtX2Cq4U9vNyp85OhJqLJISrm?=
- =?us-ascii?Q?HPsnvk5v5QL+4zAmG6u7d8hTRiNA74lx/e96J56PDnQKkKwL/bqb0BEdqXej?=
- =?us-ascii?Q?542G76wBPXf2oaYGNYk9XfH0gAzjJ5+tPacU8ZLe0Fy0xcEmfYQV2dNXNFa3?=
- =?us-ascii?Q?YUdogI7yT2G9qq/EjrL8FeN6CI4EyFgENSde8zjIEkoxMpdlbS1uo2G1aaaH?=
- =?us-ascii?Q?g9h0rc7kAF8daLOjYQj7FkGQk9dwa6KAYwGy8ohq7HpggwfZJJgXTbaOOQiR?=
- =?us-ascii?Q?zwm0x/+ua6Sbfvk/R5eNqrYfSVMlWJWv7MTLFVJy4ZHwyUsK8mcmo64A/OFi?=
- =?us-ascii?Q?g+zMpczxZ2SZfuroqv7FIspaNjuxYJy1LFOhvMIdK2DuPPlkfc/uFGmub2Xp?=
- =?us-ascii?Q?OjcNtuSylSpnUC8C0PDcx+9NPw7gUtCOTJQQyQFRz4JO/dINiWE1MaOPEf7V?=
- =?us-ascii?Q?cpA7Xue8f48ZjjaLcE5tb65YUPSBUyQiQReQRbD+n6KrQtXwAv8gYnn8WVYx?=
- =?us-ascii?Q?QQiuRp8BBkVyciYRcbJResuqNGRLJgDx3xRTkTlj6YNFXhXpcnAeT23JGrLG?=
- =?us-ascii?Q?HsjOpGRTIyOzyRTNuAGBT29Z8n5cJSiqBJrrJEFNcDfoNPZrXEgEerW80nwi?=
- =?us-ascii?Q?vmlHv30/XJ8MX4nLoP+bRrdVDD0kdmlAlVmDkDbLGz2+g/aWcTY6wib2tUJ8?=
- =?us-ascii?Q?CjlVTFEXTvyTlVwtqewNZLxAaZCWRi5G/bHQtvLnWpzk1VhE/mQI4WczLpzt?=
- =?us-ascii?Q?ZLJGJA/05f5f/YVSBUjLS2+9JGiRLVXdLTwnr0kKBI7tP0N71CSTfDvYe4HK?=
- =?us-ascii?Q?F/ZVYbaOi+QzXPuLhUmsp2im9J7ZErON3dU3np29Hmx5M7lYqKOmxQ7Gav/k?=
- =?us-ascii?Q?0whqBcNo75GGfKkONds+WR1ycMhJzJpStCv1sudGVNBp9RA9rh4lm0hgBjYM?=
- =?us-ascii?Q?k4C0UfXfZYvpbwHTiA0+zUc3uf9926ScXIGVrO2BzVdAGbGyalig5KFuAXF5?=
- =?us-ascii?Q?UK/QfGUpdeJ6Ie5ujrfZCMveoN7U52n0V4DZS9nY4bkfoCygRBQVyVYDoX0T?=
- =?us-ascii?Q?Ufi6AfZ6W9hikHLZjRfCrwNcKvP8T+PTN28VJ9QzFrAsJsaawuFXMMA4fPEY?=
- =?us-ascii?Q?qQ3izwFZxoRiZhWHb/JQcfjfZgb48w5M8gC16hph5trM9+xn6V+HSurwqtJU?=
- =?us-ascii?Q?fqgHD7IZw7OoiHPyMkzDxLWsucOQzvbvnK3yR6B4ZSdkaIB4/b6NRA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OVabxCTlayJ6uPghYeyScSNJAa5Vb6l0Rpt0iv55FEl7gSRJAZ1Zv8ZlqhhZ?=
- =?us-ascii?Q?KID2yJuU7tQvqeGHlLDcvWphsbc2MCMo1hYhfF2fHg6xLvUpqYhLkehbHwVr?=
- =?us-ascii?Q?/pOUGcdI06BPW5tnxSk/qcRMOQveYBvajx1OmnatVh34Ihn/hJRJWU8Z8MRk?=
- =?us-ascii?Q?DQd4VL6LdhfSkMPvj8n7Z1+qjpjgT7dKdi+Wc/qOtvl3xHVb0PYXMRW4r7mh?=
- =?us-ascii?Q?kllAzfXxEec1kt2hQw1UengVPVCEzC7glaPjveDZdoyj+OcShZFBWkwGBFSF?=
- =?us-ascii?Q?Zs3JgUwRMA9dA5zFnLPELGScgxgcn1BjwR9HIo591Wnepv438sNqWxFkARWH?=
- =?us-ascii?Q?PJtgGo7Kv4Iiqesv6KXqyabTD9iY4e8qpBP9VesnFVZOrK20lK5pUO3xtnUF?=
- =?us-ascii?Q?PMBWFuhwvia6NTVyr8prcicRmDXiN7kUiEjyLkuR7rSICLSTU4qWCrthkr+9?=
- =?us-ascii?Q?VDSN9eCnp7Wbv/0EfqrqVNNFS79g8q31oKzfiyU5EmEI19T5HXvtffIzmDlp?=
- =?us-ascii?Q?eLOjiHJ02tio60bhL78j5qEimB/LIh5gzNSyPbboauXTpCnZBGozzW6f4QXI?=
- =?us-ascii?Q?8xm7mesaaIFwYvz8/CqOj4hb5xgJ4dtE34Aprssc+8d8YCsqX/pnjEbPrz1y?=
- =?us-ascii?Q?hPfBcZQnhW36NrAj3zne62rZnuNmQpd93UgDcI+FBQhaTvG9cGGs+5OqM15s?=
- =?us-ascii?Q?4l0YsKWVIGWTQVYXGy/OCvQ5KXlxq2OTtpKs0tk+fm/JlkvQNykXZ3+qc2DF?=
- =?us-ascii?Q?Mxj5jK89S5eTl49eVU6tnh5jKHcmTODhil6RlQnV6yWkxthXfr/5IziRbrtb?=
- =?us-ascii?Q?MNM7vQV8ms1ZgZUSVwWgUIJu5f08KGNwPilawuCE1ANpjUeryKjq6ZpmMy2p?=
- =?us-ascii?Q?ctWDuUXb4z4pDDC9X7KkS1JJ/hslNS4E7sOz3aqlSEevW83UEZbrE/J4nUa/?=
- =?us-ascii?Q?t4F6q+27VdHNiPR9LcbjJY2bgde6/pN27WoBnVovRsyOOicVSsBL3j83Dg2q?=
- =?us-ascii?Q?XqzC0NnqMnl77I4q5hPY+Xyx6HTHjr7Mym1U3NbFz0K2AcqBxD4xSMogezM3?=
- =?us-ascii?Q?MqUgDbXPcQW5KrPaJuMSDhaXKe65Rj4g8XUaaa4qw2lExv/3fQyIbV041hgT?=
- =?us-ascii?Q?LUPkV7lTvibhsR6+MCsQ9xm8o6inejWbvYFDvlElzPMLtPEqGDG1egbOGU3T?=
- =?us-ascii?Q?ie5ZgveYIv/oePDvgsxIthsJpOxquPOyHaftfS1LXiQIDk5mXsmj0GWAPX31?=
- =?us-ascii?Q?EZea9mDHVNbcVTI5J/ZxCkI2YIxU68dFWPGTxmWA2dQV+Og1VQN8mLAEJ/LD?=
- =?us-ascii?Q?3nexFYEdZu1h8TJJFARtTB9TP++Pasx9XaljtpsPFvgnKCp4YCGPWP5D66To?=
- =?us-ascii?Q?Pwkv1ovY8erVPCzmUC/WVbChYMWfTmfnsxFq9fpomSmbOu/sFNiqpVp5P7KP?=
- =?us-ascii?Q?FtANQ0jeWhB95KipbKEVoOE50wNZYGVNPYPkPe59+rjXHmAvN3EwTcmvDFkW?=
- =?us-ascii?Q?/htyNHoolsuwwjdF7sw7Lc+doJZc/BwAzgK7SyS7hAtv6/7Lf5TlBLWnCWyn?=
- =?us-ascii?Q?d2898kV7PmN7yhhDtUmpYcRv2cBU6GBDO1+HD5nPhZG90pCk6stBUZZepyPS?=
- =?us-ascii?Q?iA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2ec8793-b4de-438d-64c5-08dd6d5c7b55
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 18:23:33.3706
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HEAaO/y0Qv51HEqQ0MvsyboYmedVlIbanN8cXLaibLv5XiHCAjxBagK/ZWFEkVAnPgTBLsBN+tTMDLpZ8m6wcphxmv4/r/VfD7Ay/A34rYE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7131
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,suse.cz,huawei.com,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-This prints an error message if the FW Dump trigger command fails. This
-scenario is mainly observed in legacy chipsets 8987 and 8997 and also
-IW416, where this feature is unavailable due to memory constraints.
+On Thu 27-03-25 23:18:09, Ojaswin Mujoo wrote:
+> Block validity checks need to be skipped in case they are called
+> for journal blocks since they are part of system's protected
+> zone.
+> 
+> Currently, this is done by checking inode->ino against
+> sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
+> buffer head. If someone modifies this underneath us then the
+> s_journal_inum field might get corrupted. To prevent against this,
+> change the check to directly compare the inode with journal->j_inode.
+> 
+> **Slight change in behavior**: During journal init path,
+> check_block_validity etc might be called for journal inode when
+> sbi->s_journal is not set yet. In this case we now proceed with
+> ext4_inode_block_valid() instead of returning early. Since systems zones
+> have not been set yet, it is okay to proceed so we can perform basic
+> checks on the blocks.
+> 
+> Suggested-by: Baokun Li <libaokun1@huawei.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Fixes: 998e447f443f ("Bluetooth: btnxpuart: Add support for HCI coredump feature")
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
----
- drivers/bluetooth/btnxpuart.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Looks good. Feel free to add:
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index e26fabe8fb3d..57c88a1cb660 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1288,7 +1288,9 @@ static void nxp_coredump(struct hci_dev *hdev)
- 	u8 pcmd = 2;
- 
- 	skb = nxp_drv_send_cmd(hdev, HCI_NXP_TRIGGER_DUMP, 1, &pcmd);
--	if (!IS_ERR(skb))
-+	if (IS_ERR(skb))
-+		bt_dev_err(hdev, "Failed to trigger FW Dump. (%ld)", PTR_ERR(skb));
-+	else
- 		kfree_skb(skb);
- }
- 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+One style nit below:
+
+> diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+> index 87ee3a17bd29..e8c5525afc67 100644
+> --- a/fs/ext4/block_validity.c
+> +++ b/fs/ext4/block_validity.c
+> @@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
+>  {
+>  	__le32 *bref = p;
+>  	unsigned int blk;
+> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+>  
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> +	if (journal && inode == journal->j_inode)
+>  		return 0;
+>  
+>  	while (bref < p+max) {
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 365d31004bd0..8b048be14008 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -384,10 +384,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
+>  				unsigned int line,
+>  				struct ext4_map_blocks *map)
+>  {
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> -		return 0;
+> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+> +
+> +	if (journal && inode == journal->j_inode)
+> +			return 0;
+
+Bogus indentation here.
+
+								Honza
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
