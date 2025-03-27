@@ -1,114 +1,147 @@
-Return-Path: <linux-kernel+bounces-579240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A529A74100
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:39:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BBDA74108
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EE41891023
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E820C3B2369
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F57B1D934D;
-	Thu, 27 Mar 2025 22:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17F31DDA0E;
+	Thu, 27 Mar 2025 22:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LaRu65/k"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ma7WcIpR"
 Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156681ACEBE
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8844016A956
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743115144; cv=none; b=Rz/C9UAwFATSasy63WznLFnB/CvVqeO/WjJGUmuJdRADyTUhS2xYlDHv9tfmrnNs6qCwdLUYy7rkJhXI2G8g4xx7zSZGzxPwSZE4QC0x8KGF6OGdsRhUHT+bqIDnWplvPL0xgVQter22IFDA1NMtdY3ml93+8XNcW4+Q8Nvyffo=
+	t=1743115486; cv=none; b=EhuwkVHIi8kKKiDH3Ljc6sqMsjpJeDiprG4U8Lqh0+wjxNCHsd7Ygm8MHhcbJB6k5j/6eFptF07EvFmvmlLmVsNgVI5ZYk8bwdZVhS5Srg6jfukLWZGh7PrDE5t7gdF+wY3vwZtW6rd1byZYGRC4Os04NzR9qBOrgGOvYAjb8yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743115144; c=relaxed/simple;
-	bh=7mCtYt5PwkW6wan3Dj5V1pnjA26KG8rl6zyRMkZ2pjw=;
-	h=To:Cc:Message-ID:From:Subject:Date; b=Pg0NVqyn70GTmxVPHmPI+jOaPRdqrTXU4RFV3kqgNUZhBaCXq0nuOWMr8WCpY7v3tirimyy5LjVU78YulQW+5uDni1MfjmKakKOBoGvhoXyCSgwdK2wJe77NPGMFVLSBe96YsIR4fZCWrG/kIEOp5kbMxddJ+o8/FOdOaxrxZ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LaRu65/k; arc=none smtp.client-ip=202.12.124.147
+	s=arc-20240116; t=1743115486; c=relaxed/simple;
+	bh=EVSozXOZKV9ZpHzoCP5rGPCCzzyWRqpKuEwpvefeeD0=;
+	h=To:Cc:Message-ID:In-Reply-To:References:From:Subject:Date; b=U8rfyeOS588JkMF1Qlj/dCGC3oWUikHtbiL7r2poYZeLn1xKMnFZuKDjf1abQVnNuDAJtrtUOqLJp7VmJ3+3bBptxMDReAKIlWdFEyqKDpGzoFLkUXVYC9DBjFPFjb2egLBAbUCxL/F8YFA9rBrH2ff7ihD+EUlXfg5Xnx3XSIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ma7WcIpR; arc=none smtp.client-ip=202.12.124.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id BEE70114016C;
-	Thu, 27 Mar 2025 18:38:59 -0400 (EDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id CD09D1140092;
+	Thu, 27 Mar 2025 18:44:43 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Thu, 27 Mar 2025 18:38:59 -0400
+  by phl-compute-01.internal (MEProxy); Thu, 27 Mar 2025 18:44:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1743115139; x=1743201539; bh=JiMEP2AO36eHBlp6X5ZxLmtvskSS
-	I47S1BFITURAF9M=; b=LaRu65/k+kouEgc/eTHWZWzHZOntua11rj8MV2lwsv1B
-	i3PiJQwbGAsWwixPnO4WIkbcWJToTjbnhZ6MWMKiNOMJqx7qkgtvTTmW28MB1mbq
-	q1LSvwHkHj+DzhQJlJVuEY9oh/dlI6VFELPnS32c00i9LFr4UBEffqk9/S8Q5vNM
-	5URx2/eZEhRZQB0AYrJ5Col83ydkiiKltG1AAouVDdyBDZ5sov6SCM4hgt/Uh3aW
-	r2NceL6QCSfDLLq6IKZtMSWx5UY10kxRw96AUtKJSF82NgS6bKWcbcz8jRbUrB/5
-	RfAs7hjEJVBJP6F9dpF5mWWgV7PLo+JWO3EM1P63xA==
-X-ME-Sender: <xms:gtPlZ9gM--sS_oD6dX_mz_c0SOih5aKCXD0TLzyqYkirj0iSez8WEA>
-    <xme:gtPlZyCkhHbC9qMFxoCXanL4w_KwZv4WNYywcPCNh4h1aQE11KD2FHjjzklZL7DYf
-    KJzdJMnmRaXdf6kWmc>
-X-ME-Received: <xmr:gtPlZ9H5zqa0oP4v4vtbiAXyzKeXyWH3JT4H7fRwY2QxJzdHR_TTbYXF7LL_ZnfGlz8pTvqNX9QrfFqO8QFM-E8ekpqFbWXQnQg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieelieefucetufdoteggodetrf
+	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743115483; x=
+	1743201883; bh=XgoMfS+YSJBX4lDElI2Bnf1qXuBkYAb9h/BqygdkIb4=; b=m
+	a7WcIpRi6hc1luDamk3e6HlYCOcKnlBcP88MHtE6sMiaWpA7wV17VXEkcmAra5Gq
+	pDZyb9ZhkyQ+7y/KFQ2rKdudLKkIOAXDR7F91XGkII2EQKoSu4zfAFRdRTQtyChs
+	4x4DMPQeMW9V/LMoFUG0nbv7WekZgBuTKVVu5Otk2qL3zhBGfbxadTGwLf0v5Kl/
+	l2xYoPokbVTdcXWNVcO7MAg071Wz4TGX6oHcxoZFAGR6UGrdwSJLDgA4uChrKdaI
+	jcJBNT43nrtip355n1KVb0uLJFbFAAe/Y4w5SR5c0R8/8eP6Kx6mCmtfwB2EQQj+
+	WW1yhaCa6WAlZhJAVRSJQ==
+X-ME-Sender: <xms:29TlZ3sZBxjAHsKSzWKCIbw2EIMfmaUZcH9roWQpjrycYRc5T3fdOQ>
+    <xme:29TlZ4d3RAuoth-TvcE-z5q-rjoR5A4H8Q9VWpGToklNVfc09S4pgWy-4IGU9l7rr
+    DOLfEpUXcDTHHYaKzQ>
+X-ME-Received: <xmr:29TlZ6yGXomKlBS-Z_O-_yEJHXb-h3aHZnViMLkJVhKeVDfRunGlNuXre29brSN4ciNcpiv_fBc_s9LfvWPhEIHavAd6DCgP8Fo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieelieegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhr
-    ohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorh
-    hgqeenucggtffrrghtthgvrhhnpeehfffggeefveegvedtiefffeevuedtgefhueehieet
-    ffejfefggeevfeeuvdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgt
-    phhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlih
-    hnuhigqdhmieekkhdrohhrghdprhgtphhtthhopegurghnihgvlhestdigtdhfrdgtohhm
-    pdhrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrgh
-X-ME-Proxy: <xmx:gtPlZySQIcoigHupBPQwsu-i9-kZzYTCZ44DBw-LnBu_aNj3REM-CA>
-    <xmx:gtPlZ6x7Po0IDmzpsl7DZJ82SGC-ZhDVkflZwTfoptDcNOPLjPWh8g>
-    <xmx:gtPlZ47MLfLtIS3DJgVPIWwS84GcTctfMHcdH_nf_TlzpLlLi9IDHQ>
-    <xmx:gtPlZ_w9zWxb1trZ7ACV4Nz9-G8-6z28OYqUyYq7bWgtjGxwyqTpQQ>
-    <xmx:g9PlZ-_1IVKWcWwaXdc-IYEKUHfItVEvIeEwOhHpyYAuLBXIBxq5dIHh>
+    gvnhhtshculddquddttddmnecujfgurhepvfevkfgjfhfhufffsedttdertddttddtnecu
+    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
+    horhhgqeenucggtffrrghtthgvrhhnpeelgefhvefgveduhefffeeuveehtdeigedukeef
+    uddvhedvfefhkedugffffeetheenucffohhmrghinhephhgvrggurdhssgenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhi
+    nhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:29TlZ2NLsf1V1-bkF3ahkV21Nl_Girn9gnrMtrjRY37MwIBSZKBFZg>
+    <xmx:29TlZ3_Pv-N9ItfNmYmWOik_dGkATxpiSKpT2LFwnKPuGXhqTuI0Vg>
+    <xmx:29TlZ2UPEjmHUredwTorh-ho6mPrseTE4jzZZDOmPAsoADelnmOogA>
+    <xmx:29TlZ4fdPsCbyldfOyKJRfokoGD9pWXt7y1KlowdCtI7p13lsv1ubg>
+    <xmx:29TlZ5KtvxihcNqiUagu-BBhnBo5QQgkpTU7ZGf-edn12yFZ8KUNgf43>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 27 Mar 2025 18:38:56 -0400 (EDT)
+ 27 Mar 2025 18:44:41 -0400 (EDT)
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Daniel Palmer" <daniel@0x0f.com>,
-    linux-m68k@lists.linux-m68k.org,
+Cc: linux-m68k@lists.linux-m68k.org,
     linux-kernel@vger.kernel.org
-Message-ID: <54c8046f6ffcb16b3e4e7aa1a6fedbc4e576f16a.1743114940.git.fthain@linux-m68k.org>
+Message-ID: <ec2d443d3c3213028bbbab7c2e0382cd53db75fe.1743115195.git.fthain@linux-m68k.org>
+In-Reply-To: <cover.1743115195.git.fthain@linux-m68k.org>
+References: <cover.1743115195.git.fthain@linux-m68k.org>
 From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH] m68k/mvme147: Don't unregister boot console needlessly
-Date: Fri, 28 Mar 2025 09:35:40 +1100
+Subject: [PATCH v3 3/3] m68k: Remove unused "cursor home" code from debug
+ console
+Date: Fri, 28 Mar 2025 09:39:55 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-When MACH_IS_MVME147, the boot console calls mvme147_scc_write() to
-generate console output. That will continue to work even after
-debug_cons_nputs() becomes unavailable so there's no need to
-unregister the boot console.
+The cursor home operation is unused and seems undesirable for logging.
+Remove it. The console_not_cr label actually means "not line feed and
+not carriage return either" so take the opportunity to replace it with
+something less confusing. Rectify some inconsistent whitespace while
+we're here.
 
-Cc: Daniel Palmer <daniel@0x0f.com>
-Fixes: 077b33b9e283 ("m68k: mvme147: Reinstate early console")
 Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
- arch/m68k/kernel/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/m68k/kernel/head.S | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/arch/m68k/kernel/early_printk.c b/arch/m68k/kernel/early_printk.c
-index f11ef9f1f56f..2fb22d8395b5 100644
---- a/arch/m68k/kernel/early_printk.c
-+++ b/arch/m68k/kernel/early_printk.c
-@@ -60,7 +60,7 @@ early_param("earlyprintk", setup_early_printk);
+diff --git a/arch/m68k/kernel/head.S b/arch/m68k/kernel/head.S
+index 49e079b0d0b5..6465333d5f7c 100644
+--- a/arch/m68k/kernel/head.S
++++ b/arch/m68k/kernel/head.S
+@@ -3555,28 +3555,21 @@ func_start	console_putc,%a0/%a1/%d0-%d7
+ 	jra	L(console_exit)
  
- static int __init unregister_early_console(void)
- {
--	if (!early_console || MACH_IS_MVME16x)
-+	if (!early_console || MACH_IS_MVME147 || MACH_IS_MVME16x)
- 		return 0;
+ L(console_not_lf):
+-	cmpib	#13,%d7
+-	jne	L(console_not_cr)
++	cmpib	#'\r',%d7
++	jne	L(console_not_lf_not_cr)
+ 	clrl	%a0@(Lconsole_struct_cur_column)
+ 	jra	L(console_exit)
  
- 	return unregister_console(early_console);
+-L(console_not_cr):
+-	cmpib	#1,%d7
+-	jne	L(console_not_home)
+-	clrl	%a0@(Lconsole_struct_cur_row)
+-	clrl	%a0@(Lconsole_struct_cur_column)
+-	jra	L(console_exit)
+-
+-/*
+- *	At this point we know that the %d7 character is going to be
+- *	rendered on the screen.  Register usage is -
+- *		a0 = pointer to console globals
+- *		a1 = font data
+- *		d0 = cursor column
+- *		d1 = cursor row to draw the character
+- *		d7 = character number
+- */
+-L(console_not_home):
++	/*
++	 *	At this point we know that the %d7 character is going to be
++	 *	rendered on the screen.  Register usage is -
++	 *	a0 = pointer to console globals
++	 *	a1 = font data
++	 *	d0 = cursor column
++	 *	d1 = cursor row to draw the character
++	 *	d7 = character number
++	 */
++L(console_not_lf_not_cr):
+ 	movel	%a0@(Lconsole_struct_cur_column),%d0
+ 	movel	%a0@(Lconsole_struct_cur_row),%d1
+ 
 -- 
 2.45.3
 
