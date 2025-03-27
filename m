@@ -1,285 +1,229 @@
-Return-Path: <linux-kernel+bounces-578689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD74A73541
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C42ECA73495
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAFF179351
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92A52173B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3667F148827;
-	Thu, 27 Mar 2025 15:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB812218587;
+	Thu, 27 Mar 2025 14:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="M0s7jEl9"
-Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9imn3qo"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F7C157A67;
-	Thu, 27 Mar 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752B120FAAD;
+	Thu, 27 Mar 2025 14:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087736; cv=none; b=njv49HZq8LQFid444UC5a9V5VtPG6/kNV4c50O/Dw6b2Cjn5PHsmD+RguqJgoZ6WUS+ZLvMzGXHYpxN2BkfpaPQPLUBVje+4fnY3waZdKU0Lmy9+Be6IFzSkBkS28HNmUetwnaCg/4++0iupfENOfW7jPhMf8S1tywKGN+q1vWs=
+	t=1743086186; cv=none; b=Zccdl5t8IIGC1abcyRS9Q030/Vn8sdvnlFPC8X/I311HoOUNggj1Omya+lsEQR4vInk1H1Stt4kq9xcIzM8wUdgQswAhSa9aDCet4IDYy3ZjYwXPSqTsWJKbe4PYbHHPzwZ9SMzoaB1Z4jyA2fsR3UKyJ4ZQpVwhbQkJP9tER+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087736; c=relaxed/simple;
-	bh=OE6oiY0nSPPuNUu7YpqG+RqZI7ITGNCaVXamDmTr+no=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LESqdexpGQZrfzHL+hPz+eKjfty3WE7Fqrp4nTzkC9hQUccnXJAeMaiaP1kgrq83huN7XtiT4+dknOFVVzliXf5CgSqlSJZzrVTu3dCHqqpRHXWi+o7IC02vIRaQXeg38P7gLldErEmOKKdxeyzDe09+o+sh7kiwN6TtrD+xgGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=M0s7jEl9; arc=none smtp.client-ip=67.231.149.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
-Received: from pps.filterd (m0050095.ppops.net [127.0.0.1])
-	by m0050095.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 52R8iofe012268;
-	Thu, 27 Mar 2025 14:35:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=jan2016.eng;
-	 bh=vZfj3Afs41hYu1dHv9/e2igxXfM/rkKPJf0BWi3Cq7I=; b=M0s7jEl9aM/C
-	cBy5mOZ/WL2VrstsaYAuNCbSBlt1dkQmiuBZJv9fbRIOW9SC4/gOSZg/pQtc3cTD
-	hMqO40qCwjKV8zloozNYHizRsuXU89iBdH9SYqg1yM4Vcv/AAkQJRMTFZg0xLqsY
-	HPcT3UfwUG0P1U8EcpwwgH/VwrNblXanq2ZFV8zHhpun4BOzyB/SXfwFLeljtgFR
-	hWp6ZqX7/NQ2URyyLjV7wSNJJJbWaq123a0/es+RulpY5UoI2RRfU6lBwjcvpoub
-	T5y+fQouNW3ATj8smPOcRih+FYv4tvnBmZ+hr9CQWcUmPsePARTZtM2du/AZ3BpF
-	ImDfE2zsag==
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-	by m0050095.ppops.net-00190b01. (PPS) with ESMTPS id 45hnmmbd71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 14:35:35 +0000 (GMT)
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-	by prod-mail-ppoint1.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 52RDuoCU006214;
-	Thu, 27 Mar 2025 10:35:34 -0400
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-	by prod-mail-ppoint1.akamai.com (PPS) with ESMTP id 45mvqa2qgf-1;
-	Thu, 27 Mar 2025 10:35:34 -0400
-Received: from [172.19.46.102] (bos-lpa4700a.bos01.corp.akamai.com [172.19.46.102])
-	by prod-mail-relay10.akamai.com (Postfix) with ESMTP id E29F365F2A;
-	Thu, 27 Mar 2025 14:35:33 +0000 (GMT)
-Message-ID: <4f258a96-42fe-4567-886b-e8e2b949ab1a@akamai.com>
-Date: Thu, 27 Mar 2025 10:35:33 -0400
+	s=arc-20240116; t=1743086186; c=relaxed/simple;
+	bh=aRSJEE4LF/DgyqNP78KuA37ILgQD4/DkDEBzOXdalYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3zHnfKVQ+8FUHNF8Pbw3yUGiALdn2nlXwTustj+9BfE1uzt+CHjSeJRn23sJNDPq8RqilZqkTbl5hvs2eapg61gLqgewvV1lDyXlBs26mCKEjtwAiXT/8XePtw0tWZueRbw9Uu2TdD2zG9zZ+aLpIY84HMKWURvBzLUplgBU9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9imn3qo; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227d6b530d8so21023035ad.3;
+        Thu, 27 Mar 2025 07:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743086184; x=1743690984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wCmk4hmuZJ512kbCxwIcYRx/KVLFgt2B/Rg6XnWmpH0=;
+        b=B9imn3qofIk5gUlIvys2NL9TmacUxLEPIbhqOKVo5PcvlaCefmGJEBu9fgAu4Sex5a
+         rbbpMpx49ZSxIl2ctFl5HRdRxfaTbGwnz00Z4JwpJY/Rz4nhmglwikFersrDeFt9YdsY
+         eSNlPDCzFxRw0O/Nn/ehvmRI03Y0MfL7BeTh+UhCCuQxW/B6EsyUmecSTYMerQM9ED6D
+         7QSPDdRGqsQn1n22c54ZVH3XdXI/uh2rs31bGOB6wQyNBq35udLvUuLTwgBD947Qd6ti
+         /0K+Ztea2zKom8dAubCbV7CDu55lV3Jhg8t+nlbExMXDZ/jQAV8JP27ayGru4jybwxth
+         UBWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743086184; x=1743690984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wCmk4hmuZJ512kbCxwIcYRx/KVLFgt2B/Rg6XnWmpH0=;
+        b=YA86lzX3o8qpdDFAG4koexsBOVJrTpx4lLSs2CZMxC7DSejpnUag2/GswMyVRE3MHj
+         LXyKZFpBWfsAzf0lkMcXoJUzXlH5/NALj4ygJnvCx+bsscgm+pfT8vhhqEwXPNBd+Xg9
+         zvQHNYJkNGw+6uIccSPnW4c2TDkdAvrm+W+OVgCcndhxtI3An/PIQaoA81198TKgoSkJ
+         q+Sa8Bguedch39VD3uBIaQd0SOnfihZRed+gjD1WudAXlh42yN/YcugVz8iXSGRqRFF2
+         cw4BiHfPzhbwylk2xIb/BfoiXiBKfJIM9kssGycbcxqZjoh8lo6mBM4lgav5GZJxi0FG
+         09yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbPi4XavMv1OMsr9qvIYAWd8qIZPOO2m7IwYirRuyQzTbZRodyXpAcDYb1FvCvJ2LfdDZ44X3h@vger.kernel.org, AJvYcCWx/inNPnxL06QeK/K/mXVLlo9Fn1Z/b/vNlyj0TkUcuqxDF8cFrck7VWzFTGc/TqmHgRv3RXSvg1IYapU=@vger.kernel.org, AJvYcCXEQjskpUB4/5wcONrkq6dt/enVWIwngUijT0FLq5dFQu+nMPZlpOplCuAXOBXKhPBfj0uF/+Ni3W8h@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBhubSu/iTZLCHa5t1jJ7AwPdJpa9jGo6RfomvYQUo1l9vppa6
+	p9Bdhn6nXZgSq7tR6rcO5v5F6BDPkHT/2jIUmRPZV8/3R4g3AJY=
+X-Gm-Gg: ASbGncsT00ArK39jCVnYlfsrPej23vh1Sh2iEUkP53EjEs45WAWGqmVU5H5Tu5wyDat
+	gvrnEVnjsFwPPo3+4vYqi5HYf0ks08IxMtjQssy6Eut9GFMSXxG5orjUhSlvgxkzs1aW4aLA4sv
+	lObgpq+F+JRsV3yTLDhFB1max/ZLxR7aagM3J7RgLKontZ3nGMeDls583qtmfvC5N58m/34ncGi
+	3scVPZtbB7jruQzSm0BPaPSK7vjRX8/2ycIplM9bHSmiQrKpdmfB7D7pE/ppB1ipaoisgSjpcTr
+	ecS5cCydLx/vvyxLe5Bltk0Bs5xH6fHPJvC0NvTuy8aX
+X-Google-Smtp-Source: AGHT+IGDGrmcXz0yo6x3fW0RJOxnKZihvpxzy9pmxAKnOwTngC++Wp2N8mMvV7YeUTAcRN/VCZxolA==
+X-Received: by 2002:a17:902:fc4f:b0:216:410d:4c53 with SMTP id d9443c01a7336-2280491aa7dmr60192305ad.41.1743086183439;
+        Thu, 27 Mar 2025 07:36:23 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2291eec73d6sm143915ad.42.2025.03.27.07.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 07:36:22 -0700 (PDT)
+Date: Thu, 27 Mar 2025 07:36:22 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: syzbot <syzbot+377b71db585c9c705f8e@syzkaller.appspotmail.com>
+Cc: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, eric.dumazet@gmail.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	linux-x25@vger.kernel.org, lkp@intel.com, llvm@lists.linux.dev,
+	ms@dev.tdt.de, netdev@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, pabeni@redhat.com, sdf@fomichev.me,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [x25?] possible deadlock in lapbeth_device_event
+Message-ID: <Z-ViZoezAdjY8TC-@mini-arch>
+References: <67cd611c.050a0220.14db68.0073.GAE@google.com>
+ <67e55c12.050a0220.2f068f.002c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next regression: SNP Guest boot hangs with certain cpu/mem
- config combination
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Aithal, Srikanth" <sraithal@amd.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "Roth, Michael" <Michael.Roth@amd.com>
-References: <363f8293-23e3-44d3-8005-b31eb5b7f975@amd.com>
- <rar5bkfy7iplfhitsbna3b2dmxbk7nunlaiclwars6kffdetl4@lzm7iualliua>
- <08981771-39ac-af66-e2ec-e8f9bf6aed0a@amd.com>
- <idlcitykk3hxg5by5sltuljyjf7uanmve5fspu6dectubhy5za@mjmv4i5vwyby>
- <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
-Content-Language: en-US
-From: Jason Baron <jbaron@akamai.com>
-In-Reply-To: <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 phishscore=0 adultscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2503270099
-X-Proofpoint-GUID: KubT_C3ekVS3SxSr3F5pJOdAO2O81AM6
-X-Proofpoint-ORIG-GUID: KubT_C3ekVS3SxSr3F5pJOdAO2O81AM6
-X-Authority-Analysis: v=2.4 cv=HYMUTjE8 c=1 sm=1 tr=0 ts=67e56237 cx=c_pps a=StLZT/nZ0R8Xs+spdojYmg==:117 a=StLZT/nZ0R8Xs+spdojYmg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=QyXUC8HyAAAA:8 a=1wTiysn-UDBPyNMy3dsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 mlxscore=0 clxscore=1011 spamscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503270099
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67e55c12.050a0220.2f068f.002c.GAE@google.com>
 
-
-
-On 3/27/25 10:25 AM, Kirill A. Shutemov wrote:
-> !-------------------------------------------------------------------|
->    This Message Is From an External Sender
->    This message came from outside your organization.
-> |-------------------------------------------------------------------!
+On 03/27, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
 > 
-> On Thu, Mar 27, 2025 at 02:58:12PM +0200, Kirill A. Shutemov wrote:
->> On Wed, Mar 26, 2025 at 05:30:35PM -0500, Tom Lendacky wrote:
->>> On 3/25/25 08:33, Kirill A. Shutemov wrote:
->>>> On Tue, Mar 25, 2025 at 02:40:00PM +0530, Aithal, Srikanth wrote:
->>>>> Hello,
->>>>>
->>>>>
->>>>> Starting linux-next build next-20250312, including recent build 20250324, we
->>>>> are seeing an issue where the SNP guest boot hangs at the "boot smp config"
->>>>> step:
->>>>>
->>>>>
->>>>>   [ 2.294722] smp: Bringing up secondary CPUs ...
->>>>> [    2.295211] smpboot: Parallel CPU startup disabled by the platform
->>>>> [    2.309687] smpboot: x86: Booting SMP configuration:
->>>>> [    2.310214] .... node  #0, CPUs:          #1   #2   #3   #4 #5   #6
->>>>> #7   #8   #9  #10  #11  #12  #13  #14  #15  #16  #17 #18  #19  #20  #21
->>>>> #22  #23  #24  #25  #26  #27  #28  #29  #30 #31  #32  #33  #34  #35  #36
->>>>> #37  #38  #39  #40  #41  #42  #43 #44  #45  #46  #47  #48  #49  #50  #51
->>>>> #52  #53  #54  #55  #56 #57  #58  #59  #60  #61  #62  #63  #64  #65  #66
->>>>> #67  #68  #69 #70  #71  #72  #73  #74  #75  #76  #77  #78  #79  #80  #81
->>>>> #82 #83  #84  #85  #86  #87  #88  #89  #90  #91  #92  #93  #94  #95 #96
->>>>> #97  #98  #99 #100 #101 #102 #103 #104 #105 #106 #107 #108 #109 #110 #111
->>>>> #112 #113 #114 #115 #116 #117 #118 #119 #120 #121 #122 #123 #124 #125 #126
->>>>> #127 #128 #129 #130 #131 #132 #133 #134 #135 #136 #137 #138 #139 #140 #141
->>>>> #142 #143 #144 #145 #146 #147 #148 #149 #150 #151 #152 #153 #154 #155 #156
->>>>> #157 #158 #159 #160 #161 #162 #163 #164 #165 #166 #167 #168 #169 #170 #171
->>>>> #172 #173 #174 #175 #176 #177 #178 #179 #180 #181 #182 #183 #184 #185 #186
->>>>> #187 #188 #189 #190 #191 #192 #193 #194 #195 #196 #197 #198
->>>>> --> The guest hangs forever at this point.
->>>>>
->>>>>
->>>>> I have observed that certain vCPU and memory combinations work, while others
->>>>> do not. The VM configuration I am using does not have any NUMA nodes.
->>>>>
->>>>> vcpus             Mem        SNP guest boot
->>>>> <=240            19456M    Boots fine
->>>>>> =241,<255   19456M    Hangs
->>>>> 1-255              2048M    Boots fine
->>>>> 1-255              4096M    Boots fine
->>>>>> 71                 8192M    Hangs
->>>>>> 41                 6144M    Hangs
->>>>>
->>>>> When I bisected this issue, it pointed to the following commit :
->>>>>
->>>>>
->>>>> *commit 800f1059c99e2b39899bdc67a7593a7bea6375d8*
->>>>> Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->>>>> Date:   Mon Mar 10 10:28:55 2025 +0200
->>>>>
->>>>>      mm/page_alloc: fix memory accept before watermarks gets initialized
->>>>
->>>> Hm. It is puzzling for me. I don't see how this commit can cause the hang.
->>>>
->>>> Could you track down where hang happens?
->>>
->>> Let me say that the guest config is key for this. Using that config, I
->>> think you might be able to repro this on TDX. The config does turn off TDX
->>> support, so I'm hoping that turning it on doesn't change anything.
->>>
->>> I've been able to track it down slightly... It is happening during the CPU
->>> bringup trace points and it eventually gets to line 2273 in
->>> rb_allocate_cpu_buffer() and never comes back from an alloc_pages_node()
->>> call. That's as far as I've gotten so far. I'm not a mm expert so not sure
->>> if I'll be able to progress much further.
->>
->> Urgh... It is deadlock on cpu_hotplug_lock :/
->>
->> _cpu_up() takes the lock on write and starts CPU bring up under it.
->> If during CPU bringup we accept the last page in the zone, __accept_page()
->> calls static_branch_dec() which takes the lock again.
->>
->> Oopsie.
->>
->> So the patch itself doesn't introduce a regression, but uncovers
->> preexisting deadlock. With the patch we accept more pages during the boot
->> and it triggers the deadlock.
->>
->> Let me think about the fix.
+> HEAD commit:    1a9239bb4253 Merge tag 'net-next-6.15' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15503804580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=95c3bbe7ce8436a7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=377b71db585c9c705f8e
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139a6bb0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16974a4c580000
 > 
-> + Static branch maintainers
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-1a9239bb.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/bd56e2f824c3/vmlinux-1a9239bb.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/19172b7f9497/bzImage-1a9239bb.xz
 > 
-> The only option I see so far is to drop static branch from this path.
-> 
-> But I am not sure if it the only case were we use static branch from CPU
-> hotplug callbacks.
-> 
-> Any other ideas?
-
-
-Hmmm, didn't take too close a look here, but there is the 
-static_key_slow_dec_cpuslocked() variant, would that work here? Is the 
-issue the caller may or may not have the cpu_hotplug lock?
-
-Thanks,
-
--Jason
-
-
-
-> 
-> The deadlock I'm talking about:
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+377b71db585c9c705f8e@syzkaller.appspotmail.com
 > 
 > ============================================
 > WARNING: possible recursive locking detected
-> 6.14.0-rc5+ #13 Tainted: G S
+> 6.14.0-syzkaller-05877-g1a9239bb4253 #0 Not tainted
 > --------------------------------------------
-> swapper/0/1 is trying to acquire lock:
-> ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
+> dhcpcd/5649 is trying to acquire lock:
+> ffff888023ad4d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2751 [inline]
+> ffff888023ad4d28 (&dev->lock){+.+.}-{4:4}, at: netif_napi_add_weight include/linux/netdevice.h:2783 [inline]
+> ffff888023ad4d28 (&dev->lock){+.+.}-{4:4}, at: lapbeth_new_device drivers/net/wan/lapbether.c:415 [inline]
+> ffff888023ad4d28 (&dev->lock){+.+.}-{4:4}, at: lapbeth_device_event+0x586/0xbe0 drivers/net/wan/lapbether.c:460
 > 
 > but task is already holding lock:
-> ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_up (./arch/x86/include/asm/bitops.h:227 ./arch/x86/include/asm/bitops.h:239 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 ./include/linux/cpumask.h:570 ./include/linux/cpumask.h:1131 kernel/cpu.c:1641)
+> ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2751 [inline]
+> ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+> ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:39 [inline]
+> ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: dev_change_flags+0xa7/0x250 net/core/dev_api.c:67
 > 
 > other info that might help us debug this:
->   Possible unsafe locking scenario:
+>  Possible unsafe locking scenario:
 > 
->         CPU0
->         ----
->    lock(cpu_hotplug_lock);
->    lock(cpu_hotplug_lock);
+>        CPU0
+>        ----
+>   lock(&dev->lock);
+>   lock(&dev->lock);
 > 
->   *** DEADLOCK ***
+>  *** DEADLOCK ***
 > 
->   May be due to missing lock nesting notation
+>  May be due to missing lock nesting notation
 > 
-> 2 locks held by swapper/0/1:
-> #0: ffffffffbdc7e058 (cpu_add_remove_lock){+.+.}-{4:4}, at: cpu_up (kernel/cpu.c:? kernel/cpu.c:1712)
-> #1: ffffffffbdc7e150 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_up (./arch/x86/include/asm/bitops.h:227 ./arch/x86/include/asm/bitops.h:239 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 ./include/linux/cpumask.h:570 ./include/linux/cpumask.h:1131 kernel/cpu.c:1641)
+> 2 locks held by dhcpcd/5649:
+>  #0: ffffffff900fb268 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+>  #0: ffffffff900fb268 (rtnl_mutex){+.+.}-{4:4}, at: devinet_ioctl+0x26d/0x1f50 net/ipv4/devinet.c:1121
+>  #1: ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock include/linux/netdevice.h:2751 [inline]
+>  #1: ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+>  #1: ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: netdev_lock_ops include/net/netdev_lock.h:39 [inline]
+>  #1: ffff888029940d28 (&dev->lock){+.+.}-{4:4}, at: dev_change_flags+0xa7/0x250 net/core/dev_api.c:67
 > 
 > stack backtrace:
-> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G S                 6.14.0-rc5+ #13
-> Tainted: [S]=CPU_OUT_OF_SPEC
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 02/02/2022
+> CPU: 1 UID: 0 PID: 5649 Comm: dhcpcd Not tainted 6.14.0-syzkaller-05877-g1a9239bb4253 #0 PREEMPT(full) 
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
 > Call Trace:
->   <TASK>
-> dump_stack_lvl (lib/dump_stack.c:122)
-> print_deadlock_bug (kernel/locking/lockdep.c:3041)
-> __lock_acquire (kernel/locking/lockdep.c:? kernel/locking/lockdep.c:3893 kernel/locking/lockdep.c:5228)
-> ? asm_sysvec_apic_timer_interrupt (./arch/x86/include/asm/idtentry.h:702)
-> ? free_one_page (mm/page_alloc.c:?)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> lock_acquire (kernel/locking/lockdep.c:5851)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> cpus_read_lock (./include/linux/percpu-rwsem.h:51)
-> ? static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> static_key_slow_dec (kernel/jump_label.c:321 kernel/jump_label.c:336)
-> cond_accept_memory (mm/page_alloc.c:7024)
-> get_page_from_freelist (./arch/x86/include/asm/bitops.h:206 ./arch/x86/include/asm/bitops.h:238 ./include/asm-generic/bitops/instrumented-non-atomic.h:142 mm/page_alloc.c:3417)
-> ? lock_release (kernel/locking/lockdep.c:469)
-> __alloc_frozen_pages_noprof (mm/page_alloc.c:4740)
-> __alloc_pages_noprof (mm/page_alloc.c:4774)
-> rb_allocate_cpu_buffer (kernel/trace/ring_buffer.c:2235)
-> ? _raw_spin_unlock_irqrestore (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./arch/x86/include/asm/irqflags.h:155 ./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
-> trace_rb_cpu_prepare (kernel/trace/ring_buffer.c:7322)
-> cpuhp_invoke_callback (kernel/cpu.c:216)
-> ? __pfx_trace_rb_cpu_prepare (kernel/trace/ring_buffer.c:7297 kernel/trace/ring_buffer.c:7304)
-> _cpu_up (kernel/cpu.c:967 kernel/cpu.c:990 kernel/cpu.c:1021 kernel/cpu.c:1691)
-> cpu_up (kernel/cpu.c:473 kernel/cpu.c:1725)
-> cpuhp_bringup_mask (kernel/cpu.c:1789)
-> ? kernel_init (init/main.c:1459)
-> smp_init (./include/linux/bitmap.h:445 ./include/linux/nodemask.h:241 ./include/linux/nodemask.h:438 kernel/smp.c:1012)
-> kernel_init_freeable (init/main.c:1561)
-> ? __pfx_kernel_init (init/main.c:1455)
-> kernel_init (init/main.c:1459)
-> ret_from_fork (arch/x86/kernel/process.c:148)
-> ? __pfx_kernel_init (init/main.c:1455)
-> ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
->   </TASK>
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_deadlock_bug+0x1e9/0x240 kernel/locking/lockdep.c:3042
+>  check_deadlock kernel/locking/lockdep.c:3094 [inline]
+>  validate_chain kernel/locking/lockdep.c:3896 [inline]
+>  __lock_acquire+0xff7/0x1ba0 kernel/locking/lockdep.c:5235
+>  lock_acquire kernel/locking/lockdep.c:5866 [inline]
+>  lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
+>  __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+>  __mutex_lock+0x19a/0xb00 kernel/locking/mutex.c:732
+>  netdev_lock include/linux/netdevice.h:2751 [inline]
+>  netif_napi_add_weight include/linux/netdevice.h:2783 [inline]
+>  lapbeth_new_device drivers/net/wan/lapbether.c:415 [inline]
+>  lapbeth_device_event+0x586/0xbe0 drivers/net/wan/lapbether.c:460
+>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:85
+>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2180
+>  call_netdevice_notifiers_extack net/core/dev.c:2218 [inline]
+>  call_netdevice_notifiers net/core/dev.c:2232 [inline]
+>  __dev_notify_flags+0x12c/0x2e0 net/core/dev.c:9409
+>  netif_change_flags+0x108/0x160 net/core/dev.c:9438
+>  dev_change_flags+0xba/0x250 net/core/dev_api.c:68
+>  devinet_ioctl+0x11d5/0x1f50 net/ipv4/devinet.c:1200
+>  inet_ioctl+0x3a7/0x3f0 net/ipv4/af_inet.c:1001
+>  sock_do_ioctl+0x115/0x280 net/socket.c:1190
+>  sock_ioctl+0x227/0x6b0 net/socket.c:1311
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:906 [inline]
+>  __se_sys_ioctl fs/ioctl.c:892 [inline]
+>  __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7effd384cd49
+> Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+> RSP: 002b:00007ffedd440088 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007effd377e6c0 RCX: 00007effd384cd49
+> RDX: 00007ffedd450278 RSI: 0000000000008914 RDI: 000000000000001a
+> RBP: 00007ffedd460438 R08: 00007ffedd450238 R09: 00007ffedd4501e8
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffedd450278 R14: 0000000000000028 R15: 0000000000008914
+>  </TASK>
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+
+#syz test
+
+diff --git a/drivers/net/wan/lapbether.c b/drivers/net/wan/lapbether.c
+index 56326f38fe8a..a022e930bd8e 100644
+--- a/drivers/net/wan/lapbether.c
++++ b/drivers/net/wan/lapbether.c
+@@ -39,6 +39,7 @@
+ #include <linux/lapb.h>
+ #include <linux/init.h>
+ 
++#include <net/netdev_lock.h>
+ #include <net/x25device.h>
+ 
+ static const u8 bcast_addr[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+@@ -372,6 +373,7 @@ static void lapbeth_setup(struct net_device *dev)
+ 	dev->hard_header_len = 0;
+ 	dev->mtu             = 1000;
+ 	dev->addr_len        = 0;
++	netdev_lockdep_set_classes(netdev);
+ }
+ 
+ /*	Setup a new device.
+
 
