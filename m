@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-579041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F0A73F11
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:50:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEF8A73F16
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33CE11882931
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:49:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18570165D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015651C1F0D;
-	Thu, 27 Mar 2025 19:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37BF1C174E;
+	Thu, 27 Mar 2025 19:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Em9mcxso"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dEbyuk8P"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6DF171658
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E53117BB21
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743104955; cv=none; b=dL4aJAWEdUy4fyxUYXudTAn30KIFZ6x/HdT9n6pJO/Ds8dflkrF6Lr1wPHVaBR79Lc2GUZfw71hbI6xLBYq9TZ0mlyyLOHXqsk9QU4hIGCzgzZgJIyUwDIbidqE/tKfraKLHpajhzR0Jz7JpcK3hn6L3vq/86tktrH2yoraRsWU=
+	t=1743105099; cv=none; b=KmTPfi2Uv8M10UcTAk82frdI2QU77Muhk4TrqkINborjiYBHN+11GQapLLQp/dgzsTUYkF6ndkDwKIqcSr0uhSLmOrlY/f4DLtYwSDZ/zse7UBYWRBBbmX/FVigKnsf8CUdokzOFYaty6L+jgCopEwablChnAHP6yL8HtZ34S4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743104955; c=relaxed/simple;
-	bh=TmhrEyyzYHS+5GOcpxXhAFm8eLJRmXJBamh8xsmNaSI=;
+	s=arc-20240116; t=1743105099; c=relaxed/simple;
+	bh=Tq1/cEY8ShIsxcJyAI4tVwmzrkLP4E85CmBG2dlLMVA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LIW6QkwPvKdiCC5/cPa1WX/W1aBurzkXCcRvUvB0M8Tndj1w8u+Sn/X3f/lEGdlpLnlz39WF3EzJK2+BConTwEcT4mYps6AjqimQSj3Y22vkprG1enPsZPcxmNMbg/8RJNkJjmtqr/Ji60V9xk2x7qXLD6RPbKgoSeRvAhJxchc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Em9mcxso; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=cngEFwDOSlqY2tFQdra2Gs6kwUOzFWnY+h9Oh7b3lRK+9RPmDndTHdTXNzIkjkAEvXfM6wsMFysXiXWXmCX3XFhrvtfHIridXmSO1ylA1679mx1x5Fo8VjpAoIBk94IUlGedO4KRmAQmrWxBPfBy/fLrdJmF0KKkFb8E6FrS+h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dEbyuk8P; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e61375c108so1774281a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:49:12 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so213195666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:51:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743104951; x=1743709751; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1743105095; x=1743709895; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ItE8oX0ILk3WjrUu6e7/GfRlQ0WuxC6tMvI04/KUJA=;
-        b=Em9mcxsofxkOn9pYWhQrCEUL1/t6yt3+Q0YHUxxGSYF4eY6++t9CWSSyXnqSpyq4D8
-         W+18/2maStRvKVSQJK/mMt4jUC5OsnUH84a6a6IybA31AlfqQJrKkm1uFO454l0y1yAd
-         KcwOlsuc5xeludgaqX0izfRzL70SbjTCzrhhs=
+        bh=D9Cp7nHYOueUQMptFhXWQIk/iraWU46+xV5MSj1gwlQ=;
+        b=dEbyuk8POLs6qvahc8Jyfi1n8KOnoR/qgbiVt83PjkSo6vctl5C3TuDI+qR8yABnbk
+         q8LLgRaK6YWAVYCEniR7i7h/mgRiQy9blNIMCKPk7Myzpj46O8w0sVjWe/fVRF+2146z
+         ACLGOIP9+lBKEZzaeTu0IBBQd8bt02rBYkTKA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743104951; x=1743709751;
+        d=1e100.net; s=20230601; t=1743105095; x=1743709895;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9ItE8oX0ILk3WjrUu6e7/GfRlQ0WuxC6tMvI04/KUJA=;
-        b=dg/Fh+xj1vac3KBfXrl61kCKHgKXLsYMBIiRGTr1opg5NUQTuKON6nYcZbDjfwNMZ7
-         3AnuABqHxZiBQoLuhgbulZabkW9kHiMdfx+0v2Ozwu0CIMjYAyM4WZ8u5LQpm4vKCQPE
-         Ok9IhYDvxy5ffBkDSK4leRDxiT1dXwHMtvD203Fmq/Q8n3g4YVPLtyp6gK/2sP79wnNs
-         3JfQpnWG3rebD1dn7Uz9oiK4OzCLY0+DElhg2aEK1H0wKi9zBe6Ww8LIQeb5hYcgdf/D
-         yAokhWYTgFoNFOPVdjkB00XSqWpdN5dYIlXq0JndRLwsSJVIIGBLJP9DVEDYw+i5koG9
-         Fwcg==
-X-Gm-Message-State: AOJu0YwdsmYVLlczL9pdvFLWX292BLeuv5xu6ADPRkGh4ZKH7xUT5bZu
-	5w3OspqRGddGWX+7oWXO7BJ4NYtsd0TZ5epRchjN8ovH2xRygxpH7XO9pzxYrrjYzg4NdtO3Tdz
-	N86Q=
-X-Gm-Gg: ASbGncuWtimTD0UJzx05JBybMm3bugP2Urthy8pdQh1LI0fh/uWKDsT/E5blRVXuV4v
-	EXZv38ZwUfuPMueFJ2B8JVqLUM1/KYGLzvTVmFVMtSrYSFUSweS1BJZsh3AfnJtGCCq1WR6CqIV
-	O69OO6wFQs709/U6P+7w3Pr1Nhge549ouwd5LESLkG7iREWsJ7WI0snZj+evtIR8KXWy3S3QFmC
-	Glk8VlERD4JOh0n5dQjPCyXscJWp0iOIrSwlruPrvrXA6JYtDL3leJJhm9Ujk5b/onOFoSkEwZL
-	d5HZIrLmlO5ye286Ar3xx1mTcfOs3Bk4KPB82YAmv4+3oUnEmGLhpMPerJ2DGGd5yMLvezjScqB
-	LFWcxYo6dQLyjSH1k99I=
-X-Google-Smtp-Source: AGHT+IHv5Z7lSC8TsdVynOEG7/vuX+l4TUNnGuVH/578VK1MW//EeAAa0F00UgZ19Oon0NOIgT09fA==
-X-Received: by 2002:a05:6402:26cc:b0:5dc:c9ce:b01b with SMTP id 4fb4d7f45d1cf-5ed8e27b765mr5031209a12.8.1743104951142;
-        Thu, 27 Mar 2025 12:49:11 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17e0042sm245518a12.80.2025.03.27.12.49.10
+        bh=D9Cp7nHYOueUQMptFhXWQIk/iraWU46+xV5MSj1gwlQ=;
+        b=FLYITwSH/AqBUQJr9NtQ9l0UM6F59Dt/InXrUl4GL/geFkWJ2qMaXjHL6aHYsBqYc/
+         d1B72FixDMOBlqvZqhvKZjRP5FgHreCXY8Ptz8aUs1ZpS/nBBh2hdhJ2atUw9XmAp9U2
+         alI8OUJse2ffAZ+1rbyMNGslpMV0gCqh3jnDzestCXuXOuGn2sEFx0aEzlztBMNFajZj
+         GrtAga3wDhUbNsXomBd/FdEGf0WlqfhacY0YfxEVsf9A9ZbW0FsB55gUbACkkUd7uqd7
+         pYpOvp4n1QEyygXmIvyiOxUQasAlCLgvBYGpC2JOHdOFEBfMhVkUPnGpYOBMqLJLWxpP
+         pHSg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4xxOMKroNTb5sG+XkAl1NYmeEzFyZMrXDHCnelAiByQqCRBydCq3NtlR8bpzs+83QV0f46+mLfCijxOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznlNVcCUzVQe0zS3Fs5iniFfMipwZTBQ/GlEx1WK5N+PZqpi3K
+	i3q0fS8Nwa2wG1gSlOKf9RP9a7gfiNPqmhCFI0gbq0pVDKm8+NQHc86K1O82uOrWTVU/3WHgbz7
+	3oKE=
+X-Gm-Gg: ASbGncsfe37GPMh/z5pmXussNWmEj/btA93g6UkpAwVhNNX5TSxNUXyfeDfaWWzz73o
+	0u1ZiBon2GzyfQjokDjaeCFKDFSiPpDBK/ulmk50zM7SpKoqCwD0AEnC+c7eZf81lUlqoK6E+wP
+	jRetFwL/wHtib8mcUjsmq7QrakuFaJFcKJ+/wKFPsKzABaoZ2drQnIe89x8PbWyMVLtmiEreqHa
+	LRcBhf75QaGD98USCo9i3brV7zz4rUF0bc0CjlI0fdY7BPMHGI62UUfZCS10ey8zIMlkNnemIg/
+	QHQUTW5YU5wlbByKyhdXnjQt34GWIqRs4qP+mD6DdslWltm3sFWd/P6EhkL0PK5R9TLdA1BsGZ0
+	7YRGVGXEGCKGlu1y//Kw=
+X-Google-Smtp-Source: AGHT+IG+4L5+RgxgNHq+3pvLVGH8RoIFAC4YqPJMXnzox0LluPPRVO6W7Y4aYruKPuKGxOhLpuvpIg==
+X-Received: by 2002:a17:906:f5a4:b0:ac2:a089:f47c with SMTP id a640c23a62f3a-ac6fb14f400mr545581866b.55.1743105095262;
+        Thu, 27 Mar 2025 12:51:35 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7192f0adasm42538666b.79.2025.03.27.12.51.34
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 12:49:10 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e61375c108so1774249a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:49:10 -0700 (PDT)
-X-Received: by 2002:a17:907:3ea8:b0:ac3:45c6:a1ec with SMTP id
- a640c23a62f3a-ac6faeef8e8mr423348166b.25.1743104949094; Thu, 27 Mar 2025
- 12:49:09 -0700 (PDT)
+        Thu, 27 Mar 2025 12:51:34 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac29af3382dso219537166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:51:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUC+joS5lX7HAHEyxnlxwehvlP0FK4AZkxefAfRHNf3+6n5U1CPUKASom0GHpFB9JUrbxi4jZrHm2zxnoA=@vger.kernel.org
+X-Received: by 2002:a17:906:7952:b0:ac3:bf36:80e2 with SMTP id
+ a640c23a62f3a-ac6faeb2408mr397130966b.20.1743105093834; Thu, 27 Mar 2025
+ 12:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327102953.813608-1-mingo@kernel.org> <20250327102953.813608-14-mingo@kernel.org>
-In-Reply-To: <20250327102953.813608-14-mingo@kernel.org>
+References: <20250326084751.2260634-1-mingo@kernel.org> <20250326084751.2260634-5-mingo@kernel.org>
+ <20250326085343.GB25239@noisy.programming.kicks-ass.net> <Z-UcIJAQsNXoxMXG@gmail.com>
+In-Reply-To: <Z-UcIJAQsNXoxMXG@gmail.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 27 Mar 2025 12:48:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wihuzRytaFKr6b_pbi209JW+GWiNMtb9x-XhQdstxPuMw@mail.gmail.com>
-X-Gm-Features: AQ5f1JozIZWS8j2lCU6cy3yQlYJmv-RuLU59ehvhVkiyHqS-QfeMDqKPFphPR_s
-Message-ID: <CAHk-=wihuzRytaFKr6b_pbi209JW+GWiNMtb9x-XhQdstxPuMw@mail.gmail.com>
-Subject: Re: [PATCH 13/14] bugs/sh: Concatenate 'cond_str' with '__FILE__' in
- __WARN_FLAGS(), to extend WARN_ON/BUG_ON output
+Date: Thu, 27 Mar 2025 12:51:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiN1d6ZuzwwLOKreyGuE6Q-yHG5kCkA2xVxbWXxORoXSw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jribw8Yzdlk7EJSC5yUVWYg9jKEP0ciqIKyzTGKwB4C9E58yp3DXLaIwaE
+Message-ID: <CAHk-=wiN1d6ZuzwwLOKreyGuE6Q-yHG5kCkA2xVxbWXxORoXSw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] bugs/x86: Augment warnings output by concatenating
+ 'cond_str' with the regular __FILE__ string in _BUG_FLAGS()
 To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 27 Mar 2025 at 03:30, Ingo Molnar <mingo@kernel.org> wrote:
+On Thu, 27 Mar 2025 at 02:36, Ingo Molnar <mingo@kernel.org> wrote:
 >
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Cc: linux-sh@vger.kernel.org
-> Cc: <linux-arch@vger.kernel.org>
+> BTW., any reason why we go all the trouble with the bug_entry::line u16
+> number, instead of storing it in the bug_entry::file string with a
+> :__LINE__ postfix or so?
 
-You say that, but I don't see that in the actual email, which only
-went to lkml...
+The compiler will happily share the same storage for identical
+strings, so that was an issue: re-using the same memory for the same
+filename being repeated multiple times.
 
-So the sh maintainers (and riscv and s390 etc: same issue with those
-emails) probably never saw this.
+That obviously doesn't work anyway once you add the warning string to
+it, so that makes that whole argument go away.
 
-The patches look fine to me, fwiw.
-
-           Linus
+              Linus
 
