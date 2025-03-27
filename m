@@ -1,155 +1,108 @@
-Return-Path: <linux-kernel+bounces-578215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B60A72C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:38:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90FBA72CA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:41:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A0667A2F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:37:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7061B189AA3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9443B20CCD9;
-	Thu, 27 Mar 2025 09:38:30 +0000 (UTC)
-Received: from smtp134-79.sina.com.cn (smtp134-79.sina.com.cn [180.149.134.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A1D20CCF1;
+	Thu, 27 Mar 2025 09:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="OSXflsOk"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B891A8F60
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C3A20CCC4;
+	Thu, 27 Mar 2025 09:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743068310; cv=none; b=HvoOWI2fbLE/lpk/FGVvBRJtSyRsbAEuk/6kDYKxhLp0/LLGXM2hK4+lylZyrDUu5aI1CKooBJmHg/6MeMbBjYxr3w7639qs3EeMiZ+r9z9lixz/JTs56siF7N3Ep/VVQ6Kv3Xi2xNOdPhIMQC7sgG4Vnnk2OsTXSGitE9CPlhw=
+	t=1743068480; cv=none; b=URyaUKZixvTs9GALoI00VEyRlyv97f26ez/VYSAmBjKWsEn/TEKvVYVktYGWvH1KGlpjDk8CxnhN+4OEvpj7GXzUcMtDPPgrYIbFGk8Xhddq2qpgYb3Tl/1ac7V0/DvV+rqBLRjnzh+L7vtiLzrXObQ1T7bw+3ZGMJiwlsLq5ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743068310; c=relaxed/simple;
-	bh=hXjAPFrEm6g0Zx8qm9hJGyjV1JomIaQsolkTA0hkEvY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=h3FM+1O7B4ZuJNOblwuxRuuMIrHW6pn9+GGavGn5w1vAl+ilaWfzULswyPXwJW52OAc/Orqk8my9oLDe6TlecpoRBTCL+Mgjh/GhEcvquLNMfIruxfXZlXUysHp4hfFnrhUgGZeVpczszQrx57GawTtO0YgyYiIRbJM8smSK4Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com; spf=pass smtp.mailfrom=everest-semi.com; arc=none smtp.client-ip=180.149.134.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everest-semi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everest-semi.com
-Received: from unknown (HELO zy-virtual-machine.localdomain)([180.159.108.242])
-	by sina.net (10.185.250.29) with ESMTP
-	id 67E51C8B00005989; Thu, 27 Mar 2025 17:38:20 +0800 (CST)
-X-Sender: zhangyi@everest-semi.com
-X-Auth-ID: zhangyi@everest-semi.com
-Authentication-Results: sina.net;
-	 spf=none smtp.mailfrom=zhangyi@everest-semi.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=zhangyi@everest-semi.com
-X-SMAIL-MID: EA3D3A9DBD6743E6AFDA933E0A47562C
-X-SMAIL-UIID: EA3D3A9DBD6743E6AFDA933E0A47562C-20250327-173820
-From: Zhang Yi <zhangyi@everest-semi.com>
-To: broonie@kernel.org,
-	robh@kernel.org,
-	tiwai@suse.com,
-	devicetree@vger.kernel.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	krzk+dt@kernel.org
-Cc: amadeuszx.slawinski@linux.intel.com,
-	krzk@kernel.org
-Subject: RE: [PATCH v6 1/2] ASoC: codecs: add support for ES8389
-Date: Thu, 27 Mar 2025 17:38:18 +0800
-Message-Id: <20250327093818.48050-1-zhangyi@everest-semi.com>
+	s=arc-20240116; t=1743068480; c=relaxed/simple;
+	bh=glMrtPRMwCf/hTpSOg9es/RCOrRO2mA/9DknAIORiEk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NohBBC7bIQ28Fu6zg5vtWY6GLky3S8ymDanSYYcJHElwIz5qKxtopvVPy7dJE7wNE9inke93rMhS1g2VY2Wg5ZPrHlIfvR76IS7BJ8vkPvB4kilZnnUr7HY6z0UsVVtXg+jKdLmq7kr0uiSfkzmSHV2J3ZkYaTJcqURaGa26ksA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=OSXflsOk; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R75SFE012762;
+	Thu, 27 Mar 2025 02:40:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=Ei2z18ex06t1MQHQoeuQQd5olVFTcCe9I9eJdiosu0w=; b=OSX
+	flsOkEMG/ruUFHOrfPAnaJL4dNn/7286kE5YlozUodOfHNaY6lYGGoBz39ofL1Th
+	1vHnC1WMm6Jtv0ONjCC6k/bowl8JwODbSDKVU4WcusHNFFyzHPf1MP44bzegqE6a
+	+SGNo0u3Ua9wkNSPj1QRNtc3/6fgrCJpKMhW3K9GwSJG3UQYiqbSqdwSIuADtJwm
+	BX7lClax2vy/u27lNbaxqHIbU1aggCuhfMaexpN0YRCKetaIa2/Y6SCIXBCbKZuW
+	R916uBsIZz308J2HRRojBhLk4S0pPE2dwijZqQAm53olKIEW3MCvVEJuB7qyfA4g
+	tcatW0YxibwMzgpYUqQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 45n1yv89kb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 02:40:59 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 27 Mar 2025 02:40:58 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 27 Mar 2025 02:40:58 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 562C65E6869;
+	Thu, 27 Mar 2025 02:40:55 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>, <tduszynski@marvell.com>
+Subject: [net PATCH] octeontx2-af: Free NIX_AF_INT_VEC_GEN irq
+Date: Thu, 27 Mar 2025 15:10:54 +0530
+Message-ID: <20250327094054.2312-1-gakula@marvell.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: O9ga0dYAkM2jHIK0rodNJKKbROtFkzQu
+X-Authority-Analysis: v=2.4 cv=dKCmmPZb c=1 sm=1 tr=0 ts=67e51d2b cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=x9ZtOMo8CBIAi1-txUEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: O9ga0dYAkM2jHIK0rodNJKKbROtFkzQu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
 
-> >   	imply SND_SOC_ES8316
-> >   	imply SND_SOC_ES8323
-> >   	imply SND_SOC_ES8326
-> > +	imply SND_SOC_ES8389
-> >   	imply SND_SOC_ES8328_SPI
-> >   	imply SND_SOC_ES8328_I2C
-> >   	imply SND_SOC_ES7134
-> 
-> Add it in alphabetical order?
+Due to the incorrect initial vector number in 
+rvu_nix_unregister_interrupts(), NIX_AF_INT_VEC_GEN is not
+geeting free. Fix the vector number to include NIX_AF_INT_VEC_GEN
+irq.
 
-I'll fix the issue about the order of this couple of places.
+Fixes: 5ed66306eab6 ("octeontx2-af: Add devlink health reporters for NIX")
+Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > diff --git a/sound/soc/codecs/es8389.c b/sound/soc/codecs/es8389.c new 
-> > file mode 100644 index 000000000000..73c1966c30be
-> > --- /dev/null
-> > +++ b/sound/soc/codecs/es8389.c
-> > @@ -0,0 +1,966 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * es8389.c  --  ES8389/ES8390 ALSA SoC Audio Codec
-> 
-> The only place that mentions ES8390? Is this correct?
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+index dab4deca893f..27c3a2daaaa9 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
+@@ -207,7 +207,7 @@ static void rvu_nix_unregister_interrupts(struct rvu *rvu)
+ 		rvu->irq_allocated[offs + NIX_AF_INT_VEC_RVU] = false;
+ 	}
+ 
+-	for (i = NIX_AF_INT_VEC_AF_ERR; i < NIX_AF_INT_VEC_CNT; i++)
++	for (i = NIX_AF_INT_VEC_GEN; i < NIX_AF_INT_VEC_CNT; i++)
+ 		if (rvu->irq_allocated[offs + i]) {
+ 			free_irq(pci_irq_vector(rvu->pdev, offs + i), rvu_dl);
+ 			rvu->irq_allocated[offs + i] = false;
+-- 
+2.25.1
 
-Actually ES8389 and ES8390 are the same chip.I'll drop the ES8390 in this place
-to avoid any misunderstandings.
-
-> > +	{50, 400000, 8000, 0x00, 0x75, 0x05, 0xC8, 0x01, 0xC1, 0x90, 0x10, 0x00, 0x18, 0xC7, 0xD0, 0xC0, 0x8F, 0xC7, 0x01, 0x12, 0x00, 0x09, 0x19, 0x07},
-> > +	{600, 4800000, 8000, 0x05, 0x65, 0x25, 0xF9, 0x00, 0xD1, 0x90, 0x10, 0x00, 0x18, 0xC7, 0xD0, 0xC0, 0x8F, 0xC7, 0x01, 0x12, 0x00, 0x09, 0x19, 0x07},
-> > +	{1500, 12000000, 8000, 0x0E, 0x25, 0x25, 0xE8, 0x00, 0xD1, 0x90, 0x40, 0x00, 0x31, 0xC7, 0xC5, 0x00, 0x8F, 0xC7, 0x01, 0x12, 0x00, 0x09, 0x19, 0x07},
-> > +	{2400, 19200000, 8000, 0x0B, 0x01, 0x00, 0xD0, 0x00, 0xD1, 0x80, 0x90, 0x00, 0x31, 0xC7, 0xC5, 0x00, 0xC7, 0xC7, 0x00, 0x12, 0x00, 0x09, 0x19, 0x07},
-> > +	{3000, 24000000, 8000, 0x0E, 0x24, 0x05, 0xD0, 0x00, 0xC2, 0x80, 0xC0, 0x00, 0x31, 0xC7, 0xC5, 0x00, 0x8F, 0xC7, 0x01, 0x12, 0x00, 0x09, 0x19, 0x07},
-> > +	{3250, 26000000, 8000, 0x40, 0x05, 0xA4, 0xC0, 0x00, 0xD1, 0x80, 
-> > +0xD0, 0x00, 0x31, 0xC7, 0xC5, 0x00, 0xC7, 0xC7, 0x00, 0x12, 0x00, 
-> > +0x09, 0x19, 0x07},
-> > +
-> > +};
-> 
-> Missing new line between array above and below function? I think checkpatch warns about this?
-
-I'll fix it
-
-> > +
-> > +static int es8389_probe(struct snd_soc_component *codec) {
-> > +	int ret = 0;
-> > +	struct es8389_private *es8389 = 
-> > +snd_soc_component_get_drvdata(codec);
-> 
-> Use "reverse christmas tree" notation for declaring variables? Also ret gets overwritten below, so it is useless to set it.
-
-I'll fix it
-
-> > +static const struct regmap_config es8389_regmap = {
-> > +	.reg_bits = 8,
-> > +	.val_bits = 8,
-> > +
-> > +	.max_register = ES8389_MAX_REGISTER,
-> > +
-> > +	.volatile_reg = es8389_volatile_register,
-> > +	.cache_type = REGCACHE_MAPLE,
-> > +};
-> > +
-> > +static void es8389_i2c_shutdown(struct i2c_client *i2c) {
-> > +	struct snd_soc_component *component;
-> > +	struct es8389_private *es8389;
-> > +
-> > +	es8389 = i2c_get_clientdata(i2c);
-> > +	component = es8389->component;
-> 
-> Unused variable? And while you are removing it, you can also remove it from 'struct es8389_private', as this place seems to be the only user.
-
-Yes, I'll drop them
-
-> > +
-> > +	regmap_write(es8389->regmap, ES8389_MASTER_MODE, 0x28);
-> > +	regmap_write(es8389->regmap, ES8389_HPSW, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_VMID, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_RESET, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0xCC);
-> > +	usleep_range(500000, 550000);//500MS
-> > +	regmap_write(es8389->regmap, ES8389_CSM_JUMP, 0x00);
-> > +	regmap_write(es8389->regmap, ES8389_ANA_CTL1, 0x08);
-> > +	regmap_write(es8389->regmap, ES8389_ISO_CTL, 0xC1);
-> > +	regmap_write(es8389->regmap, ES8389_PULL_DOWN, 0x00); }
-> > +
-> > +static int es8389_i2c_probe(struct i2c_client *i2c_client) {
-> > +	struct es8389_private *es8389;
-> > +	int ret = -1;
-> 
-> No need to set ret as it will be overwritten anyway, and '-1' is not considered a proper value. Use some error code if you must.
-
-Ok
 
