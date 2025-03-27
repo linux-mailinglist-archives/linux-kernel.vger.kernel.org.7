@@ -1,95 +1,173 @@
-Return-Path: <linux-kernel+bounces-579283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC43A7418D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:40:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D828A7418F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A560717B611
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCB9E3BCF82
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1921E1E05;
-	Thu, 27 Mar 2025 23:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFF41EB5EC;
+	Thu, 27 Mar 2025 23:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ayjKaoAi"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="VlufetNz"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592311AA1E0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4C01AA1E0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743118849; cv=none; b=hvBakFmjB7uEuEMjLXH685A2JKcDeFek7zuObxSTzlv1F/gkrOjuXGB1gJHcNA6nrJBNxOz+uES9CELQ311jMOcTDvwR0S3sobyuhsdats3pEaW7WH9KvrCr5m/DiYefSV7LuOB0aFFu8/Y8d3wOPLouynE/oOYd5mYekEm43tM=
+	t=1743119050; cv=none; b=F4n+5P8rG5kIGbYJq1kQjzm5EC4epmCA7BA3G8nBMhYamWVxq23F2JtrY1LPdQqHV3YT7hBad1DeWGChQJ5z9C8mDBt65HCsHtmEyLm2IwcJgGXh5vJ//Jy1fnVSvPvnAN9cbJ1PWlwhNUGKKZjwaHZ9CifBvB/+okWqBI74BZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743118849; c=relaxed/simple;
-	bh=4mZ5loR1n2RQh8haFBL1ne3Pd5C5k/X3Gfa2nHEbdsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKyzPo9rVbmVDVyz6ZKGyNM7/vSrji5swNHQwXIldBAcirr5+qQA3FpBVgzEvpw7pBbyJZb9WQBwpluGhMYOaIugda58ZvTVX2Nut8Y0z1cRhDq1N3Z6qaqM9Jia/3tJfWdp6XTNzhpdoxwNI9fPBfY18Nt8CHC++EMU2EHCZFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ayjKaoAi; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4C09F40E021E;
-	Thu, 27 Mar 2025 23:40:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Uq__qQZ0tv6C; Thu, 27 Mar 2025 23:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1743118836; bh=oI4FPLSsvMMsGRjS5/ggg98WeoNDTnygYAZClij+M2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ayjKaoAimU1Qh3vhMGTkuh1VGezcWowXkZItJLNZlqnp+wiGcjQOA3grRzEQ0hyRp
-	 +cUNb/kK9TwA5XS0WIDrcmSlDp1qUER4OZKUKcDESSmF5EPBPG1Pd/GM743cagxyV1
-	 hjB5RntRpyEF4+eLhvzXune5Mwre1mtrndwlBKXbQUxgNhqGmq1SbmbnRJu6zMdeAa
-	 G6D77A0vatZIPxYJhCmgpZGm8+0p1lDLMXX9V9G56Xc6y8n7e4d5DUp5C/ATOxpded
-	 WQJWNrpE20l9CdyemKqJrH/A3OMQ4UBb9a2bKVU3Gis5gBBZo9mpn+G2n9+DbJ6pg5
-	 +60ZrBOHTnxnlH1mCkROzT5HJ+8ELV4zTFXNgEES4+W82rfmeLlIl5uea/7XqU6jYy
-	 LOtii/s+OaJA2DJLHfykYQ6+bEm1I6g4IipcBEqjFJRm8Hd0OB8xIUpdx6ZDmeA9+i
-	 AXjfP4ZldbpdzY6DSas4uqIsGjfhHZDCvkC8kxKH4eldeV0Cpprg4giBWFAI0fhxFy
-	 I7xXbK+5a8l17TjeyJqtpIKTumhkqE3mNIi3uudY7ztoikhStTgR4sD0HttYqqLNsv
-	 0ZA3I0M22KQ2JALmfwI4ZJ6Z2gJ4fI6RLAdsBBD5aJvSov49rjv1rmLJ9bHKIwcLhz
-	 L1nCVfHkWu68Gq55gOOx/7mc=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	s=arc-20240116; t=1743119050; c=relaxed/simple;
+	bh=alf3U4GcHSVeqmFlbDvuq5reIBuvm9agxUeKx/4y55g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i3NaYp8E7qf0lyCfQ+Uy+k/nw8iZL44KaSW1/Mf9RIZrXfZPo1U3eJ3jTIQngu9gRY6UiA6BpUDJ0hxOq5PfEv34fEgI9bcIF7t61F7l/mNbJ4WvHqJwKcHfFtmYY8NcSRYAfRC6QFngY1tg6iFoiHBJM4YlRXA1APibiIkYUx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=VlufetNz; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 52D0940E0169;
-	Thu, 27 Mar 2025 23:40:28 +0000 (UTC)
-Date: Fri, 28 Mar 2025 00:40:21 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: boris.ostrovsky@oracle.com
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com
-Subject: Re: [PATCH 0/2] Clear AMD's microcode cache on load failure
-Message-ID: <20250327234021.GEZ-Xh5TM0GCqvwScL@fat_crate.local>
-References: <20250327210305.1694664-1-boris.ostrovsky@oracle.com>
- <Z-XEPVvEDhC5vzR4@gmail.com>
- <f8ec905f-04d4-46f6-909c-7f79b151c0df@oracle.com>
+	by mx1.riseup.net (Postfix) with ESMTPS id 4ZP0c740lGzDqVm;
+	Thu, 27 Mar 2025 23:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1743119047; bh=alf3U4GcHSVeqmFlbDvuq5reIBuvm9agxUeKx/4y55g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VlufetNzwXU8NRcUODo7oGdFcHs8Cw+lmJ6fnJXrXemx7ckgsXDJm2/o35jEoxOOL
+	 5VTc0efTvMQfBHjp0jc/xBpKSBgBpazFi7eIw4vCLQj+9LNmWgZ68xIfstaSYH+8J7
+	 OoA3qeAJzbdEXyO2rPK8rPxSCfDs6KTFhEzn/jyc=
+X-Riseup-User-ID: AA98FD0A338178116BF02F5E8D8EB66630877B08DD781AD6E5F015046AD33AE9
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4ZP0c54WQZzFwfR;
+	Thu, 27 Mar 2025 23:44:05 +0000 (UTC)
+From: Fernando Fernandez Mancera <ffmancera@riseup.net>
+To: x86@kernel.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Cc: dwmw@amazon.co.uk,
+	mhkelley@outlook.com,
+	mingo@kernel.org,
+	Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: [PATCH v3] x86/i8253: Invoke clockevent_i8253_disable() with interrupts disabled
+Date: Fri, 28 Mar 2025 00:43:57 +0100
+Message-ID: <20250327234357.3383-1-ffmancera@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f8ec905f-04d4-46f6-909c-7f79b151c0df@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 27, 2025 at 05:44:32PM -0400, boris.ostrovsky@oracle.com wrote:
-> Will resend.
+Lockdep complains correctly due to the context, but in reality there is
+no possible deadlock. At the point where pit_timer_init() is called
+there is no other possible usage of i8253_lock because the system is
+still in the very early boot stage.
 
-No need to resend - I'll sort it out.
+pit_timer_init() should disable interrupts before calling
+clockevent_i8253_disable() and do not inflict the
+raw_spin_lock_irqsave() on the callback function. This prevents lockdep
+from detecting a false positive and future proves the code.
 
-Thx.
+[   45.408952] =====================================================
+[   45.408970] WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+[   45.408974] 6.14.0-rc7+ #6 Not tainted
+[   45.408978] -----------------------------------------------------
+[   45.408980] systemd-sleep/3324 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+[   45.408986] ffffffffb2c23398 (i8253_lock){+.+.}-{2:2}, at: pcspkr_event+0x3f/0xe0 [pcspkr]
+[   45.409004]
+               and this task is already holding:
+[   45.409006] ffff9c334d7c2230 (&dev->event_lock){-.-.}-{3:3}, at: input_dev_resume+0x21/0x50
+[   45.409023] which would create a new lock dependency:
+[   45.409025]  (&dev->event_lock){-.-.}-{3:3} -> (i8253_lock){+.+.}-{2:2}
+[   45.409043]
+               but this new dependency connects a HARDIRQ-irq-safe lock:
+[   45.409045]  (&dev->event_lock){-.-.}-{3:3}
+[   45.409052]
+               ... which became HARDIRQ-irq-safe at:
+[   45.409055]   lock_acquire+0xd0/0x2f0
+[   45.409062]   _raw_spin_lock_irqsave+0x48/0x70
+[   45.409067]   input_event+0x3c/0x80
+[   45.409071]   atkbd_receive_byte+0x9b/0x6e0
+[   45.409077]   ps2_interrupt+0xb2/0x1d0
+[   45.409082]   serio_interrupt+0x4a/0x90
+[   45.409087]   i8042_handle_data+0xf8/0x280
+[   45.409091]   i8042_interrupt+0x11/0x40
+[   45.409095]   __handle_irq_event_percpu+0x87/0x260
+[   45.409100]   handle_irq_event+0x38/0x90
+[   45.409105]   handle_edge_irq+0x8b/0x230
+[   45.409109]   __common_interrupt+0x5c/0x120
+[   45.409114]   common_interrupt+0x80/0xa0
+[   45.409120]   asm_common_interrupt+0x26/0x40
+[   45.409125]   pv_native_safe_halt+0xf/0x20
+[   45.409130]   default_idle+0x9/0x20
+[   45.409135]   default_idle_call+0x7a/0x1d0
+[   45.409140]   do_idle+0x215/0x260
+[   45.409144]   cpu_startup_entry+0x29/0x30
+[   45.409149]   start_secondary+0x132/0x170
+[   45.409153]   common_startup_64+0x13e/0x141
+[   45.409158]
+               to a HARDIRQ-irq-unsafe lock:
+[   45.409161]  (i8253_lock){+.+.}-{2:2}
+[   45.409167]
+               ... which became HARDIRQ-irq-unsafe at:
+[   45.409170] ...
+[   45.409172]   lock_acquire+0xd0/0x2f0
+[   45.409177]   _raw_spin_lock+0x30/0x40
+[   45.409181]   clockevent_i8253_disable+0x1c/0x60
+[   45.409186]   pit_timer_init+0x25/0x50
+[   45.409191]   hpet_time_init+0x46/0x50
+[   45.409196]   x86_late_time_init+0x1b/0x40
+[   45.409201]   start_kernel+0x962/0xa00
+[   45.409206]   x86_64_start_reservations+0x24/0x30
+[   45.409211]   x86_64_start_kernel+0xed/0xf0
+[   45.409215]   common_startup_64+0x13e/0x141
+[   45.409220]
+               other info that might help us debug this:
 
+[   45.409222]  Possible interrupt unsafe locking scenario:
+
+[   45.409224]        CPU0                    CPU1
+[   45.409226]        ----                    ----
+[   45.409228]   lock(i8253_lock);
+[   45.409234]                                local_irq_disable();
+[   45.409237]                                lock(&dev->event_lock);
+[   45.409243]                                lock(i8253_lock);
+[   45.409249]   <Interrupt>
+[   45.409251]     lock(&dev->event_lock);
+[   45.409257]
+                *** DEADLOCK ***
+
+Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
+---
+v1: initial patch
+v2: use local_irq_save()/restore() around clockevent_i8253_disable()
+v3: improve wording of commit message, dropped "Fixes" tag and used
+scoped_guard(irq) instead.
+---
+ arch/x86/kernel/i8253.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/i8253.c b/arch/x86/kernel/i8253.c
+index 80e262bb627f..cb9852ad6098 100644
+--- a/arch/x86/kernel/i8253.c
++++ b/arch/x86/kernel/i8253.c
+@@ -46,7 +46,8 @@ bool __init pit_timer_init(void)
+ 		 * VMMs otherwise steal CPU time just to pointlessly waggle
+ 		 * the (masked) IRQ.
+ 		 */
+-		clockevent_i8253_disable();
++		scoped_guard(irq)
++			clockevent_i8253_disable();
+ 		return false;
+ 	}
+ 	clockevent_i8253_init(true);
 -- 
-Regards/Gruss,
-    Boris.
+2.49.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
