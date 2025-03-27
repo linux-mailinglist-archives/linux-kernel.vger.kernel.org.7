@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-578709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585AEA7357C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:20:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97414A73562
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B034C189B1EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:20:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC53C1758FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED005187FE4;
-	Thu, 27 Mar 2025 15:19:49 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67626155C83;
+	Thu, 27 Mar 2025 15:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2lmFiB0k"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C42154423;
-	Thu, 27 Mar 2025 15:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CC314D2B7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743088789; cv=none; b=gx+JNs++r2G7nU4THI7KH5bXLm52blEQivWe8x0GYCrfN52NufoFVxZJjz0148A7H+9YB5dMfXuHgg3bqkJ1l8OHHSXqadMqlLc52vgbE61VASKQWASeLM5TY4LKNYO7IjWopUrFIz+q0TNvSltArlZMi2AvBhRlcuC+gOwG4uo=
+	t=1743088285; cv=none; b=m2lT+S2oSgjP19YDfXAw78yVZrzKtUrmv54sF/aYxGYT/lXAAzyN67N5vYG7mEAXXL2OyzwSgabqQ5hZBVbwmXurMFXQLpi41oanR8UM1VNBFN33Wa6mPqZVYjaf4aUjS7am//uJe169QLCp52HVXl0ybLro7SgAQO01z7WmBuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743088789; c=relaxed/simple;
-	bh=3rM1KS2GRjTxilLprollGDmQ/AJkW8LBlNp4xdN0E6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1l4ZrdBY1sDN/atLlCpnBfNoHjvjtMd6TUjz8eHjSnnubBxLhOCvEep0X5NparaZweUj4CuHDSJpe4newBwXlYNWhFr0lsESzkrj7H5iT2kfTazWEGDln/OC0GVouWhmgO3Pb+A9Vfd4rCRZ4nSYCXRK9vqNnb6/Y3ChlxgTAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 20F3A24C9C;
-	Thu, 27 Mar 2025 18:13:23 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Thu, 27 Mar 2025 18:13:21 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.198.57.252])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4ZNnGk69ZYz1h0PW;
-	Thu, 27 Mar 2025 18:13:18 +0300 (MSK)
-From: Tigran Sogomonian <tsogomonian@astralinux.ru>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Tigran Sogomonian <tsogomonian@astralinux.ru>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH RFC] renesas: add zero check for prate variable
-Date: Thu, 27 Mar 2025 18:10:44 +0300
-Message-ID: <20250327151109.9648-1-tsogomonian@astralinux.ru>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1743088285; c=relaxed/simple;
+	bh=wBQJ8H0SYNkyT4BaoNXsacSzvU3YkFd6/mC/KCirIW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CSANdm1cZLGCzPN4ITv6opkdKSIg/JZQbuVY4v7CO5yRx809VlA0Nh9ern8n+N0zZT+10f4o8HgS3/roNeVC+GLTCirZZTqR6xTZHbsXWBIcXWIm0j86FL6xaVvHSgEgiesDuFGxf+bvNE4N5BnK4mhrN4b4L2+D+t23QrLTZ5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2lmFiB0k; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2263428c8baso187215ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:11:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743088283; x=1743693083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFT0Tlu/Hika32/TdgxS6ejrdxXM/PdIfs46XY+0fN0=;
+        b=2lmFiB0kBiK4M5R5qEBwL84qb0r8rkr5FUolhL6/2IBqGAYBZ2ISOW54WERe5mfZyq
+         LfMfJWE2VrJUeb9B29mF2fRJ6Uum+9IgX2aQeJSvwukMFJGGZ1juJcohIESdMEYFs0uW
+         /Ff+XXwn8fuz9rYCaQz4JgF50I4LOzRE81GErWCmkrdvM6DbaQK4+BJ0kGmoIjdM9ljh
+         7feniihItcGyjjwTdBSz26gvKTEeHGUw+KtujVt/3pfufYoYZM0x1zdKE6tG4eIPz1Kk
+         Zh3fN8EU2Vq3ssfxob1QAq4x/DITX3/J31ryEm45OXJlZAmvK6BRqCvxcNHZevWQmYml
+         OBLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743088283; x=1743693083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UFT0Tlu/Hika32/TdgxS6ejrdxXM/PdIfs46XY+0fN0=;
+        b=LXL+QtrflCyZWNllsOrM+hn9veJ4JCx8m6o0maAempCxn4O1qqVXrqPjx6RsKIIz8u
+         /aHW5UyzTzkz3aB8VhLXLVe3XENJ9xV7pmEQtcvmnpJyQtmvC9O/If7VkxLg7aa5HkMj
+         moOFgbS1EQ6b/WpYfJCI/WHTYhXzZDTxuHcbPCIQ6OPUlIk7yr5lGrMpbeUEwYa9ahee
+         hftBevynkqmfPpOsWnQzOYc6vPqUdWxraJr9Jk4O5uHZzceYHRsF75Oj8CRaNjz0DlcA
+         4fGbgf804F6oNsltjHI4Z3ifGaoKPwpkF5MZwSWgVQHGk1ZOszC+33R6B+qJfJGNcaPr
+         tLlg==
+X-Gm-Message-State: AOJu0YxRR7dX5ypE/eZKXdk9oh2iImAbpA5luojXihJy/agoxwFuQopm
+	YaS+aqs7NGoMs7erw9aRY0RILAM2nizSzbEcAaDVJ8iTeQw3K1M/GQmT+U+AsB0hB4Hw8dHV7QN
+	lUPvRQcZAjmGR2fZ7BqYx5TPdrhCmWUP84hQ8
+X-Gm-Gg: ASbGncumzardLLpZosM0wDQe0jQf5ucRJ76BPeWYFv13/qs+9YDfCqSrerEA43oD/fa
+	AJPeq9uAG4XJ/qr20iVBu1CxSdIDrWEdzhqj2gs7pbB71VSsXpdJQUF3jNwot2mXEOR/eeeyL4h
+	8rg7eWvPwYUFQeKa2mf+KKtomyyIyYKHwzdW2z2gp8sQBZDNIQEMOKH3A=
+X-Google-Smtp-Source: AGHT+IEmUlg8vfNHKdNwRJgEYBStuk1Iqnk9Tb7Rh3F1o2XWlpyWwxqPnTAeqSUMln3x+u0VE3DK2iGVOFMpNM/Zimg=
+X-Received: by 2002:a17:902:ac95:b0:215:8232:5596 with SMTP id
+ d9443c01a7336-22806bdf663mr2614605ad.16.1743088283014; Thu, 27 Mar 2025
+ 08:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: tsogomonian@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192165 [Mar 27 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/27 06:17:00 #27830093
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+References: <20250326234758.480431-1-ctshao@google.com>
+In-Reply-To: <20250326234758.480431-1-ctshao@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 27 Mar 2025 08:11:11 -0700
+X-Gm-Features: AQ5f1JrUNgyp-Ys5KZ-MHxFkmzlIa7yR9ImeiDhqzkOC5aDhHZD6RX-sIVZhKqw
+Message-ID: <CAP-5=fUAd5rjXp7evGLqm+gk4yjq+eoGaHNCkaAYNEcKonb4gA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Fix incorrect counts when count the same uncore
+ event multiple times
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, james.clark@linaro.org, howardchu95@gmail.com, 
+	linux@treblig.org, yeoreum.yun@arm.com, ak@linux.intel.com, 
+	weilin.wang@intel.com, asmadeus@codewreck.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To avoid division by zero, a check was added to the prate
-variable, since no guarantees were found that it could not
-be equal to zero.
+On Wed, Mar 26, 2025 at 4:49=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> w=
+rote:
+>
+> Let's take a look an example, the machine is SKX with 6 IMC devices.
+>
+>   perf stat -e clockticks,clockticks -I 1000
+>   #           time             counts unit events
+>        1.001127430      6,901,503,174      uncore_imc_0/clockticks/
+>        1.001127430      3,940,896,301      uncore_imc_0/clockticks/
+>        2.002649722        988,376,876      uncore_imc_0/clockticks/
+>        2.002649722        988,376,141      uncore_imc_0/clockticks/
+>        3.004071319      1,000,292,675      uncore_imc_0/clockticks/
+>        3.004071319      1,000,294,160      uncore_imc_0/clockticks/
+>
+> 1) The events name should not be uniquified.
+> 2) The initial count for the first `clockticks` is doubled.
+> 3) Subsequent count only report for the first IMC device.
+>
+> The first patch fixes 1) and 3), and the second patch fixes 2).
+>
+> After these fix:
+>
+>   perf stat -e clockticks,clockticks -I 1000
+>   #           time             counts unit events
+>        1.001127586      4,126,938,857      clockticks
+>        1.001127586      4,121,564,277      clockticks
+>        2.001686014      3,953,806,350      clockticks
+>        2.001686014      3,953,809,541      clockticks
+>        3.003121403      4,137,750,252      clockticks
+>        3.003121403      4,137,749,048      clockticks
+>
+> I also tested `-A`, `--per-socket`, `--per-die` and `--per-core`, all
+> looks good.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks CT, I tested on hybrid and it looks good. I did notice a
+regression with hwmon:
 
-Signed-off-by: Tigran Sogomonian <tsogomonian@astralinux.ru>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 2 ++
- drivers/clk/renesas/rcar-gen4-cpg.c | 2 ++
- 2 files changed, 4 insertions(+)
+Before:
+```
+$ perf stat -e data_read,temp1 -a sleep 0.1
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 027100e84ee4..66da3b4398cd 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -205,6 +205,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
- 						  prate * zclk->fixed_div);
- 
- 	prate = req->best_parent_rate / zclk->fixed_div;
-+	if (prate == 0)
-+		return -EINVAL;
- 	min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
- 	max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
- 	if (max_mult < min_mult)
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 31aa790fd003..4c9a7d699290 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -308,6 +308,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
- 						  prate * zclk->fixed_div);
- 
- 	prate = req->best_parent_rate / zclk->fixed_div;
-+	if (prate == 0)
-+		return -EINVAL;
- 	min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
- 	max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
- 	if (max_mult < min_mult)
--- 
-2.47.1
+Performance counter stats for 'system wide':
 
+           212.12 MiB  data_read
+18,446,744,073,709,284.00 'C   hwmon_acpitz/temp1/
+            46.00 'C   hwmon_coretemp/temp1/
+            32.00 'C   hwmon_iwlwifi_1/temp1/
+            40.85 'C   hwmon_nvme/temp1/
+            47.00 'C   hwmon_spd5118/temp1/
+```
+
+After:
+```
+$  perf stat -e data_read,temp1 -a sleep 0.1
+
+Performance counter stats for 'system wide':
+
+           213.08 MiB  data_read
+18,446,744,073,709,448.00 'C   temp1
+```
+
+So we're not uniquifying the hwmon events any more, I'll look into a
+fix. I also need to open a bug to use my acptiz device to solve the
+world's energy problems as it is currently running with 5% of the
+surface temperature of the Sun.
+
+Thanks,
+Ian
+
+> Ian Rogers (2):
+>   perf evlist: Make uniquifying counter names consistent
+>   perf parse-events: Use wildcard processing to set an event to merge
+>     into
+>
+>  tools/perf/builtin-record.c    |   7 +-
+>  tools/perf/builtin-top.c       |   7 +-
+>  tools/perf/util/evlist.c       |  66 +++++++++-----
+>  tools/perf/util/evlist.h       |   3 +-
+>  tools/perf/util/evsel.c        | 116 ++++++++++++++++++++++++-
+>  tools/perf/util/evsel.h        |  11 ++-
+>  tools/perf/util/parse-events.c |  45 ++++++----
+>  tools/perf/util/stat-display.c | 151 +--------------------------------
+>  tools/perf/util/stat.c         |  40 +--------
+>  9 files changed, 214 insertions(+), 232 deletions(-)
+>
+> --
+> 2.49.0.472.ge94155a9ec-goog
+>
 
