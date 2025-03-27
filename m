@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-578746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D10CA735EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:48:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD6CA735F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0378417972E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C554179613
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0C919ABAB;
-	Thu, 27 Mar 2025 15:48:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153B719DF75;
+	Thu, 27 Mar 2025 15:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4Um6QHO"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C497A155C83;
-	Thu, 27 Mar 2025 15:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C067B155C83;
+	Thu, 27 Mar 2025 15:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743090503; cv=none; b=E3Lxf02vTVn6NxgShzG2YzfxDgVLxHZ4vWmvuxOskRU1incdG6XV5E/MQqjYc7jK88kTP15I995ca+gH2CVxOL1XsQH9kKOfq7KacQO3+O5Yu0JEAGIK2Z2tP2j7iw2zZR1+iW5tR/UrWUUXy5BB11NPEU6p7PsqJhG2YyxULr8=
+	t=1743090566; cv=none; b=B5vPNgDO7naXiA8hjUN08eEd2cEqU7EDpciqzsz6GeASSGQCwQFMWa5/rk0rIzQkM22f5XIV38Rdtnn9r275bkeO1M7MLFqkfeWkojvrR9DlI+mV1Hh+FnC+X6GOMu73gi2UskZgA90zgslycl2skW+qobLCT0oK36B8iXX8QUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743090503; c=relaxed/simple;
-	bh=47j3I74ks2/O4s0BYb1TImz8jQ4IkN1cpagyuQxWYLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s+VxkusMMxTsRRQngh2kPZTjqLvOCexUwsNx3IE+fIR7f1Nd/uPvZUOY3T3HeoNMdedn72bTGKIE7H+8QukRIT10FJEv6AakzSugxE9ezyOM/MT8V8xnTPLKAGPU9R0nF7K6cTCE/v60Ws1sP74uyP/MDI5azycv1qwtvFMuzhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E94C4CEDD;
-	Thu, 27 Mar 2025 15:48:22 +0000 (UTC)
-Date: Thu, 27 Mar 2025 11:49:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Libo Chen <libo.chen@oracle.com>
-Subject: [PATCH] tracing: Verify event formats that have "%*p.."
-Message-ID: <20250327114911.2c713511@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743090566; c=relaxed/simple;
+	bh=Fx0i3p4mlf7xc+F7De5cWrUOeKfN8zxZXVFfC6n4sEY=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWC5ezaAjyrq51D0bRoGZ/TPedEEQe7zlK4ACe8TWLMTallqtW6w2aoiAfplTimqKukTqOHZYlGzgTrbZdpEvVDoZMfrW6hVU36y2TJj4F0hx/YpYwQoaVPP6vCuTrB6XoN9T1M3w1wsUg2Abt17saJq00rOGnNanUdxpbLIHNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4Um6QHO; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso12742335e9.3;
+        Thu, 27 Mar 2025 08:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743090563; x=1743695363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q0IXK2rCyNqiPkcVyjGixix5uWCxqfElYtjg0TfVyEE=;
+        b=m4Um6QHOpzKXVwxZCxu2xvVa5mB5Ee2bEqU0h3HoJZ3uYuNSImi4n/qH32L68hL+dL
+         Jr5hc/e45WrxFwlvz3sJk/Rv0etyu8S+HMovQFqitfHxQxjr9yol5qx3J2eG3z6USwDM
+         bTBSHFGNh7fb+wnncZhw31VALuK9Yjz3Fo8OjnpA/6lf6g4T2ocsUsMk2nD75SHCEOdY
+         8HgwpdnMv+kZg+lHmM1BoClfTibfTJMIFmJx3aw0bOKtmWbRRDS6JxiFtjKs07GQ8v7/
+         49/iqzU481Tv8fK0VqRpnsQ1AnWW21JptPVBFLiiEEJfyBcQPdTfI9TyWpk4Ip1K+I7l
+         I3xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743090563; x=1743695363;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q0IXK2rCyNqiPkcVyjGixix5uWCxqfElYtjg0TfVyEE=;
+        b=p8xvbC4Db/IeeRlJ6Q0+w3N+BPrpyA4tmzRr14uJoHP7Zt95XXIra3fWxlxvVc9GgI
+         gj4+5LgIsgn7hXAwzKEPXKJj2+VgDMFuXbhb1eAbqywr961cq3xYP4JMsBr28FWoZ48C
+         8FV5cUTS0SsCWMvVIYuV0mIzpB++wZQmKEQcINSmeqmdxTj+1aOs+ro2HAprRegjjW/k
+         8MnnKu0U6PVZC6iL5bd1Tr7tsvnbElV1eI40NVW37kg7TWfe7omn4QET7SV98ra2fM6o
+         HX+cQo4/QLDQLeWh3JvQRgT+6OqcyzoROK+1m9ac9xUqxXO0DNCflbtNf38xkWVwk9q2
+         +4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWcnAjC2/59pR1P4fnFVf5M6Pp92Zt0y2AFbwWAE/m1lOFlzOHAY4GStzoRq2aEIgQwwYRK5z26lNQ@vger.kernel.org, AJvYcCUtMlDRYhUNQuNylqzvzdEhRXBR5/6+2CvyNOSJ7FhqXT4FOC31Q2JR4yMbPZNMUy1udeFTgVxci+TQXQsE@vger.kernel.org, AJvYcCXX21wQaBYo69NaL7Xn00FQshfMjQlmyKH93wL40vwzDL4bwf/NVi8sR0DCYIpS198KQgJbLk5A@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO9OPunZiWzYwotU7I4embsfRDM/FId9jfzXqkWltccLQb2/3Z
+	KfyWOotFRrXGNdb/mfiLKlwaNYwrUnv/qgmvX31vxShfG3OflHK/
+X-Gm-Gg: ASbGncvGDoNo773QKogKYI4CXgio4Jj7FFZQADwFuqyzzQFdlGAgVhKAPeHGoIXeJVc
+	/ReRCcK94CRtCKxuOBApAQkfsq3vwlDask3ZM1okZs5DkmtrAECYkQ5gRPGx/D9vKej03dA3y6Y
+	fBdMYH/jclMpBrHt8fqT0tIN1sTwdSznt8nGt9Z+LebgNfM3qNyUlSoYYrE4euva71MeaGZmEcT
+	zLkv2eAQUpfNT/kOB5abrXm0MVE+Ts2WsrM0/yzHl4pezkcC1ydj6KQwgfVHX0G3OhYzUanZHOm
+	WxyUvUkTELav2vGImI8M9HcQ+hc+8FnpjB2BmJIw96yzORdv3BgGbT9bta4/UJA5xlWumF/FRQi
+	J
+X-Google-Smtp-Source: AGHT+IGWLcvkiw2IlWT9/Bezt8to1CnGT4k9RihRRIS9ghrz6OqCYVFB+fUqZB1wJCuaLVEvvjMSXA==
+X-Received: by 2002:a05:600c:3150:b0:43b:c0fa:f9cd with SMTP id 5b1f17b1804b1-43d84f8a7dcmr45977415e9.7.1743090562763;
+        Thu, 27 Mar 2025 08:49:22 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82efe678sm41416485e9.20.2025.03.27.08.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 08:49:22 -0700 (PDT)
+Message-ID: <67e57382.050a0220.3ce63f.a120@mx.google.com>
+X-Google-Original-Message-ID: <Z-VzgNZ8jyQp9yMS@Ansuel-XPS.>
+Date: Thu, 27 Mar 2025 16:49:20 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH 4/6] dt-bindings: net: ethernet-controller:
+ permit to define multiple PCS
+References: <20250318235850.6411-1-ansuelsmth@gmail.com>
+ <20250318235850.6411-5-ansuelsmth@gmail.com>
+ <20250321161812.GA3466720-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321161812.GA3466720-robh@kernel.org>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Fri, Mar 21, 2025 at 11:18:12AM -0500, Rob Herring wrote:
+> On Wed, Mar 19, 2025 at 12:58:40AM +0100, Christian Marangi wrote:
+> > Drop the limitation of a single PCS in pcs-handle property. Multiple PCS
+> > can be defined for an ethrnet-controller node to support various PHY
+> 
+> typo
+> 
+> > interface mode type.
+> 
+> What limitation? It already supports multiple PCS phandles. It doesn't 
+> support arg cells. If you want that, either you have to fix the number 
+> of cells or define a #pcs-handle-cells property. You've done neither 
+> here.
+> 
+> Adding #pcs-handle-cells will also require some updates to the dtschema 
+> tools.
+>
 
-The trace event verifier checks the formats of trace events to make sure
-that they do not point at memory that is not in the trace event itself or
-in data that will never be freed. If an event references data that was
-allocated when the event triggered and that same data is freed before the
-event is read, then the kernel can crash by reading freed memory.
+I might be confused by doesn't 
 
-The verifier runs at boot up (or module load) and scans the print formats
-of the events and checks their arguments to make sure that dereferenced
-pointers are safe. If the format uses "%*p.." the verifier will ignore it,
-and that could be dangerous. Cover this case as well.
+pcs-handle:
+  items:
+    maxItems: 1
 
-Also add to the sample code a use case of "%*pbl".
+limit it to 
 
-Link: https://lore.kernel.org/all/bcba4d76-2c3f-4d11-baf0-02905db953dd@oracle.com/
+pcs-handle = <&foo>;
 
-Reported-by: Libo Chen <libo.chen@oracle.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events.c                | 7 +++++++
- samples/trace_events/trace-events-sample.h | 8 ++++++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
+and make it not valid 
 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 7b3ef1d26167..34e7b4af9f88 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -470,6 +470,7 @@ static void test_event_printk(struct trace_event_call *call)
- 			case '%':
- 				continue;
- 			case 'p':
-+ do_pointer:
- 				/* Find dereferencing fields */
- 				switch (fmt[i + 1]) {
- 				case 'B': case 'R': case 'r':
-@@ -498,6 +499,12 @@ static void test_event_printk(struct trace_event_call *call)
- 						continue;
- 					if (fmt[i + j] == '*') {
- 						star = true;
-+						/* Handle %*pbl case */
-+						if (!j && fmt[i + 1] == 'p') {
-+							arg++;
-+							i++;
-+							goto do_pointer;
-+						}
- 						continue;
- 					}
- 					if ((fmt[i + j] == 's')) {
-diff --git a/samples/trace_events/trace-events-sample.h b/samples/trace_events/trace-events-sample.h
-index 999f78d380ae..0622c9e3f2be 100644
---- a/samples/trace_events/trace-events-sample.h
-+++ b/samples/trace_events/trace-events-sample.h
-@@ -319,7 +319,8 @@ TRACE_EVENT(foo_bar,
- 		__assign_cpumask(cpum, cpumask_bits(mask));
- 	),
- 
--	TP_printk("foo %s %d %s %s %s %s %s %s (%s) (%s) %s", __entry->foo, __entry->bar,
-+	TP_printk("foo %s %d %s %s %s %s %s %s (%s) (%s) %s [%d] %*pbl",
-+		  __entry->foo, __entry->bar,
- 
- /*
-  * Notice here the use of some helper functions. This includes:
-@@ -370,7 +371,10 @@ TRACE_EVENT(foo_bar,
- 
- 		  __get_str(str), __get_str(lstr),
- 		  __get_bitmask(cpus), __get_cpumask(cpum),
--		  __get_str(vstr))
-+		  __get_str(vstr),
-+	         __get_dynamic_array_len(cpus),
-+	         __get_dynamic_array_len(cpus),
-+	         __get_dynamic_array(cpus))
- );
- 
- /*
+pcs-handle = <&foo1>, <&foo2>;
+
+?
+
+The cells property will come but only when there will be an actual user
+for it (I assume QCOM PCS will make use of it)
+
+> > 
+> > It's very common for SoCs to have a dedicated PCS for SGMII mode and one
+> > for USXGMII mode.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/ethernet-controller.yaml | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> > index 45819b235800..a260ab8e056e 100644
+> > --- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> > +++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+> > @@ -110,8 +110,6 @@ properties:
+> >  
+> >    pcs-handle:
+> >      $ref: /schemas/types.yaml#/definitions/phandle-array
+> > -    items:
+> > -      maxItems: 1
+> >      description:
+> >        Specifies a reference to a node representing a PCS PHY device on a MDIO
+> >        bus to link with an external PHY (phy-handle) if exists.
+> > -- 
+> > 2.48.1
+> > 
+
 -- 
-2.47.2
-
+	Ansuel
 
