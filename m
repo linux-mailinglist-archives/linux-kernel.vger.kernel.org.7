@@ -1,109 +1,159 @@
-Return-Path: <linux-kernel+bounces-578586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50604A733F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:10:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03426A73405
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C07B7A7493
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F83189DD18
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2E1217668;
-	Thu, 27 Mar 2025 14:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7CB217716;
+	Thu, 27 Mar 2025 14:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="Tsu6CDEl"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BtiPq5k7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0351547C0;
-	Thu, 27 Mar 2025 14:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743084636; cv=pass; b=mxjpZFovS+ju1tg+JUh3TQcw3sxBaM6/ZLpNERI4HnZZPemVFu/FoFf1d6HG/PjZ61O3DBf4x8LM9CwCv1rwO62OlmozDvUCZAyvCYY5iwtQIF+E+YelBwS4L0o2p4nyThn6xsJr2hR7cjhI4VF8S1yJRb0hmxpZMwIqPryHQms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743084636; c=relaxed/simple;
-	bh=xuXc7MvjBMPG9ZEhDFgqZF0gyD5LGfdEXc+1TSAKemo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=POWLU0oSVd6tm97eD6zWFduHvjlDpUOKkcPT4txq3QxETT46oh/J6H+BB5mKGO4BhtUYgn0O5+D25hroKL37Dr3kF50xhDlj9yeUb+QwDXjU0vtSysyRSzwce7XBlJyxMjMPpE9L5xKWmVNW8bTriLSkFUvAYAChWJ6YYpPDeJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=Tsu6CDEl; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743084617; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BR0UwQ2FzQkfwb4yaquRNiD4Ly9Wpgqdwcde1mPx31XkjX5dfmmI+mfUyfLZQhPzpwkuY3NyrfYMGID/M+/MLQEBYLLAuk6b5jHDno5BD21kKbuFzkvQWW/yRrDoxBlucUghHXNx9O2dfnUkSj/INu8kmgx5PZZbKSXYiBUiyfU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743084617; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Rd72ZSp0c1wqOF9wFxJf6YkyT5PHaJKvyyrLNbHW2eo=; 
-	b=IlCsronZ4F0f4/mnflStJNBut+OjUwriYtWSm7W0brKX7VvYYPbsQN3EQ+vM6fHBHGXqfpsMZLERR2vhegw31eNoTR1RZqbdB5rQzDBwZ7HzwEr0DuCvZF1AaPKmvb9gR4sF/Za3+E579otkt3ZfAhAVS27vvNdjhIA3gWLQdtg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743084617;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Rd72ZSp0c1wqOF9wFxJf6YkyT5PHaJKvyyrLNbHW2eo=;
-	b=Tsu6CDElz48AMNVpLSkoZmt26tnQtpjXQaE6gooPaxh7Vcqf2jEUnb50av4gcg6a
-	fHBLHCsFAd0m31nHbykcWeNujd66UNEexuIuEzvvaz8Q0W/q3jr/eO8z33YfBZ5FoXx
-	ckcTNDmAsv5irQwLB/1G6bhD2ZetYIJgop6t2MTE=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1743084616848372.7384738795423; Thu, 27 Mar 2025 07:10:16 -0700 (PDT)
-Date: Thu, 27 Mar 2025 14:10:16 +0000
-From: Martyn Welch <martyn.welch@collabora.com>
-To: "Daniel Baluta" <daniel.baluta@gmail.com>
-Cc: "Shawn Guo" <shawnguo@kernel.org>,
-	"Sascha Hauer" <s.hauer@pengutronix.de>,
-	"Pengutronix Kernel Team" <kernel@pengutronix.de>,
-	"Fabio Estevam" <festevam@gmail.com>,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"kernel" <kernel@collabora.com>, "imx" <imx@lists.linux.dev>,
-	"linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree" <devicetree@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <195d7f07c75.da78a5cf8278.1708647163991154090@collabora.com>
-In-Reply-To: <CAEnQRZD15J9GOHFL6MfaLtSkgaN6ksT_YL7GvG2U_St8q2+KgA@mail.gmail.com>
-References: <20250327120857.539155-1-martyn.welch@collabora.com> <CAEnQRZD15J9GOHFL6MfaLtSkgaN6ksT_YL7GvG2U_St8q2+KgA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mp: Add device tree for Nitrogen8M Plus
- ENC Carrier Board
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E5B21767A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743084670; cv=none; b=Rc0pJM36AklkjnaTbeySvh8lpQpdUYtOyEJnQSzThRGWoJIVSOIA+3dGR1q8PqNltYyOJcxN4rHWiHEsr5rY+lUbmhTq9R+Vd4+XTAN4SunRa/fJzsro3MGhkms0k+CEz+LGSzMf6INyeWd8yTb9M7P7u+wdsu+WiP0ewm5sYZ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743084670; c=relaxed/simple;
+	bh=B7vCfx3k3GGrVgJmcqjs9B8k5ffO9HgiTB4iz81gIcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HYRy7ndXQvwjNvcucT8g6lvWAxWUv7z2zKj44wmHoPA5L0nW0yy0fVGF66jbNesTaOYJWt2j2s2VS7F1hra0AhBShg5v16F0iOeQfiqQFKUB59a+OesQ1aijxOXwMQ9CgrCbtQ5vb8qQ3TQI6tT2UshF0TemswYQfpL9KKahidE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BtiPq5k7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743084668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hi0A6scfyHr5zE+wPaQeLFGm0aUxJknUTOgLYjwIz9w=;
+	b=BtiPq5k7ds1DWxWDG68ltd8vYn1/mMb3/WIotBxws5we8jwNVcIo+31YuzBInaAr3G6+5y
+	keixqkSU2koROQnf2snEVpUvDEswo8fy5NKgQUOB8DajRTlZIJIf8ndH9KFGoy0ZibmgWu
+	exGGG+c5ppEJlz92TovuGfTpMXw6JuA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-124-0OjuSLB-MjGee72y6trr4Q-1; Thu, 27 Mar 2025 10:11:06 -0400
+X-MC-Unique: 0OjuSLB-MjGee72y6trr4Q-1
+X-Mimecast-MFC-AGG-ID: 0OjuSLB-MjGee72y6trr4Q_1743084665
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d51bd9b45so6655125e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:11:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743084665; x=1743689465;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hi0A6scfyHr5zE+wPaQeLFGm0aUxJknUTOgLYjwIz9w=;
+        b=xFPkgg5N71vt8H4RKxIXAyY27hH/FE0Z8+qd0pWqPBUVyd+DVql7FganqbucVe2cUK
+         u81Ia26+ibistIh71Wtjv+GxniJePEr+gwNGz1uTOBiyismeSUa5jTOxbEP2NRj0Q2Lf
+         lyv5jTA6pDFeu4ipqIkaG9kleTMtLvbLGsij+qXubaICtTTjxp9DIYfgG5S8NjtZ3X3N
+         job/lzYz+7Lio34UcUeiNg+UgSfcwcJTViJwKWoLLqtwK1D+JDoanbDhBDZsYC/XRtbM
+         VexfIdse0+IfwfLHVYnZH5j8GZiKxSmlTmCRBZdJ8PM7mS+hg9AcXZeYc1qJzCflVVEU
+         emFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW/wpohwGFRrarfpCdy7WG0RPGUP+M/2FyT6lDmsHtAoYgilh5R1QfDEbtrd5JWEKhkG9PY5M44bfmYzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyotKg2QxM1BAjYCqMc75OdvcP31dIN5TJezFkIHgJCl+QNdGlc
+	0LtyoQQHd82qZrha/LWOOcjLpJZdBYCSCDybEgn8O/ZZDnEOjVuthRsjcHfAShD8CFM8yuebNph
+	3vW7R23nNI5XQ7whHZKQHAbiK5hTY0ZYcdfVj+CIaCO9UI3GwbKz+aOUERpWd8g==
+X-Gm-Gg: ASbGnctC1W2E3M8MhaBsHPIV92pLrSCQwOqZpQpVWSIzze/33UovR8/vkmpjn3wnMM+
+	xaTLLoakl3ij/ixxB3hC/PQsGQcd4u0ayjVuLse40b9DeWiI/m3XvgM0bYXhTpy6LEfMEImJpQp
+	0QvgHHfX2OTbXO5yei+JcTvIA9cX6jiIh5/M2FpBMYwtyRi0UimN23X+CQR+CLzRcUrbV+AUI9N
+	VBZ4yONIZHdbtipwBT1v6g/Y5onZcyfULLmY2Xy3iB3qxX1zRFJI0IYO1+oTTo1HhniRENG8Y2t
+	yWgPeGoGBBDjXwhblaqB/yhZp9AoOKr7mkbTY1IiBiCQGFAQDri6ZM2h9HBSijty
+X-Received: by 2002:a05:600c:1d05:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-43d84f5f482mr38225385e9.2.1743084664707;
+        Thu, 27 Mar 2025 07:11:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqwervicR8HJyW32dDEpFNwFDZuw43Crvb82jmCEiLUmWRbpF+tRkohYrusgDBir4muwY2dA==
+X-Received: by 2002:a05:600c:1d05:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-43d84f5f482mr38224505e9.2.1743084664134;
+        Thu, 27 Mar 2025 07:11:04 -0700 (PDT)
+Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f995a10sm19848348f8f.6.2025.03.27.07.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 07:11:03 -0700 (PDT)
+Date: Thu, 27 Mar 2025 15:10:58 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
+	Claudio Carvalho <cclaudio@linux.ibm.com>, Dov Murik <dovmurik@linux.ibm.com>, 
+	Dionna Glaze <dionnaglaze@google.com>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] tpm: add SNP SVSM vTPM driver
+Message-ID: <setj52yumlcd43q5hnsfntig5mv7uxhh6n32puahkmwg75wtlc@ft3xk3vybpwn>
+References: <20250324104653.138663-1-sgarzare@redhat.com>
+ <20250324104653.138663-4-sgarzare@redhat.com>
+ <Z-RV7T7Bwt3Auopx@kernel.org>
+ <x3nkctmpbwkldm5aawfpqrw3b5lej5kxuxam7gb2w6nhgzy7kr@gd3mfnigyg6q>
+ <Z-U8UxEdt9Jit9GA@kernel.org>
+ <Z-U9KxQYA6vj1DZT@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Z-U9KxQYA6vj1DZT@kernel.org>
 
+On Thu, Mar 27, 2025 at 01:57:31PM +0200, Jarkko Sakkinen wrote:
+>On Thu, Mar 27, 2025 at 01:53:59PM +0200, Jarkko Sakkinen wrote:
+>> On Thu, Mar 27, 2025 at 11:03:07AM +0100, Stefano Garzarella wrote:
+>> > On Wed, Mar 26, 2025 at 09:30:53PM +0200, Jarkko Sakkinen wrote:
+>> > > On Mon, Mar 24, 2025 at 11:46:48AM +0100, Stefano Garzarella wrote:
 
- ---- On Thu, 27 Mar 2025 13:00:13 +0000  Daniel Baluta <daniel.baluta@gmail.com> wrote --- 
- > > +       mdio {
- > > +               compatible = "snps,dwmac-mdio";
- > > +               #address-cells = <1>;
- > > +               #size-cells = <0>;
- > > +
- > > +               ethphy0: ethernet-phy@4 {
- > > +                       compatible = "ethernet-phy-ieee802.3-c22";
- > > +                       reg = <4>;
- > > +                       eee-broken-1000t;
- > > +#if 0
- > > +                       interrupts-extended = <&gpio3 2 IRQ_TYPE_LEVEL_LOW>;
- > > +                       reset-gpios = <&gpio3 16 GPIO_ACTIVE_LOW>;
- > > +#endif
- > 
- > You should not have dead code in the final submission. If it is not
- > used just remove it.
- > 
+[...]
 
-Agh! Scanned though it a few times, somehow missed the ifdefs. Yup. wIll remove.
+>> > > > +
+>> > > > +static struct tpm_class_ops tpm_chip_ops = {
+>> > > > +	.flags = TPM_OPS_AUTO_STARTUP,
+>> > > > +	.recv = tpm_svsm_recv,
+>> > > > +	.send = tpm_svsm_send,
+>> > > > +	.cancel = tpm_svsm_cancel,
+>> > > > +	.status = tpm_svsm_status,
+>> > > > +	.req_complete_mask = 0,
+>> > > > +	.req_complete_val = 0,
+>> > > > +	.req_canceled = tpm_svsm_req_canceled,
+>> > >
+>> > > If this was bundled with the patch set, this would short a lot:
+>> > >
+>> > > https://lore.kernel.org/linux-integrity/20250326161838.123606-1-jarkko@kernel.org/T/#u
+>> > >
+>> > > So maybe for v5? Including this patch does not take send_recv()
+>> > > out of consideration, it is just smart thing to do in all cases.
+>> > >
+>> > > It would be probably easiest to roll out my patch together with
+>> > > rest of the patch set.
+>> >
+>> > Yeah, I agree. I'll include it in this series and adapt this patch on top of
+>> > it.
+>>
+>> Yeah, and you could simplify to goal in the other patch set: it's about
+>> avoiding double-copy of a buffer.
+
+Yep, agree!
+
+>>
+>> It's a totally legit argument that we can measure. So in the end this
+>> will help out landing that too because it takes away the extra cruft
+>> and streamlines the goal.
+>
+>... IMHO there is this unwritten law for upstreaming kernel features
+>that goes something like "further the goals are from white papers,
+>closer they are to mainline" ;-)
+
+:-D I'll make a note of it!
 
 Thanks,
+Stefano
 
-Martyn
 
