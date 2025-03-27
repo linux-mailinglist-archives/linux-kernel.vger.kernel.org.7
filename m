@@ -1,93 +1,57 @@
-Return-Path: <linux-kernel+bounces-578701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28DE1A7355F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:09:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585AEA7357C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2F517D829
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B034C189B1EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F05187858;
-	Thu, 27 Mar 2025 15:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntCX2k47"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED005187FE4;
+	Thu, 27 Mar 2025 15:19:49 +0000 (UTC)
+Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92AB155C83;
-	Thu, 27 Mar 2025 15:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C42154423;
+	Thu, 27 Mar 2025 15:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743088040; cv=none; b=c4HUW9VbOT5aJ0LacaoT2KICSCtiw7OH3jZcX9uaqvYbE/cxzaKCpDKRBSkYzqu6H+4hquxSYtv6InPlgCVH5WfyqnsWSco+apVTRoBsH5k7J+Z6BisYrSN30FXfkW0HZZQTWy8ziVTll0GCavjVz2/n7tJwrwo7JGK865y9Hk0=
+	t=1743088789; cv=none; b=gx+JNs++r2G7nU4THI7KH5bXLm52blEQivWe8x0GYCrfN52NufoFVxZJjz0148A7H+9YB5dMfXuHgg3bqkJ1l8OHHSXqadMqlLc52vgbE61VASKQWASeLM5TY4LKNYO7IjWopUrFIz+q0TNvSltArlZMi2AvBhRlcuC+gOwG4uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743088040; c=relaxed/simple;
-	bh=IGOlgbMnyFjkmCr7mrACZlNpeHBjA6HM1S444NLVEa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FUxsTIWgHcA+97W/msfKRGAHdHs9qrinLt9qI+BWDdAsp7M42c90aw6TK62DILjnmTiBD4uGrR+Hv9Cx4v5IIbHDWDqBg2M5idcqiXb3+ld2d97La6OS+QVUjfgMn2OPXwL7Ae/67A81qbTZ+sQ481PiDKT1WffSy58eiFlktGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntCX2k47; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22401f4d35aso26633015ad.2;
-        Thu, 27 Mar 2025 08:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743088038; x=1743692838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QSnBFPCz6EJRCbgAs1hUwvMtKdYF2dHvHQTAU0FhBus=;
-        b=ntCX2k476oVP0dkVEFl6ftmw6mEnHZudai6WekoJOUtZvNRLVUUHXwEApHKiyIwMLi
-         OAmHjRvJA07jHpQdoxWq0ApOex1+QM2JT0Rd4Y2hMpz338hVPeGr2dLG5qRBGK1b0RQ7
-         8Hgi/cZl3/DKUaI/ToAGBZ7g79wLO3y7U+svgH9tHFXGHF0phfOALdetaMXeNhix7J5z
-         Jti4gAaIu92GkQy0xH4H64xa4KazgbNCP+p1Y+dKMiCETMHLBR1GXEWv0LCgEvXnzSnJ
-         w+5INFCKLYSAeZ7a7UvlHMZF947vUtSKYcD8InZdYhdLfYhGErqOjJGIZVz1ZKM/pb1s
-         hS+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743088038; x=1743692838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QSnBFPCz6EJRCbgAs1hUwvMtKdYF2dHvHQTAU0FhBus=;
-        b=JWnQXcUvSgPHKQdXyg68NGGRNEgeOPBRJAVTJFluQn5ahLuc/DsMVIyMFvUKtdif0d
-         LmOyLXCuJWCvpHc/v+i5uPD6kAL+xC+NZkHJ4Q0jw2EfizcRQumtWzOD0j3OJYB/slq3
-         hh8S2JpGBI1gu2HQ0zYIYLVJpZvQ1fsaOjxrYe3f/oGVS+3w6MVU+OAUltEEUQiI6Ghf
-         yh6HFzL3kgsosC2J6PV+4RSvsYoHl02h+TL6hb4/JU+spd9HhdSVkfz8Pj/Rs/5iQ1Rr
-         eRNIN7PQ7qkKl8szbPl1zfDOanTRHv/x1dDmTZqR2tF/ov8Cd5nfzDPap/opqGLc+Gl9
-         MWSA==
-X-Forwarded-Encrypted: i=1; AJvYcCX41kzbJQ1uDwOK2wS1dvTFERn/KCxi/QKOShWHXhJA3lBfxlfj1gFY0FnCpDzSf2Ekl87O7UyWT1eWuCYChYeyXQ==@vger.kernel.org, AJvYcCXoc3z3kzcPQkqI+Jr/qVrQYTtztZMlc1dTBHXrQDlcJstjma8j+vFCQJZtoObTRFg9ijjKwUaqOqFUeOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRV+GrghVGZxuytiXOyBrlmXm20+1dJAdRPfAdwPTtabfKjwEJ
-	bgm2m+tQItiCqGYS0E79nuTQS5zHrt7GWR3Q8rUvQUs0kBt8FxGp
-X-Gm-Gg: ASbGncuppzc5in7hY/FKr3ZAh1kZ461Cy2X/I1ai9CKlufSQWLa5wFPON4AjvaTcBDh
-	mMoLP0xc0/HLK6NN6ptVASXWosnBnbGJ8EpyRKJkf6f36cy9qbfVJ2W60+ZROTbQlSVM1Ulyhfl
-	+KEy7zQLk6Ry7p2O6TZpFGJFsOPFo6eRRPfOk3n8bH65qdjgjmeTYL/TR/tpMV5X54Ir+EBx5B4
-	pgwRHUQIgyXD4Vk6ntDxCM0FJZrGQC4UCcUAIIQELOhcLIBgNP34ShfBfdwoN2ZAZfSmAXMHsSz
-	E8buL1/TD+YZNKb+Vqv9yqf30bEpruFgSYyWWMKy1Gv19nf8P7RLOV5VV/P+37/WHkVzXuKICyf
-	K/JLF
-X-Google-Smtp-Source: AGHT+IHQoplcEatDuFtcOhE2bWxxvWKhWtII0JknPc4UIIl7hdymWZ+PnM1/9vGYGnqb7EbmmsAikg==
-X-Received: by 2002:a17:903:1988:b0:223:325c:89f6 with SMTP id d9443c01a7336-2280488be77mr58686565ad.10.1743088037862;
-        Thu, 27 Mar 2025 08:07:17 -0700 (PDT)
-Received: from howard.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eedea0asm670635ad.73.2025.03.27.08.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 08:07:17 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	peterz@infradead.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1743088789; c=relaxed/simple;
+	bh=3rM1KS2GRjTxilLprollGDmQ/AJkW8LBlNp4xdN0E6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a1l4ZrdBY1sDN/atLlCpnBfNoHjvjtMd6TUjz8eHjSnnubBxLhOCvEep0X5NparaZweUj4CuHDSJpe4newBwXlYNWhFr0lsESzkrj7H5iT2kfTazWEGDln/OC0GVouWhmgO3Pb+A9Vfd4rCRZ4nSYCXRK9vqNnb6/Y3ChlxgTAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 20F3A24C9C;
+	Thu, 27 Mar 2025 18:13:23 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
+	Thu, 27 Mar 2025 18:13:21 +0300 (MSK)
+Received: from localhost.localdomain (unknown [10.198.57.252])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4ZNnGk69ZYz1h0PW;
+	Thu, 27 Mar 2025 18:13:18 +0300 (MSK)
+From: Tigran Sogomonian <tsogomonian@astralinux.ru>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Tigran Sogomonian <tsogomonian@astralinux.ru>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH v4] perf trace: Fix possible insufficient allocation of argument formats
-Date: Thu, 27 Mar 2025 08:07:12 -0700
-Message-ID: <20250327150712.1966188-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	lvc-project@linuxtesting.org
+Subject: [PATCH RFC] renesas: add zero check for prate variable
+Date: Thu, 27 Mar 2025 18:10:44 +0300
+Message-ID: <20250327151109.9648-1-tsogomonian@astralinux.ru>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,84 +59,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: tsogomonian@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 192165 [Mar 27 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/27 06:17:00 #27830093
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-In my previous fix of runtime error(Link:
-https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-howardchu95@gmail.com/),
-I made a mistake of decrementing one unconditionally, regardless of
-whether an extra 'syscall_nr' or 'nr' field was present in
-libtraceevent's tp_format. This may cause perf trace to allocate one
-fewer arg_fmt entry than needed for the accurate representation of syscall
-arguments.
+To avoid division by zero, a check was added to the prate
+variable, since no guarantees were found that it could not
+be equal to zero.
 
-This patch corrects the mistake by checking the presence of'syscall_nr' or
-'nr', and adjusting the length of arg_fmt[] accordingly.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Suggested-by: Namhyung Kim <namhyung@kernel.org>
-Fixes: c7b87ce0dd10 ("perf trace: Fix runtime error of index out of bounds")
+Signed-off-by: Tigran Sogomonian <tsogomonian@astralinux.ru>
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 2 ++
+ drivers/clk/renesas/rcar-gen4-cpg.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-Changes in v4:
-- Make the patch apply
-
-Changes in v3:
-- Add 'Fixes:' tag
-
-Changes in v2:
-- Simplify the code (written by Namhyung)
-
- tools/perf/builtin-trace.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index a102748bd0c9..439e152186da 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2022,9 +2022,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
- {
- 	int idx;
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 027100e84ee4..66da3b4398cd 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -205,6 +205,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+ 						  prate * zclk->fixed_div);
  
--	if (nr_args == RAW_SYSCALL_ARGS_NUM && sc->fmt && sc->fmt->nr_args != 0)
--		nr_args = sc->fmt->nr_args;
--
- 	sc->arg_fmt = calloc(nr_args, sizeof(*sc->arg_fmt));
- 	if (sc->arg_fmt == NULL)
- 		return -1;
-@@ -2034,7 +2031,6 @@ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
- 			sc->arg_fmt[idx] = sc->fmt->arg[idx];
- 	}
+ 	prate = req->best_parent_rate / zclk->fixed_div;
++	if (prate == 0)
++		return -EINVAL;
+ 	min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+ 	max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+ 	if (max_mult < min_mult)
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index 31aa790fd003..4c9a7d699290 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -308,6 +308,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+ 						  prate * zclk->fixed_div);
  
--	sc->nr_args = nr_args;
- 	return 0;
- }
- 
-@@ -2176,14 +2172,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
- 		return err;
- 	}
- 
--	/*
--	 * The tracepoint format contains __syscall_nr field, so it's one more
--	 * than the actual number of syscall arguments.
--	 */
--	if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields - 1))
--		return -ENOMEM;
--
- 	sc->args = sc->tp_format->format.fields;
-+	sc->nr_args = sc->tp_format->format.nr_fields;
-+
- 	/*
- 	 * We need to check and discard the first variable '__syscall_nr'
- 	 * or 'nr' that mean the syscall number. It is needless here.
-@@ -2194,6 +2185,9 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
- 		--sc->nr_args;
- 	}
- 
-+	if (syscall__alloc_arg_fmts(sc, sc->nr_args))
-+		return -ENOMEM;
-+
- 	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
- 	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
- 
+ 	prate = req->best_parent_rate / zclk->fixed_div;
++	if (prate == 0)
++		return -EINVAL;
+ 	min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+ 	max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+ 	if (max_mult < min_mult)
 -- 
-2.45.2
+2.47.1
 
 
