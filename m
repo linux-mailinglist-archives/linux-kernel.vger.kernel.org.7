@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-578846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85A8A73733
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:46:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C05BA73744
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E66188F2B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:44:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1CBC17F096
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930D920F08F;
-	Thu, 27 Mar 2025 16:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07209215769;
+	Thu, 27 Mar 2025 16:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQrmitgn"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ee/NDvK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BFB1CAA67;
-	Thu, 27 Mar 2025 16:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB1A1494DF;
+	Thu, 27 Mar 2025 16:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743093825; cv=none; b=GwuU8RPH9TyDto3RTX+yGAto4Pp+NoL2EZIq5r/FU3nloNChRCYXOy0Znu2sPriboAFg9MJzgWz14wTo2dFZU44ydisvIdODuG0/CDy1ocaoycG8i9SQLBUWxxZ8Y4nz/FbRmSAEa/BFwzrp305eOePJdZVa+jdTcc7whV2TwjE=
+	t=1743093939; cv=none; b=pX+AZM3Cvn7mYkaOiMPQunizp9dhS26BpH3WZJ+i472sdnJcK3lrVj3Ux84RmLVyClItqV8wxBsrCvSeO9yilSfPBv41qdBS/gN97NG0owmQB8TYfGQkz916B81XRqYelu0qackYJbDNfQ/aaHt04oLgT6waGOH5aMdqv7Ixs4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743093825; c=relaxed/simple;
-	bh=TnJVCFD64o69mN5Hh/YDo52i9+KO2ogrvXQQhM53668=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1RWYJpi4QwztXpYEF3Rzni2pJrkNBsVEEf+59FPgGsfe2MMr0byDNEyta26tWHLq6/S7brq1pj07QsTRMOWwzQE8/xI/Z3+9/xcfUSwIvRUzk9RNaiktA6mLU6K0v7B0HX2fzaIfvUYc4fj11Pve3tYipP4DAnOKnS0ga0uTCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PQrmitgn; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-226185948ffso27773185ad.0;
-        Thu, 27 Mar 2025 09:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743093823; x=1743698623; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lb1+R66+rUYGnBLRmPtMSXkNrgkfnJRiAlwP5fnx9QU=;
-        b=PQrmitgnryitbBrE41o4Jw4BNAWfwmNIbw2mUGgLVyCgjWinbr9zI35MCG8yHgTy5V
-         FJeqzRFGNKGggMWl60PBLIN2Gd7bRsUcSHAC6mxAa2UVbvvXFo/48PPJIMNsNxlPYDgU
-         Jwlj3trHsPa3Hb8bkn+89elH7JeW4Vl1QAExR/tyvZMeqBhcA/6FPwx12AwqPG8aVV0G
-         1FlvB01ggSEG79VpocRAAbqrtcAHN63/t71gp49K0Gst/sRxU8Bzae8D5AZW+BF1FmyQ
-         ZQflXLsgiUZW3Bj3yIoFwebt6pBQjp6dRLobtbXYmvi4EuqBDnwSinERq22uLXSk4GHo
-         l4iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743093823; x=1743698623;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lb1+R66+rUYGnBLRmPtMSXkNrgkfnJRiAlwP5fnx9QU=;
-        b=s/UdkaTBT80xqtX2NXN/X2A3QqHC0euIPBB4VE+05hkI+KOkPgwazH+Yq00CF7mFGf
-         HmS+HRhKsGQtrHnkdDe5/Nqtt54obMnTs6j9t1X/B+sQ0wRCKlImJLVa/4nJ2xOZJb+b
-         5PeuhHCjQMUOQqU5wk+gGF8qmk4KiYPZ2RKWDgAdtX/0/lsNee6gavHIUuG/0cHl4yJb
-         AN29SbuxdToqFNRVxInIFaUFU4Ox0AESay9VAHXQILd9hZTTEIb/sAa12aiARt0FSQiD
-         ESdavRtY/QZIwGIo4GeDHeMrge5NdujFyR3GuYfngvUeeW+g7exBIEi7jYj1vGdNBdMQ
-         JplA==
-X-Forwarded-Encrypted: i=1; AJvYcCUq+YkB4UZbBKgIuB/P+4lb5kaukPFr29anSCOShwfxcnTcE6BqNIOKzTeoiwqL/JOpazp2TozVU6iOyVio@vger.kernel.org, AJvYcCUuN1hXhpSP3fnDj1sIqOq3zvPiKuJBSGmAfjilpbQZAwzvIiLlv3brFNs0vQiFpWaf0YYYzpq7hHE=@vger.kernel.org, AJvYcCWl3uNLg6D9FTzA10f+LojatytekmfekaCB57vnDxyhBZi8WpiNBI5GkSXhLTsz5aulj6sTlLC/4a55@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbKt+yDvwR/8zMVaNWD5RQCEetKfyHdwhjIE1Hr+13CadC3Wo/
-	jgsCv6pOSHA10ai1QvfRFW3kadjLY8rOZvhU/53EGu26nG8C0TG7
-X-Gm-Gg: ASbGnctBFYxUcMvtjppTqzVx2Jo6OgF2f2wRekiRkcdf6Os0IRYVmJLYCwhvXl1o1iv
-	7EBolyJVqDAiaQ/HxRcd3MGzQbDOrgfG9HqB5crtGjkVxYvPdO0Udj0QxCyfx+Wb4EyWirKAkuh
-	xrT6wA8PGgZHq77D64ieYXiXjBZM/OEdKazPGKEtimYJruLnmYM/I4b5vkrmXNKb1z13PBEjgEw
-	5BlK/3jewRMhmH4bDDYdwMJ/ldtQL20C3jzbDfm7I0B9fieW8JLwGz77fVqHUOQnpdBBPzokCoa
-	emQAg6pOwASnVgPqTcm+gNseDQzsHofkA9vOLnRl8KFS6mDCOD5FVA==
-X-Google-Smtp-Source: AGHT+IG9qnhCTor+SGyDKWAUyClWNk4AWFZpE4cZ+MxMyD0oepgvr5ve7N3BBCEMLaVTfMHbgN6Pew==
-X-Received: by 2002:a05:6a00:194d:b0:736:476b:fcd3 with SMTP id d2e1a72fcca58-739610d1e18mr7478554b3a.24.1743093822611;
-        Thu, 27 Mar 2025 09:43:42 -0700 (PDT)
-Received: from localhost ([2804:30c:b03:ee00:e0b8:a8b8:44aa:8d0b])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af93ba10863sm87262a12.74.2025.03.27.09.43.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 09:43:41 -0700 (PDT)
-Date: Thu, 27 Mar 2025 13:44:44 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	corbet@lwn.net
-Subject: Re: [PATCH v3 2/4] Documentation: iio: ad4000: Add new supported
- parts
-Message-ID: <Z-WAfEIvsWTr5Q_v@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1742992305.git.marcelo.schmitt@analog.com>
- <bb57e4452cb6bf9f644c0ea2c248d4b72ecc65b8.1742992305.git.marcelo.schmitt@analog.com>
- <ab73f7d5-77fb-4264-ab4a-03ee78aeee06@baylibre.com>
+	s=arc-20240116; t=1743093939; c=relaxed/simple;
+	bh=wF9ipZcNB/0eHsPWmPL1B2OKg5FK6fHZ9xznjO7EbCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lA4hH56o3rtB0At+lZWZSKcsoXCOblFeUqp+qDdlqagEGVPlTQaKRSenee85g3nDaLH7npQ1oZthc/NGX7u9aglfAVwciRLzZ8Jz1pbT+ApLjKe2L4c18KLjgwouARBTQJ0xsv7WKFNv/Va5ghDGBhzuUs2aFUKN12LJ/GL4I5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ee/NDvK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 197F5C4CEE5;
+	Thu, 27 Mar 2025 16:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743093939;
+	bh=wF9ipZcNB/0eHsPWmPL1B2OKg5FK6fHZ9xznjO7EbCk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ee/NDvK626Bb1Uwbs4E2o9wZFY/lDaRZ9ubxJ2LqrUxRJv05QKJpPL29LjJyLY/6P
+	 dHj8Niub6QEuZNQvjQXcwhFbZBnRGTyESUQ3sxsMQkOYaWq+FDkrcrOlTJ8I8lyul/
+	 32fwtOxeZSNCDpQtmsZ4BZ/74bLr5WDE3tbPQ9I3vHpeEXOzb7dJYi9RzYQus8ehgS
+	 IxOKP3EGHHVR4coLmVaOaLR92Ve20Ao9JxK/jMdOXTqHUreYkDK5YscR8nwr89sR/p
+	 u4XZR41/eGeZH8cQv76pph6ery0ym0w9cCuAi6VTLgjb6CwGkTOu++qK82XIjoNuWc
+	 pOEhT/pk2CkLA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c75830b455so680817fac.1;
+        Thu, 27 Mar 2025 09:45:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHLPcBJ9S2GhZelzaGtxAewdDMHfMg3Uuj0ub+/WMEOexrmEfRwSejleahxEjZA63KhY1dbRWweMfLKx0=@vger.kernel.org, AJvYcCUQKGUDUbC2UwYyynfMTLY6Ta8CCwD3slb9b5tec/uTaQgbfBjXm8+AamF3ZhCDyWdsFebM+w7MkrU=@vger.kernel.org, AJvYcCVFrAkLFom7YdoQaj1vCNZjWSXKXR9x8OTnZJYZqkKOBE73NbRS+zcnozuh3VDIVXifKaOaMMQCHrbf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIzToYtL8jCnWYLCcKVzkR9iKHp3IeNFtNqcVBtKURv9Zc9mZP
+	cbkNd6A9xze/ZajHZn7h6nUj8Q33AubOtRC+hZB9X5+/Ylxu899nhieOjqIHEYuoPd8pLbp21hr
+	joat+a9oiGqRSmd9UaerOq8gu+Ec=
+X-Google-Smtp-Source: AGHT+IEdHzMes6epfYuSawV3mY3iFmhRhmu87zpi8OHs6t+XHe19Js4YCvurVJX69p7//O4r9UNp+Qm5gzHXegJPAmE=
+X-Received: by 2002:a05:6870:218f:b0:2c3:f8e3:bdb9 with SMTP id
+ 586e51a60fabf-2c84818f575mr2572277fac.28.1743093938185; Thu, 27 Mar 2025
+ 09:45:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab73f7d5-77fb-4264-ab4a-03ee78aeee06@baylibre.com>
+References: <20250317093445.361821-1-csokas.bence@prolan.hu>
+ <20250317093445.361821-2-csokas.bence@prolan.hu> <CAJZ5v0hJZBxU6SSq9C8gp2peETFWu0jbhrM82B5GvQkVXPR+9Q@mail.gmail.com>
+ <3e6d7071-1ba9-484c-9dcb-c5da6ad1ffe3@prolan.hu> <CAJZ5v0jka2r9PaKsF0FE2qJaFfnVNGd8sZRE6Aay-Ugpzot44w@mail.gmail.com>
+ <d926d2c2-8cc9-4a71-b8ca-b5f03ac9afb8@prolan.hu> <CAJZ5v0iS20uPhqNOnkj36rTBGQF3fecF6Hq4JU4=wz4pSzrFyg@mail.gmail.com>
+ <bcf363db-8fff-4fb1-b29e-300f7b8bc090@prolan.hu>
+In-Reply-To: <bcf363db-8fff-4fb1-b29e-300f7b8bc090@prolan.hu>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Mar 2025 17:45:26 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g2cjZwJYjd7Jt-dDDaxjCPwmkAzRZM1HDT4tod7RiUUw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpMAgH4hDdx8tpla6GgEclU1a-D6wPVXKpe8AogK9pUv3F-grNrK0it6P8
+Message-ID: <CAJZ5v0g2cjZwJYjd7Jt-dDDaxjCPwmkAzRZM1HDT4tod7RiUUw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] pm: runtime: Add new devm functions
+To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Varshini Rajendran <varshini.rajendran@microchip.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Len Brown <len.brown@intel.com>, 
+	Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Alexander Dahl <ada@thorsis.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Pavel Machek <pavel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/27, David Lechner wrote:
-> On 3/26/25 8:25 AM, Marcelo Schmitt wrote:
-> > Commit <c3948d090080> ("iio: adc: ad4000: Add support for PulSAR devices"),
-> > extended the ad4000 driver supports many single-channel PulSAR devices.
-> > 
-> > Update IIO ad4000 documentation with the extra list of supported devices.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> Don't forget to pick up tags. I already gave my:
+On Thu, Mar 27, 2025 at 5:11=E2=80=AFPM Cs=C3=B3k=C3=A1s Bence <csokas.benc=
+e@prolan.hu> wrote:
+>
+> Hi,
+>
+> On 2025. 03. 27. 15:14, Rafael J. Wysocki wrote:
+> > /-- devm_pm_runtime_get_noresume()
+> > |   /-- devm_{pm_runtime_set_active() + pm_runtime_enable() (in this or=
+der)}
+> > |   |   pm_runtime_use_autosuspend()
+> > |   |
+> > |   |   Note that the device cannot be suspended here unless its
+> > runtime PM usage
+> > |   |   counter is dropped, in which it would need to be bumped up
+> > again later to
+> > |   |   retain the balance.
+> > |   |
+> > |   \-> pm_runtime_disable() + pm_runtime_set_suspended() (in this orde=
+r)
+> > \-> pm_runtime_put_noidle()
+>
+> Ah, so basically what I've done originally, just calling
+> `devm_pm_runtime_get_noresume()` _first_ instead of _last_, right?
 
-Oops, sorry. My bad.
-I've picked them now.
+Right.
 
-> 
-> 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> 
-> 
-Thanks,
-Marcelo
+If you want to use pm_runtime_get_noresume() to prevent the device
+from suspending and you do that after enabling runtime PM for it, the
+device may suspend between the "enable" and the "get_noresume".  Doing
+the latter before the former prevents this race from occurring.
+
+> > And pm_runtime_dont_use_autosuspend() is not really necessary after
+> > disabling runtime PM.
+>
+> It was done this way in devm_pm_runtime_enable() already, see commit
+> b4060db9251f ("PM: runtime: Have devm_pm_runtime_enable() handle
+> pm_runtime_dont_use_autosuspend()"). I didn't change anything
+> behaviourally there.
+
+Yes, this is fine, although not really necessary.
+
+> > Also, I think that the driver could be fixed without introducing the
+> > new devm_ stuff which would be way simpler, so why don't you do that
+> > and then think about devm_?
+>
+> Sure, I could quick-fix this, go through all the possible error paths
+> and whatnot and ref-count in my head, but it doesn't fix the underlying
+> problem: in order to properly use PM, you have to do a bunch of calls in
+> some set order, then undo them in reverse order on error and remove --
+> exactly the thing devm was designed for, and exactly the thing where
+> it's easy for a human to forget one case by accident. Thus I prefer to
+> use the *real* solution, devm.
+
+Except that you need to enforce the proper initial ordering or you may
+get undesirable results on the way out.
+
+Say you call devm_pm_runtime_set_active() after
+devm_pm_runtime_enable() by mistake.  It doesn't do anything, but
+runtime PM may still work because the device gets resumed at one point
+and if it has never been in a low-power state in the first place, the
+"transition" may just be transparent.  On the way out, the cleanup
+action for devm_pm_runtime_set_active() will run before the cleanup
+action for devm_pm_runtime_enable() AFAICS and so it won't do anything
+again, so the device's parent and suppliers (if any) may remain
+reference-counted.
+
+That's why I'm saying that it is better to combine
+pm_runtime_set_active() with pm_runtime_enable() (in the right order)
+in one devm_ call and define the cleanup action for it to run
+pm_runtime_disable() before pm_runtime_set_suspended().  Then, the
+mistake described above cannot be made.
 
