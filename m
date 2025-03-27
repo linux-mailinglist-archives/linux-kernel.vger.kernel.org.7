@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-579218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC92A740D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:28:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C2A740D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43953BF362
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF53BF6DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300641F666B;
-	Thu, 27 Mar 2025 22:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679521F8697;
+	Thu, 27 Mar 2025 22:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JjyI5zmH"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uxCV7WBT"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3275E1F4CBD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B181F5404
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 22:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743114270; cv=none; b=odiAXGPMAi2/9M9AL+X7LryliM6xzlkhDtPDMDQRoqklD96OvqPVGBSNfnWe3pi0zkKOkc3TfibVtb+SDac8c2PnNt16vCqpCEe5zqb7LF8Qdbv3UfconSgET/epwDFZJYzVUitJXMrICBik+N0kHO553GfUmW+4wlPXQTP5SF0=
+	t=1743114272; cv=none; b=W9MdEfVenjLzlc3bYQ+1ACtBm6D6sL+VRJKHI4mQq7Yp4HJjUg+3kG4+JJ7oK32BbOsULqSoc92MjFi/d9b1eZxpQQ8j2xme2LpQBbRjUCCIEKe2OJ/bLIEc+IIfWIuh4YFoQbQzcbuSMmgRITrYF7Ia5BovBih0KE6sIdFFFZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743114270; c=relaxed/simple;
-	bh=jhC27Zaa9rTrkKMgldvX9P8aqnSagvdFSdc7U7Jyn3M=;
+	s=arc-20240116; t=1743114272; c=relaxed/simple;
+	bh=BsZ4beG/3MY0LIlMnfOtq+u6ug+ZXaSOs8YIhhZ38Cg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=A09b0nykBknlKVpzBRrW6tAx/UiMFaGGK6BVrNk5HJ0VbzVerJ1aAE1D5ukl+07Biv8e2wIyFnQRW42cVz6QW8015axT9vma8VkMzv7DQwkN8ptr6anV6Mms+rJ/u6dkZb27FofekCXljpUQJloNGaitCvbzTIK5zwoNWQYXf0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JjyI5zmH; arc=none smtp.client-ip=209.85.160.73
+	 To:Content-Type; b=rkk7xIKJqLyDV06t/2sFJ8WdbhKgYXN+R5NPXQ1OT7/BeQUa6qZ3+vn2fLo+wxjq+ON0WL6QoSx7osdS42zMKAz0WiHCnjMG30azRzKi5THLGnVJ7ehwy7VuemRVlmlwxvScex00SmDIXL6qJziJ7qrrefBEjUnxNPasxNQPI7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uxCV7WBT; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-2c70bdbbb1bso1051501fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:24:25 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225505d1ca5so25849655ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743114265; x=1743719065; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743114267; x=1743719067; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GTzW5K68zOFl8tHWsLxW3KBGNqm+tt/wZjBTGwX9wNE=;
-        b=JjyI5zmHunRiyrgLFz0+f+nAVR9SaqYKr9+LrwTS4YLtvfBDQzFqs92+fKn/rV9/pc
-         lpsf2WFKEQtLv10g+xchxqPGy4sjG95mFy7HMvPrf9Y2UCzlkNlCc6cEJDBO7Bgw3RLx
-         C9KT9SP2aHzpCfMhSmSejXCfrbuT/D2FSo0knor/GlCfCFQB+HroOE1upW/b5fD/kOlm
-         dlZpeItBJTVeyOj7NlumDkMxImzQ2Xh+syjCAxLPsR8b4Ebxu6cEFmf4U7fj82aJsIrV
-         JlYd11L/uToN2FxYJQesJjdLULfZ5eouqYG9Y5NbNPAwYRxtQMmaxIq3+iMcuzVPVA0F
-         r0Kw==
+        bh=LtdlsqM6blzGroFn64X29nm7pFzYH4kvfvsnMdFHGUE=;
+        b=uxCV7WBTESXGyEtoYMREHNPTGWWIS4F3j8nfwvmrUgUrASnfNoIaUGIXpUNqw6ph3o
+         b4dm4/Qe3JmcztMVeLWCdwAIdNfWEzmVym8lSxaHwywxWiGALL4cBQIBW8dk5Nx1JKk3
+         kmdZ7XWZEnfIoRcJXuhK9McFLjqRw+OJyeeruk4WYh4rHGyX9/ouRZ4HDioHIqlkg5hM
+         JIoP/y2mKqG2wRhqJbUPL64+cTQfoW99y7WTy2dylV2jLqYTTGiQdzczhIAhAaEZjpI6
+         33RHDe+JRNSaJbtFDtpYHw8NrutdPTFglUgAj+wDRHz3jYJlZaGxzAlPdOF34VobHE2E
+         pMoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743114265; x=1743719065;
+        d=1e100.net; s=20230601; t=1743114267; x=1743719067;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTzW5K68zOFl8tHWsLxW3KBGNqm+tt/wZjBTGwX9wNE=;
-        b=N9db1NrTHII90PDzutn6wEyuX7HkgidQvRMlOSeTN7/GVuNxrLcFLmI80do4GfZCRo
-         L+8doqKc57D1KR6MNZlUm54yfMaRMbDKor5vVqsX5qVx7hK2i2/cHZphX1xNsaiJNNQB
-         cGXjh87H6E7UQWzFvezCiuL7is7MpFycZEV0hjTuMChl9DuWrad3F+S62+Xxhm9hPvZI
-         4srZfSpBqAy9qUWU0q0DkbA7vpXwyZVMUkFDg+oAwt2AgOofsK/d62BLOqCAOLNwKSmb
-         5Fhi2sMkWoQBopXc95UyGJkUnO/en5FZuQvh52ZNlLYhsqWt1bpa3ZeLZEDz/5O/hdmH
-         2Nbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhScUdgwjKz28OUyqErGVGBzCaMS9Meol5XqoYyRqsj9+E1K54K0zR53LOMW2ZXOtYaslHrl+KHRp7jm8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDMMZxbv/lp8/4qiHQQtbv+kkPLerZEiocVvqryBPDKCunuWyz
-	3gig6Q5ttC4FXNzYPGip6cncBV/XKDxZ1UWwHVMCu7+4NTeZ9oaKYQVYQSlmsLeEdMiQMTBa0wn
-	7psgpjA==
-X-Google-Smtp-Source: AGHT+IE96i9od6ViUJOkA41ez+UOYkJ8mtB5Vj5H23tEmmWP8dGexiZbjg+0rJfqjTQoMhX/yS9LUSnr2T/t
-X-Received: from oabxj1.prod.google.com ([2002:a05:6870:4f81:b0:2bc:69a2:7ea5])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:2889:b0:29e:65ed:5c70
- with SMTP id 586e51a60fabf-2c84819f69dmr3397439fac.30.1743114265237; Thu, 27
- Mar 2025 15:24:25 -0700 (PDT)
-Date: Thu, 27 Mar 2025 15:23:18 -0700
+        bh=LtdlsqM6blzGroFn64X29nm7pFzYH4kvfvsnMdFHGUE=;
+        b=Ld1O49BVX/tpkdQ8gQwseerdF66ub6vvMkATHByIJAkwHn8tQYEWX+s7NQCyFWwJtV
+         l1rg5c4Xavl7T0VD4PbZwxNSfEsk5v1KxLq5EDfU+rhtJlWRzTxe9niLkDLA94nU3Xvn
+         5CvqtQlDKO1IpVfHF47NhcdAA+KQVfcHLNitTK3uzM9+3CfoIQHGOSdayGdKdMjnuh4V
+         6ovS3Prs1g1nsOSazuNMB1uSOOZ4kQLWRRfSkY2of0ecuxbvxw+XYHXdvJsCKGlTRUCq
+         X9JQ0/w86vND/UsEKGw1/TbFA+zrXjFmdDdqdbdeNeY23S1z7OLzKimNUZQ+6wiDM3Tp
+         UOVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWd/bn/F0BUpuBaK11NCuDyz8yHPeFxqfWU7VoQ9GT2rqog3PA0l3anu1+OpRmNQgkSyLhb4hD5M3ABoaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWNkRa0eNfeuMOk1D1BPbJYiky23zJvN03HeH2rF2lJLVNsJCR
+	13KqzW3SMxPCRLKa2KfwyBd4hK+l2QpviFwE5mp8ZTpw6LbiEN86rbYR5HJZ7VFZa11609j0Tqz
+	qAuxHgg==
+X-Google-Smtp-Source: AGHT+IETcJiUn3A/4xUzAhkVVO/EWpFOAKvAMHkhyEtVipvJc6YK61SLppyUlPMQmlehbJEl6uPJeJJonHqx
+X-Received: from pfbgo11.prod.google.com ([2002:a05:6a00:3b0b:b0:736:4313:e6bc])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:11c7:b0:224:1c41:a4c0
+ with SMTP id d9443c01a7336-2280481ceafmr71003245ad.9.1743114267296; Thu, 27
+ Mar 2025 15:24:27 -0700 (PDT)
+Date: Thu, 27 Mar 2025 15:23:19 -0700
 In-Reply-To: <20250327222331.117701-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250327222331.117701-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250327222331.117701-24-irogers@google.com>
-Subject: [PATCH v4 23/35] perf vendor events: Update nehalemep events
+Message-ID: <20250327222331.117701-25-irogers@google.com>
+Subject: [PATCH v4 24/35] perf vendor events: Update nehalemex events
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -94,15 +94,15 @@ memory.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- .../pmu-events/arch/x86/nehalemep/cache.json  | 32 +++++++++++++++
- .../pmu-events/arch/x86/nehalemep/other.json  | 40 -------------------
- .../arch/x86/nehalemep/virtual-memory.json    |  8 ++++
+ .../pmu-events/arch/x86/nehalemex/cache.json  | 32 +++++++++++++++
+ .../pmu-events/arch/x86/nehalemex/other.json  | 40 -------------------
+ .../arch/x86/nehalemex/virtual-memory.json    |  8 ++++
  3 files changed, 40 insertions(+), 40 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
-index b90026df2ce7..c9d154f1d09a 100644
---- a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
-+++ b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+index 2c0ea6f8c4e0..b6c6b22a3188 100644
+--- a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
++++ b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
 @@ -239,6 +239,38 @@
          "SampleAfterValue": "100000",
          "UMask": "0x2"
@@ -142,10 +142,10 @@ index b90026df2ce7..c9d154f1d09a 100644
      {
          "BriefDescription": "All L2 data requests",
          "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/other.json b/tools/perf/pmu-events/arch/x86/nehalemep/other.json
+diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/other.json b/tools/perf/pmu-events/arch/x86/nehalemex/other.json
 index f6887b234b0e..5fe5ca778e9f 100644
---- a/tools/perf/pmu-events/arch/x86/nehalemep/other.json
-+++ b/tools/perf/pmu-events/arch/x86/nehalemep/other.json
+--- a/tools/perf/pmu-events/arch/x86/nehalemex/other.json
++++ b/tools/perf/pmu-events/arch/x86/nehalemex/other.json
 @@ -15,46 +15,6 @@
          "SampleAfterValue": "2000000",
          "UMask": "0x1"
@@ -193,10 +193,10 @@ index f6887b234b0e..5fe5ca778e9f 100644
      {
          "BriefDescription": "All loads dispatched",
          "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/virtual-memory.json b/tools/perf/pmu-events/arch/x86/nehalemep/virtual-memory.json
+diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/virtual-memory.json b/tools/perf/pmu-events/arch/x86/nehalemex/virtual-memory.json
 index e88c0802e679..accd263cfbfd 100644
---- a/tools/perf/pmu-events/arch/x86/nehalemep/virtual-memory.json
-+++ b/tools/perf/pmu-events/arch/x86/nehalemep/virtual-memory.json
+--- a/tools/perf/pmu-events/arch/x86/nehalemex/virtual-memory.json
++++ b/tools/perf/pmu-events/arch/x86/nehalemex/virtual-memory.json
 @@ -88,6 +88,14 @@
          "SampleAfterValue": "200000",
          "UMask": "0x20"
