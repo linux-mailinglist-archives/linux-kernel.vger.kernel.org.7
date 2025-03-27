@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-578034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C33A729FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64203A729FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED1718925A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 05:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FB9189236B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 05:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1401C3BE3;
-	Thu, 27 Mar 2025 05:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F079A1C3BE6;
+	Thu, 27 Mar 2025 05:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWETa2j3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBmbqLvA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111B213DDAA;
-	Thu, 27 Mar 2025 05:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC913DDAA;
+	Thu, 27 Mar 2025 05:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743054247; cv=none; b=pUyj2kLMtF/spOCK80pIecHhrkfYnlTnEl0mcEnkRcL3THP2N0PIrNlboZvNnxmJla5izX1xXMCAV9h5W0H+reVWXWUvKetaxgmswVinFM69vFi3BGDCz77xSESUgKOcaZZzbWDOP4YSFhORORRYgK+/33ymUJ1GD3LTlebfCKE=
+	t=1743054297; cv=none; b=IqA6AMr1cl7RIC2tIgO7uzKm/44/d2z9sIJYa1WNoVhNJE7eU/xDcBltuz2HMlhwVdjoVvcREH2be4gblGyofjN7OhkO3+g3HIgZFk0J2Aqf81FQ63jZq+sQBnyTwukt/yrr2ZKO2P64uu4nGCJAFU61HDilRVyBBJcZpfYa2IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743054247; c=relaxed/simple;
-	bh=7doPNIBcvGM2CVSphaz6RI3B+Qyn0i0/VaXR4AUmgxw=;
+	s=arc-20240116; t=1743054297; c=relaxed/simple;
+	bh=QLmbrKmAd6h0fd+I9quZv7EdyPeLJ2iTZ2AFB70/Paw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sETmgb171naYG1cClQfuSHAVqy45+6boNvP8dIAzvHjEv9sfMB3BdT21Z3pxGFVXgQXAxydXyR51H6OD/ZrLeGz+CE3CLltBHcl+14H0rmNjb7wPxhHOM4b5LxLqWDm9Ggf5JtfMo1xpayTxlGt+YA7rMbDKiNUGnUaEeMOBiMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWETa2j3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52C3C4CEDD;
-	Thu, 27 Mar 2025 05:44:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uSYwRfK2BZ41OxzlEQdqs2g5VMix2djyleyoIvIsIgp+QkouI8/hSYnNrmZphM/P8ALLCyVkIFAn1E4xz21SI1o0lg+50Pejdq3cTMcvZv5h/TZ3/oG858luFneTGgnv3BmxHTAM6Vom/SLPJq2wtDkRKXf34Oz9koRL2RsXY4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBmbqLvA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E7EFC4CEDD;
+	Thu, 27 Mar 2025 05:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743054246;
-	bh=7doPNIBcvGM2CVSphaz6RI3B+Qyn0i0/VaXR4AUmgxw=;
+	s=k20201202; t=1743054296;
+	bh=QLmbrKmAd6h0fd+I9quZv7EdyPeLJ2iTZ2AFB70/Paw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EWETa2j3567PZ4ia0bZOYjmGOwwbxcBFY/NH7FKE4grjP1x1drO6d36mRbM8xKKfT
-	 /LiIC0cqcWA0ZR0iQPuD/qItheQHWum9CWuSySdPsunUAfwMKRZGtrr0DCFT9g/18U
-	 wFVyAtcseW1uQzrmyCGWBB6KmErqINz6ioGSMfxABVa8m6BEaxdohDq3Be40yEapFC
-	 rY0NjTjXfR1JWLi3Az6w51q03c9OlaVviKKgcGCgBMZpATte+WrC48kRf/xQ6jL9Qr
-	 skhav8ZQidpmsHGLDxuAp07Bawv2mfioFjooQB2Yk5QQGGO1WcY/uyJ0FmUealsSZ3
-	 PQ7tNNsJbUeBg==
-Date: Wed, 26 Mar 2025 22:44:04 -0700
+	b=kBmbqLvA40PrskS69xA3UD0YTDkzEiXUpFg00+as92TTE9HtnlWP700pyGOM7+KaG
+	 oooeJsLL6sYjcrK3A1slpBVSgpUV7ATURNFQ7EKUK0dIdI3nZXB6mhbB5wGKQsZMoS
+	 VqFqmC4DU37K/MqnPyGKXII/Xa/3PE8Yy+rdHne8eBJ9uY06hVRoQImBOWR5pDxi6J
+	 MlWjFqHoHo8QsYp5iEq57SIz2GQQ8ZZ6NMOT6N4FKpadOPJG6iMvREju3gJjw7h2l4
+	 uY7w7HBKZ1eYgQK+PJk6umi2Co+a0jq3aEdStvpMTpUvujRh73NteBl1qsQo6EG1HS
+	 U168oUxsWtXDQ==
+Date: Wed, 26 Mar 2025 22:44:54 -0700
 From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-tip-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
- theoretical divide-by-zero in pwm_mediatek_config()
-Message-ID: <5i7cbgl7vza4bktquqbr7mvkrypbzmoeoys76wpzo4efmwze32@uwasrdhgsejo>
-References: <fb56444939325cc173e752ba199abd7aeae3bf12.1742852847.git.jpoimboe@kernel.org>
- <174289169184.14745.2432058307739232322.tip-bot2@tip-bot2>
- <4avdt2nru6cpypssyw5chxiuadh74qcobfboopwsske2ycr565@qnb6utlyxuj4>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+Subject: Re: [BUG] vmlinux.o: warning: objtool: iommu_dma_sw_msi() falls
+ through to next function alloc_io_pgtable_ops()
+Message-ID: <6iqec5chiqlsysp2vb7qlfkebzyrdreb3rtm7t7nx3ppiywqya@xj7w7y5r7twh>
+References: <5dd1f35e-8ece-43b7-ad6d-86d02d2718f6@paulmck-laptop>
+ <88ef4efd-9736-4c37-9b05-212e65602322@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,38 +58,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4avdt2nru6cpypssyw5chxiuadh74qcobfboopwsske2ycr565@qnb6utlyxuj4>
+In-Reply-To: <88ef4efd-9736-4c37-9b05-212e65602322@paulmck-laptop>
 
-On Wed, Mar 26, 2025 at 11:35:28AM +0100, Uwe Kleine-König wrote:
-> I wonder a bit about procedures here. While I like that warnings that
-> pop up in drivers/pwm (and elsewhere) are cared for, I think that the
-> sensible way to change warning related settings is to make it hard to
-> enable them first (harder than "depends on !COMPILE_TEST" "To avoid
-> breaking bots too badly") and then work on the identified problems
-> before warning broadly. The way chosen here instead seems to be enabling
-> the warning immediately and then post fixes to the warnings and merge
-> them without respective maintainer feedback in less than 12 hours.
-
-Actually, this type of warning has existed for years.  Nothing in the
-recent objtool patches enabled it.
-
-I only discovered this particular one a few days ago.  I suspect it only
-exists with newer compilers.
-
-> I fail to reproduce the warning here for an x86_64 build on
-> 1e26c5e28ca5. I have:
+On Wed, Mar 26, 2025 at 04:45:52PM -0700, Paul E. McKenney wrote:
+> On Wed, Mar 26, 2025 at 04:18:51PM -0700, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > Building next-20250326 using clang version 19.1.7 (CentOS 19.1.7-1.el9)
+> > gets me the following warning:
 > 
->         $ grep -E 'CONFIG_(CLK|PWM_MEDIATEK|OBJTOOL_WERROR)\>' .config
->         CONFIG_PWM_MEDIATEK=m
->         CONFIG_OBJTOOL_WERROR=y
+> Apologies, but make that gcc version 11.5.0 20240719 (Red Hat 11.5.0-5) (GCC).
+> (Hey, it has almost always been clang in the past...)
 > 
-> and the build works fine for me and there is no warning about
-> drivers/pwm/pwm-mediatek.o. What am I missing?
+> Also, the runs that have this problem are the ones whose kernels are
+> built with CONFIG_DEBUG_LOCK_ALLOC=y, but that do *not* enable KASAN.
+> For rcutorture, these are scenarios SRCU-P, TREE02, TREE05, TASKS01,
+> TRACE02, RUDE01, SRCU-T, and TINY02.
 
-Sorry, I should have given more details about that.  It was likely
-something with KCOV and/or UBSAN, though I can't seem to recreate it at
-the moment either :-/
+Thanks, I posted a fix here:
+
+https://lore.kernel.org/0c801ae017ec078cacd39f8f0898fc7780535f85.1743053325.git.jpoimboe@kernel.org
 
 -- 
 Josh
