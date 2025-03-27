@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-579046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9274DA73F1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED86A73F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551A33A61D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655C23ABC07
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6971CDA14;
-	Thu, 27 Mar 2025 19:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED221D86CE;
+	Thu, 27 Mar 2025 19:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+fyvt/4"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="imqEb3S2"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357B817BB21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4BA1C7018
 	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743105141; cv=none; b=OWZDK3tEyrCOSAvtb2BIXX8e5MKJ157d6oUr5Q5MbcmbhyGvjgcBNdz6j1a24vZWUWfkT9/Yf8SI2cdiOwt3JuKcHgt2QAnBk5ImMjnfmj6f7ythAUH9UnVPmH3ID1ait+M2LIM9l+uVdXPbmBjlr4z4kwuzMgBZStpkk3h1suw=
+	t=1743105143; cv=none; b=TFg0znFJzqI41enslZVwW+tvGd0lXqscVZB+/awLSaP9XrhC/PLNlh+vrJ3K7SmjVZd0EX1/BhoY7jX7CLXpypIgZqleXZt3eumJXmdNbHK0aY2d2YbA1mutZp5K8jeY6hDW2fYHCRNTnuNUOiVL22Imzk2eOrRL1aVYY1Fn6OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743105141; c=relaxed/simple;
-	bh=+fdqIDe6IZhKndHvkhWjgqzlWgI592YvC7I1hrip3vA=;
+	s=arc-20240116; t=1743105143; c=relaxed/simple;
+	bh=hTEcAgFyabQdDOMvXUf1ra7M0I32RQuujqQop3hQj8E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I5X94qH0nDV8ADrnPUZAeEQ0gxtbucsjzOe38ltEKDtGJ1Xa7LML83sh2g0hq8jJPKNh6zQbgQiZXJow4SnC6xccU4N/Ey4WXr9ckAb+2L0aTfbqH1lJPhjLrwMbkEKxC781zRxmhit8mPRdX7s+8MH68zuDhh34wAMR1Q2lpw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+fyvt/4; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=AI4VXHM0ZNOtic2cNvLZ0damQ1OI2wxA+B4ehd2kgZxmTSsIfhn3PBBMN4o90O4FmHS64OvJbSadIIODv9DtJRMJf4QBNUGr+h8X7k8wjDim1aEJjpVRopuXqySOcY0Lae63z+CY1mTl6XV9lIOiPGBajjRaRS95U9Sf52wwKVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=imqEb3S2; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743105140; x=1774641140;
+  t=1743105142; x=1774641142;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+fdqIDe6IZhKndHvkhWjgqzlWgI592YvC7I1hrip3vA=;
-  b=S+fyvt/4lJhHNjGdTUEvYWKWOr/dYlLDwdD9seidiBSo4zSQWcxW1HYG
-   O0Tmvu85CuL86DBp9N6KOO650lU2bRZLqBX/zIdabbSjMJ7+szE1t7TYy
-   tuM6FbnpaC/VQyb7BK4gnQNGXzvn3Kzt1xt9Eovm2mRJ6S1zgAKY9a5a1
-   ZYmRPqDyGrSzGn0mPVmWlo373fvHx6TbWcvZuntXRQSAoExlXB+bqd14V
-   LoCFZrNd8Hg3Uf5lxchmuWracwRTP4Hwd3hWe3J2iGY1RyHWdKIEwOCfO
-   x0ziEel65taZJ7exEcc8QlESAdt2NDkQXcnsG+db+aoMUcoUO1vFFQAz6
-   g==;
-X-CSE-ConnectionGUID: hqww/MSJQtqwHILISN89cg==
-X-CSE-MsgGUID: LFvoSiIoSCeQad75yCkasg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48115667"
+  bh=hTEcAgFyabQdDOMvXUf1ra7M0I32RQuujqQop3hQj8E=;
+  b=imqEb3S21cWvov1heHcO1YrxOFfaAdXzTSAmdiTOwWS+EYrSmRFyD9mt
+   WgqkY/69n0e5W58kMZqoN5RKlgF0BDHjy0kQKCPPIt8lWn+HiAMeiypWO
+   x2iDzq7ZzVdR0Omg/YroCn+OWpmzzjetf7WofmDp/akUaIEP1gNEwBcyH
+   WTKwUqrvF0RliR8bsQm69CT5DwH8gdBbNix+F7/kvA5//yZoBEMT5iRx+
+   dxSiA2tcghUHDApbOtDRLDdaa3wz97BTNqqnbfHH1v4N8gyJ6oEbxRmTJ
+   JdyJIB5nSzkZ+kjBUJTrRxnXgjtvxcAL8RaM6aehgbt5xVvxkR+7W7kEM
+   A==;
+X-CSE-ConnectionGUID: wX+Gp4UIRvW4oVBWRsP9Ww==
+X-CSE-MsgGUID: 7wQRXqOYT4iLPo4v53mCsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48115673"
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="48115667"
+   d="scan'208";a="48115673"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
   by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 12:52:18 -0700
-X-CSE-ConnectionGUID: Tfbb/jUYTD6CftDED50nLA==
-X-CSE-MsgGUID: a88/Py6rTam2CyWaKNq3fA==
+X-CSE-ConnectionGUID: RojT5B91QWyeDEZl5Wby3g==
+X-CSE-MsgGUID: XTOR6rydQLeoz78q4ArLQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
-   d="scan'208";a="125207688"
+   d="scan'208";a="125207692"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by fmviesa007.fm.intel.com with ESMTP; 27 Mar 2025 12:52:17 -0700
 From: kan.liang@linux.intel.com
@@ -69,9 +69,9 @@ To: peterz@infradead.org,
 Cc: eranian@google.com,
 	thomas.falcon@intel.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 2/5] perf/x86/intel: Track the num of events needs late setup
-Date: Thu, 27 Mar 2025 12:52:14 -0700
-Message-Id: <20250327195217.2683619-3-kan.liang@linux.intel.com>
+Subject: [PATCH V4 3/5] perf: Extend the bit width of the arch-specific flag
+Date: Thu, 27 Mar 2025 12:52:15 -0700
+Message-Id: <20250327195217.2683619-4-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250327195217.2683619-1-kan.liang@linux.intel.com>
 References: <20250327195217.2683619-1-kan.liang@linux.intel.com>
@@ -85,109 +85,89 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-When a machine supports PEBS v6, perf unconditionally searches the
-cpuc->event_list[] for every event and check if the late setup is
-required, which is unnecessary.
+The auto counter reload feature requires an event flag to indicate an
+auto counter reload group, which can only be scheduled on specific
+counters that enumerated in CPUID. However, the hw_perf_event.flags has
+run out on X86.
 
-The late setup is only required for special events, e.g., events support
-counters snapshotting feature. Add n_late_setup to track the num of
-events that needs the late setup.
+Two solutions were considered to address the issue.
+- Currently, 20 bits are reserved for the architecture-specific flags.
+  Only the bit 31 is used for the generic flag. There is still plenty
+  of space left. Reserve 8 more bits for the arch-specific flags.
+- Add a new X86 specific hw_perf_event.flags1 to support more flags.
 
-Other features, e.g., auto counter reload feature, require the late
-setup as well. Add a wrapper, intel_pmu_pebs_late_setup, for the events
-that support counters snapshotting feature.
+The former is implemented. Enough room is still left in the global
+generic flag.
 
 Tested-by: Thomas Falcon <thomas.falcon@intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/intel/core.c | 14 ++++++++++++++
- arch/x86/events/intel/ds.c   |  3 +--
- arch/x86/events/perf_event.h |  5 +++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/events/perf_event_flags.h | 41 +++++++++++++++---------------
+ include/linux/perf_event.h         |  2 +-
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 2a3f802e3ab9..66c42f856636 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2603,6 +2603,8 @@ static void intel_pmu_del_event(struct perf_event *event)
- 		intel_pmu_lbr_del(event);
- 	if (event->attr.precise_ip)
- 		intel_pmu_pebs_del(event);
-+	if (is_pebs_counter_event_group(event))
-+		this_cpu_ptr(&cpu_hw_events)->n_late_setup--;
- }
- 
- static int icl_set_topdown_event_period(struct perf_event *event)
-@@ -2914,12 +2916,24 @@ static void intel_pmu_enable_event(struct perf_event *event)
- 	}
- }
- 
-+void intel_pmu_late_setup(void)
-+{
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+
-+	if (!cpuc->n_late_setup)
-+		return;
-+
-+	intel_pmu_pebs_late_setup(cpuc);
-+}
-+
- static void intel_pmu_add_event(struct perf_event *event)
- {
- 	if (event->attr.precise_ip)
- 		intel_pmu_pebs_add(event);
- 	if (intel_pmu_needs_branch_stack(event))
- 		intel_pmu_lbr_add(event);
-+	if (is_pebs_counter_event_group(event))
-+		this_cpu_ptr(&cpu_hw_events)->n_late_setup++;
- }
- 
+diff --git a/arch/x86/events/perf_event_flags.h b/arch/x86/events/perf_event_flags.h
+index 1d9e385649b5..70078334e4a3 100644
+--- a/arch/x86/events/perf_event_flags.h
++++ b/arch/x86/events/perf_event_flags.h
+@@ -2,23 +2,24 @@
  /*
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 1f7e1a692a7a..486881fe162e 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1355,9 +1355,8 @@ static void __intel_pmu_pebs_update_cfg(struct perf_event *event,
- }
+  * struct hw_perf_event.flags flags
+  */
+-PERF_ARCH(PEBS_LDLAT,		0x00001) /* ld+ldlat data address sampling */
+-PERF_ARCH(PEBS_ST,		0x00002) /* st data address sampling */
+-PERF_ARCH(PEBS_ST_HSW,		0x00004) /* haswell style datala, store */
+-PERF_ARCH(PEBS_LD_HSW,		0x00008) /* haswell style datala, load */
+-PERF_ARCH(PEBS_NA_HSW,		0x00010) /* haswell style datala, unknown */
+-PERF_ARCH(EXCL,			0x00020) /* HT exclusivity on counter */
+-PERF_ARCH(DYNAMIC,		0x00040) /* dynamic alloc'd constraint */
+-PERF_ARCH(PEBS_CNTR,		0x00080) /* PEBS counters snapshot */
+-PERF_ARCH(EXCL_ACCT,		0x00100) /* accounted EXCL event */
+-PERF_ARCH(AUTO_RELOAD,		0x00200) /* use PEBS auto-reload */
+-PERF_ARCH(LARGE_PEBS,		0x00400) /* use large PEBS */
+-PERF_ARCH(PEBS_VIA_PT,		0x00800) /* use PT buffer for PEBS */
+-PERF_ARCH(PAIR,			0x01000) /* Large Increment per Cycle */
+-PERF_ARCH(LBR_SELECT,		0x02000) /* Save/Restore MSR_LBR_SELECT */
+-PERF_ARCH(TOPDOWN,		0x04000) /* Count Topdown slots/metrics events */
+-PERF_ARCH(PEBS_STLAT,		0x08000) /* st+stlat data address sampling */
+-PERF_ARCH(AMD_BRS,		0x10000) /* AMD Branch Sampling */
+-PERF_ARCH(PEBS_LAT_HYBRID,	0x20000) /* ld and st lat for hybrid */
+-PERF_ARCH(NEEDS_BRANCH_STACK,	0x40000) /* require branch stack setup */
+-PERF_ARCH(BRANCH_COUNTERS,	0x80000) /* logs the counters in the extra space of each branch */
++PERF_ARCH(PEBS_LDLAT,		0x0000001) /* ld+ldlat data address sampling */
++PERF_ARCH(PEBS_ST,		0x0000002) /* st data address sampling */
++PERF_ARCH(PEBS_ST_HSW,		0x0000004) /* haswell style datala, store */
++PERF_ARCH(PEBS_LD_HSW,		0x0000008) /* haswell style datala, load */
++PERF_ARCH(PEBS_NA_HSW,		0x0000010) /* haswell style datala, unknown */
++PERF_ARCH(EXCL,			0x0000020) /* HT exclusivity on counter */
++PERF_ARCH(DYNAMIC,		0x0000040) /* dynamic alloc'd constraint */
++PERF_ARCH(PEBS_CNTR,		0x0000080) /* PEBS counters snapshot */
++PERF_ARCH(EXCL_ACCT,		0x0000100) /* accounted EXCL event */
++PERF_ARCH(AUTO_RELOAD,		0x0000200) /* use PEBS auto-reload */
++PERF_ARCH(LARGE_PEBS,		0x0000400) /* use large PEBS */
++PERF_ARCH(PEBS_VIA_PT,		0x0000800) /* use PT buffer for PEBS */
++PERF_ARCH(PAIR,			0x0001000) /* Large Increment per Cycle */
++PERF_ARCH(LBR_SELECT,		0x0002000) /* Save/Restore MSR_LBR_SELECT */
++PERF_ARCH(TOPDOWN,		0x0004000) /* Count Topdown slots/metrics events */
++PERF_ARCH(PEBS_STLAT,		0x0008000) /* st+stlat data address sampling */
++PERF_ARCH(AMD_BRS,		0x0010000) /* AMD Branch Sampling */
++PERF_ARCH(PEBS_LAT_HYBRID,	0x0020000) /* ld and st lat for hybrid */
++PERF_ARCH(NEEDS_BRANCH_STACK,	0x0040000) /* require branch stack setup */
++PERF_ARCH(BRANCH_COUNTERS,	0x0080000) /* logs the counters in the extra space of each branch */
++PERF_ARCH(ACR,			0x0100000) /* Auto counter reload */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 2fa0cd6772f1..aaffe31b78da 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -144,7 +144,7 @@ struct hw_perf_event_extra {
+  * PERF_EVENT_FLAG_ARCH bits are reserved for architecture-specific
+  * usage.
+  */
+-#define PERF_EVENT_FLAG_ARCH			0x000fffff
++#define PERF_EVENT_FLAG_ARCH			0x0fffffff
+ #define PERF_EVENT_FLAG_USER_READ_CNT		0x80000000
  
- 
--static void intel_pmu_late_setup(void)
-+void intel_pmu_pebs_late_setup(struct cpu_hw_events *cpuc)
- {
--	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct perf_event *event;
- 	u64 pebs_data_cfg = 0;
- 	int i;
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index d6d56568e11f..84943243b05d 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -261,6 +261,7 @@ struct cpu_hw_events {
- 	struct event_constraint	*event_constraint[X86_PMC_IDX_MAX];
- 
- 	int			n_excl; /* the number of exclusive events */
-+	int			n_late_setup; /* the num of events needs late setup */
- 
- 	unsigned int		txn_flags;
- 	int			is_fake;
-@@ -1598,6 +1599,8 @@ void intel_pmu_disable_bts(void);
- 
- int intel_pmu_drain_bts_buffer(void);
- 
-+void intel_pmu_late_setup(void);
-+
- u64 grt_latency_data(struct perf_event *event, u64 status);
- 
- u64 cmt_latency_data(struct perf_event *event, u64 status);
-@@ -1654,6 +1657,8 @@ void intel_pmu_pebs_disable_all(void);
- 
- void intel_pmu_pebs_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sched_in);
- 
-+void intel_pmu_pebs_late_setup(struct cpu_hw_events *cpuc);
-+
- void intel_pmu_drain_pebs_buffer(void);
- 
- void intel_pmu_store_pebs_lbrs(struct lbr_entry *lbr);
+ static_assert((PERF_EVENT_FLAG_USER_READ_CNT & PERF_EVENT_FLAG_ARCH) == 0);
 -- 
 2.38.1
 
