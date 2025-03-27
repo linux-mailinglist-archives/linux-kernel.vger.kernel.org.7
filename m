@@ -1,185 +1,147 @@
-Return-Path: <linux-kernel+bounces-578555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD90FA73388
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:44:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F71A7338E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ACE616AC2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF21116F6C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99C4215791;
-	Thu, 27 Mar 2025 13:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD9C213256;
+	Thu, 27 Mar 2025 13:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pjFoo+a1"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="lQ5T7J3T"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821F2215180
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743083093; cv=none; b=Ic7qmu0JNMxVn6FwtXvd7VVJTehIzXLKiFBqb+nH23lmzuBda/ndmoYpzjBI8+nG9gxoNAHZ0nDmevGuT+2oKFvU6JRMYEaAzuVMCZ35hmEb1VidQIvU/An+LiK76z7ONClWRhsxM3Ev2Cel9XvfqKjyJ9amG4wf6A5Eb0mXVSE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743083093; c=relaxed/simple;
-	bh=+8qPATH2HU9gwTeERrkruIa/ZTb6ByUOe6zVYLhAwRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IP5wRTkR7/J1YTfzSYsMrLDLQvYuDmDoxsLkEAepqF/SiiAG2Fg/Ku3tnsfx+8ooq65D7o/YxIFatgZroRI4EDCH63iRwqL49yK3RfdBGMrlSaUMyoW0JLNbljOZx2sRnYvFUBlFGFCmJ6yRQmAkUHloHppAQbtq7sp2MX2HMJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pjFoo+a1; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4772f48f516so21249531cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743083090; x=1743687890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6WBmIHYNxH2hNbnztSUM0YQzeS33DRZ8fFAtqoGQFWc=;
-        b=pjFoo+a1vmvmeGoXbrD9ufhqtY/eIDG41U5P0E+mCI1eUvKf6qsSU0iyDvGYHpTMRZ
-         w4H0cEE1SL4rDMYovt8no73Pq4xXrmWMd2fYTrE7a2Gkex5Ova7vTuJ7Q244kDpORuDx
-         p5U7WEhagSA+ujUvAYq3BY6xkvTNe5jOAuuPVtMb0voJWtGcpTiHEH3nt33DwZeB1yJO
-         jAG8gz8atvvcV6Q8t5YDsOk2IEKx46RzT6gjVijDKLcICp7kF17F/NhF2kXn/qACvVuo
-         2k/6dGMOP2Z1pkAKZbV/+zCGV2MJAStfhy/Yb7Hbt/eY5SJ3bRYCxj91eiDNbNqZMjZj
-         82kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743083090; x=1743687890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6WBmIHYNxH2hNbnztSUM0YQzeS33DRZ8fFAtqoGQFWc=;
-        b=plV/7FxlSRylD9ihZVPImfBERgCUYPKBzc+AmN6gjl60QvUzvTz6+3VBUlWo7q56rM
-         dvu83wfKiah4fz+TmeNyZLnDdy4KnGvA4gHRxuF2gR4A04GuDm0PDOZRLxNwT0G/sRsO
-         Llnyi6Tcal62N8L3vgT5vQgWvP/dV5TbPd8KkiC5tXJxfDxTxfQaV6mtZkFfDfo1VIJs
-         JfcabHJkr3fr8aPHdacaYb4nL/mdfSX/vjSA4nWREenKaNJ2UIGOsTdYafPlXWT1HaXG
-         geQiCy2gwojGKTNREV5zzyHYPHzMrCymkHtYojfAKGVYmTsxRQUIdv8aP7YWUPS8IG3j
-         ViqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdj8p04y2afyVX3okd5FzQ+14xqzHy1fqhPqFKiBK9U7xB+s0o50zzCiAsSwKl5sifJGJ4wdPL6rSNF7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3V8Wocsb+W8Pbkcn3bV3Fj2HRSQ+vDJVr+IrLdgzgOnCvireW
-	6LodnW/W3i4Y3RX6JzFpc8SJ225YSm/jLoXc8TNsf/rPNkH2vEXwzCj9rJ92tjug27LIjUFeCza
-	+WT/hHBJeqbxUI61TWcfNWmQvrnf1FK3luwSj
-X-Gm-Gg: ASbGncvFFvmXfpQwAtdnm186GG2flpinQekyZQkFiXCRqC7bRo3dpi0TFuKxekJF3dF
-	c47aUlyKy1/4Ot3BkgohgrwoDZvc5qkSNXn7rk/cNg4QGfsolqmubhua2XyE0BLQo56QMcedXa3
-	b82NVw2KN88OFlwND5BnCc271WsMc=
-X-Google-Smtp-Source: AGHT+IEWhxaHLHGXV1mslhQ21zSlluJIiMobOHGWwfdwPV4FGN4ZX2GDfzSu9mFinq8HolGVw+mb5MiSpprY8RZqK4w=
-X-Received: by 2002:a05:622a:4ac6:b0:471:b32e:c65d with SMTP id
- d75a77b69052e-4777f82ef6emr4678161cf.19.1743083090165; Thu, 27 Mar 2025
- 06:44:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AEA20DD4D;
+	Thu, 27 Mar 2025 13:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743083223; cv=pass; b=DsMfWXEGi4xxsamCy/js1e/8vL83ZM3HGB2dVP1x5O/Rr+8eJqTE67pY9+JtigUyI2TrPxlG8OQ/kGivyYT3PyXdCpCB/4xB5vPkl6LK7ku/ku0QKQFziyBQr9OeOmPtLvCBv0LRD1y5gDcOVQBOAzPm1maciIR81dTcGdGwFoU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743083223; c=relaxed/simple;
+	bh=SLUxjfTytuTXkm0ZV5mwqh8ZxkVkPIHWO5tXHBHT3Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDT0UGj7ocEIw2JVriUn7faaEAxgs99D2zu4iTpg7nmtxjOcboNyiFo9kh4ri4AeKY8ZiZOID+h2+TWXfHVIVE3sO/1Gb+WtNNk57TMWWz+gcud2Hki7usJYDbiFKmHmNnHF4MeFPHqBNW/yOsni/QF5GOsgdjZ07vtmutk3CpI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=lQ5T7J3T; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743083196; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=NVYMy9HnNLqGZG42kIKaNWeUamhFYNAVgfBG1tqLMhUYnILfAzLS908F1HdJRSnBQS+SUnnTcODgzoZKoFqiq7brP0Lrh0EC3JOw7Wv8YMk8XRhFoVMb2cnWx1r9FAD4xTC8c0l+9DBUC033oV7Zwf9js4JarkF+UT2mVoeRVJo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743083196; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ehwn0eQcEIVrlPhTdcgJsA+l7jiw8BKWzcfn+2hit6M=; 
+	b=hZYTrDx5O5oJwTQz+FUWaSxwevdbjO0lZYBxCAi41ON4LOZUWtQ/uANBaTPaopo5aWysI8Fc5+2Nah8SuE8fZOrAE2jPAFYsHMXvcWat6h90/WdL2wHfptFsdn0MWtsp4m8Cm+5sAmzKj4ijkT8Iet0VJX/0XU6OqUdjmEHKEM0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743083196;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=ehwn0eQcEIVrlPhTdcgJsA+l7jiw8BKWzcfn+2hit6M=;
+	b=lQ5T7J3TIvcUHiFIKN9JmJLijCyY3Auv4iBU4toqnmwDQJ0k0gUeyjGSj+M7tgOW
+	LwUoTEhd9ZtAFeNNukjUNwmY9mCOZX+c70L9AlIbf9dacIPOh7drc11ROC8BEN3G0a7
+	fXJqer+Jpvu2luXFR7SqELomUkaDRPRdVamPoy/c=
+Received: by mx.zohomail.com with SMTPS id 1743083195187729.6171611042369;
+	Thu, 27 Mar 2025 06:46:35 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 669F4180510; Thu, 27 Mar 2025 14:46:30 +0100 (CET)
+Date: Thu, 27 Mar 2025 14:46:30 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, lgirdwood@gmail.com, broonie@kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
+ abstraction
+Message-ID: <opip2gbm6tpjqnx4hqk4mghbkhv7egexeqs5ukfn7oz3mm7nev@y7qffwz5ckdz>
+References: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202503241406.5c9cb80a-lkp@intel.com> <87pli4z02w.ffs@tglx>
- <6sn76aya225pqikijue5uv5h3lyqk262hc6ru3vemn7xofdftd@sw7gith52xh7>
- <CANn89iKjCgmxtiLeVAiXODHbbR7=gYYi5cfAS1hS5qn+z=-o1Q@mail.gmail.com>
- <877c4azyez.ffs@tglx> <CANn89iKAkio9wm73RNi9+KngNaS+Au2oaf0Tz9xOd+QEhFSkyw@mail.gmail.com>
- <CANn89i+nAN+p-qRypKxB4ESohXkKVPmHuV_m86j3DPv6_+C=oQ@mail.gmail.com>
- <87v7ruycfz.ffs@tglx> <CANn89iJvxYsF0Y9jH+Oa2=akrydR8qbWAMbz_S6YZQMSe=2QWQ@mail.gmail.com>
- <87jz8ay5rh.ffs@tglx> <CANn89i+r-k-2UNtnyWC6PaJmO_R6Wc6UROgeoir5BmgVV8wDqQ@mail.gmail.com>
- <CAGudoHHVJWeRWPyArnYnJERPR2gyU0PzBTwx=wWKnCemry45Nw@mail.gmail.com>
-In-Reply-To: <CAGudoHHVJWeRWPyArnYnJERPR2gyU0PzBTwx=wWKnCemry45Nw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 27 Mar 2025 14:44:39 +0100
-X-Gm-Features: AQ5f1Jqj0hl3MGq_fBgn4lV2nPWlCqeAKMvuOzfv5-Zz2OFt_YiqJpvkXJEMWQc
-Message-ID: <CANn89iLGof+T6Ksp56vTXpwKdn60cJ7FWrm-Y-3TNmCNW+Hq_A@mail.gmail.com>
-Subject: Re: [tip:timers/core] [posix] 1535cb8028: stress-ng.epoll.ops_per_sec
- 36.2% regression
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Benjamin Segall <bsegall@google.com>, Frederic Weisbecker <frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 27, 2025 at 2:43=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Thu, Mar 27, 2025 at 2:17=E2=80=AFPM Eric Dumazet <edumazet@google.com=
-> wrote:
-> >
-> > On Thu, Mar 27, 2025 at 2:14=E2=80=AFPM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> > >
-> > > On Thu, Mar 27 2025 at 12:37, Eric Dumazet wrote:
-> > > > On Thu, Mar 27, 2025 at 11:50=E2=80=AFAM Thomas Gleixner <tglx@linu=
-tronix.de> wrote:
-> > > >> Cute. How much bloat does it cause?
-> > > >
-> > > > This would expand 'struct ucounts' by 192 bytes on x86, if the patc=
-h
-> > > > was actually working :)
-> > > >
-> > > > Note sure if it is feasible without something more intrusive like
-> > >
-> > > I'm not sure about the actual benefit. The problem is that parallel
-> > > invocations which access the same ucount still will run into contenti=
-on
-> > > of the cache line they are modifying.
-> > >
-> > > For the signal case, all invocations increment rlimit[SIGPENDING], so
-> > > putting that into a different cache line does not buy a lot.
-> > >
-> > > False sharing is when you have a lot of hot path readers on some othe=
-r
-> > > member of the data structure, which happens to share the cache line w=
-ith
-> > > the modified member. But that's not really the case here.
-> >
-> > We applications stressing all the counters at the same time (from
-> > different threads)
-> >
-> > You seem to focus on posix timers only :)
->
-> Well in that case:
-> (gdb) ptype /o struct ucounts
-> /* offset      |    size */  type =3D struct ucounts {
-> /*      0      |      16 */    struct hlist_node {
-> /*      0      |       8 */        struct hlist_node *next;
-> /*      8      |       8 */        struct hlist_node **pprev;
->
->                                    /* total size (bytes):   16 */
->                                } node;
-> /*     16      |       8 */    struct user_namespace *ns;
-> /*     24      |       4 */    kuid_t uid;
-> /*     28      |       4 */    atomic_t count;
-> /*     32      |      96 */    atomic_long_t ucount[12];
-> /*    128      |     256 */    struct {
-> /*      0      |       8 */        atomic_long_t val;
->                                } rlimit[4];
->
->                                /* total size (bytes):  384 */
->                              }
->
-> This comes from malloc. Given 384 bytes of size it is going to be
-> backed by a 512-byte sized buffer -- that's a clear cut waste of 128
-> bytes.
->
-> It is plausible creating a 384-byte sized slab for kmalloc would help
-> save memory overall (not just for this specific struct), but that
-> would require extensive testing in real workloads. I think Google is
-> in position to do it on their fleet and android? fwiw Solaris and
-> FreeBSD do have slabs of this size and it does save memory over there.
-> I understand it is a tradeoff, hence I'm not claiming this needs to be
-> added. I do claim it does warrant evaluation, but I wont blame anyone
-> for not wanting to do dig into it.
->
-> The other option is to lean into it. In this case I point out the
-> refcount shares the cacheline with some of the limits and that it
-> could be moved to a dedicated line while still keeping the struct <
-> 512 bytes, thus not spending more memory on allocation. the refcount
-> changes less frequently than limits themselves so it's not a big deal,
-> but it can be adjusted "for free" if you will.
->
-> while here I would probably change the name of the field. A reference
-> counter named "count" in a struct named "ucounts", followed by an
-> "ucount" array is rather unpleasing. How about s/count/refcount?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ublvsxzjg6uy6qpe"
+Content-Disposition: inline
+In-Reply-To: <20250326-topics-tyr-regulator-v2-1-780b0362f70d@collabora.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/243.29.94
+X-ZohoMailClient: External
 
 
-How many 'struct ucounts' are in use in a typical host ?
+--ublvsxzjg6uy6qpe
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH RESEND v2] rust: regulator: add a bare minimum regulator
+ abstraction
+MIME-Version: 1.0
 
-Compared to other costs, this seems pure noise to me.
+Hi,
+
+On Wed, Mar 26, 2025 at 03:39:33PM -0300, Daniel Almeida wrote:
+> +    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
+> +        // SAFETY: It is safe to call `regulator_get()`, on a device pointer
+> +        // received from the C code.
+> +        let inner = from_err_ptr(unsafe { bindings::regulator_get(dev.as_raw(), name.as_ptr()) })?;
+> +
+> +        // SAFETY: We can safely trust `inner` to be a pointer to a valid
+> +        // regulator if `ERR_PTR` was not returned.
+> +        let inner = unsafe { NonNull::new_unchecked(inner) };
+> +
+> +        Ok(Self { inner })
+> +    }
+
+I think it's worth discussing using regulator_get() VS
+regulator_get_optional(). We somehow ended up with the C regulator
+API being more or less orthogonal to other in-kernel C APIs (clocks,
+gpio, reset, LED) with the _optional suffixed version returning
+-ENODEV for a missing regulator (and thus needing explicit handling)
+and the normal version creating a dummy regulator (and a warning).
+
+Considering the Rust API is new, it would be possible to let the
+Rust get() function call regulator_get_optional() instead and then
+introduce something like get_or_dummy() to call the normal
+regulator_get() C function.
+
+I see reasons in favor and against this. I just want to make sure it
+has been considered before the API is being used, which makes it a
+lot harder to change.
+
+Greetings,
+
+-- Sebastian
+
+--ublvsxzjg6uy6qpe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmflVrIACgkQ2O7X88g7
++pq9zA/9FENRJp4Q0a5/LfXxwh5lGHBar89GysLA5RJRRQG6kURjfTzWhMeND0tU
+ZN0o9TA9vfg85DmYM3zLFvuNBKZvclGIQrapwVjWgYFomQL3O9EGSf6GG/fdIhIF
+M4k4qQPsDWhd+/pKS15bBPQp1XhSRhxxFrCwEQkn6uBiRhPupxBfaU3ezrqz8/yB
+samus3LsVYXHa6eKZ6BT52rnFyPkNeDvjJte6WRNMRTKxnmLNVVcH3yJ6BXG2J5f
+wJzdjyCY1nk7JbDKGOiClsZbR17LyQdQMjZD6Vh/0ejddY83IZ1EPylyMP2t0AHm
+DLL6WXo53CWd024SMRiC9cPOFpFTBTK1AjgleJRmls4G6LqrPX7TTYisH0IqDEVA
+DqTACMskQovxZ9ObR9tX1j24275IlBBneLbi6f9UqeZ9opu4u/Fk3s0luEySKU4+
+gaggrWgo9o6MQzFiLK5F1RqQ8yhSDYQuSd8DRgSKdfwrORGN6wmz5vnOGz3Qf/ba
+uNDeK9GtuhWD7A+hdM1kAGdHxC2Fi0KZD/ob/T+R4QEKvUHepaNtuhy0euhARQtT
+UN6ymILyCuhU6p5zLfmL7pUjaE+JmVO8qo977Ja6mY1Gwv8z77yR1GOBi3FI1H6d
+UW0eGuLAr8p0eEn5ieWgzvDvL3X/SjOPipmhyf7ORGT7azxuV+g=
+=NRAH
+-----END PGP SIGNATURE-----
+
+--ublvsxzjg6uy6qpe--
 
