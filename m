@@ -1,146 +1,177 @@
-Return-Path: <linux-kernel+bounces-578605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3F5A73420
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:17:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA7EA73432
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CC13BF93A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51774189E457
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663CD217F53;
-	Thu, 27 Mar 2025 14:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0504B217F40;
+	Thu, 27 Mar 2025 14:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjGJ7ec1"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/8oDAGy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B24214A98;
-	Thu, 27 Mar 2025 14:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9FB215781;
+	Thu, 27 Mar 2025 14:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743084951; cv=none; b=o2h2za0L6yVnytL2qgoN7Z8PUeMAoC/BBjbArdxl9hBJo4fiYYDxb1zGaEo9PMtVEG6UunVhdz+PL3W9cXLLdSIDZq46j2SrtoX7ErtWdxgAZauhLWTHHiy7cIqsFgJ2A7Gvu0/jt9PvQmQfLJxKSJ4FkVWLQTzmhb5kg1fc5k4=
+	t=1743085001; cv=none; b=uWIXyBf7o4TMpNUQj0xWMhOVLZXniwf13UsP4L6pyma6oI/rhLaaNAVvNQF1t8LH1z0IHk2dUb0ecS0VQy1FmmLocU8UD8CIRIZlk26GgfwXpFvQtfXOchcgWoXfh141A4q2Zimnzed7lR5JCUjNaB8T1uTis90cXoabnO6NxB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743084951; c=relaxed/simple;
-	bh=M/9iLSgPAvBEvcRj/91c2/vxVJRa76X4X1+UONc6k7g=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkFmekbhyEYqPmWY2xvyGC9hDWk0oFTLLw+rFDYHlQimF1OLRJL+KmrdX9kvQYyogOxtPSGmfU3N4zDHFi1w0QIcW0STcCOl/mXB9PRPY6hDNQhc9+CID5pY2mU0j98VmeD9H/X45zNm4ojnLAlE70yMh572cGXLOqcgjEhjvgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjGJ7ec1; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39149bccb69so890405f8f.2;
-        Thu, 27 Mar 2025 07:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743084948; x=1743689748; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsPfvFNFiYpWeexMGdkrslH41pW1FMvcmq+GTlkBH+w=;
-        b=IjGJ7ec1Bd6jvKPZoDNI0z8iixTInzQPjfLRUlSaQ8WIEkV9HP3aeKjVeJmRk2damj
-         jLUGovlLGrm7KCk+MgKQu6V3Kb0bA0I8gelhuVf9YB2vEz2nLM+UW8EN+/3bbSfZUXXB
-         qCzvVovmNWTHO6wzSON0LD8g4eb6oWqjl+MokQiUo6qGIP0JroPJQO5W8WbPUGZ/IbOV
-         fHpJwYL/exEdN3ATid0XTapvaLLAxIpW8g+R3YIQZx4Y9/h9FnxlLk2YmKW1I3KeD1EG
-         0U/IPpczx3LkLva9Ll30DhoL9TqUq7RjNShvu3HWZXLsBJr1exPlM0pbe42H2TIqs8I9
-         /FgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743084948; x=1743689748;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZsPfvFNFiYpWeexMGdkrslH41pW1FMvcmq+GTlkBH+w=;
-        b=TyhKUPckJ+lHbDIhBRVjdOiTejXaH60qnqem6Ki2MEV2Z2ZBptDzxI5wf5POCetKpo
-         ufbSIdfhuhtax2/dKDj7p2TdXVo1l582Z4A7rlBG3wt+EMkk8WvFGn1MzVWjs0AOylw9
-         ocoS/GK0KBXweF7SER34XV1oP/n8u5kmBE7UgMNbqK7UvOp0nD087I18cFfjgv1v4G/s
-         qo9faOgqG5FQOPjbiSlRORhbl2KKrKX+K3nD5eKM4fKGP9LqVAgHYf1ELpQtaxKIhTBR
-         kDaIFrPQzjNWeZSyhapBFc2fVALwS+oqDdOSAYLFGNGungk+jtlvnyukOMceiydMoCU7
-         D01w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhdZtq8o8G3YcbF2+HWHxzOnCeqisrHO0JDAc48ztfquNsLjp5pHDCRKJcSuGd+2SaaWh91eTkUbAB@vger.kernel.org, AJvYcCV3y62anG+Oy8TfnWrVltPU46M4Ke8DnJ/uErm0ZvHDrKinIAll4ns2gH9hbsotdMyxcRZBSciR+SfeBX/M@vger.kernel.org, AJvYcCWEL+QLTbXsZgErl+4fksctux8yKeKhF2NYB4a9/AF9RyOe1CVlXTg76Upbk7cIIfpxPPwCCGTX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX076B3+/FH0+yo71wgKWC95JWIHmrSI1xdffGm+fBEVc48XH4
-	IRNkkC6y1umBDxJSTJom+B5YocRwMCL0WvLGAH+FoddbL+2mTT3y
-X-Gm-Gg: ASbGncvUS+bZKmde3aOjVDw17iG53MhkFkyLCiEZnKiXKmBVZD7/lLgIEmjSQjYkxMA
-	qNE2BBMK+KqxfIEvZlBnebvHJbPzGl2PLWOGG+eTTNIBsgXrcLDPmrlbeHLuo65Z3SZJ4WDjru2
-	cny/47n5r78VjYEPx4sjxqeI/N3FcyTRkvvknypSH6HuxtMh4KNbPOp0Udh+HpFGzgOqjqn9y5Z
-	MCWb084ukCaLl3qUFGg5DLrUEXX0nueybieWy0by244jYdQjD/N3cV7rb37vFZQP07QQGheibX6
-	QbFtG51itzRgBgfXwK8qU2uzj/TRD2jfyNyJcs7pI6X/sd3hlJhlxw2ve0ycxk4BMchfobhIMWJ
-	8
-X-Google-Smtp-Source: AGHT+IGXejG6SSWE1qsqlV2SDFl6w1YGt8KTotTLV2mFe3yEQtSfi86doGIB0kaHG0uCeBfkHHrEAw==
-X-Received: by 2002:a05:6000:184b:b0:391:441b:baac with SMTP id ffacd0b85a97d-39ad1773e93mr2692945f8f.50.1743084947937;
-        Thu, 27 Mar 2025 07:15:47 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e83620sm38992435e9.12.2025.03.27.07.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 07:15:46 -0700 (PDT)
-Message-ID: <67e55d92.050a0220.2fa7e9.5d6b@mx.google.com>
-X-Google-Original-Message-ID: <Z-VdkOhLT-4q4NQb@Ansuel-XPS.>
-Date: Thu, 27 Mar 2025 15:15:44 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Eric Woudstra <ericwouds@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH v3 1/4] net: phy: pass PHY driver to
- .match_phy_device OP
-References: <20250326233512.17153-1-ansuelsmth@gmail.com>
- <20250326233512.17153-2-ansuelsmth@gmail.com>
- <Z-UxZMJR7-Hp_7d0@shell.armlinux.org.uk>
+	s=arc-20240116; t=1743085001; c=relaxed/simple;
+	bh=b6mdXoFJkSMTCeoswVCOOV3ePYqQZEbz8t5B8vz+5og=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XZax6mUEwouEP9kUtxTonnKv1zVVjg8poOvse5wUtGyjo+RR9+YzqRYQ8UcoHqMRlCGNvxNafarK9jzqh64UTN+YI7jkRGAfPLx9Upjd08cqDmVA+4JypRCC/kKKuBhqy7SM2FlQSlPwLzA+/3JFRjeGP0j1ff5/+inKdjZejB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/8oDAGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70042C4CEDD;
+	Thu, 27 Mar 2025 14:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743085000;
+	bh=b6mdXoFJkSMTCeoswVCOOV3ePYqQZEbz8t5B8vz+5og=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c/8oDAGyX9TRQLi2a/0QQEn+/bs8GrQ5NiidqUKS7viWhVlT/t3QCkJYMuruY/Eg9
+	 tXV39OH0mSg4cxPjzrE/uo/5E84GYRnlYVDDxnvIpFmpGIEY+MYSjZWnlLtC6pTcxg
+	 Wy87fniqwzMhg+/18l3R3nWGd/ludStxhCZvbpmnGg91EHaHS+xIFku3ltWS36I+qy
+	 smNoQAwY4xtuVjcWgcGa7k4/GCfMhXd3o8eOZ+NeJpbEU/hDiuIasHSTdL6OPYIL7i
+	 vYtDq78ruOS+4FWWuZ/JVRns+1Co2QnzFqdjQQDlhXS3aWE373KFg1yB0nohv0TKt/
+	 6C/PSQYjRrTyw==
+Message-ID: <fc1c6ded-2246-4d09-90b4-c0a264962ab3@kernel.org>
+Date: Thu, 27 Mar 2025 15:16:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-UxZMJR7-Hp_7d0@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Enhance the PCIe controller driver
+To: Manikandan Karunakaran Pillai <mpillai@cadence.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Milind Parab <mparab@cadence.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250327105429.2947013-1-mpillai@cadence.com>
+ <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 27, 2025 at 11:07:16AM +0000, Russell King (Oracle) wrote:
-> On Thu, Mar 27, 2025 at 12:35:01AM +0100, Christian Marangi wrote:
-> > Pass PHY driver pointer to .match_phy_device OP in addition to phydev.
-> > Having access to the PHY driver struct might be useful to check the
-> > PHY ID of the driver is being matched for in case the PHY ID scanned in
-> > the phydev is not consistent.
-> > 
-> > A scenario for this is a PHY that change PHY ID after a firmware is
-> > loaded, in such case, the PHY ID stored in PHY device struct is not
-> > valid anymore and PHY will manually scan the ID in the match_phy_device
-> > function.
-> > 
-> > Having the PHY driver info is also useful for those PHY driver that
-> > implement multiple simple .match_phy_device OP to match specific MMD PHY
-> > ID. With this extra info if the parsing logic is the same, the matching
-> > function can be generalized by using the phy_id in the PHY driver
-> > instead of hardcoding.
-> > 
-> > Suggested-by: Russell King (Oracle) <linux@armlinux.org.uk>
+On 27/03/2025 11:59, Manikandan Karunakaran Pillai wrote:
+> Enhances the exiting Cadence PCIe controller drivers to support second
+> generation PCIe controller also referred as HPA(High Performance
+> Architecture) controllers.
 > 
-> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> The patch set enhances the Cadence PCIe driver for the new high
+> performance architecture changes. The "compatible" property in DTS
+> is added with  more strings to support the new platform architecture
+> and the register maps that change with it. The driver read register
+> and write register functions take the updated offset stored from the
+> platform driver to access the registers. The driver now supports
+> the legacy and HPA architecture, with the legacy code being changed 
+> minimal. The TI SoC continues to be supported with the changes 
+> incorporated. The changes are also in tune with how multiple platforms
+> are supported in related drivers.
 > 
-> Please also update the email address in the suggested-by to match the
-> one in my reviewed-by for the next resend.
+> Patch 1/7 - DTS related changes for property "compatible"
+> Patch 2/7 - Updates the header file with relevant register offsets and
+>             bit definitions
+> Patch 3/7 - Platform related code changes
+> Patch 4/7 - PCIe EP related code changes
+> Patch 5/7 - Header file is updated with register offsets and updated
+>             read and write register functions
+> Patch 6/7 - Support for multiple arch by using registered callbacks
+> Patch 7/7 - TIJ72X board is updated to use the new approach
 > 
-> Thanks!
->
+> Comments from the earlier patch submission on the same enhancements are
+> taken into consideration. The previous submitted patch links is
+> https://lore.kernel.org/lkml/CH2PPF4D26F8E1C205166209F012D4F3A81A2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com/
+> 
+> The scripts/checkpatch.pl has been run on the patches with and without 
+> --strict. With the --strict option, 4 checks are generated on 1 patch
+> (patch 0002 of the series), which can be ignored. There are no code 
+> fixes required for these checks. The rest of the 'scripts/checkpatch.pl'
+> is clean.
+> 
+> The changes are tested on TI platforms. The legacy controller changes are
+> tested on an TI J7200 EVM and HPA changes are planned for on an FPGA 
+> platform available within Cadence.
+> 
+> Manikandan K Pillai (7):
+>   dt-bindings: pci: cadence: Extend compatible for new platform
+>     configurations
+>   PCI: cadence: Add header support for PCIe next generation controllers
+>   PCI: cadence: Add platform related architecture and register
+>     information
+>   PCI: cadence: Add support for PCIe Endpoint HPA controllers
+>   PCI: cadence: Update the PCIe controller register address offsets
+>   PCI: cadence: Add callback functions for Root Port and EP controller
+>   PCI: cadence: Update support for TI J721e boards
+> 
 
-kernel test robot made me aware that this cause error with
-nxp-c45-tja11xx. I was on an old net-next branch and didn't notice the
-""recent"" changes to macsec support. I'm updating this and keeping the
-reviewed-by tag, hope it's OK.
+Why your patches are not properly threaded? I see only one patch.
 
-Also adding the simplify commit as suggested that recive the
-match_phy_device.
+Same story was for this:
+https://lore.kernel.org/all/CH2PPF4D26F8E1CE4E18E9CC5B8DAF724DCA2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com/
 
--- 
-	Ansuel
+BTW, that's continuation, so version correctly your patches and provide
+detailed changelog.
+
+Best regards,
+Krzysztof
 
