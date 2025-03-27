@@ -1,105 +1,84 @@
-Return-Path: <linux-kernel+bounces-578267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA2FA72D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:11:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8375BA72D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18041886054
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8128E1895F2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F21A20E330;
-	Thu, 27 Mar 2025 10:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BB20E027;
+	Thu, 27 Mar 2025 10:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XSr+DglZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UHy8kk/3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4817320E331
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D013E433C8;
+	Thu, 27 Mar 2025 10:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743070093; cv=none; b=ZzPlzKHbYByeOEnyfkpLEwT5ZrTU/BXOVXgiWPzpnUMKmKtU64W9ZIb6KNnrC3sCCQGOdT5tBHz5393jKGkKhm7ueWQOMIVE/1vz90nmX6t5jxdcCSD7SouOp5yqEJPb+LWIG+KY1j7+zqk1ndNAavi+MkoR7dMqbJQA+MCMYEA=
+	t=1743070173; cv=none; b=sZBqfUedoiQtJ45V2xSN8bjX8hiQ3G3m0s9OnvSgKtIsOuvd1h+5T09LaktYbHtL1OVdD/4n6cm8Gukx0MQuL4dvch/L7EhDZ4oORj2nf3DkEbVaB6baAYP4xlRLK6J65Vph7Ca3EXVUZgNB1S7FCJpucI5gTdfc+xPGlCmbYko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743070093; c=relaxed/simple;
-	bh=lmxrzIS+d76Qh3zL9kdazJJMQfZpNeJz82hwqqtwmOI=;
+	s=arc-20240116; t=1743070173; c=relaxed/simple;
+	bh=d8XG/C09xjfs3CzpZIdecMSM3/jWhXt87UX1vhyMoaU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLYK2v1CnSJJKdl6mZjqJOXgOeYr2kRxLicljYWMRlhJXZ04ufDW3tIL18fSjgpuRRxBX1KzRZCVV7Htwe1Yj5JxQIJHMYFETxpMIJTaDqkmL3EfhRAs0tLWXBRcjxG5uHGl2nPovWs2tFl3nG1ATy9+DBQpz+XZ6BjGoBcPDPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XSr+DglZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jFjF024938
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:08:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=v9Zn3NFoa6qbW13srYFRWI0q
-	FLJJSbYP/Owvwt3xu9A=; b=XSr+DglZxUlwrJiiVO6p2cbRjHyH9VV5LZH6k+Fv
-	2GhmzyQyJcpVvaTm0RUMLq/Hc9lJV81nRU1PSfzhvOm3h4bw1r5Lek1WRZwP/OQD
-	TIVgqX4HH6ZU+6cniNZbXxsd4NtVY1PQDiplHWWDJCHFqM5XT+o4TpbkYjt8NGpI
-	S8f24e5OKX2Fdb156tPJx53nE6gEgK+Md1zndI8/nmTvTrY9m+EHaWFJ2nSuqw/3
-	W/1mfodS6oxPlaLK474YWT6DPmXOzgy6EyRDbmSaqTk7wWN4eHjkw0x88alqs/vw
-	M+li+dQx4KOk7njtoU1o5wJnpgy5cKFD5XxCmM2GDziF1w==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd4r539-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:08:11 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c579d37eeeso126232285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:08:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743070090; x=1743674890;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v9Zn3NFoa6qbW13srYFRWI0qFLJJSbYP/Owvwt3xu9A=;
-        b=UTmXehfL9+an4J/tlWQ6MI0P1fW2aB/0hYW6l2AZ2NQwGI7unCyALHfbji3VH8dYts
-         IaaUzkGIAZuDbeBpTOsE9G5sNVqkiXpefqM7m0tXZvMKnFLYusPf0ow5kpVv4kASxd7D
-         okG4/+FX5V6J1lGF5GO0IuiyTM/fUQWYKOtULn7AfYhnjxls+4R7I1o8r+6vgu2qyAEu
-         VkbZrl9F1boHekeUn02GItH/O9Tf/v1TvT7w2eL307dBhV+BNnPXJlo1tMMjBQPQCJz6
-         ixBijjTNfiOcy92hcLfPlibRN85gvcWFTImblVPKRJE/MA+DFzhY5wcYDOzq+vEjtPt9
-         ybQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK5lQNnJm1ZUz2s9aTxiT3FwiLaHchZ/uSUUKnSAN1FeDWbK9vclKzeoBzthCtCHhDiR+gIIqbbuAf6X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTDDYZrKQJWZmiBIh7Xw3y2yGhWxG/FtoUcSF1Lh1OdBzeQ9bd
-	VsmghhRp8PdFwrzn1klf+yjj4cVQW5xCb0Fy4ag3PkT8c6DkYm0FCEifucLMCGilcXEiiY9nt0A
-	xv30D5JMUqv4oiwvElt0NhPuUnWjESYFK63tOwQN8YB8RoDuDYNjMPAKDkZioaO0=
-X-Gm-Gg: ASbGncuza8j4omdL7LUBHBR07/G6YlFCVSOTZvVAvxLeWOQ9l/tRHwd0UhOCn2TSFhK
-	5pbLHsLARM5ItdlLJhO/UsvH28E/qNccyctfIwvs7OrdyzvRstZ+T/aDOpjHzVEBGXHdEOxcyUQ
-	yr88bcUMSjHc1yySHIariGkxgLY4YcwG2yulyoJPzN91gt4wRYSA0J+ZfpUbVhAAbRENNORfdco
-	t2if/1VbPreHU2Q1Suy/I3hD5adxaQXUBbXLQobv7Nt6W3Ivz5FjjYkty5nIvxPY5QX42fRNgj5
-	4i2q2m/yAdPFz+jfQt+k9j7Ky8B0s22YRLpXgiLYuoTwxc/nFK+Ri2wgw6A+jkeH++3Bj8SVzdP
-	Tbjw=
-X-Received: by 2002:a05:620a:31a2:b0:7c5:5e9f:eb30 with SMTP id af79cd13be357-7c5ed9fd929mr351144785a.15.1743070089909;
-        Thu, 27 Mar 2025 03:08:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfo1HINB6YcRjR3qV8lWRD2r7J0TP04aAmHGCotilIOFQMpC4PSzHQ5mqIDTl1lKVyghovcg==
-X-Received: by 2002:a05:620a:31a2:b0:7c5:5e9f:eb30 with SMTP id af79cd13be357-7c5ed9fd929mr351139785a.15.1743070089450;
-        Thu, 27 Mar 2025 03:08:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647b635sm2029989e87.63.2025.03.27.03.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 03:08:08 -0700 (PDT)
-Date: Thu, 27 Mar 2025 12:08:05 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Marc Gonzalez <mgonzalez@freebox.fr>,
-        Dmitry Baryshkov <lumag@kernel.org>, Arnaud Vrac <avrac@freebox.fr>,
-        Sayali Lokhande <quic_sayalil@quicinc.com>,
-        Xin Liu <quic_liuxin@quicinc.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 09/12] arm64: dts: qcom: sm6350-pdx213: Wire up USB
- regulators
-Message-ID: <voosrd5xx72gh2p5qbsp6ghdkm2jo4m5psrm5h2gmzi7rrmsmo@53qpvewgzd5t>
-References: <20250327-topic-more_dt_bindings_fixes-v2-0-b763d958545f@oss.qualcomm.com>
- <20250327-topic-more_dt_bindings_fixes-v2-9-b763d958545f@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzrRj4RMLf4hgzf3kmshharbwOU39S2uKBvtSbzHcAU4r6AwvD3EkJ1ZHHeoX3FxK+417qpYlO7GATTC8g3LYKFIimHDvtr9csFPH6mjPc2mAf8CBHmx4j6su++ES5KaB90l/8s1XIMo9+Rw7777Bjxmg/G/ovs2QCDaoUePVmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UHy8kk/3; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743070172; x=1774606172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d8XG/C09xjfs3CzpZIdecMSM3/jWhXt87UX1vhyMoaU=;
+  b=UHy8kk/3AY8awiHiHtMQukm3zy72t70CYYNxS9pMzGPtAJZVUWHu02jD
+   bWqctvcKXEuWhUj6smvsLSpLBOfDPYr/XqoOy9MeHau7zEcx8GXG6/CxG
+   5uY3kk+DNj8kwlFqoXf3WzRIRnHmvgN4B4UFPLe3PAwcnxSY+3m+CXr+S
+   lmsKXlFCeKJ+vXrpndZOoH9ItWpQzEXt/GV17HEifZu3bYcAlSlVKND4N
+   nICtID8Usg+JkDHTKKSfQBScj8PMvhTjhfeN3KI8wsgbTdxskTVGxK+hE
+   Dt0qWjfmOCZAnFN2p/IC+Rh/cok1SFQNIKhG4/XIn1aEf+/P4IyHI22Rx
+   Q==;
+X-CSE-ConnectionGUID: c9Dc2yeVQuWKXMOj8ZxfHA==
+X-CSE-MsgGUID: xaauNgO5Tke7xnGVwjE9Pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="55760011"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="55760011"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:09:31 -0700
+X-CSE-ConnectionGUID: AIRUMm0sQ2SXk8zCZXAaPw==
+X-CSE-MsgGUID: Lj332GGXTXenW6TOIDBV2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="129775600"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 03:09:28 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 6D06A11F99F;
+	Thu, 27 Mar 2025 12:09:25 +0200 (EET)
+Date: Thu, 27 Mar 2025 10:09:25 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: kieran.bingham@ideasonboard.com, Shravan.Chippa@microchip.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Luis Garcia <git@luigi311.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] media: i2c: imx334: Support 4 or 8 lane operation
+ modes
+Message-ID: <Z-Uj1VnLKQH09__5@kekkonen.localdomain>
+References: <20250310071751.151382-1-tarang.raval@siliconsignals.io>
+ <20250310071751.151382-5-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,35 +87,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250327-topic-more_dt_bindings_fixes-v2-9-b763d958545f@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: 3HOidaENR0Me5fe8QbM3nLoJm62PU9VL
-X-Proofpoint-GUID: 3HOidaENR0Me5fe8QbM3nLoJm62PU9VL
-X-Authority-Analysis: v=2.4 cv=QLZoRhLL c=1 sm=1 tr=0 ts=67e5238b cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=iXEU_j0xfCFYBHAbzAYA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 phishscore=0
- mlxlogscore=630 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503270068
+In-Reply-To: <20250310071751.151382-5-tarang.raval@siliconsignals.io>
 
-On Thu, Mar 27, 2025 at 02:47:11AM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi Tarang,
+
+On Mon, Mar 10, 2025 at 12:47:46PM +0530, Tarang Raval wrote:
+> imx334 can support both 4 and 8 lane configurations.
+> Extend the driver to configure the lane mode accordingly.
 > 
-> Wire up the regulators based on the downstream release to appease the
-> devicetree checker.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
 > ---
->  arch/arm64/boot/dts/qcom/sm6350-sony-xperia-lena-pdx213.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/media/i2c/imx334.c | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
 > 
+> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
+> index 24ccfd1d0986..23bfc64969cc 100644
+> --- a/drivers/media/i2c/imx334.c
+> +++ b/drivers/media/i2c/imx334.c
+> @@ -47,6 +47,8 @@
+>  #define IMX334_EXPOSURE_DEFAULT	0x0648
+>  
+>  #define IMX334_REG_LANEMODE            CCI_REG8(0x3a01)
+> +#define IMX334_CSI_4_LANE_MODE         3
+> +#define IMX334_CSI_8_LANE_MODE         7
+>  
+>  /* Window cropping Settings */
+>  #define IMX334_REG_AREA3_ST_ADR_1      CCI_REG16_LE(0x3074)
+> @@ -107,7 +109,6 @@
+>  /* CSI2 HW configuration */
+>  #define IMX334_LINK_FREQ_891M	891000000
+>  #define IMX334_LINK_FREQ_445M	445500000
+> -#define IMX334_NUM_DATA_LANES	4
+>  
+>  #define IMX334_REG_MIN		0x00
+>  #define IMX334_REG_MAX		0xfffff
+> @@ -181,6 +182,7 @@ struct imx334_mode {
+>   * @exp_ctrl: Pointer to exposure control
+>   * @again_ctrl: Pointer to analog gain control
+>   * @vblank: Vertical blanking in lines
+> + * @lane_mode: Mode for number of connected data lanes
+>   * @cur_mode: Pointer to current selected sensor mode
+>   * @mutex: Mutex for serializing sensor controls
+>   * @link_freq_bitmap: Menu bitmap for link_freq_ctrl
+> @@ -204,6 +206,7 @@ struct imx334 {
+>  		struct v4l2_ctrl *again_ctrl;
+>  	};
+>  	u32 vblank;
+> +	u32 lane_mode;
+>  	const struct imx334_mode *cur_mode;
+>  	struct mutex mutex;
+>  	unsigned long link_freq_bitmap;
+> @@ -240,7 +243,6 @@ static const struct cci_reg_sequence common_mode_regs[] = {
+>  	{ IMX334_REG_HADD_VADD, 0x00},
+>  	{ IMX334_REG_VALID_EXPAND, 0x03},
+>  	{ IMX334_REG_TCYCLE, 0x00},
+> -	{ IMX334_REG_LANEMODE, 0x03},
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Not a fault of this patch but also the closing brace should have a space
+before it. Could you address it in the earlier patches?
+
+>  	{ IMX334_REG_TCLKPOST, 0x007f},
+>  	{ IMX334_REG_TCLKPREPARE, 0x0037},
+>  	{ IMX334_REG_TCLKTRAIL, 0x0037},
+> @@ -876,6 +878,13 @@ static int imx334_start_streaming(struct imx334 *imx334)
+>  		return ret;
+>  	}
+>  
+> +	ret = cci_write(imx334->cci, IMX334_REG_LANEMODE,
+> +			imx334->lane_mode, NULL);
+> +	if (ret) {
+> +		dev_err(imx334->dev, "failed to configure lanes\n");
+> +		return ret;
+> +	}
+> +
+>  	ret = imx334_set_framefmt(imx334);
+>  	if (ret) {
+>  		dev_err(imx334->dev, "%s failed to set frame format: %d\n",
+> @@ -1022,7 +1031,14 @@ static int imx334_parse_hw_config(struct imx334 *imx334)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (bus_cfg.bus.mipi_csi2.num_data_lanes != IMX334_NUM_DATA_LANES) {
+> +	switch (bus_cfg.bus.mipi_csi2.num_data_lanes) {
+> +	case 4:
+> +		imx334->lane_mode = IMX334_CSI_4_LANE_MODE;
+> +		break;
+> +	case 8:
+> +		imx334->lane_mode = IMX334_CSI_8_LANE_MODE;
+
+Doesn't this affect the PLL configuration? Presumably higher frame rates
+could be achieved at least.
+
+> +		break;
+> +	default:
+>  		dev_err(imx334->dev,
+>  			"number of CSI2 data lanes %d is not supported\n",
+>  			bus_cfg.bus.mipi_csi2.num_data_lanes);
 
 -- 
-With best wishes
-Dmitry
+Regards,
+
+Sakari Ailus
 
