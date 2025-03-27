@@ -1,189 +1,156 @@
-Return-Path: <linux-kernel+bounces-578136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED130A72B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:17:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CC0A72B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC46D3BB7A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48F2E7A2C10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584DA200B85;
-	Thu, 27 Mar 2025 08:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A9D1FFC60;
+	Thu, 27 Mar 2025 08:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P17ZkbrS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h1qX1ibi"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEDC1FFC68;
-	Thu, 27 Mar 2025 08:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F1F53E23
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743063355; cv=none; b=T6rLIYMClKQeXIDzGDY6Kq0oO/vMsaEmJUwhFTsop+prjecdNTaqxSMFAc3lnyLlmXvtqLF8vBOvtXFafwx5sHQKq4+QtiUBxc9NagJI6rbGIHtH9V1r3HaSO6GqhwpqjQs0Ur1Xhcz1KPHHrAe0PS3FrG3WAh7WeeSL9Yh0M1s=
+	t=1743063285; cv=none; b=VKmTDdXLV7qTx4mN0fNLA7RiKqh+x21H1q3tXiKR2PhOJqvjJ5go64RcxNiMddFvAcJR2Bp4PfZWUo9EUQz88Mdqh5QkFo1Pz5cRsxWtCSp83fZQjs+KlL9LofjRxm4r5JLnsZ+yztkcsYXFD4Zv5KzDQFDRgcD0U1sgi00Dv5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743063355; c=relaxed/simple;
-	bh=M+VJbvrV0xAs0puHDDM7SCsYcFRVHseqxgAnzW2L6uw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UH8wFzsSEeMV05rfFGZLNBZN2O1shROpefaxgb2s92q9xrWOYhcCgaT+sanLv3Ko8oXA0cw6TTYkn+EDTGJ4ug27B0cf405O0pS1vVKd88g0HtY2rbP+8eNoFTmL31J6Sd/AXWMyBdF8fTCaGLQ9YbiKlkNUR1PVPD8YLuwrcCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P17ZkbrS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA56C4CEDD;
-	Thu, 27 Mar 2025 08:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743063354;
-	bh=M+VJbvrV0xAs0puHDDM7SCsYcFRVHseqxgAnzW2L6uw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P17ZkbrSSG/JqLf81qx/GabaQUddarxJby0Zfrkvg0nZBExjMiRnpG6mfUANruUfE
-	 iB+LDHxSfiIJZoWEituwDAi5D6aIxq7BWF1aADxmFdBABfd9ynZNt4sBjjPs2GepGo
-	 dKYq079bSkbOHsqtanCQpqwUN1wQvdvjx8Gqbl5seQMEBktB36Nb2nLXda2yZ8YKj7
-	 aqVNjD12i/WDHOov3uzmTuWEThvF9An00IVdSR5F9zJry0KEOXBghUT8rHkdozE4JU
-	 psk5Ut0RPpFju4gk6E5WnhJXCarvYc+CUmcT1OEJ5LoRAX/OXK9RhfLENKL/g7wXp2
-	 dDgBuH16P2cUQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1txiP7-0000000059o-0EEp;
-	Thu, 27 Mar 2025 09:15:57 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dennis Gilmore <dgilmore@redhat.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] arm64: dts: qcom: x1e78100-t14s: enable SDX62 modem
-Date: Thu, 27 Mar 2025 09:14:27 +0100
-Message-ID: <20250327081427.19693-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1743063285; c=relaxed/simple;
+	bh=dqDAKLbnS5sjnD7NkwvXo/kZFn7+fO2d0R6Ff+ZBKJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q3DqnPLzHe+L786wPjfluYOsnLAK1EV5KVTbwrQJzJci61Ha0PQ6lm7AQfdGWSAS3e76DYKm/8cfmHxYsTTsDs0sG/8lfB4FXQnLl6NLXneIIcPfd8AXAzUgIV4bID3ZQeasoVpjaUfOX79bUqwk94Uhbi9YEmekk3NghWBCo9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h1qX1ibi; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2263428c8baso115185ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 01:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743063283; x=1743668083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h9a5QRkmmOyJeIvB5Cn9PmXfV97y4kQAOBXvf9QzfDM=;
+        b=h1qX1ibi9fM1XUcL6NrpzaPOn028Ine3Rf2tl6ZF1NVV0eQRqIEx6VhdC3oSKoGpgg
+         THur3ZekWWo/5f0FUBO/ij9ah4vMBpjJ1Btliaj9X06+TGfUeMIwjyTDjHC1/UY4jrBX
+         6RPBF1oQS/fSpDzJa7T5j3gWDMFFVIySuDELVGmot50uzj0nlNq7zNBZN9vdyUjxFPcD
+         iI939mdFfF2h7k8wcYuulfLD50UH03ekSjFLpkxb7AJpANJzymGs3xzYPC8qdvAJu0QS
+         OOwgR+2ZGy1uemrZ3ioc2Mv5QH+PBJI0WbqWoDwlnjxnPObh1OuyKZ2qBvuiytfIcSQk
+         5ufA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743063283; x=1743668083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h9a5QRkmmOyJeIvB5Cn9PmXfV97y4kQAOBXvf9QzfDM=;
+        b=GUiAAOk0xWeReu64FqUgtXsvMSiLPXSnQ8qArra6aaqzifmD9FXI2sfZbLffJqVd7R
+         OtF+TbpbXeZAqp2SmePR1y8rBH4Yfv8uhTHYMNierLdJWTB2OSidMr1XMG5FXWvPO3Dc
+         qh/yYs10RQkk4NRxtu3sStL1x708+CcQ42ec6IyXx3ehkPIXv/AbA/PDm7/AA1tAoENj
+         QIT86UL9TRHk6QBIjPZieUOEKo3X2To2flgNmZqHHumnBRTMaiQz9B4FJQQMOoBUVUt+
+         6xaXnYnqVTUBBHq+FVRBF1FOBKnZQCK9Y6IxDqw0+lfVRBZwCasbfZwc5y6DpqbPKeij
+         bH1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXmBm3HSB0fnYKYse3Bte1Zcv7lXlcpL8xkU6AnYHQkxCU7EZU8UY0o48rDO7ipAajkNIQ+05UiTvn/oag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI0QiCBq5WcaIWUavSTpBIfOBux49FztMWUjQ6ytrUJU+NLgyk
+	sVji2pa7kVyOFagtlt7iwIBk/E/TD/H0N379zddOFucaioqOK71M1a/Kden7dSbOqMv9dYhJ+9p
+	zJHU2vojZx/hlXjV90bkW7UfpDYOwEc31eoBq
+X-Gm-Gg: ASbGncscSHYZY/m6JygDmPfglLTAiCXFluuEYDa7xnN1Sfg/yVqt54RQVkswfhb0asl
+	R3vj9nPpfQ8K1s4Sie1h11zr70QKOiNoQGFx+Ckeah8YEldbhNfND96eaDuYkRkuckcVlk28+T6
+	LSZUj6kUVU2FMNFlWFzePgDYl3wZahepzKsQNNgS/bdkD3nLQSvgs2+dn+zZnzEHJQkUlzAg==
+X-Google-Smtp-Source: AGHT+IHgfzrQlEamv4gYgjx/fwFVnfQvhKeODD0LFSb3f0rLf6g/j0CVYOoteVLkG0M+nr3xqexqfLuYGBQj9X7EB6c=
+X-Received: by 2002:a17:903:1a0b:b0:215:8723:42d1 with SMTP id
+ d9443c01a7336-22806bc133bmr1942515ad.10.1743063282486; Thu, 27 Mar 2025
+ 01:14:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250313181629.17764-1-adrian.hunter@intel.com>
+In-Reply-To: <20250313181629.17764-1-adrian.hunter@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 27 Mar 2025 01:14:29 -0700
+X-Gm-Features: AQ5f1JpB0AViQmQuFfLvDkCuf5x_Lo9CiwkMjG3MaJ-5wwbn2bayOkBOcIzzqck
+Message-ID: <CAGtprH_o_Vbvk=jONSep64wRhAJ+Y51uZfX7-DDS28vh=ALQOA@mail.gmail.com>
+Subject: Re: [PATCH RFC] KVM: TDX: Defer guest memory removal to decrease
+ shutdown time
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org, 
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com, 
+	kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com, 
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, 
+	isaku.yamahata@intel.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, 
+	chao.gao@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable PCIe5 and the SDX62 modem present on some T14s.
+On Thu, Mar 13, 2025 at 11:17=E2=80=AFAM Adrian Hunter <adrian.hunter@intel=
+.com> wrote:
+> ...
+> =3D=3D Problem =3D=3D
+>
+> Currently, Dynamic Page Removal is being used when the TD is being
+> shutdown for the sake of having simpler initial code.
+>
+> This happens when guest_memfds are closed, refer kvm_gmem_release().
+> guest_memfds hold a reference to struct kvm, so that VM destruction canno=
+t
+> happen until after they are released, refer kvm_gmem_release().
+>
+> Reclaiming TD Pages in TD_TEARDOWN State was seen to decrease the total
+> reclaim time.  For example:
+>
+>         VCPUs   Size (GB)       Before (secs)   After (secs)
+>          4       18              72              24
+>         32      107             517             134
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
+If the time for reclaim grows linearly with memory size, then this is
+a significantly high value for TD cleanup (~21 minutes for a 1TB VM).
 
-I don't have a modem in my T14s, but this is based on the work I did to
-enable the modem on the CRD reference design and the T14s schematics.
+>
+> Note, the V19 patch set:
+>
+>         https://lore.kernel.org/all/cover.1708933498.git.isaku.yamahata@i=
+ntel.com/
+>
+> did not have this issue because the HKID was released early, something th=
+at
+> Sean effectively NAK'ed:
+>
+>         "No, the right answer is to not release the HKID until the VM is
+>         destroyed."
+>
+>         https://lore.kernel.org/all/ZN+1QHGa6ltpQxZn@google.com/
 
-I'm hopping Dennis will be able to help out with testing.
+IIUC, Sean is suggesting to treat S-EPT page removal and page reclaim
+separately. Through his proposal:
+1) If userspace drops last reference on gmem inode before/after
+dropping the VM reference
+    -> slow S-EPT removal and slow page reclaim
+2) If memslots are removed before closing the gmem and dropping the VM refe=
+rence
+    -> slow S-EPT page removal and no page reclaim until the gmem is around=
+.
 
-Note that we may possibly need a new entry for SDX62 in the MHI driver
-device id table (mhi_pci_id_table) as well. The output of 'lspci -n'
-will tell.
+Reclaim should ideally happen when the host wants to use that memory
+i.e. for following scenarios:
+1) Truncation of private guest_memfd ranges
+2) Conversion of private guest_memfd ranges to shared when supporting
+in-place conversion (Could be deferred to the faulting in as shared as
+well).
 
-Johan
+Would it be possible for you to provide the split of the time spent in
+slow S-EPT page removal vs page reclaim?
 
-
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index 962fb050c55c..8b3f715bfc0b 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -310,6 +310,22 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_wwan: regulator-wwan {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VCC3B_WAN_RCM";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 221 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wwan_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	sound {
- 		compatible = "qcom,x1e80100-sndcard";
- 		model = "X1E80100-LENOVO-Thinkpad-T14s";
-@@ -1028,6 +1044,25 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie5 {
-+	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
-+
-+	vddpe-3v3-supply = <&vreg_wwan>;
-+
-+	pinctrl-0 = <&pcie5_default>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie5_phy {
-+	vdda-phy-supply = <&vreg_l3i_0p8>;
-+	vdda-pll-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -1309,6 +1344,29 @@ wake-n-pins {
- 		};
- 	};
- 
-+	pcie5_default: pcie5-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio150";
-+			function = "pcie5_clk";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio149";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio151";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	pcie6a_default: pcie6a-default-state {
- 		clkreq-n-pins {
- 			pins = "gpio153";
-@@ -1367,6 +1425,13 @@ wcd_default: wcd-reset-n-active-state {
- 		bias-disable;
- 		output-low;
- 	};
-+
-+	wwan_sw_en: wwan-sw-en-state {
-+		pins = "gpio221";
-+		function = "gpio";
-+		drive-strength = <4>;
-+		bias-disable;
-+	};
- };
- 
- &usb_1_ss0_hsphy {
--- 
-2.48.1
-
+It might be worth exploring the possibility of parallelizing or giving
+userspace the flexibility to parallelize both these operations to
+bring the cleanup time down (to be comparable with non-confidential VM
+cleanup time for example).
 
