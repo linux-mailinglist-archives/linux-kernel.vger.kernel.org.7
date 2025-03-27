@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-577846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C15A727BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 01:22:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0472A727BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 01:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7890D3A5FD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24584179DF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 00:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824015695;
-	Thu, 27 Mar 2025 00:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4132749C;
+	Thu, 27 Mar 2025 00:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fg/NIX9f"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Bi4wlPxh"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE165256D;
-	Thu, 27 Mar 2025 00:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3DE2576
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 00:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743034956; cv=none; b=VZqkhnZusD3/jOY1SiImRHfbvQFHu2q9oY0Q/nJJNwQmZW9kw9H/3NhBTE4gRE3H2TL7HcrbsRxFTrD3oJ0usyCpfg5EvXtZjrI+6y+78QwAdXMPEj2pkFmw9XRAQxU+qgvNz3glTp3fWG53KWRiQhzZqHSPPQIn9Q9vhl1QedQ=
+	t=1743035054; cv=none; b=I6RQRuNHyLYL0tvmoTyLicyIYrXnQhLNT4vk9xhFQ8+zwBnqlPpJClo6EugNp1UPNfR7w4AMGqWC8iiW4u7tQdgIhPO7BN32kakZ4+3pvWETqUYD71zhRRlwbyqr/MEjrzqBqd6XRKhEhy4UpYmRjHDbq5EzOEVY4mIqyilIsbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743034956; c=relaxed/simple;
-	bh=m2ou00RWSTPISt5+LGR9ErqICdduZd2KOzoJ7WVS2/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHQp6hiZKaapliwE2Zew9FF5nSe2OPEgH0D5LEN1Iv/kcEQtbqfAVF3nONRXI6lKfO7NI5jef75p7VLeqXXRjNYENvy938YbEVdBczxloADZzd6AVrosgRcCOlzN9244hVLsKZS+I/A+mXhXueyuMcZ+K7uWJkRCdIkLIBGtvzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fg/NIX9f; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=04l0Ano4NKttJ//41wioFP+enerKAade9veITCjqTko=; b=fg/NIX9f2E7OJfnXH977f+rIIJ
-	FOk3Ua/V5k8O9Xjl9/wVH3nXgoQI+fajg7WM9Y+5dLJV5o3RySVI7+X4qMfdNKNL/cSSfAoE1T4nf
-	skdelG3FvBe88K2LwCVyWQ/g1Kc6RCeg7yQI+hNyOjYT2xlytdunGsExyZyVlFginzVby06aOxmI2
-	RLSm/TnlLlKyQxM3my1OcXRLugecsbvspPVzvDtwmytlcalLGyEjNdRs/0tQLpp0bfX5+dW4HPQyM
-	v4nwWM5HeT4bKfqkBG8nZWyIXfSXXSKJO2yBBxrPJTUQJWL3CNKr1ZFYWqq9IGNdX5BorVZvs1Acc
-	hVhBtv5g==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txb0w-00000005sNH-0wc6;
-	Thu, 27 Mar 2025 00:22:31 +0000
-Message-ID: <870f6a20-7edc-4115-a700-11c886f181cf@infradead.org>
-Date: Wed, 26 Mar 2025 17:22:26 -0700
+	s=arc-20240116; t=1743035054; c=relaxed/simple;
+	bh=5wafyIN48zJ4F4r7LP1sidlLxsmu0xaWh8EwA4NGr6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XYBH2U3JrnbxqZO7MIVKx8Jl7EqjWsDOB/VgGg1zS2mN09KohrnZxVDKwmlIMUZyfkGT1QDSbYf22qKC+4tXKg9QGJOggrJwhLk//bJu9Ghv31WCtICaxVnCzY7Z9VNRzZrreaC1qk61JM+G6BAVZtSympbW2LhCWo2YOkmwH64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Bi4wlPxh; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QK0UIa024616;
+	Thu, 27 Mar 2025 00:23:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=w6qCVgdk5TdFH+HvwXZjDm65omEih
+	uaEMZMZo2bKcC0=; b=Bi4wlPxhxYzWZ3KuFM7vi4bvEcGJL9m9wLd/5vLCAeSJZ
+	rzko2haXAvLTAyBH3CK/L+FhKsBmf8WPYtYGzOI94aGC24FLB2sAqfazo6cTN3xp
+	r1zVHJf1FaW3xQv4swicr+1aWCznyWvmX4aqwM/pebIS29wwraPXBBX42gCyO4qI
+	E8JhECtWyqCQN1VE+8EknN4yHYrK6aCz1PwIS1dr2+HpMpmmIbFb0bCmYtKb+8YX
+	npnuJJm/vewW58mMeJ1VeyFP+fz2vcHSvo5eAjQ/Os71U0w3+251B1LeAKnyLBZI
+	MH/lo3Tcd98VjcgOPICuBfFyMFP5DmBsRyUVe7/lA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45mqft8ka5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Mar 2025 00:23:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52QMDTGj016011;
+	Thu, 27 Mar 2025 00:23:52 GMT
+Received: from clb-2-bm-ad2.osdevelopmeniad.oraclevcn.com (clb-2-bm-ad2.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.172])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45jj9465pr-1;
+	Thu, 27 Mar 2025 00:23:52 +0000
+From: Libo Chen <libo.chen@oracle.com>
+To: peterz@infradead.org, mgorman@techsingularity.net, longman@redhat.com
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, tj@kernel.org
+Subject: [PATCH v2 0/2] sched/numa: skip VMA scanning on memory pinned
+Date: Wed, 26 Mar 2025 17:23:50 -0700
+Message-ID: <20250327002352.203332-1-libo.chen@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Mar 26 (drivers/media/cec/i2c/tda9950)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
- Russell King <rmk+kernel@armlinux.org.uk>
-References: <20250326165619.58d443f8@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250326165619.58d443f8@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ mlxlogscore=758 mlxscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2503270001
+X-Proofpoint-GUID: bwx0NLRix8ZQm_iXcRIc0REHGNTgj-6W
+X-Proofpoint-ORIG-GUID: bwx0NLRix8ZQm_iXcRIc0REHGNTgj-6W
+
+v1->v2:
+1. add perf improvment numbers in commit log. Yet to find perf diff on
+will-it-scale, so not included here. Plan to run more workloads.
+2. add tracepoint.
+3. To peterz's comment, this will make it impossible to attract tasks to
+those memory just like other VMA skippings. This is the current
+implementation, I think we can improve that in the future, but at the
+moment it's probabaly better to keep it consistent.
 
 
+Libo Chen (2):
+  sched/numa: skip VMA scanning on memory pinned to one NUMA node via
+    cpuset.mems
+  sched/numa: Add tracepoint that tracks the skipping of numa balancing
+    due to cpuset memory pinning
 
-On 3/25/25 10:56 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20250325:
-> 
-
-on x86_64, when CONFIG_I2C=m and
-CONFIG_CEC_NXP_TDA9950=y:
-
-ld: vmlinux.o: in function `tda9950_write_range':
-tda9950.c:(.text+0x1225126): undefined reference to `i2c_transfer'
-ld: vmlinux.o: in function `tda9950_read':
-tda9950.c:(.text+0x122553f): undefined reference to `i2c_transfer'
-ld: vmlinux.o: in function `tda9950_irq':
-tda9950.c:(.text+0x122573e): undefined reference to `i2c_transfer'
-ld: vmlinux.o: in function `tda9950_driver_init':
-tda9950.c:(.init.text+0x726a3): undefined reference to `i2c_register_driver'
-ld: vmlinux.o: in function `tda9950_driver_exit':
-tda9950.c:(.exit.text+0x54fc): undefined reference to `i2c_del_driver'
-
+ include/trace/events/sched.h | 31 +++++++++++++++++++++++++++++++
+ kernel/sched/fair.c          |  9 +++++++++
+ 2 files changed, 40 insertions(+)
 
 -- 
-~Randy
+2.43.5
 
 
