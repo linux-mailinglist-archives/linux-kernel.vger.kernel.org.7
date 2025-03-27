@@ -1,156 +1,176 @@
-Return-Path: <linux-kernel+bounces-579090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C690CA73F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:57:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0973A73FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4527517A312
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:56:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5605116C77E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CDA1DD529;
-	Thu, 27 Mar 2025 20:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8546D1F8738;
+	Thu, 27 Mar 2025 20:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PE7BOpUe"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ObHWR8V9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD2B1EDA10
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D091F8749
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743108877; cv=none; b=LU41Gigy30gZUNk3F9pXxt9lPMyMZqPqK5OlP3aPmKD3SZ8ecmpliBGZtKZgWhdx4N6Ymk0hg0RrexatMdWEwFUs8Xtjn2xDMZWPoE79940x8n1xHxqM2JS8psKtyyW58r6IzVf7UaHgmeCjduV3k1SXKCX3pBsDfKpGtFriesk=
+	t=1743108904; cv=none; b=cHR/wKlY6qDvvc1nkW/RoXKyaqs3DjjPxNmSOeXGrcshqFhHzn3cLYP+8M32ojU+ecJEx7F93nrOAylu0/NJbffzQhRyKRZlX+oZahWiUMGQQNxgOucDeBgzS63ckh+ay8W/nYIwlW+sIphu0jNdwfDqu2Pb3HXJ1uC4z+cHHIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743108877; c=relaxed/simple;
-	bh=MOixnmZ5KSrzGpzYrCJ9WcwNGK7+qXqOG+AfZbuba5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBr5c06HbBKXGOPj5IFL1ebQvXXDvrulybPgMxWmgjHABHuFHq4OTo6m1ieK6+zsr2g7rrtFzMSHjTmi8fpzVWVUHJSC0txuJfuieIXXbumyqPOXJjBhrXWzSXZz6UGnCNFGnefDxK/AwlydBP+xrmbFJ78AsLyfNxt/ksPgdOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PE7BOpUe; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-54957f0c657so1656873e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:54:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1743108869; x=1743713669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e8UsDIEuQLaBq2B4bFyfUGHpD+OjquB6qiwgS7a8XjY=;
-        b=PE7BOpUev2oi5+mTZeoD7RRi4AgaLCCOkG+KFjqaMXamCIqNn8uRFcFR4j4xSlvotL
-         p0J9+sfT4o/Og3ug+MTV/Ytk7k5N5jPj60NYOp6R15uj7zi+2Vws5jR06SicpSmAI8Zu
-         LaCY23/9D6upSaWur6g7U041d+4tXcVyoe/5Q=
+	s=arc-20240116; t=1743108904; c=relaxed/simple;
+	bh=VMgHcMRYwhQ0xgu1wlvYPDPwmDJ4uxAlGWaYhde7uaM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bbVt9JbUt3XkawXnYFMvOd2T8K+FfAvbzwikyS8c9u0R4Qihd5XtrKavxiaaNPs3iIkIDCVXk4eL1ilBLa609/JqDRtevFNtHC83b91WkBy+9smiR20cpJqI1sktFwyJ5ieihweK++vQMpmgFinNeP2s4fTv0wPHCvn6JACZJ58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ObHWR8V9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52REo9aN002256
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/ly1+Z7dtjOKbmn8e5OQP6
+	L63YMAehGlgPlqCbNIXtY=; b=ObHWR8V9UUMVkVU4e65IIH3QcNKyPNdvESXpKF
+	N1SJ/8Lw+2Cbcd5itXqpBheUrVciX7yU8jf3FyOWBoMpLnCXbZnlA50XvRS5I7jV
+	ofzPva0rJSVjtHwuD1MMepKPXs4ZU0Kez8LpjBB4kC+BHroU55vE81NccGRz2sPj
+	rm5h0AFU4QQGsHcgoCRXyxwsxBeONNtRrq75Cm1Gnq6mmQ8C6BfYJJ+c+iYSOSjT
+	nhnGRqEj9w2EzD+x1JXom51yksvN6YazyA8+qVsVdjTohhZcly5rWnvRphTgxrLQ
+	pmVDNIM1G4zOLEpNwIH7rWDKDmRCYfbpHuEj6L/0cTTtZyzA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m0xdygf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:01 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2240a960f9cso24785835ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:55:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743108869; x=1743713669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e8UsDIEuQLaBq2B4bFyfUGHpD+OjquB6qiwgS7a8XjY=;
-        b=nOmIuU83QgeLWqMsFoGm7Bg2bYJwgVhf/fUuIQRWuBhm5G3WeTCoV5ZRm15NU4vr4L
-         2+GfE2bGRv2kmqBMlPwuTvjiSuhwVuRrsQbhPEQ6pdcDVIuvdw+4ySxhPEo6Au4Z6Iqy
-         FqSr2MOVQ6/YLZcVrTqbz08neeHlcdkx1dQYmm0b2sUB8ND/Aiktus7fUl1GREhEUbje
-         S6j6SyJToZ8OjnWBO7TRS38zYjCQ3W3VW2bDhkjNRfKOCzpeS5rA3deY3z99AIJdey+9
-         VhsDrgvAhLsHSvqrOg0n4OCdYV8m94Jy871v63guW2Vm0xXYdYO8DuxYmFhB+PStClY/
-         hFHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxhDZgcxJV8AxNrCLPyJpTIcRIZhaajbXlxtm32LDTgL9+jvYH7NNW4Qdsh1MkZ32657SIpJJLqmehSU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyixg+N3MIYg+UAz3nXF2k5NexhXi2Y3e0ClGiVspIpnmjbbNqa
-	DnSuLUXoImmc+X0GyOet+NssUgb+Sqac/2IrAejvmzw82mWJwcwQobW2/AAWPz17X5oGsCk8/0R
-	RND52
-X-Gm-Gg: ASbGncu2627dpl6Pj9rZG8zXQjJAqnDQV3/f/fTnxEOuw8/nOn5EzAldbBdMWS6elov
-	APtx/ITGuZPHCsNJiQpLAqDsEAzLMPbtZXtOFp7QREE5cwxrhxs5X1cn88BPYInhJ2b5r2IWvZ5
-	2sPAjD5ikdiGepjqHpuzSNbwKJ/KPi8X0ou6Uca4Lz9rc8AKO6sd7WRTJkpiBJWgraPTz0HWhkZ
-	XmdKpcLEaIFoBuk7z3TMQUCuwffNImOBA4X0nreMfqHbyTDigfHBR8Peu7pGu5RWtY6CESULjxC
-	mgtzeVCkcBPyQqa6Sbh13d7/7yDn+AKd6gH29qtpxw/95MyQiTfGf3qe5eT0E2N3NzZ6DwdAPNl
-	jf4SHWQMT
-X-Google-Smtp-Source: AGHT+IGgfJXYJoSirD0tRCwP+Ex3fowP1id/LdAZwZbfwvCY8NKMWyFPsZRRtIbbxX61Er5wiY/59w==
-X-Received: by 2002:a05:6512:334b:b0:549:929c:e896 with SMTP id 2adb3069b0e04-54b0ac79fe3mr109978e87.11.1743108869077;
-        Thu, 27 Mar 2025 13:54:29 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30dd2aa916asm801441fa.18.2025.03.27.13.54.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 13:54:28 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54957f0c657so1656786e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:54:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXCY6V5FkmaIqKpX4IRGv6lD29jf4n8O7is6Xv2nM1EXVzwRA2JHjK3eFTL29TqrZi6H7MVbZ2jfrm4hcM=@vger.kernel.org
-X-Received: by 2002:a05:6512:1145:b0:54a:f743:3137 with SMTP id
- 2adb3069b0e04-54b0acd179cmr72751e87.19.1743108866803; Thu, 27 Mar 2025
- 13:54:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743108900; x=1743713700;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ly1+Z7dtjOKbmn8e5OQP6L63YMAehGlgPlqCbNIXtY=;
+        b=EWiSLapcVzZrK0kPGVx/jN73ze6UZ7f3Az80a10sqJxyepFg9XzgqVFmPj13jzJVOY
+         2ypD4WQxl9lbFNGSHBGQCifZtUPdRntIc5gSFYsnxIeiZCLv6rz29/R7EPIcv22f6Qkz
+         r7A5BY9d8rwrskq7GW5Tq0Y0Qa51z5O+fSU+CilC2QCo41SQsM8wC/fAV74ZgtgZewEI
+         fEzNnSc1yP2C2NqXEubbmX5ZsBxRzCjqQ/97FfZRwoblBIdGW0BxMJl92YI7TSoIWMvs
+         VQEtq9xD4LyNaUpZuayQSgTqWpHus2PKuBdjHq/rF7y6Tq3BcK/la2gEV1tFGOMvj38a
+         ZRTw==
+X-Forwarded-Encrypted: i=1; AJvYcCViRb7iNx3R8VoaA9SwuBohnNdWKlzEMXbeGZ8UcT+JceveOAgaYEw9Q5hw2WdGrew/SQyZfxJV2hGcqQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh8aOfgs6IWvtGLoxcAAbCAcJ3HggIyKqkSqstofgulVApEGSL
+	Vwu445Mf4IRZDD9ykUiBFmgxMpM9hUFrsbQLjDDck0wQBlmVgJ7w3N6BcCCbgPKseObmgYgAsIu
+	NE/a4rNxoFGOAKlIIJw2uE+99XEVOw/MqFO9lYi8GMTYq1puRGRWlOMlav/7uaro=
+X-Gm-Gg: ASbGnct6Sn3NTmaPBqeILjJNJ4xDhhz0ksQwHf+ptYj3xcNcu5i1UbvR2jskj71RZ7x
+	tAKJZ4/Z22uSBm3kDdLRIb6wMWoy8+7FKwDpgSaJAwECsa1EdnNNj1aPOHwhApD7zT14IGwTq02
+	NHj5Apx3ilJRs8Pn9akjnRmD+KIAvzyzdU3WbcIXztfupPLIXvsU5jOKQkXKPjuG9+44FKOxUi/
+	DJP+eR1F/pFwJZhn0b95+OplS0sX5v4QkgwUGKN8IEoLP2090+Vny/Xa4vzOPmG2KK16GkrcHTp
+	ZRTYFVopKjlqDfi0TE65ZYzqFMdwnXWddpAxewHPIWrjVH/5JprrMbEUR0Y2BDpMmzy2Rmo=
+X-Received: by 2002:a05:6a00:4f89:b0:736:7960:981f with SMTP id d2e1a72fcca58-73960e3074bmr7520364b3a.8.1743108900077;
+        Thu, 27 Mar 2025 13:55:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdrY5thxVvn0A1tvz5Th5MBR9OpmIFchSuzb/8ASuSDEwAiRBfXsPBYYnBFb256qeOry5N3Q==
+X-Received: by 2002:a05:6a00:4f89:b0:736:7960:981f with SMTP id d2e1a72fcca58-73960e3074bmr7520322b3a.8.1743108899535;
+        Thu, 27 Mar 2025 13:54:59 -0700 (PDT)
+Received: from hu-molvera-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93ba10da3sm330889a12.66.2025.03.27.13.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 13:54:59 -0700 (PDT)
+From: Melody Olvera <melody.olvera@oss.qualcomm.com>
+Subject: [PATCH v3 0/4] Add UFS support for SM8750
+Date: Thu, 27 Mar 2025 13:54:27 -0700
+Message-Id: <20250327-sm8750_ufs_master-v3-0-bad1f5398d0a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326-b4-panel-ls043t1le01-v3-1-96c554c0ea2b@redhat.com>
-In-Reply-To: <20250326-b4-panel-ls043t1le01-v3-1-96c554c0ea2b@redhat.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 27 Mar 2025 13:54:15 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WvD6tTu_rLTm0njXM5-S_1WBg2rf+TyFZvdi8xUT7yQA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqwXpRnI1xK0FFhWi1aSV1krHZ9nkiYrhEk988aBRX6Vsz34UXOhp11Tyw
-Message-ID: <CAD=FV=WvD6tTu_rLTm0njXM5-S_1WBg2rf+TyFZvdi8xUT7yQA@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/panel/sharp-ls043t1le01: Use _multi variants
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Tejas Vipin <tejasvipin76@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAO75WcC/22Nyw6CMBBFf4XM2poZHhZd+R+GkFIHmQUPWyAaw
+ r9b0cSNy3OTe84Cnp2wh1O0gONZvPRdgGQXgW1Md2Ml18AQY5whoVa+zXWG5VT7sjV+ZKeOJiX
+ CA2FqNITf4LiWx+a8FB92fJ+CevyNjfixd8+tO9N7/SYo+ZOYSaGqEq1TipGr3J6Dz0pn97Zvo
+ VjX9QUAwFsIyQAAAA==
+X-Change-ID: 20250107-sm8750_ufs_master-9a41106104a7
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nitin Rawat <quic_nitirawa@quicinc.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Melody Olvera <melody.olvera@oss.qualcomm.com>,
+        Manish Pandey <quic_mapa@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743108898; l=1659;
+ i=melody.olvera@oss.qualcomm.com; s=20241204; h=from:subject:message-id;
+ bh=VMgHcMRYwhQ0xgu1wlvYPDPwmDJ4uxAlGWaYhde7uaM=;
+ b=OtftsdREQR25w2leTvjMBGDDcJBrx8mGnXf9p/ED9q6f+CUJZmAHDD7W1AZQ6ci5KfY8snqKG
+ 1i0RCmNen8CC9unMEG9x+tpau4odXSd1ZHlPMB6RaIfu5ncRJ6HsdeI
+X-Developer-Key: i=melody.olvera@oss.qualcomm.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-Proofpoint-ORIG-GUID: erelf6UlES85AVVoskJaPAhOphlrcGV9
+X-Proofpoint-GUID: erelf6UlES85AVVoskJaPAhOphlrcGV9
+X-Authority-Analysis: v=2.4 cv=Q43S452a c=1 sm=1 tr=0 ts=67e5bb25 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=28BvOmV-xxLMpQdZyEsA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_04,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=900 malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1011
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270140
 
-Hi,
+Add UFS support for SM8750 SoCs.
 
-On Wed, Mar 26, 2025 at 8:29=E2=80=AFPM Anusha Srivatsa <asrivats@redhat.co=
-m> wrote:
->
-> Move away from using deprecated API and use _multi variants
-> if available. Use mipi_dsi_msleep() and mipi_dsi_usleep_range()
-> instead of msleep() and usleep_range() respectively.
->
-> Used Coccinelle to find the _multi variant APIs,replacing
-> mpi_dsi_msleep() where necessary and for returning
-> dsi_ctx.accum_err in these functions. mipi_dsi_dcs_write()
-> does not have a corresponding _multi() variant. Replacing it with
-> mipi_dsi_dcs_write_seq_multi() instead. This change is manual.
->
-> The Coccinelle script is the same as the one in commit c8ba07caaecc
-> ("drm/panel/synaptics-r63353: Use _multi variants")
->
-> v2: Use mipi_dsi_write_buffer_multi() in place of
-> mipi_dsi_dcs_write(). (Dmitry)
->
-> v3: add commit details where the same coccinelle script is
-> used and remove the actual script from commit log.
-> Use mipi_dsi_dcs_write_seq_multi() for mipi_dsi_dcs_write() (Doug)
->
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Tejas Vipin <tejasvipin76@gmail.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
-> Changes in v3:
-> - Simplify commit log by adding a reference to a patch that uses the
->   same script.
-> - Simplify code by using a helper that doesnt need additional code
->   changes other then using the helper itself.
->
-> - Link to v2: https://lore.kernel.org/r/20250324-b4-panel-ls043t1le01-v2-=
-1-e43aedc115be@redhat.com
->
-> Changes in v2:
-> - While mipi_dsi_dcs_write() does not have a corresponding _multi()
->   variant replace it with mipi_dsi_dcs_write_buffer_multi() to have all
->   APIs following _multi() usage for easier error handling
->
-> - Link to v1: https://lore.kernel.org/r/20250316-b4-panel-ls043t1le01-v1-=
-1-ee38371b0ba0@redhat.com
-> ---
->  drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c | 41 +++++++++----------=
-------
->  1 file changed, 15 insertions(+), 26 deletions(-)
+---
+Changes in v3:
+1. Fixed style in sm8750.dtsi
+- Link to v2: https://lore.kernel.org/all/20250310-sm8750_ufs_master-v2-0-0dfdd6823161@quicinc.com/
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Changes in v2:
+1. Addressed Konrad and Krzysztof comment to fix style in sm8750.dtsi
+2. Addressed Dmitry's comment to sort RX by the register offset.
+3. Addressed Dmitry's comment to update offset and reg value in
+   lowercase hex.
+4. Addressed Dmitry's comment to replace sm8750_ufsphy_g5_pcs by
+   sm8650_ufsphy_g5_pcs.
+5. Addressed Dmitry's comment to include a helper which include
+   serdes, pcs and lane init for a particular table.
+6. Addressed Dmitry and Konrad comment to update cpu-ufs path
+   icc type vote to ACTIVE_ONLY from ALWAYS.
+7. Split MTP and QRD board dt commits
+- Link to v1: https://lore.kernel.org/r/20250113-sm8750_ufs_master-v1-0-b3774120eb8c@quicinc.com
+
+---
+Nitin Rawat (4):
+      dt-bindings: ufs: qcom: Document the SM8750 UFS Controller
+      arm64: dts: qcom: sm8750: Add UFS nodes for SM8750 SoC
+      arm64: dts: qcom: sm8750: Add UFS nodes for SM8750 MTP
+      arm64: dts: qcom: sm8750: Add UFS nodes for SM8750 QRD board
+
+ .../devicetree/bindings/ufs/qcom,ufs.yaml          |   2 +
+ arch/arm64/boot/dts/qcom/sm8750-mtp.dts            |  18 ++++
+ arch/arm64/boot/dts/qcom/sm8750-qrd.dts            |  18 ++++
+ arch/arm64/boot/dts/qcom/sm8750.dtsi               | 103 +++++++++++++++++++++
+ 4 files changed, 141 insertions(+)
+---
+base-commit: db8da9da41bced445077925f8a886c776a47440c
+change-id: 20250107-sm8750_ufs_master-9a41106104a7
+
+Best regards,
+-- 
+Melody Olvera <melody.olvera@oss.qualcomm.com>
+
 
