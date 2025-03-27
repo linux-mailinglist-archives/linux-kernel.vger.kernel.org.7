@@ -1,92 +1,279 @@
-Return-Path: <linux-kernel+bounces-579284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB30A74191
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 900F8A74192
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48701892DA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D122418902EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 23:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977BF1E8324;
-	Thu, 27 Mar 2025 23:44:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878021DB933;
+	Thu, 27 Mar 2025 23:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCgxblRS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE801AA1E0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4997E1E1DE4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 23:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743119046; cv=none; b=U+oGKe/9f5hGE7BEHthW65Cz/VlUM0dSPBF2Jwfop4JuH5YXbJ8E9qMA6yw5bAbahYarNv4BLBITi10A65sjM9aBhyDqyPwVIvuOvhip1zcWPeF2D/TTM1owC1Rn5u8SrcN5IjomPfHuBw9T1R087KPiyBy6mpHi7FbnQZj2dAY=
+	t=1743119097; cv=none; b=RlikNU1afumdVnXNRbvYfP2Q33ZFn5E0GuecrR3cj8nPKoG4W1a5+55SU8Fq2HA2U8kcVJ2ro/gokwzLoku8KNZ5p9Aj0zgj5QhK0vLjsV2s2DSdLsKDVUWAXEorN147BPJi7d6Y75qZBZ2GXx4yah3Od/jTQDLN19H+7iPOr5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743119046; c=relaxed/simple;
-	bh=zJfe+ntDz0a5gqUOPpRgPJsQIkqcEFey64SoptgS/Iw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=do0tXDAkNOVSD/djUJ39itc866pcnZZapDFo1hjHdz5TK29g3hCD0ZwWYzrA+GyrdILicBZCTYF3ySMRBh5QInsxLUk0vyPpvT3g0L0nOXLJiocSHk3SJxZfIGmeF/nIGIYuk0ardpejU3bxfDD7v6OzlBKGyee/pjDz+k6OIlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d43b460962so27770825ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743119044; x=1743723844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HyMx14slmZO48hXwKrnjOU7rwzYOFJJ2XuwciiG24c=;
-        b=RGFy+zanuU0NwmQq/Z8DlDe8iVWKCYpUO7bWQdYvHb9xmjogx1annhqtoFCDbgVnhu
-         VQo3XxzM6Z1xCbwQi/XSXpTZAz4uvSuHR+8a4cXCBtIGvQL52YU+k+2NnaDK59DX0n3g
-         KQL+SbKV/DGwatEjT/CIPvN78S8PKkWKZINIp5+1cmyqmC4bNn41AOzIjj+3Rnq05dTC
-         mJVIVDRH1KoH4v/720I2OcCVLfNkVVI9e0El5CVsWhW3GEiGBu+s4NgkMp1PCPYKmlZY
-         dSkYuwuI13xjUNN4JTqKuIdRaOwAgQKQjWRQFBqJEMVQAAJ/XBPmuk7mvy/fam6cQ39y
-         0o6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVCUAE6D4fVpRSj60ZY+N4BhFuwasWCKX4tMqvCsjfC64b5FUdfms+T9e6CMwM4AmEL2nJTcrFVwWylZyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGloTiV++2woSoHx9QA8ceZCPRcbl8xehKCLNBDA6+jRJ58rrj
-	n9TyHZvQOnfZLH89tq3Nneppy7Mj/4KTUlljrZSAnIKXdbiPVNK3a5vvoIIw8/xdkOaXwmxlCOR
-	V+1SsYeXjLNrtLPUX+3QPObq/yggmvtxQoh06ffZOqj+ODVwl58ltVw0=
-X-Google-Smtp-Source: AGHT+IGP0KfS302a6JahnEaFSrCURrW/iARLg9wT0HWhuDbr6UaQ3NEOiHKp2eCied/LzPpIPMg8HST/OAGgBXsb5bJEocyXgbCb
+	s=arc-20240116; t=1743119097; c=relaxed/simple;
+	bh=Ln5pk7zODtsPxlL9Wl6nJ4QkGnnSvPEBN4wYq12bc58=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oi8yL1pqPF33PbRbmxBgcw3QWA1fyF2jMjB6uLSJWgq1hB5rCDQ9K7jeVzAt++7tkZPJ2oF6GEaglg8zfZRHNUao8QO7Q1E1zAkMcFQHOIE8fYMmkihT1AbagyagsdpJv1P0hrH4D5oLIEJzUmJPJM4CC866b4rq/sRfOxxiarA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCgxblRS; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743119096; x=1774655096;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Ln5pk7zODtsPxlL9Wl6nJ4QkGnnSvPEBN4wYq12bc58=;
+  b=GCgxblRSNv0O9ff2Nd4ASoVAHCXwXsgYPqltAkjcciHpTBfxj7cPNq05
+   8999AcrHg0PlWXG6Xc6LLNS3KUk28HpZRqU2EHA0g80NCsUDBkpK7dCau
+   77DdDmj0OsrVUOigSA18PRxWoeMiz0TMsMaBN/oATbE7W34zVFhCfnSPT
+   BoPJvziGZI4Svea8e2XlmmnTBaHvg39+aIIcCq09IbS2Ei/wmnbYGLMq0
+   5+XuCDEg4vwK8jpCGMwSeih7o906mRc2f5cZodN4MhANa+6O0gLxeLzmO
+   05m/JCAos9WzFCkvsMT3AZqrGAd4Tjq7zxlWzTyGHBA00cJcer4v+NXaF
+   A==;
+X-CSE-ConnectionGUID: L9DHUtMZRkKzTe0usD2eDg==
+X-CSE-MsgGUID: k66A+WayTg6wvyORyywd8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="66946382"
+X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
+   d="scan'208";a="66946382"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 16:44:55 -0700
+X-CSE-ConnectionGUID: WP+/Jl1ySNmvU3+IqKkcWQ==
+X-CSE-MsgGUID: vfxunjoARW62S9QtXhI7bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
+   d="scan'208";a="130352053"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 27 Mar 2025 16:44:53 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txwu0-00070s-2a;
+	Thu, 27 Mar 2025 23:44:49 +0000
+Date: Fri, 28 Mar 2025 07:44:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [tip:WIP.x86/alternatives 35/43] arch/x86/kernel/alternative.c:2614:
+ warning: Excess function parameter 'tp_array.vec' description in
+ 'text_poke_int3_batch_process'
+Message-ID: <202503280745.Jp7eol8r-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fed:b0:3d3:f6ee:cc4c with SMTP id
- e9e14a558f8ab-3d5ccce76c2mr58974305ab.0.1743119043917; Thu, 27 Mar 2025
- 16:44:03 -0700 (PDT)
-Date: Thu, 27 Mar 2025 16:44:03 -0700
-In-Reply-To: <6772fd43.050a0220.2f3838.04cd.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e5e2c3.050a0220.2f068f.0050.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_find_extent (4)
-From: syzbot <syzbot+ee60e584b5c6bb229126@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, ritesh.list@gmail.com, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot has bisected this issue to:
+Hi Ingo,
 
-commit 93cdf49f6eca5e23f6546b8f28457b2e6a6961d9
-Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Date:   Sat Mar 25 08:13:39 2023 +0000
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-    ext4: Fix best extent lstart adjustment logic in ext4_mb_new_inode_pa()
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/alternatives
+head:   89555c4754bde7a509d7992c1ecefeb00229fac9
+commit: 33bc2a1341293fac4fd4e0f7035ca2397daf8fb5 [35/43] x86/alternatives: Rename 'text_poke_int3_batch()' to 'text_poke_int3_batch_process()'
+config: x86_64-buildonly-randconfig-001-20250328 (https://download.01.org/0day-ci/archive/20250328/202503280745.Jp7eol8r-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250328/202503280745.Jp7eol8r-lkp@intel.com/reproduce)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1566b43f980000
-start commit:   1e1ba8d23dae Merge tag 'timers-clocksource-2025-03-26' of ..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1766b43f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1366b43f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2edddb53537e0320
-dashboard link: https://syzkaller.appspot.com/bug?extid=ee60e584b5c6bb229126
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1623343f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1123343f980000
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503280745.Jp7eol8r-lkp@intel.com/
 
-Reported-by: syzbot+ee60e584b5c6bb229126@syzkaller.appspotmail.com
-Fixes: 93cdf49f6eca ("ext4: Fix best extent lstart adjustment logic in ext4_mb_new_inode_pa()")
+All warnings (new ones prefixed by >>):
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>> arch/x86/kernel/alternative.c:2614: warning: Excess function parameter 'tp_array.vec' description in 'text_poke_int3_batch_process'
+>> arch/x86/kernel/alternative.c:2614: warning: Excess function parameter 'tp_array.nr_entries' description in 'text_poke_int3_batch_process'
+
+
+vim +2614 arch/x86/kernel/alternative.c
+
+17f41571bb2c4a Jiri Kosina                2013-07-23  2591  
+fd4363fff3d967 Jiri Kosina                2013-07-12  2592  /**
+33bc2a1341293f Ingo Molnar                2025-03-27  2593   * text_poke_int3_batch_process() -- update instructions on live kernel on SMP
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2594   * @tp_array.vec:		vector of instructions to patch
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2595   * @tp_array.nr_entries:	number of entries in the vector
+fd4363fff3d967 Jiri Kosina                2013-07-12  2596   *
+fd4363fff3d967 Jiri Kosina                2013-07-12  2597   * Modify multi-byte instruction by using int3 breakpoint on SMP.
+ea8596bb2d8d37 Masami Hiramatsu           2013-07-18  2598   * We completely avoid stop_machine() here, and achieve the
+ea8596bb2d8d37 Masami Hiramatsu           2013-07-18  2599   * synchronization using int3 breakpoint.
+fd4363fff3d967 Jiri Kosina                2013-07-12  2600   *
+fd4363fff3d967 Jiri Kosina                2013-07-12  2601   * The way it is done:
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2602   *	- For each entry in the vector:
+fd4363fff3d967 Jiri Kosina                2013-07-12  2603   *		- add a int3 trap to the address that will be patched
+fd4363fff3d967 Jiri Kosina                2013-07-12  2604   *	- sync cores
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2605   *	- For each entry in the vector:
+fd4363fff3d967 Jiri Kosina                2013-07-12  2606   *		- update all but the first byte of the patched range
+fd4363fff3d967 Jiri Kosina                2013-07-12  2607   *	- sync cores
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2608   *	- For each entry in the vector:
+fd4363fff3d967 Jiri Kosina                2013-07-12  2609   *		- replace the first byte (int3) by the first byte of
+fd4363fff3d967 Jiri Kosina                2013-07-12  2610   *		  replacing opcode
+fd4363fff3d967 Jiri Kosina                2013-07-12  2611   *	- sync cores
+fd4363fff3d967 Jiri Kosina                2013-07-12  2612   */
+33bc2a1341293f Ingo Molnar                2025-03-27  2613  static void text_poke_int3_batch_process(void)
+fd4363fff3d967 Jiri Kosina                2013-07-12 @2614  {
+c3d6324f841bab Peter Zijlstra             2019-06-05  2615  	unsigned char int3 = INT3_INSN_OPCODE;
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2616  	unsigned int i;
+c3d6324f841bab Peter Zijlstra             2019-06-05  2617  	int do_sync;
+9222f606506c5f Jiri Kosina                2018-08-28  2618  
+9222f606506c5f Jiri Kosina                2018-08-28  2619  	lockdep_assert_held(&text_mutex);
+9222f606506c5f Jiri Kosina                2018-08-28  2620  
+efd608fa7403ba Nadav Amit                 2022-09-21  2621  	/*
+527963ab5369ee Ingo Molnar                2025-03-27  2622  	 * Corresponds to the implicit memory barrier in try_get_tp_array() to
+296b9167381c07 Ingo Molnar                2025-03-27  2623  	 * ensure reading a non-zero refcount provides up to date tp_array data.
+efd608fa7403ba Nadav Amit                 2022-09-21  2624  	 */
+41e4ceece5913b Eric Dumazet               2025-03-25  2625  	for_each_possible_cpu(i)
+10b9345c1aa7dd Ingo Molnar                2025-03-27  2626  		atomic_set_release(per_cpu_ptr(&int3_refs, i), 1);
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2627  
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2628) 	/*
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2629) 	 * Function tracing can enable thousands of places that need to be
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2630) 	 * updated. This can take quite some time, and with full kernel debugging
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2631) 	 * enabled, this could cause the softlockup watchdog to trigger.
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2632) 	 * This function gets called every 256 entries added to be patched.
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2633) 	 * Call cond_resched() here to make sure that other tasks can get scheduled
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2634) 	 * while processing all the functions being patched.
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2635) 	 */
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2636) 	cond_resched();
+9350a629e839ca Steven Rostedt (Google     2023-05-31  2637) 
+fd4363fff3d967 Jiri Kosina                2013-07-12  2638  	/*
+01651324edad9d Peter Zijlstra             2017-07-31  2639  	 * Corresponding read barrier in int3 notifier for making sure the
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2640  	 * tp_array.nr_entries and handler are correctly ordered wrt. patching.
+fd4363fff3d967 Jiri Kosina                2013-07-12  2641  	 */
+fd4363fff3d967 Jiri Kosina                2013-07-12  2642  	smp_wmb();
+fd4363fff3d967 Jiri Kosina                2013-07-12  2643  
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2644  	/*
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2645  	 * First step: add a int3 trap to the address that will be patched.
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2646  	 */
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2647  	for (i = 0; i < tp_array.nr_entries; i++) {
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2648  		tp_array.vec[i].old = *(u8 *)text_poke_int3_addr(&tp_array.vec[i]);
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2649  		text_poke(text_poke_int3_addr(&tp_array.vec[i]), &int3, INT3_INSN_SIZE);
+d769811ca93303 Adrian Hunter              2020-05-12  2650  	}
+fd4363fff3d967 Jiri Kosina                2013-07-12  2651  
+5c02ece81848db Peter Zijlstra             2019-10-09  2652  	text_poke_sync();
+fd4363fff3d967 Jiri Kosina                2013-07-12  2653  
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2654  	/*
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2655  	 * Second step: update all but the first byte of the patched range.
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2656  	 */
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2657  	for (do_sync = 0, i = 0; i < tp_array.nr_entries; i++) {
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2658  		u8 old[POKE_MAX_OPCODE_SIZE+1] = { tp_array.vec[i].old, };
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2659  		u8 _new[POKE_MAX_OPCODE_SIZE+1];
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2660  		const u8 *new = tp_array.vec[i].text;
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2661  		int len = tp_array.vec[i].len;
+97e6c977ccf128 Peter Zijlstra             2019-10-09  2662  
+76ffa7204b1ad7 Peter Zijlstra             2019-11-11  2663  		if (len - INT3_INSN_SIZE > 0) {
+d769811ca93303 Adrian Hunter              2020-05-12  2664  			memcpy(old + INT3_INSN_SIZE,
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2665  			       text_poke_int3_addr(&tp_array.vec[i]) + INT3_INSN_SIZE,
+d769811ca93303 Adrian Hunter              2020-05-12  2666  			       len - INT3_INSN_SIZE);
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2667  
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2668  			if (len == 6) {
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2669  				_new[0] = 0x0f;
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2670  				memcpy(_new + 1, new, 5);
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2671  				new = _new;
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2672  			}
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2673  
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2674  			text_poke(text_poke_int3_addr(&tp_array.vec[i]) + INT3_INSN_SIZE,
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2675  				  new + INT3_INSN_SIZE,
+76ffa7204b1ad7 Peter Zijlstra             2019-11-11  2676  				  len - INT3_INSN_SIZE);
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2677  
+c3d6324f841bab Peter Zijlstra             2019-06-05  2678  			do_sync++;
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2679  		}
+d769811ca93303 Adrian Hunter              2020-05-12  2680  
+d769811ca93303 Adrian Hunter              2020-05-12  2681  		/*
+d769811ca93303 Adrian Hunter              2020-05-12  2682  		 * Emit a perf event to record the text poke, primarily to
+d769811ca93303 Adrian Hunter              2020-05-12  2683  		 * support Intel PT decoding which must walk the executable code
+d769811ca93303 Adrian Hunter              2020-05-12  2684  		 * to reconstruct the trace. The flow up to here is:
+d769811ca93303 Adrian Hunter              2020-05-12  2685  		 *   - write INT3 byte
+d769811ca93303 Adrian Hunter              2020-05-12  2686  		 *   - IPI-SYNC
+d769811ca93303 Adrian Hunter              2020-05-12  2687  		 *   - write instruction tail
+d769811ca93303 Adrian Hunter              2020-05-12  2688  		 * At this point the actual control flow will be through the
+d769811ca93303 Adrian Hunter              2020-05-12  2689  		 * INT3 and handler and not hit the old or new instruction.
+d769811ca93303 Adrian Hunter              2020-05-12  2690  		 * Intel PT outputs FUP/TIP packets for the INT3, so the flow
+d769811ca93303 Adrian Hunter              2020-05-12  2691  		 * can still be decoded. Subsequently:
+d769811ca93303 Adrian Hunter              2020-05-12  2692  		 *   - emit RECORD_TEXT_POKE with the new instruction
+d769811ca93303 Adrian Hunter              2020-05-12  2693  		 *   - IPI-SYNC
+d769811ca93303 Adrian Hunter              2020-05-12  2694  		 *   - write first byte
+d769811ca93303 Adrian Hunter              2020-05-12  2695  		 *   - IPI-SYNC
+d769811ca93303 Adrian Hunter              2020-05-12  2696  		 * So before the text poke event timestamp, the decoder will see
+d769811ca93303 Adrian Hunter              2020-05-12  2697  		 * either the old instruction flow or FUP/TIP of INT3. After the
+d769811ca93303 Adrian Hunter              2020-05-12  2698  		 * text poke event timestamp, the decoder will see either the
+d769811ca93303 Adrian Hunter              2020-05-12  2699  		 * new instruction flow or FUP/TIP of INT3. Thus decoders can
+d769811ca93303 Adrian Hunter              2020-05-12  2700  		 * use the timestamp as the point at which to modify the
+d769811ca93303 Adrian Hunter              2020-05-12  2701  		 * executable code.
+d769811ca93303 Adrian Hunter              2020-05-12  2702  		 * The old instruction is recorded so that the event can be
+d769811ca93303 Adrian Hunter              2020-05-12  2703  		 * processed forwards or backwards.
+d769811ca93303 Adrian Hunter              2020-05-12  2704  		 */
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2705  		perf_event_text_poke(text_poke_int3_addr(&tp_array.vec[i]), old, len, new, len);
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2706  	}
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2707  
+c3d6324f841bab Peter Zijlstra             2019-06-05  2708  	if (do_sync) {
+fd4363fff3d967 Jiri Kosina                2013-07-12  2709  		/*
+fd4363fff3d967 Jiri Kosina                2013-07-12  2710  		 * According to Intel, this core syncing is very likely
+fd4363fff3d967 Jiri Kosina                2013-07-12  2711  		 * not necessary and we'd be safe even without it. But
+fd4363fff3d967 Jiri Kosina                2013-07-12  2712  		 * better safe than sorry (plus there's not only Intel).
+fd4363fff3d967 Jiri Kosina                2013-07-12  2713  		 */
+5c02ece81848db Peter Zijlstra             2019-10-09  2714  		text_poke_sync();
+fd4363fff3d967 Jiri Kosina                2013-07-12  2715  	}
+fd4363fff3d967 Jiri Kosina                2013-07-12  2716  
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2717  	/*
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2718  	 * Third step: replace the first byte (int3) by the first byte of
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2719  	 * replacing opcode.
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2720  	 */
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2721  	for (do_sync = 0, i = 0; i < tp_array.nr_entries; i++) {
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2722  		u8 byte = tp_array.vec[i].text[0];
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2723  
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2724  		if (tp_array.vec[i].len == 6)
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2725  			byte = 0x0f;
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2726  
+ac0ee0a9560c97 Peter Zijlstra             2023-01-23  2727  		if (byte == INT3_INSN_OPCODE)
+c3d6324f841bab Peter Zijlstra             2019-06-05  2728  			continue;
+fd4363fff3d967 Jiri Kosina                2013-07-12  2729  
+4cacf32f02d9e3 Ingo Molnar                2025-03-27  2730  		text_poke(text_poke_int3_addr(&tp_array.vec[i]), &byte, INT3_INSN_SIZE);
+c3d6324f841bab Peter Zijlstra             2019-06-05  2731  		do_sync++;
+c3d6324f841bab Peter Zijlstra             2019-06-05  2732  	}
+c3d6324f841bab Peter Zijlstra             2019-06-05  2733  
+c3d6324f841bab Peter Zijlstra             2019-06-05  2734  	if (do_sync)
+5c02ece81848db Peter Zijlstra             2019-10-09  2735  		text_poke_sync();
+c3d6324f841bab Peter Zijlstra             2019-06-05  2736  
+01651324edad9d Peter Zijlstra             2017-07-31  2737  	/*
+efd608fa7403ba Nadav Amit                 2022-09-21  2738  	 * Remove and wait for refs to be zero.
+451283cd40bcec Peter Zijlstra             2025-03-25  2739  	 *
+451283cd40bcec Peter Zijlstra             2025-03-25  2740  	 * Notably, if after step-3 above the INT3 got removed, then the
+451283cd40bcec Peter Zijlstra             2025-03-25  2741  	 * text_poke_sync() will have serialized against any running INT3
+451283cd40bcec Peter Zijlstra             2025-03-25  2742  	 * handlers and the below spin-wait will not happen.
+451283cd40bcec Peter Zijlstra             2025-03-25  2743  	 *
+451283cd40bcec Peter Zijlstra             2025-03-25  2744  	 * IOW. unless the replacement instruction is INT3, this case goes
+451283cd40bcec Peter Zijlstra             2025-03-25  2745  	 * unused.
+01651324edad9d Peter Zijlstra             2017-07-31  2746  	 */
+41e4ceece5913b Eric Dumazet               2025-03-25  2747  	for_each_possible_cpu(i) {
+10b9345c1aa7dd Ingo Molnar                2025-03-27  2748  		atomic_t *refs = per_cpu_ptr(&int3_refs, i);
+41e4ceece5913b Eric Dumazet               2025-03-25  2749  
+41e4ceece5913b Eric Dumazet               2025-03-25  2750  		if (unlikely(!atomic_dec_and_test(refs)))
+41e4ceece5913b Eric Dumazet               2025-03-25  2751  			atomic_cond_read_acquire(refs, !VAL);
+41e4ceece5913b Eric Dumazet               2025-03-25  2752  	}
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2753  }
+c0213b0ac03cf6 Daniel Bristot de Oliveira 2019-06-12  2754  
+
+:::::: The code at line 2614 was first introduced by commit
+:::::: fd4363fff3d96795d3feb1b3fb48ce590f186bdd x86: Introduce int3 (breakpoint)-based instruction patching
+
+:::::: TO: Jiri Kosina <jkosina@suse.cz>
+:::::: CC: H. Peter Anvin <hpa@linux.intel.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
