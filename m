@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-578548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C43A73375
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:38:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53259A7337D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CDE17872D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240E03B5BC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CC215F6B;
-	Thu, 27 Mar 2025 13:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60F221577C;
+	Thu, 27 Mar 2025 13:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLNemgbX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AeeuhZzd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00094215F41;
-	Thu, 27 Mar 2025 13:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8270E21516D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743082680; cv=none; b=QgM7EQP3X2flbzVD5A4Lr+gdp5cGgK4W8yM7tt2xVwIO8GdSvnapnOZXGRZ8v/dXAIk0cqQ4Mcy4VarCDDTRrkLMMTRboBWvHYtC+b79q4Wk5osVXqQ1mpDZzu65m8xSMQMBJ8CMutYH1mp8l9MlhbqMUGkskJIeRlpPq3zoUX0=
+	t=1743082827; cv=none; b=ciymWjdWqhZ2pdfsAvHin8oCu8zPDupJuFGrNiJdY5jGK64ZtoRV9K9A7nEQEloJsntxmH3muhXyxletTN398AqdvMC39KXfint5mZXjk1q7lVb459awEqbnu0F1kzeU5jiwJ3HM4ho21YKLL+t8fTJ8SeLQjRI4+ame+BlpZek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743082680; c=relaxed/simple;
-	bh=g48C53wIQ9kisIJ+mo4pQeIIjGFozOXYfFQ82UEzKlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=n6lWIHmIeiK4Kb8rTXbopwjmLevz9F2OMF2uMk/XjnBFwnXRnYpoZpfGRAdvzz4/WO9SI0+wVFwsQFEey50c3Ro47dNDRhTPA5CLbcpLK3hugaOYUMB2/aBuFYkClgZZ/gE+CL8vXgjD0lt/6T+Ac7VdbOyheIpwt66cvSoDuNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLNemgbX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E16C4CEE8;
-	Thu, 27 Mar 2025 13:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743082679;
-	bh=g48C53wIQ9kisIJ+mo4pQeIIjGFozOXYfFQ82UEzKlw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=LLNemgbX3Dbf1Fl+6thM/M9H7JJ9frLa7+skx8wrLVDCvgnKmttz6zOUNF78Hwiq5
-	 AGus3LLTH3l0HzwgLhsQ/Zvjy3HMHuIroNgx3MvJFwsSjtjdI4oo7xEwsPftIx9dHv
-	 VpkD3xWaHRXNfMtDU4lc6VE7T3LwVHvckeUd8diJRvFVJ4/uM5S/579OLvm1CR6VZe
-	 La1xzac8qD9p0Gm9N9yv+qJPlLYdFi8jWvOEhZKipvIPD9Vv9u3Hux9kiXevTKR6rL
-	 2ZHuPN5E7NTBjLfUoqi9OhVlrivDEqADyhN6U+GLByJGH5QmuNY2droaNwdUOv511F
-	 txJvP0ELte/6g==
-Date: Thu, 27 Mar 2025 08:37:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yibo Dong <dong100@mucse.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add MUCSE vendor ID to pci_ids.h
-Message-ID: <20250327133757.GA1432088@bhelgaas>
+	s=arc-20240116; t=1743082827; c=relaxed/simple;
+	bh=d2W6l2kcU8eLf2PMeZMdFTwaOG8w7XFS50Hk735+Du4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o8xY788AeKkEe1wHRw+NhwwR0VZN2DdlAXckvTqh2Y6n1A3mTAzG7us+cALCwdaO9c+bbyQPW53j23OyWNL8/T45F/4oWk7Y64NeSXbW970rq/H1OTXlzv1nKmuG1k1Oi34kmDr0XgHLij7vReiVj+0Gc2tJpKm4HXT1U2OwymY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AeeuhZzd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Umx+HX5wjGNSTr33Jqdvs6Gd7+Nc0iKv5ZmJkf9uPfo=; b=AeeuhZzdRVzBEFFamN5eLVduhp
+	eFrEaU5j3iO+xAkRRdrgFDOrRoTfN1RaFgg6SbPxwLnBXYbfz4+cdJ6NGzgYXDfRSOQNCYxCh7G6T
+	2fV2YjstbF3fUzhZDDjYwfdbk56zdYdo4MwIuJ/M0mY1fQoxeNoeH7Ufi+SIpfi3sXt86Q1uWzxQw
+	vDbOnljRGzxxuNQoRsdqxwiqFj8vRnGc4kPGQKo8llWyMBbkXYTNBMHorvuNX3vT+EpSgT1U2YwsZ
+	/HS/qqVFnG/3UrHleAxcvcj8RyKgMO4RhykvnPzRLkRxakPPd07e4w3dkPV1mCW3rRFbwfccsW6nL
+	NKcUFIEQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txnSy-0000000BueD-0G8V;
+	Thu, 27 Mar 2025 13:40:16 +0000
+Date: Thu, 27 Mar 2025 13:40:15 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Huan Yang <link@vivo.com>
+Cc: Hillf Danton <hdanton@sina.com>, Christoph Hellwig <hch@lst.de>,
+	bingbu.cao@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, opensource.kernel@vivo.com, urezki@gmail.com,
+	vivek.kasireddy@intel.com
+Subject: Re: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
+Message-ID: <Z-VVP0kABztfpan7@casper.infradead.org>
+References: <20250317055304.GB26662@lst.de>
+ <5a12454c-16a1-4400-a764-f49293d8dece@vivo.com>
+ <20250318064805.GA16121@lst.de>
+ <5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com>
+ <20250318083330.GB18902@lst.de>
+ <bcbbc2e9-858f-46ed-909e-1d911dd614f0@vivo.com>
+ <20250318084453.GB19274@lst.de>
+ <20250319050359.3484-1-hdanton@sina.com>
+ <20250319112651.3502-1-hdanton@sina.com>
+ <752e606b-640d-46d1-a8e0-fa714b29a7b6@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1835B10BD36E99AC+20250327112426.GB468890@nic-Precision-5820-Tower>
+In-Reply-To: <752e606b-640d-46d1-a8e0-fa714b29a7b6@vivo.com>
 
-On Thu, Mar 27, 2025 at 07:24:26PM +0800, Yibo Dong wrote:
-> On Wed, Mar 26, 2025 at 11:57:28AM -0500, Bjorn Helgaas wrote:
-> > On Tue, Mar 25, 2025 at 02:57:18PM +0800, Yibo Dong wrote:
-> > > Add MUCSE as a vendor ID (0x8848) for PCI devices so we can use
-> > > the macro for future drivers.
-> > > 
-> > > Signed-off-by: Yibo Dong <dong100@mucse.com>
-> > 
-> > Please post this in the series where you add the future drivers.
-> > 
-> > We don't add new things to pci_ids.h unless they are actually used by
-> > more than one driver because it complicates life for people who
-> > backport things (there's a note at the top of the file about this).
-> 
-> Thanks for the reminder; the drivers maybe use 'the define' are
-> netdev drivers, so, I should first send patches to netdev subsystem,
-> and re-send this patch to pci subsystem after my patches is applied
-> by netdev subsytem? or I should send this to netdev subsystem along
-> with the drivers?
+On Mon, Mar 24, 2025 at 10:13:03AM +0800, Huan Yang wrote:
+> HI Hillf,
 
-Just include it with your netdev series and cc me.  I'll ack it and
-the whole series can be merged together via netdev.
+Hillf is banned from the mailing lists.  I suuggest not replying to
+any email that he sends to you privately.
 
-> > > +#define PCI_VENDOR_ID_MUCSE		0x8848
-> > 
-> > https://pcisig.com/membership/member-companies?combine=8848 says this
-> > Vendor ID belongs to:
-> > 
-> >   Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd
-> > 
-> > I suppose "MUCSE" connects with that somehow.
-> > 
-> > It's nice if people can connect PCI_VENDOR_ID_MUCSE with a name used
-> > in marketing the product.  Maybe "MUCSE" is the name under which
-> > Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd markets
-> > products?
-> 
-> Yes, MUCSE is just abbreviation for “Wuxi Micro Innovation Integrated Circuit
-> Design Co.,Ltd”
-
-Perfect.  I see you've already added it to the lspci database along
-with several devices:
-
-  https://admin.pci-ids.ucw.cz/read/PC/8848
-
-All looks good!  I'll watch for your netdev patches.
-
-Bjorn
+https://lore.kernel.org/all/67cf7499597e9_1198729450@dwillia2-xfh.jf.intel.com.notmuch/
 
