@@ -1,261 +1,551 @@
-Return-Path: <linux-kernel+bounces-578405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2109A7301E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0470DA72F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A029189DA33
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179D6189BF89
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCFA215775;
-	Thu, 27 Mar 2025 11:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493E212B07;
+	Thu, 27 Mar 2025 11:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b="F1pRlGgp"
-Received: from mx07-0063e101.pphosted.com (mx07-0063e101.pphosted.com [205.220.184.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHmffOKP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED102139B2;
-	Thu, 27 Mar 2025 11:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.184.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743075523; cv=fail; b=I9P7obQoKFrIJfWTj2a3Eee6aTiffEN1e+P4idjAjWIgGSGTSkPZpARItiJ4JMsUQcM7TG84WIkvuWeDAH6vCgaVJ0lHSuAxvPA9ZmZm6+5qVa2YaF+tI+iyrUzVy+LdiceFHzWVwe/dYH+mU573Mo3iayCnXeiCweCU3QOMt6c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743075523; c=relaxed/simple;
-	bh=vnA1UymLOMeibDYYF5JoYhc1CMTgPHJDZ7mE1VBCPXw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Uug5BuRXYS3lpf9JQX5Gnybbkoz7ZrKY4i2ohEFsE755lgA08z28VINdV2NKVuwh7eIS7a5jthNku/7UPs8R6M7eyDb4Bv85U1erlNMf7pK9rvXBUlILJbosG6kNGrWSOUshsTQObW9eI4cWq4L+KKfCBo0WNXfQ1i647eScHsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com; spf=pass smtp.mailfrom=blaize.com; dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b=F1pRlGgp; arc=fail smtp.client-ip=205.220.184.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blaize.com
-Received: from pps.filterd (m0247495.ppops.net [127.0.0.1])
-	by mx08-0063e101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52RB3Ix7019756;
-	Thu, 27 Mar 2025 11:27:26 GMT
-Received: from pnypr01cu001.outbound.protection.outlook.com (mail-centralindiaazlp17010007.outbound.protection.outlook.com [40.93.132.7])
-	by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 45hkb2thc2-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Mar 2025 11:27:26 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nzb95QX62xHjJ1ZTMDFTreVkWNSojbmivktjiuUaZhPym4cfPKN4KV4Q9IzKRNh/owM12izURB+AJWg7QK5mIPJ3WRBOMaELbOBTfHBJ9LroEUuUSYe0zhREYuMZfhyOLWvhsc5YfINoAY9Mv9EGRhOEuzMt7QELhJ/2KwPl862jVQ8qo/x2WJZ3N9gvsVVNYGgf+o1Yw0Gv+RYrtD70S47qNuT8FYiKvmMXsMsntj2eAfvzF48g23o1Qded3b9SFn5yKOOhbN2ipVld7JoZKjHj6w5lnwZP942Rn4rFhP1tn9kCB9cKAJnICfiCsvaaM5pZqfCz1CSZv7UFLrIokA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vnA1UymLOMeibDYYF5JoYhc1CMTgPHJDZ7mE1VBCPXw=;
- b=vEPMadRvrx3Fl4GLB447m9mJ9Zz0snTDxgEmCO9veHQLvzBKWEliyDunU+c5OsnQB5RiNB5WkRT43I/BHLRkZuq1RC6oYftBPCGZgjprLiqw3WZqGyCEFQndPR+fsibMgylWrkYiZXdQix2bS8k1Qw8hGFeX3lO/NfGye45vgqFEXqP5jhaGHKxkqy/OK8qnz7UjlfXc9TZWidYgzbiba/hEcMPAH7PTpe20cUSMQD892am8NX5D+bjda97WejOZuvmS4TUEccPZselA1bevIesypPOR9//0AcXav2uXBp4DpSspBnVpMnP3dClFwMi3ifZ2QYMvhn9/10C/zULKQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
- dkim=pass header.d=blaize.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vnA1UymLOMeibDYYF5JoYhc1CMTgPHJDZ7mE1VBCPXw=;
- b=F1pRlGgpKe/2wqt0C7vhxHr9ceMKdvtBqeftqtGRupuiecDu194AMJibvt4VuUqLVrkB1155570NX9OMDaQ31B8rX33NBb/GuWfUBroUmPItC2/smrPH7/GVjGoJGwQFbt4nqoenvvTNW/4QcWP16mu11ou+wPJqYY1enCldeA0=
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:12a::5)
- by MAZPR01MB8910.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:cd::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 11:27:05 +0000
-Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655]) by MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::309a:12cf:74a4:5655%4]) with mapi id 15.20.8583.026; Thu, 27 Mar 2025
- 11:27:05 +0000
-From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        James Cowgill <james.cowgill@blaize.com>,
-        Matt Redfearn <matthew.redfearn@blaize.com>,
-        Neil Jones
-	<neil.jones@blaize.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz
- Golaszewski <brgl@bgdev.pl>,
-        Matt Redfearn <matthew.redfearn@blaize.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Nikolaos Pasaloukos
-	<nikolaos.pasaloukos@blaize.com>
-Subject: [PATCH v2 3/3] arm64: dts: blaize-blzp1600: Enable GPIO support
-Thread-Topic: [PATCH v2 3/3] arm64: dts: blaize-blzp1600: Enable GPIO support
-Thread-Index: AQHbnwsr8t06J68oF0WylvpAtNCDMg==
-Date: Thu, 27 Mar 2025 11:27:05 +0000
-Message-ID:
- <20250327-kernel-upstreaming-add_gpio_support-v2-3-bbe51f8d66da@blaize.com>
-References:
- <20250327-kernel-upstreaming-add_gpio_support-v2-0-bbe51f8d66da@blaize.com>
-In-Reply-To:
- <20250327-kernel-upstreaming-add_gpio_support-v2-0-bbe51f8d66da@blaize.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0PR01MB10184:EE_|MAZPR01MB8910:EE_
-x-ms-office365-filtering-correlation-id: 1f420926-929a-4e97-b130-08dd6d224dd1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MWI0T1o4dXdYU3FlYXVEWWJKOUIwMzdvLy9CTFZ4b21mMURnVzFwQ0RJa0hG?=
- =?utf-8?B?WTV0OTVhTU82MnhZNkxrUUMySnlHS2o2SkJxNXBZSlZYdit5ZGsyaGlIb0Fr?=
- =?utf-8?B?eXhsTi9VR2Zud1J4WXU5WFphY3g5TDV3MHdTVzB2UiswbHJCMzd5TGVrRFo4?=
- =?utf-8?B?dkE0NGRZd21ORkFwbXJpUUphSUttRjBmRUM5dFl1Z3U0MGh2OGxtV3RMc2Vt?=
- =?utf-8?B?WjVSVUV1aWlZeE40dGRWWjlMOTNtVy9DYjFMeGhiRjl2cVJ6ODdYVzVxS3Qz?=
- =?utf-8?B?OFQrRmdJcCttV3I2S1FEZ01jV0R6SU00SytVcWZYbGpaMk1FMlJQa0sxak15?=
- =?utf-8?B?d0FkWWgxNE9zb2FaWWRUOThxTmFUUWNhdTgrWHY4RmM5eTgyQzd6eTVjelY5?=
- =?utf-8?B?a29JZkoxaW01bDRJVmtPTEtwQUIyN3VWUVcrMUVnalV5QkhiSjNOTFozUGVz?=
- =?utf-8?B?UktrbU8zb3JNbytEMURDU3V0S2ZyOW9TR1FHZW1XQWJhVzE2UGdKdzJUZnpL?=
- =?utf-8?B?Z3B6ZkZyUVV0R25HVlhOZFpaZHIwcmlUZWhmeVcrcVduTm44d3FFVW1td0FM?=
- =?utf-8?B?cGJHUitKeGVWVHB3cVFxQ3FPREIyMmpVNlQwbmR4ZmdNWHlxN3FLMmVvd1F4?=
- =?utf-8?B?TUlRd21OaTdySFNzR1lhSm85Y3lVdVdKd2FKOENpNXRqcm91OElMeko5Q0lQ?=
- =?utf-8?B?Z3BwSHdnZVFVUi9IeWp6WUp2YWw3QisvMW1YbW13WmhLMkdaemFtcFUwWHJ4?=
- =?utf-8?B?U3lCcUhTeVZIK2ZFMEF6cnZCYVF5RFpKQ29jWk41amdNNUFOdXB2T1JMWUFt?=
- =?utf-8?B?VFdvbE0rZjFneTRlMDAxbkFlajhRcGFPWTYvSURDRWZLMThpMHdjZzJiQ05r?=
- =?utf-8?B?S29qczFFTGE2NjNDNk8zQTJRNk02YmYzQlliYlZHZXowVHd2QTFhMFpxdTBR?=
- =?utf-8?B?d0VudlpOR29FU01KOXBuR3l0bDRoNUFSY1d6Vm5MMm41c25SeTI3ejZNa0U0?=
- =?utf-8?B?bDBmaWdiK0ROMW9LTVlIZm0zRjUzMnVURi9HWTBqeU43SVpkdFpFeFB3WW9U?=
- =?utf-8?B?RW95TFpXUmpjTnJYa0FDTGtuOTROeWFrUG5iMm1Pa2Vuc3VJVUszeDErZFRX?=
- =?utf-8?B?a2oxMldXdENiQlpoM01RNE42Y0MrdHpyR3ZrSkprbkdqbFFCdTVNUFltdDl2?=
- =?utf-8?B?Rmp1ZmJpZjJNZ3JOWjkzMDhnblBxYXNOL0wycmQrWGJHUXBaYUc0ZE03bU1p?=
- =?utf-8?B?OTRtV1ppdUZSVTBpK2JqN3N1QkpWT2FGMnpqaklSVkVkdi91cHVNWGVyVlZh?=
- =?utf-8?B?S0c3WXpxM3dWZlFNdktNY3VKTGRiL2pjLzdmWkhaNGwwckgrMnREeSszYUpZ?=
- =?utf-8?B?eFQrTktuaExSVktBQVNZVDZDRS9lY2RTaG43U3U3QjdYcE94TXkzS1l0QnJO?=
- =?utf-8?B?YUVlQkdnbFRuc2IyTFB2R1pNTzNtVFRsV3VjTkgrdDNPWHdtWEc4MUNWNXRF?=
- =?utf-8?B?VmljVFYvaGI2c1Z0Nmxqbmx5djFJWnMyb2h6citZS2hoekZnYTZYb21nTTJa?=
- =?utf-8?B?WXg4amFQd2REbDhFaDAyRDNYMUVWOEtlWXVieEQ1V3ZqdnU5UkNFRDdjaUxQ?=
- =?utf-8?B?WEpxSWpzNkJ1V0dYRlhjeFFGVXQ5amtXT3M5ZSszMTE0M1R6a0JMTDVaZ25k?=
- =?utf-8?B?ZGpCSHVwQWZlQnlOUEJlUXVEQnlNY2tiNERvN2RzYTFwVFg1T2VtTmhJb0xu?=
- =?utf-8?B?UW5jeFZDT2tHOCtQcFdXbjdySXphM0pqY0ZkUkQ3QUl5c3NZVFhpRVM5V0Uw?=
- =?utf-8?B?czlWR0RCMFE1bUFnQ2JrbE5iMERSbm56OGdzam5vbHIxZ2VnVzBSRlBpUDJU?=
- =?utf-8?B?MjFjQVFrL3hPa2xoTFJ3WElIbW4xeDVGYVJMcUIrdGdIUHcxeFZ0S1p1TGgx?=
- =?utf-8?B?NmxLL2hmeUpwYlVsc2w3b09icmx4ZURzTnNPTEZldzlHNUtNeW1qTHViNjNw?=
- =?utf-8?B?cW5wcVRsZlNRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?KzM2bS9RVHFOaWZjZm9kUmMzaXlWamVDT3BVY292WnIxK24yejR4a3JmYXcx?=
- =?utf-8?B?VUlxcm13aVBtVUhEYndXdjVpL2xWaXNoeU56SG5USjB4REU3OEJUWkFpRTdk?=
- =?utf-8?B?ZHBDL252WlgrazNicWEvbloxaXBCd3pkRVNJb3ovaFZHcnh5SXN1V0NmUmlN?=
- =?utf-8?B?WWcxYncvNUx0V21pbzZyT0hzVS93L0FPQzJHMmpEZHl5Q0ZWdjJ4WEk3dFVh?=
- =?utf-8?B?VFBteXEyc0psNUQzZjV2RUFjNVBHdWNkdFUrVllRUFNhdFdHOHNvd2dldi9S?=
- =?utf-8?B?ejFENjUvL29NeFRTWHdJMzl0S3VxOUpEK1ZSUjNZVnE0V2VPemhKZmxSSndM?=
- =?utf-8?B?ckRybng4cW8wMWlzdG1TeXZUd3VRZTE3RUd2dVRIbmxzQ0tuQXlnU1RnaVpq?=
- =?utf-8?B?T05oWnF0YnFNbFMrTkFoS1lNOFNBU3VsUjIxKzhzckxQYld2VmV2NzNEZFNm?=
- =?utf-8?B?YlZwQVp2Q0N5aXd5WGlCTHVCdnlDQXBpTFpLZTlWbVRlMVdWU3NwQU5vRWJq?=
- =?utf-8?B?Smk4Q0NIWjhIN0dWMkE5LzErcE1ONjBIWHpLZktGNHpIaFZ3SGx2cStOdlFs?=
- =?utf-8?B?U1ZDeDBsL0JjQXZrMmxFWlJzSXZCa1dmQzZwZUtqRzk5YmhUQXJCNFBENUJ1?=
- =?utf-8?B?SEVENjQxMnVOaXNvM1M1MHpxdDFabVNOUXZjdVo1eHl2UkpKWURDdCs4MUxr?=
- =?utf-8?B?L1JLQ1R6Q05QbFRxbngrTFpUQ1MyVWw0MFNVdVBaSWliTk9NdEYyRFBTY3BW?=
- =?utf-8?B?Y2QydWtXdHJObHpUTkZuQUF3eGx4V2pxWEcyMmtTM2JLV29WWlN3Z2lkM1pV?=
- =?utf-8?B?ZEVQNjhCQUdTTnI5YjdSWkZjYUtNcmF4T1dnd2p1Ym5PLzFHaVYrQzhGUFNZ?=
- =?utf-8?B?dXRPZTU3SmZVTjV6a3RxT1hPTmQvWnFmamNucDV1TFV6VXVJMVpUUkFjWkJl?=
- =?utf-8?B?MVYrWlNBVFoxVmN0WVkrM0xNQlg0dWlpb2xjOEVKb0ladU9iQVBTcHpTamsz?=
- =?utf-8?B?Y2tjaFdpdUdFUFU5VEdReEVVc2RSQ3F1Q3VLZVVXem5wQnpOUTFSVUhrZ09k?=
- =?utf-8?B?YlBGUHdsTGx3dk1KWXpFV2JEU0NFN3ZuNnREKzBGQnFUbEJzWkRZSjgwUVhX?=
- =?utf-8?B?MWRldVJFdG1qb1kvSVJvZW1IaythbDZDOEU5TkZnSEhtNjJETkxQd1QzZlVP?=
- =?utf-8?B?VitQcSszY3pzUEdjMHlZUXRJY21OVUtDUXMzbkY2Tllaa0VURlE5OHR5UzZR?=
- =?utf-8?B?MHdrWUxNZHRtdXVqdjQvREkvR1lGT3Z5dHRPMThNVC9YOUs4cTlSZ1lxVms4?=
- =?utf-8?B?T1NTTFNMSlRlekRtTnVwWUMrMDBBWjJ0dW1ISTBVVld4SWROcUxNZjJJYmda?=
- =?utf-8?B?ajZHWW9vRDFhbGtFeUFtWVBnMjYxSHlmcFkyMG93S2ZWcTcxYXBJemZtUDBj?=
- =?utf-8?B?VGV2M2w0Si9PK2lrR1BaV0VpUHNuMU5nbDVrbGRBK3F3WlBxWHhrWThqaCt4?=
- =?utf-8?B?elVzcC9HTXJGQW1vdzI0VkJ1Mkh2MWdiN2VEckJxZjJCbjVKSytLZmVIOERk?=
- =?utf-8?B?a0JDWEE2cG1qQncrVXZwVkJmYkh0alJLVjNkSUx3SmpUeFJuMHNGRy9oTnha?=
- =?utf-8?B?VjFUOFJaK2NCNEZxNUlkTklSQ0hIRmpCZmt1QU01MEFqQmZ3aUNxSTF6T3Rr?=
- =?utf-8?B?WkVwcDZYSXN3YkF1d1gxZlhPQUpIcW1JS2tCMTlkVTdCRlJDY0t2ZlFSMlJI?=
- =?utf-8?B?anU2YmVVOHdndXd4TmgvU1hnMTAyelRaeURzVUlvb3VLUlFwV1Bnc1gxZkUy?=
- =?utf-8?B?RDBoZUVXR2w3Myt3dVJwbTluMCs1ZmJ5U0hkejQ2clZYMGM1Tm5lUzlBcUQ1?=
- =?utf-8?B?UmFwWHBYaWorcHFKOEpVMitRb0tUNythUGc1ZXZGNUhNRTFLT1ZEaHVyY0pk?=
- =?utf-8?B?T2tkVExpb2t0NDJSQ3VzdXh4WFJ2R1RYVkhBemxYTGFDM0JUMWVkdTE3alZ3?=
- =?utf-8?B?a3RFYmVRMkZQY3lCOG9lMTJOdkdzaEJOeUh3VVdFWFBTdEZzMU9RSERhNUtU?=
- =?utf-8?B?ejR4UW9ianlzMnZoL0FtRFdxUzRKOStpOFNqdk5RdFlTTzZzN1lPZzF1WmpG?=
- =?utf-8?B?VEtuSHc4aDVhVTBQVFpBcjJhMStQekxWMWJuWllYOEVLdkhBSjVia1laditv?=
- =?utf-8?B?WUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A4A589C210C59841B96809F08BA6D060@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310FE19D88F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 11:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743074849; cv=none; b=YPeyYS4kSG4CST0z4TA0dlkHiDNkm50+Oj6eEOipUiXqz2WH1dL3lqZiWZwnG1TD7ZcgIfp4MfK/X1FfkajACMt3ubPeUaBuhVi0wvCLZSrR8U2rh2BxqVEE5JS7WGgw2Ve0Zz2mu5vL6ou0yDDFTnU+48Sc3DFamljl33fwaQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743074849; c=relaxed/simple;
+	bh=HtfcmMhfTVpx6CO2LNav2kK6hxP9dxXovNBekGqqQAI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DlmndcCAuKerEhsWrhXYGDQLS8BbtdYtJbOqv8DP6gPY7Us5DfDFZrjenRS5KVGbepjnYy27C50XAlkaEBAjQcxp/FoZt0krSZmQl26pA8OrDoGkqZCUtUM+sg8zMMZhJi1SJHwUrLr8cuLtpA0FGgXhLB55vtcbC5D9LWgWCK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHmffOKP; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743074847; x=1774610847;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=HtfcmMhfTVpx6CO2LNav2kK6hxP9dxXovNBekGqqQAI=;
+  b=ZHmffOKPpYWeuP+Bu2IIGNX9MaqJdumWWWtO0Ku2HH1tIrRX5FA/IhQk
+   O2tcQ2SgDCEHmyhyaSznCHarukG7qrra/UJW+f+NHupAyHD0pE89lT9T1
+   LDp5Bce9hp2E/oJhDp/kYyR0ZYfkFi7YtVI2YUw97BSnmIoOqaWjx7zrU
+   R2kHANBD9swJAdZk7o3BsO1gFIJdcjO2gv0SLO+lsRdZ/qYDZ9qiHNQJz
+   NkiFhnxJqhM3se8WVmyCeCjeQIvzeyJvWtVTmAAURetPxetW25nq6n5mh
+   f6y31AhgxScDgGMZii8tcyAOzXir/vIK7SD1RtFHXZaXEgiigC1cZIvq+
+   w==;
+X-CSE-ConnectionGUID: lr1WRR4JR8+52kndkSMAqw==
+X-CSE-MsgGUID: sOvRfuLRTXiWFMnCnrfxFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="55058681"
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="55058681"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 04:27:26 -0700
+X-CSE-ConnectionGUID: GKmXEAGyTPut4aSZgJQgqQ==
+X-CSE-MsgGUID: P8OiKgE8SKuD356W4bcMTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
+   d="scan'208";a="124912406"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.17])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 04:27:21 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>, Gerd Hoffmann <kraxel@redhat.com>, Qiang Yu
+ <yuq825@gmail.com>, Steven Price <steven.price@arm.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Frank Binns <frank.binns@imgtec.com>,
+ Matt Coster <matt.coster@imgtec.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v20 05/10] drm/shmem-helper: Refactor locked/unlocked
+ functions
+In-Reply-To: <87iknu67hd.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
+ <20250322212608.40511-6-dmitry.osipenko@collabora.com>
+ <87iknu67hd.fsf@intel.com>
+Date: Thu, 27 Mar 2025 13:27:18 +0200
+Message-ID: <87friy67e1.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: blaize.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f420926-929a-4e97-b130-08dd6d224dd1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2025 11:27:05.7835
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kDtKasEEZzQcLUKg9J0d/TaX8H8ZN+XWMgJuJ0MCCGOtBrf39sQqG4TyNzZyi6JxhjNY/NWWWT54oGRUYVK3RNARF0F97GxEN9eGVYmMv10=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB8910
-X-Proofpoint-GUID: LUOOzxyhwKLqtI-iPPN3E5iufAyfFJNA
-X-Proofpoint-ORIG-GUID: LUOOzxyhwKLqtI-iPPN3E5iufAyfFJNA
-X-Authority-Analysis: v=2.4 cv=JvjxrN4C c=1 sm=1 tr=0 ts=67e5361e cx=c_pps a=5CkbgoO2JNAQOP1ij0Zt3g==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=-5LYVjoNHPMA:10 a=SrsycIMJAAAA:8 a=SrueIWi38-K_uB21zSIA:9 a=QEXdDO2ut3YA:10 a=zapPnUM7SFj2ezx6rUw-:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Reason: orgsafe
+Content-Type: text/plain
 
-QmxhaXplIEJMWlAxNjAwIHVzZXMgdGhlIGN1c3RvbSBzaWxpY29uIHByb3ZpZGVkIGZyb20NClZl
-cmlTaWxpY29uIHRvIGFkZCBHUElPIHN1cHBvcnQuDQpUaGlzIGludGVyZmFjZSBpcyB1c2VkIHRv
-IGNvbnRyb2wgc2lnbmFscyBvbiBtYW55IG90aGVyDQpwZXJpcGhlcmFscywgc3VjaCBhcyBFdGhl
-cm5ldCwgVVNCLCBTRCBhbmQgZU1NQy4NCg0KU2lnbmVkLW9mZi1ieTogTmlrb2xhb3MgUGFzYWxv
-dWtvcyA8bmlrb2xhb3MucGFzYWxvdWtvc0BibGFpemUuY29tPg0KLS0tDQogYXJjaC9hcm02NC9i
-b290L2R0cy9ibGFpemUvYmxhaXplLWJsenAxNjAwLWNiMi5kdHMgfCAzNiArKysrKysrKysrKysr
-KysrKysrKysrDQogYXJjaC9hcm02NC9ib290L2R0cy9ibGFpemUvYmxhaXplLWJsenAxNjAwLmR0
-c2kgICAgfCAxMiArKysrKysrKw0KIDIgZmlsZXMgY2hhbmdlZCwgNDggaW5zZXJ0aW9ucygrKQ0K
-DQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9ibGFpemUvYmxhaXplLWJsenAxNjAw
-LWNiMi5kdHMgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2JsYWl6ZS9ibGFpemUtYmx6cDE2MDAtY2Iy
-LmR0cw0KaW5kZXggN2UzY2VmMmVkMzUyMmUyMDI0ODdlNzk5YjIwMjFjZDQ1Mzk4ZTAwNi4uZmI1
-NDE1ZWIzNDdhMDI4ZmM2NTA5MDAyN2E0YzRmYzg5YzgyODBmNSAxMDA2NDQNCi0tLSBhL2FyY2gv
-YXJtNjQvYm9vdC9kdHMvYmxhaXplL2JsYWl6ZS1ibHpwMTYwMC1jYjIuZHRzDQorKysgYi9hcmNo
-L2FybTY0L2Jvb3QvZHRzL2JsYWl6ZS9ibGFpemUtYmx6cDE2MDAtY2IyLmR0cw0KQEAgLTgxLDMg
-KzgxLDM5IEBAIGdwaW9fZXhwYW5kZXJfbTI6IGdwaW9ANzUgew0KIAkJCQkgICJVQVJUMV9UT19S
-U1AiOwkvKiBHUElPXzE1ICovDQogCX07DQogfTsNCisNCismZ3BpbzAgew0KKwlzdGF0dXMgPSAi
-b2theSI7DQorCWdwaW8tbGluZS1uYW1lcyA9ICJQRVJTVF9OIiwJCS8qIEdQSU9fMCAqLw0KKwkJ
-CSAgIkxNOTYwNjNfQUxFUlRfTiIsCS8qIEdQSU9fMSAqLw0KKwkJCSAgIklOQTMyMjFfUFYiLAkJ
-LyogR1BJT18yICovDQorCQkJICAiSU5BMzIyMV9DUklUIiwJLyogR1BJT18zICovDQorCQkJICAi
-SU5BMzIyMV9XQVJOIiwJLyogR1BJT180ICovDQorCQkJICAiSU5BMzIyMV9UQyIsCQkvKiBHUElP
-XzUgKi8NCisJCQkgICJRU1BJMF9SU1RfTiIsCS8qIEdQSU9fNiAqLw0KKwkJCSAgIkxNOTYwNjNf
-VENSSVRfTiIsCS8qIEdQSU9fNyAqLw0KKwkJCSAgIkRTSV9UQ0hfSU5UIiwJLyogR1BJT184ICov
-DQorCQkJICAiRFNJX1JTVCIsCQkvKiBHUElPXzkgKi8NCisJCQkgICJEU0lfQkwiLAkJLyogR1BJ
-T18xMCAqLw0KKwkJCSAgIkRTSV9JTlQiLAkJLyogR1BJT18xMSAqLw0KKwkJCSAgIkVUSF9SU1Qi
-LAkJLyogR1BJT18xMiAqLw0KKwkJCSAgIkNTSTBfUlNUIiwJCS8qIEdQSU9fMTMgKi8NCisJCQkg
-ICJDU0kwX1BXRE4iLAkJLyogR1BJT18xNCAqLw0KKwkJCSAgIkNTSTFfUlNUIiwJCS8qIEdQSU9f
-MTUgKi8NCisJCQkgICJDU0kxX1BXRE4iLAkJLyogR1BJT18xNiAqLw0KKwkJCSAgIkNTSTJfUlNU
-IiwJCS8qIEdQSU9fMTcgKi8NCisJCQkgICJDU0kyX1BXRE4iLAkJLyogR1BJT18xOCAqLw0KKwkJ
-CSAgIkNTSTNfUlNUIiwJCS8qIEdQSU9fMTkgKi8NCisJCQkgICJDU0kzX1BXRE4iLAkJLyogR1BJ
-T18yMCAqLw0KKwkJCSAgIkFEQUNfUlNUIiwJCS8qIEdQSU9fMjEgKi8NCisJCQkgICJTRF9TV19W
-REQiLAkJLyogR1BJT18yMiAqLw0KKwkJCSAgIlNEX1BPTl9WREQiLAkJLyogR1BJT18yMyAqLw0K
-KwkJCSAgIkdQSU9fRVhQX0lOVCIsCS8qIEdQSU9fMjQgKi8NCisJCQkgICJCT0FSRF9JRF8wIiwJ
-CS8qIEdQSU9fMjUgKi8NCisJCQkgICJTRElPMV9TV19WREQiLAkvKiBHUElPXzI2ICovDQorCQkJ
-ICAiU0RJTzFfUE9OX1ZERCIsCS8qIEdQSU9fMjcgKi8NCisJCQkgICJTRElPMl9TV19WREQiLAkv
-KiBHUElPXzI4ICovDQorCQkJICAiU0RJTzJfUE9OX1ZERCIsCS8qIEdQSU9fMjkgKi8NCisJCQkg
-ICJCT0FSRF9JRF8xIiwJCS8qIEdQSU9fMzAgKi8NCisJCQkgICJCT0FSRF9JRF8yIjsJCS8qIEdQ
-SU9fMzEgKi8NCit9Ow0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvYmxhaXplL2Js
-YWl6ZS1ibHpwMTYwMC5kdHNpIGIvYXJjaC9hcm02NC9ib290L2R0cy9ibGFpemUvYmxhaXplLWJs
-enAxNjAwLmR0c2kNCmluZGV4IDdkMzk5ZTZhNTMyZjViMjQzODVkZDgzN2JlOTY1YmU3NzFjN2Qy
-NGMuLjVhNmM4ODJiMmY1N2Q1N2QzMDQ4NjlkZWU4NzdjOTk2Y2JhYmI3MTIgMTAwNjQ0DQotLS0g
-YS9hcmNoL2FybTY0L2Jvb3QvZHRzL2JsYWl6ZS9ibGFpemUtYmx6cDE2MDAuZHRzaQ0KKysrIGIv
-YXJjaC9hcm02NC9ib290L2R0cy9ibGFpemUvYmxhaXplLWJsenAxNjAwLmR0c2kNCkBAIC0xMjAs
-NiArMTIwLDE4IEBAIGdpYzogaW50ZXJydXB0LWNvbnRyb2xsZXJANDEwMDAwIHsNCiAJCQkJCQkg
-SVJRX1RZUEVfTEVWRUxfTE9XKT47DQogCQl9Ow0KIA0KKwkJZ3BpbzA6IGdwaW9ANGMwMDAwIHsN
-CisJCQljb21wYXRpYmxlID0gImJsYWl6ZSxibHpwMTYwMC1ncGlvIjsNCisJCQlyZWcgPSA8MHg0
-YzAwMDAgMHgxMDAwPjsNCisJCQlncGlvLWNvbnRyb2xsZXI7DQorCQkJI2dwaW8tY2VsbHMgPSA8
-Mj47DQorCQkJbmdwaW9zID0gPDMyPjsNCisJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMyBJUlFf
-VFlQRV9MRVZFTF9ISUdIPjsNCisJCQlpbnRlcnJ1cHQtY29udHJvbGxlcjsNCisJCQkjaW50ZXJy
-dXB0LWNlbGxzID0gPDI+Ow0KKwkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQorCQl9Ow0KKw0KIAkJ
-dWFydDA6IHNlcmlhbEA0ZDAwMDAgew0KIAkJCWNvbXBhdGlibGUgPSAibnMxNjU1MGEiOw0KIAkJ
-CXJlZyA9IDwweDRkMDAwMCAweDEwMDA+Ow0KDQotLSANCjIuNDMuMA0KDQo=
+On Thu, 27 Mar 2025, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Sun, 23 Mar 2025, Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
+>> Add locked and remove unlocked postfixes from drm-shmem function names,
+>> making names consistent with the drm/gem core code.
+>
+> This breaks the build for drivers/accel/ivpu/ivpu_gem.c.
+>
+> Please enable CONFIG_DRM_ACCEL_IVPU=m and fix the fallout.
+
+Ditto for CONFIG_DRM_ACCEL_AMDXDNA=m.
+
+>
+> BR,
+> Jani.
+>
+>
+>>
+>> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+>> Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
+>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> ---
+>>  drivers/gpu/drm/drm_gem_shmem_helper.c        | 60 +++++++++----------
+>>  drivers/gpu/drm/imagination/pvr_gem.c         |  4 +-
+>>  drivers/gpu/drm/lima/lima_gem.c               |  2 +-
+>>  drivers/gpu/drm/panfrost/panfrost_drv.c       |  2 +-
+>>  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |  2 +-
+>>  drivers/gpu/drm/tests/drm_gem_shmem_test.c    | 14 ++---
+>>  include/drm/drm_gem_shmem_helper.h            | 28 ++++-----
+>>  7 files changed, 56 insertions(+), 56 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+>> index 98c68999d61a..a9e35a46e72b 100644
+>> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+>> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+>> @@ -174,7 +174,7 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+>>  			kfree(shmem->sgt);
+>>  		}
+>>  		if (shmem->pages)
+>> -			drm_gem_shmem_put_pages(shmem);
+>> +			drm_gem_shmem_put_pages_locked(shmem);
+>>  
+>>  		drm_WARN_ON(obj->dev, shmem->pages_use_count);
+>>  
+>> @@ -186,7 +186,7 @@ void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem)
+>>  }
+>>  EXPORT_SYMBOL_GPL(drm_gem_shmem_free);
+>>  
+>> -static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
+>> +static int drm_gem_shmem_get_pages_locked(struct drm_gem_shmem_object *shmem)
+>>  {
+>>  	struct drm_gem_object *obj = &shmem->base;
+>>  	struct page **pages;
+>> @@ -220,12 +220,12 @@ static int drm_gem_shmem_get_pages(struct drm_gem_shmem_object *shmem)
+>>  }
+>>  
+>>  /*
+>> - * drm_gem_shmem_put_pages - Decrease use count on the backing pages for a shmem GEM object
+>> + * drm_gem_shmem_put_pages_locked - Decrease use count on the backing pages for a shmem GEM object
+>>   * @shmem: shmem GEM object
+>>   *
+>>   * This function decreases the use count and puts the backing pages when use drops to zero.
+>>   */
+>> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+>> +void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem)
+>>  {
+>>  	struct drm_gem_object *obj = &shmem->base;
+>>  
+>> @@ -247,7 +247,7 @@ void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem)
+>>  			  shmem->pages_mark_accessed_on_put);
+>>  	shmem->pages = NULL;
+>>  }
+>> -EXPORT_SYMBOL_GPL(drm_gem_shmem_put_pages);
+>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_put_pages_locked);
+>>  
+>>  int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+>>  {
+>> @@ -257,7 +257,7 @@ int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+>>  
+>>  	drm_WARN_ON(shmem->base.dev, drm_gem_is_imported(&shmem->base));
+>>  
+>> -	ret = drm_gem_shmem_get_pages(shmem);
+>> +	ret = drm_gem_shmem_get_pages_locked(shmem);
+>>  
+>>  	return ret;
+>>  }
+>> @@ -267,7 +267,7 @@ void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem)
+>>  {
+>>  	dma_resv_assert_held(shmem->base.resv);
+>>  
+>> -	drm_gem_shmem_put_pages(shmem);
+>> +	drm_gem_shmem_put_pages_locked(shmem);
+>>  }
+>>  EXPORT_SYMBOL(drm_gem_shmem_unpin_locked);
+>>  
+>> @@ -318,7 +318,7 @@ void drm_gem_shmem_unpin(struct drm_gem_shmem_object *shmem)
+>>  EXPORT_SYMBOL_GPL(drm_gem_shmem_unpin);
+>>  
+>>  /*
+>> - * drm_gem_shmem_vmap - Create a virtual mapping for a shmem GEM object
+>> + * drm_gem_shmem_vmap_locked - Create a virtual mapping for a shmem GEM object
+>>   * @shmem: shmem GEM object
+>>   * @map: Returns the kernel virtual address of the SHMEM GEM object's backing
+>>   *       store.
+>> @@ -327,13 +327,13 @@ EXPORT_SYMBOL_GPL(drm_gem_shmem_unpin);
+>>   * exists for the buffer backing the shmem GEM object. It hides the differences
+>>   * between dma-buf imported and natively allocated objects.
+>>   *
+>> - * Acquired mappings should be cleaned up by calling drm_gem_shmem_vunmap().
+>> + * Acquired mappings should be cleaned up by calling drm_gem_shmem_vunmap_locked().
+>>   *
+>>   * Returns:
+>>   * 0 on success or a negative error code on failure.
+>>   */
+>> -int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+>> -		       struct iosys_map *map)
+>> +int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
+>> +			      struct iosys_map *map)
+>>  {
+>>  	struct drm_gem_object *obj = &shmem->base;
+>>  	int ret = 0;
+>> @@ -356,7 +356,7 @@ int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+>>  			return 0;
+>>  		}
+>>  
+>> -		ret = drm_gem_shmem_get_pages(shmem);
+>> +		ret = drm_gem_shmem_get_pages_locked(shmem);
+>>  		if (ret)
+>>  			goto err_zero_use;
+>>  
+>> @@ -379,28 +379,28 @@ int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+>>  
+>>  err_put_pages:
+>>  	if (!drm_gem_is_imported(obj))
+>> -		drm_gem_shmem_put_pages(shmem);
+>> +		drm_gem_shmem_put_pages_locked(shmem);
+>>  err_zero_use:
+>>  	shmem->vmap_use_count = 0;
+>>  
+>>  	return ret;
+>>  }
+>> -EXPORT_SYMBOL_GPL(drm_gem_shmem_vmap);
+>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_vmap_locked);
+>>  
+>>  /*
+>> - * drm_gem_shmem_vunmap - Unmap a virtual mapping for a shmem GEM object
+>> + * drm_gem_shmem_vunmap_locked - Unmap a virtual mapping for a shmem GEM object
+>>   * @shmem: shmem GEM object
+>>   * @map: Kernel virtual address where the SHMEM GEM object was mapped
+>>   *
+>>   * This function cleans up a kernel virtual address mapping acquired by
+>> - * drm_gem_shmem_vmap(). The mapping is only removed when the use count drops to
+>> - * zero.
+>> + * drm_gem_shmem_vmap_locked(). The mapping is only removed when the use count
+>> + * drops to zero.
+>>   *
+>>   * This function hides the differences between dma-buf imported and natively
+>>   * allocated objects.
+>>   */
+>> -void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+>> -			  struct iosys_map *map)
+>> +void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+>> +				 struct iosys_map *map)
+>>  {
+>>  	struct drm_gem_object *obj = &shmem->base;
+>>  
+>> @@ -416,12 +416,12 @@ void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+>>  			return;
+>>  
+>>  		vunmap(shmem->vaddr);
+>> -		drm_gem_shmem_put_pages(shmem);
+>> +		drm_gem_shmem_put_pages_locked(shmem);
+>>  	}
+>>  
+>>  	shmem->vaddr = NULL;
+>>  }
+>> -EXPORT_SYMBOL_GPL(drm_gem_shmem_vunmap);
+>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_vunmap_locked);
+>>  
+>>  static int
+>>  drm_gem_shmem_create_with_handle(struct drm_file *file_priv,
+>> @@ -449,7 +449,7 @@ drm_gem_shmem_create_with_handle(struct drm_file *file_priv,
+>>  /* Update madvise status, returns true if not purged, else
+>>   * false or -errno.
+>>   */
+>> -int drm_gem_shmem_madvise(struct drm_gem_shmem_object *shmem, int madv)
+>> +int drm_gem_shmem_madvise_locked(struct drm_gem_shmem_object *shmem, int madv)
+>>  {
+>>  	dma_resv_assert_held(shmem->base.resv);
+>>  
+>> @@ -460,9 +460,9 @@ int drm_gem_shmem_madvise(struct drm_gem_shmem_object *shmem, int madv)
+>>  
+>>  	return (madv >= 0);
+>>  }
+>> -EXPORT_SYMBOL_GPL(drm_gem_shmem_madvise);
+>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_madvise_locked);
+>>  
+>> -void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem)
+>> +void drm_gem_shmem_purge_locked(struct drm_gem_shmem_object *shmem)
+>>  {
+>>  	struct drm_gem_object *obj = &shmem->base;
+>>  	struct drm_device *dev = obj->dev;
+>> @@ -476,7 +476,7 @@ void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem)
+>>  	kfree(shmem->sgt);
+>>  	shmem->sgt = NULL;
+>>  
+>> -	drm_gem_shmem_put_pages(shmem);
+>> +	drm_gem_shmem_put_pages_locked(shmem);
+>>  
+>>  	shmem->madv = -1;
+>>  
+>> @@ -492,7 +492,7 @@ void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem)
+>>  
+>>  	invalidate_mapping_pages(file_inode(obj->filp)->i_mapping, 0, (loff_t)-1);
+>>  }
+>> -EXPORT_SYMBOL_GPL(drm_gem_shmem_purge);
+>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_purge_locked);
+>>  
+>>  /**
+>>   * drm_gem_shmem_dumb_create - Create a dumb shmem buffer object
+>> @@ -589,7 +589,7 @@ static void drm_gem_shmem_vm_close(struct vm_area_struct *vma)
+>>  	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+>>  
+>>  	dma_resv_lock(shmem->base.resv, NULL);
+>> -	drm_gem_shmem_put_pages(shmem);
+>> +	drm_gem_shmem_put_pages_locked(shmem);
+>>  	dma_resv_unlock(shmem->base.resv);
+>>  
+>>  	drm_gem_vm_close(vma);
+>> @@ -639,7 +639,7 @@ int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct
+>>  		return -EINVAL;
+>>  
+>>  	dma_resv_lock(shmem->base.resv, NULL);
+>> -	ret = drm_gem_shmem_get_pages(shmem);
+>> +	ret = drm_gem_shmem_get_pages_locked(shmem);
+>>  	dma_resv_unlock(shmem->base.resv);
+>>  
+>>  	if (ret)
+>> @@ -707,7 +707,7 @@ static struct sg_table *drm_gem_shmem_get_pages_sgt_locked(struct drm_gem_shmem_
+>>  
+>>  	drm_WARN_ON(obj->dev, drm_gem_is_imported(obj));
+>>  
+>> -	ret = drm_gem_shmem_get_pages(shmem);
+>> +	ret = drm_gem_shmem_get_pages_locked(shmem);
+>>  	if (ret)
+>>  		return ERR_PTR(ret);
+>>  
+>> @@ -729,7 +729,7 @@ static struct sg_table *drm_gem_shmem_get_pages_sgt_locked(struct drm_gem_shmem_
+>>  	sg_free_table(sgt);
+>>  	kfree(sgt);
+>>  err_put_pages:
+>> -	drm_gem_shmem_put_pages(shmem);
+>> +	drm_gem_shmem_put_pages_locked(shmem);
+>>  	return ERR_PTR(ret);
+>>  }
+>>  
+>> diff --git a/drivers/gpu/drm/imagination/pvr_gem.c b/drivers/gpu/drm/imagination/pvr_gem.c
+>> index 6a8c81fe8c1e..d9d7c6d1a138 100644
+>> --- a/drivers/gpu/drm/imagination/pvr_gem.c
+>> +++ b/drivers/gpu/drm/imagination/pvr_gem.c
+>> @@ -203,7 +203,7 @@ pvr_gem_object_vmap(struct pvr_gem_object *pvr_obj)
+>>  
+>>  	dma_resv_lock(obj->resv, NULL);
+>>  
+>> -	err = drm_gem_shmem_vmap(shmem_obj, &map);
+>> +	err = drm_gem_shmem_vmap_locked(shmem_obj, &map);
+>>  	if (err)
+>>  		goto err_unlock;
+>>  
+>> @@ -257,7 +257,7 @@ pvr_gem_object_vunmap(struct pvr_gem_object *pvr_obj)
+>>  			dma_sync_sgtable_for_device(dev, shmem_obj->sgt, DMA_BIDIRECTIONAL);
+>>  	}
+>>  
+>> -	drm_gem_shmem_vunmap(shmem_obj, &map);
+>> +	drm_gem_shmem_vunmap_locked(shmem_obj, &map);
+>>  
+>>  	dma_resv_unlock(obj->resv);
+>>  }
+>> diff --git a/drivers/gpu/drm/lima/lima_gem.c b/drivers/gpu/drm/lima/lima_gem.c
+>> index 9bb997dbb4b9..609221351cde 100644
+>> --- a/drivers/gpu/drm/lima/lima_gem.c
+>> +++ b/drivers/gpu/drm/lima/lima_gem.c
+>> @@ -195,7 +195,7 @@ static int lima_gem_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+>>  	if (bo->heap_size)
+>>  		return -EINVAL;
+>>  
+>> -	return drm_gem_shmem_vmap(&bo->base, map);
+>> +	return drm_gem_shmem_vmap_locked(&bo->base, map);
+>>  }
+>>  
+>>  static int lima_gem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+>> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> index 0f3935556ac7..a731f6b59a42 100644
+>> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+>> @@ -476,7 +476,7 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
+>>  		}
+>>  	}
+>>  
+>> -	args->retained = drm_gem_shmem_madvise(&bo->base, args->madv);
+>> +	args->retained = drm_gem_shmem_madvise_locked(&bo->base, args->madv);
+>>  
+>>  	if (args->retained) {
+>>  		if (args->madv == PANFROST_MADV_DONTNEED)
+>> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+>> index 3d9f51bd48b6..02b60ea1433a 100644
+>> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+>> +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+>> @@ -51,7 +51,7 @@ static bool panfrost_gem_purge(struct drm_gem_object *obj)
+>>  		goto unlock_mappings;
+>>  
+>>  	panfrost_gem_teardown_mappings_locked(bo);
+>> -	drm_gem_shmem_purge(&bo->base);
+>> +	drm_gem_shmem_purge_locked(&bo->base);
+>>  	ret = true;
+>>  
+>>  	dma_resv_unlock(shmem->base.resv);
+>> diff --git a/drivers/gpu/drm/tests/drm_gem_shmem_test.c b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
+>> index fd4215e2f982..98884966bb92 100644
+>> --- a/drivers/gpu/drm/tests/drm_gem_shmem_test.c
+>> +++ b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
+>> @@ -173,7 +173,7 @@ static void drm_gem_shmem_test_vmap(struct kunit *test)
+>>  	ret = kunit_add_action_or_reset(test, drm_gem_shmem_free_wrapper, shmem);
+>>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>>  
+>> -	ret = drm_gem_shmem_vmap(shmem, &map);
+>> +	ret = drm_gem_shmem_vmap_locked(shmem, &map);
+>>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>>  	KUNIT_ASSERT_NOT_NULL(test, shmem->vaddr);
+>>  	KUNIT_ASSERT_FALSE(test, iosys_map_is_null(&map));
+>> @@ -183,7 +183,7 @@ static void drm_gem_shmem_test_vmap(struct kunit *test)
+>>  	for (i = 0; i < TEST_SIZE; i++)
+>>  		KUNIT_EXPECT_EQ(test, iosys_map_rd(&map, i, u8), TEST_BYTE);
+>>  
+>> -	drm_gem_shmem_vunmap(shmem, &map);
+>> +	drm_gem_shmem_vunmap_locked(shmem, &map);
+>>  	KUNIT_EXPECT_NULL(test, shmem->vaddr);
+>>  	KUNIT_EXPECT_EQ(test, shmem->vmap_use_count, 0);
+>>  }
+>> @@ -281,17 +281,17 @@ static void drm_gem_shmem_test_madvise(struct kunit *test)
+>>  	ret = kunit_add_action_or_reset(test, drm_gem_shmem_free_wrapper, shmem);
+>>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>>  
+>> -	ret = drm_gem_shmem_madvise(shmem, 1);
+>> +	ret = drm_gem_shmem_madvise_locked(shmem, 1);
+>>  	KUNIT_EXPECT_TRUE(test, ret);
+>>  	KUNIT_ASSERT_EQ(test, shmem->madv, 1);
+>>  
+>>  	/* Set madv to a negative value */
+>> -	ret = drm_gem_shmem_madvise(shmem, -1);
+>> +	ret = drm_gem_shmem_madvise_locked(shmem, -1);
+>>  	KUNIT_EXPECT_FALSE(test, ret);
+>>  	KUNIT_ASSERT_EQ(test, shmem->madv, -1);
+>>  
+>>  	/* Check that madv cannot be set back to a positive value */
+>> -	ret = drm_gem_shmem_madvise(shmem, 0);
+>> +	ret = drm_gem_shmem_madvise_locked(shmem, 0);
+>>  	KUNIT_EXPECT_FALSE(test, ret);
+>>  	KUNIT_ASSERT_EQ(test, shmem->madv, -1);
+>>  }
+>> @@ -319,7 +319,7 @@ static void drm_gem_shmem_test_purge(struct kunit *test)
+>>  	ret = drm_gem_shmem_is_purgeable(shmem);
+>>  	KUNIT_EXPECT_FALSE(test, ret);
+>>  
+>> -	ret = drm_gem_shmem_madvise(shmem, 1);
+>> +	ret = drm_gem_shmem_madvise_locked(shmem, 1);
+>>  	KUNIT_EXPECT_TRUE(test, ret);
+>>  
+>>  	/* The scatter/gather table will be freed by drm_gem_shmem_free */
+>> @@ -329,7 +329,7 @@ static void drm_gem_shmem_test_purge(struct kunit *test)
+>>  	ret = drm_gem_shmem_is_purgeable(shmem);
+>>  	KUNIT_EXPECT_TRUE(test, ret);
+>>  
+>> -	drm_gem_shmem_purge(shmem);
+>> +	drm_gem_shmem_purge_locked(shmem);
+>>  	KUNIT_EXPECT_NULL(test, shmem->pages);
+>>  	KUNIT_EXPECT_NULL(test, shmem->sgt);
+>>  	KUNIT_EXPECT_EQ(test, shmem->madv, -1);
+>> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
+>> index cef5a6b5a4d6..0609e336479d 100644
+>> --- a/include/drm/drm_gem_shmem_helper.h
+>> +++ b/include/drm/drm_gem_shmem_helper.h
+>> @@ -102,19 +102,19 @@ struct drm_gem_shmem_object *drm_gem_shmem_create_with_mnt(struct drm_device *de
+>>  							   struct vfsmount *gemfs);
+>>  void drm_gem_shmem_free(struct drm_gem_shmem_object *shmem);
+>>  
+>> -void drm_gem_shmem_put_pages(struct drm_gem_shmem_object *shmem);
+>> +void drm_gem_shmem_put_pages_locked(struct drm_gem_shmem_object *shmem);
+>>  int drm_gem_shmem_pin(struct drm_gem_shmem_object *shmem);
+>>  void drm_gem_shmem_unpin(struct drm_gem_shmem_object *shmem);
+>> -int drm_gem_shmem_vmap(struct drm_gem_shmem_object *shmem,
+>> -		       struct iosys_map *map);
+>> -void drm_gem_shmem_vunmap(struct drm_gem_shmem_object *shmem,
+>> -			  struct iosys_map *map);
+>> +int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
+>> +			      struct iosys_map *map);
+>> +void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+>> +				 struct iosys_map *map);
+>>  int drm_gem_shmem_mmap(struct drm_gem_shmem_object *shmem, struct vm_area_struct *vma);
+>>  
+>>  int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem);
+>>  void drm_gem_shmem_unpin_locked(struct drm_gem_shmem_object *shmem);
+>>  
+>> -int drm_gem_shmem_madvise(struct drm_gem_shmem_object *shmem, int madv);
+>> +int drm_gem_shmem_madvise_locked(struct drm_gem_shmem_object *shmem, int madv);
+>>  
+>>  static inline bool drm_gem_shmem_is_purgeable(struct drm_gem_shmem_object *shmem)
+>>  {
+>> @@ -123,7 +123,7 @@ static inline bool drm_gem_shmem_is_purgeable(struct drm_gem_shmem_object *shmem
+>>  		!shmem->base.dma_buf && !drm_gem_is_imported(&shmem->base);
+>>  }
+>>  
+>> -void drm_gem_shmem_purge(struct drm_gem_shmem_object *shmem);
+>> +void drm_gem_shmem_purge_locked(struct drm_gem_shmem_object *shmem);
+>>  
+>>  struct sg_table *drm_gem_shmem_get_sg_table(struct drm_gem_shmem_object *shmem);
+>>  struct sg_table *drm_gem_shmem_get_pages_sgt(struct drm_gem_shmem_object *shmem);
+>> @@ -214,12 +214,12 @@ static inline struct sg_table *drm_gem_shmem_object_get_sg_table(struct drm_gem_
+>>  }
+>>  
+>>  /*
+>> - * drm_gem_shmem_object_vmap - GEM object function for drm_gem_shmem_vmap()
+>> + * drm_gem_shmem_object_vmap - GEM object function for drm_gem_shmem_vmap_locked()
+>>   * @obj: GEM object
+>>   * @map: Returns the kernel virtual address of the SHMEM GEM object's backing store.
+>>   *
+>> - * This function wraps drm_gem_shmem_vmap(). Drivers that employ the shmem helpers should
+>> - * use it as their &drm_gem_object_funcs.vmap handler.
+>> + * This function wraps drm_gem_shmem_vmap_locked(). Drivers that employ the shmem
+>> + * helpers should use it as their &drm_gem_object_funcs.vmap handler.
+>>   *
+>>   * Returns:
+>>   * 0 on success or a negative error code on failure.
+>> @@ -229,7 +229,7 @@ static inline int drm_gem_shmem_object_vmap(struct drm_gem_object *obj,
+>>  {
+>>  	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+>>  
+>> -	return drm_gem_shmem_vmap(shmem, map);
+>> +	return drm_gem_shmem_vmap_locked(shmem, map);
+>>  }
+>>  
+>>  /*
+>> @@ -237,15 +237,15 @@ static inline int drm_gem_shmem_object_vmap(struct drm_gem_object *obj,
+>>   * @obj: GEM object
+>>   * @map: Kernel virtual address where the SHMEM GEM object was mapped
+>>   *
+>> - * This function wraps drm_gem_shmem_vunmap(). Drivers that employ the shmem helpers should
+>> - * use it as their &drm_gem_object_funcs.vunmap handler.
+>> + * This function wraps drm_gem_shmem_vunmap_locked(). Drivers that employ the shmem
+>> + * helpers should use it as their &drm_gem_object_funcs.vunmap handler.
+>>   */
+>>  static inline void drm_gem_shmem_object_vunmap(struct drm_gem_object *obj,
+>>  					       struct iosys_map *map)
+>>  {
+>>  	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
+>>  
+>> -	drm_gem_shmem_vunmap(shmem, map);
+>> +	drm_gem_shmem_vunmap_locked(shmem, map);
+>>  }
+>>  
+>>  /**
+
+-- 
+Jani Nikula, Intel
 
