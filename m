@@ -1,145 +1,147 @@
-Return-Path: <linux-kernel+bounces-578211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AE8A72C96
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:35:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FFDA72C99
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8401899714
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E031703CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099A20CCC4;
-	Thu, 27 Mar 2025 09:35:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8AB1A8F60
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939646BF;
+	Thu, 27 Mar 2025 09:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geg2uA8t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E6B20C025
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743068146; cv=none; b=K0+C2nvYZA3mKHVO0Cgc29tdDSgV1JHSpOw4EvrH/flK5Sl/h6AQiAp/aD+1XOhc0l78eycBnLz/1V+SF6IrMFUbLxm4CJvjA2INVvwnLcW3mglyb/c8pnpUI+PgPxHrSzJzHDPZzYSJkN33JXGRDaM3mRKLlpyBlSYFQW189mA=
+	t=1743068197; cv=none; b=ERVy8+PmZL018b/X0DfPPH86doztpndFndaRczyEpbn7/57j0CXz7Hxiun+WnsitKTH/4+byJwn0TKpjkkFUbwSPkA8K/nE33KKBxFmod1fYEPHxpXeNS7anJmaNn4IrgR3eGCf36AMyF+bbIt51OkpTN+u7FFh5Q3RETcJP8HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743068146; c=relaxed/simple;
-	bh=Yz/tUxwIyLQ7HNXu+dzXfyR3JnuM1gjbS67S+hWQWqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OnXg0H7NV6rDi7HI4P09XhPCDwTx301/GeDr2NOAxxQNXmdwckDrUmNks6hADVX8Ev4YFjpRGedDTFRhTPBrJhNU7KeaiwF/8TkGt09cK2DRtBrpds8d+/ar33Fgxk9225/dhjbIxNylOzpxYvhxN7FCmHsR+ALuSpYT1yGqEiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23B4A106F;
-	Thu, 27 Mar 2025 02:35:48 -0700 (PDT)
-Received: from [10.34.129.27] (e126645.nice.arm.com [10.34.129.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5097C3F63F;
-	Thu, 27 Mar 2025 02:35:40 -0700 (PDT)
-Message-ID: <3c21871b-4936-4143-bc78-38495a7995a6@arm.com>
-Date: Thu, 27 Mar 2025 10:35:35 +0100
+	s=arc-20240116; t=1743068197; c=relaxed/simple;
+	bh=bZhE3bjLYhBkFnRZcm1kLv51TZMsYQg3FaSHG239LRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuWMxwI7pp1ZjczG36g6CF8e+lVsSB871wLBrbSKjql+HPhjatnNgPHQKUxxSHCUWNeq8W92ELqVNqVFiVuq7n4dhxgqt/YQH7U+GsD6n3qo+AOHVZJn9kbWb8+RTs0CoQ9pEcpguN1Ak8d6fj+0UYkAbR/kFcGBQ8Yw9Iwh4Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geg2uA8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F372AC4CEEA;
+	Thu, 27 Mar 2025 09:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743068197;
+	bh=bZhE3bjLYhBkFnRZcm1kLv51TZMsYQg3FaSHG239LRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=geg2uA8tbxXWb8pT4jufA8lnH/AnEHbUUZ7Dzobj3zppV66qR5AOqLGdBShF8sk9n
+	 6V063O3WYmxmnHG+gkqHDB+F35bE8HcAnJ2rw8h3pceLwbT2iPiq5oqHRMjJvM4evx
+	 udGFVX8Hgf9xf0mk85WTgtiTD//8vwDZu5SewxSUlbcHzC6P5OhGBhQFr1yDRBYdGa
+	 2HPKCUCjYUFKWv19GCWLmCvipQhwD4xhP8eMGROWDMh3PBVntIdKCiSn66Y4vxeVxB
+	 E9SCkRrdGD8wxx1zYpOhTwnhrx3rF7MpcsIoXcZy4J5uyQMyzINraVdxW5cVLPy2z/
+	 oXamAzbdB8u6Q==
+Date: Thu, 27 Mar 2025 10:36:32 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4/5] bugs/x86: Augment warnings output by concatenating
+ 'cond_str' with the regular __FILE__ string in _BUG_FLAGS()
+Message-ID: <Z-UcIJAQsNXoxMXG@gmail.com>
+References: <20250326084751.2260634-1-mingo@kernel.org>
+ <20250326084751.2260634-5-mingo@kernel.org>
+ <20250326085343.GB25239@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Allow decaying util_est when util_avg > CPU
- capa
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Chritian Loehle <christian.loehle@arm.com>,
- Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20250325150542.1077344-1-pierre.gondois@arm.com>
- <CAKfTPtCfaH6SvBesbKBHRNfjZHJXXC1h4NF8GoFUczE5NiRunQ@mail.gmail.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <CAKfTPtCfaH6SvBesbKBHRNfjZHJXXC1h4NF8GoFUczE5NiRunQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326085343.GB25239@noisy.programming.kicks-ass.net>
 
 
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-On 3/26/25 18:25, Vincent Guittot wrote:
-> On Tue, 25 Mar 2025 at 16:06, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>
->> commit 10a35e6812aa ("sched/pelt: Skip updating util_est when
->> utilization is higher than CPU's capacity")
->> prevents util_est from being updated if util_avg is higher than the
->> underlying CPU capacity to avoid overestimating the task when the CPU
->> is capped (due to thermal issue for instance). In this scenario, the
->> task will miss its deadlines and start overlapping its wake-up events
->> for instance. The task will appear as always running when the CPU is
->> just not powerful enough to allow having a good estimation of the
->> task.
->>
->> commit b8c96361402a ("sched/fair/util_est: Implement faster ramp-up
->> EWMA on utilization increases")
->> sets ewma to util_avg when ewma > util_avg, allowing ewma to quickly
->> grow instead of slowly converge to the new util_avg value when a task
->> profile changes from small to big.
->>
->> However, the 2 conditions:
->> - Check util_avg against max CPU capacity
->> - Check whether util_est > util_avg
->> are placed in an order such as it is possible to set util_est to a
->> value higher than the CPU capacity if util_est > util_avg, but
->> util_est is prevented to decay as long as:
->> CPU capacity < util_avg < util_est.
->>
->> Just remove the check as either:
->> 1.
->> There is idle time on the CPU. In that case the util_avg value of the
->> task is actually correct. It is possible that the task missed a
->> deadline and appears bigger, but this is also the case when the
->> util_avg of the task is lower than the maximum CPU capacity.
->> 2.
->> There is no idle time. In that case, the util_avg value might aswell
->> be an under estimation of the size of the task.
->> It is possible that undesired frequency spikes will appear when the
->> task is later enqueued with an inflated util_est value, but the
->> frequency spike might aswell be deserved. The absence of idle time
->> prevents from drawing any conclusion.
->>
->> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> On Wed, Mar 26, 2025 at 09:47:49AM +0100, Ingo Molnar wrote:
+> > This allows the reuse of the UD2 based 'struct bug_entry' low-overhead
+> > _BUG_FLAGS() implementation and string-printing backend, without
+> > having to add a new field.
+> > 
+> > An example:
+> > 
+> > If we have the following WARN_ON_ONCE() in kernel/sched/core.c:
+> > 
+> > 	WARN_ON_ONCE(idx < 0 && ptr);
+> > 
+> > Then previously _BUG_FLAGS() would store this string in bug_entry::file:
+> > 
+> > 	"kernel/sched/core.c"
+> > 
+> > After this patch, it would store and print:
+> > 
+> > 	"[idx < 0 && ptr] kernel/sched/core.c"
+> > 
+> > Which is an extended string that will be printed in warnings.
+> > 
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > ---
+> >  arch/x86/include/asm/bug.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+> > index aff1c6b7a7f3..e966199c8ef7 100644
+> > --- a/arch/x86/include/asm/bug.h
+> > +++ b/arch/x86/include/asm/bug.h
+> > @@ -50,7 +50,7 @@ do {									\
+> >  		     "\t.org 2b+%c3\n"					\
+> >  		     ".popsection\n"					\
+> >  		     extra						\
+> > -		     : : "i" (__FILE__), "i" (__LINE__),		\
+> > +		     : : "i" (cond_str __FILE__), "i" (__LINE__),		\
+> >  			 "i" (flags),					\
+> >  			 "i" (sizeof(struct bug_entry)));		\
+> >  } while (0)
 > 
-> This change looks reasonable to me. Did you face problems related to
-> this in a particular use case ?
+> Sneaky :-)
 
-I think it was more related to the fact util_est is not decayed when:
-(runnable - util_avg) > margin
+BTW., any reason why we go all the trouble with the bug_entry::line u16 
+number, instead of storing it in the bug_entry::file string with a
+:__LINE__ postfix or so?
 
-This patch slightly helps to decay, but not that much.
+Using 4 bytes doesn't even save any RAM, given that the average line 
+position number within the kernel is around 3 bytes:
 
-> 
-> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.rog>
+ $ for N in $(git grep -lE 'WARN_ON|BUG_ON|WARN\(|BUG\(' -- '*.[ch]'); do echo -n $(($(cat $N | wc -l)/2)) | wc -c; done | sort -n | uniq -c
 
-Thanks!
-> 
-> 
->> ---
->>   kernel/sched/fair.c | 7 -------
->>   1 file changed, 7 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index c798d2795243..de7687e579c2 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -4918,13 +4918,6 @@ static inline void util_est_update(struct cfs_rq *cfs_rq,
->>          if (last_ewma_diff < UTIL_EST_MARGIN)
->>                  goto done;
->>
->> -       /*
->> -        * To avoid overestimation of actual task utilization, skip updates if
->> -        * we cannot grant there is idle time in this CPU.
->> -        */
->> -       if (dequeued > arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq))))
->> -               return;
->> -
->>          /*
->>           * To avoid underestimate of task utilization, skip updates of EWMA if
->>           * we cannot grant that thread got all CPU time it wanted.
->> --
->> 2.25.1
->>
+     10 1
+   1209 2
+   6645 3
+   1582 4
+     10 5
+
+( This is the histogram of the length of average line numbers within 
+  the kernel's ~9,400 .[ch] source code files that are using these 
+  facilities. )
+
+So concatenation would save on complexity, IMHO, and it would give us 
+flexibility as well, if we passed in the string from higher layers. We 
+wouldn't have to change architecture level code at all for this series 
+for example.
+
+Not to mention that some files within the kernel are beyond the 16-bit 
+limit already, 38K to 222K lines of code:
+
+  starship:~/tip> wc -l drivers/gpu/drm/amd/include/asic_reg/dcn/dcn_3_2_0_sh_mask.h
+  222,948 drivers/gpu/drm/amd/include/asic_reg/dcn/dcn_3_2_0_sh_mask.h
+
+  starship:~/tip> wc -l crypto/testmgr.h
+  38,897 crypto/testmgr.h
+
+So u16 line numbers are also a (minor) breakage waiting to happen.
+
+Thanks,
+
+	Ingo
 
