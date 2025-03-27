@@ -1,91 +1,83 @@
-Return-Path: <linux-kernel+bounces-578557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290E8A7338D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:46:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB567A73390
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4A3B2AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95D016FB4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12012135A4;
-	Thu, 27 Mar 2025 13:46:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36154322B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 13:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36177215041;
+	Thu, 27 Mar 2025 13:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRYR+wJJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC8420CCEA;
+	Thu, 27 Mar 2025 13:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743083205; cv=none; b=sX9rnHdTwq5Yc9hwNrjodwJbm07I188jme8QnMbkkUn6Sb2s0diVy9F+/4Xy8sflSoNz8tvfm6duLvrNk4zNYr7f4bCV2wpzl9XbStoVWrbdo7BXdL6TOLjVjMlWcDDt9aotR5pXVTMW5braevy82bK0WTBl7yGRzdI1nU2+FxI=
+	t=1743083230; cv=none; b=ht2fKMrvBHL23zFPlrh6KBNWMYsGNfmB/KN84oOqYjMwTBpN27CzMp75iD7FXmn0rMbP8OfJV+wu4ND+imeYpw8LNU3RlKlBF4lEcI6PW4HEjj4Oh3sDEfa0e22lAj9ALrdJI9EEizEfU+cR5D+NHdA2WMZvi1kjU6b+6jGijEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743083205; c=relaxed/simple;
-	bh=XSvt4u2E8Y7gS+WaK0nHAJ6/lGFIQo6Ki7abGpuMRcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RRnvZsZM56r1KU2SGxLsFs1MA05UH8DW1I1x5AE6vYXRGF17B9QAieWtxb+eN4hHXvK7sWyXoXH7ZaQW+U4V/jKCLbaBC91zsWfGMFt8k22bwH47RnMnnWmPSy3St2c4Ry7prqssWol3tmnOie1oDbrDVh5eWnjRRtU0cXflBog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40BA91063;
-	Thu, 27 Mar 2025 06:46:47 -0700 (PDT)
-Received: from [10.57.86.146] (unknown [10.57.86.146])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D86D3F63F;
-	Thu, 27 Mar 2025 06:46:37 -0700 (PDT)
-Message-ID: <5582c321-9297-4d92-9e1f-497afa17f8be@arm.com>
-Date: Thu, 27 Mar 2025 09:46:35 -0400
+	s=arc-20240116; t=1743083230; c=relaxed/simple;
+	bh=RF3wdOFzL4vQqrB1B0vZ2iCYv5b2RA5x1OV5kLSU3FE=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=bRNrZpZ+2F8i8iDlA7ZwesLxYd/Ndo7gR5U328agm3BetwtRtm1R9RdqZIvV5fqjgrJf8KDPoYFlXDYEF7+Lca6Nv0obPQztkzmfQuHD7dnHkl/DtzaOhKhYksxpl6DRUgf+QFLNIz1G7ps/+e0Swj+Aitc+VsxOicm8uRZbt5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRYR+wJJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91924C4CEDD;
+	Thu, 27 Mar 2025 13:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743083230;
+	bh=RF3wdOFzL4vQqrB1B0vZ2iCYv5b2RA5x1OV5kLSU3FE=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=TRYR+wJJTnUYnvc1ODN4B9vpFKwvFoCczHvPyqf3uyWcee9vc7G3HqduxGVF99hGj
+	 2Anar/GswBgL04kQZ9wHQpotK+vz0ZpPE6+J7Eb/VTi2PcOmI2BZq3zNIwPhwtQdXG
+	 QbWKDgA4NBm1Wl/MModaDXner0J3IDHY/sZSU8C+1n6tLKZCMO4ElsgXDUpeelYVmE
+	 cv8Vp7Iain2yESM5cV0XyZbYHErfh63L4j48/Ex3hgmA1YRD5vqNgxkueELk2ceCHU
+	 7vcG8O9KKTohmlyEUFTgtyiTklRJvINQ1fdoDiG+RpkeAFVVaw9+WescKG+IQ5mZKj
+	 gfYcPqQWUU29A==
+Message-ID: <83d859d94aeedacc2d5fb058a84bfdac@kernel.org>
+Date: Thu, 27 Mar 2025 13:47:07 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v9 2/5] drm/bridge: add support for refcounting
+In-Reply-To: <20250326-drm-bridge-refcount-v9-2-5e0661fe1f84@bootlin.com>
+References: <20250326-drm-bridge-refcount-v9-2-5e0661fe1f84@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Anusha Srivatsa" <asrivats@redhat.com>, "David
+ Airlie" <airlied@gmail.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Fabio
+ Estevam" <festevam@gmail.com>, =?utf-8?b?SGVydsOpIENvZGluYQ==?= <herve.codina@bootlin.com>, "Hui
+ Pu" <Hui.Pu@gehealthcare.com>, "Inki Dae" <inki.dae@samsung.com>, "Jagan
+ Teki" <jagan@amarulasolutions.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jonas
+ Karlman" <jonas@kwiboo.se>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek Szyprowski" <m.szyprowski@samsung.com>, "Marek
+ Vasut" <marex@denx.de>, "Maxime Ripard" <mripard@kernel.org>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Robert Foss" <rfoss@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/11] Perf improvements for hugetlb and vmalloc on
- arm64
-Content-Language: en-GB
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>, David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250304150444.3788920-1-ryan.roberts@arm.com>
- <Z-VBgcl9LJGlEzy2@pc636>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z-VBgcl9LJGlEzy2@pc636>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 27/03/2025 08:16, Uladzislau Rezki wrote:
-> On Tue, Mar 04, 2025 at 03:04:30PM +0000, Ryan Roberts wrote:
->> Hi All,
->>
->> This is v3 of a series to improve performance for hugetlb and vmalloc on arm64.
->> Although some of these patches are core-mm, advice from Andrew was to go via the
->> arm64 tree. Hopefully I can get some ACKs from mm folks.
->>
->> The 2 key performance improvements are 1) enabling the use of contpte-mapped
->> blocks in the vmalloc space when appropriate (which reduces TLB pressure). There
->> were already hooks for this (used by powerpc) but they required some tidying and
->> extending for arm64. And 2) batching up barriers when modifying the vmalloc
->> address space for upto 30% reduction in time taken in vmalloc().
->>
->> vmalloc() performance was measured using the test_vmalloc.ko module. Tested on
->> Apple M2 and Ampere Altra. Each test had loop count set to 500000 and the whole
->> test was repeated 10 times.
->>
-> I will have a look and review just give me some time :)
+On Wed, 26 Mar 2025 18:47:36 +0100, Luca Ceresoli wrote:
+> DRM bridges are currently considered as a fixed element of a DRM card, and
+> thus their lifetime is assumed to extend for as long as the card
+> exists. New use cases, such as hot-pluggable hardware with video bridges,
+> require DRM bridges to be added to and removed from a DRM card without
+> tearing the card down. This is possible for connectors already (used by DP
+>=20
+> [ ... ]
 
-Thanks for the reviews - appreciate it!
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-> 
-> --
-> Uladzislau Rezki
-
+Thanks!
+Maxime
 
