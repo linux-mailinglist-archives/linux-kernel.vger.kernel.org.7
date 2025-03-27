@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-578370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85F2A72EA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50663A72EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:17:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29AB1789A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61D816DA1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BE7210190;
-	Thu, 27 Mar 2025 11:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ua7daI3E"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0103121018D;
+	Thu, 27 Mar 2025 11:17:05 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B241B211487
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 11:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8051FFC46;
+	Thu, 27 Mar 2025 11:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743074123; cv=none; b=Usl1xTpkxuOaEMgIrsiU9ki3rEBWsjQSJRCO3onDVFnM7SJDfbJqGAVHFPvGJXqs44nIyWp2Ha6mCXKdQ8eQ6GGU/FGunA95DC5ohdhWoOtt4KZYkGMAE0KyCjgErnaxY1ymHuWl1g3Xwajl5AFSPZHazCFtOlHKnrNu8hsaNL4=
+	t=1743074224; cv=none; b=smCJpZAQ0sG0spZXPSs+2oG0EJ2pE4P9cWWXcZeGYkQDFiWkiQtXnzEsp/obHu02Dtzu6TPojn5xUH5WKtST+JEvcwRPlN0JieG2YvNAXVGCMHM+mIlNaXcuEHh5F3oI6R5xtYqJTpdwTcEglr0Xc18sJT6FP0oYb9DHYMha/Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743074123; c=relaxed/simple;
-	bh=Lb97isTLBEeOVnMF+0hR3SCtW77apQZ6W9iJ3L6spPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=unFHnScUeYXM52EJQt6hYxeE3MFA6KazNSvJe1m9+urdqy8i6X1twmlLRWnDKDctgTBtutMr8/9/gIh7/1HblZAM86B5C2UKSDCshesTzUhp2IP+2Qs7LAzNNX8uvmQBO141jzjmwQz6GdjmU8UgDt2VtWCivQowrDHCceh9jPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ua7daI3E; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39143200ddaso482146f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 04:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743074120; x=1743678920; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DMODiyhJzHUS6gKDF2pRi/gZt3v4YGP+Fqt7967m3t0=;
-        b=Ua7daI3EvYZDstf8j3kQsF7ViSlzxPEarN7A6yQgsr+sHX7UEv9V+c15/hX54TnGph
-         p0EawDGgLDTHJhpTwb6G+Gel64UOFU+zcfxe5cbAl7Zwj4vkZK42Q+3jdAmMhKazqqh9
-         CZ2O+VZdg7WpDKgVBlTA9l4fgP7F1is870eL+iAsRTuNg8fctwMn6TdA6FfZlOkp+IVg
-         0Np+HwECM398A+DtOHbZ+vj5Ddh59TYZRNuTzGfNza6A9L49zjF6dygpKniKU+GCLl0t
-         uBsSoDO5Je8N/kfSQbSUghJpD1wK25mftQ+Do/FjYPkqs9TwQEz38rebOX1MT9lhWuyO
-         xNog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743074120; x=1743678920;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DMODiyhJzHUS6gKDF2pRi/gZt3v4YGP+Fqt7967m3t0=;
-        b=IAElNnq7FRURh6ztMhE789uuUQHY4HPz4h6d7r6gQoMHLKPdNkTS+MQAAMeYU3FUAN
-         i8z8zZ2hoAfKSEjh2V/QXXuRC7CFB0u+xwl321yUtjSq7SsSJBHFsbfMD/id6p80ZTpU
-         nqtPT1w4nqpD9wsjaz5bNVrQjy9iLYEs38tH1QYahztu95RzXbmlzkds1/TDkUEgIKPr
-         CszTzChotHhx2Scj14lrC7syz2FKh5OOOPpUukx4/4kpDa4DxuINDMYGwTu1pDy7aUNf
-         GcB84r+XnZgyaNvP+WA0oVTAS46iRpmbMk6kb2bzYvX/TML2Lal3CRbpa54gFRMgFl25
-         CVnA==
-X-Gm-Message-State: AOJu0YyQkxL8A0tnO19GlKkXFuDQedSevgQmCHgMnr8JPhYAunGD92t7
-	5lRNQ0DWvzg+lojG+THMjO4xdCrThUqnrcMo2Eg1c5QA0o2MHIImNTJ3DGpbkRY=
-X-Gm-Gg: ASbGncvBucQDQqJS06JpaCF48Opy6xx+N2QUQojCdYJhTzqcuOWx4gpOWhFMGC2wWHS
-	X48o2ol/NBcNd0uextTYaa+BuyaX5ab+plncqpFcptAl1+THYNf8sLRLgzwVzZ3KMejkqpDzE5w
-	wAKWi+Jlc/MRUrfboNyoVSuSMOsPST+qfFBunTvsG3NfMdhr1pKwMYd89E77meNgy2p41Ot7G/E
-	94w9vZqi27+G7fMabQnjbm5WJ5bjvk6tiFE8yAnrwpeOty7AHNfPAYsd/tIPFM0uOmTKIIozarf
-	SxSYtjME3kgV1w4MFDKGsY+W81laTHAEIWRSz0smhOGuYDU=
-X-Google-Smtp-Source: AGHT+IEM+iSkjODwzqX6JmHzpZx5dFBa9V5ncsKe5tqs1bQnjwuXD+UnyrMlHKMZu+xQ4SanEW4CPw==
-X-Received: by 2002:a5d:47a5:0:b0:391:ab2:9e80 with SMTP id ffacd0b85a97d-39ad174df98mr2492035f8f.24.1743074119917;
-        Thu, 27 Mar 2025 04:15:19 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3dd5sm19503318f8f.45.2025.03.27.04.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 04:15:19 -0700 (PDT)
-Date: Thu, 27 Mar 2025 12:15:17 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: [GIT PULL] livepatching for 6.15
-Message-ID: <Z-UzRZybK1du6HYM@pathway.suse.cz>
+	s=arc-20240116; t=1743074224; c=relaxed/simple;
+	bh=DQVHqiuPN11gb2JpuH2GOnPPU4bG0nvnSH4cAgUtCsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lv2f6vCTONQanM4PP9NaQcDz6BigENoEC5MsnJbbscbBD5wWmpZeHC82BQdMTiSRPVkNwFn/r/yJIuFF6r259kvss8zMIWGOBe5P+b1xO+EskYOsFcFYCil8kkatOMFAcP5Cji6N3+9rL4bJZi1juWdr3b/7JAmrhOzX8atRSIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZNgxS3XBPzvWpc;
+	Thu, 27 Mar 2025 19:13:00 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id B17191800B4;
+	Thu, 27 Mar 2025 19:16:57 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 27 Mar 2025 19:16:56 +0800
+Message-ID: <076babae-9fc6-13f5-36a3-95dde0115f77@huawei.com>
+Date: Thu, 27 Mar 2025 19:16:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: David Hildenbrand <david@redhat.com>, <yangge1116@126.com>,
+	<akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <21cnbao@gmail.com>,
+	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
+	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+ <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+ <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-Hi Linus,
 
-please pull the latest changes for the kernel livepatching from
+在 2025/3/26 20:46, David Hildenbrand 写道:
+> On 26.03.25 13:42, Jinjiang Tu wrote:
+>> Hi,
+>>
+>
+> Hi!
+>
+>> We notiched a 12.3% performance regression for LibMicro pwrite 
+>> testcase due to
+>> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before 
+>> adding to LRU batch").
+>>
+>> The testcase is executed as follows, and the file is tmpfs file.
+>>      pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
+>
+> Do we know how much that reflects real workloads? (IOW, how much 
+> should we care)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git tags/livepatching-for-6.15
+No, it's hard to say.
 
-==========================================
+>
+>>
+>> this testcase writes 1KB (only one page) to the tmpfs and repeats 
+>> this step for many times. The Flame
+>> graph shows the performance regression comes from 
+>> folio_mark_accessed() and workingset_activation().
+>>
+>> folio_mark_accessed() is called for the same page for many times. 
+>> Before this patch, each call will
+>> add the page to cpu_fbatches.activate. When the fbatch is full, the 
+>> fbatch is drained and the page
+>> is promoted to active list. And then, folio_mark_accessed() does 
+>> nothing in later calls.
+>>
+>> But after this patch, the folio clear lru flags after it is added to 
+>> cpu_fbatches.activate. After then,
+>> folio_mark_accessed will never call folio_activate() again due to the 
+>> page is without lru flag, and
+>> the fbatch will not be full and the folio will not be marked active, 
+>> later folio_mark_accessed()
+>> calls will always call workingset_activation(), leading to 
+>> performance regression.
+>
+> Would there be a good place to drain the LRU to effectively get that 
+> processed? (we can always try draining if the LRU flag is not set)
 
-- Add a selftest for tracing of a livepatched function.
-- Skip a selftest when kprobes are not using ftrace
-- Some documentation clean up.
+Maybe we could drain the search the cpu_fbatches.activate of the local cpu in __lru_cache_activate_folio()? Drain other fbatches is meaningless .
 
-----------------------------------------------------------------
-Filipe Xavier (2):
-      selftests: livepatch: add new ftrace helpers functions
-      selftests: livepatch: test if ftrace can trace a livepatched function
-
-Petr Mladek (1):
-      Merge branch 'for-6.15/ftrace-test' into for-linus
-
-Song Liu (1):
-      selftest/livepatch: Only run test-kprobe with CONFIG_KPROBES_ON_FTRACE
-
-Vincenzo MEZZELA (1):
-      docs: livepatch: move text out of code block
-
-Yafang Shao (1):
-      livepatch: Add comment to clarify klp_add_nops()
-
- Documentation/livepatch/module-elf-format.rst    | 13 ++++---
- kernel/livepatch/core.c                          |  9 +++--
- tools/testing/selftests/livepatch/functions.sh   | 49 ++++++++++++++++++++++++
- tools/testing/selftests/livepatch/test-ftrace.sh | 34 ++++++++++++++++
- tools/testing/selftests/livepatch/test-kprobe.sh |  2 +
- 5 files changed, 99 insertions(+), 8 deletions(-)
+>
+>
 
