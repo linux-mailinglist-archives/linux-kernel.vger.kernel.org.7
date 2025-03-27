@@ -1,140 +1,144 @@
-Return-Path: <linux-kernel+bounces-578692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C349DA73545
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:05:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33771A73546
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D550416E40D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9CB18919B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498F315533F;
-	Thu, 27 Mar 2025 15:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921EF1537C6;
+	Thu, 27 Mar 2025 15:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAnzToYv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kbF/Fw9M"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56F14D2B7;
-	Thu, 27 Mar 2025 15:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1321474B8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 15:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087825; cv=none; b=bThpLuehLetB3sKrsddIX75A297v97EIwxxB0vomUKKc4qiwQ367G9fwmSh3U07n2eE0AFjlQfnqy/dng/qWrhgjuWdTiwAz5bMRntXuG1etAPVSvqLomdhApPSypAXMKsIUrJS32x/c2fjQrTBiBGN1qefq+n505swQWD/dvBA=
+	t=1743087859; cv=none; b=qazrwtE1KVcgU80a9q5vbKmqGnWdhuX/Fg93WqUJKRuwOUtYgPOX5tEUwJAwngEEeQCCI7kM2g9TUlTZpvoyL3+qwUI4Pzv9eiONT3vaNCCrCppW99OqxN/bJ/SoXfgpZ6sWiVfuNsjMcLL57c4sq03Zew57m45m9VNbHmA+u3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087825; c=relaxed/simple;
-	bh=qhNaZMqHRNgrvn2itfynRD7HiiYGkt6KoXYBf4VPZVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9J+O/nFNss6SZt3wfPXtdz+CwjdPRyErNX0SjDC/lgqKnRPFqvAnN/M79j1l/KiwID8QBissM/IufhVg5srGejmCSVkopLT9ZahzA1MuKpxx8S2mF5ZMn0XjYCtVvXvJLL1AmY4Vnn8po1/kJqeaUvHpdG5f2gif6z1X14DQYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAnzToYv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79BBC4CEDD;
-	Thu, 27 Mar 2025 15:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743087825;
-	bh=qhNaZMqHRNgrvn2itfynRD7HiiYGkt6KoXYBf4VPZVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EAnzToYvV7cdR79GN/juteoi+4GOjZj0gJx4MyYeq6/r5GQGrSYIgIciTXl4C6vj8
-	 QToXCvwcnRSrFUbeRgMBW6Zp4P9sSIxvpdwfbO+8maiAPooUbs9FwyQEbHfC2eU4W3
-	 Lss/03kBwumTJtopMQ2MULG4on2Xm7NP5gKCLawyu/ZYWgN3ZwIKgc52mtFenVRQqL
-	 FSC4JJca926tf+SnBMo/bVA8yAKNSLIxZ3FnuYAY83EEIJjTqC4YwGz3oGZmEUBwTt
-	 weycV6LSbzLgYch6i3f0neFpsotIxVWW0MGmhnJv2vOPtRDrCUMHhKmVwtkEg2C4Yc
-	 /jYXbffxCbz7Q==
-Date: Thu, 27 Mar 2025 15:03:40 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Petr Tesarik <ptesarik@suse.com>,
-	Grant Likely <grant.likely@secretlab.ca>,
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: Ensure memory used for spi_write_then_read() is DMA
- safe
-Message-ID: <8bf5fb34-a554-4ab3-b774-470c08971447@sirena.org.uk>
-References: <ca70e24d-57b6-4250-bd0d-7f5c72e1d282@sirena.org.uk>
- <b37480a4-5344-4cf4-8fd1-400e2588fc28@app.fastmail.com>
- <db36bbf0-0ad5-4c37-bfcc-917508805eba@sirena.org.uk>
- <efe910db-77d0-4ddf-8fc2-df4955e7b9f3@app.fastmail.com>
- <06435855-531b-4a3b-9f2e-1a5caea0d65b@sirena.org.uk>
- <38fe54d2-bd8a-4655-863d-cd1c482ac9a8@app.fastmail.com>
- <Z917hRQM2ZhSwvFx@finisterre.sirena.org.uk>
- <6a3a4b10-f51b-43e2-8281-057f6751424b@app.fastmail.com>
- <8ff02f5a-fa66-4403-b193-a18c23879e0d@sirena.org.uk>
- <92817727-d0f2-4d91-8fef-84ee92ab42e7@app.fastmail.com>
+	s=arc-20240116; t=1743087859; c=relaxed/simple;
+	bh=hTh/cfVgLHrPOGu6GYfIXW4bOU+Eq28EHmrYsiW2aWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBY281m0oAE6JVoVdYL0EcUsSRvf5HFAuLjsFd+Hz8CDqKKrfCnI6xK08HOPzRIYm3scOWPQhJZCVc8XBrIKP4EjPid2Fovn68D0KGd9RlU+fO7XejEGDyVwvdng1Km5PG8SlSzrGNWDki0bOlPrh7YInnIk5O5q+gPS8W+TcQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kbF/Fw9M; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2240b4de12bso32122045ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1743087857; x=1743692657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1dzn/q3DwJwUQakeNgiZfS0yjXlYy1cHDyYLgM2hgUc=;
+        b=kbF/Fw9MBisX2Nd+N1XCOWW4BNOdcPuWdY/X1h4czHDt63O1ELouX1qamvPp7ZmqY/
+         P9QL4FSdWBbeQrmTo2rTG8o/RQ+2AnW8Cy6RuIR9vumG4dN4PlvDb9P3ub3BnG+YBp7R
+         obrEjGz2Sj7Ux5o+3km31lHIumfwOFwGI5t7w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743087857; x=1743692657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1dzn/q3DwJwUQakeNgiZfS0yjXlYy1cHDyYLgM2hgUc=;
+        b=WNLNnKnlYqdo12lEfuMMrrdaUyMC1UScRKRDWZPEYV/mRvXClgTuORvoUK2FA/VfGo
+         McaTanAiBzh+T7nWmF51kW5+9ieBfy+dk2oOBFqVPowUrKJZLegPBCn0tb31FJywOP7A
+         pzV2WZNx+NUpQJJ3s47vi9pNV+FRx/F3YHR58lihNR8kBrqBS0AtJfeS5Gw5jLz15hg+
+         K+7p3o2GqBJeExttJMw+5P0Fvjh+8/9e6lcpPxRd0vxTLAwcO26lyuKXxE11xpxu4NEH
+         Yg21+2dMbFRcFcYKGcctDZQkj05khBjVmCGo21snGnDn1HK9e4oPlx8TS+Ke2bGl1+Do
+         xEbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPpEZcCXGkvEMl42OXSMA0wcFlCLt49mQNxoeAttHPGcuNoGiMU1isxmL10jkJt8nJvuwxMnjJibF9Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygk486B4M4aPJBWYwraqHQiof2L5/GcnxOXRmmQPoEBY3ee7Hz
+	H3F9Y7qSGhk2Lp1uLFYldsKZ4sfNgq0klBeB8Q23Oiyeoi2Epbo3hfcwhHFkoQ==
+X-Gm-Gg: ASbGncuNFkC4VzOQeKYv7CLine6xwGz3k5hA5a9zmCQiH/gV+CYgFHafZLkvvVeqYca
+	9LbAYadGNva8UCe8ZatsvbcI5sYQUMoc1NzwWTisrQOaxxAnrYJTOs20rDC435hNhLVoO/72KB6
+	Z6AN53vLDOfaNU2QCgHIUjmYg33dZ4qOZaWOC6hjPxN9mfheT20cBoWvtJieKPmaL9wwylOOrVo
+	U2Zkef3LK6eJ0wZZB+07ztVqsDn1uqQ11DC+CWl6ypnlqEsC+WcLYfwtaqjdkNsiz7SLKNd4Tmx
+	TApzV+b7+98HocFLB9ngdRa6+FBfVL8Rjq5feKYt3Efm3ZCx2cPUSCUEULKJxLPoqA1A2Q==
+X-Google-Smtp-Source: AGHT+IEVqGTm9SnJQYYYVq75N+ryfrvO/8a+zp+Bo8G0CL6FxM48RSgxG269/Ff2pGWCEpMLTxoWGQ==
+X-Received: by 2002:a17:902:ef4d:b0:224:1ef:1e00 with SMTP id d9443c01a7336-2280485782emr63449195ad.19.1743087856578;
+        Thu, 27 Mar 2025 08:04:16 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:cd9c:961:27c5:9ceb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eee0bafsm619715ad.90.2025.03.27.08.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 08:04:15 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	stable@vger.kernel.org
+Subject: [PATCHv3] thunderbolt: do not double dequeue a request
+Date: Fri, 28 Mar 2025 00:03:50 +0900
+Message-ID: <20250327150406.138736-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tf2yxVVdxALET0IF"
-Content-Disposition: inline
-In-Reply-To: <92817727-d0f2-4d91-8fef-84ee92ab42e7@app.fastmail.com>
-X-Cookie: Multics is security spelled sideways.
+Content-Transfer-Encoding: 8bit
 
+Some of our devices crash in tb_cfg_request_dequeue():
 
---tf2yxVVdxALET0IF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ general protection fault, probably for non-canonical address 0xdead000000000122
 
-On Wed, Mar 26, 2025 at 10:45:57PM +0100, Arnd Bergmann wrote:
-> On Wed, Mar 26, 2025, at 17:20, Mark Brown wrote:
-> > On Fri, Mar 21, 2025 at 08:42:12PM +0100, Arnd Bergmann wrote:
+ CPU: 6 PID: 91007 Comm: kworker/6:2 Tainted: G U W 6.6.65
+ RIP: 0010:tb_cfg_request_dequeue+0x2d/0xa0
+ Call Trace:
+ <TASK>
+ ? tb_cfg_request_dequeue+0x2d/0xa0
+ tb_cfg_request_work+0x33/0x80
+ worker_thread+0x386/0x8f0
+ kthread+0xed/0x110
+ ret_from_fork+0x38/0x50
+ ret_from_fork_asm+0x1b/0x30
 
-> >> Using dma_alloc_noncoherent() should make the implementation
-> >> much nicer than GFP_DMA in the past, so we could add a bus
-> >> specific helper for SPI that checks if the controller actually
-> >> wants to do DMA and whether the buffer is problematic at all,
-> >> and then decides to either allocate a bounce buffer and
-> >> fill the sg table with the correct DMA address, map the
-> >> existing buffer, or pass it without mapping depending on
-> >> what the device needs.
+The circumstances are unclear, however, the theory is that
+tb_cfg_request_work() can be scheduled twice for a request:
+first time via frame.callback from ring_work() and second
+time from tb_cfg_request().  Both times kworkers will execute
+tb_cfg_request_dequeue(), which results in double list_del()
+from the ctl->request_queue (the list poison deference hints
+at it: 0xdead000000000122).
 
-> > That query feels a lot like spi_optimize_message().  Which should
-> > possibly then just do the bouncing if it's needed.
+Do not dequeue requests that don't have TB_CFG_REQUEST_ACTIVE
+bit set.
 
-> Would that require attaching the temporary buffer to the message
-> or could that be a permanent bounce buffer?
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: stable@vger.kernel.org
+---
 
-We probably want to be able to do both - have a permanent buffer for
-normal operation, and allocate a separate one when
-spi_optimize_message() is explicitly called by the client code since the
-idea is with the explicit calls is to be able to have the message baked
-for a long time and you might have multiple messages ready.
+v3: tweaked commit message
 
-> The advantage of using a permanent buffer is that it
-> avoids both the kmalloc and the iommu mapping in the fast
-> path and only needs to do the dma_sync_single_()
-> for cache management, which should be faster for small
-> transfers.
+ drivers/thunderbolt/ctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> The downside would be a higher memory usage and the
-> need for a mutex.
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index cd15e84c47f4..1db2e951b53f 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -151,6 +151,11 @@ static void tb_cfg_request_dequeue(struct tb_cfg_request *req)
+ 	struct tb_ctl *ctl = req->ctl;
+ 
+ 	mutex_lock(&ctl->request_queue_lock);
++	if (!test_bit(TB_CFG_REQUEST_ACTIVE, &req->flags)) {
++		mutex_unlock(&ctl->request_queue_lock);
++		return;
++	}
++
+ 	list_del(&req->list);
+ 	clear_bit(TB_CFG_REQUEST_ACTIVE, &req->flags);
+ 	if (test_bit(TB_CFG_REQUEST_CANCELED, &req->flags))
+-- 
+2.49.0.395.g12beb8f557-goog
 
-Yes, the memory consumption is a potential issue.  We only tend to have
-small numbers of SPI controllers though so if it's a page or two per
-controller it's not too bad.  We could potentially make the buffer
-discardable and allocate it on demand and release it under memory
-pressure but that feels like a worry about when it's an issue kind of
-thing.
-
-For cases where we could use the source buffer directly we also have to
-work out when it saves more overhead to use the existing mapping vs
-doing a new mapping that skips a copy.
-
---tf2yxVVdxALET0IF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflaMwACgkQJNaLcl1U
-h9A1pQf+JDEsvjbk+opIKoib4mniCmWAV/h2nR8tAGNT3pnQsgYBRzPL9BLlXO2V
-ge0/mawK3854sMFtGweFmcxkj86eDsUJ3IDdf0p7cel10MRu2suvdVxYxDwEQlw/
-GLxRS5fm7boCBF+U+AbKQOE0Y6ZyDhvWfc11tB/1QCQslC1enmaN/wBGjQNSw715
-dQY+1j48jI4iwOJp7ytWtcaKX+UZDv+PVy2M8sgzhb7A3ZNa1JCLrUlkak3Rk+tH
-2eSDoEbM6PyCSHZWeAdpepdgzLZwcCkcvlBrbvbICtiL5y60cTnb94dfCyxqqv+m
-M07enFRLku5ZcJv1IdF+jVJjAPqdsg==
-=zXrV
------END PGP SIGNATURE-----
-
---tf2yxVVdxALET0IF--
 
