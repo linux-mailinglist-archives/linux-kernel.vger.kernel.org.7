@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-578960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A266A73DF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:21:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B11EA73DFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465973B9F24
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE706177FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E1D21ABDE;
-	Thu, 27 Mar 2025 18:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DDE21A45F;
+	Thu, 27 Mar 2025 18:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eXCnCWX+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VjFdkMwF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eXCnCWX+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VjFdkMwF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TjCJqHJr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CaeiXBC4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TjCJqHJr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CaeiXBC4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5BE21A45E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 18:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D85F13D52F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 18:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743099664; cv=none; b=Ex86asBlmktjIWeCqF0nYnA9H13M6hQA/sDyus2uorz/vNBQ3CJOHX8ob+IovO/sXlzmSBGlLo6o2Oa8VhoLOV9hkr9Ovga5XySzlZUu/Jmwb3D02tUVsOWHOpuf4S4ji9NgrY5l1d4zF19QVLvK3wSB1pUScxd4CqFb54shBxA=
+	t=1743099927; cv=none; b=ilHnnk8QY2TXNmrscLkCbHMDtbRRpCwlJ7pmFYdphNe9R6mQqs56OmQGIX2HbE5m2bvXx7LKppT3f5MT5TCC7xnTLI/PoJk4cTjwD6hOjvNAuZ9ZZR8fIG7zdfS15Su7J+NIIsxo7JwgWuVPbq931kLWtheKGqgGQlTnXEH9Ro0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743099664; c=relaxed/simple;
-	bh=aBLV3Sn7z0xp0njCPyD7ONfmrZSIzPT22+6XnwAJ5II=;
+	s=arc-20240116; t=1743099927; c=relaxed/simple;
+	bh=OulG0XLHl860fDu1KpdrDZ4jIsi48op/mKLO0ODW4KM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbIxuvAd38dHERJgeAMigqOZywhr1xhci2y+Xnszg5BH9VQVXEFF4SPWdotKB/gayWxnVhz31YEj9iLV2xUDtZ/WMSvbbzqEJWpZDPuWzJoLQe7DCza9W9dqR8h8TiQ/Sv+/tWpWSIQjV//MDNHs0kn8HvQUxQ/PqBPzojy2EUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eXCnCWX+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VjFdkMwF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eXCnCWX+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VjFdkMwF; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmnqBlUoCl5+iPuyfDjRYzioGuLvrxy7Hoq1sWHYd1bvzd/AreLtiU9TqkfL/KwGH/Ne8ExhP+PHBx8Td1/1odlys7ZQpZG999qCKmxUHbZQqrHEB5akHwpYLfuae0nO5C+gc7nJzcVhc/g/yN9oy2blmN7oaXkXNDiMnAVb4sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TjCJqHJr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CaeiXBC4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TjCJqHJr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CaeiXBC4; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F33D62119B;
-	Thu, 27 Mar 2025 18:20:58 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9FEB71F449;
+	Thu, 27 Mar 2025 18:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743099659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	t=1743099923;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=eXCnCWX+M5poAwOACk1QBrI5K51h3oJWu/+TTMg3aeHXutxYPLRiM0MJS/2lM25cx3dG1Q
-	IPlkr8s9HYaFY5I9s4KmUe0TC1Mm4x9clryxI4qmvViPPLdlhMjageOFzXPG5XQK5RtX8Y
-	o7iv2UHek/aTvXMy9pJqkYWDlLhjF9I=
+	bh=aUCyKW2kmDHCfqlcerOqkSIiGM1Gg6BwtOUC1hJuz88=;
+	b=TjCJqHJruYL0W2fhkdzFUeTGvuUPivWludlFvM1YnuE95j1/ZlyRontfQVM3YVoHhzpFPQ
+	zBz+u0ofu4BjTMdXi2iiSBPkzfrY3XFZk6B+lFpGqcWE45c7eCFIuQ75G3fTBzXUxQXU6P
+	nmKDm81e8OlEvm0LXt89pHF5Dvxpe7A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743099659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=susede2_ed25519; t=1743099923;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=VjFdkMwFGBOw+g6GTSrdjWCoWA4CQFBPJmrHFwkofLd9HU185GAu3kB2d8F8pNftEWV2Py
-	fPBOxzEf3aQuN8Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eXCnCWX+;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VjFdkMwF
+	bh=aUCyKW2kmDHCfqlcerOqkSIiGM1Gg6BwtOUC1hJuz88=;
+	b=CaeiXBC4dlNBDD3k+XL6nYmBkgtr8fxKd/Pbciz8yHgVECJ4PtGTjqZedC4mzKx6VPIrnI
+	5FWInIEUtDrgEiCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743099659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	t=1743099923;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=eXCnCWX+M5poAwOACk1QBrI5K51h3oJWu/+TTMg3aeHXutxYPLRiM0MJS/2lM25cx3dG1Q
-	IPlkr8s9HYaFY5I9s4KmUe0TC1Mm4x9clryxI4qmvViPPLdlhMjageOFzXPG5XQK5RtX8Y
-	o7iv2UHek/aTvXMy9pJqkYWDlLhjF9I=
+	bh=aUCyKW2kmDHCfqlcerOqkSIiGM1Gg6BwtOUC1hJuz88=;
+	b=TjCJqHJruYL0W2fhkdzFUeTGvuUPivWludlFvM1YnuE95j1/ZlyRontfQVM3YVoHhzpFPQ
+	zBz+u0ofu4BjTMdXi2iiSBPkzfrY3XFZk6B+lFpGqcWE45c7eCFIuQ75G3fTBzXUxQXU6P
+	nmKDm81e8OlEvm0LXt89pHF5Dvxpe7A=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743099659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=susede2_ed25519; t=1743099923;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U1tx1jdQvYVz6iQ3XKAZ6sA3Iy0kGapu7x+JoDHx8HE=;
-	b=VjFdkMwFGBOw+g6GTSrdjWCoWA4CQFBPJmrHFwkofLd9HU185GAu3kB2d8F8pNftEWV2Py
-	fPBOxzEf3aQuN8Cg==
+	bh=aUCyKW2kmDHCfqlcerOqkSIiGM1Gg6BwtOUC1hJuz88=;
+	b=CaeiXBC4dlNBDD3k+XL6nYmBkgtr8fxKd/Pbciz8yHgVECJ4PtGTjqZedC4mzKx6VPIrnI
+	5FWInIEUtDrgEiCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E16D3139D4;
-	Thu, 27 Mar 2025 18:20:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CB44139D4;
+	Thu, 27 Mar 2025 18:25:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /QUDNwqX5WfDKgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Mar 2025 18:20:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 89133A082A; Thu, 27 Mar 2025 19:20:58 +0100 (CET)
-Date: Thu, 27 Mar 2025 19:20:58 +0100
-From: Jan Kara <jack@suse.cz>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
- power management
-Message-ID: <zcxwcu2ty5fmkqt7dnpwdmohkp6pi7hfhltlxgpnx2xhsutgoc@gkixsx4map3o>
-References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
- <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
+	id 6dTxHROY5WfaKwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 27 Mar 2025 18:25:23 +0000
+Date: Thu, 27 Mar 2025 19:25:18 +0100
+From: David Sterba <dsterba@suse.cz>
+To: syzbot <syzbot+bbbdd6d6efbfc5174561@syzkaller.appspotmail.com>
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_free_fs_info (2)
+Message-ID: <20250327182518.GC32661@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <67b8a9a8.050a0220.14d86d.057a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,114 +103,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
-X-Rspamd-Queue-Id: F33D62119B
+In-Reply-To: <67b8a9a8.050a0220.14d86d.057a.GAE@google.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
+X-Spamd-Result: default: False [-1.50 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=6cc40dfe827ffb85];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TAGGED_RCPT(0.00)[bbbdd6d6efbfc5174561];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
 	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,hansenpartnership.com:email,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Score: -1.50
 X-Spam-Flag: NO
 
-On Thu 27-03-25 10:06:13, James Bottomley wrote:
-> Introduce a freeze function, which iterates superblocks in reverse
-> order freezing filesystems.  The indicator a filesystem is freezable
-> is either possessing a s_bdev or a freeze_super method.  So this can
-> be used in efivarfs, whether the freeze is for hibernate is also
-> passed in via the new FREEZE_FOR_HIBERNATE flag.
+On Fri, Feb 21, 2025 at 08:28:24AM -0800, syzbot wrote:
+> Hello,
 > 
-> Thawing is done opposite to freezing (so superblock traversal in
-> regular order) and the whole thing is plumbed into power management.
-> The original ksys_sync() is preserved so the whole freezing step is
-> optional (if it fails we're no worse off than we are today) so it
-> doesn't inhibit suspend/hibernate if there's a failure.
+> syzbot found the following issue on:
 > 
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> HEAD commit:    0ad2507d5d93 Linux 6.14-rc3
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=179ae898580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=6cc40dfe827ffb85
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bbbdd6d6efbfc5174561
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6bb4d4755dce/disk-0ad2507d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/57594e8f74d9/vmlinux-0ad2507d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a4f2442a20b1/bzImage-0ad2507d.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+bbbdd6d6efbfc5174561@syzkaller.appspotmail.com
+> 
+> assertion failed: percpu_counter_sum_positive(em_counter) == 0, in fs/btrfs/disk-io.c:1266
+> ------------[ cut here ]------------
+> kernel BUG at fs/btrfs/disk-io.c:1266!
 
-OK, I've seen you are setting the new FREEZE_FOR_HIBERNATE flag but I didn't
-find anything using that flag. What do you plan to use it for? Does you
-efivars usecase need it? I find passing down this detail about the caller
-down to all filesystems a bit awkward. Isn't it possible to extract the
-information "hibernate is ongoing" from PM subsystem?
+void btrfs_free_fs_info(struct btrfs_fs_info *fs_info)
+{
+        struct percpu_counter *em_counter = &fs_info->evictable_extent_maps;
 
-> +/*
-> + * Kernel freezing and thawing is only done in the power management
-> + * subsystem and is thus single threaded (so we don't have to worry
-> + * here about multiple calls to filesystems_freeze/thaw().
-> + */
-> +
-> +static int freeze_flags;
-
-Frankly, the global variable to propagate flags is pretty ugly... If we
-really have to propagate some context into the iterator callback, rather do
-it explicitly like iterate_supers() does it.
-
-> +static void filesystems_freeze_callback(struct super_block *sb)
-> +{
-> +	/* errors don't fail suspend so ignore them */
-> +	if (sb->s_op->freeze_super)
-> +		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-> +				       | FREEZE_HOLDER_KERNEL
-> +				       | freeze_flags);
-> +	else if (sb->s_bdev)
-> +		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-> +			     | freeze_flags);
-
-Style nit - braces around above blocks would be IMHO appropriate.
-
-> +	else {
-> +		pr_info("Ignoring filesystem %s\n", sb->s_type->name);
-> +		return;
-> +	}
-> +
-> +	pr_info("frozen %s, now syncing block ...", sb->s_type->name);
-> +	sync_blockdev(sb->s_bdev);
-> +	pr_info("done.");
-> +}
-
-Generally this callback is not safe because it can race with filesystem
-unmount and calling ->freeze_super() after the filesystem's ->put_super()
-was called may have all sorts of interesting effects (freeze_super() itself
-will just bail with a warning, which is better but not great either).
-
-The cleanest way I see how to make the iteration safe is to grab active sb
-reference (like grab_super() does it) for the duration of freeze_super()
-calls. Another possibility would be to grab sb->s_umount rwsem exclusively
-as Luis does it in his series but that requires a bit of locking surgery
-and ->freeze_super() handlers make this particularly nasty these days so I
-think active sb reference is going to be nicer these days.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+        percpu_counter_destroy(&fs_info->stats_read_blocks);
+        percpu_counter_destroy(&fs_info->dirty_metadata_bytes);
+        percpu_counter_destroy(&fs_info->delalloc_bytes);
+        percpu_counter_destroy(&fs_info->ordered_bytes);
+        if (percpu_counter_initialized(em_counter))
+                ASSERT(percpu_counter_sum_positive(em_counter) == 0);
 
