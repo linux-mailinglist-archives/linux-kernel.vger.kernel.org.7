@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-579109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE18A73FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:02:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF01A73FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2210E17DAAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE9A1B60BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29A61FDA83;
-	Thu, 27 Mar 2025 20:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A821FDE14;
+	Thu, 27 Mar 2025 20:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpxEleeB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mniHxcTO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4575A1FCF6B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BDC1FE478
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743108910; cv=none; b=TtyIs1cW8g1mWc2w74tgR+JTmrF+7bDQ769FslJX2kqT3WwaqB/bJIkP9XX03cgs515LniFg703q8YOdEs47e/ri5EN+CpIpGNBZVd+P632PyDcqEttJuPnWwyCfEMC/osXc4prTnma+CWuQ6H+rMoevmcO+g9kRwMDDFOWCWVw=
+	t=1743108913; cv=none; b=Nl4ZjUDIBq+/12ZB6GRBd/thJrx/oyPzINVeciIEkjyCJL3vGGsfKJ6qpvt6/plzvQOHDCWusYMD1VbbhkQ5Crq/EiB4aCBgHIboEfRipiw47pEH6nlgec8BKCpphL2in77UX5FajxjPcp+GX8YGKNh2Sn1qz71Ax/zxhM1sUIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743108910; c=relaxed/simple;
-	bh=DgovOuuyafFnae2SeX+P/RmrowYrTqPQkxMedo3u53s=;
+	s=arc-20240116; t=1743108913; c=relaxed/simple;
+	bh=aQn1IMuNWEzPzCM2QlviwU5M5BXYHAYMr6gHofPyD/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ev3XQqOtCIEdKQ3phiVOuyco8X2F1VtgurT/d4Apo7C7a5kbvRIT5lhxpek+0CXzuco3JMWW2gk5zdsRojWCMeyv5y73ffIl0Amk+eUqmnbvORdT0P8C9W2J6Cxt6IPEmdKNg7hMlz0GyK1AHO+ozAIpY7Zq7zDhB1MFxxu0mB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpxEleeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8E7C4CEF6;
-	Thu, 27 Mar 2025 20:55:07 +0000 (UTC)
+	 MIME-Version; b=mbNzxpNGpOA+zSsqlXS3tJz06gfcxFDxPHb4AuzCOEuWuP+KFoWw+CCQiXIteH3vanZnB4kmQqVuO3iT4AAQQ7clqNlMyjzswVIvPBQjjhp0fmK2vzM48AKhUQjpX4DXQfTUnnGNf3VJ+4/l9SwfIYpWPBTUO76N8KEbHLeYPDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mniHxcTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DE1C4CEE8;
+	Thu, 27 Mar 2025 20:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743108910;
-	bh=DgovOuuyafFnae2SeX+P/RmrowYrTqPQkxMedo3u53s=;
+	s=k20201202; t=1743108912;
+	bh=aQn1IMuNWEzPzCM2QlviwU5M5BXYHAYMr6gHofPyD/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UpxEleeBQ3RSJluK2UdswiaqGVfcS5u0OPyqEN+at7Ri6uY0AwcdR95VjdNcPRXws
-	 BQfP1x0ySQvyayPNy6pLmyHVzfcPoRXNxpOLF1HnuFn+e2miXeryjx0yXCpkfSyKh9
-	 SHlSRyFyXEpxxcZrx3HmsKuFgB/xGS8Wl9hAUrKEa36ifpDsr5zUYZ+Rdb2dbngUk5
-	 wCngQD3Bm7nGj6+SoHz7Fp7C6LE9F5XiD6owc0Jt00X6Unhnnirv4wQypd2TDfdWuu
-	 C+zUW2m8MtMxcfEMn3D98IT4Ke4EStRr2o56mgt53fcgKg3kQkbncp19tfhKkQgiaJ
-	 Ep0qFcjmbF0/g==
+	b=mniHxcTOHD9MJreBwlnXOktb90Qdd3uhJ4x8H9zfARNdsQOUGJ/q4w6UOFsqr95am
+	 LUDycNG1YHPAE6WiOzwVpo0bfrOu5+uMG/CGhoWSpqM2uFKmfqPhj6PDpHY7fbFwLT
+	 X+swV4UWf4gJEbPNS3r15+oa26y/ESpHjlUK7qyP3HbSPQxEZCFyuUonmp4DHJvtgM
+	 aSBIUf2D0DgRf5xpZZ9W8u15aIMmC/VgZOBdtuxxDr2Qz/PGpGnZUOLVq8AHIaredf
+	 O+e8OizBkac2hNv8lggxuL6hAevQq15zhmqWPKdGzFRNLyVTGaN93PCBgu7JYCcS6W
+	 1wSihEI+3hR4A==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -48,9 +48,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 29/41] x86/alternatives: Rename 'put_desc()' to 'put_tp_array()'
-Date: Thu, 27 Mar 2025 21:53:42 +0100
-Message-ID: <20250327205355.378659-30-mingo@kernel.org>
+Subject: [PATCH 30/41] x86/alternatives: Simplify try_get_tp_array()
+Date: Thu, 27 Mar 2025 21:53:43 +0100
+Message-ID: <20250327205355.378659-31-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250327205355.378659-1-mingo@kernel.org>
 References: <20250327205355.378659-1-mingo@kernel.org>
@@ -62,36 +62,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Just like with try_get_tp_array(), this name better reflects
-what the underlying code is doing, there's no 'descriptor'
-indirection anymore.
+There's no need to return a pointer on success - it's always
+the same pointer.
+
+Return a bool instead.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/alternative.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 4b5ab9002e07..0b11f53d6e6d 100644
+index 0b11f53d6e6d..244119066672 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2486,7 +2486,7 @@ struct text_poke_int3_array *try_get_tp_array(void)
- 	return &tp_array;
- }
+@@ -2475,15 +2475,14 @@ static struct text_poke_int3_array {
  
--static __always_inline void put_desc(void)
-+static __always_inline void put_tp_array(void)
+ static DEFINE_PER_CPU(atomic_t, int3_refs);
+ 
+-static __always_inline
+-struct text_poke_int3_array *try_get_tp_array(void)
++static bool try_get_tp_array(void)
  {
  	atomic_t *refs = this_cpu_ptr(&int3_refs);
  
-@@ -2590,7 +2590,7 @@ noinstr int text_poke_int3_handler(struct pt_regs *regs)
- 	ret = 1;
+ 	if (!raw_atomic_inc_not_zero(refs))
+-		return NULL;
++		return false;
  
- out_put:
--	put_desc();
-+	put_tp_array();
- 	return ret;
+-	return &tp_array;
++	return true;
  }
+ 
+ static __always_inline void put_tp_array(void)
+@@ -2530,9 +2529,9 @@ noinstr int text_poke_int3_handler(struct pt_regs *regs)
+ 	 */
+ 	smp_rmb();
+ 
+-	desc = try_get_tp_array();
+-	if (!desc)
++	if (!try_get_tp_array())
+ 		return 0;
++	desc = &tp_array;
+ 
+ 	WARN_ON_ONCE(desc->vec != tp_array.vec);
  
 -- 
 2.45.2
