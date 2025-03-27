@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-578088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02EDA72A94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:29:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D9EA72A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EB817192D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C1B3B942A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB92C1F4CA1;
-	Thu, 27 Mar 2025 07:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0386874040;
+	Thu, 27 Mar 2025 07:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XVH+7Azp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dCMw+44a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TbZAiMcv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2565A1F4C84;
-	Thu, 27 Mar 2025 07:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D58A1F4CBF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743060580; cv=none; b=Z68eazVQj0pLYIO5u/s5mwJt2NC/q1vfNZAZq7UsSXiRGi7e9ard0XISPkWowJqXA2zi8NEhkU5RauktzaAIwAmB7kV7JAG3/dmMO8zBAmC8ncEjF0lsnfQ2tU9ETcNIg3yjRBjSjbjwQ0IAjUOBMgoR8SOy0nFjQjcHIoYLqx8=
+	t=1743060601; cv=none; b=uVUX8GG0gqBM0p6dvS2FiGoLP7/OLpolm/8VTBo4gZ7tufOKUQyi5tLW+fYP8KFa5vF6UdM8j9MQJE+BhzP5gX6vCDFzdjwfEYovUt4GQx/2tuQMopnhjW+uD5a7OlXtzLHBLWcSDZLqnqD/fkS9zuox2RR0dk7e7Sjvigpdwsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743060580; c=relaxed/simple;
-	bh=3IxE9eOQMfi7kEhpK35vuO2kbQmb/e1Ie+KL3VDxl8c=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oqRCC+CrdJpihufG0WN1AObrSjymnjnJjIWvFOvDOPU6XudjsHrXaMFcvyn4eTJloa5Qct8SUhVi7hcUK+m7Y+rayO1LCH4OgClLGlAM5/A2ILicxu0mpWuXpDJLhUFR2OegvW6sACpUTMdtHHPehOqJ5gwP1Hwl9Yo6hR72fwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XVH+7Azp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dCMw+44a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 27 Mar 2025 07:29:31 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743060575;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQ9s+vlxdp0zs18EJ6/ldypBQXUY54t96roc7c4NIOA=;
-	b=XVH+7AzpToqVeEhD5LA7DpK0KLNZp88y5k/2MJTFuJ6a5M5KR3lvtV0ZYsY5s7zvkZjcLA
-	T57M6q4MSQPPlFgAVCTG3f4x5ipwj2xF20DS1ADOveC472JYTxpPPcgcEYkc4OgI2nY14u
-	KufhKdelnnXX5mq6IXnuChEweFYttqe/aI7rfxVS2CBE8uroscBXlwlm6JmuD2T/sXRNAn
-	J0nYomDzu0pVqEId1fqkNyEKJxSVIjmlLLg2IqI2V0MhdJ1X6HKcnzWAP9DqtAuzXJKVVU
-	Wl6OikTn88ctUvcqT4H2k4u8URTo6CQnfFCLzIAf6+8NofAmXCPq651HzKJ7RA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743060575;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQ9s+vlxdp0zs18EJ6/ldypBQXUY54t96roc7c4NIOA=;
-	b=dCMw+44ax/RBvMafWEcCGvj5a7AFaOrLxv/SqwDOz2suBWHToM63BCPvFN9muWJCNXccZk
-	03SqXo8SKgl2cyCQ==
-From: "tip-bot2 for Boqun Feng" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/urgent] locking/lockdep: Decrease nr_unused_locks if
- lock unused in zap_class()
-Cc: Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Waiman Long <longman@redhat.com>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250326180831.510348-1-boqun.feng@gmail.com>
-References: <20250326180831.510348-1-boqun.feng@gmail.com>
+	s=arc-20240116; t=1743060601; c=relaxed/simple;
+	bh=ksooDKwMUuHkTaFWvqhnbrlEK7O5z3878QbVilW3idE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CV6sBy72kwEF0kg8/8tlqWpYvtec9cXR//0GxuhthtxeLMtB1tORIMKzLCwhlM22NqlrXL/xyNosM+NrkUegnXWsGSmi84OzRzPSWe4wIlWLLdpDxF71kODEdL/AzhKEopUmYkhzan6H47dImqjr3GqmPCUNFFqO01qy3cVbNjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TbZAiMcv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51429C4CEDD;
+	Thu, 27 Mar 2025 07:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743060600;
+	bh=ksooDKwMUuHkTaFWvqhnbrlEK7O5z3878QbVilW3idE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=TbZAiMcvd2wbBHxnjiQsvrzz5OkyWyRHZYpacKEBBLv/MpCQt7jAWcRYcjyTUTRkh
+	 o3N029NmzTm84jm8m2l7vh79xaSLkO+H1S7ZjxTJZR/rjlSNyQk4LvVhRskRMPVysF
+	 NDfAGiJ/vGrwTYJqZI4GbFLuru9ZXW/SY475QpMUXNKe7GocguQzB3RUcCLWsETv3b
+	 tYjrjzzPRvndtRDRinyg9xFkgXST1Q4HqhuAB9YaIsgldMy+jX6I5mfN4AnyOdePrE
+	 sZQ456U8RwCbvA3a5jOrozx4sOwTHkKqJw0TQhxuSilJmwY8vaBJlyOIGgTo2Rpnto
+	 vL38ziYlcNRSg==
+Message-ID: <deb42999-df89-471b-a161-e33b97f96b74@kernel.org>
+Date: Thu, 27 Mar 2025 15:29:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174306057203.14745.17035425599679029480.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "pilhyun.kim@sk.com" <pilhyun.kim@sk.com>
+Subject: Re: [External Mail] Re: [PATCH] f2fs: prevent the current section
+ from being selected as a victim during garbage collection
+To: "yohan.joung@sk.com" <yohan.joung@sk.com>, Yohan Joung
+ <jyh429@gmail.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+ "daeho43@gmail.com" <daeho43@gmail.com>
+References: <20250326141428.280-1-yohan.joung@sk.com>
+ <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
+ <2d95428375bd4a5592516bb6cefe4592@sk.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <2d95428375bd4a5592516bb6cefe4592@sk.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the locking/urgent branch of tip:
+On 3/27/25 14:43, yohan.joung@sk.com wrote:
+>> From: Chao Yu <chao@kernel.org>
+>> Sent: Thursday, March 27, 2025 3:02 PM
+>> To: Yohan Joung <jyh429@gmail.com>; jaegeuk@kernel.org; daeho43@gmail.com
+>> Cc: chao@kernel.org; linux-f2fs-devel@lists.sourceforge.net; linux-
+>> kernel@vger.kernel.org; 정요한(JOUNG YOHAN) Mobile AE <yohan.joung@sk.com>
+>> Subject: [External Mail] Re: [PATCH] f2fs: prevent the current section
+>> from being selected as a victim during garbage collection
+>>
+>> On 3/26/25 22:14, Yohan Joung wrote:
+>>> When selecting a victim using next_victim_seg in a large section, the
+>>> selected section might already have been cleared and designated as the
+>>> new current section, making it actively in use.
+>>> This behavior causes inconsistency between the SIT and SSA.
+>>
+>> Hi, does this fix your issue?
+> 
+> This is an issue that arises when dividing 
+> a large section into segments for garbage collection.
+> caused by the background GC (garbage collection) thread in large section
+> f2fs_gc(victim_section) -> f2fs_clear_prefree_segments(victim_section)-> 
+> cursec(victim_section) -> f2fs_gc(victim_section by next_victim_seg)
 
-Commit-ID:     495f53d5cca0f939eaed9dca90b67e7e6fb0e30c
-Gitweb:        https://git.kernel.org/tip/495f53d5cca0f939eaed9dca90b67e7e6fb0e30c
-Author:        Boqun Feng <boqun.feng@gmail.com>
-AuthorDate:    Wed, 26 Mar 2025 11:08:30 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 27 Mar 2025 08:23:17 +01:00
+I didn't get it, why f2fs_get_victim() will return section which is used
+by curseg? It should be avoided by checking w/ sec_usage_check().
 
-locking/lockdep: Decrease nr_unused_locks if lock unused in zap_class()
+Or we missed to check gcing section which next_victim_seg points to
+during get_new_segment()?
 
-Currently, when a lock class is allocated, nr_unused_locks will be
-increased by 1, until it gets used: nr_unused_locks will be decreased by
-1 in mark_lock(). However, one scenario is missed: a lock class may be
-zapped without even being used once. This could result into a situation
-that nr_unused_locks != 0 but no unused lock class is active in the
-system, and when `cat /proc/lockdep_stats`, a WARN_ON() will
-be triggered in a CONFIG_DEBUG_LOCKDEP=y kernel:
+Can this happen?
 
-  [...] DEBUG_LOCKS_WARN_ON(debug_atomic_read(nr_unused_locks) != nr_unused)
-  [...] WARNING: CPU: 41 PID: 1121 at kernel/locking/lockdep_proc.c:283 lockdep_stats_show+0xba9/0xbd0
+e.g.
+- bggc selects sec #0
+- next_victim_seg: seg #0
+- migrate seg #0 and stop
+- next_victim_seg: seg #1
+- checkpoint, set sec #0 free if sec #0 has no valid blocks
+- allocate seg #0 in sec #0 for curseg
+- curseg moves to seg #1 after allocation
+- bggc tries to migrate seg #1
 
-And as a result, lockdep will be disabled after this.
+Thanks,
 
-Therefore, nr_unused_locks needs to be accounted correctly at
-zap_class() time.
+> 
+> Because the call stack is different, 
+> I think that in order to handle everything at once, 
+> we need to address it within do_garbage_collect, 
+> or otherwise include it on both sides. What do you think?
+> 
+> [30146.337471][ T1300] F2FS-fs (dm-54): Inconsistent segment (70961) type [0, 1] in SSA and SIT
+> [30146.346151][ T1300] Call trace:
+> [30146.346152][ T1300]  dump_backtrace+0xe8/0x10c
+> [30146.346157][ T1300]  show_stack+0x18/0x28
+> [30146.346158][ T1300]  dump_stack_lvl+0x50/0x6c
+> [30146.346161][ T1300]  dump_stack+0x18/0x28
+> [30146.346162][ T1300]  f2fs_stop_checkpoint+0x1c/0x3c
+> [30146.346165][ T1300]  do_garbage_collect+0x41c/0x271c
+> [30146.346167][ T1300]  f2fs_gc+0x27c/0x828
+> [30146.346168][ T1300]  gc_thread_func+0x290/0x88c
+> [30146.346169][ T1300]  kthread+0x11c/0x164
+> [30146.346172][ T1300]  ret_from_fork+0x10/0x20
+> 
+> struct curseg_info : 0xffffff803f95e800 {
+> 	segno        : 0x11531 : 70961
+> }
+> 
+> struct f2fs_sb_info : 0xffffff8811d12000 {
+> 	next_victim_seg[0] : 0x11531 : 70961
+> }
+> 
+>>
+>> https://lore.kernel.org/linux-f2fs-devel/20250325080646.3291947-2-
+>> chao@kernel.org
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
+>>> ---
+>>>  fs/f2fs/gc.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c index
+>>> 2b8f9239bede..4b5d18e395eb 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1926,6 +1926,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct
+>> f2fs_gc_control *gc_control)
+>>>  		goto stop;
+>>>  	}
+>>>
+>>> +	if (__is_large_section(sbi) &&
+>>> +			IS_CURSEC(sbi, GET_SEC_FROM_SEG(sbi, segno)))
+>>> +		goto stop;
+>>> +
+>>>  	seg_freed = do_garbage_collect(sbi, segno, &gc_list, gc_type,
+>>>  				gc_control->should_migrate_blocks,
+>>>  				gc_control->one_time);
+> 
 
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250326180831.510348-1-boqun.feng@gmail.com
----
- kernel/locking/lockdep.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index b15757e..58d78a3 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6264,6 +6264,9 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 		hlist_del_rcu(&class->hash_entry);
- 		WRITE_ONCE(class->key, NULL);
- 		WRITE_ONCE(class->name, NULL);
-+		/* Class allocated but not used, -1 in nr_unused_locks */
-+		if (class->usage_mask == 0)
-+			debug_atomic_dec(nr_unused_locks);
- 		nr_lock_classes--;
- 		__clear_bit(class - lock_classes, lock_classes_in_use);
- 		if (class - lock_classes == max_lock_class_idx)
 
