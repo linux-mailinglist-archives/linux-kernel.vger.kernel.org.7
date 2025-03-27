@@ -1,65 +1,139 @@
-Return-Path: <linux-kernel+bounces-578324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86232A72E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:46:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B3FA72E19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21357A24F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B754178820
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B3320F081;
-	Thu, 27 Mar 2025 10:46:39 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45F720FA93;
+	Thu, 27 Mar 2025 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TiU74tr/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1894D22615;
-	Thu, 27 Mar 2025 10:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F314158553;
+	Thu, 27 Mar 2025 10:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743072399; cv=none; b=Ymx1cfaRgmKayEk1bTsqkiNShc2peoEvXDKnbb6Qi1S2ESg5/pZEyhOEkQjDCLN7HmgGa6OJ5BtJBqBmEQKZjfG6SYC95TmU/vwYUEAeBeZHYPHGjuh7YKs/hASwvLL9T4Q3qjSh2kdNigfIKThVw6siQXj4Ied2UwUf8D15l1c=
+	t=1743072424; cv=none; b=ZNcFh9bYQHBs/38ubTXybIzAbgDzokt0kUfXO9pkIG31eh9ar8nZ1fifTwkTPKS2k7whdYXm+I+vXSsQ8UMAwMESAsHNse8PPx5bWiSKxYpXUjTHF3f/8Uc7yeyNFQFcabzuF+VhSLqytHKlZqftnV4uo4yyNNZu8WDLsaniP18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743072399; c=relaxed/simple;
-	bh=CKMMwORL/7e171LK3vZmTi2HBGLdvefbMJzbjzQiBQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1x+TrW3vZ5oKF+/AuaQ4QMtgz6QSFIdhWk0A8yEM63fVX4zuqohCYeWTWQHwYEldi55QQ+VNNEH9BSW2mlfYy2YmqTzZgv9qO31Y2M5Rfi9y1YQrl4xSuwH3ZiO6wbtcbwBFMjsgJMuL18JJ/HIoSz8Aef0RWVSgfUnR8aZUkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id D9B8268C4E; Thu, 27 Mar 2025 11:46:32 +0100 (CET)
-Date: Thu, 27 Mar 2025 11:46:32 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
-	brauner@kernel.org, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 3/3] iomap: rework IOMAP atomic flags
-Message-ID: <20250327104632.GD10068@lst.de>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com> <20250320120250.4087011-4-john.g.garry@oracle.com> <87cye8sv9f.fsf@gmail.com> <20250323063850.GA30703@lst.de> <87bjtrsw2d.fsf@gmail.com>
+	s=arc-20240116; t=1743072424; c=relaxed/simple;
+	bh=q6eLCM9m9tdf5FHOuWhLS1KtcQTHHwd78ODHnG8D2iM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l25VggiFzhlHhE5E5uSus69qnWXnQOhJNU7XqW71WRx129Nxs1QthKTez+x4hxc63eja0lzDXHrT649DYnF9JabjWZeopyB1Z4TpUXYgycA6ri1T0+sfmv9eBUKoZMLfEfB2Tzmp9hoWoeKUI4nB8KdNVv9AuCujYNCh/I0grMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TiU74tr/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jD3g021227;
+	Thu, 27 Mar 2025 10:46:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zflJaGi8Iu07joFHAVIRGs6+kBty2ftSAYz9D2DjFAw=; b=TiU74tr/l7ODWCPz
+	AadR8Vkm6oX356OuJjboL3+s/C+IyKJxh+Ot5bgB3z/kraFrZVQm4wEPTNbiKxFh
+	kYt5lOH7OjhT2e22CvTzTF+J7xhH9pZ42zV1dOGslUbq9HQGB/VoCAC/PUsU5w9U
+	VsZONTybbz2fLll3JuPGbxqQkTvsX66OmriEGL45XJLRmdON0e+Cve7JUX6q4Yah
+	W1IoHIQnKXhxhq/LlVpQZYwHIz1L39AzVKCIvOPjzIQlRH54ZVm1Hod001BfxlWG
+	VU8atUKL46oBWHZnvpfMQeJVOO9AxzWXENrUUsF/e0HTob/4juUuuO1QszmtevK7
+	utp94g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyr9p1ew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 10:46:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52RAkpYo017409
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 10:46:51 GMT
+Received: from [10.216.8.158] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Mar
+ 2025 03:46:45 -0700
+Message-ID: <49186309-72f5-faa5-bcae-739c6b5e7d30@quicinc.com>
+Date: Thu, 27 Mar 2025 16:16:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bjtrsw2d.fsf@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 2/6] dt-bindings: dma: qcom,bam: Document dma-coherent
+ property
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+References: <20250313130918.4238-1-quic_kaushalk@quicinc.com>
+ <20250313130918.4238-3-quic_kaushalk@quicinc.com>
+ <572630ae-50bb-4575-8885-1d97b602ca8f@kernel.org>
+From: Kaushal Kumar <quic_kaushalk@quicinc.com>
+In-Reply-To: <572630ae-50bb-4575-8885-1d97b602ca8f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: JhHUnpaRcdG96V7po4YruSElUVhKsVzp
+X-Authority-Analysis: v=2.4 cv=UblRSLSN c=1 sm=1 tr=0 ts=67e52c9c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=jO2oUhU3BBFrcGlQPxsA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: JhHUnpaRcdG96V7po4YruSElUVhKsVzp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 bulkscore=0 malwarescore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270073
 
-On Sun, Mar 23, 2025 at 07:12:02PM +0530, Ritesh Harjani wrote:
-> flags in struct iomap is of type u16. So will make core iomap flags
-> starting from bit 15, moving downwards. 
-> 
-> Here is a diff of what I think you meant - let me know if this diff
-> looks good to you? 
-
-Yes, this looks good to me.
+On 3/13/2025 8:20 PM, Krzysztof Kozlowski wrote:
+> On 13/03/2025 14:09, Kaushal Kumar wrote:
+>> SDX75 BAM DMA controller has DMA-coherent support so define
+>> it in the properties section, without which 'dtbs_check'
+>> reports the following error:
+>>
+>>    controller@1c9c000: 'dma-coherent' does not match any of the
+>>    regexes: 'pinctrl-[0-9]+'
+> How can I reproduce it?
+It is not an existing error. It is the error that would come unless the 
+new property is defined. Will remove this part of commit text in v2.
+> Fixes tag?
+>
+>> Signed-off-by: Kaushal Kumar <quic_kaushalk@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> index 3ad0d9b1fbc5..c4dd6a503964 100644
+>> --- a/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/qcom,bam-dma.yaml
+>> @@ -39,6 +39,8 @@ properties:
+>>     "#dma-cells":
+>>       const: 1
+>>   
+>> +  dma-coherent: true
+>> +
+> Which devices are DMA coherent?
+Will update it under a bam version check in v2.
+>
+>
+> Best regards,
+> Krzysztof
 
 
