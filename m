@@ -1,75 +1,52 @@
-Return-Path: <linux-kernel+bounces-578549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CD1A73378
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C43A73375
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF09B1786B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:38:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CDE17872D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03E217657;
-	Thu, 27 Mar 2025 13:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947CC215F6B;
+	Thu, 27 Mar 2025 13:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gigqDCzd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLNemgbX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0292628D;
-	Thu, 27 Mar 2025 13:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00094215F41;
+	Thu, 27 Mar 2025 13:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743082683; cv=none; b=IEPTcQGNog3N+PpoXgpD+pfi2fQdgTbQefQdZ6mqxBBGDFrv7zC7nQp9myiJz1BUj8A1zXGi34e/nV//xPNqL9XvOeidWe22z+Tbb7mLHZEDUNAVxEdX/9sLvgalUzrplGFOr58HXDaqOIOkuz+zq6kKm+HTDGtN4NfSSJoiSzs=
+	t=1743082680; cv=none; b=QgM7EQP3X2flbzVD5A4Lr+gdp5cGgK4W8yM7tt2xVwIO8GdSvnapnOZXGRZ8v/dXAIk0cqQ4Mcy4VarCDDTRrkLMMTRboBWvHYtC+b79q4Wk5osVXqQ1mpDZzu65m8xSMQMBJ8CMutYH1mp8l9MlhbqMUGkskJIeRlpPq3zoUX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743082683; c=relaxed/simple;
-	bh=evCPU66MCh/bwq1B1yhuT2t43RG2f/1GbPnojOYjMjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DC6i+kebXbjPmvX+GWX44zIQ7RJS70TWqPoRgcR0OAhJ2Ttja5bAHnqfKAjT4AczyaO7h903323pcCjiqSmUk/GDOr7dkZhVZD+hOY3dKUS8tIEiuLzzV3BaALCfkg54Z9jBsGobMOUiH9+37Q6rrG8+VRqK40vwxX8Mp1O+vO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gigqDCzd; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743082682; x=1774618682;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=evCPU66MCh/bwq1B1yhuT2t43RG2f/1GbPnojOYjMjI=;
-  b=gigqDCzdxeRexX9jNyP4D0GiCS4ducc2IrrkYMu6CpitKUrSb/pfIwdR
-   qzgDT02M80fzW+xFX9Y4QJ2Yc6bIG+DUG9osUFvn/NY/w9sXCrV9PgD/g
-   dQhZGgnDm0qzIArlA5j6c8yubKtQnE4TgWSJU6fa2sFgYJOZo8Ldi1sD8
-   1xofQeK2qdqHCZd4hv3ro+UWT5yYoz/sn1COwBXhFozEVeh1NP2QGLgTu
-   Wkp2B7d1L+djhyDjmzvIIJY3BHoTkPYQcVpHuB9f+yKTkldzRYnK6Trfc
-   OEM6+AbLqgzbt7TmUqK/KuC+mZgYmjxwR7dwTVFjKtEChpm57DNr+bcJj
-   w==;
-X-CSE-ConnectionGUID: 9ppp10PfQLCnbutUMs89fw==
-X-CSE-MsgGUID: Iomj7LpcR2m0qvcIFB9Bxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44287700"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="44287700"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 06:38:01 -0700
-X-CSE-ConnectionGUID: InlPhFe+Soe7LClEHLCLRw==
-X-CSE-MsgGUID: /4JUZVgaQK+T6euogmlXkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="129292328"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 27 Mar 2025 06:37:58 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 2352C1D9; Thu, 27 Mar 2025 15:37:57 +0200 (EET)
-Date: Thu, 27 Mar 2025 15:37:56 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCHv2] thunderbolt: do not double dequeue a request
-Message-ID: <20250327133756.GA3152277@black.fi.intel.com>
-References: <20250327114222.100293-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1743082680; c=relaxed/simple;
+	bh=g48C53wIQ9kisIJ+mo4pQeIIjGFozOXYfFQ82UEzKlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=n6lWIHmIeiK4Kb8rTXbopwjmLevz9F2OMF2uMk/XjnBFwnXRnYpoZpfGRAdvzz4/WO9SI0+wVFwsQFEey50c3Ro47dNDRhTPA5CLbcpLK3hugaOYUMB2/aBuFYkClgZZ/gE+CL8vXgjD0lt/6T+Ac7VdbOyheIpwt66cvSoDuNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLNemgbX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E16C4CEE8;
+	Thu, 27 Mar 2025 13:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743082679;
+	bh=g48C53wIQ9kisIJ+mo4pQeIIjGFozOXYfFQ82UEzKlw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LLNemgbX3Dbf1Fl+6thM/M9H7JJ9frLa7+skx8wrLVDCvgnKmttz6zOUNF78Hwiq5
+	 AGus3LLTH3l0HzwgLhsQ/Zvjy3HMHuIroNgx3MvJFwsSjtjdI4oo7xEwsPftIx9dHv
+	 VpkD3xWaHRXNfMtDU4lc6VE7T3LwVHvckeUd8diJRvFVJ4/uM5S/579OLvm1CR6VZe
+	 La1xzac8qD9p0Gm9N9yv+qJPlLYdFi8jWvOEhZKipvIPD9Vv9u3Hux9kiXevTKR6rL
+	 2ZHuPN5E7NTBjLfUoqi9OhVlrivDEqADyhN6U+GLByJGH5QmuNY2droaNwdUOv511F
+	 txJvP0ELte/6g==
+Date: Thu, 27 Mar 2025 08:37:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yibo Dong <dong100@mucse.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Add MUCSE vendor ID to pci_ids.h
+Message-ID: <20250327133757.GA1432088@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,76 +55,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250327114222.100293-1-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1835B10BD36E99AC+20250327112426.GB468890@nic-Precision-5820-Tower>
 
-Hi,
+On Thu, Mar 27, 2025 at 07:24:26PM +0800, Yibo Dong wrote:
+> On Wed, Mar 26, 2025 at 11:57:28AM -0500, Bjorn Helgaas wrote:
+> > On Tue, Mar 25, 2025 at 02:57:18PM +0800, Yibo Dong wrote:
+> > > Add MUCSE as a vendor ID (0x8848) for PCI devices so we can use
+> > > the macro for future drivers.
+> > > 
+> > > Signed-off-by: Yibo Dong <dong100@mucse.com>
+> > 
+> > Please post this in the series where you add the future drivers.
+> > 
+> > We don't add new things to pci_ids.h unless they are actually used by
+> > more than one driver because it complicates life for people who
+> > backport things (there's a note at the top of the file about this).
+> 
+> Thanks for the reminder; the drivers maybe use 'the define' are
+> netdev drivers, so, I should first send patches to netdev subsystem,
+> and re-send this patch to pci subsystem after my patches is applied
+> by netdev subsytem? or I should send this to netdev subsystem along
+> with the drivers?
 
-On Thu, Mar 27, 2025 at 08:41:21PM +0900, Sergey Senozhatsky wrote:
-> Some of our devices crash in tb_cfg_request_dequeue():
-> 
->  general protection fault, probably for non-canonical address 0xdead000000000122
-> 
->  CPU: 6 PID: 91007 Comm: kworker/6:2 Tainted: G U W 6.6.65)
->  RIP: 0010:tb_cfg_request_dequeue+0x2d/0xa0
->  Call Trace:
->  <TASK>
->  ? tb_cfg_request_dequeue+0x2d/0xa0
->  tb_cfg_request_work+0x33/0x80
->  worker_thread+0x386/0x8f0
->  kthread+0xed/0x110
->  ret_from_fork+0x38/0x50
->  ret_from_fork_asm+0x1b/0x30
-> 
-> The circumstances are unclear, however, the theory is that
-> tb_cfg_request_work() can be scheduled twice for a request:
-> first time via frame.callback from ring_work() and second
-> time from tb_cfg_request().  Both times kworkers will execute
-> tb_cfg_request_dequeue(), which results in double list_del()
-> from the ctl->request_queue (the list poison deference hints
-> at it: 0xdead000000000122).
-> 
-> Another possibility can be tb_cfg_request_sync():
-> 
-> tb_cfg_request_sync()
->  tb_cfg_request()
->   schedule_work(&req->work) -> tb_cfg_request_dequeue()
->  tb_cfg_request_cancel()
->   schedule_work(&req->work) -> tb_cfg_request_dequeue()
+Just include it with your netdev series and cc me.  I'll ack it and
+the whole series can be merged together via netdev.
 
-Not sure about this one because &req->work will only be scheduled once the
-second schedule_work() should not queue it again (as far as I can tell).
-
-> To address the issue, do not dequeue requests that don't
-> have TB_CFG_REQUEST_ACTIVE bit set.
-
-Just to be sure. After this change you have not seen the issue anymore
-with your testing?
-
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Cc: stable@vger.kernel.org
-> ---
+> > > +#define PCI_VENDOR_ID_MUCSE		0x8848
+> > 
+> > https://pcisig.com/membership/member-companies?combine=8848 says this
+> > Vendor ID belongs to:
+> > 
+> >   Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd
+> > 
+> > I suppose "MUCSE" connects with that somehow.
+> > 
+> > It's nice if people can connect PCI_VENDOR_ID_MUCSE with a name used
+> > in marketing the product.  Maybe "MUCSE" is the name under which
+> > Wuxi Micro Innovation Integrated Circuit Design Co.,Ltd markets
+> > products?
 > 
-> v2: updated commit message, kept list_del()
-> 
->  drivers/thunderbolt/ctl.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-> index cd15e84c47f4..1db2e951b53f 100644
-> --- a/drivers/thunderbolt/ctl.c
-> +++ b/drivers/thunderbolt/ctl.c
-> @@ -151,6 +151,11 @@ static void tb_cfg_request_dequeue(struct tb_cfg_request *req)
->  	struct tb_ctl *ctl = req->ctl;
->  
->  	mutex_lock(&ctl->request_queue_lock);
-> +	if (!test_bit(TB_CFG_REQUEST_ACTIVE, &req->flags)) {
-> +		mutex_unlock(&ctl->request_queue_lock);
-> +		return;
-> +	}
-> +
->  	list_del(&req->list);
->  	clear_bit(TB_CFG_REQUEST_ACTIVE, &req->flags);
->  	if (test_bit(TB_CFG_REQUEST_CANCELED, &req->flags))
-> -- 
-> 2.49.0.395.g12beb8f557-goog
+> Yes, MUCSE is just abbreviation for “Wuxi Micro Innovation Integrated Circuit
+> Design Co.,Ltd”
+
+Perfect.  I see you've already added it to the lspci database along
+with several devices:
+
+  https://admin.pci-ids.ucw.cz/read/PC/8848
+
+All looks good!  I'll watch for your netdev patches.
+
+Bjorn
 
