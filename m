@@ -1,84 +1,53 @@
-Return-Path: <linux-kernel+bounces-577927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-577907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F44BA7288A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 02:58:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872C4A72866
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 02:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01C71881C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 01:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4660E189FAD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 01:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE234502A;
-	Thu, 27 Mar 2025 01:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MIPPGnS2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD06F1AA1D8;
+	Thu, 27 Mar 2025 01:48:10 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE6F450F2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 01:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFED45C14;
+	Thu, 27 Mar 2025 01:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743040708; cv=none; b=RgTZpTPTLJZlNWbLyEgMC4BLRPHhODSFj+8gAkxR8PSF8VEj9GncUO6NPgPICM2xiYlSf9Gu1g4QdsQkAB0pGW8qR1XxT9MvhhQ5sinzdW2kz7afRffc2CIp0aGyj2v/IP+a3qGynBnic5+s+tsLeoGkjFeLe7sxOXoqbfxfPbA=
+	t=1743040090; cv=none; b=d3wKD7EJjg8n7Obhg1LOGYUqI92QKAQkYKH+ua4HeVDGF/na7J65/TCZ14MN7q5hR4lvxqxVg6HYTIQxNCMWAxb6+eExgEGaecE69vfTANQUpiEVBO7undZz6TRJhO9jb4Mfcx5hvcRpmcbPZ0b6wvSm4HDpEePiWGe9CSk6JIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743040708; c=relaxed/simple;
-	bh=y5Yc2AWg7KRuGni0Mizpld+5ZmkhffNgW7Th7yyA5FM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u3sp40mgdea7ysT5RkMfOucqwHPFTYqUWNAH14KHe5BZS8DCg+VM8Q4wZHW51x11k9ye5p7+P0RU7in1d+TSsc6WrY4g5Hcx90q/PRLXukvig26FPp/5ilWSpNi3Y8c49A0WwHCSZmQAsTu+Gj9YpP25+4K2ofFJ6pgsB7SAE8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MIPPGnS2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2279915e06eso10614815ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 18:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1743040706; x=1743645506; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6uNWrXSTjfeu5Aiv0ot8FNDbO+2f9UO0L73RTwUFwaI=;
-        b=MIPPGnS2KGC/Picb1QH4HuBErO/74iBOFMlLOY3k8koIo6wHM1RXiiCPgFNbZgkcMG
-         yyT42bG69/D6gml1wCalByM6ZdGKSzTFMpbLdvd9XtTXrLBB7Lp/06vXl6d0SfO64pIL
-         xITn5Oliigo3eABPKhuqtsThH4SFKySyPYvWw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743040706; x=1743645506;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6uNWrXSTjfeu5Aiv0ot8FNDbO+2f9UO0L73RTwUFwaI=;
-        b=ZiYjnvNnknrLZ+wcZaBOihc/0iCZ7ajmT4u0e3KDXoEbEbWtfmkXzSjcSi7bVcxQ1q
-         P3BDFp4jgOLH4ZeYDL5xQtILOR7YnhUnoYiCd4okruyeQjDXwUzRl9ERTJAHvvGIBaT1
-         ol37CuE0XXLnlIu+LWiuYROcaJi2f1YFE5s0ip6O4rIaZJuxk4rf9CUeGjQKevl9v7N9
-         pcGnZ3dJhmKDupfm3mW8LzYzMwLLUUTO9QOThqYr3vdXQmhHs0+NQq5jplzJ5ZuoE25f
-         n8WRYe8NmMzghvXEzM6m+e0PQCM8o5xQoD+WzUnfLoY4+pro44kf8Bu7a1hmqqFh16L8
-         2S0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcpr6Koz+07SdC813tTSiNl/qzHbV1kVnIxXqAbVvwG+0MS8YboUFJcSHoO7ocIF2qKXlekMaUcyvB1T0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4MmxMJofldfC9hQzlY6soj2X980pct/3s3j/47yTosjlgkKAn
-	k9nbr5ivphRpUdoMf0NP45g+u4CsgeKUF1sO2B9/lnzZ+kMJn5B8IcYqtRZxGrnGTaGKbcKguyP
-	7bg==
-X-Gm-Gg: ASbGncvgBzKtFLuaxAKRc9eyJ+EW65shYM+FLk3nxvQMwp1zTThOV2R4Ly1DI1oJCNB
-	k3PnzHqZJwhwCfmIOML1ZOL6vyQjonvnw9bWGZAhzSmZA4ICAqrOPgIw2m3u4WzhrYjDY6+qV5l
-	0Ml3AbXL8GFpfM0eGVBfghlqngsg+UnD9q9ntYqrc8UFfvJXmPDjS3k0Bqehi+0ZLexMgvlL78Q
-	yNvolobzi3blW1PsCMpTCinV+bKUQeJhrYQn79N87gT3x5lMuGFRLqpPn9MyjjTA2kJ+pQJdbtO
-	HL/9y8Bxvl9n5FErGfVjZ1h+X0j7O7lAhaK0oNfcoxQfm4FSGRBb7fP6wEo3FPEC7OLUIg==
-X-Google-Smtp-Source: AGHT+IFgCjEGsfmZC/cFD1rz5jTmPfnSGBzSPP2T8YYuA6b3EF7+oKU92MWdhl5U1dvCKyZ+zR8XHg==
-X-Received: by 2002:a17:902:e5c6:b0:223:60ce:2451 with SMTP id d9443c01a7336-22804851df6mr23326415ad.15.1743040705764;
-        Wed, 26 Mar 2025 18:58:25 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:cd9c:961:27c5:9ceb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fab592sm13482435b3a.19.2025.03.26.18.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Mar 2025 18:58:25 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Richard Chang <richardycc@google.com>,
-	Brian Geffon <bgeffon@google.com>,
-	Minchan Kim <minchan@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv2] zram: modernize writeback interface
-Date: Thu, 27 Mar 2025 10:58:09 +0900
-Message-ID: <20250327015818.4148660-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+	s=arc-20240116; t=1743040090; c=relaxed/simple;
+	bh=YExHr+2mn/5PLGawiihdqqA9Qe1EXHQUBAkBpbg9IW4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fZoKrJp/3Zn36wcQ+BcVi3UlpaMD8CYQWN1z2Qpfg1mlO8aLOp6arpi0OtXB3fznsdM1a+nrdPb/Hmk4XoTxV+f7LUMlf2CVkLT8IUvQXLIuypqZwMDEBwc5RUb5wGhiZz81zf4Xb7SYqfF5xqbk7Qx/cRStlSqaVXjTz83iuVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZNRK06Z0tzvX0F;
+	Thu, 27 Mar 2025 09:44:04 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id F17111800B4;
+	Thu, 27 Mar 2025 09:48:01 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemg200005.china.huawei.com
+ (7.202.181.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 27 Mar
+ 2025 09:48:00 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<kuniyu@amazon.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH net] ipv6: sit: fix skb_under_panic with overflowed needed_headroom
+Date: Thu, 27 Mar 2025 09:58:27 +0800
+Message-ID: <20250327015827.2729554-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,430 +55,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-The writeback interface supports a page_index=N parameter which
-performs writeback of the given page.  Since we rarely need to
-writeback just one single page, the typical use case involves
-a number of writeback calls, each performing writeback of one
-page:
+When create ipip6 tunnel, if tunnel->parms.link is assigned to the previous
+created tunnel device, the dev->needed_headroom will increase based on the
+previous one.
 
-  echo page_index=100 > zram0/writeback
-  ...
-  echo page_index=200 > zram0/writeback
-  echo page_index=500 > zram0/writeback
-  ...
-  echo page_index=700 > zram0/writeback
+If the number of tunnel device is sufficient, the needed_headroom can be
+overflowed. The overflow happens like this:
 
-One obvious downside of this is that it increases the number of
-syscalls.  Less obvious, but a significantly more important downside,
-is that when given only one page to post-process zram cannot perform
-an optimal target selection.  This becomes a critical limitation
-when writeback_limit is enabled, because under writeback_limit we
-want to guarantee the highest memory savings hence we first need
-to writeback pages that release the highest amount of zsmalloc pool
-memory.
+  ipip6_newlink
+    ipip6_tunnel_create
+      register_netdevice
+        ipip6_tunnel_init
+          ipip6_tunnel_bind_dev
+            t_hlen = tunnel->hlen + sizeof(struct iphdr); // 40
+            hlen = tdev->hard_header_len + tdev->needed_headroom; // 65496
+            dev->needed_headroom = t_hlen + hlen; // 65536 -> 0
 
-This patch adds page_indexes=LOW-HIGH parameter to the writeback
-interface:
+The value of LL_RESERVED_SPACE(rt->dst.dev) may be HH_DATA_MOD, that leads
+to a small skb allocated in __ip_append_data(), which triggers a
+skb_under_panic:
 
-  echo page_indexes=100-200 page_indexes=500-700 > zram0/writeback
+  ------------[ cut here ]------------
+  kernel BUG at net/core/skbuff.c:209!
+  Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+  CPU: 0 UID: 0 PID: 24133 Comm: test Tainted: G W 6.14.0-rc7-00067-g76b6905c11fd-dirty #1
+  Tainted: [W]=WARN
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
+  RIP: 0010:skb_panic+0x156/0x1d0
+  Call Trace:
+   <TASK>
+   skb_push+0xc8/0xe0
+   fou_build_udp+0x31/0x3a0
+   gue_build_header+0xf7/0x150
+   ip_tunnel_xmit+0x684/0x3660
+   sit_tunnel_xmit__.isra.0+0xeb/0x150
+   sit_tunnel_xmit+0x2e3/0x2930
+   dev_hard_start_xmit+0x1a6/0x7b0
+   __dev_queue_xmit+0x2fa9/0x4120
+   neigh_connected_output+0x39e/0x590
+   ip_finish_output2+0x7bb/0x1f00
+   __ip_finish_output+0x442/0x940
+   ip_finish_output+0x31/0x380
+   ip_mc_output+0x1c4/0x6a0
+   ip_send_skb+0x339/0x570
+   udp_send_skb+0x905/0x1540
+   udp_sendmsg+0x17c8/0x28f0
+   udpv6_sendmsg+0x17f1/0x2c30
+   inet6_sendmsg+0x105/0x140
+   ____sys_sendmsg+0x801/0xc70
+   ___sys_sendmsg+0x110/0x1b0
+   __sys_sendmmsg+0x1f2/0x410
+   __x64_sys_sendmmsg+0x99/0x100
+   do_syscall_64+0x6e/0x1c0
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  ---[ end trace 0000000000000000 ]---
 
-This gives zram a chance to apply an optimal target selection
-strategy on each iteration of the writeback loop.
+Fix this by add check for needed_headroom in ipip6_tunnel_bind_dev().
 
-We also now permit multiple page_index parameters per call (previously
-zram would recognize only one page_index) and a mix or single pages and
-page ranges:
-
-  echo page_index=42 page_index=99 page_indexes=100-200 \
-       page_indexes=500-700 > zram0/writeback
-
-Apart from that the patch also unifies parameters passing and resembles
-other "modern" zram device attributes (e.g. recompression), while the
-old interface used a mixed scheme: values-less parameters for mode and
-a key=value format for page_index.  We still support the "old" value-less
-format for compatibility reasons.
-
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Reported-by: syzbot+4c63f36709a642f801c5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4c63f36709a642f801c5
+Fixes: c88f8d5cd95f ("sit: update dev->needed_headroom in ipip6_tunnel_bind_dev()")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
 ---
- Documentation/admin-guide/blockdev/zram.rst |  17 ++
- drivers/block/zram/zram_drv.c               | 320 +++++++++++++-------
- 2 files changed, 232 insertions(+), 105 deletions(-)
+ net/ipv6/sit.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
-index 9bdb30901a93..b8d36134a151 100644
---- a/Documentation/admin-guide/blockdev/zram.rst
-+++ b/Documentation/admin-guide/blockdev/zram.rst
-@@ -369,6 +369,23 @@ they could write a page index into the interface::
+diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
+index 39bd8951bfca..1662b735c5e3 100644
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -1095,7 +1095,7 @@ static netdev_tx_t sit_tunnel_xmit(struct sk_buff *skb,
  
- 	echo "page_index=1251" > /sys/block/zramX/writeback
- 
-+In Linux 6.16 this interface underwent some rework.  First, the interface
-+now supports `key=value` format for all of its parameters (`type=huge_idle`,
-+etc.)  Second, the support for `page_indexes` was introduced, which specify
-+`LOW-HIGH` range (or ranges) of pages to be written-back.  This reduces the
-+number of syscalls, but more importantly this enables optimal post-processing
-+target selection strategy. Usage example::
-+
-+	echo "type=idle" > /sys/block/zramX/writeback
-+	echo "page_indexes=1-100 page_indexes=200-300" > \
-+		/sys/block/zramX/writeback
-+
-+We also now permit multiple page_index params per call and a mix of
-+single pages and page ranges::
-+
-+	echo page_index=42 page_index=99 page_indexes=100-200 \
-+		page_indexes=500-700 > /sys/block/zramX/writeback
-+
- If there are lots of write IO with flash device, potentially, it has
- flash wearout problem so that admin needs to design write limitation
- to guarantee storage health for entire product life.
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index fda7d8624889..9e8ed1bf308b 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -734,114 +734,19 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
- 	submit_bio(bio);
  }
  
--#define PAGE_WB_SIG "page_index="
--
--#define PAGE_WRITEBACK			0
--#define HUGE_WRITEBACK			(1<<0)
--#define IDLE_WRITEBACK			(1<<1)
--#define INCOMPRESSIBLE_WRITEBACK	(1<<2)
--
--static int scan_slots_for_writeback(struct zram *zram, u32 mode,
--				    unsigned long nr_pages,
--				    unsigned long index,
--				    struct zram_pp_ctl *ctl)
-+static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+-static void ipip6_tunnel_bind_dev(struct net_device *dev)
++static int ipip6_tunnel_bind_dev(struct net_device *dev)
  {
--	for (; nr_pages != 0; index++, nr_pages--) {
--		bool ok = true;
--
--		zram_slot_lock(zram, index);
--		if (!zram_allocated(zram, index))
--			goto next;
--
--		if (zram_test_flag(zram, index, ZRAM_WB) ||
--		    zram_test_flag(zram, index, ZRAM_SAME))
--			goto next;
--
--		if (mode & IDLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_IDLE))
--			goto next;
--		if (mode & HUGE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_HUGE))
--			goto next;
--		if (mode & INCOMPRESSIBLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
--			goto next;
--
--		ok = place_pp_slot(zram, ctl, index);
--next:
--		zram_slot_unlock(zram, index);
--		if (!ok)
--			break;
--	}
--
--	return 0;
--}
--
--static ssize_t writeback_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t len)
--{
--	struct zram *zram = dev_to_zram(dev);
--	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
--	struct zram_pp_ctl *ctl = NULL;
-+	unsigned long blk_idx = 0;
-+	struct page *page = NULL;
- 	struct zram_pp_slot *pps;
--	unsigned long index = 0;
--	struct bio bio;
- 	struct bio_vec bio_vec;
--	struct page *page = NULL;
--	ssize_t ret = len;
--	int mode, err;
--	unsigned long blk_idx = 0;
--
--	if (sysfs_streq(buf, "idle"))
--		mode = IDLE_WRITEBACK;
--	else if (sysfs_streq(buf, "huge"))
--		mode = HUGE_WRITEBACK;
--	else if (sysfs_streq(buf, "huge_idle"))
--		mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
--	else if (sysfs_streq(buf, "incompressible"))
--		mode = INCOMPRESSIBLE_WRITEBACK;
--	else {
--		if (strncmp(buf, PAGE_WB_SIG, sizeof(PAGE_WB_SIG) - 1))
--			return -EINVAL;
--
--		if (kstrtol(buf + sizeof(PAGE_WB_SIG) - 1, 10, &index) ||
--				index >= nr_pages)
--			return -EINVAL;
--
--		nr_pages = 1;
--		mode = PAGE_WRITEBACK;
--	}
--
--	down_read(&zram->init_lock);
--	if (!init_done(zram)) {
--		ret = -EINVAL;
--		goto release_init_lock;
--	}
--
--	/* Do not permit concurrent post-processing actions. */
--	if (atomic_xchg(&zram->pp_in_progress, 1)) {
--		up_read(&zram->init_lock);
--		return -EAGAIN;
--	}
--
--	if (!zram->backing_dev) {
--		ret = -ENODEV;
--		goto release_init_lock;
--	}
-+	struct bio bio;
-+	int ret, err;
-+	u32 index;
+ 	struct ip_tunnel *tunnel = netdev_priv(dev);
+ 	int t_hlen = tunnel->hlen + sizeof(struct iphdr);
+@@ -1134,7 +1134,12 @@ static void ipip6_tunnel_bind_dev(struct net_device *dev)
+ 		WRITE_ONCE(dev->mtu, mtu);
+ 		hlen = tdev->hard_header_len + tdev->needed_headroom;
+ 	}
++
++	if (t_hlen + hlen > U16_MAX)
++		return -EOVERFLOW;
++
+ 	dev->needed_headroom = t_hlen + hlen;
++	return 0;
+ }
  
- 	page = alloc_page(GFP_KERNEL);
--	if (!page) {
--		ret = -ENOMEM;
--		goto release_init_lock;
--	}
--
--	ctl = init_pp_ctl();
--	if (!ctl) {
--		ret = -ENOMEM;
--		goto release_init_lock;
--	}
--
--	scan_slots_for_writeback(zram, mode, nr_pages, index, ctl);
-+	if (!page)
-+		return -ENOMEM;
+ static void ipip6_tunnel_update(struct ip_tunnel *t,
+@@ -1452,7 +1457,9 @@ static int ipip6_tunnel_init(struct net_device *dev)
+ 	tunnel->net = dev_net(dev);
+ 	strcpy(tunnel->parms.name, dev->name);
  
- 	while ((pps = select_pp_slot(ctl))) {
- 		spin_lock(&zram->wb_limit_lock);
-@@ -929,10 +834,215 @@ static ssize_t writeback_store(struct device *dev,
- 
- 	if (blk_idx)
- 		free_block_bdev(zram, blk_idx);
--
--release_init_lock:
- 	if (page)
- 		__free_page(page);
-+
-+	return ret;
-+}
-+
-+#define PAGE_WRITEBACK			0
-+#define HUGE_WRITEBACK			(1 << 0)
-+#define IDLE_WRITEBACK			(1 << 1)
-+#define INCOMPRESSIBLE_WRITEBACK	(1 << 2)
-+
-+static int parse_page_index(char *val, unsigned long nr_pages,
-+			    unsigned long *lo, unsigned long *hi)
-+{
-+	int ret;
-+
-+	ret = kstrtoul(val, 10, lo);
-+	if (ret)
-+		return ret;
-+	*hi = *lo + 1;
-+	if (*lo >= nr_pages || *hi > nr_pages)
-+		return -ERANGE;
-+	return 0;
-+}
-+
-+static int parse_page_indexes(char *val, unsigned long nr_pages,
-+			      unsigned long *lo, unsigned long *hi)
-+{
-+	char *delim;
-+	int ret;
-+
-+	delim = strchr(val, '-');
-+	if (!delim)
-+		return -EINVAL;
-+
-+	*delim = 0x00;
-+	ret = kstrtoul(val, 10, lo);
-+	if (ret)
-+		return ret;
-+	if (*lo >= nr_pages)
-+		return -ERANGE;
-+
-+	ret = kstrtoul(delim + 1, 10, hi);
-+	if (ret)
-+		return ret;
-+	if (*hi >= nr_pages || *lo > *hi)
-+		return -ERANGE;
-+	*hi += 1;
-+	return 0;
-+}
-+
-+static int parse_mode(char *val, u32 *mode)
-+{
-+	*mode = 0;
-+
-+	if (!strcmp(val, "idle"))
-+		*mode = IDLE_WRITEBACK;
-+	if (!strcmp(val, "huge"))
-+		*mode = HUGE_WRITEBACK;
-+	if (!strcmp(val, "huge_idle"))
-+		*mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
-+	if (!strcmp(val, "incompressible"))
-+		*mode = INCOMPRESSIBLE_WRITEBACK;
-+
-+	if (*mode == 0)
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+static int scan_slots_for_writeback(struct zram *zram, u32 mode,
-+				    unsigned long lo, unsigned long hi,
-+				    struct zram_pp_ctl *ctl)
-+{
-+	u32 index = lo;
-+
-+	while (index < hi) {
-+		bool ok = true;
-+
-+		zram_slot_lock(zram, index);
-+		if (!zram_allocated(zram, index))
-+			goto next;
-+
-+		if (zram_test_flag(zram, index, ZRAM_WB) ||
-+		    zram_test_flag(zram, index, ZRAM_SAME))
-+			goto next;
-+
-+		if (mode & IDLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_IDLE))
-+			goto next;
-+		if (mode & HUGE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_HUGE))
-+			goto next;
-+		if (mode & INCOMPRESSIBLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
-+			goto next;
-+
-+		ok = place_pp_slot(zram, ctl, index);
-+next:
-+		zram_slot_unlock(zram, index);
-+		if (!ok)
-+			break;
-+		index++;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t writeback_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t len)
-+{
-+	struct zram *zram = dev_to_zram(dev);
-+	u64 nr_pages = zram->disksize >> PAGE_SHIFT;
-+	unsigned long lo = 0, hi = nr_pages;
-+	struct zram_pp_ctl *ctl = NULL;
-+	char *args, *param, *val;
-+	ssize_t ret = len;
-+	int err, mode = 0;
-+
-+	down_read(&zram->init_lock);
-+	if (!init_done(zram)) {
-+		up_read(&zram->init_lock);
-+		return -EINVAL;
-+	}
-+
-+	/* Do not permit concurrent post-processing actions. */
-+	if (atomic_xchg(&zram->pp_in_progress, 1)) {
-+		up_read(&zram->init_lock);
-+		return -EAGAIN;
-+	}
-+
-+	if (!zram->backing_dev) {
-+		ret = -ENODEV;
-+		goto release_init_lock;
-+	}
-+
-+	ctl = init_pp_ctl();
-+	if (!ctl) {
-+		ret = -ENOMEM;
-+		goto release_init_lock;
-+	}
-+
-+	args = skip_spaces(buf);
-+	while (*args) {
-+		args = next_arg(args, &param, &val);
-+
-+		/*
-+		 * Workaround to support the old writeback interface.
-+		 *
-+		 * The old writeback interface has a minor inconsistency and
-+		 * requires key=value only for page_index parameter, while the
-+		 * writeback mode is a valueless parameter.
-+		 *
-+		 * This is not the case anymore and now all parameters are
-+		 * required to have values, however, we need to support the
-+		 * legacy writeback interface format so we check if we can
-+		 * recognize a valueless parameter as the (legacy) writeback
-+		 * mode.
-+		 */
-+		if (!val || !*val) {
-+			err = parse_mode(param, &mode);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			break;
-+		}
-+
-+		if (!strcmp(param, "type")) {
-+			err = parse_mode(val, &mode);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			break;
-+		}
-+
-+		if (!strcmp(param, "page_index")) {
-+			err = parse_page_index(val, nr_pages, &lo, &hi);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			continue;
-+		}
-+
-+		if (!strcmp(param, "page_indexes")) {
-+			err = parse_page_indexes(val, nr_pages, &lo, &hi);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			continue;
-+		}
-+	}
-+
-+	err = zram_writeback_slots(zram, ctl);
+-	ipip6_tunnel_bind_dev(dev);
++	err = ipip6_tunnel_bind_dev(dev);
 +	if (err)
-+		ret = err;
-+
-+release_init_lock:
- 	release_pp_ctl(zram, ctl);
- 	atomic_set(&zram->pp_in_progress, 0);
- 	up_read(&zram->init_lock);
++		return err;
+ 
+ 	err = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
+ 	if (err)
 -- 
-2.49.0.395.g12beb8f557-goog
+2.34.1
 
 
