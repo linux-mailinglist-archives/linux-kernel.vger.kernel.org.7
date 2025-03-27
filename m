@@ -1,128 +1,101 @@
-Return-Path: <linux-kernel+bounces-578049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E541DA72A25
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:26:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF57A72A2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:28:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27BCA7A5631
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30A9B3AF6C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 06:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD501C3BFC;
-	Thu, 27 Mar 2025 06:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0051ACEA6;
+	Thu, 27 Mar 2025 06:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jT9wp617"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Slx1x+X7"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8A217E4;
-	Thu, 27 Mar 2025 06:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A141A9B4F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 06:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743056755; cv=none; b=cmVCVJZAt2Ux1KhIQSrcwTsV6SHw79yP1EHLSNTg156FcsZg+qdwlqz/DHqDEDaIbKyBSlOGau9aKYxIhbooI6Jj/G+OUTZRQkg83jA4qCO1N3BWEHm96V7dy/hK7g0+Hf1DT+b2wp8RGfBYKef6BjFC2KXiOwkDV5qY2Iis51E=
+	t=1743056861; cv=none; b=EnIqCU+y4wYc5C/Mg+hRciMYco5Kit0vpDqjLzGVVk+Af3LwPc8qtd2a8Q+BTNY80Raxm5QPU2el7IuQOtAas4AqrjbY2ybNz6vOzocmNKFjRKU9IawhMt2tQrIUmshRSFIGZjiYH11b/80FRoORTyo+jlLCOUgnbcIBAiOQD+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743056755; c=relaxed/simple;
-	bh=AoXL8hpcNGRM86CC02gZufjwGC+N033mnX/R9DQvFTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rCqHlAJxRNfaBwodXY8bgalffPnzYpeAFsha30m57d6979fkGJHWf/c14pFMFLqcXrnr3m9nHMq+MbiuT+J2PKPYY4TwsgpPTSEcjfy6S9KgQDW13WXEQ/JVFbvU55rxgnLZulMX9htkgqqC+kdNglGl6uhHRrSnl0zqHNXterw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jT9wp617; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52R6PZRT2400369
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Mar 2025 01:25:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1743056735;
-	bh=X6X477M6Va5tmFzvIWyeyFPAoll0J0fqW7yMcUpyfIs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=jT9wp617Nb+KhxmAumqwlwv2WEZXkT9C0gQFEk7k8EJmHA607mAlPG4gTeJA/g4iP
-	 u7zVlOYTRV8A9zXKJja9hMRfT8GeEQYkVfVkUjl4MdpXaVgy131oKVFkTF9l8AiiUK
-	 doU5CRR7HBOO9IvehTdzv6xKIcBBaAhf2VAGzpOc=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52R6PZvA107600
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Mar 2025 01:25:35 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Mar 2025 01:25:35 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Mar 2025 01:25:35 -0500
-Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52R6PVGp070709;
-	Thu, 27 Mar 2025 01:25:31 -0500
-Message-ID: <b7439746-4143-4504-939e-e8abd705c962@ti.com>
-Date: Thu, 27 Mar 2025 11:55:30 +0530
+	s=arc-20240116; t=1743056861; c=relaxed/simple;
+	bh=vNB55LLHsIzewlg4O3Bpq6Hpru+HJpGh5yavNpxEX24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V2+5kSGg3IumoQ36mXX3wCaQa3YJKZ+pv02Bd9tA9Xq6+09LXpoS1YX0NwkqOH3Hhy7AR+p/b8d0O5wDp9H2MH0aayh25jXqw9KkeJaMsd//lwZZe9xtnoHxXglhHpYxnW8WvpHrQgveuWTC6M+bDgw3YFGTYcvNl3gcgkyOHZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Slx1x+X7; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3011737dda0so726416a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Mar 2025 23:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743056859; x=1743661659; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vNB55LLHsIzewlg4O3Bpq6Hpru+HJpGh5yavNpxEX24=;
+        b=Slx1x+X77vv+lBm/QSo/JzDCg5zL3cE+6cCBpC5Bc8vE4vLaS8UZxH/mGc5tkh7PHD
+         u8OaFfYX9eRqGiffN9GCxXgfXv3AUdb6YhuceWvYWMWAfUt6nKLoOAiAHzF5ZlxT845B
+         qwnwdrqf8oL+k+bliBKFqj3oxl2rynksEqTdl6Px2APq5Et5xjnLFHHFO4XU1QnJRXQ2
+         Y5GJie3APj8wN8RVlAeO4TRALaqhGjrUS1LA8UknXJ9RnOlTexp+YPIuOHpXEiqCyJlV
+         7yubMZZX1d24EaVRZlQ+ZKl+7EVD3maOJobMB+YDq7kRunvauKf8rfQxALyKVJul8zsf
+         z2vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743056859; x=1743661659;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vNB55LLHsIzewlg4O3Bpq6Hpru+HJpGh5yavNpxEX24=;
+        b=T2v7M+m96qcnxhQiTMoyqQJvIyxehFwKE53nQz9ShADJYwpV4zIVTWPdVj4TyaxkUW
+         EsTvhH0A14cKCVJE353whnsHROWUQkTPwxE9iOeYykmJYzrXGiRmnpUnnE1BWKGx6HNz
+         TYpVwG1dhvK7cI5jQS14J5QaxkLThFv4YnWH1pv7iOF5oKVtOIcbnA0xL0WPC2frTErv
+         Q7fvzZ5sdP9e7SL9qH6owL4GCa9CBDz4oXYXCSxF5p0ajYGQ9Wpvbaudyy6LPc5L5ttA
+         3KstBXrgcwjnqnw4PeA4+QdhHfBKcm3xGYyCLyKIPyydpl5ggBEBsYQLuqqelgyCMBHQ
+         W5Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/puN+OceMXsjXdfCuUZZ4Wt9bptXyyZ55YXyAmE6D7OXPuV2NSReHrXwJaxYdIoPMCUb58n9/p6gKVD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbFm5fIfUnHcgSAz2bdUidJrNEV4p0V8TwFq0GqVnPIDOyiDc3
+	27LP7KfMj3v999BzB6HAvf78H7zfmYnFCWdEGA9NwrLOQdohVLbTQ0wfvv/rB9T8Ixqju7zEbOk
+	NbsyuSq+HBg5X/NcUFSZu+0mCleT1bipcAIKg
+X-Gm-Gg: ASbGncuiFgH/J9yf9nC5r5Q+2FCr2TAqt+vbpyI7Remtf7GyMsgkBoSw/eIjXbJDSoe
+	wVT9tl1RvyXmJ4hdJOTQaDMid6dXYDeXnCkOJ2AT2ZcwIHANobc+gHUw43cdCkWVmlvLi9kRZal
+	k6ZIXB9UEXBO3STk4Qyu1Ag+M63AqSZjpElrCcvWzogrdYxx0XgwWPs17Y
+X-Google-Smtp-Source: AGHT+IFt7Uet3UwCNOAH8meYB2W9ViJLDi7wcmCNPw9mSbfJ0sSbyamjROCSnSFkmO0FUw183zFiWc7Rnl9Qc4okr5s=
+X-Received: by 2002:a17:90b:354e:b0:304:ec28:4437 with SMTP id
+ 98e67ed59e1d1-304ec284935mr218399a91.22.1743056858259; Wed, 26 Mar 2025
+ 23:27:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] media: ti: j721e-csi2rx: Use
- devm_of_platform_populate
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
-        Jai Luthra
-	<jai.luthra@linux.dev>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans
- Verkuil <hverkuil@xs4all.nl>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>,
-        Sakari Ailus
-	<sakari.ailus@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>
-CC: Rishikesh Donadkar <r-donadkar@ti.com>,
-        Vaishnav Achath
-	<vaishnav.a@ti.com>,
-        Changhuang Liang <changhuang.liang@starfivetech.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250324-probe_fixes-v1-0-5cd5b9e1cfac@ideasonboard.com>
- <20250324-probe_fixes-v1-1-5cd5b9e1cfac@ideasonboard.com>
-Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20250324-probe_fixes-v1-1-5cd5b9e1cfac@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com> <20250319005141.312805-2-quic_wcheng@quicinc.com>
+In-Reply-To: <20250319005141.312805-2-quic_wcheng@quicinc.com>
+From: Puma Hsu <pumahsu@google.com>
+Date: Thu, 27 Mar 2025 14:27:00 +0800
+X-Gm-Features: AQ5f1JoUEAB76GccOuQU5OR51PoZ29U3C8QHFwNl_oTL2dvwjiuuxHuLDi3FutQ
+Message-ID: <CAGCq0LZoi0MOJLJYUeQJW6EfOU_Ch=v1Sg8L4_B-KhdDCx1fCw@mail.gmail.com>
+Subject: Re: [PATCH v36 01/31] xhci: sideband: add initial api to register a
+ secondary interrupter entity
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz, 
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net, 
+	broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org, 
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com, 
+	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/03/25 17:31, Jai Luthra wrote:
-> Ensure that we clean up the platform bus when we remove this driver.
-> 
-> This fixes a crash seen when reloading the module for the child device
-> with the parent not yet reloaded.
-> 
-> Fixes: b4a3d877dc92 ("media: ti: Add CSI2RX support for J721E")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+Hi,
 
-Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-
-Regards
-Devarsh
-> ---
->   drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 6412a00be8eab89548950dd21b3b3ec02dafa5b4..a066024bf745450e2ba01d06c0fec4e6bdbfa97e 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -1118,7 +1118,7 @@ static int ti_csi2rx_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto err_vb2q;
->   
-> -	ret = of_platform_populate(csi->dev->of_node, NULL, NULL, csi->dev);
-> +	ret = devm_of_platform_populate(csi->dev);
->   	if (ret) {
->   		dev_err(csi->dev, "Failed to create children: %d\n", ret);
->   		goto err_subdev;
-> 
+We have implemented and verified the USB audio offloading feature with
+the xhci sideband driver on our Google Pixel products. We would
+appreciate it if this solution can be accepted. Thank you all for the
+work!
 
