@@ -1,163 +1,97 @@
-Return-Path: <linux-kernel+bounces-578415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F72A7303F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE5FA73045
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0194E7A4369
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:42:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C75327A52D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4062C2139DA;
-	Thu, 27 Mar 2025 11:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066D8214201;
+	Thu, 27 Mar 2025 11:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fflci9VP"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8Edver1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D787213256
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 11:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDD2213E89;
+	Thu, 27 Mar 2025 11:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743075766; cv=none; b=by26hYt7H6QcqOybU+1e0ZBq9931jri6D7rTOwYraYpLF9e6INl1YwPabVf/J8pEyRgRlGW7vp4yTI8pJigV2hZQgs91cEQVu5xPJYvY36TK0paczoN+0KPN1jJh68tw+M1+T/Hko+npobo3g0TSIAfvVMsxzc03PuGHpDEC8LQ=
+	t=1743075771; cv=none; b=mCCkx5jCjM8+6drjnPbKIT41iryIEGWq6SpJBz1wJP1ZLx7D7vz4nikI+eUz0LVi1n+ElP60elBkkbWvTJ7CuIjwRod3kWah9PO3NQh1apXhPShsckSc3mlH/LBspdUn4QGfRx1zqAV1Ps7SqRB5COH32Xal9siorsqzzKyNmR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743075766; c=relaxed/simple;
-	bh=eF+vO4HWF5WkZYoqiFRQYzuWAnQ6UlCJ4XBQjnS6q9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIwLByeGAT1snLuueanN2ytkPLRYTuVHkS0Ir1kGKaP25++Wc8GjnM5Pjw/qVDZUBUxyl4hMrrKBqIh3aPnCg6P97AnUPMqfDjvOSZQMA/8mw0I9rrMd4koVCampuipOHwmr27ov/nDmi20C3I67Bs9Qa3zXy14mawpLHEtFnK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fflci9VP; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so8383475e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 04:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743075762; x=1743680562; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hwGnmu50XyHLYTx+XRrSMtCI46qAB4IVnO+O6BeEDNs=;
-        b=Fflci9VP5xYYRiR5vNq4EM0cgs/2j9T0KnSLAwqUXQrkfAPbiUhTFSkdzQzsiG7dbS
-         jLQC+UjQuqNkpjpruMKSS9eqYOONBH7WbHPeemJYl8cw4xmGbiZhWfwVtf3x1Jo4HKOU
-         rcYW6nb18vm+woWHS37Jc+4lCAO0f+RGSHIm4X89b2Q4xz2IRb2riUVUtg/pzBhEZH5K
-         jurUM62XR8KX2XgaHLiKRQr0yUTLTuKth08PmlE+2ljVsPwtZzJ3CmxbVMYtaiHqAdCo
-         3KTcjZv5bhxsINmt//CE8u/wTMEwDdj8BdfrIvfkXpBa5uK4m2dArtWFgGfSOmAxls7o
-         ptgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743075762; x=1743680562;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwGnmu50XyHLYTx+XRrSMtCI46qAB4IVnO+O6BeEDNs=;
-        b=mRGWz99NdDukVn4t62oxaVk3brza1TL49IuZQOFqbowDvS/rrrHLW/z0WiRs0UxOV+
-         6lea3snVvRTefI1R6uqVltEKdmoO+fRx4fRdVKbOgIf4IY7/1JFOPRLHDrPJTlPfbfUK
-         CNFQ6pCAq8lJ96L0nh7onTVauGRQzFvb8mq3hkStjx7+gNTgyVZLRPGbAYkOgg+DXABp
-         rxdwGCrP1fBeyZqwhTbd0eNXyG0PjpvSVDHtaXhRUKcM7QJhJvhfCnfc4zU/+u2myol1
-         1MUdkwgvxq9VqaA7k0oT2yzkrSrC+iR1hZRTPxETgLOGjnyqXXxms58kx93UAAyuaObO
-         Qyqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4kRbrZROGAfHk4M51zftxc8Lb4WTzbOk4jFlpSh3LY5hP95GGptFzTSueGT2TPpyDAUDLYKQgTRR36uI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1vTXaMq7AlUr5Blm7ed3eXzoaVIIHHXmXUvlqcyQlifusEkEi
-	o0V1DyxIltkZARjKXOohU1dnvSrcNBv4yWAMiu4x8YUduEUpJ2hSNeCzZ/LSybE=
-X-Gm-Gg: ASbGnctfEwaBuWF6Ovz0DkBB1lBfkEiy8ZTzfS8IEAkXxDsiT6HGygO6U6XU9DaNjbA
-	FAdtXzRzAFZDaZzR2o8jJD8vUOuSQrsHtTpU4LR/coss5yNN1nKlBGfXHy1M8w/F8txPZ6g0YkN
-	mufe/XdLp7b6ubnz5eo0H7oecZ+UMMcCoiZSTcuxHymk4pI+nVkuPAKGL7kVE13JjNTbxjq/2yz
-	5J+Ai6T/BrGgN+9j8VG4pDw8Mm7jrR+G5DodxsJszmQl6VKnQmms1t7V6gkoozmvy+Zf2nwaO7v
-	ePdCQ4MSlyR9Gxh/C/x07XeRF/GCY2Wroj3RsfcMJWRzzTmI57Pz6kXsGbGU0BpBvKD55LBrnG9
-	PoE8lZWtbZH3EUS1xqpzkWQ==
-X-Google-Smtp-Source: AGHT+IHxQud/sts4jUj3rWl7atpMgeW2AEZlo7j926k/DmxvMnse39hxq1AoC3ZKQcdcRrj3t9hXxQ==
-X-Received: by 2002:a05:600c:4f45:b0:43c:fe15:41c9 with SMTP id 5b1f17b1804b1-43d8d641abdmr4440155e9.9.1743075762504;
-        Thu, 27 Mar 2025 04:42:42 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1394:8401:ac5f:98de:4c1b:7bf1? ([2001:a61:1394:8401:ac5f:98de:4c1b:7bf1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e836f2sm34897965e9.11.2025.03.27.04.42.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 04:42:42 -0700 (PDT)
-Message-ID: <04a011b5-a7fa-4270-a072-365b5abd2aec@suse.com>
-Date: Thu, 27 Mar 2025 12:42:41 +0100
+	s=arc-20240116; t=1743075771; c=relaxed/simple;
+	bh=RakhnoMPABa71lhIIUj0KdaIOqRz0wWIi87CD/jZimE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWijWTswfxJvS6Lg3Kdc/FehHo3Xqc3d93n/Uqx8ge0yJeaI+6DC63fFEDHBgNPCPH6pj7U8KoGEhXFwlC2db4yogSr7MiaEJPp4J7shnP1zpbzdbVYs3bx9y4tugKabxVOafd55qDCUn+rDDaLkvwjVzy6pOqNY4P3D2QzHYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8Edver1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA75DC4CEDD;
+	Thu, 27 Mar 2025 11:42:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743075771;
+	bh=RakhnoMPABa71lhIIUj0KdaIOqRz0wWIi87CD/jZimE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q8Edver1J53rwV8Gnsazt/HAq4QHVQNNuTfr5oBKS2Lsm71dTIAlhmYvGNCJT/Zq2
+	 6TR3hCSlLAgzglh4fUm1UNTxRQfcMgPYWMVGb5aKbHTmgqTrkm7OBT2Q1eZyP938wn
+	 Js47VJMhjhBGvgxP5JjTCWRIj6DGhRq/UvA/vJ5F0rnfIZ1dzcHJP144JPzMn5qEtm
+	 KwomvJqyR1NewoBr8rNtUdxjrcIzbYTWZSMjeN/RAmBtKDHkJ8dJ2jnGaHd5nqzkak
+	 dshX7GwGuddxug4YtAN/j9bLAaJYBZvHMdCfX96hDcxjSriw7xdP8eKWbVfFzjyKhi
+	 NG749msum9RjA==
+Date: Thu, 27 Mar 2025 11:42:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.12 000/115] 6.12.21-rc2 review
+Message-ID: <18c620b1-b04f-473c-a331-748ecc433ccb@sirena.org.uk>
+References: <20250326154546.724728617@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: WARNING in cm109_urb_irq_callback/usb_submit_urb
-To: Alan Stern <stern@rowland.harvard.edu>, Oliver Neukum <oneukum@suse.com>
-Cc: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kun Hu <huk23@m.fudan.edu.cn>,
- Jiaji Qin <jjtan24@m.fudan.edu.cn>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- syzkaller@googlegroups.com
-References: <559eddf1.5c68.195b1d950ef.Coremail.baishuoran@hrbeu.edu.cn>
- <62d91b68-2137-4a3a-a78a-c765402edd35@suse.com>
- <a3f66f2e-a99e-47f2-a3ef-742b6903cc5d@rowland.harvard.edu>
- <7be81186-2d18-4d0e-8a93-d2dda20b02b2@suse.com>
- <07f2ec1a-0363-4734-97ff-a129699b1907@rowland.harvard.edu>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <07f2ec1a-0363-4734-97ff-a129699b1907@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FCPf0F7oU+UyRez1"
+Content-Disposition: inline
+In-Reply-To: <20250326154546.724728617@linuxfoundation.org>
+X-Cookie: Multics is security spelled sideways.
 
-Hi,
 
-On 20.03.25 18:25, Alan Stern wrote:
+--FCPf0F7oU+UyRez1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> static void cm109_stop_traffic(struct cm109_dev *dev)
->> {
->>          dev->shutdown = 1;
->>          /*
->>           * Make sure other CPUs see this
->>           */
->>          smp_wmb();
->>          usb_kill_urb(dev->urb_ctl);
->>          usb_kill_urb(dev->urb_irq);
->>          cm109_toggle_buzzer_sync(dev, 0);
->>          dev->shutdown = 0;
->>          smp_wmb();
-> 
-> I don't know anything about this driver, but the placement of the second
-> smp_wmb() looks odd.  Should it really come before the line that sets
+On Wed, Mar 26, 2025 at 11:46:02AM -0400, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.21 release.
+> There are 115 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Indeed. This driver is not written for comprehension. As far as I can tell
-it is not necessary at all. You need to set shutdown to zero before you
-resubmit the URBs. But I don't see how the barrier helps with that.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-> dev->shutdown to 0?  In general, smp_wmb() is used to separate two sets
-> of stores; if it comes after all the relevant stores have been performed
-> then it won't accomplish anything.
+--FCPf0F7oU+UyRez1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Don't we guarantee an interaction between smp_wmb() and taking a spinlock?
-> 
->> }
->>
->> This driver has a tough job as the two completion
->> handlers submitted each other's as well as their own
->> URBs based on the data they get.
->> That scheme is rather complex, but as far as I can tell correct,
->> but you need to test that flag everywhere.
-> 
-> However, it's quite noticeable that the code you want to change in
-> cm109_submit_buzz_toggle() doesn't have any memory barriers to pair with
-> the smb_wmb()'s above.  Shouldn't there at least be an smp_rmb() after
-> you read dev->shutdown?
+-----BEGIN PGP SIGNATURE-----
 
-I think this driver assumes that the ctl_submit_lock spinlock makes
-it safe.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflObQACgkQJNaLcl1U
+h9A0JQf+LZmfizWcsUTIoz3GihyUn/pi5rMcyZ/k7PaWvBVxZcmhxwerjWuXBNK2
+xi5N1/O69v6dDZP9IV1Vw6Zi+hkBSZXQPTWqbA3QQNVuhZOjZqILRMqYiiSTX6iz
+0qfvl021HE1VMbMQtQZeajhUj6Fp0ItvLfp5gwZt+Vn2IbTkW0cOvlzfoLLIOL/e
+IbtICMF2GaLUixwsFkoNx9gybW+DCaDpEYEU7GmM2ODCbEopQP/TDUKAcBWruCnn
+fkdN9AiMJ4LjQosPID1lEl4Yw6t3LBkaspQc7/poFY2sMGIJ/J54XVbdlWG7JJ+S
+diUw1byWItYo0JN1HRgLMnQBb/UHaQ==
+=/kxc
+-----END PGP SIGNATURE-----
 
-> As long you're updating the synchronization, it might be a good idea to
-> also improve the comment describing the memory barriers.  "Make sure
-> other CPUs see this" doesn't mean anything -- of course all the other
-> CPUs will eventually see the changes made here.  The point is that they
-> should see the new value of dev->shutdown before seeing the final
-> completion of the two URBs.  Also, the comment should say which other
-> memory barriers pair with the ones here.
-
-Before the completion? AFAICT they need to see it before they try
-to submit an URB.
-
-	Regards
-		Oliver
-
+--FCPf0F7oU+UyRez1--
 
