@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-578995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD528A73E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:12:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C59A73E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F47189DD46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FBA917BF1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA31C5D44;
-	Thu, 27 Mar 2025 19:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D401B87FD;
+	Thu, 27 Mar 2025 19:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YW3BkigU"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="g7zNhjSf";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="g7zNhjSf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997981A9B53;
-	Thu, 27 Mar 2025 19:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B861C4A0A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743102739; cv=none; b=EV8akhjG/Ih4xtlLkcLtARmD7x17BfD0qLCQo1fck/RUZ33kE4q9xRBVf+hijisMyVb58/Ux/9d3bJAIdzRNH2scupWChW95epjKxEkcy806lzhDzXN3YbEGTcatQ4VTOdAJ1xtonXSFZrEQLV6hYrAhVJEtHP2RaUAHcAjP5Bw=
+	t=1743102372; cv=none; b=LH8dmxPJtXG1QKKqd7P70XcN3aBdgc4iFMQxuW8nwP5PNaYsksbIICJCtkd/d1rvvtkrLBVZVusJ+bGoJPi/JRXZFAT8ssCsG4SMYpx/fLS93D4iu4/vv44XtSDNg9VwTIsvRIZoY4xchyLZ5bNPYKPmjgjhaway/n3y25qhWUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743102739; c=relaxed/simple;
-	bh=Ciuy7SYnjMYUooGCr49YaQJO0AOzZefzB1tqQvXWtdw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0ciyom5TQAjb+ALiXwM4pkw3WE3r8uXAP7lYT9ZepXwkdRXnWLdHm6xGl+xevW/EigbFY2BeNueejauZHBDsQ+DwFcLdiQVyzFxpJIKvAE6yUdDpy0hZdirt1r3pf0xoROmn7RZp5XIHJ/bM43jncZi4LKdZiRvv8F+gWE0yzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YW3BkigU; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54af09697f5so1299845e87.1;
-        Thu, 27 Mar 2025 12:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743102735; x=1743707535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=StkVM+le25Hla98QLuBqf3lB3dQcljggHb+Tt9lM4Wk=;
-        b=YW3BkigUZ0T/3AsisQM27TrpxehuozWR3pX/aX5imHNQ/y7FDk2y+6h9wdbMgPJhx3
-         XEI9BqhMTbt5nuOO2DQodya9oxoFnvYAMXR3j4BwwlEw3SuCUvbpgJ3Lo+9VhCQVN/X8
-         JZpArJPjswdNH9+1qgnsjdgEtUXl9xHRd5XcNNlV6kiiol94AD6BdwVGCeZx950JkEGG
-         TwQve5AAdGUqhtWEuoEepSfcC8R4p6jX0i7mIsB56APYtpF3yzJ47h0m2NoWAKgTB4BX
-         1mXIUuEN3kgdMPRVu4vzbAwX/QKxRrjRdEt19Lz26YG5yW8Mdvw6aC7MReMRgQzk3WRz
-         gq5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743102735; x=1743707535;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=StkVM+le25Hla98QLuBqf3lB3dQcljggHb+Tt9lM4Wk=;
-        b=plQWcNs6qATzAFNUYhbj8Q+Eyu+sZmDyUm5ovO/TXgntbdOUb7jdP1vk2FsSQq8rb2
-         yklwuPl87nXhpZElkrFzQHy26nSOYYyBGBiU7a0Bw/wxr8Buev8Ry0El5t4cyiaGpwuq
-         mM6RgeUvb+Z4prtn0MCPsS1l0ttQ+ocSkkUfITww72EcRfVLGQW1c1ZTOMBwFjjTje3r
-         0X43hWbRkixMFyZGZGsS19MyvBIlWrwpspS1i/A4WiRAoxbztM9WkhuJryR5BbBYOjH4
-         UJ2dEelGOg2wpQG2XNOi+cUXmttlsOhnS4C5Fju5MD8HWg9bikShHKvsebv3KejlYhPF
-         Y7fg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6LS7vZ2Gcs24XTukrXzQ98ZxLtxTraLc62kttMuuKm4CohMeaGv6o6r6DvrJ2qbX6pYrNafQrPUcwRWw=@vger.kernel.org, AJvYcCWD2etJ7vvFwahGGc270AzFVqhRz9SLzkvc0+iXqCqR8xi8KlV8/h2YLlX8EkWN/6UCA/EBXzTbDZJzhZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOWm/9HZDqnXNbGgFYYMswqzLCxI/HuEsEElXTtr1+ngToYmxV
-	g/U+a+JenB0tnEQinAVWOF/fLzCPUw8S9RMc51uzxRAQvkOhRxjQ5lrJUg==
-X-Gm-Gg: ASbGncsvpsLEDxMCiNvs5Rmb8Q804qKZYjFj1nnpovM40ivBKDr2HJAl9UrCzKwEdh1
-	pxwO+kZyl9+BHXjH6L3GvkTvgj5bzBIiBb2B1zNsHa2SqDx9GuaKjw+ft2PTwqpJruZ61wCHpry
-	EpQNrlG7Dmi6FKFlFUi+BlwYx7wHNLRQ+LhzUyjdkI3EQOsKZO3lveBNwsLLU3nSoLRkUbRVC9E
-	yuM+Jld113z8J+keNyXq36HF0QBHQqno5kmkF7rwR1bu7U0oAK5gHOe9NuOqhp26G5txHzLN1HG
-	EppPjfpZ9PdxUDKJ5HSiwQNf/DsvDT70dx46zeKceylc+1PRwA/aweR9SV3/0JbhCnfsGQlDWf7
-	MOmy4fZo=
-X-Google-Smtp-Source: AGHT+IHY1i46M+bs9tCWsv/F4fXogE3fPvbPST4Ryrgrjr+AS7twse2VWiJ7kMyFqfokFZOVRz9TJA==
-X-Received: by 2002:a05:6512:6c4:b0:545:f4b:ed58 with SMTP id 2adb3069b0e04-54b011d5d58mr1743966e87.18.1743102735252;
-        Thu, 27 Mar 2025 12:12:15 -0700 (PDT)
-Received: from localhost (dsl-hkibng12-50dd15-219.dhcp.telia.fi. [80.221.21.219])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54b095a0b39sm51058e87.229.2025.03.27.12.12.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 12:12:13 -0700 (PDT)
-From: Petja Patjas <pp01415943@gmail.com>
-To: Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Petja Patjas <pp01415943@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: rc: add keymap for Hauppauge Credit Card RC
-Date: Thu, 27 Mar 2025 20:56:04 +0200
-Message-ID: <20250327191109.76679-1-pp01415943@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743102372; c=relaxed/simple;
+	bh=LzVdvnik9Y57qKAHXQnjxSB8RLIkWw+U05SKnYrNVFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nFgab79olVHU9BM5KkcJbUVDbyTh+kSaWuRLw5XMsaqAmdIlVuk31MmOU893ddzRJVqgNPxcFIKqFgRLNAfTli/x+0Ll8VOGop1P/QmUml5ZWDATk2q3OJBBbMlqaxD00vswj4zAEtymqBXo2fxpIXnLrD9qNaUsB3DaFjFEEFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=g7zNhjSf; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=g7zNhjSf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5F62B1F388;
+	Thu, 27 Mar 2025 19:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1743102365; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1uaLOUY0NRlFtKACDBCKYX8snuEcg6PpjJZK1xBYCNw=;
+	b=g7zNhjSfrYL5RYkzVmcyjXJxmGUk+AMVERlvObo78oWjtTLkXYhkFzcMqIMrvG+dy+Sr8H
+	t3WM1tDbVLZLUG22cKsZu2lG1MfeUKF/9Kmfg/kVgQIqmYNRMy/WILfSnMUlUSc1zwAaxl
+	iVaDS04UMDjCUoVJzicP4ZPgoUsY5N4=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=g7zNhjSf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1743102365; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=1uaLOUY0NRlFtKACDBCKYX8snuEcg6PpjJZK1xBYCNw=;
+	b=g7zNhjSfrYL5RYkzVmcyjXJxmGUk+AMVERlvObo78oWjtTLkXYhkFzcMqIMrvG+dy+Sr8H
+	t3WM1tDbVLZLUG22cKsZu2lG1MfeUKF/9Kmfg/kVgQIqmYNRMy/WILfSnMUlUSc1zwAaxl
+	iVaDS04UMDjCUoVJzicP4ZPgoUsY5N4=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 113581376E;
+	Thu, 27 Mar 2025 19:06:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mDu7Ap2h5WeONgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Thu, 27 Mar 2025 19:06:05 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH] xen: fix multicall debug feature
+Date: Thu, 27 Mar 2025 20:06:02 +0100
+Message-ID: <20250327190602.26015-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,68 +84,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 5F62B1F388
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add keymap for the black Hauppauge Credit Card Remote Control.
+Initializing a percpu variable with the address of a struct tagged as
+.initdata is breaking the build with CONFIG_SECTION_MISMATCH_WARN_ONLY
+not set to "y".
 
-Signed-off-by: Petja Patjas <pp01415943@gmail.com>
+Fix that by using an access function instead returning the .initdata
+struct address if the percpu space of the struct hasn't been
+allocated yet.
+
+Fixes: 368990a7fe30 ("xen: fix multicall debug data referencing")
+Reported-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- drivers/media/rc/keymaps/rc-hauppauge.c | 42 +++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/x86/xen/multicalls.c | 26 ++++++++++++++------------
+ arch/x86/xen/smp_pv.c     |  1 -
+ arch/x86/xen/xen-ops.h    |  3 ---
+ 3 files changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/rc/keymaps/rc-hauppauge.c b/drivers/media/rc/keymaps/rc-hauppauge.c
-index d7156774aa0e..9e64c0b2d18e 100644
---- a/drivers/media/rc/keymaps/rc-hauppauge.c
-+++ b/drivers/media/rc/keymaps/rc-hauppauge.c
-@@ -261,6 +261,48 @@ static struct rc_map_table rc5_hauppauge_new[] = {
- 	{ 0x001e, KEY_RED },	/* Reserved */
- 	{ 0x0000, KEY_NUMERIC_0 },
- 	{ 0x0026, KEY_SLEEP },	/* Minimize */
-+
-+	/*
-+	 * Keycodes for the black Credit Card Remote Control shipped with, for
-+	 * example, the WinTV-dualHD tuner.
-+	 * Keycodes start with address = 0x19
-+	 */
-+	{ 0x190a, KEY_LAST },		/* <- */
-+	{ 0x192f, KEY_MENU },		/* List */
-+	{ 0x1910, KEY_CHANNELUP },
-+	{ 0x192e, KEY_CHANNELDOWN },
-+	{ 0x192c, KEY_OK },
-+
-+	{ 0x1911, KEY_TV },
-+	{ 0x190c, KEY_POWER },
-+
-+	{ 0x1900, KEY_NUMERIC_0 },
-+	{ 0x1938, KEY_NUMERIC_1 },
-+	{ 0x1920, KEY_NUMERIC_2 },
-+	{ 0x1901, KEY_NUMERIC_3 },
-+	{ 0x1902, KEY_NUMERIC_4 },
-+	{ 0x1904, KEY_NUMERIC_5 },
-+	{ 0x1905, KEY_NUMERIC_6 },
-+	{ 0x1907, KEY_NUMERIC_7 },
-+	{ 0x1908, KEY_NUMERIC_8 },
-+	{ 0x190f, KEY_NUMERIC_9 },
-+
-+	{ 0x1921, KEY_VOLUMEUP },
-+	{ 0x1903, KEY_VOLUMEDOWN },
-+	{ 0x1906, KEY_MUTE },
-+
-+	{ 0x1909, KEY_CAMERA },		/* Snap */
-+	{ 0x1922, KEY_SUBTITLE },	/* CC */
-+	{ 0x192b, KEY_INFO },
-+
-+	{ 0x1929, KEY_END },		/* Skip to live TV */
-+	{ 0x190d, KEY_PLAYPAUSE },
-+	{ 0x1926, KEY_STOP },
-+	{ 0x192a, KEY_RECORD },
-+	{ 0x193a, KEY_PREVIOUS },	/* |< */
-+	{ 0x193b, KEY_REWIND },		/* << */
-+	{ 0x193c, KEY_FASTFORWARD },	/* >> */
-+	{ 0x193d, KEY_NEXT },		/* >| */
- };
+diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
+index 10c660fae8b3..7237d56a9d3f 100644
+--- a/arch/x86/xen/multicalls.c
++++ b/arch/x86/xen/multicalls.c
+@@ -54,14 +54,20 @@ struct mc_debug_data {
  
- static struct rc_map_list rc5_hauppauge_new_map = {
+ static DEFINE_PER_CPU(struct mc_buffer, mc_buffer);
+ static struct mc_debug_data mc_debug_data_early __initdata;
+-static DEFINE_PER_CPU(struct mc_debug_data *, mc_debug_data) =
+-	&mc_debug_data_early;
+ static struct mc_debug_data __percpu *mc_debug_data_ptr;
+ DEFINE_PER_CPU(unsigned long, xen_mc_irq_flags);
+ 
+ static struct static_key mc_debug __ro_after_init;
+ static bool mc_debug_enabled __initdata;
+ 
++static struct mc_debug_data * __ref get_mc_debug(void)
++{
++	if (!mc_debug_data_ptr)
++		return &mc_debug_data_early;
++
++	return this_cpu_ptr(mc_debug_data_ptr);
++}
++
+ static int __init xen_parse_mc_debug(char *arg)
+ {
+ 	mc_debug_enabled = true;
+@@ -71,20 +77,16 @@ static int __init xen_parse_mc_debug(char *arg)
+ }
+ early_param("xen_mc_debug", xen_parse_mc_debug);
+ 
+-void mc_percpu_init(unsigned int cpu)
+-{
+-	per_cpu(mc_debug_data, cpu) = per_cpu_ptr(mc_debug_data_ptr, cpu);
+-}
+-
+ static int __init mc_debug_enable(void)
+ {
+ 	unsigned long flags;
++	struct mc_debug_data __percpu *mcdb;
+ 
+ 	if (!mc_debug_enabled)
+ 		return 0;
+ 
+-	mc_debug_data_ptr = alloc_percpu(struct mc_debug_data);
+-	if (!mc_debug_data_ptr) {
++	mcdb = alloc_percpu(struct mc_debug_data);
++	if (!mcdb) {
+ 		pr_err("xen_mc_debug inactive\n");
+ 		static_key_slow_dec(&mc_debug);
+ 		return -ENOMEM;
+@@ -93,7 +95,7 @@ static int __init mc_debug_enable(void)
+ 	/* Be careful when switching to percpu debug data. */
+ 	local_irq_save(flags);
+ 	xen_mc_flush();
+-	mc_percpu_init(0);
++	mc_debug_data_ptr = mcdb;
+ 	local_irq_restore(flags);
+ 
+ 	pr_info("xen_mc_debug active\n");
+@@ -155,7 +157,7 @@ void xen_mc_flush(void)
+ 	trace_xen_mc_flush(b->mcidx, b->argidx, b->cbidx);
+ 
+ 	if (static_key_false(&mc_debug)) {
+-		mcdb = __this_cpu_read(mc_debug_data);
++		mcdb = get_mc_debug();
+ 		memcpy(mcdb->entries, b->entries,
+ 		       b->mcidx * sizeof(struct multicall_entry));
+ 	}
+@@ -235,7 +237,7 @@ struct multicall_space __xen_mc_entry(size_t args)
+ 
+ 	ret.mc = &b->entries[b->mcidx];
+ 	if (static_key_false(&mc_debug)) {
+-		struct mc_debug_data *mcdb = __this_cpu_read(mc_debug_data);
++		struct mc_debug_data *mcdb = get_mc_debug();
+ 
+ 		mcdb->caller[b->mcidx] = __builtin_return_address(0);
+ 		mcdb->argsz[b->mcidx] = args;
+diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+index 688ff59318ae..9bb8ff8bff30 100644
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -305,7 +305,6 @@ static int xen_pv_kick_ap(unsigned int cpu, struct task_struct *idle)
+ 		return rc;
+ 
+ 	xen_pmu_init(cpu);
+-	mc_percpu_init(cpu);
+ 
+ 	/*
+ 	 * Why is this a BUG? If the hypercall fails then everything can be
+diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
+index 63c13a2ccf55..25e318ef27d6 100644
+--- a/arch/x86/xen/xen-ops.h
++++ b/arch/x86/xen/xen-ops.h
+@@ -261,9 +261,6 @@ void xen_mc_callback(void (*fn)(void *), void *data);
+  */
+ struct multicall_space xen_mc_extend_args(unsigned long op, size_t arg_size);
+ 
+-/* Do percpu data initialization for multicalls. */
+-void mc_percpu_init(unsigned int cpu);
+-
+ extern bool is_xen_pmu;
+ 
+ irqreturn_t xen_pmu_irq_handler(int irq, void *dev_id);
 -- 
-2.49.0
+2.43.0
 
 
