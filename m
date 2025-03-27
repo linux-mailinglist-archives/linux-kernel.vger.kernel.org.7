@@ -1,87 +1,63 @@
-Return-Path: <linux-kernel+bounces-578466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B29A7325E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:39:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D975DA73263
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 13:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E946176742
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:39:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EC1189AAF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD92748F;
-	Thu, 27 Mar 2025 12:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A931E214239;
+	Thu, 27 Mar 2025 12:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="vEwkFh4g"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wAErWEWa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48B31AF0C1
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B024E322B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 12:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743079162; cv=none; b=ByCmjtvBiZF5rFFILS7SCtW9/r4iyYnCfuXvdx6vckAI8nNP9mRdQm24mgNl+HboHkmUQM50wMO8WS1OziobIwtR175eko6r/NSTEpWwFVTbLhsnSulD7ThMPm0jVw0lS9VE3EH3yVNV9yoixndgWwPvNbOmSZxuHLcnnAMJ4iQ=
+	t=1743079305; cv=none; b=dBunhI5ADR6zYCK2tLOx8zDRSPUJ9pZFXdtr5Eh08Hiq/w7Ol/cR7fA9AqEAkJYRZzInaIWgalEgjBQw4kLrXP0kKULv8imk7y9JSqgBZT9GY0MrCOHnwhSlQfBKHujtEma9j9JAxu/OcyQsEH6SvtagQtIxMnYZHmugxNUb3dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743079162; c=relaxed/simple;
-	bh=WWk2aAaq6zdeqJwi9KMh3mESgi1HjPX0MLnZB921QL0=;
+	s=arc-20240116; t=1743079305; c=relaxed/simple;
+	bh=3ECEl/NX/Jn9j/dpT2zSyV4SoXO/iMCmymPyi1rFue8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1w0p6/i+6shDxq4GGupgekOsa97eB/kpvgdBWZAVEBBnqmtEqh7pQ2B7saKQ9ZH71CUiUqD+mWfVNRf00rfMMm2n4EMe52FhoZxWAFmZkK90CAL1FOuxj4jajOPLTN20574bGVnRkjzggvThCGhyfm7uof5jqjSZIQvltPfRVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=vEwkFh4g; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e8f254b875so7448226d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 05:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1743079159; x=1743683959; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FauV6XaAhhMNOVmnhLCm2YoazvoXLrFgf7nD2aWpfAM=;
-        b=vEwkFh4gNvMsBY2/2YL6LH0OGyKgb0sB6tEXk8IxKmg4LW5cRRo67L6oSiAu/PMu6Z
-         k3RuCs3VZNObpMGSnkYYc8GB2HhEpcWFeqbFM/8rWbJQiw9Air9RLIuBlFNHF7vO/UWD
-         W64ec3X9PeoKZFcXMh+IOAKDba3b/VFuxo34u4++lTUSWfOqszve+d41VFQtx5C76CZ8
-         4PgtH3amQ9NHSSs3WhyxPkAFRPvuhHvyyKttM1iltRLDaU3/hTsT6NL8gzMV1oGeumAQ
-         oMQvx8IB5DQ1vkUNDf+zCTam89DDrBfWLzTzYPe+Cn6+13Y1QYu3EtpRBHGBEkf1Dh73
-         TuHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743079159; x=1743683959;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FauV6XaAhhMNOVmnhLCm2YoazvoXLrFgf7nD2aWpfAM=;
-        b=G95aQuW7w3Y2LIpiVvK0Y6jyOCGO6DB6VzX+rattr8lfBP1Uxsiffh1IyKsUr39UWb
-         YMPk6VxnpGpmf0xcsVINwsKMj+J19Db3509BNdgyZry5AvASY8j6l5meu1mjtpnTwt/B
-         ciALC6V8Y3HlnxM1B5/l+duZj7sFT0Cl5NEHKoY49w+ThDSL9oWovlo6+Jpvw4/dPkzG
-         BIw7GKTQOJnlRiu3wldAULPLbggFHYyHQ58G7Zeypgc2VWLHvu/YglD+KgCkOwq9NWZR
-         SGRTtv7JWFtI7oD11Yk79xj4Wet6P9ySsEB/9vCJIV3hCyaZ8IYSgLLghy8LEdFiwOvN
-         0njg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZR8hXmF4NAmRkK39JFeXaxJRX3HLzMUMCWzVgD0zBrdZ+BxvUOQkpdCTkOOatsMcVk2mG0cVoWmYtADQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFbN40Q28FQ3k7WhHMwMFb3V6h1cfNlyJWFz5rKqIcJsNoGIGx
-	DuuHzp6iO/U7COWawg3unCNHg8X1b6HBMGngUaPgB/+YUgnrd41ScaAzns/P/G4=
-X-Gm-Gg: ASbGncsEnJnIKr7WwODNa+xhhBdkIG0av6j81+UFLY/opgHX6PNGaf06IDn5b50tEdA
-	m1e4um7TXAWnF9H1asrjhxRRafV8P2PHP4DnFj5AXIbwx+HJVl1zENz9gjdWR8dXT+PBZT0CXJy
-	32wE5t0EVqgF67yi+5DAnjYQiVXCJiR5GYIF7Xir91JC2vlEjTMFbMKXLJB6kY4XIj3mydXzKbn
-	X7HiEo8eN2K53jui8tKeKSZlgMZ/mKJBK+sljhhXac9GPLn31rluW0U4oE38VF/U+YKpbUpiaGs
-	dUEBTrfex1HOSjFmA/l8CGSf195G+lKHQaJdnW/rBhznWCVxpzZhMYs=
-X-Google-Smtp-Source: AGHT+IEugMcsVBsNP6xK+ytuQacNPJrLg+xpOV2Yf8FWt8NTaiL4BjTxneHpSew8BFvHk8lHrqxIJA==
-X-Received: by 2002:a05:6214:dab:b0:6ea:d361:a4ca with SMTP id 6a1803df08f44-6ed23933cacmr52304966d6.32.1743079159410;
-        Thu, 27 Mar 2025 05:39:19 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F ([208.94.110.98])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef344fasm79611566d6.57.2025.03.27.05.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 05:39:19 -0700 (PDT)
-Date: Thu, 27 Mar 2025 08:39:03 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>,
-	lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, ying.huang@linux.alibaba.com,
-	hyeonggon.yoo@sk.com, honggyu.kim@sk.com, kernel-team@meta.com,
-	yunjeong.mun@sk.com, rakie.kim@sk.com
-Subject: Re: [LSF/MM/BPF TOPIC] Weighted interleave auto-tuning
-Message-ID: <Z-VG5-U1XFprCjww@gourry-fedora-PF4VCD3F>
-References: <20250109185048.28587-1-joshua.hahnjy@gmail.com>
- <Z-Uye2V-6Urz2IIA@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZoHsXCyfwEEhJR2EVSpX9BAXcaytovKV2nDDj3Kcjkcmsl1GF6dv6d7DYb7x5WgQDdzqUvDHUOIzBXmGuJimYjqsj7oxN+RxepSt0oBYC40yVbmjJPzwxjPSVe5wVd7HaeoOOprnD7a4iPMkxpRiL+izq3qhWBHaPaOV33oASw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wAErWEWa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O+A64R/LqWZmWuQwTs3JlV4X4sGVXRXZaReSlXcbmhY=; b=wAErWEWaSZUwSyIQYuDLx6mWHx
+	ClVrKbIpPnvmm9caHL85QTvQ+QdCTtnaEfctqfAcnxb23SBXiPV/lmo2BQ8B6M/EXGZtR01N1uak/
+	o+mIYSV/0riB9kWnxngrRgPGxccPNIcG017P9qTBv9qVHge4htmN8RnPZcpv7UCdYRyXrhiUDIKku
+	BuMlZ3M+N2B+0nfIiFJknGE1a0SZ/9KRze3k2qzmMbmb+NxHFcoY8FLiTx+QhwpA9ybJ9XgWYma+Q
+	xxNo2w2XHuz3HuF/p/8a8wbQ7x548DSMAk+BzS657XPOf9EF8kjUeqdNr1C5tGrXRjEVpp7m6c67U
+	fh/J6JBA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txmYH-0000000BrS8-3chg;
+	Thu, 27 Mar 2025 12:41:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6F2FB3004AF; Thu, 27 Mar 2025 13:41:41 +0100 (CET)
+Date: Thu, 27 Mar 2025 13:41:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4/5] bugs/x86: Augment warnings output by concatenating
+ 'cond_str' with the regular __FILE__ string in _BUG_FLAGS()
+Message-ID: <20250327124141.GC31358@noisy.programming.kicks-ass.net>
+References: <20250326084751.2260634-1-mingo@kernel.org>
+ <20250326084751.2260634-5-mingo@kernel.org>
+ <20250326085343.GB25239@noisy.programming.kicks-ass.net>
+ <Z-UcIJAQsNXoxMXG@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,41 +66,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-Uye2V-6Urz2IIA@localhost.localdomain>
+In-Reply-To: <Z-UcIJAQsNXoxMXG@gmail.com>
 
-On Thu, Mar 27, 2025 at 12:11:55PM +0100, Oscar Salvador wrote:
-> Hi Joshua,
-> 
-> as discussed in the LSFMM about how you can react to nodes becoming
-> memory{aware,less}, you can register a hotplug memory notifier, as
-> memory-tiering currently does.
-> 
-> The current use of the hotplug memory notifier by some consumers (e.g:
-> memory-tiering, slub, etc) is a bit suboptimal, as they only care about
-> nodes changing its memory state, yet they get notified for every
-> {online,offline}_pages operation.
-> 
-> I came up with [1]
-> 
-> I did not publish it yet upstream because I wanted to discuss it a bit
-> with David, but you can give it a try to see if it works for you.
-> But till it is upstream, you will have to use the hotplug memory
-> notifier.
-> 
-> [1] https://github.com/leberus/linux.git numa-node-notifier 
-> 
+On Thu, Mar 27, 2025 at 10:36:32AM +0100, Ingo Molnar wrote:
 
-+CC: Yunjeong Mun and Rakie Kim
+> > > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+> > > index aff1c6b7a7f3..e966199c8ef7 100644
+> > > --- a/arch/x86/include/asm/bug.h
+> > > +++ b/arch/x86/include/asm/bug.h
+> > > @@ -50,7 +50,7 @@ do {									\
+> > >  		     "\t.org 2b+%c3\n"					\
+> > >  		     ".popsection\n"					\
+> > >  		     extra						\
+> > > -		     : : "i" (__FILE__), "i" (__LINE__),		\
+> > > +		     : : "i" (cond_str __FILE__), "i" (__LINE__),		\
+> > >  			 "i" (flags),					\
+> > >  			 "i" (sizeof(struct bug_entry)));		\
+> > >  } while (0)
+> > 
+> > Sneaky :-)
+> 
+> BTW., any reason why we go all the trouble with the bug_entry::line u16 
+> number, instead of storing it in the bug_entry::file string with a
+> :__LINE__ postfix or so?
 
-Something to consider as a follow up to your series.
-
-Thanks Oscar, we were just discussing this.  Seems there's multiple
-users doing the same thing, so it seems reasonable to discuss.  This
-would probably deal with my race condition concerns here as well:
-
-https://lore.kernel.org/linux-mm/20250325102804.1020-1-rakie.kim@sk.com/
-
-> -- 
-> Oscar Salvador
-> SUSE Labs
+I have no clue; this is well before my time. But yes, that seems a
+viable option indeed.
 
