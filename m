@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-579746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A4FA748E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:04:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE73BA74945
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1D407A90C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:02:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DD1188FABC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA1021ADD4;
-	Fri, 28 Mar 2025 11:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958B621ABA6;
+	Fri, 28 Mar 2025 11:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZlXwEPS2"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b="oKSYzyhC";
+	dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b="SIT6CiHE"
+Received: from mta-64-143.flowmailer.net (mta-64-143.flowmailer.net [185.136.64.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D74221ABD1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A31E2135CE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743159786; cv=none; b=RSS3iZDvK0qf3n1XWf3kbAOgV8nMAPTyauqGRBt25U7qrsPfrPzV25gr5ux/z21XkK8mNLafuJ8dQHVGw+S2n8DVpFvTVtsLnyrnDupOhihxNAv7cQW5roCkDrUanm0LRfLiQ/Bygs4yzaBG0Yo8LnFvivuxLvDSaYPpri/hLwI=
+	t=1743161734; cv=none; b=mdapTRUecPSw+GqJ8Np1Knuu8q6QRKvM2yL0ddx74ie4/6l7Fz4nfAILvyA5/6kgcro129ALaaR8foFcYoSN0Lu4pAuRAX16jelzPx6D2LvMnK+gNLUFaEIspz8+2W2trTCd1b3NCcLZL3dvyoR/ivFtxTSYSGJW4eR9CBrVYG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743159786; c=relaxed/simple;
-	bh=FOFWiAYSyx44KVxMf8ZVYfZw2/T0gUlKOs0RhszDu0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ihKc8XIQ3RIMwv5Nn5BpHu4T/NBYqtzlIoHfi7IRoAg9TGtPIEeTQXmG4P0dJ7kuW1lm2NsEVfacwSK29vpxV91G3qwr+KsBuvD2IB0d2h/BFLjLym/HqTC58bLbO5FBQwmfR4rBVHLTVahIVv3XKYbOFKJjO+YXea6lFqObkII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZlXwEPS2; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1743159782;
-	bh=FOFWiAYSyx44KVxMf8ZVYfZw2/T0gUlKOs0RhszDu0U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZlXwEPS2LocAW8WUtqhJFw1KPezF+mBfTVBdGEEnC/X7RlwkpiXvoED8NF3lLRgCN
-	 lEK2uoIj2vCi2WGn8W+fMx/Mh2ZWs/VS3sVvZ7m/WFAVTCEOgjtAcns2mbC1nkrJ+f
-	 LSoIp5NENjVR7E1SSqDMca05i623B7Bk0kyn5RGuv092gDnaxoCXcMBwdLE/ASAvDa
-	 oiRJ1NJkE9CGXNC4+L19DjA8tCLmobN2a5dfLkGQ8+BfQS5UuL280ikwTTPADDdxbv
-	 +V8VwotuDoBe33RBuKm0jL4bgOeO02Xg/NCCncyW4E9N/kijlQi+ZDSeOx7ZxuzOuj
-	 9hszRTdxsHAhA==
-Received: from debian.. (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46B7F17E1062;
-	Fri, 28 Mar 2025 12:02:59 +0100 (CET)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.fornazier@gmail.com,
-	airlied@gmail.com,
-	simona.vetter@ffwll.ch,
-	robdclark@gmail.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	valentine.burley@collabora.com,
-	lumag@kernel.org,
-	quic_abhinavk@quicinc.com,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	tzimmermann@suse.de,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] drm/ci: uprev mesa
-Date: Fri, 28 Mar 2025 16:32:33 +0530
-Message-ID: <20250328110239.993685-4-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250328110239.993685-1-vignesh.raman@collabora.com>
-References: <20250328110239.993685-1-vignesh.raman@collabora.com>
+	s=arc-20240116; t=1743161734; c=relaxed/simple;
+	bh=53ymfis4dfeL0ecSb9MKI7Q0juoBYEyVTXX0BR7IO0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=uCHQvFThhHCh16v9dQBOCwD7kP5CYpuFcQJtMdmrBJdoxQH1R8CmO+wxV1ETD88fBPjqNzYHyW2NLPb6eBUBoMZH1D0JAOeZ6SSOSqZHhhaDdsIZBY+Hglqkp9TAbbgmYTVDjrix2RZzpI41pC4tPdxJDyok6MoBVB6UsM6oG/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com; dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b=oKSYzyhC; dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b=SIT6CiHE; arc=none smtp.client-ip=185.136.64.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com
+Received: by mta-64-143.flowmailer.net with ESMTPSA id 20250327135424aa7366db7c0019fdb7
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 27 Mar 2025 14:54:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=s1;
+ d=flowmailer.net;
+ h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:In-Reply-To:Date:Message-ID:MIME-Version;
+ bh=zRyNrCtp5GeNxxNbMBGYIhJanL4rsyW90z/rY63BsJc=;
+ b=oKSYzyhCBZTaJhH0pMGrWh6OHJn/RvmbWlZl51XYZ6/Y48VCWoNwWFqdA2H38imxhyA6ee
+ Vw0P2n+Dll4L8fmWJDhpOMz0agoARE2l97mAx8thOaxMKpvgbvWZps4OQ3j3Its1jRJ5XgJd
+ Tsv5JsgrZRMfjAPKQLiP3znCJPnQc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm3;
+ d=siemens-energy.com; i=schuster.simon@siemens-energy.com;
+ h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:In-Reply-To:Date:Message-ID:MIME-Version;
+ bh=zRyNrCtp5GeNxxNbMBGYIhJanL4rsyW90z/rY63BsJc=;
+ b=SIT6CiHEfBE+1Nzw2HADfTuWd2JqV36GC1mGDAPRkejcZJz2/n3H+ZmW3YtRj2OMwYu9Xq
+ yiGRQ/PDKXsePSquwJtIzUkti14ErshlV82p7WNz9Vur+H2so1AC1tAA6AENTn1FGbW+x3dk
+ kDQbKEHGlpbmAuey+ADmBJT2boMc9Pmkw9A6Ut3klFbhyaiVIp12mSyqMSuzR49K9Q5o1756
+ D/VTcmJkgppkeTsZ5dRJjLQtAKGFK9aajiY+/LqrPuoViRnTYFkoZvTBqE2/LnvcH55pYzDH
+ aiZtLmhoJx86nhLbQZQRg2ddpGpGg/MyKqwz3n2MqUXUNGQ2vVCt/OQA==;
+Date: Thu, 27 Mar 2025 14:54:22 +0100
+From: Simon Schuster <schuster.simon@siemens-energy.com>
+To: Dinh Nguyen <dinguyen@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Andreas Oetken <andreas.oetken@siemens-energy.com>,
+	Mike Rapoport <rppt@kernel.org>, Song Liu <song@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Simon Schuster <schuster.simon@siemens-energy.com>
+Subject: [PATCH 1/2] nios2: force update_mmu_cache on spurious
+ tlb-permission--related pagefaults
+Message-ID: 
+ <fm-32642-20250327135424aa7366db7c0019fdb7-ahhkqZ@errorhandling.siemens-energy.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fm-32642-2025032713472354f98643960019fd6d-cXH63M@errorhandling.siemens-energy.com>
 
-The current s3cp implementation does not work anymore after the
-migration, and instead of fixing it and propagating the fix down to us,
-it's simpler to directly use curl. Uprev mesa [1][2] to adapt these
-changes. Also replace broken s3cp command with a curl wrapper call in
-drm-ci.
+NIOS2 uses a software-managed TLB for virtual address translation. To
+flush a cache line, the original mapping is replaced by one to physical
+address 0x0 with no permissions (rwx mapped to 0) set. This can lead to
+TLB-permission--related traps when such a nominally flushed entry is
+encountered as a mapping for an otherwise valid virtual address within a
+process (e.g. due to an MMU-PID-namespace rollover that previously
+flushed the complete TLB including entries of existing, running
+processes).
 
-[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34120
-[2] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34244
+The default ptep_set_access_flags implementation from mm/pgtable-generic.c
+only forces a TLB-update when the page-table entry has changed within the
+page table:
 
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+	/*
+	 * [...] We return whether the PTE actually changed, which in turn
+	 * instructs the caller to do things like update__mmu_cache. [...]
+	 */
+	int ptep_set_access_flags(struct vm_area_struct *vma,
+				  unsigned long address, pte_t *ptep,
+				  pte_t entry, int dirty)
+	{
+		int changed = !pte_same(*ptep, entry);
+		if (changed) {
+			set_pte_at(vma->vm_mm, address, ptep, entry);
+			flush_tlb_fix_spurious_fault(vma, address);
+		}
+		return changed;
+	}
+
+However, no cross-referencing with the TLB-state occurs, so the
+flushing-induced pseudo entries that are responsible for the pagefault
+in the first place are never pre-empted from TLB on this code path.
+
+This commit fixes this behaviour by always requesting a TLB-update in
+this part of the pagefault handling, fixing spurious page-faults on the
+way. The handling is a straightforward port of the logic from the MIPS
+architecture via an arch-specific ptep_set_access_flags function ported
+from arch/mips/include/asm/pgtable.h.
+
+Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+Signed-off-by: Andreas Oetken <andreas.oetken@siemens-energy.com>
 ---
- drivers/gpu/drm/ci/build-igt.sh   | 2 +-
- drivers/gpu/drm/ci/build.sh       | 6 +++---
- drivers/gpu/drm/ci/gitlab-ci.yml  | 6 ++++--
- drivers/gpu/drm/ci/image-tags.yml | 2 +-
- drivers/gpu/drm/ci/lava-submit.sh | 2 +-
- 5 files changed, 10 insertions(+), 8 deletions(-)
+ arch/nios2/include/asm/pgtable.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
-index eddb5f782a5e..caa2f4804ed5 100644
---- a/drivers/gpu/drm/ci/build-igt.sh
-+++ b/drivers/gpu/drm/ci/build-igt.sh
-@@ -71,4 +71,4 @@ tar -cf artifacts/igt.tar /igt
- # Pass needed files to the test stage
- S3_ARTIFACT_NAME="igt.tar.gz"
- gzip -c artifacts/igt.tar > ${S3_ARTIFACT_NAME}
--ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/${S3_ARTIFACT_NAME}
-+s3_upload ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/
-diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
-index 284873e94d8d..6fb74c51abe2 100644
---- a/drivers/gpu/drm/ci/build.sh
-+++ b/drivers/gpu/drm/ci/build.sh
-@@ -148,13 +148,13 @@ if [[ "$UPLOAD_TO_MINIO" = "1" ]]; then
+diff --git a/arch/nios2/include/asm/pgtable.h b/arch/nios2/include/asm/pgtable.h
+index eab87c6beacb..e5d64c84aadf 100644
+--- a/arch/nios2/include/asm/pgtable.h
++++ b/arch/nios2/include/asm/pgtable.h
+@@ -291,4 +291,20 @@ void update_mmu_cache_range(struct vm_fault *vmf, struct vm_area_struct *vma,
+ #define update_mmu_cache(vma, addr, ptep) \
+ 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
  
-     ls -l "${S3_JWT_FILE}"
-     for f in $FILES_TO_UPLOAD; do
--        ci-fairy s3cp --token-file "${S3_JWT_FILE}" /kernel/$f \
--                https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/$f
-+        s3_upload /kernel/$f \
-+                https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/
-     done
- 
-     S3_ARTIFACT_NAME="kernel-files.tar.zst"
-     tar --zstd -cf $S3_ARTIFACT_NAME install
--    ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/${S3_ARTIFACT_NAME}
-+    s3_upload ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/
- 
-     echo "Download vmlinux.xz from https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/vmlinux.xz"
- fi
-diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
-index 6850ce99a673..e54e382bf5fb 100644
---- a/drivers/gpu/drm/ci/gitlab-ci.yml
-+++ b/drivers/gpu/drm/ci/gitlab-ci.yml
-@@ -1,6 +1,6 @@
- variables:
-   DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
--  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha 82ab58f6c6f94fa80ca7e1615146f08356e3ba69
-+  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha f73132f1215a37ce8ffc711a0136c90649aaf128
- 
-   UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
-   TARGET_BRANCH: drm-next
-@@ -20,8 +20,10 @@ variables:
-           rm download-git-cache.sh
-           set +o xtrace
-   S3_JWT_FILE: /s3_jwt
-+  S3_JWT_HEADER_FILE: /s3_jwt_header
-   S3_JWT_FILE_SCRIPT: |-
-       echo -n '${S3_JWT}' > '${S3_JWT_FILE}' &&
-+      echo -n "Authorization: Bearer ${S3_JWT}" > '${S3_JWT_HEADER_FILE}' &&
-       unset CI_JOB_JWT S3_JWT  # Unsetting vulnerable env variables
-   S3_HOST: s3.freedesktop.org
-   # This bucket is used to fetch the kernel image
-@@ -253,7 +255,7 @@ make git archive:
-     - tar -cvzf ../$CI_PROJECT_NAME.tar.gz .
- 
-     # Use id_tokens for JWT auth
--    - ci-fairy s3cp --token-file "${S3_JWT_FILE}" ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/${S3_GITCACHE_BUCKET}/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME.tar.gz
-+    - s3_upload ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/${S3_GITCACHE_BUCKET}/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/
- 
- 
- # Sanity checks of MR settings and commit logs
-diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
-index c04ba0e69935..53fe34b86578 100644
---- a/drivers/gpu/drm/ci/image-tags.yml
-+++ b/drivers/gpu/drm/ci/image-tags.yml
-@@ -1,5 +1,5 @@
- variables:
--   CONTAINER_TAG: "20250307-mesa-uprev"
-+   CONTAINER_TAG: "20250328-mesa-uprev"
-    DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
-    DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
- 
-diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
-index f22720359b33..a1e8b34fb2d4 100755
---- a/drivers/gpu/drm/ci/lava-submit.sh
-+++ b/drivers/gpu/drm/ci/lava-submit.sh
-@@ -54,7 +54,7 @@ cp artifacts/ci-common/init-*.sh results/job-rootfs-overlay/
- cp "$SCRIPTS_DIR"/setup-test-env.sh results/job-rootfs-overlay/
- 
- tar zcf job-rootfs-overlay.tar.gz -C results/job-rootfs-overlay/ .
--ci-fairy s3cp --token-file "${S3_JWT_FILE}" job-rootfs-overlay.tar.gz "https://${JOB_ROOTFS_OVERLAY_PATH}"
-+s3_upload job-rootfs-overlay.tar.gz "https://${JOB_ARTIFACTS_BASE}"
- 
- # Prepare env vars for upload.
- section_switch variables "Environment variables passed through to device:"
++static inline int pte_same(pte_t pte_a, pte_t pte_b);
++
++#define __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
++static inline int ptep_set_access_flags(struct vm_area_struct *vma,
++					unsigned long address, pte_t *ptep,
++					pte_t entry, int dirty)
++{
++	if (!pte_same(*ptep, entry))
++		set_ptes(vma->vm_mm, address, ptep, entry, 1);
++	/*
++	 * update_mmu_cache will unconditionally execute, handling both
++	 * the case that the PTE changed and the spurious fault case.
++	 */
++	return true;
++}
++
+ #endif /* _ASM_NIOS2_PGTABLE_H */
 -- 
-2.47.2
+2.39.5
 
 
