@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-579505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FC2A74433
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:59:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AEAA7445C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:28:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861CA3AEC36
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 06:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218AA175C93
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB792116F2;
-	Fri, 28 Mar 2025 06:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB52E211704;
+	Fri, 28 Mar 2025 07:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D+uOyMHm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b="oCSn+EwZ";
+	dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b="BcQppq/T"
+Received: from mta-65-138.flowmailer.net (mta-65-138.flowmailer.net [185.136.65.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AFEC2C8;
-	Fri, 28 Mar 2025 06:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC7733985
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 07:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743145072; cv=none; b=OndCNCQHNihDxYX32o2o4py32gRPZdTRoDszpmGX7mhibOVDfQbTqblLlYYAyWV7rtnMd1X5Ho9/4C8wyClGOPE+z1etx/NsJdjQ/jBMZcReN8nL3ugJDwqiqEUn9d7XNJKZ5tJjTkp9koplp8wImaZOHuMOBrOFQiGVIaNUj2k=
+	t=1743146902; cv=none; b=Ht13AmvEyx6mH/gJj3iS+RNzrD5e8PJQ/qKTZ8aHLFsqAQZ54WSi69vUlD0+mSW9yqKHp2uxSPeWpBNjsaMG7t/NOhzqGfgBH4ylQPv/Y29O5aoyI88PiEgMLHbXn9fFfPsGIVMLKZyakQ6hy2HF+EKEVtpJDs+dlXADuP7G05U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743145072; c=relaxed/simple;
-	bh=fqn1sNdp7XTxAsfS81siDrBYMb7spo0YQWmWiuH7buA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bkjin0LDW+YaZPm5sJbHhApWYKXkLRT7hnmporHJzcBt+SWu7Lj2RhcnyTqoAyu5Iq/TK/SFH/kYyU3M7ivAXE/hZYPoOzKu8RjdHKHJIMBvIQlUW/GXjz1o/SYnAI/DNQwgU69iSHmx/NO2m24Ar3dtbp2xY3kV+Gj09DgJH9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D+uOyMHm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1743145066;
-	bh=gtrmpLFu9NFyCseORhGab0BfgU5yV+aysRBcn9FP0i4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D+uOyMHmcAjwHmFTrJsJwFubUL+qwAjXnjlhHs+RjBwCXjDU4x7QvZM6lzO+/dKU6
-	 EnsgFNlE4mGHP904u8B/S+lxAQBnvwW6F/OgwIlvtBTdlUG5pxwjE7kx4/GXTcoXLZ
-	 AsBh/I9V5G+f/ASsKNSDRVnohE8EFxQnqmglvUUrHUSUbikvrhnACeaplQD6rNc24q
-	 5AhgOzKhNXtI2AbmoJEVkkKlaDvILO+f0CQkOBAWbmpRRByk+1cLGY6X1LVg5+2LlT
-	 uIvP+lR1vr/MQm4Q+wvjnlK6G+gZEuuJKWtlFA/2+L6EX5xJV5L8bq3jORZPFrnwmr
-	 K+XhLKexPco5Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZPBDV5BmTz4wcn;
-	Fri, 28 Mar 2025 17:57:46 +1100 (AEDT)
-Date: Fri, 28 Mar 2025 17:57:45 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the iommufd tree
-Message-ID: <20250328175745.7ecfee87@canb.auug.org.au>
-In-Reply-To: <20250318213359.5dc56fd1@canb.auug.org.au>
-References: <20250318213359.5dc56fd1@canb.auug.org.au>
+	s=arc-20240116; t=1743146902; c=relaxed/simple;
+	bh=xS9M60GsLwwabDVlYXg18HsVdahK+BCJQyhYNBMmeZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qwMMWwd14M+IDyqvBoZGYDcB0cLh/yT3lbEs4qwavN0N71UPYICEwdaBZaa66B81y9JiijgJ2IGmvlM/gsuPL7ll3ZeA6KXjJg51UJ0QglYOt+FNZmnFBoPJVeV8uHXGamxm7lt4YFfSJLXQ1WSUFi9GTulGjnxo0MB3kagIFog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com; dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b=oCSn+EwZ; dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b=BcQppq/T; arc=none smtp.client-ip=185.136.65.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com
+Received: by mta-65-138.flowmailer.net with ESMTPSA id 2025032713472338dcdd83140019fd15
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 27 Mar 2025 14:47:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=s1;
+ d=flowmailer.net;
+ h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:Date:Message-ID:MIME-Version;
+ bh=yRjQOtEQw7tKoK5pjP8XWCOwT5Yvp+cdAQiMZYYSISg=;
+ b=oCSn+EwZHWqSsrqRev8I5Er22SXzgADN2lQj7EBP/8C8QMhllnPkMj5FroZGLIPTDBkKk5
+ kNYE08foKAo9UZwSfMd/W7OfkheSteZSa5zmW8y+fhmzCQwjpyzhKhkWCQwMkUPujgdKr9R3
+ ZdIsND7JRKcw8Y7IcuWNXAFcb4KbI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm3;
+ d=siemens-energy.com; i=schuster.simon@siemens-energy.com;
+ h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:Date:Message-ID:MIME-Version;
+ bh=yRjQOtEQw7tKoK5pjP8XWCOwT5Yvp+cdAQiMZYYSISg=;
+ b=BcQppq/TSpGmKZlFrnEBSGu1jNMW2th3SsHmXUMyddTOhSODzOnw3f+p1qf54n5zPv2/YJ
+ l3+eQzsqtUFVRo1mRmW4smSWqqbAG9k6w8Q3Y1QJk+pCFsdFJAzdsxMoDq02BcTwvc+8w41a
+ vR9r2WZ3BJEETeTvi6VUtCMty7RiVD4SiA7wB4vFB2BQv0SNsHbFDpMsHCn4KHoZlKgHUdxK
+ jcEGFTisqi75XIVnzKEi2/HJvNgu7sJZaEzQqar4C9IpCwNBdLXZ7TJmnIJe6VCEzXY/BUjE
+ EXJPcjf0K3LNrdRAM5YYowjThf/ax2aC/5/ydFfCaVuzsvXq+NT3pzzA==;
+Date: Thu, 27 Mar 2025 14:47:21 +0100
+From: Simon Schuster <schuster.simon@siemens-energy.com>
+To: Dinh Nguyen <dinguyen@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Andreas Oetken <andreas.oetken@siemens-energy.com>,
+	Mike Rapoport <rppt@kernel.org>, Song Liu <song@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Simon Schuster <schuster.simon@siemens-energy.com>
+Subject: [PATCH 0/2] arch/nios2: Address spurious page faults
+Message-ID: 
+ <fm-32642-2025032713472338dcdd83140019fd15-kduNDQ@errorhandling.siemens-energy.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oCqlxps/yWr+Efk63b+z.1l";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/oCqlxps/yWr+Efk63b+z.1l
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On nios2, we have observed instances where a single process can get
+stuck in an infinite loop of repeated page faults for a single address.
 
-Hi all,
+To invalidate an existing mapping, nios2 replaces the TLB entry for the
+virtual address with an invalid dummy (mmu pid 0, physical address 0x0,
+all permissions set to invalid).
+However, this may conflict with actual, existing mappings for that
+virtual address within the address space associated with mmu pid 0,
+which will then repeatedly fault until the conflicting entry is
+preempted from TLB.
 
-On Tue, 18 Mar 2025 21:33:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the iommufd tree, today's linux-next build (htmldocs)
-> produced this warning:
->=20
-> Documentation/userspace-api/iommufd:323: include/uapi/linux/iommufd.h:103=
-3: CRITICAL: Unexpected section title or transition.
->=20
-> -------------------------------------------------------------------------=
- [docutils]
-> WARNING: kernel-doc 'scripts/kernel-doc -rst -enable-lineno include/uapi/=
-linux/iommufd.h' processing failed with: Documentation/userspace-api/iommuf=
-d:323: include/uapi/linux/iommufd.h:1033: (SEVERE/4) Unexpected section tit=
-le or transition.
->=20
-> -------------------------------------------------------------------------
->=20
-> Introduced by commit
->=20
->   50c842dd6cd3 ("iommufd: Add IOMMUFD_OBJ_VEVENTQ and IOMMUFD_CMD_VEVENTQ=
-_ALLOC")
+The issue is partially masked by sufficient paging activity in the
+system which eventually replaces one of the conflicting entries with a
+valid mapping for a different mmu pid. Yet, in the case of low paging
+activity (e.g., during early boot), this does not happen reliably,
+causing the process to hang.
 
-Any progress on this?
+The commits in this series address this issue in two ways:
+- By ensuring that TLB entries are updated from their corresponding
+  page-table entry on TLB permission violations as these can be caused
+  by an invalidation/dummy entry (PATCH 1/2)
 
---=20
-Cheers,
-Stephen Rothwell
+- By not introducing duplicate TLB entries for mmu pid 0. Instead,
+  invalidation maintains mmu pid because the pair <mmu pid, virtual
+  address> is unique in the current TLB state (PATCH 2/2)
 
---Sig_/oCqlxps/yWr+Efk63b+z.1l
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Please see the commit messages in the individual patches for details.
 
------BEGIN PGP SIGNATURE-----
+The patches were tested to successfully boot on nios2 hardware on top of
+linux-next commit eb4bc4b07f66.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfmSGkACgkQAVBC80lX
-0GzVgQf9F7nfcBkbujW4wDZ4D2AvEXRZXNzyE1bczzn7VcxBNJs6HGM17w27WZ8l
-oNHTA+qOfMn1sGdTuYHcnfgVrhTOF5GYEF1J1XN2oDG0DMQOxmf8iuh6lXoqSGMp
-B6AQZsru/XvrjZ6x1dWRYwG8BEVztA1+R7QR0/8AQGoLPZSpVVOb3SztUS9z5GXY
-QdDLIpfc3LsyxYUnWphsLrs4RwMnrN3/krVbyd4gU/cNleOQocjIaal1iYQ0zfS/
-6mZ3Uuzbh5YI9mZbZYe9yrTQ4xTS00BpcbSqUXCvqX3Ra9osC6ysachXAH7id97n
-favvT+DaNqk9dT75RDYjZbkzmABsmw==
-=zwO2
------END PGP SIGNATURE-----
+Simon Schuster (2):
+  nios2: force update_mmu_cache on spurious tlb-permission--related
+    pagefaults
+  nios2: do not introduce conflicting mappings when flushing tlb entries
 
---Sig_/oCqlxps/yWr+Efk63b+z.1l--
+ arch/nios2/include/asm/pgtable.h | 16 ++++++++++++++++
+ arch/nios2/mm/tlb.c              | 18 +++++++++++-------
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+
+-- 
+2.39.5
+
 
