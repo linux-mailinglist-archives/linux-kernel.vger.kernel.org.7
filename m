@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-578076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3862DA72A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:12:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7A0A72A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA3D1890C0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:13:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC037A5298
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062A91CEAA3;
-	Thu, 27 Mar 2025 07:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6076A1CAA6D;
+	Thu, 27 Mar 2025 07:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cu4Lslcz"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="h8AErXRy"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD93C2C8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9964D1C861C;
+	Thu, 27 Mar 2025 07:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743059562; cv=none; b=HmyEWDliT5xNEUSDE8guXwX1q7qMmeXh0sRCiftVlHHwxsiuX19AiPGoJcOtw0PfJTNXjDCOR8JhKDXOa1h4IP+jT29wB8DQNwcE5eLrRX1ZUnRetJnVH01qs55kUqUr4dTh+ScxSQiMzggrgVkOTLMT9Ihpec4NXVvJcjrcGoA=
+	t=1743059546; cv=none; b=Ge7WWKVAlQs5LG14z39gby6faF0ID2kufglbX0d7rAQ3hAGNcOAXPrCCJP8/y2LcCvp/Ku7xHIhwKk9eI5eNLMwywt1T/qiLVlp8i837F89Wu3YvN4bEMeZfDp/I0ED4TrePPxJSAh5XKVAT/c5PClmSlDgTuJ8bw4v0Ub4RjbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743059562; c=relaxed/simple;
-	bh=kWnkqGmb4g6Askmybg+1eKZXKnBANORnQqKnQWrsO64=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IAFtLdbpZmQ48oAMHAO+RJUtXuDshJb3MUZjZuAq8lQjoIWnL58/XB+383sKG8ReqAtc06JUXQqOUNX5M+8XpbegO2TM0e2yZGR4X9tGOESzjKeCv7Jte2ujSuPJOonx/bCrV7hIkwNN1GnHkcrU3jB6qz7SWdYmz2Xn8rSx3Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cu4Lslcz; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227aaa82fafso14168975ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 00:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743059560; x=1743664360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/xbdb3Q23KDbzMapeISquzFQrHEt5ZEKz4vyQX8oNvk=;
-        b=cu4LslczJbA6SmpMkbdu/SaMdoBdg5ScIzcYHZiaCQwxd2TbYUxsjFi0Dz8MiDGA6D
-         xUjZkLqfBxaBfN7Gc3n4hEkoBF7kvpAuxRxBOz0Uf9t3zgNWsHfTyvA1FZ2O/l91K16c
-         T2XtU7eFoIl15kSnJpXuC+vgrhAhFg5UqKynncub1GGqnfc4tedefbauttwqPsDFfcHR
-         jSdFTC4Hyvf0Qq3f4S0WldD6fq7WzKhLoBccD0pR7hlefGooo+KuQBqqcLos0PQTRTXT
-         dZu2MNT7dOnRPg6a5dpW54cdxu8vHxdLohwAiyNG3wUgUzzalXE4IWPzHfYaCUgwP25u
-         QCxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743059560; x=1743664360;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/xbdb3Q23KDbzMapeISquzFQrHEt5ZEKz4vyQX8oNvk=;
-        b=tirlwebUsi5YhxRndTv8ENSXTxjkgL1hx1U2xzmnicDIMHcL4A8HUEFIPJoRMOnXlF
-         TZWO7866G0Yf/0E0mMT1icHR5bBKC0JNvG/KQ7tGgTSSlbAg4NU4tlcn1HYEWAPbg0QZ
-         CIXFUVMutQ0vePp0t4CpuEJtCyJwvOVU6euh1T5DEUAqRhmHM9Rq7wrJNa5d52UwQmRk
-         KxjherTl39dADVRI8o+2sFJPV7QHM+B4Zn/O4P9+MnbymOZWiWNNbzmfcmCnnJItuVwG
-         bbsy5udqINJEz+m1nCCL40Eza4fJ6/7cDra2wL+8H6jIOK+CRC5S2BMrhgzn+4b0I/Oq
-         nCUQ==
-X-Gm-Message-State: AOJu0YznzXvVo8BHcrhU3Osf07VirIpVe7e4Xw14d2opDKV063mRv7fL
-	KWpR+mS6UrHCJDLQYD3pStU78LdPCiNAf+yHIEZul/GQd61BghBU
-X-Gm-Gg: ASbGncu+3pgbvF89tyaIQzL801k/9gSQktavV+7BDnTxHg6R4hVwaJqOHcPhvXOsVRX
-	b+s0H6nmXd/ZLKw/edCmZAh+Mzeu/h1fSV6g6+rson49HwWL0KnCsLWTYn+A725UFKgp23e50+I
-	leSLcFWcWk9zwpgk6Vf87k+J1w+kayp1Pfnkz3vvXpW0FnhEW+hqCezej8LZCBa29BglWVT4PfE
-	P4y4KFuNeyHrs5u38vl+Zy1PmeII/DAMU8bClCyK/q8LHptH9TBt7dIPUKv8F3zjL3LY66FIL/X
-	2GjG+a+7Q7uwOUDZdbrDjto+W2m0YFE388sBzj7gYKjQKZQRnuhzbzPvHuJjY9XEO4VmW9fNAcH
-	jk90ZmOiPXfB3HOHzw78TjixrJsDDYM5ovBrSNbhtAt/Wtg==
-X-Google-Smtp-Source: AGHT+IFDp8VpQjWHlX3gp+6smleu2nKPG7xnbgHcyHRmfYtPjB7KEC9FFa7q7HitUa+EWY/gaVymHg==
-X-Received: by 2002:a17:903:230c:b0:224:1eab:97b2 with SMTP id d9443c01a7336-22804950c59mr35976535ad.53.1743059559993;
-        Thu, 27 Mar 2025 00:12:39 -0700 (PDT)
-Received: from codespaces-3dd663.dxrpqgqhlb3ehogrxrezr215ye.rx.internal.cloudapp.net ([20.192.21.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b7fdesm121580375ad.143.2025.03.27.00.12.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 00:12:39 -0700 (PDT)
-From: adityagarg1208@gmail.com
-X-Google-Original-From: gargaditya08@live.com
-To: jikos@kernel.org,
-	torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Aditya Garg <gargaditya08@live.com>
-Subject: [PATCH] HID: hid-appletb-kbd: Fix wrong date and kernel version in sysfs interface docs
-Date: Thu, 27 Mar 2025 07:12:08 +0000
-Message-ID: <20250327071233.12237-1-gargaditya08@live.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743059546; c=relaxed/simple;
+	bh=xLDxqFPTSPn0/knZPERzvm0+bXSKlxaYfylULmtrafg=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=RjfHE96IPnshf6hhb+ZtAAsM5Ma7vJsXTe8HXoYiXGkTZ99EDigqS5ckNt36xFDJLJ3/GWADVJMa1/RDt3D4PSDqN3SUjNxwYNpkDWqsMmjwlXy051It+bqoPGcVqb0RiU2qmnuDCDZzZnV1LeV9dc9xN1SnOVvpjYlwpIQgoZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=h8AErXRy; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1743059536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lH20vJ48RSA10XECX0SWG627PAsPjNVOUl91E9dSA10=;
+	b=h8AErXRy2tf++eIitSzH4Z7avDyXJ3XY5svwpL8omEiu/+RugNoAOmQgoAcvtxJuq2K3lF
+	OBL7yNp5z2S8UrU2xL3P/dwwPZ+z2tjk/FL5wYznfPEuLNF7EXHBeoNJV8+tdlqKW8Bysu
+	A/h8o7mVuanCMIOBx4cAJCCNpxAybAPPM/CJ3gE0Dw31mk75lBGlhtbg7J9tMANBPyuwHI
+	HmMVM/OIxMoeQoOc0MfCW/ho1u82D1qIw8Uw03DHGmPjBsRLHLDDquUAjboVscVmAKjsgv
+	eW/Y0hHCT9n8ETLIsGgsnV9HG4X25LpUQs7NAaHZTFDN+v7rAdLXnkg2C6k71w==
+Date: Thu, 27 Mar 2025 08:12:14 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+ patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Heiko Stuebner <heiko@sntech.de>, Vegard Nossum <vegard.nossum@oracle.com>,
+ Darren Kenny <darren.kenny@oracle.com>, Diederik de Haas
+ <didi.debian@cknow.org>
+Subject: Re: [PATCH 6.6 00/77] 6.6.85-rc1 review
+In-Reply-To: <2025032656-closure-exile-38fe@gregkh>
+References: <20250325122144.259256924@linuxfoundation.org>
+ <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
+ <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
+ <751cf2c6-c692-4595-98e9-fa3ae4dfd10a@oracle.com>
+ <0001e7e020145983055d154488f5c460@manjaro.org>
+ <2025032656-closure-exile-38fe@gregkh>
+Message-ID: <6a8a77a00a11ae9c22b1a2fe50cbbb34@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Aditya Garg <gargaditya08@live.com>
+Hello Greg,
 
-The driver hid-appletb-kbd was upstreamed in kernel 6.15. But, due to an
-oversight on my part, I didn't change the kernel version and expected
-date while upstreaming the driver, thus it remained as 6.5, the original
-kernel version when the driver was developed for downstream. This commit
-should fix this.
+On 2025-03-26 16:38, Greg Kroah-Hartman wrote:
+> On Wed, Mar 26, 2025 at 04:56:18AM +0100, Dragan Simic wrote:
+>> On 2025-03-26 03:33, Harshit Mogalapalli wrote:
+>> > On 25/03/25 21:37, Dragan Simic wrote:
+>> > > On 2025-03-25 16:07, Naresh Kamboju wrote:
+>> > ...
+>> > > > Build regression: arm64 dtb rockchip non-existent node or label
+>> > > > "vcca_0v9"
+>> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>> > > >
+>> > > > ## Build log
+>> > > > arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+>> > > > (phandle_references):
+>> > > > /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
+>> > > >
+>> > > >   also defined at arch/arm64/boot/dts/rockchip/rk3399-
+>> > > > rockpro64.dtsi:659.8-669.3
+>> > ...
+>> > >
+>> > > This is caused by another patch from the original series failing
+>> > > to apply due to some bulk regulator renaming.  I'll send backported
+>> > > version of that patch soon, which should make everything fine.
+>> >
+>> > On ARM configs, we do see the same issue that Naresh reported.
+>> >
+>> > arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+>> > (phandle_references): /pcie@f8000000: Reference to non-existent node
+>> > or label "vcca_0v9"
+>> >  also defined at
+>> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
+>> > ERROR: Input tree has errors, aborting (use -f to force output)
+>> > make[3]: *** [scripts/Makefile.lib:423:
+>> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dtb] Error 2
+>> > make[3]: *** Waiting for unfinished jobs....
+>> > arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+>> > (phandle_references): /pcie@f8000000: Reference to non-existent node
+>> > or label "vcca_0v9"
+>> >  also defined at
+>> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
+>> > ERROR: Input tree has errors, aborting (use -f to force output)
+>> > make[3]: *** [scripts/Makefile.lib:423:
+>> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtb] Error 2
+>> > make[2]: *** [scripts/Makefile.build:480: arch/arm64/boot/dts/rockchip]
+>> > Error 2
+>> > make[2]: *** Waiting for unfinished jobs....
+>> >
+>> > Caused by commit: 1e4bd0ec5a47 ("arm64: dts: rockchip: Add missing
+>> > PCIe supplies to RockPro64 board dtsi") -- PATCH 42/77 of this series.
+>> >
+>> > We see same problem with 6.12.21-rc1 as well.
+>> >
+>> > Notes:
+>> > -----
+>> > I think Dragan was referring to upstream commit: bd1c959f37f3 ("arm64:
+>> > dts: rockchip: Add avdd HDMI supplies to RockPro64 board dtsi") which
+>> > will fix this problem but fails to apply due to regulator renaming in
+>> > commit: 5c96e6330197 ("arm64: dts: rockchip: adapt regulator nodenames
+>> > to preferred form") which is not in stable kernels(6.6.y and 6.12.y)
+>> 
+>> Exactly, the direct dependency is the commit bd1c959f37f3 ("arm64:
+>> dts: rockchip: Add avdd HDMI supplies to RockPro64 board dtsi"),
+>> for which I haven't sent the backported version yet.
+>> 
+>> As Diederik pointed it out already in a separate message [*] from
+>> a couple of days ago, it might be the best to include the commit
+>> 5c96e6330197 ("arm64: dts: rockchip: adapt regulator nodenames to
+>> preferred form") into stable kernels as well.
+>> 
+>> Obviously, including the commit 5c96e6330197 pretty much goes
+>> against the rules of stable kernels, but it would save a lot of
+>> time and effort in the future.
+>> 
+>> [*] 
+>> https://lore.kernel.org/stable/D8ONE4WEF7A2.1OE1YY8J34MM3@cknow.org/
+> 
+> As that's a big change, and no one seems to be sending it to me for
+> inclusion, I'll just go drop the patch that broke the builds for now 
+> and
+> wait for someone to send working ones later.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Makes sense to me, thanks.  I'll send you the three patches (i.e., the
+bulk regulator renaming patch, and the two RockPro64 patches) that need
+to be included in the stable kernels, in the next couple of days.  
+Having
+the bulk regulator renaming patch included in the stable kernels should
+save us a lot of time and effort in the future.
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
-index 2a19584d0..8c9718d83 100644
---- a/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
-+++ b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
-@@ -1,6 +1,6 @@
- What:		/sys/bus/hid/drivers/hid-appletb-kbd/<dev>/mode
--Date:		September, 2023
--KernelVersion:	6.5
-+Date:		March, 2025
-+KernelVersion:	6.15
- Contact:	linux-input@vger.kernel.org
- Description:
- 		The set of keys displayed on the Touch Bar.
--- 
-2.49.0
-
+I would've sent you those patches earlier, but I'm currently in a really
+tight spot when it comes to time.
 
