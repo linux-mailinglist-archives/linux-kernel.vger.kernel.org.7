@@ -1,214 +1,142 @@
-Return-Path: <linux-kernel+bounces-578985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EC0A73E59
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:05:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C23A73F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 20:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D3553B6D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C3C165DD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 19:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DFD1C5496;
-	Thu, 27 Mar 2025 19:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcjxtNcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F1F1B4233;
-	Thu, 27 Mar 2025 19:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E191C1F0D;
+	Thu, 27 Mar 2025 19:50:06 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50AF17A31E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743102326; cv=none; b=eC1gi4tjMQQUbdfePhF28GscgmPVh3I2i+KKv80rrXugiH64K7Q9v/XhCJCqlPjfel+ow8qAtnYNUpSzUb7Km1936sn4VlQd91SK7r80bAv7wQRjldANRXT+bafLizYy6St5lr0+RzX3AnGdiKI9WGlDu+iZbW4vKR5Mbogek94=
+	t=1743105006; cv=none; b=lsKHBrouXFd3RtJGH6SEWClZPAcoMIrOJ8JKLD7nglvFpjTvRyBtlt4LpJmPYYrGnCL/uczWmKfRzd1Xsir5yvZJPO5qtzJeZHGHfGp6AdkLo0K/LeCxhF0w/hHrr1AP+85zafFSRdB+c7LnBvTwA2SYM9wW0N1YmoOir5YZ3qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743102326; c=relaxed/simple;
-	bh=royO+w2c6N9+Ae4O+8R9pvu8Oa6kniOImOeVjP+Vgo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PkksAwGwate//vSXS9GhWJpbW3U6JibjtrMtOX8D+QlbHvPkLKKQ61EMUia4eboqeShbPH19NxNI35QJb6Ud4VuhWP8/efFXX0+L54EH2zH66lRZGpA6cyVRKsi+QKwQQ1RhQVfH7pSU7z9KV6P2lZ+6ttrhoVBikNh4+OzBgsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcjxtNcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F967C4CEEA;
-	Thu, 27 Mar 2025 19:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743102326;
-	bh=royO+w2c6N9+Ae4O+8R9pvu8Oa6kniOImOeVjP+Vgo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BcjxtNcRk2a5gj9Jo1yGk5c+nyUjO85bmg20mflzNVETdkhRNzqBplv5rk+268ab4
-	 ewCGop7tC8fSB/BzZh8iVsUUDVMHdIKUI/FQYOUyUiGSrAwHMTM970qh0lnbriiLG+
-	 ouyZQ8HbWjli9nOdyoojRGRXqti2QAfOQiVu95udrxkAAjUy0YeR3YeQKfiHRjvDGC
-	 wTYtGQoYLKd9WTnBW3jCgBsOTONvYNglI+yixuA59dRTOWq5y+qeX1xtllRCWFc6A/
-	 Qa75ypbXEVtgOx96jJzwIfqJg9vHwmyqZ7zukFXMcbd54WoVm8z/wtigjt36oPw3Da
-	 gA7URGLk5xUCg==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c769da02b0so727580fac.3;
-        Thu, 27 Mar 2025 12:05:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVsDycktYPzZQuQmpHNzkgQ0MtvopmtfXFaI6cBRKwoa4aX22WE5FuCqOk8dDQ3BO1hPnmYWcGGrkt8@vger.kernel.org, AJvYcCWKdYLmxZ7fqzHPWGLe4gTKlIy7C/tGQ3o8e3TQieGUoUoGpMLtFV/WPYWF7VBzJjlbJ7yk8A5GkSLG@vger.kernel.org, AJvYcCXckiE6R+THC6S/3hhWst8hhyejYnm7sT453ykgYYFFhxv04JX84yBfQp5H9U2g7nx4J5aAHY8afw/ByHSN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiK/Z/tNl7Vjx9gzQN3xuyRKOOelvj1t1wPGEVK4C1YI98U5Sv
-	HFNlTJhECZcyHKLHZF/47nljWSrTEn9jGqmMWx9B4GXPIBbxbXWhuzrWvAX1GslQgOWWhYYFkNH
-	hXs8WtHdB2mJNMB0LtDSdOunV5u0=
-X-Google-Smtp-Source: AGHT+IE/2aQJNTEVm5F9T/mY1JuTqpsVUFboEGKZv4C9PsotATB3DZ4H6GW/BJBYunP13VbST/P9FXomPk09bn2SKG4=
-X-Received: by 2002:a05:6870:2891:b0:29e:569a:f90d with SMTP id
- 586e51a60fabf-2c84823dfeamr3093612fac.32.1743102325633; Thu, 27 Mar 2025
- 12:05:25 -0700 (PDT)
+	s=arc-20240116; t=1743105006; c=relaxed/simple;
+	bh=XVScH/u/a6lwV3UqGyQ8+mJFwywZ6c2JYPY6otTdlbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qQG7c3JYYzx9vkSe8hoI4fdSm1eoJ+um+/7MgjK7BJ7d9PZnrZO+kyPwgSzGPSsV1R2rCFlyPWn2x/stPuBDu9znOqTAtHnELBml9OSfeLiH5E/7U/J3xonym9uz8Uysbi0rSNgZjqchLSe+ww5sYxqvughkJhez/lyxnOUmwv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4ZNtCY6NVdz9v5M;
+	Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id DjaaxL0rvOli; Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZNtCY5gJSz9tC6;
+	Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C18358B76E;
+	Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MK2dalRyhSYe; Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 47F8A8B763;
+	Thu, 27 Mar 2025 19:55:53 +0100 (CET)
+Message-ID: <b37c7a1a-9ec8-417e-9d9d-adeffe409df8@csgroup.eu>
+Date: Thu, 27 Mar 2025 19:55:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313100658.15805-1-zhoushengqing@ttyinfo.com> <CAJZ5v0jBrTuuf_RJ45Eu2OwpRNXS-hFyL-PxGMv2K+jYVQtn2w@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jBrTuuf_RJ45Eu2OwpRNXS-hFyL-PxGMv2K+jYVQtn2w@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 27 Mar 2025 20:05:14 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gd5-QfbLhneYKJxER6XC1aDE8KxvX5j695=FdZWHc-kQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JoKVaAeBmRAv4MMHbTxt02rfq6mRQYHxuSVaxLpnITNa1jOYmm9ErObqDQ
-Message-ID: <CAJZ5v0gd5-QfbLhneYKJxER6XC1aDE8KxvX5j695=FdZWHc-kQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] Add rev 2 check for PRESERVE_BOOT_CONFIG function
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [main-line]Build warnings on PowerPC system
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <61cf556c-4947-4bd6-af63-892fc0966dad@linux.ibm.com>
+ <8797a1c4-dc58-4a85-bc51-a3d4131e7930@linux.ibm.com>
+ <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
+ <38653c58-a5c4-496f-9b52-e7bc3e447423@linux.ibm.com>
+ <516febac-b2ba-48a0-83a4-ab259e972541@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <516febac-b2ba-48a0-83a4-ab259e972541@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 27, 2025 at 7:57=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> On Thu, Mar 13, 2025 at 11:07=E2=80=AFAM Zhou Shengqing
-> <zhoushengqing@ttyinfo.com> wrote:
-> >
-> > Per PCI Firmware Specification Revision 3.3 Table 4-7 _DSM Definitions
-> > for PCI. Preserve PCI Boot Configuration Initial Revision ID changed to=
- 2.
-> >
-> > And add acpi_check_dsm() for DSM_PCI_PRESERVE_BOOT_CONFIG.
-> >
-> > Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-> > ---
-> > v5:follow Bjorn advice, add acpi_check_dsm for PCI _DSM.
-> > v4:Initialize *obj to NULL.
-> > v3:try revision id 1 first, then try revision id 2.
-> > v2:add Fixes tag.
-> >
-> > Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to=
- pci_re")
-> > ---
-> >  drivers/pci/pci-acpi.c | 43 ++++++++++++++++++++++++++++++------------
-> >  1 file changed, 31 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> > index af370628e583..4f9e0548c96d 100644
-> > --- a/drivers/pci/pci-acpi.c
-> > +++ b/drivers/pci/pci-acpi.c
-> > @@ -122,24 +122,43 @@ phys_addr_t acpi_pci_root_get_mcfg_addr(acpi_hand=
-le handle)
-> >
-> >  bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
-> >  {
-> > -       if (ACPI_HANDLE(&host_bridge->dev)) {
-> > -               union acpi_object *obj;
-> > +       bool rc =3D false;
-> > +       union acpi_object *obj;
->
-> + u64 rev;
->
-> >
-> > -               /*
-> > -                * Evaluate the "PCI Boot Configuration" _DSM Function.=
-  If it
-> > -                * exists and returns 0, we must preserve any PCI resou=
-rce
-> > -                * assignments made by firmware for this host bridge.
-> > -                */
-> > +       if (!ACPI_HANDLE(&host_bridge->dev))
-> > +               return false;
-> > +
-> > +       /*
-> > +        * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
-> > +        * exists and returns 0, we must preserve any PCI resource
-> > +        * assignments made by firmware for this host bridge.
-> > +        *
-> > +        * Per PCI Firmware r3.2, released Jan 26, 2015,
-> > +        * DSM_PCI_PRESERVE_BOOT_CONFIG Revision ID is 1. But PCI Firmw=
-are r3.3,
-> > +        * released Jan 20, 2021, changed sec 4.6.5 to say
-> > +        * "lowest valid Revision ID value: 2". So check rev 1 first, t=
-hen rev 2.
-> > +        */
->
-> +         for (rev =3D 1; rev <=3D 2; rev++) {
-> +                 if (!acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev),
-> &pci_acpi_dsm_guid,
-> +                                   rev, BIT(DSM_PCI_PRESERVE_BOOT_CONFIG=
-)))
-> +                         continue;
-> +
-> +                obj =3D
-> acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev), ,
-> &pci_acpi_dsm_guid,
-> +                                  rev, BIT(DSM_PCI_PRESERVE_BOOT_CONFIG)=
-);
 
-Of course, the above acpi_evaluate_dsm_typed() call has been
-messed-up, it should be
 
-obj =3D acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridge->dev),
-                                  &pci_acpi_dsm_guid, rev,
-                                  DSM_PCI_PRESERVE_BOOT_CONFIG,
-                                 NULL, ACPI_TYPE_INTEGER);
+Le 27/03/2025 à 17:24, Venkat Rao Bagalkote a écrit :
+> 
+> On 27/03/25 8:36 pm, Madhavan Srinivasan wrote:
+>>
+>> On 3/27/25 7:31 PM, Venkat Rao Bagalkote wrote:
+>>> On 27/03/25 7:22 pm, Madhavan Srinivasan wrote:
+>>>> On 3/27/25 12:33 AM, Venkat Rao Bagalkote wrote:
+>>>>> Greetings!!!
+>>>>>
+>>>>> I see below build warnings while compiling mainline kernel on IBM 
+>>>>> Power9 system.
+>>>>>
+>>>>> Repo Link: https://eur01.safelinks.protection.outlook.com/? 
+>>>>> url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ftorvalds%2Flinux.git%2F&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7Cd6121f3814a7497bc5e608dd6d4be6c8%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638786894952762400%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3el3Uw9JR2vxDzjOIvF%2BVnienBrwtOsA%2Ftg0kGBqziE%3D&reserved=0
+>>>>>
+>>>>> Head Commit: f6e0150b2003fb2b9265028a618aa1732b3edc8f
+>>>>>
+>>>>> Attached is the .config.
+>>>>>
+>>>>> Machine: IBM Power9
+>>>>>
+>>>>> gcc version 11.5.0
+>>>> What is the ld version in your system.
+>>> Please find the ld version below.
+>>>
+>>> GNU ld version 2.35.2-59.el9
+>>
+>> ah ok that explains. Kindly can you try with this patch and let us 
+>> know whether
+>> this fixes the warning in your setup
+>>
+>>
+>> diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+>> index 1db60fe13802..09ceb5a42d81 100755
+>> --- a/arch/powerpc/boot/wrapper
+>> +++ b/arch/powerpc/boot/wrapper
+>> @@ -235,7 +235,7 @@ fi
+>>   # suppress some warnings in recent ld versions
+>>   nowarn="-z noexecstack"
+>>   if ! ld_is_lld; then
+>> -       if [ "$LD_VERSION" -ge "$(echo 2.39 | ld_version)" ]; then
+>> +       if [ "$LD_VERSION" -ge "$(echo 2.35 | ld_version)" ]; then
+>>                  nowarn="$nowarn --no-warn-rwx-segments"
+>>          fi
+>>   fi
+> Above change fixes the issue. No warnings observed. Thank you!!
 
-but the idea should be clear nevertheless.
+Take care, this must be a special version of binutils.
 
-> +                if (obj && obj->integer.value =3D=3D 0)
-> +                        rc =3D true;
-> +
-> +                ACPI_FREE(obj);
-> +
-> +                if (rc)
-> +                       return true;
-> +         }
-> +
-> +         return false;
->
-> would achieve the same with fewer lines of code and less code
-> duplication if I'm not mistaken.
->
-> > +       if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev),
-> > +                               &pci_acpi_dsm_guid, 1, BIT(DSM_PCI_PRES=
-ERVE_BOOT_CONFIG))) {
-> >                 obj =3D acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridg=
-e->dev),
-> > -                                             &pci_acpi_dsm_guid,
-> > -                                             1, DSM_PCI_PRESERVE_BOOT_=
-CONFIG,
-> > -                                             NULL, ACPI_TYPE_INTEGER);
-> > +                                               &pci_acpi_dsm_guid,
-> > +                                               1, DSM_PCI_PRESERVE_BOO=
-T_CONFIG,
-> > +                                               NULL, ACPI_TYPE_INTEGER=
-);
-> >                 if (obj && obj->integer.value =3D=3D 0)
-> > -                       return true;
-> > +                       rc =3D true;
-> > +               ACPI_FREE(obj);
-> > +       } else if (acpi_check_dsm(ACPI_HANDLE(&host_bridge->dev),
-> > +                                       &pci_acpi_dsm_guid, 2, BIT(DSM_=
-PCI_PRESERVE_BOOT_CONFIG))) {
-> > +               obj =3D acpi_evaluate_dsm_typed(ACPI_HANDLE(&host_bridg=
-e->dev),
-> > +                                               &pci_acpi_dsm_guid,
-> > +                                               2, DSM_PCI_PRESERVE_BOO=
-T_CONFIG,
-> > +                                               NULL, ACPI_TYPE_INTEGER=
-);
-> > +               if (obj && obj->integer.value =3D=3D 0)
-> > +                       rc =3D true;
-> >                 ACPI_FREE(obj);
-> >         }
-> >
-> > -       return false;
-> > +       return rc;
-> >  }
-> >
-> >  /* _HPX PCI Setting Record (Type 0); same as _HPP */
-> > --
+With regular 2.36.1 I get following error:
+
+$ /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld --version
+GNU ld (GNU Binutils) 2.36.1
+Copyright (C) 2021 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) a later 
+version.
+This program has absolutely no warranty.
+
+$ /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld 
+--no-warn-rwx-segments test.o
+/opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: 
+unrecognized option '--no-warn-rwx-segments'
+/opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: use 
+the --help option for usage information
+
 
