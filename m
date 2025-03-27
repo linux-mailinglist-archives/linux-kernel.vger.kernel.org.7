@@ -1,204 +1,151 @@
-Return-Path: <linux-kernel+bounces-578925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110DFA73CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:46:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0810BA73CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 18:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA988189B2E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE8C83BB8DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD4D218EBF;
-	Thu, 27 Mar 2025 17:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB1821A427;
+	Thu, 27 Mar 2025 17:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SvIGVoXg"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yd0tcFDu"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04B515B102
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 17:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DEA219A8F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 17:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743097599; cv=none; b=q8f8/Bxt+SQ4hFuyNnmgKaETeuFq5isGeIDWlLrLmV8zD9Q2HDhPo/1O/V87jWfpalCyVd7odP/5+dzlmWXNyI43rca0c/88OrdCezbp0mWEdRnXMbFInU+Xyz4CFcAIEBodYE6o5SQh4OD5oiLK+A8YWOM5MaP+prTUSAefiIs=
+	t=1743097609; cv=none; b=TNlLmNtDNoTeOfoVzyQOxDQuWwHJNgndjM1m7JU7kBIoU5qBMFq0fS29DuSSeLIweHR/Uq1Y30S2dDTabJj+rLPnFuJLFzLcR01OWvp5lvF1OsK9gMpOJrTEvUTqc/0re/027j62KsiVukc87RkrcimdRJUlaiajSJ23KAzIwvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743097599; c=relaxed/simple;
-	bh=K/H3MMq54rB5pQbGnnWn4DE7Lk3mFS006sPSA+42NaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwacAa713RoxWRX1WqoX+hE+k1rC9iZBi1TLwev9NmZC8DQhvrNkVahd9VtT4tctG56cBp9gSyMQ1e0R39cLTfREJ0C6n63hcUaGlcsbAtVJUr2E+iRpl5gnEW0VjzVpGsR83d5e7z7DLiDhLeMFuQZT9qoScg9gfQqwrdNG0kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SvIGVoXg; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22622ddcc35so37849275ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:46:37 -0700 (PDT)
+	s=arc-20240116; t=1743097609; c=relaxed/simple;
+	bh=lvZCFsbLaE/K2JRb3trbOpkbgEQW9KtRlAX0K2bNMKo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RJC6P6eXu5ZtLhJNFOYeaQmqgkXia0r3eJO9ujc0qpU67yxrxbbQ+EjhTSuFoBl7EJSV4EmOXunQfsv9do3iWJo2wBynJ+rbmj2zs0bexBMsayxBerTvacGRFUVUP3NMQaHYf09PkZe6uX75PdzjFsnH5QPeH+VYExOJJ0MBD2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yd0tcFDu; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so13734151fa.2;
+        Thu, 27 Mar 2025 10:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743097597; x=1743702397; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VP36Jxj7G1BlweoA/d2yJUmiG72ezjHbFm0xpNIeG9M=;
-        b=SvIGVoXgcFpHAvik6hlseuzgU6A9aaFYNUZaZufMlk1cfv5PajsJzgYhp3I1rFrgg/
-         KRIXkboqPJrjWSBl9GvmkPjDcAdDcgM1F8vkAmFcCvj78TEIfDe/AZ7uF5xK4BH2diPV
-         4tjBgLH/4nx0AXlPfvPyS5QCv6SmCcXdSFElPXIR0pRcTl+671PGPasKDjqUXSiu4B1I
-         OZXJgVq4YvNzD1EbVXhDJHg1Q1JH687njXR3HXCVdQg6VI/uLBrPi7dpUMTbVhW+yg2b
-         JuA4PKrhDABvSIhpKHvVsG1lRM8/8QPgWAJ3ONMGB/4i2Y3eBCprfK+Bsqr2Nw6D5hoX
-         BblQ==
+        d=gmail.com; s=20230601; t=1743097606; x=1743702406; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2v9fY5YvquFYGnnxVXEqXhs7WkaxlazIrr56h7WUAuc=;
+        b=Yd0tcFDuUq/vg3Ao2HRptQNG9D3G51udQnVgtzGXQQDH41v6QFKoFNeCt4q/v6B3AF
+         zlIlq4SWSpJnhwQvCaMX/4eDBEqFt/NLETrzqv/AfgsKjxtms5qKF80r4OK0DfypIUDP
+         AGckc5AQfZcttr5Kok4+LBt0YNB2p0FofeXZQn6GRpWS/BnRBbJwilP4/7McQrAGYA7y
+         gdoN4nRekIYJVqag09fPSEdB6ida0oZm2L4lPmURGHcnTcj6284eVw5vjGrex4kIpWya
+         TAxA4Dqpr5NHZfbq3wzD/qh2hiNJIsjUvkVqDyVQ6W2Jeu3UZqQuZq+2COB5rpQe7H0a
+         xihA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743097597; x=1743702397;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VP36Jxj7G1BlweoA/d2yJUmiG72ezjHbFm0xpNIeG9M=;
-        b=VG8MTAlKA9KjMBgKrbHdP6iEh3NKKWXgdYvgDxvAHTpI9Ry1VfXVywJTgTuIK340p2
-         SBpMk5S6VIqDwfXWJM1jBwSNdLyI72OdCdss8LqqUi73k4gvZBEAGvKxOtSe8pD+fsQk
-         vC8jbcgZyaW9iW18Z6cCznlwllWaPCxr9hlmKz5Tv7OJwNtaOT6UlvnM3lAh4Tx1+Ho+
-         hwMXMi5kEezG+KhEzz7KhH5fai9k/G79SkC4TamcF7maIoYAlIA9Y7kx9th6W0zbNwGg
-         PnrrAmSDFU0aXBkd4e8Wwn1WbV1BuCnJrgbPErDVWOeVwKh3V3FhDC+QiMw8eZBid3gS
-         HxRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5fme3thTqIHcMPl9RPkwswMND55VLLFeD3c5m8TckFimcfZHzvfN8kx62DnDm0Pekjn8Awt2rmO9FYbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBuec5la+PuDY/VtR1zr7PpRx1MmlRhHQRmd/c1TwWY7DphG82
-	MN+1cOMELAHid7ueUiTbRD9jLQ+KGFeLYC9Sp6LTdlKp02PBiM6LzsvDSh4gWJ8=
-X-Gm-Gg: ASbGnctJH2KNFszGxlcS72u1vAffKYPDQB93PLuu3vTr2x9yNh9lxnNR0YH2ns4RfLl
-	2h0fF1qG9TNEojz4Bwu2o19WtiVjsGi0U/ti1evLIV8pnoWc2YKwPVLZZpGU/0WIv2OJvNHF7fK
-	fjYBEPiqBq7XfMDw7ViBkA9cysYsnWbJUYnF416tj2KcGOZjU5xawZ5uC+cYxX79FZM+bHVAZ7J
-	Fe+59xiFG3nPlOT6nsnJT7gEmhOSAv7AYkE/lrP5XIF7QnIWcN90kdOdoXyzk8ieY7Ff62YMdhU
-	ptFmaCCNSqXotFEnLBqnNgmUsNIS2K3WWxaIoxn96gK7DsC5
-X-Google-Smtp-Source: AGHT+IFSXmevSgu0c4k+tbh9HtWwPHxZfRmTVMfNtRWlKK16L55hJPlan5Ye/YLGFvsKxYn6qWag3g==
-X-Received: by 2002:a05:6a00:a27:b0:736:eb7e:df39 with SMTP id d2e1a72fcca58-739610cea8amr6694677b3a.24.1743097596726;
-        Thu, 27 Mar 2025 10:46:36 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5135:a466:ae77:3d38])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739710cd08dsm84941b3a.160.2025.03.27.10.46.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 10:46:36 -0700 (PDT)
-Date: Thu, 27 Mar 2025 11:46:33 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-	"open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V2] remoteproc: core: Clear table_sz when rproc_shutdown
-Message-ID: <Z-WO-fhDJKyG7hn2@p14s>
-References: <20250326020215.3689624-1-peng.fan@oss.nxp.com>
+        d=1e100.net; s=20230601; t=1743097606; x=1743702406;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2v9fY5YvquFYGnnxVXEqXhs7WkaxlazIrr56h7WUAuc=;
+        b=FMsRN6WzXCnvLj9aTHJsRwOBD8AnJRJZvc2gZRDgEo5zFHGlyyq76wY9Fkg/putyVJ
+         YozEX0x3RXLVCk/q6Gdy0H5E/pKPBA8xfmd5U4IZu0kCt79zSxk6hkOi540hGzJeE7ZS
+         DNor5dMC/sc+Bbe4lWEzuJuAfq5u/OQYzWhWmTbCJzzS8FAwmyxd3V4Axd4wyafkl5P9
+         X1+DUVour56cotOTZBkTCM0oZPckz8UBTrNnqVj73K9vdZcvITWXuRmwSOt031Jq/T30
+         2U6U0Kvttx7hwkrRmNVdJkpV4McVELonhzbs60mD8BADZwGfzMIXZtkTUB6FD2h7Jgsm
+         sK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUFv/rXRutLoEI+xeoNNeMBdcsd99ofvp3gxHrFi3ZQnyqeIg5fH2igDeTd36w1PbeNeZyb44LiAwNGYU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf5JTx/AZAJaXMc226F93j056Gaq4NqcJTc7nPnLc3LOQJOeSp
+	dIcNQVWQIhVvN2IgZXFY2d1RmcsTIwVJ7LSM3BVQy2dMckVxvR3hjpnfSoj0uG2/m+pUWwaQfev
+	WNi1ranpUaOD4pqiX5mxNtt/r5SoQfqC+
+X-Gm-Gg: ASbGncswaC0396qD4Mh0004y1n31aALKXtqrKCxrB1BXQuvjI9dtsemQ9/FbVMxkSux
+	abnycRwhAGPH03AWAH4tcR4yUmVs1tWdbtHO34EJ0qj/CYDD6vRJlxJvJlXwxcjsEfyC4r9rP0Q
+	KbtmKmmvY/vi+Y2b18KGNNkFi7xaFwvreWrewY2K4+S8O/bDmoVuI7aWqiav57
+X-Google-Smtp-Source: AGHT+IHR5yqYgsnTZoDIb5FHZp75NyxUBVYevHQmqRIhK0zQdvA00g0tK6YLQmErVE3AGIjs1/CFLXdqqukNHYmCnyc=
+X-Received: by 2002:a05:651c:50a:b0:30c:5c6:91cd with SMTP id
+ 38308e7fff4ca-30dc5e3144fmr19049281fa.13.1743097605340; Thu, 27 Mar 2025
+ 10:46:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326020215.3689624-1-peng.fan@oss.nxp.com>
+From: Sharan Kumar Muthu Saravanan <sharweshraajan@gmail.com>
+Date: Thu, 27 Mar 2025 23:16:34 +0530
+X-Gm-Features: AQ5f1JoA2LVCatsBU7abtKWg8JKbG4rmS9BUmyvc18cxYG2CWo5g9cLZe5GRImQ
+Message-ID: <CAGo=CcJaF3bt511abOtgQ0OXjoDmw8bota3dkVQw5fe0SfHLpw@mail.gmail.com>
+Subject: ALSA: hda/realtek: Enable Mute LED on HP OMEN Laptop xd000xx
+To: tiwai@suse.com
+Cc: inux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+This HP Laptop uses ALC245 codec, and this codec was already used but
+on your previous patches which i referred said that led off coef can
+be set to 0
 
-On Wed, Mar 26, 2025 at 10:02:14AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> There is case as below could trigger kernel dump:
-> Use U-Boot to start remote processor(rproc) with resource table
-> published to a fixed address by rproc. After Kernel boots up,
-> stop the rproc, load a new firmware which doesn't have resource table
-> ,and start rproc.
->
+Signed-off-by: M SHARAN KUMAR <sharweshraajan@gmail.com>
 
-If a firwmare image doesn't have a resouce table, rproc_elf_load_rsc_table()
-will return an error [1], rproc_fw_boot() will exit prematurely [2] and the
-remote processor won't be started.  What am I missing?
+---
+ sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-[1]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_elf_loader.c#L338
-[2]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_core.c#L1411 
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index a84857a3c2bf..8c2375476952 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4739,6 +4739,21 @@ static void
+alc245_fixup_hp_mute_led_coefbit(struct hda_codec *codec,
+                snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
+        }
+ }
++static void alc245_fixup_hp_mute_led_v1_coefbit(struct hda_codec *codec,
++                                           const struct hda_fixup *fix,
++                                               int action)
++{
++       struct alc_spec *spec = codec->spec;
++
++       if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++               spec->mute_led_polarity = 0;
++               spec->mute_led_coef.idx = 0x0b;
++               spec->mute_led_coef.mask = 3 << 2;
++               spec->mute_led_coef.on = 1 << 3;
++               spec->mute_led_coef.off = 0;
++               snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
++       }
++}
 
-> When starting rproc with a firmware not have resource table,
-> `memcpy(loaded_table, rproc->cached_table, rproc->table_sz)` will
-> trigger dump, because rproc->cache_table is set to NULL during the last
-> stop operation, but rproc->table_sz is still valid.
-> 
-> This issue is found on i.MX8MP and i.MX9.
-> 
-> Dump as below:
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> Mem abort info:
->   ESR = 0x0000000096000004
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x04: level 0 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af63000
-> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 2 UID: 0 PID: 1060 Comm: sh Not tainted 6.14.0-rc7-next-20250317-dirty #38
-> Hardware name: NXP i.MX8MPlus EVK board (DT)
-> pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : __pi_memcpy_generic+0x110/0x22c
-> lr : rproc_start+0x88/0x1e0
-> Call trace:
->  __pi_memcpy_generic+0x110/0x22c (P)
->  rproc_boot+0x198/0x57c
->  state_store+0x40/0x104
->  dev_attr_store+0x18/0x2c
->  sysfs_kf_write+0x7c/0x94
->  kernfs_fop_write_iter+0x120/0x1cc
->  vfs_write+0x240/0x378
->  ksys_write+0x70/0x108
->  __arm64_sys_write+0x1c/0x28
->  invoke_syscall+0x48/0x10c
->  el0_svc_common.constprop.0+0xc0/0xe0
->  do_el0_svc+0x1c/0x28
->  el0_svc+0x30/0xcc
->  el0t_64_sync_handler+0x10c/0x138
->  el0t_64_sync+0x198/0x19c
-> 
-> Clear rproc->table_sz to address the issue.
-> 
-> While at here, also clear rproc->table_sz when rproc_fw_boot and
-> rproc_detach.
-> 
-> Fixes: 9dc9507f1880 ("remoteproc: Properly deal with the resource table when detaching")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V2:
->  Clear table_sz when rproc_fw_boot and rproc_detach per Arnaud
-> 
->  drivers/remoteproc/remoteproc_core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c2cf0d277729..1efa53d4e0c3 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1442,6 +1442,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +	rproc->table_sz = 0;
->  unprepare_rproc:
->  	/* release HW resources if needed */
->  	rproc_unprepare_device(rproc);
-> @@ -2025,6 +2026,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +	rproc->table_sz = 0;
->  out:
->  	mutex_unlock(&rproc->lock);
->  	return ret;
-> @@ -2091,6 +2093,7 @@ int rproc_detach(struct rproc *rproc)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +	rproc->table_sz = 0;
->  out:
->  	mutex_unlock(&rproc->lock);
->  	return ret;
-> -- 
-> 2.37.1
-> 
+ /* turn on/off mic-mute LED per capture hook by coef bit */
+ static int coef_micmute_led_set(struct led_classdev *led_cdev,
+@@ -7883,6 +7898,7 @@ enum {
+        ALC245_FIXUP_TAS2781_SPI_2,
+        ALC287_FIXUP_YOGA7_14ARB7_I2C,
+        ALC245_FIXUP_HP_MUTE_LED_COEFBIT,
++       ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT,
+        ALC245_FIXUP_HP_X360_MUTE_LEDS,
+        ALC287_FIXUP_THINKPAD_I2S_SPK,
+        ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD,
+@@ -10126,6 +10142,10 @@ static const struct hda_fixup alc269_fixups[] = {
+                .chained = true,
+                .chain_id = ALC285_FIXUP_THINKPAD_HEADSET_JACK,
+        },
++       [ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT] = {
++               .type = HDA_FIXUP_FUNC,
++               .v.func = alc245_fixup_hp_mute_led_v1_coefbit,
++       },
+        [ALC245_FIXUP_HP_MUTE_LED_COEFBIT] = {
+                .type = HDA_FIXUP_FUNC,
+                .v.func = alc245_fixup_hp_mute_led_coefbit,
+@@ -10569,6 +10589,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+        SND_PCI_QUIRK(0x103c, 0x8a0f, "HP Pavilion 14-ec1xxx",
+ALC287_FIXUP_HP_GPIO_LED),
+        SND_PCI_QUIRK(0x103c, 0x8a20, "HP Laptop 15s-fq5xxx",
+ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+        SND_PCI_QUIRK(0x103c, 0x8a25, "HP Victus 16-d1xxx (MB 8A25)",
+ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
++       SND_PCI_QUIRK(0x103c, 0x8bcd, "HP Omen 16-xd0xxx (MB 8BCD)",
+ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT),
+        SND_PCI_QUIRK(0x103c, 0x8a28, "HP Envy 13", ALC287_FIXUP_CS35L41_I2C_2),
+        SND_PCI_QUIRK(0x103c, 0x8a29, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
+        SND_PCI_QUIRK(0x103c, 0x8a2a, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
+--
 
