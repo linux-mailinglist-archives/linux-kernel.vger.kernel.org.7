@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-578417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7FBA7307E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:46:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31562A730AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072BF189EEBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:43:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075313BC57F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3349F214235;
-	Thu, 27 Mar 2025 11:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94907213E6F;
+	Thu, 27 Mar 2025 11:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oE4vReb+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pp7ByAOC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EFF2135B3;
-	Thu, 27 Mar 2025 11:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EF42135CF;
+	Thu, 27 Mar 2025 11:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743075782; cv=none; b=J1QX+LuVs0GOD0fWLwTgMXlBzWwoA9KuXKj1745pwoQZCmnUTjqEWbKLALdNakyvLhgmvOZXQGPvDAVa5wvG3+0w9bPtK9nExcB4drpHw2VA+E1ooLtQcSaOw51SMJETliw6Pal02ImBclW8KjK29mOe6ZS5+s5iYVT/PRlWrL4=
+	t=1743075798; cv=none; b=lAJcnNSQGW8mlFAtHzaDsdRED0DgOKu0XyEbX8JUpVw7HsNhu7s0sY7+lnTJY5nUbnvM+GcsTYFDot1NEmwlYXWRU7vTmM+lg5L2CvEYENyxxnzygKH+lc7m32CJdKsmk3qI70OlEyRMngBz28loR2TOL9lS3d5iuTD4T178/x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743075782; c=relaxed/simple;
-	bh=VCLUDpdbtwekbJxTmpwBa3iXtRAsiaJOSlL8AoOO+oM=;
+	s=arc-20240116; t=1743075798; c=relaxed/simple;
+	bh=N9fiOT2qCHps6OIB3uTC1sIuTQsv+OckRQ/04tIMado=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpW+R+6gfgKUWG4pUo8x+q5zod4+K33RycrmedeJ5ZXqYLzRYfQlPEzk1rA7PZRPYtvzP8nWtQSZHccecK0U5rvFsEXlgJAK0Zi4bLRoGkMb6a3U6KCreNcf9p95dFODaiFE/p9yOJWKM7DIRpJKNKNrQ6gVNOouVBWBFX33r1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oE4vReb+; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743075781; x=1774611781;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VCLUDpdbtwekbJxTmpwBa3iXtRAsiaJOSlL8AoOO+oM=;
-  b=oE4vReb+CCgPTXNWE49HLqYyzodPN0pVhxfrcuvdvfGH55yul2zQ63+P
-   YALQYK4Whz4nZeMxq48IUEsQ8LB1lF7IkvcadV8/ZfOtc29PrhPwvt8V1
-   mbn3ya+uOwN1BwOzPRzgk0txN7bGJefr6TC/RJbENBPwthqG+v1xlClBT
-   SFqJnCv+WjNU7g1IYjsdsiW5H612aUlFUvunWqAmi3STido/wwvCIkcb/
-   VR03HgndI882a4oV0MDyTXbuebf34IcebVwTtmHLnja7F12+JcYFyH8vP
-   Tm+J7BtJTBEzSumHS8o8z01zWQWrNUcDa24ffmkgT+007WZkBToll7U5o
-   w==;
-X-CSE-ConnectionGUID: gDJWJ1YJSIiTsrSzoGsh3w==
-X-CSE-MsgGUID: NiO5vfizT8mxarYxKEdy/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="69765449"
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="69765449"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 04:43:00 -0700
-X-CSE-ConnectionGUID: 4b7knrmyQRCxDSae82fy4g==
-X-CSE-MsgGUID: MbSA80+HTk6llZlVf7p1bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,280,1736841600"; 
-   d="scan'208";a="126048114"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 04:42:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1txldM-00000006QO5-1Mcw;
-	Thu, 27 Mar 2025 13:42:52 +0200
-Date: Thu, 27 Mar 2025 13:42:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Zijun Hu <quic_zijuhu@quicinc.com>, Hannes Reinecke <hare@suse.de>,
-	Al Viro <viro@zeniv.linux.org.uk>, Li Zetao <lizetao1@huawei.com>,
-	Anuj Gupta <anuj20.g@samsung.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/2] PCI: Remove pcim_iounmap_regions()
-Message-ID: <Z-U5vIbVDZLe9QnM@smile.fi.intel.com>
-References: <20250327110707.20025-2-phasta@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IIPPPtpj5tkg50B+aBeDenYIFzr3Elnhd+p7B7pu+eC0Q+1ubuYN4kOKSk4HxtzkVFseKuD6iHISDU6Okvc1PqrnUjxMhduGmF6VH1OnQKkWJepN8V0hRb1hQmcC9V1UWwdiVN9Ux/StcqiYgTUZGligmLRdDP1mFUwiWQwWE2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pp7ByAOC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2276C4CEDD;
+	Thu, 27 Mar 2025 11:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743075797;
+	bh=N9fiOT2qCHps6OIB3uTC1sIuTQsv+OckRQ/04tIMado=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pp7ByAOCDJDq0nivwm107H06bBmgYXxp4PvpmYwAZDNDe8uo4tHJJauqRu1uC7sWZ
+	 0leAdhV7x4v5h5ngShstl2P4PvQLickJ9dJFONxlKQJGP6KUTj1Xpq5fUzZ6F7PWQY
+	 kToKTkmbC2zpJY5RZA2c+K791T9bcR0Gud6QrFaXiwEB7r2Y8ew5F6sHMYXdKnhjuh
+	 4Cno/FFtIbZa/dJRURQUmYmk/cjcD+NMqApfxN/81UMKZAv3OA1kMM5UsxdF6vBh1T
+	 m+drFXWGMC+FUHvXdQ6EdxWC0bW6vMSoN9Mryq4/LLEgXRI4KxpuLsgHwvGwvJnQca
+	 SiljulivhhxbA==
+Date: Thu, 27 Mar 2025 11:43:11 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.6 00/76] 6.6.85-rc2 review
+Message-ID: <59fd1354-2f2b-4cca-814b-b8d3e5f8ab74@sirena.org.uk>
+References: <20250326154346.820929475@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iho6y+5l47QAZFVI"
+Content-Disposition: inline
+In-Reply-To: <20250326154346.820929475@linuxfoundation.org>
+X-Cookie: Multics is security spelled sideways.
+
+
+--iho6y+5l47QAZFVI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250327110707.20025-2-phasta@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Mar 27, 2025 at 12:07:06PM +0100, Philipp Stanner wrote:
-> The last remaining user of pcim_iounmap_regions() is mtip32 (in Linus's
-> current master)
-> 
-> So we could finally remove this deprecated API. I suggest that this gets
-> merged through the PCI tree.
+On Wed, Mar 26, 2025 at 11:44:35AM -0400, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.85 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Good god! One API less, +1 to support this move.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Mark Brown <broonie@kernel.org>
 
-> (I also suggest we watch with an eagle's
-> eyes for folks who want to re-add calls to that function before the next
-> merge window opens).
+--iho6y+5l47QAZFVI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Instead of this I suggest that PCI can take this before merge window finishes
-and cooks the (second) PR with it. In such a case we wouldn't need to care,
-the developers will got broken builds.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-With Best Regards,
-Andy Shevchenko
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflOc4ACgkQJNaLcl1U
+h9Agswf+JwIUxV3yIXIKePlD/4Ba+CcVUP1IVMCG4yNwlWhIForOsqYCUhG8l3uQ
+ytbprdJwDhv5KzvktjtAQPHJx90T4wopQZICmpzCd96HkM1vCUq8ptjVg9/d2cJS
+FwvkHqenfpKOIPvzL3rcwx6U2C8xdHpXeefAZ+qw8fqmw5PfklFAztgr/Z+MA1fd
+r9N+jSqLnZSje1wJO7tj8HnBDoiBBJByxaGCWHEQrkY655crfQRDGQJ/g6olNG6F
+GgxXxvtsO2rk2NCAuIfIDAk/PU2bbAKYaIXjSaIRWRTOjmDUj9EOGXJ/dblD3QzL
+0hR6PUzsLuPS7hvp3xX7kXpg0tLlBw==
+=8G6M
+-----END PGP SIGNATURE-----
 
-
+--iho6y+5l47QAZFVI--
 
