@@ -1,116 +1,104 @@
-Return-Path: <linux-kernel+bounces-579119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D77A73FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:06:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBD8A73FD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 22:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789731B6332F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:02:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37083AA8EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 21:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9567E201039;
-	Thu, 27 Mar 2025 20:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D1A1D6DD4;
+	Thu, 27 Mar 2025 20:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoY7SGc7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IobFMYmC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F157E20102A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9B41624C2;
+	Thu, 27 Mar 2025 20:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743108934; cv=none; b=CAn5xzy2Weh1wpUOn/GWc8afj1WD4rD172o8eg5fjqx9GnC18WfW4VIfArX1coSJ2E/VAtP9Yb8IoJq2tZpwCZpNjzj6VyZZOBvmL09syEe8eoNsbgV/ewc5v+4UmE0ilUbaXNbi5kMKQUe7XBByU9YisPxUw7ji2NtiIRCj4sw=
+	t=1743109023; cv=none; b=BUzsbPonVCSfdM7HU3hucoY3AOI++MvHRpwK6CerwcKn8Ghs4z0YP1JbeBjCQRkKmp71y5iHYo23GvVzK+NQd7eq7jgefJ7dKfGVZas8oOuHfXZ/fMgnVTNtsieHUhWrr8lVK+/O5CPKAvRpcGFe1O9kgxppcLeQkmc8fwxLxlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743108934; c=relaxed/simple;
-	bh=UjD1AYfZXQ3g8Nnd8gn7w8mDASasb2fkP86nzz+63xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AM6e3FBB1Ed63D+jE+eZC3a2A0Tq7VYZZ5cym0MGzPFrSuzSxYMD5QUxsCepDXAVz09QcOq+QwRqKlqN4tpSU4WFUBltWxuQBqAxRpPLqCcKucnYpgRyNJk+TkXVhlu5CRSV3LiRnxWWkm1w9WI5uF+ec9ISyZiEJbxBu/KoX1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoY7SGc7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF392C4CEEA;
-	Thu, 27 Mar 2025 20:55:31 +0000 (UTC)
+	s=arc-20240116; t=1743109023; c=relaxed/simple;
+	bh=k965J4r67f9gDf6M03ogXhOMMMJERpqaXsXopGkUyrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFnJt6KPjaILho5BkbSAeq8bAihkCKL5tdi+IzHydjgf+Iq9Rd1/0B9a1JOIjpCoPj1lcTa2zZ5ELaEA4Hn5HKRObfYpqK2NKDlK5SCLtLF08HI2bqIZu0gpC95pFNJXCPi3olTdFlx6P0bY2HqvFgrtusl0Tv4daWkZBMc2Udw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IobFMYmC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43E2DC4CEDD;
+	Thu, 27 Mar 2025 20:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743108933;
-	bh=UjD1AYfZXQ3g8Nnd8gn7w8mDASasb2fkP86nzz+63xg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JoY7SGc7vjsPpmdxhAVyf0VOZOPDfNeGnNsMdHxeOiT9+FuTHNg8LaczKMSTxWuPk
-	 7Fmtu7hie5qsbiEb4hKtQXe4kReoP0T/q/zq8sFTPQ1D75Qo5tCJ+i08pufy2CdWd7
-	 x289Oop8/7QKi2Uxl79CiMrmylD5bMLGGKh2j62hgK6jWM9AdlUuISvbkj77iZAGTV
-	 Ai2btru7uaUs1GrYUqA2AV/25A8O1vxN7lM/mYGH7thT8xXdD3IkDPrw0hBycwVOzp
-	 bnPM5VJ1vhkjQEK8zIjebvvLDNhmeSUVDMOITp73iq/BHZ5nzUE2gRJhvoZi0IBqOu
-	 FoBbWjcnqMdjg==
+	s=k20201202; t=1743109023;
+	bh=k965J4r67f9gDf6M03ogXhOMMMJERpqaXsXopGkUyrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IobFMYmCjS6A956MvZWr9OlF1ezNb0xk5tv0RvQp3a8buZqkAwy7PoL6jMs9ZYQFe
+	 El7w1LBGuK7aG3IaVSRYH7QXt+shX4uil8KxhjfEgJJEPhtF5xzZAFcJLcjaSUcnCE
+	 qqXumV7+9j5utajJqflF93JPEFLD5oxVPo9BJIS2GjBkQDlMal4f4wpobPFES1B5iM
+	 ujUVmGMJa20BojdeiZO8WO2jWq91eIeaD2zMzvZNvsLdjUZJ2IRZb33YRMt0eMWXox
+	 SvS/ZeDvuVuAvJGak4rV8ZAHO5+ADFYI3pYWj/3PyF9n5kEPBJJnDG4MgZN+ioSK+u
+	 AdF7ElJfOAoIw==
+Date: Thu, 27 Mar 2025 21:56:57 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 39/41] x86/alternatives: Move tp_array completion from text_poke_int3_finish() and text_poke_int3_flush() to text_poke_int3_batch_process()
-Date: Thu, 27 Mar 2025 21:53:52 +0100
-Message-ID: <20250327205355.378659-40-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250327205355.378659-1-mingo@kernel.org>
-References: <20250327205355.378659-1-mingo@kernel.org>
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <Z-W7mRAkMfFyJ6sE@gmail.com>
+References: <Z-B_R737uM31m6_K@gmail.com>
+ <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
+ <Z-EGvjhkg6llyX24@gmail.com>
+ <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
+ <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
+ <20250324113304.GB14944@noisy.programming.kicks-ass.net>
+ <Z-JsJruueRgLQ8st@gmail.com>
+ <20250325103047.GH36322@noisy.programming.kicks-ass.net>
+ <Z-KS7H6666PZ3eKv@gmail.com>
+ <20250325123119.GL36322@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325123119.GL36322@noisy.programming.kicks-ass.net>
 
-Simplifies the code and improves code generation a bit:
 
-   text	   data	    bss	    dec	    hex	filename
-  14769	   1017	   4112	  19898	   4dba	alternative.o.before
-  14742	   1017	   4112	  19871	   4d9f	alternative.o.after
+* Peter Zijlstra <peterz@infradead.org> wrote:
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/alternative.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+> On Tue, Mar 25, 2025 at 12:26:36PM +0100, Ingo Molnar wrote:
+> 
+> > Yeah, so I do know what #BP is, but what the heck disambiguates the two 
+> > meanings of _bp and why do we have the above jungle of an inconsistent 
+> > namespace? :-)
+> > 
+> > Picking _int3 would neatly solve all of that.
+> 
+> Sure; the most obvious case where BP would make sense, the trap entry
+> point, we already use int3 so yeah, make it int3 throughout.
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ba322a29aefd..1b523496a2f6 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -2750,6 +2750,9 @@ static void text_poke_int3_batch_process(void)
- 		if (unlikely(!atomic_dec_and_test(refs)))
- 			atomic_cond_read_acquire(refs, !VAL);
- 	}
-+
-+	/* They are all completed: */
-+	tp_array.nr_entries = 0;
- }
- 
- static void text_poke_int3_loc_add(void *addr, const void *opcode, size_t len, const void *emulate)
-@@ -2857,20 +2860,16 @@ static bool tp_addr_ordered(void *addr)
- 
- void text_poke_int3_finish(void)
- {
--	if (tp_array.nr_entries) {
-+	if (tp_array.nr_entries)
- 		text_poke_int3_batch_process();
--		tp_array.nr_entries = 0;
--	}
- }
- 
- static void text_poke_int3_flush(void *addr)
- {
- 	lockdep_assert_held(&text_mutex);
- 
--	if (tp_array.nr_entries == TP_ARRAY_NR_ENTRIES_MAX || !tp_addr_ordered(addr)) {
-+	if (tp_array.nr_entries == TP_ARRAY_NR_ENTRIES_MAX || !tp_addr_ordered(addr))
- 		text_poke_int3_batch_process();
--		tp_array.nr_entries = 0;
--	}
- }
- 
- /**
--- 
-2.45.2
+Okay - I just sent out a series to do this. Found a few other things to 
+fix/improve along the way:
 
+	https://lore.kernel.org/r/20250327205355.378659-1-mingo@kernel.org
+
+Thanks,
+
+	Ingo
 
