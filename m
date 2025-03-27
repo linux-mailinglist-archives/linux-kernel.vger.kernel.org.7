@@ -1,137 +1,119 @@
-Return-Path: <linux-kernel+bounces-578073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF37A72A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:10:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3862DA72A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDDD1701A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA3D1890C0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 07:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531151CAA95;
-	Thu, 27 Mar 2025 07:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062A91CEAA3;
+	Thu, 27 Mar 2025 07:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U04CPQDc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cu4Lslcz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0315C2C8;
-	Thu, 27 Mar 2025 07:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD93C2C8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 07:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743059347; cv=none; b=EV11jt5TvoyKAFRxtHSvDyOlafbZ92bBc3XjQQGm8Jx14hUK9VOug0kjJ0M0Uv5BmtA+UcbqED5RGDUVLC4P25BTJfKveJfRw5MCs5ml4ecNok9VAZFYN3eQ9Z4kb8ZjQ3VN8BYDirS1NH8rM3UL7JC5sHunzv1Su1WNrgvkqnY=
+	t=1743059562; cv=none; b=HmyEWDliT5xNEUSDE8guXwX1q7qMmeXh0sRCiftVlHHwxsiuX19AiPGoJcOtw0PfJTNXjDCOR8JhKDXOa1h4IP+jT29wB8DQNwcE5eLrRX1ZUnRetJnVH01qs55kUqUr4dTh+ScxSQiMzggrgVkOTLMT9Ihpec4NXVvJcjrcGoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743059347; c=relaxed/simple;
-	bh=RTO5t/LI0jIMfKv+KM5XxXFziRhRYwgdAn1ECXSY6XM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVh+hT0uPTsNbLpcGXo2ycwyVgv19dXcdQ5jeWMzF1Gx3pJM68RLh7KW2xp1KyLsNR/RUIGg8M3kVhL+2qznuWwPPgiX8jGaPlR9dB2ZIzWb4dNXD95VeH8Egap6nwsZQXidYt8UqBPUVu2zn/R7pFBNS7lcoBGDUdsCwIh0lmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U04CPQDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B918C4CEDD;
-	Thu, 27 Mar 2025 07:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743059347;
-	bh=RTO5t/LI0jIMfKv+KM5XxXFziRhRYwgdAn1ECXSY6XM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U04CPQDcY3gzL8RpY9KoV0VVAL012KmNh2pSctz+IrjUMuuJUf2dQuWF/K3llVV8B
-	 cCEyG5XPLhQlOi25ILmRnCqjbpTB7u7TLyfBKIttZ9tLc+aTrDowJ9A9jLlgsQRuQO
-	 eYS/C+V7hIuUuiV/mz+Rr9WzaoE920ea4rCT/lbSjrAFDeCc4YTJzPBJ3SY+4wcQAt
-	 8OSk+wTKvxSL/qVWW/WSp48rewfqL9vpx7qQCeNXS92ic4wSrcCmTXV5aToVDRPrdE
-	 UK7Ok39Y0XVdmv4kGEgW9+PoGlxx6f7KaOyDQRvQrF2xUfEBufH55tyWCHx2NFcu+o
-	 nA0Dx3TMKlCEQ==
-Message-ID: <da93bf6c-b4bc-4c4f-9373-583fbd0c031c@kernel.org>
-Date: Thu, 27 Mar 2025 08:09:00 +0100
+	s=arc-20240116; t=1743059562; c=relaxed/simple;
+	bh=kWnkqGmb4g6Askmybg+1eKZXKnBANORnQqKnQWrsO64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IAFtLdbpZmQ48oAMHAO+RJUtXuDshJb3MUZjZuAq8lQjoIWnL58/XB+383sKG8ReqAtc06JUXQqOUNX5M+8XpbegO2TM0e2yZGR4X9tGOESzjKeCv7Jte2ujSuPJOonx/bCrV7hIkwNN1GnHkcrU3jB6qz7SWdYmz2Xn8rSx3Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cu4Lslcz; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227aaa82fafso14168975ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 00:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743059560; x=1743664360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/xbdb3Q23KDbzMapeISquzFQrHEt5ZEKz4vyQX8oNvk=;
+        b=cu4LslczJbA6SmpMkbdu/SaMdoBdg5ScIzcYHZiaCQwxd2TbYUxsjFi0Dz8MiDGA6D
+         xUjZkLqfBxaBfN7Gc3n4hEkoBF7kvpAuxRxBOz0Uf9t3zgNWsHfTyvA1FZ2O/l91K16c
+         T2XtU7eFoIl15kSnJpXuC+vgrhAhFg5UqKynncub1GGqnfc4tedefbauttwqPsDFfcHR
+         jSdFTC4Hyvf0Qq3f4S0WldD6fq7WzKhLoBccD0pR7hlefGooo+KuQBqqcLos0PQTRTXT
+         dZu2MNT7dOnRPg6a5dpW54cdxu8vHxdLohwAiyNG3wUgUzzalXE4IWPzHfYaCUgwP25u
+         QCxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743059560; x=1743664360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/xbdb3Q23KDbzMapeISquzFQrHEt5ZEKz4vyQX8oNvk=;
+        b=tirlwebUsi5YhxRndTv8ENSXTxjkgL1hx1U2xzmnicDIMHcL4A8HUEFIPJoRMOnXlF
+         TZWO7866G0Yf/0E0mMT1icHR5bBKC0JNvG/KQ7tGgTSSlbAg4NU4tlcn1HYEWAPbg0QZ
+         CIXFUVMutQ0vePp0t4CpuEJtCyJwvOVU6euh1T5DEUAqRhmHM9Rq7wrJNa5d52UwQmRk
+         KxjherTl39dADVRI8o+2sFJPV7QHM+B4Zn/O4P9+MnbymOZWiWNNbzmfcmCnnJItuVwG
+         bbsy5udqINJEz+m1nCCL40Eza4fJ6/7cDra2wL+8H6jIOK+CRC5S2BMrhgzn+4b0I/Oq
+         nCUQ==
+X-Gm-Message-State: AOJu0YznzXvVo8BHcrhU3Osf07VirIpVe7e4Xw14d2opDKV063mRv7fL
+	KWpR+mS6UrHCJDLQYD3pStU78LdPCiNAf+yHIEZul/GQd61BghBU
+X-Gm-Gg: ASbGncu+3pgbvF89tyaIQzL801k/9gSQktavV+7BDnTxHg6R4hVwaJqOHcPhvXOsVRX
+	b+s0H6nmXd/ZLKw/edCmZAh+Mzeu/h1fSV6g6+rson49HwWL0KnCsLWTYn+A725UFKgp23e50+I
+	leSLcFWcWk9zwpgk6Vf87k+J1w+kayp1Pfnkz3vvXpW0FnhEW+hqCezej8LZCBa29BglWVT4PfE
+	P4y4KFuNeyHrs5u38vl+Zy1PmeII/DAMU8bClCyK/q8LHptH9TBt7dIPUKv8F3zjL3LY66FIL/X
+	2GjG+a+7Q7uwOUDZdbrDjto+W2m0YFE388sBzj7gYKjQKZQRnuhzbzPvHuJjY9XEO4VmW9fNAcH
+	jk90ZmOiPXfB3HOHzw78TjixrJsDDYM5ovBrSNbhtAt/Wtg==
+X-Google-Smtp-Source: AGHT+IFDp8VpQjWHlX3gp+6smleu2nKPG7xnbgHcyHRmfYtPjB7KEC9FFa7q7HitUa+EWY/gaVymHg==
+X-Received: by 2002:a17:903:230c:b0:224:1eab:97b2 with SMTP id d9443c01a7336-22804950c59mr35976535ad.53.1743059559993;
+        Thu, 27 Mar 2025 00:12:39 -0700 (PDT)
+Received: from codespaces-3dd663.dxrpqgqhlb3ehogrxrezr215ye.rx.internal.cloudapp.net ([20.192.21.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b7fdesm121580375ad.143.2025.03.27.00.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 00:12:39 -0700 (PDT)
+From: adityagarg1208@gmail.com
+X-Google-Original-From: gargaditya08@live.com
+To: jikos@kernel.org,
+	torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Aditya Garg <gargaditya08@live.com>
+Subject: [PATCH] HID: hid-appletb-kbd: Fix wrong date and kernel version in sysfs interface docs
+Date: Thu, 27 Mar 2025 07:12:08 +0000
+Message-ID: <20250327071233.12237-1-gargaditya08@live.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dt-bindings: Add OmniVision OV02C10
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, robh@kernel.org,
- hdegoede@redhat.com, mchehab@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, bod@kernel.org
-References: <20250324171508.GA668235-robh@kernel.org>
- <20250326150114.71401-1-bryan.odonoghue@linaro.org>
- <W8_0Ch2J0PWJ5pKHojZjFbM8huvxWlaWajtl_uhQF3UszGH_O8WTRZdQxh_eHs2JzLOx7CCxx01UZDHPQqAyCA==@protonmail.internalid>
- <1dd46a9e-e97d-415a-9e33-67ee234c4bac@kernel.org>
- <0de575dc-5afb-40fb-be30-99906d0e493b@linaro.org>
- <c1959f95-9ee1-4597-b6ec-fbedc8a872db@kernel.org>
- <afae182f-b264-4b57-acd7-2c2cf090e1ad@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <afae182f-b264-4b57-acd7-2c2cf090e1ad@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/03/2025 18:34, Bryan O'Donoghue wrote:
->>
->> I meant bindings are exactly the same, unless I missed something.
->> Devices are similar enough as well.
->>
->>> Seems simpler to me to have two separate files ?
->>
->> Not really, more files to maintain, more trivialities to fix if we
->> decide to change something in all bindings (e.g. style).
->>
->> Best regards,
->> Krzysztof
-> 
-> Hmm, so we have two in-flight series and one yaml file.
-> 
-> OK, I'll drop this patch and add ov02c10 to the ov02e10 yaml as you suggest.
-> 
-> So long as the yaml file goes in first, the order of application of the 
-> ov02c10/ov02e10 drivers won't matter and can be fixed with a cherry-pick.
-You can combine the series or add here a dependency.
+From: Aditya Garg <gargaditya08@live.com>
 
-Best regards,
-Krzysztof
+The driver hid-appletb-kbd was upstreamed in kernel 6.15. But, due to an
+oversight on my part, I didn't change the kernel version and expected
+date while upstreaming the driver, thus it remained as 6.5, the original
+kernel version when the driver was developed for downstream. This commit
+should fix this.
+
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+index 2a19584d0..8c9718d83 100644
+--- a/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
++++ b/Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/hid/drivers/hid-appletb-kbd/<dev>/mode
+-Date:		September, 2023
+-KernelVersion:	6.5
++Date:		March, 2025
++KernelVersion:	6.15
+ Contact:	linux-input@vger.kernel.org
+ Description:
+ 		The set of keys displayed on the Touch Bar.
+-- 
+2.49.0
+
 
