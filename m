@@ -1,178 +1,117 @@
-Return-Path: <linux-kernel+bounces-578135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E314EA72B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:17:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F4BFA72AF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 09:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1A1189AE74
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B62172BFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 08:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4AB1FF615;
-	Thu, 27 Mar 2025 08:15:54 +0000 (UTC)
-Received: from invmail3.skhynix.com (exvmail3.skhynix.com [166.125.252.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699BE14831F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4F81FF7D6;
+	Thu, 27 Mar 2025 08:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DCYdEoUU"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B963B10E4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 08:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743063353; cv=none; b=m/1RjGK7ZB3qQf2lpNYK/hfLkm+pZijK407mgOW7vtyJXUp6zuY7RXyIkVl4RmJfZGN/7KJeHfk/StVx0s9uARSZSD2gA4TeDSOaiSM2bKrY+lgxj64Nja1syjTfqMxAVq4nH5h5y6W5CnqmGDPHi8fw/z+lx17g8Uc7q7fxCug=
+	t=1743062486; cv=none; b=ubKbAnZwF2QfZAFY0LhaeY6fBJmX+M7L+IMFoP8wa8cBIYQrIWZV7fqYWQWgrUdHDDI7gRG1/pZNqSTfeZ0S9B70Y/1Mi+t8ROO738oMdT2hwjy0ZhrphdkB5sCXPxpiD6FA7pDU84cX43FLc2KMootPelWzwnElyRifZEvvE6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743063353; c=relaxed/simple;
-	bh=KOrLlP3xEOabRRMDrY3samUcXLFwPbVBnmQcHMjazrA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pwM8B5RpeOCZW81HkROBaH9qbzT175dD/6BC5ZZUUtFoJulBBC1vmnHmUe43t8XXlYIWqEWoYyfSdNU4RyFuJvN5qSXNk4HRgR3g37ZaMW7HA1ORwBLpyk2DxVHFikFpKaJYSjcETMR08GnqRGT839PdN8xbCrvXQ+SjF2pfPSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc59-057ff7000000aab6-47-67e505a76e30
-Received: from hymail21.hynixad.com (10.156.135.51) by hymail24.hynixad.com
- (10.156.135.54) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Thu, 27 Mar
- 2025 17:00:39 +0900
-Received: from hymail21.hynixad.com ([10.156.135.51]) by hymail21.hynixad.com
- ([10.156.135.51]) with mapi id 15.02.1544.014; Thu, 27 Mar 2025 17:00:39
- +0900
-From: =?utf-8?B?7KCV7JqU7ZWcKEpPVU5HIFlPSEFOKSBNb2JpbGUgQUU=?=
-	<yohan.joung@sk.com>
-To: Chao Yu <chao@kernel.org>, Yohan Joung <jyh429@gmail.com>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>, "daeho43@gmail.com"
-	<daeho43@gmail.com>
-CC: "linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	=?utf-8?B?6rmA7ZWE7ZiEKEtJTSBQSUxIWVVOKSBNb2JpbGUgQUU=?= <pilhyun.kim@sk.com>
-Subject: RE: [External Mail] Re: [External Mail] Re: [PATCH] f2fs: prevent the
- current section from being selected as a victim during garbage collection
-Thread-Topic: [External Mail] Re: [External Mail] Re: [PATCH] f2fs: prevent
- the current section from being selected as a victim during garbage collection
-Thread-Index: AQHbnt3fELlyoJQ1W0qLIYQiUdi4aLOGhdAQ//95qYCAAJuVkA==
-Date: Thu, 27 Mar 2025 08:00:38 +0000
-Message-ID: <8d1f6aa914f94f5da1ccd46c75e9031b@sk.com>
-References: <20250326141428.280-1-yohan.joung@sk.com>
- <bf3f571c-a6bf-4a17-8745-039b37ac4f48@kernel.org>
- <2d95428375bd4a5592516bb6cefe4592@sk.com>
- <deb42999-df89-471b-a161-e33b97f96b74@kernel.org>
-In-Reply-To: <deb42999-df89-471b-a161-e33b97f96b74@kernel.org>
-Accept-Language: ko-KR, en-US
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1743062486; c=relaxed/simple;
+	bh=kvCsp4ajSClfM+PQkPZ6FRU3m9/CysSi8g5CRuV/xIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmLQNpHV0E2rn7sE+YkZ+NpH76UwX/dmDxP+VNuwTj+o6rjE7GADVdSoIqi8nCNKykAOPLR63SqAyD0L/KMyFIngmdjY5AuR5GkjFGSwGr9o8TcqLhcZZRll99HVvGJrc1NY2HVwQy2YWftkNeYTzrom2X0GmhSb5ZLv0ocBiDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DCYdEoUU; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so88691466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 01:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743062483; x=1743667283; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a531H04jtlfrLiToQk74ZzGWSJg2ofCUbRy747MJx2A=;
+        b=DCYdEoUU/CmihWg/3l9WLPe+h32NAXC+N6tNlT1YzsXCBaDsLGeAr9G0opCSqIyOba
+         qqXuLlAm4y7v7wv+Aa4PpuwXjVeKCV9FRPX0UtYRJFwLrVbUpsuoo13LI+KdRAdgVXgm
+         erkTZMGrAGkcpHzkUxNb+PZcWBm71HgbXOm4jG5PCRMRdwBWyx0cc0EF49irttV4b0Di
+         7DndTh2f9N7+f7J9U0O02UA6GtN9o3oUs7vjsPqxPlRH4z0hYXUcqF+2YrhBANR49CvS
+         1HFrkh4zKns7MqFUBZ+RgWZuDJ9STrJI/VdEEyJz6hMo+xGxfJNJWmqVbpDo2diTO1wa
+         C7AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743062483; x=1743667283;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a531H04jtlfrLiToQk74ZzGWSJg2ofCUbRy747MJx2A=;
+        b=qDjz6bBr9ZlB346f6z6eI+ro0jkWQuF3WAH0wPvdvgj2ULcB5EuheoeKiouKYoWK/u
+         TZM9BKUE3+GKd1/kOwYKZobRhp0JHBkXGzbj22S/2cG8umgITkCmww2w6j9if0BUS6W2
+         f4y+1AKPftbT2930gXkLM2QLCn2uW5vLjRS+CXNQ/NzGl+3ZavcYGEimC5nzBPF7jz6S
+         tgJcLgC0AF2wyxYrbhBdqwhV7UIzVfTA1LSUgl6iOvys0GZq4SIOpG0QylMPLBHBeHA0
+         AKUfHhMU3gwK0j6lZxcTWiWiIAwQNVpX/9xi0S03P7OPDeXzdHiRjKC4zJ7/hwysXmyT
+         MuWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH8qh97WCZz1t9yQLvCgmB8z/9M7iR5RC+u6rHWv8pOFG+VjxJsPI7CI882cVMewaWjrJjrKPki1Ids9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLdTqbffb9JMHKIaV+io6ibz4rlm3/JMMczzn8XtMqbVP9ikcP
+	HphMWBoOv0G03yA7PNZcNp8lK1wHwr3TagIGlS0OQHQXVRWNVYVubsfjyV0XQD9KyDa3qA0dgqq
+	8
+X-Gm-Gg: ASbGncuchxkYLQJTFH8oOvzGa+sbMdX23y+roU6ZK+MRFu3WIUVQu2jWwZ4dluE4tK9
+	LtPicN5xnok20QEidL1nz8DwJW/gFt82z9aHTsd/mVbJveXY9GVQadditGevViYTJ0ocaS3EvOF
+	W6M5sKSo8MEGTb0vNElUM3+bJY4u77cfgc9mbPn08vCAv630hPKISTLN87FNFBfMZEdJvZpDbel
+	WxyJQRCmVf0RXYr8DDXgebh6TkTJd4yn8wViqVfAc6ThEWYRk8N7nx0wDXnC2lqYhTsOStVWUN/
+	YszzdMZv0VPkBLmwDxTFTmS9iMzAsYuSGi4AdPSATQ==
+X-Google-Smtp-Source: AGHT+IHlAyv/3p/10wHnvPzRB7knGR5QL1WFb/pxotTJbUre9F01yQVEOy4S9yoXSBNRVr+2aItjgA==
+X-Received: by 2002:a17:907:da4:b0:ac1:fa31:78cf with SMTP id a640c23a62f3a-ac6fb10c230mr234152366b.35.1743062482933;
+        Thu, 27 Mar 2025 01:01:22 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac70c6828fcsm58131266b.93.2025.03.27.01.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 01:01:22 -0700 (PDT)
+Date: Thu, 27 Mar 2025 10:01:20 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH] soc: qcom: pmic_glink: enable UCSI on sc8280xp
+Message-ID: <Z+UF0P5HHzqwejYc@linaro.org>
+References: <20250326124944.6338-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsXC9ZZnoe5y1qfpBj92yVlc3jWHzYHR4/Mm
-	uQDGKC6blNSczLLUIn27BK6Me7+OshScsqw4tfUMUwNjj0UXIyeHhICJxN0n/WxdjFwcQgJv
-	GCUmvdnMDOEsYJT48G0nUIaDg00gVGLrcnaQuIjAVEaJq/uPgxUxC7xklNh3/Q2YIywwi1Hi
-	7erXUGWzGSUenV7IDLJERMBJYurBE2CjWARUJTp/JIKEeQVMJe4c+c8Ese4ko8Tqf5uZQBKc
-	AnYSZ9e+ZwepZxSQlbh6TQYkzCwgLrH46zVmiLsFJJbsOQ9li0q8fPyPFaRcQkBR4u5WKRCT
-	WUBTYv0ufYhORYkp3Q/ZIbYKSpyc+YQFolNS4uCKGywTGMVmIVkwC6F7FpLuWUi6FzCyrGIU
-	ycwry03MzDHWK87OqMzLrNBLzs/dxAiMk2W1fyJ3MH67EHyIUYCDUYmHN4HjSboQa2JZcWXu
-	IUYJDmYlEV7JK0Ah3pTEyqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwc
-	nFINjDEhJrcjn+XX8POuaOnrnWyVLVEQc/pPiaNi8M8DUW+6tb7cP+srHckSyO4f0pGnsVdW
-	baNhvn6tksk6x7PsHlqnQh8l31y5eOoaj6s/i1cYrytj+meZcG3+2pi10fc5CwOif/48nhTd
-	OXWapSSH75MpC8718WWxtqQbLUjwnSO7N/LtFoNlSizFGYmGWsxFxYkAyEh1Co8CAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326124944.6338-1-johan+linaro@kernel.org>
 
-PiBGcm9tOiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJj
-aCAyNywgMjAyNSA0OjMwIFBNDQo+IFRvOiDsoJXsmpTtlZwoSk9VTkcgWU9IQU4pIE1vYmlsZSBB
-RSA8eW9oYW4uam91bmdAc2suY29tPjsgWW9oYW4gSm91bmcNCj4gPGp5aDQyOUBnbWFpbC5jb20+
-OyBqYWVnZXVrQGtlcm5lbC5vcmc7IGRhZWhvNDNAZ21haWwuY29tDQo+IENjOiBjaGFvQGtlcm5l
-bC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyBsaW51eC0NCj4g
-a2VybmVsQHZnZXIua2VybmVsLm9yZzsg6rmA7ZWE7ZiEKEtJTSBQSUxIWVVOKSBNb2JpbGUgQUUg
-PHBpbGh5dW4ua2ltQHNrLmNvbT4NCj4gU3ViamVjdDogW0V4dGVybmFsIE1haWxdIFJlOiBbRXh0
-ZXJuYWwgTWFpbF0gUmU6IFtQQVRDSF0gZjJmczogcHJldmVudCB0aGUNCj4gY3VycmVudCBzZWN0
-aW9uIGZyb20gYmVpbmcgc2VsZWN0ZWQgYXMgYSB2aWN0aW0gZHVyaW5nIGdhcmJhZ2UgY29sbGVj
-dGlvbg0KPiANCj4gT24gMy8yNy8yNSAxNDo0MywgeW9oYW4uam91bmdAc2suY29tIHdyb3RlOg0K
-PiA+PiBGcm9tOiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+DQo+ID4+IFNlbnQ6IFRodXJzZGF5
-LCBNYXJjaCAyNywgMjAyNSAzOjAyIFBNDQo+ID4+IFRvOiBZb2hhbiBKb3VuZyA8anloNDI5QGdt
-YWlsLmNvbT47IGphZWdldWtAa2VybmVsLm9yZzsNCj4gPj4gZGFlaG80M0BnbWFpbC5jb20NCj4g
-Pj4gQ2M6IGNoYW9Aa2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQ7IGxpbnV4LQ0KPiA+PiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyDsoJXsmpTtlZwoSk9V
-TkcgWU9IQU4pIE1vYmlsZSBBRQ0KPiA+PiA8eW9oYW4uam91bmdAc2suY29tPg0KPiA+PiBTdWJq
-ZWN0OiBbRXh0ZXJuYWwgTWFpbF0gUmU6IFtQQVRDSF0gZjJmczogcHJldmVudCB0aGUgY3VycmVu
-dA0KPiA+PiBzZWN0aW9uIGZyb20gYmVpbmcgc2VsZWN0ZWQgYXMgYSB2aWN0aW0gZHVyaW5nIGdh
-cmJhZ2UgY29sbGVjdGlvbg0KPiA+Pg0KPiA+PiBPbiAzLzI2LzI1IDIyOjE0LCBZb2hhbiBKb3Vu
-ZyB3cm90ZToNCj4gPj4+IFdoZW4gc2VsZWN0aW5nIGEgdmljdGltIHVzaW5nIG5leHRfdmljdGlt
-X3NlZyBpbiBhIGxhcmdlIHNlY3Rpb24sDQo+ID4+PiB0aGUgc2VsZWN0ZWQgc2VjdGlvbiBtaWdo
-dCBhbHJlYWR5IGhhdmUgYmVlbiBjbGVhcmVkIGFuZCBkZXNpZ25hdGVkDQo+ID4+PiBhcyB0aGUg
-bmV3IGN1cnJlbnQgc2VjdGlvbiwgbWFraW5nIGl0IGFjdGl2ZWx5IGluIHVzZS4NCj4gPj4+IFRo
-aXMgYmVoYXZpb3IgY2F1c2VzIGluY29uc2lzdGVuY3kgYmV0d2VlbiB0aGUgU0lUIGFuZCBTU0Eu
-DQo+ID4+DQo+ID4+IEhpLCBkb2VzIHRoaXMgZml4IHlvdXIgaXNzdWU/DQo+ID4NCj4gPiBUaGlz
-IGlzIGFuIGlzc3VlIHRoYXQgYXJpc2VzIHdoZW4gZGl2aWRpbmcgYSBsYXJnZSBzZWN0aW9uIGlu
-dG8NCj4gPiBzZWdtZW50cyBmb3IgZ2FyYmFnZSBjb2xsZWN0aW9uLg0KPiA+IGNhdXNlZCBieSB0
-aGUgYmFja2dyb3VuZCBHQyAoZ2FyYmFnZSBjb2xsZWN0aW9uKSB0aHJlYWQgaW4gbGFyZ2UNCj4g
-PiBzZWN0aW9uDQo+ID4gZjJmc19nYyh2aWN0aW1fc2VjdGlvbikgLT4NCj4gPiBmMmZzX2NsZWFy
-X3ByZWZyZWVfc2VnbWVudHModmljdGltX3NlY3Rpb24pLT4NCj4gPiBjdXJzZWModmljdGltX3Nl
-Y3Rpb24pIC0+IGYyZnNfZ2ModmljdGltX3NlY3Rpb24gYnkgbmV4dF92aWN0aW1fc2VnKQ0KPiAN
-Cj4gSSBkaWRuJ3QgZ2V0IGl0LCB3aHkgZjJmc19nZXRfdmljdGltKCkgd2lsbCByZXR1cm4gc2Vj
-dGlvbiB3aGljaCBpcyB1c2VkDQo+IGJ5IGN1cnNlZz8gSXQgc2hvdWxkIGJlIGF2b2lkZWQgYnkg
-Y2hlY2tpbmcgdy8gc2VjX3VzYWdlX2NoZWNrKCkuDQo+IA0KPiBPciB3ZSBtaXNzZWQgdG8gY2hl
-Y2sgZ2Npbmcgc2VjdGlvbiB3aGljaCBuZXh0X3ZpY3RpbV9zZWcgcG9pbnRzIHRvIGR1cmluZw0K
-PiBnZXRfbmV3X3NlZ21lbnQoKT8NCj4gDQo+IENhbiB0aGlzIGhhcHBlbj8NCj4gDQo+IGUuZy4N
-Cj4gLSBiZ2djIHNlbGVjdHMgc2VjICMwDQo+IC0gbmV4dF92aWN0aW1fc2VnOiBzZWcgIzANCj4g
-LSBtaWdyYXRlIHNlZyAjMCBhbmQgc3RvcA0KPiAtIG5leHRfdmljdGltX3NlZzogc2VnICMxDQo+
-IC0gY2hlY2twb2ludCwgc2V0IHNlYyAjMCBmcmVlIGlmIHNlYyAjMCBoYXMgbm8gdmFsaWQgYmxv
-Y2tzDQo+IC0gYWxsb2NhdGUgc2VnICMwIGluIHNlYyAjMCBmb3IgY3Vyc2VnDQo+IC0gY3Vyc2Vn
-IG1vdmVzIHRvIHNlZyAjMSBhZnRlciBhbGxvY2F0aW9uDQo+IC0gYmdnYyB0cmllcyB0byBtaWdy
-YXRlIHNlZyAjMQ0KPiANCj4gVGhhbmtzLA0KVGhhdCdzIGNvcnJlY3QNCkluIGYyZnNfZ2V0X3Zp
-Y3RpbSwgd2UgdXNlIG5leHRfdmljdGltX3NlZyB0byANCmRpcmVjdGx5IGp1bXAgdG8gZ290X3Jl
-c3VsdCwgdGhlcmVieSBieXBhc3Npbmcgc2VjX3VzYWdlX2NoZWNrDQpXaGF0IGRvIHlvdSB0aGlu
-ayBhYm91dCB0aGlzIGNoYW5nZT8NCg0KQEAgLTg1MCwxNSArODUwLDIwIEBAIGludCBmMmZzX2dl
-dF92aWN0aW0oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1bnNpZ25lZCBpbnQgKnJlc3VsdCwN
-CiAgICAgICAgICAgICAgICAgICAgICAgIHAubWluX3NlZ25vID0gc2JpLT5uZXh0X3ZpY3RpbV9z
-ZWdbQkdfR0NdOw0KICAgICAgICAgICAgICAgICAgICAgICAgKnJlc3VsdCA9IHAubWluX3NlZ25v
-Ow0KICAgICAgICAgICAgICAgICAgICAgICAgc2JpLT5uZXh0X3ZpY3RpbV9zZWdbQkdfR0NdID0g
-TlVMTF9TRUdOTzsNCi0gICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZ290X3Jlc3VsdDsNCiAg
-ICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgaWYgKGdjX3R5cGUgPT0gRkdfR0MgJiYN
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2JpLT5uZXh0X3ZpY3RpbV9zZWdbRkdf
-R0NdICE9IE5VTExfU0VHTk8pIHsNCiAgICAgICAgICAgICAgICAgICAgICAgIHAubWluX3NlZ25v
-ID0gc2JpLT5uZXh0X3ZpY3RpbV9zZWdbRkdfR0NdOw0KICAgICAgICAgICAgICAgICAgICAgICAg
-KnJlc3VsdCA9IHAubWluX3NlZ25vOw0KICAgICAgICAgICAgICAgICAgICAgICAgc2JpLT5uZXh0
-X3ZpY3RpbV9zZWdbRkdfR0NdID0gTlVMTF9TRUdOTzsNCi0gICAgICAgICAgICAgICAgICAgICAg
-IGdvdG8gZ290X3Jlc3VsdDsNCiAgICAgICAgICAgICAgICB9DQorDQorICAgICAgICAgICAgICAg
-c2Vjbm8gPSBHRVRfU0VDX0ZST01fU0VHKHNiaSwgc2Vnbm8pOw0KKw0KKyAgICAgICAgICAgICAg
-IGlmIChzZWNfdXNhZ2VfY2hlY2soc2JpLCBzZWNubykpDQorICAgICAgICAgICAgICAgICAgICAg
-ICBnb3RvIG5leHQ7DQorDQorICAgICAgICAgICAgICAgZ290byBnb3RfcmVzdWx0Ow0KICAgICAg
-ICB9DQo+IA0KPiA+DQo+ID4gQmVjYXVzZSB0aGUgY2FsbCBzdGFjayBpcyBkaWZmZXJlbnQsDQo+
-ID4gSSB0aGluayB0aGF0IGluIG9yZGVyIHRvIGhhbmRsZSBldmVyeXRoaW5nIGF0IG9uY2UsIHdl
-IG5lZWQgdG8gYWRkcmVzcw0KPiA+IGl0IHdpdGhpbiBkb19nYXJiYWdlX2NvbGxlY3QsIG9yIG90
-aGVyd2lzZSBpbmNsdWRlIGl0IG9uIGJvdGggc2lkZXMuDQo+ID4gV2hhdCBkbyB5b3UgdGhpbms/
-DQo+ID4NCj4gPiBbMzAxNDYuMzM3NDcxXVsgVDEzMDBdIEYyRlMtZnMgKGRtLTU0KTogSW5jb25z
-aXN0ZW50IHNlZ21lbnQgKDcwOTYxKQ0KPiA+IHR5cGUgWzAsIDFdIGluIFNTQSBhbmQgU0lUIFsz
-MDE0Ni4zNDYxNTFdWyBUMTMwMF0gQ2FsbCB0cmFjZToNCj4gPiBbMzAxNDYuMzQ2MTUyXVsgVDEz
-MDBdICBkdW1wX2JhY2t0cmFjZSsweGU4LzB4MTBjIFszMDE0Ni4zNDYxNTddWw0KPiA+IFQxMzAw
-XSAgc2hvd19zdGFjaysweDE4LzB4MjggWzMwMTQ2LjM0NjE1OF1bIFQxMzAwXQ0KPiA+IGR1bXBf
-c3RhY2tfbHZsKzB4NTAvMHg2YyBbMzAxNDYuMzQ2MTYxXVsgVDEzMDBdICBkdW1wX3N0YWNrKzB4
-MTgvMHgyOA0KPiA+IFszMDE0Ni4zNDYxNjJdWyBUMTMwMF0gIGYyZnNfc3RvcF9jaGVja3BvaW50
-KzB4MWMvMHgzYyBbMzAxNDYuMzQ2MTY1XVsNCj4gPiBUMTMwMF0gIGRvX2dhcmJhZ2VfY29sbGVj
-dCsweDQxYy8weDI3MWMgWzMwMTQ2LjM0NjE2N11bIFQxMzAwXQ0KPiA+IGYyZnNfZ2MrMHgyN2Mv
-MHg4MjggWzMwMTQ2LjM0NjE2OF1bIFQxMzAwXSAgZ2NfdGhyZWFkX2Z1bmMrMHgyOTAvMHg4OGMN
-Cj4gPiBbMzAxNDYuMzQ2MTY5XVsgVDEzMDBdICBrdGhyZWFkKzB4MTFjLzB4MTY0IFszMDE0Ni4z
-NDYxNzJdWyBUMTMwMF0NCj4gPiByZXRfZnJvbV9mb3JrKzB4MTAvMHgyMA0KPiA+DQo+ID4gc3Ry
-dWN0IGN1cnNlZ19pbmZvIDogMHhmZmZmZmY4MDNmOTVlODAwIHsNCj4gPiAJc2Vnbm8gICAgICAg
-IDogMHgxMTUzMSA6IDcwOTYxDQo+ID4gfQ0KPiA+DQo+ID4gc3RydWN0IGYyZnNfc2JfaW5mbyA6
-IDB4ZmZmZmZmODgxMWQxMjAwMCB7DQo+ID4gCW5leHRfdmljdGltX3NlZ1swXSA6IDB4MTE1MzEg
-OiA3MDk2MQ0KPiA+IH0NCj4gPg0KPiA+Pg0KPiA+PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9s
-aW51eC1mMmZzLWRldmVsLzIwMjUwMzI1MDgwNjQ2LjMyOTE5NDctMi0NCj4gPj4gY2hhb0BrZXJu
-ZWwub3JnDQo+ID4+DQo+ID4+IFRoYW5rcywNCj4gPj4NCj4gPj4+DQo+ID4+PiBTaWduZWQtb2Zm
-LWJ5OiBZb2hhbiBKb3VuZyA8eW9oYW4uam91bmdAc2suY29tPg0KPiA+Pj4gLS0tDQo+ID4+PiAg
-ZnMvZjJmcy9nYy5jIHwgNCArKysrDQo+ID4+PiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9u
-cygrKQ0KPiA+Pj4NCj4gPj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2djLmMgYi9mcy9mMmZzL2dj
-LmMgaW5kZXgNCj4gPj4+IDJiOGY5MjM5YmVkZS4uNGI1ZDE4ZTM5NWViIDEwMDY0NA0KPiA+Pj4g
-LS0tIGEvZnMvZjJmcy9nYy5jDQo+ID4+PiArKysgYi9mcy9mMmZzL2djLmMNCj4gPj4+IEBAIC0x
-OTI2LDYgKzE5MjYsMTAgQEAgaW50IGYyZnNfZ2Moc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBz
-dHJ1Y3QNCj4gPj4gZjJmc19nY19jb250cm9sICpnY19jb250cm9sKQ0KPiA+Pj4gIAkJZ290byBz
-dG9wOw0KPiA+Pj4gIAl9DQo+ID4+Pg0KPiA+Pj4gKwlpZiAoX19pc19sYXJnZV9zZWN0aW9uKHNi
-aSkgJiYNCj4gPj4+ICsJCQlJU19DVVJTRUMoc2JpLCBHRVRfU0VDX0ZST01fU0VHKHNiaSwgc2Vn
-bm8pKSkNCj4gPj4+ICsJCWdvdG8gc3RvcDsNCj4gPj4+ICsNCj4gPj4+ICAJc2VnX2ZyZWVkID0g
-ZG9fZ2FyYmFnZV9jb2xsZWN0KHNiaSwgc2Vnbm8sICZnY19saXN0LCBnY190eXBlLA0KPiA+Pj4g
-IAkJCQlnY19jb250cm9sLT5zaG91bGRfbWlncmF0ZV9ibG9ja3MsDQo+ID4+PiAgCQkJCWdjX2Nv
-bnRyb2wtPm9uZV90aW1lKTsNCj4gPg0KDQo=
+On 25-03-26 13:49:44, Johan Hovold wrote:
+> Commit ad3dd9592b2a ("soc: qcom: pmic_glink: disable UCSI on sc8280xp")
+> disabled UCSI shortly after it had been enabled to fix a regression that
+> was observed on the Lenovo ThinkPad X13s.
+> 
+> Specifically, disconnecting an external display would trigger a system
+> error and hypervisor reset but no one cared enough to track down the bug
+> at the time.
+> 
+> The same issue was recently observed on X Elite machines, and commit
+> f47eba045e6c ("usb: typec: ucsi: Set orientation as none when connector
+> is unplugged") worked around the underlying issue by setting the
+> connector orientation to 'none' on disconnect events to avoid having the
+> PHY driver crash the machine in one orientation.
+> 
+> Enable UCSI support also on sc8280xp now that the DisplayPort disconnect
+> crashes are gone.
+> 
+> Cc: Abel Vesa <abel.vesa@linaro.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
