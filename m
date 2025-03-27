@@ -1,515 +1,270 @@
-Return-Path: <linux-kernel+bounces-578407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0382A73026
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:42:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 535A2A7304F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A8D3BF79D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9800A3BF0F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF1B21577E;
-	Thu, 27 Mar 2025 11:38:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307F21516B
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 11:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01F5213E88;
+	Thu, 27 Mar 2025 11:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GymUN+1D"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC06120D514;
+	Thu, 27 Mar 2025 11:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743075524; cv=none; b=Ej3WL8lqNNIvAP9Nol0sckfmpOXzzq1hPJAUGZb3zI2TPmHFx1OofPvm710u5r6ubL6cvt0HkFLs0wgcb+m6BSwfvx/E0tYFDZb0fMd+FAGgL0fIBbTvJYbq4C18yVCbvO4ugLufnW7EspswJ9nxk7cyiRSzCRr5XFxT3qgykZE=
+	t=1743075584; cv=none; b=Xz6vJWVwRPCclLerA40gRC1IZC//GQ/i8HtOVYG5sYyZXj+R0lDJNBsS0yXEfSEiUBN1o3a6EY2LCG1igzLhLnj87xotUFql1OZV3Jo2gNctxX6afimb3+fTX57/iOFB9VxpK/jpunbp1+ctbUt0+OXeB9TodJhDoKDMikzNDjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743075524; c=relaxed/simple;
-	bh=ni4JHCeXBFYBOcpuB1OOkPGPrJG/LY5yQLxtefvJjTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pC7rrjCQkXNgeEtyrzchy6OxThFkTO5RajTx4K39wFM1jlezN6DCKCK3PYl2+JLbDG8PQAtegUR6Xrf72V2FtL9fEbvJMmWtwHepFLCw3drXxoVOsunQNwcaGe8shWIW7VVFPXOPTpo7MK0EWfAo78Ww93KsekRz+QHAZqO/u3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 615CF1762;
-	Thu, 27 Mar 2025 04:38:46 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 45C4A3F58B;
-	Thu, 27 Mar 2025 04:38:39 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 9/9] coresight: Consolidate clock enabling
-Date: Thu, 27 Mar 2025 11:38:03 +0000
-Message-Id: <20250327113803.1452108-10-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250327113803.1452108-1-leo.yan@arm.com>
-References: <20250327113803.1452108-1-leo.yan@arm.com>
+	s=arc-20240116; t=1743075584; c=relaxed/simple;
+	bh=HLTBY8S4ZTpJUpA3lXf5BDLlXk9fvudGXjyPq/LNYbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EboAFcSnw3GsVBC5UpkADpFWYBO1bS7dfCtDx9JgEv39J0T0QWEAC5Ju3bkrpD9VlVsUS8HMsl76+XPB4PYUo8HnGC/um6fV2uGaKQTm+ve22oBs+6yMdCiKehSipVhBFJ+VZ8W+mXf93TGgeVbai2f4Lk9ebf1MQ8O/aM3KhPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GymUN+1D; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so1546058a12.2;
+        Thu, 27 Mar 2025 04:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743075581; x=1743680381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H5YJ+HIPr7Xtl+bdBaUXFEAtySXgJKTavR2pWedTVNo=;
+        b=GymUN+1DDsJvfYJRDpFhJj0OJnFetds2IdVrjcWQtcMLTPrWurKDaQgNH2q+3vnpjh
+         ABewIkVTVYlunGabkMNI3EqjCZJ6sJiNplQBetPk7diietp7GKErMnTsXqYzx3R6A9eo
+         e5qsMgZN/PdoD+RbfSplV1bK263YK8632advVPlh3ss8O5sRpV22ly64jOfTGT1oKY4Y
+         JOWmPDFxALbEQllSj5aGENiu9mGEwXQPdbe6dJPr7jZZ6JK+H4NClpo3FY/RM8e/ICWQ
+         yNDdEQQC3dxXs1QXzyKWrGX58l7gB2X7HeiB6KvI9F8rRWXgRQlwar4uwpPWLr2CVDxm
+         6sCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743075581; x=1743680381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H5YJ+HIPr7Xtl+bdBaUXFEAtySXgJKTavR2pWedTVNo=;
+        b=MvSIYdYCW7fT2UfYKMvZikDj/IYEYAY3dW7Z0zQSNm4z6Kftl0PNCvTmwiaypCC1XK
+         Qfbj2jsGzMIr5keVhoyVUBCg0WxXzIJ6IkehAduW/xEIQCa6hVK9+PycXFjytOr1IG57
+         L2kIWNLQe93ZAX82vzB8gGfmvsW2O8Cx+SqrDk2u7EAfn7pCbcKetIopDde1rQ00bQRn
+         0otOdzx8NxdDSqXYCIey/t7OPI7Dd/hfhRN7GkDJ7nBfT2el207LC52TSC+HbzjwAXmw
+         5bsJLq8RmBKQKPnaiCWTNuhVf4eBv5CleMavGbWq3ywqhTO6xAqs4ehtSRqdSmxBjZde
+         pCoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEn4+DU3aRS2iwctlVWc+HI97kbBicmV5fSEZJaIoeBBv/mW7BRbl7C11PbZnnjodixaKJtsnjAFxB1RdEDHbItCb/1QF9@vger.kernel.org, AJvYcCUKqSchGNmUHWKSFZ6fBbO+YPX2h6VBoswndf1BRjcPRapXsddlhAb+jsEWK4+dhWjBzEDzpJ/yrE9TXQ==@vger.kernel.org, AJvYcCUaBbPbREmkbhmxWP7LAp4mmheJa+n79KYxchkmin2Oxdknp/XseQ7ag3sQPhbNEY4n0x94INhghFMMhN+x@vger.kernel.org, AJvYcCUdp3C5Q97RaqmtRHzFW8JTWORNVq6bcPoQGtt8e5am15U2pQVN2klhp5w9JuQjONr6zLHFraytxKR6bZfT@vger.kernel.org, AJvYcCV5+PM2leCkf1OTyE9kgJVACzl0hQYTJrflbcRVnPh6JxwMJNCVoIWCgZ/UeVojU0TkHI0Fe+jdK6804A==@vger.kernel.org, AJvYcCVFplNedoYP8ShfaKL86rJHf6g8i5KJQz3uU6TOONIqUOpKusSut4vd9b90M4GdHU4c2sC02LkmFuib@vger.kernel.org, AJvYcCVQQTYk4+swU9Wv0Wj3hwz6JqYYWBRkqE0b6QP/7Wz4Ho8aXxVosmyaStALp9N8CzEvPpv3m9eM8T2CYA==@vger.kernel.org, AJvYcCVpIA/g+pU4DXU8FFBfg0cJxfowGus6Pok/CZ7fhfQu8X0As1ibyqnU5EL0km9SHnwHbrcgQKRke+k=@vger.kernel.org, AJvYcCX/DXRwrxdQYUVnhBwy1CQHGAOkOsr15yHU5UI5vKhpyqQiHb+wzgzfRHUnJIC6wXQ1zN/qjHpWjfaQDQ==@vger.kernel.org, AJvYcCXTKOqO
+ WNzYFL/rVYzJoVSfjCXuwVkXfQAo8fpZsG3w/9junMUAO6RYds6kRLhA/25fiGL2VTwRrsuV@vger.kernel.org, AJvYcCXXrB5aWG4JZYJ6VDgY2x2pI9RCHLfByb4G2ku+2usH8R4nlig9jVgIPgqRAYGLr1Jd0T7Ds872RYTCJR1Zmg==@vger.kernel.org, AJvYcCXpHM1uhitCXIudSl3ytB1LHmlfC7j1t6TGnrl60GDzBW9BCzhRSh0/sGL7U/shlCPiQzBIteJD/GeYcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL2tH5UMzVYIR8w8s5QI/BOz4W18M5vsegh4tvaWvQOYmgj1JG
+	ttZmAKsGTC8fhP70qrji6jnp/8YPoopOmBZrH3uGRkS2qV1/iKk4fDdweSSBxz6lZL/K+EzEWV/
+	Sm+ikNoZ+YKXXbH9Bfv+uV0ZcCJ4=
+X-Gm-Gg: ASbGncti0A4FctA4zwc8LIfSh3+rm5t/MAeVTPb47GDnyO9WeLPW0RFwreL+nEMSCG7
+	//JX22PPCjoMjzkIK7TmTrQqOmHvQfOyr3QiuWP0akyF8hijBwtHxaF9ognabUm/uqjEYyYQn+H
+	zpR/lUU1fPRI7lo+opqqV649zi1A==
+X-Google-Smtp-Source: AGHT+IGgy/miY5V7+MPkH09VPO41DMi/jMR8Bk4E49dQyif98hlWpMqsre9jbg/TLCs8zzkfhNjlalqvBIB5xRYILRM=
+X-Received: by 2002:a05:6402:518d:b0:5e7:b02b:6430 with SMTP id
+ 4fb4d7f45d1cf-5ed8f3fd122mr2772445a12.23.1743075580404; Thu, 27 Mar 2025
+ 04:39:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org> <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
+ <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+In-Reply-To: <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 27 Mar 2025 12:39:28 +0100
+X-Gm-Features: AQ5f1JofzJgaxJ0LZuoFvXDiOPJAJ8w60JwbZ8r4It-kQ_jhprqRZDypv8Lufbk
+Message-ID: <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CoreSight drivers enable pclk and atclk conditionally.  For example,
-pclk is only enabled in the static probe, while atclk is an optional
-clock that it is enabled for both dynamic and static probes, if it is
-present.  In the current CoreSight drivers, these two clocks are
-initialized separately.  This causes complex and duplicate codes.
+On Thu, Mar 27, 2025 at 10:33=E2=80=AFAM Andrey Albershteyn <aalbersh@redha=
+t.com> wrote:
+>
+> On 2025-03-23 09:56:25, Amir Goldstein wrote:
+> > On Fri, Mar 21, 2025 at 8:49=E2=80=AFPM Andrey Albershteyn <aalbersh@re=
+dhat.com> wrote:
+> > >
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > >
+> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > extended attributes/flags. The syscalls take parent directory fd and
+> > > path to the child together with struct fsxattr.
+> > >
+> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > that file don't need to be open as we can reference it with a path
+> > > instead of fd. By having this we can manipulated inode extended
+> > > attributes not only on regular files but also on special ones. This
+> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > we can not call ioctl() directly on the filesystem inode using fd.
+> > >
+> > > This patch adds two new syscalls which allows userspace to get/set
+> > > extended inode attributes on special files by using parent directory
+> > > and a path - *at() like syscall.
+> > >
+> > > CC: linux-api@vger.kernel.org
+> > > CC: linux-fsdevel@vger.kernel.org
+> > > CC: linux-xfs@vger.kernel.org
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > ...
+> > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filenam=
+e,
+> > > +               struct fsxattr __user *, ufsx, size_t, usize,
+> > > +               unsigned int, at_flags)
+> > > +{
+> > > +       struct fileattr fa;
+> > > +       struct path filepath;
+> > > +       int error;
+> > > +       unsigned int lookup_flags =3D 0;
+> > > +       struct filename *name;
+> > > +       struct mnt_idmap *idmap;.
+> >
+> > > +       struct dentry *dentry;
+> > > +       struct vfsmount *mnt;
+> > > +       struct fsxattr fsx =3D {};
+> > > +
+> > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > +       BUILD_BUG_ON(sizeof(struct fsxattr) !=3D FSXATTR_SIZE_LATEST)=
+;
+> > > +
+> > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D =
+0)
+> > > +               return -EINVAL;
+> > > +
+> > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > +               lookup_flags |=3D LOOKUP_FOLLOW;
+> > > +
+> > > +       if (at_flags & AT_EMPTY_PATH)
+> > > +               lookup_flags |=3D LOOKUP_EMPTY;
+> > > +
+> > > +       if (usize > PAGE_SIZE)
+> > > +               return -E2BIG;
+> > > +
+> > > +       if (usize < FSXATTR_SIZE_VER0)
+> > > +               return -EINVAL;
+> > > +
+> > > +       error =3D copy_struct_from_user(&fsx, sizeof(struct fsxattr),=
+ ufsx, usize);
+> > > +       if (error)
+> > > +               return error;
+> > > +
+> > > +       fsxattr_to_fileattr(&fsx, &fa);
+> > > +
+> > > +       name =3D getname_maybe_null(filename, at_flags);
+> > > +       if (!name) {
+> > > +               CLASS(fd, f)(dfd);
+> > > +
+> > > +               if (fd_empty(f))
+> > > +                       return -EBADF;
+> > > +
+> > > +               idmap =3D file_mnt_idmap(fd_file(f));
+> > > +               dentry =3D file_dentry(fd_file(f));
+> > > +               mnt =3D fd_file(f)->f_path.mnt;
+> > > +       } else {
+> > > +               error =3D filename_lookup(dfd, name, lookup_flags, &f=
+ilepath,
+> > > +                                       NULL);
+> > > +               if (error)
+> > > +                       return error;
+> > > +
+> > > +               idmap =3D mnt_idmap(filepath.mnt);
+> > > +               dentry =3D filepath.dentry;
+> > > +               mnt =3D filepath.mnt;
+> > > +       }
+> > > +
+> > > +       error =3D mnt_want_write(mnt);
+> > > +       if (!error) {
+> > > +               error =3D vfs_fileattr_set(idmap, dentry, &fa);
+> > > +               if (error =3D=3D -ENOIOCTLCMD)
+> > > +                       error =3D -EOPNOTSUPP;
+> >
+> > This is awkward.
+> > vfs_fileattr_set() should return -EOPNOTSUPP.
+> > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
+> > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
+> > ioctl returns -EOPNOTSUPP.
+> >
+> > I don't think it is necessarily a bad idea to start returning
+> >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
+> > because that really reflects the fact that the ioctl is now implemented
+> > in vfs and not in the specific fs.
+> >
+> > and I think it would not be a bad idea at all to make that change
+> > together with the merge of the syscalls as a sort of hint to userspace
+> > that uses the ioctl, that the sycalls API exists.
+> >
+> > Thanks,
+> > Amir.
+> >
+>
+> Hmm, not sure what you're suggesting here. I see it as:
+> - get/setfsxattrat should return EOPNOTSUPP as it make more sense
+>   than ENOIOCTLCMD
+> - ioctl_setflags returns ENOIOCTLCMD which also expected
+>
+> Don't really see a reason to change what vfs_fileattr_set() returns
+> and then copying this if() to other places or start returning
+> EOPNOTSUPP.
 
-This patch consolidates clock enabling into a central place.  It renames
-coresight_get_enable_apb_pclk() to coresight_get_enable_clocks() and
-encapsulates clock initialization logic:
+ENOIOCTLCMD conceptually means that the ioctl command is unknown
+This is not the case since ->fileattr_[gs]et() became a vfs API
+the ioctl command is handled by vfs and it is known, but individual
+filesystems may not support it, so conceptually, returning EOPNOTSUPP
+from ioctl() is more correct these days, exactly as is done with the ioctls
+FS_IOC_FIEMAP and FIFREEZE which were also historically per fs
+ioctls and made into a vfs API.
 
- - If a clock is initialized successfully, its clock pointer is assigned
-   to the double pointer passed as an argument.
- - If pclk is skipped for an AMBA device, or if atclk is not found, the
-   corresponding double pointer is set to NULL.  The function returns
-   Success (0) to guide callers can proceed with no error.
- - Otherwise, an error number is returned for failures.
+The fact that bcachefs does not implement ->fileattr_[gs]et() and does
+implement FS_IOC_FS[GS]ETXATTR is an oversight IMO, since it
+was probably merged after the vfs conversion patch.
 
-CoreSight drivers are refined so that clocks are initialized in one go.
-As a result, driver data no longer needs to be allocated separately in
-the static and dynamic probes.  Moved the allocation into a low-level
-function to avoid code duplication.
+This mistake means that bcachefs fileattr cannot be copied up by
+ovl_copy_fileattr() which uses the vfs API and NOT the ioctl.
 
-Suggested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/hwtracing/coresight/coresight-catu.c       | 30 ++++++++++--------------------
- drivers/hwtracing/coresight/coresight-cpu-debug.c  | 29 +++++++++++------------------
- drivers/hwtracing/coresight/coresight-ctcu-core.c  |  8 ++++----
- drivers/hwtracing/coresight/coresight-etm4x-core.c | 11 ++++-------
- drivers/hwtracing/coresight/coresight-funnel.c     | 11 ++++-------
- drivers/hwtracing/coresight/coresight-replicator.c | 11 ++++-------
- drivers/hwtracing/coresight/coresight-stm.c        |  9 +++------
- drivers/hwtracing/coresight/coresight-tmc-core.c   | 30 ++++++++++--------------------
- drivers/hwtracing/coresight/coresight-tpiu.c       | 10 ++++------
- include/linux/coresight.h                          | 38 +++++++++++++++++++++++++++-----------
- 10 files changed, 81 insertions(+), 106 deletions(-)
+However, if you would made the internal vfs API change that I suggested,
+it will have broken ovl_real_fileattr_get() and ovl_copy_fileattr(),
+so leave it for now - if I care enough I can do it later together with
+fixing the overlayfs and fuse code.
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index c0a51ab0312c..c63dee1ac997 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -508,14 +508,20 @@ static int __catu_probe(struct device *dev, struct resource *res)
- {
- 	int ret = 0;
- 	u32 dma_mask;
--	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct catu_drvdata *drvdata;
- 	struct coresight_desc catu_desc;
- 	struct coresight_platform_data *pdata = NULL;
- 	void __iomem *base;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, drvdata);
-+
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
- 	catu_desc.name = coresight_alloc_device_name(&catu_devs, dev);
- 	if (!catu_desc.name)
-@@ -571,14 +577,8 @@ static int __catu_probe(struct device *dev, struct resource *res)
- 
- static int catu_probe(struct amba_device *adev, const struct amba_id *id)
- {
--	struct catu_drvdata *drvdata;
- 	int ret;
- 
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	amba_set_drvdata(adev, drvdata);
- 	ret = __catu_probe(&adev->dev, &adev->res);
- 	if (!ret)
- 		pm_runtime_put(&adev->dev);
-@@ -618,22 +618,12 @@ static struct amba_driver catu_driver = {
- static int catu_platform_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct catu_drvdata *drvdata;
- 	int ret = 0;
- 
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
--
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	ret = __catu_probe(&pdev->dev, res);
- 	pm_runtime_put(&pdev->dev);
- 	if (ret)
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 5f90351778ee..dff663ac7805 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -562,10 +562,20 @@ static void debug_func_exit(void)
- 
- static int __debug_probe(struct device *dev, struct resource *res)
- {
--	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct debug_drvdata *drvdata;
- 	void __iomem *base;
- 	int ret;
- 
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, drvdata);
-+
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, NULL);
-+	if (ret)
-+		return ret;
-+
- 	drvdata->cpu = coresight_get_cpu(dev);
- 	if (drvdata->cpu < 0)
- 		return drvdata->cpu;
-@@ -625,13 +635,6 @@ static int __debug_probe(struct device *dev, struct resource *res)
- 
- static int debug_probe(struct amba_device *adev, const struct amba_id *id)
- {
--	struct debug_drvdata *drvdata;
--
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	amba_set_drvdata(adev, drvdata);
- 	return __debug_probe(&adev->dev, &adev->res);
- }
- 
-@@ -690,18 +693,8 @@ static struct amba_driver debug_driver = {
- static int debug_platform_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct debug_drvdata *drvdata;
- 	int ret = 0;
- 
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
--
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
-diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-index edd93ff2d3c5..c586495e9a08 100644
---- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
-+++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-@@ -188,7 +188,7 @@ static int ctcu_probe(struct platform_device *pdev)
- 	const struct ctcu_config *cfgs;
- 	struct ctcu_drvdata *drvdata;
- 	void __iomem *base;
--	int i;
-+	int i, ret;
- 
- 	desc.name = coresight_alloc_device_name(&ctcu_devs, dev);
- 	if (!desc.name)
-@@ -207,9 +207,9 @@ static int ctcu_probe(struct platform_device *pdev)
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
--	if (IS_ERR(drvdata->apb_clk))
--		return PTR_ERR(drvdata->apb_clk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->apb_clk, NULL);
-+	if (ret)
-+		return ret;
- 
- 	cfgs = of_device_get_match_data(dev);
- 	if (cfgs) {
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index ff4ac4b686c4..ba5d1a015140 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -2145,13 +2145,14 @@ static int etm4_probe(struct device *dev)
- 	struct csdev_access access = { 0 };
- 	struct etm4_init_arg init_arg = { 0 };
- 	struct etm4_init_arg *delayed;
-+	int ret;
- 
- 	if (WARN_ON(!drvdata))
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
- 	if (pm_save_enable == PARAM_PM_SAVE_FIRMWARE)
- 		pm_save_enable = coresight_loses_context_with_cpu(dev) ?
-@@ -2235,10 +2236,6 @@ static int etm4_probe_platform_dev(struct platform_device *pdev)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
--
- 	if (res) {
- 		drvdata->base = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(drvdata->base))
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index fd60491c9a19..6494a3b5d18e 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -217,6 +217,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	struct coresight_platform_data *pdata = NULL;
- 	struct funnel_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-+	int ret;
- 
- 	if (is_of_node(dev_fwnode(dev)) &&
- 	    of_device_is_compatible(dev->of_node, "arm,coresight-funnel"))
-@@ -230,13 +231,9 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
--
--	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Map the device base for dynamic-funnel, which has been
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index aeb2b3d8e210..8595dc104795 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -223,6 +223,7 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	struct replicator_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
- 	void __iomem *base;
-+	int ret;
- 
- 	if (is_of_node(dev_fwnode(dev)) &&
- 	    of_device_is_compatible(dev->of_node, "arm,coresight-replicator"))
-@@ -237,13 +238,9 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
--
--	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Map the device base for dynamic-replicator, which has been
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index d589fc61a00e..f859ab932d22 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -842,13 +842,10 @@ static int __stm_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
--	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
- 	dev_set_drvdata(dev, drvdata);
- 
- 	base = devm_ioremap_resource(dev, res);
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-index 86ea3fea7abb..745d33d0646f 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-@@ -785,13 +785,19 @@ static int __tmc_probe(struct device *dev, struct resource *res)
- 	u32 devid;
- 	void __iomem *base;
- 	struct coresight_platform_data *pdata = NULL;
--	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct tmc_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
- 	struct coresight_dev_list *dev_list = NULL;
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, drvdata);
-+
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
- 	ret = -ENOMEM;
- 
-@@ -897,14 +903,8 @@ static int __tmc_probe(struct device *dev, struct resource *res)
- 
- static int tmc_probe(struct amba_device *adev, const struct amba_id *id)
- {
--	struct tmc_drvdata *drvdata;
- 	int ret;
- 
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	amba_set_drvdata(adev, drvdata);
- 	ret = __tmc_probe(&adev->dev, &adev->res);
- 	if (!ret)
- 		pm_runtime_put(&adev->dev);
-@@ -981,18 +981,8 @@ static struct amba_driver tmc_driver = {
- static int tmc_platform_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct tmc_drvdata *drvdata;
- 	int ret = 0;
- 
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
--
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index 5821ae73a34a..a68ed6b97bf7 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -132,6 +132,7 @@ static int __tpiu_probe(struct device *dev, struct resource *res)
- 	struct coresight_platform_data *pdata = NULL;
- 	struct tpiu_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-+	int ret;
- 
- 	desc.name = coresight_alloc_device_name(&tpiu_devs, dev);
- 	if (!desc.name)
-@@ -143,13 +144,10 @@ static int __tpiu_probe(struct device *dev, struct resource *res)
- 
- 	spin_lock_init(&drvdata->spinlock);
- 
--	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
--	if (IS_ERR(drvdata->atclk))
--		return PTR_ERR(drvdata->atclk);
-+	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
-+	if (ret)
-+		return ret;
- 
--	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
--	if (IS_ERR(drvdata->pclk))
--		return PTR_ERR(drvdata->pclk);
- 	dev_set_drvdata(dev, drvdata);
- 
- 	/* Validity for the resource is already checked by the AMBA core */
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 26eb4a61b992..cf3fbbc0076a 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -471,25 +471,41 @@ static inline bool is_coresight_device(void __iomem *base)
- }
- 
- /*
-- * Attempt to find and enable "APB clock" for the given device
-+ * Attempt to find and enable programming clock (pclk) and trace clock (atclk)
-+ * for the given device.
-  *
-- * Returns:
-+ * The AMBA bus driver will cover the pclk, to avoid duplicate operations,
-+ * skip to get and enable the pclk for an AMBA device.
-  *
-- * clk   - Clock is found and enabled
-- * NULL  - Clock is not needed as it is managed by the AMBA bus driver
-- * ERROR - Clock is found but failed to enable
-+ * atclk is an optional clock, it will be only enabled when it is existed.
-+ * Otherwise, a NULL pointer will be returned to caller.
-+ *
-+ * Returns: '0' on Success; Error code otherwise.
-  */
--static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
-+static inline int coresight_get_enable_clocks(struct device *dev,
-+					      struct clk **pclk,
-+					      struct clk **atclk)
- {
--	struct clk *pclk = NULL;
-+	WARN_ON(!pclk);
- 
- 	if (!dev_is_amba(dev)) {
--		pclk = devm_clk_get_enabled(dev, "apb_pclk");
--		if (IS_ERR(pclk))
--			pclk = devm_clk_get_enabled(dev, "apb");
-+		*pclk = devm_clk_get_enabled(dev, "apb_pclk");
-+		if (IS_ERR(*pclk))
-+			*pclk = devm_clk_get_enabled(dev, "apb");
-+		if (IS_ERR(*pclk))
-+			return PTR_ERR(*pclk);
-+	} else {
-+		/* Don't enable pclk for an AMBA device */
-+		*pclk = NULL;
- 	}
- 
--	return pclk;
-+	if (atclk) {
-+		*atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+		if (IS_ERR(*atclk))
-+			return PTR_ERR(*atclk);
-+	}
-+
-+	return 0;
- }
- 
- #define CORESIGHT_PIDRn(i)	(0xFE0 + ((i) * 4))
--- 
-2.34.1
-
+Thanks,
+Amir.
 
