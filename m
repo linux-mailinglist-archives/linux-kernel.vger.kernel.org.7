@@ -1,276 +1,113 @@
-Return-Path: <linux-kernel+bounces-578610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31F1A73438
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:19:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E299A733E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1870A1780DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572433A7B53
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAE021771A;
-	Thu, 27 Mar 2025 14:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8F2217653;
+	Thu, 27 Mar 2025 14:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="My6WhwEC"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlNePcCL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD46120F071;
-	Thu, 27 Mar 2025 14:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06667212B00;
+	Thu, 27 Mar 2025 14:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743085102; cv=none; b=a+HY1eDhdeMkd/srD1PDlJieUdGzjyH8YRnajxLYyyRufgvtSR92+OLj2tXAPhPpWFNCraXuV+y/AhMnunZKru+re1P1zIPlFSxivQmEy5VL3hD4cpVPHVJhLI73ZolOrvaJ3Iua8kzcFNy++sxH3/5b/3kfJSx0vd266fZ+ACA=
+	t=1743084429; cv=none; b=X1wfx+Mya4jtSuy3mbRYGjWqapbIimyyV8d9GRk+eZn1Ww406CHyXOOAOieL8xPFVSRlCFvtAjRYQtZZsbpIon2aKcD/e06zENFehxmN3NZumQg6GQ/14zYA/5e9XIZiSeJSS7xk/WItNgogO3BjPo6rdmfS71dhw/oO3gxOTpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743085102; c=relaxed/simple;
-	bh=HFAUvP0qKmHTS37uLlxwq4DaGeKS/405aLiixg0iZa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JMLixA42fx+9e0PkhPm3ABcUAQV53vTf9CoMnbnSBnhpCrt+SeQrhZj5gPQFnBHc11zIE6S8DIQPlxXTqwKXex+1ljvJFvas6kEp61PqKnaKFkpJwbaduNiDce4T2D4GN3q/U6fMmj0jaTpjop7y96tjDsNOs5RDZBKTwhEalWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=My6WhwEC; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743085099;
-	bh=HFAUvP0qKmHTS37uLlxwq4DaGeKS/405aLiixg0iZa0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:From;
-	b=My6WhwECfAc9RZve0UUGsNiydEvSgEkuKLSlqjpnxs3rqEsLvnWGzJ0JN/fuoXm74
-	 jTnH1Fju+h9DBZKap/pjaJaY6c9fakSUfih+DprHEfxVAgIzJEBc/PReU1CfxpynJO
-	 ctB4YaNRkLnbtPWa/LJDrQzuccYWhrcvNMIn/iqY=
-Received: from lingrow.int.hansenpartnership.com (unknown [153.66.160.227])
-	by lamorak.hansenpartnership.com (Postfix) with ESMTP id 485001C0078;
-	Thu, 27 Mar 2025 10:18:19 -0400 (EDT)
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	jack@suse.cz,
-	hch@infradead.org,
-	david@fromorbit.com,
-	rafael@kernel.org,
-	djwong@kernel.org,
-	pavel@kernel.org,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	boqun.feng@gmail.com
-Subject: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for power management
-Date: Thu, 27 Mar 2025 10:06:13 -0400
-Message-ID: <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
-References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
+	s=arc-20240116; t=1743084429; c=relaxed/simple;
+	bh=ylAWPbcULtSaZe34dKWVThPXcBtGPQIYkRD3zXK0jv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZtfpTP5Rj0VuFUppJ19K81u+GBLwPYglV11pi8wp42Xwn7etmrOMeSNKg+FCM4ptTBbuyHm0SQ13BC03iaYRUT+KIP0G64p7JifEwQpC5aWamcVU9e5Z4GUyz8qrFyx2MBX5Kv/WMkBYs0ICtK1xtN1ahKveHsYXF7LXVEpZiYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlNePcCL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E0CC4CEEA;
+	Thu, 27 Mar 2025 14:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743084428;
+	bh=ylAWPbcULtSaZe34dKWVThPXcBtGPQIYkRD3zXK0jv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JlNePcCLfToBC2V80buwbF7hDm4cODW591JUZKXC7jYOsbBYiLE3imKkGNI8oMDuv
+	 aMcE1Pg4wpXRcR/WL/KlNcz4cVY7kyahY/rNM976Ke/WDaIlCCu1mzsa4jlJoUEw2r
+	 D06695KHjfWkSZSZis1fG20XslUzL2qo+FzqN9DVsZkm3q8e9sK+qfLdFkhTxTVWAU
+	 gs1Apq/l6ay9uP/nMwuPDhtS6lkzNDrVIZN8Z4kZ+nito8NSZ/+9JNEkgXumk27O1/
+	 45lahgHvDPnm4IsxX4eQW2oRWEtZSo/w7Q+m9b6xHrvUcZyhImnR9hsU6g7RXdYgWS
+	 xQbvUdMWftaCQ==
+Date: Thu, 27 Mar 2025 14:07:04 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org
+Subject: Re: [PATCH V1] spi: Add support for Double Transfer Rate (DTR) mode
+Message-ID: <f3115251-8fa9-4019-8fb0-145daf32cfa2@sirena.org.uk>
+References: <20250326083954.3338597-1-quic_msavaliy@quicinc.com>
+ <40db39ef-7ef3-4720-9c85-ccfe1c11c299@sirena.org.uk>
+ <c89603b7-b70c-4b55-ac87-f84ce5be2c6c@quicinc.com>
+ <3aa2c190-ce4d-4805-943b-f65e98ce762c@sirena.org.uk>
+ <8435b037-8b54-401a-b4f6-b4b497c4c3eb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UgfMhIpRC9osdcao"
+Content-Disposition: inline
+In-Reply-To: <8435b037-8b54-401a-b4f6-b4b497c4c3eb@quicinc.com>
+X-Cookie: Multics is security spelled sideways.
 
-Introduce a freeze function, which iterates superblocks in reverse
-order freezing filesystems.  The indicator a filesystem is freezable
-is either possessing a s_bdev or a freeze_super method.  So this can
-be used in efivarfs, whether the freeze is for hibernate is also
-passed in via the new FREEZE_FOR_HIBERNATE flag.
 
-Thawing is done opposite to freezing (so superblock traversal in
-regular order) and the whole thing is plumbed into power management.
-The original ksys_sync() is preserved so the whole freezing step is
-optional (if it fails we're no worse off than we are today) so it
-doesn't inhibit suspend/hibernate if there's a failure.
+--UgfMhIpRC9osdcao
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- fs/super.c               | 61 ++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h       |  5 ++++
- kernel/power/hibernate.c | 12 ++++++++
- kernel/power/suspend.c   |  4 +++
- 4 files changed, 82 insertions(+)
+On Thu, Mar 27, 2025 at 03:33:15PM +0530, Mukesh Kumar Savaliya wrote:
 
-diff --git a/fs/super.c b/fs/super.c
-index 76785509d906..b4b0986414b0 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1461,6 +1461,67 @@ static struct super_block *get_bdev_super(struct block_device *bdev)
- 	return sb;
- }
- 
-+/*
-+ * Kernel freezing and thawing is only done in the power management
-+ * subsystem and is thus single threaded (so we don't have to worry
-+ * here about multiple calls to filesystems_freeze/thaw().
-+ */
-+
-+static int freeze_flags;
-+
-+static void filesystems_freeze_callback(struct super_block *sb)
-+{
-+	/* errors don't fail suspend so ignore them */
-+	if (sb->s_op->freeze_super)
-+		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-+				       | FREEZE_HOLDER_KERNEL
-+				       | freeze_flags);
-+	else if (sb->s_bdev)
-+		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-+			     | freeze_flags);
-+	else {
-+		pr_info("Ignoring filesystem %s\n", sb->s_type->name);
-+		return;
-+	}
-+
-+	pr_info("frozen %s, now syncing block ...", sb->s_type->name);
-+	sync_blockdev(sb->s_bdev);
-+	pr_info("done.");
-+}
-+
-+/**
-+ * filesystems_freeze - freeze callback for power management
-+ *
-+ * Freeze all active filesystems (in reverse superblock order)
-+ */
-+void filesystems_freeze(bool for_hibernate)
-+{
-+	freeze_flags = for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-+	__iterate_supers_rev(filesystems_freeze_callback);
-+}
-+
-+static void filesystems_thaw_callback(struct super_block *sb)
-+{
-+	if (sb->s_op->thaw_super)
-+		sb->s_op->thaw_super(sb, FREEZE_MAY_NEST
-+				     | FREEZE_HOLDER_KERNEL
-+				     | freeze_flags);
-+	else if (sb->s_bdev)
-+		thaw_super(sb,	FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL
-+			   | freeze_flags);
-+}
-+
-+/**
-+ * filesystems_thaw - thaw callback for power management
-+ *
-+ * Thaw all active filesystems (in forward superblock order)
-+ */
-+void filesystems_thaw(bool for_hibernate)
-+{
-+	freeze_flags = for_hibernate ? FREEZE_FOR_HIBERNATE : 0;
-+	__iterate_supers(filesystems_thaw_callback);
-+}
-+
- /**
-  * fs_bdev_freeze - freeze owning filesystem of block device
-  * @bdev: block device
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index cbbb704eff74..de154e9379ec 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2272,6 +2272,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-  * @FREEZE_HOLDER_KERNEL: kernel wants to freeze or thaw filesystem
-  * @FREEZE_HOLDER_USERSPACE: userspace wants to freeze or thaw filesystem
-  * @FREEZE_MAY_NEST: whether nesting freeze and thaw requests is allowed
-+ * @FREEZE_FOR_HIBERNATE: set if freeze is from power management hibernate
-  *
-  * Indicate who the owner of the freeze or thaw request is and whether
-  * the freeze needs to be exclusive or can nest.
-@@ -2285,6 +2286,7 @@ enum freeze_holder {
- 	FREEZE_HOLDER_KERNEL	= (1U << 0),
- 	FREEZE_HOLDER_USERSPACE	= (1U << 1),
- 	FREEZE_MAY_NEST		= (1U << 2),
-+	FREEZE_FOR_HIBERNATE	= (1U << 3),
- };
- 
- struct super_operations {
-@@ -3919,4 +3921,7 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
- 
- int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
- 
-+void filesystems_freeze(bool for_hibernate);
-+void filesystems_thaw(bool for_hibernate);
-+
- #endif /* _LINUX_FS_H */
-diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-index 10a01af63a80..fc2106e6685a 100644
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -778,7 +778,12 @@ int hibernate(void)
- 
- 	ksys_sync_helper();
- 
-+	pr_info("about to freeze filesystems\n");
-+	filesystems_freeze(true);
-+	pr_info("filesystem freeze done\n");
-+
- 	error = freeze_processes();
-+	pr_info("process freeze done\n");
- 	if (error)
- 		goto Exit;
- 
-@@ -788,7 +793,9 @@ int hibernate(void)
- 	if (error)
- 		goto Thaw;
- 
-+	pr_info("About to create snapshot\n");
- 	error = hibernation_snapshot(hibernation_mode == HIBERNATION_PLATFORM);
-+	pr_info("snapshot done\n");
- 	if (error || freezer_test_done)
- 		goto Free_bitmaps;
- 
-@@ -842,6 +849,8 @@ int hibernate(void)
- 	}
- 	thaw_processes();
- 
-+	filesystems_thaw(true);
-+
- 	/* Don't bother checking whether freezer_test_done is true */
- 	freezer_test_done = false;
-  Exit:
-@@ -939,6 +948,8 @@ int hibernate_quiet_exec(int (*func)(void *data), void *data)
- 
- 	thaw_processes();
- 
-+	filesystems_thaw(true);
-+
- exit:
- 	pm_notifier_call_chain(PM_POST_HIBERNATION);
- 
-@@ -1041,6 +1052,7 @@ static int software_resume(void)
- 
- 	error = load_image_and_restore();
- 	thaw_processes();
-+	filesystems_thaw(true);
-  Finish:
- 	pm_notifier_call_chain(PM_POST_RESTORE);
-  Restore:
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 09f8397bae15..34cc5b0c408c 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -544,6 +544,7 @@ int suspend_devices_and_enter(suspend_state_t state)
- static void suspend_finish(void)
- {
- 	suspend_thaw_processes();
-+	filesystems_thaw(false);
- 	pm_notifier_call_chain(PM_POST_SUSPEND);
- 	pm_restore_console();
- }
-@@ -581,6 +582,7 @@ static int enter_state(suspend_state_t state)
- 		trace_suspend_resume(TPS("sync_filesystems"), 0, true);
- 		ksys_sync_helper();
- 		trace_suspend_resume(TPS("sync_filesystems"), 0, false);
-+		filesystems_freeze(false);
- 	}
- 
- 	pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[state]);
-@@ -603,6 +605,8 @@ static int enter_state(suspend_state_t state)
- 	pm_pr_dbg("Finishing wakeup.\n");
- 	suspend_finish();
-  Unlock:
-+	if (sync_on_suspend_enabled)
-+		filesystems_thaw(false);
- 	mutex_unlock(&system_transition_mutex);
- 	return error;
- }
--- 
-2.43.0
+> IIUC, It comes to the point of first identifying if it's in context of QSPI
+> controller or SPI controller right ?
 
+> Identify if SPI/QSPI controller has this capability using dtr_caps =
+> true/false. Then check if it's supporting SDR/DDR mode. Can we then
+> introduce below struct to first mark capability as true/false and then
+> process dtr_mode ?
+
+> if not supported (dtr_caps = false), then don't care dtr_mode.
+
+We should complain if the device requsted anything the controller can't
+support.
+
+> struct spi_caps {
+> 	bool dtr_mode;
+> 	bool dtr_caps;
+> };
+
+The controller capabilities are currently mainly advertised via the
+SPI_CONTROLLER_ flags but adding some bools also works, some things
+already do use that.  I'm not sure we need to wrap things in a further
+struct though.
+
+--UgfMhIpRC9osdcao
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmflW4cACgkQJNaLcl1U
+h9DO7gf9GK9kaZ7F5byJPJNQeOitCwqJBmRUPfkO3oVkQLL0DGjU/ckyHfNcq/27
+Iv3KniQ2oZAEqO9UpGcOY7fjEl+e1eb+aDyEBGHBZnrJbqVbaAmB4dBH4PYu/zRm
+F/u8ibgorqythriUu1YW8nTxg81x5sHZhNvLR9geyXyKrMrIXYoZJ/T8bAfnDpKo
+EdBKdh3Skcj830O+HytvyPNcZDBKZQc2kMGPMh1qnGNKQc0GIa/oGOQ7g6vXcRjz
+i+e8CScGMdLsDc0yp9t46TA/NF0TMNVo2N6bPrPSe9425vmOBz8fiN7kqnpxP/5g
+1cdoovWzMFF/PNqGxnOkRHJDMbXTdg==
+=rjSg
+-----END PGP SIGNATURE-----
+
+--UgfMhIpRC9osdcao--
 
