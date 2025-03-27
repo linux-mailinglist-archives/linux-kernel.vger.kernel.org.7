@@ -1,147 +1,110 @@
-Return-Path: <linux-kernel+bounces-578341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9D7A72E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:00:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA089A72E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 12:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB154179BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 10:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E20189DB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 11:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6932E20F081;
-	Thu, 27 Mar 2025 10:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9152D1FECCF;
+	Thu, 27 Mar 2025 11:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a9QWp4XN"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NbCsH+Kd"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8420720E310
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 10:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68AA20F08A;
+	Thu, 27 Mar 2025 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743073157; cv=none; b=m4fB6jAv9EIRKzlYO5xhOrQG7UPjOFBTad34zDNUJ0XKbQroTsDWwAbpFcb5t3iQztt4syd+qMKDVTQgzs/cWXdGN+mGCxrvAqBAsa6/VaIxTGmzfQCl7HtqsKaINBmFOkPcBnZyg2GBMnI+Z4QzW5fNSfurVcH2SnJT1bGmekY=
+	t=1743073225; cv=none; b=KKKxWvwpdgCONs8gJUKQFswLRya/+PtCFPpWaJIll67PLjxWOWQYaE6kQQYYzEmSVDstlFBPZ0pvBerWtfOF7kacH017zM7RSsodmPiI+LALUCuV08ZYa+wVDZhAEIV3TYIVx2Mkv6OLI857ZU+1aLHnuClfizBR2UqL/qsxEZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743073157; c=relaxed/simple;
-	bh=lwWCrR/B7oa/IFy0hg/5DLmuq94sNl7F4vnXqp7+MBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ulomPVX7inuH51F3OE8UBi8Fj13bxAIU4BulFiysjDmYyetQ5d/D85iNxkJjeoovsWKHz5OeNPCnlyDDakcT0EQ3fITkTir2PnLxYrQ97B/1MgAqZ1XVrIIWx00VcV0+2KzFmr7DXj35rOmgHQbhDpdT7Nla9LuOO7KSfyCKZpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a9QWp4XN; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so7712905e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 03:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743073154; x=1743677954; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KvqX6X6Nw79zH+/DuMzJ8U1lMnhunqLpWAm4SYnoS9g=;
-        b=a9QWp4XNrccKd72EhJ4rg2e0+nB+knQJTnTOJuYAHns2AlGJWe8zjH+SdHTjz92gpn
-         0CL3zwW7yY0IgvJNX/PLhiMqKhQ9ZoaosMiiqwBEJxPOBwccVKc8zA92ZAhsNNDweRbj
-         se2U6rA2U3vK6tcz0vMxlsqEPrM6Ptongulqd+akvZXcoWVbxVFNheWc7rBVAoSVnhmA
-         vyFsy0iwf9fZblzJ70LBdak6wT4s2aDe+WkJqcQ9ZjLiAw3RuhvFWiiPqMMHiiMVD5lI
-         iSTIOLaoixUb6hGMkE2sPjV5so6gAhu+EoYRbYhKn9SEUopbhokMxLeg5ZbAHKR7oPQe
-         T62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743073154; x=1743677954;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KvqX6X6Nw79zH+/DuMzJ8U1lMnhunqLpWAm4SYnoS9g=;
-        b=iyVEUpCqggP/jGSa/2/rn+vQXWNKwphMcnFsvOtdNK+IhvSYSlARci8Q6rZje06umY
-         dn1b8INvBCK9Hz/bKCuWT9P/AmiO/1xCmSW0QF/ZxRK9ZXcsosXg+a5NaSKlc/tzR86K
-         KZKlNw9FnKpt91edT8HLr38PSLbX67DgynKS0v26FcxvNct6cM48pxybKvzI2fFpP3hR
-         OzJn11PG53WFyRFSqh9ri5e88IVuPDcHDcjqM0gf6fDNFUPzfK/ywc6/+kBBKvv01T0z
-         PSWA7YlGdxLhI7/sApsWRVdPQuXu1Jrf2XMCGmOcCP5lAMBZxbSl0XGqb3m16wP10okM
-         HcfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWrNripZ2LaFXk6z+bOlG+geqGa8rwn3ZmK8lQiHj4MTi1DBt2cf8WFgpSzmx6SdMysb6WWg7W7kxut2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3/s9y20iZikEzkrdKKZwILKAofqWUvCg1jgdODqDF+v+cRuGi
-	3LC5q0Ot+VeP2v5xDqdJremQdYQrEdyEM/ltm450OkSzTIU8AURyGphlTQGNxhY=
-X-Gm-Gg: ASbGncvhLAD92WNh5qZvYmy8GOvE8cu8hxef+sPk7NOxD1BcNlkIZnl0JcIFpSElMgN
-	qIljEeMFDWFEv26OuIXRsX7sogvj4VhFo2pSFJ5ffuipLDnb15gbsbA6a8ih74q0mRbjG+gILRG
-	YKL0VP88lGRdQbPIWHb466mMZ2l01g0iiw35XR4DFEq1DeZDxPMXWZebgTPR2GM8KdM0ChaG2Zw
-	0AHueFpXYapMmEcCapVVbZuzcOydSkjkhtQGH9tC4pt1qca70wKz2tZebFOhlI9twb/Aor8Wvul
-	3x868Tw6utAquwGRVPWhmgvnPqQbtA2TB24rWGkuzH6wFpk=
-X-Google-Smtp-Source: AGHT+IGr8uD0XY+bX3hu+2/VzY5XGbZMzutnjed6ELJNZ21ytjGuAWchlodTBbktxWfDGrYrlctV0w==
-X-Received: by 2002:a05:600c:3b29:b0:43c:fe9f:ab90 with SMTP id 5b1f17b1804b1-43d85097473mr25180155e9.28.1743073153679;
-        Thu, 27 Mar 2025 03:59:13 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8314e110sm34631365e9.39.2025.03.27.03.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 03:59:13 -0700 (PDT)
-Date: Thu, 27 Mar 2025 11:59:11 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] printk for 6.15
-Message-ID: <Z-Uvf8YsA6q54hv4@pathway.suse.cz>
+	s=arc-20240116; t=1743073225; c=relaxed/simple;
+	bh=w3JYCOGpygoGJ3y123UWwPLBHs+WM8VCObC2NhViTlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeibdIwZUpCP5xeax8fR2hMch0utG9TVDRWPd2HvBAAjvwCseaQn+sPjvDGxlyLE6ORXPw98mn/2mwIAas0JW0SBJyIVfAcXDXBI5BeL0Q7uoT/2E9nxH+fhFR3AozvxFLBxg8P5z+KLKwTyv5xBBdEXvrWxAbhHZzEqzZEWLNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NbCsH+Kd; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BA89D44398;
+	Thu, 27 Mar 2025 11:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743073215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/QfWDYrwMkLZJOOtnbfBEwGvUQZ+rFNZUyw4fZaJqEA=;
+	b=NbCsH+KdjKpUhgit17/yawha+DWXowPoQ0nKI24bkOdE2voj0r0LzKXv50ukDDRjngzPbZ
+	8URO7qvWwcIP1h54a7KmiGjhtUoCQYG+D6HWr0sOBY1h+33paqem+UYYo741b7Y+p8X2BF
+	qWI2BZGGjkalc0nddixNHVtQlJXuelzt7EcKxlYo2ofteJLSEqsNmhQyqNk30GbroG6EoZ
+	44a4w+WlmFOIC5sJaQhQjosFtCj/9Ci2tSr490CNQANO9eCu5FKkYw1kTD9v4wIYGl9AQ8
+	CulovQAYsIYYfMi/v1b1NagcBxuPPCDErbXDpe7DetvRt+xTscigBXls/lzxQg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH RESEND net] MAINTAINERS: Add dedicated entries for phy_link_topology
+Date: Thu, 27 Mar 2025 12:00:12 +0100
+Message-ID: <20250327110013.106865-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieekvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephedtheeufeeutdekudelfedvfefgieduveetveeuhffgffekkeehueffueehhfeunecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdqvddrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
+ giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hi Linus,
+The infrastructure to handle multi-phy devices is fairly standalone.
+Add myself as maintainer for that part as well as the netlink uAPI
+that exposes it.
 
-please pull the latest printk changes from
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Acked-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+Re-sending the patch to target net instead of net-next, and aggregated
+the acks/reviews from Andrew and Jakub
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git tags/printk-for-6.15
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-==============================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1cd25139cc58..36511ed5bf6a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16577,6 +16577,13 @@ F:	net/ethtool/mm.c
+ F:	tools/testing/selftests/drivers/net/hw/ethtool_mm.sh
+ K:	ethtool_mm
+ 
++NETWORKING [ETHTOOL PHY TOPOLOGY]
++M:	Maxime Chevallier <maxime.chevallier@bootlin.com>
++F:	Documentation/networking/phy-link-topology.rst
++F:	drivers/net/phy/phy_link_topology.c
++F:	include/linux/phy_link_topology.h
++F:	net/ethtool/phy.c
++
+ NETWORKING [GENERAL]
+ M:	"David S. Miller" <davem@davemloft.net>
+ M:	Eric Dumazet <edumazet@google.com>
+-- 
+2.48.1
 
-- New option "printk.debug_non_panic_cpus" allows to store printk
-  messages from non-panic CPUs during panic. It might be useful
-  when panic() fails. It is disabled by default because it increases
-  the chance to see the messages printed before panic() and on
-  the panic-CPU.
-
-- New build option "CONFIG_NULL_TTY_DEFAULT_CONSOLE" allows to build
-  kernel without the virtual terminal support which prefers ttynull
-  over serial console.
-
-- Do not unblank suspended consoles.
-
-- Some code clean up.
-
-----------------------------------------------------------------
-Adam Simonelli (1):
-      printk: Add an option to allow ttynull to be a default console device
-
-Donghyeok Choe (1):
-      printk/panic: Add option to allow non-panic CPUs to write to the ring buffer.
-
-Marcos Paulo de Souza (5):
-      printk: Rename suspend_console to console_suspend_all
-      printk: Rename resume_console to console_resume_all
-      printk: Rename console_stop to console_suspend
-      printk: Rename console_start to console_resume
-      printk: Check CON_SUSPEND when unblanking a console
-
-Petr Mladek (1):
-      Merge branch 'for-6.15-console-suspend-api-cleanup' into for-linus
-
- Documentation/admin-guide/kernel-parameters.txt    |  8 ++++
- Documentation/admin-guide/serial-console.rst       |  4 +-
- drivers/gpu/drm/clients/drm_log.c                  |  4 +-
- drivers/tty/Kconfig                                | 19 +++++++-
- drivers/tty/serial/serial_core.c                   |  6 +--
- include/linux/console.h                            |  8 ++--
- kernel/kexec_core.c                                |  4 +-
- kernel/power/hibernate.c                           | 16 +++----
- kernel/power/suspend.c                             |  8 ++--
- kernel/printk/internal.h                           |  1 +
- kernel/printk/printk.c                             | 55 +++++++++++++++++-----
- kernel/printk/printk_ringbuffer.c                  | 13 +++--
- .../pm-graph/config/custom-timeline-functions.cfg  |  4 +-
- tools/power/pm-graph/sleepgraph.py                 |  6 +--
- 14 files changed, 110 insertions(+), 46 deletions(-)
 
