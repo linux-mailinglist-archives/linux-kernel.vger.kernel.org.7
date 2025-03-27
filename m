@@ -1,103 +1,183 @@
-Return-Path: <linux-kernel+bounces-578793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D016A73682
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:15:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F458A73693
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 17:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467013B7288
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:15:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 915EB7A6D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 16:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1C519E819;
-	Thu, 27 Mar 2025 16:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DD041C85;
+	Thu, 27 Mar 2025 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dm1Q/8/Q"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BIpapE5R"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C9B41C85;
-	Thu, 27 Mar 2025 16:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2342B17BBF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 16:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743092115; cv=none; b=ty/gB4eJVCO9WItCZ6KI4E4ov2XZCo3QgP3GSJL7xTDB3zAQpEauz2ppZXVHkOp1FW99N2BgL+2g+djs7jkHYuGqEbSCBrLNNmOlofBxhOcVXcnN9hqBO7rV2c7M26GmuWXBPIznPj+i0D/6PAwBxqvmeWLxJhzLQAvFvzhXm7k=
+	t=1743092297; cv=none; b=Gq0U6IDOERbOEiAd+faMJj2h8hplvF3fjP9zwviB3a5jK/1EKwlMC1McIz0FXHSNL3zzlB6gxnfmRAh6spY4BJmIbVMfeXvzotJqipskglXFDeNq3uu517f05bslurcadDmVpT30KgZsNFnjlAZFPwKdMUnDZZ8iB49O0Nd9KbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743092115; c=relaxed/simple;
-	bh=PBjMIPbm34YhMtcHEbuTRJblo1v587ku20drBHEc6xE=;
+	s=arc-20240116; t=1743092297; c=relaxed/simple;
+	bh=mqnEF3sEPkpqCxNnwMjJWdaf2hat+YThq07xRZFUJb4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aBXfV8pi5ve+b+ao/C8GQTA4EuHc2aQN3cQHBXK/RB+w/AZGayRSUX3HR3vXY5C5mDV/TUQFEsyn+AlcmaM9sFtr6x3Nj/wJUhFUkiHJRNTUCtbsESvSxQUL+zmMDC3MD2XEt41rDDPisdCNpHhFB5BrSUjDaEpRHQwTpHK2reU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dm1Q/8/Q; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3014ae35534so1701317a91.0;
-        Thu, 27 Mar 2025 09:15:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=a9mdaI7idzVzidHJ667S6HyPeNpnu9DCiaXX4vnrdrLqTWAJQ+wSm6H2S31bmWVJqFUyNvyLRn/76fs7RF1EPd+kV8ZyGrq225DYB8ukFlcPfAvEwU4wdULulhTVjH9/A2GaosF9ldGKnVYuvkP/h2H3sB3vL6ctkwvH7My15PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BIpapE5R; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5fc447b03f2so334477eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 09:18:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743092113; x=1743696913; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743092295; x=1743697095; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PBjMIPbm34YhMtcHEbuTRJblo1v587ku20drBHEc6xE=;
-        b=Dm1Q/8/QWsBU6hU5k9gnpnQMZkx98SMdBsRyKncmC5zPjl945JdNVjOIpDwDy6uUE5
-         ooMLo/h+DtaDCAWmbPwn5lOUhiXX/9JOpuCEiQVUQH0oJUhgUJRREN9OhiZmz+Uzy0xa
-         4XC2b0UV1Kb0+qql3rdhJu++dJ8VoNQ05kFp6jyk0Q4pQ+NlzlEWTRD7XV1ZmiN6u+Qy
-         fSM4+it0q7vR/RE+pDZk5ENWZbm/jt+juyYb4A7kRhjF7wivdkJ89IP+YV+blLsUV5L2
-         UUN0fWkxodiBxZNSK1Z+S5Gs/z3Pz2frV6cm4DnVrHkAxaFBbvUPFDZtYn1u9bvjmqVL
-         Fgtg==
+        bh=mqnEF3sEPkpqCxNnwMjJWdaf2hat+YThq07xRZFUJb4=;
+        b=BIpapE5RyVzk6V5S6VXODc9xlzG1qwHW5AlukVCmcjJDLTP896Sai/vyirlrgvy6iE
+         CF4mEs0HJxCoVC3M0SQdDY3UIXtC8HV90jlJP96dtAcFD6ulsRhs8RU9gRaJIGW0ShFH
+         hHrS8wp3dx0Ohos0mX0KqtjMf6qWjmyoU6Ym2BAc83cOO879ohQdU0CArpDhFG6nxP55
+         erPcGfiWu4gST2PvJg3O/60MnArs0EKV1+Khi+yyBdXGXht6ca5U8gGf/7Gj6z5vbf13
+         5G/DpG8nHXkhgkDI5k3B2XeeLtG8DKlKAj1wne3lucY8aQOnE8wqvXfyWkTYBTGBRlFB
+         t/Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743092113; x=1743696913;
+        d=1e100.net; s=20230601; t=1743092295; x=1743697095;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PBjMIPbm34YhMtcHEbuTRJblo1v587ku20drBHEc6xE=;
-        b=kWRWPnuVhdDhpi0egdvAEpVin4wrpLsxJKaDsltVGhGK8n6bATnSqduvsxuoi+mBBX
-         y2kW0x9Hf5jXq5oXKCBpQEPaXZ5o9P0KbABlNk0vzm714j7STQJ1TQZIkHO0wA1cTe+G
-         o65JPSyKtFLKrb+arA9Kt2hgl6s1rikdF5qX+3D7N5ErNBwnoayh2yLk2Aa3j35Fo6yp
-         6/PDTHXEcw1vvKn4paPh/4ABcEIieLjZVlAp3QiPp2jhZ8dt/AsGsj1mXNLd0Xm57Zgc
-         N/OvhzDT34Wkx/euy0zvZYBjp9w22ytPFrLt2wsuxdNEVWhoaRDtWFfn3V3pogKv/aDj
-         UKlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU64HXfXOyK3vVW+tn6Xwf2q2DRVisXMNjmwWkTgsJC5QDuj90ydmaLUGl8xBF8/3QP8FQdvVlcPQ5I@vger.kernel.org, AJvYcCUy4mm0iYbrHPkqZcE6byZ8++mD/V0QufVwxpg9xjaoL2ih3q+5lh3poNZaMDhRlXnQlaSh8aDRkHZcs1Ew@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUrhBkshMOc6I7xRHGJ6xii/uNkkv/9lkNLL1l/8mZVe3SlciV
-	5sYH4FRT0f38+aiE/l5Lv0AkoQfi0wLiat3GC2YeL5V+JMfjLETFbj/y5rDMAj+UXjOYT+WxoIw
-	t7vqerJXcIQxT3dOHFC5qfswGTyY=
-X-Gm-Gg: ASbGncuqNN4vqX9pZ2LFnqnaEPOcgQeL7x0wka/fghDQ4xD/k+Xfr+NOFWdKTx3cG/a
-	lgoMWL2w5rnW/9gV0uyAU9GqvMvesB4BKbIVvsPRtuHNgesNUh0L8nR4qBKcvQdnHeypCAQ8iqQ
-	v4X3I3PJVU0RCx94SuOu9k/ag=
-X-Google-Smtp-Source: AGHT+IGxfLnA21DnRIbYYx8S6PoJ4aTz0uiokeIMBWjywJxr9DzgkdlxVh3T7ZtOpKy2EtNnbCJT4rNDAaVAjO4mHv8=
-X-Received: by 2002:a17:90b:4c05:b0:2ee:9b09:7d3d with SMTP id
- 98e67ed59e1d1-303a81651bcmr5489458a91.19.1743092113156; Thu, 27 Mar 2025
- 09:15:13 -0700 (PDT)
+        bh=mqnEF3sEPkpqCxNnwMjJWdaf2hat+YThq07xRZFUJb4=;
+        b=OJbKtwxcu/39owj71qry4Boj503yOuqs80O4xH4jfotrQWooPzZB8Sz8L34tIje+XD
+         qoI/zHmz2zCLa92hMEXrzyUUCBGvERPHaR0eoT1jZhJZTe8ajt4wNVVd40hdR4/9FNLY
+         LSMmw0Wvz2WP0rk3NzJaGy7k4J65dgZH+nBWpYxvmmjEUDkCeowN7SielDvlzJsnyQgv
+         L5641s+8SbM/Y5nG2jXXyelIkjqxxJutix6got6Beyx/Vxf1kgZRv9RptcJLbm2fhdP2
+         CYc27anIn305GMxtxYYMzorflCwu+H2TD8CcgLwV44fdx8RKTScSfrela6EAV5a2pL9Q
+         qfww==
+X-Forwarded-Encrypted: i=1; AJvYcCW5t2/6KyzhcX76IMA0p4BZRS587sdX7WeW0pXfI4CFslT95ghguH2q1DYSYARxnCS8z2E+On24dljdsN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx85ATCnU1QQQBiOKiaaBQhv61JWjS44dTI1tD1Vd5z/o8WrxWI
+	opj8ZMWU32h0aGo9NkTnFC7J4VLmiXy9hAE/ybzDKWfzasi4ltBsCildGYuFtmCos2XNO6Ml1+7
+	r6BMgZ+p0uz05eQvI0STnZfg3JrC4X9NsnaLP
+X-Gm-Gg: ASbGncvhovV83IWCnmqDzuT+1mIsXM3nR2GgjMn2qIlUXE8vW8xxU+CoQzWeBol+fTC
+	+zb4W2PhRWwUlDzc2DiQrFXkyoCnWmJgTcx6mARx+lGK2nri8X0ELe8xPEq/OgjHAY10EXYVQm0
+	NhfbUT0P2POSKdOkanZX4gBAn4o0WO4JM1Cja1N/U3kuLaQkw4JEG5PVX6
+X-Google-Smtp-Source: AGHT+IHi/yk2VLxWNlRgQHIdydvCFdW8Pn4TABTgo0AZYTWi7HVy6oo4mtI83E0GardJ1MPFVXWR5Xlw9TlArgIgINQ=
+X-Received: by 2002:a05:6820:6704:b0:601:b2b6:aa5 with SMTP id
+ 006d021491bc7-602785c979bmr2021645eaf.2.1743092294836; Thu, 27 Mar 2025
+ 09:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326215214.1706887-1-Frank.Li@nxp.com>
-In-Reply-To: <20250326215214.1706887-1-Frank.Li@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 27 Mar 2025 18:16:41 +0200
-X-Gm-Features: AQ5f1JqSne5RAICGf_1pTfxM4Me80uo-4iPsnpzylek8szz9S9jRRSHS2H44qaY
-Message-ID: <CAEnQRZD+OUSuysUBmReO0kwdZ61oDucXF7nNAuCYArxk0sRUwg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8qm-mek: consolidate reserved-memory
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20250321111535.3740332-1-bqe@google.com> <20250321111535.3740332-4-bqe@google.com>
+ <Z92N8dyIE42ROW2t@thinkpad> <CANiq72kYzx7JTVqrJuP0Wo9=1qtaN7s7fqkD5DDcjA59SgMizQ@mail.gmail.com>
+In-Reply-To: <CANiq72kYzx7JTVqrJuP0Wo9=1qtaN7s7fqkD5DDcjA59SgMizQ@mail.gmail.com>
+From: Burak Emir <bqe@google.com>
+Date: Thu, 27 Mar 2025 17:18:03 +0100
+X-Gm-Features: AQ5f1JqK4tvGF3XTiYKmmHBK6VonsiKsvurd5yTSrJFY6pmEub1Sn5wAN5tQNz0
+Message-ID: <CACQBu=X2KFNO4r_jVNLkCFJQh1qh9ErGN_BJpYOvJF6mHpE_Ag@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] rust: add bitmap API.
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>, David Gow <davidgow@google.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 11:52=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+On Fri, Mar 21, 2025 at 7:50=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Move dsp_vdev* to under existed reserved-memory node to consolidate all
-> reserved-memory together.
+> Hi Yury,
 >
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> A couple comments in case it helps regarding the docs/comments discussion=
+...
+>
+> On Fri, Mar 21, 2025 at 5:04=E2=80=AFPM Yury Norov <yury.norov@gmail.com>=
+ wrote:
+> >
+> > In C we separate declarations from function body with an empty line.
+> > Can you do that in rust? Can you point to a rust coding style? Do you
+> > guys really use 2-whitespace tabs?
+>
+> Please see https://docs.kernel.org/rust/coding-guidelines.html.
+>
+> You are right that the example block you quoted should have the
+> formatting fixed.
+>
+> I am not sure what you mean by separating declarations from body here.
+> I guess you mean variable declarations in C vs. the rest of the body
+> -- in Rust it is not done, i.e. declaring new bindings in the middle
+> as they are needed is expected (and sometimes needed).
+>
+> > I think I already asked to make the test a separate unit. It's amazing
+> > that rust understands scattered commented blocks of code and can turn
+> > them into unit tests. Unfortunately, I'm not.
+> >
+> > Please create a separate unit and test everything there, just like we
+> > do with normal C code.
+>
+> APIs should have examples, ideally good ones etc. The above looks like
+> an standard example, but maybe I am missing something.
+>
+> The examples are meant to be documentation first and foremost, that
+> happens to double as a test (so that it does not get out of sync
+> etc.). It is how we document everything else in Rust, and in fact we
+> are becoming stricter in requesting more examples when people add more
+> APIs (otherwise they never get added :)
+>
+> If actual tests are needed (i.e. on top of what examples provide),
+> then we just finally landed in -next `#[test]`-like support, i.e. unit
+> tests that can be written separately. We try to have tests as close as
+> possible to the code they exercise, too, but in some cases it may be
+> best to separate them (e.g. if there are way too many).
+>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+I tried this in today's mainline and got errors "undefined reference
+to `bitmap_free', `bitmap_zalloc`..."
+Is the version that landed in -next fixing those? Are there known limitatio=
+ns?
+
+> > For find_bit functions we have a lib/find_bit_benchmark.c Can you add
+> > a similar rust test, so we'll make sure you're not introducing
+> > performance regressions with your wrappers?
+> >
+> > Please don't use KUNITs. It's not ready for benchmarks, and tests built
+> > against it don't run on major distros.
+>
+> Cc'ing David here in case he has more context around this...
+>
+> I agree having a good "integrated benchmark" system would be nice, and
+> being able to mark particular "tests" as benchmarks etc.
+>
+> Regarding distributions, it sounds an orthogonal issue to me, but I
+> may be lacking context...
+>
+> > Are you sure a public method description should bear implementation
+> > details? I'm not. If implementation changes in future, the public API
+> > should stay stable (yes, including comments).
+>
+> To clarify, it is describing the invariants of a type (i.e. it is not
+> a method description).
+>
+> The invariants in some cases refer to private details (e.g. typically
+> a field), and whether to allow that or not is something we discussed
+> several times in the past.
+>
+> We went with allowing the `# Invariants` section to refer to the
+> fields of a type if needed, as a practical decision. However, if
+> something is a "private invariant" that others must not rely on, then
+> we should still point it out explicitly etc.
+>
+> I hope that clarifies.
+
+Thanks, it does & I will leave these as is then.
 
