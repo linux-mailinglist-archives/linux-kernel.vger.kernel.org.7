@@ -1,56 +1,88 @@
-Return-Path: <linux-kernel+bounces-578667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-578669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336BAA734FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:52:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F80A73502
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 15:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F92189026A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CA771890B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Mar 2025 14:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED126218826;
-	Thu, 27 Mar 2025 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C7F21885D;
+	Thu, 27 Mar 2025 14:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="TOWGc3eW"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aGXof6Tw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE7217F31
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 14:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B1A217F36;
+	Thu, 27 Mar 2025 14:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743087104; cv=none; b=LHjmYkhhm40GFhihZaOHVEl4pO+nS4CapRpYTH2MV3gyl3zohdmUTHF+GodDFswx+JkGy2xQu7moGNSBdosayAhEql3jINMmju/I5MGl2tHSTBggcy1hl/rRy2thxC7doQn6OdvEeM6qBeLAJOhSlF+73dUl78EAGBwdBPnMkZw=
+	t=1743087134; cv=none; b=pDmvzO9nZ75CI8xeAAPU/JMQvr8U5CZ4SQUicHZoL5Rrz0GOZ2Wka62V5zxN1IE1I7aOma1d89tVppAGP8ZaKqYii5FyxeT3Hb7N4+S31wlDJ0xwJUgaMVkjrnQVPQguvu16SmbQkW2+xif8gfCmWTtrjJa+f40NNb6rhAHsbZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743087104; c=relaxed/simple;
-	bh=jFY6/9yxtTShwRhi8aGD1r33YUrFs2oJ27jagdR8Dpk=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uy3PFg10QAsQrDcrf2FCp9OcP1DmC2H0/eoYKOJjTh9Lr+Bkfo5zFdnjULL+cBmpCucHsfLj9WVfgKBngcCkrHjhVAWBtz8X3OY4SW3sZ402hNmXdVlM/1L1tJA5vriBTHnswN8ojLb+yhp8TooIqjFB1clI2YZcXfGxhSh6JQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=TOWGc3eW; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1743087100; x=1743346300;
-	bh=5aQI5GkKTceApRtAP68NzR/aWmFWlKkk+99MRVZEmXA=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=TOWGc3eWuabcLp6rBjuWHYHrsDi+qHTetGi59vh6rH02QkScnwLzqmYAFM7InHGwO
-	 8RPXfpLvRwZlL9oTll0txC/GAb4dniORM4ustf7fYw4QhdvKCxoZpbPJJYWhV3bxQ0
-	 cB4KT9aG7EauVVapiGhkSLYbh397y7k4x+RpPZAbFLhPQVOwERIJiAji6g41kvAarF
-	 f1ZvJCzATPo4cqj7CxjQ8h58ybGz0FvS95UGG7keswbEo+hLukvUZw7VQkRlYY48ci
-	 UZW20BDkkbK6r/FYT7dJS0aUhz//mSJahyFj22TXLrWKtH/OhJpTsD0P1OSj3xEH1X
-	 +GoT6Pri6jc7Q==
-Date: Thu, 27 Mar 2025 14:51:36 +0000
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-Subject: Re: [[PATCH v2] 0/2] Use memcpy_and_pad for jset_entry_log->d init
-Message-ID: <B_oQnAzbHuX7dGVA98YTNgereEetK1r5pIJGI00DhsxRK4fD7WEuyZB9U2cuquiKlL3l5xeS5tU-srIwazCDGk55cE13AubE7MTGrtqobSk=@protonmail.com>
-In-Reply-To: <20250327125235.1958273-1-nicolescu.roxana@protonmail.com>
-References: <20250327125235.1958273-1-nicolescu.roxana@protonmail.com>
-Feedback-ID: 136600343:user:proton
-X-Pm-Message-ID: 53e0bb9476d3a97a9496a511465e1e722f443760
+	s=arc-20240116; t=1743087134; c=relaxed/simple;
+	bh=Bhr1KeHS8Z77l5QEy9EMMf1yW4NyU+HAeAvfNIiaQvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wpjxavx2e+D9B/gcwG+Kg3yRtZTIIdypYfiEyRwIIcIYwS+Zopnnsd4gH/M5FjukwUwsRNUy4YSWZK3M4ceueVJm10xu0x8eNio2cUTE2Bt8BWxtGp2HaT4+mFK2q90JDGqCzFeA4wVvs+DhKUmE+lYmD6nBQ7qC3FmryQ77bNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aGXof6Tw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5kbN3018437;
+	Thu, 27 Mar 2025 14:51:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YycBTB
+	loCv3Pe+HLW4266HM2aMmLdKjY8qSwckPN1l8=; b=aGXof6TwnPmmaeKrc03m8B
+	Ouq9G8h13K9yMwrwbT0psJBcT+zvYmB/rccERzO9NYJvoKOqPfoc+5oqlw71JIzp
+	4tniGC7xCUvHWHAo3JYvrJMcbyA9JLGS9tid6BfD9kawSHTm0SzG1yA27CHW6zOJ
+	16H6RLDWKAIPKkFiWTwA6fIx1d8NZkrVSgju0xADrLKoLK7UrDL1z6Oo/IYyZSlq
+	mezyUuTKc85oJJpq/IXEggVkeSkYJzMxpegjjtj66J0JZVKMBQAdXoM2KPQbrC1M
+	zsH/cgxEn5Eo6X9V+9ePe4ahSQU8yyXk6hfBG1FQxQQ0FSq0c3aIPJtrb/m+0EQQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45mnrwnj2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 14:51:58 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52RCnl1Z009737;
+	Thu, 27 Mar 2025 14:51:57 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rkwk8r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Mar 2025 14:51:57 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52REpq7145154732
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Mar 2025 14:51:52 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 420D020043;
+	Thu, 27 Mar 2025 14:51:52 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 15B4E20040;
+	Thu, 27 Mar 2025 14:51:52 +0000 (GMT)
+Received: from localhost (unknown [9.152.212.168])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 27 Mar 2025 14:51:52 +0000 (GMT)
+Date: Thu, 27 Mar 2025 15:51:50 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2] s390/pci: Fix dev.dma_range_map missing sentinel
+ element
+Message-ID: <your-ad-here.call-01743087110-ext-9280@work.hours>
+References: <20250312-fix_dma_map_alloc-v2-1-530108d9de21@linux.ibm.com>
+ <c6bcb10536005fd36966a97574e424c17cde1105.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,38 +90,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c6bcb10536005fd36966a97574e424c17cde1105.camel@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 13KfAhoY4-2FwZoeKoHuTDNbFrC-h_Kq
+X-Proofpoint-ORIG-GUID: 13KfAhoY4-2FwZoeKoHuTDNbFrC-h_Kq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
+ impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 suspectscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270099
 
-On Thursday, March 27th, 2025 at 1:52 PM, Roxana Nicolescu <nicolescu.roxan=
-a@protonmail.com> wrote:
+On Thu, Mar 27, 2025 at 10:45:40AM +0100, Niklas Schnelle wrote:
+> On Wed, 2025-03-12 at 11:32 +0100, Niklas Schnelle wrote:
+> > The fixed commit sets up dev.dma_range_map but missed that this is
+> > supposed to be an array of struct bus_dma_region with a sentinel element
+> > with the size field set to 0 at the end. This would lead to overruns in
+> > e.g. dma_range_map_min(). It could also result in wrong translations
+> > instead of DMA_MAPPING_ERROR in translate_phys_to_dma() if the paddr
+> > were to not fit in the aperture. Fix this by using the
+> > dma_direct_set_offset() helper which creates a sentinel for us.
+> > 
+> > Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
+> > Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> > ---
+> > Note: Based on iommu/next
+> > 
+> > v1 -> v2:
+> > - Fixed typo, added trailers
+> > - Link to v1: https://lore.kernel.org/r/20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com
+> > ---
+> >  arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
+> >  1 file changed, 11 insertions(+), 13 deletions(-)
+> > 
+> 
+> With the IOMMU pull request for Linux v6.15 the fixed commit is now in
+> Linus tree (with the SHA as cited) but this fix isn't. Since this fix
+> only touches s390 specific code I think it could go through the s390
+> tree but that currently doesn't carry the fixed commit so would have to
+> wait until the s390 tree pulls in v6.15-rc1. 
+> 
+> I don't think any breakage from the missing sentinel is visible outside
+> of guests using the new IOMMU passthrough mode so I guess waiting until
+> after v6.15-rc1 would be okay.
+> 
+> Heiko, Vasily, Alexander what do you think?
 
-> This replaces the depracated usage of strncpy with memcpy_and_pad when
-> used for initializing the d buffer of the struct jset_entry_log.
->=20
-> The other 2 usage of memcpy were also replaced by memcpy_and_pad.
->=20
-> Changes since v1:
-> - since the dest buffer is not required to be NULL-terminated,
-> memcpy_and_pad is used instead of strscpy. This adds zeros at the end
-> of the buffer if there's extra room.
-> - the same mechanism was done before in both __bch2_fs_log_msg() and
-> bch2_trans_log_msg by zero-ing out the src buffer. The second patch
-> replaces that logic with memcpy_and_pad to provide uniformity.
->=20
-> Roxana Nicolescu (2):
-> bcachefs: replace strncpy() with memcpy_and_pad in
-> journal_transaction_name
-> bcachefs: replace memcpy with memcpy_and_pad for jset_entry_log->d
->=20
-> buff
->=20
-> fs/bcachefs/btree_trans_commit.c | 3 ++-
-> fs/bcachefs/btree_update.c | 8 +++-----
-> 2 files changed, 5 insertions(+), 6 deletions(-)
->=20
-> --
-> 2.34.1
-
-Please ignore this patchset, the patch title is wrong. It has extra bracket=
-s. 
+Sure, I'll pick it up in the s390 tree for rc1 or rc2, depending on
+whether there will be a second s390 tree pull request during the merge
+window.
 
