@@ -1,246 +1,149 @@
-Return-Path: <linux-kernel+bounces-580444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC94EA751EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:15:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2608A751EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80A5189488C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470C016DC85
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A291EF386;
-	Fri, 28 Mar 2025 21:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A6E1EEA5D;
+	Fri, 28 Mar 2025 21:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eev4V3bc"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hPAyz47u"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F821CAA9E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DF014D70E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743196540; cv=none; b=usztvAE1bqH2iF3g0QrJVh78eQ4gQkXkzElHibnfnq8ygt48/zWj3FQrKj9AT8X3KVj3KK6pWH1zkXGqUwixSivnvgiL77YYZvdjh8n+/TLRXroQmjoXuT7BuF+FTh30tsdb6sVGrLY6Hxc0Y/H2826uwNMndKdFLXMyDU5hw9g=
+	t=1743196476; cv=none; b=dfnRhkSch0ePVnjSZ3qiiVmcqXCX5AD8Ju1PkLuU4AQlEtQFkaDjuNf3cxEcnZkquLBBUopUUu+hj+gNRfBjxj/o5yTPqhf5/TR8suQ7R2/L6i5L4ARs4+A1LFpB8Wf3SsYyB9hvp7vDvSgYK6rrNgTg4H27qhm5yu1vKwdK+hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743196540; c=relaxed/simple;
-	bh=tZFwzGfSYAuIByw2ZdY1WpwZUroqIUlEQluU1a14x2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qpfMqT8ZBIZ/JBomeo34y/PEQUhOx0/1vh19sFxkM6RY519lz3acVNN5/iDKf0tWLcsU3LFsH5PnpcAl3QU4/FBIfGKADB0RP2QfrWk7XZPCUOQZUcHAE+CjOB6UJ6csRxyHd81qMu4WkydKA8s9ngs6u18vLQegooarQmW09ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eev4V3bc; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223a7065ff8so17735755ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:15:38 -0700 (PDT)
+	s=arc-20240116; t=1743196476; c=relaxed/simple;
+	bh=gdCIisoprcAtBtrqnXWRX9t4HFnV++povrCMun5++2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thhKEs2zez+MG3YTVb5lSL+bEO4wnVndqWsq8swF2qBLM50z/K+xN0Wn7PA+ii2P3+FjE6iGjzSx0aenUoPYgModi6k5DhyOOmfzGNxsyjIXZ2qwXCW8lUEiMebAUlZk6ZijLrsPBnrwsXP2vy/0XrqHTEdOORhKz+78oVQtqfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hPAyz47u; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85b44094782so80871839f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743196538; x=1743801338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbUbFTWJD7pwB3jiRDiQvtUN69ijb2DE0TXBdNZ7PTw=;
-        b=Eev4V3bcDX5YGIMxMo1tybarkR0JyblsNaazw5uux4w/iLFzan0fRml10hUputx63A
-         dc0o69MykzI2Fg8HdfReCMtqZaOwVw3rwHUA01Aa9ppPD2knCzj6Y/fFO8bT3n145AdY
-         gX1wBfmQvGKslgqSVMCFdvltXOjw5FdYq9ioJxwi6b9qMAARg/auRG4hAUVkm7AKvNgT
-         qn3pHNXkGodFWZ+SqSPi/J+OKXqLDPhXO9KrgrXwYJr0ONHMDBpOTA91PHzo08E82zJB
-         K3Ba3b5yLfVajcvlR6CZHTCLWZzd91LzsZTh3vV3Qupb3RJpycjUnPrpQfHZ2VAeZODm
-         9Ytg==
+        d=linuxfoundation.org; s=google; t=1743196473; x=1743801273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ITd/dVYH0tNgH+qwyAefOJkkLmPAmD8hZuOxOmm1KYQ=;
+        b=hPAyz47uQPdn88DejICza5rMu5hhAS/K8/yLaylBzkvkuYjN0P9OWTibQiS1K+jMhi
+         PqmpON4tIxL1TFp65/nxltxlMd7dgdnNzKWAqFR6joIq2Rg7WDz4a8uZwR1DeH4Hf+sR
+         rcvCUTEvpa6OJroM20S+5AQ6GQlaIm2ShHlvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743196538; x=1743801338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qbUbFTWJD7pwB3jiRDiQvtUN69ijb2DE0TXBdNZ7PTw=;
-        b=GqiFvHLnjQNygYMXqOfC/1r82HR43SGUkYv2N9YRBZ5BOV3HtskTtgVIjAUXhGZ6ua
-         i2cvealiV5OICFwihjH9lAk7LTaGaehOgXE+MUdoC2H+hvEe7IgvqYTzG+tK8QdZEmhe
-         w3WCtoeYxbqECDaq4HCgdd2caq79oGfFwNPf22l4it2Y6KsU8GpocZRDyQ5yPYE9BcHF
-         0+tJsCcRh4FyPEMpStqXey/3drfd5tE/126zXWWDt+9KtB6pwizckdtX6xbW8hVdtkjy
-         l9gKCSj0dzIza8jLYKfBz5zkzssa4Z0BFM9h5d+s0Uly9rkQAsCR1o9IdYZGThLjDbkV
-         3wNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoKqTqnFQIr9qr6L8u44DceYSl7kmB+W+VUml4McCN7hmmwi6HousT3aw+57KTyr6p/F7b1C29B9CK3oI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOwEsB/uXSlwuhoABtCClHzG7OEmc5ZrCl++E75Z9T7gBQVLvZ
-	52NH+RdxWQzw3fcT2e/MFpIMyyNTmzZx+/qwqKusYHcZmg6uCPpb
-X-Gm-Gg: ASbGncthernVW7JJrVRM8+ZUK3oT1Aye4qUlBmyxLKLm/SrFCArw7M8FW4i9CY6ZYGI
-	JgpTRm7m1c3MMMjAfOhatk3v0LJXNXSdDhCuVGgw2F5hGIgeBtf4dMBi+koMqpm4efftp8mA2QF
-	5b8BVbxBacQ9umG3zI0vUrPPDICseSyiBxp1amSJNZLaCc/PJcU8flgZp4ZCYL7CSCbqQvlqDvw
-	B8sGArC0oZRA5j6le5zqHMPrf+M7hLI8yb4z9U6pTpBOpCMh07SI22y+ei0QVEU8nfWI6GfEWdh
-	PSQ4MWTm/icX+J5jxB1m/tqMcjNF1sz0OYTU53xn4p8r0zRsyd/T7GLoNBivYXBBVhM8KNZX/hi
-	4WHtjHQqbacG85w==
-X-Google-Smtp-Source: AGHT+IHDjHmSibHj5GGIUXlXojDC4EIiLsffxfiVyP6HzgNznyb+FNdMvwg2bsWgDhCZDfRyWVRkGw==
-X-Received: by 2002:a17:90b:51c6:b0:2ff:5ed8:83d1 with SMTP id 98e67ed59e1d1-305320af2camr1021006a91.19.1743196537935;
-        Fri, 28 Mar 2025 14:15:37 -0700 (PDT)
-Received: from fedora.. (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-30516d55fbasm2407137a91.15.2025.03.28.14.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 14:15:37 -0700 (PDT)
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Huan Yang <link@vivo.com>,
-	linux-kernel@vger.kernel.org,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [RFC PATCH v2 1/1] mm/vmalloc: Introduce vmap_file()
-Date: Fri, 28 Mar 2025 14:13:49 -0700
-Message-ID: <20250328211349.845857-2-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250328211349.845857-1-vishal.moola@gmail.com>
-References: <20250328211349.845857-1-vishal.moola@gmail.com>
+        d=1e100.net; s=20230601; t=1743196473; x=1743801273;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ITd/dVYH0tNgH+qwyAefOJkkLmPAmD8hZuOxOmm1KYQ=;
+        b=coUvxpfhrmrZybNCvK9GNZkNDtRTaLn/DoAkL99Tj6SUUq4NvPg2WFKEOaMbMoCNOm
+         MjcSahPpW4LC2WPaAvoPLGZGpedS6sMZ7S9wT2z9gqYH+hoj+8V5ScNblX70nNzlAjVe
+         byV6F6BumAh3HexXH5WQbNruVZexAe+4mYlkLxs2WYOZ67H1mzw/P4BuxXwpK9DTS+j1
+         fYwpldYMeI6j8PzcqwuSz9T3rx9jOidZJt1wjpKvRYV2mK3SQo1ZUNdzI2ISY9toJNLv
+         RgOwk5hwhA7saNew3rvrhsU/M0l1IAOqlsqAQ/th6EzJM4BjHxt8A9hS5jUxvY/es4Rn
+         KEnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeuB+JAF3/25wGbryhSNxySf0LCtdIGpFNdA7SkxgYXPK3LH/PhF/eT+85Grufb8xvcoaxy4+zpXbb09w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHI4yIwWJLnbr3d+OxfP5XNPLfv1XlD1AoXbfKjohS2kJqUpq3
+	mTL4XMNB310R1/WdbzB49AOVhsg8QtDOHR/Ep8E1LhvlcWTjbDJvxJpp6/TUxAE=
+X-Gm-Gg: ASbGncuyOovgqmHP7elqx1ZdKcW1Xzg49Py/uswzoL8VFOXHJVQSA96l28J7HYeT6OV
+	rVW3oyWkuC+jT5tQd4TE0/Aby99ORzLKIc6xF3q4FowqYcC+1jFeFZpSgLHrOyxSa6AiDRvQKNf
+	+ti8EgzCu1Ay4a+RJc+K/h4StFU17BL5Ga9zTj6KpgCuITHpRuDJJa+ayjVCKwtMQ7s2QM2/6Po
+	MhhllTMuuUUdg4USHPgaeiNlbc25QqqOwuni2s02+MomrTKU/jKI6/TZnWycIN6Rm04VsvGsvHr
+	ChRDjfqmQsDeBT08wHLtu/oB2ogj6xF8x4W1wbfI/zPhW4NLYUQaRaE=
+X-Google-Smtp-Source: AGHT+IEu5vwAIwrMiVRpX0qPvQFoMngxuYyjWw6k1tjZRjkdhtFK08i2zSOfHAkxXDDIpwatOAc0tg==
+X-Received: by 2002:a05:6602:7288:b0:85e:8c20:6194 with SMTP id ca18e2360f4ac-85e9e761b07mr146555039f.0.1743196473247;
+        Fri, 28 Mar 2025 14:14:33 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f464746a8fsm623876173.46.2025.03.28.14.14.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 14:14:32 -0700 (PDT)
+Message-ID: <99a8b726-726a-4e26-bafc-9ff2b1e4d7be@linuxfoundation.org>
+Date: Fri, 28 Mar 2025 15:14:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
+ usbip device
+To: Zongmin Zhou <min_halo@163.com>
+Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
+ gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250219092555.112631-1-min_halo@163.com>
+ <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
+ <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
+ <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
+ <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
+ <c49917d2-5157-4878-9866-be6053b5124d@linuxfoundation.org>
+ <6d47fef6.9eef.19565c308e5.Coremail.min_halo@163.com>
+ <803b43c6-9aab-4380-9753-fd2efa8061fa@linuxfoundation.org>
+ <7e9db4d9-0a22-44b4-a981-0de25d6a2aa4@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <7e9db4d9-0a22-44b4-a981-0de25d6a2aa4@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-vmap_file() is effectively an in-kernel equivalent to calling mmap()
-on a file. A user can pass in a file mapping, and vmap_file() will map
-the specified portion of that file directly to kernel virtual space.
+On 3/13/25 04:02, Zongmin Zhou wrote:
+> 
+> On 2025/3/11 00:49, Shuah Khan wrote:
+>> On 3/5/25 03:03, Zongmin Zhou wrote:
+>>> At 2025-03-05 03:45:28, "Shuah Khan" <skhan@linuxfoundation.org> wrote:
+>>>
+>>>> On 3/2/25 05:37, Zongmin Zhou wrote:
+>>>>> Dear shuah,
+>>>>>
+>>>>>
+>>>>> Yes, I agree with you.It would be better if there have a more simpler fixes than This patch.
+>>>>>
+>>>>> I can just think of the two possible solutions that mentioned before.
+>>>>
+>>>  >What are the two possible solutions?
+>>> 1. The patch we are discussing now,have to change the API between the kernel and user-space.
+>>
+>> 2. Simply set vhci-hcd dma mask to 64 by default,just modify the vhci-hcd driver. Then dma_max_mapping_size() will always return SIZE_MAX.
+>>
+>> I prefer option #2 - What are the downsides if any with this option?
+>>
+> If set vhci-hcd dma mask to 64 by default,I can't predict what will happen when the real USB controller support less than 64bit?
+> 
+> After all, the data flows from vhci-hcd to usbip-host and finally to the USB controller to which the device is actually connected.
+> 
+> the data is ultimately processed through the real USB controller?
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/vmalloc.h |   2 +
- mm/vmalloc.c            | 113 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 115 insertions(+)
+Sorry for the delay.
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 31e9ffd936e3..d5420985865f 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -192,6 +192,8 @@ extern void vfree_atomic(const void *addr);
- 
- extern void *vmap(struct page **pages, unsigned int count,
- 			unsigned long flags, pgprot_t prot);
-+void *vmap_file(struct address_space *mapping, loff_t start, loff_t end,
-+			unsigned long flags, pgprot_t prot);
- void *vmap_pfn(unsigned long *pfns, unsigned int count, pgprot_t prot);
- extern void vunmap(const void *addr);
- 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 3ed720a787ec..b94489032ab5 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3475,6 +3475,119 @@ void *vmap(struct page **pages, unsigned int count,
- }
- EXPORT_SYMBOL(vmap);
- 
-+/**
-+ * vmap_file - map all folios in a file to virtually contiguous space.
-+ * @mapping: The address space to map.
-+ * @start: The starting byte.
-+ * @end: The final byte to map.
-+ * @flags: vm_area->flags.
-+ * @prot: page protection for the mapping.
-+ *
-+ * Maps a file into contiguous kernel virtual space. The caller is expected
-+ * to ensure that the folios caching the file are present and uptodate. The
-+ * folios must remain so until the file is unmapped.
-+ *
-+ * If @start or @end are not PAGE_ALIGNED, vmap_file() will round
-+ * @start down and @end up to encompass the desired pages. The
-+ * address returned is always PAGE_ALIGNED.
-+ *
-+ * Return: the address of the area or %NULL on failure.
-+ */
-+void *vmap_file(struct address_space *mapping, loff_t start, loff_t end,
-+		unsigned long flags, pgprot_t prot)
-+{
-+	struct vm_struct *area;
-+	struct folio *folio;
-+	unsigned long addr, end_addr;
-+	const pgoff_t first = start >> PAGE_SHIFT;
-+	const pgoff_t last = end >> PAGE_SHIFT;
-+	XA_STATE(xas, &mapping->i_pages, first);
-+
-+	unsigned long size = (last - first + 1) << PAGE_SHIFT;
-+
-+	if (WARN_ON_ONCE(flags & VM_FLUSH_RESET_PERMS))
-+		return NULL;
-+
-+	/*
-+	 * Your top guard is someone else's bottom guard. Not having a top
-+	 * guard compromises someone else's mappings too.
-+	 */
-+	if (WARN_ON_ONCE(flags & VM_NO_GUARD))
-+		flags &= ~VM_NO_GUARD;
-+
-+	area = get_vm_area_caller(size, flags, __builtin_return_address(0));
-+	if (!area)
-+		return NULL;
-+
-+	addr = (unsigned long) area->addr;
-+	end_addr = addr + size;
-+
-+	rcu_read_lock();
-+	xas_for_each(&xas, folio, last) {
-+		phys_addr_t map_start;
-+		int map_size, err;
-+		bool pmd_bound, is_first_map;
-+
-+		if (xas_retry(&xas, folio))
-+			continue;
-+		if (!folio || xa_is_value(folio) ||
-+				!folio_test_uptodate(folio))
-+			goto out;
-+
-+		is_first_map = (addr == (unsigned long) area->addr);
-+		map_start = folio_pfn(folio) << PAGE_SHIFT;
-+		map_size = folio_size(folio);
-+
-+		/* We can unconditionally calculate values for the first
-+		 * folio. This lets us handle skipping pages in the first
-+		 * folio without verifying addresses every iteration.
-+		 */
-+		if (is_first_map) {
-+			map_size -= (first - folio->index) << PAGE_SHIFT;
-+			map_start += (first - folio->index) << PAGE_SHIFT;
-+		}
-+
-+		if (addr + map_size > end_addr)
-+			map_size = end_addr - addr;
-+
-+		/* We need to check if this folio will cross the pmd boundary.
-+		 * If it does, we drop the rcu lock to allow for a new page
-+		 * table allocation.
-+		 */
-+
-+		pmd_bound = is_first_map ||
-+			(IS_ALIGNED(addr, PMD_SIZE)) ||
-+			((addr & PMD_MASK) !=
-+			((addr + map_size) & PMD_MASK));
-+
-+		if (pmd_bound) {
-+			xas_pause(&xas);
-+			rcu_read_unlock();
-+		}
-+
-+		err = vmap_range_noflush(addr, addr + map_size,
-+				map_start, prot, PAGE_SHIFT);
-+
-+		if (pmd_bound)
-+			rcu_read_lock();
-+
-+		if (err) {
-+			vunmap(area->addr);
-+			area->addr = NULL;
-+			goto out;
-+		}
-+
-+		addr += map_size;
-+	}
-+
-+out:
-+	rcu_read_unlock();
-+	flush_cache_vmap((unsigned long)area->addr, end_addr);
-+
-+	return area->addr;
-+}
-+EXPORT_SYMBOL_GPL(vmap_file);
-+
- #ifdef CONFIG_VMAP_PFN
- struct vmap_pfn_data {
- 	unsigned long	*pfns;
--- 
-2.48.1
+That is the case. I have to check the code to see what the host
+would do if it receives larger buffers from the client (vhci)
+> 
+> However, the default setting to 64-bit is equivalent to eliminating the impact of
+> 
+> the patch(commit d74ffae8b8dd) on usbip protocol devices, sounds feasible?
+> 
+> I am not very professional in this field, waiting for your evaluation.
 
+We can give this a try. Send me the patch with default testing the
+following cases:
+
+Host - swiotlb enabled and disabled in your environment to see what
+happens when there is a mismatch swiotlb enabled case and client
+side doesn't limit the size.
+
+thanks,
+-- Shuah
 
