@@ -1,141 +1,179 @@
-Return-Path: <linux-kernel+bounces-579463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2294BA743AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:06:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCB0A743C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692CC17684E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 06:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9643BA1F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 06:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB721146B;
-	Fri, 28 Mar 2025 06:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="clkVJETU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F8B211A24;
+	Fri, 28 Mar 2025 06:14:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B79079CF;
-	Fri, 28 Mar 2025 06:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034DF1EF36F;
+	Fri, 28 Mar 2025 06:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743141963; cv=none; b=OUlTczWau+boZ0pmP70KCcpZ3rDtPw+YryWjf95hrspeJUNoF8z3+RcdVEeU/pSXyifVDEo1FH75QTCJHWtiBmlxLlQhrCpjp9bd/FMxWUGKjzM82lfyitpCsgkIIv45cvHXRKQua55P2Pu+g7K1xlyp+Q/mAdptjDXAzNop2ps=
+	t=1743142493; cv=none; b=s9dO/tonM/LIHawKjnn2bYNURc/xn2/dO8bA1ys2s5Z66z9RFmj7tHWH38zQPL8Mgi6cp3bbF2XyFOpDB0VJRB81P/j+DzNHHacsqORqfTPQCaReuFPJzay3CQa5fyQD8u54tgyE64xxGzUr7JyYtuUNKnK0AK4gGr4M5wOaMLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743141963; c=relaxed/simple;
-	bh=mMBBdaEfvWPB+V13LxKAUqSfPqHXXoV5jbWKRlNKZhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SjozZUooPVR3w30ZAC/aa1BAaZbC6SHNYLdHTeQwo/LIMtQIy1U0Zy96E/BZ2hILxqH57Wpm9TP2B6noARVdxtH73kATCfGVScQ+bhXUbHGZg93qa5bg4eMkVfXCfSeLbpIfhk0x2XVlIP26ykdmz3tD3IwMsG0A56UKAGiTSvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=clkVJETU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S5V8pA013798;
-	Fri, 28 Mar 2025 06:05:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JOfvnTSzLoO17AT75usOqFQaQV75k80oAk0V74z+Ub0=; b=clkVJETUE0eEmL+Y
-	A4zDILhXrHQgdD0tt4Hu+H/GadDEfZ79sE7ZN9JpdP6aCURP2tXJbrk3k8cRJx58
-	+IW4vlttricMA5KXm3gCRSeXVtOodr6ZbydI9n+GrP80u0z41xlIbSgqEBJOPu/5
-	9l9UNR6VKiDaFT4OL5bmbWIV8Fu9t+6PSVpA8HQ8WOVSPRq2bwBgVpdsK9dIHI7X
-	jjCIgl5GAq62ewmjeTdUSCQkSC2ycOlOtVN0E3jIRlDKu33DFS9IaicctZ4psGCi
-	VX4l/zmhESDoUZLWL/syKwLgdaiSdcur5mdtHKqMc/ALtJS72eZrDtcbT6jgiCv2
-	egnpiQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45mffcp9ys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Mar 2025 06:05:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52S65udb007684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Mar 2025 06:05:56 GMT
-Received: from [10.217.238.57] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Mar
- 2025 23:05:53 -0700
-Message-ID: <4a205725-af49-4f28-ab78-7059451d66c8@quicinc.com>
-Date: Fri, 28 Mar 2025 11:34:58 +0530
+	s=arc-20240116; t=1743142493; c=relaxed/simple;
+	bh=v5tjRA3ZVyMyUsgojjyteteRUZX2Erx+Fr5ybQyUuh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UvhW9nZVsUIV7mIAruWz2388anJHmI44tzcbUfs1cy/O8+V2gxB2ArS2JX7Ch0BiQoZ4FmXBxbxlKrmpeYMPhMNnvZe8mJDghuF0pInrPtTqc5LmFvReu0p1w9Rt13YjU5sqjWH7bksdqMMr39HNmaj/2ZaUxReqUHVDTsJ3Q3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZP9GX4gsNz4f3jZd;
+	Fri, 28 Mar 2025 14:14:28 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 42D6C1A07BB;
+	Fri, 28 Mar 2025 14:14:46 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHK2BSPuZnfAUtHw--.25875S4;
+	Fri, 28 Mar 2025 14:14:44 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@lst.de,
+	xni@redhat.com,
+	colyli@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC v2 00/14] md: introduce a new lockless bitmap
+Date: Fri, 28 Mar 2025 14:08:39 +0800
+Message-Id: <20250328060853.4124527-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
- <ea79cee4-8c47-4054-bd17-2097ada4e583@kernel.org>
- <b57fa204-d3d2-4b74-8834-3f2d93726a99@quicinc.com>
- <73ed6108-27ab-43ac-abd3-82656693404d@kernel.org>
-Content-Language: en-US
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-In-Reply-To: <73ed6108-27ab-43ac-abd3-82656693404d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=CdgI5Krl c=1 sm=1 tr=0 ts=67e63c45 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=sY3dAEUmMzCiYxic9fkA:9
- a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: VQmD0566vwbfOYe4r6RzvjEYkHsAt4rL
-X-Proofpoint-ORIG-GUID: VQmD0566vwbfOYe4r6RzvjEYkHsAt4rL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_03,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- spamscore=0 mlxlogscore=960 lowpriorityscore=0 suspectscore=0 phishscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503280040
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHK2BSPuZnfAUtHw--.25875S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr1kZry3XFW5GryUtrW5Jrb_yoWrGF1UpF
+	ZxJr4fGrs0qr47Xw13AryIqFySqr4kJr9Igr93A39Y9F1DCr9Ivr48WayFv347Gry3JF1q
+	qr45tr95GFyDCrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUOv38UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
+#### Background
 
-On 3/27/2025 12:38 PM, Krzysztof Kozlowski wrote:
-> On 26/03/2025 18:40, Yuvaraj Ranganathan wrote:
->> On 3/25/2025 1:00 PM, Krzysztof Kozlowski wrote:
->>> On 27/02/2025 19:08, Yuvaraj Ranganathan wrote:
->>>> The initial QCE node change is reverted by the following patch 
->>>> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
->>>
->>> Use commit SHA syntax (see submitting patches, checkpatch).
->>>
->>>> because of the build warning,
->>>>
->>>>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->>>>     ...
->>>>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
->>>
->>> Not relevant warning.
->>>
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Are you saying this is not the warning seen at merging?
-> Tell me how it is relevant? Tell me how can I reproduce it.
-> 
-> Best regards,
-> Krzysztof
+Redundant data is used to enhance data fault tolerance, and the storage
+method for redundant data vary depending on the RAID levels. And it's
+important to maintain the consistency of redundant data.
 
-Below commands will show the above warnings without the fix,
-make clean && make qcom/qcs9100-ride.dtb CHECK_DTBS=1
-make clean && make qcom/qcs8300-ride.dtb CHECK_DTBS=1
+Bitmap is used to record which data blocks have been synchronized and which
+ones need to be resynchronized or recovered. Each bit in the bitmap
+represents a segment of data in the array. When a bit is set, it indicates
+that the multiple redundant copies of that data segment may not be
+consistent. Data synchronization can be performed based on the bitmap after
+power failure or readding a disk. If there is no bitmap, a full disk
+synchronization is required.
 
-Thanks,
-Yuvaraj.
+#### Key Concept
+
+##### State Machine
+
+Each bit is one byte, contain 6 difference state, see llbitmap_state. And
+there are total 8 differenct actions, see llbitmap_action, can change state:
+
+llbitmap state machine: transitions between states
+
+|           | Startwrite | Startsync | Endsync | Abortsync| Reload   | Daemon | Discard   | Stale     |
+| --------- | ---------- | --------- | ------- | -------  | -------- | ------ | --------- | --------- |
+| Unwritten | Dirty      | x         | x       | x        | x        | x      | x         | x         |
+| Clean     | Dirty      | x         | x       | x        | x        | x      | Unwritten | NeedSync  |
+| Dirty     | x          | x         | x       | x        | NeedSync | Clean  | Unwritten | NeedSync  |
+| NeedSync  | x          | Syncing   | x       | x        | x        | x      | Unwritten | x         |
+| Syncing   | x          | Syncing   | Dirty   | NeedSync | NeedSync | x      | Unwritten | NeedSync  |
+
+special illustration:
+- Unwritten is special state, which means user never write data, hence there
+  is no need to resync/recover data. This is safe if user create filesystems
+  for the array, filesystem will make sure user will get zero data for
+  unwritten blocks.
+- After resync is done, change state from Syncing to Dirty first, in case
+  Startwrite happen before the state is Clean.
+
+##### Bitmap IO
+
+A hidden disk, named mdxxx_bitmap, is created for bitmap, see details in
+llbitmap_add_disk(). And a file is created as well to manage bitmap IO for
+this disk, see details in llbitmap_open_disk(). Read/write bitmap is
+converted to buffer IO to this file.
+
+IO fast path will set bits to dirty, and those dirty bits will be cleared
+by daemon after IO is done. llbitmap_barrier is used to syncronize between
+IO path and daemon;
+
+Test result: to be added
+
+Noted:
+1) user must apply the following mdadm patch, and then llbitmap can be
+enabled by --bitmap=lockless
+https://lore.kernel.org/all/20250327134853.1069356-1-yukuai1@huaweicloud.com/
+2) this set is cooked on the top of my other set:
+https://lore.kernel.org/all/20250219083456.941760-1-yukuai1@huaweicloud.com/
+
+Yu Kuai (14):
+  block: factor out a helper bdev_file_alloc()
+  md/md-bitmap: pass discard information to bitmap_{start, end}write
+  md/md-bitmap: remove parameter slot from bitmap_create()
+  md: add a new sysfs api bitmap_version
+  md: delay registeration of bitmap_ops until creating bitmap
+  md/md-llbitmap: implement bit state machine
+  md/md-llbitmap: implement hidden disk to manage bitmap IO
+  md/md-llbitmap: implement APIs for page level dirty bits
+    synchronization
+  md/md-llbitmap: implement APIs to mange bitmap lifetime
+  md/md-llbitmap: implement APIs to dirty bits and clear bits
+  md/md-llbitmap: implement APIs for sync_thread
+  md/md-llbitmap: implement all bitmap operations
+  md/md-llbitmap: implement sysfs APIs
+  md/md-llbitmap: add Kconfig
+
+ block/bdev.c             |   21 +-
+ drivers/md/Kconfig       |   12 +
+ drivers/md/Makefile      |    1 +
+ drivers/md/md-bitmap.c   |   10 +-
+ drivers/md/md-bitmap.h   |   21 +-
+ drivers/md/md-llbitmap.c | 1410 ++++++++++++++++++++++++++++++++++++++
+ drivers/md/md.c          |  180 ++++-
+ drivers/md/md.h          |    3 +
+ include/linux/blkdev.h   |    1 +
+ 9 files changed, 1614 insertions(+), 45 deletions(-)
+ create mode 100644 drivers/md/md-llbitmap.c
+
+-- 
+2.39.2
+
 
