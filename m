@@ -1,172 +1,92 @@
-Return-Path: <linux-kernel+bounces-579982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C3CA74BCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:58:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE27A74BD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CE5F1B65C4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6FB16E70D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6F0198E81;
-	Fri, 28 Mar 2025 13:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YAFpctMq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8X9hFvGw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C4F1BE86E;
+	Fri, 28 Mar 2025 13:49:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7B017C225;
-	Fri, 28 Mar 2025 13:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFAB1AF0D6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743169709; cv=none; b=bz1U2Crz+CZyzD6BikGUgr7fRYVvd7aPA6hgh0iJQsj5pPQWq5JYmzeHYBQaWJWF7enUHUfktLkNCEIiPaR2D39MLDGe2CgEwNh63R4/wFRlUaKGtVx36Zcn0I+jKdhUMgBqxjjmIFSDGhXVtE2MAyQZ0PfZEkvUZ+5azDerUYo=
+	t=1743169745; cv=none; b=ckuV8AumDxl/9JPhorHQ4ZmpF1B0eYhYXVk4y59pop1r4mT5nIkEUUBAW7IYJdAoe5Bkff3vdihwDxVV14qIsEJ3G5BAvNpdR6fwTHRblVuYvtzesDZUHm8P92VoRU9rwwGbwXqPdpIz/H7HvJ3YQABzvh8S8YJ3ZDcZG/oyc5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743169709; c=relaxed/simple;
-	bh=A4lEWOeHQUYgXZddxDMWiNnsI7HKHKG9xnnHtCg4XgQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KTPBE62TOmA13+ExsIWYEK3GaskNTTMBtJYAeTd+UH3rk59kegK+8mh4YpzF9fa3ui03SehKTGNy8dw0FLXDa3ll2n5HeTgDJ1RehxoNa2MDmFj3FiED7FlrhbYfeieU1u0QpERMaml/OJaqJ6dAfOfF6Su6ocakYQv50OvDHjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YAFpctMq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8X9hFvGw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Mar 2025 13:48:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743169706;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OoDqsfdyFwtIrnDdUOO1ZJZxvc9k9417KYe0eB98UGI=;
-	b=YAFpctMqOW2Ku8TrsHXlzOGfNiHY1UX6ohlW9XWVsk4ES3ipxhDQj4y1tpUGJuEY/OOxZr
-	qH26b6fEDPvCUdkJC28cgBPIHtDYMjeKjJHyH/NNmVquNi/Q5iEGSmRD7p3gRUJSYI09HA
-	t+3w4fYDhX4i2KnVjsIpIKlbVXVcvB+hw+LaNYJgeCwAbWAuur1bGIuJECkwJxD3yUmAxc
-	fnchKYlYC+IMwHqFrXd8edxobehL5PxcQ/vTrXpD8Di4/axz3dJpzUrhJ+CsdeCq6NNYRf
-	YO3PWblJym5Y+fJ6h7R2IRQpBu1QKX3gXEHMcLSNM5hn/vvVt6/TnFoQmBtU8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743169706;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OoDqsfdyFwtIrnDdUOO1ZJZxvc9k9417KYe0eB98UGI=;
-	b=8X9hFvGwAM7/Vwy+ikJsNRxxm3nVY3T9qMZt1KYqh1p/M9RzSC+qvsTAyVKT03kdhBSZRp
-	Z2cvrC1Kd7qoYhAg==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/urgent] objtool, lkdtm: Obfuscate the do_nothing() pointer
-Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
-References:
- <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1743169745; c=relaxed/simple;
+	bh=ksFQUOP3EzZfL9D4/0O2XSC5+UR6AEx8dV1lPhH8BeA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jDJj0jzXEHX5fzZggtDWnMbLdi5gnzcQhxSwZNuis+1a+03t7MpOdDeUlGtMG+uQM+dA2CAGXvSGn0RkFP129lXlSoR9UaFE9tpC9G5TowzgITrcJcgnYPHbBDC4YI6In/9yjn42YcwX5LkgDKwEmQgdzlfyTHvZfeRtkqsmpj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d585d76b79so18987775ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 06:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743169742; x=1743774542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZccP94vSlfyk6BXUvEnclbkKMxBWU/FoFWjWqAr+xSc=;
+        b=Z5GUtchbLGh7+benCtqzfmBvVWrND3sYLKZwe2jQQ3OvJIzMI90dpgp/uEBRC5JGOH
+         6NgyK4/DRZoh3ghth3rTSTlJmuzPnL9f4byLvbCqSrSxpQdj9s2uPbxWqfPZXHuJ3SOI
+         PZLRXln4J1f4hwKPyvwgaSF5nCKwBl0/OSkErbjTs5L5QqWBNpu6J0sTxgP0/an67h14
+         FK37TrYIbK7+clHUFhXh7ztpFzxaCw98vOC4oCEYvzzb1ke/Hj17rzOcrDlqrm2Fxx0I
+         W/wpVvX0W+VaTn4Or1+OTsx6ShVblvTbmWGfwB3yGXRy37A5rjylXehx64itQKo/Q20H
+         OiYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxdrQrXGB9Yun8S23CQZUSOJDzIfXp6Ih+xGnNt2QAmXxIesdeSgW507Axi4R1FZvJ1I9NrxTbXmKxvgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKx2/6H0sccEMtAviupbHaG7K9BmbAOJyiNoWBYCFaHqqdn9vy
+	RQq761934hEYyO2KRknGsYKEv50ipX0pxwnTWVDZ7+KBaI1kGRO8xfgijNz6P+kFEOmyrpXb/5/
+	hmk7toj4Cg5yGD09+xnAh1/ow+KaTSZX23ACll8RwTlZIU052w5WCEi8=
+X-Google-Smtp-Source: AGHT+IGwRYua1iETzdd0MEmIL3HDNfodpZ6kzAALmumare+moQZbATVg3Tb/phYquDGYuvTGiVbb0t0/KM3tnAOm1426Ww8zs2hT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174316970529.14745.224291620616247692.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1689:b0:3d4:28c0:1692 with SMTP id
+ e9e14a558f8ab-3d5ccdc1e0bmr85604945ab.5.1743169742505; Fri, 28 Mar 2025
+ 06:49:02 -0700 (PDT)
+Date: Fri, 28 Mar 2025 06:49:02 -0700
+In-Reply-To: <20250328132557.GB29527@redhat.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e6a8ce.050a0220.2f068f.0077.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
+	ericvh@kernel.org, jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, mjguzik@gmail.com, 
+	netfs@lists.linux.dev, oleg@redhat.com, swapnil.sapkal@amd.com, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the objtool/urgent branch of tip:
+Hello,
 
-Commit-ID:     05026ea01e95ffdeb0e5ac8fb7fb1b551e3a8726
-Gitweb:        https://git.kernel.org/tip/05026ea01e95ffdeb0e5ac8fb7fb1b551e3a8726
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Mon, 24 Mar 2025 14:56:12 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 28 Mar 2025 14:38:09 +01:00
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-objtool, lkdtm: Obfuscate the do_nothing() pointer
+unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 
-If execute_location()'s memcpy of do_nothing() gets inlined and unrolled
-by the compiler, it copies one word at a time:
 
-    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x1374
-    mov    %rax,0x38(%rbx)
-    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x136c
-    mov    %rax,0x30(%rbx)
-    ...
+Tested on:
 
-Those .text references point to the middle of the function, causing
-objtool to complain about their lack of ENDBR.
+commit:         acb4f337 Merge tag 'm68knommu-for-v6.15' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bab804580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95c3bbe7ce8436a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=146b9bb0580000
 
-Prevent that by resolving the function pointer at runtime rather than
-build time.  This fixes the following warning:
-
-  drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x23: relocation to !ENDBR: .text+0x1378
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202503191453.uFfxQy5R-lkp@intel.com/
----
- drivers/misc/lkdtm/perms.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
-index 5b861db..6c24426 100644
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -29,6 +29,13 @@ static const unsigned long rodata = 0xAA55AA55;
- static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
- 
- /*
-+ * This is a pointer to do_nothing() which is initialized at runtime rather
-+ * than build time to avoid objtool IBT validation warnings caused by an
-+ * inlined unrolled memcpy() in execute_location().
-+ */
-+static void __ro_after_init *do_nothing_ptr;
-+
-+/*
-  * This just returns to the caller. It is designed to be copied into
-  * non-executable memory regions.
-  */
-@@ -65,13 +72,12 @@ static noinline __nocfi void execute_location(void *dst, bool write)
- {
- 	void (*func)(void);
- 	func_desc_t fdesc;
--	void *do_nothing_text = dereference_function_descriptor(do_nothing);
- 
--	pr_info("attempting ok execution at %px\n", do_nothing_text);
-+	pr_info("attempting ok execution at %px\n", do_nothing_ptr);
- 	do_nothing();
- 
- 	if (write == CODE_WRITE) {
--		memcpy(dst, do_nothing_text, EXEC_SIZE);
-+		memcpy(dst, do_nothing_ptr, EXEC_SIZE);
- 		flush_icache_range((unsigned long)dst,
- 				   (unsigned long)dst + EXEC_SIZE);
- 	}
-@@ -267,6 +273,8 @@ static void lkdtm_ACCESS_NULL(void)
- 
- void __init lkdtm_perms_init(void)
- {
-+	do_nothing_ptr = dereference_function_descriptor(do_nothing);
-+
- 	/* Make sure we can write to __ro_after_init values during __init */
- 	ro_after_init |= 0xAA;
- }
 
