@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-579685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1772A74810
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:19:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC45A74848
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EEE5188FEEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:19:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E58817D951
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6689A2144A0;
-	Fri, 28 Mar 2025 10:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9984321B19E;
+	Fri, 28 Mar 2025 10:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E8GF7uWT"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HkJb0hyf"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2190214229
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048421ADC5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157162; cv=none; b=bGUNADXdYSPfHcg8szn2zSo+v4+dAurZ+1tM15RcG/ja4iGhw6uxXLFLatOSTf/PtD0QHtGxce7H4xiO75rsX42+2U6DBDW8FK0sIQP2zlHcEfT7TwEQoNbJ3W6Uzw52WBnfWl9aJrslHMAsN/jVcBUSCFS+yJOz/GymzZvHJ80=
+	t=1743157750; cv=none; b=bxIlMBUnGv+famae8JjJ6LsHulxK0YUf6HyYBrf3W0GohB42Ges7RGgAU6aiMAzBrWnPQI8GpJYZAtT9/v0dVfEDNQ/dlylxI3vyMOjP/w6p5KP3Q/TsmYrSodUbVQwERG/KX1DJk6XiO2dJ7Et/LAzbvLaYc3vVAD55U8DWQgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157162; c=relaxed/simple;
-	bh=jz3aY36o7j1FfklzKk7CT65RWrvPbaWXJsL0lBphTq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m6ENZ3vQtteMFZsgHf5v06NQTIPGwczp3qX6CK1Jv3YCuBzr6Iy7w9CxwKI+hGWwiH4bXcOpQ8edbnO99XbQpuw/BahBVkAg9O9yInlwg8gEOThBhZ7GZBd2ma6qjVztg86DrmVZfYTGB8TJSImO6MMxxsFlGMNbTmN5Eegrx/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E8GF7uWT; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39143200ddaso1244966f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743157158; x=1743761958; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N9MH3GUSx2ijDFw2/8FoaPDcqum1gfQzhI04q7LblUM=;
-        b=E8GF7uWTGxqUjEWMfSmDSS3rJjt3jyH93E+/BM6TVih7IUflhe4ze+rs8vKhgnlnRT
-         QhQ+smgfFQhIbfcdb6bORnzPMQ/wnjHrgkeSILfS+8PGYKUzaREZR0XN9XzHeznFFJxj
-         C/2ASr4umOr6wANC3tFm68v+scibSL/gU3HCAfgcN01iYHIYHfkIqWdnytjzaOwJKy6D
-         ZPXlBoCqwJ27fuxxoC0EWXw1aBEZoBdP2xsXY74rNH95n3LUo7DBunD+VrVioqhILLaM
-         Uisc4A5rSuyE1jUomoo30GN2pJVuU1ctJVATLQEoBacdwDbZiYAVRIHNJZYXD5IvfZud
-         bSIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743157158; x=1743761958;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N9MH3GUSx2ijDFw2/8FoaPDcqum1gfQzhI04q7LblUM=;
-        b=jw0I7FFJT0LRoOp8bJtKcXk2odsQOas3ZQ4Ad8hhCfyoAqHXejGRlR5qbMwqMv2sBr
-         1jA2r3iFP08PGSJL7sh5sRiRI/kQD6qhsLH82hFHC0Gvc/D6nYtYn3EKd/io8nBu1jPf
-         PHma5RCK+ahuKSx9bpb5YClPqY/bdCnheXribd4v8QbZaBKHEio5geVA+oq7h6YrVZ8/
-         +PnF1w9CbSYCkX/z5CIWM0IZYgVw3Qomh8ltTIi1gADDgdJZICYlxah419VAHF3seQds
-         4WzvUeAFWYts24hojqRN3X0XgDAioU9JXeCVRjBxsLwtU4GYxSofBos77dvajIn528Cg
-         17gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWEYdJvY7yxjtjfnaf+EMGfHnl1nA2xmpRCz1JNqiITpUJbDP/W1HhhIive3TXdFbJPGgdvyfy4YLHUG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYdSJnNIPaLZmYGRJR4XVjqJdaBqtrmaqMwer7+h6JAFsVvrlW
-	ob8HuBwNTMNQcfW8a8Xj8Yu4fYXtI23y+Rf5ispOofxqthhYBV5CXMAfQJr1H6k=
-X-Gm-Gg: ASbGnctazACVEZyTKJHpINGFx0yOV3KCeRF94ppCBmnsayK68LAeFHyACb1H3Q4dclI
-	NNejTpm7dl4CWEuby4bqsf/3tUHoTKZbduE3azv95/V2pWnqSvpVWBI2BKWYhf5/DovRC7DBSVZ
-	RLQdt1Pmt1DCMkPYIr5Bm9S7EjujQYc4eYrqZd5KV3brpHdQXq1Bfey1TBzkbJM138vXVPPpLMF
-	sOtXy8rxyjy/0oeQSFnQShxTrHz90nTJKQD2cEzRFSquoRsTCy0lX4Qa4PhHhZSna2mof/TG5FF
-	ZaQFfZTOQgy5b0HW8fg1iAm/n/lPFoNNHdiV+rqTvepcb408Oj3oWoSM+70=
-X-Google-Smtp-Source: AGHT+IGJKr46cfNOSniY/dCUZeCweOop1DoiisSS7BUAqfPuL9uBmcKmHfMWxpVOpa84DymztwUNqg==
-X-Received: by 2002:a5d:59a8:0:b0:391:22a9:4408 with SMTP id ffacd0b85a97d-39ad1749fdfmr7315210f8f.16.1743157158044;
-        Fri, 28 Mar 2025 03:19:18 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82efe389sm65412055e9.19.2025.03.28.03.19.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 03:19:17 -0700 (PDT)
-Message-ID: <3e52d80d-0c60-4df5-8cb5-21d4b1fce7b7@suse.com>
-Date: Fri, 28 Mar 2025 11:19:16 +0100
+	s=arc-20240116; t=1743157750; c=relaxed/simple;
+	bh=K37yE3iyYuruvJeuoMfhV+Q8sLRd6nF2BXd0h3DpmUU=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=cxH9NNbBx3ViUvuzV4FBSujhxgotSerssd8KNlYLP1WKov+nGyKhynJtNevmbJ7fG77CHQuZMJ3msHvQ/+UgRMEL/7LTJBD7DZQ5NmIaIotMlEr/ffUjTEN7DOeWI3QQ3FOEIQOAIHh3qUxzBihvBbHEvZyy6afId3H8DzE5UIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HkJb0hyf; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red54.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743157743; bh=I2eMAS1QoFOyVHmK1FI/Y9oGcQmoyT9GZd4/d7u4S2Y=;
+	h=From:To:Cc:Subject:Date;
+	b=HkJb0hyflb/1EuJPHQnZWzlka/VTRKvcRRVQgEDJIEs9z3G5AtIyq+zaIQRifSqE9
+	 mTv5O9iZgLZSapSUkFa/12eOiZ6WEfZrJbCMjLgVa9+x4t3bjBqzMkFi7rzZzo/PJl
+	 ZIN/EeahmydpA9k/9+ny0c0Zh38zPftP0UHkUwDw=
+Received: from mail.red54.com ([139.99.8.57])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 5179D080; Fri, 28 Mar 2025 18:20:23 +0800
+X-QQ-mid: xmsmtpt1743157223tws36nd57
+Message-ID: <tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9ApmSjGAwIgWVyFsdwRYfpF6XWUljFL9CGWaXb+SYBegsQSuHDa
+	 nI0O7Z+SDmOWqkDMzxaTGO3i7OLfvQtyuwZTtBFzupP2Hhi4/Jw0ie/8c8I+9e9Bz6rOBMDvmpFh
+	 LjGhF4kIEyIHDng1mYjUXoPH/4hAt1ExAxHyDIfOuEOFGTrXsz1GvmEJgWev5InZEOe6XNT7KOfG
+	 i+HZ/Z8zXKp6BCf6dZqzZu88SHg3p70mUuuoE+JaMupi7pDsHUdXqEHfjnuAX0bXY4RfnpDdI+Tt
+	 3Sw1o6aBIdLu/e9hsxnwp8ecxctSB/sw0x8xjmVnfImb9HwPWjXX3ON6RwRge8jWYKHuusMa8QCE
+	 fOJ/7yfeH6Ls7UxIifcVcAHwbZVKQcPbeZTbFFnf6M5GlqlSWispUd5euM/9w7l3l8kjcMHZh2H0
+	 IiXm0GawkZ3AIq37R9Ec3IIvjMhEWkV9E2FTWEoDH9HX4/rkDkwUplHMODNOWqBdAgAMr1k/QgVz
+	 h1KVDcnqTnjgu/3rTRmLBOtdjqcYkaCvD6w4L5KBBTmu5zaaiZ3ZUVFi7KBY7OmDSR4AEUzsYXGc
+	 TBJpGK6KdTXxMYWh/rYT9ZBfLvakVZvrdm8Bp2o7o6Boa3NUhrC0gpBirYS2yYMfJ+mf0E8wgspC
+	 ZZkBLrUnYNo1X0qpepJJBohoWZaRGZQO3Hz7/W+K/nuCV32tdCjA9LEtI+DPfQQd16sdOqXfAAJ2
+	 Nom+TP5uAR4l6SFs8+vfPoKIFsaXqicDrtE/bePN7AHSNRUM08NAOwgGIVFhhGUX5EBpR9Szz+fm
+	 SJ3ijjMWKDtbF9BKHbKYHxbM7noR0mR3er4vNLCs4eqKUIS4BL/6TzKLKoeVBFHAD+O9VY+/oNoE
+	 tdl99IPisRdF7LTjyQ/MrnZzdJDveQYP5gUDYegQ/QIQWOeliZU44VZHgARWnCbF10OfdZzWcDyZ
+	 vN6+jra0REvKMV93KNnddkuFcsX60ue7kGgVMA6s/9mG3jF+u1aw==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+Sender: yeking@red54.com
+From: Yeking@Red54.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6=20=28XIE=20Zhibang=29?= <Yeking@Red54.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Yuntao Liu <liuyuntao12@huawei.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Vasilevsky <dave@vasilevsky.ca>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Victor Boivie <victor.boivie@sonyericsson.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Oskar Andero <oskar.andero@sonyericsson.com>,
+	Bjorn Andersson <bjorn.andersson@sonyericsson.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: Fix support for CMDLINE_EXTEND
+Date: Fri, 28 Mar 2025 10:20:17 +0000
+X-OQ-MSGID: <20250328102017.53121-1-Yeking@Red54.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kbuild: deb-pkg: Add libdw-dev:native to
- Build-Depends-Arch
-To: WangYuli <wangyuli@uniontech.com>
-Cc: masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- samitolvanen@google.com, zhanjun@uniontech.com, niecheng1@uniontech.com,
- guanwentao@uniontech.com
-References: <39FF69551D01924F+20250326174156.390126-1-wangyuli@uniontech.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <39FF69551D01924F+20250326174156.390126-1-wangyuli@uniontech.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/26/25 18:41, WangYuli wrote:
-> The dwarf.h header, which is included by
-> scripts/gendwarfksyms/gendwarfksyms.h, resides within the libdw-dev
-> package.
-> 
-> This portion of the code is compiled under the condition that
-> CONFIG_GENDWARFKSYMS is enabled.
-> 
-> Consequently, add libdw-dev to Build-Depends-Arch to prevent
-> unforeseen compilation failures.
-> 
-> Fix follow possible error:
->   In file included from scripts/gendwarfksyms/cache.c:6:
->   scripts/gendwarfksyms/gendwarfksyms.h:6:10: fatal error: 'dwarf.h' file not found
->       6 | #iIn file included from nscripts/gendwarfksyms/symbols.cc:lude6 :
->   <dwarf.hscripts/gendwarfksyms/gendwarfksyms.h>:6
->   :      10| :          ^~~~~~~~~
->   fatal error: 'dwarf.h' file not found
->     6 | #include <dwarf.h>
->       |          ^~~~~~~~~
-> 
-> Fixes: f28568841ae0 ("tools: Add gendwarfksyms")
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  scripts/package/mkdebian | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 0178000197fe..25edee97fff7 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -209,7 +209,7 @@ Rules-Requires-Root: no
->  Build-Depends: debhelper-compat (= 12)
->  Build-Depends-Arch: bc, bison, flex,
->   gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
-> - kmod, libelf-dev:native,
-> + kmod, libdw-dev:native, libelf-dev:native,
->   libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
->   python3:native, rsync
->  Homepage: https://www.kernel.org/
+From: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
 
-If scripts/package/mkdebian is updated in this way then I think
-scripts/package/mkspec -> scripts/package/kernel.spec should be adjusted
-as well for consistency.
+It should be the default command line appended to the bootloader command
+line, not the bootloader command line appended to the default command
+line.
 
-File scripts/package/kernel.spec contains:
-BuildRequires: (elfutils-libelf-devel or libelf-devel) flex
+This will be consistent with the behavior of FDT, EFI, and other
+platforms.
 
-elfutils-libelf-devel is for Fedora/RH distros, libelf-devel is for
-(open)SUSE.
+Fixes: 4394c1244249 ("ARM: 6893/1: Allow for kernel command line concatenation")
+Signed-off-by: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
+---
+ arch/arm/Kconfig              |  4 ++--
+ arch/arm/kernel/atags_parse.c | 10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-If I'm looking correctly, a new dependency to make dwarf.h available for
-both would be:
-BuildRequires: elfutils-devel or libdw-devel
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 25ed6f1a7c7a..635e4da33fff 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1534,8 +1534,8 @@ config CMDLINE_FROM_BOOTLOADER
+ config CMDLINE_EXTEND
+ 	bool "Extend bootloader kernel arguments"
+ 	help
+-	  The command-line arguments provided by the boot loader will be
+-	  appended to the default kernel command string.
++	  The default kernel command string will be appended to the
++	  command-line arguments provided by the boot loader.
+ 
+ config CMDLINE_FORCE
+ 	bool "Always use the default kernel command string"
+diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+index 4ec591bde3df..bd163f00602e 100644
+--- a/arch/arm/kernel/atags_parse.c
++++ b/arch/arm/kernel/atags_parse.c
+@@ -120,15 +120,15 @@ __tagtable(ATAG_REVISION, parse_tag_revision);
+ 
+ static int __init parse_tag_cmdline(const struct tag *tag)
+ {
+-#if defined(CONFIG_CMDLINE_EXTEND)
+-	strlcat(default_command_line, " ", COMMAND_LINE_SIZE);
+-	strlcat(default_command_line, tag->u.cmdline.cmdline,
+-		COMMAND_LINE_SIZE);
+-#elif defined(CONFIG_CMDLINE_FORCE)
++#if defined(CONFIG_CMDLINE_FORCE)
+ 	pr_warn("Ignoring tag cmdline (using the default kernel command line)\n");
+ #else
+ 	strscpy(default_command_line, tag->u.cmdline.cmdline,
+ 		COMMAND_LINE_SIZE);
++#if defined(CONFIG_CMDLINE_EXTEND)
++	strlcat(default_command_line, " ", COMMAND_LINE_SIZE);
++	strlcat(default_command_line, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
++#endif
+ #endif
+ 	return 0;
+ }
 -- 
-Thanks,
-Petr
+2.43.0
+
 
