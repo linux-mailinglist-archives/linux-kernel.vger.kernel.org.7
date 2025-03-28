@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-579683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8708DA747FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:18:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBA7A747D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B407A4ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A796F189C8A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D421ABA7;
-	Fri, 28 Mar 2025 10:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A216214229;
+	Fri, 28 Mar 2025 10:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="mZwK/Ben"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cZAaOH9n"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAB1A5BAE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30897213241
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157105; cv=none; b=h5DToauK5qrFJQFCw2qp6hvoJGKRMGKxHd5bM5eKcL9bVvucVTtdJdXKDOucTEwxu8UwUsI6QwYmDBwsDRXPJJ9poNFGUKucd0bthp68+CoTrgkhFBCAMMUTpQ2UHNO5lsCiozEuM8LBWUaT3f6+IxMLbPfFozg6qUoOpb/JiK4=
+	t=1743156935; cv=none; b=uRqe8YGUCoNvZRR1wABVBlt08TL8a+EYFCD3HURj2Iz7y4GI9uxg6yl0/v2N5WunZ2/u2IqVB75Hn8vGsLOSuVPHw4aC6qrGsIa48BQ36W9bBzGxAp4fqlCwu2eyIwOjY655fvjt7auerr//AAyn/eVYa0ykzoU6UtxAnGh2GwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157105; c=relaxed/simple;
-	bh=jooCdF1JwrrJXjQWuLslEA3Jk/cX46lBROBHZgF7M5c=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=sd/kmyXA9kcvgtTxQJLXHohUBSFGXiUguC1Hqe1n7vHc4lB7gYfW0CQ9daGEzcWKsM8eYoChFruTzHlebw8Ehl2fJ+5dwUIh6MvaEH7wnqrUBCRy8J3jIDu9ACEnKVqEwdhvCpDM1tPJyaQ5eOX/3iFhHNBPG2rxJLT3Y7dfYAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=mZwK/Ben; arc=none smtp.client-ip=203.205.221.221
+	s=arc-20240116; t=1743156935; c=relaxed/simple;
+	bh=pHw6CEXh6wjbfoZ/9JOEwR+hldQ8fGN5w6ukzfO/6zg=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=ZgQ8WYYVSf3NG+HbfYNK7/l6q7JxhLrT0Fc3lOi5Trm+Ai6R+EaksIe2pHTEoJqe2j3s9Y7+mHwpSvqcuTQWBVph3lS6CqCbFFDWMigg1oy7RrisUjZiFHxg5KGJNyt1gjbjEcUXGjqRfICchNgZOz/KVAzG798ACuwbNId2ahE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cZAaOH9n; arc=none smtp.client-ip=203.205.221.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red54.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743156795; bh=rR35e+hZRNuo1YA29CMJi0+EW7SiAaMAanzrs8CeOf0=;
+	t=1743156923; bh=EcuiC7xJsstU7iMIVfSBPGIrko8IzU16J1B4XmArQFQ=;
 	h=From:To:Cc:Subject:Date;
-	b=mZwK/Ben4aUMZA3Y38igh+BiHwNZ/0D3FAXSXe1APkzcnSDjjkvrCSe4LLBwGWSDE
-	 voA3/rcL9qzv+NMPtNeHNtNkWOhDKa+K8oqWcKOV41sLxaD5rVqutAHLv16yaVMgtn
-	 dtdn8Fat1JhEamjoHF+Mhzj9PNm23FA4HspgncAI=
+	b=cZAaOH9nPWadR1hgx+L69Kx3fTN4bcm3UOtzBk6BgN0t7T2l6qYti1WuHDTUbEH5t
+	 GLuUmvfg77+RxRqFS5gADYvnEZCMoGciUX2xVb3adY48f7XxQ7KuH6LWSD21MsUUJ9
+	 YO7001qSx5EC5CXSezNJwG7Ucq84XM2cp9LAntPc=
 Received: from mail.red54.com ([139.99.8.57])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 34309049; Fri, 28 Mar 2025 18:13:03 +0800
-X-QQ-mid: xmsmtpt1743156783t48ghc6wv
-Message-ID: <tencent_7FAF68BF7A2EAD9BFE869ECFDB837F980309@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GMfqh5izIbfJ5xGhYBVKfPatPPzVgDN5d2bv3dImBuc1q+2YO7j
-	 7pMh5QtcK85H3+FQhze+IottobVBgvsqfrz7AWxJ2raOAP1c1QIPDPSzfqu7ObBgmCbkZ4Zdffrl
-	 qqHBvEcBClnSX//AUsoQ6xzwpduPA5xQWTLbxxu1+XosFeQYan9RwBjRf/QiH4pF7TRwb+mFhMAg
-	 14fRj/Sc3q4p/xCLin4p+ZIV0fqSmSMBO8rjh3NpQtC7noXBG6f9XvPwGkHr+rC4/APB9Bgccqsj
-	 CVLw4eOcCFcAIs4Tn4A/VkrqfUL4dJLh5nOm3/nKO8pC4xEqEL2H/0cA/nFtwf2X8RBHMGvJ5J3i
-	 210hgHYPW/7U8rJpgfgZZmHQPMSEHhE9rcQp2uCScBkrDqbgsqCTnMj9BdSqVKiOFLwUCzCFeVSX
-	 AgfFMJJt3CGaU70f0TpEWgA+2rqZ3fxZqk2L8DR5l3r/ymhNooC58DiO6Ku75FhIPuIlw5EGcsFS
-	 1yAWqlf1N/0HN0rN9dDTe7pCJqaqwHaj1nCYlsW+jXv2SWzRhgIgcifbSsP1UXWYkXrcYWwtzUI8
-	 yIMOkakU+Tz9mnqgFUOpgaj2xQ45ZZiaIqVKPJdOhmKJVmi/f7hFmf4Em6+elCrQNbjusJ+4T4jD
-	 C50d5ZN2qMDVh9KpCJNYK1efrVQtpfiTslFtHNe8wFkp7X58zOVp11XD/FDZExT732GlOmyNFIGj
-	 /9ZnA2nPvy4Sf+jMv9VylQdnGuRQyuxq32BzyTOEXI+sawsD4nxf6//5yVv9RZIh8KWHSFr88Sdc
-	 woTqAt16dQfHvLQWONFUx7bD4yDsJor+IcOiYGW1STsM/NheeEXYPQ/BxHXQK0P2LliiwgJ5ACMP
-	 XKmChphvUhtXdsrQOlHjKQI+1uGQJDqhqFGkgnfvX9JbZDO0l50lev0GCZ5iHASEcpjBRzf6Fohr
-	 gpbWfHQfMiiUFVqlHhC9nSsy+7qCTOsb8Rfb7pgrZcUOePBj6nFUVKAFEV6Ia0wJygNfjLcbq83B
-	 r0viZ7CBoGBSpTEfSo
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 3C52C2E7; Fri, 28 Mar 2025 18:15:05 +0800
+X-QQ-mid: xmsmtpt1743156905traegrmkl
+Message-ID: <tencent_A93C7FB46BFD20054AD2FEF4645913FF550A@qq.com>
+X-QQ-XMAILINFO: N2zgDHximsrq6XAvK1wKKG3gsLhFL0nvP/GWnZbACO7itADC08NUfqDnGjqbo+
+	 /m/BCrc7k4rCDdFU47S0uG5BJkDkMjnHTmi+PbrjajzIw9tIfORusIAa+MwyROTQ8NqjEOD6WpBC
+	 enbtYB9kpkrBXrSsRMiTWCKoln2962f+Ebh9gOJvsQrujgHJr+A2q691wjE2XnQ4S+88QWp6pzJw
+	 20twSRMP475SqKs8PMm9HnQgvv+NIBgesF0IncKWSah2MxZb9H3pzkwsKDT5iSMiIa4Tda3D8o7t
+	 Wllva/NGZWaEX7UcfZbnEfxB5xG1i8TMZ1jsLkBZy0kNlXI+yGkUWFJtSzCRTiQTq6y6e2BBWd2E
+	 OsaCUdVJVdreyqhe45roscWbTrj2gujYKYNEmdn0zOmIoj3ctXlnLfC4pLkUQXdRNbOqfL2GPErs
+	 K8AnY5uSdA+2WFILIB9/8wOM0NTovlVZKzAqA/EVCJ6FI13Lxh2UJieriRjaVQduGlv6lxb1eDgr
+	 cYPgRXLUsE5AWjlG6BvHLLZd3rKKEELEWS47ccRaooWpfqCcID+jvErsFsbUQ8cHFcZfa9GM98fv
+	 d4m9+bpOI0qLpbiGqrnt21ShHAFjoiQoCB24felJDzo7WcJmTW0lJtD6OZ0jIKoaDjZbJsB+WS9+
+	 YY5LrVYzN/J2EPFi/yLCZvMF59knYOw1gPPC0mGYIWuGwS+92JchDEhem/gmkRKvAqLJfhraLnMY
+	 mIE2a960p/fufP0rG5wKpwU2tEv9SGMV8OywoaNxnWXDdnwIGQb09aOIKRcALtYXMNDXhRymWD8p
+	 eXzg+cQ4vGM51By4YXD3+4pZowOJbCY+D1C+lBjcaHYilGm7yeUbGx5y6wRvVqTN3YOc23lJ4GuW
+	 5XGLmIX/A0joo5Q6HCrQXh+EV6l7GVAvDA7yY+vLxGojOxG+TTV1tr9kE3rdF8oX9a95lsmTFInQ
+	 wo2gTaJH1JFTYdUimHk2nKbn3dfbVfVE1lwmBEGsQCd9ud00sIXJc0f2tU8KZLXTORezgUcqbp8E
+	 /0dGwUZhYJq40GrGPk
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 Sender: yeking@red54.com
 From: Yeking@Red54.com
-To: loongarch@lists.linux.dev
+To: linux-riscv@lists.infradead.org
 Cc: =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6=20=28XIE=20Zhibang=29?= <Yeking@Red54.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Guo Ren <guoren@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Debbie Maliotaki <dmaliotaki@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: Kconfig: Fix help text of CMDLINE_EXTEND
-Date: Fri, 28 Mar 2025 10:12:03 +0000
-X-OQ-MSGID: <20250328101203.52765-1-Yeking@Red54.com>
+Subject: [PATCH] RISC-V: Kconfig: Fix help text of CMDLINE_EXTEND
+Date: Fri, 28 Mar 2025 10:14:22 +0000
+X-OQ-MSGID: <20250328101422.52851-1-Yeking@Red54.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,19 +85,19 @@ From: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
 It is the built-in command line appended to the bootloader command line,
 not the bootloader command line appended to the built-in command line.
 
-Fixes: fa96b57c1490 ("LoongArch: Add build infrastructure")
+Fixes: 3aed8c43267e ("RISC-V: Update Kconfig to better handle CMDLINE")
 Signed-off-by: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
 ---
- arch/loongarch/Kconfig | 4 ++--
+ arch/riscv/Kconfig | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 7477d5f8d876..067c0b994648 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -388,8 +388,8 @@ config CMDLINE_BOOTLOADER
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 54ed2a8cd7af..4cd18d0d07b3 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -1144,8 +1144,8 @@ config CMDLINE_FALLBACK
  config CMDLINE_EXTEND
- 	bool "Use built-in to extend bootloader kernel arguments"
+ 	bool "Extend bootloader kernel arguments"
  	help
 -	  The command-line arguments provided during boot will be
 -	  appended to the built-in command line. This is useful in
