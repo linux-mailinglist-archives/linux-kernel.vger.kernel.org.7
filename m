@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-580315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8735DA7503F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B175A75046
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0997716D2F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C049716D77D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDC81DF74E;
-	Fri, 28 Mar 2025 18:15:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EA21DE893;
+	Fri, 28 Mar 2025 18:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIJW3V49"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B0F1DED59
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 18:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38527286A9;
+	Fri, 28 Mar 2025 18:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743185705; cv=none; b=ZWmBMX5/cI3mZF15R4hUcrEhNVMOU5ERyyu5px6nsz/cfUoz3LobXDjFTLQLL+qLdxOkO7D2H7FEDqtdudqP/j3fK42Co5TB8GGwj/BjOkS6zvfsX0uqWnYZ2EvWcXuTG9wT8aPp6+gTXibz5MKbEh53y7k+vO4StCY4DzRZfqc=
+	t=1743185981; cv=none; b=rX5+ZPrmi/ce0NE7g/PWL0oeOp+WLBAQOtAT9vyx8Cg4mCHnqes6qwyicY4m3Is3ljjkyMwArhq6eh1yJVEXc8gmXY12hL4E5Bg1zvK7N9NlRcdsjoL8rmY9S3LwOUxaqn4CjJ3C/l1h7L7f2qNHbcaBvrj2wxKtFaoZQuwzXrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743185705; c=relaxed/simple;
-	bh=auytqwmfmZdmxud7+ikGTeVRUyAcwLoMT+aVsOP1upQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RVUBUq5hTi/rLtjq7Dh2qTysdDglEJVI5FBtPaJfbSmADuMKp83miPMUkRQ/57cs/hchzs6LETvYh0YeR4spuGXwiQC9DLcBz4txrb7fPkMxBQwa+WL2r1vrG1x3+s4MDfZ3VBhS8vfwoJJG92HSiKE0uPxiLQ9722flQrkMAUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85db3356bafso537106039f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:15:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743185702; x=1743790502;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Od2ayAfPIfaoTthbROKToHzuWfc9MXJFkm8vY5m2028=;
-        b=Tqbk6LX7zknxPQj522zCTUMwNIALTtDLF9PCkY67QI0fo8hMolYX/F3TLvA0I40GnC
-         vlmaPGXXSMBnBsXoiH8PZkl3HcHxqcl6OsJxdyIF3lKkTssdKL+qPgNCxQtyaXbp1Xxu
-         QvXZ+6cd4BfGeA2fsyKHhHMMUmubxVFEmYnRuEGHlwMW8F7hzZi2Fn5v6czPo1eeetxV
-         1DwN6pxnJlb8E0Z0lr/+MwEPbBwL3geg4VrgBAv+2j/UtT0BwqvxwWU6feSF5GwF0EfR
-         sgIMpU63GtEvdW0O7iPhaeHSp9HubaHmR2oomhY2dRV5YSoja0AGz0bi2Z+S0QsN70dF
-         eEsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtm1GmSkYw7ghFhX3K68K+QLFaoL+N3pgusBxrLUv4TYPmeAcltiyJlr13qjBhzVzTH3mYbYGuKLjeviQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP+LFuCpVs6gMxulO2YGJFBlOQ8rOIi8E/tonY0L78mfiRcXWq
-	cZiKXgLiNTBZJ/mhUhvoK0Ao9nl3QxuslvjzyruW+0f8XHMEpyUCcpZaaL2UzAAVQV8ZTCXZXgQ
-	5+u8VtzzuGhUXCBPb+Y0bPNnOHxtjvrbuMg/M0wOGyC4XuaGqc3n+9y4=
-X-Google-Smtp-Source: AGHT+IEkXIj68rOgamqULFpajMuN1jDdr4AwRpkW/srbIH22FpMPr0HhEfac3lMdYy+t2NOGA/FEtiR8cZOUNTmVU/iNS+uCkfFt
+	s=arc-20240116; t=1743185981; c=relaxed/simple;
+	bh=kuN9bj2/FuIAEYupxbfKi1EvsySiDFDN5oiqwFLqYAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SrC+mstbAApYm+A8DrRf4nRAyQS9u0iwncWCrf3rdF/BPFGY4Hjez0xgyDT7qsQv8Xo6QVJsqAfEBLdIRYbxWqS0fqmGcsEHeI+SY5oLTMKgoj9B7ZVYh82eueASd16lAk7uPCOt/SovWdGiNFWo2h8ZM4MVJVBtxFykLfQFXsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIJW3V49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFAEC4CEE4;
+	Fri, 28 Mar 2025 18:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743185980;
+	bh=kuN9bj2/FuIAEYupxbfKi1EvsySiDFDN5oiqwFLqYAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rIJW3V49I9jLbHWMa0w4kTdMtOE1NuGq0BxD57kac4FsGfuJgdz5R18XiwpJ5IY8L
+	 WGGNpdsBG8G1TbHbFqidPFPOLG5BnL80GM/yUkmaHea1eSBsVWfyL+aWANghueq9pX
+	 bfdVldrFdJjDaSAmRUtmAs9jHgg60Mvg/N3vAADlDttzzIHPq3Nmfq9mFnz+GXDD2O
+	 H21R1IAQy+X/EnheoIS0kiB/Blquw4bgU06Jgkp94k+FT7TWvf8qF6ZKNLBCCwRUn3
+	 eInjZCGIETrO9DeVuwSxZ6uL0U5bJ401lCJMlFo72XGHDOUVgQ6HQeOOqzmZMK6lzU
+	 UQ+EyL9MdLoRg==
+Date: Fri, 28 Mar 2025 19:19:37 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
+	linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
+ theoretical divide-by-zero in pwm_mediatek_config()
+Message-ID: <4swgr64qmedmlpsgaf7n4mfssfoxqkjvlveg3xhm7eogh7ae76@t4zd7fw4trxg>
+References: <fb56444939325cc173e752ba199abd7aeae3bf12.1742852847.git.jpoimboe@kernel.org>
+ <174289169184.14745.2432058307739232322.tip-bot2@tip-bot2>
+ <m7pgkp3ueo7iqgqf74upjrihr3mpmb3sqhwegnjxxwsrgx2jsw@dnec5iqiyobh>
+ <Z-Uv60sD_S2xYVB1@gmail.com>
+ <nzk5uzpwqqkflmdgfe7kwsnsecqnsn6vsyo4ycoaueasnud6ot@pg6cazrf6zuf>
+ <Z-XBb_8f6cItnlZN@gmail.com>
+ <ivss2v7kmk6ylcojffyxwucsmfcgbbe3kxiasbe3dqijvooy6m@vpkopftglx3a>
+ <Z-an4KuB-OQE5ovv@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194e:b0:3d5:8103:1a77 with SMTP id
- e9e14a558f8ab-3d5e08eda71mr7008115ab.1.1743185702307; Fri, 28 Mar 2025
- 11:15:02 -0700 (PDT)
-Date: Fri, 28 Mar 2025 11:15:02 -0700
-In-Reply-To: <85011.1743183886@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e6e726.050a0220.2f068f.0080.GAE@google.com>
-Subject: Re: [syzbot] [afs?] BUG: sleeping function called from invalid
- context in __alloc_frozen_pages_noprof
-From: syzbot <syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in afs_dynroot_readdir
-
-loop0: detected capacity change from 0 to 512
-EXT4-fs: Ignoring removed bh option
-EXT4-fs (loop0): mounting ext3 file system using the ext4 subsystem
-EXT4-fs (loop0): 1 truncate cleaned up
-EXT4-fs (loop0): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: writeback.
-============================================
-WARNING: possible recursive locking detected
-6.14.0-syzkaller-07422-gacb4f33713b9-dirty #0 Not tainted
---------------------------------------------
-syz.0.16/6130 is trying to acquire lock:
-ffff888011d70148 (&type->i_mutex_dir_key#9){.+.+}-{4:4}, at: afs_dynroot_readdir+0x49e/0xb10 fs/afs/dynroot.c:351
-
-but task is already holding lock:
-ffff888011d70148 (&type->i_mutex_dir_key#9){.+.+}-{4:4}, at: iterate_dir+0x4a6/0x760 fs/readdir.c:101
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&type->i_mutex_dir_key#9);
-  lock(&type->i_mutex_dir_key#9);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz.0.16/6130:
- #0: ffff88807e06bcf8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x247/0x310 fs/file.c:1213
- #1: ffff888011d70148 (&type->i_mutex_dir_key#9){.+.+}-{4:4}, at: iterate_dir+0x4a6/0x760 fs/readdir.c:101
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6130 Comm: syz.0.16 Not tainted 6.14.0-syzkaller-07422-gacb4f33713b9-dirty #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x2be/0x2d0 kernel/locking/lockdep.c:3042
- check_deadlock kernel/locking/lockdep.c:3094 [inline]
- validate_chain+0x928/0x24e0 kernel/locking/lockdep.c:3896
- __lock_acquire+0xad5/0xd80 kernel/locking/lockdep.c:5235
- lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
- down_read+0xb3/0xa50 kernel/locking/rwsem.c:1524
- afs_dynroot_readdir+0x49e/0xb10 fs/afs/dynroot.c:351
- iterate_dir+0x5a9/0x760 fs/readdir.c:108
- __do_sys_getdents fs/readdir.c:322 [inline]
- __se_sys_getdents+0x1ff/0x4e0 fs/readdir.c:308
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdd5b98d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fdd5c816038 EFLAGS: 00000246 ORIG_RAX: 000000000000004e
-RAX: ffffffffffffffda RBX: 00007fdd5bba5fa0 RCX: 00007fdd5b98d169
-RDX: 00000000000000b8 RSI: 0000200000001fc0 RDI: 0000000000000004
-RBP: 00007fdd5ba0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fdd5bba5fa0 R15: 00007ffe6a4f5bb8
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="f3tl5ltsvr4fcv7q"
+Content-Disposition: inline
+In-Reply-To: <Z-an4KuB-OQE5ovv@gmail.com>
 
 
-Tested on:
+--f3tl5ltsvr4fcv7q
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [tip: objtool/urgent] objtool, pwm: mediatek: Prevent
+ theoretical divide-by-zero in pwm_mediatek_config()
+MIME-Version: 1.0
 
-commit:         acb4f337 Merge tag 'm68knommu-for-v6.15' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10922a4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=982413b40f90fdf8
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b6c5c6a1d0119b687a1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17f51198580000
+Hello Ingo,
 
+On Fri, Mar 28, 2025 at 02:45:04PM +0100, Ingo Molnar wrote:
+> * Uwe Kleine-K=F6nig <ukleinek@kernel.org> wrote:
+>=20
+> > > failures in a single place to not inconvenience randconfig CI=20
+> > > testing efforts, so in that sense it would be nice to send this via=
+=20
+> > > the objtool/urgent tree, but I'll remove it if you insist.
+> >=20
+> > I'm still in the process to determine my opinion on that.
+>=20
+> Although Josh's fix looks obviously correct to me, I've removed the=20
+> commit from objtool/urgent, because your indecision about it is=20
+> blocking other fixes.
+
+This isn't exactly the reaction that I expected, but of course you're
+entitled to do that.
+
+> Feel free to pick up the fix in your tree.
+
+I'd like to understand if there are still more fixes needed similar to
+the pwm-mediatek one. I managed to reproduce that issue and will play
+around with that a bit to check if some more fixes are needed.
+
+Best regards
+Uwe
+
+
+--f3tl5ltsvr4fcv7q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfm6DcACgkQj4D7WH0S
+/k6Idwf+NHG99w3ld8/jj5dIJe41t+wqWNDukkOdVCI9fnEaA2ORiaTXqYDmK0SU
+x1Mzba4AQQxduqqYgYqAaghyNrPWG8IFICvbWETTLMn08YgQQ+L5Y3Jpy34Sgmu2
+CNTHzZf9kIar8Ku4uC/JESe9DvK7QxxYMNGaTwiN25k1J9mKDEF2HMI6/kg9gcgX
+OzSJBOARIGexC3pj5c6f16Y9nMdn1HggXSyXLJfiGLvsf4YmTB9z0GA5KE3EEdqb
+CUozcqKtFBLpQxq3NR3nvu/sbAtJTR6L9hI89s29kEvRGCC1ilgmOW9zglYcCOmy
+dJjCHXk0wk1QYDOjs/7e6McqxGgZzw==
+=zpEw
+-----END PGP SIGNATURE-----
+
+--f3tl5ltsvr4fcv7q--
 
