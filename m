@@ -1,231 +1,108 @@
-Return-Path: <linux-kernel+bounces-579481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C986A743F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:21:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69295A743B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F163BE9B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 06:18:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51ACC17B237
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 06:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2FF21A433;
-	Fri, 28 Mar 2025 06:15:01 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FCC211479;
+	Fri, 28 Mar 2025 06:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="F96GF6DW"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0708D214A76;
-	Fri, 28 Mar 2025 06:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8963479CF;
+	Fri, 28 Mar 2025 06:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743142501; cv=none; b=Pd7s5Y7wpd8I64wpbnE0txVRTU18WYj1LVzofnc1584R14/dtxVR+z3v6h9Soc24Gg+Te2DPY06ySoKRBBzGhdhmuFWs/177jrB37IfJhv4ACvFWxaAI53kZeyp6TzJ7OfQPcDZm1Gg5cQAmMIQvvE+D4rw/m7j6T4t1NbUP3eQ=
+	t=1743142350; cv=none; b=mvjbJBOmWeSE4FTDGw1pKt0X+EWVf2aVQt4KhIvbNX5rDgEdLnQuTTkmRgJxGJD1SN7UGTPXWdrpdh0jBgnKHZftsbESHeCvom2TCi2ibkb2Bbap+plp4aLWFpGN9KkK2HLqURioUoK/GErs8plstn6B/JApWjcvO4NWqMCNNtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743142501; c=relaxed/simple;
-	bh=ZtBApdvbCHQMo0CY4GcBbl/RqYZCO4FTf2913i3BV6g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rHnQ+c59tEmtnELNlCy+VKXEVo432dtevwso7ZzWyT5fecIwGVKN2KV7fvI5moAVUq1tA/uaP7L2nxeeDbKNw+meJ0qcQJWiCRac6oEz+UOxUMwt/YfExlsft9cUZ+nSzdUZuL1BEnchCuucyw2EEkyUMl9B5ab73I8mISd+5Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZP9Gb6hWmz4f3jdF;
-	Fri, 28 Mar 2025 14:14:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E42001A0CE1;
-	Fri, 28 Mar 2025 14:14:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHK2BSPuZnfAUtHw--.25875S18;
-	Fri, 28 Mar 2025 14:14:54 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: hch@lst.de,
-	xni@redhat.com,
-	colyli@kernel.org,
-	axboe@kernel.dk,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC v2 14/14] md/md-llbitmap: add Kconfig
-Date: Fri, 28 Mar 2025 14:08:53 +0800
-Message-Id: <20250328060853.4124527-15-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250328060853.4124527-1-yukuai1@huaweicloud.com>
-References: <20250328060853.4124527-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1743142350; c=relaxed/simple;
+	bh=qrK0dPbVWUOk4PR7RgSLOyEhCBzwdV2UZk0QMH06ekY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iT8lsNSue4/NW/kStNWPv7gzLzEtXv8jcgbu0t+phzQ/pRu50jC5bVRbTvRFmmKy3482bmU/w0utVzMWOcpbR8VqSaIWs+OLF8PoYKC1Ll9UxoXxYOi2j5Ju8QwvUBjSXMRxeSq6DGnsTEpV6nywamX85hbUgVN3KckouzMmBIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=F96GF6DW; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52S6BYoe2633129
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Mar 2025 01:11:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743142294;
+	bh=j9GlTDbw/VGq+mpBKGBMYd7sWUnu8ZpsWmTLspYzU0Y=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=F96GF6DWBTDVRcJr5ixE81enuTD2bJKxrQu9uNtWNPBV7AgpX9CO3KIUOPMXzEI5L
+	 Lc97WzllLq+PDeRMCBOWJA4F2D3iYaPQ+OWgVWlYAJvedPD6iUPcsqsuJHBxncnFev
+	 HM6+I7RdJQclCjZdiN6ispcVwO9VFNUYRKGaAhD0=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52S6BYt7024519
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Mar 2025 01:11:34 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Mar 2025 01:11:34 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Mar 2025 01:11:34 -0500
+Received: from [10.249.140.156] ([10.249.140.156])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52S6BQTf038705;
+	Fri, 28 Mar 2025 01:11:27 -0500
+Message-ID: <d1abf39d-c452-4bf1-ab40-2fc1ebca6ff7@ti.com>
+Date: Fri, 28 Mar 2025 11:41:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHK2BSPuZnfAUtHw--.25875S18
-X-Coremail-Antispam: 1UD129KBjvJXoWxXF17trW3GFW3trW3Zr4xZwb_yoWrJw1rpF
-	Z3Xry5Cr1rtF4xXw13Aa4UuF98Jan7Kr9rurn3u3yruFWDArZ8Jr4xKFyUtw1DWrsxJF9x
-	JF1rGa9xG3WYqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 0/3] Bug fixes from XDP and perout series
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <pabeni@redhat.com>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kory.maincent@bootlin.com>,
+        <dan.carpenter@linaro.org>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <jacob.e.keller@intel.com>,
+        <horms@kernel.org>, <john.fastabend@gmail.com>, <hawk@kernel.org>,
+        <daniel@iogearbox.net>, <ast@kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger
+ Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+References: <20250321081313.37112-1-m-malladi@ti.com>
+ <20250325104458.3363fb5d@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <20250325104458.3363fb5d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Yu Kuai <yukuai3@huawei.com>
 
-A new config MD_LLBITMAP is added, user can now using llbitmap to
-replace the old bitmap.
+On 3/25/2025 11:14 PM, Jakub Kicinski wrote:
+> On Fri, 21 Mar 2025 13:43:10 +0530 Meghana Malladi wrote:
+>> This patch series consists of bug fixes from the features which recently
+>> got merged into net-next, and haven't been merged to net tree yet.
+>>
+>> Patch 2/3 and 3/3 are bug fixes reported by Dan Carpenter
+>> <dan.carpenter@linaro.org> using Smatch static checker.
+> 
+> Could you perhaps add the customary
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> tags, then?
+> 
+> Please also link to the reports.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/Kconfig       | 12 ++++++++++++
- drivers/md/Makefile      |  1 +
- drivers/md/md-bitmap.h   | 13 +++++++++++++
- drivers/md/md-llbitmap.c | 27 +++++++++++++++++++++++++++
- drivers/md/md.c          |  7 +++++++
- 5 files changed, 60 insertions(+)
-
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index 0da07182494c..e5dc893ad09a 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -52,6 +52,18 @@ config MD_BITMAP
- 
- 	  If unsure, say Y.
- 
-+config MD_LLBITMAP
-+	bool "MD RAID lockless bitmap support"
-+	default n
-+	depends on BLK_DEV_MD
-+	help
-+	  If you say Y here, support for the lockless write intent bitmap will
-+	  be enabled.
-+
-+	  Note, this is an experimental feature.
-+
-+	  If unsure, say N.
-+
- config MD_AUTODETECT
- 	bool "Autodetect RAID arrays during kernel boot"
- 	depends on BLK_DEV_MD=y
-diff --git a/drivers/md/Makefile b/drivers/md/Makefile
-index 811731840a5c..e70e4d3cbe29 100644
---- a/drivers/md/Makefile
-+++ b/drivers/md/Makefile
-@@ -39,6 +39,7 @@ linear-y       += md-linear.o
- obj-$(CONFIG_MD_LINEAR)		+= linear.o
- obj-$(CONFIG_MD_RAID0)		+= raid0.o
- obj-$(CONFIG_MD_BITMAP)		+= md-bitmap.o
-+obj-$(CONFIG_MD_LLBITMAP)	+= md-llbitmap.o
- obj-$(CONFIG_MD_RAID1)		+= raid1.o
- obj-$(CONFIG_MD_RAID10)		+= raid10.o
- obj-$(CONFIG_MD_RAID456)	+= raid456.o
-diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-index 7a3cd2f70772..ee0c65e87dba 100644
---- a/drivers/md/md-bitmap.h
-+++ b/drivers/md/md-bitmap.h
-@@ -171,4 +171,17 @@ static inline void md_bitmap_exit(void)
- }
- #endif
- 
-+#ifdef CONFIG_MD_LLBITMAP
-+int md_llbitmap_init(void);
-+void md_llbitmap_exit(void);
-+#else
-+static inline int md_llbitmap_init(void)
-+{
-+	return 0;
-+}
-+static inline void md_llbitmap_exit(void)
-+{
-+}
-+#endif
-+
- #endif
-diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
-index 88ba29111e13..5e2f89137feb 100644
---- a/drivers/md/md-llbitmap.c
-+++ b/drivers/md/md-llbitmap.c
-@@ -1381,3 +1381,30 @@ static struct bitmap_operations llbitmap_ops = {
- 
- 	.group			= &md_llbitmap_group,
- };
-+
-+int md_llbitmap_init(void)
-+{
-+	md_llbitmap_io_wq = alloc_workqueue("md_llbitmap_io",
-+					 WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
-+	if (!md_llbitmap_io_wq)
-+		return -ENOMEM;
-+
-+	md_llbitmap_unplug_wq = alloc_workqueue("md_llbitmap_unplug",
-+					 WQ_MEM_RECLAIM | WQ_UNBOUND, 0);
-+	if (!md_llbitmap_unplug_wq) {
-+		destroy_workqueue(md_llbitmap_io_wq);
-+		md_llbitmap_io_wq = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	return register_md_submodule(&llbitmap_ops.head);
-+}
-+
-+void md_llbitmap_exit(void)
-+{
-+	destroy_workqueue(md_llbitmap_io_wq);
-+	md_llbitmap_io_wq = NULL;
-+	destroy_workqueue(md_llbitmap_unplug_wq);
-+	md_llbitmap_unplug_wq = NULL;
-+	unregister_md_submodule(&llbitmap_ops.head);
-+}
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index c1f13288069a..4d05eae69795 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -10104,6 +10104,10 @@ static int __init md_init(void)
- 	if (ret)
- 		return ret;
- 
-+	ret = md_llbitmap_init();
-+	if (ret)
-+		goto err_bitmap;
-+
- 	ret = -ENOMEM;
- 	md_wq = alloc_workqueue("md", WQ_MEM_RECLAIM, 0);
- 	if (!md_wq)
-@@ -10135,6 +10139,8 @@ static int __init md_init(void)
- err_misc_wq:
- 	destroy_workqueue(md_wq);
- err_wq:
-+	md_llbitmap_exit();
-+err_bitmap:
- 	md_bitmap_exit();
- 	return ret;
- }
-@@ -10439,6 +10445,7 @@ static __exit void md_exit(void)
- 
- 	destroy_workqueue(md_misc_wq);
- 	destroy_workqueue(md_wq);
-+	md_llbitmap_exit();
- 	md_bitmap_exit();
- }
- 
--- 
-2.39.2
-
+Sure, I will add them and post to the v3 to net.
 
