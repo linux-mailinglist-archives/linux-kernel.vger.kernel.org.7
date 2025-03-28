@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-579894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB24DA74AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:35:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E58CA74AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:33:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B713BDA2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37127189DEDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5BD21D590;
-	Fri, 28 Mar 2025 13:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073A822155E;
+	Fri, 28 Mar 2025 13:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ4hPLrM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1TqWFTm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9170C1ACECF
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65956221544
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168499; cv=none; b=sL/8DTldwd2Zi1CGoAMCu2yHu8oEJmRKHkKHJK/4RAWravaFSDOFyokhciH9VFWM+HTQB7AvzI7RIxK+yVYSEZNQo+4XesLA1CykRXlhcfnuuTp2xNpwLs8+n3Uy81BMM0PO+tKzSF6U+RDRugd70qMmXrnumIDuE1L4nD+xy4E=
+	t=1743168502; cv=none; b=dSbGmbe/ki5ctN44BKe8bMBur1Ab/THdCcv9Rsu34MqVM8VA3bCWL2asFmpu0PMa3Zpx8LVLG1YdFy/LXUneBZaGGnv2XtjtGvL4CjChPmsgz3NzoF46NchR7hIedeCMgL+NQWW3/vMSGH8eew82v9w6Sbbvl615xG1/pZORLzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168499; c=relaxed/simple;
-	bh=zcSLh9zb2Qc3VpXhOklk3s3w0Tr/O8DBH2iEqzq6lck=;
+	s=arc-20240116; t=1743168502; c=relaxed/simple;
+	bh=n7ntESqylVRPbiYcAi7Lvjwrj3FNVhCQtHzxQk/n5tk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jgBr0p6ab6o/G6O8NSLurvjyJJf0BYiITSRhtpXF+k//qeoxbuoiHidcBJpxSePDbsW9QE8D8b+Smk619CDJKnYPtlAVxMSqda6ALgMjv7VFvZ3UfgcgRi7DroSVWG8zzNLnxZUPLCAaiaYwk1uN0Oly+0vn1qtMsW6kPy2pcz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ4hPLrM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0CEC4CEEA;
-	Fri, 28 Mar 2025 13:28:17 +0000 (UTC)
+	 MIME-Version; b=R6BeRCH9kmk5+IV3y4FgM5UEtaL+YMsFkU0VmMXDDyvzM0viDIg6M29zjQXPtpP3IPr6aVFKG+o+Qhv5FgWNBeI/rp+t+JCoo7Pzz506gJNxVXLjAQw01QxDMkGL++7HgkxLT1N2TZA2qHmk1NBqGYm+hmPuER5AMnklnC4w9Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1TqWFTm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A72C4CEE4;
+	Fri, 28 Mar 2025 13:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743168499;
-	bh=zcSLh9zb2Qc3VpXhOklk3s3w0Tr/O8DBH2iEqzq6lck=;
+	s=k20201202; t=1743168501;
+	bh=n7ntESqylVRPbiYcAi7Lvjwrj3FNVhCQtHzxQk/n5tk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rJ4hPLrMaYHLD34kxbKrSiGFbLSno7OHB+POiTD4uR/rYUOiQ+ajr70d6SP/XXiFf
-	 LYIRbOmKb5AyvvSDBHXLPFVRtNWkY7D3YSiXeOy8WLtEEhZ9lIZCXsoL5qI9ujRUpu
-	 Fpl/jrQCegPJhF34UrO/xU/uOLmtkIGdEGiNtHrzkFV+jxOcwDuJTeZSFAdh+clQ+P
-	 /gWeJoY/GvEx5dSQxbPXpXo+0TGqzcxNbCL5/gBkUnZ3vgmHhN+pNxKn/MjXxw4Q+5
-	 0tOxblXjOGlwJTFOKI/OuQ2dw7bO1ww67X2i1IStFrO+751bO6+biCqtwROf/zkQeE
-	 ZfHPSmrM0ce+A==
+	b=L1TqWFTmtzksYIF0lLS1ZEq6jZOf1ChDlXrOwOEddAUtOjUHp4AiiwVyRnaFFtQ+A
+	 /egvDvllKqpL33fEazBdnSNET6PokExuAEACzYMFLSlth/XpMkP3LLj/H7uPSSV3W5
+	 +nNiGoCGiYfhOGAbCtH1Wf/bBsi2yhk3y2WurTcrdGaCrs+z+KP+CEyRWEz1tyAg9/
+	 ds+f0AAqj29p3BkV7y88RjV5hdsm5RzMcTp9WJVkLdtVccxsZN4HvExjrfamgqaGj+
+	 4JpFaW9HBSHdg8x+At+C/7XejqoZOtQjxwexvl/d4dCfcw09ul50SfCkwUH0pfizcw
+	 RGwxfcl62nG5g==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -49,9 +49,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 23/49] x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
-Date: Fri, 28 Mar 2025 14:26:38 +0100
-Message-ID: <20250328132704.1901674-24-mingo@kernel.org>
+Subject: [PATCH 24/49] x86/alternatives: Assert input parameters in smp_text_poke_batch_process()
+Date: Fri, 28 Mar 2025 14:26:39 +0100
+Message-ID: <20250328132704.1901674-25-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328132704.1901674-1-mingo@kernel.org>
 References: <20250328132704.1901674-1-mingo@kernel.org>
@@ -63,38 +63,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of constructing a vector on-stack, just use the already
-available batch-patching vector - which should always be empty
-at this point.
+At this point the 'tp' input parameter must always be the
+global 'tp_vec' array, and 'nr_entries' must always be equal
+to 'tp_vec_nr'.
 
-This will allow subsequent simplifications.
+Assert these conditions - which will allow the removal of
+a layer of indirection between these values.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/x86/kernel/alternative.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ffffec4597b7..70abc636b87c 100644
+index 70abc636b87c..6652863539e8 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2906,8 +2906,13 @@ void __ref smp_text_poke_batch_add(void *addr, const void *opcode, size_t len, c
-  */
- void __ref smp_text_poke_single(void *addr, const void *opcode, size_t len, const void *emulate)
- {
--	struct smp_text_poke_loc tp;
-+	struct smp_text_poke_loc *tp;
-+
-+	/* Batch-patching should not be mixed with single-patching: */
-+	WARN_ON_ONCE(tp_vec_nr != 0);
-+
-+	tp = &tp_vec[tp_vec_nr++];
-+	text_poke_int3_loc_init(tp, addr, opcode, len, emulate);
+@@ -2627,6 +2627,9 @@ static void smp_text_poke_batch_process(struct smp_text_poke_loc *tp, unsigned i
  
--	text_poke_int3_loc_init(&tp, addr, opcode, len, emulate);
--	smp_text_poke_batch_process(&tp, 1);
-+	smp_text_poke_batch_finish();
- }
+ 	lockdep_assert_held(&text_mutex);
+ 
++	WARN_ON_ONCE(tp != tp_vec);
++	WARN_ON_ONCE(nr_entries != tp_vec_nr);
++
+ 	int3_vec.vec = tp;
+ 	int3_vec.nr_entries = nr_entries;
+ 
 -- 
 2.45.2
 
