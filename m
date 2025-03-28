@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-580218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB95A74F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:18:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EADA74F20
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8060A1891FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 17:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66EE77A6D17
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 17:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF01F8BDD;
-	Fri, 28 Mar 2025 17:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF9C1DE4C7;
+	Fri, 28 Mar 2025 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="P5YzoigM"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="j9jUbA+Y"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899E323CB;
-	Fri, 28 Mar 2025 17:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7851DB131;
+	Fri, 28 Mar 2025 17:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743182000; cv=none; b=ZlI+wY3AiNRiJoF38zwivdWGAdIC7bERP40EkbgRmG6OXI453HuQryi79S0ez30v8mQlXDmgoBgJW0AvRFuXmpks1ccfGwS4jZLZpOAxVuQJOsRhONlYCKGKwnw4/BP2u2jx3ygwQhaFhz+b8yEftqCs5do+l9wzqWpWDkFkhn0=
+	t=1743182111; cv=none; b=HULMEUOuEycEl6wfxyrCOF00poUseuipVsg2FrdnscccB/rz1cBLGW5xyckjsOb/x7YBekPoQLkmp6tlG42kTrfAe/AdeEO7d6ItPJapLi9TmKzOOKCCjABxm8rDx6XicBrkH5zfiC+5ZTjONhM1+dePcXC+jDnpy0LfS7BHl6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743182000; c=relaxed/simple;
-	bh=MB2jPYJaEbZQcWgNWsaALclmodZo+JNw9KqSeSRq3os=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AhwcFuLEkY07/E7qf3gWz1mWw7Wd6UpoyNAwyDJQT2tOzMBWgeMzXAj57xJNd7uPLDOowEWANTE7xKeOaOkgA/6xKjZMyuvwMODdilbQfZ0AmjBPK8o4qROM5m+YBlC9tYOWOx1LPazyp6fQRnUO91KFFk+qhzMKDhiFrKsgYGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=P5YzoigM; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52SHC6vp2029344
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 28 Mar 2025 10:12:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52SHC6vp2029344
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1743181952;
-	bh=kOTtKvz1zMYkhx3BZ6WsyXttUav/IHta+1O5HIpwEhk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P5YzoigM+f47zYJmXgkMePdJvRjWYh1snaaccBRL0NQZqL6ou7O0AEi4dVu05Beb6
-	 Km1zPHd7LgLXFFSKU/ergi3QAMow2eFV+y0KQnRRhdB6Cgaatpdxi+sGAKi65K8Qjp
-	 dwGJ2xtZuJiPdmtRH+PGj4qByls4fE2mmoRCyPGUpSdC2pdWvZ72/sGRrA9NsEB8Lp
-	 9hQAMYSpCLsdm2CAMUv1wQtJfH6MhCKKTfkY7JNw7eJO2514M+7N4gV2SmOB8DNRnp
-	 sGnYgbcnZAmZkhRPLa8299lGVXILivxAXkBj5SNmuiFG4x8O2NSxZY0RwaHj7x7tuA
-	 BPyOHAXwrLtTQ==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        andrew.cooper3@citrix.com, luto@kernel.org, peterz@infradead.org,
-        chao.gao@intel.com, xin3.li@intel.com
-Subject: [PATCH v4 19/19] KVM: nVMX: Allow VMX FRED controls
-Date: Fri, 28 Mar 2025 10:12:05 -0700
-Message-ID: <20250328171205.2029296-20-xin@zytor.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250328171205.2029296-1-xin@zytor.com>
-References: <20250328171205.2029296-1-xin@zytor.com>
+	s=arc-20240116; t=1743182111; c=relaxed/simple;
+	bh=da7sHPFNtbq2W4cYMJ0iJEuTAgjeSMbHDG0WJspHRso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iAzqZc2W6aQGNN3ivA/CSfNbawLkN01m+qYzt4ryV1KJV8nAY/9flYWyjTycB1xYZXVb5s45Nvrh+0k6LlyohewtmSLhZzClXHSOuhyuQxA7O0K+6RY7CDTn6MhnBOqCiPe/92hpiPyvaIEMqLJg5rYIIOM8Hi+qhnyiOCiZd+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=j9jUbA+Y; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZPRwk4ttvzlmm8f;
+	Fri, 28 Mar 2025 17:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1743182101; x=1745774102; bh=+EK6tmoFiYgHeuEyYxLkyu/8
+	1AguotCIY7k04YXofmY=; b=j9jUbA+Y5cBItNjvfQ+hyeUC2A02jumLj99vu9Ep
+	QoIt9B0pGDaEXn3Eb4C7JI157palYsortj0m/1bHm0df6yx4Z9p98StjSZ7AN8UP
+	OpfdWX7smPS95pZ0DGo0aKD0qc0PcwQ+VfM2ddlusFp6Oa0NFz7EauHnzZowFipv
+	gSiztiM1f2lE2yD4gzixI5WBTs1+I4Tyr/aqGOg4Zt4vugPDb6ab1ecFYiB1xtf2
+	grgmz+nykuAAjJy36yBnxETKZnHETu5yylDQMXZvxq35/bowSUCYW9tBflsK06Zi
+	rFgyjVEFeHBrz3ALs7xayo7LCpf4GILzWbE/tjPd/+lT4A==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id fvm9X_Lqj2Gh; Fri, 28 Mar 2025 17:15:01 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZPRwb0J4fzlv768;
+	Fri, 28 Mar 2025 17:14:53 +0000 (UTC)
+Message-ID: <2ef77956-3e09-4315-8e3d-2046830f9227@acm.org>
+Date: Fri, 28 Mar 2025 10:14:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/2] ufs: core: delegate the interrupt service
+ routine to a threaded irq handler
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250326-topic-ufs-use-threaded-irq-v2-0-7b3e8a5037e6@linaro.org>
+ <20250326-topic-ufs-use-threaded-irq-v2-2-7b3e8a5037e6@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250326-topic-ufs-use-threaded-irq-v2-2-7b3e8a5037e6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Xin Li <xin3.li@intel.com>
+On 3/26/25 1:36 AM, Neil Armstrong wrote:
+> +static irqreturn_t ufshcd_intr(int irq, void *__hba)
+> +{
+> +	struct ufs_hba *hba = __hba;
+> +
+> +	/*
+> +	 * Move interrupt handling to thread when MCQ is not supported
+> +	 * or when Interrupt Aggregation is not supported, leading to
+> +	 * potentially longer interrupt handling.
+> +	 */
+> +	if (!is_mcq_supported(hba) || !ufshcd_is_intr_aggr_allowed(hba))
+> +		return IRQ_WAKE_THREAD;
+> +
+> +	/* Directly handle interrupts since MCQ handlers does the hard job */
+> +	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
+> +				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
+> +}
 
-Allow nVMX FRED controls as nested FRED support is in place.
+Calling ufshcd_is_intr_aggr_allowed() from the above interrupt handler
+seems wrong to me. I think you want to check whether or not ESI has been
+disabled since only if ESI is disabled all I/O completions are handled
+by a single interrupt if MCQ is enabled.
 
-Signed-off-by: Xin Li <xin3.li@intel.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Tested-by: Shan Kang <shan.kang@intel.com>
----
- arch/x86/kvm/vmx/nested.c | 6 ++++--
- arch/x86/kvm/vmx/vmx.c    | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 538ab3418957..e64ac0d1f6f2 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -7191,7 +7191,8 @@ static void nested_vmx_setup_exit_ctls(struct vmcs_config *vmcs_conf,
- 		 * advertise any feature in it to nVMX until its nVMX support
- 		 * is ready.
- 		 */
--		msrs->secondary_exit_ctls &= 0;
-+		msrs->secondary_exit_ctls &= SECONDARY_VM_EXIT_SAVE_IA32_FRED |
-+					     SECONDARY_VM_EXIT_LOAD_IA32_FRED;
- 	}
- }
- 
-@@ -7206,7 +7207,8 @@ static void nested_vmx_setup_entry_ctls(struct vmcs_config *vmcs_conf,
- #ifdef CONFIG_X86_64
- 		VM_ENTRY_IA32E_MODE |
- #endif
--		VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS;
-+		VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS |
-+		VM_ENTRY_LOAD_IA32_FRED;
- 	msrs->entry_ctls_high |=
- 		(VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR | VM_ENTRY_LOAD_IA32_EFER |
- 		 VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 03855d6690b2..601753a90b53 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7973,6 +7973,7 @@ static void nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)
- 
- 	entry = kvm_find_cpuid_entry_index(vcpu, 0x7, 1);
- 	cr4_fixed1_update(X86_CR4_LAM_SUP,    eax, feature_bit(LAM));
-+	cr4_fixed1_update(X86_CR4_FRED,       eax, feature_bit(FRED));
- 
- #undef cr4_fixed1_update
- }
--- 
-2.48.1
-
+Bart.
 
