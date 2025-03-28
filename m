@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-579804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D0DA749B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:20:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F416A7497C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:49:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A57189A501
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E301897725
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3294A21B18B;
-	Fri, 28 Mar 2025 12:20:12 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633241537C6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DD9215055;
+	Fri, 28 Mar 2025 11:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8Q6i91f"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8348012CDA5;
+	Fri, 28 Mar 2025 11:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743164411; cv=none; b=bf8zavOdBw9mRkoh6MvLXGJuhso2RSrBViEmn70KXRDPUsDbDSkdImRHXyTBff0Ev7z5tmCAUtWBX2eyRAlUG1qVOpyJhomtrf5Yzf3zz9Xo+aLoXsodmaKcWq4dH1HbKtKCBsNQi4yWG5SbhsPDYpDAjtx6V2UvBv1WmTSmzfo=
+	t=1743162552; cv=none; b=uOPfd7sagZuHk253Jm+CRfBw3sjqbfMFBMzqCOKsQ6U3JptWOHclhqdT37yORaybdXEoFAESdo0MfgQwcRKJQ5gTmeAPyTVGUnLzZbMPDKDqDU/ryuQZTK3B8IuLGzg3qPZ0Yh7m7TAJ9MgE+UQFoHHOHhDP5xiRzhtumsMY098=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743164411; c=relaxed/simple;
-	bh=UCjH2Ms8cWcrH8DKbIjBq3dQ2+iqiaqyMgj4HCuqX/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DApFKenD3J6hBiCKMJB/vIDQECWWyeeAZ5uJE3paKleiHtQbm+AARMtO1ydaB9pcnUY8pz7paa2aZPqzPoonS9ZzW60rCbnKVeH521DE1mB+xWlfJb0pjyr6oh2upvfHoXlkXPCimDMmLb1kKjOa7EJ+FFrL09tbdZc7gGCuvt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4ZPJhQ0sv0z9vdk;
-	Fri, 28 Mar 2025 12:48:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id VHeEn-jhQIqn; Fri, 28 Mar 2025 12:48:54 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZPJhP2w1Bz9tjl;
-	Fri, 28 Mar 2025 12:48:53 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 827338B76E;
-	Fri, 28 Mar 2025 12:48:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wUjXM0YDApDW; Fri, 28 Mar 2025 12:48:53 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3C80F8B763;
-	Fri, 28 Mar 2025 12:48:53 +0100 (CET)
-Message-ID: <d021d85f-e00e-4795-878f-ee53a5fd886c@csgroup.eu>
-Date: Fri, 28 Mar 2025 12:48:53 +0100
+	s=arc-20240116; t=1743162552; c=relaxed/simple;
+	bh=0zEkKMKBraCYtb5mtSN+uT7ZBhwEIcNCzdAPtVcplng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C0yP4cd8G6GATUlYmM5q7CJoKzrpKnht7taPJWaXjTjH2DeUoh6ZL3KSUgZgYSc4043mhdVkTa8gsTD3yMN0urLip/dK5gVqe/25tGSqcs8PiGT0Hs2kzIA4kQMREsgxi+NqZaGkcaxoNn/uucDsrf6HMP/55H38OgixbRwgXqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8Q6i91f; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fd89d036so46559495ad.1;
+        Fri, 28 Mar 2025 04:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743162551; x=1743767351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmCEfmKtu69bI3FAW2+d7YTQS71wGEca1RL8cb9p8b4=;
+        b=T8Q6i91fpuSH9PjstdfHjmuofjx+obmcY4OYYspdqDZhPYQHTteJcHAIzG3YPr8lxu
+         NiraXJk9ECrmPzxABoEpp/a4tm+WXV1KEQv2HM/k5Z7c86CdDUEqiyPKz7SVQORUrraG
+         m14oIXy/MKuIB/Z0DQlrH06i2slKB3nEzk+DiinOgbUkaXebNSgMf1lQqTaPdmlFa3sr
+         cie3JTUzLVeQ/EuDy+4q7X7SvKTO6tHJAi9fV7yvutSqHoYzGZWxl+9/V5Dc1c8YamuY
+         yqeZJw4hbk7cO0WbWdprDhdzrk1jYmiUHoCpUsIfmFrIrlZr2bwYTpoO4+j+XPiGuoLN
+         f12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743162551; x=1743767351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmCEfmKtu69bI3FAW2+d7YTQS71wGEca1RL8cb9p8b4=;
+        b=rBlygtjHosFUseFujWNHrKo13QQ73C4xaM92DxEJKoJ8km771lQywIuWOLTb9sZd27
+         WqJpCORRWHYtDX4ta75dGtOk4E12oWhTLhU37+Pm8IgIMsnp1sOmwf2CzdblC7FFSKMo
+         ogAGyBRuHdktOCBU8LYqWtmktkxEexew9Wn7xfn8bz/Qb6A3CJh2p2zh5jPFxIiefFqk
+         rqpyC5b2mEFDNLZdG7u0K9Gu0J5BaCgs3xhLQpe/gJJbsSvG5d79ajsXDgm88KV0qnVb
+         FroE74BIJyC4KKsCBtd5yvAIM8VRVRu5I6ISKA0t7Xhpeh7bpGaxZmId9F0//2igCTFU
+         GqRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIOcmIW3LbwwkWvH1LTJgEZx244M0/ysMJsHiUNZSRGnZUEwd/C78aZEQhS0SNq0CMW92j4yleYHUIcg==@vger.kernel.org, AJvYcCWkxRQDuh7DCxwqiSQH1u/125NZaeNs5ulviI0F/eCFIyTUZYZYp1pFrm3jNlcO5KrsyLbqKnmTALye8Ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjlQ0AgOqAvuX8vNBuXUENKoaPJOu7NsUYV5O2XLLWbqhkW0bK
+	w1o1mTgaXCwR0YSN7JNwWzxYL8EKLIrgP+ABwEiUzjum1QRIrKlP4W3Bkg==
+X-Gm-Gg: ASbGncug+mDr23gti2cbSNXLfdt1f6GNKy79KGhgSHZAOIK12hAO8p64P0KqM3sw+Uo
+	iLtsYW6ma9oaQd6RI7UBM6kVIor4ZiyOYpTtcDGBav/97DX9WmZDTEKbEGXVyI1YfiNezISJWvx
+	OItphYn6fMD0j1Kf5/XNyWKRybJgkGLct8IraWXpjs22t5bAcnbc1DmME5BifZTjwZ89Cmbkhhg
+	4UGEK7Ih0d65ZTI7IbWunIWFW4of3+Vlj5/hVhSkPu5r8ySHLhAaLuI7AKMYEMx2Lxu4yEPMpYK
+	sfUgUnvxqErJ9B1CGLm9szBsC/vk6ebZ/5oYpgvb9yMu
+X-Google-Smtp-Source: AGHT+IFFQaOmCK0iCTHGrRWzTWyXgcqukYghNfKOZ9vdJoDmptQQcXqn262rau+jeEOIhHNu2IkQaA==
+X-Received: by 2002:a17:902:f646:b0:224:f12:3735 with SMTP id d9443c01a7336-228048c8674mr125053825ad.31.1743162550503;
+        Fri, 28 Mar 2025 04:49:10 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1cfb2asm15676575ad.141.2025.03.28.04.49.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 04:49:09 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id F028B420A74C; Fri, 28 Mar 2025 18:49:06 +0700 (WIB)
+Date: Fri, 28 Mar 2025 18:49:06 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the iommufd tree
+Message-ID: <Z-aMsk148w8zgaRQ@archie.me>
+References: <20250318213359.5dc56fd1@canb.auug.org.au>
+ <20250328175745.7ecfee87@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [main-line]Build warnings on PowerPC system
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <61cf556c-4947-4bd6-af63-892fc0966dad@linux.ibm.com>
- <8797a1c4-dc58-4a85-bc51-a3d4131e7930@linux.ibm.com>
- <b5713b0b-a278-424c-8ba3-3aec01454e94@linux.ibm.com>
- <38653c58-a5c4-496f-9b52-e7bc3e447423@linux.ibm.com>
- <516febac-b2ba-48a0-83a4-ab259e972541@linux.ibm.com>
- <b37c7a1a-9ec8-417e-9d9d-adeffe409df8@csgroup.eu>
- <e18df940-bb30-44c9-9384-7325e8d02d25@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <e18df940-bb30-44c9-9384-7325e8d02d25@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eiW7nh+I1UK1dOHA"
+Content-Disposition: inline
+In-Reply-To: <20250328175745.7ecfee87@canb.auug.org.au>
 
 
+--eiW7nh+I1UK1dOHA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 28/03/2025 à 12:14, Madhavan Srinivasan a écrit :
-> 
->>>> diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
->>>> index 1db60fe13802..09ceb5a42d81 100755
->>>> --- a/arch/powerpc/boot/wrapper
->>>> +++ b/arch/powerpc/boot/wrapper
->>>> @@ -235,7 +235,7 @@ fi
->>>>    # suppress some warnings in recent ld versions
->>>>    nowarn="-z noexecstack"
->>>>    if ! ld_is_lld; then
->>>> -       if [ "$LD_VERSION" -ge "$(echo 2.39 | ld_version)" ]; then
->>>> +       if [ "$LD_VERSION" -ge "$(echo 2.35 | ld_version)" ]; then
->>>>                   nowarn="$nowarn --no-warn-rwx-segments"
->>>>           fi
->>>>    fi
->>> Above change fixes the issue. No warnings observed. Thank you!!
->>
->> Take care, this must be a special version of binutils.
->>
->> With regular 2.36.1 I get following error:
->>
->> $ /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld --version
->> GNU ld (GNU Binutils) 2.36.1
->> Copyright (C) 2021 Free Software Foundation, Inc.
->> This program is free software; you may redistribute it under the terms of
->> the GNU General Public License version 3 or (at your option) a later version.
->> This program has absolutely no warranty.
->>
->> $ /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld --no-warn-rwx-segments test.o
->> /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: unrecognized option '--no-warn-rwx-segments'
->> /opt/gcc/gcc-8.5.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: use the --help option for usage information
->>
-> 
-> Nice catch. Thanks Christophe.
-> 
-> May be we need to handle this special/specific case with an
-> additional check
-> 
-> diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-> index 1db60fe13802..d3779c20e548 100755
-> --- a/arch/powerpc/boot/wrapper
-> +++ b/arch/powerpc/boot/wrapper
-> @@ -237,6 +237,8 @@ nowarn="-z noexecstack"
->   if ! ld_is_lld; then
->          if [ "$LD_VERSION" -ge "$(echo 2.39 | ld_version)" ]; then
->                  nowarn="$nowarn --no-warn-rwx-segments"
-> +        elif [ "$LD_VERSION" -eq "235020000" ]; then
-> +                nowarn="$nowarn --no-warn-rwx-segments"
->          fi
->   fi
-> 
+On Fri, Mar 28, 2025 at 05:57:45PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Tue, 18 Mar 2025 21:33:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the iommufd tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> >=20
+> > Documentation/userspace-api/iommufd:323: include/uapi/linux/iommufd.h:1=
+033: CRITICAL: Unexpected section title or transition.
+> >=20
+> > -----------------------------------------------------------------------=
+-- [docutils]
+> > WARNING: kernel-doc 'scripts/kernel-doc -rst -enable-lineno include/uap=
+i/linux/iommufd.h' processing failed with: Documentation/userspace-api/iomm=
+ufd:323: include/uapi/linux/iommufd.h:1033: (SEVERE/4) Unexpected section t=
+itle or transition.
+> >=20
+> > -----------------------------------------------------------------------=
+--
+> >=20
+> > Introduced by commit
+> >=20
+> >   50c842dd6cd3 ("iommufd: Add IOMMUFD_OBJ_VEVENTQ and IOMMUFD_CMD_VEVEN=
+TQ_ALLOC")
+>=20
+> Any progress on this?
 
-I think it is not the official version of 2.35.2, it is a modified 
-version from a distribution. It doesn't exist in the official 2.35.2:
+Should've been fixed by [1].
 
-$ git remote -v
-origin	https://sourceware.org/git/binutils-gdb.git (fetch)
-origin	https://sourceware.org/git/binutils-gdb.git (push)
+Thanks.
 
-$ git grep rwx-segments origin/binutils-2_35-branch
-[empty]
+[1]: https://lore.kernel.org/linux-doc/20250328114654.55840-1-bagasdotme@gm=
+ail.com/
 
-What about doing something like commit 0d362be5b142 ("Makefile: link 
-with -z noexecstack --no-warn-rwx-segments") ?
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Christophe
+--eiW7nh+I1UK1dOHA
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ+aMsgAKCRD2uYlJVVFO
+o9YzAQDn1v3TNYpnKgI8UEekDsYLDjef3OrEiJ2fES/KcXCpSgEAqXDhWHOlgqby
+6VzlrRXLBT9DsXWNBh79cIwjlpTDWAA=
+=6llm
+-----END PGP SIGNATURE-----
+
+--eiW7nh+I1UK1dOHA--
 
