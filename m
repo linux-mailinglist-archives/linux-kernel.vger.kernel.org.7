@@ -1,158 +1,146 @@
-Return-Path: <linux-kernel+bounces-579344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED6AA74227
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:52:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF93A7422B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5990C7A62F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5604D188DF8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BF21C84C1;
-	Fri, 28 Mar 2025 01:52:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977C1C760D;
+	Fri, 28 Mar 2025 01:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Zr6j/xM5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2892E189B91;
-	Fri, 28 Mar 2025 01:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EF0189B91;
+	Fri, 28 Mar 2025 01:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743126763; cv=none; b=BoRoOsnVhIl0cByQW1bCpGM2w6nTvMhovZD1mSftnAQ/lIqS0aeNJqUPXuoi6eMSh5RSCo7hx+NBZDroBQ2oGn7pztbrEWeXOxhbOPPj+DeNnCLsp3RKhHd08Tgqs5V/WQAQ0aMlOC2fJPCLZjmlRiNlIUCxn4E48w2jXkyVveY=
+	t=1743127178; cv=none; b=q6d3cXVcfH53LL3tszHUUe//F6cFjQs4BmJ+MFoyWHYkw0SAMNNDjs8Uc9Z3zcOSEpqaX1CaskZaRY2WC9Iw9hxCdYhC5en03JsE/lFK4iQxc3nQG+KgCEMf6IiivuwMF3h5IdBkOnV/6UNqmQoosxBJVT+4Gy7mkmwgQxiSVLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743126763; c=relaxed/simple;
-	bh=QLD9RGfyd2zrbv8TRBfjCsGm8iBbrUYkfY1cB3ufAc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z27KofrTHzvmVbXYa8IdkQPtzSLOD9EKFnfu2SUgs3wE7ILBL8h0E5E6ilXcXo0T7n2fvmq794O16zsXTHHB5P3Dnh7ERqsJws5agYneh++w6tPuEfEPuiQas6RfSQv69UJBjKIZgocsc/Kzcx9nqsB6sQ6kW0HtlltfBnz32uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZP3Rn6zBrz4f3m7H;
-	Fri, 28 Mar 2025 09:52:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 76CA51A0BBD;
-	Fri, 28 Mar 2025 09:52:30 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBHrGDaAOZngr4aHw--.27227S3;
-	Fri, 28 Mar 2025 09:52:28 +0800 (CST)
-Message-ID: <6203563b-ff13-47b2-b630-d710eab47d62@huaweicloud.com>
-Date: Fri, 28 Mar 2025 09:52:26 +0800
+	s=arc-20240116; t=1743127178; c=relaxed/simple;
+	bh=h53gNow7zNag0auKs9fje8t6fMoKtAPUWcjpQ1qKgI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eoafAEnPKcxAeqjmbaDw4wNSRWtUO9k4pdcaUNSph/Y5BhTlIJANhqJksBLPTWLylusJfmTmZOmIbOIVoHkcoVJWwsR604D50M9uarHohE+PEwGOeCXZc8Hj32NAX9fvK1tZFwlpCEgWz9Ke16CH92En/5MrjyDgFWH35j9Q54E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Zr6j/xM5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1743127172;
+	bh=I2KurtP2vFyxuKvIdJhRk0/uFqRNHteULCvEDOApobE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Zr6j/xM5F/qprlb18TuPQMGjG2Ru2T+GPqbJ3ouh7frAr3v7bW/Mmz1hQrIg2RoZ2
+	 QVUbn36sPCZ2hXOrrGcHlgi6l0p7jURQ3RdBAwdor9vqUk7W8N2dTVnqT8Iyf1CIgp
+	 VQnVajYQqe9B6xohhsPYGZzuSP2yYjTr57ojG1gruWuIb+7C7mTomxnNAH3Nu/bI2x
+	 eVVg8vax5J1CIdpgXTwkj3nLpBoLanSwYEjrT/VWznhkAxssMCbB6+hOOrYsVFiioG
+	 KbajaI1Bur5iWohWmi0QUMsMP1NUhoAi2Q9FCctHn6xbxKMZEKRwcGFkZOLxVR9aif
+	 wdQtzepAFyCng==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZP3cM5cKHz4wyh;
+	Fri, 28 Mar 2025 12:59:31 +1100 (AEDT)
+Date: Fri, 28 Mar 2025 12:59:30 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the i2c-host tree
+Message-ID: <20250328125930.4f8692b1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ext4: Make block validity check resistent to sb bh
- corruption
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-References: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBHrGDaAOZngr4aHw--.27227S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr15XFyfCw18XFW5CF1UGFg_yoW5Aw4fp3
-	9xCryUXry8uryj9rWIqF47ZFyY9ayxK3yj9rn8Cwn0q398X34xKryrtF4UX3WkKrW8Ga18
-	XF1ru3y5CanFkrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; boundary="Sig_/99llr.uA9IWapHH8ekPbabN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 2025/3/28 1:48, Ojaswin Mujoo wrote:
-> Block validity checks need to be skipped in case they are called
-> for journal blocks since they are part of system's protected
-> zone.
-> 
-> Currently, this is done by checking inode->ino against
-> sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
-> buffer head. If someone modifies this underneath us then the
-> s_journal_inum field might get corrupted. To prevent against this,
-> change the check to directly compare the inode with journal->j_inode.
-> 
-> **Slight change in behavior**: During journal init path,
-> check_block_validity etc might be called for journal inode when
-> sbi->s_journal is not set yet. In this case we now proceed with
-> ext4_inode_block_valid() instead of returning early. Since systems zones
-> have not been set yet, it is okay to proceed so we can perform basic
-> checks on the blocks.
-> 
-> Suggested-by: Baokun Li <libaokun1@huawei.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+--Sig_/99llr.uA9IWapHH8ekPbabN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the inprovement! Besides the indentation that Jan pointed
-out, it looks good to me.
+Hi all,
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+The following commits are also in the i2c tree as different commits
+(but the same patches):
 
-> ---
-> 
-> ** Changes since v1 [1] **
-> 
-> - instead of using an sbi field direction check against jorunal->j_inode
-> - let block validity perform basic checks on journal blocks as well
-> 	during init path
-> - kvm-xfstests quick tests are passing
-> 
-> [1] https://lore.kernel.org/linux-ext4/d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com/
-> 
->  fs/ext4/block_validity.c | 5 ++---
->  fs/ext4/inode.c          | 9 +++++----
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-> index 87ee3a17bd29..e8c5525afc67 100644
-> --- a/fs/ext4/block_validity.c
-> +++ b/fs/ext4/block_validity.c
-> @@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
->  {
->  	__le32 *bref = p;
->  	unsigned int blk;
-> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
->  
-> -	if (ext4_has_feature_journal(inode->i_sb) &&
-> -	    (inode->i_ino ==
-> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-> +	if (journal && inode == journal->j_inode)
->  		return 0;
->  
->  	while (bref < p+max) {
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 365d31004bd0..8b048be14008 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -384,10 +384,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
->  				unsigned int line,
->  				struct ext4_map_blocks *map)
->  {
-> -	if (ext4_has_feature_journal(inode->i_sb) &&
-> -	    (inode->i_ino ==
-> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-> -		return 0;
-> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
-> +
-> +	if (journal && inode == journal->j_inode)
-> +			return 0;
-> +
->  	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
->  		ext4_error_inode(inode, func, line, map->m_pblk,
->  				 "lblock %lu mapped to illegal pblock %llu "
+  01879dd3b07d ("i2c: amd-asf: Set cmd variable when encountering an error")
+  04bbb78be54e ("i2c: brcmstb: Use i2c_10bit_addr_*_from_msg() helpers")
+  0c5620203c08 ("i2c: amd: Switch to guard(mutex)")
+  19f3af22ccbf ("i2c: axxia: Use i2c_10bit_addr_*_from_msg() helpers")
+  1a32c37c73ea ("i2c: eg20t: Use i2c_10bit_addr_*_from_msg() helpers")
+  1a63160e0884 ("i2c: i801: Use MMIO if available")
+  280deda134db ("i2c: iproc: Refactor prototype and remove redundant error =
+checks")
+  2951c695bf4a ("i2c: omap: Add support for setting mux")
+  3c10f034fff0 ("i2c: dw: Update the master_xfer callback name")
+  408fbbbbce6a ("i2c: mlxbf: Use readl_poll_timeout_atomic() for polling")
+  470787fb5b27 ("i2c: mt7621: Use i2c_10bit_addr_*_from_msg() helpers")
+  5721ac2c5ac4 ("i2c: pasemi: Add registers bits and switch to BIT()")
+  594f71eabcc5 ("dt-bindings: i2c: imx-lpi2c: add i.MX94 LPI2C")
+  646edba35872 ("i2c: qup: Vote for interconnect bandwidth to DRAM")
+  676bacdd6eb4 ("i2c: i801: Improve too small kill wait time in i801_check_=
+post")
+  6c47a63bddda ("i2c: i801: Switch to iomapped register access")
+  6ef61d097224 ("i2c: mv64xxx: Use i2c_*bit_addr*_from_msg() helpers")
+  6fc176e1830c ("i2c: bcm-kona: Use i2c_10bit_addr_*_from_msg() helpers")
+  78cc2f229e92 ("i2c: k1: Initialize variable before use")
+  7a8c4bdbee5c ("dt-bindings: i2c: exynos5: add exynos7870-hsi2c compatible=
+")
+  813fe8a1c150 ("i2c: i801: Cosmetic improvements")
+  85175a591d67 ("i2c: octeon: remove 10-bit addressing support")
+  8b9de656fc8f ("dt-bindings: i2c: qup: Document interconnects")
+  92a8d36abbd8 ("i2c: octeon: fix return commenting")
+  9427b4680e0e ("i2c: qcom-geni: Update i2c frequency table to match hardwa=
+re guidance")
+  94505359bbf0 ("i2c: pxa: fix call balance of i2c->clk handling routines")
+  992961d3a4b1 ("i2c: cadence: Move reset_control_assert after pm_runtime_s=
+et_suspended in probe error path")
+  9a3208cb7c21 ("i2c: ibm_iic: Use i2c_*bit_addr*_from_msg() helpers")
+  9b982a430344 ("i2c: i2c-exynos5: fixed a spelling error")
+  a20a217ac502 ("i2c: mux: remove incorrect of_match_ptr annotations")
+  a41771366857 ("dt-bindings: i2c: spacemit: add support for K1 SoC")
+  a516fd98fbbb ("i2c: spacemit: add support for SpacemiT K1 SoC")
+  ad9769d81ac4 ("i2c: i801: Move i801_wait_intr and i801_wait_byte_done in =
+the code")
+  aff120a4546b ("i2c: kempld: Use i2c_10bit_addr_*_from_msg() helpers")
+  b22c902580a8 ("i2c: cadence: Simplify using devm_clk_get_enabled()")
+  b402ffba81ca ("i2c: Introduce i2c_10bit_addr_*_from_msg() helpers")
+  b7fc85a98f96 ("dt-bindings: i2c: samsung,s3c2410: add exynos7870-i2c comp=
+atible")
+  c529a82a7f8f ("dt-bindings: i2c: i2c-rk3x: Add rk3562 support")
+  c9a73204f14c ("i2c: rzv2m: Use i2c_10bit_addr_*_from_msg() helpers")
+  d0120c8e9a5e ("dt-bindings: i2c: omap: Add mux-states property")
+  e02ea71a6ff6 ("i2c: amd-asf: Modify callbacks of i2c_algorithm to align w=
+ith the latest revision")
+  eadae9e7606f ("i2c: octeon: refactor common i2c operations")
+  ee280e4d4e6d ("dt-bindings: i2c: qcom,i2c-qup: Document power-domains")
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/99llr.uA9IWapHH8ekPbabN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfmAoIACgkQAVBC80lX
+0Gz2cAf/eZv506xe2vKyxKJxwQPG3aeqCUeZVj/C8VndPBl/9TuFDBbHhst58WnJ
+4ug/hoAf09HF+GfcMP0i8zIMY9C8f5NuT4A6EVrfvlo/rKUs3L/GgjYQsPFl/p/u
+nexXhFgXNy+FNNEn4dhOHyLwvxzH3Ty0gbfLIO6hGjjifxBrn6MvVvov7DlaXtjd
++nKd93TGW9va9If9zHGuWxQ/dI1Nn+M3THztc1cP+86SqjGclbkJzcA8Q/sDRzeB
+E2+gf2ZX6DP6p4IJY+zX2Yb2n2yUlu5eFKwlDYdYP2vpD24jkNpIF/HyF7DitLL/
+iq3aMV/LgU+Iyaxp3be3Fm4bpTIDBQ==
+=hfVy
+-----END PGP SIGNATURE-----
+
+--Sig_/99llr.uA9IWapHH8ekPbabN--
 
