@@ -1,174 +1,174 @@
-Return-Path: <linux-kernel+bounces-579405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E37CA742C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19257A742CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:26:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E5EC7A4997
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:21:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977287A7EF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADD921129D;
-	Fri, 28 Mar 2025 03:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbeIj9xe"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7218321129C;
+	Fri, 28 Mar 2025 03:26:45 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A70926AC3;
-	Fri, 28 Mar 2025 03:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE18D26AC3;
+	Fri, 28 Mar 2025 03:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743132172; cv=none; b=TWl5W1QLdRmR+38E8g4jeHaJ2zbsj+640flT1NdgVxMNzkDO/e+IqLSDNsiT4amiagKN/atPy/tobrI9cWOaZm5E8gdt7Iv/B1Vm/YRH+QG/5UCKJcH8kYCvNeyFVogeY3B1jVtRMyaxZWLf+dXmebA+A8lKP10LgRzqWI0xOr0=
+	t=1743132405; cv=none; b=mzuU/Z0gEyhodJZYQFCWWOzT1HwlvZnzsEsd/D3gJsc9nS2IkrIMuoDVvOsqHeHYcIDH0eHhTt/geJz36uD3nUIsE5CV+oi4dmSj+Nch7a/B8xMhfm5C0tZkA/OmxO42U85t0gttNJNHJusbFGRzV/K86ff77PHw8pa/YlRhkjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743132172; c=relaxed/simple;
-	bh=M5y+SHEBcaPioIYa3upR4kMT+jizMmJOTydbfnEFN+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uceNLdTarelUR7Deu/IxdEKAQ5EQKIKOjztgXIL1pgpcUXSN9Wf2JfLOwgB5yNPS+5Itvub22aGGB5maZzyyd1i9or/yXP78rG69RU760pS5xdN0qLpNXnbGKLUfnwSdCgtbeOQIB8djDdTx+jbpZFsifHpJTgAa8hQTJ0HZQXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbeIj9xe; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so880527f8f.0;
-        Thu, 27 Mar 2025 20:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743132169; x=1743736969; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B7C8z55+T8oYS2KV30NvrF9v2VMjdBS5RbEDCZuaYTo=;
-        b=LbeIj9xezHgffGo3joskGQv1UQzhGj9sUy5jSgktp/AYhWTFPJWlcJrJTzmqzkWDu6
-         0angimizh3ez1Qy6BdBP0RO9P2NMJ0jhClOrQmqQ4EV+4cN6fqUGYadjv7KKQKk5eGrS
-         NiB3ENmwoSBfhepNLMJGRJpBgZFRXze3iwYnyG4/VuNRn+ML21ycz//Kv4aEh2XWGytn
-         43d5tQXB4UHwvon/lIPf+kcFLI6w147MmQcrl+TQDEVrI6a8xjVnJo+mgrYhXqVYBJa+
-         b25CB+tEXm6hBY/WI5DdZ1mhG5iXb1dvFWxhx2A3RGtUn9LvtyvhucR7IMaxEOQRG318
-         fkkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743132169; x=1743736969;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B7C8z55+T8oYS2KV30NvrF9v2VMjdBS5RbEDCZuaYTo=;
-        b=LFGA/qh/0PQNFztF5HKjsbPvmLX6k12jVdHDtoH+o46+kUW/oQ/2OaIc4XHr3gfNU3
-         H/ntvCZrqzlQzin4+OnyuqlmKGqurmwyawJbLsCwUSGrALo2TnWtanxfBiMSn3qBKbOC
-         XK49Hs6EShr602aRdzRqb224B7sIVYk/Jd7A6R3mrabvIZGkiCIMLxZGg+VjFVS4IAjd
-         LSirkg6f79LBVNtlKhrH7PEmh5z2MVBiZk1oVdkKfpVPXLOJa29Cv+eqUsW7pMPggxmO
-         fCGupTKYkk910oEban284wTB06JNm10QIdCmgZ6z5gxfOjkPdoechXm9n8/87ZqNZ8Ln
-         IRRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRjIQRSnkXkeXOKkzoY15KgFdR+jLvDtSYpjutf31eIl+7L2r54NNbEj7WCiGPla9ASu1DUlr20x/sk/zgMxRu@vger.kernel.org, AJvYcCWbc/GyeLvRVqC358ztlKjE0mwobP37/044MTk7l5NimxKPQlBGWHxvk7hX+Gukxq7+Ltkhq6RZ6nA7pnz5@vger.kernel.org, AJvYcCX0/vAhBbatX2wsM1Gse+x70G1M4Rmd6wVjDFVfAiif7bEdFmUfLsXFuj9v0LilB4MTNPIlxXgT0BET+9vB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA6DTlZjIp9pIxXf762RKBoHdl6k8kdRPEJPlj8IwYdDZ++pQ8
-	7EuwamifIQ9KDKcyDT7/W9UWf3dxdITrrRqBOweQ5p6MDUYAycECLxe/uihLwiWgUiiWurWP8Fi
-	MZ26KwOGH8hC27Pg+eHKV96bOuYo=
-X-Gm-Gg: ASbGnctPhnbXQWfIywbpoM2lSH6rq3X0XDvVhLhDW2Ec++j1gTWzGdS1B/kVH+5APaX
-	e9hwr6DNO8GgiSWcqob8bJvrF9txzgq6NVUm2IliqLgPKOU3y7OhqFBfcGPZMyZ7whKwBvH2VxI
-	Pvy6zagEwRn+hjAgnr+kH3OhfK1PI+
-X-Google-Smtp-Source: AGHT+IHVqJ00wvtvQwj5eSUkJyD/Qm8KBYe23yrQxTy9l1qjtGvOpEvI62C4RjCoDOOLaZM92/M93nihjWAGw7b+r8o=
-X-Received: by 2002:a05:6000:40e0:b0:391:4189:d28d with SMTP id
- ffacd0b85a97d-39ad176dea8mr5129848f8f.34.1743132168612; Thu, 27 Mar 2025
- 20:22:48 -0700 (PDT)
+	s=arc-20240116; t=1743132405; c=relaxed/simple;
+	bh=+apTMILyuzoKGjYoNsju5JB1rSx0wdhfEltS4X8Zfm4=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=S4S7hCk0COjyBpTQQxd1SU64XV8Dsl3xHPrFNzHJ3g6H0mK0zocR7fhDPR914vQCRA7WpcQh+mrXVAWDEBFRvnKcl7v3n0rZjiGojDVHdepdZpC2t81ay5S2dnEw8xXRtNN7mEkEbOUyzqF5/oZywHtrLK6GedpbOJcMhl03feQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201620.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202503281126270447;
+        Fri, 28 Mar 2025 11:26:27 +0800
+Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
+ jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Mar 2025 11:26:27 +0800
+Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
+ by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
+ id 15.01.2507.039; Fri, 28 Mar 2025 11:26:27 +0800
+From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
+	<liubo03@inspur.com>
+To: "kristen.c.accardi@intel.com" <kristen.c.accardi@intel.com>,
+	"vinicius.gomes@intel.com" <vinicius.gomes@intel.com>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?RG91IHpoaSBjaG9uZyBEb3UgKOeqpuW/l+WGsik=?= <douzhichong@inspur.com>
+Subject: Intel IAA issue consultation
+Thread-Topic: Intel IAA issue consultation
+Thread-Index: AdufkEvJfAQaVtDyQmuUDCsR4b4QKA==
+Date: Fri, 28 Mar 2025 03:26:27 +0000
+Message-ID: <7f9bf073f04d4ba6b0d98f6189d951bc@inspur.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
+	micalg=SHA1; boundary="----=_NextPart_000_0009_01DB9FD3.F1F08830"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325015617.23455-1-pcc@google.com> <20250325015617.23455-3-pcc@google.com>
-In-Reply-To: <20250325015617.23455-3-pcc@google.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Fri, 28 Mar 2025 04:22:37 +0100
-X-Gm-Features: AQ5f1JrJXWzo2O7BIgaxbbGefH-hJc8YZYbR3ERisHcev8zGo0XarIRgt3wr42U
-Message-ID: <CA+fCnZe+KzyBOBPsJonEhDV-5ZH57QPfTCREawXiwvpTcspNug@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] kasan: Add strscpy() test to trigger tag fault on arm64
-To: Peter Collingbourne <pcc@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+tUid: 20253281126274143ae6e0c39763f2d3a34275742cb0e
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
+
+------=_NextPart_000_0009_01DB9FD3.F1F08830
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 2:56=E2=80=AFAM Peter Collingbourne <pcc@google.com=
-> wrote:
->
-> From: Vincenzo Frascino <vincenzo.frascino@arm.com>
->
-> When we invoke strscpy() with a maximum size of N bytes, it assumes
-> that:
-> - It can always read N bytes from the source.
-> - It always write N bytes (zero-padded) to the destination.
->
-> On aarch64 with Memory Tagging Extension enabled if we pass an N that is
-> bigger then the source buffer, it triggers an MTE fault.
->
-> Implement a KASAN KUnit test that triggers the issue with the current
-> implementation of read_word_at_a_time() on aarch64 with MTE enabled.
+Hi Kristen:
 
-I think the wording here is confusing, makes it sound like the issue
-is not fixed.
+We recently encountered issues when using Intel IAA (In-Memory Analytics =
+Accelerator) for data decompression in the Linux kernel. Specifically, =
+while using the iaa_crypto driver, decompression fails when processing =
+large datasets composed of non-contiguous memory pages. Initially, we =
+attempted to address this by using scatterlists (SGLs), but =
+decompression still failed. After analyzing the iaa_crypto driver code, =
+we discovered that =E2=80=8Bnon-contiguous pages require enabling IOMMU =
+to map them into a single virtual contiguous memory block for the =
+device. However, while this approach worked for small numbers of =
+non-contiguous pages, it failed for larger quantities due to IOMMU =
+limitations in mapping fragmented pages into a unified virtual address =
+space.
 
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> Co-developed-by: Peter Collingbourne <pcc@google.com>
-> Signed-off-by: Peter Collingbourne <pcc@google.com>
-> Link: https://linux-review.googlesource.com/id/If88e396b9e7c058c1a4b5a252=
-274120e77b1898a
-> ---
-> v3:
-> - simplify test case
->
-> v2:
-> - rebased
-> - fixed test failure
->
->  mm/kasan/kasan_test_c.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index 59d673400085f..b69f66b7eda1d 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -1570,6 +1570,7 @@ static void kasan_memcmp(struct kunit *test)
->  static void kasan_strings(struct kunit *test)
->  {
->         char *ptr;
-> +       char *src;
->         size_t size =3D 24;
->
->         /*
-> @@ -1581,6 +1582,18 @@ static void kasan_strings(struct kunit *test)
->         ptr =3D kmalloc(size, GFP_KERNEL | __GFP_ZERO);
->         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->
-> +       src =3D kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
-> +       strscpy(src, "f0cacc1a0000000", KASAN_GRANULE_SIZE);
-> +
-> +       /*
+We would like to consult with you
 
-Please also extend the comment here to say something like: "Make sure
-that strscpy() does not trigger KASAN if it overreads into poisoned
-memory".
+Is it possible to use iaa_crypto for decompression with =
+=E2=80=8Bnumerous non-contiguous pages?
+If yes, what modifications are required to resolve the IOMMU mapping =
+constraints?
 
-> +        * The expected size does not include the terminator '\0'
-> +        * so it is (KASAN_GRANULE_SIZE - 2) =3D=3D
-> +        * KASAN_GRANULE_SIZE - ("initial removed character" + "\0").
-> +        */
-> +       KUNIT_EXPECT_EQ(test, KASAN_GRANULE_SIZE - 2,
-> +                       strscpy(ptr, src + 1, KASAN_GRANULE_SIZE));
-> +
-> +       kfree(src);
->         kfree(ptr);
->
->         /*
-> --
-> 2.49.0.395.g12beb8f557-goog
->
+Thanks,
+Bo Liu.
 
-The code looks much better!
+------=_NextPart_000_0009_01DB9FD3.F1F08830
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+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
+9w0DAgICAIAwDgYIKoZIhvcNAwQCAgCAMAcGBSsOAwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQWBBTk
+Hdp/y3+DuDJ13Q1YzgU9iV7NdzAfBgNVHSMEGDAWgBReWQOmtExYYJFO9h61pTmmMsE1ajCCAQ8G
+A1UdHwSCAQYwggECMIH/oIH8oIH5hoG6bGRhcDovLy9DTj1JTlNQVVItQ0EsQ049SlRDQTIwMTIs
+Q049Q0RQLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZpZ3Vy
+YXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50hjpodHRwOi8vSlRDQTIwMTIu
+aG9tZS5sYW5nY2hhby5jb20vQ2VydEVucm9sbC9JTlNQVVItQ0EuY3JsMIIBKQYIKwYBBQUHAQEE
+ggEbMIIBFzCBsQYIKwYBBQUHMAKGgaRsZGFwOi8vL0NOPUlOU1BVUi1DQSxDTj1BSUEsQ049UHVi
+bGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz1ob21l
+LERDPWxhbmdjaGFvLERDPWNvbT9jQUNlcnRpZmljYXRlP2Jhc2U/b2JqZWN0Q2xhc3M9Y2VydGlm
+aWNhdGlvbkF1dGhvcml0eTBhBggrBgEFBQcwAoZVaHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2No
+YW8uY29tL0NlcnRFbnJvbGwvSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb21fSU5TUFVSLUNBLmNy
+dDBBBgNVHREEOjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJsaXVibzAz
+QGluc3B1ci5jb20wDQYJKoZIhvcNAQELBQADggEBAA+BaY3B3qXmvZq7g7tZLzq2VQjU//XHTmyl
+58GLDWdVHsuX3lrAGwEfLVnUodpvthjtb7T7xEUzJh4F62zLFSm8HOBPH1B+6SFQKChHZeM0pauv
+Xr1krRtVv82RgLsU26XrXFUPN+NcPwt7vOw1zHOiDic4anL3A9gsuDljAi2l+CA5RY05yL+8oras
+EAhOYL6+ks9aB8QiCxbZzShkDTMkrh0N1DjoBLaibtnlI/fxOUYM6vgdiI+FC02G41B364ZAc1ma
+bSFvGIP6cIdr/olprPQOj9cq6zMi05qUBUj22hDvhcY0TlT4fEJSrvblp/LG6qTtVI3ilUAxhe8i
+9cIxggOTMIIDjwIBATBwMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xGDAWBgoJkiaJk/IsZAEZFghs
+YW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUxEjAQBgNVBAMTCUlOU1BVUi1DQQITfgAA0dHV
+TGwIT1/wiwAAAADR0TAJBgUrDgMCGgUAoIIB+DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0yNTAzMjgwMzI0MThaMCMGCSqGSIb3DQEJBDEWBBRwkzhKdOPzrJindkLj
+8x1y0MMnlDB/BgkrBgEEAYI3EAQxcjBwMFkxEzARBgoJkiaJk/IsZAEZFgNjb20xGDAWBgoJkiaJ
+k/IsZAEZFghsYW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUxEjAQBgNVBAMTCUlOU1BVUi1D
+QQITfgAA0dHVTGwIT1/wiwAAAADR0TCBgQYLKoZIhvcNAQkQAgsxcqBwMFkxEzARBgoJkiaJk/Is
+ZAEZFgNjb20xGDAWBgoJkiaJk/IsZAEZFghsYW5nY2hhbzEUMBIGCgmSJomT8ixkARkWBGhvbWUx
+EjAQBgNVBAMTCUlOU1BVUi1DQQITfgAA0dHVTGwIT1/wiwAAAADR0TCBkwYJKoZIhvcNAQkPMYGF
+MIGCMAoGCCqGSIb3DQMHMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAECMA4G
+CCqGSIb3DQMCAgIAgDANBggqhkiG9w0DAgIBQDAHBgUrDgMCGjALBglghkgBZQMEAgMwCwYJYIZI
+AWUDBAICMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC9Nf1rsx+tjr5Pj4kAe6Y8hg1c
+MTKwvs1BbJEGDoSaUAa7+0tDHFZCjlrR3LRGfJY8OFbLBUZGnPeSkWv8kvPIR7V3iqze5q0RuLrW
+xiSF8/ahNRSIgJd/PmQDV1Bu/12pCN9KXLlnkh4YgxuSUKYdGn4kfvMuM1ndcjs4snYtIL58zsAR
+aKRf5M4/hQUqANqmAnQBIEO3D1Y+JdADbDFz5pBWNP5Wi0WBLmTJqyys/Bz2+7rv0gWb2cJQWwhF
+rUISR7Vi/XQIy/XZB2adgm0EpZkSTsmXs4EUc4B6826I+q8CxzQRQ7re+PRdPces2T6lSeVuNANV
+Ay6dcjS85G3SAAAAAAAA
+
+------=_NextPart_000_0009_01DB9FD3.F1F08830--
 
