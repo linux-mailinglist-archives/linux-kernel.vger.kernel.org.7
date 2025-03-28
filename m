@@ -1,118 +1,246 @@
-Return-Path: <linux-kernel+bounces-579657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6296AA74699
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 785F8A74694
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA5E17D129
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A739175ABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF9D21ABB9;
-	Fri, 28 Mar 2025 09:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8AC21517C;
+	Fri, 28 Mar 2025 09:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T3AQWw9h"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBHlJRpS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C771421A458
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 09:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CB5214A6C;
+	Fri, 28 Mar 2025 09:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743155129; cv=none; b=BzgcFnmVscfYjn2j2kSDaJrUqUx85F/yPtO8TjTXe3IlT8QQvh78+sb8CJ5b53n7ZWGrEX5HXcKA16c7h2Cp63v+grYwi+5twR19uSDn0U2FyazT9w4oUDow3u8qwaP4dmmSXBAAzE87Pfkwi+Z/I2DCxs12WKJBshLsI/NAtfw=
+	t=1743155113; cv=none; b=ROGfp9vEBjTwdI8fVwqpJ9pzarN9qQJ5u8vYFBPAVeZK7QDxiCc43qYmCmU5L+9i7BDVmOxtn5ljq78OwsKwU0muHJMqBfq+TlVJtZMnzIPcFXl2Yo0u+pu61xyygoOdk3zCFAeicvfp37Dj/zZ72rcli4gfOswdGeQbbQb81Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743155129; c=relaxed/simple;
-	bh=5Cs1VhxIx23P0yMjASi7V/4dI6H8aliXgmTd9VxuMg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F90Z4A4XKoDAsj7+1iHmrWzdFi8KUAcitR6i4O5inZXROZQlEEDNDJzr9TMq5cQB4YSs9qhpDJUhg8fDYlU8TX9J2lj+pbgh3f0MWeHqajcuF6awiPkRSeZKa0JBPzU3yy21hbz+CxogXNMlmvZ8h3KX0efcOWCYpvmzvRDctlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T3AQWw9h; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1743155108; x=1743759908; i=markus.elfring@web.de;
-	bh=ymBq8lQ1iPd7IBlnK/ub4od+vL6Ja03I0kcTM3LmbH8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=T3AQWw9hwIN7HeOdx41tR+LaLXYd36qtYKmHH2UreaDftKel2rGJJsFeDvbasvn5
-	 qEWdefSZqb/5PRR7Ip+w9bHIquaM6/SJVwzV8n80lsndKL4J7Tslbq4+rBLlZYsVn
-	 w4gxCeWnFX0UiakmfBA2Diukc3Dhp48+RfcJtdl34/nGea6MjUePZ27OyxZsTg7WW
-	 6Lpx37jhtgstmDHUEET5JccRmDTA3WEljmNSZDotzK57l/LT3U6L9rPTS5vDjrmqi
-	 YS1KMKmzjkxPOYDrQotcWzjmmDdg2hV69YloggPr0X8ONc3CkqFae6u1vUKUXNFLi
-	 7cSM30GmSf+ZJNEqUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3V6G-1txY2b3tPm-000sdG; Fri, 28
- Mar 2025 10:45:07 +0100
-Message-ID: <48e363a6-00d5-4374-8c73-a1a0d9c7c387@web.de>
-Date: Fri, 28 Mar 2025 10:44:19 +0100
+	s=arc-20240116; t=1743155113; c=relaxed/simple;
+	bh=9h0GJzU6Aief9ThMESTGvq/UEVqXhEwYJGASD6M/NUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D/FVYYXxI6xOpdUjgFNbgUElB9FdpZJDqyc9CD0zLgQ6iKCJh+gtI6JQ7MaFPPPZ/XLxOWPsw01M6Rg6QguhhZj+rRt9orMg+mOY4+kE8gHnaUHbuDm5CHlAWqi5L+3HoD5VMSCVIOC+/l1GJh+joOvpnzU1Zc3jh2uOcJuUylA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBHlJRpS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246D5C4CEE4;
+	Fri, 28 Mar 2025 09:45:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743155112;
+	bh=9h0GJzU6Aief9ThMESTGvq/UEVqXhEwYJGASD6M/NUc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GBHlJRpSIZQn96cJHjJLy3wu05TPyg5mO09E2xVwucYpNQ2bRpIUHBpzp/KLou7S6
+	 x93Lb4VopnCFGlKajP/00wL7cweb1eX+tgaAnKYp5D55b+9Hh4Awo3w4l4CHs1XP7v
+	 Xzd+0p2Hl89qgLRU7jCvUGjQfYgIqTuofWqjSS3dV56jvFbIX4FRAxnFBDvQnQ+LD8
+	 398Oipf/KwTJp9fwuyZK3hGwVpxu8FUU9TT3J55/AFdzuBq891qXJxdJ3Rf2bI4z9A
+	 3JOzmGIzsSV5tmFaknlYT9Isj1CG9YOl/OAI6zMqxb4QyPvYUu7w18FQp5sJ1sJq6P
+	 koxTGFAHOc9wg==
+Date: Fri, 28 Mar 2025 09:44:54 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>, Kim
+ Seer Paller <kimseer.paller@analog.com>, Anshul Dalal
+ <anshulusr@gmail.com>, Ramona Gradinariu <ramona.gradinariu@analog.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, Robert Budai
+ <robert.budai@analog.com>, Petre Rodan <petre.rodan@subdimension.ro>,
+ Andreas Klinger <ak@it-klinger.de>, Fabrice Gasnier
+ <fabrice.gasnier@foss.st.com>, Matti Vaittinen <mazziesaccount@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: iio: Correct indentation and style in
+ DTS example
+Message-ID: <20250328094454.3ec9dd7d@jic23-huawei>
+In-Reply-To: <20250324125313.82226-1-krzysztof.kozlowski@linaro.org>
+References: <20250324125313.82226-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm/page_alloc: Consolidate unlikely handling in
- page_expected_state
-To: Ye Liu <liuye@kylinos.cn>, linux-mm@kvack.org
-Cc: Ye Liu <ye.liu@linux.dev>, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>
-References: <20250328014757.1212737-1-ye.liu@linux.dev>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250328014757.1212737-1-ye.liu@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:71634MduVWjU36iNjxiNP42rMX5v8YC/4ENU4CvMN43VJ9cDDj8
- M1LS2GugVQiYljsd1Cshs/i+gMCu9EcyP0sdzz0LGDv9/GnCG3KJz0MSu2qOobdnuLYFdcE
- BmuVpv//Tkpku/WWZsIrAUmRZd1RcY1vFtfAQKw8u8PZQechUsISwUpoVzE49SHuI2MVLSd
- q6GK6lzxmBYhzyUM4XdqQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BjKbcwqZCkE=;vNWR6Aw63S3MIyEvu1pUwRewkeF
- ZNOFDZFBiaSOFd5aa2t5Jo+ln2A/fdbgGs0ESnVH9Oxh2oZ4j2r8MebZReIA2QLwj4CbTI3B8
- 25xMR0pae6D4gcCL+0LutAvBHVO94XO614QfEXQj0rwETSgLxLS+a0ZogSrYWrm6sldyqs1U5
- xAFHObykIiw3dZSLnaBrlEoXgcZJtgLrzcHnI6zLr0UOYJ4Gojy7Ph0tWykcoS1TsK4Ay3cSe
- vBICreAvvCI01JwPn62NYvcbnIX5o8HeiDi1gUmK6EzaYnviQ6+4vrIn0vzrDPQ1zw6MH8jAd
- F8km3Ups51HydvjcIIC3eiXFIfC7HiHx1Ct2C+qnElWW+elM/H4Pf87iBGPkf/XcNy8QyC/0f
- cJnS2C9JgkHASIcKGEiW9KMc/W8Aev6vUOHu0V+cSLUowHGeG7Zb2GT1Z3kRkArisG85JbRCo
- UH/LcvimPkaYDikjdQtmvNQ1cCELNfuKoRdZgHBmFJziLpJqz27Te0IAo7m1xO6kMJYXnq1a4
- 7JAXyrTwjeeadPOrpLw7gqUnHiBUyDnG8MRGDZz0iAoag65LtWXoqoQfrQP97QmyF48xVSQ4i
- 8KR+wwJZ3Qb/9p2yCmjhDh16QzBs6Gc/kjQlHM16eNxVfMWH3+Dd9tndD9f5DQAPvpxLG/nk5
- fi8Wui2p/NXLfgCtZSi8vDvWhO4kOICGKK7rFex/zLTKxvYEyUFmOCQZWowKvR/lAsVmDeb8j
- oL7aSSPqMjGsoRxPYhXjEW+6ZMoEIqVGSFmTIhoz9JYeaM/odiyu8eKyCRH6yvb0mEaY3DcwN
- zEX2tqwEiKdt6gAdSuaWbyn+dvt1tlgJCxl2yVV491H4By9bmGUBQXjVfPE104BII8nq3UdWP
- fXkB+n7lOFVFDrwhGU2NpP4YjveXTNyK6JFUw+iz4dAzv9k6SAzEImuE0/c7mKjLjdwJMdXEe
- VDrFfBl72O5pJ5HUUAMgVEn/JmW80V77W65XEKK+0FzmigTr1DSB7TsiSaXB+BqE+0ty8+Bz7
- WZ2Hd5F+iXbk8gjgh2GQ5xNyQr4ByK3MGDhbJcMx2z2QLLBkpRvzR3OPYQM8EaT7wiGbxvG3A
- E9j/WZ2ebvEGJVlI29Iw5+f2xqxTYd/1hG0QMAfCJb96Bi68+uH0mvkirKBTaizgpXaDI2TEL
- u2ZSrP/eMkF8Vra/+5FJl6MvNpNKde85CFk3znev1tEk/PoX19wmLzzPnBii4s4ZTZ96ei6/n
- GSZiz6URTdF30JBzRG1l+xWWFZ7X3F8bnTOSEa00F87uPXF4LeF/4D+dl6UCJi/OcDa3cyyz/
- SOAf3CPiPDdoauVpSQ/0dpKH0Kk4lSqcDg3ZWkFZF8SLZvQ2lYlG0MK313AvPUtWqWSHTdrds
- 5rQb7/sRIB1VcuaksKeRbtSIZZq6DTZlFwY4QunienMbjbpT42yQvcG1PADhGfsLbfKG7kWJG
- 2tFz9PZEeugF63LR3bzc4zztV3wYCj2y/N2S2EWLSvTjfjJJK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
+On Mon, 24 Mar 2025 13:53:12 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied both patches to my testing branch. I'll rebase on rc1 once
+that is available and push out as togreg.
+
+Thanks,
+
+Jonathan
 > ---
-> V4: =E2=80=A6 and append parentheses to all function names.
+>  .../bindings/iio/adc/st,stm32-adc.yaml        | 102 +++++++++---------
+>  1 file changed, 51 insertions(+), 51 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> index ef9dcc365eab..17bb60e18a1c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml
+> @@ -498,7 +498,7 @@ patternProperties:
+>  examples:
+>    - |
+>      // Example 1: with stm32f429, ADC1, single-ended channel 8
+> -      adc123: adc@40012000 {
+> +    adc123: adc@40012000 {
+>          compatible = "st,stm32f4-adc-core";
+>          reg = <0x40012000 0x400>;
+>          interrupts = <18>;
+> @@ -512,28 +512,28 @@ examples:
+>          #address-cells = <1>;
+>          #size-cells = <0>;
+>          adc@0 {
+> -          compatible = "st,stm32f4-adc";
+> -          #io-channel-cells = <1>;
+> -          reg = <0x0>;
+> -          clocks = <&rcc 0 168>;
+> -          interrupt-parent = <&adc123>;
+> -          interrupts = <0>;
+> -          st,adc-channels = <8>;
+> -          dmas = <&dma2 0 0 0x400 0x0>;
+> -          dma-names = "rx";
+> -          assigned-resolution-bits = <8>;
+> +            compatible = "st,stm32f4-adc";
+> +            #io-channel-cells = <1>;
+> +            reg = <0x0>;
+> +            clocks = <&rcc 0 168>;
+> +            interrupt-parent = <&adc123>;
+> +            interrupts = <0>;
+> +            st,adc-channels = <8>;
+> +            dmas = <&dma2 0 0 0x400 0x0>;
+> +            dma-names = "rx";
+> +            assigned-resolution-bits = <8>;
+>          };
+>          // ...
+>          // other adc child nodes follow...
+> -      };
+> +    };
+>  
+>    - |
+>      // Example 2: with stm32mp157c to setup ADC1 with:
+>      // - channels 0 & 1 as single-ended
+>      // - channels 2 & 3 as differential (with resp. 6 & 7 negative inputs)
+> -      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -      #include <dt-bindings/clock/stm32mp1-clks.h>
+> -      adc12: adc@48003000 {
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    adc12: adc@48003000 {
+>          compatible = "st,stm32mp1-adc-core";
+>          reg = <0x48003000 0x400>;
+>          interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -550,27 +550,27 @@ examples:
+>          #address-cells = <1>;
+>          #size-cells = <0>;
+>          adc@0 {
+> -          compatible = "st,stm32mp1-adc";
+> -          #io-channel-cells = <1>;
+> -          reg = <0x0>;
+> -          interrupt-parent = <&adc12>;
+> -          interrupts = <0>;
+> -          st,adc-channels = <0 1>;
+> -          st,adc-diff-channels = <2 6>, <3 7>;
+> -          st,min-sample-time-nsecs = <5000>;
+> -          dmas = <&dmamux1 9 0x400 0x05>;
+> -          dma-names = "rx";
+> +            compatible = "st,stm32mp1-adc";
+> +            #io-channel-cells = <1>;
+> +            reg = <0x0>;
+> +            interrupt-parent = <&adc12>;
+> +            interrupts = <0>;
+> +            st,adc-channels = <0 1>;
+> +            st,adc-diff-channels = <2 6>, <3 7>;
+> +            st,min-sample-time-nsecs = <5000>;
+> +            dmas = <&dmamux1 9 0x400 0x05>;
+> +            dma-names = "rx";
+>          };
+>          // ...
+>          // other adc child node follow...
+> -      };
+> +    };
+>  
+>    - |
+>      // Example 3: with stm32mp157c to setup ADC2 with:
+>      // - internal channels 13, 14, 15.
+> -      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -      #include <dt-bindings/clock/stm32mp1-clks.h>
+> -      adc122: adc@48003000 {
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/stm32mp1-clks.h>
+> +    adc122: adc@48003000 {
+>          compatible = "st,stm32mp1-adc-core";
+>          reg = <0x48003000 0x400>;
+>          interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -587,28 +587,28 @@ examples:
+>          #address-cells = <1>;
+>          #size-cells = <0>;
+>          adc@100 {
+> -          compatible = "st,stm32mp1-adc";
+> -          #io-channel-cells = <1>;
+> -          reg = <0x100>;
+> -          interrupts = <1>;
+> -          #address-cells = <1>;
+> -          #size-cells = <0>;
+> -          channel@13 {
+> -            reg = <13>;
+> -            label = "vrefint";
+> -            st,min-sample-time-ns = <9000>;
+> -          };
+> -          channel@14 {
+> -            reg = <14>;
+> -            label = "vddcore";
+> -            st,min-sample-time-ns = <9000>;
+> -          };
+> -          channel@15 {
+> -            reg = <15>;
+> -            label = "vbat";
+> -            st,min-sample-time-ns = <9000>;
+> -          };
+> +            compatible = "st,stm32mp1-adc";
+> +            #io-channel-cells = <1>;
+> +            reg = <0x100>;
+> +            interrupts = <1>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            channel@13 {
+> +                reg = <13>;
+> +                label = "vrefint";
+> +                st,min-sample-time-ns = <9000>;
+> +            };
+> +            channel@14 {
+> +                reg = <14>;
+> +                label = "vddcore";
+> +                st,min-sample-time-ns = <9000>;
+> +            };
+> +            channel@15 {
+> +                reg = <15>;
+> +                label = "vbat";
+> +                st,min-sample-time-ns = <9000>;
+> +            };
+>          };
+> -      };
+> +    };
+>  
+>  ...
 
-Collateral evolution for summary phrases?
-
-
-> V3: Delete 'This patch'.
-> V2: return true instead of false in the PageHWPoison branch.
-> ---
->  mm/page_alloc.c | 24 ++++++++----------------
-=E2=80=A6
-
-How do you think about to replace repeated marker lines by line breaks?
-
-Regards,
-Markus
 
