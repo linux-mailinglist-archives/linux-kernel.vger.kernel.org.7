@@ -1,210 +1,158 @@
-Return-Path: <linux-kernel+bounces-579299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464B0A741A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:07:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2B9A741AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1853AF11F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4BA83B8F8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 00:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C042C9A;
-	Fri, 28 Mar 2025 00:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA5E12B71;
+	Fri, 28 Mar 2025 00:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bIX909An"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HFUngHB9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D8F36B;
-	Fri, 28 Mar 2025 00:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743120451; cv=fail; b=cqmb1VNrgOmfKI9w/TPbjtPe1WgvZhafQWVuY0q9hoRgnG3aOuby67oBaNe2SQCKyp/YP65QI7twHvUJoQ5kS6DcvX3je3BdkkOp7wmbf23ntA2SDN7mOb38PzoPD0yeOSHj1H+OH+P5pziWOmHpI7kCacRL2wXxyw85WCfozTQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743120451; c=relaxed/simple;
-	bh=My5uihLMw55Yb9MZdFha8SuODR0+LZ5MiYJMxj76OA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b1NjisStiaCfLyCeUvZSOceL+Fn83Jz7hYLx74ifUpxBLC+Qja/PigwEhD+BngI/rj3jqASQqczVNgy3qvtdUW682/7/nAjhxYsbDesCqqn9KzzD7RHNF9RtA1Krl7PEuRpPc2L/BcxgxaxNzsnuud0jSmjmPP9EvOZAnXbHN+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bIX909An; arc=fail smtp.client-ip=40.107.243.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XtFDVS/iFWlsNxqCbKq+77Ntt5fwnYJGS9oO32FpaZ52RgnHjEbk6c5NqRLnzatqo2AgvnEcWLkTzlTGHAdjMiNgMR3rKYZ8+rfvYllZt1yfJJmNZ1YDaoiFWcyhATAqOIqeawH/CW4EVCOPIulr1Z+zZC5woAI14M2lcGFxNaPBIjGrmv1c1qjQgXLqkxATBNUWlC0wHPsWpp7UlfIzWhsX7bhk8rtLwGJ3CgMYGhXZl8/qs8ADdOyMfx7KiUT7IyeBTcVzD/zcnXhik1QWdCnorEtZWe7OYhswxG7U2U66s5tCtprvf0Ke4nI4cuTVdJkWffdvpwfadQz8sWczgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tudb6pweeQeVX04DyanZXRWQDU/NVStQQPIl2hCS1a8=;
- b=vsxMtfiCK77O+7eBRNRM/IqIprtZ5A0DzJmmbnR5wx3jwO+5VM6gTAx48WvLdvr8Tus5xu9/XtNAR3Tgx5Q94TMYTe5iKByxbj0dNGRKQZBeGNCtN1Oex1+0QrVEGRiWjTzFEPDEhWo2ShvJfhvRsP9OQpLOxSVU6bttKvEQCGOp5tn80jBvMB9ih/2dFTuvPG4+fAh+NH6aehZj7sdr575umGONFgySa8SiQIBnuAvnKTW2g/Ood6DLTbNpoJHSlIGO0cIkdk6++iOVc8gPhbBc3VeEhshdDIBS253jTEmyIOnV1kN4w4GUGzw/g/+ZaiQhTtFJJU4N0sH4KU2ntg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tudb6pweeQeVX04DyanZXRWQDU/NVStQQPIl2hCS1a8=;
- b=bIX909AnvYeZB6iCNfQ8SQOP9UfRpf9dAeWbCoRtUDEVN2kv3rrc7zDxHzHnSJ64drawibduv1irnjCMBj+I+dcWaNijbzA7dvQxmkR9x0sIQN9KEPvxCz9bdBtBoEclkQbYf6Tqp1QEN7AR3fEIuddwK1dLeHG0JpP2tmoB7JnJvIfSDw01SH94smaYrYxHw59CEpfmR/t/PJLcuZcu9N++TqDrku0h5Z8oxt1nNqT5Gnvk4pclqxPmIMBZNG6nnnFUMdcVApVpcdcE0pIpRRAhGrSQNl05Z3AYPr2e+0j6FOSpIFVvcHzo7AiR1sF4UFtu1izGXDAFtYZTIhsESQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- MN2PR12MB4285.namprd12.prod.outlook.com (2603:10b6:208:1d7::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
- 2025 00:07:27 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
- 00:07:26 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
- memory
-Date: Thu, 27 Mar 2025 20:07:23 -0400
-X-Mailer: MailMate (2.0r6233)
-Message-ID: <731D8D6E-52A0-4144-A2BB-7243BFACC92D@nvidia.com>
-In-Reply-To: <Z-WAbWfZzG1GA-4n@casper.infradead.org>
-References: <20250327160700.1147155-1-ryan.roberts@arm.com>
- <Z-WAbWfZzG1GA-4n@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1PR13CA0406.namprd13.prod.outlook.com
- (2603:10b6:208:2c2::21) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E792E2F41;
+	Fri, 28 Mar 2025 00:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743120612; cv=none; b=QvLsLnkL1sybx3yvLTB87JLF7QxYZspXTr9PQQn4HRnLI+82oRd8yiHM1w6KTlJn91JK05Ryp5N7eI6YZzYcnHhv8MIgAfDN8HxhbHoto7msSgfN1vRXXvAdUKMRrZ1PXHG6p/MoHNdLfSt9wNVnyoaqukq/6dlgM7LjDypkpD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743120612; c=relaxed/simple;
+	bh=kRmfQHhdsEfz51+Ij+AlR850u7cAKWODyMGyKix5U20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1mV/cbuQPBBy2mqtvO1W1/BXpWCuy5XstkkCHNIMswmIMUAfndMCyb2o+0mUWS5ZSbS60ijtdTxKAs9SxdhfX67M5SfmvgtgPrS60s7h/regLxlXi+LaclAzDSsRE58odHwa2no+iVL5n1PSoRDL0sLflcz+vseU/tSv35iJ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HFUngHB9; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743120611; x=1774656611;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kRmfQHhdsEfz51+Ij+AlR850u7cAKWODyMGyKix5U20=;
+  b=HFUngHB9ftL7M9AbK/mvGA1seXQw17vvH4fSdDcKu6c7SqGWce07xWgn
+   KTUt3dsCgPB3U0EaRCl3b7vKdAjC+wO0duIfVDGyO9GeXhtH5AtvoahCM
+   9GDxCsO0dVDmhqngdt5lJbRCJk4FWmqft64iQd9b8kXHbQXBtGBl8wgNo
+   eX3OTLII6PC8MWlQ4gTbmu9svFPV45xrg3q2LLFsjxLhwlnBwtAxw/F3r
+   GZZ0bEZdVzcW/fQA7knb37LeCMLkZO/ZhDXB3RJKn/JXNfCWYtxxau5c1
+   PA0Hk2LMzBuWzxSKhwkCY4bEfJ3k6L9SrtXkPzqDX4gNnZcC0JELKcqpG
+   Q==;
+X-CSE-ConnectionGUID: Ww8IH197Sa25FPJuaXXvhg==
+X-CSE-MsgGUID: /AEGC2chRR+96ck6yazjRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="66948869"
+X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
+   d="scan'208";a="66948869"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 17:10:09 -0700
+X-CSE-ConnectionGUID: bebUCIUZQCqjFD56NdIMiQ==
+X-CSE-MsgGUID: 8mO7oFR0THK+ptYySqaUkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,281,1736841600"; 
+   d="scan'208";a="125208486"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 27 Mar 2025 17:10:06 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txxIQ-00071K-32;
+	Fri, 28 Mar 2025 00:10:02 +0000
+Date: Fri, 28 Mar 2025 08:08:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH] rust: clarify the language unstable features in use
+Message-ID: <202503280805.Oq84ECdB-lkp@intel.com>
+References: <20250327211302.286313-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN2PR12MB4285:EE_
-X-MS-Office365-Filtering-Correlation-Id: f09f0cbb-c977-4caf-61be-08dd6d8c85ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RnVmYzdPcTVZNVViMXlWam5vZWxCbUQ4b1VMSXJrdHYxU3RvM0RmY1VHbXFt?=
- =?utf-8?B?NzVHME1DeGNpaW9aclNyUWtYVi9iWDRldVRkZTI1TlVBallmcXF0WDZ0ZjhV?=
- =?utf-8?B?bGhUTU80RkJIYUl6QlNwdVJ2Q2hoc2l2dXdoc0lRbG9JNXR5bkVkdHY4dDla?=
- =?utf-8?B?Tm96SjJqYytEeWY5elVVNThoM3JjY0dPb05TM1hwTytTTUdHUEVOWkttTmlC?=
- =?utf-8?B?MmJweTdRckRUS3J4WjRWdWc2Wm1pSWdlM0djbVB2L1NDbjVzZW9JMW9CNWdV?=
- =?utf-8?B?UmxCY3g3TW51RklaWVdoM1Q0U3o2ZmZXaVhWcW9PaktRSjZpNlVTSW00Skcv?=
- =?utf-8?B?SjBTeTB6b3ZnN3dxUDJoNE9TTFlMZFVHdi81SDkyYjlTeXNBN2NCSWlSc0Vs?=
- =?utf-8?B?QUhoVEZBQTlSNXJwUFdIN3lwR3paa1dhbk4wZ0lEVUh3K1E2d2ZsbGZJSTFE?=
- =?utf-8?B?Tis4TGw4UWw4UjQzOVB4ZGovaTQ0ZnYvOGxmUmVXUmg2VWJrdHJKS1NNbS9M?=
- =?utf-8?B?VjdzTU5MMWhLVzZMRVJmWVY4Yyt1enQ2WUZpUkQ0UEI2OHJzT1BzTGh5M3Vy?=
- =?utf-8?B?Wk5XYXF5R1hKMGJUdk1NWDd5akxSckordXVSb1pCR1U5clNtN2tFTi84eHBE?=
- =?utf-8?B?VlBRb0tUNHAvZmVBU21KREhTelEvVXgxQ3lvWHd5WnZmaHZaV08yTVlqWFdT?=
- =?utf-8?B?ckd6UWxIcWdsZ1oxV3hxUTVSZ1Y5bUQ0R0h2OHJUV1BEVGs4eXI3dFYvQU9H?=
- =?utf-8?B?QURTREpRVzg3eldzQkc4WEx3Wm41bEVtUVBxcERwb0V0MW9DQ0hLVjZOR3dq?=
- =?utf-8?B?cG50M1ZrTUthQnBPWjdyN2Y1RXN4bkI0MVJ6eE90MWlFa0xGUi9UVXFnaFNx?=
- =?utf-8?B?SGR3Q0Y1R3pWOStoSzZWK1Z6Mk5tZUN6RXE0VWFEY2JHbmVtZkpKaVo5aUhQ?=
- =?utf-8?B?Yzc5SW9QeVd5WkJ6OWRxYUVIWG1JVzcycVdCdmVmVkdnbWRJV3huV0tnU2RU?=
- =?utf-8?B?ejRBdmY3MGNYdklZUnk3UU1DK1c5KzI0b3dnYzBrNGZ1emRPTlM2eWt3Qi9Y?=
- =?utf-8?B?ekx0eUVBZExCRzRHTXlzOHVqZU1QN1ZFWkR1MmpjK3NvajYvZ0p5ajhUZkh5?=
- =?utf-8?B?UFZ0bFhycFJod3l4Y2ZGQ0pSeVJXSmFockwyVzZXS1llL1lxVTV5WENLVXlR?=
- =?utf-8?B?czRRZ2RXOUR4azdBbVJEN3Y1V0tpblpaSHl5aXZ3ZW9iaCsrWGpra1RVWlpv?=
- =?utf-8?B?MGFnZFZWWWFXaWk2b0lYeTlTR1BOTno4NDRpVDA2YlhhNnhZNk5IdDIzcFQw?=
- =?utf-8?B?OE1wSUI0RVN1dG0rL2cvUGRpdk12Y01xVTJzSHI5aVdNQWFXbzM0d25XVTdP?=
- =?utf-8?B?YStlRzRDNVVmUE81WktFL2IrQ2VETzl2V2t0ajNaM2VqQnJhOHk3eXEzblpD?=
- =?utf-8?B?SmhqVk11UjcwcW1aUUtlUzE5V3lPMlROaGVNbU1HWEVWRmREam5taUJmQnhz?=
- =?utf-8?B?SktLUFl6QitXYkt1TzBvdVpPQnRPRUZiTUFLSHR3cVZVNDRyaERMQVFXWkt3?=
- =?utf-8?B?NTY3MzZmS2JTT1gxbE9QY2tSQzF2c29tS3g5ME5GNnNjT0dHOVppVlVzaEgw?=
- =?utf-8?B?RVFwWlpqeXJKa0EzN0oxR2xJbFhjMTlYSDg1WHdFd09VcitMZjZIb29FQTNi?=
- =?utf-8?B?am9maWxWcS8rYVZDdHM5V01pdjlpZkV5blp4TXAvT3B4bktPVDd0bWU3Vkt6?=
- =?utf-8?B?bVI3SWp3QVg3bzV5SVpaQ05EMVBQZ3B5S2hXbkpEenJiTmF2SmNVRjJZV0VW?=
- =?utf-8?B?SHZSQWZhUmMrNmh3TXNFaHB1b2s2dGhyelhTem9uT0lhWGJkcDlJSmQ5akJO?=
- =?utf-8?Q?DFajrL3tlld1B?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UCtPenpVNi9ybjh1TmxQT1pSYU1tWlRNQ3hlYjhWOTkwR05GTHNhT1ZRNGhK?=
- =?utf-8?B?YVVNc1RRR3lraTNhbGVZTmNCVUxXTTNodXZEWkZVVjFYaTg5MXRLVEtFOVJj?=
- =?utf-8?B?UTdxczZ5OVRjcUN3OTBPeWlNRG95ZG5PSWNVU3hWYmxpQjdWdEFhU3haSDZo?=
- =?utf-8?B?T2tqV0tvTmtLYkRIVmZLZURoeTgvRlFIZHQwZlBYVDZXbEt3OGsxUHJFaDd5?=
- =?utf-8?B?c0hyMGdzUWJVYnpxK2h5dXFMaGN1Mmx4cFlxWjBCb3E4bHlNenRsUS8zemJQ?=
- =?utf-8?B?MWJJQW11bnRRamxNWWtnOUdIUS96TnZDVHlBRTNpTUJ2ZG4rejBzU2JsaWht?=
- =?utf-8?B?Q3YxQTV5RzZ6dnZ0UUZCYVZXbGUxYVgyMS83cEUwdnZkK2NMa1pLcUZqTjNE?=
- =?utf-8?B?RkwzVXNGK1c0VzliL1Y3WnlXTGY0UHVxYTdYT1JndHZ1Rzk5bU4reFZKejhK?=
- =?utf-8?B?RnY2WldoMHhpM1RLcG9TNGNWMVlDMWdnWjhKeG92WWNEb0VFN0ZwWnFhNkJI?=
- =?utf-8?B?RU1XT3JjVmo1a3pGNHJZbnRxMEtCVDdSY0R4WWtqR1UyR0c3bGRoWGw5SlRt?=
- =?utf-8?B?T3E2ek51N0YrY3VPQTNMU1Baa2IrSkpJTERMQlkxSFhsWE9OWW94Q050MnZU?=
- =?utf-8?B?cVJZY3YrUnVCSS83NzRCOGNZeldpUzhReTltM2FKQ0VNY3RTWjFZY1laV25q?=
- =?utf-8?B?M1dURFdFNFA3UTNaeDB4MXI2UDJSYlNVbmVwOGxtNVg5L1A3OFpnUXRMaitt?=
- =?utf-8?B?L25qWnQ2andjNE9INEVySy8vN01IQW5Wc25oTUZMN1k1VEJTQjlzME9VMFVG?=
- =?utf-8?B?SFA4ZDcxUm0zRmU3emkvNzRIUlcyQS9pSEg2WVJob3RDL29XdVNrYU1zYUJ3?=
- =?utf-8?B?Umd1QmtDMXZYK0tmeVE0YVpaTktmQ1RGZ1haSTlRN1lLQXo5YU1mN0ZPT0pm?=
- =?utf-8?B?Yk83SnV3THUxQ3JKT0U4ZlFnRHFuQjVKNzlEZEJXZ2VaUUNudWVxbUV1WDFh?=
- =?utf-8?B?Zk5IZndLa243Q2laVDNxb3RWVzZGaThzUVBKc0xkaXBoZzhIcTE5YW5Id2xG?=
- =?utf-8?B?aVkxUWhHS2NOYWI0eW9HQlB0Y3NzUmZWdmdHd2I0NG43dittOTYrR0dVeWpE?=
- =?utf-8?B?Ymh4cnJrc2RRM3FnNzQ4R2JlK05wbkxUL1JHVGUvY2R3VkpqaWNlMWFSQjFE?=
- =?utf-8?B?bno4NitYbWdpR3Fxa0p4SmtKODV4NFQ2VGJ4aG1wQWI2ZjJIK2wwVnJ3OWVX?=
- =?utf-8?B?c3lVdHR4N2trMGZXRUdwMEJpUVhyTFZhMm1oampsL0k1YVVKUGYyWkhhTTd5?=
- =?utf-8?B?cXEzN3RSeVN4cjQzTHovR1AyMmhiQ3BHeVRvVHl3ZVhUZS9aYTFmK29FdGpp?=
- =?utf-8?B?eEFkMGpRVG5XZ3dUYnB4a2d0V2tuS2dsRGNpeVVQSFFsdEZYK2dmcjloOC9G?=
- =?utf-8?B?cnphWHYzWlV6YU5QVkZJUVFTcEtheE5GbHVTRWJ6VmJ1ZEJTeXYyM3pnTWp4?=
- =?utf-8?B?U1NtNnZjVEZJR3d5Mno2cG1FMHZZUVlNOVgxQmFQckFDVENVcEcvTXVmUGhS?=
- =?utf-8?B?eHQzSzdnRlVCSVdybm54T2RQWEI1Z1hqNUxJTFdyR1FTZ25NZzVQeUhab1B0?=
- =?utf-8?B?MUxsR2tpWEdEK1Bpb21tKzRrSVVCNzNmd0t1YllnYWVLSDh4dWJ1VmkrdHpj?=
- =?utf-8?B?QUZlV0FHUCt4OGxsUnhPZ3RNOVF2Y1kxYVRPUDloNmN1cXFRYUZabkR1VTk4?=
- =?utf-8?B?eXBYSERZZGxsOEtIb0ZxZTNESnpRTS8zNXpYbzRJZTVRRjVyai9hNG95Umhk?=
- =?utf-8?B?R1BVb0VVektBNHEvVGkzWkViSEw0RDEvcGFKdEtPcll4WUpyTklDQ3JMOTJh?=
- =?utf-8?B?WEQvSE1pQkVzNXFkdVBaaXY2U2ppQ3BxWHJoTGJiMGZUSXlVQzhNa0c3ally?=
- =?utf-8?B?R2EwMWdjM0QxZmRPY0FnZUdKK09OM0pxU09tOW93dFNPbU5iN1hKVGYvYmtx?=
- =?utf-8?B?YWY3QUNwdzJGVVlvMno5Tng2Z04rTGdtZjU0ZjVhYzltRXUxVUlYcUFIeXN0?=
- =?utf-8?B?VXZEa1F6NDRsc0ZMKzBRRUxUSHF6K2IvSzh6VzQyekhtTjVha0t3cHZqdGJx?=
- =?utf-8?Q?PNGRPb2SL/HqjiW9jo5VgUH2U?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f09f0cbb-c977-4caf-61be-08dd6d8c85ee
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 00:07:26.7561
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EL26Pm9qROiYi+jpKf0L8UA93skDQ8ar4ECoUPC42wtdQCSBQ6G3rRpfHwIMN7tL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4285
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327211302.286313-1-ojeda@kernel.org>
 
-On 27 Mar 2025, at 12:44, Matthew Wilcox wrote:
+Hi Miguel,
 
-> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
->> So let's special-case the read(ahead) logic for executable mappings. The
->> trade-off is performance improvement (due to more efficient storage of
->> the translations in iTLB) vs potential read amplification (due to
->> reading too much data around the fault which won't be used), and the
->> latter is independent of base page size. I've chosen 64K folio size for
->> arm64 which benefits both the 4K and 16K base page size configs and
->> shouldn't lead to any read amplification in practice since the old
->> read-around path was (usually) reading blocks of 128K. I don't
->> anticipate any write amplification because text is always RO.
->
-> Is there not also the potential for wasted memory due to ELF alignment?
-> Kalesh talked about it in the MM BOF at the same time that Ted and I
-> were discussing it in the FS BOF.  Some coordination required (like
-> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
-> there?)
->
->> +#define arch_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
->
-> I don't think the "arch" really adds much value here.
->
-> #define exec_folio_order()	get_order(SZ_64K)
+kernel test robot noticed the following build errors:
 
-How about AMD’s PTE coalescing, which does PTE compression at
-16KB or 32KB level? It covers 4 16KB and 2 32KB, at least it will
-not hurt AMD PTE coalescing. Starting with 64KB across all arch
-might be simpler to see the performance impact. Just a comment,
-no objection. :)
+[auto build test ERROR on e6ea10d5dbe082c54add289b44f08c9fcfe658af]
 
-Best Regards,
-Yan, Zi
+url:    https://github.com/intel-lab-lkp/linux/commits/Miguel-Ojeda/rust-clarify-the-language-unstable-features-in-use/20250328-051650
+base:   e6ea10d5dbe082c54add289b44f08c9fcfe658af
+patch link:    https://lore.kernel.org/r/20250327211302.286313-1-ojeda%40kernel.org
+patch subject: [PATCH] rust: clarify the language unstable features in use
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250328/202503280805.Oq84ECdB-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250328/202503280805.Oq84ECdB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503280805.Oq84ECdB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 12h /usr/bin/make W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
+   make: Entering directory '/kbuild/src/consumer'
+   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+>> Diff in rust/kernel/lib.rs at line 12:
+    //! do so first instead of bypassing this crate.
+    
+    #![no_std]
+   -
+    // Please see https://github.com/Rust-for-Linux/linux/issues/2 for details on
+    // the unstable features in use.
+    
+   Diff in rust/kernel/lib.rs at line 19:
+    // Stable since Rust 1.79.0.
+    #![feature(inline_const)]
+   -
+    // Stable since Rust 1.81.0.
+    #![feature(lint_reasons)]
+   -
+    // Stable since Rust 1.82.0.
+    #![feature(raw_ref_op)]
+   -
+    // Stable since Rust 1.83.0.
+    #![feature(const_maybe_uninit_as_mut_ptr)]
+    #![feature(const_mut_refs)]
+   Diff in rust/kernel/lib.rs at line 31:
+    #![feature(const_ptr_write)]
+    #![feature(const_refs_to_cell)]
+   -
+    // Expected to become stable.
+    #![feature(arbitrary_self_types)]
+   -
+    // `feature(derive_coerce_pointee)` is the one expected to become stable.
+    #![cfg_attr(CONFIG_RUSTC_HAS_COERCE_POINTEE, feature(derive_coerce_pointee))]
+    #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized))]
+   make[2]: *** [Makefile:1811: rustfmt] Error 123
+   make[2]: Target 'rustfmtcheck' not remade because of errors.
+   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+   make[1]: *** [Makefile:251: __sub-make] Error 2
+   make[1]: Target 'rustfmtcheck' not remade because of errors.
+   make: *** [Makefile:251: __sub-make] Error 2
+   make: Target 'rustfmtcheck' not remade because of errors.
+   make: Leaving directory '/kbuild/src/consumer'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
