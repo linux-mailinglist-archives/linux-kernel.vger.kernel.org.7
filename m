@@ -1,382 +1,189 @@
-Return-Path: <linux-kernel+bounces-579829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7465A74A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED67CA749F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8920B3BEC28
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95FFB3BB673
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE3B8C07;
-	Fri, 28 Mar 2025 12:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAE98C0B;
+	Fri, 28 Mar 2025 12:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2pxioa3"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RSVjqBX5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9E54204E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCFE8F5B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743165852; cv=none; b=TJh+UQrggpQBusJnx/IAa3o2zXddAzDV+ILqvhSg+d1pIj7d/1B9yRrmby+NOCs+co1SxOq7BH2V/caXq7mFmEyYee96DkLhxht7TiDuua9g62oh5mGduQMVAmczYM/IILNaRALUCedBEyGlizVAFctwv8jW9Ht9TasUwSHHdlw=
+	t=1743165766; cv=none; b=gvIajrKvJr4jAPGLMJJM00g2ktv73d2cafX61PwkK2oUhVZ64ormo9SDowYMF3NJzL9YYemGqDnFItoVYwqtBs44jXAqJr69gEnBUfqcKif0sDNmvhl4MXgQTGqI/xmiGXB7g9gJi9pnD2yItsJ/nTJjwXwVhGHKSBb98IiF/Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743165852; c=relaxed/simple;
-	bh=WrIN+BAUrs5NvGZQtogfzo0keNjYdjwvQej6G+pv1u0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WCU43EYemFlmaO64gt/8G3VcZ0x8+KF436KjlvWuxTm8hG/AyUlRt8TrSv5Zly/4ESM4ULQ8Tvk7atWgXW/MsGSnFco6ByvwINlj62ZfgabAX1jpNPuxhzR8b7oIz1U31gJDsgEYcOVgQ+IC3TX2MuiCVXJCXrH8AbkrHDPS6Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2pxioa3; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso16260265e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 05:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743165849; x=1743770649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B0TonPVWz9mI3rQIo8Nx/goVi88wQEsQiD42zjG9CpU=;
-        b=R2pxioa3Hh/cd/OFcoFiE9diT/XYdYlR9ufY15AbhB5Qp1DKtKnwRBaFDxinS1eVwd
-         4fpCVKabxqLzCOGRpmZBlFbY0sU7gyadd6zjvYSR0Yted0a1H2cOsjeGxWHMFW7YNo2x
-         BwlaEDIads35/0ALC1Bci+FgHzEh0GaEfdXA7xV+oj1/aaoByfCjxwn3l/1IVeYJ37nL
-         CEJJKHvl2lXTOSTYluTdIQovYhwZdvwweI88fe/M+AAx9QSGQUSGiSeSXAilgUkpL9no
-         fYyZ0k1EPRIGzxuD4X1yEpa0AAxWy2/Ug0JVSQMCbXFXY2jGX21LXq+UKfnwEvFJYvWN
-         M5ZQ==
+	s=arc-20240116; t=1743165766; c=relaxed/simple;
+	bh=bQDpPCtUhvgJJ5g/t1g/tDAcU68+OQ9HEBz9CRO8tDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsWlbPEwA2Wjn5CjTI01ZRkBfRLorR+sRjEIfYms+HWI5rwgircqISArPs5n0FZlJqUZ9+i9yGnJwF3ZuWUdKqkcxHrFrnKXdg+YR9aGiZeuhl1hnU4unKHb66BWnGfw3qmlUoWraxAhr9ficiXwHSGEnnVJLPs/gpvEkhLg+aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RSVjqBX5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S56Glj022576
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:42:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=14wfkeUYgJyjMP20QYKCrYEP
+	yG67GgHvAYWTR0MQ0Bw=; b=RSVjqBX5WL1IV9CajtGOzznjQq0WZZzM5tg1qD+S
+	x974QeRw2AtpH9dz16GHFYvFmem822tQ3bI5fGEGWJh8G6Cdp01971TCfxCIEaSQ
+	S0wpJkplSnqoM61h0Y1KXFbxzsMhiMZyFzDUgCkrtF4X+8fq+db5y+NKpkJE+pgE
+	dxYEHt+S3t6ZZDLnEueWaZ93QVMAN8abVjW2KJxKbex30HXpb7xuG2Z+GeQAq94Z
+	wRWMgN1AZ0+bV/s1oavCXMeHTpK6KT72k2nuZV9cRKPmSXlWWuc5BfNsdYfboje8
+	X5AS5Z1DrhvJ3OsWgjDeU2xP7si4MAL8JFQ/Ii5t7D/Sig==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyr9sxjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:42:43 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5f7210995so186346685a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 05:42:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743165849; x=1743770649;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B0TonPVWz9mI3rQIo8Nx/goVi88wQEsQiD42zjG9CpU=;
-        b=SeYVEv1aMdWhPk/mNZ7DULKZ9N1jvKsbwk+R9/Wfn7fxYonkEF+/DqX4RwqyjadJGb
-         Z7c6GNkR8hzPBwDbuK9XxtsbPAV/6jnpLXjFl/UlppH7ZCiwgHJT+ALnmhLo4ySCV7nv
-         +jofuQ8DWKIoJLhuLLxuVOO42JEo86hX8RbXJH4EnL3151PqraRgXROnVwKlQx5Grh+R
-         0gH/9ywUo6e6E+IJeKfu+GBFDbYwfafi8VZ2cfKZ+OWi18F2h9F90j5X8EHO8SvQ2uEC
-         76QoTVS+c5yQX/Hv8NOz6mRWt2VC0DqTsdThEEdGXkXlyXxltu4uIkUVwRkX6cSJhNRM
-         XNDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCJA+DXOsbjDLJep7BpdJgooXPHAFdNzoLJ467u6m/vhbahqH9CRLYWLwMOveGl3cm/uUbk4+90xLjQ0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOK5vnGS3Iqt/p/cdfU61L4jKZ4bzaQSpERWdOl9877bWl1kNh
-	gaTotYMybVWzNtifY3h2q4HFB+Ew4yMbSpY9tYewlp9uINUShRi/
-X-Gm-Gg: ASbGncvUcqYg74bFGpoKE1YAIPKyzELhyWWmqnnCoTdnke5ChIEmK1WMoDY5z//jWw1
-	yeDAWQrvvn6Bf1O7w8GDVhjtp9eFqTXgVtPaNOmpXex6vYaRucEROAh/R/pYCd3j9nzdXEKVa8d
-	GlEwM/y93aI0Rh6WIMG2P9dmMBcyYlgKiA0uUfMuIEyS/fZ+lYv7UmvWC2zaTLhpv/nvMYJKbxj
-	4ci5uIdIRKcoXyg+pYl/yCgzHCbCSb1SrWZX3h9ZGJXy41UH31zYm06fDx5vSUZfNYmwRafSXvj
-	COMjvOKr8Nxo3gSIDhlu6RNYmusEspjNHJpjHNLRiIuerw/T
-X-Google-Smtp-Source: AGHT+IH+M1H6NQa8Z2M4QlINtAbkG+ajmJC/3xRR4fh+SsBnVhZz4g7Oz2Ge60JhFSFIpN14jqi2SA==
-X-Received: by 2002:a05:600c:83cf:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-43d84fbbc43mr84772155e9.16.1743165848864;
-        Fri, 28 Mar 2025 05:44:08 -0700 (PDT)
-Received: from HP-650 ([105.112.193.96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a448dsm2483159f8f.100.2025.03.28.05.44.05
+        d=1e100.net; s=20230601; t=1743165763; x=1743770563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14wfkeUYgJyjMP20QYKCrYEPyG67GgHvAYWTR0MQ0Bw=;
+        b=Xst8idCXe3blu74gFlqpRQFxsYEl7qzEHUmTMMAbGZgIIDvekFPa4MpkfdMwiq3vHh
+         Ho/YtccELtuOAXCkLCCZcE8VtQfR8tBR2PbAdXI5eppveoaX4oz0+9HYB2UVImBXMaQy
+         6Cz1yAYuowPI1+A5219XB4qQqGBsiemA3q7rITCkCFkNv8H1pMt6eQ5IPoxlmEvoJO+d
+         AvDR9Yk2E14NmBAkDU4+oO/s0FW79YpCM1uiMSWlF6FLEJl0rYd7SODahmMdSqinFpAn
+         R/yhRMcbKl7tlAvQnCzUMPmc3xDnNWUeEzFZQRVThXhZTJCD1fhlM1FtgeRIVwZLXgdx
+         bV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbnkio2kKkAL81J27kS6p1wjP6aSiXPlU7Dxx2ZIxvQ6XI/Ql6IGh4ZJmoqq/sg4yLcSo3XYBcEot+yDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2jFWMwy9APjfHp0JoaJOSVr2HEUsEJOAlkRlu6pPgIXcn4jUm
+	/pl1gso1aAJEAlzKSP9hh1oCDouc4Cirdkse9FF4ELkEsOKfy3E6jCnmSh0c/p+9E6mMcVWxWl3
+	rWnAKF1hXGJEY342RdzLeqM2L8sn3Qc25Owrk5gr28pX96AUNTRSq4IZYNk7rFeU=
+X-Gm-Gg: ASbGncvk7m9oWs2E2viuXmyYf93f01UwaNVfUHIdx03/ZjXmEYEEhmZn8Ua4pOL8Oz6
+	bxf0t33up/rEDhhWN6aqAVLpEk1TG7DjBs4qwTUL+NxhH4Xq0ZcH1tDVbHxqNMS4lNU9VdjTlIj
+	q7vzNyyvIBnvK2XdJbKlYBKiaxWlGORMm8ajyP4UHftLSHiL3Hoebth9wwGkhB3O6l4glWPZiZ3
+	nxTAeYr9XhhtTM9VN20Ks7x5ghYI4Gp7pxDqbOc+Agxl86/ycV6w0SJP/Q/MwFjGOMqunDm8P+G
+	XwD08a9blyoMNS0tlb3NYK975ixm6thMZJkn8SiHTvAzbg5BAbpVQURBrkI3cLdzHUMJ8+rvIuo
+	MtHk=
+X-Received: by 2002:a05:620a:17a3:b0:7c5:e8c5:a307 with SMTP id af79cd13be357-7c5f9b83df6mr358599285a.9.1743165762638;
+        Fri, 28 Mar 2025 05:42:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFF8gtMExOuPLX60Y/NWAprj6cU1KqqKQnEnc8pwizsNlXZ+YMUgbsuyMomHSvBH+FClZ/jw==
+X-Received: by 2002:a05:620a:17a3:b0:7c5:e8c5:a307 with SMTP id af79cd13be357-7c5f9b83df6mr358594185a.9.1743165762076;
+        Fri, 28 Mar 2025 05:42:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54b09590f43sm298804e87.177.2025.03.28.05.42.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 05:44:08 -0700 (PDT)
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: outreachy@lists.linux.dev
-Cc: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	julia.lawall@inria.fr,
-	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Subject: [PATCH 5/5] staging: rtl8723bs: modify variable names to comply with kernel naming convention
-Date: Fri, 28 Mar 2025 13:39:42 +0100
-Message-Id: <dd32dfe6c837d88dd13a546aadcb0bc207b997d6.1743163801.git.abrahamadekunle50@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1743163800.git.abrahamadekunle50@gmail.com>
-References: <cover.1743163800.git.abrahamadekunle50@gmail.com>
+        Fri, 28 Mar 2025 05:42:39 -0700 (PDT)
+Date: Fri, 28 Mar 2025 14:42:38 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
+Cc: Ettore Chimenti <ettore.chimenti@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Georg Gottleuber <ggo@tuxedocomputers.com>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wse@tuxedocomputers.com, cs@tuxedocomputers.com
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
+ Gen1
+Message-ID: <2bm7rmsznt6t5wnjlyssrwhk42akh53suxfile633fkanhs2gh@3cl4zr54j5wc>
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+ <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com>
+ <5hvghahezqms6x4pi3acgaujyhiql6mzl2xhzph5phhki2yiyq@oi3xjatj7r64>
+ <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
+ <l77iickvroov7crzg6s2i7nq3kakqgdtbqki74stavqkiwyjfs@rv2oegbwogxi>
+ <p5dxsjp2xdl5esmpxseqiy4n2xsici5fvow6wtiquhq7ixmlkt@fty3ez75y5ld>
+ <CAO9ioeUSSshmw6gdEhQNzgAUQLh44etHRAsOThwFZ_9mfyJYiA@mail.gmail.com>
+ <56b22711-1d78-4cc9-8a32-cb4805497ebd@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56b22711-1d78-4cc9-8a32-cb4805497ebd@tuxedocomputers.com>
+X-Proofpoint-GUID: jkJ4plHFTUIwYSxoSMgzk9r7raF0l8jt
+X-Authority-Analysis: v=2.4 cv=UblRSLSN c=1 sm=1 tr=0 ts=67e69943 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=hw263EMk9VmrFZoxUeAA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: jkJ4plHFTUIwYSxoSMgzk9r7raF0l8jt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_06,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 impostorscore=0
+ adultscore=0 clxscore=1015 mlxlogscore=999 bulkscore=0 malwarescore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503280088
 
-The variable names use the camelCase naming convention which is not consistent
-with Linux kernel naming convention.
+On Fri, Mar 28, 2025 at 12:34:43PM +0100, Georg Gottleuber wrote:
+> 
+> 
+> Am 21.03.25 um 16:51 schrieb Dmitry Baryshkov:
+> > On Fri, 21 Mar 2025 at 17:49, Ettore Chimenti
+> > <ettore.chimenti@linaro.org> wrote:
+> >>
+> >> Hi Dmitry,
+> >>
+> >> On Tue, Mar 18, 2025 at 11:36:32PM +0200, Dmitry Baryshkov wrote:
+> >>> On Tue, Mar 18, 2025 at 04:24:27PM +0100, Georg Gottleuber wrote:
+> >>>> Am 07.03.25 um 07:45 schrieb Dmitry Baryshkov:
+> >>>> [...]
+> >>>>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> >>>>>>> new file mode 100644
+> >>>>>>> index 000000000000..86bdec4a2dd8
+> >>>>>>> --- /dev/null
+> >>>>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> >>>>>>
+> >>>>>>> +&gpu {
+> >>>>>>> +       status = "okay";
+> >>>>>>> +
+> >>>>>>> +       zap-shader {
+> >>>>>>> +               firmware-name = "qcom/a740_zap.mbn";
+> >>>>>>
+> >>>>>> Are the laptop's OEM key/security fuses not blown?
+> >>>>>
+> >>>>> Can this laptop use "qcom/x1e80100/gen70500_zap.mbn" which is already a
+> >>>>> part of linux-firmware?
+> >>>>
+> >>>> It seems so.
+> >>>>
+> >>>> Because there were no logs about loading zap.mbn, I activated dyndbg
+> >>>> (dyndbg="file drivers/base/firmware_loader/main.c +fmp"). See attachment
+> >>>> for dmesg output. But GUI freezes after sddm login.
+> >>>
+> >>> Does it happen only with this ZAP or does it happen with the ZAP from
+> >>> WIndows too? Can you run some simple GPU workload, like kmscube from the
+> >>> console?
+> >>>
+> >>
+> >> It seems to work fine changing the `firmware-name` property to
+> >> "qcom/x1e80100/gen70500_zap.mbn" and updating to latest mesa on Debian
+> >> Sid (25.0.1).
+> >>
+> >> Also tried with linux-firmware binary blob.
+> > 
+> > Then please post an updated patch, using firmware & ZAP from linux-firmware.
+> 
+> I'm sorry, all our devices are engineering examples (including Ettores).
+> The mass production devices will be fused.
 
-Modify the names to use snake_case in adherence to the Linux kernel approved
-naming convention for consistency with the codebase.
+Then all the firmware names should be adjusted accordingly. Please see
+the names used by Lenovo T14s as an example.
 
-Reported by checkpatch:
+Also we'd really appreciate the firmware being contributed to
+linux-firmware repo (again, see Lenovo example).
 
-CHECK: Avoid camelCase:
-
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_cmd.c      | 22 +++++-----
- drivers/staging/rtl8723bs/core/rtw_efuse.c    | 42 +++++++++----------
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  8 ++--
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  | 14 +++----
- .../staging/rtl8723bs/core/rtw_wlan_util.c    | 18 ++++----
- 5 files changed, 52 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_cmd.c b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-index ad949b0e2b97..ae22b2bf5446 100644
---- a/drivers/staging/rtl8723bs/core/rtw_cmd.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_cmd.c
-@@ -1132,10 +1132,10 @@ static void collect_traffic_statistics(struct adapter *padapter)
- 
- u8 traffic_status_watchdog(struct adapter *padapter, u8 from_timer)
- {
--	u8 bEnterPS = false;
--	u16 BusyThresholdHigh = 25;
--	u16 BusyThresholdLow = 10;
--	u16 BusyThreshold = BusyThresholdHigh;
-+	u8 b_enter_ps = false;
-+	u16 busy_threshold_high = 25;
-+	u16 busy_threshold_low = 10;
-+	u16 busy_threshold = busy_threshold_high;
- 	u8 bBusyTraffic = false, bTxBusyTraffic = false, bRxBusyTraffic = false;
- 	u8 bHigherBusyTraffic = false, bHigherBusyRxTraffic = false, bHigherBusyTxTraffic = false;
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
-@@ -1149,10 +1149,10 @@ u8 traffic_status_watchdog(struct adapter *padapter, u8 from_timer)
- 		/*&& !MgntInitAdapterInProgress(pMgntInfo)*/) {
- 		/*  if we raise bBusyTraffic in last watchdog, using lower threshold. */
- 		if (pmlmepriv->LinkDetectInfo.bBusyTraffic)
--			BusyThreshold = BusyThresholdLow;
-+			busy_threshold = busy_threshold_low;
- 
--		if (pmlmepriv->LinkDetectInfo.NumRxOkInPeriod > BusyThreshold ||
--			pmlmepriv->LinkDetectInfo.NumTxOkInPeriod > BusyThreshold) {
-+		if (pmlmepriv->LinkDetectInfo.NumRxOkInPeriod > busy_threshold ||
-+			pmlmepriv->LinkDetectInfo.NumTxOkInPeriod > busy_threshold) {
- 			bBusyTraffic = true;
- 
- 			if (pmlmepriv->LinkDetectInfo.NumRxOkInPeriod > pmlmepriv->LinkDetectInfo.NumTxOkInPeriod)
-@@ -1175,7 +1175,7 @@ u8 traffic_status_watchdog(struct adapter *padapter, u8 from_timer)
- 		/*  check traffic for  powersaving. */
- 		if (((pmlmepriv->LinkDetectInfo.NumRxUnicastOkInPeriod + pmlmepriv->LinkDetectInfo.NumTxOkInPeriod) > 8) ||
- 			(pmlmepriv->LinkDetectInfo.NumRxUnicastOkInPeriod > 2)) {
--			bEnterPS = false;
-+			b_enter_ps = false;
- 
- 			if (bBusyTraffic) {
- 				if (pmlmepriv->LinkDetectInfo.TrafficTransitionCount <= 4)
-@@ -1193,11 +1193,11 @@ u8 traffic_status_watchdog(struct adapter *padapter, u8 from_timer)
- 				pmlmepriv->LinkDetectInfo.TrafficTransitionCount = 0;
- 
- 			if (pmlmepriv->LinkDetectInfo.TrafficTransitionCount == 0)
--				bEnterPS = true;
-+				b_enter_ps = true;
- 		}
- 
- 		/*  LeisurePS only work in infra mode. */
--		if (bEnterPS) {
-+		if (b_enter_ps) {
- 			if (!from_timer)
- 				LPS_Enter(padapter, "TRAFFIC_IDLE");
- 		} else {
-@@ -1227,7 +1227,7 @@ u8 traffic_status_watchdog(struct adapter *padapter, u8 from_timer)
- 	pmlmepriv->LinkDetectInfo.bHigherBusyRxTraffic = bHigherBusyRxTraffic;
- 	pmlmepriv->LinkDetectInfo.bHigherBusyTxTraffic = bHigherBusyTxTraffic;
- 
--	return bEnterPS;
-+	return b_enter_ps;
- 
- }
- 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_efuse.c b/drivers/staging/rtl8723bs/core/rtw_efuse.c
-index 62a2919086f3..6a2fc4dfa07e 100644
---- a/drivers/staging/rtl8723bs/core/rtw_efuse.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_efuse.c
-@@ -10,21 +10,21 @@
- 
- 
- /* Define global variables */
--u8 fakeEfuseBank;
--u32 fakeEfuseUsedBytes;
--u8 fakeEfuseContent[EFUSE_MAX_HW_SIZE] = {0};
--u8 fakeEfuseInitMap[EFUSE_MAX_MAP_LEN] = {0};
--u8 fakeEfuseModifiedMap[EFUSE_MAX_MAP_LEN] = {0};
--
--u32 BTEfuseUsedBytes;
--u8 BTEfuseContent[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
--u8 BTEfuseInitMap[EFUSE_BT_MAX_MAP_LEN] = {0};
--u8 BTEfuseModifiedMap[EFUSE_BT_MAX_MAP_LEN] = {0};
--
--u32 fakeBTEfuseUsedBytes;
--u8 fakeBTEfuseContent[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
--u8 fakeBTEfuseInitMap[EFUSE_BT_MAX_MAP_LEN] = {0};
--u8 fakeBTEfuseModifiedMap[EFUSE_BT_MAX_MAP_LEN] = {0};
-+u8 fake_efuse_bank;
-+u32 fake_efuse_used_bytes;
-+u8 fake_efuse_content[EFUSE_MAX_HW_SIZE] = {0};
-+u8 fake_efuse_init_map[EFUSE_MAX_MAP_LEN] = {0};
-+u8 fake_efuse_modified_map[EFUSE_MAX_MAP_LEN] = {0};
-+
-+u32 bte_fuse_used_bytes;
-+u8 bte_fuse_content[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
-+u8 bte_use_init_map[EFUSE_BT_MAX_MAP_LEN] = {0};
-+u8 bte_use_modified_map[EFUSE_BT_MAX_MAP_LEN] = {0};
-+
-+u32 fakebte_fuse_used_bytes;
-+u8 fakebte_fuse_content[EFUSE_MAX_BT_BANK][EFUSE_MAX_HW_SIZE];
-+u8 fakebte_use_init_map[EFUSE_BT_MAX_MAP_LEN] = {0};
-+u8 fakebte_use_modified_map[EFUSE_BT_MAX_MAP_LEN] = {0};
- 
- #define REG_EFUSE_CTRL		0x0030
- #define EFUSE_CTRL			REG_EFUSE_CTRL		/*  E-Fuse Control. */
-@@ -33,10 +33,10 @@ static bool Efuse_Read1ByteFromFakeContent(u16 Offset, u8 *Value)
- {
- 	if (Offset >= EFUSE_MAX_HW_SIZE)
- 		return false;
--	if (fakeEfuseBank == 0)
--		*Value = fakeEfuseContent[Offset];
-+	if (fake_efuse_bank == 0)
-+		*Value = fake_efuse_content[Offset];
- 	else
--		*Value = fakeBTEfuseContent[fakeEfuseBank - 1][Offset];
-+		*Value = fakebte_fuse_content[fake_efuse_bank - 1][Offset];
- 	return true;
- }
- 
-@@ -44,10 +44,10 @@ static bool Efuse_Write1ByteToFakeContent(u16 Offset, u8 Value)
- {
- 	if (Offset >= EFUSE_MAX_HW_SIZE)
- 		return false;
--	if (fakeEfuseBank == 0)
--		fakeEfuseContent[Offset] = Value;
-+	if (fake_efuse_bank == 0)
-+		fake_efuse_content[Offset] = Value;
- 	else
--		fakeBTEfuseContent[fakeEfuseBank - 1][Offset] = Value;
-+		fakebte_fuse_content[fake_efuse_bank - 1][Offset] = Value;
- 	return true;
- }
- 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 183c3046ca1f..90966b7034ab 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -3579,7 +3579,7 @@ void issue_action_BA(struct adapter *padapter, unsigned char *raddr, unsigned ch
- 	dump_mgntframe(padapter, pmgntframe);
- }
- 
--static void issue_action_BSSCoexistPacket(struct adapter *padapter)
-+static void issue_action_bss_coexist_packet(struct adapter *padapter)
- {
- 	struct list_head		*plist, *phead;
- 	unsigned char category, action;
-@@ -3901,9 +3901,9 @@ void site_survey(struct adapter *padapter)
- 			pmlmeext->chan_scan_time = SURVEY_TO;
- 			pmlmeext->sitesurvey_res.state = SCAN_DISABLE;
- 
--			issue_action_BSSCoexistPacket(padapter);
--			issue_action_BSSCoexistPacket(padapter);
--			issue_action_BSSCoexistPacket(padapter);
-+			issue_action_bss_coexist_packet(padapter);
-+			issue_action_bss_coexist_packet(padapter);
-+			issue_action_bss_coexist_packet(padapter);
- 		}
- 	}
- 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index 84109e338c86..75ce5f15f996 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -406,14 +406,14 @@ void rtw_set_ps_mode(struct adapter *padapter, u8 ps_mode, u8 smart_ps, u8 bcn_a
- s32 LPS_RF_ON_check(struct adapter *padapter, u32 delay_ms)
- {
- 	unsigned long start_time;
--	u8 bAwake = false;
-+	u8 b_awake = false;
- 	s32 err = 0;
- 
- 
- 	start_time = jiffies;
- 	while (1) {
--		rtw_hal_get_hwreg(padapter, HW_VAR_FWLPS_RF_ON, &bAwake);
--		if (bAwake)
-+		rtw_hal_get_hwreg(padapter, HW_VAR_FWLPS_RF_ON, &b_awake);
-+		if (b_awake)
- 			break;
- 
- 		if (padapter->bSurpriseRemoved) {
-@@ -558,11 +558,11 @@ void LPS_Leave_check(struct adapter *padapter)
- {
- 	struct pwrctrl_priv *pwrpriv;
- 	unsigned long	start_time;
--	u8 bReady;
-+	u8 b_ready;
- 
- 	pwrpriv = adapter_to_pwrctl(padapter);
- 
--	bReady = false;
-+	b_ready = false;
- 	start_time = jiffies;
- 
- 	cond_resched();
-@@ -573,11 +573,11 @@ void LPS_Leave_check(struct adapter *padapter)
- 		if (padapter->bSurpriseRemoved ||
- 		    !(padapter->hw_init_completed) ||
- 		    (pwrpriv->pwr_mode == PS_MODE_ACTIVE))
--			bReady = true;
-+			b_ready = true;
- 
- 		mutex_unlock(&pwrpriv->lock);
- 
--		if (bReady)
-+		if (b_ready)
- 			break;
- 
- 		if (jiffies_to_msecs(jiffies - start_time) > 100)
-diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-index 73c70b016f00..06e7677b5e3a 100644
---- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-@@ -223,16 +223,16 @@ void UpdateBrateTblForSoftAP(u8 *bssrateset, u32 bssratelen)
- 
- void Save_DM_Func_Flag(struct adapter *padapter)
- {
--	u8 bSaveFlag = true;
-+	u8 b_save_flag = true;
- 
--	rtw_hal_set_hwreg(padapter, HW_VAR_DM_FUNC_OP, (u8 *)(&bSaveFlag));
-+	rtw_hal_set_hwreg(padapter, HW_VAR_DM_FUNC_OP, (u8 *)(&b_save_flag));
- }
- 
- void Restore_DM_Func_Flag(struct adapter *padapter)
- {
--	u8 bSaveFlag = false;
-+	u8 b_save_flag = false;
- 
--	rtw_hal_set_hwreg(padapter, HW_VAR_DM_FUNC_OP, (u8 *)(&bSaveFlag));
-+	rtw_hal_set_hwreg(padapter, HW_VAR_DM_FUNC_OP, (u8 *)(&b_save_flag));
- }
- 
- void Switch_DM_Func(struct adapter *padapter, u32 mode, u8 enable)
-@@ -1502,7 +1502,7 @@ void update_capinfo(struct adapter *Adapter, u16 updateCap)
- {
- 	struct mlme_ext_priv *pmlmeext = &Adapter->mlmeextpriv;
- 	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
--	bool		ShortPreamble;
-+	bool		short_preamble;
- 
- 	/*  Check preamble mode, 2005.01.06, by rcnjko. */
- 	/*  Mark to update preamble value forever, 2008.03.18 by lanhsin */
-@@ -1511,16 +1511,16 @@ void update_capinfo(struct adapter *Adapter, u16 updateCap)
- 		if (updateCap & cShortPreamble) {
- 			/*  Short Preamble */
- 			if (pmlmeinfo->preamble_mode != PREAMBLE_SHORT) { /*  PREAMBLE_LONG or PREAMBLE_AUTO */
--				ShortPreamble = true;
-+				short_preamble = true;
- 				pmlmeinfo->preamble_mode = PREAMBLE_SHORT;
--				rtw_hal_set_hwreg(Adapter, HW_VAR_ACK_PREAMBLE, (u8 *)&ShortPreamble);
-+				rtw_hal_set_hwreg(Adapter, HW_VAR_ACK_PREAMBLE, (u8 *)&short_preamble);
- 			}
- 		} else {
- 			/*  Long Preamble */
- 			if (pmlmeinfo->preamble_mode != PREAMBLE_LONG) { /*  PREAMBLE_SHORT or PREAMBLE_AUTO */
--				ShortPreamble = false;
-+				short_preamble = false;
- 				pmlmeinfo->preamble_mode = PREAMBLE_LONG;
--				rtw_hal_set_hwreg(Adapter, HW_VAR_ACK_PREAMBLE, (u8 *)&ShortPreamble);
-+				rtw_hal_set_hwreg(Adapter, HW_VAR_ACK_PREAMBLE, (u8 *)&short_preamble);
- 			}
- 		}
- 	}
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
