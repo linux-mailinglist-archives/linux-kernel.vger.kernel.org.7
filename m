@@ -1,161 +1,290 @@
-Return-Path: <linux-kernel+bounces-580306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5FFA75014
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:05:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041D5A7501C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8AB179474
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9103BBCB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764541DFE0B;
-	Fri, 28 Mar 2025 18:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EFC1DC99E;
+	Fri, 28 Mar 2025 18:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="WblRSibU"
-Received: from mail-yb1-f228.google.com (mail-yb1-f228.google.com [209.85.219.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzQL842f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211DD14A0BC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 18:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DF81CAA86;
+	Fri, 28 Mar 2025 18:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743185091; cv=none; b=Rk7goA9VheKa2eX0JCalvxWye2ehpbgSeVDRaFQeXu30/Qxuzs5kPiNjPzFVXQfYOwLc0n7TSwgNiReu60P1MbBTIZ5DhQ4VBRhtOV8jUoavaEvCEKZWf3GGNzsenS98NSfGCMKKIXyowiFuon3BX2fRb8kqAEvcUoLY80TmiO8=
+	t=1743185215; cv=none; b=b0BKslJGHHKZ4ONHvzcKlx6sQJxYCofXBPlccd+o+JVuY1yVaCBcMdbHJI5vm0m7w81n5TR555ItYRQuZ6ckx2OOh1cZvxhZHSM0cimX42VuaHkvvqqdRL4zWfKbpeWc0xuhv9rT22ppmm4/Dp8We1UHbglEtxPPmtV6YpAy4aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743185091; c=relaxed/simple;
-	bh=XQMgakDIJjvP2FenQcES4/nXwydyPWmlJoZ3T4wy04c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aBRnJmJUYiryPOeIAG8BRpzIo8kKSfIVjmMYeDfCagPMSjx7dPMBATWKs5ykY5wflX8jdlHLRYeX1AHL5XgDUKtNXJmtsynkToX1TGm2xVfhBG59MUP/PawtDFqwClHYnq3fbMqyg+zrNzReK8s6IbouhyK5BpoAuk7YdhXBjX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=WblRSibU; arc=none smtp.client-ip=209.85.219.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-yb1-f228.google.com with SMTP id 3f1490d57ef6-e6b78b80393so123859276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743185089; x=1743789889; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ToMds7a1iukk8k+ynJkA30yqjBpeuxVgmALggVXwSPI=;
-        b=WblRSibUVk9qBh14N6JVAG2nBVgmFkk4yHYlbMVAKsxWqoQj7ivQ+tGZX8daQOwE12
-         IgEP/wEyqMar33IhGJP9TgaUzjDuiy229P8xtGXvOteGquSTW3vFDKOUcymk+99R9/cb
-         JxweMLcGrM+AG7Kp1y3IUC6e/xVmHfZD8aSvP+ssnjGlJjna6QMuNn2bOJRqm+KwIjcC
-         sNM6vzNwO8qaFD9NCri5SUs17eyJG1QsCrzCLa5wWczW1Kx+mzYB+8QejFdYqqrDwZ11
-         GSAYVBgIjT06xKrDSxphv0dYaLYiYpagZJ+fP0vs/yUQJlwRAsq/NCVPsSFDUiR8uEd6
-         liCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743185089; x=1743789889;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ToMds7a1iukk8k+ynJkA30yqjBpeuxVgmALggVXwSPI=;
-        b=s3icQ2wRTCYPzX9uFiB8++Q2tp/lthy9iTf5S52sxqgvyIcW2ZWC30Se9h2AtQ9wEr
-         cdf3sugi8ZWI9uRmcyP7rSLn8Qww1Rpm233c6T6GFS9qBerEjgVItxnpDhcQIUyzR2Eq
-         ZmbXn51RvYJ5OK56g9dvWzWHhQNAjuCr4V1OzGl14+V5EWvw0hHiLC+BYTC1O8flO+hY
-         uIN939AGUgW/gpe3fJxzV6IJ6GWLie/QaSGCDUzcXWu7fxoDa5f2w1XHJmN3pqUvMpBL
-         ZFphh0tt+dHFZkdl90iL0EiLTdhZIAbuxHd3DJLN1RytnsCqqiOu10Zza4fpmu+vkk5O
-         IvWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrcdKuXkgOsAcaxd2uNwuZVE95Nm28bvwRvEivIuUl+oYxCORCNWteqiiZ9b/zzAf8kefG8iW4M+F99IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTJ9SdYQaqRfWNA0ZQnQgDEi8vn7jJl0WnbgJCj3FGQyoXwi4M
-	I/B45d6RETmXNx49FEktt15t6w99M5KAmI1BxCx1Ptlporla6viZd5w2mdI0La7HZtHF1fGe61h
-	kvr2xytP025TvKZnTXNuXrU5ewI+BPUdT
-X-Gm-Gg: ASbGncsSUfGGk2hCCEnUPs5CEMkTlqdZN1ib3eluJsk17vptkNMqCsxuBrb4sxWsGdB
-	aTaVUbDSuInLNVlvZd8XHdMSoc33zvzgoHfJhehjSAOWCez0tjAniNRdY0IH37vqGVjBhvnJBYB
-	T4zjCrZ6Oa1trRvTvqcT7sNErHM1p4leIEPhXapC4NA0n8NZc0UVkoNhSPXaFqv43LDJXCveejR
-	JoGgIwdrbyYWxPKoLbpR67Kgi5YQH68CSyGIdZog7ifkiiJFlhO5m/pC1M9wGQduat2mcOC/fi6
-	9soswP2EHKpkVnXpNsp5xwocNEzwbIIiZ2CcxZKGda69Szzg
-X-Google-Smtp-Source: AGHT+IEqw+lKegEraS7WeFtb+fekn2SZ9vc6rfbQB4wWCBvh3x/gk+5IVeAG0hDMfpysnVPW9CQwnFYky0Ki
-X-Received: by 2002:a05:690c:112:b0:6ee:b726:62cd with SMTP id 00721157ae682-7025736bbf9mr2158077b3.9.1743185088693;
-        Fri, 28 Mar 2025 11:04:48 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-7023a95d0d2sm2932487b3.49.2025.03.28.11.04.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 11:04:48 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 08A8B340721;
-	Fri, 28 Mar 2025 12:04:48 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 06FDEE412FD; Fri, 28 Mar 2025 12:04:48 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 5/5] ublk: store req in ublk_uring_cmd_pdu for ublk_cmd_tw_cb()
-Date: Fri, 28 Mar 2025 12:04:11 -0600
-Message-ID: <20250328180411.2696494-6-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250328180411.2696494-1-csander@purestorage.com>
-References: <20250328180411.2696494-1-csander@purestorage.com>
+	s=arc-20240116; t=1743185215; c=relaxed/simple;
+	bh=rTIJI4MeYIGiwGC7iTIv2fRjjO/e/c49sVnVsZ7O1UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3dF2f3jnT7V/wQdkhh5wGDFwoppLpsjZo8K9oGKI+WCmIMzA3ccLXstIN4kZWUxOjvikLvxupJVkYELnwMtk//H15Y81n7I2mFtzeFG9JPciL6Shj9bCIcUamxUGP3bxmWvLgXKnRsP42R4Pm0YqBsW2fJkV08vF7tIrb8aLRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzQL842f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFA6C4CEE4;
+	Fri, 28 Mar 2025 18:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743185214;
+	bh=rTIJI4MeYIGiwGC7iTIv2fRjjO/e/c49sVnVsZ7O1UY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bzQL842flLbiGhEEZcrJEhVeQaE6cWeZjDuhHMX0cx25DEnF/KX7llfaFCr1Y0j8+
+	 Hv7F9u63CnZ/aiTyFyqUWj+4YRzjDjkgrSjWmyej29Bc8c4Xj6jk6RiOt+lCgNrgVx
+	 kkIDSScxuCAbHcHvg08FNUb4qBGZZj/FP+GqTK1N7xgXgPyAAT/SGtStFMzEI/T7Ut
+	 fBX7mFdduQ//ns67JnF3AoDzcIKWVBIjbaebnYI2RNkBDxiplBQMQQpro04CYgz+SF
+	 KBsqUKUxHNmnaFUs4GfNr4oGcmzNISM0ItuIJ6R27dkT+FwODvwTOKzcMN6RHol7A9
+	 jWTMMrc9AY1Pw==
+Date: Fri, 28 Mar 2025 20:06:49 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: dave.hansen@intel.com, linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+	dionnaglaze@google.com, bondarn@google.com, scott.raynor@intel.com
+Subject: Re: [PATCH v2 2/2] x86/sgx: Implement EUPDATESVN and
+ opportunistically call it during first EPC page alloc
+Message-ID: <Z-blOQ94ymUsDwPn@kernel.org>
+References: <20250328125859.73803-1-elena.reshetova@intel.com>
+ <20250328125859.73803-3-elena.reshetova@intel.com>
+ <Z-bhczXA6aHdCYHq@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-bhczXA6aHdCYHq@kernel.org>
 
-Pass struct request *rq to ublk_cmd_tw_cb() through ublk_uring_cmd_pdu,
-mirroring how it works for ublk_cmd_list_tw_cb(). This saves some
-pointer dereferences, as well as the bounds check in blk_mq_tag_to_rq().
+On Fri, Mar 28, 2025 at 07:50:43PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Mar 28, 2025 at 02:57:41PM +0200, Elena Reshetova wrote:
+> > SGX architecture introduced a new instruction called EUPDATESVN
+> > to Ice Lake. It allows updating security SVN version, given that EPC
+> > is completely empty. The latter is required for security reasons
+> > in order to reason that enclave security posture is as secure as the
+> > security SVN version of the TCB that created it.
+> > 
+> > Additionally it is important to ensure that while ENCLS[EUPDATESVN]
+> > runs, no concurrent page creation happens in EPC, because it might
+> > result in #GP delivered to the creator. Legacy SW might not be prepared
+> > to handle such unexpected #GPs and therefore this patch introduces
+> > a locking mechanism to ensure no concurrent EPC allocations can happen.
+> > 
+> > It is also ensured that ENCLS[EUPDATESVN] is not called when running
+> > in a VM since it does not have a meaning in this context (microcode
+> > updates application is limited to the host OS) and will create
+> > unnecessary load.
+> > 
+> > This patch is based on previous submision by Cathy Zhang
+> > https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+> > 
+> > Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+> > ---
+> >  arch/x86/include/asm/sgx.h      | 41 +++++++++++++--------
+> >  arch/x86/kernel/cpu/sgx/encls.h |  6 ++++
+> >  arch/x86/kernel/cpu/sgx/main.c  | 63 ++++++++++++++++++++++++++++++++-
+> >  arch/x86/kernel/cpu/sgx/sgx.h   |  1 +
+> >  4 files changed, 95 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> > index 6a0069761508..5caf5c31ebc6 100644
+> > --- a/arch/x86/include/asm/sgx.h
+> > +++ b/arch/x86/include/asm/sgx.h
+> > @@ -26,23 +26,26 @@
+> >  #define SGX_CPUID_EPC_SECTION	0x1
+> >  /* The bitmask for the EPC section type. */
+> >  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
+> > +/* EUPDATESVN presence indication */
+> > +#define SGX_CPUID_EUPDATESVN	BIT(10)
+> >  
+> >  enum sgx_encls_function {
+> > -	ECREATE	= 0x00,
+> > -	EADD	= 0x01,
+> > -	EINIT	= 0x02,
+> > -	EREMOVE	= 0x03,
+> > -	EDGBRD	= 0x04,
+> > -	EDGBWR	= 0x05,
+> > -	EEXTEND	= 0x06,
+> > -	ELDU	= 0x08,
+> > -	EBLOCK	= 0x09,
+> > -	EPA	= 0x0A,
+> > -	EWB	= 0x0B,
+> > -	ETRACK	= 0x0C,
+> > -	EAUG	= 0x0D,
+> > -	EMODPR	= 0x0E,
+> > -	EMODT	= 0x0F,
+> > +	ECREATE		= 0x00,
+> > +	EADD		= 0x01,
+> > +	EINIT		= 0x02,
+> > +	EREMOVE		= 0x03,
+> > +	EDGBRD		= 0x04,
+> > +	EDGBWR		= 0x05,
+> > +	EEXTEND		= 0x06,
+> > +	ELDU		= 0x08,
+> > +	EBLOCK		= 0x09,
+> > +	EPA		= 0x0A,
+> > +	EWB		= 0x0B,
+> > +	ETRACK		= 0x0C,
+> > +	EAUG		= 0x0D,
+> > +	EMODPR		= 0x0E,
+> > +	EMODT		= 0x0F,
+> > +	EUPDATESVN	= 0x18,
+> >  };
+> >  
+> >  /**
+> > @@ -73,6 +76,11 @@ enum sgx_encls_function {
+> >   *				public key does not match IA32_SGXLEPUBKEYHASH.
+> >   * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
+> >   *				is in the PENDING or MODIFIED state.
+> > + * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
+> > + * %SGX_EPC_NOT_READY:		EPC is not ready for SVN update.
+> > + * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
+> > + *				updated because current SVN was not newer than
+> > + *				CPUSVN.
+> >   * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
+> >   */
+> >  enum sgx_return_code {
+> > @@ -81,6 +89,9 @@ enum sgx_return_code {
+> >  	SGX_CHILD_PRESENT		= 13,
+> >  	SGX_INVALID_EINITTOKEN		= 16,
+> >  	SGX_PAGE_NOT_MODIFIABLE		= 20,
+> > +	SGX_INSUFFICIENT_ENTROPY	= 29,
+> > +	SGX_EPC_NOT_READY		= 30,
+> > +	SGX_NO_UPDATE			= 31,
+> >  	SGX_UNMASKED_EVENT		= 128,
+> >  };
+> >  
+> > diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
+> > index 99004b02e2ed..3d83c76dc91f 100644
+> > --- a/arch/x86/kernel/cpu/sgx/encls.h
+> > +++ b/arch/x86/kernel/cpu/sgx/encls.h
+> > @@ -233,4 +233,10 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
+> >  	return __encls_2(EAUG, pginfo, addr);
+> >  }
+> >  
+> > +/* Update CPUSVN at runtime. */
+> > +static inline int __eupdatesvn(void)
+> > +{
+> > +	return __encls_ret_1(EUPDATESVN, "");
+> > +}
+> > +
+> >  #endif /* _X86_ENCLS_H */
+> > diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+> > index b61d3bad0446..24563110811d 100644
+> > --- a/arch/x86/kernel/cpu/sgx/main.c
+> > +++ b/arch/x86/kernel/cpu/sgx/main.c
+> > @@ -32,6 +32,11 @@ static DEFINE_XARRAY(sgx_epc_address_space);
+> >  static LIST_HEAD(sgx_active_page_list);
+> >  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
+> >  
+> > +/* This lock is held to prevent new EPC pages from being created
+> > + * during the execution of ENCLS[EUPDATESVN].
+> > + */
+> > +static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
+> > +
+> >  static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
+> >  static unsigned long sgx_nr_total_pages;
+> >  
+> > @@ -457,7 +462,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+> >  	page->flags = 0;
+> >  
+> >  	spin_unlock(&node->lock);
+> > -	atomic_long_inc(&sgx_nr_used_pages);
+> > +
+> > +	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
+> > +		spin_lock(&sgx_epc_eupdatesvn_lock);
+> > +		/* Only call sgx_updatesvn() once the first enclave's
+> > +		 * page is allocated from EPC
+> > +		 */
+> > +		if (atomic_long_read(&sgx_nr_used_pages) == 0)
+> > +			sgx_updatesvn();
+> > +		atomic_long_inc(&sgx_nr_used_pages);
+> > +		spin_unlock(&sgx_epc_eupdatesvn_lock);
+> > +	}
+> >  
+> >  	return page;
+> >  }
+> > @@ -970,3 +985,49 @@ static int __init sgx_init(void)
+> >  }
+> >  
+> >  device_initcall(sgx_init);
+> > +
+> > +/**
+> > + * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
+> > + * If EPC is ready, this instruction will update CPUSVN to the currently
+> > + * loaded microcode update SVN and generate new cryptographic assets.
+> > + */
+> > +void sgx_updatesvn(void)
+> > +{
+> > +	int retry = 10;
+> > +	int ret;
+> > +
+> > +	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
+> > +
+> > +	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
+> > +		return;
+> > +
+> > +	/* Do not execute ENCLS[EUPDATESVN] if running in a VM since
+> > +	 * microcode updates are only meaningful to be applied on the host.
+> > +	 */
+> > +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> > +		return;
+> > +
+> > +	do {
+> > +		ret = __eupdatesvn();
+> > +		if (ret != SGX_INSUFFICIENT_ENTROPY)
+> > +			break;
+> > +
+> > +	} while (--retry);
+> > +
+> > +	switch (ret) {
+> > +	case 0:
+> > +		pr_info("EUPDATESVN: success\n");
+> > +		break;
+> > +	case SGX_EPC_NOT_READY:
+> > +	case SGX_INSUFFICIENT_ENTROPY:
+> > +	case SGX_EPC_PAGE_CONFLICT:
+> > +		pr_err("EUPDATESVN: error %d\n", ret);
+> > +		break;
+> > +	case SGX_NO_UPDATE:
+> > +		break;
+> > +	default:
+> > +		pr_err("EUPDATESVN: unknown error %d\n", ret);
+> > +		break;
+> > +	}
+> 
+> Overall, I think you're right in that "inversion" does make sense,
+> now that other stuff is better aligned.
+> 
+> At least when there is spurious error, I think ioctl's should stop
+> responding and driver should not do anything useful anymore. I.e.,
+> it should go out-of-service.
+> 
+> I don't think the driver should tear-down, just stop servicing
+> VM's and responding ioctl's.
+> 
+> Possibly thish should be also right action for other errors than
+> "insufficient entropy" but I'm open for comments for this.
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/block/ublk_drv.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Or actually actually I take one step back with my suggestions
+because this really should be a question for which I don't have
+the definitive answer.
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 23250471562a..466a23b89379 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -87,11 +87,14 @@ struct ublk_uring_cmd_pdu {
- 	 *
- 	 * It should have been stored to request payload, but we do want
- 	 * to avoid extra pre-allocation, and uring_cmd payload is always
- 	 * free for us
- 	 */
--	struct request *req_list;
-+	union {
-+		struct request *req;
-+		struct request *req_list;
-+	};
- 
- 	/*
- 	 * The following two are valid in this cmd whole lifetime, and
- 	 * setup in ublk uring_cmd handler
- 	 */
-@@ -1266,22 +1269,21 @@ static void ublk_dispatch_req(struct ublk_queue *ubq,
- static void ublk_cmd_tw_cb(struct io_uring_cmd *cmd,
- 			   unsigned int issue_flags)
- {
- 	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
- 	struct ublk_queue *ubq = pdu->ubq;
--	int tag = pdu->tag;
--	struct request *req = blk_mq_tag_to_rq(
--		ubq->dev->tag_set.tags[ubq->q_id], tag);
- 
--	ublk_dispatch_req(ubq, req, issue_flags);
-+	ublk_dispatch_req(ubq, pdu->req, issue_flags);
- }
- 
- static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
- {
--	struct ublk_io *io = &ubq->ios[rq->tag];
-+	struct io_uring_cmd *cmd = ubq->ios[rq->tag].cmd;
-+	struct ublk_uring_cmd_pdu *pdu = ublk_get_uring_cmd_pdu(cmd);
- 
--	io_uring_cmd_complete_in_task(io->cmd, ublk_cmd_tw_cb);
-+	pdu->req = rq;
-+	io_uring_cmd_complete_in_task(cmd, ublk_cmd_tw_cb);
- }
- 
- static void ublk_cmd_list_tw_cb(struct io_uring_cmd *cmd,
- 		unsigned int issue_flags)
- {
--- 
-2.45.2
+The current code works like this: if anything that we don't
+like happens, we re-iterate.
+
+Should some of the "exceptional conditions" have a different
+recovery or not?
+
+BR, Jarkko
+
 
 
