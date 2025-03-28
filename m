@@ -1,366 +1,152 @@
-Return-Path: <linux-kernel+bounces-580369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFAAA750F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:43:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10278A75104
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4190F188646E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1563B3CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4E51E411C;
-	Fri, 28 Mar 2025 19:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8B31E5209;
+	Fri, 28 Mar 2025 19:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TGQyvVIY"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZlO/OiMs"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787F01E32D5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D441E0DDF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743190979; cv=none; b=tQwdrWmhEqwPMbm+yvGf6PQuQ97AGr2jUcGe6kiCpCE+OY50xJkGqVuFJ4lHwnoTjBE7XbLMxsUdBzL6H9dFn/JhIHIEJo1CO1xUBLAv+X0Iy2c7V5g9+FDiIJ+RRz93kiP3NvF6uHyA2WckGYej9qqDwuR6U2KV3ssB0NyoEBg=
+	t=1743191128; cv=none; b=MWIr3kmv/Q4v5dM+NdiME4E/meHIEHPDtS8cBhm83p/gFzFgsyTzaEZ4638Ejm0MjLXqwYUj9YqjXFzhFh0+SvMFQze+W0RdZRYK2FLxcduiy1YOViArvZQXJUPEPAq5mIVdGc1akHL9Ok4WZR+8n3lDV1mQTinpxsbggO6qR7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743190979; c=relaxed/simple;
-	bh=7Nstma/QyJOTLkQP6CMCqb15xpuG2APAgK/ZzZOCFz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eKepSs9Id7pkD5JmjYxVNR+Y9EvufnZrMaYY0pDfUJ+Y7FSJwauYww9tCdw17vlUMaK/+rZVkG8jikKF4f2Q2hUvq5r54OuJRdknGqsaN32xsWSRddXaJEZmsUXSiZl0oQrv3H7wMVTB9AViAQJp2PYIOt3ArsICL7Qpa44V8tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TGQyvVIY; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3913b539aabso1511856f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743190975; x=1743795775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGPZIH+SORfb56w3DneXQkNE6QvEHzvRmk0/Th5mBUE=;
-        b=TGQyvVIYryLNWFGZQBNpw0nu7amyvQfPqpCmbPfdl8WeI6AbOLhRK2+3v9xeoiqPC9
-         iHeZn7MyJ1aSLG936pbLfUl5+JP2xbIY0ivLwcwsiUknnk70sUqc3+AusCtnUqOVPrhj
-         OBX8KdvZtx4O7DDSNQo3w/2r9BvF5/QNY9XwbNF5VYiSDUBnoxGdiOTAnlE+oQX5aFak
-         b55f1AIgUPEt89eRN48JyXw21NfjrKdZTjsBX2LN04k+dHzUNIclCwUF/3MBKto2zPRT
-         c45pxbG+NWBLw1kqLd0bZ7A3WZ8zk9N7DfxUBg/xh6GyJc34v2hFb5tr+MYnlq8DMjx1
-         Tl2w==
+	s=arc-20240116; t=1743191128; c=relaxed/simple;
+	bh=4MOYdNgWkuykYtDLL+uWJuPdUj1BvzZ2t9NSiU4EON8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CXl0TLSYbISvlMD0rnkkg/GGje3bnEmiLGu/pHoh/HfphKDygHuZINVz1sGCoj4hwjnzp9vTaFW1gzwxd48Cik8R4urK93/FJu7Mx9U/kDBOKpaGfrNheDj6lO9ih+234F1fPgLH0ZRbe3mMQYOItSPJjKliAwQ7POS5OzwZmJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZlO/OiMs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52SDHTv7012429
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:45:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Hvro5GjO+Wldw2eoT96XJ63A
+	JVuzQWMJ2SYOkl9vzGo=; b=ZlO/OiMsXxnfibTyZMAPDrBEtjwu2ltf8lQmaeA5
+	W248m61J2AHxcnDgiZy0T4s3fEFUMzZGeEDPye3Q1jT2y9Dz/smTI4Jp1SNhj+aJ
+	w0caTVUJroQ2M1PPu1dZnA2O8tu9mqGspOUzPdEYZTvExU87TT86gSSr8KfDABDZ
+	C+Hp8+IQuY1eLoado+IKzp/9bg8pMr7vey8pV64ubw5kYcDqt/EwjzdBg5QrAsyx
+	CtkEymqeCzmwEVZzUHt7zG0INLoEgrG+kGJ6VFNk3OAMqNg9AIl6J86R6Mu+jcQ3
+	iRKxsCWRTf41D6LacYwwkKx7L60n4ogpWZwgfKmu6EXLhA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45mmutqqy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:45:25 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2262051205aso35963935ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:45:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743190975; x=1743795775;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGPZIH+SORfb56w3DneXQkNE6QvEHzvRmk0/Th5mBUE=;
-        b=eOne1lEIlkLH+ZO40ZU4g4Y04ISHhBvkZZ8sXfKsFM9VaV+RqQBbY12TUUq9pzFm2X
-         mWWnYKbiKexrzyXJKdnrQPQ+s1ek1eGPxz1m5h8EDkGbB2frqo+nH+9+mY3vtie3zLZA
-         OOoXcEk9IxLHDoqSw6MbkasUbKrs/3g5+in1cHuxcHo3l/qD6BgLy8MTkCRDPWQCRm8S
-         wEZk1LuHDD0llQNQL7EtSDIwRfCDs9XLgPSfPIVuPLvl9EGgsMxe01kzmt+0FJoGqXCF
-         L7ZAjdknWjkV2RbnPBLysfjSNrKlXJNbV99BOwxE2EglM2XJGwEI581zCy/lFKbZebAN
-         uRow==
-X-Forwarded-Encrypted: i=1; AJvYcCXjJ3tldX9nXbXhxKSBmrHxjiGFq2mmdDGvvAEmVDFuluvtrd1R1mmAdLw/RP0XDTTU7OT1Lb0j9C+LdWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsc2uuzodcczAbLxAyrHj6/DbuNvZPdspMUIMojeeuAtj6BQ12
-	9lACartZg7qs/K69Et8xaYnw/VLrGiRfwmV0zaE9VH6WITMPEqPtwxIdSONEpQI=
-X-Gm-Gg: ASbGncvDF5AthNGS1T0oYC6KEBziZv0vX/wbqyZEqS4i7MQ/pkZ0Zt4cUK4J3/IUEmA
-	rLVkIGw3I88/w0tRPe1IGVxa2EnwWBFCtPbam54K3Ixgr7Ns2tYHWTFkMpiEcaInUYXUQCuZHTX
-	YUXB3ejcG8lQhQNVcRB1+0BlgNuod5kfkNAqpFZ0xBqBDG5sqcI+t9APOtTzU/RtW6y5GiKu43+
-	rXZo5I9nDnLXnFgvNEijsZPLBVmIozxwI5xMEC3LXs7hcm16WVdIGPEyc5LM+PwqBQ0oFbd/NCF
-	ZLaxPh2AMLq86lQSomFB3b0/n/7CkR8wXpol72GoMJ2QTATm3Q/FRFtzsZC8hhXEL9aWudM0MOG
-	Oau6RuZMP
-X-Google-Smtp-Source: AGHT+IGwYxowMvQi3jrYDALsf5EWTbXVqrgowY/8/qcxb5RTVXlsrii2XQKX3Yk2A2/4M4G1bKtxwQ==
-X-Received: by 2002:a5d:5f85:0:b0:391:39fc:6664 with SMTP id ffacd0b85a97d-39c120c7cb6mr335396f8f.6.1743190974607;
-        Fri, 28 Mar 2025 12:42:54 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c0b663623sm3551473f8f.35.2025.03.28.12.42.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 12:42:53 -0700 (PDT)
-Message-ID: <03f65f72-4727-44c7-90cb-6d251f360c85@linaro.org>
-Date: Fri, 28 Mar 2025 20:42:52 +0100
+        d=1e100.net; s=20230601; t=1743191125; x=1743795925;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hvro5GjO+Wldw2eoT96XJ63AJVuzQWMJ2SYOkl9vzGo=;
+        b=RiHhvrQpPe1dqhwN6u8G6rejGL6I+RMNSg5WKS+ZE5rQsofiQAMp6sKqD5fJ2FD7HI
+         clju3Xbb/zuSh5ReIa/fhgCln9AZP0m62aVsjFJuuKLsdyK8fZg+YIGpGxq2rL022E+O
+         O1soLb5+PxsqnlY3g1HpVkURVD9Xyc1WhUVPGxRoecrRxIw1S2vBE6yEHpU3GmNMEeQW
+         NJZtpRGai5/Pc+IRdqX8d4b9gVsbtWtRab8Jpn6usGDfWH0cldPuQKZ77oe+8C7kwMAm
+         XtNfp8UJj5npHWuPNRMRBlVjVa+ZbMRdOl0rvpJfQ+rwagHsOaLugtj58jgwx/l5d3S8
+         Uveg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9LprRvKDfaE0DUygaQbJbkOPKr5VnJTxUQQ8RBHc6Ak2Tw8lQmSgiFItiqUIHqR3F6zkcDilOAw5pFG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEO72s68egSdI475221ZKnFhVZKrulh/KNDoYl4Rj+Hjo2KRTL
+	kXAz40xX8sO5XB4fCfM4KS+JhTUw/nHm08SnuzuISpgjdhcZn0heFyYcoGqihpbP+3uZf9QcTyq
+	+B8gYJKrj0SErSuMbMc38UKBCmsa1DpVVDhLTJRHKuvT9lZj/LM4BbJAcbPzlXiBS8PxXwbJQCg
+	FzblVHJSrDea9yLc/I39CLJfbSIL2Ef01WW/N50Q==
+X-Gm-Gg: ASbGncuL6Xf6oPaEHL+0BUAcslZXo0YIfYMXDOtY8DJnYMv9Q7sWXlvsqGSpiSqxntV
+	lb0EVj+YCjMAcAnaRh8c2sZTQQlrw8UGCcZ3U2d+eHdV/OoK4Lteb2GByYrn8dmrxgtC2WeXO5v
+	HMzQ55BTZx01B9TAzWJ7u33K3kBmdi
+X-Received: by 2002:a17:902:ea02:b0:220:ea90:191e with SMTP id d9443c01a7336-2292f944dd7mr5603355ad.4.1743191124722;
+        Fri, 28 Mar 2025 12:45:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2FloYykYPJgUHYSECpQ9Y3zz3A/KY/pa3AFDLAj9DQXvG9v4c/yWr4SAhhsaubUsKlu76YHyagAGjGMbmqyc=
+X-Received: by 2002:a17:902:ea02:b0:220:ea90:191e with SMTP id
+ d9443c01a7336-2292f944dd7mr5602735ad.4.1743191124237; Fri, 28 Mar 2025
+ 12:45:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] watchdog: Add the Software Watchdog Timer for the NXP
- S32 platform
-To: Guenter Roeck <linux@roeck-us.net>, wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- S32@nxp.com, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
- Thomas Fossati <thomas.fossati@linaro.org>
-References: <20250328151516.2219971-1-daniel.lezcano@linaro.org>
- <20250328151516.2219971-2-daniel.lezcano@linaro.org>
- <a7c9715f-b912-49dd-a664-7b5e6017d0fa@roeck-us.net>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <a7c9715f-b912-49dd-a664-7b5e6017d0fa@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-8-quic_amakhija@quicinc.com> <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
+ <d64bf3b3-7c4d-490e-8bd7-1ad889aa7472@quicinc.com> <0220605f-3ff6-4ea3-88e3-09e602962a61@quicinc.com>
+ <zzcd4pv7laryb2c5wkuwrhj2ih3lciqgxfyefj4qmi5clxftbi@ykpy42anl4jm> <d09fe2f8-fdfa-474c-a742-b6cd2f8662e1@kernel.org>
+In-Reply-To: <d09fe2f8-fdfa-474c-a742-b6cd2f8662e1@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Fri, 28 Mar 2025 21:45:12 +0200
+X-Gm-Features: AQ5f1JrEmDVBvWjH9IO2Mtkm1mRjebe3Iamg0GwU0FiHaNIm70ztqd-cjwD8G_8
+Message-ID: <CAO9ioeXSdpNq+cOSHhbbE2Qya5LXjXixj4_g0h2PHBRcLxdsfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
+ to DP bridge nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
+        conor+dt@kernel.org, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
+        quic_jesszhan@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-ORIG-GUID: unBobXpKYxvwvQH4xm0W4P26mf2FX8dU
+X-Authority-Analysis: v=2.4 cv=MqlS63ae c=1 sm=1 tr=0 ts=67e6fc55 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=AD09SHeqe-8lbBjqVQoA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: unBobXpKYxvwvQH4xm0W4P26mf2FX8dU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_09,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 mlxlogscore=672 mlxscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ phishscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503280134
 
+On Fri, 28 Mar 2025 at 16:22, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 28/03/2025 13:45, Dmitry Baryshkov wrote:
+> > On Fri, Mar 28, 2025 at 03:13:57PM +0530, Ayushi Makhija wrote:
+> >>> These both above commented from Dmitry I have addressed in the version 2 of patch 7 of the series.
+> >>> I have squash patch 8 into patch 7 of version 1 into patch 7 of version 2 of the series.
+> >>>
+> >>>
+> >>> Thanks,
+> >>> Ayushi
+> >>
+> >> Hi Krzysztof,
+> >>
+> >> I hope this message finds you well. I wanted to follow up on the reply I sent. Your feedback is invaluable to us, and we would greatly appreciate any further insights or comments you might have.
+> >>
+> >
+> > Granted the lack of response, please make sure that you've addressed all
+> > the comments and proceed with the next iteration of the patchset.
+>
+> Just to clarify, I did not plan to respond here, because email style
+> which tries to respond to my comments is unreadable. It's impossible to
+> find what is quote, what is the comment and what is the response.
+>
+> I expected inline responses to the original emails and detailed changelog.
 
-Hi Guenter,
-
-thanks for your review
-
-On 28/03/2025 19:10, Guenter Roeck wrote:
-> On 3/28/25 08:15, Daniel Lezcano wrote:
->> The S32 platform has several Software Watchdog Timer available and
-> 
-> Why "Software" ? This is a hardware watchdog, or am I missing something ?
-
-I have no idea why it is called 'Software' because it is indeed a 
-hardware watchdog. It is how NXP called it in their technical reference 
-manual.
-
->> tied with a CPU. The SWT0 is the only one which directly asserts the
->> reset line, other SWT require an external setup to configure the reset
->> behavior which is not part of this change.
->>
->> The maximum watchdog value depends on the clock feeding the SWT
->> counter which is 32bits wide. On the s32g274-rb2, the clock has a rate
->> of 51MHz which lead to 83 seconds maximum timeout.
->>
->> The timeout can be specified via the device tree with the usual
->> existing bindings 'timeout-sec' or via the module param timeout.
->>
->> The watchdog can be loaded with the 'nowayout' option, preventing the
->> watchdog to be stopped.
->>
->> The watchdog can be started at boot time with the 'early-enable'
->> option, thus letting the watchdog framework to service the watchdog
->> counter.
->>
->> the watchdog support the magic character to stop when the userspace
->> releases the device.
->>
->> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
->> Cc: Thomas Fossati <thomas.fossati@linaro.org>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
-
-[ ... ]
-
->> --- /dev/null
->> +++ b/drivers/watchdog/s32g_wdt.c
->> @@ -0,0 +1,362 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Watchdog driver for S32G SoC
->> + *
->> + * Copyright (C) 2014 Freescale Semiconductor, Inc.
->> + * Copyright 2017-2019, 2021-2025 NXP.
-> 
-> Does this originate from out-of-tree code ?
-> If so, a reference would be helpful.
-
-Well, I kept the copyright but this implementation is mostly from scratch.
-
->> +#include <linux/debugfs.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/moduleparam.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/watchdog.h>
->> +#include <linux/clk.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
-> 
-> Alphabetic include file order, please.
-> 
->> +
->> +#define DRIVER_NAME "s32g-wdt"
->> +
->> +#define S32G_SWT_CR(__base)    (__base + 0x00)        /* Control 
->> Register offset    */
-> 
-> checkpatch:
->      CHECK: Macro argument '__base' may be better as '(__base)' to avoid 
-> precedence issues
-
-I'm not sure to get this one.
-
->> +#define S32G_SWT_CR_SM        BIT(9) | BIT(10)    /* -> Service 
->> Mode        */
-> 
-> checkpatch:
->      ERROR: Macros with complex values should be enclosed in parentheses
-> 
-> I am not going to comment on the other issues reported by checkpatch,
-> but I expect them to be fixed in the next version. I would strongly suggest
-> to run "checkpatch o--strict" on the patch and fix what it reports.
-
-Sure, I will do that, thanks
-
-[ ... ]
-
->> +static void s32g_wdt_debugfs_init(struct device *dev, struct 
->> s32g_wdt_device *wdev)
->> +{
->> +    struct debugfs_regset32 *regset;
->> +    static struct dentry *dentry = NULL;
->> +
->> +    if (!dentry)
->> +        dentry = debugfs_create_dir("watchdog", NULL);
-> 
-> That is a terribly generic debugfs directory name. That is unacceptable.
-> Pick a name that is driver specific.
-
-Why is it terrible ? We end up with:
-
-watchdog/40100000.watchdog
-
-There are 7 watchdogs on the platform, the directory is there to group 
-them all. It seems to me it is self-explanatory, no ?
-
->> +
->> +    dentry = debugfs_create_dir(dev_name(dev), dentry);
->> +
-> 
-> Where is this removed if the driver is unloaded ?
-
-Oh right, I missed it. Thanks for pointing this out.
-
-> Also, if the driver is built into the kernel, it seems to me that a second
-> instance will create a nested directory. That seems odd.
-
-No, because there is the test above if (!dentry) which is a static variable.
-
-[ ... ]
-
->> +static int s32g_wdt_set_timeout(struct watchdog_device *wdog, 
->> unsigned int timeout)
->> +{
->> +    struct s32g_wdt_device *wdev = wdd_to_s32g_wdt(wdog);
->> +
->> +    __raw_writel(wdog_sec_to_count(wdev, timeout), S32G_SWT_TO(wdev- 
->> >base));
->> +
->> +    /*
->> +     * Conforming to the documentation, the timeout counter is
->> +     * loaded when servicing is operated or when the counter is
->> +     * enabled. In case the watchdog is already started it must be
->> +     * stopped and started again to update the timeout
->> +     * register. Here we choose to service the watchdog for
->> +     * simpler code.
->> +     */
->> +    return s32g_wdt_ping(wdog);
-> 
-> Either check if the watchdog is running, or add a note explaining that a 
-> ping
-> on a stopped watchdog does not have adverse effect.
-
-Ok, I think the comment is unclear. I'll provide a clarified version 
-based on the documentation.
-
->> +}
->> +
->> +static unsigned int s32g_wdt_get_timeleft(struct watchdog_device *wdog)
->> +{
->> +    struct s32g_wdt_device *wdev = wdd_to_s32g_wdt(wdog);
->> +    unsigned long val, counter;
->> +
->> +    /*
->> +     * The counter output can be read only if the SWT is
->> +     * disabled. Given the latency between the internal counter
->> +     * and the counter output update, there can be very small
->> +     * difference. However, we can accept this matter of fact
->> +     * given the resolution is a second based unit for the output.
->> +     */
->> +    val = __raw_readl(S32G_SWT_CR(wdev->base));
->> +
->> +    if (test_bit(S32G_SWT_CR_WEN, &val))
->> +        s32g_wdt_stop(wdog);
-> 
-> The watchdog core provides wdt_is_running() which would avoid the
-> extra i/o access.
-
-Ok, thanks for the suggestion
-
->> +
->> +    counter = __raw_readl(S32G_SWT_CO(wdev->base));
->> +
->> +    if (test_bit(S32G_SWT_CR_WEN, &val))
->> +        s32g_wdt_start(wdog);
->> +
->> +    return counter / wdev->rate;
->> +}
->> +
->> +static const struct watchdog_ops s32g_wdt_ops = {
->> +    .owner        = THIS_MODULE,
->> +    .start        = s32g_wdt_start,
->> +    .stop        = s32g_wdt_stop,
->> +    .ping        = s32g_wdt_ping,
->> +    .set_timeout    = s32g_wdt_set_timeout,
->> +    .get_timeleft    = s32g_wdt_get_timeleft,
->> +};
->> +
->> +static void s32g_wdt_init(struct s32g_wdt_device *wdev)
->> +{
->> +    unsigned long val;
->> +
->> +    /* Set the watchdog's Time-Out value */
->> +    val = wdog_sec_to_count(wdev, wdev->wdog.timeout);
->> +
->> +    __raw_writel(val, S32G_SWT_TO(wdev->base));
->> +
->> +    /*
->> +     * Get the control register content. We are at init time, the
->> +     * watchdog should not be started.
->> +     */
->> +    val = __raw_readl(S32G_SWT_CR(wdev->base));
->> +
->> +    /*
->> +     * We want to allow the watchdog timer to be stopped when
->> +     * device enters debug mode.
->> +     */
->> +    val |= S32G_SWT_CR_FRZ;
->> +
->> +    /*
->> +     * However, when the CPU is in WFI or suspend mode, the
->> +     * watchdog must continue. The documentation refers it as the
->> +     * stopped mode.
->> +     */
->> +    val &= ~S32G_SWT_CR_STP;
->> +
->> +    /*
->> +     * Use Fixed Service Sequence to ping the watchdog which is
->> +     * 0x00 configuration value for the service mode. It should be
->> +     * already set because it is the default value but we reset it
->> +     * in case.
->> +     */
->> +    val &= ~S32G_SWT_CR_SM;
->> +
->> +    __raw_writel(val, S32G_SWT_CR(wdev->base));
->> +
->> +    /*
->> +     * The watchdog must be started when the module is loaded,
->> +     * leading to getting ride of the userspace control. The
-> 
-> ride ? And why does it _have_ to be started when the module is loaded ?
-
-The comment is misleading. I meant when the 'early_enable' option is 
-set, then the watchdog must be started.
-
->> +     * watchdog framework will handle the pings. It is especially
->> +     * handy for kernel development.
->> +     */
->> +    if (early_enable) {
->> +        s32g_wdt_start(&wdev->wdog);
->> +        set_bit(WDOG_HW_RUNNING, &wdev->wdog.status);
->> +    }
->> +}
->> +
-
-[ ... ]
-
-Thanks
-
-   -- Daniel
-
+Works for me. I'd say, let's get the next revision and check if it
+resolves your comments or we have more comments.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+With best wishes
+Dmitry
 
