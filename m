@@ -1,110 +1,208 @@
-Return-Path: <linux-kernel+bounces-579666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33BAA7471C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:05:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE00A7475F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231BD1B60602
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A97588175E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23C921ABCD;
-	Fri, 28 Mar 2025 10:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C92621ABD3;
+	Fri, 28 Mar 2025 10:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g8t9rbZG"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mX1QPbBL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB01217651
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F4021ABBD
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743156264; cv=none; b=PaF91ekENga0PnqLIsI0wrscurNzp7ETznOSH65hGVxTyn+c7U5oJnKnOP8fOVF2YCeATlkaRItNAry8c7iZ8xs20FmF13W2iLFiW+O4smLuUX3oND38Exrz5zw2FbmttXRykzaXl7ZE7YfbA7tmpauuR3yoLKA1r/63Z77arkI=
+	t=1743156348; cv=none; b=H18yfB4fP0eDMHfHq0d6Iv04nZ7DolGPofwCC4Yy0suTtmOkLnJmgqWh18Gg72zPCS7qiKjQ1DOUsuIiZfb8OV212I+G54AK+fC2T42txR3LAg8PxYYfmfP+njK7PhwNC4YW+RkU8266N0fpRapuGSbMCZPuYNUnTIPTiDy2cuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743156264; c=relaxed/simple;
-	bh=yVEU9Z9Cc8B9W4xNNyEcyh6tlvqC6ybG2jaMWegweJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R8d1dTaV+qLS35YUVOu6Is8OmT4CajDBKVP3reHqEw4RcOrFUGQ+YX3o/kMz40X/Kt9rUDq/vap3gIqiP99BW7iPsNjm+ozVVzNbeqCHcAoyixH7V0r+GhNkqAeW6W8TEIxZnSv8pms1noXr+riADik3ZBVc2J+SkZ0RnJJ6ivg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g8t9rbZG; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54993c68ba0so2060481e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1743156260; x=1743761060; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yVEU9Z9Cc8B9W4xNNyEcyh6tlvqC6ybG2jaMWegweJs=;
-        b=g8t9rbZGbrlXB5llJq+BBLRV1NBe7VglGZujVNaqfal49bofcjambfiTuvBE70ELRp
-         WlnYHFfMzszO9OYPcv40VYrCAPExxm/O/8sYGu+1rmnUXkCeu6E0bbSjZ6hiefUfghru
-         qb5Vfx9dI3f0xNMQqXTRVB4WSVLHkbaqs7Gw0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743156260; x=1743761060;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yVEU9Z9Cc8B9W4xNNyEcyh6tlvqC6ybG2jaMWegweJs=;
-        b=Lkw3gu5uLVW8bll9e9dQe1rGTEuDQccSiGZ+9sXZolb09Icf5i08G8BJTGEKaBYs2M
-         9Zn0X1i4aexuP0r5LQnf3u/4U2quZv0vmddSaWNfbvwdN8UYTWkn+zYgMhbHO+uChziK
-         WptMu1s497cDhtD2+Zt02IY8VPs5Y26gxnNQnJXSZpUQXJVe4gPio1F1QtyFEef+h3dC
-         jcxOWik5tPC3u3oDjL7cv7bAJu3ZEcETy5Yn5FV+1TagEe0N3oqQxMCiSzn9e0wYlVvC
-         mf9ksYTFwbPqRdn/cChI4fKPygiG9+eFaF0F1JmGd4CV9esFj5nq43CojVhKFCleUOPq
-         51wg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4lvTRNsj1y+WqyCofqvfFyT2dcn15/z3tccev4cfLKlotrWNgp09ZBeRLqeItYM5RDGDWu6UbJMrdW6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyocDNhePaOJ+HnMsDwGYeeTRMAaoFFX41cDSn+Y1oHlC+hNU6K
-	EVj6dPyujqdpPzNd0nAWCAXoM1n8jO/glzN1Xw2Qk4U24+1hHIQltyujGRgRTxUTrRp3iQ30eMy
-	fZtnM/M9src1UVdt4dXvDNhNMMblwiMXKAXhL
-X-Gm-Gg: ASbGncsTY179paKqvKhSvWo8EWVH+AIBlc9sLO7OwIw1LT6dAx6IyiVQx2/blZtISHj
-	TY9bovzwITe0mqJzgHrbJNVxY05FDORgWSUNZcU1RgWvw1tyxN+VDXS6EMNuzDKiMUTlZWncghz
-	Y+MUV6IMODgGpOc3ZyjBwavBCou4bAf6YNcMUOQYC90lkB1FKc12SD7A==
-X-Google-Smtp-Source: AGHT+IHePVtXJ1qJQdbP4+JraAsng3JxPcp8ln2qAoF7z/+m2DWfYuVxIC5W1TfslB1L3LezP+QcBUJ4Mmt/gRVxkjw=
-X-Received: by 2002:ac2:4e16:0:b0:549:7145:5d2f with SMTP id
- 2adb3069b0e04-54b01221f44mr2788893e87.33.1743156260501; Fri, 28 Mar 2025
- 03:04:20 -0700 (PDT)
+	s=arc-20240116; t=1743156348; c=relaxed/simple;
+	bh=Q0o2ssfPoSfk2eKGd9eiql4gPDexAE3aFwWQnyBXpoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5n7TKcuNX7J++MR1nCG8utYiZhdxz0UgTPAyR5kZrcqO6Jcy/Z5Y8vg4QK+rnMz3MEuacTjS1vY9tmT+lFsK4ygGBURY+kgoGDLy3v+SBWTFvaf7N2Tzh7ComEBkChVRlxzceolfSXbtjWySsM83fTsyE3ii397S8iuddrlXdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mX1QPbBL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 72179752;
+	Fri, 28 Mar 2025 11:03:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743156235;
+	bh=Q0o2ssfPoSfk2eKGd9eiql4gPDexAE3aFwWQnyBXpoc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mX1QPbBLJEwxALUPzb156MKV7SX+inreNYBm1ScvPWaks58uWu+fV/tcaklVvTsIA
+	 QsMAdJlOTcp43Stn5phQRP81RA6BYehj+ymIfGqdx8MPUTI+sHkXBIq2xHfYbcYmmH
+	 LyDXuwvul+c+1V32lfPmjo2JJLj0GTUU4SBuiiws=
+Message-ID: <5282b9f9-edef-45fd-8228-16096981a11a@ideasonboard.com>
+Date: Fri, 28 Mar 2025 12:05:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327-fix-mtk-iommu-error-v1-1-df969158e752@collabora.com>
-In-Reply-To: <20250327-fix-mtk-iommu-error-v1-1-df969158e752@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 28 Mar 2025 18:04:09 +0800
-X-Gm-Features: AQ5f1JruRldxLi3oN3F4vGRjnP_jRoig-8O423pVAOXUeHgChYU13ECJHzNzG14
-Message-ID: <CAGXv+5HAa0-AXg6=htNappreR5-9sPHNp7L9ByEBq4XZxADBXw@mail.gmail.com>
-Subject: Re: [PATCH] iommu/mediatek: Fix NULL pointer deference in mtk_iommu_device_group
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	"Rob Herring (Arm)" <robh@kernel.org>, kernel@collabora.com, Joerg Roedel <jroedel@suse.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/11] drm/fourcc: Add DRM_FORMAT_XV15/XV20
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com>
+ <20250326-xilinx-formats-v4-2-322a300c6d72@ideasonboard.com>
+ <20250327223449.GA16629@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250327223449.GA16629@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 27, 2025 at 6:48=E2=80=AFPM Louis-Alexis Eyraud
-<louisalexis.eyraud@collabora.com> wrote:
->
-> Currently, mtk_iommu calls during probe iommu_device_register before
-> the hw_list from driver data is initialized. Since iommu probing issue
-> fix, it leads to NULL pointer dereference in mtk_iommu_device_group when
-> hw_list is accessed with list_first_entry (not null safe).
->
-> So, change the call order to ensure iommu_device_register is called
-> after the driver data are initialized.
->
-> Fixes: 9e3a2a643653 ("iommu/mediatek: Adapt sharing and non-sharing pgtab=
-le case")
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe pa=
-th")
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Hi,
 
-Tested-by: Chen-Yu Tsai <wenst@chromium.org> # MT8183 Juniper, MT8186 Tenta=
-cruel
+On 28/03/2025 00:34, Laurent Pinchart wrote:
+> Hi Tomi,
+> 
+> Thank you for the patch.
+> 
+> On Wed, Mar 26, 2025 at 03:22:45PM +0200, Tomi Valkeinen wrote:
+>> Add two new pixel formats:
+>>
+>> DRM_FORMAT_XV15 ("XV15")
+>> DRM_FORMAT_XV20 ("XV20")
+>>
+>> The formats are 2 plane 10 bit per component YCbCr, with the XV15 2x2
+>> subsampled whereas XV20 is 2x1 subsampled.
+>>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> ---
+>>   drivers/gpu/drm/drm_fourcc.c  | 6 ++++++
+>>   include/uapi/drm/drm_fourcc.h | 8 ++++++++
+>>   2 files changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+>> index 2f5781f5dcda..e101d1b99aeb 100644
+>> --- a/drivers/gpu/drm/drm_fourcc.c
+>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>> @@ -346,6 +346,12 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>>   		{ .format = DRM_FORMAT_P030,            .depth = 0,  .num_planes = 2,
+>>   		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
+>>   		  .hsub = 2, .vsub = 2, .is_yuv = true},
+>> +		{ .format = DRM_FORMAT_XV15,		.depth = 0,  .num_planes = 2,
+>> +		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
+>> +		  .hsub = 2, .vsub = 2, .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_XV20,		.depth = 0,  .num_planes = 2,
+>> +		  .char_per_block = { 4, 8, 0 }, .block_w = { 3, 3, 0 }, .block_h = { 1, 1, 0 },
+>> +		  .hsub = 2, .vsub = 1, .is_yuv = true },
+> 
+> It appears we can never have too much (or enough) documentation, as
+> reading the format info documentation leaves me with unanswered
+> questions.
+> 
+> Looking at drm_format_info_min_pitch():
+> 
+> uint64_t drm_format_info_min_pitch(const struct drm_format_info *info,
+> 				   int plane, unsigned int buffer_width)
+> {
+> 	if (!info || plane < 0 || plane >= info->num_planes)
+> 		return 0;
+> 
+> 	return DIV_ROUND_UP_ULL((u64)buffer_width * info->char_per_block[plane],
+> 			    drm_format_info_block_width(info, plane) *
+> 			    drm_format_info_block_height(info, plane));
+> }
+> 
+> For the first plane, the function will return `buffer_width * 4 / 3`
+> (rouding up), which I think is right. For the second plane, it will
+> return `buffer_width * 8 / 3`, which I believe is wrong as the format is
+> subsampled by a factor 2 horizontally. It seems that either
+> char_per_block and block_w need to take horizontal subsampling into
+> account (and therefore be 8 and 6 for the second plane), or
+> drm_format_info_min_pitch() should consider .hsub. Or there's something
+> else I'm missing :-)
+
+The buffer_width is already divided by the hsub, in 
+drm_format_info_plane_width().
+
+>>   	};
+>>   
+>>   	unsigned int i;
+>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+>> index 81202a50dc9e..1247b814bd66 100644
+>> --- a/include/uapi/drm/drm_fourcc.h
+>> +++ b/include/uapi/drm/drm_fourcc.h
+>> @@ -304,6 +304,14 @@ extern "C" {
+>>   #define DRM_FORMAT_RGB565_A8	fourcc_code('R', '5', 'A', '8')
+>>   #define DRM_FORMAT_BGR565_A8	fourcc_code('B', '5', 'A', '8')
+>>   
+>> +/*
+>> + * 2 plane 10 bit per component YCrCb
+>> + * index 0 = Y plane, [31:0] x:Y2:Y1:Y0 2:10:10:10 little endian
+>> + * index 1 = Cb:Cr plane, [63:0] x:Cr2:Cb2:Cr1:x:Cb1:Cr0:Cb0 2:10:10:10:2:10:10:10 little endian
+> 
+> I believe this is right, but I have a hard time validating it, as I
+> think the corresponding figures in UG1085 are incorrect (they show a
+> 8bpp format as far as I can tell). Do I assume correctly that you've
+> tested the formats ?
+
+Yes. kms++'s master branch has support for all the formats in this series.
+
+  Tomi
+
 
