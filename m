@@ -1,199 +1,147 @@
-Return-Path: <linux-kernel+bounces-579411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA40A742CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F512A742D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 905421796DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:29:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCAF1178FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDB321147B;
-	Fri, 28 Mar 2025 03:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB4A13C8F3;
+	Fri, 28 Mar 2025 03:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAorpbq2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rw0CAJvh"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EA6211462
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6A42F30
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743132586; cv=none; b=RHR1fiDM3j88lVwkI10xb6nRJzOLBGC/UHdHiOdTH/7G3wxXfAfFFUJlxBHG/XYWW61JFfKKumMIfu5ou7408MsbfF14hx+k6k33Tkpx8KKlsPhE6a9UXvjnGo16ShP/2KNc7+UyXX/c1yCd5d265SjOWPVUfq8EnNkrSDxdHs0=
+	t=1743132983; cv=none; b=hRYaT20UfpY1u/MsR94iZRvL6wZzzeqxGkO7GeCFVwIUum6tcq+Bc9ieFYZuu+dck9W1IB3IBNk/3Vt0p2aTXluEfCrf34rGR102rH/JAvvrSj2AWfMOfeFMCt5srSZHYRVpgVdp9IE73v8AC8zouELCBeMKNhBd55HUO386ydw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743132586; c=relaxed/simple;
-	bh=fFHh/7o5dVm+ZWv7/WGLvJs+KgMMTP4llLeLOFEYEVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kChVYli+dk09AclCXbys3X4lfT6Sm2Y4r2zBe49ZWil5obhtOhnrky9zRCXmT+2vTsmbQzpVsTafhgdVnSGlUTFA5i+0Wkdmh8riEMu+7Vb8wJPaqO4RQqABdjfTAhlnpMocLzvX3lU7TeR63Bm4W2T0BktsgiD4SGIRXxjM3G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAorpbq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C50C4CEDD;
-	Fri, 28 Mar 2025 03:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743132586;
-	bh=fFHh/7o5dVm+ZWv7/WGLvJs+KgMMTP4llLeLOFEYEVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oAorpbq28XkkI2Dp2iR+VZdQOb0oqdrOxk7WjqCNo0z8LpXPphVbxHONeQQsVY0O9
-	 w8GAVuureAjqfv8BN1b+yBnUh/8L6EA7ncXKzX4OWgU9fJK1amWEPSoIVVzo7zZlBl
-	 6cESQiQvaMg47G0rxZWVfx4+JYc4lZG6Z8yFC+MIrAKYBgrITHXPXGxZOLxwCNJpUx
-	 zQSIvrNKhs8kzpKdpLpMw7wELBKuaV5AIGuskgS9L3rW0BQ0t5Ykl8YTUXZ5XG6mgN
-	 hw1iDxCZ9j7InszfHE83oeRcjNv+zHhkyxnEMaGuT197ExUZZH0gKwCZYjqqr/As5R
-	 xz+G5iRpQPoxw==
-Date: Fri, 28 Mar 2025 03:29:44 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Daeho Jeong <daehojeong@google.com>
-Subject: Re: [PATCH v2 1/2] f2fs: zone: fix to calculate first_zoned_segno
- correctly
-Message-ID: <Z-YXqKOIgYCpfuL0@google.com>
-References: <20250325080646.3291947-1-chao@kernel.org>
+	s=arc-20240116; t=1743132983; c=relaxed/simple;
+	bh=+frlrd9FzA0Y1MLXf/LE9ieO4zWiozcuaEjhCdlsW0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VR59uiu88QHyC8sxHrFJJG4X6ZVPEGOk88kc4xNEcNQEVF4UQgTDcjJw8rbhthX5Y07IEygL7Q51MbJO7e5R/ZOlVDIwaD3a5VsyCACND84XJ8xzfJkkeU62GxbXDywVHq5SkfWcUMDkRmkP/x8RKkJAxCq2yxKOw/UT0L4kMog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rw0CAJvh; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so220748566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1743132979; x=1743737779; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gEC8sJ5gvGrjdnR5ogccPiUny6HLYEid0fVwKOPDiYs=;
+        b=Rw0CAJvhAVN62c3qCYiBTJjVW+bukHmIN7E8M93+tUOjLvIKz7gHYPugzB5oeekELz
+         bWBCVz+RwWbAhAbtqGAfU+B9yvozs47ulhCKgYsUacnKUVnBJS8auB1+LcQsXyNNddKu
+         DWFceuvIZqnYDJfBbPG2T6WTybW3mgntx8omU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743132979; x=1743737779;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gEC8sJ5gvGrjdnR5ogccPiUny6HLYEid0fVwKOPDiYs=;
+        b=mQBxd2Vp3eWBpxl+5dQqG8Co1sjbtM7DDUTf18gO+gHpYOFT2ehKCg8CbaTrO0Vrzq
+         LmpGqzk/NVKOvhIHVw33uethPJXMP0IAKu1KNMJvE8z+cT6Xy2S44tR2cOxP7xd+0Ar4
+         OLruFDP8KEEbN4P6g6yuNqA6EMqUeoNnAyaTn5o/Wo+zv8JFY/hsCLtgHNoSMbLbxgqz
+         e+UOdWfooKOfy+WIpyYWzZf3Y01VBb7JBNWEWYDl+xq8j+3wIbxnw+8PmhD9mrV6J1Dm
+         Z+gSXl+CsUgK0fhqc49mJaH4w9nVhxlHJoZFCBH53COwzICk5VAwY9YTdf1G3e8w9qvD
+         BcxQ==
+X-Gm-Message-State: AOJu0Yypym2A9CDKeLWTGZ15hEt9y3U0ypSud+0UoCTshtzRkXSgZgcg
+	dsOwRBunYj6RtW3hg0d7npZuJXSxfCJa/CLBWHj9AiRzzPLvYxbADdLhZmU0ujXribSFUWAcjOu
+	9CcM=
+X-Gm-Gg: ASbGncsSz3genCcsbGJECGvh/jss0VY43y8meZmQ2xVaF1LMVM3VMf2lSyL6ztP50uh
+	hkrj/yU20jV6YNl85YRkTwsdNOfKIpvgMlPoEENM91D988cbrCcsgx3PfMpkfq6k8kKQXcbSjEN
+	NyEzP5TFaBcYnDKTfte42ep8AiIeI4BtL9AjBkOiZkpNMwvi/TBJ58OvH+PMpet68CEOYDMsJE/
+	jvPgFmbWSofetiKMo+okTXZHH0d2sERWrtFunRFFFI0yVc7Z6TN4Hz9V9fqVglBRM2l0wMK+iRF
+	t4rc6MsXQz2jY+/jzbNnVq5YUxwDIU/BOkpGZ52N0CxrrgwFoy1oBsCLjeslWqYltcA5SBP+/ZC
+	Wfnlq+jYPcDLDAcdGtP0=
+X-Google-Smtp-Source: AGHT+IHE1NOKH6E6lZG1iZmN5MxxrucNgK1uei8emYgLT6EtGCC354szJDVMVv36hT6zXnogvsDibQ==
+X-Received: by 2002:a17:907:6ea5:b0:ac3:ccf7:3a11 with SMTP id a640c23a62f3a-ac6fb14591bmr509117466b.44.1743132978597;
+        Thu, 27 Mar 2025 20:36:18 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927af39sm91686266b.44.2025.03.27.20.36.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 20:36:17 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so220747266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 20:36:17 -0700 (PDT)
+X-Received: by 2002:a17:907:868c:b0:ac4:169:3664 with SMTP id
+ a640c23a62f3a-ac6faf04132mr477722566b.33.1743132976743; Thu, 27 Mar 2025
+ 20:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325080646.3291947-1-chao@kernel.org>
+References: <20250327171037.032bf7e7@gandalf.local.home> <CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
+ <20250327212447.24e05e7e@batman.local.home> <CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
+ <20250327220106.37c921ea@batman.local.home> <CAHk-=wiNLcTj2iiE9waSkmpYpu6VQ_q=Zaqi_WmAMiv_MvH4vQ@mail.gmail.com>
+ <CAHk-=wjhT_xPdATLmfmdWCM7gKApvTyino_ffko5z1YumJDAHA@mail.gmail.com>
+ <20250327230104.660a4b35@batman.local.home> <CAHk-=wh3VnL5Rpuh7tCitOKYDPqWoucFNCh6b3-JR6qZtxCiCw@mail.gmail.com>
+In-Reply-To: <CAHk-=wh3VnL5Rpuh7tCitOKYDPqWoucFNCh6b3-JR6qZtxCiCw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 27 Mar 2025 20:36:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wio-SF6dm+QeBW7HN7TFOK1noEm_EVob2UGyUwRYz=L9Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JryiNvjxwgoALTvZs-teBVM83QHu9Njr2fkTfpyoW5DtDJkGExCdqiy4nU
+Message-ID: <CAHk-=wio-SF6dm+QeBW7HN7TFOK1noEm_EVob2UGyUwRYz=L9Q@mail.gmail.com>
+Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Feng Yang <yangfeng@kylinos.cn>, 
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 
-It seems this patch breaks the multi-partition cases.
+On Thu, 27 Mar 2025 at 20:19, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 27 Mar 2025 at 20:01, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > Are you OK with the idea of moving the mapping code into the ring
+> > buffer code (which I think is cleaner) and then keeping track of that
+> > to get to the pages with the helper function?
+> >
+> > struct page *rb_get_page(struct trace_buffer *buffer, unsigned long addr)
+> > {
+> >         if (buffer->flags & RB_FL_PHYSICAL) {
+> >                 addr -= buffer->vmap_start;
+> >                 addr += buffer->phys_start;
+> >                 return pfn_to_page(addr >> PAGE_SHIFT);
+> >         }
+> >         return virt_to_page(addr);
+> > }
+>
+> I think that would have been *enormously* better, yes
 
-On 03/25, Chao Yu wrote:
-> A zoned device can has both conventional zones and sequential zones,
-> so we should not treat first segment of zoned device as first_zoned_segno,
-> instead, we need to check zone type for each zone during traversing zoned
-> device to find first_zoned_segno.
-> 
-> Otherwise, for below case, first_zoned_segno will be 0, which could be
-> wrong.
-> 
-> create_null_blk 512 2 1024 1024
-> mkfs.f2fs -m /dev/nullb0
-> 
-> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
-> Cc: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v2:
-> - traverse w/ zone unit in get_first_zoned_segno()
->  fs/f2fs/f2fs.h    | 18 +++++++++++++-----
->  fs/f2fs/segment.c |  2 +-
->  fs/f2fs/super.c   | 37 +++++++++++++++++++++++++++++++++----
->  3 files changed, 47 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ca884e39a5ff..3dea037faa55 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4630,12 +4630,16 @@ F2FS_FEATURE_FUNCS(readonly, RO);
->  F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
->  
->  #ifdef CONFIG_BLK_DEV_ZONED
-> -static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> -				    block_t blkaddr)
-> +static inline bool f2fs_zone_is_seq(struct f2fs_sb_info *sbi, int devi,
-> +							unsigned int zone)
->  {
-> -	unsigned int zno = blkaddr / sbi->blocks_per_blkz;
-> +	return test_bit(zone, FDEV(devi).blkz_seq);
-> +}
->  
-> -	return test_bit(zno, FDEV(devi).blkz_seq);
-> +static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> +								block_t blkaddr)
-> +{
-> +	return f2fs_zone_is_seq(sbi, devi, blkaddr / sbi->blocks_per_blkz);
->  }
->  #endif
->  
-> @@ -4711,9 +4715,13 @@ static inline bool f2fs_valid_pinned_area(struct f2fs_sb_info *sbi,
->  					  block_t blkaddr)
->  {
->  	if (f2fs_sb_has_blkzoned(sbi)) {
-> +#ifdef CONFIG_BLK_DEV_ZONED
->  		int devi = f2fs_target_device_index(sbi, blkaddr);
->  
-> -		return !bdev_is_zoned(FDEV(devi).bdev);
-> +		return !f2fs_blkz_is_seq(sbi, devi, blkaddr);
-> +#else
-> +		return true;
-> +#endif
->  	}
->  	return true;
->  }
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 396ef71f41e3..dc360b4b0569 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3311,7 +3311,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
->  
->  	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
->  		f2fs_down_write(&sbi->gc_lock);
-> -		err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk),
-> +		err = f2fs_gc_range(sbi, 0, sbi->first_zoned_segno - 1,
->  				true, ZONED_PIN_SEC_REQUIRED_COUNT);
->  		f2fs_up_write(&sbi->gc_lock);
->  
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 011925ee54f8..9a42a1323f42 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -4307,12 +4307,33 @@ static void f2fs_record_error_work(struct work_struct *work)
->  
->  static inline unsigned int get_first_zoned_segno(struct f2fs_sb_info *sbi)
->  {
-> +#ifdef CONFIG_BLK_DEV_ZONED
-> +	unsigned int zoneno, total_zones;
->  	int devi;
->  
-> -	for (devi = 0; devi < sbi->s_ndevs; devi++)
-> -		if (bdev_is_zoned(FDEV(devi).bdev))
-> -			return GET_SEGNO(sbi, FDEV(devi).start_blk);
-> -	return 0;
-> +	if (!f2fs_sb_has_blkzoned(sbi))
-> +		return NULL_SEGNO;
-> +
-> +	for (devi = 0; devi < sbi->s_ndevs; devi++) {
-> +		if (!bdev_is_zoned(FDEV(devi).bdev))
-> +			continue;
-> +
-> +		total_zones = GET_ZONE_FROM_SEG(sbi, FDEV(devi).total_segments);
-> +
-> +		for (zoneno = 0; zoneno < total_zones; zoneno++) {
-> +			unsigned int segs, blks;
-> +
-> +			if (!f2fs_zone_is_seq(sbi, devi, zoneno))
-> +				continue;
-> +
-> +			segs = GET_SEG_FROM_SEC(sbi,
-> +					zoneno * sbi->secs_per_zone);
-> +			blks = SEGS_TO_BLKS(sbi, segs);
-> +			return GET_SEGNO(sbi, FDEV(devi).start_blk + blks);
-> +		}
-> +	}
-> +#endif
-> +	return NULL_SEGNO;
->  }
->  
->  static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
-> @@ -4349,6 +4370,14 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->  #endif
->  
->  	for (i = 0; i < max_devices; i++) {
-> +		if (max_devices == 1) {
-> +			FDEV(i).total_segments =
-> +				le32_to_cpu(raw_super->segment_count_main);
-> +			FDEV(i).start_blk = 0;
-> +			FDEV(i).end_blk = FDEV(i).total_segments *
-> +						BLKS_PER_SEG(sbi);
-> +		}
-> +
->  		if (i == 0)
->  			FDEV(0).bdev_file = sbi->sb->s_bdev_file;
->  		else if (!RDEV(i).path[0])
-> -- 
-> 2.48.1
+.. actually, thinking a bit more about it, I think you want another
+level of abstraction to deal with the chunking side (ie I think you
+want to make the subbuf_ids[] thing explicit and the 'page order' as
+well).
+
+So you have that 'meta_buffer' thing for the first page, but you also
+have that subbuf_ids[] array with pages chunked by 'order'), and I
+think you need another level of abstraction for those.
+
+IOW, you'd have 'rb_get_meta_buffer_page()' for the first page, and
+then something like 'rb_get_buffer_page()' for the subbuf_id[] thing.
+
+Or something in that direction. I didn't look *too* closely at what
+the code actually needs, I'm just trying to make sure that you don't
+pass random kernel addresses around, but something more structured.
+
+Preferably maybe just the page index *within* the ring buffer,
+perhaps, and have the helper function do the whole "is this the meta
+buffer or one of the subbuf_id things"?
+
+Hmm?
+
+More clear abstraction is what I'm looking for, in other words.
+
+              Linus
 
