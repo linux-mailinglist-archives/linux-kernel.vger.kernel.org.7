@@ -1,154 +1,91 @@
-Return-Path: <linux-kernel+bounces-580430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337F9A751D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:04:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F69A7520F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA8C1894201
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19E118949CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63381F582C;
-	Fri, 28 Mar 2025 21:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9343D1F4C92;
+	Fri, 28 Mar 2025 21:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="CJ+RyN9R"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="s+5s9tDo"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D7E1F4C97
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E968D1F4C84;
+	Fri, 28 Mar 2025 21:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743195770; cv=none; b=WS4PZfK4/K+5fk0pk3XOgNqNr/+6rQk4YH56hj1ykAahbJh9+vhcrWQNowwpRbyQ8F6BiAayehHce4aPVN2HEk/swxW8zQ7luGBWMngttZuaL7pzVENnn7RDPRECePcOMIE8BSUFn6csLZR3//5TIrGBraw6zZZXTX4jldJCYvs=
+	t=1743196890; cv=none; b=sqwziV+55RpedJY9anybfpXyHtzfTkGgoajhWkUcOVEr93XABUfZHKWblC0XhxazgZbg6auOQWTd98uNgWEKDcCyT3xrzPTquR+r6k96J4vmt56BeYJYpog1GoLJiyZyIqY/CtYQCJ/HN77TWzs04510FxeKwbTwiEWVYWvDTjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743195770; c=relaxed/simple;
-	bh=qVNF/97Fzr1SWnglsbvekG+r808MZVRjwdBPHhVs+jM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WJ6YaNvipl24YuBeCe/ivsFPxRch5Z14S9Qev0faQEAoJ5YMfmba4aslatplSOSw1Clu/6kL1qz6bc/mfHEPT1eH1cfITeIDnMF2PXP/iLdTXuj2eMFd+vkkpz7UcmfA8xOerOqfbE4AxPIcLgS+ygE0y6agTdYkYSj+2d71kFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=CJ+RyN9R; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85dac9729c3so192122839f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1743195768; x=1743800568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Up6UVO27Yn/XqWtQdUwLGOA59Ljhuzuee1Xv/FAc+zk=;
-        b=CJ+RyN9RpRelRlmPUEU53s9zgD27jdtZod7yaP2ba6eoB5sTvH6lMdSeMqW6zkJec7
-         Z7YDJEwtPaaRb9tougW3du4L/h5Lv/IQpcWE9bUGnXilU47dk1F17ouAm/1HUgrUAw75
-         5Uya1kNPEGe4Y2QqRkucUvDQ62+4CZISfVt+nNnvzVAVaafvVwLcvLNYD7CBXlJrNaI9
-         7qeQit6lcf4egmXug8tEo7oHAoyPkkjmnsr8Ga2tYR5zAX7oWdP8Ov37KOw8pgkY0sLB
-         me3mDuVlFxvXFeAaCXTq4J80m1ht+lneoB5F/+304mVmjJajsm68i/AObrmzN0h60Ayk
-         vKPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743195768; x=1743800568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Up6UVO27Yn/XqWtQdUwLGOA59Ljhuzuee1Xv/FAc+zk=;
-        b=UlHLC9mcap+RdGXVUx5gLs6Y9mMWcmFuzxd/fjuGVc96kg6Mdlzotq8v3r5igN+rZm
-         O+H/6jUflVlBjGCTMt5MnBEhMzlSFBDjr5F7Sv03F8M0RDB+rlYCM1+d4ZE6mpwKRije
-         H+LQvF/kyOkgmHTlVQxrzd3ykG5zBSU4vgmK+ColZkq3r5Rl6oM3L1Jk5HqH7PNm9iSO
-         ZRcNKLN+PPflTXoEjN2dapuh0drIRTd8OcVn3aA53n+cWYh/HOT6lHpIldgoVQVXYoQ9
-         HsO31vYYFGiEIF3GuhOsRBazI8J/x4oucBRJfNhFNCWcXFIAv4Iz24x4O3jA4IevpV1n
-         Rpfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmQmspbNKzskRxemn1hjHT8Pl0wpZt4FMDDx/7gO99SwFMikBp3JGJTsF8w25oxYZa/5ZhUa4+ekNpEBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbgCMzecj+MVEmhD6r14EqlWRoeAS5V0UW7BR6Uk6iVOY8YrNa
-	GXu0LWhOs2v1iDVgZFEdKlpDXhAhbDOhEpQvjlZYnVwW/2QVLebzgWPt4paaWn4=
-X-Gm-Gg: ASbGncsnN4JdbAoKkEAlTqQedUv1T7Ybmj3h0iuk7DO6iGDOm6fap+qfacahr9t21/l
-	kK/9QB470sfMKU9R5LHEPbiVNSofEcYHWO/zV6q97EIwT447LXyOdAkwQYfoDUs1wWm4MyH8q8l
-	jryvtQj4V/JfwCOX9gYt+d+hjfQ6zptgwHar9hruh1vDQYpAmt2IQVYHdCEhZeHJcUvpgFVgsqZ
-	58ytqfQFKbyA+Nc01+Gdjax55D/MZm9r74tUqDW3JufdYzuaXZU+dCAMOaFBTkJ8uoyQtRf2Zo1
-	tnEyl10FMhrbJom89TrtLBJVPFtncMsS2OS/AxhSqSGAwXXBApyhuwHHxW9AOYUUHBitEQXG0T5
-	4eAqP964kZ9+z4ZtzCA==
-X-Google-Smtp-Source: AGHT+IGycY5TIkiYNgkSFBznHFQkpXRLd390tmdbEA+ih3++uzphzN5QAmfZxFmfAoPvrq6k/CN1+Q==
-X-Received: by 2002:a05:6e02:23ca:b0:3d3:e296:1c1c with SMTP id e9e14a558f8ab-3d5e090e3e0mr11364365ab.9.1743195767546;
-        Fri, 28 Mar 2025 14:02:47 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d5d5a74286sm6769405ab.39.2025.03.28.14.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 14:02:47 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	dlan@gentoo.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heylenay@4d2.org,
-	guodong@riscstar.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Fri, 28 Mar 2025 16:02:32 -0500
-Message-ID: <20250328210233.1077035-8-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250328210233.1077035-1-elder@riscstar.com>
-References: <20250328210233.1077035-1-elder@riscstar.com>
+	s=arc-20240116; t=1743196890; c=relaxed/simple;
+	bh=UGkLoJtbx5sNziafI54D/Isr65TKJvpRmSH3l1aSTGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RkyKnwuHHsJtXhbLFrJYsw92yeF70QUsoq4zrn5J77tRgX5PzfLqbT1OItRXnIh4fghN8GZJBdLI3FFekTk4rox66UlHcpG9fSS9wuSBvTI/z5VZSaVwLv/BCwXpBluu8tjkO69hx3J/ZD1+lwDI/QqLPcET7NIl4OL7Uq/YcHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=s+5s9tDo; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id 4bc26fc8e0c88c91; Fri, 28 Mar 2025 22:21:26 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 7E1867F0283;
+	Fri, 28 Mar 2025 22:21:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1743196885;
+	bh=UGkLoJtbx5sNziafI54D/Isr65TKJvpRmSH3l1aSTGY=;
+	h=From:Subject:Date;
+	b=s+5s9tDoFatFzwfoe9/FuGyhTl3fMcDqCeFaNmnx4CxiXZzeDXaZlhDfuEB4Hs4Th
+	 X2AiIPMNPQXk6RUAuEnYWglSJkCW0kJnCZ1LKmTxEfZIN6Te/zXHjRx27JfOeX1e8Y
+	 cv7S94gq4REsrhIfveTmYhkRPMddr3j9IHqcvG4YGEaywIeI4DaQjqGINxTnGsTFDG
+	 IM4/pQ0GXRQn9uFrZOlxpttDeojVVSccwOYhGrAkllaHFIWlvj9GWmOiV9Oxxyvhrj
+	 rgTbe5ca65vtn99kGvOmPAu85NrLawTgsfhAvWDXIjlKctZxpn9wfGO+g4mIQgt7V9
+	 vwTOkvDqvdGSw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Subject:
+ [PATCH v1 00/10] cpufreq: cpufreq_update_limits() fix and some cleanups
+Date: Fri, 28 Mar 2025 21:36:05 +0100
+Message-ID: <4651448.LvFx2qVVIh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedvfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrgg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=96 Fuz1=96 Fuz2=96
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+Hi Everyone,
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+This series of patches consists of a fix for a possible (and actually happening
+in some cases) NULL pointer dereference in cpufreq_update_limits() (patch
+[01/10]) and a bunch of tangentially related fixes inspired by it, mostly about
+using __free() for cleanup and locking guards.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 09a9100986b19..f86d1b58c6d35 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -350,6 +350,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -518,6 +530,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+The first patch is definitely for 6.15, but the rest is rather 6.16 material.
+
+Please refer to the individual patch changelogs for more information.
+
+Thanks!
+
+
 
 
