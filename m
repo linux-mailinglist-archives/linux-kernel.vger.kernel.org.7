@@ -1,218 +1,130 @@
-Return-Path: <linux-kernel+bounces-579778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93059A74957
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:40:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7A9A7495C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4DD21891B6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6393175AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EC021ABD1;
-	Fri, 28 Mar 2025 11:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD3521ABA7;
+	Fri, 28 Mar 2025 11:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PbBMCrUk"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muaH3KoX"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B333521ABA6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2481DD877
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743161993; cv=none; b=d+qqZSkdKcdsJFls9P2widk4eBrBj75YPikNbC3gbHpTRBMs8EIUdB7N3NLDO9YevGJqA3L318R7LcjpCDdmnvDLx2hAhUyBM5t6gWqMaxLNLxoB9GHrkotRkOM/sVv/fI7l10M9L4Cpof0hpwL9ggz5o9+uDKyATHpqopDWvvY=
+	t=1743162125; cv=none; b=CQSfG8H/m+L8lVat5x+nIPZdoNh+gMcdEoNq93J/VkL4xJ79/NA3MOcVxRQCdWOKmLxq/8Vu6setJ8aJuLaeG9ydH21OoBWqAM8p8+zRYACfk4Zym1wqNkzEHNDWOEJMTyg58u/qdTEqpk4zaMf5djcWzxDiGxIRToet5OoGEi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743161993; c=relaxed/simple;
-	bh=xXtCiqDkKVzPlrRtPr8GSLtwyVRSEyvpBCAqqFCIdaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AlGSQ349suz9RMEmmyCVwL7Fm9yqLbKALmshLB8Vib+adZQMIm9DEXp0oLZU67w+OU1bwqf7DK68qNIErcdtWLNIH7jTskCquUMD2oehHzAjaBEfiYTm/KByS5sEKJGDJfl23p8g9cLUZg5Emmq/arZ+ubuTfE1zFY761DIysfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PbBMCrUk; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5dce099f4so2810372a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 04:39:51 -0700 (PDT)
+	s=arc-20240116; t=1743162125; c=relaxed/simple;
+	bh=PFZ4TMRgtKdeGj2aNdIxMtFoTXajuTar5AF4BMOWugk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SAyvggCYU/bldrcHCHMGHnwAg3ITVLMFaAOt7iie7dJ6hMOOoMTZeEMy6aIINl0JNLE+aqbTBqHICK7DfgeUC0k1ZkRgpPPQrSCGEUIvwnmEzTKCnXFOR8FAd+QNviBSd3FUV9oZx45Pm7JoEZ4okB8oA3EH74Suv4JamGxWJZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=muaH3KoX; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso22300835e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 04:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743161990; x=1743766790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQBUB18mwX4A4xTotkHj/u2lOJW8/CY/92F1uJiGKg4=;
-        b=PbBMCrUks+2fvkA0eSjWoFZXzsLxG8NbRWh1XRqbMaVBHST1JpyC+UJVO4ucGxfzBB
-         lVxQKuAzZQKsq9B3YnHG9FW0LdJzFqIWprKIrSdsNQOkZ2fk3Sy6cbgonrcqinqj26jG
-         fOFGa06ASBCUbFlewfmPUWLBBygp7SRktaTlG0e2qqDrIIT16rwrpeoYElXevruyxs4S
-         0bx8eYO3fp8RI0Zmmc5Rgcm4VvRsKig7sPwtbAtzuKlXqPGmBfo3ax37KuaaFw2LsIHm
-         dNc4O416xKjkbHKA9ALXQGXLyGI8Og7C6RpL5SLAztOpFHkNg9usisU+5KvtK6RFQFeH
-         cTQA==
+        d=gmail.com; s=20230601; t=1743162121; x=1743766921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qU5AiWpbN3KM74t30WidB9pTNIUeBMiW8GyuUSbcvA=;
+        b=muaH3KoXo3iSq9fjvchf4biTUdghVETDMqOEu2MFsvLIwDJXWtDzCsO3VArQgWOvSg
+         n3OQCTy3Iix33B1rTPa8tPgwB1n/5L7pDgcwI7DdNb3sKBcwoE44LAqVtw66goG29hqE
+         ucojNRxEPh2unU8yGV2rEVopEiWtmsqK6jn5Q++U0dbTTcz2a8nijUZxuZRWnZX5MRTD
+         TNF3YkElwEVNsBz3B53GkXrSQFcUBRhkXbv8RptERr9x3F7TlZLH5S4XA5GMJeSgJnN6
+         T1XaY20HHVAK3dDvcQTEDzRpXF/QhZ8Ybvj0tx23/FAB0qXVpcWUmG/fwSLTS9Af5C0/
+         Azuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743161990; x=1743766790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KQBUB18mwX4A4xTotkHj/u2lOJW8/CY/92F1uJiGKg4=;
-        b=jWr64KrUFnQamgLQtmWpdayyYOb6Dh39Qf4UpNC+K7oDn7gF2yGY7WS2Fu+6RwngnS
-         4oJsdaamA+t/ObdVNNf/SpZESO/yPC2ucuxZQtVSI8Mn8Is6Uz4//POOgZVL5Xtrk3oF
-         Keqnc9/KBQ8Z24+zEwKnNPj3yg8Mezd6KBOltAuOyS65yiryqy1bc1aZfIvpiH/tMSC2
-         5oX6Ws6cSezlfMla93LL+TUY0h4ROlKGxMploNT6dNeUekAAvqBjhr8Xfi7xgYkXLXmk
-         Xdx9zgRDbhBa3goV3HU61DIyH8ZrzbyHKwMDzBPwQPZhj+ImdMEaceTLxZXgsI7cFsna
-         uEIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXuiXkStdd6LAIPq91Jzmu0/N10dLhvNOHzc+neZIUWaI5zEbpQjvLs519D7skmxbAdn9vfDqGgjxHX4BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3iz1IYh2OfvMbTKqJqWkE9W4HzhDJdyPBhK8/3XiGvZ3KuStu
-	98aIbV7Gg7114QvIUIkmV6hpN6ZbYUttD0KpSuwgFoxr62qb5Q7xDuzd33SMqQ==
-X-Gm-Gg: ASbGncurOWqMZnwxKg0r5T8c0El2etPbg2n1GLX275qrPjVry2rFsgjwPMauskpeuTK
-	o3+G6K865ZajC69PlEr9QBwm5vr7T0O1cSM3ln3yZO6A6yV2LmCkpYDe8Dm/+8t5hyeub+T8dzi
-	oUwEWvNOxsnFhoFjMdbjJ7YufoYqP30ZymSk6yfIoq+Mzdbm7OI+KajY4OQO3U/4sA1Ro0XNDLW
-	XcEzoF6ZCJ/lUnJjHuSvp8qOfUjK2x+T8KUkpbYhM5FXocoEtWgPTp7wwXatMO1yotk6ZIxfZBi
-	Rpyvcz8olduAvYydFjFANsEuy21mKnJGNpJ2S38maAaq9p1R9yB3+tkAboFU+cudt6Ny9zSxdbv
-	WvW0=
-X-Google-Smtp-Source: AGHT+IGeYnm3vDHFpDSraEUf3HzDe65CWmKu1pd5dHmjPuvRy1baA8IV5n1Oel5kP1U7FdthFEYd6A==
-X-Received: by 2002:a17:906:6a09:b0:abf:6f87:c720 with SMTP id a640c23a62f3a-ac6faf0959fmr756376266b.29.1743161989773;
-        Fri, 28 Mar 2025 04:39:49 -0700 (PDT)
-Received: from google.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719621b73sm145729266b.120.2025.03.28.04.39.48
+        d=1e100.net; s=20230601; t=1743162121; x=1743766921;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qU5AiWpbN3KM74t30WidB9pTNIUeBMiW8GyuUSbcvA=;
+        b=bha6+ngNLqw/ax9lyRoW8jpca9pK0pxnVDob8k/4QgCf8ZBvZsDbkR8t41grbZaJot
+         axWum8Fl+Hd270hwF13Pxz7Hrtrj5ayvKOIrdLBrY3PaHgFc4JuOhWZue1vg74OQgAn3
+         KYfxnZ3mLqI5yCJVbllLTFmm+ciXpCzra7MoLDsp40n5tdC5tYehaYvQuIQSacUNlXOx
+         cecyf018l63JYQ369OqvEKmlqsawOIrQfJiFNWlPXDMK8mWCqhSeLeY9TYf3XQ0U1VHO
+         oVqDNkdYRdfXi5DhiO+YnM2HJEumYv14qqya0iwlqOPlfG+WesWhdiqvSbY9WdcP799B
+         DxEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/1EcH19oGAk/pvtoBx6+4tVoW3089/Tyb5bQYZYO54sfID2McHgmDpxS545wfEKwnRSXrU+7wUkwmpD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx4gKebuOQ8fWSJ8/i/ndRTkVADWj0TJeDT7BnuVey024aD6/I
+	BHFQTsDaCNsBR7cfwa1Jupe131/OT0hTRCYpxIDg1kMDrzmuXUtWBpJVAg==
+X-Gm-Gg: ASbGncttGoaoRhKlscXXFQoz/7jhxgnTzv/qiFO1+jIqUDyzeYTKrABJn6Jma4dm7EH
+	NvJiKT9C5Lx1XoAfv0Z6r8ru4p9Fn73UXLEQwixPjZgADjQS0pyE4HMARPMgh9uG/MWvKbWSe4c
+	hcSP9rO5QfiMuuzqbPWYiSnBeRCPT9CqfTw0jnNQsy94Z/a3Tw3xGHjRL3hobb2AxVyctNayFmc
+	aornVgykrDxkJwEJ3of09Qbaatq5OTB1KE/zXtkyvaw9wUmx5VRHa7hFOdP99ruCDs4JNWEuukE
+	tSHgLzLdAH7u5gUhAJ9JoFEySPWUlY6pBOJJx6zFTy7D
+X-Google-Smtp-Source: AGHT+IE6NyaKSWsufmYH5cuBADybmG03r6oOy5QuUTP68hFuOh3PEqtETMHUqZz02lhy8vWkbThYlA==
+X-Received: by 2002:a05:600c:354a:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43d91789e8bmr24547425e9.11.1743162121507;
+        Fri, 28 Mar 2025 04:42:01 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c0b6656afsm2335864f8f.40.2025.03.28.04.42.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 04:39:49 -0700 (PDT)
-Date: Fri, 28 Mar 2025 11:39:45 +0000
-From: Quentin Perret <qperret@google.com>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, snehalreddy@google.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
-	will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, Andrei Homescu <ahomescu@google.com>
-Subject: Re: [PATCH v4 3/3] KVM: arm64: Release the ownership of the hyp rx
- buffer to Trustzone
-Message-ID: <Z-aKgXVjp4nNJcLd@google.com>
-References: <20250326113901.3308804-1-sebastianene@google.com>
- <20250326113901.3308804-4-sebastianene@google.com>
- <Z-Qv4b0vgVql2yOb@google.com>
- <Z-UcW32Hk6f_cuxc@google.com>
+        Fri, 28 Mar 2025 04:42:01 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: of: fix documentation reference
+Date: Fri, 28 Mar 2025 12:41:48 +0100
+Message-ID: <20250328114148.260322-1-rgallaispou@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-UcW32Hk6f_cuxc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thursday 27 Mar 2025 at 09:37:31 (+0000), Sebastian Ene wrote:
-> On Wed, Mar 26, 2025 at 04:48:33PM +0000, Quentin Perret wrote:
-> > On Wednesday 26 Mar 2025 at 11:39:01 (+0000), Sebastian Ene wrote:
-> > > Introduce the release FF-A call to notify Trustzone that the hypervisor
-> > > has finished copying the data from the buffer shared with Trustzone to
-> > > the non-secure partition.
-> > >
-> > > Reported-by: Andrei Homescu <ahomescu@google.com>
-> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > > ---
-> > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 ++++++---
-> > >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > index 6df6131f1107..ac898ea6274a 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > @@ -749,6 +749,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
-> > >  	DECLARE_REG(u32, uuid3, ctxt, 4);
-> > >  	DECLARE_REG(u32, flags, ctxt, 5);
-> > >  	u32 count, partition_sz, copy_sz;
-> > > +	struct arm_smccc_res _res;
-> > >  
-> > >  	hyp_spin_lock(&host_buffers.lock);
-> > >  	if (!host_buffers.rx) {
-> > > @@ -765,11 +766,11 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
-> > >  
-> > >  	count = res->a2;
-> > >  	if (!count)
-> > > -		goto out_unlock;
-> > > +		goto release_rx;
-> > >  
-> > >  	if (hyp_ffa_version > FFA_VERSION_1_0) {
-> > >  		/* Get the number of partitions deployed in the system */
-> > > -		if (flags & 0x1)
-> > > +		if (flags & PARTITION_INFO_GET_RETURN_COUNT_ONLY)
-> > >  			goto out_unlock;
-> > >  
-> > >  		partition_sz  = res->a3;
-> > > @@ -781,10 +782,12 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
-> > >  	copy_sz = partition_sz * count;
-> > >  	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
-> > >  		ffa_to_smccc_res(res, FFA_RET_ABORTED);
-> > > -		goto out_unlock;
-> > > +		goto release_rx;
-> > >  	}
-> > >  
-> > >  	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
-> > > +release_rx:
-> > > +	ffa_rx_release(&_res);
-> 
-> Hi,
-> 
-> > 
-> > I'm a bit confused about this release call here. In the pKVM FF-A proxy
-> > model, the hypervisor is essentially 'transparent', so do we not expect
-> > EL1 to issue that instead?
-> 
-> I think the EL1 should also issue this call irrespective of what the
-> hypervisor is doing. Sudeep can correct me here if I am wrong, but this
-> is my take on this.
+Documentation/devicetree/bindings/graph.txt content has move directly to
+the dt-schema repo.
 
-Agreed, but with the code as it is implemented in this patch, I think
-that from the host perspective there is a difference in semantic for
-the release call. W/o pKVM the buffer is essentially 'locked' until
-the host issues the release call. With pKVM, the buffer is effectively
-unlocked immediately upon return from the PARTITION_INFO_GET call
-because the hypervisor happened to have issued the release call
-behind our back. And there is no way the host to know the difference.
+Point to the YAML of the official repo instead of the old file.
 
-I understand that we can argue the hypervisor-issued call is for the
-EL2-TZ buffers while the EL1-issued call is for the EL1-EL2 buffers,
-but that's not quite working that way since pKVM just blindly forwards
-the release calls coming from EL1 w/o implementing the expected
-semantic.
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ drivers/gpu/drm/drm_of.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> I am looking at this as a way of signaling the availability of the rx
-> buffer across partitions. There are some calls that when invoked, they
-> place the buffer in a 'locked state'.
-> 
-> 
-> > How is EL1 supposed to know that the
-> > hypervisor has already sent the release call?
-> 
-> It doesn't need to know, it issues the call as there is no hypervisor
-> in-between, why would it need to know ?
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 5530919e0ba0..964a746e90aa 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -55,7 +55,8 @@ EXPORT_SYMBOL(drm_of_crtc_port_mask);
+  * and generate the DRM mask of CRTCs which may be attached to this
+  * encoder.
+  *
+- * See Documentation/devicetree/bindings/graph.txt for the bindings.
++ * See https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/graph.yaml
++ * for the bindings.
+  */
+ uint32_t drm_of_find_possible_crtcs(struct drm_device *dev,
+ 				    struct device_node *port)
+@@ -106,7 +107,9 @@ EXPORT_SYMBOL_GPL(drm_of_component_match_add);
+  * Parse the platform device OF node and bind all the components associated
+  * with the master. Interface ports are added before the encoders in order to
+  * satisfy their .bind requirements
+- * See Documentation/devicetree/bindings/graph.txt for the bindings.
++ *
++ * See https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/graph.yaml
++ * for the bindings.
+  *
+  * Returns zero if successful, or one of the standard error codes if it fails.
+  */
+-- 
+2.49.0
 
-As per the comment above, there is a host-visible difference in semantic
-with or without pKVM which IMO is problematic.
-
-For example, if the host issues two PARTITION_INFO_GET calls back to
-back w/o a release call in between, IIUC the expectation from the
-FF-A spec is for the second one to fail. With this patch applied, the
-second call would succeed thanks to the implicit release-call issued by
-pKVM. But it would fail as it is supposed to do w/o pKVM.
-
-I'm not entirely sure if that's gonna cause real-world problem, but it
-does feel unecessary at best. Are we trying to fix an EL1 bug in the
-hypervisor here?
-
-> > And isn't EL1 going to be
-> > confused if the content of the buffer is overridden before is has issued
-> > the release call itself?
-> 
-> The hypervisor should prevent changes to the buffer mapped between the
-> host and itself until the release_rx call is issued from the host.
-> If another call that wants to make use of the rx buffer sneaks in, we
-> would have to revoke it with BUSY until rx_release is sent.
-
-Right, exactly, but that's not implemented at the moment. IMO it is much
-simpler to rely on the host to issue the release call and just not do it
-from the PARTITION_INFO_GET path in pKVM. And if we're scared about a
-release call racing with PARTITION_INFO_GET at pKVM level, all we should
-need to do is forward the release call with the host_buffers.lock held I
-think. Wdyt?
-
-Thanks,
-Quentin
 
