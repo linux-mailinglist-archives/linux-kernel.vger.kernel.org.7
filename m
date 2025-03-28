@@ -1,223 +1,202 @@
-Return-Path: <linux-kernel+bounces-579350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F757A74234
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:06:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150A5A7423B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0C307A6CE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:05:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD81D3B4050
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687021C7013;
-	Fri, 28 Mar 2025 02:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1F51DDA35;
+	Fri, 28 Mar 2025 02:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JFouIk4r"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TTA3W9qO"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2084.outbound.protection.outlook.com [40.107.20.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16AD22094
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743127593; cv=none; b=texMY8yA2qwVvPhnYaxIk0rl/VPBMeCDga+D+R5tOe+iUygvU+d3Mtq7prLl4/MRD8ZrSnxpuaAoWB4jU1uJ20NpGKYu0+E3gqqw6KwWnRY60t63V3C5+CNgqEnzGzwNfSrBI7a/ITOG62dgND4iVF6CjGv5gfWu1Rwu+bNRFo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743127593; c=relaxed/simple;
-	bh=HSGHot/llLzr8LhanGS8sn2V/E1zdjux6dN+zQzGj40=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=Oe6b7f/7N07J2tYy2MqulOdN11I7ach4Ju1nOCayeCK3gNP7iBT6TiE0Q4iyHpJHKR4Z5q6Be9ryaTgaV3kUiLwspDcydHsdjvDYcXX7QWwuAIC69WZ+6KJJJlBX0vcrqDwr0Je6FPbLUWIm66lvF4GHX5biKq/8NsF+csLKgsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JFouIk4r; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250328020621epoutp0111864860cf7b20a9f54744db6450d6e0~w1UzZn6Vd0481304813epoutp01X
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:06:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250328020621epoutp0111864860cf7b20a9f54744db6450d6e0~w1UzZn6Vd0481304813epoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743127581;
-	bh=D8IpMw/PyIwlTASHtAtNiOFtZWIT38Af/vEjjwwVgSo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JFouIk4rZU/NFwW5KTmkK2UXWnA8GlO1sKgkUstgRK3ZLTKvgH9BpqzQwvwjNuBr6
-	 hExgcTtkfU3efJC4bWcmPJ4vSuUa6yVUKXHVElqtpwLR4gCaIjq2yL/HEIBwF3cwVR
-	 yTt491e05xBFIY2CM1VCWIMM4N9RXeA0NLYoKc4A=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250328020621epcas2p223d58a4b9a9d85182af94a710f902642~w1UyyTDGQ3118231182epcas2p2Y;
-	Fri, 28 Mar 2025 02:06:21 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.97]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZP3mD3BjFz2SSKr; Fri, 28 Mar
-	2025 02:06:20 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.A9.37303.C1406E76; Fri, 28 Mar 2025 11:06:20 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250328020619epcas2p1c707663a67650439381b03b6b4924408~w1Uxnh5kJ3055030550epcas2p1Z;
-	Fri, 28 Mar 2025 02:06:19 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250328020619epsmtrp126fa2492984a4728a3a12af699f26119~w1UxmsGqh0662506625epsmtrp1Y;
-	Fri, 28 Mar 2025 02:06:19 +0000 (GMT)
-X-AuditID: b6c32a4d-54ffe700000091b7-52-67e6041ccfbd
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A7.4D.19478.B1406E76; Fri, 28 Mar 2025 11:06:19 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250328020619epsmtip1c07d1737776bf524099b48b17a1cbb37~w1UxY0UMf1455014550epsmtip1S;
-	Fri, 28 Mar 2025 02:06:19 +0000 (GMT)
-Date: Fri, 28 Mar 2025 11:10:33 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan
-	<saravanak@google.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vincent
-	Guittot <vincent.guittot@linaro.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	hajun.sung@samsung.com, d7271.choe@samsung.com, joonki.min@samsung.com,
-	Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in
- GICv3 ITS driver
-Message-ID: <Z+YFGd/wbJ4kuxhB@perf>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2016201260;
+	Fri, 28 Mar 2025 02:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743128113; cv=fail; b=KEz640TOPATBktPh7ZQ1Xm4cHpREIRq//Z/zjbOsxfAdM2AMQb+g8/kNZogYrnSV6cEl/DAa7KrGnGerYKAPwzpbqVLjz+fMQQZSi+tVgaFVX4bxrrgGaGXM8XtBLgaW3dODopddlfoNao/6cUM7SHEf7JkPb2xwcTP8+vGKRyk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743128113; c=relaxed/simple;
+	bh=5jvPSOT3ybSBZ3aYuBXsmn/ohWezjfKU8WuGrEw4McI=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dWCBYUlTIHnOZdx3AAgF6dQYzdQHuUPxxtDXIEz5/JYGhI3xPRgV99DvuhJtmnF0sZCmAbABXecCNntZn74wFa04UC1bhs4wMoJp0pst7nxv4sl4zpERe0k0EU1w3Zmac9+16FG8UBuzk2CucgdkQzAO7jzWreOH5oh3z3LRPmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TTA3W9qO; arc=fail smtp.client-ip=40.107.20.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z/WNfdrX0raPZSZle28iwbTglYZ6rSdu5Hqy7JL9Bs3SR8JXMuqstQ23mfDdfnn7n7dLL6NjlBCT32NLVAQrTCoxVZfgmH0G9l0SpL9RY6ArlhDYJnuVnYffVOyjau9H9QNLLl2kytvJyFViT7jZByniUi2FZn4VAiBW0w+agdchpjW2dHWb/neNdetVucVy1pxERCAq3gaO2F9w+yE0Y3zHWLTKos/qjvwasywyAszO2XMiMwANDVXvo9QlB0WhBGD0DHCuwSiryOBspagua061ziD2VaCbh27AAEx0Vz/xdgbE/XNmF+JG/hwrxVOJjYZ3pn9ceh25SHMRf1ETPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nfq3otGA5ILHZSuGXPi93w6wqQwrmpaPH7nS08yMxDI=;
+ b=BRSYgks9tPAD7PsW2J0Q035rw0cPTsiYViSw89kaQPt1HupnYIy9jCY6ZGo6/QYdqggC6UAO/aMYA/JTc9KHLqberxoWt/y65q+enz9tefNsAHttov5aGUvDx5khV6saBk9cyXkYmArE7Yfi/A2I4uuVMFArUAEj9i6polo8THlzcVVMwfg6XG+dLDKbkoY/ZbSB896jJ0Q+RfoX1TxOMKRogBqgUQwaNstcYzazAIqla0L+aHLF2nrJ2+zjtehcwg6CJYyvq8of/YsXwNukTpR2HmVFyKXMCKWIOmGEnuEHrxhbVu3e0QzMuaLrRCkauQQhjtAtOsuocUFSjGFSdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nfq3otGA5ILHZSuGXPi93w6wqQwrmpaPH7nS08yMxDI=;
+ b=TTA3W9qOw2O0iwTBI2xsXp+lRgL8SB62/cj+Ob8TmWENvkQjeoP30BxcksZLcu8Cf6EwWH1GBEulVTUXS+/Z0zLa6fUT74KjLhKHv1xPbHDvs8IYuQSuMdQeIkjMvTbW7ziORBkJM7FKmjTtV62uekpEq5KkVJr/aZz0cKPFA0tcnUbvn+v1JKtv7i3pSJ+dZPQ2iAQz0nq2NWwK2juTkl6llnmiaMRPRJr7FmF1a/zl7GrvaRDJ4gq64kB+dLwFXJ3ILnAy5jJRUP2osaujApcfLvHzBcoheJsCH+V+zMrrtj5sjlupemraXYsKXoURpllhz0TFr3hJRyTLb/mZGw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by DB8PR04MB7018.eurprd04.prod.outlook.com (2603:10a6:10:121::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
+ 2025 02:15:09 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
+ 02:15:09 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: dt-bindings: fsl,mqs: Reference common DAI properties
+Date: Fri, 28 Mar 2025 10:13:39 +0800
+Message-Id: <20250328021339.1593635-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0099.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::27) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86v7rulw2d.wl-maz@kernel.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmua4My7N0gxf7xCyu7Z3IbtG0/xKz
-	xdXd75gtdmwXsdj0+BqrxeVdc9gsds45yWrRdegvm8XmTVOZLY6vDbfoOPKN2WLxgU/sDjwe
-	23ZvY/VYsKnUY9OqTjaPO9f2sHm8O3eO3WPzknqPvi2rGD0+b5IL4IjKtslITUxJLVJIzUvO
-	T8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOlVJoSwxpxQoFJBYXKykb2dT
-	lF9akqqQkV9cYquUWpCSU2BeoFecmFtcmpeul5daYmVoYGBkClSYkJ2x/uVT9oJH0hVzNy9l
-	b2B8LNrFyMkhIWAi0byulQXEFhLYwyjxb589hP2JUeLWYZ8uRi4I+9zrH6wwDT1vLzNDJHYy
-	Sqz7+4MNwnnIKPHgyyawKhYBVYmbJ9vBxrIJ6EpsO/GPEcQWEVCU+HThJCNIA7PAHyaJd2c3
-	sncxcnAIC0RJPG6PA6nhFVCWuPvvFhOELShxcuYTsDmcAtoSV74+YQLplRBYyyHxsWk/E0iv
-	hICLxMlpWhDXCUu8Or6FHcKWknjZ3wZlF0s03L/FDNHbwihx6voLZoiEscSsZ+1gxzELZEhc
-	O/CZDWKmssSRWywQYT6JjsN/2SHCvBIdbUIQnWoSv6ZsYISwZSR2L14BNdFDovVrCxMkTM4z
-	SuztP840gVFuFpJ3ZiHZNgtoLLOApsT6XfoQYXmJ5q2zmSHC0hLL/3EgqVjAyLaKUSq1oDg3
-	PTXZqMBQNy+1HB7dyfm5mxjB6VjLdwfj6/V/9Q4xMnEwHmKU4GBWEuGVvPIkXYg3JbGyKrUo
-	P76oNCe1+BCjKTCqJjJLiSbnAzNCXkm8oYmlgYmZmaG5kamBuZI476GPT9OFBNITS1KzU1ML
-	Uotg+pg4OKUamCZnBpnr/m2cpXaoISE8Jmme12E1w5raee8jrkX90b6uyrpBI7FdLeZu4cwT
-	x6coVM46cOlW7Zu3G/3NhN2PFmxvUXdcfsm9tfdiS/3joOjzExLu/38hl6h1VcjcvWnyVjbX
-	bb3vu//L64VKqjyu6WL1ObBVweyVfX1jWs03gV3lWRuVffd8tnpp6RhfHrd5i6utzOsDJdtC
-	QovSD322E4z+eu1lS3Oue/N51ymq8o+TyyvfTepzncDzSsGy6tyNVQ/blgeV8RyK3hKpxCbT
-	EB31Q1Haq9655WzK1gNlU+4n3Ux7cPvNirLk01udIrUmSb6SuS1+wqHLbU3g0aDtXBE9S2Yl
-	6Z44Xnv35JIYJZbijERDLeai4kQAO6vv5FAEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTlea5Vm6wcIpBhbX9k5kt2jaf4nZ
-	4urud8wWO7aLWGx6fI3V4vKuOWwWO+ecZLXoOvSXzWLzpqnMFsfXhlt0HPnGbLH4wCd2Bx6P
-	bbu3sXos2FTqsWlVJ5vHnWt72DzenTvH7rF5Sb1H35ZVjB6fN8kFcERx2aSk5mSWpRbp2yVw
-	Zax738Ze0CJZcarNqYFxoXAXIyeHhICJRM/by8xdjFwcQgLbGSV+7PvPDJGQkbi98jIrhC0s
-	cb/lCJgtJHCfUeLM5CwQm0VAVeLmyXYWEJtNQFdi24l/jCC2iICixKcLJxlBhjILNDBLTPs9
-	FaxIWCBKYs/baUwgNq+AssTdf7eYIDZfZpSY+GwXVEJQ4uTMJ2ANzALqEn/mXQK6iAPIlpZY
-	/o8DIiwv0bx1NtihnALaEle+PmGawCg4C0n3LCTdsxC6ZyHpXsDIsopRNLWgODc9N7nAUK84
-	Mbe4NC9dLzk/dxMjOLa0gnYwLlv/V+8QIxMH4yFGCQ5mJRFeyStP0oV4UxIrq1KL8uOLSnNS
-	iw8xSnOwKInzKud0pggJpCeWpGanphakFsFkmTg4pRqYxBqiktX2+azr1Fy082Wrw7rPeUnT
-	1785qt0vbLLzvPDp337WNVZr7/0M3yhU7bCr5eDP6qtGr+rWWmY/j2Ferv3h4Dd2C3VpJbGX
-	YfWPmne0n1vAdNGzXCzrq8WRusXXJsl8/zw/hNXqBafkV6VLnnMfXvnL3HnmxKubByZskt3w
-	4pLoJYuiEwFeeUq77pZxadkbVcVsko54uFNYo9YmRVJAOsqa/bXsg2fMZdIKBZ+uKF3pSVaa
-	J+/wrJ3v6r6LSvVmjAXXHDfJd3FveByWtYk5von9l+LfHVNt2gKCWa9qTmEwNI34/0Y+eG6C
-	vUXlCacthhflHjW4zAmYHnQyRj3kZcramblbhFeFMssosRRnJBpqMRcVJwIA63VLIhwDAAA=
-X-CMS-MailID: 20250328020619epcas2p1c707663a67650439381b03b6b4924408
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="-----xErIy8MFyp5znNcbVfGOYxfVuB8z5fzEV-ls754GuccR_q1=_4071c_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5
-References: <CGME20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5@epcas2p3.samsung.com>
-	<Z+Nv8U/4P3taDpUq@perf> <8634f0mall.wl-maz@kernel.org>
-	<Z+TEa8CVAYnbD/Tu@perf> <86v7rulw2d.wl-maz@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DB8PR04MB7018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e3bbda8-1162-4762-4598-08dd6d9e5cdf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ys/xkueZ2gYpr2W+dlggOr7ehExge8y46fU2Ns3jvYoRIMOO3Rw1grkasHFM?=
+ =?us-ascii?Q?ai9SufBRma0PsYpCyYU8muBvnnfJ8lEJjsPgujrmaDeVAmX1YY7HdcZgipe2?=
+ =?us-ascii?Q?Dd6tY6WT0Txuk2MhflMUldaYZlxuHZ9iEh8za/zpNBZE9qSzOs9pFGDZNsrv?=
+ =?us-ascii?Q?ChAPGVNM5Z9yJlApPIDQysGAQq1YJt5lfMUpLZe0lsHGX1f/60BTZqsLh4zH?=
+ =?us-ascii?Q?cPYjPZxYbfS6mpLvqkAcI2zLZ13WFewOhX7XsB6Z8jwt8PLHKzEjbn0j33fD?=
+ =?us-ascii?Q?caAIetui2eNxtdmAgsA37xZtzwnuYOW7wbczW+MJIahStOY+utckq64vot0z?=
+ =?us-ascii?Q?lX9lfaSWXm8Fv4Io95kyCg2q/rQk7zHANA0ezQa7Th313duyFpfHxHWVGlTz?=
+ =?us-ascii?Q?hqC1riRmm+Bn2pSd4WMEGEPxLUsLKdH9IkjL2rd+TLhWrhmx77//GojDq1KP?=
+ =?us-ascii?Q?ZbT+Q8CcAlxxppfvmM75fe2nCnDVkebVL0EfjolM+WEIQuuZNoIid2jt/vYO?=
+ =?us-ascii?Q?b/q4ketwAS36dCYYB+0dOQM7EbtsW2TRRLqLwfd8ydc60Nfvv5KZUH5FK46z?=
+ =?us-ascii?Q?0f6s+uZsj4RCxtk/W4ehYJ/23j3Tnz89DqImWjEH26OSE5kGG1HTLOWW+pLQ?=
+ =?us-ascii?Q?KE724oznM6+/rP4JjxaQH0ymjubNHcIT/RjPXvkhZ+LZnwK+T1uTg5QOCRd9?=
+ =?us-ascii?Q?QWkJBi0xDDKd9/YVWdwkyfYaNM+X/8JZR6XMCN80mOEznFXX595LNq3r5ynL?=
+ =?us-ascii?Q?QDiMOQNVLxRA2VdlJcXy5rKIMDjOqkMRneKf2p3wQ2H3Aa2EbUjAisnTC50n?=
+ =?us-ascii?Q?i144Aywc2njWzP9AmbcOGGCpRtNSMt8X2nvRT9cDAdLY9YAwDegXBBhW0xRi?=
+ =?us-ascii?Q?222cXBeziQj8OB+c4ahns5sgKCvGZYHHUOuyzRYvGhR1haNJmItdOEjH3YYD?=
+ =?us-ascii?Q?zNm/qrajl5XnhVSUaNlSVfwcxNQFA/YinOoxAX30aWiw8XwBaE1thWidJl0h?=
+ =?us-ascii?Q?h7FA7Dsshs+IcSVtGksEGP/feKR//LoScAmkUOOeXnN3ss4Nr+DxKMB1hY4l?=
+ =?us-ascii?Q?tqI7POn/WT2lvnz2ITUYMdsjbaZjPQbeOO1jAzDUYkoAJlDY/La7Fr5j1GKt?=
+ =?us-ascii?Q?e1oy0oy3fdEAvSBd/Y4X+Uv1dA7OBwBPo1e5gswpuTeb9WcCxvgJOTQjADwt?=
+ =?us-ascii?Q?I0NDNCGy27wbBUdBa8qg8bxdxovHIwllX6s8F6kGM+HkJi4SFvcqWNedM6oV?=
+ =?us-ascii?Q?TTT6p9VGT292VbMDEVMGs/dthmMYboyecYUL8O8ZmKdihTnlepWoDfPsJtbs?=
+ =?us-ascii?Q?Sf1AWkhdOXTIhZy19vg8zHLf/m3DGfuIxY4vTXM5isotXTy5jL770zQsD6Np?=
+ =?us-ascii?Q?TrNgERX3zLJlLFHkvM4VXaN/61SdKHgd3MGB6qNMUxwl9XGO+WzSXt52dKge?=
+ =?us-ascii?Q?/SRowITB0LZlOSMuguqyTu8aIVFBPinY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QlATJvCMMPxtRmrBOUq3/0TbnqgrAwag8ObwW1oaZDnA4DdsjNNNtBER/TEg?=
+ =?us-ascii?Q?6ZtBdKLqRmeZb4FwbPic45TFXINGLYsicKzfeTgQdWNvJl3bLrdb52kyASEC?=
+ =?us-ascii?Q?ZjDnr04UgjJkHaxKvwn2jsIELYlpqTIL863/qguVRXbAgkfwtFJ6xKNYyvWr?=
+ =?us-ascii?Q?zUxhcvQ0yPQ2//OoOIsLuUtFRHaf25q3p4icMndNLHMTEnaYgVzE/cBs7DEE?=
+ =?us-ascii?Q?YF4VzFsvnQQdESR6Txp2Uw7EWr4F+skgEQ1ecoSUSVljYKk36qkTTLwjAJux?=
+ =?us-ascii?Q?egOLrd8vMRqQ4Mu8BoEXuHxMazKt5cmBXRsA7T50guOQi/1BgqUowL7IZtHE?=
+ =?us-ascii?Q?Bzi9qiW2oE+Qp3yo0e9arMeI7B5AjJ+slBXXJTM+XUnfCuPn6qISnMI4Zg5I?=
+ =?us-ascii?Q?dE4TbMI7zs4Fj2sHZNdWH+0AqpyUR55tzfM4Z+M4zvoj5Fa7Ot3iFUE/62iI?=
+ =?us-ascii?Q?IxaHPXFQUdDg3vag3J9qXhUEK34i1HUw2HLXcWMbCta8Ps0YotfGYpNTlVqt?=
+ =?us-ascii?Q?OfCgbtvBQj8zMCgGNSx+a4oK/3H23GXN4K+fb4w9xHedXIWCOjPS1qf74BWm?=
+ =?us-ascii?Q?7/6sk08KZthstXs7LVrY5Uq1I3RcF1h+UgX4TIjyY5kG65e00Y2mVYY2tj9+?=
+ =?us-ascii?Q?Ncp82vXItjLC4K3wNfrFKEcAiGCE+LTjld/7ZFcF7mZ2+np7a1tAlmZLChby?=
+ =?us-ascii?Q?OqjnsdntwURM+U7HFKWYHAeQ1EptmKwr8Jde5n+rUI/640elg6N/aRWXIBQO?=
+ =?us-ascii?Q?FcT3PAwcz+p6fMW3mWUPxBAczsyJkxwVWcPQ9utgVRh0unQ/89XDnCIf+qPy?=
+ =?us-ascii?Q?HsnJn9iW4pKNxNSsaxlsn8mhv+GMQ28nh1BJqqZXRVpmKNBsbnK7frz1mHjj?=
+ =?us-ascii?Q?QBcrknWIXVgP1lWcOU/CQjkie8rONnxXQIOhhS50/J3aWStPnvyoHZj47mMA?=
+ =?us-ascii?Q?4aSZUahoEK2AYn5D5dw0ZZdpfWbPG/ILDlGInY+4RqCPf5CF4dhj5FhWXfiG?=
+ =?us-ascii?Q?CwTEfqqvzBcRTyVgzJgmSn8Tm9DZxUcDRJdmWtWuO9FRW5FJOfqvDaLbzFlJ?=
+ =?us-ascii?Q?6kKCyT1kazIU7P8SM4bkCZ2N59s8VJyeLoX0DwTGgoCXE8R/e9eWqLvNZFge?=
+ =?us-ascii?Q?R2JJFqGSyveJXumKLgP6UF2FKQiW1bgBS+C/bZ8fHBuaOMNuD4SnwDnCRsni?=
+ =?us-ascii?Q?LJdEOckfgAChLbmTBg7OGUkzSAB2wias47/eZU4Wb+ugH+54QoRkB6i/uAva?=
+ =?us-ascii?Q?rx2nvP5eyV2YHAxW0w7h5LVhfhip+Cp0GtEkFzi+IWKZw7gvEnEiOx3PIxau?=
+ =?us-ascii?Q?UPC4ZKmAtwa8yTpcewsDRNCp8e/IJwxCbXpg+PPLxegquurrpBHLCFP5b3TU?=
+ =?us-ascii?Q?BcIIa0LiEgy7HWoHtJ13abfpeSV9OdrVhU+im4QICLEp7r2STE9pTIY4pipT?=
+ =?us-ascii?Q?/ljPgc8Cm4lJHIqY+iJgaU0xTYs5qC1O8Wpvyx/WRO1KAT0R74sx4jCTa76+?=
+ =?us-ascii?Q?cpGkMz9zT4+J8Wf82XkU66cr7FWL7/Bf7ZTEEJbeVN3Arwe9Rj4wLiP9FfFU?=
+ =?us-ascii?Q?rdKxK2Fx7lS+8H8rnFgMe390lv+t+/xRM6MpJBEx?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e3bbda8-1162-4762-4598-08dd6d9e5cdf
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 02:15:09.0620
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +tyLMhg5Bc3m3smdx1iXvhic4kv7UPR470VxIyyf1LL148Z2NIwLe7q34sJHL1q8ZjXSCrNdka4UKZMpAcY86Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7018
 
--------xErIy8MFyp5znNcbVfGOYxfVuB8z5fzEV-ls754GuccR_q1=_4071c_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+Reference the dai-common.yaml schema to allow '#sound-dai-cells' and
+"sound-name-prefix' to be used.
 
-On Thu, Mar 27, 2025 at 08:25:14AM +0000, Marc Zyngier wrote:
-> On Thu, 27 Mar 2025 03:22:19 +0000,
-> Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > 
-> > [1  <text/plain; utf-8 (8bit)>]
-> > On Wed, Mar 26, 2025 at 08:59:02AM +0000, Marc Zyngier wrote:
-> > > On Wed, 26 Mar 2025 03:09:37 +0000,
-> > > Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > > > 
-> > > > Hi.
-> > > > 
-> > > > On our SoC, we are using S2IDLE instead of S2R as a system suspend mode.
-> > > > However, when I try to enable ARM GICv3 ITS driver (drivers/irqchip/irq-gic-v3-its.c),
-> > > > I noticed that there is no proper way to invoke suspend/resume callback,
-> > > > because it only uses syscore_ops, which is not called in an s2idle scenario.
-> > > 
-> > > This is *by design*.
-> 
-> [...]
-> 
-> > > > How should we handle this situation ?
-> > > 
-> > > By implementing anything related to GIC power-management in your EL3
-> > > firmware. Only your firmware knows whether you are going into a state
-> > > where the GIC (and the ITS) is going to lose its state (because power
-> > > is going to be removed) or if the sleep period is short enough that
-> > > you can come back from idle without loss of context.
-> > > 
-> > > Furthermore, there is a lot of things that non-secure cannot do when
-> > > it comes to GIC power management (most the controls are secure only),
-> > > so it is pretty clear that the kernel is the wrong place for this.
-> > > 
-> > > I'd suggest you look at what TF-A provides, because this is not
-> > > exactly a new problem (it has been solved several years ago).
-> > > 
-> > > 	M.
-> > > 
-> > > -- 
-> > > Without deviation from the norm, progress is not possible.
-> > > 
-> > 
-> > Hi Marc,
-> > 
-> > First of all, I’d like to distinguish between the GICv3 driver (irq-gic-v3.c)
-> > and the ITS driver (irq-gic-v3-its.c).
-> > 
-> > I now understand why the GICv3 driver doesn’t implement suspend and resume functions.
-> > However, unlike the GICv3 driver, the ITS driver currently provides
-> > suspend and resume functions via syscore_ops in the kernel.
-> 
-> For *suspend*. The real suspend. Not a glorified WFI. And that's only
-> for situations where we know for sure that we are going to suspend.
-> 
-> > And AFAIK, LPIs are always treated as non-secure. (Please correct me If I'm wrong).
-> > 
-> > The problem is that syscore_ops is not invoked during the S2IDLE scenario,
-> > so we cannot rely on it in that context.
-> > We would like to use these suspend/resume functions during S2IDLE as well.
-> 
-> Again, this is *by design*. There is no semantic difference between
-> s2idle and normal idle. They are the same thing. Do you really want to
-> save/restore the whole ITS state on each and every call into idle?
-> Absolutely not.
-> 
-> Only your firmware knows how deep you will be suspended, and how long
-> you will be suspended for, and this is the right place for to perform
-> save/restore of the ITS state. Not in generic code that runs on every
-> arm64 platform on the planet.
-> 
-> 	M.
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v2:
+- add constrain for sound-dai-cells
 
-Thank you for the clear explanation. I completely understand now.
+ Documentation/devicetree/bindings/sound/fsl,mqs.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
-> 
+diff --git a/Documentation/devicetree/bindings/sound/fsl,mqs.yaml b/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
+index 8c22e8348b14..d1ac84e518a0 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
++++ b/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
+@@ -28,6 +28,9 @@ properties:
+       - fsl,imx95-aonmix-mqs
+       - fsl,imx95-netcmix-mqs
+ 
++  "#sound-dai-cells":
++    const: 0
++
+   clocks:
+     minItems: 1
+     maxItems: 2
+@@ -55,6 +58,7 @@ required:
+   - clock-names
+ 
+ allOf:
++  - $ref: dai-common.yaml#
+   - if:
+       properties:
+         compatible:
+@@ -86,7 +90,7 @@ allOf:
+       required:
+         - gpr
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+-- 
+2.34.1
 
--------xErIy8MFyp5znNcbVfGOYxfVuB8z5fzEV-ls754GuccR_q1=_4071c_
-Content-Type: text/plain; charset="utf-8"
-
-
--------xErIy8MFyp5znNcbVfGOYxfVuB8z5fzEV-ls754GuccR_q1=_4071c_--
 
