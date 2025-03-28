@@ -1,102 +1,81 @@
-Return-Path: <linux-kernel+bounces-579860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79FEA74A70
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:11:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D17A74A76
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E2F18985A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C449316D11D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0569B1537A7;
-	Fri, 28 Mar 2025 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0B4145355;
+	Fri, 28 Mar 2025 13:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L5H1rfvo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9+ULbLGD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f6nHSpqB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JVcPqmAa"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mqx4g0fi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1590145355
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A8D3C0C;
+	Fri, 28 Mar 2025 13:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743167430; cv=none; b=hB0blG0frMOR37yVnPHQGl5tcQjxFgA7zJn6Bwlr/6zKfd/pOmgTakdyLXHC9bEpQhCeupiHLI8HHX/OHa/xMXvmcv7ej+sWOMma1t4dV2Y7Adc3BQ2F6nLRKVXxDW7asYg4xCW+5/hPLQcNQlHhLtNLsBxR124EH2lntwv/mzQ=
+	t=1743167754; cv=none; b=AjMQq9Kgww1E9uTpkHC9hO10UKuaC3jRjLY8j4K/mDb9lSxzthi12NzyEnHIiBQfz9aS/qewd6ic78B+jTDsqumFjisXzMYrmU1pP2MKxkr52if46VlpQGy3LqWEXRO914rMJ7y8FTIUWEGL5VrJmEkJlBGEmW/yu1OnngYU180=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743167430; c=relaxed/simple;
-	bh=On9No0HbpCX/gikk0qGXkiMf8uMwWvvDnDP966WgRdE=;
+	s=arc-20240116; t=1743167754; c=relaxed/simple;
+	bh=QwSIXy+3yg65uEoLr+hIy5mMBOunDFf0avciADMFhc0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nU8pUMaWBmp8H8k5ujshOByZGbeLugcLaMLMGvO/Gorgq23IOFN54mnc4kulh+EnrhjFO+gydAw3bIQg/Yj/2Q2NF+hK0YHgyCkM5ZAr/l+o/npsgGidI69HmaFlSX/+YPf/cokGAE3KUc4WXQWI3urUIUrSl6BfoNJj4/2XsWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L5H1rfvo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9+ULbLGD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f6nHSpqB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JVcPqmAa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E28FB1F388;
-	Fri, 28 Mar 2025 13:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743167427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xu1rSHeQgr2TGn2wogNSIxm18y3cQEiVZTbjppWE6F4=;
-	b=L5H1rfvoEM88pq1D5oWedswEYssvdloxShoiAjRCwku77+uMMut2dnFqa6sn1SjUfP5107
-	SFHSnXy6SCogX83wX8Acw6p3YeAVH5PYzvDa6QwAZ2Ym668fGxsrwTBG91+/WnlJkYh6Yv
-	ME7D/N0XuYvL01iUsCUfiot2DZ5a3LQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743167427;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xu1rSHeQgr2TGn2wogNSIxm18y3cQEiVZTbjppWE6F4=;
-	b=9+ULbLGDTBrhvM4DMbrx/SlOF+iDLs1nsgrBENy5oBc3BN9l1TCLMKSqelpONaKa6eGux5
-	sU5Zs+QzCa/IAqDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=f6nHSpqB;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JVcPqmAa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743167426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xu1rSHeQgr2TGn2wogNSIxm18y3cQEiVZTbjppWE6F4=;
-	b=f6nHSpqBO0rJMm+yJS7a+aKMJkd21PtIKTkfXGDMEPLLEqOy+ke86jXZTQD44qeurkpwpb
-	sPlyuqjIammQ1HzLmeNIqecaNUphhWDyx80zj5L1P0zTxQIVDLmTCsycxAh9foHyKYc+LM
-	kfrIM5dDxgknO618j/qNV4p2T4vqAFg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743167426;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xu1rSHeQgr2TGn2wogNSIxm18y3cQEiVZTbjppWE6F4=;
-	b=JVcPqmAakRV7qR4ZkSj9JkqqhXRwiKNCP7PRHqRR2AvGsKhyLUgHavr/ciwvJW76VjVJLT
-	QbVO8+NJ1LS/vZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4EB7213927;
-	Fri, 28 Mar 2025 13:10:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id o4NpEMKf5mdiXQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 28 Mar 2025 13:10:26 +0000
-Date: Fri, 28 Mar 2025 14:10:24 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
-	hughd@google.com, willy@infradead.org, david@redhat.com,
-	21cnbao@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process
- large folios
-Message-ID: <Z-afwA3UyEJxryBp@localhost.localdomain>
-References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
- <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
- <54886038-3707-4ea0-bd84-00a8f4a19a6a@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTsoDupGXUxKiD3wq3ae2KU1y69nkRc+i6z1vJRy5DcTVOQ+ba+ffQ3ayjB/qDrWQWseNoAXCMxv7nZ4vHer+AFC+d1EueTIxYP/94tZfm50zpM9kCX+dN0mBS8HKJZfJ+cjCa21m6EN2ns+6QohA0Tn5UlWOMJl//4ERvkUiqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mqx4g0fi; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743167752; x=1774703752;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QwSIXy+3yg65uEoLr+hIy5mMBOunDFf0avciADMFhc0=;
+  b=Mqx4g0fi35vwEMQtaE6axkv8tCvfKKu1/Oqrsu0sn+5YidOQjGQj7w++
+   9k0v2yuQSovZbraT+Bme8ppbkLUvLd6eKeqxosZYmykhPBsuqoX0HQGXj
+   3Vnw5QWCEtXOMvFH8cRO/We1Q1b/Y5MUyUnCxu1cuxIHSBFtJAMdN3K7z
+   jeMg8cAKDnPLula+0PR9rGyPqolijbrGIJKzjqg2uJ6vN3DQFhtIDewTz
+   ayF2rPpHEzzanDbkH+FfqxJth/bH7GlxCBoRT89NzQuhSxnVNfcEiVeEs
+   rXzw14fbnsZ3ra05Pg83+yPtnTTbKGJPqZZkLCEQ8toeqUHz6MECGDUvQ
+   g==;
+X-CSE-ConnectionGUID: JUikcurzREawvopulM08nA==
+X-CSE-MsgGUID: hK+RRb10SlanToErZnioTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="44657835"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="44657835"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 06:15:51 -0700
+X-CSE-ConnectionGUID: EwJ9838WTrSb5sfy554dUg==
+X-CSE-MsgGUID: g0gX6VhxRGS1RHFNcamB7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="129583228"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 28 Mar 2025 06:15:46 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ty9Ym-0007SU-10;
+	Fri, 28 Mar 2025 13:15:44 +0000
+Date: Fri, 28 Mar 2025 21:15:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>,
+	Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
+	rppt@kernel.org, rafael@kernel.org, lenb@kernel.org,
+	akpm@linux-foundation.org, alison.schofield@intel.com,
+	rrichter@amd.com, bfaccini@nvidia.com, haibo1.xu@intel.com,
+	david@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	chenbaozi@phytium.com.cn,
+	Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Subject: Re: [PATCH v2] mm: numa_memblks: introduce numa_add_reserved_memblk
+Message-ID: <202503282026.QNaOAK79-lkp@intel.com>
+References: <20250328092132.2695299-1-wangyuquan1236@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,57 +84,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <54886038-3707-4ea0-bd84-00a8f4a19a6a@arm.com>
-X-Rspamd-Queue-Id: E28FB1F388
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux.alibaba.com,linux-foundation.org,google.com,infradead.org,redhat.com,gmail.com,nvidia.com,kvack.org,vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[localhost.localdomain:mid,suse.de:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250328092132.2695299-1-wangyuquan1236@phytium.com.cn>
 
-On Thu, Mar 27, 2025 at 10:08:56AM -0400, Ryan Roberts wrote:
-> You could simplify to the following, I think, to avoid needing to grab the folio
-> and call folio_pte_batch():
-> 
-> 			else if (pte_present(pte)) {
-> 				int max_nr = (end - addr) / PAGE_SIZE;
-> 				step = min(pte_batch_hint(ptep, pte), max_nr);
-> 			} ...
+Hi Yuquan,
 
-Yes, I think this makes much more sense, in the end, as you said, we do
-not really need what folio_pte_batch gives us here.
+kernel test robot noticed the following build errors:
 
-With the API I am working on, batching will be done in there internally,
-so we will not have to expose this here.
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuquan-Wang/mm-numa_memblks-introduce-numa_add_reserved_memblk/20250328-172428
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250328092132.2695299-1-wangyuquan1236%40phytium.com.cn
+patch subject: [PATCH v2] mm: numa_memblks: introduce numa_add_reserved_memblk
+config: loongarch-randconfig-002-20250328 (https://download.01.org/0day-ci/archive/20250328/202503282026.QNaOAK79-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250328/202503282026.QNaOAK79-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503282026.QNaOAK79-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/acpi/numa/srat.c:10:
+   drivers/acpi/numa/srat.c: In function 'acpi_parse_cfmws':
+>> drivers/acpi/numa/srat.c:461:13: error: implicit declaration of function 'numa_add_reserved_memblk' [-Wimplicit-function-declaration]
+     461 |         if (numa_add_reserved_memblk(node, start, end) < 0) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: in definition of macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+   drivers/acpi/numa/srat.c:461:9: note: in expansion of macro 'if'
+     461 |         if (numa_add_reserved_memblk(node, start, end) < 0) {
+         |         ^~
+
+
+vim +/numa_add_reserved_memblk +461 drivers/acpi/numa/srat.c
+
+   431	
+   432	static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
+   433					   void *arg, const unsigned long table_end)
+   434	{
+   435		struct acpi_cedt_cfmws *cfmws;
+   436		int *fake_pxm = arg;
+   437		u64 start, end;
+   438		int node;
+   439	
+   440		cfmws = (struct acpi_cedt_cfmws *)header;
+   441		start = cfmws->base_hpa;
+   442		end = cfmws->base_hpa + cfmws->window_size;
+   443	
+   444		/*
+   445		 * The SRAT may have already described NUMA details for all,
+   446		 * or a portion of, this CFMWS HPA range. Extend the memblks
+   447		 * found for any portion of the window to cover the entire
+   448		 * window.
+   449		 */
+   450		if (!numa_fill_memblks(start, end))
+   451			return 0;
+   452	
+   453		/* No SRAT description. Create a new node. */
+   454		node = acpi_map_pxm_to_node(*fake_pxm);
+   455	
+   456		if (node == NUMA_NO_NODE) {
+   457			pr_err("ACPI NUMA: Too many proximity domains while processing CFMWS.\n");
+   458			return -EINVAL;
+   459		}
+   460	
+ > 461		if (numa_add_reserved_memblk(node, start, end) < 0) {
+   462			/* CXL driver must handle the NUMA_NO_NODE case */
+   463			pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
+   464				node, start, end);
+   465		}
+   466		node_set(node, numa_nodes_parsed);
+   467	
+   468		/* Set the next available fake_pxm value */
+   469		(*fake_pxm)++;
+   470		return 0;
+   471	}
+   472	
 
 -- 
-Oscar Salvador
-SUSE Labs
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
