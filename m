@@ -1,169 +1,249 @@
-Return-Path: <linux-kernel+bounces-579573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3206FA74562
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36281A74574
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5879A178E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1331A17DA72
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA99A212FA5;
-	Fri, 28 Mar 2025 08:28:41 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52411C6FEE;
+	Fri, 28 Mar 2025 08:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VzBf0E0k"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8E62F30;
-	Fri, 28 Mar 2025 08:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE7211485
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 08:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743150521; cv=none; b=dgVSVxE3BoNsjNTTWPrRaqwMtScw5w2kOSG0Zg2w5bVo496wtUeuuAlhSdyuSXUtOE2o57JQJx+XGUq6QUaCp/V9pajOMgr9rwhe5m/+c3baA1SDUUieHBcy685+oops+lswZGfeLws3L0D8iPmzrftXbgmZlG+ELHSxmjBE3m8=
+	t=1743150625; cv=none; b=Fu+ROY13PWYWZbGjLXClav48zVPYg/eEI9MhG295Eyr6+mnE4yIDOd2yUgM9LSFUeAHoLC9nom2eIIhfkKCSccICvJJHZcFoR9kUUPAiPinc5kthMls8M+8Vmm/q30cIrd7veSmMF81AYp2iTSpweldu6KfH+OGtWqilnff9FEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743150521; c=relaxed/simple;
-	bh=+7f36zh2YmV73APuA9i2NpMvoGc/2rspVzmVxr+RyqY=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=U2usz4mfdMqdkGXWwSRQ0lv9Yk3/PECNds6zvJmv/J/iVGUcE6Ol/GrjDhaRIlUMojgFuPTUM9Ic8j6T7YhN7q4WdUwNLRbLBY2ZGo4OnahSJRyu/MPtaXHA+YG8jvupI7tV+XTeFkYkUy+ERmyDzxKOXnH2zev1XxBGyFQFGGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZPDG10YpBz27hVk;
-	Fri, 28 Mar 2025 16:29:13 +0800 (CST)
-Received: from kwepemg500006.china.huawei.com (unknown [7.202.181.43])
-	by mail.maildlp.com (Postfix) with ESMTPS id F118F1400F4;
-	Fri, 28 Mar 2025 16:28:34 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemg500006.china.huawei.com (7.202.181.43) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 28 Mar 2025 16:28:34 +0800
-Subject: Re: [PATCH v6 5/5] hisi_acc_vfio_pci: bugfix live migration function
- without VF device driver
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
-References: <20250318064548.59043-1-liulongfang@huawei.com>
- <20250318064548.59043-6-liulongfang@huawei.com>
- <20250321095240.40bf55ec.alex.williamson@redhat.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <96c36c66-37a6-7bdb-75b8-dd7d6f63bb35@huawei.com>
-Date: Fri, 28 Mar 2025 16:28:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1743150625; c=relaxed/simple;
+	bh=fDqF6O4FnTPiRQdfgNkPd+mtmIU2vY7UGxECVEdgvno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SdZJl42JdphO5sqUlv3m7wCpLWVi3YtlYWFYW8WBRvbkAD+DVVbxOfIb1ZbKGbFluvD6j/XUcNCgPIBhbiKYlRTK6t5BcQWttOJmsWZm2u6mrFCj8AZlnFbsQNp86QQekCSwWq++ZxkM6Yjmzm1N77QKYnwF54wH7ujfonnGTFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VzBf0E0k; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224100e9a5cso38131355ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1743150623; x=1743755423; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMvSX3/8MLdcWMy6QaV85qtOi5tjLAdkUxquxvyJjpk=;
+        b=VzBf0E0kLGuYHHdVFN3ZEHUhWfc8i6rVrgAk+EkgWmA2Z5LS/PyRRKgST+muqvzSaI
+         j+zUvu7zs8jMjh3EzXcXPe9HLmGHWM8QErcs5jeizznoYs/jxgy2U864AN6CCoXvACRM
+         5W1kXrO6XcKsr+3ZsPufFmwo+U8DTvCX404WM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743150623; x=1743755423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iMvSX3/8MLdcWMy6QaV85qtOi5tjLAdkUxquxvyJjpk=;
+        b=XaZTm5iYEVX8/4fBEnbhVqClMLTUUU1wLfRv1gXzsAKP35oj7GvZtDEkjH2Pt/qCaw
+         zaTGfgzrifW39likglLkPJeSiyssd7LsbasUATAx/ydbh0IxyGHxf2oIuKyC29sh0mUP
+         Pe8ogxzSt9c56VZRzuYsU8pxtWrpQIEJdklX1CTaoHuYrGohG/JtcrgwYnVB2RK0XSmG
+         RSc9hRwNusJVru3m6gwJRB29ik59KNpfSAWSgkjHsnsi7228ZPHTvSXZDibo96MJlcVO
+         5lf4zmTb7knjZIOD5hEDZHnmxJ6jUfmYrz9hig0SNHsOhjhegDQ/h+Sm2JQ4eranMeNB
+         XJ9Q==
+X-Gm-Message-State: AOJu0Yw9H5pc7aj9xu/XGHdssBeCaRaa1QzewBFOhhxZHqqV2CqeArW9
+	yTfbqZlX3kPm2iqHe7GI7+WCA22iSMDHYBCTgmHbNuZ0KaLb8ul3oLaTh5pojQ==
+X-Gm-Gg: ASbGnctGR84d+752maD9DukN0dDc1Zllxtshk8eyvyJNpjPs2HXMLz6zJogXLBfmyeB
+	P2yz23qHsXflrXsyUo6NZ95tAGnxPFhoCmwY/tEm8GkjUf6gWIOOSDNfsa4xBOJE/OfoPsaXLJt
+	wrzZko+xY2sI048Sjlhfb949oVa8bU7+MjBWOk5Ea1bcwvC9LBiqqjNk/8JhyimgVjLtG1jnzxM
+	PdS1oqul2v0pZZdFgKIoTWr/XajeY+y7pqX/aETSuMxhsOnAibEYAnnMW/QmCrE4nqKX/f/bpip
+	5t1aEkg9dR+S8MkjN7PUyUWqUn2QN3q9AvvuBRy9dwlAe58N9IIyOc8dvKXYBpf7xQ==
+X-Google-Smtp-Source: AGHT+IHk5g+zM1oUsjRtviy05Z0HNph2qVB5VdMrxZ+hrOLHHnalDkunfM120pSNG/jfbr5zMflnrg==
+X-Received: by 2002:a17:902:e886:b0:220:e63c:5b13 with SMTP id d9443c01a7336-2280491c3f4mr112692905ad.46.1743150622552;
+        Fri, 28 Mar 2025 01:30:22 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:9004:7029:99b:276])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1ef62asm12283775ad.217.2025.03.28.01.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 01:30:22 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Cc: linux-kernel@vger.kernel.org,
+	Stephen Boyd <swboyd@chromium.org>,
+	linux-usb@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: usb: Add binding for PS5511 hub controller
+Date: Fri, 28 Mar 2025 16:28:45 +0800
+Message-ID: <20250328082950.1473406-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250321095240.40bf55ec.alex.williamson@redhat.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg500006.china.huawei.com (7.202.181.43)
+Content-Transfer-Encoding: 8bit
 
-On 2025/3/21 23:52, Alex Williamson wrote:
-> On Tue, 18 Mar 2025 14:45:48 +0800
-> Longfang Liu <liulongfang@huawei.com> wrote:
-> 
->> If the VF device driver is not loaded in the Guest OS and we attempt to
->> perform device data migration, the address of the migrated data will
->> be NULL.
->> The live migration recovery operation on the destination side will
->> access a null address value, which will cause access errors.
->>
->> Therefore, live migration of VMs without added VF device drivers
->> does not require device data migration.
->> In addition, when the queue address data obtained by the destination
->> is empty, device queue recovery processing will not be performed.
->>
->> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live migration")
->> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
->> ---
->>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 21 ++++++++++++-------
->>  1 file changed, 14 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> index cadc82419dca..68b1c7204cad 100644
->> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> @@ -426,13 +426,6 @@ static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  		return -EINVAL;
->>  	}
->>  
->> -	ret = qm_write_regs(vf_qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
->> -	if (ret) {
->> -		dev_err(dev, "failed to write QM_VF_STATE\n");
->> -		return ret;
->> -	}
->> -
->> -	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->>  	hisi_acc_vdev->match_done = true;
->>  	return 0;
->>  }
->> @@ -498,6 +491,13 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  	if (migf->total_length < sizeof(struct acc_vf_data))
->>  		return -EINVAL;
->>  
->> +	ret = qm_write_regs(qm, QM_VF_STATE, &vf_data->vf_qm_state, 1);
->> +	if (ret) {
->> +		dev_err(dev, "failed to write QM_VF_STATE\n");
->> +		return -EINVAL;
->> +	}
->> +	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->> +
->>  	qm->eqe_dma = vf_data->eqe_dma;
->>  	qm->aeqe_dma = vf_data->aeqe_dma;
->>  	qm->sqc_dma = vf_data->sqc_dma;
->> @@ -506,6 +506,12 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  	qm->qp_base = vf_data->qp_base;
->>  	qm->qp_num = vf_data->qp_num;
->>  
->> +	if (!vf_data->eqe_dma || !vf_data->aeqe_dma ||
->> +	    !vf_data->sqc_dma || !vf_data->cqc_dma) {
->> +		dev_err(dev, "resume dma addr is NULL!\n");
->> +		return -EINVAL;
->> +	}
->> +
-> 
-> I'm not sure how this fits in based on the commit log.  IIUC, we're
-> actually rejecting the migration data here, which will cause a
-> migration failure.  We're also testing the validity of the data *after*
-> we've actually applied it to the hisi_qm object, which seems backwards.
-> 
-> Are we just not processing the migration data because there's no driver
-> or are we failing the migration?  There shouldn't be a requirement on
-> the state of the guest driver for a successful migration.  Thanks,
->
+Parade PS5511 is USB hub with 4 USB 3.2 compliant 5Gbps downstream(DS)
+ports, and 1 extra USB 2.0 downstream port. The hub has one reset pin
+control and two power supplies (3V3 and 1V1).
 
-Therefore, this shouldn't be about exiting the migration operation,
-but rather continuing the migration process while skipping these empty
-address write operations.
-Consequently, this shouldn't return an error,
-it should simply return 0.
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+---
 
-Thanks.
-Longfang.
+ .../bindings/usb/parade,ps5511.yaml           | 138 ++++++++++++++++++
+ 1 file changed, 138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/parade,ps5511.yaml
 
-> Alex
-> 
->>  	ret = qm_set_regs(qm, vf_data);
->>  	if (ret) {
->>  		dev_err(dev, "set VF regs failed\n");
->> @@ -1531,6 +1537,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct vfio_device *core_vdev)
->>  	hisi_acc_vdev->vf_id = pci_iov_vf_id(pdev) + 1;
->>  	hisi_acc_vdev->pf_qm = pf_qm;
->>  	hisi_acc_vdev->vf_dev = pdev;
->> +	hisi_acc_vdev->vf_qm_state = QM_NOT_READY;
->>  	mutex_init(&hisi_acc_vdev->state_mutex);
->>  	mutex_init(&hisi_acc_vdev->open_mutex);
->>  
-> 
-> 
-> 
-> .
-> 
+diff --git a/Documentation/devicetree/bindings/usb/parade,ps5511.yaml b/Documentation/devicetree/bindings/usb/parade,ps5511.yaml
+new file mode 100644
+index 00000000000000..605f94df561428
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/parade,ps5511.yaml
+@@ -0,0 +1,138 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/parade,ps5511.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: PS5511 4+1 Port USB 3.2 Gen 1 Hub Controller
++
++maintainers:
++  - Pin-yen Lin <treapking@chromium.org>
++
++properties:
++  compatible:
++    enum:
++      - usb1da0,5511
++      - usb1da0,55a1
++
++  reg: true
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  reset-gpios:
++    items:
++      - description: GPIO specifier for GRST# pin.
++
++  vddd11-supply:
++    description:
++      1V1 power supply to the hub
++
++  vdd33-supply:
++    description:
++      3V3 power supply to the hub
++
++  peer-hub:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandle to the peer hub on the controller.
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          1st downstream facing USB port
++
++      port@2:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          2nd downstream facing USB port
++
++      port@3:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          3rd downstream facing USB port
++
++      port@4:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          4th downstream facing USB port
++
++      port@5:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          5th downstream facing USB port
++
++required:
++  - compatible
++  - reg
++  - peer-hub
++
++patternProperties:
++  '^.*@[1-5]$':
++    description: The hard wired USB devices
++    type: object
++    $ref: /schemas/usb/usb-device.yaml
++    additionalProperties: true
++
++additionalProperties: false
++
++allOf:
++  - $ref: usb-device.yaml#
++  - if:
++      not:
++        properties:
++          compatible:
++            enum:
++              - usb1da0,usb55a1
++    then:
++      properties:
++        port@5: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    usb {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        /* 2.0 hub on port 1 */
++        hub_2_0: hub@1 {
++            compatible = "usb1da0,55a1";
++            reg = <1>;
++            peer-hub = <&hub_3_0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++            /* USB 2.0 device on port 5 */
++            device@5 {
++                reg = <5>;
++                compatible = "usb123,4567";
++            };
++        };
++
++        /* 3.0 hub on port 2 */
++        hub_3_0: hub@2 {
++            compatible = "usb1da0,5511";
++            reg = <2>;
++            peer-hub = <&hub_2_0>;
++
++            ports {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                /* Type-A connector on port 3 */
++                port@3 {
++                    reg = <3>;
++                    endpoint {
++                        remote-endpoint = <&usb_a0_ss>;
++                    };
++                };
++            };
++        };
++    };
+-- 
+2.49.0.472.ge94155a9ec-goog
+
 
