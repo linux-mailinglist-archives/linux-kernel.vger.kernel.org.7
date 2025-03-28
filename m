@@ -1,276 +1,212 @@
-Return-Path: <linux-kernel+bounces-580270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60373A74FC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:51:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14400A75000
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:03:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE361898146
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 17:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC93F3B95EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EE61E22FC;
-	Fri, 28 Mar 2025 17:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD5E1E22FC;
+	Fri, 28 Mar 2025 17:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CF058XN2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Rb/ZVXgv"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11hn2232.outbound.protection.outlook.com [52.100.173.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EEE1E1DF9;
-	Fri, 28 Mar 2025 17:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743184249; cv=none; b=ZqYGyNRUuoN9Z0Bvjg3VDdWlTNTqdN/BD+XGOlRfD9SDUV2KbqAYjKfPae+zgp9O2Vm6DXsHNgKgvEL+J47Abn/zuje6yN31alKn+AuAJHO/JhPAs6XctJh+MZ5zuDgSta9noD3OODvlyxaMEuXLP1dPhADuUEjkVWFZljb7tgQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743184249; c=relaxed/simple;
-	bh=op3+AAIYXvlFsPil8RChqFwsSZhSrZvw+UsKo54/4IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oB7T0t2Vlwhtl+bBEv4QZwcByHAHUQIV367+egeIBVwInGH/4XdtFGQWyyEyxoOCzSXqw8H93chs6NEByGMhtDT9eyxXNEtYfeKz9omxIjjobtZGEpGUSAI2oJ0s78ghBc2ohJUhS+RCZvDX3h0hJMaYjQyi/cxjNf8zq1t2wSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CF058XN2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D38F9C19421;
-	Fri, 28 Mar 2025 17:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743184248;
-	bh=op3+AAIYXvlFsPil8RChqFwsSZhSrZvw+UsKo54/4IU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CF058XN2awHuVvXzRJZsGMXh+Ps6Cc7duoNCMsHRRznbRzkedacuit4fJSVz4Wq4I
-	 SwsuXk9ZOrBMCe9Gc1LpAFuYDQLIiBUnz8JKEKCspzpit5u1UBAnYJiC3UnQCtpTyb
-	 ALQ03fvmk2MUl0MzS7PyTKD0YpyytrXSB1f0YAy6/pF8bXEBHtjO5RvYzs8gqorK0m
-	 my59Cqfx1f+WUVnEFDUDfqsFZW32bKUVQu9P1xjcaczd4D88ywGRcR2Zqo1xtDN9NP
-	 k0r6IOpJr73rIzxcA9Wud+PkbAAf1Ee6/dEUpLIowd9Jd5wZm5BINCcezounEQxhm5
-	 MW9PNU0rczmPQ==
-Date: Fri, 28 Mar 2025 19:50:43 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: dave.hansen@intel.com, linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
-	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
-	dionnaglaze@google.com, bondarn@google.com, scott.raynor@intel.com
-Subject: Re: [PATCH v2 2/2] x86/sgx: Implement EUPDATESVN and
- opportunistically call it during first EPC page alloc
-Message-ID: <Z-bhczXA6aHdCYHq@kernel.org>
-References: <20250328125859.73803-1-elena.reshetova@intel.com>
- <20250328125859.73803-3-elena.reshetova@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BEF1DED6C;
+	Fri, 28 Mar 2025 17:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.100.173.232
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743184597; cv=fail; b=f+cofTg+mVyx34EJUzpkWN/KADu+KbMtpQ6ja3o1jnqbkwIqPN3CC6g8rA7b/1N82mbRAjBTe6FGe0RBezlzBZI1PrxRwySBWrUinJpugSuISq+3MkRWyG0VoJRH8VcGRfroTitW/p+xzVjrKnfC54qG3Cbm0y3CqSA6U0XBBmo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743184597; c=relaxed/simple;
+	bh=T3ASJ2H/SPRM7m/l81hloy8dXIwXWS6TpECHBIDl6DI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Nj+NO1fIl4iLSSKxWKBSBJSOjz/qlH18Dc+LL5LNfGI9eC4JRSJiYyHJemFC48gIcnox1r7giUI+DQRF2KGRxkR7l77g6xGfINE6FlM3az7sM7JfEHgaP9hXwdbUt30YGxo9cGiT3KHxKc1QVhJlBa1qnnz+C2hKG+Y7cvBt8fU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Rb/ZVXgv; arc=fail smtp.client-ip=52.100.173.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qQwqnveL39Ow8xCci+BhTHUntg86v43tydfRY+7aazuULCixZFtS/udqXlaw3uYGs7g5WO4xk30Asyz8w5Jk+95Jsfihu26kF6ScGqDRAviuOBzXbTtMvoX34fY3kWY9H/agKt7Biit4DJ10T4e1usHGi0yBY/wvp0oAddy8iRXDTcvq+L/th1eKBAHzMAHROnTvVqnbriL+UvACwo3RFPLFQG9bniVQoo7tOaJQpOHKX0bk9zCfMambEvjgjJ7DRz4M0ebl+9n7kqq0rNVFxT7/hcIpX1q5nTLpdlRoIRWPP/P1j1WN3D2cEqjKFMTQvLe6FalVb9FIt8Rc4kvggA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PZCPKaQ3i04mC2G9UITYCbKWY8r4PIwRcgJjzkU/eJc=;
+ b=wNlvUYIN3AIAICoN1rnnx8w8fibR96Z7nuFB2PrtU5/U2RJsTcTCBmeIYY5wdmcDs/PnFAiq8eDWPNCCPs+rIGj4c8yxzjXNnRQlvCrcL57qVXLL2S4y+8KxjqU0/gzTG7eppUDsZferfQVRI8cULVSq6VxmONaEKFPOi8zjWNUoWZzLKvnY1UrE3hC5VG0+eD0mwW9Hjjp8C8WcA/eEqKOYSOf/KTyPcR750FmTo8ULEDMoYbH/ComXslcS2I4uqYVE+0mTGbT8oblhbSqMfaWXMLO2WCbDLkdyn364TGg5d1N00uyA/K2U3rlVL4blwquUUDOz5M8LNOPhXhN3/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PZCPKaQ3i04mC2G9UITYCbKWY8r4PIwRcgJjzkU/eJc=;
+ b=Rb/ZVXgvYQPD1QfS38hwbEbjLF305EmHt/YVYpxOkDVp6BJdtn1cQea3mU5R1c6HRNMBH2peucRPhHnLdiBRe0+1bx+U3dyK/hgRmg/ulZQ0ezHCqsbgIC2r92lTARBOLUuSCCaI6XUV4XwCHBjUhcnNipMnW7x5iEO63sNxigY=
+Received: from SJ0PR03CA0081.namprd03.prod.outlook.com (2603:10b6:a03:331::26)
+ by SJ2PR12MB8807.namprd12.prod.outlook.com (2603:10b6:a03:4d0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
+ 2025 17:56:32 +0000
+Received: from SJ5PEPF000001CF.namprd05.prod.outlook.com
+ (2603:10b6:a03:331:cafe::58) by SJ0PR03CA0081.outlook.office365.com
+ (2603:10b6:a03:331::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Fri,
+ 28 Mar 2025 17:56:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001CF.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Fri, 28 Mar 2025 17:56:32 +0000
+Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Mar
+ 2025 12:56:27 -0500
+Message-ID: <314522ae-05a4-4dfb-af99-6bb3901a5522@amd.com>
+Date: Fri, 28 Mar 2025 23:26:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328125859.73803-3-elena.reshetova@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+To: Oleg Nesterov <oleg@redhat.com>, syzbot
+	<syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+CC: <asmadeus@codewreck.org>, <brauner@kernel.org>, <dhowells@redhat.com>,
+	<ericvh@kernel.org>, <jack@suse.cz>, <jlayton@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux_oss@crudebyte.com>, <lucho@ionkov.net>, <mjguzik@gmail.com>,
+	<netfs@lists.linux.dev>, <swapnil.sapkal@amd.com>,
+	<syzkaller-bugs@googlegroups.com>, <v9fs@lists.linux.dev>,
+	<viro@zeniv.linux.org.uk>
+References: <20250328144928.GC29527@redhat.com>
+ <67e6be9a.050a0220.2f068f.007f.GAE@google.com>
+ <20250328170011.GD29527@redhat.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250328170011.GD29527@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CF:EE_|SJ2PR12MB8807:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d475756-4036-4acb-2e15-08dd6e21e01d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|34020700016|82310400026|1800799024|7416014|376014|12100799063;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qm1rY2w4N2tHRzVKV1liOFBBa2V6cHpFdnRKRjR0a2dOYVZSTHJLYWp1SDNn?=
+ =?utf-8?B?b25PWklTM3lJRE5RczZUV2pLU1BZazdtM2JXSitVcUY4cVlQTEFGZ1hmNytn?=
+ =?utf-8?B?c3VOYUlIdUlRYk1IM3RGZVRaQ1JBMHFVQzZRaUhZV3dlU1Z6UUJKd25OcXlh?=
+ =?utf-8?B?TFZkWDNIRExva1FBQkZmU0ZveG5lVGNNdzYzRTdGcG1FNjJrRmFSU2JNMVl0?=
+ =?utf-8?B?a2ZtaC9TcmdOUHgrVGhSVStOMUpyN3lzdUpLNFpGcEFEQWxVQ3pJOGhEK1Jy?=
+ =?utf-8?B?WlRtZWh1dDdzZkVUeVJ4dE4yTWVtR01wSGJyay91ZkU0ZGFEY1BVQitNRXBG?=
+ =?utf-8?B?d3NjQmpNYXRtN1FZV3pJQ0cwbjJNalRUU0RrdVVYTUczbWZKZEtqME9sVVBF?=
+ =?utf-8?B?L2hFMDljTUVaQVVNMzVmQWRoVUJUMjJEQWIwemd1eXFuMUdqQzZTL1Vja2JI?=
+ =?utf-8?B?SmozdlJBZHdrT0YyUVIrMm56T2xaRUhqd1dEYXkvZWNDMUdTN0FRdStPZFRF?=
+ =?utf-8?B?QVJVTjIxL1pvSEwrZE9QN243R3orc0F1NlRIWnNQVHhIZEo4ckJsMi90czFk?=
+ =?utf-8?B?QjR2TS9DdlRMbnlyUCtseGtzWk9zbkJZS2phT0V4N1BIMS9FRnlubDRYaytW?=
+ =?utf-8?B?cm92dEFmUG1IYytRU1hVZzF2WjNraWRqaFpsa0RiWnF5amJDUmovYW5kTWRX?=
+ =?utf-8?B?dXUwRmdSMjV3a0p6cFhtZWFvUndCbHlpeWw0TTl1ZnRhMjdJWTJiZlo3OFJN?=
+ =?utf-8?B?UEk0cDNoQ2k1SWw0S1NQK0RvL3p6VGlhNTV1ZDY3UHBMQ01wSjg5NEpCc2pF?=
+ =?utf-8?B?RXViWUY5NFpQeElVS0p4VFNXeFJ4SndTblNsalVHenRDT0c2U0h0OGJCWlhT?=
+ =?utf-8?B?NThOVmlBY2xQNXZpdDBqSGN2UnZqd05LbUZjMXpBWW8yczFoQlVwbm5zdXkr?=
+ =?utf-8?B?OU1UYlRwQVZYTWRpMit1TWdoM2RBMVREdDRvUTREaHh6bmQzanRVVXV3T1kv?=
+ =?utf-8?B?ZXVqNGtVVUZwcVAyV25aSEc0blVlNjk0TlN4VG91UlI2ZmxZekxRWWlBR1lE?=
+ =?utf-8?B?Q2VWWkFvTlQ1aVc2TFhNdGRxZU51UForOWF1anFXVHFGVWduSXE4d3U4R0g3?=
+ =?utf-8?B?eGJHZjNGR0MwZGJsQkVQT3hURU5mY1F0VW15SC9FUThMajQ0ZHJvbXQ3dmto?=
+ =?utf-8?B?STdMeDkvelVZMG11TWZxdGdiS0JiQ2lheVpuQTd5b3FsOFhZaWlldU5Fc2hI?=
+ =?utf-8?B?Smoyb05wM2NUQXlJUGtRMVVCWWdwaXdFRmlYelk0QXlQRi9PSENqNEpMSXdI?=
+ =?utf-8?B?cTNMWDJBdWx0d0dVRkVHQmFING5jeWI1N2ZWdUVOWnRkQXRqd1FNMllmV3hz?=
+ =?utf-8?B?aVlmZkhhMEIveFZpZXlWbWZ2b3Zib1AvOFEzOWRrbFFXd3dJNDJwTENmbEpj?=
+ =?utf-8?B?ZUpTWnJObG5Scjc0c1hlVEtxV0ZBMVZhWW5tcUJEaStIWCtKKytnNWJ3NDlo?=
+ =?utf-8?B?M3Zzb2UybU51UlNuekVlQjhOejkyeUwyWmc2TjdtWkFnYTVvU2JnRlR0Sldn?=
+ =?utf-8?B?eDZwUjd5Y2lpZEFFMzJrdmxIdXBmNzgwTHZTQ0ZTRnNGL08rdWRuKzZsVE9x?=
+ =?utf-8?B?Tlh4RW43Um1KZ0dOdXBsR1BMbnJ6U2s4NW11ZGZEbmxaTi9ieXM2SW55SWpk?=
+ =?utf-8?B?OWJyT1hGTlB6QUpaKzdjTXE5TUhMaUEwRmdFK29QV0ZaS21FbENTMG1mWWJM?=
+ =?utf-8?B?dDZzUnQxY3E2K1VQVVFKM2dESC9uVElPM1E1c2crdGs4c0htUzhwNTlkUkYr?=
+ =?utf-8?B?VG1ReTZFRXdVS3djVUpFcDVCdk9DenY4Wkl6bFJzN25NTlEwTDh4WHp0SHpr?=
+ =?utf-8?B?WnNReGZMaEY4Mm0wM1luaHB3Si92MVBDNDlxUXF4bkNZL0lTeUlua0pnWjJq?=
+ =?utf-8?B?SEZkU2pReE9pU3Jjbkk1L2daWVRkU0NJQnpYczUwd3I4QmVhSjVIWXhxbXEw?=
+ =?utf-8?Q?Zpz9EgIDvaIzNfxat6+J04y6g8J7xQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(34020700016)(82310400026)(1800799024)(7416014)(376014)(12100799063);DIR:OUT;SFP:1501;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 17:56:32.8057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d475756-4036-4acb-2e15-08dd6e21e01d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8807
 
-On Fri, Mar 28, 2025 at 02:57:41PM +0200, Elena Reshetova wrote:
-> SGX architecture introduced a new instruction called EUPDATESVN
-> to Ice Lake. It allows updating security SVN version, given that EPC
-> is completely empty. The latter is required for security reasons
-> in order to reason that enclave security posture is as secure as the
-> security SVN version of the TCB that created it.
+Hello Oleg,
+
+On 3/28/2025 10:30 PM, Oleg Nesterov wrote:
+> Dear syzbot,
 > 
-> Additionally it is important to ensure that while ENCLS[EUPDATESVN]
-> runs, no concurrent page creation happens in EPC, because it might
-> result in #GP delivered to the creator. Legacy SW might not be prepared
-> to handle such unexpected #GPs and therefore this patch introduces
-> a locking mechanism to ensure no concurrent EPC allocations can happen.
+> On 03/28, syzbot wrote:
+>>
+>> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+>>
+>> Reported-by: syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com
+>> Tested-by: syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com
+>
+
+Yours is the right approach. I was searching for p9_poll_mux()
+which would wake the read collector to free pipe buffers but I
+didn't dig enough and I was too lazy to open code it (guilty!)
+If this gets picked, feel free to add:
+
+Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+  
+> Thanks. so the previous
 > 
-> It is also ensured that ENCLS[EUPDATESVN] is not called when running
-> in a VM since it does not have a meaning in this context (microcode
-> updates application is limited to the host OS) and will create
-> unnecessary load.
+> 	syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> 	unregister_netdevice: waiting for DEV to become free
 > 
-> This patch is based on previous submision by Cathy Zhang
-> https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+> 	unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
 > 
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-> ---
->  arch/x86/include/asm/sgx.h      | 41 +++++++++++++--------
->  arch/x86/kernel/cpu/sgx/encls.h |  6 ++++
->  arch/x86/kernel/cpu/sgx/main.c  | 63 ++++++++++++++++++++++++++++++++-
->  arch/x86/kernel/cpu/sgx/sgx.h   |  1 +
->  4 files changed, 95 insertions(+), 16 deletions(-)
+> report suggests that upstream/master has another/unrelated issue(s).
+
+I could not reproduce this bit on mainline at commit acb4f33713b9
+("Merge tag 'm68knommu-for-v6.15' of
+git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu") so I too
+second that it is an unrelated issue.
+
 > 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 6a0069761508..5caf5c31ebc6 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -26,23 +26,26 @@
->  #define SGX_CPUID_EPC_SECTION	0x1
->  /* The bitmask for the EPC section type. */
->  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
-> +/* EUPDATESVN presence indication */
-> +#define SGX_CPUID_EUPDATESVN	BIT(10)
->  
->  enum sgx_encls_function {
-> -	ECREATE	= 0x00,
-> -	EADD	= 0x01,
-> -	EINIT	= 0x02,
-> -	EREMOVE	= 0x03,
-> -	EDGBRD	= 0x04,
-> -	EDGBWR	= 0x05,
-> -	EEXTEND	= 0x06,
-> -	ELDU	= 0x08,
-> -	EBLOCK	= 0x09,
-> -	EPA	= 0x0A,
-> -	EWB	= 0x0B,
-> -	ETRACK	= 0x0C,
-> -	EAUG	= 0x0D,
-> -	EMODPR	= 0x0E,
-> -	EMODT	= 0x0F,
-> +	ECREATE		= 0x00,
-> +	EADD		= 0x01,
-> +	EINIT		= 0x02,
-> +	EREMOVE		= 0x03,
-> +	EDGBRD		= 0x04,
-> +	EDGBWR		= 0x05,
-> +	EEXTEND		= 0x06,
-> +	ELDU		= 0x08,
-> +	EBLOCK		= 0x09,
-> +	EPA		= 0x0A,
-> +	EWB		= 0x0B,
-> +	ETRACK		= 0x0C,
-> +	EAUG		= 0x0D,
-> +	EMODPR		= 0x0E,
-> +	EMODT		= 0x0F,
-> +	EUPDATESVN	= 0x18,
->  };
->  
->  /**
-> @@ -73,6 +76,11 @@ enum sgx_encls_function {
->   *				public key does not match IA32_SGXLEPUBKEYHASH.
->   * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
->   *				is in the PENDING or MODIFIED state.
-> + * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-> + * %SGX_EPC_NOT_READY:		EPC is not ready for SVN update.
-> + * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
-> + *				updated because current SVN was not newer than
-> + *				CPUSVN.
->   * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
->   */
->  enum sgx_return_code {
-> @@ -81,6 +89,9 @@ enum sgx_return_code {
->  	SGX_CHILD_PRESENT		= 13,
->  	SGX_INVALID_EINITTOKEN		= 16,
->  	SGX_PAGE_NOT_MODIFIABLE		= 20,
-> +	SGX_INSUFFICIENT_ENTROPY	= 29,
-> +	SGX_EPC_NOT_READY		= 30,
-> +	SGX_NO_UPDATE			= 31,
->  	SGX_UNMASKED_EVENT		= 128,
->  };
->  
-> diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-> index 99004b02e2ed..3d83c76dc91f 100644
-> --- a/arch/x86/kernel/cpu/sgx/encls.h
-> +++ b/arch/x86/kernel/cpu/sgx/encls.h
-> @@ -233,4 +233,10 @@ static inline int __eaug(struct sgx_pageinfo *pginfo, void *addr)
->  	return __encls_2(EAUG, pginfo, addr);
->  }
->  
-> +/* Update CPUSVN at runtime. */
-> +static inline int __eupdatesvn(void)
-> +{
-> +	return __encls_ret_1(EUPDATESVN, "");
-> +}
-> +
->  #endif /* _X86_ENCLS_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-> index b61d3bad0446..24563110811d 100644
-> --- a/arch/x86/kernel/cpu/sgx/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/main.c
-> @@ -32,6 +32,11 @@ static DEFINE_XARRAY(sgx_epc_address_space);
->  static LIST_HEAD(sgx_active_page_list);
->  static DEFINE_SPINLOCK(sgx_reclaimer_lock);
->  
-> +/* This lock is held to prevent new EPC pages from being created
-> + * during the execution of ENCLS[EUPDATESVN].
-> + */
-> +static DEFINE_SPINLOCK(sgx_epc_eupdatesvn_lock);
-> +
->  static atomic_long_t sgx_nr_used_pages = ATOMIC_LONG_INIT(0);
->  static unsigned long sgx_nr_total_pages;
->  
-> @@ -457,7 +462,17 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
->  	page->flags = 0;
->  
->  	spin_unlock(&node->lock);
-> -	atomic_long_inc(&sgx_nr_used_pages);
-> +
-> +	if (!atomic_long_inc_not_zero(&sgx_nr_used_pages)) {
-> +		spin_lock(&sgx_epc_eupdatesvn_lock);
-> +		/* Only call sgx_updatesvn() once the first enclave's
-> +		 * page is allocated from EPC
-> +		 */
-> +		if (atomic_long_read(&sgx_nr_used_pages) == 0)
-> +			sgx_updatesvn();
-> +		atomic_long_inc(&sgx_nr_used_pages);
-> +		spin_unlock(&sgx_epc_eupdatesvn_lock);
-> +	}
->  
->  	return page;
->  }
-> @@ -970,3 +985,49 @@ static int __init sgx_init(void)
->  }
->  
->  device_initcall(sgx_init);
-> +
-> +/**
-> + * sgx_updatesvn() - Issue ENCLS[EUPDATESVN]
-> + * If EPC is ready, this instruction will update CPUSVN to the currently
-> + * loaded microcode update SVN and generate new cryptographic assets.
-> + */
-> +void sgx_updatesvn(void)
-> +{
-> +	int retry = 10;
-> +	int ret;
-> +
-> +	lockdep_assert_held(&sgx_epc_eupdatesvn_lock);
-> +
-> +	if (!(cpuid_eax(SGX_CPUID) & SGX_CPUID_EUPDATESVN))
-> +		return;
-> +
-> +	/* Do not execute ENCLS[EUPDATESVN] if running in a VM since
-> +	 * microcode updates are only meaningful to be applied on the host.
-> +	 */
-> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +		return;
-> +
-> +	do {
-> +		ret = __eupdatesvn();
-> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
-> +			break;
-> +
-> +	} while (--retry);
-> +
-> +	switch (ret) {
-> +	case 0:
-> +		pr_info("EUPDATESVN: success\n");
-> +		break;
-> +	case SGX_EPC_NOT_READY:
-> +	case SGX_INSUFFICIENT_ENTROPY:
-> +	case SGX_EPC_PAGE_CONFLICT:
-> +		pr_err("EUPDATESVN: error %d\n", ret);
-> +		break;
-> +	case SGX_NO_UPDATE:
-> +		break;
-> +	default:
-> +		pr_err("EUPDATESVN: unknown error %d\n", ret);
-> +		break;
-> +	}
+> As for the patches from me or Prateek (thanks again!), I think that
+> the maintainers should take a look.
+> 
+> But at this point I am mostly confident that the bisected commit aaec5a95d5961
+> ("pipe_read: don't wake up the writer if the pipe is still full") is innocent,
+> it just reveals yet another problem.
+> 
+> I guess (I hope ;) Prateek agrees.
 
-Overall, I think you're right in that "inversion" does make sense,
-now that other stuff is better aligned.
+I agree aaec5a95d5961 is not guilty! (unlike me) :)
 
-At least when there is spurious error, I think ioctl's should stop
-responding and driver should not do anything useful anymore. I.e.,
-it should go out-of-service.
+> 
+> Oleg.
+> 
 
-I don't think the driver should tear-down, just stop servicing
-VM's and responding ioctl's.
+-- 
+Thanks and Regards,
+Prateek
 
-Possibly thish should be also right action for other errors than
-"insufficient entropy" but I'm open for comments for this.
-
-BR, Jarkko
 
