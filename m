@@ -1,413 +1,269 @@
-Return-Path: <linux-kernel+bounces-580445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A43A751F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1619A751F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8707316DF90
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:16:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BC1B16DD71
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1D31EB5EC;
-	Fri, 28 Mar 2025 21:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A021E1DE4;
+	Fri, 28 Mar 2025 21:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hgiu7PIb"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lMWAyH6T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uTAtLPOS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14401C1F02;
-	Fri, 28 Mar 2025 21:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FECF1DFDB4;
+	Fri, 28 Mar 2025 21:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743196607; cv=none; b=NnYEH7KUnqiGW0yJcSGfousw7zXsKeW1KDGyDZBuGtMWA/+RLojpdquBmGlr48bmsU9gHhQTQDtWY/DIVs6zPuQ6+vUXvyLitOGgkwVfwlqnBOwLbgUPoAxmKE4qrz5dxCudbZBPfeyTvXsTo7x4cPNRgPSZcOy73ElvVck7Wcg=
+	t=1743196697; cv=none; b=b4sF7KEDR/9iKMNTj6jKANnc9C64sivhE0Qr+uVSLgwwUA5XHCWOMndeWiBaVQvJyKD3+uJPbsl99NCXKHjGd8NHMiUChkcOVlNYIqTnz1HKz6xxeqmuTBjZDwdZkBh8hydTOJUZ6d1yWMa343KRkoE+mNofFz/wgPmGtZ98RFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743196607; c=relaxed/simple;
-	bh=Cq75cGWaNXGgJPlvDR2m7QPBSOCXA3dE6y5mQk9wX50=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=d+h4pyYzuPipf6ThuWUuT1oKT3Z01wITbEnezk6ymIYY2hRkvQaJmeA0BSpmQ3CcH3m5SX+sY3cElrjKsSm1GDAqzYK3L1Ij1ZLV2CGO8BKr3sCPud5mE+FoOG1QOYT3kOeEXc2llS+UufV5eZm2Zjg/XKsLz8Z988Q2Yy809VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hgiu7PIb; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224341bbc1dso52624305ad.3;
-        Fri, 28 Mar 2025 14:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743196605; x=1743801405; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQdvqWnU1/MoyOl7aQRdpiuixcuM6V34/ep3gwrpUas=;
-        b=Hgiu7PIby6xvuivTy+raej+y7SlOn6+kcmy3LgvQZfO6D/piEEdSC5mtLQYfFA7TV3
-         hVQbX01/UhX49HPeSXVcOVN9v7GCpjvqdhPrQsYQUjAkJ9rpAH4GOQ7Izd4TOjaRY6bj
-         J1JStXPEaa3oxx5j8SzqBOju+vmRm1ri6dPqsFnW2PBGMaxCTyi5kmcbyLw8p+8ydqNQ
-         3akgEFBtWTy2wJncDz1rXgBJ64QdmPBIU9PxIwyjMu0ZancMo4CzYpbiULZ4vEitg+2B
-         NVecoPveGHznTY6gYQQM/PlMGwX4r5oUXXPSnGEKxnICZCNJcMNtroVceWe6ji0ux0YQ
-         6krg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743196605; x=1743801405;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PQdvqWnU1/MoyOl7aQRdpiuixcuM6V34/ep3gwrpUas=;
-        b=hs5/sLi/Y9JIC5WW4xqZJLwLAabBq8tpCpUN1DozQxRTj5+GXL4gu1RZYzt0ssK8EU
-         bvg60WzoSoYZT54/boOSsN3hLhbwO6XJdQI4j+10sO6SZgyttWC8PvV/Tx9TfbQ3HZhN
-         JOBBFSyaau8GU16rXZc+hwNhq/2WhqNI/GqDqUrqhKuWtJqeN9eqLGg2wFUObCwn2ONz
-         Qh+D/KHKLEcD4cq9QuIvUXft6Zv/C+USPuH6t/CqV+gOAvIlAbXCnvAD/hrr9waEzRqT
-         8AtzDiHDiSWvawDa+Ev3jepKpOtUj8klaKJ1tOk0iqK+ZYagrATLriy9dXplRT0cpr8z
-         8wCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWISYDgiybW20ADy2K7jadYNvpl1z6Od9khimofMPmZZeJZ+yLNkUhHryBOPQ1+zaJFaa1i68n5+c1BzD6aT0laCjrxog==@vger.kernel.org, AJvYcCWJeD8JKzJxTT/oazDEtA2xGr66j5gl1HUhJuLQhktdK72luCkGU3Pi9CKaxK5HNcrJKZidzVYXBDKZTys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Alm7nZadnpaofAoy6R59AGfsP+Q8ITyqSn9ViL3Ap+YzBdbI
-	xjWFsLGHXT/IcUn9c8jg4ccNKE53U4y76wL6M5pvMYjv1L9jyNTV
-X-Gm-Gg: ASbGncvnLAAio/CHzrI7+/mgO9JOzx3WlfXimyk22XKURKiS0B7txZv+7P7ELnNJfXx
-	i7kaWHsZaTdZFYQLf55iPSWYK50wlcSUhf7/NZxSxo2+d9Z4z6Ke36OPlBrJYP7dqwPxzArZWCB
-	W8//62vtMkzP6foKzK2MaDrdAyzDLaXOKFtIS4YJxAvag1W8Lt0sr0pac5aLgQomGagkQxA7qEV
-	T6WssfBNIO4AAAxn6VOcSJGUl0iCwj8q45MT12jr4zbDJ0a5Ctz6/hsShFfAQSES5mt3ezwAwf/
-	6lqlAQmOpW2/70Ojmq/MwNHu53RsfzvRPMGXKw==
-X-Google-Smtp-Source: AGHT+IEgjthqdq03xySw0fw1gDiZrOK53FoxCuE0evUJbZW8d31nnltpw9rglMXXdHBvIAX76wb3yQ==
-X-Received: by 2002:a17:902:748b:b0:224:2524:3047 with SMTP id d9443c01a7336-2292f97578dmr8231515ad.26.1743196604426;
-        Fri, 28 Mar 2025 14:16:44 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93ba0e4f0sm2104479a12.72.2025.03.28.14.16.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 14:16:44 -0700 (PDT)
+	s=arc-20240116; t=1743196697; c=relaxed/simple;
+	bh=jfZmS86WvTQbO/vPwK7LXkrbWV/6CsJp6BszCFN7PSs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qxFiCCNWhEsWjXzHTSW1JZ6pfLBn2iAKUu3Flgc3HsxQqBJNYoStdA9n+7Y7/N+TIzHUDKozWBjvS/mcqd6ZQ2iha5OIjjEgKQGl0LpTVcZ8evxL/28F4/nKeXfulGvKIOZhMGFA2oLv9OvoToXr4ruf02GE7a1kQwNyveXHjCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lMWAyH6T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uTAtLPOS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 28 Mar 2025 21:17:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743196688;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJzNhMB9eAzSRLxdzIZ9YYgaFezXpzE5fARKxl+OUIY=;
+	b=lMWAyH6TYt9MgwOwkpt2pJe5mESyyBHsC5Ujv9uwP2Bjtxie+0iWY7PYJxjpixZITh53vO
+	KeNFhu3kI4V2/u7U00sLkP61FF4Cud8Drp0pIITTgAbiFIaTJ3e7nY/iwYMGrxoU1e1vYm
+	wsBqqkUVw0G/ssA6EvbvS2c9EHhwtbUPH4s7W3uVsC/TaWILjIrqG9i9pYxDrZZBYPqRUp
+	L+YsOW2Hc9mQBgX8tm/85RKmRHvhG0RLngsVrbTi18pQTLpbYqpn1NNTicMg18YhFSMWq4
+	EArV5gG9rM1DnaHbEkBxiwztw4z9ouSIdcdwom+zxQsx2e51pQ1RPsPvKHhZyg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743196688;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJzNhMB9eAzSRLxdzIZ9YYgaFezXpzE5fARKxl+OUIY=;
+	b=uTAtLPOSrXifEcy9sAojoeEX7qJj4EMW4f8JPis1a0Gtu3gkienrz6mczQRSsp+Vdy4XM8
+	Ba2BxgCk2s2faGDw==
+From: "tip-bot2 for Herton R. Krzesinski" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/uaccess: Improve performance by aligning writes to
+ 8 bytes in copy_user_generic(), on non-FSRM/ERMS CPUs
+Cc: Ondrej Lichtner <olichtne@redhat.com>,
+ "Herton R. Krzesinski" <herton@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250320142213.2623518-1-herton@redhat.com>
+References: <20250320142213.2623518-1-herton@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 28 Mar 2025 18:16:41 -0300
-Message-Id: <D8S7MF97YEGI.21PR2NBB42QRS@gmail.com>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Armin Wolf" <W_Armin@gmx.de>, "Hans de Goede" <hdegoede@redhat.com>,
- <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
- "LKML" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 03/12] platform/x86: alienware-wmi-wmax: Improve
- internal AWCC API
-From: "Kurt Borja" <kuurtb@gmail.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
- <20250313-hwm-v6-3-17b57f787d77@gmail.com>
- <45699e14-6d51-8116-b252-a7a20ffe8e8b@linux.intel.com>
-In-Reply-To: <45699e14-6d51-8116-b252-a7a20ffe8e8b@linux.intel.com>
+MIME-Version: 1.0
+Message-ID: <174319666347.14745.18304475049279156644.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri Mar 28, 2025 at 11:51 AM -03, Ilpo J=C3=A4rvinen wrote:
-> On Thu, 13 Mar 2025, Kurt Borja wrote:
->
->> Inline all AWCC WMI helper methods and directly return the newly
->> introduced __awcc_wmi_command() helper to simplify implementation.
->>=20
->> Drop awcc_thermal_control() in favor of awcc_op_activate_profile().
->>=20
->> Add awcc_op_get_resource_id(), awcc_op_get_current_profile() and a new
->> failure code.
->>=20
->> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->> ---
->>  drivers/platform/x86/dell/alienware-wmi-wmax.c | 150 +++++++++++++++---=
--------
->>  1 file changed, 91 insertions(+), 59 deletions(-)
->>=20
->> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pl=
-atform/x86/dell/alienware-wmi-wmax.c
->> index 80aefba5b22d6b4ac18aeb2ca356f8c911150abd..b9dbfdc8096c571722b3c7ac=
-3e73989e235e2eb9 100644
->> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
->> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
->> @@ -32,6 +32,7 @@
->>  #define AWCC_THERMAL_MODE_GMODE			0xAB
->> =20
->>  #define AWCC_FAILURE_CODE			0xFFFFFFFF
->> +#define AWCC_FAILURE_CODE_2			0xFFFFFFFE
->>  #define AWCC_THERMAL_TABLE_MASK			GENMASK(7, 4)
->>  #define AWCC_THERMAL_MODE_MASK			GENMASK(3, 0)
->>  /* Some IDs have a BIT(8) flag that we ignore */
->> @@ -443,8 +444,7 @@ const struct attribute_group wmax_deepsleep_attribut=
-e_group =3D {
->>  };
->> =20
->>  /*
->> - * Thermal Profile control
->> - *  - Provides thermal profile control through the Platform Profile API
->> + * AWCC Helpers
->>   */
->>  static bool is_awcc_thermal_profile_id(u8 code)
->>  {
->> @@ -463,72 +463,107 @@ static bool is_awcc_thermal_profile_id(u8 code)
->>  	return false;
->>  }
->> =20
->> -static int awcc_thermal_information(struct wmi_device *wdev, u8 operati=
-on,
->> -				    u8 arg, u32 *out_data)
->> +static int __awcc_wmi_command(struct wmi_device *wdev, u32 method_id,
->> +			      struct wmax_u32_args *args, u32 *out)
->
-> Why did you put __ into the name?
->
-> Some people oppose __ prefix altogether, I don't entirely agree with thei=
-r=20
-> stance but I don't really understand what the underscores here signify.
->
-> Normally I see __ being used in three main cases:
-> - non-__ variant does some locking around the call too the __ func (thoug=
-h=20
->   many funcs use _locked postfix these days).
-> - func is "dangerous" and caller has to really know what he/she is
->   doing / be careful for some reason.
-> - non-__ variant exists and somebody cannot come up better name for the
->   internally called function (not very good use case, IMHO)
+The following commit has been merged into the x86/mm branch of tip:
 
-Oh - I didn't know. Andy also mentioned this prefix is used for
-non-atomic versions of some functions like __set_bit().
+Commit-ID:     411d2763b3ba0e3a99cd27ce813738d530b2320d
+Gitweb:        https://git.kernel.org/tip/411d2763b3ba0e3a99cd27ce813738d530b2320d
+Author:        Herton R. Krzesinski <herton@redhat.com>
+AuthorDate:    Thu, 20 Mar 2025 11:22:13 -03:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 28 Mar 2025 21:56:49 +01:00
 
->
-> I don't see any of those apply here, this looks just an ordinary wrapper=
-=20
-> function, thus the question.
+x86/uaccess: Improve performance by aligning writes to 8 bytes in copy_user_generic(), on non-FSRM/ERMS CPUs
 
-I did it to indicate it's a "private" method, so it's not used directly.
-But ofc that's not the convention here, so I'll drop it.
+History of the performance regression:
+======================================
 
->
->>  {
->> -	struct wmax_u32_args in_args =3D {
->> +	int ret;
->> +
->> +	ret =3D alienware_wmi_command(wdev, method_id, args, sizeof(*args), ou=
-t);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (*out =3D=3D AWCC_FAILURE_CODE || *out =3D=3D AWCC_FAILURE_CODE_2)
->> +		return -EBADRQC;
->> +
->> +	return 0;
->> +}
->> +
->> +static inline int awcc_thermal_information(struct wmi_device *wdev, u8 =
-operation,
->> +					   u8 arg, u32 *out)
->> +{
->> +	struct wmax_u32_args args =3D {
->>  		.operation =3D operation,
->>  		.arg1 =3D arg,
->>  		.arg2 =3D 0,
->>  		.arg3 =3D 0,
->>  	};
->> -	int ret;
->> =20
->> -	ret =3D alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION,
->> -				    &in_args, sizeof(in_args), out_data);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	if (*out_data =3D=3D AWCC_FAILURE_CODE)
->> -		return -EBADRQC;
->> -
->> -	return 0;
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args=
-, out);
->>  }
->> =20
->> -static int awcc_thermal_control(struct wmi_device *wdev, u8 profile)
->> +static inline int awcc_game_shift_status(struct wmi_device *wdev, u8 op=
-eration,
->
-> As a general rule, don't add inline to .c files, we leave figuring=20
-> inlining out to the compiler.
+Since the a series of user copy updates were merged upstream
+~2 years ago via:
 
-Good to know, thanks!
+  a5624566431d ("Merge branch 'x86-rep-insns': x86 user copy clarifications")
 
->
->> +					 u32 *out)
->>  {
->> -	struct wmax_u32_args in_args =3D {
->> -		.operation =3D AWCC_OP_ACTIVATE_PROFILE,
->> -		.arg1 =3D profile,
->> -		.arg2 =3D 0,
->> -		.arg3 =3D 0,
->> -	};
->> -	u32 out_data;
->> -	int ret;
->> -
->> -	ret =3D alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL,
->> -				    &in_args, sizeof(in_args), &out_data);
->> -	if (ret)
->> -		return ret;
->> -
->> -	if (out_data =3D=3D AWCC_FAILURE_CODE)
->> -		return -EBADRQC;
->> -
->> -	return 0;
->> -}
->> -
->> -static int awcc_game_shift_status(struct wmi_device *wdev, u8 operation=
-,
->> -				  u32 *out_data)
->> -{
->> -	struct wmax_u32_args in_args =3D {
->> +	struct wmax_u32_args args =3D {
->>  		.operation =3D operation,
->>  		.arg1 =3D 0,
->>  		.arg2 =3D 0,
->>  		.arg3 =3D 0,
->>  	};
->> -	int ret;
->> =20
->> -	ret =3D alienware_wmi_command(wdev, AWCC_METHOD_GAME_SHIFT_STATUS,
->> -				    &in_args, sizeof(in_args), out_data);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	if (*out_data =3D=3D AWCC_FAILURE_CODE)
->> -		return -EOPNOTSUPP;
->> -
->> -	return 0;
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_GAME_SHIFT_STATUS, &args, =
-out);
->>  }
->> =20
->> +/**
->> + * awcc_op_get_resource_id - Get the resource ID at a given index
->> + * @wdev: AWCC WMI device
->> + * @index: Index
->> + * @out: Value returned by the WMI call
->> + *
->> + * Get the resource ID at a given index. Resource IDs are listed in the
->
-> Use @index to refer to the argument.
+.. copy_user_generic() on x86_64 stopped doing alignment of the
+writes to the destination to a 8 byte boundary for the non FSRM case.
 
-Ack
+Previously, this was done through the ALIGN_DESTINATION macro that
+was used in the now removed copy_user_generic_unrolled function.
 
->
->> + * following order:
->> + *
->> + *	- Fan IDs
->> + *	- Sensor IDs
->> + *	- Unknown IDs
->> + *	- Thermal Profile IDs
->> + *
->> + * The total number of IDs of a given type can be obtained with
->> + * AWCC_OP_GET_SYSTEM_DESCRIPTION.
->> + *
->> + * Return: 0 on success, -errno on failure
->> + */
->> +static inline int awcc_op_get_resource_id(struct wmi_device *wdev, u8 i=
-ndex, u32 *out)
->> +{
->> +	struct wmax_u32_args args =3D {
->> +		.operation =3D AWCC_OP_GET_RESOURCE_ID,
->> +		.arg1 =3D index,
->> +		.arg2 =3D 0,
->> +		.arg3 =3D 0,
->> +	};
->> +
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args=
-, out);
->> +}
->> +
->> +static inline int awcc_op_get_current_profile(struct wmi_device *wdev, =
-u32 *out)
->> +{
->> +	struct wmax_u32_args args =3D {
->> +		.operation =3D AWCC_OP_GET_CURRENT_PROFILE,
->> +		.arg1 =3D 0,
->> +		.arg2 =3D 0,
->> +		.arg3 =3D 0,
->> +	};
->> +
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args=
-, out);
->> +}
->> +
->> +static inline int awcc_op_activate_profile(struct wmi_device *wdev, u8 =
-profile)
->> +{
->> +	struct wmax_u32_args args =3D {
->> +		.operation =3D AWCC_OP_ACTIVATE_PROFILE,
->> +		.arg1 =3D profile,
->> +		.arg2 =3D 0,
->> +		.arg3 =3D 0,
->> +	};
->> +	u32 out;
->> +
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &o=
-ut);
->> +}
->> +
->> +/*
->> + * Thermal Profile control
->> + *  - Provides thermal profile control through the Platform Profile API
->> + */
->>  static int awcc_platform_profile_get(struct device *dev,
->>  				     enum platform_profile_option *profile)
->>  {
->> @@ -536,10 +571,8 @@ static int awcc_platform_profile_get(struct device =
-*dev,
->>  	u32 out_data;
->>  	int ret;
->> =20
->> -	ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_CURRENT_PROFI=
-LE,
->> -				       0, &out_data);
->> -
->> -	if (ret < 0)
->> +	ret =3D awcc_op_get_current_profile(priv->wdev, &out_data);
->> +	if (ret)
->>  		return ret;
->> =20
->>  	if (out_data =3D=3D AWCC_THERMAL_MODE_GMODE) {
->> @@ -550,7 +583,7 @@ static int awcc_platform_profile_get(struct device *=
-dev,
->>  	if (!is_awcc_thermal_profile_id(out_data))
->>  		return -ENODATA;
->> =20
->> -	out_data &=3D AWCC_THERMAL_MODE_MASK;
->> +	out_data =3D FIELD_GET(AWCC_THERMAL_MODE_MASK, out_data);
->
-> Should this be part of the earlier patch??
+Turns out this change causes some loss of performance/throughput on
+some use cases and specific CPU/platforms without FSRM and ERMS.
 
-I think I'll leave it in this patch, but I'll move it to
-awcc_op_get_resource_id().
+Lately I got two reports of performance/throughput issues after a
+RHEL 9 kernel pulled the same upstream series with updates to user
+copy functions. Both reports consisted of running specific
+networking/TCP related testing using iperf3.
 
---=20
- ~ Kurt
+Partial upstream fix
+====================
 
->
->>  	*profile =3D awcc_mode_to_platform_profile[out_data];
->> =20
->>  	return 0;
->> @@ -583,8 +616,8 @@ static int awcc_platform_profile_set(struct device *=
-dev,
->>  		}
->>  	}
->> =20
->> -	return awcc_thermal_control(priv->wdev,
->> -				    priv->supported_thermal_profiles[profile]);
->> +	return awcc_op_activate_profile(priv->wdev,
->> +					priv->supported_thermal_profiles[profile]);
->>  }
->> =20
->>  static int awcc_platform_profile_probe(void *drvdata, unsigned long *ch=
-oices)
->> @@ -606,8 +639,7 @@ static int awcc_platform_profile_probe(void *drvdata=
-, unsigned long *choices)
->>  	first_mode =3D sys_desc[0] + sys_desc[1];
->> =20
->>  	for (u32 i =3D 0; i < sys_desc[3]; i++) {
->> -		ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_RESOURCE_ID,
->> -					       i + first_mode, &out_data);
->> +		ret =3D awcc_op_get_resource_id(priv->wdev, i + first_mode, &out_data=
-);
->> =20
->>  		if (ret =3D=3D -EIO)
->>  			return ret;
->>=20
->>=20
+The first report was related to a Linux Bridge testing using VMs on a
+specific machine with an AMD CPU (EPYC 7402), and after a brief
+investigation it turned out that the later change via:
 
+  ca96b162bfd2 ("x86: bring back rep movsq for user access on CPUs without ERMS")
+
+... helped/fixed the performance issue.
+
+However, after the later commit/fix was applied, then I got another
+regression reported in a multistream TCP test on a 100Gbit mlx5 nic, also
+running on an AMD based platform (AMD EPYC 7302 CPU), again that was using
+iperf3 to run the test. That regression was after applying the later
+fix/commit, but only this didn't help in telling the whole history.
+
+Testing performed to pinpoint residual regression
+=================================================
+
+So I narrowed down the second regression use case, but running it
+without traffic through a NIC, on localhost, in trying to narrow down
+CPU usage and not being limited by other factor like network bandwidth.
+I used another system also with an AMD CPU (AMD EPYC 7742). Basically,
+I run iperf3 in server and client mode in the same system, for example:
+
+ - Start the server binding it to CPU core/thread 19:
+   $ taskset -c 19 iperf3 -D -s -B 127.0.0.1 -p 12000
+
+ - Start the client always binding/running on CPU core/thread 17, using
+   perf to get statistics:
+   $ perf stat -o stat.txt taskset -c 17 iperf3 -c 127.0.0.1 -b 0/1000 -V \
+       -n 50G --repeating-payload -l 16384 -p 12000 --cport 12001 2>&1 \
+       > stat-19.txt
+
+For the client, always running/pinned to CPU 17. But for the iperf3 in
+server mode, I did test runs using CPUs 19, 21, 23 or not pinned to any
+specific CPU. So it basically consisted with four runs of the same
+commands, just changing the CPU which the server is pinned, or without
+pinning by removing the taskset call before the server command. The CPUs
+were chosen based on NUMA node they were on, this is the relevant output
+of lscpu on the system:
+
+  $ lscpu
+  ...
+    Model name:             AMD EPYC 7742 64-Core Processor
+  ...
+  Caches (sum of all):
+    L1d:                    2 MiB (64 instances)
+    L1i:                    2 MiB (64 instances)
+    L2:                     32 MiB (64 instances)
+    L3:                     256 MiB (16 instances)
+  NUMA:
+    NUMA node(s):           4
+    NUMA node0 CPU(s):      0,1,8,9,16,17,24,25,32,33,40,41,48,49,56,57,64,65,72,73,80,81,88,89,96,97,104,105,112,113,120,121
+    NUMA node1 CPU(s):      2,3,10,11,18,19,26,27,34,35,42,43,50,51,58,59,66,67,74,75,82,83,90,91,98,99,106,107,114,115,122,123
+    NUMA node2 CPU(s):      4,5,12,13,20,21,28,29,36,37,44,45,52,53,60,61,68,69,76,77,84,85,92,93,100,101,108,109,116,117,124,125
+    NUMA node3 CPU(s):      6,7,14,15,22,23,30,31,38,39,46,47,54,55,62,63,70,71,78,79,86,87,94,95,102,103,110,111,118,119,126,127
+  ...
+
+So for the server run, when picking a CPU, I chose CPUs to be not on the same
+node. The reason is with that I was able to get/measure relevant
+performance differences when changing the alignment of the writes to the
+destination in copy_user_generic.
+
+Testing shows up to +81% performance improvement under iperf3
+=============================================================
+
+Here's a summary of the iperf3 runs:
+
+  # Vanilla upstream alignment:
+
+		     CPU      RATE          SYS          TIME     sender-receiver
+	Server bind   19: 13.0Gbits/sec 28.371851000 33.233499566 86.9%-70.8%
+	Server bind   21: 12.9Gbits/sec 28.283381000 33.586486621 85.8%-69.9%
+	Server bind   23: 11.1Gbits/sec 33.660190000 39.012243176 87.7%-64.5%
+	Server bind none: 18.9Gbits/sec 19.215339000 22.875117865 86.0%-80.5%
+
+  # With the attached patch (aligning writes in non ERMS/FSRM case):
+
+		     CPU      RATE          SYS          TIME     sender-receiver
+	Server bind   19: 20.8Gbits/sec 14.897284000 20.811101382 75.7%-89.0%
+	Server bind   21: 20.4Gbits/sec 15.205055000 21.263165909 75.4%-89.7%
+	Server bind   23: 20.2Gbits/sec 15.433801000 21.456175000 75.5%-89.8%
+	Server bind none: 26.1Gbits/sec 12.534022000 16.632447315 79.8%-89.6%
+
+So I consistently got better results when aligning the write. The
+results above were run on 6.14.0-rc6/rc7 based kernels. The sys is sys
+time and then the total time to run/transfer 50G of data. The last
+field is the CPU usage of sender/receiver iperf3 process. It's also
+worth to note that each pair of iperf3 runs may get slightly different
+results on each run, but I always got consistent higher results with
+the write alignment for this specific test of running the processes
+on CPUs in different NUMA nodes.
+
+Linus Torvalds helped/provided this version of the patch. Initially I
+proposed a version which aligned writes for all cases in
+rep_movs_alternative, however it used two extra registers and thus
+Linus provided an enhanced version that only aligns the write on the
+large_movsq case, which is sufficient since the problem happens only
+on those AMD CPUs like ones mentioned above without ERMS/FSRM, and
+also doesn't require using extra registers. Also, I validated that
+aligning only on large_movsq case is really enough for getting the
+performance back.
+
+I also tested this patch on an old Intel based non-ERMS/FRMS system
+(with Xeon E5-2667 - Sandy Bridge based) and didn't get any problems:
+no performance enhancement but also no regression either, using the
+same iperf3 based benchmark. Also newer Intel processors after
+Sandy Bridge usually have ERMS and should not be affected by this change.
+
+[ mingo: Updated the changelog. ]
+
+Fixes: ca96b162bfd2 ("x86: bring back rep movsq for user access on CPUs without ERMS")
+Fixes: 034ff37d3407 ("x86: rewrite '__copy_user_nocache' function")
+Reported-by: Ondrej Lichtner <olichtne@redhat.com>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250320142213.2623518-1-herton@redhat.com
+---
+ arch/x86/lib/copy_user_64.S | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/x86/lib/copy_user_64.S b/arch/x86/lib/copy_user_64.S
+index aa8c341..06296eb 100644
+--- a/arch/x86/lib/copy_user_64.S
++++ b/arch/x86/lib/copy_user_64.S
+@@ -77,6 +77,24 @@ SYM_FUNC_START(rep_movs_alternative)
+ 	_ASM_EXTABLE_UA( 0b, 1b)
+ 
+ .Llarge_movsq:
++	/* Do the first possibly unaligned word */
++0:	movq (%rsi),%rax
++1:	movq %rax,(%rdi)
++
++	_ASM_EXTABLE_UA( 0b, .Lcopy_user_tail)
++	_ASM_EXTABLE_UA( 1b, .Lcopy_user_tail)
++
++	/* What would be the offset to the aligned destination? */
++	leaq 8(%rdi),%rax
++	andq $-8,%rax
++	subq %rdi,%rax
++
++	/* .. and update pointers and count to match */
++	addq %rax,%rdi
++	addq %rax,%rsi
++	subq %rax,%rcx
++
++	/* make %rcx contain the number of words, %rax the remainder */
+ 	movq %rcx,%rax
+ 	shrq $3,%rcx
+ 	andl $7,%eax
 
