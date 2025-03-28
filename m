@@ -1,176 +1,123 @@
-Return-Path: <linux-kernel+bounces-579816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C7BA749DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:36:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9B8A749E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CAC1898A76
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B161885950
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0008C0B;
-	Fri, 28 Mar 2025 12:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C583D6FB9;
+	Fri, 28 Mar 2025 12:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FNFq2f+k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="VbIUA2p9"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75A410FD;
-	Fri, 28 Mar 2025 12:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDB18F7D;
+	Fri, 28 Mar 2025 12:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743165351; cv=none; b=Xv4gQ51A/VTrxZGD67gz3CwrEpHSJ+TX1J5Dy8I0x/7E2i1vHrCKq0vtHQBib8ZhS46dO+8JSyANqVxix7C2gqsgT7PvQDqHwYmfHGlQoXqupBjk7FSD1cekRJQxXc2QJj8CMbwTIjyezXSMblhn5/jWX5fsaWcGwbmf+mVjJC0=
+	t=1743165478; cv=none; b=b1SqPgZB1kOvoI1t1knKH9ykLKhKs109j/kL9aux8gjUbSrOhzhaka2az80fxAapYPiJCFEGiITlZ+gZwqH8+s8xXOvf/B1IsBLCt8GKBb664tIFBzHgphCuriPK4jlcdD/5r2FmIbjf6IizfIv9BGWA9ZeshXZEWV9Rqh7mMXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743165351; c=relaxed/simple;
-	bh=kkYelAsLE09zWGPafoFLVzLQ6mWjrr5Yv4raVwT1e4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cIP6Z7Ty6/tRdGGF7qDTzaK2YTULbg7SzJBk5FHHCaSulyaZ5hYBrpbER6WC+qK6ZXnD9NCv+y1a7JakCGm3Dq0inBNlyeXSZp9/I8PAHxDCFqHBhsTnnvHjTBT6QSh0rgvzDFw84a1N1lPod/ydH19I9eD/l8Hom+ejk0bdaHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FNFq2f+k; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743165351; x=1774701351;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kkYelAsLE09zWGPafoFLVzLQ6mWjrr5Yv4raVwT1e4w=;
-  b=FNFq2f+k1jdb5HrJnFV/3FkXx0WbrEt0GD9qjZRRp9BLIbBJRLh4icX9
-   eU6y8TA79q0DiwyVI4aRIc8kou5/sbF8d1fL/I5WDz8K3gAvp+igVcQri
-   AQfXAQ1UC5na7ByhgjteS1zBdo9vzUxdiyDqffbTxv6WpJDLwOiubz0Mj
-   8PFkVzX9L+FGvhCsEILKCtJn6ZQp2gdmiwxc2fcGQ2kcGNIqsvqvy4v/d
-   LlQRll4xE9yiWUiHdUlmJEdpsgZbKk0EJSqZyQDe614OExjlWzhiQh7LB
-   PG8TlCtHQwQkn7Lp21eZKF83d61KYA1gv8lJNLnBMwlSIpA7GXrdhtm7W
-   w==;
-X-CSE-ConnectionGUID: APqkOAVFStKn8qCFmX0Nig==
-X-CSE-MsgGUID: aSEdZufRSVyg0JM0PEILwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44688454"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="44688454"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:35:50 -0700
-X-CSE-ConnectionGUID: yX5I6lH4TxmyN5fRoWAAPA==
-X-CSE-MsgGUID: MCHoUNYmRgW0SGW/R988RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="130488530"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 05:35:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ty8w0-00000006jqO-3YOp;
-	Fri, 28 Mar 2025 14:35:40 +0200
-Date: Fri, 28 Mar 2025 14:35:40 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
-Message-ID: <Z-aXnHig0HgVOLK2@smile.fi.intel.com>
-References: <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
- <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
- <Z9vydaUguJiVaHtU@smile.fi.intel.com>
- <D8PF958QL5AK.2JIE4F1N1NI0F@bootlin.com>
- <Z-LSHoYA1enEOeHC@smile.fi.intel.com>
- <D8QA116WPNUE.11VKIHSG9N0OZ@bootlin.com>
- <Z-Qh8yBMaCMhv_Ny@smile.fi.intel.com>
- <D8R4B2PKIWSU.2LWTN50YP7SMX@bootlin.com>
- <Z-WQAC8Fc90C1Ax6@smile.fi.intel.com>
- <D8RQYJXP0KMK.3L8A8YVZKID89@bootlin.com>
+	s=arc-20240116; t=1743165478; c=relaxed/simple;
+	bh=gXZMM9dIJk+UayztFAHwSYgFE4erlyKrm08RE2SIk7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sBsbSn5iQvmW2r3lislDh8ofH9w8YEQWBjUGBpLCq5nL6WkblxD0paihZupd5YaBAtaCRsHVMGAixqQbf3iwWa/4clHorGUjqVjlaMa4OZJiRnBRZ+Mon6gn5LTtp4OHjqA8n8qwPts564dS7U96WS2BrQ7uhuqB6ZWNVmuSGAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=VbIUA2p9; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso13757915e9.3;
+        Fri, 28 Mar 2025 05:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1743165475; x=1743770275; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xQTCb13dlcBwF4DMmiRnbU7+UrXrX4JGlrCk5UoyzXc=;
+        b=VbIUA2p9yCUuPKFjF62octjpZkjUbVa1JE6gqdUMGcCIbYWBAB/0x66/RHTbnDqd1A
+         iZAGWGOuaWWfj5ZlKxbkQ16X8h+hxxAiwSZ3RKCvxH7Ely3BdefOPOb1pZUVY8klZSPj
+         iyDTN1DhBT7cJG0fj7EnlPHv8wWdau6jxqbzWotXcNv0baLDkx/NU5ibq77vPRe/bjlJ
+         SwzjWXMLxIfeKmjrYMeLeRiqS+VB3zc2qPopwS/mQLZDrNwtTrhacd0ZDXnCBri2TUCY
+         taPysRVTZi86n3oksLfPJJPDbiDEPVMXmZFKZTy/aIUH3DhkS4JQc3DPfRGeia+x8EFx
+         YioA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743165475; x=1743770275;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQTCb13dlcBwF4DMmiRnbU7+UrXrX4JGlrCk5UoyzXc=;
+        b=CGuAJ10rD/uzdSbsbMx058QGkVecPETXyACNL4TPF/uuTvnWs0uQyrgceS9QGddY8R
+         QhdLS8Xrke/X+lf5P6XdmASj2Xo+kl/YA/ZWIb/1DSa6rXfDC31BDVZO6X+hD1KddO6t
+         ZeGG4X0t5Rqu9riLPxb6b4001/YchsSYUt1s/PsewZ5izoX5HctwgKCJuQO/+Xx19YmP
+         vaQ/NPfQV1gtqYIv539/QxUZ25vsF4Ka0t8Ifax9LSp81WwU8QSA/WKz8InVeNrEHVX5
+         W6rOndLKvjGPXdLSCxsZZ642vqhpBO9FGUHuClEvDphyfPHH8oXo7tfhntzl0z32Y+n9
+         paXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAP/mIgnSvEd/OIK2JlphsrAPmkrBLsPRx11x62E6OZygV8kxjk3+yh9K08r9GxhT9+CuDSTl1tdcXuuo=@vger.kernel.org, AJvYcCWwnXT1j/dkr+frgOZpHdzMirp1lnvzg05mimfm38nOAtjmewjeX8yeIIJkZTzhoy6oTonRFY51@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAeNncI2Pole0k+cEoex/78tjZ+c4YlQw55g5g+dTx1i5PqPXM
+	cdX3wrI0SuVNRGGhGnu7yh3480V9Tus/WQ9FPeKLDrHfic7INn8=
+X-Gm-Gg: ASbGncv4otkLrfPf0uFupNYq+AJ0mKv/rhMUZWRhOFdkTn8FsqlhpRl3qc1sMxhYkGi
+	WViF3RGU/gUZxe3SZm5ZZn/RCGNYtUjncrUyz1hWwk5QLiT5f35UZ52ul5cHz2LBvAJsYLCTtCv
+	iItye2kt30gEqHFX7lpsquoZNkLT/KY9Eo+njTp94GIL3gN7G1K1AMr30QKQ8tn/JtANEE0ScyG
+	0Rg0NgOtyCGK+86X/+btSRjPSo5L26ThLOfeaNltzP2RAIoqdxFKiJvVyhXTLKiUJca2FM+uDqf
+	fFc9xStAzEIQLK9571lNcWx4NdCGNrMq/1GRcs93XGgsFEnY1Py2pyZPW2dBptT4R036vPX6fF3
+	hDrZJrUuT7Y57SUK2cLGiP2w=
+X-Google-Smtp-Source: AGHT+IETWTz0/f50w8S5qemUwIFlMsEwzmPuImlQZlXznfvbz7J2nktJXxQNH6s//faEpXnd3Av+FA==
+X-Received: by 2002:a05:600c:4f89:b0:43c:f5e4:895e with SMTP id 5b1f17b1804b1-43d84f5b4d4mr68120615e9.1.1743165474637;
+        Fri, 28 Mar 2025 05:37:54 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2acddf.dip0.t-ipconnect.de. [91.42.205.223])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e834a5sm71937665e9.13.2025.03.28.05.37.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 05:37:53 -0700 (PDT)
+Message-ID: <689412eb-8c45-452b-9364-c6edbcd655aa@googlemail.com>
+Date: Fri, 28 Mar 2025 13:37:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8RQYJXP0KMK.3L8A8YVZKID89@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc3 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250328074420.301061796@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250328074420.301061796@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 28, 2025 at 09:13:12AM +0100, Mathieu Dubois-Briand wrote:
-> On Thu Mar 27, 2025 at 6:50 PM CET, Andy Shevchenko wrote:
-> > On Thu, Mar 27, 2025 at 03:28:08PM +0100, Mathieu Dubois-Briand wrote:
-> > > On Wed Mar 26, 2025 at 4:49 PM CET, Andy Shevchenko wrote:
+Am 28.03.2025 um 08:47 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.132 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-...
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-> > > > The use of this API is inappropriate here AFAICT. It drops the parent refcount
-> > > > and on the second call to it you will have a warning from refcount library.
-> > > >
-> > > > It should be as simple as device_set_node().
-> > > >
-> > > > >         }
-> > > >
-> > > > With that, the conditional becomes
-> > > >
-> > > > 	} else if (is_of_node(fwnode)) {
-> > > > 		device_set_node(&pdev->dev, fwnode);
-> > > > 	}
-> > > >
-> > > > where fwnode is something like
-> > > >
-> > > > 	struct fwnode_handle *fwnode = dev_fwnode(parent);
-> > > 
-> > > I tried to use device_set_node(), but then I got some other issue: as we
-> > > now have several devices with the same firmware node, they all share the
-> > > same properties. In particular, if we do use pinctrl- properties to
-> > > apply some pinmmuxing, all devices will try to apply this pinmuxing and
-> > > of course all but one will fail.
-> > > 
-> > > And this makes me think again about the whole thing, maybe copying the
-> > > fwnode or of_node from the parent is not the way to go.
-> > > 
-> > > So today we rely on the parent node for four drivers:
-> > > - keypad and rotary, just to ease a bit the parsing of some properties,
-> > >   such as the keymap with matrix_keypad_build_keymap(). I can easily do
-> > >   it another way.
-> > > - PWM and pinctrl drivers, are a bit more complicated, as in both case
-> > >   the device tree node associated with the device is used internally. In
-> > >   one case to find the correct PWM device for PWM clients listed in the
-> > >   device tree, in the other case to find the pinctrl device when
-> > >   applying pinctrl described in the device tree.
-> > > 
-> > > So maybe I have to find a better way for have this association. One way
-> > > would be to modify the device tree bindings to add a PWM and a pinctrl
-> > > node, with their own compatible, so they are associated to the
-> > > corresponding device. But maybe there is a better way to do it.
-> >
-> > Okay, so the main question now, why do the device share their properties
-> > to begin with? It can be done via fwnode graph or similar APIs (in case
-> > it is _really_ needed).
-> 
-> I wouldn't say the properties are shared: we have a single node in the
-> device tree as this is just one device. But as we create several
-> (software) devices in the MFD driver, we now have several devices linked
-> with a single device tree node.
-> 
-> One solution would be to create more subnodes in the device tree, one
-> for pinctrl and one for PWM, but this feels a bit like describing our
-> software implementation in the device tree instead of describing the
-> hardware.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-I see. From my point of view the above is the correct approach, but
-you need to ask DT experts, I'm not one of them.
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
