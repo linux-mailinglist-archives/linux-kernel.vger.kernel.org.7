@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-579336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4755A74216
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:36:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A4EA7421F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63322176209
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:36:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C331784B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37501A262A;
-	Fri, 28 Mar 2025 01:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5681CAA86;
+	Fri, 28 Mar 2025 01:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Mh1OCcnG"
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qNfkS4e3"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4A2224CC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743125792; cv=pass; b=qP5F5C/fQLcmT658n/hcATzfsUmVr3bYBRA018B2OHj6j2JyRx/BKjUMAlz62lW18a1eFuj75rBccWHX8GfhaCwRw0S8Gt1ussgz/Ea5vpgv3DQlqqI0KoMr49lZEKzUgy9nBT8i1IiPygNpUe6rEX8j/rhjnj5houafQw1DEhk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743125792; c=relaxed/simple;
-	bh=8JArjRxnFIEWAa8Z3EZ6r/0xEXjHpy2xMRzcmhybK8E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nEcMvtrD5r2U/C3y9fun2dlTBH4JD4617sPw4zBKW1GP/F10dAc2FU5OQJ8Yx83i18xX61qvLB92gz7+13EvVQZKUROuLxthT3F5Ej/UWCOk1FF5zBAxLjOV7SAAxdXAH2/DUcjcinN69kJnAlJyM26OsDCIyxUb93Jbx+yGNxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Mh1OCcnG; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743125763; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RQRS6F8pY0ZJ6se+EmJajCBo02km4vAJbM5kE5YWpB6mEu9dP2AFkvHzPsLxuRrVkCon4JJ+RO93K/qCNl9vdJ27SE0fyLYdTyCqcJL7ST9Utn241Fj2F1xV223GNmIjolbJw2LXwVNPUb1xsR3JQeDw2C29dANeJ/SxYxzMB6k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743125763; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=v+83m7PeA/Hi77apWlhVpRurgQRvbvqEjxvPe005cPI=; 
-	b=B/TYuOLC2uHclrYTLu8tlqPEdkpFZ6lhKw30t1o6MoAznSLgDsIbXKKVAmOdFmUuMLVjsYZ3rkVyFOTRMlV9Z1NLeEOk65yeXuZ/POngx+IvQuWZ/+8kiTXmEZWB8PS4wlSOUJSuFWpqINNSaSd0YLZIg4U6BwfGw8xLFzKqsXk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743125763;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=v+83m7PeA/Hi77apWlhVpRurgQRvbvqEjxvPe005cPI=;
-	b=Mh1OCcnGh9vuwx9w+gZUo9FrVDe0z8qpcBA28Qb3BdVsMNBjaq3kkXVvITmKiMLq
-	clbYuOQudpjzyV2Jv+Qf1Yy/FTrzgxkQAqVIBQei5HZnVdSSKpT5EOdP5cw7Mdn3Wtl
-	IY1bPuiCIrYKDUvEOjiw09QoMdqU2Jaw/IXE/anI=
-Received: by mx.zohomail.com with SMTPS id 1743125760960269.99873457084107;
-	Thu, 27 Mar 2025 18:36:00 -0700 (PDT)
-Message-ID: <ce386264-db89-4e96-865b-59f1fe39858c@collabora.com>
-Date: Fri, 28 Mar 2025 04:35:57 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217391A262A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743126422; cv=none; b=nGwwmh+aqimtV+YtBScFy3rTpWp0Pd2UqTcXIV25MjAQg+1P8ce8KNKC3+u7N3ztdNsp7+PJDc2FXs2JHLX8OkPkbE7W5lgVFkEgYHa79k9IV5UjmEngZIqsoeNgI54Z7YuQQYv0EDUJOeTCr5g1zlyWIJqoATWqtIqCt96pSnM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743126422; c=relaxed/simple;
+	bh=gD872F4HiXHd0hgxZ9nCLIWr16yhNwUFBf7pVx7VkrM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=SBoGWPkRJazAntRO4+B0wRYRAHfyCN6nh59L+A4BXyrIfOVk7nEtprqrBWQvZLTTJkkb5sS5rOjdjnCMj+bi0ViyI4NacevZZc7FsrPAnfNTGpe0Ee0BoS+OESUf3uAto8cFgpVhjAhkCHVF5BRHL0jAIDFP5Iv5jz8ICVAbP4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qNfkS4e3; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743126416; bh=9j5d/J8zcsc5onhRmFuStFe5/dVv8ZloWD0b6T9BVks=;
+	h=From:To:Cc:Subject:Date;
+	b=qNfkS4e38LmjltPkMu4+UOb+3ARzmNSL3esC4tpUjwBmE+58HhzOM/XJIqBzH2i2g
+	 Drc9IUT0sxzYt6ZsSFQJpwkPdQk54N5e0SiEvUCG5wSPDpgTNn+9vU9YDTRdprrR/4
+	 RUUwNFke3VAMtfk6WldxUBYR1Sn+w73inNiCLoMw=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 98D004FD; Fri, 28 Mar 2025 09:38:13 +0800
+X-QQ-mid: xmsmtpt1743125893t1l3naihh
+Message-ID: <tencent_4A5421BA11BD9C5B5BF3CEA95FD212AB3107@qq.com>
+X-QQ-XMAILINFO: NbgegmlEc3Juz8M7sFYLcR+S2gUYWW88+ryy6gT64V8NCj4docy/xDcvjiPm9M
+	 LSAki3QnsVpmF2d4RcsYT+c/x2BH8fxVtlzpZst4EWiaIe4X4hSvBpE8IPt/NMgSK/wmZxqERESN
+	 EqiReWMHMQf9+6cAYEBtAvWvP72J0BIbcGsowh+jG/F+LXwY/3u57yWDqx2fqMJQzB6BCIFNU5f8
+	 sIUILE1JhEs/Njh/EmDrYTAcVJwHWem+H7LzDdolaLZ0LhW5iAmLnv7676RcZSsli0oOQXDQcfmr
+	 v3fSmvPKSfy/gfVHdwLhmm25Wz7aVwjUx6Bt5ia9HCgUBZSR7QSTHfoIkqVwRTq8KuY3IRosWWlQ
+	 PC4OTrRzOJwf5AszMqVvU1KzKnHFxfKxqmp5rrJUpfOjOcD87SWjGWtDpUEpMLusOQkEglGEsE4X
+	 xOzusL+YKWFqvm47QHjExU+gS431ouvlq9uIctx8w5pWUfATwlVQvaAXupKsEStdhfp4QUby02wn
+	 tLc/dSixNNT0ujJcYq8D9otMEzJ6bNw7Q5KNyRYPHnJoy/9qy0rTjA7Iz9jzncO9jD28W8lEI4Bz
+	 De4eqTMbEGFtrrEjOYTpEnxkhf0Ujg5q/Q+WvsAnphif6sPgOYB2d0DCLfLlAN3TScr0adn8tfcQ
+	 6PTeW2ayTv8zjlWGRub4hKuCkeCkSOPEBsenoz/CC/YPFhYStGPpnVN4re80pg+ozAsIItMG07Jh
+	 25LvylM0mCkcf56tKk/i4G13suZcaYMVG35cXCoA/WwqvH7LsopS0qggE7rU78+wyrE0wTKb9N7S
+	 i9fSvNKASVxzOonYUekX6qFKrJG0ZQb0bHlvUQCR+oHDS6cky0/I10HX7HwvhZeDAnKSfjfr6FuL
+	 ZZwK7JvmswWav5NmcdBzYMi4nmKCkCvkcDtzrad0C6OiOmf5JRlYjNGbkRhun75Bi5r9uzB81iAZ
+	 w+TJl/BpYBnKGCT5gtPib0DPqIF1AURqCD03en7H8=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH v2 0/3] nvme: Add sysfs interface for APST configuration management
+Date: Fri, 28 Mar 2025 09:38:08 +0800
+X-OQ-MSGID: <20250328013808.88688-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] drm/virtio: Fix missed dmabuf unpinning in error
- path of prepare_fb()
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>
-References: <20250326014902.379339-1-dmitry.osipenko@collabora.com>
- <20250326014902.379339-2-dmitry.osipenko@collabora.com>
- <IA0PR11MB7185345D3DFA8C7900059144F8A62@IA0PR11MB7185.namprd11.prod.outlook.com>
- <16a30d03-9c98-47a4-959f-8671f7cb7fab@collabora.com>
- <IA0PR11MB71851C0607629875CC458A90F8A12@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <IA0PR11MB71851C0607629875CC458A90F8A12@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 3/27/25 10:14, Kasireddy, Vivek wrote:
->> Another question, why do we need this fencing for imported dmabuf?
->> Fencing isn't done host/guest blobs in this code, while dmabuf is
->> essentially a guest blob. Could you please clarify why this fence is
->> needed? Maybe we shouldn't allocate fence in the first place for the dmabuf.
-> At-least for the non-virgl use-cases (where the rendering is done in the Guest such
-> as in passthrough), this Guest/Host synchronization fence serves two purposes:
-> - It prevents the Guest from reusing/destroying the submitted buffer (Guest compositor
->   FB) until the Host is done using it. Otherwise, the Guest compositor might render
->   into this buffer at the same time while the Host is consuming it, leading to issues
->   such as tearing/flickering. This problem is more noticeable in cases where the
->   Guest compositor has only one backbuffer such as Xorg + dirtfyFb.
-> 
-> - It also prevents the Guest compositor from rendering faster than the Host refresh
->   rate. In other words, it just sets the upper bound in terms of the buffer submission
->   rate as there is no point in going over the Host refresh rate, which would likely
->   lead to wastage of GPU cycles and dropped frames.
-> 
-> Therefore, this fence is really needed for Guest blobs including imported dmabufs.
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-Thanks a lot
+This series enhances NVMe APST (Autonomous Power State Transition) support by:
+1. Adding warnings for PST table allocation failures
+2. Exposing APST tables via sysfs for runtime inspection
+3. Providing per-controller sysfs interface for APST configuration
+
+The changes allow better visibility and control of power management settings
+through userspace tools while maintaining the existing functionality.
+
+Yaxiong Tian (3):
+  nvme: Add warning for PST table memory allocation failure in
+    nvme_configure_apst
+  nvme: add sysfs interface for APST table updates
+  nvme: add per-controller sysfs interface for APST configuration
+
+Changes Since v1
+
+Add mutex_lock in nvme_set_latency_tolerance() for Potential competition 
+between nvme_set_latency_tolerance() and apst_update_store().
+
+
+ drivers/nvme/host/core.c  | 24 ++++++++++------
+ drivers/nvme/host/nvme.h  |  6 ++++
+ drivers/nvme/host/sysfs.c | 59 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+), 8 deletions(-)
 
 -- 
-Best regards,
-Dmitry
+2.25.1
+
 
