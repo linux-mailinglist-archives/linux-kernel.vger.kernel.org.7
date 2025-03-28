@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-579580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C970DA7456D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B05A74572
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09A93BD88C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:30:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44013BE608
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB7F213E7A;
-	Fri, 28 Mar 2025 08:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378D2135D8;
+	Fri, 28 Mar 2025 08:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORm0QcCy"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Soa0HlYE"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F8B212FBF;
-	Fri, 28 Mar 2025 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229A5212FA3;
+	Fri, 28 Mar 2025 08:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743150638; cv=none; b=ssjzEcHNAtQdDJsk9YceI0YtTbpIwvkrU8uSStGSEVag4/ku59faMUa0jE57Wl9mii2aCrhXRYTIb6Bgx0zpdVSIhDt3oC4mPIPMUQbSR0A9ahKZW4M/qZMpAY3ys/n1Vs2yACTGVGFBe+Rw1arZecI+kBgpNdp/JoWBYrdZHlM=
+	t=1743150679; cv=none; b=IuxUV4j3cTpl6zj3qsk5O2yOxmBlt6Ww6lzJK0wtT4qPrpQbop84USmhIxAVCzWNI7zW5ujsb/8g6ivUm2Q3eLeuFVPXTKLvV/q+CcOBOLr5GlriBJEvbjQ3lxTdGYDqmQjMvpKywq9nV0PQ4669ckioQ6/DwpiI0hDwCIKr3fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743150638; c=relaxed/simple;
-	bh=DTcedE6KspyD0WF2+HMkGLOGGYHnEJsoVr5IaBC0H1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBFTW/q/NQ7iLiXO/pE219xZNeYQR+P4aw0sebuieDxrzDKY+rBLoUqyX+rvehM/vX5kNxa/ukI/i2mrdAYJ7zldOD5zd0aHIcop3rko4TFrnhxFeGzNz9ZyLOQfzOiVUhwyYHsdQBRZPV5HnNaQ9eqKz5r63f3zUKhsiKFvrUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORm0QcCy; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51eb18130f9so928928e0c.3;
-        Fri, 28 Mar 2025 01:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743150635; x=1743755435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wCz69q91HFfvhGoJrcN7iTaAaXUD5silbw3K2qhF6HQ=;
-        b=ORm0QcCyYHE88TApOCi8jN7/pgRrfidzwxJ90Kgn/rDoKPW/cpJpvXDTNa3K4bBEQf
-         J9W2rSQmBEdnAZ/cv360sy+CVWbfU2iK4YM/TqjgAgkZlcQ9n3iA9YIn9F42y9w9hjo1
-         QltX8cGtW3t/hnc0E40DRcNSwVqRpSWLuIxRPhzNYdClOBFFXqjMM/uovzDWxIUdBMld
-         tTLGdsylxy21Is42Yx98+F6/xDkOJ/QtZXPsJNgAerd8QZxd4IdAw5DrrfcDeKE0UvB/
-         Zj9G+gqV7S4AwZ/tXd+92oESXpH7/yv0e/JSIX9E7+9PxkbAuvBQJLZczMAr2NxXOV3g
-         m11g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743150635; x=1743755435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wCz69q91HFfvhGoJrcN7iTaAaXUD5silbw3K2qhF6HQ=;
-        b=IzHY4hcshxNjfdB/XABmSzDXNopvem2c9KBpjXhoP1Ehxj0UbiQ+U9FVQf2tLGOwek
-         ej8JDfnEny8VT3FALp+3uxhtMRL0oA9DpV86XBr5ftC4TxZAfHcMCOGaJMv6LNMsQPNK
-         y7tUmS5dAkihs5IENeUEJcKLUiZbiqVJF5K2GUwWstNxzZ0PtK+TpuYzbxhNxZFNI/ZX
-         to6OQhIWs61QQM5RS68lCQe/W7sAVuyTybgJJNcgO/oMvUHW8NCoYfYs/GY+ejZ1y/Qr
-         uFBIPr+tQxX/KLSwAfIxKNVXmwPZz4nmGufnE0OvL0LW4vE3FynZfXuv0+10jJhfiF4/
-         GMmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzg4L5MedjkS7cPiXrr/SPLUw949dgaJoYk0h/jzt1B4zp4mo5r2Ap2r05qJkiSEbbTv3VS3DHVeQbLtAheQItQg=@vger.kernel.org, AJvYcCUzp9Kig5yTQOSYu4Ou4fSo9bUj83TELR81DzMrKoe6+oIWWHZUjF0ftHw21uWyS6Mkafsp0E5uJP//uiw=@vger.kernel.org, AJvYcCX6upC/tXaz1ZKUTHIEdHJt3nc4+MmZMbtOrxhcNjFmIvlek3VJ6Bh5iyl3zZ2XBXRvOagBYh+Vu39s@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA5FeE25qBa8MWhYNJO9l6ac9OT7VqOLZ8HxTUALiOfYXbxsnK
-	4sm7UDo4Qcudu/A40dEUJQVzrgwI/oreLYSXQkpx52d5tKeUei3SfBaJnEYyXmFtf7Xomzsbg35
-	Wo7rjeCuit1k7t4oDJg4J9u330lU=
-X-Gm-Gg: ASbGncuZH0gRBj+SsHcsOe45urtm27AV2wRdarYOoJblRyrWcW3WQPNffo/BKYH5/9J
-	PNk7LWS6OQ/Iuj3MHO/oowGZJE2IcIWbk/fGYG9uZo/4uNiC5l0dpaDyg2dVM3xQeq7/prYxsGI
-	tTfYy2jeXEKv8fbwZG8eGUNytxMg==
-X-Google-Smtp-Source: AGHT+IFIZReqhwYH+e0OINTV0TbFc9HMOCFT2KPlEmIJBSBf3GP/kFOfHmgaEfx6fm/rrHXFKMQCWubhlgeX8F1T68s=
-X-Received: by 2002:a05:6122:887:b0:520:9b05:4cb6 with SMTP id
- 71dfb90a1353d-52600719492mr4729899e0c.0.1743150635039; Fri, 28 Mar 2025
- 01:30:35 -0700 (PDT)
+	s=arc-20240116; t=1743150679; c=relaxed/simple;
+	bh=W1ijLkVD+r1Mbr+dTxFg4hpHIKg9HGyAzzfPZkdDY/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L03UsR/u14VX7LlZjK/8orDPagWCJaNOSo8i7+8anjgbHe9VTHCInmNRIGE6jbTktING7mcHNXNHrCwY8MduUmugPl8AVfkCQ5l2c1GI652ySWy9PvGTatDrQ2G9G7OXIxamFHwm0zjKnJQlryx8jE8EnsoHXRDQmpZHCNiu8e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Soa0HlYE; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=eiyjJ7Xvynv7EYyBA/dubhzSD/lLyCEcXIjuNUtW1O4=; b=Soa0HlYEcxrc+s6yMNOCZUAPoh
+	IaQhsnncS9m/K5dqQ/wpGchltuENVuLoC4q0Tm3fUnaW0br5TORezrjn+TlQgFThERhrTMrBzHkZZ
+	je7pIepkekfhJnpioFHZnZc61VFAtKE1yrXZJyZfhaLAeV/9fO3UBrOvLqeHaw8cOq8C0xm1D10BT
+	7J7SQpVz02FE3+2HN9Qt/hpA/mahDWemwIfkGYcbO2EnIZYjpA5PzBeQ0geEaswRaMMx7+8aqhIWp
+	JK7vJbGGkRMa7p2HAstGN9I3HfXrKqg8o2nbCowpYZUn4FqrxB8Cu/qtY0uQMoysqVXM++h/5DKVl
+	WZ1pFMdA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40544)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ty57I-0008C7-1X;
+	Fri, 28 Mar 2025 08:31:04 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ty57G-00072a-1O;
+	Fri, 28 Mar 2025 08:31:02 +0000
+Date: Fri, 28 Mar 2025 08:31:02 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Andrei Botila <andrei.botila@oss.nxp.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Eric Woudstra <ericwouds@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v4 3/6] net: phy: nxp-c45-tja11xx: simplify
+ .match_phy_device OP
+Message-ID: <Z-ZeRhR73FS4iOzz@shell.armlinux.org.uk>
+References: <20250327224529.814-1-ansuelsmth@gmail.com>
+ <20250327224529.814-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327120737.230041-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250327120737.230041-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <8734ey10dp.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <8734ey10dp.wl-kuninori.morimoto.gx@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 28 Mar 2025 08:30:08 +0000
-X-Gm-Features: AQ5f1JrdoiuRzwfKuayvqqi9Zb-yH-FlHzUYFciOjeCux00RWQ8VspRuF2eowtU
-Message-ID: <CA+V-a8sk_SU4-2tq6ZdOsMeZY41NeFhVbAq_NZQ7YgUWuMkACw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] usb: renesas_usbhs: Correct function reference in comment
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-usb@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327224529.814-4-ansuelsmth@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Kuninori san,
+On Thu, Mar 27, 2025 at 11:45:14PM +0100, Christian Marangi wrote:
+> Simplify .match_phy_device OP by using a generic function and using the
+> new phy_id PHY driver info instead of hardcoding the matching PHY ID
+> with new variant for macsec and no_macsec PHYs.
+> 
+> Also make use of PHY_ID_MATCH_MODEL macro and drop PHY_ID_MASK define to
+> introduce phy_id and phy_id_mask again in phy_driver struct.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/net/phy/nxp-c45-tja11xx.c | 39 +++++++++++--------------------
+>  1 file changed, 14 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/net/phy/nxp-c45-tja11xx.c b/drivers/net/phy/nxp-c45-tja11xx.c
+> index bc2b7cc0cebe..fccfc1468698 100644
+> --- a/drivers/net/phy/nxp-c45-tja11xx.c
+> +++ b/drivers/net/phy/nxp-c45-tja11xx.c
+> @@ -19,7 +19,6 @@
+>  
+>  #include "nxp-c45-tja11xx.h"
+>  
+> -#define PHY_ID_MASK			GENMASK(31, 4)
+>  /* Same id: TJA1103, TJA1104 */
+>  #define PHY_ID_TJA_1103			0x001BB010
+>  /* Same id: TJA1120, TJA1121 */
+> @@ -1971,31 +1970,17 @@ static int nxp_c45_macsec_ability(struct phy_device *phydev)
+>  	return macsec_ability;
+>  }
+>  
+> -static int tja1103_match_phy_device(struct phy_device *phydev,
+> -				    const struct phy_driver *phydrv)
+> +static int tja11xx_no_macsec_match_phy_device(struct phy_device *phydev,
+> +					      const struct phy_driver *phydrv)
+>  {
+> -	return phy_id_compare(phydev->phy_id, PHY_ID_TJA_1103, PHY_ID_MASK) &&
+> +	return phy_id_compare(phydev->phy_id, phydrv->phy_id, phydrv->phy_id_mask) &&
 
-Thank you for the review.
+We try to keep to less than 80 columns in networking, and this driver
+does so, so please keep it that way.
 
-On Fri, Mar 28, 2025 at 12:09=E2=80=AFAM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->
->
-> Hi Prabhakar
->
-> Thank you for your patch
->
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Update the comment to reference `usbhs_mod_probe` instead of
-> > `usbhs_mod_init`, as `usbhs_mod_probe` is the correct function
-> > used in this context.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/usb/renesas_usbhs/common.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_u=
-sbhs/common.c
-> > index 4b35ef216125..15ef246a1245 100644
-> > --- a/drivers/usb/renesas_usbhs/common.c
-> > +++ b/drivers/usb/renesas_usbhs/common.c
-> > @@ -698,7 +698,7 @@ static int usbhs_probe(struct platform_device *pdev=
-)
-> >       if (ret < 0)
-> >               goto probe_end_fifo_exit;
-> >
-> > -     /* dev_set_drvdata should be called after usbhs_mod_init */
-> > +     /* dev_set_drvdata should be called after usbhs_mod_probe */
-> >       platform_set_drvdata(pdev, priv);
->
-> If you want to care about context, it seems we want to care "dev_set_drvd=
-ata"
-> and "platform_set_drvdata" too :)
-> And, it is easy to understand that it indicates function if it has ().
-> like below
->
-> -       /* dev_set_drvdata should be called after usbhs_mod_init */
-> +       /* platform_set_drvdata() should be called after usbhs_mod_probe(=
-) */
->         platform_set_drvdata(pdev, priv);
->
-Ok, I'll update it as above in v2.
+(Note: the 80 column limit doesn't apply to printing messages, which
+should not be line-wrapped to allow them to be searched for).
 
-Cheers,
-Prabhakar
+Other than that, thanks for addressing the other driver I pointed out
+that benefits from this.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
