@@ -1,275 +1,160 @@
-Return-Path: <linux-kernel+bounces-580413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D14DA751A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:46:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C8A751A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668CB1892C17
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42DE5172021
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7509B1E5B97;
-	Fri, 28 Mar 2025 20:46:49 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95391EB5D1;
+	Fri, 28 Mar 2025 20:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="bBB9k8ra"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18451E545
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 20:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067CCE545;
+	Fri, 28 Mar 2025 20:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743194809; cv=none; b=b/N7ISk3ggnxpmMu/sx4MTfPdl1C3sxhlp0nPsTJvd+cwjHxBe4KPow09T7w2knqs1K1BsPJnGJ/5B/h0YwIWP4IyGlqqdtkRsx7P0EZQ/664TiacyZPyc+sSsF/RwlPk/SAyDyY0QSIUxz8SKSuZiLDpYwnIif4A0gj11JQmJA=
+	t=1743195105; cv=none; b=luxjjkLo65JTtzF6jbYcxXLxlS5aqmmubwsRsp+DwRW+R8nXYpr0B6Ly3WlB5ruY+SJSC4Zp7WsBfXgbXlc69QMbEnOVVcTFZsIxpMooo2U+Of2yviAPlF6BWTrrd85skrpiI7Wmwkbc1+eSV0diii37w5AzNtb++y/ayTH7sUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743194809; c=relaxed/simple;
-	bh=oohnoraHIkOgNIMvs5qklmJwk57xtUn8v/eYTX8S2kI=;
-	h=Message-ID:Date:MIME-Version:Subject:References:To:From:
-	 In-Reply-To:Content-Type; b=jQUqwSzbK3dw6Dvu6+gY9kAzjnj//gJLsX695fB8s9CKNFqNZtIVKjavPuqYC3LOrNPEmXEPUnCCrOWOVtRbq8nfZuBH3i4+J3LI966D9bJI6F4HfYSIXvo8v3kE6n91JoNrLVKF9aS926w0OT7+LqwO3F2kAPtrsDsJpEzg5co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.102] (213.87.139.63) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 28 Mar
- 2025 23:46:28 +0300
-Message-ID: <8db16fb6-f87e-48dd-8845-0eaac95a6527@omp.ru>
-Date: Fri, 28 Mar 2025 23:46:27 +0300
+	s=arc-20240116; t=1743195105; c=relaxed/simple;
+	bh=MQZZ3TmtYmYcQaVaYPEoNBH2OXH61DqFYYdTK0HxYJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g3BRaq+KEbOCpn6Jq+hjRGN2lSsA4cRZl3dlqHq8xmXvluelp3vBbtHLhAYKw4tedu0ZeFeBiux2yU6/OJKeWq1gIEdWI/buKcIxEEymm7HAu8otkXRfjABV8ACp9FR/yEJYFgcst2rHZP95RIkjbUAa4zggEVagnCLB7jP1AYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=bBB9k8ra; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id 563c1f317e1126b2; Fri, 28 Mar 2025 21:51:41 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 70AC97F0283;
+	Fri, 28 Mar 2025 21:51:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1743195100;
+	bh=MQZZ3TmtYmYcQaVaYPEoNBH2OXH61DqFYYdTK0HxYJs=;
+	h=From:Subject:Date;
+	b=bBB9k8raFIRc2A/TDXhyMMpqhNxZBIVCVW9tMCKKF7MkMf+NUOX5g1ELwBrtnPU31
+	 uaJ6+2USSovJQgAUWdDcRiQz2sWApk1CiWMV8ekiRzo2h9x8zEAZ7pTHa9qzcx2uZS
+	 UHsc1tqPd+cT3FyMgt6qSAfFxZzpECDDW04iSRzsgKOZL7+fkxCF9AOrAo0qIptTPw
+	 V19aqgiMP0Nb/Ad0CMwGr4iT9ajC+BsmmlOVfYk5TJHhr0TZ7uHgXekyFouqfxJJxO
+	 ysEkfqs3S9eGocvzu1jnJ3UpbfpASCfy4Ve8FlUnnv4r+tuIeRjVgXjgVIEzAGpvEX
+	 qSkza2XA8G4xg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v1 09/10] cpufreq: Introduce cpufreq_policy_refresh()
+Date: Fri, 28 Mar 2025 21:47:31 +0100
+Message-ID: <6047110.MhkbZ0Pkbq@rjwysocki.net>
+In-Reply-To: <4651448.LvFx2qVVIh@rjwysocki.net>
+References: <4651448.LvFx2qVVIh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Fwd: [PATCH 5.10.y] KEYS: asymmetric: properly validate hash_algo and
- encoding
-Content-Language: en-US
-References: <c57a86ed-42c4-4705-b8d5-f9f23eb3e7df@omp.ru>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <c57a86ed-42c4-4705-b8d5-f9f23eb3e7df@omp.ru>
-X-Forwarded-Message-Id: <c57a86ed-42c4-4705-b8d5-f9f23eb3e7df@omp.ru>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 03/28/2025 20:35:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 192217 [Mar 28 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 51 0.3.51
- 68896fb0083a027476849bf400a331a2d5d94398
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.139.63 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.139.63 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.139.63
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 03/28/2025 20:38:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 3/28/2025 6:58:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedvfedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
 
-Oops, forgot about LKML...
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
--------- Forwarded Message --------
-Subject: [PATCH 5.10.y] KEYS: asymmetric: properly validate hash_algo and encoding
-Date: Fri, 28 Mar 2025 23:37:26 +0300
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-To: stable@kernel.org, Stefan Berger <stefanb@linux.ibm.com>, Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, Eric Biggers <ebiggers@google.com>, Vitaly Chikunov <vt@altlinux.org>, Jarkko Sakkinen <jarkko@kernel.org>
-CC: lvc-project@linuxtesting.org, Sergey Shtylyov <s.shtylyov@omp.ru>
+Since cpufreq_update_limits() obtains a cpufreq policy pointer for the
+given CPU and reference counts the object pointed to by it, calling
+cpufreq_update_policy() from cpufreq_update_limits() is somewhat
+wasteful because that function calls cpufreq_cpu_get() on the same
+CPU again.
 
-From: Eric Biggers <ebiggers@google.com>
+To avoid that unnecessary overhead, move the part of the code running
+under the policy rwsem from cpufreq_update_policy() to a new function
+called cpufreq_policy_refresh() and invoke that new function from
+both cpufreq_update_policy() and cpufreq_update_limits().
 
-[ Upstream commit 590bfb57b2328951d5833979e7ca1d5fde2e609a ]
-
-It is insecure to allow arbitrary hash algorithms and signature
-encodings to be used with arbitrary signature algorithms.  Notably,
-ECDSA, ECRDSA, and SM2 all sign/verify raw hash values and don't
-disambiguate between different hash algorithms like RSA PKCS#1 v1.5
-padding does.  Therefore, they need to be restricted to certain sets of
-hash algorithms (ideally just one, but in practice small sets are used).
-Additionally, the encoding is an integral part of modern signature
-algorithms, and is not supposed to vary.
-
-Therefore, tighten the checks of hash_algo and encoding done by
-software_key_determine_akcipher().
-
-Also rearrange the parameters to software_key_determine_akcipher() to
-put the public_key first, as this is the most important parameter and it
-often determines everything else.
-
-[s.shtylyov@omp.ru: removed the ECDSA related code.]
-
-Fixes: 299f561a6693 ("x509: Add support for parsing x509 certs with ECDSA keys")
-Fixes: 215525639631 ("X.509: support OSCCA SM2-with-SM3 certificate verification")
-Fixes: 0d7a78643f69 ("crypto: ecrdsa - add EC-RDSA (GOST 34.10) algorithm")
-Cc: stable@vger.kernel.org
-Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-Tested-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- crypto/asymmetric_keys/public_key.c |   92 ++++++++++++++++++++++--------------
- 1 file changed, 58 insertions(+), 34 deletions(-)
+ drivers/cpufreq/cpufreq.c |   31 ++++++++++++++++++-------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-Index: linux-stable/crypto/asymmetric_keys/public_key.c
-===================================================================
---- linux-stable.orig/crypto/asymmetric_keys/public_key.c
-+++ linux-stable/crypto/asymmetric_keys/public_key.c
-@@ -59,38 +59,65 @@ static void public_key_destroy(void *pay
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2689,6 +2689,21 @@
+ 	return ret;
  }
  
- /*
-- * Determine the crypto algorithm name.
-+ * Given a public_key, and an encoding and hash_algo to be used for signing
-+ * and/or verification with that key, determine the name of the corresponding
-+ * akcipher algorithm.  Also check that encoding and hash_algo are allowed.
-  */
--static
--int software_key_determine_akcipher(const char *encoding,
--				    const char *hash_algo,
--				    const struct public_key *pkey,
--				    char alg_name[CRYPTO_MAX_ALG_NAME])
-+static int
-+software_key_determine_akcipher(const struct public_key *pkey,
-+				const char *encoding, const char *hash_algo,
-+				char alg_name[CRYPTO_MAX_ALG_NAME])
- {
- 	int n;
- 
--	if (strcmp(encoding, "pkcs1") == 0) {
--		/* The data wangled by the RSA algorithm is typically padded
--		 * and encoded in some manner, such as EMSA-PKCS1-1_5 [RFC3447
--		 * sec 8.2].
-+	if (!encoding)
-+		return -EINVAL;
++static void cpufreq_policy_refresh(struct cpufreq_policy *policy)
++{
++	guard(cpufreq_policy_write)(policy);
 +
-+	if (strcmp(pkey->pkey_algo, "rsa") == 0) {
-+		/*
-+		 * RSA signatures usually use EMSA-PKCS1-1_5 [RFC3447 sec 8.2].
- 		 */
-+		if (strcmp(encoding, "pkcs1") == 0) {
-+			if (!hash_algo)
-+				n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
-+					     "pkcs1pad(%s)",
-+					     pkey->pkey_algo);
-+			else
-+				n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
-+					     "pkcs1pad(%s,%s)",
-+					     pkey->pkey_algo, hash_algo);
-+			return n >= CRYPTO_MAX_ALG_NAME ? -EINVAL : 0;
-+		}
-+		if (strcmp(encoding, "raw") != 0)
-+			return -EINVAL;
-+		/*
-+		 * Raw RSA cannot differentiate between different hash
-+		 * algorithms.
-+		 */
-+		if (hash_algo)
-+			return -EINVAL;
-+	} else if (strcmp(pkey->pkey_algo, "sm2") == 0) {
-+		if (strcmp(encoding, "raw") != 0)
-+			return -EINVAL;
- 		if (!hash_algo)
--			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
--				     "pkcs1pad(%s)",
--				     pkey->pkey_algo);
--		else
--			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
--				     "pkcs1pad(%s,%s)",
--				     pkey->pkey_algo, hash_algo);
--		return n >= CRYPTO_MAX_ALG_NAME ? -EINVAL : 0;
--	}
++	/*
++	 * BIOS might change freq behind our back
++	 * -> ask driver for current freq and notify governors about a change
++	 */
++	if (cpufreq_driver->get && has_target() &&
++	    (cpufreq_suspended || WARN_ON(!cpufreq_verify_current_freq(policy, false))))
++		return;
++
++	refresh_frequency_limits(policy);
++}
++
+ /**
+  * cpufreq_update_policy - Re-evaluate an existing cpufreq policy.
+  * @cpu: CPU to re-evaluate the policy for.
+@@ -2706,17 +2721,7 @@
+ 	if (!policy)
+ 		return;
+ 
+-	guard(cpufreq_policy_write)(policy);
 -
--	if (strcmp(encoding, "raw") == 0) {
--		strcpy(alg_name, pkey->pkey_algo);
--		return 0;
-+			return -EINVAL;
-+		if (strcmp(hash_algo, "sm3") != 0)
-+			return -EINVAL;
-+	} else if (strcmp(pkey->pkey_algo, "ecrdsa") == 0) {
-+		if (strcmp(encoding, "raw") != 0)
-+			return -EINVAL;
-+		if (!hash_algo)
-+			return -EINVAL;
-+		if (strcmp(hash_algo, "streebog256") != 0 &&
-+		    strcmp(hash_algo, "streebog512") != 0)
-+			return -EINVAL;
-+	} else {
-+		/* Unknown public key algorithm */
-+		return -ENOPKG;
- 	}
+-	/*
+-	 * BIOS might change freq behind our back
+-	 * -> ask driver for current freq and notify governors about a change
+-	 */
+-	if (cpufreq_driver->get && has_target() &&
+-	    (cpufreq_suspended || WARN_ON(!cpufreq_verify_current_freq(policy, false))))
+-		return;
 -
--	return -ENOPKG;
-+	if (strscpy(alg_name, pkey->pkey_algo, CRYPTO_MAX_ALG_NAME) < 0)
-+		return -EINVAL;
-+	return 0;
+-	refresh_frequency_limits(policy);
++	cpufreq_policy_refresh(policy);
  }
+ EXPORT_SYMBOL(cpufreq_update_policy);
  
- static u8 *pkey_pack_u32(u8 *dst, u32 val)
-@@ -111,9 +138,8 @@ static int software_key_query(const stru
- 	u8 *key, *ptr;
- 	int ret, len;
+@@ -2725,7 +2730,7 @@
+  * @cpu: CPU to update the policy limits for.
+  *
+  * Invoke the driver's ->update_limits callback if present or call
+- * cpufreq_update_policy() for @cpu.
++ * cpufreq_policy_refresh() for @cpu.
+  */
+ void cpufreq_update_limits(unsigned int cpu)
+ {
+@@ -2738,7 +2743,7 @@
+ 	if (cpufreq_driver->update_limits)
+ 		cpufreq_driver->update_limits(cpu);
+ 	else
+-		cpufreq_update_policy(cpu);
++		cpufreq_policy_refresh(policy);
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_update_limits);
  
--	ret = software_key_determine_akcipher(params->encoding,
--					      params->hash_algo,
--					      pkey, alg_name);
-+	ret = software_key_determine_akcipher(pkey, params->encoding,
-+					      params->hash_algo, alg_name);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -177,9 +203,8 @@ static int software_key_eds_op(struct ke
- 
- 	pr_devel("==>%s()\n", __func__);
- 
--	ret = software_key_determine_akcipher(params->encoding,
--					      params->hash_algo,
--					      pkey, alg_name);
-+	ret = software_key_determine_akcipher(pkey, params->encoding,
-+					      params->hash_algo, alg_name);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -328,9 +353,8 @@ int public_key_verify_signature(const st
- 	BUG_ON(!sig);
- 	BUG_ON(!sig->s);
- 
--	ret = software_key_determine_akcipher(sig->encoding,
--					      sig->hash_algo,
--					      pkey, alg_name);
-+	ret = software_key_determine_akcipher(pkey, sig->encoding,
-+					      sig->hash_algo, alg_name);
- 	if (ret < 0)
- 		return ret;
- 
+
+
+
 
