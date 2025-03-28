@@ -1,91 +1,190 @@
-Return-Path: <linux-kernel+bounces-579627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E718BA74622
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:15:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A248A74626
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109C23BEA31
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D300189A4E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C59F213E88;
-	Fri, 28 Mar 2025 09:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C492C2116F0;
+	Fri, 28 Mar 2025 09:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cSLN8PR5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jdh4hzWi"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96E4213E69;
-	Fri, 28 Mar 2025 09:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2DF145B27;
+	Fri, 28 Mar 2025 09:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743153276; cv=none; b=g6Z83Aevr9ot83fUBwr5RfFh5f87BK5ZmbdhLeGRsBtvATqzOTT2vT/IWUo97eLlCy4qQLLYW/O2HRLNyhnQ0yz34tcMsSzGtQWauPvsRmQBHaI+dXMLlzbiGY1TlBTuLwdQRuPmAPT2n2tt3zstAtYAHdSZQnbV1jZ41wtgSfM=
+	t=1743153371; cv=none; b=t7fjs+ugN/28/faa030lMTtUcmRASBkdaw2m/qgJpFTMpyHfrriH6jvcSuawUC4N7zBBZvEeu2Bq3cHVkUKPXRhmSQMu/YbTGALssUcDEO6EIdXEqgcvlPBfojzxe2M9FEVtnaPQXhAdbnoF9jx8QyF8JJsO0nP05M6T6thh/qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743153276; c=relaxed/simple;
-	bh=6E+1krQUsQz13SOR02sZAPmH4sQWRbkNr1y+0pGHuaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YceZcXqI5U67CUy8pILR8IKmOBU7rZx8kXxacZY75elqWd7AxnozSgFYbNlg4i4O9gyp82OhPO0Mc/j80wWPG2jOuTtRufrnRmkrrznQshMdiovUkPKIh2aVYL96GxC+UHUOkqyPEILfrlfAXp29BhiuuL7gPp/UImRgPBMyKOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cSLN8PR5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00417C4CEE4;
-	Fri, 28 Mar 2025 09:14:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743153275;
-	bh=6E+1krQUsQz13SOR02sZAPmH4sQWRbkNr1y+0pGHuaE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cSLN8PR5bFNCp8B1Z9DCNOzvXzpCgPQi6mfkQGoyZUwIbQnmyexu71M2YPeWISJIu
-	 OQ8lVdRl6hNiOh0VsNm1Cu0RrOPNF3ohd5qwcp2qJYsTNBJ4M4C0BVg91WRz5pwnMx
-	 4h0grN+N5yJviFatPNHmkbSimzjpKM+pbcZa2zno8wPaU2VNTbHrJEwNrvmqCR5Bme
-	 ycymwL8SmBgoCK7ApfTXe6nRx90Vwt+TCYK5RX3P0AOIWA0hJyjfcHHsGN//UG2Ayb
-	 e3kMi1WsjHDUGsab8d82qo9dRR7nxoaJViFp5I8Vu6fjY97//GX9A6hvzKod8f0eDD
-	 9DKBqQRXri9CQ==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Breno Leitao <leitao@debian.org>
-Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
-Date: Fri, 28 Mar 2025 10:14:28 +0100
-Message-ID: <20250328-testlauf-kordel-6ebfaca4ba0d@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
-References: <20250326-configfs-maintainer-v1-1-b175189fa27b@kernel.org>
+	s=arc-20240116; t=1743153371; c=relaxed/simple;
+	bh=adf04wGi+9obpoFeO+JGISKn7dPuPF1GbDHgd+fFpNs=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=ZTG6g7ITwJCq8c5IX7HA1md7ujC/P0pGfpwSH/EyX1wBGLPNelmSpsvxGpeHsv1LiOLeqErkqGM26sV9gf3BXc0sdrYtIMilHmGSoxvdFyvpoCiQ9ofaQEuL+30n8S+qDNvdkET3mTr10ewQR7TBDJsFwv8RuDRycwp+eVtFy3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jdh4hzWi; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743153355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s1ha8nU9rL2AUrvffeNdwwUmS1zgXHAGS16YD/tF7kY=;
+	b=jdh4hzWiMAci5QoKp8IyisvglFAMbymI7BfycqBa37RoSr1c1Bd8/Mhi6URgIIUP7GSDJH
+	nhF7SSxYW8vsyB0y35ah3NsJMXRvqQcP330aUO0IizqT2l3W1UteNGgdyYtOKelhOXuoRB
+	z5SJSHWTgSlQadm23UA/+DaKxXtndN4=
+Date: Fri, 28 Mar 2025 09:15:53 +0000
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1035; i=brauner@kernel.org; h=from:subject:message-id; bh=6E+1krQUsQz13SOR02sZAPmH4sQWRbkNr1y+0pGHuaE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/yyjbyy91XSlLQuqxta/47BQ/ibqU/Is+qesXsgj/m m7V6XG4o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKKtxgZ/s/luGiT8IFfmVd5 YrzP5E+RsoeWuTxlShfK0bldYlS8j+F/NJu954m6faEVnx+HvU75fHxF0lSP/s/7hI/JKLhnhp9 gBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <17a3bc7273fac6a2e647a6864212510b37b96ab2@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net v1] net: Fix tuntap uninitialized value
+To: "Willem de Bruijn" <willemdebruijn.kernel@gmail.com>,
+ netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+ hawk@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
+ syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com,
+ bpf@vger.kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+ song@kernel.org, kpsingh@kernel.org, jolsa@kernel.org
+In-Reply-To: <67e5be3c65de3_10636329488@willemb.c.googlers.com.notmuch>
+References: <20250327134122.399874-1-jiayuan.chen@linux.dev>
+ <67e5be3c65de3_10636329488@willemb.c.googlers.com.notmuch>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 26 Mar 2025 17:45:30 +0100, Andreas Hindborg wrote:
-> Remove Joel Becker as maintainer of configfs and add Andreas Hindborg as
-> maintainer and Breno Leitao as reviewer. Also update the tree URL.
-> 
-> Add an entry for Joel Becker to CREDITS.
-> 
-> 
+March 28, 2025 at 05:08, "Willem de Bruijn" <willemdebruijn.kernel@gmail.=
+com> wrote:
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+>=20
+>=20Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> Then tun/tap allocates an skb, it additionally allocates a prepad s=
+ize
+> >  (usually equal to NET_SKB_PAD) but leaves it uninitialized.
+> >  bpf_xdp_adjust_head() may move skb->data forward, which may lead to =
+an
+> >  issue.
+> >  Since the linear address is likely to be allocated from kmem_cache, =
+it's
+> >  unlikely to trigger a KMSAN warning. We need some tricks, such as fo=
+rcing
+> >  kmem_cache_shrink in __do_kmalloc_node, to reproduce the issue and t=
+rigger
+> >  a KMSAN warning.
+> >=20
+>=20>  Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
+> >  Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@goo=
+gle.com/T/
+> >  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  drivers/net/tun.c | 2 ++
+> >=20
+>=20>  1 file changed, 2 insertions(+)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> >=20
+>=20>  index f75f912a0225..111f83668b5e 100644
+> >=20
+>=20>  --- a/drivers/net/tun.c
+> >=20
+>=20>  +++ b/drivers/net/tun.c
+> >=20
+>=20>  @@ -1463,6 +1463,7 @@ static struct sk_buff *tun_alloc_skb(struct =
+tun_file *tfile,
+> >=20
+>=20>  if (!skb)
+> >=20
+>=20>  return ERR_PTR(err);
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  + memset(skb->data, 0, prepad);
+> >=20
+>=20>  skb_reserve(skb, prepad);
+> >=20
+>=20>  skb_put(skb, linear);
+> >=20
+>=20>  skb->data_len =3D len - linear;
+> >=20
+>=20
+> Is this specific to the tun device?
+>=20
+>=20This happens in generic (skb) xdp.
+>=20
+>=20The stackdump shows a napi poll call stack
+>=20
+>=20 bpf_prog_run_generic_xdp+0x13ff/0x1a30 net/core/dev.c:4782
+>=20
+>=20 netif_receive_generic_xdp+0x639/0x910 net/core/dev.c:4845
+>=20
+>=20 do_xdp_generic net/core/dev.c:4904 [inline]
+>=20
+>=20 __netif_receive_skb_core+0x290f/0x6360 net/core/dev.c:5310
+>=20
+>=20 __netif_receive_skb_one_core net/core/dev.c:5487 [inline]
+>=20
+>=20 __netif_receive_skb+0xc8/0x5d0 net/core/dev.c:5603
+>=20
+>=20 process_backlog+0x45a/0x890 net/core/dev.c:5931
+>=20
+>=20Since this is syzbot, the skb will have come from a tun device,
+>=20
+>=20seemingly with IFF_NAPI, and maybe IFF_NAPI_FRAGS.
+>=20
+>=20But relevant to bpf_xdp_adjust_head is how the xdp metadata
+>=20
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Thanks.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I'm=20wondering if we can directly perform a memset in bpf_xdp_adjust_hea=
+d
+when users execute an expand header (offset < 0).
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Although the main purpose of bpf_xdp_adjust_head is to write new headers,
+it's possible that some users might be doing this to read lower-layer
+headers, in which case memset would be inappropriate.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+However, I found that when expanding headers, it also involves copying
+data meta forward, which would overwrite padding memory, so maybe I'm
+overthinking this?
 
-[1/1] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
-      https://git.kernel.org/vfs/vfs/c/8de544883456
+In general, since bpf_xdp_adjust_head can access skb->head, it exposes a
+minimum of XDP_PACKET_HEADROOM (256) uninitialized bytes to users, and
+I'm not entirely clear if there are any security implications.
+
+
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 2ec162dd83c4..51f3f0d9b4bb 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff *, =
+xdp, int, offset)
+        if (metalen)
+                memmove(xdp->data_meta + offset,
+                        xdp->data_meta, metalen);
++       if (offset < 0)
++               memset(data, 0, -offset);
+        xdp->data_meta +=3D offset;
+        xdp->data =3D data;
 
