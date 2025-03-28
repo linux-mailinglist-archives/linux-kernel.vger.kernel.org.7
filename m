@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-579762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40848A7491D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:20:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01444A7492C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73F807A9596
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7BB188DBB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E1218AA5;
-	Fri, 28 Mar 2025 11:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F3E219300;
+	Fri, 28 Mar 2025 11:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P8KhpqBV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ZMOtiS0O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Oq7FA2fX"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB4A1C3BE2;
-	Fri, 28 Mar 2025 11:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA7145B27;
+	Fri, 28 Mar 2025 11:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743160813; cv=none; b=acBLeVL1rn+4ZuN6WnTB4dPNwfQxJZpcPNKhJBOjCryr9Q6zX11YoQCdEw9bQqGZQBKUxf1atzmzjQHXMkk4ys+5glbtXmEyMUMWDTTddX3xfhJEdbmyUC5l7FY4ezoLnxXOb5tCFkpRyb+KCjXtpIttEF8EiCQzcBnrt5LIKwU=
+	t=1743161040; cv=none; b=ZZ2eQuckCP7I1eQ2bKEesCwqiT+7PsHl6EXchyerFwponbaCU+id56YVw7cIMPIERdrfdpLaZt4N3H4Mv/nVgROX9FI289k2/AI18uXM9IOKC99RF96+s9ry9xRVJeh8XtiH7gr7TPal2mN40biAdL8JX5+HDsyc0oGTNKKU/sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743160813; c=relaxed/simple;
-	bh=0ZPSp3btIrmhUTN6L0ttOPzcih+9F47B2CwBcEZlaW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Nsm27Jkore7AfvvP9VgyBMq40xl6kSNkrmTSYK/SV2RHjTxMmuIoYoEXrNd1/xcVsfLKcJA35nZLofHFGASGG9ZIDRrDuSOctWeE/QV+A82hOtSuYGkHEY3MZZyvgKEtUKWiuOJFZILyq2ULtZ3Bai6qwpv7oWCaC7M1g0FY4Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P8KhpqBV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S56siu021236;
-	Fri, 28 Mar 2025 11:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GO7N2+DbqSmQmIQly8bmUa7Rwhx/tS+87oapSWjvioo=; b=P8KhpqBVEMWC10tF
-	z44j66u15c12eHHroXps2MREQpOE+cFoQha9Rcd9HtgFtq6WRwTBEJcz93cPLa9R
-	LVm8Y0scQiGB7rVN0u9E6WeOIGusRY6nu/8Uz1j9eZjmUxnH+JhmKzclKfAH6P5/
-	SNuZDE1Y9HdxKqeViI3gvmwkC5HdfG3qpRX/tbhJNZRKhr9zlRyQp+2MtLzTyW70
-	7IVZNhWFFCcbPj83M5uuIwxigsmLoWwm8BgCsC3RRsU+ZSzIPa7x3H6biL58i42P
-	BtSw9YynMjr4Acm4JZ15BTbQRRsLQQFZiYVg3qrlslWVnjud0CS01eEt/aYbIV9S
-	I5paYg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyr9sp5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Mar 2025 11:20:05 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52SBK5Fg026904
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Mar 2025 11:20:05 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Mar
- 2025 04:20:02 -0700
-Message-ID: <547a51bf-a3ad-48ed-9797-65d28c63e852@quicinc.com>
-Date: Fri, 28 Mar 2025 16:49:59 +0530
+	s=arc-20240116; t=1743161040; c=relaxed/simple;
+	bh=4haCMiQGwXbwIqOi2DTM31N7olFfgo32yAb88V10LBE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qf9HNr6W3utgWMGjCFgzhDF2OoWk9pZGRSagwQPL266VeSh/ymO7paVvFx8EnUH+tNBdLZ0nlIE5FpNU59zkaOwNSQDdi/0BSuSYI6XEafy4Zj0TXZsUL4IJpls/ExGtRu3LHtgWVZyU9SmvxnSQR5sTnULQJE6+zVa5etcgZuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ZMOtiS0O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Oq7FA2fX; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 260E71382CF6;
+	Fri, 28 Mar 2025 07:23:56 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Fri, 28 Mar 2025 07:23:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1743161036;
+	 x=1743247436; bh=O+MPH2+4JaCT8VB2dnNVA+w+welJat5VcOYiRMQDg3k=; b=
+	ZMOtiS0OcQJA+VD0ZhdmZCSMOaXY9RTbSGHbRWs1hQJbOtEF8ixheuhisqhIlXaG
+	Cj+veRFllQinyPui0YIx2dAm54rbInpjLbiZW2cQkwkFOLZzjlzLmUSxDhy67lcd
+	rJpsfdwtYJP8bAAFt4QKzBoS6rtIu+uMdEJQ9EVSCj8K5DZB/aQPGuzM4IL1HWWF
+	LZ3+x6XHbkSv1s9CTdg+I/eLnkM7U0nWJYyojmKO8qhMOLXkXw/lyL3A2vxC4eZ6
+	RzYXhB7o5YZGbIVKXp8aAXDAE19zvMLrGOPjPfpxD0Tdl1bYmF3cRqAFjzF6F9/o
+	F+qFsFozEWCUT/uFW5KxlA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743161036; x=
+	1743247436; bh=O+MPH2+4JaCT8VB2dnNVA+w+welJat5VcOYiRMQDg3k=; b=O
+	q7FA2fXMWtDgxnorKPKncBMbaQes29h04PL1bP0Vzr6Pstn+2AkxP0yRWr1lFqvE
+	oY5m04cbYRtnqiQGYDsFRx20AyqEVsertDcasTCNhizj9heSsDwRzVTxwk5DKpnV
+	h33lgXaeBJcufzCk4mMkePImQymMMbIr2dhTxbE+Wk9rNCbz8G4pao0+3tYVD9vI
+	rK0is8ELdOjKeMXwFrCDC0uZG7DDrfK7aJmBR4LJpCSzf/yDIENjBd7wNLsI/DCF
+	NRR0gl1YBXgKafz2PeP3e6d3lY5ZVQBYnKGstHqEkvwhYecEx4Rk+w1C3j99fpJp
+	dmRf+oVaJcwJhUpb8C4rQ==
+X-ME-Sender: <xms:yobmZ99LAquTDIkXlHVwkvBw5o0KunoyDkFNCw35d4LHs9w6tBBY0Q>
+    <xme:yobmZxvErnsTlSf-rkfxD5qDHRiG377P8wa70AzI0LPpUJa2IAm3oSnxoOGXOCajk
+    iRBeIQJM7ufmnanCwM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeduudeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeej
+    feekkeelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepghgrrhihsehgrghr
+    hihguhhordhnvghtpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtg
+    homhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphht
+    thhopehsvghrghhiohdrtgholhhlrgguohesghhmrghilhdrtghomhdprhgtphhtthhope
+    ihrghkohihohhkuhesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhl
+    sehgohhoghhlvgdrtghomhdprhgtphhtthhopegurghvihgughhofiesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhunhhithdquggvvhesghhoohhglhgvghhrohhuphhsrdgt
+    ohhm
+X-ME-Proxy: <xmx:yobmZ7AZ3tfGPEbrlFsolTAeUFR_9GNfNAkrKSZbU_ng-778IM80aw>
+    <xmx:yobmZxd8yAcJrOreQ14a_xB3qZsQPj7yw8QieDZdIVdNtC-QGko3hQ>
+    <xmx:yobmZyNEUQMxAhvQjH9kSbh_SjJeWfrLUpdvrwgMAycn1AAL1stsEg>
+    <xmx:yobmZzkR_BeuxyDrkDGy6bhpcqC_oL-kFeCLB1XPZXQig9Vk5b9-jA>
+    <xmx:zIbmZ4XZYsvTyLapkm5Ko9DoSQctLeSD3Lsc005SCyMYd4kNWDOF6N26>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1935F2220072; Fri, 28 Mar 2025 07:23:53 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] i2c: npcm: Add clock toggle recovery
-To: <mohammed.0.elbadry@gmail.com>, <avifishman70@gmail.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <andi.shyti@kernel.org>, <venture@google.com>
-CC: Tali Perry <tali.perry1@gmail.com>
-References: <20250324205901.1274708-2-mohammed.0.elbadry@gmail.com>
- <20250327193816.670658-1-mohammed.0.elbadry@gmail.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20250327193816.670658-1-mohammed.0.elbadry@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+X-ThreadId: Tc75a1b42c9faed5d
+Date: Fri, 28 Mar 2025 12:23:33 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Zijlstra" <peterz@infradead.org>
+Cc: =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
+ "Brendan Higgins" <brendan.higgins@linux.dev>,
+ "David Gow" <davidgow@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, "Dave Hansen" <dave.hansen@linuax.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Josh Poimboeuf" <jpoimboe@kernel.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@samsung.com>,
+ "Alice Ryhl" <aliceryhl@google.com>,
+ "David Rheinsberg" <david@readahead.eu>, rust-for-linux@vger.kernel.org,
+ "Shuah Khan" <skhan@linuxfoundation.org>, ricardo.marliere@suse.com,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Martin Rodriguez Reboredo" <yakoyoku@gmail.com>,
+ linux-kernel@vger.kernel.org
+Message-Id: <06639d9d-13b7-4d9a-a734-a430e91c1c27@app.fastmail.com>
+In-Reply-To: <20250327135847.GE31358@noisy.programming.kicks-ass.net>
+References: <66f3f697-530a-4d22-979a-1472c8e8de3a@app.fastmail.com>
+ <20250327135847.GE31358@noisy.programming.kicks-ass.net>
+Subject: Re: Symbol too long for allsyms warnings on KSYM_NAME_LEN
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W_uzPud8X8nKkpskZRvytLgMwsitWorX
-X-Authority-Analysis: v=2.4 cv=UblRSLSN c=1 sm=1 tr=0 ts=67e685e6 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=pGLkceISAAAA:8 a=OQBl7lQLBQ5js10xF0oA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: W_uzPud8X8nKkpskZRvytLgMwsitWorX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_05,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 impostorscore=0
- adultscore=0 clxscore=1015 mlxlogscore=894 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503280077
 
+On Thu, Mar 27, 2025, at 14:58, Peter Zijlstra wrote:
+> On Thu, Mar 27, 2025 at 09:38:46AM +0100, Arnd Bergmann wrote:
+>> My randconfig builds sometimes (around one in every 700 configs) run
+>> into this warning on x86:
+>> 
+>> Symbol __pfx_snnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7n too long for kallsyms (517 >= 512).
+>> Please increase KSYM_NAME_LEN both in kernel and kallsyms.c
+>> 
+>> The check that gets triggered was added in commit c104c16073b
+>> ("Kunit to check the longest symbol length"), see
+>> https://lore.kernel.org/all/20241117195923.222145-1-sergio.collado@gmail.com/
+>> 
+>> and the overlong identifier seems to be the result of objtool adding
+>> the six-byte "__pfx_" string to a symbol in elf_create_prefix_symbol()
+>> when CONFIG_FUNCTION_PADDING_CFI is set.
+>> 
+>> I think the suggestion to "Please increase KSYM_NAME_LEN both in
+>> kernel and kallsyms.c" is misleading here and should probably be
+>> changed. I don't know if this something that objtool should work
+>> around, or something that needs to be adapted in the test.
+>
+> Probably test needs to be fixed; objtool can't really do anything here,
+> it just take the existing symname and prefixes it.
 
+I found a workaround that avoids the problem for me now, see
+https://lore.kernel.org/linux-kbuild/20250328112156.2614513-1-arnd@kernel.org/
 
-On 3/28/2025 1:08 AM, mohammed.0.elbadry@gmail.com wrote:
-> From: Tali Perry <tali.perry1@gmail.com>
-> 
-> During init of the bus, the module checks that the bus is idle.
-> If one of the lines are stuck try to recover them first before failing.
-> Sometimes SDA and SCL are low if improper reset occurs (e.g., reboot).
-> 
-> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> Signed-off-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>
-> ---
->   drivers/i2c/busses/i2c-npcm7xx.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-> index 2fe68615942e..f05cae20cb27 100644
-> --- a/drivers/i2c/busses/i2c-npcm7xx.c
-> +++ b/drivers/i2c/busses/i2c-npcm7xx.c
-> @@ -1967,10 +1967,14 @@ static int npcm_i2c_init_module(struct npcm_i2c *bus, enum i2c_mode mode,
->   
->   	/* Check HW is OK: SDA and SCL should be high at this point. */
->   	if ((npcm_i2c_get_SDA(&bus->adap) == 0) || (npcm_i2c_get_SCL(&bus->adap) == 0)) {
-> -		dev_err(bus->dev, "I2C%d init fail: lines are low\n", bus->num);
-> -		dev_err(bus->dev, "SDA=%d SCL=%d\n", npcm_i2c_get_SDA(&bus->adap),
-> -			npcm_i2c_get_SCL(&bus->adap));
-> -		return -ENXIO;
-> +		dev_warn(bus->dev, " I2C%d SDA=%d SCL=%d, attempt recover\n", bus->num,
-> +				 npcm_i2c_get_SDA(&bus->adap), npcm_i2c_get_SCL(&bus->adap));
-> +		if (npcm_i2c_recovery_tgclk(&bus->adap)) {
-You are here post trying recovery. In the log below you may want to add, 
-"Post recovery" ? instead of "init fail" ? Just a suggestion.
-> +			dev_err(bus->dev, "I2C%d init fail: lines are low, SDA=%d SCL=%d\n",
-> +				bus->num, npcm_i2c_get_SDA(&bus->adap),
-Thanks for making previous change. Now "lines are low" not relevant as 
-you just need to print status 1 or 0.
-> +				npcm_i2c_get_SCL(&bus->adap));
-> +			return -ENXIO;
-> +		}
->   	}
->   
->   	npcm_i2c_int_enable(bus, true);
-
+      Arnd
 
