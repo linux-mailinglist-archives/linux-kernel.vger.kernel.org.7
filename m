@@ -1,124 +1,105 @@
-Return-Path: <linux-kernel+bounces-579680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85755A747E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:17:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1565CA747FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:18:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893261B6047B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50737A48BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA2721516E;
-	Fri, 28 Mar 2025 10:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E401218823;
+	Fri, 28 Mar 2025 10:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="JIYO42aa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="asR2tvTE"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Z0r5qVOR"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F14F1A5BAE;
-	Fri, 28 Mar 2025 10:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA59E1B4244;
+	Fri, 28 Mar 2025 10:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157021; cv=none; b=radzzAMJMXyL/dcw+gdBe5VSlYhDH7Sgml77Vag/V5CXS3/IriOOhg4QD1u/gV9o73K/dg+7hOu1sj/PqkSIZoI7wshm7jJgRZHe9Ykxa0Gsj0zahGnlIQtjx5h4dBpmu5YFx0+k6mFFdvhwOB1zcYjo/I/tWBDcN9e/wthXmfI=
+	t=1743157103; cv=none; b=tFD/uRb2ey66ExYFJ4Rba6/tgw/soBJOOJs2Ab7EDQes11BRZBEzF8BU2HQekFtwc0t40+VoPga6TyRi2AqBoauSP8nJBTs0lQhJ1rTOWWQ879FRhjPYUn46AAEPALnIHPfaq8XzIgTe3W6ivbfcUuM2OZ9NTP5m+pgNlqjJzYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157021; c=relaxed/simple;
-	bh=/arn/xPbmGg9sUXMiuKadWzed+23kCeYKFOmCYvBUtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jIvNP4cLE9gVAbu/JvUmZ3wmQ7vsGLPgNrisyVMG69HjtZbPWcWM8aMJVGPbcNAR8DU2p33vKVPbXSb/GUl9rvvpoJkNW6oe6o5TDw4jXRCC6bYqNYUBq9djZOJx2fr25S31aknGYiuchqWsLSfCzDL7dfFssuef7nYX4QDws9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=JIYO42aa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=asR2tvTE; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 263B41380B39;
-	Fri, 28 Mar 2025 06:16:58 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Fri, 28 Mar 2025 06:16:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743157018;
-	 x=1743243418; bh=IMBk0uSPcE9659LgXN2g27zCHtqfCxGM1l5u0E4E2hA=; b=
-	JIYO42aaTijYZrCVLAmu7TcR7c47s+0HLa/+VSkxSE/qpp8dwjMd1g9WHBOBSYuk
-	Tjt+ghXqh6GmJg6/8ubLR7hrEpjSDhWZm1sZi5yhPIFY0YWk3SNd2aEotDmbOmvw
-	IwbvFzZv7Gb1Xt2gaJcDRTOBSSzPdl+N40ujzQbxC40O1ObfQyHL14QJhvq0Wp45
-	11nxkHUsqvxOOz+y154NDjifmIANsI57cgXE+T482kwfb5euf0L5xvVeGJSaNI9p
-	ECOyyhcfdtm9iTxJ6IfPqTXvOulQOGCl6+YORq6aWiRJJA/AI4IJYedpvkctJMa8
-	qJm7L06ZANIVd8x5YX82qA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743157018; x=
-	1743243418; bh=IMBk0uSPcE9659LgXN2g27zCHtqfCxGM1l5u0E4E2hA=; b=a
-	sR2tvTEaugR+Dov5MAHQUSimSAMlu1Z0sc1S5Q/Os6d09f3nDRg7wHRokusneud5
-	4rVsrx6myTJXKT6ZVSFCvoYtUpjLYcWWTPhRNTOSg/Rms9pFvOmBwFC0FR5orMJC
-	NL9FbeISCy4otN6Yx2VADa6KbeillxhDHe+yKEIrjIrtopaGGjTLCAi0i97/p3ah
-	Ls2h5acQfJ/vupUqHdDeu2ylO5WOyA4hTyPbIK2lQ0XIUT3AN4DqoHYBj/sXbBg/
-	TEkKiiiBNbdXtQtzrhil5QqQm0aME8yaw8lsh9TMupXhLv3xatJNg7Dyqb6i/bJj
-	sK1k+W40RyKIqT5d2ebag==
-X-ME-Sender: <xms:GXfmZyz2OWK0eLV7S-9fTcXk5czovMcK7jsBJXk1q277DeechG6qYQ>
-    <xme:GXfmZ-R0X0akjQqYhih8HBXDVXuCsHPnKLVnRcQUBcrWS5I0uWGBJVp9P1kRxVlcf
-    nS2vH0KNLbQHkww>
-X-ME-Received: <xmr:GXfmZ0X1OSvv9ZAc7tYTzwcza9TJj06xexoZ-B08bLJA5CgSIajMMYgwJxdtUhsUVsz5gMPM6TtVddH79Ec66SvOZ8vCfY1gF_gRLoAzDcMV3wNf-EqB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedutddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledt
-    udfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjrggtohesuhhlshdrtghordiirgdprhgtphhtthhopehl
-    ihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepmhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehrughunhhlrghpse
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepthhrrghpvgigihhtsehsphgrfihn
-    rdhlihhnkh
-X-ME-Proxy: <xmx:GXfmZ4jYiLAuzU5Y0sQZRuwx0swgtGMzkTYYrqgJoQi2quf-shHbFg>
-    <xmx:GXfmZ0AmcuaJRImY1WiQjhwsaRHJ7sR96kTjYAnwqxySP_tU5__-Mg>
-    <xmx:GXfmZ5Jl3vBKSJagfwFInK5KWhobLPdpjMGR58oBNxMmc_Z4KnIzag>
-    <xmx:GXfmZ7D8Jw_-_iTqbOYT4VzDlz9gVeBmNJzjI450U6OysBObnLO8SQ>
-    <xmx:GnfmZ20-ARwv0lOLjVjSadSL6TAk6dOPLx1hi0HM4z6qI8-Hw4cUBZ18>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Mar 2025 06:16:56 -0400 (EDT)
-Message-ID: <e89ab398-41f5-48ff-9592-98d21056043f@fastmail.fm>
-Date: Fri, 28 Mar 2025 11:16:55 +0100
+	s=arc-20240116; t=1743157103; c=relaxed/simple;
+	bh=LuZQ/VXIC4NAiPg9MT1mlCX4GWeC1O18VNnybzVvySc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hpn4gcgPULfz/9WFT+I5S1cEKvkTdFHcME0TmusNNOxP9Kgq6FcsvWn9pyqKHe+RJiQHylfSXF8z3uLsRCjHoyyybzq4q70la/WZga0CcuWxoxDo/7iw0i0qS4kBtyehQV9JFWnDV02xRikrlt1Edy39+sW++8avzZLyh/n0z18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Z0r5qVOR; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F0421023F59A;
+	Fri, 28 Mar 2025 11:18:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743157092; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=NmL+230093prb2NKvGUaTrcx0iU/raazJ57E3zSIxCg=;
+	b=Z0r5qVOR6BaTO4LUrWVjCwI/84iGjwoYWbx2c4BAKGSdXTzPTMWgoOOKjv8Mz4nC/gd79F
+	EQb7+VE7fnFQCIWEeO4Yy/CbJbC6s6BBMB8Gxqn+ZsL1VCllXzSUcSyUCaXVIqll4s1fvv
+	RXJqsLud4JnN6Oop/rUC7yr4gDhXgTePAa7B7fSKCQZkOnzsBDu6zyXK9WGBEDDIr0294T
+	CiyhXsmLocJ4kCD/v4cKAZ8oLCPNABIsIG7ooJ3gMG8DibJr7T9ixzNVJ1P3vyh5Mi57/L
+	8dWKZXqXu3sGNHoRLy0PHxsj+AB2wXyB5acZQ22t2z9+GksCm7uoaf0fbEGzuw==
+Date: Fri, 28 Mar 2025 11:18:04 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc3 review
+Message-ID: <Z+Z3XMF2FPpJF9kZ@duo.ucw.cz>
+References: <20250328074420.301061796@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: fuse: increase readdir() buffer size
-To: Jaco Kroon <jaco@uls.co.za>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: miklos@szeredi.hu, rdunlap@infradead.org, trapexit@spawn.link
-References: <20230727081237.18217-1-jaco@uls.co.za>
- <20250314221701.12509-1-jaco@uls.co.za>
- <05b36be3-f43f-4a49-9724-1a0d8d3a8ce4@uls.co.za>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <05b36be3-f43f-4a49-9724-1a0d8d3a8ce4@uls.co.za>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8kqYFcOiNCx97xrq"
+Content-Disposition: inline
+In-Reply-To: <20250328074420.301061796@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
 
+--8kqYFcOiNCx97xrq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 3/28/25 11:15, Jaco Kroon wrote:
-> Hi All,
-> 
-> I've not seen feedback on this, please may I get some direction on this?
-> 
-> Kind regards,
-> Jaco
-> 
+Hi!
 
-Sorry, will review today.
+> This is the start of the stable review cycle for the 6.1.132 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--8kqYFcOiNCx97xrq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+Z3XAAKCRAw5/Bqldv6
+8rjDAKCoJ9GVccacCduZB0htrl9iuNI7PgCeLRVgi6d8QkEIHG+MxnBhRShdjIE=
+=Vcz+
+-----END PGP SIGNATURE-----
+
+--8kqYFcOiNCx97xrq--
 
