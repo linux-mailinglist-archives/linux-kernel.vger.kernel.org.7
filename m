@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-579810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BF3A749C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:27:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7B7A749CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1A516BF3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 019DC7A3E80
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0AB21B9F8;
-	Fri, 28 Mar 2025 12:27:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6418B21ADBC;
-	Fri, 28 Mar 2025 12:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7F121B9D6;
+	Fri, 28 Mar 2025 12:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="y/sX9qPI"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184A621423F;
+	Fri, 28 Mar 2025 12:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743164824; cv=none; b=m1hYGKfDYJGgbTGsnM+k/WYxG1BSwnDaaL8YBBCq9Y+8gzDZ0oenWIdujv/PkhdTdNHTeWCI69LsyuaIX8kzrl+Pi3daGdAmS3OTike9Q7903vQcLiktw/PRuPUz/LUkuEcKYTEU9ihfrmj38qrVRktxKhlpi8PSr2EIYs132sA=
+	t=1743164974; cv=none; b=eRhQqMl7gd0PdJ556icDhi78k88EEoGQGx2dI09ihCsaKyvAB0qEGR3e05HZYoY8JJ0HOyQuvn01JUpTSo1N+G3M/cEtCZaWxGn18aA3DUcPw1B0L9J17PwBQKeCi3Mx1AZBq4upawVOZOH0BAyMJa01R+uvgXIPATBa3wxr7JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743164824; c=relaxed/simple;
-	bh=4A51r4J4k6fvL8K9vhlNLWy+yBPtoZPbbeUliBdFZmQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jptIqgbC/gY6VS0GyQlyaI/z8p2X86jrgIfnrdjXkVX5emMJoAAhiahHUKjQcw9L1dzxdXgAcg4EnkTkAa95XtQSgkT6H1d43aQ/oXIoRxPmBDNNgS7QGwMndxD0s2vi6bDIbbDH7VB1Wu1O3zbyZYJaNcB5wUxGBiRmBeA/DF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D585169C;
-	Fri, 28 Mar 2025 05:27:06 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2D64E3F58B;
-	Fri, 28 Mar 2025 05:27:00 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH 2/2] perf hist: Refine signed integer checking
-Date: Fri, 28 Mar 2025 12:26:44 +0000
-Message-Id: <20250328122644.2383698-3-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250328122644.2383698-1-leo.yan@arm.com>
-References: <20250328122644.2383698-1-leo.yan@arm.com>
+	s=arc-20240116; t=1743164974; c=relaxed/simple;
+	bh=E1w1Pu81bUhOsVxhSt+NbiHujeHIIyEqLBGhz2QxMQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gW0wpXVOBqY2zNpaZD7sfkjLk4R5nG22Shgg+R2aNipa/Bbnwotu5ZfZBwbqeBYxvAjNMkh08We3mGCb8PF0rfi6stJcxijGJcFH9YW//Hl4KxjVuaYNwAHqtKNwGbep/zDor+JZqwU4nmKxWd3/nh3fYElW2zTjvv9GDHxd3jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=y/sX9qPI; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 27B311F93B;
+	Fri, 28 Mar 2025 13:29:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1743164961;
+	bh=CJoUsYQQ2p89R4BMLX7IiEIRyUeB4EqC9KfvN65AKKE=; h=From:To:Subject;
+	b=y/sX9qPII563AOIh4nsmHa209II2+DyvCWXOmT1qGGrksAjVHkPfLJiWufWP2S7Y6
+	 t3k9FmX2NSj0V167AwBYmhKWMGs9N3vNmuoyH2wzHijvUrc31e0aOjY0cNbuoKclAJ
+	 4pNC9G+l8GPqtuMGD7DRGBdP9591W7tTWggmcKQYVDaVCc6dXojYsheLH6qrmY3HIB
+	 LGAdaX8HjIp8uM6M41UIJmgxnxOrgbkomKZKOo0jOHnDPju2Q2VSGXNRYYiF9dS0BF
+	 sieinzZHu0CfwTmH798xTc10GwykiueergQeayuTjAddETu6NSs/1KJTTCKOFvQz8U
+	 1TOBENrK05kOA==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v1] dt-bindings: gpio: pca95xx: add Toradex Embedded Controller
+Date: Fri, 28 Mar 2025 13:29:17 +0100
+Message-Id: <20250328122917.43273-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,38 +65,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To avoid any issues caused by overflow in a signed integer, and since
-the limit to USHRT_MAX is not necessary, this patch simply decrements
-the signed integer and checks that it is greater than 0.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
+The Toradex Embedded Controller IO16 is a 16-bit I2C I/O expander
+implemented using a small MCU.
+Its register interface and behavior are compatible with the PCAL6416.
+
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 ---
- tools/perf/ui/stdio/hist.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index 7ac4b98e28bc..6da624309fab 100644
---- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <limits.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <linux/string.h>
-@@ -25,10 +24,7 @@ static size_t callchain__fprintf_left_margin(FILE *fp, int left_margin)
- 	int i;
- 	int ret = fprintf(fp, "            ");
- 
--	if (left_margin > USHRT_MAX)
--		left_margin = USHRT_MAX;
--
--	for (i = 0; i < left_margin; i++)
-+	for (i = left_margin; i > 0; i--)
- 		ret += fprintf(fp, " ");
- 
- 	return ret;
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+index 7b1eb08fa055..db1520ff38bd 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+@@ -16,6 +16,9 @@ description: |+
+ properties:
+   compatible:
+     oneOf:
++      - items:
++          - const: toradex,embedded-controller-io16
++          - const: nxp,pcal6416
+       - items:
+           - const: diodes,pi4ioe5v6534q
+           - const: nxp,pcal6534
+@@ -132,6 +135,7 @@ allOf:
+               - maxim,max7325
+               - maxim,max7326
+               - maxim,max7327
++              - toradex,embedded-controller-io16
+     then:
+       properties:
+         reset-gpios: false
 -- 
-2.34.1
+2.39.5
 
 
