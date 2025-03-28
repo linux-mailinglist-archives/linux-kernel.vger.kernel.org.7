@@ -1,103 +1,188 @@
-Return-Path: <linux-kernel+bounces-579962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE504A74B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:52:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1040DA74BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A44816B2E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272941B60634
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830D52222AF;
-	Fri, 28 Mar 2025 13:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4027C19004B;
+	Fri, 28 Mar 2025 13:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWl5fG51"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTo2ZmNc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C118B221F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB6E192D70;
+	Fri, 28 Mar 2025 13:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168980; cv=none; b=WsHUb2GzBOA4Bi4P+nlI4KRf4xc2unSGH35BAXlMlIxUbAPDvR7krd5NRE/W8UuWnQBS3br4p/LVren+oX1hEJh3W3zqHsmo9LNXx8wpFP2rVaMpsYucy8Tf2LP7ICpXK2uGJvBs6S4qxEcMu6D+oeiOvU1fRiJm/gLTlEsXlpM=
+	t=1743169134; cv=none; b=FxNYh3yHB72Y1vI3UPg6Z9N3cwY+4sjWFpGWwuQzxNz0VLU9pd2Gu4AzMW98hg02yQCSqtHnp5M+19VvLQF+d0yl79FeFAY92B7EY/x0dC64eSy6iqI6UMkqhBry1XmwxD5tAx5LHaREcw8o/hojyoUE8VmnaLkH5xO+D84CiUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168980; c=relaxed/simple;
-	bh=gAUG+3QHn5G2kE00kQ0ZJWy/tGz+gk+Kn6E2FuyOF1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTAsvIr0tI6gSh2dMwRfV+wOq/bdgiIa+uWzpqypbbJPV2S6KN/FJRGUrv3S8bISQa1vzS7hSsttI/Do9z3qtDv0uFkH5EyCX97/TNLnWTpDJxfnkZ+OrvXtugnvL37fp9AFpGsmQr3wOPs5xHxb8gdOC0K4Kq5pJFubbdFcVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWl5fG51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8A5C4CEE4;
-	Fri, 28 Mar 2025 13:36:17 +0000 (UTC)
+	s=arc-20240116; t=1743169134; c=relaxed/simple;
+	bh=Ot8PlJs5zMx+ImUyzZSzvhXJUZFiZ3hUICBotN2aZQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ckas5tLUuQx12h/+axYwEGqseZQfQ1aIBE/zCRfkELdDMK1ArPSHcjErbT8lomMhm7of9eoek1RgbmrpsedrZyjTb2oli9gEL5B9jaGNhztorgRuaPq61tjJ5cQlcSGKjS6mg+QknSZcr7MX2t3TfRev0+Ns+kyMGEXl8RBvHXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTo2ZmNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808A9C4CEE4;
+	Fri, 28 Mar 2025 13:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743168979;
-	bh=gAUG+3QHn5G2kE00kQ0ZJWy/tGz+gk+Kn6E2FuyOF1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QWl5fG51ht11gtNw2/q0t3N6QnUnZMzpDer9PXEP+sFxCNPHhp0TOqohm7jF3U4C8
-	 J6pWd2VnfKf9gRCsq/jG/IGoGBXSrPWb7X1xetQ42nCNbcdGwM4Ni+uEoJK/PyOYBF
-	 UdwYgVSCR6am0SjWUuFLMT5RNgPyvljKkKnSxfPmdakWwgQ1hvHreihae/9WZSvdah
-	 CF8yF4O1Yo+b3Y8i+OzpdXx3pgdj0tjsAWgxiVLaaIXWDMHRMBENdm/HjgA89srVMQ
-	 B9my2pKP+fDguabedeicJ97Zk7cngSRec1a9oO8h45mhlFsWgoNXVi98gvucdwr2PJ
-	 XTO/FY7nl/diQ==
-Date: Fri, 28 Mar 2025 14:36:14 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: boris.ostrovsky@oracle.com
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com
-Subject: Re: [PATCH 0/2] Clear AMD's microcode cache on load failure
-Message-ID: <Z-alzhvfSXN4liNE@gmail.com>
-References: <20250327210305.1694664-1-boris.ostrovsky@oracle.com>
- <Z-XEPVvEDhC5vzR4@gmail.com>
- <f8ec905f-04d4-46f6-909c-7f79b151c0df@oracle.com>
+	s=k20201202; t=1743169134;
+	bh=Ot8PlJs5zMx+ImUyzZSzvhXJUZFiZ3hUICBotN2aZQI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jTo2ZmNc/UtSpYTx4jZr5EUcwmJDd/UVk9cmKonW6L34LSQUoG/keyMbrNOd5CPQv
+	 UP+UALKK2qTBtmjqOQNezFsmglfMAlicgXJvfZU9l14tTcrc/FUmd3pJb09j5PaJNJ
+	 dq8NH5eUO3hnghAj62kdSEGO/6c28W1xfLOA1Vju1j4uHjC/HqdKpEl0wpLRAgjRpR
+	 Gc5VpytxDj0qEEHjEO/M+ok1FlUe5nZifGCLkamskYspSLX4Lh+7xDmC+mBM/lsTiJ
+	 V0g7IFVy4/JrmhZnexcpN+aokk0jO4llsXV9jX4ofNBoJKTnSAPLskx70TTpNJdRSa
+	 yTDRMBg4UF1eg==
+From: cel@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: [GIT PULL] NFSD changes for v6.15
+Date: Fri, 28 Mar 2025 09:38:52 -0400
+Message-ID: <20250328133852.2344-1-cel@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8ec905f-04d4-46f6-909c-7f79b151c0df@oracle.com>
+Content-Transfer-Encoding: 8bit
 
+The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
 
-* boris.ostrovsky@oracle.com <boris.ostrovsky@oracle.com> wrote:
+  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
 
-> 
-> On 3/27/25 5:33 PM, Ingo Molnar wrote:
-> > * Boris Ostrovsky <boris.ostrovsky@oracle.com> wrote:
-> > 
-> > > Drop microcode cache when load operation fails to update microcode.
-> > > 
-> > > Also make __apply_microcode_amd() return correct error.
-> > > 
-> > > Boris Ostrovsky (2):
-> > >    x86/microcode/AMD: Fix __apply_microcode_amd()'s return value
-> > >    x86/microcode/AMD: Clean the cache if update did not load microcode
-> > > 
-> > >   arch/x86/kernel/cpu/microcode/amd.c | 9 ++++++++-
-> > >   1 file changed, 8 insertions(+), 1 deletion(-)
-> > Should these be Cc: stable perhaps?
-> 
-> 
-> Definitely the first patch. The second one is not really a fix but rather an
-> improvement.
+are available in the Git repository at:
 
-Well, #2 seems to be fixing a real bug too:
+  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.15
 
-  If microcode did not get loaded there is no reason to keep it in the cache.
-  Moreover, if loading failed it will not be possible to load an earlier
-  version of microcode since failed version will always be selected from
-  the cache on next reload attempt.
+for you to fetch changes up to 26a80762153ba0dc98258b5e6d2e9741178c5114:
 
-this bug basically regresses the ability to load an earlier version of 
-the microcode, if a newer version's loading has failed.
+  NFSD: Add a Kconfig setting to enable delegated timestamps (2025-03-14 10:49:47 -0400)
 
-It would be a pretty common usecase to attempt to load the earlier 
-version if the loading of a new one doesn't succeed, right?
+----------------------------------------------------------------
+NFSD 6.15 Release Notes
 
-Thanks,
+Neil Brown contributed more scalability improvements to NFSD's
+open file cache, and Jeff Layton contributed a menagerie of
+repairs to NFSD's NFSv4 callback / backchannel implementation.
 
-	Ingo
+Mike Snitzer contributed a change to NFS re-export support that
+disables support for file locking on a re-exported NFSv4 mount.
+This is because NFSv4 state recovery is currently difficult if
+not impossible for re-exported NFS mounts. The change aims to
+prevent data integrity exposures after the re-export server
+crashes.
+
+Work continues on the evolving NFSD netlink administrative API.
+
+Many thanks to the contributors, reviewers, testers, and bug
+reporters who participated during the v6.15 development cycle.
+
+----------------------------------------------------------------
+Chuck Lever (9):
+      NFSD: Skip sending CB_RECALL_ANY when the backchannel isn't up
+      NFSD: nfsd_unlink() clobbers non-zero status returned from fh_fill_pre_attrs()
+      NFSD: Never return NFS4ERR_FILE_OPEN when removing a directory
+      NFSD: Return NFS4ERR_FILE_OPEN only when renaming over an open file
+      NFSD: Return NFS4ERR_FILE_OPEN only when linking an open file
+      NFSD: Fix trace_nfsd_slot_seqid_sequence
+      NFSD: Fix callback decoder status codes
+      NFSD: Re-organize nfsd_file_gc_worker()
+      NFSD: Add a Kconfig setting to enable delegated timestamps
+
+Dr. David Alan Gilbert (2):
+      SUNRPC: Remove unused krb5_decrypt
+      SUNRPC: Remove unused make_checksum
+
+Gustavo A. R. Silva (1):
+      fs: nfs: acl: Avoid -Wflex-array-member-not-at-end warning
+
+Jeff Layton (19):
+      lockd: add netlink control interface
+      nfsd: don't ignore the return code of svc_proc_register()
+      nfsd: allow SC_STATUS_FREEABLE when searching via nfs4_lookup_stateid()
+      nfsd: prepare nfsd4_cb_sequence_done() for error handling rework
+      nfsd: lift NFSv4.0 handling out of nfsd4_cb_sequence_done()
+      nfsd: always release slot when requeueing callback
+      nfsd: only check RPC_SIGNALLED() when restarting rpc_task
+      nfsd: when CB_SEQUENCE gets ESERVERFAULT don't increment seq_nr
+      nfsd: handle NFS4ERR_BADSLOT on CB_SEQUENCE better
+      nfsd: eliminate special handling of NFS4ERR_SEQ_MISORDERED
+      nfsd: prevent callback tasks running concurrently
+      nfsd: eliminate cl_ra_cblist and NFSD4_CLIENT_CB_RECALL_ANY
+      nfsd: replace CB_GETATTR_BUSY with NFSD4_CALLBACK_RUNNING
+      nfsd: move cb_need_restart flag into cb_flags
+      nfsd: handle errors from rpc_call_async()
+      nfsd: reorganize struct nfs4_delegation for better packing
+      nfsd: remove unneeded forward declaration of nfsd4_mark_cb_fault()
+      nfsd: remove obsolete comment from nfs4_alloc_stid
+      nfsd: use a long for the count in nfsd4_state_shrinker_count()
+
+Li Lingfeng (3):
+      sunrpc: clean cache_detail immediately when flush is written frequently
+      nfsd: remove the redundant mapping of nfserr_mlink
+      nfsd: put dl_stid if fail to queue dl_recall
+
+Mike Snitzer (1):
+      nfsd: disallow file locking and delegations for NFSv4 reexport
+
+NeilBrown (6):
+      nfsd: filecache: remove race handling.
+      nfsd: filecache: use nfsd_file_dispose_list() in nfsd_file_close_inode_sync()
+      nfsd: filecache: use list_lru_walk_node() in nfsd_file_gc()
+      nfsd: filecache: introduce NFSD_FILE_RECENT
+      nfsd: filecache: don't repeatedly add/remove files on the lru list
+      nfsd: filecache: drop the list_lru lock during lock gc scans
+
+Nicolas Bouchinet (1):
+      sysctl: Fixes nsm_local_state bounds
+
+Olga Kornievskaia (3):
+      nfsd: fix management of listener transports
+      nfsd: adjust WARN_ON_ONCE in revoke_delegation
+      svcrdma: do not unregister device for listeners
+
+ Documentation/filesystems/nfs/reexport.rst |  10 +-
+ Documentation/netlink/specs/lockd.yaml     |  45 +++++++++
+ fs/lockd/Makefile                          |   2 +-
+ fs/lockd/netlink.c                         |  44 +++++++++
+ fs/lockd/netlink.h                         |  19 ++++
+ fs/lockd/netns.h                           |   3 +
+ fs/lockd/svc.c                             | 123 ++++++++++++++++++++++--
+ fs/nfs/export.c                            |   3 +-
+ fs/nfs_common/nfsacl.c                     |   8 +-
+ fs/nfsd/Kconfig                            |  12 ++-
+ fs/nfsd/filecache.c                        | 122 +++++++++++++-----------
+ fs/nfsd/filecache.h                        |   7 ++
+ fs/nfsd/nfs4callback.c                     | 146 ++++++++++++++++-------------
+ fs/nfsd/nfs4layouts.c                      |   7 +-
+ fs/nfsd/nfs4proc.c                         |   2 +-
+ fs/nfsd/nfs4state.c                        | 114 ++++++++++++++--------
+ fs/nfsd/nfsctl.c                           |  53 ++++++-----
+ fs/nfsd/state.h                            |  20 ++--
+ fs/nfsd/stats.c                            |   4 +-
+ fs/nfsd/stats.h                            |   2 +-
+ fs/nfsd/trace.h                            |  24 ++++-
+ fs/nfsd/vfs.c                              | 106 +++++++++++++++------
+ include/linux/exportfs.h                   |  14 ++-
+ include/linux/posix_acl.h                  |  11 ++-
+ include/uapi/linux/lockd_netlink.h         |  29 ++++++
+ net/sunrpc/auth_gss/gss_krb5_crypto.c      | 144 ----------------------------
+ net/sunrpc/auth_gss/gss_krb5_internal.h    |   7 --
+ net/sunrpc/cache.c                         |   6 +-
+ net/sunrpc/xprtrdma/svc_rdma_transport.c   |   3 +-
+ 29 files changed, 685 insertions(+), 405 deletions(-)
+ create mode 100644 Documentation/netlink/specs/lockd.yaml
+ create mode 100644 fs/lockd/netlink.c
+ create mode 100644 fs/lockd/netlink.h
+ create mode 100644 include/uapi/linux/lockd_netlink.h
 
