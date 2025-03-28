@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-579565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9E5A74547
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:22:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB10CA7454F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6AE8189D01E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04DC189003A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61635212FA3;
-	Fri, 28 Mar 2025 08:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTuM/es2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7CB212B39;
+	Fri, 28 Mar 2025 08:24:12 +0000 (UTC)
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF62153BE8;
-	Fri, 28 Mar 2025 08:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090CF18DB2B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 08:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743150149; cv=none; b=UFNJHNBLjaaFARN1FOBaFJdSS/UEWqef4JZTV0LKkMISTAF1+Lb1ENkxxY1d0zf/0Jwig4tIjcJ/B7I07zmAf+OvfH9Zw2SsYW2bOYxAbx8DSLP1HHsvEidbg7qudQ7nI3rL+jZnCxVcclDqXW18w9DxN2Z3iBbGmowT90CRhi0=
+	t=1743150252; cv=none; b=tY0KkfVdalYJRAFO8Pcor9yxMLlqYVvccrAxrUbNiqfxFp2Bi+PjHFPuGd5qxYiboRTsnQGZ6KmyjBpJme8lLNAw0r3KjWVnsiYSXqMGQJvItGWdJQBOLAKeaP/p3HRp9a5Rji3UZiFr7LQs7fhY70mRKBIdkDln+Ntji3EeIAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743150149; c=relaxed/simple;
-	bh=2baag8An67ABokx/NaGcXx9UiUw/BBwCwZPwTm0M9BM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCRrrL1ticZkEoEUfy6eiG4+LhAuHPkkpbP313L7OhA4S8M8kL6sD6X9rQmx6q28klkH3bH5/zwt/AGmThLlEvhmqsSiEZalUrRRPuZ8RT2vDjpbxYbkftK626c/rZg31LPOwoyp53TK0d09syOmreUove8aZdeIpnSo2DQIgDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTuM/es2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39B1C4CEE9;
-	Fri, 28 Mar 2025 08:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743150149;
-	bh=2baag8An67ABokx/NaGcXx9UiUw/BBwCwZPwTm0M9BM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tTuM/es2Naf3TIWRv61QkD7wr7M/XgAbTnrEoq6gkar2prfUFfN4qlYaAzPfvqU2s
-	 YE0tjuxq87UEoJOMSwY8JO89B4Lo+Ee75nf9CD/7e1q0XLt29MB1tK49C1NhHxdMFO
-	 Bv2bcCKTeHN6qEmg6iKo26k36jkwA6LIASZdpysWCevhcUnUFMLHhs9r6EX7bfbyey
-	 rt9jJfdNTYPTgPlFzJexfam0Pbr7PDXy9HtWG9IGE1W7f5oQW/yGGUEfrFsoKBKEbo
-	 +v3m9zG/D1mv5NxdnD5R81LtiOrfvuLCFfvqrJpEkihi7BuRNGRQ8KWu11Qa7R+w4U
-	 DhunWgMBkZhoA==
-Date: Fri, 28 Mar 2025 09:22:26 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Manikandan Karunakaran Pillai <mpillai@cadence.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>, 
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, 
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/7] dt-bindings: pci: cadence: Extend compatible for new
- platform configurations
-Message-ID: <20250328-poised-dolphin-of-sympathy-e1d83e@krzk-bin>
-References: <CH2PPF4D26F8E1CA951AF03C17D11C7BEB3A2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
- <20250327111106.2947888-1-mpillai@cadence.com>
- <CH2PPF4D26F8E1C1CBD2A866C59AA55CD7AA2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+	s=arc-20240116; t=1743150252; c=relaxed/simple;
+	bh=3K9E9P/3fJhtWUagyMGSRbT2D5mew/Y9C8iypQyVCXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OP3CQDLVNAxTCtE4xNvhUTPSXkXQaS+mHSy20JouU4hsev0hAAFxDvoIXUwkAZUYsWA+4FLQNmNON7ENS7JJuu4P2JKhQ0d9NulDBfJmVE83TRmXhAs26DkVpbCDShIcF3EPyvfN0AkK1WrJXMWo1tasNiibkUJW7Q5lNv7qy3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:84f5:57a8:7b3b:9088])
+	by laurent.telenet-ops.be with cmsmtp
+	id W8Q32E0051KBnwa018Q3pj; Fri, 28 Mar 2025 09:24:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1ty50U-0000000G6nn-2d5Y;
+	Fri, 28 Mar 2025 09:24:03 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1ty50V-00000006N2R-0Qmy;
+	Fri, 28 Mar 2025 09:24:03 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>,
+	Varadarajan Narayanan <quic_varada@quicinc.com>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-mtd@lists.infradead.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] mtd: nand: Drop explicit test for built-in CONFIG_SPI_QPIC_SNAND
+Date: Fri, 28 Mar 2025 09:24:01 +0100
+Message-ID: <99eef91c334f3f2314c2f5671e1eb55211a5ff19.1743150196.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CH2PPF4D26F8E1C1CBD2A866C59AA55CD7AA2A12@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 27, 2025 at 11:19:47AM +0000, Manikandan Karunakaran Pillai wrote:
-> Document the compatible property for the newly added values for PCIe EP and
-> RP configurations. Fix the compilation issues that came up for the existing
-> Cadence bindings
-> 
-> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
-> ---
->  .../bindings/pci/cdns,cdns-pcie-ep.yaml       |  12 +-
->  .../bindings/pci/cdns,cdns-pcie-host.yaml     | 119 +++++++++++++++---
->  2 files changed, 110 insertions(+), 21 deletions(-)
+If CONFIG_SPI_QPIC_SNAND=m, but CONFIG_MTD_NAND_QCOM=n:
 
-One more thing: SoB mismatch. Maybe got corrupted by Microsoft (it is
-known), so you really need to fix your mailing setup or use b4 relay.
+    ERROR: modpost: "qcom_nandc_unalloc" [drivers/spi/spi-qpic-snand.ko] undefined!
+    ...
 
-Best regards,
-Krzysztof
+Fix this by dropping the explicit test for a built-in
+CONFIG_SPI_QPIC_SNAND completely.  Kbuild handles multiple and mixed
+obj-y/obj-m rules for the same object file fine.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503280759.XhwLcV7m-lkp@intel.com/
+Fixes: 7304d1909080ef0c ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/mtd/nand/Makefile | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/mtd/nand/Makefile b/drivers/mtd/nand/Makefile
+index db516a45f0c52635..44913ff1bf12cc24 100644
+--- a/drivers/mtd/nand/Makefile
++++ b/drivers/mtd/nand/Makefile
+@@ -3,11 +3,8 @@
+ nandcore-objs := core.o bbt.o
+ obj-$(CONFIG_MTD_NAND_CORE) += nandcore.o
+ obj-$(CONFIG_MTD_NAND_ECC_MEDIATEK) += ecc-mtk.o
+-ifeq ($(CONFIG_SPI_QPIC_SNAND),y)
+ obj-$(CONFIG_SPI_QPIC_SNAND) += qpic_common.o
+-else
+ obj-$(CONFIG_MTD_NAND_QCOM) += qpic_common.o
+-endif
+ obj-y	+= onenand/
+ obj-y	+= raw/
+ obj-y	+= spi/
+-- 
+2.43.0
 
 
