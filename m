@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-579989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D5CA74BD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39B7BA74BD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F928460FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC99B4614E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E931921E0AD;
-	Fri, 28 Mar 2025 13:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXjwTIzd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABCF21D3DF;
-	Fri, 28 Mar 2025 13:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55297221F0A;
+	Fri, 28 Mar 2025 13:50:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77947221555;
+	Fri, 28 Mar 2025 13:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743169804; cv=none; b=qi+GLn6MLHexYDV43/q30pt2IohlltB/X8WWCJ3AxUizdtyntOnGu5U4BFTRFYZKZtM4DpPvAcKnZOKu1wPrrl1NuxFF87fWztZluirc7ywSNzbIde/UO5H2IYyZCN2cWRkOFMbZ7GNBCIbC4vOcn6i4ovFRb5RmWJXcsUIuuVI=
+	t=1743169858; cv=none; b=XpwSljEvdmB01nPsorg8yQT909+vq9ltPM/AoYoV0y5UyifGuOnA7u+Vs61Q7/oNzObRD10UtXesD8tiqSIfHQivwRQ33Wxhg/ribD68EZ04oPjSgauwYKZPDca8i0nIDsdjOJZSkqgjG4oOPNgwJ2nipU31zhZRtHv0TOItsRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743169804; c=relaxed/simple;
-	bh=++Wf31pg/OpvCXLQNuNhLu/4SJCaLWuaIEBlPe1gT64=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UliVGrfzaUK5aGjSmCqGRp9giJkDw+e7GCDTJEgSxDVi+w12XJRTKdvSftnqk/30BfAQY00f6XcaEjDj0y4zLDXPSk64x0ONjwxAZKyKMTiD2RGhczz8UNv5eM8cset06Vg9Hn7NVdBYrbWly2q9h/PcgO4V90RioGD7Sedmz5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXjwTIzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1655EC4CEEA;
-	Fri, 28 Mar 2025 13:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743169804;
-	bh=++Wf31pg/OpvCXLQNuNhLu/4SJCaLWuaIEBlPe1gT64=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EXjwTIzd1bemcl0u+pPRKYYjZOXCg1n/FAkHDGJ6DQiOlBC4qlVHTbOOmUmvswXEr
-	 sFjFAY2WVTm4yBtJImJNQZD+DwTmrnbqTdJmPGAFWS2LOrMZmIgusYL5rIYn2wTOWp
-	 r8u6lwTbZD+oKV4J/u5Y5V/5zHle/w1S3ibuQUs4/Q1RtZkhV6wSKJXT/U0w0BIsdn
-	 PjiBVoMxLEcnieeA8lczP9aNMF3i8xEPw5i2SROhqORaBvUwceqtxYdcMDE8+EWF6I
-	 BA67lE1yHToMaKPUrgI8CbSG0sxBBJhDN8O84/aBlR4mGcBTtPAJftW2NumVWYC6ZH
-	 im9YFikv31k5g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF497380AA66;
-	Fri, 28 Mar 2025 13:50:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1743169858; c=relaxed/simple;
+	bh=kB0O55JTvtBtlL5U/x7kW4cl6qxP+ll8Aivlmj9ntwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6w5zxyX+T+cIEFzfnCoxIWtC9FNm1BaxcqrYhJqAGlCFPf3OiQGCf3FmT0dw+x5jcCzTBH7fQnCNlPTEyFSCIOcLRhptnAwdLpwcZ9hpjxb3TLLUdYmot2C6aTYeKvGRBf636+ytCLBHzb7Yq+41rZU0PT3ckJwg5n5OLFlqKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98F041691;
+	Fri, 28 Mar 2025 06:50:59 -0700 (PDT)
+Received: from [10.57.87.112] (unknown [10.57.87.112])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1646F3F63F;
+	Fri, 28 Mar 2025 06:50:52 -0700 (PDT)
+Message-ID: <ef307875-1fa1-45f4-8e42-ab78d87b3582@arm.com>
+Date: Fri, 28 Mar 2025 13:50:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec
+ memory
+Content-Language: en-GB
+To: Zi Yan <ziy@nvidia.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20250327160700.1147155-1-ryan.roberts@arm.com>
+ <Z-WAbWfZzG1GA-4n@casper.infradead.org>
+ <731D8D6E-52A0-4144-A2BB-7243BFACC92D@nvidia.com>
+ <dfc06a39-3d92-4995-ab06-c552e351f7c8@arm.com>
+ <8DEB30F0-52D0-4857-9BAC-CDAC045A396E@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <8DEB30F0-52D0-4857-9BAC-CDAC045A396E@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net/mlx5e: SHAMPO,
- Make reserved size independent of page size
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174316984028.2839333.4008696441488010424.git-patchwork-notify@kernel.org>
-Date: Fri, 28 Mar 2025 13:50:40 +0000
-References: <1742732906-166564-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1742732906-166564-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- edumazet@google.com, andrew+netdev@lunn.ch, gal@nvidia.com,
- leonro@nvidia.com, saeedm@nvidia.com, leon@kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, moshe@nvidia.com, mbloch@nvidia.com,
- lkayal@nvidia.com
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 23 Mar 2025 14:28:26 +0200 you wrote:
-> From: Lama Kayal <lkayal@nvidia.com>
+On 28/03/2025 09:32, Zi Yan wrote:
+> On 28 Mar 2025, at 9:09, Ryan Roberts wrote:
 > 
-> When hw-gro is enabled, the maximum number of header entries that are
-> needed per wqe (hd_per_wqe) is calculated based on the size of the
-> reservations among other parameters.
+>> On 27/03/2025 20:07, Zi Yan wrote:
+>>> On 27 Mar 2025, at 12:44, Matthew Wilcox wrote:
+>>>
+>>>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
+>>>>> So let's special-case the read(ahead) logic for executable mappings. The
+>>>>> trade-off is performance improvement (due to more efficient storage of
+>>>>> the translations in iTLB) vs potential read amplification (due to
+>>>>> reading too much data around the fault which won't be used), and the
+>>>>> latter is independent of base page size. I've chosen 64K folio size for
+>>>>> arm64 which benefits both the 4K and 16K base page size configs and
+>>>>> shouldn't lead to any read amplification in practice since the old
+>>>>> read-around path was (usually) reading blocks of 128K. I don't
+>>>>> anticipate any write amplification because text is always RO.
+>>>>
+>>>> Is there not also the potential for wasted memory due to ELF alignment?
+>>>> Kalesh talked about it in the MM BOF at the same time that Ted and I
+>>>> were discussing it in the FS BOF.  Some coordination required (like
+>>>> maybe Kalesh could have mentioned it to me rathere than assuming I'd be
+>>>> there?)
+>>>>
+>>>>> +#define arch_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
+>>>>
+>>>> I don't think the "arch" really adds much value here.
+>>>>
+>>>> #define exec_folio_order()	get_order(SZ_64K)
+>>>
+>>> How about AMD’s PTE coalescing, which does PTE compression at
+>>> 16KB or 32KB level? It covers 4 16KB and 2 32KB, at least it will
+>>> not hurt AMD PTE coalescing. Starting with 64KB across all arch
+>>> might be simpler to see the performance impact. Just a comment,
+>>> no objection. :)
+>>
+>> exec_folio_order() is defined per-architecture and SZ_64K is the arm64 preferred
+>> size. At the moment x86 is not opted in, but they could choose to opt in with
+>> 32K (or whatever else makese sense) if the HW supports coalescing.
 > 
-> Miscalculation of the size of reservations leads to incorrect
-> calculation of hd_per_wqe as 0, particularly in the case of large page
-> size like in aarch64, this prevents the SHAMPO header from being
-> correctly initialized in the device, ultimately causing the following
-> cqe err that indicates a violation of PD.
+> Oh, I missed that part. I thought, since arch_ is not there, it was the same
+> for all arch.
+> >>
+>> I'm not sure if you thought this was global and are arguing against that, or if
+>> you are arguing for it to be global because it will more easily show us
+>> performance regressions earlier if x86 is doing this too?
 > 
-> [...]
+> I thought it was global. It might be OK to set it global and let different arch
+> to optimize it as it rolls out. Opt-in might be "never" until someone looks
+> into it, but if it is global and it changes performance, people will notice
+> and look into it.
 
-Here is the summary with links:
-  - [net] net/mlx5e: SHAMPO, Make reserved size independent of page size
-    https://git.kernel.org/netdev/net/c/fab058356885
+Ahh now that we are both clear, I'd prefer to stick with the policy as
+implemented; exec_folio_order() defaults to "use the existing readahead method"
+but can be overridden by arches (arm64) that want specific behaviour (64K folios).
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> 
+> --
+> Best Regards,
+> Yan, Zi
 
 
