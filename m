@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-579703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC45A74848
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:30:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF12A74815
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E58817D951
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6ADF188D9B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9984321B19E;
-	Fri, 28 Mar 2025 10:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92748217733;
+	Fri, 28 Mar 2025 10:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HkJb0hyf"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZCIgt/Sn"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0048421ADC5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8705C213E66;
+	Fri, 28 Mar 2025 10:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157750; cv=none; b=bxIlMBUnGv+famae8JjJ6LsHulxK0YUf6HyYBrf3W0GohB42Ges7RGgAU6aiMAzBrWnPQI8GpJYZAtT9/v0dVfEDNQ/dlylxI3vyMOjP/w6p5KP3Q/TsmYrSodUbVQwERG/KX1DJk6XiO2dJ7Et/LAzbvLaYc3vVAD55U8DWQgg=
+	t=1743157257; cv=none; b=qnPPX2euJMV1ox5Gq5koMiNH5kawZqA+8a8K3wn7dXlf85+PCZmRRy0pgghWxckkY1/zxkAihmBuULeWhFKg/PZbhslOjo2967s6yVnl8QtIiKZZfau+WWT25ykxEWQWXK6wf1y+fV9+fwEOtn8f/RJU/GX5F8UZRuOnXhnYYgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157750; c=relaxed/simple;
-	bh=K37yE3iyYuruvJeuoMfhV+Q8sLRd6nF2BXd0h3DpmUU=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=cxH9NNbBx3ViUvuzV4FBSujhxgotSerssd8KNlYLP1WKov+nGyKhynJtNevmbJ7fG77CHQuZMJ3msHvQ/+UgRMEL/7LTJBD7DZQ5NmIaIotMlEr/ffUjTEN7DOeWI3QQ3FOEIQOAIHh3qUxzBihvBbHEvZyy6afId3H8DzE5UIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HkJb0hyf; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red54.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743157743; bh=I2eMAS1QoFOyVHmK1FI/Y9oGcQmoyT9GZd4/d7u4S2Y=;
-	h=From:To:Cc:Subject:Date;
-	b=HkJb0hyflb/1EuJPHQnZWzlka/VTRKvcRRVQgEDJIEs9z3G5AtIyq+zaIQRifSqE9
-	 mTv5O9iZgLZSapSUkFa/12eOiZ6WEfZrJbCMjLgVa9+x4t3bjBqzMkFi7rzZzo/PJl
-	 ZIN/EeahmydpA9k/9+ny0c0Zh38zPftP0UHkUwDw=
-Received: from mail.red54.com ([139.99.8.57])
-	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
-	id 5179D080; Fri, 28 Mar 2025 18:20:23 +0800
-X-QQ-mid: xmsmtpt1743157223tws36nd57
-Message-ID: <tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com>
-X-QQ-XMAILINFO: NQR8mRxMnur9ApmSjGAwIgWVyFsdwRYfpF6XWUljFL9CGWaXb+SYBegsQSuHDa
-	 nI0O7Z+SDmOWqkDMzxaTGO3i7OLfvQtyuwZTtBFzupP2Hhi4/Jw0ie/8c8I+9e9Bz6rOBMDvmpFh
-	 LjGhF4kIEyIHDng1mYjUXoPH/4hAt1ExAxHyDIfOuEOFGTrXsz1GvmEJgWev5InZEOe6XNT7KOfG
-	 i+HZ/Z8zXKp6BCf6dZqzZu88SHg3p70mUuuoE+JaMupi7pDsHUdXqEHfjnuAX0bXY4RfnpDdI+Tt
-	 3Sw1o6aBIdLu/e9hsxnwp8ecxctSB/sw0x8xjmVnfImb9HwPWjXX3ON6RwRge8jWYKHuusMa8QCE
-	 fOJ/7yfeH6Ls7UxIifcVcAHwbZVKQcPbeZTbFFnf6M5GlqlSWispUd5euM/9w7l3l8kjcMHZh2H0
-	 IiXm0GawkZ3AIq37R9Ec3IIvjMhEWkV9E2FTWEoDH9HX4/rkDkwUplHMODNOWqBdAgAMr1k/QgVz
-	 h1KVDcnqTnjgu/3rTRmLBOtdjqcYkaCvD6w4L5KBBTmu5zaaiZ3ZUVFi7KBY7OmDSR4AEUzsYXGc
-	 TBJpGK6KdTXxMYWh/rYT9ZBfLvakVZvrdm8Bp2o7o6Boa3NUhrC0gpBirYS2yYMfJ+mf0E8wgspC
-	 ZZkBLrUnYNo1X0qpepJJBohoWZaRGZQO3Hz7/W+K/nuCV32tdCjA9LEtI+DPfQQd16sdOqXfAAJ2
-	 Nom+TP5uAR4l6SFs8+vfPoKIFsaXqicDrtE/bePN7AHSNRUM08NAOwgGIVFhhGUX5EBpR9Szz+fm
-	 SJ3ijjMWKDtbF9BKHbKYHxbM7noR0mR3er4vNLCs4eqKUIS4BL/6TzKLKoeVBFHAD+O9VY+/oNoE
-	 tdl99IPisRdF7LTjyQ/MrnZzdJDveQYP5gUDYegQ/QIQWOeliZU44VZHgARWnCbF10OfdZzWcDyZ
-	 vN6+jra0REvKMV93KNnddkuFcsX60ue7kGgVMA6s/9mG3jF+u1aw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-Sender: yeking@red54.com
-From: Yeking@Red54.com
-To: linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6=20=28XIE=20Zhibang=29?= <Yeking@Red54.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Yuntao Liu <liuyuntao12@huawei.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Dave Vasilevsky <dave@vasilevsky.ca>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Victor Boivie <victor.boivie@sonyericsson.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Oskar Andero <oskar.andero@sonyericsson.com>,
-	Bjorn Andersson <bjorn.andersson@sonyericsson.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: Fix support for CMDLINE_EXTEND
-Date: Fri, 28 Mar 2025 10:20:17 +0000
-X-OQ-MSGID: <20250328102017.53121-1-Yeking@Red54.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743157257; c=relaxed/simple;
+	bh=G37Rpxj9artpzjHdH9Kk80lSjQKgVboLMMZFWLJA/YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ElHFCp8ksIxWcjK2hfw3eSQBRuJ/mlj5NX/mXyegWst4VwrdsUURHNIidhcHLNbC+bX92N4zUvAeaabFKsCd+B7xvwdj5kEYkgChFMLT6W61JRA/YGzENwq/RJNKAQU4UKyCwIFEX+g6/YZbQELv9kxMyBEYGBEddo/tacqxmnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZCIgt/Sn; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 84E34101D4409;
+	Fri, 28 Mar 2025 11:20:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743157252; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=WpjA+IwZTQ3hDj6knG5UpwdBfRtzOJ7yh3/1OQNgpWk=;
+	b=ZCIgt/Sn2A3J4Qbw6/w5TT8J5sG4z1Vcd7s68vS5boYUw/wVWe533s0vL0+haSfwT/hvwq
+	KC7D1VRUKbHOJS3Skd0ZLMiYlmVyyyRqbH5JiOeKIcDCb2NeegD4twjEmXOa/DSI8/QftM
+	7lAjIbCYgRKfXzJRg4ySzKQohzgNFadBZIH3jglOj7ZgktJQgmkUHt+Gg3Qn4baqt5UOi6
+	k+xEf0TFlL0sk0qA7RbFGjA9D8UmM++jCLLOgnUPH5oX3wJWd/aeuTyCpTBC70LnbvxeNJ
+	MoH3XZKmiWG1/9jblABjm1ye+kAIzUXSvlb6i01qO/86sJ76OFUTmac5xuKNZg==
+Date: Fri, 28 Mar 2025 11:20:46 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 000/115] 6.12.21-rc2 review
+Message-ID: <Z+Z3/hhNoBemgSYS@duo.ucw.cz>
+References: <20250326154546.724728617@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="69CeavOzPm4brp6y"
+Content-Disposition: inline
+In-Reply-To: <20250326154546.724728617@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
 
-It should be the default command line appended to the bootloader command
-line, not the bootloader command line appended to the default command
-line.
+--69CeavOzPm4brp6y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This will be consistent with the behavior of FDT, EFI, and other
-platforms.
+Hi!
 
-Fixes: 4394c1244249 ("ARM: 6893/1: Allow for kernel command line concatenation")
-Signed-off-by: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
----
- arch/arm/Kconfig              |  4 ++--
- arch/arm/kernel/atags_parse.c | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+> This is the start of the stable review cycle for the 6.12.21 release.
+> There are 115 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 25ed6f1a7c7a..635e4da33fff 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1534,8 +1534,8 @@ config CMDLINE_FROM_BOOTLOADER
- config CMDLINE_EXTEND
- 	bool "Extend bootloader kernel arguments"
- 	help
--	  The command-line arguments provided by the boot loader will be
--	  appended to the default kernel command string.
-+	  The default kernel command string will be appended to the
-+	  command-line arguments provided by the boot loader.
- 
- config CMDLINE_FORCE
- 	bool "Always use the default kernel command string"
-diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
-index 4ec591bde3df..bd163f00602e 100644
---- a/arch/arm/kernel/atags_parse.c
-+++ b/arch/arm/kernel/atags_parse.c
-@@ -120,15 +120,15 @@ __tagtable(ATAG_REVISION, parse_tag_revision);
- 
- static int __init parse_tag_cmdline(const struct tag *tag)
- {
--#if defined(CONFIG_CMDLINE_EXTEND)
--	strlcat(default_command_line, " ", COMMAND_LINE_SIZE);
--	strlcat(default_command_line, tag->u.cmdline.cmdline,
--		COMMAND_LINE_SIZE);
--#elif defined(CONFIG_CMDLINE_FORCE)
-+#if defined(CONFIG_CMDLINE_FORCE)
- 	pr_warn("Ignoring tag cmdline (using the default kernel command line)\n");
- #else
- 	strscpy(default_command_line, tag->u.cmdline.cmdline,
- 		COMMAND_LINE_SIZE);
-+#if defined(CONFIG_CMDLINE_EXTEND)
-+	strlcat(default_command_line, " ", COMMAND_LINE_SIZE);
-+	strlcat(default_command_line, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-+#endif
- #endif
- 	return 0;
- }
--- 
-2.43.0
+CIP testing did not find any problems here:
 
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+
+I believe 6.6 will pass the testing, too, with enough retries; bbb is
+doing that for some reason.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--69CeavOzPm4brp6y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+Z3/gAKCRAw5/Bqldv6
+8k/cAJ9WmK/AMr2bwLBaTMbLAv92XoplNACglOAunu5RUzKAJ7kpAEK6YffjKks=
+=/nV5
+-----END PGP SIGNATURE-----
+
+--69CeavOzPm4brp6y--
 
