@@ -1,268 +1,159 @@
-Return-Path: <linux-kernel+bounces-580420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94996A751B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:58:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B53A751BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0FF3B0F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C4F3B22D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD981EB5D1;
-	Fri, 28 Mar 2025 20:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE441EF365;
+	Fri, 28 Mar 2025 21:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QyZlPKw9"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="c9TCqEP+"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A4E545
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 20:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3FC1C5D7F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743195494; cv=none; b=PXHr2FlveOU2cxMOSsLOcX4chnBhqBq1KK3bedpb9+u9gTZhZRzzq9RVZmdcDsebFh67bAMbHVlhzsZoYRgRkFGK9muQjd58dnDlnh8klYO+bkzVs2YL9pox1Mlu5XxXIv3av8eprGMNeXymtk+8sXSm2ds33rUsz0BDLk6HqzQ=
+	t=1743195761; cv=none; b=IOQfI656mn5BKtNF4w7mdW1smNPSu2NFTCOHkyf9FjmUZuqFtMfFo02dA/+1iMiIHjrBzzKF3tAGS2utqEya7+4mwn5nEhi7kle7cUWUwpzZjr4ISV1MwKcs6WCp2ZSazvXQpL5s5ZM2c5vf8gFOiOBJ5gyKypliySxnUByh3w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743195494; c=relaxed/simple;
-	bh=BVW0XhDPO/2+9RSGuGhR87CPWwNGqHO85wYj08m4tgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pWbTYD+J62mVKm2B3X1/d7n9vwEY0q+xJnOWpfaP1Nm+TQpPSd9Mx7NMDstdLUNGw37Dj8v1HwRT0DUylfUKw2b3vWxxcnOQZkslaB0oGNH6S1vq16GC+pszp/OhsEaWfIErtBgTirF7kNa5tEfwNFTJPvjxd/lDWSa1ARVxxJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QyZlPKw9; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso18701695e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:58:12 -0700 (PDT)
+	s=arc-20240116; t=1743195761; c=relaxed/simple;
+	bh=b1a8moIudFYGQBBhZ0ZFwpnDk+15x8Wgx+ZUtGp0Kxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SNG4bD9yOYJPSWz6rjltbw9y2GqZT1B0as7xGGb5B4ARWAb105cRGn6Z+UCeLAN7EnFB1NhdT411s2XvDBB9NRD7+WJ6OMVmx32sc0TykPAFv2J3cMHvshFlGeJPUmyLBfWTLxVZ2o83keREHQIh8qoE9CijOBVKvbXMsaPMJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=c9TCqEP+; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ce868498d3so8765545ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743195491; x=1743800291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+oTTaYulNzz2jhtw5cRdi7qx7l2fz5I36Z6TNtlMsWM=;
-        b=QyZlPKw9lJHmORWNmauhUa0wmqtUPnSXO/+5SzUaFVu6buUy/lW4QZgWI2wQajoJ+G
-         QMJRKvDIUxAKR9u0QLwooDPAdu76nWUxK96JNuk9oqiua8Fq6JOCCuIHqcJcFjCbCLkh
-         3nZZKCN3gNXFwa/3IrGXOWDwVwhUPx1gmUPjG3cRLEjgvxna8sGUS+sSq0Na4Fefq62B
-         zDJM1SEn3Wwx/f83w5NHVWoBab73bUwWE2tHDfeqFb4yM8F9Gi7pnRpXdyNBecoo6f2T
-         fm4w3B9SiKd00St0OPkk7A8vzu0YGs8I23cSKqdigICojYsDn3cwbm777ee+KsRzsU6O
-         BJbQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1743195757; x=1743800557; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHJYMx5Ny8sSHNURLwOrkk6ILyuNYFJwUzbCpGHWiDs=;
+        b=c9TCqEP+s9zS9L94KmrusyCFRtVbamHajsz4onjhmq7HFM9LRsizp74BCVidFq45Ff
+         bvHHJLQWVGdQEmViaMN1TWIn9a3WegBYq/ZDWoqd+PUcnVsF2/A7rYFxJBWczA+R3LAK
+         q7pgm5ro6+7igdBPECJhomiTNl+rsxFPw80mwMWI1utWB5JnwoqgudWTFdSzXvcLVvM3
+         4qNCu0nQSmzNxY1riwAKfNvR38BGqgOA+3wFLu3JhDq159jEMZeQiqhA/GhQVO38l5zw
+         0zdelRHJx6TpA3UyZi2rpYKl3hkWfOm/BFwbX1OhIs4FUE2XLIxCDP1h7pIb+NyDQ0ti
+         +zfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743195491; x=1743800291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+oTTaYulNzz2jhtw5cRdi7qx7l2fz5I36Z6TNtlMsWM=;
-        b=PjKiPaxOC6YLp6U1TOfKkD4kbwqX6FEZb0qKlxM1VN7T9BDf4NTvlmgWfUs3qm0UA7
-         k1zT1jM3gjIvL/vB3cC4/U6uJN3Yn0Vza0mN8AFZ7zUeeiCDrHDasMDLx/krxDf1Tx3u
-         X3/475rUBwhksowpCJxYpbR2EWfnBHwS4j/TzssVLVZPv9ERfh9jpgKMD01xtvcf02dC
-         Qd5oYwL5iduezaZFfh9Ux8cit1Ms5+d2ZXPHHxHhGP2X4nr4vJ1y6no0yVL9VUpVYPh2
-         SeEnIslQjqOs+4ySaVQOT//6SflICKdMMefOEqGdX8JofgclyKOOrcVY+BLcOvIJVbf8
-         iQiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdJh5mF7eFirMwfEoHowuArmcbcF30iLSZIh2yeQV7Lt7FAIH+zXM6I60rEplvgl0JNnHqoK8u2dfHW0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzYOkd62y6fYV89ve46JoSQZa6zqSymbALh/tlQVB0TYTG8Rf6
-	KY41EEUJhZzg4O4iQEH12PUKDyxAFjCOtqsT9KvCVcI6iHj5FMgymtLDg6V9vR8=
-X-Gm-Gg: ASbGncuO4z09e/2K1yxI75icOrsH83JUtgKFbxIdt8gwqJeXdReJUaLnac+znnQTpBo
-	KLRPxcW6pXbG5bKqZZ5rsr1uK7A69iLBRb3ab0rHbZyvXpISJyhP5BInPQ/cVLavM6maocIU2Te
-	+p+nWPDTytXsDzjRZLSWU2fgI6D3zk03D4YFWJCwu7ch19kOjPC0EJiZ7c8PopKrwHLxCVrYAPz
-	ogewOgFG3Ss7QxNiACcP2SoDfBjkoT3sNuylkvcKIgrDbRmXlSY+c5o/S0sMlsFKOgcLxmU+SBj
-	X0XhMWzwCpA1T0HEBx3QP0KwRetOqzny+1ZVOIu7hx/Qb8sjThk40wlV84RFZxUV0p738EZ7PHQ
-	Q8CRZaEIs
-X-Google-Smtp-Source: AGHT+IFqXU1M+Pd6CMFBypVz3suv5poS4ILSOIL1uN7LFhe180YHnGFtscVuw9P793mhMEzt5SW0Pw==
-X-Received: by 2002:a05:600c:468c:b0:43c:fa3f:8e5d with SMTP id 5b1f17b1804b1-43db61b52e5mr10442915e9.2.1743195491122;
-        Fri, 28 Mar 2025 13:58:11 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d82efe678sm81785095e9.20.2025.03.28.13.58.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 13:58:10 -0700 (PDT)
-Message-ID: <80ed9b3d-4d84-4bd4-8fba-20485e8a0731@linaro.org>
-Date: Fri, 28 Mar 2025 21:58:10 +0100
+        d=1e100.net; s=20230601; t=1743195757; x=1743800557;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VHJYMx5Ny8sSHNURLwOrkk6ILyuNYFJwUzbCpGHWiDs=;
+        b=s40YBJZzB0+EukWknWAfbsy8uPP3pN1o+6gNx7VtdO4gSBy3U9uKrGyJeS11B0hb9Z
+         svFZhS/QMlOhZicyu2qKnPvCH9A3PMnmQiAmjMRSI00/69YEqI5/QLHMjFQt7ryTnIh2
+         exemeKxq/e8jadbIFvRKcAcMPyxtyhOi+Y46QTeW+I+sntTT7JRDvJMF8KXVMpS63KWY
+         fo83wW68SfFIgWN2aE7g979RKVER4AjhOXKPommkbqXOWxQA7XGHMNc9VMrJ3lIqKC1C
+         XkDIwp11ds69P0uwxz2M4H3Mh+OOE9AOaRLn+E36gub6kMfkkDtXFncmbl9KSLLC1gii
+         ZanQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXY5Cp/GONqv0J6SpaM6AnU4wWAkYkV+AqFYTibkkW8nStEhC7yfq3Z2+KVoUgQbsRgft7QoXDL+rHAUCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXU6AZNBYKe+FveQ6EalXGdi5WKIBiN3yEusaY8E1sNyJpL1oZ
+	BdPELvr6UBx+fOAwU111mCWevjS0xa4h3pYM6S+bOTCFRf/B49gKwPUG9Mkyvs4=
+X-Gm-Gg: ASbGncsCVKBN7DxQoSd8PFmhoisO6qGoXIikJbj3khA/wGdZex+lVn+7AuN4WAG88ix
+	g3xi2tQBpX/eHyDHexjJn5KcOrOpGMgCTd9BrMXeBh4O1Uxme11gJLhEOD1XiGPIbgedfP62T9a
+	UHBQPBCWWWBZXlb5hUmA27GrlDvbI0BexztbkuW6VVe3N15njJdkv2uEiBcw+0nB8a2W3dhtbOm
+	KQSzz9YbpSUwlHBwqXoNLdvuSzEoBhmO8SGXGGy3aKRbDrdqRna/0+aiK/jkjcLd89ML9O+5BTr
+	YIIs/MLMQyR0YGIqMzIdb//WM4L8hbpjdrbv2NCAoZD1tLzXlVnVZBpg8aKkVEwU61/17DSkDoR
+	csAD3Kqos2wZc9u4kBw==
+X-Google-Smtp-Source: AGHT+IHk48TQj5LU1BljWFGSUTe9vm5Iy8BdohARUm7BRbpRyYRCt5Yc1AT2nUjsk81V+iVQCDA4Kw==
+X-Received: by 2002:a05:6e02:260a:b0:3d5:d743:8089 with SMTP id e9e14a558f8ab-3d5e091344amr12125865ab.7.1743195757226;
+        Fri, 28 Mar 2025 14:02:37 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d5d5a74286sm6769405ab.39.2025.03.28.14.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 14:02:36 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlan@gentoo.org
+Cc: heylenay@4d2.org,
+	guodong@riscstar.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] clk: spacemit: add K1 reset support
+Date: Fri, 28 Mar 2025 16:02:25 -0500
+Message-ID: <20250328210233.1077035-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] watchdog: Add the Software Watchdog Timer for the NXP
- S32 platform
-To: Guenter Roeck <linux@roeck-us.net>, wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- S32@nxp.com, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
- Thomas Fossati <thomas.fossati@linaro.org>
-References: <20250328151516.2219971-1-daniel.lezcano@linaro.org>
- <20250328151516.2219971-2-daniel.lezcano@linaro.org>
- <a7c9715f-b912-49dd-a664-7b5e6017d0fa@roeck-us.net>
- <03f65f72-4727-44c7-90cb-6d251f360c85@linaro.org>
- <5ee20c44-0846-440d-8ae8-8f7e6b8743cf@roeck-us.net>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <5ee20c44-0846-440d-8ae8-8f7e6b8743cf@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 28/03/2025 20:56, Guenter Roeck wrote:
-> On 3/28/25 12:42, Daniel Lezcano wrote:
->>
->> Hi Guenter,
->>
->> thanks for your review
->>
->> On 28/03/2025 19:10, Guenter Roeck wrote:
->>> On 3/28/25 08:15, Daniel Lezcano wrote:
->>>> The S32 platform has several Software Watchdog Timer available and
->>>
->>> Why "Software" ? This is a hardware watchdog, or am I missing 
->>> something ?
->>
->> I have no idea why it is called 'Software' because it is indeed a 
->> hardware watchdog. It is how NXP called it in their technical 
->> reference manual.
->>
-> 
-> I guess it is because it resets the software. Please drop the term;
-> it is misleading.
+This series adds reset controller support for the SpacemiT K1 SoC.
+It is based on Linux v6.14.  This version of the series is updated
+in reponse to review feedback from the initial version:
+  https://lore.kernel.org/lkml/20250321151831.623575-1-elder@riscstar.com/
 
-Ok, I will drop the term but keep a reference to the NXP documentation.
+As before, this version is built upon the clock controller driver that
+Haylen Chu currently has out for review (currently at v5):
+  https://lore.kernel.org/lkml/20250306175750.22480-2-heylenay@4d2.org/
 
->>>> tied with a CPU. The SWT0 is the only one which directly asserts the
->>>> reset line, other SWT require an external setup to configure the reset
->>>> behavior which is not part of this change.
->>>>
->>>> The maximum watchdog value depends on the clock feeding the SWT
->>>> counter which is 32bits wide. On the s32g274-rb2, the clock has a rate
->>>> of 51MHz which lead to 83 seconds maximum timeout.
->>>>
->>>> The timeout can be specified via the device tree with the usual
->>>> existing bindings 'timeout-sec' or via the module param timeout.
->>>>
->>>> The watchdog can be loaded with the 'nowayout' option, preventing the
->>>> watchdog to be stopped.
->>>>
->>>> The watchdog can be started at boot time with the 'early-enable'
->>>> option, thus letting the watchdog framework to service the watchdog
->>>> counter.
->>>>
->>>> the watchdog support the magic character to stop when the userspace
->>>> releases the device.
->>>>
->>>> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
->>>> Cc: Thomas Fossati <thomas.fossati@linaro.org>
->>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> ---
->>
->> [ ... ]
->>
->>>> --- /dev/null
->>>> +++ b/drivers/watchdog/s32g_wdt.c
->>>> @@ -0,0 +1,362 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>>> +/*
->>>> + * Watchdog driver for S32G SoC
->>>> + *
->>>> + * Copyright (C) 2014 Freescale Semiconductor, Inc.
->>>> + * Copyright 2017-2019, 2021-2025 NXP.
->>>
->>> Does this originate from out-of-tree code ?
->>> If so, a reference would be helpful.
->>
->> Well, I kept the copyright but this implementation is mostly from 
->> scratch.
->>
-> I am not a copyright expert, but if this isn't derived from some other 
-> driver
-> it should not include old copyrights.
+It also depends on two commits that will land in v6.15: 5728c92ae1123
+("mfd: syscon: Restore device_node_to_regmap() for non-syscon nodes")
+and 7ff4faba63571 ("pinctrl: spacemit: enable config option").
 
-Ok, I'll put only the NXP copyright
+The basic content of the patches has not changed since last time, so
+I won't repeat the explantion of each here.
 
-[ ... ]
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v2
 
->>>> +static void s32g_wdt_debugfs_init(struct device *dev, struct 
->>>> s32g_wdt_device *wdev)
->>>> +{
->>>> +    struct debugfs_regset32 *regset;
->>>> +    static struct dentry *dentry = NULL;
->>>> +
->>>> +    if (!dentry)
->>>> +        dentry = debugfs_create_dir("watchdog", NULL);
->>>
->>> That is a terribly generic debugfs directory name. That is unacceptable.
->>> Pick a name that is driver specific.
->>
->> Why is it terrible ? We end up with:
->>
->> watchdog/40100000.watchdog
->>
->> There are 7 watchdogs on the platform, the directory is there to group 
->> them all. It seems to me it is self-explanatory, no ?
->>
-> 
-> It should be something like "s32g/40100000.watchdog". Someone could have 
-> some other watchdog
-> (say, a real software watchdog) in the system and decide to use the top 
-> level directory name
-> for whatever reason. The top level should be something driver specific, 
-> not a generic name.
+Since last time:
+  - Added Rob's Reviewed-by tag on the first patch
+  - Renamed the of_match_data data type (and one or two other symbols) to
+    use "spacemit" rather than "k1".
+  - Replaced the abbreviated "rst" or "RST" in names of newly-defined
+    sympols with "reset" or "RESET" respectively.
+  - Eliminated rcdev_to_controller(), which was only used once.
+  - Changed a function that unsafely did a read/modify/write of a register
+    to use regmap_update_bits() instead as suggested by Haylen.
+  - Eliminated a null check for a pointer known to be non-null.
+  - Reordered the assignment of reset controller device fields.
+  - Added a "sentinel" comment as requested by Yixun.
+  - Updated to be based on Linux v6.14 final.
 
-Apparently we can have a subsystem creating the subsystem directory.
+Note that I did *not* change anything related to the "remote CPU" (RCPU
+and RCPU2) resets (and clocks).
 
-For example regmap is created by the core framework:
+					-Alex
 
-ls /sys/kernel/debug/regmap
-4009c240.pinctrl-map0  4009c240.pinctrl-map1  4009c240.pinctrl-map2 
-4009c240.pinctrl-map3  4009c240.pinctrl-map4  4009c240.pinctrl-map5
+Alex Elder (7):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  clk: spacemit: define struct spacemit_ccu_data
+  clk: spacemit: add reset controller support
+  clk: spacemit: define existing syscon resets
+  clk: spacemit: make clocks optional
+  clk: spacemit: define new syscons with only resets
+  riscv: dts: spacemit: add reset support for the K1 SoC
 
-drivers/base/regmap/regmap-debugfs.c
-   regmap_debugfs_root = debugfs_create_dir("regmap", NULL);
-
-Or pinctrl:
-
-ls /sys/kernel/debug/pinctrl
-4009c240.pinctrl  pinctrl-devices   pinctrl-handles   pinctrl-maps
-
-drivers/pinctrl/core.c:
-  debugfs_root = debugfs_create_dir("pinctrl", NULL);
-
-
-Would it make sense to have the watchdog framework to create this 
-topmost directory and have the driver to use an API like:
-
-int watchdog_debugfs_add(struct watchdog_device *wdog);
-
-with wdog->debugfs set by the caller.
-
-No need to have more API. When the driver is unloaded it can destroy its 
-own directory. And when the core watchdog framework exits, it can 
-recursively destroy the topmost directory.
-
-
->>>> +
->>>> +    dentry = debugfs_create_dir(dev_name(dev), dentry);
->>>> +
->>>
->>> Where is this removed if the driver is unloaded ?
->>
->> Oh right, I missed it. Thanks for pointing this out.
->>
->>> Also, if the driver is built into the kernel, it seems to me that a 
->>> second
->>> instance will create a nested directory. That seems odd.
->>
->> No, because there is the test above if (!dentry) which is a static 
->> variable.
->>
-> 
-> Yes, and then the second watchdog will create 
-> "watchdog/40100000.watchdog/40200000.watchdog"
-> or similar because dentry is overwritten with the reference to 
-> "40100000.watchdog"
-> 
-> Thanks,
-> Guenter
-> 
-
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
+ drivers/clk/spacemit/ccu-k1.c                 | 380 +++++++++++++++++-
+ include/dt-bindings/clock/spacemit,k1-ccu.h   | 128 ++++++
+ 4 files changed, 521 insertions(+), 18 deletions(-)
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.45.2
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
