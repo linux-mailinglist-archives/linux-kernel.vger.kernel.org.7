@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-579682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1565CA747FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:18:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784EFA7481F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E50737A48BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3810216ADE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E401218823;
-	Fri, 28 Mar 2025 10:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C32B217733;
+	Fri, 28 Mar 2025 10:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Z0r5qVOR"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="wzoozC5J"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA59E1B4244;
-	Fri, 28 Mar 2025 10:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973F1D7E21;
+	Fri, 28 Mar 2025 10:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157103; cv=none; b=tFD/uRb2ey66ExYFJ4Rba6/tgw/soBJOOJs2Ab7EDQes11BRZBEzF8BU2HQekFtwc0t40+VoPga6TyRi2AqBoauSP8nJBTs0lQhJ1rTOWWQ879FRhjPYUn46AAEPALnIHPfaq8XzIgTe3W6ivbfcUuM2OZ9NTP5m+pgNlqjJzYY=
+	t=1743157418; cv=none; b=mW5mCsJzi2wF+MatAqjwXBrbR6bmtdNvedKr68syQfqQkMFWxfvOjTYlFoHNdpfNZFSqZZvYJXgsFKWO8SiJ+wVGXnkIKJjNFbfe3IFNobO7WgK/++vmA5kOThlaLtwzomB0TtlMhNkSwO7eXzpmXBQhGufE1ekVZVtf1UfNjaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157103; c=relaxed/simple;
-	bh=LuZQ/VXIC4NAiPg9MT1mlCX4GWeC1O18VNnybzVvySc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hpn4gcgPULfz/9WFT+I5S1cEKvkTdFHcME0TmusNNOxP9Kgq6FcsvWn9pyqKHe+RJiQHylfSXF8z3uLsRCjHoyyybzq4q70la/WZga0CcuWxoxDo/7iw0i0qS4kBtyehQV9JFWnDV02xRikrlt1Edy39+sW++8avzZLyh/n0z18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Z0r5qVOR; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F0421023F59A;
-	Fri, 28 Mar 2025 11:18:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1743157092; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=NmL+230093prb2NKvGUaTrcx0iU/raazJ57E3zSIxCg=;
-	b=Z0r5qVOR6BaTO4LUrWVjCwI/84iGjwoYWbx2c4BAKGSdXTzPTMWgoOOKjv8Mz4nC/gd79F
-	EQb7+VE7fnFQCIWEeO4Yy/CbJbC6s6BBMB8Gxqn+ZsL1VCllXzSUcSyUCaXVIqll4s1fvv
-	RXJqsLud4JnN6Oop/rUC7yr4gDhXgTePAa7B7fSKCQZkOnzsBDu6zyXK9WGBEDDIr0294T
-	CiyhXsmLocJ4kCD/v4cKAZ8oLCPNABIsIG7ooJ3gMG8DibJr7T9ixzNVJ1P3vyh5Mi57/L
-	8dWKZXqXu3sGNHoRLy0PHxsj+AB2wXyB5acZQ22t2z9+GksCm7uoaf0fbEGzuw==
-Date: Fri, 28 Mar 2025 11:18:04 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/197] 6.1.132-rc3 review
-Message-ID: <Z+Z3XMF2FPpJF9kZ@duo.ucw.cz>
-References: <20250328074420.301061796@linuxfoundation.org>
+	s=arc-20240116; t=1743157418; c=relaxed/simple;
+	bh=kfnA0dse3vgZ+fkK7/yQkYuHHTaaxE5askDA+8RMtOI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=AVxYM9KjYbfkHxDFtNUeP4PBI5wAxqRNi5YTzS5cTG+Y7cRJCs+ycRUnlfBkws3DR8ZMyvY3U372pIcfCxVkH+/Wpe3yp4xMN8wNqRq/hMmgtugEXtbuBQAq5D68+Pv6ucULTeKttL/uS1UkFm/+owIjlCb665craZKfqr1/yCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com; spf=pass smtp.mailfrom=red54.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=wzoozC5J; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Red54.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=red54.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743157107; bh=H2OTz8qixQSaNYMYOwPN0zr3Spnwqzfy6K+SC7egpi0=;
+	h=From:To:Cc:Subject:Date;
+	b=wzoozC5J5Zs7kwXxyhsn82cmtx415X86A3m1UJQ6SALiSXk+tCg2tAG5/OUlk/cTK
+	 hf1RNxs9XLy2v4phSGZJKrN7nOJk3q9JbtDmTPfYVs53G6H+SWga/YWgbr7C6fmbDP
+	 WllwYWpoPS9N4hDMQQbrNxfXw1bB2hMETlOjAfyY=
+Received: from mail.red54.com ([139.99.8.57])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 48F3BC99; Fri, 28 Mar 2025 18:18:15 +0800
+X-QQ-mid: xmsmtpt1743157095tkan4cn01
+Message-ID: <tencent_40B6A6E7C79AEEEFEC79A07DE00724909A05@qq.com>
+X-QQ-XMAILINFO: N+tZcXNNUKPOq0E9fe2tInSMWeGR7AoKa9CfwgyWxam3RDeGnbizC0ptDSI3QN
+	 1ARp8tXQwHqJGGNx+qDidrqn3GSLqIJCA7wf1X+0YEkfLm7aL/J7/GbHzFCgAX68+L+ymbrCu6Up
+	 G8Y5ytwIulU/PbiNmGVLk00ajkY8m5Y/ZPkR0RbMpZuosL6f7Po7OGWgevShtf0uq9dpB1fLNQjK
+	 8CDyNeya8aYkgwxMNHbN3hdrnkn40IGu2hPa0NCP4Ji/pjiloqLrtN3z3xyHmn+16C/48ngaUoV9
+	 N3fCvlYtlTNrjDehAIbuiclypNvAq1NxIeoq6Pvjr7rqQ1AAYl1MpFaPJl63n90BkfKZUMu5zr5Y
+	 OrzcQfeaz0qMFCPTn/uIRAB1STWWI8GlB/N8St2r46paTE1kHD0NUtp+hFKqEqe6AhjFtgh2A3oR
+	 BzuBfKYitBOC6T75WZT6PxizIE0zrj2kCnUG+fNzjoUYAwDBwIIXMFg97w7pER8PrBAcivYcf4cS
+	 XIurcpjMFseJ50nohhEp8iFF8sR9kiPeXD/iR9eVH4OR/rmFeXsXV3C1DR8yQSHPv9bgYBqgyWOe
+	 dkfRbNdrB9qPjqELvi3ycic+w2ZibX5QptwEOK8OthFXo5QlP9X+KoOJOoPONdNiBNRwnGDgbrzg
+	 wbIStjkEno1+nsz6vwRauN28Bn//LoVKIHAl6xNCXImdHvJD4k+A0ww+4nHbA+VTU/T9WjBfTWo0
+	 NwsJgV9F/2OYo3B7indAoG+5fvlCrgqJCz2uIC1wOujf8RP37xCEI+DxK6ucQ9YL7vBXdSqAnHCR
+	 wUtlkb0u4/T/EnRYT6ni/sBocqv0do2htnslkqDWkzYmycG50xX/VZAsA7WU0SqpRe9VmXkIZ97M
+	 J/8Ds09TwQoHpQTaxbHgPn0/BIPV4MkRtWpWuHC3Wf5GuhKknhDuWQ2X2CCLnydza2R8/jKbybnI
+	 CaoXYe34zqCltPvXyB2Oc7j4b4GyrIeJU/YxsEUpGlcV/iN1W2HgMKrzGufcsB
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+Sender: yeking@red54.com
+From: Yeking@Red54.com
+To: linux-sh@vger.kernel.org
+Cc: =?UTF-8?q?=E8=B0=A2=E8=87=B4=E9=82=A6=20=28XIE=20Zhibang=29?= <Yeking@Red54.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Paul Mundt <lethal@linux-sh.org>,
+	Pawel Moll <pawel.moll@st.com>,
+	Stuart Menefy <stuart.menefy@st.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] SH: Kconfig: Fix help text of CMDLINE_EXTEND
+Date: Fri, 28 Mar 2025 10:18:11 +0000
+X-OQ-MSGID: <20250328101811.53017-1-Yeking@Red54.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8kqYFcOiNCx97xrq"
-Content-Disposition: inline
-In-Reply-To: <20250328074420.301061796@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
 
---8kqYFcOiNCx97xrq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is the bootloader arguments concatenated with the given string,
+not the given string concatenated with the bootloader arguments.
 
-Hi!
+Fixes: d724a9c9d572 ("sh: Allow for kernel command line concatenation.")
+Signed-off-by: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
+---
+ arch/sh/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> This is the start of the stable review cycle for the 6.1.132 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 89185af7bcc9..81e5e205416e 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -727,8 +727,8 @@ config CMDLINE_OVERWRITE
+ config CMDLINE_EXTEND
+ 	bool "Extend bootloader kernel arguments"
+ 	help
+-	  Given string will be concatenated with arguments passed in
+-	  by a bootloader.
++	  Arguments passed in by a bootloader will be concatenated
++	  with given string.
+ 
+ config CMDLINE_FROM_BOOTLOADER
+ 	bool "Use bootloader kernel arguments"
+-- 
+2.43.0
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---8kqYFcOiNCx97xrq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+Z3XAAKCRAw5/Bqldv6
-8rjDAKCoJ9GVccacCduZB0htrl9iuNI7PgCeLRVgi6d8QkEIHG+MxnBhRShdjIE=
-=Vcz+
------END PGP SIGNATURE-----
-
---8kqYFcOiNCx97xrq--
 
