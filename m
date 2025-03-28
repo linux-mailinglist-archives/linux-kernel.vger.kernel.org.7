@@ -1,199 +1,124 @@
-Return-Path: <linux-kernel+bounces-580414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57993A751A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:49:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 396A7A751AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E985C3B0CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:49:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC457A7054
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645301E9B0E;
-	Fri, 28 Mar 2025 20:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A15F1EB5D1;
+	Fri, 28 Mar 2025 20:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ti0CLPod"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BdtdVYXj"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6453E545;
-	Fri, 28 Mar 2025 20:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A414AE545;
+	Fri, 28 Mar 2025 20:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743194953; cv=none; b=CELGQqq/OvH9FYjwsQTty9hhOSVqP3JShF/mQDk+rsmCNt51P+bQ6xulB0pUSTDUG6KgWFvanTTdLCmVzQm5a/NNc+6sM5OduWzsOzWSw+2rmWX809rv2MVqDVvLjVwQSQlpoBbk/chN+3VWGVRMoL6gjCT37yB34YazgKoNPrA=
+	t=1743195202; cv=none; b=RAVKTHi7wqj7Ur9EMN3SXxVO6uigwbBp2CuslH5o7pWVA1HbVcTWrzTgZ6v8N731lggU583Tgfdx/KYhxAEJYai2SlyPE2vS98SlZFd/GZjce5M3Rre6NDDUH+FDJaBoljba9i2YUasOG0if9Y7xOdLpvH7QIxNQinbKgfV2mDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743194953; c=relaxed/simple;
-	bh=g7RMliEMabcpLtBmo+l3wn5Zu7NC8J3yDDeIBr9ndeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IgeWNcPUYH7QU8XEHomuDmJ6L14n/1cWKwkd5F8bwDZ8GHg2MoaTwDNarvKKzdqJqX6L1TqA2xJ5D9tjPUcdqb5jf3OnPDfubwQ7j1BOPtBTJ0S9UCRfJ03Fd1cn/eTUX5W1jczt8Uzes+d25jtuL9B+6mfwTcJB6q2OfM/rxhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ti0CLPod; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 039c0c9098c45059; Fri, 28 Mar 2025 21:49:03 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A773A7F0283;
-	Fri, 28 Mar 2025 21:49:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1743194943;
-	bh=g7RMliEMabcpLtBmo+l3wn5Zu7NC8J3yDDeIBr9ndeY=;
-	h=From:Subject:Date;
-	b=Ti0CLPodRIt+kE2BvX8FZSkAjmzkNidp/ZhgXbAqYyd/Nie47grB1VI6SQPkGEbyk
-	 zZ2daP9YY7GesWWKIq1nnMEKprUFfX06n+Ht6cC30K7kRiWCz4LlTLlkFyfO0oSS2f
-	 wX/5Hg5Vs3i/Xl/4j1E3XcbtL3sr2/P8sXmKBVNTpZaQ86ef600QtMGEhDS6h4h4ih
-	 Go6N0PJ7fuZ2CMbva+8zLaCK553cP1n0PWsk/jzK/oCaKcFz+xrPfmN0HIqUcBqZLi
-	 d/LcZzUELCwatBMb0iDKtKuPmpMUBXJUjQ0W2ZpIgtPuvuaHC4dlNeNI2P3RpCGsDg
-	 sQpBP9yNNhOuw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH v1 10/10] cpufreq: Pass policy pointer to ->update_limits()
-Date: Fri, 28 Mar 2025 21:48:54 +0100
-Message-ID: <8560367.NyiUUSuA9g@rjwysocki.net>
-In-Reply-To: <4651448.LvFx2qVVIh@rjwysocki.net>
-References: <4651448.LvFx2qVVIh@rjwysocki.net>
+	s=arc-20240116; t=1743195202; c=relaxed/simple;
+	bh=L1sxyt2yym+IHesz0d2Q6lVQk6i2aCG+WS1RD3gldYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZXyFOtT/zKfVxh8Sa5yytPDZwXTjUqPfNIvgkOgTm8c0wFbj/CVhlN6eSqLH1fwXrImTtrHv36L6tmn1IOSUXVsm1DTWaVrn4SM8Xd6GKgC3ayY+IE+z3q55WrywfsESMOjunpU0UkUUeKbbgd7PXl2pwXkVGagsRJdh30zcO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BdtdVYXj; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-227aaa82fafso56196595ad.2;
+        Fri, 28 Mar 2025 13:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743195200; x=1743800000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GJQ1Sn7f/nJpTYs+G8/LKPPbwUGACYMbIrHKliEJEzc=;
+        b=BdtdVYXjthhpNy9+tzfYA23YlIhRTnMpXPh1l1A2GXSm11cyX1NvjAZQxw0cJ4IkC2
+         nfKdQmgElKgcIW2x4RLFqSTtBNYyiZ6uZXoYuh6OeGV4j1vCAiRw0qzeHvxUHCLo67jq
+         FQqFDCMLF9QA0zIgnFESjva+eCO5vP5+8zL47HkIPgcMBGDAnaLGqQdE6rAoiG9alHWg
+         jvkkDyGCuriclWlAWisirmHEVNFEHvMJFtOSa6sLNdIZCI5XC9Rm7w07LfnwHnh5sNL/
+         vCbo51jW3s2S433Gdhto7A1S97t1U6W+TLecIOgq3udzko8NL1ERbR91TyjCqBh4NlIr
+         qvQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743195200; x=1743800000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJQ1Sn7f/nJpTYs+G8/LKPPbwUGACYMbIrHKliEJEzc=;
+        b=NQ8A1KlRccF9cG23R09HzaDcPnst4CTSYSBTmRPgfIgAb+pL1NADMC/VVCut8h4+4B
+         8+P2Kjkb9FEDG5Lc8HPYPcyvPOCNGVnedfCI93fGHAQeq6oV4/iWmjDRoYCXJeEUtjiD
+         3dzGxoss19Tf5muU0iMZtgCPRTfVIvTzl7B4z2TCQE7GrFUNZv167zt9FvU0a4fA0LHL
+         kxrUsh4d/ZxUDK5WKRPLLrMfRBFKT0064jxrPCh60Oat8w87pW5FLX/quyGmiypE4Xsk
+         FGZiKlxOgr963HMWyTbbRoOpE7Mee0KcrjImI6gNRoUHci4fCuUHPnZJgbUPHfIli/Yi
+         j+Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCW2cvpT6YHSIy8dEfAMC7uYxv1mUHpqA00yDrUSacOI34R3U8bdAPw22Z5Hu8vh64dso4nGnlxy@vger.kernel.org, AJvYcCWNJhi710PhEDIKvyM5VZsJo/H8um4S/FLDmUxihXIub/irlvcDiO8s5EBcxYca231wSeW1ubMRyIe4MGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTcPQyWy+NicAC4KdqGs3l+VIW+Ot9IJ1jA1Q3Cx+vTF817GDc
+	f3cyPSHWBr3Hi5ezyMo0Qc0v7nCIIxE0e/dGkBVPG57gZQ8TiV25
+X-Gm-Gg: ASbGncvIZsSQH/HFO2Z7sWIOK6hvkjShlcC2gptTa48IeKx8Qa8x2h550aLXlC5cHpC
+	+MFCK8K+cf5zHWay7d4DkGiJWmdd/wqf3/RIN3rU0I+UfFONE6ssbstyEd9ZJ9fvJXwpGY1e4Bn
+	IyGKwvn/rbsdgfXuZLrSmn5X97pUS+SDicG9ezMpBcCUe/o+kx4XNUxUa/hG1tWHoKIdAQXio1u
+	0ZuCsPHNaLpf4bwxUz7zkVguOP0NJA1nfofFOjap7GLkeZFoTCswUduFBXP0pWOczK/vIr/25og
+	QPuUBqt9XKa4sqaFJ9AJGByXfSHxubNSojQQTpNgu/p4delM
+X-Google-Smtp-Source: AGHT+IFDeGZ9vPA9qpQBzEUA3zSpURmz+wGI4PNW09mhj213tqyA/4063foRlK1avSu9yQpmRJpiPw==
+X-Received: by 2002:a05:6a00:1395:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-7398034e500mr940648b3a.3.1743195199526;
+        Fri, 28 Mar 2025 13:53:19 -0700 (PDT)
+Received: from localhost ([129.210.115.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e271absm2340148b3a.51.2025.03.28.13.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 13:53:18 -0700 (PDT)
+Date: Fri, 28 Mar 2025 13:53:18 -0700
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: syzbot <syzbot+a3422a19b05ea96bee18@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] kernel BUG in skbprio_enqueue
+Message-ID: <Z+cMPsPQfpEFJz60@pop-os.localdomain>
+References: <67e521f9.050a0220.2f068f.0026.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedvvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67e521f9.050a0220.2f068f.0026.GAE@google.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Mar 27, 2025 at 03:01:29AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f6e0150b2003 Merge tag 'mtd/for-6.15' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13a14a4c580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=46a07195688b794b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a3422a19b05ea96bee18
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109e343f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1037abb0580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f6e0150b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/7ade4c34c9b1/vmlinux-f6e0150b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1fe37b97ec9d/bzImage-f6e0150b.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+a3422a19b05ea96bee18@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at net/sched/sch_skbprio.c:127!
 
-Since cpufreq_update_limits() obtains a cpufreq policy pointer for the
-given CPU and reference counts the corresponding policy object, it may
-as well pass the policy pointer to the cpufreq driver's ->update_limits()
-callback which allows that callback to avoid invoking cpufreq_cpu_get()
-for the same CPU.
+I am looking into this bug.
 
-Accordingly, redefine ->update_limits() to take a policy pointer instead
-of a CPU number and update both drivers implementing it, intel_pstate
-and amd-pstate, as needed.
+BTW, it is not related to my qlen_notify patchset since it is not yet
+merged and this stack trace does not even involve qlen_notify.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/amd-pstate.c   |    7 ++-----
- drivers/cpufreq/cpufreq.c      |    2 +-
- drivers/cpufreq/intel_pstate.c |   29 ++++++++++++++++++-----------
- include/linux/cpufreq.h        |    2 +-
- 4 files changed, 22 insertions(+), 18 deletions(-)
-
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -821,19 +821,16 @@
- 	schedule_work(&sched_prefcore_work);
- }
- 
--static void amd_pstate_update_limits(unsigned int cpu)
-+static void amd_pstate_update_limits(struct cpufreq_policy *policy)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpu);
- 	struct amd_cpudata *cpudata;
- 	u32 prev_high = 0, cur_high = 0;
- 	bool highest_perf_changed = false;
-+	unsigned int cpu = policy->cpu;
- 
- 	if (!amd_pstate_prefcore)
- 		return;
- 
--	if (!policy)
--		return;
--
- 	if (amd_get_highest_perf(cpu, &cur_high))
- 		return;
- 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2741,7 +2741,7 @@
- 		return;
- 
- 	if (cpufreq_driver->update_limits)
--		cpufreq_driver->update_limits(cpu);
-+		cpufreq_driver->update_limits(policy);
- 	else
- 		cpufreq_policy_refresh(policy);
- }
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1353,14 +1353,9 @@
- 		cpufreq_update_policy(cpu);
- }
- 
--static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
-+static void __intel_pstate_update_max_freq(struct cpufreq_policy *policy,
-+					   struct cpudata *cpudata)
- {
--	struct cpufreq_policy *policy __free(put_cpufreq_policy);
--
--	policy = cpufreq_cpu_get(cpudata->cpu);
--	if (!policy)
--		return false;
--
- 	guard(cpufreq_policy_write)(policy);
- 
- 	if (hwp_active)
-@@ -1370,16 +1365,28 @@
- 			cpudata->pstate.max_freq : cpudata->pstate.turbo_freq;
- 
- 	refresh_frequency_limits(policy);
-+}
-+
-+static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
-+{
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-+
-+	policy = cpufreq_cpu_get(cpudata->cpu);
-+	if (!policy)
-+		return false;
-+
-+	__intel_pstate_update_max_freq(policy, cpudata);
- 
- 	return true;
- }
- 
--static void intel_pstate_update_limits(unsigned int cpu)
-+static void intel_pstate_update_limits(struct cpufreq_policy *policy)
- {
--	struct cpudata *cpudata = all_cpu_data[cpu];
-+	struct cpudata *cpudata = all_cpu_data[policy->cpu];
-+
-+	__intel_pstate_update_max_freq(policy, cpudata);
- 
--	if (intel_pstate_update_max_freq(cpudata))
--		hybrid_update_capacity(cpudata);
-+	hybrid_update_capacity(cpudata);
- }
- 
- static void intel_pstate_update_limits_for_all(void)
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -399,7 +399,7 @@
- 	unsigned int	(*get)(unsigned int cpu);
- 
- 	/* Called to update policy limits on firmware notifications. */
--	void		(*update_limits)(unsigned int cpu);
-+	void		(*update_limits)(struct cpufreq_policy *policy);
- 
- 	/* optional */
- 	int		(*bios_limit)(int cpu, unsigned int *limit);
-
-
-
+Thanks.
 
