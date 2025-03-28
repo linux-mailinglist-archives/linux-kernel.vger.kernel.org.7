@@ -1,173 +1,168 @@
-Return-Path: <linux-kernel+bounces-580053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694CAA74CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:32:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E259A74CC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:33:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9A13B9F49
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13DFD1884A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD65B214A96;
-	Fri, 28 Mar 2025 14:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96507188596;
+	Fri, 28 Mar 2025 14:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFThrR8b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eBd6+CQu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B131DE4C7;
-	Fri, 28 Mar 2025 14:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF7221ABC3;
+	Fri, 28 Mar 2025 14:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743172155; cv=none; b=UpF+rH+KP8GZu6AGYR9PF4vtgyUdgMRqHsc+rUJNhEk8HH/2hEEOz4xCsrcaL1vSbq35BROrX3HyWVM8hAI/1wMLpF8sSnPMJjOuh8UPfS3Dm8XgVAmzQtC3TU80V+Q8MyffIV5vnEewuANzla/KyL0IMyIzU/R+IHc1cjmjCPA=
+	t=1743172158; cv=none; b=crMKyN26rwLwXHuyiftt3dKCOJfafQr41XMzAENRII3ER7rLbropCesU8SOevZgH9xgXl2Q8l7cmbeCHFEEpA7zf4hLYAW5ke5pz6B8eDBR+NXUq6LpIbUuC7/rfrIvzdZuRFYCMcySZicZ/UTDhCOrYtPZ4Lq+SuDG3DNwx7ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743172155; c=relaxed/simple;
-	bh=guXFmN2lsyyKD0m8D7A/1C3bGEj7EzdLXiLfXZocE+Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ICWU7aeNXzF7l3pRBowBuUdXWmTZwDAUO50Kiqt9QD2sLf635AWedluT1NS4sX2DI4tMN/4WoRYzbi9Vzaw1XM6m+XdnaZycQoUmUW3m4b5IH8w0sVdSpJkkkDOTJNYF5n/yaILa991XCNohM80Qmx0ctiu5w+Vcb2YaLtKFg8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFThrR8b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F085DC4CEE4;
-	Fri, 28 Mar 2025 14:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743172154;
-	bh=guXFmN2lsyyKD0m8D7A/1C3bGEj7EzdLXiLfXZocE+Y=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UFThrR8bPUs/a89kRhwKzIvU21ZzFj1Xc5T5ue1Ck9J8JOl8IsVcMulPmSgogdzlf
-	 JRz9Om2SPefeM7/p0pxnkY+RZ1JENxtDtiqnzz0M25r0MBXglZpXsggykcv6XbT8Aa
-	 JqoqO5f5vjSGZvDiP/g24SsT1RK4hdfN6XCf2eb6HiIBuPJLYgISkvQvZKtGySwKVf
-	 6hOizrcIGfnZ9YJ3KTrpImMAMZjWtSnYicZciceoDIXvSHy4uoZWdcId31t+WTiwLe
-	 uzruZ10FEee7w65NTDGwJY2SeQVKSuaPq3VMp2EIUN2dhd+qbgq++Kz5wXRo8gswu+
-	 kkJJmiV0K1GEg==
-From: Daniel Gomez <da.gomez@kernel.org>
-Date: Fri, 28 Mar 2025 14:28:37 +0000
-Subject: [PATCH] kconfig: merge_config: use an empty file as initfile
+	s=arc-20240116; t=1743172158; c=relaxed/simple;
+	bh=l/OiCU06Blsj/S9+Z5QZVOgiUG9TGxtRhkLs+UWeJas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qWkhnI6Q/aGc/cn2IBbrvGY1SbF2/ypG2uwCMoLxbD6nvQ4+FLdKOKza1kzysAudXhz/SvfcNvdiSaqgKbbG1CKy22QJh+UZWTdO0tdZa8A7pyMt4RS3hu/gW82Dv2LLFUyeqDGyNkvTLgfbGMA95IsXxz5rrq6eBelMWBiSREE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eBd6+CQu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S7QOUS028066;
+	Fri, 28 Mar 2025 14:29:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n4jj968sHeyLb1l/ofhgzVS26MNlRAok8RT8dkLpyZo=; b=eBd6+CQuy+BtwmZk
+	kFfnjpCsKLZnsuCjbZN3K1qYrctr/mzxeXCTofl2GvXvwEwCw8Gq8Z4LNhBuJdVo
+	hfTmddjsKnO2iL9omZDOm6zvkd91VNcth09inJp+qYUtLBrLo0y5LO68l2v+oIMK
+	22R5ReVFKcbvBLqkI/70qGCCKwr7zVSigddEHCv0rmdtd5op+6q+9HK9U/nzl8IB
+	S2OXo/WZsDO5TpSOvqow6aVoKS9MCEt9eQXgFpG+8We/eeowQYM0orSR9JSuuTSs
+	erV9S29gmHmUM5Wbg8ZGDOgLHxveN/4jnbuWzUhgFdjU7bIBH18bN0cmTv9DTJEW
+	UGXv4A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45nat0u3vm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 14:29:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52SESxAi011156
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 14:28:59 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Mar
+ 2025 07:28:55 -0700
+Message-ID: <f6b0cec1-a20d-4ed8-84b2-06d464ae5e0c@quicinc.com>
+Date: Fri, 28 Mar 2025 19:58:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] i3c: master: Add Qualcomm I3C controller driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <jarkko.nikula@linux.intel.com>, <linux-i3c@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>
+References: <20250326141641.3471906-1-quic_msavaliy@quicinc.com>
+ <20250326141641.3471906-3-quic_msavaliy@quicinc.com>
+ <d0b178ab-ad22-4230-a790-6a19a6abfd89@kernel.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <d0b178ab-ad22-4230-a790-6a19a6abfd89@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250328-fix-merge-config-v1-1-ee78797d1302@samsung.com>
-X-B4-Tracking: v=1; b=H4sIABSy5mcC/x2MQQqAIBBFryKzTlAj1K4SLcJGm0UaChFId29o+
- fjvvw4NK2GDWXSoeFOjkhn0ICAcW04oaWcGo8ykRuNkpEeeWHkIJUdK0tmIWnmlLXrg21WRnT+
- 5rO/7ARVm6WxiAAAA
-X-Change-ID: 20250328-fix-merge-config-87fe109017e9
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Gomez <da.gomez@kernel.org>, Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=PPkP+eqC c=1 sm=1 tr=0 ts=67e6b22c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=xmqELmrshfw207yTACQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: J84Qot4ok5FWK2Vttf6Ol0Gvslz_I0KW
+X-Proofpoint-ORIG-GUID: J84Qot4ok5FWK2Vttf6Ol0Gvslz_I0KW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_07,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503280100
 
-From: Daniel Gomez <da.gomez@samsung.com>
+Thanks Krzysztof for correcting !
 
-The scripts/kconfig/merge_config.sh script requires an existing
-$INITFILE (or the $1 argument) as a base file for merging Kconfig
-fragments. However, an empty $INITFILE can serve as an initial starting
-point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
-if -m is not used. This variable can point to any configuration file
-containing preset config symbols (the merged output) as stated in
-Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
-contain just the merge output requiring the user to run make (i.e.
-KCONFIG_ALLCONFIG=<$INITFILE> make <allnoconfig/alldefconfig> or make
-olddefconfig).
+On 3/26/2025 7:58 PM, Krzysztof Kozlowski wrote:
+> On 26/03/2025 15:16, Mukesh Kumar Savaliya wrote:
+>> +
+>> +static int i3c_geni_resources_init(struct geni_i3c_dev *gi3c, struct platform_device *pdev)
+>> +{
+>> +	int ret;
+>> +
+>> +	gi3c->se.base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(gi3c->se.base))
+>> +		return PTR_ERR(gi3c->se.base);
+>> +
+>> +	gi3c->se.clk = devm_clk_get(&pdev->dev, "se-clk");
+> 
+> Never tested.
+> 
+sorry, i ran and i got below error now:
+i3c@884000: Unevaluated properties are not allowed ('clock-names', 
+'interrupts' were unexpected).
 
-Instead of failing when `$INITFILE` is missing, create an empty file and
-use it as the starting point for merges.
+so i have made below change and ran dt_binding_check + dtbs_check, i 
+could fix the issue. Let me have this review internally specific to 
+dt-binding and will post next patch after internal review. So i can 
+avoid such misses.
 
-Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
----
-Commit b9fe99c5b994 ("kbuild: mergeconfig: move an error check
-to merge_config.sh") moves the check for .config to exist from
-scripts/kconfig/Makefile to the scripts/kconfig/merge_config.sh.
-But this is no longer necessary.
+yaml :
++  clock-names:
++    const: se
++
+-  - interrupts-extended
++  - interrupts
 
-This avoid having to run a make <target> to create a first .config file.
-Workflow:
+example:
+clock-names = "se";
 
-./scripts/kconfig/merge_config.sh \
--m .config \
-<fragment list>
+>> +	if (IS_ERR(gi3c->se.clk))
+>> +		return dev_err_probe(&pdev->dev, PTR_ERR(gi3c->se.clk),
+>> +							"Unable to get serial engine core clock: %pe\n",
+>> +							gi3c->se.clk);
+>> +
+>> +	ret = device_property_read_u32(&pdev->dev, "se-clock-frequency", &gi3c->clk_src_freq);
+> 
+> I don't see previous comments implemented. Comment was: "Drop".
+> 
+> You did not test the DTS - again - even though I asked for that.
+> 
+Sorry for miss. I did test for this but what happened is while i worked 
+for multiple other changes, i did miss merging of removal of 
+se-clock-frequency from the driver code. I had hard-coded it instead of 
+removing because we don't give this frequency selection to user right now.
 
-make olddefconfig
-
-Here the logs with upstream scripts/kconfig/merge_config.sh (to show
-.config is created with tinyconfig).
-
-make tinyconfig V=1
-{..}
-make -f ./scripts/Makefile.build obj=scripts/kconfig tinyconfig
-KCONFIG_ALLCONFIG=kernel/configs/tiny-base.config make -f ./Makefile allnoconfig
-make -f ./scripts/Makefile.build obj=scripts/basic
-make -f ./scripts/Makefile.build obj=scripts/kconfig allnoconfig
-scripts/kconfig/conf  --allnoconfig Kconfig
-
-configuration written to .config
-
-make -f ./Makefile tiny.config
-make -f ./scripts/Makefile.build obj=scripts/basic
-make -f ./scripts/Makefile.build obj=scripts/kconfig tiny.config
-cmd_merge_fragments tiny.config
-  ./scripts/kconfig/merge_config.sh -m .config
-./kernel/configs/tiny.config ./arch/x86/configs/tiny.config
-Using .config as base
-Merging ./kernel/configs/tiny.config
-Value of CONFIG_CC_OPTIMIZE_FOR_SIZE is redefined by fragment
-./kernel/configs/tiny.config:
-Previous value: # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
-New value: CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-
-Value of CONFIG_KERNEL_XZ is redefined by fragment
-./kernel/configs/tiny.config:
-Previous value: # CONFIG_KERNEL_XZ is not set
-New value: CONFIG_KERNEL_XZ=y
-
-Value of CONFIG_SLUB_TINY is redefined by fragment
-./kernel/configs/tiny.config:
-Previous value: # CONFIG_SLUB_TINY is not set
-New value: CONFIG_SLUB_TINY=y
-
-Merging ./arch/x86/configs/tiny.config
-Value of CONFIG_UNWINDER_GUESS is redefined by fragment
-./arch/x86/configs/tiny.config:
-Previous value: # CONFIG_UNWINDER_GUESS is not set
-New value: CONFIG_UNWINDER_GUESS=y
-
-merged configuration written to .config (needs make)
-
-make -f ./Makefile olddefconfig
-make -f ./scripts/Makefile.build obj=scripts/basic
-make -f ./scripts/Makefile.build obj=scripts/kconfig olddefconfig
-scripts/kconfig/conf  --olddefconfig Kconfig
-
-configuration written to .config
----
- scripts/kconfig/merge_config.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-index 0b7952471c18f6882b8978f839f3170bb41fb01f..ad35a60de350ae1c5b60d39bf752115d27276f52 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -112,8 +112,8 @@ INITFILE=$1
- shift;
- 
- if [ ! -r "$INITFILE" ]; then
--	echo "The base file '$INITFILE' does not exist.  Exit." >&2
--	exit 1
-+	echo "The base file '$INITFILE' does not exist. Creating one..." >&2
-+	touch $INITFILE
- fi
- 
- MERGE_LIST=$*
-
----
-base-commit: e21edb1638e82460f126a6e49bcdd958d452929c
-change-id: 20250328-fix-merge-config-87fe109017e9
-
-Best regards,
--- 
-Daniel Gomez <da.gomez@samsung.com>
+> You claim you did internal review, but I have doubts because internal
+> review would tell you how to test it (there is comprehensive internal
+> guide - see go/upstream). Then the testing would point out this issue.
+> 
+> Such trivial things should not be in v1 even. But they happened so you
+> got the review. Now you sent v2 ignoring that public review.
+> 
+> Sorry guys, please improve internal processes instead of wasting
+> reviewers time.
+> 
+Sure, i agree there are misses. will have internal review with 
+dt-bindings and related changes in driver, then will post V3.
+> NAK.
+> 
+> Best regards,
+> Krzysztof
 
 
