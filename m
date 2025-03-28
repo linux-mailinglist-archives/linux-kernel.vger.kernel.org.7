@@ -1,146 +1,99 @@
-Return-Path: <linux-kernel+bounces-579774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE73BA74945
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:35:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89350A74924
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DD1188FABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0A017C258
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958B621ABA6;
-	Fri, 28 Mar 2025 11:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967E21764B;
+	Fri, 28 Mar 2025 11:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b="oKSYzyhC";
-	dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b="SIT6CiHE"
-Received: from mta-64-143.flowmailer.net (mta-64-143.flowmailer.net [185.136.64.143])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQMobnX/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A31E2135CE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FCA145B27;
+	Fri, 28 Mar 2025 11:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743161734; cv=none; b=mdapTRUecPSw+GqJ8Np1Knuu8q6QRKvM2yL0ddx74ie4/6l7Fz4nfAILvyA5/6kgcro129ALaaR8foFcYoSN0Lu4pAuRAX16jelzPx6D2LvMnK+gNLUFaEIspz8+2W2trTCd1b3NCcLZL3dvyoR/ivFtxTSYSGJW4eR9CBrVYG8=
+	t=1743160922; cv=none; b=o6CBLUD0nJGh1tslPjrKM4mhkVKcYrk6s3iG8DvpXjTR9ZVVmNAVaVkBqgpJwIXII81VuIg/cD9+KO5+OUMKUCvXEi3SYY3zDQGWoRaegpvo+2W0RIMvv3QUOTlSdhfTCuzy9NebaRaPPGbMHKJInFFKyDm/2ABdm1MbP9QonsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743161734; c=relaxed/simple;
-	bh=53ymfis4dfeL0ecSb9MKI7Q0juoBYEyVTXX0BR7IO0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uCHQvFThhHCh16v9dQBOCwD7kP5CYpuFcQJtMdmrBJdoxQH1R8CmO+wxV1ETD88fBPjqNzYHyW2NLPb6eBUBoMZH1D0JAOeZ6SSOSqZHhhaDdsIZBY+Hglqkp9TAbbgmYTVDjrix2RZzpI41pC4tPdxJDyok6MoBVB6UsM6oG/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com; dkim=pass (1024-bit key) header.d=flowmailer.net header.i=@flowmailer.net header.b=oKSYzyhC; dkim=pass (2048-bit key) header.d=siemens-energy.com header.i=schuster.simon@siemens-energy.com header.b=SIT6CiHE; arc=none smtp.client-ip=185.136.64.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens-energy.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=errorhandling.siemens-energy.com
-Received: by mta-64-143.flowmailer.net with ESMTPSA id 20250327135424aa7366db7c0019fdb7
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 27 Mar 2025 14:54:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=s1;
- d=flowmailer.net;
- h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:In-Reply-To:Date:Message-ID:MIME-Version;
- bh=zRyNrCtp5GeNxxNbMBGYIhJanL4rsyW90z/rY63BsJc=;
- b=oKSYzyhCBZTaJhH0pMGrWh6OHJn/RvmbWlZl51XYZ6/Y48VCWoNwWFqdA2H38imxhyA6ee
- Vw0P2n+Dll4L8fmWJDhpOMz0agoARE2l97mAx8thOaxMKpvgbvWZps4OQ3j3Its1jRJ5XgJd
- Tsv5JsgrZRMfjAPKQLiP3znCJPnQc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm3;
- d=siemens-energy.com; i=schuster.simon@siemens-energy.com;
- h=from:from:sender:to:to:cc:cc:subject:subject:content-type:content-type:content-transfer-encoding:In-Reply-To:Date:Message-ID:MIME-Version;
- bh=zRyNrCtp5GeNxxNbMBGYIhJanL4rsyW90z/rY63BsJc=;
- b=SIT6CiHEfBE+1Nzw2HADfTuWd2JqV36GC1mGDAPRkejcZJz2/n3H+ZmW3YtRj2OMwYu9Xq
- yiGRQ/PDKXsePSquwJtIzUkti14ErshlV82p7WNz9Vur+H2so1AC1tAA6AENTn1FGbW+x3dk
- kDQbKEHGlpbmAuey+ADmBJT2boMc9Pmkw9A6Ut3klFbhyaiVIp12mSyqMSuzR49K9Q5o1756
- D/VTcmJkgppkeTsZ5dRJjLQtAKGFK9aajiY+/LqrPuoViRnTYFkoZvTBqE2/LnvcH55pYzDH
- aiZtLmhoJx86nhLbQZQRg2ddpGpGg/MyKqwz3n2MqUXUNGQ2vVCt/OQA==;
-Date: Thu, 27 Mar 2025 14:54:22 +0100
-From: Simon Schuster <schuster.simon@siemens-energy.com>
-To: Dinh Nguyen <dinguyen@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Andreas Oetken <andreas.oetken@siemens-energy.com>,
-	Mike Rapoport <rppt@kernel.org>, Song Liu <song@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Simon Schuster <schuster.simon@siemens-energy.com>
-Subject: [PATCH 1/2] nios2: force update_mmu_cache on spurious
- tlb-permission--related pagefaults
-Message-ID: 
- <fm-32642-20250327135424aa7366db7c0019fdb7-ahhkqZ@errorhandling.siemens-energy.com>
+	s=arc-20240116; t=1743160922; c=relaxed/simple;
+	bh=tI0s+XqMzbOXtR3wees2SBwNPieMqGD2JPuPiVKR4GU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mmPtV9m+1e4XdJ0RfC3cf+9I+UEnE+cQjOpwtwAMGivC/sFv61HmZFZkeJfCmRNU1MCw9S7n+e8Z+1tZzCthPCosixWvl802cNfvgtXCib6JJkHGL3DBJP7GvTQea3dWAf1Rd351e5+TjLJQzkUMI6UpP2tihMKAcGkPAC7v/5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQMobnX/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC286C4CEE4;
+	Fri, 28 Mar 2025 11:21:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743160922;
+	bh=tI0s+XqMzbOXtR3wees2SBwNPieMqGD2JPuPiVKR4GU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vQMobnX/+/6dk+eG47Ovx4iDisf2Hc+i3S7huL2zhwwwWdHyW1Uv8JWjiuL/kM5nP
+	 bGzMWth1uXlbImw2paJsFWt0QyfrWhRgowWc85iCfW+EFDG5fk/MobHGaipP6Dih3n
+	 xxvIrx0CWYQ4KlRp50WbUdGchulmkP9BKFJNF7AWv0YChAgw//jpx1jVMaIOubPded
+	 7TLGRpfVW1iIkyMM20KbcyYalMhhbIOUHxAlkw66Gr9r8uI9LeHUEdFbibqooBePCo
+	 urhK7nUYVAQnSntFwHqkulxeMAbAfyyWRUS8lgYHg0/6XkBA6idI1iS5nm06lJpd5+
+	 N685At++kdGEA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Rae Moar <rmoar@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>,
+	David Gow <davidgow@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Mostafa Saleh <smostafa@google.com>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/mksysmap: skip objtool __pfx_ symbols
+Date: Fri, 28 Mar 2025 11:48:19 +0100
+Message-Id: <20250328112156.2614513-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fm-32642-2025032713472354f98643960019fd6d-cXH63M@errorhandling.siemens-energy.com>
+Content-Transfer-Encoding: 8bit
 
-NIOS2 uses a software-managed TLB for virtual address translation. To
-flush a cache line, the original mapping is replaced by one to physical
-address 0x0 with no permissions (rwx mapped to 0) set. This can lead to
-TLB-permission--related traps when such a nominally flushed entry is
-encountered as a mapping for an otherwise valid virtual address within a
-process (e.g. due to an MMU-PID-namespace rollover that previously
-flushed the complete TLB including entries of existing, running
-processes).
+From: Arnd Bergmann <arnd@arndb.de>
 
-The default ptep_set_access_flags implementation from mm/pgtable-generic.c
-only forces a TLB-update when the page-table entry has changed within the
-page table:
+The recently added testcase for overly long symbols triggers when
+CONFIG_FUNCTION_PADDING_CFI is set:
 
-	/*
-	 * [...] We return whether the PTE actually changed, which in turn
-	 * instructs the caller to do things like update__mmu_cache. [...]
-	 */
-	int ptep_set_access_flags(struct vm_area_struct *vma,
-				  unsigned long address, pte_t *ptep,
-				  pte_t entry, int dirty)
-	{
-		int changed = !pte_same(*ptep, entry);
-		if (changed) {
-			set_pte_at(vma->vm_mm, address, ptep, entry);
-			flush_tlb_fix_spurious_fault(vma, address);
-		}
-		return changed;
-	}
+Symbol __pfx_snnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nnng1h2i3j4k5l6m7ng1h2i3j4k5l6m7nng1h2i3j4k5l6m7ng1h2i3j4k5l6m7n too long for kallsyms (517 >= 512).
+Please increase KSYM_NAME_LEN both in kernel and kallsyms.c
 
-However, no cross-referencing with the TLB-state occurs, so the
-flushing-induced pseudo entries that are responsible for the pagefault
-in the first place are never pre-empted from TLB on this code path.
+Change the mksymtab table so the prefixed symbols are not included
+in kallsyms.
 
-This commit fixes this behaviour by always requesting a TLB-update in
-this part of the pagefault handling, fixing spurious page-faults on the
-way. The handling is a straightforward port of the logic from the MIPS
-architecture via an arch-specific ptep_set_access_flags function ported
-from arch/mips/include/asm/pgtable.h.
-
-Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
-Signed-off-by: Andreas Oetken <andreas.oetken@siemens-energy.com>
+Fixes: c104c16073b7 ("Kunit to check the longest symbol length")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/nios2/include/asm/pgtable.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ scripts/mksysmap | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/nios2/include/asm/pgtable.h b/arch/nios2/include/asm/pgtable.h
-index eab87c6beacb..e5d64c84aadf 100644
---- a/arch/nios2/include/asm/pgtable.h
-+++ b/arch/nios2/include/asm/pgtable.h
-@@ -291,4 +291,20 @@ void update_mmu_cache_range(struct vm_fault *vmf, struct vm_area_struct *vma,
- #define update_mmu_cache(vma, addr, ptep) \
- 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
+diff --git a/scripts/mksysmap b/scripts/mksysmap
+index 3accbdb269ac..33df38ede1e0 100755
+--- a/scripts/mksysmap
++++ b/scripts/mksysmap
+@@ -59,6 +59,9 @@
+ # EXPORT_SYMBOL (namespace)
+ / __kstrtabns_/d
  
-+static inline int pte_same(pte_t pte_a, pte_t pte_b);
++# prefixed symbols from objtool
++/ __pfx_/d
 +
-+#define __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
-+static inline int ptep_set_access_flags(struct vm_area_struct *vma,
-+					unsigned long address, pte_t *ptep,
-+					pte_t entry, int dirty)
-+{
-+	if (!pte_same(*ptep, entry))
-+		set_ptes(vma->vm_mm, address, ptep, entry, 1);
-+	/*
-+	 * update_mmu_cache will unconditionally execute, handling both
-+	 * the case that the PTE changed and the spurious fault case.
-+	 */
-+	return true;
-+}
-+
- #endif /* _ASM_NIOS2_PGTABLE_H */
+ # ---------------------------------------------------------------------------
+ # Ignored suffixes
+ #  (do not forget '$' after each pattern)
 -- 
 2.39.5
 
