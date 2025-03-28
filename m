@@ -1,290 +1,122 @@
-Return-Path: <linux-kernel+bounces-579380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C14A7428E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:51:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AA7A74266
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:47:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312653BF316
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E686189F3A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E79212D8D;
-	Fri, 28 Mar 2025 02:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A73E20DD54;
+	Fri, 28 Mar 2025 02:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B/3IDTKM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IbxB4R11"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09357212B04
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A856E154BF0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743130115; cv=none; b=RGaTx6OU4eH6Urgeq5NWUQ5FkD90aHLIuIuY+8O89xa4mLHnzysTG4Y29j7K7mABUKefNcJ4pJ6bLOANsAHnLwMegcd95Pes5qZRTgMiXtXRYwPlTMorRHjgiXX35sqsg8PMLWZwMUGF/3GBH+nIRVOoYOEEkXH//HY55ZHw03Q=
+	t=1743130066; cv=none; b=DLgSVjPYfIPnQo9m6iE7AAmIsHx25MjKpgdghu1TETQAieLL2NtdV6nyjrL6+fi37Judg/T4CUzlpdTEPC480WC6FUQq+wRMPZ0kusybgRWyzEwQKQwe0IVNX5Egomadu5+zqf5a9qkYpMrv2xVsxF39KFJtfq9AMwZ2Sv9d9LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743130115; c=relaxed/simple;
-	bh=g5/VyZP+pdW+4xerLwCvGtfu0d1NX7AdPGdSj8+rwx4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=id1rJ6bIUjmEEMnEBJWDvLguQXtEvdfZiojMCNFOH6nj7bV3jeaCSn7uQQfzhrsrfSiCNYlSTgWVDtsd0JbpFcvL8WfCGTkI4UFm4PgxpKUD59xbi2RySBQHCh03DSoZqnOCg6RNnWp7FPThY3J5dZRN2aljnQJFXJDSe0he4iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B/3IDTKM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52REUeuZ022562
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:48:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PCGSU+KPDQuHu1vRudNrdfJOihDwMebMNug8NPCN5yg=; b=B/3IDTKM8cHJ6OiQ
-	asGwbQ6Ur/b5XGIZd9AJ1FcxtqnPaTzU3RU07zcEeTf6FTb2ICSrW+qgo7c1zcbc
-	adjnJXAtMUNq3KhqFfEDOHJ5+uS0HHPnIFFvC/QIbt5Ik/Vt61ACEo9vC2Iu9HYJ
-	ye3U0VasXPYOEu9To04M5NI53ud1sRsEzT7UJoujZOnap5VnM2Kou2uvVcpclruv
-	7qJZDpfLpZWnsPUY3Q4/32eBPPoBGbBqUmtWI3p1kqyTQv28sPW9AZc0WN0wn//f
-	S5ifIM+UG4qiDw255TploEvza//YquWS9fcI/scdBYSb3eeTonOEurTfFfNXi7s0
-	6wdE4w==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyr9r90f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:48:32 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2254e500a73so23055725ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:48:32 -0700 (PDT)
+	s=arc-20240116; t=1743130066; c=relaxed/simple;
+	bh=QILqAby03bmHK7yv1py+pWbWWURKgWfLFr4gVMP81BQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D6AHXQrmJ4MerMfUppqJ5Lu9mDdiw7D90/T0sp3E+b5Ms5O55hMrb6kjUCp2L0cAPqqAuaYJntXO1PLhgRJ0EdACFHfqEQcMaEpLsnxEZBU49jh7AQyUp1AqA3755bKTPyt/xEHjco5uwIwI3bYNgsFct1n8I6u8ipt9o0pR4MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IbxB4R11; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff62f9b6e4so356850a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1743130064; x=1743734864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+EzFQHCtUgWmoDifuVxej7HfnN8BQClVg09pdvG46dw=;
+        b=IbxB4R111+2RBJBoyPONFX97qqlBk9yiLiszqSIpPVrWqO/6FPcSYVHSuHjNrNaKdU
+         xbtdPZFbtPxxlyxNoMoTvvCWvM6TpqiDiZJEVDhD0+Fx53IOtkknhNOK6TthVRazTCzN
+         AgypNeCjyqlrW70fagZhYdqQ3oPG/BPTX62GE1JXrBsODg2RYEDVWBnQC+WRRkYVQfzy
+         fGr+E5K0JkyDgXUrxkDen4pOxlG/dKEmqNoVHYJ8sAqpTad75A/Qwlmiv0CJoNczM71H
+         dqE+I9mjTI1v418A77F1OAOPMHo4xj8o8xvhaBzBrDup4ynIss66cjoZ1/YpRoePwRUW
+         pkKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743130111; x=1743734911;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1743130064; x=1743734864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PCGSU+KPDQuHu1vRudNrdfJOihDwMebMNug8NPCN5yg=;
-        b=kZ5aQO4a6zJ+Pj+CGCji5fwa9s98uRRRIhgwElripwJDl3t5fZk5GmnS3zht2RVTEo
-         6dDT3XehzxyJNF2gXz5TnMJCs3D/ZQxO/pI4gARwDP+QFP0u9U1CZ9RDhMxQ++l+5L5X
-         bV04cvGlb5E9AagSt31Y9alTA5Z1p6JQS5xCUUWnU/LgCzEpBqZ8LxR5pHqdWmEjbLQs
-         l4TRkYZj69G1l0XXwzfiOmxxPuHawM8OoSgYKCLZM2MXxrSMU5JLbYB9tqsl03BpQHz9
-         2JePdZrBN+sMEk4VEgWSMYUz9MlC62I7UwZPZkN045g9imXi573B4XBhb5EMU0cFnQbV
-         Swag==
-X-Forwarded-Encrypted: i=1; AJvYcCUFWRWPLGJKJ2uiVSqtfJYcbnj57II+WvcT2wVC56splBNavVGLnqC2xRQE1uKqWlyd+LOc5z+DgsH7T8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8HM0YuvuY1VqCG5a+90pI/5Q9balh5Xmant3E2PGM/ACfrP1a
-	IV+dFOQDoY8M3sAg8SJWtbjjHzX5MVfEUsIPBk7UMsRnIsTFtDrIwGy2bZnn9lW26hQF90LLFo7
-	9W1zhcgx/kAszORrqPyFQqWvqHDux5WjxBDBYiOI3EYqtMe00KOV1O8171NIH/w==
-X-Gm-Gg: ASbGncvxa/yYvMU4SmIIpmGULBBGauk4M4nyjReIog8etm099MAPSslG7OauanWc1c5
-	YWp41K1fCqnPdGiW87OdUYZG2oh553gc8Z2IwMe4fJAetse+g/qPl6Ng5NTyMahZxi7zL62q1NL
-	vMwa3FgKZKrkUYlgoEkV2XjhjmKbecJzg6mrUGC670eRTfVyA5P600xPd5q7uXV0ZFWU1Jr8bCi
-	jA+OlTML4CUa2zPFpGPPcIhQddmlZRCWIsA69TEt8mghX+eo+OFgPU2J7ooJC7MJNPuctumLoIb
-	p7l5wmGdvVmGeOypyTGp8rvVRjZ5SB6WlrdcZs/L9ggrWv0Imf0DJn5gzyAC/0rMtreTWJE0E8w
-	=
-X-Received: by 2002:a17:903:11c7:b0:224:1c41:a4c0 with SMTP id d9443c01a7336-2280481ceafmr79424465ad.9.1743130111076;
-        Thu, 27 Mar 2025 19:48:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJGZ0cJVQzXI2U87eVFkSCI1ZGWBVrXJkCEIpRZnSXSiYSN2x5VOSHicEkZLgh3lhf/YMtEA==
-X-Received: by 2002:a17:903:11c7:b0:224:1c41:a4c0 with SMTP id d9443c01a7336-2280481ceafmr79424155ad.9.1743130110538;
-        Thu, 27 Mar 2025 19:48:30 -0700 (PDT)
-Received: from hu-azarrabi-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eeca203sm7317565ad.30.2025.03.27.19.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 19:48:30 -0700 (PDT)
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Date: Thu, 27 Mar 2025 19:47:31 -0700
-Subject: [PATCH v3 09/11] qcomtee: add primordial object
+        bh=+EzFQHCtUgWmoDifuVxej7HfnN8BQClVg09pdvG46dw=;
+        b=d0ckIdidZ/ueTaNYUhdWOj2z/4wPH5ZwTZDuzTpsqPm3hYPp5/ilzV15nSDQzMkH2S
+         AR/sQuu1iHvEGFphZO/z0cRoQ62hPlld+sZGikf8dtqUOjRSKVI2EazD5bfrwzW/wu/A
+         huB+ncEmMR933xmooI1wyAH73S9Ui8OuEat/z/k6Lpy0m8k6kqklQysIpPXokRPp0Y/g
+         lOaTc+95eGD3xsJuD1CLpV1880GYo777dWWqkPOmmAPV6PvEhru6fCiGr2quARpcVWWi
+         oqDEkeC0rI3ozbaSkhIigDm3MgB6iJqI27LhnTm6Av5Si4lMlivQOopF70aFBalZX+2G
+         Z5YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoFOj1T375xdLethwrYPB/qc3bMk7gLLeoRiEIEqriI2eQi4RgIE8JUJbuNvWJS0e6tNYAArMW4BLIo1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJuCFQ3pKKEAUeiMaXqC/0EVj22kDo1XjxuvS4GLG6xK3W19lq
+	/F/RsGPFLRWbPC504NmwDP4NU8dHwn4jqqMfCx9trog9A3KpEK7FVNxR0N6pnAz1Y8cVqAGQNcX
+	xGnu7UnFvoxEF53xB9FuGk12+R5LLCBQ2GttjpA==
+X-Gm-Gg: ASbGncvMn2dUbMp/CHl/dL4bEJOSm/oKcY9UoRRkewLHJxbK+yzpeeApMXVTCVx5wj6
+	OOaAQ2pgA5WQhzKlmfLOcYyIC1b92C8Q2iCaQ98AnKtYAOjA1wWbSvkzfSeG1O3Iijo6LfTXpCG
+	Mjr5RFhvnt47/oVeDPznJG7Cui
+X-Google-Smtp-Source: AGHT+IFyrhfYHVDlBOiKvWboBacvv1fccig7N3Elhwk8fCEKTl6db/yebGmyYLY8ZpyFY7nSqApkcid9OQtcv8EmepA=
+X-Received: by 2002:a17:90b:314c:b0:2ff:4a6d:b359 with SMTP id
+ 98e67ed59e1d1-303b278eefbmr2488894a91.7.1743130063671; Thu, 27 Mar 2025
+ 19:47:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-9-7f457073282d@oss.qualcomm.com>
-References: <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com>
-In-Reply-To: <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-doc@vger.kernel.org,
-        Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-X-Mailer: b4 0.13.0
-X-Proofpoint-GUID: hNURA6XKQWU_0OICgdvWLiGsLRqvJyqq
-X-Authority-Analysis: v=2.4 cv=UblRSLSN c=1 sm=1 tr=0 ts=67e60e00 cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=9rWlDpKKD8PBIGPBT6cA:9 a=QEXdDO2ut3YA:10 a=RVmHIydaz68A:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: hNURA6XKQWU_0OICgdvWLiGsLRqvJyqq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_01,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 impostorscore=0
- adultscore=0 clxscore=1015 mlxlogscore=999 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503280017
+References: <20250321205722.3947901-1-csander@purestorage.com>
+ <20250321205722.3947901-4-csander@purestorage.com> <20250327104441.GC10068@lst.de>
+In-Reply-To: <20250327104441.GC10068@lst.de>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 27 Mar 2025 19:47:32 -0700
+X-Gm-Features: AQ5f1JrA-BzXMglBzOaQqSWgz06sNK3uTMpl7x2enG4XCF9cWuP5AYH0nUF7HF0
+Message-ID: <CADUfDZoMhCyM1FQmhftEeC7G2b5Wj338DE=H6XxrUjp=eOoJ4g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] nvme/ioctl: move fixed buffer lookup to nvme_uring_cmd_io()
+To: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After booting, the kernel provides a static object known as the
-primordial object. This object is utilized by QTEE for native
-kernel services such as yield or privileged operations.
+On Thu, Mar 27, 2025 at 3:44=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Fri, Mar 21, 2025 at 02:57:22PM -0600, Caleb Sander Mateos wrote:
+> > nvme_map_user_request() is called from both nvme_submit_user_cmd() and
+> > nvme_uring_cmd_io(). But the ioucmd branch is only applicable to
+> > nvme_uring_cmd_io(). Move it to nvme_uring_cmd_io() and just pass the
+> > resulting iov_iter to nvme_map_user_request().
+>
+> From a quick looks this valid, but actually adds slightly more code.
+> Is there some long term plan you have in this area that this helps
+> with?  Otherwise it feels like churn.
 
-Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
----
- drivers/tee/qcomtee/Makefile          |  1 +
- drivers/tee/qcomtee/core.c            | 19 +++++++---
- drivers/tee/qcomtee/primordial_obj.c  | 65 +++++++++++++++++++++++++++++++++++
- drivers/tee/qcomtee/qcomtee_private.h |  3 ++
- 4 files changed, 83 insertions(+), 5 deletions(-)
+In v3 [1], the call to io_uring_cmd_import_fixed() is moved before
+nvme_alloc_user_request(), which ensures the fixed buffer lookup
+happens before the request may go async. That way, the request stills
+succeed if the fixed buffer is unregistered before the request can be
+reissued in a blocking fashion on the io_uring work queue. There's
+also no longer any cleanup required if the lookup fails, so it's a
+smaller net increase in lines of code.
+Philosophically, it feels like checking the io_uring command flags and
+looking up the fixed buffer doesn't really belong in the shared
+nvme_map_user_request() helper.
+I don't have any particular future plans here. I'd be happy to move
+the logic out to a separate helper if you feel nvme_uring_cmd_io() is
+getting too big.
 
-diff --git a/drivers/tee/qcomtee/Makefile b/drivers/tee/qcomtee/Makefile
-index 1b14b943e5f5..a3a2d00e83f0 100644
---- a/drivers/tee/qcomtee/Makefile
-+++ b/drivers/tee/qcomtee/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_QCOMTEE) += qcomtee.o
- qcomtee-objs += async.o
- qcomtee-objs += call.o
- qcomtee-objs += core.o
-+qcomtee-objs += primordial_obj.o
- qcomtee-objs += qcom_scm.o
- qcomtee-objs += release.o
- qcomtee-objs += shm.o
-diff --git a/drivers/tee/qcomtee/core.c b/drivers/tee/qcomtee/core.c
-index 162e32db656a..76944241e8e8 100644
---- a/drivers/tee/qcomtee/core.c
-+++ b/drivers/tee/qcomtee/core.c
-@@ -31,10 +31,12 @@ int qcomtee_next_arg_type(struct qcomtee_arg *u, int i,
- }
- 
- /*
-- * QTEE expects IDs with the QCOMTEE_MSG_OBJECT_NS_BIT set for objects
-- * of the QCOMTEE_OBJECT_TYPE_CB type.
-+ * QTEE expects IDs with QCOMTEE_MSG_OBJECT_NS_BIT set for objects of
-+ * QCOMTEE_OBJECT_TYPE_CB type. The first ID with QCOMTEE_MSG_OBJECT_NS_BIT
-+ * set is reserved for the primordial object.
-  */
--#define QCOMTEE_OBJECT_ID_START (QCOMTEE_MSG_OBJECT_NS_BIT + 1)
-+#define QCOMTEE_OBJECT_PRIMORDIAL (QCOMTEE_MSG_OBJECT_NS_BIT)
-+#define QCOMTEE_OBJECT_ID_START (QCOMTEE_OBJECT_PRIMORDIAL + 1)
- #define QCOMTEE_OBJECT_ID_END (UINT_MAX)
- 
- #define QCOMTEE_OBJECT_SET(p, type, ...) \
-@@ -112,7 +114,9 @@ static void qcomtee_object_release(struct kref *refcount)
-  */
- int qcomtee_object_get(struct qcomtee_object *object)
- {
--	if (object != NULL_QCOMTEE_OBJECT && object != ROOT_QCOMTEE_OBJECT)
-+	if (object != &qcomtee_primordial_object &&
-+	    object != NULL_QCOMTEE_OBJECT &&
-+	    object != ROOT_QCOMTEE_OBJECT)
- 		return kref_get_unless_zero(&object->refcount);
- 
- 	return 0;
-@@ -125,7 +129,9 @@ EXPORT_SYMBOL_GPL(qcomtee_object_get);
-  */
- void qcomtee_object_put(struct qcomtee_object *object)
- {
--	if (object != NULL_QCOMTEE_OBJECT && object != ROOT_QCOMTEE_OBJECT)
-+	if (object != &qcomtee_primordial_object &&
-+	    object != NULL_QCOMTEE_OBJECT &&
-+	    object != ROOT_QCOMTEE_OBJECT)
- 		kref_put(&object->refcount, qcomtee_object_release);
- }
- EXPORT_SYMBOL_GPL(qcomtee_object_put);
-@@ -215,6 +221,9 @@ static struct qcomtee_object *qcomtee_local_object_get(unsigned int object_id)
- {
- 	struct qcomtee_object *object;
- 
-+	if (object_id == QCOMTEE_OBJECT_PRIMORDIAL)
-+		return &qcomtee_primordial_object;
-+
- 	/*
- 	 * This is not protected by an RCU read lock because we are
- 	 * confident that QTEE does not issue a RELEASE request and
-diff --git a/drivers/tee/qcomtee/primordial_obj.c b/drivers/tee/qcomtee/primordial_obj.c
-new file mode 100644
-index 000000000000..a30967d89c91
---- /dev/null
-+++ b/drivers/tee/qcomtee/primordial_obj.c
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/delay.h>
-+#include "qcomtee_private.h"
-+
-+/**
-+ * DOC: Primordial Object
-+ *
-+ * After boot, the kernel provides a static object of type
-+ * %QCOMTEE_OBJECT_TYPE_CB called the primordial object. This object is used
-+ * for native kernel services or privileged operations.
-+ *
-+ * We support:
-+ *  - %QCOMTEE_OBJECT_OP_YIELD to yield by the thread running in QTEE.
-+ *  - %QCOMTEE_OBJECT_OP_SLEEP to wait for a period of time.
-+ */
-+
-+#define QCOMTEE_OBJECT_OP_YIELD 1
-+#define QCOMTEE_OBJECT_OP_SLEEP 2
-+
-+static int
-+qcomtee_primordial_obj_dispatch(struct qcomtee_object_invoke_ctx *oic,
-+				struct qcomtee_object *primordial_object_unused,
-+				u32 op, struct qcomtee_arg *args)
-+{
-+	int err = 0;
-+
-+	switch (op) {
-+	case QCOMTEE_OBJECT_OP_YIELD:
-+		cond_resched();
-+		/* No output object. */
-+		oic->data = NULL;
-+		break;
-+	case QCOMTEE_OBJECT_OP_SLEEP:
-+		/* Check message format matched QCOMTEE_OBJECT_OP_SLEEP op. */
-+		if (qcomtee_args_len(args) != 1 ||
-+		    args[0].type != QCOMTEE_ARG_TYPE_IB ||
-+		    args[0].b.size < sizeof(u32))
-+			return -EINVAL;
-+
-+		msleep(*(u32 *)(args[0].b.addr));
-+		/* No output object. */
-+		oic->data = NULL;
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
-+}
-+
-+static struct qcomtee_object_operations qcomtee_primordial_obj_ops = {
-+	.dispatch = qcomtee_primordial_obj_dispatch,
-+};
-+
-+struct qcomtee_object qcomtee_primordial_object = {
-+	.name = "primordial",
-+	.object_type = QCOMTEE_OBJECT_TYPE_CB,
-+	.ops = &qcomtee_primordial_obj_ops
-+};
-diff --git a/drivers/tee/qcomtee/qcomtee_private.h b/drivers/tee/qcomtee/qcomtee_private.h
-index ab3acad40359..a5d05a72af15 100644
---- a/drivers/tee/qcomtee/qcomtee_private.h
-+++ b/drivers/tee/qcomtee/qcomtee_private.h
-@@ -219,4 +219,7 @@ int qcomtee_user_object_submit(struct tee_context *ctx,
- 			       struct tee_param *params, int num_params,
- 			       int req_id, int errno);
- 
-+/* (2) Primordial Object. */
-+extern struct qcomtee_object qcomtee_primordial_object;
-+
- #endif /* QCOMTEE_PRIVATE_H */
+Best,
+Caleb
 
--- 
-2.34.1
-
+[1]: https://lore.kernel.org/lkml/20250324200540.910962-4-csander@purestora=
+ge.com/T/#u
 
