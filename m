@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-579922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6718BA74B13
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:42:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0D0A74AC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A1C88115C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AF33AD693
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B47188A0E;
-	Fri, 28 Mar 2025 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0079D22258C;
+	Fri, 28 Mar 2025 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSEpKWhc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V+ct6d2a"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7AF2356A3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31632222C7;
+	Fri, 28 Mar 2025 13:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168563; cv=none; b=AZKMba5SGrpMOlJiwvaRQdn6woOZVu26VxrqGX/CPaV45Cs34lKfR6hvu//gqabxz6Vv6bIUXm5CvH4SXJCENmkK9woLhZVbKhpCBJUIjPLeQjhh88zElRbiPpeP1OzM1k1TV7y2m85qxx5g7lgTcBKku4BoNfHYykdGMhrn8CA=
+	t=1743168513; cv=none; b=SFGz4ur9oJLm2ekkZGLUSX9hUp1yEdK7gkb8kNHTJoYf14FepacRGPkjy1flRBz6+ZbRSon6yjguMeFI5kwbi1IW1jBsgrkaqPIk6xrUiK5Iz4bsiwqmW3niudd7RRpy25seeJFBHrjcX7lSSgG6HJ+rWHoJuTSmx2CXFJFMQcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168563; c=relaxed/simple;
-	bh=WpqYCmjDIdupb8yXwuJg+5H+hsNUqhDNiN1/6wHf950=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AhULqFuI3PtCFmOj219PqRFkWf7CrzmWurN25wo9etuJSt5Fd8RQQIejW2fE4p0NwUkOE6q3OFkJNq7Xkp2obnPsBsmTtCHA4gcWkncNrxbohYGW0bIhsMKip6NH+lGi2xvfQkNb3pJdWMHw9nCLsoIv+3a5huUCbHSBN2dkcUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSEpKWhc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 581AAC4CEE4;
-	Fri, 28 Mar 2025 13:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743168563;
-	bh=WpqYCmjDIdupb8yXwuJg+5H+hsNUqhDNiN1/6wHf950=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tSEpKWhcFRzT4Luj28SgY5cuzp0xj2CDZ/pD8RxTQvVetsWemdGsMUBrCnIOW0rwY
-	 CXXYqrAwxU4KbYhN8Ntjw2G4m4aI+kCQ18GqWUXRmkWkZ4aSbX7pNlFRFh3ftsgTK0
-	 1klPu8GJDk0KZLhyGlbUy6NVVcAs9kSi2KSXampCSRoOpu7NzMFj1XtKMeY1QMVwZe
-	 GirZNvfh0g963hknGLW9PCCcnuyd+4yPQ43QGm16qdzkvSt1Xn88jYqaaeYa/ciblI
-	 SfdF67C/bUlQ0cVWcI8sy2c04kVHRgzCp0cXx4z3twPSMv8EhVyErIkZS3rw/6/zkm
-	 cc318XdkvUc4w==
-From: Ingo Molnar <mingo@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 49/49] x86/alternatives: Rename 'apply_relocation()' to 'text_poke_apply_relocation()'
-Date: Fri, 28 Mar 2025 14:27:04 +0100
-Message-ID: <20250328132704.1901674-50-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250328132704.1901674-1-mingo@kernel.org>
-References: <20250328132704.1901674-1-mingo@kernel.org>
+	s=arc-20240116; t=1743168513; c=relaxed/simple;
+	bh=AmiIbt/wN7iOY/s7foyX8kzAk2TSDj8J5sMRc0KGCao=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=EnKoUnHmXU1NpmlA/MOw4VsKGn+PbJYWxi/qe3/58Tk83j+3J39QXkg/L+aIw3uE9r7CbeAnTo9MR8sWea58IXfgOzRNroD0cnYm6sYy7uplr4OpYF+QpDyrg0Wz48JsLNklTHVrCXDGNdyYpyCdfcCtcA46yJs0Hl144T70Wxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V+ct6d2a; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743168496; x=1743773296; i=markus.elfring@web.de;
+	bh=IpfDNgazgXXBhb3QCNRjJJD4rFulvC5l9bpTYHKG/4I=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=V+ct6d2aiYPipLyNzTJIGp5xE3blwGV4MJzi71wDjLMjqIfaEpauAS4lUBBc5IKw
+	 PesrvwSg3KCuHnHl8neZQscEK+QbLdvVIAUvuB5OZUf/URsJbSYX1TkJpUMe1FA99
+	 0R6TwfI5+RTbgePAExWvKb0Re2vN8hGvn4fJ76nqPyJGRGVhU4aCwZ469b3bX5mrU
+	 SkgVnvlZKcZVFVcl9DMGo99gU8qW6MVw3CccwZCHB3CxT+EhkvVhSngO8uVstH1qC
+	 vEhRT7Zc9nYWmEGvlCqNwXaYlxyg+AB9AdIY0skgqo/g1GieSj9mdujNl/kM0mDWV
+	 2/tQyNylINfPRKsyIg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MeDMb-1tNRlH03Md-00b2Hg; Fri, 28
+ Mar 2025 14:28:16 +0100
+Message-ID: <06545fa2-7f82-4154-a882-faddb53df4d9@web.de>
+Date: Fri, 28 Mar 2025 14:28:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+References: <20250326141641.3471906-3-quic_msavaliy@quicinc.com>
+Subject: Re: [PATCH v2 2/3] i3c: master: Add Qualcomm I3C controller driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250326141641.3471906-3-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cT4tjGtvJXvSRL+OUV0lx2UA5LnpeNz7q6/InzNnyiHEeviRrrT
+ J5NFpTF815mDYWMO4nPeGSD+QWvucLhYGTqXjab/uxjKLQs+S+00/gVECE65Ll0VkcaBJ13
+ 3O69z7LlI/4kiHqQB0J/15AuLEWqpqTotzAjYKo7DSXrGgpATtje3q3pelLnJc74ZIWTwWK
+ 5bbY3ik9lh+qlhh2hkwCA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VOlzgvrPiWw=;l+7eWe+iFzWKRZ3mRi7dimYU2oq
+ grhkx9vsw/VEsjtCEXy54VQHpRClnNXV+HsR9CxvgANjp4EF3yKVRZOHULbMauoT8pJnnaooT
+ 26PitrDifSc990DwYDszXFag//F4MEJqvQFvQATnpP63nvBnufBWMaJ9lAfeD/W8HqNNa9QFp
+ Wv4UUqLu5ospDIjmuWKH1ztIa6nRdFA4aSH77Cfrrea7EFQC4Yfhq99WXoI04ntItmb5LpWwr
+ p3XiEo5ga1keYYYM5/g8ystw+oZWrIzac4taLPppQQSZMkXHg1i1a0I7+0ZLUpbrUgJcZLzXO
+ 5tR5w7hc6ierey3WTEXDSwEmn4G/LrevpBdHbCPbdq9ZF0BVnaHyjnK5HVXVdUcpW2xigWnaw
+ /aWWZ3N9Q8lx1wUhvCcpdlULI+BdHafdtv5DttCKdGPvXn3bSGNpisCZk1eRvXCQTSo9AD3X3
+ iJvTzfdgV3N7fU9fpJbvExMIQQKfMqApC+aXhE/u/hI8w9MBvl9UKh7zxk0rfN1mRKrGPD3Ay
+ LBOpYj36D536AY0oUl/iVwgBiwI+uCMvO5/rRMbcTcRO6OwAPl0cit1RTyOQTnp7Zxcu38VHX
+ 9a2x3tvW6MnCiRVtLm63UNVzza4gPL7tLr1g/JNC1BPO+xNfEW7HV6JttUvUminTVKYw4WT6F
+ kM+VnT++9dayUzuzO0zugVmwl02ktS7qWjNhFKFQwfHVh4Z1dDiCK40teZbGA57CREoYXPD0s
+ PaswK4GWhPRj2JijkOdxI+cyIDafIfVblEzE2bJMQ4X78MOmp5yKFT/vl0AGp9Bts8kBZENLg
+ sN38PcnpJXVZsAGGODKy+sKtRsCd6VPdO7L5GeKe6qUTwsaSNyTux6jZTZpMtxHSHPgwI0dJq
+ 1ucUB5aSYQ39vjc7k/LrH8GeHQMdeyoJjGsLFqxrEpAAV6mzM/S0asiXAVjsGdZ2P0zR1y2AZ
+ PmYGR6kidtZy+1PlaFWBaG/XZLzz4XwvOqxJukKRxEscdnaRypUufwnfWXeJtOH8vn+t+99C/
+ E4YuQq7a93OA3XFC6Sv5MRzbFjLN9jluFbuWR6iYF4bHvQiERfh80Tom2mhKwm9ED8NuBrxvu
+ 7oIPpZ7UgcGx8mwYDi6A39hw4JojweAt+HoBteW4kYoHRDIZvoMtzG/d7gMZbZo+f7Kq+BQCH
+ wmSjV6WcqsG6r7vSt0ApWNjislltguxytljGvqGFIX7RBLDOk8D3Rg6SEtFkCrGf7NOJnhUPo
+ d/kKoneAZ6TfdgqD7vZbRvfgdrWJcIo6AHRt7E5IM802j0a8Ndylp7MNeKh8ERifVzWx5GOTS
+ tHV5e2/sh04YF//+YEfFTL/TvC8N51HOE4W+TAcQLQ3VeEMnI2OF2Y37YeqHmPWgFbMLnnti5
+ toB+RCOs+2qe5s7SPYCbAuSfxuRtNcZZvsR7b9t5BY6kLbYjfTtw39fGX33e4aN9eB4L34HC/
+ FIAzafpxCJg0qAp0Lsa25iy08tYcpQ0T3C0242WpeAmb4Aao4
 
-Join the text_poke_*() API namespace.
+=E2=80=A6
+> +++ b/drivers/i3c/master/qcom-i3c-master.c
+> @@ -0,0 +1,1107 @@
+=E2=80=A6
+> +/* M_CMD OP codes for I2C/I3C */
+> +#define I3C_READ_IBI_HW          0
+> +#define I2C_WRITE                1
+> +#define I2C_READ                 2
+=E2=80=A6
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/text-patching.h | 2 +-
- arch/x86/kernel/alternative.c        | 6 +++---
- arch/x86/kernel/callthunks.c         | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+Can an enumeration become helpful here?
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index 53ac94743e5d..335f88b54ed0 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -15,7 +15,7 @@
- 
- extern void text_poke_early(void *addr, const void *opcode, size_t len);
- 
--extern void apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen, u8 *repl, size_t repl_len);
-+extern void text_poke_apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen, u8 *repl, size_t repl_len);
- 
- /*
-  * Clear and restore the kernel write-protection flag on the local CPU.
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index a855db342c6a..cd5b69b6eff8 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -340,7 +340,7 @@ static void __apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen,
- 	}
- }
- 
--void apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen, u8 *repl, size_t repl_len)
-+void text_poke_apply_relocation(u8 *buf, const u8 * const instr, size_t instrlen, u8 *repl, size_t repl_len)
- {
- 	__apply_relocation(buf, instr, instrlen, repl, repl_len);
- 	optimize_nops(instr, buf, instrlen);
-@@ -496,7 +496,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 		for (; insn_buff_sz < a->instrlen; insn_buff_sz++)
- 			insn_buff[insn_buff_sz] = 0x90;
- 
--		apply_relocation(insn_buff, instr, a->instrlen, replacement, a->replacementlen);
-+		text_poke_apply_relocation(insn_buff, instr, a->instrlen, replacement, a->replacementlen);
- 
- 		DUMP_BYTES(ALT, instr, a->instrlen, "%px:   old_insn: ", instr);
- 		DUMP_BYTES(ALT, replacement, a->replacementlen, "%px:   rpl_insn: ", replacement);
-@@ -1981,7 +1981,7 @@ __visible noinline void __init __alt_reloc_selftest(void *arg)
- static noinline void __init alt_reloc_selftest(void)
- {
- 	/*
--	 * Tests apply_relocation().
-+	 * Tests text_poke_apply_relocation().
- 	 *
- 	 * This has a relative immediate (CALL) in a place other than the first
- 	 * instruction and additionally on x86_64 we get a RIP-relative LEA:
-diff --git a/arch/x86/kernel/callthunks.c b/arch/x86/kernel/callthunks.c
-index 25ae54250112..e016c5780d42 100644
---- a/arch/x86/kernel/callthunks.c
-+++ b/arch/x86/kernel/callthunks.c
-@@ -186,7 +186,7 @@ static void *patch_dest(void *dest, bool direct)
- 	u8 *pad = dest - tsize;
- 
- 	memcpy(insn_buff, skl_call_thunk_template, tsize);
--	apply_relocation(insn_buff, pad, tsize, skl_call_thunk_template, tsize);
-+	text_poke_apply_relocation(insn_buff, pad, tsize, skl_call_thunk_template, tsize);
- 
- 	/* Already patched? */
- 	if (!bcmp(pad, insn_buff, tsize))
-@@ -295,7 +295,7 @@ static bool is_callthunk(void *addr)
- 	pad = (void *)(dest - tmpl_size);
- 
- 	memcpy(insn_buff, skl_call_thunk_template, tmpl_size);
--	apply_relocation(insn_buff, pad, tmpl_size, skl_call_thunk_template, tmpl_size);
-+	text_poke_apply_relocation(insn_buff, pad, tmpl_size, skl_call_thunk_template, tmpl_size);
- 
- 	return !bcmp(pad, insn_buff, tmpl_size);
- }
-@@ -313,7 +313,7 @@ int x86_call_depth_emit_accounting(u8 **pprog, void *func, void *ip)
- 		return 0;
- 
- 	memcpy(insn_buff, skl_call_thunk_template, tmpl_size);
--	apply_relocation(insn_buff, ip, tmpl_size, skl_call_thunk_template, tmpl_size);
-+	text_poke_apply_relocation(insn_buff, ip, tmpl_size, skl_call_thunk_template, tmpl_size);
- 
- 	memcpy(*pprog, insn_buff, tmpl_size);
- 	*pprog += tmpl_size;
--- 
-2.45.2
-
+Regards,
+Markus
 
