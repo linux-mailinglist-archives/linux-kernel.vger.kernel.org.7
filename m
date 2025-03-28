@@ -1,156 +1,157 @@
-Return-Path: <linux-kernel+bounces-579849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71627A74A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:05:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D32A74A54
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020CE16FF05
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:05:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0225E7A4DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DA7128816;
-	Fri, 28 Mar 2025 13:05:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A1E128819;
+	Fri, 28 Mar 2025 13:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SM21I+OY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1F92F37;
-	Fri, 28 Mar 2025 13:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5D82D78A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743167127; cv=none; b=BNVVhonGVrdypxjwetRGUsGf05LRqZM9MLCiZDoxgistuI4vtuwBBNuPQ6/O69Dok9EHbjTdLKCl/e1tpXMxJgaBDcC1AbMFHkUJmkVQcJ/1NqPoBFLxvK4+LrSHkK50yDx2FeglamtQNYrfTMz3OILMsVyUvLkLhRifvzumzII=
+	t=1743167238; cv=none; b=oo739JKqP4cqBOlbflwxw9sfNlC6LYCcvA3/xjmlQ9dCmeRtyKHAmMnjkoTqjyULFTyX0SvFUpvwgLkn5pQPzLyFImSsewI/hs5ZhuJP+fbgpmpBMjMpN1QmuxQ0TjxCVSPdx7CsFhbQ84+ty19Gykiz+kF1s8QTJmGi5pnhOsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743167127; c=relaxed/simple;
-	bh=ShT2PenzU5S5NzCDUYFCGLCJD2T3cC+Uz/7PyWeV60k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dbQgrjHfXz9iSf7jqCHvixtI2PShqM19HNmOv1O9dOdn4J5tJv64voNDim+lxfFG2i7EQE/YIzR4kxIfJnCurZozhNZT/sLAFlfrwNRHPUB/b6oNsXHoxnvJ3uxAbshtICgs9NG0OQj/sT3R5BJkwjyR7T9vVLTLJv/VxWe9hsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZPLND6rMQz689QQ;
-	Fri, 28 Mar 2025 21:05:00 +0800 (CST)
-Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 076131404F5;
-	Fri, 28 Mar 2025 21:05:21 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 28 Mar 2025 14:05:20 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 28 Mar 2025 14:05:20 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
-	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
-	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
-	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
-	<gthelen@google.com>, "wschwartz@amperecomputing.com"
-	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
-	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
-	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH v2 7/8] cxl/memfeature: Add CXL memory device soft PPR
- control feature
-Thread-Topic: [PATCH v2 7/8] cxl/memfeature: Add CXL memory device soft PPR
- control feature
-Thread-Index: AQHbmcK1iSI3dcXpwk+yz+WC3qTrybOHL5sAgAAB6wCAAVqhsA==
-Date: Fri, 28 Mar 2025 13:05:20 +0000
-Message-ID: <481fb71e2867469d963e74d89a0228be@huawei.com>
-References: <20250320180450.539-1-shiju.jose@huawei.com>
- <20250320180450.539-8-shiju.jose@huawei.com>
- <20250327170156.GCZ-WEhNREaxQaH_ya@fat_crate.local>
- <20250327170848.GDZ-WGIM553HJ61xj6@fat_crate.local>
-In-Reply-To: <20250327170848.GDZ-WGIM553HJ61xj6@fat_crate.local>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1743167238; c=relaxed/simple;
+	bh=jJSbhidB4wtrA44KDjDfyYcFbDomkPCPcofw8Bs0CBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ork3DaqnW8+jdBBebvapaJx2sR9UhUgGksDA2ZFQ9VDwYK7Pn3hhlpr2VXMq7sxm6HtmbmKXAjWvL7CXcUnoFzLomv4Tirv3ZVguBBgDASsipA8eryOakEQIpi4dnWa9sSnnkk5ju3Jc+PFq+6i8gfIB7RAEeq4apMxzoo0VYJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SM21I+OY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743167235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jsbGK2j9zIC6mJ/vbpDwVvR2z0iK01j/LkGPGiz+mZM=;
+	b=SM21I+OY50yCKhHCEma0hkZsZ8/pY/i0wBk0y+Jp2dZlI0yfoqr9niERGGE4VYlINaW6eR
+	f+3c5jFx8qQEGAjARxfoSnl5rcB4qkP05TRl0mRKmIFPRpiB2sX+3sZ9eCVacpahD5nrKU
+	wF65gKxHDaxxJ/tdAU0xygAqzt+wA6M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-1CIOfj-jMNCTUr9Jro5TdA-1; Fri,
+ 28 Mar 2025 09:07:11 -0400
+X-MC-Unique: 1CIOfj-jMNCTUr9Jro5TdA-1
+X-Mimecast-MFC-AGG-ID: 1CIOfj-jMNCTUr9Jro5TdA_1743167229
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 45D681956075;
+	Fri, 28 Mar 2025 13:07:08 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.74])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 309EC195DF83;
+	Fri, 28 Mar 2025 13:07:00 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 28 Mar 2025 14:06:34 +0100 (CET)
+Date: Fri, 28 Mar 2025 14:06:26 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Dominique Martinet <asmadeus@codewreck.org>
+Cc: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
+	brauner@kernel.org, dhowells@redhat.com, ericvh@kernel.org,
+	jack@suse.cz, jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+	lucho@ionkov.net, mjguzik@gmail.com, netfs@lists.linux.dev,
+	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
+	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <20250328130625.GA29527@redhat.com>
+References: <377fbe51-2e56-4538-89c5-eb91c13a2559@amd.com>
+ <67e5c0c7.050a0220.2f068f.004c.GAE@google.com>
+ <Z-XOvkE-i2fEtRZS@codewreck.org>
+ <49c26b3c-cab9-4ee6-919d-c734f4de6028@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49c26b3c-cab9-4ee6-919d-c734f4de6028@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQm9yaXNsYXYgUGV0a292IDxicEBh
-bGllbjguZGU+DQo+U2VudDogMjcgTWFyY2ggMjAyNSAxNzowOQ0KPlRvOiBTaGlqdSBKb3NlIDxz
-aGlqdS5qb3NlQGh1YXdlaS5jb20+DQo+Q2M6IGxpbnV4LWN4bEB2Z2VyLmtlcm5lbC5vcmc7IGRh
-bi5qLndpbGxpYW1zQGludGVsLmNvbTsgZGF2ZUBzdGdvbGFicy5uZXQ7DQo+Sm9uYXRoYW4gQ2Ft
-ZXJvbiA8am9uYXRoYW4uY2FtZXJvbkBodWF3ZWkuY29tPjsgZGF2ZS5qaWFuZ0BpbnRlbC5jb207
-DQo+YWxpc29uLnNjaG9maWVsZEBpbnRlbC5jb207IHZpc2hhbC5sLnZlcm1hQGludGVsLmNvbTsg
-aXJhLndlaW55QGludGVsLmNvbTsNCj5kYXZpZEByZWRoYXQuY29tOyBWaWxhcy5TcmlkaGFyYW5A
-YW1kLmNvbTsgbGludXgtZWRhY0B2Z2VyLmtlcm5lbC5vcmc7DQo+bGludXgtYWNwaUB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-ZzsNCj50b255Lmx1Y2tAaW50ZWwuY29tOyByYWZhZWxAa2VybmVsLm9yZzsgbGVuYkBrZXJuZWwu
-b3JnOw0KPm1jaGVoYWJAa2VybmVsLm9yZzsgbGVvLmR1cmFuQGFtZC5jb207IFlhemVuLkdoYW5u
-YW1AYW1kLmNvbTsNCj5yaWVudGplc0Bnb29nbGUuY29tOyBqaWFxaXlhbkBnb29nbGUuY29tOyBK
-b24uR3JpbW1AYW1kLmNvbTsNCj5kYXZlLmhhbnNlbkBsaW51eC5pbnRlbC5jb207IG5hb3lhLmhv
-cmlndWNoaUBuZWMuY29tOw0KPmphbWVzLm1vcnNlQGFybS5jb207IGp0aG91Z2h0b25AZ29vZ2xl
-LmNvbTsgc29tYXN1bmRhcmFtLmFAaHBlLmNvbTsNCj5lcmRlbWFrdGFzQGdvb2dsZS5jb207IHBn
-b25kYUBnb29nbGUuY29tOyBkdWVud2VuQGdvb2dsZS5jb207DQo+Z3RoZWxlbkBnb29nbGUuY29t
-OyB3c2Nod2FydHpAYW1wZXJlY29tcHV0aW5nLmNvbTsNCj5kZmVyZ3Vzb25AYW1wZXJlY29tcHV0
-aW5nLmNvbTsgd2JzQG9zLmFtcGVyZWNvbXB1dGluZy5jb207DQo+bmlmYW4uY3hsQGdtYWlsLmNv
-bTsgdGFueGlhb2ZlaSA8dGFueGlhb2ZlaUBodWF3ZWkuY29tPjsgWmVuZ3RhbyAoQikNCj48cHJp
-bWUuemVuZ0BoaXNpbGljb24uY29tPjsgUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3
-ZWkuY29tPjsNCj5rYW5na2FuZy5zaGVuQGZ1dHVyZXdlaS5jb207IHdhbmdodWlxaWFuZyA8d2Fu
-Z2h1aXFpYW5nQGh1YXdlaS5jb20+Ow0KPkxpbnV4YXJtIDxsaW51eGFybUBodWF3ZWkuY29tPg0K
-PlN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgNy84XSBjeGwvbWVtZmVhdHVyZTogQWRkIENYTCBtZW1v
-cnkgZGV2aWNlIHNvZnQgUFBSDQo+Y29udHJvbCBmZWF0dXJlDQo+DQo+T24gVGh1LCBNYXIgMjcs
-IDIwMjUgYXQgMDY6MDE6NTZQTSArMDEwMCwgQm9yaXNsYXYgUGV0a292IHdyb3RlOg0KPj4gT24g
-VGh1LCBNYXIgMjAsIDIwMjUgYXQgMDY6MDQ6NDRQTSArMDAwMCwgc2hpanUuam9zZUBodWF3ZWku
-Y29tIHdyb3RlOg0KPj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9lZGFjL21lbV9yZXBhaXIuYyBi
-L2RyaXZlcnMvZWRhYy9tZW1fcmVwYWlyLmMNCj4+ID4gaW5kZXggM2IxYTg0NTQ1N2IwLi5iZjdl
-MDFhOGI0ZGQgMTAwNzU1DQo+PiA+IC0tLSBhL2RyaXZlcnMvZWRhYy9tZW1fcmVwYWlyLmMNCj4+
-ID4gKysrIGIvZHJpdmVycy9lZGFjL21lbV9yZXBhaXIuYw0KPj4gPiBAQCAtNDUsNiArNDUsMTEg
-QEAgc3RydWN0IGVkYWNfbWVtX3JlcGFpcl9jb250ZXh0IHsNCj4+ID4gIAlzdHJ1Y3QgYXR0cmli
-dXRlX2dyb3VwIGdyb3VwOw0KPj4gPiAgfTsNCj4+ID4NCj4+ID4gK2NvbnN0IGNoYXIgKiBjb25z
-dCBlZGFjX3JlcGFpcl90eXBlW10gPSB7DQo+PiA+ICsJW0VEQUNfUFBSXSA9ICJwcHIiLA0KPj4g
-PiArfTsNCj4+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKGVkYWNfcmVwYWlyX3R5cGUpOw0KPj4NCj4+
-IFdoeSBpcyB0aGlzIHRoaW5nIGV4cG9ydGVkIGluc3RlYWQgb2YgYWRkaW5nIGEgZ2V0dGVyIGZ1
-bmN0aW9uIGFuZA0KPj4gaGF2aW5nIGFsbCBpdHMgdXNlcnMgcGFzcyBpbiBwcm9wZXIgZGVmaW5l
-cyBhcyBhcmd1bWVudHM/DQo+Pg0KPj4gQW5kICJFREFDX1BQUiIgaXMgbm90IGEgcHJvcGVyIGRl
-ZmluZSAtIGl0IGRvZXNuJ3QgdGVsbCBtZSB3aGF0IGl0IGlzLg0KPj4NCj4+IEl0IHNob3VsZCBi
-ZSBtb3JlIGxpa2VseSBhDQo+Pg0KPj4gRURBQ19SRVBBSVJfUFBSLA0KPj4gRURBQ19SRVBBSVJf
-Uk9XX1NQQVJJTkcsDQo+PiBFREFDX1JFUEFJUl9CQU5LX1NQQVJJTkcsDQo+Pg0KPj4gYW5kIHNv
-IG9uLg0KDQpIaSBCb3Jpc2xhdiwNCg0KV2lsbCBjaGFuZ2UuDQoNCj4NCj5Mb29raW5nIGF0IHRo
-aXMgbW9yZToNCj4NCj4rc3RhdGljIGludCBjeGxfcHByX2dldF9yZXBhaXJfdHlwZShzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIHZvaWQgKmRydl9kYXRhLA0KPisJCQkJICAgY29uc3QgY2hhciAqKnJlcGFp
-cl90eXBlKQ0KPit7DQo+KwkqcmVwYWlyX3R5cGUgPSBlZGFjX3JlcGFpcl90eXBlW0VEQUNfUFBS
-XTsNCj4rDQo+KwlyZXR1cm4gMDsNCj4rfQ0KPg0KPkNhbiB0aGlzIGJlIGFueSBtb3JlIHNpbGx5
-Pw0KPg0KPkFuIG9wcyBtZW1iZXIgd2hpY2ggY29waWVzIGEgc3RyaW5nIHBvaW50ZXIgaW50byBz
-b21lIGFyZ3VtZW50LiBXaGF0IGZvcj8NCj4NCj5JZiB0aG9zZSBzdHJpbmdzIGFyZSBmb3IgdXNl
-cnNwYWNlLCB3aHkgZG9uJ3QgeW91IHNpbXBseSByZXR1cm4gKm51bWJlcnMqIGFuZA0KPmxldCB1
-c2Vyc3BhY2UgY29udmVydCB0aGVtIGludG8gc3RyaW5ncz8NClllcy4gVGhlIEVEQUMgbWVtb3J5
-IHJlcGFpciBpbnRlcmZhY2UgZGVmaW5lZCBhcyByZXR1cm4gJ251bWJlcnMnIGZvciB1c2Vyc3Bh
-Y2UgdW50aWwgDQp2MTggb2YgdGhlIEVEQUMgc2VyaWVzLiAgQ2hhbmdlZCB0byByZXR1cm4gJ3N0
-cmluZycgYXMgTWF1cm8gd2FudGVkLg0KUGxlYXNlIHNlZSBkaXNjdXNzaW9uIGhlcmUuDQpodHRw
-czovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTAxMTQxNTI2MTcuMTRlYjQxYjVAZm96Lmxhbi8N
-Cg0KPg0KVGhhbmtzLA0KU2hpanUNCg==
+On 03/28, K Prateek Nayak wrote:
+>
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -687,7 +687,13 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+>  	else
+>  		n = p9_fd_poll(m->client, NULL, NULL);
+> -	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+> +	/* Failed to send request */
+> +	if (!(n & EPOLLOUT)) {
+> +		p9_conn_cancel(m, -EIO);
+
+Thanks a lot Prateek!
+
+Can't really the changes in net/9p, but I am not sure. !(n & EPOLLOUT)
+means that pipe is full, nothing wrong. We need to kick m->rq in this
+case.
+
+Dominique says:
+
+	For me the problem isn't so much that this gets ERESTARTSYS but that it
+	nevers gets to read the 7 bytes that are available?
+
+Yes. Of course I do not pretend I fully understand the problem, but it
+seems this is because p9_read_work() doesn't set Rworksched and doesn't
+do schedule_work(&m->rq) if list_empty(&m->req_list).
+
+However, if the pipe is full, before the commit aaec5a95d59615523db0
+("pipe_read: don't wake up the writer if the pipe is still full"),
+p9_read_work() -> p9_fd_read() -> kernel_read(ts->rd) triggered the
+unnecessary wakeup. This wakeup calls p9_pollwake() shich kicks
+p9_poll_workfn() -> p9_poll_mux(), and p9_poll_mux() will notice
+EPOLLIN and schedule_work(&m->rq).
+
+May be the patch below makes more sense?
+
+Oleg.
+
+#syz test: upstream
+
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 56e62978e502..aa9cd248a243 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -669,7 +669,6 @@ static void p9_poll_mux(struct p9_conn *m)
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+ 
+@@ -687,13 +686,7 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
++	p9_poll_mux(m);
+ 
+ 	return 0;
+ }
+
 
