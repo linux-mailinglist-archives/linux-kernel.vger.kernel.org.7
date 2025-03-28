@@ -1,169 +1,173 @@
-Return-Path: <linux-kernel+bounces-580479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E9AA75242
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 23:01:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20258A7525F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 23:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2E83AF3E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03721714F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684CA1D63FA;
-	Fri, 28 Mar 2025 22:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26701F30D1;
+	Fri, 28 Mar 2025 22:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ffg02hjy"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="A0LKbWu0"
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686024A05;
-	Fri, 28 Mar 2025 22:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194E31EFF84;
+	Fri, 28 Mar 2025 22:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.64.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743199305; cv=none; b=dBJbcTxveElUpgCVm8PKrZg+0Efq6cous5XkLy9hnheqe6qEvPWPUrtP//jKm4o14/qy6K5fFFZqVdIrCsHPuS8C3NSatYm00mCSOb9G1H+otytJ1Qpphnkr2gWSv1K0hBX8nWpLD2EoPji9ch66cHO7ezG0lH4mSQXqtTXlyk8=
+	t=1743199905; cv=none; b=j5atHOjDDqvhdJMIFG2BhWB0Rz6QXi7DimEGp/LMoyfkmXCuQ3jNkNLMp6+xn0qw23wwpVHYWDLWnitOrFfgY9cayPNFP9QqiX4+NBp77blczTrXbWKiH85OEZ9No2QsbqSFhvedaRsAY8j2oMPiNP+gRMBO0sSZmc2mJlosTPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743199305; c=relaxed/simple;
-	bh=SSH6fnOtoT1ysxQcZHp9njNCoc5fKETBZvRU3SyCI/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZCNhC8d03MYw7/Y3EueIyecBF++XOFooNwH3AfCRi1SStsQDGYGB3SpCND4r6UWWbh4pCZyy28dG9tEWsaaDkpOaWFHdCGoSkf7CQ5VDq8RGzv0iPtrKn7Vn4Mr586N5v8oqeid4thXXsBlo6rIkl486u8sZFxWKe6QP/elS2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ffg02hjy; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2260c91576aso46654755ad.3;
-        Fri, 28 Mar 2025 15:01:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743199303; x=1743804103; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/IVrZIj5NwvolOp7P5/XK/Tk+P2OhfakRiW9sxSIYFs=;
-        b=Ffg02hjybBYIU2aF315dGuF40DRNdUj/VLfPTvCkOPh2N3h6DqibexjUc06F4r3yka
-         nPPjEZifHK67UiVxATkZaNWTGjEwQbVhbUnzYfgehZ3SacZCaov5nraeRTF2JhN0ISa0
-         xaY8AwyFt0fdmwzebBv6cg70gobV4VL642wU0HzCaRRzP/GoID/Hf0nsYJKyIKZHTYP0
-         /jwpgm7GSRV0nB8/AJKwGIVUAFkuZjx096KwHKfPBkuuEWtBb093P+bb3jWutawmR4xy
-         Hasp5BlNZdtkj6Piv0a4Bm3ciycbjou2bPGhbj7IiXl+vGnH4wfTCTdIif+YGp4X1ign
-         XJ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743199303; x=1743804103;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/IVrZIj5NwvolOp7P5/XK/Tk+P2OhfakRiW9sxSIYFs=;
-        b=CT+tWBGHcsjbq2tt2g8I2E7egu828YvjXMIvGxB2ToI+bUirDEOgHGvv1gT+B/jv3Q
-         uezT2ctma6RFO06R+ZYJQ+XBfWgSUgPkOAyA1qdfMj+5QSMh/Wewd3xgQ7PkQhY75/wU
-         oOX3XLICGNwnrOGZyu7HlhMAcwsbbmvqZXFLwN0yVlwzKzaO7dzaN7dP6VUcayn7yD+I
-         ooyf8l4OYZZMci0pUgY0DclQ49R+qSAoo5/jE7QAiSizyN4wlMo70gOwCBDoLVB61pDs
-         Ksig64UAVwMk4oGsmSfOHTdUSlNUsPthyZ6HPIJgi2pgWlgxA/fTxVnB8GJZGDUeyYSO
-         xMFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtoTirXxPEoSducUn7IMusf1n5NmG9jLHpPHTc+2QJ5ttk5GOnQSr1+bJO9xpFoEM43Otq49BtgG73SVjgCSWY@vger.kernel.org, AJvYcCWJGikblEcwYkRHaWUt6LKSVzIb/Vhxefj3b6+tTj2sjUULrDwyrnpnxXU/jdqyQ+3VnnsY59FYTDNXPJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIsQic44I7hc8tnz2nA6OY8ZMY2SSRgf1MiAlSRq6QSyuZ6m1a
-	y7fYMpP9IFzGVmUWOJJ5I+jGD4Piz2NbEAQaZk+yRa/WItCWS7lQ
-X-Gm-Gg: ASbGnctS3AIGaJcjmvVZA+rzZ0g6KXNkZSqT9tQrzdkgoLB/+/ei7cFisNoi0QbOjy+
-	Jj7PW0prpGXwJtH747VVq7uxUX3ht3hu4byZtSSHf/UqkpTxaDv+oURhOaBjQpyMe3TYUOpmxXP
-	FnimGWoBpxp7zcKMNCfka86puAc27sf7UxOTVoesJJY4KMOTDBlSh8LUqwMc+8aGTsMC0hF1vuG
-	NTu0oY0V4MRYxPJoIb5oFfFNnHbdIkCiVEc6HASp3hu68w1FAcTT6at/3ZaINnrOOUYREmsg10i
-	F7xCWJEaS4HlFp2NfpZWVNgVJ0+TOUDenH58mdc01ltv7sfyCfcK2NpWv4UPh9va
-X-Google-Smtp-Source: AGHT+IGJyrofPtYjcdwJFJMViyQI/JadXUdxW2feSLnMyP0HVI8yOQ2zIl58vUTrfxBzH7KUhYJ53Q==
-X-Received: by 2002:a05:6a00:1784:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-7398038028cmr1140094b3a.10.1743199303271;
-        Fri, 28 Mar 2025 15:01:43 -0700 (PDT)
-Received: from sid-Inspiron-15-3525.. ([106.222.231.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739710d4761sm2318154b3a.167.2025.03.28.15.01.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 15:01:42 -0700 (PDT)
-From: Siddarth G <siddarthsgml@gmail.com>
-To: shuah@kernel.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	Siddarth G <siddarthsgml@gmail.com>,
-	David Binderman <dcb314@hotmail.com>
-Subject: [PATCH] selftests/mm: Fix loss of information warnings
-Date: Sat, 29 Mar 2025 03:30:37 +0530
-Message-ID: <20250328220037.149763-1-siddarthsgml@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743199905; c=relaxed/simple;
+	bh=/dib/gzsTIlvEmJfADpulHrNlQwv64RFIf5HDrJqhsU=;
+	h=Date:Message-Id:Subject:MIME-Version:Content-Type:From:To:Cc; b=eg/w7Qe+CpZ1oe7g6t4fp0YiGYvOeJYpLQcnHVStZRjFJsHuX6ZJhA+5ShFKHWQQHNIGmV7pHK8hIYgC+mttuoyvF5YU1L00Xpa1KzZt4rHYLq20K128MEtN2d4sEPDc7lYusD+9UYqHwhBuUt+y/BqQq5hACxVnm+tHl38kAuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl; spf=pass smtp.mailfrom=rere.qmqm.pl; dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b=A0LKbWu0; arc=none smtp.client-ip=91.227.64.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rere.qmqm.pl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+	t=1743199297; bh=/dib/gzsTIlvEmJfADpulHrNlQwv64RFIf5HDrJqhsU=;
+	h=Date:Subject:From:To:Cc:From;
+	b=A0LKbWu0qS5fbovl4poQJpOYSfC3czOLCfemvBpE2+Jrdq/r+0uHx/QBuw3cA/BVV
+	 j0AbOeFTUB+cKfglS4M4qCS6P0rV4hs0V5Qkf+CEnZu4keuOw4O6AMw2EZYaK+AVfl
+	 iXy+ExxVGDXF4tgA157+5HLa6BLOUOnxunCdLMqh50dGL/VvJSFOBnu06hBmh6lRlK
+	 fT0zs4sC3g2v3E3eYnwL6mYK9v4VPFmTHLiH4QaVYD44oaN96IfBz5TW7GWA5vBsA+
+	 2ooewN05kBYY7Ln6tdqkqLBFXc4uh33iDOQTQZwOd3+voT3t8m/9YzcjS4stMkDNeD
+	 YTR4VLANjcMLg==
+Received: from remote.user (localhost [127.0.0.1])
+	by rere.qmqm.pl (Postfix) with ESMTPSA id 4ZPZHN6WFHz1L;
+	Fri, 28 Mar 2025 23:01:36 +0100 (CET)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 1.0.7 at mail
+Date: Fri, 28 Mar 2025 23:01:36 +0100
+Message-Id: <6f496c586e0c2db7f7b929f466bdd0607e61e45d.1743199164.git.mirq-linux@rere.qmqm.pl>
+Subject: [PATCH media/fixes] media: rtl2832_sdr: unsplit vb_queue initialization
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+From:	=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+To:	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?UTF-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 
-Cppcheck reported a style warning:
-int result is assigned to long long variable. If the variable is long long
-to avoid loss of information, then you have loss of information.
+`queue->lock` must be set before calling vb2_queue_init() as the
+calee checks the whole structure for validity. Otherwise we get:
 
-Changing the type of page_size from 'unsigned int' to 'unsigned long long'
-was considered. But that might cause new conversion issues in other
-parts of the code where calculations involving 'page_size' are assigned
-to int variables. So we approach by appending ULL suffixes
+  rtl2832 7-0010: Realtek RTL2832 successfully attached
+  usb 2-1.6: DVB: registering adapter 0 frontend 0 (Realtek RTL2832 (DVB-T))...
+  dvbdev: dvb_create_media_entity: media entity 'Realtek RTL2832 (DVB-T)' registered.
+  r820t 8-001a: creating new instance
+  r820t 8-001a: Rafael Micro r820t successfully identified, chip type: R820T
+  ------------[ cut here ]------------
+  WARNING: CPU: 4 PID: 1364245 at drivers/media/common/videobuf2/videobuf2-core.c:2661 vb2_core_queue_init+0x249/0x250 [videobuf2_common]a
+...
+  CPU: 4 UID: 1000 PID: 1364245 Comm: gqrx Tainted: G        W  O       6.13.7+ #671
+  Tainted: [W]=WARN, [O]=OOT_MODULE
+  Hardware name: System manufacturer System Product Name/P8Z68-V PRO, BIOS 3603 11/09/2012
+  RIP: 0010:vb2_core_queue_init+0x249/0x250 [videobuf2_common]
+  Code: eb f1 0f 0b eb ed 0f 0b eb e9 0f 0b eb e5 0f 0b eb e1 0f 0b eb dd 0f 0b eb d9 0f 0b eb d5 0f 0b eb d1 0f 0b eb cd 0f 0b eb c9 <0f> 0b eb c5 0f 1f 00 83 7f 30 01 74 05 c3 cc cc cc cc 53 48 89 fb
+  RSP: 0018:ffffc9000d747858 EFLAGS: 00010246
+  RAX: 0000000000000000 RBX: ffff888123e09750 RCX: ffffffffa4601500
+  RDX: 0000000000000001 RSI: 0000000000000001 RDI: 0000000000000000
+  RBP: ffff8883b3617000 R08: ffffffffa45fd090 R09: ffffffff8240ca40
+  R10: 0000000000000990 R11: 0000000000000000 R12: ffff88830fd27580
+  R13: ffff8883b3617010 R14: 0000000000000000 R15: ffff888123e09000
+  FS:  00007f4a7e480dc0(0000) GS:ffff8887fe600000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 000055f78f2f5dd8 CR3: 000000060f310004 CR4: 00000000000626f0
+  Call Trace:
+   <TASK>
+   ? __warn+0x80/0x180
+   ? vb2_core_queue_init+0x249/0x250 [videobuf2_common]
+   ? report_bug+0x18d/0x1c0
+   ? handle_bug+0x53/0x90
+   ? exc_invalid_op+0x13/0x60
+   ? asm_exc_invalid_op+0x16/0x20
+   ? vb2_core_queue_init+0x249/0x250 [videobuf2_common]
+   rtl2832_sdr_probe+0x191/0x570 [rtl2832_sdr]
+   platform_probe+0x3b/0x90
+   really_probe+0xbf/0x380
+   ? driver_probe_device+0x90/0x90
+   __driver_probe_device+0x73/0x150
+   driver_probe_device+0x1a/0x90
+   __device_attach_driver+0x80/0x110
+   bus_for_each_drv+0x7e/0xd0
+   __device_attach+0xb2/0x1b0
+   bus_probe_device+0x8f/0xa0
+   device_add+0x645/0x860
+   platform_device_add+0x171/0x250
+   platform_device_register_full+0x10f/0x1a0
+   rtl2832u_tuner_attach+0x40c/0x9a0 [dvb_usb_rtl28xxu]
+   dvb_usbv2_probe+0x67d/0x1210 [dvb_usb_v2]
+   usb_probe_interface+0xdc/0x2f0
+   really_probe+0xbf/0x380
+   ? driver_probe_device+0x90/0x90
+   __driver_probe_device+0x73/0x150
+   driver_probe_device+0x1a/0x90
+   __device_attach_driver+0x80/0x110
+   bus_for_each_drv+0x7e/0xd0
+   __device_attach+0xb2/0x1b0
+   proc_ioctl+0x1ae/0x210
+   usbdev_ioctl+0x14f6/0x15f0
+   ? lock_release+0x205/0x430
+   __x64_sys_ioctl+0x8e/0xc0
+   do_syscall_64+0x58/0x100
+   entry_SYSCALL_64_after_hwframe+0x67/0x6f
+  RIP: 0033:0x7f4a83b24ded
+  Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+  RSP: 002b:00007ffe9f17fea0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  RAX: ffffffffffffffda RBX: 0000561ed1074780 RCX: 00007f4a83b24ded
+  RDX: 00007ffe9f17ff00 RSI: 00000000c0105512 RDI: 0000000000000013
+  RBP: 00007ffe9f17fef0 R08: 00007ffe9f17fe30 R09: 0000000000000000
+  R10: 00007f4a827405c8 R11: 0000000000000246 R12: 0000561ed1396d80
+  R13: 0000561ed135eca0 R14: 0000561ed11a63d0 R15: 0000000000000000
+   </TASK>
+  irq event stamp: 0
+  hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+  hardirqs last disabled at (0): [<ffffffff810895a8>] copy_process+0x998/0x1ee0
+  softirqs last  enabled at (0): [<ffffffff810895a8>] copy_process+0x998/0x1ee0
+  softirqs last disabled at (0): [<0000000000000000>] 0x0
+  ---[ end trace 0000000000000000 ]---
+  rtl2832_sdr rtl2832_sdr.4.auto: Could not initialize vb2 queue
+  rtl2832_sdr rtl2832_sdr.4.auto: probe with driver rtl2832_sdr failed with error -22
 
-Reported-by: David Binderman <dcb314@hotmail.com>
-Closes: https://lore.kernel.org/all/AS8PR02MB10217315060BBFDB21F19643E9CA62@AS8PR02MB10217.eurprd02.prod.outlook.com/
-Signed-off-by: Siddarth G <siddarthsgml@gmail.com>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 ---
- tools/testing/selftests/mm/pagemap_ioctl.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/dvb-frontends/rtl2832_sdr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
-index 57b4bba2b45f..f3b12402ca89 100644
---- a/tools/testing/selftests/mm/pagemap_ioctl.c
-+++ b/tools/testing/selftests/mm/pagemap_ioctl.c
-@@ -244,7 +244,7 @@ int sanity_tests_sd(void)
- 	long walk_end;
+diff --git a/drivers/media/dvb-frontends/rtl2832_sdr.c b/drivers/media/dvb-frontends/rtl2832_sdr.c
+index 05254d8717db..0357624968f1 100644
+--- a/drivers/media/dvb-frontends/rtl2832_sdr.c
++++ b/drivers/media/dvb-frontends/rtl2832_sdr.c
+@@ -1363,6 +1363,7 @@ static int rtl2832_sdr_probe(struct platform_device *pdev)
+ 	dev->vb_queue.ops = &rtl2832_sdr_vb2_ops;
+ 	dev->vb_queue.mem_ops = &vb2_vmalloc_memops;
+ 	dev->vb_queue.timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
++	dev->vb_queue.lock = &dev->vb_queue_lock;
+ 	ret = vb2_queue_init(&dev->vb_queue);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not initialize vb2 queue\n");
+@@ -1421,7 +1422,6 @@ static int rtl2832_sdr_probe(struct platform_device *pdev)
+ 	/* Init video_device structure */
+ 	dev->vdev = rtl2832_sdr_template;
+ 	dev->vdev.queue = &dev->vb_queue;
+-	dev->vdev.queue->lock = &dev->vb_queue_lock;
+ 	video_set_drvdata(&dev->vdev, dev);
  
- 	vec_size = num_pages/2;
--	mem_size = num_pages * page_size;
-+	mem_size = num_pages * (long long)page_size;
- 
- 	vec = malloc(sizeof(struct page_region) * vec_size);
- 	if (!vec)
-@@ -432,7 +432,7 @@ int sanity_tests_sd(void)
- 	free(vec2);
- 
- 	/* 8. Smaller vec */
--	mem_size = 1050 * page_size;
-+	mem_size = 1050ULL * page_size;
- 	vec_size = mem_size/(page_size*2);
- 
- 	vec = malloc(sizeof(struct page_region) * vec_size);
-@@ -487,7 +487,7 @@ int sanity_tests_sd(void)
- 	total_pages = 0;
- 
- 	/* 9. Smaller vec */
--	mem_size = 10000 * page_size;
-+	mem_size = 10000ULL * page_size;
- 	vec_size = 50;
- 
- 	vec = malloc(sizeof(struct page_region) * vec_size);
-@@ -1058,7 +1058,7 @@ int sanity_tests(void)
- 	char *tmp_buf;
- 
- 	/* 1. wrong operation */
--	mem_size = 10 * page_size;
-+	mem_size = 10ULL * page_size;
- 	vec_size = mem_size / page_size;
- 
- 	vec = malloc(sizeof(struct page_region) * vec_size);
-@@ -1507,7 +1507,7 @@ int main(int __attribute__((unused)) argc, char *argv[])
- 	sanity_tests_sd();
- 
- 	/* 2. Normal page testing */
--	mem_size = 10 * page_size;
-+	mem_size = 10ULL * page_size;
- 	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
- 	if (mem == MAP_FAILED)
- 		ksft_exit_fail_msg("error nomem\n");
-@@ -1520,7 +1520,7 @@ int main(int __attribute__((unused)) argc, char *argv[])
- 	munmap(mem, mem_size);
- 
- 	/* 3. Large page testing */
--	mem_size = 512 * 10 * page_size;
-+	mem_size = 512ULL * 10 * page_size;
- 	mem = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
- 	if (mem == MAP_FAILED)
- 		ksft_exit_fail_msg("error nomem\n");
+ 	/* Register the v4l2_device structure */
 -- 
-2.43.0
+2.39.5
 
 
