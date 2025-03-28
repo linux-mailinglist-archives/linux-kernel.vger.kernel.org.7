@@ -1,271 +1,175 @@
-Return-Path: <linux-kernel+bounces-579706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1228A74857
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:31:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22326A74877
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF733BE92C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9611897704
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA38821C9E8;
-	Fri, 28 Mar 2025 10:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D0721322B;
+	Fri, 28 Mar 2025 10:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FjG5K+U9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="d4rrCeae"
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A370721C193
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933491C174E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743157764; cv=none; b=P+CYwCw1yYZdmNUrU1hF401DOpJbhMheXm/WC6EnbHu5QQjprS8qlr0xifhyO2+/TvQ+Wfe9fL57nm90UTaFuMOjDG8Sq7+RmJbZvHZJYIlxug3pi6ZLrrHNpVg0cYNFPWC8o/rfx69SFQnyx+6cFPlQ6I0/nGGIHf1hbSQLees=
+	t=1743158422; cv=none; b=Sx7LhsASAa2rUs375aSLZlPIWb+uBO3EjqcmF0Bc1UUgAoO9RNJCkGcVTDcm9OljGxE8msX4x6YoBCSMRQ9Vlh1c9Ly7NAZ676KX6F2QKFWdFXB5csB4C29pzWPdGO2le4uEAEvEbAJMsRH4OkGVLi2wlXCpdZxMbGZaB9rBvxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743157764; c=relaxed/simple;
-	bh=U7DWrCD6EQXqUQIkpwerhpxSQhLGZ9eFto7N2dbcVTs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ph9Ng0ukNoGpNSLcL39qLYEakywKprFnFd90FxBJftRJh1U9zzitCsl304Ky51ZsQ9uw67iqKXmzibqbxbP+6DuGp0QZsNrrXPJSSX9bmCSc0wnCIRy6J27iXW1eVRZCrN1z8BJQbKDeoTMxvzwSWdbmyulVE96VLdZzsIblA4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FjG5K+U9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S2CTNo023886
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:29:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YZyozmENnf1D4BlU1MbFdQpfwvTwdNp0J/DqysHuxfs=; b=FjG5K+U95cf8EhPB
-	6x4JwH11FCMLZvGAdwnJjjL/o78Y9ujkdHHpeQ2krlZXflnlCWWR6rkJr/6EMfCA
-	jFpfXnRSZvczgEiNCGihfaV4dFBYtKUcSPe8RxqjdgmXDvhNd64rPAj69tHj3NlW
-	HdPXiG8LGRLPWAVC+uz91IsQBLAr/EFwWwarKJ4rF3SCkrOGwKCzzxhYHO9PULe9
-	0qy45rfs64BPDY4M2iXbDELE7SkLm2CKoXgj9US9p0OhBqzcfDDmNrpUp1ApbpFO
-	PnEvXY4Ii5YsioEhvyhzRKVhLYukSnxQpdXV3wRwWWffcFT9tx8iJyeLIuRwGlXD
-	6tnwoA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45njsc1b5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:29:21 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-224364f2492so36411985ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:29:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743157761; x=1743762561;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YZyozmENnf1D4BlU1MbFdQpfwvTwdNp0J/DqysHuxfs=;
-        b=TFmUP1qJCZTW3kv4G+ypRHXrIJBcRytN4zFdenp+EY67TWd6vZeS2dfU4kYwkFg9Wv
-         HSExqD2TM8Bo7ZtuvejuciiFlQF1jWg1VkeZuMCVhygvhA/JVYtPOd4hNnHReAVRqNvc
-         c9zRR0riJaNjaz5R3yw0Cav8mf6b6u8eNjsAUtsyQBuTmSEp4iaVZp6RnspzV0OAkyVU
-         XA+pGamdZeoBF8zHgKpu8Fodbr574+/OJS6XgTrjmjgq9JnInXitiVJzFhegZdSC6qqg
-         WqCNwzMCEAKkJMu2uQudL0yrKS2t5RL4MWv07ZmBu9i+dVBE1SoZ3RbrSh5eq6lwlAuX
-         IhVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWasPTWOoy2y0QO27PBmqsOWtSJtwGTChBvlf5TS0RcvNHJMJKWsiX/rPTKU93Z+dQoJkOUO9kQwQsOa+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu7AzS9ExJe8StR6LtmEwWQW0C7kLhyxvluBsV0VoO4UYFEQYA
-	58Ag5j6ITZ53cK34YM+o+qIvUpHHQqpoJJ+ldQNZWlXp18NNVjngm5Gh5jCtHfX7h1kigNfRu9a
-	/ZS57wQBgrDScZsWYzOcgIqnom5s0VICCWqngZtvJjAvoO6Cd3C6s882bgXHRvxE=
-X-Gm-Gg: ASbGncu8lxQNxuxYxDPPd2nHqmkMmIBR9Uv5NSkEI1IrU6gN6zoKKAvbTJogjoX8u2e
-	CyaHTbiXRS/lM4zNA0C4dr9l7+H4gwJAxSMiqPZwMObIZZfJei9OxJZb2FTFuLT+UdDpQsRlHCP
-	vSrwC/qyEauWvKqx1iYefM4K4BWnUVXCX9yJeL75RBvS9Bf6DnuxjbOetsSXe2H0BLImzARtoYW
-	EGEg9xVWRpQkHxz/ozhfi3DqDgOu5Dop/hqh0tOkrcQQF+2PcIsG35YmQL8s4/g5yvDo+GxXyCu
-	YP5norieJR7GdmeCp5w68ik0IczKAIuARYhWRVcmeQ8h5a7gpe8=
-X-Received: by 2002:a17:902:f646:b0:224:f12:3735 with SMTP id d9443c01a7336-228048c8674mr121121925ad.31.1743157761020;
-        Fri, 28 Mar 2025 03:29:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTLwXEUOwEmMsUdJEpr/rmOv1KKLheXbqRHRhCDP2HIepa0hdRuCAfWHrz2ORIUC0rf+g8sA==
-X-Received: by 2002:a17:902:f646:b0:224:f12:3735 with SMTP id d9443c01a7336-228048c8674mr121121265ad.31.1743157760482;
-        Fri, 28 Mar 2025 03:29:20 -0700 (PDT)
-Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eee11b7sm14561965ad.86.2025.03.28.03.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 03:29:20 -0700 (PDT)
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Fri, 28 Mar 2025 15:58:33 +0530
-Subject: [PATCH v9 5/5] PCI: dwc: Add support for configuring lane
- equalization presets
+	s=arc-20240116; t=1743158422; c=relaxed/simple;
+	bh=x2e4qnIWrwIBG0j4W+5WT1W+v5MPlz50IWf7emFarRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RtSFX5ovG/9yvphsrRdkX4A5FPImd1kOO4PMu2aofyTuIohsGAaNcvUWVB8yMBVnQxNDfiNX7M6Iwk3GHC+cl9fRTUkH/NLO3BKrJOgrd/I+wG3QNoHPmwtNgTof01QHYTew1ySBC3Q1Mpbd60ByNdEB1LAvbkigJmbNvtRvkBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=d4rrCeae; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZPH1H2NqFzVfJ;
+	Fri, 28 Mar 2025 11:33:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1743158003;
+	bh=ZRMeNlcXNIbn1nJwecKQQoqD89P0pz802GFL11P7xo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d4rrCeaeECs4meKGwPt7Wp3nMmR1RwXM+Vy+28uAjIlMObqbr/+B5EwjVDAfb6dy0
+	 o4C2LVSasTtrBPaaQszpmUtor98nBKIuG7IhZdYOvYHOYTkPFRBSM9r6mvXnKvxjtb
+	 yCypmxnt6aRKFmnB296GOlblJVEby4rR7RMiJJok=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZPH1G0ZHMzJhb;
+	Fri, 28 Mar 2025 11:33:21 +0100 (CET)
+Date: Fri, 28 Mar 2025 11:33:21 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Alessandro Carminati <acarmina@redhat.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v7 09/28] landlock: Add AUDIT_LANDLOCK_ACCESS and log
+ ptrace denials
+Message-ID: <20250328.Ahc0thi6CaiJ@digikod.net>
+References: <20250320190717.2287696-10-mic@digikod.net>
+ <20250327213807.12964-1-m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250328-preset_v6-v9-5-22cfa0490518@oss.qualcomm.com>
-References: <20250328-preset_v6-v9-0-22cfa0490518@oss.qualcomm.com>
-In-Reply-To: <20250328-preset_v6-v9-0-22cfa0490518@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743157732; l=4766;
- i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=U7DWrCD6EQXqUQIkpwerhpxSQhLGZ9eFto7N2dbcVTs=;
- b=ViVIJg5kkCvIkqx3JzuIUQN0sSRyoXOi/qnO2mEdfQm4OUIlPz9oHhnr8KbEv4i7UX18xCpYj
- /+zdbyIrLUjCq8x/e45RiGbdUi1PTRy2ZoMyrZhMZAZ0+CXHcpW0mX/
-X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
- pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Authority-Analysis: v=2.4 cv=fJk53Yae c=1 sm=1 tr=0 ts=67e67a02 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=S-wDCh2AgS0RhsWIeBgA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: qVWRgGo-wAqK4cZTeTASIf2_RXgSX3iM
-X-Proofpoint-ORIG-GUID: qVWRgGo-wAqK4cZTeTASIf2_RXgSX3iM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_05,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxscore=0 mlxlogscore=999 clxscore=1015 phishscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503280071
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250327213807.12964-1-m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-PCIe equalization presets are predefined settings used to optimize
-signal integrity by compensating for signal loss and distortion in
-high-speed data transmission.
+On Thu, Mar 27, 2025 at 09:38:05PM +0000, Tingmao Wang wrote:
+> Hi Mickaël,
 
-Based upon the number of lanes and the data rate supported, write
-the preset data read from the device tree in to the lane equalization
-control registers.
+Hi, thanks for the report.
 
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 76 +++++++++++++++++++++++
- drivers/pci/controller/dwc/pcie-designware.h      |  3 +
- 2 files changed, 79 insertions(+)
+> 
+> On 3/20/25 19:06, Mickaël Salaün wrote:
+> [...]
+> > +static struct landlock_hierarchy *
+> > +get_hierarchy(const struct landlock_ruleset *const domain, const size_t layer)
+> > +{
+> > +	struct landlock_hierarchy *hierarchy = domain->hierarchy;
+> > +	ssize_t i;
+> > +
+> > +	if (WARN_ON_ONCE(layer >= domain->num_layers))
+> > +		return hierarchy;
+> > +
+> > +	for (i = domain->num_layers - 1; i > layer; i--) {
+> > +		if (WARN_ON_ONCE(!hierarchy->parent))
+> > +			break;
+> > +
+> > +		hierarchy = hierarchy->parent;
+> > +	}
+> > +
+> > +	return hierarchy;
+> > +}
+> > +
+> > +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> > +
+> > +static void test_get_hierarchy(struct kunit *const test)
+> > +{
+> > +	struct landlock_hierarchy dom0_hierarchy = {
+> > +		.id = 10,
+> > +	};
+> > +	struct landlock_hierarchy dom1_hierarchy = {
+> > +		.parent = &dom0_hierarchy,
+> > +		.id = 20,
+> > +	};
+> > +	struct landlock_hierarchy dom2_hierarchy = {
+> > +		.parent = &dom1_hierarchy,
+> > +		.id = 30,
+> > +	};
+> > +	struct landlock_ruleset dom2 = {
+> > +		.hierarchy = &dom2_hierarchy,
+> > +		.num_layers = 3,
+> > +	};
+> > +
+> > +	KUNIT_EXPECT_EQ(test, 10, get_hierarchy(&dom2, 0)->id);
+> > +	KUNIT_EXPECT_EQ(test, 20, get_hierarchy(&dom2, 1)->id);
+> > +	KUNIT_EXPECT_EQ(test, 30, get_hierarchy(&dom2, 2)->id);
+> > +	KUNIT_EXPECT_EQ(test, 30, get_hierarchy(&dom2, -1)->id);
+> 
+> This causes a warning from WARN_ON_ONCE(layer >= domain->num_layers)
+> when running this test, I guess because layer is unsigned.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index dd56cc02f4ef..153f9ce93ccd 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -507,6 +507,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
- 	if (pci->num_lanes < 1)
- 		pci->num_lanes = dw_pcie_link_get_max_link_width(pci);
- 
-+	ret = of_pci_get_equalization_presets(dev, &pp->presets, pci->num_lanes);
-+	if (ret)
-+		goto err_free_msi;
-+
- 	/*
- 	 * Allocate the resource for MSG TLP before programming the iATU
- 	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
-@@ -808,6 +812,77 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
- 	return 0;
- }
- 
-+static void dw_pcie_program_presets(struct dw_pcie_rp *pp, enum pci_bus_speed speed)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	u8 lane_eq_offset, lane_reg_size, cap_id;
-+	u8 *presets;
-+	u32 cap;
-+	int i;
-+
-+	if (speed == PCIE_SPEED_8_0GT) {
-+		presets = (u8 *)pp->presets.eq_presets_8gts;
-+		lane_eq_offset =  PCI_SECPCI_LE_CTRL;
-+		cap_id = PCI_EXT_CAP_ID_SECPCI;
-+		/* For data rate of 8 GT/S each lane equalization control is 16bits wide*/
-+		lane_reg_size = 0x2;
-+	} else if (speed == PCIE_SPEED_16_0GT) {
-+		presets = pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS - 1];
-+		lane_eq_offset = PCI_PL_16GT_LE_CTRL;
-+		cap_id = PCI_EXT_CAP_ID_PL_16GT;
-+		lane_reg_size = 0x1;
-+	} else if (speed == PCIE_SPEED_32_0GT) {
-+		presets =  pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_32GTS - 1];
-+		lane_eq_offset = PCI_PL_32GT_LE_CTRL;
-+		cap_id = PCI_EXT_CAP_ID_PL_32GT;
-+		lane_reg_size = 0x1;
-+	} else if (speed == PCIE_SPEED_64_0GT) {
-+		presets =  pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_64GTS - 1];
-+		lane_eq_offset = PCI_PL_64GT_LE_CTRL;
-+		cap_id = PCI_EXT_CAP_ID_PL_64GT;
-+		lane_reg_size = 0x1;
-+	} else {
-+		return;
-+	}
-+
-+	if (presets[0] == PCI_EQ_RESV)
-+		return;
-+
-+	cap = dw_pcie_find_ext_capability(pci, cap_id);
-+	if (!cap)
-+		return;
-+
-+	/*
-+	 * Write preset values to the registers byte-by-byte for the given
-+	 * number of lanes and register size.
-+	 */
-+	for (i = 0; i < pci->num_lanes * lane_reg_size; i++)
-+		dw_pcie_writeb_dbi(pci, cap + lane_eq_offset + i, presets[i]);
-+}
-+
-+static void dw_pcie_config_presets(struct dw_pcie_rp *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	enum pci_bus_speed speed = pcie_link_speed[pci->max_link_speed];
-+
-+	/*
-+	 * Lane equalization needs to be perfomed for all data rates
-+	 * the controller supports and for all supported lanes.
-+	 */
-+
-+	if (speed >= PCIE_SPEED_8_0GT)
-+		dw_pcie_program_presets(pp, PCIE_SPEED_8_0GT);
-+
-+	if (speed >= PCIE_SPEED_16_0GT)
-+		dw_pcie_program_presets(pp, PCIE_SPEED_16_0GT);
-+
-+	if (speed >= PCIE_SPEED_32_0GT)
-+		dw_pcie_program_presets(pp, PCIE_SPEED_32_0GT);
-+
-+	if (speed >= PCIE_SPEED_64_0GT)
-+		dw_pcie_program_presets(pp, PCIE_SPEED_64_0GT);
-+}
-+
- int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -861,6 +936,7 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
- 		PCI_COMMAND_MASTER | PCI_COMMAND_SERR;
- 	dw_pcie_writel_dbi(pci, PCI_COMMAND, val);
- 
-+	dw_pcie_config_presets(pp);
- 	/*
- 	 * If the platform provides its own child bus config accesses, it means
- 	 * the platform uses its own address translation component rather than
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 61d1fb6b437b..30ae8d3f4282 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -25,6 +25,8 @@
- #include <linux/pci-epc.h>
- #include <linux/pci-epf.h>
- 
-+#include "../../pci.h"
-+
- /* DWC PCIe IP-core versions (native support since v4.70a) */
- #define DW_PCIE_VER_365A		0x3336352a
- #define DW_PCIE_VER_460A		0x3436302a
-@@ -381,6 +383,7 @@ struct dw_pcie_rp {
- 	int			msg_atu_index;
- 	struct resource		*msg_res;
- 	bool			use_linkup_irq;
-+	struct pci_eq_presets	presets;
- };
- 
- struct dw_pcie_ep_ops {
+Interestingly this doesn't make the test to fail (because the result is
+still correct), nor to show up when using tools/testing/kunit/kunit.py,
+which is why I didn't see that.
 
--- 
-2.34.1
+> Should it
+> be ssize_t, if this is an expected usage?
 
+The get_hierarchy() code is correct, and the KUnit test is correct too.
+Using a ssize_t would introduce a bug.
+
+The issue is that I wanted to test a case that should never happen,
+hence the WARN_ON_ONCE().
+
+I guess the best "fix" for now would be to remove the KUnit test with
+-1, but there is a new KUnit feature to hide this kind of warning:
+https://lore.kernel.org/linux-kselftest/20250313114329.284104-1-acarmina@redhat.com/
+It is currently in linux-next, but I'm not sure it will be merged in
+Linux 6.15 .
+
+For now I'll keep this commit but I'll send a fix/update to either
+remove the test or use the new DEFINE_SUPPRESSED_WARNING macros
+depending on its merge status.
+
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 7 PID: 145 at security/landlock/audit.c:142 get_hierarchy (security/landlock/audit.c:142)
+> Modules linked in:
+> CPU: 7 UID: 0 PID: 145 Comm: kunit_try_catch Tainted: G                 N  6.14.0-next-20250326-dev-00004-g4e57edc3e062-dirty #5 PREEMPT(undef)
+> Tainted: [N]=TEST
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> RIP: 0010:get_hierarchy (security/landlock/audit.c:142)
+> Code: 83 e8 02 e8 18 00 84 c0 75 02 0f 0b 48 83 c4 08 48 89 d8 5b 41 5c 41 5e 5d c3 48 c7 c7 00 f3 21 83 e8 e2 e7 18 00 84 c0 75 e2 <0f> 0b eb de 48 89 75 e0 e8 a1 a9 a7 ff 48 8b 75 e0 e9 76 ff ff ff
+> // snip //
+> Call Trace:
+>  <TASK>
+> test_get_hierarchy (security/landlock/audit.c:178 (discriminator 5))
+> ? test_get_denied_layer (security/landlock/audit.c:158)
+> ? lock_repin_lock (kernel/locking/lockdep.c:5649 kernel/locking/lockdep.c:5978)
+> ? __lock_acquire (kernel/locking/lockdep.c:4675 kernel/locking/lockdep.c:5189)
+> ? _raw_spin_unlock_irqrestore (./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
+> ? find_held_lock (kernel/locking/lockdep.c:5348)
+> ? trace_irq_enable (./include/trace/events/preemptirq.h:40 (discriminator 17))
+> ? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:80)
+> ? kvm_clock_get_cycles (./arch/x86/include/asm/preempt.h:95 arch/x86/kernel/kvmclock.c:80 arch/x86/kernel/kvmclock.c:86)
+> ? ktime_get_ts64 (kernel/time/timekeeping.c:318 (discriminator 4) kernel/time/timekeeping.c:335 (discriminator 4) kernel/time/timekeeping.c:907 (discriminator 4))
+> kunit_try_run_case (lib/kunit/test.c:400 lib/kunit/test.c:443)
+> ? kunit_try_run_case_cleanup (lib/kunit/test.c:430)
+> 
+> 
 
