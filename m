@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-580419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CE9A751B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:57:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFED6A7519F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CDF16F6B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E70E3AFACF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C006A1EB5D1;
-	Fri, 28 Mar 2025 20:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FF61E8357;
+	Fri, 28 Mar 2025 20:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="yH0WR7ID"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNYh6u8a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F2D3C0C;
-	Fri, 28 Mar 2025 20:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81EFE545;
+	Fri, 28 Mar 2025 20:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743195420; cv=none; b=D6R4bwN73fs1UQm0t+Ij6gcvg5UYw2M9FG+88SS7Fw55MN43moBOyVX4ds7xiPyKwsdGxf5gTXBmWzzTJ+3GqJpfAVcP4vvLX355b9X999TpD8bIu2StYTy9XbHhItLLmhefjgyTg/1/78H6+jzva1hkuUjaaqIsvIYnKD62Vsg=
+	t=1743194745; cv=none; b=XipqZagEMGTeGhnR5Wt1rxW9kzu7AkK6BDGVYHjS3ymRLRbvtWaJwZ53C9eB4mV8jiYDiC3qrnNf+GSg7VI7NNQ1E+izIbBKxE+mu5tEIoMiCQrzyxILxTviXng3OEcjkfpK047gv9LB48o49S6afGCxSotBQ2zI7xCk6P150fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743195420; c=relaxed/simple;
-	bh=ycJEX7FuLXeGzXyCuuMpFUIzwIDr+WEtto5p6PVc7x0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u8YOePkBGJCH+78bNb1y78ou4aJ40Q0WgcGkZSNWkw1TJQurA+qU27I4rY1G8kXL5jGAaBwlTEqMKFPWdzvqaXIDU8zJVmP8NHYIk52sBxQoAk0yDO2Xa16dHUcLRAXBDldMaExJpswV69KP0xebdmKuQnrLXS9xzAEyoej+dyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=yH0WR7ID; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 9f9d1509029a4dea; Fri, 28 Mar 2025 21:56:56 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B80477F0283;
-	Fri, 28 Mar 2025 21:56:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1743195416;
-	bh=ycJEX7FuLXeGzXyCuuMpFUIzwIDr+WEtto5p6PVc7x0=;
-	h=From:Subject:Date;
-	b=yH0WR7IDWnty0oBzXx8Nj8/7zcZSESOSZH9DiBdnRJucNKEfqoVspqvCKrAdaOv0l
-	 hN7PWk125sKE6UzIUM93Cx5x+1jZyGMDEv28JXrLQ3ucv4zmo7oE6r7VFxZJ9auKlI
-	 c8T9HlMBjYv79w6UGGpusiQ8LVnYcsNVs//KsP3cjq36b/1JP/u/n7uEvYuqpOAXU7
-	 CnjD9r6lT/TkgtdebB7QIL+5v74FZhil93HGVQmHMg14nvlqGIiVM7KjaIjtdqTVGT
-	 MzHx0vGpvHsr5wK8mQG433GKuUHqhAqQTBVAL7XiIoSc0aVbH5gMu0GDHe4iYnYioQ
-	 1lBbZKfcC8kIg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Sudeep Holla <sudeep.holla@arm.com>
-Subject:
- [PATCH v1 07/10] cpufreq: Drop cpufreq_cpu_acquire() and
- cpufreq_cpu_release()
-Date: Fri, 28 Mar 2025 21:45:38 +0100
-Message-ID: <3880470.kQq0lBPeGt@rjwysocki.net>
-In-Reply-To: <4651448.LvFx2qVVIh@rjwysocki.net>
-References: <4651448.LvFx2qVVIh@rjwysocki.net>
+	s=arc-20240116; t=1743194745; c=relaxed/simple;
+	bh=gblrgFlqbUDvjkc6YbKVtEGV+5JozaP2AsM/g6GiBvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kl3Ux7pzMISEVEMfaRk17YCwrAAu7Fi2PQxytcgAESRB2INnmanPe/y4vKogt64iyNtlVk6BPF1tCig2kdqeDl1yw9GtPQtZxqsiKyZK0ZTuRasME720FSfsVj5dZXxXhmhiXXPzJTVrYaVVfeeYw+qGWtDAjKvrs/eUNXDBvkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNYh6u8a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48723C4CEE4;
+	Fri, 28 Mar 2025 20:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743194743;
+	bh=gblrgFlqbUDvjkc6YbKVtEGV+5JozaP2AsM/g6GiBvY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HNYh6u8aXe7NzxiuGLWkVd7JfpTdcAwfLDFDenBFRnFpvI9nGwnXXra+M4dtc+/VF
+	 kMI3osWV5w65F1wzplT047AticbWTBx39lZ/nYQUPTpXgJipijWvoDsrb5zay2bJyE
+	 H2f0QRAM3v71EQ6ThMxQUxTlYy3viUEcNU/QqZnKSEKzmUJ0RwLmbAeg3LZPjwrYz5
+	 IQDI+1Hicm06gagxTWEYwiEd5bKzIYdL+MdDpXQ4+Fbmp0IZ6WEFZD3XTIkmIP/N9f
+	 rgnibdMimTYT/rF5lW6Rx6HjaRvkBmxzRho9VwuXqB7IlV2hxTu6/8/wu+urL7a1Yn
+	 OEPDZhzTcozJw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E5C49CE0889; Fri, 28 Mar 2025 13:45:42 -0700 (PDT)
+Date: Fri, 28 Mar 2025 13:45:42 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: linux-cxl@vger.kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, gourry@gourry.net,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	sfr@canb.auug.org.au
+Subject: Re: [BUG -next] ./usr/include/cxl/features.h:11:10: fatal error:
+ uuid/uuid.h: No such file or directory
+Message-ID: <52a34c97-88d2-415e-a899-6583ae3ba620@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <f6489337-67c7-48c8-b48a-58603ec15328@paulmck-laptop>
+ <14bfcfa0-5999-49e4-854e-ff8810d6df3c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedvfeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=24 Fuz1=24 Fuz2=24
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14bfcfa0-5999-49e4-854e-ff8810d6df3c@intel.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Mar 28, 2025 at 01:03:19PM -0700, Dave Jiang wrote:
+> 
+> 
+> On 3/28/25 10:39 AM, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > In next-20250328 and next-20250327, allmodconfig builds get me:
+> > 
+> > ./usr/include/cxl/features.h:11:10: fatal error: uuid/uuid.h: No such file or directory
+> > 
+> > This file is apparently auto-generated, because when I change the #include
+> > to the more likely linux/uuid.h, my changes are overwritten by the build.
+> > 
+> > Gregory Price noted that something similar has happened recently and been fixed:
+> > 
+> > https://lore.kernel.org/all/70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com/
+> > 
+> > Perhaps someone unfixed it?
+> > 
+> > 								Thanx, Paul
+> 
+> 
+> I can't get the powerpc cross build to build to reproduce the issue from next-20250328. Does the change below address the issue for you?
+> 
+> ---
+> diff --git a/include/uapi/cxl/features.h b/include/uapi/cxl/features.h
+> index d6db8984889f..691eeda9c892 100644
+> --- a/include/uapi/cxl/features.h
+> +++ b/include/uapi/cxl/features.h
+> @@ -8,11 +8,7 @@
+>  #define _UAPI_CXL_FEATURES_H_
+>  
+>  #include <linux/types.h>
+> -#ifndef __KERNEL__
+> -#include <uuid/uuid.h>
+> -#else
+>  #include <linux/uuid.h>
+> -#endif
+>  
+>  /*
+>   * struct cxl_mbox_get_sup_feats_in - Get Supported Features input
 
-Since cpufreq_cpu_acquire() and cpufreq_cpu_release() have no more
-users in the tree, remove them.
+Thank you, Dave!
 
-No intentional functional impact.
+Please note that I am reproducing this not on powerpc, but instead on
+x86 with a simple allmodconfig build.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/cpufreq.c |   45 ---------------------------------------------
- include/linux/cpufreq.h   |    2 --
- 2 files changed, 47 deletions(-)
+Making the above change got me this:
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -255,51 +255,6 @@
- }
- EXPORT_SYMBOL_GPL(cpufreq_cpu_put);
- 
--/**
-- * cpufreq_cpu_release - Unlock a policy and decrement its usage counter.
-- * @policy: cpufreq policy returned by cpufreq_cpu_acquire().
-- */
--void cpufreq_cpu_release(struct cpufreq_policy *policy)
--{
--	if (WARN_ON(!policy))
--		return;
--
--	lockdep_assert_held(&policy->rwsem);
--
--	up_write(&policy->rwsem);
--
--	cpufreq_cpu_put(policy);
--}
--
--/**
-- * cpufreq_cpu_acquire - Find policy for a CPU, mark it as busy and lock it.
-- * @cpu: CPU to find the policy for.
-- *
-- * Call cpufreq_cpu_get() to get a reference on the cpufreq policy for @cpu and
-- * if the policy returned by it is not NULL, acquire its rwsem for writing.
-- * Return the policy if it is active or release it and return NULL otherwise.
-- *
-- * The policy returned by this function has to be released with the help of
-- * cpufreq_cpu_release() in order to release its rwsem and balance its usage
-- * counter properly.
-- */
--struct cpufreq_policy *cpufreq_cpu_acquire(unsigned int cpu)
--{
--	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
--
--	if (!policy)
--		return NULL;
--
--	down_write(&policy->rwsem);
--
--	if (policy_is_inactive(policy)) {
--		cpufreq_cpu_release(policy);
--		return NULL;
--	}
--
--	return policy;
--}
--
- /*********************************************************************
-  *            EXTERNALLY AFFECTING FREQUENCY CHANGES                 *
-  *********************************************************************/
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -241,8 +241,6 @@
- 
- u64 get_cpu_idle_time(unsigned int cpu, u64 *wall, int io_busy);
- 
--struct cpufreq_policy *cpufreq_cpu_acquire(unsigned int cpu);
--void cpufreq_cpu_release(struct cpufreq_policy *policy);
- int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu);
- void refresh_frequency_limits(struct cpufreq_policy *policy);
- void cpufreq_update_policy(unsigned int cpu);
+usr/include/cxl/features.h:59:9: error: unknown type name ‘uuid_t’
 
-
-
+							Thanx, Paul
 
