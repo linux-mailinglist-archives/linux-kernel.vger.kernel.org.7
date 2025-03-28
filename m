@@ -1,72 +1,161 @@
-Return-Path: <linux-kernel+bounces-579732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BADA748C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:55:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D855A748C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B542175CB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FF0D177D4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13659214217;
-	Fri, 28 Mar 2025 10:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E108321516D;
+	Fri, 28 Mar 2025 10:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A73a8cFT"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKQmSvqE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F52F1F583D;
-	Fri, 28 Mar 2025 10:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69572213232
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743159321; cv=none; b=fWt8LgcgfUl0ShRLl844CdxnftkDheH/QN663VaJiWM7VxbHQ9AgfMU88Hut4nEZ30h038QW2G+BFovAxJ1vZtNW3brxRR9X8WaErjBSOZcnxVGOxttibaIwKn2O7bubd++/astseSrRKm/khojU4rsSL6TU1JOXEeQZDbjzTEM=
+	t=1743159344; cv=none; b=l9wdxRQfC+tvfyxA6CbyFo/DJbqtUV8xD4HQY3F4Y7+ynQRdGmdWNYEdIwZaSfhWhWxEeBe6BykBuh0gIzbx4SNMVJQOJ2Wtb2+J3WeoZg8QVKeRrP0LZbeTB39eur2OgijUv2ZP5Xu+8WPfi4yG+caWkHXAiuTpIzevQH9pW6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743159321; c=relaxed/simple;
-	bh=FOllFKRqF5bBq2cR+69jE9OQJJq3gVw/gnpRvT34u3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qznWQWXY42X7Ea2V9L93m3WtpNG2o/ZI1+/xkqAjJ4rcd45dFyLU6lm5ZiIv4iKBhVwU2TtzHplEC19v2ngD8Te3QMVSKv2C7IkrooaaWMCgV+EiVYjoqJaOKRyTx9/A2cw3Vby7ZwH5CHVDet9vNu1SYaNsP+eHWZcDudFC0fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A73a8cFT; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JbS8da8AxoXIq0TnjhuaWcxM7AcovnYAibDqa/WW/GE=; b=A73a8cFTgja0rTt+bwsiuXHMah
-	MSo5fz48Pcca4ncUIm+L9F58YvCMxFjj/4kxLrQM0yELBwHpcukBWE0n7sU0trsiJwGb4ner9TTbL
-	L9tnZJFFC3xobtAZ4bCOgv3H6CaTMjL4fVVeonUkJuP5q4MPmhFeDNxhP/2V3eaySJr8fcQgu2HZt
-	nzM2a2/Zq+qQyxxJP4AVnr9twqXd19FdnUpS8Atn2qrK+YnkejoZQWakaSvfXbYs2ruTmYU85Y5j9
-	knp007yARnsYD1PowgGFtePDcD4NQAGeA5JjUr1hKV0GhNVs0W2r2GQjPPSmQH6LpxVSLAGSBJb7e
-	l/9sFMHg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1ty7Ms-0000000DBIe-0bhL;
-	Fri, 28 Mar 2025 10:55:18 +0000
-Date: Fri, 28 Mar 2025 03:55:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Fanhui Meng <mengfanhui@kylinos.cn>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: optimize sq_hctx assignment
-Message-ID: <Z-aAFkOm0KtFp9b6@infradead.org>
-References: <20250328031321.790317-1-mengfanhui@kylinos.cn>
+	s=arc-20240116; t=1743159344; c=relaxed/simple;
+	bh=a1rly5gUjRmHoKNV/zsYKyvyzWBEx5uJp0WvPNmcVHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=O1fXgiHg3lwsBF9f3g+mZEYhH6P0WEN/quRaE+7m0uV9yTkyc/hLVW9RcKLbMFFSwN58POHLDua57Cr7UwKJGFKIcvYst2rU/Xma0FPwXRnZ6diA06bTe/Ebos6h4XIVhWl6QdKr424NAkErKYOzWlOfYusT27/C3blX5Ur09A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKQmSvqE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-399737f4fa4so878502f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743159340; x=1743764140; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jlWuwEyib7bXwZotu7bXNMhvHgZvJuZ47SfBzkqHSrM=;
+        b=VKQmSvqEshjjasFJ/wkZyrnlqFdq0qNYEtXZjSZTok2xfb4VtJfv3jrRe11T+mZ7yM
+         kQGM4MYnl1A5xuTs/O1nmbGGITRrtBlX62t/W8l3FLZjB0AjbYqRz7wyno5JdPm/tAoW
+         bizcGx0Bv3QY5meKIRXINxMuFXbl8cW04xQhRdwjq12cFxrmI5uWzUpqE9t6+sPnNSCu
+         HSGGjhXdHgueF9Dzod8JFHMvipPgZjSQo0h4dXFz7JjbgAdwns261u1WWTG5LQJzu8Yk
+         b4raLWPFjgnHBy+Ey81FaQgjcELTo487MDVk5AOxf5pywTSlEoDolB0vX3ZU5qOBStAp
+         zwng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743159340; x=1743764140;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlWuwEyib7bXwZotu7bXNMhvHgZvJuZ47SfBzkqHSrM=;
+        b=Fpc+iqaBJ3OV6wTcKGcvvSSui3qo24Xn0k63Z543Uz/gSatW34ryjye6SVcqXBdVQP
+         WI5KhofWIFzqtFGSy/F7EGiJeRUNTpayRmtLyMxGVsFVk9owJz78wihx7H1ApV0J5ypE
+         zDDRXf1ok+6Ek3LjMccEXPPyxh/ZJiHWPkcsgSZmLENUHxOsC2Xo6guiWoMsid/Dktww
+         4TAlaRFRt7yyTeNilGpSXgCvc5kOBKg3BmfjDA9pXad/VClSFoZxs/wFDAZgTiXWw9uK
+         E+ghml0sYiCvRcQcW+vFek9q7VqVJPF3AoA/NBhK1xplPgM6sIM0tvN+OoJz39KRnzA9
+         eQBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSiG0y/xvj7OvDSfQ8PFIfFBeUbENcSa3deymblEu4vf4ppWcMzvQH9B4nEc3D98OlSys+BeRPi5CjNu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlsjF9JvhtY+RCmMO8Jk/EZ7MWkQe6dtdftRZGLjfjyD1K5cjH
+	3EI5ketjUPCdRP0gzj7tdcPK1kMA3vUgwR/ZFlTVZedXbiITfDvjIUv0X6Q79Uo=
+X-Gm-Gg: ASbGncuXg17WIyj2uNlPGLYeKGQRHEGlFJoHS3u7htY+XdwfplCHZ9f0tVBaU2y877X
+	Dm0T9CwLAzoUvtgI1ECmUVPiZ9sqRHx86+kO0BYn+OG+O8S1TQzCW8frsEULJzkosug5EneXYC3
+	bmcgPfLdRtgg6nr04eGcpNOxCV1h1/pbv7V1fTlOirofHQT0+yv4aiUrJddiQglyWAds4WdoZnJ
+	Q6FvRiB/yAUA+TmdygX9U+FcbG2ncZn1dLJ/0zcI8qFx+PrzNZuLoL3Dla8a1nXttidTIMwXtMK
+	ex+qBfY3MNimpmz0yIv3/Xk8acFq8fj3YHAYCzJvcGxf6VIv0g==
+X-Google-Smtp-Source: AGHT+IGpJg4Oq+TQPYDqZ2gf0BvpT6xO0x4HFewwKq64hg9Uw0vquJBndWaTVIT8A6IIrPjIrbk7lg==
+X-Received: by 2002:a05:6000:184c:b0:391:2d61:4561 with SMTP id ffacd0b85a97d-39ad17544cbmr6256409f8f.6.1743159340557;
+        Fri, 28 Mar 2025 03:55:40 -0700 (PDT)
+Received: from [192.168.1.247] ([77.81.75.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b79e0afsm2249168f8f.65.2025.03.28.03.55.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 03:55:40 -0700 (PDT)
+Message-ID: <6ebf4627-913a-409c-98b2-7dbc120107fa@linaro.org>
+Date: Fri, 28 Mar 2025 10:55:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328031321.790317-1-mengfanhui@kylinos.cn>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf stat: Don't print uncounted hwmon events
+To: Ian Rogers <irogers@google.com>
+References: <20250328045337.229354-1-irogers@google.com>
+Content-Language: en-US
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250328045337.229354-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 28, 2025 at 11:13:21AM +0800, Fanhui Meng wrote:
-> Optimizing code for greater standardization.
 
-not sure what is an optimization here.  I personally really like
-initializing variables at declaration time, but it's not an optimization
-and without other changes it the area this really just feels like churn.
+
+On 28/03/2025 4:53 am, Ian Rogers wrote:
+> Aggregation is different for core events compared to uncore. For
+> uncore we don't want the counts for events not in the aggregation
+> id. Switch the !counter->pmu->is_uncore test to a
+> counter->pmu->is_core as the hwmon PMU doesn't set the uncore
+> boolean. There are 2 booleans as some PMUs forget to set either
+> cpumask or cpus that are used to determine whether a PMU is uncore or
+> core. Also check config->aggr_get_id is present as the non-core
+> 'software' PMU doesn't have it set.
+> 
+> Before:
+> ```
+> $ perf stat --per-core -e temp_cpu -a true
+> 
+>   Performance counter stats for 'system wide':
+> 
+> S0-D0-C0              1              63.00 'C   temp_cpu
+> S0-D0-C1              0      <not counted> 'C   temp_cpu
+> S0-D0-C2              0      <not counted> 'C   temp_cpu
+> S0-D0-C3              0      <not counted> 'C   temp_cpu
+> S0-D0-C4              0      <not counted> 'C   temp_cpu
+> S0-D0-C5              0      <not counted> 'C   temp_cpu
+> S0-D0-C6              0      <not counted> 'C   temp_cpu
+> S0-D0-C7              0      <not counted> 'C   temp_cpu
+> 
+>         0.001375790 seconds time elapsed
+> ```
+> 
+> After:
+> ```
+> $ perf stat --per-core -e temp_cpu -a true
+> 
+>   Performance counter stats for 'system wide':
+> 
+> S0-D0-C0              1              38.00 'C   temp_cpu
+> 
+>         0.001260575 seconds time elapsed
+> ```
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>   tools/perf/util/stat-display.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> index 91386429115d..ed3270ab2557 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -981,7 +981,7 @@ static bool should_skip_zero_counter(struct perf_stat_config *config,
+>   	 * Skip value 0 when it's an uncore event and the given aggr id
+>   	 * does not belong to the PMU cpumask.
+>   	 */
+> -	if (!counter->pmu || !counter->pmu->is_uncore)
+> +	if (!counter->pmu || counter->pmu->is_core || !config->aggr_get_id)
+>   		return false;
+>   
+>   	perf_cpu_map__for_each_cpu(cpu, idx, counter->pmu->cpus) {
+
+Reviewed-by: James Clark <james.clark@linaro.org>
 
 
