@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-579841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA8BA74A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:59:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BD9A74A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D733BC709
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2443BCA6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FCF12CD8B;
-	Fri, 28 Mar 2025 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OjvO0PxA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tQ3RCDDI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oatfvwxs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="un83GBRc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59342440C;
+	Fri, 28 Mar 2025 13:00:14 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DC770814
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7CD374FF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743166760; cv=none; b=DZsUfC2jOsxKR26GVecKdCI2klMonGG+LuI3U7X0xg88gmLz2G/yhahPCvu/E6WczuSynUyK7HAskbh4ZvI0SymNwiKJ9uEjMGcW6VfDSm2111ndCpoADsVzcT3zqZeXQ+eMFExqC/PMWL9B+EDV87xw7un8apKqRkj9gy5UQ4o=
+	t=1743166814; cv=none; b=RyRikXqQqv3+/670DP7nlYPYc6EJp9RfYT30EJ9b2yop/1lkwKR6PL8C9eJe8E6JSI/DCT2QQpCr2Ma+xQPkJ2IO8h5mXSLHJ+q/FomOQDFnJ99xuDJvP1/PYkv17YtcWV0uRsROMsKu+XnPEf3VN1aGksS0nnNInk56TDyXOwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743166760; c=relaxed/simple;
-	bh=vKq8kM552BXKQP3g2sfxgp8yUYJ9RZrKo9foX6FztlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfsrpqqxxCXu9peDS48IjY8mkvJYUIs06YonyK7YD+gI3lqVvbj+kUGOxWZF0kO9bXV8MNkSnDupWayKPXB3OHDWYjbqTm2phnzpSG1GzwbVnJGQBj8Q4TD4V0wAvM7Ae/ilCTj0uBxgdrtzdQSyO7L+CPMc378iE6Mim1eHm7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OjvO0PxA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tQ3RCDDI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oatfvwxs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=un83GBRc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2AF1D1F395;
-	Fri, 28 Mar 2025 12:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743166756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eoxJI3tSKLozJ9buY/IslFV3bpaEPzfq4n4oUlR3WrI=;
-	b=OjvO0PxA0t3ZTZ9GNxIcnu72SMZo+wkU7VDLEbSNBRFVu2XRgZxDOtb3PEvuVRzobY3yjK
-	fC75e3lA6UJRq3xrGYG7kNx8xCqQkvbPYcYsfoOHEvahdgwiDjUM2df5wYcm0kUk63vxwr
-	jpadw0hsXbYv1/trkSe+rcyGK60bZBE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743166756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eoxJI3tSKLozJ9buY/IslFV3bpaEPzfq4n4oUlR3WrI=;
-	b=tQ3RCDDI4C+Bzmjd+Lk5V/RR7b9u8CQDHlSg8P44v0ke1jEg4SiggnDNp2D7t4qeTGr97a
-	PC4r0i2UiUJMKGCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743166755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eoxJI3tSKLozJ9buY/IslFV3bpaEPzfq4n4oUlR3WrI=;
-	b=oatfvwxsbU7P+YVlnLSiyPOPGUfmvH2QjcTQ4Ghe4XRH7veK9lBO2Wkl2Oo9qdhxDlqdqy
-	eR0tnhUQiyneCrAaGIF7UC7VmGNUJiuFwS4tZup0USW+RgB3Y38aWixKHAnJMbdAdEEVwk
-	Qv+bNieWW7OsBQ4TnU4UidmStRTsxyM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743166755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eoxJI3tSKLozJ9buY/IslFV3bpaEPzfq4n4oUlR3WrI=;
-	b=un83GBRcEX61mgTbGYcy75UbAZc0pr4gRG7omy8bfO6vkQ4izH/XHaUJSZMlDGGHcVvFh9
-	0Ycd08rcsT5SlJCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDE3C13927;
-	Fri, 28 Mar 2025 12:59:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8/iEKyKd5meEWQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 28 Mar 2025 12:59:14 +0000
-Date: Fri, 28 Mar 2025 13:59:09 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: akpm@linux-foundation.org, monstr@monstr.eu, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH] microblaze/mm: put mm_cmdline_setup() in .init.text
- section
-Message-ID: <Z-adHYx8NAzle2xS@localhost.localdomain>
-References: <20250328010136.13139-1-richard.weiyang@gmail.com>
+	s=arc-20240116; t=1743166814; c=relaxed/simple;
+	bh=mtrhs0FWYCc+xIyO8l1PClhGbGvAQDUBWAAAWdvfHwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g6nK1UOWyKH8mwVcDK/U8GgK7yPT2BmKdpfHYe4NQLUvvY9EtSAuzzasUH5GwiWB56OYFe3ETBlu13Wg8LDFRi46QjRhlI/1/8Zvtsx0T/tLsFU56W7uKNiILT+99E19APaAF21kv2EJaqcooIew4SBKZuHk7O52OGV+h+silrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E605E442A7;
+	Fri, 28 Mar 2025 13:00:01 +0000 (UTC)
+Message-ID: <26afad1a-bee0-498b-8213-aea87167dedd@ghiti.fr>
+Date: Fri, 28 Mar 2025 14:00:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328010136.13139-1-richard.weiyang@gmail.com>
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,intel.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Make sure toolchain supports zba before using zba
+ instructions
+Content-Language: en-US
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: kernel test robot <lkp@intel.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>
+References: <20250328115422.253670-1-alexghiti@rivosinc.com>
+ <7352dfbf-51e0-47b0-81e2-264f30989bf1@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <7352dfbf-51e0-47b0-81e2-264f30989bf1@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedufeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurdefudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepjedprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheprghlvgigghhhihhtihesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgp
+ dhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Fri, Mar 28, 2025 at 01:01:36AM +0000, Wei Yang wrote:
-> As reported by lkp, there is a section mismatch of mm_cmdline_setup() and
-> memblock. The reason is we don't specify the section of mm_cmdline_setup()
-> and gcc put it into .text.unlikely.
-> 
-> As mm_cmdline_setup() is only used in mmu_init(), which is in .init.text
-> section, put mm_cmdline_setup() into it too.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> CC: Masahiro Yamada <masahiroy@kernel.org>
-> CC: Andrew Morton <akpm@linux-foundation.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503241259.kJV3U7Xj-lkp@intel.com/
+On 28/03/2025 13:51, Clément Léger wrote:
+>
+> On 28/03/2025 12:54, Alexandre Ghiti wrote:
+>> Old toolchain like gcc 8.5.0 does not support zba, so we must check that
+>> the toolchain supports this extension before using it in the kernel.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202503281836.8pntHm6I-lkp@intel.com/
+>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>> ---
+>>   arch/riscv/Kconfig                     | 8 ++++++++
+>>   arch/riscv/include/asm/runtime-const.h | 5 +++--
+>>   2 files changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 0d8def968a7e..ae6303f15b28 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -735,6 +735,14 @@ config TOOLCHAIN_HAS_VECTOR_CRYPTO
+>>   	def_bool $(as-instr, .option arch$(comma) +v$(comma) +zvkb)
+>>   	depends on AS_HAS_OPTION_ARCH
+>>   
+>> +config TOOLCHAIN_HAS_ZBA
+>> +	bool
+>> +	default y
+>> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zba)
+>> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
+>> +	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
+>> +	depends on AS_HAS_OPTION_ARCH
+>> +
+>>   config RISCV_ISA_ZBA
+> Hi Alex,
+>
+> Why not add a "depends on TOOLCHAIN_HAS_ZBA" here so you don't have to
+> check for that config option when using CONFIG_RISCV_ISA_ZBA ? This is
+> done like that for ZBB and ZBC.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+Actually Conor changed that for Zbb in 
+https://lore.kernel.org/lkml/20241024-aspire-rectify-9982da6943e5@spud/T/#m89d45ba3cbc6c2f953516c0e9977fecf397809b0 
+which is queued for 6.15.
+
+Zba is also used in BPF, so we should not require that the toolchain 
+supports zba but instead just that the platform supports it.
+
+Thanks,
+
+Alex
 
 
--- 
-Oscar Salvador
-SUSE Labs
+>
+> Thanks,
+>
+> Clément
+>
+>>   	bool "Zba extension support for bit manipulation instructions"
+>>   	default y
+>> diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/asm/runtime-const.h
+>> index ea2e49c7149c..c07d049fdd5d 100644
+>> --- a/arch/riscv/include/asm/runtime-const.h
+>> +++ b/arch/riscv/include/asm/runtime-const.h
+>> @@ -77,7 +77,8 @@
+>>   	".long 1b - .\n\t"					\
+>>   	".popsection"						\
+>>   
+>> -#if defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_RISCV_ISA_ZBKB)
+>> +#if defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)	\
+>> +	&& defined(CONFIG_RISCV_ISA_ZBKB)
+>
+>>   #define runtime_const_ptr(sym)						\
+>>   ({									\
+>>   	typeof(sym) __ret, __tmp;					\
+>> @@ -93,7 +94,7 @@
+>>   		: [__ret] "=r" (__ret), [__tmp] "=r" (__tmp));		\
+>>   	__ret;								\
+>>   })
+>> -#elif defined(CONFIG_RISCV_ISA_ZBA)
+>> +#elif defined(CONFIG_RISCV_ISA_ZBA) && defined(CONFIG_TOOLCHAIN_HAS_ZBA)
+>>   #define runtime_const_ptr(sym)						\
+>>   ({									\
+>>   	typeof(sym) __ret, __tmp;					\
 
