@@ -1,190 +1,124 @@
-Return-Path: <linux-kernel+bounces-579628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A248A74626
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:16:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1906A7462B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D300189A4E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CA21729F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C492C2116F0;
-	Fri, 28 Mar 2025 09:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47340213236;
+	Fri, 28 Mar 2025 09:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jdh4hzWi"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hcacrj5o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2DF145B27;
-	Fri, 28 Mar 2025 09:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20FB1C36;
+	Fri, 28 Mar 2025 09:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743153371; cv=none; b=t7fjs+ugN/28/faa030lMTtUcmRASBkdaw2m/qgJpFTMpyHfrriH6jvcSuawUC4N7zBBZvEeu2Bq3cHVkUKPXRhmSQMu/YbTGALssUcDEO6EIdXEqgcvlPBfojzxe2M9FEVtnaPQXhAdbnoF9jx8QyF8JJsO0nP05M6T6thh/qE=
+	t=1743153449; cv=none; b=m0xDZEdfNlL18LJ0VAsm+Qix9S3GR0rPPJP1OeWHGCIi73WnNCSw0EZyOdLN0HrqGmbXl4tnCtDQ4+RddnfjkzekgnyopNVFfwkZkJG/C5HZ2ZmCM9ORUxZOjzGyV0rOduJKcwoAnxAGpXFKWJ8aMFYcYV/oweX2RLY6nhOKeLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743153371; c=relaxed/simple;
-	bh=adf04wGi+9obpoFeO+JGISKn7dPuPF1GbDHgd+fFpNs=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=ZTG6g7ITwJCq8c5IX7HA1md7ujC/P0pGfpwSH/EyX1wBGLPNelmSpsvxGpeHsv1LiOLeqErkqGM26sV9gf3BXc0sdrYtIMilHmGSoxvdFyvpoCiQ9ofaQEuL+30n8S+qDNvdkET3mTr10ewQR7TBDJsFwv8RuDRycwp+eVtFy3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jdh4hzWi; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1743153449; c=relaxed/simple;
+	bh=x3NZvRcTwn5V3UNaJOHVOZoRrWFFeJumVFdMrcbedTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UPVumygXJOn9xFcKybBh5sduRHQi6ADQuypRkRwVog8r2o3vfADenKKVLbYKSinrb0a/nHgemsenUbHiB827bb/kJK0byI3YkUpuLgGOifh4Wa+cEFTGmcngSAn0ypqS6Z8VhaAYQ+8IJb/3s13V5528Dhjb03jh7qtGJ/u2N6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hcacrj5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17ACAC4CEEF;
+	Fri, 28 Mar 2025 09:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743153449;
+	bh=x3NZvRcTwn5V3UNaJOHVOZoRrWFFeJumVFdMrcbedTY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Hcacrj5oLcZNctvxWb2JkytmbNpy16GrQDazYdb3U13vQtlqbiTurPeagMX2EmSot
+	 c9YQWuUlC7J5fFaYf3S9pMKcYm8GrhJ2rysiCdWnltJXIcprJLlfor6ghXRombxg1g
+	 5GV6uwO+vMxySN/wU371tF0nC52XhM7SOTJrV0uDQOSpHmcn6zjlhkC7zmQFqMccsd
+	 sOZ7ne+0ka8+QNzSOzvKJQGFcFV6hYTEdEJlauvZ9H4hsVjRG3uaqKk64Z9bDi7z6r
+	 i/vjd6EaWTMTTtByHjlio+lBQf/DoNAvj8b09aOzA26jLaznZlKaEFoxTOEVQuhWGY
+	 dNdLozlmlBoJQ==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5499614d3d2so2166267e87.3;
+        Fri, 28 Mar 2025 02:17:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVRgdiUjTz4vDiQqks3dTvrCtH6pa17ya8XUmA9kG7QlpJy7XouP2Ut5Xz3VGuuRdb7HGo4Oh6dWGXEezE=@vger.kernel.org, AJvYcCVUYWiT06UjUFwtO9Y0AypFNQKleMXNJujEr6VHm0wnFWNpXP47InZcRWRPa1+CQKhojFSEdYbZ6WleAw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9Q9DIyNEkWwD1+4RfYMBtORdxgWOl+Q2tf/uHdneZY7laq2Jz
+	M7XPfF3H6SdP5AfE3RX6KIBNGXYuiKV+t1z8jG+McJuEOanJqseEUhCrOJt2L8tfJXMIHQZKcsy
+	vDAa86EagKku2KUN5g9lLyPsuef0=
+X-Google-Smtp-Source: AGHT+IGGL5mo+8gl975uX9YbeSFfQJTYPPBcfIX724FcwKqMBD1e0YNf3sTbZdbZh4dqUchfGKzQdax50C3WfiheG4A=
+X-Received: by 2002:a05:6512:1094:b0:549:7145:5d28 with SMTP id
+ 2adb3069b0e04-54b011dca5fmr2331245e87.25.1743153447420; Fri, 28 Mar 2025
+ 02:17:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743153355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s1ha8nU9rL2AUrvffeNdwwUmS1zgXHAGS16YD/tF7kY=;
-	b=jdh4hzWiMAci5QoKp8IyisvglFAMbymI7BfycqBa37RoSr1c1Bd8/Mhi6URgIIUP7GSDJH
-	nhF7SSxYW8vsyB0y35ah3NsJMXRvqQcP330aUO0IizqT2l3W1UteNGgdyYtOKelhOXuoRB
-	z5SJSHWTgSlQadm23UA/+DaKxXtndN4=
-Date: Fri, 28 Mar 2025 09:15:53 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <17a3bc7273fac6a2e647a6864212510b37b96ab2@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH net v1] net: Fix tuntap uninitialized value
-To: "Willem de Bruijn" <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
- syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com,
- bpf@vger.kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, kpsingh@kernel.org, jolsa@kernel.org
-In-Reply-To: <67e5be3c65de3_10636329488@willemb.c.googlers.com.notmuch>
-References: <20250327134122.399874-1-jiayuan.chen@linux.dev>
- <67e5be3c65de3_10636329488@willemb.c.googlers.com.notmuch>
-X-Migadu-Flow: FLOW_OUT
+References: <363f8293-23e3-44d3-8005-b31eb5b7f975@amd.com> <rar5bkfy7iplfhitsbna3b2dmxbk7nunlaiclwars6kffdetl4@lzm7iualliua>
+ <08981771-39ac-af66-e2ec-e8f9bf6aed0a@amd.com> <idlcitykk3hxg5by5sltuljyjf7uanmve5fspu6dectubhy5za@mjmv4i5vwyby>
+ <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
+ <4f258a96-42fe-4567-886b-e8e2b949ab1a@akamai.com> <xcxcte6tzti7e6gcucf2ylfptie6kkvs2q5edup6mtzo5tenft@d2rm3p2yjoue>
+ <20250327110224.68c69c78@gandalf.local.home> <2kwzi2qxqualhskbgckk6m7oc6vsgupquceqgfx2gnz5xbkier@rwdrhym7yxhr>
+ <vhwle6fj3ifmcouppec5adegqludggsxcsxxveqa43hugtsdgy@pb7vd5cqjmx3> <m4cubsijicsrtq3blyzxeknsuc4cqswg35yz45uk5lipza4lps@yeqq2j5hf4y3>
+In-Reply-To: <m4cubsijicsrtq3blyzxeknsuc4cqswg35yz45uk5lipza4lps@yeqq2j5hf4y3>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 28 Mar 2025 10:17:16 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGLWYrfEzdDXy1wriBycx0DPQ_kL==Jkw_sDW5f0KxEHw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpU6H6LooyOgp5MxGSUplJ1Di55u9wZFLS5uZLKj7Nvk3hVgSh4D1Gok6Y
+Message-ID: <CAMj1kXGLWYrfEzdDXy1wriBycx0DPQ_kL==Jkw_sDW5f0KxEHw@mail.gmail.com>
+Subject: Re: linux-next regression: SNP Guest boot hangs with certain cpu/mem
+ config combination
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	"Aithal, Srikanth" <sraithal@amd.com>, Jason Baron <jbaron@akamai.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"Roth, Michael" <Michael.Roth@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-March 28, 2025 at 05:08, "Willem de Bruijn" <willemdebruijn.kernel@gmail.=
-com> wrote:
+On Fri, 28 Mar 2025 at 10:09, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Fri, Mar 28, 2025 at 10:28:19AM +0200, Kirill A. Shutemov wrote:
+> > On Thu, Mar 27, 2025 at 07:39:22PM +0200, Kirill A. Shutemov wrote:
+> > > On Thu, Mar 27, 2025 at 11:02:24AM -0400, Steven Rostedt wrote:
+> > > > On Thu, 27 Mar 2025 16:43:43 +0200
+> > > > "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+> > > >
+> > > > > > > The only option I see so far is to drop static branch from this path.
+> > > > > > >
+> > > > > > > But I am not sure if it the only case were we use static branch from CPU
+> > > > > > > hotplug callbacks.
+> > > > > > >
+> > > > > > > Any other ideas?
+> > > > > >
+> > > > > >
+> > > > > > Hmmm, didn't take too close a look here, but there is the
+> > > > > > static_key_slow_dec_cpuslocked() variant, would that work here? Is the issue
+> > > > > > the caller may or may not have the cpu_hotplug lock?
+> > > > >
+> > > > > Yes. This is generic page alloc path and it can be called with and without
+> > > > > the lock.
+> > > >
+> > > > Note, it's not the static_branch that is an issue, it's enabling/disabling
+> > > > the static branch that is. Changing a static branch takes a bit of work as
+> > > > it does modify the kernel text.
+> > > >
+> > > > Is it possible to delay the update via a workqueue?
+> > >
+> > > Ah. Good point. Should work. I'll give it try.
+> >
+> > The patch below fixes problem for me.
+>
+> Ah. No, it won't work. We can get there before workqueues are initialized:
+> mm_core_init() is called before workqueue_init_early().
+>
+> We cannot queue a work. :/
+>
+> Steven, any other ideas?
+>
 
->=20
->=20Jiayuan Chen wrote:
->=20
->=20>=20
->=20> Then tun/tap allocates an skb, it additionally allocates a prepad s=
-ize
-> >  (usually equal to NET_SKB_PAD) but leaves it uninitialized.
-> >  bpf_xdp_adjust_head() may move skb->data forward, which may lead to =
-an
-> >  issue.
-> >  Since the linear address is likely to be allocated from kmem_cache, =
-it's
-> >  unlikely to trigger a KMSAN warning. We need some tricks, such as fo=
-rcing
-> >  kmem_cache_shrink in __do_kmalloc_node, to reproduce the issue and t=
-rigger
-> >  a KMSAN warning.
-> >=20
->=20>  Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
-> >  Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@goo=
-gle.com/T/
-> >  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> >=20
->=20>  ---
-> >=20
->=20>  drivers/net/tun.c | 2 ++
-> >=20
->=20>  1 file changed, 2 insertions(+)
-> >=20
->=20>=20=20
->=20>=20
->=20>  diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> >=20
->=20>  index f75f912a0225..111f83668b5e 100644
-> >=20
->=20>  --- a/drivers/net/tun.c
-> >=20
->=20>  +++ b/drivers/net/tun.c
-> >=20
->=20>  @@ -1463,6 +1463,7 @@ static struct sk_buff *tun_alloc_skb(struct =
-tun_file *tfile,
-> >=20
->=20>  if (!skb)
-> >=20
->=20>  return ERR_PTR(err);
-> >=20
->=20>=20=20
->=20>=20
->=20>  + memset(skb->data, 0, prepad);
-> >=20
->=20>  skb_reserve(skb, prepad);
-> >=20
->=20>  skb_put(skb, linear);
-> >=20
->=20>  skb->data_len =3D len - linear;
-> >=20
->=20
-> Is this specific to the tun device?
->=20
->=20This happens in generic (skb) xdp.
->=20
->=20The stackdump shows a napi poll call stack
->=20
->=20 bpf_prog_run_generic_xdp+0x13ff/0x1a30 net/core/dev.c:4782
->=20
->=20 netif_receive_generic_xdp+0x639/0x910 net/core/dev.c:4845
->=20
->=20 do_xdp_generic net/core/dev.c:4904 [inline]
->=20
->=20 __netif_receive_skb_core+0x290f/0x6360 net/core/dev.c:5310
->=20
->=20 __netif_receive_skb_one_core net/core/dev.c:5487 [inline]
->=20
->=20 __netif_receive_skb+0xc8/0x5d0 net/core/dev.c:5603
->=20
->=20 process_backlog+0x45a/0x890 net/core/dev.c:5931
->=20
->=20Since this is syzbot, the skb will have come from a tun device,
->=20
->=20seemingly with IFF_NAPI, and maybe IFF_NAPI_FRAGS.
->=20
->=20But relevant to bpf_xdp_adjust_head is how the xdp metadata
->=20
-
-Thanks.
-
-I'm=20wondering if we can directly perform a memset in bpf_xdp_adjust_hea=
-d
-when users execute an expand header (offset < 0).
-
-Although the main purpose of bpf_xdp_adjust_head is to write new headers,
-it's possible that some users might be doing this to read lower-layer
-headers, in which case memset would be inappropriate.
-
-However, I found that when expanding headers, it also involves copying
-data meta forward, which would overwrite padding memory, so maybe I'm
-overthinking this?
-
-In general, since bpf_xdp_adjust_head can access skb->head, it exposes a
-minimum of XDP_PACKET_HEADROOM (256) uninitialized bytes to users, and
-I'm not entirely clear if there are any security implications.
-
-
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 2ec162dd83c4..51f3f0d9b4bb 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff *, =
-xdp, int, offset)
-        if (metalen)
-                memmove(xdp->data_meta + offset,
-                        xdp->data_meta, metalen);
-+       if (offset < 0)
-+               memset(data, 0, -offset);
-        xdp->data_meta +=3D offset;
-        xdp->data =3D data;
+Why is the use of a static key required here?
 
