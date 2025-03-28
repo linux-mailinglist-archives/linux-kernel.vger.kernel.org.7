@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-580359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB425A750E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:39:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D476A750E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 20:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342C87A6E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:37:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063651731B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454F71E7C20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805641E832D;
 	Fri, 28 Mar 2025 19:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VPxa0TlJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PAAVN7fe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161C41E51EA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0291E51F0
 	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743190723; cv=none; b=AFv9xd9DnqABaFpfEfhD5kxXUJjOPRyFrh2nRY44NbWWnb7AfBY5OndXgmQhZus8TM0KMJW823ckVp5e4Zj9yjLC2CQp4sLA4I3chPiYn6imH3acbY1rLgg1XYAMb831A2kkOfQqwOnt2BDyBHoSxfgahhawh1PY+MKm/7tVcms=
+	t=1743190723; cv=none; b=RWnM2r/quRFJa8r15fTtNTPFLqjkmTzW8FskX1puR7WPIVBJF0kIjanYmPICFzs1ZwmxLJsYlq/ZJsGaU4kmvDxrPpyZOCCn8IvikhwzRVAAiuCl9R3A3Gpz6Cl71urirt3DTH7lpsfEaz5IdvRd42lc5yaP9oEtM74QM2Ur8Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743190723; c=relaxed/simple;
-	bh=OhhVGWpcSFG4gipijq1AzZCC0xlnH6g6N0gsuYd0QGI=;
+	bh=4/rTMq/46RiBRdHLe/iPEiu7QFHdEoEIGbQiFE4kn/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=QgeOWoJ1cb+D+LanBeIDb9ZDulnYg+428oNOOSIi32j9lAbWUwWghXWbNuBkTYW+gv8J/+XIbHMIIFqIoEiVOcYyjAlgDrMDtpYEi8iwmhmhq1t4KYJkXjSwc3JjgibV2mcsTnwS23gwhOtgCeRVCwyuYctYy7F1/9qGgoLcUxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VPxa0TlJ; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-type; b=ESedt1JZZJ6/3pmRltg5frycdfITiuMQy8EgieBl6B3GX3/ZvCYmkUi1AYyywadsS9qicvBGc1jh4vFfJLaHIo2FtX+5JQO7c+CFMrffQ5NJiGYAqpCyzheb6HbNtMJtMbMB3q65foJp2PnRA0YuDFyeTKXQlVHIT5Yl9uC2wzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PAAVN7fe; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743190720;
+	s=mimecast20190719; t=1743190721;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=625UNCZM4QGRK3cVKqtvQTiUqdD7+p90TqpeI7OzcGs=;
-	b=VPxa0TlJafzuAFohe2BlFemZ9MGZqZcMiCiUj7fs3WohNwXxujs7PzY8R0DyWAtpCmClEw
-	uk2wJ/ABIY8byVhJAD+fimPhBP8ulQJVRbB/tY6IEMIrs5yLC916ckbu0o08D0pg6rGg6v
-	yVxDwWuFrax3CBi8dYB4nvpgNpb7JbQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=mTopFJvlk34hyUN56gjPiK5ncmjWmYtuhJkCrhP6gA8=;
+	b=PAAVN7feWxbT7Xc2aZSUozCLyLxi+BVTGwCFTj5qY7sMEHT8eFmV7qtVf7QU+FqJOLgcYv
+	bbhyhHLqNv9s5OgF8eRdBIefyKUAeS8n63VXull87UN5efEy3B0WU18itAYOgkjk6Ku7Q9
+	NYN3hgHATZX+NisLoF+bfuC4F13VEGo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-f6kqXyQSP8K0U4574qwa6w-1; Fri,
- 28 Mar 2025 15:38:37 -0400
-X-MC-Unique: f6kqXyQSP8K0U4574qwa6w-1
-X-Mimecast-MFC-AGG-ID: f6kqXyQSP8K0U4574qwa6w_1743190716
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-S3yrDD4UONOd5OGQtyVauA-1; Fri,
+ 28 Mar 2025 15:38:39 -0400
+X-MC-Unique: S3yrDD4UONOd5OGQtyVauA-1
+X-Mimecast-MFC-AGG-ID: S3yrDD4UONOd5OGQtyVauA_1743190718
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 983F0180AF52;
-	Fri, 28 Mar 2025 19:38:36 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA96A1945103;
+	Fri, 28 Mar 2025 19:38:38 +0000 (UTC)
 Received: from jmeneghi-thinkpadp1gen3.rmtusnh.csb (unknown [10.17.17.223])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C06781828A92;
-	Fri, 28 Mar 2025 19:38:34 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DF2391828A92;
+	Fri, 28 Mar 2025 19:38:36 +0000 (UTC)
 From: John Meneghini <jmeneghi@redhat.com>
 To: kbusch@kernel.org,
 	hch@lst.de,
@@ -66,9 +66,9 @@ Cc: loberman@redhat.com,
 	emilne@redhat.com,
 	jmeneghi@redhat.com,
 	bgurney@redhat.com
-Subject: [PATCH v3 2/5] nvme: change the NVME_MULTIPATH config option description
-Date: Fri, 28 Mar 2025 15:38:23 -0400
-Message-ID: <20250328193826.356257-3-jmeneghi@redhat.com>
+Subject: [PATCH v3 3/5] nvme: add the NVME_ENABLE_MULTIPATH_PARAM config option
+Date: Fri, 28 Mar 2025 15:38:24 -0400
+Message-ID: <20250328193826.356257-4-jmeneghi@redhat.com>
 In-Reply-To: <20250328193826.356257-1-jmeneghi@redhat.com>
 References: <20250328193826.356257-1-jmeneghi@redhat.com>
 Precedence: bulk
@@ -81,40 +81,61 @@ Content-type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Fix up the NVME_MULTIPATH config description so that
-it accurately describes what it does.
+The CONFIG_NVME_ENABLE_MULTIPATH_PARAM option controls the
+core_nvme.multipath parameter. When CONFIG_NVME_ENABLE_MULTIPATH_PARAM=n
+the multipath parameter is removed from the kernel and nvme multipathing
+is permanently enabled.  When CONFIG_NVME_ENABLE_MULTIPATH_PARAM=y the
+nvme multipath parameter is added to the kernel and nvme multipath
+support is controlled by the core_nvme.multipath parameter.
+
+By default CONFIG_NVME_ENABLE_MULTIPATH_PARAM=y
 
 Signed-off-by: John Meneghini <jmeneghi@redhat.com>
 Tested-by: John Meneghini <jmeneghi@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Bryan Gurney <bgurney@redhat.com>
 ---
- drivers/nvme/host/Kconfig | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/nvme/host/Kconfig     | 11 +++++++++++
+ drivers/nvme/host/multipath.c |  2 ++
+ 2 files changed, 13 insertions(+)
 
 diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
-index 10e453b2436e..d47dfa80fb95 100644
+index d47dfa80fb95..8c04b6b93982 100644
 --- a/drivers/nvme/host/Kconfig
 +++ b/drivers/nvme/host/Kconfig
-@@ -18,10 +18,15 @@ config NVME_MULTIPATH
- 	bool "NVMe multipath support"
- 	depends on NVME_CORE
- 	help
--	   This option enables support for multipath access to NVMe
--	   subsystems.  If this option is enabled only a single
--	   /dev/nvmeXnY device will show up for each NVMe namespace,
--	   even if it is accessible through multiple controllers.
-+	  This option controls support for multipath access to NVMe
-+	  subsystems. If this option is enabled support for NVMe multipath
-+	  access is included in the kernel. If this option is disabled support
-+	  for NVMe multipath access is excluded from the kernel. When this
-+	  option is disabled each controller/namespace receives its
-+	  own /dev/nvmeXnY device entry and NVMe multipath access is
-+	  not supported.
+@@ -28,6 +28,17 @@ config NVME_MULTIPATH
+ 
+ 	  If unsure, say Y.
+ 
++config NVME_ENABLE_MULTIPATH_PARAM
++	bool "NVMe enable multipath param"
++	depends on NVME_CORE && NVME_MULTIPATH
++	default y
++	help
++	  This option enables the core_nvme.multipath parameter.
++	  If this option is disabled the core_nvme.multipath parameter
++	  is excluded from the kernel.
 +
 +	  If unsure, say Y.
- 
++
  config NVME_VERBOSE_ERRORS
  	bool "NVMe verbose error reporting"
+ 	depends on NVME_CORE
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 6b12ca80aa27..83084093e8db 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -10,9 +10,11 @@
+ #include "nvme.h"
+ 
+ bool multipath = true;
++#ifdef CONFIG_NVME_ENABLE_MULTIPATH_PARAM
+ module_param(multipath, bool, 0444);
+ MODULE_PARM_DESC(multipath,
+ 	"turn on native support for multiple controllers per subsystem");
++#endif
+ 
+ static const char *nvme_iopolicy_names[] = {
+ 	[NVME_IOPOLICY_NUMA]	= "numa",
 -- 
 2.48.1
 
