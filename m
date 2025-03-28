@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-579629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74858A74629
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:17:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E26A3A74690
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C5A189BE5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6730E175976
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88059213236;
-	Fri, 28 Mar 2025 09:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE310214A65;
+	Fri, 28 Mar 2025 09:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VcDsR06d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hC2HIV3y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B4A1C36;
-	Fri, 28 Mar 2025 09:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5546A214213;
+	Fri, 28 Mar 2025 09:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743153437; cv=none; b=Bt6+neWz7hYAythUrqg5JVxFvvdlsc/QrmsFiH7t9Tqa/u6eHwqfsc349tvbeCUwr7jM1prTQgNvDNGv8OMGouvHbsJtt8Q4TWB9QihBm6jMw0jb7hBCaW204QeYSg+gOiOOmCyfmToeReQcB2xodNXmhSfXp8N7AlVivaBq5lE=
+	t=1743155066; cv=none; b=qDDHmXJHlMOb3rN99OeB87LQsxDDNT7SSJiv4MkAC/P/z5l8bGSaNDM3P+beQU0RBvLoYGKp27YXt3eFAl9HsbRA3+42MFYwihK8ooNB276i2UT/PQpG6G+wSthdOsx8b3vS3Y94qGZF/R7dyLiPQpIlIVv8GZJNfmQb2EpkWog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743153437; c=relaxed/simple;
-	bh=R49xfafOMRZGIS4xB8rrTfPNt5gs5+WCiFiRuZHq/w4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m4xyWyvlG+hmWVH4mNNsihAACQ1d2f2TrLxxDE1zNupRkz7bM+xKK/z/nmt/qn5042gqLgQeZg7q+fXLJwmDzafBQredyG1YMLmIDoy8ILAR0bOfkKRmzky6zi/T1ip6BfLNGgbVs2tls1+PWMM+ite/YVWgX0zrdHXbAjcHW6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VcDsR06d; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743153435; x=1774689435;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=R49xfafOMRZGIS4xB8rrTfPNt5gs5+WCiFiRuZHq/w4=;
-  b=VcDsR06du3n802uR5bGhlSunxTM1JI8f7K5dtu0QdvGYqjjHOpQ2KwDy
-   ljYhFOpd0D9WjsTlyM1W3VZZvRRzNwKOYmJAc2Zenp47x6SGOvZa6eo+j
-   NOu+qRdF04qwaYWqEmlPUH6nn+GwgQwFz+42pgpIEpFkcpVu8XNRyg/2R
-   qz2e3UvuYnCcsh3mt1TnZgt2RR4VbC9PXmkpTXzxwU4RS3etGBsSY5OFP
-   G9tb83+9AUhsrzPvO/zarFiZ4bnBnxgozQWtXlPN0nw1S8nSb33IhVNvd
-   CEXIKdWL2K0tyVUc5f4zfRognyCO1DNLWL0NmG6za5F0etP2sz/ys63M8
-   Q==;
-X-CSE-ConnectionGUID: lg2XpSisTMmYpQBTMA3VuQ==
-X-CSE-MsgGUID: F0IUrmXwS9+30sc45ub+Fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44401854"
-X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; 
-   d="scan'208";a="44401854"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 02:17:14 -0700
-X-CSE-ConnectionGUID: X3eEiq/8SWWfStwXYg0ZDw==
-X-CSE-MsgGUID: mHjs0pwVTIaL56iYZ4kG7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; 
-   d="scan'208";a="125622129"
-Received: from win-uq4qlp9a0jq.iind.intel.com (HELO madhum.iind.intel.com) ([10.223.138.63])
-  by fmviesa008.fm.intel.com with ESMTP; 28 Mar 2025 02:17:10 -0700
-From: madhu.m@intel.com
-To: gregkh@linuxfoundation.org
-Cc: heikki.krogerus@linux.intel.com,
-	linux-usb@vger.kernel.org,
-	pooja.katiyar@intel.com,
-	dmitry.baryshkov@linaro.org,
-	diogo.ivo@tecnico.ulisboa.pt,
-	lk@c--e.de,
-	linux-kernel@vger.kernel.org,
-	Madhu M <madhu.m@intel.com>
-Subject: [PATCH v2] usb: typec: ucsi: Add the UCSI commands in debugfs
-Date: Fri, 28 Mar 2025 15:13:05 +0530
-Message-Id: <20250328094305.546724-1-madhu.m@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743155066; c=relaxed/simple;
+	bh=lCH6JJxjNaQa3teANM2/ZsrcH0FwzDmtw0XPeQUYyrg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=DFsFg0iPkCNIzJeoVEQGhFhWiHbfZNRtJfngY/gF9M9ilN044H+scF9725XGQ3LrruLNz9zkS53STd1u3mdHsqogbawnOziNC9k7Un4cyTHk/SMWsSvoLlcM6MiVhaMTRjw7grmyk/K15miNpdLl3ntVeoY0HV2g2nqGNbEKHq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hC2HIV3y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S0Pfh1006996;
+	Fri, 28 Mar 2025 09:44:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q6szw+ntz9VDczTlnbIDkDQ5IY9zguQ76RZzJB69Xis=; b=hC2HIV3yU8oM7wWx
+	2+h8sQKqaWJxMK3RAgdmL+FYQz5iTHee6JXB6vEMRq5zKTRUs2LG7uHtTltpm5VV
+	MuACHJl6AqNCapeQg/uXP9YGOuscMbJ7kl3LSR6GwzmF94VEMJ8veVzZ771tPUBr
+	HlFcJB6F5Z+2fKaPjcaQPbKaqjIwqsF+G86xmUls/t9YGdf21+EfusALwOwnRxyF
+	z6sooYa6DO6tJ2te1xMMOStNT5geuTisDHFOVdrosXutz7owmmapHtEfSBZF9k1M
+	oEo2Y1K+nlPiSeedd9C+vPatAIwkIdWdYmd1739LQDQSYDRLf0r5orfkRRApq1Ag
+	5n7xrw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj8123-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 09:44:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52S9i81S006558
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 09:44:08 GMT
+Received: from [10.206.97.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Mar
+ 2025 02:44:00 -0700
+Message-ID: <0220605f-3ff6-4ea3-88e3-09e602962a61@quicinc.com>
+Date: Fri, 28 Mar 2025 15:13:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/10] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI
+ to DP bridge nodes
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
+        <marijn.suijten@somainline.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
+References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
+ <20250311122445.3597100-8-quic_amakhija@quicinc.com>
+ <20250312-athletic-cockle-of-happiness-e88a3a@krzk-bin>
+ <d64bf3b3-7c4d-490e-8bd7-1ad889aa7472@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <d64bf3b3-7c4d-490e-8bd7-1ad889aa7472@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: crYXy3p45ra23Jg3L43TFwAy1c04P9hK
+X-Proofpoint-ORIG-GUID: crYXy3p45ra23Jg3L43TFwAy1c04P9hK
+X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e66f69 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=Bf3lAFkBa5TPtOYeXToA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_04,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=990
+ malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503280065
 
-From: Madhu M <madhu.m@intel.com>
+> These both above commented from Dmitry I have addressed in the version 2 of patch 7 of the series.
+> I have squash patch 8 into patch 7 of version 1 into patch 7 of version 2 of the series.
+> 
+> 
+> Thanks,
+> Ayushi
 
-Added the UCSI commands UCSI_GET_CAM_SUPPORTED, UCSI_GET_PD_MESSAGE,
-UCSI_GET_ATTENTION_VDO and UCSI_SET_USB support in debugfs to enhance
-PD/TypeC debugging capability.
+Hi Krzysztof,
 
-Signed-off-by: Madhu M <madhu.m@intel.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/usb/typec/ucsi/debugfs.c | 4 ++++
- drivers/usb/typec/ucsi/ucsi.h    | 2 ++
- 2 files changed, 6 insertions(+)
+I hope this message finds you well. I wanted to follow up on the reply I sent. Your feedback is invaluable to us, and we would greatly appreciate any further insights or comments you might have.
 
-diff --git a/drivers/usb/typec/ucsi/debugfs.c b/drivers/usb/typec/ucsi/debugfs.c
-index eae2b18a2d8a..92ebf1a2defd 100644
---- a/drivers/usb/typec/ucsi/debugfs.c
-+++ b/drivers/usb/typec/ucsi/debugfs.c
-@@ -34,16 +34,20 @@ static int ucsi_cmd(void *data, u64 val)
- 	case UCSI_CONNECTOR_RESET:
- 	case UCSI_SET_SINK_PATH:
- 	case UCSI_SET_NEW_CAM:
-+	case UCSI_SET_USB:
- 		ret = ucsi_send_command(ucsi, val, NULL, 0);
- 		break;
- 	case UCSI_GET_CAPABILITY:
- 	case UCSI_GET_CONNECTOR_CAPABILITY:
- 	case UCSI_GET_ALTERNATE_MODES:
-+	case UCSI_GET_CAM_SUPPORTED:
- 	case UCSI_GET_CURRENT_CAM:
- 	case UCSI_GET_PDOS:
- 	case UCSI_GET_CABLE_PROPERTY:
- 	case UCSI_GET_CONNECTOR_STATUS:
- 	case UCSI_GET_ERROR_STATUS:
-+	case UCSI_GET_PD_MESSAGE:
-+	case UCSI_GET_ATTENTION_VDO:
- 	case UCSI_GET_CAM_CS:
- 	case UCSI_GET_LPM_PPM_INFO:
- 		ret = ucsi_send_command(ucsi, val,
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index 3a2c1762bec1..72b9d5a42961 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -123,9 +123,11 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
- #define UCSI_GET_CONNECTOR_STATUS		0x12
- #define UCSI_GET_CONNECTOR_STATUS_SIZE		152
- #define UCSI_GET_ERROR_STATUS			0x13
-+#define UCSI_GET_ATTENTION_VDO			0x16
- #define UCSI_GET_PD_MESSAGE			0x15
- #define UCSI_GET_CAM_CS			0x18
- #define UCSI_SET_SINK_PATH			0x1c
-+#define UCSI_SET_USB				0x21
- #define UCSI_GET_LPM_PPM_INFO			0x22
- 
- #define UCSI_CONNECTOR_NUMBER(_num_)		((u64)(_num_) << 16)
--- 
-2.34.1
+Thanks,
+Ayushi
 
 
