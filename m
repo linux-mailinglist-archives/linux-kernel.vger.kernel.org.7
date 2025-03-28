@@ -1,131 +1,165 @@
-Return-Path: <linux-kernel+bounces-579356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F67DA74240
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:22:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F63A7423D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB0F17A7B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:22:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 447E07A5867
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C65D20DD67;
-	Fri, 28 Mar 2025 02:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C37720DD54;
+	Fri, 28 Mar 2025 02:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="YEVEFI7I"
-Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P3XGsjnf"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5C713D89D;
-	Fri, 28 Mar 2025 02:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A2B13D89D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743128545; cv=none; b=EkqmNOhE09kH5DRifMbH9USERfTKRKU/d6GrscFlf7vdQ5mXTOq5shFxLxYmaq9KFsLxmDC/Tvn1wBkJHP9m63vX6+9mbRdRwW6JPy8m7C0kTHMXd/2U4sahJXk4jaoFVPK6e379y2s/Bvd6OSh6Obb9QwzTGLCAx8qFYHBv7yU=
+	t=1743128276; cv=none; b=nIlqQuvVrC6Wx4BRcxLVeFdKfH5DdR+iaKjvOvuuH/ubkkvNwfPbcCbzRuocH5+D7jQDKIKNG4iB1zEtzgGg5CApWXu/r6wL0pR2h9Cn/KQpY4ap2BCit144RF17IVsOh1iYoXUPrlqLRQfzlptbFQiiyJZs4WQN732HAZd2gps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743128545; c=relaxed/simple;
-	bh=rzOiPlsw0Ze9Jrg8kR08chKDFfn1EOEud685m8doOZE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sIhBE9ku9OZ+QTOb+LTN5BTBBp0w68n2cQNK/CKPC0F1vOvs48VqDLYMxU86xdVsYDtUoAbt7ZLCN32bK2QPMDmH2ao7ah27B7abqTEQk1P7sHSz8pUvtO9lKsPotFmstSXO20ncUFIgHJ7fX/4eZOgBs4H9iVjmIhDsTdyaODY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=YEVEFI7I; arc=none smtp.client-ip=207.171.188.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1743128276; c=relaxed/simple;
+	bh=Gz8a2lWDh68k8Fs8vD7GDwx0RQXPkZI0YPSyF+bSVEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nbtyK4QvKy9JBHn54LYVFNDJVEe1ba+tVxbq7Isoc9G/5yQKmX1GCmoR2DBd1qHEEYDefuQijswwipIyOSBxC1Md1gSsqGgTkMgaAHeSCJkPnqDpwnme38ZrYX8D74jQVJBeZXkZJ0kHu7/sLaXCo/hPPW6RT9lvFF0Ej/zkx/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P3XGsjnf; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac41514a734so273523666b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:17:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1743128544; x=1774664544;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YwI/xbbicptm+UYjp+Km1RDmkr0i6xne+jGkYZTwAPQ=;
-  b=YEVEFI7IfLp+PFwSMUmKng+QLDIVB3DQ6vzAFPldklm++CDaGhXg27m8
-   ijvyUCE4Ar50iPP2Nijte2nTi7Z+ePi9KeDJJ7mgOe4BVe4YTevie0ytY
-   vLKsrWAFjPBavAay2gBnl1dJm33JwLLvRq4cZK+ywdzyMZyHx9oX5vLdL
-   4=;
-X-IronPort-AV: E=Sophos;i="6.14,282,1736812800"; 
-   d="scan'208";a="5251929"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 02:22:19 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:56542]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.83:2525] with esmtp (Farcaster)
- id 0304003b-c2ed-4bc2-ab57-3e91635583f7; Fri, 28 Mar 2025 02:22:18 +0000 (UTC)
-X-Farcaster-Flow-ID: 0304003b-c2ed-4bc2-ab57-3e91635583f7
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 28 Mar 2025 02:22:17 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.187.171.35) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 28 Mar 2025 02:22:14 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <i.abramov@mt-integration.ru>
-CC: <aleksander.lobakin@intel.com>, <davem@davemloft.net>,
-	<ebiederm@xmission.com>, <edumazet@google.com>, <horms@kernel.org>,
-	<jdamato@fastly.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<leitao@debian.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
-Date: Thu, 27 Mar 2025 19:15:00 -0700
-Message-ID: <20250328022204.12804-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250328011302.743860-1-i.abramov@mt-integration.ru>
-References: <20250328011302.743860-1-i.abramov@mt-integration.ru>
+        d=linux-foundation.org; s=google; t=1743128272; x=1743733072; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RPZJmVxE58ipBTDGpUOh/5LdmpmjmFS9XlzEeuLLmA8=;
+        b=P3XGsjnfkvfJPgP6Hkp/wGB9fmWeAyX4x9MmFMHWcgVVPPPzjWvZ5MhTNnhxlDJls/
+         BtJqKjVkaihR0ZP48R6wxm3sWZ7KS4/Zo6DaDDlB5siW0XwMkwEWLhcGEQQpLZ7uCLcd
+         sz+FUjjo7S6EXbros7/s7NxhUQ2R1nN0Ohs+c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743128272; x=1743733072;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RPZJmVxE58ipBTDGpUOh/5LdmpmjmFS9XlzEeuLLmA8=;
+        b=tS6CJQAdJrVqfs8BAx5xFnnHJbGisvGEo5vpkQMDlvAtE7cyLis++hBiMsTrphx08Q
+         3zvNTXvb2FsJi/2AWwdYRU9IKuNTM/XaexV+q1NepW3zW8A7nDPydtg/D62icWknNEZJ
+         gG4c0mcQSyYGzVqFo/oXvvav5B/AYm1pP/0NNIrPaouOT2t5a42a7EKV7I9ys3oTrxaa
+         oXWkCpNZSvr00gZj64rthfVF3fN5TCyisRMCe4Wfs6qqQI88elgLblX18u2apCSCLDgi
+         sPxsv1NKYgnxLfeXJtwAhOmPADU0sp+eJwTqRv8D8VfWFKbV36yLKB7BJf37ODPw5Bn7
+         J0jA==
+X-Gm-Message-State: AOJu0YxhUcSl+ctpXt+qGRopgH6qbnuNF0907+hr8h9iOkmzC46/1jbT
+	/RjKJ3DNrPTDCjuLjv+DBNk4BTe4TN1SU5sjH9eOgz6XVctaXVsHedUDPyRlXVVWM/yMR1U7xaI
+	PIEU=
+X-Gm-Gg: ASbGncv8oZYBajj+y8+QBYvHaF+xV3a0a1aFH2VatYvwTrN9cdhrCYPFn9f738amaKu
+	jyPqHhr17vrhxQoKhdlqPZCJ2wC/7q4WlcWGuwdjEIvcPdc57sMEU7mPurnRoJkTFXW5TH55MR1
+	LrGVa76PQcQC8O9AmTQuytSzRTHkYbUhA3bJLiWZ/YW8pD6j7oA1r8KKjpeSXvVcmiqpmnYU/Rm
+	GrAZWNCW4WvHh1ByKd+YHuKwuuPWnxIKGQTfrQHCaMrLsRvUSFfiLj3WlNzjVTnFBJvYzkJSTfg
+	q2wZPzNsbmDDXzXJ/qodcvNaBx7SIaei1rmZUSMX2JZ6xTeHt/8tCnAS9glUtZFCKccHb6pYLiP
+	0o6hb0I1CiiE6ftCl+3M=
+X-Google-Smtp-Source: AGHT+IGjeGQGhYZjQFZHwzD818+9XEYNl8h1pMo+0pTZ9QLBoj0L/ypCFNBgTwVlvlQiag8GOEQUtA==
+X-Received: by 2002:a17:907:9285:b0:ac6:d160:e3b9 with SMTP id a640c23a62f3a-ac6faed4403mr509131166b.22.1743128271958;
+        Thu, 27 Mar 2025 19:17:51 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b0a5sm84751666b.56.2025.03.27.19.17.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Mar 2025 19:17:51 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so211134266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:17:51 -0700 (PDT)
+X-Received: by 2002:a17:907:9482:b0:ac6:e33a:6a0d with SMTP id
+ a640c23a62f3a-ac6fb15fd21mr603095766b.55.1743128271107; Thu, 27 Mar 2025
+ 19:17:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <20250327171037.032bf7e7@gandalf.local.home> <CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
+ <20250327212447.24e05e7e@batman.local.home> <CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
+ <20250327220106.37c921ea@batman.local.home>
+In-Reply-To: <20250327220106.37c921ea@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 27 Mar 2025 19:17:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiNLcTj2iiE9waSkmpYpu6VQ_q=Zaqi_WmAMiv_MvH4vQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqyWvoDETKaiG9lijOdJ_vWG_LH2Cmmp2T3hmrn4a3Mf1Bl9oZ22DESos4
+Message-ID: <CAHk-=wiNLcTj2iiE9waSkmpYpu6VQ_q=Zaqi_WmAMiv_MvH4vQ@mail.gmail.com>
+Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Feng Yang <yangfeng@kylinos.cn>, 
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 27 Mar 2025 at 19:01, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> Let me explain this better. Yes it uses alloc_page() but that's just an
+> intermediate function. What is saved is the page_address(page), as that
+> is what is used by the code.
 
-> Subject: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
+I understood.
 
-s/__dev_change_net_namespace/netif_change_net_namespace/
+But NO, that is *not* what is used by the code.
 
-Also, please specify the target tree: [PATCH v2 net]
+You literally use "struct page *" whenever you want to mmap it.
 
+If the *only* thing that was used was the virtual address, this
+wouldn't be a discussion.
 
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-Date: Fri, 28 Mar 2025 04:12:57 +0300
-> It's pointless to call WARN_ON() in case of an allocation failure in
-> device_rename(), since it only leads to useless splats caused by deliberate
-> fault injections, so avoid it.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 8b41d1887db7 ("[NET]: Fix running without sysfs")
+As it is, you allocate it in form A, then you turn it into *either*
+form B or C, and then when you need form A again you turn it back. And
+you do so in a particularly disgusting and random way.
 
-Reported-by: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/netdev/000000000000a45a92061ce6cc7d@google.com/
+> The virtual address needs to be created as that's all the code cares
+> about.
 
+Stop LYING.
 
-> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
-> ---
->  net/core/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 2f7f5fd9ffec..14726cc8796b 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -12102,7 +12102,7 @@ int __dev_change_net_namespace(struct net_device *dev, struct net *net,
+If that was "all the code cared about" we'd not have this discussion.
 
-It applies cleanly but please make sure to use the latest tree.
+It clearly wants things *back* as 'struct page' again. Stop making
+shit up and maki9ng excuses for your bad code.
 
+And yes, it would probably be fine to just keep it as *both* in parallel.
 
+But honestly, if you only save one thing - as you currently do - you
+should save the thing that is more fundamental.
 
->  	dev_set_uevent_suppress(&dev->dev, 1);
->  	err = device_rename(&dev->dev, dev->name);
->  	dev_set_uevent_suppress(&dev->dev, 0);
-> -	WARN_ON(err);
-> +	WARN_ON(err && err != -ENOMEM);
->  
->  	/* Send a netdev-add uevent to the new namespace */
->  	kobject_uevent(&dev->dev.kobj, KOBJ_ADD);
-> -- 
-> 2.39.5
+That's 'struct page *'. That's the allocation, that's the thing you
+need for mmap, and that's what you *should* have used for
+de-allocation too (even if I think you currently just end up using the
+virtual mapping and depend on the VM code undoing your mapping).
+
+Anyway, I'm not arguing any more. I'm telling you that this code will
+
+ (a) not be pulled this merge window
+
+ (b) not be pulled EVER unless you clean it up
+
+ (c) you need to stop with this hackery
+
+Apparently you knew it was ugly hackery, since you said "I figured
+this would be the most controversial", so it wasn't a surprise to you
+that I'm complaining.
+
+Why did you send it then? Because I'm serious - this has been a
+pattern, and I  AM DONE.
+
+Next time, I won't bother to explain why I'm not pulling, because
+apparently even when I explain, you just start making excuses and
+making more garbage up.
+
+Next time, you're going in the spam filter.
+
+Because it's annoying that I have to go through your pull requests so
+carefully, but what makes me truly fed up is that this KEEPS
+HAPPENING, and then when I complain you just start arguing about it
+even though you seem to have been aware that the code was shit.
+
+            Linus
 
