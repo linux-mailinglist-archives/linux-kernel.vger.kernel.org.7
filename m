@@ -1,142 +1,171 @@
-Return-Path: <linux-kernel+bounces-579737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B79A748D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:59:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F34A748DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8915A7A8932
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8918179C44
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A328C213232;
-	Fri, 28 Mar 2025 10:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4513C1E8340;
+	Fri, 28 Mar 2025 11:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9TDsGYn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1JGttWrd"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2801531C5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEC9B676
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743159546; cv=none; b=Hk2mD2HOgf6dOwPG2yo9m/nq3HBB1d5Ubxy6YK62fXyVMTrLvPIbEM2OGjD7Hypnz3gaD5Gym7COn+WszgHsGk5Fv/NsEZbrIG8yOBodsNTF4ZLUDajUkX8WqnDMIfAu1U9k7/N1VQ5xOyPDCaM1YjbUV+oGXYwryIS4+8lJpr4=
+	t=1743159662; cv=none; b=BTedDZS8+fMk2XL2BXNlQ9Dy8rw6foFmbPqdQO5IzVkxGPHDB4zWMGb48y/CpQrnG/9ViTCk6OI3GlpJWtoiL7pxJU2XOTFm7Vx5LtbOyXYbbDIyOS/l/CWQMjbmAgwhsO3U8Nu8NwuSVWbEqb70YBC+TjGJNuFjt2YjsC/96LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743159546; c=relaxed/simple;
-	bh=M80BwyeI/5FhFXlfX1oHfEYhuopM64H98lTBJqDtmUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grTOQPYtVRD6yWk2RGifVNJKALDRQhpMaSzo3rezmF1AGoIFKwNHO7za4M1Plqg2UKjSa6R+4XJN9cij0WR7d12FnPagrUuMwO65xHBQUzWMpoY2ub21yzOXYFspQHlZnowyZ0O5lmfRwaVX55iGEpS9JfEsxfDuZmtfr7OGGNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9TDsGYn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0744CC4CEEA;
-	Fri, 28 Mar 2025 10:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743159545;
-	bh=M80BwyeI/5FhFXlfX1oHfEYhuopM64H98lTBJqDtmUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b9TDsGYnRmR2NTB+cMFv3V7o4VGVVAeWJz4o/XS8VEzMYhfz1f/tpnAbCoB4D/WLH
-	 K+rWsdPhTZplESNX/zBQwfJQj4Izc47Z130tirzVE1hXbyuhL1q39lSBC6rAmMXyTX
-	 Kgvf9GvWT7Qbi+XybKYWg3AHJkQ1gJJRam2FHvOA6xBwdwBSwwu0fVyjEizpEaHBto
-	 up7QGzu7JRaSNPdOK6KjJ7Bl8mcx4aE6zenTXKAHB9m+I3WdtCDoKRj50PzPFNC0ot
-	 X4qtrSjQ8uTwT1J70iilAWU9mG7V/oZT5MRUC3dLroa7uxpundunvmkvKIsD/sFzSB
-	 3dnDRGVUgrkVQ==
-Date: Fri, 28 Mar 2025 11:59:00 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Chris Bainbridge <chris.bainbridge@gmail.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	nouveau@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, lyude@redhat.com, sumit.semwal@linaro.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/nouveau: prime: fix ttm_bo_delayed_delete oops
-Message-ID: <Z-aA9LBCtdCK4YYr@pollux>
-References: <Z9GHj-edWJmyzpdY@debian.local>
- <00e4d9c4-ecfc-4784-b603-12db04cda806@amd.com>
- <Z9q-ggKKgTsvW-Rz@debian.local>
- <Z9rA0G2urlVHFOSx@cassiopeiae>
- <1f4a534f-8883-4793-b191-60c2773f6217@amd.com>
- <Z9rSTkXlub-JZAz0@cassiopeiae>
- <Z-P4epVK8k7tFZ7C@debian.local>
+	s=arc-20240116; t=1743159662; c=relaxed/simple;
+	bh=RTvrT163C/OYAULWUc0nbH7g2zdCKugNEGNlKYbvqYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsrfYBQ9uk5YqAMgcYjQiUYpAwotE28UN35WUA/Ssvuvmcpg9cSNGRHTZE4ptMatcK4e9AXxH+Bd1oeoRoygTF80ZUN+2ZTsGn3VwrnbayBbGA6+zTX2F4aQs32qzq8oU6GQQrHXxlMvJ5KS8bCQ2qBy1Z99nfOZcnZyCxM6rgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1JGttWrd; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bef9b04adso21130901fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 04:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743159658; x=1743764458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rOesqKZa3XJ61TBEmAO2k4CbFDtxNZRhw8ecwIaP1cg=;
+        b=1JGttWrdSRmWgYuEvkMJDhRW0aj4w00dJOFZzFeMra75ZWkzaIdQlYUcUz8JOkAfyq
+         DtuWJiZmnRjnQrHAWwl+QE27HYP7z77DdWN4P+uvmwIM2GW2pWJN4ypOsvThH4q4LKh4
+         YllNDfLL/CXX85IGfLKUs1OD7h4buFpWQcCYdS+7hBOlAWT3tSAzD22MGHxfMIXySQzQ
+         9A4EAiQygoxkoyhEnoLGYqbwvamzTI/nW48t9npfG5CUJRNQJ4nNeLGhsjLjlP6hrmLH
+         Sd2TtU+j1CqPyoEsOVB9t2vgbk7TCVErBTLDS9o0OQq1Ky1ekpxVzb3fvxCnPjtYwb78
+         r4PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743159658; x=1743764458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rOesqKZa3XJ61TBEmAO2k4CbFDtxNZRhw8ecwIaP1cg=;
+        b=GKNuLdvERPVc37N8TtmuI+RhdSIdPK2ca586+6XDZxo4NhqfuWRKWts6BR24dB3iUq
+         QUQjHQv3+McZakRpvL2iu/hBg/scF6R5kat/dgwKBYRGth0DSFkekH+Isj17UxBrRFXk
+         Ik50B2m1R8/wu60mHAxYPGH5+c1HpeqxdHgnCX7GjAdTcnQXCNUnQTWUR8fmdhr19BQf
+         luEpcK6kar1+GNZvxJ7cmmSzMiV6PnQ3/fKSAGHejctneO5M7kVr3chYy10TgW04hDGb
+         E2b3OJ5yB5o9KtPx8z2wo8Ngy0XzCPxRaUdTM4ogfpAXc8A3yeB+WRIkwV39X0Rbupb4
+         2CSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBw7BvgPZnG/+TBZdeJNtehXmF54EeigrNHY/nZEOA26G+g4Deu038QC6e5un45ACcx9ZIbI+pA1MEpQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwirV2Y9RoyAnhNj4FMGrdufiZ6lNBp+3LSz9h8MvHEFJhtvEw
+	wo9X/M4CSdwUMEiBYhDDh1EQlWQdJW+DGuMIH2Plb/cL1V8papmAUNn6LTtwI/hbVd6fWysfOdU
+	F5LBqmxWYfnlh9R1e6BbwPsLm7R1h9dfTnzDvcA==
+X-Gm-Gg: ASbGnctAMcRDcz/tGsObxoPdAZVB5Ml4J2adDY0ilHQPKJ5/OtoHH3R+k+/G8pbgoUz
+	7GijEZon3N/y6/uVr1Dn31FXMmPpowYbFtqHlTww90woa96QOwqzEwFrnfzT7SzcneapaxMW1WW
+	Mwji7ftbEda4zV08wrrWiQUkQivRtBVysuVEpsQwXoqfBxpcGZKQ3053gXKw==
+X-Google-Smtp-Source: AGHT+IGUxoQfqtRs5BLZD1cStRR4vw9J/A9hMILMv3y1NEgPSz8NtoRMXjLDrd/LgBzWys+lYN+WJpH8IF6zibF3Hm4=
+X-Received: by 2002:a05:651c:1258:b0:30d:b49d:7fb7 with SMTP id
+ 38308e7fff4ca-30dc5de6e42mr23133211fa.16.1743159658237; Fri, 28 Mar 2025
+ 04:00:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z-P4epVK8k7tFZ7C@debian.local>
+References: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
+ <1d8bf01be50646bb7b36abfc1ecb25eb997598dd.camel@sapience.com>
+ <CAMRc=Mc6Tn9CZJA6EN_a0i=hiiz6jTr9oYLHdJ8iyrtsw+LmZw@mail.gmail.com>
+ <76e77de144a51d345c3542dd77dd0bdd86e4d5e5.camel@sapience.com> <81b162e821747d807816673f89a171fbd0a0bba5.camel@sapience.com>
+In-Reply-To: <81b162e821747d807816673f89a171fbd0a0bba5.camel@sapience.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 28 Mar 2025 12:00:47 +0100
+X-Gm-Features: AQ5f1JotXGND5AKHZoNwK7zNDD3vr5pLn2oLc_RMaggJ-PAg60vLiVwT4l3chnc
+Message-ID: <CAMRc=Me0-Tv3ZZDsdijuErYZTswbjQ0obMGh_XtUn+cT-uCZ3A@mail.gmail.com>
+Subject: Re: rc4 and later log message: gpiochip_add_data_with_key:
+ get_direction failed -> missing pinctrl patch
+To: Genes Lists <lists@sapience.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 26, 2025 at 12:52:10PM +0000, Chris Bainbridge wrote:
-> Fix an oops in ttm_bo_delayed_delete which results from dererencing a
-> dangling pointer:
-> 
-> Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6b7b: 0000 [#1] PREEMPT SMP
-> CPU: 4 UID: 0 PID: 1082 Comm: kworker/u65:2 Not tainted 6.14.0-rc4-00267-g505460b44513-dirty #216
-> Hardware name: LENOVO 82N6/LNVNB161216, BIOS GKCN65WW 01/16/2024
-> Workqueue: ttm ttm_bo_delayed_delete [ttm]
-> RIP: 0010:dma_resv_iter_first_unlocked+0x55/0x290
-> Code: 31 f6 48 c7 c7 00 2b fa aa e8 97 bd 52 ff e8 a2 c1 53 00 5a 85 c0 74 48 e9 88 01 00 00 4c 89 63 20 4d 85 e4 0f 84 30 01 00 00 <41> 8b 44 24 10 c6 43 2c 01 48 89 df 89 43 28 e8 97 fd ff ff 4c 8b
-> RSP: 0018:ffffbf9383473d60 EFLAGS: 00010202
-> RAX: 0000000000000001 RBX: ffffbf9383473d88 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffbf9383473d78 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 6b6b6b6b6b6b6b6b
-> R13: ffffa003bbf78580 R14: ffffa003a6728040 R15: 00000000000383cc
-> FS:  0000000000000000(0000) GS:ffffa00991c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000758348024dd0 CR3: 000000012c259000 CR4: 0000000000f50ef0
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  ? __die_body.cold+0x19/0x26
->  ? die_addr+0x3d/0x70
->  ? exc_general_protection+0x159/0x460
->  ? asm_exc_general_protection+0x27/0x30
->  ? dma_resv_iter_first_unlocked+0x55/0x290
->  dma_resv_wait_timeout+0x56/0x100
->  ttm_bo_delayed_delete+0x69/0xb0 [ttm]
->  process_one_work+0x217/0x5c0
->  worker_thread+0x1c8/0x3d0
->  ? apply_wqattrs_cleanup.part.0+0xc0/0xc0
->  kthread+0x10b/0x240
->  ? kthreads_online_cpu+0x140/0x140
->  ret_from_fork+0x40/0x70
->  ? kthreads_online_cpu+0x140/0x140
->  ret_from_fork_asm+0x11/0x20
->  </TASK>
-> 
-> The cause of this is:
-> 
-> - drm_prime_gem_destroy calls dma_buf_put(dma_buf) which releases the
->   reference to the shared dma_buf. The reference count is 0, so the
->   dma_buf is destroyed, which in turn decrements the corresponding
->   amdgpu_bo reference count to 0, and the amdgpu_bo is destroyed -
->   calling drm_gem_object_release then dma_resv_fini (which destroys the
->   reservation object), then finally freeing the amdgpu_bo.
-> 
-> - nouveau_bo obj->bo.base.resv is now a dangling pointer to the memory
->   formerly allocated to the amdgpu_bo.
-> 
-> - nouveau_gem_object_del calls ttm_bo_put(&nvbo->bo) which calls
->   ttm_bo_release, which schedules ttm_bo_delayed_delete.
-> 
-> - ttm_bo_delayed_delete runs and dereferences the dangling resv pointer,
->   resulting in a general protection fault.
-> 
-> Fix this by moving the drm_prime_gem_destroy call from
-> nouveau_gem_object_del to nouveau_bo_del_ttm. This ensures that it will
-> be run after ttm_bo_delayed_delete.
-> 
-> Signed-off-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Suggested-by: Christian König <christian.koenig@amd.com>
-> Fixes: 22b33e8ed0e3 ("22b33e8ed0e3nouveau: add PRIME support")
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3937
-> Cc: <Stable@vger.kernel.org>
+On Fri, Mar 28, 2025 at 11:00=E2=80=AFAM Genes Lists <lists@sapience.com> w=
+rote:
+>
+> On Sun, 2025-03-16 at 08:48 -0400, Genes Lists wrote:
+>
+> On Tue, 2025-03-11 at 10:40 -0700, Bartosz Golaszewski wrote:
+>
+> On Tue, 11 Mar 2025 15:03:59 +0100, Genes Lists <lists@sapience.com> said=
+:
+>
+> On Sat, 2025-03-08 at 15:45 -0500, Genes Lists wrote:
+>
+> ......
+>
+>
+>
+> There are two problems here. The issue you're seeing is fixed in next but
+> not in mainline due to my omission. I will send a patch for that.
+>
+> On the other hand, the pinctrl driver in question should be fixed too.
+> Can you try the following change:
+>
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c
+> b/drivers/pinctrl/intel/pinctrl-intel.c
+> index d889c7c878e2..0c6925b53d9f 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -1068,7 +1068,11 @@ static int intel_gpio_get_direction(struct
+> gpio_chip *chip, unsigned int offset)
+>
+>         pin =3D intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+>         if (pin < 0)
+> -               return -EINVAL;
+> +               /*
+> +                * For pins configured to functions other than GPIO, defa=
+ult
+> +                * to the safe INPUT value.
+> +                */
+> +               return GPIO_LINE_DIRECTION_IN;
+>
+>         reg =3D intel_get_padcfg(pctrl, pin, PADCFG0);
+>         if (!reg)
+>
+> ?
+>
+> FYI: This was uncovered by commit 9d846b1aebbe ("gpiolib: check the
+> return value of gpio_chip::get_direction()").
+>
+> Bart
+>
+>
+> Hi Bart - I don't see this pincntrl patch in mainline yet -  what's your =
+thinking on this?
+>
+> thanks!
+>
+>
+>
+> Following up - same question - this patch is not in mainline as of today.
+>
+> Can you share your thoughts/plans on this one?
+>
+> thanks.
+>
+>
+> --
+>
+> Gene
+>
 
-Applied to drm-misc-fixes, thanks!
+My thoughts are that this is in mainline as commit 0102fbf52b93e
+("gpiolib: don't check the retval of get_direction() when registering
+a chip")[1].
 
-[ Fixed up the Fixes: tag, where the commit hash is repeated in the commit
-subject. ]
+Bart
+
+[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+commit/?id=3D0102fbf52b93e609fec0dab53b1fb4fe69113f5e
 
