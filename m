@@ -1,202 +1,131 @@
-Return-Path: <linux-kernel+bounces-579353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150A5A7423B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:15:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F67DA74240
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD81D3B4050
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB0F17A7B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1F51DDA35;
-	Fri, 28 Mar 2025 02:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C65D20DD67;
+	Fri, 28 Mar 2025 02:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="TTA3W9qO"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2084.outbound.protection.outlook.com [40.107.20.84])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="YEVEFI7I"
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2016201260;
-	Fri, 28 Mar 2025 02:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743128113; cv=fail; b=KEz640TOPATBktPh7ZQ1Xm4cHpREIRq//Z/zjbOsxfAdM2AMQb+g8/kNZogYrnSV6cEl/DAa7KrGnGerYKAPwzpbqVLjz+fMQQZSi+tVgaFVX4bxrrgGaGXM8XtBLgaW3dODopddlfoNao/6cUM7SHEf7JkPb2xwcTP8+vGKRyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743128113; c=relaxed/simple;
-	bh=5jvPSOT3ybSBZ3aYuBXsmn/ohWezjfKU8WuGrEw4McI=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dWCBYUlTIHnOZdx3AAgF6dQYzdQHuUPxxtDXIEz5/JYGhI3xPRgV99DvuhJtmnF0sZCmAbABXecCNntZn74wFa04UC1bhs4wMoJp0pst7nxv4sl4zpERe0k0EU1w3Zmac9+16FG8UBuzk2CucgdkQzAO7jzWreOH5oh3z3LRPmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=TTA3W9qO; arc=fail smtp.client-ip=40.107.20.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z/WNfdrX0raPZSZle28iwbTglYZ6rSdu5Hqy7JL9Bs3SR8JXMuqstQ23mfDdfnn7n7dLL6NjlBCT32NLVAQrTCoxVZfgmH0G9l0SpL9RY6ArlhDYJnuVnYffVOyjau9H9QNLLl2kytvJyFViT7jZByniUi2FZn4VAiBW0w+agdchpjW2dHWb/neNdetVucVy1pxERCAq3gaO2F9w+yE0Y3zHWLTKos/qjvwasywyAszO2XMiMwANDVXvo9QlB0WhBGD0DHCuwSiryOBspagua061ziD2VaCbh27AAEx0Vz/xdgbE/XNmF+JG/hwrxVOJjYZ3pn9ceh25SHMRf1ETPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nfq3otGA5ILHZSuGXPi93w6wqQwrmpaPH7nS08yMxDI=;
- b=BRSYgks9tPAD7PsW2J0Q035rw0cPTsiYViSw89kaQPt1HupnYIy9jCY6ZGo6/QYdqggC6UAO/aMYA/JTc9KHLqberxoWt/y65q+enz9tefNsAHttov5aGUvDx5khV6saBk9cyXkYmArE7Yfi/A2I4uuVMFArUAEj9i6polo8THlzcVVMwfg6XG+dLDKbkoY/ZbSB896jJ0Q+RfoX1TxOMKRogBqgUQwaNstcYzazAIqla0L+aHLF2nrJ2+zjtehcwg6CJYyvq8of/YsXwNukTpR2HmVFyKXMCKWIOmGEnuEHrxhbVu3e0QzMuaLrRCkauQQhjtAtOsuocUFSjGFSdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nfq3otGA5ILHZSuGXPi93w6wqQwrmpaPH7nS08yMxDI=;
- b=TTA3W9qOw2O0iwTBI2xsXp+lRgL8SB62/cj+Ob8TmWENvkQjeoP30BxcksZLcu8Cf6EwWH1GBEulVTUXS+/Z0zLa6fUT74KjLhKHv1xPbHDvs8IYuQSuMdQeIkjMvTbW7ziORBkJM7FKmjTtV62uekpEq5KkVJr/aZz0cKPFA0tcnUbvn+v1JKtv7i3pSJ+dZPQ2iAQz0nq2NWwK2juTkl6llnmiaMRPRJr7FmF1a/zl7GrvaRDJ4gq64kB+dLwFXJ3ILnAy5jJRUP2osaujApcfLvHzBcoheJsCH+V+zMrrtj5sjlupemraXYsKXoURpllhz0TFr3hJRyTLb/mZGw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by DB8PR04MB7018.eurprd04.prod.outlook.com (2603:10a6:10:121::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
- 2025 02:15:09 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%3]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
- 02:15:09 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: fsl,mqs: Reference common DAI properties
-Date: Fri, 28 Mar 2025 10:13:39 +0800
-Message-Id: <20250328021339.1593635-1-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0099.apcprd03.prod.outlook.com
- (2603:1096:4:7c::27) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5C713D89D;
+	Fri, 28 Mar 2025 02:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743128545; cv=none; b=EkqmNOhE09kH5DRifMbH9USERfTKRKU/d6GrscFlf7vdQ5mXTOq5shFxLxYmaq9KFsLxmDC/Tvn1wBkJHP9m63vX6+9mbRdRwW6JPy8m7C0kTHMXd/2U4sahJXk4jaoFVPK6e379y2s/Bvd6OSh6Obb9QwzTGLCAx8qFYHBv7yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743128545; c=relaxed/simple;
+	bh=rzOiPlsw0Ze9Jrg8kR08chKDFfn1EOEud685m8doOZE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sIhBE9ku9OZ+QTOb+LTN5BTBBp0w68n2cQNK/CKPC0F1vOvs48VqDLYMxU86xdVsYDtUoAbt7ZLCN32bK2QPMDmH2ao7ah27B7abqTEQk1P7sHSz8pUvtO9lKsPotFmstSXO20ncUFIgHJ7fX/4eZOgBs4H9iVjmIhDsTdyaODY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=YEVEFI7I; arc=none smtp.client-ip=207.171.188.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743128544; x=1774664544;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=YwI/xbbicptm+UYjp+Km1RDmkr0i6xne+jGkYZTwAPQ=;
+  b=YEVEFI7IfLp+PFwSMUmKng+QLDIVB3DQ6vzAFPldklm++CDaGhXg27m8
+   ijvyUCE4Ar50iPP2Nijte2nTi7Z+ePi9KeDJJ7mgOe4BVe4YTevie0ytY
+   vLKsrWAFjPBavAay2gBnl1dJm33JwLLvRq4cZK+ywdzyMZyHx9oX5vLdL
+   4=;
+X-IronPort-AV: E=Sophos;i="6.14,282,1736812800"; 
+   d="scan'208";a="5251929"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 02:22:19 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:56542]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.83:2525] with esmtp (Farcaster)
+ id 0304003b-c2ed-4bc2-ab57-3e91635583f7; Fri, 28 Mar 2025 02:22:18 +0000 (UTC)
+X-Farcaster-Flow-ID: 0304003b-c2ed-4bc2-ab57-3e91635583f7
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 28 Mar 2025 02:22:17 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.171.35) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 28 Mar 2025 02:22:14 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <i.abramov@mt-integration.ru>
+CC: <aleksander.lobakin@intel.com>, <davem@davemloft.net>,
+	<ebiederm@xmission.com>, <edumazet@google.com>, <horms@kernel.org>,
+	<jdamato@fastly.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<leitao@debian.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
+Subject: Re: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
+Date: Thu, 27 Mar 2025 19:15:00 -0700
+Message-ID: <20250328022204.12804-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250328011302.743860-1-i.abramov@mt-integration.ru>
+References: <20250328011302.743860-1-i.abramov@mt-integration.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DB8PR04MB7018:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7e3bbda8-1162-4762-4598-08dd6d9e5cdf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ys/xkueZ2gYpr2W+dlggOr7ehExge8y46fU2Ns3jvYoRIMOO3Rw1grkasHFM?=
- =?us-ascii?Q?ai9SufBRma0PsYpCyYU8muBvnnfJ8lEJjsPgujrmaDeVAmX1YY7HdcZgipe2?=
- =?us-ascii?Q?Dd6tY6WT0Txuk2MhflMUldaYZlxuHZ9iEh8za/zpNBZE9qSzOs9pFGDZNsrv?=
- =?us-ascii?Q?ChAPGVNM5Z9yJlApPIDQysGAQq1YJt5lfMUpLZe0lsHGX1f/60BTZqsLh4zH?=
- =?us-ascii?Q?cPYjPZxYbfS6mpLvqkAcI2zLZ13WFewOhX7XsB6Z8jwt8PLHKzEjbn0j33fD?=
- =?us-ascii?Q?caAIetui2eNxtdmAgsA37xZtzwnuYOW7wbczW+MJIahStOY+utckq64vot0z?=
- =?us-ascii?Q?lX9lfaSWXm8Fv4Io95kyCg2q/rQk7zHANA0ezQa7Th313duyFpfHxHWVGlTz?=
- =?us-ascii?Q?hqC1riRmm+Bn2pSd4WMEGEPxLUsLKdH9IkjL2rd+TLhWrhmx77//GojDq1KP?=
- =?us-ascii?Q?ZbT+Q8CcAlxxppfvmM75fe2nCnDVkebVL0EfjolM+WEIQuuZNoIid2jt/vYO?=
- =?us-ascii?Q?b/q4ketwAS36dCYYB+0dOQM7EbtsW2TRRLqLwfd8ydc60Nfvv5KZUH5FK46z?=
- =?us-ascii?Q?0f6s+uZsj4RCxtk/W4ehYJ/23j3Tnz89DqImWjEH26OSE5kGG1HTLOWW+pLQ?=
- =?us-ascii?Q?KE724oznM6+/rP4JjxaQH0ymjubNHcIT/RjPXvkhZ+LZnwK+T1uTg5QOCRd9?=
- =?us-ascii?Q?QWkJBi0xDDKd9/YVWdwkyfYaNM+X/8JZR6XMCN80mOEznFXX595LNq3r5ynL?=
- =?us-ascii?Q?QDiMOQNVLxRA2VdlJcXy5rKIMDjOqkMRneKf2p3wQ2H3Aa2EbUjAisnTC50n?=
- =?us-ascii?Q?i144Aywc2njWzP9AmbcOGGCpRtNSMt8X2nvRT9cDAdLY9YAwDegXBBhW0xRi?=
- =?us-ascii?Q?222cXBeziQj8OB+c4ahns5sgKCvGZYHHUOuyzRYvGhR1haNJmItdOEjH3YYD?=
- =?us-ascii?Q?zNm/qrajl5XnhVSUaNlSVfwcxNQFA/YinOoxAX30aWiw8XwBaE1thWidJl0h?=
- =?us-ascii?Q?h7FA7Dsshs+IcSVtGksEGP/feKR//LoScAmkUOOeXnN3ss4Nr+DxKMB1hY4l?=
- =?us-ascii?Q?tqI7POn/WT2lvnz2ITUYMdsjbaZjPQbeOO1jAzDUYkoAJlDY/La7Fr5j1GKt?=
- =?us-ascii?Q?e1oy0oy3fdEAvSBd/Y4X+Uv1dA7OBwBPo1e5gswpuTeb9WcCxvgJOTQjADwt?=
- =?us-ascii?Q?I0NDNCGy27wbBUdBa8qg8bxdxovHIwllX6s8F6kGM+HkJi4SFvcqWNedM6oV?=
- =?us-ascii?Q?TTT6p9VGT292VbMDEVMGs/dthmMYboyecYUL8O8ZmKdihTnlepWoDfPsJtbs?=
- =?us-ascii?Q?Sf1AWkhdOXTIhZy19vg8zHLf/m3DGfuIxY4vTXM5isotXTy5jL770zQsD6Np?=
- =?us-ascii?Q?TrNgERX3zLJlLFHkvM4VXaN/61SdKHgd3MGB6qNMUxwl9XGO+WzSXt52dKge?=
- =?us-ascii?Q?/SRowITB0LZlOSMuguqyTu8aIVFBPinY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QlATJvCMMPxtRmrBOUq3/0TbnqgrAwag8ObwW1oaZDnA4DdsjNNNtBER/TEg?=
- =?us-ascii?Q?6ZtBdKLqRmeZb4FwbPic45TFXINGLYsicKzfeTgQdWNvJl3bLrdb52kyASEC?=
- =?us-ascii?Q?ZjDnr04UgjJkHaxKvwn2jsIELYlpqTIL863/qguVRXbAgkfwtFJ6xKNYyvWr?=
- =?us-ascii?Q?zUxhcvQ0yPQ2//OoOIsLuUtFRHaf25q3p4icMndNLHMTEnaYgVzE/cBs7DEE?=
- =?us-ascii?Q?YF4VzFsvnQQdESR6Txp2Uw7EWr4F+skgEQ1ecoSUSVljYKk36qkTTLwjAJux?=
- =?us-ascii?Q?egOLrd8vMRqQ4Mu8BoEXuHxMazKt5cmBXRsA7T50guOQi/1BgqUowL7IZtHE?=
- =?us-ascii?Q?Bzi9qiW2oE+Qp3yo0e9arMeI7B5AjJ+slBXXJTM+XUnfCuPn6qISnMI4Zg5I?=
- =?us-ascii?Q?dE4TbMI7zs4Fj2sHZNdWH+0AqpyUR55tzfM4Z+M4zvoj5Fa7Ot3iFUE/62iI?=
- =?us-ascii?Q?IxaHPXFQUdDg3vag3J9qXhUEK34i1HUw2HLXcWMbCta8Ps0YotfGYpNTlVqt?=
- =?us-ascii?Q?OfCgbtvBQj8zMCgGNSx+a4oK/3H23GXN4K+fb4w9xHedXIWCOjPS1qf74BWm?=
- =?us-ascii?Q?7/6sk08KZthstXs7LVrY5Uq1I3RcF1h+UgX4TIjyY5kG65e00Y2mVYY2tj9+?=
- =?us-ascii?Q?Ncp82vXItjLC4K3wNfrFKEcAiGCE+LTjld/7ZFcF7mZ2+np7a1tAlmZLChby?=
- =?us-ascii?Q?OqjnsdntwURM+U7HFKWYHAeQ1EptmKwr8Jde5n+rUI/640elg6N/aRWXIBQO?=
- =?us-ascii?Q?FcT3PAwcz+p6fMW3mWUPxBAczsyJkxwVWcPQ9utgVRh0unQ/89XDnCIf+qPy?=
- =?us-ascii?Q?HsnJn9iW4pKNxNSsaxlsn8mhv+GMQ28nh1BJqqZXRVpmKNBsbnK7frz1mHjj?=
- =?us-ascii?Q?QBcrknWIXVgP1lWcOU/CQjkie8rONnxXQIOhhS50/J3aWStPnvyoHZj47mMA?=
- =?us-ascii?Q?4aSZUahoEK2AYn5D5dw0ZZdpfWbPG/ILDlGInY+4RqCPf5CF4dhj5FhWXfiG?=
- =?us-ascii?Q?CwTEfqqvzBcRTyVgzJgmSn8Tm9DZxUcDRJdmWtWuO9FRW5FJOfqvDaLbzFlJ?=
- =?us-ascii?Q?6kKCyT1kazIU7P8SM4bkCZ2N59s8VJyeLoX0DwTGgoCXE8R/e9eWqLvNZFge?=
- =?us-ascii?Q?R2JJFqGSyveJXumKLgP6UF2FKQiW1bgBS+C/bZ8fHBuaOMNuD4SnwDnCRsni?=
- =?us-ascii?Q?LJdEOckfgAChLbmTBg7OGUkzSAB2wias47/eZU4Wb+ugH+54QoRkB6i/uAva?=
- =?us-ascii?Q?rx2nvP5eyV2YHAxW0w7h5LVhfhip+Cp0GtEkFzi+IWKZw7gvEnEiOx3PIxau?=
- =?us-ascii?Q?UPC4ZKmAtwa8yTpcewsDRNCp8e/IJwxCbXpg+PPLxegquurrpBHLCFP5b3TU?=
- =?us-ascii?Q?BcIIa0LiEgy7HWoHtJ13abfpeSV9OdrVhU+im4QICLEp7r2STE9pTIY4pipT?=
- =?us-ascii?Q?/ljPgc8Cm4lJHIqY+iJgaU0xTYs5qC1O8Wpvyx/WRO1KAT0R74sx4jCTa76+?=
- =?us-ascii?Q?cpGkMz9zT4+J8Wf82XkU66cr7FWL7/Bf7ZTEEJbeVN3Arwe9Rj4wLiP9FfFU?=
- =?us-ascii?Q?rdKxK2Fx7lS+8H8rnFgMe390lv+t+/xRM6MpJBEx?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e3bbda8-1162-4762-4598-08dd6d9e5cdf
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 02:15:09.0620
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +tyLMhg5Bc3m3smdx1iXvhic4kv7UPR470VxIyyf1LL148Z2NIwLe7q34sJHL1q8ZjXSCrNdka4UKZMpAcY86Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7018
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Reference the dai-common.yaml schema to allow '#sound-dai-cells' and
-"sound-name-prefix' to be used.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
-changes in v2:
-- add constrain for sound-dai-cells
+> Subject: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
 
- Documentation/devicetree/bindings/sound/fsl,mqs.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+s/__dev_change_net_namespace/netif_change_net_namespace/
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,mqs.yaml b/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
-index 8c22e8348b14..d1ac84e518a0 100644
---- a/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
-+++ b/Documentation/devicetree/bindings/sound/fsl,mqs.yaml
-@@ -28,6 +28,9 @@ properties:
-       - fsl,imx95-aonmix-mqs
-       - fsl,imx95-netcmix-mqs
- 
-+  "#sound-dai-cells":
-+    const: 0
-+
-   clocks:
-     minItems: 1
-     maxItems: 2
-@@ -55,6 +58,7 @@ required:
-   - clock-names
- 
- allOf:
-+  - $ref: dai-common.yaml#
-   - if:
-       properties:
-         compatible:
-@@ -86,7 +90,7 @@ allOf:
-       required:
-         - gpr
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
--- 
-2.34.1
+Also, please specify the target tree: [PATCH v2 net]
 
+
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+Date: Fri, 28 Mar 2025 04:12:57 +0300
+> It's pointless to call WARN_ON() in case of an allocation failure in
+> device_rename(), since it only leads to useless splats caused by deliberate
+> fault injections, so avoid it.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 8b41d1887db7 ("[NET]: Fix running without sysfs")
+
+Reported-by: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/netdev/000000000000a45a92061ce6cc7d@google.com/
+
+
+> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+> ---
+>  net/core/dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 2f7f5fd9ffec..14726cc8796b 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -12102,7 +12102,7 @@ int __dev_change_net_namespace(struct net_device *dev, struct net *net,
+
+It applies cleanly but please make sure to use the latest tree.
+
+
+
+>  	dev_set_uevent_suppress(&dev->dev, 1);
+>  	err = device_rename(&dev->dev, dev->name);
+>  	dev_set_uevent_suppress(&dev->dev, 0);
+> -	WARN_ON(err);
+> +	WARN_ON(err && err != -ENOMEM);
+>  
+>  	/* Send a netdev-add uevent to the new namespace */
+>  	kobject_uevent(&dev->dev.kobj, KOBJ_ADD);
+> -- 
+> 2.39.5
 
