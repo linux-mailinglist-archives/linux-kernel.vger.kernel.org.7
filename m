@@ -1,514 +1,273 @@
-Return-Path: <linux-kernel+bounces-580004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56B8A74C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C24A74C1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D7B3ABE44
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158113A8D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5833A17C225;
-	Fri, 28 Mar 2025 14:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4264617A2F8;
+	Fri, 28 Mar 2025 14:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVGpj2SV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CUA4NyUm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6430B2C9A;
-	Fri, 28 Mar 2025 14:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2709C22F19
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743170566; cv=none; b=NK+EkHzPLEG/aXieZYip0rM8DII8y6+QRZ4z5/MiMn0Wun3u+KGYzJhNsRfsd49j0f2DW3+WFDG4CcdDKoO9ohCfC7CFzwTcr/Rw20cdDOn9TAvraUxFQPLYQK2MYheM4xzIZWV8MdbtdeVrZ29mMFSMq1pxFSymGwev2MtpCyc=
+	t=1743170636; cv=none; b=W4cRPg9V1hzE7LOsCXOWbIe2dHhlfBtGJmbPh8gn/0ksinTQjFglRXoApQ7U1NAFABeyvZxbfSZJdWlh7tMTCv2/A4XYumLNvLJ9vaTBqKjHUiLa5sbv+rvzEDtjjvWNxn8AHOod/U4/bEFpeREmICNeWFv5aNMSctOp+RVopsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743170566; c=relaxed/simple;
-	bh=nlYYEWBQMCeOE61SbM1GGp8VG9KGxxi30BBhoNGMW7A=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sgn3qSNz/BPpfDdzkrJksC0cZABnz9pSn4/Zfo+MDCwFjhkgU4w4E9ecwnJKevq9eueLUVKCvPEGXGSegg3usKB3ruWKY/oKBupxRwyK2TpD1ro5n9hKjOV3F0hPt4nHV7JgQz4tKlI2svCCBlTJe+3r4Y8o/UWgMQgcTEs60NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVGpj2SV; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743170564; x=1774706564;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=nlYYEWBQMCeOE61SbM1GGp8VG9KGxxi30BBhoNGMW7A=;
-  b=LVGpj2SVoa5IiErPhAp+SoqtQn5Yqm7dDgy28wBtmTqaUSR865ymrk2Q
-   SvAkeK7PN0uWEfE93Am5do7QrC2QA/Hwn6lTzljJwYeioERMxM7are17c
-   Teww+UgMrIP8eyEOUnMoCyi8/RpX4C+16X1yf2UC0pi0dok3s+/El/4eA
-   RrGOSAiFMkECQCY+y8XDUOibUq2gjZDEgavF/k7Xea1OD+wRQ+USiTweR
-   U0CdIHej4WfiPhvLlRl36uDk9qIjqeknbnJ7rGMFOoLxucmneT59tc+1H
-   m30QNugdDIJ5lGQwwxHlpJ12l5zv/oZ1X7YYv1R/jxAiXFS7umHN58QBr
-   g==;
-X-CSE-ConnectionGUID: tjxraiH+S46BUv/z+gxp7g==
-X-CSE-MsgGUID: fh040ytoRWG/uszrrfevtg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="32134471"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="32134471"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 07:02:44 -0700
-X-CSE-ConnectionGUID: +K2qMGG3Qv+l8z3ySYza1g==
-X-CSE-MsgGUID: 7QtwsSITQfepydJgdn02KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="130308483"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.43])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 07:02:41 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 28 Mar 2025 16:02:37 +0200 (EET)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 01/12] platform/x86: alienware-wmi-wmax: Rename thermal
- related symbols
-In-Reply-To: <20250313-hwm-v6-1-17b57f787d77@gmail.com>
-Message-ID: <474a861e-284e-fa15-5338-31d1c32ec37b@linux.intel.com>
-References: <20250313-hwm-v6-0-17b57f787d77@gmail.com> <20250313-hwm-v6-1-17b57f787d77@gmail.com>
+	s=arc-20240116; t=1743170636; c=relaxed/simple;
+	bh=40aQCT4O8fEvX6ZHUOSbqQHr8x+W1Av6fkZgp7Bd9Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EN3Q58A2282cFDsFoZX0cqwCIyxS76rcBIYehIuwclJY/P14mzYZDJ8KOpYyfFjLe/HIXvcvQF81DT9GGu1hQGov9jwHyMH2HdSfy4r37/HCzLqxrWNR2OWmVbfED4cT8ngbpkS2oSV9IJoEsfOS3s3mgghNOOi5H9OBNgfkhQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CUA4NyUm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743170632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=75wYxT3IroHLlrMDZKWsJPHcaRpOEmpxaKWKNfx9sEA=;
+	b=CUA4NyUm8iSZNQUauaZ6YRgcIIiOWB2gN3Xz3ZyXiP+FYtfG6B7SbnvgrwCHT7lr6IcL2l
+	6f3r7wVAAEVmmhOs7NnCJVAgYwZOHDy+rc7RpAgnu0gb72A37BMTaBXzXE5wVzchcnlapY
+	la29piwRrFywpNuX0jTZZ69hmnxgbO0=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-527-5Ia_TswTNx6XTMEVMaVPbA-1; Fri, 28 Mar 2025 10:03:50 -0400
+X-MC-Unique: 5Ia_TswTNx6XTMEVMaVPbA-1
+X-Mimecast-MFC-AGG-ID: 5Ia_TswTNx6XTMEVMaVPbA_1743170630
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d59fc520edso757125ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 07:03:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743170629; x=1743775429;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=75wYxT3IroHLlrMDZKWsJPHcaRpOEmpxaKWKNfx9sEA=;
+        b=WvDqXoHXPbg83ceKg8zpuWrHNFkQBXjL9qrmf+GbrYfL+cLtwaZ75hL1rqXZTkkhhn
+         mF0sGbfzKNEbZ5txUZmc9gu9PGwSfc8OVhIhNLD92ExjIzJQ6b6CO7FaFxJteVX00Q1U
+         KDZSA44mqC5ezIOwWPoKegIdQoKiAXvXQYam/oDwLTqev/qXc2LwwBxSCrmKVddDUlH7
+         rdKeU8IM64SLewrLxp/3XTv11G3K7FNMJb5DM1Rer9sQuiOZBjRw82DsWzDSdUy5DQih
+         6Sw0to9+w+U3XG7uutHIg1y5R6ql2nhrQoSSmTMkYNMWnWCVmTvg8pFdqO4O6hTmWXLX
+         U/gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyN8vUuwYtOKCSKFLLBDFmxs/hByR3X0KUns4ZAnrRML4Vc5ZlZCXocgogjkbDFV6Hh/OLm2i0s8y+lig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPcQOgPn5dK4k+S4aRuhI9cEcaLk1GpZGW4UKxB0aXN0cm6Lxj
+	0jr+KNgCw84yg5a167NJfmXQzY/4G2Rn9R2CDYKq6K8RrvPJjvFKCnZGHUHWHsvQnkXEObZMAsf
+	fNGHc/RHmtJkZgd0WP1ByQxYM1YCy2nluJnS19MXmiC3flJvU+20tTuwPWvO6gIQ29VONSA==
+X-Gm-Gg: ASbGncvfMQdfMWIymBPJTEEj40rcSc8zw7EhDHS5mVSfXAvdtOuE9bKBlzcod25J107
+	oLdsgl4yb1xTf6Ftg8yEjLdf164ROt6IRcH9ugs5CoV6tmMw7qrW+P/YbAoWY1jZwhXI6apvlko
+	j49MhYh1xdAOHZICvj8khKSQmVcwdnTyaGgyv4Awi02oDCzWPF+NgG2+pM3eKHAAMo2gz2wYU4U
+	DgeiU7xSlTKNBRlMx2W6hhnfFlaS1FqUzYYR5vTDORk1JipJ2dVfGNhkVFb26Q+9DUhZ2omhruu
+	mhtLhArpL3alyeXxHJk=
+X-Received: by 2002:a05:6e02:3309:b0:3d4:3fbf:967f with SMTP id e9e14a558f8ab-3d5ce2379d6mr22848355ab.7.1743170629192;
+        Fri, 28 Mar 2025 07:03:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2yhoc9K+rOe3eFD1M2GGgLaXgUCMXwvTcs9i8ZSO2bSdARCXsSVRM8GpdG/TKPqPqUbl0rA==
+X-Received: by 2002:a05:6e02:3309:b0:3d4:3fbf:967f with SMTP id e9e14a558f8ab-3d5ce2379d6mr22848155ab.7.1743170628693;
+        Fri, 28 Mar 2025 07:03:48 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d5d5a6c645sm4784945ab.19.2025.03.28.07.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 07:03:46 -0700 (PDT)
+Date: Fri, 28 Mar 2025 08:03:43 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: liulongfang <liulongfang@huawei.com>
+Cc: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
+ <jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
+Subject: Re: [PATCH v6 1/5] hisi_acc_vfio_pci: fix XQE dma address error
+Message-ID: <20250328080343.2bfb6fdf.alex.williamson@redhat.com>
+In-Reply-To: <f72a87ed-5884-2a6f-02e1-b0bcd172a4e8@huawei.com>
+References: <20250318064548.59043-1-liulongfang@huawei.com>
+	<20250318064548.59043-2-liulongfang@huawei.com>
+	<20250321095140.4980c7c0.alex.williamson@redhat.com>
+	<f72a87ed-5884-2a6f-02e1-b0bcd172a4e8@huawei.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1260473303-1743170557=:932"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, 28 Mar 2025 16:04:17 +0800
+liulongfang <liulongfang@huawei.com> wrote:
 
---8323328-1260473303-1743170557=:932
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> on 2025/3/21 23:51, Alex Williamson wrote:
+> > On Tue, 18 Mar 2025 14:45:44 +0800
+> > Longfang Liu <liulongfang@huawei.com> wrote:
+> >   
+> >> The dma addresses of EQE and AEQE are wrong after migration and
+> >> results in guest kernel-mode encryption services  failure.
+> >> Comparing the definition of hardware registers, we found that
+> >> there was an error when the data read from the register was
+> >> combined into an address. Therefore, the address combination
+> >> sequence needs to be corrected.
+> >>
+> >> Even after fixing the above problem, we still have an issue
+> >> where the Guest from an old kernel can get migrated to
+> >> new kernel and may result in wrong data.
+> >>
+> >> In order to ensure that the address is correct after migration,
+> >> if an old magic number is detected, the dma address needs to be
+> >> updated.
+> >>
+> >> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live migration")
+> >> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+> >> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> >> ---
+> >>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 41 ++++++++++++++++---
+> >>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    | 14 ++++++-
+> >>  2 files changed, 47 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> >> index 451c639299eb..304dbdfa0e95 100644
+> >> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> >> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> >> @@ -350,6 +350,32 @@ static int vf_qm_func_stop(struct hisi_qm *qm)
+> >>  	return hisi_qm_mb(qm, QM_MB_CMD_PAUSE_QM, 0, 0, 0);
+> >>  }
+> >>  
+> >> +static int vf_qm_version_check(struct acc_vf_data *vf_data, struct device *dev)
+> >> +{
+> >> +	switch (vf_data->acc_magic) {
+> >> +	case ACC_DEV_MAGIC_V2:
+> >> +		if (vf_data->major_ver != ACC_DRV_MAJOR_VER) {
+> >> +			dev_info(dev, "migration driver version<%u.%u> not match!\n",
+> >> +				 vf_data->major_ver, vf_data->minor_ver);
+> >> +			return -EINVAL;
+> >> +		}
+> >> +		break;
+> >> +	case ACC_DEV_MAGIC_V1:
+> >> +		/* Correct dma address */
+> >> +		vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+> >> +		vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
+> >> +		vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
+> >> +		vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
+> >> +		vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
+> >> +		vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
+> >> +		break;
+> >> +	default:
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+> >>  			     struct hisi_acc_vf_migration_file *migf)
+> >>  {
+> >> @@ -363,7 +389,8 @@ static int vf_qm_check_match(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+> >>  	if (migf->total_length < QM_MATCH_SIZE || hisi_acc_vdev->match_done)
+> >>  		return 0;
+> >>  
+> >> -	if (vf_data->acc_magic != ACC_DEV_MAGIC) {
+> >> +	ret = vf_qm_version_check(vf_data, dev);
+> >> +	if (ret) {
+> >>  		dev_err(dev, "failed to match ACC_DEV_MAGIC\n");
+> >>  		return -EINVAL;
+> >>  	}  
+> > 
+> > Nit, we store the return value here, but never use it beyond testing
+> > non-zero.  This is a pattern throughout this driver that should be
+> > fixed (maybe in a future series).  We should return the errno from the
+> > sub-function rather than overriding it unless we have a specific reason
+> > to do otherwise.  Thanks,
+> >  
+> 
+> You've raised a point that seems to apply in multiple places.
+> Could this be addressed in a future bugfix patch?
 
-On Thu, 13 Mar 2025, Kurt Borja wrote:
+Yes, I've noted that above.  Thanks,
 
-> The "thermal" features of the WMAX WMI device are only present on the
-> host device if the ACPI _UID is "AWCC". Replace WMAX prefixes with
-> "AWCC" to reflect this relationship.
->=20
-> Thermal profiles with WMAX_PROFILE_BASIC prefix are also renamed to
-> WMAX_PROFILE_LEGACY because they are only supported in older versions
-> of this WMI device.
->=20
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+Alex
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> >> @@ -418,7 +445,9 @@ static int vf_qm_get_match_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+> >>  	int vf_id = hisi_acc_vdev->vf_id;
+> >>  	int ret;
+> >>  
+> >> -	vf_data->acc_magic = ACC_DEV_MAGIC;
+> >> +	vf_data->acc_magic = ACC_DEV_MAGIC_V2;
+> >> +	vf_data->major_ver = ACC_DRV_MAJOR_VER;
+> >> +	vf_data->minor_ver = ACC_DRV_MINOR_VER;
+> >>  	/* Save device id */
+> >>  	vf_data->dev_id = hisi_acc_vdev->vf_dev->device;
+> >>  
+> >> @@ -496,12 +525,12 @@ static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data *vf_data)
+> >>  		return -EINVAL;
+> >>  
+> >>  	/* Every reg is 32 bit, the dma address is 64 bit. */
+> >> -	vf_data->eqe_dma = vf_data->qm_eqc_dw[1];
+> >> +	vf_data->eqe_dma = vf_data->qm_eqc_dw[QM_XQC_ADDR_HIGH];
+> >>  	vf_data->eqe_dma <<= QM_XQC_ADDR_OFFSET;
+> >> -	vf_data->eqe_dma |= vf_data->qm_eqc_dw[0];
+> >> -	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[1];
+> >> +	vf_data->eqe_dma |= vf_data->qm_eqc_dw[QM_XQC_ADDR_LOW];
+> >> +	vf_data->aeqe_dma = vf_data->qm_aeqc_dw[QM_XQC_ADDR_HIGH];
+> >>  	vf_data->aeqe_dma <<= QM_XQC_ADDR_OFFSET;
+> >> -	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[0];
+> >> +	vf_data->aeqe_dma |= vf_data->qm_aeqc_dw[QM_XQC_ADDR_LOW];
+> >>  
+> >>  	/* Through SQC_BT/CQC_BT to get sqc and cqc address */
+> >>  	ret = qm_get_sqc(vf_qm, &vf_data->sqc_dma);
+> >> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> >> index 245d7537b2bc..91002ceeebc1 100644
+> >> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> >> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
+> >> @@ -39,6 +39,9 @@
+> >>  #define QM_REG_ADDR_OFFSET	0x0004
+> >>  
+> >>  #define QM_XQC_ADDR_OFFSET	32U
+> >> +#define QM_XQC_ADDR_LOW	0x1
+> >> +#define QM_XQC_ADDR_HIGH	0x2
+> >> +
+> >>  #define QM_VF_AEQ_INT_MASK	0x0004
+> >>  #define QM_VF_EQ_INT_MASK	0x000c
+> >>  #define QM_IFC_INT_SOURCE_V	0x0020
+> >> @@ -50,10 +53,15 @@
+> >>  #define QM_EQC_DW0		0X8000
+> >>  #define QM_AEQC_DW0		0X8020
+> >>  
+> >> +#define ACC_DRV_MAJOR_VER 1
+> >> +#define ACC_DRV_MINOR_VER 0
+> >> +
+> >> +#define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
+> >> +#define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
+> >> +
+> >>  struct acc_vf_data {
+> >>  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
+> >>  	/* QM match information */
+> >> -#define ACC_DEV_MAGIC	0XCDCDCDCDFEEDAACC
+> >>  	u64 acc_magic;
+> >>  	u32 qp_num;
+> >>  	u32 dev_id;
+> >> @@ -61,7 +69,9 @@ struct acc_vf_data {
+> >>  	u32 qp_base;
+> >>  	u32 vf_qm_state;
+> >>  	/* QM reserved match information */
+> >> -	u32 qm_rsv_state[3];
+> >> +	u16 major_ver;
+> >> +	u16 minor_ver;
+> >> +	u32 qm_rsv_state[2];
+> >>  
+> >>  	/* QM RW regs */
+> >>  	u32 aeq_int_mask;  
+> > 
+> > 
+> > 
+> > .
+> >   
+> 
 
-I note though that this also renames OPERATION -> OP, which is fine, it=20
-just wasn't mentioned.
-
---=20
- i.
-
-
-> ---
->  drivers/platform/x86/dell/alienware-wmi-wmax.c | 173 +++++++++++++------=
-------
->  1 file changed, 87 insertions(+), 86 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pla=
-tform/x86/dell/alienware-wmi-wmax.c
-> index 3d3014b5adf046c94c1ebf39a0e28a92622b40d6..ed70e12d73d7fe5d89f3364c5=
-367820bf47e3c1e 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> @@ -24,16 +24,17 @@
->  #define WMAX_METHOD_DEEP_SLEEP_STATUS=09=090x0C
->  #define WMAX_METHOD_BRIGHTNESS=09=09=090x3
->  #define WMAX_METHOD_ZONE_CONTROL=09=090x4
-> -#define WMAX_METHOD_THERMAL_INFORMATION=09=090x14
-> -#define WMAX_METHOD_THERMAL_CONTROL=09=090x15
-> -#define WMAX_METHOD_GAME_SHIFT_STATUS=09=090x25
-> =20
-> -#define WMAX_THERMAL_MODE_GMODE=09=09=090xAB
-> +#define AWCC_METHOD_THERMAL_INFORMATION=09=090x14
-> +#define AWCC_METHOD_THERMAL_CONTROL=09=090x15
-> +#define AWCC_METHOD_GAME_SHIFT_STATUS=09=090x25
-> =20
-> -#define WMAX_FAILURE_CODE=09=09=090xFFFFFFFF
-> -#define WMAX_THERMAL_TABLE_MASK=09=09=09GENMASK(7, 4)
-> -#define WMAX_THERMAL_MODE_MASK=09=09=09GENMASK(3, 0)
-> -#define WMAX_SENSOR_ID_MASK=09=09=09BIT(8)
-> +#define AWCC_THERMAL_MODE_GMODE=09=09=090xAB
-> +
-> +#define AWCC_FAILURE_CODE=09=09=090xFFFFFFFF
-> +#define AWCC_THERMAL_TABLE_MASK=09=09=09GENMASK(7, 4)
-> +#define AWCC_THERMAL_MODE_MASK=09=09=09GENMASK(3, 0)
-> +#define AWCC_SENSOR_ID_MASK=09=09=09BIT(8)
-> =20
->  static bool force_platform_profile;
->  module_param_unsafe(force_platform_profile, bool, 0);
-> @@ -151,38 +152,38 @@ static const struct dmi_system_id awcc_dmi_table[] =
-__initconst =3D {
->  =09},
->  };
-> =20
-> -enum WMAX_THERMAL_INFORMATION_OPERATIONS {
-> -=09WMAX_OPERATION_SYS_DESCRIPTION=09=09=3D 0x02,
-> -=09WMAX_OPERATION_LIST_IDS=09=09=09=3D 0x03,
-> -=09WMAX_OPERATION_CURRENT_PROFILE=09=09=3D 0x0B,
-> +enum AWCC_THERMAL_INFORMATION_OPERATIONS {
-> +=09AWCC_OP_GET_SYSTEM_DESCRIPTION=09=09=3D 0x02,
-> +=09AWCC_OP_GET_RESOURCE_ID=09=09=09=3D 0x03,
-> +=09AWCC_OP_GET_CURRENT_PROFILE=09=09=3D 0x0B,
->  };
-> =20
-> -enum WMAX_THERMAL_CONTROL_OPERATIONS {
-> -=09WMAX_OPERATION_ACTIVATE_PROFILE=09=09=3D 0x01,
-> +enum AWCC_THERMAL_CONTROL_OPERATIONS {
-> +=09AWCC_OP_ACTIVATE_PROFILE=09=09=3D 0x01,
->  };
-> =20
-> -enum WMAX_GAME_SHIFT_STATUS_OPERATIONS {
-> -=09WMAX_OPERATION_TOGGLE_GAME_SHIFT=09=3D 0x01,
-> -=09WMAX_OPERATION_GET_GAME_SHIFT_STATUS=09=3D 0x02,
-> +enum AWCC_GAME_SHIFT_STATUS_OPERATIONS {
-> +=09AWCC_OP_TOGGLE_GAME_SHIFT=09=09=3D 0x01,
-> +=09AWCC_OP_GET_GAME_SHIFT_STATUS=09=09=3D 0x02,
->  };
-> =20
-> -enum WMAX_THERMAL_TABLES {
-> -=09WMAX_THERMAL_TABLE_BASIC=09=09=3D 0x90,
-> -=09WMAX_THERMAL_TABLE_USTT=09=09=09=3D 0xA0,
-> +enum AWCC_THERMAL_TABLES {
-> +=09AWCC_THERMAL_TABLE_LEGACY=09=09=3D 0x90,
-> +=09AWCC_THERMAL_TABLE_USTT=09=09=09=3D 0xA0,
->  };
-> =20
-> -enum wmax_thermal_mode {
-> -=09THERMAL_MODE_USTT_BALANCED,
-> -=09THERMAL_MODE_USTT_BALANCED_PERFORMANCE,
-> -=09THERMAL_MODE_USTT_COOL,
-> -=09THERMAL_MODE_USTT_QUIET,
-> -=09THERMAL_MODE_USTT_PERFORMANCE,
-> -=09THERMAL_MODE_USTT_LOW_POWER,
-> -=09THERMAL_MODE_BASIC_QUIET,
-> -=09THERMAL_MODE_BASIC_BALANCED,
-> -=09THERMAL_MODE_BASIC_BALANCED_PERFORMANCE,
-> -=09THERMAL_MODE_BASIC_PERFORMANCE,
-> -=09THERMAL_MODE_LAST,
-> +enum awcc_thermal_profile {
-> +=09AWCC_PROFILE_USTT_BALANCED,
-> +=09AWCC_PROFILE_USTT_BALANCED_PERFORMANCE,
-> +=09AWCC_PROFILE_USTT_COOL,
-> +=09AWCC_PROFILE_USTT_QUIET,
-> +=09AWCC_PROFILE_USTT_PERFORMANCE,
-> +=09AWCC_PROFILE_USTT_LOW_POWER,
-> +=09AWCC_PROFILE_LEGACY_QUIET,
-> +=09AWCC_PROFILE_LEGACY_BALANCED,
-> +=09AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE,
-> +=09AWCC_PROFILE_LEGACY_PERFORMANCE,
-> +=09AWCC_PROFILE_LAST,
->  };
-> =20
->  struct wmax_led_args {
-> @@ -210,20 +211,20 @@ struct wmax_u32_args {
->  struct awcc_priv {
->  =09struct wmi_device *wdev;
->  =09struct device *ppdev;
-> -=09enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LA=
-ST];
-> +=09enum awcc_thermal_profile supported_thermal_profiles[PLATFORM_PROFILE=
-_LAST];
->  };
-> =20
-> -static const enum platform_profile_option wmax_mode_to_platform_profile[=
-THERMAL_MODE_LAST] =3D {
-> -=09[THERMAL_MODE_USTT_BALANCED]=09=09=09=3D PLATFORM_PROFILE_BALANCED,
-> -=09[THERMAL_MODE_USTT_BALANCED_PERFORMANCE]=09=3D PLATFORM_PROFILE_BALAN=
-CED_PERFORMANCE,
-> -=09[THERMAL_MODE_USTT_COOL]=09=09=09=3D PLATFORM_PROFILE_COOL,
-> -=09[THERMAL_MODE_USTT_QUIET]=09=09=09=3D PLATFORM_PROFILE_QUIET,
-> -=09[THERMAL_MODE_USTT_PERFORMANCE]=09=09=09=3D PLATFORM_PROFILE_PERFORMA=
-NCE,
-> -=09[THERMAL_MODE_USTT_LOW_POWER]=09=09=09=3D PLATFORM_PROFILE_LOW_POWER,
-> -=09[THERMAL_MODE_BASIC_QUIET]=09=09=09=3D PLATFORM_PROFILE_QUIET,
-> -=09[THERMAL_MODE_BASIC_BALANCED]=09=09=09=3D PLATFORM_PROFILE_BALANCED,
-> -=09[THERMAL_MODE_BASIC_BALANCED_PERFORMANCE]=09=3D PLATFORM_PROFILE_BALA=
-NCED_PERFORMANCE,
-> -=09[THERMAL_MODE_BASIC_PERFORMANCE]=09=09=3D PLATFORM_PROFILE_PERFORMANC=
-E,
-> +static const enum platform_profile_option awcc_mode_to_platform_profile[=
-AWCC_PROFILE_LAST] =3D {
-> +=09[AWCC_PROFILE_USTT_BALANCED]=09=09=09=3D PLATFORM_PROFILE_BALANCED,
-> +=09[AWCC_PROFILE_USTT_BALANCED_PERFORMANCE]=09=3D PLATFORM_PROFILE_BALAN=
-CED_PERFORMANCE,
-> +=09[AWCC_PROFILE_USTT_COOL]=09=09=09=3D PLATFORM_PROFILE_COOL,
-> +=09[AWCC_PROFILE_USTT_QUIET]=09=09=09=3D PLATFORM_PROFILE_QUIET,
-> +=09[AWCC_PROFILE_USTT_PERFORMANCE]=09=09=09=3D PLATFORM_PROFILE_PERFORMA=
-NCE,
-> +=09[AWCC_PROFILE_USTT_LOW_POWER]=09=09=09=3D PLATFORM_PROFILE_LOW_POWER,
-> +=09[AWCC_PROFILE_LEGACY_QUIET]=09=09=09=3D PLATFORM_PROFILE_QUIET,
-> +=09[AWCC_PROFILE_LEGACY_BALANCED]=09=09=09=3D PLATFORM_PROFILE_BALANCED,
-> +=09[AWCC_PROFILE_LEGACY_BALANCED_PERFORMANCE]=09=3D PLATFORM_PROFILE_BAL=
-ANCED_PERFORMANCE,
-> +=09[AWCC_PROFILE_LEGACY_PERFORMANCE]=09=09=3D PLATFORM_PROFILE_PERFORMAN=
-CE,
->  };
-> =20
->  static struct awcc_quirks *awcc;
-> @@ -444,26 +445,26 @@ const struct attribute_group wmax_deepsleep_attribu=
-te_group =3D {
->   * Thermal Profile control
->   *  - Provides thermal profile control through the Platform Profile API
->   */
-> -static bool is_wmax_thermal_code(u32 code)
-> +static bool is_awcc_thermal_mode(u32 code)
->  {
-> -=09if (code & WMAX_SENSOR_ID_MASK)
-> +=09if (code & AWCC_SENSOR_ID_MASK)
->  =09=09return false;
-> =20
-> -=09if ((code & WMAX_THERMAL_MODE_MASK) >=3D THERMAL_MODE_LAST)
-> +=09if ((code & AWCC_THERMAL_MODE_MASK) >=3D AWCC_PROFILE_LAST)
->  =09=09return false;
-> =20
-> -=09if ((code & WMAX_THERMAL_TABLE_MASK) =3D=3D WMAX_THERMAL_TABLE_BASIC =
-&&
-> -=09    (code & WMAX_THERMAL_MODE_MASK) >=3D THERMAL_MODE_BASIC_QUIET)
-> +=09if ((code & AWCC_THERMAL_TABLE_MASK) =3D=3D AWCC_THERMAL_TABLE_LEGACY=
- &&
-> +=09    (code & AWCC_THERMAL_MODE_MASK) >=3D AWCC_PROFILE_LEGACY_QUIET)
->  =09=09return true;
-> =20
-> -=09if ((code & WMAX_THERMAL_TABLE_MASK) =3D=3D WMAX_THERMAL_TABLE_USTT &=
-&
-> -=09    (code & WMAX_THERMAL_MODE_MASK) <=3D THERMAL_MODE_USTT_LOW_POWER)
-> +=09if ((code & AWCC_THERMAL_TABLE_MASK) =3D=3D AWCC_THERMAL_TABLE_USTT &=
-&
-> +=09    (code & AWCC_THERMAL_MODE_MASK) <=3D AWCC_PROFILE_USTT_LOW_POWER)
->  =09=09return true;
-> =20
->  =09return false;
->  }
-> =20
-> -static int wmax_thermal_information(struct wmi_device *wdev, u8 operatio=
-n,
-> +static int awcc_thermal_information(struct wmi_device *wdev, u8 operatio=
-n,
->  =09=09=09=09    u8 arg, u32 *out_data)
->  {
->  =09struct wmax_u32_args in_args =3D {
-> @@ -474,21 +475,21 @@ static int wmax_thermal_information(struct wmi_devi=
-ce *wdev, u8 operation,
->  =09};
->  =09int ret;
-> =20
-> -=09ret =3D alienware_wmi_command(wdev, WMAX_METHOD_THERMAL_INFORMATION,
-> +=09ret =3D alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION,
->  =09=09=09=09    &in_args, sizeof(in_args), out_data);
->  =09if (ret < 0)
->  =09=09return ret;
-> =20
-> -=09if (*out_data =3D=3D WMAX_FAILURE_CODE)
-> +=09if (*out_data =3D=3D AWCC_FAILURE_CODE)
->  =09=09return -EBADRQC;
-> =20
->  =09return 0;
->  }
-> =20
-> -static int wmax_thermal_control(struct wmi_device *wdev, u8 profile)
-> +static int awcc_thermal_control(struct wmi_device *wdev, u8 profile)
->  {
->  =09struct wmax_u32_args in_args =3D {
-> -=09=09.operation =3D WMAX_OPERATION_ACTIVATE_PROFILE,
-> +=09=09.operation =3D AWCC_OP_ACTIVATE_PROFILE,
->  =09=09.arg1 =3D profile,
->  =09=09.arg2 =3D 0,
->  =09=09.arg3 =3D 0,
-> @@ -496,18 +497,18 @@ static int wmax_thermal_control(struct wmi_device *=
-wdev, u8 profile)
->  =09u32 out_data;
->  =09int ret;
-> =20
-> -=09ret =3D alienware_wmi_command(wdev, WMAX_METHOD_THERMAL_CONTROL,
-> +=09ret =3D alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL,
->  =09=09=09=09    &in_args, sizeof(in_args), &out_data);
->  =09if (ret)
->  =09=09return ret;
-> =20
-> -=09if (out_data =3D=3D WMAX_FAILURE_CODE)
-> +=09if (out_data =3D=3D AWCC_FAILURE_CODE)
->  =09=09return -EBADRQC;
-> =20
->  =09return 0;
->  }
-> =20
-> -static int wmax_game_shift_status(struct wmi_device *wdev, u8 operation,
-> +static int awcc_game_shift_status(struct wmi_device *wdev, u8 operation,
->  =09=09=09=09  u32 *out_data)
->  {
->  =09struct wmax_u32_args in_args =3D {
-> @@ -518,46 +519,46 @@ static int wmax_game_shift_status(struct wmi_device=
- *wdev, u8 operation,
->  =09};
->  =09int ret;
-> =20
-> -=09ret =3D alienware_wmi_command(wdev, WMAX_METHOD_GAME_SHIFT_STATUS,
-> +=09ret =3D alienware_wmi_command(wdev, AWCC_METHOD_GAME_SHIFT_STATUS,
->  =09=09=09=09    &in_args, sizeof(in_args), out_data);
->  =09if (ret < 0)
->  =09=09return ret;
-> =20
-> -=09if (*out_data =3D=3D WMAX_FAILURE_CODE)
-> +=09if (*out_data =3D=3D AWCC_FAILURE_CODE)
->  =09=09return -EOPNOTSUPP;
-> =20
->  =09return 0;
->  }
-> =20
-> -static int thermal_profile_get(struct device *dev,
-> -=09=09=09       enum platform_profile_option *profile)
-> +static int awcc_platform_profile_get(struct device *dev,
-> +=09=09=09=09     enum platform_profile_option *profile)
->  {
->  =09struct awcc_priv *priv =3D dev_get_drvdata(dev);
->  =09u32 out_data;
->  =09int ret;
-> =20
-> -=09ret =3D wmax_thermal_information(priv->wdev, WMAX_OPERATION_CURRENT_P=
-ROFILE,
-> +=09ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_CURRENT_PROF=
-ILE,
->  =09=09=09=09       0, &out_data);
-> =20
->  =09if (ret < 0)
->  =09=09return ret;
-> =20
-> -=09if (out_data =3D=3D WMAX_THERMAL_MODE_GMODE) {
-> +=09if (out_data =3D=3D AWCC_THERMAL_MODE_GMODE) {
->  =09=09*profile =3D PLATFORM_PROFILE_PERFORMANCE;
->  =09=09return 0;
->  =09}
-> =20
-> -=09if (!is_wmax_thermal_code(out_data))
-> +=09if (!is_awcc_thermal_mode(out_data))
->  =09=09return -ENODATA;
-> =20
-> -=09out_data &=3D WMAX_THERMAL_MODE_MASK;
-> -=09*profile =3D wmax_mode_to_platform_profile[out_data];
-> +=09out_data &=3D AWCC_THERMAL_MODE_MASK;
-> +=09*profile =3D awcc_mode_to_platform_profile[out_data];
-> =20
->  =09return 0;
->  }
-> =20
-> -static int thermal_profile_set(struct device *dev,
-> -=09=09=09       enum platform_profile_option profile)
-> +static int awcc_platform_profile_set(struct device *dev,
-> +=09=09=09=09     enum platform_profile_option profile)
->  {
->  =09struct awcc_priv *priv =3D dev_get_drvdata(dev);
-> =20
-> @@ -565,8 +566,8 @@ static int thermal_profile_set(struct device *dev,
->  =09=09u32 gmode_status;
->  =09=09int ret;
-> =20
-> -=09=09ret =3D wmax_game_shift_status(priv->wdev,
-> -=09=09=09=09=09     WMAX_OPERATION_GET_GAME_SHIFT_STATUS,
-> +=09=09ret =3D awcc_game_shift_status(priv->wdev,
-> +=09=09=09=09=09     AWCC_OP_GET_GAME_SHIFT_STATUS,
->  =09=09=09=09=09     &gmode_status);
-> =20
->  =09=09if (ret < 0)
-> @@ -574,8 +575,8 @@ static int thermal_profile_set(struct device *dev,
-> =20
->  =09=09if ((profile =3D=3D PLATFORM_PROFILE_PERFORMANCE && !gmode_status)=
- ||
->  =09=09    (profile !=3D PLATFORM_PROFILE_PERFORMANCE && gmode_status)) {
-> -=09=09=09ret =3D wmax_game_shift_status(priv->wdev,
-> -=09=09=09=09=09=09     WMAX_OPERATION_TOGGLE_GAME_SHIFT,
-> +=09=09=09ret =3D awcc_game_shift_status(priv->wdev,
-> +=09=09=09=09=09=09     AWCC_OP_TOGGLE_GAME_SHIFT,
->  =09=09=09=09=09=09     &gmode_status);
-> =20
->  =09=09=09if (ret < 0)
-> @@ -583,21 +584,21 @@ static int thermal_profile_set(struct device *dev,
->  =09=09}
->  =09}
-> =20
-> -=09return wmax_thermal_control(priv->wdev,
-> +=09return awcc_thermal_control(priv->wdev,
->  =09=09=09=09    priv->supported_thermal_profiles[profile]);
->  }
-> =20
-> -static int thermal_profile_probe(void *drvdata, unsigned long *choices)
-> +static int awcc_platform_profile_probe(void *drvdata, unsigned long *cho=
-ices)
->  {
->  =09enum platform_profile_option profile;
->  =09struct awcc_priv *priv =3D drvdata;
-> -=09enum wmax_thermal_mode mode;
-> +=09enum awcc_thermal_profile mode;
->  =09u8 sys_desc[4];
->  =09u32 first_mode;
->  =09u32 out_data;
->  =09int ret;
-> =20
-> -=09ret =3D wmax_thermal_information(priv->wdev, WMAX_OPERATION_SYS_DESCR=
-IPTION,
-> +=09ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_SYSTEM_DESCR=
-IPTION,
->  =09=09=09=09       0, (u32 *) &sys_desc);
->  =09if (ret < 0)
->  =09=09return ret;
-> @@ -605,7 +606,7 @@ static int thermal_profile_probe(void *drvdata, unsig=
-ned long *choices)
->  =09first_mode =3D sys_desc[0] + sys_desc[1];
-> =20
->  =09for (u32 i =3D 0; i < sys_desc[3]; i++) {
-> -=09=09ret =3D wmax_thermal_information(priv->wdev, WMAX_OPERATION_LIST_I=
-DS,
-> +=09=09ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_RESOURCE_=
-ID,
->  =09=09=09=09=09       i + first_mode, &out_data);
-> =20
->  =09=09if (ret =3D=3D -EIO)
-> @@ -614,11 +615,11 @@ static int thermal_profile_probe(void *drvdata, uns=
-igned long *choices)
->  =09=09if (ret =3D=3D -EBADRQC)
->  =09=09=09break;
-> =20
-> -=09=09if (!is_wmax_thermal_code(out_data))
-> +=09=09if (!is_awcc_thermal_mode(out_data))
->  =09=09=09continue;
-> =20
-> -=09=09mode =3D out_data & WMAX_THERMAL_MODE_MASK;
-> -=09=09profile =3D wmax_mode_to_platform_profile[mode];
-> +=09=09mode =3D out_data & AWCC_THERMAL_MODE_MASK;
-> +=09=09profile =3D awcc_mode_to_platform_profile[mode];
->  =09=09priv->supported_thermal_profiles[profile] =3D out_data;
-> =20
->  =09=09set_bit(profile, choices);
-> @@ -629,7 +630,7 @@ static int thermal_profile_probe(void *drvdata, unsig=
-ned long *choices)
-> =20
->  =09if (awcc->gmode) {
->  =09=09priv->supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
-> -=09=09=09WMAX_THERMAL_MODE_GMODE;
-> +=09=09=09AWCC_THERMAL_MODE_GMODE;
-> =20
->  =09=09set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
->  =09}
-> @@ -638,9 +639,9 @@ static int thermal_profile_probe(void *drvdata, unsig=
-ned long *choices)
->  }
-> =20
->  static const struct platform_profile_ops awcc_platform_profile_ops =3D {
-> -=09.probe =3D thermal_profile_probe,
-> -=09.profile_get =3D thermal_profile_get,
-> -=09.profile_set =3D thermal_profile_set,
-> +=09.probe =3D awcc_platform_profile_probe,
-> +=09.profile_get =3D awcc_platform_profile_get,
-> +=09.profile_set =3D awcc_platform_profile_set,
->  };
-> =20
->  static int awcc_platform_profile_init(struct wmi_device *wdev)
->=20
->=20
---8323328-1260473303-1743170557=:932--
 
