@@ -1,418 +1,349 @@
-Return-Path: <linux-kernel+bounces-580092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE06A74D29
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:52:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA2CA74D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:51:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C5257A5EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2660D162B4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D4A1C4A13;
-	Fri, 28 Mar 2025 14:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212E21C4A2D;
+	Fri, 28 Mar 2025 14:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ztSvHw7L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOC6m7Y/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700B71624C3;
-	Fri, 28 Mar 2025 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF351BFE00;
+	Fri, 28 Mar 2025 14:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743173541; cv=none; b=IpYhZjghvBwGLYOB5TgJG3efQ/209eMj08Fo6HYRo8y4UHsxGza5L9Jc4kri66435NCaIwZzzLtT6Wk/Sk/fLK3G/zpMWBCom6tI1YyE27IZ5y/kDm/RezGqxgsr+mVEPmW4vIX9wRCypHG2krXn7kJ8eQAxerZQJDieVjqYktQ=
+	t=1743173495; cv=none; b=NbSv8uaFPQLzCpEnUTb9wKh5FeROv2/eMTbSjIKDLCjbP8IFdlgSFS7AkWZ5AkYEBq4uPw+bkDq+ggiab9V8rh9O18RYRYBYOlzUockj1IcMqswC1EtQDdWdCtogMYj0Li84475IsQaqAWbNAsyhz0UN21N6FpUFcBmSryjBKo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743173541; c=relaxed/simple;
-	bh=u8HZkBHk33/7uyUy5NTwVMnc49O8zZAT11ihgUr7MKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y3jrEk9Q0fkpUeCJv4hsPQhLzo4M1IJvtv3T3bg1V+X3Xw452LbQJit1D5Aa0BoQliTQmnK8eU1st8QSUwCFpYpcJRMbw4JtMAGG3SgxM3HmXzq5yLW43tLBxK5TGIoMCJqBi4kFhnCwFrU789yQALTuOAC7CZMp9IhD93lnV0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ztSvHw7L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E952C4CEE4;
-	Fri, 28 Mar 2025 14:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743173540;
-	bh=u8HZkBHk33/7uyUy5NTwVMnc49O8zZAT11ihgUr7MKA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ztSvHw7LuOJMQHzoZJfYWPea2FoQCIs71rPF+4SsogdAIevgdYtDZ6XMaiEoB8GIE
-	 bAnZEPEQXkYvBtFi2hK25WnxVkk824tkFB4RxUU5k8h3GESQuyyjuXulrYB+IIW2Q5
-	 8Sd73wcJbg1dvHZ7/MARYVH+6SQfoKyezJVBs8mY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.6 00/75] 6.6.85-rc3 review
-Date: Fri, 28 Mar 2025 15:50:54 +0100
-Message-ID: <20250328145011.672606157@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743173495; c=relaxed/simple;
+	bh=smwC0unOFGh8PfOUsx/7/ay83esrI2NLTBGHJtfTtkA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cLEI3Kn355ER2hkLkQsTEn5aGYbsL004dQjYSDl0NMPtGoZmfQrpD+jYrBtTLuVOZF4f+Rk9gfjCEgVsEcHJ1IAWCJrsHP7hWUltVrd+goi9+JDwwFM6phMKhc4DPhQPnxiJYGxr1HBQelTPhcfBLPtuH0psUPNBdwRaLYoqvXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOC6m7Y/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743173493; x=1774709493;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=smwC0unOFGh8PfOUsx/7/ay83esrI2NLTBGHJtfTtkA=;
+  b=bOC6m7Y/ijeWqOdxkSsuIGWvhHe5pTVqbgJlsj2ihR5HG8xCzFA7s04E
+   wLCSr8jWuqDbOr5HRXsVtSdh6zltlxeX5KSK6aVbUPWjg76LqmPZsNe94
+   0E51yWWAJoh4WnI2snMfUmwM7VwGGcLy7WhDKNb+7feduc25hFkBIi8Mg
+   QzImybcE3ZdzCpwAHGEQxTwJYBmCvHBCDCG0wpSo072ECbElDCkAWZJG2
+   av+j2OEl9VFbPVma25Kmr8L2OxUzB7A41Vkg00U+QOG344z1BYkpcpVd4
+   uWvt899IM86EL6ChQgp19y1d249oCLyvLTG2AEWlLFSrNOOI+oC4lzl7W
+   w==;
+X-CSE-ConnectionGUID: LVm+HXy1S5e/E+6G1WFSxg==
+X-CSE-MsgGUID: KcWB0fLNSryiXqyjybO97A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="44699060"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="44699060"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 07:51:33 -0700
+X-CSE-ConnectionGUID: X+n/PXcGT1yhRck8hvdgeg==
+X-CSE-MsgGUID: 8CUGKNeFTYypYfLJi0FKtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="125920445"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.43])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 07:51:30 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 28 Mar 2025 16:51:27 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 03/12] platform/x86: alienware-wmi-wmax: Improve
+ internal AWCC API
+In-Reply-To: <20250313-hwm-v6-3-17b57f787d77@gmail.com>
+Message-ID: <45699e14-6d51-8116-b252-a7a20ffe8e8b@linux.intel.com>
+References: <20250313-hwm-v6-0-17b57f787d77@gmail.com> <20250313-hwm-v6-3-17b57f787d77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc3.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.85-rc3
-X-KernelTest-Deadline: 2025-03-30T14:50+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.6.85 release.
-There are 75 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sun, 30 Mar 2025 14:49:59 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc3.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.85-rc3
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    netfilter: nft_counter: Use u64_stats_t for statistic.
-
-Benjamin Berg <benjamin.berg@intel.com>
-    wifi: iwlwifi: mvm: ensure offloading TID queue exists
-
-Miri Korenblit <miriam.rachel.korenblit@intel.com>
-    wifi: iwlwifi: support BIOS override for 5G9 in CA also in LARI version 8
-
-Shravya KN <shravya.k-n@broadcom.com>
-    bnxt_en: Fix receive ring space parameters when XDP is active
-
-Josef Bacik <josef@toxicpanda.com>
-    btrfs: make sure that WRITTEN is set on all metadata blocks
-
-Dietmar Eggemann <dietmar.eggemann@arm.com>
-    Revert "sched/core: Reduce cost of sched_move_task when config autogroup"
-
-Justin Klaassen <justin@tidylabs.net>
-    arm64: dts: rockchip: fix u2phy1_host status for NanoPi R4S
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Eagerly switch ZCR_EL{1,2}
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Mark some header functions as inline
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Refactor exit handlers
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Remove VHE host restore of CPACR_EL1.SMEN
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Remove VHE host restore of CPACR_EL1.ZEN
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Remove host FPSIMD saving for non-protected KVM
-
-Mark Rutland <mark.rutland@arm.com>
-    KVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state
-
-Fuad Tabba <tabba@google.com>
-    KVM: arm64: Calculate cptr_el2 traps on activating traps
-
-Arthur Mongodin <amongodin@randorisec.fr>
-    mptcp: Fix data stream corruption in the address announcement
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: fix incorrect validation for num_aces field of smb_acl
-
-Mario Limonciello <mario.limonciello@amd.com>
-    drm/amd/display: Use HW lock mgr for PSR1 when only one eDP
-
-Martin Tsai <martin.tsai@amd.com>
-    drm/amd/display: should support dmub hw lock on Replay
-
-David Rosca <david.rosca@amd.com>
-    drm/amdgpu: Fix JPEG video caps max size for navi1x and raven
-
-David Rosca <david.rosca@amd.com>
-    drm/amdgpu: Fix MPEG2, MPEG4 and VC1 video caps max size
-
-qianyi liu <liuqianyi125@gmail.com>
-    drm/sched: Fix fence reference count leak
-
-Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-    drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
-
-Saranya R <quic_sarar@quicinc.com>
-    soc: qcom: pdr: Fix the potential deadlock
-
-Sven Eckelmann <sven@narfation.org>
-    batman-adv: Ignore own maximum aggregation size during RX
-
-Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-    xsk: fix an integer overflow in xp_create_and_assign_umem()
-
-Ard Biesheuvel <ardb@kernel.org>
-    efi/libstub: Avoid physical address 0x0 when doing random allocation
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    ARM: shmobile: smp: Enforce shmobile_smp_* alignment
-
-Stefan Eichenberger <stefan.eichenberger@toradex.com>
-    ARM: dts: imx6qdl-apalis: Fix poweroff on Apalis iMX6
-
-Ye Bin <yebin10@huawei.com>
-    proc: fix UAF in proc_get_inode()
-
-Zi Yan <ziy@nvidia.com>
-    mm/migrate: fix shmem xarray update during migration
-
-Raphael S. Carvalho <raphaelsc@scylladb.com>
-    mm: fix error handling in __filemap_get_folio() with FGP_NOWAIT
-
-Gu Bowen <gubowen5@huawei.com>
-    mmc: atmel-mci: Add missing clk_disable_unprepare()
-
-Kamal Dasu <kamal.dasu@broadcom.com>
-    mmc: sdhci-brcmstb: add cqhci suspend/resume to PM ops
-
-Quentin Schulz <quentin.schulz@cherry.de>
-    arm64: dts: rockchip: fix pinmux of UART0 for PX30 Ringneck on Haikou
-
-Stefan Eichenberger <stefan.eichenberger@toradex.com>
-    arm64: dts: freescale: imx8mm-verdin-dahlia: add Microphone Jack to sound card
-
-Stefan Eichenberger <stefan.eichenberger@toradex.com>
-    arm64: dts: freescale: imx8mp-verdin-dahlia: add Microphone Jack to sound card
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    accel/qaic: Fix integer overflow in qaic_validate_req()
-
-Christian Eggers <ceggers@arri.de>
-    regulator: check that dummy regulator has been probed before using it
-
-Christian Eggers <ceggers@arri.de>
-    regulator: dummy: force synchronous probing
-
-E Shattow <e@freeshell.de>
-    riscv: dts: starfive: Fix a typo in StarFive JH7110 pin function definitions
-
-Maíra Canal <mcanal@igalia.com>
-    drm/v3d: Don't run jobs that have errors flagged in its fence
-
-Haibo Chen <haibo.chen@nxp.com>
-    can: flexcan: disable transceiver during system PM
-
-Haibo Chen <haibo.chen@nxp.com>
-    can: flexcan: only change CAN state when link up in system PM
-
-Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-    can: ucan: fix out of bound read in strscpy() source
-
-Biju Das <biju.das.jz@bp.renesas.com>
-    can: rcar_canfd: Fix page entries in the AFL list
-
-Andreas Kemnade <andreas@kemnade.info>
-    i2c: omap: fix IRQ storms
-
-Guillaume Nault <gnault@redhat.com>
-    Revert "gre: Fix IPv6 link-local address generation."
-
-Lin Ma <linma@zju.edu.cn>
-    net/neighbor: add missing policy for NDTPA_QUEUE_LENBYTES
-
-Justin Iurman <justin.iurman@uliege.be>
-    net: lwtunnel: fix recursion loops
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    net: atm: fix use after free in lec_send()
-
-Kuniyuki Iwashima <kuniyu@amazon.com>
-    ipv6: Set errno after ip_fib_metrics_init() in ip6_route_info_create().
-
-Kuniyuki Iwashima <kuniyu@amazon.com>
-    ipv6: Fix memleak of nhc_pcpu_rth_output in fib_check_nh_v6_gw().
-
-David Lechner <dlechner@baylibre.com>
-    ARM: davinci: da850: fix selecting ARCH_DAVINCI_DA8XX
-
-Jeffrey Hugo <quic_jhugo@quicinc.com>
-    accel/qaic: Fix possible data corruption in BOs > 2G
-
-Arkadiusz Bokowy <arkadiusz.bokowy@gmail.com>
-    Bluetooth: hci_event: Fix connection regression between LE and non-LE adapters
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    Bluetooth: Fix error code in chan_alloc_skb_cb()
-
-Junxian Huang <huangjunxian6@hisilicon.com>
-    RDMA/hns: Fix wrong value of max_sge_rd
-
-Junxian Huang <huangjunxian6@hisilicon.com>
-    RDMA/hns: Fix a missing rollback in error path of hns_roce_create_qp_common()
-
-Junxian Huang <huangjunxian6@hisilicon.com>
-    RDMA/hns: Fix unmatched condition in error path of alloc_user_qp_db()
-
-Junxian Huang <huangjunxian6@hisilicon.com>
-    RDMA/hns: Fix soft lockup during bt pages loop
-
-Saravanan Vajravel <saravanan.vajravel@broadcom.com>
-    RDMA/bnxt_re: Avoid clearing VLAN_ID mask in modify qp path
-
-Phil Elwell <phil@raspberrypi.com>
-    ARM: dts: bcm2711: Don't mark timer regs unconfigured
-
-Arnd Bergmann <arnd@arndb.de>
-    ARM: OMAP1: select CONFIG_GENERIC_IRQ_CHIP
-
-Qasim Ijaz <qasdev00@gmail.com>
-    RDMA/mlx5: Handle errors returned from mlx5r_ib_rate()
-
-Kashyap Desai <kashyap.desai@broadcom.com>
-    RDMA/bnxt_re: Add missing paranthesis in map_qp_id_to_tbl_indx
-
-Yao Zi <ziyao@disroot.org>
-    arm64: dts: rockchip: Remove undocumented sdmmc property from lubancat-1
-
-Phil Elwell <phil@raspberrypi.com>
-    ARM: dts: bcm2711: PL011 UARTs are actually r1p5
-
-Peng Fan <peng.fan@nxp.com>
-    soc: imx8m: Unregister cpufreq and soc dev in cleanup path
-
-Marek Vasut <marex@denx.de>
-    soc: imx8m: Use devm_* to simplify probe failure handling
-
-Marek Vasut <marex@denx.de>
-    soc: imx8m: Remove global soc_uid
-
-Cosmin Ratiu <cratiu@nvidia.com>
-    xfrm_output: Force software GSO only in tunnel mode
-
-Alexandre Cassen <acassen@corp.free.fr>
-    xfrm: fix tunnel mode TX datapath in packet offload mode
-
-Alexander Stein <alexander.stein@ew.tq-group.com>
-    arm64: dts: freescale: tqma8mpql: Fix vqmmc-supply
-
-Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-    firmware: imx-scu: fix OF node leak in .probe()
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/arm/boot/dts/broadcom/bcm2711.dtsi            |  11 +-
- arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi      |  10 +-
- arch/arm/mach-davinci/Kconfig                      |   1 +
- arch/arm/mach-omap1/Kconfig                        |   1 +
- arch/arm/mach-shmobile/headsmp.S                   |   1 +
- .../boot/dts/freescale/imx8mm-verdin-dahlia.dtsi   |   6 +-
- .../arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi |  16 +--
- .../boot/dts/freescale/imx8mp-verdin-dahlia.dtsi   |   6 +-
- .../boot/dts/rockchip/px30-ringneck-haikou.dts     |   2 +
- arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts |   2 +-
- arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dts |   1 -
- arch/arm64/include/asm/kvm_host.h                  |   7 +-
- arch/arm64/include/asm/kvm_hyp.h                   |   1 +
- arch/arm64/kernel/fpsimd.c                         |  25 ----
- arch/arm64/kvm/arm.c                               |   1 -
- arch/arm64/kvm/fpsimd.c                            |  89 +++---------
- arch/arm64/kvm/hyp/entry.S                         |   5 +
- arch/arm64/kvm/hyp/include/hyp/switch.h            | 106 ++++++++++-----
- arch/arm64/kvm/hyp/nvhe/hyp-main.c                 |  15 +-
- arch/arm64/kvm/hyp/nvhe/pkvm.c                     |  29 +---
- arch/arm64/kvm/hyp/nvhe/switch.c                   | 112 ++++++++++-----
- arch/arm64/kvm/hyp/vhe/switch.c                    |  13 +-
- arch/arm64/kvm/reset.c                             |   3 +
- arch/riscv/boot/dts/starfive/jh7110-pinfunc.h      |   2 +-
- drivers/accel/qaic/qaic_data.c                     |   9 +-
- drivers/firmware/efi/libstub/randomalloc.c         |   4 +
- drivers/firmware/imx/imx-scu.c                     |   1 +
- drivers/gpu/drm/amd/amdgpu/nv.c                    |  20 +--
- drivers/gpu/drm/amd/amdgpu/soc15.c                 |  20 +--
- drivers/gpu/drm/amd/amdgpu/vi.c                    |  36 ++---
- .../gpu/drm/amd/display/dc/dce/dmub_hw_lock_mgr.c  |  15 ++
- drivers/gpu/drm/radeon/radeon_vce.c                |   2 +-
- drivers/gpu/drm/scheduler/sched_entity.c           |  11 +-
- drivers/gpu/drm/v3d/v3d_sched.c                    |   9 +-
- drivers/i2c/busses/i2c-omap.c                      |  26 +---
- drivers/infiniband/hw/bnxt_re/qplib_fp.c           |   2 -
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.h         |   3 +-
- drivers/infiniband/hw/hns/hns_roce_hem.c           |  16 ++-
- drivers/infiniband/hw/hns/hns_roce_main.c          |   2 +-
- drivers/infiniband/hw/hns/hns_roce_qp.c            |  10 +-
- drivers/infiniband/hw/mlx5/ah.c                    |  14 +-
- drivers/mmc/host/atmel-mci.c                       |   4 +-
- drivers/mmc/host/sdhci-brcmstb.c                   |  10 ++
- drivers/net/can/flexcan/flexcan-core.c             |  18 ++-
- drivers/net/can/rcar/rcar_canfd.c                  |  28 ++--
- drivers/net/can/usb/ucan.c                         |  43 +++---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  10 +-
- drivers/net/wireless/intel/iwlwifi/fw/file.h       |   4 +-
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c        |   9 +-
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  37 ++++-
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c       |  28 ++++
- drivers/net/wireless/intel/iwlwifi/mvm/sta.h       |   3 +-
- drivers/regulator/core.c                           |  12 +-
- drivers/regulator/dummy.c                          |   2 +-
- drivers/soc/imx/soc-imx8m.c                        | 151 ++++++++++-----------
- drivers/soc/qcom/pdr_interface.c                   |   8 +-
- fs/btrfs/tree-checker.c                            |  30 ++--
- fs/btrfs/tree-checker.h                            |   1 +
- fs/proc/generic.c                                  |  10 +-
- fs/proc/inode.c                                    |   6 +-
- fs/proc/internal.h                                 |  14 ++
- fs/smb/server/smbacl.c                             |   5 +-
- include/linux/proc_fs.h                            |   7 +-
- include/net/bluetooth/hci.h                        |   2 +-
- kernel/sched/core.c                                |  22 +--
- mm/filemap.c                                       |  13 +-
- mm/migrate.c                                       |  10 +-
- net/atm/lec.c                                      |   3 +-
- net/batman-adv/bat_iv_ogm.c                        |   3 +-
- net/batman-adv/bat_v_ogm.c                         |   3 +-
- net/bluetooth/6lowpan.c                            |   7 +-
- net/core/lwtunnel.c                                |  65 +++++++--
- net/core/neighbour.c                               |   1 +
- net/ipv6/addrconf.c                                |  15 +-
- net/ipv6/route.c                                   |   5 +-
- net/mptcp/options.c                                |   6 +-
- net/netfilter/nft_counter.c                        |  90 ++++++------
- net/xdp/xsk_buff_pool.c                            |   2 +-
- net/xfrm/xfrm_output.c                             |  43 +++++-
- 80 files changed, 799 insertions(+), 600 deletions(-)
-
+Content-Type: text/plain; charset=US-ASCII
+
+On Thu, 13 Mar 2025, Kurt Borja wrote:
+
+> Inline all AWCC WMI helper methods and directly return the newly
+> introduced __awcc_wmi_command() helper to simplify implementation.
+> 
+> Drop awcc_thermal_control() in favor of awcc_op_activate_profile().
+> 
+> Add awcc_op_get_resource_id(), awcc_op_get_current_profile() and a new
+> failure code.
+> 
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+>  drivers/platform/x86/dell/alienware-wmi-wmax.c | 150 +++++++++++++++----------
+>  1 file changed, 91 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> index 80aefba5b22d6b4ac18aeb2ca356f8c911150abd..b9dbfdc8096c571722b3c7ac3e73989e235e2eb9 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> @@ -32,6 +32,7 @@
+>  #define AWCC_THERMAL_MODE_GMODE			0xAB
+>  
+>  #define AWCC_FAILURE_CODE			0xFFFFFFFF
+> +#define AWCC_FAILURE_CODE_2			0xFFFFFFFE
+>  #define AWCC_THERMAL_TABLE_MASK			GENMASK(7, 4)
+>  #define AWCC_THERMAL_MODE_MASK			GENMASK(3, 0)
+>  /* Some IDs have a BIT(8) flag that we ignore */
+> @@ -443,8 +444,7 @@ const struct attribute_group wmax_deepsleep_attribute_group = {
+>  };
+>  
+>  /*
+> - * Thermal Profile control
+> - *  - Provides thermal profile control through the Platform Profile API
+> + * AWCC Helpers
+>   */
+>  static bool is_awcc_thermal_profile_id(u8 code)
+>  {
+> @@ -463,72 +463,107 @@ static bool is_awcc_thermal_profile_id(u8 code)
+>  	return false;
+>  }
+>  
+> -static int awcc_thermal_information(struct wmi_device *wdev, u8 operation,
+> -				    u8 arg, u32 *out_data)
+> +static int __awcc_wmi_command(struct wmi_device *wdev, u32 method_id,
+> +			      struct wmax_u32_args *args, u32 *out)
+
+Why did you put __ into the name?
+
+Some people oppose __ prefix altogether, I don't entirely agree with their 
+stance but I don't really understand what the underscores here signify.
+
+Normally I see __ being used in three main cases:
+- non-__ variant does some locking around the call too the __ func (though 
+  many funcs use _locked postfix these days).
+- func is "dangerous" and caller has to really know what he/she is
+  doing / be careful for some reason.
+- non-__ variant exists and somebody cannot come up better name for the
+  internally called function (not very good use case, IMHO)
+
+I don't see any of those apply here, this looks just an ordinary wrapper 
+function, thus the question.
+
+>  {
+> -	struct wmax_u32_args in_args = {
+> +	int ret;
+> +
+> +	ret = alienware_wmi_command(wdev, method_id, args, sizeof(*args), out);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (*out == AWCC_FAILURE_CODE || *out == AWCC_FAILURE_CODE_2)
+> +		return -EBADRQC;
+> +
+> +	return 0;
+> +}
+> +
+> +static inline int awcc_thermal_information(struct wmi_device *wdev, u8 operation,
+> +					   u8 arg, u32 *out)
+> +{
+> +	struct wmax_u32_args args = {
+>  		.operation = operation,
+>  		.arg1 = arg,
+>  		.arg2 = 0,
+>  		.arg3 = 0,
+>  	};
+> -	int ret;
+>  
+> -	ret = alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION,
+> -				    &in_args, sizeof(in_args), out_data);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	if (*out_data == AWCC_FAILURE_CODE)
+> -		return -EBADRQC;
+> -
+> -	return 0;
+> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
+>  }
+>  
+> -static int awcc_thermal_control(struct wmi_device *wdev, u8 profile)
+> +static inline int awcc_game_shift_status(struct wmi_device *wdev, u8 operation,
+
+As a general rule, don't add inline to .c files, we leave figuring 
+inlining out to the compiler.
+
+> +					 u32 *out)
+>  {
+> -	struct wmax_u32_args in_args = {
+> -		.operation = AWCC_OP_ACTIVATE_PROFILE,
+> -		.arg1 = profile,
+> -		.arg2 = 0,
+> -		.arg3 = 0,
+> -	};
+> -	u32 out_data;
+> -	int ret;
+> -
+> -	ret = alienware_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL,
+> -				    &in_args, sizeof(in_args), &out_data);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (out_data == AWCC_FAILURE_CODE)
+> -		return -EBADRQC;
+> -
+> -	return 0;
+> -}
+> -
+> -static int awcc_game_shift_status(struct wmi_device *wdev, u8 operation,
+> -				  u32 *out_data)
+> -{
+> -	struct wmax_u32_args in_args = {
+> +	struct wmax_u32_args args = {
+>  		.operation = operation,
+>  		.arg1 = 0,
+>  		.arg2 = 0,
+>  		.arg3 = 0,
+>  	};
+> -	int ret;
+>  
+> -	ret = alienware_wmi_command(wdev, AWCC_METHOD_GAME_SHIFT_STATUS,
+> -				    &in_args, sizeof(in_args), out_data);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	if (*out_data == AWCC_FAILURE_CODE)
+> -		return -EOPNOTSUPP;
+> -
+> -	return 0;
+> +	return __awcc_wmi_command(wdev, AWCC_METHOD_GAME_SHIFT_STATUS, &args, out);
+>  }
+>  
+> +/**
+> + * awcc_op_get_resource_id - Get the resource ID at a given index
+> + * @wdev: AWCC WMI device
+> + * @index: Index
+> + * @out: Value returned by the WMI call
+> + *
+> + * Get the resource ID at a given index. Resource IDs are listed in the
+
+Use @index to refer to the argument.
+
+> + * following order:
+> + *
+> + *	- Fan IDs
+> + *	- Sensor IDs
+> + *	- Unknown IDs
+> + *	- Thermal Profile IDs
+> + *
+> + * The total number of IDs of a given type can be obtained with
+> + * AWCC_OP_GET_SYSTEM_DESCRIPTION.
+> + *
+> + * Return: 0 on success, -errno on failure
+> + */
+> +static inline int awcc_op_get_resource_id(struct wmi_device *wdev, u8 index, u32 *out)
+> +{
+> +	struct wmax_u32_args args = {
+> +		.operation = AWCC_OP_GET_RESOURCE_ID,
+> +		.arg1 = index,
+> +		.arg2 = 0,
+> +		.arg3 = 0,
+> +	};
+> +
+> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
+> +}
+> +
+> +static inline int awcc_op_get_current_profile(struct wmi_device *wdev, u32 *out)
+> +{
+> +	struct wmax_u32_args args = {
+> +		.operation = AWCC_OP_GET_CURRENT_PROFILE,
+> +		.arg1 = 0,
+> +		.arg2 = 0,
+> +		.arg3 = 0,
+> +	};
+> +
+> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args, out);
+> +}
+> +
+> +static inline int awcc_op_activate_profile(struct wmi_device *wdev, u8 profile)
+> +{
+> +	struct wmax_u32_args args = {
+> +		.operation = AWCC_OP_ACTIVATE_PROFILE,
+> +		.arg1 = profile,
+> +		.arg2 = 0,
+> +		.arg3 = 0,
+> +	};
+> +	u32 out;
+> +
+> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &out);
+> +}
+> +
+> +/*
+> + * Thermal Profile control
+> + *  - Provides thermal profile control through the Platform Profile API
+> + */
+>  static int awcc_platform_profile_get(struct device *dev,
+>  				     enum platform_profile_option *profile)
+>  {
+> @@ -536,10 +571,8 @@ static int awcc_platform_profile_get(struct device *dev,
+>  	u32 out_data;
+>  	int ret;
+>  
+> -	ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_CURRENT_PROFILE,
+> -				       0, &out_data);
+> -
+> -	if (ret < 0)
+> +	ret = awcc_op_get_current_profile(priv->wdev, &out_data);
+> +	if (ret)
+>  		return ret;
+>  
+>  	if (out_data == AWCC_THERMAL_MODE_GMODE) {
+> @@ -550,7 +583,7 @@ static int awcc_platform_profile_get(struct device *dev,
+>  	if (!is_awcc_thermal_profile_id(out_data))
+>  		return -ENODATA;
+>  
+> -	out_data &= AWCC_THERMAL_MODE_MASK;
+> +	out_data = FIELD_GET(AWCC_THERMAL_MODE_MASK, out_data);
+
+Should this be part of the earlier patch??
+
+>  	*profile = awcc_mode_to_platform_profile[out_data];
+>  
+>  	return 0;
+> @@ -583,8 +616,8 @@ static int awcc_platform_profile_set(struct device *dev,
+>  		}
+>  	}
+>  
+> -	return awcc_thermal_control(priv->wdev,
+> -				    priv->supported_thermal_profiles[profile]);
+> +	return awcc_op_activate_profile(priv->wdev,
+> +					priv->supported_thermal_profiles[profile]);
+>  }
+>  
+>  static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
+> @@ -606,8 +639,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
+>  	first_mode = sys_desc[0] + sys_desc[1];
+>  
+>  	for (u32 i = 0; i < sys_desc[3]; i++) {
+> -		ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_RESOURCE_ID,
+> -					       i + first_mode, &out_data);
+> +		ret = awcc_op_get_resource_id(priv->wdev, i + first_mode, &out_data);
+>  
+>  		if (ret == -EIO)
+>  			return ret;
+> 
+> 
+
+-- 
+ i.
 
 
