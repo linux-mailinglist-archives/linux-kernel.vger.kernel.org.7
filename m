@@ -1,199 +1,275 @@
-Return-Path: <linux-kernel+bounces-579605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D86A745D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:58:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E08A745E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E56D1B6084F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F05197A87B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9292139A2;
-	Fri, 28 Mar 2025 08:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482D32144B1;
+	Fri, 28 Mar 2025 08:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqZ8b8Ox"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bvedlF+W"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2630C213255;
-	Fri, 28 Mar 2025 08:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D69C214217;
+	Fri, 28 Mar 2025 08:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743152297; cv=none; b=RQbRcikppCQxRJ7e7nLXALlDaf2NxBLEA3ZTnLjY4ewvDaDKlTMhwjRkAANV7MSCK5n8rhDbwb97Vr8xEqmiZLFi8hYvfrEvT/cSAOuOLl6FNYXlrtfbD0dKLgqXZxvragU41VH2HJHX/HrfazsgcKsy8OfJlNex03eL+OkyM/k=
+	t=1743152376; cv=none; b=YYGoR64ZoFvdlDdm8rwsHO6E7GmHYRC0Fn3NSaktv7URuKfE/4eBGRXtMHDpLOf25/Bi2ugi6vzLMEm3ZLdfNjVojmNQX34PTj9RjZTPUrrkhzXD8YVnOPt29wPTCVZM9ebhfooRSJgN7RrIvEzQPD1rlektGKg84NwRlx2+KH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743152297; c=relaxed/simple;
-	bh=iG2vQX9C9wvH1r4TQLc3s9WUefTjRwU/KWarh7bNpaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ERlnBp0zm9xfTGobLUbVI8ar6att2OhYxb2T8qizYigYUvx4v+8hIQXl+aG2Z/l2+o8VcKbjmvqlKxYuZ4n3AydpKMugrFu5iwAga5SbbOiG9YulRP8Ht8Gy02JuDMnIUHffWd/JvF5IjcnRFWKspSQ5pcYFIwZHeB09NXbX8a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqZ8b8Ox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D869C4CEE4;
-	Fri, 28 Mar 2025 08:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743152296;
-	bh=iG2vQX9C9wvH1r4TQLc3s9WUefTjRwU/KWarh7bNpaE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QqZ8b8OxhMkKPGJYVT3jTlU0Y6kwOa3pDiGB0hhZ7KDzJg7Q5tukQ0ZHW0XlGpgq7
-	 hYu9kyftSQytjOy6wDDv2xDA0blQwdpSxNY9ShnhpELtSXOomlNeh5BJvQFJYBpiad
-	 cPg2CrP6R8n5Wwm/BDU5S5IVCCwRxlFwvccCejRke8/EPo8vCvwVwgnbKSf/f0P1AT
-	 0k4WE61puykFACM/TYbYOk3VAmmTfPz1K6GmmG5sOugtItf5KrWIfQHrPRClJ1d1CE
-	 lOCsKWFOU/TwK+ja+imkcz7AR5nqbPLTXljv6YOw4l8dqhw2fq0Q7zEHtChxX7sgUL
-	 JMppIe29k8GNA==
-Date: Fri, 28 Mar 2025 08:58:05 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] iio: dac: ad3530r: Add ABI file for the AD3530R
- DAC
-Message-ID: <20250328085805.44122c63@jic23-huawei>
-In-Reply-To: <20250324-togreg-v2-2-f211d781923e@analog.com>
-References: <20250324-togreg-v2-0-f211d781923e@analog.com>
-	<20250324-togreg-v2-2-f211d781923e@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743152376; c=relaxed/simple;
+	bh=vckH85TCWtlpiEkZsVZxvAiOQglNq7EoGooS+6LrDyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiX84FEm+9ZFmVlwt1z6z+80ibZXn27t/xRpUEoBehELvqNfz9VOrBMSs64yv/8p6rcZA3OeGJsZfTqxtYlxD2Hub60cEVnBWYXACk0UDdIxQcfD3Q68+RjZLW8GtomlFtL5djOQUeFoljQBZZuCYtrPYmAzElmCxGEUPIDk7ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bvedlF+W; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+Ed7x22gxcXzy6tcl8aXdoUEVTlRgFGdbAz/YQVnOSg=; b=bvedlF+WLf08RqHjdHuM2tFLzA
+	MsjWFWDHOgXENVACMmNnah6z+UPBsoMYjvBEuhULeR1RI8LPt0xkm8wnT3xLzrjXzJC92r26X/B31
+	UDBmYn5e0emo7eGHGdKNz9sOwdeFFrpI8aPQwbKAOD/3/Heczat6c28LHndYBVD1IZ6SRxn2AEsvb
+	Lsous30maM4v+KKlJZ6UJEH/pqXNcyes4qAlNSelcR88iHyTDRMutMLiMJAitl7d3svDsfJTXUrWV
+	bQLYApvpDKiFHecRUBQdgD9qAzRkkoFeQq1CDbo+aTAizJPXACedv/aEFPhSEcdSLiauDOjUT2gF1
+	xEGrCQAg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48142)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ty5Yf-0008Dc-0U;
+	Fri, 28 Mar 2025 08:59:21 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ty5Ya-00073g-2P;
+	Fri, 28 Mar 2025 08:59:16 +0000
+Date: Fri, 28 Mar 2025 08:59:16 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH 3/6] net: phylink: Correctly handle PCS probe
+ defer from PCS provider
+Message-ID: <Z-Zk5PPI8M551xti@shell.armlinux.org.uk>
+References: <20250318235850.6411-1-ansuelsmth@gmail.com>
+ <20250318235850.6411-4-ansuelsmth@gmail.com>
+ <Z9rplhTelXb-oZdC@shell.armlinux.org.uk>
+ <67daee6c.050a0220.31556f.dd73@mx.google.com>
+ <Z9r4unqsYJkLl4fn@shell.armlinux.org.uk>
+ <67db005c.df0a0220.f7398.ba6b@mx.google.com>
+ <Z9sbeNTNy0dYhCgu@shell.armlinux.org.uk>
+ <67e58cd2.7b0a0220.289480.1e35@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67e58cd2.7b0a0220.289480.1e35@mx.google.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, 24 Mar 2025 19:22:56 +0800
-Kim Seer Paller <kimseer.paller@analog.com> wrote:
+On Thu, Mar 27, 2025 at 06:37:19PM +0100, Christian Marangi wrote:
+> On Wed, Mar 19, 2025 at 07:31:04PM +0000, Russell King (Oracle) wrote:
+> > If we wish to take something away, then first, it must be
+> > unpublished to prevent new users discovering the resource. Then
+> > existing users need to be dealt with in a safe way. Only at that
+> > point can we be certain that there are no users, and thus the
+> > underlying device begin to be torn down.
+> > 
+> > It's entirely logical!
+> 
+> OK so (I think this was also suggested in the more specific PCS patch)
+> - 1. unpublish the PCS from the provider
+> - 2. put down the link...
+> 
+> I feel point 2 is the big effort here to solve. Mainly your problem is
+> the fact that phylink_major_config should not handle PROBE_DEFER and
+> should always have all the expected PCS available. (returned from
+> mac_select_pcs)
+> 
+> So the validation MUST ALWAYS be done before reaching that code path.
 
-> Define muxout_select and muxout_select_available sysfs interface for the
-> AD3530R and AD3531R DAC.
->=20
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  .../ABI/testing/sysfs-bus-iio-dac-ad3530r          | 68 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  7 +++
->  2 files changed, 75 insertions(+)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac-ad3530r b/Docume=
-ntation/ABI/testing/sysfs-bus-iio-dac-ad3530r
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..9d3126952fd1c5214afb895c4=
-972dc4a891ed7d4
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac-ad3530r
-> @@ -0,0 +1,68 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/muxout_select
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Selects which of the multiplexer's input signals will be
-> +		monitored on the MUX_OUT pin.
-Hi Kim,
+Yes, but there's a sting in the tail - e.g. if we take away link modes
+that are advertised on some media by a PCS going away.
 
-Do we have a use case where the monitoring would not be by an ADC attached
-to the host CPU? (i.e. using a channel on an ADC that has it's own IIO driv=
-er)
+Here's a theoretical situation:
 
-If no other use case, then support this as a consumer of an ADC channel from
-another device with all these exposed as different channels when a read is =
-requested.
-There are quite a few drivers doing this already.
+- separate PCS for SGMII and 10GBASE-R with their own drivers, muxed
+  onto the same pins.
+- PHY which switches its host interface between these two modes.
 
-The source vs sink thing may need to be done via labels as it isn't a conce=
-pt
-that maps directly to ADC channel characteristics.
+when both PCS are available, the PHY could be advertising 10base-T,
+100base-Tx, 1000base-T and 10000base-T.
 
-If this is being routed to some external hardware monitoring then most like
-this should be in device tree as doesn't make sense to switch dynamically in
-any cases that I recall from previous similar drivers.
+If one of these two PCS drivers becomes no longer available, then we
+need to revalidate and update the PHY's advertisement.
 
-Jonathan
+> That means that when a PCS is removed, the entire phylink should be
+> refreshed and reevaluated. And at the same time lock userspace from
+> doing anything fancy (as there might be a possibility for
+> phylink_major_config)
 
-> +		* powered_down - MUX_OUT pin is powered down. An 80k=CE=A9 impedance
-> +				 can be seen at the MUX_OUT pin.
-> +		* vout0 - Voltage representation of VOUT0.
-> +		* iout0_source - Voltage representation of IOUT0 (source mode).
-> +		* iout0_sink - Voltage representation of IOUT0 (sink mode).
-> +		* vout1 - Voltage representation of VOUT1.
-> +		* iout1_source - Voltage representation of IOUT1 (source mode).
-> +		* iout1_sink - Voltage representation of IOUT1 (sink mode).
-> +		* vout2 - Voltage representation of VOUT2.
-> +		* iout2_source - Voltage representation of IOUT2 (source mode).
-> +		* iout2_sink - Voltage representation of IOUT2 (sink mode).
-> +		* vout3 - Voltage representation of VOUT3
-> +		* iout3_source - Voltage representation of IOUT3 (source mode).
-> +		* iout3_sink - Voltage representation of IOUT3 (sink mode).
-> +		* vout4 - Voltage representation of VOUT4.
-> +		* iout4_source - Voltage representation of IOUT4 (source mode).
-> +		* iout4_sink - Voltage representation of IOUT4 (sink mode).
-> +		* vout5 - Voltage representation of VOUT5.
-> +		* iout5_source - Voltage representation of IOUT5 (source mode).
-> +		* iout5_sink - Voltage representation of IOUT5 (sink mode).
-> +		* vout6 - Voltage representation of VOUT6.
-> +		* iout6_source - Voltage representation of IOUT6 (source mode).
-> +		* iout6_sink - Voltage representation of IOUT6 (sink mode).
-> +		* vout7 - Voltage representation of VOUT7.
-> +		* iout7_source - Voltage representation of IOUT7 (source mode).
-> +		* iout7_sink - Voltage representation of IOUT7 (sink mode).
-> +		* die_temp - Voltage representation of internal die temperature.
-> +		* agnd - MUX_OUT pin internally tied to AGND.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/muxout_select_available
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Reading this returns the valid values that can be written to the
-> +		muxout_select attribute:
-> +		* powered_down
-> +		* vout0
-> +		* iout0_source
-> +		* iout0_sink
-> +		* vout1
-> +		* iout1_source
-> +		* iout1_sink
-> +		* vout2
-> +		* iout2_source
-> +		* iout2_sink
-> +		* vout3
-> +		* iout3_source
-> +		* iout3_sink
-> +		* vout4
-> +		* iout4_source
-> +		* iout4_sink
-> +		* vout5
-> +		* iout5_source
-> +		* iout5_sink
-> +		* vout6
-> +		* iout6_source
-> +		* iout6_sink
-> +		* vout7
-> +		* iout7_source
-> +		* iout7_sink
-> +		* die_temp
-> +		* agnd
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ffdb3f21fc4fb35b349449afbb30fecd4fe72978..2d3c31c74594ca1934c67e7aa=
-d0a179feeaa39bf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1289,6 +1289,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/g=
-it/netdev/net.git
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
->  F:	drivers/net/amt.c
-> =20
-> +ANALOG DEVICES INC AD3530R DRIVER
-> +M:	Kim Seer Paller <kimseer.paller@analog.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +W:	https://ez.analog.com/linux-software-drivers
-> +F:	Documentation/ABI/testing/sysfs-bus-iio-dac-ad3530r
-> +
->  ANALOG DEVICES INC AD3552R DRIVER
->  M:	Nuno S=C3=A1 <nuno.sa@analog.com>
->  L:	linux-iio@vger.kernel.org
->=20
+Taking the rtnl lock prevents userspace interfering with the interface
+configuration.
 
+> Daniel at some point in the brainstorm process suggested that we might
+> need something like phylink_impair() to lock it while it's getting
+> ""refreshed"". Do you think that might be a good path for this?
+
+Taking the rtnl should be sufficient.
+
+> One of the first implementation of this called phylink_stop (not
+> dev_stop) so maybe I should reconsider keeping everything phylink
+> related. But that wouldn't put the interface down from userspace if I'm
+> not wrong.
+> 
+> It's point 3 (of the old list) "the MAC driver needs to be notified that
+> the PCS pointer it stashed is no longer valid, so it doesn't return it for
+> mac_select_pcs()." my problem. I still feel MAC should not track PCS but
+> only react on the presence (or absence) of them.
+> 
+> And this point is really connected to point 1 so I guess point 1 is the
+> first to handle, before this. (I also feel it will magically solved once
+> point 1 is handled)
+
+I'm wondering whether the mac_select_pcs() interface needs to be
+revised - it's going to be difficult to do because there's many drivers
+that blindly return a PCS irrespective of the interface mode.
+
+I'm thinking that MAC drivers should register a PCS against a set of
+interface modes that it wants to use it for (the interface modes that
+a PCS supports is not necessarily the interface modes a MAC driver
+wants to use it for.) That means we could handle mac_select_pcs()
+entirely within phylink, which avoids storing PCS pointers in the MAC
+driver.
+
+I don't think this fully addresses the issues though.
+
+However..
+
+> > > For point 1, additional entry like available_interface? And gets updated
+> > > once a PCS gets removed??? Or if we don't like the parsing hell we map
+> > > every interface to a PCS pointer? (not worth the wasted space IMHO)
+> > 
+> > At the moment, MAC drivers that I've updated will do things like:
+> > 
+> >                 phy_interface_or(priv->phylink_config.supported_interfaces,
+> >                                  priv->phylink_config.supported_interfaces,
+> >                                  pcs->supported_interfaces);
+> > 
+> > phylink_config.supported_interfaces is the set of interface modes that
+> > the MAC _and_ PCS subsystem supports. It's not just the MAC, it's both
+> > together.
+> > 
+> > So, if a PCS is going away, then clearing the interface modes that the
+> > PCS was providing would make sense - but there's a problem here. What
+> > if the PCS is a bought-in bit of IP where the driver supports many modes
+> > but the MAC doesn't use it for all those modes. So... which interface
+> > modes get cleared is up to the MAC driver to decide.
+
+.. we would then know which modes to clear from
+phylink_config.supported_interfaces.
+
+> Should we add an OP to handle removal of PCS from a MAC? Like
+> .mac_release_pcs ? I might be wrong but isn't that giving too much
+> freedom to the driver?
+> 
+> I need to recheck how the interface validation work and what values are
+> used but with this removal thing on the table, supported_interfaces OR
+> with the PCS supported_interface might be problematic and maybe the
+> original values should be stored somewhere.
+
+That thought also crossed my mind too.
+
+> > > > There's probably a bunch more that needs to happen, and maybe need
+> > > > to consider how to deal with "pcs came back".. but I haven't thought
+> > > > that through yet.
+> > > 
+> > > Current approach supports PCS came back as we check the global provider
+> > > list and the PCS is reachable again there.
+> > > (we tasted various scenario with unbind/bind while the interface was
+> > > up/down)
+> > 
+> > ... because you look up the PCS in the mac_select_pcs() callback which
+> > leads to a different race to what we have today, this time inside the
+> > phylink code which thankfully phylink prints an error which is *NEVER*
+> > supposed to happen.
+> >
+> 
+> I want to make sure tho you are ok with the usage of .mac_select_pcs
+> for re-evaluation task.
+> 
+> Maybe a better approach is to introduce .mac_get_pcs and enforce the
+> usage only on validation phase? (aka in phylink_validate_mac_and_pcs)
+> 
+> AFAIK in that phase .mac_select_pcs can return errors if the requested
+> interface is not possible for one reason or another.
+
+The problem is that the validation phase could happen in the distant
+past in relation to when we actually use the results.
+
+Consider the above case with SGMII + 10GBASE-R. We're running at
+10G speeds, so we're using the 10GBASE-R PCS, and have been running for
+a year. The cabling deteriorates, and the PHY renegotiates switching to
+1G speed now wanting to use the SGMII PCS but someone's removed the
+driver! The validation would've happened before the 10G link came up
+but the use is now a significant time in the future.
+
+In that scenario, if the SGMII PCS driver is available, then switching
+to 1G speed is possible. If the driver isn't available, then the result
+is that the link has gone down. That's the same result if we stop
+advertising the slower speeds - the PHY basically wouldn't be able to
+establish link at a slower speed, so the link has gone down.
+
+So, maybe than re-evaluate phylink, maybe just keep track of which
+PHY interface modes we can no longer support, and if we attempt to
+switch to one of those, force the link down. However, with:
+
+f1ae32a709e0 ("net: phylink: force link down on major_config failure")
+
+we now have the mechanics to do this - if mac_select_pcs returns an
+error for the interface mode at major_config time, we force the link
+down until such time that we do have a successful major configuration.
+Maybe we should just rely on that rather than trying to do a full
+re-evaluation and reprogram things like PHY advertisements.
+
+Maybe in this case, we need a way to inform phylib - if I remember
+correctly, there is a way to get the PHY to signal "remote fault" to
+the link partner, and this kind of situation seems an ideal use, but
+I'd need to check 802.3.
+
+Yes, the MAC driver still needs to be aware of a PCS going away so it
+can properly respond to mac_select_pcs().
+
+Part of the issue here is that phylink wasn't designed from the start
+to cope with PCS as separate drivers - it always assumed that the MAC
+was in control of the PCS and would ensure that the PCS would remain
+available. E.g. through a PCS specific create() method causing a direct
+module relationship without the involvement of the driver model, or the
+PCS driver being built-in to the MAC driver.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
