@@ -1,174 +1,273 @@
-Return-Path: <linux-kernel+bounces-579524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54718A7449F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:46:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6634A744A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B881B61453
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2CE1B6049F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 07:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAD2212D63;
-	Fri, 28 Mar 2025 07:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69857211A37;
+	Fri, 28 Mar 2025 07:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr7wUDwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ybGgDK6e"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61250211A21;
-	Fri, 28 Mar 2025 07:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B546D1C5F36
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 07:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743147876; cv=none; b=U9KDvrqKVRfwxl4s+mAzjjeRKWWyfixFss6H28j1z0umRq5oKiTJnLqL2UTe8DzcdeuNkhJE80eXxn+sAmaFOk65OmaRBN96TLnEjqeZxFjq7qAziPuGmpuJrl6R0YUsUEjS93RMqEfvFzB7JY66OYLvYKPRcyakLcddm942GbM=
+	t=1743147916; cv=none; b=QTSwQx4jVd63vMhPQ2IeY8B140BEcEnU+92/7x7GyaWEQaMn8f+TfFHHft8pXSxtS1bm2tl383GUR/EPQp1d/ALUZPTQgUbq6lploZadyPeQiG6wyHpqfasEKzntEHUlNEJiYv2Wbu5edL+VNcbZepfDWNPc81ti/pXW+CzOPBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743147876; c=relaxed/simple;
-	bh=DrhY9Gh1OreY+2yKI5o/Ho68C4hcLAcK8qj33JiXDdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pLenurIAVuhZTMRkxozBM7nP8zhbFJm3E1q1tqOrc8A+Vj655bG5YkX9D0yB+ml78NRSklWkbBOsmO7S2/Bd0geuJva6f/X//BJ7kUZ62c+q5EpAYmVy2vzVJcWy3K40WYarcnn/rJL/frSBzU0uwqC7twYr8Ng/LXIpF8V9NY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr7wUDwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32566C4CEE4;
-	Fri, 28 Mar 2025 07:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743147874;
-	bh=DrhY9Gh1OreY+2yKI5o/Ho68C4hcLAcK8qj33JiXDdk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Lr7wUDwGlPHNPo3QKBOXasr59CeJwgZmw1U40lyquMd2yw7lWyVDHJBBgJg0ZJJok
-	 r2NPVj7PAQWQvcpAZTuyyVSO1vFCKdlM7CCrXmD8/LVPgNL7JUADqmjflCjdbMQxXo
-	 8o1+KoFE0j4kxdGGa/gqQe6g5s9ucXSLLOZFDNObP08S7FkOi8mFVIuVUngLKNUTlT
-	 Hz7O+UKmZyl8aVCWy/CEr5FP/RqNm0ws83VCHVybt01xESLq36X9cWVA+MQM+80IaL
-	 SLtqPcgY7fLyGklTOKwW2IrIJV4ky286gURtZDEqi/51+KO92vVy3XTgb/Y3Ietfpy
-	 Yc9ws2nCZ3tVg==
-Message-ID: <de0f7848-1fe7-451f-b48b-e20fbf3d0c2b@kernel.org>
-Date: Fri, 28 Mar 2025 08:44:23 +0100
+	s=arc-20240116; t=1743147916; c=relaxed/simple;
+	bh=rHhW4EJhfJ7yNY7e2PyX5y0Z5SfuR3jfuW9uefIR6VA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gSPEfvSomd/nM8LAVgRToykce6OpWmqPBuxN3lfWTOcXxBGoJtgchcWnVGrOKTOysqTY2kc8QTxcctBvwYwDqYMMz+Jajhnn3Lm1HCv2xiQ7gawP2hIAPSlHFJ0KH+SX7ccZVnL3k4vpQrkMUBwTdaQ6uQGVvCGDX8n5CqA6Xl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ybGgDK6e; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-300fefb8e06so2977638a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 00:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743147914; x=1743752714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IESU1cLx8J9+1ppDJfS8syyG1sO20GZa5dzaM+JLDsk=;
+        b=ybGgDK6eUeQRG50hCxFAhTi9uqJguXaP6qOR8k3CD5oeu+BqHDhdpDo5+q7u3wS/mV
+         tWYviy9gGYrz75S8jQHiRcxlOn2F8e2GI4cWzyRSeyjVqBHE8emFCnPS9wDFyhp3QV91
+         OoPjWDb4k9Twr45c8WmPhjRPCvQqnPWxRi5f7hNl3bNFvO61qzoGy0l1gt/MImj6QhUw
+         XY7AhryvGYUCFi+7C3ZWWj1UHj8YQfWp+3bldiV+bnfyweKJ6aB8PgAOTpnRTjaITqSk
+         eO3+OXpq6qFXynENO0tVGhYarrYUbqe7OijQQ7ukhef29t9QcMY3ICYoyBVnQooQforq
+         uhfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743147914; x=1743752714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IESU1cLx8J9+1ppDJfS8syyG1sO20GZa5dzaM+JLDsk=;
+        b=js8joXI2jUTz160d64TKWKIhmqofbMbt7sP/IsuzXiJy0vTDAbqFGug+E+MaaBkPMf
+         B7I+rrLfK10lq4CH9RtbPiltNA8/LoJQYOkTcqzDgHyC3dHuJKnZv+FWlyQWBDtKaLfF
+         ug1rjPQOUmNljdHrIoT6/W4FY286q23VC4et5gXkOzzOvaYtQv6LXThTCyTIfPZFiWwZ
+         LXXzqceQX9RNBFGQwz2UUyaEQqLWKcykUCl78wBxJ1GpVOAlDTTVrwDxH9lAM7Kj+wQB
+         Yjp/hXkdJTR1fc0CgbZvloVzhTaeXCuL9qEYASPRRlpM/GT1zcOxMbnzuhX15WhGiWGG
+         r1OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDrMyVQziIt69rpK5dLjZSFXErgmx47XWxJvra0Rji81pQOX8kB2Pd5srbVbjbPiBSbjkjcER/RY45xQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOf+7OsXEpBqvv+FAPLB+0b49lnFBk63A6RsP27jLjUSnVfIW+
+	Q/Jw4rhLuj6jSbNc+63XS4Vcp5QnI/A2+j4TndSXxWKTsHa2x8DsqQBD/Ph/VIRyfDzr4ByjQY5
+	UShH9IFzNEbj0V6sskY2GssBZGoxqFtAShfYf
+X-Gm-Gg: ASbGnctMpTSLiWqm8e6pyO1IyXbMQX2RUBWqIu2uEpQeBFOUDHlxh8UoL65GdQ2Ab7f
+	qbYBNE0Vy9RqaAHQ7hFMUc81oa7Mb1LuxVPPPQ2rM9HqI79FGrwsY23K6XZTDkWLNZuo85udTz1
+	N/HN6c3FYHO4vFygjmi/en30JCxUx+5NKPNUDEU5C0mjGXbyQQihU2u3m0
+X-Google-Smtp-Source: AGHT+IH6UrNf8k0iIk0UW8yjv9n/nScAByODrny3BYGZJEV9LB+thNungicKZ0bfZ+d7qsqmH1ybo9gXm2eAAWDsTZw=
+X-Received: by 2002:a17:90b:4a4f:b0:2fe:a77b:d97e with SMTP id
+ 98e67ed59e1d1-303a7d66285mr10270841a91.11.1743147913645; Fri, 28 Mar 2025
+ 00:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/15] arm64: defconfig: Enable Renesas RZ/V2N SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250326143945.82142-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org> <Z-VETFWFT5NksD7J@ninjato>
- <6fa375d2-5ba8-4b2b-8a54-f28b3cbedcfb@kernel.org> <Z-WAZ_IlMBB3XbTN@ninjato>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z-WAZ_IlMBB3XbTN@ninjato>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com> <20250319005141.312805-6-quic_wcheng@quicinc.com>
+In-Reply-To: <20250319005141.312805-6-quic_wcheng@quicinc.com>
+From: Puma Hsu <pumahsu@google.com>
+Date: Fri, 28 Mar 2025 15:45:00 +0800
+X-Gm-Features: AQ5f1JonoFS3uWyzINSVXYoD9NyFnlP1GUczGkKTm-KX97WAnMBIsmA-S-vI3bg
+Message-ID: <CAGCq0LZJmt3BdEXTvyOBUvsCCzVD1eQE2LQ6Eh_WRs7jYmR6oA@mail.gmail.com>
+Subject: Re: [PATCH v36 05/31] usb: host: xhci: Notify xHCI sideband on
+ transfer ring free
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz, 
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net, 
+	broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org, 
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com, 
+	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/03/2025 17:44, Wolfram Sang wrote:
-> 
->> You did not object to last discussion about this (a month ago) - neither
->> to my comments nor to resolution - so this patchset repeating the same
-> 
-> Because I cannot follow every Renesas patch series there is. You are
-> long enough around to know that large companies have different entities,
-> groups whatsoever. It is quite a challenge to streamline this via one
-> group, we need to share work. We do try hard, though, and have a
-> ARM/RISC-V/RENESAS ARCHITECTURE maintainer. Geert does a *hell of a job*
-> getting all these submission into shape, and he surely does not accept
-> code thrown over the wall. And geez, the patch series was just sent
-> yesterday, you didn't give us even time to raise the issue internally.
-> 
->> pattern from the same folks while ignoring previous talk is
->> contradicting "not too bad at fixing stuff".
-> 
-> First, being a maintainer myself, I do understand the frustration of
-> patch review not being honored. I can also agree that this series did
-> not work out perfectly. But that does not mean that we don't care, in
-> general.  Despite all imperfection and possibly different opinions, we
-> try hard to be a good citizen and spend considerable time on doing
-> things right. Accusing us of throwing just "code over the wall" because
-> there is an issue somewhere which hasn't been worked on in one month is
-> plain unfair.
-We do not speak about same things. I speak of review being ignored for
-multiple revisions in one patchset and then another patchset sending
-exactly the same pattern.
+On Wed, Mar 19, 2025 at 8:52=E2=80=AFAM Wesley Cheng <quic_wcheng@quicinc.c=
+om> wrote:
+>
+> In the case of handling a USB bus reset, the xhci_discover_or_reset_devic=
+e
+> can run without first notifying the xHCI sideband client driver to stop o=
+r
+> prevent the use of the transfer ring.  It was seen that when a bus reset
+> situation happened, the USB offload driver was attempting to fetch the xH=
+CI
+> transfer ring information, which was already freed.
+>
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
 
-Previous patchset receive my review about this. Thierry ignored it and
-send v2 with same code. Then v3 with exactly the same code, but with a
-remark in cover letter "but such a change is out of
-scope for this patchset."
+Tested-by: Puma Hsu <pumahsu@google.com>
 
-And now Pabhakar sends the same pattern.
-
-Each of these contributors were not changing here anything, it's like
-not their job. It looks like this will never get fixed, because each
-person wants to just get their stuff merged, so let's ignore the
-reviewers comments.
-
-That's not how upstreaming works - you need to change some things, fix
-some stuff, add more code, if you want to add your independent features.
-That is how upstream was always. The easiest example is - one new driver
-for some completely new feature is fine. Second new driver for similar
-new feature receives feedback: please create subsystem to have common
-set/handling of that new thingies.
-
-Best regards,
-Krzysztof
+> ---
+>  drivers/usb/host/xhci-sideband.c  | 29 ++++++++++++++++++++++++++++-
+>  drivers/usb/host/xhci.c           |  3 +++
+>  include/linux/usb/xhci-sideband.h | 30 +++++++++++++++++++++++++++++-
+>  3 files changed, 60 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sid=
+eband.c
+> index 742bbc6c2d9b..d49f9886dd84 100644
+> --- a/drivers/usb/host/xhci-sideband.c
+> +++ b/drivers/usb/host/xhci-sideband.c
+> @@ -88,6 +88,30 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *=
+sb, struct xhci_virt_ep *e
+>
+>  /* sideband api functions */
+>
+> +/**
+> + * xhci_sideband_notify_ep_ring_free - notify client of xfer ring free
+> + * @sb: sideband instance for this usb device
+> + * @ep_index: usb endpoint index
+> + *
+> + * Notifies the xHCI sideband client driver of a xHCI transfer ring free
+> + * routine.  This will allow for the client to ensure that all transfers
+> + * are completed.
+> + *
+> + * The callback should be synchronous, as the ring free happens after.
+> + */
+> +void xhci_sideband_notify_ep_ring_free(struct xhci_sideband *sb,
+> +                                      unsigned int ep_index)
+> +{
+> +       struct xhci_sideband_event evt;
+> +
+> +       evt.type =3D XHCI_SIDEBAND_XFER_RING_FREE;
+> +       evt.evt_data =3D &ep_index;
+> +
+> +       if (sb->notify_client)
+> +               sb->notify_client(sb->intf, &evt);
+> +}
+> +EXPORT_SYMBOL_GPL(xhci_sideband_notify_ep_ring_free);
+> +
+>  /**
+>   * xhci_sideband_add_endpoint - add endpoint to sideband access list
+>   * @sb: sideband instance for this usb device
+> @@ -342,7 +366,9 @@ EXPORT_SYMBOL_GPL(xhci_sideband_interrupter_id);
+>   * Return: pointer to a new xhci_sideband instance if successful. NULL o=
+therwise.
+>   */
+>  struct xhci_sideband *
+> -xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_ty=
+pe type)
+> +xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_ty=
+pe type,
+> +                      int (*notify_client)(struct usb_interface *intf,
+> +                                   struct xhci_sideband_event *evt))
+>  {
+>         struct usb_device *udev =3D interface_to_usbdev(intf);
+>         struct usb_hcd *hcd =3D bus_to_hcd(udev->bus);
+> @@ -381,6 +407,7 @@ xhci_sideband_register(struct usb_interface *intf, en=
+um xhci_sideband_type type)
+>         sb->vdev =3D vdev;
+>         sb->intf =3D intf;
+>         sb->type =3D type;
+> +       sb->notify_client =3D notify_client;
+>         vdev->sideband =3D sb;
+>
+>         spin_unlock_irq(&xhci->lock);
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 61950a350432..91e2d6eac8b7 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/string_choices.h>
+>  #include <linux/dmi.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/usb/xhci-sideband.h>
+>
+>  #include "xhci.h"
+>  #include "xhci-trace.h"
+> @@ -3919,6 +3920,8 @@ static int xhci_discover_or_reset_device(struct usb=
+_hcd *hcd,
+>                 }
+>
+>                 if (ep->ring) {
+> +                       if (ep->sideband)
+> +                               xhci_sideband_notify_ep_ring_free(ep->sid=
+eband, i);
+>                         xhci_debugfs_remove_endpoint(xhci, virt_dev, i);
+>                         xhci_free_endpoint_ring(xhci, virt_dev, i);
+>                 }
+> diff --git a/include/linux/usb/xhci-sideband.h b/include/linux/usb/xhci-s=
+ideband.h
+> index f8722afb8a2d..45288c392f6e 100644
+> --- a/include/linux/usb/xhci-sideband.h
+> +++ b/include/linux/usb/xhci-sideband.h
+> @@ -21,6 +21,20 @@ enum xhci_sideband_type {
+>         XHCI_SIDEBAND_VENDOR,
+>  };
+>
+> +enum xhci_sideband_notify_type {
+> +       XHCI_SIDEBAND_XFER_RING_FREE,
+> +};
+> +
+> +/**
+> + * struct xhci_sideband_event - sideband event
+> + * @type: notifier type
+> + * @evt_data: event data
+> + */
+> +struct xhci_sideband_event {
+> +       enum xhci_sideband_notify_type type;
+> +       void *evt_data;
+> +};
+> +
+>  /**
+>   * struct xhci_sideband - representation of a sideband accessed usb devi=
+ce.
+>   * @xhci: The xhci host controller the usb device is connected to
+> @@ -30,6 +44,7 @@ enum xhci_sideband_type {
+>   * @type: xHCI sideband type
+>   * @mutex: mutex for sideband operations
+>   * @intf: USB sideband client interface
+> + * @notify_client: callback for xHCI sideband sequences
+>   *
+>   * FIXME usb device accessed via sideband Keeping track of sideband acce=
+ssed usb devices.
+>   */
+> @@ -44,10 +59,14 @@ struct xhci_sideband {
+>         struct mutex                    mutex;
+>
+>         struct usb_interface            *intf;
+> +       int (*notify_client)(struct usb_interface *intf,
+> +                            struct xhci_sideband_event *evt);
+>  };
+>
+>  struct xhci_sideband *
+> -xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_ty=
+pe type);
+> +xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_ty=
+pe type,
+> +                      int (*notify_client)(struct usb_interface *intf,
+> +                                   struct xhci_sideband_event *evt));
+>  void
+>  xhci_sideband_unregister(struct xhci_sideband *sb);
+>  int
+> @@ -71,4 +90,13 @@ void
+>  xhci_sideband_remove_interrupter(struct xhci_sideband *sb);
+>  int
+>  xhci_sideband_interrupter_id(struct xhci_sideband *sb);
+> +
+> +#if IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND)
+> +void xhci_sideband_notify_ep_ring_free(struct xhci_sideband *sb,
+> +                                      unsigned int ep_index);
+> +#else
+> +static inline void xhci_sideband_notify_ep_ring_free(struct xhci_sideban=
+d *sb,
+> +                                                    unsigned int ep_inde=
+x)
+> +{ }
+> +#endif /* IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND) */
+>  #endif /* __LINUX_XHCI_SIDEBAND_H */
+>
 
