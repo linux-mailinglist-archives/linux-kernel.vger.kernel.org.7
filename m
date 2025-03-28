@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-579893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA05A74AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:34:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0498A74AA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:33:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FF23ABA00
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02EB179655
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591A421D5B4;
-	Fri, 28 Mar 2025 13:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF3A22068A;
+	Fri, 28 Mar 2025 13:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUaj1hlT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJXbrO1e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4A121D584
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82D21E096
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168494; cv=none; b=MHGSxHfZ0CbCcl7cFZCqBVCJ8Vs6i+HKwtCNf4Djl/47jTVu8WzdR3AVdBuuBs2gN9eI2T9Yu2QJI06QVI8B4n/Jbbk9kzdOpOE4qr2oRwq9iLU+YSzGU15rYWv6rwyVsUXqMybp1+/q6u64MQRSir3I+ZEZLYrekykbGaSI64Q=
+	t=1743168500; cv=none; b=A0ul5Md31qwZ0RnLoJuH5JDGQlsb11lyzEOBfDCOd1WrFl1oSYXVJnjgDWkymLWc2KapmRpxgSNTqqexwp3Z57Mgb84Q0otgEvcfXBwsI2fQeTnMoCQMEueYtRsrB2zwheqkcpOrX0oGk/KFILAX8Zys9vf3cXbFEV3avIR7qn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168494; c=relaxed/simple;
-	bh=1MjuidLYoRQbBQZBlQfNFXuF6K0GxTisnjnQj3c/rfI=;
+	s=arc-20240116; t=1743168500; c=relaxed/simple;
+	bh=C4QxJVYUpLSEmHPMwaR93U0zu+QPPz4nEkMxWVyEGbU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QynVEwy3dFfolECt5qkkWoUuOrlooCWFF+kvmgl2kNu/QToGcl7tdUo6nnjjF1v9Ek3nJcqkkEZwxSQYEzdFW5CDKKoPw31o+ipbF8xTaEsfRu0DpNtw1bjJIvAq2dLqihNFExQlRUX3lV+GN4owV9TrdAejE/B+ErYcUDs4Zsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUaj1hlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D8AC4CEE5;
-	Fri, 28 Mar 2025 13:28:12 +0000 (UTC)
+	 MIME-Version; b=YIZ/q+TycJV3KJkB9i0GnSUzGMKMtpqhu5thCediwRqlkAWx82ohtDP5vLqfaZz7NyoB763zvROobx+lK81pdSkJkG4FmcTHcub2lj+OW8a6ADZAP6iASqzQdrpxMwUF2rYrrcDq4IIIVVd1Fm+n4ltJC30CZavkMseANpEADUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJXbrO1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAA2C4CEE5;
+	Fri, 28 Mar 2025 13:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743168494;
-	bh=1MjuidLYoRQbBQZBlQfNFXuF6K0GxTisnjnQj3c/rfI=;
+	s=k20201202; t=1743168497;
+	bh=C4QxJVYUpLSEmHPMwaR93U0zu+QPPz4nEkMxWVyEGbU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AUaj1hlTHzOgyyea6rjfjOE8v9Jl6QWS5kLfwtA9ZIPD/UetuFGgj4O15xjXTsaCZ
-	 TjOPlk/EGsrvd9UH2q9etrU6YDl7E33kjP8/wFlNSoIcI3W4fNoFqAI7aqJRSzA9L5
-	 XLaW0KuwEClEMwQeG13jYuWXuc0SCElFK+KY42Gfh85nnZtkMI0Vnh08YwBPSJ+o0Q
-	 UN4GVYayB86j9FaoUxc76wtQcKNQtmmgjvuqPZWfSUt8SzWiH9YV6zqU2Qsi1r1eqC
-	 W1Cll7j3L6+VFLf6YVA86VckLl6w9qIsRJs5gu9LDwla8U91UTMd+Ou4owtv9rIuIB
-	 FXzUdiGODHNGw==
+	b=GJXbrO1eJ8h5kvqaCyJa4ug7JXs03iYFNwsIwySr7BOT6Ea1Qv5hLB/fe/kKAdIqb
+	 L1BzaSAd7ZXZBYY7TNFQ6mkVFFdLDdQICFzHMsVv/+zMSiqLElnsg4LmgYuQYctJF1
+	 os8YkPXe8p7VYzVpo5mcksdWVuIVB4O7OWcc7PaQ0IJkqCSD82hF3JuBf+xRuUkY34
+	 HMUmPnLvPb3Nk9Upd4ek9KHBPaeGrM8FGJBpjU7B/ulElrlbZMvjN7tXg3xDG24v6z
+	 g7ksY2Pn84UQ4M8BYiCPMT4r44/dJqSvtwqIA1EObt2HhpTmuer3YZ+YBN3HvvRkMg
+	 FyMjAhlvoHv4g==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -49,9 +49,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 21/49] x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
-Date: Fri, 28 Mar 2025 14:26:36 +0100
-Message-ID: <20250328132704.1901674-22-mingo@kernel.org>
+Subject: [PATCH 22/49] x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
+Date: Fri, 28 Mar 2025 14:26:37 +0100
+Message-ID: <20250328132704.1901674-23-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328132704.1901674-1-mingo@kernel.org>
 References: <20250328132704.1901674-1-mingo@kernel.org>
@@ -63,68 +63,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-tp_order_fail() uses inverted logic: it returns true in case something
-is false, which is only a plus at the IOCCC.
+There's this weird hack used by smp_text_poke_batch_finish() to indicate
+a 'forced flush':
 
-Instead rename it to regular parity as 'text_poke_addr_ordered()',
-and adjust the code accordingly.
+	smp_text_poke_batch_flush(NULL);
 
-Also add a comment explaining how the address ordering should be
-understood.
+Just open-code the vector-flush in a straightforward fashion:
 
-No change in functionality intended.
+	smp_text_poke_batch_process(tp_vec, tp_vec_nr);
+	tp_vec_nr = 0;
+
+And get rid of !addr hack from text_poke_addr_ordered().
+
+Leave a WARN_ON_ONCE(), just in case some external code learned
+to rely on this behavior.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/x86/kernel/alternative.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 5fe54f3c6211..66778dac257f 100644
+index 66778dac257f..ffffec4597b7 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2843,28 +2843,34 @@ static void text_poke_int3_loc_init(struct smp_text_poke_loc *tp, void *addr,
-  * We hard rely on the tp_vec being ordered; ensure this is so by flushing
-  * early if needed.
-  */
--static bool tp_order_fail(void *addr)
-+static bool text_poke_addr_ordered(void *addr)
+@@ -2847,12 +2847,11 @@ static bool text_poke_addr_ordered(void *addr)
  {
  	struct smp_text_poke_loc *tp;
  
++	WARN_ON_ONCE(!addr);
++
  	if (!tp_vec_nr)
+ 		return true;
+ 
+-	if (!addr) /* force */
 -		return false;
-+		return true;
- 
- 	if (!addr) /* force */
--		return true;
-+		return false;
- 
--	tp = &tp_vec[tp_vec_nr - 1];
-+	/*
-+	 * If the last current entry's address is higher than the
-+	 * new entry's address we'd like to add, then ordering
-+	 * is violated and we must first flush all pending patching
-+	 * requests:
-+	 */
-+	tp = &tp_vec[tp_vec_nr-1];
- 	if ((unsigned long)text_poke_addr(tp) > (unsigned long)addr)
--		return true;
-+		return false;
- 
--	return false;
-+	return true;
+-
+ 	/*
+ 	 * If the last current entry's address is higher than the
+ 	 * new entry's address we'd like to add, then ordering
+@@ -2866,6 +2865,14 @@ static bool text_poke_addr_ordered(void *addr)
+ 	return true;
  }
  
++void smp_text_poke_batch_finish(void)
++{
++	if (tp_vec_nr) {
++		smp_text_poke_batch_process(tp_vec, tp_vec_nr);
++		tp_vec_nr = 0;
++	}
++}
++
  static void smp_text_poke_batch_flush(void *addr)
  {
  	lockdep_assert_held(&text_mutex);
- 
--	if (tp_vec_nr == TP_VEC_MAX || tp_order_fail(addr)) {
-+	if (tp_vec_nr == TP_VEC_MAX || !text_poke_addr_ordered(addr)) {
- 		smp_text_poke_batch_process(tp_vec, tp_vec_nr);
- 		tp_vec_nr = 0;
+@@ -2876,11 +2883,6 @@ static void smp_text_poke_batch_flush(void *addr)
  	}
+ }
+ 
+-void smp_text_poke_batch_finish(void)
+-{
+-	smp_text_poke_batch_flush(NULL);
+-}
+-
+ void __ref smp_text_poke_batch_add(void *addr, const void *opcode, size_t len, const void *emulate)
+ {
+ 	struct smp_text_poke_loc *tp;
 -- 
 2.45.2
 
