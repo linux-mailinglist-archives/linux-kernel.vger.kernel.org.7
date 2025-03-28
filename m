@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-579721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4B7A7489A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:45:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC11A7487D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:41:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315803B3182
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:45:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412177A81FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81AD1DE2C3;
-	Fri, 28 Mar 2025 10:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB7C2147E9;
+	Fri, 28 Mar 2025 10:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ubL6rwRE"
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fnDoUv7x"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8D41E8343
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE41C174E;
+	Fri, 28 Mar 2025 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743158721; cv=none; b=Q5PbGshQZLS0Fw1Y8PkG+uD1cwNvn/4KJ3wg6SSOgz5JJpc742/69+XrUe2O4hWIkPMer/FfILcxo67asaLlfhjOlU/B4FnFV2Vk9QSq7/HJPtOJMnWicVnWcDbxjE/HfA8sS8rJ/RsoJQqW9D0fZ6WA30sbJfOSOGvZHHHq5QA=
+	t=1743158474; cv=none; b=Ow/kV+3+AjgWQ1gn6T0JNzOnNZbIMldPPI4TKG5lNfRvqX9bIJdWZuN4l059iAd4LpTziWHVcH9GetbxIY/zLFIge+XyTksmU2U4pDj7F+L6QvP5otk7tc70sybAsKbDo9T1qSbcHEynkV1IHjNrVc3tJc4p/VYv0JASi8r9Kdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743158721; c=relaxed/simple;
-	bh=E9KF9VYf5rgIBhAdPjIGjpic8a0/cAy+P9SJgR3gjkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZswPBh1N3acGNMOCe1u+5NwpL6JfTEh6/BrIMWZt/X41r/DU64ZJAGT7gvjQxQHJLtEwMnRUwHcsBvaLZFMEQI2+k4MQF5qVl9OOLou6JzmU98tw9PoKFseYOZ6Dai7c9E1xzpfp3srZpMF0ThHxfZ/66Bo/Xmx0nUedoznzqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ubL6rwRE; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZPH7D4YFjzW2y;
-	Fri, 28 Mar 2025 11:38:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1743158312;
-	bh=MyuTqVvTP1UPCrUbHlnkU12n+jkzkkYz1VOSQfsDbeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ubL6rwRE1GKQDgpoFHHnqtWunMExgXmH9SIOevHevMNsSgJymrB8PqtT7RsLdLH6w
-	 LH8BY2mtUo8hpXM7UsTfJgikKEEPrGDHXtD/YG1KBqXB9zjymaqJWWlh2+lJ2/0GBJ
-	 hyNRO+Q8o5kFKLuA61PJ1bLsF5hhWu4A3JkuEPzU=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZPH735RxtzKRX;
-	Fri, 28 Mar 2025 11:38:23 +0100 (CET)
-Date: Fri, 28 Mar 2025 11:38:23 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, 
-	Alessandro Carminati <acarmina@redhat.com>, linux-kselftest@vger.kernel.org, 
-	David Airlie <airlied@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Daniel Diaz <daniel.diaz@linaro.org>, David Gow <davidgow@google.com>, 
-	Arthur Grillo <arthurgrillo@riseup.net>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Guenter Roeck <linux@roeck-us.net>, Alessandro Carminati <alessandro.carminati@gmail.com>, 
-	Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com, 
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	loongarch@lists.linux.dev, x86@kernel.org
-Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
-Message-ID: <20250328.sah9oog5ahSh@digikod.net>
-References: <20250313114329.284104-1-acarmina@redhat.com>
- <202503131016.5DCEAEC945@keescook>
- <20250313-abiding-vivid-robin-159dfa@houat>
+	s=arc-20240116; t=1743158474; c=relaxed/simple;
+	bh=+Cr53Mv5cVCxK2AEW2QgAI5641P4VOCPUL4p240FVn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RtHpgKmC7/bO+tGJGmZ7Fvc1HjneGK2RnLeW3TPhegSZ/tIERBnBl2mglbnT1opsMSR2l/vmDxucD4/cezLYov7fXHYfw4OfMLXaoq3p/VSIIiEX8A5ZNu1gEBAdnHH8oFAb42CfKoaRUPf4sGdbbzCf/QFTRj5sVE4cmf+cXn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fnDoUv7x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S853YL011141;
+	Fri, 28 Mar 2025 10:41:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9iwwtYnFPmLMO4Z6C59FXnTyRLkIi5qrCDGvyDBIlMM=; b=fnDoUv7xmWhLszKE
+	A/rasxif8J23znv+w1KdvgFyfL3Z4iBfux8/7ok0wz1T4uwC5ensxf4K30OMvxhx
+	QK9OfOP8nPSJFEmBikJBDzrv42+Rq1fiiGzxG5c1TdVPdyxApdvj8t5VwqDYTAxC
+	keejGPiyBTlncdtoDhttnTFrslSthLWssDzCu6mF952BdxgCOyvCRHsc3FuHWgMe
+	iUSqgFV6By4x90Bs3d2VWGmfvVTFLmcsRati7DahEqqJIG3t5PAIbyTOSji3IrE3
+	Odkku51jfHXrUF22KtTWUE5w+EVDPkMey2Ak2V/kBor3gt3szp9sTaTHCSo9uQMi
+	AIxirA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45nqxugfmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 10:41:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52SAf70L007015
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 10:41:07 GMT
+Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Mar
+ 2025 03:41:01 -0700
+Message-ID: <98bf09d2-0ad4-4499-b020-88107c115c01@quicinc.com>
+Date: Fri, 28 Mar 2025 16:09:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250313-abiding-vivid-robin-159dfa@houat>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/18] dt-bindings: clock: qcom: sm8450-camcc: Allow to
+ specify two power domains
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-3-895fafd62627@quicinc.com>
+ <c58b129c-1c83-44f3-bd52-13cc24e50cbb@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <c58b129c-1c83-44f3-bd52-13cc24e50cbb@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jXzdg-JTLd6aqric1QWOXm2CB2Aj13W6
+X-Authority-Analysis: v=2.4 cv=e7QGSbp/ c=1 sm=1 tr=0 ts=67e67cc4 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=SowLGM7tv_KyZWzOVrUA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: jXzdg-JTLd6aqric1QWOXm2CB2Aj13W6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_05,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=795 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503280073
 
-On Thu, Mar 13, 2025 at 06:24:25PM +0100, Maxime Ripard wrote:
-> Hi,
+
+
+On 3/27/2025 8:58 PM, Bryan O'Donoghue wrote:
+> On 27/03/2025 09:52, Jagadeesh Kona wrote:
+>> -      A phandle to an OPP node describing required MMCX performance point.
+>> +      Phandles to OPP nodes that describe required performance point on power domains
 > 
-> On Thu, Mar 13, 2025 at 10:17:49AM -0700, Kees Cook wrote:
-> > On Thu, Mar 13, 2025 at 11:43:15AM +0000, Alessandro Carminati wrote:
-> > > Some unit tests intentionally trigger warning backtraces by passing bad
-> > > parameters to kernel API functions. Such unit tests typically check the
-> > > return value from such calls, not the existence of the warning backtrace.
-> > 
-> > Thanks for picking this series back up! I honestly thought this had
-> > already landed. :)
-> > 
-> > > With CONFIG_KUNIT enabled, image size increase with this series applied is
-> > > approximately 1%. The image size increase (and with it the functionality
-> > > introduced by this series) can be avoided by disabling
-> > > CONFIG_KUNIT_SUPPRESS_BACKTRACE.
-> > 
-> > Yeah, as with my prior review, I'm a fan of this. It makes a bunch of my
-> > very noisy tests much easier to deal with.
+> I believe we are dropping "Phandle to" generally as this is a redundant statement.
 > 
-> And for the record, we're also affected by this in DRM and would very
-> much like to get it merged in one shape or another.
+> You should also pluralise performance-points.
+> 
+> .. required performance-points on power-domains
+> 
+> Other than that
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
 
-Here is another case:
-https://lore.kernel.org/all/20250328.Ahc0thi6CaiJ@digikod.net/
+Yes, I will fix above in the next series.
 
-It would be very useful to have this feature merged.  Without it, we may
-need to remove useful tests.
+Thanks,
+Jagadeesh
+
+> ---
+> bod
 
