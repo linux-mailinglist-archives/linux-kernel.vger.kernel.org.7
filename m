@@ -1,188 +1,260 @@
-Return-Path: <linux-kernel+bounces-580193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A1CA74EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:02:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9377BA74ED2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AC697A6CB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 17:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C163B8B2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6371DB15C;
-	Fri, 28 Mar 2025 17:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719101DE3DF;
+	Fri, 28 Mar 2025 17:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ443N26"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MDN0aaDd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684379D2;
-	Fri, 28 Mar 2025 17:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97201DD525
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 17:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743181334; cv=none; b=jtJv+i7nq5gkoC741ByGoz23qyxQsPfKy9y2Ip54bPwq136YkwHK9vW/yn3d5uV4dF2YM/9DOmnkhRM7c6Z/I9TnfY8mjZNLGbiPFjz0bU5KUabZwCxJzcwnaYM9SwFvJ2p16JjKgGEKDiS6P2OaX/rEOuFEjB3RwAlyyyFpVPo=
+	t=1743181411; cv=none; b=mkjGHAfOtWuJYBWbiuzrk80WqKTQIlI2mbDlb8ItWU8EXWYbrPLZYkX57nT2csVvfVoovOaYZ2LVTO5KXwcgE1vvHUShm8rb+SP+bAz4tWGTCDhjeZ5cMgrQ6go6+CuvQZboS4dpt9Mp5RMOCehVq0PpUaUPvLVnM7KXz3P5hPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743181334; c=relaxed/simple;
-	bh=0CCc9sG1JRFAdQjSNsWyNdNN0+t+ZAjvF9/cbOcLf0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rDJJA8VxSYrzKMlqX2/HnQAqmLe/HXe5Ou8iZtZEO4YwbsJMoKrq4nct37XyOt6ZUEM+J888jIyLSnP+PLdyYlvWTHj2i5F8LFyLBXGLMQZy1NHPtnVYo7ebCnL8ATMOjqLuqvXQy5B0wien3fKsPLuLYrVXOSOe7HBAvZXPQpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ443N26; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E657AC4CEE4;
-	Fri, 28 Mar 2025 17:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743181334;
-	bh=0CCc9sG1JRFAdQjSNsWyNdNN0+t+ZAjvF9/cbOcLf0M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KQ443N26l/zrrNFcZuLCsFD+fHb/9AxUOkdSw5avOuQBnl+eMjIk41LJjDRtS5Svf
-	 ZRFJ/9MZjqvRCGPE0kDa2jF+q77kBCtede9kNALSzIj6tM4/ZCSlWTk3FKTCYhMMlL
-	 o23ptcBHfnMAvDbGJGRDiiG0edxFOQyeOeUPULFQAYkFw5BRgtQZraR51zpVjyKCQJ
-	 fdBREzkitzvgFhCRNphs6JHe8MQU1Qw9I8kS1RZwxXRKOG3ftL29SUSaO7TiSwWRe0
-	 79F7kGxqTITPfBsNCt2iC5KamhJqgP92FVCL2MrsO290RGNovYI4lZNEAqRJfHRoxB
-	 gVN9LvU3uQdLw==
-Date: Fri, 28 Mar 2025 12:02:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
-	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
-	rrichter@amd.com, nathan.fontenot@amd.com,
-	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
-	ming.li@zohomail.com, PradeepVineshReddy.Kodamati@amd.com
-Subject: Re: [PATCH v8 03/16] CXL/AER: Introduce Kfifo for forwarding CXL
- errors
-Message-ID: <20250328170212.GA1508786@bhelgaas>
+	s=arc-20240116; t=1743181411; c=relaxed/simple;
+	bh=5VL+nSlr4EcqTMw6hRb9pJpX+24HA7R7EtdOhFmG/0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAtoAKdHJixpIU1NoNwNCDT9z3UV/ksSQV3FNoBN0pt2ULRHuLGdtPxJ2jF9LUzPJgkMLV0aomQmrW3aSkBKhpGgrHQp8a1j8l/sRif0X6QMEt6hqMt7ZOUOHTI55LZTE5USpIWWxrNyOkfbI4rewqPZ8qpg1CMASVB2+4GIWJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MDN0aaDd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743181408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9uf0+0Mizn7Wtg468+LZG3Q/0Otqz8lfJO3EiDJY7w4=;
+	b=MDN0aaDd5BB8sFE2d9mV4AeL2Dmu68I8kk3oXy1vbdsGrYiMto1+DUsracAjMmGyBAkCq0
+	heulOM3GNJn07dXmvCmAzWpoDuhVLV28IrsEbWpZrdvpcvVZUGQp7VVppZhHYxrsTvDUys
+	m74fGTea01WwGoYcSRsH0wbgDiCdDsc=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-e89uLg8KOGaVyp6hKnbHlw-1; Fri, 28 Mar 2025 13:03:27 -0400
+X-MC-Unique: e89uLg8KOGaVyp6hKnbHlw-1
+X-Mimecast-MFC-AGG-ID: e89uLg8KOGaVyp6hKnbHlw_1743181406
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abb9b2831b7so332095466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:03:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743181406; x=1743786206;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uf0+0Mizn7Wtg468+LZG3Q/0Otqz8lfJO3EiDJY7w4=;
+        b=ldFxVOJ9eRuLIwgludiXdStStrYJ3E/Omm3lcv9y2YpUMJDP+W7fA60dhv8hS9+5jN
+         G7OdOl5E8gmj+vGepqQ5wVP3zbAQD9GLkEIN1empXyulx3LvarZ+vlHteyenyUqpwhw2
+         p816RyD3WArGYFzL56gRFh2t5Ex8nWhjCJqhVMMbiXUBMWaDBIR2mL+E+d8kX4Kb+6P6
+         sn424rJeCt4kyj7jv2YTZy4u0CCpXs0sxmULg9JCrIPBRRSVpYaaetkiJw+dvcuei7U7
+         gn7tzVemPO1SEGTNgwN9BhEKqix+QDToK8Q8nxh3M2w8YbFHwzHpIs4FsYWK54kbQZDX
+         ke3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3+3wFXS2ZRz/7y8NpBzEnUbw0JbTYbWdm2EdHU8h3ufcOI0bPTk2MnOBILEmZM/1SxYbT9SEtNhUQ0wY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy07B0whsR/eWxdQkbUm0sVCVHLe/1X62FlfyHKMh5G/0v7+5vy
+	gKdlJtn5KczJSRecGnvN4rF1aCKJXtJrO5AInUxVP2HNMwjU7rGYZUXxYqZr6tui1lETl9OP3ch
+	i8NWPbaE6trb2eLQA20Qvr2br/82KCjhyCyegihlMCu5wpBSoKmxuhLA1iYH2FQ==
+X-Gm-Gg: ASbGncvq2u/uEhnhvBwVKUrK470a08scPOThgoKVJg/hhzEquWlF4hGAmgen0KV1jGB
+	6LcHdponK4V2s2UkwOsctYms1NGDfdOOmlzmAsV0qqet5QSqCIv5dd4Rl1HvuwI1BtyU7bMS+UN
+	ny4DlZogJMWYDARFkrSpfgoVEPX8xuWpjZcs42bGNA5xmetKe8I8fVj/DyH8kZ04GvJr+CxGaQg
+	vijWh4uR837Jcly7fqr1NPjn9/OeWj2/uRWgLw/8vzzq7hfQMH+5WFNyO/HxmWt0AuPhsPxtiFR
+	YYpvXeH36we7TUb1m11jaDR/ZRXZe7sJya8CE5T8f6CK9scUAzVcojQkYy4gGWQc
+X-Received: by 2002:a17:906:c115:b0:ac6:e29b:8503 with SMTP id a640c23a62f3a-ac71eac290amr421854666b.1.1743181405020;
+        Fri, 28 Mar 2025 10:03:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGd9u9IUSVtU5cjE8R52KpOjUFspVo6+RZH/1O5CExd6Dpx7I7lN+krtxHcvzE1FAVtm4Ndw==
+X-Received: by 2002:a17:906:c115:b0:ac6:e29b:8503 with SMTP id a640c23a62f3a-ac71eac290amr421844466b.1.1743181404266;
+        Fri, 28 Mar 2025 10:03:24 -0700 (PDT)
+Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b243sm191783266b.69.2025.03.28.10.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 10:03:23 -0700 (PDT)
+Date: Fri, 28 Mar 2025 18:03:19 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>, 
+	Daniel =?utf-8?B?QmVycmFuZ8Op?= <berrange@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
+	Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, "David S. Miller" <davem@davemloft.net>, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] vsock: add namespace support to vhost-vsock
+Message-ID: <r6a6ihjw3etlb5chqsb65u7uhcav6q6pjxu65iqpp76423w2wd@kmctvoaywmbu>
+References: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ae4740d-e2d9-4d49-b021-6712311842ed@amd.com>
+In-Reply-To: <20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com>
 
-What does this series apply to?  I default to the current -rc1
-(v6.14-rc1), but this doesn't apply there, and I don't have the
-base-commit: aae0594a7053c60b82621136257c8b648c67b512 mentioned in the
-cover letter.
+CCing Daniel
 
-Sometimes things make more sense when I can see everything as applied.
-
-On Thu, Mar 27, 2025 at 01:12:30PM -0500, Bowman, Terry wrote:
-> On 3/27/2025 12:08 PM, Bjorn Helgaas wrote:
-> > On Wed, Mar 26, 2025 at 08:47:04PM -0500, Terry Bowman wrote:
-> >> CXL error handling will soon be moved from the AER driver into the CXL
-> >> driver. This requires a notification mechanism for the AER driver to share
-> >> the AER interrupt details with CXL driver. The notification is required for
-> >> the CXL drivers to then handle CXL RAS errors.
-> >>
-> >> Add a kfifo work queue to be used by the AER driver and CXL driver. The AER
-> >> driver will be the sole kfifo producer adding work. The cxl_core will be
-> >> the sole kfifo consumer removing work. Add the boilerplate kfifo support.
-> >>
-> >> Add CXL work queue handler registration functions in the AER driver. Export
-> >> the functions allowing CXL driver to access. Implement the registration
-> >> functions for the CXL driver to assign or clear the work handler function.
-> >>
-> >> Create a work queue handler function, cxl_prot_err_work_fn(), as a stub for
-> >> now. The CXL specific handling will be added in future patch.
-> >>
-> >> Introduce 'struct cxl_prot_err_info'. This structure caches CXL error
-> >> details used in completing error handling. This avoid duplicating some
-> >> function calls and allows the error to be treated generically when
-> >> possible.
-
-> >> +int cxl_create_prot_err_info(struct pci_dev *_pdev, int severity,
-> >> +			     struct cxl_prot_error_info *err_info)
-> >> +{
-> ...
-
-> >> +	if ((pci_pcie_type(pdev) != PCI_EXP_TYPE_ENDPOINT) &&
-> >> +	    (pci_pcie_type(pdev) != PCI_EXP_TYPE_RC_END)) {
-> >> +		pci_warn_once(pdev, "Error: Unsupported device type (%X)", pci_pcie_type(pdev));
-> >> +		return -ENODEV;
-> >
-> > Similar.  A pci_warn_once() here seems like a debugging aid during
-> > development, not necessarily a production kind of thing.
-> >
-> > Thanks for printing the type.  I would use "%#x" to make it clear that
-> > it's hex.  There are about 1900 %X uses compared with 33K
-> > %x uses, but maybe you have a reason to capitalize it?
+On Wed, Mar 12, 2025 at 01:59:34PM -0700, Bobby Eshleman wrote:
+>Picking up Stefano's v1 [1], this series adds netns support to
+>vhost-vsock. Unlike v1, this series does not address guest-to-host (g2h)
+>namespaces, defering that for future implementation and discussion.
 >
-> Got it "%x". Would you recommend the pci_warn_once() is removed?
-
-The dependency on pdev being an endpoint is not clear here, so I would
-just remove the check altogether or move it to the place that breaks
-if pdev is not an endpoint.
-
-> >> +#if defined(CONFIG_PCIEAER_CXL)
-> >> +int cxl_register_prot_err_work(struct work_struct *work,
-> >> +			       int (*_cxl_create_prot_err_info)(struct pci_dev*, int,
-> >> +								struct cxl_prot_error_info*))
-> >
-> > Ditto.  Rewrap to fit in 80 columns, unindent this function
-> > pointer decl to make it fit.  Same below in aer.h.
+>Any vsock created with /dev/vhost-vsock is a global vsock, accessible
+>from any namespace. Any vsock created with /dev/vhost-vsock-netns is a
+>"scoped" vsock, accessible only to sockets in its namespace. If a global
+>vsock or scoped vsock share the same CID, the scoped vsock takes
+>precedence.
 >
-> Ok, got it. Without using typedefs, right ?
+>If a socket in a namespace connects with a global vsock, the CID becomes
+>unavailable to any VMM in that namespace when creating new vsocks. If
+>disconnected, the CID becomes available again.
 
-A typedef would be fine with me.
+I was talking about this feature with Daniel and he pointed out 
+something interesting (Daniel please feel free to correct me):
 
-> >> +struct cxl_prot_error_info {
-> >> +	struct pci_dev *pdev;
-> >> +	struct device *dev;
-> >> +	void __iomem *ras_base;
-> >> +	int severity;
-> >
-> > What does the "prot" in "cxl_prot_error_info" refer to?
+     If we have a process in the host that does a listen(AF_VSOCK) in a 
+     namespace, can this receive connections from guests connected to 
+     /dev/vhost-vsock in any namespace?
+
+     Should we provide something (e.g. sysctl/sysfs entry) to disable 
+     this behaviour, preventing a process in a namespace from receiving 
+     connections from the global vsock address space (i.e.  
+     /dev/vhost-vsock VMs)?
+
+I understand that by default maybe we should allow this behaviour in 
+order to not break current applications, but in some cases the user may 
+want to isolate sockets in a namespace also from being accessed by VMs 
+running in the global vsock address space.
+
+Indeed in this series we have talked mostly about the host -> guest path 
+(as the direction of the connection), but little about the guest -> host 
+path, maybe we should explain it better in the cover/commit 
+descriptions/documentation.
+
+Thanks,
+Stefano
+
 >
-> Protocol. As in CXL Protocol Error Information. I suppose it needs
-> to be renamed if it wasn't obvious.
-
-Unless there are CXL non-protocol errors that need to be
-distinguished, I would just omit "prot" altogether.
-
-> > There's basically no error info here other than "severity".
+>Testing
 >
-> Correct. It's more accurately "CXL Protocol Error Context" but I didn't
-> want to re-use 'context' because 'context' is used for thread/process
-> statefulness. Also, I followed the existing CPER parallel work that uses
-> a similar kfifo etc. Thoughts on rename?
-
-What's the name of the corresponding CPER struct?
-
-> > I guess "dev" and "pdev" are separate devices (otherwise you would
-> > just use "&pdev->dev"), but I don't have any intuition about how they
-> > might be related, which is a little disconcerting.
+>QEMU with /dev/vhost-vsock-netns support:
+>	https://github.com/beshleman/qemu/tree/vsock-netns
 >
-> "pdev" represents a PCIe device: RP, USP, DSP, or EP.  "dev" is the
-> same device as "pdev" but "dev" is found in CXL topology. "dev" is
-> discovered through ACPI/platform enumeration and interconnected with
-> other CXL "devs" using upstream and downstream links. Moving back
-> and forth between "pdev" and its CXL "dev" requires a search unique
-> to the device type and point beginning the search.
-
-It seems weird to me to have two device pointers here.  Seems like we
-should use a single pointer to identify the device, and if we need to
-get from PCI to CXL or vice versa, there should be a pointer somewhere
-so we don't have to search all the time.
-
-> > I would have thought that "ras_base" would be a property of "dev"
-> > (the CXL device) and wouldn't need to be separate.
+>Test: Scoped vsocks isolated by namespace
 >
-> "ras_base" is a common member of the CXL Port, CXL Downstream Port,
-> CXL Upstream Port, and CXL EP. If one wants the "ras_base" for a
-> given CXL "dev" then the "dev" must be converted to CXL Port,
-> Downstream Port, or Upstream Port.
+>  host# ip netns add ns1
+>  host# ip netns add ns2
+>  host# ip netns exec ns1 \
+>				  qemu-system-x86_64 \
+>					  -m 8G -smp 4 -cpu host -enable-kvm \
+>					  -serial mon:stdio \
+>					  -drive if=virtio,file=${IMAGE1} \
+>					  -device vhost-vsock-pci,netns=on,guest-cid=15
+>  host# ip netns exec ns2 \
+>				  qemu-system-x86_64 \
+>					  -m 8G -smp 4 -cpu host -enable-kvm \
+>					  -serial mon:stdio \
+>					  -drive if=virtio,file=${IMAGE2} \
+>					  -device vhost-vsock-pci,netns=on,guest-cid=15
+>
+>  host# socat - VSOCK-CONNECT:15:1234
+>  2025/03/10 17:09:40 socat[255741] E connect(5, AF=40 cid:15 port:1234, 16): No such device
+>
+>  host# echo foobar1 | sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+>  host# echo foobar2 | sudo ip netns exec ns2 socat - VSOCK-CONNECT:15:1234
+>
+>  vm1# socat - VSOCK-LISTEN:1234
+>  foobar1
+>  vm2# socat - VSOCK-LISTEN:1234
+>  foobar2
+>
+>Test: Global vsocks accessible to any namespace
+>
+>  host# qemu-system-x86_64 \
+>	  -m 8G -smp 4 -cpu host -enable-kvm \
+>	  -serial mon:stdio \
+>	  -drive if=virtio,file=${IMAGE2} \
+>	  -device vhost-vsock-pci,guest-cid=15,netns=off
+>
+>  host# echo foobar | sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+>
+>  vm# socat - VSOCK-LISTEN:1234
+>  foobar
+>
+>Test: Connecting to global vsock makes CID unavailble to namespace
+>
+>  host# qemu-system-x86_64 \
+>	  -m 8G -smp 4 -cpu host -enable-kvm \
+>	  -serial mon:stdio \
+>	  -drive if=virtio,file=${IMAGE2} \
+>	  -device vhost-vsock-pci,guest-cid=15,netns=off
+>
+>  vm# socat - VSOCK-LISTEN:1234
+>
+>  host# sudo ip netns exec ns1 socat - VSOCK-CONNECT:15:1234
+>  host# ip netns exec ns1 \
+>				  qemu-system-x86_64 \
+>					  -m 8G -smp 4 -cpu host -enable-kvm \
+>					  -serial mon:stdio \
+>					  -drive if=virtio,file=${IMAGE1} \
+>					  -device vhost-vsock-pci,netns=on,guest-cid=15
+>
+>  qemu-system-x86_64: -device vhost-vsock-pci,netns=on,guest-cid=15: vhost-vsock: unable to set guest cid: Address already in use
+>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+>---
+>Changes in v2:
+>- only support vhost-vsock namespaces
+>- all g2h namespaces retain old behavior, only common API changes
+>  impacted by vhost-vsock changes
+>- add /dev/vhost-vsock-netns for "opt-in"
+>- leave /dev/vhost-vsock to old behavior
+>- removed netns module param
+>- Link to v1: https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+>
+>Changes in v1:
+>- added 'netns' module param to vsock.ko to enable the
+>  network namespace support (disabled by default)
+>- added 'vsock_net_eq()' to check the "net" assigned to a socket
+>  only when 'netns' support is enabled
+>- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+>
+>---
+>Stefano Garzarella (3):
+>      vsock: add network namespace support
+>      vsock/virtio_transport_common: handle netns of received packets
+>      vhost/vsock: use netns of process that opens the vhost-vsock-netns device
+>
+> drivers/vhost/vsock.c                   | 96 +++++++++++++++++++++++++++------
+> include/linux/miscdevice.h              |  1 +
+> include/linux/virtio_vsock.h            |  2 +
+> include/net/af_vsock.h                  | 10 ++--
+> net/vmw_vsock/af_vsock.c                | 85 +++++++++++++++++++++++------
+> net/vmw_vsock/hyperv_transport.c        |  2 +-
+> net/vmw_vsock/virtio_transport.c        |  5 +-
+> net/vmw_vsock/virtio_transport_common.c | 14 ++++-
+> net/vmw_vsock/vmci_transport.c          |  4 +-
+> net/vmw_vsock/vsock_loopback.c          |  4 +-
+> 10 files changed, 180 insertions(+), 43 deletions(-)
+>---
+>base-commit: 0ea09cbf8350b70ad44d67a1dcb379008a356034
+>change-id: 20250312-vsock-netns-45da9424f726
+>
+>Best regards,
+>-- 
+>Bobby Eshleman <bobbyeshleman@gmail.com>
+>
 
-Passing around ras_base seems dodgy to me.  I think it's better to
-pass around a real entity like a pci_dev or cxl_port or cxl_dport or
-whatever.  Code that needs to deal with ras_base presumably should
-know about the internals of the device ras_base belongs to.
-
-Bjorn
 
