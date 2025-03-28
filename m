@@ -1,78 +1,136 @@
-Return-Path: <linux-kernel+bounces-579367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAF7A74261
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:38:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8FFA74296
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E1A189CFC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0040C7A852A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F49D20E008;
-	Fri, 28 Mar 2025 02:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDvCY6wU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D191720E037;
+	Fri, 28 Mar 2025 02:51:41 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08790224F6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915A720DD6B;
+	Fri, 28 Mar 2025 02:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743129511; cv=none; b=ZjRup1S7loZoSLVJJHHHPMIEZKnGrl8ndwI91hE+St6BP7OCPuvQeHrg8wbOnfd9GwOlrDp8QKaHrNKZdMXaTAcNn/CITbw2UHFUDbxnn8nMt4yrxSDRzWb6JfTrkO3o43rbCTv0ebqkSJ3wWbpSS+xJBgrU486hYQdkKhMeltk=
+	t=1743130301; cv=none; b=WtzaXJnZC/h3NcsriYNsheXUm7jVq9FHa9wHn3dFCTZf7hmB+TWTKJqgDTAOlAHEeXk4BqfnsTSkaOhZZQzC/GWwPRyWo75GdGD0SG+Yoi5Q/87LWm/Kxo/uT1t+xnMEVUWKMQbE5J2yBM9s5YG2TvYNliGtFHEPxIP+6R7nDkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743129511; c=relaxed/simple;
-	bh=ubvd53CGAr0IIjdwcdj7JtmnEXkb4DloqbGr0/jCMW0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IINWFdl/DJZqa2slkCwrPTueEr7McWbIN5qPzNodcg5cNYxWWITOQBcPA+mlGvG8i9cPsFDoQ/iMZZyLGdzyfcLinth8y4FuT03ps6hqleG4oJ/6/eP8StACrjRZPu68tws0TmwIbYyeEaFrZdsi5QmhuLpAThwaryAUGY03ZkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDvCY6wU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 786A6C4CEDD;
-	Fri, 28 Mar 2025 02:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743129510;
-	bh=ubvd53CGAr0IIjdwcdj7JtmnEXkb4DloqbGr0/jCMW0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=CDvCY6wUavwQNXf2CYKrafBzFaK1Wt7gCSB3YJLuzIPva1l7ROTHHOKuz0uY9fdpx
-	 3z1PL1OrA/wniQxfarPvRhcGYJfDEdRT648EfWb2FRgCm0Ctdsen0lh/gcPJtJx5qT
-	 eTpa6ysA4qVN/hpoJiuEx+ePA7hQQaA6qC9JIH6ztckXyLrXm0KL7OYRuku8j8FPMA
-	 W6Lu6eiOfqGXZtU2O06IFg5m2VoMxDrcmmC8iQb/Xc8yVUJOmlJCCuBildEBB9a9Cx
-	 0UXykpbNK0A/RGkv3gCN+/RIDR13FDRkPH1RqWaBcb+MloE1s/1DewHtFlnQEpXcoF
-	 +zMSXokLBcNKA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EE953380AAEB;
-	Fri, 28 Mar 2025 02:39:07 +0000 (UTC)
-Subject: Re: [GIT PULL] probes: Updates for v6.15
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250327221357.bfa54d31c9f8b9b1e68ffe3d@kernel.org>
-References: <20250327221357.bfa54d31c9f8b9b1e68ffe3d@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250327221357.bfa54d31c9f8b9b1e68ffe3d@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-v6.15
-X-PR-Tracked-Commit-Id: bb9c6020f4c3a07a90dc36826cb5fbe83f09efd5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a7e135fe59a516b2a981fc5820e7a1e2118b427e
-Message-Id: <174312954653.2324629.16631039113736761358.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Mar 2025 02:39:06 +0000
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1743130301; c=relaxed/simple;
+	bh=OfSMEoXcKwYz9G/YAO5ukyb0YgaWhOSY50U/Dlz3TLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Mime-Version:Content-Type; b=CnQW2xU9mAqqc23XXHsuw9snVjnwEQ8hTtExACy5qPAqqoaA9eTkWGjiPQ0bE2fRUVeWX2hcemYVU+ZR44hwJDfB7D1avAQ+uSRrXoh1ktyzJyghHtkTdQfPUzlpcYhhrETzzybCnNkBI1wxBg/RQFtuhREDH2XafwsHDqVuhUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (51b692a2.dsl.pool.telekom.hu [::ffff:81.182.146.162])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 00000000000800FA.0000000067E60D82.0006A495; Fri, 28 Mar 2025 03:46:26 +0100
+From: Gergo Koteles <soyer@irl.hu>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+  Len Brown <lenb@kernel.org>,
+  Mario Limonciello <mario.limonciello@amd.com>,
+  Rodrigo Siqueira <siqueira@igalia.com>,
+  Alex Hung <alex.hung@amd.com>,
+  Alex Deucher <alexander.deucher@amd.com>
+Cc: linux-acpi@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+  linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>,
+  stable@vger.kernel.org
+Subject: [PATCH] ACPI: video: Handle fetching EDID as ACPI_TYPE_PACKAGE
+Date: Fri, 28 Mar 2025 03:44:00 +0100
+Message-ID: <4cef341fdf7a0e877c50b502fc95ee8be28aa811.1743129387.git.soyer@irl.hu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-The pull request you sent on Thu, 27 Mar 2025 22:13:57 +0900:
+Some Lenovo laptops incorrectly return EDID as
+buffer in ACPI package (instead of just a buffer)
+when calling _DDC.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes-v6.15
+Calling _DDC generates this ACPI Warning:
+ACPI Warning: \_SB.PCI0.GP17.VGA.LCD._DDC: Return type mismatch - \
+found Package, expected Integer/Buffer (20240827/nspredef-254)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a7e135fe59a516b2a981fc5820e7a1e2118b427e
+Use the first element of the package to get the EDID buffer.
 
-Thank you!
+The DSDT:
 
+Name (AUOP, Package (0x01)
+{
+	Buffer (0x80)
+	{
+	...
+	}
+})
+
+...
+
+Method (_DDC, 1, NotSerialized)  // _DDC: Display Data Current
+{
+	If ((PAID == AUID))
+        {
+		Return (AUOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.AUOP */
+	}
+	ElseIf ((PAID == IVID))
+	{
+		Return (IVOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.IVOP */
+	}
+	ElseIf ((PAID == BOID))
+	{
+		Return (BOEP) /* \_SB_.PCI0.GP17.VGA_.LCD_.BOEP */
+	}
+	ElseIf ((PAID == SAID))
+	{
+		Return (SUNG) /* \_SB_.PCI0.GP17.VGA_.LCD_.SUNG */
+	}
+
+	Return (Zero)
+}
+
+Cc: stable@vger.kernel.org
+Fixes: c6a837088bed ("drm/amd/display: Fetch the EDID from _DDC if available for eDP")
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
+Signed-off-by: Gergo Koteles <soyer@irl.hu>
+---
+ drivers/acpi/acpi_video.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index efdadc74e3f4..65cf36796506 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -649,6 +649,9 @@ acpi_video_device_EDID(struct acpi_video_device *device, void **edid, int length
+ 
+ 	obj = buffer.pointer;
+ 
++	if (obj && obj->type == ACPI_TYPE_PACKAGE && obj->package.count == 1)
++		obj = &obj->package.elements[0];
++
+ 	if (obj && obj->type == ACPI_TYPE_BUFFER) {
+ 		*edid = kmemdup(obj->buffer.pointer, obj->buffer.length, GFP_KERNEL);
+ 		ret = *edid ? obj->buffer.length : -ENOMEM;
+@@ -658,7 +661,7 @@ acpi_video_device_EDID(struct acpi_video_device *device, void **edid, int length
+ 		ret = -EFAULT;
+ 	}
+ 
+-	kfree(obj);
++	kfree(buffer.pointer);
+ 	return ret;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.49.0
+
 
