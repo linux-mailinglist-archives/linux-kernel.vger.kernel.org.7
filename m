@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-579347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634FEA7422D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:01:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95C4A74232
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:04:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F58188C778
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B42E3BDB8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61D11714C6;
-	Fri, 28 Mar 2025 02:01:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A8D1C860C;
+	Fri, 28 Mar 2025 02:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AI6hOgWt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7044222094
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5656822094
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743127269; cv=none; b=NR4TjRk6GHRQbVHj8wXDZdIjYqp12836dgfVMaLE6ekDM8G9VUYf9mOnckt3rv1NwUo3433ygM8Q/LNQS+Z2N3iRGUKEOfneB+gm0L9++EDA7q5pF7O3V+lMFQsLxgvIkcD/IPvDeWMqWFGOT09ta6J2Q+RFa4GBOVUDofgvZkM=
+	t=1743127447; cv=none; b=u3rV8uer6zwnXGW+RBVrYtwzffAvztw8wr2aPX4lclTM1d94rex1Kdlls8b2xD1xVr+VE30cca9ZXzBoNlcYJ2g/OyZrP01mgbkG/diEMMGJPPDZO/yisLdIGdnr01YkobetrOkCHR/EqLdFv4bRWzTLwTXenS+zOE2+iYMWYaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743127269; c=relaxed/simple;
-	bh=lS156lXSmbxj9WGPbtOyKYq7PavFbCd34yFZE+Eaxyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t2xfmt5L1TrQFsVpQ2rC10CnQg4X/9gjqp/ZghcQPuAg8aJlcw3uUkJYdclzPqKCyEnBWZgwL2oCvN50umLS4CDG79sEoi9nWWeIsJ4uEpv9lv+uNFzkGszxCnriZtuR8O7He14uMr7gdjxqlhk6elPaXerlM2qJbZSlrIkk0Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0981AC4CEDD;
-	Fri, 28 Mar 2025 02:01:07 +0000 (UTC)
-Date: Thu, 27 Mar 2025 22:01:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Feng Yang <yangfeng@kylinos.cn>, Jiapeng Chong
- <jiapeng.chong@linux.alibaba.com>
-Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
-Message-ID: <20250327220106.37c921ea@batman.local.home>
-In-Reply-To: <CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
-References: <20250327171037.032bf7e7@gandalf.local.home>
-	<CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
-	<20250327212447.24e05e7e@batman.local.home>
-	<CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743127447; c=relaxed/simple;
+	bh=ydAfFR2QyoIlAay2PemZpZg7AC2VjaggoCXfQdMnP40=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aJhXwvTgxOEYrPVF9XXv01+T2bnPENZLUhNRNu00yj2wiBPaot+YzCefdjXVjJ5aVh9cXXoDbD4BdnqSSswRu7Rspy72XYl8BwOGaHhDOrDL4KdlDwDoWpImBRsHjk2gI+l/hfSFjqYMz/70NwBLMAm5z7rkvFPWpy+ZJ/G2XZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AI6hOgWt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743127447; x=1774663447;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ydAfFR2QyoIlAay2PemZpZg7AC2VjaggoCXfQdMnP40=;
+  b=AI6hOgWtotaR/FvTKxdnMd7a42G9Toypsx3Q5ksd5B98Eh8eRhQdB9Fn
+   iiNB6M+SB2Es0lXoQUE+4mx1UfI3QCgiV3Xl1gikEffjy15SmMA4l3KIA
+   phHKxHrPOCKAeYAfB0QSKixPJDulIHmFlG4FmG0AsbrBY1rgVCo6jVhg0
+   RJhsjha2LtrQSez3RWBJpUOnPi04hVhE3MvJp3l/OEAT8WzwA0FGfT/50
+   frIcxGOzSBMFiZiNfy29h6NJuEk9GBbGbf1JKA8H30lT0LKz1C/zz4+UC
+   4h3LToUey2LYSHpo5q1fEl1stD9KEjlgFgDFLWZI0MjiohRpr95zWkHaJ
+   g==;
+X-CSE-ConnectionGUID: xgfGkAU8RrS9YOH6uSMEGg==
+X-CSE-MsgGUID: VE51xInJR3Cd6WA4xtBh1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="48141010"
+X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; 
+   d="scan'208";a="48141010"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2025 19:04:06 -0700
+X-CSE-ConnectionGUID: rCG89HRRQYWssfxLOo+tEw==
+X-CSE-MsgGUID: NJ6XsOe1RpOKop/9tTD5PQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,282,1736841600"; 
+   d="scan'208";a="126125279"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 27 Mar 2025 19:04:04 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1txz4d-00074x-1F;
+	Fri, 28 Mar 2025 02:03:57 +0000
+Date: Fri, 28 Mar 2025 10:02:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [tip:WIP.x86/alternatives 32/43] vmlinux.o: warning: objtool:
+ text_poke_int3_handler+0x15: call to try_get_tp_array() leaves .noinstr.text
+ section
+Message-ID: <202503280943.gnyusUlI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 27 Mar 2025 18:31:55 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/alternatives
+head:   89555c4754bde7a509d7992c1ecefeb00229fac9
+commit: 2559956f36daa294cc4c3beef0a2853cfe02f230 [32/43] x86/alternatives: Simplify try_get_tp_array()
+config: x86_64-buildonly-randconfig-004-20250328 (https://download.01.org/0day-ci/archive/20250328/202503280943.gnyusUlI-lkp@intel.com/config)
+compiler: clang version 20.1.1 (https://github.com/llvm/llvm-project 424c2d9b7e4de40d0804dd374721e6411c27d1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250328/202503280943.gnyusUlI-lkp@intel.com/reproduce)
 
-> On Thu, 27 Mar 2025 at 18:24, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > The pages are never vmalloc'd, it's only ever vmap()'d on top of
-> > contiguous physical memory or allocated via alloc_page() in the order
-> > given. Thus, we do not support non consecutive physical memory.  
-> 
-> Christ, that just makes it EVEN WORSE.\
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503280943.gnyusUlI-lkp@intel.com/
 
-Let me explain this better. Yes it uses alloc_page() but that's just an
-intermediate function. What is saved is the page_address(page), as that
-is what is used by the code. That is, the allocation uses alloc_page()
-but then immediately converted to page_address() to use. The page
-itself is just an temp variable to get contiguous memory, as the
-sub-buffers must be contiguous.
+All warnings (new ones prefixed by >>):
 
-> 
-> Just keep track of the actual original physical allocation, then!
-> 
-> By all means vmap it too for whoever wants the virtual allocation, but
-> remember the *real* allocation, and keep it as a 'struct page'
-> together with the order that you already have.
+>> vmlinux.o: warning: objtool: text_poke_int3_handler+0x15: call to try_get_tp_array() leaves .noinstr.text section
 
-The virtual address needs to be created as that's all the code cares
-about. For the case where the physical memory is passed in, it requires
-a vmap(). The struct page is only needed when the ring buffer is going
-to be mmapped to user space.
-
-> 
-> And then you never use vmalloc_to_page() - or even virt_to_page() - at
-> all, because you actually know your base allocation, and keep it in
-> that form that so much of this code wants in the first place.
-> 
-> Having a a nice reliable 'struct page *' (together with that size
-> order) and keeping it in that form would be *so* much cleaner.
-> 
-> Instead of randomly translating it to (two different!) kinds of
-> virtual kernel addresses and then translating it back when you wanted
-> the original proper format.
-
-By moving the physical mapping of the code into the ring buffer code, I
-can set a flag for the buffer to mark it as being mapped directly, and
-we can save the struct pages for this location (easily found by the
-address). Then to get the page, it could be a simple helper function of:
-
-struct page *rb_get_page(struct trace_buffer *buffer, unsigned long addr)
-{
-	if (buffer->flags & RB_FL_PHYSICAL) {
-		addr -= buffer->vmap_start;
-		addr += buffer->phys_start;
-		return pfn_to_page(addr >> PAGE_SHIFT);
-	}
-	return virt_to_page(addr);
-}
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
