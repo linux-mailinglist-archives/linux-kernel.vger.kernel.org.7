@@ -1,78 +1,166 @@
-Return-Path: <linux-kernel+bounces-579407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA73FA742C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:26:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B140A742CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64ECE1796D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E732B178599
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E197321147F;
-	Fri, 28 Mar 2025 03:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebJRRSHO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044A2211285;
+	Fri, 28 Mar 2025 03:27:32 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A77B211478
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06D126AC3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743132367; cv=none; b=D6M0oduqZGsFATpdax6CydoAwH0tMJ3Y7SXl9vS3rXFuKIyT3eGVOAnqJKXVk0Ng12M9fYidAp4q+C9I2w6/6ngnj+TnfBO3piGe4fThdJo7G8kNhZ0CyX6DKgi4VoMjHyxUE+M1FT5RUOLRyL2E9T5dKtU39oBLVBqXcOBmkzk=
+	t=1743132451; cv=none; b=cdr9+OVOz2Ofa/r3Oc3Q7ZTL6VOt7HDJQWMEczU1n28KGvko+BHpqu0pXBjj7N30O5qWxmdMdGmwNAcFMzkVYtvsfrYgIpRX5BRmxdKj3X72ogW8ge2xFEQEwtBTMkOBKq02R1VNAV6gXCvOmWkmx5rajx7l1k5aggyVQs5dLH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743132367; c=relaxed/simple;
-	bh=rnfP8vqCbMABGaplMmCx0GcjL/Pxu/7rMdpg0X70dlY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=lzIxmYYNz8iMSpKlG66qCPXZAdmaJM7PxBpryEIGOtzZ6luKFsQ5GMjn1Y9NVAlX2mRk6Gn6K3L4tukA5H2uJxuKIily9aM2FWWRM+i2B84O3zhS+CmM/p4sdNcxfx31JoPioYem884hUgYMPtpVGXJ32FSW2ApHAK/rm3p9p8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebJRRSHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF87C4CEEB;
-	Fri, 28 Mar 2025 03:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743132367;
-	bh=rnfP8vqCbMABGaplMmCx0GcjL/Pxu/7rMdpg0X70dlY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ebJRRSHOkVmVZczP1qCxqRGJV5RCo3zXuXMGK61IcD9z3qhZsvVsEMPX0ptZYBsWK
-	 FFaf3tEOX/yk0cUfeBuiJOhZAQZ2FKEA55UA8kH5Xih+dFiLEW4axxBYpBdvx9+YdG
-	 lfIxpexeO6KjU6yKLsHPlvv6K87E+hQs0feSEBRN1WCHRhQnQL5WKqUIu5n5fhwqBK
-	 Fq9Iv+KZclLvNxpm3+CNCYFYvCSIj420cLMWmPIbxRQSOhm6xhMRF0HtV1bN1+fowT
-	 OjSFupmiiNd9xcTGnaRaR4+aeygmU51ZFSMbpJiOAP2MN/25/ZEcLUZyJ22oGtmNNh
-	 S9S2jiKN3Yx1g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE71380AAEB;
-	Fri, 28 Mar 2025 03:26:44 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.15-1 tag
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <2fff6b84-52af-4320-8c8e-9aca1c009127@linux.ibm.com>
-References: <2fff6b84-52af-4320-8c8e-9aca1c009127@linux.ibm.com>
-X-PR-Tracked-List-Id: <linuxppc-dev.lists.ozlabs.org>
-X-PR-Tracked-Message-Id: <2fff6b84-52af-4320-8c8e-9aca1c009127@linux.ibm.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-1
-X-PR-Tracked-Commit-Id: 861efb8a48ee8b73ae4e8817509cd4e82fd52bc4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7b667acd69e316c2ed1b47e5dcd9d093be4a843f
-Message-Id: <174313240323.2338593.17266673695538541862.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Mar 2025 03:26:43 +0000
-To: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, adubey@linux.ibm.com, amachhiw@linux.ibm.com, arnd@arndb.de, atrajeev@linux.ibm.com, avnish@linux.ibm.com, christophe.leroy@csgroup.eu, gautam@linux.ibm.com, gbatra@linux.ibm.com, jk@ozlabs.org, kjain@linux.ibm.com, kuba@kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com, paulus@ozlabs.org, robh@kernel.org, schwab@linux-m68k.org, segher@kernel.crashing.org, sourabhjain@linux.ibm.com, tglx@linutronix.de, vaibhav@linux.ibm.com, Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>
+	s=arc-20240116; t=1743132451; c=relaxed/simple;
+	bh=+ymYX1lWgUWHrnm9NwuxfIBaFe0iGWJkOpsUodpvUnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tJ6VJfLx2T248Ytz/zFobenGgJ8n10bAt4aVj+9Sd9nwnj7/OSvsnHJptugwLNgu4EL9U3ddTL2prQzALxowsaqEk7AoyyEftlkLCF6C6ispFfvJINYuqiUh5Rhlur/DmY+hmeJ60bZixCtaQ+qltOh7vJWj6K5+BzCFyiGz1zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4CBC4CEDD;
+	Fri, 28 Mar 2025 03:27:30 +0000 (UTC)
+Date: Thu, 27 Mar 2025 23:27:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Feng Yang <yangfeng@kylinos.cn>, Jiapeng Chong
+ <jiapeng.chong@linux.alibaba.com>
+Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
+Message-ID: <20250327232729.031be0b4@batman.local.home>
+In-Reply-To: <CAHk-=whzQAYKuoFm9WGOE-QJJ47xvh0VN+RW1EEPCHTERQntQA@mail.gmail.com>
+References: <20250327171037.032bf7e7@gandalf.local.home>
+	<CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
+	<20250327212447.24e05e7e@batman.local.home>
+	<CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
+	<20250327220106.37c921ea@batman.local.home>
+	<CAHk-=wiNLcTj2iiE9waSkmpYpu6VQ_q=Zaqi_WmAMiv_MvH4vQ@mail.gmail.com>
+	<20250327224400.304bc106@batman.local.home>
+	<CAHk-=whzQAYKuoFm9WGOE-QJJ47xvh0VN+RW1EEPCHTERQntQA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 26 Mar 2025 08:22:36 +0530:
+On Thu, 27 Mar 2025 20:05:14 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+> > I'M NOT LYING, and honestly I'm quite offended that you accused me of
+> > lying!  
+> 
+> What's the definition of lying again? Saying something that wasn't
+> true? That's literally what you did. You claimed only the virtual
+> address was used. That's *CLEARLY* not true.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-1
+This is more of a confusing of the words. I did say "that's all the
+code cares about", I meant the code that is used for recording and
+reporting the events. I thought it was obvious that I didn't mean the
+mmapped code. It wasn't lying, it was a miscommunication.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7b667acd69e316c2ed1b47e5dcd9d093be4a843f
+> 
+> > Before 6.10 (from 2.6.28 through to 6.9), the only uses of struct page
+> > was in the allocation and freeing of the ring buffer. It wasn't used
+> > before that. The virtual address is what the kernel writes to, it's
+> > what was read.  
+> 
+> What the hell is your point?
+> 
+> Bringing up something that *used* to be true, but isn't any longer true?
 
-Thank you!
+My point was that I can't *just* use the struct page. It sounds to me
+that you want me to to refactor all of the code to handle struct page
+even when the consumer is in the kernel.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> 
+> So face the music. The fact that you mmap the thing means that now it
+> needs 'struct page'. Stop making excuses, stop making things up, and
+> just deal with it.
+
+Again, are you suggesting that the code needs to be converted to using
+struct page for all of it? Even for the kernel consumer code?
+
+> 
+> or don;t.
+> 
+> > But when you read the "trace" or "trace_pipe" file, or even read the
+> > "trace_pipe_raw", the struct page is never used.  
+> 
+> Again, WHAT IS YOUR POINT?
+> 
+> Those aren't the issues. The issue is that you added mmap. Stop
+> bringing up completely irrelevant issues. Stop saying "but but but
+> other code doesn't need it".
+> 
+> The code directly under discussion clearly does in fact need it and use it.
+
+I guess, are you asking to save the struct page for every allocation,
+and not using virt_to_page() to get it? In other words, do I need to
+increase the memory footprint to add another pointer because the code
+can be mmapped?
+
+	page = page_alloc();
+	bpage->page = page_address(page);
+	bpage->struct_page = page;
+
+??
+
+> 
+> So when you go "this will cause controversy", you should take a step
+> back, and think about how you can *avoid* writing things in an ugly
+> manner.
+
+Because this was the code we last had an argument about, which is why I
+figured it would be "controversial". You don't need to read more into
+it than that.
+
+> 
+> Instead you just went for it, and here we are.
+
+Again, it wasn't because I thought it was hackery, but because this is
+the code we last argued about. Hence, why I thought it was the most
+"controversial".
+
+> 
+> So for next time, just don't repeat the same ugly hackery five times
+> in a row, for one thing. If that code had been *clean* code, I would
+> almost certainly not have reacted to the nasty "translate pointers
+> back and forth".
+> 
+> But as it is, instead of having some clear abstractions and helper
+> functions to do things in one place with sane tests for "if this is a
+> ,TRACE_ARRAY_FL_BOOT thing, we have a clearly separate path" you
+> repeated the disgusting hackery overr and overr and made sure it was
+> front and center.
+> 
+> Now it's too late. I've seen that horror, and I'm not willing to take it.
+> 
+> You need to keep the 'struct page' around for mmap. Instead of living
+> in the past and saying "before mmap, we didn't need it", just realize
+> that the "before mmap" situation is not relevant any more. We're not
+> there.
+> 
+> Or just say "mmap just isn't worth the pain of cleaning up this code".
+
+So you are saying that you want this to save the page struct directly
+then. My only concern with that is the added memory to save the
+structure when it could be easily calculated.
+
+As I work on memory limited devices, I try not to waste memory when
+there's another way to get what is needed.
+
+-- Steve
 
