@@ -1,118 +1,211 @@
-Return-Path: <linux-kernel+bounces-579544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC88FA744EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:05:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B6EA744FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7CDC7A7C45
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411E1178AAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF6C212D6A;
-	Fri, 28 Mar 2025 08:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580FD212D8D;
+	Fri, 28 Mar 2025 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxV4e41O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N092Qp7O"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4184A14885B;
-	Fri, 28 Mar 2025 08:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC18C14885B;
+	Fri, 28 Mar 2025 08:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743149108; cv=none; b=qu4sKI0rxXBsAh+RJ9Q19NsT2iPd7AXaTylODr/wIq9kHaxxT0ph31dHu41pFcIoXXV4JnnOjBV3ZtX2jcay+pB8RH/EhUytzzDmSuv0E2E3SZ8u5mUpwN1qmTHHQU5j7CZlb+wb+6cdrLW2EcG0JqSd83FgCaW9s6xfibUvO0E=
+	t=1743149201; cv=none; b=TSrBNIRIXB8hA1xZ6nQvwY5PPJt6WFm0Qarss3Dii4zgyJp2f36Kv3VKejAIeZG1ocr/r6bipdob/oHTkjBYvUp62iYX+9+etRRw6ckubhy8Ty5uV23h68hexm2w/7FtRPJgQKd/vAle61hQ7zw5/o6aPBH6Wl9QAV0SbHRDWJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743149108; c=relaxed/simple;
-	bh=gwAYp9P/m5BCJQdLgcvyrWULpPnCynoYB/01bOTg0R8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q0iy9u15trnJFJu02XPcv7cv93t57nq6gY+PHv1Oi1+nyOEIk1pcBWmmzWihWqeZ56dqEJSPsOzGGBo7nzbf9NSwEkeSYzhaBvi/yc1LvJw6McW/Ji9ywSx49bogQ2lq44Li3HcJn0w4pyj4+OH19W525gg4DEW0+wrl2O0tgVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxV4e41O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 248BAC4CEE4;
-	Fri, 28 Mar 2025 08:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743149107;
-	bh=gwAYp9P/m5BCJQdLgcvyrWULpPnCynoYB/01bOTg0R8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=oxV4e41OdYTa6c+MRtELqGfUJHfqSWsScYQSKWwFFyWxUqrwA44O2QXsyfC3NzKjk
-	 rZG0J3PydcSZGfmR8eNCD+qM3W7TzhtNzSRO6S4VAavJZhC6Di8Rt9BGGYgUWLos99
-	 zyU8eWLYfxd/ql6mReuXLGe2lEvjoTWXhMyCqrTJ4m30C3S3fdDa6klYwc/OzGhu6C
-	 HVTSHsfJL1RODgWmfXFHHd/mfar1vtX20LdGOeRqUlyZi1+WKKIAbiHybjybsNyFPu
-	 dY4IwbK7411c6Qxx5rDrVPdsFilKLhKTwWYa6meqE+kCmt0N7SPfhcXlomUAjhiaFb
-	 cBEQMumky+21Q==
-Message-ID: <9c8e9828-3622-4621-b46f-d8794beb307f@kernel.org>
-Date: Fri, 28 Mar 2025 09:05:01 +0100
+	s=arc-20240116; t=1743149201; c=relaxed/simple;
+	bh=inIinvMRcoxSU5jkQ4C6yhA2C5QhP0fLo1Xh4gg2+8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HgyPCbloDdiRi1hb+CZyTp+Vx6EdaHXq6ZsUcWpQ/gVA7NOAdmSEZvKpdQNrKTkfoidMBBRe1NrCYGmpcqEH2fYVHA17jjPrQQzdvojPfpdab0gBIWFAAZ6ORS8J4Z9aDIce2Ntc6a6Y/gut8E+TRZ26W6hzH6vMbF5735KZLPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N092Qp7O; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D2FFF4434A;
+	Fri, 28 Mar 2025 08:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743149191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=txpxsTy5Igy4BZd7LQw51gIz0+Sc/EV673tLlRbxdo0=;
+	b=N092Qp7O4xu0C0LC9Jld0qwLeROPEa2bmbHa5rx+7UryRNUCT3x0EbFCiiWUWjRguxk6bB
+	mk5ZtVAtYtX97CjiRg3dkVV4YPzvVEpfg3s6RuvDbBbyi7EThmLtS8fwI66Suwlaciq4v4
+	Rf5krwbNXkTmZYMJ7T0t9iWAPu+oYN2jjP7XWMYgPNm4BSi9QSsNkhuz1x4FyBogit97es
+	W72asT8vzmkMmAk7JAXCvNR8IV2i+d2x6sW/Nm3I9waCp8fsWg5YR8x8iMiLD/HTNIPxbf
+	nkPnXDB1e6ODDgjV81XDs3Ui/33W81KOClPg8T5JShIJvqKJASv5fz4JworyEg==
+Date: Fri, 28 Mar 2025 09:06:21 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Alexander H Duyck <alexander.duyck@gmail.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v5 09/13] net: phylink: Use phy_caps_lookup for
+ fixed-link configuration
+Message-ID: <20250328090621.2d0b3665@fedora-2.home>
+In-Reply-To: <8d3a9c9bb76b1c6bc27d2bd01f4831b2cac83f7f.camel@gmail.com>
+References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
+	<20250307173611.129125-10-maxime.chevallier@bootlin.com>
+	<8d3a9c9bb76b1c6bc27d2bd01f4831b2cac83f7f.camel@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: dt-bindings: fsl,mqs: Reference common DAI
- properties
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, lgirdwood@gmail.com,
- broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250328021339.1593635-1-shengjiu.wang@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250328021339.1593635-1-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedtjeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeeifeevjeevfeeujeeuieeftdehieejkedukeffhfehhedvieeugeejvefhffeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrqddvrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvtddprhgtphhtthhopegrlhgvgigrnhguvghrrdguuhihtghksehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdpr
+ hgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 28/03/2025 03:13, Shengjiu Wang wrote:
-> Reference the dai-common.yaml schema to allow '#sound-dai-cells' and
-> "sound-name-prefix' to be used.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Thu, 27 Mar 2025 18:16:00 -0700
+Alexander H Duyck <alexander.duyck@gmail.com> wrote:
 
-Best regards,
-Krzysztof
+> On Fri, 2025-03-07 at 18:36 +0100, Maxime Chevallier wrote:
+> > When phylink creates a fixed-link configuration, it finds a matching
+> > linkmode to set as the advertised, lp_advertising and supported modes
+> > based on the speed and duplex of the fixed link.
+> >=20
+> > Use the newly introduced phy_caps_lookup to get these modes instead of
+> > phy_lookup_settings(). This has the side effect that the matched
+> > settings and configured linkmodes may now contain several linkmodes (the
+> > intersection of supported linkmodes from the phylink settings and the
+> > linkmodes that match speed/duplex) instead of the one from
+> > phy_lookup_settings().
+> >=20
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > ---
+> >  drivers/net/phy/phylink.c | 44 +++++++++++++++++++++++++++------------
+> >  1 file changed, 31 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+> > index cf9f019382ad..8e2b7d647a92 100644
+> > --- a/drivers/net/phy/phylink.c
+> > +++ b/drivers/net/phy/phylink.c
+> > @@ -802,12 +802,26 @@ static int phylink_validate(struct phylink *pl, u=
+nsigned long *supported,
+> >  	return phylink_validate_mac_and_pcs(pl, supported, state);
+> >  }
+> > =20
+> > +static void phylink_fill_fixedlink_supported(unsigned long *supported)
+> > +{
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
+> > +	linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, supported);
+> > +}
+> > + =20
+>=20
+> Any chance we can go with a different route here than just locking
+> fixed mode to being only for BaseT configurations?
+>=20
+> I am currently working on getting the fbnic driver up and running and I
+> am using fixed-link mode as a crutch until I can finish up enabling
+> QSFP module support for phylink and this just knocked out the supported
+> link modes as I was using 25CR, 50CR, 50CR2, and 100CR2.
+>=20
+> Seems like this should really be something handled by some sort of
+> validation function rather than just forcing all devices using fixed
+> link to assume that they are BaseT. I know in our direct attached
+> copper case we aren't running autoneg so that plan was to use fixed
+> link until we can add more flexibility by getting QSFP support going.
+
+These baseT mode were for compatibility with the previous way to deal
+with fixed links, but we can extend what's being report above 10G with
+other modes. Indeed the above code unnecessarily restricts the
+linkmodes. Can you tell me if the following patch works for you ?
+
+Maxime
+
+-----------
+
+=46rom 595888afb23f209f2b1002d0b0406380195d53c1 Mon Sep 17 00:00:00 2001
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date: Fri, 28 Mar 2025 08:53:00 +0100
+Subject: [PATCH] net: phylink: Allow fixed-link registration above 10G
+
+The blamed commit introduced a helper to keep the linkmodes reported by
+fixed links identical to what they were before phy_caps. This means
+filtering linkmodes only to report BaseT modes.
+
+Doing so, it also filtered out any linkmode above 10G. Reinstate the
+reporting of linkmodes above 10G, where we report any linkmodes that
+exist at these speeds.
+
+Reported-by: Alexander H Duyck <alexander.duyck@gmail.com>
+Closes: https://lore.kernel.org/netdev/8d3a9c9bb76b1c6bc27d2bd01f4831b2cac8=
+3f7f.camel@gmail.com/
+Fixes: de7d3f87be3c ("net: phylink: Use phy_caps_lookup for fixed-link conf=
+iguration")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/phy/phylink.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 69ca765485db..de90fed9c207 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -715,16 +715,25 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+ 		phylink_warn(pl, "fixed link specifies half duplex for %dMbps link?\n",
+ 			     pl->link_config.speed);
+=20
+-	linkmode_zero(pl->supported);
+-	phylink_fill_fixedlink_supported(pl->supported);
++	linkmode_fill(pl->supported);
+=20
+ 	linkmode_copy(pl->link_config.advertising, pl->supported);
+ 	phylink_validate(pl, pl->supported, &pl->link_config);
+=20
++	phylink_fill_fixedlink_supported(match);
++
+ 	c =3D phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
+ 			    pl->supported, true);
+-	if (c)
+-		linkmode_and(match, pl->supported, c->linkmodes);
++	if (c) {
++		/* Compatbility with the legacy behaviour : Report one single
++		 * BaseT mode for fixed-link speeds under or at 10G, or all
++		 * linkmodes at the speed/duplex for speeds over 10G
++		 */
++		if (linkmode_intersects(match, c->linkmodes))
++			linkmode_and(match, match, c->linkmodes);
++		else
++			linkmode_copy(match, c->linkmodes);
++	}
+=20
+ 	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+ 	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
+--=20
+2.48.1
+
 
