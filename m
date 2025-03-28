@@ -1,49 +1,78 @@
-Return-Path: <linux-kernel+bounces-579726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6A0A748B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:49:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B1BA748B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CD03BCF6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457CE3BD1F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007D0212D67;
-	Fri, 28 Mar 2025 10:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F29214213;
+	Fri, 28 Mar 2025 10:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="RDyuBwEi"
-Received: from p00-icloudmta-asmtp-us-east-2d-10-percent-1.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-east-2d.k8s.cloud.apple.com (p-east3-cluster6-host7-snip4-10.eps.apple.com [57.103.85.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="exJqj0vN"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0772C1DE3B7
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.85.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD081E833C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 10:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743158980; cv=none; b=rhV9qWADxVECPPIjgVOUtipauoD668gDZI/C7W1HbNoqzkHVtxR7+cWEtRYs8pnm9AbFPqgTioC8VFIuRLUTDqUm7stXDnj/6juNwWY5y2HVYgXWr1xdL3VKkkX1eG9QKNIbpPAOEd/ZD+6Lo07GZBZeV0ZuXGscE+ymah0aR0Y=
+	t=1743159105; cv=none; b=RSongs33yOB7s/n/2zMJ7gXlftSga1LXb8Jha7c9t9EpHVap9uEgRBwKETR8iSzE6GD8XQR3iIUMtuN5u9BSGAf0EOKvZx+7s9Eohnb0GrlS30GVk96HM/tWkr2TY0wZBjM1o7P1yifgJyOmAsikVF0dsTvBT+45glEV9WnGwkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743158980; c=relaxed/simple;
-	bh=7NAEPAX6m8dKJDfn+6jbCMWo5spDoAoaB7FaHgS8niY=;
+	s=arc-20240116; t=1743159105; c=relaxed/simple;
+	bh=HbA7tMOi1Feho6qYy2tg+QgB3PPhFWttRgsDiLAQsAk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oj1HTpJZUp7v/dcC0KIcppxvLl9vK60RA0F1gwob46Q+z3M6Z0U0UGbUaE1XlG4TQxkBz7hAB06c9InLDkV27XzWsnfD4MNxKXKoDE3CQfry1BWtS6D5nS88Ud9VI6D5LfvsDiRPVr8aJTFmKxI+DPBcrhA7k6e0CfnPNQOBK5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=RDyuBwEi; arc=none smtp.client-ip=57.103.85.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=fvG19Ay+E96nIa+spIyHiWWlBnSI38cW9OJJz+SbdYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=RDyuBwEilAEbMBwO891hmRqrPo+ocYMFAlUOUMqEoMOlAT0vAjLJfnXCvQubLcT+4
-	 UiaO5ViyKWUllCUUOKgeteEWgTFPZZTEGQCQnAegvZ7qDngcioK+mE/n1amPwyO9Rc
-	 7lsyqlOXyoXCFwWQfBA6nEtBHLYYqQimQjpxcnyPYZz4WyXwhxZOLhJURpVtbhyQhP
-	 rJVtixcDXG2sOPuyD6OcbGczzu2lfRCY7uyghQ/ISXtgPjFZehCVW0EgOh0FTqxaOK
-	 tYm7PM+mZi2K6vvl7I2cMnEA6DZ9zF4LG+xPsqOth7uzbps5Nb6l8UNEjhVkPDKb0z
-	 NdKyHa0TpUIDg==
-Received: from [192.168.1.28] (qs-asmtp-me-k8s.p00.prod.me.com [17.57.155.37])
-	by p00-icloudmta-asmtp-us-east-2d-10-percent-1.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-east-2d.k8s.cloud.apple.com (Postfix) with ESMTPSA id 397EF180311E;
-	Fri, 28 Mar 2025 10:49:32 +0000 (UTC)
-Message-ID: <4c6c2096-4f30-41d5-ad18-74436e8d48a5@pereznus.es>
-Date: Fri, 28 Mar 2025 11:49:30 +0100
+	 In-Reply-To:Content-Type; b=jadCZTeig4vrThNdX/3pn89YvEHvJsfJzr8EstwJuvesC5NTgfKA4YEaOUPDriyF+5aSUM56Z1WTtPz3YLkgApnwJd6gF1XYBqcREtnN1dLpI2RwB0YetkSI60KQ3FTbsop7AXJfgmFySg//rxgkgRxTqiclMpQFRVJ7uO4PLoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=exJqj0vN; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso326403266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1743159102; x=1743763902; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DQVoBzYq7Puhz7ziaLimw8gEX/xy907ffqXtK8mC8IY=;
+        b=exJqj0vN05hcM2+hdinVcnsUjw9e6snQVz0hTycSaRnGMhBH6itJCGMdgcbZ5Zy52Y
+         o66gUkiL89P985vVmd0xlgFEuH9W5AmeLjinpZRMR146sfqSfn1QgZbW86n5sDFKq2KL
+         hgZnjEWsZuIaJPOhfSgWuYMbXcRH0MCKzR6YYcTqimXOBeeJgGrEwbADEVwHtcoWhEjB
+         XgKb6VRAbukQzbm0i7chP9sYi05hyGVOKTclj6MG4p2CykxTv9tp7I5LQbb6DkhqqqYM
+         agjMHpOnmHbgvzkBIRkf5erdcdL37ZHCu3JGrkstLqiTKf0qIawsLz1lmrIkXrJoLov3
+         bZKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743159102; x=1743763902;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQVoBzYq7Puhz7ziaLimw8gEX/xy907ffqXtK8mC8IY=;
+        b=RIfr7KrmJHpVToGmduyTH4h/3Dkcwv26vooMwBjexpuy6Upalztqy7Me/vnSQV3keu
+         vsj7+lLW35j6p8IcqNORo1U/nHeT5p9qThGYyee5kbBlaOCCk/h/+nHdJgHaIQRZ0V19
+         K1ipkwt7LWLqnvhHoncymh7bqb3IbbZ6cKHU761u31e+FHqATk0lrD9F4qxZFQugmdRi
+         xrIFmmgtJ2hZjqcyNI23k0ywJC4o+5hjzymntDcKNFKLECbduIrULJIgZc+QiZywcJzK
+         +PmAYvXViMN6rY2GMNE0Gks3u9WXCs7dVnQqlp2nFmnV3+wWdWR2+J1bJ93KM7q+TbGP
+         y/mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVLKjUjbBXl3pTwzKCo00K4yyrcScr5uD+iIDf6+8VJCEhE/bmAQJPOXjJ8MlF6wxKyPO2ZXNJCWXnQlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJgrBTbWzGk4wmGFSBMwsex+nLLQ0RIit88m6cJ1RvcL+vDJ8c
+	UhwMgDv7uVAafExWK4ptgFqgbk9t7wjjO3pzveswPYwozpJE+E1LDDnab089KAg=
+X-Gm-Gg: ASbGnctj+mIGVpEo8Ar83hFcWjwJT11Vj6SVvdRgkVocKuMa/2y4JF3iaRg1JCLqqZG
+	M9t7Q3iE/2XRCtoUvapt6vVwlIV5NbNo9WD0KokdkuDWs5U776E0cK3l5QxqMe7Dcn2CFUGR8bm
+	W5q43Q8xN50SE3QCi++Zjk4CcNL/P1tylfCtbmiCzt4cv9SMjhfn/VywOu/WODPBlLvDNwo0VEZ
+	M7XOl/GjE/LDXrmiakk2H7gi6MmxMt7oT2xz5M+LR7qGwBSlEHq+T6YbaV0rk6Mkb565fhxLhWI
+	phVD/iPj8X6E1x9VpvjOE57bc5G5flX4nHK7bzxO0LCcKNbShw==
+X-Google-Smtp-Source: AGHT+IFL4jqPAqUnZ7HDp7n5d8sxsztzpjD+EXPGZF738ZKWCkWtSM+MMvDEWhIygYJX8/2agEkClw==
+X-Received: by 2002:a17:906:c148:b0:ac3:47b1:d210 with SMTP id a640c23a62f3a-ac6fb10a79amr784650266b.39.1743159101716;
+        Fri, 28 Mar 2025 03:51:41 -0700 (PDT)
+Received: from [192.168.0.20] ([212.21.159.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71922ba88sm143453866b.16.2025.03.28.03.51.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 03:51:41 -0700 (PDT)
+Message-ID: <90b3e063-9587-40a9-90e6-1ad792c4a175@suse.com>
+Date: Fri, 28 Mar 2025 12:51:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,105 +80,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: iio: light: bh1750: Add reset-gpios
- property
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Tomasz Duszynski <tduszyns@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250324135920.6802-1-sergio@pereznus.es>
- <20250328094904.06ce0c96@jic23-huawei>
-Content-Language: es-ES, en-US, ca
-From: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>
-In-Reply-To: <20250328094904.06ce0c96@jic23-huawei>
+Subject: Re: [RFC PATCH] /dev/mem: Disable /dev/mem under TDX guest
+To: Dan Williams <dan.j.williams@intel.com>, dave.hansen@linux.intel.com
+Cc: kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev,
+ x86@kernel.org, linux-kernel@vger.kernel.org, vannapurve@google.com
+References: <20250318113604.297726-1-nik.borisov@suse.com>
+ <67d9c447ddcfd_11987294c6@dwillia2-xfh.jf.intel.com.notmuch>
+ <327a23d5-d5c4-4227-aafb-9d4ddd90289e@suse.com>
+ <67e2f315af42e_50a3294d4@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+In-Reply-To: <67e2f315af42e_50a3294d4@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: Cu-FzO0OvO7mrghDlTHVXQu5Uu2xAf_U
-X-Proofpoint-ORIG-GUID: Cu-FzO0OvO7mrghDlTHVXQu5Uu2xAf_U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-28_05,2025-03-27_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1030 mlxscore=0
- bulkscore=0 suspectscore=0 spamscore=0 phishscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2503280074
 
 
-El 28/03/2025 a las 10:49, Jonathan Cameron escribió:
-> On Mon, 24 Mar 2025 14:59:19 +0100
-> Sergio Perez <sergio@pereznus.es> wrote:
->
->> Some BH1750 sensors require a hardware reset via GPIO before they can
->> be properly detected on the I2C bus. Add a new reset-gpios property
->> to the binding to support this functionality.
+
+On 25.03.25 г. 20:16 ч., Dan Williams wrote:
+> Nikolay Borisov wrote:
+> [..]
+>>> It seems unfortunate that the kernel is allowing conflicting mappings of
+>>> the same pfn. Is this not just a track_pfn_remap() bug report? In other
+>>> words, whatever established the conflicting private mapping failed to do
+>>> a memtype_reserve() with the encryption setting such that
+>>> track_pfn_remap() could find it and enforce a consistent mapping.
 >>
->> The reset-gpios property allows specifying a GPIO that will be toggled
->> during driver initialization to reset the sensor.
->>
->> Signed-off-by: Sergio Perez <sergio@pereznus.es>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Series applied to the testing branch of iio.git. I'll rebase that
-> on rc1 once available and push out as my togreg branch.
->
-> Thanks,
->
-> Jonathan
-Thank you very much, I remain attentive in case anything needs to be done.
->> ---
->> Revision history:
->> v5 => v6:
->>   - Fixed include placement as commented by Krzysztof Kozlowski
->> v4 => v5:
->>   - Update description to reflect "active low" on reset signal as indicated by Krzysztof Kozlowski
->>   - Update description to clarify what pin of sensor is used to do reset (DVI) as mentioned by Krzysztof Kozlowski
->>   - Edit example to be coherent with "active low" as informed by Krzysztof Kozlowski
->>   - Added necessary include on example
->> v3 => v4:
->>   - No changes
->> v2 => v3:
->>   - Split in two patches: dtbinding and code
->>   - Ensure list off mantainers following instructions by Krzysztof Kozlowski
->>   - Delete redundant details on description as suggested by Jonathan Cameron
->>   - Added related example to existing one as suggested by Jonathan Cameron
->> v1 => v2:
->>   - Ensure check tests as commented by Rob Herring
->>   - Fixes some whitespaces and end lines
->> ---
->>   Documentation/devicetree/bindings/iio/light/bh1750.yaml | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.yaml b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->> index 1a88b3c253d5..9df81c271411 100644
->> --- a/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->> +++ b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
->> @@ -24,6 +24,10 @@ properties:
->>     reg:
->>       maxItems: 1
->>   
->> +  reset-gpios:
->> +    description: GPIO connected to the DVI reset pin (active low)
->> +    maxItems: 1
->> +
->>   required:
->>     - compatible
->>     - reg
->> @@ -32,6 +36,7 @@ additionalProperties: false
->>   
->>   examples:
->>     - |
->> +    #include <dt-bindings/gpio/gpio.h>
->>       i2c {
->>         #address-cells = <1>;
->>         #size-cells = <0>;
->> @@ -39,6 +44,7 @@ examples:
->>         light-sensor@23 {
->>           compatible = "rohm,bh1750";
->>           reg = <0x23>;
->> +        reset-gpios = <&gpio2 17 GPIO_ACTIVE_LOW>;
->>         };
->>       };
->>   
+>> I'm not an expert into this, but looking at the code it seems
+>> memtype_reserve deals with the memory type w.r.t PAT/MTRR i.e the
+>> cacheability of the memory, not whether the mapping is consistent w.r.t
+>> to other, arbitrary attributes.
+> 
+> Right, but the observation is that "something" decides to map that first
+> page of memory as private and then xlate_dev_mem_ptr() fails to maintain
+> consistent mapping.
+> 
+> So memtype_reserve() is indeed an awkward place to carry this
+> information and overkill for this particular bug.
+> 
+> However, something like the following is more appropriate than saying
+> /dev/mem is outright forbidden for guests.
+> 
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 38ff7791a9c7..4a7a5fc83039 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -122,6 +122,10 @@ static void __ioremap_check_other(resource_size_t addr, struct ioremap_desc *des
+>                  return;
+>          }
+>   
+> +       /* Ensure BIOS data (see devmem_is_allowed()) is consistently mapped */
+> +       if (PHYS_PFN(addr) < 256)
+> +               desc->flags |= IORES_MAP_ENCRYPTED;
+> +
+>          if (!IS_ENABLED(CONFIG_EFI))
+>                  return;
+>   
+> ...because if the guest image wants to trust root why enforce piecemeal
+> lockdown semantics?
+
+
+This fixes the issue as now the remapped address and the direct mapping 
+are identical.
+
+Tested-by: Nikolay Borisov <nik.borisov@suse.com>
+
+Would you care to send a proper patch ?
+
+
+
+
 
