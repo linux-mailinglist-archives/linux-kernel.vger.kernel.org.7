@@ -1,145 +1,174 @@
-Return-Path: <linux-kernel+bounces-580108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B08FA74D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:07:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D80A74D56
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1277189AA68
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04CD17793D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1F21C860C;
-	Fri, 28 Mar 2025 15:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24EC1C6F70;
+	Fri, 28 Mar 2025 15:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgYLGahh"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Crxb7MXM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ECD79E1;
-	Fri, 28 Mar 2025 15:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C71BBBD4;
+	Fri, 28 Mar 2025 15:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743174393; cv=none; b=lv7F0hHMJIS9mckreG8w1yP7SmHEB2rklaak6zzsg5jP+IJVnhWWgzDZ3Kuc34/cSp6rjZApnZyDoJgvjG5O97MxLQMezLagvbEAjy4WhZ68XgvSPGd7y6UtS+Bv2AUoWg2Qwf3I9EqfcCvOEzqi7X5Rx87gEdQzsZBzlbck2rM=
+	t=1743174366; cv=none; b=qQufI8SnGQ61+muUAJK2OLfODRJRSj1AuWkMBjQIsJ/Cbk+Y1JyYvhu/kPMlw4OSH9g68KpslFsL6iPe4eoVsrGUErABdBu1YwcZMaNOBjs5ER9JyEqaj1Bzw0JoddtrrOKxKaeNzFWM7vdiSP/YE4mcKIcQypUWIDcFoFB3ywQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743174393; c=relaxed/simple;
-	bh=Msd4djB5R4l+uchgtEHVjrVjZkqKDfz854vGB8wNEkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Exuu49fn4bFGcBxCnl88c9YBBnlcmCcxO2yMO0jJ70bx2wOd4JlHhwSYB198oEcsBT0nuplZkF736LokHC38G9Qf+casw26ZaIVgUQY7gTGtKJs6KpEAbT+yXFPKLYwlKEKmAWreEGVAaqZUR1cm0JKe3mpp3UdjbhqVPu2tXDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgYLGahh; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso424360166b.1;
-        Fri, 28 Mar 2025 08:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743174390; x=1743779190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Msd4djB5R4l+uchgtEHVjrVjZkqKDfz854vGB8wNEkM=;
-        b=UgYLGahhw/yF4pHZqHqZmGHu26jEgGdaE8st8l4Gpj+VfpgD+o0A3BTmrhQ1lcQwPk
-         xT5BZXyOvMWUxZ7RtzPrvwxtVBLWq1SC3kY33tyS0USyZvfyEG+w/kRt7tSVjRXQyTV7
-         UTf/+j+JN6kJtXMH+CRIg9cn8HX5T7f4G8ZN5JXbRS4zzU55UMEh8MS+57lC5b02Viaa
-         CeKblFl8ZuEaAlX2+NIK8VpwNjSDhy+92JxaIoG89UQaNMbwbxIPgrF/v8aGQNAGeBYT
-         gzbgqS//V6tp3HHTyb24J5izYe/6Yi84tKykeH0cB6rMdVOzdmKcG+CPBZkl5VZupVmO
-         txqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743174390; x=1743779190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Msd4djB5R4l+uchgtEHVjrVjZkqKDfz854vGB8wNEkM=;
-        b=Ea+HdHakX3Lha9feqIfIIEJN7xlQ1oXUuNAtrtciYAX/kEOWeb/ypSvgoL0YD07uCY
-         1fUbCA8iH6jb2FaRTVOo9V8pO+BXPbEgvCa/+cmfl+6P5MLL8Y5mAiBCFWod+WYOrj5Z
-         kV0cs4Yr/rlED2nKdYRBL1+zI8PlXxCCBdJiO/71nhjHRjJ5so2cUOaIZGqDhkuZL7DB
-         1bAn0amSD/8D25AGpMJ3OkJL2I0vKhkvknlYFUMQ7T9mtc31/LjNE6by/m/QLhKeBBBu
-         KncMsfThPYuplF/QP6EFj9c3XVuI1Rpw7BWxq746FuzUtAng1FXr90CTTMES3VvKUdFS
-         sgew==
-X-Forwarded-Encrypted: i=1; AJvYcCU0aUziBrqLXugnjpPcG6dxmm7f3TrfpcWxUUEceZfXTk7OmcRzIEFTFfXw5kxKlUMRHv0rbyZVvA0bYYif@vger.kernel.org, AJvYcCU78BsEvdOiyfMuCbu2GlaTuLsa/Tw1TDz9+ARrq8PPapFk5jjPEdoIxafqXEpMm0QQP0fkSpB6zK5qd2lR2lmThoJ5@vger.kernel.org, AJvYcCUnBhWnzxJ7NUUdLzjoiZbVgBoeAXMhudnSSw/S+GtJc9KF+FNyDdR9rKnDCSnqUtpvmnX/9DtTNZ8sAe0aH7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyABzTWk5LYvnVxYNLylZAEebPVq74FIXvDYGx0KakoMJwSf3BX
-	UMstphhoISDgDiRsLzZkQFWM0+wLxfyvh09QTmRP5fXwy4LjRGFEYCLT/Z885uR50W2GSDrg0mp
-	7BwVq+MUfS0iLiHp4YWQbVExnrM4=
-X-Gm-Gg: ASbGncuI3V8oIWLXYecZSJxiH1waSuk3tf04Les48PJOlN9TyQb49p8jXTbiYJkApzD
-	vDP/OOTjGoeKILzcQ5DZbT8chl0WgEVuKzocdkrUOcsZJyv1p4ApW95nW+YeIcQm5QumEvnn2QT
-	oquDWFkowHaqS1ug1hW+V3UabUVIj/
-X-Google-Smtp-Source: AGHT+IF3awyMowLWcH8PYZtZ0QIKNGeH7GystPt3Pz6u/xIoaX7e+hcV/huIRE3IqTiua+SWdLXB5i53FCvfcvy67/g=
-X-Received: by 2002:a17:907:2ce6:b0:ac3:bd68:24f0 with SMTP id
- a640c23a62f3a-ac6fae6cecemr822946266b.7.1743174389460; Fri, 28 Mar 2025
- 08:06:29 -0700 (PDT)
+	s=arc-20240116; t=1743174366; c=relaxed/simple;
+	bh=4vH685Tb4jxWzrnxI4M3J8jAnCKnkC0Y5Nt7TGHd7oE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ykro8tXKnQhOWGG0TEVJcAWk4vHPSwb2rx9ZzmaP+HxyzN9V2mJn5omq1KTB+ZQ8UlqIs/eRQRUcQndMtfdBbI5Ffv1iAasvcbVrsikmQ172JmE6nFAZ9WF3dI0SbYaJz229B/yk2aojcy7QJuA+cGfhp0ZsRarsCez/+9k6LOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Crxb7MXM; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743174363; x=1774710363;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=4vH685Tb4jxWzrnxI4M3J8jAnCKnkC0Y5Nt7TGHd7oE=;
+  b=Crxb7MXMdmaoFSsRPFAQ1vQ7mQ8cIZaTUpr/cM4wQnuH5mJ04qmarpXA
+   NbUNpEawBVNLFGmRQiwBHOqSD3jvyW/bvPGG/OnjO3v7GcRnwEgRB8H/B
+   j+qDcXcS/gM8g6MudYe8Gtd+moqsn+s43gcY8kNEKHl1JoPp8vmnZTQwT
+   yVHn2SlKEl/emf/w2D5K51dJbFmNBTRk/T6x85ET7vwcdSyjmGAKtq+d0
+   /T/qlk3dB1BIFeZ6DQYKUdLhKpNyXM0fjR/vCKvseBx1A/I8A6HxqNg9z
+   4t6ior01v7Yt9O0U1//rBqGxOW0b+dWkMryYMmYsJEUYm3r58j0SgnIoi
+   A==;
+X-CSE-ConnectionGUID: orIqwZHwQYSBBatl1YANAA==
+X-CSE-MsgGUID: PuJDPE1eQNiQExLrkKD9ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="55907940"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="55907940"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 08:06:02 -0700
+X-CSE-ConnectionGUID: Rp8CfLZlRrGJrur5w3IiuA==
+X-CSE-MsgGUID: HKeOa/r6RSW9p2/4u62Hzw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="125230667"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.43])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 08:06:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 28 Mar 2025 17:05:56 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 06/12] platform/x86: alienware-wmi-wmax: Add support
+ for the "custom" thermal profile
+In-Reply-To: <20250313-hwm-v6-6-17b57f787d77@gmail.com>
+Message-ID: <44ee0740-b47b-0980-e5c7-27cb94a772d9@linux.intel.com>
+References: <20250313-hwm-v6-0-17b57f787d77@gmail.com> <20250313-hwm-v6-6-17b57f787d77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
- <Z-KCNy7Qu2vFdwVx@pathway.suse.cz> <Z-apePufuwt19djQ@pathway.suse.cz>
-In-Reply-To: <Z-apePufuwt19djQ@pathway.suse.cz>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 28 Mar 2025 17:05:52 +0200
-X-Gm-Features: AQ5f1Jolt35aKfTTrIroDhj_MxpPPjpfJR6IiTWJztgRTkKXPo6i2wePW3zd0rc
-Message-ID: <CAHp75VeZBUVhGB8mSRFFJ5i70qUxmKRgeEoJzuPtQ5YPWh-MUA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] vsprintf: Add __printf attribute to where it's required
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Kees Cook <kees@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Andy Shevchenko <andy@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-1614277634-1743174356=:932"
 
-On Fri, Mar 28, 2025 at 3:51=E2=80=AFPM Petr Mladek <pmladek@suse.com> wrot=
-e:
-> On Tue 2025-03-25 11:15:21, Petr Mladek wrote:
-> > On Fri 2025-03-21 16:40:46, Andy Shevchenko wrote:
-> > > This whole series started from a simple fix (see the last patch)
-> > > to make GCC (Debian 14.2.0-17) happy when compiling with `make W=3D1`
-> > > (note, that CONFIG_WERROR=3Dy and all warnings break the build!)
-> > > down to a rabbit hole.
-> > >
-> > > However starting from v2 the last patch doesn't require the first
-> > > part, I prefer still to have them since the functions, while being
-> > > _binary_ printf()-like, are still printf()-like. It also puts in alig=
-n
-> > > the tracing stuff with the rest and fixes the wrong parameter value.
-> > >
-> > > These first 4 patches are organised in a strict order and can't be
-> > > reshuffled, otherwise it will produce a warnings in between.
-> > >
-> > > I believe the best route for the series is printk tree with immutable
-> > > tag or branch for the others.
-> > >
-> > > Alternatively the first 4 patches can be applied first as they
-> > > are pretty much straightforward. They also can be squashed to one
-> > > (as the same topic behind), but it all is up to the respective
-> > > maintainers.
-> >
-> > The whole series looks good to me:
-> >
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> >
-> > I am going to push it via the printk tree. I think about doing
-> > so as a second pull request by the end of this merge window.
-> >
-> > Anyway, I am going to wait few more days for eventual feedback
-> > or push back.
->
-> JFYI, I have pushed the patchset into printk/linux.git,
-> branch for-6.15-printf-attribute.
->
-> I am going to send a pull request the following week
-> if nothing happens in the meantime.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thank you!
-It will make us much closer to the moment when we can enable WERROR=3Dy
-in the CIs for `make W=3D1` on x86 defconfigs (those that are in the
-kernel source tree).
+--8323328-1614277634-1743174356=:932
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 13 Mar 2025, Kurt Borja wrote:
+
+> All models with the "AWCC" WMAX device support a "custom" thermal
+> profile. In some models this profile signals user-space that the user
+> wants to manually control the fans, which are always unlocked. In other
+> models it actually unlocks manual fan control.
+>=20
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 
 --=20
-With Best Regards,
-Andy Shevchenko
+ i.
+
+> ---
+>  drivers/platform/x86/dell/alienware-wmi-wmax.c | 23 +++++++++++++++++++-=
+---
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pla=
+tform/x86/dell/alienware-wmi-wmax.c
+> index 0530f25b956f73f47c0354f40dac2910448c894e..3b37e4456482bc284b8e867c1=
+c5b6255fc6c8ef2 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> @@ -29,8 +29,6 @@
+>  #define AWCC_METHOD_THERMAL_CONTROL=09=090x15
+>  #define AWCC_METHOD_GAME_SHIFT_STATUS=09=090x25
+> =20
+> -#define AWCC_THERMAL_MODE_GMODE=09=09=090xAB
+> -
+>  #define AWCC_FAILURE_CODE=09=09=090xFFFFFFFF
+>  #define AWCC_FAILURE_CODE_2=09=09=090xFFFFFFFE
+>  #define AWCC_THERMAL_TABLE_MASK=09=09=09GENMASK(7, 4)
+> @@ -177,6 +175,11 @@ enum AWCC_THERMAL_TABLES {
+>  =09AWCC_THERMAL_TABLE_USTT=09=09=09=3D 0xA,
+>  };
+> =20
+> +enum AWCC_SPECIAL_THERMAL_CODES {
+> +=09AWCC_SPECIAL_PROFILE_CUSTOM=09=09=3D 0x00,
+> +=09AWCC_SPECIAL_PROFILE_GMODE=09=09=3D 0xAB,
+> +};
+> +
+>  enum awcc_thermal_profile {
+>  =09AWCC_PROFILE_USTT_BALANCED,
+>  =09AWCC_PROFILE_USTT_BALANCED_PERFORMANCE,
+> @@ -589,9 +592,15 @@ static int awcc_platform_profile_get(struct device *=
+dev,
+>  =09if (ret)
+>  =09=09return ret;
+> =20
+> -=09if (out_data =3D=3D AWCC_THERMAL_MODE_GMODE) {
+> +=09switch (out_data) {
+> +=09case AWCC_SPECIAL_PROFILE_CUSTOM:
+> +=09=09*profile =3D PLATFORM_PROFILE_CUSTOM;
+> +=09=09return 0;
+> +=09case AWCC_SPECIAL_PROFILE_GMODE:
+>  =09=09*profile =3D PLATFORM_PROFILE_PERFORMANCE;
+>  =09=09return 0;
+> +=09default:
+> +=09=09break;
+>  =09}
+> =20
+>  =09if (!is_awcc_thermal_profile_id(out_data))
+> @@ -679,11 +688,17 @@ static int awcc_platform_profile_probe(void *drvdat=
+a, unsigned long *choices)
+> =20
+>  =09if (awcc->gmode) {
+>  =09=09priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
+> -=09=09=09AWCC_THERMAL_MODE_GMODE;
+> +=09=09=09AWCC_SPECIAL_PROFILE_GMODE;
+> =20
+>  =09=09__set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
+>  =09}
+> =20
+> +=09/* Every model supports the "custom" profile */
+> +=09priv->supported_profiles[PLATFORM_PROFILE_CUSTOM] =3D
+> +=09=09AWCC_SPECIAL_PROFILE_CUSTOM;
+> +
+> +=09__set_bit(PLATFORM_PROFILE_CUSTOM, choices);
+> +
+>  =09return 0;
+>  }
+> =20
+>=20
+>=20
+--8323328-1614277634-1743174356=:932--
 
