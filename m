@@ -1,166 +1,211 @@
-Return-Path: <linux-kernel+bounces-579409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B140A742CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:27:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB9FA742D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 04:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E732B178599
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FE43AEB59
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044A2211285;
-	Fri, 28 Mar 2025 03:27:32 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D39211464;
+	Fri, 28 Mar 2025 03:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="sqeRiTMn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uife+W1O"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06D126AC3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2059F211297
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 03:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743132451; cv=none; b=cdr9+OVOz2Ofa/r3Oc3Q7ZTL6VOt7HDJQWMEczU1n28KGvko+BHpqu0pXBjj7N30O5qWxmdMdGmwNAcFMzkVYtvsfrYgIpRX5BRmxdKj3X72ogW8ge2xFEQEwtBTMkOBKq02R1VNAV6gXCvOmWkmx5rajx7l1k5aggyVQs5dLH8=
+	t=1743132599; cv=none; b=aEIjWTNYQnxCa1MLW2/uJFcTe3OqUaPgqsNqQh5Ou8IZna1rKC5s1INWwWDwujpd/ZXrFoai2P70Rko+PiX06rB5f/FbNDtbub6M/UWuorjzhr1F8s2LTEaGGAYtrZJNrfr4r9EKJdHcEmOeUrxCmA6SzuaKGrJB2RLRMejujKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743132451; c=relaxed/simple;
-	bh=+ymYX1lWgUWHrnm9NwuxfIBaFe0iGWJkOpsUodpvUnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tJ6VJfLx2T248Ytz/zFobenGgJ8n10bAt4aVj+9Sd9nwnj7/OSvsnHJptugwLNgu4EL9U3ddTL2prQzALxowsaqEk7AoyyEftlkLCF6C6ispFfvJINYuqiUh5Rhlur/DmY+hmeJ60bZixCtaQ+qltOh7vJWj6K5+BzCFyiGz1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4CBC4CEDD;
-	Fri, 28 Mar 2025 03:27:30 +0000 (UTC)
-Date: Thu, 27 Mar 2025 23:27:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Feng Yang <yangfeng@kylinos.cn>, Jiapeng Chong
- <jiapeng.chong@linux.alibaba.com>
-Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
-Message-ID: <20250327232729.031be0b4@batman.local.home>
-In-Reply-To: <CAHk-=whzQAYKuoFm9WGOE-QJJ47xvh0VN+RW1EEPCHTERQntQA@mail.gmail.com>
-References: <20250327171037.032bf7e7@gandalf.local.home>
-	<CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
-	<20250327212447.24e05e7e@batman.local.home>
-	<CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
-	<20250327220106.37c921ea@batman.local.home>
-	<CAHk-=wiNLcTj2iiE9waSkmpYpu6VQ_q=Zaqi_WmAMiv_MvH4vQ@mail.gmail.com>
-	<20250327224400.304bc106@batman.local.home>
-	<CAHk-=whzQAYKuoFm9WGOE-QJJ47xvh0VN+RW1EEPCHTERQntQA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743132599; c=relaxed/simple;
+	bh=8/WxSS8N6A7ADDU4kWFIT2nK+URzk2alNowBMmCMsz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gK1Zmqej1WrwNx0eRGB8yBUQf4MRu9UCJUnSsLsiyiGwWdN7qP5GkaURHHRX3x/Hx8FRjTMzzRW0Bgd5L69K4rjoweFlKO/dnyAUXw/L6Xvkp3qoQpHYF1OZOeVfIf+D07BY4Gcxfxm9wnJ8dxXoF+IIHcuMzhtyGB7qXvwUowE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com; spf=pass smtp.mailfrom=fastmail.com; dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b=sqeRiTMn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uife+W1O; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.com
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.stl.internal (Postfix) with ESMTP id DBCA711401C0;
+	Thu, 27 Mar 2025 23:29:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Thu, 27 Mar 2025 23:29:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1743132594; x=1743218994; bh=Cp9lnvxnIv186+PcpNlli
+	pcDG9HTXGIBE5DKPJ+XZwc=; b=sqeRiTMnXfM6jqq8DA3k13Z2gwVf98zn/H135
+	GS8gXTnNMEJ3MKU/LYrcWreGIEKUUwFwcMiZni9IDYqCYZhiAj3ueNWOxAcNMmb7
+	Ukl2I7cZ67Elzju84csRh4YA6sX1eVOYDKtbpT2NAk+B5YRJGx6n6VqqeHdN40dS
+	HidgHMy3sQCRd63X0nK5MTmtriUq0yiors1t/3rUof5zEQSiRLm3nwKoZiacKt2d
+	iLw0oQOErnrrA4rVzc6A+DPcbFxK8JxJdtMiMSuQgFf64ZkKuZXICOlQc4WhNVOy
+	qriyZ4dCHLdSJIquBkhmbJl1hq9Ik+ipiZVHIOBpiAYeHu/ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1743132594; x=1743218994; bh=Cp9lnvxnIv186+PcpNllipcDG9HTXGIBE5D
+	KPJ+XZwc=; b=uife+W1ONSbhjyAYkKtKCHueaVurosYX+/re1nHbnO2HBb/vuIn
+	1FTXGpknr2ycz3RCRjGVfAQWPMZ/srvTeCJsUgCArpalhAHbAfiAS8IOnGu0zTRo
+	V9gFqgrt0+2hW6r3W5uKuARubbHjKmpNFYqERgNUPjeL63CdeJ/U4du9DpIDCdx4
+	IJC7r8BATbq81tr7NYLrOXokyqPrsUEXXPPZHRczZ122mwkiSCfKwAL+ML7cZ+iq
+	SsKvfSue5mzE/woQJG4C9wrSE4EbtJXY6fK28PhDperyE/etyN/bGMbTLKc8bkSz
+	1nDslQ+40Fyg1KFtLK3nBY9qfpT2o15rDUA==
+X-ME-Sender: <xms:shfmZ0ueZmte-UCiLj_sx71Sr2OicFTeql5p0qIqBCVMLU_0_1YoDA>
+    <xme:shfmZxfkAizWkzupd75SCwrdIhPYL9H_qFEoR_wguSR-ayfvcaK9ny6xrVmJA5xj8
+    eid39WO4WUuDqlsddw>
+X-ME-Received: <xmr:shfmZ_wfvIQvzMU-OzolW59hbrShzUKUYBO8Ixc8e6e_u3BA4Z16pxECoNALr0yqvIRWyEhuy1AK-MiRObQ9K1zAemtGImyIirLvbXcrBxnJUnrX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedtvdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeflrghmvghsucfhlhhofigvrhhs
+    uceosgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhvefgkeeiuddtudfhgefgiedvuefhhedtffejtddtfeekieefieejveet
+    hfegheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhlugdriihonhgvvdefjeefsehfrghsthhmrghilhdrtghomhdpnhgspghrtghpthht
+    ohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrghrrhihrdifvghnth
+    hlrghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdr
+    tghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpth
+    htoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthho
+    pegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomhdprhgtphhtthhopegrih
+    hrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhl
+    rdgthhdprhgtphhtthhopehskhhhrghnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorh
+    hgpdhrtghpthhtohepsgholhgurdiiohhnvgdvfeejfeesfhgrshhtmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:shfmZ3NyCdJM4kDItLzQq4l4PaerQQJfU1PHSdIwvxJs2VqU3G9oIA>
+    <xmx:shfmZ0_RIGPuBdhT93TbFw2L5RHMWtEYYUmC9fJ9flovfKCs4EVGXA>
+    <xmx:shfmZ_W0wKi7BigvzbvCrGgrVa63VstqKsNXKWcPg6NMpLMzuXKMFA>
+    <xmx:shfmZ9e7Grd1sw7Jvos6p3fhNA_7W76JBum0yIg3NekAXL_9jnYMTQ>
+    <xmx:shfmZ-d0gZN4Dit82iKkYe5JQ1c7xde-YhBNjDy9ijbxehNfrdVZRCiw>
+Feedback-ID: ibd7e4881:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Mar 2025 23:29:52 -0400 (EDT)
+From: James Flowers <bold.zone2373@fastmail.com>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	siqueira@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	skhan@linuxfoundation.org
+Cc: James Flowers <bold.zone2373@fastmail.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] drm/amd/display: removed unused function
+Date: Thu, 27 Mar 2025 20:29:02 -0700
+Message-ID: <20250328032942.16264-1-bold.zone2373@fastmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Mar 2025 20:05:14 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> 
-> > I'M NOT LYING, and honestly I'm quite offended that you accused me of
-> > lying!  
-> 
-> What's the definition of lying again? Saying something that wasn't
-> true? That's literally what you did. You claimed only the virtual
-> address was used. That's *CLEARLY* not true.
+Removed unused function mpc401_get_3dlut_fast_load_status.
 
-This is more of a confusing of the words. I did say "that's all the
-code cares about", I meant the code that is used for recording and
-reporting the events. I thought it was obvious that I didn't mean the
-mmapped code. It wasn't lying, it was a miscommunication.
+Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h     | 17 -----------------
+ .../drm/amd/display/dc/mpc/dcn401/dcn401_mpc.c  | 11 -----------
+ .../drm/amd/display/dc/mpc/dcn401/dcn401_mpc.h  | 14 --------------
+ 3 files changed, 42 deletions(-)
 
-> 
-> > Before 6.10 (from 2.6.28 through to 6.9), the only uses of struct page
-> > was in the allocation and freeing of the ring buffer. It wasn't used
-> > before that. The virtual address is what the kernel writes to, it's
-> > what was read.  
-> 
-> What the hell is your point?
-> 
-> Bringing up something that *used* to be true, but isn't any longer true?
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+index 3a89cc0cffc1..eaef3899da7b 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+@@ -967,23 +967,6 @@ struct mpc_funcs {
+ 	*/
+ 
+ 	void (*update_3dlut_fast_load_select)(struct mpc *mpc, int mpcc_id, int hubp_idx);
+-	/**
+-	* @get_3dlut_fast_load_status:
+-	*
+-	* Get 3D LUT fast load status and reference them with done, soft_underflow and hard_underflow pointers.
+-	*
+-	* Parameters:
+-	* - [in/out] mpc - MPC context.
+-	* - [in] mpcc_id
+-	* - [in/out] done
+-	* - [in/out] soft_underflow
+-	* - [in/out] hard_underflow
+-	*
+-	* Return:
+-	*
+-	* void
+-	*/
+-	void (*get_3dlut_fast_load_status)(struct mpc *mpc, int mpcc_id, uint32_t *done, uint32_t *soft_underflow, uint32_t *hard_underflow);
+ 
+ 	/**
+ 	* @populate_lut:
+diff --git a/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.c b/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.c
+index ad67197557ca..98cf0cbd59ba 100644
+--- a/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.c
++++ b/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.c
+@@ -47,16 +47,6 @@ void mpc401_update_3dlut_fast_load_select(struct mpc *mpc, int mpcc_id, int hubp
+ 	REG_SET(MPCC_MCM_3DLUT_FAST_LOAD_SELECT[mpcc_id], 0, MPCC_MCM_3DLUT_FL_SEL, hubp_idx);
+ }
+ 
+-void mpc401_get_3dlut_fast_load_status(struct mpc *mpc, int mpcc_id, uint32_t *done, uint32_t *soft_underflow, uint32_t *hard_underflow)
+-{
+-	struct dcn401_mpc *mpc401 = TO_DCN401_MPC(mpc);
+-
+-	REG_GET_3(MPCC_MCM_3DLUT_FAST_LOAD_STATUS[mpcc_id],
+-			MPCC_MCM_3DLUT_FL_DONE, done,
+-			MPCC_MCM_3DLUT_FL_SOFT_UNDERFLOW, soft_underflow,
+-			MPCC_MCM_3DLUT_FL_HARD_UNDERFLOW, hard_underflow);
+-}
+-
+ void mpc401_set_movable_cm_location(struct mpc *mpc, enum mpcc_movable_cm_location location, int mpcc_id)
+ {
+ 	struct dcn401_mpc *mpc401 = TO_DCN401_MPC(mpc);
+@@ -618,7 +608,6 @@ static const struct mpc_funcs dcn401_mpc_funcs = {
+ 	.set_bg_color = mpc1_set_bg_color,
+ 	.set_movable_cm_location = mpc401_set_movable_cm_location,
+ 	.update_3dlut_fast_load_select = mpc401_update_3dlut_fast_load_select,
+-	.get_3dlut_fast_load_status = mpc401_get_3dlut_fast_load_status,
+ 	.populate_lut = mpc401_populate_lut,
+ 	.program_lut_read_write_control = mpc401_program_lut_read_write_control,
+ 	.program_lut_mode = mpc401_program_lut_mode,
+diff --git a/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.h b/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.h
+index ce6fbcf14d7a..8e35ebc603a9 100644
+--- a/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.h
++++ b/drivers/gpu/drm/amd/display/dc/mpc/dcn401/dcn401_mpc.h
+@@ -241,23 +241,9 @@ void mpc401_update_3dlut_fast_load_select(
+ 	int mpcc_id,
+ 	int hubp_idx);
+ 
+-void mpc401_get_3dlut_fast_load_status(
+-	struct mpc *mpc,
+-	int mpcc_id,
+-	uint32_t *done,
+-	uint32_t *soft_underflow,
+-	uint32_t *hard_underflow);
+-
+ void mpc401_update_3dlut_fast_load_select(
+ 	struct mpc *mpc,
+ 	int mpcc_id,
+ 	int hubp_idx);
+ 
+-void mpc401_get_3dlut_fast_load_status(
+-	struct mpc *mpc,
+-	int mpcc_id,
+-	uint32_t *done,
+-	uint32_t *soft_underflow,
+-	uint32_t *hard_underflow);
+-
+ #endif
+-- 
+2.49.0
 
-My point was that I can't *just* use the struct page. It sounds to me
-that you want me to to refactor all of the code to handle struct page
-even when the consumer is in the kernel.
-
-> 
-> So face the music. The fact that you mmap the thing means that now it
-> needs 'struct page'. Stop making excuses, stop making things up, and
-> just deal with it.
-
-Again, are you suggesting that the code needs to be converted to using
-struct page for all of it? Even for the kernel consumer code?
-
-> 
-> or don;t.
-> 
-> > But when you read the "trace" or "trace_pipe" file, or even read the
-> > "trace_pipe_raw", the struct page is never used.  
-> 
-> Again, WHAT IS YOUR POINT?
-> 
-> Those aren't the issues. The issue is that you added mmap. Stop
-> bringing up completely irrelevant issues. Stop saying "but but but
-> other code doesn't need it".
-> 
-> The code directly under discussion clearly does in fact need it and use it.
-
-I guess, are you asking to save the struct page for every allocation,
-and not using virt_to_page() to get it? In other words, do I need to
-increase the memory footprint to add another pointer because the code
-can be mmapped?
-
-	page = page_alloc();
-	bpage->page = page_address(page);
-	bpage->struct_page = page;
-
-??
-
-> 
-> So when you go "this will cause controversy", you should take a step
-> back, and think about how you can *avoid* writing things in an ugly
-> manner.
-
-Because this was the code we last had an argument about, which is why I
-figured it would be "controversial". You don't need to read more into
-it than that.
-
-> 
-> Instead you just went for it, and here we are.
-
-Again, it wasn't because I thought it was hackery, but because this is
-the code we last argued about. Hence, why I thought it was the most
-"controversial".
-
-> 
-> So for next time, just don't repeat the same ugly hackery five times
-> in a row, for one thing. If that code had been *clean* code, I would
-> almost certainly not have reacted to the nasty "translate pointers
-> back and forth".
-> 
-> But as it is, instead of having some clear abstractions and helper
-> functions to do things in one place with sane tests for "if this is a
-> ,TRACE_ARRAY_FL_BOOT thing, we have a clearly separate path" you
-> repeated the disgusting hackery overr and overr and made sure it was
-> front and center.
-> 
-> Now it's too late. I've seen that horror, and I'm not willing to take it.
-> 
-> You need to keep the 'struct page' around for mmap. Instead of living
-> in the past and saying "before mmap, we didn't need it", just realize
-> that the "before mmap" situation is not relevant any more. We're not
-> there.
-> 
-> Or just say "mmap just isn't worth the pain of cleaning up this code".
-
-So you are saying that you want this to save the page struct directly
-then. My only concern with that is the added memory to save the
-structure when it could be easily calculated.
-
-As I work on memory limited devices, I try not to waste memory when
-there's another way to get what is needed.
-
--- Steve
 
