@@ -1,135 +1,233 @@
-Return-Path: <linux-kernel+bounces-580073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E205A74CFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:44:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC93A74CFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9B0164182
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D003A28B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E6019259E;
-	Fri, 28 Mar 2025 14:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A59A16BE3A;
+	Fri, 28 Mar 2025 14:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="s2/L1+/T"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SupQdQe4"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661143C0C;
-	Fri, 28 Mar 2025 14:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519AB24B34
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743172829; cv=none; b=ras6+28aPof6Y3OLLtUrsStJ9POvLvnTsvCna3Zwc2evdYNo3b4oG3NBgyUisTRfp+xnME8TsHVz43QWdhghQvzh7rc0hMCa6viKjIZmqLflSCgVYgF8tUAgb0tHuVoLGKu54V8jrAKt2MUbU7IZw8prdRQlFLxH4p18fzI4hs0=
+	t=1743172898; cv=none; b=kRcKazlwr9DYxYDy9H7spNM91qIiIsSzqUn6Gb05ysQ0AvwjyFmmxUW5VuHDVRZpWTBiuyvUZT1X7WdjmESgDtfgOxUWv7CTSn2Cz6ndoAstHSMuXFXxLw4o5BA797zU6/fRFfTHDsgVT00b/vbEkT4JkeIJ8KN3gj+pr9QRMtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743172829; c=relaxed/simple;
-	bh=NYPS/v/ycIumwT9WLEQUa0YkJotGjG2MR3ruv/QsIqM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jFLSrklLzn8Jg7Zj7yy0wAXBgfeBbcuruRm1eRMJm555fwJUlLd1SRqoGc5sQMnPuD2maz0sY0KPymzun3LnrfFaWa7mdecf8Vgc9Oor9YacWIHWCQff5+fxIFZAyeI7hDNnwyQSoyQ4VAiYqqb4aLwEkP2Ruj00AKNKThStnx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=s2/L1+/T; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743172827;
-	bh=NYPS/v/ycIumwT9WLEQUa0YkJotGjG2MR3ruv/QsIqM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=s2/L1+/TpCbJZgJuy43eHwyIglpRI4Q1IUx5s0wtxRU7aeHS5ZHMkJdaPyqZZaZwD
-	 KQbaGnrV79PsVaASc0+0hO7CPPGyVOcqTAwkWNkS6CjsfQFlUj8VS+LuH3Fzj2hiws
-	 R10bIGRdMEwMyFRVc21V04BSLHRGW0MYYgS9i1Fk=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id D48BE1C008C;
-	Fri, 28 Mar 2025 10:40:26 -0400 (EDT)
-Message-ID: <6cd9f94e5c80883534fad561123e0ce3d1837599.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 4/4] vfs: add filesystem freeze/thaw callbacks for
- power management
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com, 
- rafael@kernel.org, djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
- boqun.feng@gmail.com
-Date: Fri, 28 Mar 2025 10:40:26 -0400
-In-Reply-To: <20250328-ambulant-elektrisch-8127624ea520@brauner>
-References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
-	 <20250327140613.25178-5-James.Bottomley@HansenPartnership.com>
-	 <20250328-ambulant-elektrisch-8127624ea520@brauner>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
-	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
-	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
-	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
-	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
-	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
-	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
-	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743172898; c=relaxed/simple;
+	bh=rwejAxpg5OS8Q108uciT3T1T4kdPwP3UqmAgZ4A5YGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PdsmhGJXSj9YzMEeMb6nWPE2JAgV2IJmpO/ljyFIN+VLOm8bfQdmJxszzjT6mb6RsgKkSxP9fI5fFgtV60GFDWsqAlZwP5SHgphAhyP9H7cloRP0WRAF7g1bZz2C8UJJffWZbVrkgMuXnVfv9E4cQ1hrecIAIuOJQ+nuyIZYdKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SupQdQe4; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e17d3e92d9so17277436d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 07:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743172895; x=1743777695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8PSLk2F3fInrjRTLiWjUEBX5kPanbDTjlA93maHcUB8=;
+        b=SupQdQe4bRFTh9BoBMopQdU1WIAReGh9v0CFjRTjp26catTP7Nre7ykrIXgOAhoqPr
+         M6Y8ukvDZ+ktN+mmte5oggwVTplFEqGDHfAX7tEV8pTL4LZkoa+PvYobT6mUYqVUmlFV
+         vFkCXvwLoMROwevLIKzWW21aQbtJNO22x7SgimaSIip9gB7Gn1HXHE5OniNqYLR27/3J
+         0mt08u87iN/oX1/ymYuOso/doiSqzna+HaFrhP+DkUJG/AlPTXhjOZsjMXROEiiaCMta
+         il8jL07I752aSxcHCeIyynDJxerKwetiAu8I5gHzoiEo9DgRITVXIIVcWl5psxGxAktL
+         rrKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743172895; x=1743777695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8PSLk2F3fInrjRTLiWjUEBX5kPanbDTjlA93maHcUB8=;
+        b=Lmf8fZi9NCmw9u3yl1k0Wz6nd7UOOByDzhUt8okMPuWqcEEBaUhPDhpAUAUiHF1ugm
+         uqsCvmUNIKlGpSnd8UkS1L3D098nxaSKpQHrbgbRNrJsgPahVEYLL78Nx5e8fHEFAMBT
+         7LPrp4HTUzYS4ukE6IQPVwO6VsrcjQ2Y9dPnft8wCY8Ewq0N+lo6YefftFRB+Xi/BI6B
+         jROfnKH8vMhAeRkUFJ2wX4cJAec9xtp5azBrusZZ+mkQPa6Gx6ITLteFItCdkHm9p5Ip
+         bzLTCFO3cEvKdHRPBGkwct0xs2PPO9OAFPEUHDNURcSjaORxEKsCHdCnAN+Qv+xcWgzg
+         yT0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRqPx0Wy+AsqiRm+Ax97DQm/v8qbm/UfTwADPr21k5ZoqLmhuqY0pZDP/nNui3+qLnTX1Bx4TMbhr1Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeMhfJRJvTimSX19tO886xqQ49cbwGk2tnqVi0oCSO413G5U64
+	WVFykGdi2yxucjf/r8wHWsbVDBKH/Bq62J72WMM5tngfd9pUf/Egi5lwLIXSKmbYkupCXZgPs60
+	DWMqrD360wJJimmdY6o1X8jDh7YEL5qwtSDXoYw==
+X-Gm-Gg: ASbGncvYvcRuSYElQrXfCUl13eJvHZgBwtbUP7wcqFOQlqWC2z5/JT18+JxtYRXhJeg
+	0Fgq2R+nwcJ3N4IJQj4TrjzmABSaWDFEjx6+Vl0J+BZk4zUIf7XWOktyPjCm+vmYioCIe6fXrZR
+	BWv4ezxg887vXb3/DW3gwaSwUr
+X-Google-Smtp-Source: AGHT+IGcmCoufZsJf+6l9aRk5HLG9OtzQu1jDmiZN16zPWDRYTTfVuM+toXqrUBPygRyIl2b6nKgv1mMqXgQ0pTc/Ns=
+X-Received: by 2002:ad4:4eaa:0:b0:6e8:fb8c:e6dd with SMTP id
+ 6a1803df08f44-6ed2389150cmr114525136d6.5.1743172894625; Fri, 28 Mar 2025
+ 07:41:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250116092254.204549-1-nphamcs@gmail.com>
+In-Reply-To: <20250116092254.204549-1-nphamcs@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 28 Mar 2025 10:41:23 -0400
+X-Gm-Features: AQ5f1JqS9FleVybHK178H17T9QEZ5B5-G4s_YZvA6v7tsWpD5FulqYeWSFfjRAw
+Message-ID: <CAKEwX=MVud-zjJaGGXQcRiniqoYwkzANuk18LvCvoY-7o1oWbA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Virtual Swap Space
+To: lsf-pc@lists.linux-foundation.org, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org
+Cc: ryncsn@gmail.com, chengming.zhou@linux.dev, yosryahmed@google.com, 
+	chrisl@kernel.org, linux-mm@kvack.org, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, shakeel.butt@linux.dev, hch@infradead.org, 
+	hughd@google.com, 21cnbao@gmail.com, usamaarif642@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-03-28 at 13:01 +0100, Christian Brauner wrote:
-> On Thu, Mar 27, 2025 at 10:06:13AM -0400, James Bottomley wrote:
-[...]
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 76785509d906..b4b0986414b0 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -1461,6 +1461,67 @@ static struct super_block
-> > *get_bdev_super(struct block_device *bdev)
-> > =C2=A0	return sb;
-> > =C2=A0}
-> > =C2=A0
-> > +/*
-> > + * Kernel freezing and thawing is only done in the power
-> > management
-> > + * subsystem and is thus single threaded (so we don't have to
-> > worry
-> > + * here about multiple calls to filesystems_freeze/thaw().
-> > + */
-> > +
-> > +static int freeze_flags;
-> > +
-> > +static void filesystems_freeze_callback(struct super_block *sb)
-> > +{
-> > +	/* errors don't fail suspend so ignore them */
-> > +	if (sb->s_op->freeze_super)
-> > +		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | FREEZE_HOLDER_KERNEL
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
-> > +	else if (sb->s_bdev)
-> > +		freeze_super(sb, FREEZE_MAY_NEST |
-> > FREEZE_HOLDER_KERNEL
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 | freeze_flags);
-> > +	else {
-> > +		pr_info("Ignoring filesystem %s\n", sb->s_type-
-> > >name);
-> > +		return;
-> > +	}
-> > +
-> > +	pr_info("frozen %s, now syncing block ...", sb->s_type-
-> > >name);
-> > +	sync_blockdev(sb->s_bdev);
->=20
-> Unnecessary, either the filesystem is responsible for this if it
-> provides its own ->freeze_super() or freeze_super() does it in
-> sync_filesystem.
+On Thu, Jan 16, 2025 at 4:22=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> My apologies if I missed any interested party in the cc list -
+> hopefully the mailing lists cc's suffice :)
+>
+> I'd like to (re-)propose the topic of swap abstraction layer for the
+> conference, as a continuation of Yosry's proposals at LSFMMBPF 2023
+> (see [1], [2], [3]).
+>
+> (AFAICT, the same idea has been floated by Rik van Riel since at
+> least 2011 - see [8]).
+>
+> I have a working(-ish) prototype, which hopefully will be
+> submission-ready soon. For now, I'd like to give the motivation/context
+> for the topic, as well as some high level design:
+>
+> I. Motivation
+>
+> Currently, when an anon page is swapped out, a slot in a backing swap
+> device is allocated and stored in the page table entries that refer to
+> the original page. This slot is also used as the "key" to find the
+> swapped out content, as well as the index to swap data structures, such
+> as the swap cache, or the swap cgroup mapping. Tying a swap entry to its
+> backing slot in this way is performant and efficient when swap is purely
+> just disk space, and swapoff is rare.
+>
+> However, the advent of many swap optimizations has exposed major
+> drawbacks of this design. The first problem is that we occupy a physical
+> slot in the swap space, even for pages that are NEVER expected to hit
+> the disk: pages compressed and stored in the zswap pool, zero-filled
+> pages, or pages rejected by both of these optimizations when zswap
+> writeback is disabled. This is the arguably central shortcoming of
+> zswap:
+> * In deployments when no disk space can be afforded for swap (such as
+>   mobile and embedded devices), users cannot adopt zswap, and are forced
+>   to use zram. This is confusing for users, and creates extra burdens
+>   for developers, having to develop and maintain similar features for
+>   two separate swap backends (writeback, cgroup charging, THP support,
+>   etc.). For instance, see the discussion in [4].
+> * Resource-wise, it is hugely wasteful in terms of disk usage, and
+>   limits the memory saving potentials of these optimizations by the
+>   static size of the swapfile, especially in high memory systems that
+>   can have up to terabytes worth of memory. It also creates significant
+>   challenges for users who rely on swap utilization as an early OOM
+>   signal.
+>
+> Another motivation for a swap redesign is to simplify swapoff, which
+> is complicated and expensive in the current design. Tight coupling
+> between a swap entry and its backing storage means that it requires a
+> whole page table walk to update all the page table entries that refer to
+> this swap entry, as well as updating all the associated swap data
+> structures (swap cache, etc.).
+>
+>
+> II. High Level Design Overview
+>
+> To fix the aforementioned issues, we need an abstraction that separates
+> a swap entry from its physical backing storage. IOW, we need to
+> =E2=80=9Cvirtualize=E2=80=9D the swap space: swap clients will work with =
+a virtual swap
+> slot (that is dynamically allocated on-demand), storing it in page
+> table entries, and using it to index into various swap-related data
+> structures.
+>
+> The backing storage is decoupled from this slot, and the newly
+> introduced layer will =E2=80=9Cresolve=E2=80=9D the ID to the actual stor=
+age, as well
+> as cooperating with the swap cache to handle all the required
+> synchronization. This layer also manages other metadata of the swap
+> entry, such as its lifetime information (swap count), via a dynamically
+> allocated per-entry swap descriptor:
+>
+> struct swp_desc {
+>         swp_entry_t vswap;
+>         union {
+>                 swp_slot_t slot;
+>                 struct folio *folio;
+>                 struct zswap_entry *zswap_entry;
+>         };
+>         struct rcu_head rcu;
+>
+>         rwlock_t lock;
+>         enum swap_type type;
+>
+> #ifdef CONFIG_MEMCG
+>         atomic_t memcgid;
+> #endif
+>
+>         atomic_t in_swapcache;
+>         struct kref refcnt;
+>         atomic_t swap_count;
+> };
+>
+>
+> This design allows us to:
+> * Decouple zswap (and zeromapped swap entry) from backing swapfile:
+>   simply associate the swap ID with one of the supported backends: a
+>   zswap entry, a zero-filled swap page, a slot on the swapfile, or a
+>   page in memory .
+> * Simplify and optimize swapoff: we only have to fault the page in and
+>   have the swap ID points to the page instead of the on-disk swap slot.
+>   No need to perform any page table walking :)
+>
+> III. Future Use Cases
+>
+> Other than decoupling swap backends and optimizing swapoff, this new
+> design allows us to implement the following more easily and
+> efficiently:
+>
+> * Multi-tier swapping (as mentioned in [5]), with transparent
+>   transferring (promotion/demotion) of pages across tiers (see [8] and
+>   [9]). Similar to swapoff, with the old design we would need to
+>   perform the expensive page table walk.
+> * Swapfile compaction to alleviate fragmentation (as proposed by Ying
+>   Huang in [6]).
+> * Mixed backing THP swapin (see [7]): Once you have pinned down the
+>   backing store of THPs, then you can dispatch each range of subpages
+>   to appropriate pagein handler.
+>
+> [1]: https://lore.kernel.org/all/CAJD7tkbCnXJ95Qow_aOjNX6NOMU5ovMSHRC+95U=
+4wtW6cM+puw@mail.gmail.com/
+> [2]: https://lwn.net/Articles/932077/
+> [3]: https://www.youtube.com/watch?v=3DHwqw_TBGEhg
+> [4]: https://lore.kernel.org/all/Zqe_Nab-Df1CN7iW@infradead.org/
+> [5]: https://lore.kernel.org/lkml/CAF8kJuN-4UE0skVHvjUzpGefavkLULMonjgkXU=
+ZSBVJrcGFXCA@mail.gmail.com/
+> [6]: https://lore.kernel.org/linux-mm/87o78mzp24.fsf@yhuang6-desk2.ccr.co=
+rp.intel.com/
+> [7]: https://lore.kernel.org/all/CAGsJ_4ysCN6f7qt=3D6gvee1x3ttbOnifGneqcR=
+m9Hoeun=3DuFQ2w@mail.gmail.com/
+> [8]: https://lore.kernel.org/linux-mm/4DA25039.3020700@redhat.com/
+> [9]: https://lore.kernel.org/all/CA+ZsKJ7DCE8PMOSaVmsmYZL9poxK6rn0gvVXbjp=
+qxMwxS2C9TQ@mail.gmail.com/
 
-I simply copied it from super.c:fs_bdev_freeze(), so is the
-sync_blockdev() in there unnecessary as well?
+Link to my slides:
 
-Regards,
+https://drive.google.com/file/d/1mn2kSczvEzwq7j55iKhVB3SP67Qy4KU2/view?usp=
+=3Dsharing
 
-James
-
+Thank you for your interest!
 
