@@ -1,150 +1,214 @@
-Return-Path: <linux-kernel+bounces-580062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5808A74CCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27874A74CD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35531894C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E181896C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B14D1D61A4;
-	Fri, 28 Mar 2025 14:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6617C1BDAA0;
+	Fri, 28 Mar 2025 14:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZEYjmRP+"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRMLU2dQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E91B17BCE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08701B0F33;
+	Fri, 28 Mar 2025 14:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743172255; cv=none; b=XMbfKfZSt7oHvRAn+OxvMkAo/jwP0GjyFyjt73nxL2F6W0iv8Y+cL4q/3yNm+gxtkOQx4Z1ZLdvglgAtdsgZMZdEbV6ZNCAE8Ndjp7iyPEBrBt9JlfUXqKi+B7jhGVq2E2c6iNCNZwohFkl+2vWLoCI7cxSqHuLN82+c9BlxSl8=
+	t=1743172407; cv=none; b=Y5kCc7A34fm9siDf8sCTLau8o46XDtIIeqxr9glrzAlZZdYdGashIv3sXA+Ycb7kR7kAUbtQYtFDuPKvHB2DlksBV8UjDavWVfug7x6/DMzCqmeNasF2oE4cEN5EVQC4PE5esglrDb0oRZvVrzqS3LP+6DRbdBRDX9Hk50/yf8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743172255; c=relaxed/simple;
-	bh=r69myt5CYJDUUxJ5eZ651vr//FxFOh0JfBQxRjDjfyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HxjHMafqlczqCaYQyGWT5f1IsCgu84uAMM458LqKHYCAT74rEyvcoNyohuRlu86xdkguM4mCWqkSWvVkWbmJSHLPJO9oYqPJhF2fTWojy0Azhv4fUNEDcP9xsWIyrdYDrUBtj/NvDQogSUD/XQquP0NiutnbgCXMIdCAUxldoCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZEYjmRP+; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39129fc51f8so1642391f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 07:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743172252; x=1743777052; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xY2G9dr/4ekvZx7BFTEs3c751w4Nf1CQJqhKZMVEU4o=;
-        b=ZEYjmRP+KgxRSgG3Klf5kTIFMr7IGRgQzSNRuvCnMWdN3KHbCkJdhygggiUewwetLd
-         zwhX9UcLP2182klbfZYlZzwE22vA6EHWeHHDbMjOujy8PYJjGLfTvJ8sn10JUhhH1l/2
-         I/OncZpgj1Fqsfr6Mi/NUpcxo02/x5wKsi0Qaj1JX7BQQ3vmLPAgcyngypjsyPyiSTP2
-         d629LAlD2zky6JMG2VIj9ZPihi4zdxf2xrQJWDySa5SgQyxV54oL3dTpx7mF/ifHF8jB
-         XvrlItqg3BPpeWDMDy/6b1IqFYIkgyg2nKWXip5LdNKPRUELGI4n/Cue13yBTXDbij+C
-         A/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743172252; x=1743777052;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xY2G9dr/4ekvZx7BFTEs3c751w4Nf1CQJqhKZMVEU4o=;
-        b=sFc1sk9P0r11O5tiJGxKI3LZLVCD2jER9rL0pOAKFC7r40FYtXXjDP70cX/b497Q4K
-         z98MFtN8RgvNkznhWObI3tQiH6xO+kUs5Q5McadD3YY7Pn/ZoAMDN+tw+TVWFylimkh2
-         zP/Bcel0S4pIcQ7bWMx+0L358S3FMluqJ7uDu0TNxpFe459tsaDldY60O23IvBvXkpDU
-         One3hDlH+Tmrv5F67Bu6KSco0McdLxt4ecHZADc8ZTl9nr6rUDA2XCvu7yCxd8J69Nly
-         IfWHmtLBxXql4GkUIcMLMHNtT5SJd/3RLgn35ByygMUZzE8bTiDo4iPtwhqgRaKoJoVW
-         xryA==
-X-Forwarded-Encrypted: i=1; AJvYcCXopCbWeb2vzkw+C2Wp/Lo/RJi0g0x8WJJm5SmDp7yu2ljBJd9KYtQVPZNDf29iPFLZxBtJCNr9rM0B5p0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybAoxqLjQiLTj0th0voq2l7aXFwsIpp39wi68Xdy46VIF6aTMT
-	uZD6S/che99R6FnlhjBHoKcDUr4kyCwWWJ4xVF0xHkGiZMOMRfQDpuvSQnAgsHk=
-X-Gm-Gg: ASbGnctp/Rv5Il6HIhRkGEnZ8/3zGgoirFIc8RJM5DQJz/dhpJ2YhsJhf8Zw+E17xBh
-	2Cdq29X9yd4beP08XMqk+2crV0AR2eFC/Gne1PofH8rwwCWZPl8YjKMlwSSSrbhEK/JoRlJmkWP
-	EN/EACO+jDbSUV5sVVg14CVS9htNH5hsr1yz6yw5xu2w3P982NfnLns2skVnAHKr9gbBDKP3WqQ
-	IPMQdZh1BRo05ujQoviIkEGsuXU2ojPrOUMjj8AcNv3ZNRRWspyvwP/7d4tLsEar8fezCLxSx/j
-	3Ft0Beqn2DINNswWQIyTAqPesEmw+jCADrMdwdHoeUaMOx6dsCmB5/tlHKs=
-X-Google-Smtp-Source: AGHT+IEqlAqw/EIsqm1BgyscIBxGUOeIxfC2lXTrnQ19OhlcGKYtCY+38uMpnMJk3wcdZrYVzV+TOA==
-X-Received: by 2002:a5d:584c:0:b0:398:9e96:e798 with SMTP id ffacd0b85a97d-39ad17415a2mr7314079f8f.13.1743172246976;
-        Fri, 28 Mar 2025 07:30:46 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:70c0:edf6:6897:a3f8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c0b79e0dcsm2789859f8f.64.2025.03.28.07.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 07:30:46 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 28 Mar 2025 15:30:44 +0100
-Subject: [PATCH] PCI: rcar-gen4: set ep BAR4 fixed size
+	s=arc-20240116; t=1743172407; c=relaxed/simple;
+	bh=sF3tJHSziQD5AA7cOPlYPBrdvLxoYRT3GRg4H0Au7yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DBgDTSgDNb8fTcaleMfJUe0hjLz2g7nWBhnQh4AzRmU+4fRW7nU7xOXVsW+mw7ZdMaxopL6DFKOoJGey6Noxgw7tK1zrD7jutwJo/TnuRwZn9oNrnxLnIrus84P+mtyp2VKsDf0h6fTO1n1Y1XmPkP5XMsHyBjaOj9YgbaQ72NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRMLU2dQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C3AC4CEE4;
+	Fri, 28 Mar 2025 14:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743172407;
+	bh=sF3tJHSziQD5AA7cOPlYPBrdvLxoYRT3GRg4H0Au7yg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iRMLU2dQLM58a8dfdSf36UYDIW3nIdzAau0oAmAWE49Z0bv/Vox9l+kFPP3sYV4cL
+	 AKefUbRCcq4RJoqQiuzZN+bkBgMwMdi95TUop/7LzuO/uqSnJZX+FRmKYAAQAiX1wx
+	 fMwk28l5REC6yampCFF3uXXw7Z/1WuT8NqZ3jE2V4iUEjIPJIku7DTgrD6xhUFvDPJ
+	 /cbdVDYVjq/uBkP5X5JoQAONdNBDoUljNn31SFEEURFqoBSAfb5Q+xDQw4XepRKyIy
+	 fEhRoNS5aR0uC69YPQzr3uT/jx4vw3KbvybxLB6+f02vezW+iGiufpzeQ+7QFIvix/
+	 XOpwfgCQIRs1Q==
+Message-ID: <36b67f9c-5905-4fa6-8190-ab980850b3a2@kernel.org>
+Date: Fri, 28 Mar 2025 15:33:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: i3c: Add Qualcomm I3C master
+ controller
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jarkko.nikula@linux.intel.com,
+ linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org
+References: <20250326141641.3471906-1-quic_msavaliy@quicinc.com>
+ <20250326141641.3471906-2-quic_msavaliy@quicinc.com>
+ <991b0652-76f2-40d6-b49b-1e6f76e254ac@kernel.org>
+ <661e1a21-0f3a-497a-9b3b-fab284e30d19@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <661e1a21-0f3a-497a-9b3b-fab284e30d19@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250328-rcar-gen4-bar4-v1-1-10bb6ce9ee7f@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAJOy5mcC/x3MPQqAMAxA4auUzAbsjyheRRxqm2qWKimIIL27x
- fEb3nuhkDAVmNULQjcXPnOD7hSEw+edkGMzmN4MvTUTSvCCO2WHmxeHMYSorRsT2QladAklfv7
- hstb6AfDmTqdgAAAA
-X-Change-ID: 20250328-rcar-gen4-bar4-dccd1347fe38
-To: Marek Vasut <marek.vasut+renesas@gmail.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Serge Semin <fancer.lancer@gmail.com>
-Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1164; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=r69myt5CYJDUUxJ5eZ651vr//FxFOh0JfBQxRjDjfyk=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBn5rKU93EsfEvQqRKfYw9fYTj3oD6m4KNpZ84sz
- uxMinKIJd2JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ+aylAAKCRDm/A8cN/La
- hcPzEACgdAwbHl3qVRBYfJhEGKIBUUVbe3SP6v/HrFIig9GMe+v6Vh5MwjgOI8sSrJNPputEyDV
- LPk+aYT18SfUg0BK3Ji8plS6dtfAAKYqAF2NP7JQrkhFvLf15Wnp2gNSrI0cAvZTNAvc7fTSh2G
- G/FEe0tl80zU7/1p+jtzoN6RJjAI76zroHqREmJlWkELpfluQoDaKIjL56N+kbrCh3DyqqDBfQb
- NCZXUBtoRmw8AsBJquKGDdj8a9NgeGLmeFdxOuf4w2neq+6XEuxaYs/MtSaj+d2Boij8Ppsf91Y
- m/9fOePAM1dvizw3PcrOzzSoKu/oC78vptAYlehYHX6N7x94vl/+iBs4nRyyKUwXR9fgZeZ55M/
- JUuyAmaOQQ8Qr0ef0W1opD14erhPETY9o/9Z9s9wZ/zmb1y7uFVuV9l652kPjKY5eWxzoxrhkNm
- owPbGUdNWeSPockslN6cRjZUmDcJZNGJvLOJtEIGh7Fz+gbhJ6vZYT0U6lqcj1/jS961f9qaT78
- 9FC8tNf+f3+zKbn7FUYlIukFgKwYjADEMUsc89sJbqsXqZKFWJqMoWQU0KO2MrMs2CyrTBYzI8l
- L4dmhkVNNTO/VI41+28MryVmwHl7rJbniok+Ucvthn1L1J2ig8sBGFt3K2DuNHm1yh1cG8QQIAI
- upkny4XrrLDWubw==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On rcar-gen4, the ep BAR4 has a fixed size of 256B.
-Document this constraint in the epc features of the platform.
+On 28/03/2025 15:28, Mukesh Kumar Savaliya wrote:
+> Thanks Krzysztof for immediate review !
+> 
+> On 3/26/2025 7:53 PM, Krzysztof Kozlowski wrote:
+>> On 26/03/2025 15:16, Mukesh Kumar Savaliya wrote:
+>>> Add device tree bindings for the Qualcomm I3C controller. This includes
+>>> the necessary documentation and properties required to describe the
+>>> hardware in the device tree.
+>>>
+>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>> ---
+>>>   .../bindings/i3c/qcom,i3c-master.yaml         | 60 +++++++++++++++++++
+>>>   1 file changed, 60 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>> new file mode 100644
+>>> index 000000000000..af6b393f2327
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/i3c/qcom,i3c-master.yaml
+>>
+>> Naming: nothing improved.
+>>
+> Sorry, i didn't get exactly. To your comment "Filename matching 
+> compatible." i have Changed the compatible string to "qcom,i3c-master" 
+> and now it's matching to file name.
+> 
+> shall i make filename as qcom,i3c-master-qcom.yaml ? If this is wrong, 
+> please suggest.
+> 
+> Removed "bindings" from the subject line too. I have removed "master" 
+> from the description, shall i remove from subject also and keep only 
+> controller ? I kept master controller thinking it may be good as "master 
+> controller" instead "controller".
 
-Fixes: e311b3834dfa ("PCI: rcar-gen4: Add endpoint mode support")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-This was tested on rcar-gen4 r8a779f0-spider device.
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 1 +
- 1 file changed, 1 insertion(+)
+I still see the "master" in the compatible and filename.
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index fc872dd35029c083da58144dce23cd1ce80f9374..02638ec442e7012d61dfad70016077d9becf56a6 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -403,6 +403,7 @@ static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
- 	.msix_capable = false,
- 	.bar[BAR_1] = { .type = BAR_RESERVED, },
- 	.bar[BAR_3] = { .type = BAR_RESERVED, },
-+	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256 },
- 	.bar[BAR_5] = { .type = BAR_RESERVED, },
- 	.align = SZ_1M,
- };
+> 
+> 
+>>> @@ -0,0 +1,60 @@
+>>> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/i3c/qcom,i3c-master.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm Geni based QUP I3C Controller
+>>> +
+>>> +maintainers:
+>>> +  - Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>> +
+>>> +description:
+>>> +  I3C in master mode supports up to 12.5MHz, SDR mode data transfer in mixed
+>>> +  bus mode (I2C and I3C target devices on same i3c bus). It also supports
+>>> +  hotjoin, IBI mechanism.
+>>> +
+>>> +  I3C Controller nodes must be child of GENI based Qualcomm Universal
+>>> +  Peripharal. Please refer GENI based QUP wrapper controller node bindings
+>>> +  described in Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml.
+>>> +
+>>> +allOf:
+>>> +  - $ref: i3c.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,i3c-master
+>>
+>> And this got worse. It makes also no sense either: how can you claim
+>> that this covers all possible future I3C masters from Qualcomm?
+>>
+>> What was the resolution of previous discussion?
+>>
+> Below was my understanding and reply.
+> "
+> I think i should remove const. kept it for now as no other compatible to 
+> be added as of now.
+> let me remove const.
+> SoC name is not required, as this compatible is generic to all the SOCs.
 
----
-base-commit: dea140198b846f7432d78566b7b0b83979c72c2b
-change-id: 20250328-rcar-gen4-bar4-dccd1347fe38
+I don't see any talks about const, what are you referring to?
+
+> "
+> 
+> But i realized i missed to remove const, sorry for that.
+> 
+> 
+> I have also checked for qcom,spi-geni-qcom.yaml, it has below :
+> properties:
+>    compatible:
+>      const: qcom,geni-spi
+> 
+> Let me know if i can correct for SPI in separate new patch ?
+
+I love such arguments - let's find whatever old bindings and whatever
+antipattern.
+
+What was the outcome of the discussion? I think was about geni, no? What
+did Rob write? So how did it became i3c-master?
 
 Best regards,
--- 
-Jerome
-
+Krzysztof
 
