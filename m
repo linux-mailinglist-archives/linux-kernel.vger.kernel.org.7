@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-579812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B53A749CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:29:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977BBA749D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C571B6022B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540393B8795
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB90821B9D1;
-	Fri, 28 Mar 2025 12:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4208C0B;
+	Fri, 28 Mar 2025 12:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cf1eAIlL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/6ymHg8O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IKbiqcma"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B549121ADBC;
-	Fri, 28 Mar 2025 12:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000834C6D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743164974; cv=none; b=gxzPAXkAyDjd1DTK/+Crzl5MysEiAEgy1BwRyKXFc+DAEIWz4dde4JLpJeOjnFMTlAsbj44kOB6lnrLxBhVSVpWKEN8+OLg/u3RBMxJFdi51XxwDR3wjh1/t1IZj7T207DKDFjhhX3guBefwWW1gKbfkYVSvehGl3MY+3FKlZCA=
+	t=1743165030; cv=none; b=phqZ3mMg5pdNWIkQ5S/weImJT/P9p2n84YyCrBY4GQM/a/CCAPr5P6wDcmqyVMusvVc8pGwt1jkO9XbyboyQ05oqd6oh2Bz+otWzBsOsLN0KsgA2euZKmaC/JfeAU3J/yr/uV2vBIwpfCTi7DIe8vdrKC+5l/cHYNMblUwhVALo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743164974; c=relaxed/simple;
-	bh=NC71RCgKx1VzfATo4SMybFVbIZBLe1wK7psQL34+xRs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RBBwa0D8zlQ6Ndh4RQwFzGkyPvIdv7oMAztuvqJiXfB8Nf+UebK9OJkaGLuBV71bL7jDqExi6ZEnoJWKX7efqncuKxnxdZbeVKoemUnqtN6cm6FTuL/pCyOQiYjA9yIBMTc7UpR/pYTS+L1T0dlrDFre2uM7MLaUMlG+DFt0F5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cf1eAIlL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/6ymHg8O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 28 Mar 2025 12:29:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743164970;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLxxtQfWt8F1cTUmw8yduUelufCDQn4P8udW6pGvP/k=;
-	b=Cf1eAIlL/K5XY/cc7tODr7B6wDput7sEFib/bZBdM4E2ZupjgMh+23xOqLIOwGxzLFbaLo
-	nMoklVDW+4Ikbh+3h6qUd5v6zZA730wgtB6BygegTSQ01+V42LlHe6eelcpk+vuwHrj6ij
-	hJXemRJdbLUnDsWXHRKCdIezv7L83sXAnP16GayskgIaEOTtuK+vUD2+41ZIjSEgcfUIqK
-	vvCC+Am6PSWtcr52MP3pbhXfiF4Ky/VhvgxVFB8AVWsyutVS2k+OZrBZLbVKCHlw+zKJGm
-	C/bPr/73KzQQ6WUaCfbINGqFkgJhbWfcm309QcM/NPam6uRN/H7xy199VtowIQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743164970;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nLxxtQfWt8F1cTUmw8yduUelufCDQn4P8udW6pGvP/k=;
-	b=/6ymHg8OCEXLmslxA8iFXtfmrc2dhH5zyeTgTqQkwz3gKjkz4sHU2tKYcFUrxSxwaz+8Sv
-	uuAf1YIxHDubRgDA==
-From: "tip-bot2 for Boris Ostrovsky" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/microcode/AMD: Fix __apply_microcode_amd()'s
- return value
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250327230503.1850368-2-boris.ostrovsky@oracle.com>
-References: <20250327230503.1850368-2-boris.ostrovsky@oracle.com>
+	s=arc-20240116; t=1743165030; c=relaxed/simple;
+	bh=nw034KAl4K5R0p3fjOL7F1tDs2mvWBYsT2yzg0RvKTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KlXiy/bByTNc4Npx0ZSykAs3zGnmsroZLbun/kiJDPRZQXGal+bqpbSUoBRPmYb9jNqkHENe3gRGVsVZlpZD8KVS7XcIFf5stTNK6QWHTo0zGOGSBNFh30U0ikDD993ICYsAKyPpZ8oOZzGe3yJWcI6dXR11s8MYzWf9u121+tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IKbiqcma; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8GY9oAspc/UtzxBw+Itn8O6EjWFnF2C8yVESOjSlnrI=; b=IKbiqcmatIo0Xkt4D1J2y/GG+t
+	ZbuNUAw5UdJFOliKlRY/+WuQbfhczTWO4mSRBVwMYz60TS7L2hS+imkBaQ2NDPLyt3Szyt0MnkBzc
+	uW0hOCRc3c0B/DdgEAXxuoiJUbgFeMNtMspS1EYeOY73CiY5ubhx07G/L3DirVQvy70hDUgIZdNfy
+	Ir54uMqedYZwpd1qlYPAZcjcDamI07VZAcc/RfZ4RfEuzGv7/QHsNgVy3KKLINbx6SVxXmWU3+wU9
+	kmalwafojs6If181kkuxPEe8DczboPeh+leY/fepp7AdB62+Yt8BNhMkOWqk/U65yate1OaInct0A
+	5E0yfIEg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49770)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ty8qR-0008OX-0q;
+	Fri, 28 Mar 2025 12:29:55 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ty8qM-0007BV-0X;
+	Fri, 28 Mar 2025 12:29:50 +0000
+Date: Fri, 28 Mar 2025 12:29:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yeking@red54.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Eric Biggers <ebiggers@google.com>,
+	Yuntao Liu <liuyuntao12@huawei.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Vasilevsky <dave@vasilevsky.ca>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Victor Boivie <victor.boivie@sonyericsson.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Oskar Andero <oskar.andero@sonyericsson.com>,
+	Bjorn Andersson <bjorn.andersson@sonyericsson.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: Fix support for CMDLINE_EXTEND
+Message-ID: <Z-aWPqAUOIDEzzpZ@shell.armlinux.org.uk>
+References: <tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174316496492.14745.16906685061384112632.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_3E8155B4A33D48D6637F16CFE5ED293F0E08@qq.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Fri, Mar 28, 2025 at 10:20:17AM +0000, Yeking@Red54.com wrote:
+> From: 谢致邦 (XIE Zhibang) <Yeking@Red54.com>
+> 
+> It should be the default command line appended to the bootloader command
+> line, not the bootloader command line appended to the default command
+> line.
 
-Commit-ID:     31ab12df723543047c3fc19cb8f8c4498ec6267f
-Gitweb:        https://git.kernel.org/tip/31ab12df723543047c3fc19cb8f8c4498ec6267f
-Author:        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-AuthorDate:    Thu, 27 Mar 2025 19:05:02 -04:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 28 Mar 2025 12:49:02 +01:00
+Later arguments override earlier arguments. Any compiled-in command line
+needs to be overridable by user supplied input from the boot loader. The
+current behaviour is correct.
 
-x86/microcode/AMD: Fix __apply_microcode_amd()'s return value
+Sorry, but no.
 
-When verify_sha256_digest() fails, __apply_microcode_amd() should propagate
-the failure by returning false (and not -1 which is promoted to true).
-
-Fixes: 50cef76d5cb0 ("x86/microcode/AMD: Load only SHA256-checksummed patches")
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250327230503.1850368-2-boris.ostrovsky@oracle.com
----
- arch/x86/kernel/cpu/microcode/amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 138689b..b61028c 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -600,7 +600,7 @@ static bool __apply_microcode_amd(struct microcode_amd *mc, u32 *cur_rev,
- 	unsigned long p_addr = (unsigned long)&mc->hdr.data_code;
- 
- 	if (!verify_sha256_digest(mc->hdr.patch_id, *cur_rev, (const u8 *)p_addr, psize))
--		return -1;
-+		return false;
- 
- 	native_wrmsrl(MSR_AMD64_PATCH_LOADER, p_addr);
- 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
