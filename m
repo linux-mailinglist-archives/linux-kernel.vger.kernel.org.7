@@ -1,84 +1,57 @@
-Return-Path: <linux-kernel+bounces-579870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17C0A74A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:26:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FC3A74A8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C3E1759EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:26:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63A517A5F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115FB1537C6;
-	Fri, 28 Mar 2025 13:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E9215442A;
+	Fri, 28 Mar 2025 13:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PmYIas4L"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lv91joZJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE52A1BF58
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942EA1BF58
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168382; cv=none; b=potnjO2RReQlW930s7FOgCuhYlLSJ+5+rzMYyJvtCSJiaMWp5zI6KdAOXiGa6Dkf5Ou0hy8r79r8Nc8tdkLZdJme49MGKNdqK9V9pttFI7rR442awxVBfv1Jg2cWbUnRU4FzEop2lJpgwKPFnVOmc/xyyLe1N8q/3z+tvQAx2aA=
+	t=1743168443; cv=none; b=j8TDcRqEr1DK5TOnSsrGWon2Wuf+WP7hOioUgb4Vt0SAjzptTH1gG3xm70nDLPmlPmWDsJjljaF627UYUgCSSaXbFQCy9866mjPzwL3pFdI+P4EMirpVx7i+elXIvOxkpAac9CVORyTYK77aj72XQD0TSrM0HoLYFbaZz3ajkKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168382; c=relaxed/simple;
-	bh=ZjPEwmC8d6yJXPD/Af2mmAD/CXzsaS4nGWUuqYQ2klA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a9WFkg702lvzXnKdXjAfK13FA5ULLqV+51J24Had9hhgxWZevANrX68BnTF5aJNBJ8eaJ6oWtbdyUc2ozu7OnB7ClhlhqyPf0VcUhjENzz2+lLCNFH+nUqDvl4D8f2pTm/FZzKqM5udFHZKKhTnTyoG5v3X1RnAjZxOQ1++giVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PmYIas4L; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso3569238a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 06:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1743168379; x=1743773179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x92zjhfd2x6noSpfStll/xqcTYe/rT8zkKTNHbnXK/I=;
-        b=PmYIas4LH8O/EEOvr9KFy5oceDv+6EM9YEbtfz3lQ4AYUXId/yftUdyzP9hv5LOrjS
-         VfxmoqockuVO2gpVfJi8+cOTSc+tx8Mv+/4ogUNus6Bbycs+ggKTsiobm8L5DXx9a4bN
-         6nbniHTTPqDTf+aQXhCF6/PqcsM2y1GBlAkdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743168379; x=1743773179;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x92zjhfd2x6noSpfStll/xqcTYe/rT8zkKTNHbnXK/I=;
-        b=wbkY8EGprv0X/rq0+5u+qmdFhmS+d/Q3FTEW4/S1Y4Eqqy7y6dJfWDk/S8v8bIwwvg
-         79E4FaDi0d9VdNQMGnH9BMHx8v0x8te2MzQuV4OqlfukMvL26SduPsdrzpnHiKxcBC2n
-         uXnmXRMMYYojIu8M3hnAAAzMyZyeE9FlDO/+6ZF1uUSFFvRQg/HSYvcIvyIhWVSGjSSb
-         9TVmH6VgPpDrWuMgV7o5fM6zZPFMZ+WemEykA5f748+dPX8x3tS3Rb+CQGpRc7rjAbxn
-         4mW157J5Kntq1rn1VLoYufnlDq9qUimUcyVLebXYuJV9gpfLGYqmqh2/r3pe4YoW26w+
-         ob1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvfPVpugq8Wlrq1xmbXv84R2U5fnvNORTm2A2BLCzSk9h416hSrEJpFYQ/f6rq2D4ELVUj0HszlA0AjPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9VONvxj1t2sXRpCo9c96BXKijjY+V5UWWC+6gc+BA3vMnpCM9
-	V+DDaBblmjkcQcrxk4tKHX0bxgCuWmqr/T99XXCdrVwyjYRLO8hEnyF+EdFHmw==
-X-Gm-Gg: ASbGnctlsrJ0C1xsDm2Nc9chUCQ6bLqV7fKYGIdbQPh5Q8L4mXpXPO0r/Ce3RIvmZIX
-	pi/hVzKG+HoAfh2bBOAVAyXQdVxqlsqy7M43320Kwfqq+YNP1AZxjhEnWrjq5QDD5gqDxtAhxuj
-	2q638rYYWgAYV34HptMlXSnY1TKtjOPXWBryZmNgqh0Qr2o73K96lS9MYXYKg8AWCGyDvDYPeZ0
-	wp2OVLHp1WyvpeDqGrJM9BjO++qfzepsvLPQ/8WGzEfgZI/R4RX9NVaC2FzgbBlhAWA6N5Qro/9
-	Yd8UTvkBseA8QuSju+HJvutO6Xpsrg2qSVP6KqAEa1ih8E3v87KBdh0dqYioLomroet4zmNXc5S
-	unZdqhgCqU+/WTeZW16Inorb1e16YTOc7LQ==
-X-Google-Smtp-Source: AGHT+IGZz7/5rdEd+k2LnpfWVd2CubAVWU4pOV0U+4t4bZFMZn0KMjyPhCW1xU9L8mZ2Wc+waAiwmg==
-X-Received: by 2002:a05:6402:270b:b0:5e5:bcd6:4ad8 with SMTP id 4fb4d7f45d1cf-5ed8e28ae2dmr7247798a12.9.1743168378947;
-        Fri, 28 Mar 2025 06:26:18 -0700 (PDT)
-Received: from srosek-gl03.c.googlers.com.com (157.250.32.34.bc.googleusercontent.com. [34.32.250.157])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc16eda94sm1413457a12.33.2025.03.28.06.26.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 06:26:18 -0700 (PDT)
-From: Slawomir Rosek <srosek@chromium.org>
-To: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>
-Cc: chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	ukaszb@chromium.org,
-	Slawomir Rosek <srosek@chromium.org>
-Subject: [PATCH v1] platform/chrome: cros_ec_proto: allow to build as module
-Date: Fri, 28 Mar 2025 13:26:12 +0000
-Message-ID: <20250328132612.511471-1-srosek@chromium.org>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+	s=arc-20240116; t=1743168443; c=relaxed/simple;
+	bh=ciG6s+Ngx+r3i3fxclAY4BO15BHpOHCeSzg+3ak7WHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kmegmXCYBoy1ITqLjYC6oNDwE3loJOukEtyIShy7C+iVrqSCnfAA9JXuBbUNvdfLjnxSO4NmhyEzQjETZSWB16nuYQlKuCRnyDPUw5II2uGU/pgWdmWLjGr61BS1YTSWKcYcWHAauvKr3XkqLnEnH0mNVy0Btadx3eMpNhcUcog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lv91joZJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4198C4CEE4;
+	Fri, 28 Mar 2025 13:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743168443;
+	bh=ciG6s+Ngx+r3i3fxclAY4BO15BHpOHCeSzg+3ak7WHw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lv91joZJNkI3HaIXmKHfIU1Gcu75PTnsSEa0AsySLsEiMjalyuFcOjasaQElHoL5c
+	 bPGxCMCPRDMRyCoTes3zFsIYh48i8J+GBja4DKxDutXXO93yOX5k5qvOnuE22M7keV
+	 6T464J9WIPONWwc4Z7oete+KL1QxfLfAI6/VLcYVVWMdXdoUp+4g9EUbX9n7KyetXX
+	 9Dg+4CmcSOIQz9pBFGTgTyzXkKo/C/3c7COtHISVNIywiTrKoSpUAYu1WRxIzjaixs
+	 yf468py47nt7dKR2z06TAb1Ts4v7sSSAzD0kx9Ev1Fu5YJIRK1C1kM5ISBkSL1fMMq
+	 7G/Big3DFQgOw==
+From: Ingo Molnar <mingo@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH -v2 00/49] Simplify, reorganize and clean up the x86 text-patching code (alternative.c)
+Date: Fri, 28 Mar 2025 14:26:15 +0100
+Message-ID: <20250328132704.1901674-1-mingo@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,58 +60,188 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This allows to build ChromeOS EC communication protocol helpers as
-kernel module which is particularly useful for Android GKI (Generic
-Kernel Image) configuration. With this change the ChromeOS Platform
-(CONFIG_CHROME_PLATFORMS=y) can be enabled directly from the vendor
-kconfig fragment whithout additional configuration in gki_defconfig.
+This series has 3 main parts:
 
-Signed-off-by: Slawomir Rosek <srosek@chromium.org>
----
- drivers/platform/chrome/Kconfig         | 2 +-
- drivers/platform/chrome/Makefile        | 3 ++-
- drivers/platform/chrome/cros_ec_proto.c | 3 +++
- 3 files changed, 6 insertions(+), 2 deletions(-)
+(1)
 
-diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-index 1b2f2bd09662..f523ae3d3be0 100644
---- a/drivers/platform/chrome/Kconfig
-+++ b/drivers/platform/chrome/Kconfig
-@@ -155,7 +155,7 @@ config CROS_EC_LPC
- 	  module will be called cros_ec_lpcs.
- 
- config CROS_EC_PROTO
--	bool
-+	tristate
- 	help
- 	  ChromeOS EC communication protocol helpers.
- 
-diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-index 1a5a484563cc..b981a1bb5bd8 100644
---- a/drivers/platform/chrome/Makefile
-+++ b/drivers/platform/chrome/Makefile
-@@ -25,7 +25,8 @@ endif
- obj-$(CONFIG_CROS_EC_TYPEC)		+= cros-ec-typec.o
- 
- obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
--obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o cros_ec_trace.o
-+cros-ec-proto-objs			:= cros_ec_proto.o cros_ec_trace.o
-+obj-$(CONFIG_CROS_EC_PROTO)		+= cros-ec-proto.o
- obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
- obj-$(CONFIG_CROS_EC_CHARDEV)		+= cros_ec_chardev.o
- obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 877b107fee4b..f90d2e7b616c 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -1157,3 +1157,6 @@ int cros_ec_get_cmd_versions(struct cros_ec_device *ec_dev, u16 cmd)
- 		return resp.version_mask;
- }
- EXPORT_SYMBOL_GPL(cros_ec_get_cmd_versions);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("ChromeOS EC communication protocol helpers");
+The first part of this series performs a thorough text-patching API namespace
+cleanup discussed with Linus for the -v1 series:
+
+	# boot/UP APIs & single-thread helpers:
+
+						text_poke()
+						text_poke_kgdb()
+	[ unchanged APIs: ]			text_poke_copy()
+						text_poke_copy_locked()
+						text_poke_set()
+
+						text_poke_addr()
+
+	# SMP API & helpers namespace:
+
+	text_poke_bp()			=>	smp_text_poke_single()
+	text_poke_loc_init()		=>	__smp_text_poke_batch_add()
+	text_poke_queue()		=>	smp_text_poke_batch_add()
+	text_poke_finish()		=>	smp_text_poke_batch_finish()
+
+	text_poke_flush()		=>	[removed]
+
+	text_poke_bp_batch()		=>	smp_text_poke_batch_process()
+	poke_int3_handler()		=>	smp_text_poke_int3_trap_handler()
+        text_poke_sync()		=>	smp_text_poke_sync_each_cpu()
+
+
+(2)
+
+The second part of the series simplifies and standardizes the SMP batch-patching
+data & types & accessors namespace, around the new text_poke_array* namespace:
+
+	int3_patching_desc		=	[removed]
+	temp_mm_state_t			=>	[removed]
+
+	try_get_desc()			=>	try_get_text_poke_array()
+	put_desc()			=>	put_text_poke_array()
+
+	tp_vec,tp_vec_nr		=>	text_poke_array
+	int3_refs			=>	text_poke_array_refs
+
+	- All constants got moved into the TEXT_POKE_* namespace
+
+	- All local variables and function parameters got standardized around
+	  the 'tpl' naming scheme. No more toilet paper references. ;-)
+
+(3)
+
+The third part of the series contains additional patches, that
+together with the data-namespace simplification changes remove
+about 3 layers of unnecessary indirections and simplify/streamline
+various aspects of the code:
+
+	x86/alternatives: Remove duplicate 'text_poke_early()' prototype
+	x86/alternatives: Update comments in int3_emulate_push()
+	x86/alternatives: Remove the confusing, inaccurate & unnecessary 'temp_mm_state_t' abstraction
+	x86/alternatives: Add text_mutex) assert to smp_text_poke_batch_flush()
+	x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
+	x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
+	x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
+	x86/alternatives: Introduce 'struct smp_text_poke_array' and move tp_vec and tp_vec_nr to it
+	x86/alternatives: Remove the tp_vec indirection
+	x86/alternatives: Simplify try_get_text_poke_array()
+	x86/alternatives: Simplify smp_text_poke_int3_trap_handler()
+	x86/alternatives: Simplify smp_text_poke_batch_process()
+	x86/alternatives: Move the text_poke_array manipulation into text_poke_int3_loc_init() and rename it to __smp_text_poke_batch_add()
+	x86/alternatives: Remove the mixed-patching restriction on smp_text_poke_single()
+	x86/alternatives: Document 'smp_text_poke_single()'
+	x86/alternatives: Add documentation for smp_text_poke_batch_add()
+	x86/alternatives: Move text_poke_array completion from smp_text_poke_batch_finish() and smp_text_poke_batch_flush() to smp_text_poke_batch_process()
+	x86/alternatives: Simplify text_poke_addr_ordered()
+	x86/alternatives: Constify text_poke_addr()
+	x86/alternatives: Simplify and clean up patch_cmp()
+	x86/alternatives: Standardize on 'tpl' local variable names for 'struct smp_text_poke_loc *'
+	x86/alternatives: Simplify the #include section
+	x86/alternatives: Move declarations of vmlinux.lds.S defined section symbols to <asm/alternative.h>
+	x86/alternatives: Remove 'smp_text_poke_batch_flush()'
+	x86/alternatives: Update the comments in smp_text_poke_batch_process()
+
+Various APIs also had their names clarified, as part of the renames.
+I also added comments where justified.
+
+There's almost no functional changes in the end, other than
+mixed smp_text_poke_single() & smp_text_poke_batch_add() calls
+are now probably working better than before - although I'm not
+aware of such in-tree usage at the moment.
+
+After these changes there's a reduction of about ~20 lines of
+code if we exclude comments, and some reduction in text size:
+
+   text       data        bss        dec        hex    filename
+  13637       1009       4112      18758       4946    arch/x86/kernel/alternative.o.before
+  13549       1009       4156      18714       491a    arch/x86/kernel/alternative.o.after
+
+But the main goal was to perform a thorough round of source code TLC,
+to make the code easier to read & maintain, and to remove a chunk
+of technical debt accumulated incrementally over 20 years, which
+improvements are only partly reflected in line count and code size decreases.
+
+Lightly tested only.
+
+This tree can also be found at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip WIP.x86/alternatives
+
+Thanks,
+
+    Ingo
+
+================>
+
+Ingo Molnar (49):
+  x86/alternatives: Rename 'struct bp_patching_desc' to 'struct int3_patching_desc'
+  x86/alternatives: Rename 'bp_refs' to 'int3_refs'
+  x86/alternatives: Rename 'text_poke_bp_batch()' to 'smp_text_poke_batch_process()'
+  x86/alternatives: Rename 'text_poke_bp()' to 'smp_text_poke_single()'
+  x86/alternatives: Rename 'poke_int3_handler()' to 'smp_text_poke_int3_trap_handler()'
+  x86/alternatives: Rename 'poking_mm' to 'text_poke_mm'
+  x86/alternatives: Rename 'poking_addr' to 'text_poke_mm_addr'
+  x86/alternatives: Rename 'bp_desc' to 'int3_desc'
+  x86/alternatives: Remove duplicate 'text_poke_early()' prototype
+  x86/alternatives: Update comments in int3_emulate_push()
+  x86/alternatives: Remove the confusing, inaccurate & unnecessary 'temp_mm_state_t' abstraction
+  x86/alternatives: Rename 'text_poke_flush()' to 'smp_text_poke_batch_flush()'
+  x86/alternatives: Rename 'text_poke_finish()' to 'smp_text_poke_batch_finish()'
+  x86/alternatives: Rename 'text_poke_queue()' to 'smp_text_poke_batch_add()'
+  x86/alternatives: Rename 'text_poke_loc_init()' to 'text_poke_int3_loc_init()'
+  x86/alternatives: Rename 'struct text_poke_loc' to 'struct smp_text_poke_loc'
+  x86/alternatives: Rename 'struct int3_patching_desc' to 'struct text_poke_int3_vec'
+  x86/alternatives: Rename 'int3_desc' to 'int3_vec'
+  x86/alternatives: Add text_mutex) assert to smp_text_poke_batch_flush()
+  x86/alternatives: Assert that smp_text_poke_int3_trap_handler() can only ever handle 'tp_vec[]' based requests
+  x86/alternatives: Use non-inverted logic instead of 'tp_order_fail()'
+  x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
+  x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
+  x86/alternatives: Assert input parameters in smp_text_poke_batch_process()
+  x86/alternatives: Introduce 'struct smp_text_poke_array' and move tp_vec and tp_vec_nr to it
+  x86/alternatives: Remove the tp_vec indirection
+  x86/alternatives: Rename 'try_get_desc()' to 'try_get_text_poke_array()'
+  x86/alternatives: Rename 'put_desc()' to 'put_text_poke_array()'
+  x86/alternatives: Simplify try_get_text_poke_array()
+  x86/alternatives: Simplify smp_text_poke_int3_trap_handler()
+  x86/alternatives: Simplify smp_text_poke_batch_process()
+  x86/alternatives: Rename 'int3_refs' to 'text_poke_array_refs'
+  x86/alternatives: Move the text_poke_array manipulation into text_poke_int3_loc_init() and rename it to __smp_text_poke_batch_add()
+  x86/alternatives: Remove the mixed-patching restriction on smp_text_poke_single()
+  x86/alternatives: Document 'smp_text_poke_single()'
+  x86/alternatives: Add documentation for smp_text_poke_batch_add()
+  x86/alternatives: Move text_poke_array completion from smp_text_poke_batch_finish() and smp_text_poke_batch_flush() to smp_text_poke_batch_process()
+  x86/alternatives: Rename 'text_poke_sync()' to 'smp_text_poke_sync_each_cpu()'
+  x86/alternatives: Simplify text_poke_addr_ordered()
+  x86/alternatives: Constify text_poke_addr()
+  x86/alternatives: Simplify and clean up patch_cmp()
+  x86/alternatives: Standardize on 'tpl' local variable names for 'struct smp_text_poke_loc *'
+  x86/alternatives: Rename 'TP_ARRAY_NR_ENTRIES_MAX' to 'TEXT_POKE_ARRAY_MAX'
+  x86/alternatives: Rename 'POKE_MAX_OPCODE_SIZE' to 'TEXT_POKE_MAX_OPCODE_SIZE'
+  x86/alternatives: Simplify the #include section
+  x86/alternatives: Move declarations of vmlinux.lds.S defined section symbols to <asm/alternative.h>
+  x86/alternatives: Remove 'smp_text_poke_batch_flush()'
+  x86/alternatives: Update the comments in smp_text_poke_batch_process()
+  x86/alternatives: Rename 'apply_relocation()' to 'text_poke_apply_relocation()'
+
+ arch/x86/include/asm/alternative.h   |   6 +
+ arch/x86/include/asm/text-patching.h |  29 ++---
+ arch/x86/kernel/alternative.c        | 364 +++++++++++++++++++++++++------------------------------
+ arch/x86/kernel/callthunks.c         |   6 +-
+ arch/x86/kernel/ftrace.c             |  18 +--
+ arch/x86/kernel/jump_label.c         |   6 +-
+ arch/x86/kernel/kprobes/core.c       |   4 +-
+ arch/x86/kernel/kprobes/opt.c        |   6 +-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/kernel/static_call.c        |   2 +-
+ arch/x86/kernel/traps.c              |   6 +-
+ arch/x86/mm/init.c                   |  16 +--
+ arch/x86/net/bpf_jit_comp.c          |   2 +-
+ 13 files changed, 219 insertions(+), 248 deletions(-)
+
 -- 
-2.49.0.472.ge94155a9ec-goog
+2.45.2
 
 
