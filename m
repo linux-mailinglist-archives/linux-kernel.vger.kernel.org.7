@@ -1,136 +1,285 @@
-Return-Path: <linux-kernel+bounces-580124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E303EA74D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AC9A74DA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84DD517284C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C36B17AC72
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469DB1CAA89;
-	Fri, 28 Mar 2025 15:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF95171092;
+	Fri, 28 Mar 2025 15:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+GsAMeU"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HR0T81It"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47108171092
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 15:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62171B4257;
+	Fri, 28 Mar 2025 15:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743175076; cv=none; b=pXSENA+k1l9kNGbqeBLREQt8vCxxlfRdVamVXXrZmf/KV3A8cNARMFTUTIv9IEuU5RvwJjb/MQUhNfV4F+jqyWTRoY24ZDyyvg0r3goiaUysE07L9/JjEP/5Rj66fiIPoaJWd0huuqbamKpe0nrw0VcGUMX5YRVQYInbigo8oqY=
+	t=1743175289; cv=none; b=VIXolLYF45Kv6XXQRBtDJia9l91SC6eIaG8hkBCdtppUBVLiZ8H+eY26mdxFAh9ZOqXC2KEc1hIs8MGIPfWVmvNeo005AyEjDjLVlZMp2yywJMwyUFxyztrzL9qKo7TVOes+XSj7BxO7XVHpez8xDcv6ap0HsLIOgFaYaPjE4YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743175076; c=relaxed/simple;
-	bh=jEhtVTn1QWFoySaUXbkHkCIjovKC7NhTpAQFfzMoxEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gc9C7Hq90apUSapcD+Edue/OXS0O6fKxdkHV7cunoLoRG8lRZEG30k9QuppsCweHf3I433z2Klpe6mjGUHyUjJuRGZdXyZmpLQ1nL7vWbl7iE3UhguDy241NaCVx1ZwNLwtYfQPV54/NEa1G7VDIdKZ2TlBHBkysTFuxzQ63rpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+GsAMeU; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-86d587dbc15so2030369241.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 08:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743175074; x=1743779874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Jn0e09I6pw9OL2TVwRIfefTbq7C/d6a62JusO5U0Kc=;
-        b=Q+GsAMeUU7rxujJZW5HlZcidmoJGTmqztWqEmMhYlOiKgO2nbvkCR33/1mF4b3PbTU
-         Qk5rGr1lxUDQAYA1DJkkPQK1c/IonSOj/mwXaDGAeFn2CWnvMLInQ4yKBmkoPrvZzkj8
-         Pz9J6OX9sjFqQmTxbfXHgHbiPyema/fHMwr3xA1jGMSVIBJ8TrxPbYi79KMqsDzp28s0
-         dLv734kL4k7jg9RYaRQ3D/GiXx0dukNvPfJgzqE649hDdmIut7WdDYjsdI0+LQld1K+/
-         NpEXuHcGj0QKtJ2fuKs2u6BnVqloTemnyzhMgGA51i2VsONnV15yKD5ipRl1/SrjOdO3
-         VZKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743175074; x=1743779874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Jn0e09I6pw9OL2TVwRIfefTbq7C/d6a62JusO5U0Kc=;
-        b=dCaXMoMNFrpO9D9H+TtWdxrg1Osp+y6cXqABvxiH5apnuYNEGqqTDUwENFoperCVE6
-         OSBH6ZYmMQEYPKuO4CPHkhN0aPh+e29AZSjWG1hTG7pCh40cvCPdW1q5AXfqzJn5+wiM
-         UF/k+IjQM7mZ5fZngeeA2KOoj7Ah2tqndAikY830IFJQ9EHa8k4yjE5Ievbpmxi2A/5B
-         dqZHXPkFnUPgCiyCEDSjaJPOwVTeUQbCclwFn7QfJNZqsFgwyfzEApVBldZ0leyEa8up
-         mclKKRV22x2XG2iSAVbmk0dh83J1RCV9lUmuyGWfiGJ0b8vHUQqK8k9XQ8DE9MyZBVXB
-         G6ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVO7qwYk777xiY5yKj9iORZtVWJnYCzjB9hqfZsx3lq7pMY2f6MLbZl9xoJdhtYBIDnxvCnTv3ZpB3EZk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhqmQIpnFUyQ+xXzKnaW09JTsrhDvjMm0+Ac0Qjvmvjmnl9Zve
-	Wzzi789ERONlB9OrgM13/l2g2lkoCIFBiiRi121ThZIUNd5ri8m2uUmxEKcNBcpY7cxcKROOy/7
-	ZLMoSspCd5HTemNPHZD2nvyA5ScE=
-X-Gm-Gg: ASbGnctvBkLSsx3sIPz6Q2eP8p492ECS6DQFA2taHpiZUy8qJYiR6pnaM1FxcWejjFo
-	qkDhX1ty3RjI9Wvb4QFdUogHT9XXDSFgXu6uroQDvXfBztQ+n7hwRH0SG3bF126ZeIRP0nvWR5q
-	ddHZmQMZgNj7+6z3Qfk8oZjIIwRzw=
-X-Google-Smtp-Source: AGHT+IEqrBEH5TDL81Y5j3ZIzOBqupeT+igPlWE2szhh0MEQKTWwtxcEL2xqXu4qp0Tz0FWhtqAPB67lgvSSjeeodZY=
-X-Received: by 2002:a05:6122:889:b0:50d:39aa:7881 with SMTP id
- 71dfb90a1353d-52610fc715cmr2676350e0c.0.1743175073764; Fri, 28 Mar 2025
- 08:17:53 -0700 (PDT)
+	s=arc-20240116; t=1743175289; c=relaxed/simple;
+	bh=VhPm2s6F8u50aVYbaCa6/EYrQ2WdUIRZwvMuwy2pwbE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXwr8A3c7mXDV9Vu4mZQH+eVpCirGTV2nDsX5pp9RAZimq+YTYBMV11CgdXK41fqiYZMe81KNfJfaLoDWJUYVeknQ7GmU7k6eAeTl4PxXmzE516FZO4hd5r/KbMfT5SUu+7F5YCUkwb3jaN4ou1YZ690zImv+fIb/x9QX5UHUF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HR0T81It; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52SFLCsP2195666
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Mar 2025 10:21:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743175272;
+	bh=Lu7OQHrwsF2ia/OLiHFgjNKQ6t/ACm/lnjgCvTJD/OM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=HR0T81ItniugJhjhJ0zhVxuByYwLpIJ8maACasCnOVMH5I+EJUY/wHDu2F5ZHOOSm
+	 2cArtAf2cjQD74gW8B4/i4wzE8DhNLLEmcZ5IjFrrzjdcn/0bmH5M0GnkIA0Yf5d2S
+	 /fFLmwR5NquI+UMeVv6XOrc/wJ5MN0kBbp/wYbPw=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52SFLCBQ097515
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Mar 2025 10:21:12 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Mar 2025 10:21:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Mar 2025 10:21:12 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52SFLChf124302;
+	Fri, 28 Mar 2025 10:21:12 -0500
+Date: Fri, 28 Mar 2025 10:21:12 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Wadim Egorov <w.egorov@phytec.de>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot
+ phase tags
+Message-ID: <20250328152112.lh7i3rgkkmhzekzi@kimono>
+References: <20250305085537.3976579-1-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1743163800.git.abrahamadekunle50@gmail.com>
- <dd32dfe6c837d88dd13a546aadcb0bc207b997d6.1743163801.git.abrahamadekunle50@gmail.com>
- <21e624e7-c18f-6aa2-2a16-7cd46e706d47@inria.fr> <CADYq+fZd=C-EydjBmkP6Rh6XAJS6Kg1nM7zGhyLrGYiLGkZ8mw@mail.gmail.com>
- <acd2df4b-6865-d2c0-7bc2-babcc930d03d@inria.fr>
-In-Reply-To: <acd2df4b-6865-d2c0-7bc2-babcc930d03d@inria.fr>
-From: Samuel Abraham <abrahamadekunle50@gmail.com>
-Date: Fri, 28 Mar 2025 16:17:44 +0100
-X-Gm-Features: AQ5f1JoIf6U6Zu3AD1_fwccY3uYCCIVmv3RFHYcdBK_5pT0_ajsEDqFotfNCPoc
-Message-ID: <CADYq+fY-UNbpWeefGuo_Y5OG98AQRu1=uZYu2cqpONOTpar4YA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] staging: rtl8723bs: modify variable names to comply
- with kernel naming convention
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: outreachy@lists.linux.dev, gregkh@linuxfoundation.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250305085537.3976579-1-w.egorov@phytec.de>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Mar 28, 2025 at 4:13=E2=80=AFPM Julia Lawall <julia.lawall@inria.fr=
-> wrote:
->
->
->
-> On Fri, 28 Mar 2025, Samuel Abraham wrote:
->
-> > On Fri, Mar 28, 2025 at 3:55=E2=80=AFPM Julia Lawall <julia.lawall@inri=
-a.fr> wrote:
-> > >
-> > >
-> > >
-> > > On Fri, 28 Mar 2025, Abraham Samuel Adekunle wrote:
-> > >
-> > > > The variable names use the camelCase naming convention which is not=
- consistent
-> > > > with Linux kernel naming convention.
-> > > >
-> > > > Modify the names to use snake_case in adherence to the Linux kernel=
- approved
-> > > > naming convention for consistency with the codebase.
-> > >
-> > > There is another naming issue that checkpatch perhaps doesn't warn ab=
-out
-> > > which is the encoding of types in variable names.  You can see some
-> > > variables with names that start with b for boolean and p for pointer.
-> > > Those letters shouldn't be used in kernel code.
-> > >
-> > > julia
-> >
-> > Hello, and thank you very much for your review
-> > Do I send that as a different standalone patch?
-> > Or should I send a v2 after attaching the patch to the patchset?
->
-> Perhaps find some different files than the ones affected by your patchset
-> and send a standalone patch.
->
-> julia
+On 09:55-20250305, Wadim Egorov wrote:
+> The bootph-all and bootph-pre-ram tags were introduced in dt-schema
+> (dtschema/schemas/bootph.yaml) to define node usage across different
+> boot phases.
+> 
+> Add boot phase tags to all required nodes to ensure boot support from
+> all sources, including UART, USB (DFU), Ethernet, uSD card, eMMC, and
+> OSPI NOR Flash.
+> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+> ---
+> v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2025-February/1006239.html
+> v2:
+>   - Add bootph-all to cpsw_port1 and main_pktma 
+>   - Remove bootph-all from cpsw3g
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi   | 15 +++++++++++++++
+>  .../arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi |  9 +++++++++
+>  2 files changed, 24 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
+> index 2ef4cbaec789..effab2f810c2 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
+> @@ -29,6 +29,7 @@ aliases {
+>  	memory@80000000 {
+>  		device_type = "memory";
+>  		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
+> +		bootph-all;
+>  	};
+>  
+>  	reserved_memory: reserved-memory {
+> @@ -131,6 +132,7 @@ main_i2c0_pins_default: main-i2c0-default-pins {
+>  			AM62X_IOPAD(0x1e0, PIN_INPUT_PULLUP, 0) /* (B16) I2C0_SCL */
+>  			AM62X_IOPAD(0x1e4, PIN_INPUT_PULLUP, 0) /* (A16) I2C0_SDA */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	main_mdio1_pins_default: main-mdio1-default-pins {
+> @@ -138,6 +140,7 @@ main_mdio1_pins_default: main-mdio1-default-pins {
+>  			AM62X_IOPAD(0x160, PIN_OUTPUT, 0) /* (AD24) MDIO0_MDC */
+>  			AM62X_IOPAD(0x15c, PIN_INPUT, 0) /* (AB22) MDIO0_MDIO */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	main_mmc0_pins_default: main-mmc0-default-pins {
+> @@ -153,6 +156,7 @@ AM62X_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* (AC1) MMC0_DAT5 */
+>  			AM62X_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* (AD2) MMC0_DAT6 */
+>  			AM62X_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* (AC2) MMC0_DAT7 */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	main_rgmii1_pins_default: main-rgmii1-default-pins {
+> @@ -170,6 +174,7 @@ AM62X_IOPAD(0x140, PIN_OUTPUT, 0) /* (AD18) RGMII1_TD3 */
+>  			AM62X_IOPAD(0x130, PIN_OUTPUT, 0) /* (AE19) RGMII1_TXC */
+>  			AM62X_IOPAD(0x12c, PIN_OUTPUT, 0) /* (AD19) RGMII1_TX_CTL */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	ospi0_pins_default: ospi0-default-pins {
+> @@ -186,6 +191,7 @@ AM62X_IOPAD(0x024, PIN_INPUT, 0) /* (H25) OSPI0_D6 */
+>  			AM62X_IOPAD(0x028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
+>  			AM62X_IOPAD(0x008, PIN_INPUT, 0) /* (J24) OSPI0_DQS */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	pmic_irq_pins_default: pmic-irq-default-pins {
+> @@ -210,6 +216,7 @@ &cpsw3g {
+>  &cpsw_port1 {
+>  	phy-mode = "rgmii-rxid";
+>  	phy-handle = <&cpsw3g_phy1>;
+> +	bootph-all;
+>  };
+>  
+>  &cpsw3g_mdio {
+> @@ -220,6 +227,7 @@ &cpsw3g_mdio {
+>  	cpsw3g_phy1: ethernet-phy@1 {
+>  		compatible = "ethernet-phy-id2000.a231", "ethernet-phy-ieee802.3-c22";
+>  		reg = <1>;
+> +		bootph-all;
+>  		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+>  		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
+>  	};
+> @@ -232,10 +240,15 @@ mbox_m4_0: mbox-m4-0 {
+>  	};
+>  };
+>  
+> +&main_pktdma {
+> +	bootph-all;
+> +};
+> +
+>  &main_i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&main_i2c0_pins_default>;
+>  	clock-frequency = <400000>;
+> +	bootph-all;
 
-Okay noted.
-Thanks
+please review closer the series to ensure that no parent node has a
+bootph property if the child node has it.
 
-Adekunle.
+>  	status = "okay";
+>  
+>  	pmic@30 {
+> @@ -355,6 +368,7 @@ serial_flash: flash@0 {
+>  		cdns,tchsh-ns = <60>;
+>  		cdns,tslch-ns = <60>;
+>  		cdns,read-delay = <0>;
+> +		bootph-all;
+>  	};
+>  };
+>  
+> @@ -363,5 +377,6 @@ &sdhci0 {
+>  	pinctrl-0 = <&main_mmc0_pins_default>;
+>  	disable-wp;
+>  	non-removable;
+> +	bootph-all;
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
+> index 922cad14c9f8..aab74d6019b0 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62x-phyboard-lyra.dtsi
+> @@ -138,6 +138,7 @@ vcc_3v3_mmc: regulator-vcc-3v3-mmc {
+>  		regulator-max-microvolt = <3300000>;
+>  		regulator-always-on;
+>  		regulator-boot-on;
+> +		bootph-all;
+>  	};
+>  
+>  	vcc_3v3_sw: regulator-vcc-3v3-sw {
+> @@ -233,6 +234,7 @@ AM62X_IOPAD(0x228, PIN_INPUT_PULLUP, 0) /* (C21) MMC1_DAT2 */
+>  			AM62X_IOPAD(0x224, PIN_INPUT_PULLUP, 0) /* (D22) MMC1_DAT3 */
+>  			AM62X_IOPAD(0x240, PIN_INPUT_PULLUP, 0) /* (D17) MMC1_SDCD */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	main_rgmii2_pins_default: main-rgmii2-default-pins {
+> @@ -257,6 +259,7 @@ main_uart0_pins_default: main-uart0-default-pins {
+>  			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14) UART0_RXD */
+>  			AM62X_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (E14) UART0_TXD */
+>  		>;
+> +		bootph-all;
+>  	};
+>  
+>  	main_uart1_pins_default: main-uart1-default-pins {
+> @@ -266,6 +269,7 @@ AM62X_IOPAD(0x198, PIN_OUTPUT, 2) /* (A19) MCASP0_AXR2.UART1_RTSn */
+>  			AM62X_IOPAD(0x1ac, PIN_INPUT, 2) /* (E19) MCASP0_AFSR.UART1_RXD */
+>  			AM62X_IOPAD(0x1b0, PIN_OUTPUT, 2) /* (A20) MCASP0_ACLKR.UART1_TXD */
+>  		>;
+> +		bootph-pre-ram;
+>  	};
+>  
+>  	main_usb1_pins_default: main-usb1-default-pins {
+> @@ -430,12 +434,14 @@ &main_mcan0 {
+>  &main_uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&main_uart0_pins_default>;
+> +	bootph-all;
+>  	status = "okay";
+>  };
+>  
+>  &main_uart1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&main_uart1_pins_default>;
+> +	bootph-pre-ram;
+>  	/* Main UART1 may be used by TIFS firmware */
+>  	status = "okay";
+>  };
+> @@ -467,11 +473,13 @@ &sdhci1 {
+>  	pinctrl-0 = <&main_mmc1_pins_default>;
+>  	disable-wp;
+>  	no-1-8-v;
+> +	bootph-all;
+>  	status = "okay";
+>  };
+>  
+>  &usbss0 {
+>  	ti,vbus-divider;
+> +	bootph-all;
+>  	status = "okay";
+>  };
+>  
+> @@ -482,6 +490,7 @@ &usbss1 {
+>  
+>  &usb0 {
+>  	usb-role-switch;
+> +	bootph-all;
+>  
+>  	port {
+>  		typec_hs: endpoint {
+> -- 
+> 2.34.1
+> 
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
