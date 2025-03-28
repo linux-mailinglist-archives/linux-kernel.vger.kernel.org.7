@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-579343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C3AA74225
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:51:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FF2A7421D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AF23BB2AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89D5189C3AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441BB1C5D78;
-	Fri, 28 Mar 2025 01:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E77189B91;
+	Fri, 28 Mar 2025 01:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZQYhvZfJ"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="cYnZdELW"
 Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0219A1F5E6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A98B1F5E6
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743126708; cv=none; b=MxfhCjEeUAgBRQ57oKragINektO0ybhUYfO6ax6bbM/iTKS9q9dNNPtS5uoRf77RQgnrOTF97EKP47JQLFOMQqIT7S0eVm0ofGRQ3lYDeJvvEZimssxxPFF6rouCXB/4/4+LaFWZOG2gTlMkPaKHFzm8tEFDyGpJ7y9dix2j6rU=
+	t=1743126341; cv=none; b=jCO7pmm/AQR6kYyBlEtIIJbtO1662uEdUn9Ulem7i5WPig2xd+WaAl6MNLuY+9dUUDBP6+f4CRA8zW4wzlnLZgEFFIRFHxWyjyONJeDYjyE+cMQI0c6LoWzK7iGv+5Gpx7OPIvKo3tNIhQ3XcBJXdWnGaR0TYqMQFCZWLUKGYz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743126708; c=relaxed/simple;
-	bh=CdInnaW2IoMquTqrJ0EaLqunLOWjgUx9zTs/KAhtqgA=;
+	s=arc-20240116; t=1743126341; c=relaxed/simple;
+	bh=5rlMF3EdTMplo4ZiNP8oicxDIGNVDLr4l1WVenFeBDc=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=UNjirnH1hSDvn0qJIbRXf+kglQ1W589CqTDFRBT6CJTFhfGUHNgW56AMy66wSi08vQ8s66XWOwija2tGSDxdgi93O48niZQe7iEOrcvze8rKFACnf2IYrMk99pmppC+86QGJq5/8bQotmpnASQBufee1UgWWasC+ZjzJGv6dR1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZQYhvZfJ; arc=none smtp.client-ip=203.205.221.202
+	 MIME-Version; b=gtDykUAEb6TD3f2hleCZRg5kd4bw9n9Q0Fgtu7rQ2i0y14Ap4uptALlj16ADfnBsrHRV4BAOLhoq1A5SJEFxFpbSeg/D/XP/3YEUuv8ee0ctGkOmngKHnMwnAgZwrw3XKGSgBtJhzRGRkxHS58PB5d/7emQd4PpyS36viTy3y6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=cYnZdELW; arc=none smtp.client-ip=203.205.221.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743126403; bh=PjXUOGWXY+dEUkurv+VbTf8nEAUGXROEdkAf6TL7DIo=;
+	t=1743126034; bh=aExX0kC5Xf+cB41U+J27cfH1AIdrlolDMYa3emTpxnE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZQYhvZfJiWbu5bslotLmCBIyFbSl+Px7tZABXMxkxLPJtS0fD5mXSHmDuXF8z+TOC
-	 jVTIsgXzfsqgKKYD8c8kurSojyJ+wHHAMRfRbu7T2T0WN7M7cFoP3V47oWpmjj1NNh
-	 UFHBcqmUly4tPxr8xnovrpHHK27LhhByyOnHagLo=
+	b=cYnZdELWFGqey8+Y+dIV911egyIbXWDvTq1RajNK4xB93EcuympUu+WpNbSX5pZjZ
+	 U5kSGW9/z1VD9lFibn8q3oJONEck3KRUBJ8hSMRNhgYjaD0h3dSWSuRZDUm3/Q4IZK
+	 pFY/7tnfrVm11ivKs8y+qvb7G5IGEVn8XZG39EtI=
 Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id A16BAECE; Fri, 28 Mar 2025 09:40:22 +0800
-X-QQ-mid: xmsmtpt1743126022tnsyc6efw
-Message-ID: <tencent_10073A637F934BE4C78884A0465872286C09@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8I5pEsPCmWh/6BKZqiMrnvcCXG4fCP1/9IllAXb2wFCI+NKgdTe
-	 Hi0yLm8wVOiu8gzYGvTKkcpuKUtFk1G3BtoZypnScNh4JxQuCECK64vFjDU1Z5HQP6QrRS9ZA1E+
-	 Fkt34nHUlLdC3c8Y7QsKeMWbQltbwiyRLSfvTlPLoZHuk9Tpv82RW8kPjjrk5QO0cnnBJqnuFsNk
-	 qba98qvUg8lv/LoqkAHQ37x6EBhgO2J+/UVZYDYwinCvQRw6PHQvlcglzr3WpmNepmdo0kkpUyAf
-	 FEFoH32j1ZaYvAHbRE9QgzdBS5zlKgkuE1Az+3/jm3FDaL+R3jzmb6+eWDF8L5GEe/sLDF0qBCut
-	 YjI7lGfA5btSV2QKV9hYaK8v1lTolRhbDKFMUfFfyihBsk1+kfdnPutluioh9lkcsktHKuPMJmXo
-	 9wndBYSuyneSosS/wTapNel6fFZARYFPBRBVpElgwbbHIpXC0HY+wRlVbz8WtxO9aBrrVnDhfxa7
-	 q7PHAwcxEkkYpeA0fKrLt3GhrDY29xmIIQyMsND2VZ9kapOvUwthmyMU1yfnthUTkSJCdfGZEIY5
-	 xkSkTS5ai2BAx7TM4CA2xDkqFIEtxq6A4Iu3aDPW+5WzC2La6/zoeyEsAmztG2808+ienjqg08wV
-	 D9aEQi0AxG8891e6Ih/QU5sLdTFWTXO0OFt/Ksm9nxEMucb1Ty7QqPFDXc3JToCsrScTogUFHrIe
-	 oeB3akTgJFXu7JciocPKMgA+OOKuh+6ODdWKMDYh1/ksiRaE2Mg5IkYAmWm50S6dDda1a2PiP5fF
-	 imKZlCvO2ZHyjnslAErSeSy82EartcnbEQ3k2WvlzzLOMQXL9L1/8xlfqHAZmxucnMxTvM4YZ2qm
-	 raqRY+cA9u8e96L91cJGz+YjOC4CinmRG+rjPK9rVMKSWEWtne02CCZQV6ztuA5FiCh74loni7Af
-	 odA2YfbiO9iJ8j72OqGuECzWpqCUeY
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id A20B4A85; Fri, 28 Mar 2025 09:40:32 +0800
+X-QQ-mid: xmsmtpt1743126032tok9f6m5q
+Message-ID: <tencent_29C768845246A8732C6D233A857EC74B6809@qq.com>
+X-QQ-XMAILINFO: OcN56dxiYj5T37Veb2R6Gdm+66ORTSOhPQYHL55Adm1fBVLY0+VtJA5/hPDHYX
+	 AdGk9n/rqz5fwOomSbagstJaOJ93dH4C+JN0HtN5/djMqiearbN4PZ83gp3eMdSC8W2aAhxop0YB
+	 noxV1Z2XtpVWxP5ysxmh9GLgBPpL7AVf7F4RLh1Ple53gVILzncKWDiSfJhS58JvL8rrsydf2hpK
+	 +JlZJSpWpViktMwmEp2FAX/2uwEO9OucbsJTbeiBNkW7MZr7NlLehG76TKrDkzZSUOiujxyuj9e5
+	 +p+1NdIdXc6UyVjE9+gqpq9ht0PVLb9IwmC8nUsN+U+yTOcfd1OgL/Z2uDDP0ZdK6i+JZfqMJ+CG
+	 K6QEqDoduJJKGyRWDsSxvijBk+tBmKve8rI4hmO2ReHkqK37LYTYAZubJv4/9z7hM6AVIsapoIru
+	 wrl+WytjY0RfQEWxkUA6UkUY463K3q41W4fCbA2ctJFBMtEpYufFj8o40Jjay0qtRZFbZQo6t4XB
+	 XNastaNWjNiVAJrskTtmUbkB51KU0QXFwYPc3GFWKKnrvYyYYWLkvOJpTiaktIrNM+8H552PsdLB
+	 oGnwkLgN8RYpFWP1u9zUw3HGzlQRIkoZRkwxpnZdeks1+QS3D1VjNA/QPH70R8kwo+Bl7qdnJw/5
+	 IeqVUoJwDZ74cJ8wJrsydw/JrgYqipj6j6H5KM9NctJG/VvQ6a3/oQQ7SgNcndmX1d+Rd358Wmwr
+	 Y/rndW2WcdyUro+iJQz7ArxaRExHk9mr+MwL0ud+JiQY38m4ZJSAHD2MUPOIYdHYf+OjdRV0qhaA
+	 H7td1McW+FVYQSU+PPvBVA31suj0ylPwzVJ2CKUwZzpedc2j92Fs9j7+BCeRr3jQ/hNoholKXPPZ
+	 vC7zL72CMBkw13bFu+wEEGee3a+3S8WIEHa3UPJLYV7dR4oJZ6uqXn4TcOhdFVzYSeuVqV8n0WTR
+	 2RsJSZ8BbnDkWbkEjyD1ykfT+ziQRti3rZ8of/p/yz2ceM6mFSopVee00JlfL0
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
 From: Yaxiong Tian <iambestgod@qq.com>
 To: kbusch@kernel.org,
 	axboe@kernel.dk,
@@ -64,9 +64,9 @@ To: kbusch@kernel.org,
 Cc: linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v2 1/3] nvme: Add warning for PST table memory allocation failure in nvme_configure_apst
-Date: Fri, 28 Mar 2025 09:40:21 +0800
-X-OQ-MSGID: <20250328014021.94451-1-iambestgod@qq.com>
+Subject: [PATCH v2 2/3] nvme: add sysfs interface for APST table updates
+Date: Fri, 28 Mar 2025 09:40:31 +0800
+X-OQ-MSGID: <20250328014031.94959-1-iambestgod@qq.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <tencent_4A5421BA11BD9C5B5BF3CEA95FD212AB3107@qq.com>
 References: <tencent_4A5421BA11BD9C5B5BF3CEA95FD212AB3107@qq.com>
@@ -80,30 +80,124 @@ Content-Transfer-Encoding: 8bit
 
 From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-Currently the function fails silently on PST table memory allocation failure.
-Add warning messages to improve error visibility.
+Currently, the APST (Autonomous Power State Transition) table can only be
+updated during module initialization via module parameters or indirectly
+by setting QoS latency requirements. This patch adds a direct sysfs
+interface to allow dynamic updates to the APST table at runtime.
 
-Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+The new sysfs entry is created at:
+/sys/class/nvme/<controller>/apst_update
+
+This provides more flexibility in power management tuning without
+requiring module reload or QoS latency changes.
+
+Example usage:
+update nvme module parameters.
+echo 1  > /sys/class/nvme/nvme0/apst_update
+
+Signed-off-by: Yaxiong Tian  <tianyaxiong@kylinos.cn>
 ---
- drivers/nvme/host/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c  |  9 +++++++--
+ drivers/nvme/host/nvme.h  |  2 ++
+ drivers/nvme/host/sysfs.c | 23 +++++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index c2d89fac86c5..fb0404fee551 100644
+index fb0404fee551..9dea1046b8b4 100644
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -2678,8 +2678,10 @@ static int nvme_configure_apst(struct nvme_ctrl *ctrl)
+@@ -2654,7 +2654,7 @@ static bool nvme_apst_get_transition_time(u64 total_latency,
+  *
+  * Users can set ps_max_latency_us to zero to turn off APST.
+  */
+-static int nvme_configure_apst(struct nvme_ctrl *ctrl)
++int nvme_configure_apst(struct nvme_ctrl *ctrl)
+ {
+ 	struct nvme_feat_auto_pst *table;
+ 	unsigned apste = 0;
+@@ -2778,8 +2778,11 @@ static void nvme_set_latency_tolerance(struct device *dev, s32 val)
+ 
+ 	if (ctrl->ps_max_latency_us != latency) {
+ 		ctrl->ps_max_latency_us = latency;
+-		if (nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE)
++		if (nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE) {
++			mutex_lock(&ctrl->apst_lock);
+ 			nvme_configure_apst(ctrl);
++			mutex_unlock(&ctrl->apst_lock);
++		}
  	}
+ }
  
- 	table = kzalloc(sizeof(*table), GFP_KERNEL);
--	if (!table)
-+	if (!table) {
-+		dev_warn(ctrl->device, "Failed to allocate pst table; not using APST\n");
- 		return 0;
+@@ -4852,6 +4855,8 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ 	ctrl->ka_cmd.common.opcode = nvme_admin_keep_alive;
+ 	ctrl->ka_last_check_time = jiffies;
+ 
++	mutex_init(&ctrl->apst_lock);
++
+ 	BUILD_BUG_ON(NVME_DSM_MAX_RANGES * sizeof(struct nvme_dsm_range) >
+ 			PAGE_SIZE);
+ 	ctrl->discard_page = alloc_page(GFP_KERNEL);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 51e078642127..7f8e10f5bf7a 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -385,6 +385,7 @@ struct nvme_ctrl {
+ 	key_serial_t tls_pskid;
+ 
+ 	/* Power saving configuration */
++	struct mutex apst_lock;
+ 	u64 ps_max_latency_us;
+ 	bool apst_enabled;
+ 
+@@ -828,6 +829,7 @@ void nvme_unfreeze(struct nvme_ctrl *ctrl);
+ void nvme_wait_freeze(struct nvme_ctrl *ctrl);
+ int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
+ void nvme_start_freeze(struct nvme_ctrl *ctrl);
++int nvme_configure_apst(struct nvme_ctrl *ctrl);
+ 
+ static inline enum req_op nvme_req_op(struct nvme_command *cmd)
+ {
+diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+index 6d31226f7a4f..5003cb294d65 100644
+--- a/drivers/nvme/host/sysfs.c
++++ b/drivers/nvme/host/sysfs.c
+@@ -684,6 +684,28 @@ static DEVICE_ATTR(dhchap_ctrl_secret, S_IRUGO | S_IWUSR,
+ 	nvme_ctrl_dhchap_ctrl_secret_show, nvme_ctrl_dhchap_ctrl_secret_store);
+ #endif
+ 
++static ssize_t apst_update_store(struct device *dev,
++					      struct device_attribute *attr,
++					      const char *buf, size_t size)
++{
++	int err;
++	bool bool_data = false;
++	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
++	err = kstrtobool(buf, &bool_data);
++
++	if (err)
++		return err;
++
++	if (bool_data && nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE) {
++		mutex_lock(&ctrl->apst_lock);
++		nvme_configure_apst(ctrl);
++		mutex_unlock(&ctrl->apst_lock);
 +	}
++
++	return size;
++}
++static DEVICE_ATTR_WO(apst_update);
++
+ static struct attribute *nvme_dev_attrs[] = {
+ 	&dev_attr_reset_controller.attr,
+ 	&dev_attr_rescan_controller.attr,
+@@ -712,6 +734,7 @@ static struct attribute *nvme_dev_attrs[] = {
+ 	&dev_attr_dhchap_ctrl_secret.attr,
+ #endif
+ 	&dev_attr_adm_passthru_err_log_enabled.attr,
++	&dev_attr_apst_update.attr,
+ 	NULL
+ };
  
- 	if (!ctrl->apst_enabled || ctrl->ps_max_latency_us == 0) {
- 		/* Turn off APST. */
 -- 
 2.25.1
 
