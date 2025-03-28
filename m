@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-580449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F7A751F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:19:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D17AA75214
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:23:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90A618947F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200231700C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66A51E51F0;
-	Fri, 28 Mar 2025 21:19:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A381B1F3B98;
+	Fri, 28 Mar 2025 21:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LY3PP5Jw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A9C1A0BF1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20841F09A3;
+	Fri, 28 Mar 2025 21:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743196780; cv=none; b=l1BkdRyH08hG2HZseps0B+saQMmY3653UTgshFJH3PQvpHm3BCXyE3eTn48XPO/FqB3/3hC7Fb5fZrWsD97U3YpWuwYNbkr0IxmZ6l74Flg+viAv8wnPIbcfUJL5hwwzDEoXzVwh74xfRQ5MNnaZw21k37gTdc30Qmy4SzXjYgE=
+	t=1743196948; cv=none; b=fw0q5y/qRaM8MKTORhhk/Y0/xe2CMEoDv0ihrXceJtlLKsGdPPB3gTy7HbucMNJIIc7kPWmt1sMy4qQhgSAv6QVwYu+1I8Ajm4UXY5uOpHYfKCimrDpYjPMTndVXhbFql3WPcLWk3mzIqhoAkqEmoLSXpLjjRziv9S0i0x3N43k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743196780; c=relaxed/simple;
-	bh=s5btmg4so1djPIgLxWaq+A1cA7iuSJ3YgSJla80Zv8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CZyYJmfRH2onUTC8mtGz5nKb9URpRzHTTXk/bDcg/Y0wjCgY8DQGh3sS7APaiChg6pwSLNlGfHxm6xZDY4gGTMZlKsTFUyxdYCjzO9Oz3AdGDO2mP41CVjV4zVyPn8mlsuHcIqyQsuIL2PuZEtZR/EqUCgsMM4W4rKQLOkqy0n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618D9C4CEE4;
-	Fri, 28 Mar 2025 21:19:39 +0000 (UTC)
-Date: Fri, 28 Mar 2025 17:20:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell
- <sfr@canb.auug.org.au>
-Subject: [GIT PULL v3] latency tracing: Documentation fix for previous pull
- request
-Message-ID: <20250328172030.286d5a47@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743196948; c=relaxed/simple;
+	bh=iPVNZrosWilyB+mH4hBlRAtdEDDdZj+MPuPZjiWFiAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZWurMHMIBdEjlGTrmK5XTadl7h97+hRDened+1lZRXbz2WDkwo+WQKgN5OaDTI23sOELxxMAEgQCnqKcrA97QRXycp/gUYflOEvwo7gA1DExruhUnVs7XoxJuYTerkw8m1m+BtVoYS6/tvEhmm2Af+6RppJfrVHMd5YzBNpjAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LY3PP5Jw; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743196946; x=1774732946;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iPVNZrosWilyB+mH4hBlRAtdEDDdZj+MPuPZjiWFiAY=;
+  b=LY3PP5JwUN2AOKGow4m35/ZpvPD/+CUjrJmUxYXJgvfPPJHPis7K00ha
+   +qKbZvK6WJuOeu1HnIG3W3CAPilvSAnJzvAL1NfffDAVDQRS5Xl3pmeMC
+   QTkPmQbHgyynJKVDAaD9XE3XMI5+8HVpywcLLUUltXW+q+ZFYTAtHwP+t
+   d+76YWdm0uZHPvwyJDYe4ctaN9aQxz5tDmTWplZNt+/9AkkLFitodlez8
+   ONan5ZCz6HZ4dSkZtHSjiW2SClZiiaqZsOxRMoIbndMkAlEHSlqJ4ZzVW
+   lUXtlkEpaxkNfhbyuhr/vA7pQsMmQUXcFKyVsWJzBmiiBS1gJZDH+D+LB
+   w==;
+X-CSE-ConnectionGUID: Kq8UO8+NT6O0wwYDKFbvhA==
+X-CSE-MsgGUID: 5qPRqMCNRb+5gy/sYQ3SVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="61965760"
+X-IronPort-AV: E=Sophos;i="6.14,284,1736841600"; 
+   d="scan'208";a="61965760"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 14:22:25 -0700
+X-CSE-ConnectionGUID: Rly5uu6cRAS34j5ZxW7JiQ==
+X-CSE-MsgGUID: EpBvDbyfTHaoX3d2DvXGrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,284,1736841600"; 
+   d="scan'208";a="162791723"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.108.185]) ([10.125.108.185])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 14:22:24 -0700
+Message-ID: <30a7f782-4388-45b6-bb3c-a0faf85b7445@intel.com>
+Date: Fri, 28 Mar 2025 14:22:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG -next] ./usr/include/cxl/features.h:11:10: fatal error:
+ uuid/uuid.h: No such file or directory
+To: paulmck@kernel.org
+Cc: linux-cxl@vger.kernel.org, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ gourry@gourry.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+ sfr@canb.auug.org.au
+References: <f6489337-67c7-48c8-b48a-58603ec15328@paulmck-laptop>
+ <14bfcfa0-5999-49e4-854e-ff8810d6df3c@intel.com>
+ <52a34c97-88d2-415e-a899-6583ae3ba620@paulmck-laptop>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <52a34c97-88d2-415e-a899-6583ae3ba620@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Linus,
 
-It was reported that there was a documentation issue with the latency tree
-just after I sent the pull request. It was fixed and I replied that there
-was an update, but the original one was pulled instead. I probably should
-have deleted the older tag, which would have made it obvious that there was
-a never version.
+On 3/28/25 1:45 PM, Paul E. McKenney wrote:
+> On Fri, Mar 28, 2025 at 01:03:19PM -0700, Dave Jiang wrote:
+>>
+>>
+>> On 3/28/25 10:39 AM, Paul E. McKenney wrote:
+>>> Hello!
+>>>
+>>> In next-20250328 and next-20250327, allmodconfig builds get me:
+>>>
+>>> ./usr/include/cxl/features.h:11:10: fatal error: uuid/uuid.h: No such file or directory
+>>>
+>>> This file is apparently auto-generated, because when I change the #include
+>>> to the more likely linux/uuid.h, my changes are overwritten by the build.
+>>>
+>>> Gregory Price noted that something similar has happened recently and been fixed:
+>>>
+>>> https://lore.kernel.org/all/70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com/
+>>>
+>>> Perhaps someone unfixed it?
+>>>
+>>> 								Thanx, Paul
+>>
+>>
+>> I can't get the powerpc cross build to build to reproduce the issue from next-20250328. Does the change below address the issue for you?
+>>
+>> ---
+>> diff --git a/include/uapi/cxl/features.h b/include/uapi/cxl/features.h
+>> index d6db8984889f..691eeda9c892 100644
+>> --- a/include/uapi/cxl/features.h
+>> +++ b/include/uapi/cxl/features.h
+>> @@ -8,11 +8,7 @@
+>>  #define _UAPI_CXL_FEATURES_H_
+>>  
+>>  #include <linux/types.h>
+>> -#ifndef __KERNEL__
+>> -#include <uuid/uuid.h>
+>> -#else
+>>  #include <linux/uuid.h>
+>> -#endif
+>>  
+>>  /*
+>>   * struct cxl_mbox_get_sup_feats_in - Get Supported Features input
+> 
+> Thank you, Dave!
+> 
+> Please note that I am reproducing this not on powerpc, but instead on
+> x86 with a simple allmodconfig build.
+> 
+> Making the above change got me this:
+> 
+> usr/include/cxl/features.h:59:9: error: unknown type name ‘uuid_t’
 
-Anyway, this is the commit that was suppose to be added, with a new change
-log:
-
-Documentation fix for runtime verifier
-
-The runtime verifier documents that were created were not referenced
-in the indices, which caused warning when building the documentation
-tree. Those documents are now added to the rv indices.
+I wasn't able to hit that with allmodconfig on x86 with a Fedora 41 build setup. What is the specific command lines you are using?
 
 
-Please pull the latest trace-latency-v6.15-3 tree, which can be found at:
 
+> 
+> 							Thanx, Paul
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-latency-v6.15-3
-
-Tag SHA1: cc878e7c98d50f2525ae669e1e5bad70478532ae
-Head SHA1: 4bb5d82b66002b770f8917d68ab4fbefcb7f5f9b
-
-
-Gabriele Monaco (1):
-      Documentation/rv: Add sched pages to the indices
-
-----
- Documentation/tools/rv/index.rst | 1 +
- Documentation/trace/rv/index.rst | 1 +
- 2 files changed, 2 insertions(+)
----------------------------
-commit 4bb5d82b66002b770f8917d68ab4fbefcb7f5f9b
-Author: Gabriele Monaco <gmonaco@redhat.com>
-Date:   Thu Mar 27 09:12:40 2025 +0100
-
-    Documentation/rv: Add sched pages to the indices
-    
-    The pages Documentation/tools/rv/rv-mon-sched.rst and
-    Documentation/trace/rv/monitor_sched.rst were introduced but not
-    included in any index.
-    
-    Add them to the respective indices.
-    
-    Cc: Jonathan Corbet <corbet@lwn.net>
-    Link: https://lore.kernel.org/20250327081240.46422-1-gmonaco@redhat.com
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Fixes: 03abeaa63c08 ("Documentation/rv: Add docs for the sched monitors")
-    Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/Documentation/tools/rv/index.rst b/Documentation/tools/rv/index.rst
-index 8fd16d91d639..64ba2efe2e85 100644
---- a/Documentation/tools/rv/index.rst
-+++ b/Documentation/tools/rv/index.rst
-@@ -15,6 +15,7 @@ Runtime verification (rv) tool
-    rv-mon
-    rv-mon-wip
-    rv-mon-wwnr
-+   rv-mon-sched
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/trace/rv/index.rst b/Documentation/trace/rv/index.rst
-index 15fa966102c0..e80e0057feb4 100644
---- a/Documentation/trace/rv/index.rst
-+++ b/Documentation/trace/rv/index.rst
-@@ -12,3 +12,4 @@ Runtime Verification
-    da_monitor_instrumentation.rst
-    monitor_wip.rst
-    monitor_wwnr.rst
-+   monitor_sched.rst
 
