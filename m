@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-579373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BEB9A7427A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:49:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DC7A7429A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34AF37A7FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B02A3BBFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AD920E715;
-	Fri, 28 Mar 2025 02:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="TwPdQG+Z"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FD720F079;
+	Fri, 28 Mar 2025 02:49:24 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54DD20E01B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7E320E323;
+	Fri, 28 Mar 2025 02:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743130105; cv=none; b=VfE2Nw6V3blBO108JafsZJWsvMPG8EglXzqLjB8LoqAbYvh+KdMetGlyHkK3VGcYD/QK5f5FxjsNE8gW/MAcyLYjW7qVW6FD6Xzs3xvIVI4oMVW0RJ4zY0FxWsGNF3emMVmJK3Webr4zzqFYBnY3t1GN+hagOTUW59P7u4H10Tg=
+	t=1743130163; cv=none; b=MPwq9eVML2WGSmc1HyBy8dKQn10qKElUXhttDunpthUTf4b/D3m0y6Cb6nEcn5JYtyh5X3gkLFTgw//rbI743oRC39QFZ6tPI/M3iGU4knCsfxPV4A2gRYb6zuA10vd2bPKJ2+H213u2SZ1Vw3OUDRZ0sMq1mvfhIAIIfd8JoZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743130105; c=relaxed/simple;
-	bh=e2On1fb6O58TqnEGWKGy4iYqXb9CpFoYz2GpFoxnHc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BVJociggfA7DnUuvbXFBXG547oH5qMlRqV8KgMxzgr8qKsTgggq0UjCHnKCzVuZHfvbmx/A0TlUsIv56/ADVYoDyRaZtgy2BXVzNfeYIOnJyEKmFIBMExhEi/OpGLkvfDnCAL/W8BU31l46ejrwCbd/Lp3DFp2LazAwqmzUNOMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=TwPdQG+Z; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff73032ac0so369206a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Mar 2025 19:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1743130103; x=1743734903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7oUlXQTE4USpfOU4bhU00bGxcL8wzVl02D95/iuVNsI=;
-        b=TwPdQG+Zr+zu+i+rhwmwMbnNn0LNCa4+IFv3ruOwspG036U6LDjcECbk1js/zF47iw
-         96+p1SQsv/bRqz1Kx54GYguR/SF5dzzKwzjFiO8kKwiiN0Hm2IOd9RTDNCG1PGqwwtzT
-         XAJiS6Bu9SL424Dy8WLhKdheHTmlXsim2+vOeUH3XInrODcmV8LCWQwspwhfStm+fhVA
-         h49zv30/pQgx1JlwOAiA9we8LKqtch9oemq/k3ZuXujOj0yAPPn74p3khv1OYZOCrT8K
-         oECKZZ+HXaHOp35CiJ+61vBRqMxm6tx1e1YKQOFTkaKEDVWH/105PHdudjLSsZgDh5fr
-         Q+2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743130103; x=1743734903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7oUlXQTE4USpfOU4bhU00bGxcL8wzVl02D95/iuVNsI=;
-        b=HnZuHEFrdhXjH1FQ4jJTVcoDhQLnb1GfYYKpl3hXr27oqk+o4twmbhaE9MorrtxMQE
-         tB6rtQ6WUMRNx3K91Ggn9ZlNAEWxwXDV8dwSHGJHqUW8JG1QrVg8iiLVCv46cWfzUsjJ
-         LOijbdXb6OayT9YS0pXYlDo82hk4NmdOYx8lHGhDPnM3U6xhxlwOyA4aVmZzdtAgL8UA
-         bMiFqGZ1YnI7NerMqva7Sb6W1RSAl/KDlP6NXj888Je0y8NCSeJN1kva783h8Pt6gssY
-         gCoFBstOKD74VK8DqMq+BVFdWf73O+kF0h37n4SfKbM/jlcQrDOd+Sk2xlNJ8cZLdNUg
-         jhug==
-X-Forwarded-Encrypted: i=1; AJvYcCWmQItvnV9Q+xoBHjPKqr2R41X+j1qbOW7KK9UvPUWT4q7dbUo/s5043IkoJGVYTbCwU6X6i62cqPYltfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn37N/4Mq7IMn5mCq3kn2NDcTc/6Iqv/nKZBIxISlkzTiy4pqQ
-	66CsY3rM446pTd2FuHDmhBRWxP5Lcxzq3IwHBL4PMWwmC92rbN/O4RaRA+5LrAqBLlRoDSOP6aQ
-	Yngj9KFWndcKwQPPLgor4LuGdNwm/BnFIrx9EOOS6a7lMQ79lK3Y=
-X-Gm-Gg: ASbGncvt1YO0kCKs28nEiJot2vCU6zcp8imGrrdbqN5p31pP8PgY+hGHcR90gwiTPDl
-	BWycT9Sq0nLlqP29pkZocVwbPVd2BNaL5ipZaow/Nu+6GFY0aGhHw+3kWbrTF2ZT2Kua6R8aNAt
-	z3cvV1ebEuQSLNIwjWxGpaVJ3/
-X-Google-Smtp-Source: AGHT+IH5+njc/B9zdYdMwIxhAZN2UDtU62BqIvQxdf8FL37O1ElaoBnGJuHjBhevSMlUpnHeDnICzSch78C6MeU5HDw=
-X-Received: by 2002:a17:90b:4d07:b0:2fe:b972:a2c3 with SMTP id
- 98e67ed59e1d1-303b1dba5e1mr2943196a91.0.1743130102743; Thu, 27 Mar 2025
- 19:48:22 -0700 (PDT)
+	s=arc-20240116; t=1743130163; c=relaxed/simple;
+	bh=iJWNsJTPADMcOZPLDPY9tsRmwNLUSzR7d2gKrOxG/ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h54FNHlM37m9hhMIU9ZmRDJvzWd2uCjXzeTWbvfGRRdUtm5Vttzzu0f2PjOeTdsxBcSsiF0v6FZON2fIHr5kzYaJ3cKfhR1pis/MGPyo1R5ptnPUrr1ZPdYV8XDEvrw5+DA+L+plj/iu19hA5HInNY7i2FXUS6CHhu8j36wZ87o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZP4jJ4dybz13LNq;
+	Fri, 28 Mar 2025 10:48:52 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id 941ED1800E4;
+	Fri, 28 Mar 2025 10:49:17 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 28 Mar
+ 2025 10:49:16 +0800
+Message-ID: <2ee12dc5-8170-46ec-a78c-ce0950b9704d@huawei.com>
+Date: Fri, 28 Mar 2025 10:49:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321205722.3947901-1-csander@purestorage.com>
- <20250321205722.3947901-3-csander@purestorage.com> <20250327104232.GB10068@lst.de>
-In-Reply-To: <20250327104232.GB10068@lst.de>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 27 Mar 2025 19:48:11 -0700
-X-Gm-Features: AQ5f1JracAj1NqSM2tKPDpP46TcYNxt437uXCSHVplEHIBbua7GDryFHdYertZc
-Message-ID: <CADUfDZrqrAQzcf14B1ZxJoxVWOg2giXNCop18WG=62eMEHO7Mg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] nvme/ioctl: don't call blk_mq_free_request() in nvme_map_user_request()
-To: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ext4: Make block validity check resistent to sb bh
+ corruption
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Ritesh Harjani
+	<ritesh.list@gmail.com>, Zhang Yi <yi.zhang@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <linux-ext4@vger.kernel.org>, Yang Erkun
+	<yangerkun@huawei.com>
+References: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <c434eb50ee5161e23036d58a6166a7e216f6d6a0.1743097281.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On Thu, Mar 27, 2025 at 3:42=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
+On 2025/3/28 1:48, Ojaswin Mujoo wrote:
+> Block validity checks need to be skipped in case they are called
+> for journal blocks since they are part of system's protected
+> zone.
 >
-> On Fri, Mar 21, 2025 at 02:57:21PM -0600, Caleb Sander Mateos wrote:
-> >       ret =3D nvme_execute_rq(req, false);
-> >       if (result)
-> >               *result =3D le64_to_cpu(nvme_req(req)->result.u64);
-> >       if (bio)
-> >               blk_rq_unmap_user(bio);
-> > -     blk_mq_free_request(req);
-> >
-> >       if (effects)
-> >               nvme_passthru_end(ctrl, ns, effects, cmd, ret);
-> >
-> > +out_free_req:
-> > +     blk_mq_free_request(req);
+> Currently, this is done by checking inode->ino against
+> sbi->s_es->s_journal_inum, which is a direct read from the ext4 sb
+> buffer head. If someone modifies this underneath us then the
+> s_journal_inum field might get corrupted. To prevent against this,
+> change the check to directly compare the inode with journal->j_inode.
 >
-> We'll want the request freed before nvme_passthru_end here to avoid
-> deadlocks with namespaces scanning.
+> **Slight change in behavior**: During journal init path,
+> check_block_validity etc might be called for journal inode when
+> sbi->s_journal is not set yet. In this case we now proceed with
+> ext4_inode_block_valid() instead of returning early. Since systems zones
+> have not been set yet, it is okay to proceed so we can perform basic
+> checks on the blocks.
+>
+> Suggested-by: Baokun Li <libaokun1@huawei.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Thanks for the patch！Looks good to me, except for the extra indentation
+pointed out by Honza. With that fixed feel free to add:
 
-Good point, I'll send out a v4.
+Reviewed-by: Baokun Li <libaokun1@huawei.com>
 
-Thanks,
-Caleb
+
+Cheers,
+Baokun
+> ---
+>
+> ** Changes since v1 [1] **
+>
+> - instead of using an sbi field direction check against jorunal->j_inode
+> - let block validity perform basic checks on journal blocks as well
+> 	during init path
+> - kvm-xfstests quick tests are passing
+>
+> [1] https://lore.kernel.org/linux-ext4/d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com/
+>
+>   fs/ext4/block_validity.c | 5 ++---
+>   fs/ext4/inode.c          | 9 +++++----
+>   2 files changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+> index 87ee3a17bd29..e8c5525afc67 100644
+> --- a/fs/ext4/block_validity.c
+> +++ b/fs/ext4/block_validity.c
+> @@ -351,10 +351,9 @@ int ext4_check_blockref(const char *function, unsigned int line,
+>   {
+>   	__le32 *bref = p;
+>   	unsigned int blk;
+> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+>   
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> +	if (journal && inode == journal->j_inode)
+>   		return 0;
+>   
+>   	while (bref < p+max) {
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 365d31004bd0..8b048be14008 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -384,10 +384,11 @@ static int __check_block_validity(struct inode *inode, const char *func,
+>   				unsigned int line,
+>   				struct ext4_map_blocks *map)
+>   {
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> -		return 0;
+> +	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
+> +
+> +	if (journal && inode == journal->j_inode)
+> +			return 0;
+> +
+>   	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+>   		ext4_error_inode(inode, func, line, map->m_pblk,
+>   				 "lblock %lu mapped to illegal pblock %llu "
+
+
 
