@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-579744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7293BA748E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:03:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A4FA748E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2803E7A493C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1D407A90C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6A821ABA0;
-	Fri, 28 Mar 2025 11:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA1021ADD4;
+	Fri, 28 Mar 2025 11:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cdqhQpjS"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZlXwEPS2"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8591A1DED6E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D74221ABD1
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 11:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743159782; cv=none; b=HJzoXP/3N46gM0wCL3hocVGR0YLTUAuaX5Nx9on1umNXB0uQGmmmjVGbf5+O1fLeYbFPK0D5o4Xw/i9QC090aOix50AlJf46AC7QvGE28eQocUGEetYtnyh6lo4w2gaQr9yvLCKPu6jFNYDofn84DY9FGBjxTYfpm3a7eCSu1lE=
+	t=1743159786; cv=none; b=RSS3iZDvK0qf3n1XWf3kbAOgV8nMAPTyauqGRBt25U7qrsPfrPzV25gr5ux/z21XkK8mNLafuJ8dQHVGw+S2n8DVpFvTVtsLnyrnDupOhihxNAv7cQW5roCkDrUanm0LRfLiQ/Bygs4yzaBG0Yo8LnFvivuxLvDSaYPpri/hLwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743159782; c=relaxed/simple;
-	bh=U4GjcafDlm3dAsQF9NeUgAupHC3MbjsBzZynIBGQLGY=;
+	s=arc-20240116; t=1743159786; c=relaxed/simple;
+	bh=FOFWiAYSyx44KVxMf8ZVYfZw2/T0gUlKOs0RhszDu0U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GcgYNWpuxEE9h11tiK7uLHc5blXbte0HLVBpoHrLtISURq3Vhjo7usPeLzft1SuNHZYEhDNwdTBi1Dm+FsvzQ0xflmrf0JiGvL1jDRE6QMkHUXX2JmoIK0ejr2jzrZIZ2C25xKHlGn5Tg/OFpli14THKS1G4BJjxMxwQXI8X0ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cdqhQpjS; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version; b=ihKc8XIQ3RIMwv5Nn5BpHu4T/NBYqtzlIoHfi7IRoAg9TGtPIEeTQXmG4P0dJ7kuW1lm2NsEVfacwSK29vpxV91G3qwr+KsBuvD2IB0d2h/BFLjLym/HqTC58bLbO5FBQwmfR4rBVHLTVahIVv3XKYbOFKJjO+YXea6lFqObkII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZlXwEPS2; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1743159778;
-	bh=U4GjcafDlm3dAsQF9NeUgAupHC3MbjsBzZynIBGQLGY=;
+	s=mail; t=1743159782;
+	bh=FOFWiAYSyx44KVxMf8ZVYfZw2/T0gUlKOs0RhszDu0U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cdqhQpjSDpndSv2hbMFQa0gPlkgKhUrFZIGtOZC+e24/qBkK7v5Iwm6JAdJ22Wvag
-	 MLZJoHtR4hGjxfu7HI8q4Efv/1Is3wBH5I7yiX9NstHcHTo1WADF/8pku7K8jgI1+9
-	 wDowpAivh01sE0Z6OANLat0wxIZ9At5LaSOuNNe423Ix+T7L04pQ7Rw9KTvGr+MPFg
-	 0O++7eljfj+w6/biSyVyWsuAnkljNXk8S/X/dqP1zPgRkiuDbGNG8x+B60YTlZbHkX
-	 kSE4sdJsYM3GF5W/DWzu28x2Ihjgv6sHFzOGvD8YswwQwe8OrAwluCvC/v/gYfietR
-	 g/huYvu6JsR5g==
+	b=ZlXwEPS2LocAW8WUtqhJFw1KPezF+mBfTVBdGEEnC/X7RlwkpiXvoED8NF3lLRgCN
+	 lEK2uoIj2vCi2WGn8W+fMx/Mh2ZWs/VS3sVvZ7m/WFAVTCEOgjtAcns2mbC1nkrJ+f
+	 LSoIp5NENjVR7E1SSqDMca05i623B7Bk0kyn5RGuv092gDnaxoCXcMBwdLE/ASAvDa
+	 oiRJ1NJkE9CGXNC4+L19DjA8tCLmobN2a5dfLkGQ8+BfQS5UuL280ikwTTPADDdxbv
+	 +V8VwotuDoBe33RBuKm0jL4bgOeO02Xg/NCCncyW4E9N/kijlQi+ZDSeOx7ZxuzOuj
+	 9hszRTdxsHAhA==
 Received: from debian.. (unknown [171.76.87.92])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E42717E0EA4;
-	Fri, 28 Mar 2025 12:02:55 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46B7F17E1062;
+	Fri, 28 Mar 2025 12:02:59 +0100 (CET)
 From: Vignesh Raman <vignesh.raman@collabora.com>
 To: dri-devel@lists.freedesktop.org
 Cc: daniels@collabora.com,
@@ -63,9 +63,9 @@ Cc: daniels@collabora.com,
 	maarten.lankhorst@linux.intel.com,
 	tzimmermann@suse.de,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/3] drm/ci: check-patch: unshallow repository before fetching
-Date: Fri, 28 Mar 2025 16:32:32 +0530
-Message-ID: <20250328110239.993685-3-vignesh.raman@collabora.com>
+Subject: [PATCH v1 3/3] drm/ci: uprev mesa
+Date: Fri, 28 Mar 2025 16:32:33 +0530
+Message-ID: <20250328110239.993685-4-vignesh.raman@collabora.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250328110239.993685-1-vignesh.raman@collabora.com>
 References: <20250328110239.993685-1-vignesh.raman@collabora.com>
@@ -77,55 +77,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Ensure the repository is not shallow before fetching branches in
-check-patch job. This prevents issues where git merge-base fails
-due to incomplete history. Set the timeout of check-patch job to 1h.
+The current s3cp implementation does not work anymore after the
+migration, and instead of fixing it and propagating the fix down to us,
+it's simpler to directly use curl. Uprev mesa [1][2] to adapt these
+changes. Also replace broken s3cp command with a curl wrapper call in
+drm-ci.
+
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34120
+[2] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34244
 
 Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 ---
- drivers/gpu/drm/ci/check-patch.py    | 16 ++++++++++++----
- drivers/gpu/drm/ci/static-checks.yml |  1 +
- 2 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/ci/build-igt.sh   | 2 +-
+ drivers/gpu/drm/ci/build.sh       | 6 +++---
+ drivers/gpu/drm/ci/gitlab-ci.yml  | 6 ++++--
+ drivers/gpu/drm/ci/image-tags.yml | 2 +-
+ drivers/gpu/drm/ci/lava-submit.sh | 2 +-
+ 5 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/ci/check-patch.py b/drivers/gpu/drm/ci/check-patch.py
-index a5f399a20e25..b206f12feb64 100755
---- a/drivers/gpu/drm/ci/check-patch.py
-+++ b/drivers/gpu/drm/ci/check-patch.py
-@@ -18,12 +18,20 @@ repourl = "https://gitlab.freedesktop.org/%s.git" % os.environ["CI_MERGE_REQUEST
- # GitLab CI environment does not give us any direct info about the
- # base for the user's branch. We thus need to figure out a common
- # ancestor between the user's branch and current git master.
--os.environ["GIT_DEPTH"] = "1000"
- subprocess.call(["git", "remote", "remove", "check-patch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
- subprocess.check_call(["git", "remote", "add", "check-patch", repourl])
--subprocess.check_call(["git", "fetch", "check-patch", os.environ["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]],
--                      stdout=subprocess.DEVNULL,
--                      stderr=subprocess.DEVNULL)
-+
-+# Check if the repository is shallow
-+shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
-+                         stdout=subprocess.PIPE, universal_newlines=True).stdout.strip()
-+
-+if shallow == "true":
-+    print("Repository is shallow, unshallow git history")
-+    subprocess.check_call(["git", "fetch", "--unshallow", "check-patch", os.environ["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]],
-+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-+else:
-+    subprocess.check_call(["git", "fetch", "check-patch", os.environ["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"]],
-+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+diff --git a/drivers/gpu/drm/ci/build-igt.sh b/drivers/gpu/drm/ci/build-igt.sh
+index eddb5f782a5e..caa2f4804ed5 100644
+--- a/drivers/gpu/drm/ci/build-igt.sh
++++ b/drivers/gpu/drm/ci/build-igt.sh
+@@ -71,4 +71,4 @@ tar -cf artifacts/igt.tar /igt
+ # Pass needed files to the test stage
+ S3_ARTIFACT_NAME="igt.tar.gz"
+ gzip -c artifacts/igt.tar > ${S3_ARTIFACT_NAME}
+-ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/${S3_ARTIFACT_NAME}
++s3_upload ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${KERNEL_ARCH}/
+diff --git a/drivers/gpu/drm/ci/build.sh b/drivers/gpu/drm/ci/build.sh
+index 284873e94d8d..6fb74c51abe2 100644
+--- a/drivers/gpu/drm/ci/build.sh
++++ b/drivers/gpu/drm/ci/build.sh
+@@ -148,13 +148,13 @@ if [[ "$UPLOAD_TO_MINIO" = "1" ]]; then
  
- ancestor = subprocess.check_output(["git", "merge-base",
-                                     "check-patch/%s" % os.environ["CI_MERGE_REQUEST_TARGET_BRANCH_NAME"], "HEAD"],
-diff --git a/drivers/gpu/drm/ci/static-checks.yml b/drivers/gpu/drm/ci/static-checks.yml
-index 13ffa827b7fa..734d6055fa65 100644
---- a/drivers/gpu/drm/ci/static-checks.yml
-+++ b/drivers/gpu/drm/ci/static-checks.yml
-@@ -1,4 +1,5 @@
- check-patch:
-+  timeout: "1h"
-   extends:
-     - .build
-     - .use-debian/x86_64_build
+     ls -l "${S3_JWT_FILE}"
+     for f in $FILES_TO_UPLOAD; do
+-        ci-fairy s3cp --token-file "${S3_JWT_FILE}" /kernel/$f \
+-                https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/$f
++        s3_upload /kernel/$f \
++                https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/
+     done
+ 
+     S3_ARTIFACT_NAME="kernel-files.tar.zst"
+     tar --zstd -cf $S3_ARTIFACT_NAME install
+-    ci-fairy s3cp --token-file "${S3_JWT_FILE}" ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/${S3_ARTIFACT_NAME}
++    s3_upload ${S3_ARTIFACT_NAME} https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/
+ 
+     echo "Download vmlinux.xz from https://${PIPELINE_ARTIFACTS_BASE}/${DEBIAN_ARCH}/vmlinux.xz"
+ fi
+diff --git a/drivers/gpu/drm/ci/gitlab-ci.yml b/drivers/gpu/drm/ci/gitlab-ci.yml
+index 6850ce99a673..e54e382bf5fb 100644
+--- a/drivers/gpu/drm/ci/gitlab-ci.yml
++++ b/drivers/gpu/drm/ci/gitlab-ci.yml
+@@ -1,6 +1,6 @@
+ variables:
+   DRM_CI_PROJECT_PATH: &drm-ci-project-path mesa/mesa
+-  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha 82ab58f6c6f94fa80ca7e1615146f08356e3ba69
++  DRM_CI_COMMIT_SHA: &drm-ci-commit-sha f73132f1215a37ce8ffc711a0136c90649aaf128
+ 
+   UPSTREAM_REPO: https://gitlab.freedesktop.org/drm/kernel.git
+   TARGET_BRANCH: drm-next
+@@ -20,8 +20,10 @@ variables:
+           rm download-git-cache.sh
+           set +o xtrace
+   S3_JWT_FILE: /s3_jwt
++  S3_JWT_HEADER_FILE: /s3_jwt_header
+   S3_JWT_FILE_SCRIPT: |-
+       echo -n '${S3_JWT}' > '${S3_JWT_FILE}' &&
++      echo -n "Authorization: Bearer ${S3_JWT}" > '${S3_JWT_HEADER_FILE}' &&
+       unset CI_JOB_JWT S3_JWT  # Unsetting vulnerable env variables
+   S3_HOST: s3.freedesktop.org
+   # This bucket is used to fetch the kernel image
+@@ -253,7 +255,7 @@ make git archive:
+     - tar -cvzf ../$CI_PROJECT_NAME.tar.gz .
+ 
+     # Use id_tokens for JWT auth
+-    - ci-fairy s3cp --token-file "${S3_JWT_FILE}" ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/${S3_GITCACHE_BUCKET}/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/$CI_PROJECT_NAME.tar.gz
++    - s3_upload ../$CI_PROJECT_NAME.tar.gz https://$S3_HOST/${S3_GITCACHE_BUCKET}/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/
+ 
+ 
+ # Sanity checks of MR settings and commit logs
+diff --git a/drivers/gpu/drm/ci/image-tags.yml b/drivers/gpu/drm/ci/image-tags.yml
+index c04ba0e69935..53fe34b86578 100644
+--- a/drivers/gpu/drm/ci/image-tags.yml
++++ b/drivers/gpu/drm/ci/image-tags.yml
+@@ -1,5 +1,5 @@
+ variables:
+-   CONTAINER_TAG: "20250307-mesa-uprev"
++   CONTAINER_TAG: "20250328-mesa-uprev"
+    DEBIAN_X86_64_BUILD_BASE_IMAGE: "debian/x86_64_build-base"
+    DEBIAN_BASE_TAG: "${CONTAINER_TAG}"
+ 
+diff --git a/drivers/gpu/drm/ci/lava-submit.sh b/drivers/gpu/drm/ci/lava-submit.sh
+index f22720359b33..a1e8b34fb2d4 100755
+--- a/drivers/gpu/drm/ci/lava-submit.sh
++++ b/drivers/gpu/drm/ci/lava-submit.sh
+@@ -54,7 +54,7 @@ cp artifacts/ci-common/init-*.sh results/job-rootfs-overlay/
+ cp "$SCRIPTS_DIR"/setup-test-env.sh results/job-rootfs-overlay/
+ 
+ tar zcf job-rootfs-overlay.tar.gz -C results/job-rootfs-overlay/ .
+-ci-fairy s3cp --token-file "${S3_JWT_FILE}" job-rootfs-overlay.tar.gz "https://${JOB_ROOTFS_OVERLAY_PATH}"
++s3_upload job-rootfs-overlay.tar.gz "https://${JOB_ARTIFACTS_BASE}"
+ 
+ # Prepare env vars for upload.
+ section_switch variables "Environment variables passed through to device:"
 -- 
 2.47.2
 
