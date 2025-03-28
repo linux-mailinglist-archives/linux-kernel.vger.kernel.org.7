@@ -1,170 +1,312 @@
-Return-Path: <linux-kernel+bounces-579815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7637A749D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:32:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234F4A749BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AB31B602BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF5C3B4BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831B83208;
-	Fri, 28 Mar 2025 12:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2FC21B8F6;
+	Fri, 28 Mar 2025 12:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KFrRD143";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YBu+Lp3x";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KFrRD143";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YBu+Lp3x"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPThmLCK"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F2436B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 12:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A375A1537C6;
+	Fri, 28 Mar 2025 12:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743165152; cv=none; b=AHQpl+pJD/g12rHhdp1SCtTI9Zv7OQd/oaAJbE3U4dlUYTP2hRPPzaqXg5oLYRNc3bE7DQS/TPQh8WZrzlQEIdnCaAvvNos3WaAvJGG7mD6g647D0yl4K1bEvXzrRrAcsr3VbdIheTTRdYsrFIcktuglAGF/w+7Rta4nEKtasRc=
+	t=1743164527; cv=none; b=qbFN0BHSxA/Cy6eXXuRXrVUpXY4rht5UW1bvgzeJYbYjQCVAYP3Yyx+2FL+pfjw7vr7Mwt7RgEpZIaQPGlrTBNAf3PAxCkqpJ95cJYIsT+w9ajmC9EZ/WvWOeScRSQXMlpAc2VYV67sam79XJTSpMLCWsGSCMg4VNuCXY3+83tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743165152; c=relaxed/simple;
-	bh=0H5it2xIKnE5BTRJ7GYMNekXuQoGpGDaCDpjF0vYegY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u1yK/SJJfy+eGWu8qfDlU9GYWRz/QyEVtsZp9Iy931RmD4xVRFNQe/YC76FkQHZV8yGsTeHYPvFnv9155j7yl+QJftZl1fqPxKftgp4uI9mRtQJa+g48AmyQAGcNrAwf97VSO4wSAhNESgn2il5H/Vaxk++QVppMBn/UT3VkcUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KFrRD143; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YBu+Lp3x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KFrRD143; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YBu+Lp3x; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4E688211D3;
-	Fri, 28 Mar 2025 12:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743165149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KlEQLPwbcSypN8cs0uxLeuy5r1kRFmvFuvn20PzGOKo=;
-	b=KFrRD1434v+nCItpBpaRCJRwUYX9QY/pYvVqyWx58RgRb5GvJ4zM0XuLtCaAIfPUDLncRO
-	C9nytR3wKbE6cm2s9/m7i8p3jf5gmCkzdfZQAuHZjQ0TNylQZGa9Myx8G/rVYM1WOMXGtg
-	c5C3D01qeqGMXOhWBzhxKBaPRiBXh6w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743165149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KlEQLPwbcSypN8cs0uxLeuy5r1kRFmvFuvn20PzGOKo=;
-	b=YBu+Lp3xH+/3bzrySju9eV+IuR2XbnxZcogmtBgiqR3Jk3BNqwPWHTHKrLupgyWXAW5+j2
-	ngjft/UmaLjtvCDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KFrRD143;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YBu+Lp3x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743165149; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KlEQLPwbcSypN8cs0uxLeuy5r1kRFmvFuvn20PzGOKo=;
-	b=KFrRD1434v+nCItpBpaRCJRwUYX9QY/pYvVqyWx58RgRb5GvJ4zM0XuLtCaAIfPUDLncRO
-	C9nytR3wKbE6cm2s9/m7i8p3jf5gmCkzdfZQAuHZjQ0TNylQZGa9Myx8G/rVYM1WOMXGtg
-	c5C3D01qeqGMXOhWBzhxKBaPRiBXh6w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743165149;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KlEQLPwbcSypN8cs0uxLeuy5r1kRFmvFuvn20PzGOKo=;
-	b=YBu+Lp3xH+/3bzrySju9eV+IuR2XbnxZcogmtBgiqR3Jk3BNqwPWHTHKrLupgyWXAW5+j2
-	ngjft/UmaLjtvCDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 013A013927;
-	Fri, 28 Mar 2025 12:32:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ui6YOtyW5mcwUQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 28 Mar 2025 12:32:28 +0000
-Date: Fri, 28 Mar 2025 13:32:28 +0100
-Message-ID: <87jz89e3oj.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Upgrade calibratd-data writing code to support Alpha and Beta dsp firmware
-In-Reply-To: <20250328074326.796-1-shenghao-ding@ti.com>
-References: <20250328074326.796-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1743164527; c=relaxed/simple;
+	bh=pmhdXCc9ppKE21BTXPTPut1h94F66CU0TnLRVbgPQDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tkc9zMHuEzSKhu2g8rLdOuMAldWFJgZlwV4Y7ccUk3BjdiqmJ2IVWqoekE1xycajN+V8BlwynZGGL9nQqDBxg5F3ootMIJ8oBKkqshMdgcx45MkWzxL9HeE0TRHDrn/8/FNBjKrhwDp7gu2k4TDdVW8+QSjQfILUFVknyZwVNy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPThmLCK; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so271488166b.0;
+        Fri, 28 Mar 2025 05:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743164524; x=1743769324; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oc49DJIwJicv0xAMtGUpshz9Iya5BjyoHaAoKmn9GSM=;
+        b=bPThmLCK4k6w9gBSfwvEYo3QCgoqdIVccKoeLiEJIsomeyYTaK+f6QgZ2vNKKCcRN1
+         JYgexZlLQn3zGfAgKKieaVVqk6RpNusPzMyAC6+TiQR5MOE83AnwQMU1i17wu2h1czji
+         qSHaJlLt7fyKj75LHHROIcbWBF4GQgespQVnMCCeo9UxYUKZ/QbcZQZW5FLmGEllppd8
+         thJsrOIdjQAc/els02/9V9PPXi+KVxx+CMbV6vb3LijPnRmRQ+4FOIEgQej4qW/i3cmV
+         J3zauOtki4gUGtffNmLeV/h6JZDsGxEnOVWXZvmLFa26r3C9ZTXhRdl8tN9H0gUQA07U
+         EvBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743164524; x=1743769324;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oc49DJIwJicv0xAMtGUpshz9Iya5BjyoHaAoKmn9GSM=;
+        b=DMmWR3VO7KHwipueB97YXTGlGYc35Pi9CPiS3yCUPm9f7fQAzE7SUwr/TRDmkGML0j
+         0XQjw3XBo3K4NVw/7G6igAu1z12nlKMSyTp8p2nI/Hg/4wTm/1i0HfJiSE2ZHCPujE57
+         jOOw3W/Bflly2mkzPmYnRzowMYD82DkaaMI//IMA+wPrhqxVDsE0fiB9sbm5fq/EIqFG
+         Pc9EMV5l86dbJ26tFu89MtZmLqaP9iiYUJXuo8seb1gJaWNbmjElKgsqMskqBlHhYhG7
+         M1CJCXFIhkq709p94EDlpO1clM2LL/LBy5m0P8FfMc7pvhLBWTx6nGOED4j2tQ6Kg2W4
+         tiTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwXBHUQyGA3zzvXu3r/aCqwBAVtYDxppcbhWpmdQD5d/NXioYR+NDGux0GnVlSZDr6qA9wtaIVVO4pzQkg@vger.kernel.org, AJvYcCX0EbOQWk1/60jd2crasJ7EIG3ZRvLm5/RQ+fVT48j/2wHZ7mObnv52xiPKthpwppY2P9ZNmqiUcDdR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSYaNd2gmCX0CYh0qT3vV5v1fXSeKt7w88jA6dKaVIc/O/OYVe
+	UlCfqKRMCwgTyWR4wHAlYSQ9OU6JGUo/qQLPM5EXIkx/UldXgPQN
+X-Gm-Gg: ASbGncu5Jj0TmoES8O74b3mIJopvU6sHZkSb8A7GpAj6z9ZOK4Y0zNgTD4jeMbrn8SP
+	Kvj4FhNaz0ocELI7Sz7RfvT6o/AGHd/JR0tVJi0zINxRcsdIAS98qPKu4shZ7ZxER8sbf0JefzQ
+	uRpKEbJZLjTPW2HCQJv7PvPDFSGoTH1EfH+2fgNBvVZqhfs+REY4t2ku5Flq/0yz/1/qQJ+abTl
+	+wuaD8XoXzCNqJ/BI5hcVF6qTENoVhVpHaNtDh6fPozpiavOjdl9hZ9hAxZNz85v9L8IuEAW7Ul
+	iZarj5cISZYJOhOPX7q1xWJje1b+EfjFRtphmkuRCwrdZQm6/VMA9zm9ld+ylZlSwsS0
+X-Google-Smtp-Source: AGHT+IGJV2RjrsEGH4G9E7FfOU9np25O3dZ+J8l0SIo7Gdk10tVsJ6ybpUSbflQFjN7lriWVMh6dCQ==
+X-Received: by 2002:a17:907:7ea4:b0:ac3:2368:9a12 with SMTP id a640c23a62f3a-ac6faf024a2mr719727266b.27.1743164523493;
+        Fri, 28 Mar 2025 05:22:03 -0700 (PDT)
+Received: from [192.168.7.2] ([92.120.5.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b184sm159831966b.51.2025.03.28.05.22.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 05:22:03 -0700 (PDT)
+Message-ID: <2301b0f7-1a76-4823-8d3f-d346f8f8e865@gmail.com>
+Date: Fri, 28 Mar 2025 14:34:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 4E688211D3
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,ti.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
-
-On Fri, 28 Mar 2025 08:43:26 +0100,
-Shenghao Ding wrote:
-> 
-> Since 2025, the firmware for tas2781 has been added more audio acoustic
-> features, such as non-linear compensation, advanced battery guard,
-> rattle-noise suppression, etc. The version was divided into two different
-> series. Both series have a slight change on the calibrated data storage
-> addresses, which becames flexible instead of fixed. In order to support
-> new firwmares in time, the code have some related upgrades.
-> 
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-> 
-> ---
-> v2:
->  - revise the subject and description.
-> v1:
->  - Add updating calibration addresses code into tas2781_apply_calib in
->    case of Alpha and Beta firmware.
-
-This looks *much* better.  Applied now.
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] dt-bindings: bus: add documentation for the IMX
+ AIPSTZ bridge
+Content-Language: en-GB
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
+ Marco Felsch <m.felsch@pengutronix.de>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250324162556.30972-1-laurentiumihalcea111@gmail.com>
+ <20250324162556.30972-2-laurentiumihalcea111@gmail.com>
+ <20250325032303.GA1624882-robh@kernel.org>
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250325032303.GA1624882-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-thanks,
+On 25.03.2025 05:23, Rob Herring wrote:
+> On Mon, Mar 24, 2025 at 12:25:52PM -0400, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Add documentation for IMX AIPSTZ bridge.
+>>
+>> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
+>> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 107 ++++++++++++++++++
+>>  1 file changed, 107 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>> new file mode 100644
+>> index 000000000000..c0427dfcdaca
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>> @@ -0,0 +1,107 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bus/fsl,imx8mp-aipstz.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Secure AHB to IP Slave bus (AIPSTZ) bridge
+>> +
+>> +description:
+>> +  The secure AIPS bridge (AIPSTZ) acts as a bridge for AHB masters
+>> +  issuing transactions to IP Slave peripherals. Additionally, this module
+>> +  offers access control configurations meant to restrict which peripherals
+>> +  a master can access.
+> Wrap at 80 chars.
 
-Takashi
+
+fix in v4, thx
+
+
+>
+>> +
+>> +maintainers:
+>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,imx8mp-aipstz
+>> +
+>> +  reg:
+>> +    maxItems: 2
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: bus
+>> +      - const: ac
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 1
+>> +
+>> +  "#access-controller-cells":
+>> +    const: 0
+> With 0 cells, how do you identify which device it is?
+
+
+we don't atm. We're relying on the default configuration.
+
+
+we don't have any APIs for AC configuration so I left the
+
+cell number to 0 thinking that the cell number might depend
+
+on the API.
+
+
+if need be, I can set it to the value I was initially thinking of in v4.
+
+
+>
+>> +
+>> +  ranges: true
+>> +
+>> +# borrowed from simple-bus.yaml, no additional requirements for children
+>> +patternProperties:
+>> +  "@(0|[1-9a-f][0-9a-f]*)$":
+>> +    type: object
+>> +    additionalProperties: true
+>> +    properties:
+>> +      reg:
+>> +        items:
+>> +          minItems: 2
+>> +          maxItems: 4
+>> +        minItems: 1
+>> +        maxItems: 1024
+>> +      ranges:
+>> +        oneOf:
+>> +          - items:
+>> +              minItems: 3
+>> +              maxItems: 7
+>> +            minItems: 1
+>> +            maxItems: 1024
+>> +          - $ref: /schemas/types.yaml#/definitions/flag
+>> +    anyOf:
+>> +      - required:
+>> +          - reg
+>> +      - required:
+>> +          - ranges
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - power-domains
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+>> +  - "#access-controller-cells"
+>> +  - ranges
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/imx8mp-clock.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    bus@30c00000 {
+>> +        compatible = "fsl,imx8mp-aipstz";
+>> +        reg = <0x30c00000 0x400000>, <0x30df0000 0x10000>;
+> It doesn't look like you have any registers in the 1st entry, but they 
+> are child devices? Then you should use ranges and drop it here:
+>
+> ranges = <0x0 0x30c00000 0x400000>;
+
+
+I guess this would mean switching from global addresses (current way) to
+
+bus-relative addresses for the child devices. This wasn't my intent.
+
+
+I wonder if we could just switch to V2 in which we just use the bridge's AC
+
+configuration space and an empty 'ranges':
+
+
+aips5: bus@30df0000 {
+
+    compatible = "fsl,imx8mp-aipstz";
+
+    reg = <0x30df0000 0x10000>;
+
+    /* some more properties here */
+
+    ranges;
+
+};
+
+
+or as Marco just suggested use
+
+
+ranges = <0x30c00000 0x30c00000 0x400000>;
+
+
+instead of an empty 'ranges' to restrict the bus size.
+
+
+Personally, I'm fine with both approaches but what's your opinion on this?
+
+
+>
+>
+>> +        reg-names = "bus", "ac";
+>> +        power-domains = <&pgc_audio>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <1>;
+>> +        #access-controller-cells = <0>;
+>> +        ranges;
+>> +
+>> +        dma-controller@30e00000 {
+>> +            compatible = "fsl,imx8mp-sdma", "fsl,imx8mq-sdma";
+>> +            reg = <0x30e00000 0x10000>;
+>> +            #dma-cells = <3>;
+>> +            clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SDMA3_ROOT>,
+>> +                     <&clk IMX8MP_CLK_AUDIO_ROOT>;
+>> +            clock-names = "ipg", "ahb";
+>> +            interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+>> +            fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> No 'access-controllers' here?
+
+
+no need for that unless the child wants to request a specific AC
+
+configuration for itself.
+
+
+>
+>> +        };
+>> +    };
+>> -- 
+>> 2.34.1
+>>
 
