@@ -1,172 +1,214 @@
-Return-Path: <linux-kernel+bounces-579640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB39A74654
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:26:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25A8A7465B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 10:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB601B60E95
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 111F716BFF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5C4213E60;
-	Fri, 28 Mar 2025 09:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE832139D8;
+	Fri, 28 Mar 2025 09:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="M89brH9e";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JlS2jm1o"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="OjaaiY/r";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="TeMOrvNI"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CEF12C7FD;
-	Fri, 28 Mar 2025 09:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743153999; cv=none; b=oqRTpZTb6fm2i5KuO9JbwFhS+ixuTF+47fcXrXrdKa+k/Xw7FplXRs/VXP5pN9G718+Rm0mayzEkKZTtFRjwoCiXnSFWMKIRpAS8G7ET7FxgNI8pBvHyuADEr5N6RNmK1MT8Tlt4vBeLA/WrURbHT9UrGHmPOTRPbAf5KsJ7X28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743153999; c=relaxed/simple;
-	bh=5u3ml2HokjkpBSrVhmMhT/UIM/NCeqaUOaZDcxtw1h8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5479B2135C3;
+	Fri, 28 Mar 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743154113; cv=fail; b=oK0xr0V9bEEQId2XYwUvoYMZaPmWFkwYU9BqNPwF16DwhnXq9WaokPC35DvA7K3n/pE+qrqu6k9HRLoSUk0XNKuQ07n7bd2rG9vsmUzLarV5K0Li47QOi6vGxQ9r8w85G3lmc1/EXz9gsWwO2XaTzxC4hVn1spAVU9Q6ynHv6eM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743154113; c=relaxed/simple;
+	bh=Io6iaWL8iPAuyYenHhEsvnTcxOXssY+Mck2XybHO2Jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L7rfB3WBFX2tVl5NtKjeJmD+rxECLRKq08b/cZXgXvn8oqZUviUauYbhmQovUyo8EYCJFjeFq+gEqDcmiPs9jlSRn+sMqw3FNd6bhfHJDW8FXTOkHOoth5CMNUGLpPOw8qbSQHCMOyLdXBWHFpejBjtsiuYOfq/VY/2Qx62dNMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=M89brH9e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JlS2jm1o; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 6B4B825401C7;
-	Fri, 28 Mar 2025 05:26:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 28 Mar 2025 05:26:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1743153996; x=
-	1743240396; bh=0BoQIsG8DFsOqOY9VFH0ybGSQtxoGyEOXQ6yFqi2JGQ=; b=M
-	89brH9eZqf/FqcGsr5lai1BTGsq34R3XOCArLIo9X5BJJRNUNcyrIyulB3AWW1xz
-	QiD9sRr4nQ4TfkrqVwLXWlJaLpzZZKgbUy2r7osg/CdBEG6YiCAUKjeXbdXdFVzF
-	yAXFj3OosVEt9fOpY479dJAtc4Ms4je5dAXC96rMispE3j03KgcVNtGrfxa1zOJn
-	KlUztzHzpJu0nyl/pKD+VrecNWmJLvktXnd+U6AMucjcvjwVFti2+YWUaE8VQ/Wc
-	mSjzOwk+3GjNUusNHAbohbbmKh+O9MxAW74ga09XTh0XPGI+nBkOVDadFz+OY7fR
-	qazxjcTxr4Re2Ll+RQe6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743153996; x=1743240396; bh=0BoQIsG8DFsOqOY9VFH0ybGSQtxoGyEOXQ6
-	yFqi2JGQ=; b=JlS2jm1olS7TMfHTMUccL8b95vxoCmNGL4wbQ2o9Ter/V7c66QT
-	ln2QT0yqKfdjLK5Q4t1Wx1YHXE4nt3fGs5v47/3KPpdkxWQn9JjmRz3By0GBnQUX
-	84V8+GIJZpJXVK+ZfMf5AsAXH+WOl19jqlKjk5E3toOYOQAJYi7IMDHH3HlteFJO
-	WK1xFosHLBvdIeOoBuh+Jm6HLFqrldJqWkhupGV1gF5qHQCuo1g4V07MqZsTQMKf
-	enqRDCuxyPMfxuyPLe0Oje798YEqdMYtIUqEN6kPzCLr8uBCoAT1RyTr5XOKbewk
-	MZOSGBz/dIL+NIT82cMo9fzEkCZ3iDa2w7Q==
-X-ME-Sender: <xms:S2vmZwW3cT66Sm41nA2unmsYUeUN3BnuXyFKUIsPBxC2nsSWaHEzQw>
-    <xme:S2vmZ0mHaxcUACSf-axbnYUnoeTq_MsngwcRgtSWnOgh2qvRMBTsc87He5xOy9PbA
-    Ve1ggsVVd7JsEwhS58>
-X-ME-Received: <xmr:S2vmZ0aIAJENU6-qM5VPzlmYvd5aVXrnMPAw9WjhWoMDvgBRM54JHNH0svq_sNu8Qeganw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedtledvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddt
-    vdenucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilh
-    hlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfh
-    hfffveelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghm
-    ohhvrdhnrghmvgdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoshhtvggu
-    thesghhoohgumhhishdrohhrghdprhgtphhtthhopehkihhrihhllhdrshhhuhhtvghmoh
-    hvsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhlvghn
-    uggrtghkhiesrghmugdrtghomhdprhgtphhtthhopehsrhgrihhthhgrlhesrghmugdrtg
-    homhdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohep
-    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepjhhpohhimhgsoh
-    gvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:S2vmZ_VVFNFO8XhKjfytcNaV1ARYvdH8RmVKqMEt_VtxL61a3KQPvg>
-    <xmx:S2vmZ6l7AjurdePQaxIeW0zt4Olmg1Qce80SBfsIDKh7Bbv6cgCeWg>
-    <xmx:S2vmZ0cZ22lhVC3uy74OSI6X-x9Wjl1WkT05ME6kO0AlGznZmVypKQ>
-    <xmx:S2vmZ8EeET3tom414C1cKKW6uP8A2Obm58CDISdOOrtR-BN8j_YaAQ>
-    <xmx:TGvmZ8cLlumjDPESCPqhSLjAQVjaM1SptJ4uNlMUC7vJSxplfKioneEJ>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 28 Mar 2025 05:26:31 -0400 (EDT)
-Date: Fri, 28 Mar 2025 11:26:28 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	"Aithal, Srikanth" <sraithal@amd.com>, Jason Baron <jbaron@akamai.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"Roth, Michael" <Michael.Roth@amd.com>
-Subject: Re: linux-next regression: SNP Guest boot hangs with certain cpu/mem
- config combination
-Message-ID: <wl7m7xtqg6ftqmkyaabtzsk7lkhxnpkinyehwy6eokvwkfklzi@m6chqm3rht2u>
-References: <08981771-39ac-af66-e2ec-e8f9bf6aed0a@amd.com>
- <idlcitykk3hxg5by5sltuljyjf7uanmve5fspu6dectubhy5za@mjmv4i5vwyby>
- <ydvzjdcauzyvv7hxtra6l2gh4diz7zp4wx46eqculr7azynjke@z4x6eryq3rqd>
- <4f258a96-42fe-4567-886b-e8e2b949ab1a@akamai.com>
- <xcxcte6tzti7e6gcucf2ylfptie6kkvs2q5edup6mtzo5tenft@d2rm3p2yjoue>
- <20250327110224.68c69c78@gandalf.local.home>
- <2kwzi2qxqualhskbgckk6m7oc6vsgupquceqgfx2gnz5xbkier@rwdrhym7yxhr>
- <vhwle6fj3ifmcouppec5adegqludggsxcsxxveqa43hugtsdgy@pb7vd5cqjmx3>
- <m4cubsijicsrtq3blyzxeknsuc4cqswg35yz45uk5lipza4lps@yeqq2j5hf4y3>
- <CAMj1kXGLWYrfEzdDXy1wriBycx0DPQ_kL==Jkw_sDW5f0KxEHw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UURfUhrVF0V3nVuO3mPlrYSA7/K6AVypGI8knugzkup3xcYy3+rD5kKX543FKomMiHD/GPrt5WpA2M5itQV1B7xNYMIcEa8p79bwVHAUyHWVA7u35y89ssnkk1DnhsZqCrDadNH85HjbF8YeKWTx+yXfwof8sXIwsikCxQcig2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=OjaaiY/r; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=TeMOrvNI; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S81c2L001248;
+	Fri, 28 Mar 2025 04:28:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=PhVN3LqyVhmNtPn5aNnFMDFxPILKddrkKOUl0LoJGPU=; b=
+	OjaaiY/rj0oWy9fiHJOIX+BkotxUooZbNZGgQ8jrlgfeZQb8cpu92UfhvEwDfGII
+	aiNW/9DigypJXmHzZd+F1XoCfU6dGt08ZmjQzb0Qw1rPE/dc7KVL63HneDBGdSJD
+	YZ7+vxBXWLL0QcGFqKUAVWzRCCPU1DMQKD6V4PQC+n2oBBd0KY+ASCSIoaCI1dED
+	dZ5C3jNz6FsUACLrO5UCEc4wi4ySe/mPIN/R1xoWcpI6SR43FXagI/Zh9LiCe8+x
+	Bg3j0NHr/+RDhcKLoOu1WBmLEXZwYyOx/vEZH6KBqZqlv5fP88pkfivdqhzQlVkT
+	zkIcSZfyjHr5Ss4bgj9BBQ==
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2173.outbound.protection.outlook.com [104.47.58.173])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 45ndnu0xsh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 04:28:17 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IVbIZbXIVTsdoqmPjamMT3ITPxmIL2IhLY6sH8sfksfgKxI3XLsmDyEkYH5TBJWdQN+QKotBgauqEUqgXVGYNTF68WjAQElGKNNyuMoXN8olyVaR9z4b1ltuvfTFKNRdVwC7LUz3Mu50hu2XPXiJghjfHtbO6+szy/je7wj03qxIpsECZHue5MbHocGXpUk/UUFtBFxVzFb1cGW6LT7LNOingE4kNw2aP8E8/0TNvf0nKYwBv2fFOwAAjFVSMt/5LKcvr5zKXtl6JPcGB8104EkCDViTrfH1Bm4+9hJRlYZh1VdDrULRqZ3yIimLKkAy+mJpkOiPFsua12xHP85VSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PhVN3LqyVhmNtPn5aNnFMDFxPILKddrkKOUl0LoJGPU=;
+ b=BXfOZf0rRj256bQm+PsOBKYyPWJx9leP3mL12PKjxCXykLXe76WswCXwppyEY2PLkkQu6QjYxLDl1ic8C5+ZAPnQRvFtwp4JS53QMTLmO+83S73Sr1/x8QnL0q4yTTVjymmhzOP+ZhsyyRDMY1Dmxsxi0QtsxCkHz+sftMEPPwZYKaFo6eo+mE2+00AnAng0KE7l+gVtdgmcf8qvRidEJTe5gW8xeuAz8Djw5VKq9FlRFN4gS7+7agNDcU7ppHPlv9Akh/1YkiVVwfHFElAAJ3xTnA+SCjvZpGDwc9QH52sWFuxyID51qpKlrzQ2S9Fpfajsvhe+eWp94V4jzFdH4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com smtp.mailfrom=cirrus.com;
+ dmarc=fail (p=reject sp=reject pct=100) action=oreject
+ header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PhVN3LqyVhmNtPn5aNnFMDFxPILKddrkKOUl0LoJGPU=;
+ b=TeMOrvNInBDryoA+/XmgwCK9SlPeyYqYRlmJrx23R/5VKkrLjEYI4wpQOIgO8EzaJHnmTH6SIs3MNTXp5BQtujoA6IyncukYf3GL3C6L+Os7mrkIFnKIQXfqoSAIrxvw5RrN7ZH6XAuiZmJ+gMSg2W4vqTJ46xbKQhw1g4XZ/8E=
+Received: from MW4PR04CA0152.namprd04.prod.outlook.com (2603:10b6:303:85::7)
+ by DS7PR19MB6279.namprd19.prod.outlook.com (2603:10b6:8:98::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
+ 2025 09:28:11 +0000
+Received: from CO1PEPF000066E6.namprd05.prod.outlook.com
+ (2603:10b6:303:85:cafe::72) by MW4PR04CA0152.outlook.office365.com
+ (2603:10b6:303:85::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.43 via Frontend Transport; Fri,
+ 28 Mar 2025 09:28:11 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of cirrus.com does not
+ designate 84.19.233.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=84.19.233.75; helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CO1PEPF000066E6.mail.protection.outlook.com (10.167.249.4) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
+ via Frontend Transport; Fri, 28 Mar 2025 09:28:09 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 243BD406541;
+	Fri, 28 Mar 2025 09:28:08 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id EB385820248;
+	Fri, 28 Mar 2025 09:28:07 +0000 (UTC)
+Date: Fri, 28 Mar 2025 09:28:06 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, pierre-louis.bossart@linux.dev,
+        yung-chuan.liao@linux.intel.com, peter.ujfalusi@linux.intel.com,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 1/3] ASoC: SDCA: Create DAPM widgets and routes from
+ DisCo
+Message-ID: <Z+ZrptkW8HlcYiLB@opensource.cirrus.com>
+References: <20250327130012.3378732-1-ckeepax@opensource.cirrus.com>
+ <20250327130012.3378732-2-ckeepax@opensource.cirrus.com>
+ <d38cc4f0-2018-46ee-93ff-d5dd76ad142b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGLWYrfEzdDXy1wriBycx0DPQ_kL==Jkw_sDW5f0KxEHw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d38cc4f0-2018-46ee-93ff-d5dd76ad142b@linux.intel.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066E6:EE_|DS7PR19MB6279:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01e3fc98-50af-44ee-99cd-08dd6ddadb0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|61400799027|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L29oallNVWsvS0VqVmFUdEd6SWRQcFFWaTlGbUlwVHVnQzYwZG5Ka2VVbEtu?=
+ =?utf-8?B?a1Q1dGg1a3NrWTIrL3Q0QUVuM0tHTFpNK2NLbFZMbmRjRy9oNURRdzNIaFU0?=
+ =?utf-8?B?aVdJQTgrRkp2a3l4Nk1QSVVOaW5mck9NYUl0YjV5NCtzWmlsRTRKZm5tOFhz?=
+ =?utf-8?B?UkZZM0w5Ynpqd0lWL3RUVlhTR1h2VFdjcnVVd3pZVFJhYmhpTDVBVmQ0TzRu?=
+ =?utf-8?B?OWp2U2M1cVJEbzdkU3B2QnlXSEcrUXc3Q2h5VGMvMEg2SGJraFVPOC82WXhT?=
+ =?utf-8?B?bnE0clRQb0JYSjJnYWpMelg5SGtmUDRPR2hEZlU4VzBUQVljclpuc1ZpK3FZ?=
+ =?utf-8?B?TEFDVEYyQ0NoTDl2V0tjVlQ0dXg3Qjd2ZkhZZ3lmY0hja1lheEIrZW55UWtK?=
+ =?utf-8?B?MFN0c3c5WGlsUG9lcnJIckVia3lGS3lZTnlRd1VkVk5mQWh3d2Zra1FjbVB0?=
+ =?utf-8?B?TEtUUjd6R2hsVEpsNlRYTWVvNnhHWGdrM3ErNlEzZjRIVy8rRlFoWDVORjFQ?=
+ =?utf-8?B?SHN4REtXeGhqNCtxZ3QvUmpqVmowQzI4alZLK1FXcWFSOG54Umt0UXMwd0Fv?=
+ =?utf-8?B?TWdoTEM2dlBzYVBVQ3hRUjdMS2hwZytXYkY5ZXJDVUhyK3Y0SFo0YWZ5VU9F?=
+ =?utf-8?B?L3Y1Mm0yV3dWa2RQejBrRHNoeUFySzJpNFdhdytpWHFoc1lZL1d6RElqMEZn?=
+ =?utf-8?B?YndicEVHUXBPSVVRbVdpb09KUnQyak0xb3Frc25SSi81UHptb3R6bUFXUllr?=
+ =?utf-8?B?VVI4b0lzVXdRWmZPS0F0N2VPMlpVakpEVU9KZDlDdE5QK1pOdlh5RDhRc0hC?=
+ =?utf-8?B?eTF0YUhTdjZoblAwd1E2WHhYa21WNG4zb1YyMGdaUWxMd2oyNG5iek5QY2pV?=
+ =?utf-8?B?SUEyMjZaMmsxTi9ZcXRpQUgvd2Y1WkxwNXE4ZHc0aWxzbTlKTTFQaXhDWjBG?=
+ =?utf-8?B?bTI0TC9ud3dCeUZmdTNsMmxBVDhXcUx0VFJ2SzRPTlh2VngyVkhhYVdIbFFn?=
+ =?utf-8?B?Rm41b01FZWxCbDlqYkVMNjlXTkQ0Zm5QZXk2dzNNcGE2UzNqN2dvcmU0Tmh2?=
+ =?utf-8?B?UndhcG5FSnZhdFRCQ1kxWllYTTF6YWhQTjRLZ1ZlbUVwRW5HejJCRmlZd3NU?=
+ =?utf-8?B?ZEwzazh2bjV5WitRa1p3cGxyQUJyMmdQU0xxOHdWV2VPN0M2aW83NG94UkJl?=
+ =?utf-8?B?dmFaM2RERlJXNkw0RHl6Z0tXR3RVbm1CZGl6ZEZhaTNjenpqdUN3bGtFeEN0?=
+ =?utf-8?B?ZzliRFJ1WklTYVVCdlhRUUF3YlNtbHNKTEovcTVRQm9XWG9SeTBGZllWM3hZ?=
+ =?utf-8?B?NFF5VjNDRC9QTkdNZnBSMW5kYkRBMVFkUlQyV2hhRFlKM08xNFk3ZkpTZ1BM?=
+ =?utf-8?B?UFhoSjRNMGNtUmF6cmpUVmhJUXJLWk0xcUttaGN4SXNjSjBqWk92WXhsUGlD?=
+ =?utf-8?B?dGxyVHBFU3ZNYmhKWTNwQWRJUVNQK2p3ZmVTY28wck9LdVllYkluRXpDVUQ3?=
+ =?utf-8?B?WTlhUGM2N2IwYlBvZmdWZFdiTWpnYXQyUUtHeHIyWjR5bEFMdFFUWFFzbEFY?=
+ =?utf-8?B?RDJ2UkhrRU1rR0EwOXlIMVpIKzhSYWVhK1FBYVpDdnNEYWh1bnJpQ0JnZUlt?=
+ =?utf-8?B?YUU5WGZkYnlueDhtSlluUGR4blk3NU1kOG1EK09INHBlb1BWam9rbllUTzYw?=
+ =?utf-8?B?dlhrYjZGRGE4b2FtOWZQUzNaelVGMDhHeUJ5R3IyWVQxMElVRElMRE5xa3Bj?=
+ =?utf-8?B?ZFJINE5teDJRY2VsN1NtUDBkd0oyQmlROTFHSUdrT2MzTnNDb3ByQ1ZSSVNZ?=
+ =?utf-8?B?UDZtdDFIdFE5ckg3cG9Zd09mL2hMbkRGM3kwbytBMjhaNVg4WlZCNStsZWRo?=
+ =?utf-8?B?VVNHZmZIM3ZPVTY4SHlSanduWlN1OG5ES3h3WlRwQ2JKUlNPUjhIaGF1d0Q2?=
+ =?utf-8?B?RUxiVk4zczQwY2tocE04aGhIWU5XL3JLS1d4RllZZVh6MFZ0c3p4bHI4TUc3?=
+ =?utf-8?B?TEpQRlppWk0xYkVmTHdsV2ZXSVNJekJzK3RaaDFoY2hHNFVSeTlZbnMycVNx?=
+ =?utf-8?Q?F7xyxS?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(61400799027)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 09:28:09.8728
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01e3fc98-50af-44ee-99cd-08dd6ddadb0f
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066E6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB6279
+X-Authority-Analysis: v=2.4 cv=GoJC+l1C c=1 sm=1 tr=0 ts=67e66bb1 cx=c_pps a=19K1aDEwnJ0RahI1emVHDw==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10
+ a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=vyUtMD8Ux7WpDS4b90oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=BGLuxUZjE2igh1l4FkT-:22
+X-Proofpoint-GUID: 0vQUNQ864chgMT9kg3aiKhT5CwFkCAq7
+X-Proofpoint-ORIG-GUID: 0vQUNQ864chgMT9kg3aiKhT5CwFkCAq7
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, Mar 28, 2025 at 10:17:16AM +0100, Ard Biesheuvel wrote:
-> On Fri, 28 Mar 2025 at 10:09, Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > On Fri, Mar 28, 2025 at 10:28:19AM +0200, Kirill A. Shutemov wrote:
-> > > On Thu, Mar 27, 2025 at 07:39:22PM +0200, Kirill A. Shutemov wrote:
-> > > > On Thu, Mar 27, 2025 at 11:02:24AM -0400, Steven Rostedt wrote:
-> > > > > On Thu, 27 Mar 2025 16:43:43 +0200
-> > > > > "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
-> > > > >
-> > > > > > > > The only option I see so far is to drop static branch from this path.
-> > > > > > > >
-> > > > > > > > But I am not sure if it the only case were we use static branch from CPU
-> > > > > > > > hotplug callbacks.
-> > > > > > > >
-> > > > > > > > Any other ideas?
-> > > > > > >
-> > > > > > >
-> > > > > > > Hmmm, didn't take too close a look here, but there is the
-> > > > > > > static_key_slow_dec_cpuslocked() variant, would that work here? Is the issue
-> > > > > > > the caller may or may not have the cpu_hotplug lock?
-> > > > > >
-> > > > > > Yes. This is generic page alloc path and it can be called with and without
-> > > > > > the lock.
-> > > > >
-> > > > > Note, it's not the static_branch that is an issue, it's enabling/disabling
-> > > > > the static branch that is. Changing a static branch takes a bit of work as
-> > > > > it does modify the kernel text.
-> > > > >
-> > > > > Is it possible to delay the update via a workqueue?
-> > > >
-> > > > Ah. Good point. Should work. I'll give it try.
-> > >
-> > > The patch below fixes problem for me.
-> >
-> > Ah. No, it won't work. We can get there before workqueues are initialized:
-> > mm_core_init() is called before workqueue_init_early().
-> >
-> > We cannot queue a work. :/
-> >
-> > Steven, any other ideas?
-> >
+On Thu, Mar 27, 2025 at 02:23:28PM +0100, Amadeusz Sławiński wrote:
+> On 3/27/2025 2:00 PM, Charles Keepax wrote:
+> > +	texts[0] = "No Jack";
+> > +	texts[1] = "Jack Unknown";
+> > +	texts[2] = "Detection in Progress";
+> > +	values[0] = 0;
+> > +	values[1] = 1;
+> > +	values[2] = 2;
+> > +	for (i = 0; i < range->rows; i++) {
+> > +		enum sdca_terminal_type type;
+> > +
+> > +		type = sdca_range(range, SDCA_SELECTED_MODE_TERM_TYPE, i);
+> > +
+> > +		values[i + 3] = sdca_range(range, SDCA_SELECTED_MODE_INDEX, i);
+> > +		texts[i + 3] = get_terminal_name(type);
+> > +		if (!texts[i + 3]) {
+> > +			dev_err(dev, "%s: Unrecognised terminal type: %#x\n",
+> > +				entity->label, type);
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	soc_enum->reg = SDW_SDCA_CTL(function->desc->adr, entity->id, control->sel, 0);
+> > +	soc_enum->items = range->rows + 3;
+> > +	soc_enum->mask = roundup_pow_of_two(soc_enum->items) - 1;
+> > +	soc_enum->texts = texts;
 > 
-> Why is the use of a static key required here?
+> soc_enum->values = values; seems to be missing?
 
-It is not required, but nice to have. We don't want extra conditional in
-page alloc path.
+Thank you that is an excellent spot, the device I am using
+the values line up with the index so was easy to miss.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thanks,
+Charles
 
