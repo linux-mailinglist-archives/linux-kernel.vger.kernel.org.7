@@ -1,139 +1,148 @@
-Return-Path: <linux-kernel+bounces-579577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2E8A74570
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:31:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C970DA7456D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 09:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156E51B610D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:30:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09A93BD88C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 08:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484512139B5;
-	Fri, 28 Mar 2025 08:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB7F213E7A;
+	Fri, 28 Mar 2025 08:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvY9eNGo"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORm0QcCy"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF59213221;
-	Fri, 28 Mar 2025 08:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F8B212FBF;
+	Fri, 28 Mar 2025 08:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743150597; cv=none; b=h8IvXg6BFIlIA4Qh8MTUpavkPa7ntiZMafiNnA+GGvUeHX9WmQoIhVoxX5RVO4aCXPMQLH4xZU5MwYW8goP9PsqaItVNYgE5h50bX/h71wrcRrfuQY/uWP6n0aC2MqGKCaTiSaLdZZarY5F61AQ7PrHPOf99m7uXyNlLLhXc7Yk=
+	t=1743150638; cv=none; b=ssjzEcHNAtQdDJsk9YceI0YtTbpIwvkrU8uSStGSEVag4/ku59faMUa0jE57Wl9mii2aCrhXRYTIb6Bgx0zpdVSIhDt3oC4mPIPMUQbSR0A9ahKZW4M/qZMpAY3ys/n1Vs2yACTGVGFBe+Rw1arZecI+kBgpNdp/JoWBYrdZHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743150597; c=relaxed/simple;
-	bh=nW7zIE83b7o3baRGZOQm5hGY7byhoIDbnlaKldlCgyU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPmAwCQdj4LQ9Har9cFHkWzeAVyCmc/zi/xiNc0TSjptI3ZZc+aJ2EBph+G7B+Ctme2KzOhL+1LXkGP7N/BrTp5Q46VREqtkI2y0inIPu6TprYJ0TRrcoTZ1nrvUA7JqxY1TrGhE5Pqk//z8o/hvrcNSnZGNnXZSNc2nBkCCl7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvY9eNGo; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1743150638; c=relaxed/simple;
+	bh=DTcedE6KspyD0WF2+HMkGLOGGYHnEJsoVr5IaBC0H1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBFTW/q/NQ7iLiXO/pE219xZNeYQR+P4aw0sebuieDxrzDKY+rBLoUqyX+rvehM/vX5kNxa/ukI/i2mrdAYJ7zldOD5zd0aHIcop3rko4TFrnhxFeGzNz9ZyLOQfzOiVUhwyYHsdQBRZPV5HnNaQ9eqKz5r63f3zUKhsiKFvrUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORm0QcCy; arc=none smtp.client-ip=209.85.221.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so3612892a12.0;
-        Fri, 28 Mar 2025 01:29:54 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-51eb18130f9so928928e0c.3;
+        Fri, 28 Mar 2025 01:30:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743150593; x=1743755393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0ZCqhCnbZVt3aUx2CnCXD1Nb9xtjZIuFPWPj7IStfM=;
-        b=LvY9eNGoqI470UFtKeWHD+KPXclbVM0IjPYEd7OuXGzwj3bEIKgzZn/dEvh26/wOCn
-         3rPwtS6rUFzegz506xfIXdyCebMIt/ucKTwaCMWYtjApGSUD1d/oj6TkityvfIZjpxT3
-         z5GgPRzRy/xtsI7gCCuiLVkl6ESmpRCKusYlov2rYGiogstRwFmNAKb9mB4MS524EqCO
-         nQQoQUlTdSFtpgqppvApgf8vW2ns1mt9AM+9hO+qME4OM3r+OJGWH4ASufWEwoJSEkO7
-         rN8xs29aGhy8JGCnkUXgYQxybAc6qR1aVk43fnD/2u35eKnM/QDlqXg4OibNDT4l7Jz5
-         SXjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743150593; x=1743755393;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743150635; x=1743755435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T0ZCqhCnbZVt3aUx2CnCXD1Nb9xtjZIuFPWPj7IStfM=;
-        b=eBiFzpa5MiBOUi4q79NlyL4AdMFlGE8ynVf1iovAq2BfMpAMsmAjZUD0u8DEKPtNrN
-         7qod/DGnSa9+f5MZfVzWMaIyIdxafwlRYrVso5ne4mqMTNsrp2qLbZCFGCMkPP3c91st
-         d+p5sxPhCxCpfkhXwgJvx1iJWxhQTPOFwlrnWoZH1Jew29TkuP4ftuM78iPompscwEv2
-         o811FmKy5IVNn5QMOuxjAxNzlJ92Fgzmv8wXUnSMuczxt463LtaihF2J5oCD2VfCM+Qn
-         a55SKHSuHYHSbc7DhVj7EwU8Lvjk4KL30ncPhRYHFrXGcvcYbLSBljyNOq8id++3bUcP
-         ZViA==
-X-Forwarded-Encrypted: i=1; AJvYcCWa2/YWVOL2hdDw03wRtx/pGXPvnydEyZCX8Zz90tIoJlYlFgE+uhQtJirsgknjXdWQugxb3z6gBBG23F2s@vger.kernel.org, AJvYcCWxS2kLUTMgzOlWmxbEU6WW5qADKzziS+o1nu/ap+pJXivPoJqpHTdoWMiEj38Jrp1nH/WFPVhgbQAc@vger.kernel.org, AJvYcCXP+WoJmxS/Xe/S4FTB7f4RjOiD6LJs+DoBr9EYWbjXZTDEsEVFyVAOG9RQlShKRH70P5e3vixV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3i7sEl/EtsGjhXQkkCi6btYKPX+cHalP2UtHqtKf0XOsurrtp
-	5ImRHYZTvpgOdWwUIM13r8gFlzMIQt9IkWc+P3wjLW1CtNW4g/kc
-X-Gm-Gg: ASbGncsV+grX/jf6vdBptQyXLrHuF8Ditn7b765rbiyfnCuxCOptn00tA/gG2NF5fKN
-	yXGQ9Z8rNceyMB0quq/Cce85oEc9Wa8m2spLmxn3icgNVnxqHU2LDDdGVpmZ7NNuIxbsQCC0PMC
-	JW3mhpsHVh3Mn8AJy3PbgkqBIKPMavDGuAYPbAH9FUrfatcrlCu1UIKz9uAGqSnRW8b+kRDx8al
-	phrZ/QMiJkn/gRIWw3z5B5TXpwFwXaO2Elvs8x6gbNhbuXAZvxJDaKBwRAYWtnsqh71C+f0IVY2
-	V4X1uFmGkvrYYosdorR/UUiqCX6pAsHa/Ra9xUmSGIYms4mIlRpoXUcqmQh9hveCG1sb2Mc7XLH
-	Q
-X-Google-Smtp-Source: AGHT+IFU5A+tMQOAWn3YOK3TuwhlooPf9EWNcK6YYqJEI8gHr+LaC/RNLcb/nAuMocNkgltFg5R5WQ==
-X-Received: by 2002:a17:907:3ea2:b0:ac6:e20f:fa48 with SMTP id a640c23a62f3a-ac6faf6a198mr640703066b.33.1743150593076;
-        Fri, 28 Mar 2025 01:29:53 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac725c71e95sm48434266b.76.2025.03.28.01.29.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 01:29:52 -0700 (PDT)
-Message-ID: <67e65e00.170a0220.1aedef.166f@mx.google.com>
-X-Google-Original-Message-ID: <Z-Zd_AIsKTYJZXGk@Ansuel-XPS.>
-Date: Fri, 28 Mar 2025 09:29:48 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Andrei Botila <andrei.botila@oss.nxp.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Eric Woudstra <ericwouds@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH v4 1/6] net: phy: pass PHY driver to
- .match_phy_device OP
-References: <20250327224529.814-1-ansuelsmth@gmail.com>
- <20250327224529.814-2-ansuelsmth@gmail.com>
- <Z-ZczBztZbnc8XPa@shell.armlinux.org.uk>
+        bh=wCz69q91HFfvhGoJrcN7iTaAaXUD5silbw3K2qhF6HQ=;
+        b=ORm0QcCyYHE88TApOCi8jN7/pgRrfidzwxJ90Kgn/rDoKPW/cpJpvXDTNa3K4bBEQf
+         J9W2rSQmBEdnAZ/cv360sy+CVWbfU2iK4YM/TqjgAgkZlcQ9n3iA9YIn9F42y9w9hjo1
+         QltX8cGtW3t/hnc0E40DRcNSwVqRpSWLuIxRPhzNYdClOBFFXqjMM/uovzDWxIUdBMld
+         tTLGdsylxy21Is42Yx98+F6/xDkOJ/QtZXPsJNgAerd8QZxd4IdAw5DrrfcDeKE0UvB/
+         Zj9G+gqV7S4AwZ/tXd+92oESXpH7/yv0e/JSIX9E7+9PxkbAuvBQJLZczMAr2NxXOV3g
+         m11g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743150635; x=1743755435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wCz69q91HFfvhGoJrcN7iTaAaXUD5silbw3K2qhF6HQ=;
+        b=IzHY4hcshxNjfdB/XABmSzDXNopvem2c9KBpjXhoP1Ehxj0UbiQ+U9FVQf2tLGOwek
+         ej8JDfnEny8VT3FALp+3uxhtMRL0oA9DpV86XBr5ftC4TxZAfHcMCOGaJMv6LNMsQPNK
+         y7tUmS5dAkihs5IENeUEJcKLUiZbiqVJF5K2GUwWstNxzZ0PtK+TpuYzbxhNxZFNI/ZX
+         to6OQhIWs61QQM5RS68lCQe/W7sAVuyTybgJJNcgO/oMvUHW8NCoYfYs/GY+ejZ1y/Qr
+         uFBIPr+tQxX/KLSwAfIxKNVXmwPZz4nmGufnE0OvL0LW4vE3FynZfXuv0+10jJhfiF4/
+         GMmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzg4L5MedjkS7cPiXrr/SPLUw949dgaJoYk0h/jzt1B4zp4mo5r2Ap2r05qJkiSEbbTv3VS3DHVeQbLtAheQItQg=@vger.kernel.org, AJvYcCUzp9Kig5yTQOSYu4Ou4fSo9bUj83TELR81DzMrKoe6+oIWWHZUjF0ftHw21uWyS6Mkafsp0E5uJP//uiw=@vger.kernel.org, AJvYcCX6upC/tXaz1ZKUTHIEdHJt3nc4+MmZMbtOrxhcNjFmIvlek3VJ6Bh5iyl3zZ2XBXRvOagBYh+Vu39s@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA5FeE25qBa8MWhYNJO9l6ac9OT7VqOLZ8HxTUALiOfYXbxsnK
+	4sm7UDo4Qcudu/A40dEUJQVzrgwI/oreLYSXQkpx52d5tKeUei3SfBaJnEYyXmFtf7Xomzsbg35
+	Wo7rjeCuit1k7t4oDJg4J9u330lU=
+X-Gm-Gg: ASbGncuZH0gRBj+SsHcsOe45urtm27AV2wRdarYOoJblRyrWcW3WQPNffo/BKYH5/9J
+	PNk7LWS6OQ/Iuj3MHO/oowGZJE2IcIWbk/fGYG9uZo/4uNiC5l0dpaDyg2dVM3xQeq7/prYxsGI
+	tTfYy2jeXEKv8fbwZG8eGUNytxMg==
+X-Google-Smtp-Source: AGHT+IFIZReqhwYH+e0OINTV0TbFc9HMOCFT2KPlEmIJBSBf3GP/kFOfHmgaEfx6fm/rrHXFKMQCWubhlgeX8F1T68s=
+X-Received: by 2002:a05:6122:887:b0:520:9b05:4cb6 with SMTP id
+ 71dfb90a1353d-52600719492mr4729899e0c.0.1743150635039; Fri, 28 Mar 2025
+ 01:30:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-ZczBztZbnc8XPa@shell.armlinux.org.uk>
+References: <20250327120737.230041-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250327120737.230041-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <8734ey10dp.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <8734ey10dp.wl-kuninori.morimoto.gx@renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 28 Mar 2025 08:30:08 +0000
+X-Gm-Features: AQ5f1JrdoiuRzwfKuayvqqi9Zb-yH-FlHzUYFciOjeCux00RWQ8VspRuF2eowtU
+Message-ID: <CA+V-a8sk_SU4-2tq6ZdOsMeZY41NeFhVbAq_NZQ7YgUWuMkACw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] usb: renesas_usbhs: Correct function reference in comment
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-usb@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 28, 2025 at 08:24:44AM +0000, Russell King (Oracle) wrote:
-> On Thu, Mar 27, 2025 at 11:45:12PM +0100, Christian Marangi wrote:
-> > Pass PHY driver pointer to .match_phy_device OP in addition to phydev.
-> > Having access to the PHY driver struct might be useful to check the
-> > PHY ID of the driver is being matched for in case the PHY ID scanned in
-> > the phydev is not consistent.
-> > 
-> > A scenario for this is a PHY that change PHY ID after a firmware is
-> > loaded, in such case, the PHY ID stored in PHY device struct is not
-> > valid anymore and PHY will manually scan the ID in the match_phy_device
-> > function.
-> > 
-> > Having the PHY driver info is also useful for those PHY driver that
-> > implement multiple simple .match_phy_device OP to match specific MMD PHY
-> > ID. With this extra info if the parsing logic is the same, the matching
-> > function can be generalized by using the phy_id in the PHY driver
-> > instead of hardcoding.
-> > 
-> > Suggested-by: Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> 
-> Too much copy'n'pasting?
+Hi Kuninori san,
+
+Thank you for the review.
+
+On Fri, Mar 28, 2025 at 12:09=E2=80=AFAM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 >
+>
+> Hi Prabhakar
+>
+> Thank you for your patch
+>
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Update the comment to reference `usbhs_mod_probe` instead of
+> > `usbhs_mod_init`, as `usbhs_mod_probe` is the correct function
+> > used in this context.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/usb/renesas_usbhs/common.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_u=
+sbhs/common.c
+> > index 4b35ef216125..15ef246a1245 100644
+> > --- a/drivers/usb/renesas_usbhs/common.c
+> > +++ b/drivers/usb/renesas_usbhs/common.c
+> > @@ -698,7 +698,7 @@ static int usbhs_probe(struct platform_device *pdev=
+)
+> >       if (ret < 0)
+> >               goto probe_end_fifo_exit;
+> >
+> > -     /* dev_set_drvdata should be called after usbhs_mod_init */
+> > +     /* dev_set_drvdata should be called after usbhs_mod_probe */
+> >       platform_set_drvdata(pdev, priv);
+>
+> If you want to care about context, it seems we want to care "dev_set_drvd=
+ata"
+> and "platform_set_drvdata" too :)
+> And, it is easy to understand that it indicates function if it has ().
+> like below
+>
+> -       /* dev_set_drvdata should be called after usbhs_mod_init */
+> +       /* platform_set_drvdata() should be called after usbhs_mod_probe(=
+) */
+>         platform_set_drvdata(pdev, priv);
+>
+Ok, I'll update it as above in v2.
 
-Nono it's me creating new Tag type. Also planned to use Suggested-by:
-Reviewed-by: Signed-off-by in one line. :D (joking... hope everything
-else is ok so v5 will have everything with tag)
-
--- 
-	Ansuel
+Cheers,
+Prabhakar
 
