@@ -1,102 +1,161 @@
-Return-Path: <linux-kernel+bounces-579979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F29DA74BC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:57:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87391A74BD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:00:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E1B17E061
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A711B65E60
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B183F17332C;
-	Fri, 28 Mar 2025 13:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD851B424E;
+	Fri, 28 Mar 2025 13:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iu/iMcap"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="Q+rQeu7L";
+	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="Q+rQeu7L"
+Received: from gmmr-2.centrum.cz (gmmr-2.centrum.cz [46.255.227.203])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB667170826
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66001AF0D6;
+	Fri, 28 Mar 2025 13:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.227.203
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743169573; cv=none; b=a1zQ/O/XEmfcw85xlSXXG/R95TlcTP1WeIQxdfmv7T+yIoadYMA0/Ge21Lm/A3xbp8KJp+fwollIW8KktZQww633FtwrXqb14tDJes5QkH4TCbn5IJOpEs0EQzZJVZbolCvGSMgbv0nM/5HEDzA04gd4Vk9BYUnTDGT2jEbpfNo=
+	t=1743169725; cv=none; b=WoBdql5J7IPQGrD2j1RretYlRqXi/sDy5fepYJAaGJFXSL+Irc/oYJV2jkjeVOWbTxyaotq1M4JKkC5AjgldExFA81b49LesrxOvCzBJ2yyVe8lpE4RJL/ngKNLxTba5QTWrdTS9CCitZLpg3GhfFKCowlneHeNz+eARjkst7Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743169573; c=relaxed/simple;
-	bh=9BRPU3SLPzWh1YZglZtMUckHPTeFm2DeHxJjHOAN8xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKVQGVvwEqqcrkVbStSO+VfwLQ6/wAfbgjELY0mug/3cYxHG8McTY60hSzgGLdNjhuEXCzOs6SNiM9CzePDkG6CexEQOsfmGj8fPmOlkarlTReh6OKfD/OFKjC73tHk5FifS1BKNYTTNlmfzhdUXrPN3ne1voqlsdlQhaW+tjBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iu/iMcap; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 156D340E021E;
-	Fri, 28 Mar 2025 13:46:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2m_CWlbsjyX2; Fri, 28 Mar 2025 13:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1743169559; bh=hPVp/OPa3Ze/KbpWnC5nvMVpALBy036QuWooz7xHvWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iu/iMcapJyIA5/UbUPjAAhbEllpR2Lk03J30TXPx6PNHWhjUyJmdNE4QHA6gRosmk
-	 BGadSuc2D8GVrRcq5NRy3b1peLjalyaLpxdlDG1k8AfziKuQ+IRIKgdlVtR7udxMKJ
-	 48aD9/sCSdP/uwFap8bJGyHjqb1V0hKwYtBp45iEK8iY3gK7qulLBg1brvzi8feudy
-	 2lzXWXIRXA+SGTrj7gCcyTJ70pjnW2w+a/x5+vRBc/z5iDsnpyqUjzykXLealEUJJR
-	 ZuJx9v0QlTdW4rzoflm3uDhvJSTWb4UNHIWL2dXIjtJ8cx9oE7oH2huwvnN4Af1yIw
-	 rX3w8wfWZpQcXTIU+2YblIZrMn1KlyjGrls1MtnJEdh5o2BC/Vc9pwiWlgm/191FyS
-	 F5oKglkygQldptmyHiRyG5owSHRY0nMgFNMekDJWz0VVD+80bO6y9b2YcXOPq/tmt4
-	 wdCYsSQCxtMOECawA5I6PG5vn1VeUKU2SolbS9OIBL7OTgMS8PkBnfGvzKBLhwTb8h
-	 pPLo77KFZet4V+qaSIWIP3WFWw1/0KSWdTTJMInYmDiNY93qD8SWqSOhfqhHSVBY7k
-	 ztc5XwVYJVEAKXfH/LdSfBY6S/+wg1AnLUfHQeLkwNH2NATfZKaxcZfS5tWCixzbxw
-	 9yME1uvK5IvObOfp9Kl79ovw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	s=arc-20240116; t=1743169725; c=relaxed/simple;
+	bh=q0K01qJsYFOFiG0iZ2m4U1klsVF646bLGLD1xDAPFPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PZLfcAy2Gp4lV5Ci0mOS8bYMnByukH6sIuY3cNypEqs+OI5G6UsfqmNb+KWt248AR6Ia6YFjxoSha5vQQWZWnk6VczmJ3ptJru3PAjYsBKuPe7vM8oBa/PGHRJ4X+QOPcYlwmEHOHi2/Qb3hulfWL5FSEA62ncG+AtLdV4Vr+Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz; spf=pass smtp.mailfrom=atlas.cz; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=Q+rQeu7L; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=Q+rQeu7L; arc=none smtp.client-ip=46.255.227.203
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atlas.cz
+Received: from gmmr-1.centrum.cz (envoy-stl.cent [10.32.56.18])
+	by gmmr-2.centrum.cz (Postfix) with ESMTP id 18355200BC3F;
+	Fri, 28 Mar 2025 14:46:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
+	t=1743169600; bh=UlBw9/qeUcHj0FTkB0/+Oy9DVtY5u5gfvTikwDv089U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q+rQeu7LkRj/WcLfDzbrUmXEM+X1OkkobVwoAT3cCsIxI+ZzJAenX3wQlvJrwsDBJ
+	 bHPz43aR6yAbeuKCaFTbLxSrhvbVMXPYtAsZP1LXjXl8Fu40VOwVDPBKkj4oATP8f7
+	 cWTqdbyOl1aryGdAEs8oW8GLS5ZTCDpJ1dKsJ4OE=
+Received: from gmmr-1.centrum.cz (localhost [127.0.0.1])
+	by gmmr-1.centrum.cz (Postfix) with ESMTP id 150C31B4;
+	Fri, 28 Mar 2025 14:46:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
+	t=1743169600; bh=UlBw9/qeUcHj0FTkB0/+Oy9DVtY5u5gfvTikwDv089U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q+rQeu7LkRj/WcLfDzbrUmXEM+X1OkkobVwoAT3cCsIxI+ZzJAenX3wQlvJrwsDBJ
+	 bHPz43aR6yAbeuKCaFTbLxSrhvbVMXPYtAsZP1LXjXl8Fu40VOwVDPBKkj4oATP8f7
+	 cWTqdbyOl1aryGdAEs8oW8GLS5ZTCDpJ1dKsJ4OE=
+Received: from antispam32.centrum.cz (antispam32.cent [10.30.208.32])
+	by gmmr-1.centrum.cz (Postfix) with ESMTP id B2106D9;
+	Fri, 28 Mar 2025 14:46:39 +0100 (CET)
+X-CSE-ConnectionGUID: pyp5bXrhQ7eAqW///7xMxg==
+X-CSE-MsgGUID: VNyVFBIfT1OE2CfFrsGxcQ==
+X-ThreatScanner-Verdict: Negative
+X-IPAS-Result: =?us-ascii?q?A2FIAADPp+Zn/0vj/y5aGgEBAQEBAQEBAQEDAQEBARIBA?=
+ =?us-ascii?q?QEBAgIBAQEBQAmBSoM0gXGEVZFyi3mGM4EgjEgPAQEBAQEBAQEBCUQEAQE+A?=
+ =?us-ascii?q?YRIiygnOBMBAgQBAQEBAwIDAQEBAQEBAQEBDQEBBgEBAQEBAQYGAQKBHYU1U?=
+ =?us-ascii?q?4JiAYQpDwFGKA0CJgJfEoMCgjABAzGwEoEyGgJlhHzXdAJJBVVkgSmBGi4Bi?=
+ =?us-ascii?q?E8BhHyGKYINhH2ECoEGgw6CRyIEhk2BDIwghDSES4UxgnGCJ4tRSIEFHANZL?=
+ =?us-ascii?q?AFVEw0KCwcFgWwDKgsMCxIcFYFFe4I9aUk6Ag0CNYIbJFiCKIROgQeDN4RDh?=
+ =?us-ascii?q?VCCEYIEiSeEYC1Pg0AdQAMLGA1IESw3FBsGPQFuB6MaOoNTUSBaNFuVH7NFh?=
+ =?us-ascii?q?CWETZx7GjOXUh4DkmMBhTyTQiKkKYRogX6BfzMiMIMiUhnaQ3c8AgcBCgEBA?=
+ =?us-ascii?q?wmCO40tNIFLAQE?=
+IronPort-PHdr: A9a23:TH+bRBbQ+o96Y7pSy2ME0bv/LTH414qcDmcuAnoPtbtCf+yZ8oj4O
+ wSHvLMx1wWPBd2Qsq0d17GempujcFJDyK7JiGoFfp1IWk1NouQttCtkLei7TGbWF7rUVRE8B
+ 9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUhrwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9I
+ Ri4swndrNUajZdtJqosyBbFv3RFdupLzm50OFyfmArx6ci38JN/6Spbpugv99RHUaX0fqQ4S
+ aJXATE7OG0r58PlqAfOQxKX6nUTSmsZnQNEDhbK4h/nRpv+vTf0ueR72CmBIM35Vqs0Vii47
+ 6dqUxDnliEKPCMk/W7Ni8xwiKVboA+9pxF63oXZbp2ZOOZ4c6jAZt4RW3ZPUdhNWCxAGoO8b
+ pUAD+wdPeZDsoLxo0ICoQaiCQWwAe/izCJDiH3r0q0gy+kvER/I0RI9EdwAs3raq9r6O7sdX
+ +2u0KnFzi/OY+9M1Dvh6oXFdA0qr/GWXbJ3dMrc0VMhGB3ZjlWKtIfqMCma1uITtmiY8uFtU
+ vigi3Qkqw5rpzig3N0sh5LTiYIJzlDL7z55zJwpKty5UUN2Z8OvH5RMuS+ALYR2Xt8iTH9yu
+ CY80rALpYK3cSwUxZg6xxPSZeCKfomG7x79SuufLjl2iW97dL6imxu/81Wtx/D+W8S10VtHr
+ yhIn9jRun0N2BHe98mKR/1g9UmiwTaCzw/e5+BeLUwqlafWK4QtzqAumpcRq0jOHC/7lF3og
+ KOLeEgo4Pak5/r7brn8uJOROJN4hhv6P6kvnMG0HP42PRIUX2eB/OSxzLjj/UrkT7pUlvA2i
+ azZsIzCJcQcu665HxdZ0oY95Ba7CDeryNsYnXweIFJefRKHk5DpN0zTLPziEfiwnVKskCtxx
+ /DbO73tGInCL3nbnLfge7Zy9VJcxRI8wN1e/Z5YFLEMLfLpVkPvqtDVDAU1Pg60zur/DdVyz
+ IIeWWaBAq+DN6PStEeF6fg1I+mPfoAVvSzyK+I+6vH0kX85nUUSfbKz0ZQLaXG0Bu5mLFmBY
+ XrwntcBFn8HsRAkTOzpklKCVCRcZ2ypUq0m+jE7DJipDZzZSo+xgb2NxD27EYFOZmBaFlCMF
+ m/leJ+LWvgXbyKdPNRskj8aWri7TY8uyxWuuBXnxLpkNubU4DEXtYr/1Nhp4O3ejRUy9T1yD
+ 8SA3GCBVnx7nmQUSDItwqB/rlJyyk2Z3ah7nfNYD9pT6O1NUgsgMp7c1eN6B8joWg3dZteJV
+ EqmQtK+DDE1T9IxxcIOYklkF9WhkB/DxSyqDKERl7GQGpw0/bzT32LrK8Z+1XnGzq8hgEciQ
+ sdVMm2mnKF/+xDVB4HSi0qZjbqldbwA3C7R82eO1WWDsFlFXw5zUKXFWGgSaFPZo9v3+E3MU
+ 6OjB7I/PgRczM6NMLFKZcHxgFteXfntINvQb3qqm2eoCxaF3quCYpPydWsSj23hDx0AkgYO7
+ TOFOBI4CyOJvW3TFnptGEjpbkeq9vNx7Du/T0kp30SGaEZJybW44FgWiOaaRvdV2agL6wk7r
+ DAhJFuhxZroAtwjpEI1db9faNY0+n9OyWbQrEp2LMrzfOhZmlcCflEv7AvV3BJtB9AFyJByx
+ E4=
+IronPort-Data: A9a23:wVeOYK8h5u3FglkGFVm9DrUDhH+TJUtcMsCJ2f8bNWPcYEJGY0x3n
+ WoeX23UPamDNDfxfYp+YY3k90gCu5PTzt9hHAZt+39EQiMRo6IpJzg4wmQcnc+2BpeeJK6yx
+ 5xGMrEsFOhtEzmB4E7rauW8xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2LBVOCvT/
+ 4quyyHjEAX9gWMsaThEs/jrRC5H5ZwehhtJ4zTSWtgU5Dcyp1FNZLoDKKe4KWfPQ4U8NoaSW
+ +bZwbilyXjS9hErB8nNuu6TnpoiH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxH4
+ I4U6cHvE1dB0prkw4zxWzEAe8130DYvFLXveRBTuuTLp6HKnueFL1yDwyjaMKVBktubD12i+
+ tQAOShQZCCZh9vpzZuida4rwZszCdnkadZ3VnFIlVk1DN4pRNXYRrnSvIYe1zo2mtpTGLDVd
+ aL1axIzMlKaPkAJYA1ITs1j9AurriCXnzlwoUiWrK8++UDa0Ah4y/7mIrI5f/TTHZQPzhzD+
+ D2uE2LRPDcLCvK16DS5q1WB3MTBszngd5IZLejtnhJtqBjJroAJMzUfT1iypPCjokeiX9tEb
+ UcGkgInvaI1+WSoQ8P7Uhn+rH3slhodXcdAVuE94ymTxafOpQWUHG4JSnhGctNOnMs3QyE6k
+ 1yEhdXkARRxv7CPD3GQ7LGZqXW1Iyd9EIMZTXNaC1FYvp+5+t510U+nostfLZNZR+bdQVnYq
+ w1mZgBl3t3/UeZjO32HwG36
+IronPort-HdrOrdr: A9a23:CDIFkqxJmmhhjxqnCTv4KrPwPb1zdoMgy1knxilNoNJuHvBw8P
+ re+cjztCWE6gr5N0tPpTntAsO9qBDnhP1ICOsqXItKNTOO0ACVxepZgrcKrQeMJ8SHzI5g6Z
+ s=
+X-Talos-CUID: 9a23:PnKBvGNZraC33O5DQDh/qUQkAMAcLXD01UiXZAjnGUN5R+jA
+X-Talos-MUID: 9a23:0eXJswhOdhHuE1uNq5Kh98MpCuF53YqEKU4xyLIr4eKKGzZrFCeWtWHi
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.14,283,1736809200"; 
+   d="scan'208";a="109282367"
+Received: from unknown (HELO gm-smtp11.centrum.cz) ([46.255.227.75])
+  by antispam32.centrum.cz with ESMTP; 28 Mar 2025 14:46:34 +0100
+Received: from localhost.localdomain (ip-213-220-240-96.bb.vodafone.cz [213.220.240.96])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B5CE140E015D;
-	Fri, 28 Mar 2025 13:45:51 +0000 (UTC)
-Date: Fri, 28 Mar 2025 14:45:44 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: boris.ostrovsky@oracle.com, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com
-Subject: Re: [PATCH 0/2] Clear AMD's microcode cache on load failure
-Message-ID: <20250328134544.GAZ-aoCA03g9SygDnW@fat_crate.local>
-References: <20250327210305.1694664-1-boris.ostrovsky@oracle.com>
- <Z-XEPVvEDhC5vzR4@gmail.com>
- <f8ec905f-04d4-46f6-909c-7f79b151c0df@oracle.com>
- <Z-alzhvfSXN4liNE@gmail.com>
+	by gm-smtp11.centrum.cz (Postfix) with ESMTPSA id 322BB100AE2A3;
+	Fri, 28 Mar 2025 14:46:34 +0100 (CET)
+From: =?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
+To: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	=?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
+Subject: [PATCH] Documentation: fix typo in root= kernel parameter description
+Date: Fri, 28 Mar 2025 14:46:21 +0100
+Message-ID: <20250328134622.15917-1-arkamar@atlas.cz>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-alzhvfSXN4liNE@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 28, 2025 at 02:36:14PM +0100, Ingo Molnar wrote:
-> It would be a pretty common usecase to attempt to load the earlier 
-> version if the loading of a new one doesn't succeed, right?
+Fixes a typo in the root= parameter description, changing
+"this a a" to "this is a".
 
-This is only for late loading and no one should do that anyway.
+Fixes: c0c1a7dcb6f5 ("init: move the nfs/cifs/ram special cases out of name_to_dev_t")
+Signed-off-by: Petr Vaněk <arkamar@atlas.cz>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And load failure almost never happens - unless you're a cloud guy doing
-special hackery.
-
-So no need to expedite this as a fix - the majority does not care.
-
-Thx.
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 5e351ac52cca..6049a2f30baf 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6224,7 +6224,7 @@
+ 			port and the regular usb controller gets disabled.
+ 
+ 	root=		[KNL] Root filesystem
+-			Usually this a a block device specifier of some kind,
++			Usually this is a block device specifier of some kind,
+ 			see the early_lookup_bdev comment in
+ 			block/early-lookup.c for details.
+ 			Alternatively this can be "ram" for the legacy initial
 -- 
-Regards/Gruss,
-    Boris.
+2.48.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
