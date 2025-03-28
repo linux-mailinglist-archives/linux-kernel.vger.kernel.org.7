@@ -1,90 +1,162 @@
-Return-Path: <linux-kernel+bounces-580116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE71A74D7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:14:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7D8A74D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583C7188F106
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F6A16DA83
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCB81CCEF0;
-	Fri, 28 Mar 2025 15:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6490F1D4356;
+	Fri, 28 Mar 2025 15:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KU1uKX31"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MaCBo4c5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4401F1C860C;
-	Fri, 28 Mar 2025 15:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B70F1B87E2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 15:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743174825; cv=none; b=CwJWJiH5Lx1kAE0yU9AER2nH3e1loV9E8FBid/UFOmK3H1wAJCX6Mh4agr5NHqJEVuTxzPPvJc26TfJPi6UJOHGL2maheGOkhk7ecK/qOOHGlKpObH04rlCrHgZJ5zm3XmIOCb6L9IazwzjH9rhlKZZUKna+p2WHwopzaEebLDA=
+	t=1743174955; cv=none; b=mD1ycpcytLGCJWl0tuncwnz8UJUmspVvwKkVgiXjk+r8wyY1jf/aUFBJkrllha6UHocy7TFu8J0IFhxKueVUhjd+7UbXvkvGhv1TivwJRzckg/THCEAs4CNVFNOWdWjemBN8z/y6dJr1FMe4naq53xoRjbnsQY6RMPROUcUwi54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743174825; c=relaxed/simple;
-	bh=Dtnjl7os46EKSTPdEv2lx+mACntQjIU6u4CtZiCQQME=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UVcZiOyIwKOt4pG4roMe4zp8zn7fAdRrwylTt6bNcnb3n/h+ZfG+mc+I0lOPBYpS40CRy6NxXtBPV8lkn8hucA5nmSvadmJ7AJR3Dm9T/URMHr+jvSNeNIvwszvdhP8RkMiPI0Mu5hpQK8XYYC3dEhQLlXYXFRVTq3GuhXLlzvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KU1uKX31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBCBC4CEE4;
-	Fri, 28 Mar 2025 15:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743174824;
-	bh=Dtnjl7os46EKSTPdEv2lx+mACntQjIU6u4CtZiCQQME=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KU1uKX31NIaglimesxqTFb0KuT4jfPg992rwxEwDDBRmZo4e+KcWh7jK3uM6wRR0O
-	 XivE8gGp99t/FKqhRCGrTvMNsGS36IXO6G35woETJXQ6FLPnjuSmri5dVj15LxPF6U
-	 3RkABxexXyg2Px6CkfnzwVf26HKwK7gZG1IHwv1nC8FAjSPYGPf3lkGwDpLLy0vo7W
-	 wtw7BQyiXoAZej8iX30/hKYam2qPSM0+im66TREcruDoWcrEfgqYIbc8PyJB7J59qO
-	 7M84zHKKHia5fYP/gf+79wS1rdLaN7pWVRXRDnWxiscYqkTwHZXmdwkdwXuqp+l354
-	 lljSM9ycVccIQ==
-Date: Fri, 28 Mar 2025 10:13:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ath11k@lists.infradead.org, ath12k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI/pwrctrl: Rename pwrctrl Kconfig symbols and slot
- module
-Message-ID: <20250328151343.GA1505019@bhelgaas>
+	s=arc-20240116; t=1743174955; c=relaxed/simple;
+	bh=UTt732wJ9n8PLRvrT1PCargeNlx14cqXwsCi/u96O9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gBxlbA9ERg5ebHxc/Vp/JrZ+lCRpxA7crTsqEvPaiTZSbwueyk8ax9aCTyiaIIUXQWFucWySKxNCsbP2iSzAGCGfUjJgu5/10/j35Wyv2PotKsayIXBQDqtl3tClOTxAYl5W7+WCZ8FvF2+BH59fDGoUdcWGnWRsHqDqTqTElzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MaCBo4c5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43948021a45so22828955e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 08:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743174952; x=1743779752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iMl7ipkwOPC7e3j6qlBN0GX/yfrn6BNcMk907xgyr8=;
+        b=MaCBo4c5bpLNWOhHg33JD5CmlPvocBrCHyHxaXQ+UFz4WUfg/D+tAWB2MZA3RiV1RG
+         CZw/KaKhdJS3gd1XrD/y3ndUGqn8TfRQ7W/ufqf4++m68XqztpsS9ez7d+f4BQZOJDXj
+         z7kMnKwxHcQchlMuwfilcn+Yr3ENGFjPGsC9BbX8y1ACJGAxcNpBBTJkQLHRNmaUlwet
+         23Wrwt1B8mdlM8ZO9NkgWUNuRfnr47b6tP8Rr+5Won1xfZggQDAFJ4M7N487GNCnkIEC
+         IoC17ZLukahqT2OHqMEITw1WSk+jHwLXN8YoRa3q/7/DLM/8OPthJltJ+lVW2akY8Hhl
+         Hj6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743174952; x=1743779752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7iMl7ipkwOPC7e3j6qlBN0GX/yfrn6BNcMk907xgyr8=;
+        b=EHE5F8/uyHlS9RTH9ADGszVO/2DSGyfNnRWpi2G7IpAMobongQgkV/PTqytqXPuojx
+         PaJiqwHtRjs1O8TkXKB0gUaa/Jo/DS2TH7kmAgDvH77v0MLe+61CIsPDz3upfBbSOorU
+         aAfXQSOPVcl4wVljjDz13tCbaNgjuwDYFwGSq5a/g6ShDALlog4ch0hIe+suZIbtsdZn
+         kpC+paK6Hr1EtvvaG/StTq1SFkMvfL8FZpeAPsp5mXq5G2x0T4YPtJxGzqV03CZr/gfh
+         /+wrERPU7loHDGeRxszDDmOO7FIM8aUhr80eRwR4ONsM6sI6G65Umjh9d3gZ4vqOIMwS
+         Z4dA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP8xWwcwgDN8TBN8pmvxhk7aUKNVVakr/ORUv53K24dnJP2PA0C4g3XI7/bhpdIZW7PUNHgKDeqvDDFNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHB3CZun1y67CUt1v5QGK5j+Y7u3zjNvUhX9waShH+Jxr571Kx
+	h9PLGkYxf8NTOfDQU//LiNPupuoiKufLLNVJQcEWlGlTGShIhO3Xq39ioDwH3UU=
+X-Gm-Gg: ASbGnct+kyTeo21sMmztY9pcBP3ojy5ycacA6BcQ9VA5RBAShFZ5wl2yddi35tcSMGh
+	FxL6vEU7tpgHN52ltnTc2vQjX2s1g4z5dZeTiOmOzwxpn5GNE+Y6FbOEFnFN6adYMCexkJQ5n1V
+	dIjyhu6gPmMIiQ72o1yzpBBWMGcuKFJWtJkRqyVxmC2X3xVfi8qi14pGEegxpUcGTyK9zROqecJ
+	S7dz2XKS0MORsuPqZ09b+CVIhfV4ZcRMXoi2icVHRMAPXUUy3/TfSsBYnVfj1VlYtOO3bOKtE+U
+	bJO2VGFYoHPm4lMl4DHnLWShNEms78MhQY4rJnCqwi63ijoasv2Cq/4SXrjfrOWE5qEV5GM=
+X-Google-Smtp-Source: AGHT+IGrvdqns/KyfFdg9NaFSTKqJeDUYv3jAEEnoDUOD84kdMdf7zIggJoC/R5v670HU7RhL5LOHw==
+X-Received: by 2002:a7b:cbd8:0:b0:43c:f5fe:5c26 with SMTP id 5b1f17b1804b1-43d866d3e2dmr60639945e9.4.1743174952199;
+        Fri, 28 Mar 2025 08:15:52 -0700 (PDT)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d830f5b41sm75979335e9.27.2025.03.28.08.15.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 08:15:51 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: wim@linux-watchdog.org
+Cc: linux@roeck-us.net,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	daniel.lezcano@linaro.org,
+	S32@nxp.com,
+	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
+	Thomas Fossati <thomas.fossati@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+Subject: [PATCH 1/2] dt-bindings: watchdog: Add NXP Software Watchdog Timer
+Date: Fri, 28 Mar 2025 16:15:13 +0100
+Message-ID: <20250328151516.2219971-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328143646.27678-2-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 28, 2025 at 03:36:43PM +0100, Johan Hovold wrote:
-> Commits b88cbaaa6fa1 ("PCI/pwrctrl: Rename pwrctl files to pwrctrl") and
-> 3f925cd62874 ("PCI/pwrctrl: Rename pwrctrl functions and structures")
-> renamed the "pwrctl" framework to "pwrctrl" for consistency reasons.
-> 
-> Rename also the Kconfig symbols so that they reflect the new name while
-> adding entries for the deprecated ones. The old symbols can be removed
-> once everything that depends on them has been updated.
+Describe the Software Watchdog Timer available on the S32G platforms.
 
-I considered changing the Kconfig symbols at the time, but didn't do
-it because I didn't want to break existing .config files.  Is that not
-a concern?  Or do you think the long-term benefit is worth having
-users re-answer these config questions?
+Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+Cc: Thomas Fossati <thomas.fossati@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ .../bindings/watchdog/nxp,s32g-wdt.yaml       | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/nxp,s32g-wdt.yaml
 
-We have lots of Kconfig symbols that are not what we would choose
-today, e.g., my misguided suggestion years ago to use "CONFIG_PCI_*"
-instead of "CONFIG_PCIE_*" for PCIe controller drivers that didn't
-have any PCIe content.
+diff --git a/Documentation/devicetree/bindings/watchdog/nxp,s32g-wdt.yaml b/Documentation/devicetree/bindings/watchdog/nxp,s32g-wdt.yaml
+new file mode 100644
+index 000000000000..06ead743d5c1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/nxp,s32g-wdt.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/nxp,s32g-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP Software Watchdog Timer
++
++maintainers:
++  - Daniel Lezcano <daniel.lezcano@kernel.org>
++
++description:
++  The System Timer Module supports commonly required system and
++  application software timing functions. STM includes a 32-bit
++  count-up timer and four 32-bit compare channels with a separate
++  interrupt source for each channel. The timer is driven by the STM
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    enum:
++      - nxp,s32g-wdt
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    watchdog@0x40100000 {
++        compatible = "nxp,s32g-wdt";
++        reg = <0x40100000 0x1000>;
++        clocks = <&clks 0x3a>;
++        timeout-sec = <10>;
++    };
+-- 
+2.43.0
 
-If we do want this, I would think we should squash all these so we
-don't have breakage between this patch and the following ones.
-
-Bjorn
 
