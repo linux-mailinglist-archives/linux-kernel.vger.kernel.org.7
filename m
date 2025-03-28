@@ -1,117 +1,249 @@
-Return-Path: <linux-kernel+bounces-579901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0D0A74AC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:39:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787D6A74AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:41:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AF33AD693
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:32:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D860417EB99
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0079D22258C;
-	Fri, 28 Mar 2025 13:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44228218AA5;
+	Fri, 28 Mar 2025 13:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="V+ct6d2a"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLFYjRd1"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31632222C7;
-	Fri, 28 Mar 2025 13:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8768192B7D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168513; cv=none; b=SFGz4ur9oJLm2ekkZGLUSX9hUp1yEdK7gkb8kNHTJoYf14FepacRGPkjy1flRBz6+ZbRSon6yjguMeFI5kwbi1IW1jBsgrkaqPIk6xrUiK5Iz4bsiwqmW3niudd7RRpy25seeJFBHrjcX7lSSgG6HJ+rWHoJuTSmx2CXFJFMQcM=
+	t=1743168658; cv=none; b=pOkJdcATC6hzTS3gCNc2nD5ei0RSGBSW/5uqHn90xelzGVRyBo3feJnfur88hOUy3uyie/oUIeiNirfG/M41DlN6WSqEoMDzCM6GL7n5hSGl4tfijehWUcE42NUHAJuWI5T8+kkv6y+i5Pg+orKPaOcM3pOL0YOSL9djRDFrfYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168513; c=relaxed/simple;
-	bh=AmiIbt/wN7iOY/s7foyX8kzAk2TSDj8J5sMRc0KGCao=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=EnKoUnHmXU1NpmlA/MOw4VsKGn+PbJYWxi/qe3/58Tk83j+3J39QXkg/L+aIw3uE9r7CbeAnTo9MR8sWea58IXfgOzRNroD0cnYm6sYy7uplr4OpYF+QpDyrg0Wz48JsLNklTHVrCXDGNdyYpyCdfcCtcA46yJs0Hl144T70Wxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=V+ct6d2a; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1743168496; x=1743773296; i=markus.elfring@web.de;
-	bh=IpfDNgazgXXBhb3QCNRjJJD4rFulvC5l9bpTYHKG/4I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=V+ct6d2aiYPipLyNzTJIGp5xE3blwGV4MJzi71wDjLMjqIfaEpauAS4lUBBc5IKw
-	 PesrvwSg3KCuHnHl8neZQscEK+QbLdvVIAUvuB5OZUf/URsJbSYX1TkJpUMe1FA99
-	 0R6TwfI5+RTbgePAExWvKb0Re2vN8hGvn4fJ76nqPyJGRGVhU4aCwZ469b3bX5mrU
-	 SkgVnvlZKcZVFVcl9DMGo99gU8qW6MVw3CccwZCHB3CxT+EhkvVhSngO8uVstH1qC
-	 vEhRT7Zc9nYWmEGvlCqNwXaYlxyg+AB9AdIY0skgqo/g1GieSj9mdujNl/kM0mDWV
-	 2/tQyNylINfPRKsyIg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MeDMb-1tNRlH03Md-00b2Hg; Fri, 28
- Mar 2025 14:28:16 +0100
-Message-ID: <06545fa2-7f82-4154-a882-faddb53df4d9@web.de>
-Date: Fri, 28 Mar 2025 14:28:13 +0100
+	s=arc-20240116; t=1743168658; c=relaxed/simple;
+	bh=ej4rCGaeftxK2JXTOtoIQ9rhKbtDvQSJvMSbi3kIDdc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WQd6cjOFcW7ahcLYVRt82e93W3ng0diGqz1rnmP0MiwovVmw610sbdveo5PYi7IDkf+PUGgW+Y2w9gkyMu9hwmIVCn4PcO9FmDyHFYHnTQIPmH1TZ1Xd0VRSUYIU5YEDgJ7Q8QiPeEArDnNZtZEDC9yeqDhuN2R8O/pSVajZx6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pLFYjRd1; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so280383666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 06:30:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743168653; x=1743773453; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZRvLbiHiKLkWNaqlgJsovX/nYtjDcjC8MqvumdDWmcw=;
+        b=pLFYjRd1jeH8a30Ico34ct7vhyh8RSJ+fWxUF6uUaOMu40FQe8c2cYA+to4rM54mWL
+         LQNPjgy5nQpxSd4orBv/Tli3Il/rXxv/9/t0wzUJThtHia8gom2XNbbAGv36BQPQ8SRN
+         pt7Juo4RYjCgiccGMhEWIRq0KMETJYz9zQx2ccyRiWj9kLfT8Z2NegxSJnuaMDoyEav0
+         eoX9AHXMoacZxgWsjUwd0CXlczOmKVucy0xHoA43bDLKvK/PTBJLlsDGufH4R0kyZxWO
+         BOFr5lBQ3cGJdJ4yW1EGCCpndpFJS2FuyiDGdm7I7cKAoR/qOSQdt+aB8CcB0Wv9+Fat
+         qmWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743168653; x=1743773453;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZRvLbiHiKLkWNaqlgJsovX/nYtjDcjC8MqvumdDWmcw=;
+        b=h5bh6hEWF8gPNXAiUkdQw7l0PdhV4IsAqGYm3r1A+Yz7QtHmmU/VNyEC+XP2NjxhAL
+         ynoWQNibgLOYGronkMyVuEqwYlCKgsSLGz3lIME3alFVs4LHDWsSuRsZgfla51UlwwrQ
+         X0gsgPEl0XDbRgiw0LeyueEnyiGafwF91dK5fWaBBlVu9iiOLn5Fy+zoA1IuAs+8lAI7
+         RNSvtLJY1ZMtySppQFq/+McCynOXi/NHJu1pubj6z1HcS7UvMHLxdszIAN0klyZhhWW+
+         nh7ivnuseHxYjyz1w2jsd7ib3fsW0/ttyP15MGQCfJguuEjA+7h2bmeK4BcghGAV1FuC
+         Jb8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOJg2Dg2fzLkb1+4uW0ssV0NYoXBh8D/cu/E+jFI1rPrciYPI723v3X9IxIEFolptXeqzV81hnrOuvOPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3lUA/HwJrPqlhQmhCLGK9q0Z2Cs7gfrdLLlF+Ow5Qk+iPX2ik
+	KAcFzQkfrpPECpn2nTdQU/WlUzf40Y3wXYqxaMniWxROGI4Tnm85hoDvQesQuAU=
+X-Gm-Gg: ASbGncvYS2oO8+3yKMqNEiRUseErgf+/Qs5n8FglK9AAlJennpIpd9yN8HUofsjWtCq
+	5Np+uszCIFFKltOJD2zGWzJEOvW+xQ+bt2oXXOLM5HPxeRS+VAx5pWYYaDcYDFyFob8nFLS3VFG
+	/d3rCZCcyDWKuCQLuuNLS76MIjxnp41VG+wu8PwYSZAsyWfLMWnp2BMk8RaGEzhJ6ghvqc9Ek3c
+	4tNxAhQhgo8XgarO7R+BHaA54yMTCdcSAbABku9oqnQV6YJ6jhj5H7CnLAbn0V1Hd8dUS9FChei
+	/PXoBGL6j9P7/sr8auqsdwOZBqYQeJxdhN+HV7ThNZOAvYoplZtCXw0Fx6FESVBgoCyCdjErdI5
+	2gyacrW4CbfTmwzAI0SuL25M1Ub81
+X-Google-Smtp-Source: AGHT+IH1+pjt98yfLPdlHXhG5zwY12ogF7yk18zqK8eCDj7Jf469dISQ7xCv0AXw/+mBhRrdep/+WA==
+X-Received: by 2002:a17:907:1c07:b0:ac6:ba91:ca4d with SMTP id a640c23a62f3a-ac6faf04aafmr667626866b.31.1743168652788;
+        Fri, 28 Mar 2025 06:30:52 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17e01f7sm1355284a12.79.2025.03.28.06.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 06:30:52 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+Date: Fri, 28 Mar 2025 13:28:46 +0000
+Message-Id: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-References: <20250326141641.3471906-3-quic_msavaliy@quicinc.com>
-Subject: Re: [PATCH v2 2/3] i3c: master: Add Qualcomm I3C controller driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250326141641.3471906-3-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cT4tjGtvJXvSRL+OUV0lx2UA5LnpeNz7q6/InzNnyiHEeviRrrT
- J5NFpTF815mDYWMO4nPeGSD+QWvucLhYGTqXjab/uxjKLQs+S+00/gVECE65Ll0VkcaBJ13
- 3O69z7LlI/4kiHqQB0J/15AuLEWqpqTotzAjYKo7DSXrGgpATtje3q3pelLnJc74ZIWTwWK
- 5bbY3ik9lh+qlhh2hkwCA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VOlzgvrPiWw=;l+7eWe+iFzWKRZ3mRi7dimYU2oq
- grhkx9vsw/VEsjtCEXy54VQHpRClnNXV+HsR9CxvgANjp4EF3yKVRZOHULbMauoT8pJnnaooT
- 26PitrDifSc990DwYDszXFag//F4MEJqvQFvQATnpP63nvBnufBWMaJ9lAfeD/W8HqNNa9QFp
- Wv4UUqLu5ospDIjmuWKH1ztIa6nRdFA4aSH77Cfrrea7EFQC4Yfhq99WXoI04ntItmb5LpWwr
- p3XiEo5ga1keYYYM5/g8ystw+oZWrIzac4taLPppQQSZMkXHg1i1a0I7+0ZLUpbrUgJcZLzXO
- 5tR5w7hc6ierey3WTEXDSwEmn4G/LrevpBdHbCPbdq9ZF0BVnaHyjnK5HVXVdUcpW2xigWnaw
- /aWWZ3N9Q8lx1wUhvCcpdlULI+BdHafdtv5DttCKdGPvXn3bSGNpisCZk1eRvXCQTSo9AD3X3
- iJvTzfdgV3N7fU9fpJbvExMIQQKfMqApC+aXhE/u/hI8w9MBvl9UKh7zxk0rfN1mRKrGPD3Ay
- LBOpYj36D536AY0oUl/iVwgBiwI+uCMvO5/rRMbcTcRO6OwAPl0cit1RTyOQTnp7Zxcu38VHX
- 9a2x3tvW6MnCiRVtLm63UNVzza4gPL7tLr1g/JNC1BPO+xNfEW7HV6JttUvUminTVKYw4WT6F
- kM+VnT++9dayUzuzO0zugVmwl02ktS7qWjNhFKFQwfHVh4Z1dDiCK40teZbGA57CREoYXPD0s
- PaswK4GWhPRj2JijkOdxI+cyIDafIfVblEzE2bJMQ4X78MOmp5yKFT/vl0AGp9Bts8kBZENLg
- sN38PcnpJXVZsAGGODKy+sKtRsCd6VPdO7L5GeKe6qUTwsaSNyTux6jZTZpMtxHSHPgwI0dJq
- 1ucUB5aSYQ39vjc7k/LrH8GeHQMdeyoJjGsLFqxrEpAAV6mzM/S0asiXAVjsGdZ2P0zR1y2AZ
- PmYGR6kidtZy+1PlaFWBaG/XZLzz4XwvOqxJukKRxEscdnaRypUufwnfWXeJtOH8vn+t+99C/
- E4YuQq7a93OA3XFC6Sv5MRzbFjLN9jluFbuWR6iYF4bHvQiERfh80Tom2mhKwm9ED8NuBrxvu
- 7oIPpZ7UgcGx8mwYDi6A39hw4JojweAt+HoBteW4kYoHRDIZvoMtzG/d7gMZbZo+f7Kq+BQCH
- wmSjV6WcqsG6r7vSt0ApWNjislltguxytljGvqGFIX7RBLDOk8D3Rg6SEtFkCrGf7NOJnhUPo
- d/kKoneAZ6TfdgqD7vZbRvfgdrWJcIo6AHRt7E5IM802j0a8Ndylp7MNeKh8ERifVzWx5GOTS
- tHV5e2/sh04YF//+YEfFTL/TvC8N51HOE4W+TAcQLQ3VeEMnI2OF2Y37YeqHmPWgFbMLnnti5
- toB+RCOs+2qe5s7SPYCbAuSfxuRtNcZZvsR7b9t5BY6kLbYjfTtw39fGX33e4aN9eB4L34HC/
- FIAzafpxCJg0qAp0Lsa25iy08tYcpQ0T3C0242WpeAmb4Aao4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA+k5mcC/z3MQQrCMBCF4auUWRuZTFqirryHdFHNNB3QpiQSl
+ JK7Gwu6/B+Pb4XEUTjBqVkhcpYkYa5BuwZu0zB7VuJqAyF1aEirRI/Fa1Q8dk7z1RlsDdT3Enm
+ U1yZd+tqTpGeI7w3O+rv+DPM3slaoHB6OrbFIFu35LvMQwz5ED30p5QPJmoiqnwAAAA==
+X-Change-ID: 20250321-s2mpg10-ef5d1ebd3043
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-=E2=80=A6
-> +++ b/drivers/i3c/master/qcom-i3c-master.c
-> @@ -0,0 +1,1107 @@
-=E2=80=A6
-> +/* M_CMD OP codes for I2C/I3C */
-> +#define I3C_READ_IBI_HW          0
-> +#define I2C_WRITE                1
-> +#define I2C_READ                 2
-=E2=80=A6
+This series adds initial support for the Samsung S2MPG10 PMIC using the
+MFD framework. This is a PMIC for mobile applications and is used on
+the Google Pixel 6 and 6 Pro (oriole / raven).
 
-Can an enumeration become helpful here?
+*** dependency note ***
 
-Regards,
-Markus
+To compile, this depends on the Samsung ACPM driver in Linux next with
+the following additional patches:
+https://lore.kernel.org/all/20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org/
+https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+
+*** dependency note end ***
+
++++ Kconfig update +++
+
+There is a Kconfig symbol update in this series, because the existing
+Samsung S2M driver has been split into core and transport (I2C & ACPM)
+parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+
+This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+talk via I2C, but via the Samsung ACPM firmware.
+
++++ Kconfig update end +++
+
+This series must be applied in-order, due to interdependencies of some
+of the patches. There are also various cleanup patches to the S2M
+drivers. I've kept them ordered as:
+  * DT bindings (patches 1 ... 3)
+  * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
+  * split S2M mfd driver into s2m-core and s2m-i2c, including the
+    kconfig symbol update (patch 8)
+  * S2MPG10 core driver (patch 9)
+  * s2m mfd driver cleanup patches (patches 10 ... 23)
+  * S2MPG10 clock driver (patch 24)
+  * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
+  * S2MPG10 RTC driver (patch 27)
+  * s2m RTC cleanup patches (patches 28 ... 31)
+
+I realise these are many, but since some prep-work was required to be
+able to add S2MPG anyway, I wanted to get the cleanup patches in as
+well :-) Let me know if I should postpone them to a later date instead.
+
+The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
+clock outputs, and additional GPIOs interfaces.
+
+This series adds support in the top-level device driver, and for the
+RTC and clock. Importantly, having the RTC driver allows to do a proper
+reset of the system. Drivers or driver updates for the other components
+will be added in future patches.
+
+This will need a DT update for Oriole / Raven to enable this device. I
+will send that out separately.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- Rob:
+  - make PMIC node a child of ACPM, and all related changes (binding,
+    driver)
+- Krzysztof:
+  - merge defconfig updates into patch changing the symbols (patch 8)
+  - split MODULE_AUTHOR update into a separate patch
+  - better alignment fix (patch 11)
+  - merge two s2dos05/s2mpu05 related patches into one (patch 14)
+- myself:
+  - keep PMIC DT parsing in core, not in transport driver
+  - several updates in sec-acpm.c, see separate entries in patch 9
+  - fix typo in patch 17
+  - collect tags
+- Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
+
+---
+André Draszik (32):
+      dt-bindings: mfd: samsung,s2mps11: add s2mpg10
+      dt-bindings: clock: samsung,s2mps11: add s2mpg10
+      dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
+      mfd: sec: drop non-existing forward declarations
+      mfd: sec: sort includes alphabetically
+      mfd: sec: update includes to add missing and remove superfluous ones
+      mfd: sec: move private internal API to internal header
+      mfd: sec: split into core and transport (i2c) drivers
+      mfd: sec: add support for S2MPG10 PMIC
+      mfd: sec: merge separate core and irq modules
+      mfd: sec: fix open parenthesis alignment (multiple)
+      mfd: sec: sort struct of_device_id entries and the device type switch
+      mfd: sec: use dev_err_probe() where appropriate
+      mfd: sec: s2dos05/s2mpu05: use explicit regmap config and drop default
+      mfd: sec: s2dos05: doesn't support interrupts (it seems)
+      mfd: sec: don't ignore errors from sec_irq_init()
+      mfd: sec: rework platform data and regmap instantiating
+      mfd: sec: change device_type to int
+      mfd: sec: don't compare against NULL / 0 for errors, use !
+      mfd: sec: use sizeof(*var), not sizeof(struct type_of_var)
+      mfd: sec: convert to using MFD_CELL macros
+      mfd: sec: convert to using REGMAP_IRQ_REG() macros
+      mfd: sec: add myself as module author
+      clk: s2mps11: add support for S2MPG10 PMIC clock
+      rtc: s5m: cache value of platform_get_device_id() during probe
+      rtc: s5m: prepare for external regmap
+      rtc: s5m: add support for S2MPG10 RTC
+      rtc: s5m: fix a typo: peding -> pending
+      rtc: s5m: switch to devm_device_init_wakeup
+      rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
+      rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
+      MAINTAINERS: add myself as reviewer for Samsung S2M MFD
+
+ .../devicetree/bindings/clock/samsung,s2mps11.yaml |   1 +
+ .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  17 +
+ .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  28 +-
+ MAINTAINERS                                        |   3 +-
+ arch/arm/configs/exynos_defconfig                  |   2 +-
+ arch/arm/configs/multi_v7_defconfig                |   2 +-
+ arch/arm/configs/pxa_defconfig                     |   2 +-
+ arch/arm64/configs/defconfig                       |   2 +-
+ drivers/clk/clk-s2mps11.c                          |   8 +
+ drivers/mfd/Kconfig                                |  35 +-
+ drivers/mfd/Makefile                               |   5 +-
+ drivers/mfd/sec-acpm.c                             | 460 ++++++++++++++++++++
+ drivers/mfd/sec-common.c                           | 301 +++++++++++++
+ drivers/mfd/sec-core.c                             | 481 ---------------------
+ drivers/mfd/sec-core.h                             |  23 +
+ drivers/mfd/sec-i2c.c                              | 239 ++++++++++
+ drivers/mfd/sec-irq.c                              | 460 +++++++-------------
+ drivers/rtc/rtc-s5m.c                              | 197 ++++++---
+ include/linux/mfd/samsung/core.h                   |   7 +-
+ include/linux/mfd/samsung/irq.h                    | 103 +++++
+ include/linux/mfd/samsung/rtc.h                    |  37 ++
+ include/linux/mfd/samsung/s2mpg10.h                | 454 +++++++++++++++++++
+ 22 files changed, 2002 insertions(+), 865 deletions(-)
+---
+base-commit: f58dd835f82a5dda6c9d3895ee6f15016431fb1f
+change-id: 20250321-s2mpg10-ef5d1ebd3043
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
