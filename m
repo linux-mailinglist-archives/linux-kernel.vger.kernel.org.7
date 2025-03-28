@@ -1,220 +1,141 @@
-Return-Path: <linux-kernel+bounces-580103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CC6A74D4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:03:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21A4A74D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 16:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2CDE7A61C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:02:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97E277A2C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DFB1C2DC8;
-	Fri, 28 Mar 2025 15:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b/J3eh5/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744121CDFA6;
+	Fri, 28 Mar 2025 15:18:22 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74F14409;
-	Fri, 28 Mar 2025 15:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61263171092;
+	Fri, 28 Mar 2025 15:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743174205; cv=none; b=QIU06uJ8gHbhVfV2cIl23Yc4Yn77BlFYxYotI+XfQfjI2kdxGrN0iXaeUw2tI/uCRN9xWl0s4Fxl0vsfuXG+tDFsWnf57Hqg69E+E11Lgtef0xBDU65dNQCBJ6ovFRgO/mh0r9KYIv/VwdcjD2DRIuY4k52nkdeDlU1umy0q2zk=
+	t=1743175102; cv=none; b=pNqqQa4N4bVT2A+NeLIEpC9RMpZxwDE98UVjNbh+FJhTakIYQjJ94yZIaanXE0idZyny+fNSDNzlXZQVFuDBS2ZLKNkVlNqo/+nmISNSUbSUalAqBn/o6uVvyP15SPy2aTZIM01Clol9nmM0KM7LtFPolaFYrhwt/rvdT0QnJLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743174205; c=relaxed/simple;
-	bh=ZxMGZHgGzbx9hGs4fxcqQqkbat441pGVdLCi2AfAqIo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CezngC+FkgMS4q1hstHhoqUd/MJFONg2tO3OYAzDpsLRnanpuRay6xXpf6zIKhBYrQa51hcVf4OWCyEvq/uZ8Ll7Zqhea6+ARjwfrL8oSlFuhyd+cBpd7ZzF3YiZN6NjiZHMubiPqSWwkYawJFNUpsQA28kCSMfdTuK1FCG1eEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b/J3eh5/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743174204; x=1774710204;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ZxMGZHgGzbx9hGs4fxcqQqkbat441pGVdLCi2AfAqIo=;
-  b=b/J3eh5/dHXRYwgE5QCUq859bON1xmIgLfxHAOIoFbe6oK1MlmIJVE1C
-   yCVHXYAO0GtROR9BFnAF7JUJ5pWldb0IeDtMLnd1MbwxiusxDVecn8b8a
-   KAD9IH/SubPINy1fdRON3IKghXo3E2t4NeWiUWm/pzIVMhY+gq1F2faED
-   BkHkMX64G8W6n3XSpY2lM5ox1crtd4/xXyGl/otd9aZ/y8gUUE0HdRcn9
-   Wwb69+J5uwnqFR+wDepjRiRO0Rwc50+Ja5WGGQpmaBQLcMEfD51BIpDyN
-   75cST39kODqo5Slqdhy1RDcE1YYFNBTbf1K6G+Sz977I71I0iMmQDMbnM
-   g==;
-X-CSE-ConnectionGUID: NZrSHUI2QxKnvfEjuIiTZA==
-X-CSE-MsgGUID: MEmRim5dSaS96nMogZWXHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="69902101"
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="69902101"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 08:03:23 -0700
-X-CSE-ConnectionGUID: /BsRb/TkRu+wq9tOxexG3w==
-X-CSE-MsgGUID: 1Ied6SmDTx+4LZqahA64MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
-   d="scan'208";a="125697109"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.43])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 08:03:21 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 28 Mar 2025 17:03:18 +0200 (EET)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/12] platform/x86: alienware-wmi-wmax: Improve
- platform profile probe
-In-Reply-To: <20250313-hwm-v6-5-17b57f787d77@gmail.com>
-Message-ID: <a9a21cb9-a0aa-4450-4573-51fbc674c9cc@linux.intel.com>
-References: <20250313-hwm-v6-0-17b57f787d77@gmail.com> <20250313-hwm-v6-5-17b57f787d77@gmail.com>
+	s=arc-20240116; t=1743175102; c=relaxed/simple;
+	bh=I2diJ459zHAbnnXSfI/pe1+iVztBYA6fJv1PmJ0w2F0=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=jke+AZEUXe555Fm+FbJ5TdhIQOfyWDW9dqfMPjB0uo57teAVaIhuFO9ynq82tE2JKUZhyymuTw1l2kwhGFj2gqSN8LDrp0o7YDthE/+8jiYKWx2yeagHV/uyIN7Yj/EML5aGY4Tu5jqK8L4jRJw7tGj/7MngguOvwyFNvcFsTn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:38962)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tyAXL-000vaD-9v; Fri, 28 Mar 2025 08:18:19 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:32850 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tyAXK-00AuMC-5N; Fri, 28 Mar 2025 08:18:18 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: <i.abramov@mt-integration.ru>,  <aleksander.lobakin@intel.com>,
+  <davem@davemloft.net>,  <edumazet@google.com>,  <horms@kernel.org>,
+  <jdamato@fastly.com>,  <kuba@kernel.org>,  <leitao@debian.org>,
+  <linux-kernel@vger.kernel.org>,  <lvc-project@linuxtesting.org>,
+  <netdev@vger.kernel.org>,  <pabeni@redhat.com>,
+  <syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>
+References: <20250328011302.743860-1-i.abramov@mt-integration.ru>
+	<20250328022204.12804-1-kuniyu@amazon.com>
+Date: Fri, 28 Mar 2025 09:17:42 -0500
+In-Reply-To: <20250328022204.12804-1-kuniyu@amazon.com> (Kuniyuki Iwashima's
+	message of "Thu, 27 Mar 2025 19:15:00 -0700")
+Message-ID: <875xjtb5o9.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-XM-SPF: eid=1tyAXK-00AuMC-5N;;;mid=<875xjtb5o9.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18L2PoLqjUlh8oy7IsTTArm4NLnXlSHfRs=
+X-Spam-Level: **
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4810]
+	*  0.7 XMSubLong Long Subject
+	*  1.0 XMSlimDrugH Weight loss drug headers
+	*  0.5 XMGappySubj_01 Very gappy subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Kuniyuki Iwashima <kuniyu@amazon.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 411 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 9 (2.2%), b_tie_ro: 8 (1.9%), parse: 0.89 (0.2%),
+	extract_message_metadata: 12 (3.0%), get_uri_detail_list: 1.35 (0.3%),
+	tests_pri_-2000: 24 (5.9%), tests_pri_-1000: 2.6 (0.6%),
+	tests_pri_-950: 1.26 (0.3%), tests_pri_-900: 1.01 (0.2%),
+	tests_pri_-90: 101 (24.5%), check_bayes: 99 (24.0%), b_tokenize: 7
+	(1.7%), b_tok_get_all: 7 (1.8%), b_comp_prob: 2.5 (0.6%),
+	b_tok_touch_all: 78 (18.9%), b_finish: 0.96 (0.2%), tests_pri_0: 245
+	(59.5%), check_dkim_signature: 0.75 (0.2%), check_dkim_adsp: 3.4
+	(0.8%), poll_dns_idle: 1.29 (0.3%), tests_pri_10: 2.1 (0.5%),
+	tests_pri_500: 9 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in
+ __dev_change_net_namespace()
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com, pabeni@redhat.com, netdev@vger.kernel.org, lvc-project@linuxtesting.org, linux-kernel@vger.kernel.org, leitao@debian.org, kuba@kernel.org, jdamato@fastly.com, horms@kernel.org, edumazet@google.com, davem@davemloft.net, aleksander.lobakin@intel.com, i.abramov@mt-integration.ru, kuniyu@amazon.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On Thu, 13 Mar 2025, Kurt Borja wrote:
+Kuniyuki Iwashima <kuniyu@amazon.com> writes:
 
-> Get and store the AWCC system description in alienware_awcc_setup()
-> instead of awcc_platform_profile_probe() and add a check for integer
-> overflows to avoid misbehaviors.
-> 
-> While at it, replace set_bit() with it's non-atomic version __set_bit()
-> because `choices` belong to this thread only.
-> 
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->  drivers/platform/x86/dell/alienware-wmi-wmax.c | 61 +++++++++++++++++++-------
->  1 file changed, 46 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> index a8a13779793abbcc8d1263474cac6227d524a6f5..0530f25b956f73f47c0354f40dac2910448c894e 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-> @@ -38,6 +38,9 @@
->  /* Some IDs have a BIT(8) flag that we ignore */
->  #define AWCC_RESOURCE_ID_MASK			GENMASK(7, 0)
->  
-> +/* Arbitrary limit based on supported models */
-> +#define AWCC_MAX_RES_COUNT			16
-> +
->  static bool force_platform_profile;
->  module_param_unsafe(force_platform_profile, bool, 0);
->  MODULE_PARM_DESC(force_platform_profile, "Forces auto-detecting thermal profiles without checking if WMI thermal backend is available");
-> @@ -212,6 +215,17 @@ struct wmax_u32_args {
->  
->  struct awcc_priv {
->  	struct wmi_device *wdev;
-> +	union {
-> +		u32 system_description;
-> +		struct {
-> +			u8 fan_count;
-> +			u8 temp_count;
-> +			u8 unknown_count;
-> +			u8 profile_count;
-> +		};
-> +		u8 res_count[4];
-> +	};
-> +
->  	struct device *ppdev;
->  	u8 supported_profiles[PLATFORM_PROFILE_LAST];
->  };
-> @@ -624,37 +638,40 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
->  	enum platform_profile_option profile;
->  	struct awcc_priv *priv = drvdata;
->  	enum awcc_thermal_profile mode;
-> -	u8 sys_desc[4];
-> -	u32 first_mode;
-> +	u8 id, offset = 0;
->  	u32 out_data;
->  	int ret;
-> -	u8 id;
->  
-> -	ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_SYSTEM_DESCRIPTION,
-> -				       0, (u32 *) &sys_desc);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	first_mode = sys_desc[0] + sys_desc[1];
-> -
-> -	for (u32 i = 0; i < sys_desc[3]; i++) {
-> -		ret = awcc_op_get_resource_id(priv->wdev, i + first_mode, &out_data);
-> +	/*
-> +	 * Thermal profile IDs are listed last at offset
-> +	 *	fan_count + temp_count + unknown_count
-> +	 */
-> +	for (unsigned int i = 0; i < ARRAY_SIZE(priv->res_count) - 1; i++)
-> +		offset += priv->res_count[i];
+>> Subject: [PATCH] net: Avoid calling WARN_ON() on -ENOMEM in __dev_change_net_namespace()
+>
+> s/__dev_change_net_namespace/netif_change_net_namespace/
+>
+> Also, please specify the target tree: [PATCH v2 net]
+>
+>
+> From: Ivan Abramov <i.abramov@mt-integration.ru>
+> Date: Fri, 28 Mar 2025 04:12:57 +0300
+>> It's pointless to call WARN_ON() in case of an allocation failure in
+>> device_rename(), since it only leads to useless splats caused by deliberate
+>> fault injections, so avoid it.
 
-Doesn't this change go slightly beyond what its changelog describes, could 
-you please amend the changelog to explain it.
->  
-> +	for (unsigned int i = 0; i < priv->profile_count; i++) {
-> +		ret = awcc_op_get_resource_id(priv->wdev, i + offset, &out_data);
->  		if (ret == -EIO)
->  			return ret;
->  
-> +		/*
-> +		 * Some devices report an incorrect number of thermal profiles
-> +		 * so the resource ID list may end prematurely
-> +		 */
->  		if (ret == -EBADRQC)
->  			break;
->  
->  		id = FIELD_GET(AWCC_RESOURCE_ID_MASK, out_data);
-> -		if (!is_awcc_thermal_profile_id(id))
-> +		if (!is_awcc_thermal_profile_id(id)) {
-> +			dev_dbg(&priv->wdev->dev, "Unmapped thermal profile ID 0x%02x\n", id);
->  			continue;
-> +		}
->  
->  		mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
->  		profile = awcc_mode_to_platform_profile[mode];
->  		priv->supported_profiles[profile] = id;
->  
-> -		set_bit(profile, choices);
-> +		__set_bit(profile, choices);
->  	}
->  
->  	if (bitmap_empty(choices, PLATFORM_PROFILE_LAST))
-> @@ -664,7 +681,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
->  		priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =
->  			AWCC_THERMAL_MODE_GMODE;
->  
-> -		set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
-> +		__set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
->  	}
->  
->  	return 0;
-> @@ -695,6 +712,20 @@ static int alienware_awcc_setup(struct wmi_device *wdev)
->  	if (!priv)
->  		return -ENOMEM;
->  
-> +	ret = awcc_thermal_information(wdev, AWCC_OP_GET_SYSTEM_DESCRIPTION,
-> +				       0, &priv->system_description);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Sanity check */
-> +	for (unsigned int i = 0; i < ARRAY_SIZE(priv->res_count); i++) {
-> +		if (priv->res_count[i] > AWCC_MAX_RES_COUNT) {
-> +			dev_err(&wdev->dev, "Malformed system description: 0x%08x\n",
-> +				priv->system_description);
-> +			return -ENXIO;
-> +		}
-> +	}
-> +
->  	priv->wdev = wdev;
->  	dev_set_drvdata(&wdev->dev, priv);
->  
-> 
-> 
+No.  It is not pointless.  The WARN_ON is there because the code can not
+rollback if device_rename fails in
+__dev_change_net_namespace/netif_change_net_namespace.
 
--- 
- i.
+If device_rename fails it means that the kernel's device tree
+are inconsistent with the actual network devices.
+
+If anything we need a way to guarantee that the device_rename will
+succeed, so that all of the parts that may fail may be performed
+before we commit ourselves by notifying userspace that the device
+is being renamed.
+
+As for Breno Leitao <leitao@debian.org>'s question should we fail
+immediately.  That will put us in a far worse state.
+
+As I recall the WARN_ON exists there because someone at the last minute
+stuffed network devices into sysfs, and no one has taken the time to
+handle the practically impossible case of a device_rename failure.
+
+If you are going to do something with this logic please figure out how
+to handle a failure instead just shutting up the error message that
+let's you know something bad is wrong in the kernel.
+
+Eric
 
 
