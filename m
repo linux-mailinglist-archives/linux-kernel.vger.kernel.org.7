@@ -1,78 +1,113 @@
-Return-Path: <linux-kernel+bounces-579345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3E1A7422A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:59:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634FEA7422D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 03:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D8E7A606F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 01:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F58188C778
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 02:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4E1C7013;
-	Fri, 28 Mar 2025 01:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsqtZ21V"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61D11714C6;
+	Fri, 28 Mar 2025 02:01:09 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB13189B91
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 01:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7044222094
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 02:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743127166; cv=none; b=RUnDRf8P1KFGX4shnfw+ubpxNhW9lBNBlMto3vjcl8ZORa4ZAx2rmzqATh4uRlyWl43xdEq2dtvjL9VA6w6wW7BHEerStHncUfFhRCwmWd+lwEibW4fvcV1mgQe6k7yx2MAHjGNbRF0NCcCxV+69qoU2wwCk/NcFC4sj6DDb+yY=
+	t=1743127269; cv=none; b=NR4TjRk6GHRQbVHj8wXDZdIjYqp12836dgfVMaLE6ekDM8G9VUYf9mOnckt3rv1NwUo3433ygM8Q/LNQS+Z2N3iRGUKEOfneB+gm0L9++EDA7q5pF7O3V+lMFQsLxgvIkcD/IPvDeWMqWFGOT09ta6J2Q+RFa4GBOVUDofgvZkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743127166; c=relaxed/simple;
-	bh=ZC3CkRANeR3gpGcL0mKhAIzmnq96ttYT3GFOvZO+14k=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=PuqOpzCXDK7ZkFrJbrfuKjtJr1+JpS7UKsLhF2JbuGWz9wXnh/d/53Rf8PJ8E3G0graEkVLIUnD+C7l3VwnQ7OTakY1kxIcecfUI5dd4HWPDBaBdVpLNoA3bLN2G9NzNckr0p9AsVnNrV2Hy7tfLMiY8+7P/inYttG0MRICVMew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsqtZ21V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD0BC4CEDD;
-	Fri, 28 Mar 2025 01:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743127165;
-	bh=ZC3CkRANeR3gpGcL0mKhAIzmnq96ttYT3GFOvZO+14k=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=dsqtZ21V11TtE5SeUkUQz0+NKClzuzG5ynvqKxAkuMJPwj1Q3OxsS0MvdmeP+dGCi
-	 rSxlJ/h9MmMAHoZZoglgNiZ0/mtnAJP5ULLZzrhn18LtRpSpqye6dUisT5Xq0i547E
-	 9sz8yykTEBD2Tby6tWOuMifkDZb/i8414nRIgF22eTcHs/rnHnXeXTr8iDPQP2XlOm
-	 Sm5LKiTeFskHNgNAzCOEtDD5cGTfxI15RdmyUS3pJERPUqV3uMHIHqZMUfpJ6liCbF
-	 Z27ZUzioc/bNpGh33S97tq01gPtwC6I3SsTtfhCdi9KAVe1rPq9MnKx3AubrxfspcB
-	 S9/9xRbax0cEg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34228380AAEB;
-	Fri, 28 Mar 2025 02:00:03 +0000 (UTC)
-Subject: Re: [GIT PULL] ktest: Update for v6.15
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250327125814.63968c3a@gandalf.local.home>
-References: <20250327125814.63968c3a@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250327125814.63968c3a@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v6.15
-X-PR-Tracked-Commit-Id: 5a1bed232781d356f842576daacc260f0d0c8d2e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 68f090f09b7241a2f019191c5c737741f13a5c17
-Message-Id: <174312720208.2314285.9764497139996694000.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Mar 2025 02:00:02 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, John 'Warthog9' Hawley <warthog9@kernel.org>, Ayush Jain <Ayush.jain3@amd.com>
+	s=arc-20240116; t=1743127269; c=relaxed/simple;
+	bh=lS156lXSmbxj9WGPbtOyKYq7PavFbCd34yFZE+Eaxyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t2xfmt5L1TrQFsVpQ2rC10CnQg4X/9gjqp/ZghcQPuAg8aJlcw3uUkJYdclzPqKCyEnBWZgwL2oCvN50umLS4CDG79sEoi9nWWeIsJ4uEpv9lv+uNFzkGszxCnriZtuR8O7He14uMr7gdjxqlhk6elPaXerlM2qJbZSlrIkk0Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0981AC4CEDD;
+	Fri, 28 Mar 2025 02:01:07 +0000 (UTC)
+Date: Thu, 27 Mar 2025 22:01:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Feng Yang <yangfeng@kylinos.cn>, Jiapeng Chong
+ <jiapeng.chong@linux.alibaba.com>
+Subject: Re: [GIT PULL] ring-buffer: Updates for v6.15
+Message-ID: <20250327220106.37c921ea@batman.local.home>
+In-Reply-To: <CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
+References: <20250327171037.032bf7e7@gandalf.local.home>
+	<CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com>
+	<20250327212447.24e05e7e@batman.local.home>
+	<CAHk-=wgW4QfXuR0StSz15jqCs-suuPhfDajKr1bH2qS73cT4dA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Thu, 27 Mar 2025 12:58:14 -0400:
+On Thu, 27 Mar 2025 18:31:55 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git ktest-v6.15
+> On Thu, 27 Mar 2025 at 18:24, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > The pages are never vmalloc'd, it's only ever vmap()'d on top of
+> > contiguous physical memory or allocated via alloc_page() in the order
+> > given. Thus, we do not support non consecutive physical memory.  
+> 
+> Christ, that just makes it EVEN WORSE.\
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/68f090f09b7241a2f019191c5c737741f13a5c17
+Let me explain this better. Yes it uses alloc_page() but that's just an
+intermediate function. What is saved is the page_address(page), as that
+is what is used by the code. That is, the allocation uses alloc_page()
+but then immediately converted to page_address() to use. The page
+itself is just an temp variable to get contiguous memory, as the
+sub-buffers must be contiguous.
 
-Thank you!
+> 
+> Just keep track of the actual original physical allocation, then!
+> 
+> By all means vmap it too for whoever wants the virtual allocation, but
+> remember the *real* allocation, and keep it as a 'struct page'
+> together with the order that you already have.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+The virtual address needs to be created as that's all the code cares
+about. For the case where the physical memory is passed in, it requires
+a vmap(). The struct page is only needed when the ring buffer is going
+to be mmapped to user space.
+
+> 
+> And then you never use vmalloc_to_page() - or even virt_to_page() - at
+> all, because you actually know your base allocation, and keep it in
+> that form that so much of this code wants in the first place.
+> 
+> Having a a nice reliable 'struct page *' (together with that size
+> order) and keeping it in that form would be *so* much cleaner.
+> 
+> Instead of randomly translating it to (two different!) kinds of
+> virtual kernel addresses and then translating it back when you wanted
+> the original proper format.
+
+By moving the physical mapping of the code into the ring buffer code, I
+can set a flag for the buffer to mark it as being mapped directly, and
+we can save the struct pages for this location (easily found by the
+address). Then to get the page, it could be a simple helper function of:
+
+struct page *rb_get_page(struct trace_buffer *buffer, unsigned long addr)
+{
+	if (buffer->flags & RB_FL_PHYSICAL) {
+		addr -= buffer->vmap_start;
+		addr += buffer->phys_start;
+		return pfn_to_page(addr >> PAGE_SHIFT);
+	}
+	return virt_to_page(addr);
+}
+
+
 
