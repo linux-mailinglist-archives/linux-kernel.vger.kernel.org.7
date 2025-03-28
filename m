@@ -1,83 +1,142 @@
-Return-Path: <linux-kernel+bounces-579791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1258AA7497E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:49:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36641A7492D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 12:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F8E16AB83
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A49F1B62182
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FAE21ADC2;
-	Fri, 28 Mar 2025 11:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB35D21A434;
+	Fri, 28 Mar 2025 11:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWFq4ERN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDTiM9p9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE3A26289;
-	Fri, 28 Mar 2025 11:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D496145B27;
+	Fri, 28 Mar 2025 11:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743162560; cv=none; b=VgrkpBb7WqrorkPZQH+JT6JQk8RsjDePZxvIYdfVz3OVdHmSjsSs1ChrwNp8Dk9uYPTIw/U03Z69w/H1pADWZrotwmt2qf1g5F3Kxtki3E82UgoUsPCxi1s2Yx0vs+m4I/lNUjMM4il6Bt0OdvIryDU1oJHTplmlJ1IHKMElk84=
+	t=1743161090; cv=none; b=aOpKuJZW7rd7dWcq4wzDo9zyWg28rc2rCCp+jbb4biWME+QW+VZJElG9w3I37aRHPjo/oX1b+/xhVEPv7F3Dr7o/vWnQCOI3LuzxufcLb1RnaCMHNa6QvG0aoDOqQNFwVrK4c9wpLBI9j5rIKeDpXyiXnW5gJrte7trK7jywnfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743162560; c=relaxed/simple;
-	bh=h6ydLoR1ygT6038JNkdaPynVrS5SsAM4iLsC0fD3s54=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E+zbNgpJCE8X6QPvs1nZxlqDb9MvwGxeVKgOBl60J1P1eBGmQ/D0OwEGUK//lqmMgBxr5UkyS5jzbnPV9Wb9rHfpU5ZQlt70pDdxfIW2CBezoobVH8p/zJQ1d2LVXbXl+MsWHzvW3AsCx9Df6uL185w9upD1zF58UjuiUF0jvVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWFq4ERN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206FAC4CEE4;
-	Fri, 28 Mar 2025 11:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743162559;
-	bh=h6ydLoR1ygT6038JNkdaPynVrS5SsAM4iLsC0fD3s54=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bWFq4ERNXyE1g0r7zL3P6oqwYus2CfOtKHDKeQIqShIHk7imIxtVfMEnBDYlxG9hh
-	 Me/ObyC4e9KrM/4vMWW+x0LK0Q4oy8zFeZ8hD8OU91gi3ea7Ax9j8Fw4oTN+YW6w7p
-	 5n4rUtuwzte9qWoFovaiNRIeD1brIw/PO5ZosJfs/lMMGvvudQWJ5yz+IjJdc38V0v
-	 VkL1eOUqqdYBzFSX1CgAhWey7aT0xvNYmLC9U5PxJ5naDCvOZTWRs6IU4IXddjGlLt
-	 NH7ExgDqQnbIPFr21dEcfGQE5kcKonjrg9wM6vSxeEtOWczoupREo2rAzLiKP8nupv
-	 T86ZNI49XDPXA==
-Date: Fri, 28 Mar 2025 04:49:18 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michael Klein <michael@fossekall.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next v5 0/4] net: phy: realtek: Add support for PHY LEDs
- on
-Message-ID: <20250328044918.1082fccb@kernel.org>
-In-Reply-To: <20250326212125.100218-1-michael@fossekall.de>
-References: <20250326212125.100218-1-michael@fossekall.de>
+	s=arc-20240116; t=1743161090; c=relaxed/simple;
+	bh=uOQtP6lL6Ge7T833eHO6JChDyq2YE0dX5lWBJluwnCM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Krd9mVZOjDLMQ2M2M1/f/bLSGWtkw+0MLbloIwpNceUlQFf/t0v+w8E+gwE3B1V0jnRfkb+p3Mo2q43bzNKBQnyPTXWw6WxvO1tBoxihWiEFkR6EEbk7Cb0yaW6ZDyLe8QE8er7x9TnF4su0F2v6O6AFUtT5dml0W6OdjYU/3rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDTiM9p9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743161088; x=1774697088;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uOQtP6lL6Ge7T833eHO6JChDyq2YE0dX5lWBJluwnCM=;
+  b=jDTiM9p9b6QZqQJDEI7knlaFh3lOZmPr/6zDA7tpLtNJjrQF4jXRPJyw
+   xh2LCnBofS45vpkf0M6qLA+lQRlJ7C3wNII/UTPOvvMrbwYrqeKbtr8j2
+   woJSnOrSnPL9eawzfn9e9huayznbD+h2cp+YImZtLXgKUIzuqnOg4JWIb
+   1EzSyqndMlAKDir8G60ThaBa87rIswdN954inzQhxVzBJQna0wZeaym9q
+   j3U2xiDViXpgmD5l1uRF6Y9jzGEqcDAgxLx8FUiDBxwaXocwyahG9Hr5A
+   67KwcTvx27UoCHOMI4OhYNRVZ6xedjCowXBpL/l/2bOn9H7QBP3XBrHlr
+   w==;
+X-CSE-ConnectionGUID: kzRkAIzDR9ewfjnXHfGS4g==
+X-CSE-MsgGUID: q/sVeovVSDOoR/BBi7VFow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11385"; a="44702597"
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="44702597"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 04:24:47 -0700
+X-CSE-ConnectionGUID: iGEpRbFDRTe1f3qqVfXKNQ==
+X-CSE-MsgGUID: 9iY+bSG4R2+xiE+9+p69xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,283,1736841600"; 
+   d="scan'208";a="130277056"
+Received: from win-uq4qlp9a0jq.iind.intel.com (HELO madhum.iind.intel.com) ([10.223.138.63])
+  by orviesa003.jf.intel.com with ESMTP; 28 Mar 2025 04:24:44 -0700
+From: madhu.m@intel.com
+To: gregkh@linuxfoundation.org
+Cc: heikki.krogerus@linux.intel.com,
+	linux-usb@vger.kernel.org,
+	pooja.katiyar@intel.com,
+	dmitry.baryshkov@linaro.org,
+	diogo.ivo@tecnico.ulisboa.pt,
+	lk@c--e.de,
+	linux-kernel@vger.kernel.org,
+	Madhu M <madhu.m@intel.com>
+Subject: [PATCH v2] usb: typec: ucsi: Add the UCSI commands in debugfs
+Date: Fri, 28 Mar 2025 17:20:41 +0530
+Message-Id: <20250328115041.555008-1-madhu.m@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Mar 2025 22:21:21 +0100 Michael Klein wrote:
-> Changes in V5:
-> - Split cleanup patch and improve code formatting
+From: Madhu M <madhu.m@intel.com>
 
-## Form letter - net-next-closed
+Added the UCSI commands UCSI_GET_CAM_SUPPORTED, UCSI_GET_PD_MESSAGE,
+UCSI_GET_ATTENTION_VDO and UCSI_SET_USB support in debugfs to enhance
+PD/TypeC debugging capability.
 
-Linus already pulled net-next material v6.15 and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are currently
-accepting bug fixes only.
+Signed-off-by: Madhu M <madhu.m@intel.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+Changes in v1:
+- Removed UCSI_READ_POWER_LEVEL and UCSI_SET_PDOS commands.
+- Modified commit messages.
+---
+ drivers/usb/typec/ucsi/debugfs.c | 4 ++++
+ drivers/usb/typec/ucsi/ucsi.h    | 2 ++
+ 2 files changed, 6 insertions(+)
 
-Please repost when net-next reopens after Apr 7th.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+diff --git a/drivers/usb/typec/ucsi/debugfs.c b/drivers/usb/typec/ucsi/debugfs.c
+index eae2b18a2d8a..92ebf1a2defd 100644
+--- a/drivers/usb/typec/ucsi/debugfs.c
++++ b/drivers/usb/typec/ucsi/debugfs.c
+@@ -34,16 +34,20 @@ static int ucsi_cmd(void *data, u64 val)
+ 	case UCSI_CONNECTOR_RESET:
+ 	case UCSI_SET_SINK_PATH:
+ 	case UCSI_SET_NEW_CAM:
++	case UCSI_SET_USB:
+ 		ret = ucsi_send_command(ucsi, val, NULL, 0);
+ 		break;
+ 	case UCSI_GET_CAPABILITY:
+ 	case UCSI_GET_CONNECTOR_CAPABILITY:
+ 	case UCSI_GET_ALTERNATE_MODES:
++	case UCSI_GET_CAM_SUPPORTED:
+ 	case UCSI_GET_CURRENT_CAM:
+ 	case UCSI_GET_PDOS:
+ 	case UCSI_GET_CABLE_PROPERTY:
+ 	case UCSI_GET_CONNECTOR_STATUS:
+ 	case UCSI_GET_ERROR_STATUS:
++	case UCSI_GET_PD_MESSAGE:
++	case UCSI_GET_ATTENTION_VDO:
+ 	case UCSI_GET_CAM_CS:
+ 	case UCSI_GET_LPM_PPM_INFO:
+ 		ret = ucsi_send_command(ucsi, val,
+diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
+index 3a2c1762bec1..72b9d5a42961 100644
+--- a/drivers/usb/typec/ucsi/ucsi.h
++++ b/drivers/usb/typec/ucsi/ucsi.h
+@@ -123,9 +123,11 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
+ #define UCSI_GET_CONNECTOR_STATUS		0x12
+ #define UCSI_GET_CONNECTOR_STATUS_SIZE		152
+ #define UCSI_GET_ERROR_STATUS			0x13
++#define UCSI_GET_ATTENTION_VDO			0x16
+ #define UCSI_GET_PD_MESSAGE			0x15
+ #define UCSI_GET_CAM_CS			0x18
+ #define UCSI_SET_SINK_PATH			0x1c
++#define UCSI_SET_USB				0x21
+ #define UCSI_GET_LPM_PPM_INFO			0x22
+ 
+ #define UCSI_CONNECTOR_NUMBER(_num_)		((u64)(_num_) << 16)
 -- 
-pw-bot: defer
-pv-bot: closed
+2.34.1
 
 
