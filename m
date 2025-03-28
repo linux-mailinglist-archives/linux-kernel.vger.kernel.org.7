@@ -1,269 +1,124 @@
-Return-Path: <linux-kernel+bounces-579980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8098BA74BCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:58:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D68FA74BCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567471631E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D911B62AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA58192D70;
-	Fri, 28 Mar 2025 13:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25C5191F92;
+	Fri, 28 Mar 2025 13:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dK0hELz2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WsP1ARtf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z/rpX2Hz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A4D35976
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD76B17A311;
+	Fri, 28 Mar 2025 13:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743169709; cv=none; b=o0fSykcIpVBhHZ2trbp4l41uLHrjLKa6SQyI2dl/vjzwJ2YTiFacIykwSdzZAMoIKBoLvDes35l8rvsPKxTWFC4aT81eV2Um8aPLW1xwRNFeBvryB4gDS/ak7JTqNCsZTm3lWU9fQLqhGJDztWQp+74Y4j7Ev0KXrT+prJeZAoU=
+	t=1743169709; cv=none; b=cgFg5Q+LGoRsIEHu1aNvg7ZAavUxrrfBjMqwRia1ua1By/aycOqEiHqymyQQSlxHTKlffa+fUkeyvSqydi9wlc2G7Hu/HqA3CrR87iaa9fGSm4J62dGTXH6ufFafX5DMnGaWPNMfb/9qITmLRYtfK9Gxhm0rU041CP4pQxSaakw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743169709; c=relaxed/simple;
-	bh=+S8MKQkkSs/8tMleB9wK11MPHYdYhT6bb/fff8/MzIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iq2QiC0sn6iH2nqwyum7+KQmN8Mb1D4Rjbf4bMfjTRq+sjSqOnTMZqHnlUiRz0DFodT/gS/C+NJw1yPNezO3V/UdGlhkVTYJhDi3WleOKl9pEQtdpDXDwAkOi6GWvbqwKkp2TIf6tFejzFbWX4j9cT4dCQbRenO866EdOl2WJj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dK0hELz2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743169706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=AQnc0q6XPBSWqp3ObnEGEfmqwiJpfcrXlUDsqPnb9sk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Zu4kS3cTkonx2LWHf+XHRX1miXdFPst0zipCT+4E7YKA1EMYrU3ExLfEYupj+c2WCyQ+ixXO3CSTT8j/FvLvqZFEh0QgzEXZBtNQIM1AqPTuRELUb7rN17zXwPb6Nml5w0LTtdsgMKV/vVTCruBQQV1osYzKrMXFvMt8IOXNYh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WsP1ARtf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z/rpX2Hz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 28 Mar 2025 13:48:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743169705;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JPTNrMeu6/Cig+m6oOG7xyDbUSBNSDtp9SZo7fIlG4Y=;
-	b=dK0hELz2wSfsyJbd5dXzPiappXyDNnIyTj56mU2oYGWhcDtzDwfGvaImmKfmw29rsa7C+F
-	CMSJ/N/6sN8yE2BFqZlXqgshKMnsrsuEaWgu93lcreuthfrkj1NNAk2ppt6QrGVSUCkeaC
-	eBYOHfHrcHU8gNIjhNZxVzGToqUajI4=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-3koJHkGbNHO8KjMNzcxkeg-1; Fri, 28 Mar 2025 09:48:15 -0400
-X-MC-Unique: 3koJHkGbNHO8KjMNzcxkeg-1
-X-Mimecast-MFC-AGG-ID: 3koJHkGbNHO8KjMNzcxkeg_1743169694
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac6caf952d7so64014566b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 06:48:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743169694; x=1743774494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JPTNrMeu6/Cig+m6oOG7xyDbUSBNSDtp9SZo7fIlG4Y=;
-        b=jDqHz+hoaPA11H9XXDJkxe6Mu9Ui8yYMdMYIJMFdD0cXRqK46eGm9VPaOe/n0lYkZW
-         LSKTRAJO+3O2kjtThBELLEFiiQqXLSIX+6LBTR2cgUHfT8h6Kzw1Ss3moH+zj+0IwJBz
-         IUdWhAVPT7i67YeHTH7Alk+ns4wie+MiJrwfHgIQ/TiCSdM0P3Rkr2LOOIzEikB2bQui
-         XlPDv6j/RutknnJir7xf0HY8vYdjqFiz3oc92UQoZurF119buk5kTsZdx4Bb5OAOZix2
-         naMYu+VFK4VLnZtosEXE0h3b2zdUnOzk84ATpT5l7jz4/VfcOsiRqKefyfbb8uoCdW7g
-         E74A==
-X-Forwarded-Encrypted: i=1; AJvYcCVk30s6MjLwsujidLZhQ4MPcgEa1bwqyA63bA8eQGhKwjkFv8oZid7MxO9r+oSZkFReaQPovE6MDFGn/w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6zLSYlKWeeklh6fV2aVHdxjch6yLW9DBhoCHw4BOUimd3PE8B
-	FrQanay9QQNkjxbrmEttl0aV5tQQE//qJ691qsDtTbSjdNF5V41P/rbWgNil5Z0e8rwhGDe6sPJ
-	8AIQDkJT2m0rbBPXxOSs0hnAqkZucgP9jJJCpluOwGisJ83oMEcGx96LQqyr8gQ==
-X-Gm-Gg: ASbGncsD8DdUyi+yud/O08Bqi48g9xnaYebcQeurFXAReW218qoKqrxPiTP4VQaOYov
-	11zqbcJQrOcQV69NT1dvTAOzAoECUxw1Vu90z7iBPdH7MlNYdikOM6jO0Qr4WhQEIBO0azujdXq
-	Q+91N/wQu/lT5FKUtMi8bRCGh0ARTcMeIE51KyM1LnMkNN+JYVQ+8S6XY+L0MzEUnaKph4VggjS
-	zwChSxsNK9VfZf5CuWKj+bYlwu+aLN9ukC9RX2QOky6bTV9J5szEszuduSBBPjS2UVQ9sGBg92Q
-	ppf5SRrFvbsGO1DXPKBLBd8iRpPnfJDqdE34bLncCvLV1amqPZ/0cXXj+1vz5zcs
-X-Received: by 2002:a17:906:444:b0:ac7:1be2:1a79 with SMTP id a640c23a62f3a-ac71be221c6mr261203866b.4.1743169693821;
-        Fri, 28 Mar 2025 06:48:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7Do6TwhXVYcLm9d7+oMf8jMoIxW/KsZPz70Fgkxrb6TK+oJV9OIZ2ipHzwvR6fy5R3aM9oQ==
-X-Received: by 2002:a17:906:444:b0:ac7:1be2:1a79 with SMTP id a640c23a62f3a-ac71be221c6mr261200666b.4.1743169693188;
-        Fri, 28 Mar 2025 06:48:13 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719278674sm162698166b.40.2025.03.28.06.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 06:48:12 -0700 (PDT)
-Date: Fri, 28 Mar 2025 14:48:08 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Luigi Leonardi <leonardi@redhat.com>, Michal Luczaj <mhal@rbox.co>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hyunwoo Kim <v4bel@theori.io>
-Subject: Re: [PATCH net-next v2] vsock/test: Add test for null ptr deref when
- transport changes
-Message-ID: <bq6hxrolno2vmtqwcvb5bljfpb7mvwb3kohrvaed6auz5vxrfv@ijmd2f3grobn>
-References: <20250314-test_vsock-v2-1-3c0a1d878a6d@redhat.com>
- <85a034b7-a22d-438f-802e-ac193099dbe7@rbox.co>
- <ghik6xpa5oxhb5lc4ztmqlwm3tkv5qbkj63h5mfqs33vursd5y@6jttd2lwwo7h>
- <qp67w36nyzgyd45wi7oosxe6syx7dzcifc5s2eg47engirtrnf@ewnk6ngqw7h3>
+	bh=UR2qqIKg0l9BB5UIDzBKYJaEc6hDV4BtIEufdljkeaY=;
+	b=WsP1ARtf7A+IVepz+zq/47k7ydcbbjlNXnSIy3Dy5YLVjVDNA4+PRrNK30tp8KRHjayRh1
+	D61WCrLNOEmW/sAZO/vZDkxsv6mdm3+ttktKNm9MujrRcNlpgGU1ZSuIoytt/cNOMfNQRo
+	XS5H4YfkVn6gIN7TBGlPeg40D8gASDQ/owzeRVcGtY9ss4lWzcjYy4w7W+bMGuCg0H1lK0
+	zNZC79SDla1fu/SiA6zQUJZYsGvv4V4hVC2MDwRdxAX3BKNuOdJ0+2cY5ZeNKIeC6GeYuC
+	VmVE7e49Q94SIsz7mHHH0zJA5lVSQcqTkiCiDJk7ylpB7tqJMtMugqvgsqgkcg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743169705;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UR2qqIKg0l9BB5UIDzBKYJaEc6hDV4BtIEufdljkeaY=;
+	b=Z/rpX2HzSXkdYX9si0yrMsz2tFMrvMGWT1MGM0KN7AboC+iNq7SwWD+AhnCyWZ4iLfwOWD
+	LrIYQw1CqFnrc6Ag==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] objtool: Fix NULL printf() '%s' argument in
+ builtin-check.c:save_argv()
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
+References:
+ <a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <qp67w36nyzgyd45wi7oosxe6syx7dzcifc5s2eg47engirtrnf@ewnk6ngqw7h3>
+Message-ID: <174316970081.14745.12219421049589784447.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 26, 2025 at 05:21:03PM +0100, Stefano Garzarella wrote:
->On Wed, Mar 26, 2025 at 04:14:20PM +0100, Luigi Leonardi wrote:
->>Hi Michal,
->>
->>On Wed, Mar 19, 2025 at 01:27:35AM +0100, Michal Luczaj wrote:
->>>On 3/14/25 10:27, Luigi Leonardi wrote:
->>>>Add a new test to ensure that when the transport changes a null pointer
->>>>dereference does not occur[1].
->>>>
->>>>Note that this test does not fail, but it may hang on the client side if
->>>>it triggers a kernel oops.
->>>>
->>>>This works by creating a socket, trying to connect to a server, and then
->>>>executing a second connect operation on the same socket but to a
->>>>different CID (0). This triggers a transport change. If the connect
->>>>operation is interrupted by a signal, this could cause a null-ptr-deref.
->>>
->>>Just to be clear: that's the splat, right?
->>>
->>>Oops: general protection fault, probably for non-canonical address 0xdffffc000000000c: 0000 [#1] PREEMPT SMP KASAN NOPTI
->>>KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
->>>CPU: 2 UID: 0 PID: 463 Comm: kworker/2:3 Not tainted
->>>Workqueue: vsock-loopback vsock_loopback_work
->>>RIP: 0010:vsock_stream_has_data+0x44/0x70
->>>Call Trace:
->>>virtio_transport_do_close+0x68/0x1a0
->>>virtio_transport_recv_pkt+0x1045/0x2ae4
->>>vsock_loopback_work+0x27d/0x3f0
->>>process_one_work+0x846/0x1420
->>>worker_thread+0x5b3/0xf80
->>>kthread+0x35a/0x700
->>>ret_from_fork+0x2d/0x70
->>>ret_from_fork_asm+0x1a/0x30
->>>
->>
->>Yep! I'll add it to the commit message in v3.
->>>>...
->>>>+static void test_stream_transport_change_client(const struct test_opts *opts)
->>>>+{
->>>>+	__sighandler_t old_handler;
->>>>+	pid_t pid = getpid();
->>>>+	pthread_t thread_id;
->>>>+	time_t tout;
->>>>+
->>>>+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
->>>>+	if (old_handler == SIG_ERR) {
->>>>+		perror("signal");
->>>>+		exit(EXIT_FAILURE);
->>>>+	}
->>>>+
->>>>+	if (pthread_create(&thread_id, NULL, test_stream_transport_change_thread, &pid)) {
->>>>+		perror("pthread_create");
->>>
->>>Does pthread_create() set errno on failure?
->>It does not, very good catch!
->>>
->>>>+		exit(EXIT_FAILURE);
->>>>+	}
->>>>+
->>>>+	tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->>>
->>>Isn't 10 seconds a bit excessive? I see the oops pretty much immediately.
->>Yeah it's probably excessive. I used because it's the default 
->>timeout value.
->>>
->>>>+	do {
->>>>+		struct sockaddr_vm sa = {
->>>>+			.svm_family = AF_VSOCK,
->>>>+			.svm_cid = opts->peer_cid,
->>>>+			.svm_port = opts->peer_port,
->>>>+		};
->>>>+		int s;
->>>>+
->>>>+		s = socket(AF_VSOCK, SOCK_STREAM, 0);
->>>>+		if (s < 0) {
->>>>+			perror("socket");
->>>>+			exit(EXIT_FAILURE);
->>>>+		}
->>>>+
->>>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->>>>+
->>>>+		/* Set CID to 0 cause a transport change. */
->>>>+		sa.svm_cid = 0;
->>>>+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->>>>+
->>>>+		close(s);
->>>>+	} while (current_nsec() < tout);
->>>>+
->>>>+	if (pthread_cancel(thread_id)) {
->>>>+		perror("pthread_cancel");
->>>
->>>And errno here.
->>>
->>>>+		exit(EXIT_FAILURE);
->>>>+	}
->>>>+
->>>>+	/* Wait for the thread to terminate */
->>>>+	if (pthread_join(thread_id, NULL)) {
->>>>+		perror("pthread_join");
->>>
->>>And here.
->>>Aaand I've realized I've made exactly the same mistake elsewhere :)
->>>
->>>>...
->>>>+static void test_stream_transport_change_server(const struct test_opts *opts)
->>>>+{
->>>>+	time_t tout = current_nsec() + TIMEOUT * NSEC_PER_SEC;
->>>>+
->>>>+	do {
->>>>+		int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->>>>+
->>>>+		close(s);
->>>>+	} while (current_nsec() < tout);
->>>>+}
->>>
->>>I'm not certain you need to re-create the listener or measure the time
->>>here. What about something like
->>>
->>>	int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->>>	control_expectln("DONE");
->>>	close(s);
->>>
->>Just tried and it triggers the oops :)
->
->If this works (as I also initially thought), we should check the 
->result of the first connect() in the client code. It can succeed or 
->fail with -EINTR, in other cases we should report an error because it 
->is not expected.
->
->And we should check also the second connect(), it should always fail, 
->right?
->
->For this I think you need another sync point to be sure the server is 
->listening before try to connect the first time:
->
->client:
->    // pthread_create, etc.
->
->    control_expectln("LISTENING");
->
->    do {
->        ...
->    } while();
->
->    control_writeln("DONE");
->
->server:
->    int s = vsock_stream_listen(VMADDR_CID_ANY, opts->peer_port);
->    control_writeln("LISTENING");
+The following commit has been merged into the objtool/urgent branch of tip:
 
-We found that this needed to be extended by adding an accept() loop to 
-avoid filling up the backlog of the listening socket.
-But by doing accept() and close() back to back, we found a problem in 
-AF_VSOCK, where connect() in some cases would get stuck until the 
-timeout (default: 2 seconds) returning -ETIMEDOUT.
+Commit-ID:     d9a595c3850ea4383628115df2bb533af3b29f4f
+Gitweb:        https://git.kernel.org/tip/d9a595c3850ea4383628115df2bb533af3b29f4f
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Tue, 25 Mar 2025 18:30:37 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 28 Mar 2025 14:38:09 +01:00
 
-Fix is coming.
+objtool: Fix NULL printf() '%s' argument in builtin-check.c:save_argv()
 
-Thanks,
-Stefano
+It's probably not the best idea to pass a string pointer to printf()
+right after confirming said pointer is NULL.  Fix the typo and use
+argv[i] instead.
 
->    control_expectln("DONE");
->    close(s);
->
->Thanks,
->Stefano
+Fixes: c5995abe1547 ("objtool: Improve error handling")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Link: https://lore.kernel.org/r/a814ed8b08fb410be29498a20a5fbbb26e907ecf.1742952512.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/20250326103854.309e3c60@canb.auug.org.au
+---
+ tools/objtool/builtin-check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index 2bdff91..e364ab6 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -238,7 +238,7 @@ static void save_argv(int argc, const char **argv)
+ 	for (int i = 0; i < argc; i++) {
+ 		orig_argv[i] = strdup(argv[i]);
+ 		if (!orig_argv[i]) {
+-			WARN_GLIBC("strdup(%s)", orig_argv[i]);
++			WARN_GLIBC("strdup(%s)", argv[i]);
+ 			exit(1);
+ 		}
+ 	};
 
