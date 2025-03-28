@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-580433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B9FA751D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:06:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6969A751E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 22:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE16E16C0E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459153B06EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 21:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D5B1EB5EE;
-	Fri, 28 Mar 2025 21:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TTfRqcL9"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDABB1EF365;
+	Fri, 28 Mar 2025 21:09:11 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0A1E8356
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 21:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5C014D70E;
+	Fri, 28 Mar 2025 21:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743195993; cv=none; b=JAvP9GqefpTN7HKoc7pci238qDEPMGmRZ3Ajltk7NhYSqeNMRkoaMg8ltIj7btHuLyknBQZ+KlKNM9XDBQZpO/tsHhOP5mY86MDa5TGbGNxC5cuq/3MvOCmoe32YCaOz7VCYkniOBJq2aj/BkM2aXIws1RZiHZMUwAneOiJ893M=
+	t=1743196151; cv=none; b=XQFcfVOTHpJuvp3A9DWTu8BiKE15FFBgNTQZupUSmxsvbfFOEVnyUc2q/v1zd65Q8HhLSARQGyel4XdDU/iwbTjPuzYNej1PQEV0e0jy3IO6ph2nZtUZjn0BdwsCSY1EH4/qxiRlYIv44bQQN4BbvgXru4CFWhE+qlxtVq5OYbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743195993; c=relaxed/simple;
-	bh=4MvgCRk8GKUCzZRBR3jsAkV02zjbQDWVsh7de/ESgho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DEE47bShJ9DAgIc2QbtJnl8LdioW4g/0IwAju8qhvCxE4idNwkzFfkIEnUCSmfvjhFjxA5F0a2WmTQK8FIHe6SSdQGK9iuCW1PNzp2BVAmOVrEVHDQN8w/Q6tX6RRv9CmNqmytQWA/SO/VTgw+PUN69kH5vhXw34T7se76WzfZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TTfRqcL9; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85e15dc801aso214372139f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 14:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1743195990; x=1743800790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZjFz2NYE9XublGU59tucHqCizA+dgqB/ZBSarbDyb8U=;
-        b=TTfRqcL9HfnHmGM+Pl/0aspJpbs8raJrQy6IXXyfUYlnryDPbUe7Cx95cJ7IAgMhdD
-         Ie4PgFxWFFqkbRYwRUn1GDdsI3Z0SxoO3+8SvCvOQq8ZRRXaoV8VFB6kmHT/aP+o/S94
-         lnNLmxJYOiRuHM1YBfT3XgaDyiML3uI4cKWT4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743195990; x=1743800790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZjFz2NYE9XublGU59tucHqCizA+dgqB/ZBSarbDyb8U=;
-        b=rUh2SRvviUOM+JAlQWIIna+7HrRiBf8C07kbAACAyqV6F4E6tqyftMplsBgCKPI0as
-         F3UlggrGtUmUG1SPNTykG0ofArlZ2sNFkTiNX7p8k5ef7IXGICHPzEUlNsr8O9kOIfeZ
-         WOXJScxg3WWqxpFiZ7VX1EDkh52q0w98iSsLHI67wTMHLoQMkyh7IPJe9DykTVCbvtMR
-         rRPeay7gMy2pSZrTIiCF7KjnPp4Axh5a6q8YphzZY3WiDcyNxHCLwiVXNleUuWfklsEG
-         lF/iNnGgVXK8IKsT/W4knKugdHjAx+34emmQgNQwK8iGiN4dFVEyTugcxZv4PmRw3dWc
-         mm+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Y4zpBnJzeEUl4fCJNuegjLemc7QMH6zPA1P2/7du4ke2x5CryjL/IMVHCzbbwiy69Hh9dapyyWFTxOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTRgn8bCfzY5FEp9olTn4AxkpXZ4mSbFO4jguNEIvFH3vog8rZ
-	Htvp53dfDiYCUtWbNHgrQ3Qx9Smd6GcVncc/ZIz0ThlKZndD8KMZ9A0QiMoB4wI=
-X-Gm-Gg: ASbGncs11ssiNnQW6GijCvEV+brUGVY2SL6OmoZzjBPDjW+/96+qQ3UFFv5DW6XuySa
-	VDJMuHyJldrn6mETP2tTd2BUWiPyOvZrklR3WNO+B1DKuNMjG61d7D5nIe53lJrohS9mwGxQtoi
-	M8FIodWk+gF1wHbelx1WMaeSwPRTpfJFuqAlrZb7kMRS2GzUregULwCyRf4TCRRDchR++fTBFeU
-	/QqYL2tIY4PUbkOR3qVj6Oq8aS1WZ2C7N9vHr+DMBZmQ8VyiO7uF81EKztejRviKNmZvAtdPf5x
-	/TKtY1+7uOLcSsn4XNLIu5OjB/DQeqWMXFb2wJ9t4akBHljzlBN5KYg=
-X-Google-Smtp-Source: AGHT+IFQAA9lc+Ygw2fQ5AmWnDfp7459wtXQIdhZp08jrwKejpiRtTEBUmQY7sGkVk28m2VcnOcD4g==
-X-Received: by 2002:a05:6602:3999:b0:85a:ec03:b124 with SMTP id ca18e2360f4ac-85e9e86395cmr140854939f.4.1743195990070;
-        Fri, 28 Mar 2025 14:06:30 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4648cc348sm622042173.139.2025.03.28.14.06.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 14:06:29 -0700 (PDT)
-Message-ID: <b26a2a43-3c55-4086-88e2-64e65dcfbeb2@linuxfoundation.org>
-Date: Fri, 28 Mar 2025 15:06:28 -0600
+	s=arc-20240116; t=1743196151; c=relaxed/simple;
+	bh=Hc3c/0+YJM29iLeoht3DsYlHu7lIMwN9kBvsmSdc5E0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Mime-Version:Content-Type; b=MjDNnO+uiQuAF7X/fowH7SM2Gexrs4MkqYAtsGnxHFCgLf9VdLVg+DEQ+03L7DvTqICzd1t7hM/O1pyFjRmphqS8ZlXJlIF3t3wZ5b++lfYUVRAM6ZV/IEKk40QR43ZTcrrblvydHjIASC+XfjwQq4xx7oy/Z8Pe6hISdyYtda0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (51b692a2.dsl.pool.telekom.hu [::ffff:81.182.146.162])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000080649.0000000067E70FF3.0006D659; Fri, 28 Mar 2025 22:09:07 +0100
+From: Gergo Koteles <soyer@irl.hu>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+  Len Brown <lenb@kernel.org>, Alex Hung <alex.hung@amd.com>,
+  Mario Limonciello <mario.limonciello@amd.com>,
+  Rodrigo Siqueira <siqueira@igalia.com>,
+  Alex Deucher <alexander.deucher@amd.com>,
+  Hans de Goede <hdegoede@redhat.com>
+Cc: linux-acpi@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+  linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>,
+  stable@vger.kernel.org
+Subject: [PATCH v2] ACPI: video: Handle fetching EDID as ACPI_TYPE_PACKAGE
+Date: Fri, 28 Mar 2025 22:08:56 +0100
+Message-ID: <61c3df83ab73aba0bc7a941a443cd7faf4cf7fb0.1743195250.git.soyer@irl.hu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/tools: Drop unlikely definition from
- insn_decoder_test
-To: Ingo Molnar <mingo@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- David Gow <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>
-Cc: x86@kernel.org, Rae Moar <rmoar@google.com>,
- =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- KUnit Development <kunit-dev@googlegroups.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250318-x86-decoder-test-fix-unlikely-redef-v1-1-74c84a7bf05b@kernel.org>
- <Z9spq9OccwK7vKj7@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <Z9spq9OccwK7vKj7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-On 3/19/25 14:31, Ingo Molnar wrote:
-> 
-> * Nathan Chancellor <nathan@kernel.org> wrote:
-> 
->> After commit c104c16073b7 ("Kunit to check the longest symbol length"),
->> there is a warning when building with clang because there is now a
->> definition of unlikely from compiler.h in tools/include/linux, which
->> conflicts with the one in the instruction decoder selftest.
->>
->>    arch/x86/tools/insn_decoder_test.c:15:9: warning: 'unlikely' macro redefined [-Wmacro-redefined]
->>       15 | #define unlikely(cond) (cond)
->>          |         ^
->>    tools/include/linux/compiler.h:128:10: note: previous definition is here
->>      128 | # define unlikely(x)            __builtin_expect(!!(x), 0)
->>          |          ^
->>    1 warning generated.
->>
->> Remove the second unlikely definition, as it is no longer necessary,
->> clearing up the warning.
->>
->> Fixes: c104c16073b7 ("Kunit to check the longest symbol length")
->> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
->> ---
->>   arch/x86/tools/insn_decoder_test.c | 2 --
->>   1 file changed, 2 deletions(-)
-> 
-> I suppose this should be merged into the Kunit tree? The c104c16073b7
-> commit is in -next currently.
-> 
-> Anyway:
-> 
->    Acked-by: Ingo Molnar <mingo@kernel.org>
-> 
+The _DDC method should return a buffer, or an integer in case of an error.
+But some Lenovo laptops incorrectly return EDID as buffer in ACPI package.
 
-Thanks Ingo.
+Calling _DDC generates this ACPI Warning:
+ACPI Warning: \_SB.PCI0.GP17.VGA.LCD._DDC: Return type mismatch - \
+found Package, expected Integer/Buffer (20240827/nspredef-254)
 
-David/Brendan, Okay to apply this for the next rc?
+Use the first element of the package to get the EDID buffer.
 
-thanks,
--- Shuah
+The DSDT:
+
+Name (AUOP, Package (0x01)
+{
+	Buffer (0x80)
+	{
+	...
+	}
+})
+
+...
+
+Method (_DDC, 1, NotSerialized)  // _DDC: Display Data Current
+{
+	If ((PAID == AUID))
+        {
+		Return (AUOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.AUOP */
+	}
+	ElseIf ((PAID == IVID))
+	{
+		Return (IVOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.IVOP */
+	}
+	ElseIf ((PAID == BOID))
+	{
+		Return (BOEP) /* \_SB_.PCI0.GP17.VGA_.LCD_.BOEP */
+	}
+	ElseIf ((PAID == SAID))
+	{
+		Return (SUNG) /* \_SB_.PCI0.GP17.VGA_.LCD_.SUNG */
+	}
+
+	Return (Zero)
+}
+
+Link: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/Apx_B_Video_Extensions/output-device-specific-methods.html#ddc-return-the-edid-for-this-device
+Cc: stable@vger.kernel.org
+Fixes: c6a837088bed ("drm/amd/display: Fetch the EDID from _DDC if available for eDP")
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
+Signed-off-by: Gergo Koteles <soyer@irl.hu>
+---
+Changes in v2:
+ - Added comment
+ - Improved commit message
+ - Link to v1: https://lore.kernel.org/all/4cef341fdf7a0e877c50b502fc95ee8be28aa811.1743129387.git.soyer@irl.hu/
+
+ drivers/acpi/acpi_video.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
+index efdadc74e3f4..103f29661576 100644
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -649,6 +649,13 @@ acpi_video_device_EDID(struct acpi_video_device *device, void **edid, int length
+ 
+ 	obj = buffer.pointer;
+ 
++	/*
++	 * Some buggy implementations incorrectly return the EDID buffer in an ACPI package.
++	 * In this case, extract the buffer from the package.
++	 */
++	if (obj && obj->type == ACPI_TYPE_PACKAGE && obj->package.count == 1)
++		obj = &obj->package.elements[0];
++
+ 	if (obj && obj->type == ACPI_TYPE_BUFFER) {
+ 		*edid = kmemdup(obj->buffer.pointer, obj->buffer.length, GFP_KERNEL);
+ 		ret = *edid ? obj->buffer.length : -ENOMEM;
+@@ -658,7 +665,7 @@ acpi_video_device_EDID(struct acpi_video_device *device, void **edid, int length
+ 		ret = -EFAULT;
+ 	}
+ 
+-	kfree(obj);
++	kfree(buffer.pointer);
+ 	return ret;
+ }
+ 
+-- 
+2.49.0
+
 
