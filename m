@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-579895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-579894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0498A74AA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:33:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB24DA74AB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02EB179655
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:31:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B713BDA2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 13:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF3A22068A;
-	Fri, 28 Mar 2025 13:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5BD21D590;
+	Fri, 28 Mar 2025 13:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJXbrO1e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ4hPLrM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82D21E096
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9170C1ACECF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 13:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743168500; cv=none; b=A0ul5Md31qwZ0RnLoJuH5JDGQlsb11lyzEOBfDCOd1WrFl1oSYXVJnjgDWkymLWc2KapmRpxgSNTqqexwp3Z57Mgb84Q0otgEvcfXBwsI2fQeTnMoCQMEueYtRsrB2zwheqkcpOrX0oGk/KFILAX8Zys9vf3cXbFEV3avIR7qn4=
+	t=1743168499; cv=none; b=sL/8DTldwd2Zi1CGoAMCu2yHu8oEJmRKHkKHJK/4RAWravaFSDOFyokhciH9VFWM+HTQB7AvzI7RIxK+yVYSEZNQo+4XesLA1CykRXlhcfnuuTp2xNpwLs8+n3Uy81BMM0PO+tKzSF6U+RDRugd70qMmXrnumIDuE1L4nD+xy4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743168500; c=relaxed/simple;
-	bh=C4QxJVYUpLSEmHPMwaR93U0zu+QPPz4nEkMxWVyEGbU=;
+	s=arc-20240116; t=1743168499; c=relaxed/simple;
+	bh=zcSLh9zb2Qc3VpXhOklk3s3w0Tr/O8DBH2iEqzq6lck=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YIZ/q+TycJV3KJkB9i0GnSUzGMKMtpqhu5thCediwRqlkAWx82ohtDP5vLqfaZz7NyoB763zvROobx+lK81pdSkJkG4FmcTHcub2lj+OW8a6ADZAP6iASqzQdrpxMwUF2rYrrcDq4IIIVVd1Fm+n4ltJC30CZavkMseANpEADUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJXbrO1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAA2C4CEE5;
-	Fri, 28 Mar 2025 13:28:14 +0000 (UTC)
+	 MIME-Version; b=jgBr0p6ab6o/G6O8NSLurvjyJJf0BYiITSRhtpXF+k//qeoxbuoiHidcBJpxSePDbsW9QE8D8b+Smk619CDJKnYPtlAVxMSqda6ALgMjv7VFvZ3UfgcgRi7DroSVWG8zzNLnxZUPLCAaiaYwk1uN0Oly+0vn1qtMsW6kPy2pcz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ4hPLrM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0CEC4CEEA;
+	Fri, 28 Mar 2025 13:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743168497;
-	bh=C4QxJVYUpLSEmHPMwaR93U0zu+QPPz4nEkMxWVyEGbU=;
+	s=k20201202; t=1743168499;
+	bh=zcSLh9zb2Qc3VpXhOklk3s3w0Tr/O8DBH2iEqzq6lck=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GJXbrO1eJ8h5kvqaCyJa4ug7JXs03iYFNwsIwySr7BOT6Ea1Qv5hLB/fe/kKAdIqb
-	 L1BzaSAd7ZXZBYY7TNFQ6mkVFFdLDdQICFzHMsVv/+zMSiqLElnsg4LmgYuQYctJF1
-	 os8YkPXe8p7VYzVpo5mcksdWVuIVB4O7OWcc7PaQ0IJkqCSD82hF3JuBf+xRuUkY34
-	 HMUmPnLvPb3Nk9Upd4ek9KHBPaeGrM8FGJBpjU7B/ulElrlbZMvjN7tXg3xDG24v6z
-	 g7ksY2Pn84UQ4M8BYiCPMT4r44/dJqSvtwqIA1EObt2HhpTmuer3YZ+YBN3HvvRkMg
-	 FyMjAhlvoHv4g==
+	b=rJ4hPLrMaYHLD34kxbKrSiGFbLSno7OHB+POiTD4uR/rYUOiQ+ajr70d6SP/XXiFf
+	 LYIRbOmKb5AyvvSDBHXLPFVRtNWkY7D3YSiXeOy8WLtEEhZ9lIZCXsoL5qI9ujRUpu
+	 Fpl/jrQCegPJhF34UrO/xU/uOLmtkIGdEGiNtHrzkFV+jxOcwDuJTeZSFAdh+clQ+P
+	 /gWeJoY/GvEx5dSQxbPXpXo+0TGqzcxNbCL5/gBkUnZ3vgmHhN+pNxKn/MjXxw4Q+5
+	 0tOxblXjOGlwJTFOKI/OuQ2dw7bO1ww67X2i1IStFrO+751bO6+biCqtwROf/zkQeE
+	 ZfHPSmrM0ce+A==
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -49,9 +49,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 22/49] x86/alternatives: Remove the 'addr == NULL means forced-flush' hack from smp_text_poke_batch_finish()/smp_text_poke_batch_flush()/text_poke_addr_ordered()
-Date: Fri, 28 Mar 2025 14:26:37 +0100
-Message-ID: <20250328132704.1901674-23-mingo@kernel.org>
+Subject: [PATCH 23/49] x86/alternatives: Simplify smp_text_poke_single() by using tp_vec and existing APIs
+Date: Fri, 28 Mar 2025 14:26:38 +0100
+Message-ID: <20250328132704.1901674-24-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250328132704.1901674-1-mingo@kernel.org>
 References: <20250328132704.1901674-1-mingo@kernel.org>
@@ -63,72 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There's this weird hack used by smp_text_poke_batch_finish() to indicate
-a 'forced flush':
+Instead of constructing a vector on-stack, just use the already
+available batch-patching vector - which should always be empty
+at this point.
 
-	smp_text_poke_batch_flush(NULL);
-
-Just open-code the vector-flush in a straightforward fashion:
-
-	smp_text_poke_batch_process(tp_vec, tp_vec_nr);
-	tp_vec_nr = 0;
-
-And get rid of !addr hack from text_poke_addr_ordered().
-
-Leave a WARN_ON_ONCE(), just in case some external code learned
-to rely on this behavior.
+This will allow subsequent simplifications.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/alternative.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ arch/x86/kernel/alternative.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 66778dac257f..ffffec4597b7 100644
+index ffffec4597b7..70abc636b87c 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -2847,12 +2847,11 @@ static bool text_poke_addr_ordered(void *addr)
+@@ -2906,8 +2906,13 @@ void __ref smp_text_poke_batch_add(void *addr, const void *opcode, size_t len, c
+  */
+ void __ref smp_text_poke_single(void *addr, const void *opcode, size_t len, const void *emulate)
  {
- 	struct smp_text_poke_loc *tp;
- 
-+	WARN_ON_ONCE(!addr);
+-	struct smp_text_poke_loc tp;
++	struct smp_text_poke_loc *tp;
 +
- 	if (!tp_vec_nr)
- 		return true;
- 
--	if (!addr) /* force */
--		return false;
--
- 	/*
- 	 * If the last current entry's address is higher than the
- 	 * new entry's address we'd like to add, then ordering
-@@ -2866,6 +2865,14 @@ static bool text_poke_addr_ordered(void *addr)
- 	return true;
- }
- 
-+void smp_text_poke_batch_finish(void)
-+{
-+	if (tp_vec_nr) {
-+		smp_text_poke_batch_process(tp_vec, tp_vec_nr);
-+		tp_vec_nr = 0;
-+	}
-+}
++	/* Batch-patching should not be mixed with single-patching: */
++	WARN_ON_ONCE(tp_vec_nr != 0);
 +
- static void smp_text_poke_batch_flush(void *addr)
- {
- 	lockdep_assert_held(&text_mutex);
-@@ -2876,11 +2883,6 @@ static void smp_text_poke_batch_flush(void *addr)
- 	}
- }
++	tp = &tp_vec[tp_vec_nr++];
++	text_poke_int3_loc_init(tp, addr, opcode, len, emulate);
  
--void smp_text_poke_batch_finish(void)
--{
--	smp_text_poke_batch_flush(NULL);
--}
--
- void __ref smp_text_poke_batch_add(void *addr, const void *opcode, size_t len, const void *emulate)
- {
- 	struct smp_text_poke_loc *tp;
+-	text_poke_int3_loc_init(&tp, addr, opcode, len, emulate);
+-	smp_text_poke_batch_process(&tp, 1);
++	smp_text_poke_batch_finish();
+ }
 -- 
 2.45.2
 
