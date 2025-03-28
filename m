@@ -1,220 +1,228 @@
-Return-Path: <linux-kernel+bounces-580320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DF2A7504C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:21:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCE3A75065
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 19:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72658188DF75
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:21:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A68337A47FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 18:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAD61E1A3B;
-	Fri, 28 Mar 2025 18:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i3QlC2oa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8771DE883;
+	Fri, 28 Mar 2025 18:30:09 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5CA1DEFCD;
-	Fri, 28 Mar 2025 18:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743186065; cv=fail; b=qx6prCFl1gJtw0v2VDAnhgcIzGVtQ8Rxb6xqj0dOxwZpspRZhZlRS2jr6y+bMhuPZQBqmDvLx9uCO8x09mHmOF17k1jDhINyWVqG6nW0wMjcDkm1ZvfUG9P5dZzm0OCKdsmD6wYKwJpUHWSFiLD/oYqAkSMxt1v5pBkf6BqqwHQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743186065; c=relaxed/simple;
-	bh=KkxuMZ02fGqV6MyzLWn7PunfuZs5iN+BdgFUf4g/sR8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SpJjp7iEg8B7sTfkIObySvz2YPiMz//dWpfZaCjOyLb995TTQe+ixw2Z+u/wg8DnAJeJAeyCdBaObpX0kUSee84Nv52TVVTWsrT0VgDGANKfMtqYzKMIRjt/XgjYt2mgYngn5P2jJ2kUe/jbwKYEIJepry1unzogGIjI5WBNwuM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i3QlC2oa; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743186064; x=1774722064;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=KkxuMZ02fGqV6MyzLWn7PunfuZs5iN+BdgFUf4g/sR8=;
-  b=i3QlC2oaA+diYQGLgOY2buw1ckHNY5oB717sBRBvUft0aBc1DWxcWjKJ
-   Oqmsbpi+V0KTc6CX59CNg15+3vIP+ZCeOH6BaL+kIL5rar3Hc+iCEP3s9
-   ZPbUbFnr2bVVTqYxbq962Olqdq7m3v24irZfK1Pn+QYC5vZfrOjAG3g/6
-   IrHXp1bpzqKaENmMF/CKVUuHHQYQcXo9AKWHxKP2EDcCpoDy/CyC7c9an
-   YdoiaJhulhXaVSdW6V1CSA72oiAppjsL+8vNYE50rr7frFJhVhHsrLGca
-   /XeSF+h9jDP7n6MXqnqbXcmYLnWs7Dm4iDvH56YFCtD4qbdM42BMa0BKW
-   w==;
-X-CSE-ConnectionGUID: oTB6Hvj9T2eCLlNhLOPKYQ==
-X-CSE-MsgGUID: Awlu06OlQ7quJL3KA6mj+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11387"; a="62089922"
-X-IronPort-AV: E=Sophos;i="6.14,284,1736841600"; 
-   d="scan'208";a="62089922"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2025 11:21:03 -0700
-X-CSE-ConnectionGUID: 1sFVHfi5SAioQEOh4Ks0hQ==
-X-CSE-MsgGUID: vmc6thoIQD2JBgdzY1q4Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,284,1736841600"; 
-   d="scan'208";a="130727354"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Mar 2025 11:21:03 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 28 Mar 2025 11:21:02 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Fri, 28 Mar 2025 11:21:02 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.175)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 28 Mar 2025 11:21:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NvnN4d/U3CvYIa7xttOb+ISUNlkmgWKVv2zfjFckZj1/PJnn8DUxtXx9H5aAc+0bjeQnWpurJaNsIWEPs6zL2IAPVYzDz5ZadR7j6srvuIv1gFGPofyJcG6jaUYDSInTXVo58GpR+182ZODtmiBMBNrI3xixqW1BceZ3LKh6EEL1P+y4SlKQw2fB8M7Uuhur1EmVqn5e402ykGHsDopFYm8prba98a+T5m3+8GorM7Lj5/cg4upy1uaUbVcl4M9P3tQBSRnUDcN/f2aQ3J5E6HIp+W0fIIeS8HlQpDVLerJXgNiZn2HJpbX+W0e0cxvS5If+VlWAJhWOzX+Qyb1tGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mMKftRmXOtpQwyHVQUbLUEm5+XXx3RlWcFmcWvsCb1k=;
- b=RssHnNV8WUKTsJjH6tsz02ZW8o9a5B5TITvhHTKyfs38UPQ3b0GxK0ocRohokjNuQ7TzoltW6mwfLIraJwjtG/XuQezFGJugzYXSRXSrLpVITpKef1Ua3ROcZn1ichYHptV1teJABYM62jmUy5inZgMTFSTFqwe1mNoW6H/SuA/FfkZ6hUGzplCqUDUTy8RLosmBAnMYq5H53oISRNcSU6eCHl1rSkaJlDFboc9WT1MQM2McUCXntVA8rciPN/4PysbsKoIWYNTMn5rOdXs/06lZHd8bE4cLPODDgviCWtowmtbsCJMB6R9AXq49aB/Qd5rggUyGDJ9fPQh78IzuwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
- by PH0PR11MB5192.namprd11.prod.outlook.com (2603:10b6:510:3b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 28 Mar
- 2025 18:20:18 +0000
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563%4]) with mapi id 15.20.8534.043; Fri, 28 Mar 2025
- 18:20:18 +0000
-Date: Fri, 28 Mar 2025 14:20:13 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "John
- Harrison" <John.C.Harrison@intel.com>, <intel-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] drm/i915/gsc: delete a stray tab in
- intel_gsc_fw_get_binary_info()
-Message-ID: <Z-boXYxpnGYRqsJ8@intel.com>
-References: <6152e1ac-745d-4b38-ba49-f013e6760936@stanley.mountain>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6152e1ac-745d-4b38-ba49-f013e6760936@stanley.mountain>
-X-ClientProxiedBy: MW3PR06CA0029.namprd06.prod.outlook.com
- (2603:10b6:303:2a::34) To CYYPR11MB8430.namprd11.prod.outlook.com
- (2603:10b6:930:c6::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933EC1E0B67
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 18:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743186608; cv=none; b=ULkloLgkFwPAZZR9jzc5p5OMlfqk39ANPj+fWYkFjbA2zVvUF8IhWpXBJvl4HjyfD0DkVBLVXNLQ8oVj5c4oQjrPRE71KyPqDpdIGIwh3iB61dWyq8c+RIMPew3JeiHZAHxVFIDfT+SuO0hdFMwACSWYuJBmKoQiVBQRoP+LNR8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743186608; c=relaxed/simple;
+	bh=0XebXl+Om/rMg+RdS+JY/LjLXtd4q5WCPR44cJdQYUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A1Fb16G8DxGGcgELug8/N6ksobL3wFZn23a7oa6Dg3zjAhxus0W+hQflzMmJwXa36jg8KhVjfAxZxH5MVviZr2myj87m9olwGKpRMxghL4IqTbdeGXfckZUXUn+Gbs99/wHoxspwJAW+o8GD2BwUosui74isrDbLdXGZmopR8x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:8180:83cc:5a47:caff:fe78:8708] (helo=fangorn)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tyEK7-000000004rg-42PA;
+	Fri, 28 Mar 2025 14:20:55 -0400
+Date: Fri, 28 Mar 2025 14:20:55 -0400
+From: Rik van Riel <riel@surriel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Vinay Banakar <vny@google.com>, liuye <liuye@kylinos.cn>, Hugh Dickins
+ <hughd@google.com>, Mel Gorman <mgorman@techsingularity.net>, Yu Zhao
+ <yuzhao@google.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Subject: [PATCH v2] mm/vmscan: batch TLB flush during memory reclaim
+Message-ID: <20250328142055.313916d1@fangorn>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|PH0PR11MB5192:EE_
-X-MS-Office365-Filtering-Correlation-Id: f684d0e4-446e-4a84-234e-08dd6e25316a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?O5AdRdtxlZUTqTYGJKSyVcbHwKUgl4LsDHwddJluZHwi2XZ0XzyVemv13I6h?=
- =?us-ascii?Q?nsl2hOQFIS9ZwDlfqcEPU2u6/0U6f+4vaKg28Ty67w8sS79mKQaoSOwUl9nk?=
- =?us-ascii?Q?0p1O1gRrRWKO5zdhJHwvT90dRst/STy6HMdhxHGmtO8WmEp8iRn2jrHYUBJz?=
- =?us-ascii?Q?oh56bzjKfWRcEAKS5htf1skpwe2I9WQx6YCsNIGUMkYz1hXPPPcQcauRbDLi?=
- =?us-ascii?Q?q1fBCFKKyYLNP19WXyqE0ycH4QVLIUCd+/9HCevSo3U7Mnd3K+yiioOY+0sl?=
- =?us-ascii?Q?UthayqseA1d9fLnwT7bpFcgacdh3/nzC2fmWnQQxbUgK8p2DCN+sqV2rSDnC?=
- =?us-ascii?Q?tPfQ7+yB1FOjId6fq+ho5j28edOS5l3fwVa7DLEMbSSryF1pbezJAW2+RA3V?=
- =?us-ascii?Q?KNaDRcumjVif330NE7DFtJ3AfbNYMBxpqoxu3o0cj8WHupiUdtT9TBzh5hW7?=
- =?us-ascii?Q?J1bdipls4Y0zGeLbSXaXzUw/CdKUZ5mpKn8iPl7aVLGgRhYDKdjCKAETL+fw?=
- =?us-ascii?Q?iXqc88rmavH7ZrLh5ynEm+cNXjv/zbBr9WR/JmKkQTpY/9fK0uhWDXyzF5PQ?=
- =?us-ascii?Q?40dckLTSaLCEhwahXx47guPZIpTYxv8zoIC4KDHEGZcbDkswFDFKAKxi941n?=
- =?us-ascii?Q?WN3LQ4xazZBKcrFz+qcobjr4cXeVql52WIfCu+vnVqLSdQYCFXX4Na8rqYI4?=
- =?us-ascii?Q?JNai2SSWNBLxK3qOgbs0UzhBkbdclXhbQjlbSjOC6hDkWwO1SXwJLIARScrU?=
- =?us-ascii?Q?thbYPeIc9ozxUZqAP+9JHJbQD9A0Yrz0y3/RTh4QZxoYmBiUJWO9Vydc94z8?=
- =?us-ascii?Q?G7z4usiAMDy1JlE5sRKh98AlvUdZ8n/rCmBue0qICGIz2lc5f/vpirzuGvvG?=
- =?us-ascii?Q?Q4/cIUoCtIQBSRw198tEPJGEO6yEmwItMD8DSxR9DRCp62kOL2CFJJd6LOjq?=
- =?us-ascii?Q?OP/ESkYElE4vBPSgBBvZbZyjyxrsGWSniIT6o0+HJ8IW/puuZzu3vfvsaYEf?=
- =?us-ascii?Q?Jre9bn/gXRFL69yArUOXjhGfhIFCeRHX9/x7I92b26TcnH9oWUNdiUT/vHDR?=
- =?us-ascii?Q?ERYSOedbLOi15WC0YCqUUjLI8t/574XKVoRkLkHxoUU7pqj/fNR6G4RxX4qr?=
- =?us-ascii?Q?TgSvKJfS0NMwhYeUXX5EJI7ZJun6sQsCLeHtUiN4cWwPdnYjiT7qrJOOJCgz?=
- =?us-ascii?Q?75XObx0Yxy9VY35SgZc7PIAbuQMQ2YBulHm/raLbE/1+NqlKL1OffKUgeexq?=
- =?us-ascii?Q?vKeS49mk+X06HIjSA0K0WJGkWAWt+8z9Ntub6QdSRlj1KuLWlioJiIzVuzY5?=
- =?us-ascii?Q?NjqWxMfkRoTJmM7m6rBeguKCMUh3inYYqnniouFPhgcMc0jLs1+ulGLzCGFI?=
- =?us-ascii?Q?D4rlEW4hI7A2Mq5xuYi5fbsg6rhb?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?T2Ms6Tolob/Fluh10dBJxzmeIK3Uywty5DKH7HP8cfRrLE9fS4UWEqR00uER?=
- =?us-ascii?Q?LGZheb8oIYPEamdNQxJR7PEqsOz59su9/HDCXhzZeSyM6eZ+U9xqc2MgrqNY?=
- =?us-ascii?Q?GZOutlllg++fc1D1jZkUlO4gSYSh4/V5J5FE49IaZFPjdC332thnqU8s41Pa?=
- =?us-ascii?Q?SiBW/h3V2s4QAngWPa3onwhxj8LS5vpLaeNyCwDS3oBIWPtcPC0lIL46s7s7?=
- =?us-ascii?Q?hTGue0KFl2zaTtzqc1iWyscfBX4YT3DPS73OLwvc4fDsF2zq1fMoTDwomWGX?=
- =?us-ascii?Q?/9Fu0ZLyfGRKEtTjlwnPmU3OhJIdhTa7S4y+r0yqer2UdxFW5RXWLiF+iUBT?=
- =?us-ascii?Q?7llNK0s5wFX7vI7a4GeuUjxsSu/4msGwnN4QDg91afTAtIRUl2Z1DDnkJdjy?=
- =?us-ascii?Q?bow2DSII6f3mILoQavcXg34sNhQsOgpTmkiGWW+5Z4PpdqRd735i4snJdBhl?=
- =?us-ascii?Q?6kjYinovHLmTpLhCqtREuCHanMSSY6S/KO03xc7tt052iz4UH4rKl6Q9QZfN?=
- =?us-ascii?Q?r34Vk1hXo/JEUuD21uUJrnCHGFIJGaPsASyikYxoUmyPmcdLTo+5VsXDxQnG?=
- =?us-ascii?Q?AydkTkkgdNJgwsCytksRk+50pR16rYpdRRNB4GmDavLxmfow4qyysGfcLAcN?=
- =?us-ascii?Q?M8BI/vdHqSjcsx+Ls+9K4DF221moyeIyfqN+GF6v4dYe/fS9Lhei0Dwvi9V3?=
- =?us-ascii?Q?8eIKKnO2LPdZA5UxxTZYEWLEfP0JHli+XA7PeWQYAW9kR3b2LprG+LmSiG1A?=
- =?us-ascii?Q?AiK6VD9pi8QpbUMqSbEstLFjkOVCh0Nh4pJSnr2Ao8CAI18pLV7RQ4wWsUy3?=
- =?us-ascii?Q?2CWew7WnACdvL1CIyqZOF41DVnTWkl6Eni6SV9jcZqqRcMs9Skfk74oZ1iCX?=
- =?us-ascii?Q?VV53swApX4/oTElNb61e3/FEQfaW4fHVChwnyMtM8gP4ZMXTgiscB+nl3ndQ?=
- =?us-ascii?Q?iaHUJrdRMYofAxUX+25YwI6PsipUiV1+MZpPJ+95tpGmuvf0edLoEwnu7BNL?=
- =?us-ascii?Q?WPUDTLME/4Vz/Lyrv0+Gv6cw+1UGFEpaKuAJHebQq/djjsFCNl2SYwSca98q?=
- =?us-ascii?Q?7p4NToYEPpepOLZIaRnyp0vIcmtGdJc3KjVPxrYE1seoUireVbIIoD9JeaAz?=
- =?us-ascii?Q?gLcNlbFjkPVC1B4zeF/JsWGH/lL94eANXGuCnhcPnwMS2z61oX3L+CsSvbTX?=
- =?us-ascii?Q?kcPrcVk3KkPGhKiykTGh8GyG1GqUc1QFh7d5O29HCVnUoJ3M+1QrPd0rjjo2?=
- =?us-ascii?Q?yI/SoUBgYE0RtEVDSj4SKoCD3mQT1T8pVW0xkuf3FZxIds0pYra8LEF4T9EG?=
- =?us-ascii?Q?eRsqJoS2n2cG0+YK+0LWfeaEbDCwDAdpmhf99fGaB3I57sF77I1WKhivZIHc?=
- =?us-ascii?Q?VIdxL3j5Gat2cBao2rsd6T9zmPxfVftT8C66aaV3uzi3/UO59a0JqESDuLrI?=
- =?us-ascii?Q?w+nYWV/aaI20i8S0+a1nsofN24gpp9fmwLfrKMQjf4uoyyBlo/u+rPU5yT8x?=
- =?us-ascii?Q?SU/x0+h2hvLOQPTGVDKg2/x/L0d3V0wkeBaAF5i+VUXw5tkLSmajvfKZZIyW?=
- =?us-ascii?Q?49VeYRDXLZ8YsCymJpkFMTEp1z88dXZ+704TvuL41BP292B+3hflfxqUP0Lp?=
- =?us-ascii?Q?qQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f684d0e4-446e-4a84-234e-08dd6e25316a
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2025 18:20:18.0330
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YA4VhA7PT6hYiu6YsXVfwt4+Fhf/5QqiZKXTN4nPa8/PAA6FiA+4mz4Lrnwwxi0zNC40J5//OgLk3Gi3uLDt/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5192
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: riel@surriel.com
 
-On Mon, Mar 10, 2025 at 10:46:19PM +0300, Dan Carpenter wrote:
-> This line is indented on tab too far.  Delete the extra tab.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+From: Vinay Banakar <vny@google.com>
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+The current implementation in shrink_folio_list() performs a full TLB
+flush for every individual folio reclaimed. This causes unnecessary
+overhead during memory reclaim.
 
-and pushing right now...
+The current code:
+1. Clears PTEs and unmaps each page individually
+2. Performs a full TLB flush on every CPU the mm is running on
 
-> ---
->  drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c b/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
-> index 5dc0ccd07636..d550eb6edfb8 100644
-> --- a/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
-> +++ b/drivers/gpu/drm/i915/gt/uc/intel_gsc_fw.c
-> @@ -230,7 +230,7 @@ int intel_gsc_fw_get_binary_info(struct intel_uc_fw *gsc_fw, const void *data, s
->  		gt_info(gt, "Invalid GSC firmware for MTL/ARL, got %d.%d.%d.%d but need 102.x.x.x",
->  			gsc->release.major, gsc->release.minor,
->  			gsc->release.patch, gsc->release.build);
-> -			return -EINVAL;
-> +		return -EINVAL;
->  	}
->  
->  	if (min_ver.major) {
-> -- 
-> 2.47.2
-> 
+The new code:
+1. Clears PTEs and unmaps each page individually
+2. Adds each unmapped page to pageout_folios
+3. Flushes the TLB once before procesing pageout_folios
+
+This reduces the number of TLB flushes issued by the memory reclaim
+code by 1/N, where N is the number of mapped folios encountered in
+the batch processed by shrink_folio_list.
+
+[riel: forward port to 6.14, adjust code and naming to match surrounding code]
+
+Signed-off-by: Vinay Banakar <vny@google.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+v2: remove folio_test_young that broke some 32 bit builds, since pages should be
+    unmapped when they get to this point anyway, and if somebody mapped them again
+    they are by definition (very) recently accessed
+
+ mm/vmscan.c | 112 +++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 68 insertions(+), 44 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c767d71c43d7..286ff627d337 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1086,6 +1086,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 	struct folio_batch free_folios;
+ 	LIST_HEAD(ret_folios);
+ 	LIST_HEAD(demote_folios);
++	LIST_HEAD(pageout_folios);
+ 	unsigned int nr_reclaimed = 0, nr_demoted = 0;
+ 	unsigned int pgactivate = 0;
+ 	bool do_demote_pass;
+@@ -1394,51 +1395,10 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 				goto keep_locked;
+ 
+ 			/*
+-			 * Folio is dirty. Flush the TLB if a writable entry
+-			 * potentially exists to avoid CPU writes after I/O
+-			 * starts and then write it out here.
++			 * Add to pageout list for batched TLB flushing and IO submission.
+ 			 */
+-			try_to_unmap_flush_dirty();
+-			switch (pageout(folio, mapping, &plug, folio_list)) {
+-			case PAGE_KEEP:
+-				goto keep_locked;
+-			case PAGE_ACTIVATE:
+-				/*
+-				 * If shmem folio is split when writeback to swap,
+-				 * the tail pages will make their own pass through
+-				 * this function and be accounted then.
+-				 */
+-				if (nr_pages > 1 && !folio_test_large(folio)) {
+-					sc->nr_scanned -= (nr_pages - 1);
+-					nr_pages = 1;
+-				}
+-				goto activate_locked;
+-			case PAGE_SUCCESS:
+-				if (nr_pages > 1 && !folio_test_large(folio)) {
+-					sc->nr_scanned -= (nr_pages - 1);
+-					nr_pages = 1;
+-				}
+-				stat->nr_pageout += nr_pages;
+-
+-				if (folio_test_writeback(folio))
+-					goto keep;
+-				if (folio_test_dirty(folio))
+-					goto keep;
+-
+-				/*
+-				 * A synchronous write - probably a ramdisk.  Go
+-				 * ahead and try to reclaim the folio.
+-				 */
+-				if (!folio_trylock(folio))
+-					goto keep;
+-				if (folio_test_dirty(folio) ||
+-				    folio_test_writeback(folio))
+-					goto keep_locked;
+-				mapping = folio_mapping(folio);
+-				fallthrough;
+-			case PAGE_CLEAN:
+-				; /* try to free the folio below */
+-			}
++			list_add(&folio->lru, &pageout_folios);
++			continue;
+ 		}
+ 
+ 		/*
+@@ -1549,6 +1509,70 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 	}
+ 	/* 'folio_list' is always empty here */
+ 
++	if (!list_empty(&pageout_folios)) {
++		/*
++		 * The loop above unmapped the folios from the page tables.
++		 * One TLB flush takes care of the whole batch.
++		 */
++		try_to_unmap_flush_dirty();
++
++		while (!list_empty(&pageout_folios)) {
++			struct folio *folio = lru_to_folio(&pageout_folios);
++			struct address_space *mapping;
++			list_del(&folio->lru);
++
++			/* Recheck if the page got reactivated */
++			if (folio_test_active(folio) || folio_mapped(folio))
++				goto skip_pageout_locked;
++
++			mapping = folio_mapping(folio);
++			switch (pageout(folio, mapping, &plug, &pageout_folios)) {
++			case PAGE_KEEP:
++			case PAGE_ACTIVATE:
++				goto skip_pageout_locked;
++			case PAGE_SUCCESS:
++				/*
++				 * If shmem folio is split when writeback to swap,
++				 * the tail pages will make their own pass through
++				 * this loop and be accounted then.
++				 */
++				stat->nr_pageout += folio_nr_pages(folio);
++
++				if (folio_test_writeback(folio))
++					goto skip_pageout;
++				if (folio_test_dirty(folio))
++					goto skip_pageout;
++
++				/*
++				 * A synchronous write - probably a ramdisk.  Go
++				 * ahead and try to reclaim the folio.
++				 */
++				if (!folio_trylock(folio))
++					goto skip_pageout;
++				if (folio_test_dirty(folio) ||
++				    folio_test_writeback(folio))
++					goto skip_pageout_locked;
++				mapping = folio_mapping(folio);
++				/* try to free the folio below */
++				fallthrough;
++			case PAGE_CLEAN:
++				/* try to free the folio */
++				if (!mapping ||
++				    !remove_mapping(mapping, folio))
++					goto skip_pageout_locked;
++
++				nr_reclaimed += folio_nr_pages(folio);
++				folio_unlock(folio);
++				continue;
++			}
++
++skip_pageout_locked:
++			folio_unlock(folio);
++skip_pageout:
++			list_add(&folio->lru, &ret_folios);
++		}
++	}
++
+ 	/* Migrate folios selected for demotion */
+ 	nr_demoted = demote_folio_list(&demote_folios, pgdat);
+ 	nr_reclaimed += nr_demoted;
+-- 
+2.47.1
+
 
