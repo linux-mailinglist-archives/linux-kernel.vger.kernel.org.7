@@ -1,161 +1,139 @@
-Return-Path: <linux-kernel+bounces-580058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE93EA74CCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C2AA74C64
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 15:21:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA1F189AE30
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C126818882A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Mar 2025 14:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0841521E08B;
-	Fri, 28 Mar 2025 14:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748DE1B5EA4;
+	Fri, 28 Mar 2025 14:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="mIOVfjN5"
-Received: from out-16.pe-a.jellyfish.systems (out-16.pe-a.jellyfish.systems [198.54.127.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaOtsJF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F721D5AF;
-	Fri, 28 Mar 2025 14:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.94
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743172203; cv=none; b=J5qX6U5a62TZJ214yN90RmHdEEoxxf8HRrdxhmZFmOKFEom0D5pnKD84YfevSNgQ5x/pHvim2tvEtPiahyWAOPNM1KaOEyexRxL6BnSsjmwT3fupaKihu6scMQglAeOgT24gcHEJqHVPPoX7DKj6IB4XGg6pjPG8bVPNRKnH6Io=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743172203; c=relaxed/simple;
-	bh=hFqHqKV+KeZawAy1aS1MAjdhzYhHV8EspKvPassTmhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CHOl0isXnnRAaCe8H5aJzatmMvT0nPuvKuGx+YtKMcamz34DoYAXEfhyL3w6MsdkMkQELOPj7Amo8lAKB5NodK8cT07UquDEqMYoTAlY4tPugJd3bux6gE+6+3+EYuW157tQecvq1AYjm/O7YJ5ZMtbsGji2SrXJA10E+jbAXWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=mIOVfjN5; arc=none smtp.client-ip=198.54.127.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
-	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4ZPN3b5FRYz4wb6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45A320DF4;
 	Fri, 28 Mar 2025 14:20:43 +0000 (UTC)
-Received: from MTA-10-1.privateemail.com (unknown [10.50.14.20])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4ZPN3b4M3hz2Sd0W;
-	Fri, 28 Mar 2025 10:20:43 -0400 (EDT)
-Received: from mta-10.privateemail.com (localhost [127.0.0.1])
-	by mta-10.privateemail.com (Postfix) with ESMTP id 4ZPN3b2cFrz3hhVG;
-	Fri, 28 Mar 2025 10:20:43 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1743171643;
-	bh=hFqHqKV+KeZawAy1aS1MAjdhzYhHV8EspKvPassTmhE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mIOVfjN5eG8XbGFfWVIZgnAcnec3Vh+Fy84/9xQnW7U+BLy/ywNpN6suyLAqyX8BA
-	 2YxQ5ykvFOa/zLWYgT4Hz522N6l0nPUU1R6G/+j4HoXI/F7fdMwAbCv5FyTHpOjcs+
-	 ArRLxZirG3Rdb1lhjqtG2Y3vpoVugxpSVFbvA0hoO5bonMbHLH/KAYDg8aTuR1Ad8K
-	 Wb4qa474SoBQAQ6Z5rW9wjliQJy94u8aawIQwWuVrudNgxLXj/ZZ0uhZchv4zH8fMh
-	 0e2KRZXlFsQByva9qAsoKYiz6kPBGyVJEc1r0uLHg+55YVfcYUsy/TZBSl5BKVi+HD
-	 PCULFNVCLJUOg==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-10.privateemail.com (Postfix) with ESMTPA;
-	Fri, 28 Mar 2025 10:20:26 -0400 (EDT)
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: linux-kernel@vger.kernel.org
-Cc: mdf@kernel.org,
-	hao.wu@intel.com,
-	yilun.xu@intel.com,
-	trix@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	michal.simek@amd.com,
-	linux-fpga@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sam.winchenbach@framepointer.org,
-	Sam Winchenbach <swinchenbach@arka.org>
-Subject: [PATCH 2/2] fpga: zynq-fpga: Allow ICAP enable on probe
-Date: Fri, 28 Mar 2025 10:19:44 -0400
-Message-ID: <20250328141944.119504-2-sam.winchenbach@framepointer.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250328141944.119504-1-sam.winchenbach@framepointer.org>
-References: <20250328141944.119504-1-sam.winchenbach@framepointer.org>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743171643; cv=none; b=GYznc3a6x/aTo9FEHyVgyIKR9RyJ2do9gOTcgRAXOc7zh6ogZJntX5T+ZOmBuWaHIDucRxVlHAE/iHsuv3VoUNBJOPBOiwdhwP8d7GWlohVx7FnxC8HCi4R817AJCnSHSVXAgTbv3vPJ15nr45TtC+8FrDztD/A+Gg5i4HJYzSs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743171643; c=relaxed/simple;
+	bh=52BY8RWxqGI39nW50Uzq7mTE1cOGjvlmsJ2EgrcA9Ec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyIZ4ksWzfXecLRpI5w96HRhKym3gE31WGakAx4FqyNw4tRSn+V7yS+Dz0zD+s0Up40zBLqGVgxfv837chs9+RjiaVJNqpUF30f0AfYGM2HTZ8ewlQ1IdRg1J5Dn8vWXQEUYhAXvpWj72TqdPh42uqoexrZLGXMzNpMeYna6ajA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaOtsJF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DECC4CEE4;
+	Fri, 28 Mar 2025 14:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743171643;
+	bh=52BY8RWxqGI39nW50Uzq7mTE1cOGjvlmsJ2EgrcA9Ec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IaOtsJF9a/s3cBIUbR9Tqvn77dZbDpoeNbSKE+9o5W+xe5prQl6V2XimIGQqSPRYd
+	 5VfjWfPhjXQLQfEz78hahUx8cEJL7qeI4fFnehitos4eSBhlzGDfRRklcoYjvM/zc3
+	 wbOkObSERHHtODK1mOYAW8F2H76k54tegqVkAAw/dIGbiwRQ5/s/wDw9UA3HpXwpf8
+	 0B2Nl82gf//PCjWjulAvtdo/KBcAQt6O9NX5qL98eSrWMUgTqOVgFni+sgSnln2Z/C
+	 cQUX/fNo/MyENG5iKFB3pgZGXINNHdL08ZXVTjV4NCT5SQEjBauHzWcBKsahMmFGDS
+	 lPH6H7hIUumIA==
+Date: Fri, 28 Mar 2025 15:20:40 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>, 
+	Alessandro Carminati <acarmina@redhat.com>, linux-kselftest@vger.kernel.org, 
+	David Airlie <airlied@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Daniel Diaz <daniel.diaz@linaro.org>, David Gow <davidgow@google.com>, 
+	Arthur Grillo <arthurgrillo@riseup.net>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Guenter Roeck <linux@roeck-us.net>, Alessandro Carminati <alessandro.carminati@gmail.com>, 
+	Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com, 
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	loongarch@lists.linux.dev, x86@kernel.org
+Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
+Message-ID: <20250328-visionary-archetypal-caiman-77dedc@houat>
+References: <20250313114329.284104-1-acarmina@redhat.com>
+ <202503131016.5DCEAEC945@keescook>
+ <20250313-abiding-vivid-robin-159dfa@houat>
+ <20250328.sah9oog5ahSh@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="paxtxmnckc7vplgu"
+Content-Disposition: inline
+In-Reply-To: <20250328.sah9oog5ahSh@digikod.net>
 
-From: Sam Winchenbach <swinchenbach@arka.org>
 
-Adds an option to enable the ICAP interface when driver is probed. This
-is useful when the fabric is loaded as part of the first or second stage
-of the boot process and contains an IP core that requires access to the
-ICAP interface, such as Soft Error Mitigation (SEM) core.
+--paxtxmnckc7vplgu
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 00/14] Add support for suppressing warning backtraces
+MIME-Version: 1.0
 
-Signed-off-by: Sam Winchenbach <swinchenbach@arka.org>
----
- drivers/fpga/zynq-fpga.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+On Fri, Mar 28, 2025 at 11:38:23AM +0100, Micka=EBl Sala=FCn wrote:
+> On Thu, Mar 13, 2025 at 06:24:25PM +0100, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Thu, Mar 13, 2025 at 10:17:49AM -0700, Kees Cook wrote:
+> > > On Thu, Mar 13, 2025 at 11:43:15AM +0000, Alessandro Carminati wrote:
+> > > > Some unit tests intentionally trigger warning backtraces by passing=
+ bad
+> > > > parameters to kernel API functions. Such unit tests typically check=
+ the
+> > > > return value from such calls, not the existence of the warning back=
+trace.
+> > >=20
+> > > Thanks for picking this series back up! I honestly thought this had
+> > > already landed. :)
+> > >=20
+> > > > With CONFIG_KUNIT enabled, image size increase with this series app=
+lied is
+> > > > approximately 1%. The image size increase (and with it the function=
+ality
+> > > > introduced by this series) can be avoided by disabling
+> > > > CONFIG_KUNIT_SUPPRESS_BACKTRACE.
+> > >=20
+> > > Yeah, as with my prior review, I'm a fan of this. It makes a bunch of=
+ my
+> > > very noisy tests much easier to deal with.
+> >=20
+> > And for the record, we're also affected by this in DRM and would very
+> > much like to get it merged in one shape or another.
+>=20
+> Here is another case:
+> https://lore.kernel.org/all/20250328.Ahc0thi6CaiJ@digikod.net/
+>=20
+> It would be very useful to have this feature merged.  Without it, we may
+> need to remove useful tests.
 
-diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-index f7e08f7ea9ef3..4a53a429d659f 100644
---- a/drivers/fpga/zynq-fpga.c
-+++ b/drivers/fpga/zynq-fpga.c
-@@ -20,6 +20,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/pm.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/string.h>
- #include <linux/scatterlist.h>
-@@ -482,8 +483,7 @@ static int zynq_fpga_ops_write(struct fpga_manager *mgr, struct sg_table *sgt)
- 	return err;
- }
- 
--static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
--					struct fpga_image_info *info)
-+static int zynq_fpga_enable_icap(struct fpga_manager *mgr)
- {
- 	struct zynq_fpga_priv *priv = mgr->priv;
- 	int err;
-@@ -504,6 +504,18 @@ static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
- 
- 	clk_disable(priv->clk);
- 
-+	return err;
-+}
-+
-+static int zynq_fpga_ops_write_complete(struct fpga_manager *mgr,
-+					struct fpga_image_info *info)
-+{
-+	struct zynq_fpga_priv *priv = mgr->priv;
-+	int err;
-+	u32 intr_status;
-+
-+	err = zynq_fpga_enable_icap(mgr);
-+
- 	if (err)
- 		return err;
- 
-@@ -615,6 +627,16 @@ static int zynq_fpga_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mgr);
- 
-+	if (device_property_read_bool(dev, "enable-icap-on-load")) {
-+		err = zynq_fpga_enable_icap(mgr);
-+		if (err) {
-+			dev_err(dev, "unable to enable ICAP interface\n");
-+			fpga_mgr_unregister(mgr);
-+			clk_unprepare(priv->clk);
-+			return err;
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.49.0
+AFAIK, it's been merged in next a couple of weeks ago, so it should be
+in 6.15.
 
+Maxime
+
+--paxtxmnckc7vplgu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+awOAAKCRDj7w1vZxhR
+xbs6AP9BZSaotqaSUmBTtc4k3Uj9az+ck0f+76K8QNHFnxjslgD/XFEDSUboHQ6N
+QI2urzu11I1VyDIFnSJoU7c57HPzZQ0=
+=XSrM
+-----END PGP SIGNATURE-----
+
+--paxtxmnckc7vplgu--
 
