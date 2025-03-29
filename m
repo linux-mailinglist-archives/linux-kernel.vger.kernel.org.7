@@ -1,171 +1,173 @@
-Return-Path: <linux-kernel+bounces-580819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B918FA75694
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 15:20:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DE3A75698
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 15:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FDD116E7C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9CC3A81F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C35D1D5ADA;
-	Sat, 29 Mar 2025 14:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE3E1D61B9;
+	Sat, 29 Mar 2025 14:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="uRgsMHEC"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gvJaLT+w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE51A18BC36
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 14:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A6E1D5CC5
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 14:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743258052; cv=none; b=XXPfz9TURCpLb0mkasX4+BL4sNTSzdycWoQVp4a9riNeD8HnL1Un8flzRbM0c8m8w0few60hb6B9DBDsJW+tkaZCqxmf4vuFtZEqr1OBxKzSG+/k6SL7jxN95J4lBFb6CcXT0zj64KsfTWIAuO/PumtJEb1KnJQeRkKX+oEMfPE=
+	t=1743258153; cv=none; b=B+olWvdw4wi3RT2TnQKVBgRbl1202mgUxPoYAjFf89ftB5meuNmNZxTeZ1ARnbflCh68AU/cZZaPau/y8MFyN0Zqd2fCbpM0YBrNt9/yD0BjFJcwVqB8EJOfFGFsC3ycxrZyIIqk/l6PVtXOO5OYaVDJqmK2XkDSKSxevaDqO5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743258052; c=relaxed/simple;
-	bh=f9NlCcrXBwqbHg+asT3zxxRiHlO7Ohc3gfh8eM/VBRY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=u/uxPtiIEBTqva5yF4nX//m9oMmoxxNR123IzKYKxkG1EzZFuoLWp9dPE7eAftCi9FJSX5AcM4HF4iNjn0hdFtyuEJ4XL316lK2PJkAP3j1RL4jTqABbzozPkqsST+x2fnltR2Y9V7/Ejr8sM3m1X+5tiwLKQ7YoIgaorFCxuig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=uRgsMHEC; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=6Ea+hkfblOLDYoYVHQ2SSkGvRe5JH09Qr/4YX9bFHnw=;
-  b=uRgsMHEC200fyDEbvNldlNOW76II7dmps4Nf14NZaEg0Yrl5k8Gocf32
-   uGOkrtGEc0xId77aYjYhOXIuMYoq8sbXFOtBNxDrsBp0QwRklVA8Wf00m
-   MZSBkGCOPzUdV9N03WspQvselhHGQyjszyy75jc0tXg2fW71jDmehq0Ix
-   g=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,285,1736809200"; 
-   d="scan'208";a="215400782"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2025 15:20:48 +0100
-Date: Sat, 29 Mar 2025 15:20:47 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Samuel Abraham <abrahamadekunle50@gmail.com>
-cc: outreachy@lists.linux.dev, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: remove unnecessary type encoding in
- variable names
-In-Reply-To: <CADYq+fYizY_eRozZkKYzsD00biQMTGfhOcuqiQ0RzXApXiAF6A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.22.394.2503291515080.58211@hadrien>
-References: <Z+fTJRBOZ+66zmsh@HP-650> <alpine.DEB.2.22.394.2503291210090.58211@hadrien> <CADYq+fYizY_eRozZkKYzsD00biQMTGfhOcuqiQ0RzXApXiAF6A@mail.gmail.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1743258153; c=relaxed/simple;
+	bh=/I6H4s9GOaBgLTyzZBibv5a29XVJ28Rr+JwaWuJyJkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QmjSAN2t4wFvKHqVF5XfuEuiy0Ub7aYjwjDOz/Z1rlm/U8CnQzY7gNJMj+CUZh77uhKR5pmolk1cx6XeuoxZXKK9G9zwrEQjRh0BZ8enpULf1QUa8AgFrvySJ65QAC4BU6MOnyHQqXuzseMiE0iUeCboXbmg3I9DlAxEvxmwNDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gvJaLT+w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743258150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cw4rpcZvmTDlrAmFogt4iV7TrragRM8ByhrNacJd/I4=;
+	b=gvJaLT+wFIQMQ1Lh7I2yvqwezmuxSMPTBKVZ/G1ATMFRMg6hK+083PrJCQpQh9JWEgzbu3
+	x7l2YdDvmyOXSCSfqlLIdQJMBPh35QxuPBPRU20VuhoD7rYG+cF2SU8fFXx1qN7poTkzP4
+	fjxBYQ+Yhzas1q3q+dNJF3i/Gl09+Js=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-173-xkFppxFqO6CGI1faeSn_QQ-1; Sat,
+ 29 Mar 2025 10:22:24 -0400
+X-MC-Unique: xkFppxFqO6CGI1faeSn_QQ-1
+X-Mimecast-MFC-AGG-ID: xkFppxFqO6CGI1faeSn_QQ_1743258142
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D12D19373D7;
+	Sat, 29 Mar 2025 14:22:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.25])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D359819560AB;
+	Sat, 29 Mar 2025 14:22:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 29 Mar 2025 15:21:47 +0100 (CET)
+Date: Sat, 29 Mar 2025 15:21:39 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: asmadeus@codewreck.org
+Cc: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
+	brauner@kernel.org, dhowells@redhat.com, ericvh@kernel.org,
+	jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, lucho@ionkov.net, mjguzik@gmail.com,
+	netfs@lists.linux.dev, swapnil.sapkal@amd.com,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
+	viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <20250329142138.GA9144@redhat.com>
+References: <20250328144928.GC29527@redhat.com>
+ <67e6be9a.050a0220.2f068f.007f.GAE@google.com>
+ <20250328170011.GD29527@redhat.com>
+ <Z-c4B7NbHM3pgQOa@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-411688748-1743258047=:58211"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-c4B7NbHM3pgQOa@codewreck.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+First of all, let me remind that I know nothing about 9p or netfs ;)
+And I am not sure that my patch is the right solution.
 
---8323329-411688748-1743258047=:58211
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+I am not even sure we need the fix, according to syzbot testing the
+problem goes away with the fixes from David
+https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+but I didn't even try to read them, this is not my area.
 
+Now, I'll try to answer some of your questions, but I can be easily
+wrong.
 
+On 03/29, asmadeus@codewreck.org wrote:
+>
+> Right, so your patch sounds better than Prateek's initial blowing
+> up workaround, but it's a bit weird anyway so let me recap:
+> - that syz repro has this unnatural pattern where the replies are all
+> written before the requests are sent
 
-On Sat, 29 Mar 2025, Samuel Abraham wrote:
+Yes,
 
-> On Sat, Mar 29, 2025 at 12:13 PM Julia Lawall <julia.lawall@inria.fr> wrote:
-> >
-> >
-> >
-> > On Sat, 29 Mar 2025, Abraham Samuel Adekunle wrote:
-> >
-> > > type encoding in variable names are not a standard in Linux kernel coding
-> > > style.
-> > >
-> > > Remove redundant type prefixes (e.g, `b`, `p`) in variable names,
-> > > as explicit type encoding is not necessary in Linux kernel code which
-> > > uses type definitions rather than variable name prefixes
-> >
-> > You seem to have also gotten rid of capitalization.
->
-> Hello Julia, thank you for your review
-> Yes, I should have added that to my commit message. Thank you.
->
-> > It's also not clear how you have chosen which variables to update.  Mostly
-> > it seems to be pDM_Odm, but there is also pRFCalibrateInfo in some
-> > comments.  But you haven't updated eg bMaskDWord.
->
-> I chose to update the boolean and pointer variables which have been
-> declared in the source files
-> I was working on. pDM_Odm, declared in the source file, is a pointer
-> of type struct dm_odm_t,
-> which has been declared in a header file, so altering the pointer name
-> would have no compiler errors since
-> it is declared in the source file I modified.
-> Some function prototypes have been declared in header files, so
-> altering their names in their definition in the files
-> I was editing would result in compiler errors too if the headers were
-> not modified.
-> I could have modified the variables in those header files too in
-> drivers/staging/rtl8723bs/include
-> but I was not sure how many files would be affected by the change and
-> how long my patch would be,
-> considering the three files I modified already made my patch over 3000
-> lines long.
->
-> RFCalibrateInfo(without the p) is a pointer that is a member of the
-> struct dm_odm_t, which has been
-> declared in the header file, so altering that in the source file would
-> result in compiler errors too, since the header file
->  was not modified in drivers/staging/rtl8723bs/include/
-> >
-> > I don't know what the r represents in rOFDM0_XATxIQImbalance.
->
-> The bMaskWord is a macro defined in the
-> drivers/staging/rtl8723bs/include/Hal8192CPhyReg.h
-> as `#define bMaskDWord 0xffffffff and also rOFDM0_XATxIQImbalance is a
-> macro defined as
-> `#define rOFDM0_XATxIQImbalance 0xc80` in the header file; these two
-> values are not boolean values and are
-> also declared in the header, so altering them in the source files will
-> result in compiler errors
->
-> However, other Boolean variables declared in the source files were modified.
+> - 9p_read_work() (read worker) has an optimization that if there is no
+> in fly request then there obviously must be nothing to read (9p is 100%
+> client initiated, there's no way the server should send something
+> first), so at this point the reader task is idle
 
-OK.  It shows how confusing the code is.  Normally in the Linux kernel
-things defined with #define are fully capitalized, unless they refer to
-some name from a hardware spec.
+Yes. But note that it does kernel_read() -> pipe_read() before it becomes
+idle. See below.
 
-I'm a little surprised that there isn't some generic macro defined as
-0xffffffff in the Linux kernel, but indeed I don't see one, and I see lots
-of masks being defined as that.
+> - p9_fd_request() (sending a new request) has another optimization that
+> only checks for tx: at this point if another request was already in
+> flight then the rx task should have a poll going on for rx, and if there
+> were no in flight request yet then there should be no point in checking
+> for rx, so p9_fd_request() only kick in the tx worker if there is room
+> to send
 
-julia
+Can't comment, but
 
+> - at this point I don't really get the logic that'll wake the rx thread
+> up either... p9_pollwake() will trigger p9_poll_workfn()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Yes, but where this p9_pollwake() can come from? see below.
 
->
-> >
-> > julia
-> >
-> > >
->
-> > >
-> > > -     struct odm_rf_cal_t *pRFCalibrateInfo = &pDM_Odm->RFCalibrateInfo;
-> > > +     struct odm_rf_cal_t *rf_calibrate_info = &dm_odm->RFCalibrateInfo;
->
-> Example of RFCalibrateInfo (with the p ) being declared as a pointer
-> of type struct odm_rf_cal_t
-> and also a member of the struct dm_odm_t
->
-> So the declared variable(with the p) was modified, but the
-> member(without the p) was not modified.
-> With these, please what suggestions do you have?
-> Thanks
->
-> Adekunle
->
---8323329-411688748-1743258047=:58211--
+> - due to the new optimization (aaec5a95d59615 "pipe_read: don't wake up
+> the writer if the pipe is still full"), that 'if there is room to send'
+> check started failing and tx thread doesn't start?
+
+Again, I can be easily wrong, but no.
+
+With or without the optimization above, it doesn't make sense to start
+the tx thread when the pipe is full, p9_fd_poll() can't report EPOLLOUT.
+
+Lets recall that the idle read worker did kernel_read() -> pipe_read().
+Before this optimization, pipe_read() did the unnecessary
+
+	wake_up_interruptible_sync_poll(&pipe->wr_wait);
+
+when the pipe was full before the reading _and_ is still full after the
+reading.
+
+This wakeup calls p9_pollwake() which kicks p9_poll_workfn().
+
+p9_poll_workfn() calls p9_poll_mux().
+
+p9_poll_mux() does n = p9_fd_poll().
+
+"n & EPOLLOUT" is false, exactly because this wakeup was unnecessary,
+so p9_poll_mux() won't do schedule_work(&m->wq), this is fine,
+
+But, "n & EPOLLIN" is true, so p9_poll_mux() does schedule_work(&m->rq)
+and wakes the rx thread.
+
+p9_read_work() is called again. It reads more data and (I guess) notices
+some problem and does p9_conn_cancel(EIO).
+
+This no longer happens after the optimization. So in some sense the
+p9_fd_request() -> p9_poll_mux() hack (which wakes the rx thread in this
+case) restores the old behaviour.
+
+But again, again, quite possibly I completely misread this (nontrivial)
+code.
+
+Oleg.
+
 
