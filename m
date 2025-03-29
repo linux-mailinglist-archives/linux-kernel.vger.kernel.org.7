@@ -1,144 +1,255 @@
-Return-Path: <linux-kernel+bounces-580767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB55FA75601
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:41:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570B9A75608
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:42:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E270918924E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 11:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9751E3B09E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 11:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B898E1DD88F;
-	Sat, 29 Mar 2025 11:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DE91C5485;
+	Sat, 29 Mar 2025 11:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="UQq1cy8m"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C/vbrsxU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461F11C5D77;
-	Sat, 29 Mar 2025 11:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E909D1B043C
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743248426; cv=none; b=FhGBiLE3a4JfkGHW70Dmp08JMZo5/FYRvmV0W4+4PWSvXznQsS3jfBmlSdNlL/EiW3udLKTA6EnfA/3oviW+uUUC1B4P5DINryjWxpElxKLs53CqpVf9+gyfLu/Ui5h6YxeU2Eogg0bKimt0D+wZiM6jVRLc+SmOii24QaEf0rc=
+	t=1743248537; cv=none; b=H/vm4GZr2BYxrACi4Ah7meZfqB2PYOcWnoo567X2DCAdGqN29MUmVjoYAkI3iyw3JwzmNsKxrBCGx18WpxYddJvWBofRr+clP+NI/38hfx1inkp1WhqgyvcwcXTGdcXoh26tMf50qQN7FbVjbqi5i47sRkYI2GmZ0QzADEFpDi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743248426; c=relaxed/simple;
-	bh=P7al7clDRS8K/7GFc/corrgfq2NDWLfHg5TRl7eTdkk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lxDnLgSCfw+EKOyksssb7TMUIMNyCTs7QPFRGhcCCygMOJFptnDcT5daUPmuv4ipD20G52Y7P3WhE2boCOzHeJ/VkeI5FMizLdibH4Q1B4TB5ELHqv7Oere/zs2yO9epaPvuvHAecKa0Ndk8KYij4FvrpqO9KKM/6eGy+gDVFJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=UQq1cy8m; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1743248420; x=1743853220; i=deller@gmx.de;
-	bh=dztATHFqB+Zrc37/ZMpHqY/ixcWTTRZ34tWefSgFnYM=;
-	h=X-UI-Sender-Class:Date:From:To:Subject:Message-ID:MIME-Version:
-	 Content-Type:cc:content-transfer-encoding:content-type:date:from:
-	 message-id:mime-version:reply-to:subject:to;
-	b=UQq1cy8mxvX/zvGvL4J2YAeifgGgplHrvuxKYNje9BEACK9RJN4yVGxBcyD7Wi79
-	 T0wIqMAmr+20Jcjipl5bbGoW3S8kHSvpFiUh0X42n/CjRxb7sPqCYEGSm2pf9LzTW
-	 AvcRzxSR0eMjpkdYxlIkkTH299menMePhXS0nE3VUnKUEhCANgPj/g0TMknvfrycm
-	 6mauG0R8loVndWynYY15EhlVgH4dYkGUAVZwabw4kKAmGl7HP8DSXCX3sr1s2xaqy
-	 IEqqh1zi2oWNCaYjOGMtXPeTTr+4LCq5iu5tnmiOo+LTDb3jBPKNMk0MJWgHBLP4h
-	 vxWogg5IjEOom+N2Sw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from p100 ([109.250.63.121]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8hVB-1u2bHp2BWr-00A4oT; Sat, 29
- Mar 2025 12:40:20 +0100
-Date: Sat, 29 Mar 2025 12:40:19 +0100
-From: Helge Deller <deller@gmx.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: [GIT PULL] parisc architecture fixes and updates for v6.15-rc1
-Message-ID: <Z-fcI2QOldcZOi4f@p100>
+	s=arc-20240116; t=1743248537; c=relaxed/simple;
+	bh=/3fUFv9I1+6hyqB935Ue7MnXiU0wbFfGhPTCP5NZvdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yi6Le4SSvbYakSSaPxn7WCgPMkqYivos12nKQN5IzMleXL49rwzrncPYrYCxowd0xxOO565nf+6ZeLu3SLaebk2ZMl/BCK54uhEAg2fr7seL3k0WHT54RYAEMhIeQCKLu/KMKgrqv2Uxgz+4Uom/hou01xwjInhW9ftBj35OBl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C/vbrsxU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52T7jM07003906
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:42:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Mmm54hP5tMFj63YRNzC7S/gSA1WThy35TAoW/ZFfd30=; b=C/vbrsxU9RKNWNvY
+	PAo6sqUhnvDrdDvQG1F+uEFcNNfr6OV/1cVvP1w2MtpZqljllvTTmcyFecwB1u+s
+	tycfWw3fAKs9/CDFnQPri7xaXY7OPt76tszYznMnKIvS8g47H96JcK6FWycwcov9
+	PKPsprgkMpeFV1xNy60ccevdFFwMdq+f5iqQ3ctCSG5njnFtZwtwR6gm46LU+vjj
+	vD0ccxta+SjlDqnuj6GX5boEZMc7TICVXbb15pj1sKF/6gmuOhiiyoeBBazATet9
+	bsUMJ96d9cgkja+vD9L1Rc7gjeZlQ8M4+LmCIxomidYWpnObsHG+0jj0ez0sF6cb
+	3n4Tdw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45pa5bghwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:42:07 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8f3c21043so6536486d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 04:42:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743248526; x=1743853326;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mmm54hP5tMFj63YRNzC7S/gSA1WThy35TAoW/ZFfd30=;
+        b=sGgNoAvn3N0IDi6kj1adQ6BiRkijzLkNW1lT9QYmQr1PsunLbB9PNeodk0Qa5UMs14
+         idkLSAc+VyfTxjc8kmRG2pLm2e89HJqCg+n9UqDFf6u7IRPY49hfAMnNDizemHLT5RkQ
+         ImO05xTC92RL8Us7Qu7cXIRxxgXVOHFVyPBIUp4QemeNe3W78njE8xiRkAfyJgmXXVhd
+         E+eTYKudJhQtUt7mKYlIioERVfo0j2tt49cL7KNdUqJfl8+hrNLwnnhkUrGGc/Q0/+SB
+         dkkTUIe2f4Iufn5TgyHo81pyWCdXR039jgWlYBdUedc6jaj2QgCfs9NH31ijaX0qSEUQ
+         aSWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvoUiYahG2qXJ2JB923rUq+U4d5P6cWc82KrBp03S6fNY0sVAE3mFgkC68YB1oLeCeoBi5BLg79s/ZP/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzziOC1P20tMWNB0R7tiUwGcCi0AE/73090V3rcg1TtrTIsTM4W
+	7/p/GNdo1HZCoPG9ZUb5pp8J/uf1UX9ZzLYMKRtnVkSLbUadHLIbtex1Fx8cvqwiHJqyRaEETUX
+	ThXnnzXzG/Do6SYMLcb1q409nh+2l5HD9cJm6kHeJvGmWkbe3BUf4y6H9/JPXHQI=
+X-Gm-Gg: ASbGncsSGZr9rQQby3OShUyEiAgNV9OH/1klo6030XGSzbFu6GEN8EUMdRkt0uYBkW3
+	LoW2QlFNv1ZXoZd7ecjkV069JWb0EruO6h2WZ5lQ8fsPEvFXr+G14wxnVCUuLSAYvewdJhFZtOD
+	1CMXCxEjTmnHxv8QG7qBBT/us4k78Y0UkKL79KJLRfmicgX1IV3Vv2aknaFg6/HyPleDhjVvCIE
+	vgBMewANMVrg/wYjP66PY9v276ddA8WtN7TopyNkS/Pv9+elI0j1k30X88zTSuHanv6qaJQwKhk
+	j6ml+r+NYfG500gf3vglupU6R1OD1R9VBlj9hgF2RdKRKkGLrBVsYGIo2lfxVPQXWDiUYw==
+X-Received: by 2002:a05:6214:19e3:b0:6e8:98ce:dd75 with SMTP id 6a1803df08f44-6eed6240a60mr13440626d6.9.1743248526292;
+        Sat, 29 Mar 2025 04:42:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyNtCjF7eZFHg5e8sgPfDmRiZq6NbJYI+bCAjDsmzT1x0V+Z5zGALW3AuIi5S1IGq561tZRQ==
+X-Received: by 2002:a05:6214:19e3:b0:6e8:98ce:dd75 with SMTP id 6a1803df08f44-6eed6240a60mr13440496d6.9.1743248525880;
+        Sat, 29 Mar 2025 04:42:05 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71961f3c7sm320820566b.94.2025.03.29.04.42.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Mar 2025 04:42:05 -0700 (PDT)
+Message-ID: <ed8a59ce-0527-4514-91f8-c27972d799d4@oss.qualcomm.com>
+Date: Sat, 29 Mar 2025 12:42:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Provags-ID: V03:K1:dSKHRKYVH0549sDBljevIrVRYux+JiGD3JMaCBrjGBzx3fI5p9m
- buWH5vaTo3yKl392DTLtkVVg6CHdxxfGUV4u8z1iV+ARE3oLKMKyKMN3klqpXJ+okb6/SGy
- tZ7IeNIur7WG4T+M0qoIlQLszQinBODosDDG6Z+ZL4pFKcSIQ8UCNbbEE4yP9wmQu3Q7AD/
- rkfaCLrSfY8zLHyzHLe1Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YT2CGzQUA2s=;uEGM9xhjlQRcruVOKcDLZKZi65w
- R0v1+mqx9DNeKc0qMskWWIl4PvGK+SN91/EUyQPgq0EgadCRFDudbpkKNM3rLvU/q54L1+dtq
- xnNKwUuRLsAcMKjNMPlK+SDk6geBPtJtORR4QQZ0AJuLz7MyiWFw/KuRaO1Jbk5oBLpjrUKBc
- R1s6A6ZWXR7humKmTZ0NufZQR/9sOjbFntn4xGpY001aPsrjwAEGly/Tqzsjty5vAWKOorTkE
- roXY53NHyayKvR8drwEbSQZ5mr8rvfG5Fn79McPJGJbzaKQ9cQse6p86HGIOu16LfU+pkLZ9m
- yuu0RRUNlPo62cWJyIT2heoOBnyuXIPzng0a2FQ2PB+I9oJYppPk1PB7NpMo+nkIyPs7DeNBb
- 5LI5F6O7EJWFQwXq9irg+2g6W9mee62O2wApUWkMfSdA7Z0j1xf8E43lNKx3ugYtGc5dDfT1W
- fRNtPtNG5cFctFSOgAP61PO/DtV4pljKeK1673RuM031YNIv/vjSC7VMVj5hlmLkF5hGzylCd
- by8thuRMMYbIflwEf+OAZQaNl1Axb9dQutz5RO9oilTM4CgaaMsAbRNTs/Xc1vjke7QKalmps
- h1fQnfp5sMZ0H2b6796H8kCQ7r2UBcP56DB+ygfCUImvfcUABSEx6iAsn4o5AHcaarTlic74d
- suwI9fWPVP9TbEYCH85YQdefF9L+kf3b//R1A60XSvlkGWCSQoMzZ4byuaP6VpZR4Zk45qqr/
- V2hjCovvO99TK0eXB1+KHOAmejOgN5lEOrqGS1ndK/6gCksadlAGQQMNc7HhuuaMrmC+Chpg8
- WtQ5Yn4YB73clGX4ULBqruZ9RrFzfwTzYu276sTcJB6OmR1+U5v4Ww1eZ134TrHVJogiPzAWO
- QdhnfAPJbPIPqGkDbjvWdUBPcjlkxHWcpV/57rEuJg/gIji1JoaZ7lpEwaoAyrdcvZEN986yE
- 1RwVyN8XDdxymYfj/wbmEOUb8+F8JI0LoRrnnpYQY6Ipilxd90B8+1p5UPjN/XYaiNJ5rmoUB
- z0T80idB7qlcpji5cdr104JzJEaSc4lKrPZEw+gfmXeetVQXj1M1LxmhRHNc7SHIWYgVG2BNO
- P7HMYc8+brUHTq0Jao6zpAQHH8zXBU+9xSglF0piB8si5SBIkGDOdUPPF8e5TvbU2eTN/6DF7
- wzpx6xVvXvnRSlUAYFnbQfK6kU40tukCmlchQNv/8ELDyZ2X31ONdsHVJZy+tBOr9VEuLKlgk
- gKsqMG3qQVpjuE7DMXhY2H5DHRRtjmHYEQixQAeBJlXq/l6vSTySgEx9IQRvEoW/akMtvGwvE
- hHBbaoEsAsjiw1UaU6JUaYtKKaoOj07ZBpn0pMPaMJCc0umrn69IoA8duGETyXy7rGDipYgaI
- aJPmkswilzxoPDa4Ys3d6o3LI34ic52oXAUJbOskImMy1H7LfDrSDaY5hpfxvzHVfNdJup2et
- hFZDS6Q==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/4] PCI: dwc: Add support for configuring lane
+ equalization presets
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
+References: <20250316-preset_v6-v8-0-0703a78cb355@oss.qualcomm.com>
+ <20250316-preset_v6-v8-4-0703a78cb355@oss.qualcomm.com>
+ <3sbflmznjfqpcja52v6bso74vhouv7ncuikrba5zlb74tqqb5u@ovndmib3kgqf>
+ <92c4854d-033e-c7b5-ca92-cf44a1a8c0cc@oss.qualcomm.com>
+ <mslh75np4tytzzk3dvwj5a3ulqmwn73zkj5cq4qmld5adkkldj@ad3bt3drffbn>
+ <5fece4ac-2899-4e7d-8205-3b1ebba4b56b@oss.qualcomm.com>
+ <abgqh3suczj2fckmt4m2bkqazfgwsfj43762ddzrpznr4xvftg@n5dkemffktyv>
+ <622788fa-a067-49ac-b5b1-e4ec339e026f@oss.qualcomm.com>
+ <4rep2gvymazkk7pgve36cw7moppozaju7h6aqc3gflxrvkskig@62ykri6v4trs>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <4rep2gvymazkk7pgve36cw7moppozaju7h6aqc3gflxrvkskig@62ykri6v4trs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: fJppjlmA0wbo6LDJ_oa9u0InURnBcvNk
+X-Authority-Analysis: v=2.4 cv=YqcPR5YX c=1 sm=1 tr=0 ts=67e7dc8f cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=jKyjlexm6IKzr5l-IOMA:9 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-ORIG-GUID: fJppjlmA0wbo6LDJ_oa9u0InURnBcvNk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-29_01,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503290083
 
-Hi Linus,
+On 3/29/25 10:39 AM, Manivannan Sadhasivam wrote:
+> On Sat, Mar 29, 2025 at 09:59:46AM +0100, Konrad Dybcio wrote:
+>> On 3/29/25 7:30 AM, Manivannan Sadhasivam wrote:
+>>> On Fri, Mar 28, 2025 at 10:53:19PM +0100, Konrad Dybcio wrote:
+>>>> On 3/28/25 7:45 AM, Manivannan Sadhasivam wrote:
+>>>>> On Fri, Mar 28, 2025 at 11:04:11AM +0530, Krishna Chaitanya Chundru wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 3/28/2025 10:23 AM, Manivannan Sadhasivam wrote:
+>>>>>>> On Sun, Mar 16, 2025 at 09:39:04AM +0530, Krishna Chaitanya Chundru wrote:
+>>>>>>>> PCIe equalization presets are predefined settings used to optimize
+>>>>>>>> signal integrity by compensating for signal loss and distortion in
+>>>>>>>> high-speed data transmission.
+>>>>>>>>
+>>>>>>>> Based upon the number of lanes and the data rate supported, write
+>>>>>>>> the preset data read from the device tree in to the lane equalization
+>>>>>>>> control registers.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>>>>>>>> ---
+>>>>>>>>   drivers/pci/controller/dwc/pcie-designware-host.c | 60 +++++++++++++++++++++++
+>>>>>>>>   drivers/pci/controller/dwc/pcie-designware.h      |  3 ++
+>>>>>>>>   include/uapi/linux/pci_regs.h                     |  3 ++
+>>>>>>>>   3 files changed, 66 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>>>>>> index dd56cc02f4ef..7c6e6a74383b 100644
+>>>>>>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>>>>>>> @@ -507,6 +507,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>>>>>>>>   	if (pci->num_lanes < 1)
+>>>>>>>>   		pci->num_lanes = dw_pcie_link_get_max_link_width(pci);
+>>>>>>>> +	ret = of_pci_get_equalization_presets(dev, &pp->presets, pci->num_lanes);
+>>>>>>>> +	if (ret)
+>>>>>>>> +		goto err_free_msi;
+>>>>>>>> +
+>>>>>>>>   	/*
+>>>>>>>>   	 * Allocate the resource for MSG TLP before programming the iATU
+>>>>>>>>   	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
+>>>>>>>> @@ -808,6 +812,61 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>>>>>>>>   	return 0;
+>>>>>>>>   }
+>>>>>>>> +static void dw_pcie_program_presets(struct dw_pcie_rp *pp, enum pci_bus_speed speed)
+>>>>>>>> +{
+>>>>>>>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>>>>>>>> +	u8 lane_eq_offset, lane_reg_size, cap_id;
+>>>>>>>> +	u8 *presets;
+>>>>>>>> +	u32 cap;
+>>>>>>>> +	int i;
+>>>>>>>> +
+>>>>>>>> +	if (speed == PCIE_SPEED_8_0GT) {
+>>>>>>>> +		presets = (u8 *)pp->presets.eq_presets_8gts;
+>>>>>>>> +		lane_eq_offset =  PCI_SECPCI_LE_CTRL;
+>>>>>>>> +		cap_id = PCI_EXT_CAP_ID_SECPCI;
+>>>>>>>> +		/* For data rate of 8 GT/S each lane equalization control is 16bits wide*/
+>>>>>>>> +		lane_reg_size = 0x2;
+>>>>>>>> +	} else if (speed == PCIE_SPEED_16_0GT) {
+>>>>>>>> +		presets = pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS - 1];
+>>>>>>>> +		lane_eq_offset = PCI_PL_16GT_LE_CTRL;
+>>>>>>>> +		cap_id = PCI_EXT_CAP_ID_PL_16GT;
+>>>>>>>> +		lane_reg_size = 0x1;
+>>>>>>>> +	} else {
+>>>>>>>
+>>>>>>> Can you add conditions for other data rates also? Like 32, 64 GT/s. If
+>>>>>>> controller supports them and if the presets property is defined in DT, then you
+>>>>>>> should apply the preset values.
+>>>>>>>
+>>>>>>> If the presets property is not present in DT, then below 'PCI_EQ_RESV' will
+>>>>>>> safely return.
+>>>>>>>
+>>>>>> I am fine to add it, but there is no GEN5 or GEN6 controller support
+>>>>>> added in dwc, isn't it best to add when that support is added and
+>>>>>> tested.
+>>>>>>
+>>>>>
+>>>>> What is the guarantee that this part of the code will be updated once the
+>>>>> capable controllers start showing up? I don't think there will be any issue in
+>>>>> writing to these registers.
+>>>>
+>>>> Let's not make assumptions about the spec of a cross-vendor mass-deployed IP
+>>>>
+>>>
+>>> I have seen the worse... The problem is, if those controllers start to show up
+>>> and define preset properties in DT, there will be no errors whatsoever to
+>>> indicate that the preset values were not applied, resulting in hard to debug
+>>> errors.
+>>
+>> else {
+>> 	dev_warn(pci->dev, "Missing equalization presets programming sequence\n");
+>> }
+>>
+> 
+> Then we'd warn for controllers supporting GEN5 or more if they do not pass the
+> presets property (which is optional).
 
-Please pull the updates for the parisc architecture for 6.15-rc1:
+Ohh, I didn't think about that - and I can only think about solutions that are
+rather janky.. with perhaps the least janky one being changing the else case I
+proposed above into:
 
-Drop parisc specific memcpy_fromio() function,
-clean up coding style and fix compile warnings.
+else if (speed >= PCIE_SPEED_32_0GT && eq_presets_Ngts[speed - PCIE_SPEED_16_0GT][0] != PCI_EQ_RESV) {
+	...
+}> 
+>>>
+>>> I'm not forseeing any issue in this part of the code to support higher GEN
+>>> speeds though.
+>>
+>> I would hope so as well, but both not programming and misprogramming are
+>> equally hard to detect
+>>
+> 
+> I don't disagree. I wanted to have it since there is no sensible way of warning
+> users that this part of the code needs to be updated in the future.
 
-Thanks!
-Helge
+I understand, however I'm worried that the programming sequence or register
+may change for higher speeds in a way that would be incompatible with what
+we assume here
 
-----------------------------------------------------------------
-
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.15-rc1
-
-for you to fetch changes up to e822b8f01b40eb193cf7ebb059ac7c560a562d6f:
-
-  parisc: led: Use scnprintf() to avoid string truncation warning (2025-03-09 22:27:54 +0100)
-
-----------------------------------------------------------------
-parisc architecture updates for kernel v6.15-rc1:
-
-Drop parisc specific memcpy_fromio() function,
-clean up coding style and fix compile warnings.
-
-----------------------------------------------------------------
-Helge Deller (2):
-      Input: gscps2 - Describe missing function parameters
-      parisc: led: Use scnprintf() to avoid string truncation warning
-
-Julian Vetter (2):
-      parisc: Fix formatting errors in io.c
-      parisc: Remove memcpy_fromio
-
-Thadeu Lima de Souza Cascardo (1):
-      parisc: perf: use named initializers for struct miscdevice
-
-Yu-Chun Lin (1):
-      parisc: PDT: Fix missing prototype warning
-
- arch/parisc/include/asm/io.h      |   3 -
- arch/parisc/kernel/parisc_ksyms.c |   1 -
- arch/parisc/kernel/pdt.c          |   2 +
- arch/parisc/kernel/perf.c         |   6 +-
- arch/parisc/lib/io.c              | 119 ++++++++++----------------------------
- drivers/input/serio/gscps2.c      |   6 ++
- drivers/parisc/led.c              |   4 +-
- 7 files changed, 41 insertions(+), 100 deletions(-)
+Konrad
 
