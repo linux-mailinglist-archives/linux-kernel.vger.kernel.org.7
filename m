@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-580724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF7AA75596
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 10:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD25A75597
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 10:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9FA18934C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADCEE1891198
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2D01C1AD4;
-	Sat, 29 Mar 2025 09:47:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF661BD517
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9E91AF0AF;
+	Sat, 29 Mar 2025 09:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eA7Hyrm8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6B13597B
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 09:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743241623; cv=none; b=LCq2nhc4ClteUaokuvn6094xQH/FkwioYFYZRY+2lC4+VlwSEm/RrQoJMQKa4qiSu59egCmp0ooPSrUtkE9lRZa2eJgNAG5y3pTOdtkYmSdCttXdhW+VvHnjPWfXAYKH43/pxZF/5qj/gl0oMIBg+1pes3Wc88uzDAuTaGvGq9k=
+	t=1743241755; cv=none; b=LgLRBYKuQPrJ6jwSdWZq3LNqKguBQR1MFav88+XF8i7lVpd+bP/BbNPstAVNz/oTyDJVGn2DOTZDVeiCGFyIQ/BHCpzton8MNuo3h7VBmAR5P9JDEe8KNfhPWiVjnUWNtq30eApgw8ehuIK7dwuLigj0Quds9QB3RCLVQ5xxoLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743241623; c=relaxed/simple;
-	bh=nAdeCiCNLGruzB4lhSr+T1Go6LuomMV55frkoilpjFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYz4/9oyQQVpQgGUktznAwknbiww0aJDDe8U8UEw5Fn2wIPxYRjabLuLdQPQfr35uvCS9utKh5G2spdpcpr12rcU+LkFEdZmemaWF+Wi/1XhyMPfqM7h0t43kvyMDlYaiXlPQh3WAYFlxIvT6RjA+CTj0A+hhenerPKF+G0v/ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61765152B;
-	Sat, 29 Mar 2025 02:47:04 -0700 (PDT)
-Received: from [10.57.87.112] (unknown [10.57.87.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0943F694;
-	Sat, 29 Mar 2025 02:46:57 -0700 (PDT)
-Message-ID: <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
-Date: Sat, 29 Mar 2025 09:46:56 +0000
+	s=arc-20240116; t=1743241755; c=relaxed/simple;
+	bh=tv0nA08POILAAqGWy14m3N6kItXW+3kMFSaB74kI3N0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Af3Vz35EFzGHQrSdW6VjvQlqXBTgQ8Ip0i2YM6GqVRBBcMoMSRR4TwH6JnBJJ3SD6X8660VrIFWeCQbFdNk6IIpG92gme9Sj9j8UyXlWKDl+7AG8ZaBLCAD93/KoUstC2iYezMNypCJDT7VIGUvvMHPZq2Tl4E1KhG03xOz4U+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eA7Hyrm8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743241752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rPsm0V0jwFb/CAGVhHad9xohOJQN3D43emc/SoqswrQ=;
+	b=eA7Hyrm8I27slOi8cqdv2lY/hCeLM4eM4fNfPirV/ryHcdF0ZLR11+a9v5d3/O6T1JkB2n
+	zwLZ2Ylqz61Ip0TT5jnw21IvlTqfBeVYDM98sopJqKrMvJcgGp2mqvzaxH3a+GKfsCIrri
+	53If5dH5UYzP2RC1h2fTJeBeLQrnLPQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-121-Yd0NVBAfMfeLqGBn56eexw-1; Sat,
+ 29 Mar 2025 05:49:08 -0400
+X-MC-Unique: Yd0NVBAfMfeLqGBn56eexw-1
+X-Mimecast-MFC-AGG-ID: Yd0NVBAfMfeLqGBn56eexw_1743241747
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A9A1B19560B0;
+	Sat, 29 Mar 2025 09:49:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B32F919560AB;
+	Sat, 29 Mar 2025 09:49:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
+References: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
+To: syzbot <syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+    linux-kernel@vger.kernel.org, marc.dionne@auristor.com,
+    syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [afs?] BUG: sleeping function called from invalid context in __alloc_frozen_pages_noprof
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: pageattr: Explicitly bail out when changing
- permissions for vmalloc_huge mappings
-Content-Language: en-GB
-To: Mike Rapoport <rppt@kernel.org>, Dev Jain <dev.jain@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, gshan@redhat.com,
- steven.price@arm.com, suzuki.poulose@arm.com, tianyaxiong@kylinos.cn,
- ardb@kernel.org, david@redhat.com, urezki@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250328062103.79462-1-dev.jain@arm.com>
- <Z-cnmklGUojMzsUF@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z-cnmklGUojMzsUF@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <103745.1743241743.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 29 Mar 2025 09:49:03 +0000
+Message-ID: <103746.1743241743@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 28/03/2025 18:50, Mike Rapoport wrote:
-> On Fri, Mar 28, 2025 at 11:51:03AM +0530, Dev Jain wrote:
->> arm64 uses apply_to_page_range to change permissions for kernel VA mappings,
-> 
->                                                      for vmalloc mappings ^
-> 
-> arm64 does not allow changing permissions to any VA address right now.
-> 
->> which does not support changing permissions for leaf mappings. This function
->> will change permissions until it encounters a leaf mapping, and will bail
->> out. To avoid this partial change, explicitly disallow changing permissions
->> for VM_ALLOW_HUGE_VMAP mappings.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
 
-I wonder if we want a Fixes: tag here? It's certainly a *latent* bug.
+commit db7a516159869b19f237c73bd75599bbe0bfcc4d
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Mar 28 16:46:58 2025 +0000
 
->> ---
->>  arch/arm64/mm/pageattr.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->> index 39fd1f7ff02a..8337c88eec69 100644
->> --- a/arch/arm64/mm/pageattr.c
->> +++ b/arch/arm64/mm/pageattr.c
->> @@ -96,7 +96,7 @@ static int change_memory_common(unsigned long addr, int numpages,
->>  	 * we are operating on does not result in such splitting.
->>  	 *
->>  	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
->> -	 * Those are guaranteed to consist entirely of page mappings, and
->> +	 * Disallow VM_ALLOW_HUGE_VMAP vmalloc mappings so that
-> 
-> I'd keep mention of page mappings in the comment, e.g
-> 
-> 	* Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
-> 	* mappings are updated and splitting is never needed.
-> 
-> With this and changelog updates Ryan asked for
-> 
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> 
-> 
->>  	 * splitting is never needed.
->>  	 *
->>  	 * So check whether the [addr, addr + size) interval is entirely
->> @@ -105,7 +105,7 @@ static int change_memory_common(unsigned long addr, int numpages,
->>  	area = find_vm_area((void *)addr);
->>  	if (!area ||
->>  	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
->> -	    !(area->flags & VM_ALLOC))
->> +	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
->>  		return -EINVAL;
->>  
->>  	if (!numpages)
->> -- 
->> 2.30.2
->>
-> 
+    afs: Fix afs_dynroot_readdir() to not use the RCU read lock
+    =
+
+    afs_dynroot_readdir() uses the RCU read lock to walk the cell list whi=
+lst
+    emitting cell automount entries - but dir_emit() may write to a usersp=
+ace
+    buffer, thereby causing a fault to occur and waits to happen.
+    =
+
+    Fix afs_dynroot_readdir() to get a shared lock on net->cells_lock inst=
+ead.
+    =
+
+    Fixes: 1d0b929fc070 ("afs: Change dynroot to create contents on demand=
+")
+    Reported-by: syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Marc Dionne <marc.dionne@auristor.com>
+    cc: linux-afs@lists.infradead.org
+    cc: linux-fsdevel@vger.kernel.org
+
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 691e0ae607a1..8c6130789fde 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -348,9 +348,9 @@ static int afs_dynroot_readdir(struct file *file, stru=
+ct dir_context *ctx)
+ 	}
+ =
+
+ 	if ((unsigned long long)ctx->pos <=3D AFS_MAX_DYNROOT_CELL_INO) {
+-		rcu_read_lock();
++		down_read(&net->cells_lock);
+ 		ret =3D afs_dynroot_readdir_cells(net, ctx);
+-		rcu_read_unlock();
++		up_read(&net->cells_lock);
+ 	}
+ 	return ret;
+ }
 
 
