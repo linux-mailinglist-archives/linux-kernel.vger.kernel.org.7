@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-580817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB0FA7568F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 15:07:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB01AA7566C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B23F7A5F73
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A411889F3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 13:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368B81C9DC6;
-	Sat, 29 Mar 2025 14:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8061CAA89;
+	Sat, 29 Mar 2025 13:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="MHc6JyiJ"
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="hga6NPIf"
 Received: from out187-23.us.a.mail.aliyun.com (out187-23.us.a.mail.aliyun.com [47.90.187.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98E17A2EB
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 14:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D181C460A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 13:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743257218; cv=none; b=XmNCm1c2g0ObIQvESljFDWojBwtSVpKh/6nvaum6U2Xg6d/HbOEekwZ4L7YfxiuyIiSC1gVHoQRcEOhxLey8oi/UCYEgE2xrObd65kwT95WbjpxFwuvh3RHX17mkf6S1W2QDSdhP8jOfLxuy8H6Px36KEpkZQ27+vklUz8Lzy94=
+	t=1743255403; cv=none; b=IIN+Dw845AsdfYxTNpoewdIf/1KGlMcIsHra9pQI9VOyqj1ZJLuRCi/G2uMnhP50rU6O8lgYV2/BnLQAD1M3DvTBw3DAqlYjns4qzHwLzEFtfz1n9/39rFw6CFFBaaSqxNmE5VpqvCi9vsVLZy8XxOIcTW1G1BP+C9x2pGfALeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743257218; c=relaxed/simple;
-	bh=DcCYikwdGv3WT+ATjYijHflCMkUsAUDXDm7XgjFVZlk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z2QtNsVxXI+PCfS3L60046QrKwJilTB/ioFn0SyELMaanlamvhINBe9i2AGmXUI5flj8dbRHDBq/jiYQvFBGxvG7+Rioz77OlmwRZX55DOMFLjmayCb4yNzJiCQK1xs5gjtCe2WC+AaNNM8Pv2hwFqUdRYg/csQ8XeyaM+p6sq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=MHc6JyiJ; arc=none smtp.client-ip=47.90.187.23
+	s=arc-20240116; t=1743255403; c=relaxed/simple;
+	bh=GYA6XhR04RH+1CAfGlxWuNUtvxz+KVpOVf0+Uyr+8/U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HT+P7/LXrbWVadK+XIkwmLDiTOjaIv2fBBbR4QdNFGsDBPOB9yi1cXliePEdgp9yfneOoFUVK3KHpLvO3PfBXOfqxlmE4BExTZWzL2U+XQV4O/16fmmwefR1MPidiiQwLwitx2/9GZAsEOpa2VWnx1qmXHc+RvAWJysSbmZldwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=hga6NPIf; arc=none smtp.client-ip=47.90.187.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1743257201; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=5i/P4pBTn+YtuDGrHnFNIJANipnBlcQuFyXCKi3FGgw=;
-	b=MHc6JyiJ/TX9+56BoHyJtwNYspILYsu0iKvy0i9xHQpD8Ls2TdX5MNCVgvai1zUHvfXeMxKos8DHU6ouEjipdpcuUl9lzhvKXFAfvJyNVxYOqOVzJ9yi+cMs8SLGLA8XOQwE5cRm2n4Ph5MS+9C72hT9mLFZm/NWKdA/+qfwCLE=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.c6kOeaI_1743253532 cluster:ay29)
+	t=1743255385; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=eajsjoiON1I0Jxv4Hsr4N5ua6b1s7QOKAILrBRn4bpM=;
+	b=hga6NPIf8GI/H5QBBckg8fs/izWnHFnysOz+hQLv/Oa3BA9336mYI76Co5HGpCGRJHPJwsv6QI2clAM6mNq/baAsEgtw28ApOv7gjf9JljRnrkMo6q26JWTQGhk/IKpb1MjKyCwGEWzMEPVzo7HiE0acoBd+Dp0FVyJSuKzhA4k=
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.c7ROdG-_1743253534 cluster:ay29)
           by smtp.aliyun-inc.com;
-          Sat, 29 Mar 2025 21:05:33 +0800
+          Sat, 29 Mar 2025 21:05:35 +0800
 From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
 To: linux-kernel@vger.kernel.org
 Cc: "Hou Wenlong" <houwenlong.hwl@antgroup.com>,
@@ -49,10 +50,12 @@ Cc: "Hou Wenlong" <houwenlong.hwl@antgroup.com>,
    <x86@kernel.org>,
   "H. Peter Anvin" <hpa@zytor.com>,
   "Rik van Riel" <riel@surriel.com>
-Subject: [PATCH 0/3] Fix some ASID range size calculation issues in global ASID allocation
-Date: Sat, 29 Mar 2025 21:05:23 +0800
-Message-Id: <cover.1743250122.git.houwenlong.hwl@antgroup.com>
+Subject: [PATCH 1/3] x86/mm: Correct the actual count of available global ASIDs
+Date: Sat, 29 Mar 2025 21:05:24 +0800
+Message-Id: <0954cb7ec766d6d1e0b66a93876762b516ae9bae.1743250122.git.houwenlong.hwl@antgroup.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1743250122.git.houwenlong.hwl@antgroup.com>
+References: <cover.1743250122.git.houwenlong.hwl@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,33 +64,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-During the code review of the global ASID allocation, I found some ASID
-range size calculation issues and I'm not sure if I missread.
+The available ASID range for global ASID allocation is
+[TLB_NR_DYN_ASIDS, MAX_ASID_AVAILABLE-1], which is a close interval. So
+the actual count of available ASIDs for global ASID allocation should be
+'(MAX_ASID_AVIALBE-1) - TLB_NR_DYN_ASIDS + 1'.
 
-Firstly, as described in the comments, the range for global ASIDs is
-[TLB_NR_DYN_SIZE,MAX_ASID_AVAILABLE-1], which is a close interval. So
-the size of range is '(MAX_ASID_AVAILABLE-1)- TLB_NR_DYN_SIZE + 1'.
-However, 'global_asid_available' is set as 'MAX_ASID_AVAILABLE -
-TLB_NR_DYN_ASIDS - 1', which means one ASID is missed.
+Fixes: d504d1247e36 ("x86/mm: Add global ASID allocation helper functions")
+Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+---
+ arch/x86/mm/tlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The macro 'MAX_ASID_AVAILABLE', as I understand it, is used to represent
-the maximum valid ASID. Thus the available ASID range described in the
-comments is [0,MAX_ASID_AVAILABLE], which is a close interval too. So
-the acutal size of the range is 'MAX_ASID_AVAILABLE + 1'. But it is
-incorrectly used as the size of the bitmap in global ASID allocation,
-leading to the maximum ASID number being excluded from global ASID
-allocation.
-
-Hou Wenlong (3):
-  x86/mm: Correct the actual count of available global ASIDs
-  mm/tlb: Fix wrong judgement in allocate_global_asid()
-  x86/mm: Fix wrong usage of 'MAX_ASID_AVAILABLE' in global ASID
-    allocation
-
- arch/x86/mm/tlb.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
---
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e459d97ef397..cad4a8eae2d8 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -279,7 +279,7 @@ static DEFINE_RAW_SPINLOCK(global_asid_lock);
+ static u16 last_global_asid = MAX_ASID_AVAILABLE;
+ static DECLARE_BITMAP(global_asid_used, MAX_ASID_AVAILABLE);
+ static DECLARE_BITMAP(global_asid_freed, MAX_ASID_AVAILABLE);
+-static int global_asid_available = MAX_ASID_AVAILABLE - TLB_NR_DYN_ASIDS - 1;
++static int global_asid_available = MAX_ASID_AVAILABLE - TLB_NR_DYN_ASIDS;
+ 
+ /*
+  * When the search for a free ASID in the global ASID space reaches
+-- 
 2.31.1
 
 
