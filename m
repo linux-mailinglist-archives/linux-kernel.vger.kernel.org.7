@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-580692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C9FA75537
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:44:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B47A75543
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79C883AFF79
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:44:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138261891C07
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0632D1C9DC6;
-	Sat, 29 Mar 2025 08:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F099F19F41B;
+	Sat, 29 Mar 2025 08:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYGTSIZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e65lhkwZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6526B1C5F25;
-	Sat, 29 Mar 2025 08:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525D035972;
+	Sat, 29 Mar 2025 08:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743237828; cv=none; b=CmiMtKZ0RA9ZmearLog5JrD68fm03HajpCBIxXwayQR76vkgXXv8qwaZIi7lSt8wu3SeIecGb+x6lWwWWAyRwEgPJKKDzPZs/DvKZjrUyto9miUGdSggSU6dLjWJj55J0mty3zu1MiDEGXHYp/g2nDQ11L6zxk33hheyXesiBIA=
+	t=1743238377; cv=none; b=IpfUIncuTeXMT/rxHNrJWbu5cCrIVBog9w/tUi9u1D3Hguy0AjM7B2uOQrD3O6LV2MuLGEYTlY1e3+liMteM3zccKA6kTenzNQzfvPyWFqZu3D/eMJmjT2RpWZnyK172nq0+PFKmMnlzoMdPlIs0IqruF8yYb/eoXZoNCwczU6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743237828; c=relaxed/simple;
-	bh=GFcv+iHs3cxAf0PS51ww4sS11+jxpW/HW9m0JZc6IcE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kqzAjahG8+eZ1nL7XiQwn3/gn6DNMLvLAHkTFLH8kN3+jvPFAk9dTemJICuA5qbvcW6euZQWsYj++ca0PUIvZaCC/AUX1aI20aR9EgWE5xNqJckJ6akJnFEdMo3MiowiTjKjRjRsi+zKAri5xFZgSkSUlkUZ4alqXBPivxEaByA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYGTSIZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2889CC4CEE9;
-	Sat, 29 Mar 2025 08:43:44 +0000 (UTC)
+	s=arc-20240116; t=1743238377; c=relaxed/simple;
+	bh=VuNKaSttNCraDAMFXX4IwdkGLy4R9KErqa/ImpP7GDI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uTTXN9vqIhjcWVmSM+dxr5GPABa+4uRvEfLfi18/zTvCBbDKhOHrqh7x/7pQ+8bqBIw/lslPx/hetlOvvtjaghqOHPw3HLUvqhabRLzc4EykP0OzbkJ1wi7RYFdMgMDL1UiGKeM3JQic3Va1a7GGQEMWa7c7uvmBj1JyhVyaS3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e65lhkwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41E9C4CEE2;
+	Sat, 29 Mar 2025 08:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743237828;
-	bh=GFcv+iHs3cxAf0PS51ww4sS11+jxpW/HW9m0JZc6IcE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oYGTSIZCU9arFXhgfPLFgIXCcXZDwPiA/aKam1zwQnv0gCOcYeQaW8NaFTBoqEfex
-	 c1mx6nEvoN5R9IkI+hWv0UosTWYHFzirKgQIAEsGRwaTzSf/Gc5TdkW8LWuZwi0rI2
-	 u7KXj6RgruLNGCmL2gCcVCHVf8cpRkv7dQUlxelmjCKPqoy37FnVaJzSwsP2HUhzIe
-	 PM+zI81pboY6u1jCDexr8L9FjBxorcgIlbeiKok1TZK7roWxnnaVpanbv02mURgfZy
-	 pzu6wfTlghW3g4G50mDD7PP44ZL3ZytQHlmBSPvuFy6ROTpClmbtnrqrmHR8yB7xsD
-	 P9L1JWySm5qmA==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	jack@suse.cz
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	mcgrof@kernel.org,
-	hch@infradead.org,
-	david@fromorbit.com,
-	rafael@kernel.org,
-	djwong@kernel.org,
-	pavel@kernel.org,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	boqun.feng@gmail.com
-Subject: [PATCH v2 6/6] super: add filesystem freezing helpers for suspend and hibernate
-Date: Sat, 29 Mar 2025 09:42:19 +0100
-Message-ID: <20250329-work-freeze-v2-6-a47af37ecc3d@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
-References: <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
+	s=k20201202; t=1743238376;
+	bh=VuNKaSttNCraDAMFXX4IwdkGLy4R9KErqa/ImpP7GDI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e65lhkwZazJXDxHke7ITrqrGsNTa/7lBo7ScI8lwRLjDm+wC1YFiDX5bnYK75Hw4P
+	 y+WJSwrfTZtXQ4EhINWX/wJTpVu4SiMprLh0xw2x7UGUa8/qljf1W/ooggQqTnJnY1
+	 u49qG78g/yRn/Q7TbulS4AG5ZLvW43fTNi/VXhGZjKgPoEvjg90LKngLl0JTc3ehX9
+	 tbfiSM3wGV6/uIuWm6UCuB9+6eISC/dUQeCPeLw8V1/8Vbza0bl6TtBJJ9zeFws7wb
+	 Hh+nDdJF50HT8ZOT+Yh/ieLHp6Q828JUrIbzT3bD0cqvTlezt8BBoY8Ut9KGa+2mBU
+	 diRGhVYLs99/A==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so1689576a12.1;
+        Sat, 29 Mar 2025 01:52:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUn7YVVrN99SK8VpnAVI5Lr6/i2eebryxxB2LLpRzS30CmZPzBUHDdr4jTFNsl1FSwILYhbmHaU@vger.kernel.org, AJvYcCVDG8XIX9kuuy0M/Yjz0JOTylZ+YTIskNg/jRJN8TgkiVcloe3pLG1RWjKVKmoIi4w6APl3WS0AsOw1Tx0=@vger.kernel.org, AJvYcCXARvY8tKOsZFNPaEtTSnh6qYDXyYQwhmMQH4kpcPGqSwEJWgwrlITLSOMO8Tj2jBOuT2t5w7fzwjsuxkzxv/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEXa+d5CvTQpVPGcJPGioFs+RamU952ofde/a954Lcc34/WteB
+	x4l5LSm6/GhNeGM7/lAoN6SRRABpeAcmgmInImsSNPKmtj4SwYHyBjxLYnMxt5ofP75RVqWjhhP
+	wObWKkW3CpvbadxCjdGHCe5uBnXE=
+X-Google-Smtp-Source: AGHT+IFcTBlHFMe+cnzJ3GscmxD7DadfgO659/mYjAgkv2zsYhCstTT+cs4vEk+dCL2YR1W8PvXdP/Jf5yhQc854D64=
+X-Received: by 2002:a17:907:6092:b0:ac4:491:1549 with SMTP id
+ a640c23a62f3a-ac738a088edmr212495866b.1.1743237957112; Sat, 29 Mar 2025
+ 01:45:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2519; i=brauner@kernel.org; h=from:subject:message-id; bh=GFcv+iHs3cxAf0PS51ww4sS11+jxpW/HW9m0JZc6IcE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ/31S53cT63z6jXa7OYsFqN6eE9d3fYKg1qUPp+F6vq lqzGXZtHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOJ12H4w2eW+CeLfVfpu2/G iTwC3PU7vmSqyna1MT9jmbfZTvvONUaG+ZqBLht9jz7RbTGffvfb9dS/R/iDLt9of5fTI2yk9mk OAwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250304073554.20869-1-wangrui@loongson.cn> <aab657d72a3ee578e5c7a09c6c044e0d5c5add9a.camel@xry111.site>
+ <CAAhV-H5ayw7NxbSbCeAFaxOz+TZ8QeghmhW6-j2B1vTcjYxsJQ@mail.gmail.com> <CANiq72=AZ+CN4SScZcnRBpkS8ogCaZ=Uhe=k7fhGCVyecyRu5g@mail.gmail.com>
+In-Reply-To: <CANiq72=AZ+CN4SScZcnRBpkS8ogCaZ=Uhe=k7fhGCVyecyRu5g@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 29 Mar 2025 16:45:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5Yc8d4qSN0Fwe=wShXHzJrdJ0KX87kV0_0ToQiHBEECQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo_BhIWW_S-wVrrfYgevxjvR72OSEu-wwQPjbXYleu9ZtV1saltGmiCwUg
+Message-ID: <CAAhV-H5Yc8d4qSN0Fwe=wShXHzJrdJ0KX87kV0_0ToQiHBEECQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: Fix enabling Rust and building with GCC for LoongArch
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Rui <wangrui@loongson.cn>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	loongson-kernel@lists.loongnix.cn, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Allow the power subsystem to support filesystem freeze for
-suspend and hibernate.
+Hi, Miguel,
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/super.c         | 55 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- 2 files changed, 57 insertions(+)
+On Sat, Mar 29, 2025 at 12:15=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Mar 4, 2025 at 10:12=E2=80=AFAM Huacai Chen <chenhuacai@kernel.or=
+g> wrote:
+> >
+> > Don't rely on  default behavior, things may change in future.
+> > Acked-by: Huacai Chen <chenhuacai@loongson.cn>
+>
+> I was pinged about this one -- are you picking this one through your tree=
+?
+OK, I wll pick it to the loongarch tree, thanks.
 
-diff --git a/fs/super.c b/fs/super.c
-index 666a2a16df87..4364b763e91f 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1176,6 +1176,61 @@ void emergency_thaw_all(void)
- 	}
- }
- 
-+static inline bool get_active_super(struct super_block *sb)
-+{
-+	bool active;
-+
-+	if (super_lock_excl(sb)) {
-+		active = atomic_inc_not_zero(&sb->s_active);
-+		super_unlock_excl(sb);
-+	}
-+	return active;
-+}
-+
-+static void filesystems_freeze_callback(struct super_block *sb, void *unused)
-+{
-+	if (!sb->s_op->freeze_fs && !sb->s_op->freeze_super)
-+		return;
-+
-+	if (!get_active_super(sb))
-+		return;
-+
-+	if (sb->s_op->freeze_super)
-+		sb->s_op->freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL);
-+	else
-+		freeze_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL);
-+
-+	deactivate_super(sb);
-+}
-+
-+void filesystems_freeze(bool hibernate)
-+{
-+	__iterate_supers(filesystems_freeze_callback, NULL,
-+			 SUPER_ITER_UNLOCKED | SUPER_ITER_REVERSE);
-+}
-+
-+static void filesystems_thaw_callback(struct super_block *sb, void *unused)
-+{
-+	if (!sb->s_op->freeze_fs && !sb->s_op->freeze_super)
-+		return;
-+
-+	if (!get_active_super(sb))
-+		return;
-+
-+	if (sb->s_op->thaw_super)
-+		sb->s_op->thaw_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL);
-+	else
-+		thaw_super(sb, FREEZE_MAY_NEST | FREEZE_HOLDER_KERNEL);
-+
-+	deactivate_super(sb);
-+}
-+
-+void filesystems_thaw(bool hibernate)
-+{
-+	__iterate_supers(filesystems_thaw_callback, NULL,
-+			 SUPER_ITER_UNLOCKED | SUPER_ITER_REVERSE);
-+}
-+
- static DEFINE_IDA(unnamed_dev_ida);
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c475fa874055..29bd28491eff 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3518,6 +3518,8 @@ extern void drop_super_exclusive(struct super_block *sb);
- extern void iterate_supers(void (*f)(struct super_block *, void *), void *arg);
- extern void iterate_supers_type(struct file_system_type *,
- 			        void (*)(struct super_block *, void *), void *);
-+void filesystems_freeze(bool hibernate);
-+void filesystems_thaw(bool hibernate);
- 
- extern int dcache_dir_open(struct inode *, struct file *);
- extern int dcache_dir_close(struct inode *, struct file *);
+Huacai
 
--- 
-2.47.2
-
+>
+> I didn't test it, but the change seems safe to me for other
+> architectures that we have at the moment, since they don't seem to set
+> any of those three from a quick look, so:
+>
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+>
+> In any case, the usual question for these "skipped flags" is whether
+> they could affect the output of `bindgen`, i.e. could they modify
+> layouts somehow?
+>
+> Also, it would be nice to mention a bit more what was the build error
+> and the GCC version in the commit message.
+>
+> Finally, regarding the Cc: stable, I guess that means 6.12+ since it
+> is the first LTS with loongarch64, right?
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
 
