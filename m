@@ -1,136 +1,154 @@
-Return-Path: <linux-kernel+bounces-580593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C6DA75404
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 03:09:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E226A7540D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 03:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC716D962
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 02:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84654189A48E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 02:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2051054F8C;
-	Sat, 29 Mar 2025 02:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37EA29406;
+	Sat, 29 Mar 2025 02:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Zd4sLRTm"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VtcpE4Gt"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040871420DD
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 02:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C9815A8;
+	Sat, 29 Mar 2025 02:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743214134; cv=none; b=FfilnyzhEety7FPU3fpvEYba7op2WbXroDRdLUT1H0FWjaxYV0kAdCgtxEyp5WQjW0hHe6qzIr/kjDg8O2WqDMy0kIdJUU20+CSFeHDHZDkhLzFQufrYfbqXCSzSBElx1rzBCtSupaSUKoYZjdxNuG8DDm4+zk88pFD5w/ndfeE=
+	t=1743216353; cv=none; b=uYPu2WZw+4Cp/X7VsxCyYuxt/h+wDEJFm484WrIcXzLjn26DLFJIRbqy9NQMjsMDeTjJhux6M8/JuFvdLFozVbGmAAXQyCnlWOjYqpwReVTX2zq9sQt1IEk46kOdeN1ZGpXHQmFmivIQ6zjJCg3SCN4JQne2EvifPA0KFMm2wWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743214134; c=relaxed/simple;
-	bh=0+HnC31GvY6wN6NHBG+s6TLkjag8zoKgbsytjbA+8VU=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owqKYqZHrP9JnK8VYEqabwoz/acILjfW/bbFcghzG+4tWWtwYVR1cK54aQnKqjJgbQ9NmvOu6n8v+TwMhr/+xpBDTM6gGF6Cwm98xLgb4DFffZM6TRoX5Bpz4Zl4uzrqg3lUMKq6oVbHXy3TzDdTENOFTkeGmYjrLb+IRzIzDKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Zd4sLRTm; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4772f48f516so38713231cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Mar 2025 19:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1743214132; x=1743818932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oATviJxkq8eZnZ3wSWsDdw1hCY/CMybDZVnVXiFSWoo=;
-        b=Zd4sLRTmUW6HQC6GFAmBRH7MrnLNxi7cH1RByvhTQoIMslcxQmqTDBd7DeywkA5ezb
-         WQC+GSQckqVLU8eBttjDq7GiRynTpREusrUvHKUCZaHQuLjPokE+SPQeT1FG10bxYj9i
-         OUHD2oL0TZ2PvVnYILE/YyikOt8TnIJXxunUgkOHdsC7udMptcKy9r4PjG8U3/LvFDSs
-         /ih/SUnlMF62GnY/OhKQPL8/Rm/0uqmbWRxQ18qA5D79WB1R5Bu5vCnzEUEPt2iZ4O7q
-         9ztK4q4jqXZV8GFZI+5/0acfwu+jy+rwVJAdZb3VocwJpBcd2Pp6fMNjIhvIq53dZaLs
-         82Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743214132; x=1743818932;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oATviJxkq8eZnZ3wSWsDdw1hCY/CMybDZVnVXiFSWoo=;
-        b=o0QxoS4eC3Nye1w3W05h4E3Bjs5uO8gY/Jm0Aigvk+X8Q0Nuk4ulKABLjPhkihodqu
-         3M01N2sjx+KY8khCA3HxrwM86x2nWAxXDz+OEpyLW9cN73gQyflxAC+3o0fqqm/UW1zv
-         XnG1n/GoelMnR65nXhZYk8bXPFBLPcadE3mC2P/EVRYTwDO28Ai2iki4sOQIdAjsIA7K
-         IQ4hjLiweP5KIA8bWqemcA2Xeoov9+TF4H77UO+CBsCjNfrrt1AoWnjoZNTu5HVC/V7D
-         qPFrj3vOWvpuEeygqjiS2wSeFeX4tawd+j0Va4uy5+gKM8nt5fhp/wrb3CYwVQjs9mL9
-         CzGg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7hSrnIzMwGjS709xO7bL6I2SiPBvzLaUabLb1ORxfp+LOCnLekKO/iwModLkEjLISnv6W8bEMlAIHfmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8MCc+7ksha6QHByhTUDLDZCLzLTNh8x9OzgllIWJ3KDJcBWHv
-	IiKNgsEKh2l4JXoaKiEy6ERJYgQ5JkPl5XRxHwniCz8mfMHhOVNM4VMlAu67OCU0+sPbiU5GWik
-	=
-X-Gm-Gg: ASbGncum99neoj31yldb+jaNgscT+U9OWJ5HBx52WgkWinfAq186t0aCor8h5QSWvhM
-	CNssnnavuARrtjB3rFFjgrYILxa+GMEx/lTyP0YOH+BY2KkArjU9MwAYwHtt63vaGNAvUCzR9gQ
-	UOZojy9rp7Ug0WG5KyhJvgIlSLPYvvQrRdUXtuTTh8i3galgu/L0TfxV02xjaGWkvgCz3X80Elc
-	Rhk9XhvdoVYkwY5UFxYouyG4LvbMzffYjxlxQVyy4m+camQ+yDzchrPgnw1FcmtPFdSyJB8Xk3t
-	KSqnhnSCyGNX9Ojyl9/kENn2q6d8urTVhEiwvdUrI+If
-X-Google-Smtp-Source: AGHT+IH1L2+053HKjBANc7GI5t6N9eFdk9KEPgNwqaYsT0C/dL/Gef0yLBObqVY66eNPyS88Tua+Bw==
-X-Received: by 2002:ac8:5e46:0:b0:471:bd14:a783 with SMTP id d75a77b69052e-477b3f4a757mr27665491cf.25.1743214131601;
-        Fri, 28 Mar 2025 19:08:51 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::df1])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4778317b416sm18061541cf.50.2025.03.28.19.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Mar 2025 19:08:50 -0700 (PDT)
-Date: Fri, 28 Mar 2025 22:08:47 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v2 resend] media: dvb: usb: Fix WARNING in
- dib0700_i2c_xfer/usb_submit_urb
-Message-ID: <24798648-c5a3-4e31-9897-4610053007f3@rowland.harvard.edu>
-References: <29db5fdc-13c9-45f0-9183-c80d637725c6@rowland.harvard.edu>
- <Z-MKiV0Ei5lmWik6@shikoro>
- <d0fd60d7-5660-42ed-b1c7-4dfd6b8e74b0@rowland.harvard.edu>
- <Z-MrfICsY06DZV-2@shikoro>
- <f8e975a0-87d2-4f83-b580-6858050a252d@rowland.harvard.edu>
- <Z-QjIRoOWpoWaL6l@shikoro>
- <c6bed13c-38df-43a6-ba5f-0da03b91f3df@rowland.harvard.edu>
- <Z-RyiI1X9BN43feQ@shikoro>
- <c7f67d3b-f1e6-4d68-99aa-e462fdcb315f@rowland.harvard.edu>
- <Z-bEBk68dh918vy9@shikoro>
+	s=arc-20240116; t=1743216353; c=relaxed/simple;
+	bh=xR0kYYmDHYBvu8zW0lVbrQUftt/gZzoxa/JWUOZCI6c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WlXf3cT5kcpqxj6nmk0CW1naLlZ0Se5yz2/PEMWJniCaqS0TumJuyfVaQPRg3Twrf2eaXdW2wI0JSufPUk6Ypy1IHUO7Ub4DNiqJ/t9yIBasprAoie50taHlh7dZdAZtZUOQJt7HzWFjuumXu/ggt0mV4+vDkvxvEHNQvrPHnqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=VtcpE4Gt; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: e560bc300c4711f0aae1fd9735fae912-20250329
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Mud+iDg4MCst5FqYuld9wlN2wQNOH84EC+hVthJ8uLo=;
+	b=VtcpE4Gt5/Fm5lGshyGRnCNCwOrErrahaOJDD3FYHasvLEhlRXC4YfiUX6xXjDTkLeO45v9bFJLGYYCf+S8KSNkUYSf987S8aPnNclmA8mrrQ6r59zlDj6I0Hq3tPtNeTN+CR7SR/D8rUCMx3Up8LSekSm1tVM8rD4JD0OBXcf0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:ea9136c0-9c83-4490-968a-63d943318f7f,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:1197f78c-f5b8-47d5-8cf3-b68fe7530c9a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: e560bc300c4711f0aae1fd9735fae912-20250329
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <ot_chhao.chang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 40643921; Sat, 29 Mar 2025 10:45:37 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Sat, 29 Mar 2025 10:45:36 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Sat, 29 Mar 2025 10:45:35 +0800
+From: Hao Chang <ot_chhao.chang@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: Wenbin Mei <wenbin.mei@mediatek.com>, Axe Yang <axe.yang@mediatek.com>,
+	Qingliang Li <qingliang.li@mediatek.com>, Hanks Chen
+	<hanks.chen@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Hao
+ Chang <ot_chhao.chang@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: Fix the invalid conditions
+Date: Sat, 29 Mar 2025 10:40:29 +0800
+Message-ID: <20250329024533.5279-1-ot_chhao.chang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-bEBk68dh918vy9@shikoro>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Mar 28, 2025 at 04:45:10PM +0100, Wolfram Sang wrote:
-> Alan,
-> 
-> > Fix the problem by adding the I2C_AQ_NO_ZERO_LEN_READ adapter quirk
-> > flag to all the USB I2C adapter devices managed by dvb-usb-i2c.c,
-> > following Wolfram Sang's suggestion.  This tells the I2C core not to
-> > allow length-0 read messages.
-> 
-> Thank you again for fixing this issue. There are some USB-I2C bridges in
-> drivers/i2c/busses which also do not prevent zero len reads. Would it
-> make sense to put a protection into the I2C core? Can we reliably detect
-> that an adapter sits on a USB (maybe via the parent device), so that we
-> can then check if I2C_AQ_NO_ZERO_LEN_READ is set, and take action if
-> not?
+The variable count_reg_names is defined as an int type and cannot be
+directly compared to an unsigned int. To resolve this issue,
+first verify the correctness of count_reg_names.
 
-This really should be handled by someone who knows how those bridges 
-work.
+https://lore.kernel.org/all/5ae93d42e4c4e70fb33bf35dcc37caebf324c8d3.camel@mediatek.com/T/
 
-In the case of dib0700, it was clear from the source code that the 
-driver uses USB Control transfers to tell the hardware about I2C 
-messages.  I don't know if other bridges work in the same way.  In 
-theory a bridge could use USB Bulk transfers instead; they aren't 
-subject to this restriction on length-0 reads.  Or a bridge could use a 
-Control read transfer but include extra header material along with the 
-actual data, so that a length-0 message wouldn't end up generating a 
-length-0 read.
+Signed-off-by: Hao Chang <ot_chhao.chang@mediatek.com>
+Signed-off-by: Qingliang Li <qingliang.li@mediatek.com>
+---
+ drivers/pinctrl/mediatek/mtk-eint.c              | 4 ++--
+ drivers/pinctrl/mediatek/mtk-eint.h              | 2 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 7 +++++--
+ 3 files changed, 8 insertions(+), 5 deletions(-)
 
-So the short answer is that you would need to find someone who really 
-understands what's going on here -- which I don't.  Sorry.
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index ced4ee509b5b..557dec75fa03 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -507,7 +507,7 @@ EXPORT_SYMBOL_GPL(mtk_eint_find_irq);
+ 
+ int mtk_eint_do_init(struct mtk_eint *eint)
+ {
+-	unsigned int size, i, port, inst = 0;
++	unsigned int size, i, port, virq, inst = 0;
+ 	struct mtk_pinctrl *hw = (struct mtk_pinctrl *)eint->pctl;
+ 
+ 	/* If clients don't assign a specific regs, let's use generic one */
+@@ -584,7 +584,7 @@ int mtk_eint_do_init(struct mtk_eint *eint)
+ 		if (inst >= eint->nbase)
+ 			continue;
+ 		eint->pin_list[inst][eint->pins[i].index] = i;
+-		int virq = irq_create_mapping(eint->domain, i);
++		virq = irq_create_mapping(eint->domain, i);
+ 		irq_set_chip_and_handler(virq, &mtk_eint_irq_chip,
+ 					 handle_level_irq);
+ 		irq_set_chip_data(virq, eint);
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+index f7f58cca0d5e..0c6bf7cbdc3a 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.h
++++ b/drivers/pinctrl/mediatek/mtk-eint.h
+@@ -66,7 +66,7 @@ struct mtk_eint_xt {
+ struct mtk_eint {
+ 	struct device *dev;
+ 	void __iomem **base;
+-	u8 nbase;
++	int nbase;
+ 	u16 *base_pin_num;
+ 	struct irq_domain *domain;
+ 	int irq;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index d1556b75d9ef..0884c0700b3e 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -381,10 +381,13 @@ int mtk_build_eint(struct mtk_pinctrl *hw, struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	count_reg_names = of_property_count_strings(np, "reg-names");
+-	if (count_reg_names < hw->soc->nbase_names)
++	if (count_reg_names < 0)
++		return -EINVAL;
++
++	hw->eint->nbase = count_reg_names - (int)hw->soc->nbase_names;
++	if (hw->eint->nbase <= 0)
+ 		return -EINVAL;
+ 
+-	hw->eint->nbase = count_reg_names - hw->soc->nbase_names;
+ 	hw->eint->base = devm_kmalloc_array(&pdev->dev, hw->eint->nbase,
+ 					    sizeof(*hw->eint->base), GFP_KERNEL | __GFP_ZERO);
+ 	if (!hw->eint->base) {
+-- 
+2.46.0
 
-Alan Stern
 
