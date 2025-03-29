@@ -1,64 +1,83 @@
-Return-Path: <linux-kernel+bounces-580868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73374A75779
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:38:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A0BA75781
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CF9188CE5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8FE188DC33
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD21DE3B1;
-	Sat, 29 Mar 2025 18:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813901DED47;
+	Sat, 29 Mar 2025 18:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIbvEiiq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AWJiILj9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019135942;
-	Sat, 29 Mar 2025 18:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB681BF58;
+	Sat, 29 Mar 2025 18:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743273502; cv=none; b=cCdVvlLrbysld4kkKvETJ3vv3qiFhhGtC6d4kOZ+8AKbZwDUxpyNED+lvWqq+H7fTl507/osjjMctItqo4ssIX3F2fHt/9pRBSyjcIbPkywsFFau5afCKJ2wQ0HDrMNlnD1aK7LDCaqJt1bkPQUiDU5m/oPpTMKEnF11kWyZ++o=
+	t=1743274404; cv=none; b=QLS5XxYRWIymDMr75mVPX6XZV8hmkFY4FDfMf1KLTzyAODzEXEdELZrMzuYaAQfUDmuBSnCm5+acevYbt74bbpV75f9PjA0Pz77sPY2Ls+9GLsnJPUh5hvl2wlPUBy/DQ2RE2pVM4MwHTDO+VYspbRrTBMPk+kfjiou1t/Ru8k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743273502; c=relaxed/simple;
-	bh=d1viuqJkDBo9A3Oay9+iVUwbi8rx0kLFMrTHwdEFHUQ=;
+	s=arc-20240116; t=1743274404; c=relaxed/simple;
+	bh=/unm9wPXKMPXsDJfs4AAPZDeDhmCaqHAxiaM6PnHmjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8gYJg9X2I7IOPPF6/CcziI814jR08cXg5q/gduIiyjNK5y8L3OTgRGpMGTim2HWxUtsKykpa8YWved4SCbVHWm79/kyyLuLP/bHPevuX+0gMbzsj8/gXaqB/ci8iTn+fVmjCzJCPYrumUumRORHLj7jB6srce+cFuDaaGTKVBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIbvEiiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC498C4CEE2;
-	Sat, 29 Mar 2025 18:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743273502;
-	bh=d1viuqJkDBo9A3Oay9+iVUwbi8rx0kLFMrTHwdEFHUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GIbvEiiqMVaCRJg3gpVZdKIq9p6MYTvCUYkt6Dpp7zHeqbLJpPXjxHgQQBLTn4EOg
-	 YnfqLtGisPZ9O9LXvfHoRmjP9e8MZYZYUPuQY4oE82vtpJjOTQgT0GWlgxIQr828/w
-	 fsnXbiTduhG8hYXrXZbx4uXOhy8QHugQaXkBwGVAYHbnSC2QzLlC2lQUmv8Zdwl+XJ
-	 2oXqrv6VEsrHdozmv2tyBZmvvxGDhbySOTdEZbKpYMTTuGqqtYeqafpYKqCljoMMnz
-	 kdaImdBQKvO06KZpfpF9ABqXQaUcYgK9zK6jb3oMDF3m+O+/n5f9U2tpZGBSkMusjl
-	 +j5y6oh+HeQ0A==
-Date: Sat, 29 Mar 2025 11:38:20 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+f4Pr1G22m4knm2+5MGW7ugPCPPX1Kuceuk9OlpQE6Dd5SQiXecgFFnTNYHN59zuQPVl83Mt7iS/AvPWTueAY9415zFdZDNydjqT8w4gK7vf3aH5mNcG5P9z0ibqcRDwwIbxTnsK/IoN2UzhV3B1QzkkhkyT7GagFxWiJ3+OrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AWJiILj9; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743274403; x=1774810403;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/unm9wPXKMPXsDJfs4AAPZDeDhmCaqHAxiaM6PnHmjU=;
+  b=AWJiILj9n50XIRtsT334YSqwvsFxsO7au8BP2M/U1X6y1yyRL1Jeuoru
+   AHBOjt/WzYFR/cDP5lPLmBnmlOmIpAbPDobR/1Az7zGFoUyIuGqdW1kYA
+   i5dHak3mX4xHBj36WV300FQ3GaJ34v/R20UHmaaU7ylhnCcaCe+0iys1B
+   5jzFl9CqZ6NqkKrq3cYwjXc/4zZogZkTc/QBa90kVNg54rx2nv97BcPA6
+   dMdZ2k7YXJQyfV8S3T90QvTxbx2pTne29J5H56IlAt0j6TapE4JtOX5Zq
+   ARK++0QwXU2Td9/Im8K31c+/rkBlL3EC51e0P0/rRk+rf8oP6VJXGEeXw
+   A==;
+X-CSE-ConnectionGUID: 9ZzXevnuTg6C9+JXQGN+Lw==
+X-CSE-MsgGUID: 5i873txqTbulN0zxShTN5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11388"; a="44498996"
+X-IronPort-AV: E=Sophos;i="6.14,286,1736841600"; 
+   d="scan'208";a="44498996"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2025 11:53:22 -0700
+X-CSE-ConnectionGUID: Cu+QujXWRCCqGMGpip+qMg==
+X-CSE-MsgGUID: dpiqVix1Qq+ihM7rXO0Jmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,286,1736841600"; 
+   d="scan'208";a="148902244"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 29 Mar 2025 11:53:18 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tybHo-0008Is-1J;
+	Sat, 29 Mar 2025 18:52:32 +0000
+Date: Sun, 30 Mar 2025 02:51:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [GIT PULL] Crypto Update for 6.15
-Message-ID: <20250329183820.GB4018@sol.localdomain>
-References: <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
- <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
- <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
- <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
- <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
- <20250325152541.GA1661@sol.localdomain>
- <CAHk-=whoeJQqyn73_CQVVhMXjb7-C_atv2m6s_Ssw7Ln9KfpTg@mail.gmail.com>
- <20250329180631.GA4018@sol.localdomain>
- <CAHk-=wi5Ebhdt=au6ymV--B24Vt95Y3hhBUG941SAZ-bQB7-zA@mail.gmail.com>
- <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH 1/2] net: phy: Add support for new Aeonsemi PHYs
+Message-ID: <202503300205.g0FCozVG-lkp@intel.com>
+References: <20250323225439.32400-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,51 +86,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
+In-Reply-To: <20250323225439.32400-1-ansuelsmth@gmail.com>
 
-On Sat, Mar 29, 2025 at 11:19:19AM -0700, Linus Torvalds wrote:
-> On Sat, 29 Mar 2025 at 11:17, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > I happened to just merge the rdma updates a couple of minutes ago, and
-> > they actually removed the example I was using (ie the whole "use
-> > crypto layer for crc32c" insanity).
-> 
-> Heh. Looking closer, the "they" was actually you who did the patch and
-> Leon who applied it.
-> 
->             Linus
+Hi Christian,
 
-Yes.  Those cases were just a single algorithm, though, so of course the library
-was simpler.  fs-verity supports two hash algorithms (SHA-256 and SHA-512), and
-dm-verity unfortunately supports every hash algorithm the crypto API supports
-since it accepts it as a string and passes it directly to the crypto API.  I
-know for sure dm-verity is used with at least SHA-256, SHA-1, and BLAKE2b, but
-there could be more.  The crypto API also supports various "national pride"
-algorithms like SM3 and Streebog, for example, and some people might expect
-those to work with dm-verity.  (Unfortunately SM3 keeps getting pushed into
-various standards, libraries, CPU instruction sets, etc.)
+kernel test robot noticed the following build warnings:
 
-So for fs-verity we'd basically need:
+[auto build test WARNING on net-next/main]
 
-    if (using SHA-256)
-        sha256()
-    else
-        sha512()
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-net-Document-support-for-Aeonsemi-PHYs/20250324-065920
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250323225439.32400-1-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH 1/2] net: phy: Add support for new Aeonsemi PHYs
+config: riscv-randconfig-r072-20250329 (https://download.01.org/0day-ci/archive/20250330/202503300205.g0FCozVG-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
 
-    (and the same for any other algorithms that may get added in the future)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503300205.g0FCozVG-lkp@intel.com/
 
-And for dm-verity we'd basically need:
+smatch warnings:
+drivers/net/phy/as21xxx.c:744 as21xxx_led_hw_control_get() warn: unsigned 'val' is never less than zero.
+drivers/net/phy/as21xxx.c:775 as21xxx_led_hw_control_set() error: uninitialized symbol 'val'.
+drivers/net/phy/as21xxx.c:802 as21xxx_led_polarity_set() error: uninitialized symbol 'led_active_low'.
 
-    if (using SHA-256)
-        sha256()
-    else
-        Use crypto_ahash or crypto_shash to handle arbitrary algorithm
+vim +/val +744 drivers/net/phy/as21xxx.c
 
-And that's okay -- we can do that.  Just crypto_shash ends up being
-approximately what is needed already, so just using it seems slightly
-preferable.  But using the libraries whenever possible would be fine with me
-too.
+   733	
+   734	static int as21xxx_led_hw_control_get(struct phy_device *phydev, u8 index,
+   735					      unsigned long *rules)
+   736	{
+   737		u16 val;
+   738		int i;
+   739	
+   740		if (index > AEON_MAX_LDES)
+   741			return -EINVAL;
+   742	
+   743		val = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_LED_REG(index));
+ > 744		if (val < 0)
+   745			return val;
+   746	
+   747		val &= VEND1_LED_REG_A_EVENT;
+   748		for (i = 0; i < ARRAY_SIZE(as21xxx_led_supported_pattern); i++)
+   749			if (val == as21xxx_led_supported_pattern[i].val) {
+   750				*rules = as21xxx_led_supported_pattern[i].pattern;
+   751				return 0;
+   752			}
+   753	
+   754		/* Should be impossible */
+   755		return -EINVAL;
+   756	}
+   757	
+   758	static int as21xxx_led_hw_control_set(struct phy_device *phydev, u8 index,
+   759					      unsigned long rules)
+   760	{
+   761		u16 val;
+   762		int i;
+   763	
+   764		if (index > AEON_MAX_LDES)
+   765			return -EINVAL;
+   766	
+   767		for (i = 0; i < ARRAY_SIZE(as21xxx_led_supported_pattern); i++)
+   768			if (rules == as21xxx_led_supported_pattern[i].pattern) {
+   769				val = as21xxx_led_supported_pattern[i].val;
+   770				break;
+   771			}
+   772	
+   773		return phy_modify_mmd(phydev, MDIO_MMD_VEND1,
+   774				      VEND1_LED_REG(index),
+ > 775				      VEND1_LED_REG_A_EVENT, val);
+   776	}
+   777	
+   778	static int as21xxx_led_polarity_set(struct phy_device *phydev, int index,
+   779					    unsigned long modes)
+   780	{
+   781		bool led_active_low;
+   782		u16 mask, val = 0;
+   783		u32 mode;
+   784	
+   785		if (index > AEON_MAX_LDES)
+   786			return -EINVAL;
+   787	
+   788		for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+   789			switch (mode) {
+   790			case PHY_LED_ACTIVE_LOW:
+   791				led_active_low = true;
+   792				break;
+   793			case PHY_LED_ACTIVE_HIGH: /* default mode */
+   794				led_active_low = false;
+   795				break;
+   796			default:
+   797				return -EINVAL;
+   798			}
+   799		}
+   800	
+   801		mask = VEND1_GLB_CPU_CTRL_LED_POLARITY(index);
+ > 802		if (led_active_low)
+   803			val = VEND1_GLB_CPU_CTRL_LED_POLARITY(index);
+   804	
+   805		return phy_modify_mmd(phydev, MDIO_MMD_VEND1,
+   806				      VEND1_GLB_REG_CPU_CTRL,
+   807				      mask, val);
+   808	}
+   809	
 
-- Eric
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
