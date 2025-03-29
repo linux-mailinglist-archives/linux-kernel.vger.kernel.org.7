@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-580802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20812A75665
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:21:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC834A7565A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB20416EFBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 13:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35E81892836
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 13:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A61ADC97;
-	Sat, 29 Mar 2025 13:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39AB1CAA74;
+	Sat, 29 Mar 2025 13:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="XFltEFGi"
-Received: from out0-196.mail.aliyun.com (out0-196.mail.aliyun.com [140.205.0.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Il9zEemB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1101B424F
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 13:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CDD35972;
+	Sat, 29 Mar 2025 13:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743254481; cv=none; b=UAizlUj3SgH7b99p2ygB9N076UQldcJg6aS+2NQJujYmZY4H+slO+gj2sVx0SN/l1Nzfeh5kC/2tiZuO9iXq9COYXfGsrAV0Uho+QiPoPgqBr44wnT+c8f3HHQeE8FsihBX4izauP5Wrdz7VjvX9gUo600OBUNmGqmi/HX8G2qE=
+	t=1743253978; cv=none; b=ebSy3SE1K7scbkJv0Exl1Sol4zIe/6IRAlJX/4suLY8tKJwFCUnCtg+sJ3PJRNcBOz+S3js55WKEVxB4mvcedDb3oYDzCQkZnnHoaY6VK4E4vHZeYD3R3IeTU4koQwcc4AwEd6Bk5OQHyu1lcOtxiGeWD7Dwfe+vaBCNeSzt/x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743254481; c=relaxed/simple;
-	bh=Tj33r8eFpGults4WH7vOF0SmaR01AmzbqRML+2nDOwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eOdKFPFVq9sFq4yogvsZi7OXa7hJrMMVj7XO0eUEgOQVhxW5bJphUi/q6DzBgRF3qxSqn4E8OIeT1LqfAH8V29VEvbxrcbUzKTSVsFjsrVSXbGMoHQan3MrTsj+Lm8zzNDbLCy9T2MLZ6KLBNY7TJNm68nN7xpOs/IvdEzR4+pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=XFltEFGi; arc=none smtp.client-ip=140.205.0.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1743254474; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=aY+k5xAO7wlEJHM5XbSfo9/O2E1HKvzBj9211YyF+U4=;
-	b=XFltEFGifNO1MOmmbDmIp1zqHaflS28WIMY4DuOVqaf75NYyEVV1HRPmbiGW0P+8x7w0wFaDSlbHj1ld7qTOA+aOBoX28uuOulev0UN4/xIwcJqAT0GBNa8PCY6H+cAGZhCfB9lizwAfCaK3Pav3RMOgOL+thmbp/GGyImllLg8=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.c6iAtj2_1743253538 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Sat, 29 Mar 2025 21:05:38 +0800
-From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
-To: linux-kernel@vger.kernel.org
-Cc: "Hou Wenlong" <houwenlong.hwl@antgroup.com>,
-  "Dave Hansen" <dave.hansen@linux.intel.com>,
-  "Andy Lutomirski" <luto@kernel.org>,
-  "Peter Zijlstra" <peterz@infradead.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Ingo Molnar" <mingo@redhat.com>,
-  "Borislav Petkov" <bp@alien8.de>,
-   <x86@kernel.org>,
-  "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 3/3] x86/mm: Fix wrong usage of 'MAX_ASID_AVAILABLE' in global ASID allocation
-Date: Sat, 29 Mar 2025 21:05:26 +0800
-Message-Id: <55dd1b47ef7c8dd5518878fc682290825570225d.1743250122.git.houwenlong.hwl@antgroup.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1743250122.git.houwenlong.hwl@antgroup.com>
-References: <cover.1743250122.git.houwenlong.hwl@antgroup.com>
+	s=arc-20240116; t=1743253978; c=relaxed/simple;
+	bh=wi+c+GQMw5q+3bCR3TIsBAflQ+EXY6M0KUCrJCujUIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NWc1JUETbWrqWgHGa8aXM8zb3Gvy/p8czAMwBKTvymmpSH0nS3x4azMPbxoJS5rYfuu2hTTVUG2X1zxWkJjjtpTlJ2RSOcbipiA/hS9VF1L8OAOm47ah24oCr9F3OUPRYwHUL567hCYiWRhaiq9Tgcx1CP1oQOpxGzObgWNxuF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Il9zEemB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C09C4CEE2;
+	Sat, 29 Mar 2025 13:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743253976;
+	bh=wi+c+GQMw5q+3bCR3TIsBAflQ+EXY6M0KUCrJCujUIE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Il9zEemBXLsLnq/x2AxTuTRAxAhSh3YYa8fd8LqgpSehjGi3PZbgMoZFpStXiyh72
+	 rMr7KKW2BTDicz1Pn9qjWfznffKEz9hMEHP6b2ZDMVrMDhy3iic7nzG1SQksqH15mp
+	 sxKhuKfvzetoQ00+BSmj7NC99u5Pw+/WnIDWpMq4Itr6G9vDFp8foUrHgbuMzDLGv4
+	 B7Ff/D/iVncVGVe81ipdI8u4jt7LZEpXDdQlLhHSZM4xSn8GKfRBIJcX2YeriOzPPp
+	 FHcL1Z4QtRyc8mCrWM6ZXFifqPiPTLDZB9jnkINyWMC3R1gtZfnp7yYGCRr1CATSW/
+	 0dXhULS+0ixDA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c2504fa876so788472fac.0;
+        Sat, 29 Mar 2025 06:12:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhVqi48n65DRkOlDbOT163+sJfknXfnu3MNltZOSuLb/1w7mU3Z8xN9DMHWDTEJtE276tYsF6cjdpUCIgm@vger.kernel.org, AJvYcCXYzh+4cJTCq6IhcjmPhg27xCDV4AZR0/6usQSSvheqhF8t9oAFM7EuqEEg9vpmnTQj/5Mb0ajbrL7QT+Bh@vger.kernel.org
+X-Gm-Message-State: AOJu0YytdebPe076jUoqfyAwNe/khztzBxMv8rkGwqI0ayGGezKAOkK8
+	FErWflc4vpZUxqcwoBscptrFMdbl4qgO35UIM/oUy6Qb0xe22yZlTfWYMfmkB7UukmjZj6qDcgZ
+	Bub+2TVD5iSvs6etI/NwPwjeuxOQ=
+X-Google-Smtp-Source: AGHT+IGNfztDsFLpDkxG/ViPGhrdMUEX8GjFoDByCMbHzEmFCj+HInYa0r+eectfTa2K03ESfZW//t0XL+h0noSgHr0=
+X-Received: by 2002:a05:6870:5253:b0:29d:c832:840d with SMTP id
+ 586e51a60fabf-2cbcf7ae22fmr1815102fac.35.1743253975898; Sat, 29 Mar 2025
+ 06:12:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20250326150136epcas1p3f49bc4a05b976046214486d7aaa23950@epcas1p3.samsung.com>
+ <20250326150116.3223792-1-sj1557.seo@samsung.com>
+In-Reply-To: <20250326150116.3223792-1-sj1557.seo@samsung.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sat, 29 Mar 2025 22:12:44 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9dK-NPqxjijtx-6y_ejqg1wsSFsKW1sreOcBZmznD-nA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpD2k-OTyUpkuIxuGwuedYuaor34Pv3RdaJt3Hxem700lw4AqInlplhDjI
+Message-ID: <CAKYAXd9dK-NPqxjijtx-6y_ejqg1wsSFsKW1sreOcBZmznD-nA@mail.gmail.com>
+Subject: Re: [PATCH] exfat: call bh_read in get_block only when necessary
+To: Sungjong Seo <sj1557.seo@samsung.com>
+Cc: yuezhang.mo@sony.com, sjdev.seo@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, cpgs@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'MAX_ASID_AVAILABLE' represents the maximum valid ASID in the current
-definetion, meaning that the available ASID range is [0,
-MAX_ASID_AVAILABLE]. So the actual count of available ASIDs is
-'MAX_ASID_AVAIABLE + 1'. However, global ASID allocation use this value
-as the size of the bitmap, which results in the maximum ASID number
-being excluded from global ASID allocation. To address this issue,
-redefine the 'MAX_ASID_AVAILABLE' as the count of available ASIDs.
-
-Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
----
- arch/x86/mm/tlb.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e9eda296fb0e..0f86c3140fdc 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -102,18 +102,17 @@
- #define CR3_AVAIL_PCID_BITS (X86_CR3_PCID_BITS - PTI_CONSUMED_PCID_BITS)
-
- /*
-- * ASIDs are zero-based: 0->MAX_AVAIL_ASID are valid.  -1 below to account
-- * for them being zero-based.  Another -1 is because PCID 0 is reserved for
-- * use by non-PCID-aware users.
-+ * ASIDs are zero-based: 0->MAX_ASID_AVAILABLE-1 are valid.  -1 is because PCID
-+ * 0 is reserved for use by non-PCID-aware users.
-  */
--#define MAX_ASID_AVAILABLE ((1 << CR3_AVAIL_PCID_BITS) - 2)
-+#define MAX_ASID_AVAILABLE ((1 << CR3_AVAIL_PCID_BITS) - 1)
-
- /*
-  * Given @asid, compute kPCID
-  */
- static inline u16 kern_pcid(u16 asid)
- {
--	VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
-+	VM_WARN_ON_ONCE(asid >= MAX_ASID_AVAILABLE);
-
- #ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
- 	/*
---
-2.31.1
-
+On Thu, Mar 27, 2025 at 12:01=E2=80=AFAM Sungjong Seo <sj1557.seo@samsung.c=
+om> wrote:
+>
+> With commit 11a347fb6cef ("exfat: change to get file size from DataLength=
+"),
+> exfat_get_block() can now handle valid_size. However, most partial
+> unwritten blocks that could be mapped with other blocks are being
+> inefficiently processed separately as individual blocks.
+>
+> Except for partial unwritten blocks that require independent processing,
+> let's handle them simply as before.
+>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+Applied it to dev with Yuezhang's reviewed-by tag.
+Thanks!
 
