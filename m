@@ -1,115 +1,172 @@
-Return-Path: <linux-kernel+bounces-580644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9E5A7549A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:28:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDC4A754B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1FD3AFB90
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EED2173AB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436E817C225;
-	Sat, 29 Mar 2025 07:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD9F18DF93;
+	Sat, 29 Mar 2025 07:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NAILybhL"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEkH2gim"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC5117BCE
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 07:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58A81724;
+	Sat, 29 Mar 2025 07:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743233284; cv=none; b=r+qrf7g8WsXpd/Fa8BgTDgQeDsaEvDJzbd1mtuPuScbuVh7mSml6aw4fwHpGC04FgHEMu8dsxP7FfSqLIrK0AQlkgirLtJU4/qzJu89E08gCxnLNGpCaAzUL+xN3jCUf9hHynGp2BEBma20WxpIhNQzycv+jP1f010qxGdAdLek=
+	t=1743233578; cv=none; b=oEjHXiM1JTLTHC188AYmt2i8fNoeLSyS9sqK5qBWuSD+h5hPucEa2MSZwn/U5yNBxBtJ6Sm0mMg/t+ipDmGls9b1jcEyMxfdmihIG/r9x4aZXrXjafT4HTxtUicrmi3NU/dfiWjY1ueh72Wa7WsEXZccsaXxDjweFJr05qaJCiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743233284; c=relaxed/simple;
-	bh=k38HmKsHGBUJixcW1fB2JC7zfA7gYvLbiKF4tiKdzDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ld8sDSOsyr7uzPnB420iL07fRM76BIG8kTxVsfkDkvMdVydTWeOmQgt7cAQBD4jERDKWZdh8+IshQ4vtAXitoqBZT8ZnlkLYT6J3oFFK9ArS00e0WSKIKOCIG0CoDtmlCmLolZTRnWmnOpKAmGYa00TeMwKKnm6fmxqXIDrVZPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NAILybhL; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=k38H
-	mKsHGBUJixcW1fB2JC7zfA7gYvLbiKF4tiKdzDU=; b=NAILybhLuMW6YKzY2a+e
-	wrsST5Ml4frqU/0QKmTwxpPEcEm5xzBW35RgW9kmu+0eFRZuu0RuCRGoET2rLfcM
-	gkrrdwyJkYIT5KP0g7JOfHKL3+I0VEOh22olPCoYTr7u+xKDreSnsvZdIfulpOWt
-	+br35VsPB4JwUV86xNF6dEwIhdCIAGfJFt7YrLoCSHR6G/Q93CmVbqO0MJX46m/N
-	t8mGpUIdprNN0ghSMbE8AWzoVoAxHVD5lpH6dbVX89KNyEJinp46QFwqEwetELC6
-	XYOBG/dogI9rcjP19ghEDHb7p8pK1VwewtAdouxzvC/uzSbsh3V63dXuneXchpX0
-	4w==
-Received: (qmail 503911 invoked from network); 29 Mar 2025 08:28:00 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Mar 2025 08:28:00 +0100
-X-UD-Smtp-Session: l3s3148p1@Z3RjIHYxJx1tKjJV
-Date: Sat, 29 Mar 2025 08:28:00 +0100
-From: Wolfram Sang <wsa-dev@sang-engineering.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: kernel test robot <lkp@intel.com>,
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: drivers/mmc/host/renesas_sdhi_core.c:951: undefined reference to
- `rdev_get_drvdata'
-Message-ID: <Z-ehAHFRK_WaGVJp@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>,
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-References: <202503290554.zASQT70Q-lkp@intel.com>
- <TY3PR01MB11346FEE53574DBF768BA9B8686A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <Z-eeiMFsQQNMt2nn@shikoro>
- <TY3PR01MB11346D7FE2EC7FA3631C48A0C86A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1743233578; c=relaxed/simple;
+	bh=z1bOkfXAShDyko0UIr3HeDgqWPJ8RvzphrSe6vO7ON8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P7AJxFaqG7D6LVztJmuYzNd6hsBAm1NYYOX3AvBLo6V74c5ePVyZEPgZqLIKmDOYi9MT/7LskG/VQsBl8oxUxbcHnihRIvDjTCMoxlFAZJBlQr/sGbEdz1H2sydttDBLYVec+xqvENm7SpWo0G2OwgcPRQ2RORYuGT1lgOX4A4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEkH2gim; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22928d629faso23333445ad.3;
+        Sat, 29 Mar 2025 00:32:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743233577; x=1743838377; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/rK5ct4+5F9tZF2xsKCOk+hUi3QrDwNnhqFvRjvb+7U=;
+        b=DEkH2gimy3jMIOC98KDC0USgvqQREgyygK5SOdaT539wAEskrGzjt7aLY/80eEk25E
+         /E3pUqqhB3evikHXptZuG+uQoO0rUdjO12BPV8zNqhU7CDYrFQBU5OIDf9gF1vRPv6nk
+         /94WxGwHQhDhXPFZiSK0Q0VBPDHbG10kyZ0nPkqiZNJ8WQgi7T0j1T1ew4MUDKUwVYCg
+         My7jO1cmHPKaYLW6dKXJLodCWIfzPEXttxUWtkD8VCR8EqA7YLno8VAQWCU4p+UrOlRv
+         LflnblmVNRAi6njGrN4udPPQaTvsPT1OwaUWebAjnTiLqDsdKRTsiNFBgT31ySWyV0kj
+         dG3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743233577; x=1743838377;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/rK5ct4+5F9tZF2xsKCOk+hUi3QrDwNnhqFvRjvb+7U=;
+        b=TX76ZG83DbnTXr6uoHaTX65+hcg23rJTAax2CazwJTyI/E1jNCEPCrbzIEPkx1nQR2
+         hu6C3jetgSZL4nlG93gSSatpcBkocoIfF5dq5UmUXpaHNwHaAF4TsyTbZLLx9L/RE97j
+         P1aMQfQZPo3+0+KZkIQsV/BnCDpUMpWRAGafT0p4ztampWc53J4nPdNoPh/soeSF6sbG
+         Rx1bVCjHALMKHO3WiS8pTwBZtvg0xdI1ANP6kTX2VnfnYCreire7/7ituIzC/gBspVF3
+         s3BG+ygLyypbtjm0xFkkIZCFLxPEN+NUxbLm7aabj3e3P6Alp+x9/lrrIivYyvciJrwe
+         ubZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYnt2j7DB74VUkYv/KKvk+zdg6xGqsKEfcFOdD8U0juh6EsYL8bZruAwIMLagZ1sDs993+sKRorU0GMoqg@vger.kernel.org, AJvYcCUf9bMKo0QG5JRHjsBbmNNW8BmBZxmCDP4pDdqrr3luzQXnQ7eXpsMmz/CI1FyMMS1L7cS9CkDyqsV6gg==@vger.kernel.org, AJvYcCXHVSpcVpkqzyDqFfY7L2Qz2zC2hqBmBgOFfaf5HvhNMGkulhfuW8m5N4fZl5L8HXK0ZhYzfOGGGb39BkOtHeOb6IslVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz37DoJ1tL4LX0cvVe+v5W81qnJMKvhzCrPUkYUJhumqjo4w7pV
+	JKA53yD07tgtJ1wF9zQvrlWkgM7gTutxkFWrU52Ek5phE1TAdERC
+X-Gm-Gg: ASbGncsA5yoG6HwFamq41e07J66CO4G9OOypPZARwmM1gIlRBMRmL7F2BdJCftCoBEl
+	s47fCpZw2pmzqFeaMqccALJfi2tfXre8uqzClNOKZ3VxmGHHE3LaepZyFheWdUs0zMk/cVM3RCv
+	t0aLNrdUXLSk8qal+MXF3ckz7gU/s/tU+3c9Ejl0LM7usKN9Da2/dD9sY/SiV0Ioxs1i1bjlT53
+	r5tQW0N+q4Gka9qj4pVoI2B1ln/BuigkylH6ihvFv6DjliIiSxy7WdK9hNqZlT9Cnv8M1+yzn7g
+	fzPhFUZFcCGU3dLFoMI7ZYT9YmOhMU3PBwSqmm2QZs60
+X-Google-Smtp-Source: AGHT+IGZxXgs2TQMyJRsVCC8t7DymYTggjads6xo/8e4v7rGKxtS0CyoZKwvsP5yqj3DeWOmEMXSpw==
+X-Received: by 2002:a17:903:32c9:b0:224:2715:bf44 with SMTP id d9443c01a7336-2292f962077mr32413815ad.19.1743233576427;
+        Sat, 29 Mar 2025 00:32:56 -0700 (PDT)
+Received: from [192.168.1.26] ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eedea62sm30257645ad.55.2025.03.29.00.32.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Mar 2025 00:32:56 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Subject: [PATCH v7 00/12] platform/x86: alienware-wmi-wmax: HWMON support +
+ DebugFS + Improvements
+Date: Sat, 29 Mar 2025 04:32:17 -0300
+Message-Id: <20250329-hwm-v7-0-a14ea39d8a94@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SSjaWliVp9hX0p5C"
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346D7FE2EC7FA3631C48A0C86A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAGi52cC/13QwW6DMAwG4Fepcm6qxME47LT3mHoI4JRopUyB0
+ k0V795QDs16yOGX8v22fBcjx8Cj+NjdReQ5jGG4pED7nWg6dzmxDG3KAhSgMgpld+ulp7qtdKW
+ gRhLp509kH36fLV/HlH0cejl1kd3LAiCkp9QBDBqUWn5fr3GqP0+9C+dDM/RrUxfGaYh/z3Vms
+ /b9nzwbqaSpkMnpQhFDxtfJc5Ebu5kiGeedNgVYsB7fDWZGw2YwmZZrjd5bb5ry3ZS5MZspk9G
+ UbuLJUkuUm2VZHixQ4j1sAQAA
+X-Change-ID: 20250305-hwm-f7bd91902b57
+To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Armin Wolf <W_Armin@gmx.de>
+Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
+ platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
+ linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+ Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
+ Bagas Sanjaya <bagasdotme@gmail.com>
+X-Mailer: b4 0.14.2
 
+Hi all,
 
---SSjaWliVp9hX0p5C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This set mainly adds hwmon and manual fan control support (patches 7-8)
+to the alienware-wmi driver, after some improvements.
 
+Thank you for your feedback :)
 
-> The changes were done in SDHI core (renesas_sdhi_core.c).
->=20
-> Like this, if a random config in that architecture has CONFIG_REGULATOR u=
-ndefined
-> will lead to the same error.
+---
+Changes in v7:
 
-True :( Not happy, but I don't want to over-complicate things. Most
-systems will have regulators enabled anyhow...
+[01/12]
+  - Mention WMAX_OPERATION_* -> AWCC_OP_* in commit message
 
+[02/12]
+  - Reorder the thermal defines as Ilpo suggested
+  - Use FIELD_GET in awcc_platform_profile_get in this patch instead of
+    [03/12]
+  - Reword commit message, including title, to be more coherent with the
+    changes
 
---SSjaWliVp9hX0p5C
-Content-Type: application/pgp-signature; name="signature.asc"
+[03/12]
+  - Drop inline attributes
+  - drop __ prefix from awcc_wmi_command()
+  - Add @ to kernel-doc variable reference
 
------BEGIN PGP SIGNATURE-----
+[05/12]
+  - Reword commit message to better describe changes
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfnoQAACgkQFA3kzBSg
-KbaLyA//e+TibE5R1T06Gmo5hvWR5RS/M0j+vgZRoe7K/Zbgpd5pTDLNGpmv0m1z
-N81nvx2B74/+Hh0dS2mY36ZOghDs5D1vyCZ0JKU2pY76WMza/XMZVDY8VYTaeSfA
-a17bySHBKkkmO+NsSluRA8x9mImjrmjFH/K9RyCH7zEUKkrhrL+Ikb0V/+uogA5c
-3wnXw0ItmIevENH8j2B7wp3iDvaYcWesV8grcjwwga2hJ98OmoXejrRt57oxC3sx
-m+DpzgU3p3m2Zl+yrWU7XGIeRI16O4hyVp0hjJWbAjEqqCCynSIy5SCtiWO3sI9M
-Md/y0EsVvM3U8TgZdtY0p3xAiPUOWZIgi+//AazeF6SuiR7IW5qwcCjXLNAt6Rtp
-G/luN7XodMxlXw/SnrujagPbq2wgKTcu8YXId8VmyDihKC14lJGRJyjh4fUtJsDc
-nkcnADdJoy6i7E5h0yjInSBr/mIcDAeFGwIQmond2Zn83a5bk+yK6MKV0CmsZe2i
-Hoj4lSqT4t4rye3ICwS2HmfkPm8RrxCAMgG4cgSEwGpWOZ4XC0T09lfIaqyT1EQ7
-Ez8idFj0T1N978my1RnGFwoNTHp/V82lnsHMfsG7GC5lOZDZ+YAQbBXRwYnLMHjZ
-0jNZdjsc1ncuZic3noHTJgE2W82Alubv2IppnhMgJFAj5vQ/JxQ=
-=Y1/S
------END PGP SIGNATURE-----
+[08/12]
+  - Fix typo: aproximate -> approximate
 
---SSjaWliVp9hX0p5C--
+[09/12]
+  - Replace ARRAY_SIZE() with sizeof() when naming the debugfs directory
+
+[11/12]
+  - Fix typo: repurpused -> repurposed
+  - Drop uses of "We"
+
+Link to v6: https://lore.kernel.org/r/20250313-hwm-v6-0-17b57f787d77@gmail.com
+
+---
+Kurt Borja (12):
+      platform/x86: alienware-wmi-wmax: Rename thermal related symbols
+      platform/x86: alienware-wmi-wmax: Improve ID processing
+      platform/x86: alienware-wmi-wmax: Improve internal AWCC API
+      platform/x86: alienware-wmi-wmax: Modify supported_thermal_profiles[]
+      platform/x86: alienware-wmi-wmax: Improve platform profile probe
+      platform/x86: alienware-wmi-wmax: Add support for the "custom" thermal profile
+      platform/x86: alienware-wmi-wmax: Add HWMON support
+      platform/x86: alienware-wmi-wmax: Add support for manual fan control
+      platform/x86: alienware-wmi-wmax: Add a DebugFS interface
+      Documentation: wmi: Improve and update alienware-wmi documentation
+      Documentation: admin-guide: laptops: Add documentation for alienware-wmi
+      Documentation: ABI: Add sysfs platform and debugfs ABI documentation for alienware-wmi
+
+ Documentation/ABI/testing/debugfs-alienware-wmi    |   44 +
+ .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
+ .../admin-guide/laptops/alienware-wmi.rst          |  127 +++
+ Documentation/admin-guide/laptops/index.rst        |    1 +
+ Documentation/wmi/devices/alienware-wmi.rst        |  383 +++-----
+ MAINTAINERS                                        |    3 +
+ drivers/platform/x86/dell/Kconfig                  |    1 +
+ drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1034 +++++++++++++++++---
+ 8 files changed, 1195 insertions(+), 412 deletions(-)
+---
+base-commit: 1a9239bb4253f9076b5b4b2a1a4e8d7defd77a95
+change-id: 20250305-hwm-f7bd91902b57
+
+Best regards,
+-- 
+ ~ Kurt
+
 
