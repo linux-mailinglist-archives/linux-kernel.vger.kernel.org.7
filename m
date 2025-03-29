@@ -1,193 +1,88 @@
-Return-Path: <linux-kernel+bounces-580663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC58AA754C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:36:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94705A754A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6583B2402
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C3D170ECF
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475871DE8AB;
-	Sat, 29 Mar 2025 07:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJ81Pj/B"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127C6188915;
+	Sat, 29 Mar 2025 07:32:43 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F81DF256;
-	Sat, 29 Mar 2025 07:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F87208D0;
+	Sat, 29 Mar 2025 07:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743233608; cv=none; b=gQNnr4PDjHG4RtgeA6nOZTFfUhp/+2B0bWdMzXIFHtsMcfrS50aGgQTUkdBELph8l0vXDkY27e6lmbbjpxEx7Vy4InRUt8oxYO55jYiNyW9bYg1ShZHaZBVwxRUSRXGAPpvErDo0obbQKn86RVYADVt68oMiSIzkmqe0ArsekvE=
+	t=1743233562; cv=none; b=YyoUawvSLleDwujaTdMcua8LbtIN31IeDXbIFlyWGNtNO5g4iW6aaKkJS2EzIVvmGGDUqXQmNHwaiRB9Bh+jXGi8qp02kFJzTSMcZ6sVEu5MHifU91IqrDHJAIZ5ZTeElDfeEgPdCYeYmXC5tZrFGJDuFR2I3c/IRWaIIoZUKeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743233608; c=relaxed/simple;
-	bh=+uc1SuLU+7BkVTR+aCzoSyQBA+rYZUJ3KCpPQQaun7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jL2bVpJZ+vM2vG27fdDjKhAnxpvfV/MaRlOFoeGLGnKO9q6orExlgsyoIPFYktGkr/Ahe7+utnoWnjH0mMRSEhQClX3L/tBMUIxG9GzAr5zYRsjXjW6cOooTuJn+ExCcdOUy36lZbzyHGr00AQgA5pms1THLq931oXax75Xuy+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJ81Pj/B; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22423adf751so56980125ad.2;
-        Sat, 29 Mar 2025 00:33:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743233606; x=1743838406; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tv4G5XT9cpfw/l4UO+b+3iqID2AI+6jruhrm3oqXDY8=;
-        b=iJ81Pj/BwarJPArp/H8GLLbXepLSYARC6OAu6W35iFU46xnEiWmJvNtGG/FEtSgl2V
-         sExgrH1EV5QVNSzUML20Gv6ZnWPKSHqG3Cquqk9f3LcGpAFQco9YtWvngEgSnxGr8UT0
-         DD/g7OCmkWW72J3Rc9Wz3b9GmhBkcg541Fbf/8qijeB5VYvFDhY8REEOKA891tLPglcO
-         I2HKW9GqL0UrCB8Ub9Kxat9db3MaGv6c1LXJwyKSBwa9gKZpWRz4Hy3RdtsQmcJcBNE7
-         sjlycqvqjmZyozhGcsCR016OFMe4B4XZilqT2BmJjqj3D6DdGt6mbtUWZcT5RiSCrfjN
-         KN5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743233606; x=1743838406;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tv4G5XT9cpfw/l4UO+b+3iqID2AI+6jruhrm3oqXDY8=;
-        b=Cix2apFQ+75I687PjTdzMzfTY/Hm1pRLoRjyfnbP8i79MOYDVtjzAQ7I8+7N/gt8Ka
-         KX08HNnXF6Q9t00tDdP6xFX373MRMJQ+trKh6cJ0Tu5NAYpOCGB7lRFn55F+0Ap52LRG
-         X+t+mIYQiaecSubr+3/MA6QNR4Pvmml4oUqWZEh12dqTAS75T4ULF6T9qJphYQ2NQ67r
-         UY4HnywlYotcrG25XeTW5OKpZUdAsGzZ91iLsj29Qq3PD0gd7LlbhUDBW2Gx39VPUb3/
-         mu9sM3AudjEj/qtV90pztajS//59AWHkSw/S5WEOGeM97t6SdL5+xspO6nW8Kul2tYkK
-         fQlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQE1rUkeXJSdu2gqVnLn+zRoONLMeGvas4fGZZ3NV+QftkLK6jmjfKDQiWeuiX3FKmq4BYU+hxBcpliQfYEdB9SVy05Q==@vger.kernel.org, AJvYcCVNKdgUdQanfxf502lDkLfAy9iTV3O2jdE2YkwuGlpOLxl32LgwEVanZgP+TTxIfHJVQ0isSaJSyF7HWrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0xNGestTiLLnDxBrEN89hwx0jlM2FMEIg7OtdGi4mQEfTKFBQ
-	yQIgWxKtWyZYaNZCXAmrzBppAH9CmKVQaFGgVgrm2sCzd3q/7yhP
-X-Gm-Gg: ASbGncurh6WZpVfUlbL374cploHkv7h5P1iV07fqvrVlt24oqU4tHycgG2Ln+3BEZzB
-	rboI+OAAjdwpuG4ddVrWmMhwtp8mstt/olook4zBEgfwj3Nz3TkiTEj9TX3Q40pMeAsDbUi4neJ
-	80NORIV6438YIUrUP6wJHXyPdzZoR8f641hkn2F2CGYfvvhNqQCm+lOFUlQ5Ewtek6YKoTseLsP
-	HuSGJT+WnTm3mFD9D9kHoViga3GSAoDCnsYOiT73tyOI9N+pFqg0ktLlHhYVXEoUSpfeH/rlXOL
-	Xbqvhm+l/OX9mDxMyXZ/+9DcNJdVTy1PHvorAAYdpxHL
-X-Google-Smtp-Source: AGHT+IFx6cv+c0oNxC2iGBIlYeRWIPDze1mwvT89CZ2P13sqvbzvJLPbgDA0AnoPelBczR7Z7odsFA==
-X-Received: by 2002:a17:902:ce02:b0:224:1935:fb91 with SMTP id d9443c01a7336-2292f975776mr32894085ad.27.1743233606157;
-        Sat, 29 Mar 2025 00:33:26 -0700 (PDT)
-Received: from [192.168.1.26] ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eedea62sm30257645ad.55.2025.03.29.00.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Mar 2025 00:33:25 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-Date: Sat, 29 Mar 2025 04:32:29 -0300
-Subject: [PATCH v7 12/12] Documentation: ABI: Add sysfs platform and
- debugfs ABI documentation for alienware-wmi
+	s=arc-20240116; t=1743233562; c=relaxed/simple;
+	bh=zl50PSAP+Yh901QF+MwN7P4o1BCnhPRvAAdmTF4TlG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ae3LFrcfnr6zLw0ukSYMC+LILDOy2slp5M1J9lUiEfP+Szt7bPW90URWsKMncPbkd25+/7yHHAxUqlBqwMux8TebpKPS7EuEAPTYILYkcPQrnx8GEc/ABcNdQKulVpQtNsagouAwILPKQxhSYz7bqa8oWkcijVstdhr/ikYjE/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZPpxk2XYQz1d0tV;
+	Sat, 29 Mar 2025 15:32:10 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id B359E18010B;
+	Sat, 29 Mar 2025 15:32:36 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 29 Mar 2025 15:32:36 +0800
+From: Yihang Li <liyihang9@huawei.com>
+To: <martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <liyihang9@huawei.com>, <liuyonglong@huawei.com>,
+	<prime.zeng@hisilicon.com>
+Subject: [PATCH 0/5] hisi_sas: Misc patches and cleanups
+Date: Sat, 29 Mar 2025 15:32:31 +0800
+Message-ID: <20250329073236.2300582-1-liyihang9@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250329-hwm-v7-12-a14ea39d8a94@gmail.com>
-References: <20250329-hwm-v7-0-a14ea39d8a94@gmail.com>
-In-Reply-To: <20250329-hwm-v7-0-a14ea39d8a94@gmail.com>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Armin Wolf <W_Armin@gmx.de>
-Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
- platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
-Add ABI description for the alienware-wmi driver.
+This series contains some minor bugfix and general tidying:
+- Add host_tagset_enable module param for v3 hw to show only one queue
+  capability to the kernel
+- Ignore the soft reset result by calling I_T_nexus after the SATA disk
+  is soft reset
+- General minor tidying
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
- Documentation/ABI/testing/debugfs-alienware-wmi    | 44 ++++++++++++++++++++++
- .../ABI/testing/sysfs-platform-alienware-wmi       | 14 +++++++
- MAINTAINERS                                        |  2 +
- 3 files changed, 60 insertions(+)
+Thanks!
 
-diff --git a/Documentation/ABI/testing/debugfs-alienware-wmi b/Documentation/ABI/testing/debugfs-alienware-wmi
-new file mode 100644
-index 0000000000000000000000000000000000000000..48cfd4d0b002efd7b68d9c1d3aa91a3a05f49db5
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-alienware-wmi
-@@ -0,0 +1,44 @@
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/system_description
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes the raw ``system_description`` number reported
-+		by the WMAX device.
-+
-+		Only present on devices with the AWCC interface.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-+
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/hwmon_data
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes HWMON private data.
-+
-+		Includes fan sensor count, temperature sensor count, internal
-+		fan IDs and internal temp IDs.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-+
-+What:		/sys/kernel/debug/alienware-wmi-<wmi_device_name>/pprof_data
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes Platform Profile private data.
-+
-+		Includes internal mapping to platform profiles and thermal
-+		profile IDs.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		RO
-diff --git a/Documentation/ABI/testing/sysfs-platform-alienware-wmi b/Documentation/ABI/testing/sysfs-platform-alienware-wmi
-new file mode 100644
-index 0000000000000000000000000000000000000000..4877b3745f4e5b503376d375bf48464250328ce2
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-platform-alienware-wmi
-@@ -0,0 +1,14 @@
-+What:		/sys/class/hwmon/hwmonX/fanY_boost
-+Date:		March 2025
-+KernelVersion:	6.15
-+Contact:	Kurt Borja <kuurtb@gmail.com>
-+Description:
-+		This file exposes fan boost control for Dell gaming laptops with
-+		the AWCC WMI interface.
-+
-+		See Documentation/admin-guide/laptops/alienware-wmi.rst for
-+		details.
-+
-+		Integer value in the range 0 to 255
-+
-+		RW
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8304c6fddfeed0fc4c26bcab767f401c413c9589..95ab2d002e4aeefa09e4ad83405674991509f08e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -797,6 +797,8 @@ M:	Kurt Borja <kuurtb@gmail.com>
- L:	platform-driver-x86@vger.kernel.org
- L:	Dell.Client.Kernel@dell.com
- S:	Maintained
-+F:	Documentation/ABI/testing/debugfs-alienware-wmi
-+F:	Documentation/ABI/testing/sysfs-platform-alienware-wmi
- F:	Documentation/admin-guide/laptops/alienware-wmi.rst
- F:	Documentation/wmi/devices/alienware-wmi.rst
- F:	drivers/platform/x86/dell/alienware-wmi*
+Xingui Yang (1):
+  scsi: hisi_sas: Add host_tagset_enable module param for v3 hw
+
+Yihang Li (4):
+  scsi: hisi_sas: Use macro instead of magic number
+  scsi: hisi_sas: Code style cleanup
+  scsi: hisi_sas: Call I_T_nexus after soft reset for SATA disk
+  scsi: hisi_sas: Wait until eh is recovered
+
+ drivers/scsi/hisi_sas/hisi_sas.h       |  51 +++--
+ drivers/scsi/hisi_sas/hisi_sas_main.c  |  91 ++++----
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c |   2 +-
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c |   6 +-
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 283 ++++++++++++++++---------
+ 5 files changed, 264 insertions(+), 169 deletions(-)
 
 -- 
-2.49.0
+2.33.0
 
 
