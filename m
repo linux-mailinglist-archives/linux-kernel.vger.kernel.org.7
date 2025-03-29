@@ -1,213 +1,108 @@
-Return-Path: <linux-kernel+bounces-580889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC53CA757B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 20:32:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DBFA757A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 20:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD208188A0F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978A916CB3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD16E1DDA36;
-	Sat, 29 Mar 2025 19:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01821A5BAE;
+	Sat, 29 Mar 2025 19:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=labcsmart.com header.i=@labcsmart.com header.b="T0Vm1s/V"
-Received: from 5.mo576.mail-out.ovh.net (5.mo576.mail-out.ovh.net [46.105.43.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="mbe2UgFK"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E66190470
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 19:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.43.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18C617A31A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 19:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743276715; cv=none; b=ehW5TyKCyMjAQmbdjIuyp75gdEaeH0gr5jFycPJ6841C5s3WBP3DPG43K6jApE/qqcO8cJCcXfZhp4dQRo8Kq5rxyQessCD7o89UcUDwGDbZsyb0SR1IRlDa2y7U74hvhFCPgvNP4pz712pGERwereHZXrZ4L+yfQf2KcLjaqQM=
+	t=1743275230; cv=none; b=ouobqq4sLbVZoSn0FY9jyTjtuvHJkXNddL4YdsfX90ykeihUZVRPQ5afWk16JyiCNcnQir4LK57h5yyv5CetUoJpVQSgSu0X7s5zHeXKwgKq1pPXgKJ3pdILg1kYnqigVU9wagbvFsmf/av2BtQruwBOLBmyBK0BhWwQJroQu40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743276715; c=relaxed/simple;
-	bh=uGnuxLaPa9lafg8GL1vrIXjXYLga4eyTWR5Bm64gm6o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LLR97zO1ncHQEm4+do82inkfJ9reIUYk/7cCe+7mKXiwQozV29T3b1uZ+ouC+Ledl9mftpS6CgIUEINP8iqiRGA24bN95SQx3s4vi2OtnmxzCmSFTIv4w1UEre99mBAPdDyi4C1vng5pskzQDtiRvd/abPNTzF2Eo8nnQZdeX0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labcsmart.com; spf=pass smtp.mailfrom=labcsmart.com; dkim=pass (2048-bit key) header.d=labcsmart.com header.i=@labcsmart.com header.b=T0Vm1s/V; arc=none smtp.client-ip=46.105.43.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=labcsmart.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=labcsmart.com
-Received: from director11.ghost.mail-out.ovh.net (unknown [10.108.9.41])
-	by mo576.mail-out.ovh.net (Postfix) with ESMTP id 4ZQ5Cj0p3jz28wQ
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 18:15:13 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-bnbm7 (unknown [10.111.182.49])
-	by director11.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 9C73E1FE64;
-	Sat, 29 Mar 2025 18:15:10 +0000 (UTC)
-Received: from labcsmart.com ([37.59.142.99])
-	by ghost-submission-5b5ff79f4f-bnbm7 with ESMTPSA
-	id lXD9Eq446GegAwAAx023iw
-	(envelope-from <john.madieu@labcsmart.com>); Sat, 29 Mar 2025 18:15:10 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-99G00370defa65-2e12-46e3-a76d-ab6dc0455f8d,
-                    1AA15D79FD1645C8296C06E669C502FD88205396) smtp.auth=john.madieu@labcsmart.com
-X-OVh-ClientIp:141.94.163.193
-From: John Madieu <john.madieu@labcsmart.com>
-To: sven@svenpeter.dev,
-	j@jannau.net,
-	linus.walleij@linaro.org
-Cc: alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	john.madieu@gmail.com,
-	John Madieu <john.madieu@labcsmart.com>
-Subject: [PATCH] pinctrl: apple: Make regmap_config static const and fix indentation
-Date: Sat, 29 Mar 2025 18:15:06 +0000
-Message-Id: <20250329181506.890043-1-john.madieu@labcsmart.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743275230; c=relaxed/simple;
+	bh=CPIt57KTbw48U5UWIhC/4Sj7Kxrgg20tW/7JGwREow0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kXPZaZlxF/Nc+X6qq7sl1n8vsmKp2p811cQhK/BpeLs+6W6exKgJfwhahhSoETpCUDKnChsHZm3B/DZU4yvSu16ECBy3qi9n7QCenTLnpnAva+kJL+1OrjsVzhHW0G9mvfyXjOWZgwc+rYpXC186o8FccsAxuaUEhMYFeo6lvB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=mbe2UgFK; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d589227978so10200565ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 12:07:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743275226; x=1743880026; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PaGHXcdYFnrdjAPBt/dtHNMzVVLvDagzoTGvwSBAWXQ=;
+        b=mbe2UgFKItYPtsZr9HBaL9Uj1UCCu4KekLD64Hk3kDAJJlhGKtD6sbIR45JCx0HHJG
+         P6LLPbtCqdMR17SfXNAJzJUe1wmvajIz6uI8v3LimwCwtcSefEHlPCgnPb6I3A37T6NZ
+         jsKl/cwPG3vWyZaZBugV1mY8TtHnP6/Ne0pr64ecFbqRg+nEotAjEVUnGi4cSiOhjS3R
+         FVCg7SF8jn8wjfj6Y3KaUBAXX778e2PmUPspQLbaKTW3X2FAD/YJFYvJNnfFAWykUuIv
+         CWHOYNxkYi/tquhi/GHKeZccDhcJd+6J+zU0w/U4gauldQjD/MWcKDWsfhUB7GcaPYFs
+         JRcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743275226; x=1743880026;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PaGHXcdYFnrdjAPBt/dtHNMzVVLvDagzoTGvwSBAWXQ=;
+        b=uE3Bl+r0uwHjznxY2t5XYPWJSOTFVW3a+4dOfJdD3q/Hvmqn/udmqyrTDag02DXLwA
+         QDT4xBXtsKCtbVkoeHN58BJZtKPIoGjt5vCmXLk4hisAYrchDW/bRSdD4KRqSA1Y5wU/
+         GdY6ytiJ5fs9A9u5FHptx1C+gE6VuKLuijrNnGLowR69ARiBI7HOjWFF81I6T32fHK0W
+         17yf4vaQM65FkTdt26fQyw8BlYyp/TVxcXr17O3KpTti3sNGyiABrHAaD5S49tfggjk6
+         RNviYKBWKCu2shnbrNsIn6gIuCiDUTddfMHkYvK9EAAdf+/X5nxlfkX7ljAiXRG7H+r6
+         XrLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZPal27H/isUpghoKvFs0mFNfAdo7K6sSrIIIWoDDWPSn8X1Ha+GtTJxX6ac0tGJreCUn+HZedF6M4h8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvQAJVv6qVjvv0LNQsNakFXbzoc6VKKtMldMAkT4kPeM3qDLVS
+	vYzwCQ/Qdb7lfdxqcoeoJQfi6UigLmnorgGZixUzQAkYIbB/YLwJHAv02LebtJ8=
+X-Gm-Gg: ASbGncv1m1n03ofZ508XO7GosMGXXqVOf3F0mbeF7guWEfk2yTXDTAQT59l+5LZ5I9H
+	Ba8HSUTOhKNQYKcXMmfkgBiVCZqlWHnmJTyC2ClHeIb4zcBWb5iCEeurDgPW3w9M831fN9tBtOY
+	jUIvdEd7hg/ioyl1vsBXmMzDr8P+bR2PrKYnlHFCY627lpd3BHV97Q+y4k47ztFq5bvNE7tovAz
+	MwNO5Q2szOt4EtVb/e3t1TimTNyetTaDEYwHg8+wmTOwd6OkTZtYCcW0BDerdtVz59QvUNC4sCt
+	6TC3Sez5Aa6jQgFJa30i5nknKYqxqkipn5VukrXzmA==
+X-Google-Smtp-Source: AGHT+IGGI5rUj29WJPXqMbVotuqKmnVzBYiicrC4WVNgcPFELxFvIKEqhvm7OfHT2pS0TayTuv9AmA==
+X-Received: by 2002:a05:6e02:4401:20b0:3d2:af0b:6e2a with SMTP id e9e14a558f8ab-3d5d6c832eamr47389485ab.5.1743275226428;
+        Sat, 29 Mar 2025 12:07:06 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f46489e032sm1007193173.124.2025.03.29.12.07.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Mar 2025 12:07:05 -0700 (PDT)
+Message-ID: <9d8f1460-6317-4e8a-ba90-53e35b41f235@kernel.dk>
+Date: Sat, 29 Mar 2025 13:07:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 4085046338809924234
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeegkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeflohhhnhcuofgrughivghuuceojhhohhhnrdhmrgguihgvuheslhgrsggtshhmrghrthdrtghomheqnecuggftrfgrthhtvghrnhepgeegteetieettdffleeludeliedvueeuuefhveffhfehtdehiefhfefflefguddvnecukfhppeduvdejrddtrddtrddupddugedurdelgedrudeifedrudelfedpfeejrdehledrudegvddrleelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehjohhhnhdrmhgrughivghusehlrggstghsmhgrrhhtrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeeimgdpmhhouggvpehsmhhtphhouhht
-DKIM-Signature: a=rsa-sha256; bh=akVyMKQyCxWZ3yLiQHM8pT2PU+T/9mwnNjkwN1GvFNU=;
- c=relaxed/relaxed; d=labcsmart.com; h=From; s=ovhmo4089092-selector1;
- t=1743272113; v=1;
- b=T0Vm1s/Vrkc1RsJQHrYki+Vr3ubVgaOhtDZs744k67Osex0cxMGi6iFlHHwWn/vqtIKTC93P
- e1VZxhXuFjq2tNtU8IkyAFaJdFJqmVsbUEGGyq9CTzs03Pkkr+6CVnfiJd3EHQVvA3sJIiWQp8G
- z3H/BNoJUOQ1Gq4qJcrHfL8gCaKqQJHnfybZLKx838mt49Bg+CXmbWEekOhzvM6HqxbKewphJAD
- JbpI7fIyADsh+2pmzFirD+dT7wEj6CYcVwUymZ9XlRDevENOV7a5hZsVYxGPgdPZSGmCzgLLnwj
- 42HRqU1sPKlyqcFxY20HYqEYS7B1wY+6abjC+mwJEB5sg==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/wq: avoid indirect do_work/free_work calls
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250329161527.3281314-1-csander@purestorage.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250329161527.3281314-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Mark the regmap_config as static const since it is only used in this file
-and never modified, allowing the compiler to optimize it and enforce
-const-correctness.
+On 3/29/25 10:15 AM, Caleb Sander Mateos wrote:
+> struct io_wq stores do_work and free_work function pointers which are
+> called on each work item. But these function pointers are always set to
+> io_wq_submit_work and io_wq_free_work, respectively. So remove these
+> function pointers and just call the functions directly.
 
-Also fix minor indentation inconsistencies in function parameter alignment
-to conform with kernel coding style.
+Was going to say that the indirect call here is not something
+I'd be worried about in terms of performance, but it's also kind of
+pointless to have them when we have just the single do_work/free_work
+callback. And hence it'd reduce the struct footprint, which is always
+useful. So yeah, I do think the change makes sense.
 
-Signed-off-by: John Madieu <john.madieu@labcsmart.com>
----
-Most changes replace space indentation with tabs.
-
- drivers/pinctrl/pinctrl-apple-gpio.c | 30 ++++++++++++++--------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-apple-gpio.c b/drivers/pinctrl/pinctrl-apple-gpio.c
-index f861e63f4115..0f551d67d482 100644
---- a/drivers/pinctrl/pinctrl-apple-gpio.c
-+++ b/drivers/pinctrl/pinctrl-apple-gpio.c
-@@ -66,7 +66,7 @@ struct apple_gpio_pinctrl {
- #define REG_GPIOx_DRIVE_STRENGTH1 GENMASK(23, 22)
- #define REG_IRQ(g, x)        (0x800 + 0x40 * (g) + 4 * ((x) >> 5))
- 
--struct regmap_config regmap_config = {
-+static const struct regmap_config regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
-@@ -79,13 +79,13 @@ struct regmap_config regmap_config = {
- 
- /* No locking needed to mask/unmask IRQs as the interrupt mode is per pin-register. */
- static void apple_gpio_set_reg(struct apple_gpio_pinctrl *pctl,
--                               unsigned int pin, u32 mask, u32 value)
-+			       unsigned int pin, u32 mask, u32 value)
- {
- 	regmap_update_bits(pctl->map, REG_GPIO(pin), mask, value);
- }
- 
- static u32 apple_gpio_get_reg(struct apple_gpio_pinctrl *pctl,
--                              unsigned int pin)
-+			      unsigned int pin)
- {
- 	int ret;
- 	u32 val;
-@@ -100,9 +100,9 @@ static u32 apple_gpio_get_reg(struct apple_gpio_pinctrl *pctl,
- /* Pin controller functions */
- 
- static int apple_gpio_dt_node_to_map(struct pinctrl_dev *pctldev,
--                                     struct device_node *node,
--                                     struct pinctrl_map **map,
--                                     unsigned *num_maps)
-+				     struct device_node *node,
-+				     struct pinctrl_map **map,
-+				     unsigned *num_maps)
- {
- 	unsigned reserved_maps;
- 	struct apple_gpio_pinctrl *pctl;
-@@ -147,8 +147,8 @@ static int apple_gpio_dt_node_to_map(struct pinctrl_dev *pctldev,
- 		group_name = pinctrl_generic_get_group_name(pctldev, pin);
- 		function_name = pinmux_generic_get_function_name(pctl->pctldev, func);
- 		ret = pinctrl_utils_add_map_mux(pctl->pctldev, map,
--		                                &reserved_maps, num_maps,
--		                                group_name, function_name);
-+						&reserved_maps, num_maps,
-+						group_name, function_name);
- 		if (ret)
- 			goto free_map;
- 	}
-@@ -171,7 +171,7 @@ static const struct pinctrl_ops apple_gpio_pinctrl_ops = {
- /* Pin multiplexer functions */
- 
- static int apple_gpio_pinmux_set(struct pinctrl_dev *pctldev, unsigned func,
--                                 unsigned group)
-+				 unsigned group)
- {
- 	struct apple_gpio_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -237,7 +237,7 @@ static int apple_gpio_direction_input(struct gpio_chip *chip, unsigned int offse
- }
- 
- static int apple_gpio_direction_output(struct gpio_chip *chip,
--                                       unsigned int offset, int value)
-+				       unsigned int offset, int value)
- {
- 	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
- 
-@@ -282,7 +282,7 @@ static void apple_gpio_irq_mask(struct irq_data *data)
- 	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(gc);
- 
- 	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE,
--	                   FIELD_PREP(REG_GPIOx_MODE, REG_GPIOx_IN_IRQ_OFF));
-+			   FIELD_PREP(REG_GPIOx_MODE, REG_GPIOx_IN_IRQ_OFF));
- 	gpiochip_disable_irq(gc, data->hwirq);
- }
- 
-@@ -294,7 +294,7 @@ static void apple_gpio_irq_unmask(struct irq_data *data)
- 
- 	gpiochip_enable_irq(gc, data->hwirq);
- 	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE,
--	                   FIELD_PREP(REG_GPIOx_MODE, irqtype));
-+			   FIELD_PREP(REG_GPIOx_MODE, irqtype));
- }
- 
- static unsigned int apple_gpio_irq_startup(struct irq_data *data)
-@@ -303,7 +303,7 @@ static unsigned int apple_gpio_irq_startup(struct irq_data *data)
- 	struct apple_gpio_pinctrl *pctl = gpiochip_get_data(chip);
- 
- 	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_GRP,
--	                   FIELD_PREP(REG_GPIOx_GRP, 0));
-+			   FIELD_PREP(REG_GPIOx_GRP, 0));
- 
- 	apple_gpio_direction_input(chip, data->hwirq);
- 	apple_gpio_irq_unmask(data);
-@@ -320,7 +320,7 @@ static int apple_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 		return -EINVAL;
- 
- 	apple_gpio_set_reg(pctl, data->hwirq, REG_GPIOx_MODE,
--	                   FIELD_PREP(REG_GPIOx_MODE, irqtype));
-+			   FIELD_PREP(REG_GPIOx_MODE, irqtype));
- 
- 	if (type & IRQ_TYPE_LEVEL_MASK)
- 		irq_set_handler_locked(data, handle_level_irq);
-@@ -429,7 +429,7 @@ static int apple_gpio_pinctrl_probe(struct platform_device *pdev)
- 	unsigned int npins;
- 	const char **pin_names;
- 	unsigned int *pin_nums;
--	static const char* pinmux_functions[] = {
-+	static const char *pinmux_functions[] = {
- 		"gpio", "periph1", "periph2", "periph3"
- 	};
- 	unsigned int i, nirqs = 0;
 -- 
-2.25.1
-
+Jens Axboe
 
