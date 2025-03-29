@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-580672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9777A754E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:55:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F53A754D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:47:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6697016CA36
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C83F3AD2AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C98198A08;
-	Sat, 29 Mar 2025 07:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F5B18C345;
+	Sat, 29 Mar 2025 07:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gMqSk2Sb"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jGerbvBw"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B399E18BC36
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 07:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDFD2D78A
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 07:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743234940; cv=none; b=X0aI2MKnltzrdWaFoE/eveWvLOaLWaZF90wlYH8KHrfEfQO6LVU5A8eU2UiFrBiBepgOSglgNostH9L/aUI5ga28wZ5UItmKxB7f0QY5fjkqA92U5yP0k5v3J+ObgoLKfIbBYw9nNesl2Tw9lJf1zwuEzRMzOues0iSPB3QWh2w=
+	t=1743234467; cv=none; b=IqysLQizz0rA5PCoZR3Y7SXx7+2o3C2e7jlWnHMrqyKAv2+fU7jBgTypXeiT825J+IiHLJUWB5EVwfU/4m0s+phhaGxOmz+eH5/IcZjEKh00rJJEkLVjkWLMWmIUopxp2OBq723pzo+pX1f+xIdq/FOqq4ACziUiIa7OTOj7y8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743234940; c=relaxed/simple;
-	bh=duZT+wz2v9SXSXUndHbCY9Wa4VglcZG5ovPv+XecIc0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ftJfs4Byooi75viNhDllYnrzpLNY/eSzzsFFyP6vOeBdosC1a0IFRXzv6eqgYGr6d9TP7B4r0ch0XCv+Q2h+U2jK85eXc/hoYOsA7xRlLp9f3UxgPmbG/2hzrYXg2ChLxQElSmZBIeh7YTK8nrD6fTxrCAN9vEGAzlJT27I4oOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gMqSk2Sb; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id yQtAtsN3Ol9slyQtbteVkC; Sat, 29 Mar 2025 08:46:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743234384;
-	bh=388xrznfvx3yUimg5kNws/DNZuCQE1j80sB1rbo3xPc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=gMqSk2Sb96QmihcEfm2HH+vPYGVUcku53uvdvYXABZH++CMEHLYHCGS41nAOtVnnx
-	 hdyCnNSeMgSTKbDo0nmbONgBqUrLnruKolB7Coxuy+XgG4J0Csg1vAd7+ll5rte7hI
-	 DIXcQva1JvEQL8EjYqZiP80ZnqjZa/sf3rFqMCZZ0IxAYheyrfpOTNXxe81LbG/LE7
-	 Te4kQ0JvtSWczjdjEoFS3qzrlVba4EXxKUgoj53l71j3b5KwrSpCi2AhIjqczF7C2H
-	 YF9yRqYzzb5RaMTSgWtnZ+l0N0vZFBVGc0uNLf/91tG0HuMbKEZMSnG/Dr44kf5Mti
-	 YujWgPBiN4FMw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Mar 2025 08:46:24 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lee@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	beomho.seo@samsung.com,
-	ideal.song@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] mfd: exynos-lpass: Fix another error handling path in exynos_lpass_probe()
-Date: Sat, 29 Mar 2025 08:45:48 +0100
-Message-ID: <d224865a16b50498279b044a819e1e187d01bb28.1743231856.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1743234467; c=relaxed/simple;
+	bh=C20d2b1ecWHafw0RsWP9pzHTkp/strdWqSaK2TJDC5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hv9D2nnpvNLsO5oVYyCds3bWasFwOHLjhNS3+bt3NjhCsg4XzXtOiwEA4GP7CU6CMZ585elSc4gT1UG6Ylb8ot1+iatIa1jFak97Ww1E/Jw9q0GLAuX8JgjriibhvCs4Vju0OTnbbKzffNlZaktjTTod8lXrUcxWPXBUqr8/THQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jGerbvBw; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=C20d
+	2b1ecWHafw0RsWP9pzHTkp/strdWqSaK2TJDC5k=; b=jGerbvBw/UNqEpxqkoLM
+	JElNJ6gGmF9qBAK+u3uCG6o2VRhfEq9WKnRryoBU6aNEWYcnIvfGP2S8DdtHBPuU
+	HhtXN3dWLsoR1/6UJM+CXFSGCWjJhlXYR6IOoC7XGOvrXtaJwRhmhHtIxy8s9o6n
+	1jWRIfd2U9Odk4gT9HMnuManYumf6NaT7KrrxIePHmLPTJQATE8M1E3h9EYJqxkr
+	st8NHPo6BfRCcF+tsmVdTEQXpmSVIV5lraGOoJ0zC703zrtKh2xGQGfQc98pJtnv
+	LIsr6kFK/rxy0Q0JQJMzgzX4rppRsZeZznUiFB93+dcfzJ3ONG+psvTxNDVHilUK
+	dQ==
+Received: (qmail 508034 invoked from network); 29 Mar 2025 08:47:42 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Mar 2025 08:47:42 +0100
+X-UD-Smtp-Session: l3s3148p1@S/3iZnYx8w1tKjJV
+Date: Sat, 29 Mar 2025 08:47:42 +0100
+From: Wolfram Sang <wsa-dev@sang-engineering.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Mark Brown <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: drivers/mmc/host/renesas_sdhi_core.c:951: undefined reference to
+ `rdev_get_drvdata'
+Message-ID: <Z-elnqikbmhzTbGn@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Mark Brown <broonie@kernel.org>, kernel test robot <lkp@intel.com>,
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+References: <202503290554.zASQT70Q-lkp@intel.com>
+ <TY3PR01MB11346FEE53574DBF768BA9B8686A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <Z-eeiMFsQQNMt2nn@shikoro>
+ <TY3PR01MB11346D7FE2EC7FA3631C48A0C86A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <Z-ehAHFRK_WaGVJp@shikoro>
+ <TY3PR01MB11346540D1D1A2FD128A5EBDF86A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bLjOGq/+oqxCwi/V"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346540D1D1A2FD128A5EBDF86A32@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-If devm_of_platform_populate() fails, some clean-up needs to be done, as
-already done in the remove function.
 
-Add the needed error handling path.
+--bLjOGq/+oqxCwi/V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/mfd/exynos-lpass.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 7fd8585ba35a..9f2601e4e583 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -118,6 +118,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct exynos_lpass *lpass;
- 	void __iomem *base_top;
-+	int ret;
- 
- 	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
- 	if (!lpass)
-@@ -143,7 +144,15 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 	exynos_lpass_enable(lpass);
- 
--	return devm_of_platform_populate(dev);
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		goto err_remove_exynos_lpass;
-+
-+	return 0;
-+
-+err_remove_exynos_lpass:
-+	exynos_lpass_remove(pdev);
-+	return ret;
- }
- 
- static int __maybe_unused exynos_lpass_suspend(struct device *dev)
--- 
-2.49.0
+> Not sure about Regulator should do same for sytems that have Regulator undefined?
 
+I am aware that regulators could do this, dunno why they don't. Maybe
+noone did it so far, or they have other reasons. Beyond my bandwidth,
+though, so I am okay with your approach + "if ARCH_RENESAS".
+
+
+--bLjOGq/+oqxCwi/V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfnpZoACgkQFA3kzBSg
+KbZ9tw//XC99uM89dwHbqln1OcMY+RdcS1HwWvrNvHXHJnaJnVt9H6LaOUJuEoD0
+xHbhWGoftAfZ8rcCD3S5KK/CE0jpgXQQUxoL6x+xfwJjTc6Aw3wyDLtCu5q138L5
+WPb4t6UqsccGB+PAycKVfeDs6wLMNtLleOUaW/hZ46iK8hD63QdI0QN/xfenCSdQ
+z7EXG4euhvYlEELYLDKF8OXrN5AVb2VuUmsV0tSN/spk2US0Zntjkal2hot0uNMD
+fwgww7ubLXF5KzHIO3GtAGIEsuqQdaf6wjduP1tpJkjTwZDsEOWcbqmt3uNP116s
+SjHm/G5/yFE4NfUv95tENNcWWriOuHWcStvoq2kcNoPDq/xaaWFHHxeIO9gLDpOK
+Zya6MuYkKdcBkrkTaIhYM80NrgaPITkHx3DBp1KE7P+Y/i4hW3Y1cwVtBBZTPw7U
+55zs0Ewg6DpHqm3B85VFqqwFNhmfpTd+88eyU7uQqWHeLQIAf8+gA7pjzMsV1CNq
+PnehXcPexMfTEv1Q8pf+cgLdnRrziM7MSMNGshZZQSXbBrZ7a3o0zD9WwWTb4ZmE
+VSQwuts7Fl5rqET9je7n749ee83MfSZEfg9wG6wQnP6n1QUOOd8T6JAl39xoa9sP
+3vbDCoqYEsjD2nynE9fBqtPtp4tkyMtQd/oiWYcw0Zgun2dbJ1w=
+=2Pbx
+-----END PGP SIGNATURE-----
+
+--bLjOGq/+oqxCwi/V--
 
