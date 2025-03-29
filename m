@@ -1,104 +1,109 @@
-Return-Path: <linux-kernel+bounces-580830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34BAA756B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 15:32:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E755A756C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 15:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB1F33A8838
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53CDE170F8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 14:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06E41D6DA9;
-	Sat, 29 Mar 2025 14:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4BC1D6DBC;
+	Sat, 29 Mar 2025 14:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="LiSogFoV"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HYJUWp1I"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C451C3C07
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 14:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E119326AEC;
+	Sat, 29 Mar 2025 14:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743258757; cv=none; b=L5YaiGCfyZHLZ0WwCvajBA5DB+ifU05tWSbQB3cqOY7tDfphn/CXX1/L4Hywhd9bhUbQ7+Oo/2PBWGTxihzHXvPx9F9+vnhsmxUaW9HBeMcfvbfOohqObmUegvJRA72i4qGYVNWVOovEUrV1nrAE6anCDWoOQ/M0OchmQoc84dw=
+	t=1743259107; cv=none; b=O+7P/MGDIwyHUQZY1XUIy7XTnzjWY5/ImTFpNQ0Q2zdHurnwCrCnuVzMOgER514xZMmiVAuuj97n28by14QFqxhB+RAjKZpIexgiI+PmIgO+9kH+kTV+OShJwpUkvEA7UGmSAjmdesANDzVMYMCWYVI+v53ZLTUTwgxgsijvy4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743258757; c=relaxed/simple;
-	bh=Cf8QRuBHzGTj3EpbgfOpI8Dc180sRYRxMhwtcFoAbHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BquufaW7G4jpkkzYnE5X1kZINkCMcewP3IQRwPGOpUgBZVD2V/MZ8W+PZ18PZ20/OZVfM1MRiWyhOUQmQFnrC8aiye5l4q0tZa/d9DPSoFg0DZV1lDcTL+RdpuPQ5o3rlzeR4mdzc4HZ2N/Davfw/pILrAbzB+DFF1xkU3B/3TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=LiSogFoV; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c54a9d3fcaso298503485a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 07:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1743258755; x=1743863555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cf8QRuBHzGTj3EpbgfOpI8Dc180sRYRxMhwtcFoAbHM=;
-        b=LiSogFoVXFIl0+dfIjFBFpSHXHlPQFOIraqW/LNm9dhMhK6Ylh59+Pbvqgl+qWhbI4
-         LqHFJHozYoaoX+ARyXD39qf/0mhY4lBwHIig9wBu/URxp1Y/oBFYNVVV5n7yQEsZ4VMm
-         m6QmATA6fPyEKdSDk1vlRif2bCLx6kj6566aK7Ndq5bxxkZZqzs3DBcpsPX1u25gxKUo
-         48cUzpYVLmu/VkveSZW0TGllESo3Ao7IUgE2j0/IfmWX55gmw9665V+7KBKs7gY/SAv6
-         5Geepe4F2+wHyCvH42SXgtgQET9gzVFz8XJS534kICmNQGB7DyefzWUvBP7/MiXr6J8I
-         eKkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743258755; x=1743863555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cf8QRuBHzGTj3EpbgfOpI8Dc180sRYRxMhwtcFoAbHM=;
-        b=kkzAvHvyrp9KSDmK0yaQd88xMWaAFFPruW8DxgHe9RE0pHa4VbwxNmuN3JsC7lA7jI
-         s3RXO8XvEUg4JcGZat/+45dJDGj0Nd5cgPaYgDOEoR4btvzM5eiJ9cpaOO5WKuZnlPvA
-         kbhVBPw6smuAr5z8by0Ei+5/dTwWys0Jpn5X2mcU56P6m6pWba77nxJbnz30tIApcW6z
-         3S5XTxNE213RDzP4hICuCpWfUn5vRFNdQuSY2nIIpJP/cmhxFaDoHHP7OmliED0LajcX
-         x12mTwi4qJ0Gw/YtYz0CVdyNNF3eKiF3obVPgYLV9AsPr1acxyj7wg/EgotD+/mJLRr4
-         uAmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5hBIwLUvPZZ55LZ8Bb/eOa34fxyAp73naGUr/AGFDtJJLxShxuNoTChNtjCs3lY8v5bhRNk/pCBMJZAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySsSmbilq2BApJlk2aIzR11iDZE96XJh1MN5JoddihLlxOmVw9
-	K/63aQaHV6dtU6vGCuauVKGmvv7AWYmB7eyX7c6Hz+cCqxZdvTqomIYufBNh/A==
-X-Gm-Gg: ASbGncvwwaol8BPSvzJdU2dOV8f7mCdqjsH+IJRa9UGjoCsbvhCD1BpmBkdmY0v4bLa
-	Mw4PtdFL6IL+6E9PA8gRcVgS0JTGuElqfoLiTHO9F3r8IRA8T3qyupz6KhmYybYBhwTpAdD6rbh
-	pWTxxsp63Y9ZW+hd5E9QpfTdGL68LHwZXS0EHAFiiQQWmMkbKrLvYrL2TGf9mjPVYS/xFD5SzsX
-	0yj2rwSbdu8v/c1RWsulsB3y56nrjFP5ebJ9sITS3bP8cnJTVDBiyAnE3C8fs6McFAm01LLMatk
-	DNhVgKNJ5a4Gyj0WTP92yDOMGdxnVj5heIEGiizr54w2LTlUErKrZhM=
-X-Google-Smtp-Source: AGHT+IF0cQy0jr4KMVVkh8U0F52O1lJsPAgFLz9t15YfkUtmvE3yApsTmKKf0mX9v2iGYZlTkuZukQ==
-X-Received: by 2002:a05:620a:19aa:b0:7c5:5d32:2612 with SMTP id af79cd13be357-7c690890ef3mr378710685a.58.1743258754701;
-        Sat, 29 Mar 2025 07:32:34 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::df1])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f7659ad8sm249276685a.22.2025.03.29.07.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Mar 2025 07:32:34 -0700 (PDT)
-Date: Sat, 29 Mar 2025 10:32:31 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Mingcong Bai <baimingcong@loongson.cn>
-Subject: Re: [PATCH V2] USB: OHCI: Add quirk for LS7A OHCI controller (rev
- 0x02)
-Message-ID: <4bbbf646-318d-4805-98df-67eecf040de9@rowland.harvard.edu>
-References: <20250327044840.3179796-1-chenhuacai@loongson.cn>
- <208f5310-5932-402b-9980-0225e67f2d66@rowland.harvard.edu>
- <CAAhV-H4aitynD20EEWQhF_uv79+1nw7sKxzd7c_+009oY63tEg@mail.gmail.com>
+	s=arc-20240116; t=1743259107; c=relaxed/simple;
+	bh=l+dHcMyev7aJ/DOR2Dral9svlyRLsrbruZjTLse9CBA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JrYfoDcq9P1EAgHmAiAnM9PXsNKpB4TAfaHwphcmbaVGlYuubQtEcegs0W2nvGMDJkmT8sCby+XkHbLzO6SqE6eBZwiY5pieLif2L+mSX67auwWOiSH/3R/WaIu3JCm34BjyFrIILpxC28KSDDUifI6GzO9yFvw8a2uURSTg2h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HYJUWp1I; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id yXJ9tDUS38XbxyXJCt8j6b; Sat, 29 Mar 2025 15:37:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1743259035;
+	bh=jNo5sigsMldVErhuF43kHZ10y6ehCb/yTyOsz8Q29KI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=HYJUWp1IiRVUImtTcz4xpyR5HquyI7Yy6mqzQ2kJKjlUzbNTJnzVageYfxiCfWGqz
+	 ziJoya6pu3lLcWQpZb3NBBqMzHI+hoy5qWn7hs1rIkTgdlhLJdDc0R9PK6r5LumU4t
+	 BY7GV3BtibcsKMREyGNQq/uysb6LJQZJ/fpsoC4uv6LOpkfqKs8V4LfC2zwVA0z7Bv
+	 Q4YICI33Zcj+SMJT65CQ2Y0zcyTms4tjmlnl5ev9Q1/lRHfTPOybjYpD8mkurndXM7
+	 zjF0fO2+Vu13E2Q87AJZzCSJ5D+vF/yzjoayrt4XiJ1wnkoCFfVrcOfqiPxrPvirQ7
+	 VvEvBURtuiNpg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 29 Mar 2025 15:37:15 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-i2c@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] i2c: rzv2m: Constify struct i2c_algorithm
+Date: Sat, 29 Mar 2025 15:37:07 +0100
+Message-ID: <537d93441ced53bffa6553b8ec93d007e64cb9a5.1743258995.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAhV-H4aitynD20EEWQhF_uv79+1nw7sKxzd7c_+009oY63tEg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 29, 2025 at 04:40:59PM +0800, Huacai Chen wrote:
-> Thanks, V3 is sent:
-> https://lore.kernel.org/linux-usb/20250328040059.3672979-1-chenhuacai@loongson.cn/T/#u
+'struct i2c_algorithm' is not modified in this driver.
 
-Okay, it looks good.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-Alan Stern
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  11027	    646	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  11107	    566	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/i2c/busses/i2c-rzv2m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-rzv2m.c b/drivers/i2c/busses/i2c-rzv2m.c
+index 53762cc56d28..b0e9c0b62429 100644
+--- a/drivers/i2c/busses/i2c-rzv2m.c
++++ b/drivers/i2c/busses/i2c-rzv2m.c
+@@ -402,7 +402,7 @@ static const struct i2c_adapter_quirks rzv2m_i2c_quirks = {
+ 	.flags = I2C_AQ_NO_ZERO_LEN,
+ };
+ 
+-static struct i2c_algorithm rzv2m_i2c_algo = {
++static const struct i2c_algorithm rzv2m_i2c_algo = {
+ 	.xfer = rzv2m_i2c_xfer,
+ 	.functionality = rzv2m_i2c_func,
+ };
+-- 
+2.49.0
+
 
