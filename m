@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-580749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075F0A755CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:03:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716CFA755CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1663B7A5DC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 11:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAEA1893101
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 11:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1F31C5D7B;
-	Sat, 29 Mar 2025 11:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782DA1BD517;
+	Sat, 29 Mar 2025 11:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lscB1D19"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZQlwAFQd"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C571BD01D;
-	Sat, 29 Mar 2025 11:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2FA1ADC7F;
+	Sat, 29 Mar 2025 11:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743246155; cv=none; b=oSI9htOuLc5W/5UMA7pDNrxxe/5mzhaAVKCYix745Q7vnjL0h9iv8ZsRAgISJWxvqv4e/ithYPyzURR+usiSA9lX6rcZ36ICL0pMyIudo/RRmMkRpiM2Yl6cijSu6cccUedAeUGN/B2pv4vLpp26KXdp2wzqys/RDc0ERPMzMSM=
+	t=1743246208; cv=none; b=DVMmkHCwwn0nib4P6+pvV+QkXrWHdtmxWRj649pe7BSNPfrhPub91QUPXiFGKRwubwcFC5HU8PO4QDmXrqdBodUSupz1563LrGcxKnV2NDdSRel8vVKlAeicIOoPKsQ8Ha1zUJ8QSJZBjV5DMvSqOQhQ/d0kTvfdvJla8Z8yi10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743246155; c=relaxed/simple;
-	bh=5R9hzXaHIloEixtk4wd4P/Jbk/Qez0T6Wvo4Cm/eNHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XtdmDiioNn5uUxiueUKgs0ue47AaxZ9HeiaBxjdsYDru2iXMdLd5N+N9hHM0LqYkpF8YP2TPsfSgGbMxEJ+U6atAbYnujR0/ObRGX79wN4ES6RdMVVKqNupqSFUjQCqGUNIkxhtFoh0C5y52ZI9qclZLRveU3te15jTasmyQXWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lscB1D19; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e643f0933afso3294292276.1;
-        Sat, 29 Mar 2025 04:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743246153; x=1743850953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jsq1kdQlFLn6WmPKzWPYjHoxE5hbtalWfUYgVjm4hmU=;
-        b=lscB1D19ZqIVRIVOwjs5cSyT2LELOMSuN0uVlq/m8LXyNK/v9c1ipmhZ4ec8VtTy6f
-         Bsm3Cx/Ej3+S6423wAaytoKpRGBsHro5rLx37VBE3tpP0MuveGVIY92XWFjBOvRUj51C
-         K/LqSb0s54HwvG5KjfZq+xRBVFjE8owuLhs6Fa0XKEpycHRrrWsocAYuVv2+6A2B08XA
-         EUy3mevhLEReQuo5bJR7UDhrO+smuGKzZbF+PtdrcagQqHEZ0/kEwxJjgoeJilvUahdH
-         aRaLiwkFhgAXV86UmH6moAjI3fxgEIiJdqD+oWCoEN7KQEqIC9TALAYCROfWQvuWnLZe
-         AlNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743246153; x=1743850953;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jsq1kdQlFLn6WmPKzWPYjHoxE5hbtalWfUYgVjm4hmU=;
-        b=WxA2mvPOglgvSaYvsos7QR6myReWmcxqRiuUjKRcybuNnOowwWdl7Ehz5pOixb5Y61
-         SPKkBRz9H9gv2U4TH3M3YFF5RFpFHl9Mwl8w9wyi4ctvm2p8lyk5MjtXGHT8IeW+ggoi
-         Y6R465eCib0bregdy9COwBRpEM1vemp1Rg5VTt7Pqxl3tQP5qhtUmbX9RiQaOM77sfVL
-         bbR7LtaOcG/8p0HCOuHoD1c1iTfNm096XZtZ4Yr89VSE46Zjt5SqkIHrsEKg2u+DjCsr
-         cETiolowWfgiYob3AbFSocsq1zr1q37nqnwa7faqiqz0Jy+W9ZzTOv963hxAZRBjklDN
-         AY2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqY9blSAcwmzRmxR2JOitbvGvgu4TPlA7roXwIi2jyKUv3cb7F6fZh0OMIp23t/1RyDg4eLVDL6ck=@vger.kernel.org, AJvYcCXxIyAAibpmxMEIq/ks9wJPAo6B6SygW5WYzrMDkdG6FGOUSabBmie7ZcgqTSR9U9Dh13j9sdyJGGH0FOOF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu5buxT5Xa7xu2pm6emFfiCZyXzBYffJ2YzplGHav5g1jGlXKD
-	gV/bs6UGitvrpzeARPwyz7yuA7l+RYWA6q5Srbf0Vp19XGGwtpeq
-X-Gm-Gg: ASbGncurphxFQFUlQ+HqR6FPFfdMn7GbOWvopnnBz9seqoSSRadZT5SKYq3Ys+jFrc1
-	kJmo3ftdePuxvABhmOLFZhNr/J1zoG0uQ0mfhG/8mtkM4+KCV7IFi0zKP+qcaarkd3K41EDm2Jo
-	+KFDBVN1IZLaWe+v2qNpUh6sTszCXO7O1AGv0geP3bi5CKm7qL6lQZ4YRW383W41xHpohpMEkvE
-	U0xt69r26ua54u6dGcV+94EQ3h0hA807a6k2UqVOUH2sLVJbLTpOF0RHABavPj5I+PxaUXR+fP8
-	ujD3lk6jBxYpgENjWDiUfqKI7xb2nNVIAso=
-X-Google-Smtp-Source: AGHT+IH2l8g9eICi5VxjR50z5D2Rf7QYBYscXVtxEG4K+/DFEXhUzLsi2QX42gax29HRevowTi1+Bg==
-X-Received: by 2002:a05:6902:1581:b0:e6b:7e33:b637 with SMTP id 3f1490d57ef6-e6b82e2e712mr3210420276.14.1743246152740;
-        Sat, 29 Mar 2025 04:02:32 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:2::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e6b8473463fsm324084276.23.2025.03.29.04.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Mar 2025 04:02:32 -0700 (PDT)
-From: Nhat Pham <nphamcs@gmail.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	yosry.ahmed@linux.dev,
-	chengming.zhou@linux.dev,
-	sj@kernel.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	gourry@gourry.net,
-	willy@infradead.org,
-	ying.huang@linux.alibaba.com,
-	jonathan.cameron@huawei.com,
-	dan.j.williams@intel.com,
-	linux-cxl@vger.kernel.org,
-	minchan@kernel.org,
-	senozhatsky@chromium.org
-Subject: [RFC PATCH 2/2] zswap: add sysfs knob for same node mode
-Date: Sat, 29 Mar 2025 04:02:30 -0700
-Message-ID: <20250329110230.2459730-3-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250329110230.2459730-1-nphamcs@gmail.com>
-References: <20250329110230.2459730-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1743246208; c=relaxed/simple;
+	bh=QRi+vISoeC7R9nMc47qoHfWTH/rS+6vpQOSxq+/ZXmo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dywEfgmj9P/waAxk6CWOQyUPMc2HzCLd39K3+Ljyg8Ag72jf4UAtNnanl7krPJNy3dLPf7oy3yj01qPhtVyvjGIK/vJ2KFy+FWEc2tKyJcHAvaLdTc0V+KfKY1EKsuBBoyKzE/MJCm67LbwqA34Bxl5Zoi0M7vkaEZnwDYAM0QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZQlwAFQd; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743246198; x=1743850998; i=markus.elfring@web.de;
+	bh=UUR70NCAx2dPdRQqXXucnaqxLPHJ1CdLth3SGiwjIRY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ZQlwAFQduciEH6xlMOPNNkT6UcZ9qx2mlRW3QQqBHnoaViiUtbqX2nYxAxirQ/Wy
+	 5YobgO+woBzrtvHFJJw2ApugLTuEpWRfNQ5joZzwCOWtx17AZuZq3ZWVCcgqa/eZE
+	 Uepv/a2126lhxbqJkZhTfUGEe8jYEXfQ69hbKzPC4VzlEmXNFYGHgvTmJKWfnJqgy
+	 3xgog0SNuyubhS4Qu2eBonEHl1zeDoPWm8PaUFyL6LrQjxWcTt+y9XpOLfR5T470g
+	 qYC8SDmmMoEsjdoWKc/d8jHuTj+xEg2kPppR1fHRsLXF3XN+ncZ6SRRG850c/L95H
+	 idvFOaJwdCpBDn0HMA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkVsa-1tGwXY24B4-00fYKX; Sat, 29
+ Mar 2025 12:03:18 +0100
+Message-ID: <52f59232-78e4-46c5-b7c0-4719811ec8e8@web.de>
+Date: Sat, 29 Mar 2025 12:03:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Qasim Ijaz <qasdev00@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Jason Gerecke <jason.gerecke@wacom.com>, Jiri Kosina <jikos@kernel.org>,
+ Ping Cheng <ping.cheng@wacom.com>
+References: <20250329002003.36600-1-qasdev00@gmail.com>
+Subject: Re: [PATCH] HID: wacom: handle kzalloc() allocation failure in
+ wacom_wac_queue_flush()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250329002003.36600-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JuAHM+NNLNKqkHJu28wE+K2X20KfUzcuywTOyVR/sfVLkurhTNc
+ JoewbF+WEfRH3bSInIGYqIPJB1xWOoTIy50AE1DV8FuFFNiiRYvfG3a8KVQkh0LnYWTxoHM
+ zN4og/W1zY31jlUibwgCR44rGmvPNSNBZX0M42WrB/ytl112CFaRXR7WPLqf7+hvQrRXAAs
+ BRLL6Kecu+KkhLhSnNAiQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fW4EDglBUa0=;VXf5TctnqQlb61rzE+NR/SJiZWC
+ pxUA/ZH6ETMO8CH2lCv3TGBVpf+DiGoi42Y2p5GwIG0S9jJLtWKLKaapfLxo1TrfuyCNvYuH1
+ CTGf/EyMJjl832IZ2plGoP/+GfXUVLHo6Ez8085XoZiCliV13rKfZXxsz82BTip/SZDPGcFBa
+ S36ynyVVu31lRKASz1cReGU/DVOcJjfSo1fIaIEWc6lKczdpm7h+WMWNkUzL3lus9kY371au6
+ OMyK03RQsVXAN1rRhJse/UgCM9g28TKQV8jb7hI1DsIBIVP5Kl5uEm+7Wk5qvA2zyHx+s0Fh1
+ F/SvCcq/mvgxEZKg+esf14PJEjaht+QzR7L75Z1cbU5HUfeLlZTs4BV9hQcSxHm9nluwsmfRF
+ LBdlnqCNRlPWz5fGHmkEIp1UBsFGqQcdC/DAdY3HhAwRiPWzS80PiD9EKceCEavoPtVRl0ylV
+ rQhs0uEewlkn/7ZUN083Ka1zsVEETlqWPeuzb18R5mGJOWud54FHjbBYU6nKY390zYnb5cTPq
+ 3WTjgIKGkV9xFbUMVAdmxszBxvaMYcmylFaIxGXTr5PyNR1uW20N83eZ8o04YzZVY+Ktxem7s
+ u4ZIJHag4RXLXdegeNcan61mx97o9c0gnZQAWbIRNmoEB1L0ixK1qFaoGeMVK+fQMS6DkPrZc
+ bWlwbQVQyug7vnDkS8gq+2qhMasoHg8oMlM1dUIMrVCooiV/eEBf0vrxMSmFkhRq9DMbkWez1
+ Kj7q//OVYjNzJXpC53JhQWMTCuhOOfkyOrqTDeNWLlBipvzVcGm6NO92ykK5NdfNFCtzM5nQ8
+ JKTUu5KJr+tY3vjaScdJ2qhC2F2vo6u8aeJ0abuJtknLP2kE6sLzu+WRCKZ7O9zIWeEJuxxxP
+ 4nEAkmE/gWMOF5ZjwqnqYwS/JgsMg1DisKGm+Dp8DvLG4hcJ1BE3+0yAw1WX11yB0YKpRUiP5
+ yokAJYtbl7Yp8hUiwFssHlipZeP5l71YSYQ5CGJhRfb9Yo4d9+bGhnhRM7R+gGTGiUMHwc0s5
+ aQPmk4r/mpVJLFK/IJZZ/rmrLt+ccD02Q2vOZVXCUoUbggFbKqMjgl1SdLsmMi7HSQtJ5DSal
+ ud4kFuKzwmSFOe/FsJgZrS5TZTJ8OdBYSC7CBtOMhqklaV8P8tmL9yqjuCRzzEXNuR7X7O0ZH
+ 40u9zkitjm1IF3vJZoeTGWf/X1CkcloinuwCe/rm+xOKizzNajCNejcX38tT7or69xXaaXQAS
+ wvnjtUjcIMQv/WTGpwwpeIfaX9CIxhMpJ0MdemlXQdLqwsa1VoN3dVS0R40KkXek7fWpQgfHA
+ 9MPLqq2f4TGICCQoNgxN/HF6hXPhjZagZcrpG22F2UNCj7vhavyvguYfYKe1/jxOdaSfMsLGM
+ Roqq7qIinu08r+XYc1IbwNb5wnQZ3yiafN4R020PKcU/BwPtqnrnJSyR9kga4uuJPEGbL82Dv
+ hN0CZPGtPKEOcwkAcFFV4ozw88UBqEXSIAuKDBpcyeUSPGJwZ
 
-Taking advantage of the new node-selection capability of zsmalloc, allow
-zswap to keep the compressed copy in the same node as the original page.
+=E2=80=A6
+> from the fifo via kfifo_out(). However it does not
+> check kzalloc() for allocation failure which returns
+> NULL and could potentially lead to a NULL deref.
+=E2=80=A6
+                                            pointer dereference?
 
-The main use case is for CXL systems, where pages in CXL tier should
-stay in CXL when they are zswapped so as not to create memory pressure
-in higher tier.
+I imagine that word wrapping can occasionally become a bit nicer
+for text lines which may be longer than 52 characters.
 
-This new behavior is opted-in only, and can be enabled as follows:
-
-echo Y > /sys/module/zswap/parameters/same_node_mode
-
-Suggested-by: Gregory Price <gourry@gourry.net>
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- Documentation/admin-guide/mm/zswap.rst |  9 +++++++++
- mm/zswap.c                             | 10 ++++++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/zswap.rst b/Documentation/admin-guide/mm/zswap.rst
-index fd3370aa43fe..be8953acc15e 100644
---- a/Documentation/admin-guide/mm/zswap.rst
-+++ b/Documentation/admin-guide/mm/zswap.rst
-@@ -142,6 +142,15 @@ User can enable it as follows::
- This can be enabled at the boot time if ``CONFIG_ZSWAP_SHRINKER_DEFAULT_ON`` is
- selected.
- 
-+In a NUMA system, sometimes we want the compressed copy to reside in the same
-+node as the original page. For instance, if we use the NUMA nodes to represent
-+a CXL-based memory tiering system, we do not want the pages demoted to the
-+lower tier to accidentally return to the higher tier via zswap, creating
-+memory pressure in the higher tier. The same-node behavior can be enabled
-+as follows::
-+
-+	echo Y > /sys/module/zswap/parameters/same_node_mode
-+
- A debugfs interface is provided for various statistic about pool size, number
- of pages stored, same-value filled pages and various counters for the reasons
- pages are rejected.
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 89b6d4ade4cd..2eee57648750 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -129,6 +129,9 @@ static bool zswap_shrinker_enabled = IS_ENABLED(
- 		CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
- module_param_named(shrinker_enabled, zswap_shrinker_enabled, bool, 0644);
- 
-+static bool zswap_same_node_mode;
-+module_param_named(same_node_mode, zswap_same_node_mode, bool, 0644);
-+
- bool zswap_is_enabled(void)
- {
- 	return zswap_enabled;
-@@ -942,7 +945,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- {
- 	struct crypto_acomp_ctx *acomp_ctx;
- 	struct scatterlist input, output;
--	int comp_ret = 0, alloc_ret = 0;
-+	int comp_ret = 0, alloc_ret = 0, nid = page_to_nid(page);
- 	unsigned int dlen = PAGE_SIZE;
- 	unsigned long handle;
- 	struct zpool *zpool;
-@@ -981,7 +984,10 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 
- 	zpool = pool->zpool;
- 	gfp = GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABLE;
--	alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle, NULL);
-+	if (zswap_same_node_mode)
-+		alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle, &nid);
-+	else
-+		alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle, NULL);
- 	if (alloc_ret)
- 		goto unlock;
- 
--- 
-2.47.1
-
+Regards,
+Markus
 
