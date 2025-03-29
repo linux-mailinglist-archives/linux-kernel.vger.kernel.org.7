@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-580862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85300A75769
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:19:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994EEA75778
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFF188A32B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:19:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD5916A673
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED911DE2A7;
-	Sat, 29 Mar 2025 18:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B2nOg2GO"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E941DE8B8;
+	Sat, 29 Mar 2025 18:33:44 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8F670821
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 18:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749142AE8E;
+	Sat, 29 Mar 2025 18:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743272380; cv=none; b=bxyqrdzq0KZn1l0LEne9EcFDPqSECCIlhekoLIZRQW78Em+jKAuqeeJZmVQuJd7wAFMTUTOe82EmVaY92VckuUBV90Idh9k/YWWzVnk8s2RN6ooXBWD6HW5IP1Dnhpu5vQvWRQ9NYc2ji5XY3cV90U20u7NpgJCgAT6M30DO5VI=
+	t=1743273224; cv=none; b=CmAX8sbMqVwseTi8IKxFNCDP8Wv4BobGVQIP5iMKRQCBseOxDrJLGWaJL337bfB0L3SvBKwbiRbVAkSQxFTVK41+cgj24JVIzmJSMO67QTGXhFAWLbnEdIfelqCVGMpnd6ZoOxFWuC1g6cSNzua3zSYN/ZbNJnMbCn1N+oHRyw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743272380; c=relaxed/simple;
-	bh=sFdOZX1pb/yqN0Jss7k63caIvwp9BeCbNz+hWl1QYDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jVGZSHbd6KaySBvOKCeP7r6ta3C1YXEscJuDhxlk8B5l0G5S744WBdFn8W1RY3yjj1G8kmEHubAIU4IoP99ijxBOW/0VqLoYjKZbOSTo688FXDIoRELeKTjWmKpGLxgG1soSHrPhSK/lmvL+F3FN8T0F/WgjGZgOybqiFRprT9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=B2nOg2GO; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac3b12e8518so609053466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743272376; x=1743877176; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCy7w6bxMCSPIFn2dLOuLyXOfcR7syri8fVJ0KwW6ZA=;
-        b=B2nOg2GOy9fNkhxOqV9CwS1xtOI6dlc84WCJPH310rxp7jOzd+RtoCxyRuhUYcNvnd
-         vre+asSm5jI2dWTgbHOKseGdEeEYqJdMp81i+sKlJFdQkAEKMILL0X1K2+W+NyU9LOkT
-         p0QGcyNGSEOTwFaOAlFD14CO+skYNH8dkVaBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743272376; x=1743877176;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCy7w6bxMCSPIFn2dLOuLyXOfcR7syri8fVJ0KwW6ZA=;
-        b=fGYvadvHOL14TGpS9KP9UmOH3MghLWmqHz6DzoI7Eil2fAWlGS+tYbperv/muyL0ur
-         PgFwyns+/shuHlyOgnr4x+PG68LXiJJH5Nz+ORggbU8dBQKgI/a+AJLD3OQY7rRvntru
-         HkhYQQYWnGtDV3IWXlYe3WpljqvpW1rfGcUPkPLXl4jJmFbIDn77Jb5xaAV7/0CJzxfe
-         ZIyNwx74XG1p5zAG8Eym91iq0UscdVQFOMZUCVDOO7RO/vx/Xm/pBKmgqljPB6C9Mg8L
-         rZyOLsq3+XHRzx7lu3nQS1TQe8er5YzgaO0e+po78lDnWTv1igKGGjnUe6m95xvDalD+
-         TBGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVk6T2JHPVHhiVrq2xB/2H+DWk7EcTz7V2tnxO6ISvCaHVqSHMafDzuYuWqEmSfViBfdf9kooAquFe6cPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKuFYtoUrPwsgoW1c5ywmJ8TN0LTGERuAmpwWjlwLpHKhcROeK
-	cnl5dUa8CXi4sfCEkXNBe0v7452+dwDhKJGwRQSfLs+sEHmE2QnXrCPWFSy/SbjS31udTWxJtKF
-	UN4c=
-X-Gm-Gg: ASbGncsajl6QK/3qit98Mq1qPry4x03Sq42akrDnXF/kDC91ntjAUiPneryLVJIJ0Xy
-	rplbcMnpauk7ByI70WyTKSa4QfwV0Js64odp03XQ/IhL1lCOHJrvSaRxXaSDSC0/5c0uirUQb5t
-	gaXQv5GggP2Z5TD1jFsLPBN8/btxdRezLCr+dXtAjZFKdfMIzWugxsmSLhtBVLhskP9iLcjVudP
-	lzSUFQrJqJm9HNTIGO68NOBSCu3XoFv9GkszX+gcoeHH8b83DM62ckJMRaCHDL4P8h+HdJSgg+k
-	BDRbxZ/jrFCCP2cAJwSwUCppUIRjAB78273oNTR2Ik/LXpvJPf4OJ8MDlNZ9YgPv06HJb4IaxhW
-	plxLskL0dOY9Tm9RdYM4=
-X-Google-Smtp-Source: AGHT+IFco+DaCJNTbLLhFnCauGLQUX0FemND0ojluW9lvpDy1bJC2/cjlm5H9JIaK+kWyq3ZZfMBlw==
-X-Received: by 2002:a17:906:7955:b0:ac3:b372:6d10 with SMTP id a640c23a62f3a-ac738975daamr366745266b.4.1743272376279;
-        Sat, 29 Mar 2025 11:19:36 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719278259sm367984066b.38.2025.03.29.11.19.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Mar 2025 11:19:35 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac3b12e8518so609051466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:19:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgKh2vs/6frXh4jjakb/caB4RpImw8nAuN4gix9JcWzjj482B8cGerNZL8wHsQRxFkvRWdLKHk9XdW97k=@vger.kernel.org
-X-Received: by 2002:a17:906:c14e:b0:ac4:76d:6d2c with SMTP id
- a640c23a62f3a-ac738bae46fmr268991066b.40.1743272375207; Sat, 29 Mar 2025
- 11:19:35 -0700 (PDT)
+	s=arc-20240116; t=1743273224; c=relaxed/simple;
+	bh=N0Bu789B+gdjMhkE5nvBLyPmkVSv0quQvGRlrjO9+28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsozICA+AN9R9g+aOQhuxULd79HS3n25N+HofRx6FaIHT42gglKyFOLSphIOZ+bCizWibC3FotAD/gO/EUWJQ3ivpSFi4Vy3+StMQRTF6Fb3EM2CCeDpO/PxbPGBcWdJzusiyoAsE26z1I+YuoDjcR6Ae0I8KkGdI487vZFs8d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id AB1B9300034D8;
+	Sat, 29 Mar 2025 19:23:35 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 9633C11B31C; Sat, 29 Mar 2025 19:23:35 +0100 (CET)
+Date: Sat, 29 Mar 2025 19:23:35 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Moshe Shemesh <moshe@mellanox.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	linux-rdma@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@nvidia.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next v2 09/16] net/mlx5: Handle sync reset now event
+Message-ID: <Z-g6pzpZu_TU0-nA@wunner.de>
+References: <1602050457-21700-1-git-send-email-moshe@mellanox.com>
+ <1602050457-21700-10-git-send-email-moshe@mellanox.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au> <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au> <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
- <ZuetBbpfq5X8BAwn@gondor.apana.org.au> <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
- <Z5Ijqi4uSDU9noZm@gondor.apana.org.au> <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
- <20250325152541.GA1661@sol.localdomain> <CAHk-=whoeJQqyn73_CQVVhMXjb7-C_atv2m6s_Ssw7Ln9KfpTg@mail.gmail.com>
- <20250329180631.GA4018@sol.localdomain> <CAHk-=wi5Ebhdt=au6ymV--B24Vt95Y3hhBUG941SAZ-bQB7-zA@mail.gmail.com>
-In-Reply-To: <CAHk-=wi5Ebhdt=au6ymV--B24Vt95Y3hhBUG941SAZ-bQB7-zA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 29 Mar 2025 11:19:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
-X-Gm-Features: AQ5f1JpE91a6ThtQF6-oBNe9LzuODVuNbOWM5dekqqynxRKsAhb6YqLAueICYfA
-Message-ID: <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
-Subject: Re: [GIT PULL] Crypto Update for 6.15
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1602050457-21700-10-git-send-email-moshe@mellanox.com>
 
-On Sat, 29 Mar 2025 at 11:17, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I happened to just merge the rdma updates a couple of minutes ago, and
-> they actually removed the example I was using (ie the whole "use
-> crypto layer for crc32c" insanity).
+The following was applied as commit eabe8e5e88f5 ("net/mlx5: Handle
+sync reset now event").
 
-Heh. Looking closer, the "they" was actually you who did the patch and
-Leon who applied it.
+It does some questionable things (from a PCI perspective), so allow
+me to ask for details:
 
-            Linus
+On Wed, Oct 07, 2020 at 09:00:50AM +0300, Moshe Shemesh wrote:
+> On sync_reset_now event the driver does reload and PCI link toggle to
+> activate firmware upgrade reset. When the firmware sends this event it
+> syncs the event on all PFs, so all PFs will do PCI link toggle at once.
+> To do PCI link toggle, the driver ensures that no other device ID under
+> the same bridge by checking that all the PF functions under the same PCI
+> bridge have same device ID. If no other device it uses PCI bridge link
+> control to turn link down and up.
+[...]
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c
+> @@ -156,6 +157,120 @@ static void mlx5_sync_reset_request_event(struct work_struct *work)
+>  		mlx5_core_warn(dev, "PCI Sync FW Update Reset Ack. Device reset is expected.\n");
+>  }
+>  
+> +#define MLX5_PCI_LINK_UP_TIMEOUT 2000
+> +
+> +static int mlx5_pci_link_toggle(struct mlx5_core_dev *dev)
+> +{
+> +	struct pci_bus *bridge_bus = dev->pdev->bus;
+> +	struct pci_dev *bridge = bridge_bus->self;
+> +	u16 reg16, dev_id, sdev_id;
+> +	unsigned long timeout;
+> +	struct pci_dev *sdev;
+> +	int cap, err;
+> +	u32 reg32;
+> +
+> +	/* Check that all functions under the pci bridge are PFs of
+> +	 * this device otherwise fail this function.
+> +	 */
+> +	err = pci_read_config_word(dev->pdev, PCI_DEVICE_ID, &dev_id);
+> +	if (err)
+> +		return err;
+> +	list_for_each_entry(sdev, &bridge_bus->devices, bus_list) {
+> +		err = pci_read_config_word(sdev, PCI_DEVICE_ID, &sdev_id);
+> +		if (err)
+> +			return err;
+> +		if (sdev_id != dev_id)
+> +			return -EPERM;
+> +	}
+> +
+> +	cap = pci_find_capability(bridge, PCI_CAP_ID_EXP);
+> +	if (!cap)
+> +		return -EOPNOTSUPP;
+> +
+> +	list_for_each_entry(sdev, &bridge_bus->devices, bus_list) {
+> +		pci_save_state(sdev);
+> +		pci_cfg_access_lock(sdev);
+> +	}
+> +	/* PCI link toggle */
+> +	err = pci_read_config_word(bridge, cap + PCI_EXP_LNKCTL, &reg16);
+> +	if (err)
+> +		return err;
+> +	reg16 |= PCI_EXP_LNKCTL_LD;
+> +	err = pci_write_config_word(bridge, cap + PCI_EXP_LNKCTL, reg16);
+> +	if (err)
+> +		return err;
+> +	msleep(500);
+> +	reg16 &= ~PCI_EXP_LNKCTL_LD;
+> +	err = pci_write_config_word(bridge, cap + PCI_EXP_LNKCTL, reg16);
+> +	if (err)
+> +		return err;
+
+The commit message doesn't state the reason why you're toggling
+the Link Disable bit.
+
+It propagates a Hot Reset down the hierarchy, so perhaps that's
+the reason you're doing this?
+
+If it is, why didn't you just use one of the existing library calls
+such as pci_reset_bus(bridge)?
+
+Thanks,
+
+Lukas
 
