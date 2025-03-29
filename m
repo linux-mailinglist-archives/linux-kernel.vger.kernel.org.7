@@ -1,216 +1,147 @@
-Return-Path: <linux-kernel+bounces-580715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B29A75584
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 10:40:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCF2A7559B
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 10:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0F917097A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7DE5170700
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 09:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3411ADC86;
-	Sat, 29 Mar 2025 09:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4601ACECB;
+	Sat, 29 Mar 2025 09:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JKPCq82n"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="unk2RVen"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422C519B3CB
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 09:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232F03597B
+	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743241196; cv=none; b=DxJcQ/30+sQ4HwdMAzPZjniTDTH3gW/3M/2FQEqt3wycLZG2m1DZvTV0J02luno8365OjwTwcS/oG6Gqqe216EZcnU7cnSnR7C74GavkkBphQ0aA1keeeSoY93kS62gzvkpr/CzOjpnV1HilYaCsZ2WT/T79KYM/HblKVf3TLjw=
+	t=1743241876; cv=none; b=BK7/XCcaTKF1s/jPLz5bialC5QZZ97tjMfn8zneTdNLwQESqNKUvmVkVWe9KFQzYPcuuKooPJILWc1i6R/Oh5T2PNVRYOfxbBHAd9mcIE0q6xEpgrxXCz2O6f4cP8shqIYZKEPeCD9FzDo/b//ZEetBogschGJjvHQx1KExeghM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743241196; c=relaxed/simple;
-	bh=h448OrPfM6UqZDCzp4murBMKPsAopVuytMHYVBEJNWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SG5KrQ9SoocqQ209YsuL2pQPijqxXMneiTTp8ub66QpsmCPVlBJPUXcVj3B3TaUm5GUfw15ZPUW8s09+PVmgTDR0SjyTYLedDnYW9Dug22RHrb5Oqa9C1IpDmRdB4ca9DbtZuup762EzBp3GlPkyFfuoxhzN65jfrs4rV7IaB6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JKPCq82n; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224191d92e4so59061515ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 02:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743241193; x=1743845993; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f1B6fKZgCWYC21ZRAVBlXkt0qD2ak5SViuiSZ8N3+e4=;
-        b=JKPCq82nH8bDC+cU8tnhJWItY3Ilb6xEVyaKIkICBEReBze7/s0Z04Fq90xv/ZWTu9
-         uDfw19DOa1c4zb4maRAj37trhYQX5sp05MmdejOk1AjH8ny7eabJJVHj2hMJSmGXHhKa
-         ze0jRZ2cQI1whbhJexo69q3G4Z4iewcdQZ1a3OrvZwEFL/3U1Rn6ukQl9zdQO+I8ck2L
-         rGPRKXU63wvjNzYVXzrhWgVz16KZgrpDKpik5CfFPCs15UhmANaqePm8NjcQHkOQYlnO
-         b+f3ZM398IsFY8qIiY//Oj/hCheALT6w78KIqfbP8ROf6aHYRsn//+qbt/c5t4eq/bXG
-         1E6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743241193; x=1743845993;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f1B6fKZgCWYC21ZRAVBlXkt0qD2ak5SViuiSZ8N3+e4=;
-        b=D2RWpyjx5M/Mo8W1RgAiTeWsYIK0/aSUy45+qJefWdJSAMkJojeIx4yZMn8UAVYgs9
-         hK25LkgN3+/cEq1LA9e1bor8SthWlWXXDngwSlfpXxcAOJtRwCtYXUnDohIuOLIoxlb3
-         hIvVywWF9NnonGbFb1duBf53NZA2u6cA3I1Rx6wRzRk97WtYk1XXyI2lukO6Xa2xLPUf
-         wIGdxUdcZ8m2fj19DfOCVpnuD8qilTh1WWBuRFgHMuZY/wl/l6gM3UhlXFA2UQ4YuLiP
-         vHIgmUUVNao8Yp4D0HBnMC+dhoPXgQwvM1DsEKDBBRwJjEWyWhwCdOvDCr2hyZjVp9Ty
-         wfcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXER5/36OazzVqlRiZA6CpIk3sNA6aW/9HeZabQtBiBKC+mh7zma9nt0LgVL+WrZY+bg4CKwAshzAq5EuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj0nbUwcwK/HLYRp2SrrtyE8aDtF3l5dez4MIrskuFFGYhaglg
-	kThzok/C7/vQYK6Q+90g0SgIYktUDyIy0q5ZfwWlAlGEFEh85ngfxtUyFYhH6Q==
-X-Gm-Gg: ASbGnctAT4kXA2LWotsPVda3BiMCf8GemuPLXrb+udH+f3KZy99QxPWOVzOnclry8so
-	AUV8FA7uAfp2j039DN/w9Z0EeZ8e9nPdoyFMHl0VeNNg1AvjtrFUKyTlvMxHNynG2KmHJVY8nvB
-	pQqk+B7DkwHL7oV1riowf3A/SU/nZjPMrlSuKYmpHcTxZPfxzcNSUG4FPl7C9JBmCETM8SeGL/v
-	XcDqAXf8hgrTcTpTFoCrB94XftlhP/LcCkSbdWFpDqJ2+Q+TEmqDnEB8x39VBPuEjnxsHhpVs0X
-	wcWd7rnssukEVy4tI4o61CwvzmaUcx6vZp8WbCgvjcn9XR2NShdJn7+uqLj50pm0JQ==
-X-Google-Smtp-Source: AGHT+IE1KaqJ+6Cbvp5IKf9CYxA89yFr/QCAcVpYriUorwTLgRU9GCydNQpKyuIpw63iCI+2E23ifQ==
-X-Received: by 2002:a17:902:ea02:b0:21f:6546:9af0 with SMTP id d9443c01a7336-2292f9fcb73mr34169145ad.44.1743241193405;
-        Sat, 29 Mar 2025 02:39:53 -0700 (PDT)
-Received: from thinkpad ([120.60.65.227])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1cf4f6sm31834655ad.152.2025.03.29.02.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Mar 2025 02:39:52 -0700 (PDT)
-Date: Sat, 29 Mar 2025 15:09:46 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_mrana@quicinc.com, 
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v8 4/4] PCI: dwc: Add support for configuring lane
- equalization presets
-Message-ID: <4rep2gvymazkk7pgve36cw7moppozaju7h6aqc3gflxrvkskig@62ykri6v4trs>
-References: <20250316-preset_v6-v8-0-0703a78cb355@oss.qualcomm.com>
- <20250316-preset_v6-v8-4-0703a78cb355@oss.qualcomm.com>
- <3sbflmznjfqpcja52v6bso74vhouv7ncuikrba5zlb74tqqb5u@ovndmib3kgqf>
- <92c4854d-033e-c7b5-ca92-cf44a1a8c0cc@oss.qualcomm.com>
- <mslh75np4tytzzk3dvwj5a3ulqmwn73zkj5cq4qmld5adkkldj@ad3bt3drffbn>
- <5fece4ac-2899-4e7d-8205-3b1ebba4b56b@oss.qualcomm.com>
- <abgqh3suczj2fckmt4m2bkqazfgwsfj43762ddzrpznr4xvftg@n5dkemffktyv>
- <622788fa-a067-49ac-b5b1-e4ec339e026f@oss.qualcomm.com>
+	s=arc-20240116; t=1743241876; c=relaxed/simple;
+	bh=Hm76tCl9ilWngFmfkw+iG2Wu/U+wxdlTrtWeyLRkS6g=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=aQPSioVyXCWjpSnZHfcvejTbFNJToDhTtj/ir4ZSmQ8Vri1I/5Zqf0frKrCgtiWygMGvw5JFWkZosuz31+nYrtl6yFryw8zDdQbX5PMgjtek5h8E4VvQHCm/9YJNSN765n3okseGxg0W4lnn5gwj1Z8jkq3h7WWKP9yRekjh3cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=unk2RVen; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743241562; bh=b1kP6fo7YCLc//pUy3ZCYbT6o0OhYwIaebDSXUFjhr0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=unk2RVenF9ZK7AX6KcMh5WRu61lXGJUlWcOYeopV1eKZIUWnuWvQVdE2qhCHr3w2x
+	 4FjU3qSZsn4emcE5n1EUyRCzTfn81kK8Uokj7UqxtPkojOsDna7ZUioo5dvTRCK2pi
+	 4rvHeiHtPyKPFzWNoQCmycwSlT+lhEjYbiB4Flms=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 9F2276B9; Sat, 29 Mar 2025 17:39:50 +0800
+X-QQ-mid: xmsmtpt1743241190toeuj4j4v
+Message-ID: <tencent_FA76EF66A63CD7369E971636784A0074D509@qq.com>
+X-QQ-XMAILINFO: NvgtgL4Jzwx/TMX3ybtJp5XxQxzC5BjbKPb//QMiOAXsXzQEnLywp8Y/mubPaj
+	 qhJKvczdmWWB8NHuUdVAtins64sBrMak5LRe3SIdQpl6dAeoXixzbSRCnrl9L26EY7au1P6GOTbG
+	 Z3Hdyxs4/PJjob3V3PDvjSXgQmCJOGOC9d1hMHIisuoVf2JtbamrIulVPvbhlj1MYfpd4UHSMo8V
+	 6rKEVMEWXG+TD21Ieg8sQqQ4tEyezLrMBgd3lbXoBh5C3vyqu7w6gd1G41Z/lsMBjpgMMX4oqTOU
+	 ps1rcUxQ5zo4PFCkPst5JiduZ6B5z8UPpz5SdoKxNjsOJA3ZtzfAJL2JfT3/5LPPRAcd8nOOyBD7
+	 T7qCWcGMi0tv74jpeDW0IbArU9HsQbyc/WKLa/z2gcpqugZeVyJj+CB/kzbyyNWN6MdDwZGxJ0Se
+	 arPacZ1MyAvvsiqJrWbeyTN099kuEJYuGdLJH0uzyzf74BxAr8TvBoOH0SADgcZArVfQlTyg0OwY
+	 yOjjyh6agwWnpQG0RD0ph7AJeyoE1lBJn0nY0fwvyjJIf+PzP2rHopIZNGlqA8tanhFIMI8UHazb
+	 W6Mf+JsJSb6cwJbSqboehtoulVs4Qlt8hJbJmuTSerBqKT33j/62tXWmTnOrNU6oZbvjoOzkKDbQ
+	 nHtJuNCSLRmrkuIzZ3X1Xx5pNeqaDYK8yG9u3SQTyXnOEDQCqJA+CIBpEjy26SFOXCUzbQmBS1ug
+	 PdikEU9ki0tppuu0CTebXVo4c0XpGJwAjDkyk8nH2qSpW3F7NIoHVqq6/Hhs4IoIATVhFNuvg+Ra
+	 uwP1oxfzcnkHMJ9tjOpFVSM+pDnZdJkWfVYj0SeW7jZpRVaokRVsXtLRW8GXAFZXnBFaK6sDvu3k
+	 NGVQQF0sBiexK/AfK8uDsD5ij9vGC9OM3SVLGyAjqc5bbRkdRzqAc=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [afs?] BUG: sleeping function called from invalid context in __alloc_frozen_pages_noprof
+Date: Sat, 29 Mar 2025 17:39:51 +0800
+X-OQ-MSGID: <20250329093950.3801135-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
+References: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <622788fa-a067-49ac-b5b1-e4ec339e026f@oss.qualcomm.com>
 
-On Sat, Mar 29, 2025 at 09:59:46AM +0100, Konrad Dybcio wrote:
-> On 3/29/25 7:30 AM, Manivannan Sadhasivam wrote:
-> > On Fri, Mar 28, 2025 at 10:53:19PM +0100, Konrad Dybcio wrote:
-> >> On 3/28/25 7:45 AM, Manivannan Sadhasivam wrote:
-> >>> On Fri, Mar 28, 2025 at 11:04:11AM +0530, Krishna Chaitanya Chundru wrote:
-> >>>>
-> >>>>
-> >>>> On 3/28/2025 10:23 AM, Manivannan Sadhasivam wrote:
-> >>>>> On Sun, Mar 16, 2025 at 09:39:04AM +0530, Krishna Chaitanya Chundru wrote:
-> >>>>>> PCIe equalization presets are predefined settings used to optimize
-> >>>>>> signal integrity by compensating for signal loss and distortion in
-> >>>>>> high-speed data transmission.
-> >>>>>>
-> >>>>>> Based upon the number of lanes and the data rate supported, write
-> >>>>>> the preset data read from the device tree in to the lane equalization
-> >>>>>> control registers.
-> >>>>>>
-> >>>>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> >>>>>> ---
-> >>>>>>   drivers/pci/controller/dwc/pcie-designware-host.c | 60 +++++++++++++++++++++++
-> >>>>>>   drivers/pci/controller/dwc/pcie-designware.h      |  3 ++
-> >>>>>>   include/uapi/linux/pci_regs.h                     |  3 ++
-> >>>>>>   3 files changed, 66 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >>>>>> index dd56cc02f4ef..7c6e6a74383b 100644
-> >>>>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >>>>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >>>>>> @@ -507,6 +507,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
-> >>>>>>   	if (pci->num_lanes < 1)
-> >>>>>>   		pci->num_lanes = dw_pcie_link_get_max_link_width(pci);
-> >>>>>> +	ret = of_pci_get_equalization_presets(dev, &pp->presets, pci->num_lanes);
-> >>>>>> +	if (ret)
-> >>>>>> +		goto err_free_msi;
-> >>>>>> +
-> >>>>>>   	/*
-> >>>>>>   	 * Allocate the resource for MSG TLP before programming the iATU
-> >>>>>>   	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
-> >>>>>> @@ -808,6 +812,61 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
-> >>>>>>   	return 0;
-> >>>>>>   }
-> >>>>>> +static void dw_pcie_program_presets(struct dw_pcie_rp *pp, enum pci_bus_speed speed)
-> >>>>>> +{
-> >>>>>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >>>>>> +	u8 lane_eq_offset, lane_reg_size, cap_id;
-> >>>>>> +	u8 *presets;
-> >>>>>> +	u32 cap;
-> >>>>>> +	int i;
-> >>>>>> +
-> >>>>>> +	if (speed == PCIE_SPEED_8_0GT) {
-> >>>>>> +		presets = (u8 *)pp->presets.eq_presets_8gts;
-> >>>>>> +		lane_eq_offset =  PCI_SECPCI_LE_CTRL;
-> >>>>>> +		cap_id = PCI_EXT_CAP_ID_SECPCI;
-> >>>>>> +		/* For data rate of 8 GT/S each lane equalization control is 16bits wide*/
-> >>>>>> +		lane_reg_size = 0x2;
-> >>>>>> +	} else if (speed == PCIE_SPEED_16_0GT) {
-> >>>>>> +		presets = pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS - 1];
-> >>>>>> +		lane_eq_offset = PCI_PL_16GT_LE_CTRL;
-> >>>>>> +		cap_id = PCI_EXT_CAP_ID_PL_16GT;
-> >>>>>> +		lane_reg_size = 0x1;
-> >>>>>> +	} else {
-> >>>>>
-> >>>>> Can you add conditions for other data rates also? Like 32, 64 GT/s. If
-> >>>>> controller supports them and if the presets property is defined in DT, then you
-> >>>>> should apply the preset values.
-> >>>>>
-> >>>>> If the presets property is not present in DT, then below 'PCI_EQ_RESV' will
-> >>>>> safely return.
-> >>>>>
-> >>>> I am fine to add it, but there is no GEN5 or GEN6 controller support
-> >>>> added in dwc, isn't it best to add when that support is added and
-> >>>> tested.
-> >>>>
-> >>>
-> >>> What is the guarantee that this part of the code will be updated once the
-> >>> capable controllers start showing up? I don't think there will be any issue in
-> >>> writing to these registers.
-> >>
-> >> Let's not make assumptions about the spec of a cross-vendor mass-deployed IP
-> >>
-> > 
-> > I have seen the worse... The problem is, if those controllers start to show up
-> > and define preset properties in DT, there will be no errors whatsoever to
-> > indicate that the preset values were not applied, resulting in hard to debug
-> > errors.
-> 
-> else {
-> 	dev_warn(pci->dev, "Missing equalization presets programming sequence\n");
-> }
-> 
+#syz test: upstream 1d0b929fc070b4115403a0a6206a0c6a62dd61f5
 
-Then we'd warn for controllers supporting GEN5 or more if they do not pass the
-presets property (which is optional).
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index eb20e231d7ac..8d640f6537fc 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -286,12 +286,16 @@ static int afs_dynroot_readdir_cells(struct afs_net *net, struct dir_context *ct
+ 
+ 	_enter("%llu", ctx->pos);
+ 
++	rcu_read_lock();
+ 	for (;;) {
+ 		unsigned int ix = ctx->pos >> 1;
++		u8 name_len;
++		char *name;
++		unsigned int dynroot_ino;
+ 
+ 		cell = idr_get_next(&net->cells_dyn_ino, &ix);
+ 		if (!cell)
+-			return 0;
++			goto unlock;
+ 		if (READ_ONCE(cell->state) == AFS_CELL_FAILED ||
+ 		    READ_ONCE(cell->state) == AFS_CELL_REMOVED) {
+ 			ctx->pos += 2;
+@@ -305,19 +309,29 @@ static int afs_dynroot_readdir_cells(struct afs_net *net, struct dir_context *ct
+ 
+ 		_debug("pos %llu -> cell %u", ctx->pos, cell->dynroot_ino);
+ 
++		name_len = cell->name_len;
++		name = cell->name;
++		dynroot_ino = cell->dynroot_ino;
+ 		if ((ctx->pos & 1) == 0) {
+-			if (!dir_emit(ctx, cell->name, cell->name_len,
+-				      cell->dynroot_ino, DT_DIR))
+-				return 0;
++			rcu_read_unlock();
++			if (!dir_emit(ctx, name, name_len,
++				      dynroot_ino, DT_DIR))
++				goto out;
++			rcu_read_lock();
+ 			ctx->pos++;
+ 		}
+ 		if ((ctx->pos & 1) == 1) {
+-			if (!dir_emit(ctx, cell->name - 1, cell->name_len + 1,
+-				      cell->dynroot_ino + 1, DT_DIR))
+-				return 0;
++			rcu_read_unlock();
++			if (!dir_emit(ctx, name - 1, name_len + 1,
++				      dynroot_ino + 1, DT_DIR))
++				goto out;
++			rcu_read_lock();
+ 			ctx->pos++;
+ 		}
+ 	}
++unlock:
++	rcu_read_unlock();
++out:
+ 	return 0;
+ }
+ 
+@@ -347,9 +361,7 @@ static int afs_dynroot_readdir(struct file *file, struct dir_context *ctx)
+ 	}
+ 
+ 	if ((unsigned long long)ctx->pos <= AFS_MAX_DYNROOT_CELL_INO) {
+-		rcu_read_lock();
+ 		ret = afs_dynroot_readdir_cells(net, ctx);
+-		rcu_read_unlock();
+ 	}
+ 	return ret;
+ }
 
-> > 
-> > I'm not forseeing any issue in this part of the code to support higher GEN
-> > speeds though.
-> 
-> I would hope so as well, but both not programming and misprogramming are
-> equally hard to detect
-> 
-
-I don't disagree. I wanted to have it since there is no sensible way of warning
-users that this part of the code needs to be updated in the future.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
