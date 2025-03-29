@@ -1,172 +1,117 @@
-Return-Path: <linux-kernel+bounces-580866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2B7A75774
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:33:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73374A75779
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 19:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B463AA5BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:32:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CF9188CE5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 18:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813961DB55D;
-	Sat, 29 Mar 2025 18:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DD21DE3B1;
+	Sat, 29 Mar 2025 18:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KL0yZGt9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIbvEiiq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B182AE8E;
-	Sat, 29 Mar 2025 18:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019135942;
+	Sat, 29 Mar 2025 18:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743273175; cv=none; b=GSorhdgrVn6rVXgInFRVG/+Sxgfexa8tMaIe1SV9+2W4JEISxZQwM6guf33lOiUIIyU3vKx6yQ1p7cRDXlHRKAy6MKC0vAx8NuI3JRAV1kf0R0qVkEn9Y2hkO3tiXcUV9bLrsiFm1AKO3xVjYHqxrbS/kqxB2Qy08+Js0FOF4DU=
+	t=1743273502; cv=none; b=cCdVvlLrbysld4kkKvETJ3vv3qiFhhGtC6d4kOZ+8AKbZwDUxpyNED+lvWqq+H7fTl507/osjjMctItqo4ssIX3F2fHt/9pRBSyjcIbPkywsFFau5afCKJ2wQ0HDrMNlnD1aK7LDCaqJt1bkPQUiDU5m/oPpTMKEnF11kWyZ++o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743273175; c=relaxed/simple;
-	bh=88SrUHIh4lPXPPCyQrgHZe3BRPvZFsiCiw25NSW1FPg=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=HmFunLUlCw2fFj2e9SF/7AqMIw5tz1Dm9yMu0ctHdGT4FmdGA6plrQwpcOZipHsGbqhlbkIpXJJ14WhyduLZrHvs05DqRW5V1kyXfHZrpDgLf0iU6iY/CwfEmlhf2TN3rJ6q9tT9+MXY8pUxUsYJr6M8118bOlZzqQnBovTmgUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KL0yZGt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD62C4CEE2;
-	Sat, 29 Mar 2025 18:32:54 +0000 (UTC)
+	s=arc-20240116; t=1743273502; c=relaxed/simple;
+	bh=d1viuqJkDBo9A3Oay9+iVUwbi8rx0kLFMrTHwdEFHUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8gYJg9X2I7IOPPF6/CcziI814jR08cXg5q/gduIiyjNK5y8L3OTgRGpMGTim2HWxUtsKykpa8YWved4SCbVHWm79/kyyLuLP/bHPevuX+0gMbzsj8/gXaqB/ci8iTn+fVmjCzJCPYrumUumRORHLj7jB6srce+cFuDaaGTKVBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIbvEiiq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC498C4CEE2;
+	Sat, 29 Mar 2025 18:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743273175;
-	bh=88SrUHIh4lPXPPCyQrgHZe3BRPvZFsiCiw25NSW1FPg=;
-	h=From:To:Subject:Date:From;
-	b=KL0yZGt91+FbNnOOkmQfrmB+zy1dU4u0xDU/HVpcM/vcVFwir5l5ZaL9iwFJQs1o6
-	 nS0vnU/E+p3MjqLg9OiN9XgC8nzVJuhR8obg58ymT/QQBbkoMMaAr3Q1xEvaJy6Rxq
-	 UZmOCZ9nqsHh/ySwFHNbFWXdaNMD/WutsXx223Li/qaBDQ4wFWiV8KLF3fPf5wTkXf
-	 19rbBtpKcidIXXbQPqFSuQG3RoL12uBOZr9JJ+fVR9p6l4G06HdfGW9f0OunaUPHFK
-	 IScgMUbvIg63vw0XBCYV0PWEJmyZy/YKNQKtwXU3Fu8BweRTwLgv8RsNSyevIRsMph
-	 XYBlitrxDgBkw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: keyrings@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH] keys: Add a list for unreferenced keys
-Date: Sat, 29 Mar 2025 20:32:43 +0200
-Message-Id: <20250329183243.719222-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1743273502;
+	bh=d1viuqJkDBo9A3Oay9+iVUwbi8rx0kLFMrTHwdEFHUQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GIbvEiiqMVaCRJg3gpVZdKIq9p6MYTvCUYkt6Dpp7zHeqbLJpPXjxHgQQBLTn4EOg
+	 YnfqLtGisPZ9O9LXvfHoRmjP9e8MZYZYUPuQY4oE82vtpJjOTQgT0GWlgxIQr828/w
+	 fsnXbiTduhG8hYXrXZbx4uXOhy8QHugQaXkBwGVAYHbnSC2QzLlC2lQUmv8Zdwl+XJ
+	 2oXqrv6VEsrHdozmv2tyBZmvvxGDhbySOTdEZbKpYMTTuGqqtYeqafpYKqCljoMMnz
+	 kdaImdBQKvO06KZpfpF9ABqXQaUcYgK9zK6jb3oMDF3m+O+/n5f9U2tpZGBSkMusjl
+	 +j5y6oh+HeQ0A==
+Date: Sat, 29 Mar 2025 11:38:20 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [GIT PULL] Crypto Update for 6.15
+Message-ID: <20250329183820.GB4018@sol.localdomain>
+References: <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
+ <ZuetBbpfq5X8BAwn@gondor.apana.org.au>
+ <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
+ <Z5Ijqi4uSDU9noZm@gondor.apana.org.au>
+ <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
+ <20250325152541.GA1661@sol.localdomain>
+ <CAHk-=whoeJQqyn73_CQVVhMXjb7-C_atv2m6s_Ssw7Ln9KfpTg@mail.gmail.com>
+ <20250329180631.GA4018@sol.localdomain>
+ <CAHk-=wi5Ebhdt=au6ymV--B24Vt95Y3hhBUG941SAZ-bQB7-zA@mail.gmail.com>
+ <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiA0ioL0fonntfEXtxZ7BQuodAUsxaJ_VKdxPrnKx+DAg@mail.gmail.com>
 
-Add an isolated list for unreferenced keys, in order to make the reaping
-process more straight-forward and failure-safe.
+On Sat, Mar 29, 2025 at 11:19:19AM -0700, Linus Torvalds wrote:
+> On Sat, 29 Mar 2025 at 11:17, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > I happened to just merge the rdma updates a couple of minutes ago, and
+> > they actually removed the example I was using (ie the whole "use
+> > crypto layer for crc32c" insanity).
+> 
+> Heh. Looking closer, the "they" was actually you who did the patch and
+> Leon who applied it.
+> 
+>             Linus
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- include/linux/key.h      |  1 -
- security/keys/gc.c       | 21 ++++-----------------
- security/keys/internal.h |  1 +
- security/keys/key.c      |  7 +++++--
- 4 files changed, 10 insertions(+), 20 deletions(-)
+Yes.  Those cases were just a single algorithm, though, so of course the library
+was simpler.  fs-verity supports two hash algorithms (SHA-256 and SHA-512), and
+dm-verity unfortunately supports every hash algorithm the crypto API supports
+since it accepts it as a string and passes it directly to the crypto API.  I
+know for sure dm-verity is used with at least SHA-256, SHA-1, and BLAKE2b, but
+there could be more.  The crypto API also supports various "national pride"
+algorithms like SM3 and Streebog, for example, and some people might expect
+those to work with dm-verity.  (Unfortunately SM3 keeps getting pushed into
+various standards, libraries, CPU instruction sets, etc.)
 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index ba05de8579ec..074dca3222b9 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -236,7 +236,6 @@ struct key {
- #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
- #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
--#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
- 
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index f27223ea4578..7222692cfd60 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -218,11 +218,6 @@ static void key_garbage_collector(struct work_struct *work)
- 		key = rb_entry(cursor, struct key, serial_node);
- 		cursor = rb_next(cursor);
- 
--		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
--			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
--			goto found_unreferenced_key;
--		}
--
- 		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type == key_gc_dead_keytype) {
- 				gc_state |= KEY_GC_FOUND_DEAD_KEY;
-@@ -286,6 +281,10 @@ static void key_garbage_collector(struct work_struct *work)
- 		key_schedule_gc(new_timer);
- 	}
- 
-+	spin_lock(&key_serial_lock);
-+	list_splice_init(&key_graveyard, &graveyard);
-+	spin_unlock(&key_serial_lock);
-+
- 	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
- 	    !list_empty(&graveyard)) {
- 		/* Make sure that all pending keyring payload destructions are
-@@ -328,18 +327,6 @@ static void key_garbage_collector(struct work_struct *work)
- 	kleave(" [end %x]", gc_state);
- 	return;
- 
--	/* We found an unreferenced key - once we've removed it from the tree,
--	 * we can safely drop the lock.
--	 */
--found_unreferenced_key:
--	kdebug("unrefd key %d", key->serial);
--	rb_erase(&key->serial_node, &key_serial_tree);
--	spin_unlock(&key_serial_lock);
--
--	list_add_tail(&key->graveyard_link, &graveyard);
--	gc_state |= KEY_GC_REAP_AGAIN;
--	goto maybe_resched;
--
- 	/* We found a restricted keyring and need to update the restriction if
- 	 * it is associated with the dead key type.
- 	 */
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 2cffa6dc8255..c1b6f0b5817c 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -66,6 +66,7 @@ struct key_user {
- extern struct rb_root	key_user_tree;
- extern spinlock_t	key_user_lock;
- extern struct key_user	root_key_user;
-+extern struct list_head key_graveyard;
- 
- extern struct key_user *key_user_lookup(kuid_t uid);
- extern void key_user_put(struct key_user *user);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 7198cd2ac3a3..b34b4cba6ce7 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -22,6 +22,7 @@ DEFINE_SPINLOCK(key_serial_lock);
- 
- struct rb_root	key_user_tree; /* tree of quota records indexed by UID */
- DEFINE_SPINLOCK(key_user_lock);
-+LIST_HEAD(key_graveyard);
- 
- unsigned int key_quota_root_maxkeys = 1000000;	/* root's key count quota */
- unsigned int key_quota_root_maxbytes = 25000000; /* root's key space quota */
-@@ -658,8 +659,10 @@ void key_put(struct key *key)
- 				key->user->qnbytes -= key->quotalen;
- 				spin_unlock_irqrestore(&key->user->lock, flags);
- 			}
--			smp_mb(); /* key->user before FINAL_PUT set. */
--			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
-+			spin_lock(&key_serial_lock);
-+			rb_erase(&key->serial_node, &key_serial_tree);
-+			list_add_tail(&key->graveyard_link, &key_graveyard);
-+			spin_unlock(&key_serial_lock);
- 			schedule_work(&key_gc_work);
- 		}
- 	}
--- 
-2.39.5
+So for fs-verity we'd basically need:
 
+    if (using SHA-256)
+        sha256()
+    else
+        sha512()
+
+    (and the same for any other algorithms that may get added in the future)
+
+And for dm-verity we'd basically need:
+
+    if (using SHA-256)
+        sha256()
+    else
+        Use crypto_ahash or crypto_shash to handle arbitrary algorithm
+
+And that's okay -- we can do that.  Just crypto_shash ends up being
+approximately what is needed already, so just using it seems slightly
+preferable.  But using the libraries whenever possible would be fine with me
+too.
+
+- Eric
 
