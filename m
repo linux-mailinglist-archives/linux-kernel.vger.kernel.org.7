@@ -1,242 +1,144 @@
-Return-Path: <linux-kernel+bounces-580769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213FAA75604
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:42:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB55FA75601
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 12:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8643B126F
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E270918924E1
 	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 11:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19EB1D5CD6;
-	Sat, 29 Mar 2025 11:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B898E1DD88F;
+	Sat, 29 Mar 2025 11:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jUHDWg56"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="UQq1cy8m"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E0BC2C9
-	for <linux-kernel@vger.kernel.org>; Sat, 29 Mar 2025 11:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461F11C5D77;
+	Sat, 29 Mar 2025 11:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743248436; cv=none; b=Wc++yFZQuyLMsBDO2G/elPeDP3Mj51xkirBTkl/fS4ryVlgYGJRuIV4Bq0nigGwIjELTPm5tF1P69cATORa2gg0jkYweHxnIBkHyMFz3RaI1lFSKnX4JrCE6YdbGHukHVveoKaMrHafRyMhWLWc6DbGW+O2nx4hG1vOpyyxFZDE=
+	t=1743248426; cv=none; b=FhGBiLE3a4JfkGHW70Dmp08JMZo5/FYRvmV0W4+4PWSvXznQsS3jfBmlSdNlL/EiW3udLKTA6EnfA/3oviW+uUUC1B4P5DINryjWxpElxKLs53CqpVf9+gyfLu/Ui5h6YxeU2Eogg0bKimt0D+wZiM6jVRLc+SmOii24QaEf0rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743248436; c=relaxed/simple;
-	bh=7kEgD6DzeKFEjMWiZPVq1otJgnMgklAD9SfrOlfX+Gc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DbiFGbneO3XEMH8HSNE8c9yy0KDpS8H6L/wzyJSizthfDlQB1vhg81maAMVg2M5k8vXuZq25h3gJ6eSiwtJPLnTYu0ixQXgRRBjUUtHL8wU7wBmcWXiVseeWaqIEPpy46/PBxdhnxXvH9gL31FE+8H7r5jZkRUDcrcqYTH+Bauo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jUHDWg56; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743248432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9CEJ/sO7DltNlZUxnxCEA4NszRFr0//KBDDudIa4h8M=;
-	b=jUHDWg56hCjyfBAL7zkkSg+64vGNOFydFjVb1SGsp907zQtAB315Az2HuYffKI+h6PhqSW
-	x7VPrdaubXqvZjX0tCa3pTUwPX8b0mBLrYGcgKb4FHUU7ME9gtWX8QKo/khihpVxxBXtSG
-	3zWH9FmufBgkS5o+K5QWh2IXBHvUKGw=
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Dominik Haller <d.haller@phytec.de>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Aradhya Bhatia <aradhya.bhatia@linux.dev>
-Subject: [PATCH v11 10/14] drm/atomic-helper: Refactor crtc & encoder-bridge op loops into separate functions
-Date: Sat, 29 Mar 2025 17:09:21 +0530
-Message-Id: <20250329113925.68204-11-aradhya.bhatia@linux.dev>
-In-Reply-To: <20250329113925.68204-1-aradhya.bhatia@linux.dev>
-References: <20250329113925.68204-1-aradhya.bhatia@linux.dev>
+	s=arc-20240116; t=1743248426; c=relaxed/simple;
+	bh=P7al7clDRS8K/7GFc/corrgfq2NDWLfHg5TRl7eTdkk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lxDnLgSCfw+EKOyksssb7TMUIMNyCTs7QPFRGhcCCygMOJFptnDcT5daUPmuv4ipD20G52Y7P3WhE2boCOzHeJ/VkeI5FMizLdibH4Q1B4TB5ELHqv7Oere/zs2yO9epaPvuvHAecKa0Ndk8KYij4FvrpqO9KKM/6eGy+gDVFJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=UQq1cy8m; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1743248420; x=1743853220; i=deller@gmx.de;
+	bh=dztATHFqB+Zrc37/ZMpHqY/ixcWTTRZ34tWefSgFnYM=;
+	h=X-UI-Sender-Class:Date:From:To:Subject:Message-ID:MIME-Version:
+	 Content-Type:cc:content-transfer-encoding:content-type:date:from:
+	 message-id:mime-version:reply-to:subject:to;
+	b=UQq1cy8mxvX/zvGvL4J2YAeifgGgplHrvuxKYNje9BEACK9RJN4yVGxBcyD7Wi79
+	 T0wIqMAmr+20Jcjipl5bbGoW3S8kHSvpFiUh0X42n/CjRxb7sPqCYEGSm2pf9LzTW
+	 AvcRzxSR0eMjpkdYxlIkkTH299menMePhXS0nE3VUnKUEhCANgPj/g0TMknvfrycm
+	 6mauG0R8loVndWynYY15EhlVgH4dYkGUAVZwabw4kKAmGl7HP8DSXCX3sr1s2xaqy
+	 IEqqh1zi2oWNCaYjOGMtXPeTTr+4LCq5iu5tnmiOo+LTDb3jBPKNMk0MJWgHBLP4h
+	 vxWogg5IjEOom+N2Sw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from p100 ([109.250.63.121]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8hVB-1u2bHp2BWr-00A4oT; Sat, 29
+ Mar 2025 12:40:20 +0100
+Date: Sat, 29 Mar 2025 12:40:19 +0100
+From: Helge Deller <deller@gmx.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
+Subject: [GIT PULL] parisc architecture fixes and updates for v6.15-rc1
+Message-ID: <Z-fcI2QOldcZOi4f@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Provags-ID: V03:K1:dSKHRKYVH0549sDBljevIrVRYux+JiGD3JMaCBrjGBzx3fI5p9m
+ buWH5vaTo3yKl392DTLtkVVg6CHdxxfGUV4u8z1iV+ARE3oLKMKyKMN3klqpXJ+okb6/SGy
+ tZ7IeNIur7WG4T+M0qoIlQLszQinBODosDDG6Z+ZL4pFKcSIQ8UCNbbEE4yP9wmQu3Q7AD/
+ rkfaCLrSfY8zLHyzHLe1Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YT2CGzQUA2s=;uEGM9xhjlQRcruVOKcDLZKZi65w
+ R0v1+mqx9DNeKc0qMskWWIl4PvGK+SN91/EUyQPgq0EgadCRFDudbpkKNM3rLvU/q54L1+dtq
+ xnNKwUuRLsAcMKjNMPlK+SDk6geBPtJtORR4QQZ0AJuLz7MyiWFw/KuRaO1Jbk5oBLpjrUKBc
+ R1s6A6ZWXR7humKmTZ0NufZQR/9sOjbFntn4xGpY001aPsrjwAEGly/Tqzsjty5vAWKOorTkE
+ roXY53NHyayKvR8drwEbSQZ5mr8rvfG5Fn79McPJGJbzaKQ9cQse6p86HGIOu16LfU+pkLZ9m
+ yuu0RRUNlPo62cWJyIT2heoOBnyuXIPzng0a2FQ2PB+I9oJYppPk1PB7NpMo+nkIyPs7DeNBb
+ 5LI5F6O7EJWFQwXq9irg+2g6W9mee62O2wApUWkMfSdA7Z0j1xf8E43lNKx3ugYtGc5dDfT1W
+ fRNtPtNG5cFctFSOgAP61PO/DtV4pljKeK1673RuM031YNIv/vjSC7VMVj5hlmLkF5hGzylCd
+ by8thuRMMYbIflwEf+OAZQaNl1Axb9dQutz5RO9oilTM4CgaaMsAbRNTs/Xc1vjke7QKalmps
+ h1fQnfp5sMZ0H2b6796H8kCQ7r2UBcP56DB+ygfCUImvfcUABSEx6iAsn4o5AHcaarTlic74d
+ suwI9fWPVP9TbEYCH85YQdefF9L+kf3b//R1A60XSvlkGWCSQoMzZ4byuaP6VpZR4Zk45qqr/
+ V2hjCovvO99TK0eXB1+KHOAmejOgN5lEOrqGS1ndK/6gCksadlAGQQMNc7HhuuaMrmC+Chpg8
+ WtQ5Yn4YB73clGX4ULBqruZ9RrFzfwTzYu276sTcJB6OmR1+U5v4Ww1eZ134TrHVJogiPzAWO
+ QdhnfAPJbPIPqGkDbjvWdUBPcjlkxHWcpV/57rEuJg/gIji1JoaZ7lpEwaoAyrdcvZEN986yE
+ 1RwVyN8XDdxymYfj/wbmEOUb8+F8JI0LoRrnnpYQY6Ipilxd90B8+1p5UPjN/XYaiNJ5rmoUB
+ z0T80idB7qlcpji5cdr104JzJEaSc4lKrPZEw+gfmXeetVQXj1M1LxmhRHNc7SHIWYgVG2BNO
+ P7HMYc8+brUHTq0Jao6zpAQHH8zXBU+9xSglF0piB8si5SBIkGDOdUPPF8e5TvbU2eTN/6DF7
+ wzpx6xVvXvnRSlUAYFnbQfK6kU40tukCmlchQNv/8ELDyZ2X31ONdsHVJZy+tBOr9VEuLKlgk
+ gKsqMG3qQVpjuE7DMXhY2H5DHRRtjmHYEQixQAeBJlXq/l6vSTySgEx9IQRvEoW/akMtvGwvE
+ hHBbaoEsAsjiw1UaU6JUaYtKKaoOj07ZBpn0pMPaMJCc0umrn69IoA8duGETyXy7rGDipYgaI
+ aJPmkswilzxoPDa4Ys3d6o3LI34ic52oXAUJbOskImMy1H7LfDrSDaY5hpfxvzHVfNdJup2et
+ hFZDS6Q==
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+Hi Linus,
 
-The way any singular display pipeline, in need of a modeset, gets
-enabled is as follows -
+Please pull the updates for the parisc architecture for 6.15-rc1:
 
-	crtc enable
-	(all) bridge pre-enable
-	encoder enable
-	(all) bridge enable
+Drop parisc specific memcpy_fromio() function,
+clean up coding style and fix compile warnings.
 
-- and the disable sequence is exactly the reverse of this.
+Thanks!
+Helge
 
-The crtc operations occur by looping over the old and new crtc states,
-while the encoder and bridge operations occur together, by looping over
-the connector states of the display pipelines.
+----------------------------------------------------------------
 
-Refactor these operations - crtc enable/disable, and encoder & bridge
-(pre/post) enable/disable - into separate functions each, to make way
-for the re-ordering of the enable/disable sequences.
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-This patch doesn't alter the sequence of crtc/encoder/bridge operations
-in any way, but helps to cleanly pave the way for the next two patches,
-by maintaining logical bisectability.
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
----
- drivers/gpu/drm/drm_atomic_helper.c | 69 ++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 20 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index ee64ca1b1bec..d185486071c5 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1160,11 +1160,10 @@ crtc_needs_disable(struct drm_crtc_state *old_state,
- }
- 
- static void
--disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
-+encoder_bridge_disable(struct drm_device *dev, struct drm_atomic_state *state)
- {
- 	struct drm_connector *connector;
- 	struct drm_connector_state *old_conn_state, *new_conn_state;
--	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
- 	int i;
- 
-@@ -1227,6 +1226,14 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
- 
- 		drm_atomic_bridge_chain_post_disable(bridge, state);
- 	}
-+}
-+
-+static void
-+crtc_disable(struct drm_device *dev, struct drm_atomic_state *state)
-+{
-+	struct drm_crtc *crtc;
-+	struct drm_crtc_state *old_crtc_state, *new_crtc_state;
-+	int i;
- 
- 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
- 		const struct drm_crtc_helper_funcs *funcs;
-@@ -1274,6 +1281,14 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
- 	}
- }
- 
-+static void
-+disable_outputs(struct drm_device *dev, struct drm_atomic_state *state)
-+{
-+	encoder_bridge_disable(dev, state);
-+
-+	crtc_disable(dev, state);
-+}
-+
- /**
-  * drm_atomic_helper_update_legacy_modeset_state - update legacy modeset state
-  * @dev: DRM device
-@@ -1483,28 +1498,12 @@ static void drm_atomic_helper_commit_writebacks(struct drm_device *dev,
- 	}
- }
- 
--/**
-- * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
-- * @dev: DRM device
-- * @state: atomic state object being committed
-- *
-- * This function enables all the outputs with the new configuration which had to
-- * be turned off for the update.
-- *
-- * For compatibility with legacy CRTC helpers this should be called after
-- * drm_atomic_helper_commit_planes(), which is what the default commit function
-- * does. But drivers with different needs can group the modeset commits together
-- * and do the plane commits at the end. This is useful for drivers doing runtime
-- * PM since planes updates then only happen when the CRTC is actually enabled.
-- */
--void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
--					      struct drm_atomic_state *state)
-+static void
-+crtc_enable(struct drm_device *dev, struct drm_atomic_state *state)
- {
- 	struct drm_crtc *crtc;
- 	struct drm_crtc_state *old_crtc_state;
- 	struct drm_crtc_state *new_crtc_state;
--	struct drm_connector *connector;
--	struct drm_connector_state *new_conn_state;
- 	int i;
- 
- 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
-@@ -1528,6 +1527,14 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 				funcs->commit(crtc);
- 		}
- 	}
-+}
-+
-+static void
-+encoder_bridge_enable(struct drm_device *dev, struct drm_atomic_state *state)
-+{
-+	struct drm_connector *connector;
-+	struct drm_connector_state *new_conn_state;
-+	int i;
- 
- 	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
- 		const struct drm_encoder_helper_funcs *funcs;
-@@ -1565,6 +1572,28 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
- 
- 		drm_atomic_bridge_chain_enable(bridge, state);
- 	}
-+}
-+
-+/**
-+ * drm_atomic_helper_commit_modeset_enables - modeset commit to enable outputs
-+ * @dev: DRM device
-+ * @state: atomic state object being committed
-+ *
-+ * This function enables all the outputs with the new configuration which had to
-+ * be turned off for the update.
-+ *
-+ * For compatibility with legacy CRTC helpers this should be called after
-+ * drm_atomic_helper_commit_planes(), which is what the default commit function
-+ * does. But drivers with different needs can group the modeset commits together
-+ * and do the plane commits at the end. This is useful for drivers doing runtime
-+ * PM since planes updates then only happen when the CRTC is actually enabled.
-+ */
-+void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
-+					      struct drm_atomic_state *state)
-+{
-+	crtc_enable(dev, state);
-+
-+	encoder_bridge_enable(dev, state);
- 
- 	drm_atomic_helper_commit_writebacks(dev, state);
- }
--- 
-2.34.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.15-rc1
 
+for you to fetch changes up to e822b8f01b40eb193cf7ebb059ac7c560a562d6f:
+
+  parisc: led: Use scnprintf() to avoid string truncation warning (2025-03-09 22:27:54 +0100)
+
+----------------------------------------------------------------
+parisc architecture updates for kernel v6.15-rc1:
+
+Drop parisc specific memcpy_fromio() function,
+clean up coding style and fix compile warnings.
+
+----------------------------------------------------------------
+Helge Deller (2):
+      Input: gscps2 - Describe missing function parameters
+      parisc: led: Use scnprintf() to avoid string truncation warning
+
+Julian Vetter (2):
+      parisc: Fix formatting errors in io.c
+      parisc: Remove memcpy_fromio
+
+Thadeu Lima de Souza Cascardo (1):
+      parisc: perf: use named initializers for struct miscdevice
+
+Yu-Chun Lin (1):
+      parisc: PDT: Fix missing prototype warning
+
+ arch/parisc/include/asm/io.h      |   3 -
+ arch/parisc/kernel/parisc_ksyms.c |   1 -
+ arch/parisc/kernel/pdt.c          |   2 +
+ arch/parisc/kernel/perf.c         |   6 +-
+ arch/parisc/lib/io.c              | 119 ++++++++++----------------------------
+ drivers/input/serio/gscps2.c      |   6 ++
+ drivers/parisc/led.c              |   4 +-
+ 7 files changed, 41 insertions(+), 100 deletions(-)
 
