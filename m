@@ -1,97 +1,85 @@
-Return-Path: <linux-kernel+bounces-580649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9912EA754A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42793A754CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 08:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE94171EEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9204F174FDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Mar 2025 07:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9CE1ACEAC;
-	Sat, 29 Mar 2025 07:32:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B9617CA1B;
+	Sat, 29 Mar 2025 07:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A15Amwb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBFE183CCA;
-	Sat, 29 Mar 2025 07:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255D0EEAA;
+	Sat, 29 Mar 2025 07:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743233565; cv=none; b=csWgPd7Yi5xSpf4jmttq9nN6kJymR0C0N3/lrBreOVFWMMT3KNcOi2BhCNq1xUd3xXRTNYLUI9wAGMm8Re+ApgnYhw+smIz73OSjhOe9s/NGlZ/4td8UDo2GZ+G5WSb4OdKUGovFWpdHbmOk/rAO8oWjo4MApdwxQve0m7LeCC4=
+	t=1743233662; cv=none; b=jPVVe65mxHwoeZbA9NWKBj4kFuDpZ3UflBcwsf6fy9O50z95g7wuwCstsG4YMFhHPQr3HPyRo0FG6U47ye79lhegjES9obsSB74+Mr463Z42LnShErKWjskNHJ+t8dm4iq2q9TqB79SiCKAgfvuGBdCz7PkNCiL0de1qUbi2JQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743233565; c=relaxed/simple;
-	bh=SYhyciRCD6HcPvOs+YyIrEknhUE8pAVUbbxH0T6fJcg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bWwmiousiRyPix32E+UFjXI1avX1OxwyiefkosuEkahd3fRPNs0NaBTvFNlVEXiJMZwTSp0F4+P5cZNh0FVl/ibtyZeNojfuIertG+FTmJG3RhR2xaHJj1t1dkbc4MRA/BotQ/TvaAqujFCXC/v0sFjkKarV6Jz2pK/2etaCa6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZPptV0YPkz2CdRQ;
-	Sat, 29 Mar 2025 15:29:22 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A4A214010D;
-	Sat, 29 Mar 2025 15:32:40 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 29 Mar 2025 15:32:40 +0800
-From: Yihang Li <liyihang9@huawei.com>
-To: <martin.petersen@oracle.com>, <James.Bottomley@HansenPartnership.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <liyihang9@huawei.com>, <liuyonglong@huawei.com>,
-	<prime.zeng@hisilicon.com>
-Subject: [PATCH 5/5] scsi: hisi_sas: Wait until eh is recovered
-Date: Sat, 29 Mar 2025 15:32:36 +0800
-Message-ID: <20250329073236.2300582-6-liyihang9@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250329073236.2300582-1-liyihang9@huawei.com>
-References: <20250329073236.2300582-1-liyihang9@huawei.com>
+	s=arc-20240116; t=1743233662; c=relaxed/simple;
+	bh=o4j5LCbRbB89ZuEq7Q9Tyu1R9emivmKXvQi65+lOfgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhSeWm5QlxRvmO+BHWKUu7+DGfqcJNTsYSvdv/tP4UKQHLWhi9ArN5JW/OIY40Ac8TbtOFW2F5xPUFo/bDSdDrsKKmv5sX9pBqYQwqjHh3QQfNbRFJnY6Kfrf/3UoAiUgg4mlUA82/uEdGEjgRU9t5JyvwrDJoAVuUEHa6QnjQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A15Amwb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD1CC4CEE2;
+	Sat, 29 Mar 2025 07:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743233661;
+	bh=o4j5LCbRbB89ZuEq7Q9Tyu1R9emivmKXvQi65+lOfgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A15Amwb3lWUD0JIL9zKa0zgmQRnim7sGofSTgoK1Mu2oRGFkS3wD71V6sSi8vsJXG
+	 tCuCS7L/k70dYlhhAjmi7Cj7ae1NyWuo+chuHsqnxqAPLPlZh9P0HXT4HJtP0HNjn/
+	 hr1Oj8H+OlOD9Fa+wA49P8b3jaeWTa5RIxcDR1k7TbrjfduzFvGq5LuCobSkX74ltL
+	 bs962ouIluQ4t/A+RAa7xfV0ajn2VMYyQmIzFIcFaoNrCtOVv785tAJlaxpgtKOF2Y
+	 OEKQigZ/qKQljmn1BB2rce6a5gG7qH/qMiLwe6a7JYXQAeBbYTA+oZxm9ZfpnhInHJ
+	 icKxjZo+YwEXg==
+Date: Sat, 29 Mar 2025 08:34:15 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH 5/6] super: use common iterator (Part 2)
+Message-ID: <20250329-stumpf-pavian-090ff0c7b74f@brauner>
+References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
+ <20250328-work-freeze-v1-5-a2c3a6b0e7a6@kernel.org>
+ <db131c4abf29ea8205d6e761ac8227f5837540b5.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+In-Reply-To: <db131c4abf29ea8205d6e761ac8227f5837540b5.camel@HansenPartnership.com>
 
-SATA devices are lost when FLR is performed while the controller and disks
-are in suspended state.
+On Fri, Mar 28, 2025 at 02:58:29PM -0400, James Bottomley wrote:
+> On Fri, 2025-03-28 at 17:15 +0100, Christian Brauner wrote:
+> [...]
+> > +static inline void super_cb_grabbed(struct super_block *sb,
+> > +				    void (*f)(struct super_block *,
+> > void *),
+> > +				    void *arg)
+> > +{
+> > +	if (super_lock_excl(sb)) {
+> > +		bool active = atomic_inc_not_zero(&sb->s_active);
+> > +		super_unlock_excl(sb);
+> > +		if (active)
+> > +			f(sb, arg);
+> > +		deactivate_super(sb);
+> 
+> I don't think this can be right: if we fail to increment s_active
+> because it's zero, we shouldn't call deactivate_super(), should we?
 
-This is because the libata layer is called to initialize the SATA device
-during controller resuming. If FLR is executed at this time, the IDENTIFY
-command fails. As a result, the revalidate fails, and the SATA device is
-disabled by the libata layer.
-
-So, wait until eh is recovered.
-
-Signed-off-by: Yihang Li <liyihang9@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index c3cbeb556440..97ff48e7fe5d 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -5130,9 +5130,11 @@ static void hisi_sas_reset_prepare_v3_hw(struct pci_dev *pdev)
- {
- 	struct sas_ha_struct *sha = pci_get_drvdata(pdev);
- 	struct hisi_hba *hisi_hba = sha->lldd_ha;
-+	struct Scsi_Host *shost = hisi_hba->shost;
- 	struct device *dev = hisi_hba->dev;
- 	int rc;
- 
-+	wait_event(shost->host_wait, !scsi_host_in_recovery(shost));
- 	dev_info(dev, "FLR prepare\n");
- 	down(&hisi_hba->sem);
- 	set_bit(HISI_SAS_RESETTING_BIT, &hisi_hba->flags);
--- 
-2.33.0
-
+Fixed in-tree. Thanks.
 
