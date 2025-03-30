@@ -1,230 +1,129 @@
-Return-Path: <linux-kernel+bounces-581112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A815A75AB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 17:43:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6EFA75AB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 17:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F7C166CD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 15:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01CA21889411
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 15:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332E51D79B8;
-	Sun, 30 Mar 2025 15:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F881D5172;
+	Sun, 30 Mar 2025 15:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKxyF+ty"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVrVv+Db"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134301CCEE0;
-	Sun, 30 Mar 2025 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0248F288D2
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 15:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743349431; cv=none; b=jZNbxQT9YxvNPDwZ8XSQ2HII6jzeW5bTNqaoBtzQgv3vyHt6G9/z5P0Ts7q+1CwSE7gLbH09st1p14mKKbT0NVfWDzpB6yU2Rql6ceCAwi3foee7FYU/6GeDTG+qfJ8gx0ej7RmbSnryP0rm2y/1YFgAvJtejrFV73VoOigkS1g=
+	t=1743350091; cv=none; b=fUKvWrq2tuIdpEBxg7HYblhrslW6//JhtrZ+PFNXql4ewJZ+IUeXGzsnMZGtNBj3EW5nXQ6DoT6h8967G5sjpeGnK55cTX1uq87UGtcNU0sNz9J2DPIL3f4/DJriFWX2dEAMw8TKq3cCoiyeTg3K7Tgt0A7YSiM3lUA64y/vLw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743349431; c=relaxed/simple;
-	bh=DY/QoIgUcxlYWKWErAMultP4tK424psP9SLBssFPk1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n81+D6VN9MG02S2gtpsYYNLM6jG4xajvCHml0DTZbzrSovZibewiRzPZFTi1GmILI31+YiqbxPjnqE4RIn/ULYhafQKgJd4YoAg0kQYeePTNAI8jIrPxx3aa3W8E2+Ue4jbh8iaqfzRTdiZiI3KNiG+U4kNuxNuyR5dnjVLxj8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKxyF+ty; arc=none smtp.client-ip=209.85.216.42
+	s=arc-20240116; t=1743350091; c=relaxed/simple;
+	bh=LWlBEbR0rue8Ii1q14Xo+2oYD69eGDnHnKTJ64e1hK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=c9RUnwqXzqbm4ELCDx259AeBIHTpFnOVVljWheObQicue30m2D4QpOfObZCMAZNDD3+/+4IFUUuAUGg+LCrhal47a9AZ8lTtwYApTCvcMqz5Sb7JzfqmMTpOjRWebGoGSdyaYK7RABqSNMXJWk9pWE8dmMVrR9O2n7xGUUdHMn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVrVv+Db; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3035858c687so5032996a91.2;
-        Sun, 30 Mar 2025 08:43:49 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6fedefb1c9cso28575077b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 08:54:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743349429; x=1743954229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYhteagEyzg+N5CaIO1iHsEXBTHsWVMkEKuAyOQorjA=;
-        b=KKxyF+ty8voDiCAIANhraEC1/8WqY9g2wqSpsG4SJfBmW4/NzPbeEykaHF0fLJ5lTs
-         QCow8IiLVlbYVm6D/WancDXuXsSbq1rPOt2ggRXZnJBpvN9AuB3OvW2iLFcBWBVOSkMp
-         2JD6WwnTmxireofohz+Akh92OHcju73hbQ3aKjZZ7W1q6Hna6N7xUWcVjHIXjrIs/Twy
-         aCpv9GORzqFdtQURwtQ/D/8keX9I+tEF4iBvN2xHTTMiFRYFXqu15UO8XQQv82JmPGIA
-         aWaM1Ek1V+jalf2GmAJMkbKLbienJuha716h5kFiLMoGxyj0wHoLPsriVyvqO2fyOLtx
-         6rQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743349429; x=1743954229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743350089; x=1743954889; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uYhteagEyzg+N5CaIO1iHsEXBTHsWVMkEKuAyOQorjA=;
-        b=b71FEOmFyy3eSclrXQykWKppqs7psWrtFhYcUxwCEvkJE9epKFjF6iB9kf+mXuD4Sn
-         0UZ0JgwBl0QhsCuDb3qDMT7eUw0IazinsU8IocmNPZZWzkomUWYC4simYFwE1bJ9WGwk
-         k1D7zKsuydT398+lV3TnMowrhC8cZOc1S6W6DAQa1lUVQViDfE1gtGMyteNfN++LZd9m
-         +Zvy9Aai8G5/s3B3YihGDOjnESQnp2rnfm0T1LDnuOspDojIaizNBVAf6VGEBaZR+A81
-         CGPF7h+/swAEJVcKS1OYpJ5LrtfiyP0UemqjgXvpUXlwmJ5hlSxupR42hbCnDgY0K8Ky
-         ef8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWTl4GGHnBZ30Srl17Niif4b7n2H8Iu1u00MDFXWZ9lkDArP0PhAi2//+kxQ5P9l5EcXgykO7BFnSSBsUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYBQC/WUtawmi8ofXILVH9SlyqDHv4I4Cwriangruz6u5PwEfC
-	3d0agHpbIjyJmYFqt/9mrcViMGtaBvqb+ZKl8hT+dSEAf2yfoZe2yeg83v6k
-X-Gm-Gg: ASbGncsBdDMHb9j3SwiyOFRHb6c2ZryI6Q0Xe5FJ9cM5C99jnX85rcgtrJg0maSJzZe
-	vLRpAk+qZWzIsC+Gcp6zKt1nvDKpDhmNrYYRLOfUPmVd7Ad1hNNCfkBJCFFrRm0jBszE1zkfyGl
-	oe5tkrBXefkCiokuCYyp6Wa/Lx+UfyS6PC44Tc/MRlyuYgWo0lqc8Zb29rmla88ba8Nqub2RAEj
-	6Qq5A6KixSDyvYI5fY3aK0a25u4vVER+MkxfEmXIO4RUIqA+ahPLBJ0iiM2LlOH73p3jIMbUbuT
-	ipuqwgrzDurYvdjlvh3++YQE8tkOmkZgh3uSrPRUBZCRKTRyoNshXL1TI6s93fXC
-X-Google-Smtp-Source: AGHT+IFQ1NR4OoxulZ7bvgn4OOzRV3N3uO6d2kuqzhU72/7pKS2qxDZ/gPmXAxdv5zgchB26Xkyk0A==
-X-Received: by 2002:a17:90b:2e88:b0:2fa:228d:5b03 with SMTP id 98e67ed59e1d1-305320afbbfmr9008735a91.19.1743349428908;
-        Sun, 30 Mar 2025 08:43:48 -0700 (PDT)
-Received: from localhost ([2804:30c:b03:ee00:e0b8:a8b8:44aa:8d0b])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-30516d62964sm5567734a91.26.2025.03.30.08.43.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 08:43:47 -0700 (PDT)
-Date: Sun, 30 Mar 2025 12:44:50 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Siddharth Menon <simeddon@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
-	jic23@kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de
-Subject: Re: [PATCH v5] iio: frequency: ad9832: Use FIELD_PREP macro to set
- bit fields
-Message-ID: <Z-lm8l1ILFuJE5YS@debian-BULLSEYE-live-builder-AMD64>
-References: <20250330135402.105418-1-simeddon@gmail.com>
+        bh=LWlBEbR0rue8Ii1q14Xo+2oYD69eGDnHnKTJ64e1hK4=;
+        b=mVrVv+Dbc/AVqqWHvYJWDbJcAfqLEXsQTpxTRavo+t6iCaRGvHfi8tkErFAhHlNReA
+         vo6bwbEb+hPo/S65ZsMxU0sHn5wDsq5jv1U+jPvITlkZjoocEoup+cinF2BJrfLup4Iy
+         WDjzel9gc8l/v95bwlObN2iQ/b9s65HhuoRbsYkBlUPfmKrCVw36c8E68SaTLYoyz1Jl
+         PgZLVBvJEEITgT8whgMZXOa4WvOF99sKhSv9iGJVs01ckmVm9GZOMc6NrWrvbqjwTr0q
+         Y6+DqePfoP91qwKEa/MigVvCrbWr/35oTdhg3yu1nSX8P1deIw5fU0y8DnpZMaCj0G3Q
+         Qkfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743350089; x=1743954889;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LWlBEbR0rue8Ii1q14Xo+2oYD69eGDnHnKTJ64e1hK4=;
+        b=fyQtQVIqDaM0KLm30TlPVpkhGT3NiLWCVUfY/PYbDENLNuSK4O0GVeTbyhNPhF88Hs
+         e54WzvM96s+/jYBZCpro5e/E3LlKVVuQRthC/WQ/qtqF75qzY+iUNGy6WotZHpqm3ijH
+         v+7g3G0nyfHCLi65eIg2w0xxr3Q5tGtNVHqT2GSTEk+9Reqj4m34x4JSjCx3Xiz7H3JN
+         3FYaslCdPdsgQHSHNXj8O9eMmOVGXXbZq3znEehodQg2ROe6t2JIQVGADNonxbmCfwp6
+         +HhMIGAZNnvNEd5c6i9joGRrg7cz4roZkCz/GSXrXQdqg9XHtIqWUzoHZyIUFphwxOB2
+         TBfA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4oiDDrfJNhG2VDcBYtZ9yzKKnNGret+dScAc1ZFDmD3tLDelQldZqXnHSV+D1JPcR6Eu99Yc1aIIzwfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBH4DW/StFHlsP213Klmxvd/xYaxmpW6K2e5Q7rzDp+KrAF+W
+	vj0+Ib8kAa0ZWwcbUfdrs8UlT1qrC7Zcw7i10/sr6//VNZXlTiXmgAmIf17EZF2vhvuZNOHfA9o
+	QxpbWtezHoghMQivZhd/hY3g1Mi6DcNEbNOc=
+X-Gm-Gg: ASbGncud0bDIc2qsDA1XrZZfIHdb+STk8ybthv7fIPEj1t1YbjoS8NWKg3SdsBtkUcn
+	BbY0Cm2UUL7uoV8JNwV4jbUC6rjTpnZft1NMSunFRzOZEd/A+hX4U4ARi5TOZ0L66KD8GtjqdIl
+	kb4d9wZzlFWCHxl+ydoLYE2wv6bt+m5dUrDxgHywMa+yNhIDCgSL7nIItQWw==
+X-Google-Smtp-Source: AGHT+IE7FllcBCOS13DEOvR7SgnhqNJPiir8vxUb7WDN/BNFMIIEH5Eh4WJF3wKdt8Avs7cCJgfUjWrljkfTV0xik3w=
+X-Received: by 2002:a05:690c:6f85:b0:702:4eb0:6af with SMTP id
+ 00721157ae682-7025734bd0emr85210947b3.31.1743350088704; Sun, 30 Mar 2025
+ 08:54:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250330135402.105418-1-simeddon@gmail.com>
+References: <Z-ljeKZd7vNoQZJZ@pampelmuse>
+In-Reply-To: <Z-ljeKZd7vNoQZJZ@pampelmuse>
+From: Gonsolo <gonsolo@gmail.com>
+Date: Sun, 30 Mar 2025 17:54:38 +0200
+X-Gm-Features: AQ5f1Jo9abWDsUg5PZzhzQ2IvCkt7cOGQFYBHyRHIq03BLxyIx-gBqLg2_YQKgw
+Message-ID: <CANL0fFSUCiedt_V91bmEdDYnqo_DgkptgmYMUAWZPePM2sWzvg@mail.gmail.com>
+Subject: Re: Screen corruption with second monitor
+To: lyude@redhat.com, dakr@kernel.org, airlied@gmail.com, simona@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Siddharth,
+Hi!
 
-Some suggestions in addition to what Jonathan has provided in his review.
+Second try without attachment.
+Youtube link of screen: https://youtu.be/zVbuzxECinI
 
-On 03/30, Siddharth Menon wrote:
-> Use bitfield and bitmask macros to clearly specify AD9832 SPI
-> command fields to make register write code more readable.
-> 
-> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
-> ---
->  v1->v2:
->  - remove CMD_SHIFT and ADD_SHIFT
->  - use GENMASK
->  - store regval in an array and iterate through it
->  v2->v3:
->  - add missing header
->  - refactor code in the previously introduced loops
->  v3->v4:
->  - update commit message with a better one
->  - convert AD9832_PHASE and RES_MASK to masks
->  - cleanup a few if else blocks
->  v4->v5
->  - remove unnecessary inversion (val ? 0 : 1) used
->    with AD9832_PHASE_MASK introduced in v4
->  - use ARRAY_SIZE instead of fixed integers
->  - use reverse xmas tree order
->  - align mask macros
->  drivers/staging/iio/frequency/ad9832.c | 85 +++++++++++++-------------
->  1 file changed, 44 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-> index 140ee4f9c137..e74d085fb4f2 100644
-> --- a/drivers/staging/iio/frequency/ad9832.c
-> +++ b/drivers/staging/iio/frequency/ad9832.c
-> @@ -16,6 +16,9 @@
->  #include <linux/slab.h>
->  #include <linux/spi/spi.h>
->  #include <linux/sysfs.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/unaligned.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -59,17 +62,18 @@
->  #define AD9832_CMD_SLEEPRESCLR	0xC
->  
->  #define AD9832_FREQ		BIT(11)
-> -#define AD9832_PHASE(x)		(((x) & 3) << 9)
-> +#define AD9832_PHASE_MASK	GENMASK(10, 9)
->  #define AD9832_SYNC		BIT(13)
->  #define AD9832_SELSRC		BIT(12)
->  #define AD9832_SLEEP		BIT(13)
->  #define AD9832_RESET		BIT(12)
->  #define AD9832_CLR		BIT(11)
-> -#define CMD_SHIFT		12
-> -#define ADD_SHIFT		8
->  #define AD9832_FREQ_BITS	32
->  #define AD9832_PHASE_BITS	12
-> -#define RES_MASK(bits)		((1 << (bits)) - 1)
-> +#define RES_MASK(bits)		GENMASK((bits) - 1, 0)
-I also don't see RES_MASK being used by ad9832 so just drop it.
+Am So., 30. M=C3=A4rz 2025 um 17:30 Uhr schrieb Gon Solo <gonsolo@gmail.com=
+>:
+>
+> Hi!
+>
+> I bought a Displayport-to-HDMI cable to connect a second monitor to my
+> NVIDIA 3060 12GB with three Displayport and one HDMI outputs.
+> The first monitor is connected via the only HDMI output.
+> The (second) monitor via on DP-HDMI flickers and has vertical stripes (se=
+e the
+> attached video). I'm running the latest Arch with Nouveau and NVK.
+> The first monitor is attached via
+> Kernel 6.13.8-arch1-1
+> Mesa 25.0.2
+>
+> I think it's the driver's fault because
+> a) console works, flickering starts with the graphical console,
+> b) on Windows it works,
+> c) with NVIDIA (nvidia-open, nvidia-utils) drivers it works,
+> d) booting with just the second monitor (Displayport-HDMI) works, and
+> e) funny enough, booting with just the second monitor, and plugging in th=
+e first one
+> later also works.
+>
+> So my guess would be, there's something not working with Nouveau's handli=
+ng of
+> the second screen.
+>
+> I'm happy to provide more details on request.
+>
+> Cheers,
+> Andreas
 
-> +#define AD9832_CMD_MSK		GENMASK(15, 12)
-> +#define AD9832_ADD_MSK		GENMASK(11, 8)
-> +#define AD9832_DAT_MSK		GENMASK(7, 0)
->  
-...
->  	case AD9832_FREQ_SYM:
-> -		if (val == 1) {
-> -			st->ctrl_fp |= AD9832_FREQ;
-> -		} else if (val == 0) {
-> +		if (val == 1 || val == 0) {
->  			st->ctrl_fp &= ~AD9832_FREQ;
-> +			st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, val ? 0 : 1);
-The previous implementation would set ctrl_fp if val == 1 and unset it if val == 0.
-This patch seems to be doing the reverse (setting ctrl_fp if val == 0, and
-unsetting it if val != 0). Was the previous implementation potentially buggy?
-If not, I think we can just do
-
-		st->ctrl_fp &= ~AD9832_FREQ;
-		st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, !!val);
-
->  		} else {
->  			ret = -EINVAL;
->  			break;
->  		}
-and drop the error path. Slight change in interface but guess no problem with that.
-
-> -		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
-> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
->  					st->ctrl_fp);
->  		ret = spi_sync(st->spi, &st->msg);
->  		break;
-> @@ -224,21 +230,18 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
->  			break;
->  		}
->  
-> -		st->ctrl_fp &= ~AD9832_PHASE(3);
-> -		st->ctrl_fp |= AD9832_PHASE(val);
-> +		st->ctrl_fp &= ~FIELD_PREP(AD9832_PHASE_MASK, 3);
-> +		st->ctrl_fp |= FIELD_PREP(AD9832_PHASE_MASK, val);
-
-This seems to be a typical modify use case as exemplified in
-include/linux/bitfield.h. So,
-
-		st->ctrl_fp &= ~AD9832_PHASE_MASK;
-		st->ctrl_fp |= FIELD_PREP(AD9832_PHASE_MASK, val);
-
->  
-> -		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
-> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
->  					st->ctrl_fp);
->  		ret = spi_sync(st->spi, &st->msg);
->  		break;
->  	case AD9832_OUTPUT_EN:
-> -		if (val)
-> -			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
-> -					AD9832_CLR);
-> -		else
-> -			st->ctrl_src |= AD9832_RESET;
-> +		st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP | AD9832_CLR);
-> +		st->ctrl_src |= FIELD_PREP(AD9832_RESET, val ? 0 : 1);
-Hmm, this is modifying behavior. AD9832_SLEEP and AD9832_CLR were only being
-modified if something other than 0 was written to output enable sysfs file.
-Is the patch code mode appropriate than how the driver was before?
-
->  
-> -		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
-> +		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
->  					st->ctrl_src);
->  		ret = spi_sync(st->spi, &st->msg);
->  		break;
-
-Regards,
-Marcelo
+--=20
+Andreas
 
