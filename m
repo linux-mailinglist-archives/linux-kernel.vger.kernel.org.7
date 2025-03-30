@@ -1,114 +1,178 @@
-Return-Path: <linux-kernel+bounces-581066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A7CA75A07
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 14:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86352A75A17
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 14:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54AD8188368C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87624188B223
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE821D54FA;
-	Sun, 30 Mar 2025 12:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F951CAA81;
+	Sun, 30 Mar 2025 12:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Ezlj5uz3"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="QzN4sqc/"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF92F1C5F39;
-	Sun, 30 Mar 2025 12:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D619B3CB
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 12:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743337096; cv=none; b=qZ/o7wBSN2FazBNCzBJsMhmHLMa4WBtICoA5z2S1qfhJzLuMqRwKX6/ceXW5h8J1SqPP25qD0CUJRSsRD7S6pBphD+X/J50WZZaAqJ06OjlfhDQkRY56rWvRG8/F/LtC9AMaNjzDANhoo8NQojUnhm9dBXnkuTRnIwEtV0LQaug=
+	t=1743337884; cv=none; b=Lu8ej9cHfXGtbpTAE77NRe8EwiLgIxeLec7qSw0nF2lZIWy+R7tqJIkGfcyl1BeiNrx5/tyqem8ZleCQI3ZukebAlmEKufEtkveKFTGz2mk61t/xIuBEGqP49ll7GyZylWw0x5bKXGkkVQlB2WK+yTn9rrYCPzdwwO6zcajXqZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743337096; c=relaxed/simple;
-	bh=UqhtKa70a5/2askHmDGMX26oUmyn54ientlmKEHX2lk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MvbthteYtXI7tIUb8HFi0UYsbzrCLDlhbZIodIuZ7mpYMYgzWE8+WTcqRT4kAF2FkJ0R5Ej9XUeqUoekPmtqvecB3KJe9MRoZJZ3CYYtWjiq2lWksfmgW+hvVr+ajmszyf6KrQoLxI9eY9n2ruUhcDdLKSEDLJuyWBfwq6Ti0FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Ezlj5uz3; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1743337086;
-	bh=UqhtKa70a5/2askHmDGMX26oUmyn54ientlmKEHX2lk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Ezlj5uz3KLCvLbixTDOfWM9JMvtSf6orMo8URoeZQs3kdZh4iirzBLX+p/eyrYfja
-	 ++VOhAphiak2/zxRHBW/Gc97Xy9SPbqtRUV5C+DRojnIIrH5Sud+ZSTAwxS69XVtcK
-	 RIAIedtBk6vzb9t1cyvyE3n3m0L/1kXqBjVx2+yw=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 428AE659C8;
-	Sun, 30 Mar 2025 08:18:04 -0400 (EDT)
-Message-ID: <42dc2fc95fc9d56abd68ec620b29602eef9aa742.camel@xry111.site>
-Subject: Re: Ping: [PATCH 0/3] Drop explicit --hash-style= setting for new
-From: Xi Ruoyao <xry111@xry111.site>
-To: Guo Ren <guoren@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Fangrui Song <i@maskray.me>, Tiezhu
- Yang <yangtiezhu@loongson.cn>, 	linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, 	linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Sun, 30 Mar 2025 20:18:02 +0800
-In-Reply-To: <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
-References: <20250224112042.60282-1-xry111@xry111.site>
-	 <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
-	 <CAJF2gTRXyMX+9C_aEDbxAsxWDD2rbnDWO775YDZ3EmrQ=QinfQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+	s=arc-20240116; t=1743337884; c=relaxed/simple;
+	bh=/rHCJf+H/jrX9p/5rBcSy4Uwf6w+SeFwEG7jAr3quGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ID3iS4d2bWZgbmKaUTps+sh4Iw2gmuGFC62etBT/CpBbsQh6HacWq/MRbysMCVId4PKKPP2o9G/x5eZJrSh8vm2qZzv6BED9y0FeyQoqulW1DEE7tox9aWtcvlUYDNwKj19xRIGi1QCyKnlmdLS8731inn+SKLxfhidAg47vGJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=QzN4sqc/; arc=none smtp.client-ip=193.222.135.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 45464 invoked from network); 30 Mar 2025 14:24:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
+          t=1743337478; bh=REhcB2mZS7tKDoofE4+e/4NAUzzcPKvy/9MhJDFWxvU=;
+          h=Subject:To:Cc:From;
+          b=QzN4sqc/a77KvB6WCbtfM10m84ppIPeFGm8c8hhGBWu8w3R4eQEN6iRw5pmyV5R9Z
+           /DXF7JJpdCtMzuLLDnowwXep/fOuBgyHpQW91Y1MDUy5MJ7D2jwr247lU97fLuzBtP
+           JqbFjSf3hNQ6BtZ44RNJAIUPxuMB11LnPKYnY3Qk808vkPobqi58gThBkW3yce4dKl
+           OZcogMz6BVj4nhMYVoX2cZsd5XgKCrdL2UDU/wC+Oa5FQx+V3SByYsOMpPJlcJoLNu
+           aGLaKVwn2dn27sF55SpsAd2z3aXVEfmGVY3caVrVuG6BQe3hFkv05rd6es8DBksaMr
+           fLyNhOOdTg7uA==
+Received: from apn-78-30-75-194.dynamic.gprs.plus.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[78.30.75.194])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <bp@alien8.de>; 30 Mar 2025 14:24:38 +0200
+Message-ID: <947b1ceb-77a3-439b-bb7b-6eba38e12cb3@o2.pl>
+Date: Sun, 30 Mar 2025 14:23:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ BUG: Invalid wait context ] rtc_lock at: mc146818_avoid_UIP
+To: Borislav Petkov <bp@alien8.de>, linux-rtc@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250330113202.GAZ-krsjAnurOlTcp-@fat_crate.local>
+Content-Language: en-GB, pl
+From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
+ 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
+ TANkZ3QqXNX2
+In-Reply-To: <20250330113202.GAZ-krsjAnurOlTcp-@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 8be777aa6b28230075e5f412c274339f
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [AWN0]                               
 
-On Mon, 2025-03-10 at 10:13 +0800, Guo Ren wrote:
-> On Wed, Mar 5, 2025 at 9:27=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wro=
-te:
-> >=20
-> > Ping.
-> >=20
-> > On Mon, 2025-02-24 at 19:20 +0800, Xi Ruoyao wrote:
-> > > For riscv, csky, and LoongArch, GNU hash had already become the de-
-> > > facto
-> > > standard when they borned, so there's no Glibc/Musl releases for them
-> > > without GNU hash support, and the traditional SysV hash is just
-> > > wasting
-> > > space for them.
-> > >=20
-> > > Remove those settings and follow the distro toolchain default, which
-> > > is
-> > > likely --hash-style=3Dgnu.=C2=A0 In the past it could break vDSO self=
- tests,
-> > > but now the issue has been addressed by commit
-> > > e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH").
-> > >=20
-> > > Xi Ruoyao (3):
-> > > =C2=A0 riscv: vDSO: Remove --hash-style=3Dboth
-> The patch's comment is incorrect; when I removed --hash-style=3Dboth,
-> the output still contained the HASH, and no space was saved.
+W dniu 30.03.2025 o 13:32, Borislav Petkov pisze:
+> So,
+>
+> while playing with suspend to RAM, I got this lockdep splat below.
+>
+> Poking around I found:
+>
+> ec5895c0f2d8 ("rtc: mc146818-lib: extract mc146818_avoid_UIP")
+>
+> which is doing this funky taking and dropping the rtc_lock and I guess that's
+> inherited from ye olde times.
+>
+> I "fixed" it so lockdeup doesn't warn by converting rtc_lock to a raw spinlock
+> but this is definitely not the right fix so let me bounce it off to the folks
+> on Cc who might have a better idea perhaps...
+>
+> Thx.
 
-The idea is following the distro toolchain default (which can be
-configured building binutils).
+Hello,
 
-If the distro toolchain default is gnu, we'll use gnu.
+This problem has been reported before, see
 
-If the distro toolchain default is both, the distro is already wasting
-space everywhere for (a) some bizarre applications depending on DT_HASH
-for some bizzare reason; or (b) an oversight.
+https://lore.kernel.org/all/463fbc29-b41f-4d2d-a869-108114000cdb@o2.pl/
 
-In the case of (a) the bizarre application may needs DT_HASH in vDSO as
-well, and in the case of (b) it should be fixed for the entire distro,
-not only vDSO, for example what we are doing for AOSC:
-https://github.com/AOSC-Dev/aosc-os-abbs/pull/9531
+I started work on converting rtc_lock to a raw spinlock, but got stuck 
+mostly to a lack
+of time etc. Only did some MIPS patches (unpublished).
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+The problem is that timekeeping_suspend() takes a raw spinlock called 
+"tk_core.lock".
+With this lock taken, this function indirectly calls 
+mc146818_avoid_UIP(), which takes
+a normal spinlock called "rtc_lock". It is necessary to take the 
+rtc_lock while accessing
+the RTC: the RTC access cycle consists of writing to an index register 
+and then accessing
+the data register. If something else touches the index register in the 
+middle, we get garbage.
+
+During a RTC tick, the RTC date/time registers are in an unspecified 
+state - roughly during this
+time the UIP (Update In Progress) bit in an RTC register A is set. This 
+is handled by
+mc146818_avoid_UIP(). This function takes and releases the rtc_lock 
+multiple times,
+in order not to hold it for too long a time (while sleeping).
+But the rtc_lock does need to be taken anyway.
+
+So the solutions would be:
+
+1. Change the rtc_lock to a raw spinlock.
+
+2. Change the tick_freeze_lock to a normal spinlock (if possible).
+
+3. Possibly rewrite mc146818_avoid_UIP to avoid taking the rtc_lock if 
+the tick_freeze_lock is held (likely ugly).
+
+4. Maybe something else I haven't thought about.
+
+Thanks,
+
+Mateusz
 
