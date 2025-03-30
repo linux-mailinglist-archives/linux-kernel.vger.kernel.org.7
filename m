@@ -1,93 +1,131 @@
-Return-Path: <linux-kernel+bounces-580990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E134A758F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:40:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C42AA75906
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9AD7188B44F
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACEE3A9F71
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9382015A87C;
-	Sun, 30 Mar 2025 08:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9667918858A;
+	Sun, 30 Mar 2025 08:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKMgljRK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyjzPC7A"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21D418DF6D
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 08:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99603433A4;
+	Sun, 30 Mar 2025 08:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743324022; cv=none; b=ktEIPQsGgs18aaA50G2fW7bBVTcXynvOQadbHDIbyu0FznZvUS6oKgpqeQejwVAk7LwfaOC3bJSRs1yaDlDr9l7g5YwoqgM2qkITWMGO53+IcHg5wa8BvckoHd9n2RWeleuhnD46Uq11KrbqGDiFYa/C2eASU/kfvR0RDEXYFb0=
+	t=1743324598; cv=none; b=Ko2HkQRHMEtfMEXkOrol2tcKBOuyRnkhsDa1PhCvJbGTFnevSu0EnBlSqHozX35ZEsHgpgXFYV/4celO0iLliv5SNEsNPgx9kDxuwNGdKFGnp8CPRadT8BqfYdUooEDN7rRHIIz97fdtwuVMSun9ED/SRW7zK9CyqZ0SBKXojvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743324022; c=relaxed/simple;
-	bh=ca5Lq/0EQ7jPAb3oWTyli15DsYson7jaU3ejVDyRXHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=byX1ktT5enqWBnKKWCHBHGkw3o/7h0jvCiG9sLi+BYGD++DNuwWiKmPMz5ET9yC/TAzdXVf8v1GkUd1hmvh+1z/ShtQBnvsaAg27dlTn9sroNRgnOdEBTeWJpntoTqMuY4DATYI2Hmszg8nw3cSSVdzR8lapLZOi/RDuKjDPzzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKMgljRK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64CDEC4CEE8
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 08:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743324022;
-	bh=ca5Lq/0EQ7jPAb3oWTyli15DsYson7jaU3ejVDyRXHw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XKMgljRKvL4AO1eX36ymWzy3P0jjfHeIfdZu/+uYDZOcsGsTs4KllnR7ZJeShfZIm
-	 ANW61QQWKqt4ACCZkYejxaYxll+SKWaFWkR3PemovCK3m8i56supLX4RIoMhs8nd/b
-	 hU80tK3ApvjKAJyYgt1mNv7RQIOCARD3GOeThIvNFzIBNmFFj6q7YwfkJH7hwtX0+p
-	 OeNu1tgENzJPeb47Cw7QTGgvA84cjW7W+5a8oGuRIx4YX+B+wQlRxc0ktCRHBqyKmu
-	 GAjDiNOG65ynzkbIX2X5c6JlheZVN3YIHiwpTzMr0SmQnUQxcfRNQefQpel+ef3PA4
-	 0GBb0buthwSjQ==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so619129966b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 01:40:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUatASz9RYhNWUmFT6cQrutSRgt3MpotHbCBSHx9jqjO8lqfz5wG4CPeXqXI86yHEZh3WbNkwb3Cf9IS70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4+1CL9qgoDngTw/7SXIc7LluiWFYjP8Bv+hWuKM8LcYCWvDB0
-	3v0S8G2rht02002Ddrp3oPw0cYCdKcGQbF8zU8X2m52JXK0KRpIXI2LexNPsWTZZV2zapl1AklW
-	hQD7XKxO9NfJpKMQu9phdR3obapA=
-X-Google-Smtp-Source: AGHT+IEaTL7KP2VLk2bwtDA9C4Ekdb7n8ZwK058Y6N9KwEcNBMb5l8HLNp2UJfs8Vk9cgMj+oA5ubRu6EVYSnxM88Ys=
-X-Received: by 2002:a17:907:a08a:b0:ac3:cff:80f1 with SMTP id
- a640c23a62f3a-ac738c880d3mr413105666b.54.1743324020941; Sun, 30 Mar 2025
- 01:40:20 -0700 (PDT)
+	s=arc-20240116; t=1743324598; c=relaxed/simple;
+	bh=+bKsd+lUz1xN+iEJQV8fzknCljZQm9eRGmS71BH0FEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qp1n6xHeMKewFlwEOcLRrXOmQH76EMZiT00E2y4xze/u+S13tKtwOLRGIk37T8EXh4SamYkclHoP+4yEfdCH9WmyQB+g+1Daf5ZSi0QBPIU83dSuNUFMMhaivLWds2we4Q2v8fSv71kD/bCNV2rZ7vo1hRIar2nKn4rzzxZW6XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyjzPC7A; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2240b4de12bso38267185ad.2;
+        Sun, 30 Mar 2025 01:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743324596; x=1743929396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EmzCxvsOduwulsT5Wgwx5bMOIAHj7o4CdA5a/pTT+Dk=;
+        b=PyjzPC7A0iOIIVe1HXPQmbnjqf15w3HmKsPeTMfIB1RR74TDfBQA5uS5+qvgwrgpAx
+         FozlLek54RTJ31qZcCUTyol2fDck1jpn3X/CVOl6aoKxWyk+7EfX4SuhSPS/TmUtyn0A
+         3UOWEHwbvY7kKXEZ6draVNElw7GR4CY9JMcZD6YtIiO3ZpAcKg1OBh66EroxtXaUuZoG
+         84T6c6XoomHoTl50rRr/Av1YYib/dEwXrqNRbmi2bFDeK/3xt2XbxCuuLSt6XQP8t9nb
+         rnHGtHgZL0jDilVKWOepkUuiLDDvkVFdPe4STVw4R8BZmUJlYjNgTdVsRl7RqqZ/7gW2
+         vijA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743324596; x=1743929396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EmzCxvsOduwulsT5Wgwx5bMOIAHj7o4CdA5a/pTT+Dk=;
+        b=FLDb8IlqRHd8lfY8b38zF54l6AsCFr5MbBHCXbqwNMe6GKfCLkF8v4CA5lbqgawU2h
+         F+zgiCJc+uDxboBwS382qmG64Y2QtVxZuHitSLQPyNPmV0pBuqJXEufxXtLWOjplNMFS
+         f0yYh016IOiuqI0LMl7foeaLM7o35IkZ4wY3/DvhD7+pkujw1W1Xbew5ECg/HEKyOrxC
+         kWky2u6c+odmSXtlfouKlR1PIL1eGJ7KwvJ5tcpSgsaor6MG/BOy1+eEfu/SvgEyz/HY
+         vm+xXtJjUK2aqYvDXH7zrgXCUZ5XBc7i30v0hZ6RrHP4Y35GhW1BEZCZ2ZAU4sPUJu9L
+         7i/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEZWaLFZotsgyLHH3mWy6NFlJf0RNfDKlB1PpZncvvE9mMKdCjQItvidSZDui9JL2wojUHVyaFH8lVx2xX@vger.kernel.org, AJvYcCVEfdX97/edyNNV1dkXtY+re/5znfNaG9cgAn9kKwe2QX8sMLbaK62KeEniBpShOhN9JUjmCzpFvW8=@vger.kernel.org, AJvYcCWSTxrLye+bXR/xWZRMLRaKHqj9S0ERaa2vIn0fRIGTZYlPrdSh3ZO7GObyV0dovsopHBRyoCtHXYHaLoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzwD9+jVKImanGV62CUKeiWbtEs0EQbEr4zh+DyQvJ/kzIkt/M
+	Ret/khRa/4qAmHn3EJdL1SaQehaeN/HINNKx5WVw3xGxIT048YmY
+X-Gm-Gg: ASbGncvyoyOMxPoA+vO9Mfp6065molzrpVwiSZ8+u77ZRw+6gVFJ3qjPbRzMkReAQsk
+	l8aC5RuKeFeQ8MocpONRwlndRVeEVHhPbbGQg2VOP4kBzOLDNcSfmA3uDlxBcII5WcTLdUeld8e
+	uv+OGeeVyCHE+0JOOhCqk7C+9QcSaqG8A0PQEVmjF1wsMNBJiJIsCI4v0cIErnMmNk/hQ99ewTy
+	lCmhCcb024tUt9+AaHBR0TdPCihvqD7BF5CRCOrVHmv1ARDX5+HxSbJgugu+47TGOlpKtPfJDW4
+	YRaXf9FAUnIUezo6JUQmr9grSx6PRsOYXh/XiBz5eRmkZMMZgHoXcdOJNuSL8HPjFvKt9HGiOfK
+	U
+X-Google-Smtp-Source: AGHT+IFSa6czLX5BHKoQR4RzOcx/YbmUF2SgaxAIgJ4HQT0OJsOtxycsYNBJibWU+vKZphORkcPWdw==
+X-Received: by 2002:a05:6a21:c94:b0:1f5:9175:2596 with SMTP id adf61e73a8af0-2009f607a8bmr8922370637.13.1743324595736;
+        Sun, 30 Mar 2025 01:49:55 -0700 (PDT)
+Received: from salmon-ASUS-TUF-Dash-F15-FX516PR.. ([2402:7500:a17:45d:8f98:c8e0:143a:d5da])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93b8ae16esm4434055a12.61.2025.03.30.01.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Mar 2025 01:49:55 -0700 (PDT)
+From: Chih Yun Lin <noralin249@gmail.com>
+To: corbet@lwn.net
+Cc: jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chih Yun Lin <noralin249@gmail.com>
+Subject: [PATCH] docs: hid: Fix typo in intel-thc-hid.rst
+Date: Sun, 30 Mar 2025 16:45:18 +0800
+Message-ID: <20250330084518.20916-1-noralin249@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H5T3DLFfzPg4Zgzn7JbzqoNZdYn5_F06QNHS230xq-1MA@mail.gmail.com>
- <tencent_928F84F5CCDFC9B34B7BCACF5CA00FED5006@qq.com>
-In-Reply-To: <tencent_928F84F5CCDFC9B34B7BCACF5CA00FED5006@qq.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 30 Mar 2025 16:40:09 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4mAHixEZOgoYb3v1ELMW0=xUJwsfmR_DG5G3i7QTo=3A@mail.gmail.com>
-X-Gm-Features: AQ5f1JplMwHWAOKASkzCgYlRsRXZPm7krKQyvbHM_XbTUYWI8r1eDh3a1GeUN_s
-Message-ID: <CAAhV-H4mAHixEZOgoYb3v1ELMW0=xUJwsfmR_DG5G3i7QTo=3A@mail.gmail.com>
-Subject: Re: Re: [PATCH] LoongArch: Kconfig: Fix help text of CMDLINE_EXTEND
-To: =?UTF-8?B?6LCi6Ie06YKmIChYSUUgWmhpYmFuZyk=?= <Yeking@red54.com>
-Cc: guoren@kernel.org, jiaxun.yang@flygoat.com, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 29, 2025 at 5:45=E2=80=AFPM =E8=B0=A2=E8=87=B4=E9=82=A6 (XIE Zh=
-ibang) <Yeking@red54.com> wrote:
->
-> Hi, Huacai,
->
-> > How about replace "to the built-in command line" with "with the
-> > built-in command line" and keep others unchanged?
-> It seems that the use of the preposition "with" does not conform to the r=
-egular
-> collocation of "append" and may lead to ambiguity.
-> You can consult an LLM such as DeepSeek, Qwen, or ChatGPT.
-OK, I applied but change the title to "LoongArch: Fix help text of
-CMDLINE_EXTEND in Kconfig", thanks.
+Corrected the spelling of "triggerred" to "triggered" and "flexiblity"
+to "flexibility".
 
-Huacai
+Signed-off-by: Chih Yun Lin <noralin249@gmail.com>
+---
+ Documentation/hid/intel-thc-hid.rst | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->
-> Zhibang
->
+diff --git a/Documentation/hid/intel-thc-hid.rst b/Documentation/hid/intel-thc-hid.rst
+index 6c417205ac6a..dc9250787fc5 100644
+--- a/Documentation/hid/intel-thc-hid.rst
++++ b/Documentation/hid/intel-thc-hid.rst
+@@ -182,7 +182,7 @@ value and use PIO write (by setting SubIP write opcode) to do a write operation.
+ 
+ THC also includes two GPIO pins, one for interrupt and the other for device reset control.
+ 
+-Interrupt line can be configured to either level triggerred or edge triggerred by setting MMIO
++Interrupt line can be configured to either level triggered or edge triggered by setting MMIO
+ Control register.
+ 
+ Reset line is controlled by BIOS (or EFI) through ACPI _RST method, driver needs to call this
+@@ -302,10 +302,10 @@ waiting for interrupt ready then read out the data from system memory.
+ 3.3.2 Software DMA channel
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-THC supports a software triggerred RxDMA mode to read the touch data from touch IC. This SW RxDMA
++THC supports a software triggered RxDMA mode to read the touch data from touch IC. This SW RxDMA
+ is the 3rd THC RxDMA engine with the similar functionalities as the existing two RxDMAs, the only
+-difference is this SW RxDMA is triggerred by software, and RxDMA2 is triggerred by external Touch IC
+-interrupt. It gives a flexiblity to software driver to use RxDMA read Touch IC data in any time.
++difference is this SW RxDMA is triggered by software, and RxDMA2 is triggered by external Touch IC
++interrupt. It gives a flexibility to software driver to use RxDMA read Touch IC data in any time.
+ 
+ Before software starts a SW RxDMA, it shall stop the 1st and 2nd RxDMA, clear PRD read/write pointer
+ and quiesce the device interrupt (THC_DEVINT_QUIESCE_HW_STS = 1), other operations are the same with
+-- 
+2.43.0
+
 
