@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-580977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1F2A758D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 09:31:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55B4A758DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 09:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57233188BCCC
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 07:32:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 374557A41DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 07:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD7014A60C;
-	Sun, 30 Mar 2025 07:31:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3318E22611
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 07:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A3155389;
+	Sun, 30 Mar 2025 07:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDQX425u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2716A009
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 07:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743319908; cv=none; b=iSYm5JmYoCX4lpcOqkGDJfVJb1nYPA1qLTy7PLoAs4mt7rjQF10idmkEP/ObwLMFW0RnXsxSjlgy0/W7T3mK40A6+M9kJRKpy1qhc5vigpCzADSXMobWJJXu6A5+jhPxGuSx8q/NSGpHagfqfdFsGYL3J30hLJUJ1vxw9Mz5NCI=
+	t=1743319979; cv=none; b=PjsYnB1DtwuGsJ5oJ+BIqphl+jMj3ZiQG826wQEc74JzwKKA5kjVCce4rYVe9NbZzQ9SgO6fbHauxW4QkRwMLCSFd34sdADn6GGRXCpR0SeyVLf/tOH7pVtUV3+RAgmyt6WdE9MuZHMLhTc8jTknJubbvkoEBLLPLuDpl36w91I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743319908; c=relaxed/simple;
-	bh=0P43/VJZizLB00/Wzp2FmSM07nhoI88bGgfM5SzNu7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLsWbrm+/dvkb2vo4WJ0bzQqsfpFNqnLDittYV4+AajJsvwyalY/Ze7Y/hfAyTYqwmuXJbRSriUBoFYwE31eOPms7afrL3NLoJbs67BwzBqE5vn78aO0WP1X/tDzbOmnzvSEx9CMwHhMveALXu/TBPRKUIM8XT1IxPeBCohh8gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 885AD1007;
-	Sun, 30 Mar 2025 00:31:50 -0700 (PDT)
-Received: from [10.163.71.186] (unknown [10.163.71.186])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 409C23F694;
-	Sun, 30 Mar 2025 00:31:39 -0700 (PDT)
-Message-ID: <a87edbcf-1bbb-4ae6-9549-685210b02f97@arm.com>
-Date: Sun, 30 Mar 2025 13:01:36 +0530
+	s=arc-20240116; t=1743319979; c=relaxed/simple;
+	bh=IIDyKI8Qey1PTPb/MvYZR4HnssMujeOxvoCtCZpxi/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyJw9QG/wsxB72qJPdAzHuHKvmG0c/4lyC8LZrLU9eUKb+szIpMlc2gA6n6CDhx0UEelO3e4qpYd8t4gMNBb9B5ASYJzZiVkE9mrZghy1/X8N3HfhnQif8DozJrx+IJ+G12aJuZmKtfhQTiHwkuGWMMDP432yQihZTN+bZOGq6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDQX425u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA77C4CEDD;
+	Sun, 30 Mar 2025 07:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743319979;
+	bh=IIDyKI8Qey1PTPb/MvYZR4HnssMujeOxvoCtCZpxi/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uDQX425uXxTySy474Zz3RnUXc7LGwElGUanTn1uvh4jNNjEBq7g7tcnsCmqeboPEc
+	 WGmt1SQT8IOstk4nvhrT30dX7GfR8RstPHDcHfT6cQFrWE19RP/1p+hBX9iQvWxvgL
+	 j709Fw7ZbcMaljePnD5my2ARqp6cskV1tY0ZT+yUWk8ZY+Wuq8ly/XK1h0X29gjx2f
+	 UnxGx+gv23n5KDGpbWgTuaC9xyEiPatwB7bw3Rfn5/zGZQ9jpjAyeTlC6SNha/qZws
+	 BxUjNHXqni/jfvD1eiA8iJzsCTrlNAeHi/v18cAu9qaQquy3g4vZrIm+ULmG1rM9Eb
+	 WA7DYOsQ6NUDg==
+Date: Sun, 30 Mar 2025 10:32:50 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org,
+	gshan@redhat.com, steven.price@arm.com, suzuki.poulose@arm.com,
+	tianyaxiong@kylinos.cn, ardb@kernel.org, david@redhat.com,
+	urezki@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: pageattr: Explicitly bail out when changing
+ permissions for vmalloc_huge mappings
+Message-ID: <Z-jzouwNZwk8Ft-j@kernel.org>
+References: <20250328062103.79462-1-dev.jain@arm.com>
+ <Z-cnmklGUojMzsUF@kernel.org>
+ <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: pageattr: Explicitly bail out when changing
- permissions for vmalloc_huge mappings
-To: Ryan Roberts <ryan.roberts@arm.com>, Mike Rapoport <rppt@kernel.org>
-Cc: catalin.marinas@arm.com, will@kernel.org, gshan@redhat.com,
- steven.price@arm.com, suzuki.poulose@arm.com, tianyaxiong@kylinos.cn,
- ardb@kernel.org, david@redhat.com, urezki@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250328062103.79462-1-dev.jain@arm.com>
- <Z-cnmklGUojMzsUF@kernel.org> <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-
-
-On 29/03/25 3:16 pm, Ryan Roberts wrote:
+On Sat, Mar 29, 2025 at 09:46:56AM +0000, Ryan Roberts wrote:
 > On 28/03/2025 18:50, Mike Rapoport wrote:
->> On Fri, Mar 28, 2025 at 11:51:03AM +0530, Dev Jain wrote:
->>> arm64 uses apply_to_page_range to change permissions for kernel VA mappings,
->>
->>                                                       for vmalloc mappings ^
->>
->> arm64 does not allow changing permissions to any VA address right now.
->>
->>> which does not support changing permissions for leaf mappings. This function
->>> will change permissions until it encounters a leaf mapping, and will bail
->>> out. To avoid this partial change, explicitly disallow changing permissions
->>> for VM_ALLOW_HUGE_VMAP mappings.
->>>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > On Fri, Mar 28, 2025 at 11:51:03AM +0530, Dev Jain wrote:
+> >> arm64 uses apply_to_page_range to change permissions for kernel VA mappings,
+> > 
+> >                                                      for vmalloc mappings ^
+> > 
+> > arm64 does not allow changing permissions to any VA address right now.
+> > 
+> >> which does not support changing permissions for leaf mappings. This function
+> >> will change permissions until it encounters a leaf mapping, and will bail
+> >> out. To avoid this partial change, explicitly disallow changing permissions
+> >> for VM_ALLOW_HUGE_VMAP mappings.
+> >>
+> >> Signed-off-by: Dev Jain <dev.jain@arm.com>
 > 
 > I wonder if we want a Fixes: tag here? It's certainly a *latent* bug.
 
-I am struggling to find the commit till which we want to backport. 
-Should it be e920722 (arm64: support huge vmalloc mappings)?
-
+We have only a few places that use vmalloc_huge() or VM_ALLOW_HUGE_VMAP and
+if there was a code that plays permission games on these allocations, x86
+set_memory would blow up immediately, so I don't think Fixes: is needed
+here.
+ 
+> >> ---
+> >>  arch/arm64/mm/pageattr.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> >> index 39fd1f7ff02a..8337c88eec69 100644
+> >> --- a/arch/arm64/mm/pageattr.c
+> >> +++ b/arch/arm64/mm/pageattr.c
+> >> @@ -96,7 +96,7 @@ static int change_memory_common(unsigned long addr, int numpages,
+> >>  	 * we are operating on does not result in such splitting.
+> >>  	 *
+> >>  	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
+> >> -	 * Those are guaranteed to consist entirely of page mappings, and
+> >> +	 * Disallow VM_ALLOW_HUGE_VMAP vmalloc mappings so that
+> > 
+> > I'd keep mention of page mappings in the comment, e.g
+> > 
+> > 	* Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
+> > 	* mappings are updated and splitting is never needed.
+> > 
+> > With this and changelog updates Ryan asked for
+> > 
+> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > 
+> > 
+> >>  	 * splitting is never needed.
+> >>  	 *
+> >>  	 * So check whether the [addr, addr + size) interval is entirely
+> >> @@ -105,7 +105,7 @@ static int change_memory_common(unsigned long addr, int numpages,
+> >>  	area = find_vm_area((void *)addr);
+> >>  	if (!area ||
+> >>  	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
+> >> -	    !(area->flags & VM_ALLOC))
+> >> +	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
+> >>  		return -EINVAL;
+> >>  
+> >>  	if (!numpages)
+> >> -- 
+> >> 2.30.2
+> >>
+> > 
 > 
->>> ---
->>>   arch/arm64/mm/pageattr.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->>> index 39fd1f7ff02a..8337c88eec69 100644
->>> --- a/arch/arm64/mm/pageattr.c
->>> +++ b/arch/arm64/mm/pageattr.c
->>> @@ -96,7 +96,7 @@ static int change_memory_common(unsigned long addr, int numpages,
->>>   	 * we are operating on does not result in such splitting.
->>>   	 *
->>>   	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
->>> -	 * Those are guaranteed to consist entirely of page mappings, and
->>> +	 * Disallow VM_ALLOW_HUGE_VMAP vmalloc mappings so that
->>
->> I'd keep mention of page mappings in the comment, e.g
->>
->> 	* Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
->> 	* mappings are updated and splitting is never needed.
->>
->> With this and changelog updates Ryan asked for
->>
->> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->>
->>
->>>   	 * splitting is never needed.
->>>   	 *
->>>   	 * So check whether the [addr, addr + size) interval is entirely
->>> @@ -105,7 +105,7 @@ static int change_memory_common(unsigned long addr, int numpages,
->>>   	area = find_vm_area((void *)addr);
->>>   	if (!area ||
->>>   	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
->>> -	    !(area->flags & VM_ALLOC))
->>> +	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
->>>   		return -EINVAL;
->>>   
->>>   	if (!numpages)
->>> -- 
->>> 2.30.2
->>>
->>
-> 
 
+-- 
+Sincerely yours,
+Mike.
 
