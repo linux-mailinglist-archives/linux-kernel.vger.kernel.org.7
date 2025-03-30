@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-581285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545A5A75D0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 00:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D88A75D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 00:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E1B167BDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 22:01:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 717177A39D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 22:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885DF1DE8A8;
-	Sun, 30 Mar 2025 22:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qngwqqaa"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4863FE4;
-	Sun, 30 Mar 2025 22:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AD41DEFE4;
+	Sun, 30 Mar 2025 22:12:16 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B67360;
+	Sun, 30 Mar 2025 22:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743372105; cv=none; b=lok9/LwCChvpgrA4HQ0nPr4nXMCjzZPj4yAqucUPg/AbU+Ea1KtLbgrYsjv5tyhcxLSkmGFUZ/Cr6yyns6x/3LTRHFQNeXy4wwtnURdcl15wVWTTMtyTzSQ6DhuGw/YU9eYxX8uH6vesZmDLc56Q3bG6sGHlPYfjmJkb3rdGkbs=
+	t=1743372736; cv=none; b=KynsR+4Eiu7wdeDu0wLuW7/y6jUPO4tbwvcFnJCZhM+3iPcrO3CRiBPwEAXAZSFfa89HWc/x4XbEriT4IJuKuQZA1Ib/gqUeRi9rzWGU29BHi0jBPNRA1OMDlME2o2EJr5Zrxk7HXatsWpNcqOBSuBwT8AF3UfDkfETdTWRgINQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743372105; c=relaxed/simple;
-	bh=Tkszc10LvC0X2gbLARjsGrXZv7vlFk8/4HEG3JZn8mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGSDFB+lPfc9i5DrUJ6pnenmnhoApsbhv+1df+Nyrv1atUbB8bPoQXYE5iw9bVvwQp32BsQMZX7W99K5gK0/eaN0uMSpQt8Ibcy9/95Fm9UF9yIZGN08a2/Yp1Bl41TyRIx+AxzfJCnZ34H0mfX2t5ZOr6or87IBF4W+P4K5ghU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qngwqqaa; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kwMfUz4DFsWidBocR7kOt39zwWI/U4VW18DMFO9dYPI=; b=qngwqqaaexO6eKBiK3FhtSkgdL
-	MSs+nzF88N5K+EnT0ayn42AcEt1Tzd/rNS0zSettN7iHSvSTi0GDIgh/3ttm0X1eKnUb4BifKp7Kq
-	Gq8FPlSLKGduevzveO93LqEZAsb+UOabQlZ62bvZcUYAh+P2QGohtxJ/5jZNFbWqPAeQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tz0iW-007XLD-KA; Mon, 31 Mar 2025 00:01:20 +0200
-Date: Mon, 31 Mar 2025 00:01:20 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/4] net: mtip: The L2 switch driver for imx287
-Message-ID: <022e19f5-9a9c-42eb-9358-a6fe832e8f5f@lunn.ch>
-References: <20250328133544.4149716-1-lukma@denx.de>
- <20250328133544.4149716-5-lukma@denx.de>
- <3648e94f-93e6-4fb0-a432-f834fe755ee3@lunn.ch>
- <20250330222041.10fb8d3d@wsk>
+	s=arc-20240116; t=1743372736; c=relaxed/simple;
+	bh=zxs9NK/7J6cF5yXN8WD4I9b3sTnPdCT6V9gjOyMpCIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=umEPCn5cbKg0GMRHhln1EsRQ1+sziE34db5kHWZMYm5k+DeozSJ1lz7Fodp2joMdB6nVoj3J389BfERLhQfyGJWev941d3m2t7YQaLO9KDh+GWR8hj9W7NTBKa99v6k0DNNV/nU19SmHxFQ97D6EP9odSxFozcnYLXC+ykv+XZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: 3qadkYhTSR+fjAvV7NR60Q==
+X-CSE-MsgGUID: fnE7wi0MSCqL6LvANbyRyQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2025 07:12:11 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.92.1])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 80B9840078C5;
+	Mon, 31 Mar 2025 07:12:06 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: geert+renesas@glider.be,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org
+Cc: magnus.damm@gmail.com,
+	devicetree@vger.kernel.org,
+	john.madieu@gmail.com,
+	rui.zhang@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	sboyd@kernel.org,
+	biju.das.jz@bp.renesas.com,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	John Madieu <john.madieu.xa@bp.renesas.com>
+Subject: [PATCH v5 0/5] thermal: renesas: Add support fot RZ/G3E
+Date: Sun, 30 Mar 2025 23:49:36 +0200
+Message-ID: <20250330214945.185725-1-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250330222041.10fb8d3d@wsk>
+Content-Transfer-Encoding: 8bit
 
-> > > +	/* Prevent a state halted on mii error */
-> > > +	if (fep->mii_timeout && phy_dev->state == PHY_HALTED) {
-> > > +		phy_dev->state = PHY_UP;
-> > > +		goto spin_unlock;
-> > > +	}  
-> > 
-> > A MAC driver should not be playing around with the internal state of
-> > phylib.
-> 
-> Ok, I've replaced it with PHY API calls (phy_start() and
-> phy_is_started()).
+This series adds support for the temperature sensor unit (TSU) found on the
+Renesas RZ/G3E SoC.
 
-phy_start() and phy_stop() should be used in pairs. It is not good to
-call start more often than stop.
+The series consists of 5 patches (one of which is not related to the thermal
+framework) that progressively add TSU support as follows:
+- patch 1/5:    adds syscon/regmap support for accessing system controller
+                registers, enabling access to TSU calibration values
 
-What exactly is going on here? Why would there be MII errors?
+- patch 2-5/5:  adds dt-bindings, actual driver, DT node, and config symbol.
 
-	Andrew
+Note to Maintainers: There is a false positive warning reported by
+checkpatch.pl on patch 1/5 stating that the regmap_config struct should be
+const, despite the fact it's updated in probe().
+
+Changes:
+
+v1 -> v2
+ * Fix yaml warnings from dt-binding
+ * Update IRQ names to reflect TSU expectations
+
+v2 -> v3
+ * Remove useless 'renesas,tsu-operating-mode' property
+
+v3 -> v4
+ * Improve commit messages
+
+v4 -> v5
+ * Remove useless curly braces on single line-protected scoped guards
+
+Regards,
+
+John Madieu (5):
+  soc: renesas: rz-sysc: add syscon/regmap support
+  dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
+  thermal: renesas: rzg3e: Add thermal driver for the Renesas RZ/G3E SoC
+  arm64: dts: renesas: r9a09g047: Add TSU node
+  arm64: defconfig: Enable the Renesas RZ/G3E thermal driver
+
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  81 ++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    |  48 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/soc/renesas/Kconfig                   |   1 +
+ drivers/soc/renesas/r9a09g047-sys.c           |   1 +
+ drivers/soc/renesas/rz-sysc.c                 |  30 +-
+ drivers/soc/renesas/rz-sysc.h                 |   2 +
+ drivers/thermal/renesas/Kconfig               |   7 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3e_thermal.c       | 443 ++++++++++++++++++
+ 11 files changed, 621 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3e_thermal.c
+
+-- 
+2.25.1
+
 
