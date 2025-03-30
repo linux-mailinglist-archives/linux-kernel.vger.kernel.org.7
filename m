@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-580985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550C3A758EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD7EA7590D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825EA188A7B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E5A188BBBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798915A87C;
-	Sun, 30 Mar 2025 08:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F181189BB0;
+	Sun, 30 Mar 2025 08:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1H9fmPw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CR6AnNXx"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08396DCE1
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 08:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82C274C08;
+	Sun, 30 Mar 2025 08:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743323803; cv=none; b=IX1NbAIc+SB++XEJV07k8niKp8vwz/ITYHogNT6l8OshVj9I7FB9/fT4iJag+gM1g9GihGM2beMC02tFdFzIwWoBlE25jY69r43u1UnBofZpTkr4dlFVGJ02myL01H/GuWo9Y6VtwG8RbtVawMTvaZEgNbL4oadtBnW92VD5N10=
+	t=1743325150; cv=none; b=T1j7hFTAkGWknU8pD3qkr3UyvB35b5rRAMyoZAX4mXw7mF8KtCPUZ7Hs1KzgHPvM+yNELC2Q9icSk3Ib73fjFr/+zC7VXWyR3r7ac/5UU3jUkXkhVV+I/RJqaReYZRUwPDH57Lvm1ewlNvbj9vIxEq3lyDE5XPZa7izi1ftrEfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743323803; c=relaxed/simple;
-	bh=kOFOJm39FkXH+rwD+36WlO5jTjLl36ZB3AYPctsbP88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wv69ofUF4dGU0ifMfbVX95FNF7W6uIWNx/E6ooNovf6cnVssl7/IiSYQeghJw4O643HvD0STKHQnG2LryOy2KwVn/Qv3P5Frn59iTkn+g9DQUiSblMU+aECBBSM5MFv0i/vCV/YU14TUy6JN6zCU6JgllBpxvYpiP66ys8BTyGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1H9fmPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A1FC4CEDD;
-	Sun, 30 Mar 2025 08:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743323802;
-	bh=kOFOJm39FkXH+rwD+36WlO5jTjLl36ZB3AYPctsbP88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B1H9fmPwgNZ8nM0tHdayf7Ir9hlQgGnpZPiRWgV94jiu7g8SP3pgHLHY5s2MlRYul
-	 9pCKDTNJbGboAItH7ZuQFjJpvWyOfAjJFQMyK7Q+dDywXIPuuQpPGlmIyq0Jz/bRMi
-	 HxjYlDNgLXzIC8oES4Hs60N78eVn31UrlDlV1/MmR3PHPZhowZZvCcTrBFQF2CHVlZ
-	 fbMzHmERVLTUq8jiXHMuZwBLcj0TkUo6Ce/mGkgxaMd1VSI+Wq9yryJ5edJLQKO20C
-	 AeiNKSwhMwJYx8NprmqCf/ti597kztA2EAtgtXv8JZtDAwKNywIXtJD1IqIkEfEE1Q
-	 R4r1jzkSN5xPA==
-Date: Sun, 30 Mar 2025 11:36:34 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
-	will@kernel.org, gshan@redhat.com, steven.price@arm.com,
-	suzuki.poulose@arm.com, tianyaxiong@kylinos.cn, ardb@kernel.org,
-	david@redhat.com, urezki@gmail.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: pageattr: Explicitly bail out when changing
- permissions for vmalloc_huge mappings
-Message-ID: <Z-kCkh1XWX8Rwjwz@kernel.org>
-References: <20250328062103.79462-1-dev.jain@arm.com>
- <Z-cnmklGUojMzsUF@kernel.org>
- <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
- <Z-jzouwNZwk8Ft-j@kernel.org>
- <b7be0b9c-89fa-470d-8f6d-7db6282b3c68@arm.com>
+	s=arc-20240116; t=1743325150; c=relaxed/simple;
+	bh=/km/b3RP7+meUdGujK5Cfjr3gVbfpj8Ix+nZ0yoaw80=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=opyOBPoIBA8DBalkPnAKssJsTG/XPXi/dE138ZVavArP9WynyzwF0IQorKR7KBwoBC36SJ9WH3FFvxlSoMIWvJmNLFVy+jD737gNU0Hhc4PD9PZBycMD0M6OM6eiyhH6+ml36QiJtYoK8aFFo0iiEBjV6NUuaw4ODWF0XRjhqQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CR6AnNXx; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52U8dKo53063341
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 30 Mar 2025 03:39:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743323960;
+	bh=zVyzdrsq8rwcKEYT3slz18YJ/cFCFrZ4CWV2JbLOQZg=;
+	h=From:To:CC:Subject:Date;
+	b=CR6AnNXxBE8XeAGt6nNrC2LOTQwIlN7yitDmLdEDpYT3rVcHLm8OfbVxDMLNPVtTK
+	 ia1Fp6Jx7t9dFfDjNOQKRHiKYHaP4KM8FJQPdN0JSpi94znarBoF+CqZ82eZkGCCYI
+	 qm/hyf4JSBQjIAlLbWmElYreWFpu2mr/RwR5gg+g=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52U8dKrW118394;
+	Sun, 30 Mar 2025 03:39:20 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 30
+ Mar 2025 03:39:19 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 30 Mar 2025 03:39:19 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52U8dE4g015769;
+	Sun, 30 Mar 2025 03:39:15 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
+        <18255117159@163.com>, <cassel@kernel.org>,
+        <wojciech.jasko-EXT@continental-corporation.com>,
+        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>
+CC: <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v2 0/4] Loadable Module support for PCIe Cadence and J721E
+Date: Sun, 30 Mar 2025 14:09:10 +0530
+Message-ID: <20250330083914.529222-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7be0b9c-89fa-470d-8f6d-7db6282b3c68@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Mar 30, 2025 at 01:53:57PM +0530, Dev Jain wrote:
-> 
-> 
-> On 30/03/25 1:02 pm, Mike Rapoport wrote:
-> > On Sat, Mar 29, 2025 at 09:46:56AM +0000, Ryan Roberts wrote:
-> > > On 28/03/2025 18:50, Mike Rapoport wrote:
-> > > > On Fri, Mar 28, 2025 at 11:51:03AM +0530, Dev Jain wrote:
-> > > > > arm64 uses apply_to_page_range to change permissions for kernel VA mappings,
-> > > > 
-> > > >                                                       for vmalloc mappings ^
-> > > > 
-> > > > arm64 does not allow changing permissions to any VA address right now.
-> > > > 
-> > > > > which does not support changing permissions for leaf mappings. This function
-> > > > > will change permissions until it encounters a leaf mapping, and will bail
-> > > > > out. To avoid this partial change, explicitly disallow changing permissions
-> > > > > for VM_ALLOW_HUGE_VMAP mappings.
-> > > > > 
-> > > > > Signed-off-by: Dev Jain <dev.jain@arm.com>
-> > > 
-> > > I wonder if we want a Fixes: tag here? It's certainly a *latent* bug.
-> > 
-> > We have only a few places that use vmalloc_huge() or VM_ALLOW_HUGE_VMAP and
-> > if there was a code that plays permission games on these allocations, x86
-> > set_memory would blow up immediately, so I don't think Fixes: is needed
-> > here.
-> 
-> But I think x86 can handle this (split_large_page() in __change_page_attr())
-> ?
+Hello,
 
-Yes, but it also updates corresponding direct map entries when vmalloc
-permissions change and the direct map update presumes physical contiguity
-of the range. 
+This series enables support to build the PCIe Cadence Controller drivers
+and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+Modules. The motivation for this series is that PCIe is not a necessity
+for booting the SoC, due to which it doesn't have to be a built-in
+module. Additionally, the defconfig doesn't enable the PCIe Cadence
+Controller drivers and the PCI J721E driver, due to which PCIe is not
+supported by default. Enabling the configs as of now (i.e. without this
+series) will result in built-in drivers i.e. a bloated Linux Image for
+everyone who doesn't have the PCIe Controller. Therefore, with this
+series, after enabling support for building the drivers as loadable
+modules, the driver configs can be enabled in the defconfig to build
+the drivers as loadable modules, thereby enabling PCIe.
 
-> > > > > ---
-> > > > >   arch/arm64/mm/pageattr.c | 4 ++--
-> > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-> > > > > index 39fd1f7ff02a..8337c88eec69 100644
-> > > > > --- a/arch/arm64/mm/pageattr.c
-> > > > > +++ b/arch/arm64/mm/pageattr.c
-> > > > > @@ -96,7 +96,7 @@ static int change_memory_common(unsigned long addr, int numpages,
-> > > > >   	 * we are operating on does not result in such splitting.
-> > > > >   	 *
-> > > > >   	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
-> > > > > -	 * Those are guaranteed to consist entirely of page mappings, and
-> > > > > +	 * Disallow VM_ALLOW_HUGE_VMAP vmalloc mappings so that
-> > > > 
-> > > > I'd keep mention of page mappings in the comment, e.g
-> > > > 
-> > > > 	* Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
-> > > > 	* mappings are updated and splitting is never needed.
-> > > > 
-> > > > With this and changelog updates Ryan asked for
-> > > > 
-> > > > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > > > 
-> > > > 
-> > > > >   	 * splitting is never needed.
-> > > > >   	 *
-> > > > >   	 * So check whether the [addr, addr + size) interval is entirely
-> > > > > @@ -105,7 +105,7 @@ static int change_memory_common(unsigned long addr, int numpages,
-> > > > >   	area = find_vm_area((void *)addr);
-> > > > >   	if (!area ||
-> > > > >   	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
-> > > > > -	    !(area->flags & VM_ALLOC))
-> > > > > +	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
-> > > > >   		return -EINVAL;
-> > > > >   	if (!numpages)
-> > > > > -- 
-> > > > > 2.30.2
-> > > > > 
-> > > > 
-> > > 
-> > 
-> 
+Series is based on linux-next tagged next-20250328.
+
+Series has been tested by loading and unloading the PCI J721E driver
+when operating in the Root-Complex mode on J700-EVM with an NVMe SSD
+connected to the PCIe Connector. "hdparm" based reads of the NVMe SSD
+have been performed to validate functionality before and after a module
+unload-load sequence using modprobe. Additionally, the module unload
+was performed while running "hdparm" in the background. No crash was
+seen and reloading the module enumerated the NVMe SSD and "hdparm" could
+be re-run successfully.
+
+v1 of this series is at:
+https://lore.kernel.org/r/20250307103128.3287497-1-s-vadapalli@ti.com/
+Changes since v1:
+- Collected "Reviewed-by" tags from:
+  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+  for the first two patches in this series.
+- Based on feedback from Mani on the third patch of the v1 series at:
+  https://lore.kernel.org/r/20250318080304.jsmrxqil6pn74nzh@thinkpad/
+  pci_epc_deinit_notify() has been included in cdns_pcie_ep_disable().
+- Based on feedback from Thomas on the fourth patch of the v1 series at:
+  https://lore.kernel.org/r/88b3ecbe-32b6-4310-afb9-da19a2d0506a@bootlin.com/
+  the "check" for a non-NULL "pcie-refclk" in j721e_pcie_remove() has been
+  dropped.
+
+Regards,
+Siddharth.
+
+Kishon Vijay Abraham I (1):
+  PCI: cadence: Add support to build pcie-cadence library as a kernel
+    module
+
+Siddharth Vadapalli (3):
+  PCI: cadence-host: Introduce cdns_pcie_host_disable helper for cleanup
+  PCI: cadence-ep: Introduce cdns_pcie_ep_disable helper for cleanup
+  PCI: j721e: Add support to build as a loadable module
+
+ drivers/pci/controller/cadence/Kconfig        |  12 +-
+ drivers/pci/controller/cadence/pci-j721e.c    |  33 ++++-
+ .../pci/controller/cadence/pcie-cadence-ep.c  |  17 +++
+ .../controller/cadence/pcie-cadence-host.c    | 113 ++++++++++++++++++
+ drivers/pci/controller/cadence/pcie-cadence.c |  12 ++
+ drivers/pci/controller/cadence/pcie-cadence.h |  14 ++-
+ 6 files changed, 192 insertions(+), 9 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.34.1
+
 
