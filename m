@@ -1,160 +1,119 @@
-Return-Path: <linux-kernel+bounces-581036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F2BA759AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8EEA75979
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EEF3A7FA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CB473ABAFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08A91BE251;
-	Sun, 30 Mar 2025 10:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1D91AA1C8;
+	Sun, 30 Mar 2025 10:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="BEAzv8RE"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1170A1876;
-	Sun, 30 Mar 2025 10:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZLlD0nbt"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694621A256B
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 10:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743332303; cv=none; b=A0NOL7tJaceSlAoZpWsIc61jT67BrZ82J9MybiW0k4hbuddKOZnJjK/YyNX9ztXj30ku97g4RPTyqLscas8oqquAcbYxbZtTc6FS7FtP+dc0RMEtBk3hdCQ/K2EvOJvbMDQqr+Ed/q7mam56ovRKxrE5xcnLjMeJUiyVDp5PSSo=
+	t=1743329640; cv=none; b=RZXg0wbcmjHel3WhW+rxUNJMdtN+CfMayDLyYoVPLNafnCoqB7WCZdiB7FzBtoYPqbXd+aMI8Ll7oVi6P7ebxn6RNqnHtYjApXtpcU9/b9s4Y+Ef2CftuVacJerE2SK2JibyCrpzAIV+agQbXa3imxdvvcYB6kd6vM7sxafKUCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743332303; c=relaxed/simple;
-	bh=uVIQEOtI630sSjcBztuICMnYQfAn3q9dl1aF4VCv7Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nlxA352xqUjMwMll8ie5xpHidxd+47+fUFUQwzlNPUycHLWzNzfcW7YbxQtp2fyHPAldYgipDMDOK1eGcaTI5GFx16pIcCVzV+JJiuTOzv3JIUdXVPc6FKxxDT8aUlxP98EUHhEoUZl5g1loqfFXK1uisZzgYPHdHP9GDccwMMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=BEAzv8RE; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 1C3E840A00; Sun, 30 Mar 2025 12:13:34 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 1C3E840A00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20250313; t=1743329614;
-	bh=uVIQEOtI630sSjcBztuICMnYQfAn3q9dl1aF4VCv7Zk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BEAzv8REy4FtouX2ZOsTsRZ05+2up5KXdS0lkYsAyH73qS4Eti6xUKj/1IoKw0e0R
-	 j75FdjqmAxGH1biH+gqspa/p9cmlXoP3ek4MSavYiIxDKY6417WlMqjK/8Hmu73t8e
-	 v7O2PlMRtDEhrZxhN1PEIOO7WN3J/O7aSsTbbxYQjC1F518OL+excWx6ARlck24LY1
-	 QLqomYpSfycOBgyjtpFtgn7o/HJHrjwINcv9JMrB2ioUeBR/cLH4woZqhOspQeoSxS
-	 QDYjecYzVekAEaEBnTe0DfVDjnUqIMMvCYfUtwPONgTgCO7Gk3sZzw5pq14Fo21ynV
-	 ZZAE+IUWvM3Zg==
-Date: Sun, 30 Mar 2025 12:13:33 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Biju Das <biju.das.jz@bp.renesas.com>, Chen Ni <nichen@iscas.ac.cn>,
-	Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-	Frank Li <Frank.Li@nxp.com>, Kyunghwan Seo <khwan.seo@samsung.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [GIT PULL REQUEST] watchdog - v6.15 release cycle.
-Message-ID: <20250330101333.GA18497@www.linux-watchdog.org>
+	s=arc-20240116; t=1743329640; c=relaxed/simple;
+	bh=5Dn34M3j1J/0yG2xzBOIVJdG+eWKyBdZzWhp6uW6JiI=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=tBnJ1bYvF/GQ5SwflgEgucYQKI5kf8xIlyYnWXpSIHCz50Z1zFxTk28/rlEeF0wsTcEb9nQHy5HHUgHVKVjZKhHKZnroTcrwoC0kHpCQoU/t1JZJiwvRO2TRhUFE2Yqy2StUMeu9diUTEN27lG/VfIh7BemEO6vlJLs749QZBeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZLlD0nbt; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso2258211a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 03:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1743329637; x=1743934437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JU9e44tO6FJo/GjHldkKNGDusFlokQ2t2C9nEsto6Fo=;
+        b=ZLlD0nbtYKgcPRVStfN40UQt8fjE46Shna1bnIb1gxSE9B6ER4rbB4msA8LvSGsotD
+         rDyyJESKgkWv/Sz2Is2vTiOXqumK+ezmg9XYniQztsmG4+6+Je3qFJ0TGS1GVH8rLq+6
+         rAFHlwT7btx3CeYRGIyh8K40rg4/8X2fWBWK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743329637; x=1743934437;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JU9e44tO6FJo/GjHldkKNGDusFlokQ2t2C9nEsto6Fo=;
+        b=vPsI/QIN6u57/HRlbMXnI6ipMGB2MgyKagjviFK9/fN4bQK3XQcNy6sV89B190aPUG
+         vb2Arh5isM2BxpTAV/v/UBo4RQ2xWxN6cBg/xgF/Q/A1Ewtf4gjjb/Yr9kPwW0Xh2Phv
+         np+OggANHLZvW1zIOGtjW0Z6ZO21ItFC8Lo5lFEvdLw+aePZYTuescrdrBMCWBRBfPhI
+         fGc5TTctf037JMxk6A4QrhFNNUu0mIi1Q0z5LpOAnfP949R3r2LwC/C/vRlp+CmPTYqb
+         Y+wA4q7UO9SOS2zdqFBoA9an/YGR351tevczUYjYeY9oiK0k+5hxLY43m20FE+GoLtDs
+         TNbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGzL+EmZt3JRgsNU4e2LRk1qPN3/2rtNA9OJtTNZQVjMKTU8EYV0eGPHEXPhW+6/Fro4jHHcexROeS/+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkXsOK1GicMCMiJGDLtChtJVk9p+BLfzdSjlnw2BP3j2Nakh8M
+	d3ksxKLuziTqlqf6UGuBZlx2S6ImUQ/AaYc4zmlNWyRseA7yw1r36A7wATSuZw==
+X-Gm-Gg: ASbGncshFv3VG6/FRhhtG9qkwk3RcfMmmRAyJQguVUNUshGPkYIndZR3rs6IfOTezZF
+	UX86SJJfzch77f4GwaSajy7rc6ctGO3lObGxvqVgQs7YOtsVwiAx11AbmdBrLfKicdm5Rwp0Jt8
+	EuBmkpKgBLORTQ0Pt9fjla0mAZairs39/aEZrzHLznNJFmysjslZ+EBC9oi0QS2vCgb6N+u7ycM
+	KV8AUuyhsPyFC7MaN4qqYkwtNRjt2n3u6o5YMERMcvgD/OWnuvr8zgU7xOptz2ggqXsc8YJdfZa
+	xML/9R+7TrGaw0VULM0yzCmVFDvGSZO+chvcD3O0ZokLfa4tx5nR0uD1qStH9jopEGx4ZCKTALV
+	sYWPohbg=
+X-Google-Smtp-Source: AGHT+IEhOwFN64RAI12GBOewic8rItD3qND4hzZYF1sIbS+MnHfLx1/+PRibZCWYf0GY0riRMXCk2g==
+X-Received: by 2002:a05:6402:3490:b0:5e4:9726:7779 with SMTP id 4fb4d7f45d1cf-5edfcc1f72fmr4865313a12.2.1743329636709;
+        Sun, 30 Mar 2025 03:13:56 -0700 (PDT)
+Received: from [192.168.178.39] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17dfc4dsm4084750a12.71.2025.03.30.03.13.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Mar 2025 03:13:56 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>
+CC: <kvalo@kernel.org>, <jeff.johnson@oss.qualcomm.com>, <toke@toke.dk>, <jacobe.zang@wesion.com>, <u.kleine-koenig@baylibre.com>, <megi@xff.cz>, <sebastian.reichel@collabora.com>, <saikrishnag@marvell.com>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
+Date: Sun, 30 Mar 2025 12:13:56 +0200
+Message-ID: <195e68b2ab8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <195e686b618.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+References: <20250330093505.22370-1-abdun.nihaal@gmail.com>
+ <195e686b618.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+User-Agent: AquaMail/1.54.1 (build: 105401536)
+Subject: Re: [PATCH] Fix memory leak in brcmf_get_module_param
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On March 30, 2025 12:09:04 PM Arend Van Spriel 
+<arend.vanspriel@broadcom.com> wrote:
 
-Please pull following watchdog changes for the v6.15 release cycle.
+> On March 30, 2025 11:35:41 AM Abdun Nihaal <abdun.nihaal@gmail.com> wrote:
+>
+>> The memory allocated for settings is not freed when brcmf_of_probe
+>> fails. Fix that by freeing settings before returning in error path.
+>>
+>> Fixes: 0ff0843310b7 ("wifi: brcmfmac: Add optional lpo clock enable support")
+>
+> Good catch. Thanks for the fix.
 
-This series contains:
-* Add watchdog driver for Lenovo SE30 platform
-* Add support for Allwinner A523
-* Add i.MX94 support
-* watchdog framework: Convert to use device property
-* renesas,wdt: Document RZ/G3E support
-* Various other fixes and improvemenents
+The patch is fine, but a minor procedural nit that I should mention. The 
+subject of patches for brcmfmac should have prefix "wifi: brcmfmac:" as 
+shown in the Fixes: line. Hopefully Kalle can take care of that.
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
+Regards,
+Arend
 
-  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
+>> ---
+>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 4 +++-
+>> 1 file changed, 3 insertions(+), 1 deletion(-)
 
-are available in the git repository at:
 
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.15-rc1
-
-for you to fetch changes up to 9bc64d338b0b4b2061049df8b701f9786857690e:
-
-  watchdog: sunxi_wdt: Add support for Allwinner A523 (2025-03-25 14:11:16 +0100)
-
-----------------------------------------------------------------
-linux-watchdog 6.15-rc1 tag
-
-----------------------------------------------------------------
-Andre Przywara (2):
-      dt-bindings: watchdog: sunxi: add Allwinner A523 compatible string
-      watchdog: sunxi_wdt: Add support for Allwinner A523
-
-Andy Shevchenko (1):
-      watchdog: nic7018_wdt: tidy up ACPI ID table
-
-Arnd Bergmann (1):
-      watchdog: aspeed: fix 64-bit division
-
-Biju Das (2):
-      watchdog: Enable RZV2HWDT driver depend on ARCH_RENESAS
-      dt-bindings: watchdog: renesas,wdt: Document RZ/G3E support
-
-Chen Ni (1):
-      watchdog: npcm: Remove unnecessary NULL check before clk_prepare_enable/clk_disable_unprepare
-
-Chin-Ting Kuo (1):
-      watchdog: aspeed: Update bootstatus handling
-
-Frank Li (1):
-      dt-bindings: watchdog: fsl-imx7ulp-wdt: Add i.MX94 support
-
-Guenter Roeck (1):
-      watchdog: Convert to use device property
-
-Kyunghwan Seo (1):
-      watchdog: s3c2410_wdt: Fix PMU register bits for ExynosAutoV920 SoC
-
-Mark Pearson (1):
-      watchdog: lenovo_se30_wdt: Watchdog driver for Lenovo SE30 platform
-
-Stephen Boyd (1):
-      watchdog: cros-ec: Add newlines to printks
-
-Stephen Rothwell (1):
-      watchdog: lenovo_se30_wdt: include io.h for devm_ioremap()
-
- .../bindings/watchdog/allwinner,sun4i-a10-wdt.yaml |   2 +
- .../bindings/watchdog/fsl-imx7ulp-wdt.yaml         |   4 +
- .../devicetree/bindings/watchdog/renesas,wdt.yaml  |   4 +
- drivers/watchdog/Kconfig                           |  22 +-
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/aspeed_wdt.c                      |  81 ++++-
- drivers/watchdog/cros_ec_wdt.c                     |  10 +-
- drivers/watchdog/lenovo_se30_wdt.c                 | 394 +++++++++++++++++++++
- drivers/watchdog/nic7018_wdt.c                     |   9 +-
- drivers/watchdog/npcm_wdt.c                        |   9 +-
- drivers/watchdog/s3c2410_wdt.c                     |  10 +-
- drivers/watchdog/sunxi_wdt.c                       |  11 +
- drivers/watchdog/watchdog_core.c                   |   6 +-
- 13 files changed, 535 insertions(+), 28 deletions(-)
- create mode 100644 drivers/watchdog/lenovo_se30_wdt.c
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
 
 
