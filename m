@@ -1,144 +1,115 @@
-Return-Path: <linux-kernel+bounces-581035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB7BA759AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D172A759B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 13:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03347167424
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F789168504
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 11:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45451C4609;
-	Sun, 30 Mar 2025 10:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28251C4A13;
+	Sun, 30 Mar 2025 11:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZq1OoZG"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="i+au7s5f"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17A4158DD8;
-	Sun, 30 Mar 2025 10:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8AB155A25;
+	Sun, 30 Mar 2025 11:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743331904; cv=none; b=lJZkqlBdAHaUhqY5P1Ix5Z6oQeCopg6c/aawBXA+/PsO5pYgodXDLsIyrvUnwb2DARH5gv6T9bMeoKIASeE7c8HqN4Vkv1c8MhXvdRuM0wANgieFEgl62JjbAdLYyArKowrLWL1b6ZScz0UmJE31YAN4RvGthcLKfFup9rNWXjw=
+	t=1743332702; cv=none; b=IJSJ7sJfTyND7Dbo0isS+wYukyfFM6d06btbrseE9WhVuxXA8R5A5vMQCFN0uwGwOiEMipHht1SMHkNQJjxZaJkR0zsWLfPRy/pnepmb+PcBaOv7R3ToXMtDRPvqCl9C6MK72xJ65Ly6hkjyT19NtJov29WYHfASqBZ5yE+vIyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743331904; c=relaxed/simple;
-	bh=Q5P7NejdXbV1XiS/42ah2Xw7ZPQQT2Z6dbh2accinlU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P4Yg5pyzpv7M1xt2SAJuCswmAqcgWbBmz4aCpGCfeSHgURQSDwnhvjGq1HqatQVuS50MwIm5xhg8BWAIJnl7hH7e4THid+qlhL+AAFgprHCD/03/A6RtR1EuKhWuyDVCkudFVBt6jHowvYL/ZhFZ94un4ck2XGLAwp9RK39Boxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZq1OoZG; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223a7065ff8so45297965ad.0;
-        Sun, 30 Mar 2025 03:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743331902; x=1743936702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4Dc7903aqUi7QARvZQkiVZWl5zvBm3/ivRJbwdI5Nw=;
-        b=AZq1OoZGi85SbGoSpfmRcywNI9PIryLz2zRNRGKKhIbU16/XHMYLgG2iceJmYhsuoD
-         f8sGY+CmicE7eSPJk/eiRSrg2HfzMiwEc5h+EpPApEkFncTIUl+oW3gGEj/kvIe1vguY
-         tZcrgZsTOCZ5WW0di2NAXlp7IZpHTlXaTzyF8KBWQw8nPt5HxdlbsSPQt3+mRcT3pebj
-         NhjUHxw931vCMrCyKMc+2He6C+v2sA8PAuszxKYBf0mdpxpg/WYzWF5ahzVvS6fLT/Qp
-         EDIxzI1edGEFlLpYpjbTDMT8f6hRGlWTgqyI7v+HnK+P7OQyN0cVW7aGeFIXRvd8DDs5
-         6mxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743331902; x=1743936702;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N4Dc7903aqUi7QARvZQkiVZWl5zvBm3/ivRJbwdI5Nw=;
-        b=Bhi9tLTrvhMoZg6hqqp2LVr1lMlogLI/FOXWCLry54ddRxO1dlrhcXhnbDGkLs3zIG
-         UbdWikFxPnwel+soL+jzSY4MgAaVIP2TNiPU2wTuIr/b++6GJaPmGz0BluRrQqAALWw6
-         8IAq+4djdjUFkg/EGSrCFd/wkU6YsCkwnR2Rafn3tUrGHKd7vZW5VarmilX3geguVk+C
-         WPdjgTvu5EkN6r2AzTAWZGy7I0jtwuPVHgzLyVvQPC1fg4ZX3T07fzY8HzPrLZcXkXVL
-         QX8OgFNnrwdaiNa36vV15HdcdTbnBiCxZP9phev77A7Vq1VGwscFyMsUtnX/S8umZ3AT
-         Tw6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJFHWgxMZdhBo87eTj8kWWzSPUkV1Fk09o/pPSU2RoqJUT0YIKuDbZEHaiKRFvXB8UyfXrMPdj/e9KJCE=@vger.kernel.org, AJvYcCVR7M2oNWEnIdepKKwF5FoO+GIwHbeEbkx4El7ig87dHH3DcuMiigFdG8hn630vaIvhThHNrFtPy53zKp8e@vger.kernel.org, AJvYcCWCXw3Frd9ERzrludfXxxNyfheZKBO29rke5LLwB/OKZW27YvV/Gm6C3HTH4HK8/ooLi79AvXjZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRnVcnwf5wmQYT9Rp/g/rjKIO0LvyPP5AoZfjy5FSZPx+8LFlw
-	/m/n+bZJroTV/ueFJmza23ff2gFxvDBqLKkYhmoxpQYFCV71jr/I
-X-Gm-Gg: ASbGnctUJvKHZlRoEpQ4oVu79HGnUbc+Vu1Xiizxg6uVSTFb/1mr5BuydBTpOqK7Df3
-	RCMF/PUukIdwyGd0jPz7yZ/pyPp72mKvxCY95SQQYNlINZ9SJwrib9V0+4MlD8OFT6FhZ8RXE3r
-	DxCAV329bXnXvq3VdWN2O8Shg45LDrzNstT2aGb98QsF5BXXdTw6mPg4BVH1o+aPfNyz0oxmVhn
-	4ykx/2jIkApAw7GK1juEyEmBq6Z3jIrZgLwYan9EM+LBpzJo1+zWzFxnVJWan6vzOgPt8rejaoG
-	TiBj9MXyZ64cOEZQ9kBWExOzUx84cQTTTPWiKr4cw2zaUBhV71Fzf9a+J9L1MvBX9vcCRhQo/bh
-	GtM39WSFQs2vlivfzakhZ9zLSLXpio4CpUhyxf+ROdw==
-X-Google-Smtp-Source: AGHT+IGlynswCVf1Afq+yxlrKXxYS9eorTi2vj1TP03egLwpQVeJSiv1lInIOi7BBKDsQVKxiyXUiA==
-X-Received: by 2002:a05:6a00:3991:b0:736:ab1d:7ed5 with SMTP id d2e1a72fcca58-7398000b471mr6908974b3a.0.1743331901818;
-        Sun, 30 Mar 2025 03:51:41 -0700 (PDT)
-Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e1d922sm4991601b3a.37.2025.03.30.03.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 03:51:41 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	bigeasy@linutronix.de,
-	conor.dooley@microchip.com,
-	jirislaby@kernel.org,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pmladek@suse.com,
-	ryotkkr98@gmail.com,
-	samuel.holland@sifive.com,
-	stable@vger.kernel.org,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH v2 1/2] serial: sifive: lock port in startup()/shutdown() callbacks
-Date: Sun, 30 Mar 2025 19:51:35 +0900
-Message-Id: <20250330105135.389827-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025033015-blanching-pagan-db09@gregkh>
-References: <2025033015-blanching-pagan-db09@gregkh>
+	s=arc-20240116; t=1743332702; c=relaxed/simple;
+	bh=pfNNxAdTq6eb1LHw7nhPWiLqqGrsqhtTtoSGYECEcEg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=D0ywTIlc0v2+4J3CYkxH4jXHBksYbimuFVHAVImEhdmF+wMorJJaYcFcP7HfStbIEmxOrFUFQJQMxx3TtA39lxzPopybWT1nctECp7rx6lY285JpU+D0iOzJZWnK7La/mlRvIMm9ZF04Sjl2pzl1Y/PaIPPQ1z1I9C7a7F2VMgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=i+au7s5f; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743332660; x=1743937460; i=markus.elfring@web.de;
+	bh=7XNR047n0tXM8NmFwSJtrXlOT11ohyoE+m+0m0SvfAQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=i+au7s5fEodaGPXUL0fhpGDPzMV4f56PQ5wU3WXtw/p+vagplHY9Em3B8szdU5ka
+	 BiDaVCj3c9/ywSK9/KoSgCipbL8hwFj8+Pu3vaugwCZJ5q9UmrzoPHo+ZbjzBddrz
+	 I2apm6XMSJINtioCwVwpQP+LKbEHiENGABZek3BXnS4lgGF68JbRFzAbqDK+Vt7wt
+	 cOX1lc/qyNk1OT+2l3bWaUES1692Kp4sp/ozQLEv/b34Z+TFrBTh3UOyuvyHe6mJc
+	 IfK5KKD1sRRliqFL6F3yFCjzsavWcMf4sck9ktWtxCkX5kNuVVgJWeQzsBriEu4pt
+	 CGVVxt4AQBU7A6/A5Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MtPrY-1t7iDC0hwM-0163PR; Sun, 30
+ Mar 2025 13:04:20 +0200
+Message-ID: <aaa4ce64-db4a-49b7-8725-4514c0a52e0b@web.de>
+Date: Sun, 30 Mar 2025 13:04:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Abdun Nihaal <abdun.nihaal@gmail.com>, linux-wireless@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Kalle Valo <kalle.valo@nokia.com>,
+ Kalle Valo <kvalo@kernel.org>, "John W. Linville" <linville@tuxdriver.com>,
+ Luciano Coelho <luciano.coelho@nokia.com>,
+ Luciano Coelho <luciano.coelho@intel.com>,
+ Vidhya Govindan <vidhya.govindan@nokia.com>,
+ Vidhya Govindan <vidhya.govindan@vvdntech.in>
+References: <20250330093556.22417-1-abdun.nihaal@gmail.com>
+Subject: Re: [PATCH] Fix memory leak in wl1251_tx_work
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250330093556.22417-1-abdun.nihaal@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:7aUbUz4Z3/RYjliKc8o9zNcxEEvOW9Bvrm25RrlUTmRWjgzs7cy
+ 9Ye2b7t1K83gbNEgxQjzRTcMmNoaEI5nerVlRSrnsaEnrAdr24S0w5sUlwFjIKPQcZzOeBa
+ ugJoS/96YfCnMT/yfTh6D8pl9HY5j92ApY1RKTvTl9DU6GTlhzg7dXV+5FQ6v8M0DcSuJzP
+ bpJzFZQYwzqyOX0ZCcQ2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OqojHTPAX3Q=;oJDEECPFHEGzg0csiHSvDiVMMtW
+ 7X656/GoucVcmkCQxDSCYokEMr8BE1gsX/t925iSNIQiZRXJbKQLWnSEsE0twsXVVnWHHvppg
+ ca2eeA/78cvMpwRl7MM1d/KFe3e+R8Bk8tqT1mTU0nzXeBK0kScbkb+jM557/Jth8AL0n1KXq
+ LREDR5mUKpHAqILlfYH8B56heUKDk1tPeMa2ORdE9UdHKMSQvj7DLGe97h0FfrWGMwkRGbBme
+ 2rr5FPrdNReJ80fRok9guzYIwAoAaQqFjUmVU5udauVMr38LNzGbLAWCSBAzwDtVvVQ0LtURz
+ QF57P8douMLkMp9ZW0xMVHPGPwQeJ9T3clGbEz9sRvIMogrkkJFV+T3mynjJ0c4URBkp6ifpj
+ c5jRW8+552TwEuzlRtOam0adc4mCFbniKfUhIeJmxs5T4ElVZZplbvSa9kzrg6m+HtqLOGqz9
+ BWbyLZjXzasTttdnFfdb6FlgXVvrpfYQK18bX3Mpfe56puOov2cmvyWSY54UHvWoD+Q44Ax/N
+ 5yP2dHPr29ReAfOKdnb0i3CjXSGq+/LV1qlYnybjJQaMqdp7sN+GZufeXRBG+ACBCO2lTer2q
+ wj4gZBVIpmpdK0krjZDT0djnRpJoNEYBghE/rlk/qQUO8n9RoIEzMHpBxGdgrWuEtSxgrDlPq
+ 9IIEH69UL73eQMJqnNsdFdpFIRVsXxEdwR8v0RT7gLhCOd7L+FLvxMEBaQWGlSesbm6Cg4hnN
+ HCiNwVZ2B8Hu8ZGJgv9TZvr7gQYfi4NmYz43i10FqabzUTstdyeta8FMi0oWtOmYbipSVIe3q
+ M0GBHZg7rlc6hlDkzek5YCy5pbS6wCcYblHKTFYfH6FNujL8iBF6NOIjIW2PgMglH3C2W9CZV
+ JKb41d8XrWVKuTLMQqGrzD1FiRKa0DfZzitaBlfHsPZu2fnZ57SLl6iE3MrOn6E83ARkU50r2
+ vu1f9UHwfJnSvfmiS21dxe5BdHcrneY/m99ADizeFLa1r096hZYCMsLoOYi70tLIcXqF349nj
+ E4WjeeTG7OAt0ddjg1jWZckSWKq3nMd2uq2jfgGcGAZXlFi9rF4hgzYXY+0koofwoGFS4cxyo
+ 3B7mquRqYx35p2m0AZ8A8TxwQ9kSPYSPwh2mDpD+blWhd4EyJ8VQq3jDusuk9itU16xNv7ud8
+ smKXVBfEhHxqgoGsUcISGgAo65FG2wJJ/N3oqaT2Oh1WC+G1tpOc2KCojKbFQYmoZg7anyUMs
+ miqfjVT4Dyk76yuRBKkHWqoKQt5IJoqAWmdwUVELb/7yStzpg2UVKThqF7ssfSIYeVOpa3/NC
+ WmuXIzTClRCSfaGtTOqyCIhogDsYZed+VWFpI7sPvvVd5NGDIjUQ7LKWMQC28li+yqhGnwSL2
+ nDKbCriJOjiwK+4z3gefJq6gTI1ZgfyLZ+pX7Q08RLRPBdGn9jGlxzlPzBZc1Joiabam6Owxx
+ 9z3KmjJCOTkbOhqrRlj2dM6dS4VePXQ+G9NuuQiJtQNLjjKH0
 
-Hi Greg,
+> The skb dequeued from tx_queue is lost when wl1251_ps_elp_wakeup fails
+> with a -ETIMEDOUT error. Fix that by queueing the skb back to tx_queue.
 
-On Sun, 30 Mar 2025 09:30:27 +0200, Greg KH wrote:
->On Sun, Mar 30, 2025 at 10:16:10AM +0900, Ryo Takakura wrote:
->> startup()/shutdown() callbacks access SIFIVE_SERIAL_IE_OFFS.
->> The register is also accessed from write() callback.
->> 
->> If console were printing and startup()/shutdown() callback
->> gets called, its access to the register could be overwritten.
->> 
->> Add port->lock to startup()/shutdown() callbacks to make sure
->> their access to SIFIVE_SERIAL_IE_OFFS is synchronized against
->> write() callback.
->> 
->> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
->> Cc: stable@vger.kernel.org
->> ---
->> 
->> Hi,
->> 
->> I'm sorry that I wasn't aware of how Cc stable should be done. 
->> 
->> I added Cc for stable but please tell me if this patch should be
->> resent or if there is any that is missing.
->
->Please resend a v3.
+* Please reconsider the distribution of email addresses over recipient lists
+  once more.
 
-Ok. I'll send v3 shortly ;)
+* A corresponding subsystem specification can usually be helpful here.
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/net/wireless/ti/wl1251/tx.c?h=next-20250328
 
-Sincerely,
-Ryo Takakura
+* Would you like to append parentheses to any function names?
 
->thanks,
->
->greg k-h
+
+Regards,
+Markus
 
