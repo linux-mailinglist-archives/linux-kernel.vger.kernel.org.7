@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-580995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C42AA75906
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1A4A758FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACEE3A9F71
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7F7169109
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9667918858A;
-	Sun, 30 Mar 2025 08:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF27189BB0;
+	Sun, 30 Mar 2025 08:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyjzPC7A"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M0UdzJmp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JsmG2djz"
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99603433A4;
-	Sun, 30 Mar 2025 08:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5290C433A4;
+	Sun, 30 Mar 2025 08:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743324598; cv=none; b=Ko2HkQRHMEtfMEXkOrol2tcKBOuyRnkhsDa1PhCvJbGTFnevSu0EnBlSqHozX35ZEsHgpgXFYV/4celO0iLliv5SNEsNPgx9kDxuwNGdKFGnp8CPRadT8BqfYdUooEDN7rRHIIz97fdtwuVMSun9ED/SRW7zK9CyqZ0SBKXojvo=
+	t=1743324347; cv=none; b=iH+tE4Yp8wJX2gQVP8OwxWvI3YcTVR+j2P5pW0YMp3vkGpoYjwoB65G6oO7VWOhVPzFw5lOl3CIzMgmWYDlOpKjQskpyaR2ZPnvQQgMcRsZnHTaWSRdlxODPgBkuTI8DbRJa0YyPJWdOJS0vRT4u+Wpl9lBQZd+zoATwCAcrHrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743324598; c=relaxed/simple;
-	bh=+bKsd+lUz1xN+iEJQV8fzknCljZQm9eRGmS71BH0FEA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qp1n6xHeMKewFlwEOcLRrXOmQH76EMZiT00E2y4xze/u+S13tKtwOLRGIk37T8EXh4SamYkclHoP+4yEfdCH9WmyQB+g+1Daf5ZSi0QBPIU83dSuNUFMMhaivLWds2we4Q2v8fSv71kD/bCNV2rZ7vo1hRIar2nKn4rzzxZW6XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyjzPC7A; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2240b4de12bso38267185ad.2;
-        Sun, 30 Mar 2025 01:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743324596; x=1743929396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EmzCxvsOduwulsT5Wgwx5bMOIAHj7o4CdA5a/pTT+Dk=;
-        b=PyjzPC7A0iOIIVe1HXPQmbnjqf15w3HmKsPeTMfIB1RR74TDfBQA5uS5+qvgwrgpAx
-         FozlLek54RTJ31qZcCUTyol2fDck1jpn3X/CVOl6aoKxWyk+7EfX4SuhSPS/TmUtyn0A
-         3UOWEHwbvY7kKXEZ6draVNElw7GR4CY9JMcZD6YtIiO3ZpAcKg1OBh66EroxtXaUuZoG
-         84T6c6XoomHoTl50rRr/Av1YYib/dEwXrqNRbmi2bFDeK/3xt2XbxCuuLSt6XQP8t9nb
-         rnHGtHgZL0jDilVKWOepkUuiLDDvkVFdPe4STVw4R8BZmUJlYjNgTdVsRl7RqqZ/7gW2
-         vijA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743324596; x=1743929396;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EmzCxvsOduwulsT5Wgwx5bMOIAHj7o4CdA5a/pTT+Dk=;
-        b=FLDb8IlqRHd8lfY8b38zF54l6AsCFr5MbBHCXbqwNMe6GKfCLkF8v4CA5lbqgawU2h
-         F+zgiCJc+uDxboBwS382qmG64Y2QtVxZuHitSLQPyNPmV0pBuqJXEufxXtLWOjplNMFS
-         f0yYh016IOiuqI0LMl7foeaLM7o35IkZ4wY3/DvhD7+pkujw1W1Xbew5ECg/HEKyOrxC
-         kWky2u6c+odmSXtlfouKlR1PIL1eGJ7KwvJ5tcpSgsaor6MG/BOy1+eEfu/SvgEyz/HY
-         vm+xXtJjUK2aqYvDXH7zrgXCUZ5XBc7i30v0hZ6RrHP4Y35GhW1BEZCZ2ZAU4sPUJu9L
-         7i/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEZWaLFZotsgyLHH3mWy6NFlJf0RNfDKlB1PpZncvvE9mMKdCjQItvidSZDui9JL2wojUHVyaFH8lVx2xX@vger.kernel.org, AJvYcCVEfdX97/edyNNV1dkXtY+re/5znfNaG9cgAn9kKwe2QX8sMLbaK62KeEniBpShOhN9JUjmCzpFvW8=@vger.kernel.org, AJvYcCWSTxrLye+bXR/xWZRMLRaKHqj9S0ERaa2vIn0fRIGTZYlPrdSh3ZO7GObyV0dovsopHBRyoCtHXYHaLoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzwD9+jVKImanGV62CUKeiWbtEs0EQbEr4zh+DyQvJ/kzIkt/M
-	Ret/khRa/4qAmHn3EJdL1SaQehaeN/HINNKx5WVw3xGxIT048YmY
-X-Gm-Gg: ASbGncvyoyOMxPoA+vO9Mfp6065molzrpVwiSZ8+u77ZRw+6gVFJ3qjPbRzMkReAQsk
-	l8aC5RuKeFeQ8MocpONRwlndRVeEVHhPbbGQg2VOP4kBzOLDNcSfmA3uDlxBcII5WcTLdUeld8e
-	uv+OGeeVyCHE+0JOOhCqk7C+9QcSaqG8A0PQEVmjF1wsMNBJiJIsCI4v0cIErnMmNk/hQ99ewTy
-	lCmhCcb024tUt9+AaHBR0TdPCihvqD7BF5CRCOrVHmv1ARDX5+HxSbJgugu+47TGOlpKtPfJDW4
-	YRaXf9FAUnIUezo6JUQmr9grSx6PRsOYXh/XiBz5eRmkZMMZgHoXcdOJNuSL8HPjFvKt9HGiOfK
-	U
-X-Google-Smtp-Source: AGHT+IFSa6czLX5BHKoQR4RzOcx/YbmUF2SgaxAIgJ4HQT0OJsOtxycsYNBJibWU+vKZphORkcPWdw==
-X-Received: by 2002:a05:6a21:c94:b0:1f5:9175:2596 with SMTP id adf61e73a8af0-2009f607a8bmr8922370637.13.1743324595736;
-        Sun, 30 Mar 2025 01:49:55 -0700 (PDT)
-Received: from salmon-ASUS-TUF-Dash-F15-FX516PR.. ([2402:7500:a17:45d:8f98:c8e0:143a:d5da])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93b8ae16esm4434055a12.61.2025.03.30.01.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 01:49:55 -0700 (PDT)
-From: Chih Yun Lin <noralin249@gmail.com>
-To: corbet@lwn.net
-Cc: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chih Yun Lin <noralin249@gmail.com>
-Subject: [PATCH] docs: hid: Fix typo in intel-thc-hid.rst
-Date: Sun, 30 Mar 2025 16:45:18 +0800
-Message-ID: <20250330084518.20916-1-noralin249@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743324347; c=relaxed/simple;
+	bh=H+Ux5Cj60Wwux5gpGqtyWyKc4Ac653kKfonZ49tQiz0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=KFkCrwqHZyu637B+75ZD0AZD6yp0n8KZEX0JJM9Hjj2ANpZIt+aPrgyldTVBZJ/h+2OHGWNIYaDHLARi1Lmbsg7W1+RwoxKQuXxZvgTMMuJnDWTbTUdaYS1/NAB0g36ALfm4sJtXPDePxopYhlDcQHajLzEDy0uAseIAsyFeWM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M0UdzJmp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JsmG2djz; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 7FB6C1D417AF;
+	Sun, 30 Mar 2025 04:45:42 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Sun, 30 Mar 2025 04:45:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1743324342;
+	 x=1743331542; bh=jQjMu37O/l4HzRGTyx5F4BIFe78F9UaGqYjLoWsple4=; b=
+	M0UdzJmpeLm3ADW5uZ4hZ6yrLV3yPx/q2x7O3H3vK+lJiiDRelNFWxVBBNrXZjuH
+	rwVY8ASm2eCXlBjOgvxlxUlkQw1idKaEtgK5Vs6O9bMnp6QFeJG+P7uaITMXAS4k
+	FlMnEcWGTKeAjoAo2JQcQXczK4KMTZkIvwCCVSmxSj/eAuiFjMI3f5qxMhV2ctC2
+	ohZsFiOXa0WeNk5SvVfsTKevISygSDrexia5TTUIfuH59v4hMfUjLtoPyiZjC5Nr
+	CKh/O9FuQAGoWk6K8uaudwEC3cSvC8YQGhsFTzkcGmRhpynYmccojjI1WiVqF74A
+	80vIQ7fYxPNdVB/KIjOQGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743324342; x=
+	1743331542; bh=jQjMu37O/l4HzRGTyx5F4BIFe78F9UaGqYjLoWsple4=; b=J
+	smG2djz6vfVjZfm/9HsjDJNuy5fipjqS3xySNuwaYr8fq038FJD8/2xIwBsxEFlF
+	G+wvm44m7HU2Lf1C5XXqRG8JL0Tf9ic5ljKKT6NUlk2miPYy/cyQO+kCHJVsYSuq
+	LB0sLH17kC3hKJBk7hvZRRVBspYfF0NEdaTLC7/Mf1FZtzZNNls5aHspVuauWpYc
+	L61gee4ENborxfMwwWG6U8BIIBESUAdyPmJ0HqNOUqMlcCeIvKdNOrWPWd1G2zTd
+	I2SgmuOb/HoZ81vwwVRARvHFIK9pLZ2KhH+S2xrkeGGprWCG9QitIY/3+kOqlUzc
+	1vwWCHZ3ec6Ij1JKx4FKw==
+X-ME-Sender: <xms:tATpZ9BqDN5NsfXKy6h2aZ6DiIit7GOxNXtuogPGDBozDsavQNCP5w>
+    <xme:tATpZ7h29tLbh-LAI5WRUBt1GlvpT8QWQvBStNdqc47j_9QLriv-ZgDa_kTbNZuVj
+    0rPsmrqyOCFUDuLEpE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeeiiedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    vddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepjhhfohhrsggvshesfhgvughorhgrphhrohhjvggt
+    thdrohhrghdprhgtphhtthhopehrohhsvghnphesghhmrghilhdrtghomhdprhgtphhtth
+    hopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthht
+    ohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpdhrtghpthhtohepjhgrmhgvshdrsghoth
+    htohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgtphhtthho
+    pegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegssghrvgiiihhllhhonheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:tATpZ4k0mjpEPjUlnNOhBptKalfvSqDuXfAnqzOosmRiDt_t4Ru4OQ>
+    <xmx:tATpZ3zgCgCKTaYHV-z7WfzDdwBdQeBrBA_Ocxvx4npXAKa1HDAsfA>
+    <xmx:tATpZyTB5IB2RPxn29aslFtX9EwVNtAupyDNT_Y7jmY3YC68FC9T0A>
+    <xmx:tATpZ6YwAy2TtY_6JDC2pLq6IXuUd8-MYX0XlnrW5bfkNzC9QTWr3A>
+    <xmx:tgTpZ8GcKMuPjU7jnxyZbPEl8DsK-URHm4QxIfpTBP4VF4F5xJ0s9x6x>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0B7AF2220072; Sun, 30 Mar 2025 04:45:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T2a88af23abfdad3d
+Date: Sun, 30 Mar 2025 10:45:19 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "'bbrezillon@kernel.org'" <bbrezillon@kernel.org>,
+ "Arnaud Ebalard" <arno@natisbad.org>, "Srujana Challa" <schalla@marvell.com>,
+ "Herbert Xu" <herbert@gondor.apana.org.au>,
+ "David S . Miller" <davem@davemloft.net>,
+ "David Howells" <dhowells@redhat.com>, "Jarkko Sakkinen" <jarkko@kernel.org>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Justin M. Forbes" <jforbes@fedoraproject.org>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>, "Rosen Penev" <rosenp@gmail.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-Id: <4a1e3e4d-a568-4f5f-a6cc-502b9642d0eb@app.fastmail.com>
+In-Reply-To: 
+ <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
+References: <20250314160543.605055-1-arnd@kernel.org>
+ <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Corrected the spelling of "triggerred" to "triggered" and "flexiblity"
-to "flexibility".
+On Sun, Mar 30, 2025, at 10:34, Geert Uytterhoeven wrote:
+> On Fri, 14 Mar 2025 at 17:05, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+>> --- a/security/keys/Kconfig
+>> +++ b/security/keys/Kconfig
+>> @@ -60,7 +60,7 @@ config BIG_KEYS
+>>         bool "Large payload keys"
+>>         depends on KEYS
+>>         depends on TMPFS
+>> -       depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+>> +       select CRYPTO_LIB_CHACHA20POLY1305
+>>         help
+>>           This option provides support for holding large keys within the kernel
+>>           (for example Kerberos ticket caches).  The data may be stored out to
+>
+> Due to dropping the dependency, this appeared on my radar.
+> Should this be selected by one or some of the Kerberos Kconfig symbols?
+>
 
-Signed-off-by: Chih Yun Lin <noralin249@gmail.com>
----
- Documentation/hid/intel-thc-hid.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I don't see why: before commit 521fd61c84a1 ("security/keys: rewrite
+big_key crypto to use library interface") it was user selectable
+without the crypto dependency, and now it got back to that. I think
+from the point of view of Kconfig that is how we want it.
 
-diff --git a/Documentation/hid/intel-thc-hid.rst b/Documentation/hid/intel-thc-hid.rst
-index 6c417205ac6a..dc9250787fc5 100644
---- a/Documentation/hid/intel-thc-hid.rst
-+++ b/Documentation/hid/intel-thc-hid.rst
-@@ -182,7 +182,7 @@ value and use PIO write (by setting SubIP write opcode) to do a write operation.
- 
- THC also includes two GPIO pins, one for interrupt and the other for device reset control.
- 
--Interrupt line can be configured to either level triggerred or edge triggerred by setting MMIO
-+Interrupt line can be configured to either level triggered or edge triggered by setting MMIO
- Control register.
- 
- Reset line is controlled by BIOS (or EFI) through ACPI _RST method, driver needs to call this
-@@ -302,10 +302,10 @@ waiting for interrupt ready then read out the data from system memory.
- 3.3.2 Software DMA channel
- ~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--THC supports a software triggerred RxDMA mode to read the touch data from touch IC. This SW RxDMA
-+THC supports a software triggered RxDMA mode to read the touch data from touch IC. This SW RxDMA
- is the 3rd THC RxDMA engine with the similar functionalities as the existing two RxDMAs, the only
--difference is this SW RxDMA is triggerred by software, and RxDMA2 is triggerred by external Touch IC
--interrupt. It gives a flexiblity to software driver to use RxDMA read Touch IC data in any time.
-+difference is this SW RxDMA is triggered by software, and RxDMA2 is triggered by external Touch IC
-+interrupt. It gives a flexibility to software driver to use RxDMA read Touch IC data in any time.
- 
- Before software starts a SW RxDMA, it shall stop the 1st and 2nd RxDMA, clear PRD read/write pointer
- and quiesce the device interrupt (THC_DEVINT_QUIESCE_HW_STS = 1), other operations are the same with
--- 
-2.43.0
-
+     Arnd
 
