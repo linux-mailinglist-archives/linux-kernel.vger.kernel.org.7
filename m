@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-580991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDF7A758FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:41:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550C3A758EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2A7188B4FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825EA188A7B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A760F189BB0;
-	Sun, 30 Mar 2025 08:41:01 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798915A87C;
+	Sun, 30 Mar 2025 08:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B1H9fmPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C4815A858;
-	Sun, 30 Mar 2025 08:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08396DCE1
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743324061; cv=none; b=n8pkgsegX38Iz9pRTPVPmvOIYn3BkVzI0PP/gQKUdov4I9dLq5l5erMAlQA82h6XbtdkePsFTWRqdc/dRmXKhKYJQAJJ2zVyHYs2360KUsIzqtJFkUDRCprbv6Fq/nLKRtrpYazw3TtPb2H//R5ozb1OX0mx2WM+CiEVmubsYOg=
+	t=1743323803; cv=none; b=IX1NbAIc+SB++XEJV07k8niKp8vwz/ITYHogNT6l8OshVj9I7FB9/fT4iJag+gM1g9GihGM2beMC02tFdFzIwWoBlE25jY69r43u1UnBofZpTkr4dlFVGJ02myL01H/GuWo9Y6VtwG8RbtVawMTvaZEgNbL4oadtBnW92VD5N10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743324061; c=relaxed/simple;
-	bh=jo+fUY9KjPyIY0nrwSxzp+BoGwLTb2tLqe+pxfvkNlk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QGoJptZkj0Y+DRojToEzmU4RQsENND6i0gpNz9Z4XzIcrYxzUDBxWBiiI6ReEs43dR2ANs6YVSfzUPkwkmHe4ZPHeUeYiKk6ONZaFowxms97pqCnoWwPuQEwh9w7DWbJddM20Z8zQjA+8Fy7sbvHq+N6ZNvJ9twN8WLVaUBawL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-520847ad493so3499405e0c.1;
-        Sun, 30 Mar 2025 01:40:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743324058; x=1743928858;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZoQHXpkA0HF8Mt8XDc2rN36k5LR7d1tDjvQ8h8PozaY=;
-        b=mocfEpqgqP4bnD+hCM5E+m+qseSJsc4ItXXgpfLfTyPUoyemWJ63/yGK8vaHc6RoKq
-         PQ5RAN5sPqqynIfFQ+3OPbIbsTeHdTvd0VQMONPgsJRN08UfRxc6pq7sYFvqKQaZPag7
-         waY9sC4DdSglf9U9yIUz0yJ7Pkt64GwHeTPhkirUe9xY/5XMR5XoO0Mk43kewU2wIcVX
-         W7lEii4/JsbZLKwG52LqVIlqw+IezDzBqgmCmVgCU5ohsXWQ0/ZB2lMQbCyd2qpGP2gu
-         nG7OyqdBt9dIfHDjf7+dTtc3OjkT5bBN75isp1N+SnK635RRAt7dr9cv/4k/09JktUqU
-         uJ+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6i9bflgLZc2VjjCZDvnUKo1RvdNnwBdZKreYXVn7vs3J6aDhqI89ogzlCWeleI3nE8p6kvzwJfw==@vger.kernel.org, AJvYcCVSGCKB6QWLRpF0v28g2/CzQnAOl8AXjqd+NTcGfA2UrF7Y6T1lakk6Gg+5KP60jk+QaGKQjomtx9Tu3nKf@vger.kernel.org, AJvYcCVzoppZQrC8Ek5Mcj9xD47JbDQ3vyYs5FZLKBUN8XdEp/9lVujeH0M5Legjog0vrSGYej5WNa9BbSNcqqGGMoxC0by04FCi@vger.kernel.org, AJvYcCXCD0GIs6zOkDs5WjR+1U/mgoNn2AhQtJK3zz0aTbPDsyqNh+eWBjdA38XDMkF5blPydrY1hBCMPqxg+BYR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBFfciJeT/uGqtGJvkulendmAHJZ+QeWOxLbpF2cCSGpjXBTT2
-	j5gXKlwIwU7csJi1DwBr00FpY6e/7PmOC9yzjCRCtsSzZFIJDwp+OZbXMOtI
-X-Gm-Gg: ASbGnctDmYgJl3rNG3ezv3fObsaI7sSR6/j/yQND6jLl7VfE/ityYUNS6cLpxCtELQy
-	MCZvC0R3dAiNWpwOHJK6ChDEmmBH7kx9C/8zgJaJk/13F0jZyUn2OV6PwDWDnCKhRToKcZltUsS
-	Q/BK2kefkFrgmkzwawrFcpLgnD3UgCrEElPNrU9mcZOL5pe3rxOdyMOxxr6u+mZkhcHOc9kf9GH
-	rApsU2qaFjU+rDDExn1epYFK3TzF6tz92ki/7SikPmm2PavFviPxX0esCXi04/3rMxDKdPIr8uL
-	DKVGaDqra4PhEoUOWcLtdT59qPfxRk8iMLaYtMhJ4B8n5NuDNX3pqh+zf6n/QehPnBz4jNECW10
-	5efU17JJX+D4=
-X-Google-Smtp-Source: AGHT+IErjvIbcTuJxAq6mh/8rbjw67uY0ViOSP6eInFj77h33Zq0HidJ+dL38gtlD2aa2pZvQixC3Q==
-X-Received: by 2002:a05:6102:3ca4:b0:4bb:e511:15a6 with SMTP id ada2fe7eead31-4c6d38d34fcmr3532115137.11.1743324057951;
-        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c6bfce96f4sm1136438137.14.2025.03.30.01.40.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-520847ad493so3499403e0c.1;
-        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6qxxH9jYlhC3jEyKl65ES6l77XLOZuB5VGcy59p0X3E5iXOVhp+jkoY1lOF59xukB2ffWng7ABFgbexAn@vger.kernel.org, AJvYcCV5JI0hxLK2jqy9gcG5qDtxNuqnwej4Nd/Kqsv0GcbyPgAGZuFw6DaVQdJlmJi4y6PfluMI5odSq7bGCtpM@vger.kernel.org, AJvYcCWo0v/HkZBaRkrgB4tF3ieCILAGggtcBQ702jH8cPNlRcqcWms2RJ3TqaC372Zdv4mEGR0VCrtkgw==@vger.kernel.org, AJvYcCXfj0UroMn3WWJjHYxNZJ6iYOHv6D2YJRGZ7wLGeWhLxDpFR3+32FRylnCm2JIWgVna92Z88WO+iZ5hAFMZ9HjpCoYMOKG5@vger.kernel.org
-X-Received: by 2002:a05:6102:510c:b0:4c1:869b:7db4 with SMTP id
- ada2fe7eead31-4c6d3886c27mr3306697137.9.1743323690025; Sun, 30 Mar 2025
- 01:34:50 -0700 (PDT)
+	s=arc-20240116; t=1743323803; c=relaxed/simple;
+	bh=kOFOJm39FkXH+rwD+36WlO5jTjLl36ZB3AYPctsbP88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv69ofUF4dGU0ifMfbVX95FNF7W6uIWNx/E6ooNovf6cnVssl7/IiSYQeghJw4O643HvD0STKHQnG2LryOy2KwVn/Qv3P5Frn59iTkn+g9DQUiSblMU+aECBBSM5MFv0i/vCV/YU14TUy6JN6zCU6JgllBpxvYpiP66ys8BTyGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B1H9fmPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A1FC4CEDD;
+	Sun, 30 Mar 2025 08:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743323802;
+	bh=kOFOJm39FkXH+rwD+36WlO5jTjLl36ZB3AYPctsbP88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B1H9fmPwgNZ8nM0tHdayf7Ir9hlQgGnpZPiRWgV94jiu7g8SP3pgHLHY5s2MlRYul
+	 9pCKDTNJbGboAItH7ZuQFjJpvWyOfAjJFQMyK7Q+dDywXIPuuQpPGlmIyq0Jz/bRMi
+	 HxjYlDNgLXzIC8oES4Hs60N78eVn31UrlDlV1/MmR3PHPZhowZZvCcTrBFQF2CHVlZ
+	 fbMzHmERVLTUq8jiXHMuZwBLcj0TkUo6Ce/mGkgxaMd1VSI+Wq9yryJ5edJLQKO20C
+	 AeiNKSwhMwJYx8NprmqCf/ti597kztA2EAtgtXv8JZtDAwKNywIXtJD1IqIkEfEE1Q
+	 R4r1jzkSN5xPA==
+Date: Sun, 30 Mar 2025 11:36:34 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
+	will@kernel.org, gshan@redhat.com, steven.price@arm.com,
+	suzuki.poulose@arm.com, tianyaxiong@kylinos.cn, ardb@kernel.org,
+	david@redhat.com, urezki@gmail.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: pageattr: Explicitly bail out when changing
+ permissions for vmalloc_huge mappings
+Message-ID: <Z-kCkh1XWX8Rwjwz@kernel.org>
+References: <20250328062103.79462-1-dev.jain@arm.com>
+ <Z-cnmklGUojMzsUF@kernel.org>
+ <deedf5e2-4a25-4c1f-a5d8-a661a2eb16d2@arm.com>
+ <Z-jzouwNZwk8Ft-j@kernel.org>
+ <b7be0b9c-89fa-470d-8f6d-7db6282b3c68@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314160543.605055-1-arnd@kernel.org>
-In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 30 Mar 2025 10:34:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpsRk8bUwx1w_Bo7lsmXMYQpvMMe33_LKw24q3KhkiO1G7u-hb7ENrQgYE
-Message-ID: <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
-Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, 
-	Srujana Challa <schalla@marvell.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"Justin M. Forbes" <jforbes@fedoraproject.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7be0b9c-89fa-470d-8f6d-7db6282b3c68@arm.com>
 
-Hi Arnd,
+On Sun, Mar 30, 2025 at 01:53:57PM +0530, Dev Jain wrote:
+> 
+> 
+> On 30/03/25 1:02 pm, Mike Rapoport wrote:
+> > On Sat, Mar 29, 2025 at 09:46:56AM +0000, Ryan Roberts wrote:
+> > > On 28/03/2025 18:50, Mike Rapoport wrote:
+> > > > On Fri, Mar 28, 2025 at 11:51:03AM +0530, Dev Jain wrote:
+> > > > > arm64 uses apply_to_page_range to change permissions for kernel VA mappings,
+> > > > 
+> > > >                                                       for vmalloc mappings ^
+> > > > 
+> > > > arm64 does not allow changing permissions to any VA address right now.
+> > > > 
+> > > > > which does not support changing permissions for leaf mappings. This function
+> > > > > will change permissions until it encounters a leaf mapping, and will bail
+> > > > > out. To avoid this partial change, explicitly disallow changing permissions
+> > > > > for VM_ALLOW_HUGE_VMAP mappings.
+> > > > > 
+> > > > > Signed-off-by: Dev Jain <dev.jain@arm.com>
+> > > 
+> > > I wonder if we want a Fixes: tag here? It's certainly a *latent* bug.
+> > 
+> > We have only a few places that use vmalloc_huge() or VM_ALLOW_HUGE_VMAP and
+> > if there was a code that plays permission games on these allocations, x86
+> > set_memory would blow up immediately, so I don't think Fixes: is needed
+> > here.
+> 
+> But I think x86 can handle this (split_large_page() in __change_page_attr())
+> ?
 
-On Fri, 14 Mar 2025 at 17:05, Arnd Bergmann <arnd@kernel.org> wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Any driver that needs these library functions should already be selecting
-> the corresponding Kconfig symbols, so there is no real point in making
-> these visible.
->
-> The original patch that made these user selectable described problems
-> with drivers failing to select the code they use, but for consistency
-> it's better to always use 'select' on a symbol than to mix it with
-> 'depends on'.
->
-> Fixes: e56e18985596 ("lib/crypto: add prompts back to crypto libraries")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Yes, but it also updates corresponding direct map entries when vmalloc
+permissions change and the direct map update presumes physical contiguity
+of the range. 
 
-Thanks for your patch, which is now commit edc8e80bf862a728 ("crypto:
-lib/Kconfig - hide library options").
-
-> --- a/security/keys/Kconfig
-> +++ b/security/keys/Kconfig
-> @@ -60,7 +60,7 @@ config BIG_KEYS
->         bool "Large payload keys"
->         depends on KEYS
->         depends on TMPFS
-> -       depends on CRYPTO_LIB_CHACHA20POLY1305 = y
-> +       select CRYPTO_LIB_CHACHA20POLY1305
->         help
->           This option provides support for holding large keys within the kernel
->           (for example Kerberos ticket caches).  The data may be stored out to
-
-Due to dropping the dependency, this appeared on my radar.
-Should this be selected by one or some of the Kerberos Kconfig symbols?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> > > > > ---
+> > > > >   arch/arm64/mm/pageattr.c | 4 ++--
+> > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> > > > > index 39fd1f7ff02a..8337c88eec69 100644
+> > > > > --- a/arch/arm64/mm/pageattr.c
+> > > > > +++ b/arch/arm64/mm/pageattr.c
+> > > > > @@ -96,7 +96,7 @@ static int change_memory_common(unsigned long addr, int numpages,
+> > > > >   	 * we are operating on does not result in such splitting.
+> > > > >   	 *
+> > > > >   	 * Let's restrict ourselves to mappings created by vmalloc (or vmap).
+> > > > > -	 * Those are guaranteed to consist entirely of page mappings, and
+> > > > > +	 * Disallow VM_ALLOW_HUGE_VMAP vmalloc mappings so that
+> > > > 
+> > > > I'd keep mention of page mappings in the comment, e.g
+> > > > 
+> > > > 	* Disallow VM_ALLOW_HUGE_VMAP mappings to guarantee that only page
+> > > > 	* mappings are updated and splitting is never needed.
+> > > > 
+> > > > With this and changelog updates Ryan asked for
+> > > > 
+> > > > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > > > 
+> > > > 
+> > > > >   	 * splitting is never needed.
+> > > > >   	 *
+> > > > >   	 * So check whether the [addr, addr + size) interval is entirely
+> > > > > @@ -105,7 +105,7 @@ static int change_memory_common(unsigned long addr, int numpages,
+> > > > >   	area = find_vm_area((void *)addr);
+> > > > >   	if (!area ||
+> > > > >   	    end > (unsigned long)kasan_reset_tag(area->addr) + area->size ||
+> > > > > -	    !(area->flags & VM_ALLOC))
+> > > > > +	    ((area->flags & (VM_ALLOC | VM_ALLOW_HUGE_VMAP)) != VM_ALLOC))
+> > > > >   		return -EINVAL;
+> > > > >   	if (!numpages)
+> > > > > -- 
+> > > > > 2.30.2
+> > > > > 
+> > > > 
+> > > 
+> > 
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sincerely yours,
+Mike.
 
