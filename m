@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-580984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-580991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F0A758E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:34:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDF7A758FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91952188A3AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2A7188B4FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 08:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E851E17C219;
-	Sun, 30 Mar 2025 08:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVUvAuEt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A760F189BB0;
+	Sun, 30 Mar 2025 08:41:01 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DCF6DCE1;
-	Sun, 30 Mar 2025 08:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C4815A858;
+	Sun, 30 Mar 2025 08:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743323640; cv=none; b=hvlJrOHvZowTbfwRByTnJbJBKyZO0ZLvw8zVkguZPPXGbbDrgTi3Gj6vnF8xsWhISNZKH80DoYTcRJuYEfj0UcZNvvnOug0fWIwJlu/5CBvCYP5OT67UkqkDPuOn8UONx4/ftE2RD98j6FfGX++QjXaBy0DQ2AlB/+C4uMh/EZw=
+	t=1743324061; cv=none; b=n8pkgsegX38Iz9pRTPVPmvOIYn3BkVzI0PP/gQKUdov4I9dLq5l5erMAlQA82h6XbtdkePsFTWRqdc/dRmXKhKYJQAJJ2zVyHYs2360KUsIzqtJFkUDRCprbv6Fq/nLKRtrpYazw3TtPb2H//R5ozb1OX0mx2WM+CiEVmubsYOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743323640; c=relaxed/simple;
-	bh=v/AkdNjDg8/pFM52YxmtXHA4bqiwCOloHOV+ED+lidE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uqlm7yCUXLoUUUUPxblH+FSZOD5fqEibSbHVNsud6kIkIAhnOAlJkvratWtsv7WgBgyJklmolBK49j+YLRoghIgtHgORCYsz+bx2zZwa/DG1BU2mIsLW/3RFbz/ZYJ9YpZVLt4gdacOWd8wQpmjfFMXmUvofluKjyTc+oFP9p20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVUvAuEt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B51C4CEDD;
-	Sun, 30 Mar 2025 08:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743323639;
-	bh=v/AkdNjDg8/pFM52YxmtXHA4bqiwCOloHOV+ED+lidE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SVUvAuEt4Xnauc3Gcjd/qhE314/MpfmZATEXSN3y1IcleCQiehAxKLio5mWWAZ5de
-	 Uk/5b3+xhpmqUmEIh00orZN6UfkttxEt/bQqm3EV1ZRttG6W1JxhmHEC2Fjy2w0NQD
-	 eWgh87cbDR4X2RhFWOPAUYk0jKdI3/MY3gU6b2dHZ9NsizeB70Um9VDUL17rH6v256
-	 AeQ5Rang+cD5W/BUO3OooKk/EUz8KVrf5TyIxZA3Q8XuWYdb3sW3R4vJEpZ9TgphzQ
-	 Jkw0c+sizJIvU88cJxJ8S60CnLtRSnKDa0vgWFOpgfwqVZpiXSqcA+3dXC9gEAnDQd
-	 CDZw9o1v0Xwfw==
-Date: Sun, 30 Mar 2025 10:33:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, rafael@kernel.org, 
-	djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, mingo@redhat.com, 
-	will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 0/6] Extend freeze support to suspend and hibernate
-Message-ID: <20250330-heimweg-packen-b73908210f79@brauner>
-References: <20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org>
- <20250329-work-freeze-v2-0-a47af37ecc3d@kernel.org>
- <12ce8c18f4e16b1de591cbdfb8f6e7844e42807b.camel@HansenPartnership.com>
- <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
+	s=arc-20240116; t=1743324061; c=relaxed/simple;
+	bh=jo+fUY9KjPyIY0nrwSxzp+BoGwLTb2tLqe+pxfvkNlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGoJptZkj0Y+DRojToEzmU4RQsENND6i0gpNz9Z4XzIcrYxzUDBxWBiiI6ReEs43dR2ANs6YVSfzUPkwkmHe4ZPHeUeYiKk6ONZaFowxms97pqCnoWwPuQEwh9w7DWbJddM20Z8zQjA+8Fy7sbvHq+N6ZNvJ9twN8WLVaUBawL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-520847ad493so3499405e0c.1;
+        Sun, 30 Mar 2025 01:40:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743324058; x=1743928858;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZoQHXpkA0HF8Mt8XDc2rN36k5LR7d1tDjvQ8h8PozaY=;
+        b=mocfEpqgqP4bnD+hCM5E+m+qseSJsc4ItXXgpfLfTyPUoyemWJ63/yGK8vaHc6RoKq
+         PQ5RAN5sPqqynIfFQ+3OPbIbsTeHdTvd0VQMONPgsJRN08UfRxc6pq7sYFvqKQaZPag7
+         waY9sC4DdSglf9U9yIUz0yJ7Pkt64GwHeTPhkirUe9xY/5XMR5XoO0Mk43kewU2wIcVX
+         W7lEii4/JsbZLKwG52LqVIlqw+IezDzBqgmCmVgCU5ohsXWQ0/ZB2lMQbCyd2qpGP2gu
+         nG7OyqdBt9dIfHDjf7+dTtc3OjkT5bBN75isp1N+SnK635RRAt7dr9cv/4k/09JktUqU
+         uJ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6i9bflgLZc2VjjCZDvnUKo1RvdNnwBdZKreYXVn7vs3J6aDhqI89ogzlCWeleI3nE8p6kvzwJfw==@vger.kernel.org, AJvYcCVSGCKB6QWLRpF0v28g2/CzQnAOl8AXjqd+NTcGfA2UrF7Y6T1lakk6Gg+5KP60jk+QaGKQjomtx9Tu3nKf@vger.kernel.org, AJvYcCVzoppZQrC8Ek5Mcj9xD47JbDQ3vyYs5FZLKBUN8XdEp/9lVujeH0M5Legjog0vrSGYej5WNa9BbSNcqqGGMoxC0by04FCi@vger.kernel.org, AJvYcCXCD0GIs6zOkDs5WjR+1U/mgoNn2AhQtJK3zz0aTbPDsyqNh+eWBjdA38XDMkF5blPydrY1hBCMPqxg+BYR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFfciJeT/uGqtGJvkulendmAHJZ+QeWOxLbpF2cCSGpjXBTT2
+	j5gXKlwIwU7csJi1DwBr00FpY6e/7PmOC9yzjCRCtsSzZFIJDwp+OZbXMOtI
+X-Gm-Gg: ASbGnctDmYgJl3rNG3ezv3fObsaI7sSR6/j/yQND6jLl7VfE/ityYUNS6cLpxCtELQy
+	MCZvC0R3dAiNWpwOHJK6ChDEmmBH7kx9C/8zgJaJk/13F0jZyUn2OV6PwDWDnCKhRToKcZltUsS
+	Q/BK2kefkFrgmkzwawrFcpLgnD3UgCrEElPNrU9mcZOL5pe3rxOdyMOxxr6u+mZkhcHOc9kf9GH
+	rApsU2qaFjU+rDDExn1epYFK3TzF6tz92ki/7SikPmm2PavFviPxX0esCXi04/3rMxDKdPIr8uL
+	DKVGaDqra4PhEoUOWcLtdT59qPfxRk8iMLaYtMhJ4B8n5NuDNX3pqh+zf6n/QehPnBz4jNECW10
+	5efU17JJX+D4=
+X-Google-Smtp-Source: AGHT+IErjvIbcTuJxAq6mh/8rbjw67uY0ViOSP6eInFj77h33Zq0HidJ+dL38gtlD2aa2pZvQixC3Q==
+X-Received: by 2002:a05:6102:3ca4:b0:4bb:e511:15a6 with SMTP id ada2fe7eead31-4c6d38d34fcmr3532115137.11.1743324057951;
+        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c6bfce96f4sm1136438137.14.2025.03.30.01.40.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-520847ad493so3499403e0c.1;
+        Sun, 30 Mar 2025 01:40:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6qxxH9jYlhC3jEyKl65ES6l77XLOZuB5VGcy59p0X3E5iXOVhp+jkoY1lOF59xukB2ffWng7ABFgbexAn@vger.kernel.org, AJvYcCV5JI0hxLK2jqy9gcG5qDtxNuqnwej4Nd/Kqsv0GcbyPgAGZuFw6DaVQdJlmJi4y6PfluMI5odSq7bGCtpM@vger.kernel.org, AJvYcCWo0v/HkZBaRkrgB4tF3ieCILAGggtcBQ702jH8cPNlRcqcWms2RJ3TqaC372Zdv4mEGR0VCrtkgw==@vger.kernel.org, AJvYcCXfj0UroMn3WWJjHYxNZJ6iYOHv6D2YJRGZ7wLGeWhLxDpFR3+32FRylnCm2JIWgVna92Z88WO+iZ5hAFMZ9HjpCoYMOKG5@vger.kernel.org
+X-Received: by 2002:a05:6102:510c:b0:4c1:869b:7db4 with SMTP id
+ ada2fe7eead31-4c6d3886c27mr3306697137.9.1743323690025; Sun, 30 Mar 2025
+ 01:34:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9c0a24cd8b03539fd6b8ecd5a186a5cf98b5d526.camel@HansenPartnership.com>
+References: <20250314160543.605055-1-arnd@kernel.org>
+In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 30 Mar 2025 10:34:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpsRk8bUwx1w_Bo7lsmXMYQpvMMe33_LKw24q3KhkiO1G7u-hb7ENrQgYE
+Message-ID: <CAMuHMdViGZRQL7toi7Arvm5L=OTK1mGmODbckE+427bx4KyWdw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, 
+	Srujana Challa <schalla@marvell.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	"Justin M. Forbes" <jforbes@fedoraproject.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Mar 29, 2025 at 01:02:32PM -0400, James Bottomley wrote:
-> On Sat, 2025-03-29 at 10:04 -0400, James Bottomley wrote:
-> > On Sat, 2025-03-29 at 09:42 +0100, Christian Brauner wrote:
-> > > Add the necessary infrastructure changes to support freezing for
-> > > suspend and hibernate.
-> > > 
-> > > Just got back from LSFMM. So still jetlagged and likelihood of bugs
-> > > increased. This should all that's needed to wire up power.
-> > > 
-> > > This will be in vfs-6.16.super shortly.
-> > > 
-> > > ---
-> > > Changes in v2:
-> > > - Don't grab reference in the iterator make that a requirement for
-> > > the callers that need custom behavior.
-> > > - Link to v1:
-> > > https://lore.kernel.org/r/20250328-work-freeze-v1-0-a2c3a6b0e7a6@kernel.org
-> > 
-> > Given I've been a bit quiet on this, I thought I'd better explain
-> > what's going on: I do have these built, but I made the mistake of
-> > doing a dist-upgrade on my testing VM master image and it pulled in a
-> > version of systemd (257.4-3) that has a broken hibernate.  Since I
-> > upgraded in place I don't have the old image so I'm spending my time
-> > currently debugging systemd ... normal service will hopefully resume
-> > shortly.
-> 
-> I found the systemd bug
-> 
-> https://github.com/systemd/systemd/issues/36888
+Hi Arnd,
 
-I don't think that's a systemd bug.
+On Fri, 14 Mar 2025 at 17:05, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Any driver that needs these library functions should already be selecting
+> the corresponding Kconfig symbols, so there is no real point in making
+> these visible.
+>
+> The original patch that made these user selectable described problems
+> with drivers failing to select the code they use, but for consistency
+> it's better to always use 'select' on a symbol than to mix it with
+> 'depends on'.
+>
+> Fixes: e56e18985596 ("lib/crypto: add prompts back to crypto libraries")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> And hacked around it, so I can confirm a simple hibernate/resume works
-> provided the sd_start_write() patches are applied (and the hooks are
-> plumbed in to pm).
-> 
-> There is an oddity: the systemd-journald process that would usually
-> hang hibernate in D wait goes into R but seems to be hung and can't be
-> killed by the watchdog even with a -9.  It's stack trace says it's
-> still stuck in sb_start_write:
-> 
-> [<0>] percpu_rwsem_wait.constprop.10+0xd1/0x140
-> [<0>] ext4_page_mkwrite+0x3c1/0x560 [ext4]
-> [<0>] do_page_mkwrite+0x38/0xa0
-> [<0>] do_wp_page+0xd5/0xba0
-> [<0>] __handle_mm_fault+0xa29/0xca0
-> [<0>] handle_mm_fault+0x16a/0x2d0
-> [<0>] do_user_addr_fault+0x3ab/0x810
-> [<0>] exc_page_fault+0x68/0x150
-> [<0>] asm_exc_page_fault+0x22/0x30
-> 
-> So I think there's something funny going on in thaw.
+Thanks for your patch, which is now commit edc8e80bf862a728 ("crypto:
+lib/Kconfig - hide library options").
 
-My uneducated guess is that it's probably an issue with ext4 freezing
-and unfreezing. xfs stops workqueues after all writes and pagefault
-writers have stopped. This is done in ->sync_fs() when it's called from
-freeze_super(). They are restarted when ->unfreeze_fs is called.
+> --- a/security/keys/Kconfig
+> +++ b/security/keys/Kconfig
+> @@ -60,7 +60,7 @@ config BIG_KEYS
+>         bool "Large payload keys"
+>         depends on KEYS
+>         depends on TMPFS
+> -       depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+> +       select CRYPTO_LIB_CHACHA20POLY1305
+>         help
+>           This option provides support for holding large keys within the kernel
+>           (for example Kerberos ticket caches).  The data may be stored out to
 
-But for ext4 in ->sync_fs() the rsv_conversion_wq is flushed. I think
-that should be safe to do but I'm not sure if there can't be other work
-coming in on it before the actual freeze call. Jan will be able to
-explain this a lot better. I don't have time today to figure out what
-this does.
+Due to dropping the dependency, this appeared on my radar.
+Should this be selected by one or some of the Kerberos Kconfig symbols?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
