@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-581272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C4DA75CC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 23:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16907A75CD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 23:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D584167B66
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 21:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7577D3A90EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 21:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B090715A868;
-	Sun, 30 Mar 2025 21:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2798F1DF755;
+	Sun, 30 Mar 2025 21:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tzch3Y7Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Opp9VNJ/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702DA137932
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 21:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DF31DF244
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 21:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743371627; cv=none; b=OKc+fTRCIH5Cr8uHogg2qcylU/Ux18sPNkObtaAX7+TtuppzbK5P8GmXc7Z74oimPXSP7BRktPfEm4ux4Xsmibo3wVB4gs/yadrQs7kvn70ZwmnOYcJnoRpnn9qkT9jpdKpQyQ9j7BOJGRHaE4F2zjRj8AXQSM5wSxa3EYHGb2s=
+	t=1743371632; cv=none; b=TISm9Ker3RbBwv+jImVZls+mwffODFFkIKDAXqVjFU/LmunQjMq5K57TiZ6yfsoMpgh+d374JpxWwPBgtx8f7KinDI0A0+QTiwplo5VVDWQcP+Z9yrm9oARCZWHcqg2BE35rFIO3llvewevVdEVqeo55wio/scqS1AJwJRi1gck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743371627; c=relaxed/simple;
-	bh=SZdMgUXbNzWIrkGHQT1Y5GbxGU727DTli16VagtZmMs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TlXotNMMkMRsJ/4P0Q5jHAHIN0pbRnO3emblNf8xItNocDo4Z63viw4xezCzl4KOBOvvjefaapUiJm8OHidEUL2Oqf3GdKekQKRJMZ1x5uCVRt2pmD21/lBaFyL0FlpPNJnM5f9zwkmzUSrQEav3PBydYnSjCEfFAC2xRYsJ3vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tzch3Y7Q; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1743371632; c=relaxed/simple;
+	bh=Ox8I+KsHJM/Hp9i+72vOxpoGY/J+Vg/IxtAIFoY2xws=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ntK51A8HfDsEK1QLdhzURTJxCbX0LvLzxo0TOUeNM8NMY7B3jl5IICQHPGAl6desT2sPdAlvWjtty2oYqTatbxkkKV98SbUZaFLN9L5n93KDFIkD2hKZ2ys1BU7W4iCN96WVkW5DsI1QcTKe9HoiMbwY5LNcA0JWL7dHKptBfog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Opp9VNJ/; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743371624;
+	s=mimecast20190719; t=1743371630;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QWxjGxcyTTj0xgoyyQ7hbINmphGtnz7f5bPVPSEtkro=;
-	b=Tzch3Y7QzU+JCwpi9mIXy79d3P3HASU7c+aSUxy9q+NYZHEawYN6f2sAZYludM1Vv3/6gd
-	23gVzKU72vpS9lNT4kRnQ/OeSisly/EiH/UdpvgpuZtIUwyUFHX4nxd//Lpavzfhhuywm2
-	bfcS1dmuuHj+u/sP7oIKHZXZDB9mY/s=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vw65CPhHbDV9z4RzImsAKCyoHA3C3OtcQYbmcYf66vQ=;
+	b=Opp9VNJ/fU7i11/5pPKOeSfrP8SXsLY6xPd15PsiD7WqgyUcL/DC22S+y3ZehoLhyoHakI
+	c1qZUGRmdKdd8+a9kHwDtzgzru2xtEod6qKhGGq2iPrpgXN+EE+M9A4G1Fyls5FlfhBh9w
+	Jgc1+lgrA6RqyXPbtVNGd6qcTqd2OMs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-zXGxUkmlMmqFTaLBpVs1Lg-1; Sun,
- 30 Mar 2025 17:53:42 -0400
-X-MC-Unique: zXGxUkmlMmqFTaLBpVs1Lg-1
-X-Mimecast-MFC-AGG-ID: zXGxUkmlMmqFTaLBpVs1Lg_1743371621
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-K47zeyw9OzKpuPV2LR1woQ-1; Sun,
+ 30 Mar 2025 17:53:44 -0400
+X-MC-Unique: K47zeyw9OzKpuPV2LR1woQ-1
+X-Mimecast-MFC-AGG-ID: K47zeyw9OzKpuPV2LR1woQ_1743371623
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC2811945103;
-	Sun, 30 Mar 2025 21:53:40 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1AB41800349;
+	Sun, 30 Mar 2025 21:53:42 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.34])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B5BC41801747;
-	Sun, 30 Mar 2025 21:53:38 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1BC9D180175A;
+	Sun, 30 Mar 2025 21:53:40 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Tejun Heo <tj@kernel.org>,
 	Johannes Weiner <hannes@cmpxchg.org>,
@@ -63,9 +65,11 @@ Cc: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH 00/10] cgroup/cpuset: Miscellaneous partition bug fixes and enhancements
-Date: Sun, 30 Mar 2025 17:52:38 -0400
-Message-ID: <20250330215248.3620801-1-longman@redhat.com>
+Subject: [PATCH 01/10] cgroup/cpuset: Fix race between newly created partition and dying one
+Date: Sun, 30 Mar 2025 17:52:39 -0400
+Message-ID: <20250330215248.3620801-2-longman@redhat.com>
+In-Reply-To: <20250330215248.3620801-1-longman@redhat.com>
+References: <20250330215248.3620801-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,36 +79,136 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-This patch series fixes a number of bugs in the cpuset partition code as
-well as improvement in remote partition handling. The test_cpuset_prs.sh
-is also enhanced to allow more vigorous remote partition testing.
+There is a possible race between removing a cgroup diectory that is
+a partition root and the creation of a new partition.  The partition
+to be removed can be dying but still online, it doesn't not currently
+participate in checking for exclusive CPUs conflict, but the exclusive
+CPUs are still there in subpartitions_cpus and isolated_cpus. These
+two cpumasks are global states that affect the operation of cpuset
+partitions. The exclusive CPUs in dying cpusets will only be removed
+when cpuset_css_offline() function is called after an RCU delay.
 
-Waiman Long (10):
-  cgroup/cpuset: Fix race between newly created partition and dying one
-  cgroup/cpuset: Fix incorrect isolated_cpus update in
-    update_parent_effective_cpumask()
-  cgroup/cpuset: Fix error handling in remote_partition_disable()
-  cgroup/cpuset: Remove remote_partition_check() & make
-    update_cpumasks_hier() handle remote partition
-  cgroup/cpuset: Don't allow creation of local partition over a remote
-    one
-  cgroup/cpuset: Code cleanup and comment update
-  cgroup/cpuset: Remove unneeded goto in sched_partition_write() and
-    rename it
-  selftest/cgroup: Update test_cpuset_prs.sh to use | as effective CPUs
-    and state separator
-  selftest/cgroup: Clean up and restructure test_cpuset_prs.sh
-  selftest/cgroup: Add a remote partition transition test to
-    test_cpuset_prs.sh
+As a result, it is possible that a new partition can be created with
+exclusive CPUs that overlap with those of a dying one. When that dying
+partition is finally offlined, it removes those overlapping exclusive
+CPUs from subpartitions_cpus and maybe isolated_cpus resulting in an
+incorrect CPU configuration.
 
- include/linux/cgroup-defs.h                   |   1 +
- include/linux/cgroup.h                        |   2 +-
- kernel/cgroup/cgroup.c                        |   6 +
- kernel/cgroup/cpuset-internal.h               |   1 +
- kernel/cgroup/cpuset.c                        | 401 +++++++-----
- .../selftests/cgroup/test_cpuset_prs.sh       | 617 ++++++++++++------
- 6 files changed, 649 insertions(+), 379 deletions(-)
+This bug was found when a warning was triggered in
+remote_partition_disable() during testing because the subpartitions_cpus
+mask was empty.
 
+One possible way to fix this is to iterate the dying cpusets as well and
+avoid using the exclusive CPUs in those dying cpusets. However, this
+can still cause random partition creation failures or other anomalies
+due to racing. A better way to fix this race is to reset the partition
+state at the moment when a cpuset is being killed.
+
+Introduce a new css_killed() CSS function pointer and call it, if
+defined, before setting CSS_DYING flag in kill_css(). Also update the
+css_is_dying() helper to use the CSS_DYING flag introduced by commit
+33c35aa48178 ("cgroup: Prevent kill_css() from being called more than
+once") for proper synchronization.
+
+Add a new cpuset_css_killed() function to reset the partition state of
+a valid partition root if it is being killed.
+
+Fixes: ee8dde0cd2ce ("cpuset: Add new v2 cpuset.sched.partition flag")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ include/linux/cgroup-defs.h |  1 +
+ include/linux/cgroup.h      |  2 +-
+ kernel/cgroup/cgroup.c      |  6 ++++++
+ kernel/cgroup/cpuset.c      | 20 +++++++++++++++++---
+ 4 files changed, 25 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 485b651869d9..5bc8f55c8cca 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -710,6 +710,7 @@ struct cgroup_subsys {
+ 	void (*css_released)(struct cgroup_subsys_state *css);
+ 	void (*css_free)(struct cgroup_subsys_state *css);
+ 	void (*css_reset)(struct cgroup_subsys_state *css);
++	void (*css_killed)(struct cgroup_subsys_state *css);
+ 	void (*css_rstat_flush)(struct cgroup_subsys_state *css, int cpu);
+ 	int (*css_extra_stat_show)(struct seq_file *seq,
+ 				   struct cgroup_subsys_state *css);
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 28e999f2c642..e7da3c3b098b 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -344,7 +344,7 @@ static inline u64 cgroup_id(const struct cgroup *cgrp)
+  */
+ static inline bool css_is_dying(struct cgroup_subsys_state *css)
+ {
+-	return !(css->flags & CSS_NO_REF) && percpu_ref_is_dying(&css->refcnt);
++	return css->flags & CSS_DYING;
+ }
+ 
+ static inline void cgroup_get(struct cgroup *cgrp)
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index f231fe3a0744..49d622205997 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -5909,6 +5909,12 @@ static void kill_css(struct cgroup_subsys_state *css)
+ 	if (css->flags & CSS_DYING)
+ 		return;
+ 
++	/*
++	 * Call css_killed(), if defined, before setting the CSS_DYING flag
++	 */
++	if (css->ss->css_killed)
++		css->ss->css_killed(css);
++
+ 	css->flags |= CSS_DYING;
+ 
+ 	/*
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 39c1fc643d77..749994312d47 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -3475,9 +3475,6 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ 	cpus_read_lock();
+ 	mutex_lock(&cpuset_mutex);
+ 
+-	if (is_partition_valid(cs))
+-		update_prstate(cs, 0);
+-
+ 	if (!cpuset_v2() && is_sched_load_balance(cs))
+ 		cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
+ 
+@@ -3488,6 +3485,22 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ 	cpus_read_unlock();
+ }
+ 
++static void cpuset_css_killed(struct cgroup_subsys_state *css)
++{
++	struct cpuset *cs = css_cs(css);
++
++	cpus_read_lock();
++	mutex_lock(&cpuset_mutex);
++
++	/* Reset valid partition back to member */
++	if (is_partition_valid(cs))
++		update_prstate(cs, PRS_MEMBER);
++
++	mutex_unlock(&cpuset_mutex);
++	cpus_read_unlock();
++
++}
++
+ static void cpuset_css_free(struct cgroup_subsys_state *css)
+ {
+ 	struct cpuset *cs = css_cs(css);
+@@ -3609,6 +3622,7 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
+ 	.css_alloc	= cpuset_css_alloc,
+ 	.css_online	= cpuset_css_online,
+ 	.css_offline	= cpuset_css_offline,
++	.css_killed	= cpuset_css_killed,
+ 	.css_free	= cpuset_css_free,
+ 	.can_attach	= cpuset_can_attach,
+ 	.cancel_attach	= cpuset_cancel_attach,
 -- 
 2.48.1
 
