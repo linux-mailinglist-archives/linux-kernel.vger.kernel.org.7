@@ -1,355 +1,349 @@
-Return-Path: <linux-kernel+bounces-581283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B5EA75CF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 23:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34349A75CDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 23:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 947CE168AA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 21:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41237188A8C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 21:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDB21E5B71;
-	Sun, 30 Mar 2025 21:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F561E1E14;
+	Sun, 30 Mar 2025 21:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUh1arbT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kA0WqBxt"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012049.outbound.protection.outlook.com [52.103.2.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C53B1DF270
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 21:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743371649; cv=none; b=f81HxswEYX3ghB1OdX5FEISZkejBiDsW4d0rCEs4rZz8oG2iIPcoAxqfC1VTfnteA2AhBn5kTFcxPgdwRgSVr7GlGToomas7i6vFw4dk2HgINtj6A6BowDCaftnbWb9rTmNSi9HWrBehWDM9G4RYKVPrvCTK3PKPOXq9qDFdhaQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743371649; c=relaxed/simple;
-	bh=kctpo9J9KWhQO+Td/9xcOa96QG1Xvi2mfONXtYgkJZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fNcE01aFW7DFa3R2vOwV9fZVoaz/DeTNlqIbYEkdR1Z4hdKl6AB5nUyd+p7x4yf2YSEgZqzgwqU1EjJ8uVSttKeuIGj/tyYfBl9IuR3VHwJsSqCEcONfdR126TNVv6TqMzk+lNHOFuZ9xGdM99/EnH4sg2yJ+KNhrOlXUzlgjbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUh1arbT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743371646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d/gln7HjCzS4EQxgvfxBgXSkSYvBREZLHgr/rHkeCk0=;
-	b=FUh1arbT175MBSx6Xr8Vc6mrnrEmuJjPuMPsGv+Po3Ial3rJOcJccKzA+Hu/kqKa0HF6MK
-	8c0xS6mwr7k9x3xsMXJUwRVoJvzi//vXmttV27IBcxQZFSOngcQsvB/7EM21TzCEk5CKmk
-	hz4fd9oKSVsgosm8wzmFsC41HbNdIlo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-lKli_u7eMzuI_oQrxX44Cw-1; Sun,
- 30 Mar 2025 17:54:02 -0400
-X-MC-Unique: lKli_u7eMzuI_oQrxX44Cw-1
-X-Mimecast-MFC-AGG-ID: lKli_u7eMzuI_oQrxX44Cw_1743371641
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1AF118EBE88;
-	Sun, 30 Mar 2025 21:54:00 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.34])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 60C0C1801750;
-	Sun, 30 Mar 2025 21:53:59 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 10/10] selftest/cgroup: Add a remote partition transition test to test_cpuset_prs.sh
-Date: Sun, 30 Mar 2025 17:52:48 -0400
-Message-ID: <20250330215248.3620801-11-longman@redhat.com>
-In-Reply-To: <20250330215248.3620801-1-longman@redhat.com>
-References: <20250330215248.3620801-1-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696C91E00B4;
+	Sun, 30 Mar 2025 21:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743371637; cv=fail; b=RamxxQp4tIxLS81W+I5VVY9MGBEE8aOUJKrvz9c8Rt/cD5zHPbZwMVAYaL2hmnGQdIGWxAtG4hIpY+64lAe+nFIW0+mXpgOhovlUVG0/rqFKYs1JJzTVOHGSCbtVwr67peUiGLBZHImwEulB6zMMkUYJKibq7RTAYSFTvss3KQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743371637; c=relaxed/simple;
+	bh=aspQuQ+aJhvXpMtp6IjRMxm3wcLzUbzASxFhWZ+tF00=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FRQ/APQrvdDTO53j03Yc82aznhcp4hgcIXfoefOmTUbOY63nrFqeTsrncZeTzJwz20sv1342fjyhQ0jZ0Kl8UmrekCKwy+PiOVVoRi1e7yyNPZJ17zTCZlBz+FUZFA3ObyDm29x3Ogj/iVyp2DKFuYlKK4DQ7JBt2KBmUxJOrO8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kA0WqBxt; arc=fail smtp.client-ip=52.103.2.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NX0B6e0Y/iPHUZZHhOZAXt4/K3a+p89TvCcNzZyXa42wq7R95jN5XRLDYmL53vKFt2GtNZ7vnJf6MCJzi6ix/MpAXI4fa/5rB5FJntCi58SutrCom49l+1jlvmPyoiGN/krCV8Zn+hIKQEHKcsPTuYdRydw50ufcpJlpJDy460MFKdGijFFmex8/gp43L13wY825BYGWeYvXbMFsUtzWbEBITY7PHZXPzVf3Msy4YCgltu90LoxEZ6T4TqmmyRkABcSm/5qVZhZqCK3EkVWt27tIUH1ec06RkCrON5/dlr4TQIWSVhpTgKnNsNNncVwTbm0d4GXG1deBbShIvzP+1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OGoIa4emq0wt1gdEE7rHOPaRVTngesHmF5MoQVx1adk=;
+ b=ftZiDvJxFYW0oDsjQooqefkaWhDBeRplqUD0AANZK5iHq14g/+6t8Z09twfgyKbuaGVFBVGwkI26IzQpgfon5pF/Rjabppa7Z6mFqSj8fa2TDR4cQbRrQk+S3a+775+8/msOxWUrxhmSehV7+cGXeimicx52Nw6DJp7Ke7/sM+M2A4b+jt/LBaTsqYCaE0pEtA5tx7CB3sgKje5jylihw5LBmakLGowbVopO0aDmzl4XpWDE0p4uR3Rr3ccDQdJ7O1X6Fnh72UyRDi7agi6V8ztAfGChhnziD7GBo7cMOzWuksND/xD++IhBf4zyKbJdUVFkewpSw95QjHoDuqXiQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OGoIa4emq0wt1gdEE7rHOPaRVTngesHmF5MoQVx1adk=;
+ b=kA0WqBxtFbYA1lQfRSxvBdCEWWrywR14c5gmifpRB9AiIaVw1P3nX8QoxRNyHnQv0Iyy6imFo2QSZdInl81a49pqZZXUuon3dLhRCR+QuiIKoDc302ZiBz53WYlaiyROgwQ9X4owXE21pl2l/SsAOWKKTggFHO0KSJ9cqnnNVgztSs9ydxBM4RNrCcB9wFxOF0uQgkHDnhA9PC3WdJH72rsiOASN32xjur3d9rzgvlzZkSHCSuN0g2eD+PJytvQww7Z1TAEdqEb3HXxia8u0f8jMP77wcdaPAFPKlFrPAfKeIv6lrU2qR/dKqZbrqp8h9TPYQttVXJDDxR/YuMmfDg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH0PR02MB7527.namprd02.prod.outlook.com (2603:10b6:510:4e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Sun, 30 Mar
+ 2025 21:53:52 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8534.043; Sun, 30 Mar 2025
+ 21:53:52 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
+	<decui@microsoft.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>, "robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>
+Subject: RE: [PATCH v2 4/6] Drivers: hv: Use hv_hvcall_*() to set up hypercall
+ arguments
+Thread-Topic: [PATCH v2 4/6] Drivers: hv: Use hv_hvcall_*() to set up
+ hypercall arguments
+Thread-Index: AQHbk+AV21q88EUTeE6kvPDNj7sy5bN+ExQAgAYmPaA=
+Date: Sun, 30 Mar 2025 21:53:52 +0000
+Message-ID:
+ <SN6PR02MB4157007B9432826CAF0E42A8D4A22@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250313061911.2491-1-mhklinux@outlook.com>
+ <20250313061911.2491-5-mhklinux@outlook.com>
+ <bae5bb62-d480-46fd-837c-9267c0a30fae@linux.microsoft.com>
+In-Reply-To: <bae5bb62-d480-46fd-837c-9267c0a30fae@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7527:EE_
+x-ms-office365-filtering-correlation-id: d3825a9b-8a9f-484f-ecc9-08dd6fd55c37
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|12121999004|461199028|19110799003|8062599003|8060799006|102099032|56899033|3412199025|440099028|12091999003|30101999003|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?jVTuxOjziXj8/hltyF7kL/TdUGIIKHMpakRotfsAQcAj5WP2hcxYSHedBfrQ?=
+ =?us-ascii?Q?uo2Ff5bu23aXBahYGr89hDBNUdOzA2/QMU8W0cTt8H5KGzEUaMmEWlfWLuJa?=
+ =?us-ascii?Q?nQp00zBjBogBuMCqKpMLJKk2VTWicALiLhUlEqeFk8VywucrihdKzPpY8FrJ?=
+ =?us-ascii?Q?eLNTvpKwczloYrK5TleaGnJdCsNGyFEnRhX4mlfxo8gbTNxHd+N2Orx36LqX?=
+ =?us-ascii?Q?SMBiNC5jSUgwNR8UPH9I5jMeFRaLd58cgRBbZSAZOzzsePouSOcfHuN4lWT6?=
+ =?us-ascii?Q?u6JnZO814jivNZm82ZcNdX+dONDLyMFzM/z49DFQ0njdECMQKa1ivfufCh6d?=
+ =?us-ascii?Q?0wlVtBVYhjnFnwRrka3CSNdIIlGYqsho3A4mgLDGBvtO3Xe8qz+dEe+HnDkz?=
+ =?us-ascii?Q?N5i2nBbLvKpp7wS4PHnOscl5kWReAO8SuaTZ7BmHdDNFOSlT2TuYNTCy7Rwo?=
+ =?us-ascii?Q?svdDDsZ7Wib7AOM26mJR36K2pIcBOHB+kU64stusoyOuu2hMWMWBMsPgF5Jc?=
+ =?us-ascii?Q?N/9E8zK03TeFoGbiRgUrK9YjAIydKK/pW+30++C0gTzKot32hjwBhdD+mn5W?=
+ =?us-ascii?Q?AOebsy2/wMvO1Ig+AYEL0GK9aePdCOtyHMJJcH9053rwqLM0T5x7B8kSwcsX?=
+ =?us-ascii?Q?2WMwDhmhV8sdDNVTxPxbYuROGweDMWSXCzMOBnN0AmMJjGAV8LMtAk2IHBkd?=
+ =?us-ascii?Q?WP7325+t3mxkmlEFs3r4k3EvHaKVBi67jrTSLsppV0iV+y8Myk6KxY0r9vsk?=
+ =?us-ascii?Q?Ub2W8g9Ks0VnoK3THYXHA4qSOrOy60+RjAUAOjbrJLr4GOB/K3TWYH+eUm9b?=
+ =?us-ascii?Q?LXGaewleQXHk7y3NlMiUyOipf4Fde1ujHi90eu+HSevYJRvvrocQyzNfpDq4?=
+ =?us-ascii?Q?DqbKPnLnYu1+FJwxJLOsG53/esfc3dMVJTME+Xjg9ob0ygVpubBZYJwMlBlk?=
+ =?us-ascii?Q?+h+FFs+DJOA0rOVo/FSi0WWFI8v5EJ+GZc5eAqqKwnmnBzZKe4JFsu6ypVuA?=
+ =?us-ascii?Q?n4LdoUACa5TGs8dfDLP3+HcBShNmwX3IdC3m8Je6SJHEW1dP2E0yLxmzFHnX?=
+ =?us-ascii?Q?j7Jk8G26JnqQrfhF4m4plHb7hFsALMKa/x+fme+8j2e0nYTQvzkTnjhU7Ov3?=
+ =?us-ascii?Q?kMqFB80ZeuZn1aLNxwVWkCtDoE0YPUfFkkvZ27igfRAaKkGxSIS13Z1C+BNt?=
+ =?us-ascii?Q?5erPZSlTn1tNTxl1Atu3Kj4dKEX6s45fNo352Q=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?0HR1vulC3xb/jH0mizz04MOiNgz5VUMUNeMFnsm17GHHYs+/P2FL7ySdU9WR?=
+ =?us-ascii?Q?TzZOayo0azSJ6mafH4XySQZutM8IStvoUVYamGvy6nTX0IrWoYEjZ/0uxxIr?=
+ =?us-ascii?Q?D1bpZbXrayZDY2kKOFyKSUZUSynaizURfne+b59qbv8ZSH80gpeeIsuAIskq?=
+ =?us-ascii?Q?autTGPGD2WinEeb6zHBGU7tEL4Tr1fe6BMmoGfbaMhjWAD9Hwx/phDNf32Km?=
+ =?us-ascii?Q?zRbc9R2FsC7e91xzMsXUynhHYkdmvBbztBcDzcsDOYwgWcGY+tBQv66RjrwM?=
+ =?us-ascii?Q?7aZXyr112fn3Wt9hZWwQcVONUDDwrq3dOEo37/XRZTKh94w++ZdhG/xdtrA4?=
+ =?us-ascii?Q?iHphu65Er0cbx0hbDLnBW/hGt5hhIW/fg9QZvjQMC9UXXLT/E0AtmX0bubag?=
+ =?us-ascii?Q?5tfyqGPb6QwGLfU04S851dLIRDy+Nk6nd5fFOEMVm/EAPYaiQZZVmO/sj522?=
+ =?us-ascii?Q?DBR3r9v2IfMHZiVGpClsFMc7UVNk4vDEEwixYn7ocJrelbUoFSPnqQcvWavH?=
+ =?us-ascii?Q?noI0ohJjEy3kXTYGwSHWhHPXfOA1jTIocCc79+DPuT4ZK0oZsjSFLDCC04bn?=
+ =?us-ascii?Q?4lf4P8xqJJPZBt0sGStbySZZNmquUfZhWAqG+HQF+wZPxNzdrkD3BSgwO+Wa?=
+ =?us-ascii?Q?M0p3SJxcoJCxBALnV+lZk13X0MFyI/vhsupP4H8DH/KIPs0kk3ndcm5AFnME?=
+ =?us-ascii?Q?m2zEZSYABrn0aG9Aq1JAnv08E4bJU19IAF9FwxAkKZJ0k3/7i3KTn/3uLWL4?=
+ =?us-ascii?Q?XLppjgHJQMIueLlJfHjPm5p8JWp/mi3ic5ZbmGpGPJ/LQQmy/vKlO/wIkXfa?=
+ =?us-ascii?Q?VHlzPDQAyRxXYXitVisAi1diSso2yGo2jfG0jCIR2jowiFG+Tv2aCbPPbSI7?=
+ =?us-ascii?Q?n9Rt+GbJEFk/LtilWEbw8NtSU8uQxWDqyQgJwcOO7Zgl8ZjxS+jSvX+JZFiU?=
+ =?us-ascii?Q?5/LZmr+aavqb0NufdosS1mTJvNOmTUjrAr8ykzE38hhXvfw1RiOT742BdvW5?=
+ =?us-ascii?Q?44Nhpq6sLj3QJn8RSejyUDE7AZrwzOLjsJHfvAZtv2OMVqN4Tu7zOWkhq8Se?=
+ =?us-ascii?Q?wB9SJcuNYDrrhE0GFFzcIxt2cILpEobR4NM6wdSvJWOXPgS1CcQAjAjqcFdh?=
+ =?us-ascii?Q?FM6l5si09+192nctVXeZooPYy87llNFuAcptXROZbs+ntQ8Wn+RFcVaICxhj?=
+ =?us-ascii?Q?innYWhnOtOv+yJ1XGs/0eysMDzF63H+ujBWHlFxoFz/iSvWnE5eiqpH+Z7U?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3825a9b-8a9f-484f-ecc9-08dd6fd55c37
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Mar 2025 21:53:52.2289
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7527
 
-The current cgroup directory layout for running the partition state
-transition tests is mainly suitable for testing local partitions as
-well as with a mix of local and remote partitions. It is not that
-suitable for doing extensive remote partition and nested remote/local
-partition testing.
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, March=
+ 21, 2025 1:11 PM
+>=20
+> On 3/12/2025 11:19 PM, mhkelley58@gmail.com wrote:
+> > From: Michael Kelley <mhklinux@outlook.com>
+> >
+> > Update hypercall call sites to use the new hv_hvcall_*() functions
+> > to set up hypercall arguments. Since these functions zero the
+> > fixed portion of input memory, remove now redundant zero'ing of
+> > input fields.
+> >
+> > hv_post_message() requires additional updates. The payload area is
+> > treated as an array to avoid wasting cycles on zero'ing it and
+> > then overwriting with memcpy(). To allow treatment as an array,
+> > the corresponding payload[] field is updated to have zero size.
+> >
+> I'd prefer to leave the payload field as a fixed-sized array.
+> Changing it to a flexible array makes it look like that input is
+> for a variable-sized or rep hypercall, and it makes the surrounding
+> code in hv_post_message() more complex and inscrutable as a result.
+>=20
+> I suggest leaving hv_post_message() alone, except for changing
+> hyperv_pcpu_input_arg -> hyperv_pcpu_arg, and perhaps a comment
+> explaining why hv_hvcall_input() isn't used there.
+>=20
+> > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> > ---
+> >  drivers/hv/hv.c           | 9 ++++++---
+> >  drivers/hv/hv_balloon.c   | 4 ++--
+> >  drivers/hv/hv_common.c    | 2 +-
+> >  drivers/hv/hv_proc.c      | 8 ++++----
+> >  drivers/hv/hyperv_vmbus.h | 2 +-
+> >  5 files changed, 14 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> > index a38f84548bc2..e2dcbc816fc5 100644
+> > --- a/drivers/hv/hv.c
+> > +++ b/drivers/hv/hv.c
+> > @@ -66,7 +66,8 @@ int hv_post_message(union hv_connection_id connection=
+_id,
+> >  	if (hv_isolation_type_tdx() && ms_hyperv.paravisor_present)
+> >  		aligned_msg =3D this_cpu_ptr(hv_context.cpu_context)->post_msg_page;
+> >  	else
+> > -		aligned_msg =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +		hv_hvcall_in_array(&aligned_msg, sizeof(*aligned_msg),
+> > +				   sizeof(aligned_msg->payload[0]));
+> >
+> >  	aligned_msg->connectionid =3D connection_id;
+> >  	aligned_msg->reserved =3D 0;
+> > @@ -80,8 +81,10 @@ int hv_post_message(union hv_connection_id connectio=
+n_id,
+> >  						  virt_to_phys(aligned_msg), 0);
+> >  		else if (hv_isolation_type_snp())
+> >  			status =3D hv_ghcb_hypercall(HVCALL_POST_MESSAGE,
+> > -						   aligned_msg, NULL,
+> > -						   sizeof(*aligned_msg));
+> > +						   aligned_msg,
+> > +						   NULL,
+> > +						   struct_size(aligned_msg, payload,
+> > +						   HV_MESSAGE_PAYLOAD_QWORD_COUNT));
+>=20
+> See my comment above, I'd prefer to leave this function mostly
+> alone to maintain readability.
 
-Add a new set of remote partition tests REMOTE_TEST_MATRIX with another
-cgroup directory structure more tailored for remote partition testing
-to provide better code coverage.
+Let me try again to introduce hv_hvcall_*() without changing struct
+hv_input_post_message. If that struct isn't changed, then the
+hv_ghcb_hypercall() arguments don't have to change.
 
-Also add a few new test cases as well as adjusting existig ones for
-the original TEST_MATRIX.
+I'd like to reach a point where hyperv_input_arg isn't referenced in any
+open coding -- it should be referenced only internally in the hv_call_*()
+functions and where it is allocated and deallocated. The arguments to
+hv_hvcall_in_array() will be a slightly more complicated to prevent zero'in=
+g
+the entire payload area, but I don't think readability alone is justificati=
+on
+for open-coding the use of hyperv_input_arg.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- .../selftests/cgroup/test_cpuset_prs.sh       | 154 ++++++++++++++++--
- 1 file changed, 143 insertions(+), 11 deletions(-)
+Other reviewers -- please chime in on whether the "no open coding" goal
+should be kept. I can drop that goal if that's the way folks prefer.
 
-diff --git a/tools/testing/selftests/cgroup/test_cpuset_prs.sh b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-index d99412e7d196..a17256d9f88a 100755
---- a/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-+++ b/tools/testing/selftests/cgroup/test_cpuset_prs.sh
-@@ -112,6 +112,8 @@ cleanup()
- 	online_cpus
- 	cd $CGROUP2
- 	rmdir A1/A2/A3 A1/A2 A1 B1 test/A1 test/B1 test > /dev/null 2>&1
-+	rmdir rtest/p1/c11 rtest/p1/c12 rtest/p2/c21 \
-+	      rtest/p2/c22 rtest/p1 rtest/p2 rtest > /dev/null 2>&1
- 	[[ -n "$SCHED_DEBUG" ]] &&
- 		echo "$SCHED_DEBUG" > /sys/kernel/debug/sched/verbose
- }
-@@ -223,9 +225,9 @@ TEST_MATRIX=(
- 	"  C0-1:P1   .      .    C2-3  S+:C4-5   .      .      .     0 A1:4-5"
- 	"   C0-1     .      .   C2-3:P1   .      .      .     C2     0 "
- 	"   C0-1     .      .   C2-3:P1   .      .      .    C4-5    0 B1:4-5"
--	"C0-3:P1:S+ C2-3:P1 .      .      .      .      .      .     0 A1:0-1|A2:2-3"
--	"C0-3:P1:S+ C2-3:P1 .      .     C1-3    .      .      .     0 A1:1|A2:2-3"
--	"C2-3:P1:S+  C3:P1  .      .     C3      .      .      .     0 A1:|A2:3 A1:P1|A2:P1"
-+	"C0-3:P1:S+ C2-3:P1 .      .      .      .      .      .     0 A1:0-1|A2:2-3|XA2:2-3"
-+	"C0-3:P1:S+ C2-3:P1 .      .     C1-3    .      .      .     0 A1:1|A2:2-3|XA2:2-3"
-+	"C2-3:P1:S+  C3:P1  .      .     C3      .      .      .     0 A1:|A2:3|XA2:3 A1:P1|A2:P1"
- 	"C2-3:P1:S+  C3:P1  .      .     C3      P0     .      .     0 A1:3|A2:3 A1:P1|A2:P0"
- 	"C2-3:P1:S+  C2:P1  .      .     C2-4    .      .      .     0 A1:3-4|A2:2"
- 	"C2-3:P1:S+  C3:P1  .      .     C3      .      .     C0-2   0 A1:|B1:0-2 A1:P1|A2:P1"
-@@ -291,7 +293,7 @@ TEST_MATRIX=(
- 								       A1:P0|A2:P2|A3:P1 2"
- 	" C0-4:X2-4:S+ C1-4:X2-4:S+:P2 C2-4:X4:P1 \
- 				   .      .      X5      .      .    0 A1:0-4|A2:1-4|A3:2-4 \
--								       A1:P0|A2:P-2|A3:P-1"
-+								       A1:P0|A2:P-2|A3:P-1 ."
- 	" C0-4:X2-4:S+ C1-4:X2-4:S+:P2 C2-4:X4:P1 \
- 				   .      .      .      X1      .    0 A1:0-1|A2:2-4|A3:2-4 \
- 								       A1:P0|A2:P2|A3:P-1 2-4"
-@@ -303,13 +305,13 @@ TEST_MATRIX=(
- 	" C0-3:S+ C1-3:S+  C3      .    X2-3   X2-3   T:P2:O3=0  .   0 A1:0-2|A2:1-2|A3:1-2 A1:P0|A3:P-2 3|"
- 
- 	# An invalidated remote partition cannot self-recover from hotplug
--	" C0-3:S+ C1-3:S+  C2      .    X2-3   X2-3   T:P2:O2=0 O2=1 0 A1:0-3|A2:1-3|A3:2 A1:P0|A3:P-2"
-+	" C0-3:S+ C1-3:S+  C2      .    X2-3   X2-3   T:P2:O2=0 O2=1 0 A1:0-3|A2:1-3|A3:2 A1:P0|A3:P-2 ."
- 
- 	# cpus.exclusive.effective clearing test
- 	" C0-3:S+ C1-3:S+  C2      .   X2-3:X    .      .      .     0 A1:0-3|A2:1-3|A3:2|XA1:"
- 
- 	# Invalid to valid remote partition transition test
--	" C0-3:S+   C1-3    .      .      .    X3:P2    .      .     0 A1:0-3|A2:1-3|XA2: A2:P-2"
-+	" C0-3:S+   C1-3    .      .      .    X3:P2    .      .     0 A1:0-3|A2:1-3|XA2: A2:P-2 ."
- 	" C0-3:S+ C1-3:X3:P2
- 			    .      .    X2-3    P2      .      .     0 A1:0-2|A2:3|XA2:3 A2:P2 3"
- 
-@@ -318,7 +320,6 @@ TEST_MATRIX=(
- 	" C1-3:S+:P2 X4:P2  .      .      .    X3:P2    .      .     0 A1:1-2|XA1:1-3|A2:3:XA2:3 A1:P2|A2:P2 1-3"
- 	"  C0-3:P2   .      .    C4-6   C0-4     .      .      .     0 A1:0-4|B1:4-6 A1:P-2|B1:P0"
- 	"  C0-3:P2   .      .    C4-6 C0-4:C0-3  .      .      .     0 A1:0-3|B1:4-6 A1:P2|B1:P0 0-3"
--	"  C0-3:P2   .      .  C3-5:C4-5  .      .      .      .     0 A1:0-3|B1:4-5 A1:P2|B1:P0 0-3"
- 
- 	# Local partition invalidation tests
- 	" C0-3:X1-3:S+:P2 C1-3:X2-3:S+:P2 C2-3:X3:P2 \
-@@ -334,10 +335,10 @@ TEST_MATRIX=(
- 	# cpus_allowed/exclusive_cpus update tests
- 	" C0-3:X2-3:S+ C1-3:X2-3:S+ C2-3:X2-3 \
- 				   .    X:C4     .      P2     .     0 A1:4|A2:4|XA2:|XA3:|A3:4 \
--								       A1:P0|A3:P-2"
-+								       A1:P0|A3:P-2 ."
- 	" C0-3:X2-3:S+ C1-3:X2-3:S+ C2-3:X2-3 \
- 				   .     X1      .      P2     .     0 A1:0-3|A2:1-3|XA1:1|XA2:|XA3:|A3:2-3 \
--								       A1:P0|A3:P-2"
-+								       A1:P0|A3:P-2 ."
- 	" C0-3:X2-3:S+ C1-3:X2-3:S+ C2-3:X2-3 \
- 				   .      .     X3      P2     .     0 A1:0-2|A2:1-2|XA2:3|XA3:3|A3:3 \
- 								       A1:P0|A3:P2 3"
-@@ -385,7 +386,7 @@ TEST_MATRIX=(
- 	# A partition root with non-partition root parent is invalid| but it
- 	# can be made valid if its parent becomes a partition root too.
- 	"  C0-1:S+  C1      .    C2-3     .      P2     .      .     0 A1:0-1|A2:1 A1:P0|A2:P-2"
--	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2"
-+	"  C0-1:S+ C1:P2    .    C2-3     P1     .      .      .     0 A1:0|A2:1 A1:P1|A2:P2 0-1|1"
- 
- 	# A non-exclusive cpuset.cpus change will invalidate partition and its siblings
- 	"  C0-1:P1   .      .    C2-3   C0-2     .      .      .     0 A1:0-2|B1:2-3 A1:P-1|B1:P0"
-@@ -405,6 +406,17 @@ TEST_MATRIX=(
- 	# affect cpuset.cpus.exclusive.effective.
- 	" C1-4:X3:S+ C1:X3  .      .       .     C      .      .     0 A2:1-4|XA2:3"
- 
-+	# cpuset.cpus can contain CPUs that overlap a sibling cpuset with cpus.exclusive
-+	# but creating a local partition out of it is not allowed. Similarly and change
-+	# in cpuset.cpus of a local partition that overlaps sibling exclusive CPUs will
-+	# invalidate it.
-+	" CX1-4:S+ CX2-4:P2 .    C5-6      .     .      .      P1    0 A1:1|A2:2-4|B1:5-6|XB1:5-6 \
-+								       A1:P0|A2:P2:B1:P1 2-4"
-+	" CX1-4:S+ CX2-4:P2 .    C3-6      .     .      .      P1    0 A1:1|A2:2-4|B1:5-6 \
-+								       A1:P0|A2:P2:B1:P-1 2-4"
-+	" CX1-4:S+ CX2-4:P2 .    C5-6      .     .      .   P1:C3-6  0 A1:1|A2:2-4|B1:5-6 \
-+								       A1:P0|A2:P2:B1:P-1 2-4"
-+
- 	#  old-A1 old-A2 old-A3 old-B1 new-A1 new-A2 new-A3 new-B1 fail ECPUs Pstate ISOLCPUS
- 	#  ------ ------ ------ ------ ------ ------ ------ ------ ---- ----- ------ --------
- 	# Failure cases:
-@@ -419,6 +431,54 @@ TEST_MATRIX=(
- 	"   C0-3     .      .    C4-5   X3-5     .      .      .     1 A1:0-3|B1:4-5"
- )
- 
-+#
-+# Cpuset controller remote partition test matrix.
-+#
-+# Cgroup test hierarchy
-+#
-+#	      root
-+#	        |
-+#	      rtest (cpuset.cpus.exclusive=1-7)
-+#	        |
-+#	 +------+------+
-+#	 |             |
-+#	 p1            p2
-+#     +--+--+       +--+--+
-+#     |     |       |     |
-+#    c11   c12     c21   c22
-+#
-+# REMOTE_TEST_MATRIX uses the same notational convention as TEST_MATRIX.
-+# Only CPUs 1-7 should be used.
-+#
-+REMOTE_TEST_MATRIX=(
-+	#  old-p1 old-p2 old-c11 old-c12 old-c21 old-c22
-+	#  new-p1 new-p2 new-c11 new-c12 new-c21 new-c22 ECPUs Pstate ISOLCPUS
-+	#  ------ ------ ------- ------- ------- ------- ----- ------ --------
-+	" X1-3:S+ X4-6:S+ X1-2     X3     X4-5     X6 \
-+	      .      .     P2      P2      P2      P2    c11:1-2|c12:3|c21:4-5|c22:6 \
-+							 c11:P2|c12:P2|c21:P2|c22:P2 1-6"
-+	" CX1-4:S+   .   X1-2:P2   C3      .       .  \
-+	      .      .     .      C3-4     .       .     p1:3-4|c11:1-2|c12:3-4 \
-+							 p1:P0|c11:P2|c12:P0 1-2"
-+	" CX1-4:S+   .   X1-2:P2   .       .       .  \
-+	    X2-4     .     .       .       .       .     p1:1,3-4|c11:2 \
-+							 p1:P0|c11:P2 2"
-+	" CX1-5:S+   .   X1-2:P2 X3-5:P1   .       .  \
-+	    X2-4     .     .       .       .       .     p1:1,5|c11:2|c12:3-4 \
-+							 p1:P0|c11:P2|c12:P1 2"
-+	" CX1-4:S+   .   X1-2:P2 X3-4:P1   .       .  \
-+	      .      .     X2      .       .       .     p1:1|c11:2|c12:3-4 \
-+							 p1:P0|c11:P2|c12:P1 2"
-+	# p1 as member, will get its effective CPUs from its parent rtest
-+	" CX1-4:S+   .   X1-2:P2 X3-4:P1   .       .  \
-+	      .      .     X1     CX2-4    .       .     p1:5-7|c11:1|c12:2-4 \
-+							 p1:P0|c11:P2|c12:P1 1"
-+	" CX1-4:S+ X5-6:P1:S+ .    .       .       .  \
-+	      .      .   X1-2:P2  X4-5:P1  .     X1-7:P2 p1:3|c11:1-2|c12:4:c22:5-6 \
-+							 p1:P0|p2:P1|c11:P2|c12:P1|c22:P2 \
-+							 1-2,4-6|1-2,5-6"
-+)
-+
- #
- # Write to the cpu online file
- #  $1 - <c>=<v> where <c> = cpu number, <v> value to be written
-@@ -902,10 +962,11 @@ run_state_test()
- 		STATES=${11}
- 		ICPUS=${12}
- 
--		set_ctrl_state_noerr B1       $OLD_B1
- 		set_ctrl_state_noerr A1       $OLD_A1
- 		set_ctrl_state_noerr A1/A2    $OLD_A2
- 		set_ctrl_state_noerr A1/A2/A3 $OLD_A3
-+		set_ctrl_state_noerr B1       $OLD_B1
-+
- 		RETVAL=0
- 		set_ctrl_state A1       $NEW_A1; ((RETVAL += $?))
- 		set_ctrl_state A1/A2    $NEW_A2; ((RETVAL += $?))
-@@ -920,6 +981,76 @@ run_state_test()
- 	echo "All $I tests of $TEST PASSED."
- }
- 
-+#
-+# Run cpuset remote partition state transition test
-+#  $1 - test matrix name
-+#
-+run_remote_state_test()
-+{
-+	TEST=$1
-+	CONTROLLER=cpuset
-+	[[ -d rtest ]] || mkdir rtest
-+	cd rtest
-+	echo +cpuset > cgroup.subtree_control
-+	echo "1-7" > cpuset.cpus
-+	echo "1-7" > cpuset.cpus.exclusive
-+	CGROUP_LIST=".. . p1 p2 p1/c11 p1/c12 p2/c21 p2/c22"
-+	RESET_LIST="p1/c11 p1/c12 p2/c21 p2/c22 p1 p2"
-+	I=0
-+	eval CNT="\${#$TEST[@]}"
-+
-+	reset_cgroup_states
-+	console_msg "Running remote partition state transition test ..."
-+
-+	while [[ $I -lt $CNT ]]
-+	do
-+		echo "Running test $I ..." > $CONSOLE
-+		[[ $VERBOSE -gt 1 ]] && {
-+			echo ""
-+			eval echo \${$TEST[$I]}
-+		}
-+		eval set -- "\${$TEST[$I]}"
-+		OLD_p1=$1
-+		OLD_p2=$2
-+		OLD_c11=$3
-+		OLD_c12=$4
-+		OLD_c21=$5
-+		OLD_c22=$6
-+		NEW_p1=$7
-+		NEW_p2=$8
-+		NEW_c11=$9
-+		NEW_c12=${10}
-+		NEW_c21=${11}
-+		NEW_c22=${12}
-+		ECPUS=${13}
-+		STATES=${14}
-+		ICPUS=${15}
-+
-+		set_ctrl_state_noerr p1     $OLD_p1
-+		set_ctrl_state_noerr p2     $OLD_p2
-+		set_ctrl_state_noerr p1/c11 $OLD_c11
-+		set_ctrl_state_noerr p1/c12 $OLD_c12
-+		set_ctrl_state_noerr p2/c21 $OLD_c21
-+		set_ctrl_state_noerr p2/c22 $OLD_c22
-+
-+		RETVAL=0
-+		set_ctrl_state p1     $NEW_p1 ; ((RETVAL += $?))
-+		set_ctrl_state p2     $NEW_p2 ; ((RETVAL += $?))
-+		set_ctrl_state p1/c11 $NEW_c11; ((RETVAL += $?))
-+		set_ctrl_state p1/c12 $NEW_c12; ((RETVAL += $?))
-+		set_ctrl_state p2/c21 $NEW_c21; ((RETVAL += $?))
-+		set_ctrl_state p2/c22 $NEW_c22; ((RETVAL += $?))
-+
-+		[[ $RETVAL -ne 0 ]] && test_fail $I result
-+
-+		check_test_results $I "$ECPUS" "$STATES" "$ICPUS"
-+		((I++))
-+	done
-+	cd ..
-+	rmdir rtest
-+	echo "All $I tests of $TEST PASSED."
-+}
-+
- #
- # Testing the new "isolated" partition root type
- #
-@@ -1056,6 +1187,7 @@ test_inotify()
- 
- trap cleanup 0 2 3 6
- run_state_test TEST_MATRIX
-+run_remote_state_test REMOTE_TEST_MATRIX
- test_isolated
- test_inotify
- echo "All tests PASSED."
--- 
-2.48.1
+>=20
+> >  		else
+> >  			status =3D HV_STATUS_INVALID_PARAMETER;
+> >  	} else {
+> > diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> > index fec2f18679e3..2def8b8794ee 100644
+> > --- a/drivers/hv/hv_balloon.c
+> > +++ b/drivers/hv/hv_balloon.c
+> > @@ -1582,14 +1582,14 @@ static int hv_free_page_report(struct page_repo=
+rting_dev_info *pr_dev_info,
+> >  	WARN_ON_ONCE(nents > HV_MEMORY_HINT_MAX_GPA_PAGE_RANGES);
+> >  	WARN_ON_ONCE(sgl->length < (HV_HYP_PAGE_SIZE << page_reporting_order)=
+);
+> >  	local_irq_save(flags);
+> > -	hint =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +
+> > +	hv_hvcall_in_array(&hint, sizeof(*hint), sizeof(hint->ranges[0]));
+>=20
+> We should ensure the returned batch size is large enough for
+> "nents".
+
+OK, right.  That test would replace the WARN_ON_ONCE() based on nents.
+
+>=20
+> >  	if (!hint) {
+> >  		local_irq_restore(flags);
+> >  		return -ENOSPC;
+> >  	}
+> >
+> >  	hint->heat_type =3D HV_EXTMEM_HEAT_HINT_COLD_DISCARD;
+> > -	hint->reserved =3D 0;
+> >  	for_each_sg(sgl, sg, nents, i) {
+> >  		union hv_gpa_page_range *range;
+> >
+> > diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> > index 9804adb4cc56..a6b1cdfbc8d4 100644
+> > --- a/drivers/hv/hv_common.c
+> > +++ b/drivers/hv/hv_common.c
+> > @@ -293,7 +293,7 @@ void __init hv_get_partition_id(void)
+> >  	u64 status, pt_id;
+> >
+> >  	local_irq_save(flags);
+> > -	output =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +	hv_hvcall_inout(NULL, 0, &output, sizeof(*output));
+> >  	status =3D hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, &output);
+> >  	pt_id =3D output->partition_id;
+> >  	local_irq_restore(flags);
+> > diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
+> > index 2fae18e4f7d2..5c580ee1c23f 100644
+> > --- a/drivers/hv/hv_proc.c
+> > +++ b/drivers/hv/hv_proc.c
+> > @@ -73,7 +73,8 @@ int hv_call_deposit_pages(int node, u64 partition_id,=
+ u32 num_pages)
+> >
+> >  	local_irq_save(flags);
+> >
+> > -	input_page =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +	hv_hvcall_in_array(&input_page, sizeof(*input_page),
+> > +			   sizeof(input_page->gpa_page_list[0]));
+>=20
+> We should ensure the returned batch size is large enough.
+
+OK.
+
+>=20
+> >
+> >  	input_page->partition_id =3D partition_id;
+> >
+> > @@ -124,9 +125,8 @@ int hv_call_add_logical_proc(int node, u32 lp_index=
+, u32 apic_id)
+> >  	do {
+> >  		local_irq_save(flags);
+> >
+> > -		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> >  		/* We don't do anything with the output right now */
+> > -		output =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> > +		hv_hvcall_inout(&input, sizeof(*input), &output, sizeof(*output));
+> >
+> >  		input->lp_index =3D lp_index;
+> >  		input->apic_id =3D apic_id;
+> > @@ -167,7 +167,7 @@ int hv_call_create_vp(int node, u64 partition_id, u=
+32 vp_index, u32 flags)
+> >  	do {
+> >  		local_irq_save(irq_flags);
+> >
+> > -		input =3D *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +		hv_hvcall_in(&input, sizeof(*input));
+> >
+> >  		input->partition_id =3D partition_id;
+> >  		input->vp_index =3D vp_index;
+> > diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> > index 29780f3a7478..44b5e8330d9d 100644
+> > --- a/drivers/hv/hyperv_vmbus.h
+> > +++ b/drivers/hv/hyperv_vmbus.h
+> > @@ -101,7 +101,7 @@ struct hv_input_post_message {
+> >  	u32 reserved;
+> >  	u32 message_type;
+> >  	u32 payload_size;
+> > -	u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+> > +	u64 payload[];
+>=20
+> See my comment above, I'd prefer to keep this how it is.
+>=20
+> >  };
+> >
+> >
+>=20
+> Thanks
+> Nuno
 
 
