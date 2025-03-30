@@ -1,192 +1,288 @@
-Return-Path: <linux-kernel+bounces-581069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271CAA75A19
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 14:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4D8A75A2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 15:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBDD169BD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16201665A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 13:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7835A1CBEB9;
-	Sun, 30 Mar 2025 12:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF061CF7AF;
+	Sun, 30 Mar 2025 13:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b="mLS6Ec1u"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayIVWM3t"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC8E11CAF
-	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 12:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA4149DFF;
+	Sun, 30 Mar 2025 13:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743338345; cv=none; b=UHtp/4iwuToZAIb1vk7bFxYFntMjAL3ePAnE9/Rlgai0aBSSV8OJhJG9fXzxooIqit0eX1Np9xfECQpvj20QGM2Yt+Ow1/n9DK8oQLcr/mlmGW09MjEIcOheQEZStUu1MBFgz9Wxdw8NAh4IIUHnyrdPuva58ETFq84NDMy3HpA=
+	t=1743340545; cv=none; b=UAxPSdt/gh+7CBIJhaEnSpScwkb0GeiamyEczdCCTSQRDU8GDh6/muhcZVK/zTcjoak9pfIaC/IEKjPMeCb49tBIDPa2SZ9sN5EiGfxmve6JBuXxapCUuZt1u67sPGKxZbs/izMEGj5iE9NL1cFqHJN1jAvq5F4rMTrGkNpTXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743338345; c=relaxed/simple;
-	bh=gClqjCZh9Kz32bL1aBMjsKWarsotUp4on4WdUJPJcfA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oklMDMo05HH6wFWRNK27ZNv9gPOLcvMiiZFIGIk3fGbZU3fYrAmJL5RRYg+mDkoUjijLOjiJbdUhJ5si+ooFeGHs6zaKOHf/BlOiHmnhugXb2G5G+sNWSladsag8Ld7Ppvt5UrkE3G4x8lz6uog8iv/CS5IFRbfRIQm8sDGNFXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (2048-bit key) header.d=o2.pl header.i=@o2.pl header.b=mLS6Ec1u; arc=none smtp.client-ip=193.222.135.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 28174 invoked from network); 30 Mar 2025 14:32:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=20241105;
-          t=1743337942; bh=hoCDv68febeR3bUGtjvSv+eDR1SEWH0jExpg2Z6Cov4=;
-          h=Subject:From:To:Cc;
-          b=mLS6Ec1uk8rIFTMYwjjvGYZR8RStuGEi2maXF8ekp6qLZ9ZsOHTPfzd63jMvrrV/i
-           kCfrN7WLikqrWWSqqXDjhPlfkfr7gSypTRZNylP5tFagamydYkas/YtNU4bFqc8pSh
-           3La2pExpoxy/4mAPdOTFEqtEzrS/hXjxJwdEA6rWFru5NDtl+jzs+MqtsSn7UH/0E3
-           BF2gDXBaCBTvjqikjym9CjklqyC9BIvhVj95/cu4QE86d88pMVk5aqzcu2SpT2thYW
-           WXHJLuN4Fl0sAxdsFvSiOir3TT5m5kiYCVw7bkEkeICrGhSsm8K3W7YfLUQ4e8o4RP
-           NSFm828n9Q0CA==
-Received: from apn-78-30-75-194.dynamic.gprs.plus.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[78.30.75.194])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <bp@alien8.de>; 30 Mar 2025 14:32:22 +0200
-Message-ID: <45cee3c7-e1b2-4058-bc81-c6eb5935fad0@o2.pl>
-Date: Sun, 30 Mar 2025 14:32:19 +0200
+	s=arc-20240116; t=1743340545; c=relaxed/simple;
+	bh=zEqvR4Yif+VPOEp8p55PUCR23H0BtfvOL/VKmaewHI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Otv2zNMEbcYekenFFsM8VSz0s5WvRh6SSvFurSzV6NYDN4nEJMxSd5MpjzpCBbU/uNuqWzrfW8IsJHEWMXKfXCTKIJoQfdmXafLxthIKNjMr0uLH3WeacGn0O64BE3zGDPWqrizZAH+8xLOTkV/anVh8SRu/Qy527Q8ABJ8PFOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayIVWM3t; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22622ddcc35so41242535ad.2;
+        Sun, 30 Mar 2025 06:15:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743340543; x=1743945343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5b77UBiiF3+CsUBsobO4g2pHQ2rJ9CzTVYiaCkdVgZA=;
+        b=ayIVWM3tXfC8gQAf5V2VJMHFPw7sDJnvCMQgqnCUkK7+E3b6qnZgjLLURFhC2cSSDo
+         9LlvR4eb+O9838s2oGZ8TfpASblFkq0J6wgAarKYG1lchurECc+IETrOUVRg1b5rwi6q
+         iT3vnayBhO3Ibj7GXSGDs8F7RD4w9c2GHpuMq3DYGn06+VStTrFaMoNOO5fwnyeAQHmO
+         GcdSAi7Ek6fN57lYE8aq/FJCaSu3DQc5IBXG4o6ViyYgEdTPN20QzfPDQPygg0C4vi3C
+         W37fiff8kusUl4AHUUkD1eKI7/o6WxfotanOeU01Ezc/YlBegcFJGQA71p15t9le1i/u
+         JY0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743340543; x=1743945343;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5b77UBiiF3+CsUBsobO4g2pHQ2rJ9CzTVYiaCkdVgZA=;
+        b=EkKm8xiHBYFIDH7CwEcRGL5jgKwefD7bcaLS74pzkB3u/Tu5Aga76R2cmaKd6iCpoA
+         8hYz03QGLvs0d2fvmp1hkqqBvS4CuRIImLk6u1aYZ7wrSJKjFvlRpFT0dCQGOc2fQbDY
+         8xvIAz5MKlnFjgIx56Taql+PTEOKxa1ZnMb0gjWQhmV6Z6g4SA2gPZS05Zhzq6fmmZkT
+         UZgNYVupPfcjzNRVTosy/1yoIhdksazz9DKprb12hU3JawQcaQVRALCVNVi/3pbq0QbW
+         I9CuyvQXOBY5hALiUPd7MubBtG02p10csF8iPEcPeulv/07OuyDvqP2FZf+5SYUca8kM
+         /tqQ==
+X-Gm-Message-State: AOJu0YwmA3Qn3pXMTiftUgt+MPlC7RUdSPAHS5VYRXqA3H5i/z8kw+fq
+	+/810HJ2+peNZ58KUGk3k0v1E8zLT3CipynmMBkV6EUwRU9LIUdC2hDjQvjMp6s=
+X-Gm-Gg: ASbGncvPXdmgBklLGCnJq0g+3HdD1h3NwxWegGuLnZjDHuAf+eL971I5R8qcPJermxt
+	1Ewfy1F9S1YO/SBYtQKO3BYr/A5BvuH1qFtUjx5VJhYGDB4JveriC2M6IAXlYIlJUTY7fvKet8c
+	Jqg9pbNZDJdVDBU2azg7q5HgRTC30hh1Cyxz37yVExkcz6sLwaER1ymd/FhRHnlUj+u9kfrzDQ7
+	JhUbk7Vqc4Gic0U2AXjYCnm3bMOY8PSa+2hIQz8gTLHvf0olXskLNRD2TEWvMenrxKIKlx2pLPw
+	zgSLH/PTQtOwgSvjl7TR9mM6xZuWPkMohNRZ0oox0W4Czdq2Itd0WeGVMuQp8+AvMF05wkz/KRM
+	DkA==
+X-Google-Smtp-Source: AGHT+IFf4viNFZnZC6WyJNmg3HGPNKr7fIwzjG7td15GVJfDIQhrUJRfnfTDgukBKPs86RnGbek6Mw==
+X-Received: by 2002:a05:6a00:3a24:b0:730:99cb:7c2f with SMTP id d2e1a72fcca58-739803648bcmr6881268b3a.6.1743340543068;
+        Sun, 30 Mar 2025 06:15:43 -0700 (PDT)
+Received: from fedora.am.students.amrita.edu ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e27183sm5318985b3a.63.2025.03.30.06.15.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Mar 2025 06:15:42 -0700 (PDT)
+From: Siddharth Menon <simeddon@gmail.com>
+To: linux-iio@vger.kernel.org,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	marcelo.schmitt1@gmail.com,
+	Siddharth Menon <simeddon@gmail.com>
+Subject: [PATCH v4] iio: frequency: ad9832: Use FIELD_PREP macro to set bit fields
+Date: Sun, 30 Mar 2025 18:35:47 +0530
+Message-ID: <20250330131531.92301-1-simeddon@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ BUG: Invalid wait context ] rtc_lock at: mc146818_avoid_UIP
-From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-To: Borislav Petkov <bp@alien8.de>, linux-rtc@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250330113202.GAZ-krsjAnurOlTcp-@fat_crate.local>
- <947b1ceb-77a3-439b-bb7b-6eba38e12cb3@o2.pl>
-Content-Language: en-GB, pl
-Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
- 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
- TANkZ3QqXNX2
-In-Reply-To: <947b1ceb-77a3-439b-bb7b-6eba38e12cb3@o2.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-WP-MailID: e47304061ecc448764be7d6522469e98
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [obM0]                               
 
-W dniu 30.03.2025 o 14:23, Mateusz Jończyk pisze:
-> W dniu 30.03.2025 o 13:32, Borislav Petkov pisze:
->> So,
->>
->> while playing with suspend to RAM, I got this lockdep splat below.
->>
->> Poking around I found:
->>
->> ec5895c0f2d8 ("rtc: mc146818-lib: extract mc146818_avoid_UIP")
->>
->> which is doing this funky taking and dropping the rtc_lock and I 
->> guess that's
->> inherited from ye olde times.
->>
->> I "fixed" it so lockdeup doesn't warn by converting rtc_lock to a raw 
->> spinlock
->> but this is definitely not the right fix so let me bounce it off to 
->> the folks
->> on Cc who might have a better idea perhaps...
->>
->> Thx.
->
-> Hello,
->
-> This problem has been reported before, see
->
-> https://lore.kernel.org/all/463fbc29-b41f-4d2d-a869-108114000cdb@o2.pl/
->
-> I started work on converting rtc_lock to a raw spinlock, but got stuck 
-> mostly to a lack
-> of time etc. Only did some MIPS patches (unpublished).
->
-> The problem is that timekeeping_suspend() takes a raw spinlock called 
-> "tk_core.lock".
-> With this lock taken, this function indirectly calls 
-> mc146818_avoid_UIP(), which takes
-> a normal spinlock called "rtc_lock". It is necessary to take the 
-> rtc_lock while accessing
-> the RTC: the RTC access cycle consists of writing to an index register 
-> and then accessing
-> the data register. If something else touches the index register in the 
-> middle, we get garbage.
->
-> During a RTC tick, the RTC date/time registers are in an unspecified 
-> state - roughly during this
-> time the UIP (Update In Progress) bit in an RTC register A is set. 
-> This is handled by
-> mc146818_avoid_UIP(). This function takes and releases the rtc_lock 
-> multiple times,
-> in order not to hold it for too long a time (while sleeping).
+Use bitfield and bitmask macros to clearly specify AD9832 SPI
+command fields to make register write code more readable.
 
-I meant "while waiting / while calling udelay()". mc146818_avoid_UIP() 
-does not sleep.
+Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+---
+ v1->v2:
+ - remove CMD_SHIFT and ADD_SHIFT
+ - use GENMASK
+ - store regval in an array and iterate through it
+ v2->v3:
+ - add missing header
+ - refactor code in the previously introduced loops
+ v3->v4:
+ - update commit message with a better one
+ - convert AD9832_PHASE and RES_MASK to masks
+ - cleanup a few if else blocks
+ drivers/staging/iio/frequency/ad9832.c | 85 +++++++++++++-------------
+ 1 file changed, 44 insertions(+), 41 deletions(-)
 
-> But the rtc_lock does need to be taken anyway.
->
-> So the solutions would be:
->
-> 1. Change the rtc_lock to a raw spinlock.
->
-> 2. Change the tick_freeze_lock to a normal spinlock (if possible).
->
-> 3. Possibly rewrite mc146818_avoid_UIP to avoid taking the rtc_lock if 
-> the tick_freeze_lock is held (likely ugly).
->
-> 4. Maybe something else I haven't thought about.
->
-> Thanks,
->
-> Mateusz
-
-Greetings,
-
-Mateusz
+diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+index 140ee4f9c137..1017d2e305cf 100644
+--- a/drivers/staging/iio/frequency/ad9832.c
++++ b/drivers/staging/iio/frequency/ad9832.c
+@@ -16,6 +16,9 @@
+ #include <linux/slab.h>
+ #include <linux/spi/spi.h>
+ #include <linux/sysfs.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/unaligned.h>
+ 
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+@@ -59,17 +62,18 @@
+ #define AD9832_CMD_SLEEPRESCLR	0xC
+ 
+ #define AD9832_FREQ		BIT(11)
+-#define AD9832_PHASE(x)		(((x) & 3) << 9)
++#define AD9832_PHASE_MASK	GENMASK(10, 9)
+ #define AD9832_SYNC		BIT(13)
+ #define AD9832_SELSRC		BIT(12)
+ #define AD9832_SLEEP		BIT(13)
+ #define AD9832_RESET		BIT(12)
+ #define AD9832_CLR		BIT(11)
+-#define CMD_SHIFT		12
+-#define ADD_SHIFT		8
+ #define AD9832_FREQ_BITS	32
+ #define AD9832_PHASE_BITS	12
+-#define RES_MASK(bits)		((1 << (bits)) - 1)
++#define RES_MASK(bits)	GENMASK((bits) - 1, 0)
++#define AD9832_CMD_MSK   GENMASK(15, 12)
++#define AD9832_ADD_MSK   GENMASK(11, 8)
++#define AD9832_DAT_MSK  GENMASK(7, 0)
+ 
+ /**
+  * struct ad9832_state - driver instance specific data
+@@ -131,6 +135,8 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ {
+ 	unsigned long clk_freq;
+ 	unsigned long regval;
++	u16 freq_cmd;
++	u8 regval_bytes[4];
+ 
+ 	clk_freq = clk_get_rate(st->mclk);
+ 
+@@ -138,19 +144,15 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ 		return -EINVAL;
+ 
+ 	regval = ad9832_calc_freqreg(clk_freq, fout);
++	put_unaligned_be32(regval, regval_bytes);
+ 
+-	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((regval >> 24) & 0xFF));
+-	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					((regval >> 16) & 0xFF));
+-	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+-					((addr - 2) << ADD_SHIFT) |
+-					((regval >> 8) & 0xFF));
+-	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+-					((addr - 3) << ADD_SHIFT) |
+-					((regval >> 0) & 0xFF));
++	for (int i = 0; i < 4; i++) {
++		freq_cmd = (i % 2 == 0) ? AD9832_CMD_FRE8BITSW : AD9832_CMD_FRE16BITSW;
++
++		st->freq_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, freq_cmd) |
++			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
++			FIELD_PREP(AD9832_DAT_MSK, regval_bytes[i]));
++	}
+ 
+ 	return spi_sync(st->spi, &st->freq_msg);
+ }
+@@ -158,15 +160,21 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+ static int ad9832_write_phase(struct ad9832_state *st,
+ 			      unsigned long addr, unsigned long phase)
+ {
++	u8 phase_bytes[2];
++	u16 phase_cmd;
++
+ 	if (phase >= BIT(AD9832_PHASE_BITS))
+ 		return -EINVAL;
+ 
+-	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
+-					(addr << ADD_SHIFT) |
+-					((phase >> 8) & 0xFF));
+-	st->phase_data[1] = cpu_to_be16((AD9832_CMD_PHA16BITSW << CMD_SHIFT) |
+-					((addr - 1) << ADD_SHIFT) |
+-					(phase & 0xFF));
++	put_unaligned_be16(phase, phase_bytes);
++
++	for (int i = 0; i < 2; i++) {
++		phase_cmd = (i % 2 == 0) ? AD9832_CMD_PHA8BITSW : AD9832_CMD_PHA16BITSW;
++
++		st->phase_data[i] = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, phase_cmd) |
++			FIELD_PREP(AD9832_ADD_MSK, addr - i) |
++			FIELD_PREP(AD9832_DAT_MSK, phase_bytes[i]));
++	}
+ 
+ 	return spi_sync(st->spi, &st->phase_msg);
+ }
+@@ -197,24 +205,22 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+ 		ret = ad9832_write_phase(st, this_attr->address, val);
+ 		break;
+ 	case AD9832_PINCTRL_EN:
+-		if (val)
+-			st->ctrl_ss &= ~AD9832_SELSRC;
+-		else
+-			st->ctrl_ss |= AD9832_SELSRC;
+-		st->data = cpu_to_be16((AD9832_CMD_SYNCSELSRC << CMD_SHIFT) |
++		st->ctrl_ss &= ~AD9832_SELSRC;
++		st->ctrl_ss |= FIELD_PREP(AD9832_SELSRC, val ? 0 : 1);
++
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SYNCSELSRC) |
+ 					st->ctrl_ss);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	case AD9832_FREQ_SYM:
+-		if (val == 1) {
+-			st->ctrl_fp |= AD9832_FREQ;
+-		} else if (val == 0) {
++		if (val == 1 || val == 0) {
+ 			st->ctrl_fp &= ~AD9832_FREQ;
++			st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, val ? 0 : 1);
+ 		} else {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+-		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
+ 					st->ctrl_fp);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+@@ -224,21 +230,18 @@ static ssize_t ad9832_write(struct device *dev, struct device_attribute *attr,
+ 			break;
+ 		}
+ 
+-		st->ctrl_fp &= ~AD9832_PHASE(3);
+-		st->ctrl_fp |= AD9832_PHASE(val);
++		st->ctrl_fp &= ~FIELD_PREP(AD9832_PHASE_MASK, 3);
++		st->ctrl_fp |= FIELD_PREP(AD9832_PHASE_MASK, val ? 0 : 1);
+ 
+-		st->data = cpu_to_be16((AD9832_CMD_FPSELECT << CMD_SHIFT) |
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_FPSELECT) |
+ 					st->ctrl_fp);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+ 	case AD9832_OUTPUT_EN:
+-		if (val)
+-			st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP |
+-					AD9832_CLR);
+-		else
+-			st->ctrl_src |= AD9832_RESET;
++		st->ctrl_src &= ~(AD9832_RESET | AD9832_SLEEP | AD9832_CLR);
++		st->ctrl_src |= FIELD_PREP(AD9832_RESET, val ? 0 : 1);
+ 
+-		st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
++		st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
+ 					st->ctrl_src);
+ 		ret = spi_sync(st->spi, &st->msg);
+ 		break;
+@@ -396,7 +399,7 @@ static int ad9832_probe(struct spi_device *spi)
+ 	spi_message_add_tail(&st->phase_xfer[1], &st->phase_msg);
+ 
+ 	st->ctrl_src = AD9832_SLEEP | AD9832_RESET | AD9832_CLR;
+-	st->data = cpu_to_be16((AD9832_CMD_SLEEPRESCLR << CMD_SHIFT) |
++	st->data = cpu_to_be16(FIELD_PREP(AD9832_CMD_MSK, AD9832_CMD_SLEEPRESCLR) |
+ 					st->ctrl_src);
+ 	ret = spi_sync(st->spi, &st->msg);
+ 	if (ret) {
+-- 
+2.49.0
 
 
