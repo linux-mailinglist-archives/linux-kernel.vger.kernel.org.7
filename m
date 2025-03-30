@@ -1,91 +1,83 @@
-Return-Path: <linux-kernel+bounces-581029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51AEA7599C
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:35:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97E3A759A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 12:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0DB13AB823
-	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:34:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 017B27A4C3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 30 Mar 2025 10:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1CF1C1F07;
-	Sun, 30 Mar 2025 10:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E83184F;
+	Sun, 30 Mar 2025 10:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le/SIPUB"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmVTE+Zj"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86458184F;
-	Sun, 30 Mar 2025 10:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3BE1957FF
+	for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 10:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743330899; cv=none; b=gnUuqft5cJjyHG+3mZEHKelQ+GSkXE4Vrn7Vjm3Di2J9YeLl5JE1+psZgvckNH16X2x4dpKWsTfmk4J+TWtGmTDDVgpQamm6KsP/gcvXKGOiLzO/qieJ5MfAyNgUo3KpNOGx8qgufqDvGi2ROpPGJzvvUd4Ekb3Njn1Q7YQe8qI=
+	t=1743331036; cv=none; b=D1S1nadAJJqn7Q7XKKYyQepAUijmSzc3k1oyj+jU8005cnp1DjHZoZlaTqW7Qwrwr1/+a5dzyMqry0IpmwSJjfRkTRJvyXtcUvF0wAZJ6CNTmL1YcK3cARBhtq0CGGObds6PAIFz5f5LN4wffgs5U5pZbCNcQ1YSZ6DJuVyKzVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743330899; c=relaxed/simple;
-	bh=CTFnlW/udSDv88n+9dJ8nEXvEm2pfyeAT4QAhA1DEyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YXVnLJYi1cXifPJ2DNGkVzmjHTqcvl7H5xSa5kVOzLS1idSQ3bYgjp5Mlpk+eDx30K6Xcn4KBvpoXM5aOr976p3dvKGFKk4+NRMN/jl/YuNrcX0dZgicMVyvE8Ovh4ne+xkdZCsXBixXgAD1VGBKqgJBq7m7rEsM1V/W+9CXhq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Le/SIPUB; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1743331036; c=relaxed/simple;
+	bh=y8WpKUwlxa5kJspVT1MLrXUwdTtXLPlaHzDoqqkPMZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nlaUXY2k+hDF/PuP+Z1P/ylptcuI9/jIjugIFTgGrwnbZ6G/UfThI0dmR53rViPRB27HPcqt1/zbsF4WvKCkWMtvRTgLdj5umraF99EOpDPAmvo4xuwDoC835QaAxSsFte4rZePtPlScsVImDlyrcuHhJWRp8zS9ypUt55KEgnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmVTE+Zj; arc=none smtp.client-ip=209.85.214.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2243803b776so44506175ad.0;
-        Sun, 30 Mar 2025 03:34:58 -0700 (PDT)
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-227914acd20so70742495ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 03:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743330898; x=1743935698; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743331034; x=1743935834; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6ILafFdAuS6ZwMjkWQd4TNYrYxem7zRVOv+WyE0Dgc=;
-        b=Le/SIPUBaYtdjtNTcbQ4c4mnRYLbDZZoBDpAhkLfDbQvJ1Ru85EOlmqFQwimNm4eku
-         4QdAKW21vBY4zXOiGug3a0x1JI5V/XT4LcTIMjhtXQJZIlRfqZPtdK9UkVsw1/PcyEFz
-         IbZ5apEucxagF5ZsBSc22LTkfJ12vTjQEj1Mf2O2G81mj86P2jHpSiuqHx9i2VmVf416
-         xoXUW1McyMhkZIuW+0I4G0EVYoN/E7Tyy8+/W7ISDdkaraQGV6C2FmoGbXzBtWL0k8QX
-         UxO4yvYFu8ltafc0/7n5v8yAB1kX7HAwt872zvyrUW+fhUcjpA5XhPHB9fQwWhgxBMB+
-         fCfA==
+        bh=HxZdYDJAFQju6Y4CIsYcmH9hIt6XC3Q7NtFTO5w1vn4=;
+        b=CmVTE+ZjgYIfzR1/gOEXxJQzeysmIEU3cqAg9CtLsi+UY73Zo8IdWt+pQy/7xHS/DE
+         uru0l/wBEYevjOcnxdG3PVwv5COFOdlpxe7b/HL20sVaEL9xi83R308m/6FvlA6x0NAO
+         VI/mr0+vylC/hbEeRh4uTS+yo2YW9xiFvSgKZF17u09hTz5rGOq+mLQqpZCQn4brBCRv
+         9sBvfZG/Kz4lgMtZI6kZqu017dKWLRCQi4ZlVh0kt1T8w12WUhmHGN0Wra8LQPTJDd6r
+         JhGIfRTiQjqwsn3D75wWsNA30aygaSaVORMI9eE8cz6RcIZ2+ECkm8/Y3z1v0ZuKMagk
+         P2xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743330898; x=1743935698;
+        d=1e100.net; s=20230601; t=1743331034; x=1743935834;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=n6ILafFdAuS6ZwMjkWQd4TNYrYxem7zRVOv+WyE0Dgc=;
-        b=kKUWWM+6EXUbIyWUD1RrPxyqrWm6eNZluMBh2t+FRWHGIU3fcLOZ4bB8u0xcEFQ4Jg
-         TkMglnfH9lYUjFUFc4TeRKV494RyFQUow1FwgNPA7adrXc0JLU1iLJipwop/RKA3rLuM
-         rEcqiODvtN2ZygauOjlv6DNMKgXVGMZJPUyeNYR4O48nwpUg1QOQB66kTTv4gmyJG8cC
-         hkB7JW+fMyqHw2isBgELBoYqaS8LUbsFPgudnPrrxdAQ6iAzyIzWmzWNHkF99b3Ssouz
-         sUZOP/omvve9cWJB83UPfDhe4WRTcKPvQuin8wzM2H3E34xnPnM+KbhuE/VR7VOi5yd7
-         Jlxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJVu2k3b0sZrPbJb9ZcSxcKM7EPAq+EHR+NTfFr3PvNTrTCa0CVXOOxd+HoswzbL4ss5ybppFdNMGCyMf6gtA=@vger.kernel.org, AJvYcCVQZSwDoUXBKnq34v4Td8AGwD5soJbwcu1UxIkpGSgznuBo/WWrHhd4IyudxCUpO/FYI3K/1IOsk1drczE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM2dkZ+rCB7fT/04eyt/jD0o5crNFeDt260UT9YwDn/Y3a7IGK
-	odGWsX4HZ5E61+iEyYG4sKIXR/XUz2QzwPl3v0DRDW9Z88azwUur
-X-Gm-Gg: ASbGncs081GMrpL87AHQIhAYocaleieql4rPiYeK+t2riA1koC46AlVB4S7BkKZacru
-	iLMHLrg3yXf6tNhodbSlsxMgO2+YEHSGTqzSgkzYoaXyVtHmjoZWP7EMc04zZa73Xg5eGrUfW2k
-	ZKHehxUXAp6XRtCJBAg4h5FmyS66r3fV6/QOkBsewQxTXRD+xznRVbcmfXoHn0+PRpFcuVS+UMN
-	1IIpCFIX+azM7jEByyfe1vXsQMynGsQBMKrlpD4lkvhZqg/q8lTVsTDdwg9wEUXY2Lwgjy3/jVs
-	P+4bcuNfDsmYh2J4jrnT5uqWl9656egALCqVeZBxUDDYEPkO3UFc2bkqEtH3
-X-Google-Smtp-Source: AGHT+IH8jyiJdNbL2Tnz5sqZEPmHYfQeGIc5jmN+yL9P7wGGppF5FQlkFCFXB02xpCFhvQ80wcUgUA==
-X-Received: by 2002:a05:6a21:3408:b0:1f5:79c4:5da6 with SMTP id adf61e73a8af0-2009f5bcdfemr8257677637.5.1743330897784;
-        Sun, 30 Mar 2025 03:34:57 -0700 (PDT)
-Received: from localhost.localdomain ([49.37.217.226])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-af93b67f3f8sm4617113a12.7.2025.03.30.03.34.52
+        bh=HxZdYDJAFQju6Y4CIsYcmH9hIt6XC3Q7NtFTO5w1vn4=;
+        b=WwI6VE2bFo3yHZ3q1Jh5ri2awn8Zb7POaTY4Jox6SvaIJL82b+3Fa+p5WUSmGIGgnD
+         D8popXU21TYREU4s2Xxi0uiYo7RyoPvm0v1AAcQDiqPLEaAoAqMN5j8Df4MihgfLv2a9
+         2A1DMLqvggPl42Is7uTsY2fHH24BBSN3bNPkOwi7bYgMKWuBPocgKrQWHiKROLwky7rX
+         ow2c4z+F9ozoSOxFs9GzUk9KhIcCS4pddndlkZkivxVwh0NtXfuksNLKpz+86eV94Xtd
+         y60rP4CLPoUsSEkQEZihtQ3EttJYfX8iMWO6i0sFhmS/bwwZtlcejbjCdKz+eSWbkliV
+         e/CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTVpDfKrNfU1yytPnV/L+Eb1I2WTV6DlcmKO5FlIILY9nBE7wj2waaXyMBscLBaz4p3T/MIwZLyFpzjg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm3JjZr0Tmr/yE2FsC7ucyTji4iDJNXUnKXVKWtcok4RJOQ1QV
+	UMtHKxkW6+LEpAfy6jkZwB55I2dJdk/+nyMZMTIf9IYIOO3DmApB
+X-Gm-Gg: ASbGnct3l+uzWN4rMnhiaTzIGL5RrU61EdmBnFqWon9Sq17gKYZ18mLpCZCBdOAZwBN
+	QwV9C2Yi4T0iuBsealeGkJZFwjtzGo0sR9Mx5s02DXMmHYa+yDvM5wg1eTc4CGyro9qVRYa48wi
+	QcFXRZONQWjn0p+mWpSaPYsui3u9lNvYG+bgMICUAiq/RyGzzFfEuYrBqneqJqsYUlrK4P7kVFc
+	6mu/0PMZFvx6fHI8cMd0EnzuUl6uSCT6wKnGvo9GAO5uGF7WhYrVOeg7RE9E6oWW/M6+o2oT+RF
+	3lqC21Bi15prNI1pdC+WoznoUxvSxKH/6jjuz0MFUCmJYoPqLoqWzi5wWXCGhm2rd4YK7BkS
+X-Google-Smtp-Source: AGHT+IFXQMOUS9YRqishQwMfOJiVbs02looxdAwsW7EPfjDrWLYsaFYL8d3NHGN8PjUvWQhuNSFR/w==
+X-Received: by 2002:a05:6a21:108e:b0:1fe:8f7c:c8e with SMTP id adf61e73a8af0-2009ee32aeemr8154339637.15.1743331034151;
+        Sun, 30 Mar 2025 03:37:14 -0700 (PDT)
+Received: from localhost (206.190.232.2.16clouds.com. [206.190.232.2])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af93b6ae46esm4562286a12.21.2025.03.30.03.37.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Mar 2025 03:34:57 -0700 (PDT)
-From: Abdun Nihaal <abdun.nihaal@gmail.com>
-To: arend.vanspriel@broadcom.com
-Cc: kvalo@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	jeff.johnson@oss.qualcomm.com,
-	toke@toke.dk,
-	abdun.nihaal@gmail.com,
-	jacobe.zang@wesion.com,
-	megi@xff.cz,
-	sebastian.reichel@collabora.com,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
+        Sun, 30 Mar 2025 03:37:13 -0700 (PDT)
+From: Woody Zhang <woodyzhang666@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Woody Zhang <woodyzhang666@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] wifi: brcmfmac: fix memory leak in brcmf_get_module_param
-Date: Sun, 30 Mar 2025 16:04:24 +0530
-Message-ID: <20250330103425.44197-1-abdun.nihaal@gmail.com>
+Subject: [PATCH] platform: replace magic number with macro PLATFORM_DEVID_NONE
+Date: Sun, 30 Mar 2025 18:36:27 +0800
+Message-ID: <20250330103627.2370771-2-woodyzhang666@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,33 +87,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The memory allocated for settings is not freed when brcmf_of_probe
-fails. Fix that by freeing settings before returning in error path.
+Replace magic number with PLATFORM_DEVID_NONE to make it more
+informative.
 
-Fixes: 0ff0843310b7 ("wifi: brcmfmac: Add optional lpo clock enable support")
-Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
+Signed-off-by: Woody Zhang <woodyzhang666@gmail.com>
 ---
-V1 -> V2 : Add subsystem name in commit header as suggested by Arend
+ drivers/base/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-index cfcf01eb0daa..f26e4679e4ff 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-@@ -561,8 +561,10 @@ struct brcmf_mp_device *brcmf_get_module_param(struct device *dev,
- 	if (!found) {
- 		/* No platform data for this device, try OF and DMI data */
- 		brcmf_dmi_probe(settings, chip, chiprev);
--		if (brcmf_of_probe(dev, bus_type, settings) == -EPROBE_DEFER)
-+		if (brcmf_of_probe(dev, bus_type, settings) == -EPROBE_DEFER) {
-+			kfree(settings);
- 			return ERR_PTR(-EPROBE_DEFER);
-+		}
- 		brcmf_acpi_probe(dev, bus_type, settings);
- 	}
- 	return settings;
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 1813cfd0c4bd..63dfa41f0904 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -982,7 +982,7 @@ struct platform_device * __init_or_module __platform_create_bundle(
+ 	struct platform_device *pdev;
+ 	int error;
+ 
+-	pdev = platform_device_alloc(driver->driver.name, -1);
++	pdev = platform_device_alloc(driver->driver.name, PLATFORM_DEVID_NONE);
+ 	if (!pdev) {
+ 		error = -ENOMEM;
+ 		goto err_out;
 -- 
 2.47.2
 
