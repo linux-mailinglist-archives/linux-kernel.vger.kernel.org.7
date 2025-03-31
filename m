@@ -1,363 +1,135 @@
-Return-Path: <linux-kernel+bounces-582321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1420CA76BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A43A76BE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7CC167F24
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF2C3A8467
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1D21423C;
-	Mon, 31 Mar 2025 16:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED16D2147E0;
+	Mon, 31 Mar 2025 16:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5gShHbp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOY95uwY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EC38FB0
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 16:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743438117; cv=fail; b=kkNubhagFUigKjEuUUy0d914HVxbAl8eN2aWBJSxCzZupCPE9W0M4sJNNqX2swY42G5bNj1iIjYnsamMUcWdQfaodP3ybZ4wGy4y5k4o0nKrpad2ZGX+848Saii7pEw7jGKKMm3Ltya4lyPvWHhke09kdaFCRTmE8bu10OHdCOc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743438117; c=relaxed/simple;
-	bh=mUOtnJfzo0slfm0y/njX2YM0GdBoLD51gDLdhY6VDKY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=C+7mx4WHCGF3suvK951ERdPmsaEZxApGFA7KJnAG7PL1V+wbYBjZhBpkbR8T75MqXAx8Uwmvb4/M3TLpnY2HO3Ujeh0fi03dldo/Jaar+cv5fYcZ7hdMH+zvx6gDSvc/k7k3GZxM6JTllXv/hC+pw5zHjYyM0Vmh1TppAlA+BeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5gShHbp; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1242144B6;
+	Mon, 31 Mar 2025 16:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743438154; cv=none; b=FjjjgcCKsRUwKH+OavH0xlLKL3kCgqR1xX6mJ/mgKh2LZOQ+7XjZ/ASlme176EsGH/kv3slBY5g2cXwD59HR4LNxuMJv1h4P1OgVx0ZmnKIiwt9prcU6Vk77ZB11uNhyFGt+3Z8kdZR4Q6UqSt4di/1gqYmkav7x3Ha/HtMogks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743438154; c=relaxed/simple;
+	bh=qu0slTn0cSeXzjKKSsCRKrIcjAlR3G7kl+9OLH/fgPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=enkMkMqJ0ivqxRcY3hIjZxVdZIjMvQWFW8cPRK987Zltq5/evjSERJDqlYk3qVUZw7g+1QrYxx9B8v5e08UELScFNQ6j3CBh11DMHUC/oNegj+vTqlcmv40g00qF2mHBk2MM6lokGkTVGVK/RlUCsy59LbCPkWyTMzrshJWKxEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOY95uwY; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743438116; x=1774974116;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=mUOtnJfzo0slfm0y/njX2YM0GdBoLD51gDLdhY6VDKY=;
-  b=U5gShHbpu7PjIptxrZpWTBpi7olBNykViokZCjcGH2Kb8neNyXycPp+4
-   BXOxZgpHuaZjT84F60ejYgz6ijsbdGxTDdY7tp6yRtfA9+BKaLa3h2bzp
-   EI3yivKr4GhyeMrQjDKjCkJJT0L5Cp0Cv+23QEVtgZyHpQ6oEttJok0hc
-   cGr1iAYJppfOR9wRUsy6Ncj26WqhLh7HuVN9YDGVXhPgtga1buT/mIvUd
-   /U2W9GrQ0POf+WJcFNtigZ7+w/wxa+bjLropj1XX1N+fj18cZ4iFupOUg
-   dkjx5sipL7hIgjyHBt7HLsKPNmyGWFhTfoaC4xyKkFDBu1H5k9iohcJgK
-   A==;
-X-CSE-ConnectionGUID: CcqtbfOCSy2K1gAdY9Z9BQ==
-X-CSE-MsgGUID: wL6gcNiAQD+ALWCmEEsyIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="48604492"
+  t=1743438153; x=1774974153;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qu0slTn0cSeXzjKKSsCRKrIcjAlR3G7kl+9OLH/fgPA=;
+  b=fOY95uwYdNBSe4ehsdjM9HHE6+sRMOSebZlwfJManr4zXRpQUkC9ibf4
+   nXQqjiocb5lxLQ/6QivAH883vYrnSl+kGI1Wsn8IXJL4oJWx+EZ7qVg5Q
+   LbMatu/hc/lAf//FV1WYmJuEuJ0Bz2q9vxnrKNQpQfp25ee+ciwL6K3H9
+   5JW1mZjUSvIrMJra5VaDXuU+kiqX2SJgh0vk/kpYj7vo/ZkhxqCIEc6aK
+   bF2We0VyAXhJifP4LNNPRmn5ZuNr1jZwAFo5iziLn00IyniTixygFuq+n
+   nM03sGcnNHv6GeiFIxxZYWLCjzvFKznlD9V3Swxi+D6EBI0QDkMZcZn3r
+   g==;
+X-CSE-ConnectionGUID: 6B9oAhLyRJurQeW4pH3iUA==
+X-CSE-MsgGUID: NlDv+je/TPSqcDXSCxqCdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="55728400"
 X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; 
-   d="scan'208";a="48604492"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:21:55 -0700
-X-CSE-ConnectionGUID: dSH3mP1BTSGFb8engRvUOw==
-X-CSE-MsgGUID: syPd+PhlQxyMdwWdC/tF0A==
+   d="scan'208";a="55728400"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:22:32 -0700
+X-CSE-ConnectionGUID: l/tesncdSEqnY5m+cfkGPQ==
+X-CSE-MsgGUID: Q5exr6RUSfC1gUosjAxRPA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; 
-   d="scan'208";a="125952984"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:21:55 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 31 Mar 2025 09:21:54 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 31 Mar 2025 09:21:54 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.174)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 31 Mar 2025 09:21:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xtAOhdtMjFw11tdmmkHbE5OWHA25J0JtBr/b+sqmL5BHFc0i0ADvbGGEJzXoECrz0BHUGNtWZW4nzcyJiJjVQdD9bsimIVEPkVCOESkIqkvDb6ivqXdXOYKVrhEPpt5EpfTmofNeiwX+ZKQjicGEMXIEzrlwST5hSx26pEl73+cowZAXmnlDGS4FBO6vOJaDRxpcq8D1pfZc32znNcQJyNExNKqFYhSByoOdnPMWw5VDfM0VWgxwAer3QNil0u0kMq2xstXkVodaUDN26fN6P+YhuVL8Vm8HkFPD4Uk0ynAhlccWvQhynd9+OUAi6WOsQwowHD4+mgwesYVNGdhGEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A8J+UvMa6fFPnjNoCPKaJBSrj1QEJzTl4M8X7pOKBP4=;
- b=qPCQNgNQVV98EP9c721JIGBVacFz5wRZ4uOTonRQaE9IKhCeB2wcXklsN5MonmkmuBhs4SZlsPNcIGsFd/bcSOwpwV67oofSMxSkuS3p63L8z8bSxRwzK9dN6aRbu8NCc8K2Y9ZWCYuH6VQ/8BUOAYVgwzgs3/QG+Azm+2hwiHlWuznXWIeXV6Lm2CThozpZfi3Tma5RDYN9AsUz6vlbc1rIya9r3FSWxBOabGvIEzypAB8mB5ora615a/sRqbg/UIxxDCNyCGqDs1FXQp8cJZtppJI5fG4prx2QXN9cB1plLAhApFz1r8ife4rTv6Eu8Ms3zJ/xEVO4KAhuh6cVRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CY5PR11MB6440.namprd11.prod.outlook.com (2603:10b6:930:33::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 16:21:51 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8534.043; Mon, 31 Mar 2025
- 16:21:51 +0000
-Message-ID: <cbd8198d-467b-456e-b329-baf6ac5cff82@intel.com>
-Date: Mon, 31 Mar 2025 09:21:49 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/16] x86/resctrl: Allocate per-package structures for
- known events
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-References: <20250321231609.57418-1-tony.luck@intel.com>
- <20250321231609.57418-11-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250321231609.57418-11-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0137.namprd04.prod.outlook.com
- (2603:10b6:303:84::22) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+   d="scan'208";a="130847133"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:22:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tzHu8-00000007ibk-0C49;
+	Mon, 31 Mar 2025 19:22:28 +0300
+Date: Mon, 31 Mar 2025 19:22:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	acopo Mondi <jacopo+renesas@jmondi.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v1 1/1] media: i2c: rdacm2x: Make use of device properties
+Message-ID: <Z-rBQ8tsDHW9clYh@smile.fi.intel.com>
+References: <20250331073435.3992597-1-andriy.shevchenko@linux.intel.com>
+ <174340899625.3687388.14660711739063778026@ping.linuxembedded.co.uk>
+ <20250331120748.GB28722@pendragon.ideasonboard.com>
+ <Z-qJOeeHUgWCtkTv@smile.fi.intel.com>
+ <20250331153435.GB14432@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY5PR11MB6440:EE_
-X-MS-Office365-Filtering-Correlation-Id: dde106d4-7834-4574-8924-08dd707024b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MmVqbU14WUFKRE1NS1Z5MzBJZ1ZCT0tIMlZHQnZDcTcwcE5ERGYvdS84TW1N?=
- =?utf-8?B?RVl6N0p2dHBWSzNIQTlnTjhHQjVCY2FOanhrOVBOa2hXMHRvVjVsaEZvYysx?=
- =?utf-8?B?SExSZWlCajA3SS9IUUtjdXRmQzdOb1lpYTlmTXIzMWllaE43MWs2NUJBck9n?=
- =?utf-8?B?ZWhaZXN4aDN4ZkJFMUFhcEgwK2ZMYVlvNTZUc0Jlb1pHTVFsbm5CRjBCbldo?=
- =?utf-8?B?M2VibVk0VmZQVmQzYWxqQ2t1dTdjT1NJNTdwc3l6bXpRcDdQUmlRZXFXMndF?=
- =?utf-8?B?U3pDWFhDanc0aVVhOEtRY0FPeWg4M0g5ZjV0Q2pKRXAwaGpqMWdaaXRIdTJN?=
- =?utf-8?B?N294WStxbGhWRVZjK01SOXk1UEJnRk8vRVd6RzcwRVhTOXpzZjVURHI3Uytl?=
- =?utf-8?B?eDF6ZFljS2s4emZYMm9oZm1Xd3l2NjR4cFcwbzV2Z2w2VUtJa1pKZkwwajN6?=
- =?utf-8?B?d2d1SW8zNW5EUVp5VDFWZWVXRkpaYUd3UTBIM1hxUUpScnREY0dFMUpNQXdW?=
- =?utf-8?B?M1JVdzc4bng2eTh0bytvMVZNVloweThwa1puWkNNak1TUW9NbUVtYnZlQlJt?=
- =?utf-8?B?N0g5Yy9jeXpOZHZzMTNWUjhvdE5JcWxzZG9GVlJVcFkyY1hvNGlMUnIvS1Uw?=
- =?utf-8?B?a3c5Mmp2YUt1amQrRDBTdVp3YTlrSHJ0U3RvbmlCL2F2VnlWRFJyRGtTazRF?=
- =?utf-8?B?amZtM2lCdy9EWVBadHpHbXdDL0o4bjhPeTUzQmRDMkxhRDhmV2p5b3pUM01x?=
- =?utf-8?B?SExwTmY1UjVZZ2xrS1lGU2puVWV4NXJSdWE4N0NRTmdyM3YvTUl6TGdLS3pn?=
- =?utf-8?B?WlZSRHJCQm1ZSHVKQWtkblpnYlJwWGt5V2xZTGJLcDNoT0NtZ1NYTTdCTU9n?=
- =?utf-8?B?VWE2UC8rQkRxTEZsT05ZUGw2TTk0MU12WHdmd20yYWt1a3NmN3J1MEtuYWt3?=
- =?utf-8?B?dXI5ZXcwU0JYY0ZQMmR3Wm85N1Z5VXd5aldyS0FQckNQdlI1dWxBc216cW1C?=
- =?utf-8?B?WGEvOXhxanRTR1BSWHpyMGxlNXhCVnQyS1M5eDYrZ29uZm9QVlFyOEtLWHlp?=
- =?utf-8?B?Y1IyWDBLT1JEZFVSblVUSUpOUUQrdkhPY1BscHgxdmZMWTcvYk1qR1F6WDND?=
- =?utf-8?B?cVBWbmRKc2xkUHVVMjhOWWJSc2tiM2VCM05sZG1kUjFET1IwNCt6ZDhJSWlR?=
- =?utf-8?B?UUI2MHZVMDNKbW1Yb1JXTEJTSDNuZWhJMWJ4V1lLeTNuc2FEcGIrRHVpU1Ev?=
- =?utf-8?B?TW9NYUZsQTBBeDk0QnNXZTNRSTdCMHhNK09QSS9SM05PVmI1MnFNa1VMK2FU?=
- =?utf-8?B?V1lCbm9KSHNqRkZLdzNLZU9pckoyKytBV1E1Z1B5Sm9hVzREcFJGQlFrOUhE?=
- =?utf-8?B?ajlTZm5WQThIL0Qva05RYVByeCtLOER3a0thWU5NUktlQWVjL1RRK2JhZUtu?=
- =?utf-8?B?QjRxR2lTeHdSU2FsUFF0enRER0dzODMwTHV5ZExlaHNoYnFNUGszMksrSzhZ?=
- =?utf-8?B?c0tIbjlkOGh4eS9LUjN2bzZ2M1JoU2pEVXF2OHJpK1BKdndQVUpPTlhseE9z?=
- =?utf-8?B?L2RLUE9kbHpYQm93Yk1UbTYvZXZsK3d3NU9zOTBpbS94Q2NBSDcvSVdXa2hD?=
- =?utf-8?B?SU5OR3Y0NnNBQjZ3aDZaUktsU3FLbW9OdHlTa0N4MW1yZTZWTnNicnQyYXNp?=
- =?utf-8?B?emlFN2VkTzVSQmtVZWRDS0pKRU5kRUhnY2ZLUTJlZlZLUFJsSFdGVnZodUxW?=
- =?utf-8?B?K0xaL2FoNmV4T3dEOVVRMmpmUzgvNHA1NFlzbG9jUXYrcisvcGY4UjRqVmlF?=
- =?utf-8?B?eXVNcDJQVnA0MWxydlM5TVl0U2xwTDRkdTZBNXlncHRxSnpEQW9iRGZVN1kv?=
- =?utf-8?Q?nYcSElRqOULnm?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YXpud1lFcEI1UTlnTFhwRGNtN0x6WVd4bDRudzFTRWZyaXJmRzBYY0huYnE1?=
- =?utf-8?B?MnFuUjluYktaakROS0JabDgrYndERGVSRGJxazNVM2FjanFhSFNRVkJoazRN?=
- =?utf-8?B?a2FBd0UxQytCWldMY3NRSlkrWkNmL1g2MnZUUlpURFFRNmp5b1k1Lzd6T1Vp?=
- =?utf-8?B?QWJCRVVWdm83VVJqSmlGM0l5TjNlcDcyaWxhR3pkNkMzZXRTbkpDK0hjSHla?=
- =?utf-8?B?NUgwTlRON0JuenFXR1VTOGNEc0pseVg2S2ZsZFdmYnE0RDEvL1pYWG8rSkVl?=
- =?utf-8?B?OGZWYjJSSVdOM3ZmOG5EZDFpSjZMZVExKzJnTm5oYmdoaUxIQS9xR1RHNVdI?=
- =?utf-8?B?VHlMekhvTUtjOSs1bkFSZVR2RG1EcFRCdkxwYmtlSTQvbFdsQkVyT3kvKy91?=
- =?utf-8?B?b01vYVdBL1REK0toVEtNdHpGeHFYOHkrMGMwUFp4emcxbW8yeTRiMkdUbzBS?=
- =?utf-8?B?ZjZPUGt4YVBCdzNlekZ1bzI2dnd4Tm1XN2ZqMUdaL2ViSzZ6ZFJKbG9UMXM3?=
- =?utf-8?B?NFMzaVdKcVkzWVhpdlk1L2F5TlVNTlhvYTh0eUxTS3hqcjlSNndWWG41emhK?=
- =?utf-8?B?aEZDR1FYcW9PaHNBWmpERHhPWTlzYnZGeEhBWGd0M1N6UjJqL2FkcnVCb2Er?=
- =?utf-8?B?NTdpWFZ3NmlHaHU1a3ZlY3pnZFBzMzJEVmV2STdDVFYxeHJnMnl6aDVrTTRV?=
- =?utf-8?B?Y29IVnc0eW83U1BlUHhIS0dzWFdVK3FDa2kyQnEvM0ZOSHZVRk5VRzNTL3ZU?=
- =?utf-8?B?M3VjOUpFa3VzL3VJWGxUcHN5Q3IvUFRWWlpJbWFVTXBMNFRSUXRSQ1FKT0FK?=
- =?utf-8?B?Nm1Za0htYW5NTG5WTTlIUWx1cnVHZzRTajMrS2xLZlhBTFYzL1k3OHNmMWt3?=
- =?utf-8?B?U1UwSXoxVUlxeWFnUUZKMmhvZDdiVzhPUjhmWDM3V1FoM0pZTDFadTFiS0Jx?=
- =?utf-8?B?ZFNHR0YrdnNHTUhKd3JmeTFDTWNpS2V6RkhuRjZaQ25uZ1I3R0daNk1mZzJH?=
- =?utf-8?B?b0czTzBZQ3VOM3JwVUFyVndDRlBjYVY0Z2kyYTcrSHgwSGMyTjlGYitwbzhE?=
- =?utf-8?B?VFhYYk11eWtKQWZ5SVBTaHhaTG1WbHdZbCt2eUVBL2J0TUJuVG4va3BKN09z?=
- =?utf-8?B?djlBS1NNTUZEMFI4ZTNtU3RoUzQybHJIR21BSklDZzgrb0JySFhML2FrMzh3?=
- =?utf-8?B?amFManM1S2NFMWlnSklYN0VyWUxKa25NZTlzNFVNS0NTSkN0TlE1QThwRW40?=
- =?utf-8?B?dW1oRm5jeWkxMk9aOGF3S05TT3BUSFkwM1FwVEtWMmVBZFVJeC9yZWd1Ti9G?=
- =?utf-8?B?RmlraHpPemp0UVZZVnA1ZUJuLy8xTWhJQ2JqNW9IRWJUVllaUHp6YjZMbXRN?=
- =?utf-8?B?K2YrVUI4c0M5aFNpdmE3VUNxUStmc2YzaTBRU2JOSEx0TWRTUmpRNXJNVWF6?=
- =?utf-8?B?a1BnSGNzQ093Rk1rcVRjVktDOFZ6a0g3MG83YThCMnM0MTMyd2plUnZHR1dO?=
- =?utf-8?B?U3dxMXh5WVJDdytkQ2ZYN3BNQm1FeW93eU1GVlN1b3FBSjNueEMzbVlpWmdS?=
- =?utf-8?B?cFJGNTJ5U1U5a21HQU9PeElqVkZwcEFHUEdlMUJBQ0t0ZExvT01YK25HR2tD?=
- =?utf-8?B?R3Z4RkRjclh6SEVNUmkzZDBGL2svdUtMV2lNTG51d0hsSXJBMENDZWFxaVhF?=
- =?utf-8?B?Tk5QOUdmVmJyQlRLZzg3c2lPYWxwWWxBM05Bb2V5cVFYb3JqTEkxTEw2alY2?=
- =?utf-8?B?ZTN0VFFvaEh1TlRpbnVwZE14WWpDRDBYMDhjOUYyZ1JMNFlTSmUwM0tLY3Vt?=
- =?utf-8?B?SzdBbUx1WkNBU1o3WUhLWm94dU10c1Nhbll2NXF2dllOSHVSQnhSRk5yYmNR?=
- =?utf-8?B?TU9oVnRzT0pQTGZldDUyZHVrdnNIR0FnNEpKQ3BGeHNDMlpGcGNMRzkydG1Q?=
- =?utf-8?B?RjQvWHpsL0RsUzgwS0FOQndSRDBlWmNFdi9uNHdGWjRJMFlVL0NNbEhYZjNa?=
- =?utf-8?B?bTRoYys4UFpSRE1qb210UFBPRm5mZm80dkZGbXdhSzc4Y3E4UFpkdnJqS3Jl?=
- =?utf-8?B?NTZ0TmVweTZCSmZmNWEzUW5kUitEU283QkJMbDFNWUVHZVhMVkpHaTkybG1y?=
- =?utf-8?B?cS9hM1pYUE1DVUZlZmt3cVZONmZrb0dUbFo2ejRJc3FnYm1DVmRWRHY5QzIz?=
- =?utf-8?B?U2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: dde106d4-7834-4574-8924-08dd707024b5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 16:21:51.2757
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GHaEDQ6PJKvrC93XM57WYHlb4Bq/JqGBXhMxEDe+REpJ4HXT7Bi/ZFChxmA6N7ouR5MAE7wfwfPtP+jl2Wm8bp3cn1fxkUCMUDbZKPXuHWU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6440
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250331153435.GB14432@pendragon.ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-hi Tony,
-
-On 3/21/25 4:16 PM, Tony Luck wrote:
-> Use the per-package counts of known events to allocate arrays to
-> make a copy of just the known events.
+On Mon, Mar 31, 2025 at 06:34:35PM +0300, Laurent Pinchart wrote:
+> On Mon, Mar 31, 2025 at 03:23:21PM +0300, Andy Shevchenko wrote:
+> > On Mon, Mar 31, 2025 at 03:07:48PM +0300, Laurent Pinchart wrote:
+> > > On Mon, Mar 31, 2025 at 09:16:36AM +0100, Kieran Bingham wrote:
+> > > > Quoting Andy Shevchenko (2025-03-31 08:34:35)
+> > > > > Convert the module to be property provider agnostic and allow
+> > > > > it to be used on non-OF platforms.
+> > > > 
+> > > > Looks reasonable to me.
+> > > 
+> > > Is that going to work out of the box though ? The calls below read the
+> > > "reg" property to get the device I2C addresses. AFAIK, ACPI handles I2C
+> > > addresses using ACPI-specific methods.
+> > > 
+> > > Andy, have you tested this patch on an ACPI system ?
+> > 
+> > Only compile-tested. But you are right, this is something different here
+> > between OF and ACPI.
+> > 
+> > I can rephrase the commit message to just point out that fwnode.h shouldn't
+> > be in the drivers and either converting to device property in an assumption
+> > that later it can be easier to support non-OF cases, or using of.h.
 > 
-> Add hook into resctrl_exit() to cleanup.
+> I wasn't aware that fwnode.h shouldn't be used in drivers, could you
+> explain that ?
 
-(above is not done in patch)
+The fwnode.h provides the data types and definitions that are meant
+to be used by the fwnode / device property API providers. The leaf drivers
+shouldn't have any business with those definitions. Everything the drivers
+need should be provided via property.h. property.h guarantees the necessary
+data types to be visible to the users, when required (mostly think of
+struct fwnode_reference_args). Yes, I am aware of v4l2-fwnode.h and it seems
+it falls into the category of special device property API provider.
 
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/kernel/cpu/resctrl/internal.h  |  2 +
->  arch/x86/kernel/cpu/resctrl/core.c      |  2 +
->  arch/x86/kernel/cpu/resctrl/intel_aet.c | 60 ++++++++++++++++++++++++-
->  3 files changed, 63 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> index ada402c7678b..2503a24e4177 100644
-> --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> @@ -170,8 +170,10 @@ int rdt_get_mon_l3_config(struct rdt_resource *r);
->  
->  #ifdef CONFIG_INTEL_AET_RESCTRL
->  int rdt_get_intel_aet_mon_config(void);
-> +void rdt_intel_aet_exit(void);
->  #else
->  static inline int rdt_get_intel_aet_mon_config(void) { return 0; }
-> +static inline void rdt_intel_aet_exit(void) { };
->  #endif
->  
->  bool rdt_cpu_has(int flag);
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index 2adf40d8de32..d011c095aafa 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -1095,6 +1095,8 @@ static void __exit resctrl_arch_exit(void)
->  {
->  	cpuhp_remove_state(rdt_online);
->  
-> +	rdt_intel_aet_exit();
-> +
->  	resctrl_exit();
->  }
->  
-> diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> index 67862e81b9e0..e2d8eab997fc 100644
-> --- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> +++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
-> @@ -188,6 +188,26 @@ static bool count_events(struct pkg_info *pkg, int max_pkgs, struct pmt_feature_
->  	return found;
->  }
->  
-> +static int setup(struct pkg_info *pkg, int pkgnum, struct pmt_feature_group *p, int slot)
+> If this patch is part of an effort to eliminate usage of some APIs from
+> all drivers, I'm fine with it. Otherwise, I'm not sure it's worth
+> modifying the driver.
 
-Could you please add a comment to this function to explain what it does?
+These drivers basically include the wrong header.
+If you insist, I can patch fwnode.h to add a comment summarizing the above.
 
-> +{
-> +	struct telem_entry **tentry;
-> +
-> +	for (int i = 0; i < p->count; i++) {
-> +		for (tentry = telem_entry; *tentry; tentry++) {
-> +			if (!(*tentry)->active)
-> +				continue;
-> +			if (pkgnum != p->regions[i].plat_info.package_id)
-> +				continue;
-> +			if (p->regions[i].guid != (*tentry)->guid)
-> +				continue;
-> +
-> +			pkg[pkgnum].regions[slot++] =  p->regions[i];
-> +		}
-> +	}
-> +
-> +	return slot;
-> +}
-> +
->  DEFINE_FREE(intel_pmt_put_feature_group, struct pmt_feature_group *,	\
->  	if (!IS_ERR_OR_NULL(_T))					\
->  		intel_pmt_put_feature_group(_T))
-> @@ -202,6 +222,8 @@ static bool get_events(void)
->  	struct pmt_feature_group *p2 __free(intel_pmt_put_feature_group) = NULL;
->  	int num_pkgs = topology_max_packages();
->  	struct pkg_info *pkg __free(kfree) = NULL;
-> +	bool found_known_features = false;
-> +	int i, slot;
->  
->  	pkg = kmalloc_array(num_pkgs, sizeof(*pkg_info), GFP_KERNEL | __GFP_ZERO);
->  	if (!pkg)
-> @@ -220,13 +242,32 @@ static bool get_events(void)
->  		if (!count_events(pkg, num_pkgs, p2))
->  			intel_pmt_put_feature_group(no_free_ptr(p2));
->  
-> +	for (i = 0; i < num_pkgs; i++) {
-> +		if (!pkg[i].count)
-> +			continue;
-> +		found_known_features = true;
-> +		pkg[i].regions = kmalloc_array(pkg[i].count, sizeof(*pkg[i].regions), GFP_KERNEL);
-> +		if (!pkg[i].regions)
-> +			goto fail;
-> +
-> +		slot = 0;
-> +		if (!IS_ERR_VALUE(p1))
-> +			slot = setup(pkg, i, p1, slot);
-> +		if (!IS_ERR_VALUE(p2))
-> +			slot = setup(pkg, i, p2, slot);
-> +	}
-> +
->  	if (!IS_ERR_OR_NULL(p1))
->  		feat_energy = no_free_ptr(p1);
->  	if (!IS_ERR_OR_NULL(p2))
->  		feat_perf = no_free_ptr(p2);
->  	pkg_info = no_free_ptr(pkg);
->  
-> -	return true;
-> +	return found_known_features;
-> +fail:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-include/linux/cleanup.h has this to say about mixing goto and free helpers:
-"convert all resources that need a "goto" cleanup to scope-based cleanup, or convert
-none of them"
 
-> +	while (--i > 0)
-> +		kfree(pkg[i].regions);
-> +	return false;
->  }
->  
->  /*
-> @@ -242,6 +283,23 @@ int rdt_get_intel_aet_mon_config(void)
->  	return 1;
->  }
->  
-> +/* Clean up when resctrl shuts down completely */
-> +void rdt_intel_aet_exit(void)
-> +{
-> +	int num_pkgs = topology_max_packages();
-> +
-> +	if (pkg_info) {
-> +		for (int i = 0; i < num_pkgs; i++)
-> +			kfree(pkg_info[i].regions);
-> +		kfree(pkg_info);
-> +	}
-> +
-> +	if (feat_energy)
-> +		intel_pmt_put_feature_group(feat_energy);
-> +	if (feat_perf)
-> +		intel_pmt_put_feature_group(feat_perf);
-> +}
-> +
->  /*
->   * Late (first mount) initialization. Safe to ask OOBMSM which telemetry
->   * event groups are supported.
-
-Reinette
 
