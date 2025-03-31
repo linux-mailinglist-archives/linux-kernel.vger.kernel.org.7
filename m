@@ -1,151 +1,257 @@
-Return-Path: <linux-kernel+bounces-581932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2CB9A76700
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5660A766F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97F818893B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:39:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456C01687F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B847A2139A2;
-	Mon, 31 Mar 2025 13:39:25 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C348211A15;
+	Mon, 31 Mar 2025 13:34:27 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CCF1E5B67;
-	Mon, 31 Mar 2025 13:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318F21E47B0
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 13:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743428365; cv=none; b=Il3kSZeBF4cl6084gJZpdduxFnW2DbnR3WrzaZPQ6qrqfDCS5FSxMTo04v7aAP6FVbJemki1sZF3V4MMzRpYFiB/nGs1Ua0N/wB5qtEHSdGy8BYBTUDP3JZiyQpGttPMwUWGtOH1/25sjjLFHoEITnm8m1hbxWPhwfDnEsPOWU8=
+	t=1743428066; cv=none; b=fjpOFrUoQPcRB0kchGQ4EXXqiyym1cCPPYLHZ0Lxk7EpUGfqTbJka/Zgq289jqzqWLHuTvYBuipw/+GoVKHucD5DolnCF0xIWNQ5HoxtBicRCV8aqo3y0uWKsAA+rEG8DUfxlqRnHKHvw3dCLefn/dvWUOAHvkykuQRbXsL6ZAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743428365; c=relaxed/simple;
-	bh=hwE5GiKE3zL2s2GG0JF3k9o7qrrnfq/qiZzBJzBHOHI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qfgQ8mbq6/uG1JlkbK+I598T1CcvGFIH9almnDsqlKIBKSVVYf6w/tVyKYYL/48EoKBZNuUuNIay58Qz8nejdmX756ilHGqc85afcut8VPJd1Ylh8NzT0/nk82Y8MwEP/S6woo/rVUBAND4JQXQiqsEZ9oK+ClvhOwDMa8vh7/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4ZRBty074tz1f1gQ;
-	Mon, 31 Mar 2025 21:34:34 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 894441A016C;
-	Mon, 31 Mar 2025 21:39:20 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 31 Mar
- 2025 21:39:19 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <sfrench@samba.org>, <linkinjeon@kernel.org>
-CC: <linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, <chengzhihao1@huawei.com>,
-	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH next 3/3] smb: client: Update IO sizes after reconnection
-Date: Mon, 31 Mar 2025 21:33:15 +0800
-Message-ID: <20250331133315.117666-4-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250331133315.117666-1-wangzhaolong1@huawei.com>
-References: <20250331133315.117666-1-wangzhaolong1@huawei.com>
+	s=arc-20240116; t=1743428066; c=relaxed/simple;
+	bh=DR/e9ZYOyQJ7GMHQSjkZRG/SSgpMVoinIvZeVn3cdu8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VpePm4WxDL1PL93lD8+sIgGaIlun44A53EbQuPu4EQ/nc3FOKBu3CO3cySa6PAzfvt5JmPziRPGdDD/EBhTRRzbc4boWS36+4jbGAZeMhlULtckmzUrVJ4D7p3LLYGNQx2vQ6lnZcqEFSYTjLakoWuLr/beyU7eQ+O6lg9942Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce3bbb2b9dso49415475ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 06:34:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743428064; x=1744032864;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GwQ8MLlZO6I5kNDZrUdF7/a0DC1Byt2qediNDuihNmY=;
+        b=JM0IxpBLGG5L60JFrMTM3EMCuiu/1cSvlx4lKv3fD9EQmpyDQaK1XOXTRqgyHd04Fi
+         jtfH85n6kHu9z8TQTKD90bJONWfV5dWGA9QOFCxbPzvK+W5h8j4Tzns4Nm6ti7eO69iS
+         fUetcU3F0fzFpeIZtPIk1fiX4MpZhMCS7N0GcWzI9Vt3yzEFZByKHlGIMMuR0+aSNYmZ
+         a6t+aSA5jHt4rLZPUqbvcZsVu2MkTGUTTLx4Gt5XrlKRdZsm3fPzliBohdPFbV22TZy+
+         G9K3U6EKZ9eliK5Y/yYpjWVro/jW3Y5R+vsYBTazgM6fF2mB7JPa/qwOIy2nrMZWSGaw
+         tmEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2vddj3ydOFe/isJdkCVVFaIsrXExbFYg2B7DNcEst0y0zuD0jgTIbUyY4BGhfDSGjrCthfpWFUKd8+ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBGrkmuAYCtRmhkfrYByofHPHRVYi9jDk0XlptS4X81FVZyKjp
+	nBBr0ENDeAseAtIwHrak1zN/4Um19t3xh5tu5lw8X9Wi7XRbUWuUU/9kwi1fz3ch7XjiP6Wxecw
+	arUUeP7XzRFw8ghVNpsUjbV5Zab8t19vWwIXnxKguNY7jppDNrL43BAo=
+X-Google-Smtp-Source: AGHT+IHbCxze2FL2yt/zA2ZNEYpoRnO92fkBBh0We60v8+hNu8i0+N6BsMeglxvo/N9EZGcKmSIKxnrd3WNKpAauE4yVcd8AAP5D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+X-Received: by 2002:a05:6e02:148f:b0:3d4:6ec8:c63c with SMTP id
+ e9e14a558f8ab-3d5e09cd973mr65727275ab.17.1743428064389; Mon, 31 Mar 2025
+ 06:34:24 -0700 (PDT)
+Date: Mon, 31 Mar 2025 06:34:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ea99e0.050a0220.3c3d88.0042.GAE@google.com>
+Subject: [syzbot] [block?] possible deadlock in blk_mq_freeze_queue_nomemsave
+From: syzbot <syzbot+9dd7dbb1a4b915dee638@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When a SMB connection is reset and reconnected, the negotiated IO
-parameters (rsize/wsize) can become out of sync with the server's
-current capabilities. This can lead to suboptimal performance or
-even IO failures if the server's limits have changed.
+Hello,
 
-This patch implements automatic IO size renegotiation:
-1. Adds cifs_renegotiate_iosize() function to update all superblocks
-   associated with a tree connection
-2. Updates each mount's rsize/wsize based on current server capabilities
-3. Calls this function after successful tree connection reconnection
+syzbot found the following issue on:
 
-With this change, all mount points will automatically maintain optimal
-and reliable IO parameters after network disruptions, using the
-bidirectional mapping added in previous patches.
+HEAD commit:    aa918db707fb Merge tag 'bpf_try_alloc_pages' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1776ec3f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c654e2bc7f36976
+dashboard link: https://syzkaller.appspot.com/bug?extid=9dd7dbb1a4b915dee638
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-This completes the series improving connection resilience by keeping
-mount parameters synchronized with server capabilities.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/81273eda411b/disk-aa918db7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a2d1a79f3011/vmlinux-aa918db7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/df851fa81fd2/bzImage-aa918db7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9dd7dbb1a4b915dee638@syzkaller.appspotmail.com
+
+loop5: detected capacity change from 2048 to 64
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-syzkaller-10764-gaa918db707fb #0 Not tainted
+------------------------------------------------------
+syz.5.738/7855 is trying to acquire lock:
+ffffffff9068dfe8 (uevent_sock_mutex){+.+.}-{4:4}, at: uevent_net_broadcast_untagged lib/kobject_uevent.c:317 [inline]
+ffffffff9068dfe8 (uevent_sock_mutex){+.+.}-{4:4}, at: kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
+ffffffff9068dfe8 (uevent_sock_mutex){+.+.}-{4:4}, at: kobject_uevent_env+0xb36/0x1870 lib/kobject_uevent.c:608
+
+but task is already holding lock:
+ffff888025874ea8 (&q->q_usage_counter(io)#22){++++}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:215
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&q->q_usage_counter(io)#22){++++}-{0:0}:
+       blk_alloc_queue+0x619/0x760 block/blk-core.c:461
+       blk_mq_alloc_queue+0x179/0x290 block/blk-mq.c:4349
+       __blk_mq_alloc_disk+0x29/0x120 block/blk-mq.c:4396
+       loop_add+0x496/0xb70 drivers/block/loop.c:2067
+       loop_init+0x164/0x270 drivers/block/loop.c:2302
+       do_one_initcall+0x123/0x6e0 init/main.c:1257
+       do_initcall_level init/main.c:1319 [inline]
+       do_initcalls init/main.c:1335 [inline]
+       do_basic_setup init/main.c:1354 [inline]
+       kernel_init_freeable+0x5c2/0x900 init/main.c:1567
+       kernel_init+0x1c/0x2b0 init/main.c:1457
+       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:153
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3914 [inline]
+       fs_reclaim_acquire+0x102/0x150 mm/page_alloc.c:3928
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4089 [inline]
+       slab_alloc_node mm/slub.c:4167 [inline]
+       kmem_cache_alloc_node_noprof+0x57/0x3b0 mm/slub.c:4239
+       __alloc_skb+0x2b2/0x380 net/core/skbuff.c:658
+       alloc_skb include/linux/skbuff.h:1340 [inline]
+       alloc_uevent_skb+0x7d/0x210 lib/kobject_uevent.c:289
+       uevent_net_broadcast_untagged lib/kobject_uevent.c:326 [inline]
+       kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
+       kobject_uevent_env+0xca4/0x1870 lib/kobject_uevent.c:608
+       kobject_synth_uevent+0x7d4/0x8a0 lib/kobject_uevent.c:207
+       bus_uevent_store+0x3d/0x90 drivers/base/bus.c:832
+       bus_attr_store+0x74/0xb0 drivers/base/bus.c:172
+       sysfs_kf_write+0x11a/0x170 fs/sysfs/file.c:139
+       kernfs_fop_write_iter+0x354/0x510 fs/kernfs/file.c:334
+       new_sync_write fs/read_write.c:591 [inline]
+       vfs_write+0x5bd/0x1180 fs/read_write.c:684
+       ksys_write+0x12a/0x240 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (uevent_sock_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3166 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+       validate_chain kernel/locking/lockdep.c:3909 [inline]
+       __lock_acquire+0x1173/0x1ba0 kernel/locking/lockdep.c:5235
+       lock_acquire kernel/locking/lockdep.c:5866 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
+       __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:732
+       uevent_net_broadcast_untagged lib/kobject_uevent.c:317 [inline]
+       kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
+       kobject_uevent_env+0xb36/0x1870 lib/kobject_uevent.c:608
+       set_capacity_and_notify+0x1ca/0x240 block/genhd.c:102
+       loop_set_size drivers/block/loop.c:210 [inline]
+       loop_set_status+0x94a/0xb90 drivers/block/loop.c:1306
+       loop_set_status64 drivers/block/loop.c:1415 [inline]
+       lo_ioctl+0x729/0x26d0 drivers/block/loop.c:1582
+       blkdev_ioctl+0x277/0x6d0 block/ioctl.c:698
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  uevent_sock_mutex --> fs_reclaim --> &q->q_usage_counter(io)#22
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->q_usage_counter(io)#22);
+                               lock(fs_reclaim);
+                               lock(&q->q_usage_counter(io)#22);
+  lock(uevent_sock_mutex);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.5.738/7855:
+ #0: ffff8880259e4b68 (&lo->lo_mutex){+.+.}-{4:4}, at: loop_set_status+0x2a/0xb90 drivers/block/loop.c:1275
+ #1: ffff888025874ea8 (&q->q_usage_counter(io)#22){++++}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:215
+ #2: ffff888025874ee0 (&q->q_usage_counter(queue)#21){+.+.}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:215
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 7855 Comm: syz.5.738 Not tainted 6.14.0-syzkaller-10764-gaa918db707fb #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2079
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2211
+ check_prev_add kernel/locking/lockdep.c:3166 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+ validate_chain kernel/locking/lockdep.c:3909 [inline]
+ __lock_acquire+0x1173/0x1ba0 kernel/locking/lockdep.c:5235
+ lock_acquire kernel/locking/lockdep.c:5866 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
+ __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+ __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:732
+ uevent_net_broadcast_untagged lib/kobject_uevent.c:317 [inline]
+ kobject_uevent_net_broadcast lib/kobject_uevent.c:410 [inline]
+ kobject_uevent_env+0xb36/0x1870 lib/kobject_uevent.c:608
+ set_capacity_and_notify+0x1ca/0x240 block/genhd.c:102
+ loop_set_size drivers/block/loop.c:210 [inline]
+ loop_set_status+0x94a/0xb90 drivers/block/loop.c:1306
+ loop_set_status64 drivers/block/loop.c:1415 [inline]
+ lo_ioctl+0x729/0x26d0 drivers/block/loop.c:1582
+ blkdev_ioctl+0x277/0x6d0 block/ioctl.c:698
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl fs/ioctl.c:892 [inline]
+ __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f74ac58d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f74ad427038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f74ac7a5fa0 RCX: 00007f74ac58d169
+RDX: 00002000000007c0 RSI: 0000000000004c04 RDI: 0000000000000006
+RBP: 00007f74ac60e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f74ac7a5fa0 R15: 00007ffc990fb088
+ </TASK>
+
+
 ---
- fs/smb/client/smb2pdu.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index f9c521b3c65e..103319cdce00 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -41,10 +41,11 @@
- #ifdef CONFIG_CIFS_DFS_UPCALL
- #include "dfs_cache.h"
- #endif
- #include "cached_dir.h"
- #include "compress.h"
-+#include "fs_context.h"
- 
- /*
-  *  The following table defines the expected "StructureSize" of SMB2 requests
-  *  in order by SMB2 command.  This is similar to "wct" in SMB/CIFS requests.
-  *
-@@ -4089,10 +4090,28 @@ smb2_echo_callback(struct mid_q_entry *mid)
- 
- 	release_mid(mid);
- 	add_credits(server, &credits, CIFS_ECHO_OP);
- }
- 
-+static void cifs_renegotiate_iosize(struct TCP_Server_Info *server,
-+				    struct cifs_tcon *tcon)
-+{
-+	struct cifs_sb_info *cifs_sb;
-+
-+	if (server == NULL || tcon == NULL)
-+		return;
-+
-+	spin_lock(&tcon->sb_list_lock);
-+	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
-+		cifs_sb->ctx->rsize =
-+			server->ops->negotiate_rsize(tcon, cifs_sb->ctx);
-+		cifs_sb->ctx->wsize =
-+			server->ops->negotiate_wsize(tcon, cifs_sb->ctx);
-+	}
-+	spin_unlock(&tcon->sb_list_lock);
-+}
-+
- void smb2_reconnect_server(struct work_struct *work)
- {
- 	struct TCP_Server_Info *server = container_of(work,
- 					struct TCP_Server_Info, reconnect.work);
- 	struct TCP_Server_Info *pserver;
-@@ -4174,13 +4193,14 @@ void smb2_reconnect_server(struct work_struct *work)
- 	}
- 	spin_unlock(&cifs_tcp_ses_lock);
- 
- 	list_for_each_entry_safe(tcon, tcon2, &tmp_list, rlist) {
- 		rc = smb2_reconnect(SMB2_INTERNAL_CMD, tcon, server, true);
--		if (!rc)
-+		if (!rc) {
-+			cifs_renegotiate_iosize(server, tcon);
- 			cifs_reopen_persistent_handles(tcon);
--		else
-+		} else
- 			resched = true;
- 		list_del_init(&tcon->rlist);
- 		if (tcon->ipc)
- 			cifs_put_smb_ses(tcon->ses);
- 		else
--- 
-2.39.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
