@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-582281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104F7A76B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB023A76B56
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864451884F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837A918858A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD382144BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B372144DB;
 	Mon, 31 Mar 2025 15:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="uLWvvXBZ"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="kYos5sKB"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E49086347;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A22A21147A;
 	Mon, 31 Mar 2025 15:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743436359; cv=none; b=W8JsJZSGgM9t/Ftz+gRcTqCQK08Cr9pvqVnLrMP0Xgd+lz/WkH3ZNqIihLEMSR0O6RBVBL0qYhH/d8AMFZ4wYYvThlV7UHRgFXdhnva78+lik4A1+fMXY9ZFT1mmzOXRYLhMVMHEr8paHTW92K9/8/IoccQg/J2v5KrOcxmEW8g=
+	t=1743436360; cv=none; b=ZVO4sRAot6Guohr4/T5siRe676Uf4b6ULsNx+frKrStjjSK7uOH47U8WfwTmsY6PQcXoD0ItxxU23ssNE6Ei4Faz/nvC7D4fde7sXOxrmdwwaP2qqKBnr7aemqZYRU6sW38p3KZGOecGfvPl3TPwFv2L8seZsxxIxDMWDK1ZDdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743436359; c=relaxed/simple;
-	bh=kSAzx+eej0uycF+Jfn1RtLgdWxBP1noPEe4qNaH57QE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZJLZRuI1MhX7jWJjljImkG7/zEY5CApYAnm0IA5QE19oPJkQVtHnBARmn6S+sWMSaWKK9sGx50vzG4+BnZrBlhzg9g8ZCJBbGHUO/Ap2bKVdazIhuMD6/EGQeKvoqVTrvuMCtCPOCgZT82FzBsXBbqgjeFUrAtgkb3Ql6qKoIrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=uLWvvXBZ; arc=none smtp.client-ip=217.194.8.81
+	s=arc-20240116; t=1743436360; c=relaxed/simple;
+	bh=z+OhnofA166k/30CaNloxYejPREjsHP463osLIA9kh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IXCJC9XlbXM61bNdVdNb5QgzwvBAexGlH8OUuCkjhXZluV46UfkA7xckhmq/635k8KrnXSEdKm0GIv6DvHRgaPKDVF53H4UDIYKYna3vNmooAnzsqFkqVDbi9qs/LKE+wMg10oMvk0wqZlMbLIDZkEmcGs4PsndErHcC72TLUlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=kYos5sKB; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.corp.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 495221F93B;
+	by mail11.truemail.it (Postfix) with ESMTPA id CEA8B1F9F4;
 	Mon, 31 Mar 2025 17:52:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1743436354;
-	bh=KmFGNeGUi5nO5jd0LDYCS2bFrp7mfdJc99mrkzyV6hk=; h=From:To:Subject;
-	b=uLWvvXBZysCpj9nS486sUa+eL6MnSBa8wL+u0yOrO6CbTXJap4QM+MTHtb+3XJyTL
-	 BL9ZASM9fhkziVQAckEIvTvLJAWstk0S7YWcYll9dZkKDuYbhEWF+FqmrSLRwgFoZS
-	 SlpqqkvoThcxytHJWj6I9K7CMVcfiM6kXNa15bzGYHkGsQBMr9J2o3d+dVIXn69VRJ
-	 OAexq9i6bD/vTP0/5K+3OGdvvIIHKkhShvdCj9kixTou3sgAeVg9HMzOpKGcbF34zn
-	 dfYeH4hzxWHdFbpogu6VIeIBNxMibx95tDrct72aamsaw0IkYUttOkXiF3MPYpsBNI
-	 sNmSPXiemMN4w==
+	s=default; t=1743436355;
+	bh=SJgfb8TQpY0ee2eKfxl66K4dUcxi4hrZyAmL4y/2lB0=; h=From:To:Subject;
+	b=kYos5sKBC0NrQtVXC3EiRbd8lHaI/hsFeJmDyIbMMpHbf9B27JE9j/fcLfIqxuYxx
+	 45Kz7RTTfDoDVrRwa8+HRkiMMyH/z6vtC4jgdXcbUi/Cg7Z9Egs0HEVqHkHs6EPKXo
+	 +S+3NFVJaxW6ON1kP/JV/5sl+uQuwKlZw0Lh74E5n9z6oWYmyqlyWUQDgjSyZ5AjgY
+	 zhy8+trvBabbKNfUb1pGIBumsSDl2hsv+4OFnwr6YgLXgVfH4//IOXNP/wLdW3wRXg
+	 WwlKMOCrBmBqn5WidZgNzNIni3C8qzGnutqfZYrLw4Rfix+GcJ3bKbOruN3a3FlS0J
+	 iaGlyf9AHB8DA==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
@@ -53,10 +54,12 @@ Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
 	linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] hwmon: (amc6821) Add PWM polarity configuration with OF
-Date: Mon, 31 Mar 2025 17:52:27 +0200
-Message-Id: <20250331155229.147879-1-francesco@dolcini.it>
+Subject: [PATCH v3 1/2] dt-bindings: hwmon: amc6821: add fan and PWM output
+Date: Mon, 31 Mar 2025 17:52:28 +0200
+Message-Id: <20250331155229.147879-2-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250331155229.147879-1-francesco@dolcini.it>
+References: <20250331155229.147879-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,16 +70,56 @@ Content-Transfer-Encoding: 8bit
 
 From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Add support for configuring the PWM polarity of the amc6821 fan controller.
+Add properties to describe the fan and the PWM controller output.
 
-Francesco Dolcini (2):
-  dt-bindings: hwmon: amc6821: add fan and PWM output
-  hwmon: (amc6821) Add PWM polarity configuration with OF
+Link: https://www.ti.com/lit/gpn/amc6821
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+v3:
+ - explicitly describe the fan, use standard PWM and FAN bindings
+ - pwm.yaml cannot be referenced, because of the $nodename pattern that is
+   enforced there
+v2: https://lore.kernel.org/all/20250224180801.128685-2-francesco@dolcini.it/
+ - no changes
+v1: https://lore.kernel.org/all/20250218165633.106867-2-francesco@dolcini.it/
+---
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml      | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
- .../devicetree/bindings/hwmon/ti,amc6821.yaml | 14 +++++-
- drivers/hwmon/amc6821.c                       | 50 +++++++++++++++++--
- 2 files changed, 58 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+index 5d33f1a23d03..94aca9c378e6 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+@@ -28,6 +28,13 @@ properties:
+   i2c-mux:
+     type: object
+ 
++  fan:
++    $ref: fan-common.yaml#
++    unevaluatedProperties: false
++
++  "#pwm-cells":
++    const: 3
++
+ required:
+   - compatible
+   - reg
+@@ -50,9 +57,14 @@ examples:
+         #address-cells = <1>;
+         #size-cells = <0>;
+ 
+-        fan@18 {
++        fan_controller: fan@18 {
+             compatible = "ti,amc6821";
+             reg = <0x18>;
++            #pwm-cells = <3>;
++
++            fan {
++                pwms = <&fan_controller 0 40000 0>;
++            };
+         };
+     };
+ 
 -- 
 2.39.5
 
