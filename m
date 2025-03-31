@@ -1,152 +1,93 @@
-Return-Path: <linux-kernel+bounces-581916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3E3A766C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:23:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B7CA766E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C283AAF81
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76833A7DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED182116F6;
-	Mon, 31 Mar 2025 13:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D73212B0C;
+	Mon, 31 Mar 2025 13:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/KMf7Ad"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="nr44Ae1H"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9617A2FA;
-	Mon, 31 Mar 2025 13:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE231953A1;
+	Mon, 31 Mar 2025 13:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743427422; cv=none; b=WnpkjktzF5B6//7fTer4BYeWIGsZBPrQyFoy6nBo2PsDpR2xcJRDTtNEDo64PIExTFJTN8mqK1fi+1Qt7GQUOCGJVUWDBZLchDbXRnNz39QI6sMzXfMYgAvYDxrxBvyPsyUQ3BfiZLtVpf97GmFR9pMvcxemYMQiTQ4t7UV9aqg=
+	t=1743427815; cv=none; b=t0HvYIB4mBTrEfWxNSnhBCxGd7/iYuAxPLwo9UaoioWkLDjX0kVrREPHbWiLuIyc6cbP+LU73SmhD6PhugM7R1EBzuUQrXiYGLHOQvv4r0OtFaxvz8b/wZMH/evXXhGvJ+Gix0GXNrPSC8baG5RVPwZ+qStPWX/IaG5E4dlmGDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743427422; c=relaxed/simple;
-	bh=BNvLxh5zFpguHH6d2CpK/g7iaez1WKqjMuDikvk/WsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HznKiv9JTDUMle4EGOCQzUhY/0eEt/u9kMDRlJ2yZph4c/kMA4xqnHMDarFoXRYIjo30LWgdhtylGJxFSWGxcY1sJdV3vVbVicP+z1E8XQj/CI3gq481N7lPX/28TKdGDkibGi5gw0IoVCNBVKCqt4wP11s9DaQAAF3Jun7e094=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/KMf7Ad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8212DC4CEE3;
-	Mon, 31 Mar 2025 13:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743427420;
-	bh=BNvLxh5zFpguHH6d2CpK/g7iaez1WKqjMuDikvk/WsE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=t/KMf7AdlJOt6yO09WNRUYCsZ3Pg/d9as77b3kAXaKnYEqjsLo8zJ3dcYd/tW5K58
-	 adbprGvchIGbgCsCH1UH3FuL32t2/DGULEWY/fbhbYWhFWu22hebNSo0ZDEWrnhqa1
-	 /JnZ30HmAnK+1829u+jf/s+RBNs0+ZFtyAkg5iBLPovVsiUZvv6Y7YVWJkczF4XeeO
-	 r9yY2JimDoJRBXB+aOHMlNkedEvj77RZmrgIGWBV/2LBHZ8D5bz0DsTR2cjQob1v/Q
-	 a2t1sgLfv1ihcVaLEnO9Jh2N56BbXovPourDE1rjEski+PSMjBs4sMIjAmlKCUW5Qt
-	 glp+T9G4+mQ/w==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2c77a5747e0so2640727fac.2;
-        Mon, 31 Mar 2025 06:23:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYdfwNB7IW9vwbqJYk002vOCfbBgg+yFHbb0g6Tg3iLFoJ34/vZhIa5gbHn94Xp6IKY/ovqvWhUm2e@vger.kernel.org, AJvYcCWwhdBbSAQTRRC7y5AfFPjbwFyTXPlNk+A71sDTyMB3AwZ4ljBzOS45ec2Hwpk7ogalBZEsrRb+nUknbOrU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD9s8WbvhQ4uOtozzjbH75/qFbKQGBpoG0PGtSNlcafLa11UCz
-	UOxf00V/zol9dy/c9+yHrweBcQbH0hdXL73dgEqHnbHouuwVenybwNRY193GYH/OWUF03HqdyTh
-	fpCSg/M6kLOyhsHpoC5+NAZTcGPA=
-X-Google-Smtp-Source: AGHT+IFpjRAG9jxkdHVT1kiTjIYNaocNQRJBpnWXCk7BJLlLGdHW5Rg4gN7sPQ9eXfl0WvbDapdST+EC1XbE9rhVC70=
-X-Received: by 2002:a05:6870:610d:b0:2c2:519e:d9a9 with SMTP id
- 586e51a60fabf-2cbcf765ef8mr5111966fac.24.1743427419888; Mon, 31 Mar 2025
- 06:23:39 -0700 (PDT)
+	s=arc-20240116; t=1743427815; c=relaxed/simple;
+	bh=xvAxcwjxyDJWhDXu7y5JzLvjmhF/Q59dGZAjf5dEFKE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y9BxUiKn17LwEB/RMexJ3g7Sqr2RoklV9Qwq/UtGOi0MidMsmwdWdGubQL4kCBebuWXItQASJYKIRdz3UJx+oQPGCev2h6Yi9VzM9m2fONEe8fOQWE4s2olJzKap6Orrtugu7wgbSahgm06YTqMeYD+e0xjfyIAWT1qpYx1eZ6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=nr44Ae1H; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BB63640407
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1743427438; bh=3vxoY1G1VGLAh9adACl66l74IKVyT0LyXE9/eEvA3mo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nr44Ae1Hm1y8Afi7T/AqZYrVmVe2NiUTLykpI+Qv/ZO3Twlt+1m6SJpNPO3phY/Dr
+	 X69N752/DXzz0WluggDvCTeSOpLQpb5x2fdQffnNeRmZZpOq4Dka0YfmPlO8UXUBf/
+	 RckQ0cqfM8+DmNcxB93dLS4DqDLCCeyyeN8vd7PCdaAd8ZlVPc4a+mGjDw9MBk+XYX
+	 X7tr35VXUF93tEiM9PkZeA2TlRX2hfDX9De7bLbY1utJKMgvEWhun8v+Zb0Wljggc+
+	 VWc9tiJHBqNorLlBVSgzUM8xQtkj9MU4fgVBDLD7wVf3N4srVtxfHCPaS0jbwhj2NE
+	 xtXjfeRAo3QRg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id BB63640407;
+	Mon, 31 Mar 2025 13:23:58 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Integral <integral@archlinuxcn.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ziyao@disroot.org, integral@archlinuxcn.org, workflows@vger.kernel.org
+Subject: Re: A contradiction of "summary phrase" definition in
+ process/submitting-patches.rst
+In-Reply-To: <eb1abac9-d6d2-4dce-a5f6-d0702ceca103@archlinuxcn.org>
+References: <eb1abac9-d6d2-4dce-a5f6-d0702ceca103@archlinuxcn.org>
+Date: Mon, 31 Mar 2025 07:23:57 -0600
+Message-ID: <87h639e3ki.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <61c3df83ab73aba0bc7a941a443cd7faf4cf7fb0.1743195250.git.soyer@irl.hu>
- <CAJZ5v0jBONZ7UFL0HCOV=7xmnUphL_UTV=_1PnYmR6n0oN4pcg@mail.gmail.com> <d3dfe61a-1d4d-4aa6-870c-61249799e6da@redhat.com>
-In-Reply-To: <d3dfe61a-1d4d-4aa6-870c-61249799e6da@redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 31 Mar 2025 15:23:28 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hy7ge+vPgNXzo89=qu7pP-tPgbjUPRHUMdwUnSTpVXQQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq2qoSpp3qytZmIhGEF74CJIGeXYn3IZnod2sw1TIK9OOzCAOUj43B2Xj4
-Message-ID: <CAJZ5v0hy7ge+vPgNXzo89=qu7pP-tPgbjUPRHUMdwUnSTpVXQQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: video: Handle fetching EDID as ACPI_TYPE_PACKAGE
-To: Hans de Goede <hdegoede@redhat.com>, Gergo Koteles <soyer@irl.hu>
-Cc: Len Brown <lenb@kernel.org>, Alex Hung <alex.hung@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, linux-acpi@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 31, 2025 at 3:04=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
- wrote:
->
-> Hi,
->
-> On 31-Mar-25 1:46 PM, Rafael J. Wysocki wrote:
-> > On Fri, Mar 28, 2025 at 10:09=E2=80=AFPM Gergo Koteles <soyer@irl.hu> w=
-rote:
-> >>
-> >> The _DDC method should return a buffer, or an integer in case of an er=
-ror.
-> >> But some Lenovo laptops incorrectly return EDID as buffer in ACPI pack=
-age.
-> >>
-> >> Calling _DDC generates this ACPI Warning:
-> >> ACPI Warning: \_SB.PCI0.GP17.VGA.LCD._DDC: Return type mismatch - \
-> >> found Package, expected Integer/Buffer (20240827/nspredef-254)
-> >>
-> >> Use the first element of the package to get the EDID buffer.
-> >>
-> >> The DSDT:
-> >>
-> >> Name (AUOP, Package (0x01)
-> >> {
-> >>         Buffer (0x80)
-> >>         {
-> >>         ...
-> >>         }
-> >> })
-> >>
-> >> ...
-> >>
-> >> Method (_DDC, 1, NotSerialized)  // _DDC: Display Data Current
-> >> {
-> >>         If ((PAID =3D=3D AUID))
-> >>         {
-> >>                 Return (AUOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.AUOP */
-> >>         }
-> >>         ElseIf ((PAID =3D=3D IVID))
-> >>         {
-> >>                 Return (IVOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.IVOP */
-> >>         }
-> >>         ElseIf ((PAID =3D=3D BOID))
-> >>         {
-> >>                 Return (BOEP) /* \_SB_.PCI0.GP17.VGA_.LCD_.BOEP */
-> >>         }
-> >>         ElseIf ((PAID =3D=3D SAID))
-> >>         {
-> >>                 Return (SUNG) /* \_SB_.PCI0.GP17.VGA_.LCD_.SUNG */
-> >>         }
-> >>
-> >>         Return (Zero)
-> >> }
-> >>
-> >> Link: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/Apx_B_Video_Extens=
-ions/output-device-specific-methods.html#ddc-return-the-edid-for-this-devic=
-e
-> >> Cc: stable@vger.kernel.org
-> >> Fixes: c6a837088bed ("drm/amd/display: Fetch the EDID from _DDC if ava=
-ilable for eDP")
-> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
-> >> Signed-off-by: Gergo Koteles <soyer@irl.hu>
-> >> ---
-> >> Changes in v2:
-> >>  - Added comment
-> >>  - Improved commit message
-> >>  - Link to v1: https://lore.kernel.org/all/4cef341fdf7a0e877c50b502fc9=
-5ee8be28aa811.1743129387.git.soyer@irl.hu/
-> >
-> > Hans, any concerns here?
->
-> No the patch looks good to me:
->
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Integral <integral@archlinuxcn.org> writes:
 
-OK, applied as 6.15-rc material, thanks!
+> I found a contradiction in process/submitting-patches.rst:
+>
+> The canonical patch subject line is::
+>  =C2=A0=C2=A0=C2=A0 Subject: [PATCH 001/123] subsystem: summary phrase
+>
+> The ``summary phrase`` may be prefixed by tags enclosed in square
+> brackets: "Subject: [PATCH <tag>...] <summary phrase>".
+>
+> The former means "summary phrase" doesn't include "subsystem", while the=
+=20
+> latter means "summary phrase" includes "subsystem".
+>
+> So, which one is correct?
+
+I honestly don't see the contradiction here; the summary phrase is as
+described here; the subsystem indicator is part of it.
+
+When in doubt, look at the commits in the subsystem you are interested
+in, and you will see the expected pattern quickly enough.
+
+Thanks,
+
+jon
 
