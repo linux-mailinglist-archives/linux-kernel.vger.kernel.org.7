@@ -1,287 +1,162 @@
-Return-Path: <linux-kernel+bounces-582438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9209FA76D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0B9A76D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E59D18893A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6749B188D231
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397A721B199;
-	Mon, 31 Mar 2025 19:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E6621A443;
+	Mon, 31 Mar 2025 19:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gfu2Wb/J"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2083.outbound.protection.outlook.com [40.107.105.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WsMJjIcM"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E3721ABDC;
-	Mon, 31 Mar 2025 19:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743447804; cv=fail; b=kqYP274KehPHMeLZFlhzG2C1i6ujxiSkv9IazoeoYtuRDkd3956nomfp0fzkJlRlJLapOZoV2pr7WdNsPA4u4uu7i9YHrRGiYvVbaUyzhnATSmfOjIc0U8n8+seYeoJAzQnJ0B8dvXTwcwhDYvR25XdUpjuEoOG7PFbGyJbA1ww=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743447804; c=relaxed/simple;
-	bh=GqmVzx3QN8J61JwHycdkF8lhqGaHz1X8f8EGyilRx+8=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Af2T12EbFC2oYUgAgi4ZjMzosFfRWek+RNje2bsye++l4CtlM5kjZt681rkZ1mOIvlS028FQJ/zpqPowEOpPfUPLLwOHYyast1nteC9aYrTji7Zg28O74kPWPQ8WZlotATpH9JUtHg5KxzsRllgbb9Gtzw0XIwKTm0qixWD6r+w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gfu2Wb/J; arc=fail smtp.client-ip=40.107.105.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ft6sGArRrAmEksBchm6417so4VKN8edW/GWeW1SHvgRU/AElzhumra5u2oMsMIOcBklayBhwDBECbZxuLCFpFuNerGgzGDBJTo0WTtGrdRyst/K3gj4p6j3DaEMqTpBN9qRtzwcDKqc5s8OyTshxFx/G83P07CC/C+7V7rWlopwHfQLXdUUw9bDv2cLgiXeVTQWHmQPgIziczncvE7yvgazbItx7HeYGrYriC5ieJBsiQ/Uzi2VoiPK/9Qg3tcJCZpjodb6soof9wYGuISuRLmcvFENgEKPtKg16ynEkwS11nQuu/dm/OFB6Lj6/rAagKhUvM8xBBOC7Pqvm8q+gvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fYCSSTzDmMPDLFEOzO4wt2dUNu3Fz4XKLRtyM0ObWv8=;
- b=AZoNJ6dIaRzO6VJawbxwJ1dNua+6s1tu3BQ4ohRmHJDwGZ/26ZbWVbESPmTgzFhxiNOxDO0ihvHrKjCx6lyb15GArg5O257RN+u63M/kXYN67oW/I7s1IxERKXyqSnbpBw8P6j0soNJA1yGLFY+FOLesn2zGkZWWDVEtzYUioYx4B5e8XPyDZYfcw0n6vyvhtcc7+DpGNJFeXDz9GVy1fBTneDzt+3283FhNywG2Lno3J297deRRkSZ8Dv7oR7Pi5e3OS9jLvcd86q3orbbVIdsns6jYZ409PDNecKj041A+7TQdDnV21nNiUfmIJbpNIVVf3v44iLPVB0GedEwPKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fYCSSTzDmMPDLFEOzO4wt2dUNu3Fz4XKLRtyM0ObWv8=;
- b=gfu2Wb/JaP3HXIVfoVr3pMt2wDAVf7epScfIhew6WzKfBifLb1iwrQ+4jpgPXZZ3EtMFNQyGN1RJOmlJIYP2YHP/w6+MI5fsQU4kn/hx/IlQX/bVVQU/nCN9hP9PkgXPiS+9WhLgfzffldf2fainIrwznSUUTg8cjQhGKgKLs4BBuuZNsU3VUB9NhOgKNHssAWAifnvqMb8oA9oidO1/dCNlyBgGOb6S+Khoerp4VISNLg+UcwbuEbIHCX4ruHLD1vLdT3wZyfCK3DZprv17NkWvwdtOXLnMNwn2IO1t1gPyjbouvPt5ZuBrI/7YBs11NeKMNTSLZ8EICjX8ebk+4g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8557.eurprd04.prod.outlook.com (2603:10a6:102:214::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 19:03:19 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8534.048; Mon, 31 Mar 2025
- 19:03:19 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Mon, 31 Mar 2025 15:02:43 -0400
-Subject: [PATCH 5/8] arm64: dts: imx95: add pcie1 ep overlay file and
- create pcie-ep dtb files
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250331-imx8_pcie_ep_dts-v1-5-270ef0868ac9@nxp.com>
-References: <20250331-imx8_pcie_ep_dts-v1-0-270ef0868ac9@nxp.com>
-In-Reply-To: <20250331-imx8_pcie_ep_dts-v1-0-270ef0868ac9@nxp.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- hongxing.zhu@nxp.com, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743447781; l=3206;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=GqmVzx3QN8J61JwHycdkF8lhqGaHz1X8f8EGyilRx+8=;
- b=WQV/Nq3uBpIr5h3lfiJAIBHccvlyrZ+mDJa8x7swcdg4IN+5zl6hEF4gHftSfU0Y87KDq/H+u
- g2nY5HyEfQoDe0aCe/p2kwsqa79YndHbBVtSoAUESW2oFb45qHT+G7+
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: PH1PEPF000132E4.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:518:1::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9725521884B
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743447847; cv=none; b=mfjSd6cKqaAXSVgc8I+lZFDyYXJ/Qgseox/Ws9N9qKr/gCWfpI49K0hV/k4SJGVQkYE5zscFshMaHbXT/DUTK0NtUn0swYW87SqGviJN73VTxvZJfc+vqk8iLitYNWfGazC6xV2xSLL51uIfVql3Vf9nt+wQRw7pN6FUQ1VhSXY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743447847; c=relaxed/simple;
+	bh=KCzCQK5KfTNTXVj3QAb70ZvZJIWC5xLub+VrbQLHf60=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uUptYDmcf/PFqC081rhPTAjrUjKcSmhK2+qOTKfLebgDzKOdOvXxNVJBD3igfW7oEb+McT9qzGn+RRcxDS/CpPjPCwyac0CABf/yF0IzlNeMOe4T0ARaZuWTWmpmoTXfQH+EsXnSHmA6ghxcLwbYo0GfKgjsrhGZj/rO6NR2cZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WsMJjIcM; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso7642305a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743447842; x=1744052642; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3EOzlYlRNAiJ4+uUWCt9BJ21v6gCuzJhG6mflO89SQ=;
+        b=WsMJjIcMQuHGuqHk7oPK0lSDmr4KCRyTZ1ew2THFefYrrYbQZwLwNLDvjGOXgyNrmg
+         PsHT7FRCZvh5qgG04/7QuHs+kJfm70JJXrTcsQhE/q7OvrudMujMkFcVEDfXlLu6N0Ol
+         t+K+swTplZqslhFFmNNI8gDDdujtQfETFxizLghs1aCFF59UIj8bDiHT7hJpwIC55P6G
+         qpf6rBdyfFvF7Nu1ABwZkvDaFcD7XjbAzi9ax5aJ4SDToKhJ1WRIuq6dgH/gSowJ0o1Y
+         75RzZU+IrNUkneoeKy46SaSnJT30NFkccTR7V+n8a87lMUA/WnAvvdNR5pMSQYXcAhgn
+         Vykw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743447842; x=1744052642;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3EOzlYlRNAiJ4+uUWCt9BJ21v6gCuzJhG6mflO89SQ=;
+        b=cto4I51kcQGDghTF0Ou8YjGJfZso7BE2c+s8A39icEilAyJOnMv8t7mcLQaTZWxDOZ
+         A6enVWFIov6jS1qOpP1fhtZTLVHcJ4aXGggMeLqJANvtbyPRMNZNsG92MXi/f3F0iHhy
+         HUgyT433yTjl7xkqVwQYKhoXiYxfBGsYd5GDs8lD2ow5XATt1jR8p3iduyeq4TC1rEuE
+         TwQQhPdrq5QGjxWZ4lAAGYU20qfC+Dqesu3Rq5YR+L6EtBtUr79Ta1pPtm63q05OopVe
+         muVUlGmzrzWi1noCTzhs/sTFJUH5ZLtLdlKAANkWTh0WxHa3ovTDW/Wh8WC6Ua7lAyCe
+         rVxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdCbmVqpxwiPwgVy7IlaOve/HOUR9Ey6nrhfsARFDBOyxBmnOWmQUoy6oNOM6V9MVXU8sNra3PwyRnli4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsafvSbUeCDx6Ye+uMCJTUJgcbrBhVN2Qu1aJiavqTntyMRwkF
+	XRtNB+gsZ+6i5YnOFYccnve4l0CyuZpDwRilMCEJbIBZHUW/IChfFwMXVKj5CebgPncvGKYErOY
+	g
+X-Gm-Gg: ASbGncvNFH5OidAiW+4BXU81Bp4g8T2WvXQXhv57+e/G4Z2HRtSArdCZkQ+rtgoFaho
+	YkDFlMe5JrwBFAu7rGA4ruNc0l4i1Nhw85BWOpCNk9noqE5qzTgJ6Ny7duW0CDpMe9exlCg/wyM
+	zh+2F2V8alL1PiM/k0WUJ80R4WNc9R1HGNBYacKl6nP1XQmtyfDOFflpcmDvRxl7QpLrY3bRgpb
+	RSKQsjc4356hoXnPi0RQPiBsgbjsHtcy9jaDP+i1iJynzHEFPSfZDe4Z88Qw9DoU7y6boa4fZMU
+	3gpI+7BgA1jDbWyLe+p/YxeQnHPw+XWLjNqw0d6jHWNFnp6yUoG0mgjcz2S8gGE69D9hWEGPTLT
+	gvrLVJuOGqziFH99OGOzDjwtj/xRL
+X-Google-Smtp-Source: AGHT+IG6x2cQV9rQNT/dNa4oIVCMlwksMuE5agsbtSttDyBJNmy1EbpQYwO/1wjMinTPo+R7D0RWPQ==
+X-Received: by 2002:a17:907:9629:b0:ac3:991:a631 with SMTP id a640c23a62f3a-ac738a9a6b5mr822914366b.34.1743447841909;
+        Mon, 31 Mar 2025 12:04:01 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-172.pool80116.interbusiness.it. [80.116.51.172])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71961f9cfsm652288566b.122.2025.03.31.12.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 12:04:01 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v2 0/5] iio: ad3552r-hs: add support for internal ramp
+ generator
+Date: Mon, 31 Mar 2025 21:02:43 +0200
+Message-Id: <20250331-wip-bl-ad3552r-fixes-v2-0-cdedb430497e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8557:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5d8650a-6218-4864-0e53-08dd7086b349
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|1800799024|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dkR1U09VdWhZQXdvN2NUNnVVYzlzTmxJTUtJd2tmQytyTHUyNUI0dzRnVFd6?=
- =?utf-8?B?akowY1FPTFhqL1FFTnNIbDFUMHdvU01xbWhydjlaTDdoSytDMUgyRzZndnRZ?=
- =?utf-8?B?dlo0MW10OEQ0aGp3UU9XcndnQlllbjdkYVdGUU1XOWlPUzRnZDNEWDIxQUhi?=
- =?utf-8?B?Skp6ZDNSbktBM1dCTVVxcUVjVVJHN1AwSlRoTjN0dktKc0hKVjlpek9SeVhW?=
- =?utf-8?B?R1hncnB5SDFpektYak9yTVV6akJsYW1HaDFmenlrMTBnZEFOaHhicGxYTGJi?=
- =?utf-8?B?UUJHdVZNV2tQbEVCYzRkV3E1MVRCSkgzMk5GUVg3ZnVzOStmRHc0NFFmNHhy?=
- =?utf-8?B?cVRxc2pXSjBBN3lVK05NVzhKVFl3T2RSc2JJN1RSdTQ0MWVtMHNVN3Z1MkVH?=
- =?utf-8?B?a0lZYlFqTk9OcHJLRlZNUUFLTGxkUk02V24zYk5MNnF5cmNFUFlTRGZ4bEZT?=
- =?utf-8?B?UlNNS2h1dkw5WHIrMDBZcmZNY3RtMndDb1VmOWFOMnJPQjZ6L0wrazlQWndX?=
- =?utf-8?B?RUdlNnUzV2x4NjVBLzAvMlVkaFEzSWd3R1BEdm00VjJDZEVmb3Azbi8xVVlG?=
- =?utf-8?B?Wkd4SW1udnNYY2hHQVZXZ2dQUXQwc1ZkM2ZBUXZBTmJOMXB2eS82WjNzYUtr?=
- =?utf-8?B?K0QvZzBzK0R1UDZONHBSVWdweEFDZmNYdVhQcWtwZmFsclBhWFZLVXBUTkFs?=
- =?utf-8?B?dC82dTZNZ2FoNnJob2k0K3FEb1FuZVVKZWRJdUpiV2s2SGNQVGExc1I3ak9L?=
- =?utf-8?B?WFEyZlNrTTZDaWR6OEYrQVd3TW9SclZldWlENEd5ZTYrcUU3TUxJZytYOXNr?=
- =?utf-8?B?bWRJbHU4Z1pCeGpwZGgwaklQa1ExV2p5UXdBU0hpQktMZ2F6eGhWVnhDMFFH?=
- =?utf-8?B?YytaTllLVVRCR28zV3pXTG9KTVkvcS9hTUQyUlNXeDFOVzc5cTZFNkk2STM0?=
- =?utf-8?B?blZRdTFmSHgxd1RTcEkvSlppRXhXM0d6b2RVTnhpL0Y0VVFCc2pESWNTd0oz?=
- =?utf-8?B?Y21zMXFDbEpnL0NHTThJRHBFTWNVVmNBQUFzUjN1dG9NZ1dsWDU1N1NmdXNo?=
- =?utf-8?B?NlR2a0U2K1gxVHZuRWxiMU9odExRRWlpaEZGdWdYTjBwU1V2SXNITEhjTXll?=
- =?utf-8?B?QUNXSHNXOS9hdzAvVWNZdVNnZXZ3dGNXRlhXMDNCcEx3a056bVRya0dMZXNh?=
- =?utf-8?B?eXZubDF3SzIxMUFVZUFwL0FqNGpSMStDUW1ROUZHZU94RmRFUGJpaFdIQUFw?=
- =?utf-8?B?OUUvNmgzcXZmNlE4WjZmamY3cVBkN1lsNGpheEJjek5peVZvTXV1OHpNV1hY?=
- =?utf-8?B?QzlxK3RPVE84N2FRL0xYeGhXNDNxeFNVN09yTmM1UkRjdWNZcjU3eXBIdVVC?=
- =?utf-8?B?T055R0RJNFZXdTZIaGxKUnZabzFlbWdCY2t6a3hnNHlGczdpUU9WZXhTckhT?=
- =?utf-8?B?T0dBbVU4OUc3clViSkFHOENKU1B1emxkR0pieDArRWZWZ2ZtbFJMS1dvWWZP?=
- =?utf-8?B?THVWd2o4cWNoRVZBOVVscS9pSHZPelJ1RHhoa2F3UGx5YllzcFFpWVRyc3Rz?=
- =?utf-8?B?UDNrMEVZVFN0citkUUp2aU9VczlJMTFHS3BnOTNzMCs4NzRKRjkySjQ5OXNM?=
- =?utf-8?B?OGJQK2FNTEFhVlBWMEN4TUFEa20yNlNiZnVsVXozakduU3VtZGF3MmFhbjRm?=
- =?utf-8?B?Rk1jTFlnWXpyTVhsSE9FekRKREpvU2puTytXZk9HTzg4WHR3NllUc2dsaFNR?=
- =?utf-8?B?U3gzZEhHTEFzMTRQVkZXUlU4czNObTJGNzN2ampUYndQUVBVSk51bFF1Tlhh?=
- =?utf-8?B?NFFjQjVhaU1DSGhqWTJaUkswQStkZFQzaXArYVRLK3Z6alJOUkRDQXlqeDl5?=
- =?utf-8?B?Z3I5T0VDQUZmMnN5OXpXOW1IK3ByN0ZEbDVPZEpMRlhaamlwV0NqMDhpNGk5?=
- =?utf-8?Q?fK1d0ltUBJcU+17Kda2Ksxe53qZjAq/t?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(1800799024)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnRZRlEwMjc5VWZuU1lGcVdxQk1ZVkxJOCtwdjFjS2cyM1k1cGx1elNMRTV3?=
- =?utf-8?B?NXlQelR3aUZialYvdUgrVU93RFRHK1RqdUZjZ2NSbFpmSU5tRjVsNnVCdUlO?=
- =?utf-8?B?TnBjVGFXRlVRT1NzMEF6STVLZjZWQ2lZWkFGRjB3dDJQODk5SStPOHVuSnkx?=
- =?utf-8?B?R1pDTXovbWh5RmErMlh1cWhpNnpsLzZkV0R5dTFaK292WXJsS1J2T1RPN3U1?=
- =?utf-8?B?TVdSNkdCbXZDVDFUdktZakNOU1NjYWVYcHYxOW8zKzE4YXlERnZnRDZFemZM?=
- =?utf-8?B?azZ5emFZbEczbWZ3WW0xTXhqMlBjOGR4OURBRG1uck9IVlBXSktBWnZFbStR?=
- =?utf-8?B?RHNJdFoxTWFLeFF0YTdEWHYzWUcycnFyMGlhWGdqWDVkSzVBcER5UGJTNEUz?=
- =?utf-8?B?ZHhpMU82ZGZqNkRmRUZuUDZMUVJrS0dsREV0VE9wQXpSWWxvWStBK1owRER6?=
- =?utf-8?B?UXFLNk1OdENna0w1NHRibnJaVnROT0thZHV6Rm5CMEV4U1VUcjg1cUFiYnBO?=
- =?utf-8?B?VSt0a01TRlRJaUc0eERWeGZhYjNqQ1hadGpabmpOZUVqSnBZS3FBVHZQa1JX?=
- =?utf-8?B?dDZTTmJrUzZGaWJpZ3ZQZzZXaUpoT2FId0JHUDZMeXhOb1JwZVFpQm0zUWND?=
- =?utf-8?B?c01ZSFRLTUp4dytaZ3hRbGEycWcvdzVrWWptcDgrVFluNXViVjRORUlsRFlS?=
- =?utf-8?B?Z3lVVlVKOWdwUWFmcmwxUzgwa3lIZVJ2LzFBYlkyVnVla1A0ZlFSbjAxb0pu?=
- =?utf-8?B?cEcxYStKVTVCSll3d21zZTVDMGMwWDJzWUZDMjk5UnJKcE1UQ2ZId2RDcVBy?=
- =?utf-8?B?M0oxTTFDZkVLbEFFT2tUaEVyOTJaaXFPRDIwOHZpbTh0NDI1eDNidjB3SXh2?=
- =?utf-8?B?NW5lMDQvUi9mcVR1L2twaEIwQmJqZ3hjTHg2WWtUY2xLakxDbnhtVHl3SzFM?=
- =?utf-8?B?aG5NSVRTZ2Z5TWxXNnlFMUpLeFl1V1RacWJuS1FYZDB2VlA5NmJUNmM4RUsw?=
- =?utf-8?B?NzRJdEhBN05Ianp0ZHpaN294N3Y1eFJRQTNNTVdSemhpMzFLZ2FwcTRVYnVN?=
- =?utf-8?B?N001TnZwTEVva1FRVDV6LzJuVUhVLzhEVG5kSjdYUGljbFJxK0t3M251YU54?=
- =?utf-8?B?MEY3TjJCZHkvdTJERXNwaE1pcmw4d3FBTXp6YThyZTVTRklIT3h5czlNeHkw?=
- =?utf-8?B?dDJITExKbkRqTGFOcC9RU3ZGZTNleDBZUGlHRCtaWGNRdEVDVEZEN1ZlYzY2?=
- =?utf-8?B?dDF2aDdpODNhd3ZtZGxlN1BQRFoyMCtXeDFBZmNZcFRydG1SekNzNjZGUEE4?=
- =?utf-8?B?cE0zWm1FWWJrOW96S3ZadW5vR3Z6VDErbkxEbjkxamN6VDBoTkV0YlI4RGdk?=
- =?utf-8?B?SVE1MExwNEk3eGdrYWZqdHgyVXJzcjdKWndwZDJaWkhnb25KM085RHVBVkxR?=
- =?utf-8?B?c2JaYmZ3bUhsY1dEWk1GQnRHcWRsbEVESGJiTXBDVTk2YWVPVzFsdlhLNm1L?=
- =?utf-8?B?YW0xUWMxcWlHQ0w1QUVGL2pUdVBpaEwrVFRKU1N0MWtvSWRqbEZlUG1kdXFG?=
- =?utf-8?B?dGZqRUx4WGtkVGZJalZqejFSY3ZLTjRCVGgzR3VvWVhNUS93VUpKU21vckhO?=
- =?utf-8?B?T3BTYW1ndU5zaVdPOVR1aGJIaVJwbjZwYVlKT0kwdXZvZzU1RzZRL0dRUDJL?=
- =?utf-8?B?SVRhNDY1VUM0aUY1Rjd1MW9lMW1RL1g5Q3FtdEF0OTEyVHpPaG53d3BTNk9C?=
- =?utf-8?B?TGxxNHBKbDBXQk9tQXk1ajJoR1pqZzI3OTNwZ1Y1NkcvZzMwUDFVakdyUXFR?=
- =?utf-8?B?MjJhaU5xRmp1TXhFZE5LbzhRRDN5YnNYMTR2eFhVTlpBT2k5Tnp1aDNFeDBk?=
- =?utf-8?B?MEVZT2dzVkZhcDdGNWpwZFkwbWphaHo4Z3ZZTGJ5dTBYQkxrdUNCL0FuaWkr?=
- =?utf-8?B?ZjFLdWQ2K1RsbDliVEdBMEg2NUZBcE44Y1BvWmY3Snp4U2pQVGtXMFVIK0RJ?=
- =?utf-8?B?dzF2LzdGOEhsLzExbHU0RGRvQVBXSXczTFZ2Z1BkeTYxajR3TDltUW4xTlFy?=
- =?utf-8?B?NlZRdUYraVlLUU44K0N3MCtPbTBzQ3lJQkpVMnRmOEhOV0xveEFPOXJhb3Y4?=
- =?utf-8?Q?7B6Ijfv6ACQOhTNxZYifh0DjO?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5d8650a-6218-4864-0e53-08dd7086b349
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 19:03:19.3488
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bLKlld4BmzETtpeoiVJbObT39sL4su2f6AOJJLmceaOfeVAI06LNFaFos68k+I557XKodO/FRickKIWOtvOMng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8557
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANPm6mcC/4WNTQ6CMBCFr0Jm7Zj+orjyHoZFaUeZBClpDUoId
+ 7dyAZffe/neWyFTYspwqVZINHPmOBZQhwp878YHIYfCoISyQiuJb56wG9AFba1KeOcPZTROn+v
+ GGC9PAoo6JdqLYt7awj3nV0zL/jLLX/pncJYoUHvpnDJNkLW+dm4ZuEt09PEJ7bZtX+MWp0O7A
+ AAA
+X-Change-ID: 20250321-wip-bl-ad3552r-fixes-4a386944c170
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1948;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=KCzCQK5KfTNTXVj3QAb70ZvZJIWC5xLub+VrbQLHf60=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYkh/9eyWU/Z71/OsNwqv/Pr96d4JyZ5sriPHzypasbepZ
+ y7cvcRuekcpC4MYF4OsmCJLXWKESejtUCnlBYyzYeawMoEMYeDiFICJCAUzMrQuvPeQ5cHJ+rOV
+ z7Wf3du46qlbcTH79+JFLkr7L3e2X3jB8N9P09Elmu+SYvWKqkkKv79LPp15dNnd92YB7I7HdpQ
+ JPuMBAA==
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-Create imx95-15x15-evk pcie0-ep and imx95-19x19-evk pcie[0,1]-ep dtb files.
+Add support to enable the HDL IP core internal ramp generator,
+actually managed by the adi-axi-dac backend. 
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+It works this way:
+
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage0_en 
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage1_en                                           
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/enable 
+
+Activating ramp generator:
+
+/sys/kernel/debug/iio/iio:device0# echo -n backend-ramp-generator > data_source
+
+Deactivating:
+
+/sys/kernel/debug/iio/iio:device0# echo -n iio-buffer > data_source
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- arch/arm64/boot/dts/freescale/Makefile            |  6 ++++++
- arch/arm64/boot/dts/freescale/imx-pcie1-ep.dtso   | 15 +++++++++++++++
- arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts |  7 +++++++
- arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts | 14 ++++++++++++++
- 4 files changed, 42 insertions(+)
+Changes in v2:
+- doc, add few words for generic spi driver version,
+- axi-dac, add a separate patch to check cntrl chan validity,
+- axi-dac, return EIO on a wrong source on get, 
+- add a lock on debugfs file access,
+- use const strings and strlen on file access.
+- Link to v1: https://lore.kernel.org/r/20250321-wip-bl-ad3552r-fixes-v1-0-3c1aa249d163@baylibre.com
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 8bea36060df22..7778a0b3abe37 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -308,6 +308,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
- 
-+imx95-15x15-evk-pcie0-ep-dtbs = imx95-15x15-evk.dtb imx-pcie0-ep.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk-pcie0-ep.dtb
-+imx95-19x19-evk-pcie0-ep-dtbs += imx95-19x19-evk.dtb imx-pcie0-ep.dtbo
-+imx95-19x19-evk-pcie1-ep-dtbs += imx95-19x19-evk.dtb imx-pcie1-ep.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-pcie0-ep.dtb imx95-19x19-evk-pcie1-ep.dtb
-+
- imx8mm-kontron-dl-dtbs			:= imx8mm-kontron-bl.dtb imx8mm-kontron-dl.dtbo
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-kontron-dl.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx-pcie1-ep.dtso b/arch/arm64/boot/dts/freescale/imx-pcie1-ep.dtso
-new file mode 100644
-index 0000000000000..0e7ef7ef85605
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx-pcie1-ep.dtso
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2025 NXP
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&pcie1 {
-+	status = "disabled";
-+};
-+
-+&pcie1_ep {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts b/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-index 514f2429dcbc2..a35962f929f6b 100644
---- a/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-@@ -525,6 +525,13 @@ &pcie0 {
- 	status = "okay";
- };
- 
-+&pcie0_ep {
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	pinctrl-names = "default";
-+	vpcie-supply = <&reg_m2_pwr>;
-+	status = "disabled";
-+};
-+
- &sai1 {
- 	assigned-clocks = <&scmi_clk IMX95_CLK_AUDIOPLL1_VCO>,
- 			  <&scmi_clk IMX95_CLK_AUDIOPLL2_VCO>,
-diff --git a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-index 25ac331f03183..4accbccc75239 100644
---- a/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx95-19x19-evk.dts
-@@ -417,6 +417,13 @@ &pcie0 {
- 	status = "okay";
- };
- 
-+&pcie0_ep {
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	pinctrl-names = "default";
-+	vpcie-supply = <&reg_pcie0>;
-+	status = "disabled";
-+};
-+
- &pcie1 {
- 	pinctrl-0 = <&pinctrl_pcie1>;
- 	pinctrl-names = "default";
-@@ -425,6 +432,13 @@ &pcie1 {
- 	status = "okay";
- };
- 
-+&pcie1_ep {
-+	pinctrl-0 = <&pinctrl_pcie1>;
-+	pinctrl-names = "default";
-+	vpcie-supply = <&reg_slot_pwr>;
-+	status = "disabled";
-+};
-+
- &sai1 {
- 	#sound-dai-cells = <0>;
- 	pinctrl-names = "default";
+---
+Angelo Dureghello (5):
+      iio: dac: adi-axi-dac: add cntrl chan check
+      docs: iio: add documentation for ad3552r driver
+      iio: backend: add support for data source get
+      iio: dac: adi-axi-dac: add data source get
+      iio: dac: ad3552r-hs: add support for internal ramp
 
+ Documentation/iio/ad3552r.rst      |  72 ++++++++++++++++++++++
+ Documentation/iio/index.rst        |   1 +
+ MAINTAINERS                        |   1 +
+ drivers/iio/dac/ad3552r-hs.c       | 122 +++++++++++++++++++++++++++++++++++--
+ drivers/iio/dac/adi-axi-dac.c      |  54 ++++++++++++++++
+ drivers/iio/industrialio-backend.c |  28 +++++++++
+ include/linux/iio/backend.h        |   5 ++
+ 7 files changed, 277 insertions(+), 6 deletions(-)
+---
+base-commit: eb870a5af7db1e5ca59330875125230b28e630f9
+change-id: 20250321-wip-bl-ad3552r-fixes-4a386944c170
+
+Best regards,
 -- 
-2.34.1
+Angelo Dureghello <adureghello@baylibre.com>
 
 
