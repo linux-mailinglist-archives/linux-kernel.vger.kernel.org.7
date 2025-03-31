@@ -1,270 +1,133 @@
-Return-Path: <linux-kernel+bounces-581520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA366A760D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80453A760E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E87F3A4808
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:04:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBB7D7A265C
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF07478F54;
-	Mon, 31 Mar 2025 08:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6ED1D5CC2;
+	Mon, 31 Mar 2025 08:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bfnBblKW"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+/CY2pt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CDE1C84CB
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5461F1CCEE0
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743408277; cv=none; b=c+HNE+Lxv54YTgrjn2ZBHOWoItwiKJWgpWyk5Lj5Mbn+RrjR2M2KS+3LL10RSVfmWJj8BL4JCn7b3Qm/OSFopBOa6nH07Y/sWP/T2fzgdqsECCWeY/qeKCG25sLM+JCtlVRoeH5RetRSFkL+pQw1Gcj+EI49r83oz7A9YgkP7vM=
+	t=1743408382; cv=none; b=BoJaRE02hnquSxSaIgn0jWvb18ubjgScdb158VaG+LUbos+1A7Emn9U8dsQvuiA4bC2QhhRJiQtpuMyo0eMZvlNZ2KJIwJBtuYqaQN9UCaFrPpbaBfbgg3RWxp6e4bucCZaaMlbXZX/D/jobROfecX7O13S/xSuotahVEcDM0jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743408277; c=relaxed/simple;
-	bh=+/vznK6J/kXyee2N3VyPquK4W5Utr75HIF35H0LowLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sudgsOirb3hfoRLP6WPwFKqvm47YEjdCxnBOV27kZgQnsBCE+kJUOe/7ffY404AHcJXzK+bpgzX5gxZtWtmZnvJOBGfY1yRxRpgb2WXkZUfXPUauTXsDnSrUq+FdqXOivcJYsvUiNxpC5InGN5obXNzJKBePiIBc85mqjyBW90w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bfnBblKW; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2241c95619eso10823325ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:04:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1743408274; x=1744013074; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O1YfqM5q3N6JrT2tmqL361gwa7N8KSXnPwBvK7H0Jdg=;
-        b=bfnBblKWozeoq/xYXqkV2wARZRiFZ3lee+ypeEswhww2H8jVSWAHqoxYnu8tL09JnS
-         gAPC1Dfgah4z5t7zmAkUSTtUZccuVnHBMUz60ObAmpYO6sIg3W2EDIVGCGEReY8vpfMk
-         qsdlStanKmJv8mZnaGRPnMph8hpxlE0XCTcODcO6+WpE+VqBwgPNOMtI8xy+a/zIWhNj
-         1VzVV31E1HPEFXp60VOuCzM4sYyBB0SJ/il+IjoplSovG2AL4TdrFh8IVTVD97+QexW/
-         5Wj8y3zCSM3J70qe9bmXyrEZhezaQvjrTrzuU+McmWA34HWBp6cbbRJN4uNPVR01CgK7
-         0Bpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743408274; x=1744013074;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O1YfqM5q3N6JrT2tmqL361gwa7N8KSXnPwBvK7H0Jdg=;
-        b=hWhhAYNb0PHDLlEmRyvbiO7CAitdwJiJLzIXIvGbqSoQwT2U5neuJwgXTNKxLLiD84
-         o1yiJNvISfc/dKfbs+i7H91cSVX2RFn6f3DuGkrDOvndQ1X1yR/HA6BRoCEgjJpLhXYs
-         0NoAeyTZKYQQXhh9baauSza6AAGNFKM+ZEhxyTPFTAMgxbnSPQ0pLDjwOEUgONdBtrl/
-         Kn/7DZG5VVSw03I5YfolxV1wUgRRrFwWEayoweei9akCS3dgduIDuFAo+GrVNwvx6CwB
-         hpvZwEmy3sIsJMehY/lQ24EOulNukVXVM4c0yyqOGgmXOT/M9O5Vbh+muuS3OgjjSqLX
-         VSuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnI51jgWuN7QymapS2ntzkkWHv08APONlI2ZFQV9ymDShxf3GSzMBq6rWXWyCmQLKSR2khGkosAgYyI/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWMZJSGSrW5QqQrb24pnyvQeEdPWX8/XCPMQm16h9eLcY4i9yF
-	8i/c0VfRj2dmPlW0LAid/ZXtcFETZ9yXOZ207nCoDBY0o4ZeKWQk9P1khloESRU=
-X-Gm-Gg: ASbGncs9UASyWyQpyB6i8fvyhuUDo1jZ6eHA+9V7M3r/BHdzRHY+24bW/gZj1uvbK1B
-	XuuirWI5plkLfD9lFHpnTBeZBiahYqmnz88N+86DDKW49Fw1vYpz4lyYwacPyxB/kXopXwcUtds
-	MK/G5mNuW2RX0gvI/Ceb1/bsyUFxwbS9OZLcMetbYWyCcL4V1HvGv/hXmS1znorWrKsLCdC8Ep+
-	KIewcfLkkvx6CugOsPBn+VaF+7c0ZPLl4+URWZbrx3DAAyQSDQjkuPcHzra/fXm67Oi5oWKSZFz
-	Qz21Orfq5irEoLiPxsz5XspqWFgrcuc85ZIeLksZHNWi8/D1kda/ZXtwHmTR3OSp0Q==
-X-Google-Smtp-Source: AGHT+IE8Dz1Hvihho+GoQeM4qvZgwYsVZ+Tn2AObZx3XKfeddt3Tk2h9VbUOePJL4iQ8wePF7yVMOQ==
-X-Received: by 2002:a17:902:f70a:b0:224:18fd:6e09 with SMTP id d9443c01a7336-2292f898c11mr55849735ad.0.1743408274266;
-        Mon, 31 Mar 2025 01:04:34 -0700 (PDT)
-Received: from [10.68.121.43] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eee0d37sm64255955ad.91.2025.03.31.01.04.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Mar 2025 01:04:33 -0700 (PDT)
-Message-ID: <ec7bc197-8fde-4ccd-a02a-1effec5ac898@bytedance.com>
-Date: Mon, 31 Mar 2025 16:04:26 +0800
+	s=arc-20240116; t=1743408382; c=relaxed/simple;
+	bh=tv0nA08POILAAqGWy14m3N6kItXW+3kMFSaB74kI3N0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=LliZY7MvurveY5fC1XiIJDqKlY9r2O39n0lWDnpYX8y3Ao4lyPeK0CbCqaVcECHwocRAhkl7+ETy9bGhqp6ymT712xYEXE3R9MrokCcwUxS+0xzDse0sgUHnQ19UgmtXtjPBcpcJG4K0O1Hsyw507ts9gpnsqYPc1JTn6ag/lYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+/CY2pt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743408379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rPsm0V0jwFb/CAGVhHad9xohOJQN3D43emc/SoqswrQ=;
+	b=Z+/CY2ptGTZE+4S/ybOVnC1g9UQ6pvpvQmSNTGey2Uoh6Xjh+FHJeiexsSsJo6oHqLuIVb
+	thkKUalYM81SHaN0NvtSXo2JbTEnBu+opwV6aLMsMRuIYOXnNLzrvf858ckErvL9qfMlgY
+	jKbddwXju3CDkAuq35iSMKSvl7LunRo=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-W96iTcGqPbmvzUKojrGGFA-1; Mon,
+ 31 Mar 2025 04:06:15 -0400
+X-MC-Unique: W96iTcGqPbmvzUKojrGGFA-1
+X-Mimecast-MFC-AGG-ID: W96iTcGqPbmvzUKojrGGFA_1743408374
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 109E91955DCE;
+	Mon, 31 Mar 2025 08:06:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3FE11180B48C;
+	Mon, 31 Mar 2025 08:06:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <67e57c6c.050a0220.2f068f.0036.GAE@google.com>
+References: <67e57c6c.050a0220.2f068f.0036.GAE@google.com>
+To: syzbot <syzbot+54e6c2176ba76c56217e@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, almaz.alexandrovich@paragon-software.com,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+    marc.dionne@auristor.com, ntfs3@lists.linux.dev,
+    syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [afs?] [ntfs3?] BUG: sleeping function called from invalid context in ovl_cache_entry_new
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [RFC][PATCH] sched: Cache aware load-balancing
-Content-Language: en-US
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
- tim.c.chen@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, yu.chen.surf@foxmail.com
-References: <20250325120952.GJ36322@noisy.programming.kicks-ass.net>
- <93907416-dab4-4a3a-82b6-e37e4ee334db@bytedance.com>
- <143a63f6-3e1b-42fd-a4c8-8d2f6b7d3583@intel.com>
- <f5f056f1-a698-4660-87f0-63f5753c1679@bytedance.com>
- <1e73a88a-0d49-4ac2-a64e-6d5ff2d7ba19@intel.com>
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <1e73a88a-0d49-4ac2-a64e-6d5ff2d7ba19@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <164840.1743408370.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 31 Mar 2025 09:06:10 +0100
+Message-ID: <164841.1743408370@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 3/31/25 1:25 PM, Chen, Yu C wrote:
-> On 3/30/2025 4:46 PM, Abel Wu wrote:
->> On 3/29/25 11:06 PM, Chen, Yu C wrote:
->>> On 3/28/2025 9:57 PM, Abel Wu wrote:
->>>>
->>>> IIUC this work updates stats for the whole mm and seems not
->>>> necessary for each task of the process to repeat same thing.
->>>> Hence would be better move this work to mm_struct.
->>>>
->>>
->>> It seems that the per task cache_work is used to avoid
->>> duplicated task_cache_work() in task->task_works queue, see
->>> task_tick_cache()'s check
->>>   if (work->next == work)
->>>      task_work_add()
->>
->> Yes, this check avoids task_works being corrupt caused by double
->> adding the work, no matter this work is task- or mm-specific. So
->> if moving to mm_struct, this check become false once any task takes
->> this work, and other tasks can not do the same job until that task
->> finishes by setting work->next to work.
-> 
-> I see. What I previous thought was that, checking work->next == work
-> can not avoid two tasks doing the same statistic calculation
-> in task_cache_work(), because work->next = work is invoked
-> at the beginning of task_cache_work() - maybe need to put
-> this at the end of task_cache_work()?
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
+t master
 
-LGTM.
+commit db7a516159869b19f237c73bd75599bbe0bfcc4d
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Mar 28 16:46:58 2025 +0000
 
-> 
->>
->> BTW, moving to mm_struct will save some memory footprint?
->> Yes, this would help.
-> 
->>>
->>> To do exclusive task_cache_work() and only allow 1 task
->>> in the process to do the calculation, maybe introducing similar mechanism like task_numa_work(), something like this:
->>>
->>> if (!try_cmpxchg(&mm->cache_next_scan, &calc, next_scan))
->>>      return;
->>
->> Yes, this looks good to me. While Peter used epoch to regulate
->> the frequency of this work, which is a ligher way but allows some
->> inaccuracy which is further fixed by a double check after holding
->> mm->mm_sched_lock.
->>
->> I plan to use trylock on mm->mm_sched_lock first. If trylock fails
->> then someone is adding the work and we can skip early.
->>
->> static void task_tick_cache(struct rq *rq, struct task_struct *p)
->> {
->>      ...
->>
->>      if (mm->mm_sched_epoch == rq->cpu_epoch)
->>          return;
->>
->>      guard(raw_spinlock)(&mm->mm_sched_lock);  <-- trylock
->>
->>      ...
->> }
->>
-> 
-> This lock is intended to protect that no two tasks enqueuing the same per-mm_struct work at the same time, right? And for the task work execution phase, maybe we also need to put work->next = work at the end of task_cache_work()?
+    afs: Fix afs_dynroot_readdir() to not use the RCU read lock
+    =
 
-Lock here is needed to protect adding work, what I meant is to return
-early if trylock fails, since there is someone else being the owner to
-do the work.
+    afs_dynroot_readdir() uses the RCU read lock to walk the cell list whi=
+lst
+    emitting cell automount entries - but dir_emit() may write to a usersp=
+ace
+    buffer, thereby causing a fault to occur and waits to happen.
+    =
 
-> 
->>>
->>>>> +
->>>>> +static inline
->>>>> +void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
->>>>> +{
->>>>> +    struct mm_struct *mm = p->mm;
->>>>> +    struct mm_sched *pcpu_sched;
->>>>> +    unsigned long epoch;
->>>>> +
->>>>> +    /*
->>>>> +     * init_task and kthreads don't be having no mm
->>>>> +     */
->>>>> +    if (!mm || !mm->pcpu_sched)
->>>>> +        return;
->>>>> +
->>>>> +    pcpu_sched = this_cpu_ptr(p->mm->pcpu_sched);
->>>>> +
->>>>> +    scoped_guard (raw_spinlock, &rq->cpu_epoch_lock) {
->>>>> +        __update_mm_sched(rq, pcpu_sched);
->>>>> +        pcpu_sched->runtime += delta_exec;
->>>>> +        rq->cpu_runtime += delta_exec;
->>>>> +        epoch = rq->cpu_epoch;
->>>>> +    }
->>>>> +
->>>>> +    /*
->>>>> +     * If this task hasn't hit task_cache_work() for a while, invalidate
->>>>> +     * it's preferred state.
->>>>> +     */
->>>>> +    if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_OLD) {
->>>>> +        mm->mm_sched_cpu = -1;
->>>>> +        pcpu_sched->occ = -1;
->>>>> +    }
->>>>
->>>> This seems too late. account_mm_sched() is called when p is runnable,
->>>> so if the whole process sleeps for a while before woken up, ttwu will
->>>> take the out-dated value.
->>>>
->>>
->>> Yup, there seems to be a problem. It would be better if we could reset the mm_sched_cpu to -1 after the last thread of the process falls asleep. But considering that all threads are sleeping, even if the ttwu tries to enqueue the first newly-woken thread to an out-dated idle mm_sched_cpu, does it matter? I guess it would not be a serious problem, because all the cache of the process might have been evicted due to long sleep.
->>
->> Yes, it seems not a big deal if mm_sched_cpu not overwrites any better
->> choice.
->>
->>>
->>>>> +
->>>>> +static void task_cache_work(struct callback_head *work)
->>>>> +{
->>>>> +    struct task_struct *p = current;
->>>>> +    struct mm_struct *mm = p->mm;
->>>>> +    unsigned long m_a_occ = 0;
->>>>> +    int cpu, m_a_cpu = -1;
->>>>> +    cpumask_var_t cpus;
->>>>> +
->>>>> +    WARN_ON_ONCE(work != &p->cache_work);
->>>>> +
->>>>> +    work->next = work;
->>>>> +
->>>>> +    if (p->flags & PF_EXITING)
->>>>> +        return;
->>>>> +
->>>>> +    if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
->>>>> +        return;
->>>>> +
->>>>> +    scoped_guard (cpus_read_lock) {
->>>>> +        cpumask_copy(cpus, cpu_online_mask);
->>>>> +
->>>>> +        for_each_cpu(cpu, cpus) {
->>>>> +            /* XXX sched_cluster_active */
->>>>> +            struct sched_domain *sd = per_cpu(sd_llc, cpu);
->>>>> +            unsigned long occ, m_occ = 0, a_occ = 0;
->>>>> +            int m_cpu = -1, nr = 0, i;
->>>>> +
->>>>> +            for_each_cpu(i, sched_domain_span(sd)) {
->>>>> +                occ = fraction_mm_sched(cpu_rq(i),
->>>>> +                            per_cpu_ptr(mm->pcpu_sched, i));
->>>>> +                a_occ += occ;
->>>>> +                if (occ > m_occ) {
->>>>> +                    m_occ = occ;
->>>>> +                    m_cpu = i;
->>>>> +                }
->>>>
->>>> It would be possible to cause task stacking on this hint cpu
->>>> due to its less frequently updated compared to wakeup.
->>>>
->>>
->>> The SIS would overwrite the prev CPU with this hint(cached) CPU, and use that cached CPU as a hint to search for an idle CPU, so ideally it should not cause task stacking. But there is a race condition that multiple wakeup path might find the same cached "idle" CPU and queue wakees on it, this usually happens when there is frequent context switch(wakeup)+short duration tasks.
->>
->> Ideally mm_sched_cpu is updated every EPOCH_PERIOD which is default
->> to 10ms, so I'm afraid the race window is not small.
->>
-> OK, understood. My thought was that, if many wakers start searching for idle CPU from the same mm_sched_cpu(because mm_sched_cpu has not been changed for 10ms), if waker1 succeeds to enqueue a long-running wakee1 on that mm_sched_cpu, other wakers might stop choosing that mm_sched_cpu in SIS. But if all the wakees are short-duration ones and doing frequent context switches, many wakers would think that they find an "idle" mm_sched_cpu, but actually it is heavily contended by many wakers.
+    Fix afs_dynroot_readdir() to get a shared lock on net->cells_lock inst=
+ead.
+    =
 
-OK, seems I misunderstood the race condition you previously mentioned.
-Yes, it's not clear yet whether mm_sched_cpu would cause stacking or not,
-I will do some more test before further discussion.
+    Fixes: 1d0b929fc070 ("afs: Change dynroot to create contents on demand=
+")
+    Reported-by: syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Marc Dionne <marc.dionne@auristor.com>
+    cc: linux-afs@lists.infradead.org
+    cc: linux-fsdevel@vger.kernel.org
 
-Thanks,
-	Abel
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 691e0ae607a1..8c6130789fde 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -348,9 +348,9 @@ static int afs_dynroot_readdir(struct file *file, stru=
+ct dir_context *ctx)
+ 	}
+ =
+
+ 	if ((unsigned long long)ctx->pos <=3D AFS_MAX_DYNROOT_CELL_INO) {
+-		rcu_read_lock();
++		down_read(&net->cells_lock);
+ 		ret =3D afs_dynroot_readdir_cells(net, ctx);
+-		rcu_read_unlock();
++		up_read(&net->cells_lock);
+ 	}
+ 	return ret;
+ }
 
 
