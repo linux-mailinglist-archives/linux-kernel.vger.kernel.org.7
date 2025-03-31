@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-581903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0C4A7668D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F76DA76694
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EC81660DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6AB516A9F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA742AE8D;
-	Mon, 31 Mar 2025 13:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gsl2Knsa"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEE2211466;
+	Mon, 31 Mar 2025 13:08:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299CE211299
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 13:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2CC1DF73C
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 13:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743426444; cv=none; b=hm+onsYjMTPEnqT11DwgSApdIXyUYNXOYRsB4k+BCRWzloYXjk3Rt48+3XsSt63pmWZN5IODefH0rsmwQfNeehH3mkeA2JmxJHCUk2sKoNAQHhaxA1H/XgTb8YeM/ih6FiE98jwTkTt8SuHB2ds6IdcWc8wcn4uGnaT1TEzUbYg=
+	t=1743426503; cv=none; b=sXMPRdgBujWWG3S3OyxswZa/yxOWQkn2W7kUllfr2K6SZNubvL+dGQPLroKZ6jrGGs/PxjT4uVN4cnnFO0v1xqd9AFYB1Mh3CSPFK6TxBLbdxuC7PJl5Gq6RBG8UBCR8lt+v7Qd7CjiH9tN57RmnJ98a6gZ9e/pfgSxbgmgzKpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743426444; c=relaxed/simple;
-	bh=16YwZIoXgnM9i1KCudAoJ/d9NcgG2KIssSVas1YK37s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWvVt5EDTfZmBI3zo5rnzFIsXtAIAxiUT5NX88aL+MolCIzX3aK+rnGkELeLZPpA6wTotTnt/B6LNcTFTGbacguyQNuGImMapK+q4Bq8Jq5PqELOFt/U/4DUFovLX9j9/htr3fVkxGCH9T9wIBLu4JNsVRiSOqgQNmDP4dRrg2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gsl2Knsa; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d4496a34cdso17450975ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 06:07:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743426441; x=1744031241; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ed/Ddyzsa1QN6yzj0LbFuD8MNEjFi7fRrdU4dK99FE=;
-        b=gsl2Knsa2Uwk0CxzHOT5kvv1hUlPdbHPCCTlxgJcfo9I/G0tEZbGwl+OHAtzuQtPWx
-         RAGy0QFGFc1CGdEx+IcgaH0T2fMrGU/zZ3FucCgyOBEOfZHcIIcUlVVt84eC3Vw44juC
-         1KwPZ6K1tTU0x5YigBSByp6IX5GEWvjGokDmzHKZ8nGZ977TksCtRlR/kPelF10N9bZr
-         Ey2amgFvqIENnGA8UgbdhIlJetiJQ47XPShzmSBofkkTQLx6YmqrMxAZjP4mRRODK5zj
-         yiyrzjpQ7zezTJNgyYPn+tyuJP5+jCk+6GF1gHVmlNPl46tGAkRS9nR2DNocmZJoQ9TS
-         ZXHQ==
+	s=arc-20240116; t=1743426503; c=relaxed/simple;
+	bh=lQcciuXGdeI+gMHGUsufMwWOrrIFBfsxM70zLAB5wC4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=V8FRsKB5+6877KKLQao2flENthSAjv3vy931K4AZbW1vXGzigg5Q/j84lIw/aU/VOnUfsQ6ewjoE2vNKsIPlNwgUKPgdrtaS2jnEtZIfjMWJsN69Sp5tEQo2DHkM2VPJBx+dNVZjuRr0mHc70FJshOvsG0KjcMXi0TspTxPlZZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-849d26dd331so516585139f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 06:08:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743426441; x=1744031241;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ed/Ddyzsa1QN6yzj0LbFuD8MNEjFi7fRrdU4dK99FE=;
-        b=iURAvUybBph1pc4HcsCdzgP9Zeg2oeVh+Au2ajByIpJXU31mtyuIN927m9gmgRZ/RF
-         Yjz99vQ7j3y31DcOK8aeYni7yY8RYRO3uO1ZZJiqPyI3QV43qLg9OjYj6SeCyeCEva+g
-         lDFe5TiGZWb5mgGu9tptjeI9Wr+2AyptEPrq5n5Aez5hvnTdG+gabA4Y/KM4Ktlxsn2k
-         EEG/BrWINa5hkbYeHKIBi999dOlfisP8ScjSYF1/F5g+3j0T8xN1rPJyV78bNWnvMeX4
-         GveMUpw/H7fLBBIwsjrJaIMZk/KuJ2xzXAHrnEkedjWbRaLmOEhO04PPrHtMD3VIvdG1
-         0oKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+4MlWhmH9SlVfJBxnnZWWzUFRtQx8eD0nU12Z+7F7ULjJjH+Ognp1Pc5EilJrJMAICvk3aah4ZUwO47c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYwAvH2gtl9y2HrvkNYZ5qf2Mn1Mn+Qeys8+cB3deILJEiAjQX
-	yG7f+kqV0izm3u9onlggQRAWilyCRsCXLA42GI7/ESNRZ2YqCuRergZ9xGRgVd8=
-X-Gm-Gg: ASbGnctoUeh5MzaPPamMWg0WhNBFT4zmaMF6q4RYRdmyXLJiFMoHdVoGPR5Q8vihc5p
-	2godpRJAnR5qDjmrj4tGPZVWZRB1socqgi5p0/oF9Y8Goik8wliKuL/DjlvIkOn21QEnDt3+8Ax
-	p7taK/ADGYUhOLuTE2u2MPTVQafTXKahymbA2HI+Fn/FVaynQ664Mx4r6U4NNHpdl4TVZs1Aek5
-	U16KrdtDfg9B43z/+AKlemfQRqp732a12hiF9W9nxUsnOd25MWEoKoAOI8M4vuuDU6XeoVaZINY
-	cjjriSfWlz2laTS2pp4j1vjIXl++ggyXm6EtlMEsMg==
-X-Google-Smtp-Source: AGHT+IG32Cg6zI9tmakUIJ1DbRmEZpmwRLQi8qjY4xoSKRbxylqUWbU9vadDFdtujdQ/ao3ofcsZDA==
-X-Received: by 2002:a92:ca09:0:b0:3d3:f19c:77c7 with SMTP id e9e14a558f8ab-3d5e09c8d9fmr73771055ab.16.1743426441218;
-        Mon, 31 Mar 2025 06:07:21 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f46471b40fsm1863674173.26.2025.03.31.06.07.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Mar 2025 06:07:20 -0700 (PDT)
-Message-ID: <aa8b9ee9-1787-421c-9914-d3d7c77bd1a2@kernel.dk>
-Date: Mon, 31 Mar 2025 07:07:19 -0600
+        d=1e100.net; s=20230601; t=1743426501; x=1744031301;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HQm97m3F2hf17H9sSC0zFvTaV5xTq5eG+zcc0Ysc7gY=;
+        b=MPk0j0vd323TXiuC4I7JkybUMSJj/82GvqPrrwRx6U2d2orqrUjzkGC9ELhUYuKHZK
+         ndD+MD8QXZ+liy+BFWuuObI8t1UHMMSm5dsZsjXYsOYZGQ7/ZHsuZJgTjiV4xsiUYEiN
+         vYlIZMkn44bVxFuUdlbai5yGwPm8Xp7v0cBUoDT11zcj80Hcguk3MyRPnQm9lyTDu7U/
+         0DE0sbuiSqcUVeEHplIHVY0WpjZDA1rKDPGjBRmktOuS31A5iJac2s+0Tl2Mrg/SrI0r
+         +f20oSg5J41mMSe7rzYS1Jlj7P6DpDMeq0OTzvSBL6Z76FetKhFtgE0FGbMVqxlGR4m9
+         QkhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQvFzwtkTVHmgfW1eCCDGjGjBxPwO73gs+vwXCYtGz92tMl1xQnGwBnN0+UIIOfcezxuX/yNmYEzzaxtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6wPlLOEann8eaZu4ZgGxu1pCxJIuHSFGKNg4pXs9S7XZk23YD
+	cPAjaFLs+TQipnhvfdPOtdNeZp7+zjlKAO5eNYWozpMQKIhg2WKFcegn3UI7UKUA6m8YUgS/GcA
+	XBlRj2nwJgXA0Vvvq6wHxpXAqma695S4bvzzBnVPr/zjG+yBFvru+QKM=
+X-Google-Smtp-Source: AGHT+IHIaGFv45CH9yP1SffeoWvG2028p1ktltDelf5T5UC2qndIIoinYo63hKIwG71cL4xQRElrEOk1KdPJWahGv071nX2vW6XE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the block tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ming Lei <ming.lei@redhat.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250331163734.7dc27905@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250331163734.7dc27905@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1988:b0:3d2:ed3c:67a8 with SMTP id
+ e9e14a558f8ab-3d5d6c8346amr107275575ab.4.1743426501208; Mon, 31 Mar 2025
+ 06:08:21 -0700 (PDT)
+Date: Mon, 31 Mar 2025 06:08:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ea93c5.050a0220.1547ec.0142.GAE@google.com>
+Subject: [syzbot] Monthly f2fs report (Mar 2025)
+From: syzbot <syzbot+listcca4438a6792bfb39532@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/30/25 11:37 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the block tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> Documentation/block/ublk.rst:353: WARNING: Footnote [#] is not referenced. [ref.footnote]
-> 
-> Introduced by commit
-> 
->   17970209167d ("ublk: document zero copy feature")
+Hello f2fs maintainers/developers,
 
-Thanks, I killed the footnote.
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
--- 
-Jens Axboe
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 9 issues are still open and 57 have already been fixed.
 
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 1246    Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 59      Yes   kernel BUG in f2fs_evict_inode (4)
+                  https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
+<3> 11      No    WARNING: locking bug in f2fs_getxattr (2)
+                  https://syzkaller.appspot.com/bug?extid=44090b62afaabafe828a
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
