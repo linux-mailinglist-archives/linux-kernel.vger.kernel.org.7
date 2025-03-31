@@ -1,251 +1,139 @@
-Return-Path: <linux-kernel+bounces-582006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08A9A76828
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:38:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BAFA76822
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544D43AB748
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:36:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C807A1BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AEC2165E8;
-	Mon, 31 Mar 2025 14:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yk2QFb6c"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6608521C187;
+	Mon, 31 Mar 2025 14:34:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16E221577E;
-	Mon, 31 Mar 2025 14:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743431665; cv=fail; b=awyYmtr0QON5k0/x05VrJeWQP3k5aclr5yb5L3qn3X4bnJdNwKPBilKMIAYSWT/pobcJAeFrG1IVVHRnCPdJGbyKbnzWWU61Tgyn6fIHZd2jXE55DUlPLvK9EMaDX1Ry0tm0oVWVllkNQLVw3jHQkYHIf+1i3wd2r6SnKNMARVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743431665; c=relaxed/simple;
-	bh=47pZGroAsK/2MpWX4X1QXasealCE/qRmQTtTQhPCMvc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MVDjXR3GqzcEtVhTOsnIorc+IBB62QwQKwFrQjt3iVH5otAKb/g7YeYPLQguq6xRr9P8PFA5HywRTIfH1J/fIbLIC7Th20J6EzaXNFxFLI9w0hPxozxdnecPVh4IjVUpa4zt5qXIkgH5GROi6nevkK4O8ZKUpvR8zGy5jYRV0vo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yk2QFb6c; arc=fail smtp.client-ip=40.107.244.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u5iGpNStNl0IXN9/zq9Ps+Wh9d+QB/IFlhiOCMXxtzE/N0V0XsaZTtygAuDVaUVBTL8u1qfv6EiLEBwdRKmMpoRvJ3lnxBzxklRGiaIQRdMiSiFXcdeNcp6kw+oRbQnl07yr5Q1fOSGIK0xKrOqZSXRBRftqdctdtezY0+/k/n49+Ibwm4rZUd3YOv/Ws7q9HQM2sRqLK7yVwAEQHNgfKiiphO4TMddPjQnSLLJlEOrLraUt9oGUpSJ5SuN5T15GYJPEJfERYkQQUW+i0uog/ewPhrG6hD4gCxJTVuVF78BP09MlxSejzU3tW+00fWe/7Nlxz1zeHZVMw2E22w2/Zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VuiztvmF8rYrvqAJDjvNjMSUWD6R3brnJiGmsw6zLNI=;
- b=fncGNzwnfdNZiMfhihNdZb8v4M1t8jvEytyOAbys0LQzHE31/Ag9GPDgJ7o7OqY8H3IVgkF5x2+t2yY5KsVEMBi03tEAlUKc0qD/xAkCBMmk5z2AcSWBFLnuxz4ZC2FUSlWjq6YZ6gmNaKArHuD140eWDF2HsTIodprq6TolwAusZPs7q3QjJL9QSNSEUUdHcAz3nJZdsNdOt0nJiKgoZFrXn3iuWeRINk01ECkFlEg2JhqAVF/TeYu3/WSvOHqZ/q9NEpKXPeqFsFH48YrxZmsW36f2LYQOw7T9tWNgbx1WMPmL57L3BhUox5uOGfQk8PbnaXkMtBJ6oEV2Ct36Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VuiztvmF8rYrvqAJDjvNjMSUWD6R3brnJiGmsw6zLNI=;
- b=yk2QFb6clsHG2QkHo1XWQR1c4Vy/x+rKVVezgWf6Zib3rgDHCJNvOO8PokALkhAmBiweEwQ8xGcxkc5LzR9xlmTDvB7faeLGOpm8OuKaizJCu6s1vaNJJWhBInWxugzD3cGVTvCA8YPiUoDz+WYjSv5pOCjWg2o8jsnehvSu3io=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MW6PR12MB8913.namprd12.prod.outlook.com (2603:10b6:303:247::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 14:34:21 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8534.043; Mon, 31 Mar 2025
- 14:34:21 +0000
-Message-ID: <492a990e-0af4-4acb-be4c-8821fceea2a0@amd.com>
-Date: Mon, 31 Mar 2025 09:34:19 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ACPI: video: Handle fetching EDID as ACPI_TYPE_PACKAGE
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>, Gergo Koteles <soyer@irl.hu>
-Cc: Len Brown <lenb@kernel.org>, Alex Hung <alex.hung@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>, linux-acpi@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <61c3df83ab73aba0bc7a941a443cd7faf4cf7fb0.1743195250.git.soyer@irl.hu>
- <CAJZ5v0jBONZ7UFL0HCOV=7xmnUphL_UTV=_1PnYmR6n0oN4pcg@mail.gmail.com>
- <d3dfe61a-1d4d-4aa6-870c-61249799e6da@redhat.com>
- <CAJZ5v0hy7ge+vPgNXzo89=qu7pP-tPgbjUPRHUMdwUnSTpVXQQ@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <CAJZ5v0hy7ge+vPgNXzo89=qu7pP-tPgbjUPRHUMdwUnSTpVXQQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7PR04CA0017.namprd04.prod.outlook.com
- (2603:10b6:806:f2::22) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDD521B9FD;
+	Mon, 31 Mar 2025 14:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743431674; cv=none; b=ZFrdNkF4e9RglB2dSejEDwylqbCVMzFHthk7ElzhLeYWHtNXcYKAs3c9e8bRO5CWD7OC+VThcKNyKiTPQ72f5zuF4d9h84+J0CBUZ6GBAx/EuWIKSjeMjxMW29D2iT964mkw/5Qhwe1oLyjt5z+ufRV5DGrHE0GCnpQtyMd7O0Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743431674; c=relaxed/simple;
+	bh=UJFg1dao4GQMCub2MUS4ClAwY2RgA/iCJuXqVOviieY=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Z4tahidy7p/xejeg1N0ZCjA82/9ynUfcjUZjLPGjRqaAkO6io1qoYYg9Gdeg5DQRoMyV0xkT0xYkZf4u0ogBvSXv13/IttvgMleJWUPCe0ANa+qC59d3ZHCPnvP1JRf4H4E6jS7HkCLXzAvj01yOQ35xP5va56Ej0sN6nRlybDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E36C4CEE3;
+	Mon, 31 Mar 2025 14:34:33 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tzGEe-00000005pAG-1o8S;
+	Mon, 31 Mar 2025 10:35:32 -0400
+Message-ID: <20250331143426.947281958@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 31 Mar 2025 10:34:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v2 0/2] ring-buffer: Allow persistent memory to be user space mmapped
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB8913:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80132f1f-16d9-4e66-6fe4-08dd7061200e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFFHOFYvc0oxY2hoUURBL3pBYUZVVEJhcHFqWmlTTEt1UDNlbkxXS0pZdyt4?=
- =?utf-8?B?Y3hDeE9BamhmcWhXRkMrNkFROCtrbUlPaS9hbHNYdHdydFZEbHRFM2J0TEJa?=
- =?utf-8?B?T21DVmVwM0NkSUx4VXdwUzdleG1FRjExcnh3Sm1vSXlBb0d2bGE5cU5tUDNl?=
- =?utf-8?B?ZDZSUFNsQnJReG5iWG5YaldjZ2U3MC9QTDNVaWJnZkNzeFhTK2hMM2IrazU4?=
- =?utf-8?B?U1dxK2dIS25ZRDlzTUJ0OEdBSVphbTAzOTRVdzg2YmRYSlVpckhSOWVrV2VQ?=
- =?utf-8?B?SkJKRjJkM3NTZkpaSEJnR2Vsd0dTd2NxYm1PRE5QS212S2pFaGEwWVdjc3d2?=
- =?utf-8?B?RFNia3l0QWp4S2pNcWtzellVOTFLbnRsRCtreUN5K1haaFhPY3Q2Y0xaSDda?=
- =?utf-8?B?R3p4a2s2SXlRaXFpU2VqWmNVeHh6ZnJ1SFdRZWRKc0R2Y2lEbzNHOUN1MWJw?=
- =?utf-8?B?VTJmVXNKSEVCeXpVRHZ4VWRMU2czbnFITjVVckI1dHZiaEs2UmFGbHl4QmVm?=
- =?utf-8?B?RUJpR0pNQTh3UnZNQTdhdFY3VnVTSjFKZmZSUVdMNGlKT3VrdWNOeXFkZE95?=
- =?utf-8?B?d2lFUmZkN0dYWEM3RVVEYkFEb1lqd1VFSys1dWJkWFEvTGhXQUJtekhsbTB0?=
- =?utf-8?B?T2YyTFlSVFM2UXNuQU0zOWpmSGtTTDhNWWZWZ3R5eUdOajJ5anhwWWQycTBi?=
- =?utf-8?B?dUVmNk5SVXhTcit4dm9JMmtaQy96ZG4rUjl5eHo0MmwrNWdYSTRXa2dkRTF0?=
- =?utf-8?B?cDZKVFpySkJPZVFBbW9HMUN2WXdIbFRuajloQ3pnVk00aUg4aHpwaWo4ejBS?=
- =?utf-8?B?YWxGTFh0bW80NlQ4bElFa0FUNk13Qlh2VUllSU5TbnZ1ZWJpSU9Lc2xpVndr?=
- =?utf-8?B?M2RsU256Rm8zWDRURTEzSHo0K3N3Vys3L1Q2T2F0TnFvTW1ETndKZElMODdC?=
- =?utf-8?B?bzZHNGxxWHMxV3M4ZVBOS1poak9jdzM2enlpbklnRldqUytMZTNRSng2ZlNR?=
- =?utf-8?B?bXJFUFFReVAwMWY2Ny9KelNiQlVxbXBtclJ2dmJzN2Q1L0ZrSUNxc21ENEIx?=
- =?utf-8?B?WlVCcDdwWGZOTkw3VG1URzN6N1dza29zdWxTMlpnOXQ0eGJwZm4zdDNCQ2hL?=
- =?utf-8?B?RTJxeHNsWXFzTW5DOGwwU0hqMmovUEhBY013aDFWbHJTb2ZFWkx3UjRSMlhZ?=
- =?utf-8?B?YVp6YkdROHl5Umw0TEFPcCswdVR0VTdob3BGak5oTzZ2UHJzQlRQdi94VUZq?=
- =?utf-8?B?Y0o1MmxDM1BPUEpqaW0wamVuTzdsQjNTWExGWXdoSFRRNVZ0K1N1M1lzd3lj?=
- =?utf-8?B?RVU0M0hNZVpDeW1reEhHQzNSUkJuOHVMQyt6cklkZExYMEZIK2VzWkdCUGZF?=
- =?utf-8?B?Qi9kaldnT0dVWWh0Q0NsSWNNUTZoK1pnTXM1ajBpa1hjTkNmMDRQWW9EeFRT?=
- =?utf-8?B?aWdhRCtuL2xHakw3ekxxc0hMb1E1SWFmNzZVMEdBcWxaK2gyQ1hxaUJ3eDJY?=
- =?utf-8?B?NzVWeEVkQzY0N2tZTUorSStDdUxBbmpCVmVWTW9nYThvb0VHZ3lsRy9VZXpy?=
- =?utf-8?B?Y2FscW5EQ0g2WGwwTFk3ZXBTTlNBSVNHc3lOMzBuQUVDWi8zcHR5U1FXL09P?=
- =?utf-8?B?OFp1S2lPK2d5OERGYURydmlFWU16WFh3d2NZQ0MxUHNyZ1FCTjNMT0hzeGEx?=
- =?utf-8?B?di80NUVQM3g5ZXJTYWNwZjNQby9DUHZjTjhBMG5VaFRsMG9zUkZYRmRuNmdt?=
- =?utf-8?B?RWkrL0JLSFY3Q2gwTEM4YkdOQlh4L1BJbHRqWUNpb0tkeCt2L1d1eExILzdG?=
- =?utf-8?B?cXhBTzlwb2dHQmRkYi9qeVgyM3hjZXVQMy9MU0FXazZqUU0rYzdqWGxYSHJZ?=
- =?utf-8?Q?PjyGeRYqKzzGu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?KzIrRDNoY3orVDVCa041ejVkZmZyZ2hFa1M0MjBud0Q1TElkeGFDbjVQQkwv?=
- =?utf-8?B?TGJqVER2bjVtWmxQZ0xUcXlVZDJuNXJzNEEzZEsrVGJVbHpqcVYwRTlOUUxM?=
- =?utf-8?B?V2c2UUxPYTZndUdwbFRlUGgrbTVQTTR6czNaUGVPYjlMK1RlVmNDM1I2TW43?=
- =?utf-8?B?b2d3K3hYenVDM0NtQVB3bVppZ0tjcDNHNXRvUmFnRFRPTVZmbURZN0laN1Qv?=
- =?utf-8?B?VjVBK1lEMkdyZE85cS9pdnp1S1pCZUdtODVlKzE4WG5GVFUybU1hS2t1U3U1?=
- =?utf-8?B?czY5UldyVlY0RnZtZmN5cnlFbUlhV1BUOWUwQ0hpaXNPUnIrVml4OTRrUFls?=
- =?utf-8?B?Ry9xQ3hLUG5Ub0FHYkNzL1lmOWFOVjBZUVJGb29DRjNUbjF5NFYyVjBiNjRt?=
- =?utf-8?B?WHNLWDliTWFEOVU1ZmtOVElXUTJEZ3o3aEdVUjBWcnB5Y201bk0yMDFtZ1dD?=
- =?utf-8?B?RlV6b0tkQ3lnczduZlQ1QUVFdWRJWXRFOEtCaEhINXNpeFp4ZlBmNFVqYk1Y?=
- =?utf-8?B?blB1SHRYeXpMYzFBZDV0SVZZa2tEc0pCL3RpRTNHck0xc0tkT3FrRys4eDRZ?=
- =?utf-8?B?SGFNUVdtMC9tN21wSkRVZklmeXgxMGh6N2JwUHQ5aGdpei9nOTlNZVpkQS9v?=
- =?utf-8?B?VFFJa2Fzc0ZuL3Fjbk1Vb2lCd3BISFJGK2g0OGt6TyttMHNOVEx4TkVtMkZF?=
- =?utf-8?B?UWNDQmUvOGtHWWZwK0pmY0JmcVFYVml4WEtYYXc1cXd3cFVXR0NoSjhBQ3VZ?=
- =?utf-8?B?cE9NYnFEdkJvbWMrVFFBZFNOa05uNjl0WDB6eE5DMXMyUkRnUTA4SjVKc0Fa?=
- =?utf-8?B?dS9maC8wZk5oeG5Qd05Fcy9sU3NwbFBKV3VvdkhQTWFLTFRBRnhOVDBuZDJ3?=
- =?utf-8?B?UUxIaVF4QmpYK1RsMnhMdXZQeWdOWXkyblBaZEI5ZTIxYUFTY1lOeGFic3lQ?=
- =?utf-8?B?YWpQM2RYaE0yNERCY2VPemNLeXFyaFZncDVXb0YrWmt2eURTVW9MYVY1RjhU?=
- =?utf-8?B?K3crMjdIdk9kRzJSenFiTVNZbXJoYmlnWDNTY3l0YTQyQVJ2elZlWnBqdUJS?=
- =?utf-8?B?NWM5LzdYZ283NHlabWM1WUJMUTZRYTdQY0VTUlhuTzc5ZlRaY2x1cGdXSVp5?=
- =?utf-8?B?dy9JVzZpSU5TTEs5M2U5eVk3WTlZRUlkM213K2JYUFVFM1Y0WEpJK3lpYnBD?=
- =?utf-8?B?aXY4NTMzR1RwT2FnOWd0Ym13ZEN3QTlFZ0lqZ1loUlFCM0FWcXdUZCtORkxZ?=
- =?utf-8?B?aTdBUDdlSTR0MnM3cVU3Mk1XUDNJTitNdlJFRmUrSCtuWWZOZ0pEN3U1Nkwr?=
- =?utf-8?B?SEs5TVVXaVFIV2RWYUYxUVpUaDd5T042MWx0VVhhVEtoMDVXeUdYNjR1NWth?=
- =?utf-8?B?c3piMlNLMkxVaHIvdmNYdEF6bnVXZzdJemM3WThHM1c2bWVxSG91OWhjMGFF?=
- =?utf-8?B?cWZNQnk5bklranE0TjJabGNKWHRSVUxGRVpFNnA1VlpXQ2NrMytEWHVjZTl1?=
- =?utf-8?B?WXR6Y1FIMFZpai9tRDgwR25kVWZibUgyRzBqWVVhMFFWR29wRDNxUHkxbWFu?=
- =?utf-8?B?cm5rR2FpM2tlSXoxY21SV3FHTCtaT0NOTk1jd0xaRnNQSEtxd2FMZzBtMTFq?=
- =?utf-8?B?aDFrKytVVjJWdVM4TElRTlhPMitJVE5JVUhQeDJ1RnBBc1NYMHZUN3FnV0sy?=
- =?utf-8?B?RUR3aEVlL0ZtSjIyT0JGcldzVHhFa0dTNUo4WE5oYlQ5eWZZK3RJN3YwR2Fx?=
- =?utf-8?B?U3M2NXBDZDFtNENNemJJT0owTkhoY2JGWHBkTFpBb1F0WkVFR0psOWhrbUN4?=
- =?utf-8?B?bGpYMExlMGRBRUh1b21SUHI2Wm5WZTdIUXBSTEVHTW5ZZ21PVE9Ca09ZcDVn?=
- =?utf-8?B?MXZCSFowSXR4L1NQRGhCWXc5VGxkYjFEZndDZjUrZnNWck1TanoyeHNlVW44?=
- =?utf-8?B?ZDlsL0lBVTdKSmxuZ3dZb3BSN05Qem5icVJGZlg0TUtabEZ4N3N2RllEa1VH?=
- =?utf-8?B?VG01UWlCTll4ZlNhOHVFQzJTYmF4c3Z3cVdiY0kxSnV3amsxeGoxak1qVEFk?=
- =?utf-8?B?YXhHSE43ZUIzNUVvdjlFcXYybzFqVCt1RjNFckt1SGhldXZhQjU3SHN1b0dN?=
- =?utf-8?Q?vcm+L06k5ic49P3Kda4M1kDsg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80132f1f-16d9-4e66-6fe4-08dd7061200e
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 14:34:21.1158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ayGdlqRYIEiX2mRGB2ZA/3kV3RdglZstPVilH/2GiRZ/mX+PSuZwA8BdWWJy+rBSQ9wSmimMKXTMZup3EeVy4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8913
 
-On 3/31/2025 08:23, Rafael J. Wysocki wrote:
-> On Mon, Mar 31, 2025 at 3:04 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 31-Mar-25 1:46 PM, Rafael J. Wysocki wrote:
->>> On Fri, Mar 28, 2025 at 10:09 PM Gergo Koteles <soyer@irl.hu> wrote:
->>>>
->>>> The _DDC method should return a buffer, or an integer in case of an error.
->>>> But some Lenovo laptops incorrectly return EDID as buffer in ACPI package.
->>>>
->>>> Calling _DDC generates this ACPI Warning:
->>>> ACPI Warning: \_SB.PCI0.GP17.VGA.LCD._DDC: Return type mismatch - \
->>>> found Package, expected Integer/Buffer (20240827/nspredef-254)
->>>>
->>>> Use the first element of the package to get the EDID buffer.
->>>>
->>>> The DSDT:
->>>>
->>>> Name (AUOP, Package (0x01)
->>>> {
->>>>          Buffer (0x80)
->>>>          {
->>>>          ...
->>>>          }
->>>> })
->>>>
->>>> ...
->>>>
->>>> Method (_DDC, 1, NotSerialized)  // _DDC: Display Data Current
->>>> {
->>>>          If ((PAID == AUID))
->>>>          {
->>>>                  Return (AUOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.AUOP */
->>>>          }
->>>>          ElseIf ((PAID == IVID))
->>>>          {
->>>>                  Return (IVOP) /* \_SB_.PCI0.GP17.VGA_.LCD_.IVOP */
->>>>          }
->>>>          ElseIf ((PAID == BOID))
->>>>          {
->>>>                  Return (BOEP) /* \_SB_.PCI0.GP17.VGA_.LCD_.BOEP */
->>>>          }
->>>>          ElseIf ((PAID == SAID))
->>>>          {
->>>>                  Return (SUNG) /* \_SB_.PCI0.GP17.VGA_.LCD_.SUNG */
->>>>          }
->>>>
->>>>          Return (Zero)
->>>> }
->>>>
->>>> Link: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/Apx_B_Video_Extensions/output-device-specific-methods.html#ddc-return-the-edid-for-this-device
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: c6a837088bed ("drm/amd/display: Fetch the EDID from _DDC if available for eDP")
->>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
->>>> Signed-off-by: Gergo Koteles <soyer@irl.hu>
->>>> ---
->>>> Changes in v2:
->>>>   - Added comment
->>>>   - Improved commit message
->>>>   - Link to v1: https://lore.kernel.org/all/4cef341fdf7a0e877c50b502fc95ee8be28aa811.1743129387.git.soyer@irl.hu/
->>>
->>> Hans, any concerns here?
->>
->> No the patch looks good to me:
->>
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> OK, applied as 6.15-rc material, thanks!
 
-Sorry I'm a bit late to the party; but this looks good to me as well. 
-Thanks Gergo for the solution!
+Allow the persistent memory mapped memory to be memory mapped to user
+space as well. Currently, the user space memory mapping requires the
+buffers to have been allocated via page_alloc() and converted to virtual
+address via page_address(). But the persistent memory is memory mapped
+via vmap() and a simple virt_to_page() can not be used. Move the control
+of the physical mapping via vmap() to the ring buffer code so that it
+can then use the saved physical and virtual mapping to find the pages
+needed for memory mapping user space.
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+The first patch moves the memory mapping of the physical memory returned
+by reserve_mem from the tracing code to the ring buffer code. This makes
+sense as this gives more control over to the ring buffer in knowing exactly
+how the pages were created. It keeps track of where the physical memory
+that was mapped and also handles the freeing of this memory (removing the
+burden from the tracing code from having to do this). It also handles
+knowing if the buffer may be memory mapped or not. The check is removed
+from the tracing code, but if the tracing code tries to memory map the
+persistent ring buffer, the call to the ring buffer code will fail with
+the same error as before.
+
+The second patch implements the user space memory mapping of the persistent
+ring buffer. It does so by adding several helper functions to annotate
+what the code is doing. Note, there's two meta pages here. One is mapped
+between the kernel and user space and is used to inform user space of updates
+to the ring buffer. The other is inside the persistent memory that is used to
+pass information across boots. The persistent memory meta data is never exposed
+to user space. The meta data for user space mapping is always allocated via the
+normal memory allocation.
+
+The helper functions are:
+
+ rb_struct_page() - This is the rb_get_page() from our discussions, but
+                    I renamed it because "get" implies "put".
+                    This function will return the struct page for a given
+                    buffer page by either virt_to_page() if the page was
+                    allocated via the normal memory allocator, or it
+                    is found via pfn_to_page() by using the saved physical
+                    and virtual address of the mapped location. It uses
+                    that to calculate the physical address from the virtual
+                    address of the page and then pfn_to_page() can be used
+                    from that.
+
+  rb_fush_buffer_page() - this calls the above rb_struct_page() and then
+                    calls flush_dcache_folio() to make sure the kernel
+                    and user space is coherent.
+
+  rb_flush_meta() - This just uses virt_to_page() and calls flush_dcache_folio()
+                    as it is always allocated by the normal memory allocator.
+                    I created it just to be consistent.
+
+  rb_page_id() - The mappings require knowing where they are mapped.
+                 As the normal allocated pages are done in a way that they
+                 may exist anywhere from the kernel's point of view, they
+                 need to be labelled to know where they are mapped in user
+                 space. The bpage->id is used for this. But for the persistent
+                 memory, that bpage->id is already used for knowing the order
+                 of the pages that are still active in the write part of
+                 the buffer. This means that they are not consecutive. For
+                 the user space mapping, the index of where the pages exist
+                 in the physical memory is used for the placement in user
+                 space. In order to manage this difference between how the
+                 ids are used, this helper function handles that.
+
+These helper functions make the code obvious to what is being mapped
+and how they are mapped.
+
+Changes since v1: https://lore.kernel.org/all/20250328220836.812222422@goodmis.org/
+
+- Changed map_pages counters page_count and i to unsigned long
+
+  In case someone uses over 4 billion pages on a 64 bit machine to map
+  the memory, have the counters be unsigned long and unsigned int.
+  The way machine memory is growing, this may just happen in the near future!
+
+
+Steven Rostedt (2):
+      tracing: ring-buffer: Have the ring buffer code do the vmap of physical memory
+      ring-buffer: Allow persistent ring buffers to be mmapped
+
+----
+ include/linux/ring_buffer.h |  19 ++---
+ kernel/trace/ring_buffer.c  | 180 +++++++++++++++++++++++++++++++++++++++-----
+ kernel/trace/trace.c        |  65 ++++------------
+ 3 files changed, 186 insertions(+), 78 deletions(-)
 
