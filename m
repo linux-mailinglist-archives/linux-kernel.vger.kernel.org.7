@@ -1,244 +1,147 @@
-Return-Path: <linux-kernel+bounces-581335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9DFA75DC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 04:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65589A75E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C211669CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 02:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83333188A2BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E2084A3E;
-	Mon, 31 Mar 2025 02:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1687B13C9C4;
+	Mon, 31 Mar 2025 03:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uhhQ8W6A"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Db4egIFk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F122905
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 02:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA868F9CB
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743387634; cv=none; b=JSxVFDPet3Dwm2fxhpuUic8rDpRHvAUu3Cb4hPhbG/3iRLneiRJandd5cCZwlfLeG/rF/M7TutQw2ueuBX8WZJtIRLkO7AtatYURxvMvuru14xBxniNKAKmzLSuEC8hajKLnhCIThikVXC0CvdWsbYz5ZM2BSY7ssos2nqPr1Qs=
+	t=1743391549; cv=none; b=U1rH2znDlHJeWoSZN7trlngoTRaQAjRKcmowB2I+ZT6WI2kIZIh83dY1kM6QMj1Np0akFuFqZI0vdqUMHAa1UZSRvggvJrIKZv4HlkTEIo99Uft52muxYH2IgQ8w28Bfc8sQNx2yC9Ix3V2wZto7293ykTIIyBSB9xdObwH5ylk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743387634; c=relaxed/simple;
-	bh=uVve+fHW9CyfNbfNoh2Mn4yQ/akcLSviXkI4i3E/AWg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Bfy98ylrt6C4PBncnQVP/W8zS0Nrvg2gpxrFSsYFYcN5EYiQCdLJ2MhO1UEnhE9+k2W0D/IBL4SdIAkGgnMdhrn2P//HLGQxk3H/sdPFAWhdVySTPjQYjDkjXxtbAWdT78RBO7LwPwOjl9jOkWbwDsF137A78BNDlAcMkX3nWMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uhhQ8W6A; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff55176edcso7336092a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 19:20:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743387631; x=1743992431; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BWo5igrEPXFMOZGYJoDbqOqkIE246nBzf9T+In+irrM=;
-        b=uhhQ8W6AXLMptw96aqf12cuXRg5qZSF+QRM6lH4i2nsQKCuS4fS1bjIg7KBkolg8gT
-         GAG33VTnz5PVDHilONzWDhsrFJ64bez2LGc+Gbg/jyGuaSeBcQ3UrAQMCcd4EzTG4tGz
-         mVhFIFgT4yN/GnztjdxPVHVQPS4+EVH/EQQNb8Hp2XJbUBFxyPlJ6fIDBv8pfozFLOne
-         eehGujY4Rt2lz7m1mV8501jNe60ZOSqdr0SNET0t1kLp1o2EnibPDt5bKMDokAGcQq8K
-         0Y80gKTXwTpG72S+Mb1Nd9K9dAdJCWFB7wDsf4pq80uT6OX2pU627DchLhe7RuOWkSkR
-         SmYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743387631; x=1743992431;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BWo5igrEPXFMOZGYJoDbqOqkIE246nBzf9T+In+irrM=;
-        b=eOP/owJQHahlmFM0Vigv4CWf7BjnFmGzGGUJk1Qz95751Zhmj3tOSHKFq8ayRItzTB
-         ry3JYBBqPB1KLIzWknAsn8Sa9t+y9FSD2of37uf1jARuNzMC6noAoGmGmMTRixtpMyFS
-         vlghzbhaUs89o4JK8Ah8EJp+Cou5wrA+JXxDPXMxt3o4zbh0YJ50pB+s+sPyQu1vXjYw
-         rtWXHTFNjIwKpdZLwYTO8y+anYI++7r3pIN1FtDDn3PGmSVjMBxQ7TyXXSR4kq0L8P9l
-         +x88k22XFfM1RZCctGeuJyvKzyCf0W0l+ZYzqhC3WTs46R52wa/Ymre0g2sAUpoL/Ue6
-         N3JA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfxgl3Q9mAEQY8D2Zgw9oA2cr1O2HI+hk2Wmi0pHg7LqlL8DvM0bci+wwEP6MgeaezOAZOsjYij69I02M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAbECAZHULl8bH7AB68pcHwqyCdMK5uzPZKq+GWeCeEeR3R74X
-	8eh6tBnQh70vct8aNmzobVCzSRBzQ1KWYg5EX22K+ZwiNZ6JdueOV049FAw3EelJCVZoM8CLVfx
-	LQk9j5g==
-X-Google-Smtp-Source: AGHT+IFEPXf/Mt+Lxupw8oElteSR68csVTfxhv8Ao5MIFQc5+2vOisI5ACmq74jcfR3FVUwMpkznpQSdMVBE
-X-Received: from pgh12.prod.google.com ([2002:a05:6a02:4e0c:b0:af2:448e:a04d])
- (user=dhavale job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9202:b0:1f5:6e00:14db
- with SMTP id adf61e73a8af0-2009f5fd679mr12747317637.14.1743387630666; Sun, 30
- Mar 2025 19:20:30 -0700 (PDT)
-Date: Sun, 30 Mar 2025 19:20:08 -0700
-In-Reply-To: <20250331022011.645533-1-dhavale@google.com>
+	s=arc-20240116; t=1743391549; c=relaxed/simple;
+	bh=/AWc+ap+/VlwCnxyDD+hThYJBzd/9ydDfXQ7wQ294vA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IO1uHnyJgxJH9Fmf5lfSXxemd24FB2Ci0ltX+bb4lG2D/UeTxbF8ES6Y4I8IOQ9ExeHBN54aR6Vec8WjGZyL6cEhLb9VPx+CFy/ukn/kzX++01CcvnTsG4KRcw+c0oXxKxCYfjpaFOuSVfvSJtisrUfGb7ZY/uA3pooPYD6iBEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Db4egIFk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743391546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9H7GiXM1SYgn+J7AZH1DVhthFc+DqcJXbubfnJ6db+o=;
+	b=Db4egIFkfZTLqb7+m2uZCuso0FkEBgc9bP98y01xkt/YquaJ3y69xR1/e8wTHBczVVZZ49
+	0KHqsDO1mDP4OvtDi3c3G4neV4pXocnVwI0MsAJGlQUSO//uaOBk/obzEFkhJMXrwa/QII
+	XmhymPrB/P1H3yG10faDXSv2QDGVCwM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-6-Z3zqrOq2O_mLCzAbl7tmug-1; Sun,
+ 30 Mar 2025 23:25:43 -0400
+X-MC-Unique: Z3zqrOq2O_mLCzAbl7tmug-1
+X-Mimecast-MFC-AGG-ID: Z3zqrOq2O_mLCzAbl7tmug_1743391541
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C6E11801A06;
+	Mon, 31 Mar 2025 03:25:41 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 525DF1801752;
+	Mon, 31 Mar 2025 03:25:38 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH v3 0/4] drm/panel: Panel Refcounting infrastructure
+Date: Sun, 30 Mar 2025 22:24:11 -0400
+Message-Id: <20250330-b4-panel-refcounting-v3-0-0e0d4e4641eb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250331022011.645533-1-dhavale@google.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250331022011.645533-2-dhavale@google.com>
-Subject: [PATCH v1 1/1] erofs: lazily initialize per-CPU workers and CPU
- hotplug hooks
-From: Sandeep Dhavale <dhavale@google.com>
-To: linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>
-Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMv86WcC/3XNSwrCMBCA4auUrI2kacZSV95DXOQxaQOalKQGp
+ fTupgVBQZf/DPPNTBJGh4kcq5lEzC654Es0u4roQfoeqTOlCWccWMMFVYKO0uOVRrQ63P3kfE8
+ FkwoOUjbCtqScjmXpHht7vpQeXJpCfG5fcr1O3yD8BnNNGRXIlQVTdxrMKaIZ5LTX4UZWMfNPp
+ f2j8KIosKAlQG07+FKWZXkBaMAmOP8AAAA=
+X-Change-ID: 20250324-b4-panel-refcounting-40ab56aa34f7
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743387855; l=2326;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=/AWc+ap+/VlwCnxyDD+hThYJBzd/9ydDfXQ7wQ294vA=;
+ b=g8ObQcleCQMWGAeFaD7vB8+1P3Z5Dfgqb4o1QVwuj1SaFZu7OkBrwcASeYZAKUmGlYpx2ZWcn
+ Mj+3IStQxYUD4N+QnaLI+2F2rIDQ7ejdgPVj6pPUsqErKK6gNqFmIVF
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Defer initialization of per-CPU workers and registration for CPU hotplug
-events until the first mount. Similarly, unregister from hotplug events
-and destroy per-CPU workers when the last mount is unmounted.
+This series adds the infrastructure needed for the refcounting
+allocations for panels similar to Luca's efforts with bridges.
+Underlying intention and idea is the same - avoid use-after-free
+situations in panels. Get reference to panel when in use and put
+the reference back (down) when not in use.
+Once this gets approved, rest of the drivers will have to be
+mass converted to use this API.  All the callers of of_drm_find_panel()
+will have to be converted too.
 
-Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+Tried to split the patches as suggested in the RFC series[1].
+Also fixed the connector used during panel_init to be the one
+passed by driver.
+
+Patch 4 was not suggested or part of my initial work. Added it
+after looking at the comments Luca's v8 of the bridge series
+received.[2]
+
+[1] -> https://patchwork.freedesktop.org/series/146236/
+[2] -> https://patchwork.freedesktop.org/series/146306/#rev2
+
+Suggested-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- fs/erofs/internal.h |  5 +++++
- fs/erofs/super.c    | 27 +++++++++++++++++++++++++++
- fs/erofs/zdata.c    | 35 +++++++++++++++++++++++------------
- 3 files changed, 55 insertions(+), 12 deletions(-)
+Changes in v3:
+- Move the include from patch 1 to patch 2 where it is actually used
+- Move the refcounting documentation out from the returns section to the
+  actual helper socumentation.
+- Code style changes. Move the version changes after the s-o-b.
+- Link to v2: https://lore.kernel.org/r/20250327-b4-panel-refcounting-v2-0-b5f5ca551f95@redhat.com
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 4ac188d5d894..c88cba4da3eb 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -450,6 +450,8 @@ int z_erofs_gbuf_growsize(unsigned int nrpages);
- int __init z_erofs_gbuf_init(void);
- void z_erofs_gbuf_exit(void);
- int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb);
-+int z_erofs_init_workers(void);
-+void z_erofs_destroy_workers(void);
- #else
- static inline void erofs_shrinker_register(struct super_block *sb) {}
- static inline void erofs_shrinker_unregister(struct super_block *sb) {}
-@@ -458,6 +460,9 @@ static inline void erofs_exit_shrinker(void) {}
- static inline int z_erofs_init_subsystem(void) { return 0; }
- static inline void z_erofs_exit_subsystem(void) {}
- static inline int z_erofs_init_super(struct super_block *sb) { return 0; }
-+static inline int z_erofs_init_workers(void) { return 0; };
-+static inline  z_erofs_exit_workers(void);
-+
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index cadec6b1b554..8e8d3a7c8dba 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -17,6 +17,7 @@
- #include <trace/events/erofs.h>
- 
- static struct kmem_cache *erofs_inode_cachep __read_mostly;
-+static atomic_t erofs_mount_count = ATOMIC_INIT(0);
- 
- void _erofs_printk(struct super_block *sb, const char *fmt, ...)
- {
-@@ -777,9 +778,28 @@ static const struct fs_context_operations erofs_context_ops = {
- 	.free		= erofs_fc_free,
- };
- 
-+static inline int erofs_init_zip_workers_if_needed(void)
-+{
-+	int ret;
-+
-+	if (atomic_inc_return(&erofs_mount_count) == 1) {
-+		ret = z_erofs_init_workers();
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
-+static inline void erofs_destroy_zip_workers_if_last(void)
-+{
-+	if (atomic_dec_and_test(&erofs_mount_count))
-+		z_erofs_destroy_workers();
-+}
-+
- static int erofs_init_fs_context(struct fs_context *fc)
- {
- 	struct erofs_sb_info *sbi;
-+	int err;
- 
- 	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
- 	if (!sbi)
-@@ -790,6 +810,12 @@ static int erofs_init_fs_context(struct fs_context *fc)
- 		kfree(sbi);
- 		return -ENOMEM;
- 	}
-+	err = erofs_init_zip_workers_if_needed();
-+	if (err) {
-+		kfree(sbi->devs);
-+		kfree(sbi);
-+		return err;
-+	}
- 	fc->s_fs_info = sbi;
- 
- 	idr_init(&sbi->devs->tree);
-@@ -823,6 +849,7 @@ static void erofs_kill_sb(struct super_block *sb)
- 	erofs_fscache_unregister_fs(sb);
- 	erofs_sb_free(sbi);
- 	sb->s_fs_info = NULL;
-+	erofs_destroy_zip_workers_if_last();
- }
- 
- static void erofs_put_super(struct super_block *sb)
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 0671184d9cf1..4cd91b798716 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -403,10 +403,32 @@ static inline int erofs_cpu_hotplug_init(void) { return 0; }
- static inline void erofs_cpu_hotplug_destroy(void) {}
- #endif
- 
--void z_erofs_exit_subsystem(void)
-+int z_erofs_init_workers(void)
-+{
-+	int err;
-+
-+	err = erofs_init_percpu_workers();
-+	if (err)
-+		return err;
-+
-+	err = erofs_cpu_hotplug_init();
-+	if (err < 0)
-+		goto err_cpuhp_init;
-+	return err;
-+
-+err_cpuhp_init:
-+	erofs_destroy_percpu_workers();
-+	return err;
-+}
-+
-+void z_erofs_destroy_workers(void)
- {
- 	erofs_cpu_hotplug_destroy();
- 	erofs_destroy_percpu_workers();
-+}
-+
-+void z_erofs_exit_subsystem(void)
-+{
- 	destroy_workqueue(z_erofs_workqueue);
- 	z_erofs_destroy_pcluster_pool();
- 	z_erofs_exit_decompressor();
-@@ -430,19 +452,8 @@ int __init z_erofs_init_subsystem(void)
- 		goto err_workqueue_init;
- 	}
- 
--	err = erofs_init_percpu_workers();
--	if (err)
--		goto err_pcpu_worker;
--
--	err = erofs_cpu_hotplug_init();
--	if (err < 0)
--		goto err_cpuhp_init;
- 	return err;
- 
--err_cpuhp_init:
--	erofs_destroy_percpu_workers();
--err_pcpu_worker:
--	destroy_workqueue(z_erofs_workqueue);
- err_workqueue_init:
- 	z_erofs_destroy_pcluster_pool();
- err_pcluster_pool:
+Changes in v2:
+- Change drm_panel_put() to return void.
+- Export drm_panel_get()/put()
+- Code cleanups: add missing return documentation, improve documentation
+  in commit logs. 
+- Link to v1: https://lore.kernel.org/r/20250325-b4-panel-refcounting-v1-0-4e2bf5d19c5d@redhat.com
+
+---
+Anusha Srivatsa (4):
+      drm/panel: Add new helpers for refcounted panel allocatons
+      drm/panel: Add refcount support
+      drm/panel: deprecate old-style panel allocation
+      drm/panel/panel-simple: Use the new allocation in place of devm_kzalloc()
+
+ drivers/gpu/drm/drm_panel.c          | 92 +++++++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/panel/panel-simple.c |  9 ++--
+ include/drm/drm_panel.h              | 39 +++++++++++++++
+ 3 files changed, 133 insertions(+), 7 deletions(-)
+---
+base-commit: 372a9ca3c1f2ea10dd05a5d5008d055bc9536ced
+change-id: 20250324-b4-panel-refcounting-40ab56aa34f7
+
+Best regards,
 -- 
-2.49.0.472.ge94155a9ec-goog
+Anusha Srivatsa <asrivats@redhat.com>
 
 
