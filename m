@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-581545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F1BA76125
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B57E0A76129
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B662C1680C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513451679A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E11D54E3;
-	Mon, 31 Mar 2025 08:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2EB1D5ADE;
+	Mon, 31 Mar 2025 08:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oc0sePzh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="U7j5Njtp"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F164946BF;
-	Mon, 31 Mar 2025 08:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DE21537C8;
+	Mon, 31 Mar 2025 08:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743408963; cv=none; b=qxNVm+SYqR8F1Uem5yKjDD04vNAbDiicEYld0qRWfznWwWXaPuIAQQdkZm2LMLGTMqSN0rI6ve0DTvzRNq7qK9yqKDXejRx3T3ahVliIs7wuNLRKKbQ/NcXkg+Fs62uan8WAwTo/hS+9liORpyvJxh9Ww5noxsX/r8UvxMiUkA4=
+	t=1743409002; cv=none; b=aK7+veb3urQYK6RHzTLzrp7btPGWzpCwt2L3pEdcJaN57tnD7femcXySuubAbj8EkdQJX+GEyMEHzjRjsjSH+oDmAFhySenN/4xxNJIo3vd9tJ828mKEOzi/s+r4diklL3fsZPM5fwK5DWYkCsmf2lCs59trhgj2dLlNuE4C62A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743408963; c=relaxed/simple;
-	bh=n/AGtLCTuyDKU9z411GAmNJ6h/6MCP/tI1vTxsGxQ4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rjn646xeOtLd0pVajLy14bDynMSoOx2L9qVxyZSpRRYYVn0ur4t+9yxu9plCumoXlMdEXAFgBMo4xTSZdoUWVt6VrXtaYuYZIFeOsmoLhKMlJKy7eiKvX+TJmHm5b73KeekITJeaevfj8UPsuOTHPtHekJDCgjjy8Iq6RusESB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oc0sePzh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A3CC4CEE3;
-	Mon, 31 Mar 2025 08:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743408962;
-	bh=n/AGtLCTuyDKU9z411GAmNJ6h/6MCP/tI1vTxsGxQ4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oc0sePzhrGWkcxjuc4eQOHW6D1HRc4Em/XqacKGhSIXT4Cy2upsgVNfGakKfvcMRt
-	 KKYDYowkxiAoQb+R1IJOOE5UcKfO9CMJWVsWKwUGwa1niJXmD+kKUir9RXAVyOIqyd
-	 1RDxi4qUepfn9yUL+86ly1Eajqev/fW3aXIUWNirnLS/6ArdrlzSOG3h++aK/4ihCw
-	 kj4yY+XcUNQy4eYjqxkBi6gUrdHG/K/wRvvAVu+1ZlYa5xDBDFwxlPOyzGwklQ8I4e
-	 IraZFDeidJIc+ixalrvCaAsz6NfyJdcIdqCDuMPvGKFox0YYT49f/BRwAaZyq11N3p
-	 ukQLNMkvFawng==
-Date: Mon, 31 Mar 2025 10:15:58 +0200
-From: "krzk@kernel.org" <krzk@kernel.org>
-To: Yannic Moog <Y.Moog@phytec.de>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"robh@kernel.org" <robh@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	Benjamin Hahn <B.Hahn@phytec.de>, Yashwanth Varakala <Y.Varakala@phytec.de>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "upstream@lists.phytec.de" <upstream@lists.phytec.de>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	Jan Remmet <J.Remmet@phytec.de>, Teresa Remmet <T.Remmet@phytec.de>
-Subject: Re: [PATCH 1/3] dt-bindings: add imx8mp-libra-rdk-fpsc
-Message-ID: <20250331-zippy-apricot-seriema-cbafe8@krzk-bin>
-References: <20250328-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v1-0-28324c7f81fa@phytec.de>
- <20250328-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v1-1-28324c7f81fa@phytec.de>
- <9a8635d8-631e-483f-9d31-33cf0bea7daf@kernel.org>
- <4610469e0002796fb0de9feabd3fe328d5bf7aa9.camel@phytec.de>
+	s=arc-20240116; t=1743409002; c=relaxed/simple;
+	bh=uLA4PItba4DiOgCjVuL7xkoe0O/KU4E1+zLCqi4hRqE=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=MoF9fqqKVGXl9Ad+nCxSDEGt7gM1aN+yu40lsuZ4F9lbzAcapEbJFVnrnge0e52XqYuP/jdurp3SmbH8PWXDSn4bzC3/3TEJT2eqaFLwAhtkX/2uDclU58bjpRc6Pa4tzt/aEj7rjL1szSYTP4d+0kIMHxbv3KhDCw5lNaY4AR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=U7j5Njtp; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A3452250;
+	Mon, 31 Mar 2025 10:14:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743408887;
+	bh=uLA4PItba4DiOgCjVuL7xkoe0O/KU4E1+zLCqi4hRqE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=U7j5NjtpnbNjzG7qHxVhTgcuA1bPimh6j94C15HkBlKQGoEEOYEnqP55sWAcFw72a
+	 a+S2cXlhO6+xEHSrzu3LGJG5HaYaqwA7l5PoS4vS6x/wUPjEwOgVwhJ2xns10ZBVno
+	 dho0uPSZZSzdpiYh4nfBFS1JBjVkTWe0trRP2RqE=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4610469e0002796fb0de9feabd3fe328d5bf7aa9.camel@phytec.de>
+In-Reply-To: <20250331073435.3992597-1-andriy.shevchenko@linux.intel.com>
+References: <20250331073435.3992597-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] media: i2c: rdacm2x: Make use of device properties
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: acopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Mon, 31 Mar 2025 09:16:36 +0100
+Message-ID: <174340899625.3687388.14660711739063778026@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Mon, Mar 31, 2025 at 06:03:05AM +0000, Yannic Moog wrote:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: PHYTEC phyCORE-i.MX8MP=
- FPSC based boards
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - phytec,imx8mp-libra-rdk-fpsc=C2=A0 # i.MX 8M Plus Libra RDK
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: phyt=
-ec,imx8mp-phycore-fpsc # phyCORE-i.MX 8M Plus FPSC
-> >=20
-> > And that's different than existing phycore som? You have entire commit
-> > msg to explain that.
+Quoting Andy Shevchenko (2025-03-31 08:34:35)
+> Convert the module to be property provider agnostic and allow
+> it to be used on non-OF platforms.
 >=20
-> Yes, it is different to the existing phycore som.
-> I explained the differences in the second patch which introduces the devi=
-ce trees.
-> Would you like me to also add the explanation to this patch, or move it h=
-ere from the second patch?
 
-Some explanation should be here.
+Looks reasonable to me.
 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/media/i2c/rdacm20.c | 5 ++---
+>  drivers/media/i2c/rdacm21.c | 5 ++---
+>  2 files changed, 4 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
+> index b8bd8354d100..dcab63d19baf 100644
+> --- a/drivers/media/i2c/rdacm20.c
+> +++ b/drivers/media/i2c/rdacm20.c
+> @@ -16,10 +16,10 @@
+>   */
+> =20
+>  #include <linux/delay.h>
+> -#include <linux/fwnode.h>
+>  #include <linux/init.h>
+>  #include <linux/i2c.h>
+>  #include <linux/module.h>
+> +#include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/videodev2.h>
+> =20
+> @@ -575,8 +575,7 @@ static int rdacm20_probe(struct i2c_client *client)
+>         dev->dev =3D &client->dev;
+>         dev->serializer.client =3D client;
+> =20
+> -       ret =3D of_property_read_u32_array(client->dev.of_node, "reg",
+> -                                        dev->addrs, 2);
+> +       ret =3D device_property_read_u32_array(&client->dev, "reg", dev->=
+addrs, 2);
+>         if (ret < 0) {
+>                 dev_err(dev->dev, "Invalid DT reg property: %d\n", ret);
 
-Best regards,
-Krzysztof
+But this is no longer a DT reg property ?
 
+>                 return -EINVAL;
+> diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
+> index 3e22df36354f..5ea6988de48b 100644
+> --- a/drivers/media/i2c/rdacm21.c
+> +++ b/drivers/media/i2c/rdacm21.c
+> @@ -11,10 +11,10 @@
+>   */
+> =20
+>  #include <linux/delay.h>
+> -#include <linux/fwnode.h>
+>  #include <linux/init.h>
+>  #include <linux/i2c.h>
+>  #include <linux/module.h>
+> +#include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/videodev2.h>
+> =20
+> @@ -551,8 +551,7 @@ static int rdacm21_probe(struct i2c_client *client)
+>         dev->dev =3D &client->dev;
+>         dev->serializer.client =3D client;
+> =20
+> -       ret =3D of_property_read_u32_array(client->dev.of_node, "reg",
+> -                                        dev->addrs, 2);
+> +       ret =3D device_property_read_u32_array(&client->dev, "reg", dev->=
+addrs, 2);
+>         if (ret < 0) {
+>                 dev_err(dev->dev, "Invalid DT reg property: %d\n", ret);
+
+Same here ...
+
+With those fixed,
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+>                 return -EINVAL;
+> --=20
+> 2.47.2
+>
 
