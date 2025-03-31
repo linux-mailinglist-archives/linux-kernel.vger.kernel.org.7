@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-581356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88278A75E2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:26:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A49A75E2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3971889430
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601ED188A340
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB7714D428;
-	Mon, 31 Mar 2025 03:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7664D15747D;
+	Mon, 31 Mar 2025 03:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OBMbapTe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SvF2wLuM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064D1F9CB
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D81531DB
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743391554; cv=none; b=s3wi6zjECdJQ1FV/jLez1WLAHnBAsvctfbZq1r0cx3//Iel0zNFGGPR6Z1EiKluA+EGYlL/oSSC4ae0kf22auV3oSyw6oB/ej/9ocLqLyHHwfooRjK0GKtE4M0ab03G2FtLZGLcNzHsKkor+Z7KIPIIseYNAoSYrkL5bvwef/F0=
+	t=1743391557; cv=none; b=Zsxh+WoGuww7DL25YHrTS3NP6xMYa+Dzkcnc9C/SHBWtam3eIvOGLJTDYxGr1lzT3WjOFjAQSzdIDU88zQsEM3IMvtBF5i4Y4GJ2QcWckkufGo13pibAwOBmzPAKm95SWUZZacJKfDCuvouRUgwvBQKWEr/RiUl7graJ10fJuTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743391554; c=relaxed/simple;
-	bh=DoR5/VZXVBzYD8Bh9VJZWzLpSoYgFBcfigl+6Gt4zx4=;
+	s=arc-20240116; t=1743391557; c=relaxed/simple;
+	bh=Twe1CysgUNTNxjLGPaIExyaLHYsOasZCKyjWS8eMjhA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JvTmX2q39A0q/vXwU5Vq3XGcpTm2zJ06BDqBIy8US5RzBsVKT4wscVyxmyEbw464KI3TogbKYwaf5cPY8y6kFrJKwhOXrKazTgJVLqFMSJZN5iABAstGjDztQMEsSMq9Rmv/m5XoIgyW/VZEkK2OIZXujyDFscOYTdu2R1jqAFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OBMbapTe; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=ZtorSOzIyt0tjqZ82gSbvG829qdUC78KrFqv1Qa7jMwGrusHoLMNTf5qfeFJmgTXpBO3cDqxcVIVuhfFSsXWH/Eyp0S1kTWWHjLDHLcg/gX9Q1kTIWQJhUV7blsdFYxcmZc3KsZtBljncO8F6oibFwoLrl2dRFDo15YsXSSYlxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SvF2wLuM; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743391551;
+	s=mimecast20190719; t=1743391555;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5T/7FftKdPKD3W/7jWlPs9qhLB+6a9D8aoiBDQmOjYo=;
-	b=OBMbapTezzxNxrNT89fK0kIobvLGYYrwpQbvfjctVjFJzFxvADFgPiexzAXdULkwVuo4Fb
-	XWX/z1ZQUIxan7b4zwoIrmN7wnw/wHbl0diKQa4SY5g4eACyIZNSzHBjlUswFuVpJqF+Eb
-	dZcB67BadveZ256/R4fjn1kdq3zSkCo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=EhpkmaQVIlApTG41YTRyXQK7jdbH/Wt/GFmqtV6AMfA=;
+	b=SvF2wLuM2Adp655FSZXMgGs099EFVA7VNukkjgQ+ZZkCvCNtY5zSpRgerju6H68nONeV/n
+	UmHfm3EIFoulyGUmNDaPYePtn+SRXLyERLpVUki/XpUWsDFKqq3Q192tP+WAKbw63iPybZ
+	to0653ehh3Faz34CW5wB0EQbZTYm46E=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-S2nStVIvNkqmhWULI7WxbA-1; Sun,
- 30 Mar 2025 23:25:48 -0400
-X-MC-Unique: S2nStVIvNkqmhWULI7WxbA-1
-X-Mimecast-MFC-AGG-ID: S2nStVIvNkqmhWULI7WxbA_1743391546
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-482-2ryQG2YgO6qSpCCVuJHKUw-1; Sun,
+ 30 Mar 2025 23:25:51 -0400
+X-MC-Unique: 2ryQG2YgO6qSpCCVuJHKUw-1
+X-Mimecast-MFC-AGG-ID: 2ryQG2YgO6qSpCCVuJHKUw_1743391549
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B349C1933B49;
-	Mon, 31 Mar 2025 03:25:46 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C508180AF69;
+	Mon, 31 Mar 2025 03:25:49 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4774A180174E;
-	Mon, 31 Mar 2025 03:25:44 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DDE99180174E;
+	Mon, 31 Mar 2025 03:25:46 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Sun, 30 Mar 2025 22:24:13 -0400
-Subject: [PATCH v3 2/4] drm/panel: Add refcount support
+Date: Sun, 30 Mar 2025 22:24:14 -0400
+Subject: [PATCH v3 3/4] drm/panel: deprecate old-style panel allocation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250330-b4-panel-refcounting-v3-2-0e0d4e4641eb@redhat.com>
+Message-Id: <20250330-b4-panel-refcounting-v3-3-0e0d4e4641eb@redhat.com>
 References: <20250330-b4-panel-refcounting-v3-0-0e0d4e4641eb@redhat.com>
 In-Reply-To: <20250330-b4-panel-refcounting-v3-0-0e0d4e4641eb@redhat.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -78,169 +78,46 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Luca Ceresoli <luca.ceresoli@bootlin.com>, 
  Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743387855; l=4525;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743387855; l=1175;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=DoR5/VZXVBzYD8Bh9VJZWzLpSoYgFBcfigl+6Gt4zx4=;
- b=4CAI971VEyiUDlrEtz01eKkDBl51GU09h8i8iBx/+HRNuGtU7iFqbFoo9zK0LVoRPwCxw0WY0
- 8ZoBs4vg5gXBGX6AAHv7871kpUDNB4qtg29xjZCl8CEBtlpnxnJsHFW
+ bh=Twe1CysgUNTNxjLGPaIExyaLHYsOasZCKyjWS8eMjhA=;
+ b=qPYwBUSgg0/FV4MK0h42rjCekrEsvS/zH6bc8ugbOnDVh6oEkGewYpYksG9LqvTAJnCne1AO/
+ JaY6xXQXikCAM5NS8iXo9DIGebCxN5vAU2yzgaW5x8t0Vc9Pte4LtUN
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Allocate panel via reference counting. Add _get() and _put() helper
-functions to ensure panel allocations are refcounted. Avoid use after
-free by ensuring panel pointer is valid and can be usable till the last
-reference is put.
+Start moving to the new refcounted allocations using
+the new API devm_drm_panel_alloc(). Deprecate any other
+allocation.
 
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
 ---
-v3: Add include in this patch (Luca)
-
-v2: Export drm_panel_put/get() (Maxime)
-- Change commit log with better workding (Luca, Maxime)
-- Change drm_panel_put() to return void (Luca)
-- Code Cleanups - add return in documentation, replace bridge to
-panel (Luca)
+v3: none
+v2: make the documentation changes in v1 more precise (Maxime)
 ---
- drivers/gpu/drm/drm_panel.c | 64 ++++++++++++++++++++++++++++++++++++++++++++-
- include/drm/drm_panel.h     | 15 +++++++++++
- 2 files changed, 78 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_panel.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index bdeab5710ee324dc1742fbc77582250960556308..7b17531d85a4dc3031709919564d2e4d8332f748 100644
+index 7b17531d85a4dc3031709919564d2e4d8332f748..870bf8d471ee9c5fe65d88acc13661cacd883b9b 100644
 --- a/drivers/gpu/drm/drm_panel.c
 +++ b/drivers/gpu/drm/drm_panel.c
-@@ -355,24 +355,86 @@ struct drm_panel *of_drm_find_panel(const struct device_node *np)
- }
- EXPORT_SYMBOL(of_drm_find_panel);
- 
-+static void __drm_panel_free(struct kref *kref)
-+{
-+	struct drm_panel *panel = container_of(kref, struct drm_panel, refcount);
-+
-+	kfree(panel->container);
-+}
-+
-+/**
-+ * drm_panel_get - Acquire a panel reference
-+ * @panel: DRM panel
-+ *
-+ * This function increments the panel's refcount.
-+ * Returns:
-+ * Pointer to @panel
-+ */
-+struct drm_panel *drm_panel_get(struct drm_panel *panel)
-+{
-+	if (!panel)
-+		return panel;
-+
-+	kref_get(&panel->refcount);
-+
-+	return panel;
-+}
-+EXPORT_SYMBOL(drm_panel_get);
-+
-+/**
-+ * drm_panel_put - Release a panel reference
-+ * @panel: DRM panel
-+ *
-+ * This function decrements the panel's reference count and frees the
-+ * object if the reference count drops to zero.
-+ */
-+void drm_panel_put(struct drm_panel *panel)
-+{
-+	if (panel)
-+		kref_put(&panel->refcount, __drm_panel_free);
-+}
-+EXPORT_SYMBOL(drm_panel_put);
-+
-+/**
-+ * drm_panel_put_void - wrapper to drm_panel_put() taking a void pointer
-+ *
-+ * @data: pointer to @struct drm_panel, cast to a void pointer
-+ *
-+ * Wrapper of drm_panel_put() to be used when a function taking a void
-+ * pointer is needed, for example as a devm action.
-+ */
-+static void drm_panel_put_void(void *data)
-+{
-+	struct drm_panel *panel = (struct drm_panel *)data;
-+
-+	drm_panel_put(panel);
-+}
-+
- void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t offset,
- 			     const struct drm_panel_funcs *funcs,
- 			     int connector_type)
+@@ -74,8 +74,9 @@ EXPORT_SYMBOL(drm_panel_init);
+  * drm_panel_add - add a panel to the global registry
+  * @panel: panel to add
+  *
+- * Add a panel to the global registry so that it can be looked up by display
+- * drivers.
++ * Add a panel to the global registry so that it can be looked
++ * up by display drivers. The panel to be added must have been
++ * allocated by devm_drm_panel_alloc().
+  */
+ void drm_panel_add(struct drm_panel *panel)
  {
- 	void *container;
- 	struct drm_panel *panel;
-+	int err;
- 
- 	if (!funcs) {
- 		dev_warn(dev, "Missing funcs pointer\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	container = devm_kzalloc(dev, size, GFP_KERNEL);
-+	container = kzalloc(size, GFP_KERNEL);
- 	if (!container)
- 		return ERR_PTR(-ENOMEM);
- 
- 	panel = container + offset;
-+	panel->container = container;
- 	panel->funcs = funcs;
-+	kref_init(&panel->refcount);
-+
-+	err = devm_add_action_or_reset(dev, drm_panel_put_void, panel);
-+	if (err)
-+		return ERR_PTR(err);
- 
- 	drm_panel_init(panel, dev, funcs, connector_type);
- 
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index 97a5457b64fbbe9c91c6a4f41b8e1fbfe4fa604e..095e03c6e660d838b227e7a5cf8ca9b88c4bdc3d 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -28,6 +28,7 @@
- #include <linux/errno.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-+#include <linux/kref.h>
- 
- struct backlight_device;
- struct dentry;
-@@ -266,6 +267,17 @@ struct drm_panel {
- 	 * If true then the panel has been enabled.
- 	 */
- 	bool enabled;
-+
-+	/**
-+	 * @container: Pointer to the private driver struct embedding this
-+	 * @struct drm_panel.
-+	 */
-+	void *container;
-+
-+	/**
-+	 * @refcount: reference count of users referencing this panel.
-+	 */
-+	struct kref refcount;
- };
- 
- void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t offset,
-@@ -296,6 +308,9 @@ void drm_panel_init(struct drm_panel *panel, struct device *dev,
- 		    const struct drm_panel_funcs *funcs,
- 		    int connector_type);
- 
-+struct drm_panel *drm_panel_get(struct drm_panel *panel);
-+void drm_panel_put(struct drm_panel *panel);
-+
- void drm_panel_add(struct drm_panel *panel);
- void drm_panel_remove(struct drm_panel *panel);
- 
 
 -- 
 2.48.1
