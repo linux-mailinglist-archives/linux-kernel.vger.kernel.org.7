@@ -1,111 +1,169 @@
-Return-Path: <linux-kernel+bounces-582146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE3AA76A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:22:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709E0A76986
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76AFF3AD73F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB915163D3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D9C21E0AC;
-	Mon, 31 Mar 2025 14:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3BA22F384;
+	Mon, 31 Mar 2025 14:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Upxca9Ui"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="F3f6OHDF"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C9B233120;
-	Mon, 31 Mar 2025 14:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06B322F166;
+	Mon, 31 Mar 2025 14:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743432909; cv=none; b=qk+t6sK4M9rLremeTjZAwZLbW6R77uDiIEYQPAG8b1IJLd1W2FJAwwe9T5Ioh/SpcWGmpoPc3jJlwXTAbgmLeNSquOxzWvWFvoxHyYD9RewU1EFki53mO/RPWPxcTAx6esuz8G5mBEpjLpefuO2TfSGyLCHXu1hQPm2+jTdknc0=
+	t=1743432879; cv=none; b=h5wMTH1kAeRrOJIu6Yp/IftVkcNB2TNdiC7eQ9oeM8SHn2NCplPFDMVqO9GohzvP3DLo2Em2fYLRPdX3sRS/IXfIjl+phTsrxl5fhVWNSu2h/aKF1XkaMFnWcJErZyrGy61S2bSW6Q4U+H8wzHGqcMIsl9ubvuhdk7nnQyWQj9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743432909; c=relaxed/simple;
-	bh=6W97gUxC1i3/IIv7TYBBVZoZFV6otn8YTHabZQR4WHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7xc5IFNQNXtxV/eKXGkIKIhimVtUFAYF5NgxfceUkDrk7jbJ8GJ+IM3ZtuX7nm8iJhaUP6wd+8KIcIRtlA7d17eSfTZmN2kIAPIsQ0ASWNyPx179ZbMh988oGT6gu7dST555JOe/gYOsCFDFQuO0PDXV8fSsWFvX10Tt/zNpLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Upxca9Ui; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D061C4CEE3;
-	Mon, 31 Mar 2025 14:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743432909;
-	bh=6W97gUxC1i3/IIv7TYBBVZoZFV6otn8YTHabZQR4WHM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Upxca9UiXOFMRIEuE1Rv6jdV1d8Xkf6dhiaBgVHeIUA5f8k7ps9ZUqeJ88h2sTWCf
-	 vF8k7CLj81fx8Tsl4iqfS7s3UTdJqB6aQnMt3yA3zHMncNgMwmN+1WBVsHBsCF1Gcm
-	 qlkSwOPNFHBp44N2Jvdmv9BT28HkZHlUU3K3U5MC9XSEgmVq2oYec1d7os8V5PNV1h
-	 M4k+GCsy5Meh1lOenn8k8tFGiC0Oydp59JrvgiP1VXcMClD3OsV6X5eynK0xHxP6n+
-	 Ao0O0y45U/1lKElHfi2FvCvreWaZzfryhmML/DcBX0iMc0HBLvGbqaWtP6rds/kSYc
-	 bIkU+UT+HRi6Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	kernel test robot <lkp@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 24/24] platform/x86: x86-android-tablets: Add select POWER_SUPPLY to Kconfig
-Date: Mon, 31 Mar 2025 10:54:04 -0400
-Message-Id: <20250331145404.1705141-24-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250331145404.1705141-1-sashal@kernel.org>
-References: <20250331145404.1705141-1-sashal@kernel.org>
+	s=arc-20240116; t=1743432879; c=relaxed/simple;
+	bh=zR+wuro+r4rnXuqJeZdxGMuQG6Zw/ZgAj/YeJHwsL5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ca/9RP7cHwJRx3FntqSqlUqtIKkRMv7c/jynWq5EdE8k4Ymj4lWkRczyJ6o4itRwXDO6IaXrLmNkEry7FLxU+cvvpulv/XJdgQC9eINJ5W35JE+FVlFUb88NTzJ2tO6RsHnZcL6tIBEW0XmUaqETsyv6zp2j2LECH9ywSivYTg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=F3f6OHDF; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HPcnOhRdd53xj4ndL5o1wFLEp2VkNlI8kdN53UFjnhg=; b=F3f6OHDFFH6FQttsDKRCCNG1cK
+	wWwHSeYsKPv+hnYTawudXWiiN08AoomTV4Drfe0f3vmHHSk3rhl6pVaKsoXTrmMljQrf8toegjLfc
+	zyEoSWns/BnymMsKH7B3jbt6rQHHJRtWs7YnSGtp8i7G7LWHP5+9tLRcgTkd9Y6jdE/4vkPqjgQPj
+	z1bBoFttbNwAmuVg9GmldXo0+1v7kGdQZkiBuPsncuWtvGr3eksArn/2eTSTpmHzxftMuU6/2xzke
+	IEM1shTTauu6d6W1PjNMrDhZCAu5tN5fFsDTgxAfU67CGseWezC4wJWWucKiilVuJGjNo3mQhu12Q
+	IM+r03aA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49000)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tzGWw-0004EQ-0s;
+	Mon, 31 Mar 2025 15:54:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tzGWq-0001lE-3B;
+	Mon, 31 Mar 2025 15:54:21 +0100
+Date: Mon, 31 Mar 2025 15:54:20 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next v5 09/13] net: phylink: Use phy_caps_lookup for
+ fixed-link configuration
+Message-ID: <Z-qsnN4umaz0QrG0@shell.armlinux.org.uk>
+References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
+ <20250307173611.129125-10-maxime.chevallier@bootlin.com>
+ <8d3a9c9bb76b1c6bc27d2bd01f4831b2cac83f7f.camel@gmail.com>
+ <20250328090621.2d0b3665@fedora-2.home>
+ <CAKgT0Ue_JzmJAPKBhe6XaMkDCy+YNNg5_5VvzOR6CCbqcaQg3Q@mail.gmail.com>
+ <12e3b86d-27aa-420b-8676-97b603abb760@lunn.ch>
+ <CAKgT0UcZRi1Eg2PbBnx0pDG_pCSV8tfELinNoJ-WH4g3CJOh2A@mail.gmail.com>
+ <02c401a4-d255-4f1b-beaf-51a43cc087c5@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.9
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02c401a4-d255-4f1b-beaf-51a43cc087c5@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Hans de Goede <hdegoede@redhat.com>
+On Mon, Mar 31, 2025 at 04:17:02PM +0200, Andrew Lunn wrote:
+> On Fri, Mar 28, 2025 at 04:26:04PM -0700, Alexander Duyck wrote:
+> > A serdes PHY is part of it, but not a traditional twisted pair PHY as
+> > we are talking about 25R, 50R(50GAUI & LAUI), and 100P interfaces. I
+> > agree it is a different beast, but are we saying that the fixed-link
+> > is supposed to be a twisted pair PHY only?
+> 
+> With phylink, the PCS enumerates its capabilities, the PHY enumerates
+> its capabilities, and the MAC enumerates it capabilities. phylink then
+> finds the subset which all support.
+> 
+> As i said, historically, fixed_link was used in place of a PHY, since
+> it emulated a PHY. phylinks implementation of fixed_link is however
+> different. Can it be used in place of both a PCS and a PHY? I don't
+> know.
 
-[ Upstream commit 2c30357e755b087217c7643fda2b8aea6d6deda4 ]
+In fixed-link mode, phylink will use a PCS if the MAC driver says there
+is one, but it will not look for a PHY.
 
-Commit c78dd25138d1 ("platform/x86: x86-android-tablets: Add Vexia EDU
-ATLA 10 EC battery driver"), adds power_supply class registering to
-the x86-android-tablets code.
+> You are pushing the envelope here, and maybe we need to take a step
+> back and consider what is a fixed link, how does it fit into the MAC,
+> PCS, PHY model of enumeration? Maybe fixed link should only represent
+> the PHY and we need a second sort of fixed_link object to represent
+> the PCS? I don't know?
 
-Add "select POWER_SUPPLY" to the Kconfig entry to avoid these errors:
+As I previously wrote today in response to an earlier email, the
+link modes that phylink used were the first-match from the old
+settings[] array in phylib which is now gone. This would only ever
+return _one_ link mode, which invariably was a baseT link mode for
+the slower speeds.
 
-ERROR: modpost: "power_supply_get_drvdata" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
-ERROR: modpost: "power_supply_changed" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
-ERROR: modpost: "devm_power_supply_register" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
+Maxime's first approach at adapting this to his new system was to
+set every single link mode that corresponded with the speed. I
+objected to that, because it quickly gets rediculous when we end
+up with lots of link modes being indicated for e.g. 10, 100M, 1G
+but the emulated PHY for these speeds only indicates baseT. That's
+just back-compatibility but... in principle changing the link modes
+that are reported to userspace for a fixed link is something we
+should not be doing - we don't know if userspace tooling has come
+to rely on that.
 
-When POWER_SUPPLY support is not enabled.
+Yes, it's a bit weird to be reporting 1000baseT for a 1000BASE-X
+interface mode, but that's what we've always done in the past and
+phylink was coded to maintain that (following the principle that
+we shouldn't do gratuitous changes to the information exposed to
+userspace.)
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503231159.ga9eWMVO-lkp@intel.com/
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://lore.kernel.org/r/20250324125052.374369-1-hdegoede@redhat.com
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/platform/x86/x86-android-tablets/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Maxime's replacement approach is to just expose baseT, which
+means that for the speeds which do not have a baseT mode, we go
+from supporting it but with a weird link mode (mostly baseCR*)
+based on first-match in the settings[] table, to not supporting the
+speed.
 
-diff --git a/drivers/platform/x86/x86-android-tablets/Kconfig b/drivers/platform/x86/x86-android-tablets/Kconfig
-index a67bddc430075..193da15ee01ca 100644
---- a/drivers/platform/x86/x86-android-tablets/Kconfig
-+++ b/drivers/platform/x86/x86-android-tablets/Kconfig
-@@ -10,6 +10,7 @@ config X86_ANDROID_TABLETS
- 	depends on ACPI && EFI && PCI
- 	select NEW_LEDS
- 	select LEDS_CLASS
-+	select POWER_SUPPLY
- 	help
- 	  X86 tablets which ship with Android as (part of) the factory image
- 	  typically have various problems with their DSDTs. The factory kernels
+> > In addition one advantage is that it makes it possible to support
+> > speeds that don't yet have a type in the phy_interface_t, so as I was
+> > enabling things it allowed some backwards compatibility with older
+> > kernels.
+> 
+> I don't like the sound of that. I would simply not support the older
+> kernels, rather than do some hacks.
+
+I think Alexander is referring to having a PHY interface modes that
+supports the speed - for example, if we didn't have a PHY interface
+mode that supported 100G speeds, then 100G speed would not be
+supported.
+
+Phylink has already restricted this and has done for quite some time.
+We only allow speeds that the selected interface mode can support,
+with the exception of PHY_INTERFACE_MODE_INTERNAL which supports
+everything.
+
 -- 
-2.39.5
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
