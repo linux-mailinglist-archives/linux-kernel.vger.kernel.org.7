@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-582449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EA4A76D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24772A76D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F180D3AB7C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:06:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B87188942D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B49219EAD;
-	Mon, 31 Mar 2025 19:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244C6215064;
+	Mon, 31 Mar 2025 19:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZldkI6CD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vecPV4+N"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857FB218EBE
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D857219A67
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743447961; cv=none; b=L7Stw7321bJg/X3mhzmlFlspHhZHTS/CbzI/XQysQqJdw9uYim+L341I0wM5pj1yC+0I0LrmsySW3pCiZ0H9OVyOOXKZX5e6TBByxFwRiF12A827FWyXreKOqnFAfu//PiDdEwtbbCD3oqPkttS/doUilQ3t0fLXfZgPM3Mo1AI=
+	t=1743447999; cv=none; b=FmIwB0R6lE/G5xR+kVIJLoqwTsD71Xkua+88LlWekPySXh0sLZneLe+f0dbaOS2k9fgRJ3XchYxDsH06vDdlPtAEeAS9dSGuJ1UeyJfbmYbeu9kIMpLsYgT6Jo2FQ/Lr56jzPLuqNY5hbYgRibrH22pAaTyIBdPjdvJ0qIeB6XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743447961; c=relaxed/simple;
-	bh=ymtz3LKXQelnMrMnB1EtIZhse9Mr3gBZyo+pb7yu+nI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GCiLMQY/gFUAM5UzbJOyhMzwTZTDHa8MwVk3zzA+wQGq796P3U/Fb2DqEQJMF5iDS1cMET0+Ne/IRPOzUshJhn5EZ1VmW+7vFcxeeBRiFer7oFNwLXheZAPUqfmCeITTsL7vxLdspPD/Sd1nncqI1pMNxjKS5sM48kDUp6W8Tys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZldkI6CD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743447958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uzKnw77swTeh7HXFgYoBa2NfI5F2/BsDtkjgKan+l0U=;
-	b=ZldkI6CDx9gDDRLRMeeoUBGlZ+c+bw9e5EGwpOnBmxRaOoA63OcmA745BrU7TkQi7Cj+0p
-	+l90blBPAy3xaZy99ICx7sJj74GlWk9AnBhTOKktOawmvvF4tnWJ3fQ+LeOBTD4Zj8gvGO
-	1QLQLmbAa/2klck6JlVdY3qE15gsyKk=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-Gd2I49WLNXamVOseeTb39Q-1; Mon, 31 Mar 2025 15:05:56 -0400
-X-MC-Unique: Gd2I49WLNXamVOseeTb39Q-1
-X-Mimecast-MFC-AGG-ID: Gd2I49WLNXamVOseeTb39Q_1743447956
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-603f3a4c58dso13714eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:05:56 -0700 (PDT)
+	s=arc-20240116; t=1743447999; c=relaxed/simple;
+	bh=R6HoO9utzNAyt23BET7OrJlz4hwYGXX+QNpyGY6nmpQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DTT8dd9q2/Rirtu8lQRB+GLnayDfLbadcyB0EPtR658o/5ynt25Ze8SLw01eAsWMIHeiBO994cer2rlTBkNrWtGI2blUsxf2Tlw8GTTnUfUddiNiquJsr2NhImT9KdfL8UNPzm3u0lqTWgzNcndl411mQUcNdmFDLMdbBZlLmAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vecPV4+N; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3ce886a2d5bso39143855ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1743447995; x=1744052795; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HdVyUczeJWic0WGQFRDHoRFIuz1e6rkv6Z0rZI+fogM=;
+        b=vecPV4+NcjBKZxvci09ryChOORKh/n/VMIf2ER71IkShBfT/FNy+Ai/PmNuUWS7YsR
+         JWyOOVs1lEZaQ584VdEjgmh1oX9M2v3j7KVDDjOYHZaTcvaclcdyokQqPzKii9bkS3k9
+         RbEzjTfjHJy7RWFp6E+1W0V9VGIUbBxa+VutQdsZExmJTmr9xdjKzleliAedORnbpcqH
+         m2xKvQMXdS1KP+VD+dEFIrxq8Motc8xpIS7A24WSZWhUvvfVLbaGRg7A+/G5h6Ixnp4u
+         ulCwylZD0/0kLpxwgiqAbALs1bqk9aqTDdUmTHv36V6mmyWdf1ckFx55shPakKGQNb4p
+         PiMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743447956; x=1744052756;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzKnw77swTeh7HXFgYoBa2NfI5F2/BsDtkjgKan+l0U=;
-        b=TVtT0IV+V7dhZie+exneW1eZZp3G1jN0mYFgc8ghnn6nqoZj7hxRF9aI+saSkTr5n5
-         +Z/mUG6SR56DKPGNyU7vQ8XKQDgWuXomtroG4c6olTWeuhd01Z+BOMk+DFGV4tmKBPNs
-         rx7n8qsJk5QFuR4u9TcdcK3uzdJxL2UAVEPwUfVfHEyP5HKKScWfHvVaImZLKRptdljb
-         qdgRvlvRmAA4fetXG/wIgQElCQE9f08aaZ4zcy/edMhFZnhbt3YfFsCb1oko5YN7VTKt
-         AG0IZsxpg+5ExW5xxlWU/NtIGJUDZqr1Jg50xjDSOUDqe4bipKLbuur+FLVkDVkV40kQ
-         v1iA==
-X-Gm-Message-State: AOJu0YyewXVU3y9lZ1PgEkmU+yAHCMH3V3iEvJLqzWU0obvGGLFdVCed
-	haOuYfyrr/PaB9iSRZ+zLW315lPQ74ZDAN/JGSWnDJ394zJ6WIvlOxAakBHk2BFMrTQ63Y7AuCQ
-	a/JsN7dBbTkt3mR+sStmTiTGeMEM27dCh5QTq42I231cm8V4pMlUmQgC8TTYy7A==
-X-Gm-Gg: ASbGncsdEMTASZH8EobzVuMBENrNt6zhmgLduwvtUP9On7EeErqZful1DYYpER8+0gM
-	Td86snDRR41WO072uHvh5caJcFQoS3ZIkfwVGzg0egi/sKJiFd5Y5112traI0fdiuI6uJ2fthAD
-	F/WxS1NGHl0m2Es7kKhGTSk8IT4Yl4qt8tEqPJm//UBi8w+iiwcqj1mCu1PyIzibbVIx6Znbxe1
-	gTk4pCjPVhr17E3nK6T4kz6+cRfNDLTw4Qd6rAiln/wqxCYwWrLqIxNDVNiUVvIj1Muevr6Aku/
-	kEqfiuZf1M+iCNV0wJM=
-X-Received: by 2002:a05:6871:4f12:b0:2cc:36b1:8c19 with SMTP id 586e51a60fabf-2cc36b1dd66mr41789fac.0.1743447955852;
-        Mon, 31 Mar 2025 12:05:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGI7UGahoFOzLlam2TphSYmw3If0g3Dxd3FZsZxKkq/Qcp8nUCuQBdZUJ41G/+wxHja5olD4Q==
-X-Received: by 2002:a05:6871:4f12:b0:2cc:36b1:8c19 with SMTP id 586e51a60fabf-2cc36b1dd66mr41781fac.0.1743447955518;
-        Mon, 31 Mar 2025 12:05:55 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c86a90e132sm1970717fac.45.2025.03.31.12.05.53
+        d=1e100.net; s=20230601; t=1743447995; x=1744052795;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HdVyUczeJWic0WGQFRDHoRFIuz1e6rkv6Z0rZI+fogM=;
+        b=u3WJU7uz/4az3V/SkrLy6H6RcSuWi641hGE7DO5rpXtpx1U9JNfrfLY35u0/PjzTeg
+         OotzALyr2RhjaqeY77bgPQKScGVHqcq5dr9OhhytVP36p7Ghzem1lOk/9dKKedVsoaPP
+         x+0ipeW0DcN331TSIytK0vVFxyiFdxqyarnl4sNXmLedl4zwJi2N6wVDIxkLaIQWSj8I
+         vM25i0DsA6Q9KUBgRSd8tgcJ0rTsyNC0mnwDNUjBDDKH45unWocWWBcESCk2QCPeliwB
+         soOxDVTTwsicEfIRM07hNTZAFubWL6LShZFpa1fOPY0IwBt9JcaH+OEH/AAhxPN1euNT
+         RLFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIh0LEwHNay2I+gZmMX5q9Rpdz0vKbwpWOEk3Ha2kaF1JcpEsKxJm2VhWM2STOTLKYtcXZqxwuL/VM+VE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqylCqyZ/JC1pta/zGWaghx8QTKy/J5XGpT3omtGliSH1t0YLu
+	bnx1tx6vQXby/ZTwiFu4NFgj2XBz3fE0SA+6IRtjqKl/7Up8UniDWgbms3h/qbw=
+X-Gm-Gg: ASbGncvcJXhhSFAjU8aXO/FxE0AQ+yNFyrvkiosrY8KuC4JydSt9QD1Mas0d4b/HdMe
+	2YWY2ELr1jrWeF73K5dnesgco71TfAzMkQNwYjYuUo/OJdeLRw9+kZw7C549ZH//q4YZm/S8AOg
+	TOZY8fNH8woRIW6wD4h9uRE60CTf7knC1o7qzWEMKUOxhzcUnZXIMCNij/jmDDdHKUr0NYvpzgM
+	9F2gSURVT7+656OwFP3PMitBeZrfjRAf1I33LxTjLM+PwTxVBoTHHF/NfyVIowF1iX4jXxQxHFg
+	b5inNGU7Te9NEozzkFKYnErMV99m9L9wrRg8
+X-Google-Smtp-Source: AGHT+IFsxImJWmlzj0bwdAadBWG5vlsc90rZeFVRrBs5cjWqMGjs0KMH/Ata4U5Tofg9/H/MTEKVUg==
+X-Received: by 2002:a05:6e02:164b:b0:3d4:244b:db1d with SMTP id e9e14a558f8ab-3d5e090720amr97784525ab.6.1743447995215;
+        Mon, 31 Mar 2025 12:06:35 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f46487193dsm1995145173.79.2025.03.31.12.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 12:05:54 -0700 (PDT)
-Date: Mon, 31 Mar 2025 13:05:50 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org"
- <kvm@vger.kernel.org>
-Subject: [GIT PULL] VFIO updates for v6.15-rc1
-Message-ID: <20250331130550.2f9ba79e.alex.williamson@redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Mon, 31 Mar 2025 12:06:34 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250329161527.3281314-1-csander@purestorage.com>
+References: <20250329161527.3281314-1-csander@purestorage.com>
+Subject: Re: [PATCH] io_uring/wq: avoid indirect do_work/free_work calls
+Message-Id: <174344799393.1769197.3886261668995690740.b4-ty@kernel.dk>
+Date: Mon, 31 Mar 2025 13:06:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
-Hi Linus,
 
-The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
+On Sat, 29 Mar 2025 10:15:24 -0600, Caleb Sander Mateos wrote:
+> struct io_wq stores do_work and free_work function pointers which are
+> called on each work item. But these function pointers are always set to
+> io_wq_submit_work and io_wq_free_work, respectively. So remove these
+> function pointers and just call the functions directly.
+> 
+> 
 
-  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
+Applied, thanks!
 
-are available in the Git repository at:
+[1/1] io_uring/wq: avoid indirect do_work/free_work calls
+      commit: 842b5d5f87039d978a9748f8728cabe07a676252
 
-  https://github.com/awilliam/linux-vfio.git tags/vfio-v6.15-rc1
+Best regards,
+-- 
+Jens Axboe
 
-for you to fetch changes up to 860be250fc32de9cb24154bf21b4e36f40925707:
 
-  vfio/pci: Handle INTx IRQ_NOTCONNECTED (2025-03-17 15:15:17 -0600)
-
-----------------------------------------------------------------
-VFIO updates for v6.15-rc1
-
- - Relax IGD support code to match display class device rather than
-   specifically requiring a VGA device. (Tomita Moeko)
-
- - Accelerate DMA mapping of device MMIO by iterating at PMD and PUD
-   levels to take advantage of huge pfnmap support added in v6.12.
-   (Alex Williamson)
-
- - Extend virtio vfio-pci variant driver to include migration support
-   for block devices where enabled by the PF. (Yishai Hadas)
-
- - Virtualize INTx PIN register for devices where the platform does
-   not route legacy PCI interrupts for the device and the interrupt
-   is reported as IRQ_NOTCONNECTED. (Alex Williamson)
-
-----------------------------------------------------------------
-Alex Williamson (7):
-      vfio/type1: Catch zero from pin_user_pages_remote()
-      vfio/type1: Convert all vaddr_get_pfns() callers to use vfio_batch
-      vfio/type1: Use vfio_batch for vaddr_get_pfns()
-      vfio/type1: Use consistent types for page counts
-      mm: Provide address mask in struct follow_pfnmap_args
-      vfio/type1: Use mapping page mask for pfnmaps
-      vfio/pci: Handle INTx IRQ_NOTCONNECTED
-
-Tomita Moeko (1):
-      vfio/pci: match IGD devices in display controller class
-
-Yishai Hadas (1):
-      vfio/virtio: Enable support for virtio-block live migration
-
- drivers/vfio/pci/vfio_pci.c         |   4 +-
- drivers/vfio/pci/vfio_pci_config.c  |   3 +-
- drivers/vfio/pci/vfio_pci_core.c    |  10 +--
- drivers/vfio/pci/vfio_pci_igd.c     |   6 ++
- drivers/vfio/pci/vfio_pci_intrs.c   |   2 +-
- drivers/vfio/pci/vfio_pci_priv.h    |   6 ++
- drivers/vfio/pci/virtio/Kconfig     |   6 +-
- drivers/vfio/pci/virtio/legacy_io.c |   4 +-
- drivers/vfio/pci/virtio/main.c      |   5 +-
- drivers/vfio/vfio_iommu_type1.c     | 123 ++++++++++++++++++++++--------------
- include/linux/mm.h                  |   2 +
- mm/memory.c                         |   1 +
- 12 files changed, 106 insertions(+), 66 deletions(-)
 
 
