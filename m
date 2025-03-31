@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-582564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94DDA76FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:05:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6339A76FDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9750169B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1E63AB511
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD2A221550;
-	Mon, 31 Mar 2025 21:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779221E08B;
+	Mon, 31 Mar 2025 21:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qeb1Pgqt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRea347K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2FF21C9E1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230BA21B9FC;
 	Mon, 31 Mar 2025 21:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743454996; cv=none; b=WOv50rt25k9KvgGPcHxcE/2Z7wi/vL2uBvVPZIkB2iuvz07//2MCN1662Of2naOpTZJIWG2Vp8q7TfNGvOxPxkbbVCHKXgn6k1tUStBcrhMLwXfcLI7J1dEvPXJ/hm1hiavIP6rIygyYzewTxBd/aqfPTx/DheJy7CvzftFDi0o=
+	t=1743454996; cv=none; b=OCp6EDwQVkML5PI+ag+PDiJyJsDGHAbctq3fRQNCjovqarfy23MkZ0jBtdEDcm3rtGMhSWVJ/oGh55OLrPaSj/5WWnlXR6Pd6V3zfx4fwbopf2dAgIMGG8gpG8WIKVxoYmkoQSwcqfv35G3CjzSdmUom2IPJOXKrHmWX0TnBX3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743454996; c=relaxed/simple;
-	bh=1zu+tiXtv9EHc5tmGSDi0qMNWo1wCGu6vx+Yk4qI7Lg=;
+	bh=95yGZppaZZxoJNnNv8N0HfRV+XlPNqEDRvJVFtromRk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GXXhbHl+Jrudl+4rxYz3192cSazRRDOCxNKwOgEbGN+TiC8mjv7wsN+WAK/woTNLLZ+O1ALcDpNbyWs9zXULymtt87u6Xq0aH1ISqHKPbJySs0cCLFfU/h0VjECqtluyPxokoFtG9vzHUWRyBYB4Ejeju4AVOQ7WntnoxkTvnYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qeb1Pgqt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C831DC4CEF2;
+	 MIME-Version; b=SxRjtwNjsgM44MI4Lb0JWdPJj2L7gvwKAWzXsAGsM8aGH0hxIoMBc3jkbnUPss9sitGuqG9AXAqgpmMT7A3kpfSC4VMWpDcJVC39P3hmZbO/X7i8MDM+9JMA1Ykm7J7GbOdMEOMBxGwAIp0Flc3H9lVZzP0O4vPfHlnBDgX3Aiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRea347K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C933EC4CEF3;
 	Mon, 31 Mar 2025 21:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1743454995;
-	bh=1zu+tiXtv9EHc5tmGSDi0qMNWo1wCGu6vx+Yk4qI7Lg=;
+	bh=95yGZppaZZxoJNnNv8N0HfRV+XlPNqEDRvJVFtromRk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Qeb1PgqtgYDJnKofypo6RoakDGGU01cieJkh2ZB8Oy1EsawhGSb4RtcUAQE3KlF/i
-	 azwhWgIaewmGVOJAN3zHeJgpyW/Z90oH1VFbpj13dRmPFexCOO9CFzPX7lM4SmoVz+
-	 lbVu+w0fN2IuK/ig9Q3ZDRS3/Hhf9IsVj+bK5B0zzXtBnZE7iU6bKF9tWq3OBu2of/
-	 6M4QO0jjJ7aCL57/DjoXvu6AJmTdIFOPeT1ukYICifvoJJGTlF111ORLRBlJwh553Z
-	 ty33igFClrr2TLeUzlCCoZQgRnFA5JOPnQiSIDRLtIPNOu0y9/Qb6CSN5/2UXCNbu7
-	 z1jq9EYl9eb1Q==
+	b=CRea347KjhdlzVfvJEH/NfNFmqmypO9mjv04ULyxp16D/aiF7o4KlYzrWay6hNJdZ
+	 jpdbRR1AtDFj2qqwRovT6wSW31XsJMGepmtkfid5UH8MiKx3zUN5nsgUnJNkZmJI9G
+	 bzH47j/Nz2fygb6yfpCoG0UyT2j7ICKW2//EZ/E9l0Yk4iBcZ7hsLzWH/zVv0zKPoL
+	 CslapDzVz4v5jvRUBsWV7rEkjqIJ9X2hSkx13451GmEzaXOF+4gJ6N4r8A1ZU671mz
+	 vbzho6kqCznqC5ueMrrtJUJTib7cnw22VmzgMMnbwm2scvalaTiB13/UXX6U8srzzU
+	 eB0twgqBHIoWg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3125ECE11EE; Mon, 31 Mar 2025 14:03:15 -0700 (PDT)
+	id 33F59CE12A6; Mon, 31 Mar 2025 14:03:15 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org,
 	Joel Fernandes <joelagnelf@nvidia.com>
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 06/12] rcutorture: Pull rcu_torture_updown() loop body into new function
-Date: Mon, 31 Mar 2025 14:03:08 -0700
-Message-Id: <20250331210314.590622-6-paulmck@kernel.org>
+Subject: [PATCH v2 07/12] rcutorture: Comment invocations of tick_dep_set_task()
+Date: Mon, 31 Mar 2025 14:03:09 -0700
+Message-Id: <20250331210314.590622-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
 References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
@@ -63,90 +63,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is strictly a code-movement commit, pulling that part of
-the rcu_torture_updown() function's loop body that processes
-one rcu_torture_one_read_state_updown structure into a new
-rcu_torture_updown_one() function.  The checks for the end of the
-torture test and the current structure being in use remain in the
-rcu_torture_updown() function.
+The rcu_torture_reader() and rcu_torture_fwd_prog_cr() functions
+run CPU-bound for extended periods of time (tens or even
+hundreds of milliseconds), so they invoke tick_dep_set_task() and
+tick_dep_clear_task() to ensure that the scheduling-clock tick helps
+move grace periods forward.
+
+So why doesn't rcu_torture_fwd_prog_nr() also invoke tick_dep_set_task()
+and tick_dep_clear_task()?  Because the point of this function is to test
+RCU's ability to (eventually) force grace periods forward even when the
+tick has been disabled during long CPU-bound kernel execution.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 46 ++++++++++++++++++++++-------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+ kernel/rcu/rcutorture.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index e7f0521c56d08..7eccc74e60a7f 100644
+index 7eccc74e60a7f..ea40f3ad32dc2 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -2505,6 +2505,30 @@ static void rcu_torture_updown_cleanup(void)
- 	updownreaders = NULL;
- }
- 
-+// Do one reader for rcu_torture_updown().
-+static void rcu_torture_updown_one(struct rcu_torture_one_read_state_updown *rtorsup)
-+{
-+	int idx;
-+	int rawidx;
-+	ktime_t t;
-+
-+	init_rcu_torture_one_read_state(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs);
-+	rawidx = cur_ops->down_read();
-+	idx = (rawidx << RCUTORTURE_RDR_SHIFT_1) & RCUTORTURE_RDR_MASK_1;
-+	rtorsup->rtorsu_rtors.readstate = idx | RCUTORTURE_RDR_UPDOWN;
-+	rtorsup->rtorsu_rtors.rtrsp++;
-+	if (!rcu_torture_one_read_start(&rtorsup->rtorsu_rtors, &rtorsup->rtorsu_trs, -1)) {
-+		cur_ops->up_read(rawidx);
-+		schedule_timeout_idle(HZ);
-+		return;
-+	}
-+	smp_store_release(&rtorsup->rtorsu_inuse, true);
-+	t = torture_random(&rtorsup->rtorsu_trs) & 0xfffff; // One per million.
-+	if (t < 10 * 1000)
-+		t = 200 * 1000 * 1000;
-+	hrtimer_start(&rtorsup->rtorsu_hrt, t, HRTIMER_MODE_REL | HRTIMER_MODE_SOFT);
-+}
-+
- /*
-  * RCU torture up/down reader kthread, starting RCU readers in kthread
-  * context and ending them in hrtimer handlers.  Otherwise similar to
-@@ -2513,10 +2537,7 @@ static void rcu_torture_updown_cleanup(void)
- static int
- rcu_torture_updown(void *arg)
- {
--	int idx;
--	int rawidx;
- 	struct rcu_torture_one_read_state_updown *rtorsup;
--	ktime_t t;
- 
- 	VERBOSE_TOROUT_STRING("rcu_torture_updown task started");
+@@ -2410,7 +2410,7 @@ rcu_torture_reader(void *arg)
+ 	set_user_nice(current, MAX_NICE);
+ 	if (irqreader && cur_ops->irq_capable)
+ 		timer_setup_on_stack(&t, rcu_torture_timer, 0);
+-	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
++	tick_dep_set_task(current, TICK_DEP_BIT_RCU);  // CPU bound, so need tick.
  	do {
-@@ -2525,24 +2546,7 @@ rcu_torture_updown(void *arg)
- 				break;
- 			if (smp_load_acquire(&rtorsup->rtorsu_inuse))
- 				continue;
--			init_rcu_torture_one_read_state(&rtorsup->rtorsu_rtors,
--							&rtorsup->rtorsu_trs);
--			rawidx = cur_ops->down_read();
--			idx = (rawidx << RCUTORTURE_RDR_SHIFT_1) & RCUTORTURE_RDR_MASK_1;
--			rtorsup->rtorsu_rtors.readstate = idx | RCUTORTURE_RDR_UPDOWN;
--			rtorsup->rtorsu_rtors.rtrsp++;
--			if (!rcu_torture_one_read_start(&rtorsup->rtorsu_rtors,
--							&rtorsup->rtorsu_trs, -1)) {
--				cur_ops->up_read(rawidx);
--				schedule_timeout_idle(HZ);
--				continue;
--			}
--			smp_store_release(&rtorsup->rtorsu_inuse, true);
--			t = torture_random(&rtorsup->rtorsu_trs) & 0xfffff; // One per million.
--			if (t < 10 * 1000)
--				t = 200 * 1000 * 1000;
--			hrtimer_start(&rtorsup->rtorsu_hrt, t,
--				      HRTIMER_MODE_REL | HRTIMER_MODE_SOFT);
-+			rcu_torture_updown_one(rtorsup);
- 		}
- 		torture_hrtimeout_ms(1, 1000, &rcu_torture_updown_rand);
- 		stutter_wait("rcu_torture_updown");
+ 		if (irqreader && cur_ops->irq_capable) {
+ 			if (!timer_pending(&t))
+@@ -3260,7 +3260,7 @@ static void rcu_torture_fwd_prog_cr(struct rcu_fwd *rfp)
+ 	cver = READ_ONCE(rcu_torture_current_version);
+ 	gps = cur_ops->get_gp_seq();
+ 	rfp->rcu_launder_gp_seq_start = gps;
+-	tick_dep_set_task(current, TICK_DEP_BIT_RCU);
++	tick_dep_set_task(current, TICK_DEP_BIT_RCU);  // CPU bound, so need tick.
+ 	while (time_before(jiffies, stopat) &&
+ 	       !shutdown_time_arrived() &&
+ 	       !READ_ONCE(rcu_fwd_emergency_stop) && !torture_must_stop()) {
 -- 
 2.40.1
 
