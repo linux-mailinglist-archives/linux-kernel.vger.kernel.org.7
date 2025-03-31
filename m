@@ -1,143 +1,135 @@
-Return-Path: <linux-kernel+bounces-581487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A0DA76083
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:51:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F643A7608F
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1916D166129
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4AE3AA7DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008EC1D79B8;
-	Mon, 31 Mar 2025 07:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3031D5AC0;
+	Mon, 31 Mar 2025 07:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AM/pd9GY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3h7SVdy"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C981D5CC2;
-	Mon, 31 Mar 2025 07:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6271D5173
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743407422; cv=none; b=MZsYuTzu9cbQq9KixQ2AvKNbZRBhm24/hM/UDnEBf95soEFDhUnIMIPa4HJ8e0OagCNe8lZ6GHAg0nYrPbbDGA0jtQxWaZPca/KUMX4jL1iZyvsI7F+acWGzyFhnhhluxw+5UqvLlXpZrwPqcGSUocUxEY3pmMQ+XHhCX9ly+W4=
+	t=1743407489; cv=none; b=MYCyvq7U0RI7NrFHRDKsbEo36Fe4k90cCNoMddwwrftaHevR5BbV3Fmn0TlHHOqNb/Ibx7HO6MH2aS2/HVar3/yCKMCmTksI3nERWR7uZYbJIA+AvX05u9keFwlHCXDDQY6N4/VYQTaJAcbiRJrIg6OQQvAqt/JS1LPjSFzyo6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743407422; c=relaxed/simple;
-	bh=prYw5u8aOVdWtVy6m/f9wz2b6yIFj/X4vl/CDi7qjyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lL+PzlE3Mb4zuHHfiEyUWIud+aRx5CvFSPZyG/H1+VEC6s9f8nA+zO/y6ELlihf/Zu41WeRX3t7H6nLK06jxjPuqPihdQuMypby4Ik9E4+zikp5DkCKOR2nVh5peMm120nvQybpUhL+zHc5vZiCqnhSnVEEarpOJpUOBBhPVXKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AM/pd9GY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6366C4CEE3;
-	Mon, 31 Mar 2025 07:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743407421;
-	bh=prYw5u8aOVdWtVy6m/f9wz2b6yIFj/X4vl/CDi7qjyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AM/pd9GYteRQlJHH/4X+M0M8nhgTeNEfVSpqgsbbU5wiwkmMPlyVTd8bLxqEmRFPA
-	 4lcFyj0NdCqddz2tPlng2UW+ZkqHQ7ft6RKN6Z8NrjawnLDfNbDzz1JbEk+001y7bW
-	 cgz0/f3YJRN3QfcvpffdtzpVomt7JntgcUSbeUC1xR2cRLZWAqujDuzFtGpNiAeW3Q
-	 mXLrwE6TxaxDk6h3898Tk1UBLaqBFOCIJdKn/5URXjlXyMdmmuqxrmfp6TMfo5GT1b
-	 PPHYRRdy/ZucFP7tgDqFLY+5hTH28fwsLQm4Z48NUkMwPNya62eDQzlpFRTCd9P0OW
-	 JKlXVaiCG+0Eg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tz9uZ-00000000574-2xYS;
-	Mon, 31 Mar 2025 09:50:23 +0200
-Date: Mon, 31 Mar 2025 09:50:23 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: x1e78100-t14s: add hpd gpio to
- eDP panel
-Message-ID: <Z-pJP4PMwPo3L3Og@hovoldconsulting.com>
-References: <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org>
- <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-1-45d5f2747398@linaro.org>
+	s=arc-20240116; t=1743407489; c=relaxed/simple;
+	bh=Ja2b5BajyZQJVleOMApddlyPJUBUox5qq00mF76Nxss=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=NK68+2pQRiLqNzEmWy7mhybGR+Le40tzsJDo2oRSaYPUvEc9DrKBs+ErVCDChyS9ulDMS2c/oaqvA8FxcnFWCLntzOxubps2urefS2B9mmM+secGlkRfR/6FK8H6w1GyMrYvL9xD5KQTSDzlMluxZc6HlvcKxh687a9lajLkv9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3h7SVdy; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso802344a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 00:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743407487; x=1744012287; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AiOU8eMQlOYP7P+e8X+mdPFIr3VBEpQEAdsGq1MvY7Y=;
+        b=l3h7SVdyPgG9rO59FnDR0fykn66Zib9jRgAOaByzoLXQ7uZT740chvboukhWLtkDlU
+         KDUSJPHxvOgInXO/6IgzPtdgW3DDl0nklOYZ+vV9IH1egDzGAL6U2/o+3R3FNseOoPNO
+         vcH3srjLgu7huRgH6HMB7MODyKWqxQNH3AWHLFQ2QSfCVtl5I0h7safoLIVeTbW7VY+h
+         YoU6BOkeAuVdCR0by65G7JksByHcleNvX+kLt+F0Ev0xQpU0TUwhXKPsc1wu03CV26va
+         m/P3J+HxG/yyqqtLOMAW/ySVqvRT7+d/ZSR0pLeOaQ86RfSySgN6Yus6set2cs27XI4I
+         JBBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743407487; x=1744012287;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AiOU8eMQlOYP7P+e8X+mdPFIr3VBEpQEAdsGq1MvY7Y=;
+        b=f1GOzw9J8VT9bOKpNaWr1Pzx4WKhpma14AQJK0t6JECvZxJEIPDJ0OD4OVtCOzBS8l
+         LNnoi7twi4ajp8jzRX3k2P1sNegqUDMYwWHpG4OG2Nqxbc72RexKTXxYsTUJ/Kt4CkUT
+         z09bifWYBeDvYGvfWUrkvqYQ2FP7PEFk992TKatSAdnnZMvVxpaQugRjeBgJ0aqvHLup
+         QTXRWADZXOcuh/ykbqITTCHyqXOeA/aWCyWEuYnM7bbjr5QGdsb515dONIge4NO+IPHL
+         oN5VLP/1s4N8BJAOMTh1uiLzY3+HUKoUrkdjVZLkEIt0hIOkETr4r4Uzbwnzl9ezsRM3
+         MD2A==
+X-Gm-Message-State: AOJu0YweU/FozFWIeaeo1Iusv7/DmqSMWA9dzgB8Qcm8HToh5/yn3/0O
+	iCwRkj/Edf86zmTGKFfStQXDh6r7NVLL4vauMX7DetzF6vFMPziB1NYToCvhYj2KytQ7DnGV8xi
+	nKJ126szICmUOec6FZz5ClMkMhM00bYlF
+X-Gm-Gg: ASbGncsDBFiHiCjYyCT9BEmxK7415BxFnl7Rt2TsyEn63RhLZjYge1vAJco21u2U0wF
+	Trw19jLr+OuiE0hLrwp6KiBEdLLsUxNNGbBPE3ygb68bXNAJXcNVRQt0s/SmzZKzO3pqFTe98sb
+	y4pRQ7sxDySjdNuSjak//WmqSibg==
+X-Google-Smtp-Source: AGHT+IFc018RGrEcu7xhxTWYiMjoc1T3oUgVceAmKA8d0tTO/UO6VlSFg1ykiSlt60CO/9odhtwsfDir9DiK5RekElY=
+X-Received: by 2002:a17:90b:3b85:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-30531f715a7mr4966006a91.2.1743407486919; Mon, 31 Mar 2025
+ 00:51:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250327-wip-obbardc-qcom-t14s-oled-panel-v3-1-45d5f2747398@linaro.org>
+From: Jeff Chua <jeff.chua.linux@gmail.com>
+Date: Mon, 31 Mar 2025 15:51:16 +0800
+X-Gm-Features: AQ5f1JoKfbSkGLbUAUgP2FCD9RDBLbvBEr_9LwYKOZEfeMQ3iqNtZXogp647Xjo
+Message-ID: <CAAJw_Zt1cYcg-Fa_rCecwHnWKMi7uO2UGNEhMsxPiQa-pgUMnw@mail.gmail.com>
+Subject: platform/x86: thinkpad_acpi causing kernel oops commit 38b9ab80db31cf993a8f3ab2baf772083b62ca6f
+To: lkml <linux-kernel@vger.kernel.org>, Kurt Borja <kuurtb@gmail.com>, 
+	Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 27, 2025 at 04:56:53PM +0000, Christopher Obbard wrote:
-> The eDP panel has an HPD GPIO. Describe it in the device tree
-> for the generic T14s model, as the HPD GPIO property is used in
-> both the OLED and LCD models which inherit this device tree.
+This commit prevents the latest linux git from booting. Only those
+with thinkpad-acpi will see this.
+There's no clean way to revert this. I took the thinkpad_acpi.c from
+vanilla 6.14.0 and that booted up with the latest linux git
+(4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209).
 
-AFAICT, this patch is not correct as the hotplug detect signal is
-connected directly to the display controller on (these) Qualcomm SoCs
-and is already handled by its driver.
 
-Describing it as you do here leads to less accurate delays, see commits:
-	
-	2327b13d6c47 ("drm/panel-edp: Take advantage of wait_hpd_asserted() in struct drm_dp_aux").
-	3b5765df375c ("drm/panel: atna33xc20: Take advantage of wait_hpd_asserted() in struct drm_dp_aux")
 
-Perhaps you lose some other functionality too.
- 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-> index 962fb050c55c4fd33f480a21a8c47a484d0c82b8..46c73f5c039ed982b553636cf8c4237a20ba7687 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-> @@ -980,8 +980,12 @@ &mdss_dp3 {
->  	aux-bus {
->  		panel: panel {
->  			compatible = "edp-panel";
-> +			hpd-gpios = <&tlmm 119 GPIO_ACTIVE_HIGH>;
->  			power-supply = <&vreg_edp_3p3>;
->  
-> +			pinctrl-0 = <&edp_hpd_n_default>;
-> +			pinctrl-names = "default";
-> +
->  			port {
->  				edp_panel_in: endpoint {
->  					remote-endpoint = <&mdss_dp3_out>;
-> @@ -1286,6 +1290,13 @@ hall_int_n_default: hall-int-n-state {
->  		bias-disable;
->  	};
->  
-> +	edp_hpd_n_default: edp-hpd-n-state {
-> +		pins = "gpio119";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-pull-up;
-> +	};
 
-I checked the firmware configuration for this pin on my T14s, which
-does not match what you have here. Instead the function is set to
-"edp0_hot" which forwards the signal to the display controller which
-already handles the signal on panel power on. (And there is also no
-internal pull up enabled).
+commit 38b9ab80db31cf993a8f3ab2baf772083b62ca6f
+Author: Kurt Borja <kuurtb@gmail.com>
+Date:   Fri Feb 14 19:03:01 2025 -0500
 
-We may want to describe this pin configuration somewhere, but that's a
-separate issue.
+    platform/x86: thinkpad_acpi: Move subdriver initialization to
+tpacpi_pdriver's probe.
 
-Johan
+    It was reported that if subdrivers assigned devres resources inside
+    ibm_init_struct's .init callbacks, driver binding would fail with the
+    following error message:
+
+            platform thinkpad_acpi: Resources present before probing
+
+    Let the driver core manage the lifetimes of the subdrivers and children
+    devices, by initializing them inside tpacpi_driver's .probe callback.
+    This is appropriate because these subdrivers usually expose sysfs group=
+s
+    and the driver core manages this automatically to avoid races.
+
+    One immediate benefit of this, is that we are now able to use devres
+    inside .init subdriver callbacks.
+
+    platform_create_bundle is specifically used because it makes the
+    driver's probe type synchronous and returns an ERR_PTR if attachment
+    failed.
+
+    Additionally, to make error handling simpler, allocate the input device
+    using devm_input_allocate_device().
+
+    Reported-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+    Closes: https://lore.kernel.org/platform-driver-x86/20250208091438.5972=
+-1-mpearson-lenovo@squebb.ca/#t
+    Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+    Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+    Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+    Link: https://lore.kernel.org/r/20250215000302.19753-2-kuurtb@gmail.com
+    Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+
+
+My best.,
+Jeff
 
