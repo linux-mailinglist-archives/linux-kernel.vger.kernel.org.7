@@ -1,143 +1,113 @@
-Return-Path: <linux-kernel+bounces-581574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0457A761E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FFEA7616B
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5A71889B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4136188956C
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600E21E9B32;
-	Mon, 31 Mar 2025 08:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03F51D63E1;
+	Mon, 31 Mar 2025 08:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SuHDQIJy"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Kl/Hg3ek"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F91E7C16;
-	Mon, 31 Mar 2025 08:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5921C1D54E2
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743409462; cv=none; b=kS3+kgb4e9rIl8E85ehpa213F4hDwOgcSWdlct77y3Qu9eIFnNbGcur+hyWu7m/QiW3zEWkzFjOFjSsd7XAUE9P3BkwGSYc7on/uDhSKU/QB1q0hKLxVj2Z3+m8jMLyw5s7ZHDw+cWivwh+YtH0nmfcdzIdgJnAccrwCCbLfmYs=
+	t=1743409380; cv=none; b=RYF07o0Cd8s0WBgeYpiUP3XSWjpWjrozoZj+KwQwBnf0BJ3Y/eBT5Br5zCMZkk2X1EcuV4xmxZbCSNFujwrEfJ2CyU+u7iyTJeGFPZpyNhdMG873SLkganoeg1P8Uja9Dd5eKXytGnvMGW9FPv3kDap7Tsqf0jrkHr4syt2OGXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743409462; c=relaxed/simple;
-	bh=ABSKvHyBIrh6QHK4hlgn4QnqvAzBsraSRqbIPjJ35nM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t0itzJLIqPitCu+aBdlGbHZizteGkkwk69AHy9FPCx8YgrKEhbpIvL0p5OB5ARcVAaFgGib6xfsZESSOkyCQiW014ioFrFY4pO/OgQKxGcyvUW2D+XoEnt9vyz31x7gfU0puM45WWmvPeQi7irdE5vg0TXro5TAdTZHzGGiWme4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SuHDQIJy; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52V8Mp0F3171319
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 31 Mar 2025 01:23:28 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52V8Mp0F3171319
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1743409410;
-	bh=cMFNgaQ/yU5pBBnUjuHrZWgQ7p+gEOsEGfeLMhV/cHU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SuHDQIJy8AzSLC0DrXz1UGsHXHhDsnDQpCgFuieur9l29e7EM1ArYQl7rGjnX8wD+
-	 WkraR40jpmWTpADYisOZ7nbeYq+ByLQ5TLLYH8kKM7DCg5buwGVA5GHhHZVrggSeZ4
-	 p9nifPZWSuSDm1534yUVgXXqF/kvTz/WBhHohMexeK1jikiHydt9HM2bVqx8MyrHLR
-	 c8M6luTBzpzY8I0f63iDe6i8yCHSJXzCnLx3cOikN4ytSEhwdKsNU/oWb2NhlDUBla
-	 mlZbjuvfxWirBhjjqog8XtnbNx9xitJDGMf/rsrr0eINZ0q1eEmyIbBAiN8ijpnMcH
-	 lJXB3Tmz/tP0A==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        jgross@suse.com, andrew.cooper3@citrix.com, peterz@infradead.org,
-        acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        alexey.amakhalov@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
-        seanjc@google.com, luto@kernel.org, boris.ostrovsky@oracle.com,
-        kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
-Subject: [RFC PATCH v1 15/15] x86/msr: Move the ARGS macros after the MSR read/write APIs
-Date: Mon, 31 Mar 2025 01:22:51 -0700
-Message-ID: <20250331082251.3171276-16-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250331082251.3171276-1-xin@zytor.com>
-References: <20250331082251.3171276-1-xin@zytor.com>
+	s=arc-20240116; t=1743409380; c=relaxed/simple;
+	bh=cErORlmBQ7cX4+LXkK8ApLOIo1/7j9xJiW1S2gw/lYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0SaPJTrkgq8ovPXy7w5gnbkOB0/HJ4nsuSBKWObJLvbnljKdS0OSBj3uel5oDvM93Vs5gqhMdfrMcHc9eLy1UpNpJUib6srChYhM2WiMQKelP1MEhsDV47siRY+JbwXUqjil8dsySFGeQT51ifot9i96+cXqbN6Dl0TO1ex0kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Kl/Hg3ek; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=cErO
+	RlmBQ7cX4+LXkK8ApLOIo1/7j9xJiW1S2gw/lYA=; b=Kl/Hg3ekxFnonu+zzm8J
+	3a+o7HH2Jwc1P42FUlhwjOYzKQ90xmVExpW76eD1buOe40PV6Bn+gbAGD8q2oQk+
+	aFUtcOjHirWZOE26NwbxanGMk4JMeViKWtw0B+Epoz08GAoy0Q+rm/36Axt10AhV
+	3GnlNYasEGHyZJQZy2tWg1kvk+Etciiufw6gxM/r0tsJHRGNh/aPaZTGBK7+1v6C
+	0cR3xc7Gd+grbcxZtVtjuXgyfiP0mOAagYX31hX840zWU5uHzHNpxMcjlIgs+K7i
+	c1Yfs5Ev1JC3ocd4clG52vt6McytzflKb/TuZe3m92BMgEVJeXf7yO39gx8KHEro
+	ng==
+Received: (qmail 1154732 invoked from network); 31 Mar 2025 10:22:55 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 10:22:55 +0200
+X-UD-Smtp-Session: l3s3148p1@wN1+IJ8xHNNQ8qei
+Date: Mon, 31 Mar 2025 10:22:54 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] mmc: core: Convert into an enum for the
+ poweroff-type for eMMC
+Message-ID: <Z-pQ3rRm__8XLLrq@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250320140040.162416-1-ulf.hansson@linaro.org>
+ <20250320140040.162416-4-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/+qaW/Tbmx/7P+oU"
+Content-Disposition: inline
+In-Reply-To: <20250320140040.162416-4-ulf.hansson@linaro.org>
 
-Since the ARGS macros are no longer used in the MSR read/write API
-implementation, move them after their definitions.
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/include/asm/msr.h | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+--/+qaW/Tbmx/7P+oU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-index fc93c2601853..9b109d1d92aa 100644
---- a/arch/x86/include/asm/msr.h
-+++ b/arch/x86/include/asm/msr.h
-@@ -37,23 +37,6 @@ struct saved_msrs {
- 	struct saved_msr *array;
- };
- 
--/*
-- * both i386 and x86_64 returns 64-bit value in edx:eax, but gcc's "A"
-- * constraint has different meanings. For i386, "A" means exactly
-- * edx:eax, while for x86_64 it doesn't mean rdx:rax or edx:eax. Instead,
-- * it means rax *or* rdx.
-- */
--#ifdef CONFIG_X86_64
--/* Using 64-bit values saves one instruction clearing the high half of low */
--#define DECLARE_ARGS(val, low, high)	unsigned long low, high
--#define EAX_EDX_VAL(val, low, high)	((low) | (high) << 32)
--#define EAX_EDX_RET(val, low, high)	"=a" (low), "=d" (high)
--#else
--#define DECLARE_ARGS(val, low, high)	unsigned long long val
--#define EAX_EDX_VAL(val, low, high)	(val)
--#define EAX_EDX_RET(val, low, high)	"=A" (val)
--#endif
--
- /*
-  * Be very careful with includes. This header is prone to include loops.
-  */
-@@ -620,6 +603,23 @@ static __always_inline int wrmsrl_safe(const u32 msr, const u64 val)
- extern int rdmsr_safe_regs(u32 regs[8]);
- extern int wrmsr_safe_regs(u32 regs[8]);
- 
-+/*
-+ * both i386 and x86_64 returns 64-bit value in edx:eax, but gcc's "A"
-+ * constraint has different meanings. For i386, "A" means exactly
-+ * edx:eax, while for x86_64 it doesn't mean rdx:rax or edx:eax. Instead,
-+ * it means rax *or* rdx.
-+ */
-+#ifdef CONFIG_X86_64
-+/* Using 64-bit values saves one instruction clearing the high half of low */
-+#define DECLARE_ARGS(val, low, high)	unsigned long low, high
-+#define EAX_EDX_VAL(val, low, high)	((low) | (high) << 32)
-+#define EAX_EDX_RET(val, low, high)	"=a" (low), "=d" (high)
-+#else
-+#define DECLARE_ARGS(val, low, high)	unsigned long long val
-+#define EAX_EDX_VAL(val, low, high)	(val)
-+#define EAX_EDX_RET(val, low, high)	"=A" (val)
-+#endif
-+
- /**
-  * rdtsc() - returns the current TSC without ordering constraints
-  *
--- 
-2.49.0
+On Thu, Mar 20, 2025 at 03:00:34PM +0100, Ulf Hansson wrote:
+> Currently we are only distinguishing between the suspend and the shutdown
+> scenarios, which make a bool sufficient as in-parameter to the various PM
+> functions for eMMC. However, to prepare for adding support for another
+> scenario in a subsequent change, let's convert into using an enum.
+>=20
+> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--/+qaW/Tbmx/7P+oU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfqUN4ACgkQFA3kzBSg
+KbYdJBAAn+H/xkOTFAwMpJMyS9GPI4+Nz4BHsz/lulbfNYNcpz0K4OkIEJir4Amn
+l1+DxXEBa0JI3T/4mvBr6QND6M/VN2KrZRTR032kZjDLKvOXnmyyCH/auYsOAi7I
+Ef2SWA6PeJpdEQEnmEz2w/pCvUJiQCsOU3r1q8jk5t2eNg229dwoOC0WMsHD/J5h
+I8KLLdAivcX9gDy/H4LSZiNM+kXwL72FcB0zkXrS1MDqYkdf0yecPY1+RbHogl1T
+9A1iQXhhijZaupQNNG+iukMABmRo7XSsh7sW6hGE6FR7GkrrcNt/2uF91SGVa3rm
+B8ohec7hOo4/1Yn7IXslwhvKDrUIme2xK/7ixMTm1wdAlWw2JN3dQuDgi2TSmtSv
+SUOO+Hcnn4w542Tti7je5Dou1iyNtiYq6/cDlhHT6rMaHA9cs1mvAufOlzvQMSsw
+lbBwWBwOO0rlgpu8E+uNdm+gw8xT7W0mJzMmEWmJFm2sMdaUDED55XhH69D3oLFz
+cZnpqIiCONZtL+llrgSsfK5F8WmFfzasxYWkSKTCAro5K6gehZkuKbIJWEKiqrym
+r0xZR15zfrMR8/Ryglv6t0Rxx6M2ZqbNjdweadRFRHr8AODbL9LBn9/YKj/yaJ2c
+/EixgVIehDsUVQhqK0hSlXj7VukYhtrxOJDMNkyubAwEt4A6Ing=
+=4/+G
+-----END PGP SIGNATURE-----
+
+--/+qaW/Tbmx/7P+oU--
 
