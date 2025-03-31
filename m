@@ -1,201 +1,423 @@
-Return-Path: <linux-kernel+bounces-582153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99504A769EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:21:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AFB2A769F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8763B5003
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6541892626
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A147235BEB;
-	Mon, 31 Mar 2025 14:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155212153F7;
+	Mon, 31 Mar 2025 14:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wej7R7w+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/aTnAno"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DB02356AD
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 14:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A777220689;
+	Mon, 31 Mar 2025 14:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743432924; cv=none; b=ciyNVARugCJBRUtUsoqbxzNrOz67JNkUYAaVllGQLB8NxcDTjMH5U1vm0KS9XvJ7K0P29ln8jh4Ka/wnYrE7iS9IW9bId+Q+wZvqvCIg32UL4KWnFo+sGpKkRnzkyXEc5S+2F8kP/rbuxmDbTBHWeLq2rBl8aqTJUHE82Lj3mo8=
+	t=1743432932; cv=none; b=gh7TKlT2MEtEdGSP9i/owWQRn4sKrs/TatdR5ubQbBFdERBUykEIVzPWdoF8XTL0c38VVOG7/bwBPoIYqmu26hUiAZWwIcJvX41dvYGguyA5mx7fXhEsn3OeCvd6v8q8yPLMMxI1UrSFr9yA/rzlM5j7qK4WNNYQIZai4dq2AuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743432924; c=relaxed/simple;
-	bh=Q9O8UjLPceVEDCDVbzGN5rZyqSeVA1cCqDcPa6gtF7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEUuxiGokV39CW61+sI5S9lFk1g2pECaTjNkYbDpTYXxMeL8eB+/jg2ZiJjQ3QdwzU9ipyi4hxtLNUJsgvQPDWL3p94VcnuX2J6W87iPONq9ZI/0KKGYqe/7UoAsgNHsHqC3ABb0kJWgleUaIlVK8grJui9tdlePKLUD4Y6ohGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wej7R7w+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 82399725;
-	Mon, 31 Mar 2025 16:53:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1743432808;
-	bh=Q9O8UjLPceVEDCDVbzGN5rZyqSeVA1cCqDcPa6gtF7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wej7R7w+Pso2p0b4aeIXBL2u8ndNKcj+OZ6IYfyKD53IJoflnrCT7g29kYHpSG04c
-	 KrEhXY1ajSpi8jPbE551RKqC/EWPdscU05czKxVEHwz+bNTiAElp9/96FHOnJxKTwT
-	 o5LQszvm6ZJTqSKouOeFuzvpUdWcAZXddc24GGzk=
-Date: Mon, 31 Mar 2025 17:54:56 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Vishal Sagar <vishal.sagar@amd.com>,
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 03/11] drm/fourcc: Add DRM_FORMAT_Y8
-Message-ID: <20250331145456.GB27882@pendragon.ideasonboard.com>
-References: <20250326-xilinx-formats-v4-3-322a300c6d72@ideasonboard.com>
- <CAMuHMdXM1B1c=62EpcuUdpdpaBRZSJLXb1GBB0egzp7Fyeo5-w@mail.gmail.com>
- <b195971c-52e6-463e-a440-83dde4346e65@ideasonboard.com>
- <20250327112009.6b4dc430@eldfell>
- <b5cf15a4-7c65-4718-9c39-a4c86179ba4c@ideasonboard.com>
- <20250327175842.130c0386@eldfell>
- <CAMuHMdVEpTVWmwrYt+G-QSWucT91goUcFor9qbo5rZ+X2jnRog@mail.gmail.com>
- <20250331105446.098f0fbe@eldfell>
- <20250331082135.GB13690@pendragon.ideasonboard.com>
- <20250331135337.61934003@eldfell>
+	s=arc-20240116; t=1743432932; c=relaxed/simple;
+	bh=+FVRVe7/YXzQ+A3uiWeoA08DVI+G4WCJzgOV4HwzuYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PCJTeEL2kl59afhehfqgj39evTXNU8BcnUwbZNGeSiXRDmiykiabL3VBu0d2OyCygaqRGptooglZiqtF0VnzAKdJ6GvVEq20PaWTnW+P3Pj2E0WFAMWWjVf3E7ajYKqdJhWFiz7idXaob7HtZxgZZCFlQtwZo+y2QDGfnPugKd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/aTnAno; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359BEC4CEE4;
+	Mon, 31 Mar 2025 14:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743432931;
+	bh=+FVRVe7/YXzQ+A3uiWeoA08DVI+G4WCJzgOV4HwzuYg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y/aTnAnoRqA0ec1ueLoQ6Ri1nrdvpxWCCPSwQg53YLgD1fgb26agoOKBoOFy3Mh8q
+	 HX9l0SITgi1a6wbaPFfcfWA7I78CevfSbe0mryWl28F2Vj2rZ2ASmn7p4uxtcwLNV4
+	 gmylxAvGMjOswqlexAFu4g7DMZGRgfbdrNJUPhZR47XMVYKfAtGjgOzVk1DU6SmdIc
+	 7uCGjpkuhMmCgTJ8pze3tjCmn9f1COwF6p9e6g0uu2BdlX4XJv1WRaMOI0P1dh/pM6
+	 4MpKvPA6X698b8pVEU5HsXaeFHSw4grvjfBOAFbCC8c2BB+Z5USfUBT0R8+3WZdjdW
+	 Uu/cjSClhvKbQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Tomasz=20Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>,
+	Makarenko Oleg <oleg@makarenk.ooo>,
+	=?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <michal@nozomi.space>,
+	Paul Dino Jones <paul@spacefreak18.xyz>,
+	=?UTF-8?q?Crist=C3=B3ferson=20Bueno?= <cbueno81@gmail.com>,
+	Pablo Cisneros <patchkez@protonmail.com>,
+	Jiri Kosina <jkosina@suse.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 10/23] HID: Add hid-universal-pidff driver and supported device ids
+Date: Mon, 31 Mar 2025 10:54:56 -0400
+Message-Id: <20250331145510.1705478-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250331145510.1705478-1-sashal@kernel.org>
+References: <20250331145510.1705478-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250331135337.61934003@eldfell>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.21
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 31, 2025 at 01:53:37PM +0300, Pekka Paalanen wrote:
-> On Mon, 31 Mar 2025 11:21:35 +0300 Laurent Pinchart wrote:
-> > On Mon, Mar 31, 2025 at 10:54:46AM +0300, Pekka Paalanen wrote:
-> > > On Thu, 27 Mar 2025 17:35:39 +0100 Geert Uytterhoeven wrote:
-> > > > On Thu, 27 Mar 2025 at 16:59, Pekka Paalanen wrote:
-> > > > > On Thu, 27 Mar 2025 16:21:16 +0200 Tomi Valkeinen wrote:
-> > > > > > On 27/03/2025 11:20, Pekka Paalanen wrote:    
-> > > > > > > On Wed, 26 Mar 2025 15:55:18 +0200 Tomi Valkeinen wrote:
-> > > > > > >> On 26/03/2025 15:52, Geert Uytterhoeven wrote:
-> > > > > > >>> On Wed, 26 Mar 2025 at 14:23, Tomi Valkeinen wrote:
-> > > > > > >>>> Add greyscale Y8 format.
-> > > > > > >>>>
-> > > > > > >>>> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > >>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>    
-> > > > > > >>>
-> > > > > > >>> Thanks for your patch!
-> > > > > > >>>    
-> > > > > > >>>> --- a/include/uapi/drm/drm_fourcc.h
-> > > > > > >>>> +++ b/include/uapi/drm/drm_fourcc.h
-> > > > > > >>>> @@ -405,6 +405,9 @@ extern "C" {
-> > > > > > >>>>    #define DRM_FORMAT_YUV444      fourcc_code('Y', 'U', '2', '4') /* non-subsampled Cb (1) and Cr (2) planes */
-> > > > > > >>>>    #define DRM_FORMAT_YVU444      fourcc_code('Y', 'V', '2', '4') /* non-subsampled Cr (1) and Cb (2) planes */
-> > > > > > >>>>
-> > > > > > >>>> +/* Greyscale formats */
-> > > > > > >>>> +
-> > > > > > >>>> +#define DRM_FORMAT_Y8          fourcc_code('G', 'R', 'E', 'Y')  /* 8-bit Y-only */    
-> > > > > > >>>
-> > > > > > >>> This format differs from e.g. DRM_FORMAT_R8, which encodes
-> > > > > > >>> the number of bits in the FOURCC format. What do you envision
-> > > > > > >>> for e.g. DRM_FORMAT_Y16? fourcc_code('G', 'R', '1', '6')?    
-> > > > > > >>
-> > > > > > >> I wanted to use the same fourcc as on V4L2 side. Strictly speaking it's
-> > > > > > >> not required, but different fourccs for the same formats do confuse.
-> > > > > > >>
-> > > > > > >> So, generally speaking, I'd pick an existing fourcc from v4l2 side if
-> > > > > > >> possible, and if not, invent a new one.    
-> > > > > > >
-> > > > > > > what's the actual difference between DRM_FORMAT_R8 and DRM_FORMAT_Y8?
-> > > > > > >
-> > > > > > > Is the difference that when R8 gets expanded to RGB, it becomes (R, 0,
-> > > > > > > 0), but Y8 gets expanded to (c1 * Y, c2 * Y, c3 * Y) where c1..c3 are
-> > > > > > > defined by MatrixCoefficients (H.273 terminology)?
-> > > > > > >
-> > > > > > > That would be my intuitive assumption following how YCbCr is handled.
-> > > > > > > Is it obvious enough, or should there be a comment to that effect?    
-> > > > > >
-> > > > > > You raise an interesting point. Is it defined how a display driver, that
-> > > > > > supports R8 as a format, shows R8 on screen? I came into this in the
-> > > > > > context of grayscale formats, so I thought R8 would be handled as (R, R,
-> > > > > > R) in RGB. But you say (R, 0, 0), which... also makes sense.    
-> > > > >
-> > > > > That is a good question too. I based my assumption on OpenGL behavior
-> > > > > of R8.
-> > > > >
-> > > > > Single channel displays do exist I believe, but being single-channel,
-> > > > > expansion on the other channels is likely meaningless. Hm, but for the
-> > > > > KMS color pipeline, it would be meaningful, like with a CTM.
-> > > > > Interesting.
-> > > > >
-> > > > > I don't know. Maybe Geert does?    
-> > > > 
-> > > > I did some digging, and was a bit surprised that it was you who told
-> > > > me to use R8 instead of Y8?
-> > > > https://lore.kernel.org/all/20220202111954.6ee9a10c@eldfell  
-> > > 
-> > > Hi Geert,
-> > > 
-> > > indeed I did. I never thought of the question of expansion to R,G,B
-> > > before. Maybe that expansion is what spells R8 and Y8 apart?
-> > > 
-> > > I do think that expansion needs to be specified, so that the KMS color
-> > > pipeline computations are defined. There is a big difference between
-> > > multiplying these with an arbitrary 3x3 matrix (e.g. CTM):
-> > > 
-> > > - (R, 0, 0)
-> > > - (R, R, R)
-> > > - (c1 * Y, c2 * Y, c3 * Y)  
-> > 
-> > I'd be very surprised by an YUV to RGB conversion matrix where the first
-> > column would contain different values. What we need to take into account
-> > though is quantization (full vs. limited range).
-> 
-> A good point, are the Y coefficients always 1.0 after quantization
-> range has been accounted for?
+From: Tomasz Pakuła <tomasz.pakula.oficjalny@gmail.com>
 
-As far as I understand, they should be. RGB is full range, so the Y
-range should map to [0.0, 1.0] in RGB space. I'm also not aware of any
-colorspace where a grey colour would have different R, G and B values.
+[ Upstream commit f06bf8d94fffbb544b1cb5402c92e0a075f0d420 ]
 
-There's a related but separate question: if Y is a luma (in Y'CbCr
-terms), it will not be linear, compared to the Y luminance (YCbCr). We
-have a DEGAMMA_LUT to linearize data, but that's in the CRTC output
-path, not in the plane path, and I don't see any API element to specify
-the transfer function of data input to a CRTC.
+Extend pidff compatibility, usable button range, manage pidff quirks and
+set improved fuzz/flat default for high precision devices. Possibility
+of fixing device descriptors in the future if such needs arises.
 
-> That makes Y8 produce (Y, Y, Y), and we have our answer: R8 should be
-> (R, 0, 0), so we have both variants. Or do we need Y-formats at all?
-> 
-> Can we specify Y, R, G and B be nominal values in the range 0.0 - 1.0
-> in the KMS color processing?
-> 
-> > > I forgot to consider that in the discussion of single-channel displays,
-> > > because the displays obviously do not consider any other channel than
-> > > the one.
-> > > 
-> > > Using DRM_FORMAT_Y8 FB with a single-channel display might even be
-> > > surprising, because the proposed Y8 definition would result in c1 * Y,
-> > > and not Y. The default c1 comes from the BT.601 matrix IIRC?
-> > > 
-> > > Therefore I think the difference between R8 and Y8 has been found. Now
-> > > we just need to determine whether R8 means (R, 0, 0) or (R, R, R) to
-> > > nail down the color operations as well. There are questions like what
-> > > is the outcome at the video signal level when we have one KMS plane
-> > > with an R8 FB and another KMS plane with an RGBA8888 FB on the same
-> > > CRTC? What about Y8 or NV12 in the mix? What if the video signal is
-> > > single-channel, RGB, or YCbCr?  
+As many of PID devices are quite similar and not dependent on
+custom drivers, this one can handle all of PID devices which
+need special care.
 
+Numerous sim racing/sim flight bases report a lot of buttons
+in excess of 100. Moza Racing exposes 128 of them and thus
+the need to extend the available range.
+
+All the included devices were tested and confirmed working
+with the help of the sim racing community.
+
+Changes in v6:
+- Support "split" devices with a separate "input device" for buttons
+- Fixed comment styling
+
+Co-developed-by: Makarenko Oleg <oleg@makarenk.ooo>
+Signed-off-by: Makarenko Oleg <oleg@makarenk.ooo>
+Signed-off-by: Tomasz Pakuła <tomasz.pakula.oficjalny@gmail.com>
+Reviewed-by: Michał Kopeć <michal@nozomi.space>
+Reviewed-by: Paul Dino Jones <paul@spacefreak18.xyz>
+Tested-by: Cristóferson Bueno <cbueno81@gmail.com>
+Tested-by: Pablo Cisneros <patchkez@protonmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/Kconfig               |  14 +++
+ drivers/hid/Makefile              |   1 +
+ drivers/hid/hid-ids.h             |  31 +++++
+ drivers/hid/hid-universal-pidff.c | 192 ++++++++++++++++++++++++++++++
+ 4 files changed, 238 insertions(+)
+ create mode 100644 drivers/hid/hid-universal-pidff.c
+
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 4500d7653b05e..95a4ede270991 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -1205,6 +1205,20 @@ config HID_U2FZERO
+ 	  allow setting the brightness to anything but 1, which will
+ 	  trigger a single blink and immediately reset back to 0.
+ 
++config HID_UNIVERSAL_PIDFF
++	tristate "universal-pidff: extended USB PID driver compatibility and usage"
++	depends on USB_HID
++	depends on HID_PID
++	help
++	  Extended PID support for selected devices.
++
++	  Contains report fixups, extended usable button range and
++	  pidff quirk management to extend compatibility with slightly
++	  non-compliant USB PID devices and better fuzz/flat values for
++	  high precision direct drive devices.
++
++	  Supports Moza Racing, Cammus, VRS, FFBeast and more.
++
+ config HID_WACOM
+ 	tristate "Wacom Intuos/Graphire tablet support (USB)"
+ 	depends on USB_HID
+diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+index 496dab54c73a8..ce0e72ff694a6 100644
+--- a/drivers/hid/Makefile
++++ b/drivers/hid/Makefile
+@@ -139,6 +139,7 @@ hid-uclogic-objs		:= hid-uclogic-core.o \
+ 				   hid-uclogic-params.o
+ obj-$(CONFIG_HID_UCLOGIC)	+= hid-uclogic.o
+ obj-$(CONFIG_HID_UDRAW_PS3)	+= hid-udraw-ps3.o
++obj-$(CONFIG_HID_UNIVERSAL_PIDFF)	+= hid-universal-pidff.o
+ obj-$(CONFIG_HID_LED)		+= hid-led.o
+ obj-$(CONFIG_HID_XIAOMI)	+= hid-xiaomi.o
+ obj-$(CONFIG_HID_XINMO)		+= hid-xinmo.o
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index c6ae7c4268b84..08be87b3cc990 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -262,6 +262,10 @@
+ #define USB_DEVICE_ID_BTC_EMPREX_REMOTE	0x5578
+ #define USB_DEVICE_ID_BTC_EMPREX_REMOTE_2	0x5577
+ 
++#define USB_VENDOR_ID_CAMMUS		0x3416
++#define USB_DEVICE_ID_CAMMUS_C5		0x0301
++#define USB_DEVICE_ID_CAMMUS_C12	0x0302
++
+ #define USB_VENDOR_ID_CANDO		0x2087
+ #define USB_DEVICE_ID_CANDO_PIXCIR_MULTI_TOUCH 0x0703
+ #define USB_DEVICE_ID_CANDO_MULTI_TOUCH	0x0a01
+@@ -453,6 +457,11 @@
+ #define USB_VENDOR_ID_EVISION           0x320f
+ #define USB_DEVICE_ID_EVISION_ICL01     0x5041
+ 
++#define USB_VENDOR_ID_FFBEAST		0x045b
++#define USB_DEVICE_ID_FFBEAST_JOYSTICK	0x58f9
++#define USB_DEVICE_ID_FFBEAST_RUDDER	0x5968
++#define USB_DEVICE_ID_FFBEAST_WHEEL	0x59d7
++
+ #define USB_VENDOR_ID_FLATFROG		0x25b5
+ #define USB_DEVICE_ID_MULTITOUCH_3200	0x0002
+ 
+@@ -813,6 +822,13 @@
+ #define I2C_DEVICE_ID_LG_8001		0x8001
+ #define I2C_DEVICE_ID_LG_7010		0x7010
+ 
++#define USB_VENDOR_ID_LITE_STAR		0x11ff
++#define USB_DEVICE_ID_PXN_V10		0x3245
++#define USB_DEVICE_ID_PXN_V12		0x1212
++#define USB_DEVICE_ID_PXN_V12_LITE	0x1112
++#define USB_DEVICE_ID_PXN_V12_LITE_2	0x1211
++#define USB_DEVICE_LITE_STAR_GT987_FF	0x2141
++
+ #define USB_VENDOR_ID_LOGITECH		0x046d
+ #define USB_DEVICE_ID_LOGITECH_Z_10_SPK	0x0a07
+ #define USB_DEVICE_ID_LOGITECH_AUDIOHUB 0x0a0e
+@@ -960,6 +976,18 @@
+ #define USB_VENDOR_ID_MONTEREY		0x0566
+ #define USB_DEVICE_ID_GENIUS_KB29E	0x3004
+ 
++#define USB_VENDOR_ID_MOZA		0x346e
++#define USB_DEVICE_ID_MOZA_R3		0x0005
++#define USB_DEVICE_ID_MOZA_R3_2		0x0015
++#define USB_DEVICE_ID_MOZA_R5		0x0004
++#define USB_DEVICE_ID_MOZA_R5_2		0x0014
++#define USB_DEVICE_ID_MOZA_R9		0x0002
++#define USB_DEVICE_ID_MOZA_R9_2		0x0012
++#define USB_DEVICE_ID_MOZA_R12		0x0006
++#define USB_DEVICE_ID_MOZA_R12_2	0x0016
++#define USB_DEVICE_ID_MOZA_R16_R21	0x0000
++#define USB_DEVICE_ID_MOZA_R16_R21_2	0x0010
++
+ #define USB_VENDOR_ID_MSI		0x1770
+ #define USB_DEVICE_ID_MSI_GT683R_LED_PANEL 0xff00
+ 
+@@ -1371,6 +1399,9 @@
+ #define USB_DEVICE_ID_VELLEMAN_K8061_FIRST	0x8061
+ #define USB_DEVICE_ID_VELLEMAN_K8061_LAST	0x8068
+ 
++#define USB_VENDOR_ID_VRS	0x0483
++#define USB_DEVICE_ID_VRS_DFP	0xa355
++
+ #define USB_VENDOR_ID_VTL		0x0306
+ #define USB_DEVICE_ID_VTL_MULTITOUCH_FF3F	0xff3f
+ 
+diff --git a/drivers/hid/hid-universal-pidff.c b/drivers/hid/hid-universal-pidff.c
+new file mode 100644
+index 0000000000000..55aad2e4ac1b8
+--- /dev/null
++++ b/drivers/hid/hid-universal-pidff.c
+@@ -0,0 +1,192 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * HID UNIVERSAL PIDFF
++ * hid-pidff wrapper for PID-enabled devices
++ * Handles device reports, quirks and extends usable button range
++ *
++ * Copyright (c) 2024, 2025 Makarenko Oleg
++ * Copyright (c) 2024, 2025 Tomasz Pakuła
++ */
++
++#include <linux/device.h>
++#include <linux/hid.h>
++#include <linux/module.h>
++#include <linux/input-event-codes.h>
++#include "hid-ids.h"
++
++#define JOY_RANGE (BTN_DEAD - BTN_JOYSTICK + 1)
++
++/*
++ * Map buttons manually to extend the default joystick button limit
++ */
++static int universal_pidff_input_mapping(struct hid_device *hdev,
++	struct hid_input *hi, struct hid_field *field, struct hid_usage *usage,
++	unsigned long **bit, int *max)
++{
++	if ((usage->hid & HID_USAGE_PAGE) != HID_UP_BUTTON)
++		return 0;
++
++	if (field->application != HID_GD_JOYSTICK)
++		return 0;
++
++	int button = ((usage->hid - 1) & HID_USAGE);
++	int code = button + BTN_JOYSTICK;
++
++	/* Detect the end of JOYSTICK buttons range */
++	if (code > BTN_DEAD)
++		code = button + KEY_NEXT_FAVORITE - JOY_RANGE;
++
++	/*
++	 * Map overflowing buttons to KEY_RESERVED to not ignore
++	 * them and let them still trigger MSC_SCAN
++	 */
++	if (code > KEY_MAX)
++		code = KEY_RESERVED;
++
++	hid_map_usage(hi, usage, bit, max, EV_KEY, code);
++	hid_dbg(hdev, "Button %d: usage %d", button, code);
++	return 1;
++}
++
++/*
++ * Check if the device is PID and initialize it
++ * Add quirks after initialisation
++ */
++static int universal_pidff_probe(struct hid_device *hdev,
++				 const struct hid_device_id *id)
++{
++	int i, error;
++	error = hid_parse(hdev);
++	if (error) {
++		hid_err(hdev, "HID parse failed\n");
++		goto err;
++	}
++
++	error = hid_hw_start(hdev, HID_CONNECT_DEFAULT & ~HID_CONNECT_FF);
++	if (error) {
++		hid_err(hdev, "HID hw start failed\n");
++		goto err;
++	}
++
++	/* Check if device contains PID usage page */
++	error = 1;
++	for (i = 0; i < hdev->collection_size; i++)
++		if ((hdev->collection[i].usage & HID_USAGE_PAGE) == HID_UP_PID) {
++			error = 0;
++			hid_dbg(hdev, "PID usage page found\n");
++			break;
++		}
++
++	/*
++	 * Do not fail as this might be the second "device"
++	 * just for additional buttons/axes. Exit cleanly if force
++	 * feedback usage page wasn't found (included devices were
++	 * tested and confirmed to be USB PID after all).
++	 */
++	if (error) {
++		hid_dbg(hdev, "PID usage page not found in the descriptor\n");
++		return 0;
++	}
++
++	/* Check if HID_PID support is enabled */
++	int (*init_function)(struct hid_device *, __u32);
++	init_function = hid_pidff_init_with_quirks;
++
++	if (!init_function) {
++		hid_warn(hdev, "HID_PID support not enabled!\n");
++		return 0;
++	}
++
++	error = init_function(hdev, id->driver_data);
++	if (error) {
++		hid_warn(hdev, "Error initialising force feedback\n");
++		goto err;
++	}
++
++	hid_info(hdev, "Universal pidff driver loaded sucesfully!");
++
++	return 0;
++err:
++	return error;
++}
++
++static int universal_pidff_input_configured(struct hid_device *hdev,
++					    struct hid_input *hidinput)
++{
++	int axis;
++	struct input_dev *input = hidinput->input;
++
++	if (!input->absinfo)
++		return 0;
++
++	/* Decrease fuzz and deadzone on available axes */
++	for (axis = ABS_X; axis <= ABS_BRAKE; axis++) {
++		if (!test_bit(axis, input->absbit))
++			continue;
++
++		input_set_abs_params(input, axis,
++			input->absinfo[axis].minimum,
++			input->absinfo[axis].maximum,
++			axis == ABS_X ? 0 : 8, 0);
++	}
++
++	/* Remove fuzz and deadzone from the second joystick axis */
++	if (hdev->vendor == USB_VENDOR_ID_FFBEAST &&
++	    hdev->product == USB_DEVICE_ID_FFBEAST_JOYSTICK)
++		input_set_abs_params(input, ABS_Y,
++			input->absinfo[ABS_Y].minimum,
++			input->absinfo[ABS_Y].maximum, 0, 0);
++
++	return 0;
++}
++
++static const struct hid_device_id universal_pidff_devices[] = {
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R3),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R3_2),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R5),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R5_2),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R9),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R9_2),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R12),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R12_2),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R16_R21),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_MOZA, USB_DEVICE_ID_MOZA_R16_R21_2),
++		.driver_data = HID_PIDFF_QUIRK_FIX_WHEEL_DIRECTION },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_CAMMUS, USB_DEVICE_ID_CAMMUS_C5) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_CAMMUS, USB_DEVICE_ID_CAMMUS_C12) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_VRS, USB_DEVICE_ID_VRS_DFP),
++		.driver_data = HID_PIDFF_QUIRK_PERMISSIVE_CONTROL },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_FFBEAST, USB_DEVICE_ID_FFBEAST_JOYSTICK), },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_FFBEAST, USB_DEVICE_ID_FFBEAST_RUDDER), },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_FFBEAST, USB_DEVICE_ID_FFBEAST_WHEEL) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LITE_STAR, USB_DEVICE_ID_PXN_V10) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LITE_STAR, USB_DEVICE_ID_PXN_V12) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LITE_STAR, USB_DEVICE_ID_PXN_V12_LITE) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LITE_STAR, USB_DEVICE_ID_PXN_V12_LITE_2) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_LITE_STAR, USB_DEVICE_LITE_STAR_GT987_FF) },
++	{ }
++};
++MODULE_DEVICE_TABLE(hid, universal_pidff_devices);
++
++static struct hid_driver universal_pidff = {
++	.name = "hid-universal-pidff",
++	.id_table = universal_pidff_devices,
++	.input_mapping = universal_pidff_input_mapping,
++	.probe = universal_pidff_probe,
++	.input_configured = universal_pidff_input_configured
++};
++module_hid_driver(universal_pidff);
++
++MODULE_DESCRIPTION("Universal driver for USB PID Force Feedback devices");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Makarenko Oleg <oleg@makarenk.ooo>");
++MODULE_AUTHOR("Tomasz Pakuła <tomasz.pakula.oficjalny@gmail.com>");
 -- 
-Regards,
+2.39.5
 
-Laurent Pinchart
 
