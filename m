@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-581761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EFFA764A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544FDA7649D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133F3188904A
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D81167B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699D91E231F;
-	Mon, 31 Mar 2025 10:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2211E0E13;
+	Mon, 31 Mar 2025 10:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aghuHnW8"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YF2RlIl6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jCEmoNfH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YF2RlIl6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jCEmoNfH"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF201E0B91;
-	Mon, 31 Mar 2025 10:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C5D1C84AA
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 10:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743418651; cv=none; b=kedU9NJJ9MomolxFarixd1LBS7NLH9XRt0FdVMdGm/Jqxfod3T8MHhUYFjbBFqQdk0Dfimixl6UKMgHDTrCU8otvuMML7dhgM9c6SBPtllwM3KkR1zyBvhyWfZaE/IoPqf/cP6B6XTdEy50vJi7TWssM6UmtwUvODNNDRZaLJ+Q=
+	t=1743418650; cv=none; b=qrbYIMdCtdJ0VidPIuhEGcpJtAIGszXIGRkI7vUcA/g3dpztnpC3752CeaKbArzCM8rYO8BMYSDGbdqmLYArIqUz09K/K8Q4ySNyXD79u7ia0tyWUNcZdN/hwsg/odDdaIbTn6L27M24fuqjFHaft53sP08CMekIsQv3lHf+GI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743418651; c=relaxed/simple;
-	bh=3iyJtbgGzB1OJBH5C9tTZhh5p8Zc2H+RQBAXZssCc3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bUjB53w990Ij9+FeyHH7rSvvfP5lSlKUdD6x7f2ct54fdFGKgOlBmmfWo51mzvBKmFffednYuXC/Q51sPq5ZZHFoe+q7C3OTymooDKRwqQgUCeDFoLUG4WVi0vBemVc+JCrb6fqWmlpQ8Xgm8bPAnCKwvs7l38xA612GcKTpy6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aghuHnW8; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5240317b3e0so1407503e0c.0;
-        Mon, 31 Mar 2025 03:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743418649; x=1744023449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DNNRG1/aA151htuH/eNkLqh0nhijCBN91yU1AUjfzl8=;
-        b=aghuHnW8QAM4LFHI/vLwr/YwoSHoQ90pZ+obkZTbuMF+a+1kT4UPr9UVzueWc4l0Vw
-         kZiLZsF/xOipxQG7Xs7QjkKRk93TNe+coH3333yx6DO3BMjIE1eVJB0c0H8G44Z6VSsw
-         lLNeQrPrE/uNu+1T5Jntuf+aLRx6i6ReOi3jgEQWXaaZg8FM4Lr8Kc70dsZhYXxzH5t7
-         1I6aqXEvldknxbmPBpCMF6vdOmFoyi6esQv9vqRLzTnNyNlXNSJnjZG9Ly6J765l5iKb
-         zNXGxOjBvXavfT/U3vaE+sdB9Sred65So6u+e3KEaFoePDN74vEaGyVunFzjmVRIcLVq
-         OFzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743418649; x=1744023449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DNNRG1/aA151htuH/eNkLqh0nhijCBN91yU1AUjfzl8=;
-        b=kkQia31gwKn4i7JMXWWVMToGqmzsh3uC+3AYu2eDz0chSarS0KluwdgSsR//fjA/sH
-         Q1lQWYKQrR8pVqf7JAVxuUKUfjjCNvIaE386A3shWzbbrDhvJ9aGZwGDI87910+xPpse
-         begCt3uW3PkEm7H/Miby9IXPQkGB3SqUpLGHdjXAamPRbgoJAonmZSohtYxqN6pDQflX
-         O2HxVhzv4AcdEFurOiT4K0wIXcqwlVtLLkKHw7a2inOP665MSTMnrdhFKT67zHt/GMGh
-         kXc4r0+WdL6u7NGrRCq6LcMvPEBD+TdB/sjkeLSkylFPn+TwHSpeK5sXbppR7IcuKIIF
-         iRLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw3h6nnWbIIshbGycIKt3yAYEwGC/dWq5cQ1DHSAManlduz8suq1hxVHssAsJR7tmzM7H5cfIMwTMYM8g=@vger.kernel.org, AJvYcCWQszTeEgih4NDjbli5BHCtnbtBd5zcmUawCBesNi/OmZh8cLKEa7O0gWD3S7BL37fwMapWHSJpN5TgjCIBh2jJuSA=@vger.kernel.org, AJvYcCXlsvSyOFepEh4wzEUJWzku8W9HAZfC4RKgDxZQXON2ngDPqUAc6fpoO++vSvaDmjHtZ2G5n/6aUHPu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbjNtGtFTCuVI1J4GfEfD9crnjQPJ7xNj4o4+mg3ikb7kq8Wyc
-	WT08m1aIniBm8Y0TKjLQZiCzj8OSMthMT+09bBaYZnqZQoxjYjQ/QfMHAa+z53K8rSTHRZ5kRrf
-	JaMhBwse/aa0Z0L5Kfd5yTRyA4dE=
-X-Gm-Gg: ASbGncv0lV36ug+J5sMM9T8Pw506DJbo0vSMN0+lsIi2A8EhvPoTvCD/ePuuarzsO05
-	bLTpM58mE2e145JhhIZnNJdQxW0gzh1UQYMGdzmkHAl0jF7CRQZGeeWHiBTX/Ds0JNuxzW08GBl
-	dgxvcQiJ/hezvoB6MT1oUr5Z65LIhsLqTb2NaQ5FXCK8BwTOmEcYgEZk88gf4=
-X-Google-Smtp-Source: AGHT+IEqYRcxUiARUhkAS+U3oiuXILK20HiYaw+X095+lOU7LXb76ms2yffoHkVVCV2OqJX0/p9GqGjoiVD1nyweXf0=
-X-Received: by 2002:a05:6122:d87:b0:520:6773:e5bf with SMTP id
- 71dfb90a1353d-5261d353d3fmr3113600e0c.1.1743418648966; Mon, 31 Mar 2025
- 03:57:28 -0700 (PDT)
+	s=arc-20240116; t=1743418650; c=relaxed/simple;
+	bh=vZc4WLoF722KufXOX/s3fWR9QlQ5ECV3mb4MtzX7J4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tW0Uqot5FjnXKJFT32oYY0zSLjqVZ9TJFxPXNtgfVzdEN0sI0jdlCc3Ok28ftIXLSsEybyCssS5ODf69RDotDIwuR/1l2YZvIwyKUEU8be3gxWeWDZLTcfvPFHvUcckomKlOdEndBWkxawlbaCDadvCaCIonFWQEAmlJT5Fards=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YF2RlIl6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jCEmoNfH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YF2RlIl6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jCEmoNfH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 8F78D1F38D;
+	Mon, 31 Mar 2025 10:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743418646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=akuXqyCZOSdlrQSLt/Khb4sbew/avXeSTkqZbTZoVGA=;
+	b=YF2RlIl6UxN8gjtKv0fke8bouCvvzRT47LyJmr4ULr/9KeRuP9MYy/Zsjz2D7FzQQ0N9Ym
+	9N3yo1NLUQKL3ggQB8T4Mw+2GTh5BNCtI/o42NQCbs/3sMi1UXLBstsuqCa6hvDkNa5Un4
+	B34+bCrrCeqc4z5SMf6hQb/B66alz84=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743418646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=akuXqyCZOSdlrQSLt/Khb4sbew/avXeSTkqZbTZoVGA=;
+	b=jCEmoNfHFOR5dPqJlRHSH7G3ktjTYy1SPRHbig7fqJuMu1xf/bPM+2YX9xT+M53/SOpXGj
+	6LUkv7dq+/o9aCDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743418646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=akuXqyCZOSdlrQSLt/Khb4sbew/avXeSTkqZbTZoVGA=;
+	b=YF2RlIl6UxN8gjtKv0fke8bouCvvzRT47LyJmr4ULr/9KeRuP9MYy/Zsjz2D7FzQQ0N9Ym
+	9N3yo1NLUQKL3ggQB8T4Mw+2GTh5BNCtI/o42NQCbs/3sMi1UXLBstsuqCa6hvDkNa5Un4
+	B34+bCrrCeqc4z5SMf6hQb/B66alz84=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743418646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=akuXqyCZOSdlrQSLt/Khb4sbew/avXeSTkqZbTZoVGA=;
+	b=jCEmoNfHFOR5dPqJlRHSH7G3ktjTYy1SPRHbig7fqJuMu1xf/bPM+2YX9xT+M53/SOpXGj
+	6LUkv7dq+/o9aCDw==
+From: Michal Suchanek <msuchanek@suse.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Michal Suchanek <msuchanek@suse.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Nysal Jan K.A." <nysal@linux.ibm.com>
+Subject: [PATCH v3] powerpc/boot: Fix build with gcc 15
+Date: Mon, 31 Mar 2025 12:57:19 +0200
+Message-ID: <20250331105722.19709-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <875xjsjj6b.fsf@mpe.ellerman.id.au>
+References: <875xjsjj6b.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327120737.230041-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250327120737.230041-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <87zfh6yoly.wl-kuninori.morimoto.gx@renesas.com> <CA+V-a8uwJasrQZ+3Y1vgTKz+b_SBULXpXdGYxULUOpPkZgXjFg@mail.gmail.com>
- <875xjq12vr.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <875xjq12vr.wl-kuninori.morimoto.gx@renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 31 Mar 2025 11:57:03 +0100
-X-Gm-Features: AQ5f1JocOtJDqSG1p3iXddX3aNepbZDqcge-fFv546733q8ijn8MptjNPw0nAh4
-Message-ID: <CA+V-a8vqnNN119RbRJ5FvEUkWOd+FEHr9g+B3YnZasn=y7MWaQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] usb: renesas_usbhs: Reorder clock handling and power
- management in probe
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-usb@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,linux.ibm.com,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,google.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-Hi Morimoto san,
+Similar to x86 the ppc boot code does not build with GCC 15.
 
-On Mon, Mar 31, 2025 at 1:05=E2=80=AFAM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->
->
-> Hi Lad, Prabhakar
->
-> > > >     usbhs_probe()
-> > > >         usbhs_sys_clock_ctrl()
-> > > >             usbhs_bset()
-> > > >                 usbhs_write()
-> > > >                     iowrite16()  <-- Register access before enablin=
-g clocks
-> > >
-> > > This patch itself is not so bad idea, but basically, we should not as=
-sume
-> > > the power/clock was enabled since kernel boot.
-> > > In this driver, register access happen only during power enable <->  =
-power
-> > > disable (except your issue case), and this is good idea. So, the stra=
-nge
-> > > is usbhs_sys_clock_ctrl() call in usbhs_probe() (without power enable=
-) I
-> > > guess.
-> > >
-> > > According to the comment, it is just caring boot loader, and
-> > > usbhs_sys_clock_ctrl() itself will be called when usbhsc_power_ctrl()=
- was
-> > > called anyway. And more, if my understanding was correct, Renesas clo=
-ck
-> > > driver will stop all unused devices clock/power after boot.
-> > > So maybe we can just remove strange usbhs_sys_clock_ctrl() from usbhs=
-_probe() ?
-> > >
-> >
-> > After dropping usbhs_sys_clock_ctrl and removing the clock enabling
-> > done in this patch and with  `CONFIG_USB_G_SERIAL=3Dy` I hit the same
-> > issue.
->
-> Ah...
-> OK, not only usbhs_sys_clock_ctrl(), but other initializer also
-> missing power in probe(). Thank you for reporting, your original patch
-> is reasonable.
->
-Thanks! I'll send a V2 incorporating your review comments next week
-after v6.15-rc1 is released.
+Copy the fix from
+commit ee2ab467bddf ("x86/boot: Use '-std=gnu11' to fix build with GCC 15")
 
-Cheers,
-Prabhakar
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+v2: Move the fix outside of ifdef to apply to all subarchitectures
+v3: Change BOOTCFLAGS rather than BOOTTARGETFLAGS
+---
+ arch/powerpc/boot/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 184d0680e661..a7ab087d412c 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -70,6 +70,7 @@ BOOTCPPFLAGS	:= -nostdinc $(LINUXINCLUDE)
+ BOOTCPPFLAGS	+= -isystem $(shell $(BOOTCC) -print-file-name=include)
+ 
+ BOOTCFLAGS	:= $(BOOTTARGETFLAGS) \
++		   -std=gnu11 \
+ 		   -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+ 		   -fno-strict-aliasing -O2 \
+ 		   -msoft-float -mno-altivec -mno-vsx \
+-- 
+2.47.1
+
 
