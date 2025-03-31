@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-581883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82250A7664B
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F045FA7664F
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F270168077
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D47166E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7198B202C44;
-	Mon, 31 Mar 2025 12:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FCE2101B3;
+	Mon, 31 Mar 2025 12:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYdmsiPd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwyAq8sz"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A2F35966;
-	Mon, 31 Mar 2025 12:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD5C524F
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743425081; cv=none; b=ATtUrVtEoZo3lY8iXL2+Y4ykJ4n7QvKWK8iA6WQRiABTh7elnbSX1AJaSfF98eFytyFL4mWwUdoSu8hzPhxesxFTNoo3QtGFeQMOjK/7NvwQT4aFUjiqvGSc/q6uYZf0uqiQbX1ZnthYyigMwvCmzbgdW//BKE1Gj8oEiYhMXhM=
+	t=1743425362; cv=none; b=ulUrUHfPKx6BxBYCT2VWybNHcivyf8gVlqCQKBSstorZdHVp4u9yw6e5PPrUyNJKg2guZooGyzqEpjaF7wk66DkB4R3s51J4Ou+C9olgjiTiI94Uyyn86ix3BUPqxMV2c9lFpyLhiwsCC/OQcSm+2R3bGoPqrn6/3qRJBI5rOow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743425081; c=relaxed/simple;
-	bh=LiC9k2vhB9XdHbN17GPbp55Zc0upnEh+TTU+H1Hlzto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APoZb4TnJLEJKnNliDtTfq7KdR1Y9QJx+6/r3ZIxUd3PceoVuxCkZu2sCJgm5vLhSwR2n6H4xMY9sCald2qD7AdXxqSbonc+xbwwyiDfz9Ltk0gjBEvge1UMfHx9VRTpYM2WzAjg1VLZDCpAQsvWJhM5p/EesZxza5nV8ae5awg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYdmsiPd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DACC4CEE3;
-	Mon, 31 Mar 2025 12:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743425081;
-	bh=LiC9k2vhB9XdHbN17GPbp55Zc0upnEh+TTU+H1Hlzto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FYdmsiPdlulSlQaawINVpx61LR3YLSvr7scqcF6xslY3x4jDunbKxGxZDbq5MW398
-	 aLvupg35Rpf+w+A1duXL5oux2VM0gwmhowCvGgKnTJWLT23UEdQ6wd6GtcbV62z77u
-	 2P4Hx42mEeSvnjdHwluGz5PxoWc32psDnvRiWKisXRANzGeiParkzAA2DAwU24VMHj
-	 1qA8wyA8NF+c0Ykxik5Awg0CEQ/AZxOQFIAYUAYRbkq7xsLlD2OXhNKxiStLUKEt48
-	 /7gDzdZpyPnN8HIFpF4cw0zEACf+f78nRzbsZn324uB/8s1t9jQDSaKjyD45N8xgqf
-	 VHZ/FkJqS7Tsw==
-Date: Mon, 31 Mar 2025 13:44:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Vishwaroop A <va@nvidia.com>,
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
- controller
-Message-ID: <3b0f4fee-d46b-4086-9d63-f4093b52748e@sirena.org.uk>
-References: <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
- <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
- <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
- <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
- <499703ae-dba1-49a6-869b-a60b44c2a85f@sirena.org.uk>
- <2oxhmcrhbwlwqgyqy62p77eoag6nkavhjwmwfjfizcrhunrkjv@eaxjy6uoxszq>
- <25857b7f-5c10-46ec-b0b7-9ff89ca5ab1e@sirena.org.uk>
- <63b87feb-32ee-423c-8d82-61445414c6f7@nvidia.com>
- <9760cd70-cbd6-4865-92b9-b48eb2cdea55@sirena.org.uk>
- <69aaba89-10c6-408e-b328-c3e31a1aeaf7@nvidia.com>
+	s=arc-20240116; t=1743425362; c=relaxed/simple;
+	bh=e8e+ZLCe1/BC7oiKkwQqMWbwKPF2Ef+vtU3RbkXYK/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CsIHP85zLs/kUTKLI0Q2tesW2UQgKa6BQE6FFc70XpueXIMik6d005Bi1+KlB+jBHODkj1Tfm2ZyUmYiLTuCnDobOTrUYQ21IF87SwC6hzYYXWAKMb5sKPhtGHl2xZtnyqO9OJerpBU1IZNhjxvMbNw6H8+XwgBYZ+VXBIv9H5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwyAq8sz; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-300fefb8e06so6978932a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 05:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743425360; x=1744030160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eXfK9/CzmvNOHSqXAuOrYNlbjmDJeqXQ4wjHvzz2BV4=;
+        b=hwyAq8sz5ZPTKHU6sDVnz8AKS5XON1P7bD5/wHQ0OZZUzmu7ScQK5jbO8HP2rm29dF
+         8PSpSAmtpCXohWiheVoFvaQlWbdIekLsbnhiOQrROaJaWLfdkYP2Im32FYY2tuph0wu2
+         c9m5G8BV2tAL+0prFJMH16+rB3MdjjCwKH4E8psnNP9J6XyRNf/KEGzCd/ltVJBkefK4
+         xjQYYe42Uq1n9sk09yNGFndMerU7qA9re3AWrcVSMpownwicn/UN69TZ8+o43/69dtzl
+         cJd/BuQEfRYn2rBsZnHdKBSiGbd3DQYb3FJVlUeg/TQIgZjgdOpBVo8YcwA6v2R/YU0T
+         mmLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743425360; x=1744030160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eXfK9/CzmvNOHSqXAuOrYNlbjmDJeqXQ4wjHvzz2BV4=;
+        b=Wv9OUI+3HAMvUOTZaitjRYxUIo1Dy9BcP7Y1g5znrCddhn0N5A3zB1hHPfmrUzXIi2
+         3GRS5bV9n/qXZnrFQzDMXMruX9BUHBZjHVLJPs/343/wknZdViKyWobXI3zJPiP3eG1i
+         ewxkAGKrW7Q6eKgZt00AucTF3p1broxfK2jtlr+0BxFtCdswGrzNNkCp5ZLIv1aXVH/p
+         AY83LrfCc6oZny2La4eunuMMTTNBbMpCt4isMukblTloMeolI06OSY8pYVFggU0ZZrU2
+         mgdRM79JtmbgzArjcUaAI48YCCtJ6a+He1vTcTTIU+5IOCjtyNDyP/RzOq98t4/MTuLp
+         CERw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKximuBieyJd6Iaxo5t3UpJwCcFmSq6x7AKg4HC0L4VOD/2GS01WAVMr2A/5CC3tcRdJtjaTZ6j84yjV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFz5awQ8TNHNn8nvR4P7peq4fc6w4sUamX74ptD26Dk31uy3yW
+	o/ePHFdNb6j0+NP2zj/EsN/egas5BXYNhnoTo4IlyduaaN8DC+8MJhuJWs+W4n3qOVmo7hHO4JT
+	R1Hol+R6K64CAhaB+690IBazWm0ZZHA8Psirq
+X-Gm-Gg: ASbGncukVv1T8mamzNByv1jpmxB9yrch0/BhKRMXx4v2012FzOIkWhMYDhqJrR5LuHZ
+	4dz/RaEOu+Zhs9JZHzypHxKyNZYvD6HrkCmtkB1iV18RtUjf33CQTS4NcISYGCU/F7xpjuDXqqh
+	AJ6jZHEY41iiexG2qK8iyL/Y2niC6prZW5G65t2Zhd3qMr6s5eM0G1
+X-Google-Smtp-Source: AGHT+IEuo0GwyHsj1Yfg/oHEVZUEu0Eq1NSgwkxD8nIvU62R7F/L2ivlqyMpAatSmy/sTVD11f/BHYP+bF+iZz6REw4=
+X-Received: by 2002:a17:90b:1b0f:b0:2ff:5e4e:861 with SMTP id
+ 98e67ed59e1d1-305321653f4mr14556436a91.24.1743425359977; Mon, 31 Mar 2025
+ 05:49:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m6zwW9LXBH0p4nz1"
-Content-Disposition: inline
-In-Reply-To: <69aaba89-10c6-408e-b328-c3e31a1aeaf7@nvidia.com>
-X-Cookie: The Ranger isn't gonna like it, Yogi.
+References: <67e57c41.050a0220.2f068f.0034.GAE@google.com> <241600.1743418721@warthog.procyon.org.uk>
+In-Reply-To: <241600.1743418721@warthog.procyon.org.uk>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Mon, 31 Mar 2025 14:49:08 +0200
+X-Gm-Features: AQ5f1Jq7LGEiAfaquUrRoAilTtpSdAXsBTPIoQ20NUDfCVi_3LPGk6RVYz2JPM4
+Message-ID: <CANp29Y6gGYaQVeMHciMF5WrfueHZyWx+MJ_U4ccgJQrUyQUwog@mail.gmail.com>
+Subject: Re: [syzbot] [afs?] BUG: sleeping function called from invalid
+ context in __alloc_frozen_pages_noprof
+To: David Howells <dhowells@redhat.com>
+Cc: syzbot <syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com>, 
+	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	marc.dionne@auristor.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi David,
 
---m6zwW9LXBH0p4nz1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for letting us know!
 
-On Mon, Mar 31, 2025 at 01:34:21PM +0100, Jon Hunter wrote:
-> On 27/03/2025 15:33, Mark Brown wrote:
-> > On Wed, Mar 26, 2025 at 12:16:53PM +0000, Jon Hunter wrote:
+I've left a note in our issue tracker:
+https://github.com/google/syzkaller/issues/1020#issuecomment-2766118626
 
-> > > That's definitely what we do today, modify the kernel directly to achieve
-> > > what we need. I am trying to avoid carrying too many out of tree patches for
-> > > stuff like this and have something in the kernel that works by default. This
-> > > is even more important for 3rd party Linux distros that will not accept
-> > > non-upstream code.
+On Mon, Mar 31, 2025 at 12:58=E2=80=AFPM 'David Howells' via syzkaller-bugs
+<syzkaller-bugs@googlegroups.com> wrote:
+>
+> Note to syzbot maintainers: the C test program contains a compressed ext3
+> image and decompression code that I think is entirely unnecessary.  All i=
+t
+> does is provide a directory that the afs dynroot can be mounted upon.
+>
+> This is the only bit of the test that is actually necessary:
+>
+>   NONFAILING(memcpy((void*)0x2000000001c0, "./file0\000", 8));
+>   NONFAILING(memcpy((void*)0x2000000002c0, "afs\000", 4));
+>   NONFAILING(memcpy((void*)0x200000000400, "dyn", 3));
+>   NONFAILING(*(uint8_t*)0x200000000403 =3D 0x2c);
+>   NONFAILING(*(uint8_t*)0x200000000404 =3D 0);
+>   syscall(__NR_mount, /*src=3D*/0ul, /*dst=3D*/0x2000000001c0ul,
+>           /*type=3D*/0x2000000002c0ul, /*flags=3D*/0ul, /*opts=3D*/0x2000=
+00000400ul);
+>   NONFAILING(memcpy((void*)0x2000000000c0, "./file0\000", 8));
+>   syscall(__NR_chdir, /*dir=3D*/0x2000000000c0ul);
+>   NONFAILING(memcpy((void*)0x200000000240, "./file1\000", 8));
+>   syscall(__NR_lstat, /*file=3D*/0x200000000240ul, /*statbuf=3D*/0ul);
+>   NONFAILING(memcpy((void*)0x2000000000c0, ".\000", 2));
+>   res =3D syscall(__NR_open, /*file=3D*/0x2000000000c0ul, /*flags=3D*/0ul=
+,
+>                 /*mode=3D*/0ul);
+>   if (res !=3D -1)
+>     r[0] =3D res;
+>   syscall(__NR_getdents, /*fd=3D*/r[0], /*ent=3D*/0x200000001fc0ul,
+>           /*count=3D*/0xb8ul);
+>
+> Basically:
+>
+>   mount(NULL, "./file0", "afs", 0, "dyn,") =3D 0
+>   chdir("./file0")                  =3D 0
+>   lstat("./file1", NULL)            =3D -1 EFAULT (Bad address)
+>   open(".", O_RDONLY)               =3D 4
+>   getdents(4, 0x200000001fc0 /* 5 entries */, 184) =3D 168
+>
+> David
+>
 
-> > Overlays should work well for that case too!
-
-> If you mean device-tree overlays, I don't see how that will work today.
-> Unless we are to use one of the existing compatible strings, but that feels
-> wrong because we are not using any of those devices and like I mentioned,
-> just using 'spidev' alone in device-tree does not work with the latest
-> kernels.
-
-Why would you need to use a compatible string for anything?  I'd expect
-the overlay to add the entire new device, compatible and all.
-
---m6zwW9LXBH0p4nz1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfqjjMACgkQJNaLcl1U
-h9A9zwf/SV7SuhD12XjxoXQRf2JlgLw704FPkh0p8xsmddViLGqrfVBxUYfRR8jK
-rdhv9MIXoQrYNRv1sUN6jqJcA6jpDx/hFmvTJ2R+tiOHUY775Nb5zkFXgMAwWQx5
-rSilot1iRqT0p64la029FfWSt6fyANAy4z0FI6K/RK6tBW5XIf/cdYdVxha7wMNK
-68rKpslMhzT6S9jwU0RavadaQPfYJpYYul1uBztOr5G7j7nRtPR+JaNpwwY/6Tw/
-tv6nL3hhFVcgHreRO8VghckKTGjVqnQsoqXILhubEym+jq90uuYa7jznzIZAL7or
-x7310Rbi5LeTtHdF2tKq+4sWapBLfw==
-=Esdb
------END PGP SIGNATURE-----
-
---m6zwW9LXBH0p4nz1--
+--=20
+Aleksandr
 
