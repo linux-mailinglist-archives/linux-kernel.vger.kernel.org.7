@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-581439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090DAA75F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504F4A75F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6175D3A884F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:14:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C5A3A89A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68581AD3E5;
-	Mon, 31 Mar 2025 07:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0336A1BD9C9;
+	Mon, 31 Mar 2025 07:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2S5QZcg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ay1EarCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6853F9CB
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 07:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8542E3395;
+	Mon, 31 Mar 2025 07:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743405300; cv=none; b=dCx3XAGJwTFm/xQ7JN0pssMZiz/pYCuDIRheeWaw65grGejbwS2Q78ZwRdTg1VNQUK+BbgE42df0wb7X4AJCUkV1s/JtIv5yFJc6HapgGout2OiOluySmw4BATkK7Lo+7Vg4C4Xk7lMCpE4I9wzTHetyEUfm6AP+qgc+zg/jupA=
+	t=1743405320; cv=none; b=rIzKm8ZGZtPbE911xYuveEGBvcK4wvDxwiNNfwKYi/fddR/mXVFaj+8bDF0gd0geFaRoJzeiAVR3u2ywUcPVn14hUKTWC/p5/DSCF5a6eo6NJZq2s5mwQ6vIZFcwYSbLKwYtYnfquqGi7frHef3tanVoScJRFsVJzje7tasLHkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743405300; c=relaxed/simple;
-	bh=S9PLDZwlG5H+w+pVSMdCcSg1mFwcQbvBvxpNPhwVhLA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QtYZvA9cKznS0bXE2grRR5TQTwmUWxF4RgP4vCBcJQI0Y7IZqobjwKn0NLX/sdO4+aWwbWbF9ryzigJw+0C0YVAxHJPSaVKlOxuY5J0ypLUfzfcFZAP208HBGvCIgzJzL2oWp9ViyY4MeuoXnzX8UN1LI8gmWgFkBK/OnyaJZu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2S5QZcg; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743405299; x=1774941299;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S9PLDZwlG5H+w+pVSMdCcSg1mFwcQbvBvxpNPhwVhLA=;
-  b=d2S5QZcgHRcbNy8A8FBxs74UUR2HYIVP8MrWA6V0UKcamPx3u+W+T8ca
-   y3IL6T8mCB7HYehf6et5bL/2RN3qXiLLOnpjXTkp2xwmAHn+te9U0jo4e
-   hfA/F991S51n7aXvjU1NOpxbxlH0AuAGulYI1aO2rzecKcOVo7TxLHcwQ
-   DtIATDLKFf2bVrOCEYad9/vCnIpXdf56oBn5xHhF2mEq6EhNIsiK+PNVn
-   02rZ3rBzMeNnHCRuyinAQvAPYDaiKyu6zOb2r8Tsu64vf3p/7UtLwVwOr
-   JjUD6AISym8A8jGB3jgXYC6zUipDz17uMkprzghWoYVikxB+kC2qYSK0X
-   Q==;
-X-CSE-ConnectionGUID: mkgPBX6ZSmqLZiz764b07A==
-X-CSE-MsgGUID: o3udL39QR32lumROi6twAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="47405486"
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
-   d="scan'208";a="47405486"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 00:14:58 -0700
-X-CSE-ConnectionGUID: LA0GxrAORYSgJ6o2AYSWww==
-X-CSE-MsgGUID: oMQXemDARSOWSW/dU9e+3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
-   d="scan'208";a="126919645"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 31 Mar 2025 00:14:56 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 4CECF1B4; Mon, 31 Mar 2025 10:14:54 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] coresight: cti: Replace inclusion by struct fwnode_handle forward declaration
-Date: Mon, 31 Mar 2025 10:14:53 +0300
-Message-ID: <20250331071453.3987013-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1743405320; c=relaxed/simple;
+	bh=U9WwColyPjE0PpqjI7kbqYiBlOxCoADRrn2LMrMsr6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZ2fyXkbeY7gr964vctrzjOCMG1U3kjjpAtBBsAOzmDHmuWxj/JKI7hhlRzO8AznjB3jhxRPnqlpKk8WJ/XLPKFzNfJi3Xun9Ec6pQJywVR5hSVx5FYPhGYWkB4OxZh12DjKUbW8/aeU1fHr6LgySQNjbMaGNqdWYob9a0t/P4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ay1EarCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1769C4CEE3;
+	Mon, 31 Mar 2025 07:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743405319;
+	bh=U9WwColyPjE0PpqjI7kbqYiBlOxCoADRrn2LMrMsr6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ay1EarCvuM4L667uBXmzflmFp6Gpw+QkTMwL8AEnelkr5h9Rs4pnLyMNxJc5fSia0
+	 4P4suRMQCzZ+F8Lc7OkB7/Rr5+rbsfMR2kBNvnds9HXdtBvtI9qA+WzMag1hTEqquc
+	 f/pJOOT6/cn0u2zA9zcQlMvuaroEopWI8xLGcy9BWxH1FmCn6HGtbBWYvsVnPr39MR
+	 bXBE5Qi6jJl2cIDHP1pxKjTv9Fu1ShNBolIxr0srHHjSAU9i+ugaoxv3EdGT2PVzKn
+	 9LMt9OvneCmz8DWaLTBbD4q26Fmf2Ag2naHinrAmsxsfLPCktVsx80hdSdvyuhkLwj
+	 MvCmukjMnIfWg==
+Date: Mon, 31 Mar 2025 09:15:16 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] dt-bindings: soc: samsung: exynos-pmu: update
+ reset for gs101
+Message-ID: <20250331-curvy-daring-urchin-aeafa8@krzk-bin>
+References: <20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org>
+ <20250328-syscon-reboot-reset-mode-v4-2-77ba57703ace@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250328-syscon-reboot-reset-mode-v4-2-77ba57703ace@linaro.org>
 
-The fwnode.h is not supposed to be used by the drivers as it
-has the definitions for the core parts for different device
-property provider implementations. Drop it.
+On Fri, Mar 28, 2025 at 03:15:20PM +0000, Andr=C3=A9 Draszik wrote:
+> Add the gs101-specific reset node, allow it on gs101, and disallow it
+> on !gs101. Similarly, disallow the generic 'syscon-reboot' on gs101, as
+> we want the specific one in that case.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  .../devicetree/bindings/soc/samsung/exynos-pmu.yaml | 21 +++++++++++++++=
+++++++
+>  1 file changed, 21 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yam=
+l b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> index 204da6fe458d2d4bfeee1471ebc5c38247477ae2..8c7362cf3eeab11f6bb13a27e=
+b295d5ee6721b71 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+> @@ -97,6 +97,12 @@ properties:
+>      $ref: /schemas/phy/samsung,dp-video-phy.yaml
+>      unevaluatedProperties: false
+> =20
+> +  gs101-reboot:
 
-Since the code wants to use the pointer to the struct fwnode_handle
-the forward declaration is provided.
+syscon-reboot
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/hwtracing/coresight/coresight-cti.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> +    $ref: /schemas/power/reset/google,gs101-reboot.yaml#
 
-diff --git a/drivers/hwtracing/coresight/coresight-cti.h b/drivers/hwtracing/coresight/coresight-cti.h
-index 16e310e7e9d4..8362a47c939c 100644
---- a/drivers/hwtracing/coresight/coresight-cti.h
-+++ b/drivers/hwtracing/coresight/coresight-cti.h
-@@ -9,7 +9,6 @@
- 
- #include <linux/coresight.h>
- #include <linux/device.h>
--#include <linux/fwnode.h>
- #include <linux/list.h>
- #include <linux/spinlock.h>
- #include <linux/sysfs.h>
-@@ -17,6 +16,8 @@
- 
- #include "coresight-priv.h"
- 
-+struct fwnode_handle;
-+
- /*
-  * Device registers
-  * 0x000 - 0x144: CTI programming and status
--- 
-2.47.2
+=2E.. which leads us to the existing node. Just use oneOf:
+
+oneOf:
+  - $ref: /schemas/power/reset/syscon-reboot.yaml#
+  - $ref: /schemas/power/reset/google,gs101-reboot.yaml#
+
+or actually better:
+
+additionalProperties: true
+properties:
+  compatible:
+    enum:
+      - syscon-reboot
+      - google,gs101-reboot
+
+Best regards,
+Krzysztof
 
 
