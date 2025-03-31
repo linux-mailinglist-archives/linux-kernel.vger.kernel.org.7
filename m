@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-581722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20A8A76446
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:33:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE929A7644D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA66188BA82
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFD83ABC07
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101821DFE0A;
-	Mon, 31 Mar 2025 10:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDyviKtn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1921DF244;
-	Mon, 31 Mar 2025 10:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD461DFDAB;
+	Mon, 31 Mar 2025 10:33:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561E427726
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 10:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743417188; cv=none; b=iULRLMEyMKpna4+k6757g/MMFH/4cL5VTNIJ6y3ulkIUbq1To7GFyBFu8ijAJHLXQwFDbT4/0DlLTOEBUnlGJqefU9vICnM4Vz4ZQFyKL/p7DsIt8+P/QaWlTjZWrGc+v5+G0Mu1p6Eg1dBdU9WZxaQ37C8ZTv0ZFUGfyGpulzQ=
+	t=1743417215; cv=none; b=BvocOproTV0yJ5bPCJBc//pKjpgagHmlPPtodW3//n+DxwZXVvhLm4Twi+SmkDN+IXhCG8WN2iabIow02PaLHMDZGNodCPikgDilLT/1Sz4iU18IHJxbNWJ8y7yiTXtVfyyBF+Sr37C3K5f6Mzro0ziaBSK6nLPwR1ZnTw4ADHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743417188; c=relaxed/simple;
-	bh=nxvcNJQRIxPnlvks/aAjXspWOqO56Apa++g9yiGvNiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IfbDN4jugbxZOJ/XF5vRdA0KZ51DHl78RIkZmfMcpMf0OWiRJeENFC4o0iwALB8wE6wM6eFM3BpmsLcDAoXyiPFq2NCy5QgBmEeF9vf2+GpACdd3V6Rf7yt3CvU/+annTbTHVxDW5D8kNR6ujwLoOJEZRUroM6HAeHZZX4zY9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDyviKtn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5320BC4CEE5;
-	Mon, 31 Mar 2025 10:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743417187;
-	bh=nxvcNJQRIxPnlvks/aAjXspWOqO56Apa++g9yiGvNiI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KDyviKtnPUEibTBbLVNPamChV1rWb8LnvRuWA94N4bSMrQP70xKeP4YVwEPtYomkD
-	 Ck2aU/cgeoCDwKelM9Kg7NkxawVUVfuU64xxn0UMRHFVQpKiIxSH/2NRnNWrOy8ERB
-	 I3CQmTi1E6df5YZyNkNvzraAT0O8LhGo8qZE53tElYtI5KEuFPGomY2eLekPbiRIhD
-	 S4fTy30XX/KZWlTBWRu5JJwsqlfaFx4NYD6nhTSAThQw57IBiwLq8yFaUgCSOkMd7Q
-	 gTR/4whoahH/27yJBGw77SEjiCqP5FORC5WSxjULLfxDN0OKV5znXZf7ta/I55Ejcb
-	 Zn5VjCUL8+1DQ==
-Date: Mon, 31 Mar 2025 11:33:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v5 06/11] iio: accel: adxl345: extend sample frequency
- adjustments
-Message-ID: <20250331113300.08379a5a@jic23-huawei>
-In-Reply-To: <20250318230843.76068-7-l.rubusch@gmail.com>
-References: <20250318230843.76068-1-l.rubusch@gmail.com>
-	<20250318230843.76068-7-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743417215; c=relaxed/simple;
+	bh=YbneYaTomW9dZSD5vTT9pDDz1x90pUmjETImdeKO5/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qlCxUhmU7Mpuz0e4quOJ3ImuTKh/ib5WNE9LRqf/qsX+5uADRvshlyw0dw/wuWiZK1r+D4bAA5NRbVlhm/XYLKpLo1oTA/52QojJMU+rksphgfp72tLg8rOpns5d5QLTxJb2TswNfVw4pMBahJFtv/vKrAUUbcAOgxxos6FnQS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CEDF1F02;
+	Mon, 31 Mar 2025 03:33:37 -0700 (PDT)
+Received: from [10.57.40.234] (unknown [10.57.40.234])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201F13F63F;
+	Mon, 31 Mar 2025 03:33:31 -0700 (PDT)
+Message-ID: <48408728-f062-46f8-867f-61c6d91d410d@arm.com>
+Date: Mon, 31 Mar 2025 11:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
+To: Pavel Begunkov <asml.silence@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, tglx@linutronix.de,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20240819154259.215504-1-axboe@kernel.dk>
+ <8380f7f3-fd9f-45a0-b66b-85ec0b5d0144@gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <8380f7f3-fd9f-45a0-b66b-85ec0b5d0144@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Mar 2025 23:08:38 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Introduce enums and functions to work with the sample frequency
-> adjustments. Let the sample frequency adjust via IIO and configure
-> a reasonable default.
+On 3/31/25 10:02, Pavel Begunkov wrote:
+> On 8/19/24 16:39, Jens Axboe wrote:
+>> Hi,
+>>
+>> This is v6 of the patchset where the current in_iowait state is split
+>> into two parts:
+>>
+>> 1) The "task is sleeping waiting on IO", and would like cpufreq goodness
+>>     in terms of sleep and wakeup latencies.
+>> 2) The above, and also accounted as such in the iowait stats.
+>>
+>> The current ->in_iowait covers both, this series splits it into two types
+>> of state so that each can be controlled seperately.
+>>
+>> Patches 1..3 are prep patches, changing the type of
+>> task_struct->nr_iowait and adding helpers to manipulate the iowait counts.
+>>
+>> Patch 4 does the actual splitting.
+>>
+>> This has been sitting for a while, would be nice to get this queued up
+>> for 6.12. Comments welcome!
 > 
-> Replace the old static sample frequency handling. During adjustment of
-> bw registers, measuring is disabled and afterwards enabled again.
+> Good day,
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-One minor thing inline.
+> Did anything good happened with these patches or related work?
+> Christian> 
 
+Hi Pavel,
+so for cpuidle part we've had commit ("38f83090f515 cpuidle: menu: Remove iowait influence")
+for a while now without much complaints, hopefully that means it stays in.
+So I'd really like to know how the results still compare for relevant workloads.
 
->  	return -EINVAL;
-> @@ -504,7 +581,12 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  			     int val, int val2, long mask)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
-> -	s64 n;
-> +	enum adxl345_odr odr;
-> +	int ret;
-> +
-> +	ret = adxl345_set_measure_en(st, false);
+cpufreq iowait boosting is still a thing in schedutil and intel_pstate,
+and so far I've failed to convince Rafael and Peter to get rid of it.
+I still think that is the right thing to do, but it does come with a
+regression in most of the simple synthetic fio tests.
 
-Why is this necessary but wasn't before?
-If it should always have been done for existing calibbias etc,
-perhaps a separate precursor patch is appropriate?
+> Reminder: the goal is to let io_uring to keep using iowait boosting
+> but avoid reporting it in the iowait stats, because the jump in the
+> stat spooks users. I know at least several users carrying out of tree
+> patches to work it around. And, apparently, disabling the boosting
+> causes perf regressions.
 
+Details would be appreciated, I looked the the postgres workload that
+justified it initially and that was on cpuidle iowait which is no
+longer a thing.
 
-> +	if (ret)
-> +		return ret;
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_CALIBBIAS:
-> @@ -512,20 +594,26 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  		 * 8-bit resolution at +/- 2g, that is 4x accel data scale
->  		 * factor
->  		 */
-> -		return regmap_write(st->regmap,
-> -				    ADXL345_REG_OFS_AXIS(chan->address),
-> -				    val / 4);
-> +		ret = regmap_write(st->regmap,
-> +				   ADXL345_REG_OFS_AXIS(chan->address),
-> +				   val / 4);
-> +		if (ret)
-> +			return ret;
-> +		break;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		n = div_s64(val * NANOHZ_PER_HZ + val2,
-> -			    ADXL345_BASE_RATE_NANO_HZ);
-> +		ret = adxl345_find_odr(st, val, val2, &odr);
-> +		if (ret)
-> +			return ret;
->  
-> -		return regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
-> -					  ADXL345_BW_RATE,
-> -					  clamp_val(ilog2(n), 0,
-> -						    ADXL345_BW_RATE));
-> +		ret = adxl345_set_odr(st, odr);
-> +		if (ret)
-> +			return ret;
-> +		break;
-> +	default:
-> +		return -EINVAL;
->  	}
->  
-> -	return -EINVAL;
-> +	return adxl345_set_measure_en(st, true);
->  }
+> 
+> I'm reading through the thread, but unless I missed something, it looks
+> like the patchset is actually aligned with future plans on iowait
+> mentioned in the thread, in a sense that it reduces the exposure to
+> the user space, and, when it's time, a better approach will be able
+> replaces it with no visible effect to the user.
+
+I'm not against $subject necessarily, it's clearly a hack tapering
+over this but as I've mentioned I'm fine carrying a revert of $subject
+for a future series on iowait boosting.
+
+> 
+> On the other hand, there seems to be a work around io_uring patch
+> queued for, which I quite dislike from io_uring perspective but also
+> because it exposes even more of iowait to the user.
+> I can understand why it's there, it has been over a year since v1,
+> but maybe we can figure something out before it's released? Would
+> it be fine to have something similar to this series? Any other
+> ideas?
+
+Ah thank you, I've missed this
+https://lore.kernel.org/io-uring/f548f142-d6f3-46d8-9c58-6cf595c968fb@kernel.dk/
+Would be nice if this lead to more numbers comparing the two at least.
+
 
