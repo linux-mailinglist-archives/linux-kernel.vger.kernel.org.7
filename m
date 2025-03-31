@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-582327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CA0A76BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B181A76BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBFEE168EF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034F31693A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353032147EE;
-	Mon, 31 Mar 2025 16:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B059214A7D;
+	Mon, 31 Mar 2025 16:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sFYGFS/Y"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hXfmfFKw"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A971E0B86;
-	Mon, 31 Mar 2025 16:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088BA214A71
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 16:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743438487; cv=none; b=itvV8CKlHi6I8lZcG//WqL7GYdhM9e0/clmbELX4frR4b8Jq80i42Rp+OGELl1JVbUx0Sc8BkYp+ffVGFOO+zd88iKrXkGJRwbNRUoNcSqs5rhviJDGe5tdCzzBQKn4kEKetOv8+i5HneEgUDxGnP8BOU8WwQjdtyIVyvrwh6zQ=
+	t=1743438696; cv=none; b=NLSatl44Rd7928s3NFG0zIW+5Lud/H52xXJAfqrseXTMv/EjjLVXkpW0oxb11SGUhlePQNHyCiLSDx52lVVI2Z+9K8nDtQpVa0+Euox9yFAhnVaHxc8WS+emaogM+cfS0yp0RH+PPSwukAsxx5vTNLRidTzV8oR6qi+14iy3W0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743438487; c=relaxed/simple;
-	bh=BaWF2A5UazbVoXywtVIf3WKyRW8xn75zzoi+lh7sVLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eturTtH/w8MHg1nMQZuXC8PxXr8x2PYfu1eQUMhPe0jCCElGHVr0r+QMsTwjsVkjNVTeQtyg2AB4gnoBSqQHYCcLPzp+FBsrQb2yoLH0z3F5EVG77MLbE4Tl1+pN86ycPI747nXn4YSEYDk4U+pSJkMvev7RSgdioPyWiM9/02c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sFYGFS/Y; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7E947725;
-	Mon, 31 Mar 2025 18:26:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1743438371;
-	bh=BaWF2A5UazbVoXywtVIf3WKyRW8xn75zzoi+lh7sVLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sFYGFS/Y050KZY567oV2PaASCow/xcPAQ/xlOR3uYPcbNzjyJJE620yXolocYAdG4
-	 kzQeowe8K1oPClMBDJIaAYXpNbNC1qZNg1l+peCbnKCAO7QkYUAh1xeFlkgMywDddc
-	 Bsd1tSLNmGZnsfcMDFrGjdAoZGdO/eZZUzpT5Mj0=
-Date: Mon, 31 Mar 2025 19:27:39 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	acopo Mondi <jacopo+renesas@jmondi.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v1 1/1] media: i2c: rdacm2x: Make use of device properties
-Message-ID: <20250331162739.GG14432@pendragon.ideasonboard.com>
-References: <20250331073435.3992597-1-andriy.shevchenko@linux.intel.com>
- <174340899625.3687388.14660711739063778026@ping.linuxembedded.co.uk>
- <20250331120748.GB28722@pendragon.ideasonboard.com>
- <Z-qJOeeHUgWCtkTv@smile.fi.intel.com>
- <20250331153435.GB14432@pendragon.ideasonboard.com>
- <Z-rBQ8tsDHW9clYh@smile.fi.intel.com>
+	s=arc-20240116; t=1743438696; c=relaxed/simple;
+	bh=+t3bAIeqzZXzoFUWAcJIndn2INiDi7746DRbaGLLSiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MsfpAFi7EPwiq8XrC+un3FQEGml7pc/vhpAnUeGca32fsRsKOcfj8GaXeu1hb6qd37XwBhDUnC/8IXskNlV/aojtfY9QecoJieWSav7hLFMXnEgf3Ok0CmXxey6EWInpn8ypJ9yX6f8ulh/ZCKqXwNbGKp535gDZwZJeEY+gSzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hXfmfFKw; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so51a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 09:31:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743438692; x=1744043492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=;
+        b=hXfmfFKwXrrnOUzBDe2fRQ86yMZ2S4Atx76yknNni32dNF1kRG025/YGv8ufsHf15G
+         HtB6CkhGvMq/d73sxVibN9gAoQJidwkvvwwU36lc1qSCj7dvnJPRr9nXbCH/JmvDlc83
+         vkAeXyRL58r2ESuFIHojaFNwSWmgaOI8DTc+mMOzu+2vpUH+rC1Uk0E6t/x2tCRFULNU
+         yJYdjlsVFL52M3LWk3CD0V5d2FEL5e7AWpgt8f0x6v1MucB5pkNROeH3um0RDAeHpOcK
+         /6uoXKez5ZGyfPQ2OMHYFWLgqhgyAiO6UBltqSbJRNmD8+IFCnsdUsXGuie3ZVkuii9G
+         92fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743438692; x=1744043492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=;
+        b=s5/lUG9sA7QJvNdTDUa7nN+PlK3iSJstRCP5IzSTuHiNS7p1t1Gvl5Lz2p1Ks+Y7gi
+         MFAOqsReDXjvZ0JnazgcEuhr1Mked8IU6CS8sWZiYM5Q176aaaBOkUMC2MQ9SAxaqfiz
+         sapYMtXkALDQjZl1rvNBvKJ19X86jH4lEhaGFxVefpAv9cZIOwD849Q74w6glVsOoa8R
+         QDsJLuYEAxxGi3kooiVi7XLA863jCmS9SimlydqgGBoyUAB1KtFyAVOQ60bbP8BQ9Nai
+         iVaL9yMnVzG+um7CJQiFUX/ru8Kyv7hsyZOBtHETCThuaZ2j1W7pPO4ZFgWnHDnBB/KO
+         1Exw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQImN37GE2eE85TN3qDmSmfPhqRdS7D+SrTkyksh+aAXGaccqJ3HcQL2Wn/Nz6vYQOywGQ5jHXlw7jcAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7dXr3FBaO1f7OhAHXuGZlHblW0+7pdDh5xcKIc83f5zAcchAs
+	kfwwScgLJXMGAH74Uk62FikMx8HtQgx7du5rGD0xRm38Jdv8oCezUBsqk0BBs7JRJGwwWXcY0Gg
+	tCVOzy85Bgg7nfQjJ0XJjV4Q+Ea4OquZr0+Y2
+X-Gm-Gg: ASbGncv/jnihOfAat1TfEh7HFfDVfm6+gx8w+lQ3V9AeNkjmsR/VXAapY7ATwRuS8Hr
+	TY94ydQgbCpjosuFe37wSL5R1hXZeEllBQzev80iy9pHuBgCzSP0dFL7cWYYwkROhKgOoCOjEWz
+	BuX63DHpRfVMB3ncAm2EYaqty+h3ZZAVg1m3sCU+qa9OnrKlHAKyCno700
+X-Google-Smtp-Source: AGHT+IFS75Z0XM5wuiNpOfgrNbtyh5kI8h29Nwu2aeDt7jd1u7vYMcdG/HRw0PtOOdN+1JfXFoeOy3TjhzP1Z5z0xXA=
+X-Received: by 2002:a05:6402:1496:b0:5eb:5d50:4fec with SMTP id
+ 4fb4d7f45d1cf-5edfd9f7c30mr193132a12.0.1743438691972; Mon, 31 Mar 2025
+ 09:31:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-rBQ8tsDHW9clYh@smile.fi.intel.com>
+References: <20250331025416.478380-1-chao@kernel.org>
+In-Reply-To: <20250331025416.478380-1-chao@kernel.org>
+From: Daniel Lee <chullee@google.com>
+Date: Mon, 31 Mar 2025 09:31:20 -0700
+X-Gm-Features: AQ5f1Jo40vcwgWkYkmTPvqs1vtSU5KqyB2uPVh5Oo9YyNkgBQNmuj1T35rlyJpU
+Message-ID: <CALBjLoDnzALdShsEzii6pK+fxgbeNVh8weKVtb=PyFJ3XgS1NA@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: support to disable linear lookup fallback
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 31, 2025 at 07:22:27PM +0300, Andy Shevchenko wrote:
-> On Mon, Mar 31, 2025 at 06:34:35PM +0300, Laurent Pinchart wrote:
-> > On Mon, Mar 31, 2025 at 03:23:21PM +0300, Andy Shevchenko wrote:
-> > > On Mon, Mar 31, 2025 at 03:07:48PM +0300, Laurent Pinchart wrote:
-> > > > On Mon, Mar 31, 2025 at 09:16:36AM +0100, Kieran Bingham wrote:
-> > > > > Quoting Andy Shevchenko (2025-03-31 08:34:35)
-> > > > > > Convert the module to be property provider agnostic and allow
-> > > > > > it to be used on non-OF platforms.
-> > > > > 
-> > > > > Looks reasonable to me.
-> > > > 
-> > > > Is that going to work out of the box though ? The calls below read the
-> > > > "reg" property to get the device I2C addresses. AFAIK, ACPI handles I2C
-> > > > addresses using ACPI-specific methods.
-> > > > 
-> > > > Andy, have you tested this patch on an ACPI system ?
-> > > 
-> > > Only compile-tested. But you are right, this is something different here
-> > > between OF and ACPI.
-> > > 
-> > > I can rephrase the commit message to just point out that fwnode.h shouldn't
-> > > be in the drivers and either converting to device property in an assumption
-> > > that later it can be easier to support non-OF cases, or using of.h.
-> > 
-> > I wasn't aware that fwnode.h shouldn't be used in drivers, could you
-> > explain that ?
-> 
-> The fwnode.h provides the data types and definitions that are meant
-> to be used by the fwnode / device property API providers. The leaf drivers
-> shouldn't have any business with those definitions. Everything the drivers
-> need should be provided via property.h. property.h guarantees the necessary
-> data types to be visible to the users, when required (mostly think of
-> struct fwnode_reference_args). Yes, I am aware of v4l2-fwnode.h and it seems
-> it falls into the category of special device property API provider.
-> 
-> > If this patch is part of an effort to eliminate usage of some APIs from
-> > all drivers, I'm fine with it. Otherwise, I'm not sure it's worth
-> > modifying the driver.
-> 
-> These drivers basically include the wrong header.
-> If you insist, I can patch fwnode.h to add a comment summarizing the above.
+On Sun, Mar 30, 2025 at 7:54=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
+>
+> After commit 91b587ba79e1 ("f2fs: Introduce linear search for
+> dentries"), f2fs forced to use linear lookup whenever a hash-based
+> lookup fails on casefolded directory, it may affect performance
+> for scenarios: a) create a new file w/ filename it doesn't exist
+> in directory, b) lookup a file which may be removed.
+>
+> This patch supports to disable linear lookup fallback, so, once there
+> is a solution for commit 5c26d2f1d3f5 ("unicode: Don't special case
+> ignorable code points") to fix red heart unicode issue, then we can
+> set an encodeing flag to disable the fallback for performance recovery.
+>
+> The way is kept in line w/ ext4, refer to commit 9e28059d5664 ("ext4:
+> introduce linear search for dentries").
+>
+> Cc: Daniel Lee <chullee@google.com>
+> Cc: Gabriel Krisman Bertazi <krisman@suse.de>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/dir.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 5a63ff0df03b..e12445afb95a 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -366,7 +366,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode=
+ *dir,
+>
+>  out:
+>  #if IS_ENABLED(CONFIG_UNICODE)
+> -       if (IS_CASEFOLDED(dir) && !de && use_hash) {
+> +       if (IS_CASEFOLDED(dir) && !de && use_hash &&
+> +               !sb_no_casefold_compat_fallback(dir->i_sb)) {
 
-No, it's fine. I mixed fwnode.h and property.h when writing my previous
-reply, but I don't think it's a matter of lack of documentation, more
-likely lack of sleep :-)
 
--- 
-Regards,
+Would it be beneficial to evaluate
+!sb_no_casefold_compat_fallback(dir->i_sb) first for short-circuiting?
 
-Laurent Pinchart
+
+>
+>                 use_hash =3D false;
+>                 goto start_find_entry;
+>         }
+> --
+> 2.49.0
+>
 
