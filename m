@@ -1,156 +1,88 @@
-Return-Path: <linux-kernel+bounces-582061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CA9A76887
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:48:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C70A76885
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AC716AC7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8C9C7A3155
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E50522A4CD;
-	Mon, 31 Mar 2025 14:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB08F229B02;
+	Mon, 31 Mar 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOPA1XFz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIR7XGd4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB3B22A1ED;
-	Mon, 31 Mar 2025 14:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B4021859F;
+	Mon, 31 Mar 2025 14:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743431811; cv=none; b=a2pFVyV/WYWAKQChdx30mdx1iC/tlPpLVwe2Nn21mWW4l1ZABi2DFSs+bmQK5u1jNc7G4AtQTQJvtSb4j8SvIZaw5oh3xhK2lHGrJqBph2iv1rLExDwMCsItNVRgivLXjwvzADtJsRnAKGGjul19chv+pxUtYOpS/LEWEfHMGmE=
+	t=1743431806; cv=none; b=K9lBTa1nziLW5SHIGDKm6hh1GYuFjc8DfcBIJjU9ir6Jh/dj7qflnslstLPDgWDSL5Lz5YcDyPSYErjcgEq6NxVDHzdIf3yynqJvb+PG0rKQLVweGIg/2wszv2riSkDRYmSApqUHbMNLLE9wPEiFTkVtANgoMNUf27NGcQXQmL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743431811; c=relaxed/simple;
-	bh=5ADO/3ZB6u14eIhTvT/hIqhq1OHtuLq3qs53bMniVfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ieVO3fN9ilr560v3y4zTlFqmmdjL+hMwWlvPupT4ymweh4wRZx55xxS5dYig6zN4hlxW4+5OB6PlpyxiLKqiV/K0VVsoH7uNDPIcAeC+k9mxv1UX3FdI9cJ7hzEZAJWw63JEJn3KvrEY9TpJEsfMtpMGGpaiRXr2ixgkjsFn9H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOPA1XFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D27FC4CEE3;
-	Mon, 31 Mar 2025 14:36:49 +0000 (UTC)
+	s=arc-20240116; t=1743431806; c=relaxed/simple;
+	bh=saBfwSTx9+zrA2PPu4GkKVVeKaJUPYevf/A5oECr0ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Atx99MmGOBTo3I5oX869dZbc26YR8rrohPo/IyHqzWdqGIzJUV0gZInHmTBW+8r+8rRA/6hMG4yxzck/mfMxdWQerHjlggHyOOLS6eqAdKAN2UN2T40Ur7ZxZIxc0yAw5cOGQOUpwiwEHjROn348+XuYsuV9A+TuHJWnx9MXyxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIR7XGd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6394CC4CEED;
+	Mon, 31 Mar 2025 14:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743431810;
-	bh=5ADO/3ZB6u14eIhTvT/hIqhq1OHtuLq3qs53bMniVfQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pOPA1XFz/ckNdaJUYSCiCjwsPqUbHUca8rgo6BeaEIwgP5VYP2tSMX8rJ/ZCxc+Y5
-	 P0MHOqXOj14Tm8RwNzEkkwbgE0Vjq5RL1mU9hN4V2I4Qd/4BEEEyBekBv46ErOSFYO
-	 8eRLXOa4BlGgjzUzr9F7t7+p1Ue9CELPa7Z0JSI72XmCsZqIq1+o8JRZk4apWesl4+
-	 z/22w3/RvkswPrdYyY7Q/N7/HMIvDLqQL68mIZlLADpWYxGsA0xNKT4iF8QbBwxVIw
-	 3Wq23UMamQnTCyyzD27M1qfhNRRbEioCbkYZH7b1c1rWX39YBSdAbmZ/gLh1CEv9of
-	 e5jMF5YAameLA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kai Huang <kai.huang@intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	dave.hansen@linux.intel.com,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org
-Subject: [PATCH AUTOSEL 6.1 6/6] x86/mm/ident_map: Fix theoretical virtual address overflow to zero
-Date: Mon, 31 Mar 2025 10:36:32 -0400
-Message-Id: <20250331143634.1686409-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250331143634.1686409-1-sashal@kernel.org>
-References: <20250331143634.1686409-1-sashal@kernel.org>
+	s=k20201202; t=1743431806;
+	bh=saBfwSTx9+zrA2PPu4GkKVVeKaJUPYevf/A5oECr0ks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIR7XGd4L3Iz9uJZYZ/LcQjWI9ZXFd2ChMXVauWYXRo3tIRGb1kn3kwp/B7V2Jskb
+	 6PDPr0nOrrCS2KTkQp8zwJPJ7qwsdTGnTHLyEHms9ZErYZE8aand4okT8pSWsLgXHQ
+	 ybNAiGdg6EORQ4xfV2u4PSKvE5dZq9+IMPgWcQ/IpFL5v5Jus3F7SKMhgEl9jTEds9
+	 Wm00667Wx3UtCd1xzPJQlVt1Tz5X0/tuZfQapA2UBXtEU7ZtX9FnNzBxCppbSfmspK
+	 86P63Vs1o3tDnvbXpDntX3NkoyoigIUZ4eX25iPgUUmI7g8jYBc1oCgkfIPG0LePEw
+	 p5IuDtle2V8Qg==
+Date: Mon, 31 Mar 2025 08:36:42 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>, linux-nvme@lists.infradead.org,
+	io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] nvme/ioctl: move fixed buffer lookup to
+ nvme_uring_cmd_io()
+Message-ID: <Z-qoevl5Jaf7WFsQ@kbusch-mbp.dhcp.thefacebook.com>
+References: <20250328154647.2590171-1-csander@purestorage.com>
+ <CGME20250328155548epcas5p2368eb1a59883b133a9baf4ac39d6bac6@epcas5p2.samsung.com>
+ <20250328154647.2590171-4-csander@purestorage.com>
+ <48b9a876-0e3b-4c89-9aa3-b48f502868c3@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.132
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48b9a876-0e3b-4c89-9aa3-b48f502868c3@samsung.com>
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+On Mon, Mar 31, 2025 at 12:16:58PM +0530, Kanchan Joshi wrote:
+> On 3/28/2025 9:16 PM, Caleb Sander Mateos wrote:
+> > For NVMe passthru operations with fixed buffers, the fixed buffer lookup
+> > happens in io_uring_cmd_import_fixed(). But nvme_uring_cmd_io() can
+> > return -EAGAIN first from nvme_alloc_user_request() if all tags in the
+> > tag set are in use. This ordering difference is observable when using
+> > UBLK_U_IO_{,UN}REGISTER_IO_BUF SQEs to modify the fixed buffer table. If
+> > the NVMe passthru operation is followed by UBLK_U_IO_UNREGISTER_IO_BUF
+> > to unregister the fixed buffer and the NVMe passthru goes async, the
+> > fixed buffer lookup will fail because it happens after the unregister.
+> 
+> while the patch looks fine, I wonder what setup is required to 
+> trigger/test this. Given that io_uring NVMe passthru is on the char 
+> device node, and ublk does not take char device as the backing file. 
+> Care to explain?
 
-[ Upstream commit f666c92090a41ac5524dade63ff96b3adcf8c2ab ]
-
-The current calculation of the 'next' virtual address in the
-page table initialization functions in arch/x86/mm/ident_map.c
-doesn't protect against wrapping to zero.
-
-This is a theoretical issue that cannot happen currently,
-the problematic case is possible only if the user sets a
-high enough x86_mapping_info::offset value - which no
-current code in the upstream kernel does.
-
-( The wrapping to zero only occurs if the top PGD entry is accessed.
-  There are no such users upstream. Only hibernate_64.c uses
-  x86_mapping_info::offset, and it operates on the direct mapping
-  range, which is not the top PGD entry. )
-
-Should such an overflow happen, it can result in page table
-corruption and a hang.
-
-To future-proof this code, replace the manual 'next' calculation
-with p?d_addr_end() which handles wrapping correctly.
-
-[ Backporter's note: there's no need to backport this patch. ]
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20241016111458.846228-2-kirill.shutemov@linux.intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/mm/ident_map.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
-index 968d7005f4a72..2f383e288c430 100644
---- a/arch/x86/mm/ident_map.c
-+++ b/arch/x86/mm/ident_map.c
-@@ -27,9 +27,7 @@ static int ident_pud_init(struct x86_mapping_info *info, pud_t *pud_page,
- 		pud_t *pud = pud_page + pud_index(addr);
- 		pmd_t *pmd;
- 
--		next = (addr & PUD_MASK) + PUD_SIZE;
--		if (next > end)
--			next = end;
-+		next = pud_addr_end(addr, end);
- 
- 		if (info->direct_gbpages) {
- 			pud_t pudval;
-@@ -68,10 +66,7 @@ static int ident_p4d_init(struct x86_mapping_info *info, p4d_t *p4d_page,
- 		p4d_t *p4d = p4d_page + p4d_index(addr);
- 		pud_t *pud;
- 
--		next = (addr & P4D_MASK) + P4D_SIZE;
--		if (next > end)
--			next = end;
--
-+		next = p4d_addr_end(addr, end);
- 		if (p4d_present(*p4d)) {
- 			pud = pud_offset(p4d, 0);
- 			result = ident_pud_init(info, pud, addr, next);
-@@ -113,10 +108,7 @@ int kernel_ident_mapping_init(struct x86_mapping_info *info, pgd_t *pgd_page,
- 		pgd_t *pgd = pgd_page + pgd_index(addr);
- 		p4d_t *p4d;
- 
--		next = (addr & PGDIR_MASK) + PGDIR_SIZE;
--		if (next > end)
--			next = end;
--
-+		next = pgd_addr_end(addr, end);
- 		if (pgd_present(*pgd)) {
- 			p4d = p4d_offset(pgd, 0);
- 			result = ident_p4d_init(info, p4d, addr, next);
--- 
-2.39.5
-
+Not sure I understand the question. A ublk daemon can use anything it
+wants on the backend. Are you just referring to the public ublksrv
+implementation? That's not used here, if that's what you mean.
 
