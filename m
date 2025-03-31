@@ -1,79 +1,131 @@
-Return-Path: <linux-kernel+bounces-582375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A291FA76C69
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E725BA76C6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8281662D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97AAC18893CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8218A21577D;
-	Mon, 31 Mar 2025 17:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4C721422A;
+	Mon, 31 Mar 2025 17:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mum90agY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WRvu1IZs"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F5E202978
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743440863; cv=none; b=AS0nlik1ohsuvvldbfj6nGbhldvxGF48d+G9ywQFIaDeJfSmrWtjVOtZ4sW4yCnSYiz9diOyMurcy+d+4UpbCdLvGjNeBYFR77bnMxrKDnJCCJDnkCUYjIZ+nT62Lk5ZPcUEfsVrQApLTe0dHtlJXjzU8A25rGMo3BGh9Z99kso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743440863; c=relaxed/simple;
-	bh=w7wK1P0SQ/Hrek0iTVemnHXl2LYfpN+h9+x2gyjOXIs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=B2dCxCOUYquSfZ9NcjRjSnVRJxP2JA5A/mFvBLoytd8dExUSpmHPo272lwg6UwujwsnEG4KqTyygilIM/pH4bVx3BXLC0ZroIOJNYgcvL9iAAEAei8UQz1q7VXyNU7xa4CKujk/a1MhvLNdjV9q5nPcyNNZDXyIHH3Z+h3U6yLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mum90agY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5054C4CEE3;
-	Mon, 31 Mar 2025 17:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743440862;
-	bh=w7wK1P0SQ/Hrek0iTVemnHXl2LYfpN+h9+x2gyjOXIs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mum90agYPLukQ+6aMVJH5E6srf/DCCm043eDX6W9lklwrlX2w9HRlEtVcLg8/cKpV
-	 xkh/wK0OPc0xx5+GFUC+baFYkQcYQLUlr/wDpYEHHm2yXS16Td+fAaSkE8GALOcyt9
-	 sMecHa5z67vaZ7VSjD2qPTJ43nRfw/+b+d6iruOMKwAByviumDJ9WIFpVx0DxvYCGB
-	 EOQ7Xg3KvPuN0pqJe5Moo80tpKt3HdVZ8G9FbkWIYD8r1SeIv018aclsdR6EUUcvPs
-	 FOV3Cd4XI5V0Riiht2hRvyJJP7D4YbvV4+NRD11LhT4z9eFP6o5kkKjQafk5DjzhzE
-	 dEXxuCXRO17jg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE13D380AA7A;
-	Mon, 31 Mar 2025 17:08:20 +0000 (UTC)
-Subject: Re: [GIT PULL v3] latency tracing: Documentation fix for previous pull
- request
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250328172030.286d5a47@gandalf.local.home>
-References: <20250328172030.286d5a47@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250328172030.286d5a47@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-latency-v6.15-3
-X-PR-Tracked-Commit-Id: 4bb5d82b66002b770f8917d68ab4fbefcb7f5f9b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 609706855d90bcab6080ba2cd030b9af322a1f0c
-Message-Id: <174344089929.63132.1626492609518506781.pr-tracker-bot@kernel.org>
-Date: Mon, 31 Mar 2025 17:08:19 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco <gmonaco@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169B2130A54;
+	Mon, 31 Mar 2025 17:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743440990; cv=pass; b=oZ4QZaQ0nCnSIPmgMTo4HmFGnP6YQwxIRF9joXJdETUBKoYLHEl5ik3M8Q8n4kRIM795UrqcdTo5sbfccj/b1aDIwy/HDGatfs2kLuLlc5TcD/4mq/rMB0c/7lMJ2XFL1aGSlUhk15O9QWUwcNJFFSPcVLNWvIw1zN4IxeSE5nI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743440990; c=relaxed/simple;
+	bh=XY4Lz8nmOhMCJfx5G9//aIEqVmxe+7WPFPY77en7ljQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ebp3QI+KGcGXPu/UrmmsQ/Yn0TJFhloD6HAJd78nin9wJLKKZZ4EfkGZjOb7zfX9tmat7SW/89zok5MbM/y2XNIF2ts+Y+/IAs0ofvejHdQhy7256cTQ08vwodD3Vg9QGDYDVDiwqk7h53QOQYlwciY8Hu8Id55ydMpDWqC39EY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WRvu1IZs; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743440961; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=IZNFBj8lLYb431hC4EdDVb+eCljK5x9WopO21wV+b2w9WICI/o8Tit+PoipHWqIAxlwUBv8+eUOFdBu+C7PsHUt9ytcFLcmW7jPF8AW/S6r6/pYADeQE/OZX0Qlw/rpuHC+h7CB/EBJMuqQ3ntAIvxa6nQv4iNxpgVCUoFHKFUQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743440961; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eRBZ3dXnGZXHdDQufzHIdL1aCFdXcn3+mx27ydvwC+w=; 
+	b=QkZEsL+5X5dn2Aq1x49IvYcyeHvLd2tP4prnmmgw0kt3tN0G43vvFZkiM9UTWQi/jDmFo1Pg/Ykb6UgrWbOBLeLsLDz853aG7SpHMQ5+yM70vKKhx5DL7HeivzFBEJVI5EeuBCJnmGMRP+4xaFZkRtq7/v3+5Lols79MlzAIqe0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743440961;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=eRBZ3dXnGZXHdDQufzHIdL1aCFdXcn3+mx27ydvwC+w=;
+	b=WRvu1IZsZEnlRHbV+H1uw8jZgVGDqvH/Usx/K60ryHAYDq7jzoJsFjz2bZ835ZHk
+	jTlnkNfvrqO9OI/+IVmX/Wc0XoFw/91Gwolg0Hm8oraEM8Z0dBgTom747d17FLndUHX
+	kRvnEibtXFfnjse5qFKYfqvbXduM/EbXVCGT7F7g=
+Received: by mx.zohomail.com with SMTPS id 1743440958770263.33762723850737;
+	Mon, 31 Mar 2025 10:09:18 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v5 06/13] scripts: generate_rust_analyzer.py: add type
+ hints
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250325-rust-analyzer-host-v5-6-385e7f1e1e23@gmail.com>
+Date: Mon, 31 Mar 2025 14:09:02 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1B186177-16B9-4D2D-9603-F713F0FE9BEC@collabora.com>
+References: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com>
+ <20250325-rust-analyzer-host-v5-6-385e7f1e1e23@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-The pull request you sent on Fri, 28 Mar 2025 17:20:30 -0400:
+Hi Tamir,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-latency-v6.15-3
+[snip]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/609706855d90bcab6080ba2cd030b9af322a1f0c
+>     rust_project =3D {
+> -        "crates": generate_crates(args.srctree, args.objtree, =
+args.sysroot_src, args.exttree, args.cfgs),
+> +        "crates": generate_crates(
+> +            args.srctree,
+> +            args.objtree,
+> +            args.sysroot_src,
+> +            args.exttree,
+> +            defaultdict(
+> +                list,
+> +                {
+> +                    crate: vals.lstrip("--cfg").split()
+> +                    for crate, vals in map(lambda cfg: cfg.split("=3D",=
+ 1), args.cfgs)
+> +                },
+> +            ),
+> +        ),
+>         "sysroot": str(args.sysroot),
+>     }
+>=20
+>=20
+> --=20
+> 2.49.0
+>=20
 
-Thank you!
+I found `args_crates_cfgs()` a lot easier to understand, but I guess =
+this is a
+matter of taste. I also find that this `defaultdict()` call slightly =
+pollutes
+the surrounding code, but again, that might be just me.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regardless, running `mypy` still passes, and there is no change to the =
+output.
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+=E2=80=94 Daniel=
 
