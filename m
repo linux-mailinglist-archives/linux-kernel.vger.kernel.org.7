@@ -1,213 +1,195 @@
-Return-Path: <linux-kernel+bounces-581818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7796A76554
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:03:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E96A76564
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A18B188B1EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F29C16A279
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433BD1E47B0;
-	Mon, 31 Mar 2025 12:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A558A1E47A5;
+	Mon, 31 Mar 2025 12:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ku4JzA0m"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2080.outbound.protection.outlook.com [40.107.236.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a3Zst3Kr"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3F6155393;
-	Mon, 31 Mar 2025 12:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743422575; cv=fail; b=GG7f336PQOIeuVepMTm7d3933pRauFf8P7XZO8/mDfVRmNDTte3xXch+BlnSMFFvtCj7/qzXu+G7xkGgWBEfebvDtC/r15A6lKrlR5y5TJlOuPDGb4RLVWUqCL8v68es2Q/ou9oHCJbtsONQs1qGZTagKMti5Ob5RL+ya/xMwP4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743422575; c=relaxed/simple;
-	bh=ogDiZv85OplV/g1CMBJiVw2W6NmA05c12bVBQA8YK40=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DKQR2qk9qBnZidIBSeUbsTkmEW0mmA6Ag03NTndGZ360Fm6S2YUJpZFS9h4sLC6sRw9rktni9EXPirqvWU5Z23Vs3+QZGuqUbTYjQJTofPkIp9tw78qK9AEpivCWYWNsE4NclTKwMwXH/vsGkX2hR3lS6ZVH5O7AOT4Vng5Cr0A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ku4JzA0m; arc=fail smtp.client-ip=40.107.236.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LaRX/Ep2lh7oTrocyjyO/rdsNgrRvLxxFGyruUAJPxtaReqRAu7TIMZI+Rh+GhmZtMqiIe8dPXlH11BZEvo+6Y0Nmdf6GuZDXXnSJ+rcag0YMcUDLU5dj0JjdMEQIPzAbQdj4H/yUN4sA3loH+AT+od3ZnCbmrhHJJ38pKqHtXHAHHZC9GB7SqfNQStwwPryVpjVpbJLKVc2FDc65XazYkIPjRgebtguJEGQ/ud+hLGOTqtpAvRV3WrJeBVVR6BaRPpWJIokuqnpdLpNrnpISNGNqWSSfVgV9HQCZxIbPnYhAuEmvIKMYi7kLRFzMTc9ZTGUYGZEbNVFjN2U60Ujig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nWKAulidP2arLfx1NJfuRCf+GhG/M58AoJI5HLZZh+I=;
- b=P41GYhiy1vCnejeBoXF5ak2eww43BcFW+xZCqj5nKI2v4XyNYP1o9qs++pvrmpKdL7spH+NNQ1DtOLQhDUroSkuZC0RO5vQIBwhuc1y3Hv9aW1iBg95hJ5sfPVUFIUNFaODq55Crko7quvKUJIuPrHqHRUagXhguZiMn3lB8CXCUIgRfzUONhFS2DTjMnq4VQttQ7KBqizJiG1rL+km7feV0EYEgy2gd7lufEZARL2UjjsGUQPOY2NX1vfi5Tqu2Pnugv3f9YF5UyEhfrBr+1sCoDmnanLIw6H3IBGoaOsFISJnoZHvH/iu4n9Rb9E2emLdH90gFprSKvcNt9+Herg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nWKAulidP2arLfx1NJfuRCf+GhG/M58AoJI5HLZZh+I=;
- b=ku4JzA0mlS3odECRFEBL3AE/3g2kRcr7mVRZISfQ3MUKDvFMzu+QBD0f8Fs20Aw+gH4Ep1xXgAVXLP+3Ku8Jfx0vUyIYNrnGIQorYSjNZEmH4WfqOS8cuHDX9ycVpQLIVyC7JgCxv7gM/0udsCYE36XbVWkxj9ByHprHzTrxDBg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SJ0PR12MB7081.namprd12.prod.outlook.com (2603:10b6:a03:4ae::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 12:02:51 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8534.043; Mon, 31 Mar 2025
- 12:02:51 +0000
-Message-ID: <0e832ed8-9692-43ba-869d-8db3b419f3a9@amd.com>
-Date: Mon, 31 Mar 2025 14:02:44 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-buf/sw_sync: Decrement refcount on error in
- sw_sync_ioctl_get_deadline()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Rob Clark <robdclark@chromium.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>, Dmitry Baryshkov <lumag@kernel.org>,
- Pekka Paalanen <pekka.paalanen@collabora.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <5dbd6105-3acf-47ad-84d6-2920171916ac@stanley.mountain>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <5dbd6105-3acf-47ad-84d6-2920171916ac@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0046.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4a::12) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3383C1DF96F
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743422846; cv=none; b=g4cRu7xcbf2l8AwPcqq0851IP5qSngR/om+edsKB0AmDD8qjo9dwxXY88A4+I+Np3/LqUC+3oySYMQyn4YQx3moEaDo8z8lWxGVlhYTSgD86N/rEEhC4+y41/qWgZw5VCyZLiqUwXRHzdwFnHfVyg0VHuA9QCro64sDDKYk+WXs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743422846; c=relaxed/simple;
+	bh=kyAW7V5I4QoMJUcaFceDBhvdgBSko5qmpdEH2omPq+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=udDduVQXu+8KE7gt3Xa8jF6mPw8XjGT4d61sBBPUaUS2wm9XtICoOF3danPORYSTGwBHGSv71He+w+SVtodK1pt+edRehynsnjtjGLi1k+oitldW/JDEWGrKLbcF60Ud2SMSaRGWDzVvUxIMUiBuf81ZM5DL5jAiP9vTplR4/K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a3Zst3Kr; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6fed0620395so39350177b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 05:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743422844; x=1744027644; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DTOBUDbdb4fREuG86ilpsm2ja+JISK/4Lc+gQz+8x1k=;
+        b=a3Zst3KrxsDPLrrXsw2aZoFrNVYnhcN/6uvzGCqgpGNJmrydBprDlw3YfwT5NMZwq0
+         7gBbfbgAWdeQgnB7L6ttJjCynmidTk3cixpUQ1nbORJ+4lcHFLez7K5XFa/9Bp1rjUWV
+         sB3INHVvPq5jhXTyHxKlnGudJMpg39w9OfU0XhEXqVV2hwv1RTcmNakCem+E+FuRIZp7
+         P4B69F1xoSQkmfaHmioljeZJXhYIIJ2CzHNhKyw4747WJ8zmHggLXzmV0YMvwAacyI7r
+         ohUNH/dBMm5gL48zPhh1vqtAc0E5PrnEwQKL5jWuFe0jRIzV/OWw18q9sUMkO7+TVg9B
+         lOaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743422844; x=1744027644;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTOBUDbdb4fREuG86ilpsm2ja+JISK/4Lc+gQz+8x1k=;
+        b=tcIstiJwd/mm8nbs74P3dc4HKF2gVmx7xKfR1Gdl/aXQK83iNfEnpD4qYiE6pdfAa2
+         94AS962bF76kV44DE6pm1igYX0RWCTOohMeFdDlt0KloQH7PsewSRY5sr2lL2W9CBIjW
+         f00UI/99CjFR4FermfX/lFaYMx0iMxbdwVnKZoDvQSgKavTMwVXqwkzMP8/Y5o6dCtZy
+         XE0pYBKYJSwwt6i0utndSQeI0JQ7wrrfIJdFc3DmNABu+POBXuuiIj9MTwKP5FkFiS0P
+         uN69igipT6nEUx6Vfo8CA9x0samuU8xQudPOLeDtvTt+UFB99FYFLyg94xwHuwC0PghR
+         C5rg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0WOvd0ElZUevrCGydYNDklpf73wtLs//4N4NTlyM5W/2KTORU0lYBKLze1ToqOh/0G3hL4rNkt25cCvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzti0YVlr2uu7iaa9NEcK6oDWxECp+vAYk86y3WjELC6aTPHE3P
+	f4Wwr1flq5+7KwEcgZsF0/tDKnOEzGhuGVSUTq4sZQmYwQekWzdnNpPzGE7vIj6+jP1qd/AQ9zA
+	vRNUg3pwzRPNsstVJHwAvZeOLJlx5rY+TQUebmA==
+X-Gm-Gg: ASbGnctai4DO3DS0CIy9K1dD00iV1jiUsmS+UJtFWtVwkyWsI3lX7WwmB/i+xNLGwR4
+	zseOz6BOeMwLxlOiWDxrrxsG4xNa2E+o3fJvNqTONukmMGT0ljiFKT+3l+TL20LNB6e5KnAm/0K
+	yCznwz9BZ76FxSy6LeOmU8It3ensPdbTE0GLOywA==
+X-Google-Smtp-Source: AGHT+IHJxRRzUPwJubai0FXDNsYNlzy4L63S2h0wWPnm/GbHWoqjJYDO6RwLWKKP2n0qVCLZPs+jL3aWWO7yw7D0Wu8=
+X-Received: by 2002:a05:690c:2505:b0:6fd:a226:fb29 with SMTP id
+ 00721157ae682-702572f0a23mr109775147b3.27.1743422844113; Mon, 31 Mar 2025
+ 05:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SJ0PR12MB7081:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e32cdac-7bc3-4086-5da1-08dd704bf5ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RDVWa0xtcnVySk1QOTl4RXRacmtOYVFlZW9TYUpzWGUxT3JjS2dnVVZRenZo?=
- =?utf-8?B?aWFrWDZhcm8vN2hvaG81d3hYdEkrL3dQMG5HTklNZkwvdUJMdW9iQ0hObnhQ?=
- =?utf-8?B?Zm91S0dUcW11c01GK3hMRFpFa0o3cTMvN3ZObjJxUFN3N3NqWXF6TGNJS2Nl?=
- =?utf-8?B?Wjg1bmgvYmhqRlFqREhlOHVtOXZTSkM0ZjdNMTczSDNzc2xBT2ttSC9lZlAx?=
- =?utf-8?B?MFJXU3MxdW1WRE5PeTdwLzVVYUxVQ1N3dlExOXJqbTRodGVKNk9DQmJCdFh6?=
- =?utf-8?B?N3RkVHRUVWlDWjlBNG1HYmU2aDN5d3FhbDV3eGVzNWZ3VGd5dDVQT2Y5RThH?=
- =?utf-8?B?UzBXNDFEYWtlZExZRTNqVlA3R0pRN3kvYzk3b1dzRTFjUTdlUkpKYnFTNkhn?=
- =?utf-8?B?T3EwVnRYTHhLZHI4YUtZOUF2OG45REFKRnRmVEkyamIwUWVTTVE0dWVTdVkx?=
- =?utf-8?B?dEFGU1pFWWJGVTg3ZCtnQVdtYVoyK01ETjBLbCs2UjQxUzZqNG43MHpRcFRY?=
- =?utf-8?B?eXpRRE5TbU5Wb2ZKOEZRcjVQVEYxQ25rNjBrVDNqK2F4YTBCRTdpZExmZ29r?=
- =?utf-8?B?eENDSHRJVjJpT0VqblgvdE9pMEQxUFhaQXp4alNjdklrREVUcTNxTzllM2FH?=
- =?utf-8?B?TUs1UytVallncHJkSkx0ZmpqWFZhM1V6bGsxOVd4REY2K1BmTnFPYTMzTGhs?=
- =?utf-8?B?alRwV0hneEw3bWd2TExQWDJ1aXR2eXQ2bVhNb1l3Q2ZlbVZPOFVjR0MwdUgz?=
- =?utf-8?B?QjRramt5YlA0dnJla09UNmJXb0hEbjFrVEJNUUY3dWlTK1ZrVVVWcEpzbjRy?=
- =?utf-8?B?M3YvMmFxMDBOSXdnSjV6YlkydVQ0aHV2REVpRjA0Ui9oUzdQZURqeXY2c0I2?=
- =?utf-8?B?bFJhaUl5YUVwbzdKMTNiZnR4ZXp2cXJmWGZSaWxTM3FWM2xUSUJsYVN5bDAw?=
- =?utf-8?B?VWVuR3BxalcyYko4Yy82aFpiZ0xRVDc4WVFpUVN1NkVrRUxtWTMyM2Y1OW5X?=
- =?utf-8?B?d2VPcXhvU2gwdVcyMVU3eExTRWhsWjV0UkhkZU5PK1gzYjZoOE00NHo2Vzlm?=
- =?utf-8?B?UXVyalFiMStkUUJGNmJPTTlPRWtkUVd4TGxrdCtNdmdmZE9GcE10Vy90cG56?=
- =?utf-8?B?VVlKZlZ0RThvSm9ocTVDTkZHODhMUENoMTVTSTF1aWkvM2NEYWZLY2ZjWkFh?=
- =?utf-8?B?NGlXbGY1c2Y0Ukc4VlkrWkxQbjN4dy9VY01oejhBd1RjNGs3dU8xTkRJdVpY?=
- =?utf-8?B?RCtmOE4yMzlVYnpqMWpycUtpNmpueTRXQmVZTWFBOG5zOGh2YnplQnJONXNC?=
- =?utf-8?B?Q3dOUFFxckdCT3QrTWtSdTNYbzdGM09ackJiaUdPdnA2MDV1MVhFcmJrRnhB?=
- =?utf-8?B?SkN1N2g2UFdablpOVEMrMWhVUUpESDl5dVI5OFFHU3Zoa0FEbVkyOU9xazFC?=
- =?utf-8?B?TFpxbXRXbzU2VitoREp0bmRJMk9oczE1a2J6dE94dDhFMVpURUovaVFBa0NY?=
- =?utf-8?B?UFpJZWh5VVU5M2UzM2drWHdXT3BkZWUrbS9hYlByNmFuOFcwVW9Nb0l5OGhK?=
- =?utf-8?B?dUZHbWJnT0s4ZExXYk44NlNqbTBRZkttbzB1WjBHT2FraWNsemNaTmladDU5?=
- =?utf-8?B?VjVWVUc2NElaV0pKcWV5Sk5jc01DRjhldDZ2dUY0K0hZTkF4K0t2aFlkc0dB?=
- =?utf-8?B?RlNHOXdZaWw0Zmg3RWVVQlNpeFBpZlpNRGNnKzhzckN1c0hjSHQ1dSt6a1Ix?=
- =?utf-8?B?bXNzTTA5dWU1bVdMZi9OVm9JYmx3M0R2QzB1OTM0WEU4NDREeDd3M2grcE1p?=
- =?utf-8?B?KzZZcmwyeS9COWRadGxUdHRXL3JqQ25JNGxWZjJRb0JsVzBVKzN2bFBoUW84?=
- =?utf-8?Q?9fItco3WwKRqw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eXNzYzRXS1g3UVBqcFJ1bm9odlhzVGtOcTlxMDY5SkpRTjhqY3BiRVVzSEo1?=
- =?utf-8?B?SDFZNVpsM3JzNGthbEd1aHR4WEFLcTg2bVErTW00cHAwN2dsd1JJNEN3OWRy?=
- =?utf-8?B?UHRwOTNON2dLZitnWHZRTlRETGxTUVFIazU4Tmczbk1DeWNYNjJicE0rQzRR?=
- =?utf-8?B?cmJFYkw0WnBza0tJSnFQVlVEY0p0TGdZMUpWQ1N4S0Rwb1Y5cXBoM2FQYzQ4?=
- =?utf-8?B?WkNGbkdNeVNlUjhScFJkYlFXMDFZcE9wajJ5Y2Iyai85SGdiM0NRd3NZdzBS?=
- =?utf-8?B?ZlFKSjJBaHVGWEpKY0phRkNOSEZZam44TjZtd0NTUFBCVmdvc1pvN24yRjFL?=
- =?utf-8?B?UDlla3d1QnpCdWE0WVZDTDVCOXNNM2tvd2lRRWl6NmRzQmhiVThhVnkxdFZX?=
- =?utf-8?B?MTZjelVtNmJab3E3WmJCL1dJMnE0eXJwQmJkcEc1amxxVlZHTzhCOEU2M2JQ?=
- =?utf-8?B?ZmhmdmFIRUYxTUhqLzZmSGE3TlBTcGhSem84djRhbS8yUFdLUXhIcUJJZHg0?=
- =?utf-8?B?Vm5kbUxFQmZHcWtnSlBTdlEyS211c0pCUmtZeHlMMENsVUVleXR6Z0J1RW4y?=
- =?utf-8?B?OWxMSnhMVXJjYk5WT2ZlRG9Ud2oxQmk0Y3pTOWNWZWVuUlNRNzhBeDFDUG93?=
- =?utf-8?B?MVpaaEhuMHBoaGJaOTVaME4wZnNsN1ZJR1creTRJd05jdUpjUzFSWGdXV1gr?=
- =?utf-8?B?dTFRanhNanhUMjNKbnl4TEpyR1l5TmZ1STFzUGE2aXRlZ0laMDlvWVM2VW44?=
- =?utf-8?B?SXdtUytjSGJxMWJsRE1uWG1YWHpqTFZVQk9CeXlqMUhZbXJraWZneGFDYzF3?=
- =?utf-8?B?R2g3TzB5UCtXQTNPNDBQazZlKy9FZEc5TGZtZnFUTVFNSmNBU0ZYWUV1SC84?=
- =?utf-8?B?T0UvdnFMcXJVL25iU2JaQ0ZrbHdJdHNBT01MY1k3OTdlNDRVQlBtSnR3eDhC?=
- =?utf-8?B?eElTS24xb2VOb3RZZmNwd0ZwQklqdVJUZWw0Y1BORVozRlNUR1FXNENRaStJ?=
- =?utf-8?B?Z2MydmE1TC9XbWEvZVJhRkNQSnBMVDVxbHU4dHYxRUMzWWxKK29XZCs0NFdr?=
- =?utf-8?B?bndkd2F0OENnTk5GTnluSitpK0Z1amtyTGhSaUYzQkl2bHRtZ2VLYmZNR1Rl?=
- =?utf-8?B?aStYOWRXMWhydWJTN0ZFem55UE5xTlZwUXFuUExFR3NJYXhGNkZaUE12cHNl?=
- =?utf-8?B?S2FaVHg3ekUyRFQ4RnRWdVNrK1Fham5aTGFaSlhjZitTNjdYU2l3OTJvSWx1?=
- =?utf-8?B?OHZIZTNYeWl1LytCaGMvSXYvSG11ZUFqN0daUkNJdE5QV0FISXkrYjBhbURL?=
- =?utf-8?B?OGNkbmtJS20rUnhCN0RrR2JzOEJlVG5USGJHZzVwNlZjbEFGYTZKYUxQQmlR?=
- =?utf-8?B?WUpSNWxqQjNBdlhDWFk0TUhtQ1hIR1BSSzhoSUFJRTdDdjJMVHFIak44ZTIv?=
- =?utf-8?B?aDYrZTQ2R0pMZXBxQW1Yc3l6aGhxSWdFRlE1OWhma0pDMERrcUhXZDJZN2tO?=
- =?utf-8?B?ZHY2Q0EwNVR3YkF6eDcvNWhXWmpUclp1U2psOHhVNEl0a0QrbjV6QjNQS05w?=
- =?utf-8?B?V1VMWWY5NTlaODdLUDFidDAwUDM2WDZsNm1qb1NKQ2NaejZHL3YyVlB1K0cz?=
- =?utf-8?B?UGQ3dVFUYnpod0g0cUFVWUNoaDRpYmt2RklvTExtSEY3bTFQQVZSV0NQS2JD?=
- =?utf-8?B?clUzM3JSMzV6ZTNPdENWK01jVUR0d3lBa0tlem9NeVovb2ZTU2lCMllZV0VR?=
- =?utf-8?B?SWVEOEJrZDVzdVByWnFFQUtmaWdyUm11dTBrVFpDcWw4QUp1MmVVZ0F1am9Z?=
- =?utf-8?B?cnhEc3Y2cDJRZzAzSnhvT1dqckE4aWNiOFFxcFdjV0RHY2hIRGVEUUNKakdE?=
- =?utf-8?B?N09KWmtIdEViTEpSL1o1d2RHMzYwMElka1pKd0pjOXBEcFBCVHhWMDFWcFBK?=
- =?utf-8?B?WXc5azcxdDVuOWhhT3lzd29KVmdFWVpEalBPbkU1T29CaU05Nk9jSzJtVi84?=
- =?utf-8?B?YmNPdlN1SzZ3clNhOHh5UkRrVHcyZy9DaGExem96bk8yTzlKNUphSUF2N2w3?=
- =?utf-8?B?WTMzVFpGd0VoeTB3c1NjUzkzTmtvMXNrR2RPYnFwR1JpbHFrbjdaQzVJeGlB?=
- =?utf-8?Q?9pRnJaui056PunrQznUHEhX6f?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e32cdac-7bc3-4086-5da1-08dd704bf5ee
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 12:02:50.9909
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +0W5aNRcMBnwNzwCtWmacOVvz37zGvFDwqCgqzgkHOqnHkTjhGcAsKXdrAfo/cK2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7081
+References: <20250320140040.162416-1-ulf.hansson@linaro.org>
+ <20250320140040.162416-3-ulf.hansson@linaro.org> <PH7PR16MB6196C3AC7A7B7CA99A70E7DDE5A02@PH7PR16MB6196.namprd16.prod.outlook.com>
+ <Z-pQj6ynnfMa77fM@shikoro> <CAPDyKFr0MvQDxsi-Qd0F=1KuR4Gy6s5bhVdOXRt9K14Z9sO2Kw@mail.gmail.com>
+ <Z-pyfv_7gJ72YWhz@shikoro>
+In-Reply-To: <Z-pyfv_7gJ72YWhz@shikoro>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 31 Mar 2025 14:06:47 +0200
+X-Gm-Features: AQ5f1Jqf-2SJBYBzTd2vQDS8JECE_B0UrZpDWSB-ZjUCOgJAXrCCC3D2fOI74j8
+Message-ID: <CAPDyKFqW92wJ9P5cyO0vcV14dU5Q-JRGR=oKOS362crFy6y2Pw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] mmc: core: Further avoid re-storing power to the eMMC
+ before a shutdown
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Avri Altman <Avri.Altman@sandisk.com>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Am 31.03.25 um 11:45 schrieb Dan Carpenter:
-> Call dma_fence_put(fence) before returning an error on this error path.
+On Mon, 31 Mar 2025 at 12:46, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> Fixes: 70e67aaec2f4 ("dma-buf/sw_sync: Add fence deadline support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/dma-buf/sw_sync.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Hi Ulf,
 >
-> diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-> index f5905d67dedb..b7615c5c6cac 100644
-> --- a/drivers/dma-buf/sw_sync.c
-> +++ b/drivers/dma-buf/sw_sync.c
-> @@ -438,8 +438,10 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
->  		return -EINVAL;
->  
->  	pt = dma_fence_to_sync_pt(fence);
-> -	if (!pt)
-> +	if (!pt) {
-> +		dma_fence_put(fence);
->  		return -EINVAL;
-> +	}
+> > > > > +static bool mmc_may_poweroff_notify(const struct mmc_host *host,
+> > > > > +                               bool is_suspend)
+> > >
+> > > Maybe add some comments about the difference between
+> > > mmc_can_poweroff_notify() and mmc_may_poweroff_notify()? Like make it
+> > > super-obvious, so I will easily remember next year again :)
+> >
+> > mmc_can_* functions are mostly about checking what the card is capable
+> > of. So mmc_can_poweroff_notify() should be consistent with the other
+> > similar functions.
+> >
+> > For eMMC power-off notifications in particular, it has become more
+> > complicated as we need to check the power-off scenario along with the
+> > host's capabilities, to understand what we should do.
+> >
+> > I am certainly open to another name than mmc_may_power_off_notify(),
+> > if that is what you are suggesting. Do you have a proposal? :-)
+>
+> Initially, I didn't think of new names but some explanation in comments.
+> But since you are mentioning a rename now, how about:
+>
+> mmc_card_can_poweroff_notify() and mmc_host_can_poweroff_notify()?
 
-Good catch.
+mmc_card_can_poweroff_notify() would not be consistent with all the
+other mmc_can_* helpers, so I rather stay with
+mmc_can_poweroff_notify(), for now. If you think a rename makes sense,
+I suggest we do that as a follow up and rename all the helpers.
 
-I think it would be cleaner if we add an error label and then use "ret = -EINVAL; goto error;" here as well as a few lines below when ret is set to -ENOENT.
+mmc_host_can_poweroff_notify() seems fine to me!
 
-This way we can also avoid the ret = 0 in the declaration and let the compiler actually check the lifetime of the assignment.
+>
+> Similar to the commit 32f18e596141 ("mmc: improve API to make clear
+> hw_reset callback is for cards") where I renamed 'hw_reset' to
+> 'card_hw_reset' for AFAICS similar reasons.
+>
+> > > > >     if (mmc_can_poweroff_notify(host->card) &&
+> > > > > -           !(host->caps2 & MMC_CAP2_FULL_PWR_CYCLE))
+> > > > > +       !mmc_may_poweroff_notify(host, true))
+> > > > I guess this deserve some extra documentation because:
+> > > > If MMC_CAP2_FULL_PWR_CYCLE is not set but MMC_CAP2_FULL_PWR_CYCLE_IN_SUSPEND is set,
+> > > > !mmc_may_poweroff_notify(host, true) will evaluate to false while !(host->caps2 & MMC_CAP2_FULL_PWR_CYCLE) will evaluate to true.
+> >
+> > Right. See more below.
+> >
+> > >
+> > > I agree, I neither get this. Another way to express my confusion is: Why
+> > > do we set the 'is_suspend' flag to true in the shutdown function?
+> > >
+> >
+> > I understand your concern and I agree that this is rather messy.
+> > Anyway, for shutdown, we set the is_suspend flag to false. The
+> > reasoning behind this is that during shutdown we know that the card
+> > will be fully powered-down (both vcc and vccq will be cut).
+> >
+> > In suspend/runtime_suspend, we don't really know as it depends on what
+> > the platform/host is capable of. If we can't do a full power-off
+> > (maybe just vcc can be cut), then we prefer the sleep command instead.
+>
+> I do understand that. I don't see why this needs a change in the
+> existing logic as Alan pointed out above.
 
-Regards,
-Christian.
+Aha. I get your point now. As stated in the commit message:
 
->  
->  	spin_lock_irqsave(fence->lock, flags);
->  	if (test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+Due to an earlier suspend request the eMMC may already have been properly
+powered-off, hence we are sometimes leaving the eMMC in its current state.
+However, in one case when the host has MMC_CAP2_FULL_PWR_CYCLE_IN_SUSPEND
+set we may unnecessarily restore the power to the eMMC, let's avoid this.
 
+To further clarify, at a system suspend we issue a poweroff-notify for
+the case above. At system resume we leave the card in powered-off
+state until there is I/O (when we runtime resume it). If a shutdown
+occurs before I/O, we would unnecessarily re-initialize the card as
+it's already in the correct state.
+
+Let me try to clarify the commit message a bit with this information.
+
+>
+> > I was hoping that patch3 should make this more clear (using an enum
+>
+> Sadly, it didn't. Using MMC_POWEROFF_SUSPEND first and then later
+> MMC_POWEROFF_SHUTDOWN in mmc_shutdown() is still confusing. Do you want
+> to return false in case none of the two PWR_CYCLE flags is set?
+>
+> > type), but I can try to add some comment(s) in the code to further
+> > clarify the policy.
+>
+> Please do.
+>
+> All the best,
+>
+>    Wolfram
+>
+
+Thanks!
+
+Kind regards
+Uffe
 
