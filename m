@@ -1,120 +1,126 @@
-Return-Path: <linux-kernel+bounces-581764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F3EA764A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:59:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2BFA764AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD9E97A465C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4811E1888256
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8161E0DF5;
-	Mon, 31 Mar 2025 10:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B37E1E1DF8;
+	Mon, 31 Mar 2025 11:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GreVspFX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2NDbTtm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C2027726
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 10:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7EC1E1022;
+	Mon, 31 Mar 2025 11:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743418733; cv=none; b=eGMgZNU2fxHuhAn5HeEvTEOmecd2Wf2ezd6fzCA5337xh21zZ/imttantIPjn9L9QKg5Xp7xeEto6XCKh97w/qtkqJtL809IHCkfokWb3EvVijTTB6/25/IgGAWrw+cxX8mlMxuNcUWHQso3uEPqvgi9rBt3+gZyezHDRL8Ks+w=
+	t=1743418808; cv=none; b=UyeV4e9Jj/Df2V1IlXZUExHkcxNqbERiG8OkrPsHn6AioB/5nKNbvE8lu78At9jStT3qN48pels5qkCULXOKgDqd9qiX+8vu2Kpfj6zizQNCEu9xVz+YIyBHbzx+VijpHqn1nUyhR2FaY5Nhqrn3Y15b0F2YVEM4rkWFz53uh4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743418733; c=relaxed/simple;
-	bh=psEBahj7VoXf5BDmQJg6N1MhT2Zw8Jg1zsV6pXB500k=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=D/vDQC8m40vr0YLWMG9TEDBhavazv8tpf6SI1ADXytcfq+1WguZrMXIlhh2kmYhMXkkH/vBEIY6wYY3+4waLtBZo6Vs+KtA+Eo/ZRIToj6xX5KPIo4Bl1txNsgwqei+BxJ+i/CFmjK24O9OPoYZpyC18eRln0N0nGmkuzjWExtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GreVspFX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743418730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=93tK4DRtwDWGVyoA7NmKuVzLCQ6rWQ4QQB+PjsDLqfw=;
-	b=GreVspFXn+i5h71BqvgpS7ryaZTxdwL6fqy19rQtG9HZM7s6Qd8kfVTWjI3xKjBrgAtpYv
-	/w68hG1l9nLbfZGtUFBu0HtGx25y/f6egXtn6JnLenR/ll1iyUMu39ynlYIl5ZZZzlA1l6
-	cCi1b/NfnbIXxTksvqOG3F8AuIzSBpw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-264-l18-nn5cPAqdlq9ANEiJog-1; Mon,
- 31 Mar 2025 06:58:46 -0400
-X-MC-Unique: l18-nn5cPAqdlq9ANEiJog-1
-X-Mimecast-MFC-AGG-ID: l18-nn5cPAqdlq9ANEiJog_1743418725
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1866B1955DCC;
-	Mon, 31 Mar 2025 10:58:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 50B21180B48A;
-	Mon, 31 Mar 2025 10:58:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
-References: <67e57c41.050a0220.2f068f.0034.GAE@google.com>
-To: syzbot <syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-    linux-kernel@vger.kernel.org, marc.dionne@auristor.com,
-    syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [afs?] BUG: sleeping function called from invalid context in __alloc_frozen_pages_noprof
+	s=arc-20240116; t=1743418808; c=relaxed/simple;
+	bh=cld3lKxTDUu1Y017kQ5wCwIuFGJrB2vDX2SYmnv1YDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XtEXfeJxOqeuWwynuN1w7GqE/ijkwtghDPt0/1GeeOCrvtwqkf/WWwTH3/fvQrOEgtsWJMDrsE7w7ADajizfaKu2u6N0QaAP9NEtcCwwmRTvmPpKAAw7LYkB78z4/VKWLIELueXLTDRxt23T9z7krvZuj3v851GVW5/DSqae34U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2NDbTtm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B86C4CEE3;
+	Mon, 31 Mar 2025 11:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743418806;
+	bh=cld3lKxTDUu1Y017kQ5wCwIuFGJrB2vDX2SYmnv1YDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g2NDbTtm2fnQtfkndR19AJeXfOsg0aKBR2zhOLRbu/9G8MGRZ1S7rQHaG6x9vRzTy
+	 i3af8JbkRk75lFo8ihOyRc0MVCUuvUa8AujywyGInIhU+fKBi8VIrwUqZ7GjjkDd1c
+	 V7eYlKTZ+yvSEromo+SjihkEQY+NkhlsEtXc0RSyDGUtnuTQjmnORHU3InLe2ziFYx
+	 phqxJ12Hh7ynoTlbCRghVk9JXld7NPMhl2TsXaY6Vm3kAAYNRFtMpitT+LUGQoMlwa
+	 LmwWYmAI1sL5Eq8sEjFKyoVN1k1MzPHQIOjYO6veyU1OZbm8043mv5cZpZzdD3FbcY
+	 G+5t4zgAyjO1Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tzCsC-000000006dk-0laY;
+	Mon, 31 Mar 2025 13:00:08 +0200
+Date: Mon, 31 Mar 2025 13:00:08 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Cc: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dmitry.baryshkov@oss.qualcomm.com,
+	Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: Re: [PATCH v2 1/1] arm64: dts: qcom: x1e80100-dell-xps-9345: Add
+ WiFi/BT pwrseq
+Message-ID: <Z-p1uADNVAM9NcAW@hovoldconsulting.com>
+References: <20250331073423.3184322-1-alex.vinarskis@gmail.com>
+ <20250331073423.3184322-2-alex.vinarskis@gmail.com>
+ <Z-pN1qloL2m4BWaq@hovoldconsulting.com>
+ <CAMcHhXq9W64MHhOV5i3U4t+ZfKNC_GaBq5X3ZN7VOLt0cjPQPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <241599.1743418721.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Mar 2025 11:58:41 +0100
-Message-ID: <241600.1743418721@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMcHhXq9W64MHhOV5i3U4t+ZfKNC_GaBq5X3ZN7VOLt0cjPQPg@mail.gmail.com>
 
-Note to syzbot maintainers: the C test program contains a compressed ext3
-image and decompression code that I think is entirely unnecessary.  All it
-does is provide a directory that the afs dynroot can be mounted upon.
+On Mon, Mar 31, 2025 at 11:38:25AM +0200, Aleksandrs Vinarskis wrote:
+> On Mon, 31 Mar 2025 at 10:09, Johan Hovold <johan@kernel.org> wrote:
+> >
+> > [ +CC: Stephan ]
+> >
+> > On Mon, Mar 31, 2025 at 08:33:47AM +0100, Aleksandrs Vinarskis wrote:
+> > > Add the WiFi/BT nodes for XPS and describe the regulators for the WCN7850
+> > > combo chip using the new power sequencing bindings. All voltages are
+> > > derived from chained fixed regulators controlled using a single GPIO.
+> > >
+> > > Based on the commit d09ab685a8f5 ("arm64: dts: qcom: x1e80100-qcp: Add
+> > > WiFi/BT pwrseq").
+> >
+> > Are you sure this is correct and that you don't need to worry about the
+> > "how do we model the supplies to an M.2 card" issue?
+> >
+> > See
+> >
+> >         https://lore.kernel.org/lkml/Z-KuG0aOwEnxuhp9@linaro.org/
+> 
+> Dell XPS 9345 does not have an M.2 card, WLAN package is soldered
+> directly onboard, hence I am quite sure this is similar to QCP.
+> To be certain, perhaps @Tudor, Laurentiu or @Bryan O'Donoghue (if  you
+> have it?) could confirm from schematics?
 
-This is the only bit of the test that is actually necessary:
+I checked now, it seems you are correct.
 
-  NONFAILING(memcpy((void*)0x2000000001c0, "./file0\000", 8));
-  NONFAILING(memcpy((void*)0x2000000002c0, "afs\000", 4));
-  NONFAILING(memcpy((void*)0x200000000400, "dyn", 3));
-  NONFAILING(*(uint8_t*)0x200000000403 =3D 0x2c);
-  NONFAILING(*(uint8_t*)0x200000000404 =3D 0);
-  syscall(__NR_mount, /*src=3D*/0ul, /*dst=3D*/0x2000000001c0ul,
-          /*type=3D*/0x2000000002c0ul, /*flags=3D*/0ul, /*opts=3D*/0x20000=
-0000400ul);
-  NONFAILING(memcpy((void*)0x2000000000c0, "./file0\000", 8));
-  syscall(__NR_chdir, /*dir=3D*/0x2000000000c0ul);
-  NONFAILING(memcpy((void*)0x200000000240, "./file1\000", 8));
-  syscall(__NR_lstat, /*file=3D*/0x200000000240ul, /*statbuf=3D*/0ul);
-  NONFAILING(memcpy((void*)0x2000000000c0, ".\000", 2));
-  res =3D syscall(__NR_open, /*file=3D*/0x2000000000c0ul, /*flags=3D*/0ul,
-                /*mode=3D*/0ul);
-  if (res !=3D -1)
-    r[0] =3D res;
-  syscall(__NR_getdents, /*fd=3D*/r[0], /*ent=3D*/0x200000001fc0ul,
-          /*count=3D*/0xb8ul);
+Highly annoying that we need all this guess-work boiler plate (about
+chip internal details) for what is effectively just two supplies.
 
-Basically:
+Hopefully we can drop that again going forward, but that's a separate
+discussion.
 
-  mount(NULL, "./file0", "afs", 0, "dyn,") =3D 0
-  chdir("./file0")                  =3D 0
-  lstat("./file1", NULL)            =3D -1 EFAULT (Bad address)
-  open(".", O_RDONLY)               =3D 4
-  getdents(4, 0x200000001fc0 /* 5 entries */, 184) =3D 168
+> > > With that fixed commit f5b788d0e8cd ("arm64: dts: qcom: Add support for
+> > > X1-based Dell XPS 13 9345")
+> >
+> > Not sure what happened here.
+> 
+> Bluetooth and WLAN definitions were missing, as at the time I only
+> knew the UART port being used for bluetooth, and was missing
+> everything else to describe it.
 
-David
+Ah, ok. The above sentence looked like some left-over copy paste. I
+guess you don't need to mention it at all since this does not seem to
+warrant a proper Fixes tag.
 
+Johan
 
