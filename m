@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-581956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968CEA76762
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA58A7676E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4467A2865
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60033AB2ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F22139B6;
-	Mon, 31 Mar 2025 14:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3095C213E60;
+	Mon, 31 Mar 2025 14:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tnzgH5Xt"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJsyv5B8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4508D21148F;
-	Mon, 31 Mar 2025 14:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809F53234;
+	Mon, 31 Mar 2025 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743430029; cv=none; b=IDTJ49y0Y+gJgiUDZl1VS+vM2hKrsRqsi5wK+FuRXTIZz+W7wWHQdAZdyfG2t18nANfRn1s6Ta0gcHvV5JI8UAxgjw9ZUilLIgJv514KzgRHaKxkZ55PRWt7PboLBNaqkq1NEdQj0RLfZQKT/2295lp2Sg8YT7s+IpxYPSqmxwk=
+	t=1743430160; cv=none; b=NgeEl3dD9Lo/mKecy4Pq2ljc4JTMMdT0YW+NDhWSBxtcnF5trrbukqv0sJkGbhOUpnYz363wTSlzYh/RczftvEzHD13m4u2NLQpsvFEiKylgOdschv5fIgZB62nG1VlnKYUC/LKzrIHb90Vl8fMWepnabyMxoac400zQIjv0y7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743430029; c=relaxed/simple;
-	bh=OD7JebTfU5MT1X8WCmBSw8FWuc6qyRDXMpQO0/Gvy4c=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=AnZNkJNHuFUPxX7/6NmZU/77VaspoSNZ5Ijqd+T8bIwTg9Khz22TzbzPrrmGREBKEiCcyCF7zfqHlbSZIrvTkHnraW3V7O0Bprib2HF6LB1XW8/6M66z8A0U9PqXgjY+ZwzIX4X7Lrbn9ImcAt/za/YxRbUSsYPYLBeScKX/H/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tnzgH5Xt; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1743430025; x=1744034825; i=markus.elfring@web.de;
-	bh=gdvTQJalkKgGpg46yW+cy2ny+k+pwLnIsMQDuMyPfkk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tnzgH5Xt6wbTBSwDmUaMD/lstqW32+Rp0vHYm87h79/jovkdQxYxqyASF6nUlIX2
-	 JYQvprP2fZWfBPQSEgwVnGU3MsGbpAWtr0+3Kbnk2tiA05H37EFkgEuMUirncuG1P
-	 hifJhHhENYmvNW6Y+2UNWhRzWNe7XQihDSbZcgb42NzH0IukSoG6PAO+824iSZD3i
-	 rVhGQNag0kCEDj7bnQZZMvn3BhtDfydaCNbFJ+pFjQjmwmqoaIgliATq6vaDhz+3B
-	 8Goc7FZ7gY3alQyarryvGKHAtX179nNiPRgWoho3QqZ3q+LSkVwIDugmDyndwT9Sn
-	 ieM8wRRIAqww+c5cnQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.37]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1d7i-1sxMZd0wnY-012Izn; Mon, 31
- Mar 2025 16:07:05 +0200
-Message-ID: <96d7676a-ade7-4250-be3f-fd11728c23ee@web.de>
-Date: Mon, 31 Mar 2025 16:07:04 +0200
+	s=arc-20240116; t=1743430160; c=relaxed/simple;
+	bh=d28ybu49teeHHXEma/cD2nF7x0uH3LgBVcfGEuOwjbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MS0qF+Mw9rEiI4AZmHmhhsYUnfW2/idTA+KN3hHHfZilCARvwQhLp54tkO7nDmFxyefQvAfG+M8k+XSnmJNy7xSB4oRwQkvcIaV+ysx9JUu09uWvMJgtrvwZzX4MnO3hBG+rOLwkaA3+S64CHZbqruzE8EXkEu9bbggBwoqKh5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJsyv5B8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078C7C4CEE3;
+	Mon, 31 Mar 2025 14:09:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743430158;
+	bh=d28ybu49teeHHXEma/cD2nF7x0uH3LgBVcfGEuOwjbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PJsyv5B8dLZkZGa7j+YmqIbYg8TyZD/rV3JehPm1CK3LhAYpxWZnnc38UCQTssY6/
+	 U7apE7igeCqbQeD9GS/4NO7wuOWNV0tCeuTet24j4jjnoUX1JST/hX98V7Q1QEAmFe
+	 zifFk6540qBSD8U/mx63BRrf8KLGConpstX45SUGhZmP6ieNVXDZlWpgj+rG9vPldq
+	 /CPg/PVQCPR1aUARxrRKUaGhXATrq4DZ9G+FSW/FqtDpTKB9ofXmdPQD37oa/B0Qn/
+	 OFkV5uDtH1D4PtOZUSMNMu6y5YIkhkqyHhrV/Y0BsbyIsX8vj2+TgUl5bzg/fULWEb
+	 LeWwpe7cxuAag==
+Date: Mon, 31 Mar 2025 15:09:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Vishwaroop A <va@nvidia.com>,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <99e23453-04a3-489a-b50d-c4c8eec9c326@sirena.org.uk>
+References: <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
+ <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
+ <499703ae-dba1-49a6-869b-a60b44c2a85f@sirena.org.uk>
+ <2oxhmcrhbwlwqgyqy62p77eoag6nkavhjwmwfjfizcrhunrkjv@eaxjy6uoxszq>
+ <25857b7f-5c10-46ec-b0b7-9ff89ca5ab1e@sirena.org.uk>
+ <63b87feb-32ee-423c-8d82-61445414c6f7@nvidia.com>
+ <9760cd70-cbd6-4865-92b9-b48eb2cdea55@sirena.org.uk>
+ <69aaba89-10c6-408e-b328-c3e31a1aeaf7@nvidia.com>
+ <3b0f4fee-d46b-4086-9d63-f4093b52748e@sirena.org.uk>
+ <c81d7e8b-bcce-46a8-8938-c1ead71a988d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Henry Martin <bsdhenrymartin@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Will Deacon <will@kernel.org>
-References: <20250331135128.11881-1-bsdhenrymartin@gmail.com>
-Subject: Re: [PATCH v2] driver: tx2: Add NULL check in tx2_uncore_pmu_register
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250331135128.11881-1-bsdhenrymartin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rvQsaVjLIcFHk0ZTJft0nYrW4clO8feC57kVZ0fPagvI4VIK5OJ
- gJXQU8mFfXoHOVZUv2JL+JNymW9cYMIGUSEWsa3qJJDFBO7WQc0fgj/dKraZB5avpwPm4i0
- Dl9H65dz80TjYJ3kNfFsS8b+vlESi7gOSnwZoZuFcO7mAHqU2r+g8tPOBqly1U+fBxs86g5
- 0Ac7xuAxOhCtFS3FmtDjQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WvlePFoJq3k=;ekmxjxif54ej6eMwJALcA96UWfL
- 6bd5F1fr/u2fBaXlLdwk0ay9iQ7IUqXJFubcZZ5xoa91ODYe9CtwEW/eAPcpZRlWTzMPFgKpH
- 16exN+QxUyPiEEfnDYMOLyly8KiWkzaphRjfxdsJLrOVanvAvc3UBMbJYLasdG4KbrAko0PiG
- 5Lx6HIPbAHsTRM+WSzJlj0oR+SA5+tsrLwpzD/D71Jpo4/0WQI6OlbiKJHQ4jvBUqr808V/CH
- fyG4rTO3OZsD+Z0wGx9B8d5FhAMd1/5lzXu/LhS7dimjIuXfmd74QjYNWeVxpZBLaYzhsI1M2
- Y00FfZeS7ND9NQVvpkzJbN3VOZw3SOXOtJIRG87Kj/hq55JiEvszca++dAxjxjFzlFYpVurH5
- FZk3RExIEYs2z3cGmZDhiFLJTbY5p20ybD8tI3yGPf4TAOFB6DLvxmwKBNgEdOUFnKdye2s9n
- 9pU1bNnBz1ynaE7hYzAsDga28tXzbZ3dmXxTyGROdZtyCYhHyaTkukvpaAjLPTK2DcdiP6U/M
- m62vNSUXA43AVTrfEmZ+3QjKRe768wdH7tzpQxr8m5hg9yL6XKHalSnsKU9lnHS/hMPHfSeXi
- ctGr81Wt5A8Q7oxYBCGcEtc1+X+MfVNZpDx4dI5XbmIwkpKBVuWfrpOEMXMoW/tYn2brQtPDL
- kPBuQ3uLNBuNMx8rD8SKIHBrNoEMQV/Gc3SPmlQ+NibYD6zpgMPyMnBvOp2fHd2IYFBngH/L+
- KNNYHx+n9/e+j0GRie83Rttk10z2e8VST+I0lSWqKI1qlliTUZpac/aKDQ/pEuYBr4MY/lj63
- WqB7sMp11p7uyCHVaI86Qxn7hR5JQhiclRExhXx0RJhKGPnNrthGn4ifKSIlgMv6gYq+cV6/A
- fIqd3dlUIAIMJYEzKxeJGtz8D6pLvUhjnLn7SY/NF60DR2e31+N/pIvQSb30dftB4lXfWm87Z
- cy9AJo0t0BLtHidfTuEktogXGBoiy592Qg1yECrTN9oZlA1DWdXNPNqPgOuH/zpU/RH9sZR7N
- NimNuTp5hOwtFYBQ+lK85C5fHOqbq+GM+T46FldEfDeBzT6siJThPz2DI0OmUzGT9/fxJTYxM
- apoaiy6rkfpIA90/EW5djsYN/gZ3WwVsu3l3Maq3hCri0gLjSNxybMSMqe4Fm6DxM4HnOCGkW
- SGMekUZi1ncUchtXd7bXyWgDqz8ckVbMsEj0qMgc3YNTCUFoVW4v0MPOQGpb9Ih4X2ICCptfP
- bYbgvjufEy/EndarkVfr6GlHqdWLmal/nenJA4w1Ui6ywthfkdNJh1C7WKGacq+psEKd5ceGX
- Fmx5pDS/3XKaHaW404xbIaSPkWkxtkqt8fUuUYw+CLPj7uq0VrNghEwCfuAEhd/j02qAeRRSD
- tjpE3eFRil+nNBQEDqHrVWE0SKFYJPNraPbF8p5Hg7ZD7XYniuDkXFGgsjWMopIfZR/ouF/d1
- ISwHuX4r0UM28LTdTFonSTrhnQNb+wXFLTvfguuiiaInYq3cM
-
-> devm_kasprintf() return NULL if memory allocation fails. Currently,
-
-                   call returns?                    failed?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NN1C5YwfL50hWv5J"
+Content-Disposition: inline
+In-Reply-To: <c81d7e8b-bcce-46a8-8938-c1ead71a988d@nvidia.com>
+X-Cookie: The Ranger isn't gonna like it, Yogi.
 
 
-> tx2_uncore_pmu_register() does not check for this case, leading to a
-> possible NULL pointer dereference.
-=E2=80=A6
+--NN1C5YwfL50hWv5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-You may omit the word =E2=80=9Cpossible=E2=80=9D in such a change descript=
-ion.
+On Mon, Mar 31, 2025 at 02:11:35PM +0100, Jon Hunter wrote:
+> On 31/03/2025 13:44, Mark Brown wrote:
 
+> > Why would you need to use a compatible string for anything?  I'd expect
+> > the overlay to add the entire new device, compatible and all.
 
-Is any automated source code analysis involved here?
-https://cwe.mitre.org/data/definitions/252.html
+> We need a compatible string for the SPI device in device-tree. Sorry, but I
+> am not sure how we can add a SPI device without one.
 
-Regards,
-Markus
+> Can you confirm what you mean by 'overlay'? To me an overlay, is purely a
+> device-tree overlay and even if we have a device-tree overlay, we are still
+> missing the kernel driver part that matches the compatible string.
+
+I would expect the overlay to be a device tree overlay and to add the
+entire definition of the device, not just patch the compatible in an
+existing half constructed device.  I would expect the driver portion of
+supporting the device to happen as normal, if spidev makes sense for
+whatever devices these are then then that could be upstreamed without
+adding them to any board.
+
+--NN1C5YwfL50hWv5J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfqogkACgkQJNaLcl1U
+h9Bpjwf/XOd6Yi/IMXBqmmEYx3YawbjauWiLhFVNVXsRuyG8pqImhTrg1c18lkBK
+5UA3ZR61auRwTT5eLKNIXen1mH265jaVk6yxuxtr/H8/SqVQql3f9tz89muqaR1K
+AE5Q+cxD3A/vUuVxbrWwRePOc0eXxNA6JQekGmcrooDmGCGy7xQsJCGME8q5t4Yr
+34kYYHH89MjNZkMdhpOQiaIAqBWndVh+FexqiY2saR/o+iDvhzgoacMym9XhdM5f
+p51rcOniKwi1cqGDeqMiqKS5BVaQuvmENng9Ptx2f6ZLNdmZrgTFVqguKHxTtmcl
+aDDuCgMU3RCig4CJ/iHueWEtiu4DnQ==
+=Kfc4
+-----END PGP SIGNATURE-----
+
+--NN1C5YwfL50hWv5J--
 
