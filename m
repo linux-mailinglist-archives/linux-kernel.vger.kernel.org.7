@@ -1,307 +1,150 @@
-Return-Path: <linux-kernel+bounces-582013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD995A76826
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12298A76833
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1C177A1F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF0B1608BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0B621C9F0;
-	Mon, 31 Mar 2025 14:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7D422155B;
+	Mon, 31 Mar 2025 14:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4rsu0YO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8529221C190;
-	Mon, 31 Mar 2025 14:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123342144C4;
+	Mon, 31 Mar 2025 14:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743431674; cv=none; b=gKiVniE2cnqrDAZPgyVNxD9Csbm0SHOhF2iFbORvF1Y5gSmqoGKBYeN+VtWNAzQjYEJcDjiuYZYe6dygoJbx2Nv5hjo61hvzTPG2kVkqMHf0QRLj9N5mqm9XebX41ST0XC2oziqigHqwnMxVkU3fZoVu+quNwElhJog/j0Ipdy0=
+	t=1743431694; cv=none; b=UIwaNALKY0/9chTsWI+tGR67C5RjIA7Wm+V1Dpq1TL96VtpjZ9UYcw0+KvEsZYRq8CUtt8osmfTqqBE4ozJfos1a/bCPOB1cZ0aDkILU/x7JrE/wSOhEHbPWbJO/rdxQN4thOLZx8dS+/sWh8JHUjIUxJPkGEH6+/zIdx/7kRnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743431674; c=relaxed/simple;
-	bh=QK0iMtmHe/fpoIG5UIR046tnnV3BgOIQDLWpxeUCYok=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=J5VC89P+k9w7bAHQ8zMxBVRGPgdFZDQsLB+/k/rSjqYZ6Lc1Jicbe9Btatpih7BltaBAz8hWTYaPQyii21klSW6GDSpa8AIhbPlvDtp/3l3TXmpfppsGEcChMnedveKxMHs5GIPMOh0YEHzFHMq/w9o68wH25poJxL8Qn1TqX0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00522C4CEEB;
-	Mon, 31 Mar 2025 14:34:33 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tzGEe-00000005pBG-3G8C;
-	Mon, 31 Mar 2025 10:35:32 -0400
-Message-ID: <20250331143532.630811525@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 31 Mar 2025 10:34:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
+	s=arc-20240116; t=1743431694; c=relaxed/simple;
+	bh=mAM52nXXk2wvI22VWk+1kREQBjj6KscgBkI2cwPtYwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g0gR0tKOe+O+Aa4kASscgcrGwBlLM8YDGxcsc9DIDN8QqWtSixdI3qRC7Qk1CQ5S1OiROrUgJW/ZwtdMz6pHb1F2gSLGt8VJhOuQL5mS5EPhKY7fg/aJYWu6B24xuMY3QhjZRyQVLWTj5+7TlhmkSFhq00pv72OZyS4zkXoo+/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4rsu0YO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7FCC4CEE3;
+	Mon, 31 Mar 2025 14:34:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743431693;
+	bh=mAM52nXXk2wvI22VWk+1kREQBjj6KscgBkI2cwPtYwY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D4rsu0YOvpuTU86W7BqCgMv76xZ4BeOaXwclxmhjrF6r0+IulNA30EVzFCtdCKwJn
+	 xrZxUjGu9LaQimRft0iU2Tz47TrrLxa5bqpxIwnoskGpJg6dzjsvHhIi2QgkHZEMgD
+	 Ibx9QMF9IHY9GPTe/Unr/40Ra03ruPjbO2UnzN6Z4bkjhhHOkv4IhyIJJeMawiX10i
+	 bfv+jxOABFk81zGdiuaoA9v+X73zhYJMenuPtphVUvb0wmSTGLMJnbWK1qUWNKMGiE
+	 gG75pNtPqW0RhhlzectBVC1AH9GS5lP7/g3LS106bbiQv3mX0yKU62QmB+F5HNxwCr
+	 MrtZFzsDxzutQ==
+From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH v2 2/2] ring-buffer: Allow persistent ring buffers to be mmapped
-References: <20250331143426.947281958@goodmis.org>
+	stable@vger.kernel.org
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	syzbot+16a19b06125a2963eaee@syzkaller.appspotmail.com,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	bpf@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jiangshanlai@gmail.com,
+	josh@joshtriplett.org,
+	rcu@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 01/16] srcu: Force synchronization for srcu_get_delay()
+Date: Mon, 31 Mar 2025 10:34:35 -0400
+Message-Id: <20250331143450.1685242-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.9
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-The persistent ring buffer uses vmap()'d memory to map the reserved memory
-from boot. But the user space mmap() to the ring buffer requires
-virt_to_page() to return a valid page. But that only works for core kernel
-addresses and not for vmap() addresses.
+[ Upstream commit d31e31365b5b6c0cdfc74d71be87234ced564395 ]
 
-To address this, save the physical and virtual address of where the
-persistent memory is mapped. Create a rb_struct_page() helper function
-that returns the page via virt_to_page() for normal buffer pages that were
-allocated with page_alloc() but for the physical memory vmap()'d pages, it
-uses the saved physical and virtual addresses of where the memory was
-located to calculate the physical address of the virtual page that needs
-the struct page. Then it uses pfn_to_page() to get the page for that
-physical address.
+Currently, srcu_get_delay() can be called concurrently, for example,
+by a CPU that is the first to request a new grace period and the CPU
+processing the current grace period.  Although concurrent access is
+harmless, it unnecessarily expands the state space.  Additionally,
+all calls to srcu_get_delay() are from slow paths.
 
-New helper functions are created for flushing the cache for architectures
-that need it between user and kernel space.
+This commit therefore protects all calls to srcu_get_delay() with
+ssp->srcu_sup->lock, which is already held on the invocation from the
+srcu_funnel_gp_start() function.  While in the area, this commit also
+adds a lockdep_assert_held() to srcu_get_delay() itself.
 
-Also, the persistent memory uses the page->id for its own purpose where as
-the user mmap buffer currently uses that for the subbuf array mapped to
-user space. If the buffer is a persistent buffer, use the page index into
-that buffer as the identifier instead of the page->id.
-
-That is, the page->id for a persistent buffer, represents the order of the
-buffer is in the link list. ->id == 0 means it is the reader page.
-When a reader page is swapped, the new reader page's ->id gets zero, and
-the old reader page gets the ->id of the page that it swapped with.
-
-The user space mapping has the ->id is the index of where it was mapped in
-user space and does not change while it is mapped.
-
-Since the persistent buffer is fixed in its location, the index of where
-a page is in the memory range can be used as the "id" to put in the meta
-page array, and it can be mapped in the same order to user space as it is
-in the persistent memory.
-
-A new rb_page_id() helper function is used to get and set the id depending
-on if the page is a normal memory allocated buffer or a physical memory
-mapped buffer.
-
-Link: https://lore.kernel.org/all/CAHk-=wgD9MQOoMAGtT=fXZsWY39exRVyZgxuBXix4u=1bdHA=g@mail.gmail.com/
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reported-by: syzbot+16a19b06125a2963eaee@syzkaller.appspotmail.com
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: <bpf@vger.kernel.org>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/ring_buffer.c | 110 +++++++++++++++++++++++++++++++------
- 1 file changed, 93 insertions(+), 17 deletions(-)
+ kernel/rcu/srcutree.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 36665754340f..c95cb1e0cc0a 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -558,6 +558,7 @@ struct trace_buffer {
- 	struct ring_buffer_meta		*meta;
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 5e2e534647946..c5419e97bd97b 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -647,6 +647,7 @@ static unsigned long srcu_get_delay(struct srcu_struct *ssp)
+ 	unsigned long jbase = SRCU_INTERVAL;
+ 	struct srcu_usage *sup = ssp->srcu_sup;
  
- 	unsigned long			phys_start;
-+	unsigned long			virt_start;
- 
- 	unsigned int			subbuf_size;
- 	unsigned int			subbuf_order;
-@@ -2455,6 +2456,7 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
- 
- 		start = addr;
- 		end = start + size;
-+		buffer->virt_start = start;
- 
- 		/* scratch_size needs to be aligned too */
- 		scratch_size = ALIGN(scratch_size, sizeof(long));
-@@ -6058,6 +6060,80 @@ static void rb_clear_buffer_page(struct buffer_page *page)
- 	page->read = 0;
- }
- 
-+/*
-+ * Get the struct page for the given buffer page.
-+ *
-+ * For normal ring buffer pages that are allocated via page_alloc()
-+ * the struct page can simply be retrieved via virt_to_page().
-+ *
-+ * But if the buffer was created via a physical mapping and vmap()
-+ * was used to get to the virtual addresses, use the stored virtual
-+ * and physical of the start address to calculate the original
-+ * physical address of the given page and use pfn_to_page() to return
-+ * the struct page.
-+ */
-+static struct page *rb_struct_page(struct trace_buffer *buffer, void *vaddr)
-+{
-+	if (buffer->flags & RB_FL_PHYSICAL) {
-+		unsigned long addr = (unsigned long)vaddr;
-+
-+		addr -= buffer->virt_start;
-+		addr += buffer->phys_start;
-+		return pfn_to_page(addr >> PAGE_SHIFT);
-+	}
-+	return virt_to_page(vaddr);
-+}
-+
-+/* Some archs do not have data cache coherency between kernel and user-space */
-+static void rb_flush_buffer_page(struct trace_buffer *buffer,
-+				 struct buffer_page *bpage)
-+{
-+	struct page *page = rb_struct_page(buffer, bpage->page);
-+
-+	flush_dcache_folio(page_folio(page));
-+}
-+
-+/* The user mapped meta page is always allocated via page_alloc() */
-+static void rb_flush_meta(void *meta)
-+{
-+	struct page *page = virt_to_page(meta);
-+
-+	flush_dcache_folio(page_folio(page));
-+}
-+
-+/*
-+ * When the buffer is memory mapped to user space, each sub buffer
-+ * has a unique id that is used by the meta data to tell the user
-+ * where the current reader page is.
-+ *
-+ * For a normal allocated ring buffer, the id is saved in the buffer page
-+ * id field, and updated via this function.
-+ *
-+ * But for a physical memory mapped buffer, the id is already assigned for
-+ * memory ording in the physical memory layout and can not be used. Instead
-+ * the index of where the page lies in the memory layout is used.
-+ *
-+ * For the normal pages, set the buffer page id with the passed in @id
-+ * value and return that.
-+ *
-+ * For memory mapped pages, get the page index in the physical memory layout
-+ * and return that as the id.
-+ */
-+static int rb_page_id(struct ring_buffer_per_cpu *cpu_buffer,
-+		      struct buffer_page *bpage, int id)
-+{
-+	/*
-+	 * For boot buffers, the id is the index,
-+	 * otherwise, set the buffer page with this id
-+	 */
-+	if (cpu_buffer->ring_meta)
-+		id = rb_meta_subbuf_idx(cpu_buffer->ring_meta, bpage->page);
-+	else
-+		bpage->id = id;
-+
-+	return id;
-+}
-+
- static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
++	lockdep_assert_held(&ACCESS_PRIVATE(ssp->srcu_sup, lock));
+ 	if (srcu_gp_is_expedited(ssp))
+ 		jbase = 0;
+ 	if (rcu_seq_state(READ_ONCE(sup->srcu_gp_seq))) {
+@@ -674,9 +675,13 @@ static unsigned long srcu_get_delay(struct srcu_struct *ssp)
+ void cleanup_srcu_struct(struct srcu_struct *ssp)
  {
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-@@ -6066,15 +6142,16 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- 		return;
+ 	int cpu;
++	unsigned long delay;
+ 	struct srcu_usage *sup = ssp->srcu_sup;
  
- 	meta->reader.read = cpu_buffer->reader_page->read;
--	meta->reader.id = cpu_buffer->reader_page->id;
-+	meta->reader.id = rb_page_id(cpu_buffer, cpu_buffer->reader_page,
-+				     cpu_buffer->reader_page->id);
-+
- 	meta->reader.lost_events = cpu_buffer->lost_events;
+-	if (WARN_ON(!srcu_get_delay(ssp)))
++	spin_lock_irq_rcu_node(ssp->srcu_sup);
++	delay = srcu_get_delay(ssp);
++	spin_unlock_irq_rcu_node(ssp->srcu_sup);
++	if (WARN_ON(!delay))
+ 		return; /* Just leak it! */
+ 	if (WARN_ON(srcu_readers_active(ssp)))
+ 		return; /* Just leak it! */
+@@ -1102,7 +1107,9 @@ static bool try_check_zero(struct srcu_struct *ssp, int idx, int trycount)
+ {
+ 	unsigned long curdelay;
  
- 	meta->entries = local_read(&cpu_buffer->entries);
- 	meta->overrun = local_read(&cpu_buffer->overrun);
- 	meta->read = cpu_buffer->read;
++	spin_lock_irq_rcu_node(ssp->srcu_sup);
+ 	curdelay = !srcu_get_delay(ssp);
++	spin_unlock_irq_rcu_node(ssp->srcu_sup);
  
--	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-+	rb_flush_meta(meta);
- }
+ 	for (;;) {
+ 		if (srcu_readers_active_idx_check(ssp, idx))
+@@ -1849,7 +1856,9 @@ static void process_srcu(struct work_struct *work)
+ 	ssp = sup->srcu_ssp;
  
- static void
-@@ -6982,23 +7059,29 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
- 	unsigned int nr_subbufs = cpu_buffer->nr_pages + 1;
- 	struct buffer_page *first_subbuf, *subbuf;
-+	int cnt = 0;
- 	int id = 0;
- 
--	subbuf_ids[id] = (unsigned long)cpu_buffer->reader_page->page;
--	cpu_buffer->reader_page->id = id++;
-+	id = rb_page_id(cpu_buffer, cpu_buffer->reader_page, id);
-+	subbuf_ids[id++] = (unsigned long)cpu_buffer->reader_page->page;
-+	cnt++;
- 
- 	first_subbuf = subbuf = rb_set_head_page(cpu_buffer);
- 	do {
-+		id = rb_page_id(cpu_buffer, subbuf, id);
-+
- 		if (WARN_ON(id >= nr_subbufs))
- 			break;
- 
- 		subbuf_ids[id] = (unsigned long)subbuf->page;
--		subbuf->id = id;
- 
- 		rb_inc_page(&subbuf);
- 		id++;
-+		cnt++;
- 	} while (subbuf != first_subbuf);
- 
-+	WARN_ON(cnt != nr_subbufs);
-+
- 	/* install subbuf ID to kern VA translation */
- 	cpu_buffer->subbuf_ids = subbuf_ids;
- 
-@@ -7134,6 +7217,7 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 	if (!pgoff) {
- 		unsigned long meta_page_padding;
- 
-+		/* The meta page is always allocated via alloc_page() */
- 		pages[p++] = virt_to_page(cpu_buffer->meta_page);
- 
- 		/*
-@@ -7163,7 +7247,8 @@ static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
- 			goto out;
- 		}
- 
--		page = virt_to_page((void *)cpu_buffer->subbuf_ids[s]);
-+		page = rb_struct_page(cpu_buffer->buffer,
-+				      (void *)cpu_buffer->subbuf_ids[s]);
- 
- 		for (; off < (1 << (subbuf_order)); off++, page++) {
- 			if (p >= nr_pages)
-@@ -7196,14 +7281,6 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
- 	unsigned long flags, *subbuf_ids;
- 	int err = 0;
- 
--	/*
--	 * Currently, this does not support vmap()'d buffers.
--	 * Return -ENODEV as that is what is returned when a file
--	 * does not support memory mapping.
--	 */
--	if (buffer->flags & RB_FL_PHYSICAL)
--		return -ENODEV;
--
- 	if (!cpumask_test_cpu(cpu, buffer->cpumask))
- 		return -EINVAL;
- 
-@@ -7384,8 +7461,7 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 	goto consume;
- 
- out:
--	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-+	rb_flush_buffer_page(buffer, cpu_buffer->reader_page);
- 
- 	rb_update_meta_page(cpu_buffer);
- 
+ 	srcu_advance_state(ssp);
++	spin_lock_irq_rcu_node(ssp->srcu_sup);
+ 	curdelay = srcu_get_delay(ssp);
++	spin_unlock_irq_rcu_node(ssp->srcu_sup);
+ 	if (curdelay) {
+ 		WRITE_ONCE(sup->reschedule_count, 0);
+ 	} else {
 -- 
-2.47.2
-
+2.39.5
 
 
