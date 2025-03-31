@@ -1,237 +1,367 @@
-Return-Path: <linux-kernel+bounces-582493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E6FA76DF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:10:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9E7A76E0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CBA916A095
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857123A3CB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F397215781;
-	Mon, 31 Mar 2025 20:10:08 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5851518BBBB;
-	Mon, 31 Mar 2025 20:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE5221B9C4;
+	Mon, 31 Mar 2025 20:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="VGP/0nn0"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0618121A440;
+	Mon, 31 Mar 2025 20:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743451807; cv=none; b=G29lI7PA/yd3Q1uzsV65QVymh0Y/Qmk48bTLJvnZYlYhbUI+MUoeSrQ55N9Vj2ucsoV6yoJiwEZJaCXFFqRPSnlXFHbM8oHEpmfg0UYlMTKKGWs32DKlDGU+LnKHxneluhMjwSpm3BNnyuGuX4VYAWgOLzwdmzHEV+ly//YHfGY=
+	t=1743451920; cv=none; b=m6Ejhv54mUWB2pg4Z0nn+meOZ5I2R2gn2NV1UbeiJWNm+vTzrLK/1cdfWp7BV6129LPWqF8gS5gmYfjsTAbOVvknEfnB8hmpGB8zLanTnDGAiT2FBT5d0qK84s5kQq+NJkC8HAhYXYWcDCjwqW07ZrhfsynCC+F3suMbuL66naI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743451807; c=relaxed/simple;
-	bh=U3q9aimAB43eG1j3611rsmgpp5AzU5aSFce0DJ/oQDU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kgUt3OhhcwUrCRzvgm6ku/FwvfvD+NM6Txrzn9CvmRGGnZnmGPQpQw2y5Mbq88TdUcQ9cZunEMzgMgd42dVmU1Cs/e4xW9eWckb0wn19ozhdtdw8NVIwacbiGnQXm/+oUb2dH93oLaml52Up/FLN7bSdg6Qqgjc7TTGN9kd7KoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 8130592009C; Mon, 31 Mar 2025 22:09:56 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 7ADA792009B;
-	Mon, 31 Mar 2025 21:09:56 +0100 (BST)
-Date: Mon, 31 Mar 2025 21:09:56 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Marco Crivellari <marco.crivellari@suse.com>
-cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Frederic Weisbecker <frederic@kernel.org>, 
-    Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-    Thomas Gleixner <tglx@linutronix.de>, 
-    Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-In-Reply-To: <CAAofZF65p+DnH8xA0+sfuZv=VO63Zgv4rQ6frrdEzQYoZ0MaWA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.2503311348560.47733@angie.orcam.me.uk>
-References: <20250315194002.13778-1-marco.crivellari@suse.com> <20250315194002.13778-2-marco.crivellari@suse.com> <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk> <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
- <alpine.DEB.2.21.2503211747150.35806@angie.orcam.me.uk> <CAAofZF5yaGMG0Kyax+ksfGngQ0T6AxvN5-60SnasQh7=OabaOg@mail.gmail.com> <alpine.DEB.2.21.2503260300290.29685@angie.orcam.me.uk> <alpine.DEB.2.21.2503281345010.47733@angie.orcam.me.uk>
- <CAAofZF65p+DnH8xA0+sfuZv=VO63Zgv4rQ6frrdEzQYoZ0MaWA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1743451920; c=relaxed/simple;
+	bh=RNzXqslmQzT7+IeMpXEothGKbg0DnGRbDCZvHNoZApM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OyZ4Nk6sEjgOLsIDAirxICpeduYwrcLQ9kKVO2dRGgT79zntqE17szRlkL8BfxoTBtRkMWYA5qJcqW5jcWm8KCViI5DtisoErlUWOAowmAHp656KyFHE8h+HhNYNvAJCoWJ8TjV8hd00G1qiWp+rLpMD59w8fj4z0YSVhN8rlEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=VGP/0nn0; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=Message-Id:Date:Cc:To:From;
+	bh=ISfSMCAgKp8z55PiQhU0z6kwdG7zxeB+WY0nWqLYJPA=; b=VGP/0nn0y1hq6UZZ2Xgtb/aRCs
+	b5dAxvYVE0vpLGixgXlJlDtn2SYHFl5m6kw6cdmrGgWYnVoxi+Q+6LQlvu7ezsvwdUqe7nCreq7Rb
+	65w9Ccui3mmYFh2hsx0NWTRw0bECxoj8ol1mr7dmQIe6lZfd2b9krDed7thG+VJl3/0QOj04fhid5
+	IulmHBJ24fLweRBGqNH1CkehpVbY61FQx0Xf2QNMa1gyo4f206+f+wHSPNrdnUljwqo4cuSzD7sGl
+	vqgvLVJ72lG6qWQ4FP54CfAVHBYWjkbvKKycUYcvJ/C/N56w86Kri7QVQmJlokcodtPI51IOEe7/S
+	n4yXvakpmRTnYwvgnXgXuznjLeG/teaA/Ici/DZJi2yYqTXruujvSSluQd0AaYTZ3aNtDWAa+x1iy
+	n40hAdCLrl6bFwMBodJKjr5uFXD1AgYkGcPvxiFCuYFpaHJpRHj/lkwDPo6VL1Vzzih1pWdiVVNj/
+	yp6JlSH7/NlXybuT+tXxYkpk;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tzLTx-007Y5c-0g;
+	Mon, 31 Mar 2025 20:11:41 +0000
+From: Stefan Metzmacher <metze@samba.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Stefan Metzmacher <metze@samba.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Breno Leitao <leitao@debian.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Karsten Keil <isdn@linux-pingi.de>,
+	Ayush Sawal <ayush.sawal@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Joerg Reuter <jreuter@yaina.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Robin van der Gracht <robin@protonic.nl>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	James Chapman <jchapman@katalix.com>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Remi Denis-Courmont <courmisch@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	Jon Maloy <jmaloy@redhat.com>,
+	Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Martin Schiller <ms@dev.tdt.de>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sctp@vger.kernel.org,
+	linux-hams@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	linux-can@vger.kernel.org,
+	dccp@vger.kernel.org,
+	linux-wpan@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	mptcp@lists.linux.dev,
+	linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com,
+	linux-afs@lists.infradead.org,
+	tipc-discussion@lists.sourceforge.net,
+	virtualization@lists.linux.dev,
+	linux-x25@vger.kernel.org,
+	bpf@vger.kernel.org,
+	isdn4linux@listserv.isdn4linux.de,
+	io-uring@vger.kernel.org
+Subject: [RFC PATCH 0/4] net/io_uring: pass a kernel pointer via optlen_t to proto[_ops].getsockopt()
+Date: Mon, 31 Mar 2025 22:10:52 +0200
+Message-Id: <cover.1743449872.git.metze@samba.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 31 Mar 2025, Marco Crivellari wrote:
+The motivation for this is to remove the SOL_SOCKET limitation
+from io_uring_cmd_getsockopt().
 
-> > There's some complication here coming from the need to factor in the ISA
-> > bit in the microMIPS mode; something that hasn't been discussed so far.
-> > The `.fill 0' approach is a hack and it has struck me that we need to add
-> > a `.noinsn' pseudo-op to GAS for this purpose, complementing `.insn', but
-> > we need to stick with the hack for now anyway as it will take years until
-> > we can rely on a new feature in the assembler.
-> 
-> Ah, interesting. So de facto having the "repeat" to 0, will generate nothing.
+The reason for this limitation is that io_uring_cmd_getsockopt()
+passes a kernel pointer as optlen to do_sock_getsockopt()
+and can't reach the ops->getsockopt() path.
 
- Correct, and as a side effect this pseudo-op clears the ISA bit on any 
-label attached, as it is not an instruction.
+The first idea would be to change the optval and optlen arguments
+to the protocol specific hooks also to sockptr_t, as that
+is already used for setsockopt() and also by do_sock_getsockopt()
+sk_getsockopt() and BPF_CGROUP_RUN_PROG_GETSOCKOPT().
 
-> > I can't imagine how we'd advance past WAIT without these instructions,
-> > what do you have in mind?
-> 
-> I've not been precise, sorry.
-> I meant to remove the instructions like they are now because the
-> region would have
-> been different, then.
-> So, those instructions would have needed a change, in practice.
+But as Linus don't like 'sockptr_t' I used a different approach.
 
- OK, so this is precisely what happened here with my proposal.  Thanks for 
-clarifying.
+@Linus, would that optlen_t approach fit better for you?
 
-> > NB how do you actually verify this stuff with QEMU?  Is it by injecting
-> > an interrupt by hand at a chosen code location via GDB attached to QEMU's
-> > built-in debug stub?
-> 
-> Short answer: I am not able to fully test this, I can only boot.
-> 
-> The reason is that gdb-multiarch is not working as expected.
-> The binary in my distribution has the python support broken. So when I try to
-> inject the interrupt, I'm receiving a python error (actually, I receive the same
-> error after the "target remote" command).
-> I've also tried to compile the binary from source, but again,
-> I understand why in OBS the build I found is broken...
+Instead of passing the optlen as user or kernel pointer,
+we only ever pass a kernel pointer and do the
+translation from/to userspace in do_sock_getsockopt().
 
- Well, you should be able to set a breakpoint at `rollback_handle_int' and 
-fiddle with $epc by hand to see if the code sequence correctly skips over 
-WAIT.  Though I reckon QEMU used to have an issue with presenting the MIPS 
-privileged context over its debug stub.  Has the issue been fixed?  Either 
-way you should be able to just operate on the copy in $k0 retrieved with 
-(D)MFC0.
+The simple solution would be to just remove the
+'__user' from the int *optlen argument, but it
+seems the compiler doesn't complain about
+'__user' vs. without it, so instead I used
+a helper struct in order to make sure everything
+compiles with a typesafe change.
 
-> > Below I've included a complete change based on the outline above.  It
-> > seems to do the right thing for a couple of my configurations, but I've
-> > only eyeballed the resulting code and haven't tried running it.  Most of
-> > my hardware doesn't implement the WAIT instruction anyway.
-> 
-> It means it would be better to have someone else try the resulting
-> patch, I guess.
+The patchset does the transformation in 3
+easy to review steps:
 
- Exhaustive run-time verification is not always necessary if you can 
-demonstrate that your code is correct via other means, including 
-proofreading.
+1/4: introduces get_optlen(len, optlen) and put_optlen(len, optlen) helpers
+     on top of the existing get_user(len, optlen) and put_user(len, optlen)
+     usages.
 
- FAOD I have one MIPS32r2 system wired for testing, but that might not be 
-the most interesting configuration to verify as it'll now just use EI/EHB 
-to enable interrupts ahead of WAIT.  I could try an R1 kernel instead, but 
-I'm not sure if it can be made to work owing to the differences in the FPU 
-between R1 and R2 for the MIPS32 ISA.  I used to have a MIPS64 (R1) system 
-there, but the CPU daughtercard sadly stopped working 3 years ago and I 
-wasn't able to repair it, owing to the lack of available spare parts (it's 
-most likely a dead CPU).
+2/4: introduces a simple optlen_t that just contains 'int __user *up;'
+     that makes sure get_optlen and put_optlen get a typesafe optlen argument
+     and they are the only functions looking at optlen.
+     (The existing sockptr_t optlen code gets OPTLEN_SOCKPTR(optlen) passed)
 
-> > Let me know if you find anything here unclear or have any questions or
-> > comments.
-> 
-> 1)
-> 
-> > /* Keep the ISA bit clear for calculations on local labels here. */
-> 
-> The ISA bit should be the bit 0, correct?
-> So, also in the macro code, it's done to preserve that bit.
+3/4: The changes do_sock_getsockopt() to pass a kernel pointer instead
+     of a __user pointer via optlen_t. This is a bit tricky as
+     directly failing the copy_from_sockptr(&koptlen, optlen, sizeof(koptlen)
+     with -EFAULT might change the uapi, as some getsockopt() hooks
+     doesn't even touch optlen at all. And userspace could do something
+     like this:
 
- Correct, the bit will be set according to the ISA mode at the time the 
-originating machine instruction is executed, in EPC or any other register 
-the PC is copied to, e.g. $ra.  Likewise any instruction setting the PC 
-such as JR or ERET will set the ISA mode from the ISA bit of the source 
-register (the ISA bit for exception entry is set from CP0 Config3.ISAOnExc 
-register bit).
+        feature_x_supported = true;
+        ret = getsockopt(fd, level, optname, NULL, NULL);
+        if (ret == -1 && errno == ENOTSUPP) {
+            feature_x_supported = false;
+        }
 
- All code labels in microMIPS code will have the bit set, so that 
-relocations correctly calculate immediates used to make register jumps.  
+     And this should not give -EFAULT after the changes,
+     so optlen.kp is passed down as NULL, so that -EFAULT is
+     deferred to get_optlen() and put_optlen().
 
- The ISA mode can be switched explicitly with the JALX instruction (you 
-can mix regular MIPS and microMIPS code as long as hardware supports the 
-other ISA mode; either or both can be implemented in a given piece of 
-silicon).
+4/4: Removes the SOL_SOCKET restriction for io-uring.
 
- Other immediate jumps and branches preserve the current ISA mode, but the 
-assembler and linker verify you don't attempt to use these instructions to 
-pass control to code in the other mode; this is an assembly or link error 
-depending at what stage the label reference is resolved.
+This patchset doesn't touch any existing getsockopt() that
+was already converted to sockptr_t optlen, that's something
+for a later cleanup.
 
- FYI the documents for the microMIPS mode of operation are respectively:
+Link: https://lore.kernel.org/io-uring/86b1dce5-4bb4-4a0b-9cff-e72f488bf57d@samba.org/T/#t
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Karsten Keil <isdn@linux-pingi.de>
+Cc: Ayush Sawal <ayush.sawal@chelsio.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Willem de Bruijn <willemb@google.com>
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Xin Long <lucien.xin@gmail.com>
+Cc: Neal Cardwell <ncardwell@google.com>
+Cc: Joerg Reuter <jreuter@yaina.de>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Robin van der Gracht <robin@protonic.nl>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: kernel@pengutronix.de
+Cc: Alexander Aring <alex.aring@gmail.com>
+Cc: Stefan Schmidt <stefan@datenfreihafen.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Alexandra Winter <wintera@linux.ibm.com>
+Cc: Thorsten Winkler <twinkler@linux.ibm.com>
+Cc: James Chapman <jchapman@katalix.com>
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>
+Cc: Matt Johnston <matt@codeconstruct.com.au>
+Cc: Matthieu Baerts <matttbe@kernel.org>
+Cc: Mat Martineau <martineau@kernel.org>
+Cc: Geliang Tang <geliang@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Remi Denis-Courmont <courmisch@gmail.com>
+Cc: Allison Henderson <allison.henderson@oracle.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>
+Cc: Jan Karcher <jaka@linux.ibm.com>
+Cc: "D. Wythe" <alibuda@linux.alibaba.com>
+Cc: Tony Lu <tonylu@linux.alibaba.com>
+Cc: Wen Gu <guwen@linux.alibaba.com>
+Cc: Jon Maloy <jmaloy@redhat.com>
+Cc: Boris Pismenny <borisp@nvidia.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Martin Schiller <ms@dev.tdt.de>
+Cc: "Björn Töpel" <bjorn@kernel.org>
+Cc: Magnus Karlsson <magnus.karlsson@intel.com>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>
+CC: Stefan Metzmacher <metze@samba.org>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-sctp@vger.kernel.org
+Cc: linux-hams@vger.kernel.org
+Cc: linux-bluetooth@vger.kernel.org
+Cc: linux-can@vger.kernel.org
+Cc: dccp@vger.kernel.org
+Cc: linux-wpan@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: mptcp@lists.linux.dev
+Cc: linux-rdma@vger.kernel.org
+Cc: rds-devel@oss.oracle.com
+Cc: linux-afs@lists.infradead.org
+Cc: tipc-discussion@lists.sourceforge.net
+Cc: virtualization@lists.linux.dev
+Cc: linux-x25@vger.kernel.org
+Cc: bpf@vger.kernel.org
+Cc: isdn4linux@listserv.isdn4linux.de
+Cc: io-uring@vger.kernel.org
 
-- "MIPS Architecture For Programmers Volume I-B: Introduction to the
-   microMIPS32 Architecture"
+Stefan Metzmacher (4):
+  net: introduce get_optlen() and put_optlen() helpers
+  net: pass 'optlen_t' to proto[ops].getsockopt() hooks
+  net: pass a kernel pointer via 'optlen_t' to proto[ops].getsockopt()
+    hooks
+  io_uring: let io_uring_cmd_getsockopt() allow level other than
+    SOL_SOCKET
 
-- "MIPS Architecture for Programmers Volume II-B: The microMIPS32 
-   Instruction Set"
+ drivers/isdn/mISDN/socket.c                   |   4 +-
+ .../chelsio/inline_crypto/chtls/chtls_main.c  |   4 +-
+ include/linux/net.h                           |   2 +-
+ include/linux/sockptr.h                       |  41 ++++
+ include/net/inet_connection_sock.h            |   2 +-
+ include/net/ip.h                              |   2 +-
+ include/net/ipv6.h                            |   2 +-
+ include/net/sctp/structs.h                    |   2 +-
+ include/net/sock.h                            |   4 +-
+ include/net/tcp.h                             |   2 +-
+ include/net/udp.h                             |   2 +-
+ io_uring/uring_cmd.c                          |   3 -
+ net/atm/common.c                              |   4 +-
+ net/atm/common.h                              |   2 +-
+ net/atm/pvc.c                                 |   2 +-
+ net/atm/svc.c                                 |   4 +-
+ net/ax25/af_ax25.c                            |   6 +-
+ net/bluetooth/hci_sock.c                      |   6 +-
+ net/bluetooth/iso.c                           |   6 +-
+ net/bluetooth/l2cap_sock.c                    |   8 +-
+ net/bluetooth/rfcomm/sock.c                   |   8 +-
+ net/bluetooth/sco.c                           |  10 +-
+ net/can/isotp.c                               |   6 +-
+ net/can/j1939/socket.c                        |   6 +-
+ net/can/raw.c                                 |  14 +-
+ net/core/sock.c                               |   2 +-
+ net/dccp/ccid.c                               |   4 +-
+ net/dccp/ccid.h                               |  10 +-
+ net/dccp/ccids/ccid3.c                        |   8 +-
+ net/dccp/dccp.h                               |   2 +-
+ net/dccp/proto.c                              |  12 +-
+ net/ieee802154/socket.c                       |   8 +-
+ net/ipv4/ip_sockglue.c                        |   8 +-
+ net/ipv4/raw.c                                |  10 +-
+ net/ipv4/tcp.c                                |   4 +-
+ net/ipv4/udp.c                                |   8 +-
+ net/ipv4/udp_impl.h                           |   2 +-
+ net/ipv6/ipv6_sockglue.c                      |   8 +-
+ net/ipv6/raw.c                                |  14 +-
+ net/ipv6/udp.c                                |   2 +-
+ net/ipv6/udp_impl.h                           |   2 +-
+ net/iucv/af_iucv.c                            |   6 +-
+ net/kcm/kcmsock.c                             |   6 +-
+ net/l2tp/l2tp_ppp.c                           |   6 +-
+ net/llc/af_llc.c                              |   6 +-
+ net/mctp/af_mctp.c                            |   4 +-
+ net/mptcp/protocol.h                          |   2 +-
+ net/mptcp/sockopt.c                           |  48 ++--
+ net/netlink/af_netlink.c                      |   8 +-
+ net/netrom/af_netrom.c                        |   6 +-
+ net/nfc/llcp_sock.c                           |   6 +-
+ net/packet/af_packet.c                        |   6 +-
+ net/phonet/pep.c                              |   6 +-
+ net/rds/af_rds.c                              |   8 +-
+ net/rds/info.c                                |   6 +-
+ net/rds/info.h                                |   2 +-
+ net/rose/af_rose.c                            |   6 +-
+ net/rxrpc/af_rxrpc.c                          |   6 +-
+ net/sctp/socket.c                             | 220 +++++++++---------
+ net/smc/af_smc.c                              |   8 +-
+ net/smc/smc.h                                 |   2 +-
+ net/socket.c                                  |  34 ++-
+ net/tipc/socket.c                             |   8 +-
+ net/tls/tls_main.c                            |  18 +-
+ net/vmw_vsock/af_vsock.c                      |   6 +-
+ net/x25/af_x25.c                              |   6 +-
+ net/xdp/xsk.c                                 |  10 +-
+ 67 files changed, 387 insertions(+), 319 deletions(-)
 
-and their microMIPS64 counterparts (although the first document is almost 
-an exact copy of its regular MIPS variant).  Be sure to download revision 
-5.xx, because revision 6.xx describes an entirely different ISA which we 
-currently have no support for (downstream patches were never submitted; 
-also microMIPSr6 removed branch delay slots, which caused all sorts of 
-portability issues).  See Section 3.5 of the latter manual for further 
-discussion of the ISA bit.
+-- 
+2.34.1
 
-> 2)
-> .section .cpuidle.text,"ax"
-> 
-> This should be a single patch, right?
-> Based on what I understood, 'a' should be the allocation, and 'x' the
-> executable attribute.
-
- Both correct (see the GAS manual for the section flags); this just 
-matches the __cpuidle macro from <linux/compiler_types.h>.
-
-> This should be in order to mark those symbols like "cpuidle text":
-> 
-> $ nm -n vmlinux | grep -A3 "cpuidle_text"
-> ffffffff80a127e0 T __cpuidle_text_start
-> ffffffff80a127e0 T r4k_wait
-> ffffffff80a12800 t r4k_wait_insn
-> ffffffff80a12804 t r4k_wait_exit
-> --
-> ffffffff80a12c00 T __cpuidle_text_end
-> ffffffff80a12c00 T __noinstr_text_end
-> ffffffff80a12c00 t rest_init
-> ffffffff80a12ccc t kernel_init
-> 
-> I guess it is used in order to understand if the instruction pointer is inside
-> one of these functions / labels.
-
- See the comment at said macro in <linux/compiler_types.h> and also commit 
-6727ad9e206c ("nmi_backtrace: generate one-line reports for idle cpus").
-
-> How does a commit description sound like this?
-> 
-> "
-> mips: Add dedicated .cpuidle.text section for CPU idle routines
-> 
-> Add a dedicated executable section for CPU idle code to properly organize
-> and identify idle-related functions inside the .text section.
-> "
-
- How about:
-
-"
-MIPS: Move __r4k_wait() to .cpuidle.text section
-
-Fix missing .cpuidle.text section assignment for __r4k_wait() to correct 
-backtracing with nmi_backtrace().
-
-Fixes: 97c8580e85cf ("MIPS: Annotate cpu_wait implementations with __cpuidle")
-"
-
-or suchlike (based on the commit referred)?
-
- This probably does not itself qualify for linux-stable as the issue is 
-only annoying rather than fatal, but I think the annotation should be 
-there in case someone wants to backport it downstream.
-
-> 3)
-> 
-> > I think we also need to replace "rollback" with
-> > another name as with new code we don't roll back anymore.
-> 
-> Should be changed with "region", instead of rollback, maybe?
-> Do you have something better to suggest?
-
- Hmm, "skipover" maybe?
-
-  Maciej
 
