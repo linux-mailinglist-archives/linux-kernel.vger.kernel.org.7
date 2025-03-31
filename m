@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-581763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9EEA764A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:58:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1995CA764A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77D21889277
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3CA3A604A
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249621E0DFE;
-	Mon, 31 Mar 2025 10:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACBD1E0E13;
+	Mon, 31 Mar 2025 10:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkSqrkpI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gg7dC1iF"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6101B423C;
-	Mon, 31 Mar 2025 10:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217CD1E04BD;
+	Mon, 31 Mar 2025 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743418711; cv=none; b=LrTXSOict4dTiWf4dckBRPCWtS65+EPqasAohgOITjbL4GhFfFPcK2haeNztsdgQ3YEC6ujB9AxK/scJgS/uBeI51X1nU+ud5t27FYpzVXOseRh7jfqjBbQPxzF1dRIOhBlV203ItR+t3dfEp4No+ZSUxpuqsaQuASyxBVJS9wU=
+	t=1743418735; cv=none; b=jzeYUrufkA9I0pE3XlDJiUd8Izhqu6dCYXVo7Fjym8C8mIkqecH0bOrvVbDB5yGJ9DXURjw4AwJtdgGGK3AdXXg0EjAGSalm/pkFve0IXPJ0XOJVTFktKbwxOquKNtihFF22usGo9QQwHe2Qsqg5/1bCsQljqUur78B/sC73khQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743418711; c=relaxed/simple;
-	bh=CTlH+g2+HuA9vbv12bz+ImaQjIZbbactsMh++cN1GI4=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=PhHdIegval8oLr8rCTdfAGXLyi5r2XcjSu3xorzs0ouUc7VKr3HBng1IiSQfrQBhlhEz9Rmgc+gK2TO7sKEB+XX9EtOt6W4Ae6G5kUJaNgUMc49sufyrOkU0AbwBOYlCcl6o+JOqrL4RZfpwBO2UxFdCi0YNsARWoJE7j5TbGo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkSqrkpI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4A2C4CEE5;
-	Mon, 31 Mar 2025 10:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743418710;
-	bh=CTlH+g2+HuA9vbv12bz+ImaQjIZbbactsMh++cN1GI4=;
-	h=Date:To:Subject:Cc:From:References:In-Reply-To:From;
-	b=PkSqrkpIkH/7OzaaxJ6wbsMQMmgWRl5eEdFES3St71VRm5H+dk1F6VyKWslwo4JA7
-	 4pyTCcYTZii9Gm1D7Yeb1W2RiTTY4rNAiNSmZd7BMZdjc42yt1Sd9XKrwFewVPLafF
-	 uY1C814Uf0ZsL5omntg7q91K3n9syNGDOM0CuU/JqgTJhE2XkkEnFnglqlsEkBiu6k
-	 SI3qSKP/WdNpJW2GX93YXisUK+bLsVBRJTKup30Jz23M9G16AiIlA0biCTp3t5R1W8
-	 E/YlpNGGQ/2Lpbucy7Vlgs0UyxiTLM7L61FOiOcXZRWVtBl1XC8IuT164xCx7PL4Oh
-	 16bhAg71L6VfA==
-Content-Type: multipart/signed;
- boundary=afa0541fe8431cb3d37f46b7af78c11e8bfa2698ff6820e4842879430dbc;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 31 Mar 2025 12:58:25 +0200
-Message-Id: <D8UECOJ2NMCU.3ALYIKSODJ479@kernel.org>
-To: "Kumar, Udit" <u-kumar1@ti.com>, "Nishanth Menon" <nm@ti.com>, "Vignesh
- Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62p-j722s: add rng node
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250313144155.2382316-1-mwalle@kernel.org>
- <837cba5f-f49e-4cbf-9cbe-2b25f7c9d4b8@ti.com>
-In-Reply-To: <837cba5f-f49e-4cbf-9cbe-2b25f7c9d4b8@ti.com>
+	s=arc-20240116; t=1743418735; c=relaxed/simple;
+	bh=EdbgafNxYGu/0XTf7zfAz1bXaEoSlO/vk/i5SU4szcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOlEoxSC1yL0IjSNIbKs3D/COmPLqQ52475a8SPgHOghFnOvTXV9pJ2KCVdvoq0C87ecUWV7sHlmgO2X1f9v+3kfSNHA0bcNxAmFaoLTQogVLK25lKUfgFPEGV0TSQkW9vN2yKq1vPj7zYj5IRjzTSWvZeSgTMQGjw+cE075vTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gg7dC1iF; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52V4VTeq030864;
+	Mon, 31 Mar 2025 10:58:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=1xzsUz
+	kznSz9Dr4e9xWfh0mKDxu6S+leuxvVC4YqcUY=; b=Gg7dC1iFI1bQpIB6cNFE2s
+	NQ+0wjFaUyb7435368UrRiMcSJjaxrTuR6POKTH2qUdf9uYe63FhpKLGuPHQfvwp
+	qmh7JkcUvCulBfAcINMKuZTYDwtxhl8J1jn2PANt4PEAIL76EnmS8xoqM+T9Efpl
+	WbTruD7YcOBDnu8Ze4KsR1STNLx+04YhKtrNNPnrSx8eYqpcoYikl5XSAG1ifg/6
+	6Ca0gNx+B9y5pM+tlsZTYjNobUdeP7UHAoFBkNxWw2g1jnXds0CK4lhk64KHtVE6
+	3uQYJTUvfV0sRLWvG1JKKkbVUiqk/ftddBefKN/Lm9rxseWSVDLDAEDHm5zcQT2Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45q602kyny-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 31 Mar 2025 10:58:47 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52V8uw38005213;
+	Mon, 31 Mar 2025 10:58:46 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45pujynmd6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 31 Mar 2025 10:58:46 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52VAwgWD19202414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 31 Mar 2025 10:58:42 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 59FBA2004B;
+	Mon, 31 Mar 2025 10:58:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1527E20040;
+	Mon, 31 Mar 2025 10:58:41 +0000 (GMT)
+Received: from localhost (unknown [9.171.66.204])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 31 Mar 2025 10:58:41 +0000 (GMT)
+Date: Mon, 31 Mar 2025 12:58:39 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v2] s390/pci: Fix dev.dma_range_map missing sentinel
+ element
+Message-ID: <your-ad-here.call-01743418719-ext-6354@work.hours>
+References: <20250312-fix_dma_map_alloc-v2-1-530108d9de21@linux.ibm.com>
+ <c6bcb10536005fd36966a97574e424c17cde1105.camel@linux.ibm.com>
+ <your-ad-here.call-01743087110-ext-9280@work.hours>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <your-ad-here.call-01743087110-ext-9280@work.hours>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Ru52HP92MBdeCfXZqx7EbOK2m9jmqgDq
+X-Proofpoint-ORIG-GUID: Ru52HP92MBdeCfXZqx7EbOK2m9jmqgDq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-31_04,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ adultscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503310078
 
---afa0541fe8431cb3d37f46b7af78c11e8bfa2698ff6820e4842879430dbc
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu, Mar 27, 2025 at 03:51:50PM +0100, Vasily Gorbik wrote:
+> On Thu, Mar 27, 2025 at 10:45:40AM +0100, Niklas Schnelle wrote:
+> > On Wed, 2025-03-12 at 11:32 +0100, Niklas Schnelle wrote:
+> > > The fixed commit sets up dev.dma_range_map but missed that this is
+> > > supposed to be an array of struct bus_dma_region with a sentinel element
+> > > with the size field set to 0 at the end. This would lead to overruns in
+> > > e.g. dma_range_map_min(). It could also result in wrong translations
+> > > instead of DMA_MAPPING_ERROR in translate_phys_to_dma() if the paddr
+> > > were to not fit in the aperture. Fix this by using the
+> > > dma_direct_set_offset() helper which creates a sentinel for us.
+> > > 
+> > > Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
+> > > Reviewed-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> > > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> > > ---
+> > > Note: Based on iommu/next
+> > > 
+> > > v1 -> v2:
+> > > - Fixed typo, added trailers
+> > > - Link to v1: https://lore.kernel.org/r/20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com
+> > > ---
+> > >  arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
+> > >  1 file changed, 11 insertions(+), 13 deletions(-)
+> > > 
+> > 
+> > With the IOMMU pull request for Linux v6.15 the fixed commit is now in
+> > Linus tree (with the SHA as cited) but this fix isn't. Since this fix
+> > only touches s390 specific code I think it could go through the s390
+> > tree but that currently doesn't carry the fixed commit so would have to
+> > wait until the s390 tree pulls in v6.15-rc1. 
+> > 
+> > I don't think any breakage from the missing sentinel is visible outside
+> > of guests using the new IOMMU passthrough mode so I guess waiting until
+> > after v6.15-rc1 would be okay.
+> > 
+> > Heiko, Vasily, Alexander what do you think?
+> 
+> Sure, I'll pick it up in the s390 tree for rc1 or rc2, depending on
+> whether there will be a second s390 tree pull request during the merge
+> window.
 
-Hi Udit,
-
-> > Add the node for the random number generator inside the crypto module.
-> >
-> > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > ---
-> > This was tested on a J722S/AM67A. Also, according to the TRM this is th=
-e
->
-> Could you re-confirm please , after adding this node.=C2=A0 you selected =
-trng=20
-> offered by Linux
-
-# cat /sys/devices/virtual/misc/hw_random/rng_current
-40910000.rng
-# cat /sys/devices/virtual/misc/hw_random/rng_available
-40910000.rng
-# dd if=3D/dev/hwrng bs=3D16 count=3D1 | hexdump -C
-1+0 records in
-1+0 records out
-00000000  92 f5 44 09 fd 86 6b a2  39 d6 ad f3 e6 ec 03 4a  |..D...k.9.....=
-.J|
-00000010
-# dd if=3D/dev/hwrng bs=3D16 count=3D1 | hexdump -C
-1+0 records in
-1+0 records out
-00000000  a3 73 da d2 5b 94 83 2a  75 11 ca b3 99 d3 87 88  |.s..[..*u.....=
-..|
-00000010
-
-> > MCU instance of the SA3UL. But it's defined in -main.dtsi. Is this
-> > correct?
->
-> Yes this is correct,
->
-> please refer
->
-> https://www.ti.com/lit/zip/sprujb3=C2=A0 SPRUJB3A.pdf
->
-> table 2.1 Main Memory map, this node falls under main domain
-
-Ok. Not sure, how I came to the conclusion that this is an MCU
-instance.
-
-> > ---
-> >   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 8 ++++++++
-> >   1 file changed, 8 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/a=
-rch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-> > index 6e3beb5c2e01..e868e006318e 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-> > @@ -227,9 +227,17 @@ crypto: crypto@40900000 {
-> >   		reg =3D <0x00 0x40900000 0x00 0x1200>;
-> >   		#address-cells =3D <2>;
-> >   		#size-cells =3D <2>;
-> > +		ranges =3D <0x00 0x40900000 0x00 0x40900000 0x00 0x30000>;
-> > +
-> >   		dmas =3D <&main_pktdma 0xf501 0>, <&main_pktdma 0x7506 0>,
-> >   		       <&main_pktdma 0x7507 0>;
-> >   		dma-names =3D "tx", "rx1", "rx2";
-> > +
-> > +		rng: rng@40910000 {
-> > +			compatible =3D "inside-secure,safexcel-eip76";
-> > +			reg =3D <0x00 0x40910000 0x0 0x7d>;
-> > +			interrupts =3D <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
->
-> For completeness , this is ok to add this node but should be kept disable=
-d
-
-Shouldn't it be "reserved" then, see [1].
-
-> similar to
->
-> https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/ti/k3-j=
-7200-mcu-wakeup.dtsi#L662=20
-
-j784s4, j721e and j721s2 have them enabled. What is the rule here?
-
-You also disable the hwrng in optee in your evm according to [2]:
-CFG_WITH_SOFTWARE_PRNG=3Dy
-
--michael
-
-[1] https://devicetree-specification.readthedocs.io/en/latest/chapter2-devi=
-cetree-basics.html?highlight=3Dreservered#status
-[2] https://docs.u-boot.org/en/latest/board/ti/j722s_evm.html
-
---afa0541fe8431cb3d37f46b7af78c11e8bfa2698ff6820e4842879430dbc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ+p1UhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/j8pwGA48YnnE9XmW12Xb9i0N07RIC3iMPccKhd
-cjprpG75JZaQmW/v8ZcZZd/K8uJSE+VgAYDPVCPTWLrtYn9/oDmr+W4bVK9RMMvx
-4f0ciSTzQAxeV2R2AEjz1GcqFgnzpW68JgE=
-=t5tD
------END PGP SIGNATURE-----
-
---afa0541fe8431cb3d37f46b7af78c11e8bfa2698ff6820e4842879430dbc--
+Applied, thank you!
 
