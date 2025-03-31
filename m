@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-582628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BB7A770CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BCDA770CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CA517A2B9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6263168251
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B4021C18C;
-	Mon, 31 Mar 2025 22:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5911921C18C;
+	Mon, 31 Mar 2025 22:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1J2iP/g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WK1Lu5TX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA931C5D77
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 22:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A5342A94
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 22:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743459474; cv=none; b=nIkzXszv/9NlYD6KIFwBkOPgzq0rNjsYJQbMU0+I/xO01wheaiX//HyZpuOW1rlERSETWvX2m/ldFb5YlLGESa8fu5q+t57gU9xh8K+reFepqmXrI7x52JCdWZquqiucd+lI9LblHHK3A1o6ZOmVGO/A6GO36dB3u9PH6z887kg=
+	t=1743459538; cv=none; b=sTo2kvEFegBLQqM43oyAk08JDg0xnC/L5xfolUYQdkeNnjPTmIzHYvEpE4HwZBANytAsmTwue4obgOA9fQNocga814CPPpY/3jjQYe+zSPtqLSP1m6XeyiN2C5+ZuuanLJztervJ2olg351IeKFNx/0wfviI+Gxs1J79a91G5eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743459474; c=relaxed/simple;
-	bh=tMmd8bJ9O3ncSJ1cPNTStwm+z3KZiM/DfHDk/1nJPww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPY4GG+tVqIs50+MHm0k8ClbCeRRQHQaAv8QUI5EZv3k0B6AShUr+jzikr592B++y7/m8Ve2BFAkovjPHSGJt3GzZWoQ7c4wPDBsi4Ib+P90wLHQ6fAQ7Y7MsGCcyDWaFLGRBDqihCsYXUHIxj9gqCZuzqIKtc6k+IqtQkVjLMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1J2iP/g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8065C4CEE3;
-	Mon, 31 Mar 2025 22:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743459473;
-	bh=tMmd8bJ9O3ncSJ1cPNTStwm+z3KZiM/DfHDk/1nJPww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M1J2iP/g0iz7QpD3FIgfrWLJlKqSGrcruZZtP/j2uTGK8pYg9Cm6gbtMgogv1vdCY
-	 55LJ5wOIp7+msEaQTW9+vqcQMZtvonLv22DukOzhqntW+aKUSA5dgJZ5K24iBTkIwt
-	 FCjrwJlQhgNQog/CTtxh0WjtK6HpSz4mAyHBoDGA+VdTnTvNR3GsDGsOWvNwTttZo5
-	 pANj1Cxf12cQ9rGRnI+sTnYRrgu/Xl2qmyVIHkKYaa2d1X1sVIB4m4cZ6NS2QPCToG
-	 OvuakrqJ44s3Ga9rtTQzb0Qrx2HmT8gWP34HItDagwGv72AhkUubTBHpwdC6CRZOx0
-	 ZebzQ1iGsJ3hg==
-Date: Mon, 31 Mar 2025 15:17:51 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Philip Li <philip.li@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	lkp@intel.com, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] objtool fixes and updates
-Message-ID: <rqwvk5a2ziu2hoklq45nrnw6n3k6akbd3k4tb5i2he4vty5dxt@gj4w2tsnj55o>
-References: <Z-cSQXJKMyBSfAAc@gmail.com>
- <20250329153242.GAZ-gSmu8qiXufR04k@fat_crate.local>
- <Z-qCrbNvP2cil6jJ@gmail.com>
- <Z+qLDGvkY+TXdCjK@rli9-mobl>
- <Z-q-hYllyb7yAiBP@gmail.com>
+	s=arc-20240116; t=1743459538; c=relaxed/simple;
+	bh=Sq/lHqzKBJX9vUWqQixxyY+Nvpc95yRL5aiI8/D7+Js=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=OitppMBdclOr+pRczyP/oBSFcoD8TH5LgoVKJdJss6eelLa51ydn3YCUaks2OFVynvi6QupDcDqE6jNxxbrK8maU8cxJVAK3H7so9GfoBAw/ft2M4NhbNgcabJYplPATTKUH0U4p+UQmzWJF/RweFo0ybOzYiXhYEAvgffH5ftQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WK1Lu5TX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743459536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iITEQ8m/+1n7Y9VKquwua3X7ZRDPpcptdjSbJeo6HRE=;
+	b=WK1Lu5TXScKp6s3PMQBbdy+SHhhQUiuAuQOYhH/rUyZlW+eBlG1lzmDQj1M0RK/RLdaHVK
+	h/x1eowIEw/z/GuQvEYJdRrexm8yeFTrGi65fjM6CkEtLZii697GeydlD5l6tKIy8lv3SS
+	6ViJAIba7kCcgIQWXMMVH/Cpogln7MQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-R4k5jFvpNiu98D-pKLTfKw-1; Mon, 31 Mar 2025 18:18:54 -0400
+X-MC-Unique: R4k5jFvpNiu98D-pKLTfKw-1
+X-Mimecast-MFC-AGG-ID: R4k5jFvpNiu98D-pKLTfKw_1743459533
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3913d8d7c3eso2559438f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 15:18:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743459533; x=1744064333;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iITEQ8m/+1n7Y9VKquwua3X7ZRDPpcptdjSbJeo6HRE=;
+        b=PiUs//dMmnEdH8waLmvt+ztTos939fpfetzl+Q96sCRbhm0aYMBn6JfWxXeNFwJOxT
+         lxW2uk4vFQirb39MKQAriheQGm3oTu7E7OyHHfsowdpCMj400WKzvRVSUwIo/4/e0K3R
+         aGOXNWJAypi6LjVHUKgSRmwu7gN0OOiU6JDcazpJR4AVn2gmNFvcR+nPaPSrQZJIsyAy
+         2No/MArf/mSDKNjbv2RXPci7iP3irIXkY5fXNtRHamvxRWOdm82XCmvrL/O4h2YfludJ
+         0ytC7eGtsXhZqU4KrUWv33LhARSeB1bGR/KmjZEjaxF0iGI5a2iSghAbbZXfbLZU025X
+         rFUQ==
+X-Gm-Message-State: AOJu0Yx+D3gDBP3pCehn2FAgRb/ZRzWdqfUmbbz9z1G21QTjiyidKYBh
+	hqrGPRN7PEvjd+2RtEVf0VCP3d/OcTEArV9WV3VRCg/mY5zZfU7ueUIV/FLM55aiNm1AlCWJGLA
+	FA03TqhuYVzXRyYkf8C4ZPrY8jLXuc/ywKQ1sBK028n4HO4oJWtIlJuQPvzTRLadqTssYKkpQzi
+	vwtr/nF90DX3DkuhCGK8HTKpxBvI0MgDOOd8NkkeIPbLebQQ==
+X-Gm-Gg: ASbGncsIIO+vINFfFPavr3TxKgXP/ZWNSvHU7LaKHRpzJPhW2vcOJFBdIXJg1Oa/4tg
+	zLWnSSc4sCxPVEDj3lIReeea6YdNj8FUJuiyicdTDXxMhXhpTSGsHy0vEbQPKmV3lfiPPP2aYsl
+	+cIHd0Z4EQZgaIq/8+n8LvUsjG3NU/SLNQ8jAXhDQ90J6mh7mSCeHk4HAzKD76Bp0zVK0q01fCm
+	E7SqesK2IeN7z5PhxKkfrwcmKcCpkj/1Q3PTLhGtbvcmPQ7PeNuLg8guCqVPBg+pS7EP9SUhmYD
+	Sr7Q2rX5KwvMHjEJjw==
+X-Received: by 2002:a05:6000:2a2:b0:39b:fa24:94f5 with SMTP id ffacd0b85a97d-39c120cb51bmr7032569f8f.7.1743459532959;
+        Mon, 31 Mar 2025 15:18:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4S+/d4JTKy4IJo7qK99V5Xegqrsg28QeJcnUzqDCSkq1U4wV6u8m5ArteNUmEheoqOhZPEA==
+X-Received: by 2002:a05:6000:2a2:b0:39b:fa24:94f5 with SMTP id ffacd0b85a97d-39c120cb51bmr7032555f8f.7.1743459532546;
+        Mon, 31 Mar 2025 15:18:52 -0700 (PDT)
+Received: from [192.168.10.48] ([151.95.105.0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0ddeecc9sm11183248f8f.83.2025.03.31.15.18.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 15:18:52 -0700 (PDT)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [PATCH] selftests: kvm: bring list of exit reasons up to date
+Date: Tue,  1 Apr 2025 00:18:51 +0200
+Message-ID: <20250331221851.614582-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-q-hYllyb7yAiBP@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 31, 2025 at 06:10:45PM +0200, Ingo Molnar wrote:
-> > > This can be seen in the full report:
-> > > 
-> > >   https://lore.kernel.org/oe-kbuild-all/202503280703.OARM8SrY-lkp@intel.com/
-> > > 
-> > >   All warnings (new ones prefixed by >>):
-> > > 
-> > >      arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-160
-> > >      arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[23]=-1+0 reg2[23]=-2-152
-> > >   >> arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: skipping duplicate warning(s)
-> > > 
-> > > Note how '>>' is the new warning - the summary line added recently that 
-> > > suggests that there's more warnings. It appears to me the test-bot 
-> > > considers the other warnings old regressions, but I couldn't find any 
-> > > trace of them being reported before. Maybe they weren't Cc:-ed to lkml.
-> > > 
-> > > Or maybe these *are* all new warnings. I've Cc:-ed the LKP folks.
-> > 
-> > Hi Ingo and all, sorry for confusion, here only the line with >> is considered
-> > as new warning, due to the commit 0a7fb6f07e3a you mentioned.
-> 
-> Oh, so the loongson 'stack state mismatch' warnings started sometime in 
-> the past, but were never reported by the bot? Or were they reported 
-> somewhere? I'd like to discover the timeline of those warnings, if 
-> that's possible.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-I believe those warnings were introduced a year ago with:
-
-  cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
-
-but I wasn't able to find the original report.
-
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 279ad8946040..815bc45dd8dc 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -2019,9 +2019,8 @@ static struct exit_reason {
+ 	KVM_EXIT_STRING(RISCV_SBI),
+ 	KVM_EXIT_STRING(RISCV_CSR),
+ 	KVM_EXIT_STRING(NOTIFY),
+-#ifdef KVM_EXIT_MEMORY_NOT_PRESENT
+-	KVM_EXIT_STRING(MEMORY_NOT_PRESENT),
+-#endif
++	KVM_EXIT_STRING(LOONGARCH_IOCSR),
++	KVM_EXIT_STRING(MEMORY_FAULT),
+ };
+ 
+ /*
 -- 
-Josh
+2.49.0
+
 
