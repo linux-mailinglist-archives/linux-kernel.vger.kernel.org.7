@@ -1,119 +1,201 @@
-Return-Path: <linux-kernel+bounces-582295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C60A76B94
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:05:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B09A76C44
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790E81885DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:05:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45C83AC67E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119C04685;
-	Mon, 31 Mar 2025 16:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="denO9aBB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D7C213E77;
+	Mon, 31 Mar 2025 16:51:46 +0000 (UTC)
+Received: from mail-m3272.qiye.163.com (mail-m3272.qiye.163.com [220.197.32.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B5D21423E
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 16:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F192147F8
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 16:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743437101; cv=none; b=azeO9sk3LX+6BqeNeWYQmW2HaZS8wZj3uEtS+3HocBhZZ9dMR7CQy3JM13AV38k09ZGwCb7zssYVKqrCuzQtAR3GYdAcfzqxJcZbYc5Rz6+Z0l7AYiEYrsxhPv7HimjsnbhXKZvw1YO/HsiFpqejjWaeylThbJ2ne0vVKAVAErM=
+	t=1743439906; cv=none; b=LsOhA36X4djb6Z0Hc6OabwnCVv2Z7a5OgXzeWSU8qq1AYGWCUF/KPUpfFe0VKqgCXz0ZwK7EbiB/cNiTpWy9lLlDTrXI+6/Go0xAp/BhhgGYM7bpnKnvI3cyRUWAMwk7BarJpv+JkHA5ncSwXTCfpQwBH1Exh9iN7+itbcbXaJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743437101; c=relaxed/simple;
-	bh=tZAxirX8RFz5t1WTOr8nUlZqMufXMzg6X5IFuo2Zrrw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=tzToce/pPSbLLfLPYjtDdpnybwfKokc8fpT0Y6CmHMlFsFXQZs/5QHWAyw8wyHmTzrER8Ed60rYQGjVouObAuocB2UO4DTKVDw0Anv6Jy8pZXIpZMgwLMxy20IQk8XIA3mEQ6u8pGmtSi7APSG2sb8p9wK5s/LkpkRHUrgOSGc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=denO9aBB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-225df540edcso103856685ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 09:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743437099; x=1744041899; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZAxirX8RFz5t1WTOr8nUlZqMufXMzg6X5IFuo2Zrrw=;
-        b=denO9aBBn2oexzDIFEcSKFUoCpZMUltFO/rgY7BNvXI1k3l+8tfJLISdO7FZ6yl0hg
-         eAk6QRqLGHJmNh41w7gAn4WUovsFAP9sPRvI4w3Q2bigqo92VsVt05d/L4PgFwYSQf4/
-         As02mmy9cc1M+6HyteE1N7YhBImD5KTwYPY2Zg4oNbhzLYs24vxB3+NTvXoqMYXqt2NQ
-         ee7Ek+soz00XDn+mKhixXZLhQ71j8o38FBpV5ujin/3SLoU4V1tfcXCGWP/s91CPH4QS
-         Z4y1ixsWa0KbbuXfsFaeATCPBGjLWTV5lh8ulsQWgmqmLWIA+xeKLg1hc2tuhL8gYa26
-         t4wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743437099; x=1744041899;
-        h=in-reply-to:references:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tZAxirX8RFz5t1WTOr8nUlZqMufXMzg6X5IFuo2Zrrw=;
-        b=jIPtbTLeORFT5co5BZqznx/uOEvne+3qDGCYAu/nxOsrz3kuMXXCyfrri0Qc+/5Tq+
-         jdr6JdrmsIa/5SS4eKwn3+rwKt0QltsA6S55A8J3hna6uSZ10Sb4TVrSWNHVcDHVa6SA
-         49lqOmkiuzjdBflBAV4sU/cuZBqYGawk4ardvj/zTThlOZ36r6RgRNFQmo1q3ZYpwNOu
-         IP5nybjlNL1V+M+qMZ55/7x1p/V5tNUYT/ET8/9J66MjkUeLQodEJzKOp4orJXDjAFDQ
-         fbLlXiD+y+ehpOF7hlcD4UsitCG8guTk1xzD/WvqnqwNhsvJAkM9PXSxpzIOlU2tzjl+
-         V29A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuMyibwMgnErt0PauU8wP+IthVgMK2Y0eAZeH+wvUWA0eJgLl5E9/JwZnjpeCJj2s73C3v63dMdzRYmCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHmMVCGS35hovjGdA6n/XPK/C76cDzV7s2zS2aCXGBfTuhQM1m
-	7G6RiN6GMriE1uk1rOMiLlwVL/SBEemDKRif33UII8alVPog4BBA
-X-Gm-Gg: ASbGncu4IhW2ifjyYrNSEhp/yqVAkoc/d0KjCLwEHOaOuRPwMV189WITMbrDOly/Ir0
-	FjOL2HrIvm5ncXqXIP6tOrKsX4eberVfDQqRNDhCf4RAgj2y4/KKXDsJnq5LE79D5F1RcSHJ88G
-	WiDb0Bt2rLGD0H0pLU5e10vPk33YqmKTpJ3PVVt7JEh8/D1HZTGPcFh0KqNl32KqwwMVjRcm81W
-	L/w+LilFzuuZAdvoC9q5jreVgmf8fx9bIIGSTOQUQrAXpMhlzSrZ1zF+ZKEVqXhHLGSOu3+YQFc
-	ceH2h1MIG0AVlpsqbolDdi5baSPuajdSX+aVSQ==
-X-Google-Smtp-Source: AGHT+IHmZwSrBpBsX/AV97DyLLc+CTcTfbhytkmiLByPkxvlHuWUTWN4IeX4IPmKVEeP7c/h/Vgt7g==
-X-Received: by 2002:a05:6a00:35c7:b0:736:b923:5323 with SMTP id d2e1a72fcca58-7397273be9fmr23904034b3a.10.1743437099374;
-        Mon, 31 Mar 2025 09:04:59 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73971068581sm7124895b3a.114.2025.03.31.09.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Mar 2025 09:04:59 -0700 (PDT)
+	s=arc-20240116; t=1743439906; c=relaxed/simple;
+	bh=f97/nkeUTuQkuArGiJaplsBFm3ZSPyqqWG16TY3uKy4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=avxPFgWUSBYVU6ccgLkeljsUmPQkqnWmUPrheqZFqyrMGVUwN6RzXCNVikk7V+RpDhT4hSSfJifdnokX5bJJFmiIdAc0eJJ2W1l1oy+vrpQq70J3eDJbIXbXg3Mt0pxEHHJTm2fWM9qaum6pio6SiIWGi7skuVLPHzjF1Ru+dSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=220.197.32.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
+Received: from localhost.localdomain (unknown [122.224.147.158])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 102faff97;
+	Mon, 31 Mar 2025 20:15:43 +0800 (GMT+08:00)
+From: HongBo Yao <andy.xu@hj-micro.com>
+To: will@kernel.org
+Cc: robin.murphy@arm.com,
+	mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	andy.xu@hj-micro.com,
+	allen.wang@hj-micro.com,
+	peter.du@hj-micro.com
+Subject: [PATCH v2] perf: arm-ni: Fix list_add() corruption in arm_ni_probe()
+Date: Mon, 31 Mar 2025 20:15:36 +0800
+Message-ID: <20250331121536.2626552-1-andy.xu@hj-micro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 31 Mar 2025 13:04:55 -0300
-Message-Id: <D8UKVCL4JHTO.1SFF4L6LPUE3O@gmail.com>
-Subject: Re: platform/x86: thinkpad_acpi causing kernel oops commit
- 38b9ab80db31cf993a8f3ab2baf772083b62ca6f
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Genes Lists" <lists@sapience.com>, "Jeff Chua"
- <jeff.chua.linux@gmail.com>, "lkml" <linux-kernel@vger.kernel.org>, "Mark
- Pearson" <mpearson-lenovo@squebb.ca>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <CAAJw_Zt1cYcg-Fa_rCecwHnWKMi7uO2UGNEhMsxPiQa-pgUMnw@mail.gmail.com> <D8UG6DGW1FKI.HZ5UFH4EVY9R@gmail.com> <f63160cde06665bc4bf0e0a18402074e3843f9eb.camel@sapience.com>
-In-Reply-To: <f63160cde06665bc4bf0e0a18402074e3843f9eb.camel@sapience.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkNIVh1LTUwdTEMdHh8ZQ1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a95ec210c3303afkunm102faff97
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NzI6URw*GDJRDxY8EBITEBU8
+	ThVPFBNVSlVKTE9IT0lISE9PT0xPVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
+	SklJVUlJT1VKT0xVSk5DWVdZCAFZQU9OQ0k3Bg++
 
-On Mon Mar 31, 2025 at 12:05 PM -03, Genes Lists wrote:
-> On Mon, 2025-03-31 at 09:24 -0300, Kurt Borja wrote:
->>=20
->> I submitted a fix for this that you can test here:
->>=20
->> =C2=A0https://lore.kernel.org/platform-driver-x86/20250330-thinkpad-fix-=
-v1-1-4906b3fe6b74@gmail.com/
->>=20
->
-> FYI - Confirm it fixes the problem here as well - tested on mainline
-> commit 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
->
-> =C2=A0Tested-by: Gene C <arch@sapience.com>
+From: Hongbo Yao <andy.xu@hj-micro.com>
 
-Thank you for testing!
+When a resource allocation fails in one clock domain of an NI device,
+we need to properly roll back all previously registered perf PMUs in
+other clock domains of the same device.
 
-Are all this driver's features present before the regression still
-present after the fix?
+Otherwise, it can lead to kernel panics.
 
-Also would you mind re-sending your Tested-by tag to the patch thread?
-This way it can get automatically picked up by maintainer tools.
+Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
+arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
+arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
+list_add corruption: next->prev should be prev (fffffd01e9698a18),
+but was 0000000000000000. (next=ffff10001a0decc8).
+pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : list_add_valid_or_report+0x7c/0xb8
+lr : list_add_valid_or_report+0x7c/0xb8
+Call trace:
+ __list_add_valid_or_report+0x7c/0xb8
+ perf_pmu_register+0x22c/0x3a0
+ arm_ni_probe+0x554/0x70c [arm_ni]
+ platform_probe+0x70/0xe8
+ really_probe+0xc6/0x4d8
+ driver_probe_device+0x48/0x170
+ __driver_attach+0x8e/0x1c0
+ bus_for_each_dev+0x64/0xf0
+ driver_add+0x138/0x260
+ bus_add_driver+0x68/0x138
+ __platform_driver_register+0x2c/0x40
+ arm_ni_init+0x14/0x2a [arm_ni]
+ do_init_module+0x36/0x298
+---[ end trace 0000000000000000 ]---
+Kernel panic - not syncing: Oops - BUG: Fatal exception
+SMP: stopping secondary CPUs
 
---=20
- ~ Kurt
+Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
+---
+ drivers/perf/arm-ni.c | 44 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 30 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+index fd7a5e60e963..ee85577e86b9 100644
+--- a/drivers/perf/arm-ni.c
++++ b/drivers/perf/arm-ni.c
+@@ -102,6 +102,7 @@ struct arm_ni_unit {
+ struct arm_ni_cd {
+ 	void __iomem *pmu_base;
+ 	u16 id;
++	bool pmu_registered;
+ 	int num_units;
+ 	int irq;
+ 	int cpu;
+@@ -571,10 +572,31 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
+ 	err = perf_pmu_register(&cd->pmu, name, -1);
+ 	if (err)
+ 		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
++	else
++		cd->pmu_registered = true;
+ 
+ 	return err;
+ }
+ 
++static void arm_ni_remove_cds(struct arm_ni *ni)
++{
++	for (int i = 0; i < ni->num_cds; i++) {
++		struct arm_ni_cd *cd = ni->cds + i;
++
++		if (!cd->pmu_base)
++			continue;
++
++		if (!cd->pmu_registered)
++			continue;
++
++		writel_relaxed(0, cd->pmu_base + NI_PMCR);
++		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
++		perf_pmu_unregister(&cd->pmu);
++		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
++	}
++}
++
++
+ static void arm_ni_probe_domain(void __iomem *base, struct arm_ni_node *node)
+ {
+ 	u32 reg = readl_relaxed(base + NI_NODE_TYPE);
+@@ -593,6 +615,7 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	static atomic_t id;
+ 	int num_cds;
++	int ret;
+ 	u32 reg, part;
+ 
+ 	/*
+@@ -651,35 +674,28 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 			reg = readl_relaxed(vd.base + NI_CHILD_PTR(p));
+ 			arm_ni_probe_domain(base + reg, &pd);
+ 			for (int c = 0; c < pd.num_components; c++) {
+-				int ret;
+-
+ 				reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
+ 				arm_ni_probe_domain(base + reg, &cd);
+ 				ret = arm_ni_init_cd(ni, &cd, res->start);
+ 				if (ret)
+-					return ret;
++					goto init_cd_cleanup;
+ 			}
+ 		}
+ 	}
+ 
+ 	return 0;
++
++init_cd_cleanup:
++	arm_ni_remove_cds(ni);
++
++	return ret;
+ }
+ 
+ static void arm_ni_remove(struct platform_device *pdev)
+ {
+ 	struct arm_ni *ni = platform_get_drvdata(pdev);
+ 
+-	for (int i = 0; i < ni->num_cds; i++) {
+-		struct arm_ni_cd *cd = ni->cds + i;
+-
+-		if (!cd->pmu_base)
+-			continue;
+-
+-		writel_relaxed(0, cd->pmu_base + NI_PMCR);
+-		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
+-		perf_pmu_unregister(&cd->pmu);
+-		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
+-	}
++	arm_ni_remove_cds(ni);
+ }
+ 
+ #ifdef CONFIG_OF
+-- 
+2.43.0
+
 
