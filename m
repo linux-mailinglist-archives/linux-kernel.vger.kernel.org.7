@@ -1,194 +1,174 @@
-Return-Path: <linux-kernel+bounces-581820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3F6A76561
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:07:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD7A76567
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344F03A6CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:07:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B4216A2D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFEE1E3779;
-	Mon, 31 Mar 2025 12:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAAA1DE4E3;
+	Mon, 31 Mar 2025 12:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzHcLYEn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l72e3j8T"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBB01E2307;
-	Mon, 31 Mar 2025 12:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5911DF755;
+	Mon, 31 Mar 2025 12:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743422845; cv=none; b=gegD/rWxBtZed8atekXrTl51uwGXq/FmaR8OnDZiZYQpu8HtGTOB5YscH5/JJx6IXQEFmXuez2tW+/rUnK7hvmjmcn0guscRBk5pvQnKQwv780v4On5AHuvUys+PBd4JmgOxCS47JubrGZK51qKn0Av+oVJe7Pc+wS2y93zqUxs=
+	t=1743422869; cv=none; b=TkoiA4QwjEvOIpX7eYToTW9qwVKWcx47iIFNnXMiEPTne61aAqBX85KxUuRINl/B5Du0WGNbdtu5u5t0AKimLkepxJNv/Js+/d5ai7p93GgWxR+MBbCqNtl86wOyBec70hjmFb70EOW2mMIKfmcKjhVZv2V3JyX3iqL+so09cHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743422845; c=relaxed/simple;
-	bh=1ThVDolRoOuV8VkIIp6hbxTzz5LvEBEw3AMGfClMmb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMrEa64/T2KIvE6viglKO9wZ3EGY6TeXW1G5MaGjx8U1JZuJNriJcd0xmAXnpuFCAc6SxnyClLWG4jXCutj+M7UdhxTJesZC+jgBS7hw8u3FmNaQhQF/L0QzQPh53LWazoHL9B+XPHk+LDOVBZpHfo2I2YDvrpe9G80QhdHcwao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzHcLYEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDAFC4CEEB;
-	Mon, 31 Mar 2025 12:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743422845;
-	bh=1ThVDolRoOuV8VkIIp6hbxTzz5LvEBEw3AMGfClMmb4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GzHcLYEn3Ny6zHRzjloh5mtUFOKYJwuZHizKa5Mg78jwEdQpFgfNJTAjFSmXn9Jsy
-	 h92D4RgEx5vgq3l81qJxTnoBaDduLOb+7O3mjc3e2t9/a/yNjHColRm5ECnR+P6HHN
-	 ENIkJW+zYF2I92TTURsrwGkSEWBYCiL0vIoGMJ5AgYTykXrUnNtSiDRwvNRDAIXSqJ
-	 /Ho9Zkr4wd2aantD8JN48Fgo8R2BJr7T5pu5GSZFBeKbfYPAw0+TILHNCrivpBVV53
-	 8eNq2CcStBbZ2TzBQG047Qg/+/PflUOlti/yytEPkSohEeamGLL1FmuuSLNTXlKtom
-	 h4ikez2nSxdaw==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-72c13802133so1243257a34.3;
-        Mon, 31 Mar 2025 05:07:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6KjZwEMjM4FI94cSfKHRhvbr5WdL1zbGqV7aOlMn6SaO2h+X0Mo48yyEG7brTTahrKTlnt6hKK2Y=@vger.kernel.org, AJvYcCWH7Lh0hQNu9K3gXUPOd1CB+WbwOF2BzIJuuVgArivEJ9kMoOObD0/yGL8ph0Cwa3zEoXsz0v1i/z2t@vger.kernel.org, AJvYcCXqSPj7EGD7aBnQChsnAKaraSlY6Yt8T3QpemKL1pdDUfc6S/gCQvJKIK5BFnD81ExKhOoPa785yQGPvSit@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/cE3MokdqaYVz09wdjxhrV+JnTGEiJlosut8Cq7mcko+44M47
-	u2TGxV5XXgg93VNyM087IQ4I+LNeE08hjZwR9KL1L3kZRT+PVDarFkUi3AJxo0duNEZIsfii158
-	tK7eUWJ1jNcbflGIaBcrx0szuYwU=
-X-Google-Smtp-Source: AGHT+IFFOzs3GR6fst2FZdTPiHgytWi1lzYCXKoFaBP6man/WR8goAaw2WVdZEbCHSVPqeVXmCsizPE96fim93Xw59Y=
-X-Received: by 2002:a05:6808:3c4a:b0:3f8:eee4:7140 with SMTP id
- 5614622812f47-3ff0f53a861mr6838248b6e.22.1743422844145; Mon, 31 Mar 2025
- 05:07:24 -0700 (PDT)
+	s=arc-20240116; t=1743422869; c=relaxed/simple;
+	bh=3exQ9/6ggKwU/NkBxZMzxeThcK58sDIudztgsIwZLkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HszcFIWNQdGi4a7eCnze+6o0toBH7jbnwIrUuNsCe7Tg7KQyQugVU0GasvfB2jBfayfy1Sc6s0ZIYaRgQIarZeAIO6Tbg/gtaKW0vAOzLr95N+A7Ho8l/pGeUYVWr+3Q+FnaXcXmUEqO6gScgbIS+0Hwdi+26GaTxw5nQRBjRZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l72e3j8T; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso42455541fa.3;
+        Mon, 31 Mar 2025 05:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743422865; x=1744027665; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s5kjq5zrFz8CVB5pT2WH//d/o13BOBbZYV51NDz9WZQ=;
+        b=l72e3j8TSA1Rzl5j6lO/Tsj0yrh9aUfk61XJ7n4XS1VuNHYoMck5ZdCxYlnmd6HfqL
+         HiLeIRobK4+be3hYcsawA+IvtneXs+CJyheofpCAtnrqblz+xfj3HF9m9V5micd4Na+A
+         +UHJgYOBQT1uZ7UcnJ53uHP4XmABIKCT6eHko2CkZL1dg8J9KNI6bihC+KnzQe2VgSfB
+         rHNEqmXPbxiGNgCdTTJQLvFDST7xiM5dY2UMWYMJJUv3Fdfp+e2reg+sl1QXcg4cwadu
+         Hs9Zf116vnV1rwTAN2sX7QH8vzSHrRLGpDka9H/8Oh8PellPL9mCBG8MWA62E0La1dkx
+         tJoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743422865; x=1744027665;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s5kjq5zrFz8CVB5pT2WH//d/o13BOBbZYV51NDz9WZQ=;
+        b=lNFeYVBfHhJa71VEVRcaQw/8+ykH70w77qbMGZwD0U9pB4SajwZAChojub79jsbcem
+         J2/zqelhBNKruCZkvdrvYL47z8HQ7qN4cQmcJW/u9ZhR5frOcO0hO07QY3BQDQCgxfdk
+         KvGDhlExMe8sGtC0Ra78cIy6bh1fF6fI9RYKm7+v+27YgX8Pmnbj/YAq4mrA+rtq/IGY
+         l/314xqoeIzDlDMYoZjqFEk6PGkRAtUCXJER2ibEtIfYkHDhjXBlRNngFg5ULk0njJIG
+         IX9od7Bt34bmljS5YsTgQ6Bmh6IhTXLDDk1/TBKc4zhnsSBXAuU0mwE+JV08da7r8U9W
+         cvng==
+X-Forwarded-Encrypted: i=1; AJvYcCUC+kNjQqdovdZsSSRfrHf6HvgG2A4K+cMiSuq4pBbnLdl2re41uu7T3d6xSufBtxHLO18D003vuw0k@vger.kernel.org, AJvYcCUKI8HHeagcwS3gnrgqHubN/P/n1dGB9GnfpOX3Jxq5/woPQI3nOe+kSH3l4yC+FdGiPsDySu+YD1ek@vger.kernel.org, AJvYcCVaiSkP/M8tSZGoW8jCjc4RFZBgClQP4H+XD5GMmtjCNCl/7N5zf59pbdB4uO5wcF0/JTrs2X3EM3aNBZX2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTrvbTSET9zka4w7VWzSl6Ewwelai1jEZB1smOSq7IOi22v4U+
+	UoIYC+2742XwkuU3N7VtGmDKzhctB9nLOzRYTq+aDy3tM5wQE9Y6O/uCBA==
+X-Gm-Gg: ASbGnctxiL460n8JrR03E6M4QDw6G1MzyH7Bg9zuzvbyRxYoiN/hwOzZYoO4xC5fUUM
+	Q/wBdXmIu2m91IpXe5mKX0Eu91XC6fZzMKs8jt6UO3qo9YO2JWVhjhTzp+TNOLJeTg76MPEwpUx
+	9qE+x1IFLoytPRAzTEc9hci5b4xQru4pNHu6YR89vlTJ+/kBYFCTxTVi3fttlzt3mA4Vh5L8x1U
+	HZdRkeytKrGdA+L817TWKjX15h6Sr53Ws0a1jszp600+DhKaqk1+ImEGPQ8EBPuWYBk0SOhPQGc
+	By2wU4LObV+XV0fqDsVkoaiKiKs5S9CPW/XY7kUfnGywlyfs1/aF6Di3Hpuk0OPYRiPKGB7aYzC
+	NoSlqyMqlCOoXbDvN340NbIwRHA==
+X-Google-Smtp-Source: AGHT+IE3331El1knlH/omYZdMA2rZGtSzPZCFYb5QwIwuGeGaKBWYPPbgDndpBvlw7lX3KA4+u7MWw==
+X-Received: by 2002:a2e:bd0a:0:b0:306:501:4772 with SMTP id 38308e7fff4ca-30de034b2c1mr25584491fa.37.1743422865244;
+        Mon, 31 Mar 2025 05:07:45 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30dd2b8f92dsm13781341fa.114.2025.03.31.05.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Mar 2025 05:07:44 -0700 (PDT)
+Message-ID: <7d871d2d-bb42-43d5-96b0-88f24987d522@gmail.com>
+Date: Mon, 31 Mar 2025 15:07:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250328143040.9348-1-ggherdovich@suse.cz> <20250328143040.9348-2-ggherdovich@suse.cz>
- <SJ0PR11MB66228319834B1C7B48FCE52EF5AD2@SJ0PR11MB6622.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB66228319834B1C7B48FCE52EF5AD2@SJ0PR11MB6622.namprd11.prod.outlook.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 31 Mar 2025 14:07:13 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gC3DzanSdPqQiJ4JQppgNeRA7Z9Cge7NxmTO_shoUyOA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpiz1ZW-0Bl1lF2W3TRNAnvi3ePtK28dr6XZHboJOgboExpJXJWuhWkTtE
-Message-ID: <CAJZ5v0gC3DzanSdPqQiJ4JQppgNeRA7Z9Cge7NxmTO_shoUyOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: processor: idle: Remove obsolete comment
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: Giovanni Gherdovich <ggherdovich@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] iio: adc: ti-adc128s052: Fix ADC value on BE systems
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1742474322.git.mazziesaccount@gmail.com>
+ <babe1eac3de30aa22e09266de1f5521fa9e0decd.1742474322.git.mazziesaccount@gmail.com>
+ <20250331121124.4fed1d44@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250331121124.4fed1d44@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 31, 2025 at 9:38=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
->
-> > -----Original Message-----
-> > From: Giovanni Gherdovich <ggherdovich@suse.cz>
-> > Sent: Friday, March 28, 2025 10:31 PM
-> > To: Rafael J . Wysocki <rafael@kernel.org>; Zhang, Rui <rui.zhang@intel=
-.com>
-> > Cc: Len Brown <lenb@kernel.org>; Giovanni Gherdovich
-> > <ggherdovich@suse.cz>; linux-acpi@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-pm@vger.kernel.org
-> > Subject: [PATCH 2/2] ACPI: processor: idle: Remove obsolete comment
-> > Importance: High
-> >
-> > Since commit 496121c02127e9c460b436244c38260b044cc45a ("ACPI:
-> > processor:
-> > idle: Allow probing on platforms with one ACPI C-state"), the comment
-> > doesn't reflect the code anymore; remove it.
-> >
-> > Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
-> > ---
-> >  drivers/acpi/processor_idle.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idl=
-e.c
-> > index b181f7fc2090..2a076c7a825a 100644
-> > --- a/drivers/acpi/processor_idle.c
-> > +++ b/drivers/acpi/processor_idle.c
-> > @@ -482,10 +482,6 @@ static int acpi_processor_get_cstate_info(struct
-> > acpi_processor *pr)
-> >
-> >       pr->power.count =3D acpi_processor_power_verify(pr);
-> >
-> > -     /*
-> > -      * if one state of type C2 or C3 is available, mark this
-> > -      * CPU as being "idle manageable"
-> > -      */
-> >       for (i =3D 1; i < ACPI_PROCESSOR_MAX_POWER; i++) {
-> >               if (pr->power.states[i].valid) {
-> >                       pr->power.count =3D i;
-> > --
-> > 2.43.0
->
-> I think we can clean up a bit more. How about the patch below?
->
-> From 115d3a07febff32eed49f9343ef111e7e1452f9d Mon Sep 17 00:00:00 2001
-> From: "Zhang, Rui" <rui.zhang@intel.com>
-> Date: Mon, 31 Mar 2025 07:29:57 +0000
-> Subject: [PATCH] ACPI: processor: idle: Simplify
->  acpi_processor_get_cstate_info() logic
->
-> Since commit 496121c02127 ("ACPI: processor: idle: Allow probing on
-> platforms with one ACPI C-state"), acpi_idle driver can be probed with
-> C1 only.
->
-> Optimize the logic for setting pr->power.count and pr->flags.power by
-> 1. unconditionally set pr->flags.power leveraging the fact that C1 is
->    always valid after acpi_processor_get_power_info_default().
-> 2. update acpi_processor_power_verify() to return the highest valid
->    C-state directly.
->
-> No functional change intended.
->
-> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> ---
->  drivers/acpi/processor_idle.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index 698897b29de2..7ce8c3802937 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -442,7 +442,7 @@ static int acpi_processor_power_verify(struct acpi_pr=
-ocessor *pr)
->
->                 lapic_timer_check_state(i, pr, cx);
->                 tsc_check_state(cx->type);
-> -               working++;
-> +               working =3D i;
+On 31/03/2025 14:11, Jonathan Cameron wrote:
+> On Mon, 31 Mar 2025 11:02:55 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> ADCs supported by the ti-adc128s052 driver do return the ADC data in 16
+>> bits using big-endian format. The driver does unconditionally swap the
+>> bytes. This leads to wrong values being reported to users on big endian
+>> systems.
+>>
+>> Fix this by using the be16_to_cpu() instead of doing unconditional byte
+>> swapping.
 
-What if some states are skipped because they are invalid?  'working'
-can be less than 'i' then AFAICS.
+Appears this was one of the patches I should've never written. Nothing 
+went right :) Sorry for the noise. I'll try improving for the v2
 
->         }
->
->         if (buggy_latency) {
-> @@ -457,7 +457,6 @@ static int acpi_processor_power_verify(struct acpi_pr=
-ocessor *pr)
->
->  static int acpi_processor_get_cstate_info(struct acpi_processor *pr)
->  {
-> -       unsigned int i;
->         int result;
->
->
-> @@ -477,17 +476,7 @@ static int acpi_processor_get_cstate_info(struct acp=
-i_processor *pr)
->         acpi_processor_get_power_info_default(pr);
->
->         pr->power.count =3D acpi_processor_power_verify(pr);
-> -
-> -       /*
-> -        * if one state of type C2 or C3 is available, mark this
-> -        * CPU as being "idle manageable"
-> -        */
-> -       for (i =3D 1; i < ACPI_PROCESSOR_MAX_POWER; i++) {
-> -               if (pr->power.states[i].valid) {
-> -                       pr->power.count =3D i;
-> -                       pr->flags.power =3D 1;
-> -               }
-> -       }
-> +       pr->flags.power =3D 1;
->
->         return 0;
->  }
-> --
+> It's not doing unconditional byte swap that I can see. The
+> adc->buffer[0] << 8 | adc->buffer[1]
+> will work on big or little endian systems as we are explicitly saying
+> which byte represents higher bit values in a 16 bit output so on little
+> endian it's a byte swap, but on big endian it's a noop (the compiler might
+> noticed that and replace this code sequence with an assignment)
+> 
+> Good cleanup, but not a fix as such unless I'm missing something.
+
+No, you're not missing anything. I am the one who just got confused. I 
+am not exactly sure what I was thinking. :rolleyes: This definitely 
+isn't a fix. And, as a not a fix needing porting, I may squash this with 
+some other patch. I need to take another look at this :)
+
+>> Fixes: 913b86468674 ("iio: adc: Add TI ADC128S052")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>> I have no big endian machines on my hands to test this. Problem was
+>> spotted by reading the code, which leaves some room for errors.
+>> Careful reviewing is appreciated!
+>> ---
+>>   drivers/iio/adc/ti-adc128s052.c | 13 +++++++------
+>>   1 file changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+>> index a456ea78462f..d1e31122ea0d 100644
+>> --- a/drivers/iio/adc/ti-adc128s052.c
+>> +++ b/drivers/iio/adc/ti-adc128s052.c
+>> @@ -28,19 +28,20 @@ struct adc128 {
+>>   	struct regulator *reg;
+>>   	struct mutex lock;
+>>   
+>> -	u8 buffer[2] __aligned(IIO_DMA_MINALIGN);
+>> +	__be16 buffer __aligned(IIO_DMA_MINALIGN);
+>>   };
+>>   
+>>   static int adc128_adc_conversion(struct adc128 *adc, u8 channel)
+>>   {
+>>   	int ret;
+>> +	char *msg = (char *)&adc->buffer;
+>>   
+>> -	mutex_lock(&adc->lock);
+>> +	msg[0] = channel << 3;
+>> +	msg[1] = 0;
+> 
+> Given you are writing shared state why move this out of the lock?
+
+Very Valid Point. I'm not 100% sure what I thought of, probably assumed 
+IIO core would serialize the calls. That would've been nasty bug! I 
+appreciate your sharp eyes :)
+
+Thanks!
+
+Yours,
+	-- Matti
+
 
