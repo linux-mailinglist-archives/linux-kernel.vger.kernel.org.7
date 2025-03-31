@@ -1,147 +1,126 @@
-Return-Path: <linux-kernel+bounces-581597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D64A7626E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:35:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CD6A76272
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37DD167166
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B741B3A7E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8DD1DE4E5;
-	Mon, 31 Mar 2025 08:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981D1D63F5;
+	Mon, 31 Mar 2025 08:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DShemQvr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RvaMtatN"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2738F80;
-	Mon, 31 Mar 2025 08:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA6D1D7999
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743410031; cv=none; b=Ndh2Q9J4pKmG1pay94QCxuXXJjtTT8qWUZ3NqeAr/icIUVwEgiByZExSUQHkP4O0oLHV2T46AwvCWz7R3fIMt59b/0ggzxIRNG0HivrlKYeQcutQeCdDoVKcOzpUp8Df2P/+80UN+UkQoG3y8b+xop9glgqAT2sr48SaLFA/cVc=
+	t=1743410077; cv=none; b=f3NI62YNFpdaq1yPYocfgQvfWYjdsOBUDCnkia7ylKwGKv139mbDFREB2Cb3jk4JhIlk9izRaIuEm6tGz8s5SpQvvQ82H61wYrp9cEOucdLu1ilQ9cpkC/SMB/gplIf/zMfcDZhSXixTmcRI424tDozVsGBMssP3yDKQHP22Grs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743410031; c=relaxed/simple;
-	bh=DloZZIE6n19coXOX3Zta04gIhkvxcrcJ9ymuCwF7tgY=;
+	s=arc-20240116; t=1743410077; c=relaxed/simple;
+	bh=nkc8yXiQaPb+iayptLaJUMi+sPOcZnTLBQBWtGMTQNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlNTm+lNqiP5xXD4U95inkbrlY0KNXm5gVonX+wDepNn1q4d+DSSEiiq+jEdze6Bf5cfaNq3b6McZ/2CelNUnTv0SvXKSFpMkv+LrZIl4VwKWWTIDenFh+zxQJ3+QLfJ/xOOxamDXQRrzK18fQcZoBwxg1PcyEU2E0hbaj/Zxzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DShemQvr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E75C4CEE3;
-	Mon, 31 Mar 2025 08:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743410030;
-	bh=DloZZIE6n19coXOX3Zta04gIhkvxcrcJ9ymuCwF7tgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DShemQvrSa58moVUJ3a8exwKWWlOCwJOfj0u5GMTnY1rdcyK5kpc7C6YPvzVqIkoA
-	 LyT9t45QlEpdEmzYmeYyeJcKNsJPtTbi26iGak0bqBHrLIlzIBELjrkfuIzSNTQcjF
-	 ghoQCq3xEWxAMx6YoDyD6/yg0Q+MqHOLQ+C8esZ5n2oHTCYvK6Fdif5gN3ijzSeyT2
-	 ziY08DAzYIEEvZjCi2kmwsKSsI5nNkaImPbmMSRreqt6l3a3G5SrwgxpNSOSdSn2Q1
-	 HKMBSP6ByoZDz13XIp9kgWmVpdZPtPT5q1/E4vRy1XcM8+PDOiMRsvWapp56LOwpSH
-	 tzTPrMqDl9wzA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tzAae-000000002tv-1hIZ;
-	Mon, 31 Mar 2025 10:33:53 +0200
-Date: Mon, 31 Mar 2025 10:33:52 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Christopher Obbard <christopher.obbard@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFZdBa9FUF07qZzn0dEUry7XswiqxYJUsLgV2wmCa2SUuNpMws3Eu0gjydLc0kmC/4+2FSQ/AASg1NFaulWtOftJhNSyjPmxQBv/hIZWHQiwCGb/KVy9wbEinJIpVFapTv53mRSb61evA8fTV/C2DjzvSAEZs/OUZT91+5JP7lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RvaMtatN; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=nkc8
+	yXiQaPb+iayptLaJUMi+sPOcZnTLBQBWtGMTQNA=; b=RvaMtatNZh9bCclUcW56
+	QpUsmmhMtJMHbypRBoumHRdZe3RAi2AuXh+N9K1yr/s7TY/T7L+mNEkPjuI5m8Cb
+	wVV+z3q9VU83GHu5lbnSvDmuc5Da19+SJ4OCecjmHa6waxGeQDvpHdV+pPa40RRy
+	C4+U1EL67dynYhlt52JBY0E7U05RuJFQDM1niY/HP+rIPH3tDt7QgRilIV7ylzPw
+	6o1j7qrfJvHE8SamPf0WeMLVCH6AHAK41FPnUFYG5E6rxIV80hAf58TbB2+UdavA
+	PoYmx5gDeLexWK2U1wgUi1dk15VS26mCLa1f2b/7nEkGgDQ3aBFwt8w27NF8xqqa
+	zQ==
+Received: (qmail 1159115 invoked from network); 31 Mar 2025 10:34:33 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 10:34:33 +0200
+X-UD-Smtp-Session: l3s3148p1@tMYdSp8xDtpQ8qei
+Date: Mon, 31 Mar 2025 10:34:33 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Christian Hewitt <christianshewitt@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v6] drm/dp: clamp PWM bit count to advertised MIN and MAX
- capabilities
-Message-ID: <Z-pTcB0L33bozxjl@hovoldconsulting.com>
-References: <20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org>
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: si2168: increase cmd execution timeout value
+Message-ID: <Z-pTmaRpf_FUAlkk@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20250331075838.3444332-1-christianshewitt@gmail.com>
+ <Z-pNBAVhUwrcwDQe@shikoro>
+ <0073F061-994E-4DE6-AC0E-E7E03DD30275@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XzZliXgLQrimYMfS"
 Content-Disposition: inline
-In-Reply-To: <20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org>
+In-Reply-To: <0073F061-994E-4DE6-AC0E-E7E03DD30275@gmail.com>
 
-On Sun, Mar 30, 2025 at 08:31:07PM +0100, Christopher Obbard wrote:
-> According to the eDP specification (VESA Embedded DisplayPort Standard
-> v1.4b, Section 3.3.10.2), if the value of DP_EDP_PWMGEN_BIT_COUNT is
-> less than DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN, the sink is required to use
-> the MIN value as the effective PWM bit count.
-> 
-> This commit updates the logic to clamp the reported
-> DP_EDP_PWMGEN_BIT_COUNT to the range defined by _CAP_MIN and _CAP_MAX.
-> 
-> As part of this change, the behavior is modified such that reading both
-> _CAP_MIN and _CAP_MAX registers is now required to succeed, otherwise
-> bl->max value could end up being not set although
-> drm_edp_backlight_probe_max() returned success.
-> 
-> This ensures correct handling of eDP panels that report a zero PWM
-> bit count but still provide valid non-zero MIN and MAX capability
-> values. Without this clamping, brightness values may be interpreted
-> incorrectly, leading to a dim or non-functional backlight.
-> 
-> For example, the Samsung ATNA40YK20 OLED panel used in the Lenovo
-> ThinkPad T14s Gen6 (Snapdragon) reports a PWM bit count of 0, but
-> supports AUX backlight control and declares a valid 11-bit range.
-> Clamping ensures brightness scaling works as intended on such panels.
-> 
-> Co-developed-by: Rui Miguel Silva <rui.silva@linaro.org>
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
 
-> @@ -4035,6 +4036,32 @@ drm_edp_backlight_probe_max(struct drm_dp_aux *aux, struct drm_edp_backlight_inf
->  	}
->  
->  	pn &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> +
-> +	ret = drm_dp_dpcd_read_byte(aux, DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN, &pn_min);
-> +	if (ret < 0) {
-> +		drm_dbg_kms(aux->drm_dev, "%s: Failed to read pwmgen bit count cap min: %d\n",
-> +			    aux->name, ret);
-> +		return -ENODEV;
-> +	}
-> +	pn_min &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> +
-> +	ret = drm_dp_dpcd_read_byte(aux, DP_EDP_PWMGEN_BIT_COUNT_CAP_MAX, &pn_max);
-> +	if (ret < 0) {
-> +		drm_dbg_kms(aux->drm_dev, "%s: Failed to read pwmgen bit count cap max: %d\n",
-> +			    aux->name, ret);
-> +		return -ENODEV;
-> +	}
-> +	pn_max &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> +
-> +	/*
-> +	 * Per VESA eDP Spec v1.4b, section 3.3.10.2:
-> +	 * If DP_EDP_PWMGEN_BIT_COUNT is less than DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN,
-> +	 * the sink must use the MIN value as the effective PWM bit count.
-> +	 * Clamp the reported value to the [MIN, MAX] capability range to ensure
-> +	 * correct brightness scaling on compliant eDP panels.
-> +	 */
-> +	pn = clamp(pn, pn_min, pn_max);
+--XzZliXgLQrimYMfS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You never make sure that pn_min <= pn_max so you could end up with
-pn < pn_min on broken hardware here. Not sure if it's something you need
-to worry about at this point.
+On Mon, Mar 31, 2025 at 12:31:48PM +0400, Christian Hewitt wrote:
+> > On 31 Mar 2025, at 12:06=E2=80=AFpm, Wolfram Sang <wsa+renesas@sang-eng=
+ineering.com> wrote:
+> >=20
+> >=20
+> >> if (cmd->rlen) {
+> >> /* wait cmd execution terminate */
+> >> - #define TIMEOUT 70
+> >> + #define TIMEOUT 200
+> >=20
+> > While we are here, can we rename it to CMD_TIMEOUT and put it next to
+> > the #includes?
+>=20
+> I=E2=80=99m at the novice end of kernel contributors, so like this?
 
-> +
->  	bl->max = (1 << pn) - 1;
->  	if (!driver_pwm_freq_hz)
->  		return 0;
+Exactly! Thank you. If you send v2 of this patch, you can already add:
 
-Otherwise this looks correct to me and does not break backlight control
-on the X1E reference design:
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-Johan
+--XzZliXgLQrimYMfS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfqU5gACgkQFA3kzBSg
+KbY+gA/8CS6Jf81Um9K5Oc2V4wkAnxxChfhbaJTrMqp/W5SqfcllGDs8Pr9UGMnU
+Px99+cMeNNjft9bFx3NFUw1DLCNbARlQDK36pMXD94STo9Vqjc2AmXHn5/Mc0/wO
+6Q03apTlrC4ZNVdaKkc6BYk/i2PdAUa9DcGH0qugk38EmmphiwDodBEeRtwa774W
+vsoZHIVtVII5zXLW49+/Xh2+x5OwQNoPxp8J4q3VhGVnhu2RYjdNrb+5aMPArNoC
+48EANm72zhAFiHkM+LBjxlIlOs3kvXl/jhLOsz6kmoecJ1OTeitDYqpKOVgfs+3O
+VvRMkoL0it8K25aJaL4qsNgm5e+dFJJVwmiyJc3BqycCMBhIOCmM3h8hCE5BOoPW
+SxTJ9iJDNiIXb635U/oNQZzrUOdxBrXsM0WkV8MWwAA2DxsBOgYG+PAfUZoTAg3j
+FDIYcW5NXw1AngVho/xhK1UIQtbijJZM0PnlDOIFGkPIOJtEQOj5o5TNKxXwk+y8
+xGkdrJ14773R4OPx7lAwKR4kK11hFbzdpL3TQWe8wZ4Io0/eJkz6KBkpa0niHoPf
+MUp/07i52MhrodkWPHIVyw6IhBn3fkQeSGDKc009ac68Eim1UUgCSLtjKTczWUgR
+vhuYPDnWykUANgic+Bxj6RSam/4dfM2CQl0/bEfuQqVK8RKS2Sg=
+=5t2X
+-----END PGP SIGNATURE-----
+
+--XzZliXgLQrimYMfS--
 
