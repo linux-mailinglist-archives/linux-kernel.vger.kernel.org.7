@@ -1,161 +1,122 @@
-Return-Path: <linux-kernel+bounces-582461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26810A76D64
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69682A76D61
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C0F16A8FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DA716ACE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B273219A76;
-	Mon, 31 Mar 2025 19:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7365E219A67;
+	Mon, 31 Mar 2025 19:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Oc7nN89G"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ErTQUikq"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88920213E8E
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F3B21884B;
+	Mon, 31 Mar 2025 19:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743448366; cv=none; b=bfEc8O6OR/DGFBPXAKQdhIX50IJwu62c426pga60uM4QLqDwD0SXxRsfGpzXp+RME9rWsIJnGP/+owjgclqRy74NN7SXaylF9lJe/poJOWkhhUkNBm1y5nO9k5TBGIOw5eJbk59vA/vG8koruSBlsmW5lnj1WUL0fTNgRYKT0Mo=
+	t=1743448322; cv=none; b=tvAzX+dkKxYetCAmOv2p6eIbOgIv0fOEhtS+rN42nZvKru10qfSav1AcpYFbAxx+6wIDTJL8z/4/js8FTqh7jZzF06bFLKZJFbD/Dy95FO4fLcPPSw20eQm91uC4aLUjQaaniCNkZA8/WO724zj6Hy8x3v7Odr/MNxvF7BvfAeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743448366; c=relaxed/simple;
-	bh=FynjO+wyrDxQU76r4XZQPeVNoSz6E2PDqYfEE2ZRHJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qb+H06NFo/LuUviUHBQAkxqF84K3OIHcLl2+0ol/GTQXyWQkwyqO7lzzFMy9YN1ff9auchR7RfasS26FUhb/ESsCKR1nMaWuc4nAia6XjSFz7zRb2Skk/m6jG7e0KJKnImLVx3wxp/vPc5X0dxZxr9dVQbbT3cEYC86aTIyraqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Oc7nN89G; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso7553424a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743448362; x=1744053162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i+ZQnQ80R0WMIpJCwElOQwANooBm/ZMxuRWkUPoDmbE=;
-        b=Oc7nN89G7mR9CQfkxfeTaBdk5PXyUvZkWZIuw+hSuujjn6U51vg1udHPLNPPTHvANL
-         riy07Jgg4RR3yKlxH3mmBn8DKandeQPb4XZCAl0jZOqsN9pe/zDbf8w6heRSTAOGO7pC
-         nEZeoBFlx20vLc6VrLb41ivr/UDYiXvMDMXxjHnAvcs7OlbJXeziAQl+9jL/hZ5FNuyI
-         GT0XxmxcnnvW81mh11S45ISIz9gLXC7UPHSWkYlT3vEsgsqRBQSwLODR0OML014S1MDX
-         y2Q+5WdU9Taojmwg+5cWuD+qaSdaSWD1rl2/e7uQ1QBqPSatAi8ECacrjM/NodYQjMZH
-         c7qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743448362; x=1744053162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i+ZQnQ80R0WMIpJCwElOQwANooBm/ZMxuRWkUPoDmbE=;
-        b=VQgUCgU7R0kdis8fXnc2sjWkcioqQN1I9IhEJi4FpABn1oCIYitef1hmjsW9fq/IqW
-         9sJISCCMHgLHnX9oNl7q+lagww43z+c4odXj7kFD5N+WdbnR5itQ7xwjC20Kf31J2UM7
-         r+jxNCkf6rchsHAtv9mnJD37OKYofTUyVjYfv8nkvyfssQYVeCjo0/5HQkPTxPvtywmc
-         TvCXoW/jfjUcszrzdlwyihnAEZXF0iDcwq5faoKo+QJqslVjxgECLrOU4QRVoc+QQWWL
-         vFyIyIGSqn3KTkugSuGJ+uUu/IMvI78cePsn8YUW1P54JxDjgoeJULDdZoGM0Hn/baoQ
-         wADA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM/DjWLFCi4H7Q24Yr3UjYKDaKkX6BLnJwrcjd31MWZHtBSyS0x5+CKZxZmVuflbeZPhvkirPAu/0sr80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrSoHQdNE8fJtEvz3SpM4pe0aROLChNpml0haoaCT1zsMPUfkX
-	C9G7yGyVjYcZNMfwju4w6G6wYfBDSd6iAb7ar5D06tfe5Y4HcmnzUGLlBnYlwUo=
-X-Gm-Gg: ASbGncujadIoIheRI9IDvqiITy2svJjo9eSKHieMBaGAtltzItCxfWm7p2ej+xSZup9
-	yR7DPqnFXDd9rLlUr+46t2oj4fi7PWVxS0iGOfdsN0z2bWxbwBWamDlxj/j8VFYBp/dbotM1b5C
-	lhtvr3hSd/4DRSh5kS9SWmfrUE7a3eq5zuoeEUUlTjRAhD48D4y7oYyjsR2SleP1hGgFTVpKQpL
-	TG3ReO+2KgctmSuG70YKPBk5Zm1cu7u/7QeXDMjPsTBCIvt+ooJtc+d4wxlluDGVS1LB2y0FkBz
-	Vad2UFILM+iUPU9sfvb92rAFKPZiX40JD7XG4DuvMl2EPOotuH54dq3TI7QHWBL7pxYzh6Xs2Q2
-	T0eTOEmRAXcnVv+VQHOCskQ8=
-X-Google-Smtp-Source: AGHT+IHYlyt8xY0epQjTlOCW+TVkJ9R/yks8RK5qvgPhFcudpqb9LYxazj5SPyj/oXKpLpHkVhq25A==
-X-Received: by 2002:a17:907:7e82:b0:ac1:e332:b1f5 with SMTP id a640c23a62f3a-ac738b61c9cmr1026985366b.37.1743448361779;
-        Mon, 31 Mar 2025 12:12:41 -0700 (PDT)
-Received: from archlinux (host-80-116-51-172.pool80116.interbusiness.it. [80.116.51.172])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac76fa520absm145764166b.112.2025.03.31.12.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 12:12:41 -0700 (PDT)
-Date: Mon, 31 Mar 2025 21:11:30 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] iio: ad3552r-hs: add support for internal ramp
- generator
-Message-ID: <ucmb7wfkovo6mssmmrx4fmfv2hliulshjhob4efz2phczbnu74@3xphjz5schp4>
-References: <20250321-wip-bl-ad3552r-fixes-v1-0-3c1aa249d163@baylibre.com>
- <20250330175350.6cebf779@jic23-huawei>
+	s=arc-20240116; t=1743448322; c=relaxed/simple;
+	bh=m3RDnstX2gx0HhE5shg3bJBMpeePFQ2Yih6a2y+tM+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WQ2bASnAiOy6DxcR/Gizo0rY8nzHowCPS9FwHR1zZjkZEzt/CXHw3iI7nlu+8I0eBo3vD9VmiUwyR7WG4YMgErooLfPmo2vMGJY7n7XhUke7JIQhdU1hMHr95+REIPhIYAYQlRHYeFtgJWGhvkZXHZGleMp/xXJOi6Ch2NgDMxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ErTQUikq; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA0D610252BE4;
+	Mon, 31 Mar 2025 21:11:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743448318; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=9/SHOmvheFUaxFxBZZI7R6pWQfCAUUDodtSq/v4HDjc=;
+	b=ErTQUikq8Yq1gbsG42OM7WOuS/wFDQR3u/62VzEkp4h+LO9+Qsr6jM3CXMy1VtU0AwAWsC
+	5bd/zrrEuJIi8bYAbNK7x6Y47RmZcQf5lVtk/KARkQY0U0hjwIDXuW9qggrn2OiXbuaIx/
+	zTyfPkDIQlFwiwvD1vQUPWzMme4QIy/tcRrB4dEGLDW6PlCdt2DCFRuGuMR3jWWjPjfqzP
+	ouCIX7zWiJK8PpJKGTqv0lSPNgqUWtJSpji3e0oDCUBftWGUI1lb6Tt5O0W1hy5DDMDE5x
+	BMligRAUNuvWKjlB+LMfLMj0EFkIF/PXDrBHN/5BFIUbj7xu4O5g40J9ChpRRQ==
+Date: Mon, 31 Mar 2025 21:11:56 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add MTIP L2 switch description
+Message-ID: <20250331211156.5ed247a4@wsk>
+In-Reply-To: <CAOMZO5A4P=JbmXRyz91e3DSFbXjG7aRxMyBaTMsfB9jpVG9tww@mail.gmail.com>
+References: <20250331103116.2223899-1-lukma@denx.de>
+	<20250331103116.2223899-2-lukma@denx.de>
+	<CAOMZO5A4P=JbmXRyz91e3DSFbXjG7aRxMyBaTMsfB9jpVG9tww@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250330175350.6cebf779@jic23-huawei>
+Content-Type: multipart/signed; boundary="Sig_/hmMXF+Ye_GiLI=a_V4UguL=";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Jonathan,
+--Sig_/hmMXF+Ye_GiLI=a_V4UguL=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 30.03.2025 17:53, Jonathan Cameron wrote:
-> On Fri, 21 Mar 2025 21:28:47 +0100
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
-> > Add support to enable the HDL IP core internal ramp generator,
-> > actually managed by the adi-axi-dac backend. 
-> 
-> What is it for?  Circuit testing or something else?
-> We have in the past had pattern generators in IIO (currently under
-> frequency drivers, though I'm not sure what we have in the way of
-> waveforms in the stuff outside staging) so I'd like to be sure
-> this is about debug rather than a pattern that is actually expected
-> to be useful.
-> 
+Hi Fabio,
 
-Sorry form some reason seen this too late, just sent a v2.
+> Hi Lukasz,
+>=20
+> On Mon, Mar 31, 2025 at 7:31=E2=80=AFAM Lukasz Majewski <lukma@denx.de> w=
+rote:
+>=20
+> > +properties:
+> > +  compatible:
+> > +    const: nxp,imx287-mtip-switch =20
+>=20
+> For consistency, please use "nxp,imx28-mtip-switch" instead.
+>=20
+> imx287 is not used anywhere in the kernel.
 
-Anyway, the signal is a tooth wave at 280Hz, not sure that pattern
-can be of any use except for some dabug cases, or noise tests.
+Ok. Thanks for the info.
 
 
-Regards,
-angelo
+Best regards,
 
-> Jonathan
-> 
-> > 
-> > It works this way:
-> > 
-> > /sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage0_en 
-> > /sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage1_en                                           
-> > /sys/bus/iio/devices/iio:device0# echo 1 > buffer0/enable 
-> > 
-> > Activating ramp generator:
-> > 
-> > /sys/kernel/debug/iio/iio:device0# echo -n backend-ramp-generator > data_source
-> > 
-> > Deactivating:
-> > 
-> > /sys/kernel/debug/iio/iio:device0# echo -n iio-buffer > data_source
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> > Angelo Dureghello (4):
-> >       docs: iio: add documentation for ad3552r driver
-> >       iio: backend: add support for data source get
-> >       iio: dac: adi-axi-dac: add data source get
-> >       iio: dac: ad3552r-hs: add support for internal ramp
-> > 
-> >  Documentation/iio/ad3552r.rst      |  65 +++++++++++++++++++++++
-> >  Documentation/iio/index.rst        |   1 +
-> >  MAINTAINERS                        |   1 +
-> >  drivers/iio/dac/ad3552r-hs.c       | 106 ++++++++++++++++++++++++++++++++++---
-> >  drivers/iio/dac/adi-axi-dac.c      |  27 ++++++++++
-> >  drivers/iio/industrialio-backend.c |  28 ++++++++++
-> >  include/linux/iio/backend.h        |   5 ++
-> >  7 files changed, 227 insertions(+), 6 deletions(-)
-> > ---
-> > base-commit: eb870a5af7db1e5ca59330875125230b28e630f9
-> > change-id: 20250321-wip-bl-ad3552r-fixes-4a386944c170
-> > 
-> > Best regards,
-> 
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/hmMXF+Ye_GiLI=a_V4UguL=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfq6PwACgkQAR8vZIA0
+zr0b+wf/VzyowjhouF6JR3WeSp7yXgH7z8RnuEMkuhmmxnMRHdWg27ciMWanNTuJ
+2lZbqG9jDifMh4TUGrcp15UZUvHXHrCiXVUu+Vb7s+SlQ54AWSqw4Lrx5NUwRARC
+0Qg5UAvlzdINusmiMg1/e7O08e2n/1778Qj/9QHangd/mGKbUpnqgbcRvjWaXHy5
+Hs/fVc9PowiXcb4lfG5pnbxajk4/KTekDgdgPRNl2Fwu2UQEOgM7FqoZiNEExAH8
+SewXSt/DZreOqHffMFs+NRQB8KjPGAwAtP1m4m44salTi+4aNEHiMbFogj4gVIJW
+Ns3oNfBz5Wxakq4qzhaweo7D10biug==
+=uXKq
+-----END PGP SIGNATURE-----
+
+--Sig_/hmMXF+Ye_GiLI=a_V4UguL=--
 
