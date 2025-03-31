@@ -1,211 +1,160 @@
-Return-Path: <linux-kernel+bounces-581352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993A6A75E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C5A75E25
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41EB7166FE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4380D188A2C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77AC142E77;
-	Mon, 31 Mar 2025 03:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4266E13D521;
+	Mon, 31 Mar 2025 03:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="mt6Yrura"
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021115.outbound.protection.outlook.com [52.101.129.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQd+mwpf"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136AB173;
-	Mon, 31 Mar 2025 03:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743391084; cv=fail; b=upuQHpHLOtfm+h8xivn4pNNM4xZdUN1QIBALokCSHIU55/75slfisydRe/x1xVq7cKaqB0MWJ/f+3OeHCaCWHFgL1DW9z6xYrxcayeWnvhEE333jtAdm8YldUYZQAKnrNgX4CrJXwncrjzncGjXYn15sXt729X5LlRMSb1szK2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743391084; c=relaxed/simple;
-	bh=aE/WOuZ0p4AqDpIJQiXET+G6SjVftQXo/BxXXecPiQY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=botJWKBBsA1zny2VR1rXqi1REbknWtWy4DvctTDWmXNTsf4d0r3ZmF5mm7FDkTb7NUWNRpizBaLw+5hrHQsUSHLHGu1rKrajJ8o2STZUKJnuX8BG+nQcZMqAE3sBnpgIo33xQIZpx+cz/HmV8mHLfjqoQVXeO8TLHJe9JYH/pLQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=mt6Yrura; arc=fail smtp.client-ip=52.101.129.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvazHz+fGwiDjpsB1ZZ3Y+nHyCP/jlLidUh15Np1Q+Jhysine1hsYv96Zvx00R4TZsTxhONnIRNrzeJaf7pcT2aH6ajwUJf773clyxlCSawYPXYx3UbMq1az8H10ritItn7u1ENZ6peHaZSqt8FaGW9V2B8AftbNYdDE4ZSmdvXhGElxBcbMGiUy83MXhE1Htn4jBkZ0CsYHeH3ohnVCJVVeO4eC1DFq3XRnhA7E/5QEWa4Bf3oneRsRio1pSmpkvymifh7JTFBi/+C3RuQ4ay2SVOExcsgqFUZbti50NoYDHCfG2VuDbMdJEbj0ko/kIzFBIMiBNRDk5u6nV6M/0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p/O6jWHdujJJv8EAF9/ZsodxDZ82/q5LGswkTXChh7g=;
- b=Fo1ROCb0MSIYVfT1+2kiTv47MCs+7XHqz/skD6+GCHh1cdJY62UKdQl+HdyZIGWrwV7Ee29wPjQIUCJPFrcpBfyXWsiGJotgWruP0hKoTkF9kREkURcxGS9PNqOZ4z9jySzCt8lNAzRhW8w3RAHh/e9AC7Q2kjTnULsHNO8NUAginEkamgiuVVb1eppOhlCIuCxQpIIggPbUebA5AStC+50Al1jdbEtOJZW3iDV5zDUWoIB6RRSUn/oWa8rtSfQsxQ4cfX17einyGXqaZy9NtxvdXTZ6Z7UBMhz5kIaK9pWApaLZmXoX96WjeR1hDbVUh4s+KPcc5XKI+huhSfsshw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p/O6jWHdujJJv8EAF9/ZsodxDZ82/q5LGswkTXChh7g=;
- b=mt6YruraEkMm5wTPDG4b6Gngst4OyrBJ/Mx68CUewM60KLUH1h5ENMvFls18kyMtSjGZVNWLc/a9GjBY3s/Vr1h8K2PUQFDCgrcW0ib1YZHEWGMZKPLeetlcEo6EM4anfACBxryl8ADSQTILJ4QArzzIgqkVLF33WHITfoBufT27ngr+qP1BFdbYvLEymbekaalM5lIkVPx54xxOKi5HdjupQR3DhLVJ/7eH2AgT9+UTc4TO7bEsnLQk0KL6whWhtle9m0BPScNr1lNqcjDvUG6AY9lj2/1rmg+BJDJ4fKt8fBoYIxjMEW84cHwrtKmKRtWfQEouF0zbCk+jyp5G3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
- by PUZPR03MB7116.apcprd03.prod.outlook.com (2603:1096:301:11d::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.36; Mon, 31 Mar
- 2025 03:17:40 +0000
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f%3]) with mapi id 15.20.8583.036; Mon, 31 Mar 2025
- 03:17:39 +0000
-Message-ID: <e99da06b-acf6-490e-b39a-a283bdb2415b@amlogic.com>
-Date: Mon, 31 Mar 2025 11:17:35 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 08/10] media: platform: Add C3 ISP driver
-To: Markus Elfring <Markus.Elfring@web.de>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Scally <dan.scally@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250311-c3isp-v7-8-c3551bed9005@amlogic.com>
- <6ff5acac-4d41-4d4a-853c-9902e9673ef0@web.de>
-Content-Language: en-US
-From: Keke Li <keke.li@amlogic.com>
-In-Reply-To: <6ff5acac-4d41-4d4a-853c-9902e9673ef0@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGXP274CA0015.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::27)
- To TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE78382866
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743391366; cv=none; b=nCW23SXLeW0JjkSxOxgGSazo4feFwp/xvjcVqfNXF3O0SoJhbmSLFciox/Cbh0zTEgMvRwyUZv/bnJkGOz5lbXZLsYtp7iXvO552Dh49pq+mRJ0KdYOpm9hNBZLh02BDIra5OsTY0ZHfLag7Dt2vLer/ULd84IGJkn2Xs+Qp1dM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743391366; c=relaxed/simple;
+	bh=jo4kV8v/aENUv2W2HZOl8ofUDDJdnNKMztdocm2n5PI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ngZFZOf9mriKTDzVY+Vfh8Y+a9tfkxJtvEc15TqRHBSXuovy4h7Lj3vcozgOcRR71EL1kn+6lbpIzRfojhx8uCAC/EjilqrLVf4InloLNm5p4EC8YMmLaKmXrdUOx9KDUxuBmOZHpt8Y7CgyiFIaVY/OMWOYriut64Ya33V+h3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQd+mwpf; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e677f59438so6060950a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 20:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743391363; x=1743996163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRYx+m4X6QsBHhtE2dap7sXTHHBthKX/PSqlJw68O60=;
+        b=DQd+mwpfwNFPhunBKXyEn8Wzt/FCaJVfwVpH4wbK/9sEf2CQiKghQjn3OSd936IUIK
+         rxjBf4cnbIilpCYxCTqQem7O4zEOVzF8H2ImkUxUkTXDhkv4pE4C8UnLQ4393uXfxB5I
+         MkyxjVs1CB6u0qkVitODQ2F2HrHSfEqqjaIQEqxQLh00vGJgpap+uYBN5f6zxLvQ1lc2
+         EVViEVrJcOU2S/XUGdDZRYycwm6yOrKJcZrhzKvt8Dj1fA7POQ7pLe6x115DWF4fjwfE
+         uYcp04mwDmou1Pbk/WyCbDt4hyNsz/srrGd5tmVkaWuVs9ZqfcMaBbFt8PJU7CZiN7Xy
+         1fVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743391363; x=1743996163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KRYx+m4X6QsBHhtE2dap7sXTHHBthKX/PSqlJw68O60=;
+        b=lvq5WCbU+d09PaCmrbVhAmjlxrDvCRHCD7phfSbjkmOs13Q1HVrDggfZwoiQ3ojSyb
+         wzx6ySsxEgF4mwtuzNlveAV2Fvhr5urf+RUd9gfeG+LxOlAjkWQhozb2tytnigxobAJs
+         ++aUnZhmNnfgGj3zN8+tz25bgKkiZvgsPXpH56NDYhrQipHtIxUmV5NlXPrfEzj0HjWr
+         sOh2ceI09ryZDW5bhFY9DO3OrDG4ZmrzL5nzsT/knkNOmrX85LNrzUTHQLt7MIGe9Kmq
+         3Ss4CtR1FvG9TtSPh+qE+bjHP27ch+T0YtffHAXjcWhHSDssqRb3oPXkjmC6pvriUmsZ
+         vc8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOdeK7V+sroru+FwaeYM0L+EXt2uct36O13UaKuAtnbwEr2rhbwsHRgQXNTzfrWM/Ki3uWd+54xTyCPp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5zMep79+rC+GB/0YeMPA49D3Ngm8IrXL3zU50wghhilwhCSyH
+	fUwuwsmFAwaSTvjgI8JBsRDup68SaabAfhALTlRPHgkNiglCjpL6K2Tu2f5ezIuOCBvXd4k07fY
+	mVPjBG8hE1iAiqW6lIyP7GPxc03X51g==
+X-Gm-Gg: ASbGncv/dj14j21QJwYYhJy4h3hMNxxZB9O8xhnGMcj+QxYmP7owcnXcQDQfNxHKvBM
+	4r4P06OABsVM70UvOI1t2HqYFQI+DPUjdNCTWhfeGF/I8NY3rJPln/6wtgIE6jCiMyhmWTi9lZA
+	E8m5fru1tpbV1B2nQkl1ftB9JV
+X-Google-Smtp-Source: AGHT+IFr03gYElReDkk2cft2Hu8/w0ithkNgrI6pJXTx0/Gv+zCKyM2ZCp0EfTISo4aCXfbHX4/0AFMA14nNrWM0nc4=
+X-Received: by 2002:a05:6402:26c8:b0:5e7:8d40:8d80 with SMTP id
+ 4fb4d7f45d1cf-5edfcc07956mr6599143a12.4.1743391362815; Sun, 30 Mar 2025
+ 20:22:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|PUZPR03MB7116:EE_
-X-MS-Office365-Filtering-Correlation-Id: 585ca1bd-c671-41f7-91f4-08dd700297d8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0pQMFl0TUVBTWxTRVFQQStoZVZIeWVkdGRWZXAxQnY1ZHNOZHZIbmEvcXA5?=
- =?utf-8?B?WWljSXYxTFdQbUJtVkVYTjBSdXdFcWVFcmUyOWlCQUFIb3VUQ1ZEOWR3TDMr?=
- =?utf-8?B?WFNJTU5CZGJjMnQ1MmNSMk9paW1mSFE5bXhzT0lNR0lxZVZiM0dBeUZuWGw1?=
- =?utf-8?B?VWQ0WTd6TzdwZ2FreVRBNE80cDNWRis2bU5PbVhFaXFyUVdLU1FjYUxMVHNE?=
- =?utf-8?B?c3p0UWg1RytQR0FBVDdrdWlkWU5aSEhIU3hqaE9yYm1JajdqaURacHAwbEl1?=
- =?utf-8?B?ekRnVEx0OUpDZndlbi8xMU1pZmtwdjRrNkJKd2ZmVERhOXR3VnNvQXVSOG53?=
- =?utf-8?B?SDR2RzhxendTU1NGUVZab0ZMSENJanp5TkllQ3k3YktaWUMySzBURE90UHNz?=
- =?utf-8?B?RlIvcDdJcTZwZXhRdU5sL3UzQUF3dytGTGFmVHB1Y01oNktPeTB5czZENjRP?=
- =?utf-8?B?dUZpWTQ0VFlZRGFHSFJlYis5U1lHeE03OVJJcEwyOENaTWdaOWpMTWJtL21s?=
- =?utf-8?B?SVBvM2hFMzN4M0NTZHY5bTdjUm0rMlJER1U0bjdKTHdwZFB6TTU2WDVoVkFE?=
- =?utf-8?B?YkJ0ekZkcU50ZERUVzl1NllVWmxTbU9zbTA0YXR6ZzVrS01YMXBjd2UycjBT?=
- =?utf-8?B?ZUI5SGxQTEFZc3AvcVNtR2VmWE8yaGVFQ000VUthbUR6SzFaR0JQeUthalVo?=
- =?utf-8?B?a1R6T1JSUitCbEx0T1Q3U3RMaXduNEZpc2JiekJ3YUVhNXpBTFA1WE1Yc3JE?=
- =?utf-8?B?SEdpNFB3YlllTmI2V3VqeUY0NWl2NU9ib3EwQk5UdUQ5QUJJVVhKSUN2d3JM?=
- =?utf-8?B?Q3BBRDhmcitSdzdrY3ZVVy9iWmgyL1FWUlFlYUFRNEVScnR3SmFGU3dyWmg4?=
- =?utf-8?B?YzhiNklyalF1dXhINVR2dVlGS1pSSkVQSzZMMU9aYkV6V2JCOHRXMzEzY2J4?=
- =?utf-8?B?NlAvRkpndzM0ODh0Q1cwZmtCWnhmcTRQaDRDUmhiamhWWk9TWlN5RklaUHJi?=
- =?utf-8?B?NGZZQkgxTFBsSlNlZ2tsZHV3ZG14T2g5Y2g5blNsVFZKelpRTzU0SzZrS2w3?=
- =?utf-8?B?NW1yQ1NBM25TK01KWFQ4RGIyV2kvS2RGTnVHRmpwQTlYSGRlTVRLbmFKWCs3?=
- =?utf-8?B?enBwaHkrbHV2VnZtaTNYK0dRVmFhQUVCSE4xbUV5TzJ2dVo0MlIrTzZxeVov?=
- =?utf-8?B?azRmM2FsS3dLTWhTeGNFVkIvck5pWXFCSHM5SU9VQkh0VXNMampSdFlxOVFH?=
- =?utf-8?B?QmtWd3Q2MWNFVExPTFRNYTRncGxod0RLRXRxL29aaEtEcG9hdHNRT3N4aVZS?=
- =?utf-8?B?aDFhOVdkczljTG5oMEtDSFFCaCt1OEhSdWhodjdlRXZkY3pXVmd3dEhsblZ1?=
- =?utf-8?B?RzNWS1hSaXR0MWlsbEFBRkU2dWQ1ckVUSHd1SnN6ZUphT21Zc2NzQXRjNk45?=
- =?utf-8?B?d1k5N1N6VUQrR1NJZU9NV3RaZUVnVldGNXN1a0t5am1scmVkSThaSDEvN1Vh?=
- =?utf-8?B?U0dBalZPZU10RjJPUFJuOHRUNW5EMXkwd3F2eFB5Z2xoWTVTT3R2N1grUlFM?=
- =?utf-8?B?SHozY0hOMTJ2OFQrOFJTVFEwcjczRmtQVTZrRkhjYlIrOXZZUkZZNVY0Z3VY?=
- =?utf-8?B?VkZnTnl5aUxjU2VDSFc5OHdMVXFvd204TGJLRk1ESjNiRUUzb3NqYW1FZDB4?=
- =?utf-8?B?OTNiaU5JOHg2UThrcERtd1pBZFpVOG94VDNQdnQvZmM3Mjc3bVc0aXkzTWlN?=
- =?utf-8?B?UmdyWWtTbUNsYkhXaUtiWHg0VnRXQ1k3enB1dG1xV3NLUVM2UCszZUN0RW5t?=
- =?utf-8?Q?L/Ar+th2wHxgv6nq8MnCUXjkkajCliTbmo30Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGdNZGV1eG9jWDdKYmM0ZGROdnNIQ29MSmtzaWI2cXN4M3RXZ1dzSndQRnNF?=
- =?utf-8?B?NlVncmcwZW11WTJlZWtiYkQ5NFRKeEloWS9vMEQxZzByaEVDeWRzR2tWS0Rh?=
- =?utf-8?B?eWxrK3B6VDNNeUIzcmNtOUFrSXN4dldwSi8zY1lmTmx4KzlEZzhPbFl6VEh0?=
- =?utf-8?B?ajlCeHNUT0dROGIrVnVvb1ppRlhGV0hVQnJtOUpLQi9SNGV5QzZUVS83RkR0?=
- =?utf-8?B?K2JzUGpXNzdHUERtN05JMjFvRjlNVkh0STJlc0k5a1VraGNYbnVLUURCMVEx?=
- =?utf-8?B?UDVqOUdhK25ETExsRERRdStKUjU4ZllLczd1U2ZhTDJPYmFZZlorVE1EamlP?=
- =?utf-8?B?R1NlMWRZa2VRc0JxVjhXcHV6bDRtYjliTjdIa25xZEloYlpyZ0hmWHZTWjBj?=
- =?utf-8?B?NUEvMS9TZVE5RmNraGo0bXFCVVQ0M01IMDhBT3h2OERBVTV2aGorQjlvR1pD?=
- =?utf-8?B?S1E2ZWNKaUIrQnFaTGYrMHRwQTNFZzlHYVhlcFNyRGFDMnJ3ZW14S0UrUWZx?=
- =?utf-8?B?TnJuNmpGMlVocXQvbHVLV2IzMGh6WXRRakh5anIrSGtWeEE3eThHbWZhK3hl?=
- =?utf-8?B?NU9EdkNGMnc4ZitJK01RYSt5QmlISVFRUGhrOUFnbmxEb3hQckVvclhQZiti?=
- =?utf-8?B?S21MNnFvWnY5Y0RpRWVIT28wd1RBa3RsTlc1b0lOQmtXQ1B0YnlPNXJpS092?=
- =?utf-8?B?ZUhTSklYWVhJWHZEamtJTUJ3ZSszWk5FcjNCK0RWWlNFdXVBbWJRYzhuZWdQ?=
- =?utf-8?B?Q3dQNzN3dU9IeGsrWW5RaWpOYWhnQ3VGTXJZNXR1dW1mRFpJYllwS050NHlM?=
- =?utf-8?B?VXBlRG9nVUJNcW5DMnZFUGdzSWVOVUdia1dxSzhpRC9kZHVnZ0VkNDIySlZY?=
- =?utf-8?B?UStKYVZiU0tMMW5OdEhnVTZUQ3FjbkozVTVyd3NHakFtMnkxK2FwUFlObmQ5?=
- =?utf-8?B?bUREb1BZcmVuU0NEc2xHSG4rTXV2cThLTUZLU1VYb3hnTkl6N1U0ajl3UXd4?=
- =?utf-8?B?WUVaS0I3L0lQTkpkWFluaXVwamMrOUZGeG14cFRtNEJKb1pYMExpVjJwd3dE?=
- =?utf-8?B?aGczMWxSTWxUWDR1MTViZUNjbC8xd2p0MDFLcVZYU3RLMHZDNFNZekNkY3ZT?=
- =?utf-8?B?N3QycDZEb1F0ZXRoSmc0OGdUMk0wZGtwL25aM0hCdjBERHk1TVhNRCtEci9N?=
- =?utf-8?B?eG9HcDBOM25NRXZVSFNSTENMM25uUlVVSitTYWVuOUdmczlOK25WelN3UG1z?=
- =?utf-8?B?RE1kZlQyNVcxd1BCQUhrSUJKZnBvN1p1WjNrZFIyRXlldDk4VE00cHloK3hm?=
- =?utf-8?B?MUd5dWQyS1lKTEM1Ymd1TlAxUTk0amhVbU1wU3R2QjRHOTJpYjNqT1EyZFZ6?=
- =?utf-8?B?akFIQVhpY0R1LzJsK1RpMlBHbnhzL3d4QWZUYWtyZW05WnR2Tk1DbUpjNXRh?=
- =?utf-8?B?RWdIRlI3ZkZEeTZaallLbVIrUkN3QkFuYXNHSmdjMXo5SUhSMkNlS0hSWlFJ?=
- =?utf-8?B?TnU5bVM1NkFuY09ZbTJOMjFNUFRRSGRnOVR2YkRob29hOHBuTk1iaDJtcCtW?=
- =?utf-8?B?cE1NRFdrMnNrdXNQZWx3ZE4wL0xPK2ZWWStYWnk1eFRGTjlMWlhqVFpRaHBK?=
- =?utf-8?B?S25ZTGV0V0dROUZvbXlVaEMwaDBLdG9iV1JrOHZlVGM5dUZyWFJ1bjA1NlQ5?=
- =?utf-8?B?bmVkVHQxeTJJRkFzMitYLzlNZ0FhbTJGL0JwdEFUR1h1M21HaHQvUmVlTmZ2?=
- =?utf-8?B?Tkp3UGpvTll2MEt6VmE0ZFlocjdoRTFadVpicDVBb0JRVVdtdGtteUdTdHds?=
- =?utf-8?B?MTdaTmpRZmtMTXBHN2o5WG1FWWNzRlhGb3MrY0Vwak55anh5YXJPZm5tYXNR?=
- =?utf-8?B?aE9VQkhjWWRicTJEdnZtbXlUdE1hM29hWTY4cDg0RnpLS0FzL1grRUdBeENY?=
- =?utf-8?B?M3FydU0vVWFKU0tyMG9GNkxCWFk0TW92NWJEOHRzQmNLRHJabXhVVk9KNGRl?=
- =?utf-8?B?c2RqcGU1OW82eWNyNnlJeXJMZFBVWkhvOUVvUmtKd2NhNXhxa0xzaGlUZkdD?=
- =?utf-8?B?Y2VjMDAraFpBc0c5UmFIUFcxMUUrZmFSbndTc25Kem1RUlhWTmJWaEFvejA3?=
- =?utf-8?Q?QHoHuK+B9lJLPOTfhzCKQK3pn?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 585ca1bd-c671-41f7-91f4-08dd700297d8
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 03:17:39.7996
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aMTamqVC4MtTF3qj8bzi+HvjqOdoQvfXOk2h5UQ8gG/c3P0NYrdnNbrFkwarMmutwli75X60XWlkFlxRKsCPbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR03MB7116
+References: <202503311019.7d50fa1b-lkp@intel.com>
+In-Reply-To: <202503311019.7d50fa1b-lkp@intel.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 31 Mar 2025 05:22:30 +0200
+X-Gm-Features: AQ5f1JoWcqxwg2zWq2o5ZUVnPL-mJCZQ7LgCYfRaRjTccAHD-5GwEsJgJz1-FdE
+Message-ID: <CAGudoHFpQyxOx7SU4O5XMSK--JCtkOFc_He13UdtCYQLLwGu8w@mail.gmail.com>
+Subject: Re: [linus:master] [wait] 84654c7f47: reaim.jobs_per_min 3.0% regression
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Markus
-
-Thanks  for your reply.
-
-On 2025/3/29 18:23, Markus Elfring wrote:
-> [You don't often get email from markus.elfring@web.de. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> [ EXTERNAL EMAIL ]
->
->> The C3 ISP supports multi-camera and muti-exposure
->                                         multiexposure?
+On Mon, Mar 31, 2025 at 4:58=E2=80=AFAM kernel test robot <oliver.sang@inte=
+l.com> wrote:
 >
 >
->> high dynamic range (HDR). It brings together some
->> advanced imaging technologies to provide good image quality.
-> …
 >
-> You may occasionally put more than 60 characters into text lines
-> of such a change description.
-
-
-Are you sure the character limit for a single line is 60?
-
-I find the description 'wrap at 75 columns':
-
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14#n145
-
+> Hello,
 >
-> See also:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14#n94
+> kernel test robot noticed a 3.0% regression of reaim.jobs_per_min on:
 >
-> Regards,
-> Markus
+>
+> commit: 84654c7f47307692d47ea914d01287c8c54b3532 ("wait: avoid spurious c=
+alls to prepare_to_wait_event() in ___wait_event()")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
+> [still regression on linus/master      1a9239bb4253f9076b5b4b2a1a4e8d7def=
+d77a95]
+> [still regreasion on linux-next/master db8da9da41bced445077925f8a886c776a=
+47440c]
+>
+> testcase: reaim
+> config: x86_64-rhel-9.4
+> compiler: gcc-12
+> test machine: 192 threads 2 sockets Intel(R) Xeon(R) Platinum 8468V  CPU =
+@ 2.4GHz (Sapphire Rapids) with 384G memory
+> parameters:
+>
+[snip]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> compiler/cpufreq_governor/disk/fs/kconfig/nr_task/rootfs/runtime/tbox_gro=
+up/test/testcase:
+>   gcc-12/performance/1SSD/ext4/x86_64-rhel-9.4/100%/debian-12-x86_64-2024=
+0206.cgz/300s/igk-spr-2sp4/disk/reaim
+>
+> commit:
+>   46af8e2406 ("pipe: cache 2 pages instead of 1")
+>   84654c7f47 ("wait: avoid spurious calls to prepare_to_wait_event() in _=
+__wait_event()")
+>
+> 46af8e2406c27cc2 84654c7f47307692d47ea914d01
+> ---------------- ---------------------------
+>          %stddev     %change         %stddev
+>              \          |                \
+[snip]
+>      75.63            +4.3%      78.87        iostat.cpu.idle
+>       2.05            -2.9%       1.99        iostat.cpu.iowait
+>      21.28 =C4=85  2%     -14.8%      18.12        iostat.cpu.system
+>       1.04            -2.7%       1.01        iostat.cpu.user
+[snip]
+
+So this test spends most of the time off CPU and with my change there
+was some drop in system time, which most likely affected timings
+elsewhere and there is *more* idle.
+
+The actual perf problem is the locks and this is not a real regression
+in the sense there would be a clear speed up if it was not for those.
+
+I don't remember the details now, but there was something funky on
+last dequeue from adaptive spinning, where threads would refuse to
+spin when they *could*. I suspect this is part of the problem here
+(the fact that there is contention aside ofc). Maybe I'll get around
+to writing a proper writeup about that, but could not bring myself to
+seriously dig into it.
+
+In the meantime I don't believe this report warrants any action
+concerning the patch at hand.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
