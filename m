@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-581559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FFEA7616B
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC7CA76188
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4136188956C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:23:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DA63A7C8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03F51D63E1;
-	Mon, 31 Mar 2025 08:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C451DE4E9;
+	Mon, 31 Mar 2025 08:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Kl/Hg3ek"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vhzeHjoR"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5921C1D54E2
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7231DA0E0
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743409380; cv=none; b=RYF07o0Cd8s0WBgeYpiUP3XSWjpWjrozoZj+KwQwBnf0BJ3Y/eBT5Br5zCMZkk2X1EcuV4xmxZbCSNFujwrEfJ2CyU+u7iyTJeGFPZpyNhdMG873SLkganoeg1P8Uja9Dd5eKXytGnvMGW9FPv3kDap7Tsqf0jrkHr4syt2OGXE=
+	t=1743409425; cv=none; b=AnAdNzop7VpgU5cvKtfkVc9ATyQ/dnwMlmkcsAngWJB3OYw2rN0tJKNmV8+EwNG/b3fDZiHpp+Cu5CbeENjZqaBRN+UrogjlzIoM+iewnFTH0LshDYravim3icshTtrZqRhA89X23asi9NxCNZOe1a/24pr/LXEzj9Isko74O5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743409380; c=relaxed/simple;
-	bh=cErORlmBQ7cX4+LXkK8ApLOIo1/7j9xJiW1S2gw/lYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0SaPJTrkgq8ovPXy7w5gnbkOB0/HJ4nsuSBKWObJLvbnljKdS0OSBj3uel5oDvM93Vs5gqhMdfrMcHc9eLy1UpNpJUib6srChYhM2WiMQKelP1MEhsDV47siRY+JbwXUqjil8dsySFGeQT51ifot9i96+cXqbN6Dl0TO1ex0kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Kl/Hg3ek; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=cErO
-	RlmBQ7cX4+LXkK8ApLOIo1/7j9xJiW1S2gw/lYA=; b=Kl/Hg3ekxFnonu+zzm8J
-	3a+o7HH2Jwc1P42FUlhwjOYzKQ90xmVExpW76eD1buOe40PV6Bn+gbAGD8q2oQk+
-	aFUtcOjHirWZOE26NwbxanGMk4JMeViKWtw0B+Epoz08GAoy0Q+rm/36Axt10AhV
-	3GnlNYasEGHyZJQZy2tWg1kvk+Etciiufw6gxM/r0tsJHRGNh/aPaZTGBK7+1v6C
-	0cR3xc7Gd+grbcxZtVtjuXgyfiP0mOAagYX31hX840zWU5uHzHNpxMcjlIgs+K7i
-	c1Yfs5Ev1JC3ocd4clG52vt6McytzflKb/TuZe3m92BMgEVJeXf7yO39gx8KHEro
-	ng==
-Received: (qmail 1154732 invoked from network); 31 Mar 2025 10:22:55 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 10:22:55 +0200
-X-UD-Smtp-Session: l3s3148p1@wN1+IJ8xHNNQ8qei
-Date: Mon, 31 Mar 2025 10:22:54 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mmc: core: Convert into an enum for the
- poweroff-type for eMMC
-Message-ID: <Z-pQ3rRm__8XLLrq@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250320140040.162416-1-ulf.hansson@linaro.org>
- <20250320140040.162416-4-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1743409425; c=relaxed/simple;
+	bh=oLYgg2R3Khu6GTyhp5jk/pgurTV3eKg+D4RFW4sKhF0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aIYA9rFhCNilejiK8JhBcE351VVGKRFjESxCA+y/vtizuyPVnpLYNS6FhfSEVA6anF2c4j57lNBRJyujv27wqIAB9DB4YmqS7zqZkst7ZIV/oldLMyEdipXMwALAhrXeT50hIG7n+wvzQJLt54enmyopPByj77gmkXlLr1gnmTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vhzeHjoR; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso27895465e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743409421; x=1744014221; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z90mA7CwidsjC7fKWg5OtIg+rrVsIJQMjuYs20zPR4c=;
+        b=vhzeHjoRF7/jLwvgiKcmB0Khn8IMqwulukGA65oUFQykphCNE1fUOEuNMg+H0sIWFf
+         g2KNeCuK+tYyzimzgpt7PQ0OnxSrSH1gxkzRBHj9a+02XWd69fqBQtjuvfuWPWO5YOc2
+         ES9eFWoy7OnbjskiIsHTbTlFgd5Qoa/cLiHrZNeYXtNrL5RFWjx50MCR4Z3f+/8f87ok
+         HdQml7SjyifaRunmZSgA0luEiY05in6UypMzmYHqWuhIMD6CptFyim0eEEMW2B3ZI+1M
+         vd/v0/7DzZaWZiALrfdHv0p+KiQN5f7oqnjYYGSaYCNGFUeHIL/Qx7UXvc/usw71mCR6
+         GLUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743409421; x=1744014221;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z90mA7CwidsjC7fKWg5OtIg+rrVsIJQMjuYs20zPR4c=;
+        b=J/oV46vEgLZ0Z30Kl0ZGyprNCV3qAonuiv0QqEC6/VsbR/SJ/zHxLYDUpef3wcr5nm
+         Lu9v9HygpIjU2ghShBnqVhXJK+03YtnnXRPdqCR0+dq9MY4geo1NvoF9BO5Pu2hkxCiW
+         Qhy0GcA9MfgtO5Ou8XWtlxogI9mq8uTjELDXZN58vTl2KJZSgBNBjCh/Dq9u2oLxw55b
+         XR3zi22iCn0CxZkT50x1B/5L7322r/JwuLHUqYLoQ6afpNJgv3PhQ2lTiC2KLMHKyUOv
+         SAxSJpWikG35tItLUHjiyQ/lCTfvkto4vCEeTyfVKTW8n3lSVFmWCwVetkrhIlgrTO+Y
+         UNUA==
+X-Forwarded-Encrypted: i=1; AJvYcCViN+3rFzZq3HZuJriZvR5+wasaLzTyIDgHZVCIFVRmLbKcd9TkEyVDaBxVOsXTpF2oV4t43p/9ewgzElE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8rNI3WgsTpYQ/nYidbdgvdv9bXSHE6z3g+sswdH81nBJPU/Uw
+	Mg3szVF0giKgmlp9RwME9lomu976sNVHzWWFo/UgSH4JaEvGMKwmyLOIsbv0pXA=
+X-Gm-Gg: ASbGncshDES9VNQH3z9eu074dT/uRgRT+FgP010TwWdx+LpDB4JFkBfCVhPXyrt7wpb
+	M3CeqKEB4jvG435xPazPiLDTRrynxP3SNU4/Eu5ewvF5gSlUApbpFIyF4Vvr2HR3Ls9rn45HKB9
+	57f8cFzDJ0h4WLcX57eyOWreIEdSRRnn0LfmRLSGnrR8O4t1lCbIwdtECE1forimNF1ehCOQ85x
+	weVg2nsnSrR5wUvE8sbVi/u6zJfd1WJb6cgqW6TJJ1IsX71vYoLgNyYCY3PAlfOXGgnIc0SP2nx
+	I72LsctS/MvCnwrC9IfgRUPdDN7WIm5UJOGaEPEXUsBV76WluWia7bnCplnR9S2OgilUFjeC9iC
+	QxQxug4QuKg==
+X-Google-Smtp-Source: AGHT+IHYCZsvLxxSRJILF12M9aB6H5w5fAhHW4arty7ZQG+n7V17Z3Fsr4dbK92tgKAzi47xfntmYQ==
+X-Received: by 2002:a05:600c:468c:b0:43c:fa3f:8e5d with SMTP id 5b1f17b1804b1-43db61b52e5mr83031585e9.2.1743409421160;
+        Mon, 31 Mar 2025 01:23:41 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a8e0asm10520079f8f.101.2025.03.31.01.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 01:23:40 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v2 0/2] media: MAINTAINERS: Add myself into venus/iris to
+ maintain/review
+Date: Mon, 31 Mar 2025 09:23:33 +0100
+Message-Id: <20250331-b4-25-03-29-media-committers-venus-iris-maintainers-v2-0-036222fa383a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/+qaW/Tbmx/7P+oU"
-Content-Disposition: inline
-In-Reply-To: <20250320140040.162416-4-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAZR6mcC/6WOQQ6DIBREr2JY9zcIWmtXvUfjAuGrPynQACVtj
+ HcveoUuJpk3i5lZWcRAGNmtWlnATJG8KyBOFdOLcjMCmcJMcNFyKXoYGxAtcAnFWzSkQHtrKSU
+ METK6dwQKFMEqcqloj3GUV2x6oy/dyErzK+BEn2P1MRReKCYfvseJXO/pf3u5Bg4cdc15NxmU+
+ v4kp4I/+zCzYdu2H/N2yHL3AAAA
+X-Change-ID: 20250329-b4-25-03-29-media-committers-venus-iris-maintainers-eb38e49dc67b
+To: stanimir.k.varbanov@gmail.com, hverkuil@xs4all.nl, 
+ quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org, 
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
 
+V2:
+- EDITME: Remove Stan from venus +M per his indication he can't continue
+  due to lack of appropriate test hardware.
+- Apply trailers from Neil on patch #2
+- Link to v1: https://lore.kernel.org/r/20250329-b4-25-03-29-media-committers-venus-iris-maintainers-v1-0-0ec1007fde3c@linaro.org
 
---/+qaW/Tbmx/7P+oU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+V1:
+I'd like to help out getting patches reviewed and merged for both of these
+drivers.
 
-On Thu, Mar 20, 2025 at 03:00:34PM +0100, Ulf Hansson wrote:
-> Currently we are only distinguishing between the suspend and the shutdown
-> scenarios, which make a bool sufficient as in-parameter to the various PM
-> functions for eMMC. However, to prepare for adding support for another
-> scenario in a subsequent change, let's convert into using an enum.
->=20
-> Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
++M for venus
++R for iris
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (2):
+      media: MAINTAINERS: Switch from venus Reviewer to Maintainer
+      media: MAINTAINERS: Add myself to iris Reviewers
 
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250329-b4-25-03-29-media-committers-venus-iris-maintainers-eb38e49dc67b
 
---/+qaW/Tbmx/7P+oU
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfqUN4ACgkQFA3kzBSg
-KbYdJBAAn+H/xkOTFAwMpJMyS9GPI4+Nz4BHsz/lulbfNYNcpz0K4OkIEJir4Amn
-l1+DxXEBa0JI3T/4mvBr6QND6M/VN2KrZRTR032kZjDLKvOXnmyyCH/auYsOAi7I
-Ef2SWA6PeJpdEQEnmEz2w/pCvUJiQCsOU3r1q8jk5t2eNg229dwoOC0WMsHD/J5h
-I8KLLdAivcX9gDy/H4LSZiNM+kXwL72FcB0zkXrS1MDqYkdf0yecPY1+RbHogl1T
-9A1iQXhhijZaupQNNG+iukMABmRo7XSsh7sW6hGE6FR7GkrrcNt/2uF91SGVa3rm
-B8ohec7hOo4/1Yn7IXslwhvKDrUIme2xK/7ixMTm1wdAlWw2JN3dQuDgi2TSmtSv
-SUOO+Hcnn4w542Tti7je5Dou1iyNtiYq6/cDlhHT6rMaHA9cs1mvAufOlzvQMSsw
-lbBwWBwOO0rlgpu8E+uNdm+gw8xT7W0mJzMmEWmJFm2sMdaUDED55XhH69D3oLFz
-cZnpqIiCONZtL+llrgSsfK5F8WmFfzasxYWkSKTCAro5K6gehZkuKbIJWEKiqrym
-r0xZR15zfrMR8/Ryglv6t0Rxx6M2ZqbNjdweadRFRHr8AODbL9LBn9/YKj/yaJ2c
-/EixgVIehDsUVQhqK0hSlXj7VukYhtrxOJDMNkyubAwEt4A6Ing=
-=4/+G
------END PGP SIGNATURE-----
-
---/+qaW/Tbmx/7P+oU--
 
