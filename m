@@ -1,110 +1,91 @@
-Return-Path: <linux-kernel+bounces-581984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297CEA767DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B61FA767E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC60718879E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233BA167375
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D8A21421D;
-	Mon, 31 Mar 2025 14:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D9D214221;
+	Mon, 31 Mar 2025 14:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKXClEYy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mF7uknFw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4953234
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 14:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775AD211A0D;
+	Mon, 31 Mar 2025 14:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743431346; cv=none; b=PxB1s9FCTAJ9mfABQ65Ql3gFFB7KjSXV2LL+vOE24ZOdyRaJM3CTnslbvqJjqmMp5g0z+fLwNPBhxaKTF7VjxewbctA4OC0fdg9rySsQLXq7F1sPXyJrDlJjFnYyyLph7PtruxgTVBrcyksHV8dmnjaKTNB+aiOTMIrcXbflYZI=
+	t=1743431415; cv=none; b=VJCaJlfb4oVDbT6mmiFHm5+T5u/vZhI5uJbAlwmrjEaaa0jVWp8l5gbsZrYtEdd4DMX+U03N7teQ9mPo4RBcLdFJx9pUZIazd3MsfEJZPJRiQau8v4UiSAEJJDZwNGjo9BpTv8UFKZnqQEfVbI5awp1QMOUDkYXzZwll1FOqe8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743431346; c=relaxed/simple;
-	bh=lF6m40/JA6dazoqy3tT6BZIBqo3KiJhlx4ITotwOjG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kRpvs1zzVhVfsoPF3M41M/pDmWEXLPIzv3b5MJYFWeu9yfCVCN/KnFAJvluFfWJWt5olpPu3Wk3eTTUEFovxiVi0MYyR9pZwy7QWDc9goBT5LiXMG27kuqvhcV6VCz0W9zo7F0dj04j1nOl9/2pLaY2ZRu5kul1/7pMj4bzL9Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKXClEYy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743431344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pj2oe1FgGNek+6/QTB0TcxOqnXlPNsvqklQM0pgvpcU=;
-	b=aKXClEYyOGgdMWmIsDFVI+9U/jW0fJypH9Eyq0NCKgmkr2365HyprJrZp3BS0kZ2jzfgUO
-	PkkQEQ5Kao0fuUkr5KPXrNwkgoBywjtC3uZUFvx7GexQ/WVeaeyYHz6QjcLlKwcqeYsvsz
-	YE175We4SQ2SRzeWe32yVtD1IjeUVVY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-V0bvGhDbNkO7J3i8GpMjLw-1; Mon,
- 31 Mar 2025 10:29:01 -0400
-X-MC-Unique: V0bvGhDbNkO7J3i8GpMjLw-1
-X-Mimecast-MFC-AGG-ID: V0bvGhDbNkO7J3i8GpMjLw_1743431339
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D4FE1955DC5;
-	Mon, 31 Mar 2025 14:28:59 +0000 (UTC)
-Received: from [10.22.89.56] (unknown [10.22.89.56])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 886EF180094A;
-	Mon, 31 Mar 2025 14:28:56 +0000 (UTC)
-Message-ID: <e22e3cd8-f792-4f20-9624-76e973cf4940@redhat.com>
-Date: Mon, 31 Mar 2025 10:28:55 -0400
+	s=arc-20240116; t=1743431415; c=relaxed/simple;
+	bh=D29w7RaQcGFnVgpKwS2JqLdCApkCYd4nC1z1uMeWXeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mzrh5xcjB7BAuNHsXOtLMEsKHZBax/fxSg8IX7lCMO17/eUPjjCL434KAPOriVnd1CbAvOUYg1WVPYHnzMy7OdZQO2OaS5AKuoh4juEE2wwtwuvLZW1ryaEjVySG/1At+dHHN/fojHMpJke3jQYcn2Lc3/t3/TiW9bfVDYBmZEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mF7uknFw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=VFIvp5VniFRkYy5hkXsYY1LBxwev4K/a9oaC6jauFow=; b=mF7uknFwslSgNDplU7qtD4tjzz
+	4ZbCxwXsInxKsRRYh3jjHFhaBRmV8rLkSexH5I6S3f4gNUGNcK7yzKVZZdp4KkV/szFUQzQohce//
+	0A4vbN0w1lpDuN4OaFcahrXq4z+XcbRRcrYckhusHpTBDexqA/RabOa97nrElIz6Jdrc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tzG9H-007aKX-Kb; Mon, 31 Mar 2025 16:29:59 +0200
+Date: Mon, 31 Mar 2025 16:29:59 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
+Cc: Jacek Kowalski <jacek@jacekk.info>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Intel-wired-lan] [PATCH] e1000e: add option not to verify NVM
+ checksum
+Message-ID: <978d1158-c419-4a59-b0dd-ad5be9869991@lunn.ch>
+References: <c0435964-44ad-4b03-b246-6db909e419df@jacekk.info>
+ <9ad46cc5-0d49-8f51-52ff-05eb7691ef61@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] nvme: add the NVME_ENABLE_MULTIPATH_PARAM config
- option
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, loberman@redhat.com,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- emilne@redhat.com, bgurney@redhat.com
-References: <20250328193826.356257-1-jmeneghi@redhat.com>
- <20250328193826.356257-4-jmeneghi@redhat.com>
- <CADUfDZoXg39h-5gi+aVj2u1H6HC4Beyp2XPTrjJ_PMDPf11dQg@mail.gmail.com>
-Content-Language: en-US
-From: John Meneghini <jmeneghi@redhat.com>
-Organization: RHEL Core Storge Team
-In-Reply-To: <CADUfDZoXg39h-5gi+aVj2u1H6HC4Beyp2XPTrjJ_PMDPf11dQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ad46cc5-0d49-8f51-52ff-05eb7691ef61@intel.com>
 
-On 3/28/25 3:49 PM, Caleb Sander Mateos wrote:
->>   bool multipath = true;
->> +#ifdef CONFIG_NVME_ENABLE_MULTIPATH_PARAM
->>   module_param(multipath, bool, 0444);
->>   MODULE_PARM_DESC(multipath,
->>          "turn on native support for multiple controllers per subsystem");
->> +#endif
-> If CONFIG_NVME_ENABLE_MULTIPATH_PARAM is disabled, could you #define
-> multipath false in place of the global variable? That would allow the
-> compiler to optimize out the multipath checks and the resulting dead
-> code.
+> From a technical perspective, your patch looks correct. However, if the
+> checksum validation is skipped, there is no way to distinguish between the
+> simple checksum error described above, and actual NVM corruption, which may
+> result in loss of functionality and undefined behavior. This means, that if
+> there is any functional issue with the network adapter on a given system,
+> while checksum validation was suspended by the user, we will not be able to
+> offer support
 
-If we #define multipath to be false that would permanently disable the multipath code
-when CONFIG_NVME_ENABLE_MULTIPATH_PARAM=n, and this is not what we want. The purpose
-of CONFIG_NVME_ENABLE_MULTIPATH_PARAM=n is to simply remove the core_nvme.multipath
-parameter from the kernel so the user no longer has the ability to change
-the bool multipath variable.  We want multipath to be true.
+We have a similar issue with SFP, which contain a checksum. But a few
+vendors are lazy, they set a serial number and don't recalculate the
+checksum.
 
-There should be no change in the multipathing policy or code by
-enabling or disabling CONFIG_NVME_ENABLE_MULTIPATH_PARAM.
+We handle this by adding quirks. We know which vendors/products have
+FUBAR checksums, and allow them to be used when the checksum is
+FUBAR. You could do something similar here, add a list of vendors with
+known FUBAR checksums and allow them to be used, but taint the kernel,
+and print a warming that the device is unsupported because the vendor
+messed up the CRC.
 
-If you want to compile out the mulipath code you should set CONFIG_NVME_ENABLE_MULTIPATH=n.
-
-/John
-
+	Andrew
 
