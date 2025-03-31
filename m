@@ -1,158 +1,110 @@
-Return-Path: <linux-kernel+bounces-581538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DC9A76112
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:14:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA510A7611D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC3B164A93
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:14:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C4018848FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868EF1D6195;
-	Mon, 31 Mar 2025 08:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798A71D5CC6;
+	Mon, 31 Mar 2025 08:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIyoD3MG"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="k9j2SveD"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A1F1D5165
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82801D54E2
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743408834; cv=none; b=TNNpXO7/SP4DzY1OkOE/xv3Pab2RG6MpN8aoFBLvXrJ2T6e2R5ei8HJVZCcM8e8V2SDzmQuUERzuNO1BnoSME3ox75JJUTkBa0Yb2yhDmaQg2/jihFHCkbsL4Dony2OFBn6qhCcluN/xG1Qp5oOUbh4p4PnZi04+pH0lXonvOao=
+	t=1743408869; cv=none; b=e8EZIyNG9IMkHjr9GBLKj/0FYm02TUT8CAWVjYvAyMkALhECIpLyYY1Ged1v1vXPweurSdZ5DLAxFTq7ChNcpGej72kzyc4uv/OoCo2d7dJQmzywM9LaHaTWj8aZ9JlyIECIngK4Sk40wY0vs8c16QR7kVT6gWkPHQDu07hmjFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743408834; c=relaxed/simple;
-	bh=PnPHPhffTnddLWPJO2b0NVvsFyRaj4XlZxugAhEj3Bg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L8mp1aN+grrVGzXucolpk9B/hcP0a1ibHJDeuXln2Du3uh2GwbBiMsx3kjc4hNsEOc8oYqB0yM+C2+ib5rLpkF0y8eeq9FPdzpR/N5Wc8dcPTXD/rrkuR4fhSxu7FbPcmazuZaDDoHG0MqzEsMO9+ByluKrq6KfDeFxN/Hzx3eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EIyoD3MG; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3978ef9a778so261210f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743408831; x=1744013631; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SXxDv8uEzzOupk29klLSAOEKgKM6kgXgixs38bcJdPU=;
-        b=EIyoD3MGBKYccRvAW3U5cEheg0/7caqGci2rFAyCdB0nS7+5bu2r//QmwDBQzGBETv
-         bb3dDhzwmz+e85f2AwtjzubQe1X7mhxKxsrrDEGky8PW25d9SEIu103+2aoLtVgKDej5
-         3MKq8zAIOHJ36WGsb9z8D8GciKlZVAM3hxe6XPdTmGBuiEd0FNAvt5fW7zMd6XkBHcVG
-         dSRQsxRrZOzq0Dvx2vre91gmFNVwN5p7NBT10FLHotMrp5CoOqRbu1wb7NyZ8zZwceVI
-         iOc3A5sunMLxgm2Byu7C2vMnfgX7Ejqm0OuEd4ZMALytBxTNaqa51VY9Xg0M4PiKoHdX
-         TOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743408831; x=1744013631;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SXxDv8uEzzOupk29klLSAOEKgKM6kgXgixs38bcJdPU=;
-        b=U7V+w+boz7MTApQCyH9Gj49rMGw6M1DOYwNgsZOq0Jm+1fFB1vutNB5gUHS4DXgIdk
-         fkIT8QeaRT8yR/XJ0BOBxWB7arUWLDHZx/pxI5Mk8sLqS1xD86V4BoCFeEfdAZT5Kstu
-         4wRaStmzQ587Ov43bwpxA101TtGjIeYCqyZZYOnfWvwfRUWuuaDsleXvqY4wXUxHipGF
-         KXbvGKKbvsF3BChdJNdjUMgLhmNDCKuK8QzV8AAqGhDG/4dhCo6aYPUypxMznqrvRQiR
-         fIR1Xh1mRw24As00i+hAvcgT9ALz5xQ7hXRi+q/M/soSmms4BMF/CHNYXlHY8NELeYut
-         Wd4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXKK3bEGt9W/rxU985twM1wkTUkyX5MbSUESYFBeqpDKtcsL3fG4xig2VZKpQrUbKDhfM+J+O8xVRyBdlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhZQ5JPBSRU94XhqXBsk0kIF8SV/wI7S7Tcn9hz04dBRqbBQ/O
-	O4egwVNlrz6SrtdRLqV+0WFFRft8NzXYTtnv5+9MZIgdTg4CAPHuGLOV8kBnDZU=
-X-Gm-Gg: ASbGnct9NaZ5Rc3OYRjCjsDGqMnC8ogoRcY+AVaznZdruWkYkc02XYV/klRwneTMYwI
-	LMVcU5IfxdBq300g74SRuzMsau7RIYQVwKIJ9dlUHylBogBaLvqAp3IfJ3uG9TamN4obUjuLjiZ
-	VYfYXQ9UavWQa/orT8MDltT7gFzOeoaFaf8Yw7qGXsMNbrsADkmAJGbeohmsYXSncXR0RN66Gcm
-	E1D1RzXziinwQqc/RTT3ujFrAMC8mJ8BKd0u4a99HmXcgeYjYJseBW1MeQVinJ9g3JpAo0Xp9c6
-	qSOlM9EOUorCwBhqb+Lgei+vui485nKqTH9Wq4+Sh49Cs2PrLg8XMVppHw==
-X-Google-Smtp-Source: AGHT+IEFGA4sZLXqBCtCmvy8ZrF9tSMkgWI/FRxF2a0s+L5qTZ33ZYOB11B37AkE0XnWLTlVxskmiQ==
-X-Received: by 2002:a05:600c:4e52:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-43ea47eff0dmr101735e9.8.1743408830627;
-        Mon, 31 Mar 2025 01:13:50 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8f404ac3sm119812305e9.0.2025.03.31.01.13.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 01:13:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: writing-schema: Explain sub-nodes with additionalProperties:true
-Date: Mon, 31 Mar 2025 10:13:45 +0200
-Message-ID: <20250331081345.37103-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743408869; c=relaxed/simple;
+	bh=J67HmmeYLO7n+t/u6NZpetMD18ifvOyhhcWGwldly7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eM9lmYUqwrnVtQVMAf5nDWAXZ0T4OmO6Rop+Iq9GWCwv8lW1KBXQFp9L5caLQgsSYmslZwNz+7i8sWMkQdFIoqNbL9JGoGiUnJkUwbPKvi2jA6bicTX5VQTW4iMDiz8r47sp35BPhdPkOHikBNrjd4OqgxbnTET6dfhWBOPFEcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=k9j2SveD; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=J67H
+	mmeYLO7n+t/u6NZpetMD18ifvOyhhcWGwldly7g=; b=k9j2SveDIxumKT/2cXlR
+	ckfBIni41Z5DDWA/pL3JVP83eLjdqFdi1QrwBOsGiDdqVrYGG9ca6CutHmEwGEwF
+	GO8cVNSBelBJ7uR7dMgrv+EIdypVwY+m09GmLrNq3cCSXRCK72Q08RwcmLqoErp9
+	tmpY9IlMVNAg+W2a69vhGgT4D/BfSGBu8uZeAGYnTizQG5s5IwGnA8UBjIpBbMj3
+	BILTIdMKxim/G8CDkAUurW8Kb3SRBUjCDkJd0rKZ4RAsX7l0aW+LUpvUFuiZLGJ7
+	PKJmLamQAEf4IDsI65kUYzNA9thmpL3PrWUFu6Ufx1Daz8yki2BI+8HO/PMtiRSW
+	DA==
+Received: (qmail 1151884 invoked from network); 31 Mar 2025 10:14:25 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 10:14:25 +0200
+X-UD-Smtp-Session: l3s3148p1@RjIdAp8xFsRQ8qei
+Date: Mon, 31 Mar 2025 10:14:25 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] mmc: core: Convert mmc_can_poweroff_notify() into a
+ bool
+Message-ID: <Z-pO4coI3HtAMQt9@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250320140040.162416-1-ulf.hansson@linaro.org>
+ <20250320140040.162416-2-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MmTMFJb7JcFkqH2F"
+Content-Disposition: inline
+In-Reply-To: <20250320140040.162416-2-ulf.hansson@linaro.org>
 
-Document recently introduced pattern of using additionalProperties: true
-for sub-nodes with their own schema.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/example-schema.yaml       | 15 ++++++++++++++-
- .../devicetree/bindings/writing-schema.rst        | 11 ++++++++---
- 2 files changed, 22 insertions(+), 4 deletions(-)
+--MmTMFJb7JcFkqH2F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/example-schema.yaml b/Documentation/devicetree/bindings/example-schema.yaml
-index 484f8babcda4..c731d5045e80 100644
---- a/Documentation/devicetree/bindings/example-schema.yaml
-+++ b/Documentation/devicetree/bindings/example-schema.yaml
-@@ -178,7 +178,9 @@ properties:
-     description: Child nodes are just another property from a json-schema
-       perspective.
-     type: object  # DT nodes are json objects
--    # Child nodes also need additionalProperties or unevaluatedProperties
-+    # Child nodes also need additionalProperties or unevaluatedProperties, where
-+    # 'false' should be used in most cases (see 'child-node-with-own-schema'
-+    # below).
-     additionalProperties: false
-     properties:
-       vendor,a-child-node-property:
-@@ -189,6 +191,17 @@ properties:
-     required:
-       - vendor,a-child-node-property
- 
-+  child-node-with-own-schema:
-+    description: |
-+      Child node with their own compatible and device schema which ends in
-+      'additionalProperties: false' or 'unevaluatedProperties: false' can
-+      mention only the compatible and use here 'additionalProperties: true'.
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: vendor,sub-device
-+
- # Describe the relationship between different properties
- dependencies:
-   # 'vendor,bool-property' is only allowed when 'vendor,string-array-property'
-diff --git a/Documentation/devicetree/bindings/writing-schema.rst b/Documentation/devicetree/bindings/writing-schema.rst
-index eb8ced400c7e..fc73072f12fc 100644
---- a/Documentation/devicetree/bindings/writing-schema.rst
-+++ b/Documentation/devicetree/bindings/writing-schema.rst
-@@ -117,9 +117,14 @@ additionalProperties / unevaluatedProperties
-       should be allowed.
- 
-   * additionalProperties: true
--      Rare case, used for schemas implementing common set of properties. Such
--      schemas are supposed to be referenced by other schemas, which then use
--      'unevaluatedProperties: false'.  Typically bus or common-part schemas.
-+      - Top-level part:
-+        Rare case, used for schemas implementing common set of properties. Such
-+        schemas are supposed to be referenced by other schemas, which then use
-+        'unevaluatedProperties: false'.  Typically bus or common-part schemas.
-+      - Nested node:
-+        When listing only the expected compatible of the nested node and there
-+        is an another schema matching that compatible which ends with one of
-+        two above cases ('false').
- 
- examples
-   Optional. A list of one or more DTS hunks implementing this binding only.
--- 
-2.43.0
+On Thu, Mar 20, 2025 at 03:00:32PM +0100, Ulf Hansson wrote:
+> It's really a true/false value that matters, let's make it clear by
+> returning a bool instead.
+>=20
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--MmTMFJb7JcFkqH2F
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfqTuAACgkQFA3kzBSg
+KbZXUBAAq8KZ034aKKSV6ThQSeEOTZy4D3SWnJk3bzUBcuF35UWaj+BI4mwa816m
+9zOa98gi/xs3GrCIq0eP2MrzUMD4Q+lr9oWX9FMsAhpFfuQ1R2ihPkYiphpgsTFX
+sLSCS8EmBSdWw+3cwljFcWYEKwHTxBvVe1s+L+E47ZC+nZvlYyGarLT5kY8hs5sD
+D6LxXQwBZ1H3p5fzXmOiYPoh5MnWHHqGoCl9lm45wWqY+ddabEguDWXkWFoqHb28
+1DZRFNHEs6nEi9Z6tM3qrc1gSBozK1h/bq9Sw5iK9eM+wtXyOgxecIvxc1GbO9CV
+lMh1m8XhBCfYgLuG6doR1lZHgZ/7bnWouBSG8Mi7Cw/PbBWXNVAMbe90n/Wxef2Z
+zbV0mQTvX6rool49shHNEue5uMo41c1gOiiik/UG637GGqrAnIWx4aoezU/16+e+
+q3PvZlog82z0LjDuip5/Ymx+ZM9cwmULtPQEGyrw+Dd0mnIykfg3Xz2XOeRHbOB4
+Qfcfe37vC4kioIpzijTrknJwKxTfYg0BoYBoD61STbAQavS98REapZb02wqlhHT3
+dR33idNw4qXncuwDcDHGuFv5UBjTj3RBDCeaK+QhA5u1GPsJq5Thf2wIMnJ+FnER
+dsgM71AdB8nEcubSle3xXac7HPfeJ1nmxUGaAjIiLLB6QfqgxZA=
+=yQUp
+-----END PGP SIGNATURE-----
+
+--MmTMFJb7JcFkqH2F--
 
