@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-581565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A674EA7618D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D7CA761AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37863188AEB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391C0168DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430AC1DEFF3;
-	Mon, 31 Mar 2025 08:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983C01DD525;
+	Mon, 31 Mar 2025 08:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k4PmS5Xk"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YPxQlua5";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YPxQlua5"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB011D6188
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954A51D6DBC
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743409426; cv=none; b=o/aC+JMrmARqcw+KaYdpdpZ5cW0r0C7QABgm62lHmXVmiDoKRr66OmYqLjY/O3DyUQIGSWCzgPt6lNm1VAfqLjciV5NSXqHGbATC5j5Rcc1kaydj3/Vc8OkedeHHdY7+L6hPtk8l+6x2N4r2/eIOBeklxsHM31CvT1D+OMK6cFM=
+	t=1743409454; cv=none; b=YFVyWXsQTPUJ+3TadYrRTjIyvRG6jUoPC0e3mwIA+SJOg+ucx8w76GnQb7LuQQBteox1TWy4m6s+xoEAU4AUiOD3Ev6qAHQF+U/NwjHM+cXtKe/Ywh8Q/w+elMXLuAJQwvYrgi09DbdRjDhzVTEz8bSZ4FYe1BPH0bKnMX1zB6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743409426; c=relaxed/simple;
-	bh=IWIzqWTJerFVGDEJ6dyCfjqxawUtXxEZNgAVar0xfxQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UvJ+u9cKrpTsMvkolCmAgQQaAsCr7FCP0ERReMMTOzPbV99Sx+lddAn+xV/98CWnl6Byu3+iKaWSqjVgyYx5zvtv+YRuUsckIKxXhIsnYkzg9TqyDs1jtDZdBqYB9SgjTe6YuMYA1AFBdRlP4MwIZx81ar/f5b5bIg1eLCG1iWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k4PmS5Xk; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf680d351so28910585e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743409423; x=1744014223; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w8WDq1ZGnO/CqUh+Nw2fu1DlW08+1Zb/2+tzpoO0cZg=;
-        b=k4PmS5XkykKpXzrOoexzKUVW5fr0oskxEcL9/hohzaCgaYL2+0BFRubMCLL7Q60l58
-         r9j+4tOHYeSh3D2Iw/UIWPvJw/4mB4mkGnyvzmqlrale9qh6AWbFy7qn/1gR1vDMAZm8
-         zYma8n/g97W1UDErTsL5iwOVvgwD6st1GdwNoSxzUUzrmRLFSs//X+dmP8rJ6Rc/ce8E
-         jtCaJtxABMpFAdXCxb6JfXYqamViqw53OqwwC7ExUDVhDkjIo4bjlSPBdpZqa8mN9fry
-         OsufUvh5W4gQjeHQuwKS/PPqJYAE/slqovwOW2gdFsmCWN8Rg7Gv472h3OLQVsgt8El/
-         WdNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743409423; x=1744014223;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8WDq1ZGnO/CqUh+Nw2fu1DlW08+1Zb/2+tzpoO0cZg=;
-        b=aAMV1+MgbiAhy4XSN96usT6SL4etcTdYwfyIIhz+NvbidomVOhsLNZYZBygiqDQ1vc
-         wUr3YuUCLwiCDEj95b9rsvac6GJz78sckBBTk8SNQAiteNbfgMxUZTO1vRDTOxgJTR79
-         TmpdJJbyKWmqcxbbpr3lvPqUGLmzWP2Hwa1yPt2PF7qxmH8rUGEHdbPes+xIqxfuPeKO
-         QC90ubK6x1A+8kBLiL3jzIgHzKlz6zp3Nx1XCoaVers3l9THDlJTf6JLutoIQ1N8ge1N
-         7QKSzGGtvMtKHgW8Sn7CP6B4iDqVvF5JFxkaa5cvQiNV6An5K/IqMgI2mVdzd/8EH8j/
-         gaQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgWLpg/HxuPSyca0oi27UfdpZCw99sLtm1A1085CF8EVTZ0Tou2QlxFvHyr1HCKG/yqhbG0/b5SNuTofQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSgfyvKN+gMsjPeBynJ7pqob7NXmocFh8Wv/B6x8X8KtX2YhfH
-	l/L29LelsKbod7k+35hegm3+zDQtjvoMAF2s9n2TGfRS/Ahv4Ns4rlPGahe2R3E=
-X-Gm-Gg: ASbGncvfWAfceqLwQsfKHWuClr7cKJ7+92/hwUtl6kPyvS5jZXo+AzX6FSlnOFmN4SC
-	WNemCK64qR/tH5evQGe/rSfVaAywDXHUIetXUwvkW+NLtDIA6Xhxt0WJvH8c8Pe7OvVsluD0S3b
-	sdofB7GZM2a3H2U0XxsIBzFAiXG0aePnDISdd187AnjcjGrWrEWA9kkpSLvkPRaBQsbLE0q+fgE
-	WR2uqAAcfSD+PR440tKLFG9iR87Pv6lPbJSt2yP3MPO7QYv39FRwl/MSKc43l2PimRARgp004sh
-	C+UNCj0V81NirMBCViGMAsYXPZ3/PS2Eh0dvpIM2YB0Mn0pzfqJL+DFli4svuNMvN69DTIe8pjX
-	YfqNCDxWFCg==
-X-Google-Smtp-Source: AGHT+IEPliOGLXJ/ttkcUzPpUn/BmzsjWXM+S+SYmgYzau37T5+RA34Y6WBFtgNUEKvYobw7wxOI9A==
-X-Received: by 2002:a05:6000:2a8:b0:391:3156:6be with SMTP id ffacd0b85a97d-39c11b7dae8mr6742640f8f.7.1743409423178;
-        Mon, 31 Mar 2025 01:23:43 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a8e0asm10520079f8f.101.2025.03.31.01.23.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 01:23:42 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Mon, 31 Mar 2025 09:23:35 +0100
-Subject: [PATCH v2 2/2] media: MAINTAINERS: Add myself to iris Reviewers
+	s=arc-20240116; t=1743409454; c=relaxed/simple;
+	bh=M7wtuTQCfxk+2Ir3eEuB3u1i9IwUiZF8u71ymhhlSn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbLzN8LEeS2YAEBYH+AqBZ14N3BtmS1vgS7Odz4NPJqFznDNP1WTN/r4xvwirZ5ts3isxzvCi/Bb1f+GsNqFR9A/tuvXzlvdbFv7R4JVyiffkaqC628yBeIMc8GCwJB+Fj34Y8iFMtNIt+gMVSkMx571k5RGk6EPCGipEsnxnfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YPxQlua5; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YPxQlua5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 970CF1F38D;
+	Mon, 31 Mar 2025 08:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1743409449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=of4F53MvI3MwYC0W4LgWxfmyhWpzolPUajwOpDqYLPU=;
+	b=YPxQlua5FJ9y/qq2oMb95LSy2L/HX7NQFw3QYiX6i89vKsDrBaPp+RlCg0aUktg4GiGjZl
+	+lP+D+8kWswhXKE95h27nOy4Xq97SO7ZZ+ydk4lFDd/qmBhmFzA0p7km1rE1Fe0R8MYPVf
+	Cpww8pm3BCrIxUcCbPuKqRdzMhx6QM8=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=YPxQlua5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1743409449; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=of4F53MvI3MwYC0W4LgWxfmyhWpzolPUajwOpDqYLPU=;
+	b=YPxQlua5FJ9y/qq2oMb95LSy2L/HX7NQFw3QYiX6i89vKsDrBaPp+RlCg0aUktg4GiGjZl
+	+lP+D+8kWswhXKE95h27nOy4Xq97SO7ZZ+ydk4lFDd/qmBhmFzA0p7km1rE1Fe0R8MYPVf
+	Cpww8pm3BCrIxUcCbPuKqRdzMhx6QM8=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D409139A1;
+	Mon, 31 Mar 2025 08:24:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wFIMHilR6mc0OwAAD6G6ig
+	(envelope-from <neelx@suse.com>); Mon, 31 Mar 2025 08:24:09 +0000
+From: Daniel Vacek <neelx@suse.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Nick Terrell <terrelln@fb.com>
+Cc: Daniel Vacek <neelx@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: zstd: add `zstd-fast` alias mount option for fast modes
+Date: Mon, 31 Mar 2025 10:23:46 +0200
+Message-ID: <20250331082347.1407151-1-neelx@suse.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250331-b4-25-03-29-media-committers-venus-iris-maintainers-v2-2-036222fa383a@linaro.org>
-References: <20250331-b4-25-03-29-media-committers-venus-iris-maintainers-v2-0-036222fa383a@linaro.org>
-In-Reply-To: <20250331-b4-25-03-29-media-committers-venus-iris-maintainers-v2-0-036222fa383a@linaro.org>
-To: stanimir.k.varbanov@gmail.com, hverkuil@xs4all.nl, 
- quic_vgarodia@quicinc.com, quic_dikshita@quicinc.com, mchehab@kernel.org, 
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 970CF1F38D
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-There's some crossover between venus and iris, I'd like to help out with
-the reviews for iris to ensure we keep upstream chugging along.
+Now that zstd fast compression levels are allowed with `compress=zstd:-N`
+mount option, allow also specifying the same using the `compress=zstd-fast:N`
+alias.
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Upstream zstd deprecated the negative levels in favor of the `zstd-fast`
+label anyways so this is actually the preferred way now. And indeed it also
+looks more human friendly.
+
+Signed-off-by: Daniel Vacek <neelx@suse.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/super.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9571d042c7f4f7d3b0eb3e627f3b5ae20cf52e99..02da7a074541862bbc9da442f8380794ab5af87f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19529,6 +19529,7 @@ QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
- M:	Vikash Garodia <quic_vgarodia@quicinc.com>
- M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
- R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-+R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
- L:	linux-media@vger.kernel.org
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
-
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 40709e2a44fce..c1bc8d4db440a 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -368,6 +368,16 @@ static int btrfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 			btrfs_set_opt(ctx->mount_opt, COMPRESS);
+ 			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+ 			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
++		} else if (strncmp(param->string, "zstd-fast", 9) == 0) {
++			ctx->compress_type = BTRFS_COMPRESS_ZSTD;
++			ctx->compress_level =
++				-btrfs_compress_str2level(BTRFS_COMPRESS_ZSTD,
++							  param->string + 9);
++			if (ctx->compress_level > 0)
++				ctx->compress_level = -ctx->compress_level;
++			btrfs_set_opt(ctx->mount_opt, COMPRESS);
++			btrfs_clear_opt(ctx->mount_opt, NODATACOW);
++			btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+ 		} else if (strncmp(param->string, "zstd", 4) == 0) {
+ 			ctx->compress_type = BTRFS_COMPRESS_ZSTD;
+ 			ctx->compress_level =
 -- 
-2.49.0
+2.47.2
 
 
