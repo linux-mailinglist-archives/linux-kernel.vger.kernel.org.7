@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-581760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2431A7649F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E34A764A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF7B67A3552
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:56:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 181F27A3C23
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10171E1041;
-	Mon, 31 Mar 2025 10:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efEeA3cW"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D491DE3A8;
-	Mon, 31 Mar 2025 10:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6551E0DF5;
+	Mon, 31 Mar 2025 10:57:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D22B1E04BD
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 10:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743418650; cv=none; b=lXsY4e6CaAObw2oRWz5X7a9nvKK5lg0a3iP6v++1+spHEshewsb9A1q3WZXSmWoZBO01rHRiumeX0SfEO/D5r8o99TQmHw0QpvsBWBeWEs2AldFeKpGD2Mz2G+1Xpn1Rx0gfUcJRkkGsmR6E5PaibSK7TmxhO1xKjVtJY7shWxE=
+	t=1743418657; cv=none; b=uG76//SavYsk1N4YkrHunwGy0/Xt8hxH5h1MBlrT0qIlIKPbCLSGerl/M1j9gckEn2DKBQRZOucolDKx7qzn79yLlp/+TycXJOdq33uuwl3wH1V8/mQWI8oH2dlmaHPTMhcTcmqLZxWHpJS3Pu/VvNY2Q1ooaCrOmL5e/+cUvTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743418650; c=relaxed/simple;
-	bh=09yqRkz8LTxcnQum29LjmUWWXJkwcJhFdYmdig6HcgQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kXAh7jtVuaO+6ZGhFWSUVD6t1eNyU1yidRA2l9yJsG6Jin0nuVjrhHNAdG3jYsAYlplabWDCyOBB99tEGKWurCwZmMPeXxvRxEqZcyVX0vy6t+I45rmUpsNiWtYZ5rdnP+tRhaGjNM1AwUlphWGPTZlNUZ2fGQlIMihc/1Q7o+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efEeA3cW; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227cf12df27so61054595ad.0;
-        Mon, 31 Mar 2025 03:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743418648; x=1744023448; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fQxoGO+j1MyZc3JaI/rKrHOI5r9i4Uu5nnw1H4HdvvM=;
-        b=efEeA3cWInkiE4H6xdpflnmXpW4H6usWL9k3pd4mgloulYAVV+b9TcPZ5BN3TPclMU
-         lUagS6Z6zOHIuoGxtIw7dlxRi8BavqBDVpNtBHhLi6D1FiG3x92slDTXoEJwG+ZGpXOR
-         h/RBgGXdPlOsNTiYfJAqV+fmsioeTVD6E9rPi/CsgjAPx/60J1SCifS5ZKgAEY7BkWr0
-         RYj+xYk53pttnN0PFvXy9VHyd6wKHw+kQ9JZrtJG6Z7O5ndCcoCzPTHf0HWM3JBc0m4T
-         MNDGw546Tn5+4Hk76M4oTpskEjf9tsdWX3chWVIGo3I/ukzDtpcNoWgp5qvG4dKQjceN
-         J8Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743418648; x=1744023448;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fQxoGO+j1MyZc3JaI/rKrHOI5r9i4Uu5nnw1H4HdvvM=;
-        b=jjibRsymXytE4WEOgTSa8d2DYBC8QbDRDKK7xobTRbyfqWN01ZYsoJRlb5dfy+2eKO
-         6Lf/RdtOS1OqDjQrDygbCku8OZ16JX/6ov0Xwm69UNZ3NzNxdQKzI/2iQ4smjK/NGUE8
-         404Y2xQ8xRG5pKbSVWobrM8My7VrRssXqXL2HWL/aUN4TAVRRRY2aYq+75LMDtz1/amD
-         Sh+MqkTBS/sSfRb5ybE/srcgJ7+KDwoCV7Dyc69PZ0qVJ0aoSwriUWOWpPFG8d8KbXsc
-         zg7xyP65Wsbmh8zIMFBrScwwP4xNZv1gumW5B988ChJFfxRFmtwMeh5w72mWL98dezwy
-         j7RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDQAQ8AABeFxbnoenIoYa0Oo1gc3uaAlp5IN6HOMaSvAqKqk481dqwl+4Sh5vHhT7OKHYQnliUc5n6+e+e@vger.kernel.org, AJvYcCWTAjTXuyEpruufSGgomwqzcGUMPiFhhkd/ru4AEAEc30P2cULnTawGd5YbpVp/FAcsk7jb6xd2nrJJwqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1vS5EkXYCRGhWJrhJsCYmgknRy7O+YJ27jFnMfb8cUiURUbIt
-	/sORJW3vEke2fFHIoiYG4z03dCEOgeTv1WCJKmvKaFSBAhmyqH7s
-X-Gm-Gg: ASbGncsrFGNXD8to1WPKV0c3cKmChRlYaQpg43btTTSKVpGl8/U28tapLpF7c4NyVQh
-	/UsID6gKbeKMErakewlzKBKs74ffCLV12Nm2TrcO8wGM0lC90mCsPB8Hi8Fm4RAKTNcR1NVtLoR
-	THy74MHCl9ACSJ+Bm97fT4YoA+LFO1UYgrzhtKjwhzk4oPmTagpzIKVLBQXe7/1IYbl8Z5Ky2Rr
-	3XfR7QqF+sJL+qNsqpRfTNn6Ur5ATgZBGSYjb2cYCP2YSX7fMZYXkQGeeWqMbUzjpyPVFVUzefh
-	3fCZY5XJWN+Kx6Cvm3nBsokn6KjEJNGnFUF0dpSylGd4gGufzVAnfMCfKnb+cn1ac/MxNeB+Af6
-	kYz4KzEturTXh0Ds93iHETvf5KADnTGhK/GcR5wwqCA==
-X-Google-Smtp-Source: AGHT+IHNmQ9Qu2Wh8ipfkyOz9gG66AB6OTRqclxipqrg+lUH4XOIHmm7HxeHOz4+gDNk+/q1p1iFAA==
-X-Received: by 2002:a17:903:2341:b0:21f:6f33:f96 with SMTP id d9443c01a7336-22921ca356bmr192345245ad.6.1743418648294;
-        Mon, 31 Mar 2025 03:57:28 -0700 (PDT)
-Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7397109d241sm6660848b3a.129.2025.03.31.03.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 03:57:28 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: bigeasy@linutronix.de
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	conor.dooley@microchip.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pmladek@suse.com,
-	ryotkkr98@gmail.com,
-	samuel.holland@sifive.com,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH v3 2/2] serial: sifive: Switch to nbcon console
-Date: Mon, 31 Mar 2025 19:57:19 +0900
-Message-Id: <20250331105719.8409-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250331080318.BdZQodhu@linutronix.de>
-References: <20250331080318.BdZQodhu@linutronix.de>
+	s=arc-20240116; t=1743418657; c=relaxed/simple;
+	bh=quCnlwX+3cp+I5J9k00tk313SB10jzq3J6O7tVzXQPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sluSlGTtiPvfMZAi0KF+N/ivniC8dR1UUuyEvh4CoQZOSQ+SW0eB6KORXoM2QgrJ2Act9wrThNgxhxC4jXLc1pY9t9KoGOerL+eF3L+oAK+Y7B3o12FS9iJES+gBK8I8s8kotrHy8ELpnYg7M665/0x21tHMziOhWkgOlF4tHyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 456271F02;
+	Mon, 31 Mar 2025 03:57:39 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A98BC3F694;
+	Mon, 31 Mar 2025 03:57:33 -0700 (PDT)
+Date: Mon, 31 Mar 2025 11:57:29 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Philippe Simons <simons.philippe@gmail.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Rob Herring <robh@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Philipp Zabel
+ <p.zabel@pengutronix.de>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-sunxi@lists.linux.dev>, Jernej
+ =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Subject: Re: [PATCH 2/2] drm/panfrost: add h616 compatible string
+Message-ID: <20250331115729.33e54615@donnerap.manchester.arm.com>
+In-Reply-To: <9ad57d16-5977-4542-8598-d23d41227e7a@arm.com>
+References: <20250312232319.25712-1-simons.philippe@gmail.com>
+	<20250312232319.25712-3-simons.philippe@gmail.com>
+	<9ad57d16-5977-4542-8598-d23d41227e7a@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sebastian,
+On Mon, 31 Mar 2025 11:32:58 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-On Mon, 31 Mar 2025 10:03:18 +0200, Sebastian Andrzej Siewior wrote:
->On 2025-03-30 20:21:09 [+0900], Ryo Takakura wrote:
->> --- a/drivers/tty/serial/sifive.c
->> +++ b/drivers/tty/serial/sifive.c
->> @@ -785,33 +786,88 @@ static void sifive_serial_console_putchar(struct uart_port *port, unsigned char
->>  
->>  	__ssp_wait_for_xmitr(ssp);
->>  	__ssp_transmit_char(ssp, ch);
->> +
->> +	ssp->console_line_ended = (ch == '\n');
->> +}
->> +
->> +static void sifive_serial_device_lock(struct console *co, unsigned long *flags)
->> +{
->> +	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
->> +
->> +	return __uart_port_lock_irqsave(up, flags);
->
->this does look odd. A return statement in a return-void function. The
->imx driver started it…
+Hi Steven,
 
-Oh I see. I wasn't paying enough attetion to it...
-I'll fix it for the next version, Thanks!
+thanks for having a look!
 
-Sincerely,
-Ryo Takakura
+> On 12/03/2025 23:23, Philippe Simons wrote:
+> > Tie the Allwinner compatible string to the two features bits that will
+> > toggle the clocks and the reset line whenever the power domain is changing
+> > state.  
+> 
+> This looks fine, but we need the new compatible string to be documented
+> in the bindings:
+> 
+> Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+> 
+> I'm not sure what the situation is for the device tree for this
+> platform, but it would be good to get that all sorted before we merge
+> the compatible into panfrost.
 
->> +}
->> +
->> +static void sifive_serial_device_unlock(struct console *co, unsigned long flags)
->> +{
->> +	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
->> +
->> +	return __uart_port_unlock_irqrestore(up, flags);
->>  }
->
->Sebastian
+The binding addition was sent earlier, as part of my power-domain driver
+series:
+https://lore.kernel.org/linux-sunxi/20250221005802.11001-1-andre.przywara@arm.com/T/#m083df99cf34ddfd06a6a4b8fbb49636a51b05112
+
+Rob took that one already, and it landed in Linus' tree last week, so
+that would be covered.
+
+Cheers,
+Andre
+
+> 
+> Thanks,
+> Steve
+> 
+> > Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
+> > ---
+> >  drivers/gpu/drm/panfrost/panfrost_drv.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > index 0f3935556ac7..f13743fe6bad 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > @@ -776,6 +776,13 @@ static const struct panfrost_compatible default_data = {
+> >  	.pm_domain_names = NULL,
+> >  };
+> >  
+> > +static const struct panfrost_compatible allwinner_h616_data = {
+> > +	.num_supplies = ARRAY_SIZE(default_supplies) - 1,
+> > +	.supply_names = default_supplies,
+> > +	.num_pm_domains = 1,
+> > +	.pm_features = BIT(GPU_PM_RT_CLK_DIS) | BIT(GPU_PM_RT_RST_ASRT),
+> > +};
+> > +
+> >  static const struct panfrost_compatible amlogic_data = {
+> >  	.num_supplies = ARRAY_SIZE(default_supplies) - 1,
+> >  	.supply_names = default_supplies,
+> > @@ -859,6 +866,7 @@ static const struct of_device_id dt_match[] = {
+> >  	{ .compatible = "mediatek,mt8186-mali", .data = &mediatek_mt8186_data },
+> >  	{ .compatible = "mediatek,mt8188-mali", .data = &mediatek_mt8188_data },
+> >  	{ .compatible = "mediatek,mt8192-mali", .data = &mediatek_mt8192_data },
+> > +	{ .compatible = "allwinner,sun50i-h616-mali", .data = &allwinner_h616_data },
+> >  	{}
+> >  };
+> >  MODULE_DEVICE_TABLE(of, dt_match);  
+> 
+
 
