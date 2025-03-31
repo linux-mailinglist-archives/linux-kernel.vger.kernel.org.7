@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-581957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D475FA76767
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFEDA76770
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43662165BEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3413A8C9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F332139D2;
-	Mon, 31 Mar 2025 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD68D2A1D7;
+	Mon, 31 Mar 2025 14:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgWE4TFT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C667A3234;
-	Mon, 31 Mar 2025 14:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D53234
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 14:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743430125; cv=none; b=QOAEgpHA5Fc4BxrXrPz8Eezx5jvhW3aQxhras0xYdHgwubP6ij6vZDzKywJ6OX1Z7X/hcYHBXcJZkFdzr7zIXfnyRNlyh2mROOPlVVnh5bXGU2Chjh4w8k9v0Ks2jpI47GfWLsyVCraUFl8hIBnHTVFvQJfJ2XtvLRONjYXrVbw=
+	t=1743430189; cv=none; b=L1E5o7HuwdkCjl8iHf+B5ULjhECbAQgwV2GGL+IxyiLZeysuypnD7YDTjPhb2qW0MxYz34y4/bPo2+VakICI3I73UyDeW2J0urDPU6IUQEvGBy9rrHXs/6D6ELG2T7mMUQkoDEGpfgY695UW83qR0r7bxl+4FsJgJ70FVL5Q2Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743430125; c=relaxed/simple;
-	bh=PToFCzKfDCXNFnIrJqTIZCDzDC0JavZmtnFBn7bZiJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VjPPcnJm+7UDN9brkiM74vzMJbLri3j09yggDBGBY8iUVnayyZZS4Bc2ZzW3dCEFAYiVgdNs6naZ1DHHocQuyA7ExtTSMHVzbQlNL+JUDBBYtwskyfsGjQh2Y4KWFfSERBcqaOCG8clT38GS+/mkY0ywLltlGbM7E00S8pZhHnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E1BC4CEE3;
-	Mon, 31 Mar 2025 14:08:42 +0000 (UTC)
-Date: Mon, 31 Mar 2025 10:09:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Cc: "Naveen N. Rao" <naveen@kernel.org>, Hari Bathini
- <hbathini@linux.ibm.com>, bpf@vger.kernel.org, Michael Ellerman
- <mpe@ellerman.id.au>, Mark Rutland <mark.rutland@arm.com>, Daniel Borkmann
- <daniel@iogearbox.net>, Masahiro Yamada <masahiroy@kernel.org>, Nicholas
- Piggin <npiggin@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Vishal Chourasia
- <vishalc@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Miroslav Benes <mbenes@suse.cz>, Michal =?UTF-8?B?U3VjaMOhbmVr?=
- <msuchanek@suse.de>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
- live-patching@vger.kernel.org
-Subject: Re: [BUG?] ppc64le: fentry BPF not triggered after live patch
- (v6.14)
-Message-ID: <20250331100940.3dc5e23a@gandalf.local.home>
-In-Reply-To: <rwmwrvvtg3pd7qrnt3of6dideioohwhsplancoc2gdrjran7bg@j5tqng6loymr>
-References: <rwmwrvvtg3pd7qrnt3of6dideioohwhsplancoc2gdrjran7bg@j5tqng6loymr>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743430189; c=relaxed/simple;
+	bh=TwSbUk2bexhBRfYZh2O2px1+cAq6T4pwFbXJLNozjNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIVHQxZb30fxAhFV2WEDiboka49HaRQaaZAaSUI00kmTJZ0mBaP9d0vWhAY7o2zCXeYKnb+y8SCMG0S5KJdZt2Gktt2Gl5aC2WJz2Z7duMejZRL7dBiERjNW/6EcrKaUvlfUUV8HUoBEiwfxg1LrZGBW/tCpsGQkENYDaNZjByM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgWE4TFT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460D0C4CEE3;
+	Mon, 31 Mar 2025 14:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743430188;
+	bh=TwSbUk2bexhBRfYZh2O2px1+cAq6T4pwFbXJLNozjNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TgWE4TFT5TJnnKd32XnTxF64gPG34kwjwETYZ+oclfBfZhMpSdc2PrGfO0zI22S30
+	 u1Vlj2Qx4I/F/mSDM+f7B84WEYnRKmfaH0Kkf3oec8INZyZ1Fj0vw8hmmsZEG3hLWM
+	 3HtHgfK79276QhgtSR77rl3GZb/m78EZFfFEzZAJB+XFBNoX8V405FbQoxsnGAlv7b
+	 nsocigMJTqfkngSDmTIRQqKIvTuhnBFaC1xeiAlLUOExbbdJUwW5Gz+UIKRbWeaM5V
+	 iEkaGYwa+E9wkFo73tue119OyEuENr4ZWz6UIGplaZE4L7vMI+TO4LeTpgTx8/9Cyv
+	 YePjfSwKCe8OQ==
+Date: Mon, 31 Mar 2025 16:09:45 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v3 1/4] drm/panel: Add new helpers for refcounted panel
+ allocatons
+Message-ID: <20250331-defiant-jackrabbit-of-culture-cffe6a@houat>
+References: <20250330-b4-panel-refcounting-v3-0-0e0d4e4641eb@redhat.com>
+ <20250330-b4-panel-refcounting-v3-1-0e0d4e4641eb@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 31 Mar 2025 21:19:36 +0800
-Shung-Hsi Yu <shung-hsi.yu@suse.com> wrote:
-
-> Hi all,
-> 
-> On ppc64le (v6.14, kernel config attached), I've observed that fentry
-> BPF programs stop being invoked after the target kernel function is live
-> patched. This occurs regardless of whether the BPF program was attached
-> before or after the live patch. I believe fentry/fprobe on ppc64le is
-> added with [1].
-> 
-> Steps to reproduce on ppc64le:
-> - Use bpftrace (v0.10.0+) to attach a BPF program to cmdline_proc_show
->   with fentry (kfunc is the older name bpftrace used for fentry, used
->   here for max compatability)
-> 
->     bpftrace -e 'kfunc:cmdline_proc_show { printf("%lld: cmdline_proc_show() called by %s\n", nsecs(), comm) }'
-> 
-> - Run `cat /proc/cmdline` and observe bpftrace output
-> 
-> - Load samples/livepatch/livepatch-sample.ko
-> 
-> - Run `cat /proc/cmdline` again. Observe "this has been live patched" in
->   output, but no new bpftrace output.
-> 
-> Note: once the live patching module is disabled through the sysfs interface
-> the BPF program invocation is restored.
-> 
-> Is this the expected interaction between fentry BPF and live patching?
-> On x86_64 it does _not_ happen, so I'd guess the behavior on ppc64le is
-> unintended. Any insights appreciated.
-
-Hmm, I'm not sure how well BPF function attachment and live patching
-interact. Can you see if on x86 the live patch is actually updated when a
-BPF program is attached?
-
-Would be even more interesting to see how BPF reading the return code works
-with live patching, as it calls the function directly from the BPF
-trampoline. I wonder, does it call the live patched function, or does it
-call the original one?
-
--- Steve
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="imf3y3eouv67rpth"
+Content-Disposition: inline
+In-Reply-To: <20250330-b4-panel-refcounting-v3-1-0e0d4e4641eb@redhat.com>
 
 
-> 
-> 
-> Thanks,
-> Shung-Hsi Yu
-> 
-> 1: https://lore.kernel.org/all/20241030070850.1361304-2-hbathini@linux.ibm.com/
+--imf3y3eouv67rpth
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/4] drm/panel: Add new helpers for refcounted panel
+ allocatons
+MIME-Version: 1.0
 
+On Sun, Mar 30, 2025 at 10:24:12PM -0400, Anusha Srivatsa wrote:
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> index a9c042c8dea1a82ef979c7a68204e0b55483fc28..97a5457b64fbbe9c91c6a4f41=
+b8e1fbfe4fa604e 100644
+> --- a/include/drm/drm_panel.h
+> +++ b/include/drm/drm_panel.h
+> @@ -268,6 +268,30 @@ struct drm_panel {
+>  	bool enabled;
+>  };
+> =20
+> +void *__devm_drm_panel_alloc(struct device *dev, size_t size, size_t off=
+set,
+> +			     const struct drm_panel_funcs *funcs,
+> +			     int connector_type);
+> +
+> +/**
+> + * devm_drm_panel_alloc - Allocate and initialize a refcounted panel.
+> + * The reference count is initialised to 1 and is automatically  given b=
+ack
+> + * by devm action.
+
+No. I told you in my previous email that it needed to be between the argume=
+nts and returns
+sections ...
+
+> + * @dev: struct device of the panel device
+> + * @type: the type of the struct which contains struct &drm_panel
+> + * @member: the name of the &drm_panel within @type
+> + * @funcs: callbacks for this panel
+> + * @connector_type: the connector type (DRM_MODE_CONNECTOR_*) correspond=
+ing to
+> + * the panel interface
+
+=2E.. So here, just like you did for all the other functions you introduced.
+
+Also, there's no reference counting yet, so that paragraph should be in
+your second patch.
+
+Maxime
+
+--imf3y3eouv67rpth
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+qiKQAKCRDj7w1vZxhR
+xdJRAQCHNMX/G/Wz1zDjAtn+FlQ+3vGE7rpJ3/FEU94kH5uBIgEAlXtggqh5ttPL
+ZlOzl5oF4hEn2BkxYrkpcsHty9iH5ws=
+=txRs
+-----END PGP SIGNATURE-----
+
+--imf3y3eouv67rpth--
 
