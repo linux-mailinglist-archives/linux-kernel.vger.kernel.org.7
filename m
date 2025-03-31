@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-581353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62172A75E24
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:22:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C104DA75E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 05:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7FC188A275
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4126D168492
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 03:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B185F141987;
-	Mon, 31 Mar 2025 03:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954F12033A;
+	Mon, 31 Mar 2025 03:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JEwFdcXb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u00bTW4x"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C22312F399
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B07812F399
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 03:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743391353; cv=none; b=ldYIE8a4gBNTu+VvV65Gv2yDrYcX0tEWH54ZQkw3GrvvE02J/Kds1Quj5vUt0DBoGpqgbHpq4qf52orB+NGrVlcWYKjXjGRalkrXbtxkOT7yjoSzURVohUtqfCyZ3T4GHdEg/jJF9aC7zAYsWcHxCtAtSsnwu9/lrTnNnMtKY/M=
+	t=1743391619; cv=none; b=uP+69D4RVH4ni+k/EAsKSfyC9j19HQF871w6dYWYjOB4zAVw5o7LyRWTCfYCOLq6wZav4bnE02wLol+th5AemUHvimk0zxBe+Ca4IKzf9BCDz1juBiHlXM7vkOd5bjIySIi5LLAnnrl/IVJblm/KKM8GKx8IWMxx15MLuiPCQt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743391353; c=relaxed/simple;
-	bh=DJYht588chhOshnh/oM01PQlP9cicgLlbkkCnh6ie10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TqeAZtJPqQKJI7bb7W4cHcnoQ6GtMWHP12JkZOFr0VqUplegkN38HXlr7OJ4oUSzls9Wxk5KPN3lwTEz1dsXRJDbxYcFGtGnCQF8ct3dqnJwEciNKY2mdTTQoOOOmwEMtKCqft00NLhUdrLzdbsoaZzd7pUbmaORZy+q/PEwb+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JEwFdcXb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743391350;
+	s=arc-20240116; t=1743391619; c=relaxed/simple;
+	bh=oP/qAE0ISo2Hd44LLcQo8O1Z+cux6205Kr3iC0Onwzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G6kXAYazAthUBlbai96vj4k4IpYZU5vEo1Ktp5CTsaeevTHQdnHq+YaWelmQIs1iMVqZMonH11xuEzzxulzYWP0JkTo2im97SlvzlK8HkBjUJZLpM0QG3dV0VsOiWkTp/ssxVJaOZJT6m7QSBokKMJfVbpiGAMcZccrLqtpWGNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u00bTW4x; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743391604;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DJYht588chhOshnh/oM01PQlP9cicgLlbkkCnh6ie10=;
-	b=JEwFdcXb4BArWGTfnD66tLS2NLniPug8c+GfVlIKCyX0Pyal/Ej5qMxiy246hnHuwrifTc
-	5NSJBFshaxssi3LlV4mGg66NuA3LDzdmgFAVioTdEaD04rCeXW+TG8mrevPovsJx/Cj5/7
-	xVqQnvPjQNfNmQiOZX2kOH9hFrrnPLI=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-3L09IBzDPYuHnqBVdWCNgw-1; Sun, 30 Mar 2025 23:22:28 -0400
-X-MC-Unique: 3L09IBzDPYuHnqBVdWCNgw-1
-X-Mimecast-MFC-AGG-ID: 3L09IBzDPYuHnqBVdWCNgw_1743391348
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d5da4fb5e0so23149985ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 30 Mar 2025 20:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743391348; x=1743996148;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DJYht588chhOshnh/oM01PQlP9cicgLlbkkCnh6ie10=;
-        b=peTClvn5wZEY4NmyLolgCE4YKpr3Z+cVGRiZgvPyrXHXD5ZkHnu9wccx20/dO+tbRP
-         7QREJa97/4Tz0xtovUXi73ElMFTNzlmUdFt5KzUnEusnl3FErfrqAbpAH1hqvy8hCXoF
-         MZ/h1cGBou6Ps71Jo7KgiA+lbNi+7rcJwkCXbOZ/KpW+wLsEYV+HWY9wDcLReDNho368
-         Ns40x6hXzaHbUM+ikcFQzzi7co5xMhvMfUs+aF+MFwtn+e0n9Q8KvyqLZDSW8m71spBw
-         hryJyFl6fRjbsV71dMQnpfzBah/8TLwOf0MIe+u76RFq+RftQoSrXi6FQRvR7Zaq17Zz
-         FqYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPJdTztgjVw4nbtp6xXMWDlFgDn7dAouCJudMsEUsnD0Je+Rvf8Kk0RXU987VA85rjckvqt4lZbljfXc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydiKRiXtj6EnPxooLKh+aYZWtbmMPH5ewYi9p5dJ07roWyEJn8
-	UaWQ7OAG0cTPrhskRtiUwvCi2gen2gykFswnhKka2i/yOSVWV0ZA0xH9aMt+no2uWKCbSUd8ell
-	p/+2PgJvFI54it/avxBh0mXsu/ibRtBSPWIIBuYqOKXipiLkuqIb9DKSoUxN6xQbvwwaKkrayya
-	0o84Q0xrxuxZ3qlBH4DruUJT2b+aBPGju2xL/E
-X-Gm-Gg: ASbGncvZSWUqMScX1x5Lr/SUjtrWy3vQiKFPycm8zotcCEEJdD11SbCJ3DbCxuw1fkA
-	eJLPS1TIa07qF7mRR6xAiCWS3P1aeOQwMIivAaTO4Na4/mq1rQOhb1CN9gyR1zDgaRSSfh3GqFQ
-	==
-X-Received: by 2002:a05:6e02:17ce:b0:3a7:820c:180a with SMTP id e9e14a558f8ab-3d5e0a093b2mr79161045ab.19.1743391347968;
-        Sun, 30 Mar 2025 20:22:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzaH25Vzm7n70KpLV36fle/W5sj7NSSdA8hJmo754X2wtwvaPhuyZSC58LigxxsFYAU0bQlbQf86JZovKBAVI=
-X-Received: by 2002:a05:6e02:17ce:b0:3a7:820c:180a with SMTP id
- e9e14a558f8ab-3d5e0a093b2mr79160885ab.19.1743391347656; Sun, 30 Mar 2025
- 20:22:27 -0700 (PDT)
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iENPp3LijFa+A7OLDZZ7hkUZawrs/WHbGdevCHNli/s=;
+	b=u00bTW4xD+qolsQvKMENKBpx2kIkXWjw9s9wiHh3bPBmLsqYsWA3bkSaWBBtmkZAfM9D01
+	m2RaqVzgFSk+aOuFgqZxJVhtlRlM3o/DH1n2fvRclONKQiZv4KV8CLUk8oevpAaqWq4iaM
+	HP+At0io+uuRhdV2gSFqTSonsS51Kjc=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Anton Protopopov <aspsk@isovalent.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Jordan Rome <linux@jordanrome.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>,
+	David Lechner <dlechner@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf v2 0/2] bpf, xdp: clean adjust_{head,meta} memory when offset < 0
+Date: Mon, 31 Mar 2025 11:23:43 +0800
+Message-ID: <20250331032354.75808-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z4WFjBVHpndct7br@desktop0a> <Z5bx7ZHNcyc5fM_L@darkstar.users.ipa.redhat.com>
- <CALu+AoSSKh=5ELgQyzDrGEDm5fm2XKteH1ZC70mm89pNSSPMHw@mail.gmail.com>
- <Z-c7V2hptt9U9UCl@desktop0a> <Z+dQZozsbdls6yqJ@MiWiFi-R3L-srv> <Z-hYWc9LtBU1Yhtg@desktop0a>
-In-Reply-To: <Z-hYWc9LtBU1Yhtg@desktop0a>
-From: Dave Young <dyoung@redhat.com>
-Date: Mon, 31 Mar 2025 11:22:50 +0800
-X-Gm-Features: AQ5f1Jq_A3xmC-EmSPquFgYtTSaWdlNOr-d-et357PEEYRDXHWaZEck-6AeRlpk
-Message-ID: <CALu+AoTrPZS7ukuLsCTCwKNKVd8=PUN8nXwh9BdicyV-==-W=g@mail.gmail.com>
-Subject: Re: [REGRESSION] Kernel booted via kexec fails to resume from hibernation
-To: Roberto Ricci <io@r-ricci.it>
-Cc: Baoquan He <bhe@redhat.com>, ebiederm@xmission.com, rafael@kernel.org, pavel@ucw.cz, 
-	ytcoode@gmail.com, kexec@lists.infradead.org, linux-pm@vger.kernel.org, 
-	akpm@linux-foundation.org, regressions@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> With v4.9.337, kexec (via kexec_load) + hibernation works.
-> With v5.4.291 it doesn't.
-> I'm not sure how bisection could be done in this case.
->
+This patchset originates from my attempt to resolve a KMSAN warning that
+has existed for over 3 years:
+https://syzkaller.appspot.com/bug?extid=0e6ddb1ef80986bdfe64
 
-Not confident, but maybe you can try latest mainline kernel see if the
-below commit helps:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a2498e5c453b3d8d054d77751487cd593332f8c2
+Previously, we had a brief discussion in this thread about whether we can
+simply perform memset in adjust_{head,meta}:
+https://lore.kernel.org/netdev/20250328043941.085de23b@kernel.org/T/#t
 
-I noticed the e820 export is different for v4.9.337 and v5.4.291
+Unfortunately, I couldn't find a similar topic in the mail list, but I did
+find a similar security-related commit:
+commit 6dfb970d3dbd ("xdp: avoid leaking info stored in frame data on page reuse")
 
-Thanks
-Dave
+I just create a new topic here and make subject more clear, we can discuss
+this here.
+
+Meanwhile, I also discovered a related issue that led to a CVE,specifically
+the Facebook Katran vulnerability (https://vuldb.com/?id.246309).
+
+Currently, even with unprivileged functionality disabled, a user can load
+a BPF program using CAP_BPF and CAP_NET_ADMIN, which I believe we should
+avoid exposing kernel memory directly to users now.
+
+Regarding performance considerations, I added corresponding results to the
+selftest, testing common MAC headers and IP headers of various sizes.
+
+Compared to not using memset, the execution time increased by 2ns, but I
+think this is negligible considering the entire net stack.
+
+Jiayuan Chen (2):
+  bpf, xdp: clean head/meta when expanding it
+  selftests/bpf: add perf test for adjust_{head,meta}
+
+ include/uapi/linux/bpf.h                      |  8 +--
+ net/core/filter.c                             |  5 +-
+ tools/include/uapi/linux/bpf.h                |  6 ++-
+ .../selftests/bpf/prog_tests/xdp_perf.c       | 52 ++++++++++++++++---
+ tools/testing/selftests/bpf/progs/xdp_dummy.c | 14 +++++
+ 5 files changed, 72 insertions(+), 13 deletions(-)
+
+-- 
+2.47.1
 
 
