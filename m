@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-581521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065DAA760E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301C3A760E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400B21885D2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF5E3A58EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8041D5160;
-	Mon, 31 Mar 2025 08:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EE61D86F7;
+	Mon, 31 Mar 2025 08:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYW7ZXwr"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+lvL6eP"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642C01B6CF1
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC871D63E8;
+	Mon, 31 Mar 2025 08:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743408381; cv=none; b=l3/jdT9sLwKnnwn7f907RXjMH3XW4fuJNWFXBEb3Dsoot/7yB6Mii1UMlSeORUrXdsByN8AowHP6W25zbiwRin3Kpo9fAhweTPns4nU/Koea39O3CebKEKQmluQFBugQW+Z0MohR4VohNaGsPUs8ul4+5H0wvN8sArocGB7Yffk=
+	t=1743408401; cv=none; b=J2WuEhcQdHLSmlpVFz+VaeoKGt85M3DdE0dNdfa7au6unDa/71HepUU+o7JzPRBzwWIfor6W4AyqpuNuSSX6TNMeK0VvpWLqoxVjU19vPBjYrFRBossfDtJel2D8Ma4oZL2Y05dHnkU9TB4mOH0UT0BboBdZFLsQE+rW4nl7HGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743408381; c=relaxed/simple;
-	bh=ZfJC0SeKdJDQbt1YZCchBbUcg7nBqFPWQB9hQRz76Os=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PX+e7yGvJKnGrMOf3WkhP73+QpPAgvHK8PwfkdxSoDi73osp6sCOXF0XTNOSUrgWJaOIf0nMEhWQ0no6ukcRpQ3/qfvoXHdY6WyZTHyXgfrrxa92qRzojTxYdY2/cQH8mf4b9/dx+GZ2z4ds+utfyrEkBQnkaG80yKXHVXQEhbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nYW7ZXwr; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so28767565e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:06:18 -0700 (PDT)
+	s=arc-20240116; t=1743408401; c=relaxed/simple;
+	bh=pMR0z8cpNwEgCOa/C+ZAgIbmc8jq+a+R5RmTYNg5tEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qh5y/aDesntUPJBB7r4ZljsGrKRDr2vPSlbJUGUF+egKpfqhEfaZEfu2C0ZYXgqp+syuJns2kDNQ/fgfl50gmVBla0JTju/9nG7BHbwNf0/h3Y5hNm/reLCsIeoj6KRX5aNlyKhrPJDAGkNEXczbHqWoSIrPk/f3/J553P3+ws4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+lvL6eP; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ff73032ac0so966895a91.3;
+        Mon, 31 Mar 2025 01:06:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743408377; x=1744013177; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dem/AHZR7qF3cH79b+8VdRbhMuCiw79+oYYuDn1nDoI=;
-        b=nYW7ZXwrLX1j6ndkWjLKlFmTOP8IFtRO1aRj9OhlprisCFwJQtJ3RKPln49b6Mmp95
-         Y8nVE9GXzmYUdcO77/7AF5MHvhE4CELpr9VsVXZbK60CKet1wQGbykgDrFtiBr4SD1n8
-         que9RNF7Oz8U3oL3GrTN/j0U6yTYUgBxC9EYs9sAUeoTN+sDAtMCzmAqIvKbSvt3y3C2
-         y+YsIHuNJ14uqwHNrPa13jBfA02VwS13F4dlCaUkaGzbUBkeGIJ1el/YzMAJqxftHNzd
-         rDWmFcZYwkJsux5d+ROGmo6ACx2FeB6/+Ks4q5BrFeUuV1yfXsffACZGuXbp8wSbeFzw
-         dM3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743408377; x=1744013177;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743408399; x=1744013199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dem/AHZR7qF3cH79b+8VdRbhMuCiw79+oYYuDn1nDoI=;
-        b=FlP78M6y3L+wcZ2OdTbHQljRX9RIdUnH0nS+tIrKCARVK1hA4eS3+CXlAR4EkcnhkO
-         QfkiU3z+N3miQzd0SFKYMicURFSSmUbSKCtt9rRxu+22mPUQEomA9N/cWpkvvPP5Sd1H
-         uO408FiH0eg1MHF8cBMK+T+0JYDgxjixfqKCr2pOWEWBHY2HFfM69tfikAmoRPrlTJpq
-         zjvoG3Q4gT5dEZPNwB63oTunq7iLlpkc73zDVGNkiy1geNKvGxQaxbD91NJi9OOsOVnR
-         so0UeVu0yTvjTbEm24ZHjM1TzEfLCPVpv6s3q3PElp0lXBRDE9I1LRO2md9+/gXBMtu0
-         PzaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4z+SnFpDkaEyBauvbsV9upyRbN5iddd6EVBZPqH4GLMeY5nPNU7Ib18ucU7zN/o0NOn7X8zM+Z8T97jM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjCVGPbnHimf3v09T8jbxL34ZiWRiqv3GHcu/pdNmIbGjr5Z3d
-	3pw7fhxAlyRV1oEI0RJqZfvgu0Z8FSuWErb2a/kanrjOIJBh8Q6LCOtdtXqSydU=
-X-Gm-Gg: ASbGnctf8tie5kxOrk+xZYmFK3d/6retqgtoEMk43GjwIyL4zacOs2qpkWFvb8ntvTb
-	jGy5uVjQUBMiBBOv/Z+aryVE3rfhXd28eQBPC/tSrGigHKAkzn8VQYG5yGSSENU1umdNNhAfbq0
-	X7nGvD92079QrC6+QAdVLvgfdwR0xxsau+N3EJ9Q8Hh4pAaECkbg4z4bHxlSj79uah7q/+1j5mD
-	nTP+rYKkXd1FqlmmzwfNiNFUvSxk/HmWiKSL0W2lBynZ0R2xZamVF+RGZF7fyp2Ak+v2263xk67
-	KTgf+bjNFWMf1A892v8DA28AtgckOAnnlGGObaE5cNCGNCRuvw==
-X-Google-Smtp-Source: AGHT+IH4vJ/KqgunlkK1ej1cXacAghtjETA+BJXj8kGxSrm8d1nKUfuPzSv/zW4Kld1su7UgbTv4Jw==
-X-Received: by 2002:a05:600c:4f0d:b0:43c:f597:d589 with SMTP id 5b1f17b1804b1-43db62b5b62mr61296165e9.27.1743408376550;
-        Mon, 31 Mar 2025 01:06:16 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d8fba3ef1sm117879915e9.2.2025.03.31.01.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 01:06:16 -0700 (PDT)
-Date: Mon, 31 Mar 2025 11:06:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Gow <davidgow@google.com>
-Cc: Alessandro Carminati <acarmina@redhat.com>,
-	linux-kselftest@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-	Daniel Diaz <daniel.diaz@linaro.org>,
-	Arthur Grillo <arthurgrillo@riseup.net>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Ville Syrjala <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>,
-	Alessandro Carminati <alessandro.carminati@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: Re: [PATCH] kunit: fixes backtrace suppression test module
- description
-Message-ID: <8e4dcf64-898c-4334-8124-598964089f4a@stanley.mountain>
-References: <20250329150529.331215-1-acarmina@redhat.com>
- <CABVgOS=s-NgS1tPOOPDstuVfTmsW9H0kP8nEQmtfFiubQeyvWw@mail.gmail.com>
+        bh=pMR0z8cpNwEgCOa/C+ZAgIbmc8jq+a+R5RmTYNg5tEc=;
+        b=g+lvL6eP8M3RXTnO2TqhPIBAKNw4VcQgLJNKl+DReJHUFeTxEI7cUAHNYm4CqN+1Ou
+         VJ1rcnHGZ4Z+yenb43425tT/jOmLIVC8qOvtAv4UdH4FwcDPzvoo4aCQJ3C8PNgLslWC
+         Y0T0hTZ/fi3Af6gKh1OrHfY/fnpN5TNrKK9vIjFZqaSODwWGE5ASMKpFqaqS3OoliLVh
+         57ayWf92/rUC+sbX8wmGXltCootgM6w1qUgs/F5gBrhbcbX2DBzdfk5m7Yms4yOGNth8
+         ZeFKiTslHv2edfdQO2OuGDTSeIljZTv4fJTYZNId0FYHDFRbT8VWCOytBWr1i3A6xC9/
+         pjdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743408399; x=1744013199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMR0z8cpNwEgCOa/C+ZAgIbmc8jq+a+R5RmTYNg5tEc=;
+        b=OL/ehLrY9lxo/FQgPJ/dH1JAOegBjDAahcA7knO8sM2+Ny8Mxjt83bIJ9lRvQfsItg
+         iMr3qCWhBQVPQmN6sCbBqCxCIlgzhaw5D9QoVQRsj9Ha3/zbu7O3A5Ly9yG/1Mz2TvYk
+         HPwj9ALdYMxJUjCRzxA/QR3xiyL1NrAHNDcccvKBudUKhNDWuNHVUZfHTFgvx43AuvKX
+         nGK6KXJE8QaMJo0jytH8rv9ruv+rXqH8MxqTELAgkBuFf18Yud7C0QJ4TdpK6ajkUlMd
+         Tvc8rRfVXiyzV4yvT+/DqYr7OdKUeuPjHZO4ArjZfnm+KupJcsRYjJQk7Ru+9InT07yk
+         VSZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPO1bYcFMIMVr59GHBMgp+vhhMiwdjuXr1OlJKI8mvxadk4u2iGCcvq808aUaM4uqUaLHDmbSpsg4Kwuw=@vger.kernel.org, AJvYcCVHKpbxp+W6ZMJrX3xA5l1bCwXvTegqkDXNKNLkWJ8WQzkB4yesZx37Umc11GU6pmGj4LJeSejxp87kzKgGrXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsHAkIFzhEztORrb64/sCb4cOdX464HxrUpdcH8orfK0shRqGT
+	UoV/B0Tq41l3vdCiRgJaUOW8z1rBs1uX2pLmSlDKBRKHTsb5FwbrMVRu1rb6mzNchQqrOG+m7I5
+	kQPm4c7NmFkmh0L7/8Qlop7EX3xQ=
+X-Gm-Gg: ASbGncuQ7ut7BoyHG+Mu0FxbV5TI/OBGXmMgkmuE+HGo3A/huM+gDPEO8WiaSEQ8uSp
+	GQ4cIuzxcxCdvwSxkwYEn9vjOjG+R+gPEZHP5cbPFx5TCcVVo/5BIh1C/eA8Bim0ais0RBUV0Ji
+	d1HbDJr9ZV3pzJ5BoqRbH907Ry7A==
+X-Google-Smtp-Source: AGHT+IFEr3CTEG0QP9x9JSSC55uzenqEQf1h4v7x51TbAttpEEcTBFR5wEcJ9Ba3fd26i3yQIDWH46+NHjF0dgaugBs=
+X-Received: by 2002:a17:90b:388b:b0:2ff:6ac2:c5ae with SMTP id
+ 98e67ed59e1d1-30531f7bef6mr5375318a91.1.1743408399053; Mon, 31 Mar 2025
+ 01:06:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOS=s-NgS1tPOOPDstuVfTmsW9H0kP8nEQmtfFiubQeyvWw@mail.gmail.com>
+References: <AM9PR03MB7074692E5D24C288D2BBC801C8AD2@AM9PR03MB7074.eurprd03.prod.outlook.com>
+In-Reply-To: <AM9PR03MB7074692E5D24C288D2BBC801C8AD2@AM9PR03MB7074.eurprd03.prod.outlook.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 31 Mar 2025 10:06:25 +0200
+X-Gm-Features: AQ5f1JrrF-mgR2QxkRwbj7EnhKN34r4f1vPBnOG5nf4N9ddejcB1LuCd5hnzsR8
+Message-ID: <CANiq72mWjtP3L0_W7VsOD7uAW8LMmV=E8oHSbrT2dePyzthxxg@mail.gmail.com>
+Subject: Re: [PATCH] scripts: generate_rust_analyzer: fix pin-init name in
+ kernel deps
+To: "Lalaev, Andrei" <andrei.lalaev@anton-paar.com>
+Cc: "ojeda@kernel.org" <ojeda@kernel.org>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, 
+	"boqun.feng@gmail.com" <boqun.feng@gmail.com>, "gary@garyguo.net" <gary@garyguo.net>, 
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, 
+	"benno.lossin@proton.me" <benno.lossin@proton.me>, "a.hindborg@kernel.org" <a.hindborg@kernel.org>, 
+	"aliceryhl@google.com" <aliceryhl@google.com>, "tmgross@umich.edu" <tmgross@umich.edu>, 
+	"dakr@kernel.org" <dakr@kernel.org>, 
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 30, 2025 at 01:11:59PM +0800, David Gow wrote:
-> On Sat, 29 Mar 2025 at 23:06, Alessandro Carminati <acarmina@redhat.com> wrote:
-> >
-> > Adds module description to the backtrace suppression test
-> >
-> > Fixes:  ("19f3496") kunit: add test cases for backtrace warning suppression
-> >
-> > Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
-> > ---
-> 
-> The "Fixes" tag here should be immediately before the Signed-off-by
-> line, without a newline. Also, ideally the format should be something
-> like:
-> Fixes: d03d078df162 ("kunit: add test cases for backtrace warning suppression")
-> 
+On Mon, Mar 31, 2025 at 8:18=E2=80=AFAM Lalaev, Andrei
+<andrei.lalaev@anton-paar.com> wrote:
+>
+> Because of different crate names ("pin-init" and "pin_init") passed to
+> "append_crate" and "append_crate_with_generated", the script fails with
+> "KeyError: 'pin-init'".
+> To overcome the issue, pass the same name to both functions.
+>
+> Signed-off-by: Andrei Lalaev <andrei.lalaev@anton-paar.com>
 
-Yeah.  Everyone should configure the default hash length to 12.
+Thanks, good catch -- indeed, there was a typo in the merge.
 
-git config set --global core.abbrev 12
+I will add a Fixes tag, send another merge typo I noticed, and send
+them as a quick PR after they are in -next.
 
-I generate my fixes tags like so:
-
-#!/bin/bash
-
-git log -1 --format='Fixes: %h ("%s")' $*
-
-regards,
-dan carpenter
-
+Cheers,
+Miguel
 
