@@ -1,123 +1,213 @@
-Return-Path: <linux-kernel+bounces-581812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903A3A7653F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB473A76520
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E900F3A67C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36DB33AAB8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E521E2845;
-	Mon, 31 Mar 2025 11:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA7727726;
+	Mon, 31 Mar 2025 11:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKpUSAvL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivdhCo7E"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5871E104E;
-	Mon, 31 Mar 2025 11:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D103FE4;
+	Mon, 31 Mar 2025 11:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743422186; cv=none; b=sXecmRNKt0OlusZPbj2l3Rmx6TkHnKGxtSLbcea4DTO6ViWhV9KZ+RrlAQrvA8+w7YiFAnvNbg8akXzdM0eWHPNre6L9cV3AZrVVzC2C9u/IVT4Ps8GBLR4sE6Y31fReHJcZYuLhBkHptgmQz0rO4SA4YVc4Y0af7Qbvm8k4l5U=
+	t=1743421524; cv=none; b=O2jfAurnKh9fDhTeCsPRkhjQwVtgrDuK5oqztF3Lu+sArposOFZgQku9hou4o71yOf4eufTltKfJDtudxVxgASa01EOMV9CWkiImMJI65drumvJZu4U3WH3AeHhFsptRI/Z3930qHA4J+aBciPyDMg0M6Q3ZFGoJ4OQVtNmXfGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743422186; c=relaxed/simple;
-	bh=+2tIP000T17A8Oc7t3JMilpXBYVfCrNZDt+OW//gigc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKeLwxvrC0cxzWJy6YnTZpVv9WNqRLcOnj5f80V3wMogMFsMT2MtRceUz0mMdOVkxdoI9GL0282jLPnaSqkTgYS3pGQD07Tqy8DVd6Za4KRu2F0u9gsd6yMVj0YVcOx7LQw6uNReCsewTG3URZevs6v2orjBavzn+obxL5NtwQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKpUSAvL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EB87C4CEE3;
-	Mon, 31 Mar 2025 11:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743422186;
-	bh=+2tIP000T17A8Oc7t3JMilpXBYVfCrNZDt+OW//gigc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKpUSAvL1CD7IFs2UvGzkDo6iHdIfzQXRDwjWfHvPmUJXwX5VGnSEK1Dc8jjBYk/Y
-	 d/fwhHzvd1jUrQg/Pr6jlSYhv3ZOImcnFKf8CXC/qPn449d14yAFi8NkZkC8WNDVbE
-	 o8vKw8u26lGFPt26pgXotQ0+SOEgLIeQJTun+kMtKE37T6cJ12XoRp6DyfW7g1J/4s
-	 Oq9G75tUw4lGyZVDZ06iFHAhfXkEWNX8NeLhmb9q1WM47lsb/87ahYEq0qBRP1o59F
-	 J6fh9Ha6fLZQOhtzpk69py7w7LeXSzchJlb/ermD0d7mBLIu2ZHhwgqXbsEeShvoJF
-	 Rs05onYuLQpvg==
-Date: Mon, 31 Mar 2025 12:56:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Lutomirski <luto@kernel.org>, Willy Tarreau <w@1wt.eu>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 12/16] selftests: vDSO: parse_vdso: Use UAPI headers
- instead of libc headers
-Message-ID: <708e303e-4de6-4322-8065-1dacf0cc0d53@sirena.org.uk>
-References: <20250226-parse_vdso-nolibc-v2-0-28e14e031ed8@linutronix.de>
- <20250226-parse_vdso-nolibc-v2-12-28e14e031ed8@linutronix.de>
- <af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk>
- <c7bea938-ee3b-477e-9ed0-db29ca02a538@sirena.org.uk>
- <75ea2dcf-0ba3-4076-9a54-6b39e4e72a3d@linuxfoundation.org>
+	s=arc-20240116; t=1743421524; c=relaxed/simple;
+	bh=ECVyOQ4QJgwuY3BsSBfbArAjbpHavCxYsK47PAeOlRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m1+IHyTADtkuLb824j5redFhSozZcNiwTDUUDFb1M73ZBHO7Tg7EO6vOIozwJPH8SSlUQE4T+kxCZ0p5Nq8IEp4fGyHE2StF30sDsajH9A1GzsQnSgxmf6DucTNf2D2kMa+PWsXzjR5JsRUEj67zB8HntchZA9UeQhb1x6FC9ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivdhCo7E; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso8066786a12.3;
+        Mon, 31 Mar 2025 04:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743421521; x=1744026321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+WZetRp5ukCN3RFrLbUEaBdA30WIpXABNZMPxGA5CMM=;
+        b=ivdhCo7ENoa0caKzzBQvcDd9cRyqyPfibNVnGDwdl4bdOyP+haw2vXi8F8lpSpCBDB
+         YMt9DjPt5Fq/x2GhVZQgsVdXbRJNdsuGqXdkkOtcDG8lUi8dMmQUowsDE0WTfzw6lmkj
+         T837hxGLcW6zSIgzim7evfS4KM0MSwCopuoQHmcfWleJO0qoGhGCMe/CosmJoe4rCF7/
+         /BhF8VdRRMWXRaGSIxnT8cC+N+NWFp7GOaq7o/Oumy3s+9LvfM4btQoM4vH62SXAVcQw
+         ZUUn574xbz3bTQGbvHyji/jgZtIAyswc03t2fT1icg9bea3DMs+B0RnwwMVCuiWrNu2N
+         gysA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743421521; x=1744026321;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+WZetRp5ukCN3RFrLbUEaBdA30WIpXABNZMPxGA5CMM=;
+        b=VZ8S/EfqfltEdwkcicFDUyMZt2+PF4v43MvXiLPkMJ0yhbX5X2/Lty1jiTNvbeBLTY
+         6tZZHmXcVG7chC0DqJjuxWawaVa1JBYz1sJypF+xA+Uudad9LTrZYLJ2b/4FE2u9CCvN
+         toBCnoMZH5XAr0nXMtBafhTQqgKeMLXU3uVuFMmLhSJWfuPV9Z0/lNW3etIo5TKXBRlF
+         bKSpmuk5VbZPS6TMQdgRMaS7XcDtFGSD9i8XFEbc/cU3m6hp+7xmttG3Z++PtI0D2bAP
+         tgB8VhOCx6LmoSod2EDQGS8leLS4c/J6JF6qHb+TR9bN9LZpKj6tmmUIldBqicj9UTy2
+         RRaA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8jyzQ8l3fbf4yibOxpcaQQqbykiMJi6E22j0cTyY8q9p2z3ylZbHsWE3URQXe4VGSbyDnatkxq3N2@vger.kernel.org, AJvYcCXGOyPYNxe/cb0ges+VEpN2zUWn8j5Tzs2NLZ73t+sA175+fxDo484dHLX8mMDRQT7WfQKQA8iAzB7ClrTf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrX2DTY2vE/yEi8xmM8kRbXqFTwBQJkkbO8XwfL26nN5/t2SJ
+	GMKZ9Y1JAxR9dc5sNlsUYyp9TmmNvYXjj8Aoavf+K79YfLqnN8vf
+X-Gm-Gg: ASbGnctdL8vqgFs/wJT/WfAwlKcJf0MMxNDUR3jTf9FyPtvt9lgTZ1zEXR5AJUDZl4w
+	HTIgwXOC0E4/xm3sR+LjUXWImylzgPRyQS5SG3oTXiaQAiwxTy5XmDwh5uyD43WDXDp/mwMpf/F
+	fFJif/ST/7726RduPnnbWVhsEGayFgD1hr7A4hkCrSrTVpqZIJ1K4Gzk3b54Iz/lAj9XbuECgo9
+	+6IGNe1f2rU9IlGgbdJxRc4AfBttB5o/lpMD+naPT+s4UmHUZsXq0T1jONUbV8X6eHcceGvfX0L
+	aYfHYKg20xrb6/yAcuirQ5ltnWur48AxWkX5yrxU9ysPovMnr7u7VjzSoNVJtObfD4sOleI=
+X-Google-Smtp-Source: AGHT+IHcwdKHyjGn7qgKGCjwufvZuSvuzHtrMAol97MyCW4LRBy9QxYiA7v5eA7QLgnV+kdOOMmuBg==
+X-Received: by 2002:a05:6402:2709:b0:5e5:ca1b:c425 with SMTP id 4fb4d7f45d1cf-5edfd101725mr7051020a12.17.1743421520816;
+        Mon, 31 Mar 2025 04:45:20 -0700 (PDT)
+Received: from [192.168.5.165] ([92.120.5.14])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc1493d9dsm5532289a12.0.2025.03.31.04.45.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Mar 2025 04:45:20 -0700 (PDT)
+Message-ID: <e0d328e0-bc54-4763-9c55-694c0fd93746@gmail.com>
+Date: Mon, 31 Mar 2025 14:57:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KalBa86xIdoMygpC"
-Content-Disposition: inline
-In-Reply-To: <75ea2dcf-0ba3-4076-9a54-6b39e4e72a3d@linuxfoundation.org>
-X-Cookie: The Ranger isn't gonna like it, Yogi.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] dt-bindings: bus: add documentation for the IMX
+ AIPSTZ bridge
+Content-Language: en-GB
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250324162556.30972-1-laurentiumihalcea111@gmail.com>
+ <20250324162556.30972-2-laurentiumihalcea111@gmail.com>
+ <20250325032303.GA1624882-robh@kernel.org>
+ <2301b0f7-1a76-4823-8d3f-d346f8f8e865@gmail.com>
+ <20250331064152.g4hlw6pbpzbnlsmp@pengutronix.de>
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250331064152.g4hlw6pbpzbnlsmp@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---KalBa86xIdoMygpC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 31.03.2025 09:41, Marco Felsch wrote:
+> On 25-03-28, Mihalcea Laurentiu wrote:
+>> On 25.03.2025 05:23, Rob Herring wrote:
+>>> On Mon, Mar 24, 2025 at 12:25:52PM -0400, Laurentiu Mihalcea wrote:
+>>>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>>
+>>>> Add documentation for IMX AIPSTZ bridge.
+>>>>
+>>>> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
+>>>> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+>>>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>> ---
+>>>>  .../bindings/bus/fsl,imx8mp-aipstz.yaml       | 107 ++++++++++++++++++
+>>>>  1 file changed, 107 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..c0427dfcdaca
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/bus/fsl,imx8mp-aipstz.yaml
+>>>> @@ -0,0 +1,107 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/bus/fsl,imx8mp-aipstz.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Secure AHB to IP Slave bus (AIPSTZ) bridge
+>>>> +
+>>>> +description:
+>>>> +  The secure AIPS bridge (AIPSTZ) acts as a bridge for AHB masters
+>>>> +  issuing transactions to IP Slave peripherals. Additionally, this module
+>>>> +  offers access control configurations meant to restrict which peripherals
+>>>> +  a master can access.
+>>> Wrap at 80 chars.
+>>
+>> fix in v4, thx
+>>
+>>>> +maintainers:
+>>>> +  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: fsl,imx8mp-aipstz
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 2
+>>>> +
+>>>> +  reg-names:
+>>>> +    items:
+>>>> +      - const: bus
+>>>> +      - const: ac
+>>>> +
+>>>> +  power-domains:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  "#address-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  "#size-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  "#access-controller-cells":
+>>>> +    const: 0
+>>> With 0 cells, how do you identify which device it is?
+>> we don't atm. We're relying on the default configuration.
+> I think Rob is speaking from DT API pov. What the driver is doing with
+> additional information is up to the driver.
+>
+>> we don't have any APIs for AC configuration so I left the
+>> cell number to 0 thinking that the cell number might depend
+>> on the API.
+>>
+>> if need be, I can set it to the value I was initially thinking of in
+>> v4.
+> Which is?
+>
+> According the TRM it's a bit tricky to define the API since you need to
+> describe two different types:
+>  - master configuration
+>  - peripheral configuration
+>
+> One which came up in my mind is:
+>
+>   <&phandle TYPE ID VALUE>;
+>
+> e.g.
+>
+>   <&aipstz AIPSTZ_MASTER 0 0xf>;
+>   <&aipstz AIPSTZ_PERI 0 0xf>;
+>
+> One could use a defien for the magic value of 0xf of course.
 
-On Fri, Mar 28, 2025 at 05:08:26PM -0600, Shuah Khan wrote:
-> On 3/26/25 07:02, Mark Brown wrote:
 
-> > This bug is now in mainline.  A fix was posted by Thomas the day after
-> > the original report:
+so, my original idea was to use 2 cells: <&phandle ID VALUE>, where bit 0 of ID is used
 
-> >     https://lore.kernel.org/r/20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de
+to identify the IP type (master or slave/peripheral) and the rest of the bits are used to encode
 
-> > but it has apparently slipped through the cracks.
+the ID itself.
 
-> If this is going through tip
 
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+I think I like your idea a bit more though (i.e: have the TYPE as a separate cell)
 
-> Otherwise, I can send this up
+because I think it's easier to deal with/understand from the DTS user's perspective.
 
-Given that this hasn't had a response from tip for several weeks it's
-probably as well for you to pick it up - I was considering sending it
-directly to Linus myself.
-
---KalBa86xIdoMygpC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfqguIACgkQJNaLcl1U
-h9AmYwgAhU5OAjRIyrT55ORFUEnAgksOlpfOa+SMX3JjNaLJjSNnBKc9lpq1L0Zv
-3Gzudpo//l44I7kiHFHhujQhH1A5FwGBd8pghgzbu6lICqABVXqdBaQ/6x6qE/VW
-v2N8s9oVgeEtybhAtZb2MGo1Z43LrIzHVV6p1aJI8EHklaNqTzQHXCabK+hEVZKx
-QC8tTWgy2uNqxzGGmJTXrW949sTqpO2nhk0EqnejnjCEjI9C8iR01GCj0XOum4sT
-mk3BX8OdBX1pdZO8PhSgfnsccB11czt+FR+gGO3QcqiuJ4bnkm4ypOKJqrYdMDfc
-rR7IUBjoKGYr/QFro/1Uae0npyqFtg==
-=u7w3
------END PGP SIGNATURE-----
-
---KalBa86xIdoMygpC--
 
