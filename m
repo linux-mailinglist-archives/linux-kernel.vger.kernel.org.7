@@ -1,145 +1,83 @@
-Return-Path: <linux-kernel+bounces-582549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724F7A76FC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE55A76FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B647418876C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3254188C186
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEEB21C160;
-	Mon, 31 Mar 2025 20:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C98821B9D1;
+	Mon, 31 Mar 2025 21:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGCGKDjt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546E321B9C1;
-	Mon, 31 Mar 2025 20:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46FC13D8A4;
+	Mon, 31 Mar 2025 21:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743454625; cv=none; b=pr7doJOrsnoThz0a4b0oq9WqNP4Oe7cH/4GvshacpRCQiN+OuODmizAj7+uhnBn3XwFN+RATL1J/JQnWj3kTWJDVLVgSVK4bTV4cBtxvWjvTxnsO+03aZlmFqDqTrelDaO1hrPI7GaTqDgkpffk1Phbn91O1Qe25lF96rIySyNY=
+	t=1743454874; cv=none; b=Hv8K8CyOHv8GpTGrM+4w2G7sYU0/g93ipSYm419ThzdO0rvzRfsFFr9GWJ9OZ+jSiuc4/hkahytdW2WVk++aLIWE7/o6YkbAy2Imqc5yAQ5Mrx05nCgHYAHpZ+t6nObVG6u/KJyB8mR6nm9YA2FG/ynqzA31KMobpBjIglUZ86I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743454625; c=relaxed/simple;
-	bh=grjGL6ZIKMvZ89GhSxoNkBZGfmrbW7YwQq6dlnLMIhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KFg9PnrYAW5ZK70ClaggW7NLKztYZNI0Cx9rrdsP8/Ya3ijhtIUCybBnFALa6QZHJpMmy5iCIClTLCPKVe5yfHCykw5lUfeNcnalbw4jyGoclcE302iV9LcbzEs3J3qNHhJaCSrLQ2FKrQVuTZoNxYF4n9xULKJ/IbCRJZu21kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A55C4CEE3;
-	Mon, 31 Mar 2025 20:57:03 +0000 (UTC)
-Date: Mon, 31 Mar 2025 16:58:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Kees
- Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, "Guilherme G.
- Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tracing: ring-buffer: Have the ring buffer code
- do the vmap of physical memory
-Message-ID: <20250331165801.715aba48@gandalf.local.home>
-In-Reply-To: <CAHk-=wi5pLoe3szxLREQGGJuWU0w_POK9Sv6717UH3b7OvvfjQ@mail.gmail.com>
-References: <20250331143426.947281958@goodmis.org>
-	<20250331143532.459810712@goodmis.org>
-	<CAHk-=whUOfVucfJRt7E0AH+GV41ELmS4wJqxHDnui6Giddfkzw@mail.gmail.com>
-	<20250331133906.48e115f5@gandalf.local.home>
-	<CAHk-=wi5pLoe3szxLREQGGJuWU0w_POK9Sv6717UH3b7OvvfjQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743454874; c=relaxed/simple;
+	bh=PXB9+IIdexxKf88I2wNQQL6Ymiw74kkfsgF8CJopTpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3fpLBxYDddG/D5v1Q9ALqeF6VxfxZxUSohpfmwYvjYV6mIcKQhfRzgFP119PrPp5uSFp/OFqgbM+t14W4T34QYH3q65BWcHGHUhx7yPVyp+nysXNmCC3AjfMstqYYi3B8EaAtqBK+nAr70ohJGX3p5d73EEBacIi5zmq6ARxgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGCGKDjt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5971C4CEE3;
+	Mon, 31 Mar 2025 21:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743454874;
+	bh=PXB9+IIdexxKf88I2wNQQL6Ymiw74kkfsgF8CJopTpY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WGCGKDjtaPWgg8JQDlWXwrCTej0iosz6GowAQnbt+UNvEnb6XRI3zuaOS6YBODI5R
+	 h/EewDHMaLPST9inTzzyOI0ScqAh1WqjvYaRZPDmKXfI2h1aGAth8uIFGtXdsh1bSF
+	 HEPCDHohIuI+xHqPzr8ZNX/teuZH4Og4i6uVD07ywY83czZEvH53II0GQj2HtRMVY7
+	 es0z/yifpGD1MdAe/4rvw/jSWbAGJkgvLHDU8ykTijC6aGB8cFr4SkNcINBHhz/KCP
+	 DyqCPe5IdhPNjG0ni7Tp9PyzNXBT8vk5vUuzLl3Dv+y3toUEe/7m8Xj8zkdvcanQ7N
+	 DG+5iV8f3JBKQ==
+Date: Mon, 31 Mar 2025 16:01:12 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	benjamin.larsson@genexis.eu, devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 02/10] dt-bindings: interrupt-controller: Add EcoNet
+ EN751221 INTC
+Message-ID: <174345487191.2817170.10410972908712434627.robh@kernel.org>
+References: <20250330170306.2584136-1-cjd@cjdns.fr>
+ <20250330170306.2584136-3-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 31 Mar 2025 12:12:08 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250330170306.2584136-3-cjd@cjdns.fr>
 
 
-> > OK, so I did copy this from fs/pstore/ram_core.c as this does basically the
-> > same thing as pstore. And it looks like pstore should be updated too.  
+On Sun, 30 Mar 2025 17:02:58 +0000, Caleb James DeLisle wrote:
+> Document the device tree binding for the interrupt controller in the
+> EcoNet EN751221 MIPS SoC.
 > 
-> Please just stop copying code from random drivers or filesystems.
-
-Note, I did not blindly copy it. I knew ramoops did exactly what I wanted
-to do, so I looked at how it did it. I read the code, it looked reasonable,
-and I mapped it.
-
-I needed a way to map physical memory to vmap memory. How am I supposed to
-know it was not doing it the proper way?
-
+> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> ---
+>  .../econet,en751221-intc.yaml                 | 78 +++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/econet,en751221-intc.yaml
 > 
-> Christ.
-> 
-> I've said this before: core kernel code has higher quality
-> requirements than random drivers (or even random filesystems).
 
-I did not believe pstore was a random file system. It does similar code
-that tracing does.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> 
-> You can't copy crazy incorrect snippets from random sources and put it
-> in core kernel code.
-
-Note, even though this code lives in kernel/, it is not much different than
-pstore code. It's a way to trace / debug the kernel, very much like pstore
-in that it's used to debug. I saw that code was written in 2012 and thought
-it was mature. It made sense, and yes I could have looked for a range, but
-I trusted the people who wrote that code. This wasn't just a random looking
-at something and copying it. I really wanted to understand how it worked.
-
-And I did talk with some of the mm folks, and they seemed OK with this.
-
-
-> If it's not part of the kernel memory allocator, it does not
-> necessarily have a "struct page *" associated with it. Using a pointer
-> to 'struct page' and passing it off is just fundamentally more than a
-> bug: it's seriously and deeply broken.
-> 
-> It's probably much more obviously broken if the physical addresses
-> came from a PCI device, and this all just happens to work because it's
-> actually real RAM and we ended up having a 'struct page []' for it for
-> some random reason.
-
-Note, this only works with RAM.
-
-
-> Or it might just be because that memory *has* been in the E280 memory
-> map before it was reserved, and the 'strict page' arrays may have been
-> sized for the original E280 information, not the "after stealing"
-> information.
-
-I guess you mean E820.
-
-Mike can correct me if I'm wrong, but the memory that was stolen was actual
-memory returned by the system (E820 in x86). It reserves the memory before
-the memory allocation reserves this memory. So what reserve_mem returns is
-valid memory that can be used by memory allocator, but is currently just
-"reserved" which means it wants to prevent the allocator from using it.
-
-
-> And yes, I'm not at all surprised that we'd have other mis-users of
-> this. We have some very historical code that depends on reserved pages
-> going back all the way to linux-0.01 I suspect, because things like
-> the original VGA code knew that the physical addresses were in the
-> BIOS hole region that was backed by 'struct page'.
-
-I believe this is what Mike set up. A way to have normal RAM reserved
-before it gets added to the memory allocator. This was by design.
-
-In fact, if you do pull my v2[*] pull request of the ring buffer code (that
-removes this user space mapping of the persistent ring buffer logic) it
-actually adds the ability to free the memory and add it back into the memory
-allocator.
-
- https://lore.kernel.org/linux-trace-kernel/173989134814.230693.18199312930337815629.stgit@devnote2/
-
--- Steve
-
-[*] https://lore.kernel.org/all/20250328173533.7fa7810d@gandalf.local.home/
 
