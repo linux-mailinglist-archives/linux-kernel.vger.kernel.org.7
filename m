@@ -1,97 +1,145 @@
-Return-Path: <linux-kernel+bounces-581463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1C6A76022
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE70A76027
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0577A168580
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B6F3A9373
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 07:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A141C84A8;
-	Mon, 31 Mar 2025 07:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3721BD9E3;
+	Mon, 31 Mar 2025 07:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JA7vlAxJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGAbz3EX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394861C3BEE;
-	Mon, 31 Mar 2025 07:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865EA1BE238;
+	Mon, 31 Mar 2025 07:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743406474; cv=none; b=GsZ09ZEz36ZNro6YuEJcJ5e2qrhgomAbBdS18IgzcBdF0SCFIFRTuklgX/QuSi3izSvhyG873GVBfS5jluiYwXOZaydXfye+6H2FD//cVsGBqUO8+6p6HUijoN3oLIOpDEwd0Ss2BHjnUt7l5OTFXLWTZlDTX4miO/Z4Evt0sbk=
+	t=1743406491; cv=none; b=KiuBno2FKZ3ovjR4Whof7JMyk3y39qWpBB5t9bfwTUB3k24z5GqgL5xp3TS5hlFh6OG/rqA+ixM2mwi12ogCo6FV8jY2ynsMcQyB++D7zOAiWMLn2kvx2iii5bXWg38nZZ2zuK8SbMfQUfSyNnS424f6Is3ZoPANfvGLalIhMak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743406474; c=relaxed/simple;
-	bh=tGc0yZ9S56lmGZ8X3yzmu/RRoHPLD+50b87kiWJPefo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXavvwHUz434sCQ4vRUHUs8m5ZWxYv5P7TLp4VO2xHpgB9bzBvqg4GxSWlYEnFKx8tC8oxjbrLHrxxq4GoKd8QrqT30JjM31vctmMXxNWFt0B4YEQV2WvqzvzWDDHOcY9XuuKGgokYiGAi3EXRaB1ELlbmkM4PBjlHdGyzws1bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JA7vlAxJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2EBC4CEE3;
-	Mon, 31 Mar 2025 07:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743406473;
-	bh=tGc0yZ9S56lmGZ8X3yzmu/RRoHPLD+50b87kiWJPefo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JA7vlAxJVj2TwXGWhCabmFcSVxMEKKF3aRsKpopNTz2ticno+FLbcLVgFcmtf0Vas
-	 By1vbkN+enGJyD3jRzncriHofarLHaGjIhoFKZyShCdI5FtUWgrXcSXJsDtDLfDrQ0
-	 uc9oOBml+OtZAGgKPKGXE/aCQjL40uyFJfZcD2jhzFITcAe1IHQBckm7qwXfEUD49l
-	 ON3EokiRJBeugtYhk2p7WaksPBaPuPVH9drZe1+KBb+NISycPFJoLzFPTzuyyTTTcG
-	 U4ZMY5iPH/D8YR+QspDyTmmZG7d7IgiU0EGZx+X7xuBhF+RtBvshoTqg2ZsiXzF7vo
-	 ckgiVFefF4O7A==
-Date: Mon, 31 Mar 2025 09:34:29 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 01/32] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-Message-ID: <20250331-prophetic-convivial-dinosaur-efb1af@krzk-bin>
-References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
- <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
+	s=arc-20240116; t=1743406491; c=relaxed/simple;
+	bh=nSVE5hfepeDgS8o2bHxvN0Mtk+A0NXF3SD3CyYFB+yk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OewrDHZ7FnopPzuaPWPxqBw96rvPQrC8FgsoHI1f4YrHMYT4aqKpveawAD8ulTeFktQcxFAnLZJ36mXj16k4YdrQw1DjOM3KyeCFeO+LwdqKvfkosFrgNUBbQrE24ah1Y56Sjd6V8Mp4MltuPxm1oWaqsAIu62/xILmU6RRWdi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGAbz3EX; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743406490; x=1774942490;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nSVE5hfepeDgS8o2bHxvN0Mtk+A0NXF3SD3CyYFB+yk=;
+  b=eGAbz3EXltsBDXYP390m2bsv9SZLZy1qVjXxqLQphc4hqs6n7DKu5GpV
+   VqTKIUDK6QMJujN/3ZCRkDpul+d7UXlCt8FPZmnxVQ2r16fP0lvTIbkLm
+   aMPvR0qX0D9w1s1Qnr0w56XbxFOv59Mt+dZNkN9EPiNEFvw/q4TD7f2EO
+   b6MKg53xyuVihDEyl4gsUOgoUAY5y01yji/l6Cvw55gEHpkFw/UriorkB
+   kCkbYct3+yYlIbkXI0vNlDqHnTxm81RYf8phsBGzENvwKimq7roYGqQLF
+   55079eXMPwg6cI/nTEuxTAphqmF6wSuXvfbEMQ+uhuOI5KS2Hv+Y8CVqe
+   g==;
+X-CSE-ConnectionGUID: jPgEvlv8R0ChRUWtiauPVQ==
+X-CSE-MsgGUID: P2kD/uIbRX2/EU+PlOud8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11389"; a="44688095"
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
+   d="scan'208";a="44688095"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 00:34:49 -0700
+X-CSE-ConnectionGUID: Ccfl0me3S9OKRlX29nKBsQ==
+X-CSE-MsgGUID: qjSxrmgaQB6qYdDa5pLs3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,290,1736841600"; 
+   d="scan'208";a="131110877"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 31 Mar 2025 00:34:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C1C357CC; Mon, 31 Mar 2025 10:34:45 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: acopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] media: i2c: rdacm2x: Make use of device properties
+Date: Mon, 31 Mar 2025 10:34:35 +0300
+Message-ID: <20250331073435.3992597-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250328-s2mpg10-v2-1-b54dee33fb6b@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 28, 2025 at 01:28:47PM +0000, Andr=C3=A9 Draszik wrote:
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,s2mpg10-pmic
-> +    then:
-> +      properties:
-> +        reg: false
-> +        samsung,s2mps11-acokb-ground: false
-> +        samsung,s2mps11-wrstbi-ground: false
-> +
-> +      oneOf:
-> +        - required: [interrupts]
-> +        - required: [interrupts-extended]
+Convert the module to be property provider agnostic and allow
+it to be used on non-OF platforms.
 
-Drop, you should require only interrupts.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/media/i2c/rdacm20.c | 5 ++---
+ drivers/media/i2c/rdacm21.c | 5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-OTOH, why regulators subnode is not needed? Commit msg mentions they
-exist, so they should be required. Binding does not change because you
-added or did not add yet some driver support.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
+index b8bd8354d100..dcab63d19baf 100644
+--- a/drivers/media/i2c/rdacm20.c
++++ b/drivers/media/i2c/rdacm20.c
+@@ -16,10 +16,10 @@
+  */
+ 
+ #include <linux/delay.h>
+-#include <linux/fwnode.h>
+ #include <linux/init.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ #include <linux/videodev2.h>
+ 
+@@ -575,8 +575,7 @@ static int rdacm20_probe(struct i2c_client *client)
+ 	dev->dev = &client->dev;
+ 	dev->serializer.client = client;
+ 
+-	ret = of_property_read_u32_array(client->dev.of_node, "reg",
+-					 dev->addrs, 2);
++	ret = device_property_read_u32_array(&client->dev, "reg", dev->addrs, 2);
+ 	if (ret < 0) {
+ 		dev_err(dev->dev, "Invalid DT reg property: %d\n", ret);
+ 		return -EINVAL;
+diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
+index 3e22df36354f..5ea6988de48b 100644
+--- a/drivers/media/i2c/rdacm21.c
++++ b/drivers/media/i2c/rdacm21.c
+@@ -11,10 +11,10 @@
+  */
+ 
+ #include <linux/delay.h>
+-#include <linux/fwnode.h>
+ #include <linux/init.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ #include <linux/videodev2.h>
+ 
+@@ -551,8 +551,7 @@ static int rdacm21_probe(struct i2c_client *client)
+ 	dev->dev = &client->dev;
+ 	dev->serializer.client = client;
+ 
+-	ret = of_property_read_u32_array(client->dev.of_node, "reg",
+-					 dev->addrs, 2);
++	ret = device_property_read_u32_array(&client->dev, "reg", dev->addrs, 2);
+ 	if (ret < 0) {
+ 		dev_err(dev->dev, "Invalid DT reg property: %d\n", ret);
+ 		return -EINVAL;
+-- 
+2.47.2
 
 
