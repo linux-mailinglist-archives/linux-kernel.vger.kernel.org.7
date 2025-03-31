@@ -1,117 +1,270 @@
-Return-Path: <linux-kernel+bounces-581533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A561A76102
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA366A760D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 793977A20A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E87F3A4808
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32D21D5CC6;
-	Mon, 31 Mar 2025 08:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF07478F54;
+	Mon, 31 Mar 2025 08:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MgC+uJyn"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bfnBblKW"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538771CEEB2;
-	Mon, 31 Mar 2025 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CDE1C84CB
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743408730; cv=none; b=TkdQShL/hteOE9J7o9lMQiVshYCPpFOgNEkhqwd2F1D+g7PcWCcBjzH5b+/QK9NPcJv+jgn+yxXjvnpx/saLgyphcbD0x0eTrF1k05M7MAs+iN72Zix6dKV81m16Khy4HkkW64ch/TRxMvkX48oRobi5gXgj+v2p69GOwL7A6eQ=
+	t=1743408277; cv=none; b=c+HNE+Lxv54YTgrjn2ZBHOWoItwiKJWgpWyk5Lj5Mbn+RrjR2M2KS+3LL10RSVfmWJj8BL4JCn7b3Qm/OSFopBOa6nH07Y/sWP/T2fzgdqsECCWeY/qeKCG25sLM+JCtlVRoeH5RetRSFkL+pQw1Gcj+EI49r83oz7A9YgkP7vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743408730; c=relaxed/simple;
-	bh=8wvK2lZFm0fGGFDsuIRwI/95qNiqyB3uLA5ZiOSh614=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F0Oqkv/aidvl2fCEvHQubEebqgno5+2dq2/diCRU2jMrLSvuEzEvaqvGKnAfzYXS7KmUdzkIxfYlqtfJdIFloUC/jHNhpHrR7pcao7IIe+yxCiYYz2g2lHCKCScyJ055yq6hmPKdRQiBKnwukDMk5RxMdGwxWOmCjgpYIB95/Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MgC+uJyn; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 7E237585AC5;
-	Mon, 31 Mar 2025 07:35:40 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C55F44434E;
-	Mon, 31 Mar 2025 07:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743406532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nK/rPYXUAHUT4uoXiMNPICT+GOUkYGU1OH2yZB0mR28=;
-	b=MgC+uJyn3gloX9rqiUq/9KMmzLSHt5FrcP4zp3geP+4DnaZD9eWbb0CcC3FHYfb9jSQ8FS
-	PJ/mo4bdz+tgTZezU/8SctkK7UAwd62JFn3++0iMedgvPzWAYJsW6u7G0hYBUeRUHTFXeB
-	dsq0S51OS+l1gAfLvppXBBKfjpOWROwT5rlyIwCc/MCFwTJppIfRdYMHv04xSUqA7t3SQ5
-	0goR2J1wItC6ATei8eEYlpj4EBte1XooEndWOaWrinANRI3duC1SgrsFrETq8FcnZcTY41
-	NW3YekLIWq1ErrTeD/mvV5qjZQBv3prWEt7Qk5xZT0j59rV+/CehWQ5yGfahmQ==
-Date: Mon, 31 Mar 2025 09:35:27 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v5 09/13] net: phylink: Use phy_caps_lookup for
- fixed-link configuration
-Message-ID: <20250331093527.0267fc53@fedora.home>
-In-Reply-To: <CAKgT0UcZRi1Eg2PbBnx0pDG_pCSV8tfELinNoJ-WH4g3CJOh2A@mail.gmail.com>
-References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
-	<20250307173611.129125-10-maxime.chevallier@bootlin.com>
-	<8d3a9c9bb76b1c6bc27d2bd01f4831b2cac83f7f.camel@gmail.com>
-	<20250328090621.2d0b3665@fedora-2.home>
-	<CAKgT0Ue_JzmJAPKBhe6XaMkDCy+YNNg5_5VvzOR6CCbqcaQg3Q@mail.gmail.com>
-	<12e3b86d-27aa-420b-8676-97b603abb760@lunn.ch>
-	<CAKgT0UcZRi1Eg2PbBnx0pDG_pCSV8tfELinNoJ-WH4g3CJOh2A@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1743408277; c=relaxed/simple;
+	bh=+/vznK6J/kXyee2N3VyPquK4W5Utr75HIF35H0LowLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sudgsOirb3hfoRLP6WPwFKqvm47YEjdCxnBOV27kZgQnsBCE+kJUOe/7ffY404AHcJXzK+bpgzX5gxZtWtmZnvJOBGfY1yRxRpgb2WXkZUfXPUauTXsDnSrUq+FdqXOivcJYsvUiNxpC5InGN5obXNzJKBePiIBc85mqjyBW90w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bfnBblKW; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2241c95619eso10823325ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 01:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1743408274; x=1744013074; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=O1YfqM5q3N6JrT2tmqL361gwa7N8KSXnPwBvK7H0Jdg=;
+        b=bfnBblKWozeoq/xYXqkV2wARZRiFZ3lee+ypeEswhww2H8jVSWAHqoxYnu8tL09JnS
+         gAPC1Dfgah4z5t7zmAkUSTtUZccuVnHBMUz60ObAmpYO6sIg3W2EDIVGCGEReY8vpfMk
+         qsdlStanKmJv8mZnaGRPnMph8hpxlE0XCTcODcO6+WpE+VqBwgPNOMtI8xy+a/zIWhNj
+         1VzVV31E1HPEFXp60VOuCzM4sYyBB0SJ/il+IjoplSovG2AL4TdrFh8IVTVD97+QexW/
+         5Wj8y3zCSM3J70qe9bmXyrEZhezaQvjrTrzuU+McmWA34HWBp6cbbRJN4uNPVR01CgK7
+         0Bpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743408274; x=1744013074;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O1YfqM5q3N6JrT2tmqL361gwa7N8KSXnPwBvK7H0Jdg=;
+        b=hWhhAYNb0PHDLlEmRyvbiO7CAitdwJiJLzIXIvGbqSoQwT2U5neuJwgXTNKxLLiD84
+         o1yiJNvISfc/dKfbs+i7H91cSVX2RFn6f3DuGkrDOvndQ1X1yR/HA6BRoCEgjJpLhXYs
+         0NoAeyTZKYQQXhh9baauSza6AAGNFKM+ZEhxyTPFTAMgxbnSPQ0pLDjwOEUgONdBtrl/
+         Kn/7DZG5VVSw03I5YfolxV1wUgRRrFwWEayoweei9akCS3dgduIDuFAo+GrVNwvx6CwB
+         hpvZwEmy3sIsJMehY/lQ24EOulNukVXVM4c0yyqOGgmXOT/M9O5Vbh+muuS3OgjjSqLX
+         VSuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnI51jgWuN7QymapS2ntzkkWHv08APONlI2ZFQV9ymDShxf3GSzMBq6rWXWyCmQLKSR2khGkosAgYyI/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWMZJSGSrW5QqQrb24pnyvQeEdPWX8/XCPMQm16h9eLcY4i9yF
+	8i/c0VfRj2dmPlW0LAid/ZXtcFETZ9yXOZ207nCoDBY0o4ZeKWQk9P1khloESRU=
+X-Gm-Gg: ASbGncs9UASyWyQpyB6i8fvyhuUDo1jZ6eHA+9V7M3r/BHdzRHY+24bW/gZj1uvbK1B
+	XuuirWI5plkLfD9lFHpnTBeZBiahYqmnz88N+86DDKW49Fw1vYpz4lyYwacPyxB/kXopXwcUtds
+	MK/G5mNuW2RX0gvI/Ceb1/bsyUFxwbS9OZLcMetbYWyCcL4V1HvGv/hXmS1znorWrKsLCdC8Ep+
+	KIewcfLkkvx6CugOsPBn+VaF+7c0ZPLl4+URWZbrx3DAAyQSDQjkuPcHzra/fXm67Oi5oWKSZFz
+	Qz21Orfq5irEoLiPxsz5XspqWFgrcuc85ZIeLksZHNWi8/D1kda/ZXtwHmTR3OSp0Q==
+X-Google-Smtp-Source: AGHT+IE8Dz1Hvihho+GoQeM4qvZgwYsVZ+Tn2AObZx3XKfeddt3Tk2h9VbUOePJL4iQ8wePF7yVMOQ==
+X-Received: by 2002:a17:902:f70a:b0:224:18fd:6e09 with SMTP id d9443c01a7336-2292f898c11mr55849735ad.0.1743408274266;
+        Mon, 31 Mar 2025 01:04:34 -0700 (PDT)
+Received: from [10.68.121.43] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eee0d37sm64255955ad.91.2025.03.31.01.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 31 Mar 2025 01:04:33 -0700 (PDT)
+Message-ID: <ec7bc197-8fde-4ccd-a02a-1effec5ac898@bytedance.com>
+Date: Mon, 31 Mar 2025 16:04:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelfeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtoheprghlvgigrghnuggvrhdrughuhigtkhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtp
- dhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [RFC][PATCH] sched: Cache aware load-balancing
+Content-Language: en-US
+To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+ tim.c.chen@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, yu.chen.surf@foxmail.com
+References: <20250325120952.GJ36322@noisy.programming.kicks-ass.net>
+ <93907416-dab4-4a3a-82b6-e37e4ee334db@bytedance.com>
+ <143a63f6-3e1b-42fd-a4c8-8d2f6b7d3583@intel.com>
+ <f5f056f1-a698-4660-87f0-63f5753c1679@bytedance.com>
+ <1e73a88a-0d49-4ac2-a64e-6d5ff2d7ba19@intel.com>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <1e73a88a-0d49-4ac2-a64e-6d5ff2d7ba19@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Mar 2025 16:26:04 -0700
-Alexander Duyck <alexander.duyck@gmail.com> wrote:
-
-
-> The general idea I had in mind for upstreaming the support for fbnic
-> was to initially bring it up as a fixed-link setup using
-> PHY_INTERFACE_MODE_INTERNAL as that is essentially what we have now
-> and I can get rid of the extraneous 40G stuff that we aren't using.
-> Then we pivot into enabling additional PHY interface modes and
-> QSFP+/28 support in the kernel. Then I would add a mailbox based i2c
-> and gpio to enable SFP/QSPF on fbnic. After that we could switch fbnic
-> back to the inband setup with support for the higher speed interfaces.
+On 3/31/25 1:25 PM, Chen, Yu C wrote:
+> On 3/30/2025 4:46 PM, Abel Wu wrote:
+>> On 3/29/25 11:06 PM, Chen, Yu C wrote:
+>>> On 3/28/2025 9:57 PM, Abel Wu wrote:
+>>>>
+>>>> IIUC this work updates stats for the whole mm and seems not
+>>>> necessary for each task of the process to repeat same thing.
+>>>> Hence would be better move this work to mm_struct.
+>>>>
+>>>
+>>> It seems that the per task cache_work is used to avoid
+>>> duplicated task_cache_work() in task->task_works queue, see
+>>> task_tick_cache()'s check
+>>>   if (work->next == work)
+>>>      task_work_add()
+>>
+>> Yes, this check avoids task_works being corrupt caused by double
+>> adding the work, no matter this work is task- or mm-specific. So
+>> if moving to mm_struct, this check become false once any task takes
+>> this work, and other tasks can not do the same job until that task
+>> finishes by setting work->next to work.
 > 
-> One option I would be open to is to have me take on addressing the
-> issue in net-next instead of net since I would need to sort it out to
-> enable my patches anyway.
+> I see. What I previous thought was that, checking work->next == work
+> can not avoid two tasks doing the same statistic calculation
+> in task_cache_work(), because work->next = work is invoked
+> at the beginning of task_cache_work() - maybe need to put
+> this at the end of task_cache_work()?
 
-If that's OK for you and the proposed patch fixes your problem, I'd
-still like for the patch to get in, as right now fixed links will
-not work at all for >10G links.
+LGTM.
 
-Then we can get better linkmodes reporting for your usecase ?
+> 
+>>
+>> BTW, moving to mm_struct will save some memory footprint?
+>> Yes, this would help.
+> 
+>>>
+>>> To do exclusive task_cache_work() and only allow 1 task
+>>> in the process to do the calculation, maybe introducing similar mechanism like task_numa_work(), something like this:
+>>>
+>>> if (!try_cmpxchg(&mm->cache_next_scan, &calc, next_scan))
+>>>      return;
+>>
+>> Yes, this looks good to me. While Peter used epoch to regulate
+>> the frequency of this work, which is a ligher way but allows some
+>> inaccuracy which is further fixed by a double check after holding
+>> mm->mm_sched_lock.
+>>
+>> I plan to use trylock on mm->mm_sched_lock first. If trylock fails
+>> then someone is adding the work and we can skip early.
+>>
+>> static void task_tick_cache(struct rq *rq, struct task_struct *p)
+>> {
+>>      ...
+>>
+>>      if (mm->mm_sched_epoch == rq->cpu_epoch)
+>>          return;
+>>
+>>      guard(raw_spinlock)(&mm->mm_sched_lock);  <-- trylock
+>>
+>>      ...
+>> }
+>>
+> 
+> This lock is intended to protect that no two tasks enqueuing the same per-mm_struct work at the same time, right? And for the task work execution phase, maybe we also need to put work->next = work at the end of task_cache_work()?
 
-Maxime
+Lock here is needed to protect adding work, what I meant is to return
+early if trylock fails, since there is someone else being the owner to
+do the work.
+
+> 
+>>>
+>>>>> +
+>>>>> +static inline
+>>>>> +void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
+>>>>> +{
+>>>>> +    struct mm_struct *mm = p->mm;
+>>>>> +    struct mm_sched *pcpu_sched;
+>>>>> +    unsigned long epoch;
+>>>>> +
+>>>>> +    /*
+>>>>> +     * init_task and kthreads don't be having no mm
+>>>>> +     */
+>>>>> +    if (!mm || !mm->pcpu_sched)
+>>>>> +        return;
+>>>>> +
+>>>>> +    pcpu_sched = this_cpu_ptr(p->mm->pcpu_sched);
+>>>>> +
+>>>>> +    scoped_guard (raw_spinlock, &rq->cpu_epoch_lock) {
+>>>>> +        __update_mm_sched(rq, pcpu_sched);
+>>>>> +        pcpu_sched->runtime += delta_exec;
+>>>>> +        rq->cpu_runtime += delta_exec;
+>>>>> +        epoch = rq->cpu_epoch;
+>>>>> +    }
+>>>>> +
+>>>>> +    /*
+>>>>> +     * If this task hasn't hit task_cache_work() for a while, invalidate
+>>>>> +     * it's preferred state.
+>>>>> +     */
+>>>>> +    if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_OLD) {
+>>>>> +        mm->mm_sched_cpu = -1;
+>>>>> +        pcpu_sched->occ = -1;
+>>>>> +    }
+>>>>
+>>>> This seems too late. account_mm_sched() is called when p is runnable,
+>>>> so if the whole process sleeps for a while before woken up, ttwu will
+>>>> take the out-dated value.
+>>>>
+>>>
+>>> Yup, there seems to be a problem. It would be better if we could reset the mm_sched_cpu to -1 after the last thread of the process falls asleep. But considering that all threads are sleeping, even if the ttwu tries to enqueue the first newly-woken thread to an out-dated idle mm_sched_cpu, does it matter? I guess it would not be a serious problem, because all the cache of the process might have been evicted due to long sleep.
+>>
+>> Yes, it seems not a big deal if mm_sched_cpu not overwrites any better
+>> choice.
+>>
+>>>
+>>>>> +
+>>>>> +static void task_cache_work(struct callback_head *work)
+>>>>> +{
+>>>>> +    struct task_struct *p = current;
+>>>>> +    struct mm_struct *mm = p->mm;
+>>>>> +    unsigned long m_a_occ = 0;
+>>>>> +    int cpu, m_a_cpu = -1;
+>>>>> +    cpumask_var_t cpus;
+>>>>> +
+>>>>> +    WARN_ON_ONCE(work != &p->cache_work);
+>>>>> +
+>>>>> +    work->next = work;
+>>>>> +
+>>>>> +    if (p->flags & PF_EXITING)
+>>>>> +        return;
+>>>>> +
+>>>>> +    if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
+>>>>> +        return;
+>>>>> +
+>>>>> +    scoped_guard (cpus_read_lock) {
+>>>>> +        cpumask_copy(cpus, cpu_online_mask);
+>>>>> +
+>>>>> +        for_each_cpu(cpu, cpus) {
+>>>>> +            /* XXX sched_cluster_active */
+>>>>> +            struct sched_domain *sd = per_cpu(sd_llc, cpu);
+>>>>> +            unsigned long occ, m_occ = 0, a_occ = 0;
+>>>>> +            int m_cpu = -1, nr = 0, i;
+>>>>> +
+>>>>> +            for_each_cpu(i, sched_domain_span(sd)) {
+>>>>> +                occ = fraction_mm_sched(cpu_rq(i),
+>>>>> +                            per_cpu_ptr(mm->pcpu_sched, i));
+>>>>> +                a_occ += occ;
+>>>>> +                if (occ > m_occ) {
+>>>>> +                    m_occ = occ;
+>>>>> +                    m_cpu = i;
+>>>>> +                }
+>>>>
+>>>> It would be possible to cause task stacking on this hint cpu
+>>>> due to its less frequently updated compared to wakeup.
+>>>>
+>>>
+>>> The SIS would overwrite the prev CPU with this hint(cached) CPU, and use that cached CPU as a hint to search for an idle CPU, so ideally it should not cause task stacking. But there is a race condition that multiple wakeup path might find the same cached "idle" CPU and queue wakees on it, this usually happens when there is frequent context switch(wakeup)+short duration tasks.
+>>
+>> Ideally mm_sched_cpu is updated every EPOCH_PERIOD which is default
+>> to 10ms, so I'm afraid the race window is not small.
+>>
+> OK, understood. My thought was that, if many wakers start searching for idle CPU from the same mm_sched_cpu(because mm_sched_cpu has not been changed for 10ms), if waker1 succeeds to enqueue a long-running wakee1 on that mm_sched_cpu, other wakers might stop choosing that mm_sched_cpu in SIS. But if all the wakees are short-duration ones and doing frequent context switches, many wakers would think that they find an "idle" mm_sched_cpu, but actually it is heavily contended by many wakers.
+
+OK, seems I misunderstood the race condition you previously mentioned.
+Yes, it's not clear yet whether mm_sched_cpu would cause stacking or not,
+I will do some more test before further discussion.
+
+Thanks,
+	Abel
 
 
