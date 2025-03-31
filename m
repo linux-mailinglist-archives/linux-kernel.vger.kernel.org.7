@@ -1,109 +1,243 @@
-Return-Path: <linux-kernel+bounces-582480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C13A76DA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F67A76DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8801168610
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F933AAD72
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AB8219A9E;
-	Mon, 31 Mar 2025 19:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6893921A45D;
+	Mon, 31 Mar 2025 19:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="F3swiOwa"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dwSKtzUz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD5173;
-	Mon, 31 Mar 2025 19:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23C218E91;
+	Mon, 31 Mar 2025 19:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743450708; cv=none; b=Zah2KW6SY9X7qarrOt34IGMqQyQPvrykdQxGhZb8WEG2W9NBKNtQZP4ZpugVcWxe+Mf0dg2FP5WQiPWXNJcMNmGtv7XfA8OefKPhSRwfYiZ8CJNEzefPXLsbVnIyFyUq3IcCp22hVwUadyiFN0aS4z4WBo7UeLHzfiCa2hau27w=
+	t=1743450775; cv=none; b=S+VO9IiXaVa4/ElaFPHGYKZNCGnPikt6topDQyHGPHwN74WWeHNWZZTM4NfYxHHk8tmU4vKkhh8SiP8TojffjCGQl8VR9ojxHcWnx4///L9x9pjhEZr1FxSxd0yMSqNle0lEQS/JmruwpAZK3zDP/D0TlvMn6m3C/CToJqrjQz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743450708; c=relaxed/simple;
-	bh=/913otloLGIK9WB3vUpB/fyu/LBH3sBrmhAhMG6gFn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Low616kIbK59YEX3iMDqGiCC0swyocfrgBwMbJJ7QXr68u52rKCufxQj7/dP1bV9T2grLGzNERkergoOa5nGHWIUF2CmHb8BzsM9T+qHajPN4vw3Cd2+Lb9ZVmMqgehJzxjJF/jlOGEci6igU4CEc3I5od39gUrOvl6zddL1LFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=F3swiOwa; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1743450705;
-	bh=/913otloLGIK9WB3vUpB/fyu/LBH3sBrmhAhMG6gFn4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=F3swiOwaHMFobvAcAnUt/J2BeH86ItTA1chzzA2oFKO7/m/nIXpRNEJUOpOZ5P5pD
-	 vg5bZDooMeMcOtQrYDOqlCnJUpvIeQE2LC0CHOsHm6q0wpG3YFWoUn2rEgWtqqQBRx
-	 1Q0UoAKCW74w6wqwdPdyGgo6sibpCPZYPYJedAic=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 31C531C02E7;
-	Mon, 31 Mar 2025 15:51:45 -0400 (EDT)
-Message-ID: <77774eb380e343976de3de681204e2c7f3ab1926.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 1/4] locking/percpu-rwsem: add freezable alternative
- to down_read
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mcgrof@kernel.org, jack@suse.cz, hch@infradead.org, david@fromorbit.com,
-  rafael@kernel.org, djwong@kernel.org, pavel@kernel.org,
- peterz@infradead.org,  mingo@redhat.com, will@kernel.org,
- boqun.feng@gmail.com
-Date: Mon, 31 Mar 2025 15:51:43 -0400
-In-Reply-To: <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
-References: <20250327140613.25178-1-James.Bottomley@HansenPartnership.com>
-	 <20250327140613.25178-2-James.Bottomley@HansenPartnership.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1743450775; c=relaxed/simple;
+	bh=iAx6AiZOdcoVCQPaqkhovcXsqqfrJ9yKx5C+5ve//lE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=XjGP91H8WVfQD6MsnOrBDFcnW+yxb+6yNEYkjgPWkgYTz+RaObHpah7HijqZbtzezZfRJ3k2ThtL5N5CrrktDdbdmNKYJhmWwge3uUHuhiXlXOxThiMRALWcaRvVAgSVTHZ/xQf6ywR5YokAtN7xCqcQatx1XXSpvfbbCgEBNSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dwSKtzUz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52VFD05h007728;
+	Mon, 31 Mar 2025 19:52:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4o/ga2++oE8EAz0HX/ke0EQAZIONMTuD1M7ohYe75Ak=; b=dwSKtzUzTLPRu4m5
+	SrGojQ/5eMLmmw+GvPHg64bkT5u+XS2hZESjvgsj3LtATk+lsmRN1zWhIBpPd++F
+	J/N0KnOLUxaQuB1gpPXmLZM/mbGG4Dj8LV0x/KEp5kPvlITZFV7/QNJ32S58CrrP
+	4w9wEPcPy5SBLquuaW1QlNszZBsaQcMfZbMfrtGWCISsDbO22YwewFaWw8PamI6e
+	R467QS8F5aF8+juNjDjI3V0uoh5qcitSI9J5b6X9a+0VxcbKQAvB/8t4zJNXbXLU
+	IzWHASjGF3AhWJdU4l9rhJa26L3aW9yLNpoXC0i+2fEgohJpJZvJeq3FkX3naGSk
+	8Y4xDA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45pa1nwcwb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 31 Mar 2025 19:52:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52VJqQWl015383
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 31 Mar 2025 19:52:26 GMT
+Received: from [10.110.31.20] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 31 Mar
+ 2025 12:52:24 -0700
+Message-ID: <200c08f7-3637-c2fb-2caa-002604b957ed@quicinc.com>
+Date: Mon, 31 Mar 2025 12:52:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+Subject: Re: [PATCH v36 22/31] ASoC: qcom: qdsp6: Introduce USB AFE port to
+ q6dsp
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        Luca Weiss
+	<luca.weiss@fairphone.com>
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
+ <20250319005141.312805-23-quic_wcheng@quicinc.com>
+ <Z-J2WnrZHP6iMIhT@linaro.org>
+ <871827f0-94ba-4565-865f-775cab9501eb@quicinc.com>
+ <Z-PPlRD7gcUcNvNv@linaro.org>
+Content-Language: en-US
+In-Reply-To: <Z-PPlRD7gcUcNvNv@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GIw7Ik5soCn9yIsf1uJKEB1NenGOyaae
+X-Proofpoint-GUID: GIw7Ik5soCn9yIsf1uJKEB1NenGOyaae
+X-Authority-Analysis: v=2.4 cv=MPlgmNZl c=1 sm=1 tr=0 ts=67eaf27a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=6AAXJ8fxLwfOIhd8QYgA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-31_09,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 clxscore=1015
+ bulkscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503310138
 
-On Thu, 2025-03-27 at 10:06 -0400, James Bottomley wrote:
-[...]
-> -static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem, bool
-> reader)
-> +static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem, bool
-> reader,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool freeze)
-> =C2=A0{
-> =C2=A0	DEFINE_WAIT_FUNC(wq_entry, percpu_rwsem_wake_function);
-> =C2=A0	bool wait;
-> @@ -156,7 +157,8 @@ static void percpu_rwsem_wait(struct
-> percpu_rw_semaphore *sem, bool reader)
-> =C2=A0	spin_unlock_irq(&sem->waiters.lock);
-> =C2=A0
-> =C2=A0	while (wait) {
-> -		set_current_state(TASK_UNINTERRUPTIBLE);
-> +		set_current_state(TASK_UNINTERRUPTIBLE |
-> +				=C2=A0 freeze ? TASK_FREEZABLE : 0);
+Hi Stephan,
 
-This is a bit embarrassing, the bug I've been chasing is here: the ?
-operator is lower in precedence than | meaning this expression always
-evaluates to TASK_FREEZABLE and nothing else (which is why the process
-goes into R state and never wakes up).
+On 3/26/2025 2:57 AM, Stephan Gerhold wrote:
+> On Tue, Mar 25, 2025 at 04:18:03PM -0700, Wesley Cheng wrote:
+>> On 3/25/2025 2:24 AM, Stephan Gerhold wrote:
+>>> On Tue, Mar 18, 2025 at 05:51:32PM -0700, Wesley Cheng wrote:
+>>>> The QC ADSP is able to support USB playback endpoints, so that the main
+>>>> application processor can be placed into lower CPU power modes.  This adds
+>>>> the required AFE port configurations and port start command to start an
+>>>> audio session.
+>>>>
+>>>> Specifically, the QC ADSP can support all potential endpoints that are
+>>>> exposed by the audio data interface.  This includes isochronous data
+>>>> endpoints, in either synchronous mode or asynchronous mode. In the latter
+>>>> case both implicit or explicit feedback endpoints are supported.  The size
+>>>> of audio samples sent per USB frame (microframe) will be adjusted based on
+>>>> information received on the feedback endpoint.
+>>>>
+>>>> Some pre-requisites are needed before issuing the AFE port start command,
+>>>> such as setting the USB AFE dev_token.  This carries information about the
+>>>> available USB SND cards and PCM devices that have been discovered on the
+>>>> USB bus.  The dev_token field is used by the audio DSP to notify the USB
+>>>> offload driver of which card and PCM index to enable playback on.
+>>>>
+>>>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>>>> ---
+>>>>  sound/soc/qcom/qdsp6/q6afe-dai.c         |  60 +++++++
+>>>>  sound/soc/qcom/qdsp6/q6afe.c             | 192 ++++++++++++++++++++++-
+>>>>  sound/soc/qcom/qdsp6/q6afe.h             |  36 ++++-
+>>>>  sound/soc/qcom/qdsp6/q6dsp-lpass-ports.c |  23 +++
+>>>>  sound/soc/qcom/qdsp6/q6dsp-lpass-ports.h |   1 +
+>>>>  sound/soc/qcom/qdsp6/q6routing.c         |  32 +++-
+>>>>  6 files changed, 341 insertions(+), 3 deletions(-)
+>>>>
+>> [...]
+>>>> diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+>>>> index 90228699ba7d..b7439420b425 100644
+>>>> --- a/sound/soc/qcom/qdsp6/q6routing.c
+>>>> +++ b/sound/soc/qcom/qdsp6/q6routing.c
+>>>> @@ -435,6 +435,26 @@ static struct session_data *get_session_from_id(struct msm_routing_data *data,
+>>>>  
+>>>>  	return NULL;
+>>>>  }
+>>>> +
+>>>> +static bool is_usb_routing_enabled(struct msm_routing_data *data)
+>>>> +{
+>>>> +	int i;
+>>>> +
+>>>> +	/*
+>>>> +	 * Loop through current sessions to see if there are active routes
+>>>> +	 * to the USB_RX backend DAI.  The USB offload routing is designed
+>>>> +	 * similarly to the non offload path.  If there are multiple PCM
+>>>> +	 * devices associated with the ASoC platform card, only one active
+>>>> +	 * path can be routed to the USB offloaded endpoint.
+>>>> +	 */
+>>>> +	for (i = 0; i < MAX_SESSIONS; i++) {
+>>>> +		if (data->sessions[i].port_id == USB_RX)
+>>>> +			return true;
+>>>> +	}
+>>>> +
+>>>> +	return false;
+>>>> +}
+>>>
+>>> What is different about USB_RX compared to other output ports we have in
+>>> Q6AFE? Obviously, we can only play one stream on an output port. But
+>>> doesn't the ADSP mix streams together when you have multiple routes?
+>>>
+>>
+>> This patch will limit the USB_RX from being able to be mixed to multiple
+>> q6adm paths.
+>>
+>>> Also, this doesn't actually check for *active* routes only. It just
+>>> looks if any other MultiMedia DAI is configured to output to USB_RX.
+>>> That doesn't mean they will ever be active at the same time.
+>>>
+>>
+>> Yes, the main reason being that that is the mechanism we use to populate
+>> the active offload path within the USB SND card mixer.
+>>
+>>> I might for example want to have MultiMedia1 and MultiMedia2 both
+>>> configured to output to USB_RX. Let's assume MultiMedia1 is a normal PCM
+>>> DAI, MultiMedia2 is a compress offload DAI. When I want to playback
+>>> normal audio, I go through MultiMedia1, when I want to play compressed
+>>> audio, I go through MultiMedia2. Only one of them active at a time.
+>>> Why can't I set this up statically in the mixers?
+>>>
+>>> If you confirm that it is really impossible to have multiple streams
+>>> mixed together to the USB_RX output in the ADSP, then this should be a
+>>> runtime check instead when starting the stream IMO.
+>>>
+>>
+>> We can have multiple streams being mixed together, but it will get
+>> confusing because it changes the definition that we had discussed about in
+>> the past about the overall design for the interaction w/ userspace.
+>> Although we (QC) only support a single USB audio device for offloading,
+>> there could be other situations where the audio DSP can support multiple
+>> devices.  The assumption is that each MM path is assigned to a USB device.
+>>
+> 
+> Are you referring to the "USB Offload Playback Route PCM#*" mixers here?
+> They could just refer to first of the configured MM paths, if someone
+> decides to route multiple paths to the USB backend. Looking at
+> q6usb_update_offload_route(), I think the implementation does that
+> already.
+> 
+> I think it's fine that the userspace API for automatically "probing" the
+> PCM device supports only a single path to the USB backend. But if
+> someone wants to bypass the automatic probing and configure a more
+> advanced setup, do we need to forbid that?
+> 
+> Asked differently: what would happen if we remove this check here and
+> handle USB_RX like any other Q6AFE output port? Would anything break for
+> the userspace interface?
+> 
 
-Let me fix that and redo all the testing.
+So I took a look at seeing how the Q6ADM/ASM interactions would work for
+the situation where if user tried to start both MM1/2 streams at the same
+time over the USB offload path.  In this scenario, we see that the Q6USB BE
+DAI operations, ie startup, hw_params, etc... gets called one time for the
+initial stream.  For example, if I start playback on MM1, then that
+triggers the USB BE DAI to be brought up.
 
-Regards,
+When I start playback on MM2, since MM1 already called
+dpcm_be_dai_startup(), then be->dpcm[stream].users will be greater than
+zero.  This would cause the __soc_pcm_open() to be skipped for the USB BE
+DAI, so I wouldn't be able to check the runtime status at the Q6USB 
+backend DAI.  However, we do track current streaming sessions done over 
+Q6 ADM and it does save the AFE port associated to each COPP allocation, 
+so I think its reasonable to see if there is already a COPP entry for 
+the USB AFE port, to fail the open() call associated to the FE DAI.
 
-James
-
+Thanks
+Wesley Cheng
 
