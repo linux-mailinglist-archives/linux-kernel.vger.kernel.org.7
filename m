@@ -1,123 +1,84 @@
-Return-Path: <linux-kernel+bounces-582450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296F7A76D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:06:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C448A76D4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30AF0188D025
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F96E188523C
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473062192F9;
-	Mon, 31 Mar 2025 19:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E860921764B;
+	Mon, 31 Mar 2025 19:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9dVvoYO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UWPYzrW/"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D203215064;
-	Mon, 31 Mar 2025 19:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855921E0E13
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743447994; cv=none; b=bWcJsbAMcvWhZ7gccPvPVdHkJ1rId6FFMd7jlYjg/XcQ/SsiS5YlMt5CntmQ2OQJIzu15PSN8JWujfydJiGQzUJbVVhcVqOUCPF1x7Rel0ODQvQCK8j1okDDdlIZDfpmJ26QE5BVmQEa0TaF1UuQ0xMY5voTg3gz2uwFl/69XU4=
+	t=1743448077; cv=none; b=pA4fluRdOhzuuif/FdtmAq0wC4OYzSUZwvM8rB6RUON0t0Ni0eVCvQKW8ICOTqeDz83FTAePUJ9wuME2lroNblYwjMG8DABsyCtUfEDdSpxkcUUlXHlWErUz7Jo5j7LfXb1J7N//NIEN//5zdC8RBcEnC1L04iW+AFR2FKcJvGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743447994; c=relaxed/simple;
-	bh=GSdezILBg9AMDpFKqDEOgXG/5H5Ir4ccpT5zJFC+l7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZcK8mQtFpGYr1NeEcVC35IdSF4n+jT8MTpR4jAksb48jBqhuyLKEeiNKoDDmoWGLDOEVqE3XXVtue310y0povy5kgnCKOPD9G+Yl/pKpD61emQ3/8BvPckhtP781wlagscIkcDzqZi/+Jh6UyCw6T8OlFB3BDls9FCDg5o58Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9dVvoYO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6166C4CEE3;
-	Mon, 31 Mar 2025 19:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743447994;
-	bh=GSdezILBg9AMDpFKqDEOgXG/5H5Ir4ccpT5zJFC+l7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B9dVvoYO+m2E0z+eIzLPbDNzONgi8HajZJ+BveufehFXOOD6oJv0c5fhvHRdOyOEk
-	 4oP3K8nwcpRWbz8XdzdaLL20UzQWo/eiYnJonoV4T0v59MEZEv4uzZslVwABnOg+E8
-	 +ISP62fh4ynBERZPr7i7PMgTHf5mvRMiSLP1boea0CHoVE7QAxjjR/w5T848kiy/1x
-	 C9Jaaz3rEuekkkzW5HP5M9GgCYhdUwGm1W/67/Mjv6HDhA4ZDLR9C/JZfsm4okGO60
-	 G1XzRyeVM5RTbfUof1e0oBS9vYtvmv64to/JGdMk6n0+19T7HiAmkKM6BdZ07BljGd
-	 rmx+0kYv2bUUQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tzKSz-000000004BU-2Amd;
-	Mon, 31 Mar 2025 21:06:37 +0200
-Date: Mon, 31 Mar 2025 21:06:37 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Cc: "Tudor, Laurentiu" <Laurentiu.Tudor1@dell.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dmitry.baryshkov@oss.qualcomm.com,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH v2 1/1] arm64: dts: qcom: x1e80100-dell-xps-9345: Add
- WiFi/BT pwrseq
-Message-ID: <Z-rnvSKEysdDyj4s@hovoldconsulting.com>
-References: <20250331073423.3184322-1-alex.vinarskis@gmail.com>
- <20250331073423.3184322-2-alex.vinarskis@gmail.com>
- <Z-pN1qloL2m4BWaq@hovoldconsulting.com>
- <CAMcHhXq9W64MHhOV5i3U4t+ZfKNC_GaBq5X3ZN7VOLt0cjPQPg@mail.gmail.com>
- <Z-p1uADNVAM9NcAW@hovoldconsulting.com>
- <CAMcHhXqO2Ej3UAej9QodX1NNCHAk956++=oakPxx-MkpOucJ2Q@mail.gmail.com>
+	s=arc-20240116; t=1743448077; c=relaxed/simple;
+	bh=FqGkVPBLkWs7duAPOpc+xO9RHLQHVjSaEbcGAhsL48M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEbiDQue+xYXb2002pBKL5Rb3bcxc2GsGV7wgKeVEFwhnnPBacN4AuuqxDGqIcSK4AOuwqYvIN5wMoQc/3Rpbr1lErtVmnTUZlQJm0h2Sy5Ef/uISbYCaCrDvG+VmWgYICWBaZX3ixRfEu1P3Gq00snQPf0kNjjERI542bn4n0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UWPYzrW/; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=/UtZagbG3T/uK5
+	TqNzNdEuqBMJsjG+CKy+jLJwbOUaU=; b=UWPYzrW/TKlfbpcAeo26FYIndGtsXb
+	IzefAXRRC8INxMwHItZzCa4KcvkBOy8zLLXeQ9h9qYsXFcmCw45Mi9FmPlpDJYTF
+	1k9RtnKoz/MyWEYvoSlaCxBqRLYXUAGXQkzONKd6kTWELCL2DDWLxiylCoriGIzi
+	uZ2VFH6YMyfiIU7OidruuNBWnK2R5LSe/Bw+tJ6RGQ0FD6T5rmJsnBWlEmbHpPKE
+	7miOahJqFQlbucqgGgG3wR5seTMs7tZcFtiuGNnS7kOY3SFhFqCb1D+M1HzscZnp
+	W6Sa9Oh4APqImTHY9kl0/MeOd1QBqyNN+k/mVwxfglFYiVpyKLcEe1Jw==
+Received: (qmail 1349266 invoked from network); 31 Mar 2025 21:07:43 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 31 Mar 2025 21:07:43 +0200
+X-UD-Smtp-Session: l3s3148p1@3Kl2IqgxROEgAQnoAEJMAK1XZKOIHRkS
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-arm-kernel@lists.infradead.org,
+	soc@lists.linux.dev
+Subject: [PATCH] MAINTAINERS: delete email for Shiraz Hashim
+Date: Mon, 31 Mar 2025 21:06:42 +0200
+Message-ID: <20250331190731.5094-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMcHhXqO2Ej3UAej9QodX1NNCHAk956++=oakPxx-MkpOucJ2Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 31, 2025 at 06:51:03PM +0200, Aleksandrs Vinarskis wrote:
-> On Mon, 31 Mar 2025 at 13:00, Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Mar 31, 2025 at 11:38:25AM +0200, Aleksandrs Vinarskis wrote:
-> > > On Mon, 31 Mar 2025 at 10:09, Johan Hovold <johan@kernel.org> wrote:
-> > > > On Mon, Mar 31, 2025 at 08:33:47AM +0100, Aleksandrs Vinarskis wrote:
-> > > > > Add the WiFi/BT nodes for XPS and describe the regulators for the WCN7850
-> > > > > combo chip using the new power sequencing bindings. All voltages are
-> > > > > derived from chained fixed regulators controlled using a single GPIO.
-> > > > >
-> > > > > Based on the commit d09ab685a8f5 ("arm64: dts: qcom: x1e80100-qcp: Add
-> > > > > WiFi/BT pwrseq").
+The email address bounced. I couldn't find a newer one in recent git
+history (last activity 9 years ago), so delete this email entry.
 
-> > > > > With that fixed commit f5b788d0e8cd ("arm64: dts: qcom: Add support for
-> > > > > X1-based Dell XPS 13 9345")
-> > > >
-> > > > Not sure what happened here.
-> > >
-> > > Bluetooth and WLAN definitions were missing, as at the time I only
-> > > knew the UART port being used for bluetooth, and was missing
-> > > everything else to describe it.
-> >
-> > Ah, ok. The above sentence looked like some left-over copy paste. I
-> > guess you don't need to mention it at all since this does not seem to
-> > warrant a proper Fixes tag.
-> 
-> It was a suggestion from Dmitry in v1. Though indeed it does not
-> warrant a proper Fixed tag, as it is something  that was left out from
-> the initial series, I think it's fine to keep it like this, if it's
-> okay with you?
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-I think you misinterpreted Dmitry here. He just said that after you
-added the reference to the commit you based this on to the commit
-message you could add his reviewed-by tag ("With that fixed: R-B: Dmitry
-...")
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9bb1db9979f1..32f15c2ce531 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22627,7 +22627,6 @@ F:	drivers/accessibility/speakup/
+ 
+ SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT
+ M:	Viresh Kumar <vireshk@kernel.org>
+-M:	Shiraz Hashim <shiraz.linux.kernel@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ L:	soc@lists.linux.dev
+ S:	Maintained
+-- 
+2.47.2
 
-	https://lore.kernel.org/all/ou7w4hvbbz72nzrm45gfhpq2uzkuwpfudqeh2o34tcnbnazxgz@glmuryu5dh3s/
-
-As it stands it's hard to understand what that sentence means and why
-it is there (looks like a copy paste mistake). I suggest you just drop
-it.
-
-Johan
 
