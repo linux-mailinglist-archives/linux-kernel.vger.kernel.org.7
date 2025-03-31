@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-582122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75467A7694E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A94BA7698D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4E516BD4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54FB166774
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8E722A7F9;
-	Mon, 31 Mar 2025 14:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C0322FE1F;
+	Mon, 31 Mar 2025 14:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IRXn7Wrb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGwzB83w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BC91DF258
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 14:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F36822FE0C;
+	Mon, 31 Mar 2025 14:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743432850; cv=none; b=TxPgKcQOMrwgFmj5Vg0h0YmXeSEE3fuiibdX3rrK3PpS2kudyzzyFoEtJhznQcZF3Va8VenMyeqXwVgotb2zumOirRwiG72pMUoVXCrLdAWzI85CF4gp7WB6dmgGmG5DkpUlpsExtQifBYMOXbXgUDiD4KeZePecxBYNj8BgZHw=
+	t=1743432894; cv=none; b=hEuZZBSlPoLlNBmmBS8quspvDqKPpcAl6Do2QvV8Iq06W7zG+2vBoAFQyxvtJl+bjBtQ52JD0pQTCKz4GdbZGDPR74n4l4a3CToxD2wBefLR6KTLhs/XRyRd1eqE5uivoriv50SoYRYSRmMeS5UxCaRVB1NuhqDVOtd00PSDaQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743432850; c=relaxed/simple;
-	bh=z3Jo4cVEz82S1Hhr9IzTyltq1FXq8pBHA6uwkGyfZCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dc2Ev3c27MkE2lOlEQGiajNcbUD6qYD1iI2mCwyCFxaXS4DBjRBXyhUvgX4FvH3i9iSfnSS5NS8NumzXIyHHQhVlQrGHpSd9hBzi8PTRgZ6BJM+HowwIlxM8hgqbN68jiMLovd/IERdK2YlbrTnQY1yrS1m9y0Gek8f33gnt0+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IRXn7Wrb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743432847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iG+qEN/dmB4J+30yyi3d8IQq23oAU9zL+9Eq8FKspqc=;
-	b=IRXn7Wrbx80KpkR31UwB/rvNbXCbxu1ixpSdWdVZbNKRpjEDqKrqGN5gfhsYwDixKQxVHz
-	nDpF2A8wPeCZydD8giAlsORZmLhcPkOAMCMOkxwZP6mcWn9ytubhjj3ZbUipmdUl0U25G5
-	R1zHd/VhtaDOFuZ0ytaL4nJ4G5WxLUU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-Agcw7EsOPYiuCYdqwpm4Rw-1; Mon,
- 31 Mar 2025 10:54:03 -0400
-X-MC-Unique: Agcw7EsOPYiuCYdqwpm4Rw-1
-X-Mimecast-MFC-AGG-ID: Agcw7EsOPYiuCYdqwpm4Rw_1743432842
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9A3C180035C;
-	Mon, 31 Mar 2025 14:54:01 +0000 (UTC)
-Received: from localhost (unknown [10.43.135.229])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A2F618009BC;
-	Mon, 31 Mar 2025 14:53:58 +0000 (UTC)
-Date: Mon, 31 Mar 2025 16:53:55 +0200
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
-Subject: Re: [PATCH v2 1/2] time/timekeeping: Fix possible inconsistencies in
- _COARSE clockids
-Message-ID: <Z-qsg6iDGlcIJulJ@localhost>
-References: <20250320200306.1712599-1-jstultz@google.com>
- <Z-KURRE_Gr72Xv_n@localhost>
- <874izezv3c.ffs@tglx>
- <Z-Vx8kV4M3khPknC@localhost>
+	s=arc-20240116; t=1743432894; c=relaxed/simple;
+	bh=4wDyi5BWKf2udm+YBUejtsH0tg2dOSYunxOb5IyN7ok=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UI+JwNyJSxvVbMfhebKBRJ2jwcUlb1sovKkEeWQagAQzOJcTd2BVQa7nHZIWTwS2QAHKxBTUkS8hcF3w5AhB4/u0HnJFePkEbhj2r27SoXwdjKTimjQclIq1A14CvguB0zE9xU5QV+XJ3oWW9gVuzRyBf7P306usHg8LHbhehfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGwzB83w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC46AC4CEE3;
+	Mon, 31 Mar 2025 14:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743432894;
+	bh=4wDyi5BWKf2udm+YBUejtsH0tg2dOSYunxOb5IyN7ok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iGwzB83wKAQKKoAd6EqQFS+gKakInlmz7vermTCjQ6F4/uyawNAlLtdZluoByjfus
+	 kF9PCkpUNHPXgGUXdmNtCQhxSEpMZLw4B4LvhSv9KJUilTJ04fCO4Gc8B/nnGWLuIw
+	 E/7YLn5NaWdzPJ8TShAfxuf0j7LYcrJ3u8YimElBB6IMm7vzlFlGIJ6aAIxw7XDz/5
+	 0RkXLo7qTaDJ9AB2uoJKn0I9xPW2bZ6qmo773F+JQyy5UWqZqcp4S+jWxuP/PTDsto
+	 6t7QbzIPimyhkY5MkcEU/hU3hHlUkmE9B9Nb7rK6kYN9aZuEHYmKMgbOJx+zM+h6Nw
+	 8eNjg0WFTFS3g==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Maxim Mikityanskiy <maxtram95@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	pierre-louis.bossart@linux.dev,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	hkallweit1@gmail.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 16/24] ALSA: hda: intel: Add Lenovo IdeaPad Z570 to probe denylist
+Date: Mon, 31 Mar 2025 10:53:56 -0400
+Message-Id: <20250331145404.1705141-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250331145404.1705141-1-sashal@kernel.org>
+References: <20250331145404.1705141-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-Vx8kV4M3khPknC@localhost>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.9
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 27, 2025 at 04:42:49PM +0100, Miroslav Lichvar wrote:
-> Maybe I could simply patch the kernel to force a small clock
-> multiplier to increase the rate at which the error accumulates.
+From: Maxim Mikityanskiy <maxtram95@gmail.com>
 
-I tried that and it indeed makes the issue clearly visible. The COARSE
-fix makes the clock less stable. It's barely visible with the normal
-multiplier, at least for the clocksource I tested, but a reduced
-multiplier forces a larger NTP error and raises it above the precision
-and instability of the system and reference clocks.
+[ Upstream commit becc794c5e46f4dfca59f2385f78d83fc9e84700 ]
 
-The test was done on a machine with a TSC clocksource (3GHz CPU with
-disabled frequency scaling - normal multplier is 5592407) and tried a
-multiplier reduced by 4, 16, 64 with this COARSE-fixing patch not
-applied and applied. Each test ran for 1 minute and produced an
-average value of skew - stability of the clock frequency as reported
-by chronyd in the tracking log when synchronizing to a free-running
-PTP clock at 64, 16, and 4 updates per second. It's in parts per
-million (resolution in the chrony log is limited to 0.001 ppm).
+Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 540M doesn't have sound on
+the discrete GPU. The HDA controller in DGPU is disabled by BIOS, but
+then reenabled by quirk_nvidia_hda(). The probe fails and ends up with
+the "GPU sound probed, but not operational" error.
 
-Mult reduction	Updates/sec	Skew before	Skew after
-1		4		0.000		0.000
-1		16		0.001		0.002
-1		64		0.002		0.006
-4		4		0.001		0.001
-4		16		0.003		0.005
-4		64		0.005		0.015
-16		4		0.004		0.009
-16		16		0.011		0.069
-16		64		0.020		0.117
-64		4		0.013		0.012
-64		16		0.030		0.107
-64		64		0.058		0.879
+Add this laptop to DMI-based denylist to prevent probe early. DMI is
+used, because the audio device has zero subsystem IDs, and this entry
+would be too much, blocking all 540M chips:
+    PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000)
+Also, this laptop comes in a variety of modifications with different
+NVIDIA GPUs, so the DMI check will cover them all.
 
+Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
+Link: https://patch.msgid.link/20250208214602.39607-3-maxtram95@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/hda_intel.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index c547a86ba659c..230be67b70286 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -37,6 +37,7 @@
+ #include <linux/completion.h>
+ #include <linux/acpi.h>
+ #include <linux/pgtable.h>
++#include <linux/dmi.h>
+ 
+ #ifdef CONFIG_X86
+ /* for snoop control */
+@@ -2074,6 +2075,27 @@ static const struct pci_device_id driver_denylist[] = {
+ 	{}
+ };
+ 
++static struct pci_device_id driver_denylist_ideapad_z570[] = {
++	{ PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) }, /* NVIDIA GF108 HDA */
++	{}
++};
++
++/* DMI-based denylist, to be used when:
++ *  - PCI subsystem IDs are zero, impossible to distinguish from valid sound cards.
++ *  - Different modifications of the same laptop use different GPU models.
++ */
++static const struct dmi_system_id driver_denylist_dmi[] = {
++	{
++		/* No HDA in NVIDIA DGPU. BIOS disables it, but quirk_nvidia_hda() reenables. */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Ideapad Z570"),
++		},
++		.driver_data = &driver_denylist_ideapad_z570,
++	},
++	{}
++};
++
+ static const struct hda_controller_ops pci_hda_ops = {
+ 	.disable_msi_reset_irq = disable_msi_reset_irq,
+ 	.position_check = azx_position_check,
+@@ -2084,6 +2106,7 @@ static DECLARE_BITMAP(probed_devs, SNDRV_CARDS);
+ static int azx_probe(struct pci_dev *pci,
+ 		     const struct pci_device_id *pci_id)
+ {
++	const struct dmi_system_id *dmi;
+ 	struct snd_card *card;
+ 	struct hda_intel *hda;
+ 	struct azx *chip;
+@@ -2096,6 +2119,12 @@ static int azx_probe(struct pci_dev *pci,
+ 		return -ENODEV;
+ 	}
+ 
++	dmi = dmi_first_match(driver_denylist_dmi);
++	if (dmi && pci_match_id(dmi->driver_data, pci)) {
++		dev_info(&pci->dev, "Skipping the device on the DMI denylist\n");
++		return -ENODEV;
++	}
++
+ 	dev = find_first_zero_bit(probed_devs, SNDRV_CARDS);
+ 	if (dev >= SNDRV_CARDS)
+ 		return -ENODEV;
 -- 
-Miroslav Lichvar
+2.39.5
 
 
