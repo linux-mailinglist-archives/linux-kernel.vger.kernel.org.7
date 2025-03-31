@@ -1,52 +1,74 @@
-Return-Path: <linux-kernel+bounces-581564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818AFA7618C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0457A761E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95ECD1889B9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5A71889B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17A1DE4F1;
-	Mon, 31 Mar 2025 08:23:46 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600E21E9B32;
+	Mon, 31 Mar 2025 08:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SuHDQIJy"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145CD1DB12D;
-	Mon, 31 Mar 2025 08:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F91E7C16;
+	Mon, 31 Mar 2025 08:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743409426; cv=none; b=R1GDqqoquI14KoRUyixmWrFASLrN6j6dZ0srXvbFHnYJf2DDotdmirlNaP8PVAqhq3jSwyL0z2YW3I/wWQUPDMVdax+U+ELK6pbAg34trYcfagsTVuClbRSyMNeGTOykMGsZ7NFugWijN4/pOYUOcGqvCvsz/P/XeZyGeKI1Ygw=
+	t=1743409462; cv=none; b=kS3+kgb4e9rIl8E85ehpa213F4hDwOgcSWdlct77y3Qu9eIFnNbGcur+hyWu7m/QiW3zEWkzFjOFjSsd7XAUE9P3BkwGSYc7on/uDhSKU/QB1q0hKLxVj2Z3+m8jMLyw5s7ZHDw+cWivwh+YtH0nmfcdzIdgJnAccrwCCbLfmYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743409426; c=relaxed/simple;
-	bh=6xZI7M/xMltiZq1WTRGYM2XVR9GGLoDnoskC5hcPgWc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dWlpK/kx1QEVG4i9y2KeAI6ZhpJTa7I+0OCC0kGG6MBviUJXSBqkhO+K72Uf1yYe6VdbFX9fh1pOEVIlZqf/h3kMNPvTyWNG44D2iIPxSa0RPSvrN9x0/vAmmh7z9QcoXaXFHA77MYPdFe/QJ7YyReU3WRmSEPGUmUAJqsCJ/y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 31 Mar
- 2025 11:23:29 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N
-	<sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM
-	<bharathsm@microsoft.com>
-CC: Roman Smirnov <r.smirnov@omp.ru>, Sachin Prabhu <sprabhu@redhat.com>,
-	Shirish Pargaonkar <shirishpargaonkar@gmail.com>,
-	<linux-cifs@vger.kernel.org>, <samba-technical@lists.samba.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH 2/2] cifs: remove unreachable code in cifs_get_tcp_session()
-Date: Mon, 31 Mar 2025 11:22:50 +0300
-Message-ID: <20250331082251.123381-3-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250331082251.123381-1-r.smirnov@omp.ru>
-References: <20250331082251.123381-1-r.smirnov@omp.ru>
+	s=arc-20240116; t=1743409462; c=relaxed/simple;
+	bh=ABSKvHyBIrh6QHK4hlgn4QnqvAzBsraSRqbIPjJ35nM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t0itzJLIqPitCu+aBdlGbHZizteGkkwk69AHy9FPCx8YgrKEhbpIvL0p5OB5ARcVAaFgGib6xfsZESSOkyCQiW014ioFrFY4pO/OgQKxGcyvUW2D+XoEnt9vyz31x7gfU0puM45WWmvPeQi7irdE5vg0TXro5TAdTZHzGGiWme4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SuHDQIJy; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52V8Mp0F3171319
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Mon, 31 Mar 2025 01:23:28 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52V8Mp0F3171319
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1743409410;
+	bh=cMFNgaQ/yU5pBBnUjuHrZWgQ7p+gEOsEGfeLMhV/cHU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SuHDQIJy8AzSLC0DrXz1UGsHXHhDsnDQpCgFuieur9l29e7EM1ArYQl7rGjnX8wD+
+	 WkraR40jpmWTpADYisOZ7nbeYq+ByLQ5TLLYH8kKM7DCg5buwGVA5GHhHZVrggSeZ4
+	 p9nifPZWSuSDm1534yUVgXXqF/kvTz/WBhHohMexeK1jikiHydt9HM2bVqx8MyrHLR
+	 c8M6luTBzpzY8I0f63iDe6i8yCHSJXzCnLx3cOikN4ytSEhwdKsNU/oWb2NhlDUBla
+	 mlZbjuvfxWirBhjjqog8XtnbNx9xitJDGMf/rsrr0eINZ0q1eEmyIbBAiN8ijpnMcH
+	 lJXB3Tmz/tP0A==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-ide@vger.kernel.org,
+        linux-pm@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        jgross@suse.com, andrew.cooper3@citrix.com, peterz@infradead.org,
+        acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        alexey.amakhalov@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
+        seanjc@google.com, luto@kernel.org, boris.ostrovsky@oracle.com,
+        kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
+Subject: [RFC PATCH v1 15/15] x86/msr: Move the ARGS macros after the MSR read/write APIs
+Date: Mon, 31 Mar 2025 01:22:51 -0700
+Message-ID: <20250331082251.3171276-16-xin@zytor.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250331082251.3171276-1-xin@zytor.com>
+References: <20250331082251.3171276-1-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,74 +76,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 03/31/2025 08:06:54
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 192231 [Mar 31 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 51 0.3.51
- 68896fb0083a027476849bf400a331a2d5d94398
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 81.22.207.138 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2;inp1wst083.omp.ru:7.1.1;81.22.207.138:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 03/31/2025 08:08:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 3/31/2025 5:23:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-echo_interval is checked at mount time, the code has become
-unreachable.
+Since the ARGS macros are no longer used in the MSR read/write API
+implementation, move them after their definitions.
 
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 ---
- fs/smb/client/connect.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/x86/include/asm/msr.h | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index 73f93a35eedd..84efcb541ab2 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -1729,12 +1729,8 @@ cifs_get_tcp_session(struct smb3_fs_context *ctx,
- 	 */
- 	tcp_ses->tcpStatus = CifsNew;
- 	++tcp_ses->srv_count;
-+	tcp_ses->echo_interval = ctx->echo_interval * HZ;
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index fc93c2601853..9b109d1d92aa 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -37,23 +37,6 @@ struct saved_msrs {
+ 	struct saved_msr *array;
+ };
  
--	if (ctx->echo_interval >= SMB_ECHO_INTERVAL_MIN &&
--		ctx->echo_interval <= SMB_ECHO_INTERVAL_MAX)
--		tcp_ses->echo_interval = ctx->echo_interval * HZ;
--	else
--		tcp_ses->echo_interval = SMB_ECHO_INTERVAL_DEFAULT * HZ;
- 	if (tcp_ses->rdma) {
- #ifndef CONFIG_CIFS_SMB_DIRECT
- 		cifs_dbg(VFS, "CONFIG_CIFS_SMB_DIRECT is not enabled\n");
+-/*
+- * both i386 and x86_64 returns 64-bit value in edx:eax, but gcc's "A"
+- * constraint has different meanings. For i386, "A" means exactly
+- * edx:eax, while for x86_64 it doesn't mean rdx:rax or edx:eax. Instead,
+- * it means rax *or* rdx.
+- */
+-#ifdef CONFIG_X86_64
+-/* Using 64-bit values saves one instruction clearing the high half of low */
+-#define DECLARE_ARGS(val, low, high)	unsigned long low, high
+-#define EAX_EDX_VAL(val, low, high)	((low) | (high) << 32)
+-#define EAX_EDX_RET(val, low, high)	"=a" (low), "=d" (high)
+-#else
+-#define DECLARE_ARGS(val, low, high)	unsigned long long val
+-#define EAX_EDX_VAL(val, low, high)	(val)
+-#define EAX_EDX_RET(val, low, high)	"=A" (val)
+-#endif
+-
+ /*
+  * Be very careful with includes. This header is prone to include loops.
+  */
+@@ -620,6 +603,23 @@ static __always_inline int wrmsrl_safe(const u32 msr, const u64 val)
+ extern int rdmsr_safe_regs(u32 regs[8]);
+ extern int wrmsr_safe_regs(u32 regs[8]);
+ 
++/*
++ * both i386 and x86_64 returns 64-bit value in edx:eax, but gcc's "A"
++ * constraint has different meanings. For i386, "A" means exactly
++ * edx:eax, while for x86_64 it doesn't mean rdx:rax or edx:eax. Instead,
++ * it means rax *or* rdx.
++ */
++#ifdef CONFIG_X86_64
++/* Using 64-bit values saves one instruction clearing the high half of low */
++#define DECLARE_ARGS(val, low, high)	unsigned long low, high
++#define EAX_EDX_VAL(val, low, high)	((low) | (high) << 32)
++#define EAX_EDX_RET(val, low, high)	"=a" (low), "=d" (high)
++#else
++#define DECLARE_ARGS(val, low, high)	unsigned long long val
++#define EAX_EDX_VAL(val, low, high)	(val)
++#define EAX_EDX_RET(val, low, high)	"=A" (val)
++#endif
++
+ /**
+  * rdtsc() - returns the current TSC without ordering constraints
+  *
 -- 
-2.34.1
+2.49.0
 
 
