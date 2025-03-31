@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-582541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BCDA76F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19076A76F91
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F1165F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9372018885C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F9E21B9C1;
-	Mon, 31 Mar 2025 20:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B4C21C16A;
+	Mon, 31 Mar 2025 20:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vvm1+nnn"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCvfUcBP"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31588214227;
-	Mon, 31 Mar 2025 20:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385F021B91F;
+	Mon, 31 Mar 2025 20:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743453981; cv=none; b=jjmlZ1c+KVGq7kCH9dtfIjiUyMHvkx71/C45/qkBOBHlGgu44dIfTlvzCFcSlYSe4yXwT3Keo6EUvbvd/Ba+/W87BVItvRSpKF3jhJQFeNdbYZiRgA6ymYJtaiMkofbPLfxJbA7scObzE15zSf74qkHcvLBatkqyVeD5GCWSlNo=
+	t=1743453839; cv=none; b=ko9SItwlDLqeH/hc3wCGtPxttgJvWduRM0mL1WySrmeweI/wbYeKdMEJPQ/98UFUeP/iYo2btK0/jhUu6gKBIEbTBmY/gzUGTe64gIWHzUiOXdcD5oSOc4aJ5Nzm3W10fRuIpBc/BdXs6qi1+tbiFx8sKLoxs+/Zw9tsB0GzHGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743453981; c=relaxed/simple;
-	bh=VL1BagKpR2PzlWP4EuzcW8UqstpmSVCi9M4XdWrxn3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=htCRZukEBwh2hH7ecTUqljI12bq1iCnfTbD3EF+O/u4dmz4ogMC2xd106czwUoBaAng2CbuwmxOl1E6FnjhJY6cv/ZAcJ2JDttlyyBe1TTBijEz6nUOW/x8Lw05obvTqqeOGW4jQjDVzsinIml8NwZL437hvCcwIslzHBqMEaR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vvm1+nnn; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1743453839; c=relaxed/simple;
+	bh=NhmnlMAAlfE+UJZ4bK8dEFy6Cahb9IglOuPC0RLUf2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O6bafgWBoKqtPJFaNJRxaT2giGnEfQb/PX+w++RU5DjciQeHbLYBAuASYml/EZc2vpUDqPk7Es9ZUZ87flWkhUeBiDd6OgjMX1Dc/NI0n0VwHumzBACWuZPgr1ymk26bOB90Chem4qoOMb1VEbDsA5g8Bqbs+KFN2+ZeWROS3gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCvfUcBP; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso545137f8f.1;
-        Mon, 31 Mar 2025 13:46:18 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2963dc379so778336166b.2;
+        Mon, 31 Mar 2025 13:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743453977; x=1744058777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2k9mKVMicaaLXi6qOk7Jponh3pMkYt3H5iHRzaO+K9g=;
-        b=Vvm1+nnnHS03tPK0fE2bROB4VZy6x8fwa5D5hGu9l/nt4J3o4Z/5FfotzmdNAhH8c7
-         H+sDG7GXJER+F9Fm7eg5tWT+FiPThlfGMD1pdOOTyeINyDmwVNtMhybsu3d+8YsDaGCv
-         +7VWAgDVsivs/rfJgu7fwB36e1bzaRrcNEVRb1LO48ofYagg/wt5a3gs7yLs2HBUleMr
-         u9cZDLvWDOFEKHq+B8gqtBqOhs4/009NipZZVhaItXMXuzbk3lMSxlP1Sv4DjgZbBuSd
-         VGxB1oGPDuL3YT4gxPPotlk0UcWSBTNGuMihkiSomgFLxuTo0sgXC/Erlm28M2y6B5Rn
-         1DBg==
+        d=gmail.com; s=20230601; t=1743453835; x=1744058635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NhmnlMAAlfE+UJZ4bK8dEFy6Cahb9IglOuPC0RLUf2U=;
+        b=RCvfUcBP4AD8NsE1S6hj+Pt3al6ZG1ik3PC4wwtG/JFwKrgCXkGBrVx6I4UUgGz12B
+         07n0dASkbjPrSjcw2fNC8HG97hMWxscptVcbyOrseJMgNVp/jT4UpuB/dKs/SkdKcQSa
+         9ma6oSYGZ9vLGm4T6R0+np+SQDPSdDrwdp6DXIkqtg38efHjzaBxOAAhxc11lJxCHFKr
+         iliJ8taQ5oIiEE5mBBzTuaQ+pekFp4EFPBdAvOInAWitzMHdWpI0vRg2CwpJYKKu7Xyj
+         X2+EKE4qNqz/nc7V8DiMvVzC06/T6I02VbRkRr9lyQEvd74ODlLA2fySntd1YCNA06Xd
+         XDXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743453977; x=1744058777;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2k9mKVMicaaLXi6qOk7Jponh3pMkYt3H5iHRzaO+K9g=;
-        b=czsy3Cpk81y6fKk7qZz16PW6JwQoYCU1NqTui0Hb8hyuv/Z16hKBCU80xFPTVWDYoO
-         8Q8sjzVWe7DH+nmRUgxSYdlFssjDhQ/G9dw0kkM7FtdOfAssJg6oc2/Y3PXMfo27MBzc
-         2ookU0YWht7nK3cC1L0abljokLqrwBv9tGKgp7G6wes4IQjKyMZKcGIRe0eXeR9VdFVS
-         GyTEvZUa+xqrkTsDHoQnWdYFw5IF9JdMY/vv1S27KcQpPeiZZmgqbTmgzVcVGIWv0dgp
-         2WOot6Y98LX7/rCm1uwIHXSTvIoqxivK0JcMPH9MNtiZis/VpqgcYrurFNzRFtoZhHZ2
-         vVZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyMBVviPyTYcDzEWjA8ztEhvZxhqFiVA8TMk9eU1Ypv5cHbrHFhVqOHtqh5H2/IlAEaHw+BrJd6/wI30Zv@vger.kernel.org, AJvYcCXA23sSJvXorfhygNShg3Kq4KaapW7+xeSspnidaNFeRWsdK9sAzJ2zKdxJ8OXc2twObRcRH6xYX2bR@vger.kernel.org, AJvYcCXGsy5THKlUn76cPa7zMMNyBdx5L03KwYC/ZviUi0wz694u8y5MAbLAWBoh49TxL5XSoaSpNIjWW2cPH9zomA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwceyExyANd47K2WCAnKQWUl6oTXkh9K9Okdw2s3EH+Nonxk4eX
-	2BQ/WGlxqDi4J8fxHMs9y0ozqTtkTMVUJeokrjEg4j1WynbLeQs=
-X-Gm-Gg: ASbGncsFYXriMyUonVO5B63NyVT4jdg0n/EcbEq+VS834GebAEHnqYYv8aVbspmgtqP
-	h6OONGH2lYoeUr4mlM+TqxuXaN3Z4U8CTlDYOeSGR5qJmYD1qT6GGT90uQfcm2Ir6/MnjvmpuCd
-	uL6ygCyMaSxleUBlz71rdGCPoiOy6rcfLjw4K6WeGU9CiK3s6z7pQhc2WevJwA6Ij9Lv3eXvZuy
-	Uh2qBDg1CYQY9SRwQY4ewWybb/q/XKTaPnQowEVr1vvTKGBxtFMFqfwA7OSQzbLwIMgx3XaVGVa
-	aMGhBCN1oNM8ZbEFN0uW1b6/RUhtO8D5PSdmvFZf6bYs2XPAsPwrXY2ZRnryVUKmwcfGuyelZGT
-	FjQrFoaIAitOCV6lKNs32d7E=
-X-Google-Smtp-Source: AGHT+IHUwXQN1JEwDEcBE8BfL8c+uO3ympf5SyCdjQpEJYlefdYyaeH9vV3YZnbadue+35d7HKfhqA==
-X-Received: by 2002:a5d:6d84:0:b0:39b:f44b:e176 with SMTP id ffacd0b85a97d-39c0c13b7d1mr12175023f8f.24.1743453977282;
-        Mon, 31 Mar 2025 13:46:17 -0700 (PDT)
-Received: from alex-x1e.. (mob-194-230-148-227.cgn.sunrise.net. [194.230.148.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0ddeecc9sm11006996f8f.83.2025.03.31.13.46.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 13:46:16 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	laurentiu.tudor1@dell.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	johan@kernel.org,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v3 0/1] arm64: dts: qcom: x1e80100-dell-xps-9345: Add WiFi/BT pwrseq
-Date: Mon, 31 Mar 2025 21:43:43 +0100
-Message-ID: <20250331204610.526672-1-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1743453835; x=1744058635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NhmnlMAAlfE+UJZ4bK8dEFy6Cahb9IglOuPC0RLUf2U=;
+        b=ulmM848ajabIDQcnyA2L4JG4SHIHobFzJLazPvmYTsT1hJI1IatuvVBuxs3k11A856
+         04/wg36Si1bbwjQA1XisZNcGtO5/ieptSuYBGvdVvVjxKiVVGAcoIIOCoWE6VR3ViFMV
+         JYv1eTWpXCu6vLm71P+oydST9bEOCCiYaw4ogKb+QdN6KnjzjI/wnSRR5JI/PqMI1wKi
+         x1Nz+1peB88Z65658at2D2PCJhln1J0x7uMirvTVqTdzR3RjwZQnTAvG6Z/8a0s1PZ+H
+         u8vStq6cv1ukIv5tpDy078HP2GlUEKMoY+p7nazwsA9PWY7NSWpvHO9kpD+YksoYQo1D
+         jEuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIhWDRwTz3L6R+YWTYp6HvXx2sVmrSNZBuJcnxV4Et0Jxa27hlv5chz25wzXohet5vTefRgOxHtYr1neQ=@vger.kernel.org, AJvYcCWOMl804kKy7R9bXnzBIVnjzKxAtoBi//z+O6Ad+zHp0IMEvWJOf4JJZ+7Agi4N8DxvwDbbcsnii6d56aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxoISbzETILXc8FlUodpUl4J7K8gSuurO52eQHIbAXTSSGmKHe
+	nMdGOLf4wzMGvTwV+tgviV7mx+QjupBUBmhR+dSE6l4fsNiBRV08QiDfftXn7RhmqwGgrRxl7By
+	azuEnKoO14X2J/VSAdG+Sgm7NpV0=
+X-Gm-Gg: ASbGncv6xCOkCq3rgTVoZWXYKUI9WhSXCikKnQ5SDbv3//hPootKoh02g0JFepma1Bf
+	zi6HvjQETQMa0yKBln6v3cr/r9oIJ03WheioJ2pdKU6Hr+ASs+fVnmCDBL1zwg2PV46C5EOk7iX
+	5vltgI+ZHgLLOGFao91hBIGdYx
+X-Google-Smtp-Source: AGHT+IGa2ATWEnPtBZKrovC/2tQXOIHQaYNh/KXGz4WWHKDhRqKyDzgdS0ONK7AXu9tKvknpMnQpqfeFIU5BV3Y+5xU=
+X-Received: by 2002:a17:906:1718:b0:ac7:391b:e684 with SMTP id
+ a640c23a62f3a-ac7391beac4mr794735366b.58.1743453835197; Mon, 31 Mar 2025
+ 13:43:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
+ <f5fdc666-dd72-4a4f-9270-b539a3179382@amd.com> <20250310-eccentric-wonderful-puffin-ddbb26@houat>
+In-Reply-To: <20250310-eccentric-wonderful-puffin-ddbb26@houat>
+From: Dave Airlie <airlied@gmail.com>
+Date: Tue, 1 Apr 2025 06:43:43 +1000
+X-Gm-Features: AQ5f1Jo63dx6IuKsG5SoyFqmX486Pcaveqb15lGzyp5QvSc5pKKZ1U2dlNV04bE
+Message-ID: <CAPM=9tzkLXOz=-3eujUbbjMHunR+_5JZ4oQaqNmbrWWF9WZJ0w@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/12] dma: Enable dmem cgroup tracking
+To: Maxime Ripard <mripard@kernel.org>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Ben Woodard <woodard@redhat.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add bluetooth to mentioned device.
+On Tue, 11 Mar 2025 at 00:26, Maxime Ripard <mripard@kernel.org> wrote:
+>
+> Hi,
+>
+> On Mon, Mar 10, 2025 at 03:16:53PM +0100, Christian K=C3=B6nig wrote:
+> > [Adding Ben since we are currently in the middle of a discussion
+> > regarding exactly that problem]
+> >
+> > Just for my understanding before I deep dive into the code: This uses
+> > a separate dmem cgroup and does not account against memcg, don't it?
+>
+> Yes. The main rationale being that it doesn't always make sense to
+> register against memcg: a lot of devices are going to allocate from
+> dedicated chunks of memory that are either carved out from the main
+> memory allocator, or not under Linux supervision at all.
+>
+> And if there's no way to make it consistent across drivers, it's not the
+> right tool.
+>
 
-Changes to V2:
-* Fixed commit message misunderstanding
-* Picked Bryan's R-by
-* Picked Laurentiu's T-by
-* Link to v2: https://lore.kernel.org/all/20250331073423.3184322-1-alex.vinarskis@gmail.com/
+While I agree on that, if a user can cause a device driver to allocate
+memory that is also memory that memcg accounts, then we have to
+interface with memcg to account that memory.
 
-Changes to V1:
-* Fixed commit message
-* Picked Dmitry's R-by
-* Link to v1: https://lore.kernel.org/all/20250330212729.3062485-1-alex.vinarskis@gmail.com/
+The pathological case would be a single application wanting to use 90%
+of RAM for device allocations, freeing it all, then using 90% of RAM
+for normal usage. How to create a policy that would allow that with
+dmem and memcg is difficult, since if you say you can do 90% on both
+then the user can easily OOM the system.
 
-Aleksandrs Vinarskis (1):
-  arm64: dts: qcom: x1e80100-dell-xps-9345: Add WiFi/BT pwrseq
-
- .../dts/qcom/x1e80100-dell-xps13-9345.dts     | 144 ++++++++++++++++++
- 1 file changed, 144 insertions(+)
-
--- 
-2.45.2
-
+Dave.
+> Maxime
 
