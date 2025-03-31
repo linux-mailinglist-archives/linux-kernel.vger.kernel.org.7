@@ -1,146 +1,160 @@
-Return-Path: <linux-kernel+bounces-582224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF77BA76AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:37:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3703FA768F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D9B0164104
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22B8164956
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08B918D;
-	Mon, 31 Mar 2025 15:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A142144BF;
+	Mon, 31 Mar 2025 14:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="aPznpXnV"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLUwUQyF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2796E215056;
-	Mon, 31 Mar 2025 15:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91371E260A;
+	Mon, 31 Mar 2025 14:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743433811; cv=none; b=n2N/RL/+ZvLCwRKSDhLlVNhB469gRKjU0pL1i1KJApagqQxpr6r1V3Oi2rW6aePJJgnYaAMBGTEugfzxWGTAPcw0Nc1BqjeHCPUyKJcvy77FejmSfOiGUZtbEHT1xfetxyZulK4TQ0MdPsWwaVWtfHKmnsO0YtAVS8isf6DRtCA=
+	t=1743432767; cv=none; b=Nxf3umjGSicFLSdR3qYXr/OMP6brXP8H7zJoR09X4cuXWtQvIhkrNcsca9VHQRljLXMzU2v2ZbBVmdgC0qOI5IamqNg8AAQBwx/oFKNsS5M7R85Jyq4d5Z4J4+0zS6QTnb8t02LyjkCWRwEeICRpOKZpw08RWnL4VveA5GvBqgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743433811; c=relaxed/simple;
-	bh=L130YS/mkAlVJXejn6aN+ztbMQtCjaPOE1dul4Qi1T4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IBOq4Mc3GMO+HVYd7MSddkWF6HNgbH3vuiP28j9ZZwP5XBMVDmpnFh8ctQXQOfUl8A0EYIbwhMZEb9DrKzQ7eHoeEogj+aY4K6b9ZnETCKEZbsXr/XO/TJtnI8Jd6asBStdgISDSxwKQf23VAw/7QMzhrZFKQA6xpoT5gBLm1iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=aPznpXnV; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=MdUyb0Swl6uwi/Ba1sOIIE2Rnr6FB7PQgycucQloc9M=; t=1743433810;
-	x=1743865810; b=aPznpXnVQ5c2F0dRNjdoT2KbZJy078hybsC/bJKMacG9+2spO4WN363RymJ64
-	rkw43z/OOyVrNjKfuxNmwZyPvriMIPhVsoGFVMZz8AJXkBsmPoEesgU630FQk2n8jS9caEjnlhfg+
-	Rs8LCegSXJ3ar8xwdf6G8uE98Ym3qtwNBGL2OsAG9uGpBe9fCFZmGhbkzFCQNMrKnl76Rp6iLDpY0
-	RNct1f3SudNS3jwobhVV1TpBHYLjgIuYyGaqhNg+0XG0YCXf9AOYnmRO13+AyWHhRjcZcg/Lkidp/
-	qnaty1FtNbl2wcs6TqJLIP4TuaXWcRvkBv/yt/CutFa1ul8n8A==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1tzGTl-000AJM-1n;
-	Mon, 31 Mar 2025 16:51:09 +0200
-Message-ID: <37e1da82-736f-44a4-af51-036f9e3182f4@leemhuis.info>
-Date: Mon, 31 Mar 2025 16:51:08 +0200
+	s=arc-20240116; t=1743432767; c=relaxed/simple;
+	bh=PHTS/WBwjTKYlMdCIAb1qBrBV5xna69lqUPWK3NIU3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LP3L/nE8taoRrZxWXo0N2iIErcmHMCpAX3BEKh/tbNObC8A9Lzdi/oSqmBzSgEZJr8Su0puKdR09RbLOw091qHK6LfILQ94CSOvQYy5SgMmMBSkrGEmDeLTCcaxO7cjjKm3n0RNFy2btEv6fDXpl1s3pxy7noREvgaxuJNMxtwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLUwUQyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95409C4CEE3;
+	Mon, 31 Mar 2025 14:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743432767;
+	bh=PHTS/WBwjTKYlMdCIAb1qBrBV5xna69lqUPWK3NIU3I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dLUwUQyFXWAmVwI1sjPLADc6RCr/s5sz4Emwroh5B2CnWtyKy+qMswNKAyS0+fnJU
+	 n1peNmtHrGAKmZ16thmkWzufIMkuRaNSG1EARVc3EGWbvonap6s+fFvTAuZnT3bsHo
+	 yw2FRggh/nqxbNxdCccET7gWUNJXnh2a3Vfbq6/ua9AGRRgLc5omxAjx7WW9wZP0mI
+	 smvZVoLjUfBb7RxGJJKu6ALTSx2ng6+1dQMKTEPZN39SEXi87BnLaN/A8El3DR7i3M
+	 EecxQhkqaBdS/ZPFU/ekotHrSlhqvLws9D4eqU7UJ5GtLD2oNtmGadf/NiGPGiBsOt
+	 Ekq68N6Grd9lQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Daniel Schaefer <dhs@frame.work>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	linux@frame.work,
+	"Dustin L . Howett" <dustin@howett.net>,
+	Sasha Levin <sashal@kernel.org>,
+	bleung@chromium.org,
+	chrome-platform@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.14 01/27] platform/chrome: cros_ec_lpc: Match on Framework ACPI device
+Date: Mon, 31 Mar 2025 10:52:19 -0400
+Message-Id: <20250331145245.1704714-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/gvt: Add __nonstring annotations for
- unterminated strings
-To: Kees Cook <kees@kernel.org>, Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc: Zhi Wang <zhi.wang.linux@gmail.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, intel-gvt-dev@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- Justin Forbes <jforbes@redhat.com>, Nicolas Chauvet <kwizart@gmail.com>
-References: <20250310222355.work.417-kees@kernel.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: de-DE, en-US
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20250310222355.work.417-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1743433810;a2b6f3bc;
-X-HE-SMSGID: 1tzGTl-000AJM-1n
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14
+Content-Transfer-Encoding: 8bit
 
-On 10.03.25 23:23, Kees Cook wrote:
-> When a character array without a terminating NUL character has a static
-> initializer, GCC 15's -Wunterminated-string-initialization will only
-> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
-> with __nonstring to and correctly identify the char array as "not a C
-> string" and thereby eliminate the warning.
-> 
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-> [...]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+From: Daniel Schaefer <dhs@frame.work>
 
-To provide another small data point:
+[ Upstream commit d83c45aeec9b223fe6db4175e9d1c4f5699cc37a ]
 
-Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+Load the cros_ec_lpc driver based on a Framework FRMWC004 ACPI device,
+which mirrors GOOG0004, but also applies npcx quirks for Framework
+systems.
 
-A "Compile-Tested-by", to be precise: after a handful similar patches
-reached mainline recently this is the only one I still need to compile
-the pretty broad Fedora rawhide config on rawhide using the GCC 15
-pre-release it currently includes. The latter or the final will
-hopefully soon also reach Fedora 42 beta as well and bring the "[1]"
-mentioned in the patch description above to F42 -- which will be
-released in a few weeks, so I guess it would be nice to have this patch
-mainlined rather sooner that later to avoid more people running into this.
+Matching on ACPI will let us avoid having to change the SMBIOS match
+rules again and again.
 
-HTH, ciao, Thorsten
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: linux@frame.work
+Cc: Dustin L. Howett <dustin@howett.net>
+Signed-off-by: Daniel Schaefer <dhs@frame.work>
+Link: https://lore.kernel.org/r/20250128181329.8070-1-dhs@frame.work
+Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/platform/chrome/cros_ec_lpc.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 5a2f1d98b3501..be319949b9415 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -30,6 +30,7 @@
+ 
+ #define DRV_NAME "cros_ec_lpcs"
+ #define ACPI_DRV_NAME "GOOG0004"
++#define FRMW_ACPI_DRV_NAME "FRMWC004"
+ 
+ /* True if ACPI device is present */
+ static bool cros_ec_lpc_acpi_device_found;
+@@ -514,7 +515,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	acpi_status status;
+ 	struct cros_ec_device *ec_dev;
+ 	struct cros_ec_lpc *ec_lpc;
+-	struct lpc_driver_data *driver_data;
++	const struct lpc_driver_data *driver_data;
+ 	u8 buf[2] = {};
+ 	int irq, ret;
+ 	u32 quirks;
+@@ -526,6 +527,9 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	ec_lpc->mmio_memory_base = EC_LPC_ADDR_MEMMAP;
+ 
+ 	driver_data = platform_get_drvdata(pdev);
++	if (!driver_data)
++		driver_data = acpi_device_get_match_data(dev);
++
+ 	if (driver_data) {
+ 		quirks = driver_data->quirks;
+ 
+@@ -696,12 +700,6 @@ static void cros_ec_lpc_remove(struct platform_device *pdev)
+ 	cros_ec_unregister(ec_dev);
+ }
+ 
+-static const struct acpi_device_id cros_ec_lpc_acpi_device_ids[] = {
+-	{ ACPI_DRV_NAME, 0 },
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(acpi, cros_ec_lpc_acpi_device_ids);
+-
+ static const struct lpc_driver_data framework_laptop_npcx_lpc_driver_data __initconst = {
+ 	.quirks = CROS_EC_LPC_QUIRK_REMAP_MEMORY,
+ 	.quirk_mmio_memory_base = 0xE00,
+@@ -713,6 +711,13 @@ static const struct lpc_driver_data framework_laptop_mec_lpc_driver_data __initc
+ 	.quirk_aml_mutex_name = "ECMT",
+ };
+ 
++static const struct acpi_device_id cros_ec_lpc_acpi_device_ids[] = {
++	{ ACPI_DRV_NAME, 0 },
++	{ FRMW_ACPI_DRV_NAME, (kernel_ulong_t)&framework_laptop_npcx_lpc_driver_data },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, cros_ec_lpc_acpi_device_ids);
++
+ static const struct dmi_system_id cros_ec_lpc_dmi_table[] __initconst = {
+ 	{
+ 		/*
+@@ -866,7 +871,8 @@ static int __init cros_ec_lpc_init(void)
+ 	int ret;
+ 	const struct dmi_system_id *dmi_match;
+ 
+-	cros_ec_lpc_acpi_device_found = !!cros_ec_lpc_get_device(ACPI_DRV_NAME);
++	cros_ec_lpc_acpi_device_found = !!cros_ec_lpc_get_device(ACPI_DRV_NAME) ||
++		!!cros_ec_lpc_get_device(FRMW_ACPI_DRV_NAME);
+ 
+ 	dmi_match = dmi_first_match(cros_ec_lpc_dmi_table);
+ 
+-- 
+2.39.5
+
 
