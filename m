@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-582695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E206A77195
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 01:59:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7A9A7719E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5642416AACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A23818866B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B751DEFD2;
-	Mon, 31 Mar 2025 23:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8DB21D3EA;
+	Mon, 31 Mar 2025 23:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XosN8NtJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0ag+A0wE"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435A51DC9B8;
-	Mon, 31 Mar 2025 23:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7F521CFEF;
+	Mon, 31 Mar 2025 23:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743465537; cv=none; b=OOvHSj1yVCsy3PJl4LxK1sOudzkb1n0Lx9D0Fzpt1/4PsRySxa+f/fYKGzjWJII/yiTIdh7NSZw26x40Z/RBK144R+T8YsPdfGeyw1g1EzBHGveqYY6vTKwE0elRBDcul/zKVf3kv32mfDGxCBpm3s4AOTu9fF+uk+sSPSmUJgs=
+	t=1743465579; cv=none; b=BaWA6CZeLchHXOjWWdyXJToXn/jgUSkWURDrFWavT73qFVbp0xOxb+x9OSdRtkTnIC/L/dSMdUfUoyPs4CT/Hmkh2xytwU0yUAIphjksaVtMpX2hJ19FIGTL5zJT87EGO2u2slR6MeCrvomChVd483G0eo5wMuXo/dU19HZwfKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743465537; c=relaxed/simple;
-	bh=menO4sDEk3l45fnsd0YQAAdQADVGd+u3djMWqArXze8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZFNGFoLjgM35Kg3mAxPF+FjgNIdSESSlU0wzCQRA3jg81j2TpN1cNqRcy23XI4T5B6MvAXTqmkJAniqiQPpbu5o3dsefcGmDPSnQ28d35ce2gWKbOChzOVp29Zg6AU7iG7SKRLCwxd1vN88QIFVm88Z3CvfxLTgQmynr+293DuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XosN8NtJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1743465531;
-	bh=h4B1PPTydGZ2muA7rAU7uWBbHuGLy5fpc4PfjuS1hRQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XosN8NtJeRfDe1+tylNta3ayDdJwqkgVAEwQoH9orSLW8tBd0mi8PP8/wP6GbKhiu
-	 8ARhpyW6jztEy1kjtVW2vEjWVEU5xWvPsysO4byNYRH72imOu2sqk/xuKtd5NP+2I7
-	 cF/RcprwYSwImekVZsKIOWdQ50Y07gHIRZjNeytbqgdbANaKAJOIv/ep8SS6F2l03N
-	 JnaxH+jSkUyVjekxDVMXn77kiKSkYtDXMRl0ySlinUdN7A+0nFTpRx1s2LGcEjUooZ
-	 qcv/md+v0QA8UPNbKiVECexGQGWE6c4yGb0e34dwFw1Jvy0pBSdhJAMbQEWVTH/lgB
-	 tc9IDSuIH11Fg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZRSlH0XVSz4x5g;
-	Tue,  1 Apr 2025 10:58:51 +1100 (AEDT)
-Date: Tue, 1 Apr 2025 10:58:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Benno Lossin <benno.lossin@proton.me>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the kbuild tree
-Message-ID: <20250401105850.171beb9d@canb.auug.org.au>
-In-Reply-To: <20250317203806.63d4bc95@canb.auug.org.au>
-References: <20250317203806.63d4bc95@canb.auug.org.au>
+	s=arc-20240116; t=1743465579; c=relaxed/simple;
+	bh=LGdQNnGviTAAfXA1QSxFRNMb1V+I+snZ41QAfqiNhpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rljDuOYPuRiXPD4ZVLWuyCOkSkYiNJ3J1nelcPRSG6VBAGiqTx6Out6R/pueSVgiLf9AdpL97vxe+t0pIWQtZ6rZYHywoS3K6L0Brw5of/8o8pK3VmsEuZPnam+Uzude5ESP3AW6BkX0jit4CNi12acoSQ3wKvbd1pFAM6GvJmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0ag+A0wE; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Tmf7ncwVgVWuyzc5cYxsbvgKOZsAU8DzNdzbOOmf17Q=; b=0ag+A0wE54kG5CVWg2YhBJ6RlV
+	I/x442UnGC7ZGd93Z1rnW58RCtCT84L0GobDhQ+NLxS8FNx8AHd+93Sk1oHX0r/4EUL1NbNK4zTqo
+	m6/ehJfUHcjXuongTsaAWX45rRvqV3yYKXF9IWZCLUDuZwhYJaFCxCkT8tClvAaCeQHPvNOuSPLJL
+	+sSFaZciN7kWcwA0BIVGGB3mzUdlk3Hm1+o8putRYBxOD6UGLl0rvD0zJmer8oZv7DA/B41Ckd1gf
+	aRmUDPr6wfvm+ulSWBJRYc0JZmZIRDW7INyPrO8O+EOoIxe73SCcgPzjQFOWvYx7GLT/cU1SVVbpg
+	R5jE/4Sw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58766)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tzP2P-000532-0j;
+	Tue, 01 Apr 2025 00:59:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tzP2L-00027L-1g;
+	Tue, 01 Apr 2025 00:59:25 +0100
+Date: Tue, 1 Apr 2025 00:59:25 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Da Xue <da@lessconfused.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Da Xue <da@libre.computer>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Jakub Kicinski <kuba@kernel.org>, linux-amlogic@lists.infradead.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2] net: mdio: mux-meson-gxl: set 28th bit in eth_reg2
+Message-ID: <Z-ssXdmRLYqKbyn6@shell.armlinux.org.uk>
+References: <20250331074420.3443748-1-christianshewitt@gmail.com>
+ <17cfc9e2-5920-42e9-b934-036351c5d8d2@lunn.ch>
+ <Z-qeXK2BlCAR1M0F@shell.armlinux.org.uk>
+ <CACdvmAijY=ovZBgwBFDBne5dJPHrReLTV6+1rJZRxxGm42fcMA@mail.gmail.com>
+ <Z-r7c1bAHJK48xhD@shell.armlinux.org.uk>
+ <CACdvmAhvh-+-yiATTqnzJCLthtr8uNpJqUrXQGs5MFJSHafkSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/x1AnGmJrWppbkV5yxRc8MoQ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdvmAhvh-+-yiATTqnzJCLthtr8uNpJqUrXQGs5MFJSHafkSQ@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
---Sig_/x1AnGmJrWppbkV5yxRc8MoQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 31, 2025 at 05:21:08PM -0400, Da Xue wrote:
+> I found this on the zircon kernel:
+> 
+> #define REG2_ETH_REG2_REVERSED (1 << 28)
+> 
+> pregs->Write32(REG2_ETH_REG2_REVERSED | REG2_INTERNAL_PHY_ID, PER_ETH_REG2);
+> 
+> I can respin and call it that.
 
-Hi all,
+Which interface mode is being used, and what is the MAC connected to?
 
-On Mon, 17 Mar 2025 20:38:06 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the rust tree got a conflict in:
->=20
->   rust/Makefile
->=20
-> between commit:
->=20
->   e3de46f775ec ("rust: kbuild: skip `--remap-path-prefix` for `rustdoc`")
->=20
-> from the kbuild tree and commit:
->=20
->   d7659acca7a3 ("rust: add pin-init crate build infrastructure")
->=20
-> from the rust tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc rust/Makefile
-> index 089473a89d46,e761a8cc3bd5..000000000000
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@@ -175,9 -199,9 +203,9 @@@ quiet_cmd_rustdoc_test_kernel =3D RUSTDO
->   	rm -rf $(objtree)/$(obj)/test/doctests/kernel; \
->   	mkdir -p $(objtree)/$(obj)/test/doctests/kernel; \
->   	OBJTREE=3D$(abspath $(objtree)) \
->  -	$(RUSTDOC) --test $(rust_flags) \
->  +	$(RUSTDOC) --test $(filter-out --remap-path-prefix=3D%,$(rust_flags)) \
-> - 		-L$(objtree)/$(obj) --extern ffi --extern kernel \
-> - 		--extern build_error --extern macros \
-> + 		-L$(objtree)/$(obj) --extern ffi --extern pin_init \
-> + 		--extern kernel --extern build_error --extern macros \
->   		--extern bindings --extern uapi \
->   		--no-run --crate-name kernel -Zunstable-options \
->   		--sysroot=3D/dev/null \
+"Reversed" seems to imply that _this_ end is acting as a PHY rather
+than the MAC in the link, so I think a bit more information (the above)
+is needed to ensure that this is the correct solution.
 
-This is now a conflict between the kbuild tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/x1AnGmJrWppbkV5yxRc8MoQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfrLDoACgkQAVBC80lX
-0Gy5FggAgiGbx5AKDem4lklXDGDz49T2iCsPF9IbcG98vzugLFDD+6NRuxQYvbjJ
-d1uJFYTIDwWy+kVgbDpbLq+Nj6IPIcUHIXqkCzvr/w+CSAYLUVAnxEs75ekJw8Hi
-b/3gV/iGu0QuJzQPAUfbRBbwSueJKsrJgGtr6pyOU6RNdFZDwW3GAbLpTFgHR6eY
-ayWNFT+zT/+4o8iB2zZCJosAhl7V+SN46VIFFu518oLCcHme7+Ua3cFv2ert3rtf
-pe2DGM4WqAhUEF0fIsXua4Sm0yBPtcPeOmbQFIh5lwXi/p5zTuNjESzfp2X9nvSn
-lxKHeGjI3hGtAG2CGoazcAGpTm/U7Q==
-=HmpW
------END PGP SIGNATURE-----
-
---Sig_/x1AnGmJrWppbkV5yxRc8MoQ--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
