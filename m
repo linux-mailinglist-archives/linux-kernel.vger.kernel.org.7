@@ -1,318 +1,101 @@
-Return-Path: <linux-kernel+bounces-582333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C418FA76C06
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:35:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56A7A76C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7313AC24D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2114188DAC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8472147E0;
-	Mon, 31 Mar 2025 16:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D684214815;
+	Mon, 31 Mar 2025 16:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GPUeFo9x"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W53wfwTd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0785D2B9A8;
-	Mon, 31 Mar 2025 16:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B1978F4F;
+	Mon, 31 Mar 2025 16:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743438946; cv=none; b=td4U5/J60sB5rptiWPv+Ufxieq3WOk3v14phSPoTuDUNyq0d6CngL/ZhiSvXIxRNsY5w+dsk46xcO3vkp0zkEFALPJDFxan9Fv+41bhS99wQ+31xE5jDUvt3aMIuRGgjXD0LTrIWuj2Dr/HqhhEDdS/ZeR7F+k/UaxP3Kp9x+dY=
+	t=1743438984; cv=none; b=WEJcDy4jnL7/pYx9QM04Q1RFh/0XmlEFiiBBsIIELAhmJeAU6qdxJsGdGZOq8Y9XzTy5A96VQQuytOtaH/FTiBX0tXOGeL5L7hJs7WA0sM7kEoM7sqb4OdD5b3YDY/h0dv7lGX8Vz1D3Kb/LYCBBm39UcrYyn/5MlCycn90PXIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743438946; c=relaxed/simple;
-	bh=Y5jbM88MAgn3wl6VGv2T/3V8FXFl/Ja/r03cNLJAc9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rf9MVPPzYDAt6qlzX3QEHaRUngGvAZi5F6GHCvPS51aH12FYSlScWokd1M9wui59Fn1iMmP+Dgopc+FkU/BapfEFysnTxEMjHh8Bt2JlYv6VV0T9KqcOC0Pshg3TMYmVrSL8RC+z+2qhDIVhNS+rAuFSWzF0jWABrLPMezCV6hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GPUeFo9x; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id zI6htGlLKjmO8zI6ltQDaO; Mon, 31 Mar 2025 18:35:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743438932;
-	bh=lY7BeyveUH3AXOWViZpRYutnAaNNZPsSe/bRA8mdx0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=GPUeFo9xbQmzMQIIAaUMa7wDOXL3m658gUV3uNppLE896pHfTlFMG9rSARiJvzbwp
-	 G2LOKluvti6Iau9HYX1trNfd4g4aav2Wo/6W6sMrh69AkfV3xLNXIwDASW/Cyp+mdC
-	 jTEo8tXJV3Gw1FS6i4pWC9HxPrBlKaSzdpt7/CUnB+7gijjhWjOuT292OBaSpwF9AC
-	 gg7i9e5ruTnW6q969Pnj0YLjuR4wVKekAxqowGhtcuOCvvdED5pHR1XtV50It4A1E2
-	 R5dPVkZLUJJMPxkFhMn9myoI2WAEZjP8RxDIJmf5HfhzT4MQ0bin43DcNGItrvQ2xp
-	 +DhYQq1mF9ASA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 31 Mar 2025 18:35:32 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <3be3ca59-157d-4ceb-81bd-4a1acdbccb9c@wanadoo.fr>
-Date: Mon, 31 Mar 2025 18:35:26 +0200
+	s=arc-20240116; t=1743438984; c=relaxed/simple;
+	bh=CQvu9THSFTJVZsQPbF4NwMbzdwn2Ht5kDHjXq9KwwMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+cZCed9BSmHtKWmT31W63tkojSRbIDse8AZh1Zqq0UFniFCFDoFVFfJNC3asqcn6uHkrz5J9rYjG94bVcjPtZOYMax2hXipb+Jm+qKR2HFQBg3OCuQZQLFZclkMC3pNyPOXNRdINoA8KWcVMV13SWQuYckRMuwFpBvbu+KNWTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W53wfwTd; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743438983; x=1774974983;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CQvu9THSFTJVZsQPbF4NwMbzdwn2Ht5kDHjXq9KwwMk=;
+  b=W53wfwTdm0i6luzsCMMnloYz3WbyU82AKZMWRfet5nh1O8lDTi5LnaYe
+   NsmtDoy+R5FeXK/sjweKrjNTkg/xyabxC++iEEqoYdFgNFdId/tLi1aWM
+   JxCEYUUmth2lEXBk+EkOQKC04ONIohvu1zd0h4RbF+VuNUFbDUYCpBJY8
+   2q4Q0qhfc6MbxUdbTnpoGnuo4lcf0zF/ua3ih6f9qjvgi/UPB47s1B4YA
+   rH3KaT9zjhH3XjxYQjOtpfQYDPS/J2VB8UajW2Fca6UgXXFHQcs1bH7iZ
+   cajBmKKZHqnVEuWfNVRl1R1Gjy6K6q7g3na3jussFeXIZSmAAsrgi7bxi
+   Q==;
+X-CSE-ConnectionGUID: EUl6qq6ARy6MSlLWmfSK1Q==
+X-CSE-MsgGUID: oJoI53wJQ9i0iCLJM1tGwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="55392571"
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; 
+   d="scan'208";a="55392571"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:36:22 -0700
+X-CSE-ConnectionGUID: rhm7ZPKlTa2IlUavWJ1/8w==
+X-CSE-MsgGUID: DhbKubTZS4mCy61fzpj6KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,291,1736841600"; 
+   d="scan'208";a="163370727"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2025 09:36:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tzI7U-00000007ryy-3XWs;
+	Mon, 31 Mar 2025 19:36:16 +0300
+Date: Mon, 31 Mar 2025 19:36:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Zijun Hu <quic_zijuhu@quicinc.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v1 1/1] device property: Add a note to the fwnode.h
+Message-ID: <Z-rEgHkdkaIMj0dl@smile.fi.intel.com>
+References: <20250331163227.280501-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] leds: tlc5928: Driver for the TI 16 Channel spi LED
- driver
-To: Corentin Guillevic <corentin.guillevic@smile.fr>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20250326153535.158137-1-corentin.guillevic@smile.fr>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250326153535.158137-1-corentin.guillevic@smile.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250331163227.280501-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Le 26/03/2025 à 16:35, Corentin Guillevic a écrit :
-> The TLC59928 is an SPI-connected bus controlled 16-channel LED driver.
-> A single 16-bit register handles the whole LEDs. Following a write, a
-> latch GPIO applies the new LED configuration. An "enable" GPIO (blank
-> in the TLC59928 datasheet) turns off the whole LEDs when active/high.
-> 
-> This driver is able to handle a daisy-chain case, so when several
-> TLC59928 controllers are connected in serie.
-> 
-> Signed-off-by: Corentin Guillevic <corentin.guillevic@smile.fr>
-> ---
+On Mon, Mar 31, 2025 at 07:32:27PM +0300, Andy Shevchenko wrote:
+> Add a note to the fwnode.h that the header should not be used
+> directly in the leaf drivers, they all should use the higher
+> level APIs and the respective headers.
 
-...
+I re-read it and it's ambiguous, I fixed this in v2 that has been just sent.
 
-> +static int
-> +tlc5928_set_ledout(struct tlc5928_led *led, bool val)
-> +{
-> +	struct tlc5928_chip *chip;
-> +	struct tlc5928_chip *chip_owner = led->chip;
-> +	struct tlc5928_priv *priv = chip_owner->priv;
-> +	int ret;
-> +
-> +	mutex_lock(&priv->lock);
-> +
-> +	if (val)
-> +		chip_owner->leds_state |= (1 << led->led_no);
-> +	else
-> +		chip_owner->leds_state &= ~(1 << led->led_no);
-> +
-> +	list_for_each_entry_reverse(chip, &priv->chips_list, list) {
-> +		u16 leds_state = cpu_to_be16(chip->leds_state);
-> +
-> +		ret = spi_write(priv->spi, &(leds_state), sizeof(leds_state));
-> +
-> +		if (ret)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Missing unlock.
-Or use guard()?
-
-> +			return ret;
-> +	}
-> +
-> +	gpiod_set_value(priv->latch_gpio, 0);
-> +	udelay(1);
-> +	gpiod_set_value(priv->latch_gpio, 1);
-> +
-> +	mutex_unlock(&priv->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +tlc5928_brightness_set(struct led_classdev *led_cdev,
-> +			enum led_brightness brightness)
-> +{
-> +	struct tlc5928_led *led = ldev_to_led(led_cdev);
-> +
-> +	/* TLC5928 only allows on/off, no brightness */
-> +	return tlc5928_set_ledout(led, !!brightness);
-> +}
-> +
-> +static const struct of_device_id of_tlc5928_leds_match[] __maybe_unused = {
-> +	{ .compatible = "ti,tlc5928" },
-> +	{},
-
-Unneeded trailing ,
-
-> +};
-> +MODULE_DEVICE_TABLE(of, of_tlc5928_leds_match);
-> +
-> +static int tlc5928_probe_chip_dt(struct device *dev, struct device_node *node,
-> +		struct tlc5928_chip *chip)
-> +{
-> +	struct device_node *child;
-> +	int count, err, reg;
-> +
-> +	count = of_get_available_child_count(node);
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	chip->leds_state = 0;
-> +
-> +	for_each_available_child_of_node(node, child) {
-
-for_each_available_child_of_node_scoped()?
-
-> +		struct tlc5928_led *led;
-> +		struct led_init_data init_data = {};
-> +
-> +		init_data.fwnode = of_fwnode_handle(child);
-> +
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err) {
-> +			dev_err(dev, "%pOF: failed to read reg\n", child);
-> +			of_node_put(child);
-> +			return err;
-> +		}
-> +
-> +		if (reg < 0 || reg >= TLC5928_MAX_LEDS ||
-> +				chip->leds[reg].active) {
-> +			of_node_put(child);
-> +			return -EINVAL;
-> +		}
-> +
-> +		led = &chip->leds[reg];
-> +
-> +		led->active = true;
-> +		led->chip = chip;
-> +		led->led_no = reg;
-> +		led->ldev.brightness_set_blocking = tlc5928_brightness_set;
-> +		err = devm_led_classdev_register_ext(dev, &led->ldev,
-> +							 &init_data);
-> +		if (err < 0) {
-> +			of_node_put(child);
-> +			dev_err(dev, "Failed to register LED for node %pfw\n",
-> +				init_data.fwnode);
-> +			return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tlc5928_probe(struct spi_device *spi)
-> +{
-> +	struct device_node *node, *child;
-> +	struct device *dev = &spi->dev;
-> +	struct list_head *pos;
-> +	struct tlc5928_chip *chip;
-> +	struct tlc5928_priv *priv;
-> +	int count, err, i;
-> +
-> +	node = dev_of_node(dev);
-> +	if (!node)
-> +		return -ENODEV;
-> +
-> +	count = of_get_available_child_count(node);
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->spi = spi;
-> +	priv->latch_gpio = devm_gpiod_get(dev, "latch", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(priv->latch_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(priv->latch_gpio),
-> +				     "Failed to get latch GPIO\n");
-> +
-> +	mutex_init(&priv->lock);
-
-Maybe:
-err = devm_mutex_init(...);
-if (err)
-	return err;
-
-?
-
-> +	INIT_LIST_HEAD(&priv->chips_list);
-> +
-> +	i = 0;
-> +	for_each_available_child_of_node(node, child) {
-> +		chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +		if (!chip)
-> +			return -ENOMEM;
-> +
-> +		list_add_tail(&chip->list, &priv->chips_list);
-> +		chip->priv = priv;
-> +		chip->enable_gpio = devm_gpiod_get_index_optional(dev, "enable", i,
-> +				GPIOD_OUT_HIGH);
-> +		if (IS_ERR(chip->enable_gpio)) {
-> +			dev_err(dev, "Error getting enable GPIO %i property: %ld\n", i,
-> +					PTR_ERR(chip->enable_gpio));
-> +			return PTR_ERR(chip->enable_gpio);
-> +		}
-> +
-> +		err = tlc5928_probe_chip_dt(dev, child, chip);
-> +		if (err)
-> +			return err;
-> +
-> +		i++;
-> +	}
-> +
-> +	list_for_each(pos, &priv->chips_list) {
-
-list_for_each_entry()?
-
-> +		chip = container_of(pos, struct tlc5928_chip, list);
-> +		if (chip->enable_gpio)
-> +			gpiod_set_value(chip->enable_gpio, 0);
-> +	}
-> +
-> +	spi_set_drvdata(spi, priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tlc5928_remove(struct spi_device *spi)
-> +{
-> +	struct list_head *pos;
-> +	struct tlc5928_priv *priv = spi_get_drvdata(spi);
-> +	int i;
-> +
-> +	list_for_each(pos, &priv->chips_list) {
-
-list_for_each_entry()?
-
-> +		struct tlc5928_chip *chip = container_of(pos, struct tlc5928_chip,
-> +				list);
-> +
-> +		for (i = 0; i < TLC5928_MAX_LEDS; i++) {
-> +			if (chip->leds[i].active)
-> +				devm_led_classdev_unregister(&spi->dev,
-> +					     &chip->leds[i].ldev);
-
-Why is it needed?
-devm_led_classdev_register_ext() was used.
-
-> +		}
-> +
-> +		if (chip->enable_gpio) {
-> +			gpiod_set_value(chip->enable_gpio, 1);
-> +			gpiod_put(chip->enable_gpio);
-
-Why is it needed?
-devm_gpiod_get_index_optional() was used.
-
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct spi_device_id tlc5928_id[] = {
-> +	{ "tlc5928" },
-> +	{},
-
-Unneeded trailing ,
-
-> +};
-> +MODULE_DEVICE_TABLE(spi, tlc5928_id);
-
-...
-
-CJ
 
 
