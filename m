@@ -1,248 +1,194 @@
-Return-Path: <linux-kernel+bounces-582441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB35A76D29
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:05:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED67A76D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B540B16627D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:04:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12708188D0EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B9121C9ED;
-	Mon, 31 Mar 2025 19:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D8521CA03;
+	Mon, 31 Mar 2025 19:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YcW1Ea7a"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2062.outbound.protection.outlook.com [40.107.105.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CKojFNJa"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C970621C189;
-	Mon, 31 Mar 2025 19:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743447812; cv=fail; b=IhlGtRB+Frvfy+OriOqGwEeHKOJy73nSSOd4QMY2h/6NHoIUAd7TtwpNjmXNjeFya4p8742tNum82xCh9tQN9BEZCfIONpCncJ0AgIlV+8onfGwc3k4BJgaayPqX6E77fTg1r/RolWDPVJOHxAy7D5xNcpmHqMKqldH5vl2OptQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743447812; c=relaxed/simple;
-	bh=SxsCZ7HxktglIBU8nuSFNa/tquCqnlO9B4lfmMOW0Fk=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=uISSC2c57C6HpXuey15wav+uG6IBxuaHW1+a7NQQwtGyViupp9ffkK+8DTGCcf4IwQRhjImZOLEdXZLbkeYV4UsmXdtEN2lUY4HCvE2H2DQVPZoyG8kVnvG/Dw7KrWfJrREi4Nh/cDoXXmLQKje43kqzkU8vZSRw3XoRLVmGzsE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YcW1Ea7a; arc=fail smtp.client-ip=40.107.105.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=If4cbY9a8SFICKUuo7szL+jDTpopTHxwdRwe36pM2JRj5ccud0hSfBWglXhr1cCjWEyiNF7imkxlXZ6iGyJs6OCQUmXDsLE26tAKVbHWPQ1nBlJswIPVgFZ53Ps53CWtjP8Uur0XlN2r3ScKr7SzTdPkLgktgmGrDkHOEHmo6NgMifwyCW2U0u/JqEayZW07mtWKyovNxjfkfyT7nwJLoggJgdHuEtX0OWPxda7Hj3hopjPaa+/32qAIRqdhrQ/xCD7LREiUPHbVx1OMmzIIdr7QPQV3M917PGRYHB2Xr4YQO/ijVSqdo4b9MEHhgkGgN+fDkNse5Wl5oSxPlYC8EQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+t8bSkwPsFBosgCengdXujnbwvxKEGPRJ7DY11XgDfc=;
- b=J5KeUK9dt7adMZHwOiwLOXLii/bO4eHIkJf0SxbahHYROJ52FyAoFwX/q6wx8F/1k2PvWc+DfD8D1Bt+HrlZW12HfBdO8+FOjjGUgprLwkBC+g5s6B5t8fj5jpuYywmJvdWxloZPUSV0IoOwC6KZx7LANP2YI1MGKIny9MkmLlo0SosSHuc3ryr+6fTDyG7aCnC1VgOEh6tHMd00RQmSCNy1ZkOdTrkuO8yQDPyKjXm7kX8T9X6SO6Vh5qG9E0/04VOerLaDJJBsp2Rc4O6HSiomJEYE5Rf3AFeO3KggSCCb+VbjWUQnCcuRQfqgqFWPwMdVAJgprvaMwFN3N5nn+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+t8bSkwPsFBosgCengdXujnbwvxKEGPRJ7DY11XgDfc=;
- b=YcW1Ea7aTsqtIQaUNCVF10ZxmIsphJUieODTCldywTY38+Dm44Fxqxe5uyN9OvZYWAyWiOeZFQ+OH789mbCKOfsCjRc4yJYxM9L+oRcfDxXFhxVfzfV9Q9HYPqpfJBEN9qaS23iigpnsKXRz6bDAhArEtrQ+ogKGW4Ti5rT0md/W3yLdcwB8giBXezE9VdwZO/9HSb++PLVsUp8bO2rSR2J9Sa+P1lbto6t6JJMS4DTXyrus6muQhR/oZxMe/frCxn0A35xZ6FllgMjJ2TZj9/X5Ld3r+ZaS7FRY15SEdH6nBMsXaL6KLX13i9a9qRCr6wgNq0v2AJWcaeCcKhlnVQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8557.eurprd04.prod.outlook.com (2603:10a6:102:214::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Mon, 31 Mar
- 2025 19:03:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8534.048; Mon, 31 Mar 2025
- 19:03:28 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Mon, 31 Mar 2025 15:02:46 -0400
-Subject: [PATCH 8/8] arm64: dts: imx8mq-evk: add pcie[0,1]-ep nodes
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250331-imx8_pcie_ep_dts-v1-8-270ef0868ac9@nxp.com>
-References: <20250331-imx8_pcie_ep_dts-v1-0-270ef0868ac9@nxp.com>
-In-Reply-To: <20250331-imx8_pcie_ep_dts-v1-0-270ef0868ac9@nxp.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- hongxing.zhu@nxp.com, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743447781; l=1988;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=SxsCZ7HxktglIBU8nuSFNa/tquCqnlO9B4lfmMOW0Fk=;
- b=4nj8oL6gnyn3Dp9CpJJS/oeVCIkLQThSMHLbui7QcVMEJYddGXDq2HayhVBcSnTKi3E3WvkzM
- A0EmblX+tmNADKYvV50oD68KKQfUDAUuUuD7s7yE5jXrRnzyweZpQfO
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: PH1PEPF000132E4.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:518:1::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1F121A436
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 19:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743447849; cv=none; b=AS4+1Z+rRhBrB8DHfvt7zgyPqTdJo/D2MIGNy8EWEAqZCZcjjumYZBZPxVhGXH9NJeVyreXQG6SwU2Fa12Yw+oNbVTTLVN17n93DAipOmuSchpCLXe/Q4etH2mZgZJYZA/LKA8qIeUyK36BI9JYX79rL1Bcu3YW+n5Em8ei4GLQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743447849; c=relaxed/simple;
+	bh=hWSr+N4q8jPBwyhE+M9punDDVddf1n2Qdd8iVHO9YtM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=S5B1rsk2xvAZ64sSncRhD/xDCfyQBnmimT4m6t0lkXOZXuNjdsgJnLwyE2DC/31JE2ZxfEXi0aCXVFf124iS7HV4c9fBVldQRAdZjlBCZW0//fyeD7ogrt4dhZHJLePVkNg8aZd/BX1kbnOr+R3DTW5UHNlQpif/VNFq3JLYeu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CKojFNJa; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso839249766b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743447846; x=1744052646; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hl8ec5RDehNYBKLIScFWmbMlzzx1NzVQIVCz8eQlZvo=;
+        b=CKojFNJaP130OSkqWeDCSHVDuIKXI+ILrLlBLxP0esZbDiPqh4rw1OG5YH2tIFA9Sb
+         LaMxntkcFq7CKKDjviYZwZlJzCcUfpP3M12SrYrVlJ+b5WLfLMv0zgnLDwqa0XDfzApd
+         q6Eqgsc/I/0IE7x2uQMKRbDXTtqCVWIAaSesag3RKYJBDwdABersBbCifiO3V0/FA+jh
+         NR5jiUqhXSlniFodC4mF5UzyENv1YJMzc+evFvxBfGUp3koI/GBqO0iber05P1SAbzso
+         Bkb39MbquuHiD1BiYc4kplSp1FmI1Lnjkb35fUAPaaJYrKNB16HSWzZkuUn9LGfHTHuz
+         KISw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743447846; x=1744052646;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hl8ec5RDehNYBKLIScFWmbMlzzx1NzVQIVCz8eQlZvo=;
+        b=Tibfsm205K03RbFnssQTPQNz0Ut4O8PSZ7fxFkN63gvX2f1WhHK+erhQB8j8FFpLtO
+         UobTYMcp9RWIa6UTJItHbuc6yC/RS9BCU+D7dd76kA6PsK8LUpVXOdB6LqzGMYvfSce1
+         PZKDKzBBw5zD0fqlWYKrexT7fMbbTZNJxN3rR/3+5AyNLohzdxHB9/ncA7xLQyINJ926
+         Cj6Gxrof6NqP1f9qhwi8h4jGlEP1qSdZTTQdIe8xxqBFO/xcdJx7RF9vp2WHyrGFmuVB
+         IvP9n/KWlis/t5Av8tsSgzFTU5Y+xZ3jlxD6J99DHIb/fY+DDZk9VOH2ifUakq9AqZAU
+         4iOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6INmT7CjcIfMPuuyMYtY9t38hSmNHKGCOdiOdVYYFDHd+K2xS4rXP6m+Tl6FGi9FDTFoEHSYn0JJTNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJF+MrxPzm38Ik2fPgEecx6LLjL/xhb9RY71vQLbQzed5XBb9k
+	EKZfr8tiLmT2oYn1gpxF4R9/HgVU9QRwYfSnMKbWVnrhC9ynBoi7s0PGCHppBbo=
+X-Gm-Gg: ASbGncsR/jVF5Y2PdgSJEavOt5mW7453EvDgml9dkn4pKnc1HfblXU5VyoX6aAg0psv
+	eUArECVDPAMeQ8WqTrXlkAt/Cs26wXShyLqKJU5AnVsxIhxfDIYD71ikb9liY6ne05KDVS8+mRq
+	n5+0Wv7mAKPs2xHS/2BRp3S8O0q8iQEptNfaVfsPc8XpafniC7YVvqTxz2zJ7o3EQ7P0V//joZ5
+	gA5D4QmHLzwvwc+9Y3hY6xir6LZ+SCC+hHh0xsGLIkaL46cB/Tgscvzhj/qpdczc2JxnIUsPWLv
+	Psri/0T/187FES3gaP53sH6F5zmvv4t0qNTHKO5GLhZKpjrQFQdjNh9NcdnhTSuUc3yUNwjtpLW
+	Y7rel+13UNnk8qdYHIfiy7ReWarEb
+X-Google-Smtp-Source: AGHT+IFUxbEQNZaiCG63rBO7ylX34l7ir7rdsprXQ4WoJTKZvi2Q3tt70y30TKZLkldis7UmrRl6Mw==
+X-Received: by 2002:a17:906:c40a:b0:ac7:3916:327d with SMTP id a640c23a62f3a-ac739163364mr705284866b.60.1743447845790;
+        Mon, 31 Mar 2025 12:04:05 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-172.pool80116.interbusiness.it. [80.116.51.172])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71961f9cfsm652288566b.122.2025.03.31.12.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 12:04:05 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Date: Mon, 31 Mar 2025 21:02:46 +0200
+Subject: [PATCH v2 3/5] iio: backend: add support for data source get
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8557:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ab50666-04fe-43c9-3fe8-08dd7086b89b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|1800799024|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZnZXcElJeUxRc2FUcVZzcWlwcTViSHlXVjM4N3ROdGtpTGUvRGdmbWN5bkNt?=
- =?utf-8?B?ZEZta2RUZWpZWTltMXMrdmNFaGRCUlNraEkyb0E2aytqTklCRXBWdHRSNmJt?=
- =?utf-8?B?TTNkVlpDWEYyL3kxQUJoRDlwOUJGQlJqODVlaWFNWld3RG5LSGk2TGpHTnpW?=
- =?utf-8?B?KzZsMENOVEVKRGwrd29CV01LWGoyOTMrVHJhdE44MWtPY2pCUEZNeDhPamt6?=
- =?utf-8?B?NFp6YWRjUnBHL3lyN2xtS3ZXS3p4eVVGY0hSS3NnTzFGTFZTSzV2Zjl3R1lZ?=
- =?utf-8?B?NFMwYjNNL2JyOVZRelNhaUFadUw3aFE4SnFzVndSWU4wektKK0gwOVE1K2w3?=
- =?utf-8?B?enJYUXM3TDFGOGZlNEV1dHRQVEtnbERmRU1abjA0Vi9CeVI5cGpQQ1ZhcmRr?=
- =?utf-8?B?NlUxek41Mms1V0VneWFLVUxsN3BpRityQ1pKOUd5MXkrd2JOSExuUWRTUFN2?=
- =?utf-8?B?QTV0WlAxOUUzWUZkWW5kRFNiYnV4b1ZoTDhGTnoyMGxvQ2JudjBaTFcvMDBq?=
- =?utf-8?B?SEFyTFd5SGU1MnJzbml4bzdwZkhEQzN0c3Y1cVBhOUVQZG56a2UrUVRySUdi?=
- =?utf-8?B?Q1VFWk0zeHN3QXNiZXpXcEVMcjBLT3MzVmVtcWoyRjltTWxyRjQyeUxtWkUw?=
- =?utf-8?B?Sml4NXRDRjRaenZqNkp3eWlJL2pobXRHcWlJZ1dkN2NRL0lzT2RoOXVIREZ4?=
- =?utf-8?B?bTNINmRLM2Z0K2orcmVlWTd6eTkrKy8xY1FBb280N1c4N25WaURVV0oyV0Z3?=
- =?utf-8?B?NmRBWG9OVDlSajNqdHNNdTVHUFdoamgyclV4VzZjZW85WExLcmJIQ0M0cm5m?=
- =?utf-8?B?WVhIMG52ZmlYVjdjbFlsODRrUU1JV2FlNVlMVFFTM21lblB1K2NZWks1Qks3?=
- =?utf-8?B?RnFYOVlwdERiamVodnZjK2dyVEZVSmhKUzhmTUtYL1BLdktLK0M4K2lmcE5i?=
- =?utf-8?B?Q0RvRW80OUp0eFhoTS9ZZ3hrUnVEYnVUaVhFVk93ckt3anJuazZOUmxJMk94?=
- =?utf-8?B?eU11a29pVllMSTd0d1QwdVErTzlUSFlBNGh0TDQ0R1N1NVp6YkoxVVc1REQ3?=
- =?utf-8?B?cVlvcFFJNGswbkNwOVFyQTgrRnlUVTJhSi9YWTY2UGRXNEpxUzVoV3FlQXBU?=
- =?utf-8?B?R1FPdG9vSVJ0QXFhMWRYR2x6KzFQdVgrVGNJRldXdzVJR01GUXEzeUVibFBz?=
- =?utf-8?B?czVTVFM3NGRtQkFYQ1VqaGlyTUd6Kzh5SjNZYm0rSWpMYkhIbFB3djl6SXov?=
- =?utf-8?B?TENnNG5mQkZWWUU2UWs3UUwwTE13eDJRc01SOUhPcmdJN04xSDc3YUMxYzR0?=
- =?utf-8?B?RzJRUSt4OHJvcTNaUVVMVHRpQVp1NzBsaXJkeTFuaUlBOHI0Q0p5L3REMlZa?=
- =?utf-8?B?bGxsTy9qbzhHNDUreTlJN1pMc0NMOHQ4MzIxdmZzdGhIcnlRaXc3bHhITCt5?=
- =?utf-8?B?NFV6VmNKbW1sVW9KMjNkWUkzeENpRmlNQjhrR3J2V1RUTUFVWEphSDZDclJ2?=
- =?utf-8?B?MStRUit0b3gwQjh4N1Q5ZExGWHh2SEkxY3hiSXE2ZGdVQjlhZWtqRjZhSXRM?=
- =?utf-8?B?MVRiMUU3Y1BvT3BORXAxWXpBOUlTWXp3OUR4S1ltdVNwS2pMN3c3aW9xbDNy?=
- =?utf-8?B?b0gwMlpSczVuclNiOUpwQk92QllDc2RDRlJTZFdCYkZma1FaWUpneFZQL3Fx?=
- =?utf-8?B?dGkvZFJaUzZZQVkybXBRRER5eis3L1lHZG10S3BCK0xoUUYzN3E4QVphMWdS?=
- =?utf-8?B?a2NPMEo3WnZKcitVVTRRWFJtS1hBNFR5VGt6NVRvblo2OUZXckd2MVNCaWRo?=
- =?utf-8?B?VCt1SDRKK0Znb3pvZTlZMDY4Ny9CcWMyWnlUTDREYUFEejB4NUFNOHpXWHZG?=
- =?utf-8?B?RlBZY0pCUnlhT1hhMXQzaGVFM1NqOVJWL3hPbHhJMUJ6K0ZheU1tMkpDcnUr?=
- =?utf-8?Q?W08DndiFmsc3RyZd7ZBkGNsRrXcuZur1?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(1800799024)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OEF3WkdHdXNqa0JkUVJ0TTJmb0tDWkxtbWtneXk2Z0xVd2FGazhUQ1lYZHhR?=
- =?utf-8?B?dmgxSnh2QUg2K05PV2NqSkVhSTQzcEdVYURHaEoxSTdORDMzM2YvQjQ3ektO?=
- =?utf-8?B?VmlpNVppdkdwcjg1WkJJYTFGWnpzUGRyb1FnOUpsckVnTE5SbE9uL0p6bXpt?=
- =?utf-8?B?UXhvNEtoQTg0Vzl5dDlpSU9sNTFtNzFmTzZQamtyZndzWlFqZUpGVnJmZG1D?=
- =?utf-8?B?UHVKZEhhQ3VHVFRwQmwzMm0wNWEvdVVZMUYrS2cwS0tDdUFxclo4b09waWxn?=
- =?utf-8?B?N0pFdUJEU1IwYzQ1aThKT2pEdG5RdThlOEpWTjl5TFhZV0V1RzhhVWdFRzIr?=
- =?utf-8?B?cTlienRjZG9uaVJjc0JuNGtvb1dwRWY2aHBacmZxOFFPM2FDOXZSZEF2a3Q1?=
- =?utf-8?B?dmxVckt1cE5KUDllVklqOXhvNnlrNTR2SUVVR1JFMHpzaWk0cllpZnZ2eExk?=
- =?utf-8?B?YjhTK2VXNG5YdGRqVzZGaEFQNnJlOExCRC9DeTZvOTVGcWRrYWgreG10RXJ6?=
- =?utf-8?B?SjFqampJMGRKMWRuK0ZkZTQ3SmxGbEZ4QjFjV0haSklPQ2Vza0RpUGUzNHlm?=
- =?utf-8?B?eE0xWklqOE1halB5eXlqdjBhdCs1eDhQdU5OWlVPbG1oRGlaQ0dPYlRjR1k1?=
- =?utf-8?B?RnZWTUFiR3ErbVU1dUlRbElpWlVWTmwzK3Z1SndlQWR0Z1F1cFVLd3VnVTA0?=
- =?utf-8?B?ZmVkNWxCaW1vNTYyOCtET21HdnlwNnpMaG9mN1VwMWl1NFg2eHY2VTBDZzR5?=
- =?utf-8?B?UThNZlREVXNPTm5lVVJpRVdISmVuWjlvcytQT2xDenJZMHpkcWxBUitTUXJF?=
- =?utf-8?B?aWtFb2xGSHROOGRjM1NsQ3lPdStvek5ZUmYwZk5rRmxOdzFZTXdzMjRoVkh2?=
- =?utf-8?B?WFZ5YnI1OUFNaUhDejFyVEpkZDFtVW1ZUlRDY1lwdThZcjdqZEs4RGNBbWF0?=
- =?utf-8?B?dmJRQUloYVNLZWtpQ0pXYU9tUTFIanhiTjEwRU1mU1dHQ0dRaXVsMkN1b3hm?=
- =?utf-8?B?Q3V1aTFIV090T2w2ZlBrNDl4V2t5d0hnZXdIZzRQSDJaR0MwSnFHR1ZNNytj?=
- =?utf-8?B?eEpJTGtoWVZNaDI2TDlMMi81TjJNMTZuNHhhL3MzS1lMa0pka1lOQnNBRTZ5?=
- =?utf-8?B?dDFLejJEOFkyeFZHaFpoZmVUWnA4U0k2SzRVQkdqNFN4T3lSMGRiU2g0c1pH?=
- =?utf-8?B?b0ZINDlvaWxaWEpHd3c1cFg5LzJ4YlVRWnV4NWVZWDR5NldhSnQzcVFDeUZT?=
- =?utf-8?B?NW5HRSthTDBldWp2cXNsbXl6bHhKS3NzM1VrUmRhRldvMVFNcHFlU0VaVHhW?=
- =?utf-8?B?NXI5cDQ4OHVQYWlvV2VYaTc0ckVpZERBbGhDUE9ZekcxYSs2Rk1STzZmb1h5?=
- =?utf-8?B?eWRnOS83ckFTYkdOT2FOWlA1TjVqT1RRQWZDRHZxRlB6eVBYUk04cTUyTGxU?=
- =?utf-8?B?ZWh4a3MxbWFrbUdOd1JmcGRMNmFiQ1paQXV3cEY5amtaTzVHamRQaXU4aXo2?=
- =?utf-8?B?alRHU3gvcDZCZzJSRktodDFIN1ZwVlRjendmc0ZZZXBSZmRkQWE4bGhMWXMr?=
- =?utf-8?B?Tmk4V3JLUENoYjdSM1EvMXZobDF0ZkxxMnRYaEZaTnRmTVpUOU1lQllwRWlN?=
- =?utf-8?B?c01PVVF2UkF6a1RWeUpjeVd3NU1lbmowZlNpY3FxVU9GZU9qZWRiRVUwT2RJ?=
- =?utf-8?B?K3NlNnMvbVgzSXNZR1hYZXZEYzMyb1dQVXNoQVgrKzljM3BUaENhc3hlaWs3?=
- =?utf-8?B?cTl3dXhOdENadkdIM3R3OFJ6VWxWcDVVWFlLbDFtc3pKZW1XZVRkcWRNQi9i?=
- =?utf-8?B?Q3VWUFdseCtpZm54Q0xEc25FS3graUhvUVI5b3RlYlRaNmpxTXVqb1F2U2Yx?=
- =?utf-8?B?aTQwdW9uUGxvMFM5RVZ6SWRGRjUza2NIaUJraEhlcVlRZkptZm5TWGtrTVhD?=
- =?utf-8?B?b2FWc0tWYXJQRldYYlRld0hOMUw1L0VnTFNQekRtT0xKQ24vZ3JLZmRNL0Zr?=
- =?utf-8?B?TWZ1RWdyaFdiWndPdDlFYnZ4dyt1OEJaSDRJY3FQcDFnMCswVENidUJRazB6?=
- =?utf-8?B?VjFPaDZRWTdSZGsrZ2xDRkJuRGFIK0pPc0Nkck1GVmJheE5tWVJXa2gxMnlW?=
- =?utf-8?Q?8nsW31V8dlns3ION7Of5xZzyz?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ab50666-04fe-43c9-3fe8-08dd7086b89b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2025 19:03:28.3386
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YVVTkc2WkXo//4fk8CU5OE2KdgrvJVYGxAYtuE3Bnusj9SOA/PGg7XDTyoT0b1Ng+WB/z7c8n1MwFADFkc34NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8557
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250331-wip-bl-ad3552r-fixes-v2-3-cdedb430497e@baylibre.com>
+References: <20250331-wip-bl-ad3552r-fixes-v2-0-cdedb430497e@baylibre.com>
+In-Reply-To: <20250331-wip-bl-ad3552r-fixes-v2-0-cdedb430497e@baylibre.com>
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3489;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=/X5T/C4urb1TZY56QZlmQtSfqpUWNyuJBZpY7qU/VIg=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYkh/9exWLO9NLtcUtVlM7qU17WfY1ixYwFxg52M2r2TbR
+ 8mzMQsFO0pZGMS4GGTFFFnqEiNMQm+HSikvYJwNM4eVCWQIAxenAExkzWdGhi7zfmOtmhAbnjXH
+ 7jG9MvHIzUzuOSTifXPbiVy+7ye35jH84ThVW5VqeMwoRj7w7dtJZ//e8q3KMfVaHpi26/YOjtk
+ qTAA=
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-Add pcie[0,1]-ep nodes and apply imx-pcie1-ep overlay file.
+From: Angelo Dureghello <adureghello@baylibre.com>
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Add backend support for getting the data source used.
+
+The ad3552r HDL implements an internal ramp generator, so adding the
+getter to allow data source get/set by debugfs.
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- arch/arm64/boot/dts/freescale/Makefile       |  3 +++
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 20 ++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ drivers/iio/industrialio-backend.c | 28 ++++++++++++++++++++++++++++
+ include/linux/iio/backend.h        |  5 +++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 4f2f50203dd86..205552b4e4985 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -260,6 +260,9 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl-lvds-g133han01.dtb
+diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+index a43c8d1bb3d0f4dda4277cac94b0ea9232c071e4..c1eb9ef9db08aec8437d0d00cf77914ad6611b72 100644
+--- a/drivers/iio/industrialio-backend.c
++++ b/drivers/iio/industrialio-backend.c
+@@ -380,6 +380,34 @@ int iio_backend_data_source_set(struct iio_backend *back, unsigned int chan,
+ }
+ EXPORT_SYMBOL_NS_GPL(iio_backend_data_source_set, "IIO_BACKEND");
  
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
-+imx8mq-evk-pcie1-ep-dtbs += imx8mq-evk.dtb imx-pcie1-ep.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk-pcie1-ep.dtb
++/**
++ * iio_backend_data_source_get - Get current data source
++ * @back: Backend device
++ * @chan: Channel number
++ * @data: Pointer to receive the current source value
++ *
++ * A given backend may have different sources to stream/sync data. This allows
++ * to know what source is in use.
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_data_source_get(struct iio_backend *back, unsigned int chan,
++				enum iio_backend_data_source *data)
++{
++	int ret;
 +
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-hummingboard-pulse.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-kontron-pitx-imx8m.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-librem5-devkit.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-index a87d0692c3bb3..43e45b0bd0d17 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-@@ -377,6 +377,16 @@ &pcie0 {
- 	status = "okay";
- };
- 
-+&pcie0_ep {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
-+		 <&pcie0_refclk>,
-+		 <&clk IMX8MQ_CLK_PCIE1_PHY>,
-+		 <&clk IMX8MQ_CLK_PCIE1_AUX>;
-+	status = "disabled";
-+};
++	ret = iio_backend_op_call(back, data_source_get, chan, data);
++	if (ret)
++		return ret;
 +
- &pcie1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_pcie1>;
-@@ -390,6 +400,16 @@ &pcie1 {
- 	status = "okay";
- };
- 
-+&pcie1_ep {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie1>;
-+	clocks = <&clk IMX8MQ_CLK_PCIE2_ROOT>,
-+		 <&pcie0_refclk>,
-+		 <&clk IMX8MQ_CLK_PCIE2_PHY>,
-+		 <&clk IMX8MQ_CLK_PCIE2_AUX>;
-+	status = "disabled";
-+};
++	if (*data >= IIO_BACKEND_DATA_SOURCE_MAX)
++		return -EINVAL;
 +
- &pgc_gpu {
- 	power-supply = <&sw1a_reg>;
- };
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_data_source_get, "IIO_BACKEND");
++
+ /**
+  * iio_backend_set_sampling_freq - Set channel sampling rate
+  * @back: Backend device
+diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+index e45b7dfbec35c094942a3034fc6057a7960b9772..e59d909cb65924b4872cadd4b7e5e894c13c189f 100644
+--- a/include/linux/iio/backend.h
++++ b/include/linux/iio/backend.h
+@@ -84,6 +84,7 @@ enum iio_backend_interface_type {
+  * @chan_disable: Disable one channel.
+  * @data_format_set: Configure the data format for a specific channel.
+  * @data_source_set: Configure the data source for a specific channel.
++ * @data_source_get: Data source getter for a specific channel.
+  * @set_sample_rate: Configure the sampling rate for a specific channel.
+  * @test_pattern_set: Configure a test pattern.
+  * @chan_status: Get the channel status.
+@@ -115,6 +116,8 @@ struct iio_backend_ops {
+ 			       const struct iio_backend_data_fmt *data);
+ 	int (*data_source_set)(struct iio_backend *back, unsigned int chan,
+ 			       enum iio_backend_data_source data);
++	int (*data_source_get)(struct iio_backend *back, unsigned int chan,
++			       enum iio_backend_data_source *data);
+ 	int (*set_sample_rate)(struct iio_backend *back, unsigned int chan,
+ 			       u64 sample_rate_hz);
+ 	int (*test_pattern_set)(struct iio_backend *back,
+@@ -176,6 +179,8 @@ int iio_backend_data_format_set(struct iio_backend *back, unsigned int chan,
+ 				const struct iio_backend_data_fmt *data);
+ int iio_backend_data_source_set(struct iio_backend *back, unsigned int chan,
+ 				enum iio_backend_data_source data);
++int iio_backend_data_source_get(struct iio_backend *back, unsigned int chan,
++				enum iio_backend_data_source *data);
+ int iio_backend_set_sampling_freq(struct iio_backend *back, unsigned int chan,
+ 				  u64 sample_rate_hz);
+ int iio_backend_test_pattern_set(struct iio_backend *back,
 
 -- 
-2.34.1
+2.49.0
 
 
