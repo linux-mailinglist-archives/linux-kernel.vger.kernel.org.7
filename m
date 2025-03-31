@@ -1,129 +1,231 @@
-Return-Path: <linux-kernel+bounces-581868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA213A76617
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0F6A76623
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F7D216AFBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2938188BAE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 12:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992F31E7C0E;
-	Mon, 31 Mar 2025 12:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB5B1DF973;
+	Mon, 31 Mar 2025 12:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+XZ/CNy"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QuqeWSHu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4243D1E5B8B
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 12:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08DB1E47B4;
+	Mon, 31 Mar 2025 12:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743424471; cv=none; b=rZ9uVYNzGska8lQtZSjbAUWUw3h+dahrWlrjz0/EZoJcOIHJWNWwWEf4FOwqrevqlhKyRQqjOCo/2GRhaU5s64zLOxyxawMQDvQw4tdSn/PsLgmp+T8cbz8kjpb6KjrCwIUjuByw7rNcv2uPZLtlMRYyf/dGJIfQ2hNOIWE0vwk=
+	t=1743424601; cv=none; b=VgSsDW8RyalID6Tv0ed//4q0wPJFDMQpx+U7E7tnwzWmMrgnIkIPlArGuMGlPC3p1gnmiWT1MiGRDAu2nL6Wt4HXA2QbZqiA2a9SCwIiPKfHLHDq6Twsjzz31BQtXIGFnVTgJp6XXbxjkYCwG2JnVnHVnspaEIFKn20pB/QrDi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743424471; c=relaxed/simple;
-	bh=hgubZ8v5IYMlWlWz7IWc4ZP/Fpz45adatWKCfG7bouM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aKJaauVwht/7AcMGhJjz1cCqq2WpwCm7KYCO/7OZ/XE1Du52Sk9pb2P7yi+/DWGt3QM5dlmnf3wtfh23VK+79B5B3QX08F/zYa0HETmWXVZU7zAvg+FaWrnhbvGh0IoEYIqNsz28vA8WS7sconNFN3M3H77MHP/Dtw/UFop5cu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+XZ/CNy; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so239075f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 05:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743424467; x=1744029267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8C1B/iAjfxZB5rM4ON16gPgb8RTIZjhmtB4Xg7w4JZc=;
-        b=P+XZ/CNyZRAj+hTgJZ44xF6qNZY/DEUdzISPaVoMvv+vWZClsTvLS0irvRaVYm8Gg/
-         Q3rudI+4wVE/BqxOUdMhpbM9zNRyb3zhhO3Ggu4//xmayQSkH7WCjbEUoR4xrCnN5JkJ
-         qyoGMswJOzU+rYOHTxiI5NfAnyafFwEY/aMk0FmNNqc2X393jr0Fk6gp6OGO1lpHlVA0
-         pzyJTnHaj6ep1qC4Hmqbg52F1/ZXY5vRE7uWDJLztXDB75zRVl9axrgQpnwpVllngHtv
-         dexpGATSBQ4Jce8sAS0KmoK4z+8sAjHahExGYXqyuSm/dHqeZGz/rsKR8z+BmyzY/QRH
-         2W0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743424467; x=1744029267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8C1B/iAjfxZB5rM4ON16gPgb8RTIZjhmtB4Xg7w4JZc=;
-        b=cbk9AD0vF947xNX09SCnaKlpb3smjvRQbaEHJJCePlDfMA0eN+Jfco7l7hsFIz5s2+
-         wodLH0d6V0jjIImGIlY6j2OzVtcvFVnn81FmBtWFccGeyzPs4t3iSd40EOknnbiL5B07
-         2RhBXyV7f8mtq1GiIunFw2Hd7/mu/OJMkXxAY2/EHal8QRNYhXlimhpJKNEHgPv6Vr3b
-         BVR8dZjGCuiKKXU7cKNcoiLnVFiqu362liYpPenNS31WdNTZ8M+laPqcFL+TswOzwnC7
-         dMB4/J46hK0cRzv2b+DJFptyLAmj/FvsGoW3JvjoQTZvCgrPTkn1I2lBCoOtZLfAYHKv
-         w1XA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwc9S2qFbOI58o73oR8Iy8/Ryz8T6XPF1vy0IYvdt5MJcIUmPSSSdovwj7AqALxu7sYb1LngdrWxhw200=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG3d75bplgqyP2Ylf9o2AnoeTQv6LikZRennQvPHFmlrfRilap
-	3oaelWEqA0/HnXzqFeYuqhuvItpN3mtaC9Db36Qdp+JdldLa4tBq
-X-Gm-Gg: ASbGnctvlAYdOhW6xaGfVIuxgR5SFJ08Ug6sIBpD8dvNGMPx7jp/M3vdZ1DEV0nJ/Xp
-	rz0vfWMStrRsMr339J1LW6Nl1YU7EvZJIfLnkXYHtFUm3UaTdndlxumChdv6Um4NgImV3W5ttvJ
-	94RL/Gy5laDYtEqX1KEiVocLwdJObknKnde7WClmigj8OHVnzN61GbsqVuFjyuNTKqY6hvfVs/v
-	DMuirq2CTp8BcLoDKic33vXzOlgOK495LLqIiYMkotmI0huV0PtwG/VY2VtBniByQ2bzwiqE8Ae
-	eLS7sbch6i0FkZ12UAEayptCGJXTt3gBtzaG5b+3FgW0ZEV4wDczDDhgOovBYSyZVGz1EMcIgOM
-	ViDLhXNb8
-X-Google-Smtp-Source: AGHT+IEfunH6HBm1Y7PMm/0AssIfHy3J3Wc1+rqe+wHnYUK4e/iGLilXY3nFa6l/MWKO2U0EbJxUpw==
-X-Received: by 2002:a5d:59ae:0:b0:391:1139:2653 with SMTP id ffacd0b85a97d-39c1211d013mr7275853f8f.52.1743424467274;
-        Mon, 31 Mar 2025 05:34:27 -0700 (PDT)
-Received: from [10.254.108.83] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b79e393sm11326406f8f.72.2025.03.31.05.34.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Mar 2025 05:34:26 -0700 (PDT)
-Message-ID: <2a2e9a4c-b888-45e1-a191-847dd8e7cb9d@gmail.com>
-Date: Mon, 31 Mar 2025 14:34:22 +0200
+	s=arc-20240116; t=1743424601; c=relaxed/simple;
+	bh=HpbaK4zMAdqazzak29BwALJAc9M3zvgIDlqTytH8Etg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jQEesDrg5BfxBHZwr58iDZ7o9lTxZF4ZG6Le4P+2Dy99Zo1Yr/Bd0y6bM+Bgr6PAIoZ9HZZ3UfzYJU1Ane/5gzcEN/9GUzORgqY8fs7Ags7uMmrFpSvsqy2YyuoVfRO9XeMe3v/LehP2L+XPJtkpOkTJVdh8JVa0AzmEh8aXLiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QuqeWSHu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A42C4CEE3;
+	Mon, 31 Mar 2025 12:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743424601;
+	bh=HpbaK4zMAdqazzak29BwALJAc9M3zvgIDlqTytH8Etg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QuqeWSHucf//6sXOO9j3WVLBZEcHN7RqhNTq27erPT0c+43gPI99+aP1jPGeJhQ6+
+	 lUCA6x95hsW/ateSEspgolul2epZ0Gd6mdivTUiMP7hZPWW6SvLLyZb+SgN/HoW7ix
+	 GgHIWjlrK2D2EeHHPVDhBwPkq2HL6g16ZbGxyuINfYTUylDq4cmhhYuIOqmsgivVQS
+	 ne/KlhJKQlcWdIwBqLsgsvDbBuiSNpMI7tu3y7GK9GHJFFKDmuY0PUd7/oQVbNXE6i
+	 VmQg8Nlb08dKp1sB5MB1Ec9HJenDpGW9GiZdVXoTGJejQBFdPN83+wRMhn6td7VV5Q
+	 bGck4+ve3B3HA==
+Date: Mon, 31 Mar 2025 13:36:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v4 05/14] iio: accel: adxl345: add single tap feature
+Message-ID: <20250331133633.370bc50b@jic23-huawei>
+In-Reply-To: <CAFXKEHZ+4OyA4AFPkAayetoK3pWfzf8ubrbozJjcjTqTAnHqFw@mail.gmail.com>
+References: <20250313165049.48305-1-l.rubusch@gmail.com>
+	<20250313165049.48305-6-l.rubusch@gmail.com>
+	<20250316112057.638626bd@jic23-huawei>
+	<CAFXKEHZ+4OyA4AFPkAayetoK3pWfzf8ubrbozJjcjTqTAnHqFw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: replace use of msleep(<20) with
- usleep_range for better accuracy
-To: James Flowers <bold.zone2373@fastmail.com>, harry.wentland@amd.com,
- sunpeng.li@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
- christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
- aurabindo.pillai@amd.com, alex.hung@amd.com, skhan@linuxfoundation.org
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250326070054.68355-1-bold.zone2373@fastmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <20250326070054.68355-1-bold.zone2373@fastmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Am 26.03.25 um 08:00 schrieb James Flowers:
-> msleep < 20ms will often sleep for ~20ms (according to Documentation/timers/timers-howto.rst).
+On Wed, 19 Mar 2025 00:08:24 +0100
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Our display team has to decide but I don't think that this patch is justified.
+> On Sun, Mar 16, 2025 at 12:22=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> >
+> > On Thu, 13 Mar 2025 16:50:40 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > Add the single tap feature with a threshold in 62.5mg/LSB points and a
+> > > scaled duration in us. Keep singletap threshold in regmap cache but
+> > > the scaled value of duration in us as member variable.
+> > >
+> > > Both use IIO channels for individual enable of the x/y/z axis. Initia=
+lizes
+> > > threshold and duration with reasonable content. When an interrupt is
+> > > caught it will be pushed to the according IIO channel.
+> > > =20
+> > =20
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com> =20
+> >
+> > Hi Lothar,
+> >
+> > A few things in here are from the discussion that was continuing
+> > on v3 so I may have said more replying to that.
+> >
+> > Anyhow, for now I'll hold off on applying from this point on as
+> > a few more things to respond to inline.
+> >
+> > Jonathan
+> > =20
+> > >
+> > >  #include "adxl345.h"
+> > > @@ -31,6 +33,33 @@
+> > >  #define ADXL345_INT1                 0
+> > >  #define ADXL345_INT2                 1
+> > >
+> > > +#define ADXL345_REG_TAP_AXIS_MSK     GENMASK(2, 0)
+> > > +
+> > > +enum adxl345_axis {
+> > > +     ADXL345_Z_EN =3D BIT(0),
+> > > +     ADXL345_Y_EN =3D BIT(1),
+> > > +     ADXL345_X_EN =3D BIT(2),
+> > > +     /* Suppress double tap detection if value > tap threshold */
+> > > +     ADXL345_TAP_SUPPRESS =3D BIT(3),
+> > > +}; =20
+> > As per feedback (after you sent this!) on v3, I'd drop
+> > the last value out of the enum, or just use defines and a u8 for
+> > the one place this is used for local variable storage.
+> >
+> > =20
+> > > @@ -198,6 +387,132 @@ static int adxl345_write_raw(struct iio_dev *in=
+dio_dev,
+> > >       return -EINVAL;
+> > >  }
+> > >
+> > > +static int adxl345_read_event_config(struct iio_dev *indio_dev,
+> > > +                                  const struct iio_chan_spec *chan,
+> > > +                                  enum iio_event_type type,
+> > > +                                  enum iio_event_direction dir)
+> > > +{
+> > > +     struct adxl345_state *st =3D iio_priv(indio_dev);
+> > > +     bool int_en;
+> > > +     int ret =3D -EFAULT; =20
+> > Not used?
+> > =20
+> > > +
+> > > +     switch (type) {
+> > > +     case IIO_EV_TYPE_GESTURE:
+> > > +             switch (dir) {
+> > > +             case IIO_EV_DIR_SINGLETAP:
+> > > +                     ret =3D adxl345_is_tap_en(st, chan->channel2,
+> > > +                                             ADXL345_SINGLE_TAP, &in=
+t_en);
+> > > +                     if (ret)
+> > > +                             return ret;
+> > > +                     return int_en;
+> > > +             default:
+> > > +                     return -EINVAL;
+> > > +             }
+> > > +     default:
+> > > +             return -EINVAL;
+> > > +     }
+> > > +} =20
+> > =20
+> > > +static int adxl345_write_event_value(struct iio_dev *indio_dev,
+> > > +                                  const struct iio_chan_spec *chan,
+> > > +                                  enum iio_event_type type,
+> > > +                                  enum iio_event_direction dir,
+> > > +                                  enum iio_event_info info,
+> > > +                                  int val, int val2)
+> > > +{
+> > > +     struct adxl345_state *st =3D iio_priv(indio_dev);
+> > > +     int ret;
+> > > +
+> > > +     ret =3D adxl345_set_measure_en(st, false);
+> > > +     if (ret)
+> > > +             return ret;
+> > > + =20
+> > So in my brief reply to the v3 discussion I suggested perhaps
+> > factoring out everything from here... =20
+> > > +     switch (type) {
+> > > +     case IIO_EV_TYPE_GESTURE:
+> > > +             switch (info) {
+> > > +             case IIO_EV_INFO_VALUE:
+> > > +                     ret =3D regmap_write(st->regmap, ADXL345_REG_TH=
+RESH_TAP,
+> > > +                                        min(val, 0xFF));
+> > > +                     break;
+> > > +             case IIO_EV_INFO_TIMEOUT:
+> > > +                     ret =3D adxl345_set_tap_duration(st, val, val2);
+> > > +                     break;
+> > > +             default:
+> > > +                     ret =3D -EINVAL;
+> > > +                     break;
+> > > +             }
+> > > +             break;
+> > > +     default:
+> > > +             ret =3D -EINVAL;
+> > > +             break;
+> > > +     } =20
+> > to here, so as to allow simple direct returns.
+> >
+> > I think that will make the code more readable given the need to reenable
+> > measurements and that you want to leave it off on error.
+> > =20
+>=20
+> Sorry for replying again on this topic. Pls, find my solution in v5.
+>=20
+> After some thinking, I implemented it now using returns directly leaving =
+the
+> measurement on/off as is. I'm unsure if it actually makes sense, after an=
+ error
+> here to turn measurement on again? I can imagine a situation where a wrong
+> input might result in an error. Nothing is changed, and measurement
+> could/should continue. Now, it will probably stop, in case of wrong
+> input. But is
+> wrong input actually an issue here?
 
-The time given to msleep is just the minimum time necessary for some HW action to take place. Waiting longer than that is usually not harmful except when you want to optimize total operation time.
+If a userspace control input is out of range etc, then returning an error
+but leaving things on makes sense.  If what we see is a comms error
+it gets less clear on what we should do. =20
 
-Regards,
-Christian.
+>=20
+> As other alternative, I can think of is to shift measurement on/off
+> into the called
+> functions directly. I think, this approach was used also in the
+> ADXL380 and seems
+> to be common. Let me know what you think.
+>=20
+Moving it up or down a layer can work by allowing direct returns and always
+trying to reenable if that makes sense.
 
->
-> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> index 2cd35392e2da..2d225735602b 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> @@ -682,7 +682,7 @@ static bool execute_synaptics_rc_command(struct drm_dp_aux *aux,
->  		if (rc_cmd == cmd)
->  			// active is 0
->  			break;
-> -		msleep(10);
-> +		usleep_range(10000, 10200);
->  	}
->  
->  	// read rc result
+Sadly in error handling there is often not a right answer on what to do!
+
+Jonathan
+
+> > > +
+> > > +     if (ret)
+> > > +             return ret; /* measurement stays off */
+> > > +
+> > > +     return adxl345_set_measure_en(st, true);
+> > > +} =20
+> > =20
 
 
