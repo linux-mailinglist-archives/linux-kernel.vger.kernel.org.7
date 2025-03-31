@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-582420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB729A76CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD486A76CF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 181B57A3AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B06188CEF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3195D2165F3;
-	Mon, 31 Mar 2025 18:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E49D217719;
+	Mon, 31 Mar 2025 18:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mL2Cc24u"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmdaPVYD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E46D1DE3A5;
-	Mon, 31 Mar 2025 18:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE511BD9E3;
+	Mon, 31 Mar 2025 18:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743445907; cv=none; b=QttzNOICLOiW7SPLk5RU35m/C+DanAnOfgm8L/FFP7O/ywN3ulBQ2lK9LkB1Gh2Ywp+NW7Di4b4AQZIw2vVonAbY1924yyL/zpAIktyrROxydDxQa2oq9euIcTrVEvbCZIgwaPjkNKcCJYAfa8kXvkNKFZhcC1KBzw58pcNLlg8=
+	t=1743446000; cv=none; b=cBe03CrOhHbXLh+sMNlRsWxGBGfwKrW3fKduWugI9woAlBrcDRyWkzMq8zuyPm51cIdLmmwXyMCKVgr3lpJ+jbTDdrnlBNyFIYVGN0etYptv+XfNZboR85k3q67IM4/vQnvwQpazkCBxYKp0wXzrC8oRejrJn+X3ULDstfrhNis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743445907; c=relaxed/simple;
-	bh=Ryh0YL1/glEMLDYhovf0G+MET7UjsHYY7E9OvB3iRs0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDgzDWKNxPgSNCYdp0hKAPhopa97EbtJRzXWc+4uGPvZSFTuVOpP0jQha39/tpw9o/sYozOoGR3y6SCD1C53tiylC/5pdDgEpYbtDXJ7krx3bdUeyTArjLlTtOywE1mK2OB10F8oCK/AAm+DewDZbDPZjVE+6tzeuYAlRUqtEGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mL2Cc24u; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff53b26af2so1056322a91.0;
-        Mon, 31 Mar 2025 11:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743445906; x=1744050706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ryh0YL1/glEMLDYhovf0G+MET7UjsHYY7E9OvB3iRs0=;
-        b=mL2Cc24uc+/m24APX0gKDPlbqNrLmrG11a/FH3mWmYYBgEQ13BnpmU4OvG0MzdwJD0
-         oYpN/4T/WMXyjQ/mEU9yj0l8sqA1dN6g0vy59hm+kOBKPZqiIzRW80xqM7F8LITYJ3/X
-         4HHRSCjrvkslZzFCeRNhtN6sX6Z2k6IqaxgaaN+9DW3Z3Cf87FmRvdY9hanpuh1J4X8C
-         ueHT7geQ+jBGbGiDXOfSJPxBvj7+NMNNzgZ564aWutz+PHMQvk8p2TvFh80wQ53w/RxP
-         0AYQYf82si6AsdD/9ECgym0KputOgALjqwGZnAiHd6MxOmDFQaURNLuuJRbBlX/h8XAc
-         jW1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743445906; x=1744050706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ryh0YL1/glEMLDYhovf0G+MET7UjsHYY7E9OvB3iRs0=;
-        b=KZQJiayKXGUESHPl2xBgaZ+5gdWwYpWDu9KXfErdtmQut4tG70mMQdmXWDUEEQiahU
-         Efrjeefb4Ek0KQ4js07tmqxO37+muhcPzBccs+JgABaVhoTck4ZDI0DDFZsqnUtCFWXQ
-         Kk4v1b0RvDcKkpKhGjDpr3YF1wYUwElXUSsKfk5E5d09CMonSRvbMhzRuGpncM8fwCx/
-         l+VlLPD3Yg4K+ibsm2J98diFfdaXJw7MD2ilYJjgwWXaDUSXnZQjg4R1GdhXhN7sx2UD
-         k8YIun2tn2N5lFX2OLJOyS/NzxdXAlg7uYIQhL7IK+3/pJbLuSHY+zsoMtbv7eK2Mk2z
-         DElg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNKY9YyckW3ccwvR+j3tnKgM1UbSLvgyE9FoeiP+fN58SAsi0jXvPw8HKzlCVTw5eIEyiufkniMoYpZU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5KErN2Bg/FQY2NDHqdAc2oLMNn21pneZ0s04Ld1gpIelD/6n
-	TNsZoNm+r70JnL9pOOnh+K+t45KBbcfWCttc+A0N7AE6lccLeIkfBFXiDh/Ed2rjx7UBLKDTjNo
-	+OyimFoMfz5gi1VJEtdlXokUfuj0=
-X-Gm-Gg: ASbGncuMqMekVCaaBwp8etnuhLJ8m2yIGC+b6sCcDuvFO4z9lK85/Gq7y5E2UOjbAFj
-	ZS9ljbPWIg9nbo9sBeJTCp+gfPO1l8XZHB2gMPjAXSGF2T54F6izy8v0o+xk/AJKUMyixGr92Uj
-	7KW9LegCmG6qEvQfhErIYNsdUo4Q==
-X-Google-Smtp-Source: AGHT+IExcKaWB2a/1tgKfOwDy66H8kdPcVShSGcwccJM3AQzOSIBJFBWGCgs6XPOYp08SDi9M9EdzX5sWLy0eBdIhKM=
-X-Received: by 2002:a17:90b:3e8d:b0:301:1c11:aa7a with SMTP id
- 98e67ed59e1d1-305321512bdmr6000911a91.3.1743445905701; Mon, 31 Mar 2025
- 11:31:45 -0700 (PDT)
+	s=arc-20240116; t=1743446000; c=relaxed/simple;
+	bh=zDWOwFQTHeMBAotV1k71vCBut0m7pH1xrfDhXj83BXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MW/o2tfxbqgyJP5/6kBBKwqQ2TBmslRy2VGf6WMoJmZY0pntbMizRoD0QJaTAi8dra+K0gxXgWRSFlAy3DU69UAnxzyzF+XqQj54lLJhNRkkNNymLzwZVhymE4MnP+DnAT2pEZ26sZfnz8qIpxyDleZoB7XcYLTmGpTPOH3uzHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmdaPVYD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15568C4CEE3;
+	Mon, 31 Mar 2025 18:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743445996;
+	bh=zDWOwFQTHeMBAotV1k71vCBut0m7pH1xrfDhXj83BXU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=rmdaPVYD8I07t6FEch0gu8o46+cK/Kql1duOCBIaoLc1Czyos4g5xSA5cZN8FhOrU
+	 3rb2BJbjLgmpDGzRgqWMRN3QmvFUSB6TqqgUUEgBnK4FVd5CxK/FexgcUheiMjXQUu
+	 tlWotJh5kkhJiVFWtNe/+FxmH/0gwue3Xsjdu75cbqWl6Ae5TnbSXrFGXuCt3Pq80Z
+	 Y/olo8lScj2pJmyx/AOB8ecNmJ+24ODSWl3RcRgd5dVXz1uNvMFnIHNSyKP31Xok+M
+	 POavC+cAOWE/N7b4wFfPPgYGD06TDaZ/MhoGS+S3ZNpBg1RYHqG9RqeA3VAgqw40Ak
+	 Cj1fR68ZKsXWg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id AD420CE0869; Mon, 31 Mar 2025 11:33:15 -0700 (PDT)
+Date: Mon, 31 Mar 2025 11:33:15 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Eric Dumazet <edumazet@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, aeh@meta.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>
+Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
+ expedited RCU synchronization
+Message-ID: <35039448-d8e8-4a7d-b59b-758d81330d4b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <Z-Il69LWz6sIand0@Mac.home>
+ <934d794b-7ebc-422c-b4fe-3e658a2e5e7a@redhat.com>
+ <Z-L5ttC9qllTAEbO@boqun-archlinux>
+ <f1ae824f-f506-49f7-8864-1adc0f7cbee6@redhat.com>
+ <Z-MHHFTS3kcfWIlL@boqun-archlinux>
+ <1e4c0df6-cb4d-462c-9019-100044ea8016@redhat.com>
+ <Z-OPya5HoqbKmMGj@Mac.home>
+ <df237702-55c3-466b-b51e-f3fe46ae03ba@redhat.com>
+ <Z-rQNzYRMTinrDSl@boqun-archlinux>
+ <9f5b500a-1106-4565-9559-bd44143e3ea6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330234039.29814-1-christiansantoslima21@gmail.com>
- <20250330234039.29814-2-christiansantoslima21@gmail.com> <CANiq72=GWwhMEfwBgUFpEUFoT2Wga2=uhH6Nw7fotQYjz2G=EA@mail.gmail.com>
- <CABm2a9ek5+KYaX9fGqXVQhG-hV1esn5EnD0PxKR29D_pwfZUeg@mail.gmail.com>
-In-Reply-To: <CABm2a9ek5+KYaX9fGqXVQhG-hV1esn5EnD0PxKR29D_pwfZUeg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 31 Mar 2025 20:31:32 +0200
-X-Gm-Features: AQ5f1JqeX5XxF7_IM_NbyI2yON3IxrzIQpRw8ymtxMwge62n-Poad1wJkf3AP20
-Message-ID: <CANiq72=++3SO+VcxmyxQGK9hXEu-=jaumGiwhExdykrKkfuihA@mail.gmail.com>
-Subject: Re: [PATCH] rust: transmute: Add methods for FromBytes trait
-To: Christian <christiansantoslima21@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f5b500a-1106-4565-9559-bd44143e3ea6@redhat.com>
 
-On Mon, Mar 31, 2025 at 8:18=E2=80=AFPM Christian
-<christiansantoslima21@gmail.com> wrote:
->
-> Hi, Miguel. Idk what happened seems the git send-email took the commit
-> and the .patch together. Sorry about that and I forgot to reply all. :(
->
-> Should I submit another patch because of duplication?
+On Mon, Mar 31, 2025 at 01:33:22PM -0400, Waiman Long wrote:
+> On 3/31/25 1:26 PM, Boqun Feng wrote:
+> > On Wed, Mar 26, 2025 at 11:39:49AM -0400, Waiman Long wrote:
+> > [...]
+> > > > > Anyway, that may work. The only problem that I see is the issue of nesting
+> > > > > of an interrupt context on top of a task context. It is possible that the
+> > > > > first use of a raw_spinlock may happen in an interrupt context. If the
+> > > > > interrupt happens when the task has set the hazard pointer and iterating the
+> > > > > hash list, the value of the hazard pointer may be overwritten. Alternatively
+> > > > > we could have multiple slots for the hazard pointer, but that will make the
+> > > > > code more complicated. Or we could disable interrupt before setting the
+> > > > > hazard pointer.
+> > > > Or we can use lockdep_recursion:
+> > > > 
+> > > > 	preempt_disable();
+> > > > 	lockdep_recursion_inc();
+> > > > 	barrier();
+> > > > 
+> > > > 	WRITE_ONCE(*hazptr, ...);
+> > > > 
+> > > > , it should prevent the re-entrant of lockdep in irq.
+> > > That will probably work. Or we can disable irq. I am fine with both.
+> > Disabling irq may not work in this case, because an NMI can also happen
+> > and call register_lock_class().
+> Right, disabling irq doesn't work with NMI. So incrementing the recursion
+> count is likely the way to go and I think it will work even in the NMI case.
+> 
+> > 
+> > I'm experimenting a new idea here, it might be better (for general
+> > cases), and this has the similar spirit that we could move the
+> > protection scope of a hazard pointer from a key to a hash_list: we can
+> > introduce a wildcard address, and whenever we do a synchronize_hazptr(),
+> > if the hazptr slot equal to wildcard, we treat as it matches to any ptr,
+> > hence synchronize_hazptr() will still wait until it's zero'd. Not only
+> > this could help in the nesting case, it can also be used if the users
+> > want to protect multiple things with this simple hazard pointer
+> > implementation.
+> 
+> I think it is a good idea to add a wildcard for the general use case.
+> Setting the hazptr to the list head will be enough for this particular case.
 
-No worries, there is no need to resend for that reason.
+Careful!  If we enable use of wildcards outside of the special case
+of synchronize_hazptr(), we give up the small-memory-footprint advantages
+of hazard pointers.  You end up having to wait on all hazard-pointer
+readers, which was exactly why RCU was troublesome here.  ;-)
 
-Thanks!
-
-Cheers,
-Miguel
+							Thanx, Paul
 
