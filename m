@@ -1,103 +1,155 @@
-Return-Path: <linux-kernel+bounces-581801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E1EA7651D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4533A76522
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 13:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D3169D4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 574EA169E08
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AB21E231E;
-	Mon, 31 Mar 2025 11:44:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2612E1E25E3;
+	Mon, 31 Mar 2025 11:45:44 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EB2136352;
-	Mon, 31 Mar 2025 11:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CFD1BEF77;
+	Mon, 31 Mar 2025 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743421442; cv=none; b=P/ZRkyqPKSrKwodxjKzI26hRGz6FL8iTCVUuLQF/2iHkays3VXkvxb75g1fVM2hp5l8RReXoGxuH/gSk4RKjINIVsUjX2EgaIBocBdHu7J80w1vQrJeqNxBS1ScTwmR48/qV8ltex5HIuIWgNSysTh+Ot/p+NHIuF3hZfDa170s=
+	t=1743421543; cv=none; b=WJryaOHO9Y8f+2iParmhcDAtkDJRh8tKSnOTy+CQdY71K1bamsjTdMe7/Hp78q1EDii1dSURxWlsyB+uy2BaLWQzzSO3Dj4b2UxEHTeddISP0v5UwTLEiQ3n5rEVKROIt85Vxux6vD+5IFA5R4yCjN/wmm1Bgx06Inc+NgIFLsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743421442; c=relaxed/simple;
-	bh=VwtcWRGkbuUGP9F5bdb3pyQWL/+vqoqNVSoYEpXLvX0=;
-	h=Message-ID:Date:MIME-Version:CC:From:Subject:To:Content-Type; b=ei2D+9OLaRFvBUxMnountrCgGHPTfajvOvHDj/kJs0vnI0Zm71pvei6Urs16pjqBW4Ucf3miV5p0dbQYw1NzuYInHWHg/TX6G4SSbjfZcCooVj5ZpoxHgESbUOBzCEQ3AeGnf+rPmjcsOW+ySsUZcq1w8U80VHwQbzfmj5sbnmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZR8Pg2sZVztQpp;
-	Mon, 31 Mar 2025 19:42:31 +0800 (CST)
-Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
-	by mail.maildlp.com (Postfix) with ESMTPS id E70B8180080;
-	Mon, 31 Mar 2025 19:43:56 +0800 (CST)
-Received: from [10.174.179.176] (10.174.179.176) by
- kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 31 Mar 2025 19:43:55 +0800
-Message-ID: <805b2e50-00f7-40a4-975c-6bfe7d3c431b@huawei.com>
-Date: Mon, 31 Mar 2025 19:43:55 +0800
+	s=arc-20240116; t=1743421543; c=relaxed/simple;
+	bh=YjNj7isjZpaoY8aE2SSd4iBQGLVI1ommFerJ/LMFluU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QM4Rbp4CCESu1bgkXf8YMv0itzVJwpUGxf5+eelJD24v4cfYJhpGgWSZ36a/Em1g5V/UrmsFIrRDZmlh/lYPZDvzFHjFqLykNAR11/ADOi6p8p4a8Y1UOEG9UuxRFec54/4JXTg9CMzd+9aYUwjXL0OgPyuhWUlSoz2j2LGbwuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbb12bea54so885859766b.0;
+        Mon, 31 Mar 2025 04:45:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743421540; x=1744026340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WHaecyGu9k64BRqziBdIUjaEI9K4+K7PFPpeWvnnAAY=;
+        b=iDbsSm4VsZz8KG59mWFnsApPVSYbryXaOVy1GeWGvScfHB9DaTEvyXBS74tcbHr6Gr
+         1AuCIWSpSgM/neE9VQe8+YzQDQYeqMpBy01/iKPFP6De50Itjwium+t6QcD4z+JvDjro
+         DY/UiBKzxr2yQgrWFkoVE7Rrn1BVqBx6SWLGO2nHbOxNpDngvYn8yI3vlv9q1FQgN427
+         G8y6sk847Qsqgn/byYI2qevLxCyLQymB0pYnck8Bzc+Ppk7DAdkbmViXopGwGOg0U8+z
+         wx12TmY1o54WL0xH60wWYYMvP9ih9vNERoCvKb3TuoH6XYdp/xXTp0/Xg/aTCsX2gLR9
+         TITA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7maDtqbYXbM391mhySrBbp377A2iWHPs4jwXNGYYG/JxPVFvEW7Z9ltwG4AgWi+Z0Sh/o0jEWmKjoRi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAzEX/vnfbKNwnYxPOGiL6lAu9rD14jc119F1MQwBlciy1/6Xk
+	Am9R4dhC8qTvg2N7MH2JhPfMuIj54H47hFA7cVpFxVv4nqDfYMaq
+X-Gm-Gg: ASbGncuEOJgwIShMGz75t9N1u4RWDPMMDx3iaympnIw/MqnhN5ZDzl6cWlB27559W5H
+	9ALOTdeGLywOU5C0BSCLzNojc03MyKYrueEpr/o2wEB+QExWHlw6GTmUKYEWfQ2vil9EqcwIrUe
+	7PbPSUC3dRZzq6PKyDZDHqkvXLIX6FBJvcN9+ivmGcjoDZaYd3Jjh3+x61vHXMfkygY2YiMDzBT
+	etMZMZz5f02r2kU8BaeZhATv26GMLDqOoxDZv1i3aj4CYqgwKGrPompu4YtXV3nss0u0bO0G2KF
+	QfHmHy7gd+xmXzOGFE4mkaCakIZIuVl0+BLc
+X-Google-Smtp-Source: AGHT+IGBfH/XydCwbmLY8AYbkte/eSWnT9LoOEEI5ZVy6jIgtM7/Z/Y3vkPvuqLZQ9NNC9XMQl/grg==
+X-Received: by 2002:a17:906:7313:b0:ac6:d7d2:3221 with SMTP id a640c23a62f3a-ac738ae929bmr714290066b.24.1743421539939;
+        Mon, 31 Mar 2025 04:45:39 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71927b143sm617996766b.58.2025.03.31.04.45.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 04:45:39 -0700 (PDT)
+Date: Mon, 31 Mar 2025 04:45:37 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Stanislav Fomichev <sdf@fomichev.me>, kuniyu@amazon.com
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	michael.chan@broadcom.com, pavan.chebbi@broadcom.com,
+	andrew+netdev@lunn.ch, Taehee Yoo <ap420073@gmail.com>
+Subject: Re: [PATCH net] bnxt_en: bring back rtnl lock in bnxt_shutdown
+Message-ID: <Z+qAYXmGY08pQKKb@gmail.com>
+References: <20250328174216.3513079-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: "liwei (JK)" <liwei728@huawei.com>, Xiongfeng Wang
-	<wangxiongfeng2@huawei.com>, <libang.li@antgroup.com>,
-	<bobo.shaobowang@huawei.com>, <weiliang.qwl@antgroup.com>,
-	<zhaochuanfeng@huawei.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-From: "liwei (JK)" <liwei728@huawei.com>
-Subject: [Question] pcie_do_recovery and pci_enable_sriov deadlock problem
-To: <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200007.china.huawei.com (7.202.181.34)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250328174216.3513079-1-sdf@fomichev.me>
 
-Hi, Bjorn
+Hello Stanislav,
 
-I have encountered a PCI-related deadlock issue triggered by a NONFATAL
-AER event during the kdump kernel boot process. However, I have not yet
-devised a suitable fix for this problem and would appreciate your
-guidance in resolving it. Could you please assist me with this?
+On Fri, Mar 28, 2025 at 10:42:16AM -0700, Stanislav Fomichev wrote:
+> Taehee reports missing rtnl from bnxt_shutdown path:
+> 
+> inetdev_event (./include/linux/inetdevice.h:256 net/ipv4/devinet.c:1585)
+> notifier_call_chain (kernel/notifier.c:85)
+> __dev_close_many (net/core/dev.c:1732 (discriminator 3))
+> kernel/locking/mutex.c:713 kernel/locking/mutex.c:732)
+> dev_close_many (net/core/dev.c:1786)
+> netif_close (./include/linux/list.h:124 ./include/linux/list.h:215
+> bnxt_shutdown (drivers/net/ethernet/broadcom/bnxt/bnxt.c:16707) bnxt_en
+> pci_device_shutdown (drivers/pci/pci-driver.c:511)
+> device_shutdown (drivers/base/core.c:4820)
+> kernel_restart (kernel/reboot.c:271 kernel/reboot.c:285)
 
-The deadlock description is as follows:
-When a device is added to the delay_probe_pending_list, the
-pci_enable_sriov function is called in the probe interface of struct
-pci_driver, if the device triggers an AER NONFATAL event and this
-process occurs during the kdump boot sequence, a deadlock will arise.
+I've got this issue as well.
 
-       The deferred_probe_work side is:
+> 
+> Bring back the rtnl lock.
+> 
+> Link: https://lore.kernel.org/netdev/CAMArcTV4P8PFsc6O2tSgzRno050DzafgqkLA2b7t=Fv_SY=brw@mail.gmail.com/
+> Fixes: 004b5008016a ("eth: bnxt: remove most dependencies on RTNL")
+> Reported-by: Taehee Yoo <ap420073@gmail.com>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 
-       deferred_probe_work_func
-         ...
-         __device_attach
-           device_lock                         # hold the device_lock
-             ...
-             pci_enable_sriov
-               sriov_enable
-                 ...
-                 pci_device_add
-                   down_write(&pci_bus_sem)    # wait for the pci_bus_sem
+Tested-by: Breno Leitao <leitao@debian.org>
 
-       The AER side is:
+> ---
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> index 934ba9425857..1a70605fad38 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -16698,6 +16698,7 @@ static void bnxt_shutdown(struct pci_dev *pdev)
+>  	if (!dev)
+>  		return;
+>  
+> +	rtnl_lock();
+>  	netdev_lock(dev);
 
-       pcie_do_recovery
-         pci_walk_bus
-           down_read(&pci_bus_sem)           # hold the pci_bus_sem
-             report_normal_detected
-               device_lock                   # wait for device_unlock()
+can't we leverage the `struct net_device->lock` for the shutdown.
+Basically we have the lock the single device we are turning it down.
 
+I am wondering if we really need the big RTNL lock. This is my
+understanding of what is happening:
 
-This issue was reported by Jay Fang <f.fangjian@huawei.com> in 2019.
-Reference link: 
-https://lore.kernel.org/linux-pci/bdfaaa34-3d3d-ad9a-4e24-4be97e85d216@huawei.com/T/#mcb7dfafd0f76beaddfc9f56a71aee6d984ed4a7f
+pci_device_shutdown() is called for a single device
+ - netdev_lock(dev)
+ - netif_close(dev);
+    - dev_close_many(&single, true);
+      - __dev_close_many()
+        - ASSERT_RTNL();
 
-Thanks,
-Xiangwei Li
+Basically we ware only closing one device, and the net_device->lock
+is already held. Shouldn't it be enough?
+
+Can we do something like this (from my naive point of view):
+
+	 static void __dev_close_many(struct list_head *head)
+	  {
+		  struct net_device *dev;
+
+	-         ASSERT_RTNL();
+		  might_sleep();
+
+		  list_for_each_entry(dev, head, close_list) {
+	+	  	ASSERT_RTNL_NET(dev);
+			...
+		  }
+
+Thanks
+--breno
 
