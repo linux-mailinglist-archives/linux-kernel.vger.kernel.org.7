@@ -1,105 +1,161 @@
-Return-Path: <linux-kernel+bounces-581947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5933A76740
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:01:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD652A7674A
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A357188B624
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8B3188A5D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 14:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FFA213248;
-	Mon, 31 Mar 2025 14:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B96C213E61;
+	Mon, 31 Mar 2025 14:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7QfCNsy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRhKUG1q"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306D34A35;
-	Mon, 31 Mar 2025 14:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606EA212FB7;
+	Mon, 31 Mar 2025 14:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743429659; cv=none; b=RlKcXPZeMkczPzCHLcCMMTl7LlOqJn77gPweGn8i6yS87KVmmAdaPhK7Nwqc1q8wiVjKVHfWypXMYiD9ao9ZQkOoBmf7IHTfStL7tvxAgLAcuA/66CDUr48nO56iZ6B2IOIOwie0uuJ1N0+n5XhdeQf5YqWVXMNb3m5Z2sF/PJY=
+	t=1743429765; cv=none; b=JzVljX5vOi9BjIFds/rMQN4JSXzJKJjw3A8lxD2pMU2IzU6XjAuRAvkrFhR33oiydfC2oG4vSdicEyUaZRiVoAvHdmBPwLtY5O270VfGRoFDduaAq7UqU/CHsOWVhOEVbpfopat60CL7NyAPyqu04jW0LjBCjHicnuG2woDaczY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743429659; c=relaxed/simple;
-	bh=qx7OAI2GDeAQiCeEnYoKh5egoJWKfbqbwDFIFemysCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwnqlXcrzR87088cgCVzaYNUnxqmWA6xRIrtup++Mh93f9c7vAaohKOv9JMUEjGENhV/ywHNyW1v/PKol7sXyeJcOT6PryJynke9yZ2sX0rhxI0q9BhkOUqxnNBXTNF5N+HD6jUCcc7zt2KeKI7iAXfd7DEGyGBMjXt/LBDL7PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7QfCNsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87872C4CEE3;
-	Mon, 31 Mar 2025 14:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743429657;
-	bh=qx7OAI2GDeAQiCeEnYoKh5egoJWKfbqbwDFIFemysCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l7QfCNsyPSw46Yzt3ILIAsnJy/+D/Ntx2rchwd/Ao9AXqmMITXb42v65oVlJ1IexH
-	 81Mr37M2bV5gzj/sBT5CC6Ve63CXhO8B6pdfzaoenI/iNkBqh4A/1ouAJrOB/pn4sj
-	 C9NZisBfS2Rh0PQiCNCvNzeMk9icndFHLLmnZVawYJzHye1jaMun2H9ez+lO5ogeRQ
-	 hb+oSgmPSBBMTFV0dnQygJm3EK5Zm6VAg91XX3au1X/78Vi1eFdJydKFC9pD+25/aF
-	 J5G2SEzluyoaPkK/pP4RP/eOGUnqEI8m7N0jzVdZHtcbfXMBJhDBtarh5uPQZwnQDa
-	 QFMhW7SNDkDxw==
-Date: Mon, 31 Mar 2025 15:00:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: srinivas.kandagatla@linaro.org, perex@perex.cz, tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
-Message-ID: <78e8c1c8-8539-4b91-88ad-c802cceb8579@sirena.org.uk>
-References: <20250314174800.10142-1-srinivas.kandagatla@linaro.org>
- <20250314174800.10142-4-srinivas.kandagatla@linaro.org>
- <74214537-ad4c-428f-8323-b79502788a66@sirena.org.uk>
- <Z-qXBfrZOEkOpMHK@hovoldconsulting.com>
+	s=arc-20240116; t=1743429765; c=relaxed/simple;
+	bh=whd/Svxmvbj7rA7O6S+iIb54/KqQ8e1rgCHT0rtZ8i4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ryly8SOkKlil2w2pX5Gks0ycRWNpxASBhtq6OnJDpDoaL6wT4YCip6nlcjLrkTPbm9DXgZPVMIgHkJzBJ8XJD1gvILo6MOm7rEsP03cX48WqFY3FdhF5a/meaTNodRxgglhoK3bYclDQU+p0pow57572z6pRRLiGLPgQAINuNf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CRhKUG1q; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5262475372eso533348e0c.2;
+        Mon, 31 Mar 2025 07:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743429763; x=1744034563; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lETntPaflYFwrwUvTncaP8RyLf4Wye2mcICW7b/doA=;
+        b=CRhKUG1qmIFCM3zydOE2o8WwVu8C/ONWviUj8ooX38E6Bpngd35vW95kljRl4beKYT
+         j64JqZJ3tcW3ZQElaax13xM6bvcqzXVZrQ1sjNSpM5+Egq53crnPYpSFnNzDhGqPE0uJ
+         20LwPm6CD+eMwdaojsYCzajmAol9QNRLZS10Vh/7IH500CiYFDVBfZUPbp6O4tZvuh4j
+         1MPICHrhV8QgiP87kUawta5CWIOzpbBDAeRCokCgSZwECMOLtIAxLAxTaqvA3L6EGfmd
+         J+q+x3vZZJc5EE0wIUsa90d91WyiVPnTqq4ktJALtbEfSJk3Ows+6gWmQsRXcsGY3jwe
+         28cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743429763; x=1744034563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1lETntPaflYFwrwUvTncaP8RyLf4Wye2mcICW7b/doA=;
+        b=EKvSxoT0xcaZqZtmm/pgWBgx+sS29HuYvIX/XN3XKRmf4ScRCsJFKGE9VU2YAwFA+f
+         ami5jqaU1Rz7pFb99kYNvnnamlotZuTPDzr0l+BBu7rXk+fRLD+0f1qfEY1imeeoPzXk
+         LJdm7Pg00xPrNIeJgw2hkQGvGiUyDmJrIAl0RHSgYueGxkTZTeiTZGRrkpB2e+u+W/Jc
+         NoYbgRcjnPQVdwD3JYvImAckEinOSh7F5Nx4ReYK3sDBM3iXQXIMZjWRRJAGORrxfIQX
+         Wo0UPv1YtCJEkIhwX0jZtT8ApAC6LOi1MAILdC2piiTShC275aYR+otRTYqqV+w9xkzl
+         MAig==
+X-Forwarded-Encrypted: i=1; AJvYcCU8wYhZ+jVPV2UQmoWegv+6b/3bwSUTSIyYWpRmSl7u6seEVmNpdZq5UlJPI9nlVeOvQN71evjDmb3eTmFf@vger.kernel.org, AJvYcCVYAmEE/ZYDBiSmbbjwYgS6nJMpmuXNtulyQRB7uTsZCDrnyVGB95tyaRzfVOEC3lxdLSRrQMK2wuIb@vger.kernel.org, AJvYcCW74NHUFPvx17Eo9OKMkUppe21MSMKrFycTnP/IkoeclVdyZ4FokqyHPJEIehJlJnPRJSg2nq2N6MuI1HA=@vger.kernel.org, AJvYcCWLN5pu3oYuSnebOoJRWQ76dZ5oLfwsUikDBuYoUnSGLipMuXlEnfJ82Db8JWGfIoB6RLvm/OYaYVSa@vger.kernel.org, AJvYcCXsLIQ2kql8r7SabLB3q6UIUKYdQ0L9r1pHlBTiU5NkKzWfstTH+NxH7Ts1AeDTwAGkRrDUYBTY0VDEGaPe4rH9Ojk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKSu07fy57K5uNxOUGCJdn3K3/ojMQcKBIJqFSfEFhoiU1YQbF
+	XYGHORsrDC7XO76BvlMhEeP742G3jBvoHYFdBAkyIE567k2NbZwLxkJX7xqBrcanbRzDAn04nak
+	3xM8BSDpmTSc5Y253Vuf63gkcS6w=
+X-Gm-Gg: ASbGncs5yra38TCZOXjVv6ljnNkUTZrKoK7KjMpATWc9Ze9GGkp37quN+f0RDHL0LaG
+	lcCSXzwQJTxwJx1CDXxj2mZ5rrRHEJTbzrvH/8Fjm5btxKaOxayJCJTxZfVPG5KxJ+OfKWoS1AH
+	vzF+5vLqurLw/iLALjNzwn4juLbVI8XFqcIesBZNM0oXT7FiawyfnSTYormbw=
+X-Google-Smtp-Source: AGHT+IFJA0XagyJKY+XH2Q/wP5pTEqfLMMTmMOabXhZtdfzmwQ2y2LT/1u6A/39ZZguGThzfOqEK+WfhriLs4v9hW2A=
+X-Received: by 2002:a05:6122:2a4c:b0:520:5a87:66eb with SMTP id
+ 71dfb90a1353d-5261d366116mr5066095e0c.3.1743429763111; Mon, 31 Mar 2025
+ 07:02:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j0KmjnF/an9ogldR"
-Content-Disposition: inline
-In-Reply-To: <Z-qXBfrZOEkOpMHK@hovoldconsulting.com>
-X-Cookie: The Ranger isn't gonna like it, Yogi.
+References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250330210717.46080-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUO+mh79ExahTiW-hG26QfxrBfBFRipO_B6QWXvP-+wHg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUO+mh79ExahTiW-hG26QfxrBfBFRipO_B6QWXvP-+wHg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 31 Mar 2025 15:02:16 +0100
+X-Gm-Features: AQ5f1JoZkmNou5F8OyuDiCyoOrm4-guRY1b_zQlH7cjXGWsIxa-9FxDIWKZhpig
+Message-ID: <CA+V-a8sdFYEM6DE_ku5-FBPa6xcDmhAq6FDXiovR0VAixZds0A@mail.gmail.com>
+Subject: Re: [PATCH 13/17] drm: renesas: rz-du: mipi_dsi: Add feature flag for
+ 16BPP support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Geert,
 
---j0KmjnF/an9ogldR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the review.
 
-On Mon, Mar 31, 2025 at 03:22:13PM +0200, Johan Hovold wrote:
-> On Mon, Mar 31, 2025 at 01:32:36PM +0100, Mark Brown wrote:
-> > On Fri, Mar 14, 2025 at 05:47:58PM +0000, srinivas.kandagatla@linaro.org wrote:
+On Mon, Mar 31, 2025 at 1:29=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Sun, 30 Mar 2025 at 23:08, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Introduce the `RZ_MIPI_DSI_16BPP` feature flag in `rzg2l_mipi_dsi_hw_in=
+fo`
+> > to indicate support for 16BPP pixel formats. The RZ/V2H(P) SoC supports
+> > 16BPP, whereas this feature is missing on the RZ/G2L SoC.
+> >
+> > Update the `mipi_dsi_host_attach()` function to check this flag before
+> > allowing 16BPP formats. If the SoC does not support 16BPP, return an er=
+ror
+> > to prevent incorrect format selection.
+> >
+> > This change enables finer-grained format support control for different
+> > SoC variants.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -30,6 +30,8 @@
+> >
+> >  struct rzg2l_mipi_dsi;
+> >
+> > +#define RZ_MIPI_DSI_16BPP      BIT(0)
+> > +
+> >  struct rzg2l_mipi_dsi_hw_info {
+> >         int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long long=
+ hsfreq_mhz);
+> >         void (*dphy_exit)(struct rzg2l_mipi_dsi *dsi);
+> > @@ -38,6 +40,7 @@ struct rzg2l_mipi_dsi_hw_info {
+> >         unsigned long max_dclk;
+> >         unsigned long min_dclk;
+> >         bool has_dphy_rstc;
+> > +       u8 features;
+>
+> Please settle on a single solution for all features: either use a
+> boolean flag to indicate 16bpp, or a feature bit to indicate the need
+> for the DPHY reset signal.
+>
+Agreed, I will use the features flag for all.
 
-> > > Fixes: 9b4fe0f1cd79 ("ASoC: qdsp6: audioreach: add q6apm-dai support")
-
-> > This commit doesn't appear to exist.
-
-> I think some tool (e.g. b4) incorrectly indicated that that may be the
-> case here, but the commit does exist:
-
-Oh, actually it's a parse error with the way the tag is written - not
-quite sure why but for some reason adding the next digit to the hash
-massages things enough.
-
---j0KmjnF/an9ogldR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfqoBQACgkQJNaLcl1U
-h9Bjiwf/VUSr9Yd9KkaDlTgIuPlbwQt58f3t6htOYFLumOB6nikv3gbF46KVEFk5
-4Jch+k1zO1ZdKpmXtXUEKEIYd70ywHFwMOj37NDKBMrFi4ytsdkAqDf46Mcs1hG7
-T/Tbv9wwDOx8kjB73Rf+fh5yCFZa7k7S6M4ALJFFX6TKvW7ghhzCSVT1A6CI4Q7R
-n4Q/jNymrMxhQhhODlRDYN5xLdlmL4+B+TZgWgaX9bpBt9OkDmzmXSsgRJ690Lu6
-Z1iHemZT+1kdmbtscCPxvnZoLRlMeAzPkFK68W/8Y5yJs/FPXuAE7/4Sc6U5gnCB
-Lvz1JEBUItNQLAPUzEX5wU/ChfT9gg==
-=jJyr
------END PGP SIGNATURE-----
-
---j0KmjnF/an9ogldR--
+Cheers,
+Prabhakar
 
