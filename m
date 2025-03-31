@@ -1,160 +1,183 @@
-Return-Path: <linux-kernel+bounces-582559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BA2A76FD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F4DA76FE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 23:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4848167A65
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB0B1677DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 21:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775F21E08A;
-	Mon, 31 Mar 2025 21:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FB721CA12;
+	Mon, 31 Mar 2025 21:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAWpBFaz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUvvJktx"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FC021B9DF;
-	Mon, 31 Mar 2025 21:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B761D63DD;
+	Mon, 31 Mar 2025 21:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743454996; cv=none; b=lgFuBHn+h/h0I8jOn+FPas/Q0fl+zRhDAhAyQHSVnt6NGGlgimXs/+sdfrY10gI0lSGjxeHGoHfD+N3mmGwBl4tkC/mQTqH33XnsuEOAzfYpjOnLVnclFKgr2sihYbUaOg41I59MiFAPytm0Qh4YHx2RxQk1A6BhhwFlqZ2SegA=
+	t=1743455095; cv=none; b=FqqqgqELlSNr7cys+HgH4+esX0qFcrxRQuplk/IIfpFFYulU3ZUtbjD2L++nk5b/CDgZbm9fQIDZi94fzDjQPCzs5dvTSV8QLtjCsePaTBMdqfm4VVaSApuVqMj5TgotSJscQqCY9+nqxwvuDAKdmwkW4+9taFr45bQhovWqam4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743454996; c=relaxed/simple;
-	bh=JcZBJabSTeR6VVDLh2M4X/uJWHu8jyYG489yVTC87Es=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fVNrcLBOFtBvHIj8HdUHiYr2TpBZyccyUKKNj8Y04w14yMOyB+LRBLd17LVuifu0YE1oL3UqG6alrBDsuu5cvjFgAxLClD5zDPjFzlFNei0ww1jly4UNnO0OLxLGXDcNk+pISRwjxrQrnpd03Vd2Cj6MvTS5YxW1zomvBWY9Thg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAWpBFaz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC82C4CEF6;
-	Mon, 31 Mar 2025 21:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743454996;
-	bh=JcZBJabSTeR6VVDLh2M4X/uJWHu8jyYG489yVTC87Es=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cAWpBFazJ48gfsXr3Y1ES97nMJjvbDPTRsQTPV6OimREWecQUjGxYe5tM92XmTwy4
-	 S3IG9FH+xIifob8DBr3hVu1EmFZk63XBCrbqnFBg3FhjJsUvfti+my81TpX+fLDnZG
-	 zsCokxkZiQO/2ckFGaqR62NlE2DscVA/go9oy/MYaCpNAluUXTF87uhohWEWCqRsb5
-	 3mUR8plPObXTanTazmuh59kh1V6gEYWEDnYGFA8otlbNNeROo4ORH9bBrmRRZztwHJ
-	 8XTiCL0FTcD7g12MJ23Sw6zuqGd2DkwnoStoaxh6SeWl9kUxXyFEYknGexiVz/Fso3
-	 NfXKaGdOVyEvw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 40A61CE13DF; Mon, 31 Mar 2025 14:03:15 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Subject: [PATCH v2 12/12] torture: Add testing of RCU's Rust bindings to torture.sh
-Date: Mon, 31 Mar 2025 14:03:14 -0700
-Message-Id: <20250331210314.590622-12-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
-References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
+	s=arc-20240116; t=1743455095; c=relaxed/simple;
+	bh=U+1yEEOZzVsnuUOy+RsFKoOt/F2YbfNHQ5QjEgiuuAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3CAKiAFtgMoY3GonZUqi+4KfYCFXkKJidi51oIFzOlyoDeN9hVTYF7JAzHpsCUvtxesmEu2+1ewmXSgYAlVMithJjbB/IcZAh7ImNiFKHbRNzOBTcfx8sEz7LMdbt5+qyYsLlkkzJB/dTNmqvwA/Qgyc8cwKSh6tJj9dYulZeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUvvJktx; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22580c9ee0aso97925585ad.2;
+        Mon, 31 Mar 2025 14:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743455093; x=1744059893; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gYhYk9y2DXMVeKQttY/EQvcE7aZgDZ1TAkVyVBo9hSY=;
+        b=eUvvJktxaCAAI6XUQIGaNozpKoDBqD5n50gV1B1gWbam94qyq3rR5UlEPlV+cPaba8
+         QnnVkEcZlvZUbP/CYH6DQGJ98I//1dHtRwwslKg+X6xLiNu8W+065gax+KC9thAw5qhn
+         I2YEj1KQ7U2Ax6iJyZj5XYYnQcFHku46LcVNh6SfLf4vc0ukhP5Jw/hY40d4qeFYSY4p
+         jVwWARJHOaP/XtG6v1A2ZnixfVjOIt0MGiajmN+/I2KYM2kTS0FHrfWaTdkW2uvxwv8p
+         W7AQyuD5OYUUZ/tDNfWB0RDZfDE5QtPJ/yMlXbY86+8EoQMwj7bJkm//zNJiFevyTORg
+         EPEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743455093; x=1744059893;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gYhYk9y2DXMVeKQttY/EQvcE7aZgDZ1TAkVyVBo9hSY=;
+        b=N4TPDuMg7WsZdw2d7Nq3iXmYEaSjLiC3MDV77YvFJ7lFoGVpH0h22yCgnnmJKF+3Y+
+         sJ/oeVmAwn+3SRAz/TqEMFrSP3CiThuYfi02pTVq7brwZ8ivJ+TP8+CM+28wtSARGCgz
+         mdXPkFIBSmHSECY+CdghAaLteBjoffAf9KHB/HcK0ViZNnEmul+RPct5O8iDrryTfG+w
+         XJWJ8FxDYU6O74M5fh7WAEKCyNmhGjFanROKoowBRLjFnB7g1ZEeZavrDH4Y+2S+nooj
+         ArYSOjrR8I17VaVQDrfG92HAFtoW7/zmmzShnQGE/JWjpEzWN2ZsyIMuaiNxUqwd1mE2
+         VqWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBg7GT/yQxgmoS4l3vOA3gK97se8WqIlpUSKGg2WeLmGVCBGQzPgGdkLHfHehfrmsv+SZchg==@vger.kernel.org, AJvYcCUQJPz5g562Sy3ask/L5OSXtlliiwK6VWlLeY7qsbWF5CZStQKZuE/9KCCH4EN2g93mPWJK0h1xfehPNQ==@vger.kernel.org, AJvYcCUTYv4gA4SSSd5c0vFnKFCe9WUSQ6qbeMOqKI9tZfoa3aMRxLANPRprYnAwwegNpZwx2A2f+82bTq15qQ==@vger.kernel.org, AJvYcCUdOr75UNYchjCD8ICbpRI4IU6h71HwF5+VQhqVcm1H2vzvDli099pZoIoHxFwBo2yAR6XobEjMEH8ePQ==@vger.kernel.org, AJvYcCUl+lcGULIDP5EXFIX8jycnPpZXGxEShXKnurMvsGxwp3G3k+humhzPbsPkIRWhqywgZTA=@vger.kernel.org, AJvYcCUpBYi4IYwchoHardn9gBg2tZlbDCsKm/sMVjrp8UsFhg5WfZr64UDm0fxw9E+uO6LztROONeu/@vger.kernel.org, AJvYcCUuGa4R2NZpDWSTtoVi5KhvFM4O/BbgErU7jTzRtc3E8drWlnYFQXugLtnaavZiIMWt+CNdfweAR31iJA==@vger.kernel.org, AJvYcCUxyi19ZsGHB/F3Ot03AdKQFQ/2E23HMkgNbxJNc92nvapEpv8xWPQIxxidi0qFFpOsrxbC0pT23Ulo@vger.kernel.org, AJvYcCV8vuYcdCmlVCbkMqsvI0VcEvPnFy6lsWWb0KBTMgEcPYO3jYwRdjpVz2LWl9tqDCf5yT3ZjPgxSQjAeVLqizJR@vger.kernel.org, AJvYcCV8zKg3m5GGYYx4gLhDgI3FiIq9FGV1nc1d7VSd
+ xe0C26rqZjDDXFUcCnyHmsS8JLJX9Qm91onsCv3T99wX@vger.kernel.org, AJvYcCVPephLkKTdrQsgtZZZpUq5bJiCjn2B5MkK2g6ecwLNkBShpbned9qmvgw5ljsKEGtWqTIR8S8P3W4=@vger.kernel.org, AJvYcCW7uqAB66Ary3KPonJlJnKYzAjSG+WVTrX0pIaJuZvLM3nYCVn4dbCzEnp82RGpuKD1JQfD1zgTxDqr@vger.kernel.org, AJvYcCXII84sUJcMlMxKZL6U0/ELND+Y8XfStBWUrKlXBXiHo5m4VIRg7bi0OXGGDWw/cMwrbToeYx7vyL17CA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeTgQl3xwTOOQu1feED/x9zymZJBvH50oOm64FeSDPK5M1GcmL
+	AowwyWoHQ3k5MD34Oz+Khk9WKI9U7r0GYDvNBuJr32U2xb/uUDg=
+X-Gm-Gg: ASbGncs/8+SW8QoyUkkUtbXEEryA/QWnRuiZWux19n6rw0rHGXjn/fQ0UwpCn/I5Ln0
+	R3jLiAjHCsnzroBE0nuJcc5WRnVBC4gwE/ph2OPGPhHt6C+O3HMa0mstYULMdUYhianNx0KmkkR
+	CpgMuxXraAcVfg1EBygzNzSLzZxlrbUW6g597T72l3p1IVOvTUhhSUL6c2ih/R/aK3ja56b4bZ3
+	JyXILgGU9qtaIPMjaqjyGFHsAr3lkyxlnLcG70+7qV9bOLjB9YcuP137s2k5fj8nw/fdc1d6por
+	FZ6uEZmYbomlRMxBn/Uhkfv8f4g1yPHmlZZkdBSGyziQ2fLLqfCZnHk=
+X-Google-Smtp-Source: AGHT+IFXBij7YY6OTj5GMzGgIwp1/yPImE6Pq87f1IxAZ8AzDKSftLkrfp99lNthyITIW+quB0Qxkw==
+X-Received: by 2002:a05:6a00:1412:b0:736:3fa8:cf7b with SMTP id d2e1a72fcca58-739803bc866mr12795498b3a.13.1743455092825;
+        Mon, 31 Mar 2025 14:04:52 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af93ba10126sm6811351a12.75.2025.03.31.14.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 14:04:52 -0700 (PDT)
+Date: Mon, 31 Mar 2025 14:04:51 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Karsten Keil <isdn@linux-pingi.de>,
+	Ayush Sawal <ayush.sawal@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Joerg Reuter <jreuter@yaina.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Robin van der Gracht <robin@protonic.nl>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	James Chapman <jchapman@katalix.com>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Remi Denis-Courmont <courmisch@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, Jon Maloy <jmaloy@redhat.com>,
+	Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Martin Schiller <ms@dev.tdt.de>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
+	linux-hams@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-can@vger.kernel.org, dccp@vger.kernel.org,
+	linux-wpan@vger.kernel.org, linux-s390@vger.kernel.org,
+	mptcp@lists.linux.dev, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-afs@lists.infradead.org,
+	tipc-discussion@lists.sourceforge.net,
+	virtualization@lists.linux.dev, linux-x25@vger.kernel.org,
+	bpf@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] net/io_uring: pass a kernel pointer via optlen_t
+ to proto[_ops].getsockopt()
+Message-ID: <Z-sDc-0qyfPZz9lv@mini-arch>
+References: <cover.1743449872.git.metze@samba.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1743449872.git.metze@samba.org>
 
-This commit adds a --do-rcu-rust parameter to torture.sh, which invokes
-a rust_doctests_kernel kunit run.  Note that kunit wants a clean source
-tree, so this runs "make mrproper", which might come as a surprise to
-some users.  Should there be a --mrproper parameter to torture.sh to make
-the user explicitly ask for it?
+On 03/31, Stefan Metzmacher wrote:
+> The motivation for this is to remove the SOL_SOCKET limitation
+> from io_uring_cmd_getsockopt().
+> 
+> The reason for this limitation is that io_uring_cmd_getsockopt()
+> passes a kernel pointer as optlen to do_sock_getsockopt()
+> and can't reach the ops->getsockopt() path.
+> 
+> The first idea would be to change the optval and optlen arguments
+> to the protocol specific hooks also to sockptr_t, as that
+> is already used for setsockopt() and also by do_sock_getsockopt()
+> sk_getsockopt() and BPF_CGROUP_RUN_PROG_GETSOCKOPT().
+> 
+> But as Linus don't like 'sockptr_t' I used a different approach.
+> 
+> @Linus, would that optlen_t approach fit better for you?
 
-Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- .../selftests/rcutorture/bin/torture.sh       | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
+[..]
 
-diff --git a/tools/testing/selftests/rcutorture/bin/torture.sh b/tools/testing/selftests/rcutorture/bin/torture.sh
-index 751ce770e5462..2c3e86fe8c0a2 100755
---- a/tools/testing/selftests/rcutorture/bin/torture.sh
-+++ b/tools/testing/selftests/rcutorture/bin/torture.sh
-@@ -59,6 +59,7 @@ do_clocksourcewd=yes
- do_rt=yes
- do_rcutasksflavors=yes
- do_srcu_lockdep=yes
-+do_rcu_rust=no
- 
- # doyesno - Helper function for yes/no arguments
- function doyesno () {
-@@ -89,6 +90,7 @@ usage () {
- 	echo "       --do-rcutorture / --do-no-rcutorture / --no-rcutorture"
- 	echo "       --do-refscale / --do-no-refscale / --no-refscale"
- 	echo "       --do-rt / --do-no-rt / --no-rt"
-+	echo "       --do-rcu-rust / --do-no-rcu-rust / --no-rcu-rust"
- 	echo "       --do-scftorture / --do-no-scftorture / --no-scftorture"
- 	echo "       --do-srcu-lockdep / --do-no-srcu-lockdep / --no-srcu-lockdep"
- 	echo "       --duration [ <minutes> | <hours>h | <days>d ]"
-@@ -191,6 +193,9 @@ do
- 	--do-rt|--do-no-rt|--no-rt)
- 		do_rt=`doyesno "$1" --do-rt`
- 		;;
-+	--do-rcu-rust|--do-no-rcu-rust|--no-rcu-rust)
-+		do_rcu_rust=`doyesno "$1" --do-rcu-rust`
-+		;;
- 	--do-scftorture|--do-no-scftorture|--no-scftorture)
- 		do_scftorture=`doyesno "$1" --do-scftorture`
- 		;;
-@@ -485,6 +490,46 @@ then
- 	torture_set "rcurttorture-exp" tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration "$duration_rcutorture" --configs "TREE03" --kconfig "CONFIG_PREEMPT_LAZY=n CONFIG_PREEMPT_RT=y CONFIG_EXPERT=y" --trust-make
- fi
- 
-+if test "$do_rcu_rust" = "yes"
-+then
-+	echo " --- do-rcu-rust:" Start `date` | tee -a $T/log
-+	rrdir="tools/testing/selftests/rcutorture/res/$ds/results-rcu-rust"
-+	mkdir -p "$rrdir"
-+	echo " --- make LLVM=1 rustavailable " | tee -a $rrdir/log > $rrdir/rustavailable.out
-+	make LLVM=1 rustavailable > $T/rustavailable.out 2>&1
-+	retcode=$?
-+	echo $retcode > $rrdir/rustavailable.exitcode
-+	cat $T/rustavailable.out | tee -a $rrdir/log >> $rrdir/rustavailable.out 2>&1
-+	buildphase=rustavailable
-+	if test "$retcode" -eq 0
-+	then
-+		echo " --- Running 'make mrproper' in order to run kunit." | tee -a $rrdir/log > $rrdir/mrproper.out
-+		make mrproper > $rrdir/mrproper.out 2>&1
-+		retcode = $?
-+		echo $retcode > $rrdir/mrproper.exitcode
-+		buildphase=mrproper
-+	fi
-+	if test "$retcode" -eq 0
-+	then
-+		echo " --- Running rust_doctests_kernel." | tee -a $rrdir/log > $rrdir/rust_doctests_kernel.out
-+		./tools/testing/kunit/kunit.py run --make_options LLVM=1 --make_options CLIPPY=1 --arch arm64 --kconfig_add CONFIG_SMP=y --kconfig_add CONFIG_WERROR=y --kconfig_add CONFIG_RUST=y rust_doctests_kernel >> $rrdir/rust_doctests_kernel.out 2>&1
-+		# @@@ Remove "--arch arm64" in order to test on native architecture?
-+		# @@@ Analyze $rrdir/rust_doctests_kernel.out contents?
-+		retcode=$?
-+		echo $retcode > $rrdir/rust_doctests_kernel.exitcode
-+		buildphase=rust_doctests_kernel
-+	fi
-+	if test "$retcode" -eq 0
-+	then
-+		echo "rcu-rust($retcode)" $rrdir >> $T/successes
-+		echo Success >> $rrdir/log
-+	else
-+		echo "rcu-rust($retcode)" $rrdir >> $T/failures
-+		echo " --- rcu-rust Test summary:" >> $rrdir/log
-+		echo " --- Summary: Exit code $retcode from $buildphase, see $rrdir/$buildphase.out" >> $rrdir/log
-+	fi
-+fi
-+
- if test "$do_srcu_lockdep" = "yes"
- then
- 	echo " --- do-srcu-lockdep:" Start `date` | tee -a $T/log
--- 
-2.40.1
+> Instead of passing the optlen as user or kernel pointer,
+> we only ever pass a kernel pointer and do the
+> translation from/to userspace in do_sock_getsockopt().
 
+At this point why not just fully embrace iov_iter? You have the size
+now + the user (or kernel) pointer. Might as well do
+s/sockptr_t/iov_iter/ conversion?
 
