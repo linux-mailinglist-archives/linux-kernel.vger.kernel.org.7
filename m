@@ -1,127 +1,201 @@
-Return-Path: <linux-kernel+bounces-581661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A732A76354
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F30A76357
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 11:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A0827A446B
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A29E31887103
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 09:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E031DE4E7;
-	Mon, 31 Mar 2025 09:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1AD1DE2CE;
+	Mon, 31 Mar 2025 09:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="JurAxeJM"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzIlymMo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A411D54D1;
-	Mon, 31 Mar 2025 09:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8890F1CEEBB;
+	Mon, 31 Mar 2025 09:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743414017; cv=none; b=LMXlOVi/2DmfP18OAy4e06WRoo0GJGUZIZJv2/Gyt/R3JIFB51X2yMKOiwrefMtl6WTYNvbEArR9Z8JBUFtgc0XmyD2r7aeEONLONoLKtbzBR3B5781xwDz1BINEYLoRv6UOElllVTjZhdB/ssysvPLF/N3eYx81V2tBCpaxyRU=
+	t=1743414086; cv=none; b=StGa+8IiZbOuZGEwZfaMBFV38OM8/+KXvKlkPzcbbto3ZTcYEjik5m+DMcF94COBnnUG++uX5xN/IqT8BEOXiF06aSwX7XM/FLwE2k81BdsRKiBqBbk84iGvDcXaj4ERSbLdEqxwOSQVAw1beTRET4XnFLIAmlb8IXkPLF71bUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743414017; c=relaxed/simple;
-	bh=k12UreuXo3c2JZybYH8S+QjjIyzKPYmnZPgIgntFsyI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JxuNuLhp/ALmcOVob3JthWI1+tCCfeCoiun60M3Yhy8qfsKWEaYpEOz+lBC7xc0UMgvu6+IGhKumAaE7o3mABWcNguKMAgKsPd4jeZ5z/8eMFfCLaUnglXvwrjTOWDv57OQfdu8tPKRwHClspRH/MOQxPspPo5IpxoxHhQ48PuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=JurAxeJM; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id F1948C0003;
-	Mon, 31 Mar 2025 12:40:11 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru F1948C0003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1743414011; bh=7pkwmy/zVFndknwnlEjCwbF0G9iiLvo3J6N4X7M2Cgk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=JurAxeJM1SL6KnY3YR5lz4Qg9UcnJenmb0WBb1j2BdwFq9q5WFFXD+QSLz6Pj5rc6
-	 0u30ptxeGz8vWgH8hSD+A/jiSycdIyBlo89TCy2kReRq0NddhugpCXwYSqflDhcWg8
-	 3616R7RAMzhdAYOirqQXRrJCkWU9iTZ4pDKFFjq3skRHCODU2rT0DunXDJqhPo/oUk
-	 6qwNsmKwmCsldwsbUG+25GZEOHiXqYhHl8sztt2FDlJNdufJMsxGqWhyMwuXgLY7mh
-	 O1x9DOwlfDO9Mm7+FaKj9xdPI9l+l+V2D1z5B8cV4nAZpo/cuf7okYv4frRkZ8wjIM
-	 /uzYR3d0Q20/g==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Mon, 31 Mar 2025 12:40:11 +0300 (MSK)
-Received: from ws-8313-abramov.mti-lab.com (172.25.5.19) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 31 Mar 2025 12:40:10 +0300
-Date: Mon, 31 Mar 2025 12:40:25 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-wpan@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<miquel.raynal@bootlin.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<stefan@datenfreihafen.org>,
-	<syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
-Subject: Re: [PATCH 2/3] ieee802154: Avoid calling WARN_ON() on -ENOMEM in
- cfg802154_switch_netns()
-Message-ID: <20250331124025.7bb7c82e688ee244b2c45895@mt-integration.ru>
-In-Reply-To: <20250328023029.14249-1-kuniyu@amazon.com>
-References: <20250328010427.735657-3-i.abramov@mt-integration.ru>
-	<20250328023029.14249-1-kuniyu@amazon.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; i686-pc-mingw32)
+	s=arc-20240116; t=1743414086; c=relaxed/simple;
+	bh=KbEDbIcQklJUKKH/MxYalG9NKt5nl3VutILG7n2p7UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OP1dHCCIvzsdGoCvwYqllt2xQZNX4NsSMVMjOj+C+3oQe1beoPdPho52HVwhS0mS4XNQv149r/p2TRU/c1EKUISsKLDByCsSneR0xxlXuQ01ThiVQsKh6db3SJGKM+xB3G8sm9p1wUeo3AGWq5bqtE1UeCHMThRORTmtjR8iD1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzIlymMo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2F3C4CEE3;
+	Mon, 31 Mar 2025 09:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743414086;
+	bh=KbEDbIcQklJUKKH/MxYalG9NKt5nl3VutILG7n2p7UY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GzIlymMoSptu07gQSwU7uQwOsalKqOFb+diY9gnfk3y6NMTQu8y+U1zqCpftJZ5D/
+	 wl3AhUDj9Wv+JTvUuYjJa/NsxfA0aIXoagO36v4AtG8rwgIy+SWuvta34hfBRpMdJz
+	 YAXI5ssnS7P7QYHI7Ln4tCnCVEaRQTr0rt5Cd+FU8a6R9zI1pYW5gJkJ0BMOPAR33B
+	 LhNpFEU93xIHmrS6nwvKDHJlT7MrCh9MS9UV3pgaREwin5R3SNRxqVp4e+ArJauYz/
+	 9friea+GxAd0GgDcOI1XvG+Pk2wsVv4TCywcbmbhKE3bJB1pAfqjHwhZIIaNV4Gyv+
+	 cC9EwiD6WZmHg==
+Date: Mon, 31 Mar 2025 10:41:16 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, "Hennerich, Michael"
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] dt-bindings: iio: dac: Add adi,ad3530r.yaml
+Message-ID: <20250331104116.7ef8a467@jic23-huawei>
+In-Reply-To: <PH0PR03MB71417CFD279F01382D025848F9AD2@PH0PR03MB7141.namprd03.prod.outlook.com>
+References: <20250324-togreg-v2-0-f211d781923e@analog.com>
+	<20250324-togreg-v2-3-f211d781923e@analog.com>
+	<20250328090341.0d213f3d@jic23-huawei>
+	<PH0PR03MB71417CFD279F01382D025848F9AD2@PH0PR03MB7141.namprd03.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/31 08:25:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Prob_CN_TRASH_MAILERS}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;lore.kernel.org:7.1.1;mt-integration.ru:7.1.1;81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192233 [Mar 31 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 40
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/31 06:14:00 #27842604
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/31 08:25:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 27 Mar 2025 19:30:02 -0700, Kuniyuki Iwashima wrote:
-> From: Ivan Abramov <i.abramov@mt-integration.ru>
-> Date: Fri, 28 Mar 2025 04:04:26 +0300
->> It's pointless to call WARN_ON() in case of an allocation failure in
->> dev_change_net_namespace() and device_rename(), since it only leads to
->> useless splats caused by deliberate fault injections, so avoid it.
->> 
->> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
->> 
->> Fixes: 66e5c2672cd1 ("ieee802154: add netns support")
->> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
->
-> I suggested using net_warn_ratelimited() so this tag is not needed.
-> The patch itself looks good to me:
+On Mon, 31 Mar 2025 01:31:10 +0000
+"Paller, Kim Seer" <KimSeer.Paller@analog.com> wrote:
 
-Should I send v2 series with fixed tags?
+> > -----Original Message-----
+> > From: Jonathan Cameron <jic23@kernel.org>
+> > Sent: Friday, March 28, 2025 5:04 PM
+> > To: Paller, Kim Seer <KimSeer.Paller@analog.com>
+> > Cc: Lars-Peter Clausen <lars@metafoo.de>; Hennerich, Michael
+> > <Michael.Hennerich@analog.com>; Rob Herring <robh@kernel.org>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; lin=
+ux-
+> > iio@vger.kernel.org; linux-kernel@vger.kernel.org; devicetree@vger.kern=
+el.org
+> > Subject: Re: [PATCH v2 3/4] dt-bindings: iio: dac: Add adi,ad3530r.yaml
+> >=20
+> > [External]
+> >=20
+> > On Mon, 24 Mar 2025 19:22:57 +0800
+> > Kim Seer Paller <kimseer.paller@analog.com> wrote:
+> >  =20
+> > > Document the AD3530R/AD3530, an 8-Channel, 16-bit Voltage Output DAC,
+> > > while the AD3531R/AD3531 is a 4-Channel, 16-Bit Voltage Output DAC.
+> > > These devices include software-programmable gain controls that provide
+> > > full-scale output spans of 2.5V or 5V for reference voltages of 2.5V.
+> > > They operate from a single supply voltage range of 2.7V to 5.5V and a=
+re
+> > > guaranteed to be monotonic by design. Additionally, these devices
+> > > features a 2.5V, 5ppm/=C2=B0C internal reference, which is disabled b=
+y default.
+> > >
+> > > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> > > ---
+> > >  .../devicetree/bindings/iio/dac/adi,ad3530r.yaml   | 91 =20
+> > ++++++++++++++++++++++ =20
+> > >  MAINTAINERS                                        |  1 +
+> > >  2 files changed, 92 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3530r.ya=
+ml =20
+> > b/Documentation/devicetree/bindings/iio/dac/adi,ad3530r.yaml =20
+> > > new file mode 100644
+> > > index =20
+> > 0000000000000000000000000000000000000000..e581472b50048bedda742
+> > 2748035423b9b020382 =20
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3530r.yaml
+> > > @@ -0,0 +1,91 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: =20
+> > https://urldefense.com/v3/__http://devicetree.org/schemas/iio/dac/adi,a=
+d353
+> > 0r.yaml*__;Iw!!A3Ni8CS0y2Y!-bEqh-bKz-a-
+> > ZzfbJZwXi9KWwKlsk_Pcaj5XQLeLaDBpO8MaryRedRHaL0GUFfNz35tDsFaJkV45P
+> > fyEzA$ =20
+> > > +$schema: https://urldefense.com/v3/__http://devicetree.org/meta- =20
+> > schemas/core.yaml*__;Iw!!A3Ni8CS0y2Y!-bEqh-bKz-a-
+> > ZzfbJZwXi9KWwKlsk_Pcaj5XQLeLaDBpO8MaryRedRHaL0GUFfNz35tDsFaJkV5zI4
+> > zMaQ$ =20
+> > > +
+> > > +title: Analog Devices AD3530R and Similar DACs
+> > > +
+> > > +maintainers:
+> > > +  - Kim Seer Paller <kimseer.paller@analog.com>
+> > > +
+> > > +description: |
+> > > +  The AD3530/AD3530R are low power, 8-channel, 16-bit, buffered volt=
+age =20
+> > output, =20
+> > > +  digital-to-analog converters (DACs) that include software-programm=
+able =20
+> > gain =20
+> > > +  controls that result in full-scale output spans of 2.5V or 5V for =
+reference
+> > > +  voltages of 2.5V. The devices operate from single, 2.7V to 5.5V su=
+pply =20
+> > ranges =20
+> > > +  and are guaranteed monotonic by design. The AD3530R also offers a =
+2.5V,
+> > > +  5ppm/=C2=B0C internal reference that is disabled by default.
+> > > +  Datasheet can be found here:
+> > > +  https://www.analog.com/media/en/technical-documentation/data- =20
+> > sheets/ad3530_ad530r.pdf =20
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - adi,ad3530r =20
+> >=20
+> > You mention this one as well as a variant without the r postfix in the
+> > 'description'.
+> > So why not compatible for that?  If it's software compatible with the r=
+ version
+> > than
+> > a fallback compatible makes sense.  We probably still want to have sepa=
+rate
+> > compatibles though in case we get an errata that only applies to one of=
+ them.
+> >=20
+> > If they are the same silicon, perhaps with different ratings then make =
+that clear
+> > in the description and perhaps it is fine to not have both compatibles =
+listed. =20
+>=20
+> The main difference is that the r variant supports both internal and exte=
+rnal references,
+> while the non-r variant supports only external references. I agree with h=
+aving separate
+> compatibles. Well, I'm thinking of adding a parameter in chip_info into t=
+he driver to
+> identify internal reference support. What do you think?
+Yes, combination of separate compatibles and a parameter in chip_info to ma=
+ke the
+code simple sounds like the right solution to me.
 
-Thank you for reviewing the series!
+Jonathan
 
+>=20
+> >  =20
+> > > +      - adi,ad3531r =20
+> >=20
+> > This isn't mentioned in the description text.
+> >  =20
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1 =20
+> >=20
+> > Thanks,
+> >=20
+> > Jonathan =20
 
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
->
->
->> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
->
-> Reported-by: syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/netdev/000000000000f4a1b7061f9421de@google.com/#t
-
--- 
-Ivan Abramov <i.abramov@mt-integration.ru>
 
