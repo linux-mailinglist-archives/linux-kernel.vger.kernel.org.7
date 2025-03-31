@@ -1,65 +1,96 @@
-Return-Path: <linux-kernel+bounces-582308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AD0A76BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C11A76BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 18:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909C4188976C
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B4C1679C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 16:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247B921480C;
-	Mon, 31 Mar 2025 16:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AAF2147EE;
+	Mon, 31 Mar 2025 16:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="hcX5UORe"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="h9wtvXaO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IncMXsAx"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64422144DD;
-	Mon, 31 Mar 2025 16:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB89211A35
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 16:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743437774; cv=none; b=k0caFe2SNd9kF8ERCwjX1tvdUKnLxka08uoPj6ZFMb5FtwUWW2U4fhbnhw08TdCYMjEtxqZmcQiijwMAlX0WQYdIQ+tkj2CkLHzRR1Jps2MQ90VR8RqXcWonfpyUxAlQVJyZmYwPhVsuakrA+HmUKXVC8kGpxyyMtNHbfog8sKI=
+	t=1743437890; cv=none; b=pXoT/jx6AnorW8diCqVkzNWaa2gD/8ZcdF0LeuUNk4rbiwgdzkFDunV8CEwNL5MHCKMyqv6KzeElPL3CM+DB+zMN8gbxExemu76L/IlC4f7MAxOq99kS3wDXObIXd5YOrNSs9XIkugb7dY8vCuCAPQfrXj8ivHPtqGbMTaOsEWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743437774; c=relaxed/simple;
-	bh=ohaNaBhj+Y57HbUllos35LAObiQZlEUZfWdHRxTq3iw=;
+	s=arc-20240116; t=1743437890; c=relaxed/simple;
+	bh=aTg6yYXpHoM2puFiQpgt/tSsBDbhEsa9a6e7au0koPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3IMemq3oaZudMLAtLQD2bfxqjt8pD+GqZDtdaLAOvnlXRlYkOrFbcxlM50UjrO82INRhNjwLqSmvAVM3LLH3FBGkrmMq4UDQpNty/hp82gzSmhNedSLuTI5qblfe1oZDIn3fePmNSd65P8J9C5/O2Hohx2SBJYrpMOuUeWzh2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=hcX5UORe; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
-	by mail11.truemail.it (Postfix) with ESMTPA id 738911F93B;
-	Mon, 31 Mar 2025 18:16:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1743437770;
-	bh=YWSNkb+F757hQ68vbYeh999udDtklB+ehj/2llLix5U=; h=From:To:Subject;
-	b=hcX5UORefGPHNI1rks2hDaA1EZ/1f5EApHDGecoAVntw2erbATnNQ2AIv87SdDxk+
-	 t/G+DGeuQ8RecklguimTilkHHbq6Qg7tDIieZoFTEMp75ivU3GQ7MqjAtTOxvK4RYs
-	 4cZ5/Fi/ZaETHhHkyrt1rZLw19Sk3Zz/KlkKCP7ypmQtWqh2ilAYOVzPY5krcivhC+
-	 1/iKNK9YKL6TjE8ALztSTAwYK9eky+xATdTCYlyNH5JodgKfvvKI8crKmMOj7UzwYe
-	 n1ZvgdgEYSqVGbrEZ94ldWjmsTdus8xLBcYZbuchi8OnAPOw1wb93JgUwk4fmUGSjt
-	 IFNY2WMzW+Fow==
-Date: Mon, 31 Mar 2025 18:16:06 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6nbOQ53HQ5amzx5eZO/00rkCcvPqioIRI+yKzWwHiYppiON3FWbCzzrbon2brJNXsiY7s923cm/tgewZtYjizYYbsBWam2nrQBQQdQ5UAJGtuHWiu1vdAph+ISVVPNNU6/t2KruG4pJxq4P0K5TkYz9JYiNnZyy6FKFIovAVu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=h9wtvXaO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IncMXsAx; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5F622138456A;
+	Mon, 31 Mar 2025 12:18:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Mon, 31 Mar 2025 12:18:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1743437887; x=1743524287; bh=0PKpSpAP/D
+	7a8SfehCwf+MgvErJcuIyK4tm4G4WThW4=; b=h9wtvXaODk83Gta8YoZenzfwtQ
+	V6U7B6gOVQSS6iC+beGokGSAydYp5rOP782rw/vOwtMdk9ITbQtJHyA2yBOUFshg
+	MRxqa7DUDbLU1clvib7R8OTc80HEFnHIaFiW9IE05hx43U/C+ytt5CpnVW0AdWtA
+	xTfBivAROm5JmQGaaIC8RjX7dmE8x3hmp4DTPM/pZAxCr22s2h4idTt2CR9OaXLP
+	f7R0VYU6L2039E9CHrdtv6rx2PgVu5JirI3G6fbGgVeJWyVDMSlinBPAIyoIa6f/
+	q5KpnlGKJH/vfxHNCrBYA3PUzckuXCb26KGlnDwSSyMOuOYfvy9MaquMDmOQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1743437887; x=1743524287; bh=0PKpSpAP/D7a8SfehCwf+MgvErJcuIyK4tm
+	4G4WThW4=; b=IncMXsAxfrDJxq2YCcmDzFe1MpN2yllVRjRhm4EtyKoy9fWz3Nc
+	IIVeMs7vhFQZWIdgYitIwHGu/MkpxouKlKnW/ZVVbomYzGIsnxzMG0+qylBa6veF
+	250g/xqhkUc3Euw8s+RFEV36spxPo5Nu8RZNOzkHxxD25Ar9h4e6vi9z3JkfZtvm
+	z1grYVPzLLF0nq0HOki6l3OfF34i3G60EWn7PEPM45qAMbRBGKHzp0c+2gPw60zB
+	O5Ig7eq8X7rQyXfbiAdWHImLAItyaYe6O0Bz+oOQ7xcdOdKIt/N4BHfBS2Xuysu6
+	YGrVeGlM+vndbBpRSaQpnDJzVx+in+k1mkw==
+X-ME-Sender: <xms:P8DqZ7Rk9otQZRjcawkrYL-CFptxW2x8E06cUZdiZ0epwqi4tcq2QQ>
+    <xme:P8DqZ8y0SCyqFBkh8fRp0ZRVT2XMP0XOsHsc6jNG_26Cf6CLMemOU3r-WxZ-9jIDT
+    VtQuyjGAlDeqA>
+X-ME-Received: <xmr:P8DqZw2b1Lg83EMnjYAVxv2wtBkvBQFrNmsUQdXTNupE9XZQ9IVvip8ka0SW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedtfeekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehjohhsvghphhgrnhhgvghlfhhrihgvnhguudesgh
+    hmrghilhdrtghomhdprhgtphhtthhopeguphgvnhhklhgvrhesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhnuhigqdhsthgrghhinhhgsehlihhsthhsrdhlihhnuhigrdguvg
+    hvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:P8DqZ7AeszAceFQg2zhRRqCUiUw0vWAybDikCML2dmwd5KtoGXOLwg>
+    <xmx:P8DqZ0j1WdBDK_kt-a6SyC6a8MXmofIxJmLrX8MATHXACxbf_llr-A>
+    <xmx:P8DqZ_q78pcAWtRPyKT6XHUjPdpf-7g0OyBziJtOY1lt-7Qor9lyeA>
+    <xmx:P8DqZ_g2UlBBN6uM-9j7svOKX4EVwvXL0IhvsG0XwmchW6Z9WxyHoA>
+    <xmx:P8DqZ9VgxPB0fi6Am3gScjdUlaulmetfjRIyLMdNoLbJXzV6Bnb-iSOg>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 31 Mar 2025 12:18:06 -0400 (EDT)
+Date: Mon, 31 Mar 2025 18:16:36 +0200
+From: Greg KH <greg@kroah.com>
+To: Joseph Friend <josephangelfriend1@gmail.com>
+Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: amc6821: add fan and PWM
- output
-Message-ID: <20250331161606.GA148019@francesco-nb>
-References: <20250331155229.147879-1-francesco@dolcini.it>
- <20250331155229.147879-2-francesco@dolcini.it>
- <8064282a-17aa-4b97-b5d9-1b4a8b0dc40b@roeck-us.net>
+Subject: Re: [PATCH] staging: gpib: Fixed comments and misaligned code
+Message-ID: <2025033107-ice-docile-10cf@gregkh>
+References: <20250331143941.758600-1-josephangelfriend1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,84 +99,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8064282a-17aa-4b97-b5d9-1b4a8b0dc40b@roeck-us.net>
+In-Reply-To: <20250331143941.758600-1-josephangelfriend1@gmail.com>
 
-Hello Guenter,
-
-
-On Mon, Mar 31, 2025 at 09:01:08AM -0700, Guenter Roeck wrote:
-> On 3/31/25 08:52, Francesco Dolcini wrote:
-> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > 
-> > Add properties to describe the fan and the PWM controller output.
-> > 
-> > Link: https://www.ti.com/lit/gpn/amc6821
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > ---
-> > v3:
-> >   - explicitly describe the fan, use standard PWM and FAN bindings
-> >   - pwm.yaml cannot be referenced, because of the $nodename pattern that is
-> >     enforced there
-> > v2: https://lore.kernel.org/all/20250224180801.128685-2-francesco@dolcini.it/
-> >   - no changes
-> > v1: https://lore.kernel.org/all/20250218165633.106867-2-francesco@dolcini.it/
-> > ---
-> >   .../devicetree/bindings/hwmon/ti,amc6821.yaml      | 14 +++++++++++++-
-> >   1 file changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
-> > index 5d33f1a23d03..94aca9c378e6 100644
-> > --- a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
-> > +++ b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
-> > @@ -28,6 +28,13 @@ properties:
-> >     i2c-mux:
-> >       type: object
-> > +  fan:
-> > +    $ref: fan-common.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> > +  "#pwm-cells":
-> > +    const: 3
-> > +
-> >   required:
-> >     - compatible
-> >     - reg
-> > @@ -50,9 +57,14 @@ examples:
-> >           #address-cells = <1>;
-> >           #size-cells = <0>;
-> > -        fan@18 {
-> > +        fan_controller: fan@18 {
-> >               compatible = "ti,amc6821";
-> >               reg = <0x18>;
-> > +            #pwm-cells = <3>;
-> > +
-> > +            fan {
-> > +                pwms = <&fan_controller 0 40000 0>;
+On Mon, Mar 31, 2025 at 07:39:41AM -0700, Joseph Friend wrote:
+> Fixed style issues for gpib_bitbang.c on comments.
+>   for usage of "//" instead of "/* */"
+>   and for multi-line comments
 > 
-> There is no explanation for the parameters. I guess that the first is the index and the
-> second is the frequency. The index is not used and can be dropped (there is just a single
-> channel), and the frequency only makes sense if it can actually be configured.
+> Fixed misaligned macro backslashes and comments.
+> 
+> Signed-off-by: Joseph Friend <josephangelfriend1@gmail.com>
+> ---
+>  drivers/staging/gpib/gpio/gpib_bitbang.c | 142 ++++++++++++-----------
+>  1 file changed, 72 insertions(+), 70 deletions(-)
+> 
+> diff --git a/drivers/staging/gpib/gpio/gpib_bitbang.c b/drivers/staging/gpib/gpio/gpib_bitbang.c
 
-The PWM period can be configured, the HW supports it, so I think is a
-good idea to properly describe the HW now that I am modifying the
-binding and not have the situation in which we need it in 1 month.
+Hi,
 
-The instance is just one, it's correct, but there is an assumption
-pretty much everywhere that these 3 #cells are
- - PWM instance
- - PWM period in ns
- - PWM flags
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-I decided to keep the first cell there, with the PWM instance, for this
-reason, even as you correctly wrote it would not be required here.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-With that said, looking at existing binding, the description is almost
-never present.
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
 
-I would proceed this way for v4:
- - keep the first cell as PWM instance
- - add the description
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-Francesco
+thanks,
 
+greg k-h's patch email bot
 
