@@ -1,161 +1,200 @@
-Return-Path: <linux-kernel+bounces-581609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-581611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C919A762A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:45:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD84A762BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 10:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB2F168201
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA22188AC97
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 08:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A93E1DA61B;
-	Mon, 31 Mar 2025 08:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4946E1D7999;
+	Mon, 31 Mar 2025 08:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnwFOV3c"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Da+8Anil"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE6A1D90A9;
-	Mon, 31 Mar 2025 08:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C3E15E5BB;
+	Mon, 31 Mar 2025 08:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743410685; cv=none; b=fYja0e94QWolP55E2nxOqeIhru3IHCy6qcIog+ic7/i3zWbGdnsHO8gPMxjvZMLTwyRjE8Ax9vqXWLBSS4J7NAUUFfzbu5jdouNRd9dX5oxfDNPybYBhDJTjFQx09fjSbr7kPrxI5s/xbCD0n7oKh1jdmsORORJ06zb1EQ8MXJM=
+	t=1743410886; cv=none; b=YjKNvoBpae/hNrOB7d+jlC4S785Ipqsb9uIL4C8pClno6Xt11fFBLtOx69u70IbvYWEr7gw0dB3HN2ej8sfjGjS4Q5DADkxCjLDOf+QjH+2K9QvDNpiDL9INiY20RP+T7t+m3hSKbaxvJfbVreD+wQABDJVXreghkrbBoR7Wehk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743410685; c=relaxed/simple;
-	bh=9Eo5YorzB1znbDgWJg/+008nXJznjveNUK50EHiJXHE=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=iGnK8rImtUfqM9cFMSt6C466MLGbeTVvSuyj+s7xUtpbBIKr6cQ9NMtyvk0kcggCy3ubvHcY/Uxyl8JrDqbeC19p2BCh6y6aOCB9e/08Fx/s14Y8yRFqoCJsL7wpSvwgIHQjSiUxCCANQDalcxcZK4Cgd3fnmg6nv26rSD31sIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnwFOV3c; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43690d4605dso27324965e9.0;
-        Mon, 31 Mar 2025 01:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743410682; x=1744015482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7k8QAqyn6gLKSVxlNTUb4WI8Fi44pPrnGBNadeFjOuw=;
-        b=TnwFOV3czeyYkaAbmCHzosqb1YAp/+EPKVvN0dHHS+VNO73dKygWRBbS54Lqf3j+Hh
-         98PgoNQXnaDavyV6KLg3cJA5T14hptHBDnHFGg5wEBX87Jh8ybeOvvImlRwGlF2B4eDL
-         L1rXNvu16mfClxfgk1BfkuyTLG0I2EJiZWWuW9+sX+FRJwE0s2l/lzv3BwDkuGw/DPGH
-         9I+TAX94tcwcY0tcrtGNO8RnG5YDmqv3BfqwUIJi9ERUCUMkhTlcrDUNk8q3FN0ZSsuZ
-         VXhgfsSpuszbaQG2GdLR38ejD5dY5CHop9tKJSDS27cFWN/P2l9ooSQTLso26vtV4GRl
-         0zyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743410682; x=1744015482;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7k8QAqyn6gLKSVxlNTUb4WI8Fi44pPrnGBNadeFjOuw=;
-        b=OfwwGr0tcr5FN0KxGciH0mx5esDWfFeB4Os6ydeKyDgHn4HVIeLUcf8/uuhxSZ4CUQ
-         VEj10RjqPrDGpEPBzTGmmtwJwNNRJ2GnF8kZ+5lm7xmIiWKTFJDRCguYmhjYTtNTQTex
-         +h2xA1PGQzObB+ci78FpMW10isRJVrhvjoL/atZf+ekQA/c2f04AbBzp28zAODLTMnil
-         4vJYQJWvkfuSNSkSuMaFL/YjVPGg4G8DkVIoVIsH7NYnsVcNjq5rQ4EkW0N1nhSoFclb
-         A2Y22G1YhM/bvkbAlk3uUGnaO+SuTlgQ11ggbwBT0P85gfNm7D3pHR2Y2J9BTRt+p9wg
-         6d0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWX2HZeAgJ9uOp4yPcIcQONVaZY9iJNBwyWVd4ekG27TPO+FM1Vr7Ze1ldFYsMjN5e4pGmnal4aW4larBo=@vger.kernel.org, AJvYcCWmMzOKNnwf1ck9t/WKblIDwY8IVtTJBsFK+aHpJjAeMHaVOZgRGhGNbet823X6qLPoZrxglTxzSBJMQIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL8zGcCpPg65B6VKvlspd1ZY9kmQv72btgeEvZR/x0USSQmNns
-	JLE+QsLVRIeLzxprmVXauLkwiSJUqqXyQ2p9uROjHz68HjbpuvyneBLPgLXIaEE=
-X-Gm-Gg: ASbGncsRk6f0Ale6rjyLU/WBjhYfOFhz+5MwP14sVsyLeT1yzBaW0ozpsyenkE32HAU
-	x6zq/An/q40TTNsYhOAlKgkguO7L6tBtkNIRXaNZz1UoGM/QX7moUYXpQv3LQyXRSdulHLCl40Y
-	IdkL0/yKmUEYVi13LhBepYoG2+MOwE/IJmcNpCWT4+oWBVIPEuKA1HTeRinTGNQUbgew+DM2fbQ
-	LUXvD/StdsPPNWwRh63SkLIO4MwUSqm7Zl2c6AxYEZCX1TkjNla2Y0/iMzqlLJs3QG4d2xgE6gp
-	Vh+2WMkueau4ibC2fDaCJgK5ELPqG/K6Pin3yCHexaEJss5tRwPms0+iuv+X
-X-Google-Smtp-Source: AGHT+IGqlAOUPlYMNJdvGKhA43+8DFYtcqrURoBfLI0cjmzp73RPTqDXDf90ynGOUdQDFxYR3VTfYw==
-X-Received: by 2002:a05:600c:3b9d:b0:43d:7588:6699 with SMTP id 5b1f17b1804b1-43db6221b07mr57375675e9.7.1743410681820;
-        Mon, 31 Mar 2025 01:44:41 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8fbc12bbsm114834015e9.13.2025.03.31.01.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 01:44:41 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Peter Rosin <peda@axentia.se>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: si2168: increase cmd execution timeout value
-Date: Mon, 31 Mar 2025 08:44:37 +0000
-Message-Id: <20250331084437.3974648-1-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743410886; c=relaxed/simple;
+	bh=2Aph5r+ucMnFx8WbEX334zQY670ZD+b5koX2yPrT+io=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
+	 References:In-Reply-To; b=FDVgHu9x/003iuN74lThMncmORPPExtOv3PksZteVDAk2FcyrRfyQwFUAsxUJ2DbOWHINJ3xm84UO+WOw/KmQUJThL93CumDYiveyGRDsjYyxJauXXKNJ2JsFBJy9qzH3GWCzQOkzSgXGyoeLjaMJ7uPA6e59pUgrAww3xea3G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Da+8Anil; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7BF62047D;
+	Mon, 31 Mar 2025 08:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743410881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9aErTBB6XoGeVcpJbLF45VHi7cVLHU979KcrvGo1E0c=;
+	b=Da+8Anilt9Neby3nnfgRhzL9gqecwhYWYFRvTUXHkG/WEhbCA8z2Nr6aa6Kgpl+qrvfyDE
+	NoFKL/KBHHpdjYgv9CMUgWPAWDfu5HgkOezzhxKYANUYZGjhME8NPMRmQ7ONyXwXI6RJrl
+	g1+n1eBUZCndKJsxD5o4le4STCDdyT5ePYRiyidUKAlnJI4nKq1frCwgH3yEWStwbsi1FJ
+	SBcTvjfhPkeSbMz7ou3CL4jxggXzGcq6smV3uqkEeAk54/sjpl2gj/M896x0JKwXM61NrT
+	jk3MFf1aqSK5sGQBou9eV+sjb925zqptuFAe7E5ygQ8knVEN2egtCwfWbR1p1w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 31 Mar 2025 10:47:59 +0200
+Message-Id: <D8UBKT8USZ4U.1OOL1IJMPECFE@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Lee Jones"
+ <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
+ <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
+ <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
+ <dakr@kernel.org>
+Subject: Re: [PATCH v5 01/11] dt-bindings: mfd: gpio: Add MAX7360
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-1-fb20baf97da0@bootlin.com>
+In-Reply-To: <20250318-mdb-max7360-support-v5-1-fb20baf97da0@bootlin.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujeelgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkhffvufevofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehvedtkeffueelheektddvjefhiefhgedtudevgeehvdevlefgveetkeevleelteenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhgvvgesk
+ hgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Testing with a MyGica T230C v2 USB device (0572:c68a) shows occasional
-cmd timeouts that cause Tvheadend services to fail:
+On Tue Mar 18, 2025 at 5:26 PM CET, Mathieu Dubois-Briand wrote:
+> Add device tree bindings for Maxim Integrated MAX7360 device with
+> support for keypad, rotary, gpios and pwm functionalities.
+>
+> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+> ---
 
-Jan 28 12:23:46.788180 LibreELEC kernel: si2168 1-0060: cmd execution took 0 ms
-Jan 28 12:23:46.790799 LibreELEC kernel: si2168 1-0060: cmd execution took 0 ms
-Jan 28 12:23:46.878158 LibreELEC kernel: si2168 1-0060: cmd execution took 80 ms
-Jan 28 12:23:46.879158 LibreELEC kernel: si2168 1-0060: failed=-110
-Jan 28 12:23:46.879908 LibreELEC kernel: si2168 1-0060: failed=-110
-Jan 28 12:23:46.948234 LibreELEC kernel: si2168 1-0060: cmd execution took 60 ms
-Jan 28 12:23:46.949121 LibreELEC kernel: si2168 1-0060: cmd execution took 0 ms
-Jan 28 12:23:46.949940 LibreELEC kernel: si2168 1-0060: cmd execution took 10 ms
-..
-Jan 28 12:23:57.457216 LibreELEC tvheadend[3126]: subscription: 009B: service instance is bad, reason: No input detected
-Jan 28 12:23:57.457392 LibreELEC tvheadend[3126]: linuxdvb: Silicon Labs Si2168 #0 : DVB-T #0 - stopping 778MHz in DVB-T Network
-..
-Jan 28 12:23:57.457584 LibreELEC tvheadend[3126]: subscription: 009B: No input source available for subscription "127.0.0.1 [ | Kodi Media Center ]" to channel "XXXXXXX"
+Hi,
 
-The original timeout of 50ms was extended to 70ms in commit 551c33e729f6
-("[media] Si2168: increase timeout to fix firmware loading") but testing
-shows there are other demux commands that take longer. The largest value
-observed from user reports/logs is 150ms so increase timeout to 200ms.
+Following discussion we had under the PWM patch of this series, we might
+need to refactor a bit the device tree binding architecture, adding two
+new subnodes, one for pinctrl and one for PWM.
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Changes from v1 [0]:
-- Rename TIMEOUT to CMD_TIMEOUT and move below #include
-- Add Wolfram's review tag
+This will need create two new compatible values with associated bindings
+and modify a bit the properties of the maxim,max7360.yaml binding.
 
-[0] https://patchwork.linuxtv.org/project/linux-media/patch/20250331075838.3444332-1-christianshewitt@gmail.com/
+Here is the example modified to reflect what I have in mind.
 
- drivers/media/dvb-frontends/si2168.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+> ...
+>
+> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max7360.yaml b/D=
+ocumentation/devicetree/bindings/mfd/maxim,max7360.yaml
+> new file mode 100644
+> index 000000000000..d3c09531dc5c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/maxim,max7360.yaml
+> @@ -0,0 +1,170 @@
+>
+> ...
+>
+> +examples:
+> +  - |
+> +    #include <dt-bindings/input/input.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      io-expander@38 {
+> +        compatible =3D "maxim,max7360";
+> +        reg =3D <0x38>;
+> +
+> +        interrupt-parent =3D <&gpio1>;
+> +        interrupts =3D <23 IRQ_TYPE_LEVEL_LOW>,
+> +                     <24 IRQ_TYPE_LEVEL_LOW>;
+> +        interrupt-names =3D "inti", "intk";
+> +
+> +        keypad,num-rows =3D <8>;
+> +        keypad,num-columns =3D <4>;
+> +        linux,keymap =3D <
+> +          MATRIX_KEY(0x00, 0x00, KEY_F5)
+> +          MATRIX_KEY(0x01, 0x00, KEY_F4)
+> +          MATRIX_KEY(0x02, 0x01, KEY_F6)
+> +          >;
+> +        keypad-debounce-delay-ms =3D <10>;
+> +        autorepeat;
+> +
+> +        rotary-debounce-delay-ms =3D <2>;
+> +        linux,axis =3D <0>; /* REL_X */
+> +
 
-diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
-index d6b6b8bc7d4e..843f1e01318e 100644
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -9,6 +9,8 @@
- 
- #include "si2168_priv.h"
- 
-+#define CMD_TIMEOUT 200
-+
- static const struct dvb_frontend_ops si2168_ops;
- 
- static void cmd_init(struct si2168_cmd *cmd, const u8 *buf, int wlen, int rlen)
-@@ -40,8 +42,7 @@ static int si2168_cmd_execute(struct i2c_client *client, struct si2168_cmd *cmd)
- 
- 	if (cmd->rlen) {
- 		/* wait cmd execution terminate */
--		#define TIMEOUT 70
--		timeout = jiffies + msecs_to_jiffies(TIMEOUT);
-+		timeout = jiffies + msecs_to_jiffies(CMD_TIMEOUT);
- 		while (!time_after(jiffies, timeout)) {
- 			ret = i2c_master_recv(client, cmd->args, cmd->rlen);
- 			if (ret < 0) {
-@@ -58,7 +59,7 @@ static int si2168_cmd_execute(struct i2c_client *client, struct si2168_cmd *cmd)
- 
- 		dev_dbg(&client->dev, "cmd execution took %d ms\n",
- 				jiffies_to_msecs(jiffies) -
--				(jiffies_to_msecs(timeout) - TIMEOUT));
-+				(jiffies_to_msecs(timeout) - CMD_TIMEOUT));
- 
- 		/* error bit set? */
- 		if ((cmd->args[0] >> 6) & 0x01) {
--- 
-2.34.1
++ max7360_pwm: pwm {
++         compatible =3D "maxim,max7360-pwm";
+
+> +        #pwm-cells =3D <3>;
+
++ };
+
+> +
+> +        max7360_gpio: gpio {
+> +          compatible =3D "maxim,max7360-gpio";
+> +
+> +          gpio-controller;
+> +          #gpio-cells =3D <2>;
+> +          maxim,constant-current-disable =3D <0x06>;
+> +
+> +          interrupt-controller;
+> +          #interrupt-cells =3D <0x2>;
+> +        };
+> +
+> +        max7360_gpo: gpo {
+> +          compatible =3D "maxim,max7360-gpo";
+> +
+> +          gpio-controller;
+> +          #gpio-cells =3D <2>;
+> +        };
+
++ pinctrl {
++         compatible =3D "maxim,max7360-pinctrl";
+
+> +
+> +        backlight_pins: backlight-pins {
+> +          pins =3D "PORT2";
+> +          function =3D "pwm";
+> +        };
+
++ };
+
+> +      };
+> +    };
+
+This would allow to assign a device tree node to both the pinctrl and
+the PWM devices in the kernel?
+
+Is there any comment regarding this proposal? Without any specific
+comment, I will send a new version with these changes in a few days.
+
+Best regards,
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
