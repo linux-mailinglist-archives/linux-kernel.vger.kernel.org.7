@@ -1,154 +1,196 @@
-Return-Path: <linux-kernel+bounces-582250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB08A76AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:44:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0461FA76AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D1916411F
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B478F16D3D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 15:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D0C21A421;
-	Mon, 31 Mar 2025 15:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23040215047;
+	Mon, 31 Mar 2025 15:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGL/Ngj6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PX1oQUDP"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1F1219A86;
-	Mon, 31 Mar 2025 15:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F02A21ABDE
+	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 15:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743435357; cv=none; b=t2gZilGbcpb8UXuH9HkKVvEU4gdXtIM4BNMwdga+btopWw+qWtt34+Bas2AlH9U6FDI+RGFq8VUDyrVDrO7EE0krnCfj8raYBBSbpubQMH0KNu4P5Dc5o8D0ZpuYgvqGCzuK1TAKph4vxDVmIkbqhMnk78zR4rpF2PNf3xbjhxQ=
+	t=1743435372; cv=none; b=AZPnPrrF1+3zEFvpXUO8eu558WUb9R1Uxk6dAQmtXa280CXtYc79EwOPgFivNhrhpXJiZemtlvKz5ozjLZsWTlM8Y85KngGkByZ796ZpLaTBx5B0IYjxhVQsY/ZcLMovJ33UBVdcLtYf6PD0d90sxiyoU/F3m6rYkOI4oKcdE+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743435357; c=relaxed/simple;
-	bh=pDTF0MKZB1iayRn9ON00BlXlbWN00/eEqjP/+2646z8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VhyjBA+YKuE/Nw9tqAopFON2gmB6PqahT7wxDToLNoB+2Qriw7HyowsnIoDpj8KX7ddzSAG0HoFDNhjjqtI1IAsCz+/yFYf9cUoidj0ncoSnE8td8eAVW+Pa2z5BBQjHo5Itb+vT3VBO/qGZEqhE1SvBKMlcMxR3JRFtLObWTts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGL/Ngj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C274CC4CEE3;
-	Mon, 31 Mar 2025 15:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743435357;
-	bh=pDTF0MKZB1iayRn9ON00BlXlbWN00/eEqjP/+2646z8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hGL/Ngj6XsH8gFjHZeAkrVTP9klUSJTn4XNJyjmpWP+0FdrZFRxHMm0fOkgy04WCF
-	 8dlJVLzAc8rp5UcFr6Pb4/Z/01dwFFRTW/vCE4RDkTnbvBSVR+kMsjLUWqQBVwLfYy
-	 PiMw1xOtcmJcHx13pA1DIk+h8VSXeSq97tlJhXy6yQnv6jG90ZgpmtGHDkR//MISJC
-	 dAnKW+rE4KSmzQUhsDRQFhzRQ++IQ+lbkcx7+0HcZusW4g6dQDLDUCP9O0vy9MLY3U
-	 +OW9aVJeLDzXQ6aJ3b0997kkruS50ZCbr1JpsK8G/qa2vITkCmePNfIwWWFVcZ0OQv
-	 dj3E4olMRzHAw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] tracing: tprobe-events: Remove mod field from tprobe-event
-Date: Tue,  1 Apr 2025 00:35:53 +0900
-Message-ID: <174343535351.843280.5868426549023332120.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <174343532655.843280.15317319860632975273.stgit@devnote2>
-References: <174343532655.843280.15317319860632975273.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1743435372; c=relaxed/simple;
+	bh=gr2i7ElkViQia/0pNOSKmak0K4CKCzxZlnH5gwwO/GU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtmwFYRzbSXzbHE3VjHRMuVLUSC+NELkFM3VEdotEfGsdLhIkqB5bza6PnQdh2CdK7G7ZDjQCIoin+a2G5cioRKZOCMkEdonDgon8qwLaoBl3ZP1LHzCus1gbg6oORbGqemNjnrSo5owzf7+vo3Q/ERr+S6zrDYhbcGjtd2WHbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PX1oQUDP; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so52240155e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 08:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743435369; x=1744040169; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ywrICBipCo3D98Pb8idqM4gJmh0ImUQe88U+5Mvgaw=;
+        b=PX1oQUDPjYNPIx1lUJRY5RR3HGQDlhE/6x/X3g/V4uRSkwkKlzFmB+fk/g/cvXGH/O
+         UqUKDVawcc6BDJD5AP0Ns6MCsHo+qs49ds7VgIXEPJfmtPVAhnND1iEf38xmI5CvIgE2
+         YbzHkif3PkRXVLkSXma4slVPqRzthAj/A2mY0kb/NevHDXuS7CszJkGGiAFl4gP41Ehs
+         He7dAYnUT6HUiG/w5D0CvyLj1r0nCCuu6KTShJm/cXI8/sOHR9+JqBYkfobaIwn0HTv0
+         DmSM8p6pF4Tjs5oL4DS+Lhn/E9DxkGwD2FEhkuvBGxR8UPS5C554UctqyEN8qSugjJxQ
+         cfaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743435369; x=1744040169;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ywrICBipCo3D98Pb8idqM4gJmh0ImUQe88U+5Mvgaw=;
+        b=FxYkriuOH8Z6F/qceZ6WjC6nZTGCTrFiTyipG+/A+auF8NhBOgWJbDN5UCegYaSVIR
+         GbEpJgSrfThkUI46mmYRfARYUYiQzg3oh0Tb8UpU045JSL9or6LYrDdLx6rmVMmJCuAt
+         ocpnwJGqHaAkg6d3ZIRIYqCozkjtWeW0y2/SrWBJiinDo4Q1fcPjN3tGB4a270eT35UJ
+         RBDzz5bZm+i5BpvekQyHD35w3DRrYIcT4f8u1FQ1Z0ZkCCpMD/7xrvTd/c4839mAZM3k
+         6IeRZynaLOH1cpB8u6lcz6k1tM1TCF8JvNwKa971jSqH2tHAsZn7t7Gh4I5IU+/Akahw
+         Eraw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgSSlG+CazG4CKSsXZltRiOyz+Eh6BiklgsYJhmVQPGE117nKnaAUOVK//IyiySLN795HA3ctn/w4AYO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJvXNUOhkLOInLQ5htbAeheEbOmewzmUh/U6ZEWBSBF3UdaXjG
+	PcfFhy8AAutQ6K2sDrS4TeiZBoZiTiZzPIiir2KbxfAfCNt5FofdZIDkVLaxIihMBBh6KCwvq52
+	LEwjYmnkC5yVy+kP+50MexDkjJPPgWQKGvxeHcMj6ia4p+Kqbzu/ilw==
+X-Gm-Gg: ASbGnctpTaLuF0L4DyodqLVYOf9/zW9KFSoIBkveXAZ87Y58d7LRZKRRT+14nbAgYUw
+	khWdhA7Zh87HMTTVWJbqPicqUntyYlBJqgSHhdBdWZ3x+0ik91rXQxoOzrM9GI6V7ECu4GnK0uL
+	GLREARJ6xDWt/aAaliQSZWAF1T1/H0
+X-Google-Smtp-Source: AGHT+IFh6+GM0IlcpIWBwIQonGGQpesbhVlKLCa6o8H68xAK6yvnnZx2ARkalCWY/48oTB3ma91dmfr1kqQk/SHjFFE=
+X-Received: by 2002:a05:600c:4fc8:b0:43d:9f2:6274 with SMTP id
+ 5b1f17b1804b1-43db6248ff6mr92802865e9.14.1743435368685; Mon, 31 Mar 2025
+ 08:36:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250314174800.10142-1-srinivas.kandagatla@linaro.org> <20250314174800.10142-4-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250314174800.10142-4-srinivas.kandagatla@linaro.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Mon, 31 Mar 2025 17:35:57 +0200
+X-Gm-Features: AQ5f1Jr5r8kzu92uTPWXhQdvRpNmkEoxDzeY_UvzmL6qGDeAb3ny2uTxjO8tcRE
+Message-ID: <CACr-zFBgQsiO=EVD-sCyvQHonbRLS+7J=q+Y8WNbwSPkF_5kug@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	krzysztof.kozlowski@linaro.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dmitry.baryshkov@linaro.org, johan+linaro@kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi Srini,
 
-Remove unneeded 'mod' struct module pointer field from trace_fprobe
-because we don't need to save this info.
+On Fri, 14 Mar 2025 at 18:49, <srinivas.kandagatla@linaro.org> wrote:
+>
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>
+> With the existing code, the buffer position is only reset in pointer
+> callback, which leaves the possiblity of it going over the size of
+> buffer size and reporting incorrect position to userspace.
+>
+> Without this patch, its possible to see errors like:
+> snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
+> snd-x1e80100 sound: invalid position: pcmC0D0p:0, pos = 12288, buffer size = 12288, period size = 1536
+>
+> Fixes: 9b4fe0f1cd79 ("ASoC: qdsp6: audioreach: add q6apm-dai support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_fprobe.c |   23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+Seems like I missed adding my T-b to this patch. If it's not too late,
+please add:
 
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index 2cd9ff1049f1..14a1e4f07002 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -46,7 +46,6 @@ struct trace_fprobe {
- 	struct fprobe		fp;
- 	const char		*symbol;
- 	struct tracepoint	*tpoint;
--	struct module		*mod;
- 	struct trace_probe	tp;
- };
- 
-@@ -426,7 +425,6 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
- 					       const char *event,
- 					       const char *symbol,
- 					       struct tracepoint *tpoint,
--					       struct module *mod,
- 					       int nargs, bool is_return)
- {
- 	struct trace_fprobe *tf __free(free_trace_fprobe) = NULL;
-@@ -446,7 +444,6 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
- 		tf->fp.entry_handler = fentry_dispatcher;
- 
- 	tf->tpoint = tpoint;
--	tf->mod = mod;
- 
- 	ret = trace_probe_init(&tf->tp, event, group, false, nargs);
- 	if (ret < 0)
-@@ -776,7 +773,6 @@ static void __unregister_trace_fprobe(struct trace_fprobe *tf)
- 			tracepoint_probe_unregister(tf->tpoint,
- 					tf->tpoint->probestub, NULL);
- 			tf->tpoint = NULL;
--			tf->mod = NULL;
- 		}
- 	}
- }
-@@ -1001,23 +997,23 @@ static int __tracepoint_probe_module_cb(struct notifier_block *self,
- 
- 	mutex_lock(&event_mutex);
- 	for_each_trace_fprobe(tf, pos) {
-+		if (!trace_fprobe_is_tracepoint(tf))
-+			continue;
- 		if (val == MODULE_STATE_COMING && tf->tpoint == TRACEPOINT_STUB) {
- 			tpoint = find_tracepoint_in_module(tp_mod->mod, tf->symbol);
- 			if (tpoint) {
- 				tf->tpoint = tpoint;
--				tf->mod = tp_mod->mod;
- 				if (!WARN_ON_ONCE(__regsiter_tracepoint_fprobe(tf)) &&
- 				    trace_probe_is_enabled(&tf->tp))
- 					reenable_trace_fprobe(tf);
- 			}
--		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod) {
-+		} else if (val == MODULE_STATE_GOING &&
-+			   tf->tpoint != TRACEPOINT_STUB &&
-+			   within_module((unsigned long)tf->tpoint->probestub, tp_mod->mod)) {
- 			unregister_fprobe(&tf->fp);
--			if (trace_fprobe_is_tracepoint(tf)) {
--				tracepoint_probe_unregister(tf->tpoint,
--					tf->tpoint->probestub, NULL);
--				tf->tpoint = TRACEPOINT_STUB;
--				tf->mod = NULL;
--			}
-+			tracepoint_probe_unregister(tf->tpoint,
-+				tf->tpoint->probestub, NULL);
-+			tf->tpoint = TRACEPOINT_STUB;
- 		}
- 	}
- 	mutex_unlock(&event_mutex);
-@@ -1215,8 +1211,7 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
- 		return ret;
- 
- 	/* setup a probe */
--	tf = alloc_trace_fprobe(group, event, symbol, tpoint, tp_mod,
--				argc, is_return);
-+	tf = alloc_trace_fprobe(group, event, symbol, tpoint, argc, is_return);
- 	if (IS_ERR(tf)) {
- 		ret = PTR_ERR(tf);
- 		/* This must return -ENOMEM, else there is a bug */
+Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
 
+> ---
+>  sound/soc/qcom/qdsp6/q6apm-dai.c | 23 ++++-------------------
+>  1 file changed, 4 insertions(+), 19 deletions(-)
+>
+> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
+> index 9d8e8e37c6de..90cb24947f31 100644
+> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
+> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
+> @@ -64,7 +64,6 @@ struct q6apm_dai_rtd {
+>         phys_addr_t phys;
+>         unsigned int pcm_size;
+>         unsigned int pcm_count;
+> -       unsigned int pos;       /* Buffer position */
+>         unsigned int periods;
+>         unsigned int bytes_sent;
+>         unsigned int bytes_received;
+> @@ -124,23 +123,16 @@ static void event_handler(uint32_t opcode, uint32_t token, void *payload, void *
+>  {
+>         struct q6apm_dai_rtd *prtd = priv;
+>         struct snd_pcm_substream *substream = prtd->substream;
+> -       unsigned long flags;
+>
+>         switch (opcode) {
+>         case APM_CLIENT_EVENT_CMD_EOS_DONE:
+>                 prtd->state = Q6APM_STREAM_STOPPED;
+>                 break;
+>         case APM_CLIENT_EVENT_DATA_WRITE_DONE:
+> -               spin_lock_irqsave(&prtd->lock, flags);
+> -               prtd->pos += prtd->pcm_count;
+> -               spin_unlock_irqrestore(&prtd->lock, flags);
+>                 snd_pcm_period_elapsed(substream);
+>
+>                 break;
+>         case APM_CLIENT_EVENT_DATA_READ_DONE:
+> -               spin_lock_irqsave(&prtd->lock, flags);
+> -               prtd->pos += prtd->pcm_count;
+> -               spin_unlock_irqrestore(&prtd->lock, flags);
+>                 snd_pcm_period_elapsed(substream);
+>                 if (prtd->state == Q6APM_STREAM_RUNNING)
+>                         q6apm_read(prtd->graph);
+> @@ -247,7 +239,6 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
+>         }
+>
+>         prtd->pcm_count = snd_pcm_lib_period_bytes(substream);
+> -       prtd->pos = 0;
+>         /* rate and channels are sent to audio driver */
+>         ret = q6apm_graph_media_format_shmem(prtd->graph, &cfg);
+>         if (ret < 0) {
+> @@ -445,16 +436,12 @@ static snd_pcm_uframes_t q6apm_dai_pointer(struct snd_soc_component *component,
+>         struct snd_pcm_runtime *runtime = substream->runtime;
+>         struct q6apm_dai_rtd *prtd = runtime->private_data;
+>         snd_pcm_uframes_t ptr;
+> -       unsigned long flags;
+>
+> -       spin_lock_irqsave(&prtd->lock, flags);
+> -       if (prtd->pos == prtd->pcm_size)
+> -               prtd->pos = 0;
+> -
+> -       ptr =  bytes_to_frames(runtime, prtd->pos);
+> -       spin_unlock_irqrestore(&prtd->lock, flags);
+> +       ptr = q6apm_get_hw_pointer(prtd->graph, substream->stream) * runtime->period_size;
+> +       if (ptr)
+> +               return ptr - 1;
+>
+> -       return ptr;
+> +       return 0;
+>  }
+>
+>  static int q6apm_dai_hw_params(struct snd_soc_component *component,
+> @@ -669,8 +656,6 @@ static int q6apm_dai_compr_set_params(struct snd_soc_component *component,
+>         prtd->pcm_size = runtime->fragments * runtime->fragment_size;
+>         prtd->bits_per_sample = 16;
+>
+> -       prtd->pos = 0;
+> -
+>         if (prtd->next_track != true) {
+>                 memcpy(&prtd->codec, codec, sizeof(*codec));
+>
+> --
+> 2.39.5
+>
+>
 
