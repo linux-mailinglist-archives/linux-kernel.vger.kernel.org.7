@@ -1,180 +1,78 @@
-Return-Path: <linux-kernel+bounces-582377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEF5A76C6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B19A76C68
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 19:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD893A0424
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A911665D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 17:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59D82153EA;
-	Mon, 31 Mar 2025 17:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD74215162;
+	Mon, 31 Mar 2025 17:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fPehXRci"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ox0NIZSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B8E2135DE
-	for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 17:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE70155725;
+	Mon, 31 Mar 2025 17:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743440875; cv=none; b=UVR5S/reoaT0ryldN6iVEuSL2/nGGhKnCxXlr+/RRWvTmCoPz439yODSEoWA17GU9ZhwVAxiIvnXOOGQyDo/Lx+M0neLAze0VueGROrZ8b6n/JhDbnNV8GKdbloXk+Q8F5AFOEv8X9lHfA9Kz41bsYqTkpF1Nu9BWP1g7r9253k=
+	t=1743440855; cv=none; b=suR5ikZPQLd4wh9j4IB2OtkRkJCKXrmdxDcvNxDSm8GrL4a42adf+8pximoUg27Hho4EIWnD/OArweqi7qk4r9lV5X1OGh3nZa1QrYwzeiah2nmvb9gmVhK2h+30d4UmdFI8aliefd1ul1qhNjId/gZaqGpgWJKBG4I+CeNoxDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743440875; c=relaxed/simple;
-	bh=0XXHvVH3uTDCMxcR0WdIaNLdp3YBldH2uI8GRVxW53s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lOoHfI3obwQKo14EJlTV6PSmyN4E1L4ImniUlti2/hoOL/SFTOAS5iOI70Cr8kVBA3qtuKdeMGUUV4FGskBjrndXlSVP/gFIHopF7zrXd2uHN7SJ8cvSDMxHl53tBa9KG1Td3dW6KOdEwWb6OuR0XrqPFIOrQHPYGbf55F31VCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fPehXRci; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 31 Mar 2025 13:07:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743440859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5OupMGobLMAwcSJf51wqGLHPQ4jZkY1BiImmx9cF0Dg=;
-	b=fPehXRci0Usgern7GARpYrL022EgKSkHiT2ifiNiDLZ7nRJ9q7skctJBP84hIECOFcFSeb
-	ZViJuCPxxknN6nvxOkzNz+vwMfk7LpKtWqYVKbUP2x6UaSd+t+/L9g3JY21fGVsl06sM9l
-	nadt6Ba9UIp0BuEBMI7Y8UbigRqqDbU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs updates for 6.15 part 2
-Message-ID: <insmfmxhkgbdvnnqaxkxfllhrea25hojvjaetxgdu3jr6txyjv@i44r2xo2virt>
+	s=arc-20240116; t=1743440855; c=relaxed/simple;
+	bh=1Nk0JxPo3IrWyqDWIESPIvocBYdWxLmAxDWkJ1OndHI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VknTYBmDDAZnmCC4GfNn43Y1fXgmFKVo7+/qptO8zKAFGA9469yW5HkypQF31I2bo74PLf3R6LO3/f59cJRIm2C+jTLM3AbwOzy73ycW2A49jJm0WCVCZAlcyEXi5P0PTw7mNRaS4l7PHLQEr3MHbVd7vUcRRMD/Sl0TCt53Pak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ox0NIZSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6430C4CEE3;
+	Mon, 31 Mar 2025 17:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743440854;
+	bh=1Nk0JxPo3IrWyqDWIESPIvocBYdWxLmAxDWkJ1OndHI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ox0NIZSP087PvOMptGPCL2xFsSWvnHcaOTSQLDyU/+Zcn8yiQ78zjCUjhcNSKZNVk
+	 IU+GV+1XSUO3C8RNf3dTtmeYLQViOhoJn8tFoOxd0tV973rcOsYuybQwY5FtNFelq3
+	 pMx+cPFmJt4arfoz8YwiQEEx5xPGj9IQVdaX7Rdh3hpJAaPfUXhtNBzkfE7ZVkb9d6
+	 8heD5X+aG9WGLGBt5RIeFRdC3oI0PB+3aWhvvhTPw5UkoHLcB/IjEzpxMFxHucMoVz
+	 w4hVFm5nSov1ysaTuWN0DxqyXbQO3VJqWB0midi/DdrgsOfRjp+VnFzviVgMxPEnqC
+	 tXO11yGsYyfUw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEBE4380AA7A;
+	Mon, 31 Mar 2025 17:08:12 +0000 (UTC)
+Subject: Re: [GIT PULL] perf-tools updates for v6.15
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250328063228.3824573-1-namhyung@kernel.org>
+References: <20250328063228.3824573-1-namhyung@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250328063228.3824573-1-namhyung@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.15-2025-03-27
+X-PR-Tracked-Commit-Id: 35d13f841a3d8159ef20d5e32a9ed3faa27875bc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 802f0d58d52e8e34e08718479475ccdff0caffa0
+Message-Id: <174344089132.63132.13406299838665692519.pr-tracker-bot@kernel.org>
+Date: Mon, 31 Mar 2025 17:08:11 +0000
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
 
-The following changes since commit d8bdc8daac1d1b0a4efb1ecc69bef4eb4fc5e050:
+The pull request you sent on Thu, 27 Mar 2025 23:32:24 -0700:
 
-  bcachefs: Kill unnecessary bch2_dev_usage_read() (2025-03-24 09:50:37 -0400)
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.15-2025-03-27
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/802f0d58d52e8e34e08718479475ccdff0caffa0
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-31
+Thank you!
 
-for you to fetch changes up to 650f5353dcc9b6e690a1c763754fa1e98d217bfc:
-
-  bcachefs: fix bch2_write_point_to_text() units (2025-03-30 20:04:16 -0400)
-
-----------------------------------------------------------------
-bcachefs updates for 6.15, part 2
-
-All bugfixes and logging improvements.
-
-Minor merge conflict, see:
-https://lore.kernel.org/linux-next/20250331092816.778a7c83@canb.auug.org.au/T/#u
-
-CI says the fs-next tree is good:
-https://evilpiepirate.org/~testdashboard/ci?user=fs-next&branch=master
-
-----------------------------------------------------------------
-Florian Albrechtskirchinger (1):
-      bcachefs: Fix bch2_fs_get_tree() error path
-
-Kent Overstreet (34):
-      bcachefs: Fix nonce inconsistency in bch2_write_prep_encoded_data()
-      bcachefs: Fix silent short reads in data read retry path
-      bcachefs: Fix duplicate checksum error messages in write path
-      bcachefs: Use print_string_as_lines() for journal stuck messages
-      bcachefs: Validate number of counters for accounting keys
-      bcachefs: Document disk accounting keys and conuters
-      bcachefs: Don't unnecessarily decrypt data when moving
-      bcachefs: Fix btree iter flags in data move (2)
-      bcachefs: Fix 'hung task' messages in btree node scan
-      bcachefs: cond_resched() in journal_key_sort_cmp()
-      bcachefs: Fix permissions on version modparam
-      bcachefs: Recovery no longer holds state_lock
-      bcachefs: Fix bch2_seek_hole() locking
-      bcachefs: Don't return 0 size holes from bch2_seek_hole()
-      bcachefs: Fix WARN() in bch2_bkey_pick_read_device()
-      bcachefs: print_string_as_lines: fix extra newline
-      bcachefs: add missing newline in bch2_trans_updates_to_text()
-      bcachefs: fix logging in journal_entry_err_msg()
-      bcachefs: bch2_time_stats_init_no_pcpu()
-      bcachefs: Add an "ignore unknown" option to bch2_parse_mount_opts()
-      bcachefs: Consistent indentation of multiline fsck errors
-      bcachefs: Better helpers for inconsistency errors
-      bcachefs: bch2_count_fsck_err()
-      bcachefs: Better printing of inconsistency errors
-      bcachefs: Change btree_insert_node() assertion to error
-      bcachefs: Clear fs_path_parent on subvolume unlink
-      bcachefs: bch2_ioctl_subvolume_destroy() fixes
-      bcachefs: fix units in rebalance_status
-      bcachefs: Silence errors after emergency shutdown
-      bcachefs: Don't use designated initializers for disk_accounting_pos
-      bcachefs: Reorder error messages that include journal debug
-      bcachefs: BCH_JSET_ENTRY_log_bkey
-      bcachefs: Log original key being moved in data updates
-      bcachefs: fix bch2_write_point_to_text() units
-
- fs/bcachefs/alloc_background.c       |  22 ++--
- fs/bcachefs/alloc_foreground.c       |   2 +-
- fs/bcachefs/backpointers.c           |  43 ++++---
- fs/bcachefs/bcachefs_format.h        |   3 +-
- fs/bcachefs/btree_cache.c            |   2 +-
- fs/bcachefs/btree_gc.c               |  23 ++--
- fs/bcachefs/btree_io.c               |  63 +++++-----
- fs/bcachefs/btree_iter.c             |  14 +--
- fs/bcachefs/btree_iter.h             |   1 -
- fs/bcachefs/btree_journal_iter.c     |   2 +
- fs/bcachefs/btree_node_scan.c        |  14 ++-
- fs/bcachefs/btree_update.c           |  13 ++
- fs/bcachefs/btree_update.h           |   2 +
- fs/bcachefs/btree_update_interior.c  |  91 ++++++++------
- fs/bcachefs/buckets.c                | 161 ++++++++++++++-----------
- fs/bcachefs/chardev.c                |   6 +-
- fs/bcachefs/data_update.c            |  22 +++-
- fs/bcachefs/data_update.h            |  12 ++
- fs/bcachefs/disk_accounting.c        |  40 ++++---
- fs/bcachefs/disk_accounting.h        |   8 +-
- fs/bcachefs/disk_accounting_format.h |  80 +++++++++++--
- fs/bcachefs/ec.c                     |  22 ++--
- fs/bcachefs/errcode.h                |   3 +
- fs/bcachefs/error.c                  | 226 ++++++++++++++++++++++++++---------
- fs/bcachefs/error.h                  |  48 ++++----
- fs/bcachefs/extents.c                |   7 +-
- fs/bcachefs/fs-io-buffered.c         |   2 +-
- fs/bcachefs/fs-io.c                  |  31 +++--
- fs/bcachefs/fs-ioctl.c               |   6 +-
- fs/bcachefs/fs.c                     |   9 +-
- fs/bcachefs/fsck.c                   |  22 ++--
- fs/bcachefs/io_read.c                |   4 +-
- fs/bcachefs/io_read.h                |   6 +-
- fs/bcachefs/io_write.c               |  44 ++++---
- fs/bcachefs/journal.c                |  19 +--
- fs/bcachefs/journal_io.c             |  38 ++++--
- fs/bcachefs/lru.c                    |   7 +-
- fs/bcachefs/move.c                   |  37 +++++-
- fs/bcachefs/namei.c                  |   4 +-
- fs/bcachefs/opts.c                   |  49 ++++----
- fs/bcachefs/opts.h                   |   3 +-
- fs/bcachefs/printbuf.c               |  19 +++
- fs/bcachefs/printbuf.h               |   1 +
- fs/bcachefs/progress.c               |   6 +-
- fs/bcachefs/rebalance.c              |   5 +-
- fs/bcachefs/recovery_passes.c        |  12 +-
- fs/bcachefs/reflink.c                |  12 +-
- fs/bcachefs/sb-errors_format.h       |   6 +-
- fs/bcachefs/snapshot.c               |  16 +--
- fs/bcachefs/str_hash.c               |   2 +-
- fs/bcachefs/subvolume.c              |   1 +
- fs/bcachefs/super.c                  |  38 +++---
- fs/bcachefs/sysfs.c                  |   9 +-
- fs/bcachefs/time_stats.c             |  20 +++-
- fs/bcachefs/time_stats.h             |   1 +
- fs/bcachefs/util.c                   |   2 +-
- fs/bcachefs/util.h                   |   1 +
- 57 files changed, 856 insertions(+), 506 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
