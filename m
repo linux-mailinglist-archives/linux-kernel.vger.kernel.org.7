@@ -1,159 +1,120 @@
-Return-Path: <linux-kernel+bounces-582528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E362A76F58
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F8D5A76F66
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 22:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727E91642AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:31:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E67A164098
+	for <lists+linux-kernel@lfdr.de>; Mon, 31 Mar 2025 20:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C635F217F5C;
-	Mon, 31 Mar 2025 20:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB79F21ADA7;
+	Mon, 31 Mar 2025 20:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Up4u0ZtG"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Z4KFFf20"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3F51D86F7;
-	Mon, 31 Mar 2025 20:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3A51BBBFD;
+	Mon, 31 Mar 2025 20:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743453056; cv=none; b=AwzxPwRtMClObwcYb/5Et3GiZNReJyYa9O9GUplCe/QrQSt9pxNsSLNiKb/20o69tVthPBtJTlEIZqcjrYq3+W6qpgYX98PvCbJEP+KTik1qBpMbvA2Lm9keFp9gUd+DBZ8e9Z2LmW2p/LD3YGNo3ddeQqLq4NgoAQFFJlBoOIE=
+	t=1743453232; cv=none; b=saBpqFedm541IzygEb6UJknwe2Ix/rqlHWUSSyDptRDtvqDoxNM6pxBYYtFH9MPH762MGfvcxYPfBylv4/4dExYg76IrQOCiWCk9P7OpSndsOnWml6XJDQsuuRVCHCCP+HG9k2IsTqNb+W55XfiI/O8kB4aPQrpJto4meTITl7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743453056; c=relaxed/simple;
-	bh=oSgO4eBDnIoUqaBokqlhEpgWsqEDw8Ac1dYf3mCoSAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjrIaFQkW56KT1jAyBg8/qilnemyvVL3UVNQF7VerddIZjcBcHlwuJaZiVlkazXqX2G5z3FWnz0ieMG7mc/iOwoT47oHtPYHx0YrkU2Rn+JwbZjMfhuViOHCs5Kty9WEzuKZqEUQ2iUK8nHdv4l94ZIaLLYhVvXJtejHsPD/w1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Up4u0ZtG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bwgUmQ/Ln+vl6Ggzqf2YmSZ7HB+LoNBmRfI1Y27KDkA=; b=Up4u0ZtG1+H47e4FsrNKSaV3o8
-	3eDeJC82AW9n1sRD92fm7KDWTFxTlKyVYZkALIOZ8v3lqVlbgS4tKxO6tohdct1W0suaUXUPBw/vy
-	nK+4MK+9EMi1TY9eDu0nvxRN4EbMm1sLlZQ3F3an+fF2Unme7J1RP2aW1qxVbw+U/yaqOgyRb9VER
-	t7CcYkvNr02rp6F5f/P7MUBu0xpg7Yfk56v3d3IEvx15X2xJjSdunMDG9w8AvtwNWSCGR+LuXkJKw
-	AvRUAYvC/r3H9c5G6KWGnYgiWy3Q/2qrZ6zZIlDzU6/LmAhDX3sjUVbomWh95H2aII31UVfXXTBBr
-	wlHheixQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59730)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tzLmQ-0004lN-2S;
-	Mon, 31 Mar 2025 21:30:46 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tzLmN-0001zI-1U;
-	Mon, 31 Mar 2025 21:30:43 +0100
-Date: Mon, 31 Mar 2025 21:30:43 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Da Xue <da@lessconfused.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Da Xue <da@libre.computer>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Jakub Kicinski <kuba@kernel.org>, linux-amlogic@lists.infradead.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v2] net: mdio: mux-meson-gxl: set 28th bit in eth_reg2
-Message-ID: <Z-r7c1bAHJK48xhD@shell.armlinux.org.uk>
-References: <20250331074420.3443748-1-christianshewitt@gmail.com>
- <17cfc9e2-5920-42e9-b934-036351c5d8d2@lunn.ch>
- <Z-qeXK2BlCAR1M0F@shell.armlinux.org.uk>
- <CACdvmAijY=ovZBgwBFDBne5dJPHrReLTV6+1rJZRxxGm42fcMA@mail.gmail.com>
+	s=arc-20240116; t=1743453232; c=relaxed/simple;
+	bh=c2UV0LQ0uKecBVFY2BqHPj+KlQwpu911b6y9CvieRMM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=a1RJrp0dnaW4a2o36MPkwWXZ2OFxtmgfcJSgEFRA2z6XckTkrCZ/+XxVACOWYJ/rQidYIDOVjDq0S8YEwBm+dRcdVu920zbvCaQvqZQIYg5fVHk7NNar0YlHIHRXNF6wCIZyDnpDz0nVda11FJuke3OpVFT64hhdKDuvR/ONZZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Z4KFFf20; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52VKX0M73412381
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 31 Mar 2025 13:33:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52VKX0M73412381
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1743453183;
+	bh=x7/smMOdPkYBe+t7QfoSlZKr+k8BBZp4ioXVR2T0his=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Z4KFFf201sZydaNbvnLKcIFsMDrRsRhjp8bCSzYq7irlJscPCzdUI+8Dh4pqCCfV4
+	 ma0aiKDH5Cg73nGZwNOvjvhtZagcXOcQ9p2pYNsCc45pMH4VWAZVeIr/shFTXOyoJT
+	 59zF4BynSpJMyvMuqGTq9ieFHT39HOkA0HdIKxpHd/yvEWkvuEK7rGz99DeXh2OChY
+	 Zn0hvSP59z7ec+xOZ7nTecOJAXBz/IE20VtgatRaj322fOCOFRQHF4aywsa6ze8XYD
+	 fG5J1+Jt7zMsFRAlcpYJxihjmqzIyqp5Hnp/IhNJbmgWmvn330XKZNgzjeZAZMX0yB
+	 LqLmBrw0GOEjQ==
+Date: Mon, 31 Mar 2025 13:32:58 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>
+CC: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-ide@vger.kernel.org,
+        linux-pm@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, jgross@suse.com,
+        andrew.cooper3@citrix.com, peterz@infradead.org, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        wei.liu@kernel.org, ajay.kaher@broadcom.com,
+        alexey.amakhalov@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        tony.luck@intel.com, pbonzini@redhat.com, vkuznets@redhat.com,
+        seanjc@google.com, luto@kernel.org, boris.ostrovsky@oracle.com,
+        kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_v1_01/15=5D_x86/msr=3A_Re?=
+ =?US-ASCII?Q?place_=5F=5Fwrmsr=28=29_with_native=5Fwrmsrl=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z-pruogreCuU66wm@gmail.com>
+References: <20250331082251.3171276-1-xin@zytor.com> <20250331082251.3171276-2-xin@zytor.com> <Z-pruogreCuU66wm@gmail.com>
+Message-ID: <9D15DE81-2E68-4FCD-A133-4963602E18C9@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACdvmAijY=ovZBgwBFDBne5dJPHrReLTV6+1rJZRxxGm42fcMA@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 31, 2025 at 03:09:00PM -0400, Da Xue wrote:
-> On Mon, Mar 31, 2025 at 9:55 AM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Mon, Mar 31, 2025 at 03:43:26PM +0200, Andrew Lunn wrote:
-> > > On Mon, Mar 31, 2025 at 07:44:20AM +0000, Christian Hewitt wrote:
-> > > > From: Da Xue <da@libre.computer>
-> > > >
-> > > > This bit is necessary to enable packets on the interface. Without this
-> > > > bit set, ethernet behaves as if it is working, but no activity occurs.
-> > > >
-> > > > The vendor SDK sets this bit along with the PHY_ID bits. U-boot also
-> > > > sets this bit, but if u-boot is not compiled with networking support
-> > > > the interface will not work.
-> > > >
-> > > > Fixes: 9a24e1ff4326 ("net: mdio: add amlogic gxl mdio mux support");
-> > > > Signed-off-by: Da Xue <da@libre.computer>
-> > > > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> > > > ---
-> > > > Resending on behalf of Da Xue who has email sending issues.
-> > > > Changes since v1 [0]:
-> > > > - Remove blank line between Fixes and SoB tags
-> > > > - Submit without mail server mangling the patch
-> > > > - Minor tweaks to subject line and commit message
-> > > > - CC to stable@vger.kernel.org
-> > > >
-> > > > [0] https://patchwork.kernel.org/project/linux-amlogic/patch/CACqvRUbx-KsrMwCHYQS6eGXBohynD8Q1CQx=8=9VhqZi13BCQQ@mail.gmail.com/
-> > > >
-> > > >  drivers/net/mdio/mdio-mux-meson-gxl.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/net/mdio/mdio-mux-meson-gxl.c b/drivers/net/mdio/mdio-mux-meson-gxl.c
-> > > > index 00c66240136b..fc5883387718 100644
-> > > > --- a/drivers/net/mdio/mdio-mux-meson-gxl.c
-> > > > +++ b/drivers/net/mdio/mdio-mux-meson-gxl.c
-> > > > @@ -17,6 +17,7 @@
-> > > >  #define  REG2_LEDACT               GENMASK(23, 22)
-> > > >  #define  REG2_LEDLINK              GENMASK(25, 24)
-> > > >  #define  REG2_DIV4SEL              BIT(27)
-> > > > +#define  REG2_RESERVED_28  BIT(28)
-> > >
-> > > It must have some meaning, it cannot be reserved. So lets try to find
-> > > a better name.
-> >
-> > Indeed, that was my thoughts as well, but Andrew got his reply in
-> > before I got around to replying!
-> 
-> The datasheets don't have much in the way of information about this
-> register bit. The Amlogic GXL datasheet is notoriously inaccurate.
-> 
-> ETH_REG2 0XC8834558
-> 29:28 R 0x1 reserved
-> 
-> It claims the bit is read only while the BSP hard codes the setting of
-> this register. I am open to any name for this register bit.
-> This is the only thing holding up distro netbooting for these very
-> popular chip family.
+On March 31, 2025 3:17:30 AM PDT, Ingo Molnar <mingo@kernel=2Eorg> wrote:
+>
+>* Xin Li (Intel) <xin@zytor=2Ecom> wrote:
+>
+>> -	__wrmsr      (MSR_AMD_DBG_EXTN_CFG, val | 3ULL << 3, val >> 32);
+>> +	native_wrmsrl(MSR_AMD_DBG_EXTN_CFG, val | 3ULL << 3);
+>
+>This is an improvement=2E
+>
+>> -	__wrmsr      (MSR_IA32_PQR_ASSOC, rmid_p, plr->closid);
+>> +	native_wrmsrl(MSR_IA32_PQR_ASSOC, (u64)plr->closid << 32 | rmid_p);
+>
+>> -	__wrmsr      (MSR_IA32_PQR_ASSOC, rmid_p, closid_p);
+>> +	native_wrmsrl(MSR_IA32_PQR_ASSOC, (u64)closid_p << 32 | rmid_p);
+>
+>This is not an improvement=2E
+>
+>Please provide a native_wrmsrl() API variant where natural [rmid_p, closi=
+d_p]
+>high/lo parameters can be used, without the shift-uglification=2E=2E=2E
+>
+>Thanks,
+>
+>	Ingo
 
-Which interface mode do we think this affects?
+Directing this question primarily to Ingo, who is more than anyone else th=
+e namespace consistency guardian:
 
-As a suggestion, maybe call it:
+On the subject of msr function naming =2E=2E=2E *msrl() has always been mi=
+sleading=2E The -l suffix usually means 32 bits; sometimes it means the C t=
+ype "long" (which in the kernel is used instead of size_t/uintptr_t, which =
+might end up being "fun" when 128-bit architectures appear some time this c=
+entury), but for a fixed 64-but type we normally use -q=2E
 
-REG2_<interfacemode>_EN
-
-and possibly add a comment "This bit is documented as reserved, but
-needs to be set so that <interfacemode> can pass traffic. This is
-an unofficial name."
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Should we rename the *msrl() functions to *msrq() as part of this overhaul=
+?
 
