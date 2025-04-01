@@ -1,60 +1,98 @@
-Return-Path: <linux-kernel+bounces-583593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC341A77D34
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1E7A77D37
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA651675AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBA73AAF86
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0B7204684;
-	Tue,  1 Apr 2025 14:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317392040B7;
+	Tue,  1 Apr 2025 14:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OetrQrVK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EGoUx7cG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Qq0uth9r";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="c02Pc3H9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yWGg8w4z"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E745A2A1BF;
-	Tue,  1 Apr 2025 14:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB35204685
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743516313; cv=none; b=c6/ygWjGl1wMzIt2H8rCKKhAMz+SVD1HBe05LJItDk8QMZ6KkRuuIligmztQYNVORhzBI2pqj75pQ0unKGJBr/bDUSIhqGFLlKj5NlKJzKlKjzl72aELX16Y2KtjJufBXey3+LSPsahutAmpdPuKbfN95n/de34npMRUlFBEASE=
+	t=1743516337; cv=none; b=GKwbOVRKfI4dgehb01pkRnlDDKTdv8X00+EN0oI5cjuXBANzqqe7kxGdpY4wbxuQVttmptqC42okfk1/+NG0sHtcYwuQMOR/p9IYGTbA9OmtfMemrr+4D/nolk9rMZGdqxmw/QH8aMFZaGJ9xR7spggCbETIjip4G1SvgyoiJfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743516313; c=relaxed/simple;
-	bh=YziPmtCreaxBJzVwx7Ym3Kbx4JMxuBsOjY2qWVUatUE=;
+	s=arc-20240116; t=1743516337; c=relaxed/simple;
+	bh=AI69wCYKAaCfFkprguc6o9rLtY07cuhSRg33rT54uMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3DlopNJwfCNZPBH3uKsnMG22iQy+70530nbOb+lNduwhZnXpOzS+bEx5gzhGufuwLQFpENVXdsVIfDCDYe36UFSYYlcGZHVlH6QFKDADSrBF2uw5HzNsVGviS0FA5TTITysvpzH/wb6gdLaOgI/iNGxGd/ZN6Fe0PxIjlAMRuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OetrQrVK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54500C4CEE5;
-	Tue,  1 Apr 2025 14:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743516312;
-	bh=YziPmtCreaxBJzVwx7Ym3Kbx4JMxuBsOjY2qWVUatUE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=OetrQrVKoZ4gZPiJMhJ+qQJzd/gkhiswWDugI2/Du/qPLKbeiH/E/44pwJ6TxyFYs
-	 cpAQ6DJihrckHqeJB/XnitynGrdR1ViTpqC9td+Hrr7ja04vdM52IqfYESByP4axd2
-	 pZ4J913Cn/mncnMhU8AZENZM1MDEgnRTX21yI9D7aK9qGWzpTnMZ2Ov+j1sBg2v0o+
-	 StMAmhu6tGiS24Mt++5oNqC7NhmE7XFbXXdTRVXsf7HZiFUaoxymLKbNSH+RJ/s8LJ
-	 /LMOKK4az1Ywi7zCJWkgspyfaEunef1J2v0I9NfHtCc0Lx8LlyAm35HWeWkZV8A0KP
-	 vnnVM1b9mXxvg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EC511CE0869; Tue,  1 Apr 2025 07:05:11 -0700 (PDT)
-Date: Tue, 1 Apr 2025 07:05:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: rcu@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH v2 10/12] checkpatch: Deprecate srcu_read_lock_lite() and
- srcu_read_unlock_lite()
-Message-ID: <0cbd404a-856a-4bc3-ab76-eeb839065a2d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
- <20250331210314.590622-10-paulmck@kernel.org>
- <5588e91ab302e21bf4e30b5208cf3d387f8e7de4.camel@perches.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RK61SR/tMr3bc+Ecw3/nSzji+p61bjUHgeNJKKkqTXyFx8x+VYy07khg2AJ7MZ4F/dT75Qd58V2GCO4m2nv+Wh+YlTXvKOv73Eo09V6HY3WsukMnO3Va4LRYpSBx+IYqLtxa2C/IQXfsMiE+567EWvsmNuGMCXifmFscALAxKcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EGoUx7cG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Qq0uth9r; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=c02Pc3H9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yWGg8w4z; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D759E1F38E;
+	Tue,  1 Apr 2025 14:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743516333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
+	b=EGoUx7cGM84tfHT5TYdRrt8jlnYk0bEcB7kbInsZkIwODhhegxkGIh8Nufv8KAvH75xRVC
+	TIOtOdgMT3AR9pDBIVXxr+jLaeif8cYelNzEdyUiv7p/BoOobaXcGQzkFe0uPFY++uE/Mi
+	rWP+Gt1qWG02yqUXFw5i3MZ22nu7xUU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743516333;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
+	b=Qq0uth9rF79Ugn3wX2m12hoLobDkC7VOX+ip1BSNpdc7AGuBjY/mt5ZI8DkjWLgzVmCJeG
+	CnhF1ABakDGCMKDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=c02Pc3H9;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yWGg8w4z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743516331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
+	b=c02Pc3H9jYKWbyPcvAyUqCfAaHt7VcQSHg5m4HUqw8adanKC6ZHkXd/TxY2f944RLuph7Z
+	YY8ph5QobOQukVtCo1aKUz1W9CB6XElTsDnvgiaq4aspKS45gUbyUgfhhgA5CRjQ1ywXri
+	Jkn5D+Jur//3Je5fh5Z4ScEivdC+8rU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743516331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
+	b=yWGg8w4zHsjfTLYgZNf8d3OwrZVrMZXajdafAVa4MJ5YS77hv9Dkrml/Qr6KGlcJZ4Q5mV
+	+8FcDpXVfLbfZ5DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75266138A5;
+	Tue,  1 Apr 2025 14:05:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Uz/UGavy62f6XQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 01 Apr 2025 14:05:31 +0000
+Date: Tue, 1 Apr 2025 16:05:25 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, yanjun.zhu@linux.dev, x86@kernel.org
+Subject: Re: [PATCH v2 6/7] x86/mm: remove p4d_leaf definition
+Message-ID: <Z-vypSM90BYqdhTM@localhost.localdomain>
+References: <20250331081327.256412-1-bhe@redhat.com>
+ <20250331081327.256412-7-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,41 +101,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5588e91ab302e21bf4e30b5208cf3d387f8e7de4.camel@perches.com>
+In-Reply-To: <20250331081327.256412-7-bhe@redhat.com>
+X-Rspamd-Queue-Id: D759E1F38E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email,localhost.localdomain:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Mon, Mar 31, 2025 at 11:53:25PM -0700, Joe Perches wrote:
-> On Mon, 2025-03-31 at 14:03 -0700, Paul E. McKenney wrote:
-> > Uses of srcu_read_lock_lite() and srcu_read_unlock_lite() are better
-> > served by the new srcu_read_lock_fast() and srcu_read_unlock_fast() APIs.
-> > As in srcu_read_lock_lite() and srcu_read_unlock_lite() would never have
-> > happened had I thought a bit harder a few months ago.  Therefore, mark
-> > them deprecated.
+On Mon, Mar 31, 2025 at 04:13:26PM +0800, Baoquan He wrote:
+> There's no p4d huge page support yet, let's use the generic definition.
 > 
-> Would it be better to convert the 3 existing instances?
-
-Both are needed.  The point of these checkpatch.pl changes is to prevent
-other instances from being added.
-
-							Thanx, Paul
-
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  scripts/checkpatch.pl | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index 7b28ad3317427..de8ed5efc5b16 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -838,6 +838,8 @@ our %deprecated_apis = (
-> >  	"kunmap"				=> "kunmap_local",
-> >  	"kmap_atomic"				=> "kmap_local_page",
-> >  	"kunmap_atomic"				=> "kunmap_local",
-> > +	"srcu_read_lock_lite"			=> "srcu_read_lock_fast",
-> > +	"srcu_read_unlock_lite"			=> "srcu_read_unlock_fast",
-> >  );
-> >  
-> >  #Create a search pattern for all these strings to speed up a loop below
+> And also update the BUILD_BUG_ON() in pti_user_pagetable_walk_pmd()
+> because p4d_leaf() returns boolean value.
 > 
-> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Cc: x86@kernel.org
+
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
