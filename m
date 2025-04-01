@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-584002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D97A7823B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:32:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38410A78235
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BC616E198
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4EAB188799F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B08E2253EE;
-	Tue,  1 Apr 2025 18:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8FD225413;
+	Tue,  1 Apr 2025 18:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="onOvRPbn"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VwMQQoLO"
+Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A801224AF6
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BB92253BB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743531947; cv=none; b=evdcmYnf2NMo2LAN6mYMoiqeuTmplKL+gLV1z0MwxE2soItUgywdcpi7a2qyyLcF+I6Gtjx3haoYpCEPBh9gnhBxaYI/3inrpepGhshkhevzMy7ExZzmBWD+FtRQkhKnLoiC7O43rioimXGgWiLLFWyQPEFAfHO3gmYml7ezjR0=
+	t=1743531949; cv=none; b=McXzhLTwcL6ce5IgsaBPCoijpAmpkY6h7nM/M+VMBwKw0V5tvkUlkbF00ijNrAy36PKSSoIF1gUHoJc9jSx+hjpLxyFDjHDf6+9/PfpVWGb2qWwklQJ8rFzNohNgQdszpiD0Mw4LoE3rJvQGLlgt+BYadcusf8VdT/t20IXoB/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743531947; c=relaxed/simple;
-	bh=Qu3ENIwjPtRUy2H8z/5cBW7sG1RGzLF/ISAym7rxPVQ=;
+	s=arc-20240116; t=1743531949; c=relaxed/simple;
+	bh=MBDOAj0hPKHpQkoNjahydiN73L9NoaCbnaJXUshhGm0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hp8+a7dleokv6Pd9A6F/EQsy6Es0h+STiQiL1XS4RQUiLtA63fnCON306C0v7t6quZwsBPD2kTlRMXI6ECNd1s0M/qmuAZ6/MtAXoVVgHR3r2l7gELlAPv/G7gdGL+Sa/dDvLPU7knUJIbcUqrmdDTMe7ISu9/oDNTy1eMIHoW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=onOvRPbn; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=DLmBXHgZd8BW/bc70E+NJtza19cECYPEYpYBEQd7/ZfJbLXc9JEpuHA8BoOdpTrE7M3daUjxBZtiYf90La5SDh2ohvNe+sqZm3J3VXpDh2KlPLvMvQP1N5KRGkulJcKqjVeVigXZJ4QESeuCTGVc8uwuv+rCOMd5dqoHytj11EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VwMQQoLO; arc=none smtp.client-ip=209.85.210.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22403329f9eso104550925ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:45 -0700 (PDT)
+Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-72c7d6a53easo1194544a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743531945; x=1744136745; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743531947; x=1744136747; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vvFsqXOQnMSY0FwcqTPMe5NcrPZKJkPdo6X7LXEIfzg=;
-        b=onOvRPbnefm7XS3Bg/t+kW0L/KEFZzgttCvOrDb/1AKfj3Z13BPlJwBjlM4FdXFxIG
-         fjMPaz/DM9ALlR5JK7yTc6FFdS/BI4hLEguIgwZJlGnNvK8sCz+x02UpSjXGKU0qtpkR
-         10Y5+2GVMy9p/+VKGiR3Fw3i1Jvjd+JtKfBjAreEKXq1OyKVTpOiFhRVAqq3qHl0gMxV
-         NwoTCTUi59/gqg6BlSZ4Yviy9QsffYSYNqocmhygcwkvUY3b41e4Fm7ki5Q9EgX+Mm/J
-         9dhApM/EqyhekHu6q5kQv9ZpEsSoYpH5D6+pFPMzkD19f9KE7XLwwEDAS1WNmD/qjS/K
-         qOXA==
+        bh=3UTRp4Jp4MSvHARTmLwq2lUMY2ZfT8GOaVYNdpU6sCg=;
+        b=VwMQQoLOCiK34fXTO48lRQp1juvyeRbOL6g3Y3c8gvO4pWgWf23MwRbMXtn8kmSafT
+         dUIsYj97rpePpTKuP6RWRSTjcJ/MQb3kY0ChFrllqq04WzrHe4E54l7+LxZatHfAMgLs
+         JxO1uWSFgv3MvjvNFNPXs9kT4HsS8mZAjpoFGaHjtJRTIjeYB6eCu1pSU92oyu5oZJnW
+         XeJmR8KPruKHoldfVhKz/ZAz2BzSa19TLvQg7MioeG4OKe76p+z8TuTZlrTlIdHlXgkc
+         rkL7s0cEq60gBv+mIvxLptCDQjbgNXxH3tjeELOkSk4LcN/Y2AcFE9B2nzuQhyrCv+gO
+         VfDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743531945; x=1744136745;
+        d=1e100.net; s=20230601; t=1743531947; x=1744136747;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvFsqXOQnMSY0FwcqTPMe5NcrPZKJkPdo6X7LXEIfzg=;
-        b=S4GiqPwr9WEsNRply9wHrHHbMeLtVCg5R9NIkS1wM+PCjP+oXJiX6ojXMWhSwTEDY5
-         p0EbqKvpKJ9AEC5ib1jDptG8eIh7XwwRluRMPYxikz+XayTe40YQVIApr2ipEeWNOlZO
-         ONuBEIt9UqtfVvs22Jq48zdCHvUGnQtdPj3RUSOO3ER/ZP21gMCwbc1C7NzY8W4inG3r
-         0T0c0b3fedEKCDb+fPYa3UzbxPowdX/gi3CBLinR13mkQVEYVNaTTxfFsrgd8Lx6H+dS
-         +tW1AOGL+wnZIMgAHRU0s7a0fBVcsVkZDL2RWva6pGIAZ1RA4eEAwPvZTAPw76UALupO
-         QXCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZYF9i7agkFw/AHiqAhfiVhMCfCjv9mStPlnLWqYAkOGzhPmRqGYvCzaiCFoYd46C1NZ6xlZQSj8b29c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4Veictg3K7WdAIs6hP2RRPOkMxJ6wycAfSYSKKedITotaWiDm
-	e/JqEYuN3sdU2J84ueIlNMlrux5IR9GC1GvXJO9WkRlbjneGN5tW0YiU9238MDUokk876MY9n3U
-	nwGPipQ==
-X-Google-Smtp-Source: AGHT+IHW/4wmxkq4+EIq5aHOMrmtVB2GZ7+Z/8jfNXSu21JgnRUTXtDc8Kcd6rJ8130lmEAYOc9SAvaid5cP
-X-Received: from pfgs4.prod.google.com ([2002:a05:6a00:1784:b0:736:451f:b9f4])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebc7:b0:224:160d:3f54
- with SMTP id d9443c01a7336-2292f97caa0mr233931205ad.31.1743531944799; Tue, 01
- Apr 2025 11:25:44 -0700 (PDT)
-Date: Tue,  1 Apr 2025 11:23:32 -0700
+        bh=3UTRp4Jp4MSvHARTmLwq2lUMY2ZfT8GOaVYNdpU6sCg=;
+        b=UOsQEAKIRb3YG2KAS0C70XBmeTQiVpkorw+Puw6po51iplDBB8BXcJFLXZTMN33mOW
+         bNcDhpFFVbTbCp3ZpHpZpRpcbWD8mm63xCeWjVMVg3kuhKsXrzrkISTfw3814ozeHIsq
+         yhHBbbpNWukjLZ6WH9nLdGQ9ABkAgpo5AKN062mKZ2Fo/O49sgeLvCMiOCHAkAvpk/Fp
+         7is7g8Rny+bReJMTqRfU6YUYHKHsBb8l/93HLNBO32v3o0NjlT5Bw5hjcnQChJ3DOrhq
+         3Eexjx29kJUQA3tlr2AT0gsVeqWmzBBZsD5nAtiAZYRWl2SoHrmdyHTu1cgIvOV9qte2
+         /kuw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9FsgeblXBbOZNXMpHaJvQZnYp82qSP5BPpG5DIqtif73rTO5ycIAxKQFXHzUYlnCqc89MK+broNnHlPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQdAVRXKyReqhHHfbztJCMWhIUE043qwITyHQ+Rd3vMGqxUOxI
+	cVQdp5Ffecf6/qXXRKLCgrtuOxJpJdzuotpyFsYRB7NojzoNfI6brcmxYuVeizBK6m0yCVR2QDd
+	kdyXV3w==
+X-Google-Smtp-Source: AGHT+IEsrz/KaBMv5972/PnVFS75LSjTuIhiZlIKgw8UI1qwxDb1rR4a1EvTReYHhxsnFHQO/ofbC87XKrhm
+X-Received: from oabfr13.prod.google.com ([2002:a05:6870:f80d:b0:2c2:5d77:108f])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:698a:b0:72b:946e:ccc7
+ with SMTP id 46e09a7af769-72c6366fefdmr8680020a34.0.1743531946761; Tue, 01
+ Apr 2025 11:25:46 -0700 (PDT)
+Date: Tue,  1 Apr 2025 11:23:33 -0700
 In-Reply-To: <20250401182347.3422199-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250401182347.3422199-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401182347.3422199-35-irogers@google.com>
-Subject: [PATCH v1 34/48] perf bpf_counter: Silence -Wshorten-64-to-32 warnings
+Message-ID: <20250401182347.3422199-36-irogers@google.com>
+Subject: [PATCH v1 35/48] perf ftrace: Silence -Wshorten-64-to-32 warnings
 From: Ian Rogers <irogers@google.com>
 To: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
 	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -128,54 +128,95 @@ truncation explicit.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/bpf_counter.c        | 6 +++---
- tools/perf/util/bpf_counter_cgroup.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/builtin-ftrace.c  | 17 +++++++++++------
+ tools/perf/util/bpf_ftrace.c |  4 ++--
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-index 73fcafbffc6a..3b1dbf1f5f66 100644
---- a/tools/perf/util/bpf_counter.c
-+++ b/tools/perf/util/bpf_counter.c
-@@ -177,7 +177,7 @@ static int bpf_program_profiler__load(struct evsel *evsel, struct target *target
- 		return -1;
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index 7caa18d5ffc3..1484d798de40 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -182,7 +182,8 @@ static int read_tracing_file_to_stdout(const char *name)
  
- 	while ((tok = strtok_r(bpf_str, ",", &saveptr)) != NULL) {
--		prog_id = strtoul(tok, &p, 10);
-+		prog_id = (unsigned int)strtoul(tok, &p, 10);
- 		if (prog_id == 0 || prog_id == UINT_MAX ||
- 		    (*p != '\0' && *p != ',')) {
- 			pr_err("Failed to parse bpf prog ids %s\n",
-@@ -418,7 +418,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 	link = bpf_program__attach(skel->progs.on_switch);
- 	if (IS_ERR(link)) {
- 		pr_err("Failed to attach leader program\n");
--		err = PTR_ERR(link);
-+		err = (int)PTR_ERR(link);
+ 	/* read contents to stdout */
+ 	while (true) {
+-		int n = read(fd, buf, sizeof(buf));
++		ssize_t n = read(fd, buf, sizeof(buf));
++
+ 		if (n == 0)
+ 			break;
+ 		else if (n < 0)
+@@ -449,7 +450,7 @@ static int set_tracing_percpu_buffer_size(struct perf_ftrace *ftrace)
+ 		return 0;
+ 
+ 	ret = write_tracing_file_int("buffer_size_kb",
+-				     ftrace->percpu_buffer_size / 1024);
++				     (int)(ftrace->percpu_buffer_size / 1024));
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -691,7 +692,8 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+ 			break;
+ 
+ 		if (pollfd.revents & POLLIN) {
+-			int n = read(trace_fd, buf, sizeof(buf));
++			ssize_t n = read(trace_fd, buf, sizeof(buf));
++
+ 			if (n < 0)
+ 				break;
+ 			if (fwrite(buf, n, 1, stdout) != 1)
+@@ -713,7 +715,8 @@ static int __cmd_ftrace(struct perf_ftrace *ftrace)
+ 
+ 	/* read remaining buffer contents */
+ 	while (true) {
+-		int n = read(trace_fd, buf, sizeof(buf));
++		ssize_t n = read(trace_fd, buf, sizeof(buf));
++
+ 		if (n <= 0)
+ 			break;
+ 		if (fwrite(buf, n, 1, stdout) != 1)
+@@ -1031,7 +1034,8 @@ static int __cmd_latency(struct perf_ftrace *ftrace)
+ 			break;
+ 
+ 		if (pollfd.revents & POLLIN) {
+-			int n = read(trace_fd, buf, sizeof(buf) - 1);
++			ssize_t n = read(trace_fd, buf, sizeof(buf) - 1);
++
+ 			if (n < 0)
+ 				break;
+ 
+@@ -1049,7 +1053,8 @@ static int __cmd_latency(struct perf_ftrace *ftrace)
+ 
+ 	/* read remaining buffer contents */
+ 	while (!ftrace->target.use_bpf) {
+-		int n = read(trace_fd, buf, sizeof(buf) - 1);
++		ssize_t n = read(trace_fd, buf, sizeof(buf) - 1);
++
+ 		if (n <= 0)
+ 			break;
+ 		make_histogram(ftrace, buckets, buf, n, line);
+diff --git a/tools/perf/util/bpf_ftrace.c b/tools/perf/util/bpf_ftrace.c
+index 7324668cc83e..c4b3bb4e5922 100644
+--- a/tools/perf/util/bpf_ftrace.c
++++ b/tools/perf/util/bpf_ftrace.c
+@@ -97,7 +97,7 @@ int perf_ftrace__latency_prepare_bpf(struct perf_ftrace *ftrace)
+ 							    false, func->name);
+ 	if (IS_ERR(skel->links.func_begin)) {
+ 		pr_err("Failed to attach fentry program\n");
+-		err = PTR_ERR(skel->links.func_begin);
++		err = (int)PTR_ERR(skel->links.func_begin);
  		goto out;
  	}
  
-@@ -459,7 +459,7 @@ static int bperf_attach_follower_program(struct bperf_follower_bpf *skel,
- 	else {
- 		link = bpf_program__attach(skel->progs.fexit_XXX);
- 		if (IS_ERR(link))
--			err = PTR_ERR(link);
-+			err = (int)PTR_ERR(link);
+@@ -105,7 +105,7 @@ int perf_ftrace__latency_prepare_bpf(struct perf_ftrace *ftrace)
+ 							  true, func->name);
+ 	if (IS_ERR(skel->links.func_end)) {
+ 		pr_err("Failed to attach fexit program\n");
+-		err = PTR_ERR(skel->links.func_end);
++		err = (int)PTR_ERR(skel->links.func_end);
+ 		goto out;
  	}
  
- 	return err;
-diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
-index 6ff42619de12..35d1b950e803 100644
---- a/tools/perf/util/bpf_counter_cgroup.c
-+++ b/tools/perf/util/bpf_counter_cgroup.c
-@@ -98,7 +98,7 @@ static int bperf_load_program(struct evlist *evlist)
- 						      FD(cgrp_switch, i));
- 		if (IS_ERR(link)) {
- 			pr_err("Failed to attach cgroup program\n");
--			err = PTR_ERR(link);
-+			err = (int)PTR_ERR(link);
- 			goto out;
- 		}
- 	}
 -- 
 2.49.0.504.g3bcea36a83-goog
 
