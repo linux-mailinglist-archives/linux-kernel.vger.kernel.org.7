@@ -1,173 +1,192 @@
-Return-Path: <linux-kernel+bounces-584101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5086A78349
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CCFA7834B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B203ADAA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C15C188B8DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5D9213230;
-	Tue,  1 Apr 2025 20:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61F91EE00F;
+	Tue,  1 Apr 2025 20:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cLhQmB52"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtcL+eRZ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCF0211299
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADC21420C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743539341; cv=none; b=o5cbo8VRHY3jgV+cYFdel+86EMu1AwaOqykEIvx0aNZp2B/QJkgMru5tUN9XGa/LtO3CTgJpH4lFTTQw7W5ao0tIAe+GTujBypzDkbM+pKFH5H6HNGr6iTyliSYJck1RfgdD1olU5NSlPUeQp6uGQ6eysBazCPfznxgPVKAGumM=
+	t=1743539444; cv=none; b=okM7tYERqDK8aUk1oSDCn4dm84zV7t8PXLCJCRH7W7Qj1VI+7ehqdZXLBWQG7IqxwQ4f3tDkEFmADLhiosSR/PCH+yGLjKHd83OVzYNUt2x5Z5WDy7wHgQy/VV9GboOgIontJMPz4lXgC/p5X0N4FUunflvD/m41/GXrhSqMJqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743539341; c=relaxed/simple;
-	bh=TDQGYHYzTXG72qqa+FOFZk8SvqywdenK5AAn0IsR/bs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gCyodp87FvoZYOE36sUZb0LmDNY73SSTnd2Sl8nT7ytE2HVa9Yj8G3IP8FJrk4TmIwcAbewvxGp16nxm0Fkk02x5g5ze9f9IubF0GJbqnfu/lKI235a2SpldqJCGDC7pJGrRbuVdgHt6OC9yTNunGTy3YIK3X4JtkUeHkaQnwSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cLhQmB52; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22410b910b0so86802855ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 13:28:59 -0700 (PDT)
+	s=arc-20240116; t=1743539444; c=relaxed/simple;
+	bh=e1ShIkamowVUA9eVIDtAHBesCYliDssvEraQvEbebDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZudrjbVZ/Bd1RClvt2PHkou+sBHJX6kpZXybKt8SkVh0nfCqsNXXwZCHMh5MevTgH7sbSCQuiuglOishy6l9820TmosHPvm0SnulN76wySwBT3s0eUQOKDpo7IJQc8SMB+8PEWoHgHp9mXTffn1lL6HNRR0WQFwjuRekbCgK3c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtcL+eRZ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso43778655e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 13:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743539339; x=1744144139; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zj3tU7hEK8R3guZHUC3J4JBA+NmfHHOtD45E8t6ZNdM=;
-        b=cLhQmB52MlK7fBVIJrdI631OgtvlGvwQ7alIVcfK23a6p2vEYdavs4hEoCH/7cmCBU
-         yCL+wcuFkTZWoyVbWmQQh6gfnUcpWmEEpi10LFa1yLe0vRtDwr0idxgOu2E16v+MOeDW
-         XiXD2yeVFazahNvdRGssIlYskwgGYEyZZ5zrPKAdw9aMw+QIXapzKcplBBCo2VZZx4Kk
-         FT8rv7mZHoT2HEMmLzjLEUc1ZtP514Pdr3FTCv06E27DBjKWXlbWlprPWeHc2WnsNVW3
-         e1wVpaDnFpbHYKLBq1uFyBXqx4yhcpd3sr6DXwErxKvooCBDOFew+skdSgf6U9MWnpG6
-         cFRA==
+        d=gmail.com; s=20230601; t=1743539440; x=1744144240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QHmwB4LgIc5d8nRTjkH67nVHdKKt8PlUfNNTxoySLI=;
+        b=dtcL+eRZzFCDBJQVI5m6Efwnp7/ynd6J9D3DP0uNQpb4sR5uDCjuqEMg3B24aq+2/s
+         kJ0ieaxum3mq8r5I2mbzSb5tpRMvA0sWZS/KeR/U6tKuCjbNgsfbWI7V16UDHW1OAg8+
+         aMmip0rCaQCR29kBFkUTbzro1uAimOrMsHeVNUmmJFAAgZ+4NBTkL1aPpriUqa4VQ3Mp
+         KljWzz00SPmHJoeC1GnFBRdm3hc0PTjguEmTUp7wqAlJIV0gzZ9Qp5KxJqYN3em5m+Nw
+         VFFb+5GpUYRUPsMwArFOV2Dh1wij+KoiwsHlRR9VpNobsegK4pM+TN34Y9Kz8fgZAOPd
+         3BZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743539339; x=1744144139;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zj3tU7hEK8R3guZHUC3J4JBA+NmfHHOtD45E8t6ZNdM=;
-        b=fYFqGpGTYRWLPensgSIeQ2uMHTYmzWpNjOJ9iHtNGpZCwD4DTPKtIh+4MDB/cRz7bj
-         hN+Y/EPBzfk6uMZzGQJuvMxZ88tjo/dryUl3tWk2ZrKpZCiz0whF/JYuzdCRMwkUxWxg
-         KMnx9v6xOG0P1gSKdmSVPHhv7bfz7W+nSA7j8djl8o2aioWbDL6yNDZuukuCw9ZTXS4k
-         8O7Ot8D1+fRYkcZR+z27Z++sgFfXzzjgVcsF18MPMyskgbgl739d10lPnpLn34o3CFkX
-         TIccByii3LDwcbxoqyougtudtBPu+a2YQ88/PEkPVslvHHagE8Gk4X2fibWYMfUqg9bJ
-         Ipog==
-X-Gm-Message-State: AOJu0Yxo26qkG+6hZmUhKXtHZYWAxWqlJOP7N3ZCmFFRkksE4iNi86IP
-	5SfXEFhKPxYaPzYHa0R06NH7fLfsnfJcYxfkzZkQZ7gq6T1uT4VPzXMJNiUXy3OL17l3KOLhfIl
-	iYmTvJQ==
-X-Google-Smtp-Source: AGHT+IEzplZtwSprqpxxDIWfAcjWWNicwtbmwc4UJrb1Vkh7U1dTlw9w8CTM4B67Uz8PVGHSVKLvadxdvxK4
-X-Received: from plvx10.prod.google.com ([2002:a17:902:9a4a:b0:223:6c8e:eaf1])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e887:b0:223:f408:c3f8
- with SMTP id d9443c01a7336-2292f960348mr239426295ad.14.1743539339374; Tue, 01
- Apr 2025 13:28:59 -0700 (PDT)
-Date: Tue,  1 Apr 2025 20:28:46 +0000
+        d=1e100.net; s=20230601; t=1743539440; x=1744144240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6QHmwB4LgIc5d8nRTjkH67nVHdKKt8PlUfNNTxoySLI=;
+        b=Gpid4dnk9T7Fw/I11MB8ZmVe2jkZBsuTH1ImxBug9N9pzFPnSZACAqyjs0oTbw+idy
+         wIqpF/1mp8XEGkd3MG9Am0dNFN74dX+RrNI6hRFY1H0Tnjgi9JvElRBEaQ9yQtagi58M
+         q+O+wBfDDpw68Oaz2DJCParycDOUnrUPSSu2kuEQ+lEbtJYvqoRpXuSyibCyZTkmGB2a
+         sut4aXJXHt3oUQv0r6IzXYyp2rdkYfD/8/qByEKsUGGQCa8hltSdj/JnJOQ+/F3fWL28
+         JnIg6b5za/1eLhvleKOxpjirQ1u71lOKQR1bQ1KKKwLmuKQZ7OPuAl32lnHio75w7U82
+         vUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2M92404gnsje+OTVCZBn51SCpKh3+4B+2bLstVYK4tjQJQY5yohSj5n+rL40C7fmQQs7Nu+LScqiUcbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0343KkdxuUQgQgueKy2E6WTk6BU2ntNi2autT7FEjw3f7+975
+	N8bL97XWGP6Mn7seEAGZbD3nvtuya4gosDG/C0BY9Zqc6Wh7b8LO
+X-Gm-Gg: ASbGncuNUTmOqo1XENrULB3qWNnXIc4L/SUvRRDeA2UXqJmDKIKamFe91bgyVpT/pW5
+	6G7EIMMnT1hm1gYZyFsxJ1kuCFSsTTP3ZryjBUHQlsw32i19Y0kw/jeYWJdOvk0lHXqFJUHReb7
+	P+QkRwklUZHkLlr7dwCWkzxoSHX/ujXUYDbaPRruVjpp1Q6qmANSKdCHlfppTRDxddaIwSvOt63
+	zmK6QKPK4ZChY/CwZVYJv12xPngc6vF14WoFYcYDoAPFjTQF0nx9uczkqDqSvcx5J4zczzybPpF
+	qc88mGJkEesZbVzCGgUZ6SKWAkOVX4R+CI9vCScaYWEn7K6GOSmpmetWL/2G
+X-Google-Smtp-Source: AGHT+IF6WoA924thzyiezlrUcswx4u2tIuuRHX0f73idiC4a4c+coVG5HBcFiOVXH22mv/K63QVGoQ==
+X-Received: by 2002:a05:600c:1e1f:b0:43c:fd27:a216 with SMTP id 5b1f17b1804b1-43db62b7121mr131833025e9.23.1743539440203;
+        Tue, 01 Apr 2025 13:30:40 -0700 (PDT)
+Received: from f.. (cst-prg-92-82.cust.vodafone.cz. [46.135.92.82])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8ff02f9csm168010325e9.26.2025.04.01.13.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 13:30:39 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: mingo@redhat.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] x86: predict __access_ok() returning true
+Date: Tue,  1 Apr 2025 22:30:29 +0200
+Message-ID: <20250401203029.1132135-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401202846.3510162-2-ynaffit@google.com>
-Subject: [PATCH v4] binder: use buffer offsets in debug logs
-From: "Tiffany Y. Yang" <ynaffit@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	"Tiffany Y. Yang" <ynaffit@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Identify buffer addresses using vma offsets instead of full user
-addresses in debug logs or drop them if they are not useful.
+This works around what seems to be an optimization bug in gcc (at least
+13.3.0), where it predicts access_ok() to fail despite the hint to the
+contrary.
 
-Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
+_copy_to_user contains:
+	if (access_ok(to, n)) {
+		instrument_copy_to_user(to, from, n);
+		n = raw_copy_to_user(to, from, n);
+	}
+
+Where access_ok is likely(__access_ok(addr, size)), yet the compiler
+emits conditional jumps forward for the case where it succeeds:
+
+<+0>:     endbr64
+<+4>:     mov    %rdx,%rcx
+<+7>:     mov    %rdx,%rax
+<+10>:    xor    %edx,%edx
+<+12>:    add    %rdi,%rcx
+<+15>:    setb   %dl
+<+18>:    movabs $0x123456789abcdef,%r8
+<+28>:    test   %rdx,%rdx
+<+31>:    jne    0xffffffff81b3b7c6 <_copy_to_user+38>
+<+33>:    cmp    %rcx,%r8
+<+36>:    jae    0xffffffff81b3b7cb <_copy_to_user+43>
+<+38>:    jmp    0xffffffff822673e0 <__x86_return_thunk>
+<+43>:    nop
+<+44>:    nop
+<+45>:    nop
+<+46>:    mov    %rax,%rcx
+<+49>:    rep movsb %ds:(%rsi),%es:(%rdi)
+<+51>:    nop
+<+52>:    nop
+<+53>:    nop
+<+54>:    mov    %rcx,%rax
+<+57>:    nop
+<+58>:    nop
+<+59>:    nop
+<+60>:    jmp    0xffffffff822673e0 <__x86_return_thunk>
+
+Patching _copy_to_user() to likely() around the access_ok() use does
+not change the asm.
+
+However, spelling out the prediction *within* __access_ok() does the
+trick:
+<+0>:     endbr64
+<+4>:     xor    %eax,%eax
+<+6>:     mov    %rdx,%rcx
+<+9>:     add    %rdi,%rdx
+<+12>:    setb   %al
+<+15>:    movabs $0x123456789abcdef,%r8
+<+25>:    test   %rax,%rax
+<+28>:    jne    0xffffffff81b315e6 <_copy_to_user+54>
+<+30>:    cmp    %rdx,%r8
+<+33>:    jb     0xffffffff81b315e6 <_copy_to_user+54>
+<+35>:    nop
+<+36>:    nop
+<+37>:    nop
+<+38>:    rep movsb %ds:(%rsi),%es:(%rdi)
+<+40>:    nop
+<+41>:    nop
+<+42>:    nop
+<+43>:    nop
+<+44>:    nop
+<+45>:    nop
+<+46>:    mov    %rcx,%rax
+<+49>:    jmp    0xffffffff82255ba0 <__x86_return_thunk>
+<+54>:    mov    %rcx,%rax
+<+57>:    jmp    0xffffffff82255ba0 <__x86_return_thunk>
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
 
-V3 -> V4: Replace alloc.buffer with alloc.vm_start
-V2 -> V3: Drop transaction data addresses
-V1 -> V2: Resend to mailing lists
+I did not investigate what's going on here. It may be other spots are
+also suffering.
 
- drivers/android/binder.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+If someone commits to figuring out what went wrong I'll be happy to drop
+this patch. Otherwise this can be worked around at least for access_ok()
+consumers.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 5fc2c8ee61b1..91adf18675a1 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3261,20 +3261,16 @@ static void binder_transaction(struct binder_proc *proc,
+ arch/x86/include/asm/uaccess_64.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index c52f0133425b..30c912375260 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -98,11 +98,11 @@ static inline void __user *mask_user_address(const void __user *ptr)
+ static inline bool __access_ok(const void __user *ptr, unsigned long size)
+ {
+ 	if (__builtin_constant_p(size <= PAGE_SIZE) && size <= PAGE_SIZE) {
+-		return valid_user_address(ptr);
++		return likely(valid_user_address(ptr));
+ 	} else {
+ 		unsigned long sum = size + (__force unsigned long)ptr;
  
- 	if (reply)
- 		binder_debug(BINDER_DEBUG_TRANSACTION,
--			     "%d:%d BC_REPLY %d -> %d:%d, data %016llx-%016llx size %lld-%lld-%lld\n",
-+			     "%d:%d BC_REPLY %d -> %d:%d, data size %lld-%lld-%lld\n",
- 			     proc->pid, thread->pid, t->debug_id,
- 			     target_proc->pid, target_thread->pid,
--			     (u64)tr->data.ptr.buffer,
--			     (u64)tr->data.ptr.offsets,
- 			     (u64)tr->data_size, (u64)tr->offsets_size,
- 			     (u64)extra_buffers_size);
- 	else
- 		binder_debug(BINDER_DEBUG_TRANSACTION,
--			     "%d:%d BC_TRANSACTION %d -> %d - node %d, data %016llx-%016llx size %lld-%lld-%lld\n",
-+			     "%d:%d BC_TRANSACTION %d -> %d - node %d, data size %lld-%lld-%lld\n",
- 			     proc->pid, thread->pid, t->debug_id,
- 			     target_proc->pid, target_node->debug_id,
--			     (u64)tr->data.ptr.buffer,
--			     (u64)tr->data.ptr.offsets,
- 			     (u64)tr->data_size, (u64)tr->offsets_size,
- 			     (u64)extra_buffers_size);
- 
-@@ -4223,20 +4219,21 @@ static int binder_thread_write(struct binder_proc *proc,
- 			if (IS_ERR_OR_NULL(buffer)) {
- 				if (PTR_ERR(buffer) == -EPERM) {
- 					binder_user_error(
--						"%d:%d BC_FREE_BUFFER u%016llx matched unreturned or currently freeing buffer\n",
-+						"%d:%d BC_FREE_BUFFER matched unreturned or currently freeing buffer at offset %lx\n",
- 						proc->pid, thread->pid,
--						(u64)data_ptr);
-+						(unsigned long)data_ptr - proc->alloc.vm_start);
- 				} else {
- 					binder_user_error(
--						"%d:%d BC_FREE_BUFFER u%016llx no match\n",
-+						"%d:%d BC_FREE_BUFFER no match for buffer at offset %lx\n",
- 						proc->pid, thread->pid,
--						(u64)data_ptr);
-+						(unsigned long)data_ptr - proc->alloc.vm_start);
- 				}
- 				break;
- 			}
- 			binder_debug(BINDER_DEBUG_FREE_BUFFER,
--				     "%d:%d BC_FREE_BUFFER u%016llx found buffer %d for %s transaction\n",
--				     proc->pid, thread->pid, (u64)data_ptr,
-+				     "%d:%d BC_FREE_BUFFER at offset %lx found buffer %d for %s transaction\n",
-+				     proc->pid, thread->pid,
-+				     (unsigned long)data_ptr - proc->alloc.vm_start,
- 				     buffer->debug_id,
- 				     buffer->transaction ? "active" : "finished");
- 			binder_free_buf(proc, thread, buffer, false);
-@@ -5053,16 +5050,14 @@ static int binder_thread_read(struct binder_proc *proc,
- 		trace_binder_transaction_received(t);
- 		binder_stat_br(proc, thread, cmd);
- 		binder_debug(BINDER_DEBUG_TRANSACTION,
--			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd ptr %016llx-%016llx\n",
-+			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd\n",
- 			     proc->pid, thread->pid,
- 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
- 				(cmd == BR_TRANSACTION_SEC_CTX) ?
- 				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
- 			     t->debug_id, t_from ? t_from->proc->pid : 0,
- 			     t_from ? t_from->pid : 0, cmd,
--			     t->buffer->data_size, t->buffer->offsets_size,
--			     (u64)trd->data.ptr.buffer,
--			     (u64)trd->data.ptr.offsets);
-+			     t->buffer->data_size, t->buffer->offsets_size);
- 
- 		if (t_from)
- 			binder_thread_dec_tmpref(t_from);
+-		return valid_user_address(sum) && sum >= (__force unsigned long)ptr;
++		return likely(valid_user_address(sum) && sum >= (__force unsigned long)ptr);
+ 	}
+ }
+ #define __access_ok __access_ok
 -- 
-2.49.0.504.g3bcea36a83-goog
+2.43.0
 
 
