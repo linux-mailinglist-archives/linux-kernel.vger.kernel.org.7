@@ -1,163 +1,187 @@
-Return-Path: <linux-kernel+bounces-583192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7896EA777C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E604CA777CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E18162C30
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF85188417E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4EF1EE00F;
-	Tue,  1 Apr 2025 09:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6491EF388;
+	Tue,  1 Apr 2025 09:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="lDte6dqE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V22fAY53"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Q+/vI1Sw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6CC2AEFE;
-	Tue,  1 Apr 2025 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA231EBA1E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743499903; cv=none; b=I76yoFQpECqcqaev9ELla1x0IqHiCBpJERhmOPkaWhtlhKYXQomEXXkuLhKyaKXMS91e+uBDT5hpa1M9X6EFTv8Ez5N3+vkyul6qx2x9M0GROpRo1iaDqT3OgzH2AQbdn7LzNS9htGy0JHpjfWdtG1OWRY3Q1SKPRNLOD2HUb7w=
+	t=1743499962; cv=none; b=L9R0ynlsPnPC33X46SoCTFAuFzY9HPr2gg4j9J1r7C/XYOCW879mJhmoMUeGfWmxr3P4DSAQEP2fBgELg7HedzdKavwdluH50gz0tLDCOLKuCpkm06muh1C+lq18pYeNyRJwzpDmAra5vUZ7O0YKzp6eHfY6wUW2BgS5fufwC5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743499903; c=relaxed/simple;
-	bh=jgYjzSXiFeavvI5uH2ljfh8Oel3js0wYnlAOFC3ySJo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Ovo1Biv8LSFDT8ChWpxWZGQOkvEyZJSWI2FNnG2feyKf4nOCnzAU1xAfZ07ekL2sPldRj+7cXf/umSlG/hRlZfEB0iLvJV4EW0wOYRIC06OeC0xaL345o22q69xN0iCcVvlFPJ5x+rVlSvDS1Xg3qLpwLqQROyUezMHciZWdDmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=lDte6dqE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V22fAY53; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id B21871140099;
-	Tue,  1 Apr 2025 05:31:39 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-02.internal (MEProxy); Tue, 01 Apr 2025 05:31:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1743499899;
-	 x=1743586299; bh=26kfGnH2Kam8l8xczFEl8FkUmZLoeycEawM0qxbDrrQ=; b=
-	lDte6dqEaKhiXV0GQB4jdq388VWaTiXgYA+enf1NrgNXR/afXU3QPaok+s2QZq0E
-	rByr8dpL3k0343fCVF1cLiYPgIILKmMe+GJisMlt6IbC5jks/dSbAF8EnBDmzkcD
-	RsMjHFvWLIV/O2zs9CQqPPbQV1GUYRZdlzXbktefszZAXgBFvc7JdAtEK529Zf1y
-	9ZjGiDJH/bdoZAhhxBJD81VAhzvySqwSzTA3iXK2SEaBFltuS7Bzhlk70A+ByY4v
-	CgEPwJk+tjRh3YEKOvFwNUuoSfLhd7QtOEGBPNSwP01Y+XYe/7HtYj78j6i+uVQ3
-	ESculMzgiyBB327DdsvtFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743499899; x=
-	1743586299; bh=26kfGnH2Kam8l8xczFEl8FkUmZLoeycEawM0qxbDrrQ=; b=V
-	22fAY53qAtNJ51n08velihowB8lDUYILoef72sobNhVMrg+K79zc58XCXOCbRMsi
-	YeSX9EXQTBlwNluoG1FvWOSGzVyG97nuz35e5DAElYbt5UjA92ABNDvvn9Kf/pem
-	hd1hJOgVYyuyYU0ZyBfUHXKNy/VKzwsfmSH0bSuNNiT4tydc0/FJEuYQw3NlAeIm
-	K32BI7E9Zp588HJog1l8AJ4yzCTru5QNdx2hbV9p0luYTCstz46mzRDWQqqRMgbU
-	AifO0H/yrEgng1o9vsu6e4KssIBobzOYGIRQJfIdZw2N4/AV6qaKXICPJfO702ZH
-	zFsynNRzXEeOPM64v7iKQ==
-X-ME-Sender: <xms:erLrZxJy_3ycICMYvWA0SbTJEMz-6Y34RrZR48rG8tthqpLQIZC6bA>
-    <xme:erLrZ9LZzcVBUhsCnVEAPiESEadIWSrq3sELP2srRfcYRa3uEd8E-_q-DHD42rrW7
-    WYxSMaYwXbDSxl_SXU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghngh
-    esfhhlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdff
-    keethefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihg
-    ohgrthdrtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghp
-    thhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheptghhvg
-    hnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehfrhgvuggvrhhitges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrh
-    honhhigidruggvpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhr
-    tghpthhtohepmhgrtghrohesohhrtggrmhdrmhgvrdhukhdprhgtphhtthhopehmrghrtg
-    hordgtrhhivhgvlhhlrghrihesshhushgvrdgtohhmpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:erLrZ5vCUAu-I0p9qAgpi-PDmIwnocSr2raCFhwEW-_BjJB59r1nBQ>
-    <xmx:erLrZyaKAXaSFOVUT_q1FXy8HLt2U-mrCVPleGZNDdwnHfyk27ph8g>
-    <xmx:erLrZ4a6ESz0wt0LqlxlhHxDXBHQ7UPLBCbACSVb5ntI12oApAg3rA>
-    <xmx:erLrZ2Brj1kav_pWJWU7zXHqup0VtbVYR85Z6QqHtFSkQm-yILDHyQ>
-    <xmx:e7LrZ2mAxe_ZFIPCpFOF7w21Gp0nSGXjwzGhxfmpg70GCP7blgmnK-xk>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8E34F1C20068; Tue,  1 Apr 2025 05:31:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743499962; c=relaxed/simple;
+	bh=N1MnFFisJ8cMoy9BLzrQr7gNzud5JLemazDWM0tzY0g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=SfIgP7GX5VN7+ZwI2V95yLB9zViwqpezWcD6qbOik1nM9t9yiHABUtLLk8HSwpp+eXTHOj6jnSinpA3dwP1t1/ihXnhonKGIr16fPfkFAqEQm9ot0K6JlC4ABJroYElIWJODdNfi/fk5bV4ozC95WaZuYecc+aZRl/UOzY2ItjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Q+/vI1Sw; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so701674266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 02:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1743499957; x=1744104757; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OZBzvWcIsDBo3G9LnKcTDplA9cLCR7b0coAB89MP6E0=;
+        b=Q+/vI1SwRfZWQwoY93Fy51LnPDjMgpLxg7Fx5/i/+OcCPOLJTd2S5rRZCcHmWAudRv
+         q0UckMmJLRxFRPC7WUHc2fnEWhQCg3HO/sWTSFkXHnpyO/aabcc/w2tAfdirEaSMBAWQ
+         STYR0fzRQpRyPgsI9SoZnWGFlatiNT7VyM1/DWCh9G4GnIOpJ3m6zWPHPES15A51UjEF
+         +D/bxbOosb60o6frKyXoJOVS8mmJZZlKJcvKZOuIuS5pNffzCYzD35xPr26c/esIEKzK
+         vJrBkHtJ4yCrpPZ7r1MP852RJOOoEpbScRfHMTGCVPvQQE4serwScgJ21sog3UWp0i6S
+         V7Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743499957; x=1744104757;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OZBzvWcIsDBo3G9LnKcTDplA9cLCR7b0coAB89MP6E0=;
+        b=nyhKssDMlHDUps8OBjx7Nard0WxoueSU/j/wLLof12X9QwgrZQhlP2VUXqDAWhdyD4
+         LQ3KvmDYr244pu/n5UZxKWXOEDNTPKAltFNbG3aYYvkOcHj+qe/TsmxgE8o/RH5d367Q
+         x2LqOXL2r9Ehzt9QgvCXDEZDHiuW/2W6VwVJ+WBgwC427OrVXf0CG4QKqOcK97QrC4xR
+         RUHNAf/bvzqZDaEiLO5UMkzwTxi0rAIplszdtiSwDO8gokOzjIj8MSRakm8GGcrO8ncu
+         6k6xG4DVhamWG6R1Fze++lqzV19MnCcILFyUffhQ2WjWS26ibFM8RNhVSJhUiuneCqP0
+         H0WA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHO740kRSyHq34RU7iLWJf79JiusMRWXcBuDll6PE1jptmUkmQmpNcr4ShACCVza2UwIXDZ/gAev/UXiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4wHjRXWxc0uOa6QNJczYm9QdQAxA7auuFAwkY9NyRYQJhjucV
+	XNjGBVhSicEbn0RnMDV/qm6tlUOKV8o3pquSaROmIFt6egARrMIHhxYzvsqtuq4=
+X-Gm-Gg: ASbGncu9SBphImCqR6oqdRjYTqdG1Bs2pw7TVejnJUbnZxdn2out7GH42f+42/69qrv
+	g1TqTnzbc5qH+/38cnwmzCF4fRiZhyFiUZ5U4yL1btHtHJfmLmAyppwJicj/MW0Bm8HWHgkW4fO
+	M8OZddPvJzsfTt0saJOMpiKqtkom5JFXUL5SSa73aii0oBHgos7S/W0uHuWU2X3J1p9cUAS5DZd
+	S9CdEis2jf1Y1+T5Sg8jdLYTXbmRy9bMRCco8Sp5h+OfT5l0kfIpDA0/d2za16xQTO3zKdZ/upy
+	EhlFs8AsLneGqVvRfY5QT4SUwYcQArLzq3OO38sCFiAmaA==
+X-Google-Smtp-Source: AGHT+IFiDVwfIgbHWBVxHJV1fUXGWM172/jD8Iw3qWJRy89QsLVtEytv5j6FHvB1CN3xyra++dE96w==
+X-Received: by 2002:a17:907:7214:b0:ac6:d9cb:58c0 with SMTP id a640c23a62f3a-ac738b82b65mr902203166b.50.1743499957495;
+        Tue, 01 Apr 2025 02:32:37 -0700 (PDT)
+Received: from localhost ([41.66.98.107])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac78bdd54a7sm47785366b.22.2025.04.01.02.32.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 02:32:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: Tf2d86106c131fe8c
-Date: Tue, 01 Apr 2025 10:31:17 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "Marco Crivellari" <marco.crivellari@suse.com>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Frederic Weisbecker" <frederic@kernel.org>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Huacai Chen" <chenhuacai@kernel.org>
-Message-Id: <3f7f6ced-98e8-4101-aa83-3692e14222ca@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2503311348560.47733@angie.orcam.me.uk>
-References: <20250315194002.13778-1-marco.crivellari@suse.com>
- <20250315194002.13778-2-marco.crivellari@suse.com>
- <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
- <CAAofZF4gy6WJKLK4TzF5aV7+ca3gob5jVz3XQZyGrTpfnCsn_Q@mail.gmail.com>
- <alpine.DEB.2.21.2503211747150.35806@angie.orcam.me.uk>
- <CAAofZF5yaGMG0Kyax+ksfGngQ0T6AxvN5-60SnasQh7=OabaOg@mail.gmail.com>
- <alpine.DEB.2.21.2503260300290.29685@angie.orcam.me.uk>
- <alpine.DEB.2.21.2503281345010.47733@angie.orcam.me.uk>
- <CAAofZF65p+DnH8xA0+sfuZv=VO63Zgv4rQ6frrdEzQYoZ0MaWA@mail.gmail.com>
- <alpine.DEB.2.21.2503311348560.47733@angie.orcam.me.uk>
-Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 01 Apr 2025 11:32:34 +0200
+Message-Id: <D8V75HO8O4CO.33RMUJLKQ7UG5@fairphone.com>
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <lumag@kernel.org>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <cros-qcom-dts-watchers@chromium.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Konrad Dybcio"
+ <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/3] Fairphone 5 DisplayPort over USB-C support
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250312-fp5-pmic-glink-dp-v2-0-a55927749d77@fairphone.com>
+ <y7dfv4mmtzkv2umvverkn6qvjt3tg7cz4jj4zsb4t6vu4heh4d@64zpkjihjc23>
+In-Reply-To: <y7dfv4mmtzkv2umvverkn6qvjt3tg7cz4jj4zsb4t6vu4heh4d@64zpkjihjc23>
 
+Hi Dmitry,
 
-
-=E5=9C=A82025=E5=B9=B43=E6=9C=8831=E6=97=A5=E6=98=9F=E6=9C=9F=E5=91=A8=E4=
-=B8=80 =E4=B8=8B=E5=8D=889:09=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=
-=EF=BC=9A
-[...]
+On Wed Mar 12, 2025 at 8:06 PM CET, Dmitry Baryshkov wrote:
+> On Wed, Mar 12, 2025 at 01:05:07PM +0100, Luca Weiss wrote:
+>> This series adds all the necessary bits to enable DisplayPort-out over
+>> USB-C on Fairphone 5.
+>>=20
+>> There's currently a dt validation error with this, not quite sure how to
+>> resolve this:
+>>=20
+>>   arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dtb: typec-mux@42: port=
+:endpoint: Unevaluated properties are not allowed ('data-lanes' was unexpec=
+ted)
+>>           from schema $id: http://devicetree.org/schemas/usb/fcs,fsa4480=
+.yaml#
 >
->  FAOD I have one MIPS32r2 system wired for testing, but that might not=
- be=20
-> the most interesting configuration to verify as it'll now just use EI/=
-EHB=20
-> to enable interrupts ahead of WAIT.  I could try an R1 kernel instead,=
- but=20
-> I'm not sure if it can be made to work owing to the differences in the=
- FPU=20
-> between R1 and R2 for the MIPS32 ISA.  I used to have a MIPS64 (R1) sy=
-stem=20
-> there, but the CPU daughtercard sadly stopped working 3 years ago and =
-I=20
-> wasn't able to repair it, owing to the lack of available spare parts (=
-it's=20
-> most likely a dead CPU).
+> This comes from usb-switch.yaml, it requires that 'port' adheres to the
+> /schemas/graph.yaml#/properties/port (which forbids extra properties).
+> The usb-switch.yaml needs to be fixed to use port-base for that node.
 
-I can test on legacy (R1 version) 4Kc RTL simulator if you wish. Is ther=
-e any
-thing specific you want to test? I think I can try interrupt flood and s=
-ee if
-there is any deadlock.
+Thanks, do you think the attached patch would be suitable? It does fix
+the warning for me, but not sure if it's too lax or doing the wrong
+thing.
 
-The simulation is painfully slow, so I'd wish to minimize test vector.
+diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Docume=
+ntation/devicetree/bindings/usb/usb-switch.yaml
+index da76118e73a5..9598c1748d35 100644
+--- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
++++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
+@@ -26,11 +26,15 @@ properties:
+     type: boolean
+=20
+   port:
+-    $ref: /schemas/graph.yaml#/properties/port
++    $ref: /schemas/graph.yaml#/$defs/port-base
+     description:
+       A port node to link the device to a TypeC controller for the purpose=
+ of
+       handling altmode muxing and orientation switching.
+=20
++    patternProperties:
++      "^endpoint(@[0-9a-f]+)?$":
++        $ref: /schemas/graph.yaml#/$defs/endpoint-base
++
+   ports:
+     $ref: /schemas/graph.yaml#/properties/ports
+     properties:
 
-Thanks
 
+Regards
+Luca
 
---=20
-- Jiaxun
+>
+>>=20
+>> See also this mail plus replies:
+>> * https://lore.kernel.org/linux-arm-msm/D0H3VE6RLM2I.MK2NT1P9N02O@fairph=
+one.com/
+>>=20
+>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> ---
+>> Changes in v2:
+>> - Move adding "*-switch;" properties already in earlier patches
+>> - Move wiring up SS USB & DP to SoC instead of being done in device
+>> - Pick up tags
+>> - Link to v1: https://lore.kernel.org/r/20250226-fp5-pmic-glink-dp-v1-0-=
+e6661d38652c@fairphone.com
+>>=20
+>> ---
+>> Luca Weiss (3):
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add PTN36502 redriver
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Add OCP96011 audio switch
+>>       arm64: dts: qcom: qcm6490-fairphone-fp5: Hook up DisplayPort over =
+USB-C
+>>=20
+>>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 103 ++++++++++++++=
++++++--
+>>  arch/arm64/boot/dts/qcom/sc7280.dtsi               |   9 +-
+>>  2 files changed, 104 insertions(+), 8 deletions(-)
+>> ---
+>> base-commit: dcb11dc4740372cd4cce0b763a4a8ec4e9f347a6
+>> change-id: 20231208-fp5-pmic-glink-dp-216b76084bee
+>>=20
+>> Best regards,
+>> --=20
+>> Luca Weiss <luca.weiss@fairphone.com>
+>>=20
+
 
