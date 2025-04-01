@@ -1,183 +1,155 @@
-Return-Path: <linux-kernel+bounces-583626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0624EA77D9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B5FA77DA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02AC3165BC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:23:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B7DD164231
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398D8204C25;
-	Tue,  1 Apr 2025 14:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B067D204C2C;
+	Tue,  1 Apr 2025 14:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I4CVfNX6"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="M75HErG7"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA8E204C20
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D253204C0F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743517363; cv=none; b=MsE4rhoupT8h/tmtvr7BouMnbL21QHikYQQJZzk2TQE5eZIuT16+tYgsUiOENsyFMBovyHD9TaowiEEr9YnA78oH8HeLJwY8dldyLzHEYYDNPslnxa/pG46YuqjtoGgZQ0848UhrL923VHf4xvZgXzZsITsBpgxBGlmBe0zeSPo=
+	t=1743517489; cv=none; b=MccqiubWU79CeDpdg/yy3nEKWQ653ul0z/sNvzwKE9ud01h+v49ZUE7FidJZ7EgquOeDWMuoZwWmnrZCYSOH4IFnbWs99zOB0iXzit7i5ECAUg0zLHjPp/rJeuwQ1al0t/nC23Rqt/WjfCm7+IxZ3GoXD15TQA8R39g+r3BOFek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743517363; c=relaxed/simple;
-	bh=sw+aC5ewjJj5UHGw0yY9U0SXiO6WO4oeB/HY4wRa14o=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tMNH4x/24aCqsH4PZCVNVCMgrR5s9/8TeAOdt1CLm9D5Yxfaxzzo+opDabLPdifKW8NJeO17IE/6vE8Cg+X6iFtIIF1IVxjjvs6IZWDIdFFCqPc7Ts4CKnhaTWOL1F0XJowqiztNjUa5U4pGWy+BvCi2M8tWVb4KuRufM62tb84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I4CVfNX6; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2242ade807fso4384175ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:22:41 -0700 (PDT)
+	s=arc-20240116; t=1743517489; c=relaxed/simple;
+	bh=ruRQP+NALzlaps2YWcoiJXAJEk0o6bPMKOX1fg7yeVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fTYCtBzF1efT1pTiu0GZfy1+j22BbZcpZQUaF5irVg6Z5DgdgZ5z1vZ719lVqdK34aoDCis4kPRBB0Ov6OnwhQ9xjrE9C4DK2bHALWRe/cue8fkUFAnmawTJq/p9ERvMycBQ8+kMCpM0uAl4MghzBo9kCz1g+h1ctn+vi7Qm/l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=M75HErG7; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e8f43c1fa0so66224426d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743517361; x=1744122161; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GRRQLmB2UHTKWjLPNOKgO+07J02Vyv6Q87GOygHVBSc=;
-        b=I4CVfNX692iIbBsdOeBa+thYY68GzkY0qyOgrjD8DP7/JeYyvNmgXFfReshST3eu8+
-         d50ABGowy1Mdlinu+zbR0BCyBz79x9qFKlm5f/CR1m13CJqT5NoBArwPOmv2HjZyRo5g
-         DiNmI/E/RxDp0i4up87S6gZtVhPSePmEx3lAUhhjGjgAdbUKqHPyEExVVWeBRsCzg2tt
-         l7ug4IZ8fu40FSLy3TdMaA4NOSqm3QfxXPhUhTu7kobjsgiN+XUrn60ssvMTiNNOmaPt
-         5DsfggPVpR2oSjd6G9SvFNbqItAeGj01jTXTDZkUUhWDxBOOE3jqqORpH4PLPNmwn4wd
-         qHdA==
+        d=rowland.harvard.edu; s=google; t=1743517484; x=1744122284; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KalA4225oBl3ZvNYyeXZv8udkfU/6CXUOgPRtBpVF98=;
+        b=M75HErG7nlQueEr/I5yNgtPRsq7Dbop8Rp8hB3KzqRncY4IUY5IWdMOyv5edBrRv/S
+         nD5VejQGsw3BAujgvlnJzS7bvtEFeF00T69B4IgRLWWD6GeiVzagfFhNSMkTvrHRbZz6
+         bdD4lSaoVlsr0ynDBlrsFJEDW7zuiJu/7PdUG/KPgeiOZiBOw3BZGNxlhrzBKrHkxiM2
+         o3vf0hpt05fFt3Hyih3f9jqO7WrTSJdeFOPttxaW3SURz2AqXtJaRlCh3BWkjhDz0P11
+         gCWlBamIAnK3g9ACfgyVDud1EW3ukShDQ6flyyLZ/Jj/pPtAvl7fAxti99aNe/JwOCLo
+         zQjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743517361; x=1744122161;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GRRQLmB2UHTKWjLPNOKgO+07J02Vyv6Q87GOygHVBSc=;
-        b=K2Q3ty7mkq54OaZt2ccm+JU26V2ZTX/KoYoJKksbBCooZsZBH+JhRdBNvnE7qPS0fY
-         IgKKyqcPRzSyC2H8uxxisV4zohxoPuoy0IOOICE8L4AAICjRHU6w+ys9MAqM050tBTsU
-         nGQ2LKn16Bu6kXIXI+8AYAXWeCFiYy8sEa5BP9PDG/VlaUbYQBaZbF4vOQd+kvNJnX66
-         yCeyAO9spWYtn3NosK+YZOGLTQzigzDqMmmnKUzbr7voTYBCpcY85MXfzBhSUuY9cb4k
-         l6+O49DEJI7OlUlqARY7o3fbcA57H2pA1MNzlWwBUhZi4oSfgMbj1nTlITCIvi/Q88Js
-         SEvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnV479Cn4xeubUf1WUBKwbVDlxlA3iIvcbYzNGOYdIqrrpn1xj68DJaUJlxvBzi7h2T0qvC/emtJTj570=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4KGsPfWMbIAjjJcRuMtOK2Vp/aHC9CJgRaIQTyQ6vs6pJ1nB
-	q5/F4Vg/gI/E1QWt0u53xHskKupBlxhMx2qtMuXcB3a/sQ7P1J9ZvAFkTxEs9M4L8GjVl7hS6sC
-	pzA==
-X-Google-Smtp-Source: AGHT+IEj5AB9UPwSuBWy7y5gfFeTD62CFXIYtj8wLb2uV6AxixKP7fkmJtTBIxCecQBTTXeak4Qv5N/DQ9g=
-X-Received: from pfbhx12.prod.google.com ([2002:a05:6a00:898c:b0:732:6425:de9a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d489:b0:220:e9ef:ec98
- with SMTP id d9443c01a7336-2292f9629bemr199164595ad.19.1743517361442; Tue, 01
- Apr 2025 07:22:41 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  1 Apr 2025 07:22:38 -0700
+        d=1e100.net; s=20230601; t=1743517484; x=1744122284;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KalA4225oBl3ZvNYyeXZv8udkfU/6CXUOgPRtBpVF98=;
+        b=EniEPtiXTucRAOQklHv8iiDNRyN7ldD3UHfKR5rD2LqHLz3lvcAaNlTC+Yd4Xls7R8
+         Co9bX53dLIk0SDE7iNyuIFrsUovqjFHi0x1zXImwWrBgUjRLKBKyKaDfWwQtz6C+25Sb
+         YcYR9UFe+EOlOw8H5N8OHDosVzjks60Y/FP3ANoDy9OlctUSZLQNQO/Qywa6DB2ZgvKH
+         dEYwDkHDSQe0EMf3ZzpLgQZBkVCLAkTqVNGyGmu8YEU3Bgct0b/Yar15UuAgNACcbKGc
+         T9MVUHPZgxLEeHoyur+EkP/aW3EAqDRPjAMoeT2QF6/P7zbDHUq/UFqsBXXrk35E5z78
+         mFiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAnBL+9U50epebGDza9uR0lRDYnhcQZg2F4nSjcrER+w0rMnek+quRQktqaSS06mVeFWbSOceyaGkqzgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypL8xOX9KefQdD/a3oFhWXX3S6R9T9UqXuOVLubnOm4R99ghOG
+	K2nnSenS9HdIxOpp7KHLvanA44tixbwX6kWCrJ3e+/HVispzCZq/IPXH7mbp8A==
+X-Gm-Gg: ASbGncsE4gjnzRRcdggxriwyuLDZbCq2nEKmJaDfUiVADHCdw8/TbOpUxyYS0iLSDWH
+	Wk90j5kEIIQZqYLhgDmKMxtl6LahXqWUHUl4dzjUP8F0UiKqVpk53eIKc7A4suPLJEOhjMXVYcW
+	KZlomYoA3Yq8pi7qANL+asyo8Dqjd5k/hVncJ3JPnhTZM0FpXBg0dV3IdRVwgnQ6cnaE7iPhxFE
+	TsGkoGzppyi9XfwT1SCngy+RiJrRcJ/S0SyJJ5i288m9JD5wVmfmGd+mBY0zuEAnr2Efnn/0h0k
+	yvzVIUu99673AZ++pYbM9+vgFZPLcoI2IjnWAPHyK39/IIc5UD/UXLia6HNTS1E=
+X-Google-Smtp-Source: AGHT+IHM51nyniYqK5T/X7rJ6xKvSn4u9N4XA6OP1lkcVAxyNAwhavhEPDkoCbRJzJPfgL1uJjnDug==
+X-Received: by 2002:a05:6214:202c:b0:6ee:ba5b:d8d1 with SMTP id 6a1803df08f44-6eed61c3606mr265124296d6.16.1743517484138;
+        Tue, 01 Apr 2025 07:24:44 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f76824d5sm663280885a.30.2025.04.01.07.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 07:24:43 -0700 (PDT)
+Date: Tue, 1 Apr 2025 10:24:41 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Guan-Yu Lin <guanyulin@google.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
+	sumit.garg@kernel.org, kekrby@gmail.com,
+	jeff.johnson@oss.qualcomm.com, elder@kernel.org,
+	quic_zijuhu@quicinc.com, ben@decadent.org.uk,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 2/4] usb: add apis for offload usage tracking
+Message-ID: <fd54ab58-1357-462a-8e3f-a785f7b56813@rowland.harvard.edu>
+References: <20250401062951.3180871-1-guanyulin@google.com>
+ <20250401062951.3180871-3-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250401142238.819487-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Add option to rseq test to override /dev/cpu_dma_latency
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dongsheng Zhang <dongsheng.x.zhang@intel.com>, Zide Chen <zide.chen@intel.com>, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401062951.3180871-3-guanyulin@google.com>
 
-Add a "-l <latency>" param to the rseq test so that the user can override
-/dev/cpu_dma_latency, as described by the test's suggested workaround for
-not being able to complete enough migrations.
+On Tue, Apr 01, 2025 at 06:22:40AM +0000, Guan-Yu Lin wrote:
+> Introduce offload_usage and corresponding apis to track offload usage
+> on each USB device. Offload denotes that there is another co-processor
+> accessing the USB device via the same USB host controller. To optimize
+> power usage, it's essential to monitor whether the USB device is
+> actively used by other co-processor. This information is vital when
+> determining if a USB device can be safely suspended during system power
+> state transitions.
+> 
+> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
+> ---
 
-cpu_dma_latency is not a normal file, even as far as procfs files go.
-Writes to cpu_dma_latency only persist so long as the file is open, e.g.
-so that the kernel automatically reverts back to a power-optimized state
-once the sensitive workload completes.  Provide the necessary functionality
-instead of effectively forcing the user to write a non-obvious wrapper.
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -2036,6 +2036,114 @@ int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+>  
+>  #endif /* CONFIG_PM */
+>  
+> +#if IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND_SUSPEND)
+> +
+> +/**
+> + * usb_offload_get - increment the offload_usage of a USB device
+> + * @udev: the USB device to increment its offload_usage
+> + *
+> + * Incrementing the offload_usage of a usb_device indicates that offload is
+> + * enabled on this usb_device; that is, another entity is actively handling USB
+> + * transfers. This information allows the USB driver to adjust its power
+> + * management policy based on offload activity.
+> + *
+> + * The caller must hold @udev's device lock.
+> + *
+> + * Return: 0 on success. A negative error code otherwise.
+> + */
+> +int usb_offload_get(struct usb_device *udev)
+> +{
+> +	int ret;
+> +
+> +	if (udev->state == USB_STATE_NOTATTACHED ||
+> +			udev->state == USB_STATE_SUSPENDED)
+> +		return -EAGAIN;
+> +
+> +	/*
+> +	 * offload_usage could only be modified when the device is active, since
+> +	 * it will alter the suspend flow of the device.
+> +	 */
+> +	ret = pm_runtime_resume_and_get(&udev->dev);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	refcount_inc(&udev->offload_usage);
+> +	pm_runtime_put_sync(&udev->dev);
 
-Cc: Dongsheng Zhang <dongsheng.x.zhang@intel.com>
-Cc: Zide Chen <zide.chen@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/rseq_test.c | 31 ++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 6 deletions(-)
+The USB subsystem has wrappers: usb_autoresume_device() and 
+usb_autosuspend_device().  You should use them instead of calling the 
+runtime PM routines directly.
 
-diff --git a/tools/testing/selftests/kvm/rseq_test.c b/tools/testing/selftests/kvm/rseq_test.c
-index e5898678bfab..1375fca80bcd 100644
---- a/tools/testing/selftests/kvm/rseq_test.c
-+++ b/tools/testing/selftests/kvm/rseq_test.c
-@@ -196,25 +196,27 @@ static void calc_min_max_cpu(void)
- static void help(const char *name)
- {
- 	puts("");
--	printf("usage: %s [-h] [-u]\n", name);
-+	printf("usage: %s [-h] [-u] [-l latency]\n", name);
- 	printf(" -u: Don't sanity check the number of successful KVM_RUNs\n");
-+	printf(" -l: Set /dev/cpu_dma_latency to suppress deep sleep states\n");
- 	puts("");
- 	exit(0);
- }
- 
- int main(int argc, char *argv[])
- {
-+	int r, i, snapshot, opt, fd = -1, latency = -1;
- 	bool skip_sanity_check = false;
--	int r, i, snapshot;
- 	struct kvm_vm *vm;
- 	struct kvm_vcpu *vcpu;
- 	u32 cpu, rseq_cpu;
--	int opt;
- 
--	while ((opt = getopt(argc, argv, "hu")) != -1) {
-+	while ((opt = getopt(argc, argv, "hl:u")) != -1) {
- 		switch (opt) {
- 		case 'u':
- 			skip_sanity_check = true;
-+		case 'l':
-+			latency = atoi_paranoid(optarg);
- 			break;
- 		case 'h':
- 		default:
-@@ -243,6 +245,20 @@ int main(int argc, char *argv[])
- 	pthread_create(&migration_thread, NULL, migration_worker,
- 		       (void *)(unsigned long)syscall(SYS_gettid));
- 
-+	if (latency >= 0) {
-+		/*
-+		 * Writes to cpu_dma_latency persist only while the file is
-+		 * open, i.e. it allows userspace to provide guaranteed latency
-+		 * while running a workload.  Keep the file open until the test
-+		 * completes, otherwise writing cpu_dma_latency is meaningless.
-+		 */
-+		fd = open("/dev/cpu_dma_latency", O_RDWR);
-+		TEST_ASSERT(fd >= 0, __KVM_SYSCALL_ERROR("open() /dev/cpu_dma_latency", fd));
-+
-+		r = write(fd, &latency, 4);
-+		TEST_ASSERT(r >= 1, "Error setting /dev/cpu_dma_latency");
-+	}
-+
- 	for (i = 0; !done; i++) {
- 		vcpu_run(vcpu);
- 		TEST_ASSERT(get_ucall(vcpu, NULL) == UCALL_SYNC,
-@@ -278,6 +294,9 @@ int main(int argc, char *argv[])
- 			    "rseq CPU = %d, sched CPU = %d", rseq_cpu, cpu);
- 	}
- 
-+	if (fd > 0)
-+		close(fd);
-+
- 	/*
- 	 * Sanity check that the test was able to enter the guest a reasonable
- 	 * number of times, e.g. didn't get stalled too often/long waiting for
-@@ -293,8 +312,8 @@ int main(int argc, char *argv[])
- 	TEST_ASSERT(skip_sanity_check || i > (NR_TASK_MIGRATIONS / 2),
- 		    "Only performed %d KVM_RUNs, task stalled too much?\n\n"
- 		    "  Try disabling deep sleep states to reduce CPU wakeup latency,\n"
--		    "  e.g. via cpuidle.off=1 or setting /dev/cpu_dma_latency to '0',\n"
--		    "  or run with -u to disable this sanity check.", i);
-+		    "  e.g. via cpuidle.off=1 or via -l <latency>, or run with -u to\n"
-+		    "  disable this sanity check.", i);
- 
- 	pthread_join(migration_thread, NULL);
- 
+The same advice applies to usb_offload_put().
 
-base-commit: 782f9feaa9517caf33186dcdd6b50a8f770ed29b
--- 
-2.49.0.472.ge94155a9ec-goog
-
+Alan Stern
 
