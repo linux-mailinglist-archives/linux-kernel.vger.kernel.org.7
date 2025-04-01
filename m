@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-583368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6890AA779EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:46:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB055A77A04
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D6B3A4B6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18B2E168AAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337ED201269;
-	Tue,  1 Apr 2025 11:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B50B202980;
+	Tue,  1 Apr 2025 11:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhE0JL2z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="jrqAPSFG"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE2D200BB2;
-	Tue,  1 Apr 2025 11:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B8F1F91CD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 11:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743508007; cv=none; b=gFyv4U0mMLYrHsbiY8FiUABYXerOalJnRclUOft4KkTcCRNbvxeUfw/haHENnVugO1BFzzOv+A9/lHCUE19prsz7bZewoylWYQPQuTlfQdO4dLT9SFBnAkfJxxngCdMNdJrWNKy9iOB30MyNmJVK/VqCGzDjEcKJ8inw09twZ70=
+	t=1743508038; cv=none; b=Xd4Nu4kuHD2pyQ+LFC5e6lSf7Qgd/RoD6zjQdhJ3ZfNEGdI0jAEqDVE4hhDtwAjsgPFtVH3vgYFgnK27vw91KvaKXwAMFt+4BA8p9cH8jxlxHzVtB8ZZuct03Z5bKqWYRcZ3SiKbynMcwnMSg2CYWPCKEIr3+0u2OJCBOXSzuvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743508007; c=relaxed/simple;
-	bh=XqdnbW6pAeCpwOdRwLilImT/OKAIai64/QacKoT+his=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/vgTDgHNefuqiyh0m3qTpoVP+6SoTARXUTlm9IXYozIefgQP0vxmgEV1MAmlZOZaU5u2g+T7KDQjc9/2AFFHhexOIV/eO0NZ8Lou6x3+2yDaAF5eCFtXxnnPAzPpELL30GIV0TtmA/p6wQT3PQ0j9bnG1hytaBEpnKn+7Zp6s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhE0JL2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3E3C4CEEE;
-	Tue,  1 Apr 2025 11:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743508006;
-	bh=XqdnbW6pAeCpwOdRwLilImT/OKAIai64/QacKoT+his=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhE0JL2zRfEGDWmOoV5UfVpPRtv7w90asCz4oq8Ou2jJddm1jKMgkNMSwHl0AbDww
-	 5mlEq62AAHifxna0K901IybOxpxnyaZ4cgKWVHKOZOvqmBQyOXohBRrxTXCoSnmdwv
-	 v2M/L7jGDv7DteWTAAy4gZ8i8E6HvlVhkzG98k3gL2MbTk4iHZyvsKxHhxdBuqddl+
-	 JVGsDZDaMWgq1qhcWizdM/FItdIeN5RXiO3jW/25jZb6TIUS9h+hVU78QgkqtNxfZY
-	 Q61PsHEYt3LxNfFrbCBl9spaiT8U6QZFyPGFqnavX96jrEF0/2G74KzhJkrBLFbcE5
-	 b2lnmuYr+iWBA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tza4w-000000001Qx-137t;
-	Tue, 01 Apr 2025 13:46:50 +0200
-Date: Tue, 1 Apr 2025 13:46:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-hp-x14: drop bogus USB retimer
-Message-ID: <Z-vSKlA8MjNFk3Xh@hovoldconsulting.com>
-References: <20250328084154.16759-1-johan+linaro@kernel.org>
- <707db3e3-b380-4db4-96e9-50e66b0be595@oss.qualcomm.com>
+	s=arc-20240116; t=1743508038; c=relaxed/simple;
+	bh=3YoYCaMl4xwoOuMmYKwlQClWXfKQ6um8Ft4Xc4A2jvU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HPAiIqX5SLE5JOTeHEXLsld0X5QTCIsU0pWzbesP+TXEYOzbqZzGRyJjroyalVW+mX2QQ1NxG/1Fzfb+O3O5lxvhZz4Qlo6hS/5fEb9LJDwSNwMvbXPKWOAVxPGEr4sfFK9gOkf/cAZu8VKJMi5pArOlblTi+sMtSn1U8j/eoJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=jrqAPSFG; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1743508034;
+	bh=5/jxYKlKQRl4c7LYaZU1HrJfBEil5P4qm108AVZro4c=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jrqAPSFGUOl7yO3IyeVgKnRyb+WDsH7EooDU/YsAm6ehn8X8Wq1gC/TZsxhnWuN+E
+	 xzCoPI3JGbNHt7mU4N5udwE51U7FetigFLHAxfobOOLtzmC+CQiXj/F3K9cY1tYwlu
+	 efaa4DmfymAwFm0BJRwCpEV1Ip07b/9Oxnxs6McA=
+Received: from [IPv6:240e:454:8310:8bd:3bd7:3f9c:6187:a52a] (unknown [IPv6:240e:454:8310:8bd:3bd7:3f9c:6187:a52a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id EFC28659C8;
+	Tue,  1 Apr 2025 07:47:09 -0400 (EDT)
+Message-ID: <46ed31b37b4b92720b26be66f3e6366a714024cf.camel@xry111.site>
+Subject: Re: [PATCH] arm64: Add overrride for MPAM
+From: Xi Ruoyao <xry111@xry111.site>
+To: Anshuman Khandual <anshuman.khandual@arm.com>, James Morse
+	 <james.morse@arm.com>, Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, Mingcong Bai
+ <jeffbai@aosc.io>
+Date: Tue, 01 Apr 2025 19:47:03 +0800
+In-Reply-To: <409f6d27-3efe-4c45-8319-d360ded80f16@arm.com>
+References: <20250401055650.22542-1-xry111@xry111.site>
+	 <409f6d27-3efe-4c45-8319-d360ded80f16@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <707db3e3-b380-4db4-96e9-50e66b0be595@oss.qualcomm.com>
 
-On Tue, Apr 01, 2025 at 12:27:55PM +0200, Konrad Dybcio wrote:
-> On 3/28/25 9:41 AM, Johan Hovold wrote:
-> > Jens reported that the sanity checks added to the new ps883x USB retimer
-> > driver breaks USB and display on the HP X14. Turns out the X14 only has
-> > a retimer on one of the ports, but this initially went unnoticed due to
-> > the missing sanity check (and error handling) in the retimer driver.
-> > 
-> > Drop the non-existing retimer from the devicetree to enable the second
-> > USB port and the display subsystem.
-> > 
-> > Note that this also matches the ACPI tables.
-> > 
-> > Fixes: 6f18b8d4142c ("arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook X Laptop 14")
-> > Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> > 
-> > The devicetree went upstream before the retimer driver so the display
-> > would already be broken in 6.14 and there's no need to backport this
-> > one (but it should go into 6.15).
-> > 
-> > Note that the SBU mux can be added later when/if someone figures out how
-> > it is connected.
-> 
-> I am shocked, but this product photo [1] (is this the right laptop? there's a
-> bunch with similar naming) on the HP website suggests that indeed only one port
-> has a USB-40Gbps marking on it, with the other type-C only being supposed to do
-> 10Gbps
+On Tue, 2025-04-01 at 14:04 +0530, Anshuman Khandual wrote:
+> On 4/1/25 11:26, Xi Ruoyao wrote:
+> > As the message of the commit 09e6b306f3ba ("arm64: cpufeature: discover
+> > CPU support for MPAM") already states, if a buggy firmware fails to
+> > either enable MPAM or emulate the trap as if it were disabled, the
+> > kernel will just fail to boot.=C2=A0 While upgrading the firmware shoul=
+d be
+> > the best solution, we have some hardware of which the vender have made
+> > no response 2 months after we requested a firmware update.=C2=A0 Allow
+> > overriding it so our devices don't become some e-waste.
+>=20
+> There could be similar problems, where firmware might not enable arch
+> features as required. Just wondering if there is a platform policy in
+> place for enabling id-reg overrides for working around such scenarios
+> to prevent a kernel crash etc ?
 
-Yeah, I found a photo like that on their web page too, and the specs
-also mention it:
+In https://lore.kernel.org/all/87jzcfsuep.wl-maz@kernel.org/:
 
-	1 USB Type-C® 10Gbps signaling rate (USB Power Delivery,
-	DisplayPort™ 1.4a, HP Sleep and Charge); 1 USB Type-C® 40Gbps
-	signaling rate (USB Power Delivery, DisplayPort™ 1.4a, HP Sleep
-	and Charge)
+   > For such cases, when MPAM is incorrectly advertised, can we have kerne=
+l
+   > command line parameter like mpam=3D0 to override it's detection?
+  =20
+   We could, but only when we can confirm what the problem is.
 
-	https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-ai-pc-14-fe000-14-9j1h6av-1#techSpecs
+And there was prior arts like:
 
-> [1] https://ssl-product-images.www8-hp.com/digmedialib/prodimg/lowres/c08993265.png
+commit 892f7237b3ffb090f1b1f1e55fe7c50664405aed
+Author: Marc Zyngier <maz@kernel.org>
+Date:   Wed Jul 20 11:52:19 2022 +0100
 
-Johan
+    arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}
+   =20
+    Even if we are now able to tell the kernel to avoid exposing SVE/SME
+    from the command line, we still have a couple of places where we
+    unconditionally access the ZCR_EL1 (resp. SMCR_EL1) registers.
+   =20
+    On systems with broken firmwares, this results in a crash even if
+    arm64.nosve (resp. arm64.nosme) was passed on the command-line.
+   =20
+    To avoid this, only update cpuinfo_arm64::reg_{zcr,smcr} once
+    we have computed the sanitised version for the corresponding
+    feature registers (ID_AA64PFR0 for SVE, and ID_AA64PFR1 for
+    SME). This results in some minor refactoring.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
