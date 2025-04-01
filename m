@@ -1,252 +1,220 @@
-Return-Path: <linux-kernel+bounces-582797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFFCA772AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69E0A772A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8F7188DFCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D87616A390
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6377B18FDBD;
-	Tue,  1 Apr 2025 02:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7505C14658C;
+	Tue,  1 Apr 2025 02:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="c8s6TqC1"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021118.outbound.protection.outlook.com [40.107.192.118])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TOuFEw4o"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C132CCDB;
-	Tue,  1 Apr 2025 02:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743474187; cv=fail; b=LmhbayMPpn7Lru9DMEX/c5COYWGYwGiNyLGcyw7Z06qQHRxm2mDLd7uQbz5D1uh8GDPtIAZFR2s5sOTCuvNNGqTYTmyzNtSNdflkfv/kCGDzZgI4nQYREUKyUPAt+vmAiOdl49tFFXHvFclkG7B1Z+4tCY/YjvPt7CbHx757pqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743474187; c=relaxed/simple;
-	bh=NVnoIYf1IfFBuaRC4vGCgKz780CePPWmPU6D5ZfYBls=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PGu3DZ8Owp2A0UvHOQ8Tza/yINy+ZCdCCRzx/K5r6E9kJr3eAATboPTsNwy4KEThps5WwhG8UWPidhAA6Ht6t1jvVB2lyY5qr0bhuF/luKszDlTtISoCSnCt9rnw+W4cZYyj6+7i6pBvB5qsnxfmMKqDNVsDjZuM1+tDN23Ok6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=c8s6TqC1; arc=fail smtp.client-ip=40.107.192.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=grdWesG16UcEHy+UbiFlWbdEEq27i8Oj0RzWZLRF71WTsrEWcAlxS62zdRlrpC1nQCV63TILVkbIP98i+2hOv/GFROXjHdf4CKKivatKiUmxtK5GPnONoaKMA6Bvc+LIvnIk4Bz69QP+qx3bouT63RYoQXubAPm8MS85St/A/dSO/LdXkk4NE4LtFJab71KaKB8Le/GJCY9jewrPgcQ5x7BCrPC0smLF/yil0x0vk6CZUGC6T01/GJe6i8lPeLbCaQMDYdUuCgeG97z1eb9wrL+RgWrY4KnC+bWILRtPWFXxEKNWgiMsRros9TxtfYZpjtRlyDzeSPpvWA5urKeVrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eszEZ9AiO7KU335XLQIgVmnQPttuTZduduf2xeyb8T8=;
- b=WDyrPT0OslmBw+CgJm3EwIWsCwFc399L4s8ezgM1P6bJvEA/UdWKvkFoaBuP/bVEFWO9R42m+PtwFrHakopXLOFcgV1ohatRzXdUONTNu1g+201THQtEhq2/wo9Nj132ikFm5HrjOZ9R8xmEOQWQrfNFxRynPaeTFJxjTviW1L/xhX3//h7NHHux2CZzGIklw22gjNU3Ag4eNDQtZ30w6M8GbAJ2E4/XLl1LuFNk/Ed7C196D/7fb2dWbkSfH8tRAY9nBUfipp1ZnI91g/keV+km6ZrphIz5J6TEHRqfWbahU8eWLznzp8kQWnSzfvXMsWv3XgwQl4YVuf0yVbmsYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eszEZ9AiO7KU335XLQIgVmnQPttuTZduduf2xeyb8T8=;
- b=c8s6TqC13EN5O6acSjrsLKMtxj+8rUp6qFCAjiVigeyerI0jk8PWxVYr8Hz5lqDDgMCMv6KDJYqW5JPlpOVZeopGyve3h9WEw22GilHE5chmQjkPwt2lh2DUoWi4XnCmszgFxh4PIVAHeROTc4Jh9l/iD/c5tlcwVgYlnbiHybJUGl/uB7fUZgDLFZjsYvJXxwMarurpd6kgfI1UOBJbs958KyxNZnG/QQIxnIG2xniDlaW6dZxMaJmvFNV/HwZLKMnCCkq+WSrwnz4/E2b5u/vvR/TuK7fIjE8R9cTfUc35kaAUZ1c0L5CzZ29U8yZQ36g7Iz+01EiRe0bE2I12Sg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PPF7FE2DA30E.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::558) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.46; Tue, 1 Apr
- 2025 02:23:01 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8534.044; Tue, 1 Apr 2025
- 02:23:01 +0000
-Message-ID: <db2123c9-4777-4cc5-a00f-3df78edf5cb7@efficios.com>
-Date: Mon, 31 Mar 2025 22:23:00 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] tracing: ring-buffer: Have the ring buffer code do
- the vmap of physical memory
-To: Steven Rostedt <rostedt@goodmis.org>, Jann Horn <jannh@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org,
- Matthew Wilcox <willy@infradead.org>
-References: <20250331143426.947281958@goodmis.org>
- <20250331143532.459810712@goodmis.org>
- <CAHk-=whUOfVucfJRt7E0AH+GV41ELmS4wJqxHDnui6Giddfkzw@mail.gmail.com>
- <20250331133906.48e115f5@gandalf.local.home>
- <CAHk-=wi5pLoe3szxLREQGGJuWU0w_POK9Sv6717UH3b7OvvfjQ@mail.gmail.com>
- <20250331165801.715aba48@gandalf.local.home>
- <CAHk-=whRNxdkLC6Z91g-_RbrRsUo6K6+nvRWqccjsOycwUe_JQ@mail.gmail.com>
- <20250331194251.02a4c238@gandalf.local.home>
- <CAG48ez3w0my4Rwttbc5tEbNsme6tc0mrSN95thjXUFaJ3aQ6SA@mail.gmail.com>
- <20250331210245.585fff23@gandalf.local.home>
- <CAG48ez1mZ4nq-_DXHqiHe8_tSX37DdcngnULqXQ71fFt0oQPyA@mail.gmail.com>
- <20250331215051.21d77cab@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250331215051.21d77cab@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0183.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:8b::27) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A3E70831
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 02:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743473673; cv=none; b=gwOHlx7f3HTh7QMtJWXEFgTXGQ9nwjtN9wALryizUhauzjkR8iH3H2qvTRDU0ZXT5Q9Q7esKRj0nxFE4hTwUvPjOoKpUKvXf7MRwx8Az9GjanGAOtR89CyGs398DX5Et0oAYbWiYr3l3ah7MDl0cuXXil5pZwgaodMyN3Uv3fD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743473673; c=relaxed/simple;
+	bh=btsx7G9oLe745AyCwE8EiMzW96Mm8fFPN0r5Nj09QU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=M1LacD3iRF1XL9ZebOA8pONhT/gclf97nqhW36HxgBgQfZc9hfFNG4tJLwc0gWpkzPfcP1F6+AOr8f7q9+2FWQB/PrExhm7qiyIj7Zexz7jpkUiMV6fftj7WwlvDp/X2c7j2fnY67ZHhhTG8ynPeJmYd+9YxcS3aPgQ+XrZ0+vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TOuFEw4o; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250401021429epoutp0413ce3e460c1d08a9da4ff52dd721d51a~yEBCwZhjd1985419854epoutp04J
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 02:14:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250401021429epoutp0413ce3e460c1d08a9da4ff52dd721d51a~yEBCwZhjd1985419854epoutp04J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743473669;
+	bh=7bcFPViTtsO+p+t1ZImtFXAyntpk+EDHZqlNKA6Gh6M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TOuFEw4olTPDU1ScHlbbM0LQWlYP2ZauWyXqgYfusBsztcO4uwO6Dbd94KZiUG3lY
+	 BoPzCCmNDuoJDw9+6ahHmScTn9JUDw+HByHeJq+GSysEe8cPpBHKo9M5PjRJQqVpO7
+	 YhRWUUXEvDlNBsPt8cb6Bzlijvi0kzAAxLmqJgj0=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250401021429epcas2p2402906ff9dabc07ca417a98c05fd3182~yEBCN5tQm1409014090epcas2p2Y;
+	Tue,  1 Apr 2025 02:14:29 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZRWlm2pMzz2SSL3; Tue,  1 Apr
+	2025 02:14:28 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CE.27.37303.40C4BE76; Tue,  1 Apr 2025 11:14:28 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250401021427epcas2p40616133da2f95585af5f83e355e0cab8~yEBBErT0m0916509165epcas2p4d;
+	Tue,  1 Apr 2025 02:14:27 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250401021427epsmtrp28c03f61d7cb3ee24287566a1dd591f6b~yEBBDlwmU1626516265epsmtrp2C;
+	Tue,  1 Apr 2025 02:14:27 +0000 (GMT)
+X-AuditID: b6c32a4d-541ff700000091b7-49-67eb4c041e75
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B1.C6.19478.30C4BE76; Tue,  1 Apr 2025 11:14:27 +0900 (KST)
+Received: from ubuntu (unknown [10.229.95.128]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250401021427epsmtip160f3d75d1ab0c4c53dd0924e5eafe711~yEBAxHCur0673006730epsmtip1q;
+	Tue,  1 Apr 2025 02:14:27 +0000 (GMT)
+Date: Tue, 1 Apr 2025 11:23:36 +0900
+From: Jung Daehwan <dh10.jung@samsung.com>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: Puma Hsu <pumahsu@google.com>, Greg KH <gregkh@linuxfoundation.org>,
+	srinivas.kandagatla@linaro.org, mathias.nyman@intel.com, perex@perex.cz,
+	conor+dt@kernel.org, dmitry.torokhov@gmail.com, corbet@lwn.net,
+	broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
+	tiwai@suse.com, robh@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, Mathias Nyman
+	<mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v36 01/31] xhci: sideband: add initial api to register a
+ secondary interrupter entity
+Message-ID: <20250401022336.GA98772@ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPF7FE2DA30E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b4e57f4-6a8d-4991-4215-08dd70c42030
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1ErUTlFNWtla0FDZzFuWnliQUxRdkk0Rm1ScVlBVW1iQ3lvWDJhNFNpY09t?=
- =?utf-8?B?QmNiK2hXZ0duamE4ak5vbThONHE3OWl4RnF2Qk0wRG1nUVV2Qk9EcG1neXND?=
- =?utf-8?B?SjlEc1ZGNk4raE1HcXNPdlEvN3BnWWVsUTFGYWh0WGo3K3cxS3JFQ3BBbHdT?=
- =?utf-8?B?SUxOL3FURUZEV2g2dVUvVDNkZHo5MU5rTlNVbTZad0FSVnpYM1RyQXFNK2p1?=
- =?utf-8?B?a3UyV2lHQnlkaVlXUGgvSWE3TXpxbVcrWTErdFJvRlQ4MnBwWXZQOGgvOS9n?=
- =?utf-8?B?bXRVRXJlSzRHN1IrVlY5dUp2Q2tlV0NEK0hBdFlkS3FjVEFHZTZJb0xSU205?=
- =?utf-8?B?dkswL0pDSFdqWWhGTER5WWtEYzYxbzF2bTI3dW1SalNKdzNiVlN3S1NTVjRZ?=
- =?utf-8?B?M1dOQmo0bmtLSGV2VVljKzgvS3BEay9MdHpCaTg5K2ozVmRHSHJGNlBxa1ph?=
- =?utf-8?B?VS9BRU1jVEZuQlBrZXpid3NRUWx2UERBaUhUTXVsWTIrcHdWTEpsOVpSU3R2?=
- =?utf-8?B?VGN1TUsxN09DNXI5Vm50V2h2cHZ2Y3dqRzlWbjkvN1RpYTJYT09DZ2xodmts?=
- =?utf-8?B?MncvS0lSbW1EdXVReUREcys3ZmZ2ZWFheUx4ZVFaWFlGV2VDcGpFL3h6QldC?=
- =?utf-8?B?L0pxWGJYUG02ZVI3UDlkVVc5NjM4RVdWWjZCVURmSUEvZzI0dHVudHJQRWdU?=
- =?utf-8?B?dzVuRzFNMCsvMk5hOXRueWVDSkFlNFVaSllwVzR3alVaeVR1WnZZZ1dxTytr?=
- =?utf-8?B?QkR5eUM1N3orL0xGdWd2SFZlT21FcDBOcDdZS0xZVTNucEJ4a2wzakl0dms5?=
- =?utf-8?B?K09qNWJvdnhCaUhPU0RqeXNJZHZrcHVKZHVka0RIQ0R0cXNIZW5YbU9iVjN1?=
- =?utf-8?B?MnBSZDlFVmZRS3NIN3NPeUR3WE5uRG9RNitaM0VsMFJGUGJEa1ZEWE5pTWFY?=
- =?utf-8?B?SFZJUkY1cFNBUmtGRVV1cFdDbHMwaVBNbEs3bzVadjBXaXZnNmIrQmVha0hL?=
- =?utf-8?B?eWFMV09yMkxpZGxvLzhReWNkVG5GNkRFakkwRFY3SUJRS1FMSXkwWEdDdWdF?=
- =?utf-8?B?RXJWYjZaRTRkNWJIdGk2K0Y0U0xZbVN2TWZDb0dNM3BFd2JCNnJ3dEt6NkVk?=
- =?utf-8?B?YXZZYXl3U3BYakhGT0NEWU91R0IyaWRwUEw2Rk9mdktoQm54Q2pLUXQ3Sjc1?=
- =?utf-8?B?cWlQS2pLbThjaW9xZEFyZFdUeEZYQzErWWNvdDZQbzI2WnhMVCtkSGlBNjQy?=
- =?utf-8?B?UHZxN00wSFBNWlRjUUxabDRlODlLTXZYZXV1elpDYjJrSmw4L2JHbm1xRmw5?=
- =?utf-8?B?RkJSa01pK0labXRhcS9Jd1gyRkFRWUc2TW1ENlVtWTFnMWRvdW5oNDJueWZB?=
- =?utf-8?B?azdCYVNqMHFBZ2p4KzF4OW9SMmZrcDJBZWFCdTNPbjhnTHlvRWhiS0hET200?=
- =?utf-8?B?OGFSbHowWUgxZjlUeW9ZZVZaSDJWUlNDdlI2Qy9GRXBEalBHNmlBanRkK1NJ?=
- =?utf-8?B?T1ltVXRBajNlWVlmWmxUTElpTUlnK3VkT1E4T3duWG1RMTY0YnBEazd5QzBD?=
- =?utf-8?B?Qk11WVpGNkhncm4rTXIvU2E0bE9wMCtVKzhBMUdkT3I0cEhkSk16dk1BM0Uz?=
- =?utf-8?B?UDFlbi8vZ1ZoYjdMbmJCSFFIZ1BoTjFtTUZYUTExSlpyeWlCZCtvNzJWL3Zl?=
- =?utf-8?B?ZXZDeTd1Q0ZBN3NDOHRnRUR4ZHZBeWw4TkYzdnliYVJZbDU1TmlTdjRBWWZI?=
- =?utf-8?Q?mF3w4EKW3Bxuhh5Z8KKolgj83UyGKb7LHKtNVs2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cG9tcWNRcG52elhyZHc0cmJKQVlMNko3azFwbXlWdVJLWlR1VWZvYjMwWlVC?=
- =?utf-8?B?ZG5FaGtpTUlOTlluVVRVdUdxUjh3YmJmaFREejVDNHorUDJFeUVYMUtUbnFp?=
- =?utf-8?B?V2cwenA3U1piejNudXl3WWo4akpHdTUxVDBxOWsxMW1xYnJSNm1CRzdCNmdR?=
- =?utf-8?B?VTA3MGlTT0RlVVcyeTIxRnhITzJvU2JWMzB4YzAvMzhuNHZOaG5yMUs5Umwy?=
- =?utf-8?B?Sk5td0Rrb015RVpQR29JekJKaTJQbFNYdjg5ZllaRWUreW9VQk5vSjhMTmVy?=
- =?utf-8?B?MGthQm9UM3k3dUU1WWZna1ZaOWRpb0JCVmVlQ2VhUkhEajJGTWFwTUV2Ym9F?=
- =?utf-8?B?cG9pd0hFQjFVczEzRkMrejJ5dmZ6QVc1Mm9UaGwxeXljOTh0ak0wckJIR3V4?=
- =?utf-8?B?MXZKeE9DeFRaQ0pBVWFTODhJRWJtNVMycjNOdmN1dm1XM015REN2T3JnSXdt?=
- =?utf-8?B?dWxHc0RzNzFLSHR4TkdQeTJDMjA0dUw1bWRVSGVuaDFZVFB6ckRnUGd1ZFN4?=
- =?utf-8?B?R3VlNWZvS1NtTEV5L0lLRDQvajNENUhReVFvQkE1SEJ0WlBoeHVjMFFjQU54?=
- =?utf-8?B?RTVUcTVGYXVxb0lJcGovRUZJajdWeGNST2EydjR2c1h0bDFjR2t1ZnIyZTA4?=
- =?utf-8?B?VDFsWjdFUUI1bk1sM1NzUVpDSTQ3MlAwU05aSTlTcWQ1c0IzRmRMQVZUc2dh?=
- =?utf-8?B?QjRjUHJqc0pFRzlrSjVzdVRtSDNEbkdQNmcvaE84L25TbjZzbGNic0R6Rnp5?=
- =?utf-8?B?bTN6ZktJODNYVTUzbTlFc3N3dGpaTEdHWnBmNitNQUZFeENMd2gyTm5DRTlZ?=
- =?utf-8?B?MTc3cS9Ldk9zNUxudjk1NGRLQ2JqWWpXRVhDQUxlN3c2aVlPWXlwL2k0c0FQ?=
- =?utf-8?B?UzF4d0RiNkc1VG5lVWVaaEhpRUk3WEhKMDFsdGpJUUg5MFBRSlRGTEVCT2xn?=
- =?utf-8?B?Tkd0QWZwTDY5NHR1SFJHZFltZEpzOUF5VGJ4MVV3SitWcUNxc2Z5cDN4NFBN?=
- =?utf-8?B?WTF1eGwrdE5yVDhLMHp3SWNBdGhwc1YvMXk4Zmc3SzBudHhNMks0TDNBL1V3?=
- =?utf-8?B?eTJaSmc1ZzNjaVZXVng1WjduV21WN3hqVFhnRXRORE5ZTHZFUm8zajA5dk9q?=
- =?utf-8?B?YXN0ZG1yU0pXZGlOa0tOTWd6RVROVjFoVmdaNFVlY2RENUhZQnlKVEcwaEdK?=
- =?utf-8?B?NCtvNGFpYVFvWlJQclhlVWlLMnA4YWxsT1FhVXJJMHAwendJdGs4OHF1b2Na?=
- =?utf-8?B?aWQrT3pzaXgwTmxjOW9hMU91dWcyeHA4YmtVd21XbU9KNXlqWE5zRDBLN3Nm?=
- =?utf-8?B?VGdYUmpDL2l3a2p0cVBEQVZ2cHJxWDhId1A4WCtyMDkxREx2c2VGNHlrbmVQ?=
- =?utf-8?B?bzRCMUN2alRpSEVHazBnQy9VKzBrd3M0Y3oyemV1MVp4dEZmdmNEVERFeUc2?=
- =?utf-8?B?RTM1aGwzNGQ2ckdGSE91Qis1MW5ndkMvSVZRemtGeForWit2K2tiWDhlTjla?=
- =?utf-8?B?M1ZHcjVTY2ZhUFdJSUU4amM1bVhnTGRjY2dqcFlIZlVYN0RTS3V2aVJoQkdB?=
- =?utf-8?B?M2xSUnhQUDlhUUp4ZURpSTEraTRvWG81azlqbGZJbEVZQ0NNZmJKSDZqOG5U?=
- =?utf-8?B?K1hESGpXOHlUa0E0YjhkaTlyRzdMK2l2cUVVLzZQZlJGZ00vVUl4b0ZoNGp2?=
- =?utf-8?B?RWo2Vm4xblJUL0l0M1VaSlIwWTlpYVNSUjRiK2ZjbURnM1NRK3VlZDFXUTcz?=
- =?utf-8?B?b0k2Ny93NU1DUVpMNjhUcUJ4YkdicU5QOUpVVjg5MGhXejZSUUQ1L2lQQWVa?=
- =?utf-8?B?NUJrREtHdXkyenA1RExVNTROYUdsb2Q3M2kyN3RTbm8vOFluQm56b1VONHVz?=
- =?utf-8?B?Szl0dWFYbmd3MGtrMkJrV1B3RXJDdlNkQ2h6QW9oazlGSENsYXdRS0J0WWlS?=
- =?utf-8?B?czc0aTVGd3RuZVdqTXF1NGN6bzZhQnJaRW9xNk1YYjZDOHVTVklGbTU1c0Qy?=
- =?utf-8?B?dnMzK0Q0TkdsQjJJMmJGRC9yaHNDbG9QMWtSckgyRXUxMDNBc0pPbG1pQmJi?=
- =?utf-8?B?UXplQnBSUXk1blNFSTdIdHdKaDF6UnQ1Z3NUTy9GZUJQY2RvSGtzZWw0V2RD?=
- =?utf-8?B?K2tFdkdvUDVqeWhDWVdVc3VScit1MFI5cEtLd1BnckdBSzhpN2crUW9rbWhF?=
- =?utf-8?B?M1B5eXpVa211bDZ5RE9HNUtuNmU4clQ2KzhqN2pqMXZITjc1cVRCeFowbHBL?=
- =?utf-8?Q?vSpt5H3JeIH7aWtc1HNxKvjYKqd+IUP4fbKI2xdzCo=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b4e57f4-6a8d-4991-4215-08dd70c42030
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2025 02:23:01.3983
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i4yjktTHs6Q4vK/oQhzP8RyMfHwjM9ZROY7utYrA0iQoD3he1WXHSg682uKNBXZ7HHJyt6MYo0P/uRqFhPXXiQGnCfwaMAJvtGvwYHnB5N0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPF7FE2DA30E
+In-Reply-To: <87746e66-84c1-4ff3-8b69-fbee1664eff6@quicinc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGPb29t+Wjeim6HXGZTZnZYANa5OOwiS7RuEuGCWNLmPtj2MCl
+	MEpb2jKQkcGgfAZRBHHUMhg4QCZ28iGCRb4cDLaRZYqMDzFsUKWdToEVJgJruWr473ee932e
+	c95zcrgYv5Ljxo2Ta2iVXCITEo7sK30e/l7sUItUNJrtis5MzxDoYucwC8105wJUeWMYR33V
+	9wHKqjEQaE43RSDrrTwWKu76lYO+zTnPRmPzVhzd7NATqMJUiqHq2mwMZTWV4sjyKJON8jtO
+	4ujJuomFyhvdUdO1IhytG69yUE5/P44aqro56IelRvAupNp1dzhUVVMSVWOcY1FNDfkENXnb
+	SFDfDH5AdVVc5FA1RSU4df1BLUEVG7+kDC0jbKqlawFQC02vhvE+id8XS0uiaZWAlkcpouPk
+	0mDh+x9GHoz0DxCJvcRBKFAokEsS6GDhodAwr8NxMtv8QsHnElmSTQqTqNVCn/37VIokDS2I
+	Vag1wUJaGS1TBiq91ZIEdZJc6i2nNW+LRSJff1vjsfjYR+tWoLzumjKWmQcyQOO2AuDAhaQf
+	HGmYwO3MJ40Ariy5FABHG88D+Fh7nnixKKkoAc8d/ywvsZhCO4BT2macWcwAWDiazbZ3scnX
+	4N8npjeYID3h1PJPmJ2323hSfxfYDRj5HxtaTT0ce8GVjIc/VutYduaRb8KnX7dxGHaBg+Uz
+	G0EO5AF4qbLZ1sPl7rBtYO5Jt+dAss0BXiitwe06JA/B/Aw2c1JXaB5o4TDsBhcedhIMq+H4
+	PRPGeLUA1pu1GFPYC3Wm3I0xMTIWTq79jjGZ7vDGOJuRt8K8vlUOI/NgXg6fcbrDszdP4Qzv
+	hD2W4WeJFCw7eRsw99OCwQHTCfwU2K3bNJlu0246WyxGekBDhw8j74ZZreeeybtg3Rp3U0cV
+	IBqAG61UJ0jpKF+l2EtOJ794+yhFQhPY+CmeR64Ci2HVuxewuKAXQC4m3M77+N85KZ8XLTme
+	SqsUkaokGa3uBf62ZyvG3HZEKWxfTa6JFPsFifwCAsSBvv6iQOHLvN7Hs1I+KZVo6HiaVtKq
+	5z4W18Etg7U3fCVl3OKZdjlt8cFXT6e35sYM/VEWMRq362C4gZf1urN1LCER29p2obLklRjV
+	e7Mdvn7Oi/FbZO4Tp2vqe1dDvPsy/qrMuLKtfa7d5KTsc9Sp2W3JdUebs985nBmy80mbvmg0
+	2xLTHyW4I0inP9InDk2cqfs06OhsRNB36cWFVZedQ/lcY/6tcKehPa1arf6h44FUklw5VrYH
+	obP9RsfUxft/RnW+9LM5aEt9npewI9n6Fj+nOM3iPuUjMITXR1ocrzmL5fPEQEF6ueDeYq3R
+	xWO/Uyge8sXx3yRry0cSIwYv6TPNdz9L7U6pPbeWseyWNaLQFUabW3+RvfF9GTYiDxey1bES
+	sSemUkv+B4ufmJ6yBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7bCSnC6zz+t0g22N6hZTHz5hs1iz9xyT
+	xZMD7YwW84+cY7U4vOgFo0Xz4vVsFi9n3WOz+Halg8li4v6z7BYL25awWNz89I3V4vKuOWwW
+	c59NYbZYtKyV2aJ50xRWi9cfmlgsOnf1s1r8+v+MyWLmWmWLTbv7WC3+79nBbtF27BirxaoF
+	B9gtNnxfy+gg4bFz1l12jwWbSj0W73nJ5LFpVSebx51re9g85p0M9Ng/dw27x+K+yawe+94u
+	Y/OYuKfOY/2WqyweW/Z/ZvT4vEkugDeKyyYlNSezLLVI3y6BK+Pe8qOMBQ8EKqYeeMDWwPia
+	p4uRk0NCwETi/Y/vTF2MXBxCAtsZJRoutbJCJCQlls69wQ5hC0vcbznCClH0iFFiz6lPzCAJ
+	FgEViTe9D1lAbDYBLYl7P06AxUWA7Dtz7jOCNDAL/GaRuL38DliRsEC2xNFFs5hAbF4BbYk/
+	M7azQ0zdwiyxb813VoiEoMTJmU/AGpgF1CX+zLsENJUDyJaWWP6PAyIsL9G8dTbYMk4Be4l1
+	8zczgZSIAh306mD9BEahWUgGzUIyaBbCoFlIBi1gZFnFKJpaUJybnptcYKhXnJhbXJqXrpec
+	n7uJEZwetIJ2MC5b/1fvECMTB+MhRgkOZiUR3oivL9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ
+	8yrndKYICaQnlqRmp6YWpBbBZJk4OKUamNx5nF6ozFZ4Gmqs7/737UExTW+Gs+6rr3/Sv/TT
+	4f30oOPsV+f4HVmbyfpoMZup1r2FT36dctf4qjvhepfNx+zpvxlmusU/2Fbeyqeb8tS8us1f
+	Z/K5qO6+iqeVZVtL4kproyYKvT8bnLcyXyRiVuX+H8IpWvrslfkshQ/eK35IC8ycbvL3Sdee
+	lIVr9NScNRSvvmldL7V7+nJbMWbWWXur9jl7ymty/f9aKFpUeuF9y6HOI4Ida6OiOwsagqqz
+	GYv5FT6J68lIdWXVWV8vUlXYlTB1Tnt7/u++fecqTyfkHGmdJNVxIvvXj8usL/lPvOl/8L3Y
+	hGu/1nHugFsmmUauT8TKT7PWxvz/L/lSiaU4I9FQi7moOBEADSCNCn4DAAA=
+X-CMS-MailID: 20250401021427epcas2p40616133da2f95585af5f83e355e0cab8
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_66d1f_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250327161254epcas2p35ea7c80bdcefaefc645c061531dd6833
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
+	<20250319005141.312805-2-quic_wcheng@quicinc.com>
+	<CAGCq0LZoi0MOJLJYUeQJW6EfOU_Ch=v1Sg8L4_B-KhdDCx1fCw@mail.gmail.com>
+	<2025032734-reward-fantasize-dc16@gregkh>
+	<CAGCq0LamxvvE8b45VAshw9aWJNC2so_vK9t+pzXd3C7Y7tfYAg@mail.gmail.com>
+	<CGME20250327161254epcas2p35ea7c80bdcefaefc645c061531dd6833@epcas2p3.samsung.com>
+	<87746e66-84c1-4ff3-8b69-fbee1664eff6@quicinc.com>
 
-On 2025-03-31 21:50, Steven Rostedt wrote:
-> On Tue, 1 Apr 2025 03:28:20 +0200
-> Jann Horn <jannh@google.com> wrote:
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_66d1f_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+On Thu, Mar 27, 2025 at 09:12:12AM -0700, Wesley Cheng wrote:
 > 
->> I think you probably need flushes on both sides, since you might have
->> to first flush out the dirty cacheline you wrote through the kernel
->> mapping, then discard the stale clean cacheline for the user mapping,
->> or something like that? (Unless these VIVT cache architectures provide
->> stronger guarantees on cache state than I thought.) But when you're
->> adding data to the tracing buffers, I guess maybe you only want to
->> flush the kernel mapping from the kernel, and leave flushing of the
->> user mapping to userspace? I think if you're running in some random
->> kernel context, you probably can't even reliably flush the right
->> userspace context - see how for example vivt_flush_cache_range() does
->> nothing if the MM being flushed is not running on the current CPU.
 > 
-> I'm assuming I need to flush both the kernel (get the updates out to
-> memory) and user space (so it can read those updates).
+> On 3/27/2025 3:14 AM, Puma Hsu wrote:
+> > On Thu, Mar 27, 2025 at 3:02 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >>
+> >> On Thu, Mar 27, 2025 at 02:27:00PM +0800, Puma Hsu wrote:
+> >>> Hi,
+> >>>
+> >>> We have implemented and verified the USB audio offloading feature with
+> >>> the xhci sideband driver on our Google Pixel products. We would
+> >>> appreciate it if this solution can be accepted. Thank you all for the
+> >>> work!
+> >>>
+> >>
+> >> Great, can you properly send a "Tested-by:" line for this against the
+> >> 00/XX email so that it will be properly saved?
+> >>
+> > 
+> > We(Google Pixel) only use the xhci sideband related changes and two
+> > changes in the sound card driver. For the details, what we actually
+> > tested are patch [01], [02], [03], [04], [05], [06], [08], and [12].
+> > Do I still send the "Tested-by:" line to 00/31 email? Or should I just
+> > send the "Tested-by:" line to the 8 changes above? (I added
+> > "Tested-by" line for this [01/31] first.)
+> > 
+> >> Also, I think a new version of the series is coming, can you test that
+> >> to verify it works properly?  We have to wait until after -rc1 is out
+> >> anyway.
+> >>
+> > 
+> > I think this v36 is the last version of the series as I discussed with
+> > QCOM Wesley. And for sure I will test it if they do have a new
+> > version.
+> > 
 > 
-> The paths are all done via system calls from user space, so it should be on
-> the same CPU. User space will do an ioctl() on the buffer file descriptor
-> asking for an update, the kernel will populate the page with that update,
-> and then user space will read the update after the ioctl() returns. All
-> very synchronous. Thus, we don't need to worry about updates from one CPU
-> happening on another CPU.
+> Hi Puma,
 > 
-> Even when it wants to read the buffer. The ioctl() will swap out the old
-> reader page with one of the write pages making it the new "reader" page,
-> where no more updates will happen on that page. The flush happens after
-> that and before going back to user space.
-FWIW, I have the following in the LTTng kernel tracer to cover this.
-LTTng writes to ring buffers through the linear mapping, and reads
-the buffers from userspace either through mmap or splice.
+> I'm discussing with Stephan on the QC specific stuff, so the common changes
+> won't change on v37.  Please provide your tested-by tags for each commit,
+> so I can carry them accordingly on the next submission.  If I do end up
+> making changes to any of the common patches, I will remove your tested by
+> tag, which means you might have to test it again.
+> 
+> Thanks
+> Wesley Cheng
+> 
+> 
+> 
 
-When userspace wants to get read access to a sub-buffer (an abstraction
-that generalizes your ftrace ring buffer "pages") through mmap,
-it does the following through a "get subbuffer" ioctl:
+Hi Wesley,
 
-- Use "cpu_dcache_is_aliasing()" to check whether explicit flushing is
-   needed between the kernel linear mapping and userspace mappings.
+Thanks for your effort to upstream usb audio offload.
+I've also used your patchset like Puma.
+([01], [02], [03], [04], [05], [06], [08], and [12])
 
-- Use flush_dcache_page() to make sure all mappings for a given page
-   are flushed (both the kernel linear mapping and the userspace virtual
-   mappings).
+It works well on Exynos. Please let me know if you need also
+"Tested-by:" on our side.
 
-I suspect that if you go down the route of the explicit
-"flush_cache_range()", then you'll need to issue it on all
-mappings that alias your memory.
+Best Regards,
+Jung Daehwan
 
-AFAIU, using flush_dcache_page() saves you the trouble of issuing
-flush_cache_range() on all mapping aliases manually.
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_66d1f_
+Content-Type: text/plain; charset="utf-8"
 
-Thanks,
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_66d1f_--
 
