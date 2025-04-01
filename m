@@ -1,204 +1,143 @@
-Return-Path: <linux-kernel+bounces-582740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354ECA7721B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84CDA7722B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 03:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1ACB167CA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA61188DEAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 01:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C86D13BAF1;
-	Tue,  1 Apr 2025 00:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4857FBA2;
+	Tue,  1 Apr 2025 01:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAgSoRiP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VYP9JKfS"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2C6A33B;
-	Tue,  1 Apr 2025 00:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A977A2E3371;
+	Tue,  1 Apr 2025 01:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743468726; cv=none; b=R8YZswt3S9qE1w0CrBrv/eJVt2079hiepwGODxBjI44kxUSkMkEbeKSY1fszMdW6yvFVSq6OT574799IE0zxHp2Uef0sykE+0shimySiY8ve6dsMoA/eyFOX+1cdGgrKH14BWBKg6v/3UbpAeUOv3rCnWMw7g5P2L2IHp/9mJbQ=
+	t=1743469241; cv=none; b=qgqTzyM5UuwalbAknnxp8SL3ZH0fbyn/+OmlBI2nCsojEXYRBAYZuVFYYJdzvQFKtmrqoEuAzNCq0fNvSh9RRiczpJuXGcQEQZ3BTX9VcZh4lTCMGLeuBgVubP8DZOpsPKfb9RhrgpVrPdO5pxvBFwlUvK1Jnvv4a90Lyz4tEgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743468726; c=relaxed/simple;
-	bh=/UQ39MEbWY36jpENTddWVVKMd6edVfgsykRn4iYNpqk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Htt7YFCh6BFQ7ngtl2ozLlYoe3Z+FPBktMk8kx9zEgWObdVU9I2JQ35pG9vjTESORCtNvWkhkXHy4Pm2McyOiIepFCi1zYykjloDWLW2do1B1bhZJ5DAOf4BVyUzJC/vQoyso0aQBgMMjfGCv24lNoWQN8G3cJl56TDKPD3ajrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAgSoRiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E618C4CEE3;
-	Tue,  1 Apr 2025 00:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743468726;
-	bh=/UQ39MEbWY36jpENTddWVVKMd6edVfgsykRn4iYNpqk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ZAgSoRiP2/Glqa3apm0OrrYFKu2FP+QosSu5o8Q3NNEYzYaqT2whGzwArkmSizEwH
-	 O8OrwiAoceVgsukjMyIaXguA4CDAGUM7i43iR03n/PogVYIc5t7XiKAZ4qFlTN3T9i
-	 uhR5Q1HeMh7jggQnOQAfScEduaumf8nc+SVewgTMvGXztUyPngz2nSwxPFgw+raTT8
-	 9CVbD7xzKl9U3WwP76bt9jppbb4wb4BjEfvogpf6PV38Cv4OBJFgcZc0KhNIue5v2I
-	 oB+PQzfODYWMyyORLDxQRGxxbqYoBbJQoj0UkhQRieEl4AgsHlfX4AA8ynOMuJpkXK
-	 G5a/ehf+XwGKQ==
-Date: Mon, 31 Mar 2025 19:52:04 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1743469241; c=relaxed/simple;
+	bh=OPokjJS6bZ7xjIKgUxLbF7tf4xmoAmvSOaiF5AsgPL0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SwvozIhpJ1y/CXNlSnXzLKIl7KAFQ53RvGued5oqzXlvR72xAP33Q9iHLiDS9CSsdPRfDaaiQ+v+MTe33J1t0glPtGqpgoWAs9aJ9LHdDf4WIS4g/e++5BqiJzltdHTPznGqkX00eMum1MxiGSt4g60MyyEWyoPFas0Ha08Shjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VYP9JKfS; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1743468742;
+	bh=OPokjJS6bZ7xjIKgUxLbF7tf4xmoAmvSOaiF5AsgPL0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=VYP9JKfSVsK0aTMb6gR6csBopMOB3E6gwP/2VmBe4u9RQtCP7zmZHRTuTdCaDmlQH
+	 t+MqgtQ8BTdWA4q4jZ6YB6kshqUgxEm/2jhkzlP9hMks0L8Ou2M7bjD80yFr5TMAuN
+	 7dizjuCPdQINe6S+n1PPNXRHYCQeo1wbclTNplI5V8gGP74E35M++R5MSi+jxc3Jis
+	 wseiy4ScWjvzxMwYtbLDyIWAD3f0Rn+1w1enAOZQDP63cYf70T6nSMRWU8szPeGgrV
+	 dhsXkkCQxX448xBVMuA75/eIYz6TX+2E+lzWEDjme+2VUNwQR9vR7K7+5pL/9fKka1
+	 tmdtsOu8sXuEg==
+Received: from [10.194.67.88] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8BB8E7BFD0;
+	Tue,  1 Apr 2025 08:52:17 +0800 (AWST)
+Message-ID: <71bced05e26ae1a5f15a7335928f3f71bde143f1.camel@codeconstruct.com.au>
+Subject: Re: Re: [PATCH v4 2/3] dt-bindings: pinctrl: aspeed,ast2600-pinctrl
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Willie Thai <wthai@nvidia.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, dkodihalli@nvidia.com, 
+	gpiccoli@igalia.com, joel@jms.id.au, kees@kernel.org, krzk+dt@kernel.org, 
+	leohu@nvidia.com, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, robh@kernel.org, 
+	tingkaic@nvidia.com, tony.luck@intel.com, harrys@nvidia.com
+Date: Tue, 01 Apr 2025 11:22:16 +1030
+In-Reply-To: <20250331171857.262649-1-wthai@nvidia.com>
+References: 
+	<d0f7003c22e19c8fc7617610043edc7be925a180.camel@codeconstruct.com.au>
+	 <20250331171857.262649-1-wthai@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Johan Hovold <johan+linaro@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-usb@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Abel Vesa <abel.vesa@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-In-Reply-To: <20250331215720.19692-1-alex.vinarskis@gmail.com>
-References: <20250331215720.19692-1-alex.vinarskis@gmail.com>
-Message-Id: <174346870483.3093611.16142139479166173068.robh@kernel.org>
-Subject: Re: [PATCH v1 0/6] X1E Asus Zenbook A14 support
 
+Hi Willie,
 
-On Mon, 31 Mar 2025 23:53:34 +0200, Aleksandrs Vinarskis wrote:
-> Introduce support for the mentioned laptop.
-> 
-> Particular device exists in two model numbers:
-> * UX3407QA: X1P-42-100 or X1-26-100 (as tested)
-> * UX3407RA: X1E-78-100
-> 
-> Mostly similar to other X1-based laptops. Notable differences are:
-> * Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
->   and Qualcomm FastConnect 7800 on UX3407RA
-> * USB Type-C retimers are Parade PS8833, appear to behave identical
->   to Parade PS8830
-> * gpio90 is TZ protected
-> 
-> Document new Parade PS883x variant. Move pcie6a_phy's compatible change
-> from X1P-42-100's dtsi to be CRD specific, at it seems it does not
-> apply to all machines - on X1-26-100 phy times-out when using new x1p
-> compatible.
-> 
-> When comparing device firmware between UX3407QA, UX3407RA, it seems
-> that only ADSP firmware is different, CDSP and GPU firmware appears to
-> be the same. (At least assuming the GPU firmware name in both cases is
-> `qcdxkmsuc8380.mbn`). Since at least some blobs are different betweeen
-> X1E and X1/X1P, define new firmware directory for `qcom/x1p42100`. This
-> also makes it easier for distros to automatically extract firmware from
-> Windows and place all blobs for the model under the same path. If/When
-> firmware blobs make it to linux-firmware, same blobs can be easily
-> symlinked between `qcom/x1e80100` and `qcom/x1p42100`.
-> 
-> Qualcomm FastConnect 6900 on UX3407QA did not work out of the box, and
-> additionally required both newer firmware and patches to `board-2.bin`.
-> I added a short how-to [1], as it is not exactly trivial.
-> 
-> ACPI dumps can be found on aarch64-laptops' github [2]. HWids on
-> dtbloader's github [3].
-> 
-> [1] https://github.com/alexVinarskis/linux-x1e80100-zenbook-a14?tab=readme-ov-file#wcn688x-wifi
-> [2] https://github.com/aarch64-laptops/build/pull/134/files
-> [3] https://github.com/TravMurav/dtbloader/pull/4/files
-> 
-> Aleksandrs Vinarskis (6):
->   arm64: dts: qcom: move pcie6a type change from X1P42100 to
->     X1P42100-crd
->   usb: typec: Add Parade PS8833 Type-C Retimer variant
->   dt-bindings: usb: Add Parade PS8833 Type-C retimer variant
->   dt-bindings: arm: qcom: Add Asus Zenbook A14
->   firmware: qcom: scm: Allow QSEECOM on Asus Zenbook A14
->   arm64: dts: qcom: Add support for X1-based Asus Zenbook A14
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |    2 +
->  .../bindings/usb/parade,ps8830.yaml           |    1 +
->  arch/arm64/boot/dts/qcom/Makefile             |    2 +
->  arch/arm64/boot/dts/qcom/x1-zenbook-a14.dtsi  | 1251 +++++++++++++++++
->  .../dts/qcom/x1e80100-asus-zenbook-a14.dts    |   45 +
->  .../dts/qcom/x1p42100-asus-zenbook-a14.dts    |   48 +
->  arch/arm64/boot/dts/qcom/x1p42100-crd.dts     |    4 +
->  arch/arm64/boot/dts/qcom/x1p42100.dtsi        |    4 -
->  drivers/firmware/qcom/qcom_scm.c              |    2 +
->  drivers/usb/typec/mux/ps883x.c                |    1 +
->  10 files changed, 1356 insertions(+), 4 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/x1-zenbook-a14.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dts
-> 
-> --
-> 2.45.2
-> 
-> 
-> 
+On Mon, 2025-03-31 at 17:18 +0000, Willie Thai wrote:
+> > > Add EMMCG5 enum to compatible list of pinctrl binding for emmc
+> > > enabling.
+> > >=20
+> > > Cc: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > > Signed-off-by: Willie Thai <wthai@nvidia.com>
+> > > ---
+> > > =C2=A0.../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> > > | 1
+> > > +
+> > > =C2=A01 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-
+> > > pinctrl.yaml
+> > > b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-
+> > > pinctrl.yaml
+> > > index 80974c46f3ef..cb75e979f5e0 100644
+> > > --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-
+> > > pinctrl.yaml
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-
+> > > pinctrl.yaml
+> > > @@ -276,6 +276,7 @@ additionalProperties:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - BMCINT
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - EMMCG1
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - EMMCG4
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - EMMCG5
+> >=20
+> > What pin configuration does this correspond to for the eMMC
+> > controller?
+> > These groups aren't arbitrary, they correspond to the 1, 4 and 8-
+> > bit
+> > bus modes.
+> >=20
+> > You may have added this squash a warning, but I suspect the pinctrl
+> > configuration in your devicetree is incorrect.
+> >=20
+> > Andrew
+> >=20
+>=20
+> Thanks for your feedback !
+> We want to exclude AC5 pin in the default EMMCG4 pin group, because
+> that pin is used for other purpose.
 
+Okay, sure.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+> We define a new group called EMMCG5 as:
+> GROUP_DECL(EMMCG5, AB4, AA4, AC4, AA5, Y5, AB5, AB6)
+> The bus mode is still 4-bit mode.
+> Could you please advise if we can use the name "EMMCG5" ?
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Why is EMMCG5 an intuitive name? It doesn't make sense to me for what
+you're trying to achieve. It's probably better if we rethink the
+functions and groups to make them a little more fine-grained, perhaps
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+- EMMCDAT1
+- EMMCDAT4
+- EMMCDAT8
+- EMMCWP
+- EMMCCD
 
-  pip3 install dtschema --upgrade
+and then you request what's appropriate, rather than create groups that
+exclude a specific function/pin (such as card detect).
 
+Maybe you should drop the eMMC node from your devicetree for now, and
+add it back once we've sorted out the pinctrl side of things in a
+separate series.
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250331 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250331215720.19692-1-alex.vinarskis@gmail.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddrfacmn-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddaon-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddwlcx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddwlmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa0p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa1p2-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-zenbook-a14.dtb: pinctrl@f100000: Unevaluated properties are not allowed ('bt-en-sleep' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddrfacmn-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddaon-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddwlcx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddwlmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddbtcmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa0p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa1p2-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-asus-zenbook-a14.dtb: pinctrl@f100000: Unevaluated properties are not allowed ('bt-en-sleep' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-
-
-
-
-
+Andrew
 
