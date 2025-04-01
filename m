@@ -1,104 +1,233 @@
-Return-Path: <linux-kernel+bounces-583555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650B0A77C70
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DDCA77C1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205E716A099
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9840B3A705D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEA12045B6;
-	Tue,  1 Apr 2025 13:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cab.de header.i=@cab.de header.b="brDoKA/T"
-Received: from mail.cab.de (mail.cab.de [46.232.229.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEDF1E47A9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.229.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1D1F30A4;
+	Tue,  1 Apr 2025 13:31:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7B61F930
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743514976; cv=none; b=BLFa03ga7kaQiz6iZ+UmxWQsZSu14+loJkVSx0SqOTDTI8/NEu3GrP6yHcdz5foM7slHtIr5s3W3aY8XreoyNVy22qAcNGSewGSekHpUwLB22swYrSYKAiuaY/QFq+MdNqrlT9EnFipBEZdSCziP6636voC9cGfY3XDGZxe9jVs=
+	t=1743514315; cv=none; b=m2Apt1ptN4jLLWpLbTluloidvmctNVpuNx6e/B7LlMRQUWBdxWlsQP5HbFfb0DKbsMiljYIHvJVHYu+jX4BleemdLm6kqAHiWS0jROFx0SMZzAf2ZH9YUUHtwb1JNZLPQF4h4w4RS3gg8KmoOdSUkkta8UUfSeSIrVN7oqwUFPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743514976; c=relaxed/simple;
-	bh=utegZaxSQAewZydbCJUFE+vwbwIiJtX3JdvPqpjVQX8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ij5EWRP4SmAHL7HmHSkniXAjpHp6FXnqJ65ebC55ftuO1N3BoNhOdlSesLUM8g/gEFyYuE9vTruqNZvVhUbuOwkfJmeTP7nzTydcEx8ta+uN3lJZ7t6eTPcc2/dKcEVSZTeNfVNayOZnrZsd5w0gmxEVbTDRDUkXYmtP0qBzEzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (1024-bit key) header.d=cab.de header.i=@cab.de header.b=brDoKA/T; arc=none smtp.client-ip=46.232.229.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cab.de 4ZRpq24YglzMvb08
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; s=default;
-	t=1743514398; bh=Zs6taA3QHKiFoxaMKD5p7Rb7UrpExF4LJRsAQKvWTzE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=brDoKA/TJYOiFwv4slaWFzeozgA+W4S4zXpnG3BTJMI18/OKMm3Bo1TwMdvJ+rDTD
-	 PAsF/MeQUoc3w/KW9iYJiylQhlm441uDez0hVaCMudS887tGeXM+CsQnA0+hrE6JQE
-	 Mma1ePVr4ZGuQ6XWWsfakfwKFTaav/E3wT87UAqw=
-X-cab-MailScanner-Watermark: 1744119197.45667@uUHBCFXwNkoKiXdvlmKeGg
-X-cab-MailScanner-From: m.heidelberg@cab.de
-X-cab-MailScanner: Found to be clean
-X-cab-MailScanner-ID: 4ZRpq0121rzMvb08
-X-cab-MailScanner-Information: Please contact it@cab.de for more information
-Received: from Adranos.cab.de ([10.10.1.54] [10.10.1.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(no client certificate requested)
-	by hephaistos.cab.de (MailScanner Milter) with SMTP id 4ZRpq0121rzMvb08;
-	Tue,  1 Apr 2025 15:33:16 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cab.de 4ZRpq0121rzMvb08
-Received: from KAN23-025.cab.de (10.10.3.178) by Adranos.cab.de (10.10.1.54)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Apr
- 2025 15:33:24 +0200
-From: Markus Heidelberg <m.heidelberg@cab.de>
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Christian
- Eggers <ceggers@arri.de>
-CC: Markus Heidelberg <m.heidelberg@cab.de>, Jiri Prchal
-	<jiri.prchal@aksignal.cz>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [RFC PATCH 2/2] eeprom: at25: make FRAM device ID error message more precise
-Date: Tue, 1 Apr 2025 15:30:48 +0200
-Message-ID: <20250401133148.38330-3-m.heidelberg@cab.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250401133148.38330-1-m.heidelberg@cab.de>
-References: <20250401133148.38330-1-m.heidelberg@cab.de>
+	s=arc-20240116; t=1743514315; c=relaxed/simple;
+	bh=Q1h3J1lMlqtTxeUWZ2nmb72vQCNud+YGGXy7C5Z3tuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jIPIHFqu3wL/r+Gjtwg6c8VX4vDXafd3rvMUXqghO50YaWdwLEQmj1Neyitd7FhhtYYBPfi6eiNrD07QYcJe4XGgl5hn0hLiXYPAOv5Pvdbl9DEqbTWmvZLL0HQ9E9zejehuxdiKMgblDM7Exbp50m3iXzoajC1xGK0JguL/+OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF3D61424;
+	Tue,  1 Apr 2025 06:31:54 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E1723F694;
+	Tue,  1 Apr 2025 06:31:50 -0700 (PDT)
+Message-ID: <cf88ccd7-a95e-455e-a194-895dcc393c5b@arm.com>
+Date: Tue, 1 Apr 2025 14:31:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: catu: Introduce refcount and spinlock for
+ enabling/disabling
+To: James Clark <james.clark@linaro.org>, Yabin Cui <yabinc@google.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Leo Yan <leo.yan@arm.com>
+References: <20250328223837.2314277-1-yabinc@google.com>
+ <ea366793-4c27-44af-9b6b-8964c4151416@linaro.org>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <ea366793-4c27-44af-9b6b-8964c4151416@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Adranos.cab.de (10.10.1.54) To Adranos.cab.de (10.10.1.54)
 
-The error description would be wrong in case the "size" Devicetree
-property is missing for an FRAM without device ID.
+On 31/03/2025 15:24, James Clark wrote:
+> 
+> 
+> On 28/03/2025 10:38 pm, Yabin Cui wrote:
+>> When tracing ETM data on multiple CPUs concurrently via the
+>> perf interface, the CATU device is shared across different CPU
+>> paths. This can lead to race conditions when multiple CPUs attempt
+>> to enable or disable the CATU device simultaneously.
+>>
+>> To address these race conditions, this patch introduces the
+>> following changes:
+>>
+>> 1. The enable and disable operations for the CATU device are not
+>>     reentrant. Therefore, a spinlock is added to ensure that only
+>>     one CPU can enable or disable a given CATU device at any point
+>>     in time.
+>>
+>> 2. A reference counter is used to manage the enable/disable state
+>>     of the CATU device. The device is enabled when the first CPU
+>>     requires it and is only disabled when the last CPU finishes
+>>     using it. This ensures the device remains active as long as at
+>>     least one CPU needs it.
+>>
+>> Signed-off-by: Yabin Cui <yabinc@google.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-catu.c | 29 ++++++++++++++------
+>>   drivers/hwtracing/coresight/coresight-catu.h |  1 +
+>>   2 files changed, 22 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/ 
+>> hwtracing/coresight/coresight-catu.c
+>> index 275cc0d9f505..834a7ffbbdbc 100644
+>> --- a/drivers/hwtracing/coresight/coresight-catu.c
+>> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+>> @@ -458,12 +458,19 @@ static int catu_enable_hw(struct catu_drvdata 
+>> *drvdata, enum cs_mode cs_mode,
+>>   static int catu_enable(struct coresight_device *csdev, enum cs_mode 
+>> mode,
+>>                  void *data)
+>>   {
+>> -    int rc;
+>> +    int rc = 0;
+>> +    unsigned long flags;
+>>       struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+>> -    CS_UNLOCK(catu_drvdata->base);
+>> -    rc = catu_enable_hw(catu_drvdata, mode, data);
+>> -    CS_LOCK(catu_drvdata->base);
+>> +    spin_lock_irqsave(&catu_drvdata->spinlock, flags);
+> 
+> Hi Yabin,
+> 
+> This needs to be a raw_spinlock since [1]. Also you might as well use 
+> the new guard() thing to save someone find-and-replacing it later.
+> 
+> But I'm wondering if this is accurate. The ETR's refcount is dependent 
+> on the pid of the owner of the trace session:
+> 
+>    /* Do not proceed if this device is associated with another session */
+>    if (drvdata->pid != -1 && drvdata->pid != pid) {
+>      rc = -EBUSY;
+>      goto unlock_out;
+>    }
+> 
+>    /*
+>     * No HW configuration is needed if the sink is already in
+>     * use for this session.
+>     */
+>    if (drvdata->pid == pid) {
+>      csdev->refcnt++;
+>      goto unlock_out;
+>    }
+> 
+> If the helpers get enabled first, could this mean that CATU gets 
+> associated with a different session than the ETR? 
 
-Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
----
- drivers/misc/eeprom/at25.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thats a good point, I looked at the code and :
 
-diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-index 16ce36c02ed4..c45413e06e9c 100644
---- a/drivers/misc/eeprom/at25.c
-+++ b/drivers/misc/eeprom/at25.c
-@@ -393,7 +393,7 @@ static int at25_fram_to_chip(struct device *dev, struct spi_eeprom *chip)
- 		/* Get ID of chip */
- 		fm25_aux_read(at25, id, FM25_RDID, FM25_ID_LEN);
- 		if (id[6] != 0xc2) {
--			dev_err(dev, "Error: no Cypress FRAM (id %02x)\n", id[6]);
-+			dev_err(dev, "Error: no Cypress FRAM with device ID (manufacturer ID bank 7: %02x)\n", id[6]);
- 			return -ENODEV;
- 		}
- 		/* Set size found in ID */
--- 
-2.43.0
+I think we have a bug here, w.r.t helpers and Sinks. We enable the
+helpers (e.g. CATU) and then we try the actual sink (e.g. ETR). And
+if we fail to enable ETR, we don't disable the helpers.
 
+
+We have this today :
+
+	case CORESIGHT_DEV_TYPE_SINK:
+		ret = coresight_enable_sink(csdev, mode, sink_data);
+		/*
+		 * Sink is the first component turned on. If we
+		 * failed to enable the sink, there are no components
+		 * that need disabling. Disabling the path here
+		 * would mean we could disrupt an existing session.
+		 */
+		if (ret)
+			goto out;
+
+...
+
+out: 
+
+         return ret; 
+
+err: 
+
+         coresight_disable_path_from(path, nd); 
+
+         goto out; 
+
+}
+
+Suzuki
+
+
+Maybe not, but it
+> would be easier to understand if the core code handled the refcounting 
+> and locking for linked devices.
+> 
+> [1]: https://lore.kernel.org/all/20250306121110.1647948-3- 
+> yeoreum.yun@arm.com/
+> 
+> Thanks
+> James
+> 
+>> +    if (csdev->refcnt == 0) {
+>> +        CS_UNLOCK(catu_drvdata->base);
+>> +        rc = catu_enable_hw(catu_drvdata, mode, data);
+>> +        CS_LOCK(catu_drvdata->base);
+>> +    }
+>> +    if (!rc)
+>> +        csdev->refcnt++;
+>> +    spin_unlock_irqrestore(&catu_drvdata->spinlock, flags);
+>>       return rc;
+>>   }
+>> @@ -486,12 +493,17 @@ static int catu_disable_hw(struct catu_drvdata 
+>> *drvdata)
+>>   static int catu_disable(struct coresight_device *csdev, void *__unused)
+>>   {
+>> -    int rc;
+>> +    int rc = 0;
+>> +    unsigned long flags;
+>>       struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+>> -    CS_UNLOCK(catu_drvdata->base);
+>> -    rc = catu_disable_hw(catu_drvdata);
+>> -    CS_LOCK(catu_drvdata->base);
+>> +    spin_lock_irqsave(&catu_drvdata->spinlock, flags);
+>> +    if (--csdev->refcnt == 0) {
+>> +        CS_UNLOCK(catu_drvdata->base);
+>> +        rc = catu_disable_hw(catu_drvdata);
+>> +        CS_LOCK(catu_drvdata->base);
+>> +    }
+>> +    spin_unlock_irqrestore(&catu_drvdata->spinlock, flags);
+>>       return rc;
+>>   }
+>> @@ -550,6 +562,7 @@ static int __catu_probe(struct device *dev, struct 
+>> resource *res)
+>>       dev->platform_data = pdata;
+>>       drvdata->base = base;
+>> +    spin_lock_init(&drvdata->spinlock);
+>>       catu_desc.access = CSDEV_ACCESS_IOMEM(base);
+>>       catu_desc.pdata = pdata;
+>>       catu_desc.dev = dev;
+>> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/ 
+>> hwtracing/coresight/coresight-catu.h
+>> index 141feac1c14b..663282ec6381 100644
+>> --- a/drivers/hwtracing/coresight/coresight-catu.h
+>> +++ b/drivers/hwtracing/coresight/coresight-catu.h
+>> @@ -65,6 +65,7 @@ struct catu_drvdata {
+>>       void __iomem *base;
+>>       struct coresight_device *csdev;
+>>       int irq;
+>> +    spinlock_t spinlock;
+>>   };
+>>   #define CATU_REG32(name, offset)                    \
+> 
 
 
