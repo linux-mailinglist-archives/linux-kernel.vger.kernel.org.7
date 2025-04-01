@@ -1,140 +1,222 @@
-Return-Path: <linux-kernel+bounces-583627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AF5A77DA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:24:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15127A77D3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D180163B5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0258188744B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3EF204C03;
-	Tue,  1 Apr 2025 14:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982262046B8;
+	Tue,  1 Apr 2025 14:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Hj5njTlZ"
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVyAyhCc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79605189F56;
-	Tue,  1 Apr 2025 14:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CB41C8639;
+	Tue,  1 Apr 2025 14:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743517486; cv=none; b=jJExMM8uo+CagnVkOADaK0EQ8zuy+HU44BV4qkRy+kphEEcVMEy0uRDRiUmboWXeF9OKRBGn+GT8p7VNPi3NMk0b6kcwSsWJFpFGp5cOrrJEsefOGf1V3NlDPEp/YFQk/BhjlGEQV6iJVgHQxOXaDf8QHT0pVaqTHeOmMB+VddU=
+	t=1743516483; cv=none; b=k25l1KYwe/BlVFtQfq5WJMzHLISlSJn7RXSacdKG/SoX3GYkBHYW9PyPCw8Xx366iMaqOeJ1El4WYAeIzFmVI1QsYmM686dPI+mSKLiTRD0KJ9JCDSv5PNrAN/6f9tPXbk72S4xq+uNSRGIPk92gs/rJjIAf7wa/XFpWZMmZOKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743517486; c=relaxed/simple;
-	bh=UEwhfsnRmdNrlpCAYZKSnEloif6NrMNWguTi4XBkR/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UdqlDMd8v9XqI0ztqokosRXvsVOL7GsLQjlqhazw7RUEpnUTZ5OwbPtqoU5YT+++e0KaPyqCD1iDpUfIEyWY88NKgSBKKV90Pc17WqmbBSGNEmTJYmkmQLX1N5ULzF8YGQ3F9rQZiUBI5vyab+g1ZTyeo2KF8zC8xehwHAQUXjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=Hj5njTlZ; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nyoNBGkZ/SvbWg6/7VkY8tnH5nK8aXreynxludftxRs=; b=Hj5njTlZyw29UjEq9ufWY6IQqS
-	+BTPdR9qp5fBzzyZxLjb5cnfuYsX/kq2s9+7/0VqSTY0rgH/KYykvZDGILggKPSYXqKJMkRGvF6kH
-	Az0rHZ2EPh+H5kaL8aUBDIDJYa9bhvJx3zcACLs5StNJvYF1z9DrQ1t0nJWdyXnhxYxgo7b+X2z1s
-	rGOlnou6COwSzW0igrksph46ghfws3puz3jumymQPfrZatjvQV40YZcmDvVzitk+9V1C+KA/ABrFL
-	SoOD514rjslnw5xcQHVp9Sx8IEls5hmzOGSVG7KvSvAMclWQ9Lf38ztUbxN351nxJWsHfQNW1Q29y
-	EbrGGzFg==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:42244 helo=[192.168.0.113])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <david@lechnology.com>)
-	id 1tzcGf-000000006K1-3v06;
-	Tue, 01 Apr 2025 10:05:34 -0400
-Message-ID: <b79bda63-79bf-47b6-8ac1-1444ed101423@lechnology.com>
-Date: Tue, 1 Apr 2025 09:05:34 -0500
+	s=arc-20240116; t=1743516483; c=relaxed/simple;
+	bh=KcH6QnN1ToeMjkWFnDuRgbTIuq/tA5Z4rE1hvUZnWd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeyleykIUdwruk6FpUJTFTtPlaHfLZw6ezMrLuZUGXmWffpSSFHKEScfLhGy5E6n4AEdrWnQvnA5VIJKzr/OpAtMe/vOlsMELNNeVBQZJ9tOgNB8qAGjnZsgXvFDw9cmJvNzfn5+tWuRUetlzUX3KDWQQPanemwwyyvMf8CXSg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVyAyhCc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D22CC4CEE4;
+	Tue,  1 Apr 2025 14:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743516483;
+	bh=KcH6QnN1ToeMjkWFnDuRgbTIuq/tA5Z4rE1hvUZnWd0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=lVyAyhCcYdlKQ2ijuTWLdsz9IzSq+PHZM7ImRDdMcAz23DwNFbEXwiamYfDFind4R
+	 8PDjkDozdl7JSvIvY/72pidY0DIQNCcBqZHC7I98RITHLJyEdxd5E5c6Ct0cCrS17V
+	 T7Uyk/0G7Jr/VvhF+zqCDMGSoTKi2ymNDWhESDqCS42QSEJ0uFufoXBdJheJwSYxgg
+	 YAfXtrwAyh+WxMDtRIQ9ejpNuka3VS6oW9VpZ7JFrLdG+OBz38LD49prQOp/fE/DTX
+	 kGzxjOr/Hw71Xi5Hzspbq1wRX47SPWplG4ISzBGtHfeeo5hA0yv7L66Ir9Vxxc9ejU
+	 UocAso/tdiU4Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E42DACE0869; Tue,  1 Apr 2025 07:08:02 -0700 (PDT)
+Date: Tue, 1 Apr 2025 07:08:02 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Dave Jiang <dave.jiang@intel.com>,
+	linux-cxl@vger.kernel.org, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, gourry@gourry.net,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	sfr@canb.auug.org.au, Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [BUG -next] ./usr/include/cxl/features.h:11:10: fatal error:
+ uuid/uuid.h: No such file or directory
+Message-ID: <2b0d7649-8998-40ef-b9ba-e1c91acf4c9d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <52a34c97-88d2-415e-a899-6583ae3ba620@paulmck-laptop>
+ <30a7f782-4388-45b6-bb3c-a0faf85b7445@intel.com>
+ <51e9823c-784c-4b91-99d4-0500aaf5cec0@paulmck-laptop>
+ <67e7301dc8ad7_201f0294a5@dwillia2-xfh.jf.intel.com.notmuch>
+ <1f48ba3b-9ba8-44e5-98c7-4c9abf95a935@intel.com>
+ <20250331132439.GD10839@nvidia.com>
+ <67eac8df3e217_201f02948d@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250331171755.GC289482@nvidia.com>
+ <67eaf14b7c611_201f0294ba@dwillia2-xfh.jf.intel.com.notmuch>
+ <4641ce2f-74eb-45ea-a2f8-c7d0db905b7a@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] clk: davinci: Add NULL check in
- davinci_lpsc_clk_register()
-To: Henry Martin <bsdhenrymartin@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4641ce2f-74eb-45ea-a2f8-c7d0db905b7a@linux.ibm.com>
 
-On 4/1/25 8:13 AM, Henry Martin wrote:
-> devm_kasprintf() returns NULL when memory allocation fails. Currently,
-> davinci_lpsc_clk_register() does not check for this case, which results
-> in a NULL pointer dereference.
+On Tue, Apr 01, 2025 at 12:31:20PM +0530, Venkat Rao Bagalkote wrote:
 > 
-> Add NULL check after devm_kasprintf() to prevent this issue and ensuring
-> no resources are left allocated.
+> On 01/04/25 1:17 am, Dan Williams wrote:
+> > Jason Gunthorpe wrote:
+> > > On Mon, Mar 31, 2025 at 09:54:55AM -0700, Dan Williams wrote:
+> > > > Jason Gunthorpe wrote:
+> > > > > On Fri, Mar 28, 2025 at 05:26:42PM -0700, Dave Jiang wrote:
+> > > > > > > For now the following builds for me, but it is a quite a mess to undo
+> > > > > > > the assumption that that the hardware object definitions can not use
+> > > > > > > uuid_t:
+> > > > > > +Jason.
+> > > > > Seems invasive?
+> > > > Yeah, it left a bad taste for me as well.
+> > > > 
+> > > > > Maybe just like below?
+> > > > I like that this avoids converting to the kernel's uuid API, however,
+> > > > not quite happy that it forces userspace to contend with the
+> > > > type-conflict with uuid/uuid.h.
+> > > Oh I see
+> > > > So how about one more riff on your idea?
+> > > Sure, works for me, please post it..
+> > b4 am supports scissors lines, so:
+> > 
+> > b4 am -P _  67eac8df3e217_201f02948d@dwillia2-xfh.jf.intel.com.notmuch
+> > 
+> > ...works for me. Do you still need a separate posting?
+> > 
 > 
-> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
-> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
-> ---
+> This issue got introduced in next-20250307 and got fixed in
+> next-20250311(not sure what fixed).
+> 
+> But again got re-introduced in  next-20250318. I tried bisection, below are
+> the logs.
+> 
+> One of the things I tried is to install the UUID packages on my set up and
+> after installing those packages, issue is not seen.
+> 
+> rpm -qa | grep uuid
+> 
+> libuuid-2.37.4-20.el9.ppc64le
+> uuid-1.6.2-55.el9.ppc64le
+> uuid-c++-1.6.2-55.el9.ppc64le
+> uuid-dce-1.6.2-55.el9.ppc64le
+> uuid-devel-1.6.2-55.el9.ppc64le
+> uuidd-2.37.4-20.el9.ppc64le
+> libuuid-devel-2.37.4-20.el9.ppc64le
+> 
+> So wondering is this not a setup issue?  Please advice.
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Me, I would hope that it would not be necessary to install seven UUID
+packages just to do an allmodconfig build of the kernel.  Perhaps naive
+of me, I know.  ;-)
 
+							Thanx, Paul
+
+> Bisect Log:
+> 
+> git bisect log
+> git bisect start
+> # status: waiting for both good and bad commits
+> # bad: [c4d4884b67802c41fd67399747165d65c770621a] Add linux-next specific
+> files for 20250318
+> git bisect bad c4d4884b67802c41fd67399747165d65c770621a
+> # status: waiting for good commit(s), bad commit known
+> # good: [4701f33a10702d5fc577c32434eb62adde0a1ae1] Linux 6.14-rc7
+> git bisect good 4701f33a10702d5fc577c32434eb62adde0a1ae1
+> # good: [cda4d1b29991d4500e9f65c6936b5d3ccd99ecbb] Merge branch
+> 'spi-nor/next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
+> git bisect good cda4d1b29991d4500e9f65c6936b5d3ccd99ecbb
+> # good: [9b22611592aa21d10f7d1b89352a618436dea7ac] Merge branch 'next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> git bisect good 9b22611592aa21d10f7d1b89352a618436dea7ac
+> # good: [264791f7669a8246d129cbb935c861debba2f116] Merge branch
+> 'driver-core-next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> git bisect good 264791f7669a8246d129cbb935c861debba2f116
+> # good: [3c51cb2d6ec7cecf724cd5d78a0633f61f31e726] Merge branch 'for-next'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
+> git bisect good 3c51cb2d6ec7cecf724cd5d78a0633f61f31e726
+> # good: [612481dbc16505cf5e940809ebf36d8460d174cf] Merge branch 'main' of
+> git://git.infradead.org/users/willy/xarray.git
+> git bisect good 612481dbc16505cf5e940809ebf36d8460d174cf
+> # bad: [892715be4379deb333376e573113fd75672eca6c] Merge branch 'rust-next'
+> of https://github.com/Rust-for-Linux/linux.git
+> git bisect bad 892715be4379deb333376e573113fd75672eca6c
+> # bad: [b33f4167a8a2b9b9cc6b3e06f79b030db82cf530] Merge branch 'next' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git
+> git bisect bad b33f4167a8a2b9b9cc6b3e06f79b030db82cf530
+> # good: [3b5d43245f0a56390baaa670e1b6d898772266b3] Merge branch
+> 'for-6.15/features' into cxl-for-next
+> git bisect good 3b5d43245f0a56390baaa670e1b6d898772266b3
+> # good: [d11af4ae2169672b690a4d07a9dfdfd76c082683] Merge branch 'for-next'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git
+> git bisect good d11af4ae2169672b690a4d07a9dfdfd76c082683
+> # bad: [5908f3ed6dc209e5c824e63afda7545805f75a7e] cxl: Add support to handle
+> user feature commands for get feature
+> git bisect bad 5908f3ed6dc209e5c824e63afda7545805f75a7e
+> # good: [18285acc2c047cda2449f426c09fc8969b04b8b1] fwctl: Add documentation
+> git bisect good 18285acc2c047cda2449f426c09fc8969b04b8b1
+> # good: [15a26c223fff58d9fa4ada12a8c35697f8ecdf6c] Merge branch
+> 'for-6.15/features' into fwctl
+> git bisect good 15a26c223fff58d9fa4ada12a8c35697f8ecdf6c
+> # bad: [9b8e73cdb1418f7c251c43b2082218ed9c0d0fee] cxl: Move cxl feature
+> command structs to user header
+> git bisect bad 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee
+> # good: [858ce2f56b5253063f61f6b1c58a6dbf5d71da0b] cxl: Add FWCTL support to
+> CXL
+> git bisect good 858ce2f56b5253063f61f6b1c58a6dbf5d71da0b
+> # first bad commit: [9b8e73cdb1418f7c251c43b2082218ed9c0d0fee] cxl: Move cxl
+> feature command structs to user header
+> 
+> 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee is the first bad commit
+> commit 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee
+> Author: Dave Jiang <dave.jiang@intel.com>
+> Date:  Fri Mar 7 13:55:32 2025 -0700
+> 
+>   cxl: Move cxl feature command structs to user header
+> 
+>   In preparation for cxl fwctl enabling, move data structures related to
+>   cxl feature commands to a user header file.
+> 
+>   Reviewed-by; Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+>   Link:
+> https://patch.msgid.link/r/20250307205648.1021626-3-dave.jiang@intel.com
+>   Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+>   Reviewed-by: Li Ming <ming.li@zohomail.com>
+>   Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>   Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> 
+>  include/cxl/features.h   | 112 +----------------------------
+>  include/uapi/cxl/features.h | 169
+> ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 170 insertions(+), 111 deletions(-)
+>  create mode 100644 include/uapi/cxl/features.h
+> 
+> 
+> Regards,
+> 
+> Venkat.
+> 
 
