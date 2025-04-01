@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-583118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66A8A776D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A1DA77703
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3311016961F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79CBC16A197
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13401EB5EA;
-	Tue,  1 Apr 2025 08:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035791EDA09;
+	Tue,  1 Apr 2025 08:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LOap55V3"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="ECK0v/CU"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E9C1EB5C9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5551EB5FC;
+	Tue,  1 Apr 2025 08:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743497324; cv=none; b=pgmFMMxleeJi4W6RhjIswU+qLiUiruJ6ldgmxGQKuQZ9IO/MZD3bZXVcemMnO4q8SO9O5SKtFX98fAtIBv4MfwHDP0GHT9qkSQYgBvApH5+bie7W8IZCbHB40qHwhYgwXg50lcsWcTMbh6JJLAIhpqNdzmaf4mMdOPyHeweawK0=
+	t=1743497868; cv=none; b=GmHPJS8dh6o0satYc9eQ6N+X/NjlCedAx8Y8z7RBrkYRVAuA7Wx6R7VKZvetIfre553IMNrjvWDPwEmAZkUOQuwggKopGxqRJ+YukXOpipu5m5N0dwbvUi4wkAy8QU/grS7vSbv2C8IKg7RCSPNEVUlvj4CxWnoz7JfET82nqPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743497324; c=relaxed/simple;
-	bh=08FBqjkfx80Xs7oU45TJaQnC32mDcslSUZJgPJvQo2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4dd4YuGnVvZFfsjmeaNvt87HiyoGzmYYkpLtuQ0FnQBj9oGauRQOLvC8Z5mPDIFuGWKqS6+ZLIR6QnHQHOEG/Pk1jcYVegvbC1a65MRpmby9L1u8QD+eazrAb2wi0Se9dC6qbIEos0QN7oT78YpsWwZhENi83YAcf2cufr/A+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LOap55V3; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22409077c06so143340455ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:48:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743497322; x=1744102122; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yt1Nb3A/KQmEAHpUtsnXqXFTpyRKk6b4Ck8YXLkwgWk=;
-        b=LOap55V3kEs+GbFB7qD30+dCHi9mG9xZaOW4BJsTVABlxGP+pdEl3q50JAWTlf/tl4
-         4ypViX+5NZG9538s5mk7UmXNixaLOMQXLcJHwEHz3jf9jmK2z/1yfIWVAiP2vPLKStRc
-         oEXWwSHdCDriLzc8UIpFrTUIE/8UkUlftFSebh7rppMX1tM04YL93ElW0Wufi6RrWjSg
-         UYRpHDR5PUB9tCGK/lrsSCRjVw/ArnkB7kskbPRNMeSwmss8J51nh3hfe3jFJgiPJGoH
-         oUtcFsYnaEUWOIBavQ3LuEzGYdn7iujcPGOqlC5Izns49jgYlHfefUH+p39m/wv9KckE
-         cURQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743497322; x=1744102122;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yt1Nb3A/KQmEAHpUtsnXqXFTpyRKk6b4Ck8YXLkwgWk=;
-        b=ayGEpk+JHM/I8vobG7FMlQGtV+BsMheZM1QQcE1jZbDDJp3pOgZmDhJ/BwgB//TFbx
-         3LjLKFr6SO3zv+Sh3P1tcB8Fn2FIlDb1yYdjwxB9x9hRL0xO40UW/Pbi0Qrw28BRW2Zn
-         NH6uaNfKykW2tzXkIujgsuSnJsTW7qC+eGz3M0k9Xk6W+afGUCRhRPYZx7Ozt/Z61MzG
-         fud8JptABlSvqZ2YkwCMzSN9wXMQBNk0KdPXC72X4eT5lg9H5bfd3WetMduilwAtx7A/
-         yPjqcVbZeOB5U6Pa+8WKAFJU7GBmhrc6woYWQGrI7Nx7mRsmeSOrkue4XTYWe+pWhDxe
-         rwiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvtO01hPaoPMEnMALERLQqEQgMyvVlay+9WRAywbtl6IYQBj1ocY9OtuiPuTYebYiJRUISBGzPJUvHsao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfTaG0O3pA/sNLT2P9gysfwk61oFKzylu72arqHdEc1g34QNjl
-	yu3DtiYPmKsSBKDy4zwpnuhlyVEoXXtpeS5FQHr0qjmDsknnLY+f/e/36LonLog=
-X-Gm-Gg: ASbGncvU3NQ00HHhP2CyC4ssnxIIzgPJ8w3rCTKirrTntC5ylXiGXRw4EI9UvuKYFXg
-	whvtVAOGAYi0S5hu6/64y0P/lGrNavfBl+gXFMqItG48nnbXBqF/d1daXvNyCEEuSqoFoNT1and
-	vJZXhAvkfeR5o/ClBI6zfUzrgMa14a+XBjmDao3YiAuASOUKhMrm6LsEMX08Yy6pNSQg1yturca
-	MT8E/dCbYjD7P55OlgnudBH9QhFyQEygkliJPyTF+HSuXFB/XwFKKTTfSiMu86+uoGk0Jf3CQVc
-	POHYSjUoLtwzca2f/6dQsLh5jiV4IfcKX2wN9zrSc/rM0Q==
-X-Google-Smtp-Source: AGHT+IFL1sDm5En/LlSUmAMxBf5diaA51dnuNOwJd7pAb4DGV1ifvlM2YmefBPSpaQm0iOm9Y4TBaA==
-X-Received: by 2002:a17:902:e883:b0:224:fa0:36da with SMTP id d9443c01a7336-2292f96200bmr123211785ad.18.1743497321681;
-        Tue, 01 Apr 2025 01:48:41 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1cf688sm82999155ad.121.2025.04.01.01.48.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 01:48:41 -0700 (PDT)
-Date: Tue, 1 Apr 2025 14:18:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v1 08/10] cpufreq: Use __free() for policy reference
- counting cleanup
-Message-ID: <20250401084839.24udjvxxvvg3mim5@vireshk-i7>
-References: <4651448.LvFx2qVVIh@rjwysocki.net>
- <9437968.CDJkKcVGEf@rjwysocki.net>
+	s=arc-20240116; t=1743497868; c=relaxed/simple;
+	bh=d78V2SRfd+yrCnP+CSQdEt2iDe09S12xQHysnYKYb54=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bXJIuzF7tnEP72F8BwKHuA7YiZiO21EesHicz59rszdwwQYe7XZMBvqrlsJnuAUYzUp8sTvvtMZ8d7goMVA/93mp1bck8hm0Ch/Aj/fwMXDiWPpOEHb2n1OyNtxSu46ncusBhpHJQKduM9f/9dBgcQqnhy/WgGz0mR4xdaqsz7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=ECK0v/CU; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1743497344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WL4H1/n+KU4vDHV20Jk9Fts6NmwKIU67Olt2xVADMKQ=;
+	b=ECK0v/CUv5HYRLgRT7DeRHtoMrKwucrsQs2muDt0Obk5vr7SY/cKmt4bHi8EwKH/q85qbt
+	fUhcG6kxBrmOcGnQKl88z/WlbIjL8Zrz6gPGvmEmeawsmNKCG1lt7o1TsCV9me/frKXqK4
+	j/gQq9Bb/OBzjPpc4dkI6SGFs+j20pY=
+From: Sven Eckelmann <sven@narfation.org>
+To: mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, Wentao Liang <vulab@iscas.ac.cn>
+Cc: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] batman-adv: batman-adv: handle tvlv unicast send errors
+Date: Tue, 01 Apr 2025 10:48:59 +0200
+Message-ID: <22646445.EfDdHjke4D@ripper>
+In-Reply-To: <20250401083901.2261-1-vulab@iscas.ac.cn>
+References: <20250401083901.2261-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9437968.CDJkKcVGEf@rjwysocki.net>
+Content-Type: multipart/signed; boundary="nextPart7787093.EvYhyI6sBW";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On 28-03-25, 21:46, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+--nextPart7787093.EvYhyI6sBW
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Date: Tue, 01 Apr 2025 10:48:59 +0200
+Message-ID: <22646445.EfDdHjke4D@ripper>
+In-Reply-To: <20250401083901.2261-1-vulab@iscas.ac.cn>
+References: <20250401083901.2261-1-vulab@iscas.ac.cn>
+MIME-Version: 1.0
+
+On Tuesday, 1 April 2025 10:39:00 CEST Wentao Liang wrote:
+> In batadv_tvlv_unicast_send(), the return value of
+> batadv_send_skb_to_orig() is ignored. This could silently
+> drop send failures, making it difficult to detect connectivity
+> issues.
 > 
-> Use __free() for policy reference counting cleanup where applicable in
-> the cpufreq core.
+> Add error checking for batadv_send_skb_to_orig() and log failures
+> via batadv_dbg() to improve error visibility.
+
+This looks more like patch you've added for printk-debugging and nothing for 
+stable. And you ignore that it can also return things like -EINPROGRESS. Which 
+is not an error.
+
+You can also see that this was just for printk-debugging because the error 
+class and message has nothing to do with the actual code.
+
 > 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Fixes: 1ad5bcb2a032 ("batman-adv: Consume skb in batadv_send_skb_to_orig")
+> Cc: stable@vger.kernel.org # 4.10+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 > ---
->  drivers/cpufreq/cpufreq.c |   57 ++++++++++++++++++++--------------------------
->  1 file changed, 25 insertions(+), 32 deletions(-)
+>  net/batman-adv/tvlv.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/batman-adv/tvlv.c b/net/batman-adv/tvlv.c
+> index 2a583215d439..f081136cc5b7 100644
+> --- a/net/batman-adv/tvlv.c
+> +++ b/net/batman-adv/tvlv.c
+> @@ -625,6 +625,7 @@ void batadv_tvlv_unicast_send(struct batadv_priv 
+*bat_priv, const u8 *src,
+>  	unsigned char *tvlv_buff;
+>  	unsigned int tvlv_len;
+>  	ssize_t hdr_len = sizeof(*unicast_tvlv_packet);
+> +	int r;
+>  
+>  	orig_node = batadv_orig_hash_find(bat_priv, dst);
+>  	if (!orig_node)
+> @@ -657,7 +658,10 @@ void batadv_tvlv_unicast_send(struct batadv_priv 
+*bat_priv, const u8 *src,
+>  	tvlv_buff += sizeof(*tvlv_hdr);
+>  	memcpy(tvlv_buff, tvlv_value, tvlv_value_len);
+>  
+> -	batadv_send_skb_to_orig(skb, orig_node, NULL);
+> +	r = batadv_send_skb_to_orig(skb, orig_node, NULL);
+> +	if (r != NET_XMIT_SUCCESS)
+> +		batadv_dbg(BATADV_DBG_TP_METER, bat_priv,
+> +			   "Fail to send the ack.");
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+No, this is definitely the wrong error class. And why do you think that it is 
+an ack?
+>  out:
+>  	batadv_orig_node_put(orig_node);
+>  }
+> 
 
--- 
-viresh
+Kind regards,
+	Sven
+
+--nextPart7787093.EvYhyI6sBW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZ+uoewAKCRBND3cr0xT1
+y2qlAP9WnQgyuTR1ObdOwnfoccPeZM0k100Xsm1CijZC5WAcyAD+NywbzgD5+yMk
+e/XenInlVjSxcxl696zJLzJxWyD3cws=
+=d3Hb
+-----END PGP SIGNATURE-----
+
+--nextPart7787093.EvYhyI6sBW--
+
+
+
 
