@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-583814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A22A78017
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C8BA78027
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D93316E07F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D12116EF9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8664F2236E5;
-	Tue,  1 Apr 2025 16:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0312135DE;
+	Tue,  1 Apr 2025 16:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IieQ04KH"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jhRQUPTO"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AAC20F069
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 16:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68E820D4F8;
+	Tue,  1 Apr 2025 16:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743523942; cv=none; b=CVd7bVRnTpMp0B0viy8TtsNlUt95jC1gTwZICaVwTtaFokxqNjrTUJve6XXMTcMcxrjZrGoG3JQ1JnRvFSaJxL2vIPVgjTnGVbLvuXECCF+Hl975nlpTayCXpogHMY+OR5Exeps47+EQEhWM5Ai+RAI1hVV0S05m48rbSGJ70PQ=
+	t=1743524009; cv=none; b=QFvj57Ci/BGNLcYzwqKYG+EJTsKDNwY2QHAjIDbHZAU5mCwwE6h8DCc/9Q0pioMgYqITh1lJUAKX2kwlNx83g4hWhcCrftt5GxbpfE4rG0GMXrQYcQIM18QhY2RQMlLA29+ch/jMAXZZlOorOU0NRAkf/+5jTz0umWzozkXl4eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743523942; c=relaxed/simple;
-	bh=x6iH1miz4SBrShUgnRfWCAm4cElQH+nuoE2PFcN3gX4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pxQHbBvnL48zE+h4GkXw/ZhIZO7FXmXr516V8d63z3QFx6x7fYTLIRJuglrkG7cjeaSN0jIhI16aY991Vuim3wHDZv1jmxgQ7hidMPzmPs7J1Jd4oZDbfrJLPtJe+nckFZHHVvdmQcXubP5LGdOGCQXpy5sV16Z9bWOca9l+Ddc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IieQ04KH; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e61375c108so7523261a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 09:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743523938; x=1744128738; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0cWPyIGalJTJpOn4sOHZYmIkTB2QC9Z2olFNCWNik4=;
-        b=IieQ04KHyOzv6EyM94pwsXD8VnSMzo840xdz12Q51btx0Q8Bb0HUCMWmvpSN1/OsXJ
-         fPNiK+fzy77MWtmS7DWtRaM1TeIopdxVUtTGje5Z7cDhoabsMVk2B6YLuNo9Kvc1POee
-         42LzwlcTe6mTztDFFET0EhdYHaHuPyM2k/4WE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743523938; x=1744128738;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R0cWPyIGalJTJpOn4sOHZYmIkTB2QC9Z2olFNCWNik4=;
-        b=nOcOVFf4m04wC9W4cNrePScnppwzQjQ+rSlePodLEUaG7WnSRdQ0l0AuhanPF0CjN8
-         p0Nwp2BkRqsycnxwkE9Uo/nZw9a9jd/kmAyslPnjGfV7lkWAkxrA+l+BeYUYIcIzZk95
-         Ug+n1DzBKzwEk8InWEdi4dcc+Lo2TRuyoOZ1vh3twZZwSWLDjSdxUAVEAnEb29I0/A+k
-         5JgVRQ2PXMslOWJiI740w8Z9tc0hFH8SFhJ/k5iAsTWsFngvKiRemqUOgItNJPMoJJlF
-         ENkqoEvOBNJqEUCccKYPZB48cOgePvFKxbAskG3kgowc07TvfNjrnKqaR62DvsxoJZ7/
-         ZJrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMS7JDmorFIIhp5INKENKc9tdjmGkFaFQLU9PH4e3XHC95W2sYAZUr3TRFZokGXohezpGYYTuLSkXs2ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHYQZqpLgQJZ3hV73sgDfbfdeQnoRSyh6+j296yNRFKdy0Z2mX
-	UVMUSlT1QghbajM08W9UMNBoh8rv3iVLI/0KfGl0AgYnjLc8ZYz3Z0Hwie8JOCtIm/9q9DEnUhZ
-	ge20=
-X-Gm-Gg: ASbGncufHJmO/afPJr8J0ydyb0sc3e13fD0soDcCypQxxAVmMZ0xlmzfzfaK0A7HnWZ
-	WxTMdvbgAPPJ0aKJIiF+TnYcF7oJWKTfRCWQhTkWWrAHqlluvsB9+AsQew9OHQrBcjmMazS+V/0
-	56kdBHL/uYK/hEJ5xHPQriAPc6jZahqfvHfRvb4zRfj4hvkApos9ZF+XbRVi+V1DgXzf2o5jYSO
-	adN8k+fUAYu/2687UnIShMUQMZQBxETL0deZKLStzO6PwcBvXjedh9R6gbYI9M0aW8BSq9eIEXi
-	zqFe0kAX8QgMszN36NPO0mQPLV+CcLJH+kDkMWDhq8GXSze/o6GQzMKHMrhLc9v5kDa6A7g4b/D
-	uWCtPL/6A7tJ8ggeQh5M=
-X-Google-Smtp-Source: AGHT+IHYHskDkG+5x/8DYLHToi8c83BNIJYQfAVBmEFsZqXBsXlVY6eDlJikno3DIEcDHtwQuH+rVQ==
-X-Received: by 2002:a17:907:868a:b0:ac3:bd68:24eb with SMTP id a640c23a62f3a-ac7389e793cmr1421861566b.1.1743523938027;
-        Tue, 01 Apr 2025 09:12:18 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71967ffcdsm797629166b.140.2025.04.01.09.12.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Apr 2025 09:12:17 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so9248325a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 09:12:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXpTnH8pBsFgvKqwEAV72Mc5Uqwf83ore3NGUMCkavZuHazgTHS6QewsiRFoFknPOWdkVXa0PxYOLK+oTA=@vger.kernel.org
-X-Received: by 2002:a17:907:60ca:b0:ac7:95b3:fbe2 with SMTP id
- a640c23a62f3a-ac795b40722mr84123166b.56.1743523936719; Tue, 01 Apr 2025
- 09:12:16 -0700 (PDT)
+	s=arc-20240116; t=1743524009; c=relaxed/simple;
+	bh=oSwJs4scoL8ULhTOhuRgce9k9EhyWpP90w5Fz+liDCo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K6CFnKe/J7ki/HgQLd++Gv+KMI7PBwMP8cu8OAWVxZ9G3XQ8k86f5Iy+VInXfDLuGzIy/7eIquZ2xEFZ2wAoEr7xUnU6D97j2K60DeUKly7Tc5RnK0ttfJO7entDj8HptgYv3aZtdbs5QFBwqdTVSHMUwMuqV4dkuqws2YHjYbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jhRQUPTO; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1743524007; x=1775060007;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oSwJs4scoL8ULhTOhuRgce9k9EhyWpP90w5Fz+liDCo=;
+  b=jhRQUPTOpmJIrU5FW5z3G4Mk/6MUJXlUxUZn+ItYqMfqi5geR/WI1aRh
+   lzSfEUo55TOjy1fVle7+TwJ/lqeS1W5p5qXALSqNaXELXeQd8nk082BvM
+   MHhJ5ggFQT9c4YZHmECq3+UIOAZ0FX5O90MGLznSkXgb7uLT6w1ogWpFS
+   km4PXL27oufKrt+YIUtf6zEDOunDAcHwjw/PeBCZkk3Pn9UDhRysg/hLO
+   HcIc2Vbe3G0rEixpXX1BIeQ/oETLmTiIqZvelCqdMWYvPcWxa5yDUruOP
+   sc1leSVPbsoUYXDb2A6z+iytJRs00DSq8ZrHaJ+sLTCnzrDIx1WsypZqH
+   A==;
+X-CSE-ConnectionGUID: ggLzNIpETriZ0zPViMY9HA==
+X-CSE-MsgGUID: rWQOGm/mQu2gEKSfpww8yQ==
+X-IronPort-AV: E=Sophos;i="6.14,293,1736838000"; 
+   d="scan'208";a="39512774"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Apr 2025 09:13:21 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 1 Apr 2025 09:13:01 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 1 Apr 2025 09:13:01 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <onor+dt@kernel.org>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <nicolas.ferre@microchip.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Ryan Wanner
+	<Ryan.Wanner@microchip.com>
+Subject: [PATCH 0/6] Enable FLEXCOMs and GMAC for SAMA7D65 SoC
+Date: Tue, 1 Apr 2025 09:13:16 -0700
+Message-ID: <cover.1743523114.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tyx=edsZ3ajuAUAv4vjfa=WNEzobqAsYbBTjCfLbuEeFQ@mail.gmail.com>
- <CAHk-=wjcdfrDTjzm6J6T-3fxtVyBG7a_0BXc2=mgOuM6KPFnCg@mail.gmail.com>
- <87h6394i87.fsf@intel.com> <Z-p2ii-N2-dd_HJ6@phenom.ffwll.local>
- <20250331133137.GA263675@nvidia.com> <87tt782htn.fsf@intel.com>
-In-Reply-To: <87tt782htn.fsf@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 1 Apr 2025 09:12:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiP0ea7xq2P3ryYs6xGWoqTw1E4jha67ZbJkaFrjqUdkQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrv7hzkHPbwtJqWz0Cd1SXHgUtjes9IRxVS7PrDi4g4uM9zP-lB0F8gOBM
-Message-ID: <CAHk-=wiP0ea7xq2P3ryYs6xGWoqTw1E4jha67ZbJkaFrjqUdkQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.15-rc1
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Dave Airlie <airlied@gmail.com>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, 1 Apr 2025 at 05:21, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->
-> The header checks have existed for uapi headers before, including the,
-> uh, turds, but apparently adding them in drm broke the camel's back.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-The uapi header test things never caused any problems for me [*],
-because they don't actually pollute the source tree.
+This patch set adds all the supported FLEXCOMs for the SAMA7D65 SoC.
+This also adds the GMAC interfaces and enables GMAC0 interface for the SAMA7D65 SoC.
 
-Why? Because they all end up in that generated 'usr/include/' directory.
+With the FLEXCOMs added to the SoC the MCP16502 and the MAC address
+EEPROM are both added to flexcom10.
 
-So when I look at the source files, filename completion is entirely
-unaffected, and it all works fine.
+The dt-binding for USART is here [1]. And the dt-binding for DMA has
+been applied here [2].
 
-Look, I can complete something like
+1) https://lore.kernel.org/linux-arm-kernel/20250306160318.vhPzJLjl19Vq9am9RRbuv5ddmQ6GCEND-YNvPKKtAtU@z/
+2) https://lore.kernel.org/linux-arm-kernel/174065806827.367410.5368210992879330466.b4-ty@kernel.org/
 
-    include/uapi/asm-generic/poll.h
+Ryan Wanner (6):
+  dt-bindings: net: cdns,macb: add sama7d65 ethernet interface
+  ARM: dts: microchip: sama7d65: Add gmac interfaces for sama7d65 SoC
+  ARM: dts: microchip: sama7d65: Add FLEXCOMs to sama7d65 SoC
+  ARM: dts: microchip: sama7d65: Enable GMAC interface
+  ARM: dts: microchip: sama7d65: Add MCP16502 to sama7d65 curiosity
+  ARM: dts: microchip: sama7d65_curiosity: add EEPROM
 
-perfectly fine, because there is *not* some generated turd that affects it all.
+ .../devicetree/bindings/net/cdns,macb.yaml    |   1 +
+ .../dts/microchip/at91-sama7d65_curiosity.dts | 207 ++++++++++++
+ arch/arm/boot/dts/microchip/sama7d65.dtsi     | 299 ++++++++++++++++++
+ 3 files changed, 507 insertions(+)
 
-Because for the uapi files those hdrtest files end up being in
+-- 
+2.43.0
 
-    ./usr/include/asm-generic/poll.hdrtest
-
-and I never have any reason to really look at that subdirectory at
-all, since it's all generated.
-
-Or put another way - if I _were_ to look at it, it would be exactly
-because I want to see some generated file, in which case the 'hdrtest'
-turd would be part of it.
-
-(Although I cannot recall that ever having actually happened, to be
-honest - but looking at various header files is common, and I hit the
-drm case immediately)
-
-Would you mind taking more of that uapi approach than creating that
-hidden directory specific to the drm tree? Maybe this could *all* be
-generalized?
-
-           Linus
-
-[*] I say "never caused any problems for me", but maybe it did way in
-the past and it was fixed and I just don't recall. I have definitely
-complained about pathname completion issues to people before.
 
