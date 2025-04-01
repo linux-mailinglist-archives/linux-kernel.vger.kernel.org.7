@@ -1,185 +1,224 @@
-Return-Path: <linux-kernel+bounces-583633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FD5A77DAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:28:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F622A77DBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7181164032
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:28:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909887A3EB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492EF204C10;
-	Tue,  1 Apr 2025 14:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061A204C0F;
+	Tue,  1 Apr 2025 14:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ELMMGA8q"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DbvgWOY2"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAC320459B
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4935F204C0B;
+	Tue,  1 Apr 2025 14:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743517682; cv=none; b=HvljOJ/c0TR0R9O2i+Kz5acDC8jaJe0QqU+HkDoD03BCpgZePD5x8nzFGoZtfwSsFHGJj0pwSWg+vHYkPCedAqRhFGaq/e/6vGbdgWeWjufb9+Mbg49sHqPOggCuJCMyF+c9lnQio5+NRx9X7cgxCumuMqmC8KAuKxSEyF6zWBo=
+	t=1743517804; cv=none; b=MznTs9XW9WFjlc+QclqyWDkT7rAXOwXHGG22iWdnXNo++3S+v5SlzgFNP3HzxLX51HtQbUuMX9KhJ0MqgCBp8ZUaXBQRmiHzDp5ibhmxdsN25vAk8Q7Mymt/7K0Flcna0tZwPKN1B3mZx8eBDINeIMHxSryiouve+pmDWTnJl5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743517682; c=relaxed/simple;
-	bh=IqeR4+j070w8clCsixhEuqi570LmTfs1Y4J3Lw6IgJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kd2xKDGITlyst8KEvHA3myZcVYsw+fVKU10px1DwdtcoPrFeCHb0bKnmftul9TIZUaIxy/DQW8nG8l2lu0ObgatqkWIjWlTSQwL4YhGsh0wKcLNR/AjxqaPZVeUzxqJIUdR7uZE7V1a5UktjrYmSK5aSbUhQKfsWaqso8k6li7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ELMMGA8q; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4769aef457bso60521971cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:28:00 -0700 (PDT)
+	s=arc-20240116; t=1743517804; c=relaxed/simple;
+	bh=5aT0Vi1k+xqWtEzhocv4+cEoo/Fhlmc15jH+tEVAXik=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=t265azP+ofStxMPz6QBjvxLI6y8gD5gXJ2s6Ry/gC8yF1KBR2mu56h8LcMRB4NfrB1dLrEM3NnBK9iLs48SPkjz0hdEs5J1/JrKo5/GeQuClimBetLTssTubsL5Iy4wmMUYJGse4X1tFCQvAMm18LfhfnAetbOZ+uPnwjaMMNt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DbvgWOY2; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2279915e06eso114874645ad.1;
+        Tue, 01 Apr 2025 07:30:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1743517680; x=1744122480; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBsGxdJPH/E8qU+Rqu4TXW0stjGoPerhX8EEobjMDSs=;
-        b=ELMMGA8qZzm5vwxFzb2+nSUG/Dri4BZJt56lL03E00KOZ6rEsRJFtiHUKuQ+3GMztZ
-         oqFAoZYQuFIRNgDWWoR02G5U9cyWEnYO8obNHz2+RH3zRTYcF1sr8H/oF0appHvPVV5V
-         eAXAb0/jQC93sQGAZPBOQoG6kUm7YrsNBbVtTpNG548ovqs85d7iOzyMwBWqmBwGklvU
-         ZAW8p9aEgR3075eBRQACHEGruYQr6wtJBwTAN04H48ywIaCo5CkE97N1v+7r9PFOepVh
-         l8oBUesjtfRIlCQWPy/mcDsfi0kTF3P9vJFKLOZK8inUfxuRO0shiZY8ynbm2wqs9D1c
-         XYvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743517680; x=1744122480;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743517802; x=1744122602; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tBsGxdJPH/E8qU+Rqu4TXW0stjGoPerhX8EEobjMDSs=;
-        b=udvlpvJMMfeE7VYM79Zyv5I+GntyUXhn8vcC/K3g6tyJuVMQi1TTWv8jAgRl34nUg7
-         s+MVS1DX6IiH3OYd07NwqXTz5yZ/7/kPGn/bCb9C8cebKb+RUWtOPfmWuRIlJjy/Y69o
-         1/hWT80vk5Um8rT++mfrQxWKa80L8muVuIvuTMNdwVeg34gS2nk2DHBxh1jTWxocs//x
-         bF+iTZCM5zQl1uvOG3W6ZHFnmWpVINiWD86CVBE7K/VX5G7U6e3p6duGgjby4AJ0V0GG
-         bBAUan7Tx3enN++hNV6uZ6EPDQsLx4IX1MXRUyWiEecW8rp9BfbhqrY4UWNRx5uyP88z
-         iL6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdSIluyjVVx3VlbzQpD6jpzPqvuM1ZuLociFC7PKb2bcLOZUyO3qlwxVNv0n/V2MXCXRrformT9E3kLpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsirUTt53NjIhF/ZGgzwcdix25NIjuv+eOgBRW+l1lOhb+W4MF
-	B2dDSDmaG9lv3jE9nLscxAhvxjBDHT5MtHRT4zpG7Z3E5T0cMlSr6aMYQ4jBaw==
-X-Gm-Gg: ASbGncu/7db1GR1et0vnaqcTSdgi5EGhNo9ob6QK3ENA4TQdq/0eNiulgifwg0n3DnT
-	PD6gJvQAnRUYg50WgcFeoXvQoK7P2lvrdm4yw0SK0ZmTqMFbqm8qPTr//oLSYkmb22EDl9aOJM6
-	BIUGy73KpwrqTgJttvx8mXqEBhl4fVKSARMTxoIFyKxASIA7Q00lBfYIwWKZja3TrVDHZQ9tUZc
-	He9vuAxa+Cb1deSFk7o0uB6leMTRonrghdn9n0wbgQq51SWxqirZEWPO1H1UwrAneJ4KXptdaUa
-	1aqImgc9V32wzYOEZP+WMqoY1zWIUKkqCLHJK6rJl2/v5h65NaI6g5ViuYyf6Ow=
-X-Google-Smtp-Source: AGHT+IFEKmOpPUSraS63vAvOPCVai+Xm/1BBClBbiL0zWd5LKZcI80Wj5NNyxFqzsAbFWw7hs2psnw==
-X-Received: by 2002:ad4:5caa:0:b0:6e5:a0fc:f663 with SMTP id 6a1803df08f44-6eed5e2f0a1mr151164496d6.0.1743517680004;
-        Tue, 01 Apr 2025 07:28:00 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eec9771c2bsm62030206d6.84.2025.04.01.07.27.59
+        bh=rVsBRCp8zVFqM6Ir5qAGimm+EcciqA65qMc7SI4hE8I=;
+        b=DbvgWOY2fJrCqnA43KiCs9Uf0L2G+gOeUZCMHk2RFlLy1Lp2oL36vnrTr6AU/2GC9J
+         +XfR1MQbqo2vnvSuL6V6qFb6ZCDqdJnadCS7AStO1QLzEcqGqOU+cA3Vl9MvdZVNUkNY
+         I4L50oecNizSQOvcakGTRSLuxkDIOSZvH4nDDEU+3bnQbSsa84EEinR43496VxU2vFmo
+         C5PLj3KOmzLCQMTaYhmOsKiazaekPaUB41WGO7gNXg3+JMKhvSA6PSEJU6LjinagvX4I
+         eFGjyWWXySawBrnYp0U4o8fUGY9ScpthgBP64HtRjo9mB10UVRzXKJLpq4AvF0WT6Ila
+         Bi9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743517802; x=1744122602;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rVsBRCp8zVFqM6Ir5qAGimm+EcciqA65qMc7SI4hE8I=;
+        b=HMn5D+VqEqBlYMiTEeMQH/67SPRdFCHpaCNvkfJQSG+qBZ80eV9wAjqUSxYQuk+2oJ
+         js+2NQCaYV2QIhl1stAtr2vsMGu7pvqkgQU61VsFlXccuOz6RcJKWrWrcQAbcyBf0OjX
+         WShibP9s8Y130b3W/jyexjZcUKI0hYzLiKExRxg/TDB5GDk8NkPP+M58A9n6IudDJs5w
+         4dhHmAuHzozNJOyB6dyhutYg85CjkffuELqwCSlWweKSFsHJwTCoHIfYTzm+WWz+rfz1
+         VFw01ueeakPmrwUjFU25edBb85VOKZA8tWLYSkd6RRIdb/uWn44Cmg82yhq6kobmou44
+         rSSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFi+LJ054DYg0BZYBW0KZ5NQLOPVgYah1owqWpSWknz4hdX4HVA1nh8NvevtUNKhent0W23yQLcRBZog==@vger.kernel.org, AJvYcCWw1U5p1w+Mn4HzMgxycKb0pn3jWVuwZgVM+yGIcRz1UPy/IHzkvSdP0gU4ejVlTUfFSsmikMTwT1oy6Dj/@vger.kernel.org, AJvYcCXz30iCTuCvFlGnRZaS6c0ik/VeDdbKsx7VeITPRpEF8LzDVuONiasCP8TbAyhYMzmKWfCsSuGyxkGS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1lS9lWr2X9LSNy/TTLdDwYspep3hWapHqVMd7F5sxkm9q+mxR
+	NfxLKvXpf7UVf/D5ZSz6CagjmRFU70zNHQvudo9/YtzyFmRpEZbx
+X-Gm-Gg: ASbGnctclMmOTm/7SzyRdVmidAxnLZy9iqsrYjxHIGhJNjal90/9PmAA/dzwFkA6OJH
+	5FDC/baAwf+wrEfAABO03dUk0G56PmxYxlZjGYd2ioo6RlX4vBkmJ5ia5FcVMxYBS3diIdrEy90
+	NRrNtEImFoZSo5DG0FCu1fEua1PKVrefxwh+RwM+6bSW91ZUNbVJs61YkdVqzcP8Tn/kdXA192i
+	vsp2rf/1oU7ctroJ15Uwf7knxsJj8wyPltE8eZD71VA4EYbBFfPlUxqfWGPjihQwCRYLfr98tKg
+	6bW9PA7Uv1tnb0UQt1QIE22dw21t4Jr+yjOKCMWbGhqEwNoUdfHN7BIRPclqKNSFnO1l
+X-Google-Smtp-Source: AGHT+IG+94AfeekEAG6y/22oBIgghPbGZmP0jjSCOSTaY1D8CCsKfb/87Ko5NqqbHw5HJ40H0Ay/cw==
+X-Received: by 2002:a17:902:ef4d:b0:224:2200:5940 with SMTP id d9443c01a7336-2292f9d4e35mr245160495ad.38.1743517801786;
+        Tue, 01 Apr 2025 07:30:01 -0700 (PDT)
+Received: from localhost.localdomain ([123.16.133.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eee210csm89356995ad.70.2025.04.01.07.29.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 07:27:59 -0700 (PDT)
-Date: Tue, 1 Apr 2025 10:27:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Guan-Yu Lin <guanyulin@google.com>
-Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
-	sumit.garg@kernel.org, kekrby@gmail.com,
-	jeff.johnson@oss.qualcomm.com, elder@kernel.org,
-	quic_zijuhu@quicinc.com, ben@decadent.org.uk,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 4/4] usb: host: enable USB offload during system sleep
-Message-ID: <cc96ceae-304e-4113-86f8-06b6037ffd4b@rowland.harvard.edu>
-References: <20250401062951.3180871-1-guanyulin@google.com>
- <20250401062951.3180871-5-guanyulin@google.com>
+        Tue, 01 Apr 2025 07:30:01 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: krzk+dt@kernel.org
+Cc: pavel@kernel.org,
+	lee@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: leds: Add LP5812 LED driver
+Date: Tue,  1 Apr 2025 21:29:35 +0700
+Message-Id: <20250401142935.50906-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <8d9f077b-e656-438c-a9bd-76915d135e24@kernel.org>
+References: <8d9f077b-e656-438c-a9bd-76915d135e24@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401062951.3180871-5-guanyulin@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 01, 2025 at 06:22:42AM +0000, Guan-Yu Lin wrote:
-> Sharing a USB controller with another entity via xhci-sideband driver
-> creates power management complexities. To prevent the USB controller
-> from being inadvertently deactivated while in use by the other entity, a
-> usage-count based mechanism is implemented. This allows the system to
-> manage power effectively, ensuring the controller remains available
-> whenever needed.
-> In order to maintain full functionality of an offloaded USB devices,
-> several changes are made within the suspend flow of such devices:
-> - skip usb_suspend_device() so that the port/hub are still active for
->   USB transfers via offloaded path.
-> - not suspending the endpoints which are used by USB interfaces marked
->   with needs_remote_wakeup. Namely, skip usb_suspend_interface() and
->   usb_hcd_flush_endpoint() on associated USB interfaces. This reserves a
->   pending interrupt urb during system suspend for handling the interrupt
->   transfer, which is necessary since remote wakeup doesn't apply in the
->   offloaded USB devices when controller is still active.
-> - not flushing the endpoints of actively offloaded USB devices. Given
->   that the USB devices is used by another entity, unilaterally flush the
->   endpoint might lead to unexpected behavior on another entity.
-> - not suspending the xhci controller. This is done by skipping the
->   suspend/resume callbacks in the xhci platform driver.
-> 
-> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
-> ---
+On Mon, 31 Mar 2025, Krzysztof Kozlowski wrote:
 
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1420,11 +1420,20 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
->  			udev->state == USB_STATE_SUSPENDED)
->  		goto done;
->  
-> +	if (msg.event == PM_EVENT_SUSPEND && usb_offload_check(udev)) {
-> +		dev_dbg(&udev->dev, "device offload active, skip suspend.\n");
-> +		udev->offload_at_suspend = 1;
-> +	}
-> +
->  	/* Suspend all the interfaces and then udev itself */
->  	if (udev->actconfig) {
->  		n = udev->actconfig->desc.bNumInterfaces;
->  		for (i = n - 1; i >= 0; --i) {
->  			intf = udev->actconfig->interface[i];
-> +			if (udev->offload_at_suspend && intf->needs_remote_wakeup) {
+>Please do not explain me how DT works, we all know. You do not have
+>child node. If you disagree - point me to the line in schema having it.
 
-Why is intf->needs_remote_wakeup part of this test?  There should be a 
-comment explaining this.
+Thank you for your feedback.
+I now understand that my schema does not define child nodes, so #address-cells and #size-cells should not be included.
+I will update the schema accordingly as shown below.
 
-> +				dev_dbg(&intf->dev, "active interface on offloaded devices\n");
-> +				continue;
-> +			}
->  			status = usb_suspend_interface(udev, intf, msg);
->  
->  			/* Ignore errors during system sleep transitions */
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/leds/ti,lp5812.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
 
-> @@ -1524,17 +1536,26 @@ static int usb_resume_both(struct usb_device *udev, pm_message_t msg)
->  	udev->can_submit = 1;
->  
->  	/* Resume the device */
-> -	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume)
-> -		status = usb_resume_device(udev, msg);
-> +	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume) {
-> +		if (!udev->offload_at_suspend)
-> +			status = usb_resume_device(udev, msg);
-> +		else
-> +			dev_dbg(&udev->dev, "device offload active, skip resume.\n");
-> +	}
->  
->  	/* Resume the interfaces */
->  	if (status == 0 && udev->actconfig) {
->  		for (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {
->  			intf = udev->actconfig->interface[i];
-> +			if (udev->offload_at_suspend) {
-> +				dev_dbg(&intf->dev, "active interface on offloaded devices\n");
-> +				continue;
+title: TI/National Semiconductor LP5812 LED Driver
 
-If intf->needs_remote_wakeup wasn't set above then the interface was 
-suspended.  But here you're not going to resume it.  That can't be 
-right.
+maintainers:
+  - Nam Tran <trannamatk@gmail.com>
 
-> +			}
->  			usb_resume_interface(udev, intf, msg,
->  					udev->reset_resume);
->  		}
->  	}
-> +	udev->offload_at_suspend = 0;
->  	usb_mark_last_busy(udev);
->  
->   done:
+description: |
+  The LP5812 is an I2C LED Driver that can support LED matrix 4x3.
+  For more product information please see the link below:
+  https://www.ti.com/product/LP5812#tech-docs
 
-Alan Stern
+properties:
+  compatible:
+    const: ti,lp5812
+
+  reg:
+    maxItems: 1
+    description:
+      I2C slave address
+      lp5812/12- 0x1b
+
+patternProperties:
+  "^led@[0-9a-b]$":
+    type: object
+    $ref: common.yaml#
+    unevaluatedProperties: false
+
+    properties:
+      reg:
+        minimum: 0
+        maximum: 0xb
+
+      chan-name:
+        $ref: /schemas/types.yaml#/definitions/string
+        description: LED channel name
+
+    required:
+      - reg
+
+required:
+  - compatible
+  - reg
+
+additionalProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/leds/common.h>
+
+    i2c {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        led-controller@1b {
+            compatible = "ti,lp5812";
+            reg = <0x1b>;
+
+            led@0 {
+                    reg = <0x0>;
+                    chan-name = "a0";
+            };
+            led@1 {
+                    reg = <0x1>;
+                    chan-name = "a1";
+            };
+            led@2 {
+                    reg = <0x2>;
+                    chan-name = "a2";
+            };
+            led@3 {
+                    reg = <0x3>;
+                    chan-name = "b0";
+            };
+            led@4 {
+                    reg = <0x4>;
+                    chan-name = "b1";
+            };
+            led@5 {
+                    reg = <0x5>;
+                    chan-name = "b2";
+            };
+            led@6 {
+                    reg = <0x6>;
+                    chan-name = "c0";
+            };
+            led@7 {
+                    reg = <0x7>;
+                    chan-name = "c1";
+            };
+            led@8 {
+                    reg = <0x8>;
+                    chan-name = "c2";
+            };
+            led@9 {
+                    reg = <0x9>;
+                    chan-name = "d0";
+            };
+            led@a {
+                    reg = <0xa>;
+                    chan-name = "d1";
+            };
+            led@b {
+                    reg = <0xb>;
+                    chan-name = "d2";
+            };
+        };
+    };
+
+...
+
+
+Best regards,
+Nam Tran
 
