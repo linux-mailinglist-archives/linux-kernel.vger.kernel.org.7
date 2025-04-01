@@ -1,147 +1,273 @@
-Return-Path: <linux-kernel+bounces-583263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3850A778B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376C5A778B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CE007A3988
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606C5188F28F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D94A1F1508;
-	Tue,  1 Apr 2025 10:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0551F09A1;
+	Tue,  1 Apr 2025 10:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kb1AqoYL"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jvHDD4GP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6A1F0986;
-	Tue,  1 Apr 2025 10:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1931F0987;
+	Tue,  1 Apr 2025 10:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743502721; cv=none; b=pwlmRVwzJzBG9tpSSkPUydYxZuo1q0ZZY8mmY7tRh4lEHia5EZ9MYCumhMxIkNsyngRI3oxAn+060yClFQJ2GDCwt5UMbQhXFXDudHDaWc4LyQ6gPbwrHJI6NmFspK4YKbq1nPyar0rEkkBBTVcsksxUUpVA2O5F5sqCHCnDI+g=
+	t=1743502707; cv=none; b=mng+bvq0ogTJK3T59RIBUztwQdjJ3VJ4ePG0TmWRjlbXKuX56vPMEoEUo6CzNh8MG8+ZL7LmMb6SSR4KSNagSTE+8Y4fWLnOA4bgdGxMlXzlDAqab2mRARRlX8xqxpjLlZAZfjdz2sPoTZvBCzdBZti+8wD2DUus+6+2rfJ3PJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743502721; c=relaxed/simple;
-	bh=c50V6tQVBqAf9hFBVQTLRlrMxI4we7B1IjHR9mZdbbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HIkyQVETBwUYgUU3LRGFKZF7j6VP/9UtdM2VF52MyNy8xNgrtK3EOFyPVmRWcMR7EN75GJC1HYxesNQ7+eWsIGkggl/GtPABglvhT8VN+PjjnGwudGI/8yvqQEFuwY4rHj8weUeg5v2NRbkVQgtC1gUS0B0qqxxRwmmP/7q5hcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kb1AqoYL; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2255003f4c6so96363005ad.0;
-        Tue, 01 Apr 2025 03:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743502719; x=1744107519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=52Yyy6tKNAW68e/IV+CVhMLgP7UMspcJa+7anxM/WEc=;
-        b=Kb1AqoYLJOX6XfCvFlRVhlDjYoj9yRrZIXnKYi3JBCx1l7Ol2m4v9l8nsngANsI8sl
-         VLOj/6wiq5i2htMksfKZgaMSL0HbqoPsNe0/nSS4CIPEMkZ4lVD9MJ4M1dylU+3ueuNO
-         Wr6nFz5QEqwqh8jNfzv0XoIRS3/ER1utZRHzPFwRkBzHks4Cq87io982L5KgTLSFZEd2
-         237gJo469an1TPRKjoC20q29RZlUfO8WT5NGjK2saCNqoitc5n22sDu1Ac0Ho5ghI662
-         1grXLm7J6xUhG4NQekbIuC5TqsLdExWD5sc29HXE71mXKY3ZU9e6hFrAX2G0ml6p+avr
-         Arfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743502719; x=1744107519;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=52Yyy6tKNAW68e/IV+CVhMLgP7UMspcJa+7anxM/WEc=;
-        b=JQFmi+SZkIeZi9AemMoNz87A6sWqzI1SWIm3TPz2dHCyHd3YH4kJNKwXEllnWvhSu+
-         G5UlvzJz6i3pHGSv5Ctg+K4DOfd+XbqeTuUOcOlC+RUAVIEZPDpE3/Y3A/YNNmgjyIsP
-         9Il+Rt4PkUIw9I35H7LEVOBc0AbDD4Hu4d1RUdiEhwp7dDVpfJ9JT/8Lznp29j0VCBDk
-         wr/642hWwAy8I+QIf9skQ/9w2fTP4EzKm+BBUoddIJLIcBNby+/8Uad10wOF02R3bjdp
-         BjGcDyVVOhYs26whnTq2VmUtP0g/1K0D4MreYLCChAzIKmBmeE9fOtP+ZL1uVkOVzHhg
-         JFmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbRwbZHwGr+cSU4nI66hz5HERCA0kCgahFmQMomqO16xIbVxg3pq9MSea5vGijaxcYCL6EWVwC5ypemCQ=@vger.kernel.org, AJvYcCWjeLIXBXnKA2lC3dp2NwssKjXrkaGX4tEXWTQtt3EyoZ3ixGK+Q/1ktwWCt5FBqOqZasRdWYpmTgjZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3qnKafNKeXGtLjWrA89vLpntIoInKZfAH+sb9aT43RbunzjKx
-	keeNAGw6aNR+/rva/MpwicgzEoiLDLk7ucBl7ugl4+MUQZwx4yZvm2QJ89bk
-X-Gm-Gg: ASbGncvUzno/Ub1o/vOBM9Z+1e+IkHmFmlWQ9jVvo2BqR1dH/1oqTgXZ+2yd1jZNmDP
-	yA3rWcZelkjzBXxV1HH4oZGx2QogpAotGvFSJCflniLylJA9+1ajnTnEUEjm8N3HM+ObOqOH8qE
-	zHHOqHMSzq+MPYfLtydjiSfrs145zTNEePXf/52uiP+spKEtL1ULvGNz5qc3+YUIOpPPmTAtfY4
-	hnmXY469d3F+j53IQtHUs52DKQzZMUOyAD6e1uvGQxZ5QCNYsxekIJXHJzTkzTkhIfMDo5l9VHS
-	kuwGfPGEjWzTTcohhwxJuvQFz2MSVXQPzLaSqbKaiyxrip4hW/Y5T4Vk6bsh4CloNkFW
-X-Google-Smtp-Source: AGHT+IG8E+nX/g9arCxFT9vcimbEEY6MEhX7K2Zyy7L+8Tm9Z+wZnUc/i/1mUf+iHWktCq32FC3BRg==
-X-Received: by 2002:a17:902:f606:b0:220:eade:d77e with SMTP id d9443c01a7336-2295c0ebb1cmr39150275ad.40.1743502718774;
-        Tue, 01 Apr 2025 03:18:38 -0700 (PDT)
-Received: from mi-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1f8badsm84595835ad.246.2025.04.01.03.18.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 03:18:38 -0700 (PDT)
-From: Ying Lu <luying526@gmail.com>
-To: oneukum@suse.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luying1 <luying1@xiaomi.com>
-Subject: [PATCH v1 1/1] usbnet:fix NPE during rx_complete
-Date: Tue,  1 Apr 2025 18:18:01 +0800
-Message-ID: <e3646459ea67f10135ab821f90f66d8b6e74456c.1743497376.git.luying1@xiaomi.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743497376.git.luying1@xiaomi.com>
-References: <cover.1743497376.git.luying1@xiaomi.com>
+	s=arc-20240116; t=1743502707; c=relaxed/simple;
+	bh=/EHz54318NdoMp45HsLtrxjCORjhcPcP0lWu4il58HI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iK/Yxk2lDbnX/ZMi7VaLBIf8TpuWYReoPNMBnzRlY9F7riO/7N4elUWWr14qJ1nw58CsDVjF57xagzaeoHxVnDtyey9F1XAGPu8Pw5jlinaNg7TdLDmuFVwJP6Wj835SywUwvz9dzYObLn0ASm0gkxGIO69Cn9Gvz6WM/AmNni0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jvHDD4GP; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743502705; x=1775038705;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/EHz54318NdoMp45HsLtrxjCORjhcPcP0lWu4il58HI=;
+  b=jvHDD4GP9Ifq3fQ7RU6zTye/yZEjSJV/zb8uMvz1tA3nMeYHXRyfyXBF
+   vjei40I0iN5nI3cpU9t+zUyMeDdnm6ux+gfBAuur/Pol6hjVQTpco9G0M
+   R7iSeozyFW8QxFKBsE2ISyJO49VMmbACjyZMmlLZCxv+EOszzWKvJoC5h
+   N0tyEhCuPxvzPXzMuiZnG3C1l+caFwiob0VH7RKxHhR35D+Y1wFJS6Mpt
+   OY3HwzU3ChEnmsIeWX+yuCB9StOQBzPUYg1GJFXGBcKN35DkpeDwUb2xo
+   Tun63lIYxHqKZNvJGhHWAeQI+T3ItKNeWpe/BkUzTTCwL/8tlfI+fz1Xd
+   Q==;
+X-CSE-ConnectionGUID: K6MY/3QPSYmxh+1Zv/2U5g==
+X-CSE-MsgGUID: k07KUhraS5K0bfFWIE9Amg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11390"; a="44531764"
+X-IronPort-AV: E=Sophos;i="6.14,293,1736841600"; 
+   d="scan'208";a="44531764"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 03:18:24 -0700
+X-CSE-ConnectionGUID: slC0r/iuTUq6wGP/SJvnFw==
+X-CSE-MsgGUID: QrB00bnMTgGIxQDKdFYIAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,293,1736841600"; 
+   d="scan'208";a="131068381"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.126])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 03:18:21 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 1 Apr 2025 13:18:17 +0300 (EEST)
+To: Guenter Roeck <linux@roeck-us.net>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
+ in sync
+In-Reply-To: <01eb7d40-f5b5-4ec5-b390-a5c042c30aff@roeck-us.net>
+Message-ID: <75f74b48-edd8-7d1c-d303-1222d12e3812@linux.intel.com>
+References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com> <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com> <01eb7d40-f5b5-4ec5-b390-a5c042c30aff@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-2117202481-1743502697=:932"
 
-From: luying1 <luying1@xiaomi.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Missing usbnet_going_away Check in Critical Path.
-The usb_submit_urb function lacks a usbnet_going_away
-validation, whereas __usbnet_queue_skb includes this check.
+--8323328-2117202481-1743502697=:932
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-This inconsistency creates a race condition where:
-A URB request may succeed, but the corresponding SKB data
-fails to be queued.
+On Mon, 31 Mar 2025, Guenter Roeck wrote:
+> On Mon, Dec 16, 2024 at 07:56:31PM +0200, Ilpo J=E4rvinen wrote:
+> > Resetting resource is problematic as it prevent attempting to allocate
+> > the resource later, unless something in between restores the resource.
+> > Similarly, if fail_head does not contain all resources that were reset,
+> > those resource cannot be restored later.
+> >=20
+> > The entire reset/restore cycle adds complexity and leaving resources
+> > into reseted state causes issues to other code such as for checks done
+> > in pci_enable_resources(). Take a small step towards not resetting
+> > resources by delaying reset until the end of resource assignment and
+> > build failure list (fail_head) in sync with the reset to avoid leaving
+> > behind resources that cannot be restored (for the case where the caller
+> > provides fail_head in the first place to allow restore somewhere in the
+> > callchain, as is not all callers pass non-NULL fail_head).
+> >=20
+> > The Expansion ROM check is temporarily left in place while building the
+> > failure list until the upcoming change which reworks optional resource
+> > handling.
+> >=20
+> > Ideally, whole resource reset could be removed but doing that in a big
+> > step would make the impact non-tractable due to complexity of all
+> > related code.
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+>=20
+> With this patch in the mainline kernel, all mips:boston qemu emulations
+> fail when running a 64-bit little endian configuration (64r6el_defconfig)=
+=2E
+>=20
+> The problem is that the PCI based IDE/ATA controller is not initialized.
+> There are a number of pci error messages.
+>=20
+> pci_bus 0002:01: extended config space not accessible
+> pci 0002:01:00.0: [8086:2922] type 00 class 0x010601 conventional PCI end=
+point
+> pci 0002:01:00.0: BAR 4 [io  0x0000-0x001f]
+> pci 0002:01:00.0: BAR 5 [mem 0x00000000-0x00000fff]
+> pci 0002:00:00.0: PCI bridge to [bus 01-ff]
+> pci_bus 0002:01: busn_res: [bus 01-ff] end is updated to 01
+> pci 0002:00:00.0: bridge window [mem 0x16000000-0x160fffff]: assigned
+> pci 0002:00:00.0: bridge window [mem size 0x00100000 64bit pref]: can't a=
+ssign; no space
+> pci 0002:00:00.0: bridge window [mem size 0x00100000 64bit pref]: failed =
+to assign
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: can't assign; no space
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: failed to assign
+> pci 0002:00:00.0: bridge window [mem size 0x00100000]: can't assign; bogu=
+s alignment
+> pci 0002:00:00.0: bridge window [mem 0x16000000-0x160fffff 64bit pref]: a=
+ssigned
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: can't assign; no space
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: failed to assign
+> pci 0002:01:00.0: BAR 5 [mem size 0x00001000]: can't assign; no space
+> pci 0002:01:00.0: BAR 5 [mem size 0x00001000]: failed to assign
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: can't assign; no space
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: failed to assign
+> pci 0002:01:00.0: BAR 5 [mem size 0x00001000]: can't assign; no space
+> pci 0002:01:00.0: BAR 5 [mem size 0x00001000]: failed to assign
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: can't assign; no space
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: failed to assign
+> pci 0002:00:00.0: PCI bridge to [bus 01]
+> pci 0002:00:00.0:   bridge window [mem 0x16000000-0x160fffff 64bit pref]
+> pci_bus 0002:00: Some PCI device resources are unassigned, try booting wi=
+th pci=3Drealloc
+> pci_bus 0002:00: resource 4 [mem 0x16000000-0x160fffff]
+> pci_bus 0002:01: resource 2 [mem 0x16000000-0x160fffff 64bit pref]
+> ...
+> pci 0002:00:00.0: enabling device (0000 -> 0002)
+> ahci 0002:01:00.0: probe with driver ahci failed with error -12
+>=20
+> Bisect points to this patch. Reverting it together with "PCI: Rework
+> optional resource handling" fixes the problem. For comparison, after
+> reverting the offending patches, the log messages are as follows.
+>=20
+> pci_bus 0002:00: root bus resource [bus 00-ff]
+> pci_bus 0002:00: root bus resource [mem 0x16000000-0x160fffff]
+> pci 0002:00:00.0: [10ee:7021] type 01 class 0x060400 PCIe Root Complex In=
+tegrated Endpoint
+> pci 0002:00:00.0: PCI bridge to [bus 00]
+> pci 0002:00:00.0:   bridge window [io  0x0000-0x0fff]
+> pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
+> pci 0002:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
+> pci 0002:00:00.0: enabling Extended Tags
+> pci 0002:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguri=
+ng
+> pci_bus 0002:01: extended config space not accessible
+> pci 0002:01:00.0: [8086:2922] type 00 class 0x010601 conventional PCI end=
+point
+> pci 0002:01:00.0: BAR 4 [io  0x0000-0x001f]
+> pci 0002:01:00.0: BAR 5 [mem 0x00000000-0x00000fff]
+> pci 0002:00:00.0: PCI bridge to [bus 01-ff]
+> pci_bus 0002:01: busn_res: [bus 01-ff] end is updated to 01
+> pci 0002:00:00.0: bridge window [mem 0x16000000-0x160fffff]: assigned
+> pci 0002:00:00.0: bridge window [mem size 0x00100000 64bit pref]: can't a=
+ssign; no space
+> pci 0002:00:00.0: bridge window [mem size 0x00100000 64bit pref]: failed =
+to assign
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: can't assign; no space
+> pci 0002:00:00.0: bridge window [io  size 0x1000]: failed to assign
+> pci 0002:01:00.0: BAR 5 [mem 0x16000000-0x16000fff]: assigned
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: can't assign; no space
+> pci 0002:01:00.0: BAR 4 [io  size 0x0020]: failed to assign
+> pci 0002:00:00.0: PCI bridge to [bus 01]
+> pci 0002:00:00.0:   bridge window [mem 0x16000000-0x160fffff]
+> pci_bus 0002:00: Some PCI device resources are unassigned, try booting wi=
+th pci=3Drealloc
+> pci_bus 0002:00: resource 4 [mem 0x16000000-0x160fffff]
+> pci_bus 0002:01: resource 1 [mem 0x16000000-0x160fffff]
+> ...
+> pci 0002:00:00.0: enabling device (0000 -> 0002)
+> ahci 0002:01:00.0: enabling device (0000 -> 0002)
+> ahci 0002:01:00.0: AHCI vers 0001.0000, 32 command slots, 1.5 Gbps, SATA =
+mode
+> ahci 0002:01:00.0: 6/6 ports implemented (port mask 0x3f)
+> ahci 0002:01:00.0: flags: 64bit ncq only
 
-Subsequent processes:
-(e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
-attempt to access skb->next, triggering a NULL pointer
-dereference (Kernel Panic).
+Hi,
 
-Signed-off-by: luying1 <luying1@xiaomi.com>
----
- drivers/net/usb/usbnet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for reporting. Please add this to the command line to get the=20
+resource releasing between the steps to show:
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 44179f4e807f..5161bb5d824b 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -519,7 +519,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 	    netif_device_present (dev->net) &&
- 	    test_bit(EVENT_DEV_OPEN, &dev->flags) &&
- 	    !test_bit (EVENT_RX_HALT, &dev->flags) &&
--	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags)) {
-+	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags) &&
-+	    !usbnet_going_away(dev)) {
- 		switch (retval = usb_submit_urb (urb, GFP_ATOMIC)) {
- 		case -EPIPE:
- 			usbnet_defer_kevent (dev, EVENT_RX_HALT);
-@@ -540,8 +541,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 			tasklet_schedule (&dev->bh);
- 			break;
- 		case 0:
--			if (!usbnet_going_away(dev))
--				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-+			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
- 		}
- 	} else {
- 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
--- 
-2.40.1
+dyndbg=3D"file drivers/pci/setup-bus.c +p"
 
+Also, the log snippet just shows it fails but it is impossible to know=20
+from it why the resource assigments do not fit so could you please provide=
+=20
+a complete dmesg logs. Also providing the contents of /proc/iomem from the=
+=20
+working case would save me quite a bit of decoding the iomem layout from=20
+the dmesgs.
+
+> Bisect log is attached for reference.
+>=20
+> Guenter
+> ---
+> # bad: [609706855d90bcab6080ba2cd030b9af322a1f0c] Merge tag 'trace-latenc=
+y-v6.15-3' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-tra=
+ce
+> # good: [acb4f33713b9f6cadb6143f211714c343465411c] Merge tag 'm68knommu-f=
+or-v6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu
+> git bisect start 'HEAD' 'acb4f33713b9'
+> # good: [cf05922d63e2ae6a9b1b52ff5236a44c3b29f78c] Merge tag 'drm-intel-g=
+t-next-2025-03-12' of https://gitlab.freedesktop.org/drm/i915/kernel into d=
+rm-next
+> git bisect good cf05922d63e2ae6a9b1b52ff5236a44c3b29f78c
+> # bad: [93d52288679e29aaa44a6f12d5a02e8a90e742c5] Merge tag 'backlight-ne=
+xt-6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight
+> git bisect bad 93d52288679e29aaa44a6f12d5a02e8a90e742c5
+> # bad: [e5e0e6bebef3a21081fd1057c40468d4cff1a60d] Merge tag 'v6.15-p1' of=
+ git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6
+> git bisect bad e5e0e6bebef3a21081fd1057c40468d4cff1a60d
+> # bad: [dea140198b846f7432d78566b7b0b83979c72c2b] Merge branch 'pci/misc'
+> git bisect bad dea140198b846f7432d78566b7b0b83979c72c2b
+> # bad: [a113afb84ae63ec4c893bc3204945ef6f3bb89f7] Merge branch 'pci/endpo=
+int'
+> git bisect bad a113afb84ae63ec4c893bc3204945ef6f3bb89f7
+> # good: [a7a8e7996c1c114b50df5599229b1e7be38be3db] Merge branch 'pci/rese=
+t'
+> git bisect good a7a8e7996c1c114b50df5599229b1e7be38be3db
+> # bad: [7d4bcc0f2631e4ee10b5bcfff24a423d1c3c02a3] PCI: Move resource reas=
+signment func declarations into pci/pci.h
+> git bisect bad 7d4bcc0f2631e4ee10b5bcfff24a423d1c3c02a3
+> # good: [acba174d2e754346c07578ad2220258706a203e2] PCI: Use while loop an=
+d break instead of gotos
+> git bisect good acba174d2e754346c07578ad2220258706a203e2
+> # good: [8884b5637b794ae541e8d6fb72102b1d8dba2b8d] PCI: Add debug print w=
+hen releasing resources before retry
+> git bisect good 8884b5637b794ae541e8d6fb72102b1d8dba2b8d
+> # bad: [5af473941b56189423a7d16c05efabaf77299847] PCI: Increase Resizable=
+ BAR support from 512 GB to 128 TB
+> git bisect bad 5af473941b56189423a7d16c05efabaf77299847
+> # bad: [96336ec702643aec2addb3b1cdb81d687fe362f0] PCI: Perform reset_reso=
+urce() and build fail list in sync
+> git bisect bad 96336ec702643aec2addb3b1cdb81d687fe362f0
+> # good: [e89df6d2beae847e931d84a190b192dfac41eba7] PCI: Use res->parent t=
+o check if resource is assigned
+> git bisect good e89df6d2beae847e931d84a190b192dfac41eba7
+> # first bad commit: [96336ec702643aec2addb3b1cdb81d687fe362f0] PCI: Perfo=
+rm reset_resource() and build fail list in sync
+>=20
+
+--=20
+ i.
+
+--8323328-2117202481-1743502697=:932--
 
