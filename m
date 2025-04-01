@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-582836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510D4A77314
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 05:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA365A7732B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E724166878
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 03:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72FBF16C41F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9651552FA;
-	Tue,  1 Apr 2025 03:53:59 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758001D5141;
+	Tue,  1 Apr 2025 04:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="j88BjEpY"
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C9A33F6
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 03:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E89D187550;
+	Tue,  1 Apr 2025 04:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743479639; cv=none; b=hTPYMLP/rLb5cLk6fhWaLhQknQHYsXU5P6LuFqIceqhpNkMamOFF/koZ7ys7rjTbR5Cr2R3vQin5A/P8G2CzjgIF+kuEEYJGUg9KzQbNSRt+/OVua0zeI+t3jsi2DbFmAOZM1B9F7juUGoX2mu39d0xy49+kQwKjs8ohLXeKIas=
+	t=1743480157; cv=none; b=k+gAEfR04fc643ZAIR2pAGiHZj5X7WUcAX18njk57pfsP72f8X0mvFg3mc0lXtdZUOaeOzEmR0Wgs6clbG8s7GHkmqDdBsG9hSZYyIzqS7ATlZKE4rcaNVZaoXmbG3VLJupbg/LpqD1dSKNIfo+6RmLZbPpa+ZMB32F8pDy18Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743479639; c=relaxed/simple;
-	bh=va2Xbnf2iInYfp88pRFTEi/z95y0JXuZPRpa1wnwMoE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MY9zVUsIiw9XCQ/ZF5OHzF27z/gTu5BxFSkdYMleqMT0Qn4VOiz6Gl8juEQd/OEpZ76HUcOmg+CZYvmBT0q2JnQA2/K98eLdrzmJj0bfL2+d3nFoL2bomXaSlX9ozJrp3UOH3hfb4aRnuavedtqWRWpBV1aljBOJ8Nf/uzDAukY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ce8dadfb67so54451155ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 20:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743479634; x=1744084434;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=va2Xbnf2iInYfp88pRFTEi/z95y0JXuZPRpa1wnwMoE=;
-        b=dcRz2i0uipLCKFnZF/1+0xFcChxe0owFSo1UDDv39PxvHVrcmo1NTGnsAHexinMkBU
-         Ma1pJsVLVGi6BetfTOI3pW4cJ9IzGuRnEk3TXK3tvQy1als351Ly/cF0eUg3ZqsSXPdu
-         DStEsmpWDsMwY5NDnuZ2CYlYbl40HpduuMfVAptApBv2TIzUJ6/sRBWSheEOqT5ohgJ2
-         Bh1hN0TQSr887Go3nzi8SlTrFz1uzlOFRE0W5V4t/bz5DqUSn9UY+95zh15rw/mJUGOk
-         NVX0fLXPW7PQCFJfKo5fuDuCvqk02p/cvUNLsCo3TXMr6zY1sG3gyeJZM6fbA7rl1oiw
-         3nyw==
-X-Gm-Message-State: AOJu0Yxg33ziSHxQfVgJK+BS26EfbRNUIejWDUQdTzvUkl5cPbpSk1pN
-	NIHG35p66RdwdbZnbHHg8mxcIoau+LedYg+SIsiNZo9KTdIM91npCAWz7EDY5L78Hi/gAadu5cw
-	+/5qthunRTl4JN+cEQUKR8Mp6+vcPZBKLeIvDSAzeE34gZi8CVJmPAbM=
-X-Google-Smtp-Source: AGHT+IG136CDLicBbVuHVv17+6Nw8rlJni1r/DRtoz/KtjmUD7CEMmOFME2VrA7gCIF1PHDRoqsR1FnKIzYXaSQiAlqp6QZYcUWS
+	s=arc-20240116; t=1743480157; c=relaxed/simple;
+	bh=COGoUV2LNCT7BAByBN+90DSwtl7nzPfe94IaM5eu25A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnGladCdq+cg/L3pOfTmaZLwIgMMQ5zDauISitKoOwnZ2EDolx7ODGAeDW0Gi7MoMp64uNeJwZ7HrVIKER5eals47R3aSo6qSzL6wQh7bxhQAMsjO7XE3PNp07V/DcGEkYewsvOOFdGGg3UfyQLECc2kO/ojIPt16HcH5ZyJKJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=j88BjEpY; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 91DD26040B;
+	Tue,  1 Apr 2025 03:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1743479666;
+	bh=COGoUV2LNCT7BAByBN+90DSwtl7nzPfe94IaM5eu25A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j88BjEpYJbGHDIbrbQgnoxpXCjz6IezOyCvVyNwLauDr3s0CUHlhkktyM3q/Sg4DP
+	 KIju37voGdqjHrK6cRQHhbeirbEHelkezjqNwh4Cb9r8FiSuMOu4o3WScv/Vt3fsrk
+	 P+I1rtsv2D35AViLzbRwAnVHD7hyYutQvQLyRoo8unI5RdtN8RkQ8psUmgE5HMtWa/
+	 0ZutpaCEQw90RtyFCvRuySo3K4tXEHeUHy/FJLglhm/hJ2hpEqQIuje64/gL8Z1ICz
+	 8Rw+o7+zeSY4uBC/+on3fkT3c5KNlAZ58zcjOTeZuCyFdf708m2GG9WVHEpP+SEywS
+	 I/YMrqTnbktvw==
+Date: Tue, 1 Apr 2025 06:54:03 +0300
+From: Tony Lindgren <tony@atomide.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: khilman@kernel.org, aaro.koskinen@iki.fi, rogerq@kernel.org,
+	linux@armlinux.org.uk, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	sre@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] ARM: omap: pmic-cpcap: do not mess around without CPCAP
+ or OMAP4
+Message-ID: <20250401035403.GF4957@atomide.com>
+References: <20250331144439.769697-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3d44:b0:3d1:79a1:5b85 with SMTP id
- e9e14a558f8ab-3d5e0a099edmr105862025ab.21.1743479634806; Mon, 31 Mar 2025
- 20:53:54 -0700 (PDT)
-Date: Mon, 31 Mar 2025 20:53:54 -0700
-In-Reply-To: <6755b44c.050a0220.2477f.002a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67eb6352.050a0220.14623d.0001.GAE@google.com>
-Subject: Re: [syzbot] Re: your mail
-From: syzbot <syzbot+c761143a86b1640bc485@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250331144439.769697-1-andreas@kemnade.info>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+* Andreas Kemnade <andreas@kemnade.info> [250331 14:45]:
+> The late init call just writes to omap4 registers as soon as
+> CONFIG_MFD_CPCAP is enabled without checking whether the
+> cpcap driver is actually there or the SoC is indeed an
+> OMAP4.
+> Rather do these things only with the right device combination.
+> 
+> Fixes booting the BT200 with said configuration enabled and non-factory
+> X-Loader and probably also some surprising behavior on other devices.
 
-***
+Nice catch:
 
-Subject: Re: your mail
-Author: kent.overstreet@linux.dev
-
-#syz fix bcachefs: Disable asm memcpys when kmsan enabled
+Reivewed-by: Tony Lindgren <tony@atomide.com>
 
