@@ -1,183 +1,182 @@
-Return-Path: <linux-kernel+bounces-583835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45481A7805F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61342A78062
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCE4164A14
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F56188C3F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41010220686;
-	Tue,  1 Apr 2025 16:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3549221704;
+	Tue,  1 Apr 2025 16:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z7ALBBfb"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGGVc8cX"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093CD21D3E6
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24EB20CCE6;
+	Tue,  1 Apr 2025 16:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743524293; cv=none; b=P/9zmoylmbeWBArhJHoMuUTkvDaho0Lu/eli3KdFH6ETCTjgEeqsZRGhhDt2neLUGkFQ8dbXY91sqLfQ/oY6wwka8WM70Rrjbf++PKM5Vhn4dN+m0ek51MBqIJdQwCHrtikkloGcRD0QVN/5KQ0O5/LH3nG36Ter2E6j4ea4g3g=
+	t=1743524307; cv=none; b=W5mjbAkrlbQUmapsUCMvtKEBUXvFZkdxbh1eSguHoF8QfLRckLJMbsSmZCbRhGw8hVhyBZm0Dx+Kp3PRgzEtbfzIKdEGsTa934ve0CvcftkFl8mr8l1VyumkVDmZ1A0ifUOxazwz9j4fBJg9//n+qlkf4LuNHg/BhxdlRR5U6Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743524293; c=relaxed/simple;
-	bh=mLQbx1jisqBwOfc+NQxn9P1UAtUaAxPUhi+tPamI/f0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FhWkE5SM6HOLmeKQ0/UDBgrAJw+erT90To6IMnJwSZn7hEarzKrhCVsbTPDpnyjlbIpiNKI+Fh77ZJ9BTiNAp1R5UMGe3c8CiDIyUPnQt9KdXDf2Ft3UgmJgjE1FPO7B9K/41LSbCWj0D7CUtpyO8B8nLq4K9zQ7LKnRPhVX+jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z7ALBBfb; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso627578a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 09:18:11 -0700 (PDT)
+	s=arc-20240116; t=1743524307; c=relaxed/simple;
+	bh=a3U4OlqdGH0j5dNEyE12olnK1mGyFL4MqdrgZEhPSbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hdkJGEnapEgH8A5H+JEreXP1alXSQ062Zpew31Iy7BT0o+EKG+8haTDlIYoFpk2PsTX2gag4JzArKuTQu84uhdZ2z4RH9ev3CygGXZooi4Af5E5Gp4XZl4m55c8ed8k+t8GGhpupR1yNYLEJRCHuVeA3aYbqg+aTZHZ9ZCKp4EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGGVc8cX; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfba946so2394963f8f.3;
+        Tue, 01 Apr 2025 09:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743524291; x=1744129091; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkBWo9dnQGpjZuqJnrYPda5jwQq6BFGndRJc124YDKs=;
-        b=Z7ALBBfb6StDn1ZNvZEWH60T2KoZSvE4cfgpHEs+dmuAb/dvtyKXYPhShtp6RPzWAc
-         ynBMXa45BdNaEJJR7lHG9k6uQg5wtYzFJVfMI50q1SUDKHQbIgn8a5QFgv1+f1XisogV
-         vTpCwADBxAbgEH7MMD7HsxVHe8vAVhXkaJ2hOSct/OvNPn1q+wQRvc6yvKR3DeX6rJo0
-         CZ2xn50Esf8waJz1N2wI/driyiYbFP6qbp41rpYSwtoJQ1Hjhoj6mqoGO/mWCB3TmxDK
-         OQWxOIvOqCn2Ep0CBLDSGuITVrOpcknSRq1KXZMGPk3Xq4DGNpEntctxFXWCYKmLY+hn
-         UZ9A==
+        d=gmail.com; s=20230601; t=1743524303; x=1744129103; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/43tgkG2SXuLz4gETyubISHLC/vhEqo7IBhTOXroYI=;
+        b=HGGVc8cXpHClcuxb0MQOTt7c2m64705De2KrNZulnimn8At5qYOeyVoRPDQ6+zO126
+         oIM3hx83Wibbz6GAmAEVclGGCy9OnP8VYZRQZPDRnsR0AJ6iVNywhguDI+7OAJ8My3I6
+         TZCmNY2IjusqebgGxNkMlwrXL9KnUgDNlaFsMyx3UTFjxRyv888SXuafXHz4PrWThLkZ
+         PcN57xizTJy84kZ+EIiYSSPs95ipANq1pil40tvvzQd82127Cg85b+ygsL3rKXJ2pll7
+         5zCadukHLzsd59Vs2rhGb3JVagZVmqEjS2hAgZ7M8KlXrTqrOjB2tsYzvZ1tz421UkAo
+         nX8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743524291; x=1744129091;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1743524303; x=1744129103;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AkBWo9dnQGpjZuqJnrYPda5jwQq6BFGndRJc124YDKs=;
-        b=dS3fKBSXnl3OklBsEC2GnW7fatloDTXNdX1GSHcP+pNzelAKw1N8JkaEWYj/QjKdsT
-         YMhAznWLJMVUtovo/lmhhr0KhWEWHAA0+g55w0XIF+YLCi/8SQdKQUoaTJSplc6s7I0L
-         GhoQ7xFJbo1gnS+e488z5yRaj9AOYH+t9DJ4a7Szzc0OEaAOx2wiRphIu+pxy2wjJaEe
-         P+i0Fv4b14STK0odE/QXBdFp0tYP6Cu0Xa3o1DhQSSfIDAbDatoepu9yoA2clCXsG6Tq
-         Hna3y4qKyAaySs9mM9URHQ3X92yqMumIMrpbbqI4uYUEaEo8J980BrpWVr10eTyc6/9l
-         KdZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh382ij604Q5cWNLFQAAlP+xg3wW3ZRl/tr0n5+x/QnXC5KE6Tv/BJGs0o6WL5biKZVBvdCAdbyhLOZws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4WO6Aiv85Xsg7KHslYjy0jJMtmRuZkEGE2geYA7k0wNppJqu2
-	AAnS2e5GrxFaOlfXsTr2R1PjqGAxd8oJuQ2TeTmwlI0DWzyI9Pn/MvN9xGLnwBDhB4qsPmU9HUt
-	PUQ==
-X-Google-Smtp-Source: AGHT+IEQY+S+Rgi5OwC0yzzxYa5wSGw6iWHC3K9elsEqqknoTddyn8IHbybmZm5I3XA/J0Eutqh8BKIlg2I=
-X-Received: from pfbdu10.prod.google.com ([2002:a05:6a00:2b4a:b0:736:ae72:7543])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3950:b0:1f5:7eee:bb10
- with SMTP id adf61e73a8af0-2009f5ba6c0mr21757247637.8.1743524291266; Tue, 01
- Apr 2025 09:18:11 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  1 Apr 2025 09:18:04 -0700
-In-Reply-To: <20250401161804.842968-1-seanjc@google.com>
+        bh=Y/43tgkG2SXuLz4gETyubISHLC/vhEqo7IBhTOXroYI=;
+        b=kpYI4rFQZa+eSGK55xm45NuzLzVRMyiXYSV78CMmwbM5oWjS7D2Xs31ifkAjMWG+bk
+         tHddKfP8yqmq89JlWvZsQEme8mZBr/okClmGY6TgXJJkKM0S5c2/bFu7yUU/oCGY7d4q
+         FiZHxWUtoAQR8rL6OJVXV4kRHmptA9FOvL40pl+y0eoxQhb3nbQA0uAh2NwENfudbs0W
+         aRXyS7qFjj6Ms/401L7qaaKK/WMjxZ0OBChcq38qx+0/NODRiBXRGHukW5JmM+EGeAyl
+         B2CM0nY5eizRRoILsi44nTGqbtlo826hjV84bFWgUyHPunINPUWX0+khwpMukzfoljTa
+         6UFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJi5ujZt5O6QcGLOPB0ujZFsVAfyfNHvevHeYt86y80/pll2D1k6lXuculW7eDUS74eg+HVk44i6BX4+Y5@vger.kernel.org, AJvYcCXGt+HLdnBcP0bodudzjZfiaKq5wxFSCibFd0Hf+bF8oVVAkg3z6nLl5uOrVovqJkRLdPuA4juV/ODWy9PI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx7xPJcq80Ll3UYn05p5z/HyN3d0zuI9vTgHnSWb2vLIryPN3K
+	2HPg3tF9zbc0HYJHcgVTxo314p83tBKGrqsGjxVDWBcz7IK5lrzJILplSvyH
+X-Gm-Gg: ASbGncvsuMVS+N95BDwRpjHGK+/IK0ypN8N4NP/7/KOL1AaMvit5zwucat2AhpwPEpB
+	cSCkQAgA8JYmY+OtZsOqc0CdV77uL+h3z+42BenCz8GS0qb0VsMkmDqrxlDLKKyysllngps8zsL
+	Rvxw8HSKcWAs+SrHL3zFRvMYmuLKk8c4WziKsoaS0GKMHrspIVAjaKM2OYyGGHpIe1al6Tdg8lQ
+	sSdFghCbQSzIoG8CKsQfrNN/zJkcb1tsAAuQ9euFv1xWUXTZJsr0Jtvg3sIZ1RgV7tvPG95A4DZ
+	pvPIIOq8wwI751hC6Ou+sCgVsttWDM25562zEdnIoQNCLGnBTLmgvTBT3FD2
+X-Google-Smtp-Source: AGHT+IG45pqikqHfWcwyPHxI+T9XUXYot1p72gRtoNZAVYKJ7x0uwDZmxuOSe70AmTgFd1/RmNBFGg==
+X-Received: by 2002:a5d:5f52:0:b0:391:253b:4046 with SMTP id ffacd0b85a97d-39c120de297mr11496160f8f.16.1743524302670;
+        Tue, 01 Apr 2025 09:18:22 -0700 (PDT)
+Received: from f.. (cst-prg-92-82.cust.vodafone.cz. [46.135.92.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b66aeaasm14680601f8f.53.2025.04.01.09.18.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 09:18:21 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [MEH PATCH] fs: make generic_fillattr() tail-callable and utilize it in ext2/ext4
+Date: Tue,  1 Apr 2025 18:18:13 +0200
+Message-ID: <20250401161813.1121828-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250401161804.842968-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250401161804.842968-4-seanjc@google.com>
-Subject: [PATCH v3 3/3] KVM: x86: Add module param to control and enumerate
- device posted IRQs
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Add a module param to each KVM vendor module to allow disabling device
-posted interrupts without having to sacrifice all of APICv/AVIC, and to
-also effectively enumerate to userspace whether or not KVM may be
-utilizing device posted IRQs.  Disabling device posted interrupts is
-very desirable for testing, and can even be desirable for production
-environments, e.g. if the host kernel wants to interpose on device
-interrupts.
+Unfortunately the other filesystems I checked make adjustments after
+their own call to generic_fillattr() and consequently can't benefit.
 
-Put the module param in kvm-{amd,intel}.ko instead of kvm.ko to match
-the overall APICv/AVIC controls, and to avoid complications with said
-controls.  E.g. if the param is in kvm.ko, KVM needs to be snapshot the
-original user-defined value to play nice with a vendor module being
-reloaded with different enable_apicv settings.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/svm/svm.c          | 2 ++
- arch/x86/kvm/vmx/vmx.c          | 2 ++
- arch/x86/kvm/x86.c              | 8 +++++++-
- 4 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index a884ab544335..6e8be274c089 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1923,6 +1923,7 @@ struct kvm_arch_async_pf {
- extern u32 __read_mostly kvm_nr_uret_msrs;
- extern bool __read_mostly allow_smaller_maxphyaddr;
- extern bool __read_mostly enable_apicv;
-+extern bool __read_mostly enable_device_posted_irqs;
- extern struct kvm_x86_ops kvm_x86_ops;
+There are weird slowdowns on fstat, this is a byproduct of trying to
+straighten out the fast path.
+
+Not benchmarked, but I did confirm the compiler jmps out to the routine
+instead of emitting a call which is the right thing to do here.
+
+that said I'm not going to argue, but I like to see this out of the way.
+
+there are nasty things which need to be addressed separately
+
+ fs/ext2/inode.c    | 3 +--
+ fs/ext4/inode.c    | 3 +--
+ fs/stat.c          | 6 +++++-
+ include/linux/fs.h | 2 +-
+ 4 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 30f8201c155f..cf1f89922207 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1629,8 +1629,7 @@ int ext2_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 			STATX_ATTR_IMMUTABLE |
+ 			STATX_ATTR_NODUMP);
  
- #define kvm_x86_call(func) static_call(kvm_x86_##func)
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 8abeab91d329..def76e63562d 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -231,6 +231,8 @@ module_param(tsc_scaling, int, 0444);
- static bool avic;
- module_param(avic, bool, 0444);
- 
-+module_param(enable_device_posted_irqs, bool, 0444);
-+
- bool __read_mostly dump_invalid_vmcb;
- module_param(dump_invalid_vmcb, bool, 0644);
- 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b70ed72c1783..ac7f1df612e8 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -115,6 +115,8 @@ module_param(enable_apicv, bool, 0444);
- bool __read_mostly enable_ipiv = true;
- module_param(enable_ipiv, bool, 0444);
- 
-+module_param(enable_device_posted_irqs, bool, 0444);
-+
- /*
-  * If nested=1, nested virtualization is supported, i.e., guests may use
-  * VMX and be a hypervisor for its own guests. If nested=0, guests may not
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a5ea4b4c7036..9211344b20ae 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -227,6 +227,9 @@ EXPORT_SYMBOL_GPL(allow_smaller_maxphyaddr);
- bool __read_mostly enable_apicv = true;
- EXPORT_SYMBOL_GPL(enable_apicv);
- 
-+bool __read_mostly enable_device_posted_irqs = true;
-+EXPORT_SYMBOL_GPL(enable_device_posted_irqs);
-+
- const struct _kvm_stats_desc kvm_vm_stats_desc[] = {
- 	KVM_GENERIC_VM_STATS(),
- 	STATS_DESC_COUNTER(VM, mmu_shadow_zapped),
-@@ -9784,6 +9787,9 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- 	if (r != 0)
- 		goto out_mmu_exit;
- 
-+	enable_device_posted_irqs &= enable_apicv &&
-+				     irq_remapping_cap(IRQ_POSTING_CAP);
-+
- 	kvm_ops_update(ops);
- 
- 	for_each_online_cpu(cpu) {
-@@ -13554,7 +13560,7 @@ EXPORT_SYMBOL_GPL(kvm_arch_has_noncoherent_dma);
- 
- bool kvm_arch_has_irq_bypass(void)
- {
--	return enable_apicv && irq_remapping_cap(IRQ_POSTING_CAP);
-+	return enable_device_posted_irqs;
+-	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
+-	return 0;
++	return generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
  }
- EXPORT_SYMBOL_GPL(kvm_arch_has_irq_bypass);
  
+ int ext2_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 1dc09ed5d403..3edd6e60dd9b 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5687,8 +5687,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 				  STATX_ATTR_NODUMP |
+ 				  STATX_ATTR_VERITY);
+ 
+-	generic_fillattr(idmap, request_mask, inode, stat);
+-	return 0;
++	return generic_fillattr(idmap, request_mask, inode, stat);
+ }
+ 
+ int ext4_file_getattr(struct mnt_idmap *idmap,
+diff --git a/fs/stat.c b/fs/stat.c
+index f13308bfdc98..581a95376e70 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -78,8 +78,11 @@ EXPORT_SYMBOL(fill_mg_cmtime);
+  * take care to map the inode according to @idmap before filling in the
+  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
+  * performed on the raw inode simply pass @nop_mnt_idmap.
++ *
++ * The routine always succeeds. We make it return a value so that consumers can
++ * tail-call it.
+  */
+-void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
++int generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 		      struct inode *inode, struct kstat *stat)
+ {
+ 	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
+@@ -110,6 +113,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 		stat->change_cookie = inode_query_iversion(inode);
+ 	}
+ 
++	return 0;
+ }
+ EXPORT_SYMBOL(generic_fillattr);
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 016b0fe1536e..754893d8d2a8 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3471,7 +3471,7 @@ extern int page_symlink(struct inode *inode, const char *symname, int len);
+ extern const struct inode_operations page_symlink_inode_operations;
+ extern void kfree_link(void *);
+ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode);
+-void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
++int generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
+ void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
+ void generic_fill_statx_atomic_writes(struct kstat *stat,
+ 				      unsigned int unit_min,
 -- 
-2.49.0.472.ge94155a9ec-goog
+2.43.0
 
 
