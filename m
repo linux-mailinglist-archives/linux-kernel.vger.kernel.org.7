@@ -1,188 +1,164 @@
-Return-Path: <linux-kernel+bounces-583667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F2A77E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 790DFA77E41
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2767E1887C96
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907A73ADD25
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DDD205510;
-	Tue,  1 Apr 2025 14:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1738205509;
+	Tue,  1 Apr 2025 14:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D/c7tJt5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV08XYM1"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E172054E9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975581E47B3;
+	Tue,  1 Apr 2025 14:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743519047; cv=none; b=V26usKkU9DWb/wgWtFXSAEpkDYzEziHfCcf7FBfh6trFbAh5+IT6EJdaolI/GpP5dgm6FkWOsfO4WbD0MYH/xCdgxTDgHDkulZbUjkYbLdRgdcqCAHMIt59JGVgH7cDq5TPXc1VoJrgLLQ9ftanEonVf94oPDDUEBptIQS3Lgl4=
+	t=1743519084; cv=none; b=kC+8CAhSfBNJ1/D7d0qlJjee0138Y80G4JotgfOhPqc56CTkK+lmClomT7qh9dlesyxURT/CaQ1HNs6eP+VK/NgR4mgo2+WfNmgnTZLYg0USu5wnspeMJhVsoBx4HGlGh+gPi4ohh5zBaAusNedVlrr1MSFoXb1TLPkwwW/uzW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743519047; c=relaxed/simple;
-	bh=b280XaO4lTQNVx0iVzFlnC/pJCCMPW7RC8adpvttMw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P06XyhdUNmZn/CsZ9tK+5Ir85RFjrLs5yIS543rmm7VwWCDD4vnOJXXU8wOnqrna/iAGGf/FK/En+hgi+nXb5sAZZz8U8CbJoi25Oiy8LdtzVAwnigVMpVDEFwYHARlVx2R0dFa0sk7zivr0rPFENg360CILf3Gr4NAeq6ckVS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D/c7tJt5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743519044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YYGyGYzy2HN1yXYZfo8JaW2wVukUhyb7/MxytKSCqU4=;
-	b=D/c7tJt5IyCMUk3o921H6RAQeVCE38M2MINpac91ZPbH83eP9TO05GaOIfMKy+uVT/BlAQ
-	TbxlcuB0LrXhXeQFmTX6Dkvozyx/nULkNwnTg5ulgszLgk5DSdewCBSMRXIF7C1vTZvOgh
-	f+AYvGe0LMrif6zp9E1/nKEdsEq0w6Q=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-d2dPE71DMcuTCg78HjGh3A-1; Tue, 01 Apr 2025 10:50:43 -0400
-X-MC-Unique: d2dPE71DMcuTCg78HjGh3A-1
-X-Mimecast-MFC-AGG-ID: d2dPE71DMcuTCg78HjGh3A_1743519042
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-391459c0395so2318456f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:50:43 -0700 (PDT)
+	s=arc-20240116; t=1743519084; c=relaxed/simple;
+	bh=j1fgVaCJnqMGHgW2lJcXX+aTDx2s2m878YtWc0fTvnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eo4lrXEVZ/f2jS47+FDpkPzluw4ztUM1dTrPOSpsNxM6QPgAJ/ynCw+6kBAyez1BYVTNWa4P4OvvNwVqfIWZpC29qnEXtFqf1euXTSf2RQ6eVjTvhS0RMFtsEi6vgy0FbbvMmK2SHX8nOo4pmo/BcqxyxuiLAPuMXOZ4xLLGn1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mV08XYM1; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso50232906d6.1;
+        Tue, 01 Apr 2025 07:51:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743519081; x=1744123881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2PGIUWN8Qg4lwQqZjTaAHNRuRoKwS4SfvGv0EzV/1Q=;
+        b=mV08XYM1lIw5hS332jsC+hHH+WOcsyaKGEbwCMrSUTVELy1viaBbEmI7dYRywaPEcy
+         pL4ma0YIEvBf6eV8gYtqPCwwAXVrhlctetugzZ0/QZNyov0UOkwLv46n5IqyoWk+jaas
+         17ewU5NnS6EadVRLrTXD6Donca02NRrnaUc95oYRkZF3nESoLeo1xgFveuxqNMCkeLUU
+         dlsoKibEWRAM59HJFLUx9v9PhTEBngrZBG2ah16GBCfNPW/doKwtut7WouaigHDwWtpV
+         oE4+NoQwG280jSTUmk+QLGHnil+pUV0WglZsMxbydexOCeltV0EyOvVcAbx6e3Sy1Vp8
+         m2aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743519042; x=1744123842;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YYGyGYzy2HN1yXYZfo8JaW2wVukUhyb7/MxytKSCqU4=;
-        b=MDrv+vKeKr1pkhl9C43pxY9FqgIKLAPf6DG2B+kLwdlr1zeDwtcWvuL6WpDpQiLUey
-         cd+A9UH0Nn+4+87U7DZ+aVHNz1U8VQehCd0rWesqPxCf6cen6CBHf9YWnNMXh2o+WZLt
-         kQr6ViQ0NXCPWCiKrY+MMsBRwrSKJCOStEU8iwJBN1z3aDd1jJFFy8w8WX4d/RW/i90o
-         F4AlfwhB/rdAb3JGzHkhrvqPBIWSGR2cm7VIbc2v2dPdr5X+3nRWvlnkxgbDthoLgSX8
-         O7JaSghcM5viYYfF6I+ZJculhe1KzQPjDaZVGaArPM1sqPBGmasXOKWbiVjaK5KCu1GK
-         a5gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3fbbD5ZyNXv6i4uZ11TXmL943rHadHPU6rMxIb4fKG82+5LN1bUZt1cpXUaSwAWcD+L60OLwwceiNC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywce8DxkDAdnGT/I7ztNbQZ8L6vcBrfMxkXH0agKhno+TBPGWHN
-	q5FvqXiDz/tPxJauy15a86MBo82zNwYSAW7Yq9q29+wqAoid5Llcf2bEwLVc652BM6Uv3ykCent
-	CHsRpEzPK0UxNP0mXrj1LrlA6Ddu3urpKkytBNwyjqGfZsysphLlHogy+1siWjg==
-X-Gm-Gg: ASbGncuoOSwDTmtURkwzREUsIwi+xwGMmiBuAuFEcUCafi4JJtB7465t6amz2d7aU2y
-	Tc4oGtq/GBMIr7WqyHTEaXJX9NAji/6HnpMLIRGmri+eup8DE2k0Ce9Nk6F/xgg11mKOeQd4AF+
-	ykw/u5mH1ri3uv/gqavCX1JW/Scicj8fGUi10hQiJHQeP7ajiFYyszvk0WCv/fv036Cfp03Q97s
-	ehQuPmxz87B5265sGuKKMbM40CzO1sii3K+nMg4mee+WP5y+NS8gdXS59S8MA38+J1GHgrtndO/
-	Rz9dyUmDO+LNwChlY80wm50L2c7Wq/qxiKE5WE6rrUtEpLno+xCtvU8WCy56nSCA+Xji+fTxeh9
-	91Co8fu0pNldynapqPSKh8B50u+4E3Zv+uqRw+Y7S
-X-Received: by 2002:a5d:5984:0:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-39c120e079amr10766401f8f.25.1743519042565;
-        Tue, 01 Apr 2025 07:50:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGneUPIDd6lS071kINGiUx+FC/1faN4rQ9jfJJ+sOLSseYV4a77fCWS2WU/wxc0IDVzQHVHHw==
-X-Received: by 2002:a5d:5984:0:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-39c120e079amr10766381f8f.25.1743519042219;
-        Tue, 01 Apr 2025 07:50:42 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:4d00:6ac5:30d:1611:918f? (p200300cbc7074d006ac5030d1611918f.dip0.t-ipconnect.de. [2003:cb:c707:4d00:6ac5:30d:1611:918f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d82e6ac9bsm199864675e9.12.2025.04.01.07.50.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Apr 2025 07:50:41 -0700 (PDT)
-Message-ID: <4d051167-9419-43fe-ab80-701c3f46b19f@redhat.com>
-Date: Tue, 1 Apr 2025 16:50:40 +0200
+        d=1e100.net; s=20230601; t=1743519081; x=1744123881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w2PGIUWN8Qg4lwQqZjTaAHNRuRoKwS4SfvGv0EzV/1Q=;
+        b=vEssNtfrVlYiNt94vTqNiYi/i4ueVRLWCCRyMXKFbON6Uv3QvcDwNQGwkELIJe+jYT
+         3xUD1cPRA9WAeHscHhip4hVnyLlTHSMPTBH899kfXOSbN+Fp41R2zKM2nvXbMjPUN2zZ
+         5WVXCq8M9REQK4EcARARthgWwNuHPVtCrzYvZQ8/hx7NdiC1MppX8K5ddVWunmRSVm28
+         xR0wR7t++pgz0qjw08k17kH6lWIyEdzrxfNUK8a8J49PTO/Aoesg4au61+IsmfNuuc0e
+         9ZADf/CdiMaWqTl41j3zFUlwqWD+vtqAjTZQY0ATWP8EfVC/kH7enym6fmu2c6yf91yg
+         Qj3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPRHC+r/wI/VDsB6a0kowz4Y4qM2jImHEYIXkZuc5r9gLhb6BV7WC0IhJVvRtzvzdgm3b2a8/1ZECKUq3f@vger.kernel.org, AJvYcCWwTs8Z1z+rmYpJJLMO0CNGoRRU2qXqf4pJvdVRbMYQHweTf4KVs7yCtW0LdfO0iCAbRlk6LYT9UFwqDty3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS0LtfkAuWJJUgOVPI2di80GXiQHY/xR84rnTZM4jSRT7M+8SZ
+	qQQXateumFKn26nLaod4loQZx393iVJ1RZ26oCCYavFR1bqCZL1Y8enyxnjmaATOXL/9YHicz1a
+	dvrDcB1ZpE38zpmI16v3XtdjE7Jw=
+X-Gm-Gg: ASbGncseOfCa0oFjK5F4o31jNf2gJSRyiFwMgncoQaK4rJTmutrtlP6Cm6I8piRrFDt
+	Gcvz+9E4Fuki2UOx/PGu6aNE34JTrI0kSU+8CqWXwO498ZL9rb/dmhaBmBGOA16vf2rim4VkcP4
+	FmLtb3s6enPF0wTdeuP81d6vsAl9I=
+X-Google-Smtp-Source: AGHT+IG7pkQ1GzQpATG8QqTleJB4yNaHwHHE1zgVDQOR+ZgvIB8JI2BkCAG4FIMKSnZH4heOS1hQC/RjR8JUmqaXJsU=
+X-Received: by 2002:ad4:5684:0:b0:6e6:61a5:aa57 with SMTP id
+ 6a1803df08f44-6eed5fcb745mr166993946d6.14.1743519081478; Tue, 01 Apr 2025
+ 07:51:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] DAX: warn when kmem regions are truncated for memory
- block alignment.
-To: Gregory Price <gourry@gourry.net>
-Cc: dan.j.williams@intel.com, nvdimm@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-team@meta.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, linux-cxl@vger.kernel.org
-References: <20250321180731.568460-1-gourry@gourry.net>
- <Z-remBNWEej6KX3-@gourry-fedora-PF4VCD3F>
- <3e3115c0-c3a2-4ec2-8aea-ee1b40057dd6@redhat.com>
- <Z-v7mMZcP1JPIuj4@gourry-fedora-PF4VCD3F>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z-v7mMZcP1JPIuj4@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250401073046.51121-1-laoar.shao@gmail.com> <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+In-Reply-To: <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 1 Apr 2025 22:50:45 +0800
+X-Gm-Features: AQ5f1JoxFVNGVjpqTbB8efeabk5Z3jz9ZAOuKNxTpHQhuIoFL3zlIvT5_Hlc1yA
+Message-ID: <CALOAHbBnC9VVECVUD_-J8q5fXfG6Krc32u+_WeoCj7PdwvspJg@mail.gmail.com>
+Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
+ reading proc files
+To: Kees Cook <kees@kernel.org>
+Cc: joel.granados@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01.04.25 16:43, Gregory Price wrote:
-> On Tue, Apr 01, 2025 at 11:33:59AM +0200, David Hildenbrand wrote:
->> On 31.03.25 20:27, Gregory Price wrote:
->>> We discussed [1] how this auto-sizing can cause 1GB huge page
->>> allocation failures (assuming you online as ZONE_NORMAL). That means
->>> ACPI-informed sizing by default would potentially be harmful to existing
->>> systems and adding yet-another-boot-option just seems nasty.
->>>
->>> I've since dropped acpi-informed block size patch[2].  If there are opinions
->>> otherwise, I can continue pushing it.
->>
->> Oh, I thought we would be going forward with that. What's the reason we
->> would not want to do that?
->>
-> 
-> It seemed like having it reduce block size by default would make 1GB huge
-> pages less reliable to allocate. If you think this isn't a large concern,
-> I can update and push again.
+On Tue, Apr 1, 2025 at 10:01=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+>
+>
+> On April 1, 2025 12:30:46 AM PDT, Yafang Shao <laoar.shao@gmail.com> wrot=
+e:
+> >While investigating a kcompactd 100% CPU utilization issue in production=
+, I
+> >observed frequent costly high-order (order-6) page allocations triggered=
+ by
+> >proc file reads from monitoring tools. This can be reproduced with a sim=
+ple
+> >test case:
+> >
+> >  fd =3D open(PROC_FILE, O_RDONLY);
+> >  size =3D read(fd, buff, 256KB);
+> >  close(fd);
+> >
+> >Although we should modify the monitoring tools to use smaller buffer siz=
+es,
+> >we should also enhance the kernel to prevent these expensive high-order
+> >allocations.
+> >
+> >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >Cc: Josef Bacik <josef@toxicpanda.com>
+> >---
+> > fs/proc/proc_sysctl.c | 10 +++++++++-
+> > 1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> >index cc9d74a06ff0..c53ba733bda5 100644
+> >--- a/fs/proc/proc_sysctl.c
+> >+++ b/fs/proc/proc_sysctl.c
+> >@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *=
+iocb, struct iov_iter *iter,
+> >       error =3D -ENOMEM;
+> >       if (count >=3D KMALLOC_MAX_SIZE)
+> >               goto out;
+> >-      kbuf =3D kvzalloc(count + 1, GFP_KERNEL);
+> >+
+> >+      /*
+> >+       * Use vmalloc if the count is too large to avoid costly high-ord=
+er page
+> >+       * allocations.
+> >+       */
+> >+      if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+> >+              kbuf =3D kvzalloc(count + 1, GFP_KERNEL);
+>
+> Why not move this check into kvmalloc family?
 
-Oh, you mean with the whole memmap_on_memory thing. Even with that, 
-using 2GB memory blocks would only fit a single 1GB memory block ... and 
-it requires ZONE_NORMAL.
+good suggestion.
 
-For ordinary boot memory, the 1GB behavior should be independent of the 
-memory block size (a 1GB page can span multiple blocks as long as they 
-are in the same zone), which is the most important thing.
+>
+> >+      else
+> >+              kbuf =3D vmalloc(count + 1);
+>
+> You dropped the zeroing. This must be vzalloc.
 
-So I don't think it's a concern for DAX right now. Whoever needs that, 
-can disable the memmap_on_memory option.
+Nice catch.
 
--- 
-Cheers,
+>
+> >       if (!kbuf)
+> >               goto out;
+> >
+>
+> Alternatively, why not force count to be <PAGE_SIZE? What uses >PAGE_SIZE=
+ writes in proc/sys?
 
-David / dhildenb
+This would break backward compatibility with existing tools, so we
+cannot enforce this restriction.
 
+--=20
+Regards
+Yafang
 
