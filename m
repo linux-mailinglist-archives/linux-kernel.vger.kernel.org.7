@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-582895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A461A773A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:50:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481E0A773AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5741D3A85D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70E767A3651
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997CB1BFE00;
-	Tue,  1 Apr 2025 04:50:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2347A1C7006;
+	Tue,  1 Apr 2025 04:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L79WPtzQ"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A306EACE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 04:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E144BEACE;
+	Tue,  1 Apr 2025 04:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743483042; cv=none; b=dW2mnBFFyJgCVJvLjGCJQ8wrZTOURgcVAS4dKBfOABXHiOG8cRrffa1Azp9gI7ncgnbKpSX94CT5/OI3NonGKRFCEQQv94RV49cdouurCx0ilvCumZ/7WMIljQzq8MB5uROOVS33rVqSDclVx+z86ekOkNi1xi+uyHVi9co2yd8=
+	t=1743483540; cv=none; b=INGPONApI4CrGjon4yLK82SFTNiq7It61q/tS6X6InsnsWT9bpNpPUenIh/o6tMnNSrM8/KpzngOxmKKw6jP0z6q22Sn3qGux/yKxM/eGUSr7/NBTovP++IjhU9bCTQTfVlFxnt7NMPIjj1ronsIiM1OllMX+VRerPrCwkwA/DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743483042; c=relaxed/simple;
-	bh=YMqeGFEfZuafwnrB5kJbEH3IDII0/ZT08GZH7KupvlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=geDs9HTGOKwzbYk2MHhBB/2DpPdcsFHXr+CSuj0syRmBSSike1nT2mKmEGCoNMKPLpCfLO7ukjCACraR5fDCACHUwbrjODe0rQ81R/h/s/vLbX+3pRQBriLE0irgX2VuUrcOMqFIBTTKbqtpPN5sF7KYVpPnmYTzHG25vox08Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tzTa7-0006yV-IQ; Tue, 01 Apr 2025 06:50:35 +0200
-Message-ID: <059003d1-d725-4439-a6d7-cb354fba161b@pengutronix.de>
-Date: Tue, 1 Apr 2025 06:50:33 +0200
+	s=arc-20240116; t=1743483540; c=relaxed/simple;
+	bh=3z5XX5BtVoTMasfMWZlJkWa9WdOEmC51NhKM+qgU1+c=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=YxIYavJ7EKYG8S0A/EyTbAwOQLvCM6wA8CAudIsBwshAKiN7v1J0Hpe7XewWDavuJSTR3dqM5BkyGR9CF5QzlKZvD+ocpPzCpChCo4J4LxvzCcWshRuDZlE/4kAzBny2XKfOOWUTF3dQ3tCpAYJC7Hp7qMUWmOzL5z5l+Tn8NFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L79WPtzQ; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30db1bc464dso45786061fa.0;
+        Mon, 31 Mar 2025 21:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743483536; x=1744088336; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VWTENQzr2hZDJmgqPOZQRNlVCbiEyzezvQvSZ+qcZVY=;
+        b=L79WPtzQVMHmxt0S9rMHuOORQLP/kflg8S9LOt4yir57lXre/LSEWwAnLlYLZhsa7M
+         xIZAXXB01YT6JJtS0jYS+JTSMmZ7pcfqH3fPmWv+LcGienGp3XJRim+9b5WSMClL8NIi
+         8m47vyKIxGw5EdClPZcA2KQShcUP4plLjbBnNWA1x2lFf0DCxDvtxfGZxj8/g03K5Wcf
+         rljvylFBfpeO0zw8vvnQPnoalkk+wTYU/fd1rTd39y1kvwAy8g0fVjMVBTviqGbB4eM2
+         TM73eB8b5kQ/5gTIWxVGPztWCKwf00AR7X+MVmZmAswDnXe1I0TjetxvQOW+Y3QHuZuI
+         jykw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743483536; x=1744088336;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VWTENQzr2hZDJmgqPOZQRNlVCbiEyzezvQvSZ+qcZVY=;
+        b=HbHgROJv69G/T4gL8jTPSVeePiVNzwTlIM7EmNkKscV70NFAj7vK+gWQvab5r8Ojb0
+         kEdeAs5HTv/9rEntTXV8PhAe/bDRnmvKovhgbG78c0qjyxlXhKvY0B2jUvk8zH7JsIkf
+         Ra7ZdIkYRbwoIfwaaC9A1EbOgIzFoqTGs3M8xVaiZDxE6VThmVn0zN049Z+Oy6b/L6F+
+         0W3xBPwvFJplcIsW1H+DXfHJZrOc4mrzNvzYg9tnAUjVO4NBcG2dci+GCDiiMusx/9Jl
+         1K0AdZKg8DLoxwJnzyEoffqlxcuCAh9NpZdw999hQX2yaaTJu7FXDLC3n12ZoVmOonTB
+         9ZUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxnq48vF3D96vnapYDGr0EJAHuJ+aXIdit6+xAO+9yDSqo+VO8G/iDKtF2IqmigATNL7Ehh3gJ0uH4Rtvo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoxlR7IMy3LnF3uwXs5a0RbiRIwMhYjNZrBIfLhZtFa9u3OZeT
+	8Wxy/WEUReW8woKt9WZa+QgmomGbiSv454FDjOmFZam3vbF2W2cBwsTR/JXweXJByH0J8AsLtcN
+	hCYCIm2HMZrJMss2CNWJ2o23Pm0pYmSfl
+X-Gm-Gg: ASbGnctzG4KSAASXqjr2/+T+qm/zxmM9BGQUDVHuwYbmgoEkFc1PNw1vOFHxtpMAalt
+	a4oZ7zqyagt8mUfN+Kpy5daVTFHJ4XytGLh1Dd7tbNNwwt23flcF/VuPTxYwn41t9OPxUOWY9D0
+	xdCpxaSUzqkz0xNpMYVu6e3hQclCVCe/Qyo2wBaM15UxNTmLTXc1WuOobfZxuA
+X-Google-Smtp-Source: AGHT+IHMduVQM7Rv6Xiep2IbvUU3vM8bK7xyCH7L9lMJucSLkTrZLrMCHNVkofFdW6RqJ2xczm3thdlxaygGGHyICNA=
+X-Received: by 2002:a2e:858d:0:b0:30b:b7c3:949a with SMTP id
+ 38308e7fff4ca-30de02655e6mr33587281fa.18.1743483535946; Mon, 31 Mar 2025
+ 21:58:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] counter: interrupt-cnt: Protect enable/disable OPs with
- mutex
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>, linux-iio@vger.kernel.org
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, linux-kernel@vger.kernel.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- William Breathitt Gray <wbg@kernel.org>
-References: <20250331163642.2382651-1-alexander.sverdlin@siemens.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20250331163642.2382651-1-alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 31 Mar 2025 23:58:44 -0500
+X-Gm-Features: AQ5f1JrcVoDAoAIjWjhq1iuk122oVsMRc5QCcasmRDfbRNCFpyRC_6rrHibhPkA
+Message-ID: <CAH2r5mvre+ijjAQMbqezJ=PeNX-8-o228bh4SjyJjL8wGp70Yw@mail.gmail.com>
+Subject: SCSI circular lock dependency with current mainline
+To: LKML <linux-kernel@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Alexander,
+I saw the following circular lock dependency when running tests with
+current mainline from today.  The tests were not related to local fs
+(they were for smb3.1.1 mounts but the bug is not related to cifs.ko).
+  Presumably bug is due to locking problems for local I/O.
 
-On 31.03.25 18:36, A. Sverdlin wrote:
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> 
-> Enable/disable seems to be racy on SMP, consider the following scenario:
-> 
-> CPU0					CPU1
-> 
-> interrupt_cnt_enable_write(true)
-> {
-> 	if (priv->enabled == enable)
-> 		return 0;
-> 
-> 	if (enable) {
-> 		priv->enabled = true;
-> 					interrupt_cnt_enable_write(false)
-> 					{
-> 						if (priv->enabled == enable)
-> 							return 0;
-> 
-> 						if (enable) {
-> 							priv->enabled = true;
-> 							enable_irq(priv->irq);
-> 						} else {
-> 							disable_irq(priv->irq)
-> 							priv->enabled = false;
-> 						}
-> 		enable_irq(priv->irq);
-> 	} else {
-> 		disable_irq(priv->irq);
-> 		priv->enabled = false;
-> 	}
-> 
-> The above would result in priv->enabled == false, but IRQ left enabled.
-> Protect both write (above race) and read (to propagate the value on SMP)
-> callbacks with a mutex.
+[Mon Mar 31 23:12:21 2025] sd 0:0:0:0: [sda] Attached SCSI disk
+[Mon Mar 31 23:12:21 2025]
+======================================================
+[Mon Mar 31 23:12:21 2025] WARNING: possible circular locking
+dependency detected
+[Mon Mar 31 23:12:21 2025] 6.14.0 #1 Not tainted
+[Mon Mar 31 23:12:21 2025]
+------------------------------------------------------
+[Mon Mar 31 23:12:21 2025] (udev-worker)/423143 is trying to acquire lock:
+[Mon Mar 31 23:12:21 2025] ff1100013840f118
+(&q->elevator_lock){+.+.}-{4:4}, at: elv_iosched_store+0x13b/0x370
+[Mon Mar 31 23:12:21 2025]
+but task is already holding lock:
+[Mon Mar 31 23:12:21 2025] ff1100013840ebe8
+(&q->q_usage_counter(io)#13){++++}-{0:0}, at:
+blk_mq_freeze_queue_nomemsave+0x12/0x20
+[Mon Mar 31 23:12:21 2025]
+which lock already depends on the new lock.
+[Mon Mar 31 23:12:21 2025]
+the existing dependency chain (in reverse order) is:
+[Mon Mar 31 23:12:21 2025]
+-> #2 (&q->q_usage_counter(io)#13){++++}-{0:0}:
+[Mon Mar 31 23:12:21 2025] blk_alloc_queue+0x3f4/0x440
+[Mon Mar 31 23:12:21 2025] blk_mq_alloc_queue+0xd6/0x160
+[Mon Mar 31 23:12:21 2025] scsi_alloc_sdev+0x4c0/0x660
+[Mon Mar 31 23:12:21 2025] scsi_probe_and_add_lun+0x2f4/0x690
+...
 
-Doesn't sysfs/kernfs already ensure that the ops may not be called concurrently
-on the same open file?
+More details on the log message:
 
-Thanks,
-Ahmad
-
-> 
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> ---
->  drivers/counter/interrupt-cnt.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/counter/interrupt-cnt.c b/drivers/counter/interrupt-cnt.c
-> index 949598d51575a..d83848d0fe2af 100644
-> --- a/drivers/counter/interrupt-cnt.c
-> +++ b/drivers/counter/interrupt-cnt.c
-> @@ -3,12 +3,14 @@
->   * Copyright (c) 2021 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/counter.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
->  #include <linux/platform_device.h>
->  #include <linux/types.h>
->  
-> @@ -19,6 +21,7 @@ struct interrupt_cnt_priv {
->  	struct gpio_desc *gpio;
->  	int irq;
->  	bool enabled;
-> +	struct mutex lock;
->  	struct counter_signal signals;
->  	struct counter_synapse synapses;
->  	struct counter_count cnts;
-> @@ -41,6 +44,8 @@ static int interrupt_cnt_enable_read(struct counter_device *counter,
->  {
->  	struct interrupt_cnt_priv *priv = counter_priv(counter);
->  
-> +	guard(mutex)(&priv->lock);
-> +
->  	*enable = priv->enabled;
->  
->  	return 0;
-> @@ -51,6 +56,8 @@ static int interrupt_cnt_enable_write(struct counter_device *counter,
->  {
->  	struct interrupt_cnt_priv *priv = counter_priv(counter);
->  
-> +	guard(mutex)(&priv->lock);
-> +
->  	if (priv->enabled == enable)
->  		return 0;
->  
-> @@ -227,6 +234,8 @@ static int interrupt_cnt_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	mutex_init(&priv->lock);
-> +
->  	ret = devm_counter_add(dev, counter);
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret, "Failed to add counter\n");
-
+http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/builds/438/steps/205/logs/stdio
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks,
+
+Steve
 
