@@ -1,183 +1,100 @@
-Return-Path: <linux-kernel+bounces-584027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B52FA78266
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CACA7826C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084E33B069D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 306D7168FC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680C220E002;
-	Tue,  1 Apr 2025 18:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF322101AE;
+	Tue,  1 Apr 2025 18:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FoUhMXTZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+GH2ZSeq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="Sb7oSiKq"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9962420D505;
-	Tue,  1 Apr 2025 18:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FA620D4F8;
+	Tue,  1 Apr 2025 18:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743533002; cv=none; b=YFAuULV1MbHNhBESJ/TUciyMH+z2AAHRwaf+I+NT66Mr4FwQQGgMZcZuWdAds7OIcR8tLcmkjfKy5+E2lYyJWJGDsO+FnGTsly4HrFgeiz6jhBJY7G+gHtdZV5N1IdzzyKo+Rbzp4adFFGnnc+FyI0mYo4QRjhtEbbolc9EPJEI=
+	t=1743533175; cv=none; b=j/yHR1zW/MVSpQchAtell5lc9vkhfirXTqbDNV3JzLfe5lWZjDaGr2KaIg3oZECY1ly7GDwaKKuR8VqXOm+6sUqySY0dyRsL2s52OuBgcPBYC7AWrtgonBgM+3PL6Cj+B/bpL+tUStRLIYtGHPmEBK1NN0H8J+XvteVUlRgAuvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743533002; c=relaxed/simple;
-	bh=8/C1JKe3fscqaOAHcPivy8Eeb+khbtBI9FxScUINIT4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=C+guyPJF82spaJmueW4VdGtZaulJCoU0CQUH2HnUG2VtSjAamLRh0ksU+MdhMkvLDN1LuS7RAy65CysOOeidySh2bmU5CrCKp1sPoh1tphMF7MdO3VfC3lQcMOpdfm9f2DwKkibzdTBvwVUregr1YncocTOaMknQltRUpHsTFuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FoUhMXTZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+GH2ZSeq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 01 Apr 2025 18:43:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743532998;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b2Q2L/7rj3cxpaE4j8vthf2ql42MJVGYI7kIRx6ocME=;
-	b=FoUhMXTZbUiOhY0VHQPoFysfCgG3Xllk/+Q0XfPVi5kf9cn3RzmKd8sHf2ivjW2xq/mDG2
-	Clg/QYRQsRYL9XN/A9L/6FnXIl6tOAGpXRPqfOKiOs0JXj9XLL86i2L+BBUig47YViCrf4
-	PxZHjcToej7UC77sX/CIN94w01HbeU3JJudQC4rL7JoKWXSdSRj2qOjiti0xRciNoQZAw0
-	Trlko38JPkIgRKQz35oDNAE5NeThZFZg6ujKtDFoXrbl4vR5tP/uOuUsTzVEdyLaNYK8/P
-	YJZSB9/rwzUuHNePa5BeLdMXrE1Hsx+eLNaAr5ms0LVOfuecKQcza1HJer3QGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743532998;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b2Q2L/7rj3cxpaE4j8vthf2ql42MJVGYI7kIRx6ocME=;
-	b=+GH2ZSeqiwFfyrkQ/RSVLF7sH4K5kMrG82hu57BCMr9pNgYZWriN0Tdc2WeiaWW4AtQhj4
-	QvPT1HuxsrGxN3CQ==
-From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/platform/iosf_mbi: Remove unused
- iosf_mbi_unregister_pmic_bus_access_notifier()
-Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
- Ingo Molnar <mingo@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241225175010.91783-1-linux@treblig.org>
-References: <20241225175010.91783-1-linux@treblig.org>
+	s=arc-20240116; t=1743533175; c=relaxed/simple;
+	bh=HNhHH3uqWFzuN4oweVvGIWCxDu6KHeE/ZBo/2NlYHM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KXBR6ejKVpi3vOyyC2SGKglvvjEIz2dmnOdddqoQ5/vKjVRsARFc6ea5pNo0nJ2dvI7WIg0zGMgEGWUN0aWg21w1xWvk+CV5RmZjDkIadsU0+Ct/7dWUKzuF3bsswCp2wBKd0W/y18Ido5OqNa6nDEr6BfUMLBh/JG02u9x5hSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=Sb7oSiKq; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:471f:0:640:4191:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 4D06560CC6;
+	Tue,  1 Apr 2025 21:44:03 +0300 (MSK)
+Received: from d-tatianin-lin.yandex-team.ru (unknown [2a02:6b8:b081:8129::1:28])
+	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ahbvVD0FWa60-Ia69gsQe;
+	Tue, 01 Apr 2025 21:44:02 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1743533042;
+	bh=eMhHdCHA6bW4pvBztHIxttEiNTiHXzDH+rRdf/3ovTY=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=Sb7oSiKqPRy+5QUBsoMpQPI6aFkEdbRe3x2rHJXAMBHKVxSHwuaDX3HI6eQXd6t8a
+	 82OWDFFjMKyQoBKWnv0vVTcXdmh44aXK3z4kq/paHA2EbyNwdeZqHcqtfaI7BhUYX4
+	 VesJehXJqmax1SFtROc4C22CdR9HYkLLxceaKfnU=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Daniil Tatianin <d-tatianin@yandex-team.ru>
+To: Robert Moore <robert.moore@intel.com>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Len Brown <lenb@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPICA: exserial: don't forget to handle FFixedHW opregions for reading
+Date: Tue,  1 Apr 2025 21:43:11 +0300
+Message-Id: <20250401184312.599962-1-d-tatianin@yandex-team.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174353299389.14745.950743351956667262.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+The initial commit that introduced support for FFixedHW operation
+regions did add a special case in the AcpiExReadSerialBus If, but
+forgot to actually handle it inside the switch, so add the missing case
+to prevent reads from failing with AE_AML_INVALID_SPACE_ID.
 
-Commit-ID:     d0ebf4c7eb91fe73981d5250b50e9d22db8fb946
-Gitweb:        https://git.kernel.org/tip/d0ebf4c7eb91fe73981d5250b50e9d22db8fb946
-Author:        Dr. David Alan Gilbert <linux@treblig.org>
-AuthorDate:    Wed, 25 Dec 2024 17:50:10 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 01 Apr 2025 20:31:39 +02:00
-
-x86/platform/iosf_mbi: Remove unused iosf_mbi_unregister_pmic_bus_access_notifier()
-
-The last use of iosf_mbi_unregister_pmic_bus_access_notifier() was
-removed in 2017 by:
-
-  a5266db4d314 ("drm/i915: Acquire PUNIT->PMIC bus for intel_uncore_forcewake_reset()")
-
-Remove it.
-
-(Note that the '_unlocked' version is still used.)
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Link: https://lore.kernel.org/r/20241225175010.91783-1-linux@treblig.org
+Link: https://github.com/acpica/acpica/pull/998
+Fixes: ee64b827a9a ("ACPICA: Add support for FFH Opregion special context data")
+Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
 ---
- arch/x86/include/asm/iosf_mbi.h      |  7 -------
- arch/x86/platform/intel/iosf_mbi.c   | 13 -------------
- drivers/gpu/drm/i915/i915_iosf_mbi.h |  6 ------
- 3 files changed, 26 deletions(-)
+ drivers/acpi/acpica/exserial.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/include/asm/iosf_mbi.h b/arch/x86/include/asm/iosf_mbi.h
-index af7541c..8ace655 100644
---- a/arch/x86/include/asm/iosf_mbi.h
-+++ b/arch/x86/include/asm/iosf_mbi.h
-@@ -168,13 +168,6 @@ void iosf_mbi_unblock_punit_i2c_access(void);
- int iosf_mbi_register_pmic_bus_access_notifier(struct notifier_block *nb);
+diff --git a/drivers/acpi/acpica/exserial.c b/drivers/acpi/acpica/exserial.c
+index 5241f4c01c76..89a4ac447a2b 100644
+--- a/drivers/acpi/acpica/exserial.c
++++ b/drivers/acpi/acpica/exserial.c
+@@ -201,6 +201,12 @@ acpi_ex_read_serial_bus(union acpi_operand_object *obj_desc,
+ 		function = ACPI_READ;
+ 		break;
  
- /**
-- * iosf_mbi_register_pmic_bus_access_notifier - Unregister PMIC bus notifier
-- *
-- * @nb: notifier_block to unregister
-- */
--int iosf_mbi_unregister_pmic_bus_access_notifier(struct notifier_block *nb);
--
--/**
-  * iosf_mbi_unregister_pmic_bus_access_notifier_unlocked - Unregister PMIC bus
-  *                                                         notifier, unlocked
-  *
-diff --git a/arch/x86/platform/intel/iosf_mbi.c b/arch/x86/platform/intel/iosf_mbi.c
-index c81cea2..40ae94d 100644
---- a/arch/x86/platform/intel/iosf_mbi.c
-+++ b/arch/x86/platform/intel/iosf_mbi.c
-@@ -422,19 +422,6 @@ int iosf_mbi_unregister_pmic_bus_access_notifier_unlocked(
- }
- EXPORT_SYMBOL(iosf_mbi_unregister_pmic_bus_access_notifier_unlocked);
- 
--int iosf_mbi_unregister_pmic_bus_access_notifier(struct notifier_block *nb)
--{
--	int ret;
--
--	/* Wait for the bus to go inactive before unregistering */
--	iosf_mbi_punit_acquire();
--	ret = iosf_mbi_unregister_pmic_bus_access_notifier_unlocked(nb);
--	iosf_mbi_punit_release();
--
--	return ret;
--}
--EXPORT_SYMBOL(iosf_mbi_unregister_pmic_bus_access_notifier);
--
- void iosf_mbi_assert_punit_acquired(void)
- {
- 	WARN_ON(iosf_mbi_pmic_punit_access_count == 0);
-diff --git a/drivers/gpu/drm/i915/i915_iosf_mbi.h b/drivers/gpu/drm/i915/i915_iosf_mbi.h
-index 8f81b76..317075d 100644
---- a/drivers/gpu/drm/i915/i915_iosf_mbi.h
-+++ b/drivers/gpu/drm/i915/i915_iosf_mbi.h
-@@ -31,12 +31,6 @@ iosf_mbi_unregister_pmic_bus_access_notifier_unlocked(struct notifier_block *nb)
- {
- 	return 0;
- }
--
--static inline
--int iosf_mbi_unregister_pmic_bus_access_notifier(struct notifier_block *nb)
--{
--	return 0;
--}
- #endif
- 
- #endif /* __I915_IOSF_MBI_H__ */
++	case ACPI_ADR_SPACE_FIXED_HARDWARE:
++
++		buffer_length = ACPI_FFH_INPUT_BUFFER_SIZE;
++		function = ACPI_READ;
++		break;
++
+ 	default:
+ 		return_ACPI_STATUS(AE_AML_INVALID_SPACE_ID);
+ 	}
+-- 
+2.34.1
+
 
