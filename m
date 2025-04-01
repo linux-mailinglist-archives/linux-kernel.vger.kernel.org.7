@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-584107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A678A78351
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:33:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D92EA78354
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F42D3ADC9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45BF83AFE4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFC7214A80;
-	Tue,  1 Apr 2025 20:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F33821B9D9;
+	Tue,  1 Apr 2025 20:32:32 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEC120E32B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7A02144BB;
 	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743539550; cv=none; b=EOglPOhRwRiDDv5pwXehJl0Ylo5mWv4UkhhA+tKVtJARqhEvvvYKhTj1AfzWt00CI1HmThuUXq9DOM1jqcjD5xbXHTmjb4A1j4kGiR6yyJX3VpBWjzuy8h5z8D6NZgN7Hg6Ly8HEHo7E79aQJ5rNc7juAxR8fpdoHV5BNwl/AMk=
+	t=1743539550; cv=none; b=Pxadi8OiciUuDgltcyTpaCXaNXQl0dFZVqbR4xM0cuio8kJFhmly1h0L1O52QbUsZsmLUKatO07rsfjrFy4cQ7yGsr6x6xDQgHbpcW+jR/nfEaWpk68nYhJujqjUO92WVc+HlKOXYooM/OWXL/gzc55HREZQT+CwYnYqX9FcSZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743539550; c=relaxed/simple;
-	bh=ZFM9eZYL0PvWeKjx6LDsMsM3kKFi6vLW7UHPBAVvvts=;
+	bh=W0oIFGkZsh/VYsAVVtrN6VmCzdve/U9Qslfp6t8425I=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=a5h5y52L4b7xTkimNULRA/OGCtdvnVheWds3W0vzw9jlji2h5kn7TjK/9J08kWFeD2tRClir0F5tBv6PbKKKoHrH80vTu2VkavFYYMZqxDCTACr2lVLMxTDU9tH9ec7FDrTXOxuVFzlgB+z5iO7uhX2KJ7e6RRnZv3JCYhBLv1k=
+	 Content-Type; b=G/YhEyBKtwnWwvGAKv/ZnHIXoamDA6jr1Mc/pISyUkKyX1YpejNCs8roLD3D7nspl3+TzQl9+01RdAjqP1JA5FFexEezrIm32QB5dTGcCDlk0Pebq2ZPxFn8/ePZgmhXqAafKspN0o66MCGwaX4qeDo01RUay5OJEgSx6qTuymk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521E6C4CEF1;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97BFAC4CEF4;
 	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tziIe-00000006IeK-0CvO;
+	id 1tziIe-00000006Ieo-0wNL;
 	Tue, 01 Apr 2025 16:33:32 -0400
-Message-ID: <20250401203331.901028151@goodmis.org>
+Message-ID: <20250401203332.072456470@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 01 Apr 2025 16:25:52 -0400
+Date: Tue, 01 Apr 2025 16:25:53 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -47,7 +47,7 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  Vlastimil Babka <vbabka@suse.cz>,
  Mike Rapoport <rppt@kernel.org>,
  Jann Horn <jannh@google.com>
-Subject: [PATCH v3 3/5] tracing: Use vmap_page_range() to map memmap ring buffer
+Subject: [PATCH v3 4/5] ring-buffer: Use flush_kernel_vmap_range() over flush_dcache_folio()
 References: <20250401202549.409271454@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,78 +59,47 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The code to map the physical memory retrieved by memmap currently
-allocates an array of pages to cover the physical memory and then calls
-vmap() to map it to a virtual address. Instead of using this temporary
-array of struct page descriptors, simply use vmap_page_range() that can
-directly map the contiguous physical memory to a virtual address.
+Some architectures do not have data cache coherency between user and
+kernel space. For these architectures, the cache needs to be flushed on
+both the kernel and user addresses so that user space can see the updates
+the kernel has made.
 
-Link: https://lore.kernel.org/all/CAHk-=whUOfVucfJRt7E0AH+GV41ELmS4wJqxHDnui6Giddfkzw@mail.gmail.com/
+Instead of using flush_dcache_folio() and playing with virt_to_folio()
+within the call to that function, use flush_kernel_vmap_range() which
+takes the virtual address and does the work for those architectures that
+need it.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAG48ez3w0my4Rwttbc5tEbNsme6tc0mrSN95thjXUFaJ3aQ6SA@mail.gmail.com/
+
+Suggested-by: Jann Horn <jannh@google.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ kernel/trace/ring_buffer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e33f3b092e2e..1d7d2b772a74 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -50,6 +50,7 @@
- #include <linux/irq_work.h>
- #include <linux/workqueue.h>
- #include <linux/sort.h>
-+#include <linux/io.h> /* vmap_page_range() */
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index f25966b3a1fc..d4b0f7b55cce 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -6016,7 +6016,7 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
+ 	meta->read = cpu_buffer->read;
  
- #include <asm/setup.h> /* COMMAND_LINE_SIZE */
- 
-@@ -9803,29 +9804,27 @@ static int instance_mkdir(const char *name)
- 	return ret;
+ 	/* Some archs do not have data cache coherency between kernel and user-space */
+-	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
++	flush_kernel_vmap_range(cpu_buffer->meta_page, PAGE_SIZE);
  }
  
--static u64 map_pages(u64 start, u64 size)
-+static u64 map_pages(unsigned long start, unsigned long size)
- {
--	struct page **pages;
--	phys_addr_t page_start;
--	unsigned int page_count;
--	unsigned int i;
--	void *vaddr;
-+        unsigned long vmap_start, vmap_end;
-+	struct vm_struct *area;
-+	int ret;
+ static void
+@@ -7319,7 +7319,8 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
  
--	page_count = DIV_ROUND_UP(size, PAGE_SIZE);
-+        area = get_vm_area(size, VM_IOREMAP);
-+        if (!area)
-+                return 0;
+ out:
+ 	/* Some archs do not have data cache coherency between kernel and user-space */
+-	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
++	flush_kernel_vmap_range(cpu_buffer->reader_page->page,
++				buffer->subbuf_size + BUF_PAGE_HDR_SIZE);
  
--	page_start = start;
--	pages = kmalloc_array(page_count, sizeof(struct page *), GFP_KERNEL);
--	if (!pages)
--		return 0;
-+        vmap_start = (unsigned long) area->addr;
-+        vmap_end = vmap_start + size;
+ 	rb_update_meta_page(cpu_buffer);
  
--	for (i = 0; i < page_count; i++) {
--		phys_addr_t addr = page_start + i * PAGE_SIZE;
--		pages[i] = pfn_to_page(addr >> PAGE_SHIFT);
--	}
--	vaddr = vmap(pages, page_count, VM_MAP, PAGE_KERNEL);
--	kfree(pages);
-+        ret = vmap_page_range(vmap_start, vmap_end,
-+			      start, pgprot_nx(PAGE_KERNEL));
-+        if (ret < 0) {
-+                free_vm_area(area);
-+                return 0;
-+        }
- 
--	return (u64)(unsigned long)vaddr;
-+	return (u64)vmap_start;
- }
- 
- /**
 -- 
 2.47.2
 
