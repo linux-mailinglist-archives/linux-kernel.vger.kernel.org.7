@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-583431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A6DA77AE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 196E5A77ACE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02653A923E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31DC03A7763
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A34A204597;
-	Tue,  1 Apr 2025 12:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1446203706;
+	Tue,  1 Apr 2025 12:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oL+88cSn"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NNx7X1Kg"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEFF202F7B;
-	Tue,  1 Apr 2025 12:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237C51EC01F;
+	Tue,  1 Apr 2025 12:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743510255; cv=none; b=brAlgXymKKICT9U5I7n9kqyiCD1L7zT/Dv71e2R1R8pnO2e8dgpl+0gQtnbbogiL9M/UQJJHN+GqIokXZnNh1ZU3/5v2gww9oL/3m7bjjibeX7ooqEIrg9o614+NH8oUWI02EPthEgqQIMC1vhziixOPP5XFrh8K5NLz8YUmSIY=
+	t=1743510186; cv=none; b=kFtQzMQ4KIb/2CD3NkC8rES50yDZ7LNE4ldukAh9cnzVlrf5IRpJH3EiIiF+90B1htTg2kOlbCI1bR4E66YYI3jsotM88fvC7GaKwbxS/MoNpjzmcgtHF/RAOqCruWExcp1JnQ3UTq6sPP85fGVJQg74e29oMbMiXfrZyYQ9Xsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743510255; c=relaxed/simple;
-	bh=pNCuaRq20ihRDPIs6gWBbwsMGTzuOJxHjP1yYRN8ZiQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=cKpdWgAn/MxLZ3YRV3w9sHut6eEnOhCuW7Gyf6gFK5jv/SPKklaUh0oT4e5lGJBfwujZxQNbfxb5BiY6vVKkVtgE5FYUTlcP9gPQ8DRwIkwdC1x7kbWhbdaCzeVGG+r9aJJHDSsTUYbjWMpwdskALXrtBXDwEH06vu/I2ctbRK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oL+88cSn; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 531A8miQ018903;
-	Tue, 1 Apr 2025 14:23:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	WwkG1pZIiujSvSdNAeNRVIU4m+oKTZ5N+BMPOnssFpU=; b=oL+88cSnKOPYVrGD
-	x5nzIlrdh0OMMWcDZA0t+Zq6C8sOTF0NkhgjvTarBTg/7401jpbL9Xo3qJTmb0c6
-	smYj0K12uw3BTtlzUPCek9IWMMQsv9PY/CfIov+uL6mcoN+m84aGDmDPHw8hqBz2
-	h+gqWm+myRI0N9+zoSMribMXRuhkVLURnn9uL+aJ8HFsk76/rynuaKUFLrMhnBS5
-	e9OgmO0AAXPwOiKxb0N4pKb32Ph6spvF+Z94oSTMmeN7lJ+5mcyoNbVDnimli3wB
-	QzWwq1BDXoneAliY6+qexORC4KhvVowH33PSQD5YJzW2pJkluWJckB+ZpXirTaeR
-	iEsFsw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45p75q5k17-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Apr 2025 14:23:59 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F299C40062;
-	Tue,  1 Apr 2025 14:22:40 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E9558A0454;
-	Tue,  1 Apr 2025 14:21:53 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Apr
- 2025 14:21:52 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Tue, 1 Apr 2025 14:21:51 +0200
-Subject: [PATCH v7 7/7] arm64: defconfig: Enable STM32 Octo Memory Manager
- and OcstoSPI driver
+	s=arc-20240116; t=1743510186; c=relaxed/simple;
+	bh=nuFVkx1gSbh4qc7RrSJfuZzmwSyBRBVnMv6MbRTUtVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+3CGc25SHpXV1eiiC/ujzSosyAZRhsFgPnqfapoSDb5nubHKQemvyLGzGmNIvRYsm/FFxC6LDLgYNQqFCBf9Hs22CYP54pjb0AofitVcdsCQm20kvF3J0o7PosJ1Y5FkpVWO0t0jNLDcEX11RapvoDkqbifa7JdU+F5dI6Jtc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NNx7X1Kg; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=fXdP5m0ZfPSz1DCg8m7bHCvssJrloz5WEMURjzb5wGU=; b=NNx7X1KgxaoNizApKT4nEGh0VL
+	TGXirsgcIpnzdque+dVehm+1Tms3SXSsd7iM+6q4mUCrukCWCzPb/kRCv/sWx7yfj1mHD9NU7X6oo
+	epSzGFjQ4i5pCNGDZ8QPQgJ2B6Re9BC6Ic1yBAfMTuxRJRIzF8JRwzrmeFYIpXjJOlTA4ZYCL5do8
+	ZXZfYvn8pBVK6gXe68FC77o8qpqw3oTmlW5HTc62MArhedoCnqSIkZItfNurjAp5ZL7aQ3vcj1isa
+	cpWbEDYpECNC8BStyIHEbTHmr+MyjMxWa/mLIsm5UpwuJKQZ9Oy6QjDb2MPF0QJFHSQyp46vgkHts
+	vSV/eLKzGqGbmWRDHFg2h9Gp/NLJlQ1p55u0hN8SVsl/TkKI6+b3vm5ZUkb0CeiPnAYUdAw0kygT+
+	g70lflOMXItrRQip5T+0JvwyCbtEkovTQg7l4G1+ZAUuzdVHJgcZf0MkUOq6EkXxnsRniPEgSIL2e
+	pp2AWQE9Cjwn43SOh2NEtikk;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tzadp-007fH3-2j;
+	Tue, 01 Apr 2025 12:22:53 +0000
+Message-ID: <90334e83-618b-41e0-a35c-9ce8b0d1d990@samba.org>
+Date: Tue, 1 Apr 2025 14:22:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] net: introduce get_optlen() and put_optlen()
+ helpers
+To: Breno Leitao <leitao@debian.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Karsten Keil <isdn@linux-pingi.de>, Ayush Sawal <ayush.sawal@chelsio.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, David Ahern <dsahern@kernel.org>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>, Neal Cardwell <ncardwell@google.com>,
+ Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Robin van der Gracht <robin@protonic.nl>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+ Alexander Aring <alex.aring@gmail.com>,
+ Stefan Schmidt <stefan@datenfreihafen.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Alexandra Winter <wintera@linux.ibm.com>,
+ Thorsten Winkler <twinkler@linux.ibm.com>,
+ James Chapman <jchapman@katalix.com>, Jeremy Kerr <jk@codeconstruct.com.au>,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Remi Denis-Courmont <courmisch@gmail.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+ "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>,
+ Wen Gu <guwen@linux.alibaba.com>, Jon Maloy <jmaloy@redhat.com>,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Stefano Garzarella <sgarzare@redhat.com>,
+ Martin Schiller <ms@dev.tdt.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Magnus Karlsson <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
+ linux-hams@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-can@vger.kernel.org, dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
+ linux-s390@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ linux-afs@lists.infradead.org, tipc-discussion@lists.sourceforge.net,
+ virtualization@lists.linux.dev, linux-x25@vger.kernel.org,
+ bpf@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+ io-uring@vger.kernel.org
+References: <cover.1743449872.git.metze@samba.org>
+ <156e83128747b2cf7c755bffa68f2519bd255f78.1743449872.git.metze@samba.org>
+ <Z+vZRcbvh6r1fnZL@gmail.com>
+Content-Language: en-US, de-DE
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <Z+vZRcbvh6r1fnZL@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250401-upstream_ospi_v6-v7-7-0ef28513ed81@foss.st.com>
-References: <20250401-upstream_ospi_v6-v7-0-0ef28513ed81@foss.st.com>
-In-Reply-To: <20250401-upstream_ospi_v6-v7-0-0ef28513ed81@foss.st.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-01_05,2025-03-27_02,2024-11-22_01
 
-Enable STM32 OctoSPI driver.
-Enable STM32 Octo Memory Manager (OMM) driver which is needed
-for OSPI usage on STM32MP257F-EV1 board.
+Hello Breno,
 
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> On Mon, Mar 31, 2025 at 10:10:53PM +0200, Stefan Metzmacher wrote:
+>> --- a/include/linux/sockptr.h
+>> +++ b/include/linux/sockptr.h
+>> @@ -169,4 +169,26 @@ static inline int check_zeroed_sockptr(sockptr_t src, size_t offset,
+>>   	return memchr_inv(src.kernel + offset, 0, size) == NULL;
+>>   }
+>>   
+>> +#define __check_optlen_t(__optlen)				\
+>> +({								\
+>> +	int __user *__ptr __maybe_unused = __optlen; 		\
+>> +	BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));		\
+>> +})
+> 
+> I am a bit confused about this macro. I understand that this macro's
+> goal is to check that __optlen is a pointer to an integer, otherwise
+> failed to build.
+> 
+> It is unclear to me if that is what it does. Let's suppose that __optlen
+> is not an integer pointer. Then:
+> 
+>> int __user *__ptr __maybe_unused = __optlen;
+> 
+> This will generate a compile failure/warning due invalid casting,
+> depending on -Wincompatible-pointer-types.
+> 
+>> BUILD_BUG_ON(sizeof(*(__ptr)) != sizeof(int));
+> 
+> Then this comparison will always false, since __ptr is a pointer to int,
+> and you are comparing the size of its content with the sizeof(int).
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index bde1287ad9a7a1341162b817873eb651bb310d52..3674d9138bae6deba19c0d13586aa6e1de6750c5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -580,6 +580,7 @@ CONFIG_SPI_QUP=y
- CONFIG_SPI_QCOM_GENI=m
- CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SH_MSIOF=m
-+CONFIG_SPI_STM32_OSPI=m
- CONFIG_SPI_SUN6I=y
- CONFIG_SPI_TEGRA210_QUAD=m
- CONFIG_SPI_TEGRA114=m
-@@ -1518,6 +1519,7 @@ CONFIG_EXTCON_USB_GPIO=y
- CONFIG_EXTCON_USBC_CROS_EC=y
- CONFIG_FSL_IFC=y
- CONFIG_RENESAS_RPCIF=m
-+CONFIG_STM32_OMM=m
- CONFIG_IIO=y
- CONFIG_EXYNOS_ADC=y
- CONFIG_IMX8QXP_ADC=m
+Yes, it redundant in the first patch, it gets little more useful in
+the 2nd and 3rd patch.
 
--- 
-2.25.1
-
+metze
 
