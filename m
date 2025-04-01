@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-583981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02794A78221
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2692A78222
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5042C18927D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1E716A396
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490AB21D3D2;
-	Tue,  1 Apr 2025 18:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232FB22171A;
+	Tue,  1 Apr 2025 18:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oqs2yE84"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jHkKoPk3"
 Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202A521E091
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3361220685
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743531906; cv=none; b=E2uJP0TOj4fxSNFXioP9LnNS4KByTfQoLGFpe9CT88fsp3f6cgVyvPpxQ9Rqr0Q51BWaP0D/t0dY7Sv1GMjgQWEpABxqRSQq0MGxcb5w/xauTXBJpaaZLdHdzc2XRJ2PtLSN0ikjGMDSjVH/R+Zn9kN9acRkm7C+BrXsZwC1mCw=
+	t=1743531912; cv=none; b=hWJDFO4NyiRxTzVNo7fSLPgsz80h3VV820poqpQKuDh9tLoDCEYhBB20BOFJrLq8PRwkgo+uCMBzknwFvebcFFLrWUPANclYLvHWQVivmKRGo1oV+lIeRc9lel1VScxgLk3fd48rBbjLAupaiQk28Vxb3eBH32n6z8WZ0/AnRCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743531906; c=relaxed/simple;
-	bh=BdxBvdM8Nz1jjfzc2QOyKg4s6TJ+thWky0MjwWyO/zs=;
+	s=arc-20240116; t=1743531912; c=relaxed/simple;
+	bh=qDrp7dk7UR2vIDZlNdoIiVlhsgl8sqEUeq30Rm4CVOQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=k7WD34n7tuUh7qtvrJr+Od6gKimQ4vODpWhg8SE8JoohoXOwjPnpFLxbbatnHRYkKLgvknzgpHFuwsLdAfp5M6yd/vNkIJHb+1TI+YZKAD+GOMPXHit8mES1z0xXmqqvexc/XZmXNDf045lFbRcpfDjQoL/4Qczbs937/Je07kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oqs2yE84; arc=none smtp.client-ip=209.85.210.73
+	 To:Content-Type; b=sOhQdlAkmTUUThjjk8NL3ZEkHWu/baCPr+M/Cdi88rPviPS2CsLiqG78Beu6fuuPs7lHI+LQN3Uur3rW823HeTVRPFTcoq3JgjTNRIIU2RAUfENKW/QzEFn9z/N5YRzsMMphznnFf43dWKj6D/FXnhgjmcKSGz6sI6VoEs8nAd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jHkKoPk3; arc=none smtp.client-ip=209.85.210.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-72a2107154bso2238594a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:03 -0700 (PDT)
+Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-72c0050a956so4464993a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743531903; x=1744136703; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743531905; x=1744136705; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZOeKL1qyiNLxvN/oZiofK7bOvfFp8Vu2ELG7LdRApM=;
-        b=oqs2yE84udBic/QmNM6DVYPaI0HuSLxetxrDvRGLS2zxnlRwwA3nAOiv9A+5mvv+/X
-         oz6VSui4jj+FSywatqhYD1r4bs1RBujHjF1BkrRjM/zDUmiboicYFF2zU8WYEeB5EwwM
-         nAGl6ufgO2T8QnMtcIrJbKiboXg8itz1qUlrsKXayefD8uwz+lbgMvbTqaKKcAQv8TLX
-         gZFHoPNn6GeqpjTW1PDxJArIr3wLMMIyRIE2IqDoMHHuAGeUWT0zU9j8kVjj0C4UG3iG
-         8TFWMvf/HNkQnmBkH5jEUb3lFe6i/HhglIBRTMm4eyX0PA12sQ0LCr4CCesNl5M9MvWl
-         hFkw==
+        bh=O/8NQLM9l0NGLIoAsEqb7s+pejmq1A+sdW/bucy2qKA=;
+        b=jHkKoPk3JY1gJYE2gugJ+bnStU+pC6nzFly5P4QGTorn7+P3vMUV68Xz14GJ4v7gHK
+         tu1GG4YMfKOUx2ZKhMFGNaQju9imJEYtqnMOKzRoHXiuh8ixc5L1+tDuIyjYb1RezWRw
+         VL/v6BdasqSn/KSg5wTycAbH5N97G+kCEAQ2ychU02xeupNTex/+MuchX3Qa2Z7LaXxX
+         LzdMcOGwX6u7/XpxnH7g1njLBia2DI423eUrZWVmU1TlS3vclcet+iMF3VRCFPih5GJe
+         BE/8c7KqZQPh9fH3QAXByOI0zbtJAylicBNBVkhPT7hplOCXf8IJnXCruZJT9e1dTBpZ
+         pOfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743531903; x=1744136703;
+        d=1e100.net; s=20230601; t=1743531905; x=1744136705;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ZOeKL1qyiNLxvN/oZiofK7bOvfFp8Vu2ELG7LdRApM=;
-        b=GWKkW+ZTWmn9DSTPdGgwQfBhTlVmJkb3kORzXdU9vCzka69hPW08bxifUwT2PGMTYT
-         swvmfFZtoeLw7Q+hsKGumEjlie+L+HHT6rAHO1l+6X2Y30H18oDlZfZKND3AMlG7hPcc
-         6StjIcGXM6aO4Z3bc+lXGx53P7PmzN/2ZGMX/a+vbttc9fV1g36YAoj2hW+eS/lnNwZi
-         wtxyDz1RPwetIGrVxSz4VovyAEybRTOtg8BjDNwayMDnLcRAUwhypueL+Vmfyjw8QIuv
-         hlgB8jzx/9iVjhQwZVmmWs3vmPaZftO0z7Mor1pInYCiDR3oZXobuO0K2xHjg6/6gmZr
-         WFmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9debxMCQY3R5VWgl5TwSsd2x3qzJDvRQvAs7Tx8DsKzqfWR2kz4+EEVJ2LtcoOpa1uzB3G1AOZ4hFuNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqQZOR4HStAi08zg6oi406+yjaPlrrt1+vKsVTO8V5ZIdkDsrO
-	nI9ufUtfDbL1AcOuW5rnG+wmArRftWTUshOs6tENl2SwRjEn9k7NzFbKcBpOR2THgpEzn9jmRcy
-	cl3ca7g==
-X-Google-Smtp-Source: AGHT+IEJjExpoJgVVZs6Hlo908U0oi37UxrWtfgmlindyP0XfVD6VZ0siD4yNQUpQLPVE+N9T3e9cbC/UfJi
-X-Received: from oacmm9.prod.google.com ([2002:a05:6871:7289:b0:2b8:e735:4798])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:7002:b0:72b:a61c:cbb2
- with SMTP id 46e09a7af769-72c6378e768mr9367054a34.10.1743531903184; Tue, 01
- Apr 2025 11:25:03 -0700 (PDT)
-Date: Tue,  1 Apr 2025 11:23:11 -0700
+        bh=O/8NQLM9l0NGLIoAsEqb7s+pejmq1A+sdW/bucy2qKA=;
+        b=Bm4PwFgab8ynLi71lPCtZqqv5AlSD5ESfHchbHfiu+uBwOxpHFNakr7S26POLP+Ufk
+         SOme/Jnc+O970PrUqnY0lakcwn1LRWhGm6JqlDZ9WmQxAGr5u0isfTZ4pNTpKhCHm4aG
+         gKeWxd7TAeEu4s/m+T4Jja0k9W4r/6KU/ppsPQWYkmX1h0HtLnyADPnqcZ/dxuvhnzU1
+         99hdMLFocb7g7smfmzKCPY8vdhoRUJw3xSh9aANPXCcWgmU91PDEiKqRa4qxE/9sQXGG
+         7REt0stlshNnfzis1Asn560P+jq2enGqpEwf0vfKKMVYU/gcts+aJNrf2Du9oj8N7V6E
+         xGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyTvg3bPSQbqmk3s/p1azVENi3GW4M4SY9nV1KaFqUYU/bMG2FvPp1Y8pypjaeeQ006L35xNsR2NhP5JI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwciMfZwXsdy3yX7tVY1VHE6c2olo270B0Rb6unGqn1/ugH5Llc
+	Sre9AuDVLw0pcqRp1/nbW7XwEhC7XPYord4uYIHUpWBW39OSar264POIo8AbhEuh9vf9JEUbQUC
+	22cJ+VA==
+X-Google-Smtp-Source: AGHT+IHwNaLSyfCZQ9yujF0xXANqRr9YjfymtsJ7oaqSCiXH/SKLc6pr1AzAS4LSQE5X0torr+Wm+aih3zPD
+X-Received: from oabvr7.prod.google.com ([2002:a05:6871:a0c7:b0:289:2c09:4e10])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:388c:b0:72b:8274:7c09
+ with SMTP id 46e09a7af769-72c6377e191mr9800632a34.4.1743531905060; Tue, 01
+ Apr 2025 11:25:05 -0700 (PDT)
+Date: Tue,  1 Apr 2025 11:23:12 -0700
 In-Reply-To: <20250401182347.3422199-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250401182347.3422199-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401182347.3422199-14-irogers@google.com>
-Subject: [PATCH v1 13/48] perf trace-event: Silence -Wshorten-64-to-32 warnings
+Message-ID: <20250401182347.3422199-15-irogers@google.com>
+Subject: [PATCH v1 14/48] perf jvmti: Silence -Wshorten-64-to-32 warnings
 From: Ian Rogers <irogers@google.com>
 To: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
 	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -128,211 +128,139 @@ truncation explicit.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/python.c                      |  4 ++--
- .../scripting-engines/trace-event-python.c    | 13 ++++++-----
- tools/perf/util/trace-event-info.c            |  3 ++-
- tools/perf/util/trace-event-parse.c           |  2 +-
- tools/perf/util/trace-event-read.c            | 23 +++++++++----------
- tools/perf/util/trace-event-scripting.c       |  2 +-
- 6 files changed, 24 insertions(+), 23 deletions(-)
+ tools/perf/jvmti/jvmti_agent.c |  6 +++---
+ tools/perf/util/genelf.c       |  2 +-
+ tools/perf/util/jitdump.c      | 24 +++++++++++++-----------
+ 3 files changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index f3c05da25b4a..f55b2b7435ad 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -305,7 +305,7 @@ tracepoint_field(const struct pyrf_event *pe, struct tep_format_field *field)
- 		len    = field->size;
- 		if (field->flags & TEP_FIELD_IS_DYNAMIC) {
- 			val     = tep_read_number(pevent, data + offset, len);
--			offset  = val;
-+			offset  = (unsigned int)val;
- 			len     = offset >> 16;
- 			offset &= 0xffff;
- 			if (tep_field_is_relative(field->flags))
-@@ -599,7 +599,7 @@ static PyObject *pyrf_thread_map__item(PyObject *obj, Py_ssize_t i)
- 	if (i >= perf_thread_map__nr(pthreads->threads))
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index 526dcaf9f079..2e2be9d8a118 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -377,7 +377,7 @@ jvmti_write_code(void *agent, char const *sym,
+ 	sym_len = strlen(sym) + 1;
+ 
+ 	rec.p.id           = JIT_CODE_LOAD;
+-	rec.p.total_size   = sizeof(rec) + sym_len;
++	rec.p.total_size   = (uint32_t)(sizeof(rec) + sym_len);
+ 	rec.p.timestamp    = perf_get_timestamp();
+ 
+ 	rec.code_size  = size;
+@@ -400,7 +400,7 @@ jvmti_write_code(void *agent, char const *sym,
+ 	 */
+ 	rec.code_index = code_generation++;
+ 
+-	ret = fwrite_unlocked(&rec, sizeof(rec), 1, fp);
++	ret = (int)fwrite_unlocked(&rec, sizeof(rec), 1, fp);
+ 	fwrite_unlocked(sym, sym_len, 1, fp);
+ 
+ 	if (code)
+@@ -454,7 +454,7 @@ jvmti_write_debug_info(void *agent, uint64_t code,
+ 	 */
+ 	size += nr_lines * sizeof(struct debug_entry);
+ 	size += flen;
+-	rec.p.total_size = size;
++	rec.p.total_size = (uint32_t)size;
+ 
+ 	/*
+ 	 * If JVM is multi-threaded, multiple concurrent calls to agent
+diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
+index cdce7f173d00..6da8f3c53f7d 100644
+--- a/tools/perf/util/genelf.c
++++ b/tools/perf/util/genelf.c
+@@ -252,7 +252,7 @@ jit_write_elf(int fd, uint64_t load_addr, const char *sym,
+ 	Elf_Shdr *shdr;
+ 	uint64_t eh_frame_base_offset;
+ 	char *strsym = NULL;
+-	int symlen;
++	size_t symlen;
+ 	int retval = -1;
+ 
+ 	if (elf_version(EV_CURRENT) == EV_NONE) {
+diff --git a/tools/perf/util/jitdump.c b/tools/perf/util/jitdump.c
+index 624964f01b5f..874ced77d0a4 100644
+--- a/tools/perf/util/jitdump.c
++++ b/tools/perf/util/jitdump.c
+@@ -160,7 +160,7 @@ jit_open(struct jit_buf_desc *jd, const char *name)
+ 	 */
+ 	flockfile(jd->in);
+ 
+-	ret = fread(buf, sizeof(header), 1, jd->in);
++	ret = (int)fread(buf, sizeof(header), 1, jd->in);
+ 	if (ret != 1)
+ 		goto error;
+ 
+@@ -226,7 +226,7 @@ jit_open(struct jit_buf_desc *jd, const char *name)
+ 		bsz = bs;
+ 		buf = n;
+ 		/* read extra we do not know about */
+-		ret = fread(buf, bs - bsz, 1, jd->in);
++		ret = (int)fread(buf, bs - bsz, 1, jd->in);
+ 		if (ret != 1)
+ 			goto error;
+ 	}
+@@ -274,7 +274,7 @@ jit_get_next_entry(struct jit_buf_desc *jd)
+ 	/*
+ 	 * file is still locked at this point
+ 	 */
+-	ret = fread(prefix, sizeof(*prefix), 1, jd->in);
++	ret = (int)fread(prefix, sizeof(*prefix), 1, jd->in);
+ 	if (ret  != 1)
  		return NULL;
  
--	return Py_BuildValue("i", perf_thread_map__pid(pthreads->threads, i));
-+	return Py_BuildValue("i", (int)perf_thread_map__pid(pthreads->threads, (int)i));
- }
+@@ -304,7 +304,7 @@ jit_get_next_entry(struct jit_buf_desc *jd)
  
- static PySequenceMethods pyrf_thread_map__sequence_methods = {
-diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-index 520729e78965..547eeb45a832 100644
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -713,9 +713,10 @@ static void set_sample_datasrc_in_dict(PyObject *dict,
- 			_PyUnicode_FromString(decode));
- }
+ 	addr = ((void *)jd->buf) + sizeof(*prefix);
  
--static void regs_map(struct regs_dump *regs, uint64_t mask, const char *arch, char *bf, int size)
-+static void regs_map(struct regs_dump *regs, uint64_t mask, const char *arch, char *bf, size_t size)
- {
--	unsigned int i = 0, r;
-+	unsigned int i = 0;
-+	u64 r;
- 	int printed = 0;
+-	ret = fread(addr, bs - sizeof(*prefix), 1, jd->in);
++	ret = (int)fread(addr, bs - sizeof(*prefix), 1, jd->in);
+ 	if (ret != 1)
+ 		return NULL;
  
- 	bf[0] = 0;
-@@ -731,7 +732,7 @@ static void regs_map(struct regs_dump *regs, uint64_t mask, const char *arch, ch
+@@ -398,7 +398,7 @@ static uint64_t convert_timestamp(struct jit_buf_desc *jd, uint64_t timestamp)
+ 		return timestamp;
  
- 		printed += scnprintf(bf + printed, size - printed,
- 				     "%5s:0x%" PRIx64 " ",
--				     perf_reg_name(r, arch), val);
-+				     perf_reg_name((int)r, arch), val);
- 	}
- }
+ 	tc.time_shift = time_conv->time_shift;
+-	tc.time_mult  = time_conv->time_mult;
++	tc.time_mult  = (unsigned int)time_conv->time_mult;
+ 	tc.time_zero  = time_conv->time_zero;
  
-@@ -744,7 +745,7 @@ static int set_regs_in_dict(PyObject *dict,
- 	struct perf_event_attr *attr = &evsel->core.attr;
- 	const char *arch = perf_env__arch(evsel__env(evsel));
+ 	/*
+@@ -443,8 +443,8 @@ static int jit_repipe_code_load(struct jit_buf_desc *jd, union jr_entry *jr)
+ 	nspid = jr->load.pid;
+ 	pid   = jr_entry_pid(jd, jr);
+ 	tid   = jr_entry_tid(jd, jr);
+-	csize = jr->load.code_size;
+-	usize = jd->unwinding_mapped_size;
++	csize = (int)jr->load.code_size;
++	usize = (int)jd->unwinding_mapped_size;
+ 	addr  = jr->load.code_addr;
+ 	sym   = (void *)((unsigned long)jr + sizeof(jr->load));
+ 	code  = (unsigned long)jr + jr->load.p.total_size - csize;
+@@ -465,8 +465,10 @@ static int jit_repipe_code_load(struct jit_buf_desc *jd, union jr_entry *jr)
  
--	int size = (__sw_hweight64(attr->sample_regs_intr) * MAX_REG_SIZE) + 1;
-+	size_t size = (__sw_hweight64(attr->sample_regs_intr) * MAX_REG_SIZE) + 1;
- 	char *bf = NULL;
+ 	size = PERF_ALIGN(size, sizeof(u64));
+ 	uaddr = (uintptr_t)code;
+-	ret = jit_emit_elf(jd, filename, sym, addr, (const void *)uaddr, csize, jd->debug_data, jd->nr_debug_entries,
+-			   jd->unwinding_data, jd->eh_frame_hdr_size, jd->unwinding_size);
++	ret = jit_emit_elf(jd, filename, sym, addr, (const void *)uaddr, csize, jd->debug_data,
++			   (int)jd->nr_debug_entries, jd->unwinding_data,
++			   (uint32_t)jd->eh_frame_hdr_size,
++			   (uint32_t)jd->unwinding_size);
  
- 	if (sample->intr_regs) {
-@@ -957,7 +958,7 @@ static void python_process_tracepoint(struct perf_sample *sample,
- 		Py_FatalError(handler_name);
- 	}
+ 	if (jd->debug_data && jd->nr_debug_entries) {
+ 		zfree(&jd->debug_data);
+@@ -559,8 +561,8 @@ static int jit_repipe_code_move(struct jit_buf_desc *jd, union jr_entry *jr)
  
--	pid = raw_field_value(event, "common_pid", data);
-+	pid = (int)raw_field_value(event, "common_pid", data);
+ 	nspid = jr->load.pid;
+ 	pid   = jr_entry_pid(jd, jr);
+-	tid   = jr_entry_tid(jd, jr);
+-	usize = jd->unwinding_mapped_size;
++	tid   = (int)jr_entry_tid(jd, jr);
++	usize = (int)jd->unwinding_mapped_size;
+ 	idr_size = jd->machine->id_hdr_size;
  
- 	sprintf(handler_name, "%s__%s", event->system, event->name);
- 
-@@ -1017,7 +1018,7 @@ static void python_process_tracepoint(struct perf_sample *sample,
- 			if (field->flags & TEP_FIELD_IS_DYNAMIC) {
- 				val     = tep_read_number(scripting_context->pevent,
- 							  data + offset, len);
--				offset  = val;
-+				offset  = (unsigned int)val;
- 				len     = offset >> 16;
- 				offset &= 0xffff;
- 				if (tep_field_is_relative(field->flags))
-diff --git a/tools/perf/util/trace-event-info.c b/tools/perf/util/trace-event-info.c
-index c8755679281e..0f012890ff21 100644
---- a/tools/perf/util/trace-event-info.c
-+++ b/tools/perf/util/trace-event-info.c
-@@ -45,7 +45,8 @@ static int record_file(const char *file, ssize_t hdr_sz)
- 	unsigned long long size = 0;
- 	char buf[BUFSIZ], *sizep;
- 	off_t hdr_pos = lseek(output_fd, 0, SEEK_CUR);
--	int r, fd;
-+	int fd;
-+	ssize_t r;
- 	int err = -EIO;
- 
- 	fd = open(file, O_RDONLY);
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index 9c015fc2bcfb..982cbbc57168 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -34,7 +34,7 @@ static int get_common_field(struct scripting_context *context,
- 		*size = field->size;
- 	}
- 
--	return tep_read_number(pevent, context->event_data + *offset, *size);
-+	return (int)tep_read_number(pevent, context->event_data + *offset, *size);
- }
- 
- int common_lock_depth(struct scripting_context *context)
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index ecbbb93f0185..78a3b3801d69 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -25,18 +25,18 @@ static int input_fd;
- static ssize_t trace_data_size;
- static bool repipe;
- 
--static int __do_read(int fd, void *buf, int size)
-+static int __do_read(int fd, void *buf, size_t size)
- {
--	int rsize = size;
-+	int rsize = (int)size;
- 
- 	while (size) {
--		int ret = read(fd, buf, size);
-+		ssize_t ret = read(fd, buf, size);
- 
- 		if (ret <= 0)
- 			return -1;
- 
- 		if (repipe) {
--			int retw = write(STDOUT_FILENO, buf, ret);
-+			ssize_t retw = write(STDOUT_FILENO, buf, ret);
- 
- 			if (retw <= 0 || retw != ret) {
- 				pr_debug("repiping input file");
-@@ -51,14 +51,13 @@ static int __do_read(int fd, void *buf, int size)
- 	return rsize;
- }
- 
--static int do_read(void *data, int size)
-+static int do_read(void *data, size_t size)
- {
- 	int r;
- 
- 	r = __do_read(input_fd, data, size);
- 	if (r <= 0) {
--		pr_debug("reading input file (size expected=%d received=%d)",
--			 size, r);
-+		pr_debug("reading input file (size expected=%zd received=%d)", size, r);
- 		return -1;
- 	}
- 
-@@ -68,10 +67,10 @@ static int do_read(void *data, int size)
- }
- 
- /* If it fails, the next read will report it */
--static void skip(int size)
-+static void skip(unsigned long long size)
- {
- 	char buf[BUFSIZ];
--	int r;
-+	unsigned long long r;
- 
- 	while (size) {
- 		r = size > BUFSIZ ? BUFSIZ : size;
-@@ -86,7 +85,7 @@ static unsigned int read4(struct tep_handle *pevent)
- 
- 	if (do_read(&data, 4) < 0)
- 		return 0;
--	return tep_read_number(pevent, &data, 4);
-+	return (unsigned int)tep_read_number(pevent, &data, 4);
- }
- 
- static unsigned long long read8(struct tep_handle *pevent)
-@@ -119,7 +118,7 @@ static char *read_string(void)
- 		}
- 
- 		if (repipe) {
--			int retw = write(STDOUT_FILENO, &c, 1);
-+			ssize_t retw = write(STDOUT_FILENO, &c, 1);
- 
- 			if (retw <= 0 || retw != r) {
- 				pr_debug("repiping input file string");
-@@ -365,7 +364,7 @@ static int read_saved_cmdline(struct tep_handle *pevent)
- 	}
- 	buf[ret] = '\0';
- 
--	parse_saved_cmdline(pevent, buf, size);
-+	parse_saved_cmdline(pevent, buf, (unsigned int)size);
- 	ret = 0;
- out:
- 	free(buf);
-diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
-index 72abb28b7b5a..fb1fa227c98e 100644
---- a/tools/perf/util/trace-event-scripting.c
-+++ b/tools/perf/util/trace-event-scripting.c
-@@ -422,5 +422,5 @@ int perf_sample__sprintf_flags(u32 flags, char *str, size_t sz)
- 	if (pos < sz)
- 		str[pos] = 0;
- 
--	return pos;
-+	return (int)pos;
- }
+ 	/*
 -- 
 2.49.0.504.g3bcea36a83-goog
 
