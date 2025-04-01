@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-583412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFEEDA77A95
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1FBA77AA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E9116A382
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F3093AC129
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EA2202F7C;
-	Tue,  1 Apr 2025 12:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D552036E3;
+	Tue,  1 Apr 2025 12:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DW1ZtoxY"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X5fZgBTO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFE2202C4A;
-	Tue,  1 Apr 2025 12:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433CC202F7C;
+	Tue,  1 Apr 2025 12:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743509846; cv=none; b=HHlXuA6PSVWpZnqBy6Lksth08AvUvmoyAx1UJcR4v8b2l+2HG9xWYOht0Bo80QWH/aAV6riNNFkzzO0vRpTpJZlyHhgGx8oEfODokFzBo9BSvwQdzLQ7JHS4cAdeVTmuHWouPBSldfSIC7Beb7R7sZ1TMLekx2jsRQ6FzQg7EYM=
+	t=1743509928; cv=none; b=obEC6eWAX3kZfd5dIO3JwiR2rVsDo2RYuW9JJNVaQq8OENF2/KbwWPHClIC+RfuOcsE0sVhotsleenSC+B2Wx8IGJVwLsjVG3SUgZLws1EwebCoVDHMf8V32hHjmMioDeGym3DcewadPoTFu/4YZAwaZp/iuofEX+OUkd8WVSQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743509846; c=relaxed/simple;
-	bh=R6wjMoC006mfuBMJ9Wu3kttQzt3UeU7MYbAJy7wWNhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AazrqQnVQVGvhiRQVmdRR/r9MtoyPuZVe3X3x12eG93FbxtEVfr5hV3l/uDJatvbl8gYhgiumKtPM6W0AG6IgbPRfXEis/4PB+GWAbDK4n59iJKpJhxb3nRPC4+Y09Ra9pDvoY+b3Z1QIaxRTSRDpbXxmR/7/+1/UTc6lLHi/HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DW1ZtoxY; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac25d2b2354so890031766b.1;
-        Tue, 01 Apr 2025 05:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743509843; x=1744114643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R6wjMoC006mfuBMJ9Wu3kttQzt3UeU7MYbAJy7wWNhU=;
-        b=DW1ZtoxY1Et/qmjk59qDcyihcc3dOKVmWJ9AmezshYaFx8OcbeDLCePOWJ905HmI3n
-         1m9syvP4NEpbetKL5ArnllfVx2TQqhv1zRsY8tSbu2f+dbSU7D3G2mhc2ERqGrxwn0LH
-         WhhWA88zoiWXzmVVjF7fhPt+RZ0VGCe6XJkyQLoC9b2Rj5AalzvMzFa4XMmzNocJ3f8o
-         CRwbwM2bXZQMxjnq+v4u69KemCI+FOdOzq4tyY+YDOzOfOCN6OV5nrzGDjozfmjL+SxD
-         6Xpvyi6Z9nmpzz4XbHWzSZuTy2RsfJUS/UTeJbReDXLu+8Uj0RHAn9rCHnFUsGIpOBH6
-         XDMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743509843; x=1744114643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R6wjMoC006mfuBMJ9Wu3kttQzt3UeU7MYbAJy7wWNhU=;
-        b=S6FhxzVhNvNWP0FzuNCaiUjwMChPro7xi6HcpwfWsKE1rriR9K9FIf1xYTOm3Aok6L
-         ZeEflw2OiiM1RkzzJkLbbUicPtCfAdxuVxy96xGBfvqV20yotaA6tO10cT0cLg+ZplaV
-         2bXIxm0OY5I+jAmRruc4gPz6d6ayqb8tNZm2yOzMEYBzR9GL8qthNsypNSKvbNVW6uJM
-         ivV8oinv75Kz6wldsc9gJWbwEdawfIwbRKjkoGXjcOU3vAYYXNcECP+r6q2nkjxcUFVm
-         hBS231Z6O4OcI86zdyFvQPWR2macOgjw3hZ073mAFN4derjTpCADoYz52KjQYT3dNbEU
-         E0Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUijELK4Ooeo6Jh4BIVKaWhQlxg4BUy5ILNdOj5XEfaeDv9QTX7BsCkeBO4tIc36dkAbunmIxObs7k2x+iE@vger.kernel.org, AJvYcCW+TcI4ChBjfsTzivrrlpflTlB7LeFB4ao/f0PjlWEskjx78A3620tccmLsMl9SksbEqqq0q6GhI2317BrK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAfVw1W1cCFqCM12UxEvsZc+iX0dgFMijOAOjm1OUmueeVDHl/
-	4BO3BIaVDT4WBEKPolK/9lyJAtvMGqvKMXoEmJrE/zTUs5UhSGSv4MlH0zwK17EpHhFGBzbaqcN
-	zxURiNEsQud4VcXP3IURmP/+Vcyg=
-X-Gm-Gg: ASbGncuZIyONwnx8PppfxkVg9IO8rKP7gUqKuNRJQFbX2PJ24GZH2DNAzfv0sj885eb
-	14MmTehAGlE2d/5DERGVKk5FlV48qFYFxnvztLrUODMG3quaqsilnswq/uW3MjzT2MSrtlJIf5U
-	RffqwsrgRyLWuilfJbU2MGvN/a
-X-Google-Smtp-Source: AGHT+IF1nodvsfxM8zzvgDFfuNGksOlNXTVYSllDNvNWRsSMi6Ek74zuAjP8HfJ3Yu8HUYZTQAkZ4345X0A5wo6Nv+8=
-X-Received: by 2002:a17:907:d14:b0:ac2:e748:9f1c with SMTP id
- a640c23a62f3a-ac738a790dfmr1259620566b.33.1743509843295; Tue, 01 Apr 2025
- 05:17:23 -0700 (PDT)
+	s=arc-20240116; t=1743509928; c=relaxed/simple;
+	bh=HaiOBqHuFiJ6ixd05DvNz+WuwX4gzteShKVoCBENbV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nm7hm4JpwFR3ZAozfR+0nLhdJq2kK3yEWLuEqsyfNZfITB0w8N+YJhT0xw1jET+WppzJ51F8uroqRTzCSbiLNrbfeheCcZ8h0ieUfLohgFE3je8y+Udj08GKGzBchY1ab1mqS6M2TOUzCc0b+xVADpYpY1XBi7bdPO8czdBBddI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X5fZgBTO; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743509927; x=1775045927;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HaiOBqHuFiJ6ixd05DvNz+WuwX4gzteShKVoCBENbV8=;
+  b=X5fZgBTOn6oQO2GM8w5QxphREPEFus4w/rfGmGuF1pEAmppTbMSh0RqM
+   bXGSIysp1lHFlr+6ShOQhLoHkXDURRReG65x8tvf1RldqOQzn1oS0Bnml
+   PEIOMLNIGC4ltx0gAib789Va5apGnVhuL4M4WXNtJIoFDBL81/zrHbVSQ
+   4xhU0LnIyjstM5bRGgGIn2Vhr1kEfQ/YHUOCQmWzE90SNFNbgRwcK+0mv
+   H5w22/2/DRCQbZ5WwY//U381VC1R8344slQ/cGbQdGMyIPzzWtjtbGy4H
+   nV5YSNyK22IyN4j4BDaKoDNeoxQPkjsurcSagOwL3gG6GnPXSmog0Gd3E
+   A==;
+X-CSE-ConnectionGUID: hxgFSAx6SUS8tw/GIhu2XQ==
+X-CSE-MsgGUID: D4GVx5eyTSCUAEx8ZWXXOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="70186925"
+X-IronPort-AV: E=Sophos;i="6.14,293,1736841600"; 
+   d="scan'208";a="70186925"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 05:18:46 -0700
+X-CSE-ConnectionGUID: ivyA8vynRjex5Iyoi33rAg==
+X-CSE-MsgGUID: KAbHE6hJTWmHsvsLvmC7BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,293,1736841600"; 
+   d="scan'208";a="131373404"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.7])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 05:18:43 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: jani.nikula@intel.com,
+	linux-kbuild@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: [PATCH 0/5] hdrtest: hide the disgusting turds
+Date: Tue,  1 Apr 2025 15:18:25 +0300
+Message-Id: <20250401121830.21696-1-jani.nikula@intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACVxJT_qZP-AKUzf5sXfp2h+qJ+L0BZit3pgi-aGCuXk4Kmzuw@mail.gmail.com>
-In-Reply-To: <CACVxJT_qZP-AKUzf5sXfp2h+qJ+L0BZit3pgi-aGCuXk4Kmzuw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 1 Apr 2025 14:17:10 +0200
-X-Gm-Features: AQ5f1JrDVLMvYn_4h4FXTR8U-qtdT8ydaPcZt_-TUhzfgg0KQa9D2bkoc4ZDO3M
-Message-ID: <CAGudoHFThX1-VQ9vte4YwtjA6aCNQ0Hc5X-=yxyjdzBjD6Kr-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] proc: add a helper for marking files as permanent by
- external consumers
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 1, 2025 at 1:14=E2=80=AFPM Alexey Dobriyan <adobriyan@gmail.com=
-> wrote:
->
-> > +void proc_make_permanent(struct proc_dir_entry *de)
-> > +{
-> > + pde_make_permanent(de);
-> > +}
-> > +EXPORT_SYMBOL(proc_make_permanent);
->
-> no, no, no, no
->
-> this is wrong!
->
-> marking should be done in the context of a module!
->
-> the reason it is not exported is because the aren't safeguards against
-> module misuse
->
-> the flag is supposed to be used in case where
-> a) PDE itself is never removed and,
-> b) all the code supporting is never removed,
-> so that locking can be skipped
->
-> this it fine to mark /proc/filesystems because kernel controls it
->
-> this is fine to mark /proc/aaa if all module does is to write some
-> info to it and deletes it during rmmod
->
-> but it is not fine to mark /proc/aaa/bbb if "bbb" is created/deleted
-> while module is running,
-> locking _must_ be done in this case
+Hide all the disgusting turds in .hdrtest subdirectories in the build
+tree, and put the extra drm build-time checks behind a kconfig option.
 
-Well I'm unhappy to begin with, but did not want to do anything
-churn-inducing. The above looks like a minimal solution to me.
 
-The pde_ marking things are in an internal header and I did not want
-to move them around.
+BR,
+Jani.
 
-If anything I'm surprised there is no mechanism to get this done (I
-assumed there would be a passable flags argument, but got nothing).
 
-What I need here is that /proc/filesystems thing sorted out, as in this cal=
-l:
-> proc_create_single("filesystems", 0, NULL, filesystems_proc_show);
+Cc: linux-kbuild@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: intel-xe@lists.freedesktop.org
+Cc: intel-gfx@lists.freedesktop.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>
 
-Would you be ok with adding proc_create_single_permanent() which hides
-the logic and is not exported to modules?
+Jani Nikula (5):
+  drm: place header test files in .hdrtest subdirectories
+  drm/xe: place header test files in .hdrtest subdirectories
+  drm/i915: place header test files in .hdrtest subdirectories
+  kbuild: hdrtest: place header test files in .hdrtest subdirectories
+  drm: add config option for extra build-time checks
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+ drivers/gpu/drm/Kconfig       | 21 +++++++++++++++++++--
+ drivers/gpu/drm/Makefile      |  6 +++---
+ drivers/gpu/drm/i915/Makefile |  6 +++---
+ drivers/gpu/drm/xe/Makefile   |  6 +++---
+ include/drm/Makefile          |  6 +++---
+ usr/include/Makefile          |  4 ++--
+ 6 files changed, 33 insertions(+), 16 deletions(-)
+
+-- 
+2.39.5
+
 
