@@ -1,71 +1,65 @@
-Return-Path: <linux-kernel+bounces-583550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2392A77C5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:41:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDE1A77C40
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D679169A2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7702A16B403
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A1220409B;
-	Tue,  1 Apr 2025 13:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D249B2040B2;
+	Tue,  1 Apr 2025 13:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="WzhEGxLf"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hnz0mJo/"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F094D8D1
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145B2203712;
+	Tue,  1 Apr 2025 13:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743514876; cv=none; b=Cwma+tkr3Vwow1VGgUpuKxB1PU8v/HywpkHkWyX0zImlD162MhPgE3GdSgcMaE5zFr+hOf6Ph7UiZ0Yu7X43dlGETHenv9CXfsNDmeWoCMdh6INZj2aNncvWShEqZWSEr9sTM63+DbAN2PCilkxTS/ABlJYXeUgAz58KN/uz7oE=
+	t=1743514609; cv=none; b=gelPTzIPLB24vDEe9Hmqhct2q6/CRlju9BUamrC0NXLLOiv8/KvYZmNCPjHWgQNojIoDRc08JO3j7uWY5rzuh38Ql+sqSQfzKCzsvjXxF9cohMvmO3Yv4hkoFJvEypNV80mbd12LAh/8apew9ASKBDg75y2OtiyHSlThjZ4kIjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743514876; c=relaxed/simple;
-	bh=un1Xix6a+HafmNoFi+XktPDoawJBRIZ1Wl14fRwALZ4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=j6rSiaOmXs2I7zeO15fpZZcjMdHVE2gEH/mOBDFxciXbYv4/dIfWuyC31n/xRBH+5LYQ7Cl/reOspb+vmiGCGvZP28962ZN5IzRDkShdmz0Mn/sENX+6e/nS1Scl+7xxqoDRdJmeaCMZVe0L35BlVA+yGZlFttC7rsQiV/ZdQwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=WzhEGxLf; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743514863; bh=45+PyLUb0EtrTOlQLbC91djc159F0AGKCFfhMY0sLD4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=WzhEGxLfgTSyhl9L2Saamfzl6lCrlyxfhTNVVdOSULEpQJ0ikf0n2NtwApkbZX8rF
-	 1hYWbYgAaEAuKhWxOpe6AOHMDJr2akDzKiXymCyRb18tvyyS7ZLJewnoj6ZDm/JgSr
-	 FhG95RaTqDaohpAZvvbxbN/hTZjWsuYzOlXGWExQ=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 8B89C6B0; Tue, 01 Apr 2025 21:34:56 +0800
-X-QQ-mid: xmsmtpt1743514496tykcnsaga
-Message-ID: <tencent_CF4FA00DCAA5918DB7127CDDC95DBF190607@qq.com>
-X-QQ-XMAILINFO: MY1pxEGI2wnpretFSWHEbZGv0K8XscjQu9LgdnlfY7LSX+AjBWuGlqZW4VVwSy
-	 wr3Mq3LKi1x0AxWAzPxkPpKAPufkdhX2tpL/nHKyQZnxc6iH/PBQVCjx961M2PWoSwDMBCeMcqqm
-	 EtwBx5QM2F97joJwHy+QfzPq5ia/RmbxzLMutayIBcmGgJSF4gCInltiy1KCnZPsWtCgT3CNt8kR
-	 db0jwoOQnBpAqAphJLJwQEygIUXUEtwIFhBKH6511/5gJ161LQspC3EPO3/1XGF2f3s6Cxm475sF
-	 RjNH/D0yJIGb/vsAp1TtMuX4PIyjr3elHZy4NIBgo+bURmAC5wxgRIGRLIsLvzRdG6BzW84whiWQ
-	 pk2t3Xze6oQnJgV7PQ+/vDZghbHH+10VqdaMz2pa+vAikuZ3nWhRLeUecS8qlSo9yu2Mz255nSG0
-	 6o6l1PYF3YThjOPxbDdXsuGmVNx/mUnW3/3bHGzrva0ZCNpNszkuRQLIH69jdmLziBSUWN0yMerI
-	 NYhPZQILXe84GM9T3GgIylhXwscLI+Iu3b+1VQKiwbuI2zpzHozi3jzJUE1DrLUg1ymE5pB2GBP6
-	 OMK6S/8q2SwBNzpFa9vYXvs82qXbW388Eyd4fsRoWVZRbQ4QgzjNerDYNej6K5UMdSZk+Rz38gLS
-	 tM03AJe5FKUN4+x5FmLwd2x7a29RJ/1KLMULW90wyw1nL8lN0RHRQkysPQBwToDzsoUHGCBcpQAn
-	 EgT9HvjE6H0+RLik4nM53SLVpT0MSekfmKY0Iz73amSpyJE5tb/QOoA+YdUT9T2KX61tFQnKmCnI
-	 +olID6XlSl4l//YPaB2BZYLdFCkn5ClsSgqXkMz9mgvNAXfbliBrsjx1nMPKNq5tCOBW6XB3fUJ6
-	 77HEWeGqm2GPkIVRXyXczyWAcjj1uQG9O11AHMCIOvDV6vVv9IeUEmmHq9LXQWEw31/ZyK3PiOMT
-	 rjRyHMuBF1pYGvSxNIUg==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [isdn4linux?] [nilfs?] INFO: task hung in mISDN_ioctl
-Date: Tue,  1 Apr 2025 21:34:57 +0800
-X-OQ-MSGID: <20250401133456.1584380-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
-References: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
+	s=arc-20240116; t=1743514609; c=relaxed/simple;
+	bh=0QQv84WvRKICQ8s2yWYlDhCq2ZcAAWm+Hges6yoMfKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HUF5sc2HQ78b9Aez/vxAq63VgH6xI4BXwuY78Yi45k9fZ1/hRVXo6upILZefYxSdvATsY0y03heO+MqxNhs9g3fMtLGhcssKEeES9+asg6R8UKOQcLtXlvw7ofVFtnr+0yVuoWcUEge8QBEQ/CL7/HYSWy5+BDdtcxVGA59Chxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hnz0mJo/; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E7ADF442E0;
+	Tue,  1 Apr 2025 13:36:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743514605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=G2Qh5l+gyOSzaVUsPnabujSE4kp0M+Vr17QUqK8IMGo=;
+	b=hnz0mJo/FtIuiTNZ17CpcKyWM2FhblLFMK+45rDewbz8BbFWIwv8s1qZ+3EPC0scP/O5hn
+	QS84C8zf56ouOgI4zlSLDcw7WxHMPntOkmrqBaHJkomASPBwWlCfTO+og0I5fH3bQn0yNz
+	eOQ+mx204PtGiZy8L8y3rXIVaw9yQAUiOca/dpCN42P+KVYSkQ1Jkz96vs056aGj7xL5m5
+	T+EllEztzlrwhY4NREW3J85uWfEs0ZzFCWOyTm05gYfVviCg0p2AmM4fUsh9/gnQa0waqZ
+	B7THuwJgijtQQlWJZYJLZXihmgGQoEsb9c8iG2FxZzO76ecPXOKVLZ76S9f4eQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <michael@walle.cc>,
+	<linux-mtd@lists.infradead.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	<linux-kernel@vger.kernel.org>,
+	Steam Lin <stlin2@winbond.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	kernel test robot <lkp@intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mtd: spinand: Fix build with gcc < 7.5
+Date: Tue,  1 Apr 2025 15:36:37 +0200
+Message-ID: <20250401133637.219618-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,41 +67,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepueeileelteeggffhfeevhfeihfeffedvtddvgfelvdejleejveelueeggeevleehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledvrddukeegrdduuddtrdduleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledvrddukeegrdduuddtrdduleefpdhhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepthhuughorhdrrghmsggrrhhusheslhhinhgrrhhordhorhhgpdhrtghpthhtohepphhrrghthihushhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthhgrvghls
+ eifrghllhgvrdgttgdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-#syz test: upstream a29967be967e
+__VA_OPT__ is a macro that is useful when some arguments can be present
+or not to entirely skip some part of a definition. Unfortunately, it
+is a too recent addition that some of the still supported old GCC
+versions do not know about, and is anyway not part of C11 that is the
+version used in the kernel.
 
-diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
-index 7cfa8c61dba0..0c3771a5cd0b 100644
---- a/drivers/isdn/mISDN/timerdev.c
-+++ b/drivers/isdn/mISDN/timerdev.c
-@@ -238,8 +238,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 			ret = id;
- 			break;
- 		}
--		if (put_user(id, (int __user *)arg))
-+		if (!user_write_access_begin((int __user *)arg, sizeof(int))) {
- 			ret = -EFAULT;
-+			break;
-+		}
-+
-+		unsafe_put_user(id, (int __user *)arg, Efault);
-+		user_write_access_end();
- 		break;
- 	case IMDELTIMER:
- 		if (get_user(id, (int __user *)arg)) {
-@@ -255,8 +260,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	default:
- 		ret = -EINVAL;
- 	}
-+out:
- 	mutex_unlock(&mISDN_mutex);
- 	return ret;
-+Efault:
-+	user_write_access_end();
-+	ret = -EFAULT;
-+	goto out;
- }
+Find a trick to remove this macro, typically '__VA_ARGS__ + 0' is a
+workaround used in netlink.h which works very well here, as we either
+expect:
+- 0
+- A positive value
+- No value, which means the field should be 0.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202503181330.YcDXGy7F-lkp@intel.com/
+Fixes: 7ce0d16d5802 ("mtd: spinand: Add an optional frequency to read from cache macros")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ include/linux/mtd/spinand.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index 83301ef11aa9..0bb06aeffa62 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -67,7 +67,7 @@
+ 		   SPI_MEM_OP_ADDR(2, addr, 1),				\
+ 		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
+ 		   SPI_MEM_OP_DATA_IN(len, buf, 1),			\
+-		   __VA_OPT__(SPI_MEM_OP_MAX_FREQ(__VA_ARGS__)))
++		   SPI_MEM_OP_MAX_FREQ(__VA_ARGS__ + 0))
  
- static const struct file_operations mISDN_fops = {
+ #define SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(addr, ndummy, buf, len) \
+ 	SPI_MEM_OP(SPI_MEM_OP_CMD(0x0b, 1),				\
+-- 
+2.48.1
 
 
