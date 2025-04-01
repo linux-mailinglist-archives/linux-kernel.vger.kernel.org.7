@@ -1,319 +1,304 @@
-Return-Path: <linux-kernel+bounces-583021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9352A7756E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:43:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F18A775AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC0F169281
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:43:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713313A8CFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6890D1E9B00;
-	Tue,  1 Apr 2025 07:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A321E9B23;
+	Tue,  1 Apr 2025 07:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QTE4g73O"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8qHtNBy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2AB1E8837
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298E22D05E;
+	Tue,  1 Apr 2025 07:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743493420; cv=none; b=sWvpGRLMfteX70tP8cGsdtIyfytfrgPrj/FMFCRNqPM61MW61GmJvTswe0hJxJP80lR5dcpfnkAKj2fjjjPfky52DPVL6yBvU/cw7QaGg86GCPFEjpwasnFOCzPLtz0UoQ/gm+3fjl+ZneW+zcJQcdBrJZUGa2AW63haICbWKPM=
+	t=1743493985; cv=none; b=s2cwuoC1DQdr0fDqLdwPhcph8j2huTX4C5FOWBRilnSKXURNMsng9uaIukZvWdcAyzKgoeK20MnCO6UB5PvJbRwQuYDn5FQ++jN5WPs0OelYaPl0lKPaLJ9eigIQYLRpY6rPzziL3fgy0IKfLGdl3zu+REkBJic1Spuvle9jhkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743493420; c=relaxed/simple;
-	bh=qr/8p1o91A5TlRegE4wC9I4CaxqpQPBlCpEyH0NznAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=gv1y4flmjZwjb5xm1bkNIEf4rEkjww3FMPxWy8mntd9GG/Led0nevKGL9giX/Ot9Af/HjTWw3p1ChsmsbK5KY7g1Jx8eDPKu+j31yaj8AefTzafoFlE8+mxtkOWGXBrYDZDj2BvgGranAsq6KMCA6zK24j8wv8EZMAK3zHSolCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QTE4g73O; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250401074336epoutp016fb6cce1521e56b5c7a9d1360471524a~yIgZ3jeJD1157611576epoutp01s
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:43:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250401074336epoutp016fb6cce1521e56b5c7a9d1360471524a~yIgZ3jeJD1157611576epoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743493416;
-	bh=GwjWeunkq1l/5B88bKkJLajuB8wNS63pQ2RF9huwFp4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QTE4g73OXPu9KwnhufaowLlEVDu7/U5BcYe9r7NlzOX06rY8RnRQcR3QbOAKudqXw
-	 kj7atnF5IE4LrAcEJgkpGL/kobcolV5Qj2IFusnFaOoiM9QvfV6EAK/X6JQWxJ+SCX
-	 BSJGqgxYI2Rwdrp/6BloLvBkC06bRE1iTahBNrw4=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250401074336epcas2p2f02591cd926c46cb5e4b13bf24739f54~yIgZboA4c0122401224epcas2p2h;
-	Tue,  1 Apr 2025 07:43:36 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.100]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZRg3W673Bz6B9mM; Tue,  1 Apr
-	2025 07:43:35 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7E.B1.37303.7299BE76; Tue,  1 Apr 2025 16:43:35 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250401074335epcas2p478e462b41a0091bb8c3b438427ba33f4~yIgYNQxQ_1848418484epcas2p4B;
-	Tue,  1 Apr 2025 07:43:35 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250401074335epsmtrp18995c1031bb6821b387f8bf0e83dfac3~yIgYMKBsG3035630356epsmtrp1a;
-	Tue,  1 Apr 2025 07:43:35 +0000 (GMT)
-X-AuditID: b6c32a4d-541ff700000091b7-20-67eb99270135
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	62.6B.19478.6299BE76; Tue,  1 Apr 2025 16:43:35 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250401074334epsmtip18f2d5902c32751d094e1bf2f9e18e927~yIgX8OJwM1407114071epsmtip1X;
-	Tue,  1 Apr 2025 07:43:34 +0000 (GMT)
-Date: Tue, 1 Apr 2025 16:52:47 +0900
-From: Jung Daehwan <dh10.jung@samsung.com>
-To: Puma Hsu <pumahsu@google.com>
-Cc: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
-	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
-	lgirdwood@gmail.com, krzk+dt@kernel.org,
-	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
-	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v36 05/31] usb: host: xhci: Notify xHCI sideband on
- transfer ring free
-Message-ID: <20250401075247.GF98772@ubuntu>
+	s=arc-20240116; t=1743493985; c=relaxed/simple;
+	bh=85J+UQqrPmkLGjgTDn4/gMvG0FvRmMphb7RZrr3I10Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgD6lMShP06lDpiasqqI1bW24Ev94JGYn/Dolq37LeZoGTrSPcTEE0+paZuNCxdVgiNQrXXtRd4E2T9a4vPXIwakGX0LhFmps/hELa6ZJXJLhqE6OUPSNyD15cO8IJu3xYMuD3yIlMK59H/g6aJya0sPouOHnBqGMWDHxvYVWZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8qHtNBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8963EC4CEE4;
+	Tue,  1 Apr 2025 07:52:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743493984;
+	bh=85J+UQqrPmkLGjgTDn4/gMvG0FvRmMphb7RZrr3I10Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z8qHtNByIm8E5p7AbYs018QH17/ls1OzKBt8dHzcgbJ67+A1/wTK+6rA4JlB/4Ps/
+	 WHwSgnuRMBluhXVJsMV2uImUjVoCl7ZOUajOXz8Hy2N7kW37JJREgvN1MLwtK8P16B
+	 30z2+YLa787+Wp3jqgsF4EZ1g26n27iQ91Ma0VqyTWbEZNW+g4X5Pr7B5VytBQpKSn
+	 gU5tO4JDdcbGvmbLt948CbvNiXSCFGtMI8xYuqH8g75jwnqDwYAt1tbX3G/fZ2xGxQ
+	 vbNOC92UT5Zbj1+851IKPt/uEZp+yF68D+7pSayPTk33ws4MtrWg9ytAxtDP4ARZWZ
+	 93xpSccuufhrg==
+Date: Tue, 1 Apr 2025 09:52:52 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-edac@vger.kernel.org,
+	kvm@vger.kernel.org, xen-devel@lists.xenproject.org,
+	linux-ide@vger.kernel.org, linux-pm@vger.kernel.org,
+	bpf@vger.kernel.org, llvm@lists.linux.dev, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jgross@suse.com, andrew.cooper3@citrix.com,
+	peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, wei.liu@kernel.org,
+	ajay.kaher@broadcom.com, alexey.amakhalov@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
+	pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
+	luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
+	haiyangz@microsoft.com, decui@microsoft.com,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH v1 01/15] x86/msr: Replace __wrmsr() with
+ native_wrmsrl()
+Message-ID: <Z-ubVFyoOzwKhI53@gmail.com>
+References: <20250331082251.3171276-1-xin@zytor.com>
+ <20250331082251.3171276-2-xin@zytor.com>
+ <Z-pruogreCuU66wm@gmail.com>
+ <9D15DE81-2E68-4FCD-A133-4963602E18C9@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGCq0LZJmt3BdEXTvyOBUvsCCzVD1eQE2LQ6Eh_WRs7jYmR6oA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTdxTHd+9te1uly13R8LNboBaig4XaAqU/nBjddLnLZoaSxedkDb1p
-	CfSRPhDdAxZoeS08JsRRH+MhMAmkpgJDKCJFGSURWQqCjDWTFCZUlgy0mG3MtVw0/Pf5fc/5
-	/s75/U4OG+NZcT47Q2Ok9Bp5lpC1idE5EC2N3VnjU4orpmJh9SMvC7b2jqDQe7sQgT/cGWHC
-	gfrHCMxvsLHgvNXDgv6xIhRW9t3DYZ3lKgM+XPIzobv7EgtenqvCYH2TGYP59iomLO4uZ8K/
-	X8yhsKYtEtp7ypjwhaMLh5bBQSZsqb2Nw+srbci+MPKm9TecrLWbyAbHPEraW4pZ5PQDB4u8
-	4jpM9l1uxcmGsvNM8tZiE4usdHxN2trHGWR73zJCLtvDU7gnMveoKLmC0gsoTbpWkaFRJgs/
-	Sk17P02aKJbESpKgTCjQyNVUsvDAxymxH2RkBZ4uFGTLs0wBKUVuMAh37d2j15qMlEClNRiT
-	hZROkaWT6UQGudpg0ihFGsq4WyIWx0kDiZ9nqhpnLzJ0LTDnu8Z6Zh5ijylBOGxAJIAH5dfw
-	EmQTm0c4EGBusDPpwxICVt31+KvD5FAb+tJi/WeCRQduImC+ZJARDPAILwL6zGlBZhBRwHPL
-	igSZRcQAz/MhLMhbiO3g6WwhGjRjhIsBhpx315JCiVMgb/TaGnOJd0B978A6vwFcNd61Ahzi
-	MPCMewM6m701UGChP5duyMYB1U0Mmg+AvKk/EZpDwcLP7TjNfDBfbllnA5j6Yw4L9gCIAgT8
-	uFCA0YF4YJ0rXDNjhAq4HB2MYC1ARII7Uwxafh0UDazitMwFRRYe7YwEF9wVTJq3gX7fyPqN
-	JLg/fHX9r75FwfBoJ1aBRFg3vMy6oZo1cC1GRANb9y5ajgD5HRcxWn4TNP/H3pBRi7BaED6l
-	M6iVVHqcThKroc68mn26Vm1H1pYk5lAX4rOtipwIykacCGBjwi3cY8/mlTyuQn72HKXXpulN
-	WZTBiUgDY6vE+FvTtYEt0xjTJAlJ4oTERIksTiqWCcO4zr9mlTxCKTdSmRSlo/QvfSibw89D
-	w2eONnO+8oX4VfaSxd81XZ0uZ7y5yxL+pdJkztnsfuo8W/Dk0mhxRMuZbvc+jXvmdH/PSdmT
-	oxcODjUqSm9I3kvNtiTYog7dyPlpOWJHnj8kG3/WtrjDOeZSVX1z2udXRxvJQbTZ3tT6y0NX
-	VNnxL0Kok/uNuUfGCMG//N22le9LR56HDH967ErvufZqvnw1NXpVvRRvLvrkbe+psaRx8Ghz
-	cl7mwsQRg5sV1r23pqf0elGEtz8+VHi8gWMUlWx/LNE0nj9x/0PdUq5HhHYoIv0dM3gdf//K
-	gkWWyi+Q3n1relJbGCkonpibqvaJ3n1N8Fm1+1cPyb9Xt7PMu21yWsgwqOSSGExvkP8PWiF0
-	Xa0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsWy7bCSnK76zNfpBu9yLKY+fMJmsWbvOSaL
-	JwfaGS3mHznHanF40QtGi+bF69ksXs66x2bx7UoHk8XE/WfZLRa2LWGxuPnpG6vF5V1z2Czm
-	PpvCbLFoWSuzRfOmKawWnbv6WS1+/X/GZDFzrbLFpt19rBb/9+xgt2g7dozVYtWCA+wWG76v
-	ZXQQ99g56y67x4JNpR6L97xk8ti0qpPN4861PWwe804Geuyfu4bdY3HfZFaPfW+XsXlM3FPn
-	sX7LVRaPLfs/M3p83iQXwBvFZZOSmpNZllqkb5fAlfHo00n2gjOmFbf2X2JvYPyg3sXIySEh
-	YCIx6/d1ti5GLg4hge2MEoum32WFSEhKLJ17gx3CFpa433KEFaLoEaPEodfPwYpYBFQk7u2b
-	xQhiswloSdz7cYIZxBYRUJT48rSdCaSBWeAki8SJQ0fBioQFYiQaLqwEs3kFtCUW7T3MCDG1
-	h0li/ZpuqISgxMmZT1hAbGYBdYk/8y4BTeUAsqUllv/jgAjLSzRvnQ22jFMgUOLe1SeMICWi
-	QAe9Olg/gVFoFpJBs5AMmoUwaBaSQQsYWVYxiqYWFOem5yYXGOoVJ+YWl+al6yXn525iBKcE
-	raAdjMvW/9U7xMjEwXiIUYKDWUmEN+Lry3Qh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlC
-	AumJJanZqakFqUUwWSYOTqkGJvXM7TnWG52XLltfzV1rtmDG4aMsT7OLX62UO/+83H9tb/K2
-	BMF2n4scfPKeH9Uurq+wW9Bh/jq/vC7Tr2hH1/toOXlj122Ve5zS5WzvuVZcXmVyxUhjRbKd
-	RW2o7qY5U09KVXZ++Ke2LiNQoD9qsZiVY7Ry47azDs8uWjVqZsWvjT6gvfOOXtK7Pk9xbiO+
-	27Fcs+Z/Ls50Vbj46IDknswDT0691Oz45JCzTelMzP47f66qxS/pd3KslhL4pX5sT+jHzVkn
-	rGVqny3l4H+//Uzj1CUm2mWfczqcT3yz6Yv+wBJ4g+vxtISin2ssbkbESRjsYY8OF+reGr1b
-	bM9flj8sZ/0l7RcvKhLdJXpLiaU4I9FQi7moOBEAP5iQ/HgDAAA=
-X-CMS-MailID: 20250401074335epcas2p478e462b41a0091bb8c3b438427ba33f4
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----BWvmtLGreXPtZv31XE49129YoyRr4_KGUd.k-ILdCyGA2LCZ=_6a960_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250328074643epcas2p4cee289bcb682528d34b5676770363e01
-References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
-	<20250319005141.312805-6-quic_wcheng@quicinc.com>
-	<CGME20250328074643epcas2p4cee289bcb682528d34b5676770363e01@epcas2p4.samsung.com>
-	<CAGCq0LZJmt3BdEXTvyOBUvsCCzVD1eQE2LQ6Eh_WRs7jYmR6oA@mail.gmail.com>
-
-------BWvmtLGreXPtZv31XE49129YoyRr4_KGUd.k-ILdCyGA2LCZ=_6a960_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <9D15DE81-2E68-4FCD-A133-4963602E18C9@zytor.com>
 
-On Fri, Mar 28, 2025 at 03:45:00PM +0800, Puma Hsu wrote:
-> On Wed, Mar 19, 2025 at 8:52 AM Wesley Cheng <quic_wcheng@quicinc.com> wrote:
+
+* H. Peter Anvin <hpa@zytor.com> wrote:
+
+> On March 31, 2025 3:17:30 AM PDT, Ingo Molnar <mingo@kernel.org> wrote:
 > >
-> > In the case of handling a USB bus reset, the xhci_discover_or_reset_device
-> > can run without first notifying the xHCI sideband client driver to stop or
-> > prevent the use of the transfer ring.  It was seen that when a bus reset
-> > situation happened, the USB offload driver was attempting to fetch the xHCI
-> > transfer ring information, which was already freed.
+> >* Xin Li (Intel) <xin@zytor.com> wrote:
 > >
-> > Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> >> -	__wrmsr      (MSR_AMD_DBG_EXTN_CFG, val | 3ULL << 3, val >> 32);
+> >> +	native_wrmsrl(MSR_AMD_DBG_EXTN_CFG, val | 3ULL << 3);
+> >
+> >This is an improvement.
+> >
+> >> -	__wrmsr      (MSR_IA32_PQR_ASSOC, rmid_p, plr->closid);
+> >> +	native_wrmsrl(MSR_IA32_PQR_ASSOC, (u64)plr->closid << 32 | rmid_p);
+> >
+> >> -	__wrmsr      (MSR_IA32_PQR_ASSOC, rmid_p, closid_p);
+> >> +	native_wrmsrl(MSR_IA32_PQR_ASSOC, (u64)closid_p << 32 | rmid_p);
+> >
+> >This is not an improvement.
+> >
+> >Please provide a native_wrmsrl() API variant where natural [rmid_p, closid_p]
+> >high/lo parameters can be used, without the shift-uglification...
+> >
+> >Thanks,
+> >
+> >	Ingo
 > 
-> Tested-by: Puma Hsu <pumahsu@google.com>
+> Directing this question primarily to Ingo, who is more than anyone 
+> else the namespace consistency guardian:
 > 
+> On the subject of msr function naming ... *msrl() has always been 
+> misleading. The -l suffix usually means 32 bits; sometimes it means 
+> the C type "long" (which in the kernel is used instead of 
+> size_t/uintptr_t, which might end up being "fun" when 128-bit 
+> architectures appear some time this century), but for a fixed 64-but 
+> type we normally use -q.
 
-Tested-by: Daehwan Jung <dh10.jung@samsung.com>
+Yeah, agreed - that's been bothering me for a while too. :-)
 
-> > ---
-> >  drivers/usb/host/xhci-sideband.c  | 29 ++++++++++++++++++++++++++++-
-> >  drivers/usb/host/xhci.c           |  3 +++
-> >  include/linux/usb/xhci-sideband.h | 30 +++++++++++++++++++++++++++++-
-> >  3 files changed, 60 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sideband.c
-> > index 742bbc6c2d9b..d49f9886dd84 100644
-> > --- a/drivers/usb/host/xhci-sideband.c
-> > +++ b/drivers/usb/host/xhci-sideband.c
-> > @@ -88,6 +88,30 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *e
-> >
-> >  /* sideband api functions */
-> >
-> > +/**
-> > + * xhci_sideband_notify_ep_ring_free - notify client of xfer ring free
-> > + * @sb: sideband instance for this usb device
-> > + * @ep_index: usb endpoint index
-> > + *
-> > + * Notifies the xHCI sideband client driver of a xHCI transfer ring free
-> > + * routine.  This will allow for the client to ensure that all transfers
-> > + * are completed.
-> > + *
-> > + * The callback should be synchronous, as the ring free happens after.
-> > + */
-> > +void xhci_sideband_notify_ep_ring_free(struct xhci_sideband *sb,
-> > +                                      unsigned int ep_index)
-> > +{
-> > +       struct xhci_sideband_event evt;
-> > +
-> > +       evt.type = XHCI_SIDEBAND_XFER_RING_FREE;
-> > +       evt.evt_data = &ep_index;
-> > +
-> > +       if (sb->notify_client)
-> > +               sb->notify_client(sb->intf, &evt);
-> > +}
-> > +EXPORT_SYMBOL_GPL(xhci_sideband_notify_ep_ring_free);
-> > +
-> >  /**
-> >   * xhci_sideband_add_endpoint - add endpoint to sideband access list
-> >   * @sb: sideband instance for this usb device
-> > @@ -342,7 +366,9 @@ EXPORT_SYMBOL_GPL(xhci_sideband_interrupter_id);
-> >   * Return: pointer to a new xhci_sideband instance if successful. NULL otherwise.
-> >   */
-> >  struct xhci_sideband *
-> > -xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_type type)
-> > +xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_type type,
-> > +                      int (*notify_client)(struct usb_interface *intf,
-> > +                                   struct xhci_sideband_event *evt))
-> >  {
-> >         struct usb_device *udev = interface_to_usbdev(intf);
-> >         struct usb_hcd *hcd = bus_to_hcd(udev->bus);
-> > @@ -381,6 +407,7 @@ xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_type type)
-> >         sb->vdev = vdev;
-> >         sb->intf = intf;
-> >         sb->type = type;
-> > +       sb->notify_client = notify_client;
-> >         vdev->sideband = sb;
-> >
-> >         spin_unlock_irq(&xhci->lock);
-> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> > index 61950a350432..91e2d6eac8b7 100644
-> > --- a/drivers/usb/host/xhci.c
-> > +++ b/drivers/usb/host/xhci.c
-> > @@ -20,6 +20,7 @@
-> >  #include <linux/string_choices.h>
-> >  #include <linux/dmi.h>
-> >  #include <linux/dma-mapping.h>
-> > +#include <linux/usb/xhci-sideband.h>
-> >
-> >  #include "xhci.h"
-> >  #include "xhci-trace.h"
-> > @@ -3919,6 +3920,8 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
-> >                 }
-> >
-> >                 if (ep->ring) {
-> > +                       if (ep->sideband)
-> > +                               xhci_sideband_notify_ep_ring_free(ep->sideband, i);
-> >                         xhci_debugfs_remove_endpoint(xhci, virt_dev, i);
-> >                         xhci_free_endpoint_ring(xhci, virt_dev, i);
-> >                 }
-> > diff --git a/include/linux/usb/xhci-sideband.h b/include/linux/usb/xhci-sideband.h
-> > index f8722afb8a2d..45288c392f6e 100644
-> > --- a/include/linux/usb/xhci-sideband.h
-> > +++ b/include/linux/usb/xhci-sideband.h
-> > @@ -21,6 +21,20 @@ enum xhci_sideband_type {
-> >         XHCI_SIDEBAND_VENDOR,
-> >  };
-> >
-> > +enum xhci_sideband_notify_type {
-> > +       XHCI_SIDEBAND_XFER_RING_FREE,
-> > +};
-> > +
-> > +/**
-> > + * struct xhci_sideband_event - sideband event
-> > + * @type: notifier type
-> > + * @evt_data: event data
-> > + */
-> > +struct xhci_sideband_event {
-> > +       enum xhci_sideband_notify_type type;
-> > +       void *evt_data;
-> > +};
-> > +
-> >  /**
-> >   * struct xhci_sideband - representation of a sideband accessed usb device.
-> >   * @xhci: The xhci host controller the usb device is connected to
-> > @@ -30,6 +44,7 @@ enum xhci_sideband_type {
-> >   * @type: xHCI sideband type
-> >   * @mutex: mutex for sideband operations
-> >   * @intf: USB sideband client interface
-> > + * @notify_client: callback for xHCI sideband sequences
-> >   *
-> >   * FIXME usb device accessed via sideband Keeping track of sideband accessed usb devices.
-> >   */
-> > @@ -44,10 +59,14 @@ struct xhci_sideband {
-> >         struct mutex                    mutex;
-> >
-> >         struct usb_interface            *intf;
-> > +       int (*notify_client)(struct usb_interface *intf,
-> > +                            struct xhci_sideband_event *evt);
-> >  };
-> >
-> >  struct xhci_sideband *
-> > -xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_type type);
-> > +xhci_sideband_register(struct usb_interface *intf, enum xhci_sideband_type type,
-> > +                      int (*notify_client)(struct usb_interface *intf,
-> > +                                   struct xhci_sideband_event *evt));
-> >  void
-> >  xhci_sideband_unregister(struct xhci_sideband *sb);
-> >  int
-> > @@ -71,4 +90,13 @@ void
-> >  xhci_sideband_remove_interrupter(struct xhci_sideband *sb);
-> >  int
-> >  xhci_sideband_interrupter_id(struct xhci_sideband *sb);
-> > +
-> > +#if IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND)
-> > +void xhci_sideband_notify_ep_ring_free(struct xhci_sideband *sb,
-> > +                                      unsigned int ep_index);
-> > +#else
-> > +static inline void xhci_sideband_notify_ep_ring_free(struct xhci_sideband *sb,
-> > +                                                    unsigned int ep_index)
-> > +{ }
-> > +#endif /* IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND) */
-> >  #endif /* __LINUX_XHCI_SIDEBAND_H */
-> >
-> 
-> 
+> Should we rename the *msrl() functions to *msrq() as part of this 
+> overhaul?
 
-------BWvmtLGreXPtZv31XE49129YoyRr4_KGUd.k-ILdCyGA2LCZ=_6a960_
-Content-Type: text/plain; charset="utf-8"
+Yeah, that's a good idea, and because talk is cheap I just implemented 
+this in the tip:WIP.x86/msr branch with a couple of other cleanups in 
+this area (see the shortlog & diffstat below), but the churn is high:
 
+  144 files changed, 1034 insertions(+), 1034 deletions(-)
 
-------BWvmtLGreXPtZv31XE49129YoyRr4_KGUd.k-ILdCyGA2LCZ=_6a960_--
+So this can only be done if regenerated and sent to Linus right before 
+an -rc1 I think:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip WIP.x86/msr
+
+Thanks,
+
+	Ingo
+
+=======================>
+Ingo Molnar (18):
+      x86/msr: Standardize on u64 in <asm/msr.h>
+      x86/msr: Standardize on u64 in <asm/msr-index.h>
+      x86/msr: Use u64 in rdmsrl_amd_safe() and wrmsrl_amd_safe()
+      x86/msr: Use u64 in rdmsrl_safe() and paravirt_read_pmc()
+      x86/msr: Rename 'rdmsrl()' to 'rdmsrq()'
+      x86/msr: Rename 'wrmsrl()' to 'wrmsrq()'
+      x86/msr: Rename 'rdmsrl_safe()' to 'rdmsrq_safe()'
+      x86/msr: Rename 'wrmsrl_safe()' to 'wrmsrq_safe()'
+      x86/msr: Rename 'rdmsrl_safe_on_cpu()' to 'rdmsrq_safe_on_cpu()'
+      x86/msr: Rename 'wrmsrl_safe_on_cpu()' to 'wrmsrq_safe_on_cpu()'
+      x86/msr: Rename 'rdmsrl_on_cpu()' to 'rdmsrq_on_cpu()'
+      x86/msr: Rename 'wrmsrl_on_cpu()' to 'wrmsrq_on_cpu()'
+      x86/msr: Rename 'mce_rdmsrl()' to 'mce_rdmsrq()'
+      x86/msr: Rename 'mce_wrmsrl()' to 'mce_wrmsrq()'
+      x86/msr: Rename 'rdmsrl_amd_safe()' to 'rdmsrq_amd_safe()'
+      x86/msr: Rename 'wrmsrl_amd_safe()' to 'wrmsrq_amd_safe()'
+      x86/msr: Rename 'native_wrmsrl()' to 'native_wrmsrq()'
+      x86/msr: Rename 'wrmsrl_cstar()' to 'wrmsrq_cstar()'
+
+ arch/x86/coco/sev/core.c                           |   2 +-
+ arch/x86/events/amd/brs.c                          |   8 +-
+ arch/x86/events/amd/core.c                         |  12 +--
+ arch/x86/events/amd/ibs.c                          |  26 ++---
+ arch/x86/events/amd/lbr.c                          |  20 ++--
+ arch/x86/events/amd/power.c                        |  10 +-
+ arch/x86/events/amd/uncore.c                       |  12 +--
+ arch/x86/events/core.c                             |  42 ++++----
+ arch/x86/events/intel/core.c                       |  66 ++++++-------
+ arch/x86/events/intel/cstate.c                     |   2 +-
+ arch/x86/events/intel/ds.c                         |  10 +-
+ arch/x86/events/intel/knc.c                        |  16 +--
+ arch/x86/events/intel/lbr.c                        |  44 ++++-----
+ arch/x86/events/intel/p4.c                         |  24 ++---
+ arch/x86/events/intel/p6.c                         |  12 +--
+ arch/x86/events/intel/pt.c                         |  32 +++---
+ arch/x86/events/intel/uncore.c                     |   2 +-
+ arch/x86/events/intel/uncore_discovery.c           |  10 +-
+ arch/x86/events/intel/uncore_nhmex.c               |  70 ++++++-------
+ arch/x86/events/intel/uncore_snb.c                 |  42 ++++----
+ arch/x86/events/intel/uncore_snbep.c               |  50 +++++-----
+ arch/x86/events/msr.c                              |   2 +-
+ arch/x86/events/perf_event.h                       |  26 ++---
+ arch/x86/events/probe.c                            |   2 +-
+ arch/x86/events/rapl.c                             |   8 +-
+ arch/x86/events/zhaoxin/core.c                     |  16 +--
+ arch/x86/hyperv/hv_apic.c                          |   4 +-
+ arch/x86/hyperv/hv_init.c                          |  66 ++++++-------
+ arch/x86/hyperv/hv_spinlock.c                      |   6 +-
+ arch/x86/hyperv/ivm.c                              |   2 +-
+ arch/x86/include/asm/apic.h                        |   8 +-
+ arch/x86/include/asm/debugreg.h                    |   4 +-
+ arch/x86/include/asm/fsgsbase.h                    |   4 +-
+ arch/x86/include/asm/kvm_host.h                    |   2 +-
+ arch/x86/include/asm/microcode.h                   |   2 +-
+ arch/x86/include/asm/msr-index.h                   |  12 +--
+ arch/x86/include/asm/msr.h                         |  50 +++++-----
+ arch/x86/include/asm/paravirt.h                    |   8 +-
+ arch/x86/include/asm/spec-ctrl.h                   |   2 +-
+ arch/x86/kernel/acpi/cppc.c                        |   8 +-
+ arch/x86/kernel/amd_nb.c                           |   2 +-
+ arch/x86/kernel/apic/apic.c                        |  16 +--
+ arch/x86/kernel/apic/apic_numachip.c               |   6 +-
+ arch/x86/kernel/cet.c                              |   2 +-
+ arch/x86/kernel/cpu/amd.c                          |  28 +++---
+ arch/x86/kernel/cpu/aperfmperf.c                   |  28 +++---
+ arch/x86/kernel/cpu/bugs.c                         |  24 ++---
+ arch/x86/kernel/cpu/bus_lock.c                     |  18 ++--
+ arch/x86/kernel/cpu/common.c                       |  68 ++++++-------
+ arch/x86/kernel/cpu/feat_ctl.c                     |   4 +-
+ arch/x86/kernel/cpu/hygon.c                        |   6 +-
+ arch/x86/kernel/cpu/intel.c                        |  10 +-
+ arch/x86/kernel/cpu/intel_epb.c                    |  12 +--
+ arch/x86/kernel/cpu/mce/amd.c                      |  22 ++---
+ arch/x86/kernel/cpu/mce/core.c                     |  58 +++++------
+ arch/x86/kernel/cpu/mce/inject.c                   |  32 +++---
+ arch/x86/kernel/cpu/mce/intel.c                    |  32 +++---
+ arch/x86/kernel/cpu/mce/internal.h                 |   2 +-
+ arch/x86/kernel/cpu/microcode/amd.c                |   2 +-
+ arch/x86/kernel/cpu/microcode/intel.c              |   2 +-
+ arch/x86/kernel/cpu/mshyperv.c                     |  12 +--
+ arch/x86/kernel/cpu/resctrl/core.c                 |  10 +-
+ arch/x86/kernel/cpu/resctrl/monitor.c              |   2 +-
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c          |   2 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c             |   6 +-
+ arch/x86/kernel/cpu/sgx/main.c                     |   2 +-
+ arch/x86/kernel/cpu/topology.c                     |   2 +-
+ arch/x86/kernel/cpu/topology_amd.c                 |   4 +-
+ arch/x86/kernel/cpu/tsx.c                          |  20 ++--
+ arch/x86/kernel/cpu/umwait.c                       |   2 +-
+ arch/x86/kernel/fpu/core.c                         |   2 +-
+ arch/x86/kernel/fpu/xstate.c                       |  10 +-
+ arch/x86/kernel/fpu/xstate.h                       |   2 +-
+ arch/x86/kernel/fred.c                             |  20 ++--
+ arch/x86/kernel/hpet.c                             |   2 +-
+ arch/x86/kernel/kvm.c                              |  28 +++---
+ arch/x86/kernel/kvmclock.c                         |   4 +-
+ arch/x86/kernel/mmconf-fam10h_64.c                 |   8 +-
+ arch/x86/kernel/process.c                          |  16 +--
+ arch/x86/kernel/process_64.c                       |  20 ++--
+ arch/x86/kernel/reboot_fixups_32.c                 |   2 +-
+ arch/x86/kernel/shstk.c                            |  18 ++--
+ arch/x86/kernel/traps.c                            |  10 +-
+ arch/x86/kernel/tsc.c                              |   2 +-
+ arch/x86/kernel/tsc_sync.c                         |  14 +--
+ arch/x86/kvm/svm/avic.c                            |   2 +-
+ arch/x86/kvm/svm/sev.c                             |   2 +-
+ arch/x86/kvm/svm/svm.c                             |  16 +--
+ arch/x86/kvm/vmx/nested.c                          |   4 +-
+ arch/x86/kvm/vmx/pmu_intel.c                       |   4 +-
+ arch/x86/kvm/vmx/sgx.c                             |   8 +-
+ arch/x86/kvm/vmx/vmx.c                             |  66 ++++++-------
+ arch/x86/kvm/x86.c                                 |  38 ++++----
+ arch/x86/lib/insn-eval.c                           |   6 +-
+ arch/x86/lib/msr-smp.c                             |  16 +--
+ arch/x86/lib/msr.c                                 |   4 +-
+ arch/x86/mm/pat/memtype.c                          |   4 +-
+ arch/x86/mm/tlb.c                                  |   2 +-
+ arch/x86/pci/amd_bus.c                             |  10 +-
+ arch/x86/platform/olpc/olpc-xo1-rtc.c              |   6 +-
+ arch/x86/platform/olpc/olpc-xo1-sci.c              |   2 +-
+ arch/x86/power/cpu.c                               |  26 ++---
+ arch/x86/realmode/init.c                           |   2 +-
+ arch/x86/virt/svm/sev.c                            |  20 ++--
+ arch/x86/xen/suspend.c                             |   6 +-
+ drivers/acpi/acpi_extlog.c                         |   2 +-
+ drivers/acpi/acpi_lpit.c                           |   2 +-
+ drivers/cpufreq/acpi-cpufreq.c                     |   8 +-
+ drivers/cpufreq/amd-pstate-ut.c                    |   6 +-
+ drivers/cpufreq/amd-pstate.c                       |  22 ++---
+ drivers/cpufreq/amd_freq_sensitivity.c             |   2 +-
+ drivers/cpufreq/e_powersaver.c                     |   6 +-
+ drivers/cpufreq/intel_pstate.c                     | 108 ++++++++++-----------
+ drivers/cpufreq/longhaul.c                         |  24 ++---
+ drivers/cpufreq/powernow-k7.c                      |  14 +--
+ drivers/crypto/ccp/sev-dev.c                       |   2 +-
+ drivers/edac/amd64_edac.c                          |   6 +-
+ drivers/gpu/drm/i915/selftests/librapl.c           |   4 +-
+ drivers/hwmon/fam15h_power.c                       |   6 +-
+ drivers/idle/intel_idle.c                          |  34 +++----
+ drivers/mtd/nand/raw/cs553x_nand.c                 |   6 +-
+ drivers/platform/x86/intel/ifs/core.c              |   4 +-
+ drivers/platform/x86/intel/ifs/load.c              |  20 ++--
+ drivers/platform/x86/intel/ifs/runtest.c           |  16 +--
+ drivers/platform/x86/intel/pmc/cnp.c               |   6 +-
+ drivers/platform/x86/intel/pmc/core.c              |   8 +-
+ .../x86/intel/speed_select_if/isst_if_common.c     |  18 ++--
+ .../x86/intel/speed_select_if/isst_if_mbox_msr.c   |  14 +--
+ .../x86/intel/speed_select_if/isst_tpmi_core.c     |   2 +-
+ drivers/platform/x86/intel/tpmi_power_domains.c    |   4 +-
+ drivers/platform/x86/intel/turbo_max_3.c           |   4 +-
+ .../x86/intel/uncore-frequency/uncore-frequency.c  |  10 +-
+ drivers/platform/x86/intel_ips.c                   |  36 +++----
+ drivers/powercap/intel_rapl_msr.c                  |   6 +-
+ .../int340x_thermal/processor_thermal_device.c     |   2 +-
+ drivers/thermal/intel/intel_hfi.c                  |  14 +--
+ drivers/thermal/intel/intel_powerclamp.c           |   4 +-
+ drivers/thermal/intel/intel_tcc_cooling.c          |   4 +-
+ drivers/thermal/intel/therm_throt.c                |  10 +-
+ drivers/video/fbdev/geode/gxfb_core.c              |   2 +-
+ drivers/video/fbdev/geode/lxfb_ops.c               |  22 ++---
+ drivers/video/fbdev/geode/suspend_gx.c             |  10 +-
+ drivers/video/fbdev/geode/video_gx.c               |  16 +--
+ include/hyperv/hvgdk_mini.h                        |   2 +-
+ 144 files changed, 1034 insertions(+), 1034 deletions(-)
 
