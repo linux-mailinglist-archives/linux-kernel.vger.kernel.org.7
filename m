@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-583925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555E0A7817E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 19:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC71A78182
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 19:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC02188FBD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:26:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E384A16C750
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B964215773;
-	Tue,  1 Apr 2025 17:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD3E20F076;
+	Tue,  1 Apr 2025 17:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0n3w3k1x";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="yKw1lY92"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzMyRL2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3067920FA96;
-	Tue,  1 Apr 2025 17:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B6E207662;
+	Tue,  1 Apr 2025 17:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743528321; cv=none; b=PNnuXEZkQ7KjhoQ4TkpKBp63B1BaUxpav70hjbB2BPnZBbNDvBq7mx0XOOHRjUvv0OEKQECPm5sc/rFIIURCtF0jy+qdKNXmIyek3ql+MJI4hUdpQhcTIrKpH0X2CxckYoZluvIZmRNv9Jh1Uq/b+dgl7nQOwRgtURLIJEsrJ2w=
+	t=1743528549; cv=none; b=f/yH//Gua8rRrvaWyWn+jFA6Fz9he12/wf4UwBsv3i2xhudWymewouIxhLxJUgyTKhHIj6U0a7U0hZ7B5tCL3YGXTwHBVrEGT1KL4RumRqJ7WziEQ7JAD/0nTHw+SlrhVqMOAlYdCM2pxwmn5Jna4PXcyY5hkaLgjMMdbvUL4TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743528321; c=relaxed/simple;
-	bh=34/DWVz3xny62FFtko1B9kiCB28YM6UFyyWMYVeeQig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=me3huKQtMaGrgIfC06jUwuLLfLHdGC+fBnGceksQEeh2EetoTJ5jcqH403eCDT1v8Pis81BD3BDhfQU3yKoPRA52vZnpFcdoS/v3sRzRUG+f4+mDPdjYnt0dBi4p5ms2UqfEQuceX7YlZz7PDKRWmtUflkaiRvzoST1GlWemQoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0n3w3k1x; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=yKw1lY92; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 8FC6EEC59FC;
-	Tue, 01 Apr 2025 10:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1743528319; bh=34/DWVz3xny62FFtko1B9kiCB28YM6UFyyWMYVeeQig=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=0n3w3k1xYwdVRZSlz/Co5xIF215jsdpvvl4PjqqpwaAmb4R1oNi2GtuosqR7h0I15
-	 vLOqdD8yasEubHEYZvBVjAK4Re6igpKPSfc2VVw8ie3uLSY3SJYeFdvqwvesWMUilH
-	 Vh5THxvLLBhABaqWImTOqLc77Nw17t0D4wxGiqeBmJz+2wLZuezHr0M3ZTP6/Guo29
-	 wRrmreuaMlHaHWalBUJqgkVwxLNHPs8zQjDwca7Eliqb1yLDnjYCPlyBrpR23MvY0I
-	 FWJRGl22II2zVxYRGetW1P0l7Qn4tiAmJ91JnDOY7RPv6ghKUonq0A+WwfJra9u9xK
-	 7ijDNhYFEODjg==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
- header.d=4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id 78L11jvBmuvM; Tue,  1 Apr 2025 10:25:18 -0700 (PDT)
-Received: from localhost.localdomain (unknown [183.217.81.55])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 95CDDEC59F9;
-	Tue, 01 Apr 2025 10:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1743528318; bh=34/DWVz3xny62FFtko1B9kiCB28YM6UFyyWMYVeeQig=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yKw1lY92V5SLbhmR0TXij6E8ysSSTLOQMUTEn6BbEYML/l+e1vIWu8EaogEntPrAI
-	 fzW4XFz2Egr4WfkLcp5ZdXiNCiSupFburyQmdmS/jB0xAgL60sIBF+qzea857cVJuC
-	 J010vRFd0AUJkaYKGptzjD9b123zjWJ16FAyJG4M2F7e8ghSH5nsUmTCdDRmSARsr2
-	 xR9qREPzi01bX4enCr4nzxr4Nmc777hKTGpLoLqDGb7EgMVrkx0LA8qnegnXPITD35
-	 M+hpc1zMeI/Df/yT9sLphTcngxRHA0dXs/PwbnifbJIuvsUOGCKbvYd12ms1BUcMdx
-	 rEi2WmFSqVlMA==
-From: Haylen Chu <heylenay@4d2.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Haylen Chu <heylenay@4d2.org>
-Subject: [PATCH v6 6/6] riscv: defconfig: enable clock controller unit support for SpacemiT K1
-Date: Tue,  1 Apr 2025 17:24:34 +0000
-Message-ID: <20250401172434.6774-7-heylenay@4d2.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250401172434.6774-1-heylenay@4d2.org>
-References: <20250401172434.6774-1-heylenay@4d2.org>
+	s=arc-20240116; t=1743528549; c=relaxed/simple;
+	bh=Om+WYEmu6WcHC36VRjgW4d5CoIyf2PB5RdKLVp5lA2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aC4EJL6uo0mMMp0fP72pfNoXZVAs99kwArmZdWrcO0W6DwDDKqWJ8RJTc6jpApPexJj+Y5jgYf0IqMrLh3qVY7c7S8HjyLKB3gzcNyHtGs2w4mOz75kZnMlQasBZd5+RIB/+wgSC2CKyLfQ+YAJKW9Ek/wCBDN4H+8U+f7j4X88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzMyRL2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D5AC4CEE4;
+	Tue,  1 Apr 2025 17:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743528549;
+	bh=Om+WYEmu6WcHC36VRjgW4d5CoIyf2PB5RdKLVp5lA2g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hzMyRL2wf38evAdS2iFcXDD4o9myJw+GivAmGtFEMc2sfOfsQLr+SR5SuplsScayL
+	 xFLrWQMOM+lWhnkXbPhMoThJ/y1ouvKpX42nPaNNzUvDNlK90TzeCi9GIW3BG/Lb9p
+	 rhlm3daBQmBZlVTfjhC8KtlcicCmx4mnSBH1wU+YSHxnoSDvLQeMA32PZ8lkugSO/6
+	 xlMCox3N3puCFRDnWI1o8VOU9F365NUDC23azKy6g1a9Bp/K1h0KQ/UWEquG3bAdjT
+	 +PdkMAld2yK2IYl/ADs96Qaa8r6ahWUOaBNse8yJLXhL1j1tSEktKQAMW8hQWFTmOj
+	 oDhVNs0fn3LbQ==
+Date: Tue, 1 Apr 2025 11:29:06 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2][next] IB/hfi1: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <Z-wiYkll8Vo3ME3P@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Clock controller unit, or CCU, generates various clocks frequency for
-peripherals integrated in SpacemiT K1 SoC and is essential for normal
-operation. Let's enable it in defconfig.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Signed-off-by: Haylen Chu <heylenay@4d2.org>
+Remove unused flex-array member `class_data` from
+`struct opa_mad_notice_attr`.
+
+Fix the following warning:
+
+drivers/infiniband/hw/hfi1/mad.c:23:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v2:
+ - Remove unused flexible array. (Jason)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 0f7dcbe3c45b..011788d16d93 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -252,6 +252,8 @@ CONFIG_CLK_SOPHGO_CV1800=y
- CONFIG_CLK_SOPHGO_SG2042_PLL=y
- CONFIG_CLK_SOPHGO_SG2042_CLKGEN=y
- CONFIG_CLK_SOPHGO_SG2042_RPGATE=y
-+CONFIG_SPACEMIT_CCU=y
-+CONFIG_SPACEMIT_K1_CCU=y
- CONFIG_SUN8I_DE2_CCU=m
- CONFIG_SUN50I_IOMMU=y
- CONFIG_RPMSG_CHAR=y
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/Z-WgwsCYIXaBxnvs@kspp/
+
+ drivers/infiniband/hw/hfi1/mad.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hfi1/mad.h b/drivers/infiniband/hw/hfi1/mad.h
+index b6e3141253c4..d6dde762921a 100644
+--- a/drivers/infiniband/hw/hfi1/mad.h
++++ b/drivers/infiniband/hw/hfi1/mad.h
+@@ -124,7 +124,6 @@ struct opa_mad_notice_attr {
+ 		} __packed ntc_2048;
+ 
+ 	};
+-	u8	class_data[];
+ };
+ 
+ #define IB_VLARB_LOWPRI_0_31    1
 -- 
-2.49.0
+2.43.0
 
 
