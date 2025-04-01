@@ -1,292 +1,139 @@
-Return-Path: <linux-kernel+bounces-584115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF48A78362
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA042A7836D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CEF03AC81C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939751889A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF9E214213;
-	Tue,  1 Apr 2025 20:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C708D2144DD;
+	Tue,  1 Apr 2025 20:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSxHJvSu"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtIJ4ee8"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA0A3594F;
-	Tue,  1 Apr 2025 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC9220E32B;
+	Tue,  1 Apr 2025 20:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743540063; cv=none; b=hQUGHwdaq4f5zV07N8hGu/naTYRCEdrx167QhSAtqMd3DYQGrNqYfyxYCozz7VwUiDMy1dQNjovieVD2yc7vZxHm7M6BMI2sddiKftL7pt/+eTBOxtULeYvRiCQEONhfOJUl7X0eRvNxRW6VFrKNWahYUK6lxxYP28cUq4X/Low=
+	t=1743540208; cv=none; b=YIIyrUED0iIL1tbvA05BNKV8eD3ByuIU9rgR20eedpgORRdf9XQWH7aJarBNCKpkD0Um5U7pyYkdTM0dGKAfESldHd4rDoSRiKs8VWoXoovyTmZAnEY8H4cUbHwVtJTn8vRz3EQP/5QfygINikYqdlHOdE6Aeu9VZr5gLNI7p6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743540063; c=relaxed/simple;
-	bh=mgoj2LmOzSdQWqzKSQIr6XK+nGpBkja3pWfiePVcXbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fyuwRIF+nG5TN8t3FXdykYjwqfehER3LXWKFzNH6IDbqK3Ld1ihp4S4S+jCG4ZTrFpqpAwZxT6qgjFT11we983CkyZdiYok8deDdQeCxpAaLJdQK0qfxw1I+wPBvOuH2nFVMt/+Gtk80XVdfjL0r6jH5I2qj2hvQupelpF2FPOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSxHJvSu; arc=none smtp.client-ip=209.85.166.48
+	s=arc-20240116; t=1743540208; c=relaxed/simple;
+	bh=zQhKR8kVOAEtr8R3vm7SqBVF3sJt9l6H/kz5zrldLtk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DO96ICoYCqIZ/y+Bpbd2GlBAS8FQw7LjKI1FPt69T33i9PmHJ3ILRvNaM+yrm8SLQhhDQsdFH5N9dSuxIsXfQzgXM4EUM1y0u/Lc/+SaAD7EmBrelQFNj6rww1v+gMieHS46BR+0373OBefvo8BWYs2IQVHFnA0Boi2x5toMFMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EtIJ4ee8; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-85b5e49615aso566131639f.1;
-        Tue, 01 Apr 2025 13:41:02 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30dd5a93b49so40446891fa.0;
+        Tue, 01 Apr 2025 13:43:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743540061; x=1744144861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=siRhwdkGqZcq/rdLOAyWJygNm07mlGX8YXe+LkcnPjg=;
-        b=PSxHJvSuA23eN/jf925EuM9iPY+9sLIZ6dh/9KYCvagrUELj0YwUGbCfLkIbMxLdvT
-         mW2r9huh++HXxqpXUYZ3zmFyEeSUIZnMKlKE515VHOD4nXmySPZH0cAazPvZSUCiO/QS
-         /MQUsPWaof0W4ifWvkGX47+gpwLXm/0ItQaKiFWB07WfyaC0+T3EW2tFPvHJl35T7J6M
-         I8xd6W4IEzNAJig8Aj11v4v0aLvXrERIuEVqShZIX6XI49fVUERceBq1z/ESGZ8jLitr
-         GQ75HO3s4Z+m9l3T7bFeuiOiq/7rfsGfx3Lla82reFOP2+zswkFZFjzL++2hZrpMNtAQ
-         aDsQ==
+        d=gmail.com; s=20230601; t=1743540204; x=1744145004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncjIuT5qgvMbEBzrNid23ot35c1++uRBRoVD3rabhTU=;
+        b=EtIJ4ee8pUdS5iu5UvRHsMuLig308qB3C9KbcsQLS8MSP8t9nwIx00+t67F62KEEBO
+         cWM0PrJXffgonT8C26Yma1py09wL3M45IOc3P5sCFkp1i78IFBCuGynzzPCbv/ndfc57
+         msrZTSYCVWgahRVXs5tKJcTljiiUsshP6BF6EfFNxka2X6RFylsBkPpqrIiwkwER7k8U
+         mTOkba/j1G3+LlRmxjtmLWC+z7l8kSb/WrvfvNLd3OcPtnQh8y6ydqdQwHFh3rOOQpEO
+         oHH6oioD0geCseQ3rUxLrwLamxE4/KwZA6x0dRmgf/r1hdiYSNPROfi4/G6UOWncaRHd
+         kPlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743540061; x=1744144861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=siRhwdkGqZcq/rdLOAyWJygNm07mlGX8YXe+LkcnPjg=;
-        b=vGje2YErMSh0P9vmIYzo1OPI7EpeLdKNTuI20+6r8DPzEGB02AyF5TpCxweLCCwLiP
-         0ru/W+sDxveM7leSQVKTrg9iTIa8R+faPe+9YhO11taJxtlSOI45kfYRvLjbJhAA+vGn
-         pIsSCY9r2PudWxBch35Qb4y+PaLEnvj11ZpuJFkOLz8zVWwYpmbAAYfhMP2H9/JN9bhB
-         IcjNGjAhyLJXHKJrtnR3kcJkzaklLS6KR860lruWR36g7bbZbLf/O0cjl9Q6/TwZ3WFc
-         zyARFRxa5g2HGPEduKcIfA5+d+2uWyOTmIhQR4GVmvfLXON3ExySHs9jH7BiQqLDFBk3
-         E3ig==
-X-Forwarded-Encrypted: i=1; AJvYcCWVOzYC0a7DNLuzrUcofI/wou77yimXnkUKJPerXNlAmOLU9PNgYWlKgNk5370mHrsJ3qw1yzj0h++VMO0=@vger.kernel.org, AJvYcCWyrY1fQrnCHgqqkeKXE7hrRFuwaL0T9UV/lG/0Fh5x48aDdJYYVLT7w6jVtIz0fpbwwaQ9LledgFY9qo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyMAOAG8wdMXk9z6am4dCdmsGwTzXS7bVnNV5z9a7WqTmmNcYC
-	7pm34wsAZGVWpP73HekwefgxDfTXJafSUHcYf0QIsqi4nyGLZRD8Sk8YjeHVEADwjeX5+gwZIV5
-	2munHnK7oM/1d6uyBS+V8ot06QMA=
-X-Gm-Gg: ASbGncskWiMendZzCxANAUcORY2Jf9D5wIxj3uTLSPAdnWAULuUyZwANUFzE2r0pGtY
-	qetIaQvqCITqLds96uJiTNgeb4goCiI+cO0vW0tI2LiYOU7vHDQUwEVVe2BbGFJkuBe+LRtMUsx
-	nF0t9c0A2LceTzBw9GBEwWj6rdr2hZBoXtfst5HML6Zrq8qQ5uZ7xouH/VkuSv
-X-Google-Smtp-Source: AGHT+IFLlhtX4Th4iaWF6gmgGrgmSI2sNYPTK5C3v32iqwrOki9gMq65N8YIiPUx2AS0QMSgiiHdclEstrrecxsEUTg=
-X-Received: by 2002:a05:6e02:330e:b0:3d4:2ea4:6b8a with SMTP id
- e9e14a558f8ab-3d6ca680434mr58428335ab.22.1743540061217; Tue, 01 Apr 2025
- 13:41:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743540204; x=1744145004;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ncjIuT5qgvMbEBzrNid23ot35c1++uRBRoVD3rabhTU=;
+        b=nkIFohfO8zOeO5KxsiphauVcHRMRUAIbBhVxHZigKHSjKqQgi5dzJCmE0SFVHca5rz
+         3FQ72fhe1UgKvadtePzaVztaNZCBXmgffdlJBeWKt2AhWVBTBfZmmajZODJWOZ18sT6c
+         5BmHnFtK0BAV0vF8e5OYHinALPd7h0+QSAJVzoWSYE6JXSwCd56xT7hBd61byWrwwoe3
+         uAkkoJmfBmxYh9wuYzmOAIwLi6U1edRh2HHVGZNuOkX8PJ9G5Xyt7uVXczJZwP3ifJzc
+         aOe2nVhoY0PzGLAUQE/OHxl18m3/qzPOP007C+nwb28pSfA6l7fayD/H/2wuaCwqKdrt
+         VGNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1s4sdO5uNd/xm41H3+b052sfitkYkXK80sQmUrmlwQvYAkWdAGY6gz4N1kMNoWPkPvLZpWNQDgKqS7edL@vger.kernel.org, AJvYcCVEfKxjSTAp6klBX9+d/SVZt6vZkkGZZjMXuMgR8k4HjhnnOsCyPLYEd8W2zsCrLXjB6VG7ehDLPsp6zLg=@vger.kernel.org, AJvYcCVPzJGFJI0Add/pvuvF5w7vzJsMIMvTGOHBcRTVrll2zMq0bWcTbNTlGqrZmjLEIF6pFb4BUEHxgVyhTshq@vger.kernel.org, AJvYcCWlw+nAgPMeUOxFgMwvO1C/ZzoengDq3STafb+0D/CDWcfnsFJ52hSuYybSEY6BMlo3ni29yAAt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ5MmyjkI6NdhP8u1Jo4aC/2bzuk33fDtQrHGDnpBRoejO7Ozk
+	pFzUIde4aXUprYC7sYsNeanY5b1H7OyYxEMV2t6y0lE0FKk19nUz
+X-Gm-Gg: ASbGncuulTOyEU4bwklovXrVn+5RUqiRoE81LhAjD9aUkrqEw021ejy8IRWaBHOOK4L
+	U98I3vfNsBD9wh5qjJmpJrBYDFHBgINJt52WnZAWRw7QrmrHsH6f/A0bDsD2eEwx9aTosyAm0oP
+	USKI9nSUpg/Cmy0598VtnT4dVo3MEnL54cp90syiIMO3yCyHmiAzvHD2cuLUbFypsv+Xrooloh/
+	m4sojEWno1uaNjSUdmjEC1BhoL4hm/b0+Qwxx3YOk+p2jgAHIjylQnc1pQQw0jw7jy7Dbk2+PoB
+	Q64gDz/oA9gCh0LD3OP5x+Rhfnk4hxak1ZXWlpqPrPgkd3uH9zvrIdbeO/LFTDMxi6jjnw==
+X-Google-Smtp-Source: AGHT+IELNpGF2l/VAeH0aVpMUHnDd9JFi7xa5NDaI1mW4wUTHj9x8t8WdiqPNbT5mJBgMSpH5VHtxQ==
+X-Received: by 2002:a05:651c:1602:b0:30b:b184:a8ef with SMTP id 38308e7fff4ca-30de024b43cmr43726451fa.14.1743540203883;
+        Tue, 01 Apr 2025 13:43:23 -0700 (PDT)
+Received: from localhost.localdomain ([87.249.25.136])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30dd2ab8581sm18308161fa.25.2025.04.01.13.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 13:43:22 -0700 (PDT)
+From: Evgeny Pimenov <pimenoveu12@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Evgeny Pimenov <pimenoveu12@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Venkata Prasad Potturu <quic_potturu@quicinc.com>,
+	Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-patches@linuxtesting.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Mikhail Kobuk <m.kobuk@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: qcom: Fix sc7280 lpass potential buffer overflow
+Date: Tue,  1 Apr 2025 23:40:58 +0300
+Message-Id: <20250401204058.32261-1-pimenoveu12@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401155758.48855-1-robdclark@gmail.com>
-In-Reply-To: <20250401155758.48855-1-robdclark@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 1 Apr 2025 13:40:49 -0700
-X-Gm-Features: AQ5f1Jok8YMtfimcNM4pgU6iFDD8sQiU6mJe95HIx3itVvK4c_kQGvT5W1tTXT4
-Message-ID: <CAF6AEGsKbjq_q7ezQTn5vyAF1cjXahgbv84uYK35BJH1KBXSpw@mail.gmail.com>
-Subject: Re: [PATCH v6] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs
-To: dri-devel@lists.freedesktop.org
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>, 
-	"moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 1, 2025 at 8:58=E2=80=AFAM Rob Clark <robdclark@gmail.com> wrot=
-e:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> Add support for exporting a dma_fence fd for a specific point on a
-> timeline.  This is needed for vtest/vpipe[1][2] to implement timeline
-> syncobj support, as it needs a way to turn a point on a timeline back
-> into a dma_fence fd.  It also closes an odd omission from the syncobj
-> UAPI.
->
-> [1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
-> [2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/8=
-05
->
-> v2: Add DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE
-> v3: Add unstaged uabi header hunk
-> v4: Also handle IMPORT_SYNC_FILE case
-> v5: Address comments from Dmitry
-> v6: checkpatch.pl nits
->
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> ---
->  drivers/gpu/drm/drm_syncobj.c | 47 +++++++++++++++++++++++++++--------
->  include/uapi/drm/drm.h        |  4 +++
->  2 files changed, 41 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.=
-c
-> index 4f2ab8a7b50f..636cd83ca29e 100644
-> --- a/drivers/gpu/drm/drm_syncobj.c
-> +++ b/drivers/gpu/drm/drm_syncobj.c
-> @@ -741,7 +741,7 @@ static int drm_syncobj_fd_to_handle(struct drm_file *=
-file_private,
->  }
->
->  static int drm_syncobj_import_sync_file_fence(struct drm_file *file_priv=
-ate,
-> -                                             int fd, int handle)
-> +                                             int fd, int handle, u64 poi=
-nt)
->  {
->         struct dma_fence *fence =3D sync_file_get_fence(fd);
->         struct drm_syncobj *syncobj;
-> @@ -755,14 +755,24 @@ static int drm_syncobj_import_sync_file_fence(struc=
-t drm_file *file_private,
->                 return -ENOENT;
->         }
->
-> -       drm_syncobj_replace_fence(syncobj, fence);
-> +       if (point) {
-> +               struct dma_fence_chain *chain =3D dma_fence_chain_alloc()=
-;
-> +
-> +               if (!chain)
-> +                       return -ENOMEM;
-> +
-> +               drm_syncobj_add_point(syncobj, chain, fence, point);
-> +       } else {
-> +               drm_syncobj_replace_fence(syncobj, fence);
-> +       }
-> +
->         dma_fence_put(fence);
->         drm_syncobj_put(syncobj);
->         return 0;
->  }
->
->  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
-> -                                       int handle, int *p_fd)
-> +                                       int handle, u64 point, int *p_fd)
->  {
->         int ret;
->         struct dma_fence *fence;
-> @@ -772,7 +782,7 @@ static int drm_syncobj_export_sync_file(struct drm_fi=
-le *file_private,
->         if (fd < 0)
->                 return fd;
->
-> -       ret =3D drm_syncobj_find_fence(file_private, handle, 0, 0, &fence=
-);
-> +       ret =3D drm_syncobj_find_fence(file_private, handle, point, 0, &f=
-ence);
->         if (ret)
->                 goto err_put_fd;
->
-> @@ -869,6 +879,9 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev=
-, void *data,
->                                    struct drm_file *file_private)
->  {
->         struct drm_syncobj_handle *args =3D data;
-> +       unsigned int valid_flags =3D DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMEL=
-INE |
-> +                                  DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_=
-SYNC_FILE;
-> +       u64 point =3D 0;
->
->         if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ))
->                 return -EOPNOTSUPP;
-> @@ -876,13 +889,18 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *d=
-ev, void *data,
->         if (args->pad)
->                 return -EINVAL;
->
-> -       if (args->flags !=3D 0 &&
-> -           args->flags !=3D DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_F=
-ILE)
-> +       if (args->flags & ~valid_flags)
->                 return -EINVAL;
->
-> +       if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE)
-> +               point =3D args->point;
-> +
->         if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE=
-)
->                 return drm_syncobj_export_sync_file(file_private, args->h=
-andle,
-> -                                                   &args->fd);
-> +                                                   point, &args->fd);
-> +
-> +       if (args->point)
-> +               return -EINVAL;
->
->         return drm_syncobj_handle_to_fd(file_private, args->handle,
->                                         &args->fd);
-> @@ -893,6 +911,9 @@ drm_syncobj_fd_to_handle_ioctl(struct drm_device *dev=
-, void *data,
->                                    struct drm_file *file_private)
->  {
->         struct drm_syncobj_handle *args =3D data;
-> +       unsigned int valid_flags =3D DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_TIMEL=
-INE |
-> +                                  DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_IMPORT_=
-SYNC_FILE;
-> +       u64 point =3D 0;
->
->         if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ))
->                 return -EOPNOTSUPP;
+Case values introduced in commit
+5f78e1fb7a3e ("ASoC: qcom: Add driver support for audioreach solution")
+cause out of bounds access in arrays of sc7280 driver data (e.g. in case
+of RX_CODEC_DMA_RX_0 in sc7280_snd_hw_params()).
 
-oh, I suppose I should add a check for DRIVER_SYNCOBJ_TIMELINE?  I'll
-send a v7 a bit later
+Redefine LPASS_MAX_PORTS to consider the maximum possible port id for
+q6dsp as sc7280 driver utilizes some of those values.
 
-BR,
--R
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-> @@ -900,14 +921,20 @@ drm_syncobj_fd_to_handle_ioctl(struct drm_device *d=
-ev, void *data,
->         if (args->pad)
->                 return -EINVAL;
->
-> -       if (args->flags !=3D 0 &&
-> -           args->flags !=3D DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_IMPORT_SYNC_F=
-ILE)
-> +       if (args->flags & ~valid_flags)
->                 return -EINVAL;
->
-> +       if (args->flags & DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_TIMELINE)
-> +               point =3D args->point;
-> +
->         if (args->flags & DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_IMPORT_SYNC_FILE=
-)
->                 return drm_syncobj_import_sync_file_fence(file_private,
->                                                           args->fd,
-> -                                                         args->handle);
-> +                                                         args->handle,
-> +                                                         point);
-> +
-> +       if (args->point)
-> +               return -EINVAL;
->
->         return drm_syncobj_fd_to_handle(file_private, args->fd,
->                                         &args->handle);
-> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> index 7fba37b94401..e63a71d3c607 100644
-> --- a/include/uapi/drm/drm.h
-> +++ b/include/uapi/drm/drm.h
-> @@ -905,13 +905,17 @@ struct drm_syncobj_destroy {
->  };
->
->  #define DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_IMPORT_SYNC_FILE (1 << 0)
-> +#define DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_TIMELINE         (1 << 1)
->  #define DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE (1 << 0)
-> +#define DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE         (1 << 1)
->  struct drm_syncobj_handle {
->         __u32 handle;
->         __u32 flags;
->
->         __s32 fd;
->         __u32 pad;
-> +
-> +       __u64 point;
->  };
->
->  struct drm_syncobj_transfer {
-> --
-> 2.49.0
->
+Fixes: 77d0ffef793d ("ASoC: qcom: Add macro for lpass DAI id's max limit")
+Cc: stable@vger.kernel.org # v6.0+
+Suggested-by: Mikhail Kobuk <m.kobuk@ispras.ru>
+Suggested-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Evgeny Pimenov <pimenoveu12@gmail.com>
+---
+ sound/soc/qcom/lpass.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/qcom/lpass.h b/sound/soc/qcom/lpass.h
+index 27a2bf9a6613..de3ec6f594c1 100644
+--- a/sound/soc/qcom/lpass.h
++++ b/sound/soc/qcom/lpass.h
+@@ -13,10 +13,11 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <dt-bindings/sound/qcom,lpass.h>
++#include <dt-bindings/sound/qcom,q6afe.h>
+ #include "lpass-hdmi.h"
+ 
+ #define LPASS_AHBIX_CLOCK_FREQUENCY		131072000
+-#define LPASS_MAX_PORTS			(LPASS_CDC_DMA_VA_TX8 + 1)
++#define LPASS_MAX_PORTS			(DISPLAY_PORT_RX_7 + 1)
+ #define LPASS_MAX_MI2S_PORTS			(8)
+ #define LPASS_MAX_DMA_CHANNELS			(8)
+ #define LPASS_MAX_HDMI_DMA_CHANNELS		(4)
+-- 
+2.39.5
 
