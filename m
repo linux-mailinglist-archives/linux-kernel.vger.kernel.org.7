@@ -1,133 +1,112 @@
-Return-Path: <linux-kernel+bounces-583179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992F7A7779C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7FFA777BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82CA93ACDB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D073ABFA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F531EEA37;
-	Tue,  1 Apr 2025 09:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670D1EEA3B;
+	Tue,  1 Apr 2025 09:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzuSPGtT"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gzvIZiOZ"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7FF1EDA29;
-	Tue,  1 Apr 2025 09:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F3E1EA7CC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743499218; cv=none; b=ZixoBUDLiEOEFPw5rsDnG4BMLsspo+ez65EzqmF1B6hO4JJ0HtxOuKDHjUtQvasUk7A8hu2yhk3/8o8P/46CNmDO7Vp34ktzMJjPLqO7EwqmgII1GzjBtOTV9vLfq8dx/i4QEN6ZZHADCzNoUToISb/Ycwatl4uTtd2T8VeE09U=
+	t=1743499712; cv=none; b=Jz1na5NbjV30ExgBetLUEbKj9ZdDZwKz2PRIflgz2FTePMtgfJK4C/Gv8ZGYkP+pCHX9IIlwJPiM7KD7VPHJQv3BY06H3nxqt/4tHNIUXHtLVaM0F2yYRnozIVs4hOfZw5/xnsgfj/c6uf8CaSiS6C3jEWE4MPpXtBI606rRscw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743499218; c=relaxed/simple;
-	bh=Q4+/Q8eUvUq9Y9bXzIY4bPaeeK3kIkEBNnD8hv86/C4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jTareiwE+aTMN7oGIgcqhzPiZ5MjuzOfumNpwXRH3nSOtBzgy5FeaB6EigjYacxEUC5CN6ESq+0aFZy0VoWpw+a6kGDWAx4L0Tp938JLACjoQwHTG6gbggIgxRoBP5sLdCdB/zBCIu0aYgtZqR/gHbDL2db+03Hssebwyx90lK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CzuSPGtT; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso4158479f8f.2;
-        Tue, 01 Apr 2025 02:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743499215; x=1744104015; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Q4+/Q8eUvUq9Y9bXzIY4bPaeeK3kIkEBNnD8hv86/C4=;
-        b=CzuSPGtT1QjTYbd1N9j82OLOZ7c60BuntkouWsfkZ06Mx1vvmu92hFH8puO6AFTnDz
-         UxJ06b5EsBc3yaR7YjTcd8l7eKPGU8ay3VcNVROsOPihYKuq8zHkS2OJMSvQzQ9EMWIx
-         5UrhaMakNNVoib6b0/eQbueev2dqZSLmHBw4DUusgnVHUC39IxuDR8MSKoPrxujVguEw
-         v1/2UvDJLPSgsNkWFEZEsC9gpsBdLEi2eRIs47WXMgpj8HWRtWfnZ/mcZQT8Mtx8C5vD
-         5mbHgqMpQEOueskC4/hhXCkwCmmtski4XPyKGiV4bO565+qQ3wI10I9CwD8IsvvjxOHC
-         UreA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743499215; x=1744104015;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4+/Q8eUvUq9Y9bXzIY4bPaeeK3kIkEBNnD8hv86/C4=;
-        b=FugOza79mdIF/FSLPObiBRysksDHaiVw+LEW7fJ11MIdsV4exo5Bg4f+jgODE1PgE2
-         49Y1+9vFZsePkzxVh1H2XUrbe0Rm+Zq5dR/fuf+GlDhkKC4Aae1Ei80DiwGn0PHfNReZ
-         zGbVQRs9OQf8z9+LZo0BkmRq4B2EXjE7YRGQOUWpQAjsA43auh8lqJE3oTPaU3zIhyuY
-         Kn111lH5x2+VIeRlrZvHlQteOgcosPm6Bj5fCOv0XgvrgI2380G7BhmvfAwUCQ5P+7VP
-         beMqrU0IC4qMps7TVAOZu5ZhLrGT06I9lrK4rWWzV9Vocega5YT+eKIbfT6vbeBVimRc
-         T+jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIKHHLyFm4BwNsjeh9e/g4AEfK8CLi1AlTC41W1LXLDF1ukeg63px7u2S296nzAL7OqVPLq0Kt8aKb@vger.kernel.org, AJvYcCV4x/PdGwlRn7WoaSaKg4mYnGs5B18oCB2OtRZG2Hs5vafwWbM7DL7pVc8lVnN1VSSkTFbHgMkmdZ8=@vger.kernel.org, AJvYcCW8VjEKxGu27stu3hH9zIB5bj48cPXbVbHnaTfh9fxUR3L/5xhG6wrWs3H2DiriIdjRuVL8D9aBdPEHZhgt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3FFKZUb7m+Wy0zaPhDAK+UMAU4q21bDS/NgHJAoXOdohG34Xz
-	pmMxttdwR/CBvNGogTnpSdbmJu+Yftm1JywvJuwN0avsfxJyamd3
-X-Gm-Gg: ASbGncvXItDlltUFDT1S31o/xAwiYjQYhsV4IUvrgn6Wyestqn4C83b/oFj9GzdBAFD
-	2es0CUHWqhfvLbAzKCSCfRIAD9+IDI+xMuCp0ze/EFegR/0rC/wv1epxm7BclKlyRWyZs6UdrBT
-	/PTreh8wFYrJOZ/g/mOUgBHKYcTYqNgV6bloWe+VIciPGIPFro4B8hzu7CEw0PMKD2sB71B7H+H
-	m3sQs4pbHQMf8TEWTLfbQwOeTGlFkDiW3aWumU30ALeROTiZrG9wfJSfmFRofnwMb7tsfLyrwxM
-	5BPy8i9rcnGwC+MOuAc8vCGwh5TKZyPTp1A38OhIAbcUUUE/+a34jH766bFpb+iMThBMf51EDEI
-	k/iPTpPqiB1KtBlEJ
-X-Google-Smtp-Source: AGHT+IEKRREFuu7xEnipiixpvfhmZzkY1DBDCub5I8hZzD7/4QR7Y/PaCTDAGQ/hCQo64SSj0QbH/Q==
-X-Received: by 2002:a05:6000:220f:b0:39c:268b:83a7 with SMTP id ffacd0b85a97d-39c268b83c6mr1093103f8f.5.1743499214596;
-        Tue, 01 Apr 2025 02:20:14 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b66a962sm13396538f8f.46.2025.04.01.02.20.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 02:20:14 -0700 (PDT)
-Message-ID: <a56cd1676fd267b7be691955f90c02db01959c3d.camel@gmail.com>
-Subject: Re: [PATCH 0/4] iio: ad3552r-hs: add support for internal ramp
- generator
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron
-	 <jic23@kernel.org>
-Cc: Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Lars-Peter Clausen	
- <lars@metafoo.de>, Jonathan Corbet <corbet@lwn.net>, Olivier Moysan	
- <olivier.moysan@foss.st.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, 	linux-iio@vger.kernel.org,
- linux-doc@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Tue, 01 Apr 2025 10:20:14 +0100
-In-Reply-To: <ucmb7wfkovo6mssmmrx4fmfv2hliulshjhob4efz2phczbnu74@3xphjz5schp4>
-References: <20250321-wip-bl-ad3552r-fixes-v1-0-3c1aa249d163@baylibre.com>
-	 <20250330175350.6cebf779@jic23-huawei>
-	 <ucmb7wfkovo6mssmmrx4fmfv2hliulshjhob4efz2phczbnu74@3xphjz5schp4>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+	s=arc-20240116; t=1743499712; c=relaxed/simple;
+	bh=544eZHKsXae6Y6rhCh1hXH8ERSQGUzvVjAB22Wono2o=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=CY8W1wDq/FQiHPvWscfPF97Ers3mYeU+8HFRkhiglysuIo+yRCzjo1aZzOGhszZt2BIw9MuB6sF9t/9FTYe0oT2dM3c4qfBRFgxfQeMbH6tGiFgARmcoVO3bYCb1j9rpxKBhLP5NS4miunR7rG0nq4nz1uN9HtPwRwzh4hbaPck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gzvIZiOZ; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743499699; bh=dlneKC/ndU61i/vPL9mVRRu3chChSKIVHzfvKbs7t8A=;
+	h=From:To:Cc:Subject:Date;
+	b=gzvIZiOZLsYZ3s1yIkkMIMi43w5IC+41uxFAQm55YLSa8PFcM5n60+2oNSHvax/iY
+	 W8JXfwUs2Y7x0F9UxlSALJhNSjMGGdK6Bmm/Tt4GZt8T0Ti71PUSR+ySlwWYRfZOUV
+	 9T9vZdtsweVWboHZIOMrsL4CghzVlCJEDyLKvq7A=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 58789A4C; Tue, 01 Apr 2025 17:22:07 +0800
+X-QQ-mid: xmsmtpt1743499327ta9d3odcd
+Message-ID: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
+X-QQ-XMAILINFO: OATpkVjS499uBTf0thpdaQtwQw+psHU6CMRV3bJoz671wedWm4NBKI0+89TFUP
+	 34w0fHIr4V4aypPuB/y1i3lhRi1vq4jDnBbi9wYMGyu+MV/tlO2VPSLHJuNwgwpCZcz+e4MF5Lw5
+	 0VlAUMba7YjDAnk0qBHOYh0GQx2kPtBsfbCX4RbisjJk5WVGrHIDJFjwkIQTgLXb11t2qsFQ9qzF
+	 iYehbgdhi2mb2Tyo+PsAIy5wHYXcpON10vJb/ZzEIvdsdiDNjk8h4lDRDPQdSHD0+R5uvcbEkgz4
+	 Hf8JEcS0GJEIBHXGEXCQKfgajE7v+bWXgA+3oIQflxmPK/qGcQ7PplAnjbGEuO1yeEV3S0bdFPHr
+	 TlXIomiEvPmhF0mDso84izHEuqchxLR2C4O/oDEwM3V6o2Q8YfgrvoRUjhuhm4W+qRGiDxYkkoy6
+	 tOxvXYPatkxvPg2XKis9i0jV+rLv1HOqEJXpHO7v+QOOWS56bjY4XIeW8cxxFTfSe/HOa2yTvEFq
+	 qmM7lRgCGvSjsmD/NRKBjSch6HMxx9ml296sU1vq/VptZhaTcDR47EOO0QbMqaUI7NqljYfNemuS
+	 RKbvNCOw76K2yWxfM6XYe6zgRSUiPTPe7MOOyHmEwlavoGvdGPOVaWauwc48jfM4jKXdPgBdpYbb
+	 VQBBf/ZH5F6xjth0zHboXRCgp1bmDAcKQjeNmjS639Zi/dFmTT0yG3y46fZJkNSFgKr71HRP5keV
+	 PhLfUNcHhMvHesEYy1kVwg/fL/ZTeygO0FaB9Uytr9qPaIgROys99Lb1ksyRiO7ar9uOxAsIY3/p
+	 y0juuugnpAK6oks0BaEBZQS1I1bgbUTcEtqEquB/lAUsv4nE3xcfeaPwvW3Mw6Gj5+6C/VIy1y/r
+	 q1MhLCNyS/nkW66LV4ul51nczaR6d1VfOYi6ISgNrysjoTwfG9cY1g8WGspB9lL5uCX8yh4t48CM
+	 uyLvuH+LiKg9rj3w2NLhmmygIETImS7qdDV43xhGM=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	chaitanyak@nvidia.com
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH v3 0/3] nvme: Add sysfs interface for APST configuration management
+Date: Tue,  1 Apr 2025 17:22:06 +0800
+X-OQ-MSGID: <20250401092206.1542479-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-03-31 at 21:11 +0200, Angelo Dureghello wrote:
-> Hi Jonathan,
->=20
-> On 30.03.2025 17:53, Jonathan Cameron wrote:
-> > On Fri, 21 Mar 2025 21:28:47 +0100
-> > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> >=20
-> > > Add support to enable the HDL IP core internal ramp generator,
-> > > actually managed by the adi-axi-dac backend.=20
-> >=20
-> > What is it for?=C2=A0 Circuit testing or something else?
-> > We have in the past had pattern generators in IIO (currently under
-> > frequency drivers, though I'm not sure what we have in the way of
-> > waveforms in the stuff outside staging) so I'd like to be sure
-> > this is about debug rather than a pattern that is actually expected
-> > to be useful.
-> >=20
->=20
-> Sorry form some reason seen this too late, just sent a v2.
->=20
-> Anyway, the signal is a tooth wave at 280Hz, not sure that pattern
-> can be of any use except for some dabug cases, or noise tests.
->=20
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-Yes, typical usecase for this is to debug/validate the serial interfaces. I=
-'m
-used to this see for LVDS/CMOS though (but I would assume the principle to =
-be
-the same).
+This series enhances NVMe APST (Autonomous Power State Transition) support by:
+1. Adding warnings for PST table allocation failures
+2. Exposing APST tables via sysfs for runtime inspection
+3. Providing per-controller sysfs interface for APST configuration
 
-- Nuno S=C3=A1
+The changes allow better visibility and control of power management settings
+through userspace tools while maintaining the existing functionality.
+
+Yaxiong Tian (3):
+  nvme: Add warning for PST table memory allocation failure in
+    nvme_configure_apst
+  nvme: add sysfs interface for APST table updates
+  nvme: add per-controller sysfs interface for APST configuration
+
+Changes in v2
+
+Add mutex_lock in nvme_set_latency_tolerance() for Potential competition 
+between nvme_set_latency_tolerance() and apst_update_store().
+
+Changes in v3
+In  PACH nvme: add sysfs interface for APST table updates,Add why dynamic APST 
+updates are needed in the commit message, fix code formatting issues. 
+
+ drivers/nvme/host/core.c  | 24 ++++++++++------
+ drivers/nvme/host/nvme.h  |  6 ++++
+ drivers/nvme/host/sysfs.c | 59 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+), 8 deletions(-)
+
+-- 
+2.25.1
 
 
