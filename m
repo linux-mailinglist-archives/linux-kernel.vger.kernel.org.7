@@ -1,112 +1,209 @@
-Return-Path: <linux-kernel+bounces-583513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64238A77BDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:17:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E57A77BC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108D3166036
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF88169794
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2161F09B7;
-	Tue,  1 Apr 2025 13:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71DB20370A;
+	Tue,  1 Apr 2025 13:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ierj4fAg"
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8s4/DS4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF0E3FBB3
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1077DC2C6
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743513425; cv=none; b=jAP/oL8rOuiqimdPCk5+got+qKQ04T/XoxgS8xiluZXzr9Eaa2+CwKR81yvVBj9+t9j2FVjiDhYfLfL7I69sbArUb2yZ/RUvvKBgH9L7rF8VhwkWKTdWudt+XLrQ5Xzl+0cLGDS5LZwK6v2RYM+1n5cTvIk30KG5bOUU5Oyn0Lk=
+	t=1743513073; cv=none; b=RGtt6Ik3QUGGjW4TdSoz5YwjdMBrlvzEpd8+CYg2Gd/Lv2SI1VwQ86CUf1u2pinWOb3agv2LoDzOFets/2R2XBDnfpOsGPw4B0revJZUgIXub3NXpt1GLo4sFaFSTKs07FipF6i3rgFnPfJFpESjX4ublEp6y8Zmao4RQDw7wNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743513425; c=relaxed/simple;
-	bh=dyvFc0CDhuS2tuvF73xqRsMp9C5bsnqsj6M8jQob10Y=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=jcVW2jSEKZKG8fLh38RFECpl8bS6fdYxveoHOngsAr2VPQu1CCOhhcl+4ojCDoNBHbK6NS2oDJQwaKVflW/aoK8EBv0wDEqt2P+LaaeyoKIhfy/e/VJQ8fv3DztmbMbmtGR1M+Lb105KzEmSW+cfhdV0KL1MrvrA5x19899f1fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ierj4fAg; arc=none smtp.client-ip=203.205.221.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743513416; bh=PixgXrljpb4/o7qJ4iRL9JEHovZX9Akht4artxBMa/8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ierj4fAgzRlrzS0UxfID+B2ybM0AdCF4tFSH6ncd2LIuSYyC5GHfFyNQ8aowCpeY5
-	 19W2odukR39vDE+anTCUJtaWUwYnd/5EjybFGCF3oahVo63CVhncRRpro+wgEijeXO
-	 79gXu8ZRCdG46IOwucNpKbH24Jqrfx2p/DhHwY6k=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 2B0AD26B; Tue, 01 Apr 2025 21:10:48 +0800
-X-QQ-mid: xmsmtpt1743513048tw2uqsj7y
-Message-ID: <tencent_0677C99FAED5EECC8C85E7D606C892F34606@qq.com>
-X-QQ-XMAILINFO: MdoRYM9mYrydGj3geKJotb/VT1BySN2nOto8rjKTsARmh1lp9Jx8Z5b3pHpAdP
-	 ZnyemfJwAnI7zRSRH1y4rZymTnmYBSfphUqCZki8GwVvkAjGYBwE/UmFiHEKcowmq3SYfaf6cixD
-	 SBrEXTxLk09hb2KW/+TwO7GIVAfEIxIyXiNSaqK9DomW3Ogys1o6e1f13PGkGXzH9WhTMANrdT/S
-	 EKUguKW3RzmuV6UcdrHNBD8OcaSiGu/5Qe7wwecdiWeiNu95mllzBPB/hUQuY7rC8da+QI0bcGyu
-	 YnayQ7HMSfU14I1hffjQAmhyXg/VAdvYAGSpvJ+qZsufiyFN3ZXHE2xjIleQYonDTZWj5TWQxRzW
-	 8vy4dMyj+urwK9AB0tDBWQ7EBu/kBVVEWnN7T2qFu/M0c/m1W3ZGF0Q2cVj5R6yf9ea7BZ5KwWUE
-	 5cjTgdo0mQmnN7y+pHjNqWe/wI7ETXOhkVq8hh6HVvYIh99NBc48QoCPbNrEW8k1d1pg8EujzI04
-	 kpCYfUiBDkUWrA+XjirF7LcD4zAtcxpGjjPUnZKnOBbZ3kYo/cJWCZ8FBHZuW2FJQ75vyo8fwMYY
-	 O+8dmZo8aWVAVoskPeVYTJxuxtsXNJsdlBk2txMHkaNmL5VgERalh/nZathHZO0PnaF7hwc4pQva
-	 Ijg+rXFhVVYmr8eBsymmIPPg9DEhO1peUPFDlfE8TTiYxzBWDtZL2BxZbxpouzBEql+w2XIvLW5e
-	 ehDN0ov6tbCxP3jyjS5T/DnbP6zzuqUJF1orrxHUVZNqNwduaO+T4MyMAniq1+n2mp+TXLPw50Yx
-	 oP/1sZznKFU3NS/OHC5vxGVM435njWY+YwEIfrlrtUXijdmC5RRcB/z9ho+Go0mA2Zkv+Ql6xAdW
-	 OB05ISrmGOvVcJMTfbFfDIwFYEQfpKwl03OW+QUW5H
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [isdn4linux?] [nilfs?] INFO: task hung in mISDN_ioctl
-Date: Tue,  1 Apr 2025 21:10:49 +0800
-X-OQ-MSGID: <20250401131048.1558811-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
-References: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
+	s=arc-20240116; t=1743513073; c=relaxed/simple;
+	bh=eFj1UtKjWSXUv/IED2cgaAtIRcrA4Zbbbpt7I7dajA0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WWqc/0Ks+I4BQL7CKdloFEZLaNDPTGHJUZA+r6WOnJFg+vaXl/I7AjclgOF3qNuNKZjtu8a1n0sRLOj7FXxyc59gnNVvJyE3yrxEQLvCcPogtdQQXKRI550Q0xhajyhCQX8E+BhkmEkIWB7u8g9EwIy1yh9HcwdAx3NZ/ou3wv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8s4/DS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B57C4CEE4;
+	Tue,  1 Apr 2025 13:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743513072;
+	bh=eFj1UtKjWSXUv/IED2cgaAtIRcrA4Zbbbpt7I7dajA0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R8s4/DS4YxcOEWSzlM3EE8vMNdgInvDagqB0HhLPdwt0aoPX7rxBf0I6Kpc64GT8C
+	 UUTWbxd+xYJhVopEXrXBgG8HTMB7uZTES/sW5bKL9BwW2rs4GSHajMsPPlDBZF4Aqf
+	 qNuhLIasqKX5evNv6IFIdMNHVe92B290frTpNumgISwIcHvDISWflIPzzrpKZO1sAk
+	 t1W4COqnyH9xXfZj7MTfNJSckuianb+sMptS2E0oXYGr2pS8XIl+LmhVKTsmJHrC9I
+	 yOGKbUNPH6el2Kq6/CMN5PJnPNjtH1TF/00cUlSrQpUtGrj1/PxDUm+vj0v7jIiFTK
+	 XXan03RgCy69A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tzbOY-001L1O-Bf;
+	Tue, 01 Apr 2025 14:11:10 +0100
+Date: Tue, 01 Apr 2025 14:11:11 +0100
+Message-ID: <87o6xgyqkw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com,
+	hajun.sung@samsung.com,
+	d7271.choe@samsung.com,
+	joonki.min@samsung.com
+Subject: Re: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in GICv3 ITS driver
+In-Reply-To: <CAPDyKFrxK3Mx055hx+a4SP3CWDpWP+CEHxz+WJfT+RficK0_Ag@mail.gmail.com>
+References: <CGME20250326030527epcas2p33aa30e62cc8a00c9e151c35bee71dac5@epcas2p3.samsung.com>
+	<Z+Nv8U/4P3taDpUq@perf>
+	<8634f0mall.wl-maz@kernel.org>
+	<Z+TEa8CVAYnbD/Tu@perf>
+	<86v7rulw2d.wl-maz@kernel.org>
+	<CAPDyKFrxK3Mx055hx+a4SP3CWDpWP+CEHxz+WJfT+RficK0_Ag@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ulf.hansson@linaro.org, youngmin.nam@samsung.com, tglx@linutronix.de, saravanak@google.com, vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com, hajun.sung@samsung.com, d7271.choe@samsung.com, joonki.min@samsung.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-#syz test
+On Tue, 01 Apr 2025 13:45:43 +0100,
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>=20
+> On Thu, 27 Mar 2025 at 09:25, Marc Zyngier <maz@kernel.org> wrote:
+> >
+> > On Thu, 27 Mar 2025 03:22:19 +0000,
+> > Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> > >
+> > > [1  <text/plain; utf-8 (8bit)>]
+> > > On Wed, Mar 26, 2025 at 08:59:02AM +0000, Marc Zyngier wrote:
+> > > > On Wed, 26 Mar 2025 03:09:37 +0000,
+> > > > Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> > > > >
+> > > > > Hi.
+> > > > >
+> > > > > On our SoC, we are using S2IDLE instead of S2R as a system suspen=
+d mode.
+> > > > > However, when I try to enable ARM GICv3 ITS driver (drivers/irqch=
+ip/irq-gic-v3-its.c),
+> > > > > I noticed that there is no proper way to invoke suspend/resume ca=
+llback,
+> > > > > because it only uses syscore_ops, which is not called in an s2idl=
+e scenario.
+> > > >
+> > > > This is *by design*.
+> >
+> > [...]
+> >
+> > > > > How should we handle this situation ?
+> > > >
+> > > > By implementing anything related to GIC power-management in your EL3
+> > > > firmware. Only your firmware knows whether you are going into a sta=
+te
+> > > > where the GIC (and the ITS) is going to lose its state (because pow=
+er
+> > > > is going to be removed) or if the sleep period is short enough that
+> > > > you can come back from idle without loss of context.
+> > > >
+> > > > Furthermore, there is a lot of things that non-secure cannot do when
+> > > > it comes to GIC power management (most the controls are secure only=
+),
+> > > > so it is pretty clear that the kernel is the wrong place for this.
+> > > >
+> > > > I'd suggest you look at what TF-A provides, because this is not
+> > > > exactly a new problem (it has been solved several years ago).
+> > > >
+> > > >     M.
+> > > >
+> > > > --
+> > > > Without deviation from the norm, progress is not possible.
+> > > >
+> > >
+> > > Hi Marc,
+> > >
+> > > First of all, I=E2=80=99d like to distinguish between the GICv3 drive=
+r (irq-gic-v3.c)
+> > > and the ITS driver (irq-gic-v3-its.c).
+> > >
+> > > I now understand why the GICv3 driver doesn=E2=80=99t implement suspe=
+nd and resume functions.
+> > > However, unlike the GICv3 driver, the ITS driver currently provides
+> > > suspend and resume functions via syscore_ops in the kernel.
+> >
+> > For *suspend*. The real suspend. Not a glorified WFI. And that's only
+> > for situations where we know for sure that we are going to suspend.
+> >
+> > > And AFAIK, LPIs are always treated as non-secure. (Please correct me =
+If I'm wrong).
+> > >
+> > > The problem is that syscore_ops is not invoked during the S2IDLE scen=
+ario,
+> > > so we cannot rely on it in that context.
+> > > We would like to use these suspend/resume functions during S2IDLE as =
+well.
+> >
+> > Again, this is *by design*. There is no semantic difference between
+> > s2idle and normal idle. They are the same thing. Do you really want to
+> > save/restore the whole ITS state on each and every call into idle?
+> > Absolutely not.
+>=20
+> I agree that we don't want to save/restore for every call to idle,
+> that would simply be unnecessary and add latencies.
+>=20
+> Instead, I think the save/restore could depend on what idlestate we
+> enter and whether it's a system-wide state (s2idle/s2ram) or just
+> regular cpuidle-state.
+>=20
+> Today, we are pointing the callbacks for cpuidle and s2idle to the
+> same functions (at least for PSCI PC mode), but it's easy to change
+> that *if* we need some differentiation between s2idle and cpuidle.
+>=20
+> >
+> > Only your firmware knows how deep you will be suspended, and how long
+> > you will be suspended for, and this is the right place for to perform
+> > save/restore of the ITS state. Not in generic code that runs on every
+> > arm64 platform on the planet.
+>=20
+> Assuming we can make the code for saving/restoring generic (not in FW)
+> and that we are able to make sure the code is only executed for those
+> platforms and states that really need it. Do you think there would
+> there be any other drawback for doing this?
 
-diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
-index 7cfa8c61dba0..0c3771a5cd0b 100644
---- a/drivers/isdn/mISDN/timerdev.c
-+++ b/drivers/isdn/mISDN/timerdev.c
-@@ -238,8 +238,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 			ret = id;
- 			break;
- 		}
--		if (put_user(id, (int __user *)arg))
-+		if (!user_write_access_begin((int __user *)arg, sizeof(int))) {
- 			ret = -EFAULT;
-+			break;
-+		}
-+
-+		unsafe_put_user(id, (int __user *)arg, Efault);
-+		user_write_access_end();
- 		break;
- 	case IMDELTIMER:
- 		if (get_user(id, (int __user *)arg)) {
-@@ -255,8 +260,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	default:
- 		ret = -EINVAL;
- 	}
-+out:
- 	mutex_unlock(&mISDN_mutex);
- 	return ret;
-+Efault:
-+	user_write_access_end();
-+	ret = -EFAULT;
-+	goto out;
- }
- 
- static const struct file_operations mISDN_fops = {
+Yes. We'd end-up having to implement all sort of split PM schemes
+depending on the GIC implementation, what the firmware does, the
+various braindead assumptions that the integration makes, and other
+parameters I don't even want to consider.
 
+The GIC power management is, for better or worse, *outside* of the
+scope of the architecture. Most of it is implementation defined,
+because each and every implementer/vendor sees it as added value to
+invent their own particular flavour of crap. For example, there is no
+provision for wake-up interrupts, because nobody can agree on how
+that's supposed to work.
+
+Do we want to deal with this in the various GIC drivers? No. It is the
+job of firmware to manage this mess, because this clearly delineates
+where the responsibilities lie.
+
+	M.
+
+--=20
+Jazz isn't dead. It just smells funny.
 
