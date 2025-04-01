@@ -1,112 +1,134 @@
-Return-Path: <linux-kernel+bounces-583528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB49A77C1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:31:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18545A77C6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BF43188F36D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A81043A8C76
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EA32040AD;
-	Tue,  1 Apr 2025 13:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691202040B2;
+	Tue,  1 Apr 2025 13:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0nXnBHK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=cab.de header.i=@cab.de header.b="QJI3+YKp"
+Received: from mail.cab.de (mail.cab.de [46.232.229.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5D51F930;
-	Tue,  1 Apr 2025 13:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9220408C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.229.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743514251; cv=none; b=iRRQPn2z6TP0WryxBpwNccY480mT95cUU41pLydxvi/msgAu9bFuo1pIhBDBK+F3tz+L59uRUlc5mkZtegMWzeODvgbfRDUsDMzmIUwZO68qhmsnbY7pND7VjYZO1hp2Gs7qt+6ZXC0XCtWQb20/z/HH01auw/wHTSb7gQg09vI=
+	t=1743514975; cv=none; b=ZAiZhqh08CY0U+0zbvd2VyvWRmV0281iqHi/B8PtyiYvUyubhV5MdIS8KgI/ne/zGm238oJ5Kd9HOyg6jhy8TVbTz4onXchH8c2pmtdIOG+gU4Ijifc2ZmXIy6B0kOjJcDnuLGUdqVGku2gZMi7d+MeLRiqRUhd1kKb6crEaMvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743514251; c=relaxed/simple;
-	bh=Ul6lJvNEHBV/pZeVWxl97I6QputJg4xYguuegwagemc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pvM819CeKKrmCxS7j1GG+CSKBk0l6V0H+FdyNS8ByRjyotnOTdFbIsn3u8/1TCTdrf9UeABjjWebbU6j8EEAIOBiHPj4zT6ktlXrXgHA2VZVjy3sGLJpv5DyRZwA7Im0mTctipmCG9Sq/WOTWFhpY4DsIlwf0XaBPBg/z+RlrrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0nXnBHK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2996C4CEE4;
-	Tue,  1 Apr 2025 13:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743514251;
-	bh=Ul6lJvNEHBV/pZeVWxl97I6QputJg4xYguuegwagemc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=R0nXnBHK+h56PKjMT/5qxNKseT3aIYCEfkg+iICdVnAYkSyVf+/sLwKvt+lgp7A6j
-	 21z3BlE6WMo64ddo54dH/lQBUyTaUC4+skd/Bi4vgl5mzyfE6ot6BQVQfRxqeI1blC
-	 LTILvkFOt/nMDIVd3zOUeBLOLA7nIq9Nw9OB2z5Kt7iD5yFCl9yHzFMeruBRdCw8S0
-	 4NqI/VlEitmpQ0b+XHJJF+G8Ks31zJCKYwg1eChqc6dWoqu/JrnoZ7tyNXzYsjDfDY
-	 AP2U1OFkVXY7tQ+IGjEcszhGRQ+AzTjLr76qgoqv6hgjjnoP6WPMBbqf98H0k7j1pB
-	 zioIngRf90MEA==
-From: Mattijs Korpershoek <mkorpershoek@kernel.org>
-Date: Tue, 01 Apr 2025 15:30:37 +0200
-Subject: [PATCH] dt-bindings: mediatek,mt6779-keypad: Update Mattijs' email
- address
+	s=arc-20240116; t=1743514975; c=relaxed/simple;
+	bh=hCkca38QdSmhO6cjGfNf7pfjb4NUxK6bwuRScCq8GiA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CDZmZwQxZPaUJwTmIGYAYEE0AlCVaXA0JJDZ7flRxw1dVb+qF4KQm4q05PLkaDRN29vZUrejg13zl7pTv8OeIqExbIquCTAthbMUEUezCacwHTGFxJp/AkuoTMA63o/+q3S9HUXkcnNvyC2+Wwx2uqdNW+K32u184+koltb6peY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (1024-bit key) header.d=cab.de header.i=@cab.de header.b=QJI3+YKp; arc=none smtp.client-ip=46.232.229.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cab.de 4ZRppv3PwBzMvb0G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; s=default;
+	t=1743514391; bh=1jAXo92M2vDykbLqik4FdebMpzLAgChBKSnJhUXHPI8=;
+	h=From:To:CC:Subject:Date:From;
+	b=QJI3+YKpeCZ3qjvgXHPZg2lZYfr27+Ac86OoDEYPbabldeuaYkZw/qnOQHu4R9L2z
+	 CZN3y8f+n/nrrsg8cSbSdINVIYBSc/FCCHApBxVcAMhB7a7v4m1xCeW3ltXlSJgWqw
+	 WVNL+f+ruFegvGqL9ScwsSlpogVGOHGVmt1fBvTc=
+X-cab-MailScanner-Watermark: 1744119190.42409@Z+ageB+9BNAKE10EAT91yg
+X-cab-MailScanner-From: m.heidelberg@cab.de
+X-cab-MailScanner: Found to be clean
+X-cab-MailScanner-ID: 4ZRpps0WDGzMvb08
+X-cab-MailScanner-Information: Please contact it@cab.de for more information
+Received: from Adranos.cab.de ([10.10.1.54] [10.10.1.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(no client certificate requested)
+	by hephaistos.cab.de (MailScanner Milter) with SMTP id 4ZRpps0WDGzMvb08;
+	Tue,  1 Apr 2025 15:33:09 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.cab.de 4ZRpps0WDGzMvb08
+Received: from KAN23-025.cab.de (10.10.3.178) by Adranos.cab.de (10.10.1.54)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Apr
+ 2025 15:33:17 +0200
+From: Markus Heidelberg <m.heidelberg@cab.de>
+To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Christian
+ Eggers <ceggers@arri.de>
+CC: Markus Heidelberg <m.heidelberg@cab.de>, Jiri Prchal
+	<jiri.prchal@aksignal.cz>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [RFC PATCH 0/2] eeprom: at25: support Cypress FRAMs without device ID
+Date: Tue, 1 Apr 2025 15:30:46 +0200
+Message-ID: <20250401133148.38330-1-m.heidelberg@cab.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250401-mattijs-dts-korg-v1-1-0f8d96bf8a99@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAHzq62cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDEwND3dzEkpLMrGLdlJJi3ez8onRdQ4vUNEtzSwsLIxMzJaC2gqLUtMw
- KsJHRsbW1ABsjdO5iAAAA
-X-Change-ID: 20250401-mattijs-dts-korg-18ef97988246
-To: Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Mattijs Korpershoek <mkorpershoek@kernel.org>
-X-Mailer: b4 0.14.3-dev-94c79
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1074;
- i=mkorpershoek@kernel.org; h=from:subject:message-id;
- bh=Ul6lJvNEHBV/pZeVWxl97I6QputJg4xYguuegwagemc=;
- b=owEBbQGS/pANAwAIARkNHbRmThk1AcsmYgBn6+qIuKsPabzv/RSvLVVc64fSuzem7BVylb01dply
- PyvhJXaJATMEAAEIAB0WIQQu6UKnth9qvlMTrQAZDR20Zk4ZNQUCZ+vqiAAKCRAZDR20Zk4ZNbvXCA
- CJy+j4InTSuxmwJ0+YwXmooqhVHpiX5qNSmoiOGWB5L9p7+KtQPUq7HFvyg+NY6VlzVycvggb4WmHn
- J+8es2yRg3QFdORFSfoTxGfPCeClajHC8TKmZ5gMmA1X9lzP1IzbGVVcF/9xlZ5aGH5X5pSDNU1x4q
- a6hT5S9ForxGyuKHgwqMorY+CapbkDiYe+opCzp3XeBFfpVuBWvtPXIKzbdBrydalHk9OjuEAH79EN
- S43cmUIYvLyNhSZSnRbIfpwxfkLhUZgx8+oa7XIawEj5TFjjNPzAjKhWj9HSHe9zOGPBmgphhrS1V6
- 50Zm2XB1BtHJeXJnZ/va5BDtuVTMvj
-X-Developer-Key: i=mkorpershoek@kernel.org; a=openpgp;
- fpr=8234A35B45C0D26B31C1A2DA570338B018144F28
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: Adranos.cab.de (10.10.1.54) To Adranos.cab.de (10.10.1.54)
 
-Update Mattijs Korpershoek's email address to @kernel.org.
+Hello,
 
-Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
----
- Documentation/devicetree/bindings/input/mediatek,mt6779-keypad.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+this patch series is marked as RFC because I'm unsure if it
+should rather be implemented with an adaption in this binding:
 
-diff --git a/Documentation/devicetree/bindings/input/mediatek,mt6779-keypad.yaml b/Documentation/devicetree/bindings/input/mediatek,mt6779-keypad.yaml
-index 517a4ac1bea3..e365413732e7 100644
---- a/Documentation/devicetree/bindings/input/mediatek,mt6779-keypad.yaml
-+++ b/Documentation/devicetree/bindings/input/mediatek,mt6779-keypad.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Mediatek's Keypad Controller
- 
- maintainers:
--  - Mattijs Korpershoek <mkorpershoek@baylibre.com>
-+  - Mattijs Korpershoek <mkorpershoek@kernel.org>
- 
- allOf:
-   - $ref: /schemas/input/matrix-keymap.yaml#
+  Documentation/devicetree/bindings/eeprom/at25.yaml
 
----
-base-commit: 08733088b566b58283f0f12fb73f5db6a9a9de30
-change-id: 20250401-mattijs-dts-korg-18ef97988246
+Currently supported FRAMs use compatible="cypress,fm25","atmel,at25" in
+Devicetree, the memory size is read from its device ID.
+For FRAMs without device ID this is not possible, so the "size" property
+has to be set manually as it is done for EEPROMs.
 
-Best regards,
+I had a few solutions for implementation in mind, but opted for the
+simplest one as base for discussion:
+
+- Use the existing "compatible" string and additionally set "size". Only
+  read the device ID if "size" is not set.
+
+  But this way there is already the problem that "size" is required for
+  FRAMs without device ID, but I cannot specify that in the binding
+  because of the reused "compatible" string.
+
+Other ideas that came to mind:
+
+- Add "cypress,fm25l16b" (chip is named FM25L16B) and define "size" as
+  required property. Use that instead of "cypress,fm25".
+
+  According to Documentation/devicetree/bindings/writing-bindings.rst
+  this might even be necessary regarding this statement:
+
+    "DO add new compatibles in case there are new features or bugs."
+
+  The existing "cypress,fm25" ("FM25" is not the real name of a chip,
+  but the common prefix) also doesn't seem chosen right regarding this
+  statement:
+
+    "DO make ‘compatible’ properties specific. DON'T use wildcards in
+    compatible strings."
+
+- Add a boolean property "no-device-id" to the existing "compatible"
+  string and in case this boolean is set, define "size" as required.
+
+  This seems a bit awkward at first sight. Also, would this really solve
+  the above mentioned problem with specification of the binding?
+
+Bye!
+
+Markus Heidelberg (2):
+  eeprom: at25: support Cypress FRAMs without device ID
+  eeprom: at25: make FRAM device ID error message more precise
+
+ drivers/misc/eeprom/at25.c | 42 ++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
+
 -- 
-Mattijs Korpershoek <mkorpershoek@kernel.org>
+2.43.0
+
 
 
