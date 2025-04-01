@@ -1,102 +1,66 @@
-Return-Path: <linux-kernel+bounces-583026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF310A77586
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E709EA7757A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B53C3A8B8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:44:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5431188BAEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223491E882F;
-	Tue,  1 Apr 2025 07:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD621E9B38;
+	Tue,  1 Apr 2025 07:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="qzPej9P0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YC7CEe3x"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Z+Vvyoa7"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4FC1E9B32;
-	Tue,  1 Apr 2025 07:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CFA1E5739;
+	Tue,  1 Apr 2025 07:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743493467; cv=none; b=WYDw/QFaCWwJ0NO9yPvEHXnaubidiD6ZIO/16xlkh5O+cksvCJz9MLg3lqv514wcu2p2yFEqw28DXDtUKElE2irhuBttNcqe6UubxX6mGqX90eQKLfZADdvt+5+Hu6zR8WWHmh6OqbvxEmeFACGb82GCRkWkX8k9G/U/0jwIB8I=
+	t=1743493442; cv=none; b=J+rZ8NcvuiyWVE+m0r9kLHKwEm3Suq2aK36+9PX0etBrngTP2E2wQ0CDWKOa+jqLm4QMlBUjlvnqngZXT1lWTcWEv+16yvqn6LUEBGMGLyZhXloRL0xMmZB74KbLhWvQcHrt8mq8y4oeNA07CELyZJvVbbSarivvsBzZbjtfiq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743493467; c=relaxed/simple;
-	bh=AmmDVvNi5dUbIT7C5bbti693/xc8nSbVjPiErpkXIaw=;
+	s=arc-20240116; t=1743493442; c=relaxed/simple;
+	bh=jrrSR5QABlOAIHYPV2aONk7nc2NyAfkmio5dzxkx5nQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMDVuWeNSh8btTuohYfdd0vAJ4l1hQkHVRHX0uF/jyzyLoe7eYRec9UJRUorTmJ/LnDbipN+KQfqP5CQnvratEGmVlU+tu6w5WPit9PJ1X5zWzxQjpUBp4GDaS4J4oEQlEwV32liPyYkKS9bQdTCgdG9cq8ynKcQhrPV483cZX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=qzPej9P0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YC7CEe3x; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id B731F1382D13;
-	Tue,  1 Apr 2025 03:44:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 01 Apr 2025 03:44:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1743493463; x=1743579863; bh=N3XLkCWVDT
-	ZLVCH6BsDAQxYTNal1m2sMxq815aRphRI=; b=qzPej9P0Cpjf6qLjB/9fUndGFZ
-	F3VNEm3hbSvecuLfg9odO2CLwy/3HbmsIrAodrRIBR+eiREukEZFlFaF4TPhCV+Y
-	nQsO1rwP5Bc4fwg7c77T1ZMdCV861HpfN5XzTKW8tsciprl61oWpHmVw2axMjMos
-	KcHcKlyEEnf0QDJHbXaZeNHI4t3L/zf5XTj/OTbC/ArG0gyxPmxI5TnUCCz2pqEG
-	9TIGvad3bhWCgedZLvOM4zTLJBw9yFInnsJdHiEQLhNRfudIhxWzj8FzdzeYwKWp
-	WTAU1Llc+gQUccXYQrECx3fyCmIFovSD7JjVw6rtsmfx+jgFe5vfwlFoT7dQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743493463; x=1743579863; bh=N3XLkCWVDTZLVCH6BsDAQxYTNal1m2sMxq8
-	15aRphRI=; b=YC7CEe3xYPPfyWxJQGzpE/SeuxkPW7cLjwM8kuQ466RrpXZeIcz
-	blqnekVw8yMI7nZZti5UYEANCVyzPbZs4Fi8bFZzGKJtZqSd07Bp5Qzu1Y77eMtb
-	ZyYs9JI5dk/wXs1p59CHg9FaJiaQUjLhDCFTTh2QWgp/vA5hV3yW2CXbCeGUtncQ
-	iwTILdC88FynRKwf6DWh1u3ytAkZYw80mbD5zGyjZxKHr+xvNa3+8/lobaDkkIaD
-	7NP0mBHG2h28ULCeTRqxn3TSw88f10DC41pMfucJhxS5qIDRQIv6NT58VT4kPDbN
-	wJaKi2ERBisY/BcEXSEAsS5zfylikWdiwuQ==
-X-ME-Sender: <xms:VpnrZ-Q5G0zN6nkPZpwkxhfKnpz38cisloQiG7Ex9shXPcsd7A013Q>
-    <xme:VpnrZzyawDvhhWSGIA5REmTgiL51c-iGYytapGFUdjK43anqKuWbyTleBn0S5Vq3K
-    OCPfoBcRnF2AQ>
-X-ME-Received: <xmr:VpnrZ73rQ6rDy_KJviwtnjF5GGLDTWfoB9dZtmdVoql-0jXf3QyPW80_Y5i5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvvdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
-    hupdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprggs
-    ughivghlrdhjrghnuhhlghhuvgesghhmrghilhdrtghomhdprhgtphhtthhopegurghkrh
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrh
-    drkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:VpnrZ6CZ1gE5M17iV3Xe5klEyQmkXBk6Gt5buKD5FTQTCeWwgzh9VA>
-    <xmx:VpnrZ3jtKDLZmImLRHBHTc5sjmUR_wNCZqTirgTOWj4FRgmlu4WF6w>
-    <xmx:VpnrZ2qITZxwSpCG59LkWy5mbFyffMM_PB0YEct3MHbySen1vu-NJw>
-    <xmx:VpnrZ6ji51Vy9Jz8LFjcCngH37v3qW1gqw85U1VIwYyTdB4XCduidg>
-    <xmx:V5nrZwbdcfqM5NPRgylc6NdK0ri3GtYuMfegh1lG73xPONpzlf0dLxb8>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Apr 2025 03:44:22 -0400 (EDT)
-Date: Tue, 1 Apr 2025 08:42:57 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core
- tree
-Message-ID: <2025040140-postage-upchuck-34cd@gregkh>
-References: <20250321185630.566dc075@canb.auug.org.au>
- <20250401142159.6f468edf@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3zagJcqt6w5F6XDq54P/4iwp7Hq/h56MmoslV70WoMG6O86w+7QgtAkLgQ0g5Ri55Q45JrorZ+9bpYm8yIvRohSfL6BpQN9aCIY+2mrya08W/3Zr/BHNf7N+ScflFvgX2rn4Bnvt275T01CMbJprqkC7iyhyGc4E+B9Jeg+XF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Z+Vvyoa7; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 6937B1F928;
+	Tue,  1 Apr 2025 09:43:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1743493429;
+	bh=B210qA1B7drq3Zuu1x9tMoSRxTlQoBLd87oPguMQrIM=; h=From:To:Subject;
+	b=Z+Vvyoa7iO3cdIeJl6LPHROE4F7xT/2lM7v+cuYSC6GBxxN13h1tQvVzGNDgC2/X7
+	 C7e4lUYumWuSEtPlUPIoaeFO/TjsDHv8NauT+bYNDtajKQMjLIhqQGtz4G8oi3MiBg
+	 k/yiRVg+BAal0YCiT+tcckpCg4NuhZwbii8I4vEFCXjj2z/CuKM3jBuXapT4S61fgL
+	 vJEy42Ptnj4Ouq8kx+fu0Dl7RDkpWBA3ainoumuVrus75L0O79LT/mym4mUjyh2e00
+	 ggOb5Bga5okNjnj5Sq60sE1ZwMfc19Eep9ylCiSRf1dAIohzYK8exRkWRoQc0sVdwr
+	 DoIN4PJsw974g==
+Date: Tue, 1 Apr 2025 09:43:45 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: amc6821: add fan and PWM
+ output
+Message-ID: <20250401074345.GA8188@francesco-nb>
+References: <20250331155229.147879-1-francesco@dolcini.it>
+ <20250331155229.147879-2-francesco@dolcini.it>
+ <20250401-boisterous-teal-bison-533b01@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,91 +69,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250401142159.6f468edf@canb.auug.org.au>
+In-Reply-To: <20250401-boisterous-teal-bison-533b01@krzk-bin>
 
-On Tue, Apr 01, 2025 at 02:21:59PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Fri, 21 Mar 2025 18:56:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the rust tree got a semantic conflict in:
+On Tue, Apr 01, 2025 at 08:13:14AM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Mar 31, 2025 at 05:52:28PM +0200, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
 > > 
-> >   samples/rust/rust_dma.rs
+> > Add properties to describe the fan and the PWM controller output.
 > > 
-> > between commit:
-> > 
-> >   7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
-> > 
-> > from the driver-core tree and commit:
-> > 
-> >   9901addae63b ("samples: rust: add Rust dma test sample driver")
-> > 
-> > from the rust tree.
-> > 
-> > I fixed it up (I applied the following supplied resolution, thanks Danilo)
-> > and can carry the fix as necessary. This is now fixed as far as linux-next
-> > is concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts.
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Fri, 21 Mar 2025 18:21:27 +1100
-> > Subject: [PATCH] fix up for "samples: rust: add Rust dma test sample driver"
-> > 
-> > interacting with commit
-> > 
-> >   7b948a2af6b5 ("rust: pci: fix unrestricted &mut pci::Device")
-> > 
-> > from the driver-core tree.
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Link: https://www.ti.com/lit/gpn/amc6821
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 > > ---
-> >  samples/rust/rust_dma.rs | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > v3:
+> >  - explicitly describe the fan, use standard PWM and FAN bindings
+> >  - pwm.yaml cannot be referenced, because of the $nodename pattern that is
+> >    enforced there
+> > v2: https://lore.kernel.org/all/20250224180801.128685-2-francesco@dolcini.it/
+> >  - no changes
+> > v1: https://lore.kernel.org/all/20250218165633.106867-2-francesco@dolcini.it/
+> > ---
+> >  .../devicetree/bindings/hwmon/ti,amc6821.yaml      | 14 +++++++++++++-
+> >  1 file changed, 13 insertions(+), 1 deletion(-)
 > > 
-> > diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-> > index 908acd34b8db..874c2c964afa 100644
-> > --- a/samples/rust/rust_dma.rs
-> > +++ b/samples/rust/rust_dma.rs
-> > @@ -4,10 +4,10 @@
-> >  //!
-> >  //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+> > diff --git a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+> > index 5d33f1a23d03..94aca9c378e6 100644
+> > --- a/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+> > +++ b/Documentation/devicetree/bindings/hwmon/ti,amc6821.yaml
+> > @@ -28,6 +28,13 @@ properties:
+> >    i2c-mux:
+> >      type: object
 > >  
-> > -use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
-> > +use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude::*, types::ARef};
-> >  
-> >  struct DmaSampleDriver {
-> > -    pdev: pci::Device,
-> > +    pdev: ARef<pci::Device>,
-> >      ca: CoherentAllocation<MyStruct>,
-> >  }
-> >  
-> > @@ -48,7 +48,7 @@ impl pci::Driver for DmaSampleDriver {
-> >      type IdInfo = ();
-> >      const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
-> >  
-> > -    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-> > +    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-> >          dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
-> >  
-> >          let ca: CoherentAllocation<MyStruct> =
-> > @@ -64,7 +64,7 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>
-> >  
-> >          let drvdata = KBox::new(
-> >              Self {
-> > -                pdev: pdev.clone(),
-> > +                pdev: pdev.into(),
-> >                  ca,
-> >              },
-> >              GFP_KERNEL,
-> > -- 
-> > 2.45.2
+> > +  fan:
+> > +    $ref: fan-common.yaml#
+> > +    unevaluatedProperties: false
 > 
-> This is now a conflict between the driver-core tree and Linus' tree.
+> Why do you need the child, instead of referencing fan-common in the top
+> level?
 
-Thanks, I've sent the pull request to Linus right after the rust one,
-and warned him about this conflict.
+Two small reasons.
 
-greg k-h
+First is that the amc6821 is a fan controller, and the fan is just
+connected to it. So having the fan as a child seemed the right way to
+describe it, and this is done like that in other hwmon binding.
+
+.. but now that you asked I tried to move the fan-common to the top
+level and it's not working.
+
+I added
+
+  allOf:
+    - $ref: fan-common.yaml#
+
+at top level, removed the fan child, and moved the pwms up one level in
+the example
+
+    i2c {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        fan_controller: fan@18 {
+            compatible = "ti,amc6821";
+            reg = <0x18>;
+            #pwm-cells = <2>;
+            pwms = <&fan_controller 40000 0>;
+        };
+    };
+
+and the binding checker is not fine with it
+
+$ make dt_binding_check DT_SCHEMA_FILES=ti,amc6821.yaml
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/hwmon/ti,amc6821.example.dts
+  DTC [C] Documentation/devicetree/bindings/hwmon/ti,amc6821.example.dtb
+/home/francesco/Toradex/sources/linux/Documentation/devicetree/bindings/hwmon/ti,amc6821.example.dtb: fan@18: 'pwms' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/hwmon/ti,amc6821.yaml#
+
+
+Any suggestion?
+
+Francesco
+
 
