@@ -1,140 +1,150 @@
-Return-Path: <linux-kernel+bounces-583088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E510BA7766E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:30:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F050A77673
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6BC1889B3B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4C4167BAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A45B1EB186;
-	Tue,  1 Apr 2025 08:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdB9YS7V"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F2B1DA617
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB581EA7C9;
+	Tue,  1 Apr 2025 08:31:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9A7B673
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743496218; cv=none; b=h+MTwrEnB7Py3hsQQEpYFWxR8G2ouxx6zpjF/YIevwwvfuDv9cvT/frqTChoyfsg+T80rWVVdIVBCiCz69fv/vfipzH6fj0chtO76E26caqeW7xKShEatKgKX/SzFHf85NHQvqc3a8eMT72wava5G9yWE2YwaXw7VCjq5gAGPrs=
+	t=1743496316; cv=none; b=bCOaBfw4QRYHet9om2xtO86hGuPzwGmE33HraJxbrpQFKQJorE5fYg22IqAo7l9CM0Uf8se+1ig8VNKgUPhEAddh1vDGNkRT0ml1olo6rmIwsl1NZAz/vojhR8PV923FTQYrRE8AmT9UffZh5MGI/5Rqtj+t0Qf9qbPsJnYB7ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743496218; c=relaxed/simple;
-	bh=+PdOQY9G4Z+V6nM+cOHShiUAWSWzkcANFdjWh390aHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQotHt1x0ZY+h5eAxiHj1J04YF8tcDazlgqYQdbv6jTmJZOOjnGNa+UdjDSJGgc2PMJ0qKdUbjCc/RGWpFsRN+T5p6YaTHAWoieDjI2UNBLnlXH48etxZKFj5k3gCu+WgcWV31ynww8k5W+qcC5v2EJF8IzGUztzhqNXoci6/1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdB9YS7V; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227cf12df27so74571285ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743496215; x=1744101015; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NVkJHao0eWoC+KfJ0cgjojVWmT2IzBUFiYW5OYDGp1w=;
-        b=RdB9YS7VqY2nHJqeUpRh2TAMJKw4VGicu5mNDVuCviRPu1ma2upOejqYQUai7YNQY0
-         K7ZUM8y/Xb0qDyUGFRhnANWqfKc+7SO4CQxkhNUNSM15A7gCoRKtIVNufogbjd67JKut
-         V2QfKHo3GPLfQCmGtnD/59vwl+1mpC67Oz22wCugFxd9vamJ16rC1rzP/2OTSWLLEGL4
-         r1Cc5rrobh1juqPBNNWkrWkC78q6Q+W9kIxVHFf4r6iEkpU7aE1VgIo82jnp0nCz2hqe
-         OVl3zCm8QtuzbfiaU5WRuwug4c2WOM8uYV8vmMHHD7AwGyVMIpZ1u5FVYDICuuxO5VDV
-         08aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743496215; x=1744101015;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVkJHao0eWoC+KfJ0cgjojVWmT2IzBUFiYW5OYDGp1w=;
-        b=jF29YnHmj1EvWZ0R8Y+3zRq5Pyjuaie1Nn7M1xuk+hMgUjHmvVkj/pFzw0sSmpaEQy
-         7oApMuDufyMxn/iNLb/hcZgkF/YoSNsNPBFPuub3WJlkv4XcGYn7lP+xV6YxiIRLpLJ1
-         G2V38I8g4r51KilfTytGjHsdwi/xtDKZD1kfDVslSQDNpR4lYuMbe/qi7WpdyxUIN/tX
-         13ezMDczVmCA3C+VFar6dDt3df1JKodU2tMfByPb9Mtad+YV9SB3rEk9kIssAeYEDAob
-         E6PUkj/pv3WkwsxucCx0BnfNHjNMH9Nki/hwqTQg4FgXE/VQRtvmh2HBFEuFf0v4tlpT
-         SAlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7hNil9y1ng16m2YB/uAAbWzs7Y9cosEnUSX9X16+/iDxEWSCBpdfd6cGPGwKCwZXOP/48l26lFq0AgIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwGeROH6FXD34p4Fykn+DCzqgK8EUn98jV2UZi9LlIpkpBMPlH
-	EcWr8NkuU2epMoVq9gmt8eMByYbwoxoLmWDbf3ArAiaQgGOfFQdgNVMVWCQfjnw=
-X-Gm-Gg: ASbGncucxDcTE5dm8WcEMhgf2PEZJ9G6eGa57QRsAgzAwjD8v9jMpzxQMksFz++UACk
-	2ysRXIf+q1IT7QxRN0c4zlTPaanl2Z+pmFFAcMnoPqyR8z9kgtxsp8apoAuWTBD0gOUf31WCivZ
-	QVH+L4/cVsiIlm4MrS9pIuvC9gsSJd5dUaB+HUCYwl1k3VbbwjlPGk3pIvyJiaQTTCvzwCUyhp5
-	Sz+0qegJJJfjxJJKu7p2EuKLA28Ty47YCl8CXU8rPgJTASKI5kQOQJgwe3J/dWzFy1eP82JrwRL
-	FdWRI8kuXcggVBFRjMnjLgBw5maVT1wWl78xfE0eVQsll4Y/3fz/Gito
-X-Google-Smtp-Source: AGHT+IFcco3jmVd5+UMh72jl4ZYzaglj69gHooBlOcDmi7HxtLW7NW9Xm2Hy0zPWOtCvcc2s0O+1tg==
-X-Received: by 2002:a17:903:40cc:b0:21f:40de:ae4e with SMTP id d9443c01a7336-2292ee6363dmr168754105ad.9.1743496215410;
-        Tue, 01 Apr 2025 01:30:15 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1df12csm82615935ad.191.2025.04.01.01.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 01:30:14 -0700 (PDT)
-Date: Tue, 1 Apr 2025 14:00:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-Subject: Re: [PATCH v1 01/10] cpufreq: Reference count policy in
- cpufreq_update_limits()
-Message-ID: <20250401083012.vjwkxjkmd5afyqjt@vireshk-i7>
-References: <4651448.LvFx2qVVIh@rjwysocki.net>
- <1928789.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1743496316; c=relaxed/simple;
+	bh=seoJoeV4q+JPfatAYXDnQ97BmCiWFxxNWHxaEGXiEBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U8pnGSGgoOxOo96et0q59nuJSZ36qGwmfSgL2bgsHA70m/Dna8LyN4B/U3k94Y9nQHfq5/EKrmwcQ4hDkbkzpfhzTnzMOYXu0narUgWUUQ4GlH429Vmx07q9edaP0sgXtGR3vFEOn+R5D3mMHBCg3oN9vasC6OOZ9uSRVBi2NHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AD7214BF;
+	Tue,  1 Apr 2025 01:31:57 -0700 (PDT)
+Received: from [10.17.201.184] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E50183F63F;
+	Tue,  1 Apr 2025 01:31:48 -0700 (PDT)
+Message-ID: <8cbfd385-a950-4399-9241-bad84d357084@arm.com>
+Date: Tue, 1 Apr 2025 10:31:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/uclamp: Align uclamp and util_est and call
+ before freq update
+To: Xuewen Yan <xuewen.yan94@gmail.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, hongyan.xia2@arm.com, qyousef@layalina.io,
+ ke.wang@unisoc.com, di.shen@unisoc.com, linux-kernel@vger.kernel.org
+References: <20250325014733.18405-1-xuewen.yan@unisoc.com>
+ <03344e80-4ed2-41f1-9d2b-f7ed2e201eba@amd.com>
+ <CAB8ipk_1=U_HgVQrfQ4VRUDrcHJBQd2LJ9aXh8PG6E-Z4_xS+g@mail.gmail.com>
+ <d19cc24f-32a4-4d10-a51c-466476616e7d@amd.com>
+ <CAB8ipk8WGLqbBfamqLcXtaHO-CEbZTXt51nCwHixOn6JVaRnyw@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAB8ipk8WGLqbBfamqLcXtaHO-CEbZTXt51nCwHixOn6JVaRnyw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1928789.tdWV9SEqCh@rjwysocki.net>
 
-On 28-03-25, 21:39, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 26/03/2025 12:46, Xuewen Yan wrote:
+> Hi Prateek,
 > 
-> Since acpi_processor_notify() can be called before registering a cpufreq
-> driver or even in cases when a cpufreq driver is not registered at all,
-> cpufreq_update_limits() needs to check if a cpufreq driver is present
-> and prevent it from being unregistered.
-> 
-> For this purpose, make it call cpufreq_cpu_get() to obtain a cpufreq
-> policy pointer for the given CPU and reference count the corresponding
-> policy object, if present.
-> 
-> Fixes: 5a25e3f7cc53 ("cpufreq: intel_pstate: Driver-specific handling of _PPC updates")
-> Closes: https://lore.kernel.org/linux-acpi/Z-ShAR59cTow0KcR@mail-itl
-> Reporetd-by: Marek Marczykowski-G�recki <marmarek@invisiblethingslab.com> 
-> Cc: All applicable <stable@vger.kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpufreq/cpufreq.c |    6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2781,6 +2781,12 @@
->   */
->  void cpufreq_update_limits(unsigned int cpu)
->  {
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-> +
-> +	policy = cpufreq_cpu_get(cpu);
-> +	if (!policy)
-> +		return;
-> +
->  	if (cpufreq_driver->update_limits)
->  		cpufreq_driver->update_limits(cpu);
->  	else
+> On Wed, Mar 26, 2025 at 12:37 PM K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>>
+>> Hello Xuewen,
+>>
+>> On 3/26/2025 8:27 AM, Xuewen Yan wrote:
+>>> Hi Prateek,
+>>>
+>>> On Wed, Mar 26, 2025 at 12:54 AM K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>>>>
+>>>> Hello Xuewen,
+>>>>
+>>>> On 3/25/2025 7:17 AM, Xuewen Yan wrote:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[...]
 
--- 
-viresh
+>>>> If think cfs_rq_util_change() should be called for the root cfs_rq
+>>>> when a task is delayed or when it is re-enqueued to re-evaluate
+>>>> the uclamp constraints.
+>>>
+>>> I think you're referring to a different issue with the delayed-task's
+>>> util_ets/uclamp.
+>>> This issue is unrelated to util-est and uclamp, because even without
+>>> these two features, the problem you're mentioning still exists.
+>>> Specifically, if the delayed-task is not the root CFS task, the CPU
+>>> frequency might not be updated in time when the delayed-task is
+>>> enqueued.
+>>> Maybe we could add the update_load_avg() in clear_delayed to solve the issue?
+>>
+>> I thought something like:
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index a0c4cd26ee07..007b0bb91529 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -5473,6 +5473,9 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>>                 if (sched_feat(DELAY_DEQUEUE) && delay &&
+>>                     !entity_eligible(cfs_rq, se)) {
+>>                         update_load_avg(cfs_rq, se, 0);
+>> +                       /* Reevaluate frequency since uclamp may have changed */
+>> +                       if (cfs_rq != rq->cfs)
+>> +                               cfs_rq_util_change(rq->cfs, 0);
+>>                         set_delayed(se);
+>>                         return false;
+>>                 }
+>> @@ -6916,6 +6919,9 @@ requeue_delayed_entity(struct sched_entity *se)
+>>         }
+>>
+>>         update_load_avg(cfs_rq, se, 0);
+>> +       /* Reevaluate frequency since uclamp may have changed */
+>> +       if (cfs_rq != rq->cfs)
+>> +               cfs_rq_util_change(rq->cfs, 0);
+>>         clear_delayed(se);
+>>   }
+>>
+>> ---
+>>
+>> to ensure that schedutil knows about any changes in the uclamp
+>> constraints at the first dequeue, at reenqueue.
+> 
+> Because of the decay of update_load_avg(), for a normal task with
+> uclamp, it doesn't necessarily trigger frequency update when enqueued.
+> If we want to enforce frequency scaling for requeued delayed-tasks,
+> would it be possible to extend this change to trigger frequency update
+> for all enqueued tasks?
+
+But IMHO this is not what we want to achieve here? Instead, we want that
+the uclamp values of a just enqueued p_1 with:
+
+'p_1->se.sched_delayed && !(flags & ENQUEUE_DELAYED)'
+
+possibly count in CPU frequency settings of p_2 via:
+
+enqueue_entity(..., &p_2->se, ...) -> update_load_avg() ->
+if(decayed)cfs_rq_util_change()
+
+e.g. for shared frequency domain:
+
+-> sugov_update_shared() -> sugov_next_freq_shared() -> sugov_get_util()
+-> effective_cpu_util(...,  &min, &max)
+
+uclamp is about applying the max value of all enqueued tasks.
+
+[...]
 
