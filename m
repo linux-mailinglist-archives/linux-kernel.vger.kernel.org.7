@@ -1,290 +1,206 @@
-Return-Path: <linux-kernel+bounces-583027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52C1A7758A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D86DA775AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6219F3A8FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3DC3A8DEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBC41EB184;
-	Tue,  1 Apr 2025 07:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8F21E7C11;
+	Tue,  1 Apr 2025 07:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nT3j/ui2"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dxOwidK0"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A571EA7EC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B042D05E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743493476; cv=none; b=WQmnrRfphIgsOE7opVFJK0IX+d4tzqnFXevMyXp5DKqawjTqrGK1VAVgT0+tyC6PNisRhfst1PlvlJrgDHD2PFSY3Jvai3etdPk3Gh/a+DdKqEpIDfC3V2JUSCnMo+1XgnvlLIL07S1YO4mDNtiTJwFUduGjA/B15CghGc0P7pU=
+	t=1743494032; cv=none; b=WQPTDmQedZq8Cwu1uBHgfGHuue3brrDlP4ctY+l5nFt/vWzZXCtPiMKwT2FBWvSCFR7+x8N37We6XWkj3gIIfxlIlI/QbL+KDuV9SUWdyVAs2n8dN3oeV2arlSk7qrEPbUKXvcEPbHtzNhPjo8wYwiBpXE8IAhBLq4k5dWDpO3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743493476; c=relaxed/simple;
-	bh=StWgNhbVT74w+4EPNqqZDZapxDxdpKZBSeEPruykYxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=j43RV1G1s0oNU/fmDjqCT8hFVAGd0qOorG21dLfvpj1xDoMdFEWhLauqngYIjL31ALBcCIl3x9bv+S9vkT/Mm6mzjv//7qhB6hj95/AFXEFfJjGvgq4UgeYVYBS6mSnPn97vjx4npIU3fidTn8ZGpws/zGNKNeCb6sWFdENLF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nT3j/ui2; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250401074433epoutp02e66652f28c23acbf9fdd5a3c332b9cbb~yIhOHuqTV1007810078epoutp02u
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:44:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250401074433epoutp02e66652f28c23acbf9fdd5a3c332b9cbb~yIhOHuqTV1007810078epoutp02u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743493473;
-	bh=3MRdpHtIiwqvpeVCVz9txam/iHAkLYLHB9+ipflqPm0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nT3j/ui21EcOYOu8iHrktmJ6y6KQg/ktKC117MqoWsTWo2NNNtV8XNvHfP53u1+dx
-	 O4H4rrk3UPzV8gQwDitIYtuYsIxUPg3rtn2JF/wI4ib6t3YISt7f7aNX+xxpB1UvhR
-	 Uui31XKB2l4FeeL7FK4R5/yaBHs38cg4QDnupriQ=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250401074432epcas2p399089231d6e73929f4f34e67435ba024~yIhNagNzU1639316393epcas2p3f;
-	Tue,  1 Apr 2025 07:44:32 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4ZRg4b4QVrz2SSKm; Tue,  1 Apr
-	2025 07:44:31 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	95.D3.09856.F599BE76; Tue,  1 Apr 2025 16:44:31 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250401074430epcas2p27a19d0e3e53983d091af2258cdc7f2bc~yIhMMA1c60193401934epcas2p2b;
-	Tue,  1 Apr 2025 07:44:30 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250401074430epsmtrp20fd71249e8a69512d5458a68d548d10a~yIhMK8c1z1633316333epsmtrp2H;
-	Tue,  1 Apr 2025 07:44:30 +0000 (GMT)
-X-AuditID: b6c32a47-c1fdf70000002680-35-67eb995f9907
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	11.33.08805.E599BE76; Tue,  1 Apr 2025 16:44:30 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250401074430epsmtip27caa53a02145fc3cbf40da4e67594d6f~yIhL41JY21086710867epsmtip2F;
-	Tue,  1 Apr 2025 07:44:30 +0000 (GMT)
-Date: Tue, 1 Apr 2025 16:53:43 +0900
-From: Jung Daehwan <dh10.jung@samsung.com>
-To: Puma Hsu <pumahsu@google.com>
-Cc: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
-	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
-	lgirdwood@gmail.com, krzk+dt@kernel.org,
-	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
-	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v36 12/31] ALSA: usb-audio: Introduce USB SND platform
- op callbacks
-Message-ID: <20250401075343.GI98772@ubuntu>
+	s=arc-20240116; t=1743494032; c=relaxed/simple;
+	bh=HCEFYwh9m7hmPPqIb8SX2sunnNwMfn2DohlZBDBQQB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ii06OfRgRqzxmItgzLAfASsD8OlCWGoILcPSKPbPXpH1YEXokfiIBgB5u04TPwOLnLn2WourBqTnsjw4bBhZDOJMPbQ7cvTZ33mlRoZiDkOUIO4gT+/EOzWowMqAqRhUzeRgl6h/vIo/IPl5MA/bsuPkrNqkJYQYvMojj78H460=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dxOwidK0; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso36342315e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 00:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743494027; x=1744098827; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aVezXcmNjFvGeePsLEgaeOZHIg/Ype94xcgrgvPHBWQ=;
+        b=dxOwidK0G7Zfsp9REUR9or/xsoQD9okJy+J5WVWExkAwgJkpuniEvB/pfxYSRdeENu
+         VqbjmuIF8vgibHQQf/K7wIP5N9JJkpSnx2w4ynyyoW7Vcrlhl19FmrbjDsY0gb8hWyoX
+         wlBehcmyarmyrbs5cjvc6JZyp2PG/jXe0OYs5/oJa2GyyWVKbuLSX5GhCzILW1REsJpc
+         1483kzbC2TtjihoPu+RX0uDSsEWbYY9ac98cmHiNA244gxFNgGXHwgeJDMK53yAUy2Kr
+         9swYcTLtG5a7u0r3qLwrXf9BUVMtQGGcwKD9oXHiXoYEeP6XM6fAMwQ9UOZ1O6PxxdyB
+         xSGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743494027; x=1744098827;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aVezXcmNjFvGeePsLEgaeOZHIg/Ype94xcgrgvPHBWQ=;
+        b=Q1bkafg/fcdITjBjLgxhjF+XYq3ACBbHfpEE+HRjms4Vl6ioR3TGICeQM9fLuwo+Sf
+         axrAghmert+G05wmvHrj5dOZuVZ6fokfjLsTaDeWi/gZt3UWQXSGTRSOC7EEosU2m77V
+         d+HUKlweRe43lDf3m49KyONh8TyzFNpuxfrgNBQ7jcrFkotOwX1gc/JoPaZMZcYcOiyE
+         fjIjCMXDjeV2mBTJN0BJhvKdxHpCb0cInHbN6axcppoX+Yeo3XgqU+RAwtfsVF5/beAk
+         SxVbf+SeKu7vQIYFQhR5fUVj2jdz8Mu4rZHIksqmVgnJ36ObywE/tNd81L7B4EGBa0G+
+         /j/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVV2T2j4Hff7Ol8zaTAt61DloKAIXtP8X9mJXb/ip9j2/I5MHQG4JN3vHnxPSXmVdftQGZNa6ilkM5KZ7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe9Tv2owq/z2Od2x3KjQciVyE/IF3DRaLS9Oi+Yav8HL+R62V3
+	xi9hD7crsVgwQtVrF2qzYtvgaXtqbDA6MYdz4LyZ7v56zdKvNkLqE9cybtzy0Eg=
+X-Gm-Gg: ASbGncuRf6gcQT2soaI2v/9BJ7b4D0v7Lpxzbw//oJvriOAuTVQ5Ueg6VS8H5BC1IN3
+	AJId/Zt9Np2JKCVv0C2CBRCu4I3cB6NQ5j/qcyOhrldyNd6yrDX3y0Bp3/IDujCTsI22qpNpAc2
+	H+bqdCXhXknRTntO3rVcZdxJrgkOv8MvEqPClFke3XqjfYKAYIsn8fA+fXaH1korAlrI1G3+VcN
+	EnLfE+CTQAQBp+nWgtUUtWg2fbbIJiMwTyPMKx1yLlshtsJklAALZAGKj5XJqcZGLMvWAIWMwL8
+	5K0jKF7j1TZJzgkG2KLjiFtENTlp9ytWRr1CsO8qZkKbaUF96JO9qtOstLFizqM5HhHPJA5HMkD
+	8Ia06o7LTSHtjZckW
+X-Google-Smtp-Source: AGHT+IFCND4u4ER45buQyky5h/GbyTChDOldIH58BGtyz/UpO8YtBkFCcjfe/V7hEIN/QlaCchOJmQ==
+X-Received: by 2002:a05:6000:40cd:b0:390:e7c1:59d3 with SMTP id ffacd0b85a97d-39c120cb878mr8447965f8f.2.1743494027213;
+        Tue, 01 Apr 2025 00:53:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:355:6b90:e24f:43ff:fee6:750f? ([2a01:e0a:355:6b90:e24f:43ff:fee6:750f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b66d56csm13573413f8f.59.2025.04.01.00.53.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 00:53:46 -0700 (PDT)
+Message-ID: <ffddb84a-e1ca-4a8a-81c6-448688b1c531@baylibre.com>
+Date: Tue, 1 Apr 2025 09:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGCq0LYvXsRpfhWrvWu0=hQHBVYqJ2ifnv0wEbPWtmTw7j6-CQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTdxTer7e9vRi73VWcP9mYtewRugAtj3JFMPhA7+I2a0aGI8u6jl5b
-	Rmm7Pqagc2YgpZiBBHTQgYJlYBiIFNyglIflbZDp2HwQYCGjlceYUwZbHMhaLi78953vnO87
-	5+TkYAj3LNsPS1YbKJ1apuKj65jfdwaKg6TFMwph03l/4uz4BErUtA4yiIkOEyAudA2yiM6L
-	k4DIsNahxJRlDCUWfs5mEPntN9hEeVYFk7j3aIFFDNlLUKLUXYgQFytPIUSGrZBFmO15LOLx
-	sptBFNcGELaWXBax7GhiE1k9PSyiuqyDTVz5uxbEbiKbLaNsssxmJK2OKQZpqzaj5MhtB0qe
-	7z9ItpfWsElrbgGLbJutRMl8xwmyrvEXJtnYPgfIOdvLEk5iSrSSkskpHY9SJ2nkyWpFDH//
-	u9Ld0gixUBQk2kZE8nlqWSoVw9/zliRob7LKszqf95lMZfRQEplezw/ZEa3TGA0UT6nRG2L4
-	lFau0kZqg/WyVL1RrQhWU4YokVAYGuEp/ChF2bQo0I4IjrYUDDBPgl95OcAHg3g4nBltYOeA
-	dRgXbwIwO7cWoYNHAJqv3mDRwQKAP07nIk8lk6a+VUkrgPcLsgEdTAB4ab6O6a1i4q/A05P1
-	bC9GcQEc+6dvRe2Lb4V/uUwMrwDB+5mwz9kNvIkN+PtwaXQM9WIO/gZscN4ENH4e9hdPeEwx
-	zAc/CPuvS7xwo8d/+toXXhuI/+AD75S0A3q6PbDgznWUxhvgdG8jm8Z+cO6P1lVeD4fvuxFa
-	nOkZejpzdbUwaHGbVowQXAkfmLsRbzOIB8CuYSZNPwuzO5fYNM2B2VlcWhkAvx46w6LxZnht
-	ZnDVkYT2ecdKWy7+FQOaZpVnwBbLmsUsa5pZPK4IHgjr7CE0vQVmXP1mlX4RVj3B1lSUAbQa
-	vEBp9akKSh+qDfv/7EmaVBtY+Q/BviZQNPtnsBMwMOAEEEP4vpxD81MKLkcuS0undBqpzqii
-	9E4Q4blYPuK3MUnjeTC1QSoK3yYMF4tFkaERwkj+Jo7zoUvBxRUyA5VCUVpK91THwHz8TjIw
-	i6vgk93HdoZ0W81pec+JP/TvPFX1MEF60/fb1vK4N7fvnAAf1yqSmiUxIvflDyyZF14bWY8O
-	X4o1HREvsIy9CS/t49w4rEhs0EXbC40lxzTvZM1slXxZ/a/pAHrF/LtwuPS7vJHx+ENm/hH1
-	/t6GLtfl6l1xI6+7ih6HyZ+pL28+rtnFdMzLnORtVzp5oOUwHphi0DS32BtuJVCVUUU1C/lv
-	1/ykLftUaFUNFW2HuW13UyqCBIuxmTtyel4tky+5g+MNv0Xxjr7HG08MP7F+eW9PSXOFf9yt
-	z9Mw8+TsWKWz/65/hyP2wTm/c23T9zCr+3iVKH5xoH7zk44Baig9QcNn6pUykQDR6WX/Aaio
-	SKKoBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7bCSvG7czNfpBp2rDCymPnzCZrFm7zkm
-	iycH2hkt5h85x2pxeNELRovmxevZLF7Ousdm8e1KB5PFxP1n2S0Wti1hsbj56RurxeVdc9gs
-	5j6bwmyxaFkrs0XzpimsFp27+lktfv1/xmQxc62yxabdfawW//fsYLdoO3aM1WLVggPsFhu+
-	r2V0EPfYOesuu8eCTaUei/e8ZPLYtKqTzePOtT1sHvNOBnrsn7uG3WNx32RWj31vl7F5TNxT
-	57F+y1UWjy37PzN6fN4kF8AbxWWTkpqTWZZapG+XwJWx+v8epoJ/6hW7jrE0MM6V62Lk5JAQ
-	MJF40X6CvYuRi0NIYDejxJSWRWwQCUmJpXNvsEPYwhL3W46wQhQ9YpT4uLGJCSTBIqAi0f1i
-	I1gRm4CWxL0fJ5hBbBEBRYkvT9uZQBqYBU6ySJw4dJSxi5GDQ1ggUmL3cnuQGl4BbYnNhy4w
-	QgztZZI4/OM9C0RCUOLkzCdgNrOAusSfeZeYQXqZBaQllv/jgAjLSzRvnQ0W5hQIlDh5KgDE
-	FAU659XB+gmMQrOQzJmFZM4shDmzkMxZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/
-	dxMjOC1oae1g3LPqg94hRiYOxkOMEhzMSiK8EV9fpgvxpiRWVqUW5ccXleakFh9ilOZgURLn
-	/fa6N0VIID2xJDU7NbUgtQgmy8TBKdXANOWmfeSX3SfOJXRc5f40R4Jvy8f5T9NeCc9PkdnR
-	4xt4mG9WouncGUsXLCrYpNNVEnJ4vr2nwyYlRyNhxT36B4+E21h9VqgJUPuj4/A6yPkQswNL
-	oOLtJ9XF1rte/maw/FySw2i3/7dfc9Ic6SaeiytrtwrNeJ5ZefO1q80Fl+/qC7ttPJ5Ps9V5
-	0VmiGMyzZ5fsLD2FmCfpIu6lNuw/FnxZalAad63/hF6zZZjK9axZIkrdCvva/N19r6w9HHb+
-	Xo3Zpo9Nk/nXH50UovhVN/lb6dSidkb1kPMiET98arqaPqolpBR1/U95tIQpbM7fS9Lz9q3l
-	sr4ct9ng7/OEdYE2txawd+yoiYveppOhxFKckWioxVxUnAgA66cdSnoDAAA=
-X-CMS-MailID: 20250401074430epcas2p27a19d0e3e53983d091af2258cdc7f2bc
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_6a803_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250328074841epcas2p43e82d8eba2aa584a1034a7206ffb2e4d
-References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
-	<20250319005141.312805-13-quic_wcheng@quicinc.com>
-	<CGME20250328074841epcas2p43e82d8eba2aa584a1034a7206ffb2e4d@epcas2p4.samsung.com>
-	<CAGCq0LYvXsRpfhWrvWu0=hQHBVYqJ2ifnv0wEbPWtmTw7j6-CQ@mail.gmail.com>
-
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_6a803_
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] binder: do not crash on bad transaction in
+ binder_thread_release()
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Frode Isaksen <frode@meta.com>,
+ linux-kernel@vger.kernel.org
+References: <20250331152515.113421-1-fisaksen@baylibre.com>
+ <Z-tXhrdTtV5t_P5p@google.com>
+Content-Language: en-US
+From: Frode Isaksen <fisaksen@baylibre.com>
+In-Reply-To: <Z-tXhrdTtV5t_P5p@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
 
-On Fri, Mar 28, 2025 at 03:48:00PM +0800, Puma Hsu wrote:
-> On Wed, Mar 19, 2025 at 8:56 AM Wesley Cheng <quic_wcheng@quicinc.com> wrote:
-> >
-> > Allow for different platforms to be notified on USB SND connect/disconnect
-> > sequences.  This allows for platform USB SND modules to properly initialize
-> > and populate internal structures with references to the USB SND chip
-> > device.
-> >
-> > Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> 
-> Tested-by: Puma Hsu <pumahsu@google.com>
-> 
+On 4/1/25 5:03 AM, Carlos Llamas wrote:
+> On Mon, Mar 31, 2025 at 05:24:14PM +0200, Frode Isaksen wrote:
+>> From: Frode Isaksen <frode@meta.com>
+>>
+>> Instead of calling BUG(), set the binder_thread to NULL,
+> Yeap, not crashing the kernel is a good idea.
+>
+>> as is done in other parts of the code.
+>> Log if it is a bad transaction (other than in or out).
+>> The BUG in binder_thread_release() was preceded by
+>> these warning logs:
+>> binder: 1198:1217 got reply transaction with bad transaction stack,
+>>   transaction 49693 has target 1198:0
+> So tid 1217 is sending a reply to an incoming sync transaction. However,
+> its transaction_stack shows that t->to_thread is NULL. I have no idea
+> how can this be possible. When the transaction was picked up by 1217,
+> its info was recorded in its transaction_stack as such:
+>
+> 	if (cmd != BR_REPLY && !(t->flags & TF_ONE_WAY)) {
+> 		binder_inner_proc_lock(thread->proc);
+> 		t->to_parent = thread->transaction_stack;
+> 		t->to_thread = thread;            <----- HERE
+> 		thread->transaction_stack = t;
+> 		binder_inner_proc_unlock(thread->proc);
+> 	}
+>
+> I don't understand how 't->to_thread' later becomes NULL, maybe memory
+> corruption?
+>
+>> binder: 1198:1217 transaction failed 29201/-71, size 4-0 line 3065
+>> ...
+>> binder: release 954:1333 transaction 49693 out, still active
+>> ...
+>> binder: release 1198:1217 transaction 49693 out, still active
+>> kernel BUG at drivers/android/binder.c:5070!
+>>
+>> Signed-off-by: Frode Isaksen <frode@meta.com>
+>> ---
+>> This bug was discovered, tested and fixed (no more crashes seen) on Meta Quest 3 device.
+> Do you have a way to reproduce this? It sounds like there is something
+> else going wrong before and we probably want to fix that.
 
-Tested-by: Daehwan Jung <dh10.jung@samsung.com>
+I was never able to reproduce this locally and it happens very seldom.
 
-> > ---
-> >  sound/usb/card.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  sound/usb/card.h | 10 ++++++++++
-> >  2 files changed, 59 insertions(+)
-> >
-> > diff --git a/sound/usb/card.c b/sound/usb/card.c
-> > index 6c5b0e02e57b..4ac7f2b8309a 100644
-> > --- a/sound/usb/card.c
-> > +++ b/sound/usb/card.c
-> > @@ -118,6 +118,42 @@ MODULE_PARM_DESC(skip_validation, "Skip unit descriptor validation (default: no)
-> >  static DEFINE_MUTEX(register_mutex);
-> >  static struct snd_usb_audio *usb_chip[SNDRV_CARDS];
-> >  static struct usb_driver usb_audio_driver;
-> > +static struct snd_usb_platform_ops *platform_ops;
-> > +
-> > +/*
-> > + * Register platform specific operations that will be notified on events
-> > + * which occur in USB SND.  The platform driver can utilize this path to
-> > + * enable features, such as USB audio offloading, which allows for audio data
-> > + * to be queued by an audio DSP.
-> > + *
-> > + * Only one set of platform operations can be registered to USB SND.  The
-> > + * platform register operation is protected by the register_mutex.
-> > + */
-> > +int snd_usb_register_platform_ops(struct snd_usb_platform_ops *ops)
-> > +{
-> > +       guard(mutex)(&register_mutex);
-> > +       if (platform_ops)
-> > +               return -EEXIST;
-> > +
-> > +       platform_ops = ops;
-> > +       return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(snd_usb_register_platform_ops);
-> > +
-> > +/*
-> > + * Unregisters the current set of platform operations.  This allows for
-> > + * a new set to be registered if required.
-> > + *
-> > + * The platform unregister operation is protected by the register_mutex.
-> > + */
-> > +int snd_usb_unregister_platform_ops(void)
-> > +{
-> > +       guard(mutex)(&register_mutex);
-> > +       platform_ops = NULL;
-> > +
-> > +       return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(snd_usb_unregister_platform_ops);
-> >
-> >  /*
-> >   * Checks to see if requested audio profile, i.e sample rate, # of
-> > @@ -954,7 +990,11 @@ static int usb_audio_probe(struct usb_interface *intf,
-> >         chip->num_interfaces++;
-> >         usb_set_intfdata(intf, chip);
-> >         atomic_dec(&chip->active);
-> > +
-> > +       if (platform_ops && platform_ops->connect_cb)
-> > +               platform_ops->connect_cb(chip);
-> >         mutex_unlock(&register_mutex);
-> > +
-> >         return 0;
-> >
-> >   __error:
-> > @@ -991,6 +1031,9 @@ static void usb_audio_disconnect(struct usb_interface *intf)
-> >         card = chip->card;
-> >
-> >         mutex_lock(&register_mutex);
-> > +       if (platform_ops && platform_ops->disconnect_cb)
-> > +               platform_ops->disconnect_cb(chip);
-> > +
-> >         if (atomic_inc_return(&chip->shutdown) == 1) {
-> >                 struct snd_usb_stream *as;
-> >                 struct snd_usb_endpoint *ep;
-> > @@ -1138,6 +1181,9 @@ static int usb_audio_suspend(struct usb_interface *intf, pm_message_t message)
-> >                 chip->system_suspend = chip->num_suspended_intf;
-> >         }
-> >
-> > +       if (platform_ops && platform_ops->suspend_cb)
-> > +               platform_ops->suspend_cb(intf, message);
-> > +
-> >         return 0;
-> >  }
-> >
-> > @@ -1178,6 +1224,9 @@ static int usb_audio_resume(struct usb_interface *intf)
-> >
-> >         snd_usb_midi_v2_resume_all(chip);
-> >
-> > +       if (platform_ops && platform_ops->resume_cb)
-> > +               platform_ops->resume_cb(intf);
-> > +
-> >   out:
-> >         if (chip->num_suspended_intf == chip->system_suspend) {
-> >                 snd_power_change_state(chip->card, SNDRV_CTL_POWER_D0);
-> > diff --git a/sound/usb/card.h b/sound/usb/card.h
-> > index cdafc9e9cecd..d8b8522e1613 100644
-> > --- a/sound/usb/card.h
-> > +++ b/sound/usb/card.h
-> > @@ -209,7 +209,17 @@ struct snd_usb_stream {
-> >         struct list_head list;
-> >  };
-> >
-> > +struct snd_usb_platform_ops {
-> > +       void (*connect_cb)(struct snd_usb_audio *chip);
-> > +       void (*disconnect_cb)(struct snd_usb_audio *chip);
-> > +       void (*suspend_cb)(struct usb_interface *intf, pm_message_t message);
-> > +       void (*resume_cb)(struct usb_interface *intf);
-> > +};
-> > +
-> >  struct snd_usb_stream *
-> >  snd_usb_find_suppported_substream(int card_idx, struct snd_pcm_hw_params *params,
-> >                                   int direction);
-> > +
-> > +int snd_usb_register_platform_ops(struct snd_usb_platform_ops *ops);
-> > +int snd_usb_unregister_platform_ops(void);
-> >  #endif /* __USBAUDIO_CARD_H */
-> >
-> 
-> 
+As you can see in the log, there was a "bad transaction" 17 secs before 
+the crash.
+<6>[   13.664167] binder: 1198:1217 got reply transaction with bad 
+transaction stack, transaction 49693 has target 1198:0
+<6>[   13.664174] binder: 1198:1217 transaction failed 29201/-71, size 
+4-0 line 3065
+...
+<6>[   40.793299] binder: release 954:1333 transaction 49693 out, still 
+active
+...
+<6>[   41.624171] binder: release 1198:1217 transaction 49693 out, still 
+active
+<6>[   41.624197] ------------[ cut here ]------------
+<2>[   41.624198] kernel BUG at drivers/android/binder.c:5070!
 
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_6a803_
-Content-Type: text/plain; charset="utf-8"
+>
+>>   drivers/android/binder.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+>> index 76052006bd87..c21d7806e42b 100644
+>> --- a/drivers/android/binder.c
+>> +++ b/drivers/android/binder.c
+>> @@ -5302,7 +5302,8 @@ static int binder_thread_release(struct binder_proc *proc,
+>>   			     "release %d:%d transaction %d %s, still active\n",
+>>   			      proc->pid, thread->pid,
+>>   			     t->debug_id,
+>> -			     (t->to_thread == thread) ? "in" : "out");
+>> +			     (t->to_thread == thread) ? "in" :
+>> +			     (t->from == thread) ? "out" : "bad");
+>>   
+>>   		if (t->to_thread == thread) {
+>>   			thread->proc->outstanding_txns--;
+>> @@ -5317,7 +5318,7 @@ static int binder_thread_release(struct binder_proc *proc,
+>>   			t->from = NULL;
+>>   			t = t->from_parent;
+>>   		} else
+>> -			BUG();
+>> +			t = NULL;
+> Dropping BUG() is nice but this could use en error message.
+
+The binder_debug() will log it as "bad" transaction instead of "out", so 
+there will be a trace of this happening.
+
+Thanks,
+
+Frode
+
+>
+>>   		spin_unlock(&last_t->lock);
+>>   		if (t)
+>>   			spin_lock(&t->lock);
+>> -- 
+>> 2.49.0
+>>
+> Regards,
+> --
+> Carlos Llamas
 
 
-------ieZh69edyBxzv2Y5Ggo8207PwRbI2z7mQ5FWfU8PsFoZKj2n=_6a803_--
 
