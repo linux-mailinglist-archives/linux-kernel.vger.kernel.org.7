@@ -1,181 +1,183 @@
-Return-Path: <linux-kernel+bounces-583242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3726A77877
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:08:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FF8A77884
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877647A3332
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B87163936
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159EE1F03F3;
-	Tue,  1 Apr 2025 10:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD69D1F09A5;
+	Tue,  1 Apr 2025 10:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYY8ydHB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LKmuADDT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYY8ydHB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LKmuADDT"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zShq3P4y"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3471EF39A
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 10:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352681F03D7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 10:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743502108; cv=none; b=i+xnhJ4f7TFXdU9LErIyAIGlUMlphesR+rU8YjYmBaNQ4uEjLQlS1tSowTbtywvL4q9DXMfbfZNeIzEy090opnmkS1JPaW6vh9DEXVoJWnwIf0U+SVet4Nr7HAvR+vBuPx533ZzE8FsSRe51PQHhcRNcdrCggJUWJhYJsMbqXj4=
+	t=1743502273; cv=none; b=W9uOdiVP5S8CB4+yXB59px2Cn5ScCXAnZmHVQxoBoypvm+mdrEZuXyZUTlQMgHXnx+7plmAmjwLhA+5Bj2haqI0mMcRuyn4Jd3hJrWZ8fYbJ4Xdk0LGm422iK9xHeIj2fI76/r37Qmw/adm0pbQ2yiZgrVbvEY/gims83fCpSYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743502108; c=relaxed/simple;
-	bh=++urWKNC5cfWd08urLWmZ0ardJRYr+sbgQ55JmwHDrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJAJnsa/y75HPghw95yetV1L5hIZVYAB9kZ9LFp0IkN0QQ0/jWP2A8eU5G2D2cqIuyy7ZoFLqYdX+S4x4hh58gBQtxKRm5GUIBvrHu/7Ct3SeDQLJZ3xwhQt0uZ2NRQhZSUrgIlpr2TPVl2z0g+L4ZrMGDpKZ7UA6FG1Cx7cFnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYY8ydHB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LKmuADDT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYY8ydHB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LKmuADDT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 15CEF1F38E;
-	Tue,  1 Apr 2025 10:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743502105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
-	b=PYY8ydHB/BRKkb/f3uJZM9WIn6uy/Nfx8TSP6hkW5iebHUuThEl8ebraeZsLbQ6sE/aQ/a
-	Q7OnyH7q+A2YF3dxvliPf9T0+yFPLqHXsNgc3h+o+p94GlxdiZDmy0LzB5RJmi0CsTqcqv
-	hNOmIXk6ftY7zJWt39c1JHaPRMEFt0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743502105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
-	b=LKmuADDTSRI+wAfkOuD8IZKmzy14iQ//uKy8wxs4aZxgA3/E+p7wAEUCDZxwDoe5qKImX0
-	wRx/yN98+xBVuFBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743502105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
-	b=PYY8ydHB/BRKkb/f3uJZM9WIn6uy/Nfx8TSP6hkW5iebHUuThEl8ebraeZsLbQ6sE/aQ/a
-	Q7OnyH7q+A2YF3dxvliPf9T0+yFPLqHXsNgc3h+o+p94GlxdiZDmy0LzB5RJmi0CsTqcqv
-	hNOmIXk6ftY7zJWt39c1JHaPRMEFt0E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743502105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suSfpVgBId8IpI/9A13Qm+aO2xaK6bvk0WIrZ6mJqfA=;
-	b=LKmuADDTSRI+wAfkOuD8IZKmzy14iQ//uKy8wxs4aZxgA3/E+p7wAEUCDZxwDoe5qKImX0
-	wRx/yN98+xBVuFBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 043E9138A5;
-	Tue,  1 Apr 2025 10:08:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XomxABm762cjDgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 01 Apr 2025 10:08:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AAF3FA07E6; Tue,  1 Apr 2025 12:08:24 +0200 (CEST)
-Date: Tue, 1 Apr 2025 12:08:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH 1/6] ext4: replace kthread freezing with auto fs freezing
-Message-ID: <2nqlkokmbkvamnrza3fpjjmye3w3fy7gf5bqpjt2cxeviks5ax@u4wqm4ldxuy6>
-References: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401-work-freeze-v1-1-d000611d4ab0@kernel.org>
- <z3zqumhqgzq3agjps4ufdcqqrgip7t7xtr6v5kymchkdjfnwhp@i76pwshkydig>
- <20250401-konsens-nahebringen-fa1c80956371@brauner>
+	s=arc-20240116; t=1743502273; c=relaxed/simple;
+	bh=najhAWRGQ57Y7UB5J/ILd72qZWp6BmS+tkxT/OOIcAM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=riS72C1O0KtlqNX2oIl+h6y9ctbtTo4NnAP0d2rZRJpPg1OFevk552o/Drl9Ngu4GLfusJYJXv5nYCA2IfQQQYsCyh1wE8FW+8ArNjJnvLi3OkzChhSAoR+FQWC0cyPiGzFyu6DfpiixtoiyqQ1AmKvwuJMVcBMufblnUZmd4Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zShq3P4y; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5c9662131so8324943a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 03:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743502269; x=1744107069; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rHGgSQdD2hCEm7pwASM4ZVE3/ZfNMjeU9kHI9pQmKw0=;
+        b=zShq3P4y+AjPfdx82voQvT5m5+uOABbc5bpz8pxOvFlT6rIHzEBm/TB+1oz0bBgFlM
+         evRYymS4kStzUnifA38M1LZsRqA1pjiPUhLg8oOoJF6Qn6xpcPa/dO7w/AMGStmghwCe
+         3H1ddwQ5tVbeh67nroaYLg5+FmJsURJK6kB7TOEzwQOgMoL+SFzN1qVUP7GeTNP/GMpq
+         HrgYbQwtEjYSq/YklheHCgAAyyHx/FUo8mq3R6zCpbuEpiIhvq+w6eDd4PlSXyOIfm5U
+         HLRvT7drTDHk+ESXNOWsryb+WhBszaZPl6iyQKgc8OTits/ZDyTasQXD1MtJ3+ZwJto8
+         GpjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743502269; x=1744107069;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rHGgSQdD2hCEm7pwASM4ZVE3/ZfNMjeU9kHI9pQmKw0=;
+        b=UF9Ye40YQiq798qpybbo2Mh1IYq9oBLJSW3Q0mNWkyk1dcq5vp+268yteSGwrAFuJA
+         6NY5Rq9xNKqnZJEY1viIfsKn5VrsRfzL7mYikZs+w8BaMfdUE1i34jWbCKJFVEEVnjbA
+         ytiAdFwtXIeHkjjm0n/cJrIs1m6D9S1vV2/I56pqP4+3Hd2IgVYrp4JxKkMwUk03QuwK
+         rzYumn3YpNrVUxu48qFqolUNCQxjnoM1CX4gfuaoulkzYmyamCzcmi5/qS1MCnJ9Xrd3
+         aY/yTWfdpA5o3U76T8qjEJ3Ayt6kw3Wfjo8t1oELTgQGjSxYADu/O3cgmwflsVKUXM4Y
+         Y3fw==
+X-Forwarded-Encrypted: i=1; AJvYcCULwf49ahsqAqwxwu7lF6+4MGjtrv9V5ROGcXjZtBP59+Bm1nA7z28OM56XA+hjcJ0ROE5ZfkyLu1ic8UA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgJSZhosjyLfqSCKDqgtqAnepJFq8asqJIot3wKN9TckghpNpa
+	2jbMkD4cy1fx/PZjOEHRG+Lh2j58sYhOR0e5JIpT7FcLhq2lXvRdJt7xjP36wNQ=
+X-Gm-Gg: ASbGncsimCPnYj82Oo1rtGDb0x8Vds+iflhU/41mbdQD2mxBdQCOS/7OSzDNTRUHs+g
+	p9L0PzpQ7tqJBrnqg6SBsM6nnN3mV0toWJAEo1cr39xmCnwSoHYwbjHKIZxJ/WPRzUFExXuyTq1
+	w39BPLbwukI9iicZ0w8oAUlcdc+fNnYgslBvcbFSiqyCi689O+13gCtRPLMPjy7UN9sPDepivuo
+	TfXSxUla92E9boqd8XM8auTKrSy3AaAx4gvkaH9gsMyxabXmCgTT1g/Q0MAV96k19OE5p+54UIB
+	A60EvjU7n245pNOu+NJK2/vVGeMKPkQp+hTr16wrnVHeF1/QsSfZLlllwuU2GTl9UHjAKJZzOXX
+	cbXTgVduPHCr1/c14mVpxxUsMern3
+X-Google-Smtp-Source: AGHT+IHT9jkz+UCs3Db5OyfIYrlRo4mz+SAmgujhurHxk3CEiZo8YgaUE+HWHRECisppy8g9djLtgA==
+X-Received: by 2002:a17:906:f85b:b0:ac7:3912:5ea5 with SMTP id a640c23a62f3a-ac739125f39mr976557566b.58.1743502269438;
+        Tue, 01 Apr 2025 03:11:09 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71967ffcdsm757406966b.140.2025.04.01.03.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 03:11:09 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v5 0/2] support Linux reboot modes in syscon-reboot on
+ gs101 (Google Pixel)
+Date: Tue, 01 Apr 2025 11:11:01 +0100
+Message-Id: <20250401-syscon-reboot-reset-mode-v5-0-5b9357442363@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401-konsens-nahebringen-fa1c80956371@brauner>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,kernel.org,hansenpartnership.com,infradead.org,fromorbit.com,redhat.com,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALW762cC/43PSwqDMBAG4KtI1k3JwzzsqvcoXSRx1EBrSiLSU
+ rx7o5u2COJq+Afmm5k3ShA9JHQq3ijC6JMPfQ7iUCDXmb4F7OucESNMEMYkTq/kQo8j2BCGXBI
+ M+B5qwEJKobXVpQKK8vgjQuOfC3255tz5NIT4WjaNdO7uQEeKCa6oo1YyKqWB8833JoZjiC2a1
+ ZHtlViWGk20llwRa9VK4r+S2pD4fJOojBPcca7NSiq/Emd6QyqzpJQ1QinCjfv/bpqmDxxViaS
+ fAQAA
+X-Change-ID: 20250226-syscon-reboot-reset-mode-566588b847e1
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue 01-04-25 11:35:56, Christian Brauner wrote:
-> On Tue, Apr 01, 2025 at 11:16:18AM +0200, Jan Kara wrote:
-> > > ---
-> > >  fs/ext4/mballoc.c | 2 +-
-> > >  fs/ext4/super.c   | 3 ---
-> > >  2 files changed, 1 insertion(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> > > index 0d523e9fb3d5..ae235ec5ff3a 100644
-> > > --- a/fs/ext4/mballoc.c
-> > > +++ b/fs/ext4/mballoc.c
-> > > @@ -6782,7 +6782,7 @@ static ext4_grpblk_t ext4_last_grp_cluster(struct super_block *sb,
-> > >  
-> > >  static bool ext4_trim_interrupted(void)
-> > >  {
-> > > -	return fatal_signal_pending(current) || freezing(current);
-> > > +	return fatal_signal_pending(current);
-> > >  }
-> > 
-> > This change should not happen. ext4_trim_interrupted() makes sure FITRIM
-> > ioctl doesn't cause hibernation failures and has nothing to do with kthread
-> > freezing...
-> > 
-> > Otherwise the patch looks good.
-> 
-> Afaict, we don't have to do these changes now. Yes, once fsfreeze
-> reliably works in the suspend/resume codepaths then we can switch all
-> that off and remove the old freezer. But we should only do that once we
-> have some experience with the new filesystem freezing during
-> suspend/hibernate. So we should place this under a
-> /sys/power/freeze_filesystems knob and wait a few kernel releases to see
-> whether we see significant problems. How does that sound to you?
+This series updates syscon-reboot to support warm/soft and cold/hard
+reboot on gs101-based boards (Google Pixel 6 and Pixel 6 Pro).
 
-I agree that enabling this with some knob to allow easy way out if things
-don't work makes sense. And the removal of kthread freezing can be done
-somewhat later when we are more confident filesystem freezing on
-hibernation is solid.
+Linux supports a couple different reboot modes, but syscon-reboot
+doesn't distinguish between them and issues the same syscon register
+write irrespective of the reboot mode requested by the kernel.
 
-								Honza
+This is a problem when platforms want to do a cold reboot most of the
+time, which could e.g. wipe RAM etc, but also want to support rebooting
+while keeping RAM contents in certain cases.
+
+On gs101, this can be implemented using different syscon register
+writes.
+
+As Rob pointed out in [1], register access shouldn't be encoded into
+DT, though. At the same time, at least on gs101, the difference is just
+different register values in different registers. Therefore these
+patches:
+
+    * add a new compatible for gs101 reset. In [2], Krzysztof suggested
+      to simply add that to the existing generic binding
+    * update the generic syscon reset driver to support this new
+      compatible 'google,gs101-reboot'. In this case, and as suggested
+      in [1], the syscon writes are then deducted from the compatible,
+      rather than parsing them from DT.
+
+The existing generic syscon-reboot driver seems like a suitable place
+to add support for that, given all of this is straight forward and
+simple and similar to the existing code. If the preference is to have a
+separate driver copying much of the existing generic syscon-reboot
+driver code instead, please let me know.
+
+Link: https://lore.kernel.org/all/20250227132644.GA1924628-robh@kernel.org/ [1]
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v5:
+- Krzysztof:
+  - drop gs101-specific schema and add the new compatible to the
+    generic syscon-reboot schema, with all appropriate follow-up
+    changes to it
+  - reuse existing syscon-reboot node for gs101 in exynos-pmu schema,
+    don't introduce a new one
+- Link to v4: https://lore.kernel.org/r/20250328-syscon-reboot-reset-mode-v4-0-77ba57703ace@linaro.org
+
+Changes in v4:
+- Rob:
+  - don't add more properties to existing 'syscon-reboot' compatible /
+    binding
+  - add specific binding for 'google,gs101-reboot' compatible and
+    related driver changes
+- Link to v3: https://lore.kernel.org/r/20250227-syscon-reboot-reset-mode-v3-0-959ac53c338a@linaro.org
+
+Changes in v3:
+- support <reset-mode>-reg in driver, not just in binding, doh...
+- correctly parse <reset-mode>-offset
+- add a comment for all the BUILD_BUG_ON() checks
+- Link to v2: https://lore.kernel.org/r/20250226-syscon-reboot-reset-mode-v2-0-f80886370bb7@linaro.org
+
+Changes in v2:
+- fix whitespace issues in binding
+- Link to v1: https://lore.kernel.org/r/20250226-syscon-reboot-reset-mode-v1-0-91c1b62166ae@linaro.org
+
+---
+André Draszik (2):
+      dt-bindings: reset: syscon-reboot: add google,gs101-reboot
+      power: reset: syscon-reboot: add gs101-specific reset
+
+ .../bindings/power/reset/syscon-reboot.yaml        | 42 +++++++---
+ drivers/power/reset/syscon-reboot.c                | 98 +++++++++++++++++-----
+ 2 files changed, 107 insertions(+), 33 deletions(-)
+---
+base-commit: db8da9da41bced445077925f8a886c776a47440c
+change-id: 20250226-syscon-reboot-reset-mode-566588b847e1
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+André Draszik <andre.draszik@linaro.org>
+
 
