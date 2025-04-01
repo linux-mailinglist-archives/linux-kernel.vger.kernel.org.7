@@ -1,68 +1,67 @@
-Return-Path: <linux-kernel+bounces-584099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76452A78342
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5086A78349
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A204D3AE041
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B203ADAA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33506213230;
-	Tue,  1 Apr 2025 20:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5D9213230;
+	Tue,  1 Apr 2025 20:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SheM3Mig"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cLhQmB52"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494DA20126C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCF0211299
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743539242; cv=none; b=Cxwc/oSe95X2RQw3s5hJ2sev960WwTeTgxrLbQ+4/PJoJTPWZI1WoNYD7x7T0YK+9SsOXdsLtmRIM3n9rn7Mwxnqre+luU4wDzfF4tDUw8w/57ADdIZyEcTxsfv0859nWYal5Dwmrj7mp2z/coOAscAnAISZXxmf1EPK740U7Ms=
+	t=1743539341; cv=none; b=o5cbo8VRHY3jgV+cYFdel+86EMu1AwaOqykEIvx0aNZp2B/QJkgMru5tUN9XGa/LtO3CTgJpH4lFTTQw7W5ao0tIAe+GTujBypzDkbM+pKFH5H6HNGr6iTyliSYJck1RfgdD1olU5NSlPUeQp6uGQ6eysBazCPfznxgPVKAGumM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743539242; c=relaxed/simple;
-	bh=ls5qZCb42mdenHEt70taljAg+gpCpFTv/mhHrJQzPlc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=EF1f7Vsd8Po7DPos4p9MdvKHgX9o/vvXO6P/dTIBYzS2nA5cki1DPMxnJZUk3RA/AjuJXFFJFN4Mp6Io1iK73tHaPEm7yG6k0HwxC3cO2gvVAyYDO/HT3gumJItMgTOTrh1HWAAo6okGuAQ8ehW8Izr8j1ZivGOP9Vx6sv45Sdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SheM3Mig; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1743539341; c=relaxed/simple;
+	bh=TDQGYHYzTXG72qqa+FOFZk8SvqywdenK5AAn0IsR/bs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gCyodp87FvoZYOE36sUZb0LmDNY73SSTnd2Sl8nT7ytE2HVa9Yj8G3IP8FJrk4TmIwcAbewvxGp16nxm0Fkk02x5g5ze9f9IubF0GJbqnfu/lKI235a2SpldqJCGDC7pJGrRbuVdgHt6OC9yTNunGTy3YIK3X4JtkUeHkaQnwSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cLhQmB52; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2262051205aso85658255ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 13:27:21 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22410b910b0so86802855ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 13:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743539240; x=1744144040; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+        d=google.com; s=20230601; t=1743539339; x=1744144139; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=CrKgWnMbesTBpg6SuAlZsn2snjKZtTa3nvJ1nzvzfeU=;
-        b=SheM3MigByrNTRjrERbiqOnqCVRghjYQc26Ul14+lV8iVpo+5/GrbZTmbnO6sAL2Om
-         bOQtFITA/8ebVJGns70La4HbPKlRvBMRZM2NWuA9y+kMwuu18I0VOzwqt7SsXy0Ya46t
-         Ri0jzdfzCB+X/ry0dHFeMvI+LrV+4v4NJpcvkiimBuUYCr4fLeM9NEEPNeDtX4Px/9Yk
-         ZPZ8D4msrBqlUPhyRRYsQ0mOSo5wh+AvyXyEUC1EJpGDAZVaBYsDFjAIdmvDt1OiSset
-         iwkBMFkzc3eAZd/1wBZMpgvRviXAhxLpx3kcGU7D0rYN6Yar13aQgpdpiNOM9iVo95qk
-         I9jw==
+        bh=zj3tU7hEK8R3guZHUC3J4JBA+NmfHHOtD45E8t6ZNdM=;
+        b=cLhQmB52MlK7fBVIJrdI631OgtvlGvwQ7alIVcfK23a6p2vEYdavs4hEoCH/7cmCBU
+         yCL+wcuFkTZWoyVbWmQQh6gfnUcpWmEEpi10LFa1yLe0vRtDwr0idxgOu2E16v+MOeDW
+         XiXD2yeVFazahNvdRGssIlYskwgGYEyZZ5zrPKAdw9aMw+QIXapzKcplBBCo2VZZx4Kk
+         FT8rv7mZHoT2HEMmLzjLEUc1ZtP514Pdr3FTCv06E27DBjKWXlbWlprPWeHc2WnsNVW3
+         e1wVpaDnFpbHYKLBq1uFyBXqx4yhcpd3sr6DXwErxKvooCBDOFew+skdSgf6U9MWnpG6
+         cFRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743539240; x=1744144040;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1743539339; x=1744144139;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CrKgWnMbesTBpg6SuAlZsn2snjKZtTa3nvJ1nzvzfeU=;
-        b=IHrnkxirA6KJUT4sEEQ0jBzPNAowBvzEuCDoz0oyJ7yhd1rQuM87eawkPl1s+V2I9b
-         06Wi21QqxJJVr2zTpkRKK9Nq25CisZtW+bNz7D2fzdM/Ja2KObWGoC6YEZVxtMkLgLcy
-         SIVAfMyUrNEmc5N03UP/sR7LQ9eyxAWYDimaKKmun0n/JjftfYMXWtPriUww/Y/JP41W
-         qEYsB3Lbyu2zWdxcSX8+/+LPQQEbRcONaHYNm3YM5v/M+1zhikQ0dYv1LYGvopFKdYA8
-         auVkI+zqbTQFVp1IbN4FzBGC8WLA/3jxK4DtEnKKLR1dMlvG/SuS/OZ5iLOIjJrFowhg
-         7dWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWY//S6F/1HMry08tanZW2PTlvuG+3OJiyjYPsjaZAo6z0rnCKJvwpblDfTc7nqMP//0xTDIj/yZOpcDgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+jJT/vO/TYEnrRrzJuQI5/Qff9rvk+s8JGlRIAsH21ae/99uK
-	S/UCEqBMDY2evBTUeKKmwd0rQZ2RK+W4SeZUjy2yLChFqoaM9iFffzQiEeemZb9Z1Dd0YCIoluo
-	nAXahqA==
-X-Google-Smtp-Source: AGHT+IHdcXtWotKjnkHzQvM1nTk8QOmr4msmXRENMRa8HKqr5N+tkus6bKggdN1PfI5aOLhiVYHsBd+zNXe5
-X-Received: from pjvf6.prod.google.com ([2002:a17:90a:da86:b0:2fc:2ee0:d38a])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22c4:b0:224:6a7:a5b0
- with SMTP id d9443c01a7336-2292f944df8mr214304305ad.2.1743539240555; Tue, 01
- Apr 2025 13:27:20 -0700 (PDT)
-Date: Tue,  1 Apr 2025 13:27:15 -0700
+        bh=zj3tU7hEK8R3guZHUC3J4JBA+NmfHHOtD45E8t6ZNdM=;
+        b=fYFqGpGTYRWLPensgSIeQ2uMHTYmzWpNjOJ9iHtNGpZCwD4DTPKtIh+4MDB/cRz7bj
+         hN+Y/EPBzfk6uMZzGQJuvMxZ88tjo/dryUl3tWk2ZrKpZCiz0whF/JYuzdCRMwkUxWxg
+         KMnx9v6xOG0P1gSKdmSVPHhv7bfz7W+nSA7j8djl8o2aioWbDL6yNDZuukuCw9ZTXS4k
+         8O7Ot8D1+fRYkcZR+z27Z++sgFfXzzjgVcsF18MPMyskgbgl739d10lPnpLn34o3CFkX
+         TIccByii3LDwcbxoqyougtudtBPu+a2YQ88/PEkPVslvHHagE8Gk4X2fibWYMfUqg9bJ
+         Ipog==
+X-Gm-Message-State: AOJu0Yxo26qkG+6hZmUhKXtHZYWAxWqlJOP7N3ZCmFFRkksE4iNi86IP
+	5SfXEFhKPxYaPzYHa0R06NH7fLfsnfJcYxfkzZkQZ7gq6T1uT4VPzXMJNiUXy3OL17l3KOLhfIl
+	iYmTvJQ==
+X-Google-Smtp-Source: AGHT+IEzplZtwSprqpxxDIWfAcjWWNicwtbmwc4UJrb1Vkh7U1dTlw9w8CTM4B67Uz8PVGHSVKLvadxdvxK4
+X-Received: from plvx10.prod.google.com ([2002:a17:902:9a4a:b0:223:6c8e:eaf1])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e887:b0:223:f408:c3f8
+ with SMTP id d9443c01a7336-2292f960348mr239426295ad.14.1743539339374; Tue, 01
+ Apr 2025 13:28:59 -0700 (PDT)
+Date: Tue,  1 Apr 2025 20:28:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,63 +69,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401202715.3493567-1-irogers@google.com>
-Subject: [PATCH v1] perf trace: Fix some more memory leaks
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Message-ID: <20250401202846.3510162-2-ynaffit@google.com>
+Subject: [PATCH v4] binder: use buffer offsets in debug logs
+From: "Tiffany Y. Yang" <ynaffit@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	"Tiffany Y. Yang" <ynaffit@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The files.max is the maximum valid fd in the files array and so
-freeing the values needs to be inclusive of the max value.
+Identify buffer addresses using vma offsets instead of full user
+addresses in debug logs or drop them if they are not useful.
 
-Add missing thread__put of the found parent thread in
-thread__e_machine.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- tools/perf/util/thread.c   | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 58a2ce3ff2db..c02ea4e8b270 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1657,7 +1657,7 @@ static const size_t trace__entry_str_size = 2048;
+V3 -> V4: Replace alloc.buffer with alloc.vm_start
+V2 -> V3: Drop transaction data addresses
+V1 -> V2: Resend to mailing lists
+
+ drivers/android/binder.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 5fc2c8ee61b1..91adf18675a1 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3261,20 +3261,16 @@ static void binder_transaction(struct binder_proc *proc,
  
- static void thread_trace__free_files(struct thread_trace *ttrace)
- {
--	for (int i = 0; i < ttrace->files.max; ++i) {
-+	for (int i = 0; i <= ttrace->files.max; ++i) {
- 		struct file *file = ttrace->files.table + i;
- 		zfree(&file->pathname);
- 	}
-@@ -1703,6 +1703,7 @@ static int trace__set_fd_pathname(struct thread *thread, int fd, const char *pat
+ 	if (reply)
+ 		binder_debug(BINDER_DEBUG_TRANSACTION,
+-			     "%d:%d BC_REPLY %d -> %d:%d, data %016llx-%016llx size %lld-%lld-%lld\n",
++			     "%d:%d BC_REPLY %d -> %d:%d, data size %lld-%lld-%lld\n",
+ 			     proc->pid, thread->pid, t->debug_id,
+ 			     target_proc->pid, target_thread->pid,
+-			     (u64)tr->data.ptr.buffer,
+-			     (u64)tr->data.ptr.offsets,
+ 			     (u64)tr->data_size, (u64)tr->offsets_size,
+ 			     (u64)extra_buffers_size);
+ 	else
+ 		binder_debug(BINDER_DEBUG_TRANSACTION,
+-			     "%d:%d BC_TRANSACTION %d -> %d - node %d, data %016llx-%016llx size %lld-%lld-%lld\n",
++			     "%d:%d BC_TRANSACTION %d -> %d - node %d, data size %lld-%lld-%lld\n",
+ 			     proc->pid, thread->pid, t->debug_id,
+ 			     target_proc->pid, target_node->debug_id,
+-			     (u64)tr->data.ptr.buffer,
+-			     (u64)tr->data.ptr.offsets,
+ 			     (u64)tr->data_size, (u64)tr->offsets_size,
+ 			     (u64)extra_buffers_size);
  
- 	if (file != NULL) {
- 		struct stat st;
-+
- 		if (stat(pathname, &st) == 0)
- 			file->dev_maj = major(st.st_rdev);
- 		file->pathname = strdup(pathname);
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 89585f53c1d5..415c0e5d1e75 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -471,6 +471,7 @@ uint16_t thread__e_machine(struct thread *thread, struct machine *machine)
+@@ -4223,20 +4219,21 @@ static int binder_thread_write(struct binder_proc *proc,
+ 			if (IS_ERR_OR_NULL(buffer)) {
+ 				if (PTR_ERR(buffer) == -EPERM) {
+ 					binder_user_error(
+-						"%d:%d BC_FREE_BUFFER u%016llx matched unreturned or currently freeing buffer\n",
++						"%d:%d BC_FREE_BUFFER matched unreturned or currently freeing buffer at offset %lx\n",
+ 						proc->pid, thread->pid,
+-						(u64)data_ptr);
++						(unsigned long)data_ptr - proc->alloc.vm_start);
+ 				} else {
+ 					binder_user_error(
+-						"%d:%d BC_FREE_BUFFER u%016llx no match\n",
++						"%d:%d BC_FREE_BUFFER no match for buffer at offset %lx\n",
+ 						proc->pid, thread->pid,
+-						(u64)data_ptr);
++						(unsigned long)data_ptr - proc->alloc.vm_start);
+ 				}
+ 				break;
+ 			}
+ 			binder_debug(BINDER_DEBUG_FREE_BUFFER,
+-				     "%d:%d BC_FREE_BUFFER u%016llx found buffer %d for %s transaction\n",
+-				     proc->pid, thread->pid, (u64)data_ptr,
++				     "%d:%d BC_FREE_BUFFER at offset %lx found buffer %d for %s transaction\n",
++				     proc->pid, thread->pid,
++				     (unsigned long)data_ptr - proc->alloc.vm_start,
+ 				     buffer->debug_id,
+ 				     buffer->transaction ? "active" : "finished");
+ 			binder_free_buf(proc, thread, buffer, false);
+@@ -5053,16 +5050,14 @@ static int binder_thread_read(struct binder_proc *proc,
+ 		trace_binder_transaction_received(t);
+ 		binder_stat_br(proc, thread, cmd);
+ 		binder_debug(BINDER_DEBUG_TRANSACTION,
+-			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd ptr %016llx-%016llx\n",
++			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd\n",
+ 			     proc->pid, thread->pid,
+ 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
+ 				(cmd == BR_TRANSACTION_SEC_CTX) ?
+ 				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
+ 			     t->debug_id, t_from ? t_from->proc->pid : 0,
+ 			     t_from ? t_from->pid : 0, cmd,
+-			     t->buffer->data_size, t->buffer->offsets_size,
+-			     (u64)trd->data.ptr.buffer,
+-			     (u64)trd->data.ptr.offsets);
++			     t->buffer->data_size, t->buffer->offsets_size);
  
- 		if (parent) {
- 			e_machine = thread__e_machine(parent, machine);
-+			thread__put(parent);
- 			thread__set_e_machine(thread, e_machine);
- 			return e_machine;
- 		}
+ 		if (t_from)
+ 			binder_thread_dec_tmpref(t_from);
 -- 
 2.49.0.504.g3bcea36a83-goog
 
