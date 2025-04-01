@@ -1,106 +1,112 @@
-Return-Path: <linux-kernel+bounces-583353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF57EA779C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:42:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6025BA779D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0FC3ADE8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:40:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606E01890FB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B8F1FBEA4;
-	Tue,  1 Apr 2025 11:40:17 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA611FC7D0;
+	Tue,  1 Apr 2025 11:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YZkRXg9H"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC3F1FBCB5;
-	Tue,  1 Apr 2025 11:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933091FBE8C;
+	Tue,  1 Apr 2025 11:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743507617; cv=none; b=M6HS5eyzg06VMhIdZFj2KacFXnxsNJ94gAk7CcxJJ/h3yxTnCBjw3nhEOZi/Au9ElA+CSETWAQRxOEa9eg+qZtAzb28qQecVe85kU5IIQBDob8iSwMzmihZlaXV7bI3OpxY/lv1ryG+F43GBd5nBzSGYIdh0AkeYT9Q8Hb+g0FM=
+	t=1743507685; cv=none; b=pVoVjHhCc0QS2SMGF1J+JJP/CE/KPvSd9C0gUgBGsAaWA/DRigH9sLCpE7jKA45vPtjpHAdy/qSf6UsV3L3yCjbZh4bEW2JoG8PM90761K2TceTP+a4L2wrqMyeZbBj9WtoNGn1UZzVWIgDE+bLUVH3GKzjj9aJbdsTlf46g1CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743507617; c=relaxed/simple;
-	bh=ue7d8jD61yTTpVj7zd3g8WpLQYet8HY+YF7kTXHT4vo=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=hc1EscqAZMLy3ELgB3pDb7CS8f1jrcPThE6qHXPhCFJPs0RQqoB8nR2uZww9QTIO1x7x2yIuMitOZ4WkcY2STD/W08c5XJmC3axaIdrok/MJtsABVXli9wN5JgI+J2LEcjQ0npaFg/g474IDVsnIW8XixM4PJggPRZ/UJPAlZrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZRmJY3zdRz5B1KR;
-	Tue,  1 Apr 2025 19:40:13 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 531Be38U094450;
-	Tue, 1 Apr 2025 19:40:04 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 1 Apr 2025 19:40:06 +0800 (CST)
-Date: Tue, 1 Apr 2025 19:40:06 +0800 (CST)
-X-Zmail-TransId: 2afb67ebd09627d-9a1f2
-X-Mailer: Zmail v1.0
-Message-ID: <20250401194006848hzqFNLT61SYyidkSwwH4C@zte.com.cn>
-In-Reply-To: <20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn>
-References: 20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn
+	s=arc-20240116; t=1743507685; c=relaxed/simple;
+	bh=/IC1LsffOY4RL71900LX2YVS0C9UkwUhF8RqesER1tM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cvMRKR59u0A8vjUW1ofTS1Tth4K9B6Xd7dylte0H9BWFKN3ERTiUjmL661hCROz713asxVUJFGtxLCZ5GmigZ4dGLYLJTnORtvwv2Fn6W1uXGi0X8VCSa+N3Hbu+ryND+nqaBtYSnHX5YmM2/IR+dE6jPe7tkMwRAHxta2Jx64I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YZkRXg9H; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 531Bf2Jd3651996
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 1 Apr 2025 06:41:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743507662;
+	bh=P69NXiJFBn0YyMxukcSeHdHcWpvgS8s4dKJpRN1Hd40=;
+	h=From:To:CC:Subject:Date;
+	b=YZkRXg9H+2TBuV5NppnDcqm/Rs7LbgNxi4FdwzWdkETCwThaDI7Ht+IOJ3Pr1rf1b
+	 vGIqgldD3VSKoSxW5slX3TzUFodx9HkTw3OJjamsMYjdvF9DTDocylNgpjbaYjeyOo
+	 Wj0PpwgCDwXm0E/yc5PrKtcrh+toaEAAlUHDxfvE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 531Bf2ZM065228
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 1 Apr 2025 06:41:02 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Apr 2025 06:41:02 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Apr 2025 06:41:02 -0500
+Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 531Bevm0099961;
+	Tue, 1 Apr 2025 06:40:58 -0500
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <jai.luthra@linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <u-kumar1@ti.com>, <y-abhilashchandra@ti.com>
+Subject: [PATCH 0/5] Fix dtbs_check warnings in CSI overlays
+Date: Tue, 1 Apr 2025 17:10:48 +0530
+Message-ID: <20250401114053.229534-1-y-abhilashchandra@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <miquel.raynal@bootlin.com>, <jckuo@nvidia.com>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>, <xie.ludan@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIDIvMl0gcGh5OiB0ZWdyYTogeHVzYjogVXNlwqBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2VfYnluYW1l?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 531Be38U094450
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67EBD09D.001/4ZRmJY3zdRz5B1KR
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Xie Ludan <xie.ludan@zte.com.cn>
+There are a bunch of new warnings generated using CONFIG_OF_ALL_DTBS.
+This configuration applies DTB and overlay together to generate test DTBs,
+which are then validated using dtbs_check.
 
-Introduce devm_platform_ioremap_resource_byname() to simplify resource
-retrieval and mapping.This new function consolidates
-platform_get_resource_byname() and devm_ioremap_resource() into
-a single call, improving code readability and reducing API call overhead.
+This patch series fixes all warnings related to sensor overlays on
+jacinto platforms and a few minor warnings on sitara as well.
 
-Signed-off-by: Xie Ludan <xie.ludan@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/phy/tegra/xusb-tegra186.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+To fix some of the warnings, missing power regulator nodes are added on
+the J721E-SK and the regulator hierarchy on the AM68-SK is corrected.
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index fae6242aa730..6586472866e2 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -1485,7 +1485,6 @@ tegra186_xusb_padctl_probe(struct device *dev,
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra186_xusb_padctl *priv;
--	struct resource *res;
- 	int err;
+IMX219 Logs: https://gist.github.com/Yemike-Abhilash-Chandra/b13caae87c0c148b5643df5baba0d90c
+OV5640 Logs: https://gist.github.com/Yemike-Abhilash-Chandra/7801f74d28ed5895a15049ce9f0fbe60
 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -1495,8 +1494,7 @@ tegra186_xusb_padctl_probe(struct device *dev,
- 	priv->base.dev = dev;
- 	priv->base.soc = soc;
+Yemike Abhilash Chandra (5):
+  arm64: dts: ti: j721e-sk: Add DT nodes for power regulators
+  arm64: dts: ti: am68-sk: Fix power regulator hierarchy
+  arm64: dts: ti: k3-j721e-sk: Fix dtbs_check warnings in IMX219 overlay
+  arm64: dts: ti: k3-am62x: Fix a few minor dtbs_check warnings in
+    IMX219 overlay
+  arm64: dts: ti: k3-am62x: Rename I2C switch to I2C mux in OV5640
+    overlay
 
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ao");
--	priv->ao_regs = devm_ioremap_resource(dev, res);
-+	priv->ao_regs = devm_platform_ioremap_resource_byname(pdev, "ao");
- 	if (IS_ERR(priv->ao_regs))
- 		return ERR_CAST(priv->ao_regs);
+ .../boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso  |  3 +-
+ .../boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso  |  2 +-
+ .../dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso  |  2 +-
+ .../boot/dts/ti/k3-am68-sk-base-board.dts     | 13 ++++++-
+ .../dts/ti/k3-j721e-sk-csi2-dual-imx219.dtso  | 35 +++++++++++++++++--
+ arch/arm64/boot/dts/ti/k3-j721e-sk.dts        | 31 ++++++++++++++++
+ 6 files changed, 79 insertions(+), 7 deletions(-)
 
 -- 
-2.25.1
+2.34.1
+
 
