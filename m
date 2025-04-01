@@ -1,275 +1,92 @@
-Return-Path: <linux-kernel+bounces-582954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5877DA77486
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7249FA7747A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF8B188DBE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E49716AAF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17791E7C10;
-	Tue,  1 Apr 2025 06:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062891E2606;
+	Tue,  1 Apr 2025 06:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZsQMq8Yw"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay1vSseR"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAC619D8AC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 06:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD4B131E2D;
+	Tue,  1 Apr 2025 06:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743489038; cv=none; b=iSuTvuAh0cK6LHb5vc5eqzftyUXi/1m1TkgWuqZhJioFP/zXzjjcIQG4TK3eV1T8GFLnQISTFJ2dnB5CUb9HXrY9ilXzoL73XdeOna03v9Gej53NMLP5JHJE4EMwKfr89OHic1cEb7aYzw1nU4UH2ZN6fdxluZqSx/lAvC4+9dI=
+	t=1743488958; cv=none; b=Dvh5QfTwTV5HitwO+9fttueyWEAM6UO4BOOrWmjf+PuAAorPf1HLAa/G5e1XMp/y+lO/96ZtmJHQ3Ueh889M7UIjOQKyzE18tpUlqqEqGzFHNmRKoy6k3XLCTGRYSR9A/wH5QYDrSnr8t7noTZnZM4gqLJDoEgP5M3okSn7WaFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743489038; c=relaxed/simple;
-	bh=J/M6ym/3HaB2IbGY1t1wGYKVKwUFdldUw+cz1/kEueA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CiguxD9kafk01pAxNjJmoC+5gDv2pWEvZEeiZit6Sitkln2FBR0hwGjdeF4y9fH85HBz0hdJsv1p/hmfiwsQ5rxEno+CxIr6qXtqvwJXqxU9IGcuXcJn3id5xd/Th+8TlKtZvYkExT00A8dNyvlRl2cf3QweyOtlN9c4Y07xRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZsQMq8Yw; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff8119b436so9510721a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 23:30:36 -0700 (PDT)
+	s=arc-20240116; t=1743488958; c=relaxed/simple;
+	bh=TVeq6PNEiePIMl+ttaOJNKTUK4jVxSm94Q1sT2OShj8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=E5/qVLKe9b3LzmubjzLeGvArovHrU8Ao0Z2MU6AbedxUDFbwPW0LCVHU2IPGI5Fc89KLE2T7K2WBfvVOsjFG3aC0oVncKu9q3wymUHEjR6L11TPMG0S7/H9ipVuLhsbeCFcc9G8yOEHI4suBu3AJZqSL+LzzCxiCFc2V6eWBW9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay1vSseR; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso49798571fa.3;
+        Mon, 31 Mar 2025 23:29:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743489036; x=1744093836; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiFiSExmIpswe63JqhLJ7F3T/vXcNa8/l4kRqI6BHnI=;
-        b=ZsQMq8YwldqdPww2aNNCtLvgl8PDT8tmJiIUQ1Y+v5kcO5/3+yiDquHKfU9TvvSrIS
-         9o+MpZnuwTdxFExXq4WShoHwDscjDk+56zIorLOk4BAgedSwI/tgBgcif/j838Wij1Fb
-         kHXKjkoPnsLLc50iQ+3dHPdbuN0NI1riP4wKYltSI1eDh3cZbXwmefwu0boPugjN8eNI
-         t+7bRq5wrVYlBe3sobaRgbWy0zFEgsxDRnXXzXvoHwptMQnbJxlES8r9DNpAUJHUGzRz
-         93NuCAz6qkf0lPlJ6DebT0ribC8VkiFRFfdvFt3A8Tv6cPCE5GmTLy78pH0u5gK0LERD
-         Z1+A==
+        d=gmail.com; s=20230601; t=1743488953; x=1744093753; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
+        b=Ay1vSseRX3sXHw3vrVXZjaJPpdE5d8R4b51dc/GVakt3StvfgUlVrXqqZoBBYnmHNh
+         yqQbDI/Y5pdJZCYVxpaoZE6Ic9+sPjBuQjJfOk8x1HOc1/jGErp60ixtk4qsTc5ZJ4QC
+         fiWAh9EtRw21GV/HsUV2xxNh0UkNdQbiArTombIFgahsjo6VdDNCVtNCYf1rxgSwpodw
+         zfPIpmvuysvcdg/FR0xYBvrh0T5rHW8v9AwpPIdJfK8aWoVmGznLRwfmiKTB2M9FEkCp
+         av34MWgsf0MBx9yJeWa7WzHDy9Th9wIjkjjd3V/tplsyblPM199YXaY22/li+jQt6sJO
+         xy0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743489036; x=1744093836;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiFiSExmIpswe63JqhLJ7F3T/vXcNa8/l4kRqI6BHnI=;
-        b=NcNS6ATfTE6QOTmFxVv2joBW/nLmQEWp5Upz3brofiqoAkWYVzafUeeE/O9zeuaIcO
-         C/wphG9/wbL6cXFRFxVG3l4m4meeuoxBgnEDb7cgxG/00lhuMJg7y+wfnIE1JzT9tZYY
-         xjMZSfMTnXDvN85pBaZqhuTMP2XAsHvwtHOitcSBQE+e4HZoJ7hechKKT6qkp6Xid2dZ
-         q/8P5ZEE/fqeOJ7B/yVAj16nGt2ElWBdKdS9N8pDz60oiunNQdOutbRp+qHWITuiHiAm
-         wDPLLQfu6icWH9aHiwYsryBn0qPDiAup+71EAor2UWKf+JT3f1ykxBCRxLwB34BluJ7h
-         DOVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsH/6BvOeDka7DWWrlxIXw0v4XmxXtDa1Re1GMLTPd+o907OCBV2+k0o2REMPEKUbAVQK6N97oLUO/DsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv7fXJbIbGoAkYh+h9PX+Gi4XOSAqhIATrfzezOmLCQSxnjLqr
-	TgpD9gjurVi/pTTeaOAHgEBsdwZznZbO9azfnvCDNe9tpYEryFJPiWolk1hO3a5Jabi0/ZEPT0R
-	hpQzITpmwBQo4lw==
-X-Google-Smtp-Source: AGHT+IGxI/ecbNMCBfYfN5C+BPG5kYRSq6a1FOzanRyj9Idz2E8lANjOYdUW6OJTmUG8JPe4h77qtxE+xQa7zhg=
-X-Received: from pgbg26.prod.google.com ([2002:a63:521a:0:b0:aee:900e:e3d6])
- (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:3953:b0:1f6:6539:e026 with SMTP id adf61e73a8af0-2009f5fe141mr16978771637.15.1743489035752;
- Mon, 31 Mar 2025 23:30:35 -0700 (PDT)
-Date: Tue,  1 Apr 2025 06:22:42 +0000
-In-Reply-To: <20250401062951.3180871-1-guanyulin@google.com>
+        d=1e100.net; s=20230601; t=1743488953; x=1744093753;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iNphk2i9eSGihLD4c/ofcPRkoFOwL4x5wS5sCwun4uQ=;
+        b=tkroVjuwBNpZyXqn0++hUb3aaSmyErpjENM57SBzD+jn1e8lIOfzbqr1xqVwyWH5+K
+         JW1+zC0S48OuWdCw+ZCTZKTaVp00O3PndVhsN5aaqYlLSsiim51/lGsXehXao9m+1CBe
+         wgOfk+CuFXG1qjNEIzZWpXosPBTXQQYQxpHhjLiLkGkdW/c+pQnHHlQVHjbySYo3CA45
+         Uug6po4ll1rLQg2qr2v93sqdmkR1b5zVCvSzrYWfqxBtY2Cd/1WW3fGOzqsU65O0F364
+         z4EECaIEnxDGxlv00Y8Vz05axX14DV+WwkLenElcHDFyxpIrYS15NMfzXzg1UfIrtVpN
+         AXsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmhse57UEygeMLn6ayQSEdOSj/oiCyN3BbAOV5CQRGGddckmZVDZ55HlPwJB72z6ohuNHdzYQuzi0RIaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPv2FpJmrkZLE4eRbTjetDFI1K8At3JDzvkHB4GeIyBJmuy5d
+	XLnYW4lFr+lXrxswYNcVI80D/curI1x1dLtevwRTbZQU40tZKZhULbZ1LOQy3z+3NeCp6t3uPxA
+	zjXUnwAMHKhE6B+uqLsM+gW7dGi+UPw==
+X-Gm-Gg: ASbGncv7ocwwOEYhYfnqZcFGxJedebnqH6v7fAgHAlkDddZTRHay8mxIFWjrPe6WEG+
+	2MnogFSeJKnTPoSBfixN51dAqWSd5s724tiGIRZPKhE0G6i6iVc95DyHP4SrKiqdGscGuZ8NNTb
+	08qIrE8qRKQMzlE5ajakBOJ5WTWizHiabw9jU0QmTInD6p7WnspcAsA6V2KLWk
+X-Google-Smtp-Source: AGHT+IHHb33VIGfYVihNIXGdVHC752JKSHLPixUm9AyM/V+3XusGXkJRkjpV7z3RF2DVCGWi7oJJOKFLv5ekMkl21bA=
+X-Received: by 2002:a05:651c:2210:b0:30b:bb45:6616 with SMTP id
+ 38308e7fff4ca-30de0313c4fmr38698831fa.29.1743488952364; Mon, 31 Mar 2025
+ 23:29:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250401062951.3180871-1-guanyulin@google.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250401062951.3180871-5-guanyulin@google.com>
-Subject: [PATCH v10 4/4] usb: host: enable USB offload during system sleep
-From: Guan-Yu Lin <guanyulin@google.com>
-To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
-	stern@rowland.harvard.edu, sumit.garg@kernel.org, kekrby@gmail.com, 
-	jeff.johnson@oss.qualcomm.com, elder@kernel.org, quic_zijuhu@quicinc.com, 
-	ben@decadent.org.uk
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guan-Yu Lin <guanyulin@google.com>
+MIME-Version: 1.0
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 1 Apr 2025 01:29:01 -0500
+X-Gm-Features: AQ5f1JrTpZiZZL9PwfxIh7sDKeUI2uOIEH5Ba6569lQs35KVPC0DdGGw8xtrPx4
+Message-ID: <CAH2r5muupgCHf99YziMCFrjYY0EJbT9W74TmUq74BtfR6kmOLA@mail.gmail.com>
+Subject: test generic/074 slowdown with current mainline
+To: CIFS <linux-cifs@vger.kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Sharing a USB controller with another entity via xhci-sideband driver
-creates power management complexities. To prevent the USB controller
-from being inadvertently deactivated while in use by the other entity, a
-usage-count based mechanism is implemented. This allows the system to
-manage power effectively, ensuring the controller remains available
-whenever needed.
-In order to maintain full functionality of an offloaded USB devices,
-several changes are made within the suspend flow of such devices:
-- skip usb_suspend_device() so that the port/hub are still active for
-  USB transfers via offloaded path.
-- not suspending the endpoints which are used by USB interfaces marked
-  with needs_remote_wakeup. Namely, skip usb_suspend_interface() and
-  usb_hcd_flush_endpoint() on associated USB interfaces. This reserves a
-  pending interrupt urb during system suspend for handling the interrupt
-  transfer, which is necessary since remote wakeup doesn't apply in the
-  offloaded USB devices when controller is still active.
-- not flushing the endpoints of actively offloaded USB devices. Given
-  that the USB devices is used by another entity, unilaterally flush the
-  endpoint might lead to unexpected behavior on another entity.
-- not suspending the xhci controller. This is done by skipping the
-  suspend/resume callbacks in the xhci platform driver.
+I noticed that test generic/074 (which runs fstest with various
+options) runs almost twice as slow with current mainline, compared
+with 6.14 over smb3.1.1 mounts.  It doesn't appear to be related to
+changes to cifs.ko (as the cifs.ko code is almost identical in the
+test runs I did).  Anyone else noticing a perf regression for this?
 
-Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
----
- drivers/usb/core/driver.c    | 33 +++++++++++++++++++++++++++------
- drivers/usb/host/xhci-plat.c | 19 +++++++++++++++++++
- drivers/usb/host/xhci-plat.h |  1 +
- include/linux/usb.h          |  2 ++
- 4 files changed, 49 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 2ba033bf7e4e..678106e1c520 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -1420,11 +1420,20 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 			udev->state == USB_STATE_SUSPENDED)
- 		goto done;
- 
-+	if (msg.event == PM_EVENT_SUSPEND && usb_offload_check(udev)) {
-+		dev_dbg(&udev->dev, "device offload active, skip suspend.\n");
-+		udev->offload_at_suspend = 1;
-+	}
-+
- 	/* Suspend all the interfaces and then udev itself */
- 	if (udev->actconfig) {
- 		n = udev->actconfig->desc.bNumInterfaces;
- 		for (i = n - 1; i >= 0; --i) {
- 			intf = udev->actconfig->interface[i];
-+			if (udev->offload_at_suspend && intf->needs_remote_wakeup) {
-+				dev_dbg(&intf->dev, "active interface on offloaded devices\n");
-+				continue;
-+			}
- 			status = usb_suspend_interface(udev, intf, msg);
- 
- 			/* Ignore errors during system sleep transitions */
-@@ -1435,7 +1444,8 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 		}
- 	}
- 	if (status == 0) {
--		status = usb_suspend_device(udev, msg);
-+		if (!udev->offload_at_suspend)
-+			status = usb_suspend_device(udev, msg);
- 
- 		/*
- 		 * Ignore errors from non-root-hub devices during
-@@ -1480,9 +1490,11 @@ static int usb_suspend_both(struct usb_device *udev, pm_message_t msg)
- 	 */
- 	} else {
- 		udev->can_submit = 0;
--		for (i = 0; i < 16; ++i) {
--			usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
--			usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+		if (!udev->offload_at_suspend) {
-+			for (i = 0; i < 16; ++i) {
-+				usb_hcd_flush_endpoint(udev, udev->ep_out[i]);
-+				usb_hcd_flush_endpoint(udev, udev->ep_in[i]);
-+			}
- 		}
- 	}
- 
-@@ -1524,17 +1536,26 @@ static int usb_resume_both(struct usb_device *udev, pm_message_t msg)
- 	udev->can_submit = 1;
- 
- 	/* Resume the device */
--	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume)
--		status = usb_resume_device(udev, msg);
-+	if (udev->state == USB_STATE_SUSPENDED || udev->reset_resume) {
-+		if (!udev->offload_at_suspend)
-+			status = usb_resume_device(udev, msg);
-+		else
-+			dev_dbg(&udev->dev, "device offload active, skip resume.\n");
-+	}
- 
- 	/* Resume the interfaces */
- 	if (status == 0 && udev->actconfig) {
- 		for (i = 0; i < udev->actconfig->desc.bNumInterfaces; i++) {
- 			intf = udev->actconfig->interface[i];
-+			if (udev->offload_at_suspend) {
-+				dev_dbg(&intf->dev, "active interface on offloaded devices\n");
-+				continue;
-+			}
- 			usb_resume_interface(udev, intf, msg,
- 					udev->reset_resume);
- 		}
- 	}
-+	udev->offload_at_suspend = 0;
- 	usb_mark_last_busy(udev);
- 
-  done:
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 9843d3ad5cf4..598f1b974347 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -20,6 +20,7 @@
- #include <linux/acpi.h>
- #include <linux/usb/of.h>
- #include <linux/reset.h>
-+#include <linux/usb/xhci-sideband.h>
- 
- #include "xhci.h"
- #include "xhci-plat.h"
-@@ -483,6 +484,15 @@ static int xhci_plat_suspend_common(struct device *dev)
- 
- static int xhci_plat_suspend(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (xhci_sideband_check(hcd)) {
-+		priv->sideband_at_suspend = 1;
-+		dev_dbg(dev, "sideband instance active, skip suspend.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_suspend_common(dev);
- }
- 
-@@ -535,6 +545,15 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
- 
- static int xhci_plat_resume(struct device *dev)
- {
-+	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	if (priv->sideband_at_suspend) {
-+		priv->sideband_at_suspend = 0;
-+		dev_dbg(dev, "sideband instance active, skip resume.\n");
-+		return 0;
-+	}
-+
- 	return xhci_plat_resume_common(dev, false);
- }
- 
-diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
-index fe4f95e690fa..cd07b22adc60 100644
---- a/drivers/usb/host/xhci-plat.h
-+++ b/drivers/usb/host/xhci-plat.h
-@@ -15,6 +15,7 @@ struct usb_hcd;
- struct xhci_plat_priv {
- 	const char *firmware_name;
- 	unsigned long long quirks;
-+	unsigned sideband_at_suspend:1;
- 	bool power_lost;
- 	void (*plat_start)(struct usb_hcd *);
- 	int (*init_quirk)(struct usb_hcd *);
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index f3a4064c729c..bc3a84870907 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -648,6 +648,7 @@ struct usb3_lpm_parameters {
-  *	Will be used as wValue for SetIsochDelay requests.
-  * @use_generic_driver: ask driver core to reprobe using the generic driver.
-  * @offload_usage: number of offload activities happening on this usb device.
-+ * @offload_at_suspend: offload activities during suspend is enabled.
-  *
-  * Notes:
-  * Usbcore drivers should not set usbdev->state directly.  Instead use
-@@ -736,6 +737,7 @@ struct usb_device {
- 	unsigned use_generic_driver:1;
- 
- 	refcount_t offload_usage;
-+	unsigned offload_at_suspend:1;
- };
- 
- #define to_usb_device(__dev)	container_of_const(__dev, struct usb_device, dev)
 -- 
-2.49.0.472.ge94155a9ec-goog
+Thanks,
 
+Steve
 
