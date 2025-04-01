@@ -1,82 +1,89 @@
-Return-Path: <linux-kernel+bounces-583237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFB1A77868
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:05:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFCC7A7786D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A576A188B6E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3DD37A3595
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306F01F03E0;
-	Tue,  1 Apr 2025 10:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/o5mNI7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4DA1F03C8;
+	Tue,  1 Apr 2025 10:05:40 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8630D1EEA32;
-	Tue,  1 Apr 2025 10:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE8A1F03E0;
+	Tue,  1 Apr 2025 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743501912; cv=none; b=TUOcU3jeJYkggVAeBqNlSsvIL0FhSEqbHyjFL6avReLgmZ6cGmTMCDuXA2zG79+dpM0GDMQ5I1eN3R+8sLdQ2och+5zIOCdueFjzaf0NovxlTEfEVFIySP/1cR14SU+6vtKbY6MOVsyf4R7vwlaI2wYrMa/vBBLlH82JIHTzzkg=
+	t=1743501940; cv=none; b=fcF2GRPA1lkXWlx1VS0XyD8enuigP4npkgQFeZuCeg7Kr+J6+67hfdSLKrrR/AzJf2JUMWpNCayWbzfxz6//0VXfeocV7Z3/xtolJGvqSwVAVHqHSEYbV0DGsGKwGStJCPZyKuq/uyEUtyh+HnqTN2ciWSpQlOXxstx2HubuacY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743501912; c=relaxed/simple;
-	bh=XqqACZD4cGiQVb/IeRuwKp1AJQlOtwcHtaHrUVqvYew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGqE4URdXzf/L+wNztOE3kYv9zvhvQOBeC4vMP+0p7FqcFlH7ccvL0ekNLAdHfvpO8fmxEAdqpDye9FtZkae8QfR3O6U2UGVdtUil5EachBXGLkWSovE4qkhNiJWhD60DC+juBon2AA1G2aKdyRoCgn0YZPMH3NmJzu/1BMosLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/o5mNI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F03BFC4CEE4;
-	Tue,  1 Apr 2025 10:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743501910;
-	bh=XqqACZD4cGiQVb/IeRuwKp1AJQlOtwcHtaHrUVqvYew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o/o5mNI7iNhrvYmAcSy6AMXtjk3neTwQaU6XKMhcNf4YKbU6reRiCQsif0CEF+nKD
-	 0jVPCzJGBIsgujd9QorknipaelCcJE1HH5SjbDk3NJIKMzQb/bkbsyGNxG/XO7c61H
-	 tjqvWZ3en3Y1BbrhjBkuOfMNOxkVVwZrx84Oq/gVPTlI9jjzdxiJQF9HwpbSDKQoxe
-	 /9YNCDYMr/IQbBCdghapYS/QgX2SKcJ9xJ3gsDS9H+OrRquaAaWmM6w8vlCSNH/Usu
-	 OotQ/A1ohwa468Shj88fzxkSaML1uak0w9Rcf3vk/7irZjsdjGKrYSJrgGeNdwiNj1
-	 mn2iPzjGXmdvQ==
-Date: Tue, 1 Apr 2025 10:05:07 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] platform/chrome: cros_ec_debugfs: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Z-u6U_GDhf53PTA6@google.com>
-References: <Z-aiAAcIP7sBRtz0@kspp>
+	s=arc-20240116; t=1743501940; c=relaxed/simple;
+	bh=PtcGNtn7tm00DKNPAGREcUoOVl9b/U54L2SsdfxEG4U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TmlO19l2QXA64AjKdIMryvJZ1w5QXWQtNLYs1tYUaQbb6Cjxeexag5wIBqxvoZBqZ+FosyNb9q+ztoG/QSm1h9IklcJUbs1hTDBROs9VQX7PuEcCrHTss0pfpfbXvg6adorXxpjCOSJLSsygRcB1gM9HUVbzeRZBa3Cq66rJfP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:430:ae31:3177:4f09:da96])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 10501cafb;
+	Tue, 1 Apr 2025 18:00:26 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: dts: rockchip: Add DMA controller for RK3528
+Date: Tue,  1 Apr 2025 18:00:17 +0800
+Message-Id: <20250401100020.944658-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-aiAAcIP7sBRtz0@kspp>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTU1KVh9NQxgeGhkeQ0weTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQU9IS0EaHkhKQUhKTExBTx1LQkEfGkJNWVdZFhoPEh
+	UdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQktLWQY+
+X-HM-Tid: 0a95f0cb8c4e03a2kunm10501cafb
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Aio6CTJMDwo9FSwcFEJL
+	IywKCT5VSlVKTE9ITktKTUlMSU5MVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0tBT0hLQRoeSEpBSEpMTEFPHUtCQR8aQk1ZV1kIAVlBSk5MTjcG
 
-On Fri, Mar 28, 2025 at 07:20:00AM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-> a flexible structure where the size of the flexible-array member
-> is known at compile-time, and refactor the rest of the code,
-> accordingly.
-> 
-> So, with these changes, fix the following warnings:
-> 
-> drivers/platform/chrome/cros_ec_debugfs.c:211:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/platform/chrome/cros_ec_debugfs.c:257:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/platform/chrome/cros_ec_debugfs.c:279:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+First commit adds missing uart3 interrupt for uart3 node.
+The next commit adds the DMA controller that can be used
+for spi and uart. And add DMA description for uart nodes.
 
-For my reference:
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
+~# dmesg | grep dma
+[    0.103466] dma-pl330 ffd60000.dma-controller: Loaded driver for PL330 DMAC-241330
+[    0.104212] dma-pl330 ffd60000.dma-controller:       DBUFF-128x8bytes Num_Chans-8 Num_Peri-32 Num_Events-16
+
+Changes in v2:
+  Adjust props order
+  Collect Reviewed-by
+
+Chukun Pan (3):
+  arm64: dts: rockchip: Add missing uart3 interrupt for RK3528
+  arm64: dts: rockchip: Add DMA controller for RK3528
+  arm64: dts: rockchip: Add UART DMA support for RK3528
+
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 29 +++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
+
 
