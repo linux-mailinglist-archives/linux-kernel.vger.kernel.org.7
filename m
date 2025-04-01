@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-583239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFCC7A7786D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318BAA778E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3DD37A3595
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9FB3AA3E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4DA1F03C8;
-	Tue,  1 Apr 2025 10:05:40 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875B31F0E23;
+	Tue,  1 Apr 2025 10:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eUQNSxy1"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE8A1F03E0;
-	Tue,  1 Apr 2025 10:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C311B1EF0BA;
+	Tue,  1 Apr 2025 10:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743501940; cv=none; b=fcF2GRPA1lkXWlx1VS0XyD8enuigP4npkgQFeZuCeg7Kr+J6+67hfdSLKrrR/AzJf2JUMWpNCayWbzfxz6//0VXfeocV7Z3/xtolJGvqSwVAVHqHSEYbV0DGsGKwGStJCPZyKuq/uyEUtyh+HnqTN2ciWSpQlOXxstx2HubuacY=
+	t=1743503717; cv=none; b=mojoQg2+im6d59jKFOb3SWTJ2XkuMpXphCIA+jBB4zJNfhyN9hTI7X92KDYO4FdMKU7/ScEqBKFTi9pXxAurZklBeZ6CV3ZG3rUbsK83NfjVGeVfV2cfG88SLU6fjsHuTIcDzUJLUjqoE41PV85sHVuubiT/hK81QJiKxU4Ob6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743501940; c=relaxed/simple;
-	bh=PtcGNtn7tm00DKNPAGREcUoOVl9b/U54L2SsdfxEG4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TmlO19l2QXA64AjKdIMryvJZ1w5QXWQtNLYs1tYUaQbb6Cjxeexag5wIBqxvoZBqZ+FosyNb9q+ztoG/QSm1h9IklcJUbs1hTDBROs9VQX7PuEcCrHTss0pfpfbXvg6adorXxpjCOSJLSsygRcB1gM9HUVbzeRZBa3Cq66rJfP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:430:ae31:3177:4f09:da96])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 10501cafb;
-	Tue, 1 Apr 2025 18:00:26 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 0/3] arm64: dts: rockchip: Add DMA controller for RK3528
-Date: Tue,  1 Apr 2025 18:00:17 +0800
-Message-Id: <20250401100020.944658-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743503717; c=relaxed/simple;
+	bh=i1uX15IyzqsZWb/TvH5+a4SBwYFcxwU6+oaSdvqPc3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyQ6pb3QssjlkR2zGiMqNu4cSCtMPuEalDCVY+0s/Hp1cx6dKQuXUPxd6WtAPRMXRiawqmqK9ZvaIVNVp1arcTxl928JkM1fVlRPs2iNr0ZXrlDWMjt1awUjhe6ZyiTwuz8eSAH9RSz3SjdHEAvQzCA6J4NMe7gfelyUtNqGxTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eUQNSxy1; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id A927E5897DA;
+	Tue,  1 Apr 2025 10:02:41 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A0E09432C5;
+	Tue,  1 Apr 2025 10:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743501753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JqZFr1OBThFFO2Gb87Cot8+VhO0EETzE4mrpW6VN7x0=;
+	b=eUQNSxy1kMTi0sbivzgeK2ZVMxQD4TA3nnkh9fbyQRFRWof0NH13XKiAHJkP6BVseNy6XZ
+	gnOsLYZkftbsBd1PjuRVIUMuEDH1JdmsL2xFux9Jo19x2R6im3a8ElFBVBa/XbpjFgPtup
+	qvDw5MdTmNYFBx6+W8vW9xmKeZ6Wt7Wl7Fl/AGqwjxbbZw2BJF5X970qwfXaI36wyNch0h
+	waaraiUoxxengtjVzrsE3JoLrB0QeL+xu3cOUHo1ZoAPYdT8RUEgkdBtCSFV8vA6E5BLe3
+	Hjixi+ZvvX2PfFQOCISzEXXU5aa5nPMqX/ocmhiDj3NfHO1XUqaVz54O4JBh2g==
+Date: Tue, 1 Apr 2025 12:02:33 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Maud Spierings <maudspierings@gocontroll.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: pcf85063: replace dev_err+return with return
+ dev_err_probe
+Message-ID: <174350173761.1869522.4017225429652916450.b4-ty@bootlin.com>
+References: <20250304-rtc_dev_err_probe-v1-1-9dcc042ad17e@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTU1KVh9NQxgeGhkeQ0weTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQU9IS0EaHkhKQUhKTExBTx1LQkEfGkJNWVdZFhoPEh
-	UdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQktLWQY+
-X-HM-Tid: 0a95f0cb8c4e03a2kunm10501cafb
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Aio6CTJMDwo9FSwcFEJL
-	IywKCT5VSlVKTE9ITktKTUlMSU5MVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBT0hLQRoeSEpBSEpMTEFPHUtCQR8aQk1ZV1kIAVlBSk5MTjcG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-rtc_dev_err_probe-v1-1-9dcc042ad17e@gocontroll.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvheduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefpdhrtghpthhtohepmhgruhgushhpihgvrhhinhhgshesghhotghonhhtrhholhhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrr
+ dhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-First commit adds missing uart3 interrupt for uart3 node.
-The next commit adds the DMA controller that can be used
-for spi and uart. And add DMA description for uart nodes.
+On Tue, 04 Mar 2025 09:14:52 +0100, Maud Spierings wrote:
+> Replace the dev_err plus return combo with return dev_err_probe() this
+> actually communicates the error type when it occurs and helps debugging
+> hardware issues.
+> 
+> 
 
-~# dmesg | grep dma
-[    0.103466] dma-pl330 ffd60000.dma-controller: Loaded driver for PL330 DMAC-241330
-[    0.104212] dma-pl330 ffd60000.dma-controller:       DBUFF-128x8bytes Num_Chans-8 Num_Peri-32 Num_Events-16
+Applied, thanks!
 
-Changes in v2:
-  Adjust props order
-  Collect Reviewed-by
+[1/1] rtc: pcf85063: replace dev_err+return with return dev_err_probe
+      https://git.kernel.org/abelloni/c/119e90a3a64d
 
-Chukun Pan (3):
-  arm64: dts: rockchip: Add missing uart3 interrupt for RK3528
-  arm64: dts: rockchip: Add DMA controller for RK3528
-  arm64: dts: rockchip: Add UART DMA support for RK3528
-
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 29 +++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Best regards,
 
 -- 
-2.25.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
