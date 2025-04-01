@@ -1,118 +1,92 @@
-Return-Path: <linux-kernel+bounces-582799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2571AA772B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62805A772BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D114016A7E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A6A188D5AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6676E1A2390;
-	Tue,  1 Apr 2025 02:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26B11519A1;
+	Tue,  1 Apr 2025 02:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMg+dAsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ED918C936;
-	Tue,  1 Apr 2025 02:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ckz3va9S"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE183C2ED;
+	Tue,  1 Apr 2025 02:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743474603; cv=none; b=szSTEX6lDuHtqO5BBhGti2WPJuCM906JbW8YwMtwzzxBcL9IgnXmgbf5TR12BfRuTgngWNcGD7ox1gEALcxq7WKLoHDb2hdEfsCZfI0+oc+ErjOmYiqx5mGb9URfa7zz37o35sV5OpOVmpJxQgAp9GoQH2PzGA4zf6YAYDRx+tM=
+	t=1743474670; cv=none; b=pM/Ana3tic/VMQTo3WXBuLL4g+fnuRkebTPmmvWzFlqhO/metTq0My9PrLsjjS5pLUtdGzyRQxbmBsPAL2UrS58E0iAzmHxI57wFh6ES9Huo52qNeDSYIjL6NpYT+LopcPD1iiu3U/sJbclMMuWWOwGpDqwxA33pu03dzXNu4l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743474603; c=relaxed/simple;
-	bh=e7umfimSSpUyu6Gb9PAWxVviQ1Pyx2Rlh5oL4MRf/MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCq6eUJ3F2T5wqwQ7hj8HlnBauNRFT8mnpLWdWYfaYFH7+AoYv2qho/mvnO+cq/RP+5u9zIg1LQBZAl8E7BSkvqomN3OpUR1mHx+ttPxeCocxuwb8KRW1exVY38b/Su6MEP/P5KcsysxTGxXSX1qDAaWf+Y6yy/vEsW8ExEmWTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMg+dAsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0571C4CEE3;
-	Tue,  1 Apr 2025 02:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743474603;
-	bh=e7umfimSSpUyu6Gb9PAWxVviQ1Pyx2Rlh5oL4MRf/MI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WMg+dAsCMyIG3q3zTMQGZIr/r9WudOZIbydWtIAvOeYe0VQ2UiJZgKRYjEN2vyasu
-	 XFB40wN4HzTTLmykZwxdPRCgJRNkUcVB3f46fscBYHJgHmc/btgzZ01zdh2jyaWMOv
-	 RWe7vbEXNw9Cq6GocTz7m5DNqWC3LlCiPDhnp9y+sVZ8NushvPWjdxnJlaa87d9ig4
-	 SnK/IVbSUlX8Sgq3D96XI9yFrhgTrFgI4Mm8pvDZDPgBwiBN9GgaqHt1uzEVjynojh
-	 WEkAwHmSIZ3+rBgp5swmuKjgs0z3189hLjuB4IV2lXLdaNKQdo1aiG0MDsCMlOM2TE
-	 3h/T8R9xFBmWg==
-Date: Mon, 31 Mar 2025 21:30:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Will McVicker <willmcvicker@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Donghoon Yu <hoony.yu@samsung.com>,
-	Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [PATCH v1 5/6] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <20250401023001.GA3186122-robh@kernel.org>
-References: <20250331230034.806124-1-willmcvicker@google.com>
- <20250331230034.806124-6-willmcvicker@google.com>
+	s=arc-20240116; t=1743474670; c=relaxed/simple;
+	bh=4MYpM8jnr/X1wA3ZJOyYKyFQrCEJfGH3h3VkCqnbT6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZIt8ApLyaRAuxdDDjJwEfduG75nDdFO5BAoCUQs0/abElSVz+nM1nowKSCYiQeHkoeiYv9C17Y7I4C/UMQy8MguJq1mHRZo2bh2x5kdlDoo/39gcjse1vsGD0Kh51PNn3lR1bQVW1KPx3C/yxZyTAEwVSOCFyM3tIa3xcOn1nbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ckz3va9S; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZDN6N
+	BtOaJ5NgefmbSoc75r2LxpCFClFNBh8uIuOEGQ=; b=ckz3va9SxR/N+V2EL50vl
+	SBT0t09ErUhHCl57MhIAY2idov3dRfHPllubCh1yNnVLHeC7B9j9+jOQEdPGWA2D
+	wvf8LM1fFY1p8QLosqGuYIajP9waXxzDxBNcxRltp2c5sttBWD/2AF71+Ew9Wnh5
+	JjgIWswuxRTomhh8jdIhDI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXYaTWT+tnqHd2DQ--.1943S2;
+	Tue, 01 Apr 2025 10:30:48 +0800 (CST)
+From: Miao Li <limiao870622@163.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	limiao870622@163.com,
+	Miao Li <limiao@kylinos.cn>
+Subject: [PATCH] usb: quirks: add DELAY_INIT quirk for Silicon Motion Flash Drive
+Date: Tue,  1 Apr 2025 10:30:27 +0800
+Message-Id: <20250401023027.44894-1-limiao870622@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331230034.806124-6-willmcvicker@google.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXYaTWT+tnqHd2DQ--.1943S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xry7Xw45GF15GF1UCr1xZrb_yoWDJrc_Cr
+	1DWan3u3W8CF9xtrn2va1fZrW0kay0vryvgFyqqry3JFW7uwn5Jw47GFW0vw1UGFykJFsx
+	tw4Du3Z8Zrn3WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRitCz5UUUUU==
+X-CM-SenderInfo: 5olpxtbryxiliss6il2tof0z/1tbiShYizWfrTOx3iAAAsg
 
-On Mon, Mar 31, 2025 at 04:00:27PM -0700, Will McVicker wrote:
-> From: Donghoon Yu <hoony.yu@samsung.com>
-> 
-> On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> boot (and even after boot) the arch_timer is used as the clocksource and
-> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> source for the arch_timer.
-> 
-> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> [Original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
->  drivers/clocksource/Kconfig      |  3 +-
->  drivers/clocksource/exynos_mct.c | 47 +++++++++++++++++++++++++++-----
->  2 files changed, 42 insertions(+), 8 deletions(-)
+From: Miao Li <limiao@kylinos.cn>
 
-[...]
+Silicon Motion Flash Drive connects to Huawei hisi platforms and
+performs a system reboot test for two thousand circles, it will
+randomly work incorrectly on boot, set DELAY_INIT quirk can workaround
+this issue.
 
-> +#ifdef MODULE
-> +static int exynos4_mct_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +
-> +	if (of_machine_is_compatible("samsung,exynos4412-mct"))
+Signed-off-by: Miao Li <limiao@kylinos.cn>
+---
+ drivers/usb/core/quirks.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Your root node compatible has "samsung,exynos4412-mct"!?
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 8efbacc5bc34..61583a1b7ac6 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -383,6 +383,9 @@ static const struct usb_device_id usb_quirk_list[] = {
+ 	{ USB_DEVICE(0x0904, 0x6103), .driver_info =
+ 			USB_QUIRK_LINEAR_FRAME_INTR_BINTERVAL },
+ 
++	/* Silicon Motion Flash Drive */
++	{ USB_DEVICE(0x090c, 0x1000), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Sound Devices USBPre2 */
+ 	{ USB_DEVICE(0x0926, 0x0202), .driver_info =
+ 			USB_QUIRK_ENDPOINT_IGNORE },
+-- 
+2.25.1
 
-In any case, add a data ptr to of_device_id table and then use the match 
-data rather than comparing compatible strings again.
-
-> +		return mct_init_ppi(np);
-> +
-> +	return mct_init_spi(np);
-> +}
-> +
-> +static const struct of_device_id exynos4_mct_match_table[] = {
-> +	{ .compatible = "samsung,exynos4210-mct" },
-> +	{ .compatible = "samsung,exynos4412-mct" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
 
