@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-582959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9BBA77496
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:34:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2A2A7749B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E3C188D71F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C65516AEAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A749A1E285A;
-	Tue,  1 Apr 2025 06:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28C41E5B6A;
+	Tue,  1 Apr 2025 06:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMMJhe2m"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="VPSGCNd/"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CA61E1C29
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 06:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A6C1E5711;
+	Tue,  1 Apr 2025 06:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743489264; cv=none; b=QT+g4+FWh17y/Y3pHnIyGDlEAC5gMPya+CDlN8cPt3yuXKqNKydJn9bf/Snf2rpQJ0zNVjNpeWqD+hSLZtaiZ6/VMHLfWMFg/TX7I/FpEZHYWuYM91YQKr1G6buPnqBKP5wqhnLfQObuALuuuO/0wExrpwOuXoH+jBTnwbGKDTg=
+	t=1743489279; cv=none; b=Or6dBgE8od6zY3NXGK4yVzu6c5JEHby8FlHJOKpYP7k4bYA0Fh5aYB2oYrzGkr2JBJPN5FC+uo1aF+hVfkjzwCjjnaryRMiYTPxKoI0+wbCm+Twh91DNKJFpWuSkSlKY55FKs+tBArPqDMgBu95oIOsE4NVVEz0Y+k6EqwVeyq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743489264; c=relaxed/simple;
-	bh=okptFoCpZUVkqit49dtIutR468BxciG1BqCQRMkznrU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=grRhWgs/j6d2889GQd5SMX249kJ29ly0ZiHLU/E89dYdDaYIOdqqchE9b5lX4imjBxwpkjqXVne7Yg2LbrEwwI/5DGhBPZL9QQMLuCLh1U2kkwzl2C/Lbwmd4QgesYLxpwCA36HujYqSk3CJntFHh1z7EoJuk8AHq2z9r96mnYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMMJhe2m; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-225df540edcso114468665ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 23:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743489262; x=1744094062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFeN50Tct7m9TPsMIMcX8t/ayiqPwYq+pDcIP7/ikWY=;
-        b=cMMJhe2mWP7dJvOkoLHakc1GBU88BRfVOOs8LUyYELWeE/Buzt75VjlVdxpDmUkTPR
-         MQ+tPigMWg4JGMBrfvvXnAT/PgRN/12uJg+m5DlIRQpLmPueS5wXH+GkH8OMKtJviCs6
-         tyYlI1TLeTFMbKq8D1vIVV9+eNhj1RNJNMjilVlEGAUTWyEOJ9dEyZxZwwfuUvYaafQN
-         p+F80AQA4EzkPbzEUZSgydIftXoV2iV9KvRzbzhY6GJA9OiqdDbmId8d1L/g7clCgIgK
-         4C3lRLuxmAeHgFKojW4BKnBaXX8aSc1uOmPEdpSKg+jFITe5N7i4sH2kmm/Qe6FjPItY
-         QgPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743489262; x=1744094062;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VFeN50Tct7m9TPsMIMcX8t/ayiqPwYq+pDcIP7/ikWY=;
-        b=f6pG+ET387e9BFgX/eIaht3m/pHEfPIvDgrXjQi7ZsGbY18PyiA0VqMM66pxvNRpUN
-         +he/qz4Y+3UM/8gcpUvrUhKlvEximN97qJnBTU8a4sxMAB7TOKYKPrmf8NIX7l7nIGa1
-         erfT6iWMl0hCY1wVUMAVXvqLhLmAbQj1/OQTA10LQ3wiWoJirZju3psltbqacNP/WcSe
-         jjbqmrGWZKNsdaOdXlFMpVtfkVuoPnC8z6qa7iPkWdE3RYWiopsWLhtuB0MFY+g8/liG
-         xqcPCvTnL8MVFomk0bvmY1aXzO+bdhJK4G8bT+DhhnpQIkHBYSx943TTOZoWb4xhmGM9
-         H9Kg==
-X-Gm-Message-State: AOJu0Yz9+t4WpIjDfJWxWxTndE4I8Ff90uy+7rca4nJZtmbT+cXNcQyD
-	aZD+XyL7nSYPmfFV6hUtZi/ccJy/5t6KJ1t4ymHDF0tLoWEck/FbSeAce9Cv
-X-Gm-Gg: ASbGncu8kBLCtt1lDCkN7lWbXQwIAE3nhJ8nf7efqNAQgUJVA0GK8quK0KQssG1nEcf
-	ZOVB0S0nT9G3+esvRCBMI2cH01NJ3WZQYvb6aPxacDI982cEbH0n4C/lSz5uUoR3uWecEPmarCi
-	oFrU33XCXV0+cNN60N2v9mbXIFV7dqkXhWWxA+fHLoRnPvGN8bAjENUTnwmWQori+Nm14y5Q7tb
-	E9/+anThD+AULjHb4GCpkHBae+qPISBk3ocm3VnDilD3vpujDRZ/hdEeL6JAXTaV5TA/8+AQWAV
-	syptpF2jrUi8fOnHocbpcOlZGAK1yZTBQiFqm9QpvNxK6qY1gOl3RZw=
-X-Google-Smtp-Source: AGHT+IEoQzp2h4CGT78zFhacjN0ZepZnshpdoJ5ahAWiyhTV/wanOTdKOOHVq2/eHxMD0YYhpAmJeQ==
-X-Received: by 2002:a05:6a20:7fa7:b0:1ee:ab52:b8cc with SMTP id adf61e73a8af0-1feb5d3a07amr23490613637.21.1743489261961;
-        Mon, 31 Mar 2025 23:34:21 -0700 (PDT)
-Received: from cs20-buildserver.lan ([2403:c300:5c0c:4075:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af93b6a1719sm7396609a12.32.2025.03.31.23.34.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Mar 2025 23:34:21 -0700 (PDT)
-From: Stanley Chu <stanley.chuys@gmail.com>
-X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
-To: frank.li@nxp.com,
-	miquel.raynal@bootlin.com,
-	alexandre.belloni@bootlin.com,
-	linux-i3c@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com,
-	yschu@nuvoton.com
-Subject: [PATCH v1] i3c: master: svc: Update actual read length
-Date: Tue,  1 Apr 2025 14:34:06 +0800
-Message-Id: <20250401063406.3728534-1-yschu@nuvoton.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743489279; c=relaxed/simple;
+	bh=IbQv7rQPPxVETlMKz65xwhZihwKpbqBF7aEyV3kS2UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U4ORQ4XAtVInLgZY1GVGEdB7tq2fJDuy06i3jkjGFBJMNiYQuTNUfTn4nKE7z4m/WGb/ngJfDeZ/AsxQflYc0+zIWu6RxBxEsY+Ka7Regs/NhkUWYcpXJ9QhbSmEXj7iayTaNA9rd338FyLnxMgRO245Zr8gl4yWRbWrFieBjrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=VPSGCNd/; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5316Y73F3599664
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 31 Mar 2025 23:34:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5316Y73F3599664
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1743489248;
+	bh=hiruywcSv0X+HxVl9bkNdDT2iM1b9AUvcZ7JX89tU3I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VPSGCNd/D6BZcBJRsPOskiGs/9nkb1clIvM79j7LWzH25PiurQfHhK/8aOWhSGajz
+	 sKsgHRFH4YSYJsBJ4aHd+EWNf6DZpF0j+wWAfBzyR8Ml69TTrW/RXlc6h3ZlFYGfO3
+	 +TGkqw5oXOBYwXStiNfNlysazn5EPgJKCgRlZafoTQYNHz9Ag+3xuKcE2HpVpwu0Y6
+	 kTNXSGo+zKgYFEDkagcQ/Zxi8zR1+iHUjC4g8CxVQLIYO5Javlu5emmJ/LAfW2FtMz
+	 peCSNZc0KZ2/XmdL5MwG2/uX2VV3SpwoAKMY2qt9XsQSatqCs8Rp5ijF16alT8aA0h
+	 z01cemVMzTy8Q==
+Message-ID: <53a6f46c-1b96-45a0-9593-fa8eb8941bbf@zytor.com>
+Date: Mon, 31 Mar 2025 23:34:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/fred: Fix system hang during S4 resume with
+ FRED enabled
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, pavel@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, xi.pardee@intel.com,
+        todd.e.brandt@intel.com
+References: <20250326062540.820556-1-xin@zytor.com>
+ <CAJZ5v0jfak9K_7b=adf5ew-xDiGHUEPSp5ZpAGt66Okj-ovsGQ@mail.gmail.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <CAJZ5v0jfak9K_7b=adf5ew-xDiGHUEPSp5ZpAGt66Okj-ovsGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Stanley Chu <yschu@nuvoton.com>
+On 3/31/2025 8:30 AM, Rafael J. Wysocki wrote:
+>> +        *
+>> +        * Note, FRED RSPs setup needs to access percpu data structures.
+> And I'm not sure what you wanted to say here?  Does this refer to the
+> ordering of the code below or to something else?
 
-Some drivers, such as mctp-i3c.c, reuse the i3c_priv_xfer.len as
-the actual read len. Therefore, the controller driver should also
-update the i3c_priv_xfer.len after the read transfer is completed.
+Yes, this refers to the ordering of the code:  FRED config restoration
+needs to happen after wrmsrl(MSR_GS_BASE, ctxt->kernelmode_gs_base), or
+the system still hangs.
 
-Signed-off-by: Stanley Chu <yschu@nuvoton.com>
----
- drivers/i3c/master/svc-i3c-master.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 85e16de208d3..dd520f5d4c9f 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -1470,9 +1470,16 @@ static void svc_i3c_master_start_xfer_locked(struct svc_i3c_master *master)
- 					  cmd->len, &cmd->actual_len,
- 					  cmd->continued);
- 		/* cmd->xfer is NULL if I2C or CCC transfer */
--		if (cmd->xfer)
-+		if (cmd->xfer) {
- 			cmd->xfer->actual_len = cmd->actual_len;
- 
-+			/*
-+			 * Some i3c drivers reuse i3c_priv_xfer.len as
-+			 * the actual read length.
-+			 */
-+			cmd->xfer->len = cmd->actual_len;
-+		}
-+
- 		if (ret)
- 			break;
- 	}
--- 
-2.34.1
-
+I will make it explicit in the next iteration.
 
