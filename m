@@ -1,95 +1,130 @@
-Return-Path: <linux-kernel+bounces-582941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23118A7745D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9FFA77466
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4733A8753
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B0B91694B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437431E0DEB;
-	Tue,  1 Apr 2025 06:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNymlsUa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547D81E1C09;
+	Tue,  1 Apr 2025 06:17:41 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC161D8A10;
-	Tue,  1 Apr 2025 06:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC804131E2D;
+	Tue,  1 Apr 2025 06:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743488033; cv=none; b=jytVXtNP6kSt4NDEBTG5jSGyrenyhv5qLSWgcVzDKArfcqNLen+Ppofz87lg/RzJ0xvwl7F1bFMwanvMJ+heJaPwinmU4PJ1fj65LJ9yh00YPz9sB5kP7+wJIQ+JZ1KNCwGb19cuF50t4TG/xl8bTkclz5GkRcEQCsdAME0biW4=
+	t=1743488261; cv=none; b=riSZMFJVzBwaVufzRBJkVZSx2IsWWluJSw0YVDiL2JedyvAXiQ2TIAh81GGxWlepfwgsDSfsYALCpxJAg6C86k/GLDXkh644l8+xCP/Xme2OdjQQUKh/l1mtoCxzNEENhLyi8I+wCUBPYb7GXDFpQUaTc/tax5zNPdLkR5qR/7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743488033; c=relaxed/simple;
-	bh=a/WBWaI1GRijiNVhX5FXEpnwkrIb9sOyftFgp32l9+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MCBoaMy06sE0GNEuS1D+QUktZ9Gn5xxl8dNZWe3qsVZ8HEfVXzIb314nPMa/zEdo9xXDIBdqS/8mSdIBg1+M4yQ4ujqvxSxnlMvcSSa6fDtnHzGHKutqlyZIM9TuhEcOdPfnPaDcIIjavg8erw85vtEx2aN5vUPjP8ORZxayZNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jNymlsUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42742C4CEE8;
-	Tue,  1 Apr 2025 06:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743488033;
-	bh=a/WBWaI1GRijiNVhX5FXEpnwkrIb9sOyftFgp32l9+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jNymlsUa/smbZNP5cRJtDeGbNZjsIVNja4x7dB9r+sVZdWnd5hWwiKB9CRvQsFeJe
-	 Zp2BVuP5TDBpX+8K4PJ6IlnjXD23NVrptNeVecJQtqHl8LIwNdlF4feRJHDEjq3G4J
-	 4/fSDq6auzVqB8pY1se8oupuPSaxBsDNH6RT87HikgM9BDj+IqWlb21+hYu9KOh3sK
-	 aIw+G163YeCtXjUrdu1LmKGBOQPOzNd7B5yxhmrM5zMnxgyiWorK7NYeR9a1D/XGcW
-	 8djMi/ZIcjD3UPkdjNV+6dVMi3F4GPqjvzUYfcQD8lJIOZtC9PAn1r87ZIyrgtthxO
-	 0pFvcrsHWlSUg==
-Date: Tue, 1 Apr 2025 08:13:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctl: amlogic,pinctrl-a4: Add
- compatible string for A5
-Message-ID: <20250401-meteoric-perfect-cuttlefish-abd62d@krzk-bin>
-References: <20250401-a5-pinctrl-v2-0-a136c1058379@amlogic.com>
- <20250401-a5-pinctrl-v2-1-a136c1058379@amlogic.com>
+	s=arc-20240116; t=1743488261; c=relaxed/simple;
+	bh=L6I6mgr2VPoIYZD2sGpQ4Y2PmWqo7xJmAmKe2BECYRQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LNNTitC1MH4viFwEm51dVUGycwst6OGd/E968lLSyiV1aI4tpC2eiyJJTSdfTqY+fkPCDV41iVrY5dTnxZ+scRbb13HUxUgO2aF4lw3++p9bj8MT3faxA/acKCQKIuQrZsta9ZKFKvJet9vXsebKKzYDXyNU29H1Nq/z/OQxDRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACn3wfchOtn05WcBA--.19358S2;
+	Tue, 01 Apr 2025 14:17:02 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: andrii@kernel.org,
+	eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	peterz@infradead.org,
+	ameryhung@gmail.com,
+	juntong.deng@outlook.com,
+	oleg@redhat.com
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] selftests/bpf: Convert comma to semicolon
+Date: Tue,  1 Apr 2025 14:15:46 +0800
+Message-Id: <20250401061546.1990156-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250401-a5-pinctrl-v2-1-a136c1058379@amlogic.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACn3wfchOtn05WcBA--.19358S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZF4kWFyrtFb_yoW8Cr47pa
+	4fXw1DAr1xJa1UJa1xKa9Fqr1S9rsIq3y7Jas3Kr93Xa13t3W3XryUtr18twnxXF4rXa15
+	uw1YvFyv9an7ZrDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRzMKAUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Tue, Apr 01, 2025 at 10:06:21AM +0800, Xianwei Zhao wrote:
-> Amlogic A5 SoCs uses the same pintrl controller as A4 SoCs. There is
-> no need for an extra compatible line in the driver, but add A5
-> compatible line for documentation.
-> 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-> index 8eb50cad61d5..3bebccaf0c9f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,pinctrl-a4.yaml
-> @@ -14,8 +14,12 @@ allOf:
->  
->  properties:
->    compatible:
-> -    const: amlogic,pinctrl-a4
-> -
+Replace comma between expressions with semicolons.
 
-Do not remove blank line.
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-Best regards,
-Krzysztof
+Found by inspection.
+No functional change intended.
+Compile tested only.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+index 3220f1d28697..f38eaf0d35ef 100644
+--- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+@@ -1340,7 +1340,7 @@ static int st_ops_gen_prologue_with_kfunc(struct bpf_insn *insn_buf, bool direct
+ 	*insn++ = BPF_STX_MEM(BPF_DW, BPF_REG_6, BPF_REG_7, offsetof(struct st_ops_args, a));
+ 	*insn++ = BPF_JMP_IMM(BPF_JA, 0, 0, 2);
+ 	*insn++ = BPF_MOV64_REG(BPF_REG_1, BPF_REG_0);
+-	*insn++ = BPF_CALL_KFUNC(0, bpf_cgroup_release_id),
++	*insn++ = BPF_CALL_KFUNC(0, bpf_cgroup_release_id);
+ 	*insn++ = BPF_MOV64_REG(BPF_REG_1, BPF_REG_8);
+ 	*insn++ = prog->insnsi[0];
+ 
+@@ -1379,7 +1379,7 @@ static int st_ops_gen_epilogue_with_kfunc(struct bpf_insn *insn_buf, const struc
+ 	*insn++ = BPF_STX_MEM(BPF_DW, BPF_REG_1, BPF_REG_6, offsetof(struct st_ops_args, a));
+ 	*insn++ = BPF_JMP_IMM(BPF_JA, 0, 0, 2);
+ 	*insn++ = BPF_MOV64_REG(BPF_REG_1, BPF_REG_0);
+-	*insn++ = BPF_CALL_KFUNC(0, bpf_cgroup_release_id),
++	*insn++ = BPF_CALL_KFUNC(0, bpf_cgroup_release_id);
+ 	*insn++ = BPF_MOV64_REG(BPF_REG_0, BPF_REG_6);
+ 	*insn++ = BPF_ALU64_IMM(BPF_MUL, BPF_REG_0, 2);
+ 	*insn++ = BPF_EXIT_INSN();
+-- 
+2.25.1
 
 
