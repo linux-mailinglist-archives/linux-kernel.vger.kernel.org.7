@@ -1,154 +1,140 @@
-Return-Path: <linux-kernel+bounces-583595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1E7A77D37
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AF5A77DA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EBA73AAF86
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D180163B5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317392040B7;
-	Tue,  1 Apr 2025 14:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3EF204C03;
+	Tue,  1 Apr 2025 14:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EGoUx7cG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Qq0uth9r";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="c02Pc3H9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yWGg8w4z"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Hj5njTlZ"
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB35204685
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79605189F56;
+	Tue,  1 Apr 2025 14:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743516337; cv=none; b=GKwbOVRKfI4dgehb01pkRnlDDKTdv8X00+EN0oI5cjuXBANzqqe7kxGdpY4wbxuQVttmptqC42okfk1/+NG0sHtcYwuQMOR/p9IYGTbA9OmtfMemrr+4D/nolk9rMZGdqxmw/QH8aMFZaGJ9xR7spggCbETIjip4G1SvgyoiJfg=
+	t=1743517486; cv=none; b=jJExMM8uo+CagnVkOADaK0EQ8zuy+HU44BV4qkRy+kphEEcVMEy0uRDRiUmboWXeF9OKRBGn+GT8p7VNPi3NMk0b6kcwSsWJFpFGp5cOrrJEsefOGf1V3NlDPEp/YFQk/BhjlGEQV6iJVgHQxOXaDf8QHT0pVaqTHeOmMB+VddU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743516337; c=relaxed/simple;
-	bh=AI69wCYKAaCfFkprguc6o9rLtY07cuhSRg33rT54uMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RK61SR/tMr3bc+Ecw3/nSzji+p61bjUHgeNJKKkqTXyFx8x+VYy07khg2AJ7MZ4F/dT75Qd58V2GCO4m2nv+Wh+YlTXvKOv73Eo09V6HY3WsukMnO3Va4LRYpSBx+IYqLtxa2C/IQXfsMiE+567EWvsmNuGMCXifmFscALAxKcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EGoUx7cG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Qq0uth9r; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=c02Pc3H9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yWGg8w4z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D759E1F38E;
-	Tue,  1 Apr 2025 14:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743516333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
-	b=EGoUx7cGM84tfHT5TYdRrt8jlnYk0bEcB7kbInsZkIwODhhegxkGIh8Nufv8KAvH75xRVC
-	TIOtOdgMT3AR9pDBIVXxr+jLaeif8cYelNzEdyUiv7p/BoOobaXcGQzkFe0uPFY++uE/Mi
-	rWP+Gt1qWG02yqUXFw5i3MZ22nu7xUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743516333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
-	b=Qq0uth9rF79Ugn3wX2m12hoLobDkC7VOX+ip1BSNpdc7AGuBjY/mt5ZI8DkjWLgzVmCJeG
-	CnhF1ABakDGCMKDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=c02Pc3H9;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yWGg8w4z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743516331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
-	b=c02Pc3H9jYKWbyPcvAyUqCfAaHt7VcQSHg5m4HUqw8adanKC6ZHkXd/TxY2f944RLuph7Z
-	YY8ph5QobOQukVtCo1aKUz1W9CB6XElTsDnvgiaq4aspKS45gUbyUgfhhgA5CRjQ1ywXri
-	Jkn5D+Jur//3Je5fh5Z4ScEivdC+8rU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743516331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ioz2J5OyCW+D0qTDZtmZicbCtvIBX2wXYFGrZx7//9Y=;
-	b=yWGg8w4zHsjfTLYgZNf8d3OwrZVrMZXajdafAVa4MJ5YS77hv9Dkrml/Qr6KGlcJZ4Q5mV
-	+8FcDpXVfLbfZ5DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75266138A5;
-	Tue,  1 Apr 2025 14:05:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Uz/UGavy62f6XQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 01 Apr 2025 14:05:31 +0000
-Date: Tue, 1 Apr 2025 16:05:25 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, yanjun.zhu@linux.dev, x86@kernel.org
-Subject: Re: [PATCH v2 6/7] x86/mm: remove p4d_leaf definition
-Message-ID: <Z-vypSM90BYqdhTM@localhost.localdomain>
-References: <20250331081327.256412-1-bhe@redhat.com>
- <20250331081327.256412-7-bhe@redhat.com>
+	s=arc-20240116; t=1743517486; c=relaxed/simple;
+	bh=UEwhfsnRmdNrlpCAYZKSnEloif6NrMNWguTi4XBkR/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UdqlDMd8v9XqI0ztqokosRXvsVOL7GsLQjlqhazw7RUEpnUTZ5OwbPtqoU5YT+++e0KaPyqCD1iDpUfIEyWY88NKgSBKKV90Pc17WqmbBSGNEmTJYmkmQLX1N5ULzF8YGQ3F9rQZiUBI5vyab+g1ZTyeo2KF8zC8xehwHAQUXjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=Hj5njTlZ; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nyoNBGkZ/SvbWg6/7VkY8tnH5nK8aXreynxludftxRs=; b=Hj5njTlZyw29UjEq9ufWY6IQqS
+	+BTPdR9qp5fBzzyZxLjb5cnfuYsX/kq2s9+7/0VqSTY0rgH/KYykvZDGILggKPSYXqKJMkRGvF6kH
+	Az0rHZ2EPh+H5kaL8aUBDIDJYa9bhvJx3zcACLs5StNJvYF1z9DrQ1t0nJWdyXnhxYxgo7b+X2z1s
+	rGOlnou6COwSzW0igrksph46ghfws3puz3jumymQPfrZatjvQV40YZcmDvVzitk+9V1C+KA/ABrFL
+	SoOD514rjslnw5xcQHVp9Sx8IEls5hmzOGSVG7KvSvAMclWQ9Lf38ztUbxN351nxJWsHfQNW1Q29y
+	EbrGGzFg==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:42244 helo=[192.168.0.113])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <david@lechnology.com>)
+	id 1tzcGf-000000006K1-3v06;
+	Tue, 01 Apr 2025 10:05:34 -0400
+Message-ID: <b79bda63-79bf-47b6-8ac1-1444ed101423@lechnology.com>
+Date: Tue, 1 Apr 2025 09:05:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331081327.256412-7-bhe@redhat.com>
-X-Rspamd-Queue-Id: D759E1F38E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email,localhost.localdomain:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk: davinci: Add NULL check in
+ davinci_lpsc_clk_register()
+To: Henry Martin <bsdhenrymartin@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ xsFNBFFxkZ8BEADXzbnj9t8XSZYxKJGHdHqYgEBVzRElb3+f11qhDZKzVCMsn1+AN+PlHqC7
+ VrCWLsWTSY7WsHB2fW3aXaoidtac5FYoX2IXAun1Sbv15NcBdapImkMv6zxhAyWz6LqPfdCp
+ QV+3x6qwUPFeLHdmew8mkSq56qTFgDQr9oQhsrXKHkXFD7aIAf5bM6janQCHgGTVDraRDfEO
+ rV9rj7Wu/SfjUCVSCvW/SuWBa3IXTLNgbrNwBfo7Pl/tHuto0jxkVCIJ6J3xa85BKMw1WjA+
+ jKzh12S6KWrLUfhEUt64G9WJHiZOnVAjxgCR7TUahVM2OQHcp49ouG/JZsGNniulXH4ErA2O
+ Wt6seUEx8XQIm48H96RWgKrwKJ+1WoLEmUcYOJDZUcguMZVc3Astx8aSaRjf6IRBO8XlJSJV
+ OorkguvrTQBZJfjoicuFx7VlpdMggMZayv0cqEvzZMSHUt8DCUG74rLhtab9LCg/9wdCwqyE
+ JEi/8jaV7JWxwiCmzVpw0mHn1DiUlp5kapZT+Hart0Gc1WW915psA4G6KneisFM5DJe+S5mn
+ dUJb5IttTOx37jQQi2igwlSBdSC/M+Zy3sb+DXYJUVjVxK56RGAnlSvjHUx/TkID6Vb6HXvm
+ Fgm9vQamTEf+C3XzlY2v1YaMMX8yQjfrzQSoGfB0+9zaD9J/cwARAQABzSREYXZpZCBMZWNo
+ bmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT7CwdIEEwEIAIYFgmeVPmMECwkIBwkQH4r4jIL3
+ fANHFAAAAAAAHgAgc2FsdEBub3RhdGlvbnMuc2VxdW9pYS1wZ3Aub3JnDM6jI9LThow7adCF
+ tC3vi3zrklAc6o/kt42Hifhjwk8DFQgKBBYCAwECF4ACGwMCHgEWIQSKc9gqah9QmQfzc4gf
+ iviMgvd8AwAAEm4P/04Ou1k+zfSz2Di+wzFiIzz7c3zyU+R04sj0rFx4KRKIBYQQxgQOTkM/
+ zbKLMlggKMsbgICjDlWLp6ANCH0A22gGZQx5PJBDfjIl05G+GnK6XilpLyd3U18Xj/7PbB/t
+ GHER2Llpf/ePe1YgZPqUuI7fTtFz5QLdIjr/ygb+HWJI/H/IydaJfFDWxQWU6quGi852oKv8
+ KMhmhGjgahPF+am6p0iPjkm+PfhHchxgKIneBixpwxFaOlikODcNuo0E+wp3gGLkaDIoGv15
+ H3BMZklu96EOKeKQYctpCj8RvTKzjEbn6JxGyXhVGoPMnic2Mwc0TNrXccqDqlQh48FEK6+L
+ zAbQrPE3wWl1PFxSUvUc6b3jZ1JAjcVU2GfqhzHC0U1cjJX/XKA3jn60jl9vBgU+DkvT6Gq6
+ +pzj2nQszEx+N0+71I2v/vgoB8+kRKlibh2ydDRXfpipn2r4qR5imONrbW7OkLCEJ8nHmpmK
+ N8iZKJjjTFmktLesE1s2L0hb9eoWz7i4YGCcIMOZISRTv/w860ebOrH787Bg3JNRz+edvKU8
+ TM3twZrCedbi+wBZcgGUBpPkWLH9dUTgpycjRcCOPqOzuHQIOqCMXWFq2cQ9Oy5szMdwsEzh
+ Zf1Ys7e2++tAuALI/HXJNk4/BuddZYoorLyw7MV2mVEV91ERPIx4zsFNBFFxkZ8BEADSVjyc
+ eG8Up24FFXwv5YmV7yX520kM97N11e1RJVMI1RSU+Na3Xo9J1BW6EFMAdibD6hH8PiMmToKx
+ BrfYSLStLh2MbHA2T/3zqicU1nuk376LMyrAuoV/fl8/7Jldwh1c9AADaYXNQfZ84R6nyaTR
+ jy4fqcc/dG2kw5ZMln909SMKZc3HdVynmo9pLT2HBOnXu2d3bIGmzuDnDXzh1X8+ods4gViu
+ vB31xU1WiANr4TbhaNU+/LmEVfvhS+34Cmz3U5Xs5x7nWdpM6fFfDOSz2sIYXOGAcaV3oJ12
+ 1Uul2U2bMTsXxiwdbjmZP9jrzEfvhD5KIOutX+0OzdtM9QVB70QQOEh3maW/FwGdL5stYcad
+ sBiEEI6Y2ymVpBgzrPS6HzC+UZLUShOE+aLx+SYBYAuypikMPvG9W3MqWHCsXXEfyp2mCeor
+ Kb7PafyaBO/E5REjPmYUpkGMNZH1lGV3jegE9WdOBfXW9xvCwf0UefoFaVhjsjtzvl8lMQnd
+ rDBdKPpJ7zIIG6FGSsUYmCtvE+JAk83tfpUpSZKDSzsqtLTI8GE2fQzEuZcBqm6Yk2V1+u6r
+ jUjmqEBIzunyeUupaUc+p00JiwNE8v/wcx7UbD5m+PGOkNoLMLe0ti0O7nFlY8avZzy3eLBQ
+ enu4WsJjPVYeQGeGB3oLvCGIhT9/WwARAQABwsFfBBgBAgAJBQJRcZGfAhsMAAoJEB+K+IyC
+ 93wDC44P/0bAjHgFUPHl7jG5CrWGwgdTNN8NrjpmIxSk37kIuKMzcwP9BWhFF0mx6mCUEaxv
+ GdAQ9Va/uXB2TOyhLCGXhlf8uCwxcIyrOlhi2bK6ZIwwovyjjh7GCRnm8cP8ohDCJlDUpHkO
+ pmU4tcapbZiBrFaFAahxPMjwK9GJ3JY0lx63McgCEIwm6txNcMnVX5Y3HeW5Wo8DtmeM3Xaj
+ JLFaBXIhEfoNHMfDON6UGiXFeR8S9W8dpaX8XEwzPUjZyOG2LvOMAEPXx+kB9mZPTogong8L
+ ekL1HZHSY4OYffzQy5fVE+woHAMADkrmuosGkTRCP4IQHXOagoax/Dox01lKTLnlUL1iWWQj
+ fRaFXVKxEc2PF1RZUpoO/IQYFB1twcaF2ibT3TlGolbmb3qUYBo/Apl5GJUj/xOWwrbikD+C
+ i+vx8yuFUlulbS9Ht+3z1dFjBUDbtZ4Bdy/1heNpA9xORiRs+M4GyTil33pnBXEZp29nh7ev
+ 4VJ96sVvnQFzls3motvG+pq/c37Ms1gYayeCzA2iCDuKx6ZkybHg7IzNEduqZQ4bkaBpnEt+
+ vwE3Gg5l4dAUFWAs9qY13nyBANQ282FNctziEHCUJZ/Map6TdzHWO6hU1HuvmlwcJSFCOey8
+ yhkt386E6KfVYzrIhwTtabg+DLyMZK40Rop1VcU7Nx0M
+In-Reply-To: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Mon, Mar 31, 2025 at 04:13:26PM +0800, Baoquan He wrote:
-> There's no p4d huge page support yet, let's use the generic definition.
+On 4/1/25 8:13 AM, Henry Martin wrote:
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> davinci_lpsc_clk_register() does not check for this case, which results
+> in a NULL pointer dereference.
 > 
-> And also update the BUILD_BUG_ON() in pti_user_pagetable_walk_pmd()
-> because p4d_leaf() returns boolean value.
+> Add NULL check after devm_kasprintf() to prevent this issue and ensuring
+> no resources are left allocated.
 > 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Cc: x86@kernel.org
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: David Lechner <david@lechnology.com>
 
-
--- 
-Oscar Salvador
-SUSE Labs
 
