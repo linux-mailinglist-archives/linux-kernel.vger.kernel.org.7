@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-582851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA365A7732B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:02:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3342A77316
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 05:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72FBF16C41F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9122A3ABE86
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 03:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758001D5141;
-	Tue,  1 Apr 2025 04:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E7196D90;
+	Tue,  1 Apr 2025 03:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="j88BjEpY"
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="E10MYRBV"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E89D187550;
-	Tue,  1 Apr 2025 04:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347AE2E3398;
+	Tue,  1 Apr 2025 03:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743480157; cv=none; b=k+gAEfR04fc643ZAIR2pAGiHZj5X7WUcAX18njk57pfsP72f8X0mvFg3mc0lXtdZUOaeOzEmR0Wgs6clbG8s7GHkmqDdBsG9hSZYyIzqS7ATlZKE4rcaNVZaoXmbG3VLJupbg/LpqD1dSKNIfo+6RmLZbPpa+ZMB32F8pDy18Zs=
+	t=1743479716; cv=none; b=PVQF13tC8Ih48D11xQre0F/H6bpRWaz1RQOYTfEhAlSO4WVpa3X+RjNIuoI+pvq8kvKjwHrCsk1rpjmYl8PPHIAkL/kA9hxYODABxrHJ6pjLbOpmP86up2sP0bg+KJxL0Z7cmnr6Acu/qnHujIlhlttsCMRrYAvB49+C4vKFS7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743480157; c=relaxed/simple;
-	bh=COGoUV2LNCT7BAByBN+90DSwtl7nzPfe94IaM5eu25A=;
+	s=arc-20240116; t=1743479716; c=relaxed/simple;
+	bh=4DI89Kdnjj6kSPWKEchqMVObf0VVVoyCkBWmJoxsySA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nnGladCdq+cg/L3pOfTmaZLwIgMMQ5zDauISitKoOwnZ2EDolx7ODGAeDW0Gi7MoMp64uNeJwZ7HrVIKER5eals47R3aSo6qSzL6wQh7bxhQAMsjO7XE3PNp07V/DcGEkYewsvOOFdGGg3UfyQLECc2kO/ojIPt16HcH5ZyJKJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=j88BjEpY; arc=none smtp.client-ip=74.50.62.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
-Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id 91DD26040B;
-	Tue,  1 Apr 2025 03:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1743479666;
-	bh=COGoUV2LNCT7BAByBN+90DSwtl7nzPfe94IaM5eu25A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j88BjEpYJbGHDIbrbQgnoxpXCjz6IezOyCvVyNwLauDr3s0CUHlhkktyM3q/Sg4DP
-	 KIju37voGdqjHrK6cRQHhbeirbEHelkezjqNwh4Cb9r8FiSuMOu4o3WScv/Vt3fsrk
-	 P+I1rtsv2D35AViLzbRwAnVHD7hyYutQvQLyRoo8unI5RdtN8RkQ8psUmgE5HMtWa/
-	 0ZutpaCEQw90RtyFCvRuySo3K4tXEHeUHy/FJLglhm/hJ2hpEqQIuje64/gL8Z1ICz
-	 8Rw+o7+zeSY4uBC/+on3fkT3c5KNlAZ58zcjOTeZuCyFdf708m2GG9WVHEpP+SEywS
-	 I/YMrqTnbktvw==
-Date: Tue, 1 Apr 2025 06:54:03 +0300
-From: Tony Lindgren <tony@atomide.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: khilman@kernel.org, aaro.koskinen@iki.fi, rogerq@kernel.org,
-	linux@armlinux.org.uk, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	sre@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] ARM: omap: pmic-cpcap: do not mess around without CPCAP
- or OMAP4
-Message-ID: <20250401035403.GF4957@atomide.com>
-References: <20250331144439.769697-1-andreas@kemnade.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/oQwHar2ZXtiIPH6W+17CNFCzvrQP8/3ExDjK4h82LOd+9wyM8QR4vJ45iKVopkixNkoZoKTU0lTkzJNeUf4s/HHYFgMkCdr83ichS0/1q4e069vZ2ZRo89pNRYvClZAbVNlRS/KIz0uzLn+7rgNtCtqfV8yFbV5mOU+ZcN3f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=E10MYRBV; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=A8PlVwBjraGpOwYIdORUctCRcKdyBQF4w3RWiSehy7U=; b=E10MYRBVXR7JCggA6d1sYwiVj1
+	4esJXk/3UsvOuao2XHUbDyhOVOseJuT3iAV30i3b6YoKFCmIT4JnN8JJXuqeEXC0PUaBnrhN8KhZA
+	rVmquPes9BAOvcdiE6RB2m7tFQsYuT7TZNpREYTy2w/OYZuyoYX7oYvBO+VCuzzvLAtyk72suaLmg
+	J4BF8TRXHx1ozFuzGg3LZYhgiNQto6yzDtucBysUijOCMPKbO8b4lPvz6vm4eKtRplHxCZqntcSOK
+	3NPXX3zCmNnLV+dDi7W2+Nq7GS/34lUMd2Li6pWcXH/fyUdMybqmNBnbauEcW1zjjSSDv2QdzcLZy
+	hYJ7Dktw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tzSiM-00BjrM-1y;
+	Tue, 01 Apr 2025 11:55:03 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 01 Apr 2025 11:55:02 +0800
+Date: Tue, 1 Apr 2025 11:55:02 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: Chaining is dead
+Message-ID: <Z-tjluCx71ti6Ngq@gondor.apana.org.au>
+References: <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au>
+ <20250325152541.GA1661@sol.localdomain>
+ <Z-NdGvErMGS5OT7X@gondor.apana.org.au>
+ <Z-NjarWmWSmQ97K0@gondor.apana.org.au>
+ <20250326033404.GD1661@sol.localdomain>
+ <Z-N55Yjve6wTnPqm@gondor.apana.org.au>
+ <Z-itc_Qd5LLn19pH@gondor.apana.org.au>
+ <20250331165630.GA3893920@google.com>
+ <Z-tTEjCzpgDr9a-3@gondor.apana.org.au>
+ <20250401033303.GA56851@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,19 +74,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250331144439.769697-1-andreas@kemnade.info>
+In-Reply-To: <20250401033303.GA56851@sol.localdomain>
 
-* Andreas Kemnade <andreas@kemnade.info> [250331 14:45]:
-> The late init call just writes to omap4 registers as soon as
-> CONFIG_MFD_CPCAP is enabled without checking whether the
-> cpcap driver is actually there or the SoC is indeed an
-> OMAP4.
-> Rather do these things only with the right device combination.
-> 
-> Fixes booting the BT200 with said configuration enabled and non-factory
-> X-Loader and probably also some surprising behavior on other devices.
+On Mon, Mar 31, 2025 at 08:33:03PM -0700, Eric Biggers wrote:
+>
+> - It would add the overhead of keyslot management to software crypto
 
-Nice catch:
+That seems to be a design error in blk_crypto.  Why should we
+model the inadequacies of hardware in software?
 
-Reivewed-by: Tony Lindgren <tony@atomide.com>
+If we're going through the software crypto path in blk_crypto,
+it should be done as a first-clsas citizen, and not as a poor
+man's version of hardware crypto.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
