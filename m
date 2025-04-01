@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-583271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75250A778CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A93A778DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE8B3AADFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1783AC525
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1AC1F09B8;
-	Tue,  1 Apr 2025 10:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ADB1F0E2C;
+	Tue,  1 Apr 2025 10:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkzmIt//"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1XBSkuKh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129331E0E0B;
-	Tue,  1 Apr 2025 10:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C12C1E5B70;
+	Tue,  1 Apr 2025 10:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743503365; cv=none; b=FG/yiDCbIO4IvI2YUJd3t6XSDgGSsQoOJozYXJGdgF7uU+YkAinSzZRnXzb+ZsSw2jpSCHJ6388BktcJ7RnsORGQbWf9v/xNnnG2SZFU/sm5o3LSPPDkSYwoL0OZ9stWrl7o4pkarfFtYP3kmvCPcc6oZC5Ii3WdSkKpU3d0UGU=
+	t=1743503485; cv=none; b=cbk3bAXtmNHw5Jy8WZojjTO2Y4NR1noJ4Zy3G2K4hBj+0KT7soY+wBw4pmNKb7RSQn8MzhvJuZnzjimOLohVEz3KArgjPs0C9HpMDtvzwmR7e7tSmxq5T9KbCSC3p0ta6K0jx8zciSd3KMbl8KCpyEDhWBbQb4HW+ahCNIF7nS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743503365; c=relaxed/simple;
-	bh=Ti23H5IR6RvMf5Q2Ipi0RguLenESiqiPAhYyfxiegDU=;
+	s=arc-20240116; t=1743503485; c=relaxed/simple;
+	bh=5oF+wUYWHbpcfqiE3Mr18/rl4PEQxDN4xPaMapV7xNw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJGRWns7mUAIy1/bLmXMrsx9xNzMHulLmYb0tK1PDRQVMn4GrjvdoI8mQ/WP1wp5FxX/1VdwT3/6hzx1h88lzcySoGg9A651vBm5aNPIefO6BMkW6hSnYMOO35MOd6mg3UDPZ4mNUe+tx1LbNZ9u7LnHnya8dbMWRD0oAw71uzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkzmIt//; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E725C4CEE4;
-	Tue,  1 Apr 2025 10:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743503364;
-	bh=Ti23H5IR6RvMf5Q2Ipi0RguLenESiqiPAhYyfxiegDU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcci6Yr5qaAHhydnXHJcW7mW2ZpIwcpZIdyclC2hyAaU7O9nBczaq1gQnljlVOzXc5GtP/sOjWwNOtup5KME8kypr07qCa1tgGx1/xcmWKgTfEbgxQm9TyHCXz4oE+vVrxITIOZO7rps2W/c5wLH4UpsJkI+Tm3vbCazvamd7nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1XBSkuKh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1644BC4CEE4;
+	Tue,  1 Apr 2025 10:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743503484;
+	bh=5oF+wUYWHbpcfqiE3Mr18/rl4PEQxDN4xPaMapV7xNw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MkzmIt//69XtaVE8p+KEuoDtkLzB+IGJJ5Uj7g82bSvgoyiUnlD+KHvSIhb2LR/DG
-	 llwY1oc1pgVm8OTc/SH4pAIs+Ems2Qqdvg3pMUlbmTcULZbM8vg7QWCSVvbgsVSY1C
-	 8NdgQcKYhShHNu447epbO7tKtyo3awM6DVP6CCLkqg0qLgLe5e4IzIjLzRy5NP48L7
-	 +IDUFK+nKoAo+Rp/br5KY4Vniu5iwTteyPv3oxklXnPDHU5Dbgq9KyyOs5tWq8kYy6
-	 eVH6IuGREvRTt3aR7IGSIhjHGiTEfySGRT79353+BFMIgpAUXln5QRAUMJzADwGmxM
-	 /vQ7bnE2SfikA==
-Date: Tue, 1 Apr 2025 12:29:19 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	"open list:PCI ENDPOINT SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] misc: pci_endpoint_test: Set .driver_data for
- PCI_DEVICE_ID_IMX8
-Message-ID: <Z-u__47R9vprIbCS@ryzen>
-References: <20250331182910.2198877-1-Frank.Li@nxp.com>
- <Z-u6cZs6qncIWF98@ryzen>
+	b=1XBSkuKhBoazD6/nNcFPyi7l/UyT+SR+BCN/ra1p+U0nbIZUMRBItj0e+OZ0TI7b1
+	 ob+Wk4c74Qix7GDf1eYzCSkZlum/2c+7lYi+z5A75Kjlch/gW5+SIyxCBMpPJsPluJ
+	 Iu6y/ZZhwFfyAxFuQ+Bdk6b6634ZRyzskbItFLkY=
+Date: Tue, 1 Apr 2025 11:29:53 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ying Lu <luying526@gmail.com>
+Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, luying1 <luying1@xiaomi.com>
+Subject: Re: [PATCH v1 1/1] usbnet:fix NPE during rx_complete
+Message-ID: <2025040110-unknowing-siding-c7d2@gregkh>
+References: <cover.1743497376.git.luying1@xiaomi.com>
+ <e3646459ea67f10135ab821f90f66d8b6e74456c.1743497376.git.luying1@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z-u6cZs6qncIWF98@ryzen>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e3646459ea67f10135ab821f90f66d8b6e74456c.1743497376.git.luying1@xiaomi.com>
 
-On Tue, Apr 01, 2025 at 12:05:37PM +0200, Niklas Cassel wrote:
->
-> But... I suggest that we just remove the pci_endpoint_test_alloc_irq_vectors()
-> call from pci_endpoint_test_probe().
-
-...
-
-Solution 1.
-
-
+On Tue, Apr 01, 2025 at 06:18:01PM +0800, Ying Lu wrote:
+> From: luying1 <luying1@xiaomi.com>
 > 
-> Or, if we want to keep allocating some kind of IRQ vector in probe(),
-> just to rule out totally broken platforms, I guess we could also do:
+> Missing usbnet_going_away Check in Critical Path.
+> The usb_submit_urb function lacks a usbnet_going_away
+> validation, whereas __usbnet_queue_skb includes this check.
+> 
+> This inconsistency creates a race condition where:
+> A URB request may succeed, but the corresponding SKB data
+> fails to be queued.
+> 
+> Subsequent processes:
+> (e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
+> attempt to access skb->next, triggering a NULL pointer
+> dereference (Kernel Panic).
+> 
+> Signed-off-by: luying1 <luying1@xiaomi.com>
 
-...
+Please use your name, not an email alias.
 
-Solution 2.
+Also, what commit id does this fix?  Should it be applied to stable
+kernels?
 
+thanks,
 
-
-Considering that this is a test driver, I actually think Solution 1 is better.
-That way, even if the platform has issues with IRQs, the user can do still do
-all the tests/ioctls() that do not require working IRQs, e.g. PCITEST_BAR and
-PCITEST_BARS.
-
-
-Kind regards,
-Niklas
+greg k-h
 
