@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-584253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C02A7850A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C923DA78508
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588443AFADF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9A116C68F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8016421C168;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D421B9DE;
 	Tue,  1 Apr 2025 22:57:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFE3219A90;
-	Tue,  1 Apr 2025 22:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41F219306;
+	Tue,  1 Apr 2025 22:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743548261; cv=none; b=VFg3mrdpJ5GD0FYL4DFlvE9gbsqURSyaX0S7YtJprO1H5DWgo/n9BsMfmzyBDOELArfKRQf3vpSriyAgDiuVFlmDuf7SyfM5ToffT+wKevMFOfvdo0brZKJu2ahMX3VR85eV55/0uH//6YUg36ICZSNmtJ708P9Z1iAn5ky+l/Y=
+	t=1743548261; cv=none; b=ZIG3JCs3MZJLAe26r1tCE5vjPXw5VzTrojtvqB8cvTmgKAOCc4d/ThqPPa/JXFeEWLRI5ZwSpDQ9rsNSbwHoq2Y2QG+siMR8hEOlspURYCjykUL3HZ+lYnefb1+Z/lIhfIzrfZZB5TDEZtyyr6pTv/K4QEomqXE9jFsLXn6gi8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743548261; c=relaxed/simple;
-	bh=wpGEuBfp1Yd+qwLHRPlHkhHNTdxgpXzLD4tjrIjBYlg=;
+	bh=XYlOBYSIYETSQDHzjhTSckqROknCCMTut+9+C8IhgSs=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=MM/WUziXsdBXFdoOL8mIFOiZ7Nkmx20EfpFt6VaMSdRr3Dxhpt7L1qtLqgsgXVl0vK2mNh+xilSIw6zo+d7nq5XLGTX/88RnN53AAzyKeU9MN6yewRfPz0A/xXsF5by/A77LgggdZ4Gvjg7WFsMv401H5ecgOf5+OqjtmP9Feew=
+	 Content-Type; b=ZRcl0mvp0EjzivOxXpntpn6kcpHE1JgMRK/3gCDEBgAWoPLIhu6nuGKLE0pLEtxjceGpdYe5+zPjL6Bx0rMOwA9V0lgRicXh9DTGLKhlFGEUKjA+fMlimb20bMTuv8KwoYvks+x/zhugTf78Qmgz71nUs9wRBNJct4DC2Jt9POk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B549C4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC931C4CEE8;
 	Tue,  1 Apr 2025 22:57:40 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tzkZ8-00000006KZG-2QPz;
+	id 1tzkZ8-00000006KZk-38t4;
 	Tue, 01 Apr 2025 18:58:42 -0400
-Message-ID: <20250401225842.429332654@goodmis.org>
+Message-ID: <20250401225842.597899085@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 01 Apr 2025 18:58:13 -0400
+Date: Tue, 01 Apr 2025 18:58:14 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -47,8 +47,7 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  Vlastimil Babka <vbabka@suse.cz>,
  Mike Rapoport <rppt@kernel.org>,
  Jann Horn <jannh@google.com>
-Subject: [PATCH v5 2/4] tracing: Have reserve_mem use phys_to_virt() and separate from memmap
- buffer
+Subject: [PATCH v5 3/4] tracing: Use vmap_page_range() to map memmap ring buffer
 References: <20250401225811.008143218@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,120 +59,77 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The reserve_mem kernel command line option may pass back a physical
-address, but the memory is still part of the normal memory just like
-using memblock_reserve() would be. This means that the physical memory
-returned by the reserve_mem command line option can be converted directly
-to virtual memory by simply using phys_to_virt().
+The code to map the physical memory retrieved by memmap currently
+allocates an array of pages to cover the physical memory and then calls
+vmap() to map it to a virtual address. Instead of using this temporary
+array of struct page descriptors, simply use vmap_page_range() that can
+directly map the contiguous physical memory to a virtual address.
 
-When freeing the buffer there's no need to call vunmap() anymore as the
-memory allocated by reserve_mem is freed by the call to
-reserve_mem_release_by_name().
+Link: https://lore.kernel.org/all/CAHk-=whUOfVucfJRt7E0AH+GV41ELmS4wJqxHDnui6Giddfkzw@mail.gmail.com/
 
-Because the persistent ring buffer can also be allocated via the memmap
-option, which *is* different than normal memory as it cannot be added back
-to the buddy system, it must be treated differently. It still needs to be
-virtually mapped to have access to it. It also can not be freed nor can it
-ever be memory mapped to user space.
-
-Create a new trace_array flag called TRACE_ARRAY_FL_MEMMAP which gets set
-if the buffer is created by the memmap option, and this will prevent the
-buffer from being memory mapped by user space.
-
-Also increment the ref count for memmap'ed buffers so that they can never
-be freed.
-
-Link: https://lore.kernel.org/all/Z-wFszhJ_9o4dc8O@kernel.org/
-
-Suggested-by: Mike Rapoport <rppt@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 23 ++++++++++++++++-------
- kernel/trace/trace.h |  1 +
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ kernel/trace/trace.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index de9c237e5826..2f9c91f26d5b 100644
+index 2f9c91f26d5b..e30d1e058fea 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -8505,6 +8505,10 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
- 	struct trace_iterator *iter = &info->iter;
- 	int ret = 0;
+@@ -50,6 +50,7 @@
+ #include <linux/irq_work.h>
+ #include <linux/workqueue.h>
+ #include <linux/sort.h>
++#include <linux/io.h> /* vmap_page_range() */
  
-+	/* A memmap'ed buffer is not supported for user space mmap */
-+	if (iter->tr->flags & TRACE_ARRAY_FL_MEMMAP)
-+		return -ENODEV;
-+
- 	/* Currently the boot mapped buffer is not supported for mmap */
- 	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
- 		return -ENODEV;
-@@ -9614,9 +9618,6 @@ static void free_trace_buffers(struct trace_array *tr)
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	free_trace_buffer(&tr->max_buffer);
- #endif
--
--	if (tr->range_addr_start)
--		vunmap((void *)tr->range_addr_start);
+ #include <asm/setup.h> /* COMMAND_LINE_SIZE */
+ 
+@@ -9810,29 +9811,27 @@ static int instance_mkdir(const char *name)
+ 	return ret;
  }
  
- static void init_trace_flags_index(struct trace_array *tr)
-@@ -10710,6 +10711,7 @@ static inline void do_allocate_snapshot(const char *name) { }
- __init static void enable_instances(void)
+-static u64 map_pages(u64 start, u64 size)
++static u64 map_pages(unsigned long start, unsigned long size)
  {
- 	struct trace_array *tr;
-+	bool memmap_area = false;
- 	char *curr_str;
- 	char *name;
- 	char *str;
-@@ -10778,6 +10780,7 @@ __init static void enable_instances(void)
- 					name);
- 				continue;
- 			}
-+			memmap_area = true;
- 		} else if (tok) {
- 			if (!reserve_mem_find_by_name(tok, &start, &size)) {
- 				start = 0;
-@@ -10800,7 +10803,10 @@ __init static void enable_instances(void)
- 				continue;
- 			}
+-	struct page **pages;
+-	phys_addr_t page_start;
+-	unsigned int page_count;
+-	unsigned int i;
+-	void *vaddr;
+-
+-	page_count = DIV_ROUND_UP(size, PAGE_SIZE);
++	unsigned long vmap_start, vmap_end;
++	struct vm_struct *area;
++	int ret;
  
--			addr = map_pages(start, size);
-+			if (memmap_area)
-+				addr = map_pages(start, size);
-+			else
-+				addr = (unsigned long)phys_to_virt(start);
- 			if (addr) {
- 				pr_info("Tracing: mapped boot instance %s at physical memory %pa of size 0x%lx\n",
- 					name, &start, (unsigned long)size);
-@@ -10827,10 +10833,13 @@ __init static void enable_instances(void)
- 			update_printk_trace(tr);
+-	page_start = start;
+-	pages = kmalloc_array(page_count, sizeof(struct page *), GFP_KERNEL);
+-	if (!pages)
++	area = get_vm_area(size, VM_IOREMAP);
++	if (!area)
+ 		return 0;
  
- 		/*
--		 * If start is set, then this is a mapped buffer, and
--		 * cannot be deleted by user space, so keep the reference
--		 * to it.
-+		 * memmap'd buffers can not be freed.
- 		 */
-+		if (memmap_area) {
-+			tr->flags |= TRACE_ARRAY_FL_MEMMAP;
-+			tr->ref++;
-+		}
+-	for (i = 0; i < page_count; i++) {
+-		phys_addr_t addr = page_start + i * PAGE_SIZE;
+-		pages[i] = pfn_to_page(addr >> PAGE_SHIFT);
++	vmap_start = (unsigned long) area->addr;
++	vmap_end = vmap_start + size;
 +
- 		if (start) {
- 			tr->flags |= TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT;
- 			tr->range_name = no_free_ptr(rname);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index c20f6bcc200a..f9513dc14c37 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -447,6 +447,7 @@ enum {
- 	TRACE_ARRAY_FL_BOOT		= BIT(1),
- 	TRACE_ARRAY_FL_LAST_BOOT	= BIT(2),
- 	TRACE_ARRAY_FL_MOD_INIT		= BIT(3),
-+	TRACE_ARRAY_FL_MEMMAP		= BIT(4),
- };
++	ret = vmap_page_range(vmap_start, vmap_end,
++			      start, pgprot_nx(PAGE_KERNEL));
++	if (ret < 0) {
++		free_vm_area(area);
++		return 0;
+ 	}
+-	vaddr = vmap(pages, page_count, VM_MAP, PAGE_KERNEL);
+-	kfree(pages);
  
- #ifdef CONFIG_MODULES
+-	return (u64)(unsigned long)vaddr;
++	return (u64)vmap_start;
+ }
+ 
+ /**
 -- 
 2.47.2
 
