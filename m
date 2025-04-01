@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-583455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4436A77B1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B31B4A77B23
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5185188F3F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D469188D126
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5881203716;
-	Tue,  1 Apr 2025 12:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80D9201031;
+	Tue,  1 Apr 2025 12:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xw6SEcvZ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="MXK8HA0W"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81E51EBA14;
-	Tue,  1 Apr 2025 12:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511008; cv=none; b=dUDhRKqlGiuZi6pXToNe2VGX5wlNVRlJnfrX1dUIc98LIsXt2WxKK2Z4eAWHqHVun7bZUoKPj8/BYkkAs+bthq1H7nhgCWLvOtV3vDpJeSwO4Pf4rez6Nvg/ueOKiepRVvSyiiYmnBCmxY9s8A8UDti4Xx2E9d2OtYJgRYDQUUs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511008; c=relaxed/simple;
-	bh=SMxVGS/Buv4fRdofBLBNHAFpGHxFUKN37Cye8ij6Jnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ri+vEomjsSisB8idnAjD4kr0v+rh3UTUdqe1EzCoGT5VfTSyyn8fy9QCiIS7m68M2GwCyOp9YAvehfO7fNEdTIivnfSYNfz9nWiPFa3fSPRLPYuYwtJqtyZB9P5+trlJSnU+hDhocb6zUm+qhJXqkOUOZmvGnpmpe8syoFdfN7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xw6SEcvZ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227aaa82fafso104573815ad.2;
-        Tue, 01 Apr 2025 05:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743511006; x=1744115806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kOWsBcQybX4AdwxCjxqVL+WbP73O/Z+BulTPIY+zAE=;
-        b=Xw6SEcvZUZtMY4WKi1n+uIxRC7BhJje6tmXBOczzTAB0GokAVrEPadjP8+j7JcCH/P
-         fh/FZr2d7XApaEgue6RnqYik6wDj0ggVsq1TDk71FtmGh/0K2INqBgs2fbnOk9D1hrZm
-         Ha7OzvxpC6NTFuwnNJRSUSyDGrF/WqRKMPNYxusoHCtds2nDoTMJ8X8gDq09hHf7j6m8
-         kwI/pDqlsGXNZjBF/42Jrj/2fJ2s1vY2TarjOFZYL7yECZXVxZm9QJnrvDQg184APaX3
-         3x8SmarjnzUK+eWP+ixszeTzXVWDjcmt/w9HGPrrowd3Xj/BYVVr0RkPl60tqNuzmaD2
-         623Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743511006; x=1744115806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kOWsBcQybX4AdwxCjxqVL+WbP73O/Z+BulTPIY+zAE=;
-        b=kyk5e1JFLJyfbcdi1RIW3k8zV9vJV1vDAuL3jBxf9Bqdcay/NHphkT42tjLQ2gdAcQ
-         XigIXseWChAIflZgKQJsaPESPh1BG3q1IEl6igS56sspJyHuS2nVaR1jH66wvTqxjxMz
-         46vIFZvTxR6W5nI7Wu1kbsHwqkeMgshB4vOpJrKBSoBcNmiUB7ObjwBTFYAXewOg7KKB
-         HK8PsT2jHHpUV4qvbHgt97Qkum6E7GEZEFoMSH9OoN91CKFenibhdhue9LxL/HGxDk3T
-         /Vx52pMIzgVj+bGq8Lks2dLOqM1aNql1fdS7uGEMzKM5RBrhpA4yDogGhXkvvIpa/wWI
-         myHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2R/caAgjtVNv4WPw6/HaiSrfVUXYFiUKXPDyfSxXx22XouZztwTz0DKvhzGpbD5Gmgqyl4/FiGTfxEBc=@vger.kernel.org, AJvYcCVFoWwBiv2VlN7b9S+d1L11EHzdcQohHN4MsCaNjC+GaX65rl/KZNOhrdBevvCuCqNcls/GZidkzmtN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCmx7bHaIbMTOvUDQf7t4h+FTzdzwvpaiU21+RxcQ8m1PRf2yr
-	H+XRK0iuuICx95ucq1xrcH//u08WZcSQQdGOfz863FSgya6gm6SC
-X-Gm-Gg: ASbGnctWd9YHQ45TAnXUhDCbBgYcJdaQIz2KVS+siEMhBKzvEvOjAEJgWoLe5T1Zamk
-	Man42v3WYHe3DOVkPZH9/+eax66v2VB0cteVZ+axSs1Ia4bJf6qiwvJTKsv5OYYoflXRA24Ks0q
-	TFSDsHzpzL6KKl9xQPAkthXlvcVQ3fy0tlQbl4L0CrRC2+sqhYe//pzjuhLajysD1C/yu5vxg59
-	By8+q5KTwyqRb7O7EQEa62CFikmzFYGXkiMtaRcTfytG+ZrJdwRNFYrJ2QRuEhJRm/CIF+YytBK
-	Osip5WDZy+XPxHLZTLetCryaNpjDfWfx53I/T6EcYQPKOTlkjI0aXdtiwCcL80PWVj7ZeExGOB+
-	1saY=
-X-Google-Smtp-Source: AGHT+IGQHPJ1r32yqZ9I9wKeIBrXrtyGaI0sDXqxyakU0oi8eKsOICRD+72kOB+Mw2dnXiElAgQiMQ==
-X-Received: by 2002:a17:90b:5686:b0:2fe:a742:51b0 with SMTP id 98e67ed59e1d1-3053216e481mr17772883a91.31.1743511006184;
-        Tue, 01 Apr 2025 05:36:46 -0700 (PDT)
-Received: from mi-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3039e1139fasm12699199a91.25.2025.04.01.05.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 05:36:45 -0700 (PDT)
-From: Ying Lu <luying526@gmail.com>
-To: oneukum@suse.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC101F1315
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743511177; cv=pass; b=MMS3GrHu8T4Z2qNWuME5hzfcoyhczOX1SgiPpWk2u9CVjF0xMr8c9zq453ix1KBnqJo4TIWNU4nI/qfPT5r6qejqV307ZbV55K7ONtSuY3ES/WYgbaI5kjcLJUNSuJVY2Kgss9U8puwnsOCUAT2G2zr7yLTOo9t+1OQ+a0DVjG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743511177; c=relaxed/simple;
+	bh=m4DDJRWD3O5j4Ifb7W9vKEAfdZ+yQZJlLz/Na0uicpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YN9mOR9ajdtiE44rtWpO1uzN1e+tRbBnOiugLRJmdljK3BdEu99OUy+48SA2d6gE9mt1Y4hRDSspT4gOBVMK/m7A3Kxl0IgT9G/Q4EWhKvS9+KeEngapD8Wj6/pBEv44f+Q3h+BWJa1VMzURbwhYY2bq0a75o+pK6eQ2xJ9P/FY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=MXK8HA0W; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743511153; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EBqZ5HCJCUL3CNGfTvGMAFW5hd69p2cDxYGl5C0pH5adsR2LDzbw5YlkDmk6SVCh6WG7PVSZEbxe/5ek7ByJmqtv0DOg0GVm1btZq/yOchRMinAqFRLd6R3p05OIXl/SCgaK6xgzZokiyqd95d6vhS3I9uYQYZ1bGvsLrnmCkX8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743511153; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KYw/wFSISeadrIKTK5nd5AHNKKQw3bKBlfJXdtAH8jA=; 
+	b=VBVO81nsev+0dtjGYe2BJr0fw8EHQPiuRRENgBm9Jdcjyh9tYOspr6Te6wm9uLXypJb3H3KKmBmKxTX6GMScNWsjHN2bo8XG3E9bYSuimhtEUblTUHSYHHD9WlXDa1kZrsuFBmQ8npneAeLmNeVTlDrpVfFMf3OVnB6R6/DEzD8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743511153;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=KYw/wFSISeadrIKTK5nd5AHNKKQw3bKBlfJXdtAH8jA=;
+	b=MXK8HA0Wg5L3218AA7GV7pmL8jRBBcbgd+1Cn6Tzc8iLaMNjpjs95ofCpY537bOc
+	EUlg1Lm43B1GMuSGAKnYNonw8UexkLjCPen8NZpB792f+a4p7a9xSDxuddS40axV0Lx
+	TDguMriWiQaXreoSs3IGS0siCl6P2Q5QZ1flBkZk=
+Received: by mx.zohomail.com with SMTPS id 1743511148517505.586650767228;
+	Tue, 1 Apr 2025 05:39:08 -0700 (PDT)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+	Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Ying Lu <luying1@xiaomi.com>
-Subject: [PATCH v2 1/1] usbnet:fix NPE during rx_complete
-Date: Tue,  1 Apr 2025 20:36:32 +0800
-Message-ID: <0ed61e6aaa99a692a09f074c9f0057e47a2d22ec.1743510609.git.luying1@xiaomi.com>
+	kernel@collabora.com
+Subject: [PATCH v2 1/2] drm/virtio: Don't attach GEM to a non-created context in gem_object_open()
+Date: Tue,  1 Apr 2025 15:38:41 +0300
+Message-ID: <20250401123842.2232205-1-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743510609.git.luying1@xiaomi.com>
-References: <cover.1743510609.git.luying1@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-From: Ying Lu <luying1@xiaomi.com>
+The vfpriv->ctx_id is always initialized to a non-zero value. Check whether
+context was created before attaching GEM to this context ID. This left
+unnoticed previously because host silently skips attachment if context
+doesn't exist, still we shouldn't do that for consistency.
 
-Missing usbnet_going_away Check in Critical Path.
-The usb_submit_urb function lacks a usbnet_going_away
-validation, whereas __usbnet_queue_skb includes this check.
-
-This inconsistency creates a race condition where:
-A URB request may succeed, but the corresponding SKB data
-fails to be queued.
-
-Subsequent processes:
-(e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
-attempt to access skb->next, triggering a NULL pointer
-dereference (Kernel Panic).
-
-Signed-off-by: Ying Lu <luying1@xiaomi.com>
+Fixes: 086b9f27f0ab ("drm/virtio: Don't create a context with default param if context_init is supported")
+Cc: <stable@vger.kernel.org> # v6.14+
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 ---
- drivers/net/usb/usbnet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_gem.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 44179f4e807f..5161bb5d824b 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -519,7 +519,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 	    netif_device_present (dev->net) &&
- 	    test_bit(EVENT_DEV_OPEN, &dev->flags) &&
- 	    !test_bit (EVENT_RX_HALT, &dev->flags) &&
--	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags)) {
-+	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags) &&
-+	    !usbnet_going_away(dev)) {
- 		switch (retval = usb_submit_urb (urb, GFP_ATOMIC)) {
- 		case -EPIPE:
- 			usbnet_defer_kevent (dev, EVENT_RX_HALT);
-@@ -540,8 +541,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 			tasklet_schedule (&dev->bh);
- 			break;
- 		case 0:
--			if (!usbnet_going_away(dev))
--				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-+			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
- 		}
- 	} else {
- 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
+diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
+index 5aab588fc400..3d6aa26fdb53 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_gem.c
++++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+@@ -115,13 +115,14 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
+ 	if (!vgdev->has_context_init)
+ 		virtio_gpu_create_context(obj->dev, file);
+ 
+-	objs = virtio_gpu_array_alloc(1);
+-	if (!objs)
+-		return -ENOMEM;
+-	virtio_gpu_array_add_obj(objs, obj);
++	if (vfpriv->context_created) {
++		objs = virtio_gpu_array_alloc(1);
++		if (!objs)
++			return -ENOMEM;
++		virtio_gpu_array_add_obj(objs, obj);
+ 
+-	if (vfpriv->ctx_id)
+ 		virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx_id, objs);
++	}
+ 
+ out_notify:
+ 	virtio_gpu_notify(vgdev);
 -- 
 2.49.0
 
