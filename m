@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-583637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A88A77DBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:30:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4F7A77DC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 855AC1678BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4653AE946
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2C204C0D;
-	Tue,  1 Apr 2025 14:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB1E203714;
+	Tue,  1 Apr 2025 14:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcbfB/eu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N3XPXC12"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A942C204C07;
-	Tue,  1 Apr 2025 14:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948091EF080
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743517790; cv=none; b=YXVelDyXxAaBnF09tha8a43F759pvXivHxyqcABSu6F0H8MN4RNFnqsNL/GLLq7QlXXM62ZAdXL0zrkrSbUD2nIZjI+IfRhfQlgYFPtrs0Lwagongmg1/QRJtH4Rn448OYUgLblVak5cWxycy0I0C5+fkXCh0P+9f91upode2iM=
+	t=1743517879; cv=none; b=VG9oRTUbhcSWUEQci/N261rC/R/CXRBKbflaD3MvByorCmmStbCaCnTZiGBc8ssXMNkYx9O3tQa6fpwgwDxJAqHZmq29RHeQA4T1d4NAXuxV+jP2Eqk9/XOlsA05FdbfG6e2Q1eqKbWLrOnwQb5LG4tVBbez2hvouKO+MW1yjpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743517790; c=relaxed/simple;
-	bh=wlVU2YfmrjlqjXVg8SNfnOgR3nDw1BUVMZSLmdeVvLE=;
+	s=arc-20240116; t=1743517879; c=relaxed/simple;
+	bh=18IeR1ekHGJZ8yk9600mS83HpSem7+tDvDDU05xFpOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llUrSlAobK948Y/KLz8qgjPzVZCUmJWf3XD5zLhdKsJkAVhTI8IZI+5/b0b4tLsHSN8wELUFgsU0WfKhsm1T44IhgbrMLvYqownGRrjWlmL4PkoO5q6/iwrXgViM3fMUGS5GGhZdd6dI5lYw/PIzzWeKKJVHo/RK4SoPPQ3l0bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcbfB/eu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B483C4CEE4;
-	Tue,  1 Apr 2025 14:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743517790;
-	bh=wlVU2YfmrjlqjXVg8SNfnOgR3nDw1BUVMZSLmdeVvLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TcbfB/euuGlDXhcWN+svUyB7Q0cFXHTXFYtFI5nljZSHT7GYQ5eZf18bm6Q+IEUHe
-	 B9QfPPIvzdv9mOXDru8RZ5FoLkY9D/MQleFAHlZpcP+kAqDsRBIEbTc0UXbIPThwBu
-	 xXyoo2EDdLcW1JKhDUJVRhaemFJIj8g0iEcxzVeUI5Ez7XQIavG/tVoeKmovJ/c2zj
-	 9ZSF/8cGD+d/ms4RdbXKcNov6B+1SvpT5eO0rIT4l5KGohwX9qYf+Qeu+hjQEt4a0z
-	 ljpTynY+TrF/ruJ0XZps47jdt2vGOpH/PJc9BjYc6RXVvHKkCYg6B17kci2m+ViZCu
-	 CA3mS1nTEUWBA==
-Date: Tue, 1 Apr 2025 17:29:45 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>,
-	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"Mallick, Asit K" <asit.k.mallick@intel.com>,
-	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
-	"Cai, Chong" <chongc@google.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>,
-	"Annapurve, Vishal" <vannapurve@google.com>,
-	"dionnaglaze@google.com" <dionnaglaze@google.com>,
-	"bondarn@google.com" <bondarn@google.com>,
-	"Raynor, Scott" <scott.raynor@intel.com>
-Subject: Re: [PATCH v2 2/2] x86/sgx: Implement EUPDATESVN and
- opportunistically call it during first EPC page alloc
-Message-ID: <Z-v4WfcLhmXbYvaa@kernel.org>
-References: <20250328125859.73803-1-elena.reshetova@intel.com>
- <20250328125859.73803-3-elena.reshetova@intel.com>
- <Z-bhczXA6aHdCYHq@kernel.org>
- <Z-blOQ94ymUsDwPn@kernel.org>
- <DM8PR11MB5750C88DFC518EB77B0D613FE7AD2@DM8PR11MB5750.namprd11.prod.outlook.com>
- <Z-rU_JXWn0vCdBr_@kernel.org>
- <DM8PR11MB5750A46718F899A43C52A984E7AC2@DM8PR11MB5750.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vps3/yVvpP7EwBbUBPbjftY6CGr1rAD3N0jriwXjLhbNk7IkF/cKs9AlL54Xu+WERnnPvzJ9zf/8TUFXIM3AWF0W0mmdts0FdxC8PdzOQQxdIOUfi8ihnnvSCwSFxeT5EekiAAKgQI2dXWwCu4UTLS0F1pk/4KIRwzOi9e9w5d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N3XPXC12; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bKyAJhmkZ6FPooiWcqmZl7AUsJfz/8gnfhB+fTUxcpU=; b=N3XPXC12FcYqAIMbgi2TXCI9JY
+	O6QXp3+k/JCIAXdmT8qYxAp2Yu1x3qXVUYPPXr2Jj/JjZwzj+9BWAYC1k8ZWAzvYqj6/SMQ4ZGQjP
+	f39AdvibwohGMRvwp1xjVBlZUmZmJ3NDtZWU85rhEfRuWjkyeb4tqVzmwmPFR3rPApZVz8nxScGl+
+	WvZCGk4q5NlYzT+FQn2fJjYIrmuuearq0KzLYcbBIaaZPwDrY0ZYcO/0Lu2uF2LqO579bZZDOu+lf
+	cRTLs+IJiiHecFECqt4QzvCeK2Lv56GvZElRlTQTXaxjWtoFYXu04L7pAex0Cg+/nKIC73l5KlIi6
+	j+0YvVtQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tzce3-00000006pao-2ojw;
+	Tue, 01 Apr 2025 14:31:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4089430049D; Tue,  1 Apr 2025 16:31:15 +0200 (CEST)
+Date: Tue, 1 Apr 2025 16:31:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH -v2 00/49] Simplify, reorganize and clean up the x86
+ text-patching code (alternative.c)
+Message-ID: <20250401143115.GG5880@noisy.programming.kicks-ass.net>
+References: <20250328132704.1901674-1-mingo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,54 +66,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM8PR11MB5750A46718F899A43C52A984E7AC2@DM8PR11MB5750.namprd11.prod.outlook.com>
+In-Reply-To: <20250328132704.1901674-1-mingo@kernel.org>
 
-On Tue, Apr 01, 2025 at 09:35:33AM +0000, Reshetova, Elena wrote:
-> > > None of these exceptional conditions are fatal or present an
-> > > immediate danger to the system security. So, allowing the re-tries
-> > > seems logical in this case. In case re-tries also fail, the system
-> > > admin will have an option of gracefully shutting down all enclaves
-> > > and doing either a full reboot (if SVN is the only concern) or other
-> > > necessary actions like taking the physical node out of use, etc.
-> > >
-> > > Does this sound reasonable?
-> > 
-> > Uknown error I don't think would hold that premise.
+On Fri, Mar 28, 2025 at 02:26:15PM +0100, Ingo Molnar wrote:
+> This series has 3 main parts:
 > 
-> True, unknown is an unknown ))
-> But unknown errors should not happen (per SGX spec), and the
-
-Thus if for some reason unknown error code would be returned something
-would be horribly wrong (e.g. bad emulation of the opcode or who knows
-what) and thus it would make sense disable the driver if this happens.
-
-Or maybe even BUG_ON() in this situation?
-
-> current SGX kernel code does not handle such errors in any other way
-> than notifying that operation failed for other ENCLS leaves. So, I don't
-> see why ENCLS[EUPDATESVN] should be different from existing behaviour?
-
-While not disagreeing fully (it depends on call site), in some
-situations it is more difficult to take more preventive actions.
-
-This is a situation where we know that there are *zero* EPC pages in
-traffic so it is relatively easy to stop the madness, isn't it?
-
-I guess the best action would be make sgx_alloc_epc_page() return
-consistently -ENOMEM, if the unexpected happens.
-
-/* <- this
- * Do not execute ENCLS[EUPDATESVN] if running in a VM since
- * microcode updates are only meaningful to be applied on the host.
- */
-
-According to https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-
+> (1)
 > 
-> Best Regards,
-> Elena.
+> The first part of this series performs a thorough text-patching API namespace
+> cleanup discussed with Linus for the -v1 series:
 > 
+> 	# boot/UP APIs & single-thread helpers:
+> 
+> 						text_poke()
+> 						text_poke_kgdb()
+> 	[ unchanged APIs: ]			text_poke_copy()
+> 						text_poke_copy_locked()
+> 						text_poke_set()
+> 
+> 						text_poke_addr()
+> 
+> 	# SMP API & helpers namespace:
+> 
+> 	text_poke_bp()			=>	smp_text_poke_single()
+> 	text_poke_loc_init()		=>	__smp_text_poke_batch_add()
+> 	text_poke_queue()		=>	smp_text_poke_batch_add()
+> 	text_poke_finish()		=>	smp_text_poke_batch_finish()
+> 
+> 	text_poke_flush()		=>	[removed]
+> 
+> 	text_poke_bp_batch()		=>	smp_text_poke_batch_process()
+> 	poke_int3_handler()		=>	smp_text_poke_int3_trap_handler()
+>         text_poke_sync()		=>	smp_text_poke_sync_each_cpu()
 > 
 
-BR, Jarkko
+Not sure I like that; smp_text_poke_ is a bit of a mouth full, esp. if
+you're then adding even more text.
+
+Do we really need function names this long?
 
