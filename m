@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-583731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7C1A77F01
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:35:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EE5A77F15
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E02EF3A5D7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837E9188FB7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A71204C19;
-	Tue,  1 Apr 2025 15:35:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64B820B7E1;
+	Tue,  1 Apr 2025 15:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="m3AUBxx3"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A9A15E5D4;
-	Tue,  1 Apr 2025 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7811520AF7B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 15:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743521702; cv=none; b=s2ESFR/FQqDJ7LBHMVSNmN51rOYc/a7gZ8uehSMuU7Al8ydozjYNDVvbMr7YGskJQekT3hQmUmRxbZPJ8WhZgF4wr8JCamCINc2v9qFCaEliXMrt5hlR1sa1ZO/Pqzf6c7JFIj+Q2JxEAAQx0YZH9/K4XUEMDJSLQZYmmZUq2do=
+	t=1743521778; cv=none; b=iupql2MG7HnWytS68KTuOHhdyXZLDPCTsPuo4FuIzi0edh8+nO2bv4rTI1aCrzc/UhoQLvFXPBhYlY2mbu+uCEcn8HfTSV8BVuHKy6xlYLbJEIp2Yp93jen5daYhUaFU/N6UsTPbvs8d9Nsrrl06MWzdI4kqVQws2uQCTFbpQEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743521702; c=relaxed/simple;
-	bh=X9OEUt4lsxqGEHhwQKXxAwdPCxsyBHc752o5nyOFVH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lfPaeFvTn0qkzV/fFvdAIKKSAKolZ6w8912j6tm+w1pUQkzX9uvrw0QpGDR9ZVbUNfR2Vffme/lW3klxhgun2Zn9gq+DBU121Y8koV7Iel6RqRrpnhLPLIVkGe8FhQpOmM9ZmPsltK4MBVksC59Ii8Vkq1parzMpS4F0Elm/zdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317A9C4CEE5;
-	Tue,  1 Apr 2025 15:35:01 +0000 (UTC)
-Date: Tue, 1 Apr 2025 11:36:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Christian Loehle <Christian.Loehle@arm.com>, Leon Romanovsky
- <leon@kernel.org>
-Subject: [PATCH] ftrace: Have tracing function args depend on
- PROBE_EVENTS_BTF_ARGS
-Message-ID: <20250401113601.17fa1129@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743521778; c=relaxed/simple;
+	bh=WjBgEYRtDf+VXzdcMzZI5eDklNvn6/aE6Z39PTjvRE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdWWNozBbXygzFda/AKq6/wrAgm3dKYIoqrot3v69L1st8/ZReryRSPj2P4BkYTdcHun+xp0ZAKtsJENFNpHCmoVpAbHjvqLDWqH0QQ1PABCFKaJ+nRkXDJqcaV7WP0AiAPUXeV6LKSQLqBWFoVd6K7B3SmwIcNZn5zbzolN3Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=m3AUBxx3; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c56321b22cso529194585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 08:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1743521774; x=1744126574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjBgEYRtDf+VXzdcMzZI5eDklNvn6/aE6Z39PTjvRE8=;
+        b=m3AUBxx3xhRDmxtypLM4Pt54pD7o/KygxmczlsZH9r98bh7nljPrapMxgz3x8DxeOg
+         z4k10ulbzkffTBYiEGEL/FL9mg63VEG4uJlwdJeWBDUkysZAY0bxadyqOrulZzuSnbqK
+         0A/kYbYZoDqvZG36C9XlQ4VxVcBUnt0lKueY7/mmAidCSmEG4xrsQZbiKoIt3bem+HZq
+         H79/1SGoBMhSCVZYyWHkXf4RFTU6RwgIbd8gGIrfpU9y5N7073mQrmWhAcQtB3jPJT+F
+         82VdDRTZZWF6yWcppe0gRD4MucCkwjuhFCSA+daUx4KyrL7kQf1OOWAuZyELEV2s3ytO
+         fMEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743521774; x=1744126574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjBgEYRtDf+VXzdcMzZI5eDklNvn6/aE6Z39PTjvRE8=;
+        b=SjIheWVf/CyayhdT54vrJOEpEvCbmOVHe31Xue130hgFjxZ/wr1Bus+USeMcVTJE0b
+         y+nrnVUCs/zJkHOtyFeyL9qnTClAfLGYUuoGg0isxNuAPjuNYunSMUu0dZSgby5+QWx0
+         QCcXqidQ3c4znjjfFm57sQtw1iBNVHM0LWqsPUJ8ZJfpepPP4VauwuHTYhJlbGfcphXL
+         XsDknIiMAXP6V4JdX6bCNUSTjPMIBmZ8VSGwLSeCuk2ZhodC2zhRGR2qN6iGteioqf2V
+         0D94RCKFXGuNWrwWwzVMWyzj42hARzxAcrNkQVPeSJ1iPe/T6PoVIgE/Xj0Ln33dp9KB
+         74ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVZkFwoxSp/llOSekIdZEb80ZrbHb0cRLJGkFqbTiHBiWNi8ng8h2fp3J8vCcYfAcraerbtcgKgd+hun5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOPA5tA3sCKMeFwbM4OBbAqWmS7XnjmajwbNWxCoIKtxoanmYn
+	43g8GCRaX1PTS+9ugG2Yzz5zQhv4skzBeLssW6zGMCDhbXD8riE8+UIyVUHbtjs=
+X-Gm-Gg: ASbGnctWoqk+ODW+DqPCDrGE8ed+xoRkzJ3AbOpc7S64Q3lLY+0G1CIOJf26nUTyk5f
+	r8A6nN+rGyL3ZnQmXfsLfaFwWd8AhjUWFZqSBLtNZKbDOVUeK+ijMQRxN+BVMJdtxtIOa8gxuko
+	Vd1rsqhOtPJqfwK3JcN7B02g3JyPwjq/rI6Effvw+2HnrQVuvvefXSbpSYjvmLG8Dm9fM06yfb+
+	zfp1Udo/j+/ggp28u/JrtAQPwNRCSR5QXr7qU34E83ovE28ryiUetkMdGVxJd/EnO//27UweZXW
+	3BvBOshK1K2YLVk4i7jfbNLw5cBxvP3WqKhbENnsRDSVNYtfNYjkcZljapjQJYGac2jcDtJb1Bc
+	16Jer3DWCrANmswwYVeNSOVMbewAQ2RjXtA==
+X-Google-Smtp-Source: AGHT+IEZcbbkp6FMant09E2KObVJvCKVBbin+tpe470FPzBoJeASmhbh4JQZP0IGWuOjBWsuWH+nzQ==
+X-Received: by 2002:a05:620a:44c2:b0:7be:73f6:9e86 with SMTP id af79cd13be357-7c762a3f294mr49012785a.20.1743521774336;
+        Tue, 01 Apr 2025 08:36:14 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f7684ff6sm668661585a.33.2025.04.01.08.36.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 08:36:13 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tzdev-00000001M65-1n6W;
+	Tue, 01 Apr 2025 12:36:13 -0300
+Date: Tue, 1 Apr 2025 12:36:13 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Patrisious Haddad <phaddad@nvidia.com>
+Cc: Mark Bloch <mbloch@nvidia.com>, Arnd Bergmann <arnd@kernel.org>,
+	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Tariq Toukan <tariqt@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
+	Moshe Shemesh <moshe@nvidia.com>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/mlx5: hide unused code
+Message-ID: <20250401153613.GH186258@ziepe.ca>
+References: <20250328131022.452068-1-arnd@kernel.org>
+ <20250328131513.GB20836@ziepe.ca>
+ <a754f37e-d9ea-4fba-820e-cc56204d954f@nvidia.com>
+ <84bf60b7-2d7e-4549-8e81-bc35efeef069@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84bf60b7-2d7e-4549-8e81-bc35efeef069@nvidia.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, Apr 01, 2025 at 06:20:09PM +0300, Patrisious Haddad wrote:
 
-The option PROBE_EVENTS_BTF_ARGS enables the functions
-btf_find_func_proto() and btf_get_func_param() which are used by the
-function argument tracing code. The option FUNCTION_TRACE_ARGS was
-dependent on the same configs that PROBE_EVENTS_BTF_ARGS was dependent on,
-but it was also dependent on PROBE_EVENTS_BTF_ARGS. In fact, if
-PROBE_EVENTS_BTF_ARGS is supported then FUNCTION_TRACE_ARGS is supported.
+> > > #ifdefing away half the file seems ugly.
+> agreed, which is why I think mark bloch suggestion makes more sense, do you
+> think it is okay ? or you think there is issues with it ?
 
-Just make FUNCTION_TRACE_ARGS depend on PROBE_EVENTS_BTF_ARGS.
+I think you should split the file so we get the proper level of code
+elimination.
 
-Fixes: 533c20b062d7c ("ftrace: Add print_function_args()")
-Closes: https://lore.kernel.org/all/DB9PR08MB75820599801BAD118D123D7D93AD2@DB9PR08MB7582.eurprd08.prod.outlook.com/
-Reported-by: Christian Loehle <Christian.Loehle@arm.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+But Mark's is small and sane enough to fix the build problems.
 
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 033fba0633cf..a3f35c7d83b6 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -265,8 +265,7 @@ config FUNCTION_GRAPH_RETADDR
- 
- config FUNCTION_TRACE_ARGS
-        bool
--	depends on HAVE_FUNCTION_ARG_ACCESS_API
--	depends on DEBUG_INFO_BTF
-+	depends on PROBE_EVENTS_BTF_ARGS
- 	default y
- 	help
- 	  If supported with function argument access API and BTF, then
--- 
-2.47.2
-
+Jason
 
