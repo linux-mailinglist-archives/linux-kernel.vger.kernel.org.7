@@ -1,205 +1,128 @@
-Return-Path: <linux-kernel+bounces-582996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8987AA7750A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3272A774FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3478A7A305A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0631168A7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1130C1E7C32;
-	Tue,  1 Apr 2025 07:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA58C1E883A;
+	Tue,  1 Apr 2025 07:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j79kWSlI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7eRHRuAG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j79kWSlI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7eRHRuAG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KgQ1Yzuy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1CEvDi23"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683881EA7F0
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CF01917F4;
+	Tue,  1 Apr 2025 07:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743491726; cv=none; b=AKkmnBdFYNYkPq9oFKxKv96ykGQwwAX8rTFh9YiHBhvt7gjVQUcrA2m4aHxKi//4Dbl5/yiGKASMT1tIjTKCs5mV3V7poZY+c9ZrrL8OeAKP3Y7uZ3qxHwrSoXlzJk4yDaigxhsjpWnaqFDSSFGnYrlXN19HVes3lU8WMtUwqU4=
+	t=1743491720; cv=none; b=X4lwkKa+hsoIOtoBVeYT/tSUdoIdgdLBXaoWrjxzhJm76T2/X7x6dyFukFRvEDuYum1DiVOx+CrGFxrLPOl6o0Q4CfcGegUnETGuOn5fj50sQptAGwA/6Xsgt67tE7T8FUBX6uIYqVIUP6NzGuvcGw8ceyjqP61vfe4HOKARUSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743491726; c=relaxed/simple;
-	bh=Bgm+4ox12ICSRJ9n6RnH5Kxz5rlQEQp75AGPeM2oXUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PI7mj9bY5yjGSFJavRW6XyMGwmouNZcvu8ao5guYM//NSGs49MiBgX+OJutsHX0mk2KiZKBQpWVLCrl4D4Z8XFKPNBhUBCF1cGT5e0JiKQtrJr2qkOJzW0wm3pp1zzBd5rxy1Mi7DmER+IwV7mo1QN4BM67RqrDMEwv49xQZp3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j79kWSlI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7eRHRuAG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j79kWSlI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7eRHRuAG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B66D1F38E;
-	Tue,  1 Apr 2025 07:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743491716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1743491720; c=relaxed/simple;
+	bh=YdpQ2vu+OrqgZ3RmtnMXmsfyMoe2tI4h+kI0ggFlK3E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZAe58X7+FPHp3XQBNHBzwcDMCkirQuimb1ObI/hALrkzd/SmcfyTRL+7QENmo7J4F2fDlNxGptFXWia7OAtOz0am3gEBYc1clVT1ukQah/XhiOvHD2qeC2M9it9Uke+G8jwvAeIMLOshrJAA5vmg0OlSYNJdsbB3PLCL2ZM477s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KgQ1Yzuy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1CEvDi23; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 01 Apr 2025 07:15:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743491717;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H/yLPG2vYkVHyf8czEbkycGYqrbmBtML8bo0oviqpe4=;
-	b=j79kWSlIf/jFUulGWCR20xR/SVsUL7uUbnNrjkxA2xvDysZ6JLqDDGxJA7/Q8VOMyE8CRV
-	K/CMGhpHJGM62cvr+3vt6dJc8MJ9Y88V+F1L0cuzQe+WWUIePKKJ9zx/PkX9tCdRPVFLiL
-	ElQxcyJDuXuD6YGI0OwO0tYOtnmKa5g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743491716;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KKo0GDum4TJdCpqSz+zT5uuOmRYntJT7ZyBDN21dgpM=;
+	b=KgQ1YzuyIMvpyXZttT1ZnGv3tkCiS9GlfW9Z2uvvPbfA9jowBwXGmAlTlS89dyUz0h6vY3
+	CfkTTZblOv0yD+WlJ5ueuOKxBF9vBp7CHJR4rAFdAaEEl1oIH9rUstDDgRwRSeRvHuRM19
+	/LOkJif3AiwnA5eShUCiMkAbiWjGAJpePX86I5GaR5N3lfdZdwK0q0TbD2g8FL1SjCgqSP
+	91LvszIf9aVuygkiH+3tjjc6nAM5W4DjyKqwIb9SGPXAeV1+EL6LDhHcKidoKAW6diWPnI
+	uim90aN5UiGH/nw4wYkr5uM2buFzvbFawAORFXG98+mqTQPZ2R2mfp9BWp9TpQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743491717;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H/yLPG2vYkVHyf8czEbkycGYqrbmBtML8bo0oviqpe4=;
-	b=7eRHRuAGKQ7NB/Znde8INcFP/PGWO/oxAaOIQj/2/6iPlJUmbnjtyCqef83CRvabHAzGUi
-	n+4rej3EVNooJJDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743491716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H/yLPG2vYkVHyf8czEbkycGYqrbmBtML8bo0oviqpe4=;
-	b=j79kWSlIf/jFUulGWCR20xR/SVsUL7uUbnNrjkxA2xvDysZ6JLqDDGxJA7/Q8VOMyE8CRV
-	K/CMGhpHJGM62cvr+3vt6dJc8MJ9Y88V+F1L0cuzQe+WWUIePKKJ9zx/PkX9tCdRPVFLiL
-	ElQxcyJDuXuD6YGI0OwO0tYOtnmKa5g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743491716;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H/yLPG2vYkVHyf8czEbkycGYqrbmBtML8bo0oviqpe4=;
-	b=7eRHRuAGKQ7NB/Znde8INcFP/PGWO/oxAaOIQj/2/6iPlJUmbnjtyCqef83CRvabHAzGUi
-	n+4rej3EVNooJJDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE22713691;
-	Tue,  1 Apr 2025 07:15:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X9fIOIOS62cSUQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 01 Apr 2025 07:15:15 +0000
-Message-ID: <abcd542e-ee0e-4a11-9ae6-c66a924f2f99@suse.de>
-Date: Tue, 1 Apr 2025 09:15:15 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=KKo0GDum4TJdCpqSz+zT5uuOmRYntJT7ZyBDN21dgpM=;
+	b=1CEvDi23HUktCk5drngYf1XIBt1aReu155N/RE+yeG0xuINx6DfYvSLaYgODT6idzW0NUp
+	/YcNFmSAzoSWtgDQ==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] sched/smt: Always inline sched_smt_active()
+Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <1d03907b0a247cf7fb5c1d518de378864f603060.1743481539.git.jpoimboe@kernel.org>
+References:
+ <1d03907b0a247cf7fb5c1d518de378864f603060.1743481539.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] drm: Make some resolution info unsigned
-To: Lyude Paul <lyude@redhat.com>, Maxime Ripard <mripard@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- "open list:RUST:Keyword:b(?i:rust)b" <rust-for-linux@vger.kernel.org>
-References: <20250331222556.454334-1-lyude@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250331222556.454334-1-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <174349171647.14745.6621823717542987651.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,garyguo.net,protonmail.com,proton.me,google.com,umich.edu,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
 
-Hi
+The following commit has been merged into the objtool/urgent branch of tip:
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Commit-ID:     09f37f2d7b21ff35b8b533f9ab8cfad2fe8f72f6
+Gitweb:        https://git.kernel.org/tip/09f37f2d7b21ff35b8b533f9ab8cfad2fe8f72f6
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Mon, 31 Mar 2025 21:26:44 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 01 Apr 2025 09:07:13 +02:00
 
-for the series.
+sched/smt: Always inline sched_smt_active()
 
-Best regards
-Thomas
+sched_smt_active() can be called from noinstr code, so it should always
+be inlined.  The CONFIG_SCHED_SMT version already has __always_inline.
+Do the same for its !CONFIG_SCHED_SMT counterpart.
 
-Am 01.04.25 um 00:23 schrieb Lyude Paul:
-> During the review of some of my patches for KMS bindings in Rust, it was
-> pointed out we have some areas of DRM that are storing resolutions as
-> signed integers when it doesn't really make sense. Since Rust has
-> arithematic overflow checking by default in the kernel, let's change
-> these to unsigned so that we can take advantage of that.
->
-> Lyude Paul (2):
->    drm/edid: Use unsigned int in drm_add_modes_noedid()
->    drm/mode_config: Make drm_mode_config.(max|min)_(width|height)
->      unsigned
->
->   drivers/gpu/drm/drm_edid.c    | 10 ++--------
->   include/drm/drm_edid.h        |  2 +-
->   include/drm/drm_mode_config.h |  4 ++--
->   3 files changed, 5 insertions(+), 11 deletions(-)
->
->
-> base-commit: cf05922d63e2ae6a9b1b52ff5236a44c3b29f78c
+Fixes the following warning:
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+  vmlinux.o: error: objtool: intel_idle_ibrs+0x13: call to sched_smt_active() leaves .noinstr.text section
 
+Fixes: 321a874a7ef8 ("sched/smt: Expose sched_smt_present static key")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/1d03907b0a247cf7fb5c1d518de378864f603060.1743481539.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/r/202503311434.lyw2Tveh-lkp@intel.com/
+---
+ include/linux/sched/smt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/sched/smt.h b/include/linux/sched/smt.h
+index fb1e295..166b19a 100644
+--- a/include/linux/sched/smt.h
++++ b/include/linux/sched/smt.h
+@@ -12,7 +12,7 @@ static __always_inline bool sched_smt_active(void)
+ 	return static_branch_likely(&sched_smt_present);
+ }
+ #else
+-static inline bool sched_smt_active(void) { return false; }
++static __always_inline bool sched_smt_active(void) { return false; }
+ #endif
+ 
+ void arch_smt_update(void);
 
