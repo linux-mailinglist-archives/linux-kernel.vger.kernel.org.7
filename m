@@ -1,211 +1,150 @@
-Return-Path: <linux-kernel+bounces-583193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C087A777C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:32:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915C0A777AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3501A188462E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF133ABCE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41A81EBA1E;
-	Tue,  1 Apr 2025 09:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B611EF0A9;
+	Tue,  1 Apr 2025 09:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yzJjk7lv"
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="dnLmlc9I"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6552AEFE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02671C7006
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743499943; cv=none; b=Me79sUCsPEnOXtwMdXUF3uzY3KKR0TmgAc9h80k0wQN262BkTdIr4+b1ej/uI5Z+6fa6DaGX+mc7xL6l+GC5d9rHVRTcK4E09x0aoTZGTa1Hz617l8h/s6ZTmWf1ldaZLtBVYa481cC+LHBzNmP5w3bmYFjpPtg0c4cMxMdcirs=
+	t=1743499638; cv=none; b=azuZsvr9uPslC4GveIoIOI4DA1y+v10xutdVxOt5YyLFpxRYLYpZXNHyCTzHsi20R2mSoIUy3aSVe+Kb7d8vEspEjvIHOyb3xZlRxYrF9dwIwIwg3HImahe+y4uGCPCNNzlpu4eDEcb3Xc3de3J8Xpf5I65d5kduT2PnhU2IuXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743499943; c=relaxed/simple;
-	bh=OAKVSvRwfQi5FNmnLndFBbj2HUDr15x02ukw7LAYHkY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=EG/KGKVGflTB/ptEReA1ot14CumNRvo47aBRsXon9umUoouBpNpCNE9P3E90IxXV+9QTm9CnJAZu+WlTrwnsqGkKfZMmwNkSk3YcD47FND9gmECvTWb4BblCUOz5U6wP/mNqczFooTj3H/8TL8Xqa5NorSgMqlgFT/OxP/sDAzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yzJjk7lv; arc=none smtp.client-ip=203.205.221.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743499626; bh=rHnNmt3+i6+Fmmxq3LKb4Rz5gmJ6NIMisYM0ZQcKssA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yzJjk7lvm4rMAyz3Fuf3CKntuGeNeE6UGeKvFpTQWZh/sW92MKYKH5WYanzQDhKz8
-	 i1kWs40Pf15vKlYCi5m5dT3BaAhI19fXVhduwcEprzCmK6D4MpNM2VjuIp2JdaCdRZ
-	 6xx3BT3xwlMtsF8/g16CwfrAccjvPv3393U+fKbU=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 6C41646E; Tue, 01 Apr 2025 17:27:04 +0800
-X-QQ-mid: xmsmtpt1743499624txlq3fgvi
-Message-ID: <tencent_46894AB4C702852846EC72D26C273B817E09@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuPn2KFxiEiDoj/jELAQe4blJkXPNJwF33bp2e/1jHKrg4+l/tpb
-	 +FNG6swqazzHmsJ7vA8SZ0ez7lULzJc/kX1EqGyjlDD6WLwfenzEv0Tapnn2ZrzmBcL0CJOWnW/c
-	 2ZJCGYFTKN7/UgvON1GePZmqSvRXki4jDPsFwvLm0Sk4wOe3giuG/WVfqcQAJGkISXVZknD3nXoC
-	 X9qu3L+217VWL88XNpGXOMDx5onruI7ObrzHnGJXF64Wbve4oL1QbcjL9/XkzacxKhY2qQIXJai+
-	 NXZGH2q7XQ/DmbAreNQRtr7lN3Io/NH7UNNI7L3/AQdjlLoDwd5jqI4l4x7r61kWR9VR44asJ5Va
-	 6W8mjNIaDQcqQxeXy0gaiKM6O7QSCwTOJZk3mfoZmMaCm0zBP8yvubcjSnohY0jW5a0oBQPgltYC
-	 0bT0tsL7qVNRDB4UxnXjEfrfajOXX1qJs0SW+icYXNymIkJRh34rXf4swG8ez7hROl96i7lgnPIX
-	 Zy6xshhtYLeGsOVZ4HpEDPNB+3ur2H8K7Bx2akuPlTvRglHxL5r2TSWduWz2Ry+n3663aZ9U/eop
-	 kqUDjtVmqgG3rWQwsJCfvBOAbGe1kLqjcBV2M7Qd95s/uu7EJlwqbvi/puEFxDKQbPILInN4ZvqV
-	 ZplKy7AUoxPjoR/VOW1zsv8Kx64JJe1irFhpBypaHIFJb7BapReEixHPmJpVoSCQUXtouVLLksOh
-	 LSBTEbp9VMDrYpHsCQHUJ/Ec9Qc2UODqdID5vIgYuHXZ30b/wlOEurkcM3BxtjlE9GMU12ldDn+8
-	 ro1KNzMRPB7tz6wYc4ZacJ/koQGoLYA7cxx2wkALt7DeaTHNEe5EMSlclkGEVAJGJlrMHyfpuN1p
-	 t3gtF3YHDRAyb3F761TAdy5Z10XX+lG0Wxd4p33YcUWyux1ws736wVl+EAkIoU7QbYz+8FZtML3b
-	 7MHpEodAS1O2JuF3gY+WoX0m1UvP0s83Rzlq5oTfFQEgA/9YEfUQIJRbO1wbrLIkOHdkcMU5/CCn
-	 kxv5nYuhsnr12eWbiU
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	chaitanyak@nvidia.com
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v3 2/3] nvme: add sysfs interface for APST table updates
-Date: Tue,  1 Apr 2025 17:27:02 +0800
-X-OQ-MSGID: <20250401092702.1558230-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
-References: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
+	s=arc-20240116; t=1743499638; c=relaxed/simple;
+	bh=cfTqZDHcE5fiz//FNirKrbvmscvekrm4mADcU84mmSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a/ZsiNeRm/vkkSPTis/3UrYGZDz//xdvs/RPiZCGoehGmGnw2DGj7EvD8t7riZtM6PtK7hHdeXLxkYJwFDV+/LJLKL1kt+/czCk5zqiaAyolx5xfPlw6zm4fhQdZHp1VDFTseMdmUcFp+8xWcmTiLWqK+Am6qP1tU7LSja8zp6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=dnLmlc9I; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2254e0b4b79so137068575ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 02:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1743499635; x=1744104435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Uado/lwoP6/yzxDnZMmcfqF7svpEZg92uh1rPCCI/A=;
+        b=dnLmlc9IKdG4e9MSiBGO4NACYHLhj0h0AR/WVTMaR4INva+OmP9ctY4bRsUrKLBrve
+         fv5mSf+51ysl1zrPCK2kNG9ENz0t/2lxnfhzP82vYFd1BGRmTaxBRH/u80ObH8zG0WY0
+         q80/XEiDpUhQUJ/kkX4jkQOIiBPkBBHnGSaed2Faz2ngxUajpkQAhmna4rQ2OB/RhW11
+         xxG5Mcq12d5CSKKQnejBWj4ENoOF9Qu4Vkyk564NZl8vPZNrfrpV7Nrfws5n7R8xfRwY
+         Emu46VuVo73nOQSjKLfCqOmWb02Joqrd1oopqgf9M/gEPvWB2VxFUV+sqkwG1MA9pIMR
+         zCQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743499635; x=1744104435;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Uado/lwoP6/yzxDnZMmcfqF7svpEZg92uh1rPCCI/A=;
+        b=aJebKkaAJQlpNxryeXGriHSuxaNd/8gs6nOVlzRySYJMvllNLef1wDKT1+ZZoWmNuh
+         s23W6osgASY8CImRdY7BLA+vC/B6WJ5WUvvkWccgApV/U66671nEKkNlHIxjmGEDC8w8
+         0NGodCvgmgyAOy+NOkCbesIZdl3yenIXmVaP8DdcCJhI0b/jkZbsqjoRK1IhcjToeZln
+         w3g0IuVu/vhkj77liaHa9HRhnFp6RWeXZlZMhWWTvR9xxRYClQA5lGokNPRlqWVw4lrM
+         kLAEVHHo4yTu9BCdYqbAI3aawPO/hBCO8vV8/tOqmi3RUOkxj3PaRwqFlNq4VsKniSkj
+         cYPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJGyw6/YQBVZE7Tcve01whknr20Z2ztwQt41ZJjKGr5V688kXtOHNaiQ1fUnT9kxEYoblnTn0pSl5XuC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdMp3X8auB5SJpREBP54P0Ri1jSyZ9HP9SGXQwMRnqhslAlJWJ
+	RiaqOlDoKug/ro6Gn6Y/ECnX0hsRK6vu0tNR5faFdZh89u27Ht5JfLkouUQgBKY=
+X-Gm-Gg: ASbGncu+RO/MiYFrH4W4+Bb5139eYyU8geFUcUTg6aj/rfDLGRBtlPjMAPGL9fUeU55
+	23uEiQKmtkQ9XfcC0sK+CKY06bo2QowoXShlWn7ON4dzAhEcwhAWJl2YFLe1fBTR2N4B8e+D0Yc
+	4QT3/qwwgCteWTZRmfWQ0oVHa7eRXBCYoNLbdJFbxXhhZRIUsiD8XD5yjHo2bckFEjg4ZDihb45
+	wVzhgAmy93j+WC5Y+e709hGgTF0E3rrxxF1DF3NJ/ajHQaeuDKyu+TViZ5ruk5M7VVc9ChrSLS7
+	w6t1A0smQ1bQv5oU56FjFEb/ToodaaRdS3xOGWnbz8TPzXlIdMqKsz3S10nc0DKGtsc6RAupRxi
+	0zUM2NT7Dee39+fEf
+X-Google-Smtp-Source: AGHT+IGqaCCTYrqWmclHIKooaJS6kAOzFT7W0prKClRtoHu3FK+uWwiXhw0KuQp6tmIfbZ4lKt34fg==
+X-Received: by 2002:a17:90b:56cb:b0:2f6:f32e:90ac with SMTP id 98e67ed59e1d1-30531fa159emr21548695a91.11.1743499634871;
+        Tue, 01 Apr 2025 02:27:14 -0700 (PDT)
+Received: from ?IPV6:2001:861:3380:2e20:6214:6f9b:8e4c:f723? ([2001:861:3380:2e20:6214:6f9b:8e4c:f723])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3039e10af2csm11190566a91.21.2025.04.01.02.27.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 02:27:14 -0700 (PDT)
+Message-ID: <f8b56a02-c508-4bc9-a503-48e487ced86e@rivosinc.com>
+Date: Tue, 1 Apr 2025 11:27:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH FOR-NEXT] riscv: Add norvc after .option arch in runtime
+ const
+To: Charlie Jenkins <charlie@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Klara Modin <klarasmodin@gmail.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250331-fix_runtime_const_norvc-v1-1-89bc62687ab8@rivosinc.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250331-fix_runtime_const_norvc-v1-1-89bc62687ab8@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-In desktop systems, users can choose between power-saving mode and
-performance mode. These two modes involve different trade-offs between
-NVMe performance and power efficiency, thus requiring dynamic updates to APST.
 
-Currently, the APST (Autonomous Power State Transition) table can only be
-updated during module initialization via module parameters or indirectly
-by setting QoS latency requirements. This patch adds a direct sysfs
-interface to allow dynamic updates to the APST table at runtime.
+On 31/03/2025 20:45, Charlie Jenkins wrote:
+> .option arch clobbers .option norvc. Prevent gas from emitting
+> compressed instructions in the runtime const alternative blocks by
+> setting .option norvc after .option arch. This issue starts appearing on
+> gcc 15, which adds zca to the march.
+> 
+> Reported by: Klara Modin <klarasmodin@gmail.com>
+> 
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Fixes: a44fb5722199 ("riscv: Add runtime constant support")
+> Closes: https://lore.kernel.org/all/cc8f3525-20b7-445b-877b-2add28a160a2@gmail.com/
+> ---
+>  arch/riscv/include/asm/runtime-const.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/asm/runtime-const.h
+> index c07d049fdd5d2999c57d8a90e7363829c5462368..451fd76b881152919f22de8f5c56b51171acbf3c 100644
+> --- a/arch/riscv/include/asm/runtime-const.h
+> +++ b/arch/riscv/include/asm/runtime-const.h
+> @@ -56,6 +56,7 @@
+>  #define RISCV_RUNTIME_CONST_64_ZBA				\
+>  	".option push\n\t"					\
+>  	".option arch,+zba\n\t"					\
+> +	".option norvc\n\t"					\
 
-The new sysfs entry is created at:
-/sys/class/nvme/<controller>/apst_update
+Hey Charlie,
 
-This provides more flexibility in power management tuning without
-requiring module reload or QoS latency changes.
+Could ".option arch,+zba,-c" be used as well ? That way, c is treated
+like any other arch option. Or does norvc has other side effects ?
 
-Example usage:
-update nvme module parameters.
-echo 1  > /sys/class/nvme/nvme0/apst_update
+Thanks,
 
-Signed-off-by: Yaxiong Tian  <tianyaxiong@kylinos.cn>
----
- drivers/nvme/host/core.c  |  9 +++++++--
- drivers/nvme/host/nvme.h  |  2 ++
- drivers/nvme/host/sysfs.c | 24 ++++++++++++++++++++++++
- 3 files changed, 33 insertions(+), 2 deletions(-)
+Clément
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index fb0404fee551..9dea1046b8b4 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2654,7 +2654,7 @@ static bool nvme_apst_get_transition_time(u64 total_latency,
-  *
-  * Users can set ps_max_latency_us to zero to turn off APST.
-  */
--static int nvme_configure_apst(struct nvme_ctrl *ctrl)
-+int nvme_configure_apst(struct nvme_ctrl *ctrl)
- {
- 	struct nvme_feat_auto_pst *table;
- 	unsigned apste = 0;
-@@ -2778,8 +2778,11 @@ static void nvme_set_latency_tolerance(struct device *dev, s32 val)
- 
- 	if (ctrl->ps_max_latency_us != latency) {
- 		ctrl->ps_max_latency_us = latency;
--		if (nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE)
-+		if (nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE) {
-+			mutex_lock(&ctrl->apst_lock);
- 			nvme_configure_apst(ctrl);
-+			mutex_unlock(&ctrl->apst_lock);
-+		}
- 	}
- }
- 
-@@ -4852,6 +4855,8 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
- 	ctrl->ka_cmd.common.opcode = nvme_admin_keep_alive;
- 	ctrl->ka_last_check_time = jiffies;
- 
-+	mutex_init(&ctrl->apst_lock);
-+
- 	BUILD_BUG_ON(NVME_DSM_MAX_RANGES * sizeof(struct nvme_dsm_range) >
- 			PAGE_SIZE);
- 	ctrl->discard_page = alloc_page(GFP_KERNEL);
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 51e078642127..7f8e10f5bf7a 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -385,6 +385,7 @@ struct nvme_ctrl {
- 	key_serial_t tls_pskid;
- 
- 	/* Power saving configuration */
-+	struct mutex apst_lock;
- 	u64 ps_max_latency_us;
- 	bool apst_enabled;
- 
-@@ -828,6 +829,7 @@ void nvme_unfreeze(struct nvme_ctrl *ctrl);
- void nvme_wait_freeze(struct nvme_ctrl *ctrl);
- int nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
- void nvme_start_freeze(struct nvme_ctrl *ctrl);
-+int nvme_configure_apst(struct nvme_ctrl *ctrl);
- 
- static inline enum req_op nvme_req_op(struct nvme_command *cmd)
- {
-diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
-index 6d31226f7a4f..20146eb4c671 100644
---- a/drivers/nvme/host/sysfs.c
-+++ b/drivers/nvme/host/sysfs.c
-@@ -684,6 +684,29 @@ static DEVICE_ATTR(dhchap_ctrl_secret, S_IRUGO | S_IWUSR,
- 	nvme_ctrl_dhchap_ctrl_secret_show, nvme_ctrl_dhchap_ctrl_secret_store);
- #endif
- 
-+static ssize_t apst_update_store(struct device *dev,
-+					      struct device_attribute *attr,
-+					      const char *buf, size_t size)
-+{
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+	bool bool_data = false;
-+	int err;
-+
-+	err = kstrtobool(buf, &bool_data);
-+
-+	if (err)
-+		return err;
-+
-+	if (bool_data && nvme_ctrl_state(ctrl) == NVME_CTRL_LIVE) {
-+		mutex_lock(&ctrl->apst_lock);
-+		nvme_configure_apst(ctrl);
-+		mutex_unlock(&ctrl->apst_lock);
-+	}
-+
-+	return size;
-+}
-+static DEVICE_ATTR_WO(apst_update);
-+
- static struct attribute *nvme_dev_attrs[] = {
- 	&dev_attr_reset_controller.attr,
- 	&dev_attr_rescan_controller.attr,
-@@ -712,6 +735,7 @@ static struct attribute *nvme_dev_attrs[] = {
- 	&dev_attr_dhchap_ctrl_secret.attr,
- #endif
- 	&dev_attr_adm_passthru_err_log_enabled.attr,
-+	&dev_attr_apst_update.attr,
- 	NULL
- };
- 
--- 
-2.25.1
+>  	"slli	%[__tmp],%[__tmp],32\n\t"			\
+>  	"add.uw %[__ret],%[__ret],%[__tmp]\n\t"			\
+>  	"nop\n\t"						\
+> @@ -65,6 +66,7 @@
+>  #define RISCV_RUNTIME_CONST_64_ZBKB				\
+>  	".option push\n\t"					\
+>  	".option arch,+zbkb\n\t"				\
+> +	".option norvc\n\t"					\
+>  	"pack	%[__ret],%[__ret],%[__tmp]\n\t"			\
+>  	"nop\n\t"						\
+>  	"nop\n\t"						\
+> 
+> ---
+> base-commit: b2117b630c48be69d2782ed79fefe35dcd192ce6
+> change-id: 20250331-fix_runtime_const_norvc-407af1f24541
 
 
