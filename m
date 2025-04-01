@@ -1,188 +1,179 @@
-Return-Path: <linux-kernel+bounces-582948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722BFA77473
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:21:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AEDA7747E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25DE3A8AB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425F53A92AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD4E1E1041;
-	Tue,  1 Apr 2025 06:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160641E32CD;
+	Tue,  1 Apr 2025 06:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EoClabXa"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vrfZ83L+"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B698116C684
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 06:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743488498; cv=fail; b=UqVO8iJ+nFOKxGbBiNSaiXRmqu4Y2AE8Hj0ayLBm7K29fAnerIaN26uyfG8uDjh+71YLCx2J1WEKWYF3tGj97fwSoiX8CtyTZnIKiXQAD+Tpy2rAwpjjh7Kusr4SHjCNgYZaUdbt/nzglWBHt3zME17UsYDGXowugwWYtkiHO70=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743488498; c=relaxed/simple;
-	bh=cN8EZQcqFzh4Z5IJP/Cdm++gzVsgCDUCJug38Lx84sA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=H99OJ3H1RMmSbIK/kinxmfZVMXif3qNVI5UjswtZDQmZiRH/Olwu+40i5BqzcBZRv1WKIgLr1ldKF2/vMzwDYSiI19SY9+PiDjEpoSgsdq5vTbawlA/agNIPSnVy82QbS+/z34CNUadwPb05QO7VMOtiS/WecwuMj5m4m+B32/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EoClabXa; arc=fail smtp.client-ip=40.107.94.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XRo/8sf1ddtOkJmgd8pxDDECoNjPKEVsy0pDOE0lhVoX1tF5XfDqSLN5JZdPWX1PtYl3NCC15HNkEnqaZMhUd3Fpkj9dI5fC9KTv1GnDgkTD8380Ocdk8sAfRNiKHwQGyXsr6yDzA2pjidk0SbgcUl/bpHaoy9RLyWA6YlgCTjNHGBYxn2zdgLoEo4ULd2BTobK78fUxmFEE+j/B2AywImM94el4Opyl+Ojf9LbnCHEdTaK9A0zCnT6VefV7U3hCNA4Mz1xnU95WPx6HTKZnnaPgQdDzwRgDABVQF+AznodpgpzXBepTNOH5xKpFroweXXWdhg7OgX0iA+jf+BEbaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/l8dF900bSCD20GOcqTe6PzXAiIi82XbwQuQGBFxjIE=;
- b=sKjstnqDpiyXjJBxHDCidYsKB7l+xJ2UKf8AceOmymEeTFicRb4lnHD2EEKGUhoIyvtqfAC6kZ7+V0/Lq2FYR6UcwCvyd6maJ96U3fvosf+xsQnskpYs7QESKV+9uZL79jIdp7hekrvBMNw7ZW2TYGfNp4XyqlhW+gWMAJzkxuC9aCVmovkdiTKiWayBeTfTc+QVjT7a/jYXHC3P+MhtNeazL2EqxcysoSCqaBAEODLlFI86VhZsdq4bzGeYse+rFv5W5keXKXy+A1Ixa26S0fviER9mgRCensPQxwQmN7qMK1TEQLmkTL0SY+BVa3+BmeRgs1M6biJ2VXiWfPVYZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/l8dF900bSCD20GOcqTe6PzXAiIi82XbwQuQGBFxjIE=;
- b=EoClabXaj1jeb8dnUOcmmjBAboqavQV9NmDd4RigM0jaq12mNinpebtz2liqM047JcdjRyB0xp6nBryGB6iDmSiuqIdphFJXA0tY+xU9QHk4+SDhB+13T8jzwTtLxjPsfhnBujk3QBhR3n8DG13CfSSCEaVBpt3Zgpdj4MqU8l31BFD4dShHVLUjiICkmqOta1VRpEafLRGg84z+V2zo7HuukCP+l7qS7HTsKz0QHd4gEedn5Uag3X4kvU0YNmKQru9QvQx48keiQczo8xuXuvojVuLzoeurex44e5Z/YXHTntm/wzkRA+CkW9CTZ14kv//PXaT2SsquwWvcigVn2g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by SA1PR12MB6870.namprd12.prod.outlook.com (2603:10b6:806:25e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Tue, 1 Apr
- 2025 06:21:33 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.043; Tue, 1 Apr 2025
- 06:21:33 +0000
-Date: Tue, 1 Apr 2025 08:21:22 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] sched_ext: idle: Explicitly pass allowed cpumask to
- scx_select_cpu_dfl()
-Message-ID: <Z-uF4v0-MZ4iQFDZ@gpd3>
-References: <20250321221454.298202-1-arighi@nvidia.com>
- <20250321221454.298202-3-arighi@nvidia.com>
- <Z-sOIwUNgrjbQJkx@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-sOIwUNgrjbQJkx@slm.duckdns.org>
-X-ClientProxiedBy: ZR2P278CA0089.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:65::20) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E386A19D8AC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 06:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743489009; cv=none; b=AqR0l+Zo87XnF7k1WEo5UrrCWiq4cVFcY9JYKAbtAGj2Uqy8RA+yP3wKgfnok4mvaQ2dJ0bKTVf2Zc8TmzCVjZ0IwkqTdaarGBKSvxf9jP5kzHWBXYoKX5+ZqWenxSpTbqbKuAdBrAUVIIOVwXFFY2bm/noPaVCoi9kqnSUlSgc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743489009; c=relaxed/simple;
+	bh=USbG23zlSAIqxxboVL2BnKC5smfMZAVgXPKkRSRld0I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qKr/DGMk9WiwyqY8BdS17ICm9sfH//uilPmveZBrnClkIqGOt7pObV3/YT0gdIGl3yNwdKNnWFZ/g8JEiAAZXLDMszLFtJVp1vGPVearaeWTSJa3he6Qr2bQxaUG0AC8HGKTG0OvKnykHohLQes4kZhxOJpdDsTcgc2GuJHLGBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vrfZ83L+; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22650077995so145537245ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 23:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743489007; x=1744093807; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OqYe84wc1n9dIq60dY5m/RZydOIHZgtl3uuNumZs698=;
+        b=vrfZ83L+bowA2yITVR5dVK4I6h82FHlsI+bXSMt8kD4daHd75PRxzM2lIS1swuVn6S
+         4vSlkm9PZC6HcGqdQKnfnpsB2eRCSZvkld2BKs4DzdKXjjWMlrkIpNnUuSkNOHH3TmX3
+         2Q9kjdvBguEr+c/pwt1wnkZVpKA2RW5kX2IB4gS2CLQpzlHJ9MliaUZ+59ruf/1v8nw+
+         Ie+Ny8io77YK/0S65ebp/TfBzYEa9TcCI5uBxZcBCymXMSrggCKMkkbGVw6mG3sGyQSX
+         5OJ86LBJAlgZYwtYjpbLHUQsHpStQuPhX9fPsqaXsfSNVpAagLGkhxGLk2MSTtc5esI/
+         7bOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743489007; x=1744093807;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OqYe84wc1n9dIq60dY5m/RZydOIHZgtl3uuNumZs698=;
+        b=NmvbCSO0W0inFQ0IZ0KwvOdU/Kw2tj78QPSqVmZG9ms7kkTAqJQgLfTous+gSAcV3K
+         Y0XOjdPrznyR3xKO7gPr8ydVBZls79u5yMhngAdtbPgk7Bg6KCYhoVNEjwliMkq83T3v
+         Skg197FQjNUcDROtjUqJn7StO1+mHJ4V/b/WXa15Kld+RMJtLN7tOQkZL9bvIi3MsplZ
+         wtndai4tWZ8GSmOFcv9ahW3ZrsuUG6HTXdWSX3Z619zzvwoVynEMhz+jjFG5TJdNYSUO
+         OCsRrqwGjpomooLz+PqHPsusiMamFZR2c943qpCwYncXPf9jwMMpTlY40C93SKc5t1a3
+         oxsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwubkWe0bkA0T7OhGLUsXT/g+CcKdakgezmVkfGda3YwijYVSQM6ZAlAOVQHy5avVj8Sg03CT2nzqLxio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2WGnIPxO/+Cle9LaxG8aaGKAZeoM6GQ/F1WOfzmM16JyDx2d9
+	pByZl7dKFTR5au8gK4K2WEBtp4DOYR8K6D6oPoA8bl9wvFdv1JZOoj7yrrzMgm/6+OV7RN2P5FU
+	mVDR/QTlXnm/72w==
+X-Google-Smtp-Source: AGHT+IG/Msl15+/4rANvxgod1MVl7FV/C1o7eT1eyIP5SvPXayKelEHw73RaXYFBCSQvGe7nthOYn87oNf6fxWM=
+X-Received: from pjl14.prod.google.com ([2002:a17:90b:2f8e:b0:2fa:26f0:c221])
+ (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:f709:b0:224:7a4:b2a with SMTP id d9443c01a7336-2292f942aa8mr216978175ad.11.1743489007210;
+ Mon, 31 Mar 2025 23:30:07 -0700 (PDT)
+Date: Tue,  1 Apr 2025 06:22:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SA1PR12MB6870:EE_
-X-MS-Office365-Filtering-Correlation-Id: a60ed1f5-b84d-4e04-9b90-08dd70e572e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Yh58rrUe4lsSfoOelkk7/30Em8CpjiRLwHNzR7/f7805vb7Gvit8e69LD0WS?=
- =?us-ascii?Q?ovLHeeUuZBlxvak2mMNgEnOlqoHNhFe5Jpa/gy/hZhYBR+/17K2HoqtwOS4i?=
- =?us-ascii?Q?fodKTPAYrwaIpBylSu5w7+srkYPeZi0FVa9T+iedwNTYdn7eyHYCoQAZHSXw?=
- =?us-ascii?Q?4uRnf9S4tYvD55jvW/tUnvRpqFhlWfEzzq7I31q8t56xZwpJN0SkLuzDo1Qq?=
- =?us-ascii?Q?b7Q/dsfz/hkPpeFSP0wOdXT9LTaedMIx4u3kUeLxuZCug8fmnIzqr/vvQ3US?=
- =?us-ascii?Q?tAIc02XkSO0FQityFQzRgJeJydqVTgqW0sV5nbKZWog9YbA5CXCYXu2LZ4KG?=
- =?us-ascii?Q?kMTTPcMIlHuiNU3bmbhsSs0CoaP9g3AXbeScDHe09v6gqNzWWuY+W/sdg3GD?=
- =?us-ascii?Q?5AXReoq6TAVTxRD4//fYvXTx4wpmw4njR5MglFRDJX0aJlCFFmZlRxt5Tl7l?=
- =?us-ascii?Q?oPbLIK29rCG/C3TnvAAzKY2+nIMEDgUEWCsCPLmzXsxI3g7l6MpZYz422s48?=
- =?us-ascii?Q?W3oub6b2OvDFjPl+0kS4NGUFT8CuAZTk+zVmAWXlsCGBOGhAip9mFvp/nQr0?=
- =?us-ascii?Q?BeKp62i8tT6aZG5Q/G42KqJAPRgDtZvYqinnshAqhZW1vIjmJUlLVVzm6DMz?=
- =?us-ascii?Q?oefG4oUvNjI7FZKp8x5j2Pjojbz94/ReMIr7GvioRpnVy20jPvDRnL1tPZHj?=
- =?us-ascii?Q?HBrzzvkk3KH8mSRG2pvrnlT2LhZA0gN1OTb2dV7c7jODNyhOKLzGbScXwxYB?=
- =?us-ascii?Q?vQ8tEVTw3zASotDtZOZg0hGUYCDBoQU3vl49YZb4tqqbwi9IEcMYbnjvpm6R?=
- =?us-ascii?Q?x33JxWX/ObOVJDtBNeI/vAX22kNcrnwiYy535jYF6xiMec/qo5xXm20Uwy4K?=
- =?us-ascii?Q?fpdaooNNip2Ecc/ZkQHVCpLIwrTpbKl9qF2k+ai/eQ1Q22zE+crWp1E3Z1Dp?=
- =?us-ascii?Q?fC8OimM/Qv1K+QbLNL9jB5iq5cHJfLXiR8DSZL0n8n10Xmj8rFzduRGHB9Lp?=
- =?us-ascii?Q?im58PdQExpI8ZVHVP4/HDPkMl/OZaTqB7Bk9e9LHQ8em4HgXB1P8FiRbqgKn?=
- =?us-ascii?Q?z4hx2v6qvkF41NT2CnBvnXjDBNqUeSsI1Uu9rDXAHlk2cfEig0p3cezK3YNJ?=
- =?us-ascii?Q?Nl7NKmE6jjyDjPljKEacaCZurdI1eke5Oe9qGZtzW0oZ+T9vRWnXq3AqkpSY?=
- =?us-ascii?Q?GXoHgD9IwOSPSpCjqhUZtaw/mw9q1Y5jB9hSI5tSBzGVD3WWvBG+wQvcTdea?=
- =?us-ascii?Q?xN77Y4z+m0mOJwqKGUzAEHMNl8g5C3YOT6mxvdKnWUrRsoOffsvtPplVPBOp?=
- =?us-ascii?Q?8N/vu1ftI/JybIpyiss0XIiLqnq5kVOM8TBsJYRwkq/Hg+eGPqa9Qc1q+UTR?=
- =?us-ascii?Q?BJgGto1ypa5UxN3+faiVlfr5k6Fu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7pnZCQk5o+z0ZasD2q7AkPqoXrccWLm8FR5f56tcVQMrj/CKwwAExxKwU4Mz?=
- =?us-ascii?Q?vTAi5eThPWKr3ONFpl9G8JX5KUEJkokkspBW3YL4BSvHAOrxAmdwFNWgfDfG?=
- =?us-ascii?Q?P7N6EpB1q1k28yOycv7TEoR2rvelhfWUNrQnEk7UperLQ98P1+AyTkiQXef3?=
- =?us-ascii?Q?BZK+aRXoAwEPqBC4eyAG1rWVUrm8Pre6QZDcVpx2SGv0h2l/Kz9gXz8VKUCs?=
- =?us-ascii?Q?D26S/3W9j/RRfG9fKOws3kROGrId8CVAxtxyIK0b124kPScEhEWUVnalpkYq?=
- =?us-ascii?Q?qQIv9buzcuiOqHc91ZYj83m2RxpUyYk5Cl8RnVFhJ1gt1ixk94CaS763/SCv?=
- =?us-ascii?Q?1oanAhNbE605dK2oG9VBGa8gag/WIf46+2F7Y9xUYbfO5iCS1vFB3uMj0lqk?=
- =?us-ascii?Q?CNbf6X/BUC+iiTNV5w0yoXmgV6EzxM6lhHxzmAzzCxhaYOJWAOqpfflNxCtS?=
- =?us-ascii?Q?mQZIzXvj6O2jS9qljq6MRDY4/Tb9C9l9Hv/oxwZcMudrPs+3fIAm3GUa2JGg?=
- =?us-ascii?Q?XaEbialTWZi6/EVaYKe+dqHq/likXOeuz/zbIeiQstwTQfERrptdPU4bHNg8?=
- =?us-ascii?Q?XTWR32+Vm8RBximFNassnMEWMSmRGqp4J1G6poDDAxsFC9cb6APP7/i+tM9a?=
- =?us-ascii?Q?1tZYoT8x33WVcFfGvqJS7pzEGvLfYDqnsKXdvrZKndkHP5e020q5TKgaZlOT?=
- =?us-ascii?Q?py75g8vmdjgnNbcTNzMos8iIIPe416htKDDIcZUIJohXvPAI6BlIBa4ry34O?=
- =?us-ascii?Q?a8E7pPo8BqSB2PwljETomIx+xS4keDU4Ndh/kDROyZe0xfemZW3ujFLqWOr6?=
- =?us-ascii?Q?EsL4ghy/iVIIZwRKYKr/S2pA9Gl3BNvwmsmlg9G2iUyQFpkLpxA602jRFZpa?=
- =?us-ascii?Q?nr+PTiFlyrOwCAuZKLdgebMQQYyijT/Xn4TRJs1aEUFxB2mfOYXc2nteFHZ8?=
- =?us-ascii?Q?VKnvsksffuMWgBU2LY1VlIUhzgqzeTzf32oIa6g4iEsWgXZ3xT6AHUnWiqzf?=
- =?us-ascii?Q?+JbOyEfuaYglrFQssnSEtO9ASYcwRzl/5D2YbdkbOAeYOFWaS//eoGYX4Bqr?=
- =?us-ascii?Q?suqocy2+m4ok2ztb1c0mjRF+9Q1oSLEeSoNRE0rM3OeLh3aLgVVDYF5W42hS?=
- =?us-ascii?Q?9ypj8qwPs4VnyD6/yGURFBICT4Nvy41iH0cGNewkp0H99TMy/ieftvveUpr7?=
- =?us-ascii?Q?h8Q1h8vZfwSNrEXJXaNs0tZUUPgqI4FETl/+iuYcYmvYTxTQ4Jw5GNePR6Fo?=
- =?us-ascii?Q?HXRTnLF7HGrTC5qviojBHdImpF9pdiWJH3fWOy5AbXS02BzDUbMxRRPC9YyZ?=
- =?us-ascii?Q?EzJ/s2bV6hoV1eeD+snAVRWbnFohbTZqg8REA0dKH82w9AI4SItREfHK/r5y?=
- =?us-ascii?Q?y8WU0HWjbhvkPOpHnRGyLqs5YMORf2a2iAEBm9YzjTnLkjuPX/d0AKYdKM3/?=
- =?us-ascii?Q?5G7hyOG96j8JxoBUiLzvnKkGW27d8qeHbYa3YAYkfdC1+T5ncmDr+FUVzyY5?=
- =?us-ascii?Q?fVGSgav7k1EUKTcgkEs//LVrlvjlFOZWDv0v1vBybivGlBymJoYls0vR9xmU?=
- =?us-ascii?Q?jXGh21xoFQMM8NsfTU1SB7B944jdCOyNFH5lHWsM?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a60ed1f5-b84d-4e04-9b90-08dd70e572e9
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2025 06:21:33.5608
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7sH/eLO/E5cSR12yLRqGzQ+TEzbfhvAhXUIpQM0sPzMnpiU8hZXkmegEKYyoUA6A/CXhvkZFmzmz30/kgEga8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6870
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+Message-ID: <20250401062951.3180871-1-guanyulin@google.com>
+Subject: [PATCH v10 0/4] Support system sleep with offloaded usb transfers
+From: Guan-Yu Lin <guanyulin@google.com>
+To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
+	stern@rowland.harvard.edu, sumit.garg@kernel.org, kekrby@gmail.com, 
+	jeff.johnson@oss.qualcomm.com, elder@kernel.org, quic_zijuhu@quicinc.com, 
+	ben@decadent.org.uk
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guan-Yu Lin <guanyulin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 31, 2025 at 11:50:27AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Fri, Mar 21, 2025 at 11:10:48PM +0100, Andrea Righi wrote:
-> ...
-> > +s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
-> > +		       const struct cpumask *cpus_allowed, u64 flags)
-> >  {
-> >  	const struct cpumask *llc_cpus = NULL, *numa_cpus = NULL;
-> >  	int node = scx_cpu_node_if_enabled(prev_cpu);
-> > @@ -457,9 +458,9 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
-> >  		struct cpumask *local_cpus = this_cpu_cpumask_var_ptr(local_numa_idle_cpumask);
-> >  		const struct cpumask *cpus = numa_span(prev_cpu);
-> >  
-> > -		if (task_affinity_all(p))
-> > +		if (cpus_allowed == p->cpus_ptr && task_affinity_all(p))
-> >  			numa_cpus = cpus;
-> 
-> Note that this test isn't quite correct. While the error isn't introduced by
-> this patchset, this becomes a lot more prominent with the series.
-> p->nr_cpus_allowed tracks the number of CPUs in p->cpus_mask. p->cpus_ptr
-> can point away from p->cpus_mask without updating p->nr_cpus_allowed, so the
-> condition that should be checked is p->cpus_ptr == &p->cpus_mask &&
-> p->nr_cpus_allowed == num_possible_cpus().
+Wesley Cheng and Mathias Nyman's USB offload design enables a co-processor
+to handle some USB transfers, potentially allowing the system to sleep
+(suspend-to-RAM) and save power. However, Linux's System Sleep model halts
+the USB host controller when the main system isn't managing any USB
+transfers. To address this, the proposal modifies the system to recognize
+offloaded USB transfers and manage power accordingly. This way, offloaded
+USB transfers could still happen during system sleep (Suspend-to-RAM).
 
-Thanks for pointing this out. Considering that, it's more clear (and less
-bug prone) to just use NULL when the caller doesn't want to specify an
-additional cpumask. Will change it in the next version.
+This involves two key steps:
+1. Transfer Status Tracking: Propose offload_usage and corresponding apis
+drivers could track USB transfers on the co-processor, ensuring the
+system is aware of any ongoing activity.
+2. Power Management Adjustment:  Modifications to the USB driver stack
+(xhci host controller driver, and USB device drivers) allow the system to
+sleep (Suspend-to-RAM) without disrupting co-processor managed USB
+transfers. This involves adding conditional checks to bypass some power
+management operations in the System Sleep model.
 
-Thanks,
--Andrea
+patches depends on series "Introduce QC USB SND audio offloading support" 
+https://lore.kernel.org/lkml/20250319005141.312805-1-quic_wcheng@quicinc.com/
+
+changelog
+----------
+Changes in v10:
+- Remove unnecessary operations in dwc3 driver.
+- Introduce CONFIG_USB_XHCI_SIDEBAND_SUSPEND to enable/disable offloaded
+  usb transfers during system Suspend-to-RAM.
+- Modify the approach to detect offloaded USB transfers when the system
+  resumes from Suspend-to-RAM.
+- Mark sideband activity when sideband interrupters are created/removed.
+- Cosmetics changes on coding style.
+
+Changes in v9:
+- Remove unnecessary white space change.
+
+Changes in v8:
+- Change the runtime pm api to correct the error handling flow.
+- Not flushing endpoints of actively offloaded USB devices to avoid
+  possible USB transfer conflicts.
+
+Changes in v7:
+- Remove counting mechanism in struct usb_hcd. The USB device's offload
+  status will be solely recorded in each related struct usb_device.
+- Utilizes `needs_remote_wakeup` attribute in struct usb_interface to
+  control the suspend flow of USB interfaces and associated USB endpoints.
+  This addresses the need to support interrupt transfers generated by
+  offloaded USB devices while the system is suspended.
+- Block any offload_usage change during USB device suspend period.
+
+Changes in v6:
+- Fix build errors when CONFIG_USB_XHCI_SIDEBAND is disabled.
+- Explicitly specify the data structure of the drvdata refereced in
+  dwc3_suspend(), dwc3_resume().
+- Move the initialization of counters to the patches introducing them.
+
+Changes in v5:
+- Walk through the USB children in usb_sideband_check() to determine the
+  sideband activity under the specific USB device. 
+- Replace atomic_t by refcount_t.
+- Reduce logs by using dev_dbg & remove __func__.
+
+Changes in v4:
+- Isolate the feature into USB driver stack.
+- Integrate with series "Introduce QC USB SND audio offloading support"
+
+Changes in v3:
+- Integrate the feature with the pm core framework.
+
+Changes in v2:
+- Cosmetics changes on coding style.
+
+[v3] PM / core: conditionally skip system pm in device/driver model
+[v2] usb: host: enable suspend-to-RAM control in userspace
+[v1] [RFC] usb: host: Allow userspace to control usb suspend flows
+---
+
+Guan-Yu Lin (4):
+  usb: xhci-plat: separate dev_pm_ops for each pm_event
+  usb: add apis for offload usage tracking
+  xhci: sideband: add api to trace sideband usage
+  usb: host: enable USB offload during system sleep
+
+ drivers/usb/core/driver.c         | 141 ++++++++++++++++++++++++++++--
+ drivers/usb/core/usb.c            |   1 +
+ drivers/usb/host/Kconfig          |  11 +++
+ drivers/usb/host/xhci-plat.c      |  42 ++++++++-
+ drivers/usb/host/xhci-plat.h      |   1 +
+ drivers/usb/host/xhci-sideband.c  |  43 +++++++++
+ include/linux/usb.h               |  19 ++++
+ include/linux/usb/xhci-sideband.h |   9 ++
+ 8 files changed, 257 insertions(+), 10 deletions(-)
+
+-- 
+2.49.0.472.ge94155a9ec-goog
+
 
