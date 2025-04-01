@@ -1,199 +1,259 @@
-Return-Path: <linux-kernel+bounces-583037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFF4A775AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 314CFA77572
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AFFF3A90E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964983A8DFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928091E7C11;
-	Tue,  1 Apr 2025 07:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E129D1E990A;
+	Tue,  1 Apr 2025 07:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfOi/Eeq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d1lFf7+I";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3F1F/xT4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ErmeEZId"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Hal1TquI"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C35E1EA7C1
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9D51E835B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743493990; cv=none; b=WjPL48pRkThntmHoQvqM1Q97w/4hvmLvUwXc3zDyBh4q188lWCwjxAbkH35WQiHe5R+iOlMC+gN85whnjHZfgXLkqyIY5yT7VPDdvuaqDHT01dgbOrSDgdnj/fNSyqx9/1sznQWf1KVdc9EpREZ9Jv3obZy0MAzJ4RgUxqKUe64=
+	t=1743493441; cv=none; b=NjdrEbZ5IY+QLXyVtiMYX7H/KLjBd48HIsffooA6mKkYqjtxfSf59e4pGPTgcRSEPhoOjzId65F04Tey2L+Hu/x348BDPbw7oXEJtygRn8Zvmgs014040b6h+lKGDQXptFWVSIUeAYu+bvjJINYPnNEdR0M6kr3crcMymtLdzWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743493990; c=relaxed/simple;
-	bh=dHVyVJeHsAIk82Ns04Tg/C3Ex2qOe5USrLtmpNoFqGM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=euC6fTDyrkCJupHYD2Df4bjdFQVF22Qvjcrn2tKB7qSFxtrtb9f7jzlRj9Br5YCOas6w9gMKtbJ9wU7cGAiMNDYJI1ZdBhdLEmxM8O8VnqgfSfrpjiPRIEJqjPLQf5oozquwt0xXD/W4jhjRhR4AnNigD17MfluyJcUMe2yLEyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfOi/Eeq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d1lFf7+I; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3F1F/xT4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ErmeEZId; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6213421174;
-	Tue,  1 Apr 2025 07:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743493987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDs6f2RqNEJKjQpmeujYZRnkKQiNNSByIAH1zsTtCXU=;
-	b=JfOi/EeqNXQp2XWILz0NA/vVmg8keTXV6WpsZfKAAFVCeqiSu1TbdwWdCYzlnMsDuIgg95
-	L/b9qwZ0vmqO0JVPNuYO2ltOG5NgDvLlsiy74uWEHEhSwSMLJ/+wQ0TFpig8aXRuR8APaN
-	lGwQR6ty/PXy7lTjHO8LdLXeiTDdq2Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743493987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDs6f2RqNEJKjQpmeujYZRnkKQiNNSByIAH1zsTtCXU=;
-	b=d1lFf7+IRUZ6k0YRFqYPFZW3QF85pRFTsZua+/ANHFjuN8f3hL6VSlRnBmrYSga/hBc6Jx
-	UNaWFsrLijQqF/CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="3F1F/xT4";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ErmeEZId
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743493986; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDs6f2RqNEJKjQpmeujYZRnkKQiNNSByIAH1zsTtCXU=;
-	b=3F1F/xT40f6WKUiJf88N8/vrGP+b9916+hZJVvVLZBAwUfOUAjyyzlQ9uJHR66BD7DH8pB
-	nYCAReZk0po/dRGL8TEZtlzTx8GsANjjL8xJeKGJvW6s1o0l3+kM6kN25JvZpkGGN6fDum
-	2odfn1Vzxy/MfSnUYsAEjNuNgKoXeBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743493986;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZDs6f2RqNEJKjQpmeujYZRnkKQiNNSByIAH1zsTtCXU=;
-	b=ErmeEZIdbdMZzKX7dByHFtl2XxwcM7cpQ1a0fHc4U4FrbUymqvcl0X1M2CnLE2cGeDJKh4
-	wVbgjuz1fa9p6nAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DDC1138A5;
-	Tue,  1 Apr 2025 07:53:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pnHCDmKb62dQXQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 01 Apr 2025 07:53:06 +0000
-Message-ID: <ac5d6544-32cb-4ae1-a62a-7720b67b4042@suse.cz>
-Date: Tue, 1 Apr 2025 09:53:05 +0200
+	s=arc-20240116; t=1743493441; c=relaxed/simple;
+	bh=lusxiB4Bjaj8R/c9BU47G8MCvRdyFszKY/L+YTNPDwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=KiTbIq1rWa7dpgEaO1vRmKmLyUJJHYVDFn4GPzwz29Fb0h08yV2+19FPuUsOUATeTBJoghL66DwexvELdoUdgSXQ3BbWQq0ed4Y1QohgebGJAEZlO4tZLsk204zcCtvHHZZiZjzGwYeLGCvfqtNRU8lw8gYpw8mKpW8ns1Fw/KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Hal1TquI; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250401074357epoutp03d10349a0df2c0fd291512590b13db5a4~yIgs1dMn21726717267epoutp03j
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:43:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250401074357epoutp03d10349a0df2c0fd291512590b13db5a4~yIgs1dMn21726717267epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743493437;
+	bh=q9tZFNfIbQkwSbFLLr9QuHBwTgnp8/iAM+LYD9NLzUw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Hal1TquIwAUwF/ycGoKLQIy2gw7C2FC8iNda8Wmuy6j85oSBLQUmnaLHwbAYBqtv+
+	 WZzlm+KAPrRIFgyHWZ7P3CgPwS8GgV5F1P4BO98ryl5PkWY+ajjjKkrCROwrrSECRA
+	 a4ZRKp7O5NtAgIKuAr1U5lL/jp2MLqXNi68wZ87c=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250401074356epcas2p4fc3e4e2f20ad12b7894c5fb6be31624d~yIgr3_c5W0326403264epcas2p4r;
+	Tue,  1 Apr 2025 07:43:56 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4ZRg3v46Brz6B9m9; Tue,  1 Apr
+	2025 07:43:55 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F0.BA.09780.B399BE76; Tue,  1 Apr 2025 16:43:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250401074354epcas2p46dd378281a462056317a4e265b54cbbb~yIgqkoVwR0326403264epcas2p4l;
+	Tue,  1 Apr 2025 07:43:54 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250401074354epsmtrp19c5f4a69aef175a0e8b61bf5a7467b29~yIgqjhLBD3075130751epsmtrp1J;
+	Tue,  1 Apr 2025 07:43:54 +0000 (GMT)
+X-AuditID: b6c32a43-9b7fe70000002634-f6-67eb993b11e1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2C.DA.07818.A399BE76; Tue,  1 Apr 2025 16:43:54 +0900 (KST)
+Received: from ubuntu (unknown [10.229.95.128]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250401074354epsmtip14840f27b62e47e71aa24c0c0836242c6~yIgqSjJul1529515295epsmtip1j;
+	Tue,  1 Apr 2025 07:43:54 +0000 (GMT)
+Date: Tue, 1 Apr 2025 16:53:07 +0900
+From: Jung Daehwan <dh10.jung@samsung.com>
+To: Puma Hsu <pumahsu@google.com>
+Cc: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
+	lgirdwood@gmail.com, krzk+dt@kernel.org,
+	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
+	tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v36 06/31] usb: dwc3: Specify maximum number of XHCI
+ interrupters
+Message-ID: <20250401075307.GG98772@ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/page_alloc: Fix try_alloc_pages
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: bpf@vger.kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@kernel.org, akpm@linux-foundation.org, peterz@infradead.org,
- bigeasy@linutronix.de, rostedt@goodmis.org, shakeel.butt@linux.dev,
- mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250401032336.39657-1-alexei.starovoitov@gmail.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250401032336.39657-1-alexei.starovoitov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6213421174
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+In-Reply-To: <CAGCq0LaDzCVau0jZ8WydSFF7FVAAXuUHaR=3gPcteew6X4kP=g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf1CTdRjvu/fdu4GhL6DyDS3G4K5EGBsy+EKAelC8JF5w1QUdhq/jdeMY
+	Y26jE8pagoDECZTibUQSoCjxIxEQYQQMRdAgCrLENLyQHyOvBQqWCQ1e6vzv83ye5/P8vIeP
+	OZ3kufKTVTpGo6KVQsIeb+nZgnxeNszIxfq/nkcn7o4TqLZjkIPGu3IBOnV5kIt6KqYAyqps
+	INC08Q6B5kfyOKi4c4CHvsypwtHN2XkuGm77nEBlE8cxVHHmCIayGo9z0dG2Qi76e2mCgwx1
+	Hqix/RgXLZlaeSint5eLasq7eOjrhTqww4W6ZLzNo8ob06lK0zSHaqw5SlC/3DAR1Bf9sVRn
+	WS2Pqjz2GZf65v4Zgio2fUg1NP2IU02dc4Caa3whxuGdlBAFQycxGgGjkqUlJavkocJdbySG
+	J0oDxBIfSRAKFApUdCoTKoyIjvF5NVlpG10oeI9WptuoGFqrFfqGhWjS0nWMQJGm1YUKGXWS
+	Uh2oFmnpVG26Si5SMbpgiVjsJ7UF7k1R5I4N4+r6Fw/OjMxx9OD85nzA50PSHxpOJOcDe74T
+	2QpgVunPOGvMAtg88ivBGvMA9llzefnAbkVh1D/AWEcHgKZb9wFrjANo+GESW47CSU9YMXQB
+	LGOC9IJ3HvWt8OtJd/jgXi5nWYCR/TjsM19ZCXIm34bm7w7jy9iB3Aobqn4DLHaE/YbxFd6O
+	jIWTnQPEcuMbbAUs3R8t54HkRTu4UDdMsO1FwILqEcBiZ2i52rTatiucLsxZxVo4OjmBseJs
+	AM9asjHWsQ0aJ3JXxBipgKN9Yzi7JQ94eRRn6bUwr+cJj6UdYF6OE6v0gCeHi7gsfg52zwyu
+	ZqTgkMW0usYCDqzTnyOKgJvxqdGMT1Uz2tJi5BbY0ObL0m4wq7kUY+lNsHqR/1REOSBqwEZG
+	rU2VMzI/teT/w8vSUhvByod4hbeCkVOLIjPg8IEZQD4mXO8Q93Ba7uSQRGdkMpq0RE26ktGa
+	gdR2s2LMdYMszfZiKl2ixD9I7B8QIAn0k4oDhS4O5j/vyZ1IOa1jUhhGzWj+03H4dq56zoDp
+	pU0Zjn6cyHUFReFTQ70d+qh3g8WG+IuiLK6i8PuMhHP9Q57bH3vVH5S+ZQTh05bYrfvQ1ddK
+	ftoWIO3KkT+Mev/uzV1B5/dm4KLX29+0ChZkVp/oa7fKCoMFGo6dS3WP77WdlGKNc6TM230h
+	r8q7ub9id1gpKn3lUXKITO4yP2vVl0ij3PeXebaIIsd8Z/Txt51arL097Yeo65e2Z368Y+dU
+	9oXOb29020ePlUy6XfeO/uBw8ZHY01bmkHNgAR8rodf+kb9uY4m67Nlget+TGUfl75Znvup8
+	vEd0trbpdBz4JDMirD5u8+IiMOzf8+mBhH/WWKoTpuIP5JeXXzEm714S4loFLfHCNFr6X80v
+	fn2qBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfVDLcRzHfX9P+9WZfi30TadYcxHSnD++59kfzs/JnegoD6dZPxNbamvS
+	zsOU8lw6605TSSVKXUwoRlmUzjV5yDEhylhRKHnK0rZz+u9978/r8/p8//jSuMBGjKNjYhM4
+	ZaxELqTciat1Qr/ps7O7ZCFZr6eirDcdFCq7acZQR+0BgE7fMZOoruADQCmFFRSy6V9RqP/J
+	QQxl1jTx0Jm0IgI9/9pPosfXcyiUa9XhqKA4FUcpBh2JDl3PINGvQSuGsssDkOFGOokGjVU8
+	lFZfT6LS/Foeuvi9HCz0Zqv1L3lsvkHNFhptGGsoPUSxrU+NFJvXGMbW5Jbx2ML0EyR761Mx
+	xWYa97AVlS0EW1nTC9heg98K/lr3udGcPGYHp5wxP8p9y2DXF15cs2hnw77nQAt6fA4DNxoy
+	s6Be24cfBu60gLkBYG13A+ka+MCzuc94ruwFX++/Q7qgtwDmNvU4IYIRwYLmy8CRKSYIvvpx
+	D3fk0cxE2PfuAOZYwJlGAt4z3XVCXswaaHqQTDgyn5kKK4ranb2AOYrBinMert4TNmZ3OBmc
+	CYQDeY+GpPRQ9oXn7LSr9ocpV045b7kxYfB9TRPlQMYMvafz9t7jQKAfJtIPE+n/i/TDRPmA
+	KAU+XJxKIVNIxXHiWC4xWCVRqNSxsmDpdoUBOH9D0OQq0N2fPMMEMBqYAKRx4Wh+xDebTMCP
+	liRpOOX2jUq1nFOZgC9NCL35JeIImYCRSRK4bRwXxyn/TTHabZwWozb1ZT6Kx1LvXzPHVI6V
+	i1fr382J1oZebY3a/PFtfq0uYCDQXsJZ+DrlBovVt5VsDzw9R3vJsnZk3sI8LxDgf5O6HWyn
+	Ty6JJ3b1R7bNfBCpafOwLFq67PEf0adOaG2OCEmgBr6cpDyPpTXEfw2SRu3uzAqGiZ/9fodU
+	tytHccYFGct9H07ZKNZJwi8WBq57olpgFbXAcLX0yKkJluJJuhFtt3beTeyRfm6ZV52UMwKT
+	Y8szpnsr1OnJl2yXPRJWhsX4nxesGj95Wkt55w7cXqYwM1Wa1N/pUy5ozCvWd9kzXyT97K3T
+	5LSN2esRqe02hh5jS+zYYtEVYuLWovokIaHaIhEH4UqV5C/Qe2kdfAMAAA==
+X-CMS-MailID: 20250401074354epcas2p46dd378281a462056317a4e265b54cbbb
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_6aabf_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250328074801epcas2p2e7ee72ce6b89d36681558ecce65ba71f
+References: <20250319005141.312805-1-quic_wcheng@quicinc.com>
+	<20250319005141.312805-7-quic_wcheng@quicinc.com>
+	<CGME20250328074801epcas2p2e7ee72ce6b89d36681558ecce65ba71f@epcas2p2.samsung.com>
+	<CAGCq0LaDzCVau0jZ8WydSFF7FVAAXuUHaR=3gPcteew6X4kP=g@mail.gmail.com>
 
-On 4/1/25 05:23, Alexei Starovoitov wrote:
-> From: Alexei Starovoitov <ast@kernel.org>
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_6aabf_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+On Fri, Mar 28, 2025 at 03:46:00PM +0800, Puma Hsu wrote:
+> On Wed, Mar 19, 2025 at 8:53 AM Wesley Cheng <quic_wcheng@quicinc.com> wrote:
+> >
+> > Allow for the DWC3 host driver to pass along XHCI property that defines
+> > how many interrupters to allocate.  This is in relation for the number of
+> > event rings that can be potentially used by other processors within the
+> > system.
+> >
+> > Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> > Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
 > 
-> Fix an obvious bug. try_alloc_pages() should set_page_refcounted.
+> Tested-by: Puma Hsu <pumahsu@google.com>
 > 
-> Fixes: 97769a53f117 ("mm, bpf: Introduce try_alloc_pages() for opportunistic page allocation")
-> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 
-Acked-by: Vlastimil BAbka <vbabka@suse.cz>
+Tested-by: Daehwan Jung <dh10.jung@samsung.com>
 
-> ---
+> > ---
+> >  drivers/usb/dwc3/core.c | 12 ++++++++++++
+> >  drivers/usb/dwc3/core.h |  2 ++
+> >  drivers/usb/dwc3/host.c |  3 +++
+> >  3 files changed, 17 insertions(+)
+> >
+> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > index 66a08b527165..17ae5c13fe36 100644
+> > --- a/drivers/usb/dwc3/core.c
+> > +++ b/drivers/usb/dwc3/core.c
+> > @@ -1699,6 +1699,7 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+> >         u8                      tx_thr_num_pkt_prd = 0;
+> >         u8                      tx_max_burst_prd = 0;
+> >         u8                      tx_fifo_resize_max_num;
+> > +       u16                     num_hc_interrupters;
+> >
+> >         /* default to highest possible threshold */
+> >         lpm_nyet_threshold = 0xf;
+> > @@ -1719,6 +1720,9 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+> >          */
+> >         tx_fifo_resize_max_num = 6;
+> >
+> > +       /* default to a single XHCI interrupter */
+> > +       num_hc_interrupters = 1;
+> > +
+> >         dwc->maximum_speed = usb_get_maximum_speed(dev);
+> >         dwc->max_ssp_rate = usb_get_maximum_ssp_rate(dev);
+> >         dwc->dr_mode = usb_get_dr_mode(dev);
+> > @@ -1765,6 +1769,12 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+> >                                 &tx_thr_num_pkt_prd);
+> >         device_property_read_u8(dev, "snps,tx-max-burst-prd",
+> >                                 &tx_max_burst_prd);
+> > +       device_property_read_u16(dev, "num-hc-interrupters",
+> > +                                &num_hc_interrupters);
+> > +       /* DWC3 core allowed to have a max of 8 interrupters */
+> > +       if (num_hc_interrupters > 8)
+> > +               num_hc_interrupters = 8;
+> > +
+> >         dwc->do_fifo_resize = device_property_read_bool(dev,
+> >                                                         "tx-fifo-resize");
+> >         if (dwc->do_fifo_resize)
+> > @@ -1851,6 +1861,8 @@ static void dwc3_get_properties(struct dwc3 *dwc)
+> >         dwc->tx_max_burst_prd = tx_max_burst_prd;
+> >
+> >         dwc->tx_fifo_resize_max_num = tx_fifo_resize_max_num;
+> > +
+> > +       dwc->num_hc_interrupters = num_hc_interrupters;
+> >  }
+> >
+> >  /* check whether the core supports IMOD */
+> > diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+> > index aaa39e663f60..fbe83914d9f9 100644
+> > --- a/drivers/usb/dwc3/core.h
+> > +++ b/drivers/usb/dwc3/core.h
+> > @@ -1083,6 +1083,7 @@ struct dwc3_scratchpad_array {
+> >   * @tx_max_burst_prd: max periodic ESS transmit burst size
+> >   * @tx_fifo_resize_max_num: max number of fifos allocated during txfifo resize
+> >   * @clear_stall_protocol: endpoint number that requires a delayed status phase
+> > + * @num_hc_interrupters: number of host controller interrupters
+> >   * @hsphy_interface: "utmi" or "ulpi"
+> >   * @connected: true when we're connected to a host, false otherwise
+> >   * @softconnect: true when gadget connect is called, false when disconnect runs
+> > @@ -1330,6 +1331,7 @@ struct dwc3 {
+> >         u8                      tx_max_burst_prd;
+> >         u8                      tx_fifo_resize_max_num;
+> >         u8                      clear_stall_protocol;
+> > +       u16                     num_hc_interrupters;
+> >
+> >         const char              *hsphy_interface;
+> >
+> > diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
+> > index b48e108fc8fe..1c513bf8002e 100644
+> > --- a/drivers/usb/dwc3/host.c
+> > +++ b/drivers/usb/dwc3/host.c
+> > @@ -182,6 +182,9 @@ int dwc3_host_init(struct dwc3 *dwc)
+> >         if (DWC3_VER_IS_WITHIN(DWC3, ANY, 300A))
+> >                 props[prop_idx++] = PROPERTY_ENTRY_BOOL("quirk-broken-port-ped");
+> >
+> > +       props[prop_idx++] = PROPERTY_ENTRY_U16("num-hc-interrupters",
+> > +                                              dwc->num_hc_interrupters);
+> > +
+> >         if (prop_idx) {
+> >                 ret = device_create_managed_software_node(&xhci->dev, props, NULL);
+> >                 if (ret) {
+> >
 > 
-> As soon as I fast forwarded and rerun the tests the bug was
-> seen immediately.
-> I'm completely baffled how I managed to lose this hunk.
-
-I think the earlier versions were done on older base than v6.14-rc1 which
-acquired efabfe1420f5 ("mm/page_alloc: move set_page_refcounted() to callers
-of get_page_from_freelist()")
-
-> I'm pretty sure I manually tested various code paths of
-> trylock logic with CONFIG_DEBUG_VM=y.
-> Pure incompetence :(
-> Shame.
-> ---
->  mm/page_alloc.c | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index ffbb5678bc2f..c0bcfe9d0dd9 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7248,6 +7248,9 @@ struct page *try_alloc_pages_noprof(int nid, unsigned int order)
->  
->  	/* Unlike regular alloc_pages() there is no __alloc_pages_slowpath(). */
->  
-> +	if (page)
-> +		set_page_refcounted(page);
 
-Note for the later try-kmalloc integration, slab uses frozen pages now, so
-we'll need to split out a frozen variant of this API.
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_6aabf_
+Content-Type: text/plain; charset="utf-8"
 
-But this is ok as a bugfix for now.
 
-> +
->  	if (memcg_kmem_online() && page &&
->  	    unlikely(__memcg_kmem_charge_page(page, alloc_gfp, order) != 0)) {
->  		free_pages_nolock(page, order);
-
+------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_6aabf_--
 
