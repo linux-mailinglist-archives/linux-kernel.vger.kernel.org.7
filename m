@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-583069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEF2A77625
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E650AA7763A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AC73169958
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7633A98EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8039C1E835B;
-	Tue,  1 Apr 2025 08:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE85B1E9B3F;
+	Tue,  1 Apr 2025 08:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WkROTV9K";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eYKSIEQf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=chir.rs header.i=lotte@chir.rs header.b="YMBsE16Q"
+Received: from sender-op-o17.zoho.eu (sender-op-o17.zoho.eu [136.143.169.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5244619D8AC;
-	Tue,  1 Apr 2025 08:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743495436; cv=none; b=s2ADnPIg5z65B9KBG6LVjTXUyEdH0LLhCFSDggo77yEoUakSGT705biJisVs78t4996thloojc5krV7D5z6t5g1CzUp6H8y4H0T9IX9sJ54mT4asM4GG66rNJ52plRxLuLKnxKKOcpoumb9BZhnVELlfcjt6L6VStu1rQ4elq+8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743495436; c=relaxed/simple;
-	bh=T5GbqVyZWC7IL24uFzvj8hAEL+GTO0rSO2sLy2qsudg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eQwh0dnbPaCjf9f5qvL2Vtd4ix0N9hTC2sb/oeix3xutAy+8C0mHvQuPjhwRJMpP6li7TnbzFSa/H/8U7WAtg6a7z00zh4dylCa3NrfxhOLS6GzTD4etgSN1QnRknW0IY3Xo+dicpKFsdojV8fGf0jLmTStxl2knJ7BHAoeJxUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WkROTV9K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eYKSIEQf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 01 Apr 2025 08:17:03 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743495433;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nz0PxVBRVLI4HeLZodBOM+7xTdYHJPIkiH8CFNMIFZM=;
-	b=WkROTV9K1NVOJR5cOe0tqJgp115MTOYC/lleDlhtwVHRi5eUddDaW0CHeVwtCqlSwXbyrz
-	Aioaq8nVqOPaTuOn7QWhIOS4dckWnrcvKaAQX8EDFkb28Pp2NXEL7d4XprIq8Lyz0FVnwr
-	hBIZ33RBHCFsu2g/xad18Q8fOsKwurtj70A/PX6nhJjX0ta1MTpGFQmCusAN96HVZv1tLp
-	bHE8iqC8WLsv0cq1CBOnaMKxO26kgGIwYHbHb8TAQX6vvyeg7vC/S6W+LWKNcmzUYmiKJg
-	NBS3TG6oeY6fviuf4wbD3OhTSnAUvBBTwbNDDvYYiNX8ziPeF96iquhkBZhXsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743495433;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nz0PxVBRVLI4HeLZodBOM+7xTdYHJPIkiH8CFNMIFZM=;
-	b=eYKSIEQfz4gJcB0bs9PiJIRVCxVWzPm2tv2qdTyFcL8izw2T7QAYR/VFK26BhivwYBxQZZ
-	RWMLeYXroepzvcDA==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool/loongarch: Add unwind hints in
- prepare_frametrace()
-Cc: kernel test robot <lkp@intel.com>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <270cadd8040dda74db2307f23497bb68e65db98d.1743481539.git.jpoimboe@kernel.org>
-References:
- <270cadd8040dda74db2307f23497bb68e65db98d.1743481539.git.jpoimboe@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644131E5B69
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743495600; cv=pass; b=We9AJLj1/zzG8lzFXTWmwduUjJMdBSh2B0uQ3hNHz1uYCG69rzwa6sCm7AZA7Lu/Z4JIouGviq4dfMQmEFX9+YkUXZ2PIw1yGuX9voW6U7+uEr9bEKmVT1WMEircufkXaOsH0OwPTegDeamwg971x7FHucBdvaKUFR/eRWUeJxY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743495600; c=relaxed/simple;
+	bh=pTCQB0gM1iH0vy/KyRCFBtfEoTxJD8u1Wse1yiltnjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qqWcjT7fAASJgT9pEXMKPX62+HqMpfLAbOml6Io9nnArhpMTufW+/95Wj0KC/5lHoluxedIlxt4+VIStKsqFd/SMYhfNb0xIelcWJpEIhv0fNthPLx9G7IeB51MWiU7CH9Zi3BBXGxyIzWPkwpPYJ8kzT4uRMg8St+e1xbmglHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chir.rs; spf=pass smtp.mailfrom=chir.rs; dkim=pass (1024-bit key) header.d=chir.rs header.i=lotte@chir.rs header.b=YMBsE16Q; arc=pass smtp.client-ip=136.143.169.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chir.rs
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chir.rs
+ARC-Seal: i=1; a=rsa-sha256; t=1743495553; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=bnUeaESSZiOvk18jfd9NqyilfTpZ37Z5HjWmmkYPhPFAiwf8aKs/2mxanNYj9WGGTTVjKXoy7VstD24JzEKcXRqCBpJ1gZHXQkTtFPmLnd2gijQBtHkvDc033b65Qb/+BFqngzp4dOiCox2JgU4TKxx29mS1mS9nAAdPUuaj4io=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1743495553; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pTCQB0gM1iH0vy/KyRCFBtfEoTxJD8u1Wse1yiltnjE=; 
+	b=P/qmd0BU2fQ2u4aillXudrrxhHymlzpXHo4PpzTg1KRuCuRsATSdE0vulbULBOTiOuYfV0eIDASLA9Tugsvpl+VZYFjXeiW9ch/8pfa017Ilkefr9r8jpXKtVdCGx7CanTSo8yEESBXZSWka3yzA1chxzV0+Z57bQchOCbinnIw=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=chir.rs;
+	spf=pass  smtp.mailfrom=lotte@chir.rs;
+	dmarc=pass header.from=<lotte@chir.rs>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743495553;
+	s=zmail; d=chir.rs; i=lotte@chir.rs;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=pTCQB0gM1iH0vy/KyRCFBtfEoTxJD8u1Wse1yiltnjE=;
+	b=YMBsE16QvUsJcnBVlJKsGQki4FRJQ8sNLhNjuUQpKeIcycJx3XP5mv3GyTSYtv9u
+	BVd1UpQxFaTfLoVaqf/YfkCCkOpZMQwvj0qXaYu4iQrpU+2He0eOv6XIJ7HZa4cZZqH
+	aBGIY/536PMga1/k3YtAU7TdJZ/CzyTHgDl1/YA8=
+Received: by mx.zoho.eu with SMTPS id 1743495550257642.4299015885807;
+	Tue, 1 Apr 2025 10:19:10 +0200 (CEST)
+From: =?UTF-8?q?Charlotte=20=Dele=C5=84kec?= <lotte@chir.rs>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	max@maxfierke.com
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Introduce ClockworkPi CWD686 DRM panel driver
+Date: Tue,  1 Apr 2025 09:18:30 +0100
+Message-ID: <20250401081852.283532-1-lotte@chir.rs>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174349542583.14745.6124193536449922861.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-The following commit has been merged into the objtool/urgent branch of tip:
+The ClockworkPi DevTerm (all models) uses a 6.86" IPS display
+of unknown provenance, which uses the Chipone ICNL9707 IC driver[1].
 
-Commit-ID:     7c977393b8277ed319e92e4b598b26598c9d30c0
-Gitweb:        https://git.kernel.org/tip/7c977393b8277ed319e92e4b598b26598c9d30c0
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Mon, 31 Mar 2025 21:26:43 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 01 Apr 2025 10:10:10 +02:00
+The display panel Max Fierke has has two model numbers: TXW686001 and
+WTL068601G, but couldn’t find any manufacturer associated with either, so
+he opted for the ClockworkPi model number.
 
-objtool/loongarch: Add unwind hints in prepare_frametrace()
+This driver is based on the GPL-licensed driver released by ClockworkPi[1],
+authored by Pinfan Zhu, with some additional cleanup, rotation support,
+and display sleep re-enabling done by Max Fierke.
 
-If 'regs' points to a local stack variable, prepare_frametrace() stores
-all registers to the stack.  This confuses objtool as it expects them to
-be restored from the stack later.
+[1] https://github.com/clockworkpi/DevTerm/blob/main/Schematics/ICNL9707_Datasheet.pdf
+[2] https://github.com/clockworkpi/DevTerm/blob/main/Code/patch/armbian_build_a06/patch/kernel-004-panel.patch
 
-The stores don't affect stack tracing, so use unwind hints to hide them
-from objtool.
+Thanks to Krzysztof Kozlowski, Rob Herring, and Sam Ravnborg for their
+prior reviews.
 
-Fixes the following warnings:
+I hope this is the correct way of reviving old patches.
 
-  arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-160
-  arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[23]=-1+0 reg2[23]=-2-152
+Changes in v4:
+ - Use existing clockwork vendor ID
+ - Update the panel initalization code for DRM changes
 
-Fixes: cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
-Reported-by: kernel test robot <lkp@intel.com>
-Tested-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/270cadd8040dda74db2307f23497bb68e65db98d.1743481539.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202503280703.OARM8SrY-lkp@intel.com/
----
- arch/loongarch/include/asm/stacktrace.h   |  3 +++
- arch/loongarch/include/asm/unwind_hints.h | 10 +++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+Changes in v3:
+ - dt-bindings: add missing lines for spacing
 
-diff --git a/arch/loongarch/include/asm/stacktrace.h b/arch/loongarch/include/asm/stacktrace.h
-index f23adb1..fc8b647 100644
---- a/arch/loongarch/include/asm/stacktrace.h
-+++ b/arch/loongarch/include/asm/stacktrace.h
-@@ -8,6 +8,7 @@
- #include <asm/asm.h>
- #include <asm/ptrace.h>
- #include <asm/loongarch.h>
-+#include <asm/unwind_hints.h>
- #include <linux/stringify.h>
- 
- enum stack_type {
-@@ -43,6 +44,7 @@ int get_stack_info(unsigned long stack, struct task_struct *task, struct stack_i
- static __always_inline void prepare_frametrace(struct pt_regs *regs)
- {
- 	__asm__ __volatile__(
-+		UNWIND_HINT_SAVE
- 		/* Save $ra */
- 		STORE_ONE_REG(1)
- 		/* Use $ra to save PC */
-@@ -80,6 +82,7 @@ static __always_inline void prepare_frametrace(struct pt_regs *regs)
- 		STORE_ONE_REG(29)
- 		STORE_ONE_REG(30)
- 		STORE_ONE_REG(31)
-+		UNWIND_HINT_RESTORE
- 		: "=m" (regs->csr_era)
- 		: "r" (regs->regs)
- 		: "memory");
-diff --git a/arch/loongarch/include/asm/unwind_hints.h b/arch/loongarch/include/asm/unwind_hints.h
-index a01086a..2c68bc7 100644
---- a/arch/loongarch/include/asm/unwind_hints.h
-+++ b/arch/loongarch/include/asm/unwind_hints.h
-@@ -23,6 +23,14 @@
- 	UNWIND_HINT sp_reg=ORC_REG_SP type=UNWIND_HINT_TYPE_CALL
- .endm
- 
--#endif /* __ASSEMBLY__ */
-+#else /* !__ASSEMBLY__ */
-+
-+#define UNWIND_HINT_SAVE \
-+	UNWIND_HINT(UNWIND_HINT_TYPE_SAVE, 0, 0, 0)
-+
-+#define UNWIND_HINT_RESTORE \
-+	UNWIND_HINT(UNWIND_HINT_TYPE_RESTORE, 0, 0, 0)
-+
-+#endif /* !__ASSEMBLY__ */
- 
- #endif /* _ASM_LOONGARCH_UNWIND_HINTS_H */
+Changes in v2:
+ - dt-bindings: remove redundant backlight example
+ - add missing regulators
+ - remove some unused properties from definition (e.g. enable_gpio, supply)
+ - reorder includes
+ - remove redundant ctx->backlight in favor of backlight through drm_panel_of_backlight
+ - remove now-unneeded ctx->enabled and enable/disable hooks
+ - replace ICNL9707_DCS macro with mipi_dsi_dcs_write_seq
+ - use dev_err_probe instead of checking EPROBE_DEFER
+ - fixed return type of cwd686_remove to be void following changes to mipi_dsi_driver
+ - add .get_orientation callback
+
+
 
