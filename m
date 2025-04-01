@@ -1,99 +1,152 @@
-Return-Path: <linux-kernel+bounces-583657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58558A77E08
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:41:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0859BA77E12
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4061891069
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66DD1188FD2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE672204F73;
-	Tue,  1 Apr 2025 14:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A946204F6B;
+	Tue,  1 Apr 2025 14:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+MxI1w6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fjCrmTkR"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48331204F65;
-	Tue,  1 Apr 2025 14:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8672204F66
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743518443; cv=none; b=phHUWqDMGvala0Fnrmwk/MBrOk1RRLE8ghNNoPi0x+kbL52iLb/LiedFjnVFzjmehtw8dGFJMSmyt9nxfn5aUUcPcBFrcPiIQOMmwxNz9gUFWo4Jg3TnOVeyL8g3rYcSCDy371ikt5Zz8qCtJUX0mmMvwScIKBxZQaJNhTYqxQQ=
+	t=1743518575; cv=none; b=aO3Fz02C5CxIVR4El09z5F7yE4wJeUop4eXkQ7s5NR0AbzZ2B3PMGGLDEVU8epkQ2EJriA8LlksuAsX4WYHSEth1G/wSpoRi9D7H1CKmbrMvvZemxMSqrQw2OeRQQ3iBFumLTTjVuvlpoqmkEZ9h03mqP4A5kdQSBmRNyQWpCrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743518443; c=relaxed/simple;
-	bh=u+GoIqV+fjeT7z+mFVcbtJXhmpOHnpXRH54YzZYQbKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj99mJICV5NeBZQnrePXe2erAAc/httIZzHq2nifxCJtSyj0sOamRDiRyKl0Cq1Oo0fw9FNqy+Z8eyWW3MIDJIemT03DswBKIcfIPBKubx8tr95IuXl3VnPxneFKZcbE+uLNhVvLA/kOsyLRO2DvW5+Mjqu8QNdtHw5JseeNlgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+MxI1w6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14F6BC4CEE4;
-	Tue,  1 Apr 2025 14:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743518440;
-	bh=u+GoIqV+fjeT7z+mFVcbtJXhmpOHnpXRH54YzZYQbKA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D+MxI1w6UD4FjVaB2IKN1ytV1rYCOD1i65vy0QScvgGG07MwjSnNOfkfD9a8fB8Ty
-	 84YFO1uBWW2teT17JKiBs5FMxSnT8EnnX6dHFXv0fRmnGzSw8CKzjBD7ciU0ulj4Hf
-	 Nlxpnlnmk9U8lSD9MZkfRZ825X061HAGCBAfk6uiTx2Gpjua4kSENYMErDdi2FxVZT
-	 B1SxF2x8j8aLcKZX4s6rw/UDbcNdqCh8/v881SVWZjUGfoGWdaqNGtT0gKOhDotjXI
-	 YW4IC95G+xlIfSB9aWiaHPJ5XTBHU9yfKjS8SF+Qhl6RpKJkfL/yaBQm2pf+T/+r2Z
-	 TEDfG2wycXd+g==
-Date: Tue, 1 Apr 2025 16:40:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, rafael@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	djwong@kernel.org, pavel@kernel.org, mingo@redhat.com, will@kernel.org, 
-	boqun.feng@gmail.com
-Subject: Re: [PATCH 0/6] power: wire-up filesystem freeze/thaw with
- suspend/resume
-Message-ID: <20250401-ballen-eulen-8d074cd8ca78@brauner>
-References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
- <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
- <20250401141407.GE5880@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1743518575; c=relaxed/simple;
+	bh=WaAmYeGlXVLIMGYtadgDzWol5UWcmx6qZyJV86g3FLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZsMoojJi2D57AWhMN/RE/OG+jeH42KN3xNdBrPjb6lWntLF6XlvFm9nqpO+wLbUrEVK9Yp+GIG27kbP9ZaPdz4c36GT0JrSwfoul5tlxsU1qLcwJddRLB+wwnYED4WOxWEy2MHgtRgM7k76NxynhCqvDb9mbo5BpOC459aT7KCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fjCrmTkR; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so590105e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743518572; x=1744123372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YoKh3xRlz5mCw5TurAZL1ObVidlP7k9BL/bfJaoO1EA=;
+        b=fjCrmTkR225EelhmGO7Hekaqxx7jrEsM0yLl7Kdl1PzZ8RltUcTyoxm9unNdTVU6qu
+         Td1A4WbZnIAs/I/xjg1b317gJC0GJFKCL/UCUknTLVBJgWYxoo55AWNZfsdyt0a7C4+E
+         fwXlEnQ4j8FKxAWaFM9F6XVRmMCpYK7UzfuVbKBf7hL/rZfYWun2YkLiAYX16GQmHTdL
+         edgFdgMEQTom+ZILnxxu1GyFZYZ3V2NigfOoUfxVGfciKV0fy+X0iwgGNgSLWAHJhUNg
+         Jj+Dwezhai6htH/J6/EszwZ/Jv59oAfW6xs4OXTEv2LFk4RVg5i5yOI4vvJ28rEbmpvd
+         8+wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743518572; x=1744123372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YoKh3xRlz5mCw5TurAZL1ObVidlP7k9BL/bfJaoO1EA=;
+        b=APMQF8rPYoa7NKHxRPLFw50/vsjNFFBXwBM5GgVIugWOOv8VV95PSjkwRJ+fw8NEZ3
+         Gz1uR8UyK1OxCvk+jlS6DJvHoy4A0Y9pjBbX9s2KU8ucBha17dP81Ev13QBa3LM3e4ws
+         kXMulvRFRXaQGRugrOwRivy2wyVq3RrxGFw+Uj6ndTewC6EyZ8vee7er0XSbNi5VQO/Q
+         Eic0J9i05gicxmuXIyCYP0lqdktVrxiQLtyXERdkREWW3wyGzSUJAL/0RT1pG6H5QwLN
+         jPril9oi2MiFlmACRsJ1CwXZaslHkWvjEPYCyxGIJI4tUSm2aSSQCek0Ak29rH6PgPfo
+         ex1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVJxdp9pOyFQvNbO5X6qVD3bkXTzhYZrE3B7ebISpPZRid34rGYshBhpPwEWuxPQ2NB4OenkqKaidxmY6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySauywDHhixgZKCoV+yfFLD1PVzcuPr2irEIQwe7WThtC0MMxM
+	L1NjhvgDz5NZ7HiwwnhBI+jHOVmDfzMGtryYIZlF44iV4+zVCMnQoxN7OWq7us6iE2TcX1n5+Wk
+	ednxSu+wHcPKSmjvNe5qsG7qkMqScyCxmv9qS9A==
+X-Gm-Gg: ASbGncsbLS4peyNv7TG8gHxxOYX3UNnyo+v+A5ZCHxwi4t2ObGPr+0Y+OwlooviIeLt
+	J5PafPpWPWfVC+Ic/NqO49C+CN24LjbcktWMQivUfqe7VFe9Avf4DpD8i1F9HnNy9DiyPGIr1i7
+	X2kOY8Hgbknk8vtKPSjLvxogeKD4hmQRxMJmtqlwvHV/ozDG5nLIccOsiP
+X-Google-Smtp-Source: AGHT+IEfmhNL17r5nidNNv0tEQJKHtPF37KT698U/Xyea3ScXmWlnAbRZJLN1MOgu7vZBJKVLkZB3XPWxHnOGzPHiy4=
+X-Received: by 2002:a05:6512:12c6:b0:549:9143:4ce1 with SMTP id
+ 2adb3069b0e04-54c0a4b5a19mr1146779e87.3.1743518572001; Tue, 01 Apr 2025
+ 07:42:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250401141407.GE5880@noisy.programming.kicks-ass.net>
+References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+ <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk>
+In-Reply-To: <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 1 Apr 2025 16:42:40 +0200
+X-Gm-Features: AQ5f1JpjeDYSzEVGoQc1OoMcPQRfFfdR7yZhH4_uZk30TzdP2JDK8Wf9AT6IIJ4
+Message-ID: <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
+ workarounds for regulators
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 01, 2025 at 04:14:07PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 01, 2025 at 02:32:45AM +0200, Christian Brauner wrote:
-> > The whole shebang can also be found at:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
-> > 
-> > I know nothing about power or hibernation. I've tested it as best as I
-> > could. Works for me (TM).
-> > 
-> > I need to catch some actual sleep now...
-> > 
-> > ---
-> > 
-> > Now all the pieces are in place to actually allow the power subsystem to
-> > freeze/thaw filesystems during suspend/resume. Filesystems are only
-> > frozen and thawed if the power subsystem does actually own the freeze.
-> 
-> Urgh, I was relying on all kthreads to be freezable for live-patching:
-> 
->   https://lkml.kernel.org/r/20250324134909.GA14718@noisy.programming.kicks-ass.net
-> 
-> So I understand the problem with freezing filesystems, but can't we
-> leave the TASK_FREEZABLE in the kthreads? The way I understand it, the
+On Tue, Apr 1, 2025 at 3:27=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> On Tue, Apr 01, 2025 at 02:46:41PM +0200, Bartosz Golaszewski wrote:
+>
+> > Let's deprecate both symbols officially, add them to the MAINTAINERS
+> > keywords so that it pops up on our radars when used again, add a task t=
+o
+> > track it and I plan to use the power sequencing subsystem to handle the
+> > cases where non-exclusive access to GPIOs is required.
+>
+> What exactly is the plan here?  The regulator (and reset) usage seems
+> like a reasonable one TBH - the real problem is having an API from the
+> GPIO subsystem to discover sharing, at the minute you can't resolve a
+> binding enough to find out if there's sharing without actually
+> requesting the GPIO.
 
-Yeah, we can.
+Hard disagree on the reasonable usage. Let's consider the following:
 
-> power subsystem will first freeze the filesystems before it goes freeze
-> threads anyway. So them remaining freezable should not affect anything,
-> right?
+You have two users and one goes gpiod_set_value(desc, 0), the other:
+gpiod_set_value(desc, 1). Who is right? Depending on the timing the
+resulting value may be either.
 
-Yes. I've dropped the other patches. I've discussed this later
-downthread with Jan.
-> 
+For it to make sense, you'd have to add new interfaces:
+gpiod_enable(desc) and gpiod_disable(), that would keep track of the
+enable count. However you can't remove the hundreds of existing users
+of gpiod_set_value() so the problem doesn't go away. But even if you
+did introduce these new routines, what about
+gpiod_direction_input/output()? My point is: the GPIO consumer API is
+designed with exclusive usage in mind and it makes no sense to try to
+ram shared GPIOs into the GPIO core.
+
+Also: there are no non-exclusive GPIO usars under drivers/reset/.
+
+What I want to propose is the following:
+
+1. Audit all users of GPIOD_FLAGS_BIT_NONEXCLUSIVE
+
+Outside of drivers/regulator/ it seems that there are several users
+who don't really needs this (especially under sound/) and where using
+this flag is just a result of a copy-paste.
+
+2. Fix the actual problem with buggy DSDT
+
+Some GPIOs are requested by GPIOLIB ACPI code even though platform
+drivers also want them. Those drivers just used the non-exclusive flag
+with gpiod_get() but we should instead fix it with an ACPI request
+quirk in GPIO core.
+
+3. Use pwrseq where drivers really need non-exclusive GPIOs.
+
+The power sequencing subsystem seems like a good candidate to fix the
+issue. I imagine a faux_bus pwrseq driver that would plug into the
+right places and provide pwrseq handles which the affected drivers
+could either call directly via the pwrseq_get(), pwrseq_power_on/off()
+interfaces, or we could have this pwrseq provider register as a GPIO
+chip through which the gpiod_ calls from these consumers would go and
+the sharing mediated by pwrseq.
+
+Bartosz
 
