@@ -1,169 +1,154 @@
-Return-Path: <linux-kernel+bounces-583476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72F4A77B55
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50862A77B5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E279018901D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E34318905D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51141203704;
-	Tue,  1 Apr 2025 12:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="Lb3BdI4S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BqVwJ0zg"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255331EC01F;
-	Tue,  1 Apr 2025 12:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B381204081;
+	Tue,  1 Apr 2025 12:52:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FDA2036ED;
+	Tue,  1 Apr 2025 12:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511901; cv=none; b=ILhCjHwedd8uGL9SCvxpcQrFs9Uiq8h76mnSD7wtrvpi6vqUHDGTmrOIS4l4BO9s+ZmLyJia4tj5VVUYEocO2ueSiNbIKoXcgZZMc6asSMfJC0VYbzMzXt0BmcGEq4L3kKAqAnsSEeZH4zBuzw6vJFuEf27flk43yaZ0i2Di1dE=
+	t=1743511945; cv=none; b=AiIXzALlvStq5UnrGVTARAAZdxjRPGv1d80QeMiJ4O5muTYU0kLLi418TxVvBHmD0UR2Xp7mzjarnE+djNI3UPWth3JkAHdKe14zc1clF00jJDRddtHB6beccnzmfaXMFDQzIoYNCinlvnmnZidoQ5BFxUMfU9XrrgsKCj2Y16w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511901; c=relaxed/simple;
-	bh=DHOcwlcVKS72DNSBiJSZOaaJO9qOgf7Tm10Ulnaq2tQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXLift/KJEws28Hta4ZYWs+NwDUJae/KOVe3g7Fd43lyutz9qFUPwgS91e5yuOSVhqlbXh+5+b2W4UpXerAhPKvqUE3ocBSTn3vmF6NuAXcxu/y09xxVjhzQkQlVbly0e/RydMsB8YErUG7ENjEWKQM1N8LqvDuJw+PaDeSYv4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=Lb3BdI4S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BqVwJ0zg; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D329C25400A0;
-	Tue,  1 Apr 2025 08:51:36 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 01 Apr 2025 08:51:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1743511896; x=
-	1743598296; bh=FcH0/cGkd+r0b1nlk9gurxdGutVFNxoiOGhv00cAXHQ=; b=L
-	b3BdI4SRwv2AfKncl4vSeSJJhQBAbVTd++5aa64rOmzByrDSPOwxN/nOfd/VDRY8
-	71dMzi2KEApzx0DCiA6BM1SPwercvapYwOh22CFz7CkGLJH5yZktTL7aVuKrmijM
-	vZssfrtEPPpjtqy6vUHLCc9dRL2E3g0oJrTwAZ8k3yRE61XHHgi5kFQWj4J1NfTw
-	mUbM+0/nM5D3zSTX/H75Gm34G1sEP0s3jvHz7YwcvB19KrcDEvJyA6sSUWEWMo3l
-	YiwPNKsIOlmj8J5PBW62qMl1qCg1eQJJX8qu4fusZ+jiN62Yu7WlGBS7u9aFqq/J
-	s7svqKY6lsWC/vPq+L50Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743511896; x=1743598296; bh=FcH0/cGkd+r0b1nlk9gurxdGutVFNxoiOGh
-	v00cAXHQ=; b=BqVwJ0zgLMIlONK2a7B6kxRtNBBvvakMbp/BConZ2VglO3CXmjc
-	V9fsx26eeXcv+iiL3TgxqDQkJ0hYN2ZVneZHH/DoVmOlsbtNaCtMUCYAcAgYBQEZ
-	yOJTdT0bB9fIYa+U1hohAZn/ct2Dup+WgScJpr1JAZPRVIDgD9LD+2FJQMsloq5Z
-	2mDhVo60tFx8xk/MVT5ETv8mglAkP/DiFdiUh7+6VVDvOMNokmt+4zGKjx8GNR7v
-	GI50jPcm7oORzQ7nl6exrs4vRKqGYqDFZ9VxqiMr78/FjHyNkvqHbz4XQlt0+KXv
-	9/IAkFW4q0yUQZOXrGboIoauAo3sId5ld/g==
-X-ME-Sender: <xms:WOHrZ_VPOCBDgcyMaD0d3uwaw6VhCpmxljjYIXo3pds2WwqAcg_Y6A>
-    <xme:WOHrZ3lFosNSBlRUCpIvz2y_24WBz6jGyA7BsTsmy93QqKqqvMHcsewH5RXAR8mfC
-    RWinBY0o0wvwaK3sLA>
-X-ME-Received: <xmr:WOHrZ7aibgcHhMQcL1FcVCWfiSJbw8ThFRyQjrvbRF5F-vjVcn0L4rHL0-QN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvkedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:WOHrZ6U39qiz0OZGl73pb7TllO2LZupUkps0rFYbFMah_rBbE7C3cg>
-    <xmx:WOHrZ5mzM8WzzRLrXTniJk7p2v1sxgg4Vs3UcT3jwGihOCd3HWxrOA>
-    <xmx:WOHrZ3eKUSpK2WgbDpwQCjT7i65rjS8chqD_2dlGFtOBHRd3v6nqHA>
-    <xmx:WOHrZzFwcJGhmwEbbzpXC0MAJ1jYIyayiH-PYYLmcA_ldnyheCHTIw>
-    <xmx:WOHrZ7lTHlM8MXI8xYx1oGcR87drK-ZxWg_lcEenlF0PNWcUCQmOjOxF>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Apr 2025 08:51:35 -0400 (EDT)
-Date: Tue, 1 Apr 2025 14:51:33 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v24 16/23] ovpn: implement keepalive mechanism
-Message-ID: <Z-vhVdMThx7NQgW0@krikkit>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-16-3ec4ab5c4a77@openvpn.net>
+	s=arc-20240116; t=1743511945; c=relaxed/simple;
+	bh=G+DHmr9SMeP8LvmoZ9WUtsQY3x3ZhwAFh+YVcJkgOmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZjkWieINnOjtxlum/CjMeXKc6oGzTH5bmVJ+QVLnJ+Fvz2J/scJDq3s8jrvRu8qmYa5WwSkjQTFTd2tuQq1ElEHF/DGHlPjkWxS+US4Nd97ap8Vc+uXfIiQ4b9aTCx3MhZUI/C4AT4b/Wmq3jIGSLTnhYRO+iqW3jxM0mn+jXkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED76A14BF;
+	Tue,  1 Apr 2025 05:52:25 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E0933F694;
+	Tue,  1 Apr 2025 05:52:21 -0700 (PDT)
+Message-ID: <8d9ad64b-a5f7-4a44-a557-7edb83322fdf@arm.com>
+Date: Tue, 1 Apr 2025 13:51:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-b4-ovpn-v24-16-3ec4ab5c4a77@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] coresight: perf: Update buffer on AUX pause
+To: Leo Yan <leo.yan@arm.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311170451.611389-1-leo.yan@arm.com>
+ <20250311170451.611389-6-leo.yan@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250311170451.611389-6-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-2025-03-18, 02:40:51 +0100, Antonio Quartulli wrote:
-> @@ -124,6 +154,13 @@ void ovpn_decrypt_post(void *data, int ret)
->  			goto drop;
->  		}
->  
-> +		if (ovpn_is_keepalive(skb)) {
-> +			net_dbg_ratelimited("%s: ping received from peer %u\n",
-> +					    netdev_name(peer->ovpn->dev),
-> +					    peer->id);
-> +			goto drop_nocount;
-> +		}
+On 11/03/2025 17:04, Leo Yan wrote:
+> Due to sinks like ETR and ETB don't support interrupt handling, the
+> hardware trace data might be lost for continuous running tasks.
+> 
+> This commit takes advantage of the AUX pause for updating trace buffer
+> to mitigate the trace data losing issue.
+> 
+> The per CPU sink has its own interrupt handling.  Thus, there will be a
+> race condition between the updating buffer in NMI and sink's interrupt
+> handler.  To avoid the race condition, this commit disallows updating
+> buffer on AUX pause for the per CPU sink.  Currently, this is only
+> applied for TRBE.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   .../hwtracing/coresight/coresight-etm-perf.c  | 43 ++++++++++++++++++-
+>   1 file changed, 41 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index 2dcf1809cb7f..f1551c08ecb2 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -574,14 +574,53 @@ static void etm_event_start(struct perf_event *event, int flags)
+>   	return;
+>   }
+>   
+> -static void etm_event_pause(struct coresight_device *csdev,
+> +static void etm_event_pause(struct perf_event *event,
+> +			    struct coresight_device *csdev,
+>   			    struct etm_ctxt *ctxt)
+>   {
+> +	int cpu = smp_processor_id();
+> +	struct coresight_device *sink;
+> +	struct perf_output_handle *handle = &ctxt->handle;
+> +	struct coresight_path *path;
+> +	unsigned long size;
 > +
->  		net_info_ratelimited("%s: unsupported protocol received from peer %u\n",
->  				     netdev_name(peer->ovpn->dev), peer->id);
->  		goto drop;
-> @@ -149,6 +186,7 @@ void ovpn_decrypt_post(void *data, int ret)
->  drop:
->  	if (unlikely(skb))
->  		dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
-> +drop_nocount:
->  	if (likely(peer))
->  		ovpn_peer_put(peer);
->  	if (likely(ks))
->  	kfree_skb(skb);
->  }
+>   	if (!ctxt->event_data)
+>   		return;
+>   
+>   	/* Stop tracer */
+>   	coresight_pause_source(csdev);
+> +
+> +	path = etm_event_cpu_path(ctxt->event_data, cpu);
+> +	sink = coresight_get_sink(path);
+> +	if (WARN_ON_ONCE(!sink))
+> +		return;
+> +
+> +	/*
+> +	 * The per CPU sink has own interrupt handling, it might have
+> +	 * race condition with updating buffer on AUX trace pause if
+> +	 * it is invoked from NMI.  To avoid the race condition,
+> +	 * disallows updating buffer for the per CPU sink case.
+> +	 */
+> +	if (coresight_is_percpu_sink(sink))
+> +		return;
+> +
+> +	if (WARN_ON_ONCE(handle->event != event))
+> +		return;
+> +
+> +	if (!sink_ops(sink)->update_buffer)
+> +		return;
+> +
+> +	size = sink_ops(sink)->update_buffer(sink, handle,
+> +					     ctxt->event_data->snk_config);
 
-Again a small thing: in the case of a keepalive message, it would also
-be nice to use consume_skb instead of kfree_skb. Quoting from the doc
-for consume_skb:
+I believe we keep the sink disabled/stopped in update_buffer. We need to
+turn it back ON after the "buffer update". May be we could use a flag
+to update_buffer() to indicate this is "pause" triggered update.
 
- *	Functions identically to kfree_skb, but kfree_skb assumes that the frame
- *	is being dropped after a failure and notes that
-
-
-
-Something like this maybe (not compiled):
-
-	/* skb is passed to upper layer - don't free it */
-	skb = NULL;
-drop:
-	if (unlikely(skb))
-		dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
-	kfree_skb(skb);
-	skb = NULL;
-drop_nocount:
-	if (likely(peer))
-		ovpn_peer_put(peer);
-	if (likely(ks))
-		ovpn_crypto_key_slot_put(ks);
-	consume_skb(skb);
+Cheers
+Suzuki
 
 
+> +	if (READ_ONCE(handle->event)) {
+> +		if (!size)
+> +			return;
+> +
+> +		perf_aux_output_end(handle, size);
+> +		perf_aux_output_begin(handle, event);
+> +	} else {
+> +		WARN_ON_ONCE(size);
+> +	}
+>   }
+>   
+>   static void etm_event_stop(struct perf_event *event, int mode)
+> @@ -595,7 +634,7 @@ static void etm_event_stop(struct perf_event *event, int mode)
+>   	struct coresight_path *path;
+>   
+>   	if (mode & PERF_EF_PAUSE)
+> -		return etm_event_pause(csdev, ctxt);
+> +		return etm_event_pause(event, csdev, ctxt);
+>   
+>   	/*
+>   	 * If we still have access to the event_data via handle,
 
--- 
-Sabrina
 
