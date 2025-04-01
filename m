@@ -1,220 +1,202 @@
-Return-Path: <linux-kernel+bounces-583407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A89BA77A71
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB899A77A7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95B68168399
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A73A7D6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82FA202F60;
-	Tue,  1 Apr 2025 12:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7384202965;
+	Tue,  1 Apr 2025 12:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/m2p2JW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RsSWmaqI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089111F91CD;
-	Tue,  1 Apr 2025 12:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8472542A94
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743509648; cv=none; b=odbC3U4GVkP1U3P+PwuGJoFnh6kSqWBDMv9OZ8yIlmJtBoMQmZZGqxWrfF54aoDQyIQn/R/QLzdZIMPi5KRGHVBkEihp+kBhmZ86N+2z20seRfMI9oqVqiXuyV+cb5hIJjp9WDvVgbK7VTLZ2v1p1xiCur66FX6gpH5WahUFAB0=
+	t=1743509796; cv=none; b=ai4BPI8RMeXWRUB3m5YWWdyKUZhrAhNe9LAbdyyc6iU+0sSwcrV3JPVmWREVXhXIfIBi/iT82GF1dkMOt+8GoYz8TsCfCFaVcCpIHHxOPo4xCVFMdHC0mXdK3KL6lTfJvNYFBK5ATWuPGafqQ32FFwqfNhQKM3v73+qp5v4LOrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743509648; c=relaxed/simple;
-	bh=cW+SgWG4t5icqmSDD5B28BvPyfh8yfBleexRLseF73k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z7IduuxXE6+B03ZWxDxhXZtOyxF3EIh21tfOgn8mOSIk85iQCpleZZI+Ut1KJV68ChvdRIbf3Th+PBJCuY9oGRsfj0cTp/PeqcpmTvAwZMHm1XVXihkFeXQXgDhZvORfffnRwn/2KRsB5Mtvfk69uqXh1+BrOumBBZal1qg+LsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/m2p2JW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C69DC4CEED;
-	Tue,  1 Apr 2025 12:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743509646;
-	bh=cW+SgWG4t5icqmSDD5B28BvPyfh8yfBleexRLseF73k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m/m2p2JWYS9MkVHRFy5prVSfpIMH5SY3jiiWZrPRgGhfd0KNH/PA1tOg7S+KrJxkk
-	 JSX0cD90OB4srHDpp2NCGpyjzGIwACeD0oMeDEI8FNeU3Te/nSYZJ7IQ8PWzdUMktP
-	 CDXdXN96p45hx7W98t9osxv7ohk1bS66TN+4GeSI2mFN8/2rYf0/Ma6kRPhVynCyUW
-	 70E0A1eIbNihkaJVcogpm4i7xO3+1O18jP3ZXUGFwY/oCWWK2b3Xjxd35+2ElDER5Q
-	 hbUeOONMmPAY/FcwTQ0BwB/gJZhc+EhEcCLduC0klRJrH0mL52uS+E/hvi0irNyREs
-	 YZcmhVD7KYUvA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2c818343646so3537995fac.3;
-        Tue, 01 Apr 2025 05:14:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMrZQzrAu7UkbdnV/sC/nmXueENngvryKfXSR8c7+lxXDHT3/NNRI306Q0JNOctq+FympXMSN+I4U=@vger.kernel.org, AJvYcCWFhajWfdqvZaYPT/zH0Vj5js9X4Gqa3IKNn6/w1fTswFzj2pOvnSLz3y5vXLCJkglVOlxLJTJ5yAfn@vger.kernel.org, AJvYcCXI9bZWAUzTvzL4n7lb4DLNJNkiNwFK/d3j1sy3icOgrgAySbVKKbZJouOVn+rBnfGRttABtWWjQLF+zjJB@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhi0w1DlNHixMHdFhSJxS3ibbmRy8phzYa/n0PS+XwaunhDKAn
-	1DNa2yJFo6P/dnsAxSytlBRcrjQlEqvvIFjok9RRooez/jvxpMNmigIwnjQiLXyG2DZz3lY3gHi
-	krl3gTgaVXEMh12dBaLf00FNzqnE=
-X-Google-Smtp-Source: AGHT+IGOlogupRrW1ILu3k/BWzEUrlfnOQdl3bgoOraLGfT5cXQwFCdTo4dpWOe+YYaMJLSMdHaLzj7VnVnNwllSJKU=
-X-Received: by 2002:a05:6870:330a:b0:29e:69a9:8311 with SMTP id
- 586e51a60fabf-2cbcf7e09acmr7956746fac.36.1743509645617; Tue, 01 Apr 2025
- 05:14:05 -0700 (PDT)
+	s=arc-20240116; t=1743509796; c=relaxed/simple;
+	bh=N35vb5cdNr3EyVaPJIc3XYLhIENIrpdB/OABpH2s+28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XI4lOvRcxpvt/XUZciXT2RJ36844TNwDeGLKUXce7RkiIgvvcbpqV48iqLkq60328+DEEZD14MNLkx1yDQQ/gzTZptQ+xcJResI8fyyPb0VVipWG2SZWpiN1xofKsBzCYFCcTxeohLnfaRbro1Rx8WKBskD8Hd6OMdItEXb0Uw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RsSWmaqI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743509793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yqpsL6oK/qQwqmu8rOHD+0YUpbKB9lezEyKO6Au+xus=;
+	b=RsSWmaqIf+wSG9XHw/R+8rIoZCRy67WmFzDS3lBTC3ii35BkvPPoahc9b3nv6IOiZM1Kzb
+	NGe4D8HhGesbpp8wU2OvOpVQDqmHA3EetLt7rwrbKcsVubP1s1h/EvMLBU+R7qPUj91H6B
+	BnRAYS6nRxR8fN4yr33Qz+EUQfV6k/g=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-484-mWh5sp33OFuT6qyLNqdnog-1; Tue,
+ 01 Apr 2025 08:16:32 -0400
+X-MC-Unique: mWh5sp33OFuT6qyLNqdnog-1
+X-Mimecast-MFC-AGG-ID: mWh5sp33OFuT6qyLNqdnog_1743509791
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 73D3619560BD;
+	Tue,  1 Apr 2025 12:16:30 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.6])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A6EB180A803;
+	Tue,  1 Apr 2025 12:16:25 +0000 (UTC)
+Date: Tue, 1 Apr 2025 20:16:19 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Nilay Shroff <nilay@linux.ibm.com>
+Cc: syzbot <syzbot+4c7e0f9b94ad65811efb@syzkaller.appspotmail.com>,
+	axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in elv_iosched_store
+Message-ID: <Z-vZE2pyrg4_I2SV@fedora>
+References: <67e6b425.050a0220.2f068f.007b.GAE@google.com>
+ <Z-dUCLvf06SfTOHy@fedora>
+ <462d4e8a-dd95-48fe-b9fe-a558057f9595@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250328143040.9348-1-ggherdovich@suse.cz> <20250328143040.9348-2-ggherdovich@suse.cz>
- <SJ0PR11MB66228319834B1C7B48FCE52EF5AD2@SJ0PR11MB6622.namprd11.prod.outlook.com>
- <CAJZ5v0gC3DzanSdPqQiJ4JQppgNeRA7Z9Cge7NxmTO_shoUyOA@mail.gmail.com> <7a14ea42462a346958954f328933f583dcf9cb52.camel@intel.com>
-In-Reply-To: <7a14ea42462a346958954f328933f583dcf9cb52.camel@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 1 Apr 2025 14:13:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0juH2kYx-fyyfoFLBTjg30y59Dwj1wBYXxuHvU2c7X31w@mail.gmail.com>
-X-Gm-Features: AQ5f1JqInvfmF-dEU2O33yfuIWE_7Znqodgm49GlPYWEkfdKphYD_-K3cc_SD6g
-Message-ID: <CAJZ5v0juH2kYx-fyyfoFLBTjg30y59Dwj1wBYXxuHvU2c7X31w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ACPI: processor: idle: Remove obsolete comment
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>, "ggherdovich@suse.cz" <ggherdovich@suse.cz>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <462d4e8a-dd95-48fe-b9fe-a558057f9595@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Apr 1, 2025 at 2:25=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wro=
-te:
->
-> On Mon, 2025-03-31 at 14:07 +0200, Rafael J. Wysocki wrote:
-> > On Mon, Mar 31, 2025 at 9:38=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com=
-> wrote:
-> > >
-> > > > -----Original Message-----
-> > > > From: Giovanni Gherdovich <ggherdovich@suse.cz>
-> > > > Sent: Friday, March 28, 2025 10:31 PM
-> > > > To: Rafael J . Wysocki <rafael@kernel.org>; Zhang, Rui
-> > > > <rui.zhang@intel.com>
-> > > > Cc: Len Brown <lenb@kernel.org>; Giovanni Gherdovich
-> > > > <ggherdovich@suse.cz>; linux-acpi@vger.kernel.org; linux-
-> > > > kernel@vger.kernel.org; linux-pm@vger.kernel.org
-> > > > Subject: [PATCH 2/2] ACPI: processor: idle: Remove obsolete comment
-> > > > Importance: High
-> > > >
-> > > > Since commit 496121c02127e9c460b436244c38260b044cc45a ("ACPI:
-> > > > processor:
-> > > > idle: Allow probing on platforms with one ACPI C-state"), the
-> > > > comment
-> > > > doesn't reflect the code anymore; remove it.
-> > > >
-> > > > Signed-off-by: Giovanni Gherdovich <ggherdovich@suse.cz>
-> > > > ---
-> > > >  drivers/acpi/processor_idle.c | 4 ----
-> > > >  1 file changed, 4 deletions(-)
-> > > >
-> > > > diff --git a/drivers/acpi/processor_idle.c
-> > > > b/drivers/acpi/processor_idle.c
-> > > > index b181f7fc2090..2a076c7a825a 100644
-> > > > --- a/drivers/acpi/processor_idle.c
-> > > > +++ b/drivers/acpi/processor_idle.c
-> > > > @@ -482,10 +482,6 @@ static int
-> > > > acpi_processor_get_cstate_info(struct
-> > > > acpi_processor *pr)
-> > > >
-> > > >       pr->power.count =3D acpi_processor_power_verify(pr);
-> > > >
-> > > > -     /*
-> > > > -      * if one state of type C2 or C3 is available, mark this
-> > > > -      * CPU as being "idle manageable"
-> > > > -      */
-> > > >       for (i =3D 1; i < ACPI_PROCESSOR_MAX_POWER; i++) {
-> > > >               if (pr->power.states[i].valid) {
-> > > >                       pr->power.count =3D i;
-> > > > --
-> > > > 2.43.0
-> > >
-> > > I think we can clean up a bit more. How about the patch below?
-> > >
-> > > From 115d3a07febff32eed49f9343ef111e7e1452f9d Mon Sep 17 00:00:00
-> > > 2001
-> > > From: "Zhang, Rui" <rui.zhang@intel.com>
-> > > Date: Mon, 31 Mar 2025 07:29:57 +0000
-> > > Subject: [PATCH] ACPI: processor: idle: Simplify
-> > >  acpi_processor_get_cstate_info() logic
-> > >
-> > > Since commit 496121c02127 ("ACPI: processor: idle: Allow probing on
-> > > platforms with one ACPI C-state"), acpi_idle driver can be probed
-> > > with
-> > > C1 only.
-> > >
-> > > Optimize the logic for setting pr->power.count and pr->flags.power by
-> > > 1. unconditionally set pr->flags.power leveraging the fact that C1 is
-> > >    always valid after acpi_processor_get_power_info_default().
-> > > 2. update acpi_processor_power_verify() to return the highest valid
-> > >    C-state directly.
-> > >
-> > > No functional change intended.
-> > >
-> > > Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> > > ---
-> > >  drivers/acpi/processor_idle.c | 15 ++-------------
-> > >  1 file changed, 2 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/acpi/processor_idle.c
-> > > b/drivers/acpi/processor_idle.c
-> > > index 698897b29de2..7ce8c3802937 100644
-> > > --- a/drivers/acpi/processor_idle.c
-> > > +++ b/drivers/acpi/processor_idle.c
-> > > @@ -442,7 +442,7 @@ static int acpi_processor_power_verify(struct
-> > > acpi_processor *pr)
-> > >
-> > >                 lapic_timer_check_state(i, pr, cx);
-> > >                 tsc_check_state(cx->type);
-> > > -               working++;
-> > > +               working =3D i;
-> >
-> > What if some states are skipped because they are invalid?  'working'
-> > can be less than 'i' then AFAICS.
->
-> yes, but please refer to my comments here and below,
->
-> 1. 'working' is used as return value only in acpi_processor_power_verify(=
-).
->
-> >
-> > >         }
-> > >
-> > >         if (buggy_latency) {
-> > > @@ -457,7 +457,6 @@ static int acpi_processor_power_verify(struct
-> > > acpi_processor *pr)
-> > >
-> > >  static int acpi_processor_get_cstate_info(struct acpi_processor *pr)
-> > >  {
-> > > -       unsigned int i;
-> > >         int result;
-> > >
-> > >
-> > > @@ -477,17 +476,7 @@ static int acpi_processor_get_cstate_info(struct
-> > > acpi_processor *pr)
-> > >         acpi_processor_get_power_info_default(pr);
-> > >
-> > >         pr->power.count =3D acpi_processor_power_verify(pr);
->
-> 2. acpi_processor_get_cstate_info(), which is the only caller of
-> acpi_processor_power_verify(), use this return value to set
-> pr->power.count.
+On Tue, Apr 01, 2025 at 05:23:56PM +0530, Nilay Shroff wrote:
+> 
+> 
+> On 3/29/25 7:29 AM, Ming Lei wrote:
+> > On Fri, Mar 28, 2025 at 07:37:25AM -0700, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following issue on:
+> >>
+> >> HEAD commit:    1a9239bb4253 Merge tag 'net-next-6.15' of git://git.kernel..
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1384b43f980000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=c7163a109ac459a8
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=4c7e0f9b94ad65811efb
+> >> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178cfa4c580000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a8ca4c580000
+> >>
+> >> Downloadable assets:
+> >> disk image: https://storage.googleapis.com/syzbot-assets/fc7dc9f0d9a7/disk-1a9239bb.raw.xz
+> >> vmlinux: https://storage.googleapis.com/syzbot-assets/f555a3ae03d3/vmlinux-1a9239bb.xz
+> >> kernel image: https://storage.googleapis.com/syzbot-assets/55f6ea74eaf2/bzImage-1a9239bb.xz
+> >>
+> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> Reported-by: syzbot+4c7e0f9b94ad65811efb@syzkaller.appspotmail.com
+> >>
+> > 
+> > ...
+> > 
+> >>
+> >> If you want syzbot to run the reproducer, reply with:
+> >> #syz test: git://repo/address.git branch-or-commit-hash
+> >> If you attach or paste a git patch, syzbot will apply it before testing.
+> > 
+> > 
+> > diff --git a/block/blk-mq.c b/block/blk-mq.c
+> > index ae8494d88897..d7a103dc258b 100644
+> > --- a/block/blk-mq.c
+> > +++ b/block/blk-mq.c
+> > @@ -4465,14 +4465,12 @@ static struct blk_mq_hw_ctx *blk_mq_alloc_and_init_hctx(
+> >  	return NULL;
+> >  }
+> >  
+> > -static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+> > -						struct request_queue *q)
+> > +static void __blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+> > +				     struct request_queue *q)
+> >  {
+> >  	struct blk_mq_hw_ctx *hctx;
+> >  	unsigned long i, j;
+> >  
+> > -	/* protect against switching io scheduler  */
+> > -	mutex_lock(&q->elevator_lock);
+> >  	for (i = 0; i < set->nr_hw_queues; i++) {
+> >  		int old_node;
+> >  		int node = blk_mq_get_hctx_node(set, i);
+> > @@ -4505,7 +4503,19 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+> >  
+> >  	xa_for_each_start(&q->hctx_table, j, hctx, j)
+> >  		blk_mq_exit_hctx(q, set, hctx, j);
+> > -	mutex_unlock(&q->elevator_lock);
+> > +}
+> > +
+> > +static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
+> > +				   struct request_queue *q, bool lock)
+> > +{
+> > +	if (lock) {
+> > +		/* protect against switching io scheduler  */
+> > +		mutex_lock(&q->elevator_lock);
+> > +		__blk_mq_realloc_hw_ctxs(set, q);
+> > +		mutex_unlock(&q->elevator_lock);
+> > +	} else {
+> > +		__blk_mq_realloc_hw_ctxs(set, q);
+> > +	}
+> >  
+> >  	/* unregister cpuhp callbacks for exited hctxs */
+> >  	blk_mq_remove_hw_queues_cpuhp(q);
+> > @@ -4537,7 +4547,7 @@ int blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+> >  
+> >  	xa_init(&q->hctx_table);
+> >  
+> > -	blk_mq_realloc_hw_ctxs(set, q);
+> > +	blk_mq_realloc_hw_ctxs(set, q, false);
+> >  	if (!q->nr_hw_queues)
+> >  		goto err_hctxs;
+> >  
+> > @@ -5033,7 +5043,7 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
+> >  fallback:
+> >  	blk_mq_update_queue_map(set);
+> >  	list_for_each_entry(q, &set->tag_list, tag_set_list) {
+> > -		blk_mq_realloc_hw_ctxs(set, q);
+> > +		blk_mq_realloc_hw_ctxs(set, q, true);
+> >  
+> >  		if (q->nr_hw_queues != set->nr_hw_queues) {
+> >  			int i = prev_nr_hw_queues;
+> > 
+> 
+> This patch looks good to me, however after we fix this one, I found another splat. 
+> I see that these new splats are side effect of commit ffa1e7ada456 ("block: Make 
+> request_queue lockdep splats show up earlier").
+> 
+> IMO in the block layer code (unless it's in an IO submission path or a path where we 
+> have already frozen queue) we may still want to allow memory allocation with GFP_KERNEL. 
+> So in that sense, for example, we may acquire ->elevator_lock followed by fs_reclaim. 
 
-So far so good.
+If any memory GFP_KERNEL allocation grabs ->elevator_lock, it is one real
+deadlock risk.
 
-> > > -
-> > > -       /*
-> > > -        * if one state of type C2 or C3 is available, mark this
-> > > -        * CPU as being "idle manageable"
-> > > -        */
-> > > -       for (i =3D 1; i < ACPI_PROCESSOR_MAX_POWER; i++) {
-> > > -               if (pr->power.states[i].valid) {
-> > > -                       pr->power.count =3D i;
->
-> 3. use a loop to override pr->power.count with the index of the highest
-> valid state
+> Or in another words, shouldn't it be legitimate to acquire blk layer specific lock and 
+> then allocate memory using GFP_KERNEL assuming we haven't freezed queue or we're not in 
+> IO submission path. But this commit ffa1e7ada456 ("block: Make request_queue lockdep
+> splats show up earlier") now showing up some false-positive splat as well, please see
+> below:
 
-I see.
+It depends if we may run GFP_KERNEL allocation with ->elevator_lock.
 
-> So I'm proposing to return the index of the highest valid state directly
-> in acpi_processor_power_verify() and then we don't need this loop any
-> more.
+I feel ->elevator_lock is still used too many...
 
-OK, so I'd prefer to first rename power.count to power.max_index
-(which it really is) and then make the changes you have proposed.
+
+thanks,
+Ming
+
 
