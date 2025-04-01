@@ -1,95 +1,45 @@
-Return-Path: <linux-kernel+bounces-583196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604DEA777CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E450A777D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EFE188483D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFEF716ACE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632521EE7BE;
-	Tue,  1 Apr 2025 09:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LuUoUuPw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sjIv6WoF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LuUoUuPw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sjIv6WoF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1FB1EFFB9;
+	Tue,  1 Apr 2025 09:33:45 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4178F2AEFE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552911624D5;
+	Tue,  1 Apr 2025 09:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743500013; cv=none; b=DzQAoUsH8k2hj1Xk4CTAVGUi6S7auwscmUE7QVwstd4A+KGYRXE4pvRmifVLafwfheH3y/5INx9v5kkAAMimP2Jet1ZBdzZh7JOAhZoF6zym+f8MRYbpjJY/qHZeQdgD3+pTX9o07kqsKWa0EiHonJrLbWlX0OwNhnKhwpoN9uY=
+	t=1743500025; cv=none; b=gaZv8hwk7SeS9v66Bm5EDJ8w/44wd2hmvbXUXyyC5xtG6BRp6fe0CElqav2FQIKmvyjUNGAgpMdjiVGHb7lpqa4AYqZhq7FCnVygP0YLin+VjqxiwaAGMojKhVUY7nIwe5Bn3HhvNbGon2S2RzCnB/WneuQvUw69s8ivCtHWuI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743500013; c=relaxed/simple;
-	bh=p4F5CsaPDW6m75LgqmAHzVHZQ2h+hAv2sU8hNBF6Yok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uggf0cB42cyEh4XDR/DFUsDmI2ymd45euXQGSfShDe7ZHeKLzxCXyPaWYGfhkLH7x3iUj0Zdtp7h5bv4B0KuEKI030DiSJYU7YobEa73dJ4ApWOeUrDKF4YYJBDSVLUh3oZRuK5evSGQNccWhqPN01DgJnXFcQGS1ja0wI/tf5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LuUoUuPw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sjIv6WoF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LuUoUuPw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sjIv6WoF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4985D1F38D;
-	Tue,  1 Apr 2025 09:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743500010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4+SH6eeBTQzZ1CPgNpdP327MoBfPOV6H/Xkzknm4Hao=;
-	b=LuUoUuPwPyYrwVPb168YD3sfPm3Q/bKFRvlv6/j1qIBCUgdnX8F6T0F1v+0KtzncCyQDh1
-	3W5zx2+e7bVOzSiu7E7STLXiH6hSo+KQ9ldaq7UTSOJKg2QYbA5dUZov/oZaGpfVz8+dDu
-	yczg7w0vdE1Rj/9i/oPL20QE2Oxvhoo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743500010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4+SH6eeBTQzZ1CPgNpdP327MoBfPOV6H/Xkzknm4Hao=;
-	b=sjIv6WoFSDKivm28GP9RtZ2tKLgJI+IDTADUdWRo4yHYTOtiDTGcgtQiFruaUFgg5Nr9qP
-	u/BxC7b+EeTMv9Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=LuUoUuPw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=sjIv6WoF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743500010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4+SH6eeBTQzZ1CPgNpdP327MoBfPOV6H/Xkzknm4Hao=;
-	b=LuUoUuPwPyYrwVPb168YD3sfPm3Q/bKFRvlv6/j1qIBCUgdnX8F6T0F1v+0KtzncCyQDh1
-	3W5zx2+e7bVOzSiu7E7STLXiH6hSo+KQ9ldaq7UTSOJKg2QYbA5dUZov/oZaGpfVz8+dDu
-	yczg7w0vdE1Rj/9i/oPL20QE2Oxvhoo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743500010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4+SH6eeBTQzZ1CPgNpdP327MoBfPOV6H/Xkzknm4Hao=;
-	b=sjIv6WoFSDKivm28GP9RtZ2tKLgJI+IDTADUdWRo4yHYTOtiDTGcgtQiFruaUFgg5Nr9qP
-	u/BxC7b+EeTMv9Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F04B138A5;
-	Tue,  1 Apr 2025 09:33:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gDnUCuqy62eGAgAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 01 Apr 2025 09:33:30 +0000
-Message-ID: <a301c37c-fcc1-4c1f-9317-eb70cae59cdc@suse.de>
-Date: Tue, 1 Apr 2025 11:33:29 +0200
+	s=arc-20240116; t=1743500025; c=relaxed/simple;
+	bh=jPe2NtHiYqWwzbQU/mfy1WhcfYq0+olPLKklzEkcNjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u9en4OHSseFTyR13sBQmRKPKJvzCdRDmpxVDWIkdjUrEjIhv6RDRjzNzveNOC/kvoxqReM+jq7eWJy4efUBdkC7ozc4C7S6g/QW9J6Z7qpq5A4sxWxiB/L9PAHd1I/hfIend2QXUqvOp1uGx4tlfSnv4GoJr/6L0aZ70wuiQ/pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZRjTw1vpgz1d0sR;
+	Tue,  1 Apr 2025 17:33:08 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 93C9F140203;
+	Tue,  1 Apr 2025 17:33:38 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 1 Apr 2025 17:33:37 +0800
+Message-ID: <ffc84696-f9c6-4869-9f1e-7faf45d99060@huawei.com>
+Date: Tue, 1 Apr 2025 17:33:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,74 +47,196 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] nvmet: add command quiesce time
-To: Daniel Wagner <wagi@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
- John Meneghini <jmeneghi@redhat.com>, randyj@purestorage.com,
- Mohamed Khalfella <mkhalfella@purestorage.com>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250324-tp4129-v1-0-95a747b4c33b@kernel.org>
- <20250324-tp4129-v1-1-95a747b4c33b@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250324-tp4129-v1-1-95a747b4c33b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net] xsk: correct tx_ring_empty_descs count statistics
+To: Magnus Karlsson <magnus.karlsson@gmail.com>
+CC: Stanislav Fomichev <stfomichev@gmail.com>, <bjorn@kernel.org>,
+	<magnus.karlsson@intel.com>, <maciej.fijalkowski@intel.com>,
+	<jonathan.lemon@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>, <ast@kernel.org>,
+	<daniel@iogearbox.net>, <hawk@kernel.org>, <john.fastabend@gmail.com>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250329061548.1357925-1-wangliang74@huawei.com>
+ <Z-qzLyGKskaqgFh5@mini-arch> <Z-sRF0G43HpGiGwH@mini-arch>
+ <0d1b689c-c0ef-460a-9969-ff5aebbb8fac@huawei.com>
+ <CAJ8uoz1JxhXFkzW8n_Dud8SR-4zE7gim5vS_UZHELiA7d0k+wQ@mail.gmail.com>
+ <ed10eea2-0bf2-4747-b519-f9b9089e434e@huawei.com>
+ <CAJ8uoz2QXNN4so-EgR8sU8A86E_AeYx1w_b+BSVeCgzr1kaR+g@mail.gmail.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <CAJ8uoz2QXNN4so-EgR8sU8A86E_AeYx1w_b+BSVeCgzr1kaR+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4985D1F38D
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-On 3/24/25 13:07, Daniel Wagner wrote:
-> TP4129 introduces Command Quiesce Time (CQT) for coordinating the
-> shutdown sequence when for example KATO expires.
-> 
-> Add support to nvmet but only report CQT is available but the controller
-> doesn't need any additional time when shutting down. In this case the
-> spec says nvmet should report a value of 1.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/target/admin-cmd.c | 6 ++++++
->   drivers/nvme/target/nvmet.h     | 1 +
->   include/linux/nvme.h            | 4 +++-
->   3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Cheers,
+在 2025/4/1 16:12, Magnus Karlsson 写道:
+> On Tue, 1 Apr 2025 at 09:44, Wang Liang <wangliang74@huawei.com> wrote:
+>>
+>> 在 2025/4/1 14:57, Magnus Karlsson 写道:
+>>> On Tue, 1 Apr 2025 at 04:36, Wang Liang <wangliang74@huawei.com> wrote:
+>>>> 在 2025/4/1 6:03, Stanislav Fomichev 写道:
+>>>>> On 03/31, Stanislav Fomichev wrote:
+>>>>>> On 03/29, Wang Liang wrote:
+>>>>>>> The tx_ring_empty_descs count may be incorrect, when set the XDP_TX_RING
+>>>>>>> option but do not reserve tx ring. Because xsk_poll() try to wakeup the
+>>>>>>> driver by calling xsk_generic_xmit() for non-zero-copy mode. So the
+>>>>>>> tx_ring_empty_descs count increases once the xsk_poll()is called:
+>>>>>>>
+>>>>>>>      xsk_poll
+>>>>>>>        xsk_generic_xmit
+>>>>>>>          __xsk_generic_xmit
+>>>>>>>            xskq_cons_peek_desc
+>>>>>>>              xskq_cons_read_desc
+>>>>>>>                q->queue_empty_descs++;
+>>> Sorry, but I do not understand how to reproduce this error. So you
+>>> first issue a setsockopt with the XDP_TX_RING option and then you do
+>>> not "reserve tx ring". What does that last "not reserve tx ring" mean?
+>>> No mmap() of that ring, or something else? I guess you have bound the
+>>> socket with a bind()? Some pseudo code on how to reproduce this would
+>>> be helpful. Just want to understand so I can help. Thank you.
+>> Sorry, the last email is garbled, and send again.
+>>
+>> Ok. Some pseudo code like below:
+>>
+>>       fd = socket(AF_XDP, SOCK_RAW, 0);
+>>       setsockopt(fd, SOL_XDP, XDP_UMEM_REG, &mr, sizeof(mr));
+>>
+>>       setsockopt(fd, SOL_XDP, XDP_UMEM_FILL_RING, &fill_size,
+>> sizeof(fill_size));
+>>       setsockopt(fd, SOL_XDP, XDP_UMEM_COMPLETION_RING, &comp_size,
+>> sizeof(comp_size));
+>>       mmap(NULL, off.fr.desc + fill_size * sizeof(__u64), ...,
+>> XDP_UMEM_PGOFF_FILL_RING);
+>>       mmap(NULL, off.cr.desc + comp_size * sizeof(__u64), ...,
+>> XDP_UMEM_PGOFF_COMPLETION_RING);
+>>
+>>       setsockopt(fd, SOL_XDP, XDP_RX_RING, &rx_size, sizeof(rx_size));
+>>       setsockopt(fd, SOL_XDP, XDP_TX_RING, &tx_size, sizeof(tx_size));
+>>       mmap(NULL, off.rx.desc + rx_size * sizeof(struct xdp_desc), ...,
+>> XDP_PGOFF_RX_RING);
+>>       mmap(NULL, off.tx.desc + tx_size * sizeof(struct xdp_desc), ...,
+>> XDP_PGOFF_TX_RING);
+>>
+>>       bind(fd, (struct sockaddr *)&sxdp, sizeof(sxdp));
+>>       bpf_map_update_elem(xsk_map_fd, &queue_id, &fd, 0);
+>>
+>>       while(!global_exit) {
+>>           poll(fds, 1, -1);
+>>           handle_receive_packets(...);
+>>       }
+>>
+>> The xsk is created success, and xs->tx is initialized.
+>>
+>> The "not reserve tx ring" means user app do not update tx ring producer.
+>> Like:
+>>
+>>       xsk_ring_prod__reserve(tx, 1, &tx_idx);
+>>       xsk_ring_prod__tx_desc(tx, tx_idx)->addr = frame;
+>>       xsk_ring_prod__tx_desc(tx, tx_idx)->len = pkg_length;
+>>       xsk_ring_prod__submit(tx, 1);
+>>
+>> These functions (xsk_ring_prod__reserve, etc.) is provided by libxdp.
+>>
+>> The tx->producer is not updated, so the xs->tx->cached_cons and
+>> xs->tx->cached_prod are always zero.
+>>
+>> When receive packets and user app call poll(), xsk_generic_xmit() will be
+>> triggered by xsk_poll(), leading to this issue.
+> Thanks, that really helped. The problem here is that the kernel cannot
+> guess your intent. Since you created a socket with both Rx and Tx, it
+> thinks you will use it for both, so it should increase
+> queue_empty_descs in this case as you did not provide any Tx descs.
+> Your proposed patch will break this. Consider this Tx case with the
+> exact same init code as you have above but with this send loop:
+>
+> while(!global_exit) {
+>         maybe_send_packets(...);
+>         poll(fds, 1, -1);
+> }
+>
+> With your patch, the queue_empty_descs will never be increased in the
+> case when I do not submit any Tx descs, even though we would like it
+> to be so.
+>
+> So in my mind, you have a couple of options:
+>
+> * Create two sockets, one rx only and one tx only and use the
+> SHARED_UMEM mode to bind them to the same netdev and queue id. In your
+> loop above, you would use the Rx socket. This might have the drawback
+> that you need to call poll() twice if you are both sending and
+> receiving in the same loop. But the stats will be the way you want
+> them to be.
+>
+> * Introduce a new variable in user space that you increase every time
+> you do poll() in your loop above. When displaying the statistics, just
+> deduct this variable from the queue_empty_descs that the kernel
+> reports using the XDP_STATISTICS getsockopt().
+>
+> Hope this helps.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+
+Thank you for the advices.
+
+ From user view, queue_empty_descs increases when the app only receive 
+packets and call poll(), it is some confusing.
+
+In your Tx case, if user app use sendto() to send packets, the 
+queue_empty_descs will increase. This is reasonably.
+
+In linux manual, poll() waits for some event on a file descriptor. But 
+in af_xdp, poll() has a side effect of send msg.
+
+Previous commit 77cd0d7b3f25 ("xsk: add support for need_wakeup flag in 
+AF_XDP rings") add need_wakeup flag. It mainly work in rx process. When 
+the application and driver run on the same core, if the fill ring is 
+empty, the driver can set the need_wakeup flag and return, so the 
+application could be scheduled to produce entries of the fill ring.
+
+The commit df551058f7a3 ("xsk: Fix crash in poll when device does not 
+support ndo_xsk_wakeup") add sendmsg function in xsk_poll(), considering 
+some devices donot define ndo_xsk_wakeup.
+
+At present the value of need_wakeup & XDP_WAKEUP_TX is always true, 
+except the mlx5 driver. If the mlx5 driver queued some packets for tx, 
+it may clear XDP_WAKEUP_TX by xsk_clear_tx_need_wakeup(). So when user 
+app use sendto() to send packets, __xsk_sendmsg() will return without 
+calling xsk_generic_xmit().
+
+So I have a bold suggestion, how about removing xsk_generic_xmit() in 
+xsk_poll()?
+
+>>>>>>> To avoid this count error, add check for tx descs before send msg in poll.
+>>>>>>>
+>>>>>>> Fixes: df551058f7a3 ("xsk: Fix crash in poll when device does not support ndo_xsk_wakeup")
+>>>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>>>>> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+>>>>> Hmm, wait, I stumbled upon xskq_has_descs again and it looks only at
+>>>>> cached prod/cons. How is it supposed to work when the actual tx
+>>>>> descriptor is posted? Is there anything besides xskq_cons_peek_desc from
+>>>>> __xsk_generic_xmit that refreshes cached_prod?
+>>>> Yes, you are right!
+>>>>
+>>>> How about using xskq_cons_nb_entries() to check free descriptors?
+>>>>
+>>>> Like this:
+>>>>
+>>>>
+>>>> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+>>>> index e5d104ce7b82..babb7928d335 100644
+>>>> --- a/net/xdp/xsk.c
+>>>> +++ b/net/xdp/xsk.c
+>>>> @@ -993,7 +993,7 @@ static __poll_t xsk_poll(struct file *file, struct
+>>>> socket *sock,
+>>>>            if (pool->cached_need_wakeup) {
+>>>>                    if (xs->zc)
+>>>>                            xsk_wakeup(xs, pool->cached_need_wakeup);
+>>>> -               else if (xs->tx)
+>>>> +               else if (xs->tx && xskq_cons_nb_entries(xs->tx, 1))
+>>>>                            /* Poll needs to drive Tx also in copy mode */
+>>>>                            xsk_generic_xmit(sk);
+>>>>            }
+>>>>
+>>>>
 
