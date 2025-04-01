@@ -1,1015 +1,304 @@
-Return-Path: <linux-kernel+bounces-584016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BA9A78245
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F6FA78212
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F87A188DC78
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0E81891E95
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D843922A4EE;
-	Tue,  1 Apr 2025 18:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5B420F081;
+	Tue,  1 Apr 2025 18:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t4cMhVuQ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="b5tn3YV/";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wvMKc1yV"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EDC22A1C5
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743531977; cv=none; b=YciHXardhSVtllEVboknGw70AQcd6pnqeYQnJM9L5raCZdOQ3/IMJIc+omDl/2uDAp5L0Azwonw7Qb3bTM0+k/8o6RGQRrIHWeIE0odDih2jLlWihXrwUifwrE1Xx3ae6mwd+FMruhQyKsMkh86MX6Kiex59HAAI3ZAL7bjdb/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743531977; c=relaxed/simple;
-	bh=JH5IYw1XLUdsjJtnvPI0verzfyIExYV2qDPtVuYm074=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=siDG4wTQbkrWUwcH4G8WfmLK06MR/pHlXQkkyPFB0dKYhJLfntyqt3WI4TPGQm0Aw8B0AtEpkg6yCGpFOaH/H52Dc9aFWBeAapdQo1P1jNQrYsl/fPhXF2M1Ml9niSzVXU+AqHoJS2CRWmWCaJLhVZpafcafJxLLlys8w8P0ZfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t4cMhVuQ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff8340d547so10270796a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:26:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E911D86C6;
+	Tue,  1 Apr 2025 18:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743531868; cv=fail; b=W0KXpemIG9ANWPkQm1SsU7awNz37eAq4R05BlLzODFbh67fekjq45SVUmAttp5hueS14WTi5WXAYu78lXD9Grqi5LxkV5qXDafd3u6hcPDeEjd78MCs39Famx7BPuqIGfhkBGVYXNq4CeHAYfCV/jxAhNGoF+9XbDGHWLp+Ubkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743531868; c=relaxed/simple;
+	bh=Ix0+s6pXdtb65IDgF77db+mKNZdLCX+GzVBRz4j0rKw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Fba+p/gicXxwOTJNkadN5VPilK2jJ88j3KtuitOB/4vVFoh+fwXEhEsNEC76Alv/0p0DJi0OZap/z35FUsPznw85Z7XI3M1e++ub1tOKp6HcqRgVG9qi0rZRY3plaLxtTOvjUYFQiNTGS3gprX2H0OGqboKRfqqGJ0B6ag27r54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=b5tn3YV/; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wvMKc1yV; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 531IJvbN030487;
+	Tue, 1 Apr 2025 18:24:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=1c1IpZL7O6627OTfRSrv9gcmy/TQfD4zCkla8/HWTCs=; b=
+	b5tn3YV/a80FoIILgKYrvcleeZSMPHrBfMDyLWsC7VS0LRz7nyH4mE/5nMaZSGbW
+	LETiKdBvVdHaclrrJqAJ/yGmNJqa7tz/XjqTPCd3IMZAIYZqFzSAu4wt4v3rgCi1
+	j+CPoeyuHP28QW14NTDY85AYJDdu1B6cGpc/VDNtEh+caz212p7X5swNvCvsahej
+	CHHFXO0Loi2T1QGHTL/UWeuThLq9b/KfFwUKCeiFyWUrSSuvJtZfHGFSMQhk4Y/V
+	q3lmAsod1cVRFi03rGybZy932omlzEBKQrqi1r0mQNOze/ws+HFH1/+3lJ0Nzp4L
+	O4+SfPSQJyV4jPvQzztU0A==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45p7f0gu59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Apr 2025 18:24:08 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 531HcGFs032714;
+	Tue, 1 Apr 2025 18:24:07 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45p7a9svcf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Apr 2025 18:24:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oUcf7GBEN1D30F2mSK9Ajm6zb1vAzU2sszcPAgX01gxtfYUzn30vdUy9cZXNHtdiFhyFYaNHpdMGilqUlLfA8NLHv3PnlzmpesSb3FkIC16FzrYleu6OurZpwnRpVpPs1RqB4hlxPmAaVKg8YVUUquVF71XL0FbVkSh6BBDXmHRCPtxKTGtKBiT55Td3NQMER/TnR+qEwIzBF3SlUtfWYHGNFVmxOkyc3l/CH1lC6c0FGqTRDn9u36nMSE8xLHQCLhVFspzqOtKdKNsJPvFMLC6r9N/fX2sBmTrfs1mKrALdi49JMBx+p2+yWiZ7YjcTYxrRxEibrk2RSpIhn6Zk5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1c1IpZL7O6627OTfRSrv9gcmy/TQfD4zCkla8/HWTCs=;
+ b=XJ9ydRExu4kcv9g8/xCwYi/E+M7qZRlpU+32g/pbe3u7ZEbEros3cNp/Utcl9sAD4HcyaR9buYSVi6Qii1QqqARjSMmABEzrCaWNpSUhWgap3TikaMwy26G/Xw/HtVuOnJVCIf5aK1Zn6/F1U9aoxpg/i7wQQDgU8VApJQB/hwOQM8o+upwYc3GgLn5SAUpRVnMhEtf8Us5u8yr3rDCxdOQvx1jBvQmjEQlOns37HZE5zcVr9JujAumOYEUq1EcJHPneacqoMyguG3mdExPzrUhu4oE0dLyMmPSZE1rmeJEDejSatMeAHM5QZlA6wSD9H7llpTZ0jbCNFO4fPrEARw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743531974; x=1744136774; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xPhysvgPSu3+WhFKX3Vrd0yYhQilxaKDEP5OdoVpUVA=;
-        b=t4cMhVuQS0Wl4wlHAgsH+pRtzPNvuK6B9FZf7tveWJL8aVaJ9PWY/+I9TbYhGAOpLu
-         fRhdbBCyz6vCwNpjUeDUz29J22EbQlGGT4mcKNi3s6C+jcySM0saIx6TLWbfQZD3SSUL
-         TF0kAHH0xADPqp18IuP1gLuCU59CNhbjcPD0uNj5PbLACLfLDCmWEf1ubKZSu7RSUVsI
-         wFhINR4f10/RNwmGwTf64AmiT7CImRGSQKmJupLOSqn9KhwF2hRzk9dB0HNJn4khdBIl
-         hZz8j5Jeh7MejAzBh6sBrT5zUE6ies6W9Ti1tT3KOMjptDfysWNEZuyRkMZQSz1i+MoN
-         De/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743531974; x=1744136774;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPhysvgPSu3+WhFKX3Vrd0yYhQilxaKDEP5OdoVpUVA=;
-        b=E+0StBTwGPQ0KyRQ0xNQ/On13c77BwDqVlzJpgycGNY4wIDsZ+XZJ1FQ/zywJV3A0C
-         xW/Mdc+hixlN1ul507w/YLv4V5M4tzmwCSfwkkPRIzYrRWtLbaFZwIZ8hkEosjhFqp//
-         23gQ+4tBm+N/aOXVNvSDSCww3w/rbRkGMp5XbP8VGtR7zBaGwd/NDAZG68eGZ9yLacVx
-         NR2sM0Ix6hsXelrnm80bN11eSOiwWrdP75PxRrTnwZQMJzTX95oO06tLz/fSB0Y8WqET
-         9e807IY6uZHiIHNATaXjpUUQY2UqUorYt0LT2rvvm6mPy0pUrMS544CjBJjqFJt5a++3
-         ub8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjhlU/yI0GU7Cqu7/X2dnWJjKFK/bIpLJIMAA6KO9RUP+qDSJDa0iVLXgxJHwtrIynBZn0fXDGAzu/wR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUZdCbFhd9iX55pmFVn5XCVGvsw4wPXxJqWmTOpxZsdiE7AORj
-	51FSm4uG6p7HQRxNF5JgNjE2EJC3FV+UImG2L9tKlSzj4OyyJZulvKUMWOaoFkK6utjkKKOBp4c
-	rGQl1uQ==
-X-Google-Smtp-Source: AGHT+IGASQJESQh0P5WocUZzTVsuPYeMntTSxEaM9deIUgGCJYYaAmhumcox7D9ILdKo/OIFvvRilGZiYCz6
-X-Received: from pfkq16.prod.google.com ([2002:a05:6a00:850:b0:736:9d24:ae31])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:1509:b0:1ee:d06c:cddc
- with SMTP id adf61e73a8af0-2009f75c535mr27397490637.30.1743531973749; Tue, 01
- Apr 2025 11:26:13 -0700 (PDT)
-Date: Tue,  1 Apr 2025 11:23:46 -0700
-In-Reply-To: <20250401182347.3422199-1-irogers@google.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1c1IpZL7O6627OTfRSrv9gcmy/TQfD4zCkla8/HWTCs=;
+ b=wvMKc1yVJ2Fq1QF1xjxyLFkN5k9YvzA4MO0dHO5PbbUi6IS7fc05JVlUBf05E8RQoRBsvTNw7OZbX1Erf1jGeFTJFdbiqR84XLxXk9JQMPPss+ZOX7REx3XAqmqAeFyWRK9LljlE+r0durAFFY3dD2zi2JuGmiAlF67ZAg99dWY=
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com (2603:10b6:5:3a6::12)
+ by DM4PR10MB7389.namprd10.prod.outlook.com (2603:10b6:8:10f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.38; Tue, 1 Apr
+ 2025 18:24:04 +0000
+Received: from DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c]) by DS7PR10MB5328.namprd10.prod.outlook.com
+ ([fe80::ea13:c6c1:9956:b29c%6]) with mapi id 15.20.8583.038; Tue, 1 Apr 2025
+ 18:24:04 +0000
+Message-ID: <ca50f9b4-feb5-4365-927d-a2c931e268ed@oracle.com>
+Date: Tue, 1 Apr 2025 23:53:55 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re : [PATCH v5 3/5] thermal: renesas: rzg3e: Add thermal driver for
+ the Renesas RZ/G3E SoC
+To: John Madieu <john.madieu.xa@bp.renesas.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "robh@kernel.org"
+ <robh@kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
+Cc: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "john.madieu@gmail.com" <john.madieu@gmail.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Biju Das
+ <biju.das.jz@bp.renesas.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "lukasz.luba@arm.com" <lukasz.luba@arm.com>
+References: <20250330214945.185725-1-john.madieu.xa@bp.renesas.com>
+ <20250330214945.185725-4-john.madieu.xa@bp.renesas.com>
+ <a380c593-a2a4-40d2-8b2f-e3e1a2cdbe9e@oracle.com>
+ <OSBPR01MB277527932C5570EBC3D877C7FFAC2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+Content-Language: en-US
+From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+In-Reply-To: <OSBPR01MB277527932C5570EBC3D877C7FFAC2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0197.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::8) To DS7PR10MB5328.namprd10.prod.outlook.com
+ (2603:10b6:5:3a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250401182347.3422199-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401182347.3422199-49-irogers@google.com>
-Subject: [PATCH v1 48/48] perf: Silence -Wshorten-64-to-32 warnings
-From: Ian Rogers <irogers@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>, 
-	Ben Gainey <ben.gainey@arm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Aditya Gupta <adityag@linux.ibm.com>, 
-	Eder Zulian <ezulian@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>, 
-	Dirk Gouders <dirk@gouders.net>, Brian Geffon <bgeffon@google.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Howard Chu <howardchu95@gmail.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Jann Horn <jannh@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Yang Jihong <yangjihong@bytedance.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andi Kleen <ak@linux.intel.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Hao Ge <gehao@kylinos.cn>, Tengda Wu <wutengda@huaweicloud.com>, 
-	Gabriele Monaco <gmonaco@redhat.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Casey Chen <cachen@purestorage.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Andrew Kreimer <algonell@gmail.com>, 
-	"=?UTF-8?q?Krzysztof=20=C5=81opatowski?=" <krzysztof.m.lopatowski@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, Zixian Cai <fzczx123@gmail.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Yujie Liu <yujie.liu@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5328:EE_|DM4PR10MB7389:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87619dd5-401d-4a28-1787-08dd714a61c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VSs3MzAxOVc0TWtkMnRRMXpkc2NWNXliMDF5TVI1V0ZvVzQ1cWJ6azY0TUF2?=
+ =?utf-8?B?aVA0SWR0alMvWkxvUTcwWDJtL2tZNFh1eFRGdkhkZ1N3NmY2eUkvd1RNdzAv?=
+ =?utf-8?B?R0lra1F2bFJPcldKR0ZGUFVWckp6OUQyVWVrbXNnTnJnL2dZNjhuYWx6cFJ0?=
+ =?utf-8?B?NnMwaDhrRnFqeUhwVENlOGlpN1lwK1lKeUptY0ZONGRBMTdqcDVFb0pSMXY1?=
+ =?utf-8?B?Yjg3Zi9QRm9MNmN2QXcrQjFjTDNOZ1Y2c1M5VUhVYlVTQldQcEUwNDBvLy9w?=
+ =?utf-8?B?ZSt4VmQ4NlpDNVVUSlp0QmhrdW9LRnZBa2NZT25PZSsxWjFTaXB3dGRZZEk3?=
+ =?utf-8?B?MDRxcU9KK1VVSWJwM1o2eWUwR2V0dnRNc1hCbFdVYWR0SzkrbTQyMkpqVC9F?=
+ =?utf-8?B?MjRoNS80ZXlISHJkcDUzQXVvdkVLUWxnc3lOV3llaFZ1M1ZjRE1SWFYxUW5j?=
+ =?utf-8?B?TjUyeCtHYW52bGJMbnhyWnZMbk9XdFJLcm9UM0V1Y3dJZ3ZoOEJVMXJLNzBp?=
+ =?utf-8?B?Z0lEZVlEWjFnVnFBQkF6ODZISGlBcVNkQit4MTNaVlBSR1lTSDlLcW9tMEVO?=
+ =?utf-8?B?RzF1d3A0OFFXSmMrN2lFWnlBWFN0TkdFclg0eGxtV1k1MzJSY0JYVE5ySExY?=
+ =?utf-8?B?RzczMzF1ekZuVi9HaG5CUkVsL2RxRGE2dW9mMnBHdExrb0pOcUhXSHJ2b1Ur?=
+ =?utf-8?B?R05HZjNNQnZVZnRhU3orL1gzRXVFRUtHZW1oVUY5dmdaZXJLRVA1Y0M5ajJp?=
+ =?utf-8?B?V1A0NEQ3YUpHc0RZSTRWMW1CYVBFR2lCakJ2d1YyUXcyVHlpS1Nka1dWUUtM?=
+ =?utf-8?B?RXdyeDlFVXI5WFV5M2tieHZlNFdkdWkxTEtFU1Y1NXlwNUk4MmV4eFlxL2x2?=
+ =?utf-8?B?VyszY2JMWVlkRFdoREUyU2pCMHRsejVYV2dxM2hscEFXVWxIQy9lRVovb203?=
+ =?utf-8?B?ZDc4NnF1U3BweDA4ZU95aHNOanU1eFFxWlpxbmVsaFBGblByQ1ZBS3pFTHhR?=
+ =?utf-8?B?T2RJZGRjR3JTZjBYbWUwdVRHUTBTSElhZ2RmSkxBTzlmU1NhODBlSW5LSTNl?=
+ =?utf-8?B?VnNnemFPbjZNZnhON1Z1L3Q1bnBad0pSOXJBZnVhSzBma0k0eDFRUTRwd2cr?=
+ =?utf-8?B?VUMvZzVmdkJ0VlA1U0J2d29id1o3UVBkME5vMjAzYUxXeDFDNUx0NzZDaXNk?=
+ =?utf-8?B?a0s5b29oTlVYTEJZbTBUMk9SQTY5c3JnYnlZd25NWmlDcFB4akNrNVlkcnBZ?=
+ =?utf-8?B?ai9kL1R2S0FVdlNBTHg2U1V5d2cvT3RTN0ZnUG5YK2hmK2FXazFicisxelZp?=
+ =?utf-8?B?T2YzRCt4UUtOZ0tZeE5jcmV4RlkxdkFlMVNCUGx3eC9pcEx6YmJSZUJUcnZJ?=
+ =?utf-8?B?aHhDU3lYenNTUVNKRjZ0eUtCek9HWVNVbzBkakVSa01MOXVhZW1VZWhqMmNV?=
+ =?utf-8?B?ZlZaRHNTaUNVT2w3N3pESXdFeHJFVG80K0FJbUxlVlpiK25kdDFtVS9XZis2?=
+ =?utf-8?B?eE9NSWhuRW9yc0YySFhJOW92VW53ZlRkblNYR1BqaCtPNXVWeFk2QktuMVF0?=
+ =?utf-8?B?YWFjUThFODRyMERuNlUydnN1eTBtcDV5UHI3dTNoT3owODhlbVdYbzBFSU5B?=
+ =?utf-8?B?WmRXYm1HUVdSY1JhbDl1VmNET0dtMEo0MkF3dUxuZ2QyMVh3Sy9SSGVDMm5x?=
+ =?utf-8?B?cTR2bzgvYUc4ZytqV2l3Nnk0WUl0YzhWRGJ6SXpMQ2QzUUt4a0VVLzVoaGtH?=
+ =?utf-8?B?a2p5QUNucEt3RE5yUisrTVAzc25Ya2ErWExNemw2KzhZa3Z5SGRPVnVjcGh5?=
+ =?utf-8?B?V1RjbDlPWHVCTGZ6OHJ6YzVwU0xMWXNyMit0UXgvYmhRL1U0NCs4aHhRRkFt?=
+ =?utf-8?Q?yYGImKkuUZcZN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5328.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dW9oa2JobEduTGhaR0o0bW1LVm8vdTZxQU53VWFNQk56aC8rY0NiZHYrc1Nm?=
+ =?utf-8?B?N3UwbTlIeURhOEppZ0gxZEt6S0RPZGxhQjY1YXlyV2t3azMwUWZOdkRGbmhD?=
+ =?utf-8?B?R3ZjVXZmQmViWkdVRVJvV1MzMFpMQnloWk1hMlplYnJRNUFJeVVGend3c1Ri?=
+ =?utf-8?B?bCsxdjQvNWFVclZ3MUNBdFZvSk1YTncyOHhEOHlrUXNvRnJsYnhhRlovR1k1?=
+ =?utf-8?B?N2dBZUxnNEdJOXRmczRZNVNQZ0tZbFNwUThkK1RBVkFMSTJGT0wwNTdZV0lU?=
+ =?utf-8?B?RzdCQS9JUG5SNHBEZ040c25kZEJBRHZUa0JCZVhPZHVvTDF6NnpBSGZDTmJm?=
+ =?utf-8?B?ZDg0SkxmTDN2akNIN0RUS0JrZi9sakJrSk1xKzN3TUg3WWVsTnlyVkxlVUM5?=
+ =?utf-8?B?dkVuS1RHdTVLdlZ2d2w1S1RNNFozUlg4cnRtRU8zVmlkWUZRMjFzSHVHbzFO?=
+ =?utf-8?B?Q3Z2NDFQZnQzUzVseTEvaGdZUEhtWmVBbDBLb3ArOEtVbW9PRzJFbzd3UmZy?=
+ =?utf-8?B?eVdnRGxJYjZpc215SFlpWE8rMjhCYTA4SmxkRXA2dVhCaEUxMTdVOGlkM0Zu?=
+ =?utf-8?B?NWVFeXVYQWl0VGNRdXBtdXlrQWZwSlU3ZUhkUE9PZmZPNmJaekUrZGV1Vk5O?=
+ =?utf-8?B?Z0d3MGlJVDlmNVoyOEppelRpMEFGRVBqdXptaXppL1BjYWtZdW9UYXYzcW1Y?=
+ =?utf-8?B?RUhVb0dnUkwyYTVmWW12U1V1M0hwNGlULzlGUUxxMWQ5eE0wTThDMVorRG0r?=
+ =?utf-8?B?Q2tUSnFPbFlQNk1zRW5vQWdnczV1VE9paGJkblFhRHVLQS94WitzcmFiWFli?=
+ =?utf-8?B?eFhWNnlUQjNudWZ1ZGx6K0ZkZlNZWVRqanpRRzFhOGtiVWpaenJxWUJwRmNz?=
+ =?utf-8?B?Q3hOMDV2bkdtM2d5UFpZSHFTa0ZrZ2duSkRSbUhtVEorUlJZa0k3dnErNklq?=
+ =?utf-8?B?TXdncENaNWU2dk40WU9HVldSRHpIdklYMFQ1RVZQWUZwcFd2NFA4QmN5L3pq?=
+ =?utf-8?B?dWFnbXZ0cWxHdDd1SlBHdy9VNkE2aDhHL2tUSXlRTFQwVXAwenI3ZS8vZlMy?=
+ =?utf-8?B?eHlEa1o2Mk05a09YRW9JcWVFZk9rZnN2UDBzeW04b0s1dFFkTkQ1c21FQnVO?=
+ =?utf-8?B?MllRUGgvdnRBUUpmQ2tyNU1sazFKb043a0lDNlIrTWdycGdoZTRYUXI3WVdw?=
+ =?utf-8?B?ay9GN1UrMUdzSk4xdDRQcE01RFR6dldLaGJ0VWtCT2toS2NrV2QyUm53Q3pL?=
+ =?utf-8?B?UytFZWZoWHdnWDdQaU1RRHBWanBRS1ArVWhtbHB4bVMrRDBlWDFFM29uNGE5?=
+ =?utf-8?B?LzUrcXdNd0xYWHRYN3RUSkNoc0I3MklodVVMMlRmMUthdll5NFF6aU5Sbk50?=
+ =?utf-8?B?ek52aktCYXVFR0JXU1doUG5BeUhpNUhjNkt0YWZ1OGNidGdOSTFYVm9TekNi?=
+ =?utf-8?B?a0xsYTR2TGZ1Tk13ZFFrcVVnY1k5c3RWRlJHMG1LTHV0NkdBRFdqTlVwQXJz?=
+ =?utf-8?B?ZFFJN0FJbnRwejV3TkZpUlUzQWNVYmlGUWExcklSUXlxNU9iR3FKZU5PRXJ4?=
+ =?utf-8?B?bHczUnh6WXhsc0pTdUtWQXpycGtteVhzR0FnTkJObkxtUzR0K2ZVOWswUW5r?=
+ =?utf-8?B?ZzhVN0hjQTJJMG9rUDJ6TzRCZUNpQ2NPZm1KeEgxa25QOWNwMFNtTm5HYTBB?=
+ =?utf-8?B?eXMzREJkb2NsN0J6YTZNVC9HOEplbEhRZ1JGUVFxSkNQZ0RtV2xzRGduVkhz?=
+ =?utf-8?B?SGVmQVkwRWtybGVheGdXQUNhM2FNNmJkYTB1MWh4K1lkRFlzb0FTaGU5VXNx?=
+ =?utf-8?B?Z1lvdXFwWnNmQ3luMlpnbEZOMGdDRkd0eEYrdkx5RnhmSE1MYVI5ZTgyZGM1?=
+ =?utf-8?B?TmFORTVwamEvVUViZ0NlUm9vbVNTOHNEVGlzUlBJdFlIL1NVTmZiWkVWUmZa?=
+ =?utf-8?B?Y3ZFMXR0eGRHTEl1Q1NSTlZvNURac01ZWnFzRis1cHNMNkFMdnZQa1pQWDdH?=
+ =?utf-8?B?cldBekVSeEFZR0tZQ2ZYSk9Ob0s0MWtiMjVQbTEwRlk5SHQwUHZKQ1R5R0gx?=
+ =?utf-8?B?cFZ3Y1JaNmNqYW5rTGlOTHFEaTJCd0F3VUNhRHQ0c1g1RjJwaDl6M2Zjc2Vl?=
+ =?utf-8?Q?QruzL1HC9STw2B8LyP4IgXwc2?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	RkbelcJGt9ISJeAccxo8KwTJWnRePkoWVvr3Po3n9+OA2hTXjlFZXOhuHhip7a16fbR8G850errpyyn50OkdPAxx+oxIdY/RWPE2BMoKzSTDOdErQaePgxpXn+Ctj5jRGKPYUXAhI08vVJpGmPNz+TakoiHG6/rkPeqV+9DJYHNl9qwR2eRUcoR55zgwvkgDmIp3rhlEkPG21LlK905M+Zr8XT8jCKiWc36/6jI47PXJjHEkllb31OlMMiZV+aIVzmmLd7+N5PlCLV7MG0DPdnUMzZ4YfSccNUrsC+XPMgiIpGvlZfke8/CI0uEc9lHG+v/YvCM1LeN827tzRVH5xRy5AgmgcC7OzOS6ANohFlWztPD+9M8AlKIkHQ2uYDJtl/sdPQKrNOQV28U2iAg/DmtRXViX65YoUla/AtJEknziWFYZwWcNg8LgxDvBXTFWIK64huNr5fYgpQq3QLYDKxM3Vsj6gAR3nG/klG1XxqBCPRCvZTPZWfijtbhEHwoeQ1J4KvkYDcVBlUk/rUydiVuBver81O38Vj5EBqupWVxfAk2ZzVlQ60rNHdTADNpS8Px2ljm6GMuMyyo7byZsC/gqh/e8lildfYjRqS3iwlA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87619dd5-401d-4a28-1787-08dd714a61c8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5328.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2025 18:24:04.1501
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1+kaRHvQRuANKE3CYXmi5xgJxyJL09Utd8B9CsgJLfM/1dPP3wqBYA9okUgcULxizkfWXAL6cw2B/DuHGBB/E5R+7kzQJYHzzXsJ+yZohRk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB7389
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-01_07,2025-04-01_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502280000 definitions=main-2504010113
+X-Proofpoint-ORIG-GUID: TxkBuHwZ3WtV9LWPmBbxHkzYK40jqDOj
+X-Proofpoint-GUID: TxkBuHwZ3WtV9LWPmBbxHkzYK40jqDOj
 
-The clang warning -Wshorten-64-to-32 can be useful to catch
-inadvertent truncation. In some instances this truncation can lead to
-changing the sign of a result, for example, truncation to return an
-int to fit a sort routine. Silence the warning by making the implicit
-truncation explicit.
+Hi John,
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/perf.c                  |  2 +-
- tools/perf/util/bpf-event.c        |  2 +-
- tools/perf/util/env.c              |  2 +-
- tools/perf/util/event.c            |  4 +--
- tools/perf/util/header.c           | 54 ++++++++++++++++--------------
- tools/perf/util/hist.c             |  7 ++--
- tools/perf/util/machine.c          | 14 ++++----
- tools/perf/util/map.c              |  4 +--
- tools/perf/util/maps.c             |  6 ++--
- tools/perf/util/parse-events.c     | 16 ++++-----
- tools/perf/util/session.c          | 29 ++++++++--------
- tools/perf/util/sort.c             | 20 +++++------
- tools/perf/util/synthetic-events.c | 22 ++++++------
- tools/perf/util/target.c           |  2 +-
- tools/perf/util/thread-stack.c     |  2 +-
- tools/perf/util/thread.c           |  4 +--
- tools/perf/util/thread_map.c       |  6 ++--
- tools/perf/util/tool.c             |  2 +-
- tools/perf/util/values.c           |  4 +--
- 19 files changed, 104 insertions(+), 98 deletions(-)
+Thanks for your reply.
 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index f0617cc41f5f..2e98a29df3b2 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -476,7 +476,7 @@ int main(int argc, const char **argv)
- 	if (!cmd)
- 		cmd = "perf-help";
- 
--	srandom(time(NULL));
-+	srandom((unsigned int)time(NULL));
- 
- 	/* Setting $PERF_CONFIG makes perf read _only_ the given config file. */
- 	config_exclusive_filename = getenv("PERF_CONFIG");
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index c81444059ad0..3cf7d1a2b624 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -332,7 +332,7 @@ process_bpf_image(char *name, u64 addr, struct kallsyms_parse *data)
- 			.size = offsetof(struct perf_record_ksymbol, name),
- 		},
- 		.addr      = addr,
--		.len       = page_size,
-+		.len       = (__u32)page_size,
- 		.ksym_type = PERF_RECORD_KSYMBOL_TYPE_BPF,
- 		.flags     = 0,
- 	};
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index 36411749e007..8238a9a609ab 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -596,7 +596,7 @@ char *perf_env__find_pmu_cap(struct perf_env *env, const char *pmu_name,
- 			     const char *cap)
- {
- 	char *cap_eq;
--	int cap_size;
-+	size_t cap_size;
- 	char **ptr;
- 	int i, j;
- 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index c23b77f8f854..edd7e2fccf60 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -156,7 +156,7 @@ void perf_event__read_stat_config(struct perf_stat_config *config,
- 		switch (event->data[i].tag) {
- #define CASE(__term, __val)					\
- 		case PERF_STAT_CONFIG_TERM__##__term:		\
--			config->__val = event->data[i].val;	\
-+			config->__val = (typeof(config->__val))event->data[i].val; \
- 			break;
- 
- 		CASE(AGGR_MODE,  aggr_mode)
-@@ -190,7 +190,7 @@ size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp)
- 	u32 nr_namespaces, idx;
- 
- 	ns_link_info = event->namespaces.link_info;
--	nr_namespaces = event->namespaces.nr_namespaces;
-+	nr_namespaces = (u32)event->namespaces.nr_namespaces;
- 
- 	ret += fprintf(fp, " %d/%d - nr_namespaces: %u\n\t\t[",
- 		       event->namespaces.pid,
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index e3cdc3b7b4ab..e364dea9e243 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -185,7 +185,7 @@ static int do_write_string(struct feat_fd *ff, const char *str)
- 	u32 len, olen;
- 	int ret;
- 
--	olen = strlen(str) + 1;
-+	olen = (u32)strlen(str) + 1;
- 	len = PERF_ALIGN(olen, NAME_ALIGN);
- 
- 	/* write len, incl. \0 */
-@@ -286,7 +286,7 @@ static int do_read_bitmap(struct feat_fd *ff, unsigned long **pset, u64 *psize)
- 	if (ret)
- 		return ret;
- 
--	set = bitmap_zalloc(size);
-+	set = bitmap_zalloc((int)size);
- 	if (!set)
- 		return -ENOMEM;
- 
-@@ -1369,7 +1369,9 @@ static int memory_node__sort(const void *a, const void *b)
- 	const struct memory_node *na = a;
- 	const struct memory_node *nb = b;
- 
--	return na->node - nb->node;
-+	if (na->node == nb->node)
-+		return 0;
-+	return na->node < nb->node ? -1 : 1;
- }
- 
- static int build_mem_topology(struct memory_node **nodesp, u64 *cntp)
-@@ -2144,7 +2146,7 @@ static void print_pmu_mappings(struct feat_fd *ff, FILE *fp)
- 	str = ff->ph->env.pmu_mappings;
- 
- 	while (pmu_num) {
--		type = strtoul(str, &tmp, 0);
-+		type = (u32)strtoul(str, &tmp, 0);
- 		if (*tmp != ':')
- 			goto error;
- 
-@@ -2214,10 +2216,10 @@ static void memory_node__fprintf(struct memory_node *n,
- 	char buf_map[100], buf_size[50];
- 	unsigned long long size;
- 
--	size = bsize * bitmap_weight(n->set, n->size);
-+	size = bsize * bitmap_weight(n->set, (unsigned int)n->size);
- 	unit_number__scnprintf(buf_size, 50, size);
- 
--	bitmap_scnprintf(n->set, n->size, buf_map, 100);
-+	bitmap_scnprintf(n->set, (unsigned int)n->size, buf_map, 100);
- 	fprintf(fp, "#  %3" PRIu64 " [%s]: %s\n", n->node, buf_size, buf_map);
- }
- 
-@@ -2782,7 +2784,7 @@ static int process_pmu_mappings(struct feat_fd *ff, void *data __maybe_unused)
- 
- static int process_group_desc(struct feat_fd *ff, void *data __maybe_unused)
- {
--	size_t ret = -1;
-+	int ret = -1;
- 	u32 i, nr, nr_groups;
- 	struct perf_session *session;
- 	struct evsel *evsel, *leader = NULL;
-@@ -2996,7 +2998,7 @@ static int process_mem_topology(struct feat_fd *ff,
- 
- 	ff->ph->env.memory_bsize    = bsize;
- 	ff->ph->env.memory_nodes    = nodes;
--	ff->ph->env.nr_memory_nodes = nr;
-+	ff->ph->env.nr_memory_nodes = (int)nr;
- 	ret = 0;
- 
- out:
-@@ -3489,7 +3491,8 @@ int perf_header__fprintf_info(struct perf_session *session, FILE *fp, bool full)
- 	int fd = perf_data__fd(session->data);
- 	struct stat st;
- 	time_t stctime;
--	int ret, bit;
-+	int ret;
-+	size_t bit;
- 
- 	hd.fp = fp;
- 	hd.full = full;
-@@ -3586,15 +3589,15 @@ static int perf_header__adds_write(struct perf_header *header,
- 				   struct evlist *evlist, int fd,
- 				   struct feat_copier *fc)
- {
--	int nr_sections;
-+	size_t nr_sections;
- 	struct feat_fd ff = {
- 		.fd  = fd,
- 		.ph = header,
- 	};
- 	struct perf_file_section *feat_sec, *p;
--	int sec_size;
-+	size_t sec_size;
- 	u64 sec_start;
--	int feat;
-+	size_t feat;
- 	int err;
- 
- 	nr_sections = bitmap_weight(header->adds_features, HEADER_FEAT_BITS);
-@@ -3611,8 +3614,8 @@ static int perf_header__adds_write(struct perf_header *header,
- 	lseek(fd, sec_start + sec_size, SEEK_SET);
- 
- 	for_each_set_bit(feat, header->adds_features, HEADER_FEAT_BITS) {
--		if (do_write_feat(&ff, feat, &p, evlist, fc))
--			perf_header__clear_feat(header, feat);
-+		if (do_write_feat(&ff, (int)feat, &p, evlist, fc))
-+			perf_header__clear_feat(header, (int)feat);
- 	}
- 
- 	lseek(fd, sec_start, SEEK_SET);
-@@ -3821,9 +3824,9 @@ int perf_header__process_sections(struct perf_header *header, int fd,
- 						 int feat, int fd, void *data))
- {
- 	struct perf_file_section *feat_sec, *sec;
--	int nr_sections;
--	int sec_size;
--	int feat;
-+	size_t nr_sections;
-+	size_t sec_size;
-+	size_t feat;
- 	int err;
- 
- 	nr_sections = bitmap_weight(header->adds_features, HEADER_FEAT_BITS);
-@@ -3843,7 +3846,7 @@ int perf_header__process_sections(struct perf_header *header, int fd,
- 		goto out_free;
- 
- 	for_each_set_bit(feat, header->adds_features, HEADER_LAST_FEATURE) {
--		err = process(sec++, header, feat, fd, data);
-+		err = process(sec++, header, (int)feat, fd, data);
- 		if (err < 0)
- 			goto out_free;
- 	}
-@@ -4183,7 +4186,7 @@ static int evsel__prepare_tracepoint_event(struct evsel *evsel, struct tep_handl
- 		return -1;
- 	}
- 
--	event = tep_find_event(pevent, evsel->core.attr.config);
-+	event = tep_find_event(pevent, (int)evsel->core.attr.config);
- 	if (event == NULL) {
- 		pr_debug("cannot find event format for %d\n", (int)evsel->core.attr.config);
- 		return -1;
-@@ -4221,8 +4224,8 @@ int perf_session__read_header(struct perf_session *session)
- 	struct perf_file_header	f_header;
- 	struct perf_file_attr	f_attr;
- 	u64			f_id;
--	int nr_attrs, nr_ids, i, j, err;
--	int fd = perf_data__fd(data);
-+	u64 nr_attrs, nr_ids;
-+	int err, fd = perf_data__fd(data);
- 
- 	session->evlist = evlist__new();
- 	if (session->evlist == NULL)
-@@ -4271,7 +4274,7 @@ int perf_session__read_header(struct perf_session *session)
- 	nr_attrs = f_header.attrs.size / f_header.attr_size;
- 	lseek(fd, f_header.attrs.offset, SEEK_SET);
- 
--	for (i = 0; i < nr_attrs; i++) {
-+	for (u64 i = 0; i < nr_attrs; i++) {
- 		struct evsel *evsel;
- 		off_t tmp;
- 
-@@ -4308,7 +4311,7 @@ int perf_session__read_header(struct perf_session *session)
- 
- 		lseek(fd, f_attr.ids.offset, SEEK_SET);
- 
--		for (j = 0; j < nr_ids; j++) {
-+		for (int j = 0; j < (int)nr_ids; j++) {
- 			if (perf_header__getbuffer64(header, fd, &f_id, sizeof(f_id)))
- 				goto out_errno;
- 
-@@ -4537,7 +4540,8 @@ int perf_event__process_tracing_data(struct perf_session *session,
- 		return -1;
- 	}
- 	if (session->trace_event_repipe) {
--		int retw = write(STDOUT_FILENO, buf, padding);
-+		ssize_t retw = write(STDOUT_FILENO, buf, padding);
-+
- 		if (retw <= 0 || retw != padding) {
- 			pr_err("%s: repiping tracing data padding", __func__);
- 			return -1;
-@@ -4551,7 +4555,7 @@ int perf_event__process_tracing_data(struct perf_session *session,
- 
- 	evlist__prepare_tracepoint_events(session->evlist, session->tevent.pevent);
- 
--	return size_read + padding;
-+	return (int)(size_read + padding);
- }
- #endif
- 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index d65228c11412..37469da4afc2 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -700,7 +700,8 @@ static unsigned random_max(unsigned high)
- {
- 	unsigned thresh = -high % high;
- 	for (;;) {
--		unsigned r = random();
-+		unsigned int r = (unsigned int)random();
-+
- 		if (r >= thresh)
- 			return r % high;
- 	}
-@@ -929,7 +930,7 @@ iter_prepare_branch_entry(struct hist_entry_iter *iter, struct addr_location *al
- 		return -ENOMEM;
- 
- 	iter->curr = 0;
--	iter->total = sample->branch_stack->nr;
-+	iter->total = (int)sample->branch_stack->nr;
- 
- 	iter->bi = bi;
- 	return 0;
-@@ -2770,7 +2771,7 @@ void hist__account_cycles(struct branch_stack *bs, struct addr_location *al,
- 			 * Note that perf stores branches reversed from
- 			 * program order!
- 			 */
--			for (int i = bs->nr - 1; i >= 0; i--) {
-+			for (int i = (int)bs->nr - 1; i >= 0; i--) {
- 				addr_map_symbol__account_cycles(&bi[i].from,
- 					nonany_branch_mode ? NULL : prev,
- 					bi[i].flags.cycles, evsel,
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 2531b373f2cf..0881b83532fd 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -809,7 +809,7 @@ int machine__process_text_poke(struct machine *machine, union perf_event *event,
- 
- 	if (dso) {
- 		u8 *new_bytes = event->text_poke.bytes + event->text_poke.old_len;
--		int ret;
-+		ssize_t ret;
- 
- 		/*
- 		 * Kernel maps might be changed when loading symbols so loading
-@@ -2306,7 +2306,7 @@ static int lbr_callchain_add_lbr_ip(struct thread *thread,
- 	struct branch_stack *lbr_stack = sample->branch_stack;
- 	struct branch_entry *entries = perf_sample__branch_entries(sample);
- 	u8 cpumode = PERF_RECORD_MISC_USER;
--	int lbr_nr = lbr_stack->nr;
-+	int lbr_nr = (int)lbr_stack->nr;
- 	struct branch_flags *flags;
- 	int err, i;
- 	u64 ip;
-@@ -2472,7 +2472,7 @@ static bool has_stitched_lbr(struct thread *thread,
- 	 *
- 	 * Starts from the base-of-stack of current sample.
- 	 */
--	for (i = distance, j = cur_stack->nr - 1; (i >= 0) && (j >= 0); i--, j--) {
-+	for (i = (int)distance, j = (int)cur_stack->nr - 1; (i >= 0) && (j >= 0); i--, j--) {
- 		if ((prev_entries[i].from != cur_entries[j].from) ||
- 		    (prev_entries[i].to != cur_entries[j].to) ||
- 		    (prev_entries[i].flags.value != cur_entries[j].flags.value))
-@@ -2488,7 +2488,7 @@ static bool has_stitched_lbr(struct thread *thread,
- 	 * and the base-of-stack of current sample into lbr_stitch->lists.
- 	 * These LBRs will be stitched later.
- 	 */
--	for (i = prev_stack->nr - 1; i > (int)distance; i--) {
-+	for (i = (int)prev_stack->nr - 1; i > (int)distance; i--) {
- 
- 		if (!lbr_stitch->prev_lbr_cursor[i].valid)
- 			continue;
-@@ -2687,7 +2687,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 	u64 leaf_frame_caller;
- 
- 	if (chain)
--		chain_nr = chain->nr;
-+		chain_nr = (int)chain->nr;
- 
- 	if (evsel__has_branch_callstack(evsel)) {
- 		struct perf_env *env = evsel__env(evsel);
-@@ -2783,7 +2783,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- check_calls:
- 	if (chain && callchain_param.order != ORDER_CALLEE) {
- 		err = find_prev_cpumode(chain, thread, cursor, parent, root_al,
--					&cpumode, chain->nr - first_call, symbols);
-+					&cpumode, (int)(chain->nr - first_call), symbols);
- 		if (err)
- 			return (err < 0) ? err : 0;
- 	}
-@@ -2794,7 +2794,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 		if (callchain_param.order == ORDER_CALLEE)
- 			j = i;
- 		else
--			j = chain->nr - i - 1;
-+			j = (int)(chain->nr - i - 1);
- 
- #ifdef HAVE_SKIP_CALLCHAIN_IDX
- 		if (j == skip_idx)
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index d729438b7d65..57e22e49e65c 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -74,8 +74,8 @@ static inline bool replace_android_lib(const char *filename, char *newfilename)
- 		if (!(ndk && app))
- 			return false;
- 
--		ndk_length = strlen(ndk);
--		app_length = strlen(app);
-+		ndk_length = (int)strlen(ndk);
-+		app_length = (int)strlen(app);
- 
- 		if (!(ndk_length && app_length && app_abi_length))
- 			return false;
-diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-index 0b40d901675e..8101a3e3810b 100644
---- a/tools/perf/util/maps.c
-+++ b/tools/perf/util/maps.c
-@@ -396,7 +396,7 @@ static unsigned int maps__by_address_index(const struct maps *maps, const struct
- 				sizeof(*mapp), map__start_cmp);
- 
- 		if (mapp)
--			return mapp - maps_by_address;
-+			return (unsigned int)(mapp - maps_by_address);
- 	} else {
- 		for (unsigned int i = 0; i < maps__nr_maps(maps); i++) {
- 			if (RC_CHK_ACCESS(maps_by_address[i]) == RC_CHK_ACCESS(map))
-@@ -417,7 +417,7 @@ static unsigned int maps__by_name_index(const struct maps *maps, const struct ma
- 				sizeof(*mapp), map__strcmp);
- 
- 		if (mapp)
--			return mapp - maps_by_name;
-+			return (unsigned int)(mapp - maps_by_name);
- 	} else {
- 		for (unsigned int i = 0; i < maps__nr_maps(maps); i++) {
- 			if (RC_CHK_ACCESS(maps_by_name[i]) == RC_CHK_ACCESS(map))
-@@ -1134,7 +1134,7 @@ struct map *maps__find_by_name(struct maps *maps, const char *name)
- 
- 			if (mapp) {
- 				result = map__get(*mapp);
--				i = mapp - maps__maps_by_name(maps);
-+				i = (unsigned int)(mapp - maps__maps_by_name(maps));
- 				RC_CHK_ACCESS(maps)->last_search_by_name_idx = i;
- 			}
- 			done = true;
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 5152fd5a6ead..5e697091c820 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -317,7 +317,7 @@ static int parse_aliases(const char *str, const char *const names[][EVSEL__MAX_A
- 	*longest = -1;
- 	for (int i = 0; i < size; i++) {
- 		for (int j = 0; j < EVSEL__MAX_ALIASES && names[i][j]; j++) {
--			int n = strlen(names[i][j]);
-+			int n = (int)strlen(names[i][j]);
- 
- 			if (n > *longest && !strncasecmp(str, names[i][j], n))
- 				*longest = n;
-@@ -532,8 +532,8 @@ static int add_tracepoint(struct parse_events_state *parse_state,
- 					       !parse_state->fake_tp);
- 
- 	if (IS_ERR(evsel)) {
--		tracepoint_error(err, PTR_ERR(evsel), sys_name, evt_name, loc->first_column);
--		return PTR_ERR(evsel);
-+		tracepoint_error(err, (int)PTR_ERR(evsel), sys_name, evt_name, loc->first_column);
-+		return (int)PTR_ERR(evsel);
- 	}
- 
- 	if (head_config) {
-@@ -1153,7 +1153,7 @@ static int get_config_terms(const struct parse_events_terms *head_config,
- #define ADD_CONFIG_TERM_VAL(__type, __name, __val, __weak)	\
- do {								\
- 	ADD_CONFIG_TERM(__type, __weak);			\
--	__t->val.__name = __val;				\
-+	__t->val.__name = (typeof(__t->val.__name))__val;	\
- } while (0)
- 
- #define ADD_CONFIG_TERM_STR(__type, __val, __weak)		\
-@@ -2299,12 +2299,12 @@ static void __parse_events_error__print(int err_idx, const char *err_str,
- 	const char *str = "invalid or unsupported event: ";
- 	char _buf[MAX_WIDTH];
- 	char *buf = (char *) event;
--	int idx = 0;
-+	size_t idx = 0;
- 	if (err_str) {
- 		/* -2 for extra '' in the final fprintf */
- 		int width       = get_term_width() - 2;
--		int len_event   = strlen(event);
--		int len_str, max_len, cut = 0;
-+		size_t len_event   = strlen(event);
-+		size_t len_str, max_len, cut = 0;
- 
- 		/*
- 		 * Maximum error index indent, we will cut
-@@ -2342,7 +2342,7 @@ static void __parse_events_error__print(int err_idx, const char *err_str,
- 
- 	fprintf(stderr, "%s'%s'\n", str, buf);
- 	if (idx) {
--		fprintf(stderr, "%*s\\___ %s\n", idx + 1, "", err_str);
-+		fprintf(stderr, "%*s\\___ %s\n", (int)idx + 1, "", err_str);
- 		if (err_help)
- 			fprintf(stderr, "\n%s\n", err_help);
- 	}
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 60fb9997ea0d..2aaedb581d83 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -263,7 +263,7 @@ void perf_session__delete(struct perf_session *session)
- static void swap_sample_id_all(union perf_event *event, void *data)
- {
- 	void *end = (void *) event + event->header.size;
--	int size = end - data;
-+	size_t size = end - data;
- 
- 	BUG_ON(size % sizeof(u64));
- 	mem_bswap_64(data, size);
-@@ -912,13 +912,13 @@ static void branch_stack__printf(struct perf_sample *sample,
- 
- static void regs_dump__printf(u64 mask, u64 *regs, const char *arch)
- {
--	unsigned rid, i = 0;
-+	unsigned int i = 0;
-+	size_t rid;
- 
- 	for_each_set_bit(rid, (unsigned long *) &mask, sizeof(mask) * 8) {
- 		u64 val = regs[i++];
- 
--		printf(".... %-5s 0x%016" PRIx64 "\n",
--		       perf_reg_name(rid, arch), val);
-+		printf(".... %-5s 0x%016" PRIx64 "\n", perf_reg_name((int)rid, arch), val);
- 	}
- }
- 
-@@ -1452,7 +1452,7 @@ static s64 perf_session__process_user_event(struct perf_session *session,
- 		 */
- 		if (!perf_data__is_pipe(session->data))
- 			lseek(fd, file_offset + event->header.size, SEEK_SET);
--		err = tool->auxtrace(session, event);
-+		err = (int)tool->auxtrace(session, event);
- 		break;
- 	case PERF_RECORD_AUXTRACE_ERROR:
- 		perf_session__auxtrace_error_inc(session, event);
-@@ -1506,7 +1506,7 @@ int perf_session__deliver_synth_event(struct perf_session *session,
- 	events_stats__inc(&evlist->stats, event->header.type);
- 
- 	if (event->header.type >= PERF_RECORD_USER_TYPE_START)
--		return perf_session__process_user_event(session, event, 0, NULL);
-+		return (int)perf_session__process_user_event(session, event, 0, NULL);
- 
- 	return machines__deliver_event(&session->machines, evlist, event, sample, tool, 0, NULL);
- }
-@@ -1935,7 +1935,7 @@ static int __perf_session__process_pipe_events(struct perf_session *session)
- 		perf_session__warn_about_errors(session);
- 	ordered_events__free(&session->ordered_events);
- 	auxtrace__free_events(session);
--	return err;
-+	return (int)err;
- }
- 
- static union perf_event *
-@@ -2155,7 +2155,7 @@ reader__read_event(struct reader *rd, struct perf_session *session,
- 	event = fetch_mmaped_event(rd->head, rd->mmap_size, rd->mmap_cur,
- 				   session->header.needs_swap);
- 	if (IS_ERR(event))
--		return PTR_ERR(event);
-+		return (int)PTR_ERR(event);
- 
- 	if (!event)
- 		return READER_NODATA;
-@@ -2168,8 +2168,8 @@ reader__read_event(struct reader *rd, struct perf_session *session,
- 	    (skip = rd->process(session, event, rd->file_pos, rd->path)) < 0) {
- 		pr_err("%#" PRIx64 " [%#x]: failed to process type: %d [%s]\n",
- 		       rd->file_offset + rd->head, event->header.size,
--		       event->header.type, strerror(-skip));
--		err = skip;
-+			event->header.type, strerror((int)-skip));
-+		err = (int)skip;
- 		goto out;
- 	}
- 
-@@ -2683,14 +2683,14 @@ int perf_event__process_id_index(struct perf_session *session,
- 		if (!sid)
- 			return -ENOENT;
- 
--		sid->idx = e->idx;
-+		sid->idx = (int)e->idx;
- 		sid->cpu.cpu = e->cpu;
--		sid->tid = e->tid;
-+		sid->tid = (pid_t)e->tid;
- 
- 		if (!e2)
- 			continue;
- 
--		sid->machine_pid = e2->machine_pid;
-+		sid->machine_pid = (pid_t)e2->machine_pid;
- 		sid->vcpu.cpu = e2->vcpu;
- 
- 		if (!sid->machine_pid)
-@@ -2704,7 +2704,8 @@ int perf_event__process_id_index(struct perf_session *session,
- 			perf_guest = true;
- 		}
- 
--		ret = perf_session__set_guest_cpu(session, sid->machine_pid, e->tid, e2->vcpu);
-+		ret = perf_session__set_guest_cpu(session, sid->machine_pid,
-+						(pid_t)e->tid, (int)e2->vcpu);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index c51049087e4e..b7822aa8cc8c 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -91,7 +91,7 @@ static int repsep_snprintf(char *bf, size_t size, const char *fmt, ...)
- 	va_end(ap);
- 
- 	if (n >= (int)size)
--		return size - 1;
-+		return (int)size - 1;
- 	return n;
- }
- 
-@@ -392,7 +392,7 @@ static int _hist_entry__sym_snprintf(struct map_symbol *ms,
- 				       len, ip);
- 	}
- 
--	return ret;
-+	return (int)ret;
- }
- 
- int hist_entry__sym_snprintf(struct hist_entry *he, char *bf, size_t size, unsigned int width)
-@@ -1339,7 +1339,7 @@ static int _hist_entry__addr_snprintf(struct map_symbol *ms,
- 				       len, ip);
- 	}
- 
--	return ret;
-+	return (int)ret;
- }
- 
- static int hist_entry__addr_from_snprintf(struct hist_entry *he, char *bf,
-@@ -2667,7 +2667,7 @@ static int __sort__hpp_width(struct perf_hpp_fmt *fmt,
- 	if (!len)
- 		len = hists__col_len(hists, hse->se->se_width_idx);
- 
--	return len;
-+	return (int)len;
- }
- 
- static int __sort__hpp_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
-@@ -2681,7 +2681,7 @@ static int __sort__hpp_entry(struct perf_hpp_fmt *fmt, struct perf_hpp *hpp,
- 	if (!len)
- 		len = hists__col_len(he->hists, hse->se->se_width_idx);
- 
--	return hse->se->se_snprintf(he, hpp->buf, hpp->size, len);
-+	return hse->se->se_snprintf(he, hpp->buf, hpp->size, (unsigned int)len);
- }
- 
- static int64_t __sort__hpp_cmp(struct perf_hpp_fmt *fmt,
-@@ -2918,7 +2918,7 @@ static int hde_width(struct hpp_dynamic_entry *hde)
- {
- 	if (!hde->hpp.len) {
- 		int len = hde->dynamic_len;
--		int namelen = strlen(hde->field->name);
-+		int namelen = (int)strlen(hde->field->name);
- 		int fieldlen = hde->field->size;
- 
- 		if (namelen > len)
-@@ -2968,7 +2968,7 @@ static void update_dynamic_len(struct hpp_dynamic_entry *hde,
- 			len = pos - str;
- 
- 			if (len > hde->dynamic_len)
--				hde->dynamic_len = len;
-+				hde->dynamic_len = (unsigned int)len;
- 			break;
- 		}
- 
-@@ -3007,7 +3007,7 @@ static int __sort__hde_width(struct perf_hpp_fmt *fmt,
- 	if (!len)
- 		len = hde_width(hde);
- 
--	return len;
-+	return (int)len;
- }
- 
- bool perf_hpp__defined_dynamic_entry(struct perf_hpp_fmt *fmt, struct hists *hists)
-@@ -3256,7 +3256,7 @@ static struct evsel *find_evsel(struct evlist *evlist, char *event_name)
- 
- 	/* case 1 */
- 	if (event_name[0] == '%') {
--		int nr = strtol(event_name+1, NULL, 0);
-+		int nr = (int)strtol(event_name+1, NULL, 0);
- 
- 		if (nr > evlist->core.nr_entries)
- 			return NULL;
-@@ -4212,7 +4212,7 @@ char *sort_help(const char *prefix, enum sort_mode mode)
- {
- 	struct strbuf sb;
- 	char *s;
--	int len = strlen(prefix) + INDENT;
-+	int len = (int)strlen(prefix) + INDENT;
- 
- 	strbuf_init(&sb, 300);
- 	strbuf_addstr(&sb, prefix);
-diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-index 2fc4d0537840..f65bb4b76ccb 100644
---- a/tools/perf/util/synthetic-events.c
-+++ b/tools/perf/util/synthetic-events.c
-@@ -338,10 +338,10 @@ static bool read_proc_maps_line(struct io *io, __u64 *start, __u64 *end,
- 
- 	if (io__get_hex(io, &temp) != ':')
- 		return false;
--	*maj = temp;
-+	*maj = (u32)temp;
- 	if (io__get_hex(io, &temp) != ' ')
- 		return false;
--	*min = temp;
-+	*min = (u32)temp;
- 
- 	ch = io__get_dec(io, inode);
- 	if (ch != ' ') {
-@@ -433,7 +433,7 @@ int perf_event__synthesize_mmap_events(const struct perf_tool *tool,
- 	unsigned long long timeout = proc_map_timeout * 1000000ULL;
- 	int rc = 0;
- 	const char *hugetlbfs_mnt = hugetlbfs__mountpoint();
--	int hugetlbfs_mnt_len = hugetlbfs_mnt ? strlen(hugetlbfs_mnt) : 0;
-+	size_t hugetlbfs_mnt_len = hugetlbfs_mnt ? strlen(hugetlbfs_mnt) : 0;
- 
- 	if (machine__is_default_guest(machine))
- 		return 0;
-@@ -815,7 +815,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
- 		if (!isdigit(dent->d_name[0]))
- 			continue;
- 
--		_pid = strtol(dent->d_name, &end, 10);
-+		_pid = (pid_t)strtol(dent->d_name, &end, 10);
- 		if (*end)
- 			continue;
- 
-@@ -1043,7 +1043,7 @@ int perf_event__synthesize_threads(const struct perf_tool *tool,
- 		return err;
- 
- 	if (nr_threads_synthesize == UINT_MAX)
--		thread_nr = sysconf(_SC_NPROCESSORS_ONLN);
-+		thread_nr = (int)sysconf(_SC_NPROCESSORS_ONLN);
- 	else
- 		thread_nr = nr_threads_synthesize;
- 
-@@ -1829,7 +1829,7 @@ int perf_event__synthesize_id_sample(__u64 *array, u64 type, const struct perf_s
- 		array++;
- 	}
- 
--	return (void *)array - (void *)start;
-+	return (int)((void *)array - (void *)start);
- }
- 
- int __perf_event__synthesize_id_index(const struct perf_tool *tool, perf_event__handler_t process,
-@@ -2213,7 +2213,7 @@ int perf_event__synthesize_tracing_data(const struct perf_tool *tool, int fd, st
- 	aligned_size = PERF_ALIGN(size, sizeof(u64));
- 	padding = aligned_size - size;
- 	ev.tracing_data.header.size = sizeof(ev.tracing_data);
--	ev.tracing_data.size = aligned_size;
-+	ev.tracing_data.size = (__u32)aligned_size;
- 
- 	process(tool, &ev, NULL, NULL);
- 
-@@ -2227,7 +2227,7 @@ int perf_event__synthesize_tracing_data(const struct perf_tool *tool, int fd, st
- 	if (write_padded(&ff, NULL, 0, padding))
- 		return -1;
- 
--	return aligned_size;
-+	return (int)aligned_size;
- }
- #endif
- 
-@@ -2375,8 +2375,8 @@ int perf_event__synthesize_features(const struct perf_tool *tool, struct perf_se
- 	struct perf_header *header = &session->header;
- 	struct perf_record_header_feature *fe;
- 	struct feat_fd ff;
--	size_t sz, sz_hdr;
--	int feat, ret;
-+	size_t sz, sz_hdr, feat;
-+	int ret;
- 
- 	sz_hdr = sizeof(fe->header);
- 	sz = sizeof(union perf_event);
-@@ -2394,7 +2394,7 @@ int perf_event__synthesize_features(const struct perf_tool *tool, struct perf_se
- 
- 	for_each_set_bit(feat, header->adds_features, HEADER_FEAT_BITS) {
- 		if (!feat_ops[feat].synthesize) {
--			pr_debug("No record header feature for header :%d\n", feat);
-+			pr_debug("No record header feature for header :%zu\n", feat);
- 			continue;
- 		}
- 
-diff --git a/tools/perf/util/target.c b/tools/perf/util/target.c
-index 0f383418e3df..6a331743a099 100644
---- a/tools/perf/util/target.c
-+++ b/tools/perf/util/target.c
-@@ -112,7 +112,7 @@ enum target_errno target__parse_uid(struct target *target)
- 		 * The user name not found. Maybe it's a UID number.
- 		 */
- 		char *endptr;
--		int uid = strtol(str, &endptr, 10);
-+		int uid = (int)strtol(str, &endptr, 10);
- 
- 		if (*endptr != '\0')
- 			return TARGET_ERRNO__INVALID_UID;
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index c6a0a27b12c2..09cd14854aa5 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -180,7 +180,7 @@ static struct thread_stack *thread_stack__new(struct thread *thread, int cpu,
- 	unsigned int new_sz = 1;
- 
- 	if (thread_stack__per_cpu(thread) && cpu > 0)
--		new_sz = roundup_pow_of_two(cpu + 1);
-+		new_sz = (unsigned int)roundup_pow_of_two(cpu + 1);
- 
- 	if (!ts || new_sz > old_sz) {
- 		new_ts = calloc(new_sz, sizeof(*ts));
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 89585f53c1d5..c108f238012e 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -309,7 +309,7 @@ static int __thread__comm_len(struct thread *thread, const char *comm)
- {
- 	if (!comm)
- 		return 0;
--	thread__set_comm_len(thread, strlen(comm));
-+	thread__set_comm_len(thread, (int)strlen(comm));
- 
- 	return thread__var_comm_len(thread);
- }
-@@ -544,7 +544,7 @@ int thread__memcpy(struct thread *thread, struct machine *machine,
- 
- 	addr_location__exit(&al);
- 
--	return dso__data_read_offset(dso, machine, offset, buf, len);
-+	return (int)dso__data_read_offset(dso, machine, offset, buf, len);
- }
- 
- void thread__free_stitch_list(struct thread *thread)
-diff --git a/tools/perf/util/thread_map.c b/tools/perf/util/thread_map.c
-index b5f12390c355..141fbb819a65 100644
---- a/tools/perf/util/thread_map.c
-+++ b/tools/perf/util/thread_map.c
-@@ -93,7 +93,7 @@ static struct perf_thread_map *__thread_map__new_all_cpus(uid_t uid)
- 	while ((dirent = readdir(proc)) != NULL) {
- 		char *end;
- 		bool grow = false;
--		pid_t pid = strtol(dirent->d_name, &end, 10);
-+		pid_t pid = (pid_t)strtol(dirent->d_name, &end, 10);
- 
- 		if (*end) /* only interested in proper numerical dirents */
- 			continue;
-@@ -195,7 +195,7 @@ static struct perf_thread_map *thread_map__new_by_pid_str(const char *pid_str)
- 		return NULL;
- 
- 	strlist__for_each_entry(pos, slist) {
--		pid = strtol(pos->s, &end_ptr, 10);
-+		pid = (pid_t)strtol(pos->s, &end_ptr, 10);
- 
- 		if (pid == INT_MIN || pid == INT_MAX ||
- 		    (*end_ptr != '\0' && *end_ptr != ','))
-@@ -259,7 +259,7 @@ struct perf_thread_map *thread_map__new_by_tid_str(const char *tid_str)
- 		return NULL;
- 
- 	strlist__for_each_entry(pos, slist) {
--		tid = strtol(pos->s, &end_ptr, 10);
-+		tid = (pid_t)strtol(pos->s, &end_ptr, 10);
- 
- 		if (tid == INT_MIN || tid == INT_MAX ||
- 		    (*end_ptr != '\0' && *end_ptr != ','))
-diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-index 3b7f390f26eb..f13d5c1e3cd7 100644
---- a/tools/perf/util/tool.c
-+++ b/tools/perf/util/tool.c
-@@ -134,7 +134,7 @@ static int skipn(int fd, off_t n)
- 	while (n > 0) {
- 		ret = read(fd, buf, min(n, (off_t)sizeof(buf)));
- 		if (ret <= 0)
--			return ret;
-+			return (int)ret;
- 		n -= ret;
- 	}
- 
-diff --git a/tools/perf/util/values.c b/tools/perf/util/values.c
-index ec72d29f3d58..e44dbceaa88b 100644
---- a/tools/perf/util/values.c
-+++ b/tools/perf/util/values.c
-@@ -197,7 +197,7 @@ static void perf_read_values__display_pretty(FILE *fp,
- 	tidwidth = 3;
- 	pidwidth = 3;
- 	for (j = 0; j < values->num_counters; j++)
--		counterwidth[j] = strlen(evsel__name(values->counters[j]));
-+		counterwidth[j] = (int)strlen(evsel__name(values->counters[j]));
- 	for (i = 0; i < values->threads; i++) {
- 		int width;
- 
-@@ -251,7 +251,7 @@ static void perf_read_values__display_raw(FILE *fp,
- 			tidwidth = width;
- 	}
- 	for (j = 0; j < values->num_counters; j++) {
--		width = strlen(evsel__name(values->counters[j]));
-+		width = (int)strlen(evsel__name(values->counters[j]));
- 		if (width > namewidth)
- 			namewidth = width;
- 		width = snprintf(NULL, 0, "%x", values->counters[j]->core.idx);
--- 
-2.49.0.504.g3bcea36a83-goog
+On 01-04-2025 17:35, John Madieu wrote:
+> Hi Alok,
+> 
+> Thanks for your feedback.
+> 
+>> -----Original Message-----
+>> From: ALOK TIWARI <alok.a.tiwari@oracle.com>
+>> Sent: Monday, March 31, 2025 8:11 PM
+>> To: John Madieu <john.madieu.xa@bp.renesas.com>; geert+renesas@glider.be;
+>> conor+dt@kernel.org; krzk+dt@kernel.org; robh@kernel.org;
+>> rafael@kernel.org; daniel.lezcano@linaro.org
+>> Subject: Re : [PATCH v5 3/5] thermal: renesas: rzg3e: Add thermal driver
+>> for the Renesas RZ/G3E SoC
+>>
+>>
+>>
+>> On 31-03-2025 03:19, John Madieu wrote:
+>>> The RZ/G3E SoC integrates a Temperature Sensor Unit (TSU) block
 
+>>> +static int rzg3e_thermal_change_mode(struct thermal_zone_device *tz,
+>>> +				     enum thermal_device_mode mode) {
+>>> +	struct rzg3e_thermal_priv *priv = thermal_zone_device_priv(tz);
+>>> +
+>>> +	if (mode == THERMAL_DEVICE_DISABLED)
+>>> +		rzg3e_thermal_hw_disable(priv);
+>>> +	else
+>>> +		rzg3e_thermal_hw_enable(priv);
+>>> +
+>>> +	priv->mode = mode;
+>>> +	return 0;
+>>> +}
+>>> +
+>> always return 0 here ? what, if (!priv) return -EINVAL; ?
+> 
+> priv cannot be NULL here, guaranteed from probe().
+> Returning 0 here is expected by the thermal framework to notify
+> ops success.
+> 
+
+I agreed. priv cannot be NULL.
+It appears that return 0 is deliberate in this case. can we add 
+Meaningful comment which help to code readability.
+
+not sure if user call ioctl(fd, THERMAL_IOC_SET_MODE, 2) and it returns 
+0 with thermal enable.
+that create possibility to thermal_core call thermal_notify_tz_disable 
+if any case
+
+>>> +static const struct thermal_zone_device_ops rzg3e_tz_ops = {
+>>> +	.get_temp = rzg3e_thermal_get_temp,
+>>> +	.set_trips = rzg3e_thermal_set_trips,
+>>> +	.change_mode = rzg3e_thermal_change_mode, };
+>> other renesas driver defined as rzg2l_tz_of_ops, can be used similar one
+>> rzg3e_tz_of_ops for consistency!
+> 
+> Thanks for pointing it out. Makes sense. Will double check and
+> update accordingly.
+> 
+>>> +
+>>> +static int rzg3e_thermal_probe(struct platform_device *pdev) {
+>>> +	struct device *dev = &pdev->dev;
+>>> +	struct rzg3e_thermal_priv *priv;
+>>> +	struct reset_control *rstc;
+>>
+>> Thanks,
+>> Alok
+> 
+> Regards,
+> John
+
+Thanks,
+Alok
 
