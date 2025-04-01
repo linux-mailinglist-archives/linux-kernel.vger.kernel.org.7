@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-583508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E2CA77BC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:10:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64238A77BDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CF316B739
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108D3166036
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180B203716;
-	Tue,  1 Apr 2025 13:10:28 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2161F09B7;
+	Tue,  1 Apr 2025 13:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ierj4fAg"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA51C2C6;
-	Tue,  1 Apr 2025 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF0E3FBB3
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743513028; cv=none; b=JmOBBnkQfI9jFSMVaPVWfduLk0K/LueMPyZYZnf1joxvBuNLzKyK7G0pKQUBT4E1wy16NW7IeIM371uXPp9MbrAgrBqmXRHONMcByqqTLqPQ5iJMrzkqZ7sroHcCac5ucEbiKgM3eInRKgDE+3GhaKvAjfLx1lKaxnh6ul4yMBc=
+	t=1743513425; cv=none; b=jAP/oL8rOuiqimdPCk5+got+qKQ04T/XoxgS8xiluZXzr9Eaa2+CwKR81yvVBj9+t9j2FVjiDhYfLfL7I69sbArUb2yZ/RUvvKBgH9L7rF8VhwkWKTdWudt+XLrQ5Xzl+0cLGDS5LZwK6v2RYM+1n5cTvIk30KG5bOUU5Oyn0Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743513028; c=relaxed/simple;
-	bh=bZuhi5tp57vT1KrIZMO2TFV5Dty6u7hau5PtT9IEqvc=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=AFWQfbI3JX2X5Y4Al3B7t+BIYXfQeZUfusBjPW/rFstkiM/eG3NldPVWRYK5hVxBZLcdbDJ1i23bua5jf3/iRUGqUrbn8RCeRc6GD0vbD74Y445rUcyBu7zw92/howFg6VHAWEiOr0tYxfH4V2IS7o3S3nEwA0N79xuYTWISLWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZRpJW1cMZz501bv;
-	Tue,  1 Apr 2025 21:10:19 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 531DABTE052557;
-	Tue, 1 Apr 2025 21:10:11 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 1 Apr 2025 21:10:15 +0800 (CST)
-Date: Tue, 1 Apr 2025 21:10:15 +0800 (CST)
-X-Zmail-TransId: 2af967ebe5b7478-18370
-X-Mailer: Zmail v1.0
-Message-ID: <20250401211015750qxOfU9XZ8QgKizM1Lcyq2@zte.com.cn>
-In-Reply-To: <20250401210730615ULucEmQClX13Q7svZwHsD@zte.com.cn>
-References: 20250401210730615ULucEmQClX13Q7svZwHsD@zte.com.cn
+	s=arc-20240116; t=1743513425; c=relaxed/simple;
+	bh=dyvFc0CDhuS2tuvF73xqRsMp9C5bsnqsj6M8jQob10Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=jcVW2jSEKZKG8fLh38RFECpl8bS6fdYxveoHOngsAr2VPQu1CCOhhcl+4ojCDoNBHbK6NS2oDJQwaKVflW/aoK8EBv0wDEqt2P+LaaeyoKIhfy/e/VJQ8fv3DztmbMbmtGR1M+Lb105KzEmSW+cfhdV0KL1MrvrA5x19899f1fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ierj4fAg; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743513416; bh=PixgXrljpb4/o7qJ4iRL9JEHovZX9Akht4artxBMa/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ierj4fAgzRlrzS0UxfID+B2ybM0AdCF4tFSH6ncd2LIuSYyC5GHfFyNQ8aowCpeY5
+	 19W2odukR39vDE+anTCUJtaWUwYnd/5EjybFGCF3oahVo63CVhncRRpro+wgEijeXO
+	 79gXu8ZRCdG46IOwucNpKbH24Jqrfx2p/DhHwY6k=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 2B0AD26B; Tue, 01 Apr 2025 21:10:48 +0800
+X-QQ-mid: xmsmtpt1743513048tw2uqsj7y
+Message-ID: <tencent_0677C99FAED5EECC8C85E7D606C892F34606@qq.com>
+X-QQ-XMAILINFO: MdoRYM9mYrydGj3geKJotb/VT1BySN2nOto8rjKTsARmh1lp9Jx8Z5b3pHpAdP
+	 ZnyemfJwAnI7zRSRH1y4rZymTnmYBSfphUqCZki8GwVvkAjGYBwE/UmFiHEKcowmq3SYfaf6cixD
+	 SBrEXTxLk09hb2KW/+TwO7GIVAfEIxIyXiNSaqK9DomW3Ogys1o6e1f13PGkGXzH9WhTMANrdT/S
+	 EKUguKW3RzmuV6UcdrHNBD8OcaSiGu/5Qe7wwecdiWeiNu95mllzBPB/hUQuY7rC8da+QI0bcGyu
+	 YnayQ7HMSfU14I1hffjQAmhyXg/VAdvYAGSpvJ+qZsufiyFN3ZXHE2xjIleQYonDTZWj5TWQxRzW
+	 8vy4dMyj+urwK9AB0tDBWQ7EBu/kBVVEWnN7T2qFu/M0c/m1W3ZGF0Q2cVj5R6yf9ea7BZ5KwWUE
+	 5cjTgdo0mQmnN7y+pHjNqWe/wI7ETXOhkVq8hh6HVvYIh99NBc48QoCPbNrEW8k1d1pg8EujzI04
+	 kpCYfUiBDkUWrA+XjirF7LcD4zAtcxpGjjPUnZKnOBbZ3kYo/cJWCZ8FBHZuW2FJQ75vyo8fwMYY
+	 O+8dmZo8aWVAVoskPeVYTJxuxtsXNJsdlBk2txMHkaNmL5VgERalh/nZathHZO0PnaF7hwc4pQva
+	 Ijg+rXFhVVYmr8eBsymmIPPg9DEhO1peUPFDlfE8TTiYxzBWDtZL2BxZbxpouzBEql+w2XIvLW5e
+	 ehDN0ov6tbCxP3jyjS5T/DnbP6zzuqUJF1orrxHUVZNqNwduaO+T4MyMAniq1+n2mp+TXLPw50Yx
+	 oP/1sZznKFU3NS/OHC5vxGVM435njWY+YwEIfrlrtUXijdmC5RRcB/z9ho+Go0mA2Zkv+Ql6xAdW
+	 OB05ISrmGOvVcJMTfbFfDIwFYEQfpKwl03OW+QUW5H
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+5d83cecd003a369a9965@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [isdn4linux?] [nilfs?] INFO: task hung in mISDN_ioctl
+Date: Tue,  1 Apr 2025 21:10:49 +0800
+X-OQ-MSGID: <20250401131048.1558811-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
+References: <67dad671.050a0220.2ca2c6.0197.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <jgg@ziepe.ca>
-Cc: <leon@kernel.org>, <li.haoran7@zte.com.cn>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        <brauner@kernel.org>, <agoldberger@nvidia.com>, <cmeiohas@nvidia.com>,
-        <msanalla@nvidia.com>, <dan.carpenter@linaro.org>,
-        <mrgolin@amazon.com>, <phaddad@nvidia.com>, <ynachum@amazon.com>,
-        <mgurtovoy@nvidia.com>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIDMvM10gUkRNQS9jb3JlOiBDb252ZXJ0IHRvIHVzZSBFUlJfQ0FTVCgp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 531DABTE052557
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67EBE5BB.000/4ZRpJW1cMZz501bv
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Li Haoran <li.haoran7@zte.com.cn>
+#syz test
 
-As opposed to open-code, using the ERR_CAST macro clearly indicates that
-this is a pointer to an error value and a type conversion was performed.
-
-Signed-off-by: Li Haoran <li.haoran7@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/infiniband/core/verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/core/verbs.c b/drivers/infiniband/core/verbs.c
-index c5e78bbefbd0..75fde0fe9989 100644
---- a/drivers/infiniband/core/verbs.c
-+++ b/drivers/infiniband/core/verbs.c
-@@ -572,7 +572,7 @@ struct ib_ah *rdma_create_ah(struct ib_pd *pd, struct rdma_ah_attr *ah_attr,
- 					   GFP_KERNEL : GFP_ATOMIC);
- 	if (IS_ERR(slave)) {
- 		rdma_unfill_sgid_attr(ah_attr, old_sgid_attr);
--		return (void *)slave;
-+		return ERR_CAST(slave);
+diff --git a/drivers/isdn/mISDN/timerdev.c b/drivers/isdn/mISDN/timerdev.c
+index 7cfa8c61dba0..0c3771a5cd0b 100644
+--- a/drivers/isdn/mISDN/timerdev.c
++++ b/drivers/isdn/mISDN/timerdev.c
+@@ -238,8 +238,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 			ret = id;
+ 			break;
+ 		}
+-		if (put_user(id, (int __user *)arg))
++		if (!user_write_access_begin((int __user *)arg, sizeof(int))) {
+ 			ret = -EFAULT;
++			break;
++		}
++
++		unsafe_put_user(id, (int __user *)arg, Efault);
++		user_write_access_end();
+ 		break;
+ 	case IMDELTIMER:
+ 		if (get_user(id, (int __user *)arg)) {
+@@ -255,8 +260,13 @@ mISDN_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	default:
+ 		ret = -EINVAL;
  	}
- 	ah = _rdma_create_ah(pd, ah_attr, flags, NULL, slave);
- 	rdma_lag_put_ah_roce_slave(slave);
--- 
-2.25.1
++out:
+ 	mutex_unlock(&mISDN_mutex);
+ 	return ret;
++Efault:
++	user_write_access_end();
++	ret = -EFAULT;
++	goto out;
+ }
+ 
+ static const struct file_operations mISDN_fops = {
+
 
