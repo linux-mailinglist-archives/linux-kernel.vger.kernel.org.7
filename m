@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-584259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6EFA78533
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6964A78548
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B71F16CEA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14AB3B0421
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0564321579C;
-	Tue,  1 Apr 2025 23:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7822153C5;
+	Tue,  1 Apr 2025 23:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BD3FPvlm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b="2NPAObjB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0DF1A5BB0;
-	Tue,  1 Apr 2025 23:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6209F213E7B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 23:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743549631; cv=none; b=P87Ha43dK02u7/RiTb4N/eX6iC/uwGA6wIaBOa55Ol1hrl6JS235hHfmczh8q7bq++cqJ87dHFq2errTrnQCn3u4WU2vebCRBpsFYe8kL7j0uMfVOIod/cUURd8Y/m8pwzwid+RXKbyA4/mRucZqUOMsOzech0gMfJnzzR43fNM=
+	t=1743550604; cv=none; b=MvDJdbun0QI+jcoELEHvp/Q23OwJIZ1+A/GLEkORmRDDMNEOh0+094HKBn75fBhzouQudqQJV/8jrpe9stie1QjzCdaJH48j4GrUSJs4yDIC/Xjmdr+hWs3YD1LSqeNB8VGxniwcDhP18JMMAzfCY75xHOmvtI1e7wXEH+mpDcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743549631; c=relaxed/simple;
-	bh=SdGfe4HdfJjIe9OI0mn7guY6sY3j7loryFLpiLoQOJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YwX3M17ow6YiE99Hhoxw7wMQ9ScSd5RnctCod4y0WHJ0IrrVGisUc4EvOySXrNoWNRIDLSx5hkap49aYLjtTJZJDy0dGqLN0/14c+iAYcme4QnKDLGoBEZAeyn+OtlmHkLMb2sKRdTOXFEw9GeRvgr2YuTX7/TVw3akk98JqdPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BD3FPvlm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1743549618;
-	bh=8Vs0Q1M7JCePHwzjAATmXva0xwwPXX+W8jZzUx7dQSs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BD3FPvlmbMbRqOc5QymvffGVe6S+lZuRa0UuvGvimIT/GNaPvw7rdaKuKOO7AZQsq
-	 +B8K6c11JOXNOYrTn4nVVqizgW3eC27+hWv/qf8eIa88y8NK7epOjTvHeQ8OFaxtB6
-	 uBNdVYF1z/Ii4bHK56xlpvGNwfa/BvmuLIHjVpDpWAnNN7wy32fuyb6qSi/39x0Ys2
-	 OWcYCgdmIs+3ISXnPeR/rJpai9mW9E2ChmnkfYwgL6uptImUBh+CLdkebdNVH78UqZ
-	 3G9Jg56nmRsOfEPr0ZTY+CnVvnavAA9JTIhKxvY5T5tsm/Wo1xrTh2wAoVMlcXMFMK
-	 uHXMvVK5XImMA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZS3rK6tgRz4wcT;
-	Wed,  2 Apr 2025 10:20:17 +1100 (AEDT)
-Date: Wed, 2 Apr 2025 10:20:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Richard Weinberger <richard@nod.at>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Johannes Berg <johannes.berg@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
- <rppt@kernel.org>, Tiwei Bie <tiwei.btw@antgroup.com>
-Subject: Re: linux-next: manual merge of the uml tree with the mm-stable
- tree
-Message-ID: <20250402102016.6ab2367d@canb.auug.org.au>
-In-Reply-To: <20250319105554.2e2f3aab@canb.auug.org.au>
-References: <20250319105554.2e2f3aab@canb.auug.org.au>
+	s=arc-20240116; t=1743550604; c=relaxed/simple;
+	bh=f1LW7wArLTH/O3nNwH0Ut5ahqANxTwb+PDOdiPH7gGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qAItM4+BD/xfj98rowpSHGmo4btcrGlDb6US4erwyN9+tF9c1gdEodPHwaTMPN1OkWHKEitYjbXzujndbLiDmtBHigbWLXcBb1p2+sWBRuWTIlExv4rd/dOBjZS1Ln7Yi7Usf8vunqhDDol/FsvBdekvUNaRiusZf7M+etnkV7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com; spf=none smtp.mailfrom=wkennington.com; dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b=2NPAObjB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=wkennington.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-225df540edcso6581685ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 16:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wkennington-com.20230601.gappssmtp.com; s=20230601; t=1743550601; x=1744155401; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1W2Oez/Sw08kez7PZLuhoXC3i+XpY3chBoG0Mg2u1RE=;
+        b=2NPAObjB2BhnBu3q/M1VrmAcMkdkh2AgrVtiCnugyITfM639LSqBjj3F02oXoqTkXJ
+         1TIO0pZVzzbpQTzN2hoB0LE20aL7xGEM/MUcGXU3GMfW3dUd39x02ZA7++QW4Sn8Vb60
+         Le3JNBAiuyqJTKzLs2Qz87thdDD0nsj3rteV6w2fmYcClVOEaKJLPpGDfDsdOIEJ/eBI
+         Rnvs2+/FTfQeWB0skAiSgZDaHLRv2xd66THhMoAjJ4tm/fI0Bkdg6XpWE7iRQ4H3sYz9
+         wgp7vBBfvJVQLfQYnLttj+A/yI4WICECuxpn/ZpdiwMH/+HTtN9Fsm4v44jvFpxGfVEW
+         ndZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743550601; x=1744155401;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1W2Oez/Sw08kez7PZLuhoXC3i+XpY3chBoG0Mg2u1RE=;
+        b=BJ50IFS9WRoYcM5BX+nkI9Fd86wxezS0NTRBoqnuGLGmhKWHtlLNhyjrJ+D0f4VluZ
+         kfqX72NJuWmzoqMa79pQ94rOSLwqm2rMEVKLnspIc7juBvt+MyPO6ir4SfxXH2R4LbCc
+         ctMf55PtaGXmlvZ3z6M8sv71TzQV1gGLHF0Hp9nh2Jv2fra60g4PthG8VC+1X6PZ+R/W
+         SCMeo9sDwHVeCOT741zhoy7DK87Xii7h6zmk2kfOrEqeV0KgKXI6xtroNtDhV47zPxg6
+         TVm3XsfoKSCOslEZd69ktwE8/ElW93QzBUvpWsrV0oEh5bqxsQ7WbrOAbQkK190YCYBM
+         wpiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAVL56W41t+AdFuOIMtmzfGpTp0JwsLUz0j+dbBTKm/7J8ERbYmSXBcu7Fj26nox+JpuHdRVvaVnf5sJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGjKIQVEg4jqySsxG4WQGM5TtqCHfDOHIWeNGzt6DBlF5bFH8a
+	wkiSpBiFd1Jn2DSCAGKLz3zZ0AiWTQ43Wn73LX+mcNYpykHUqWE6ACXDzi4WTQA=
+X-Gm-Gg: ASbGnct00s5nkUfVAb23oQUTf4nUsXOcCBpHc68Q4uQkXr5ny5bAFJBxfhI1Hjfpdoc
+	885uKUK9VtgA35NHiUEYrhkY/uwuN8f9697GAGrfFWdhdBb9e5my9iCZSGnaT3ghsdRcVGCZ36/
+	zHl7MPDwUizBkruXQZsx1moEEDKI2a+5R7HOOewHIkTTINVgLGMu5yz0hysMihBJmClUjqMKQxa
+	fTTykiOn4A/wUI3E8UsGLYsmaMqnBGPCQxjixcTbndDH4vEdB0NjN/FT0Vir82hZ0QfHY4j2evS
+	l1q5BAcO4sFG5vrs3+2ihrYr+cDYFzNfSFfYiDa8ZcHX6velfH6hpNaILSE2Rp7OofyZG3h4mM+
+	2aM+IPCmbv+FFRcxDmuf7u9OApgcqM0fa7LVaYIt2Gg==
+X-Google-Smtp-Source: AGHT+IEVaEftCDieEpS7ZkP41WX9Cr6Tw3+DC3MPmN07cO7H+9fJKbzk/i15pVNXyrYe+e1tH7GluA==
+X-Received: by 2002:a17:90a:e18d:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-3056b714b87mr2357429a91.5.1743550601625;
+        Tue, 01 Apr 2025 16:36:41 -0700 (PDT)
+Received: from wak-linux.svl.corp.google.com ([2a00:79e0:2e5b:9:895:611e:1a61:85c1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1dee47sm95153755ad.180.2025.04.01.16.36.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 16:36:41 -0700 (PDT)
+From: "William A. Kennington III" <william@wkennington.com>
+To: Tomer Maimon <tmaimon77@gmail.com>,
+	Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	"William A. Kennington III" <william@wkennington.com>
+Subject: [PATCH v2] ARM: dts: nuvoton: Add OHCI node
+Date: Tue,  1 Apr 2025 16:34:09 -0700
+Message-ID: <20250401233409.3215091-1-william@wkennington.com>
+X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+Reply-To: 20240930214329.192587-1-william@wkennington.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6jRmPQ=VKeP4uWTcAj2n0_m";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/6jRmPQ=VKeP4uWTcAj2n0_m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The EHCI peripheral already exists in the devicetree, but the hardware
+also supports a discrete OHCI unit on the same USB PHY. Generic OHCI
+works fine for this device already and has been tested on real hardware.
 
-Hi all,
+Signed-off-by: William A. Kennington III <william@wkennington.com>
+---
+V1 -> V2: Fixed nodename from ohci -> usb
 
-On Wed, 19 Mar 2025 10:55:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the uml tree got a conflict in:
->=20
->   arch/um/kernel/mem.c
->=20
-> between commits:
->=20
->   0d98484ee333 ("arch, mm: introduce arch_mm_preinit")
->   8afa901c147a ("arch, mm: make releasing of memory to page allocator mor=
-e explicit")
->=20
-> from the mm-stable tree and commit:
->=20
->   e82cf3051e61 ("um: Update min_low_pfn to match changes in uml_reserved")
->=20
-> from the uml tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->=20
->=20
-> diff --cc arch/um/kernel/mem.c
-> index 379f33a1babf,61b5a5ede01c..000000000000
-> --- a/arch/um/kernel/mem.c
-> +++ b/arch/um/kernel/mem.c
-> @@@ -66,11 -68,11 +68,12 @@@ void __init arch_mm_preinit(void
->   	map_memory(brk_end, __pa(brk_end), uml_reserved - brk_end, 1, 1, 0);
->   	memblock_free((void *)brk_end, uml_reserved - brk_end);
->   	uml_reserved =3D brk_end;
-> + 	min_low_pfn =3D PFN_UP(__pa(uml_reserved));
->  -
->  -	/* this will put all low memory onto the freelists */
->  -	memblock_free_all();
->   	max_pfn =3D max_low_pfn;
->  +}
->  +
->  +void __init mem_init(void)
->  +{
->   	kmalloc_ok =3D 1;
->   }
->  =20
+ arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-This is nw a conflict between the uml tree and Linus' tree.
+diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+index c7880126cc78..5a466e97955a 100644
+--- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
++++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
+@@ -151,6 +151,13 @@ ehci1: usb@f0806000 {
+ 			status = "disabled";
+ 		};
+ 
++		ohci1: usb@f0807000 {
++			compatible = "generic-ohci";
++			reg = <0xf0807000 0x1000>;
++			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++		};
++
+ 		fiu0: spi@fb000000 {
+ 			compatible = "nuvoton,npcm750-fiu";
+ 			#address-cells = <1>;
+-- 
+2.49.0.472.ge94155a9ec-goog
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6jRmPQ=VKeP4uWTcAj2n0_m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfsdLAACgkQAVBC80lX
-0GzLFAgAjSvEglF9TcUJNM5ZgLelGVRac0nLh45FFPQ+AcKEbJnAl9xBLG6zrKsi
-zNm659QWp8jSNWyGrrAdlHrIOl/NaPLtIDOc6gcz0WuPzTk3o11PDCJg1bJl10KY
-wm8yq2/poMycvxqBflJjkEtnQFhs9FQWbCHQri3m+Uv9zrdUvIb6WJx/r2j+TaNU
-Nn3RzNspyl+f3MeHA7smCO5c3qe0qdKwIqYTx+7WXyMYSZNZBmLprCcCtmvMI7tg
-T6N9jn5ot9XSMrzCgqiNjdsV2hqkiasvOmBUWtGrFI+6BwvLObon0u6SJaMnAhei
-34fMgajwQFY3H4svOd6GrVh4qLcCJg==
-=xrW5
------END PGP SIGNATURE-----
-
---Sig_/6jRmPQ=VKeP4uWTcAj2n0_m--
 
