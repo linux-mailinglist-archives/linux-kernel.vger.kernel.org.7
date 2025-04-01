@@ -1,132 +1,153 @@
-Return-Path: <linux-kernel+bounces-582722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B98EA771E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E69EAA771E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 02:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47D6616B251
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26CC16BA1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 00:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D3860B8A;
-	Tue,  1 Apr 2025 00:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3CC13635E;
+	Tue,  1 Apr 2025 00:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iMtwiMao"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzTo9gNa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCECE3595D;
-	Tue,  1 Apr 2025 00:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC21D3FC7;
+	Tue,  1 Apr 2025 00:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743467474; cv=none; b=tIM18+zTkU/gPO8pYzTcCp437KBlBUWl7kWgTYof8mtdk3WOM1sE5xc7n6N1yH/yzL3Uwec2m1d4LzOJ/El2lXClc6QGd47QQFqaNx30QCGOe+b9RdLpBMwR/0qcfUXP19WTtxaahZBah2+RFkCokxXxnIYva501oOQvt99GxcY=
+	t=1743467606; cv=none; b=Bnxw08hOiIN/6kNg6yipulOHqe7zJtAOHPj6bLsmAsGm/B0m7B5pA00aSMtYoIqkWhDMD/tv17Nx1ninPJXO4rzngwHu2fZhR6YvEdSiUai4930t0iSv+9mY6rsdy9YyuXkF01WizK7oOuN6v4O7ro/86KGw+bxYuRHwgPVkzsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743467474; c=relaxed/simple;
-	bh=2bnlZKcqF1QfX8cbYQlebyb0ms5YPOYfQQpLSje/PXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YE5m0pF+RbS6ZCEZ1IIDNSafrTakciKBMKvqpAOqqzz+n1Ezxuk9tPLS9D9xppwiHlTt7p8NLkZSGHd0hJBGly30dvwr6B82SBoIoUobuaiOaUVLWKYbZsjI9f1c1hiH/mDwDE6C4KaFiLEcU7oyCFe/wmjWKkcivNp0qHVte7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iMtwiMao; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1743467470;
-	bh=f5UFSKlpZMd23yYXyYvmQ+25iHMADDGseIQfDj8UagA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=iMtwiMaozSMxU4VK/dGIL8xtnSqKDo/jUiqSeV4QuJYSrQjnWdBqvai0Ply8nz8Km
-	 sA1XuCft/pr6J7xUtScRH2kYZIjX2a/Eg/nzscBJMpfNDvoCerJsoP8x93svmFIVQp
-	 sUhb4ux/uMhjq0vy9o8nL89vOqbQZE3FK6tCh4kJXOadsMsm4VBWkuPyOR+haiw0oZ
-	 syFXhb7r/XCYi9cuN6ijNZ8L0duQIuAUOq17pcawG9tQPqjo1GymG1I0vJj1w7mneX
-	 8OoYbdqvGaUw7vUcKqp0sh2XiWBtwE2dDLJ/NwWMV6tibMua9H5mFhE5m/KM4dvUoR
-	 UVeCE78ZVMJkw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZRTSY62SWz4xG8;
-	Tue,  1 Apr 2025 11:31:09 +1100 (AEDT)
-Date: Tue, 1 Apr 2025 11:31:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Masahiro Yamada
- <masahiroy@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: linux-next: manual merge of the s390 tree with the kbuild tree
-Message-ID: <20250401113109.2c8cb2b2@canb.auug.org.au>
+	s=arc-20240116; t=1743467606; c=relaxed/simple;
+	bh=+zJ2gVANS/W08rzPAqYzO5t5HGmjYRihcBJZR3OXeQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KFEFNBapqkUX61LT7aMwSjREPszU1nWMweE2QNYvna821g/1Dd9tGMc3HUdBTpe9cBPxUZ6Y79PGdtNpQZ5F7Pr5jN4K/a8ks/UItWH0S8w1Vv1qcFs5i6qBfMW2W5g8ysGWnugS+CJaDRhoPJTZHWK+l8znp/uON4xzh28E7nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzTo9gNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77544C4CEE3;
+	Tue,  1 Apr 2025 00:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743467606;
+	bh=+zJ2gVANS/W08rzPAqYzO5t5HGmjYRihcBJZR3OXeQU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SzTo9gNarL0zjHyzGqzH76I+tkkdBYNgRgDOHLDbf5+LpY8NF85R5as86nceSDqIf
+	 Gy8xouGZtOwoRqgDxaZ9xNoi0KB4KMIkqAxl6Tek1PKHGEybDfjK7CpUlFR+WkrPe4
+	 ob8gnUgPmJEEYWt2WgSU+PB79zeKde+eURUkuZkaFfWVfSqXPhWyat5hht/dW2G82v
+	 SOJgs96eYYq8aQQT4CW2Us8hDEDbkfWb1OR0M8VnzW7YkfaYoG0omVwTmJeAP0eTj1
+	 Brwk83Wl8VccahrC8p3/oz0oES/QZ4ovhppnSJaFDJR3rB9p6KKS1Na3aULB5+crwv
+	 EehzY08hiuotA==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	jack@suse.cz,
+	rafael@kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	mcgrof@kernel.org,
+	hch@infradead.org,
+	david@fromorbit.com,
+	djwong@kernel.org,
+	pavel@kernel.org,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	boqun.feng@gmail.com
+Subject: [PATCH 0/6] power: wire-up filesystem freeze/thaw with suspend/resume
+Date: Tue,  1 Apr 2025 02:32:45 +0200
+Message-ID: <20250401-work-freeze-v1-0-d000611d4ab0@kernel.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
+References: <20250331-work-freeze-v1-0-6dfbe8253b9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/a+.RNlqCLfOPPdabUjbL3_p";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250401-work-freeze-693b5b5a78e0
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3022; i=brauner@kernel.org; h=from:subject:message-id; bh=+zJ2gVANS/W08rzPAqYzO5t5HGmjYRihcBJZR3OXeQU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/NrF24GwPCvFN8b438eTaXwZbS24kt+xMWqh5er1bj bO/SsqJjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMVmP477Yy3zPOwFRG/WBI 21xGeZ5engX7qiLKPDRVu1f0aEj7MDJ0GtaJSp2Z8bfRINJ3zvUZU8VYbmcwvBU1a1LhCjdJbOU EAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
---Sig_/a+.RNlqCLfOPPdabUjbL3_p
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The whole shebang can also be found at:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=work.freeze
 
-Hi all,
+I know nothing about power or hibernation. I've tested it as best as I
+could. Works for me (TM).
 
-Today's linux-next merge of the s390 tree got a conflict in:
+I need to catch some actual sleep now...
 
-  arch/s390/Makefile
+---
 
-between commit:
+Now all the pieces are in place to actually allow the power subsystem to
+freeze/thaw filesystems during suspend/resume. Filesystems are only
+frozen and thawed if the power subsystem does actually own the freeze.
 
-  9b400d17259b ("kbuild: Introduce Kconfig symbol for linking vmlinux with =
-relocations")
+Othwerwise it risks thawing filesystems it didn't own. This could be
+done differently be e.g., keeping the filesystems that were actually
+frozen on a list and then unfreezing them from that list. This is
+disgustingly unclean though and reeks of an ugly hack.
 
-from the kbuild tree and commit:
+If the filesystem is already frozen by the time we've frozen all
+userspace processes we don't care to freeze it again. That's userspace's
+job once the process resumes. We only actually freeze filesystems if we
+absolutely have to and we ignore other failures to freeze.
 
-  991a20173a1f ("s390: Fix linker error when -no-pie option is unavailable")
+We could bubble up errors and fail suspend/resume if the error isn't
+EBUSY (aka it's already frozen) but I don't think that this is worth it.
+Filesystem freezing during suspend/resume is best-effort. If the user
+has 500 ext4 filesystems mounted and 4 fail to freeze for whatever
+reason then we simply skip them.
 
-from the s390 tree.
+What we have now is already a big improvement and let's see how we fare
+with it before making our lives even harder (and uglier) than we have
+to.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      fs: add owner of freeze/thaw
+      fs: allow pagefault based writers to be frozen
+      power: freeze filesystems during suspend/resume
 
---=20
-Cheers,
-Stephen Rothwell
+Luis Chamberlain (3):
+      ext4: replace kthread freezing with auto fs freezing
+      btrfs: replace kthread freezing with auto fs freezing
+      xfs: replace kthread freezing with auto fs freezing
 
-diff --cc arch/s390/Makefile
-index d5f4be440879,fd3b70d9aab1..000000000000
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@@ -15,7 -15,7 +15,7 @@@ KBUILD_CFLAGS_MODULE +=3D -fPI
-  KBUILD_AFLAGS	+=3D -m64
-  KBUILD_CFLAGS	+=3D -m64
-  KBUILD_CFLAGS	+=3D -fPIC
-- LDFLAGS_vmlinux	:=3D -no-pie
- -LDFLAGS_vmlinux	:=3D $(call ld-option,-no-pie) --emit-relocs --discard-no=
-ne
-++LDFLAGS_vmlinux	:=3D $(call ld-option,-no-pie)
-  extra_tools	:=3D relocs
-  aflags_dwarf	:=3D -Wa,-gdwarf-2
-  KBUILD_AFLAGS_DECOMPRESSOR :=3D $(CLANG_FLAGS) -m64 -D__ASSEMBLY__
+ fs/btrfs/disk-io.c          |  4 +--
+ fs/btrfs/scrub.c            |  2 +-
+ fs/ext4/mballoc.c           |  2 +-
+ fs/ext4/super.c             |  3 --
+ fs/f2fs/gc.c                |  6 ++--
+ fs/gfs2/super.c             | 20 ++++++-----
+ fs/gfs2/sys.c               |  4 +--
+ fs/ioctl.c                  |  8 ++---
+ fs/super.c                  | 82 ++++++++++++++++++++++++++++++++++++---------
+ fs/xfs/scrub/fscounters.c   |  4 +--
+ fs/xfs/xfs_discard.c        |  2 +-
+ fs/xfs/xfs_log.c            |  3 +-
+ fs/xfs/xfs_log_cil.c        |  2 +-
+ fs/xfs/xfs_mru_cache.c      |  2 +-
+ fs/xfs/xfs_notify_failure.c |  6 ++--
+ fs/xfs/xfs_pwork.c          |  2 +-
+ fs/xfs/xfs_super.c          | 14 ++++----
+ fs/xfs/xfs_trans_ail.c      |  3 --
+ fs/xfs/xfs_zone_gc.c        |  2 --
+ include/linux/fs.h          | 16 ++++++---
+ kernel/power/hibernate.c    | 13 ++++++-
+ kernel/power/suspend.c      |  8 +++++
+ 22 files changed, 139 insertions(+), 69 deletions(-)
+---
+base-commit: a68c99192db8060f383a2680333866c0be688ece
+change-id: 20250401-work-freeze-693b5b5a78e0
 
---Sig_/a+.RNlqCLfOPPdabUjbL3_p
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfrM80ACgkQAVBC80lX
-0GxI0wgApZBKLDbtNZv0NIRRzRuXd4a5KEV+QPNNr38R4se4ygBT9U37ebzferfH
-/azTkTnO/4KVTBsgDYB5FPEYTJ582HVEr8lN7MgbH0wzkCpluIQSJHqHBjwkfSB4
-DYFcU3LQDdjceL0+cWPpK5WRy2d7Ovf3cbEMi8/MPLLdvBUbaLvmMWtxFjVrkyMJ
-Wdh/waIzLSEXfcujFXLOHYmoCsDjcZpMFq8ptiBx31gPLZCLn9ySGMCgF3v2TdGG
-nw/Ycl4PG/SfIxbcAyEQXZ4UK/D7BPE0Gxw4wh9DQP0TX8/Kq5ysybZGjfA5N7Fy
-xheQa+drfU6jR6RD3wv/0oZT+CqaUA==
-=jAJf
------END PGP SIGNATURE-----
-
---Sig_/a+.RNlqCLfOPPdabUjbL3_p--
 
