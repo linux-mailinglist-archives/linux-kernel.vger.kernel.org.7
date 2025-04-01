@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-583456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127FEA77B1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:38:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800A8A77B19
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629CE188F0BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:38:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02B57A2D44
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6CB1FBEA6;
-	Tue,  1 Apr 2025 12:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9A720010C;
+	Tue,  1 Apr 2025 12:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="m5NzIIG/"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9R7s2KQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7A1F0E56
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2E1EBA14;
+	Tue,  1 Apr 2025 12:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511089; cv=none; b=e7ECiD4AySpHbbxxxxLgnvq9D7Pw91QiDzB/9GeFkpAEmq9UVwx+SK/IjIppl8LHnNu230o20gWLHnrI+uXGxVY6+SyCEozI8png2GcfizMyb4BgtwXnnao62VbyLrH8V9XQMfRRYV7Cs7ZvTfXKPwXxdO7s4yxwytZ/pz9S3FE=
+	t=1743511002; cv=none; b=J8j+FXcDO2mLjIW0668Aao08fA/TLg9VydJpiMO9jy+GRdwHKU7FBb+Fj5ENT+q2zxR3qEhwC6Ub7rLcaRUYVrkAkba8+Ow0yyc/YLLOqWGpNElTd+K3Hch9pU8QgLymgV3fCOFYVa2e8EO/2FTALkAFGWtqehgK4OnOWtXoZGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511089; c=relaxed/simple;
-	bh=45sC2gcuHThVf7Lu+ibrQa9rcY+HgmdLqpO4yCcHX4w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CrTjIbFb4IaL8DBzw/0Hrg6QtpbJtbnE9mTYUeXdiOOls9xVWjBVwtoq4Hci6x3u7lydQWZIvpK119u/E0+Ny6Z9sogAWA6IorxF5gOoLLfoTHdLQ1PN4fS4fu/02pJXlRa/57nQwWJXaFcLWXeAQyprfG57tXlAUeolmi8iWCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=m5NzIIG/; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1743511002; c=relaxed/simple;
+	bh=rFyqZ2RLaO7RKhVaj4rYRYF03+gUYQQxc4D+EVrDNFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ze3uBUOXUWwJgGGV7OfUlI9Q0Y4LnLnGfIhUYxPoIK5FNx7XUVyZx4L+/+FTe3UHjEFrwxW0AY+zRpGCuh1u1+6KIg1mROwhw7vztxWv8tgpEWbuuRJo+UBgA0Mfav8XCmIvk0rlnfAehzD7mKpJYBeygId4lRBghvrSVIb39xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9R7s2KQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227b650504fso109395835ad.0;
+        Tue, 01 Apr 2025 05:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1743511088; x=1775047088;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=992z0ct1nxTDIKPASmURv6lsKbYXxMWUzH4MZUc64H8=;
-  b=m5NzIIG/eTn8o+WuO3JP1Xs/YDsPmT9HYxE2GHKxZN9kDgFVBt8xZ+/o
-   6bm5vGSiTY2mhfhGRPxGKJE8YHZ37d5J8VuETJKYzRchJoK1HP5yZG/sp
-   8IEt/mrOW+Uwe/SSuw3l4B2buiGeDg2WyqVIakWth6NU31RLlYLM4k9WQ
-   A=;
-X-IronPort-AV: E=Sophos;i="6.14,293,1736812800"; 
-   d="scan'208";a="731802818"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 12:38:04 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.17.79:27630]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.201:2525] with esmtp (Farcaster)
- id 458f0c32-c36c-4765-b972-66f827eb722d; Tue, 1 Apr 2025 12:38:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 458f0c32-c36c-4765-b972-66f827eb722d
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 1 Apr 2025 12:38:02 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.1.212.23) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 1 Apr 2025 12:37:58 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <sieberf@amazon.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
-Subject: [PATCH] sched/fair: Only increment deadline once on yield
-Date: Tue, 1 Apr 2025 14:36:20 +0200
-Message-ID: <20250401123622.584018-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
+        d=gmail.com; s=20230601; t=1743511000; x=1744115800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRLq03yk6Zy7YEUudCgpVtrnIVH8S9IIQdohHtcELnE=;
+        b=F9R7s2KQAzpBhEcQSLhyRl6xGdSAemhtmp0w+jC6vPizCtElvKFM2364eHh26Fh7UH
+         J5b7zikdQjrs/kwuvAwMXaPBC7DOjIMiFrwWsp9KWuMRBaVHyfsH9HkjVnznw8b9kYHa
+         bG0te1cOYjKA9f3aoWhGskfnYAuOCkFdT7Jq2/7wFgs7+IiSeFNB4M8EXkV9MCusm0m4
+         rU7E1gUSJugb7psn7IAFVwveOIUv8zAspW88Inr9/Tp/5szTsgG5i2DvNvlcrKpyuKGf
+         yuH+J5+3wnzJTr2HjLEUb8sX2TG+EwfxVYCeit2vqgd8Se4c73jVgNj7qr5S2E2fib3A
+         W57w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743511000; x=1744115800;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PRLq03yk6Zy7YEUudCgpVtrnIVH8S9IIQdohHtcELnE=;
+        b=CiJ+HTDcF1Gf6wC4+hhZLT+gSbZFrdydEyoFAF1CC10QCXKbVDaLLezCCec/pGxNtr
+         l1Z9zRbb787S8J/Dc5loIunHyfEqIoocLOAeGc6Y6Xp4gMsggtrFFDI08WVt61AbhxB1
+         VvOdTkXISkYa+oNWLgHVzV1tQp9XzcnbZlYGgiw6+mH6cnNuwupmAukEbHnHfsl+jcom
+         dz52nftMzu6OaEJGp73Q+QBUHeayTjs/ERyzHIbVP4Ma84hu+bUo2PxXGuLmKG2DlRd5
+         9UkaIQ1QGqTJ+L72s7/OTYZP/ThM+8EyYra/4ExGYwTiDKZfT7fryEyEeu4LBZOIjsJL
+         uMqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeStN/lCxGIbp6pbuGSLdE2guCyzvTw8BLUatMgm1HdeFx7AE1+qMR05ize8QiYh3/IloSuNegYZ04@vger.kernel.org, AJvYcCXwnwfurI/1rxYwF2DiUH+Cr4VL7gjDkLCcTuzVq+Lg94ymaeJpsCYD8e6BAiWozrIHh8C0XtnWUfw79/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzes8LgCatvKSFrpjtYGkz0XeTgzeN22MxeP2C4EJxVCBUpCi3f
+	pHy8KiSY7BZzBtCt5wkWLsqJyjsI5CkG1hxzwqRFGKx+/j/28Edn
+X-Gm-Gg: ASbGncuW2jwg0MXJDjJKCu3JYdPrwFegGMZ/LTRTr3pEQYW7egGMUSkkTMXb7lvX2/K
+	iXc4HVGKz9mG0qCtCm8zLT2YPuEmavh5NRZjfyFJfMeUe6ADHhHQpejV7QVWTgHUjpKrKoHReif
+	s7Tuf+cfv5l+ZzWn3cBS1OgU6ZEY3suqiJP9vFo4JffWfJJsmu/F94s6GpI123k6Y3GyG7vDL0w
+	F3D1HN72TCf43UmsHWpO7rlH3OmtM7QQr8AEcwfdvWkqoO0reJ06GMABrPlLGNjXMvbLhd7Tqlm
+	Ruodut4zabCCqkXIj/K54IjlOUwmzYpZvhPjS4S7I9ejPWvm2wavxenjckRspKKIPyRLaJ/oymY
+	i5Lo=
+X-Google-Smtp-Source: AGHT+IEZ+AqxgvDoRSMSCzF1vC7TGaxMp9fl292+90i1l0j1zcPEixAD1cQ+sRQphPvlDNQdKR1/9A==
+X-Received: by 2002:a17:90b:4d09:b0:2ee:693e:ed7a with SMTP id 98e67ed59e1d1-3053216e46bmr17029670a91.35.1743510999853;
+        Tue, 01 Apr 2025 05:36:39 -0700 (PDT)
+Received: from mi-ThinkStation-K.mioffice.cn ([43.224.245.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3039e1139fasm12699199a91.25.2025.04.01.05.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 05:36:39 -0700 (PDT)
+From: Ying Lu <luying526@gmail.com>
+To: oneukum@suse.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ying Lu <luying1@xiaomi.com>
+Subject: [PATCH v2 0/1] usbnet:fix NPE during rx_complete
+Date: Tue,  1 Apr 2025 20:36:31 +0800
+Message-ID: <cover.1743510609.git.luying1@xiaomi.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D031UWA001.ant.amazon.com (10.13.139.88) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-If a task yields, the scheduler may decide to pick it again. The task in
-turn may decide to yield immediately or shortly after, leading to a tight
-loop of yields.
+From: Ying Lu <luying1@xiaomi.com>
 
-If there's another runnable task as this point, the deadline will be
-increased by the slice at each loop. This can cause the deadline to runaway
-pretty quickly, and subsequent elevated run delays later on as the task
-doesn't get picked again. The reason the scheduler can pick the same task
-again and again despite its deadline increasing is because it may be the
-only eligible task at that point.
+The patchset fix the issue caused by the following modifications:
+commit 04e906839a053f092ef53f4fb2d610983412b904
+(usbnet: fix cyclical race on disconnect with work queue)
 
-Fix this by updating the deadline only to one slice ahead.
+The issue:
+The usb_submit_urb function lacks a usbnet_going_away validation,
+whereas __usbnet_queue_skb includes this check. This inconsistency
+creates a race condition where: A URB request may succeed, but
+the corresponding SKB data fails to be queued.
 
-Note, we might want to consider iterating on the implementation of yield as
-follow up:
-* the yielding task could be forfeiting its remaining slice by
-  incrementing its vruntime correspondingly
-* in case of yield_to the yielding task could be donating its remaining
-  slice to the target task
+Subsequent processes (e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
+attempt to access skb->next, triggering a NULL pointer dereference (Kernel Panic).
 
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fix issue:
+adding the usbnet_going_away check in usb_submit_urb to synchronize the validation logic.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e43993a4e580..c1eff68d8ffc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9024,7 +9024,7 @@ static void yield_task_fair(struct rq *rq)
- 	 */
- 	rq_clock_skip_update(rq);
+Changes in v2
+Use the formal name instead of an email alias.
 
--	se->deadline += calc_delta_fair(se->slice, se);
-+	se->deadline = se->vruntime + calc_delta_fair(se->slice, se);
- }
+Ying Lu (1):
+  usbnet:fix NPE during rx_complete
 
- static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
---
-2.47.1
+ drivers/net/usb/usbnet.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
+-- 
+2.49.0
 
 
