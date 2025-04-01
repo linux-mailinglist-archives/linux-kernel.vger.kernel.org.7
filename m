@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-583985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDE64A78226
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:29:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890F1A78223
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C583AFFB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:28:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F261168A7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D41322173E;
-	Tue,  1 Apr 2025 18:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6D4221DB6;
+	Tue,  1 Apr 2025 18:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1b06Rgp/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0VCX2HNS"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC92A221574
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6757221731
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743531913; cv=none; b=qDBaMZVTUF+glHVh76bE5C0Ymb+yslhxhNggcchxtBkORKEYyGfdFamkzx+BS3oBpI30O1VAJZbmz7TrEcaBLnZ878ZjCbdZ69KpB+bSNWTe0VC7BnsZ5fTEeyBrCrgVese1WJy9ja8wzacpEUpWOuu7V9o2RzdVO6cQlfz7ATg=
+	t=1743531915; cv=none; b=sJkSYqk1Rm84/5QgjXFWENiiYm8YZt5tolMzlELPaNYKFOKw/7W5hO+oZWrXwAPlToULcSv2hQpNJM5oo2q8l1BDc+w7h5+6fo/viUX+ua+vvwp/IXsvvrrR7WOQhkrxdm3exZ67G72mWfclqk15L4u0mK1v3Qn7hWspTtDbuQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743531913; c=relaxed/simple;
-	bh=NVp48ELe3NGN2lOoGPuvwT3sT1wygzjzD2ZhMUU85No=;
+	s=arc-20240116; t=1743531915; c=relaxed/simple;
+	bh=T6l6mC3RM0ZrHMfbS2Kf7Hfndu+LH5RVvzgZUQXsNkk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=BjfLevGdnlooLrPauMifJ9eEXz+v1QYgoRNzTb9DNE65zGQYJxBZI6ZxWJni1miOYhSASTWy3C6AsqhOnNxLhyVG3lAFtfOxwxXbz0TSMpW1c76uzVyTJOskNmnByB7PQEZrwvcBta5hE4K/eQ0qB15ixPNSlht+6HQ+pZcRqrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1b06Rgp/; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=SIc5jXaAQILOGAPBYjBEnwgaTIfrSZelZ2LxvYsK7Ec53E2LA12VIW1jJqxHv9LQU867u/VyR+FEUSLTBtJvijaK0LWH2d42BY8zB1udo8y5iPplPR6OOMri9EkhnQpIRR+v0j1cE8INzzGDP+u0L2oCyZeAfHVujwxyBPdtjqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0VCX2HNS; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-229668c8659so5255265ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:11 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224364f2492so101355925ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:25:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743531911; x=1744136711; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743531913; x=1744136713; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=E5DAxMj62L/j12CYFGazizxFtELcthjcSJ5gr2Eyr0M=;
-        b=1b06Rgp/l9Lyofzk/fvBbSZRrHiDcPjfQiOoJi0jFlw21albRrf48TKDQ53O7aZEiR
-         ukmZ7zZ4SV/79iVKeJCoVu/Wo3g5U7pWY7o/pdPS/Pw6ksFMB1M3s5J9i8LePXRxD9CS
-         mYDR6NMiBjUHDTGqkE2j6TtIbNhXJ43N8yH/yZ/I0YOtUdukoioITZtQz/Vm98qLCGN3
-         jmD06mbFejDZPJBeAtMi/fokflr2UsPYl1xG3jbNgUe8JeewdVcTw9wjKSebC5YQB2MY
-         Lhl+D3tBjf1ZV2XGxebdF8iwJBK1koBi2k4eQ5FUs0ri3jX2FphNjGNdAZZFgXIAN5XZ
-         FLCg==
+        bh=RiHQSegTWQswup2joHhVjAcAClRwR1OKlYt+E6zEsXU=;
+        b=0VCX2HNSwwvYNijhwSFI7qVfxTy3P/22SPvRAyRF+m1CnUnXqAPoZcJdnhVs822yUf
+         WwGsqHrDwwl8Lkl6i7/hmkGo5PjHbexWgDJVhKQxYv0qI9d8tJV1HoPvOhG4IqQXFaTb
+         RZyVJqCIDu+0LbufCpk+cqhFuZbSk4jH8ajZeqdkDY18t922tRH/d7fcZ9PkmAHP599r
+         5WqjaOTEOkLYz738j8HnNxKcO1LxO5Qp81iACLfWJULxGnDqmhjuivu4q1WTdcBkD1C9
+         KXo9UFdsnFozi+Bb6jTCc5XkBwMquFDDo8qh99xjfQEJuuPl3iZrz+gGiyzTdQNbCPkn
+         EhhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743531911; x=1744136711;
+        d=1e100.net; s=20230601; t=1743531913; x=1744136713;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E5DAxMj62L/j12CYFGazizxFtELcthjcSJ5gr2Eyr0M=;
-        b=a2t/Tqal0hlbOr7tVfOMB7LfYnLE6pAbWA/qUjsE8U4XFjpG2G+ve0I4dm/iK3Ii/f
-         qw28ufRtebjfynKcirlMQGx/OXbpPnQF+7uC8t8kPdRCzdL8aurtFjUjkLBj5ALFvDsD
-         ar/YjllRja5Hof49748DPJix5rm2TlRmLakt2pM+Pa9GU3nKUexXnLbL95AxDRK0pjRS
-         VSNxkp+8OuPNkFu7yGeJ40v9+cO7QXj/wTdk0nFlNRhd/m2aomZgky5g6hKg6iaDCr42
-         T4wzyZMECOeBDSzU+Ity1QrNa/56ZB/cpiNJJ/FBOvE64zXGBZgmzQ9+O71bVavFwe1S
-         /yaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ/ixf+B4G7XscV5EGW2KZgeo7FVAEWMI77o7n39iB/2mD7nk4/yVafkRYt/OP73OnaM/r2jz1TRGDyF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHRBpP5o5Nqwh+y3w3ejzO+H1SE8x7yQ02u5eFmSiO4Gca8Iol
-	K4/9PijuEH38+s64yFiDQCOqVIq7OHSPOyuzKhStEEuB3/l7O/Uy94Uz+bINTUJ90+ogRLJelPf
-	1gVNlFQ==
-X-Google-Smtp-Source: AGHT+IFFVoMjOxd6ofNhkni8FG6rogh/sedArmlUwSWu1eoBjUbWyPSvmEKMEQvbfnCT2dlrbfnCjpnKbLRm
-X-Received: from plbmm3.prod.google.com ([2002:a17:903:a03:b0:223:3ab:e4a0])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d548:b0:223:5ca1:3b0b
- with SMTP id d9443c01a7336-2292f9f1990mr231538075ad.40.1743531911025; Tue, 01
- Apr 2025 11:25:11 -0700 (PDT)
-Date: Tue,  1 Apr 2025 11:23:15 -0700
+        bh=RiHQSegTWQswup2joHhVjAcAClRwR1OKlYt+E6zEsXU=;
+        b=hgjlSnoJ9n0VbWzme0KQlpKtdKAqeCeMNMpNcd8qCdAApLUFtfVGsn11CmyjRRSk8r
+         J7I/4dpC+jQ9Eb6PmNb6E0q8RE6wpLhydpxFmrT+l0+Hf2e4Ei+YwMdSlgiH0xQmxPZA
+         GHDQ9UJNGFbPVKuCZFHHzZyBUikbpZEquaHlrVKAuTwxZ2d8PUZH352eBGWa/tohd1Cx
+         ZxXpFoCEc1C8+ao7G5qUrPvD/6/Ft/ZSggidRQjx2rD53b0AS2wY2c42QXi0nqRQfPhW
+         zH6Ybl3tQbZMQyR9eD9PLIGKZyDeUcTzMAjeQf0FD3pHnA6SdJKIaONfmLPuo5lFSjd5
+         uoKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeXC5IJ4pyE1GM/ivncMjsBHpqa19/bj1mCad6UIHZRQVoUljU3vcCldoR9UPomGyvqsjR8BNPeoqdpKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpH8exv4YYqcWcf4hvndJfQbqeX0FozgERZ9hOPApSqPiMewji
+	hKjzEpN1ZoKJKhAgF49O7CmenCg66WmcUEV3gX3CLtDIn+ZczoCkaYiBnvWuDzQmW/H4lQfz4Rj
+	5nidkjg==
+X-Google-Smtp-Source: AGHT+IHuVXNTFL1S0fgMH1lBNSWzsF0SZTjMeEvmJ7oxv+GtAlWHclrPyc521uvG/b5yh+eWGUgFdZYNZ6qq
+X-Received: from plbjw20.prod.google.com ([2002:a17:903:2794:b0:227:e9e8:7153])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e887:b0:223:f408:c3f8
+ with SMTP id d9443c01a7336-2292f960348mr234747405ad.14.1743531912769; Tue, 01
+ Apr 2025 11:25:12 -0700 (PDT)
+Date: Tue,  1 Apr 2025 11:23:16 -0700
 In-Reply-To: <20250401182347.3422199-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250401182347.3422199-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401182347.3422199-18-irogers@google.com>
-Subject: [PATCH v1 17/48] perf s390: Silence -Wshorten-64-to-32 warnings
+Message-ID: <20250401182347.3422199-19-irogers@google.com>
+Subject: [PATCH v1 18/48] perf cs-etm: Silence -Wshorten-64-to-32 warnings
 From: Ian Rogers <irogers@google.com>
 To: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
 	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -128,31 +128,31 @@ truncation explicit.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/s390-sample-raw.c | 4 ++--
+ tools/perf/util/cs-etm-base.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/s390-sample-raw.c b/tools/perf/util/s390-sample-raw.c
-index 335217bb532b..7e5c1448ea6b 100644
---- a/tools/perf/util/s390-sample-raw.c
-+++ b/tools/perf/util/s390-sample-raw.c
-@@ -202,7 +202,7 @@ static void s390_cpumcfdg_dump(struct perf_pmu *pmu, struct perf_sample *sample)
- 		color_fprintf(stdout, color, "    [%#08zx] Counterset:%d"
- 			      " Counters:%d\n", offset, ce.set, ce.ctr);
- 		for (i = 0, p = (u64 *)(cep + 1); i < ce.ctr; ++i, ++p) {
--			char *ev_name = get_counter_name(ce.set, i, pmu);
-+			char *ev_name = get_counter_name(ce.set, (int)i, pmu);
+diff --git a/tools/perf/util/cs-etm-base.c b/tools/perf/util/cs-etm-base.c
+index 4abe416e3feb..3aa1ccc9e452 100644
+--- a/tools/perf/util/cs-etm-base.c
++++ b/tools/perf/util/cs-etm-base.c
+@@ -101,7 +101,7 @@ static int cs_etm__print_cpu_metadata_v1(u64 *val, int *offset)
  
- 			color_fprintf(stdout, color,
- 				      "\tCounter:%03zd %s Value:%#018"PRIx64"\n", i,
-@@ -258,7 +258,7 @@ static void s390_pai_all_dump(struct evsel *evsel, struct perf_sample *sample)
- 		p += sizeof(pai_data.event_val);
- 		offset += sizeof(pai_data.event_val);
+ 	magic = val[i + CS_ETM_MAGIC];
+ 	/* total params to print is NR_PARAMS + common block size for v1 */
+-	total_params = val[i + CS_ETM_NR_TRC_PARAMS] + CS_ETM_COMMON_BLK_MAX_V1;
++	total_params = (int)val[i + CS_ETM_NR_TRC_PARAMS] + CS_ETM_COMMON_BLK_MAX_V1;
  
--		ev_name = get_counter_name(evsel->core.attr.config,
-+		ev_name = get_counter_name((int)evsel->core.attr.config,
- 					   pai_data.event_nr, evsel->pmu);
- 		color_fprintf(stdout, color, "\tCounter:%03d %s Value:%#018"PRIx64"\n",
- 			      pai_data.event_nr, ev_name ?: "<unknown>",
+ 	if (magic == __perf_cs_etmv3_magic) {
+ 		for (j = 0; j < total_params; j++, i++) {
+@@ -140,7 +140,7 @@ static void cs_etm__print_auxtrace_info(u64 *val, int num)
+ {
+ 	int i, cpu = 0, version, err;
+ 
+-	version = val[0];
++	version = (int)val[0];
+ 
+ 	for (i = 0; i < CS_HEADER_VERSION_MAX; i++)
+ 		fprintf(stdout, cs_etm_global_header_fmts[i], val[i]);
 -- 
 2.49.0.504.g3bcea36a83-goog
 
