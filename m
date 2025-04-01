@@ -1,108 +1,210 @@
-Return-Path: <linux-kernel+bounces-583534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05931A77C2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:34:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AC1A77C2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455A37A3894
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:33:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64817A42AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DE92045BC;
-	Tue,  1 Apr 2025 13:34:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6502045A2;
+	Tue,  1 Apr 2025 13:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P3Ys0OKV"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DC81F930;
-	Tue,  1 Apr 2025 13:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ED1202C26
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743514462; cv=none; b=Vzx2B3WGiIcNjITzRxDGLFQ+bpo85Z9ks05xTd1aBiTHpTNaexpsdm286+igyGHMXmP0WvpLigFNuI6SaStRcbFvpRfa8x2eOjQL/nyKJggHdRuKTCUilN8ni3GDIe3Ys/t9b0rCtkprXKYlxZLg0wfLd3CTF9KFN1+RI84YVNs=
+	t=1743514476; cv=none; b=EZy+qolSCJbPZeNCmTuC9wLj8ChXmCRccE0t4Fu5NF9X8ObumysWjYEN3DoLOeKRocZI8sn20Tk9YBQNd6dtyHs4UQ7ZwI8Q7IVO4LkhoRoldxSVJIh7cGPhG5XvldzaKxYG+kJ436WlZDi1YwHMLCUux+/H5FMTxMDhkZisbiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743514462; c=relaxed/simple;
-	bh=1uUfV76k7xZkOt7Kd2dU06QCk2PHLEhPFGAK1gKkdzo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iqjUyd/3BuLyfuQaAEhB3fh2GuGYqZAYG8AMD600JSrrIPiQ1m1x0mcn2k5Zf11bflZz+iBaUDdIUOb+e2hTWX5qs+KwRJSH7VpXCLH0XvLNN6PY2TvmWS4vmwHHVZQsGUU2qSHDlqmXX8CtQAHBC3bmS/Wz4a169/hT7/i/j68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EB7C4CEE4;
-	Tue,  1 Apr 2025 13:34:20 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Angelos Oikonomopoulos <angelos@igalia.com>
-Cc: Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	anshuman.khandual@arm.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] arm64: Don't call NULL in do_compat_alignment_fixup
-Date: Tue,  1 Apr 2025 14:34:18 +0100
-Message-Id: <174351444424.198539.17675821891390639702.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250401085150.148313-1-angelos@igalia.com>
-References: <20250401085150.148313-1-angelos@igalia.com>
+	s=arc-20240116; t=1743514476; c=relaxed/simple;
+	bh=+jsVXUY+JNWjKDWkdCkg/3wzBjLZu5mOtImMQ3fql1Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jVs5uKYcdXIBLi/pWKJgBk8zDXcbe/AiYCoLBO/C7oxpA0PWnpm6jFi97Rn/Vti6ioekz6gEZzAbq3APa7GwWJN2oMQwCEl9STq/A5djZasG4iY1KZ9ZdpJRHEKzffRPmnQMxGxqnygAQHQa9jK/Pq0tE14BX0DKzek1q8iLH70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P3Ys0OKV; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so32753995e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 06:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743514473; x=1744119273; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hdHYlnm7oCIQrR8yQXWXDs/JGWUxXVNjmYJAO6rvmBw=;
+        b=P3Ys0OKVDFQ1j+Mak/eyXxJZN3pgOrYgukznUbGWafaTgdn0fQ0WiSSnJ+kYic7Stv
+         gEK/XKWP5LWS9dndmHkNbGIEwHwEJThGRQd3qk13HPJO2atjhQPOb5/FN3/PxT0G68nr
+         HqWW9Fwzs1Q4HCHgf/ucKvkJF6t0Lh0a3HK1pT5nbj9o9+B5Gkg6gedm1xb/7yOIrEvg
+         YQLB+7NIpc+Sk0NCCUo1abvk4TC8LZomiCNh9yb52nreuCAFQ1YnhsN89uFjnnMVp2iY
+         bnp1DgoyZ9VqpNdY9HKXBgmuC9onQ0wE77ILUX0EP8BGTUqOTXalPPfwpmbs0e2bTKcC
+         lBlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743514473; x=1744119273;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hdHYlnm7oCIQrR8yQXWXDs/JGWUxXVNjmYJAO6rvmBw=;
+        b=VuOkn16SENcsY6QwgtEpMMx8uxE3/OnvktOHNXEkerX62PkkV5lYbRtruGiq88/rvV
+         nv/jclsZRfRqUyTx/qo+Tax1TK8G5KY4R7crV491TovAZlLUcpb8NT9u4jPnRyr1HuRy
+         fQruo6sYJQQekzmxji7vJDMqO6TneD9LvdZOCd5ki46q7k4xeCjd+PfRAKrRvsvCSzdz
+         1uCamxD5a+7li1hldrQRVzWS2Jc1xSpt/4zKJQy8VJ1Pnna/0ePZLsXdkUt4fmDDXM/w
+         eJdej/s6myhqF9dE/4CsqFg7z9E1enavPCved7adtBZCntKYJidN4L3hIIBjxfEa3EP6
+         8Qjw==
+X-Gm-Message-State: AOJu0Yzy2VHGT+8EcMoU+XoPpiJMSowu+hsgc3P8UIHDWJ1WLL6mkDfp
+	PxRWXZ6U25jJAHk+VytVnS0YPRaucdCWRDmNjZ829DX6lfjNj2wPfvS+1azmEthEEKDowQ==
+X-Google-Smtp-Source: AGHT+IG4x3Uac6Y88MEiNOljIjoS9AYRY3yNgjLa2c+ZBfDE53M+PxszbnOClR7HCFEi1qXaEnB2o3tn
+X-Received: from wmbjg21.prod.google.com ([2002:a05:600c:a015:b0:43c:f60a:4c59])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1e8f:b0:43c:ec4c:25b1
+ with SMTP id 5b1f17b1804b1-43db62bbe2amr107359285e9.23.1743514473105; Tue, 01
+ Apr 2025 06:34:33 -0700 (PDT)
+Date: Tue,  1 Apr 2025 15:34:18 +0200
+In-Reply-To: <20250401133416.1436741-8-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250401133416.1436741-8-ardb+git@google.com>
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3921; i=ardb@kernel.org;
+ h=from:subject; bh=GJdt6JvaRkOjRUstkEclqIh4LycHXHj4RdQlgPesOr0=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf3166iwvV57Pr1dd6HFzzxazmNikkIP+57Qks7WsI5Xq
+ mmCzpc6SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwESMnjP8s/7fKHxHZMuuOMeV
+ ya5siWtPzNrNuvd68kbD9dMKF6013Mfw30vUsddv1keFe16/5XnU/vcukHvNEM3SN8G/Nm2ZkUQ JCwA=
+X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+Message-ID: <20250401133416.1436741-9-ardb+git@google.com>
+Subject: [RFC PATCH 1/6] x86/boot/compressed: Merge local pgtable.h include
+ into asm/boot.h
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 01 Apr 2025 10:51:50 +0200, Angelos Oikonomopoulos wrote:
-> do_alignment_t32_to_handler only fixes up alignment faults for specific
-> instructions; it returns NULL otherwise. When that's the case, signal to
-> the caller that it needs to proceed with the regular alignment fault
-> handling (i.e. SIGBUS). Without this patch, we get:
-> 
->   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
->   Mem abort info:
->     ESR = 0x0000000086000006
->     EC = 0x21: IABT (current EL), IL = 32 bits
->     SET = 0, FnV = 0
->     EA = 0, S1PTW = 0
->     FSC = 0x06: level 2 translation fault
->   user pgtable: 4k pages, 48-bit VAs, pgdp=00000800164aa000
->   [0000000000000000] pgd=0800081fdbd22003, p4d=0800081fdbd22003, pud=08000815d51c6003, pmd=0000000000000000
->   Internal error: Oops: 0000000086000006 [#1] SMP
->   Modules linked in: cfg80211 rfkill xt_nat xt_tcpudp xt_conntrack nft_chain_nat xt_MASQUERADE nf_nat nf_conntrack_netlink nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xfrm_user xfrm_algo xt_addrtype nft_compat br_netfilter veth nvme_fa>
->    libcrc32c crc32c_generic raid0 multipath linear dm_mod dax raid1 md_mod xhci_pci nvme xhci_hcd nvme_core t10_pi usbcore igb crc64_rocksoft crc64 crc_t10dif crct10dif_generic crct10dif_ce crct10dif_common usb_common i2c_algo_bit i2c>
->   CPU: 2 PID: 3932954 Comm: WPEWebProcess Not tainted 6.1.0-31-arm64 #1  Debian 6.1.128-1
->   Hardware name: GIGABYTE MP32-AR1-00/MP32-AR1-00, BIOS F18v (SCP: 1.08.20211002) 12/01/2021
->   pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->   pc : 0x0
->   lr : do_compat_alignment_fixup+0xd8/0x3dc
->   sp : ffff80000f973dd0
->   x29: ffff80000f973dd0 x28: ffff081b42526180 x27: 0000000000000000
->   x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
->   x23: 0000000000000004 x22: 0000000000000000 x21: 0000000000000001
->   x20: 00000000e8551f00 x19: ffff80000f973eb0 x18: 0000000000000000
->   x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
->   x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
->   x11: 0000000000000000 x10: 0000000000000000 x9 : ffffaebc949bc488
->   x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
->   x5 : 0000000000400000 x4 : 0000fffffffffffe x3 : 0000000000000000
->   x2 : ffff80000f973eb0 x1 : 00000000e8551f00 x0 : 0000000000000001
->   Call trace:
->    0x0
->    do_alignment_fault+0x40/0x50
->    do_mem_abort+0x4c/0xa0
->    el0_da+0x48/0xf0
->    el0t_32_sync_handler+0x110/0x140
->    el0t_32_sync+0x190/0x194
->   Code: bad PC value
->   ---[ end trace 0000000000000000 ]---
-> 
-> [...]
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Applied to arm64 (for-next/core), thanks!
+Merge the local include "pgtable.h" -which declares the API of the
+5-level paging trampoline- into <asm/boot.h> so that its implementation
+in la57toggle.S as well as the calling code can be decoupled from the
+traditional decompressor.
 
-[1/1] arm64: Don't call NULL in do_compat_alignment_fixup
-      https://git.kernel.org/arm64/c/c28f31deeacd
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/boot/compressed/head_64.S    |  1 -
+ arch/x86/boot/compressed/la57toggle.S |  1 -
+ arch/x86/boot/compressed/misc.c       |  1 -
+ arch/x86/boot/compressed/pgtable.h    | 18 ------------------
+ arch/x86/boot/compressed/pgtable_64.c |  1 -
+ arch/x86/include/asm/boot.h           | 10 ++++++++++
+ 6 files changed, 10 insertions(+), 22 deletions(-)
 
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index eafd4f185e77..d9dab940ff62 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -35,7 +35,6 @@
+ #include <asm/bootparam.h>
+ #include <asm/desc_defs.h>
+ #include <asm/trapnr.h>
+-#include "pgtable.h"
+ 
+ /*
+  * Fix alignment at 16 bytes. Following CONFIG_FUNCTION_ALIGNMENT will result
+diff --git a/arch/x86/boot/compressed/la57toggle.S b/arch/x86/boot/compressed/la57toggle.S
+index 9ee002387eb1..370075b4d95b 100644
+--- a/arch/x86/boot/compressed/la57toggle.S
++++ b/arch/x86/boot/compressed/la57toggle.S
+@@ -5,7 +5,6 @@
+ #include <asm/boot.h>
+ #include <asm/msr.h>
+ #include <asm/processor-flags.h>
+-#include "pgtable.h"
+ 
+ /*
+  * This is the 32-bit trampoline that will be copied over to low memory. It
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 1cdcd4aaf395..94b5991da001 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -14,7 +14,6 @@
+ 
+ #include "misc.h"
+ #include "error.h"
+-#include "pgtable.h"
+ #include "../string.h"
+ #include "../voffset.h"
+ #include <asm/bootparam_utils.h>
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+deleted file mode 100644
+index 6d595abe06b3..000000000000
+--- a/arch/x86/boot/compressed/pgtable.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-#ifndef BOOT_COMPRESSED_PAGETABLE_H
+-#define BOOT_COMPRESSED_PAGETABLE_H
+-
+-#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
+-
+-#define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
+-#define TRAMPOLINE_32BIT_CODE_SIZE	0xA0
+-
+-#ifndef __ASSEMBLER__
+-
+-extern unsigned long *trampoline_32bit;
+-
+-extern void trampoline_32bit_src(void *trampoline, bool enable_5lvl);
+-
+-extern const u16 trampoline_ljmp_imm_offset;
+-
+-#endif /* __ASSEMBLER__ */
+-#endif /* BOOT_COMPRESSED_PAGETABLE_H */
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index d8c5de40669d..5a6c7a190e5b 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -4,7 +4,6 @@
+ #include <asm/bootparam_utils.h>
+ #include <asm/e820/types.h>
+ #include <asm/processor.h>
+-#include "pgtable.h"
+ #include "../string.h"
+ #include "efi.h"
+ 
+diff --git a/arch/x86/include/asm/boot.h b/arch/x86/include/asm/boot.h
+index 3f02ff6d333d..02b23aa78955 100644
+--- a/arch/x86/include/asm/boot.h
++++ b/arch/x86/include/asm/boot.h
+@@ -74,6 +74,11 @@
+ # define BOOT_STACK_SIZE	0x1000
+ #endif
+ 
++#define TRAMPOLINE_32BIT_SIZE		(2 * PAGE_SIZE)
++
++#define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
++#define TRAMPOLINE_32BIT_CODE_SIZE	0xA0
++
+ #ifndef __ASSEMBLER__
+ extern unsigned int output_len;
+ extern const unsigned long kernel_text_size;
+@@ -83,6 +88,11 @@ unsigned long decompress_kernel(unsigned char *outbuf, unsigned long virt_addr,
+ 				void (*error)(char *x));
+ 
+ extern struct boot_params *boot_params_ptr;
++extern unsigned long *trampoline_32bit;
++extern const u16 trampoline_ljmp_imm_offset;
++
++void trampoline_32bit_src(void *trampoline, bool enable_5lvl);
++
+ #endif
+ 
+ #endif /* _ASM_X86_BOOT_H */
 -- 
-Catalin
+2.49.0.472.ge94155a9ec-goog
 
 
