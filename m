@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-583227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B57A7784C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:59:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218AFA7785A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996CB188A5AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369B916A427
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F81F03C9;
-	Tue,  1 Apr 2025 09:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA90F1F03C8;
+	Tue,  1 Apr 2025 10:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="VM9xcbZ6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A8GGpwHF"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ac2JgVIP"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8EDCA4B;
-	Tue,  1 Apr 2025 09:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128E51E8331;
+	Tue,  1 Apr 2025 10:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743501554; cv=none; b=Z3VUvBDQTdHcR4Mb4z7IYvj5dkrrBWoHTO/ryR44dRYU7+7fwzMPNbT3eDF4hXGP8JFMtyujBr/Vus+pveUbCY/TMOMr7qhiHlyVrqe0+iF1LmYNtClWMpnQ7nr5JUdGviKtyRHzW6nzrwBKk26Tl6ZydpT4DpeGg9f8Aioy4QE=
+	t=1743501649; cv=none; b=H1pMGlWJmedCJDIQCsmBFlW6upbp/gGWEx2ZO+Pz0ic/5k40tj1P9ciUaGEcWm77wRdFOzn5ItcOERaN5TtVlfV+TlNLBGItvljw3w4izlhhrXCK+O1OCm3UvYrsuQdAcDJdK/buzppgaKB4XDRla6kzIpAEq2tnCuZAZG71Fd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743501554; c=relaxed/simple;
-	bh=Qqfak2UrvIEyXtb8So6PD7qTuEEQK52pCV08VP7kOFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjY8qCcYh9VThccTJTVQgBDnXdcFLHijMmlQv7GbFmY0AyJAGyY9bdhyA5SEH2NHXgMuUKeJbND1wv/Feq3iITWbllmEV1+Kfne0hVNupYBHb/Tb9oifMmVIK5rtKKE0m34qLYDKvtvHVluRGtq/xdMBE8sJLE67fRSLJtR8+h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=VM9xcbZ6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A8GGpwHF; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5B41525401C2;
-	Tue,  1 Apr 2025 05:59:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Tue, 01 Apr 2025 05:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1743501550; x=
-	1743587950; bh=Hz18F4NI0H8OQmza2BzZAHc1fArX+giecmzxAvAwMA8=; b=V
-	M9xcbZ6e46z6mIVZrXVmA30AdQP18dsZGj6VYEFstIkdnSPYOdX+R+adP8bWMu3G
-	IlGLvNW+0f7FhQdViHxgSNoRJ3nruyr2DgJU2BFRJNJs2MyNWbB26V1nZqHGbUuw
-	NBsYGXhrCJbVZ0R29j8mNfIvB/aggafgZfdSvE2nKsAj3vo/j2GwO8EhtvfmGSRA
-	uYW4gCseQyldE7gjPmOIU7J2s4un8LAfNaJTk86p07hiiBIIrQdwL5DIEK/L2CCh
-	0ogbhtPwytEya5kCPXBSqExTeuYJNSLpSzBb9AhPMO825g9prrgLHiep52yV3CDl
-	Q86ZGeUY3vdckoROZXRnQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743501550; x=1743587950; bh=Hz18F4NI0H8OQmza2BzZAHc1fArX+giecmz
-	xAvAwMA8=; b=A8GGpwHFGpXrFaqFqXdbpm7G+S5iJYlt5RjTiRHNuV2DfykZIRW
-	9SdDQl9Tmiutqcmw0tuwb7L9+3y8TPO0MHf4XsC+KUJUxZ5iJE4iy1qVW3e3t+Vi
-	ZrEs3NBhuvKOESQzmpy7OV0+YPgMtgieYcRStSWqI5YLPNA9OymDQjzRUQ/OwUKK
-	Q8QBvojB1fKb0Y6+okfwV5UIMKWXCZudhXLQRhu+24cQgIzAL7fXCAw+GFxOt7rl
-	6+AsSdRwlNndMLghkIEkQr34yzlJZjixtpJl94Zk1uLjoX3XcbtLzsejbYyfXcWE
-	XKlcrA5DO1/mVGCJ4K0zLPXI10h/pnzIq6g==
-X-ME-Sender: <xms:7bjrZ2lIyirOMToXYE1bnbJdlw3kgm78I4DJ9G4cUkW-kDe3A4GSdA>
-    <xme:7bjrZ91G8Qt67hDsF8Wz6AN4VrFrLbPJavWG92EnfnDAmNm8g_-Jnyl2wIOY5D5U4
-    lqanY8FHI7k7LBF3ws>
-X-ME-Received: <xmr:7bjrZ0oSgsxHAXtxxgCwSbZGVcWZ21Uc8KQHCIi3nfoAfuPCPpfXiLFe_d_5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:7bjrZ6mx6zwRUQDHyHNIPsuse5RRaevYRt4W8QV9c1FjVEbMXQalyA>
-    <xmx:7bjrZ00_CESBraqMgkBxNvOdhEfpLL01cTGRu_m4VD114bnIXk4o5A>
-    <xmx:7bjrZxu-RAIpwx0ZxWo-Ko1eB0G_J6HEUoSnZjBcYAj-erhb4AiacQ>
-    <xmx:7bjrZwXFkteSWDEO6F2dmeUMlYXfXdBC6rIvHnh4-ipK60RYPUIvyw>
-    <xmx:7rjrZ_0ChUTFZYO_riZ4ZDJw_fEc61lsVCmX7WWJoUp7wTGqzH65TLgn>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Apr 2025 05:59:09 -0400 (EDT)
-Date: Tue, 1 Apr 2025 11:59:07 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
-Message-ID: <Z-u46_82tkR8TsOa@krikkit>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+	s=arc-20240116; t=1743501649; c=relaxed/simple;
+	bh=zBPWvShGsz3leAu6Y0uLFozF8YQ/77KSEBnmMoIjePs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzARnM+NdgiSQElnsSxXEj4O9OUdVNe3W5GCqLSzbpPgyvOx8HW8DGAITag8l8QChkBmchbjt337UMaDydxSdTN6y1hcKDB72STR0bGKI6YysWNeJqxQbHfZ09hfKigp0q0TmMq8Ldws/4Z9yWPDtD4NjngyswgPU1ejDJTzEck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ac2JgVIP; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743501615; x=1744106415; i=markus.elfring@web.de;
+	bh=zYUg14mNyqc4q2rrOlc4nM8Ni46h/sIA41//bM4zIxo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ac2JgVIPM2MTN/AVOsB3V3bpdFdtAQfecP/c2rqnga0WnGNK+HcuJ/tLlAub+Fu5
+	 vszT8YyNmOSaiKJ9PR+3jeIWkE7JgbthUM7/ElwwQaCh73VfSIgcubRt34rd5OHZE
+	 SHw4s9k8AdJGF/hgagckoVQGha6EvleBr+E4BnJEU7HegrQ/P60tNRRB5yRqDWEcB
+	 etPiI1nUwe1cE9bF3m+NvDr1Fvb/Y/CmvZH8ctQP4Lip6P+kqzBcIm/GGDzRY+PIY
+	 ic04hGpefFolb0ULQoCiUFM1Z9y3K8IJpTb3X6pvwjkSlQfNVTRVQmCbwrQBLiR1D
+	 TtuUXRgw+dLuqxMQoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.54]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Melaj-1tR30c0cKL-00dXs6; Tue, 01
+ Apr 2025 12:00:15 +0200
+Message-ID: <383c933a-2316-40a4-ae82-f4b64e53b62c@web.de>
+Date: Tue, 1 Apr 2025 12:00:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4?] backlight: pm8941: Add NULL check in wled_configure()
+To: Daniel Thompson <danielt@kernel.org>,
+ Henry Martin <bsdhenrymartin@gmail.com>, linux-fbdev@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Helge Deller <deller@gmx.de>, Jingoo Han <jingoohan1@gmail.com>,
+ Lee Jones <lee@kernel.org>
+References: <d5f2aa49-27e2-4cc1-91be-4e195ed5249e@web.de>
+ <20250401082950.21698-1-bsdhenrymartin@gmail.com>
+ <Z-uqpxcge0J99IPI@aspen.lan>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <Z-uqpxcge0J99IPI@aspen.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:35Y86OrRspHmbZbOtY2dnh8M6H40It4ODRJuL/gWp3eBhefzQMm
+ QL31oQeB8VJK0AOdK1JgZ1l/rQGcKeEzXH1EpbYJWbH/lq8kvhxCGbw+3C4/zQmI/T26d5E
+ Kx+3q2xqMjVs/gC2q5ALd0Czm5duoi2A59KXnw3LMa1H1fpKQN+6GrJk/GriMQbc5ULWAzt
+ qGAZHq1Tvbuv0ftV2TbLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wncKC41epd8=;N1azTlu8pf5G2YwIj7RFt5yG/NN
+ Yw3zGOs6DrvEz8vZVr6hgb+sDCtYJUUBFyFwZsrZLsGPPz7Ib403bGW8zHv0+8pbzWIr2AJOw
+ ijf0Vg6Jysbs77CL7ZPu9uBX40nGKHQpo0lkUKixbY2LD/ZYSycnVwlorifJ8773Z9DdJthwf
+ 7lQZX4wma0re1QtTkitRp88tQMN1+Nkt7jVoF3E6acTyUtKO7LeIS+sCCKTdJeDbQgB6YNTVG
+ mVmeL0Wb0Mp2KW8Pi4YZJsqmEX5RKA1V1/13InL8IaiwY6b1srQbupO6ZjByHnMMLPmfimaYJ
+ 4D23dWVFji+Uan21kw8F9qdBE2YmFgs/ee/dfq+ZUxIPnuUTUYmbKF75E6Rb/IXwnG6mQ1HHJ
+ znuBVfPz5iGmAXNKhwKMoworiKYSqlf6JxFOg3mSw0dPdneK5CDQz4JWDlN0GWowvlxd9ZP9c
+ Ecl8cLidxgjdt8T/yXOrsPdSLgiJMrkypwuykE9kTRtZuu6wwy/ttGzJAyCz1xYdf9pvr+ETi
+ tWuksO1HQAX4zHe6hDiTzobkUlPJyZ33D3cgSeGDeGZMMqAwAc2eANbwTS0fKqwZSdMPSjrz2
+ dqBS+ulZEA81zYFkMYLnIP9qI7u4bQpTNwBMrdJ3o4rU//nsYB0qbqkcYLK98QRTTXGsgWSiu
+ J5TlwsZsUx40Fh1nQbO/+wfuCuB9RV1D7fHgF4vv6cTi0bm7KgSJdUJcEFiWJrVGXiURMomL2
+ tdBRsqflNe1c5eqyS6yXHSSm0dqlE1YXRPiS93xFWgtKC65/BJfqhHwUycwrDNbgJpPW2J6ns
+ mkk1cuUZhz34VQAdpsWXgAKGhuWu8rCy7bvxq0lRXSJ8Y4PDA1APch8SNgRbRUTngh7yFPgg6
+ GQg9OS0Jzxi/glR+O57U6wsgX4qTHUBr5iKyjaOxuVtg/95HN0fp5hjcbQ3qJgLnWqEFBj/Yo
+ KZMESmyY1M++xtp1XrxLwTf6Ib51ZUuhd1gOcGBvfFjmslOXFhoXPKucmtajMmo0200/PMsbE
+ 8QRH3Mtck/k5zEVpjwxpRSJ//wP3VWseEx6JxLTnDSgayy7sjRXnbwY7yobM+gEPbHWUpzUhX
+ WhFpM3kHFZ5Yjvi6QkPp9g+KHqIoEI/4aVk32v/ubRsT1jkm3RAkyGEi+guOpAKFqbHrwganH
+ rvLXfTvPulUD1d/ILhP1MEbo9Xl49JHBbgAW+O9NF2ZKvGvPsOtB8rmCLeSqCGTgxq3yXmxFL
+ e0DmH1G4dxFd0Gxj3FF+hNg5H0vBHSOl6sLQWL7RUkH/bn78IUQkJMqSbyGEvgfkwwYTq63ra
+ 5UsJVH2oxXqoumEcjjYf8L1nIQcaDCgBvNHdr+MPYMBogf2VGlupmGiNdAJPsokEb/ljbtBb3
+ SGj41c4eC71xqfguelTENoSTA2rL/39vW9wYe+nRN2WvF1P8WNRoUq/AU6r9WToKtkKgfC44v
+ E2xTN2soAViFL6h+59TcfCYeAgYEmOwQlQhrFZ2SepCSXLsvrcv4mwsPmCxS15110Y1/Qcw==
 
-2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
-> +/* this swap is not atomic, but there will be a very short time frame where the
-> + * old_secondary key won't be available. This should not be a big deal as most
-> + * likely both peers are already using the new primary at this point.
-> + */
+=E2=80=A6
+>    patch description ;-). I think the original v3 was better worded.
+=E2=80=A6
 
-This is not the case anymore.
+Can you find the mentioning of adjustments helpful for better error handli=
+ng?
 
-> +void ovpn_crypto_key_slots_swap(struct ovpn_crypto_state *cs)
-> +{
-> +	const struct ovpn_crypto_key_slot *old_primary, *old_secondary;
-> +	u8 idx;
-> +
-> +	spin_lock_bh(&cs->lock);
-> +	idx = cs->primary_idx;
-> +	old_primary = rcu_dereference_protected(cs->slots[idx],
-> +						lockdep_is_held(&cs->lock));
-> +	old_secondary = rcu_dereference_protected(cs->slots[!idx],
-> +						  lockdep_is_held(&cs->lock));
-> +	/* perform real swap by switching the index of the primary key */
-> +	WRITE_ONCE(cs->primary_idx, !cs->primary_idx);
-> +
-> +	pr_debug("key swapped: (old primary) %d <-> (new primary) %d\n",
-> +		 old_primary ? old_primary->key_id : -1,
-> +		 old_secondary ? old_secondary->key_id : -1);
-> +
-> +	spin_unlock_bh(&cs->lock);
-> +}
-
-[...]
-> +int ovpn_aead_encrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
-> +		      struct sk_buff *skb)
-> +{
-[...]
-> +	/* encrypt it */
-> +	return crypto_aead_encrypt(req);
-> +free_iv:
-> +	kfree(ovpn_skb_cb(skb)->iv);
-> +	ovpn_skb_cb(skb)->iv = NULL;
-> +free_sg:
-> +	kfree(ovpn_skb_cb(skb)->sg);
-> +	ovpn_skb_cb(skb)->sg = NULL;
-
-nit: Those shouldn't really be needed, since we'll call
-ovpn_encrypt_post that will take care of iv/sg/req. But it's fine if
-you leave them.
-
-(same thing on the decrypt side)
-
-> +	return ret;
-> +}
-
-
-[...]
-> +/**
-> + * ovpn_key_id_from_skb - extract key ID from the skb head
-> + * @skb: the packet to extract the key ID code from
-> + *
-> + * Note: this function assumes that the skb head was pulled enough
-> + * to access the first byte.
-
-nit: another "first byte" that I missed previously :(
-
-> + *
-> + * Return: the key ID
-> + */
-> +static inline u8 ovpn_key_id_from_skb(const struct sk_buff *skb)
-> +{
-> +	u32 opcode = be32_to_cpu(*(__be32 *)skb->data);
-> +
-> +	return FIELD_GET(OVPN_OPCODE_KEYID_MASK, opcode);
-> +}
-
--- 
-Sabrina
+Regards,
+Markus
 
