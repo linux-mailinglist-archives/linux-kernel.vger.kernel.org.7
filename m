@@ -1,150 +1,235 @@
-Return-Path: <linux-kernel+bounces-583185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915C0A777AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:27:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC77A777D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF133ABCE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8D8188C8F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B611EF0A9;
-	Tue,  1 Apr 2025 09:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D377A1EFF94;
+	Tue,  1 Apr 2025 09:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="dnLmlc9I"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="WgDz5MMh"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02671C7006
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D61624D5
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743499638; cv=none; b=azuZsvr9uPslC4GveIoIOI4DA1y+v10xutdVxOt5YyLFpxRYLYpZXNHyCTzHsi20R2mSoIUy3aSVe+Kb7d8vEspEjvIHOyb3xZlRxYrF9dwIwIwg3HImahe+y4uGCPCNNzlpu4eDEcb3Xc3de3J8Xpf5I65d5kduT2PnhU2IuXY=
+	t=1743500017; cv=none; b=gf61OMzkYXcLKv8Bm/UGJCyRecPBdEo1eanP1qdCje9H6G6oRC68Nat+72RspiP3bn1QfmCo3pk0z3+GCgLJ2luS7VjeV5d1QsqQf54CrqF0GVZ7PNAR1nXbo+IZyb+hCNT7RRb3NB9XXJjpKooJY9PXdPr/LzIBwfwl+bOajJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743499638; c=relaxed/simple;
-	bh=cfTqZDHcE5fiz//FNirKrbvmscvekrm4mADcU84mmSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a/ZsiNeRm/vkkSPTis/3UrYGZDz//xdvs/RPiZCGoehGmGnw2DGj7EvD8t7riZtM6PtK7hHdeXLxkYJwFDV+/LJLKL1kt+/czCk5zqiaAyolx5xfPlw6zm4fhQdZHp1VDFTseMdmUcFp+8xWcmTiLWqK+Am6qP1tU7LSja8zp6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=dnLmlc9I; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2254e0b4b79so137068575ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 02:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1743499635; x=1744104435; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Uado/lwoP6/yzxDnZMmcfqF7svpEZg92uh1rPCCI/A=;
-        b=dnLmlc9IKdG4e9MSiBGO4NACYHLhj0h0AR/WVTMaR4INva+OmP9ctY4bRsUrKLBrve
-         fv5mSf+51ysl1zrPCK2kNG9ENz0t/2lxnfhzP82vYFd1BGRmTaxBRH/u80ObH8zG0WY0
-         q80/XEiDpUhQUJ/kkX4jkQOIiBPkBBHnGSaed2Faz2ngxUajpkQAhmna4rQ2OB/RhW11
-         xxG5Mcq12d5CSKKQnejBWj4ENoOF9Qu4Vkyk564NZl8vPZNrfrpV7Nrfws5n7R8xfRwY
-         Emu46VuVo73nOQSjKLfCqOmWb02Joqrd1oopqgf9M/gEPvWB2VxFUV+sqkwG1MA9pIMR
-         zCQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743499635; x=1744104435;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Uado/lwoP6/yzxDnZMmcfqF7svpEZg92uh1rPCCI/A=;
-        b=aJebKkaAJQlpNxryeXGriHSuxaNd/8gs6nOVlzRySYJMvllNLef1wDKT1+ZZoWmNuh
-         s23W6osgASY8CImRdY7BLA+vC/B6WJ5WUvvkWccgApV/U66671nEKkNlHIxjmGEDC8w8
-         0NGodCvgmgyAOy+NOkCbesIZdl3yenIXmVaP8DdcCJhI0b/jkZbsqjoRK1IhcjToeZln
-         w3g0IuVu/vhkj77liaHa9HRhnFp6RWeXZlZMhWWTvR9xxRYClQA5lGokNPRlqWVw4lrM
-         kLAEVHHo4yTu9BCdYqbAI3aawPO/hBCO8vV8/tOqmi3RUOkxj3PaRwqFlNq4VsKniSkj
-         cYPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJGyw6/YQBVZE7Tcve01whknr20Z2ztwQt41ZJjKGr5V688kXtOHNaiQ1fUnT9kxEYoblnTn0pSl5XuC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdMp3X8auB5SJpREBP54P0Ri1jSyZ9HP9SGXQwMRnqhslAlJWJ
-	RiaqOlDoKug/ro6Gn6Y/ECnX0hsRK6vu0tNR5faFdZh89u27Ht5JfLkouUQgBKY=
-X-Gm-Gg: ASbGncu+RO/MiYFrH4W4+Bb5139eYyU8geFUcUTg6aj/rfDLGRBtlPjMAPGL9fUeU55
-	23uEiQKmtkQ9XfcC0sK+CKY06bo2QowoXShlWn7ON4dzAhEcwhAWJl2YFLe1fBTR2N4B8e+D0Yc
-	4QT3/qwwgCteWTZRmfWQ0oVHa7eRXBCYoNLbdJFbxXhhZRIUsiD8XD5yjHo2bckFEjg4ZDihb45
-	wVzhgAmy93j+WC5Y+e709hGgTF0E3rrxxF1DF3NJ/ajHQaeuDKyu+TViZ5ruk5M7VVc9ChrSLS7
-	w6t1A0smQ1bQv5oU56FjFEb/ToodaaRdS3xOGWnbz8TPzXlIdMqKsz3S10nc0DKGtsc6RAupRxi
-	0zUM2NT7Dee39+fEf
-X-Google-Smtp-Source: AGHT+IGqaCCTYrqWmclHIKooaJS6kAOzFT7W0prKClRtoHu3FK+uWwiXhw0KuQp6tmIfbZ4lKt34fg==
-X-Received: by 2002:a17:90b:56cb:b0:2f6:f32e:90ac with SMTP id 98e67ed59e1d1-30531fa159emr21548695a91.11.1743499634871;
-        Tue, 01 Apr 2025 02:27:14 -0700 (PDT)
-Received: from ?IPV6:2001:861:3380:2e20:6214:6f9b:8e4c:f723? ([2001:861:3380:2e20:6214:6f9b:8e4c:f723])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3039e10af2csm11190566a91.21.2025.04.01.02.27.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Apr 2025 02:27:14 -0700 (PDT)
-Message-ID: <f8b56a02-c508-4bc9-a503-48e487ced86e@rivosinc.com>
-Date: Tue, 1 Apr 2025 11:27:06 +0200
+	s=arc-20240116; t=1743500017; c=relaxed/simple;
+	bh=tjvcp4POZcgFYSJi6w8QFtqD88zOShmsfmbQ949KIF8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=koZrroD8qzJBqBASaeDEVVWM+VRl4UgZwT9rHaFwaLaZnkwvC3V0uOi1XgL3qqmsHsCC35196Rx7QxP1UPgi+zetrnPi9ffk41ITSGJDcnzbKWMoFwz2QJLgpZPb1mmlRuvOBWEAwChZI3d+MTPxx/EGvybsRE4RIWuFgkAE708=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=WgDz5MMh; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743500009; bh=QEYVKhECladfxjqyKQSzAOMcOlFrMVaRY3xj2wEcNhc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WgDz5MMh82Mv7X5fG5PXPmMymuq738j7zT05yyU3Q0U0HlPM7sC+7ARNW23OyAo41
+	 U4IR08PRABBpyt3zWv3mIcphzzzpxMq70BYdCc77WP1wCswVejKJdhaEOsRSb5Mu0s
+	 K4h2vl4onzbKs9JqRmgzaXGYwXoobZrXXfNY86Pg=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 6CC3BEF9; Tue, 01 Apr 2025 17:27:12 +0800
+X-QQ-mid: xmsmtpt1743499632trvvhpf3l
+Message-ID: <tencent_1B8B23E13980B65C9D11BFCA253F636E4208@qq.com>
+X-QQ-XMAILINFO: OZZSS56D9fAjdaSckX8XONgCXT6acTC9p1TuZ1I/AgH3J44VKB3DA3dBdicJwN
+	 kQ85NILCbkJYqYK0PCkm4ZvBhPmC/qLjQzwC+IzjvlVB8NvEJvGvC3YTBjrsLBo4WzyXjdlDkG9x
+	 y2rpuMiVchYqXoFbdGHxJ4rFFLgjXU2dwvDZB2nekpdAB0RbnUjG9GyPR7qyqZdc51LZFJJ3H3b8
+	 dikSdMpBg7EqlWIrWm944DaUm0xZkepk8DVM3z8Ce7Dg8JjwbWeeT/pLoVmERU20/RSGhwQW5ku0
+	 xkIlr2XmsDchUAEV5neyV9UfiBw3+gQ1AuxN+DlQeL/tcaOBVpzJM183o5BpWsxAzJYTEGpG+h5v
+	 8bfLXjOLxf7OMyBExbPeBLTeuKodnTQ+NizdT8e8+OveCppjV48/x2SzJrokbbjAWfs1Epw0N6mr
+	 1psVfY4Y0qTrUDN9w6RHqun1NRIMFOjKAtdDHYhG40N95+ABgLOzjiPQkamGpgYzrIs27/E005bd
+	 BULjDzER0Kse/ECavuZu5jYEDOBaNmjXxznatcq1dskBe/l/mLXdmARcDZOPORQw+OsiizpHdddw
+	 j46w9IS3aREPyqn0wpleff62nkIH2yvc7NjSqKk2ROfwsXDeKQhzYWhfIIyFeSsjtmhHsddLZZhw
+	 FWaD0NBt18zZGYl+S9bwCN17jPcR6IcZoq8G8ZMWaRA/0TP+eJCSk0flyZNXRdRCSUBUy2FwrMPQ
+	 +neerZmSojOxUg43/u+zXwWUZZQfxAX4/pKdi+nw/WyDChPyr6A22IHmiYuV5h1rSmBmwDky/9wm
+	 f6Q/7LHj0YKRs64tBCHXU7sF4BZvj3GbcAqwc36Wu8kYkDg3UU2BW0mn8fwCXAicK9UvcFzbBWK1
+	 Adhya+wM3cwMcjq7GhPn5uqnjtGPEDZfRQbaQiN9oqbA0/LSra5XJ16aUW1kmW6ub9kH56BdgEss
+	 mfYnucMO8ZfC2PRvwSTOYfmE8wNNA2+haXPdFfDhQ=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Yaxiong Tian <iambestgod@qq.com>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	chaitanyak@nvidia.com
+Cc: linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH v3 3/3] nvme: add per-controller sysfs interface for APST configuration
+Date: Tue,  1 Apr 2025 17:27:11 +0800
+X-OQ-MSGID: <20250401092711.1558779-1-iambestgod@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
+References: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH FOR-NEXT] riscv: Add norvc after .option arch in runtime
- const
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Klara Modin <klarasmodin@gmail.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250331-fix_runtime_const_norvc-v1-1-89bc62687ab8@rivosinc.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250331-fix_runtime_const_norvc-v1-1-89bc62687ab8@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
+Currently, APST (Autonomous Power State Transition) parameters are
+configured as module parameters affecting all controllers uniformly,
+ This lacks flexibility for heterogeneous systems.
 
-On 31/03/2025 20:45, Charlie Jenkins wrote:
-> .option arch clobbers .option norvc. Prevent gas from emitting
-> compressed instructions in the runtime const alternative blocks by
-> setting .option norvc after .option arch. This issue starts appearing on
-> gcc 15, which adds zca to the march.
-> 
-> Reported by: Klara Modin <klarasmodin@gmail.com>
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Fixes: a44fb5722199 ("riscv: Add runtime constant support")
-> Closes: https://lore.kernel.org/all/cc8f3525-20b7-445b-877b-2add28a160a2@gmail.com/
-> ---
->  arch/riscv/include/asm/runtime-const.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/runtime-const.h b/arch/riscv/include/asm/runtime-const.h
-> index c07d049fdd5d2999c57d8a90e7363829c5462368..451fd76b881152919f22de8f5c56b51171acbf3c 100644
-> --- a/arch/riscv/include/asm/runtime-const.h
-> +++ b/arch/riscv/include/asm/runtime-const.h
-> @@ -56,6 +56,7 @@
->  #define RISCV_RUNTIME_CONST_64_ZBA				\
->  	".option push\n\t"					\
->  	".option arch,+zba\n\t"					\
-> +	".option norvc\n\t"					\
+This patch introduces per-controller sysfs attributes under each NVMe
+controller's sysfs directory:
+- apst_primary_timeout_ms
+- apst_secondary_timeout_ms
+- apst_primary_latency_tol_us
+- apst_secondary_latency_tol_us
 
-Hey Charlie,
+The attributes allow runtime configuration of: Timeout values for
+primary/secondary states.
 
-Could ".option arch,+zba,-c" be used as well ? That way, c is treated
-like any other arch option. Or does norvc has other side effects ?
+The existing module parameters are retained for backward compatibility
+but now only serve as default values for new controllers.
 
-Thanks,
+Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
+---
+ drivers/nvme/host/core.c  | 16 ++++++++++------
+ drivers/nvme/host/nvme.h  |  4 ++++
+ drivers/nvme/host/sysfs.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+), 6 deletions(-)
 
-Clément
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 9dea1046b8b4..c999bd905d10 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2608,22 +2608,22 @@ static int nvme_configure_host_options(struct nvme_ctrl *ctrl)
+  * timeout value is returned and the matching tolerance index (1 or 2) is
+  * reported.
+  */
+-static bool nvme_apst_get_transition_time(u64 total_latency,
++static bool nvme_apst_get_transition_time(struct nvme_ctrl *ctrl, u64 total_latency,
+ 		u64 *transition_time, unsigned *last_index)
+ {
+-	if (total_latency <= apst_primary_latency_tol_us) {
++	if (total_latency <= ctrl->apst_primary_latency_tol_us) {
+ 		if (*last_index == 1)
+ 			return false;
+ 		*last_index = 1;
+-		*transition_time = apst_primary_timeout_ms;
++		*transition_time = ctrl->apst_primary_timeout_ms;
+ 		return true;
+ 	}
+ 	if (apst_secondary_timeout_ms &&
+-		total_latency <= apst_secondary_latency_tol_us) {
++		total_latency <= ctrl->apst_secondary_latency_tol_us) {
+ 		if (*last_index <= 2)
+ 			return false;
+ 		*last_index = 2;
+-		*transition_time = apst_secondary_timeout_ms;
++		*transition_time = ctrl->apst_secondary_timeout_ms;
+ 		return true;
+ 	}
+ 	return false;
+@@ -2728,7 +2728,7 @@ int nvme_configure_apst(struct nvme_ctrl *ctrl)
+ 		 * for higher power states.
+ 		 */
+ 		if (apst_primary_timeout_ms && apst_primary_latency_tol_us) {
+-			if (!nvme_apst_get_transition_time(total_latency_us,
++			if (!nvme_apst_get_transition_time(ctrl, total_latency_us,
+ 					&transition_ms, &last_lt_index))
+ 				continue;
+ 		} else {
+@@ -4856,6 +4856,10 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ 	ctrl->ka_last_check_time = jiffies;
+ 
+ 	mutex_init(&ctrl->apst_lock);
++	ctrl->apst_primary_timeout_ms = apst_primary_timeout_ms;
++	ctrl->apst_secondary_timeout_ms = apst_secondary_timeout_ms;
++	ctrl->apst_primary_latency_tol_us = apst_primary_latency_tol_us;
++	ctrl->apst_secondary_latency_tol_us = apst_secondary_latency_tol_us;
+ 
+ 	BUILD_BUG_ON(NVME_DSM_MAX_RANGES * sizeof(struct nvme_dsm_range) >
+ 			PAGE_SIZE);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 7f8e10f5bf7a..ed9afc3c6781 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -387,6 +387,10 @@ struct nvme_ctrl {
+ 	/* Power saving configuration */
+ 	struct mutex apst_lock;
+ 	u64 ps_max_latency_us;
++	u64 apst_primary_timeout_ms;
++	u64 apst_secondary_timeout_ms;
++	u64 apst_primary_latency_tol_us;
++	u64 apst_secondary_latency_tol_us;
+ 	bool apst_enabled;
+ 
+ 	/* PCIe only: */
+diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+index 20146eb4c671..77912e95aff8 100644
+--- a/drivers/nvme/host/sysfs.c
++++ b/drivers/nvme/host/sysfs.c
+@@ -684,6 +684,39 @@ static DEVICE_ATTR(dhchap_ctrl_secret, S_IRUGO | S_IWUSR,
+ 	nvme_ctrl_dhchap_ctrl_secret_show, nvme_ctrl_dhchap_ctrl_secret_store);
+ #endif
+ 
++#define nvme_apst_show_and_store_function(field)				\
++static ssize_t field##_show(struct device *dev,		\
++			    struct device_attribute *attr, char *buf)	\
++{									\
++	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);			\
++\
++	return sysfs_emit(buf, "%llu\n", ctrl->field);	\
++}									\
++									\
++static ssize_t field##_store(struct device *dev,		\
++			     struct device_attribute *attr,		\
++			     const char *buf, size_t size)		\
++{									\
++	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);			\
++	u64 data = 0;					\
++	int err;						\
++\
++	err = kstrtou64(buf, 0, &data);		\
++	if (err < 0)						\
++		return err;						\
++							\
++	mutex_lock(&ctrl->apst_lock);		\
++	ctrl->field = data; 	\
++	mutex_unlock(&ctrl->apst_lock);		\
++	return size;			\
++}									\
++static DEVICE_ATTR_RW(field);
++
++nvme_apst_show_and_store_function(apst_primary_timeout_ms);
++nvme_apst_show_and_store_function(apst_secondary_timeout_ms);
++nvme_apst_show_and_store_function(apst_primary_latency_tol_us);
++nvme_apst_show_and_store_function(apst_secondary_latency_tol_us);
++
+ static ssize_t apst_update_store(struct device *dev,
+ 					      struct device_attribute *attr,
+ 					      const char *buf, size_t size)
+@@ -735,6 +768,11 @@ static struct attribute *nvme_dev_attrs[] = {
+ 	&dev_attr_dhchap_ctrl_secret.attr,
+ #endif
+ 	&dev_attr_adm_passthru_err_log_enabled.attr,
++
++	&dev_attr_apst_primary_timeout_ms.attr,
++	&dev_attr_apst_secondary_timeout_ms.attr,
++	&dev_attr_apst_primary_latency_tol_us.attr,
++	&dev_attr_apst_secondary_latency_tol_us.attr,
+ 	&dev_attr_apst_update.attr,
+ 	NULL
+ };
+-- 
+2.25.1
 
->  	"slli	%[__tmp],%[__tmp],32\n\t"			\
->  	"add.uw %[__ret],%[__ret],%[__tmp]\n\t"			\
->  	"nop\n\t"						\
-> @@ -65,6 +66,7 @@
->  #define RISCV_RUNTIME_CONST_64_ZBKB				\
->  	".option push\n\t"					\
->  	".option arch,+zbkb\n\t"				\
-> +	".option norvc\n\t"					\
->  	"pack	%[__ret],%[__ret],%[__tmp]\n\t"			\
->  	"nop\n\t"						\
->  	"nop\n\t"						\
-> 
-> ---
-> base-commit: b2117b630c48be69d2782ed79fefe35dcd192ce6
-> change-id: 20250331-fix_runtime_const_norvc-407af1f24541
 
 
