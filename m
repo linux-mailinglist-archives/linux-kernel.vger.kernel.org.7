@@ -1,98 +1,71 @@
-Return-Path: <linux-kernel+bounces-583604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0B5A77D64
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:12:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FE9A77D69
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EEEF7A37C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CFE1888507
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3D3204C20;
-	Tue,  1 Apr 2025 14:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA13204F61;
+	Tue,  1 Apr 2025 14:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aMhIagR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fQ6Fn7IO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aMhIagR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fQ6Fn7IO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H58zNYJo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135C92046BB
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7822D204C3E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743516714; cv=none; b=Ob1pd2L3WIK8/aoXhB33GpfwjOVQC6Q5BHJSAN35MpHFCQbkVL54mHy44CbbF95iAZvPpgshv0yC8Yk7Ca/TEBJ6XDio5pyq24IT8eVFW1hgl5R0hxNyfM58YQb82mVoLL1L01tk4D+pBbdCtFTReGc9JDMzbBhzSJUwqCplUnA=
+	t=1743516720; cv=none; b=Z6HRi1Iy2gSjJHGr0TSlHjhhc/Tch7tH5BegcxUnCNJHFpNZM8K5PeOXRMrTozY52QvCWTo3TBiL11pfMoCSS6k8EuC6fQKFrjGaGjgRyPu0YJNgqjmYEKxW1d9CM588557cussWpdFo25oe5fpxqfa9NHbUHHM2420Qa6CGt2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743516714; c=relaxed/simple;
-	bh=YbunYiIfPtvKAcY2+sn82S8+Oomzphi+OmkpdLWSus8=;
+	s=arc-20240116; t=1743516720; c=relaxed/simple;
+	bh=GO+ERojZJ5qf/t5ROmOD9Lr2F6iO2Gb5d2Ond4j5Na8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=my79vrbLqVZ1ocEPjrStHYdUaB23alfqr0lu0HahmRMVOgsCbsYUEZaJaWk4P5AFDYQfojrJIHo8yMkhiAAEsTT6LedPaoIjngLOXNWDXfUz8yAMUe7kgGZCDR6Y0GWOarQddgi3aUJxw2tP46SWPzyoz7CvmQe7Wsk6YiDx65g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aMhIagR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fQ6Fn7IO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aMhIagR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fQ6Fn7IO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXhocOZsJuNiOUgqxmvQVjNZw+eeA8BQfV3HuX1QV8DFg+QiRqpp+AQggtGo5lTHIaiR9+b7zzn1PU+CRSHVW4+ztO8UVu/+gFCgfVOmxqlYiHRwsk3m4OssVebWMcLGGhAJwA7mC0wE6jlt+usw012Z+GH0KWW9NkGY5KfMTTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H58zNYJo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743516717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=suAxeaNpOjK2xWYvWoyiGhS57tRLw1UbrXfTqrCY4sY=;
+	b=H58zNYJohPPrJxMZL0xhNTOMv85OSVgvL7gY33EgUjCJEnXVr+JgO0xAgZ8V+PZewPjrXX
+	Jz+0qvnM13+JSeoWpLxx1mdNdUbl+ld++hJZ9Cbb99P7N3y3+hw/s7Yg0Ta+RHqugbU9u8
+	jsZTknCpYMyFPxBKK4k/w4fLWv6e/e0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-423-5HaEc5wiP2Cp8mbFAb_PfA-1; Tue,
+ 01 Apr 2025 10:11:54 -0400
+X-MC-Unique: 5HaEc5wiP2Cp8mbFAb_PfA-1
+X-Mimecast-MFC-AGG-ID: 5HaEc5wiP2Cp8mbFAb_PfA_1743516713
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 423B3211F3;
-	Tue,  1 Apr 2025 14:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743516711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K75sT1uOE2o2JxpuzJK0ApZypw9om3Mo5Rbs9DxBWvg=;
-	b=aMhIagR6HcL2s1dNtPineA2kIKgnebcZC6J5FJ2AE87CDn+j47OISMOq7ASVn+8iZB7WHM
-	kMaZPxe1K+MmHE4z912HZcnpvkUZjf88hAApOa8PU1o94kK9gRTiD2/+Nj4BnNTsunXyxv
-	djrt78yTTrJW+wYpfMa44tpuP3UYGCM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743516711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K75sT1uOE2o2JxpuzJK0ApZypw9om3Mo5Rbs9DxBWvg=;
-	b=fQ6Fn7IOyJLaoFncWAx4DD5C2/UvUox1o1Lg+YsHn9Irntk+D/M2MeTbr84D3vi0fmttT/
-	vCM8Y8oLMaaz2uDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743516711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K75sT1uOE2o2JxpuzJK0ApZypw9om3Mo5Rbs9DxBWvg=;
-	b=aMhIagR6HcL2s1dNtPineA2kIKgnebcZC6J5FJ2AE87CDn+j47OISMOq7ASVn+8iZB7WHM
-	kMaZPxe1K+MmHE4z912HZcnpvkUZjf88hAApOa8PU1o94kK9gRTiD2/+Nj4BnNTsunXyxv
-	djrt78yTTrJW+wYpfMa44tpuP3UYGCM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743516711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K75sT1uOE2o2JxpuzJK0ApZypw9om3Mo5Rbs9DxBWvg=;
-	b=fQ6Fn7IOyJLaoFncWAx4DD5C2/UvUox1o1Lg+YsHn9Irntk+D/M2MeTbr84D3vi0fmttT/
-	vCM8Y8oLMaaz2uDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E09AB138A5;
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6E14180882E;
+	Tue,  1 Apr 2025 14:11:52 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.12])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F6481955D81;
 	Tue,  1 Apr 2025 14:11:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aKUmNCb062frXwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 01 Apr 2025 14:11:50 +0000
-Date: Tue, 1 Apr 2025 16:11:45 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Baoquan He <bhe@redhat.com>
+Date: Tue, 1 Apr 2025 22:11:46 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
 Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org, yanjun.zhu@linux.dev
-Subject: Re: [PATCH v2 4/7] mm/gup: remove gup_fast_pgd_leaf() and clean up
- the relevant codes
-Message-ID: <Z-v0IRYjisOuNnMZ@localhost.localdomain>
+Subject: Re: [PATCH v2 1/7] mm/gup: fix wrongly calculated returned value in
+ fault_in_safe_writeable()
+Message-ID: <Z+v0IghIBLwha/oX@MiWiFi-R3L-srv>
 References: <20250331081327.256412-1-bhe@redhat.com>
- <20250331081327.256412-5-bhe@redhat.com>
+ <20250331081327.256412-2-bhe@redhat.com>
+ <a1f69754-776f-47eb-980e-8a12991f4865@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,46 +74,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250331081327.256412-5-bhe@redhat.com>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,localhost.localdomain:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <a1f69754-776f-47eb-980e-8a12991f4865@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Mar 31, 2025 at 04:13:24PM +0800, Baoquan He wrote:
-> In the current kernel, only pud huge page is supported in some
-> architectures. P4d and pgd huge pages haven't been supported yet.
-> And in mm/gup.c, there's no pgd huge page handling in the
-> follow_page_mask() code path. Hence it doesn't make sense to have
-> gup_fast_pgd_leaf() in gup_fast code path.
+On 04/01/25 at 10:10am, David Hildenbrand wrote:
+> On 31.03.25 10:13, Baoquan He wrote:
+> > Not like fault_in_readable() or fault_in_writeable(), in
+> > fault_in_safe_writeable() local variable 'start' is increased page
+> > by page to loop till the whole address range is handled. However,
+> > it mistakenly calcalates the size of handled range with 'uaddr - start'.
+> > 
+> > Fix it here.
 > 
-> Here remove gup_fast_pgd_leaf() and clean up the relevant codes.
+> Fixes: ? Do we know of user-visible effects?
+
+I believe it should impact, while I didn't hear of any complaint.
+Yeah, it's worth to have one Fixes.
+
 > 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
+> > 
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> > v1->v2:
+> > - Fix a patch log typo caused by copy-and-paste error. Thanks
+> >    to Yanjun.
+> > 
+> >   mm/gup.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index 855ab860f88b..73777b1de679 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -2207,8 +2207,8 @@ size_t fault_in_safe_writeable(const char __user *uaddr, size_t size)
+> >   	} while (start != end);
+> >   	mmap_read_unlock(mm);
+> > -	if (size > (unsigned long)uaddr - start)
+> > -		return size - ((unsigned long)uaddr - start);
+> > +	if (size > start - (unsigned long)uaddr)
+> > +		return size - (start - (unsigned long)uaddr);
+> >   	return 0;
+> >   }
+> >   EXPORT_SYMBOL(fault_in_safe_writeable);
+> 
+> Can we instead just use the uaddr and start variables like in
+> fault_in_readable?
+> 
+> That is, turn "start" into a const and adjust uaddr instead.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Sounds good to me, that makes these similar blocks own consistent code
+style. Will change in v3. Thanks for reviewing.
 
- 
+> 
+> (maybe we should also handle the types of these variables similar to as in
+> fault_in_readable)
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
--- 
-Oscar Salvador
-SUSE Labs
 
