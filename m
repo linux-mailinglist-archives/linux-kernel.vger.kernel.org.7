@@ -1,134 +1,136 @@
-Return-Path: <linux-kernel+bounces-583750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DE8A77F62
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:47:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C54A77F40
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E7137A4633
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F663AEC6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D8120FA96;
-	Tue,  1 Apr 2025 15:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81AD20C028;
+	Tue,  1 Apr 2025 15:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAZceWAg"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JU9kTvWO"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2838120E717;
-	Tue,  1 Apr 2025 15:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD5720AF88
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 15:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743522362; cv=none; b=Pt8wmecEiceihmeDkZLfLVRIcQVH5pgVXqjHwWP7lhUXjcV1ZJdOWk6EEPluWaRoc7eBEirWofO+2gKdYCybTewMSnaQ3YsQdMsLj2YXVGd8ALrZhuT0UNPa5qpqWTMCclnf22Q7nFYDIEuFzrzBvp044ZJmW5VDM1IywAkDliw=
+	t=1743522256; cv=none; b=QaIWkLoKq6H01RrZf57sNBTEmlzuFSlREhgrHkgrLLwgvPAr7Q5IxfQUEchpYr3Iq5Y9YpBMGbrLc3/qBoL+gdtFzgvGRG4tTu1rRAu1uGyHxzBJKqJJY1ICVoAPMigSs9bL1MyLiSv/axGR8dOKtmsI2+4CNy+S0nAcRp0JXrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743522362; c=relaxed/simple;
-	bh=VA93hrjQWlyzZwcWjEvqD+4aWl10GXJ9Bc0D9Dx2kBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VNQjv6mYnJyhmXhDRsWNTbSC54hPquLqpZ1Ub9aCNiEtyWHZ8vi5K+jGlb9TzekdQVgggAPncRLxxcR93OMdQmMV5W9OnIPP80FEtgLz5E7OGJXfpOlYInHgJVeKMZmJXDZBDLzFeYDxkNwVYNOjxBBSXRSl9Y5C5KtMFixTuXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAZceWAg; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-399744f74e9so3741857f8f.1;
-        Tue, 01 Apr 2025 08:46:00 -0700 (PDT)
+	s=arc-20240116; t=1743522256; c=relaxed/simple;
+	bh=a6xhRfFpTxAAJ5SlpRIOnpKIhMU+TA2ntom8u7AyK9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fl9CUQpFic5PRJjCTMCfB/v8v2euPXYa3wgpTiO1AfIW53YC4civvndTTlsTEqWzPBrrHOCU5SdZiAZi+NCH+8SdDdYT5tygaG2qHGyU2J5C1U/oIsmkGY0rgzZF6dVB9WuECvo/VFcIWTQy84KUAZZhQ/9t5XPP/8cIAnArTlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JU9kTvWO; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c5e2fe5f17so556873085a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 08:44:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743522359; x=1744127159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ESjB9FswjsXqDkh+hAstUPSbEKWZtoMzCjv/1OB1iXM=;
-        b=SAZceWAg6MX0G4o3E8kz4oiWIniqicoKAGY3ma/N9jHnVnIy2W/7TM/Kw9A/4wzjfh
-         vg7cDaGnf/mM7meLMGOt64w02LE/c5P+JrR6m+sFpHuoIkvDV5J9a4gLuYE7y2vek0JV
-         /wG3x6kts6a9TVi1O0VaduJUKyu+PgD+swCapIyRtBBlkzsZ5pFBck6zD7cxEb5DXRFd
-         aRIUS618KMMeAygwcDojySIEgZjDo6reH/oEILpDkfnBJL+Lairw9kmkmnhCY20YmdpA
-         c2gi5tyKSz5cVrP6Zn/SGInamTUQ6XBpmu0dEhqmkNDbgV1hqXKGW+5Yu9C2rmy88L/P
-         b4xQ==
+        d=ziepe.ca; s=google; t=1743522253; x=1744127053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TtdWsRwfUOBxgsIg+kVSTkMJUa8tV9VXtloNeO/dNoo=;
+        b=JU9kTvWO0YmqDfugbXFXY+faYyjUEszhzl+QncpB6yjvpCh0+D9etEI4yWecLy1QBt
+         9tqBtjjrU3tEg6O2pj8hO9x4AoRNCNXGeRRvO3OONGHVu0G9EOfob9YLgVhHZA0d10oM
+         anrAWWNLbhNJyan7Tk7/TvCCjbffxMZH2vVqC5rZ55mNbXFQwfcUiBI5SfBMYyxJLBDd
+         Sg7zkjGBYC0jgBND7yBY6iC92vHlqP9eYnfSeipuINhWzXVQds0ugDfahJQDoM5Ltg6h
+         MkcwdHGESKbRewQzNcYB7p1YPvhZjORbuYJd+TLyzG2OleO+4OV/ALjvVEIIi5WbmaRu
+         I32w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743522359; x=1744127159;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ESjB9FswjsXqDkh+hAstUPSbEKWZtoMzCjv/1OB1iXM=;
-        b=d7ZeTRNNO3ocqBsOcRhUzeJIllJ8RKXtAEb7UBuw4W5arqfphgMiWuH/ramiTYHNBA
-         co4/sSSAQwyJ3rC4MAz8qTzylVKaKiOmzhxWtDtx+d2n9QCkeIO2Fpl4ErTiRUU0IrLq
-         cd2j1iZYQoUPXXCpW5NBYa+joU90UJZ0qx6BwjMzz1rlaB7a1C5P4CEWilbb8I8ahYkn
-         Rl1q0GKZAdD+IwSCsv2v9yqdN4VpdS6FtTIxnPh1qyWoqaiz8mCzvgYr4oV4ThqB7vt9
-         G/GfywR651R8Ony3P7c0iVeUo8M7Cfi4xMaoKhj9BEmI1cJypO35gx39Djuad8njEzG4
-         YvOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhHB5BY1RZ47fXEmR/caz47zXdzXtAsq8HbcVoJ94fhJ+lWa5kEyvEg4R9pAQmDwNfntFzt8jJd84K@vger.kernel.org, AJvYcCVGVLgZaC2ZtmHoz8MDqXSxhJwYK+01Fdn7GGqL7tklnzPkrsuZzsBoQW9OmsgGZuTryAAbNyHYouqn+uNh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL9Pmmld/fpWsP6sW9/RYI3uG0SInDTQkbHGrFweZdBHVx/z8R
-	3Hgw7LRMWkVyzDtpsx9zsEpMNZX/QAYHV4JSHnaaT586jn9YWTHT
-X-Gm-Gg: ASbGncv2XiBDtCh0HxLnp1AG7RgnSRj2nioA1SxY1jsl37KsrT5sdoN8bGYOcgwm1BN
-	b4k3SlnipVyq7bBigNqqWLwqE7IFXD6ennU7OJtKqddtF2R7KFqRHfo5KUlKfbV4BwPTciuTPj8
-	jvV5l7FhQ6hc/in4q+tnMNxH4vXpBNOMCM0XI+Ww3JHWxY8lYgBRCbhjZR7UTp0h/EfVK+l/e5c
-	beBWN5XKCWOU+HmsxlnREpGBLkCVTcLiTkIp1NDLQ6QTYQ5RdlEIB+jsBA33oIhnlRPl6XTGOJ+
-	TYq318xR+CIEUDZQKeEDr151WIHwMBSNdSs4jBdhzveplPJbnIDFDo9f80bnL2rGS03RWksXo7x
-	K0Q8Yz7xuqFY4SuUcuQ==
-X-Google-Smtp-Source: AGHT+IGKhtb6fsJZMzdARBi+gb1FIGOla8Dmwwf9ptz7h3kdFPWq1TAOfA22Dh/s0xKKlSvTPmHHiQ==
-X-Received: by 2002:a05:6000:381:b0:39c:1f0a:ee0 with SMTP id ffacd0b85a97d-39c1f0a0f69mr5198566f8f.2.1743522359440;
-        Tue, 01 Apr 2025 08:45:59 -0700 (PDT)
-Received: from playground.localdomain ([82.79.237.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8ff042bcsm158795735e9.28.2025.04.01.08.45.58
+        d=1e100.net; s=20230601; t=1743522253; x=1744127053;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TtdWsRwfUOBxgsIg+kVSTkMJUa8tV9VXtloNeO/dNoo=;
+        b=kUTYuiXWlDKObU2l5+0C/TBcq803O9JhgynCBe/MIwHczxrSYGD6v7JRfTnhJw9LyO
+         +N3w0ldX1/sgZ6elb5d9WpxTkdPU5sh8nAYkpLBBkMwgnB/egHYyDu2EAHhkqbeElI8a
+         c8TyWMLdSZP4lAsy17c+sNL/S8TzqjzPzs9LcD9zbEU4Vy7YJL0KiaB2NCFI1/N0wDwC
+         2gsu2mbzNDKqYJOAYbbc00q0Pv/KjKtt3eHR9ZjXFrVsQ4lBhDTDkSYYjton/4rSgbsn
+         iUNzC5CU4yB8mOTwictPb0P9gs+wprYeXeE3pUFmo6n6UNhj7KYRiTtg/rTFRbGFqep7
+         Gyfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPslNKUYhbvWNRSFLDFVgioGznDrfnyWbhPcCW2tI1l3uloX8L2UgAVoU0G/BN3iJ3jR9y4XHpbtZ/5pI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKP2ct4FJ9Ly2Zt/TonqHh7oV+08bPpiEJBZkV7vXUPJpsyKmf
+	1dqx5cIbT6hy79pgEDRFVAqUd96FxRn3/fqRcZKM3x82oUFnL6NMc9/fvOSXeRzjfbk0pu9o1xB
+	A
+X-Gm-Gg: ASbGncs66dc0zUSZ3YTCpmu072mhy3NFhXyTo2B/V4J3+32mKS/VlaZcfOOQ5HTeJa9
+	sxPvf3lMs4LyR171U1nXjFQZsHNrpqScLH2bBYZKeGH+v6DaobH8g5wgLvd1tTTkfBLJDJDsUF4
+	ito0pw7wjJT2qtRZtacypPzp1702U0VdhJJUSZX6KKU+vLpuCZ9JkJ0PtyM6a4AWUXWsj2eAOU7
+	RzHdwWGMmmmEsf81YGJTk/tlSyxaFzt4ewv+Jjvspvbvu2qucEyoTXjEGzUS0A1/GboenNJSJwL
+	amGKGjmObDRiLAsrDmOORwOjhBL/xgTG2jogg+jFT4qQqynagn6LBkWiAuR9GflLruDmEYAqBuK
+	TQc8f2XrARL7vZbyEOXEscBk=
+X-Google-Smtp-Source: AGHT+IFNoRzI7w1svFEnu6uSg1a7Al/lfHMRAFbRiHbN38KY+jMtZlEEZoz8sPSAU2QwNot8xAw/Fw==
+X-Received: by 2002:a05:620a:1a91:b0:7c5:9ac2:2a7a with SMTP id af79cd13be357-7c69089246emr1907329985a.47.1743522253345;
+        Tue, 01 Apr 2025 08:44:13 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eec97974ffsm62920086d6.99.2025.04.01.08.44.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 08:45:59 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Frank Li <Frank.li@nxp.com>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 6/6] arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
-Date: Tue,  1 Apr 2025 11:44:04 -0400
-Message-Id: <20250401154404.45932-7-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250401154404.45932-1-laurentiumihalcea111@gmail.com>
-References: <20250401154404.45932-1-laurentiumihalcea111@gmail.com>
+        Tue, 01 Apr 2025 08:44:12 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tzdme-00000001MBc-1Y2l;
+	Tue, 01 Apr 2025 12:44:12 -0300
+Date: Tue, 1 Apr 2025 12:44:12 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: Jessica Clarke <jrtc27@jrtc27.com>, tjeznach@rivosinc.com,
+	joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	alex@ghiti.fr, lihangjing@bytedance.com, xieyongji@bytedance.com,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [External] Re: [PATCH] iommu: riscv: Split 8-byte accesses on 32
+ bit I/O bus platform
+Message-ID: <20250401154412.GI186258@ziepe.ca>
+References: <20250325144252.27403-1-luxu.kernel@bytedance.com>
+ <9F043708-3BB6-46CF-BEC3-2636E9A388B7@jrtc27.com>
+ <CAPYmKFtAWNz7nCDDD7rjGeV2fRBgy5Kt6KR60pEyXAM=bb7r4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPYmKFtAWNz7nCDDD7rjGeV2fRBgy5Kt6KR60pEyXAM=bb7r4g@mail.gmail.com>
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed, Mar 26, 2025 at 11:26:07AM +0800, Xu Lu wrote:
+> Hi Jessica,
+> 
+> > Is such a platform conformant to the specification?
+> 
+> We have talked about this before [1]. I think the IOMMU spec does not
+> mandate the implementation of 8-byte access functionality. The related
+> sentences are listed below:
+> 
+> "The 8-byte IOMMU registers are defined in such a way that software
+> can perform two individual 4-byte accesses, or hardware can perform
+> two independent 4-byte transactions resulting from an 8-byte access,
+> to the high and low halves of the register, in that order, as long as
+> the register semantics, with regard to side-effects, are respected
+> between the two software accesses, or two hardware transactions,
+> respectively."
 
-The DSP needs to access peripherals on AIPSTZ5 (to communicate with
-the AP using AUDIOMIX MU, for instance). To do so, the security-related
-registers of the bridge have to be configured before the DSP is started.
-Enforce a dependency on AIPSTZ5 by adding the 'access-controllers'
-property to the 'dsp' node.
+I think the commit message should explain an anyalsis that the code is
+safe against the mentioned side effects due to ordering.
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+And a comment should explain this:
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index ebbc99f9ceba..f0f0ff5edea6 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -2425,6 +2425,7 @@ dsp: dsp@3b6e8000 {
- 			mboxes = <&mu2 2 0>, <&mu2 2 1>,
- 				<&mu2 3 0>, <&mu2 3 1>;
- 			memory-region = <&dsp_reserved>;
-+			access-controllers = <&aips5 IMX8MP_AIPSTZ_HIFI4_T_RW_PL>;
- 			status = "disabled";
- 		};
- 	};
--- 
-2.34.1
++#define riscv_iommu_writeq(iommu, addr, val) \
++       ((addr == RISCV_IOMMU_REG_IOHPMCYCLES) ? \
++        lo_hi_writeq_relaxed((val), (iommu)->reg + (addr)) : \
++        hi_lo_writeq_relaxed((val), (iommu)->reg + (addr)))
 
+As the naive reading of the above spec paragraph doesn't seem like
+there are exceptions or why one register has to be the opposite order.
+
+Also missing () around addr
+
+Jason
 
