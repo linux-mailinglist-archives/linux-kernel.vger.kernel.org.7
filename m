@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-583077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A000A77640
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:21:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD20A7764A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF0393A9942
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA720188E959
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5A01E9B2E;
-	Tue,  1 Apr 2025 08:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA28E1E9B38;
+	Tue,  1 Apr 2025 08:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ek+WMyaq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VmVv+9l7"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2F1E261F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE391E9B22
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743495671; cv=none; b=BlZ2d7ddpEWGFMWsB4wdlNf8IrLfAlsC8kX2tHwT9BPZyRmPBNG7ZYzL3Gzuc51VCpHL8pTOex9Xzt5hGFR+JcvBm5vBN9fE8D3VNHvlVK93QsKU15qF4rsOYF3Lbhtdevm/yMCMLx9LIDC3YQRr5OkuhtZN1GW1BSPfHl8Wkjk=
+	t=1743495692; cv=none; b=CWutRZTSiLUqzqWrLIUci0khDOeUkw1fX1oJKSwSkDTE7filQ9c435mu2PiwwzsyA3zkWOUUufYWkMGD6S+RuRYb5U5xifyF70Nph8NJ98SU032FQs73Kcbpb4A4EfpfmndI6jveXc0kvyXm6sOt8mNjdsAlpgUEeTXwDzQxngw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743495671; c=relaxed/simple;
-	bh=cg6PEShvzm28yYdBaMTTDyOvb6+deHPCt0F8zssiOnU=;
+	s=arc-20240116; t=1743495692; c=relaxed/simple;
+	bh=erAg64H5JzF4KOwEBL8w5UwSY0ziUFS0x4UX3Gz7LuY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FW2nC7CYI7MfLApNrjBxI5JcHi0ot+nNhqYM8xrtyQns2hdVBpRJ/A13bYb8bAqMT2s9w7iGQJQXUSQAEUzxycXzvhrhkyzJbZElNK6GitekEMJwjEwDyG5OBLse3Ave+cgADiaziMiMGJa3hA0YWaLcfIyQmd+xp6hP9k9BEYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ek+WMyaq; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=aatMM5x3EEuTO3kfh7HmE3dUnFN7g/KT0kZqxMugVenJ+jmN7SgCr7x+aHGPdGzazu00dJmnIbKT25rP+Hh5LwMDZTdxsz82IhYT7WiXUWzJd+LdAE37KIr5f2LyZw2WKrF47I8fhNzkz5rp6WUrFeq9Je0x2DYfV0pc4Q8q67k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VmVv+9l7; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743495668;
+	s=mimecast20190719; t=1743495689;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6hh3sHQg1YPcmqC0I6nucOyyi71QpSx5LGkEOERvFPE=;
-	b=ek+WMyaq8ooCtEaa7ILGmcwotrDHpTyi+acKLFO8+RRhgSfEC/eIYI8l/TVXi03YGhz0rh
-	8Xgm3r+CDWechLlhIL/47Y0s+BlLW7xJvACohwH6+8uAzOJ1TLq+F20k+pM4xSb7IMFdwV
-	DJIyk1TW0tlFrQtnH9Ef6Osd9uuBGoo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=PmzklFDXuEZJS1m9bkBKHZnun7luvYIXYrbHBw7L4oc=;
+	b=VmVv+9l7MF2Jq/qNmIOfOAnoE3KR52IEfByZAUI6qj4NtGDWgI6gOyA20ixBQUBIG67DKQ
+	0UDTETHptWBXWnrZhuUlnL8ZfKD/RTuL1lBCv399HsReDlkwBKJw1Plis4v1bGllCrtM/S
+	Ot5FSFvIjQJrNPTzWoElquGocDkVMJo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-1crAhz-3PkWdacmrsib4pg-1; Tue, 01 Apr 2025 04:21:07 -0400
-X-MC-Unique: 1crAhz-3PkWdacmrsib4pg-1
-X-Mimecast-MFC-AGG-ID: 1crAhz-3PkWdacmrsib4pg_1743495666
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3914bc0cc4aso2638926f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:21:07 -0700 (PDT)
+ us-mta-103-r4FntU_IMzm1Nn6tm78D_Q-1; Tue, 01 Apr 2025 04:21:27 -0400
+X-MC-Unique: r4FntU_IMzm1Nn6tm78D_Q-1
+X-Mimecast-MFC-AGG-ID: r4FntU_IMzm1Nn6tm78D_Q_1743495686
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43e9a3d2977so15853945e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:21:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743495666; x=1744100466;
+        d=1e100.net; s=20230601; t=1743495686; x=1744100486;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=6hh3sHQg1YPcmqC0I6nucOyyi71QpSx5LGkEOERvFPE=;
-        b=ktyuIF7XOxly+MLm+fpHRAFh7fK24NQcKErVKN2r/OrzEl36JWGDiOU0RrA860VKB2
-         WWA4mDtcNVUwfeg6mEJOJM9aSUzTI4FhV2Igt/B0q/AUHEH4iujkIJP07xC1JaqS7/GA
-         IdIIsaVJBBCi+qlm1WvmyVKoaOlxHIuiHgSnzErTb5raIUFgQkBcGb6sWseF4UQEIkAs
-         Pc0138AJMO2NirOHxKjCQs1v+3O24R2NvsiP9NLJwseSjzbNLRw9Tpk6TQlp831p1eaI
-         TLFFLKMvcz9tP/4Q+VxBfOzLMECBq7MUxJqFaBSc9gfalHPt/p+I48I3yAEB/dOp5SN4
-         EExg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl5QvlHa64sJQdzYL4pTSFaAJEgNDx2ijgVINGLOBt0Mx4UGdwg6Yb0ie/PHod2oa3Pn4lJ6NysLsNzWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj9VgZsRG0ZVuCN+VHgiChL/ruM4c4MQkAJruS11qdnR6heW5o
-	HA4asD8UpW/RXn2Bv+K8PvLmCiwrdox5iWJnVnZ3ed4uuuzGjXF8j2/2lwXyZWSjyu6RdoXJDB9
-	7ZRtalzi2bwyebgxdTJDr6TfPpi1c0zYQSSSIYZ8c/AotmDpqfNApyxmo7O/YPw==
-X-Gm-Gg: ASbGnctaEW6TlgaPMenong4EO9b5hU+crOq5Tya4YiOdiSAqBgVYmBFa1AtpkTK7dtR
-	CXclFzY287bpwShz8VouQtcF8NzconiwaTU8wJsLF69CU8A1wozOMVYKCmw599vGUR4TeM1A+HT
-	ToC95MUJJvqMLh1dNH+vBLbJDLSrP/eX3qAq0gvnSw8zd9uVkhHVN2vAqR+4gR9Vu7wQTQRY3dd
-	JNSE5gigqQDbv0Xj9by1qJHucTxnZSApLcgs5e+SBANTeyokHXKAg5rOzsbpG6eSULQ6lcGNNcI
-	xG4B05SJUDsnSTMnHbNXSN15SRplOwryHxXGMnITkkfbP6uX6XzyEJAZgl2aM7GFQ6IksSO+RgE
-	rIUYN6aBxa39LrtBkLPjnKV3gRxFOM8PYD2dla/Oo
-X-Received: by 2002:a5d:588c:0:b0:390:eb50:37c3 with SMTP id ffacd0b85a97d-39c120e33a5mr8199381f8f.27.1743495666194;
-        Tue, 01 Apr 2025 01:21:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXLqumgl6PPZ8Sqy2fhKqkRiYpMZaxMRMS31vgxVjkrlC30wGVZ/p/0Y6r7j4mbneSYczTHg==
-X-Received: by 2002:a5d:588c:0:b0:390:eb50:37c3 with SMTP id ffacd0b85a97d-39c120e33a5mr8199358f8f.27.1743495665888;
-        Tue, 01 Apr 2025 01:21:05 -0700 (PDT)
+        bh=PmzklFDXuEZJS1m9bkBKHZnun7luvYIXYrbHBw7L4oc=;
+        b=GlF0PMYf8YjgytHh0K0KyMiW6LGV3SGbISsKYVKYzpbhPWz+NaTMZ19g5tIcExfDS6
+         luQeu/fMVft1Fw6FeNoozBgak5q7WFBR7ZSvy+E5CJ+JRy4Ze1IQuna+/CgmqWF9yupn
+         HIuxKfuhmA95PkPaGXnF4N7J56OmXGxO74rDUWBdFimdxe0hHqH33s0l5KJEPsA5L3XR
+         /HxX615Y2X6cSbxebw4USS3D+px1Iw2e27ekohxPqThy5KJeIRXRFCw/IDOMpuEE2LUC
+         4WuupQLFKlB8hkJrDbvzwu+tkAiwsIzR0nw9w/l7L47wO83Rj1XjvPfdOjM9rgtMZLtl
+         EAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvof87ggq/Y2vf4L7vX/w90P6I9U6CxLJYMirZAbIdo86Fk3yPQWx6atmP5swaBlRHTDofZEPbbocNA/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVA/d6nNRDsrqrCQ7Y2oHE078lVXm5AeX4lKjX6kgI2keo/ve3
+	w9Likqyditt6kj/mscVzUNqvh+OWUfD6TKGgGg0cCW9KErVMDYx5pfF63wKJdLgEQtVl30M/Yw3
+	E68v4/j0+osM1Be1QrVIp/lkrv1AqsThYKSeZZVVoKM/1uIAb+2uze/Vm10OQZw==
+X-Gm-Gg: ASbGncsZzgl9A5UZHupJqz6zz0R3aJkCfA2+wV1EIS8R2psfLPTnpPgLHf6tT2rPjrP
+	yavORhWdGpzNOnh0G+FYRIOGUzsoeaBllkx21/vNKUa0Rr5rzxa/kBMuZLcCO5y5NhaqutV7qqV
+	4ug391m1kXlGtof9+1RYtosRNhFyiPX2SWlleUNB8Ilz+h8WekX49whthAWZ29a8v8BddOP4Frh
+	MUmdO7XCQJ5il+W9DyhuJ+hgTFMlL4U7XbpDiZSrtayAzewOXlPGyj46X8aMLk1K959T7SeFZps
+	mn7I6ncl7DXOG/11FCNlmsvnISApUDpR91PNco1nduE/RNEIIoBwCfvs8/dq/DfFGAGWCXalipp
+	aB63XMnzVgMQMFSOiLGzjn44HvRPOrAyrkEw4ZYnh
+X-Received: by 2002:a05:600c:4fd1:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43db8527142mr117393545e9.31.1743495686233;
+        Tue, 01 Apr 2025 01:21:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtINwagq0snAds2FFb+sX9VQeIrTCb8h3/r3DbQ87k0g41CIwVU7XL9FVUU134tDH1lGe1ew==
+X-Received: by 2002:a05:600c:4fd1:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43db8527142mr117393355e9.31.1743495685942;
+        Tue, 01 Apr 2025 01:21:25 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c707:4d00:6ac5:30d:1611:918f? (p200300cbc7074d006ac5030d1611918f.dip0.t-ipconnect.de. [2003:cb:c707:4d00:6ac5:30d:1611:918f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b66aeaasm13620785f8f.53.2025.04.01.01.21.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8ff03715sm149329105e9.31.2025.04.01.01.21.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Apr 2025 01:21:05 -0700 (PDT)
-Message-ID: <d4f6c677-7944-4b27-a21c-819dccbfcb37@redhat.com>
-Date: Tue, 1 Apr 2025 10:21:04 +0200
+        Tue, 01 Apr 2025 01:21:25 -0700 (PDT)
+Message-ID: <9fdbaec7-27d3-426e-9089-8447a8d6f4ea@redhat.com>
+Date: Tue, 1 Apr 2025 10:21:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,11 +89,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] mm/pgtable: remove unneeded pgd_devmap()
+Subject: Re: [PATCH v2 5/7] x86/mm: remove pgd_leaf definition in arch
 To: Baoquan He <bhe@redhat.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yanjun.zhu@linux.dev
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, yanjun.zhu@linux.dev,
+ x86@kernel.org
 References: <20250331081327.256412-1-bhe@redhat.com>
- <20250331081327.256412-8-bhe@redhat.com>
+ <20250331081327.256412-6-bhe@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -141,17 +142,22 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20250331081327.256412-8-bhe@redhat.com>
+In-Reply-To: <20250331081327.256412-6-bhe@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 31.03.25 10:13, Baoquan He wrote:
-> There's no user of pgd_devmap() now, remove it from all ARCH-es
-> and linux/pgtable.h.
+> pgd huge page is not supported yet, let's use the generic definition
+> in linux/pgtable.h.
+> 
+> And also update the BUILD_BUG_ON() checking for pgd_leaf() in
+> pti_user_pagetable_walk_p4d() because pgd_leaf() returns boolean value.
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> Cc: x86@kernel.org
+> ---
 
-Drop this patch, Alistair will remove all that devmap stuff soon.
-
-https://lore.kernel.org/linux-mm/42a318bcbb65931958e52ce4b1334f3d012cbd6f.1736488799.git-series.apopple@nvidia.com/
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
