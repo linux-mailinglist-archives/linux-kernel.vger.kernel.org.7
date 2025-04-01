@@ -1,112 +1,318 @@
-Return-Path: <linux-kernel+bounces-583034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24046A77599
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36254A7751D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFEE167E61
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:47:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D499B16888B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 07:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E0A1E98E0;
-	Tue,  1 Apr 2025 07:47:48 +0000 (UTC)
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13E1E98F9;
+	Tue,  1 Apr 2025 07:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1+dcLU2X"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC233BBC9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A711E8329
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 07:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743493667; cv=none; b=d0ny9fHbCN1moUw1ghsL+CSTMDcrmH/Oz2aM7ZX/brsF/bIFDRn17PXq8b1dlWBvCixN7H0U3QtFk+boYiB2PjXRmE/l85CuS3Kj8ygTWDhfzLFCDMWCf4lZW9tSYpimlZTaicqFFcX4E0IGrYRxEptrkPfkiJC5EkC8Qstn8Mw=
+	t=1743492003; cv=none; b=YijBIpKOfi3xwJTzdLbII7rK1u7g5ErQ2WB3f0i42KAY8QiV66wzkDcrkf4ZrEUDRDMaa9bj/V2BGdalUDdemNLp8YOe39o8XD+lBs6iFryyBPMA2750SFOH1i33zA6i1udirHmZ4vUDjm6F+iM+YE9zBKYu+V2K08iVmgYNKSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743493667; c=relaxed/simple;
-	bh=KjhNRR9mMoGhC9XVVEq+YwwobekdUMI2ChK5QI1pf6c=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Qh5DGbzb349eX4Azff7YQP/3EsBAcFx12fPNKt0erV9tXNZ/wXMXusO3DfC8DbM3LiZQaQ+2oSYiF4E/jLBWI9PxFOyHn1d4cKh9U2fQIlo/mO/dOueAkLLkM4Ehf+2+EWeeWuiELBTRCm8DpjODlq4/cS7QqA8I96SpxnTl1n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-	by 156.147.23.53 with ESMTP; 1 Apr 2025 16:17:41 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
-	by 156.147.1.121 with ESMTP; 1 Apr 2025 16:17:41 +0900
-X-Original-SENDERIP: 10.178.31.96
-X-Original-MAILFROM: chanho.min@lge.com
-From: Chanho Min <chanho.min@lge.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Sven <dm-devel@schwermer.no>,
-	Gunho Lee <gunho.lee@lge.com>,
-	Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] block: restrict blk_lookup_devt non-existent partition return to MD devices
-Date: Tue,  1 Apr 2025 16:17:28 +0900
-Message-Id: <20250401071728.16030-1-chanho.min@lge.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1743492003; c=relaxed/simple;
+	bh=k/2TAvDo0gcJpXNztWOeZx7SFFzYikRx8NQ+o8K3F9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TYLV5qZFMdn6Z0PiSBlC9HJWxrKcgRH/063gQ225fgbZP1gOoX7qfel4uMdQ/tUJjPQVMWutuqdB2M0eFdV8IZAm8PhKYrBNKhQva5GO8Mas+HA0L98XKNa9HydZhcOCYv6I7/eazyromqXtL6c73x6LHARjN9tu1Py86rt5yY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1+dcLU2X; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2242ac37caeso86285ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 00:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743492000; x=1744096800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4nNzjFLlX0hgN8AxePGDE9S1lJ4kGFRD5jIQ7N2ASbw=;
+        b=1+dcLU2X+4dcEYJPN91EFfZVmau8zJXAW5z/v7N+Ksih71rAQ84V2x7Zbsvmu7x5i7
+         d2S6SvMF71ZkVZi6bf+M8HqQVrIMA8VTlkYDOBMnJV7e/l8VFpU3h2Lb1O8e3HVhPdKC
+         IFoaMAcyCJ//Lqq5eg55vyVbbixgAEJHlPgunJD5bFzHlV7ku2hWbGzgZbBJQa5na8Fc
+         QFw/ttga4wMs4ZRiemyv2WvTgV/rs+250V214P/tC9U3R/QVVSZawkN5Dpr36YtU3ySN
+         jwjmbuTCdhDLvSQhjDAHs/cd74Mi8LkyrNUbCfcArsc9f5VMc8hjBBZGM9eVY6ARxEIE
+         6dTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743492000; x=1744096800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4nNzjFLlX0hgN8AxePGDE9S1lJ4kGFRD5jIQ7N2ASbw=;
+        b=R6pberyRp9VwHgPNbZEMMtw5TNyhV75BSOWhNGRdY6oTWi3qojL7uFZBQvtyp7ci7I
+         OCTQs0YxPr7UUYSvlK61R39VqCcl9kLz8HounXG8YcAOapk83PUXSIkeQRO++LOUpbSM
+         GmZnYeveeQng7kI/uhnsq0MaoeNC8i6Bv/zW2Yx4Lx5dPrab4W//HsElE0NffVyVyzRy
+         /ZkOS4QkOewki2kKu4twFoRqa0w7aMfcEgszfFlDJbJ0mwS21qcBg82bbXsoJAQE+D5B
+         JDFhXjkczQCE79YX7k3ZLxfgqkJj288H4y+PzLFWCvTn3NKu/zeC25NJJ2eAJQtVipxH
+         2I3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkiOmSTFDskvGXw5p0xRAoXStcotNSk0aDbTKa8TcumF9JbExsrKveB+5iRm/iG6ecmjlzuNivQmszF2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyspXwPWIJnH/ZQQ1UJaoPWn6oZlmtpo3yDQisn9LX5ksbcP5LR
+	b5N/KxuEx41KUIbuTOydyTDpiuxAM8+fCuTCG7+N2Btz+qZhi7+p9jyKvIJr+y5XGL1hGMC7YP9
+	6adZ6zpsodjDoxOj+aspUu7PNRf4Pgo0CaBU0
+X-Gm-Gg: ASbGncueTzqEmncVT8a4JgOu0IyLnkLEYGYuDEIuX/zNySSJf4K1q5+mEKoJKcyOD+d
+	6T03QjaiJYoMzZoES37+cctbWD/1P1wAQ4voPYKzaTk5Vs/ciNamyuiexpBh2AYChBHrjlQ+w+Z
+	LAQh4lf4VyW6x2tEADOQKmmbgWZ4ZgJvzmqwlvOpxrX/x6vMWre1MQ+dTS3A==
+X-Google-Smtp-Source: AGHT+IEnyvd6es/zpWvt015PkcGKvZjgaAm/HA1x1p4f9qCEGneOY3x1NVAjuNd8D9r0AfQw3N5WD9kqvto64BkWnIM=
+X-Received: by 2002:a17:902:d2c6:b0:21f:3e29:9cd1 with SMTP id
+ d9443c01a7336-2295cfe6b1bmr1720245ad.1.1743492000201; Tue, 01 Apr 2025
+ 00:20:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250327160700.1147155-1-ryan.roberts@arm.com>
+ <Z-WAbWfZzG1GA-4n@casper.infradead.org> <5131c7ad-cc37-44fc-8672-5866ecbef65b@arm.com>
+ <Z-b1FmZ5nHzh5huL@casper.infradead.org> <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
+In-Reply-To: <ee11907a-5bd7-44ec-844c-8f10ff406b46@arm.com>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Tue, 1 Apr 2025 00:19:48 -0700
+X-Gm-Features: AQ5f1JrGGiC_D0IIoE2ouih3ARQNGmoqFS-gJpqf2fABIUInDzCxtOi5p0Pa9A4
+Message-ID: <CAC_TJveU2v+EcokLKJVVZ8Xje2nYmmUg8bvCD8KO1oC5MgmWCA@mail.gmail.com>
+Subject: Re: [PATCH v3] mm/filemap: Allow arch to request folio size for exec memory
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We have observed occasional failures in dm-init due to dm-mod.waitfor not
-working as expected when partitions are not yet ready. This issue was
-raised in a discussion on the mailing list:
-https://lore.kernel.org/all/e746b8b5-c04c-4982-b4bc-0fa240742755@schwermer.no/T/
-but has remained unresolved since then.
+On Sat, Mar 29, 2025 at 3:08=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 28/03/2025 15:14, Matthew Wilcox wrote:
+> > On Thu, Mar 27, 2025 at 04:23:14PM -0400, Ryan Roberts wrote:
+> >> + Kalesh
+> >>
+> >> On 27/03/2025 12:44, Matthew Wilcox wrote:
+> >>> On Thu, Mar 27, 2025 at 04:06:58PM +0000, Ryan Roberts wrote:
+> >>>> So let's special-case the read(ahead) logic for executable mappings.=
+ The
+> >>>> trade-off is performance improvement (due to more efficient storage =
+of
+> >>>> the translations in iTLB) vs potential read amplification (due to
+> >>>> reading too much data around the fault which won't be used), and the
+> >>>> latter is independent of base page size. I've chosen 64K folio size =
+for
+> >>>> arm64 which benefits both the 4K and 16K base page size configs and
+> >>>> shouldn't lead to any read amplification in practice since the old
+> >>>> read-around path was (usually) reading blocks of 128K. I don't
+> >>>> anticipate any write amplification because text is always RO.
+> >>>
+> >>> Is there not also the potential for wasted memory due to ELF alignmen=
+t?
+> >>
+> >> I think this is an orthogonal issue? My change isn't making that any w=
+orse.
+> >
+> > To a certain extent, it is.  If readahead was doing order-2 allocations
+> > before and is now doing order-4, you're tying up 0-12 extra pages which
+> > happen to be filled with zeroes due to being used to cache the contents
+> > of a hole.
+>
+> Well we would still have read them in before, nothing has changed there. =
+But I
+> guess your point is more about reclaim? Because those pages are now conta=
+ined in
+> a larger folio, if part of the folio is in use then all of it remains act=
+ive.
+> Whereas before, if the folio was fully contained in the pad area and neve=
+r
+> accessed, it would fall down the LRU quickly and get reclaimed.
+>
 
-The root cause was identified in blk_lookup_devt(), which returns a dev_t
-even for non-existent partitions, a behavior introduced by commit
-41b8c853a495 ("block: fix booting from partitioned md array"). This
-change was intended to support MD RAID devices, where partitions may not
-be available during early boot, allowing the system to proceed and detect
-them later.
 
-However, this behavior conflicts with cases like dm-init's waitfor
-mechanism, where an accurate dev_t for an existing partition is required.
-Returning a dev_t for non-existent partitions should be a special case
-(e.g., MD devices), while most scenarios, including Device Mapper, expect
-blk_lookup_devt() to reflect the actual partition state.
+Hi Ryan,
 
-To address this without major structural changes, this patch restricts the
-non-existent partition dev_t return to MD devices. For other devices,
-blk_lookup_devt() will only return a dev_t if the partition exists.
-With this change, dm-mod.waitfor works correctly, resolving the dm-init failures.
+I agree this was happening before and we don't need to completely
+address it here. Though with the patch it's more likely that the holes
+will be cached. I'd like to minimize it if possible. Since this is for
+EXEC mappings, a simple check we could use is to limit this to the
+VM_EXEC vma.
 
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- block/early-lookup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
++ if (vm_flags & VM_EXEC) {
++ int order =3D arch_exec_folio_order();
++
++ if (order >=3D 0 && ((end-address)*2) >=3D 1<<order) { /* Fault around ca=
+se */
 
-diff --git a/block/early-lookup.c b/block/early-lookup.c
-index 3fb57f7d2b127..39a32a0fe7aab 100644
---- a/block/early-lookup.c
-+++ b/block/early-lookup.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/blkdev.h>
- #include <linux/ctype.h>
-+#include <linux/major.h>
- 
- struct uuidcmp {
- 	const char *uuid;
-@@ -133,10 +134,9 @@ static dev_t __init blk_lookup_devt(const char *name, int partno)
- 
- 		if (strcmp(dev_name(dev), name))
- 			continue;
--
--		if (partno < disk->minors) {
-+		if (partno < disk->minors && MAJOR(dev->devt) == MD_MAJOR) {
- 			/* We need to return the right devno, even
--			 * if the partition doesn't exist yet.
-+			 * if the partition doesn't exist yet.(for MD devices)
- 			 */
- 			devt = MKDEV(MAJOR(dev->devt),
- 				     MINOR(dev->devt) + partno);
--- 
-2.17.1
+For reference I found below (coincidentally? similar) distributions on
+my devices
 
+=3D=3D x86 Workstation =3D=3D
+
+Total unique exec segments:   906
+
+Exec segments >=3D 16 KB:   663 ( 73.18%)
+Exec segments >=3D 64 KB:   414 ( 45.70%)
+
+=3D=3D arm64 Android Device =3D=3D
+
+Total unique exec segments:   2171
+
+Exec segments >=3D 16 KB:  1602 ( 73.79%)
+Exec segments >=3D 64 KB:   988 ( 45.51%)
+
+Result were using the below script:
+
+cat /proc/*/maps | grep 'r-xp' | \
+awk '
+BEGIN { OFS =3D "\t" }
+$NF ~ /^\// {
+path =3D $NF;
+split($1, addr, "-");
+size =3D strtonum("0x" addr[2]) - strtonum("0x" addr[1]);
+print size, path;
+}' | \
+sort -u | \
+awk '
+BEGIN {
+FS =3D "\t";
+total_segments =3D 0;
+segs_ge_16k =3D 0;
+segs_ge_64k =3D 0;
+}
+{
+total_segments++;
+size =3D $1;
+if (size >=3D 16384) segs_ge_16k++;
+if (size >=3D 65536) segs_ge_64k++;
+}
+END {
+if (total_segments > 0) {
+percent_gt_16k =3D (segs_ge_16k / total_segments) * 100;
+percent_gt_64k =3D (segs_ge_64k / total_segments) * 100;
+
+printf "Total unique exec segments: %d\n", total_segments;
+printf "\n";
+printf "Exec segments >=3D 16 KB: %5d (%6.2f%%)\n", segs_ge_16k, percent_gt=
+_16k;
+printf "Exec segments >=3D 64 KB: %5d (%6.2f%%)\n", segs_ge_64k, percent_gt=
+_64k;
+} else {
+print "No executable segments found.";
+}
+}'
+
+> >
+> >>> Kalesh talked about it in the MM BOF at the same time that Ted and I
+> >>> were discussing it in the FS BOF.  Some coordination required (like
+> >>> maybe Kalesh could have mentioned it to me rathere than assuming I'd =
+be
+> >>> there?)
+> >>
+> >> I was at Kalesh's talk. David H suggested that a potential solution mi=
+ght be for
+> >> readahead to ask the fs where the next hole is and then truncate reada=
+head to
+> >> avoid reading the hole. Given it's padding, nothing should directly fa=
+ult it in
+> >> so it never ends up in the page cache. Not sure if you discussed anyth=
+ing like
+> >> that if you were talking in parallel?
+> >
+> > Ted said that he and Kalesh had talked about that solution.  I have a
+> > more bold solution in mind which lifts the ext4 extent cache to the
+> > VFS inode so that the readahead code can interrogate it.
+> >
+
+Sorry about the hiccup in coordination, Matthew. It was my bad for not
+letting you know I planned to discuss it in the MM BoF. I'd like to
+hear Ted and your ideas on this when possible.
+
+Thanks,
+Kalesh
+
+> >> Anyway, I'm not sure if you're suggesting these changes need to be con=
+sidered as
+> >> one somehow or if you're just mentioning it given it is loosely relate=
+d? My view
+> >> is that this change is an improvement indepently and could go in much =
+sooner.
+> >
+> > This is not a reason to delay this patch.  It's just a downside which
+> > should be mentioned in the commit message.
+>
+> Fair point; I'll add a paragraph about the potential reclaim issue.
+>
+> >
+> >>>> +static inline int arch_exec_folio_order(void)
+> >>>> +{
+> >>>> +  return -1;
+> >>>> +}
+> >>>
+> >>> This feels a bit fragile.  I often expect to be able to store an orde=
+r
+> >>> in an unsigned int.  Why not return 0 instead?
+> >>
+> >> Well 0 is a valid order, no? I think we have had the "is order signed =
+or
+> >> unsigned" argument before. get_order() returns a signed int :)
+> >
+> > But why not always return a valid order?  I don't think we need a
+> > sentinel.  The default value can be 0 to do what we do today.
+> >
+>
+> But a single order-0 folio is not what we do today. Note that my change a=
+s
+> currently implemented requests to read a *single* folio of the specified =
+order.
+> And note that we only get the order we request to page_cache_ra_order() b=
+ecause
+> the size is limited to a single folio. If the size were bigger, that func=
+tion
+> would actually expand the requested order by 2. (although the parameter i=
+s
+> called "new_order", it's actually interpretted as "old_order").
+>
+> The current behavior is effectively to read 128K in order-2 folios (with =
+smaller
+> folios for boundary alignment).
+>
+> So I see a few options:
+>
+>   - Continue to allow non-opted in arches to use the existing behaviour; =
+in this
+> case we need a sentinel. This could be -1, UINT_MAX or 0. But in the latt=
+er case
+> you are preventing an opted-in arch from specifying that they want order-=
+0 -
+> it's meaning is overridden.
+>
+>   - Force all arches to use the new approach with a default folio order (=
+and
+> readahead size) of order-0. (The default can be overridden per-arch). Per=
+sonally
+> I'd be nervous about making this change.
+>
+>   - Decouple the read size from the folio order size; continue to use the=
+ 128K
+> read size and only allow opting-in to a specific folio order. The default=
+ order
+> would be 2 (or 0). We would need to fix page_cache_async_ra() to call
+> page_cache_ra_order() with "order + 2" (the new order) and fix
+> page_cache_ra_order() to treat its order parameter as the *new* order.
+>
+> Perhaps we should do those fixes anyway (and then actually start with a f=
+olio
+> order of 0 - which I think you said in the past was your original intenti=
+on?).
+>
+> Thanks,
+> Ryan
+>
 
