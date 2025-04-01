@@ -1,221 +1,150 @@
-Return-Path: <linux-kernel+bounces-583574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DDCA77CD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:53:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D5BA77CD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6FB3B032F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B723AF4F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0384D204864;
-	Tue,  1 Apr 2025 13:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A80E204695;
+	Tue,  1 Apr 2025 13:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DXUh2oCq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDKiMeEe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDEA2046AC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 13:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEE4C2C6;
+	Tue,  1 Apr 2025 13:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743515516; cv=none; b=RI9pyiR5NsvL0YKPb+dhwHeYCoWBOEHlZmhkJGDO8kUkN+Sv4GcQE0Fwg4mxnK35xKbeHBkje3slxzCV7q5oO1RyMQCaD/tjIcChy3CpVaTYT2U+qA86prfCPzdH7FUinDiePqTfx5AmCMFn4HJT7QRNPEME8FjnkoLgadd5+to=
+	t=1743515510; cv=none; b=PMS5QrwiU99VNuH3od+3VWjPpOGmwZ6AImeENfmze/YHy0dIka+mtsLbaKOFza4NZoEwRvY7E7LrAfT/qP5zCa7v/bsC4X36IPQ8VovZhAhAS0LchjWKtgut1UHTdTqf7qaxO3EWDHlC1DItnA3+FFwT9EhgNlQp99gtAbyKRNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743515516; c=relaxed/simple;
-	bh=fyJnXBrOut1qI3iVOlrjftIknLYmdN5T3FQdk35b5Ao=;
+	s=arc-20240116; t=1743515510; c=relaxed/simple;
+	bh=miTjMsIeXP+zyjE/C/mAbMIuGdRq77YdfWs2fJWn9VU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pn7iKztKsf+OawO8KesGllsadQ3oM1fq57DRxA1+Hj93/OfAUTv4XpQd45LMAXM3/48NxSRXEBZoVwK7ztPRMc55HRyr5HuWtsC2M9cXMbzVsbmKLHqAzrj3M7n/X8dLleC81OIaYvWaVzdov7OAxXdvs6BNG98+aUIZQjpedCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DXUh2oCq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743515513;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yd713vKppQHQbjGvhffkowOQ35Ux0lbgZmPhSE6rLE4=;
-	b=DXUh2oCqO1ROUWPH9FsOCb2vIi7aEw9cFXs8Wd2MT//ewVMR1qzWvxWhArg1aEIv+yxneX
-	wlr6CmaPzWfj4M8Jz77xLWVIiP7RH2ZQtVWfnI/pkm8yml/cLTKR+Xjrb3mRnCuD61H393
-	t/ee6bw7ZWLxrE6cgoPts4yAlnqCFBo=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-434-hYkVQnpgOeOvhzPi_pk8Og-1; Tue, 01 Apr 2025 09:51:51 -0400
-X-MC-Unique: hYkVQnpgOeOvhzPi_pk8Og-1
-X-Mimecast-MFC-AGG-ID: hYkVQnpgOeOvhzPi_pk8Og_1743515510
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cfda30a3cso35914365e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 06:51:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743515510; x=1744120310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yd713vKppQHQbjGvhffkowOQ35Ux0lbgZmPhSE6rLE4=;
-        b=qdggxKAmvbv8b876akWM21Cv7R9HYJVWWaCad6dYDmWRX6TCoY0G4fkJ5fTlZch9PD
-         sFN+G8GXftIY8vOayR0z/9zZS/Ye9cls/JRSJxGInSPR0slEcdlkf+Dd8NR3IX4rqfj8
-         K2eNP4R/rxv2J/iqVUBcGL5ymbHjYIMtkuwC9Um1RiPI1jMzidjmtu21Xa0BtQDakshP
-         5HdFzFF0iwg3uni74PYiEZBFDIKr8KG3RcezgdBLSqqPHsKvKCczP1iOyr7EFtkNZue8
-         gM+BX+vju2zEBwPhR8KA3sgG62Krew+ceTtp7T3k9APY5yUe4c/pTno+LR+kXD5IHT/i
-         zsug==
-X-Forwarded-Encrypted: i=1; AJvYcCWflDspAAfoXwjHrJmMOXkK0pCWP1BanYjvpl2TP3p0uxzQt85uW+VmNJpHMncnNUFOAy2SrQOjym/qJ+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtiEnQDi5tbVebIKvAMn7Au6a1xqqB8Z+/J7nUnX9sIFlp5i2S
-	niPxBzM4haV4i7UX4HwTlznT65sm7BR8zqDlk/DxExyIGygHIy8eRzPQgmpldoJDnq3bIcfoIgv
-	6Eq3Ninema4G7cpJFtEx0xltt+CXSXjNz4a2VP4dwbLVChYl0OwXioNVkcsiV7g==
-X-Gm-Gg: ASbGnctFABhq7EZgAcWMQ0mgGQ6ml09ptt4HYIlFfmBJGZkM9ytBPXrpq3mdbS2wVCa
-	L4I7KXkKWRXd2qLUSBOQlf2KrQhTTXdKTu2r1KrW7z22DSWLbwMBdyE+THOB+WjdEtqQ2NSiLx9
-	Fbc40SDhJYj2PDUneKwIyCAIFk0e4K66tkUVVaZKvG14VYUZieAq+d2hw1B7rUlYYyRwNan6dKb
-	qHgYBleJeZdLKAGK3LeKfT+SFGOg4a6rh+Ssx1xeI+xQwF0NDSRqEhVkW3w8CqU5+QAJTYYjRWg
-	6eEHTiIzWXGsN4hrbKDXrLWi5rtAGy+5JggZVGZDLAcghQSRSnyY1O3lrgU=
-X-Received: by 2002:a5d:5984:0:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-39c120e079amr10530779f8f.25.1743515509942;
-        Tue, 01 Apr 2025 06:51:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHsBMqSUaVpvZcub9DerZUyAcDAdWPbokGx4MrEDvZ1V89a1sJp60yqYaFeSZ3uq31KHnaDGQ==
-X-Received: by 2002:a5d:5984:0:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-39c120e079amr10530760f8f.25.1743515509455;
-        Tue, 01 Apr 2025 06:51:49 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-11-6-59.retail.telecomitalia.it. [87.11.6.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a4318sm13937042f8f.87.2025.04.01.06.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 06:51:48 -0700 (PDT)
-Date: Tue, 1 Apr 2025 15:51:42 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, mst@redhat.com, michael.christie@oracle.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v8 5/8] vhost: Reintroduce kthread mode support in vhost
-Message-ID: <qtii7gazb52fuvkeiymllkapnd3l3ji6ht7y7cfegybreavmit@h6bvfhwpghg6>
-References: <20250328100359.1306072-1-lulu@redhat.com>
- <20250328100359.1306072-6-lulu@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyCeqwFHKI8z664fEVXCpQHhjR9SFBRRIzEYwRj+sEvTN3KgXJrPveNgmzgEJkbmN2/mhTVFqPeLPiIl0G75IPL/U+7u3E/SHzJ7Ui2kFFZSeJR8qW0HakDGZMhLs5fkzuCDOwiL60NCOlzoAWZkH+G8Wgcqwhwvr/qOw4TlbT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDKiMeEe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 374F1C4CEE4;
+	Tue,  1 Apr 2025 13:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743515510;
+	bh=miTjMsIeXP+zyjE/C/mAbMIuGdRq77YdfWs2fJWn9VU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LDKiMeEeHXVYDT5mzu0Eh40do6d2HQFkKr4xxien6kZcRC1WNz2DxufBJ0yMC0JQ/
+	 UGis9Xaq/F++sAvhXWtgCFPCvIUbUO9EI5IvWbuPe15sf2SHLgnhN/DgC2oiaSgThl
+	 p8UQFvfuw91ULpECLKr5sd501HsRLbmE3XgFdo5SCBVEX74G8njKWJGQ1esDPHlvk9
+	 wEoWTNSlSrchS+4iIlkTFavrdmVAMZIPQiVF+uma9eHSgcbtqZzxAb+WrzT/0JQzxS
+	 Ryfgi/rXVikXEfuuALndCO4PCpGtp9JVoGs8bZR/4sRlsSbE3gTEHKYZ+pMIk741Wu
+	 Ny65oBn0dbnEA==
+Date: Tue, 1 Apr 2025 15:51:44 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com,
+	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <Z-vvcPfgyaRdd0xQ@pollux>
+References: <20250321214826.140946-1-dakr@kernel.org>
+ <20250321214826.140946-3-dakr@kernel.org>
+ <2025032158-embezzle-life-8810@gregkh>
+ <Z96MrGQvpVrFqWYJ@pollux>
+ <Z-CG01QzSJjp46ad@pollux>
+ <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
+ <Z-GNDE68vwhk0gaV@cassiopeiae>
+ <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
+ <Z-Ggu_YZBPM2Kf8J@cassiopeiae>
+ <D8OPMRYE0SO5.2JQD6ZIYXHP68@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250328100359.1306072-6-lulu@redhat.com>
+In-Reply-To: <D8OPMRYE0SO5.2JQD6ZIYXHP68@proton.me>
 
-On Fri, Mar 28, 2025 at 06:02:49PM +0800, Cindy Lu wrote:
->This commit restores the previously removed functions kthread
->wake/stop/create, and use ops structure vhost_worker_ops to
->manage worker wakeup, stop and creation. The function
->vhost_worker_create initializes these ops pointers based on
->the value of inherit_owner
->
->The old function was remove in
+On Mon, Mar 24, 2025 at 06:32:53PM +0000, Benno Lossin wrote:
+> On Mon Mar 24, 2025 at 7:13 PM CET, Danilo Krummrich wrote:
+> > On Mon, Mar 24, 2025 at 05:36:45PM +0000, Benno Lossin wrote:
+> >> On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
+> >> > On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
+> >> >> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
+> >> >> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
+> >> >> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
+> >> >> >> > Along these lines, if you can convince me that this is something that we
+> >> >> >> > really should be doing, in that we should always be checking every time
+> >> >> >> > someone would want to call to_pci_dev(), that the return value is
+> >> >> >> > checked, then why don't we also do this in C if it's going to be
+> >> >> >> > something to assure people it is going to be correct?  I don't want to
+> >> >> >> > see the rust and C sides get "out of sync" here for things that can be
+> >> >> >> > kept in sync, as that reduces the mental load of all of us as we travers
+> >> >> >> > across the boundry for the next 20+ years.
+> >> >> >> 
+> >> >> >> I think in this case it is good when the C and Rust side get a bit
+> >> >> >> "out of sync":
+> >> >> >
+> >> >> > A bit more clarification on this:
+> >> >> >
+> >> >> > What I want to say with this is, since we can cover a lot of the common cases
+> >> >> > through abstractions and the type system, we're left with the not so common
+> >> >> > ones, where the "upcasts" are not made in the context of common and well
+> >> >> > established patterns, but, for instance, depend on the semantics of the driver;
+> >> >> > those should not be unsafe IMHO.
+> >> >> 
+> >> >> I don't think that we should use `TryFrom` for stuff that should only be
+> >> >> used seldomly. A function that we can document properly is a much better
+> >> >> fit, since we can point users to the "correct" API.
+> >> >
+> >> > Most of the cases where drivers would do this conversion should be covered by
+> >> > the abstraction to already provide that actual bus specific device, rather than
+> >> > a generic one or some priv pointer, etc.
+> >> >
+> >> > So, the point is that the APIs we design won't leave drivers with a reason to
+> >> > make this conversion in the first place. For the cases where they have to
+> >> > (which should be rare), it's the right thing to do. There is not an alternative
+> >> > API to point to.
+> >> 
+> >> Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
+> >> trait to me is a sign of a canonical way to convert a value.
+> >
+> > Well, it is the canonical way to convert, it's just that by the design of other
+> > abstractions drivers should very rarely get in the situation of needing it in
+> > the first place.
+> 
+> I'd still prefer it though, since one can spot a
+> 
+>     let dev = CustomDevice::checked_from(dev)?
+> 
+> much better in review than the `try_from` conversion. It also prevents
+> one from giving it to a generic interface expecting the `TryFrom` trait.
 
-nit: s/remove/removed
+(I plan to rebase this on my series introducing the Bound device context [1].)
 
->commit 6e890c5d5021 ("vhost: use vhost_tasks for worker threads")
->
->Signed-off-by: Cindy Lu <lulu@redhat.com>
->---
-> drivers/vhost/vhost.c | 48 ++++++++++++++++++++++++++++++++++++++++++-
-> drivers/vhost/vhost.h |  1 +
-> 2 files changed, 48 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->index c162ad772f8f..be97028a8baf 100644
->--- a/drivers/vhost/vhost.c
->+++ b/drivers/vhost/vhost.c
->@@ -734,11 +734,21 @@ static void vhost_task_wakeup(struct vhost_worker *worker)
-> 	return vhost_task_wake(worker->vtsk);
-> }
->
->+static void vhost_kthread_wakeup(struct vhost_worker *worker)
->+{
->+	wake_up_process(worker->kthread_task);
->+}
->+
-> static void vhost_task_do_stop(struct vhost_worker *worker)
-> {
-> 	return vhost_task_stop(worker->vtsk);
-> }
->
->+static void vhost_kthread_do_stop(struct vhost_worker *worker)
->+{
->+	kthread_stop(worker->kthread_task);
->+}
->+
-> static int vhost_task_worker_create(struct vhost_worker *worker,
-> 				    struct vhost_dev *dev, const char *name)
-> {
->@@ -762,6 +772,41 @@ static int vhost_task_worker_create(struct vhost_worker *worker,
-> 	return 0;
-> }
->
->+static int vhost_kthread_worker_create(struct vhost_worker *worker,
->+				       struct vhost_dev *dev, const char *name)
->+{
->+	struct task_struct *task;
->+	u32 id;
->+	int ret;
->+
->+	task = kthread_create(vhost_run_work_kthread_list, worker, "%s", name);
->+	if (IS_ERR(task))
->+		return PTR_ERR(task);
->+
->+	worker->kthread_task = task;
->+	wake_up_process(task);
->+	ret = xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_KERNEL);
->+	if (ret < 0)
->+		goto stop_worker;
->+
->+	ret = vhost_attach_task_to_cgroups(worker);
->+	if (ret)
->+		goto stop_worker;
->+
->+	worker->id = id;
->+	return 0;
->+
->+stop_worker:
->+	vhost_kthread_do_stop(worker);
->+	return ret;
->+}
->+
->+static const struct vhost_worker_ops kthread_ops = {
->+	.create = vhost_kthread_worker_create,
->+	.stop = vhost_kthread_do_stop,
->+	.wakeup = vhost_kthread_wakeup,
->+};
->+
-> static const struct vhost_worker_ops vhost_task_ops = {
-> 	.create = vhost_task_worker_create,
-> 	.stop = vhost_task_do_stop,
->@@ -773,7 +818,8 @@ static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
-> 	struct vhost_worker *worker;
-> 	char name[TASK_COMM_LEN];
-> 	int ret;
->-	const struct vhost_worker_ops *ops = &vhost_task_ops;
->+	const struct vhost_worker_ops *ops =
->+		dev->inherit_owner ? &vhost_task_ops : &kthread_ops;
->
-> 	worker = kzalloc(sizeof(*worker), GFP_KERNEL_ACCOUNT);
-> 	if (!worker)
->diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
->index 98895e299efa..af4b2f7d3b91 100644
->--- a/drivers/vhost/vhost.h
->+++ b/drivers/vhost/vhost.h
->@@ -37,6 +37,7 @@ struct vhost_worker_ops {
-> };
->
-> struct vhost_worker {
->+	struct task_struct *kthread_task;
-                           ^
-nit: I'm not a fan of tabs, but here all the other fields have it, so I 
-would put it in.
+I thought about this for a while and I still think TryFrom is fine here.
 
-> 	struct vhost_task	*vtsk;
-> 	struct vhost_dev	*dev;
-> 	/* Used to serialize device wide flushing with worker swapping. */
->-- 
->2.45.0
->
+At some point I want to replace this implementation with a macro, since the code
+is pretty similar for bus specific devices. I think that's a bit cleaner with
+TryFrom compared to with a custom method, since we'd need the bus specific
+device to call the macro from the generic impl, i.e.
 
-The patch LGTM:
+	impl<Ctx: DeviceContext> Device<Ctx>
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+rather than a specific one, which we can't control. We can control it for
+TryFrom though.
 
+However, I also do not really object to your proposal, hence I'm willing to make
+the change.
+
+Do you want to make a proposal for the corresponding doc comment switching to a
+custom method?
+
+[1] https://lore.kernel.org/lkml/20250331202805.338468-1-dakr@kernel.org/
 
