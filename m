@@ -1,90 +1,253 @@
-Return-Path: <linux-kernel+bounces-583135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39646A7770B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:59:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1277A77716
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E66163DB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:59:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B27216456B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ED41EBA1E;
-	Tue,  1 Apr 2025 08:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C381EBA18;
+	Tue,  1 Apr 2025 08:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CqtCbjew"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdYg5tmv"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D0E1EA7E6
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545F1189F56
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743497937; cv=none; b=TRPBOpQLZRrUbkCoBxic4pThpogEf4E4VIUt6YKAerZhNm6uE25vew/kET5puchGmRvIbgkJeoAoJXvOzcAu7HcUPkbS3U3/Q3QQdTuheG31dcJofm5mEibt2eCzYjCTJZacRTc94QzK1KG9wSwkgDDfQP82+BOFfNKtsOJD0ok=
+	t=1743497985; cv=none; b=ALUWH9+V8vTRvtBwODLuS2Sso2tkPZULZKncCCgfGLslZu+sM0vtVFlHBkoN3c6MhJ7XBTGdMWmGEJZnLRofQWTvjvyUEEkfdzA/IztP+81l0t7CzUAywfCjIGDMdRAGbYXBf89gyxHT3is06YxHCOZ5yf1V7cvE7rurTyTCvX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743497937; c=relaxed/simple;
-	bh=y4yc+vYKyS8iT1znX5x2ZPO9Av9lSCS1iCxwEhajZsE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=vB/CKcZft7ZUg70IXMA4XrVI9LijHSK1+UoSh1Oe9ujqVWbCUTN9uU/ivNAM1vne08a64yDsz7BatraX5jsr3mDXRLZbQ+zmhfPO3++8hiDO5b0CDKK5wlmweMGYWduHsgakKTD7rVmON5ub0qcSCJmSNRj0efyy0C9WylWR1bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CqtCbjew; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:References:To:From:Subject:Cc:Message-Id:Date:
-	Content-Type:Content-Transfer-Encoding:Mime-Version:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dy2M2SCqr8kVO1xwWLFlB181Lqx+iKs9WHxMbKw/hXg=; b=CqtCbjewvb0QvIn1otMdPUC11+
-	ORUSMxI/ei8dB/e1hMtAlFOMgFVDyjE7gbI/t4tWfE/x5V1Tc1vT4l1sye1HQCGy49QxFaW3iRtrp
-	BnQj2x5FkO2iDbySAerD2nr8zCJwcW+BhFdNF5qFr/M6j++WhMip8jGN6tiMfKiW0Y9R0cCDK25K/
-	9UHLshkLtL2IzM9MkRUcmBiUISAdyRrMar215Ahhv7jq99b7AjN9Ipkv+kQTjkRhblL3nD1EmwWqi
-	3vID+XegX8exG6CWX2gubV5J8l9kRDOv8QMsI44qTrCNQx0KrztAkpQCfzO0SvQ9DZPwcHq1HfTP0
-	kqk8yEdw==;
-Received: from i59f7adb8.versanet.de ([89.247.173.184] helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tzXSL-009a4x-Rr; Tue, 01 Apr 2025 10:58:49 +0200
+	s=arc-20240116; t=1743497985; c=relaxed/simple;
+	bh=iA3vc6iBumO0wyuNH4D4SNx9H8X39pPVlKvlLxxeDqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cofMTD3s3mjuHtbcbzHHznB0QJCh6U6WAK5CnbwnEYlPIdwHR9WdHgE3BLzPAA9WfsbFJOzKXe+Qm9Bn2ajHpDuaecinThufkjGnXSZQcvMtTeDhY9uEKNYcJsPgrIIT3JoC5F9/j1OIN6GwUp9fSfUlZtuATuQv6jTBmnXsO0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdYg5tmv; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2295d78b433so9270625ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743497982; x=1744102782; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUtQE7nMd/6PSKoEtlC68hCAEgv6hCHzZZn6Ocd8nbQ=;
+        b=RdYg5tmvEjiqm121IL/nr5xTsAa7TODaIHEnWSDofjTsVwB49Br7seF1Dq21pX/7Wz
+         K5QnifMwPrCJ5zbt9gk+6sqkpTWi/+QA09Bs07vk1H6UMLVL2mQsyW6aNnsgHZpOuHhy
+         7E7ByvnqJDTBpw1E8Sg0f71SRGTUbO9gFg8msmdg3yF9gliU7sJ+urFZttPKVFb9hMTv
+         MV+amILgTfQ6z4rq2KcMkStei4C3km3hnTT9OnhPkcT4UsW1O5+CcRZyMA9H9OKolP2b
+         snayhs/E369slo70k5DbOqgQm03ea0BTUA+LPeEdjtzCwrgzYONnY8Lclvinb1iT+oJc
+         tNFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743497982; x=1744102782;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DUtQE7nMd/6PSKoEtlC68hCAEgv6hCHzZZn6Ocd8nbQ=;
+        b=XA9LyW6gOt3C4NBngQZqBDPw+HMDLW7hicPid2+eLqehWox6dTEuSNdVIbE9s/9t0n
+         TFR/FySmcGDXbbwcXesd3l+MbQEUl/lgQuLqk3jolpkqKlHZ7c709dJ+714cLnEjN+YE
+         VHDEOhjTkUC6QzTdwBmdsGtGyj9ePMtrkBcsFxthxiGARmpkfqAeUD/W5sGTO6YJMBIF
+         MriEvh8RQ30XZjFuFjlCneAtVtHK0bLEyy0ZJ2oBxmMuFwpnbuNiBuoqochu1j8cRTQu
+         XOUPIWNvSN7J+/B2+/sKv5dkj7mUvCvMUVJ1C+nY35U5gJqSeV1Ep7OQH53KBg378V6d
+         jt5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVtzFPH9OXkmWVLdWkO81Hoep1rwesBuX1bEl56uO2k7W+cNEAYq0FhXHU6MX6NNW/Vd5d38nEnXDFbJXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzurQHP1LG1Z73SjicdMvlCxM3nhjXdCeFcVKlYeZo8Cp1jDa7u
+	FqOimTYSxVbm2C89Zq6LNamtjGzIs4tUBDIR0vjyHebTLmVmpGg8vfsz8HCbJCynoTTfeT6YldF
+	hoB0xM389cIXhPjbG3x5ojm+Vd4xd5wqRA7eka/orJCY+d5D3
+X-Gm-Gg: ASbGncunwcmWIbrTIbfCajMfIeAPi19kS4zLkJt4V/qtRAG3mHjIfbDTPUIvZJg4l8t
+	PyYcpL9aR14rZavcTGob9uOLrbRF1/CUh3Ay6y+myg08lgLtVarHS8VMQ0wUXBau2ZFuAljtnLY
+	exFHgbK79gWZkH0AwxnfT7r6jHn8c=
+X-Google-Smtp-Source: AGHT+IGzin6V0f0YGKy7Udk3aewjUGbBv6XmcP/DU6qB3LkeQJ2R2Z1zAebpSyapanvD2hTwAq7WiNaUzpcJ1/QKOno=
+X-Received: by 2002:a05:6a00:853:b0:736:9fa2:bcbb with SMTP id
+ d2e1a72fcca58-73980436cbamr19044549b3a.24.1743497982506; Tue, 01 Apr 2025
+ 01:59:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Apr 2025 10:58:48 +0200
-Message-Id: <D8V6FN8TF5IK.DV6F5X5L61V@igalia.com>
-Cc: <catalin.marinas@arm.com>, <will@kernel.org>,
- <linux-kernel@vger.kernel.org>, <kernel-dev@igalia.com>
-Subject: Re: [PATCH] arm64: Don't call NULL in do_compat_alignment_fixup
-From: "Angelos Oikonomopoulos" <angelos@igalia.com>
-To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
- <linux-arm-kernel@lists.infradead.org>
-X-Mailer: aerc 0.20.1
-References: <20250331085415.122409-1-angelos@igalia.com>
- <17de4426-8263-4ccb-8420-f6913d478ae9@arm.com>
- <D8V3VKNJJI1Z.27C32MUQ1OLYF@igalia.com>
- <c1dc28a9-7a36-4303-a8eb-0e227d866c37@arm.com>
- <D8V5E7FT19GH.3EUO3I50GYF8J@igalia.com>
- <c5d835bc-883d-449f-afd3-16a09e418e1b@arm.com>
-In-Reply-To: <c5d835bc-883d-449f-afd3-16a09e418e1b@arm.com>
+MIME-Version: 1.0
+References: <20250311170451.611389-1-leo.yan@arm.com> <20250311170451.611389-2-leo.yan@arm.com>
+In-Reply-To: <20250311170451.611389-2-leo.yan@arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Tue, 1 Apr 2025 09:59:31 +0100
+X-Gm-Features: AQ5f1JpICOn046XWir454LuVhWbevJeRSx1F27tfX6sfrfiP5_Zt2Y4Br9MlhyM
+Message-ID: <CAJ9a7Vi7kkjqfTWkY1-KP-HZUNG-25sPCZqDf2_n5i_OagEDGw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] coresight: etm4x: Extract the trace unit controlling
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue Apr 1, 2025 at 10:22 AM CEST, Anshuman Khandual wrote:
-> Makes sense. A small nit - just wondering if the following restructuring
-> here would make things bit more readable ? Regardless, your decision.
+On Tue, 11 Mar 2025 at 17:05, Leo Yan <leo.yan@arm.com> wrote:
 >
-> 	if (handler)
->         	type =3D handler(addr, instr, regs);
->         else
->                 return 1;
+> The trace unit is controlled in the ETM hardware enabling and disabling.
+> The sequential changes for support AUX pause and resume will reuse the
+> same operations.
+>
+> Extract the operations in the etm4_{enable|disable}_trace_unit()
+> functions.  A minor improvement in etm4_enable_trace_unit() is for
+> returning the timeout error to callers.
+>
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  .../coresight/coresight-etm4x-core.c          | 103 +++++++++++-------
+>  1 file changed, 62 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index e5972f16abff..53cb0569dbbf 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -431,6 +431,44 @@ static int etm4x_wait_status(struct csdev_access *csa, int pos, int val)
+>         return coresight_timeout(csa, TRCSTATR, pos, val);
+>  }
+>
+> +static int etm4_enable_trace_unit(struct etmv4_drvdata *drvdata)
+> +{
+> +       struct coresight_device *csdev = drvdata->csdev;
+> +       struct device *etm_dev = &csdev->dev;
+> +       struct csdev_access *csa = &csdev->access;
+> +
+> +       /*
+> +        * ETE mandates that the TRCRSR is written to before
+> +        * enabling it.
+> +        */
+> +       if (etm4x_is_ete(drvdata))
+> +               etm4x_relaxed_write32(csa, TRCRSR_TA, TRCRSR);
+> +
+> +       etm4x_allow_trace(drvdata);
+> +       /* Enable the trace unit */
+> +       etm4x_relaxed_write32(csa, 1, TRCPRGCTLR);
+> +
+> +       /* Synchronize the register updates for sysreg access */
+> +       if (!csa->io_mem)
+> +               isb();
+> +
+> +       /* wait for TRCSTATR.IDLE to go back down to '0' */
+> +       if (etm4x_wait_status(csa, TRCSTATR_IDLE_BIT, 0)) {
+> +               dev_err(etm_dev,
+> +                       "timeout while waiting for Idle Trace Status\n");
+> +               return -ETIME;
+> +       }
+> +
+> +       /*
+> +        * As recommended by section 4.3.7 ("Synchronization when using the
+> +        * memory-mapped interface") of ARM IHI 0064D
+> +        */
+> +       dsb(sy);
+> +       isb();
+> +
+> +       return 0;
+> +}
+> +
+>  static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+>  {
+>         int i, rc;
+> @@ -539,33 +577,7 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+>                 etm4x_relaxed_write32(csa, trcpdcr | TRCPDCR_PU, TRCPDCR);
+>         }
+>
+> -       /*
+> -        * ETE mandates that the TRCRSR is written to before
+> -        * enabling it.
+> -        */
+> -       if (etm4x_is_ete(drvdata))
+> -               etm4x_relaxed_write32(csa, TRCRSR_TA, TRCRSR);
+> -
+> -       etm4x_allow_trace(drvdata);
+> -       /* Enable the trace unit */
+> -       etm4x_relaxed_write32(csa, 1, TRCPRGCTLR);
+> -
+> -       /* Synchronize the register updates for sysreg access */
+> -       if (!csa->io_mem)
+> -               isb();
+> -
+> -       /* wait for TRCSTATR.IDLE to go back down to '0' */
+> -       if (etm4x_wait_status(csa, TRCSTATR_IDLE_BIT, 0))
+> -               dev_err(etm_dev,
+> -                       "timeout while waiting for Idle Trace Status\n");
+> -
+> -       /*
+> -        * As recommended by section 4.3.7 ("Synchronization when using the
+> -        * memory-mapped interface") of ARM IHI 0064D
+> -        */
+> -       dsb(sy);
+> -       isb();
+> -
+> +       rc = etm4_enable_trace_unit(drvdata);
+>  done:
+>         etm4_cs_lock(drvdata, csa);
+>
+> @@ -884,25 +896,12 @@ static int etm4_enable(struct coresight_device *csdev, struct perf_event *event,
+>         return ret;
+>  }
+>
+> -static void etm4_disable_hw(void *info)
+> +static void etm4_disable_trace_unit(struct etmv4_drvdata *drvdata)
+>  {
+>         u32 control;
+> -       struct etmv4_drvdata *drvdata = info;
+> -       struct etmv4_config *config = &drvdata->config;
+>         struct coresight_device *csdev = drvdata->csdev;
+>         struct device *etm_dev = &csdev->dev;
+>         struct csdev_access *csa = &csdev->access;
+> -       int i;
+> -
+> -       etm4_cs_unlock(drvdata, csa);
+> -       etm4_disable_arch_specific(drvdata);
+> -
+> -       if (!drvdata->skip_power_up) {
+> -               /* power can be removed from the trace unit now */
+> -               control = etm4x_relaxed_read32(csa, TRCPDCR);
+> -               control &= ~TRCPDCR_PU;
+> -               etm4x_relaxed_write32(csa, control, TRCPDCR);
+> -       }
+>
+>         control = etm4x_relaxed_read32(csa, TRCPRGCTLR);
+>
+> @@ -943,6 +942,28 @@ static void etm4_disable_hw(void *info)
+>          * of ARM IHI 0064H.b.
+>          */
+>         isb();
+> +}
+> +
+> +static void etm4_disable_hw(void *info)
+> +{
+> +       u32 control;
+> +       struct etmv4_drvdata *drvdata = info;
+> +       struct etmv4_config *config = &drvdata->config;
+> +       struct coresight_device *csdev = drvdata->csdev;
+> +       struct csdev_access *csa = &csdev->access;
+> +       int i;
+> +
+> +       etm4_cs_unlock(drvdata, csa);
+> +       etm4_disable_arch_specific(drvdata);
+> +
+> +       if (!drvdata->skip_power_up) {
+> +               /* power can be removed from the trace unit now */
+> +               control = etm4x_relaxed_read32(csa, TRCPDCR);
+> +               control &= ~TRCPDCR_PU;
+> +               etm4x_relaxed_write32(csa, control, TRCPDCR);
+> +       }
+> +
+> +       etm4_disable_trace_unit(drvdata);
+>
+>         /* read the status of the single shot comparators */
+>         for (i = 0; i < drvdata->nr_ss_cmp; i++) {
+> --
+> 2.34.1
+>
 
-I went with the original formulation since -- to my mind at least -- an
-"early exit" idiom feels more appropriate for something we found we
-can't handle. Could work either way though.
-
-Thanks,
-Angelos
-
+Reviewed-by: Mike Leach <mike;leach@linaro.org>
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
