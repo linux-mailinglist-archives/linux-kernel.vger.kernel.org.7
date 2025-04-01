@@ -1,116 +1,264 @@
-Return-Path: <linux-kernel+bounces-584254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02D3A7850B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4616A78511
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC501891F22
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:58:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C72E37A3FFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30C221CC74;
-	Tue,  1 Apr 2025 22:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD26A21A436;
+	Tue,  1 Apr 2025 23:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLJf2v8h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6652221B9D8;
-	Tue,  1 Apr 2025 22:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63851BBBF7;
+	Tue,  1 Apr 2025 23:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743548261; cv=none; b=RK6niMXEvDmCI/whPjxx9EJIWRAV2xRNLsjo2NCtBHtpNHtcfG6mpodSHa/BPh4qLeDO+aSaxw5DwYhMA0163x3ItrcWu7H0vVw4sJ7X5gwRb7ZzecGXLY0RAjsxfO4zBxpntb+3I8/dwT3bzx0OpEj6PSm7PYN8lOfBTfnZN4M=
+	t=1743548628; cv=none; b=gDky4i1XN7K+unFlnD1OxIyl8uFsJaE1NYzMNX690QpCSwSbgLnsrUNqZ3c0xzPaBm+jKhcVTYnuQZ/CAy3besbheF80SF77lqwz/Md9ofjrV+Qmx/0JWmG7JGUUdCe2dGKmN3bcLtriaNx5zKPVOM/t9MeS1UrEX3C7oG+XVBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743548261; c=relaxed/simple;
-	bh=VVGWqO0rzDMb+s8nP/lH2okTAPFnAxC1NyA5C3vFxbM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=dAkL3OMh/lXPlPU9VqxaYh1ZWS0kaPaFygtoasp8/tbg54k0R3xzr9E1wQNZby6MsXHu+F/mnnDxUKaMcpgvfXEzD1ADPRlqVZuhjE6DD9BJwcq/Vp/QY8cy5bkuCZsFo9VOn9D2osV/YoIYkt5uUFoeMjyXnx9Htg66GJKVOCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC197C4CEEF;
-	Tue,  1 Apr 2025 22:57:40 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tzkZ8-00000006KaE-3rST;
-	Tue, 01 Apr 2025 18:58:42 -0400
-Message-ID: <20250401225842.769455187@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 01 Apr 2025 18:58:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>,
- Jann Horn <jannh@google.com>,
- stable@vger.kernel.org
-Subject: [PATCH v5 4/4] ring-buffer: Use flush_kernel_vmap_range() over flush_dcache_folio()
-References: <20250401225811.008143218@goodmis.org>
+	s=arc-20240116; t=1743548628; c=relaxed/simple;
+	bh=BYOXmSOsaPKAshZKAzxa/WceoPbno44r7z7Qhx1eioY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmwI4zpjgJx7sab9Btn0xWHi0VbFaIa96+oYBhbQV+guDwpYhz+HT1liLONJlwsvGb1dP6TGE7bUS5YQIs1zRKxf+1moBh1uxHsbKnMd4WHqp3/Or4swvmJ4talYlv+ngorcF0+dVjiX6dzNg12te+UEg28HdA7Bm8QUGAavbr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLJf2v8h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17DCFC4CEE4;
+	Tue,  1 Apr 2025 23:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743548627;
+	bh=BYOXmSOsaPKAshZKAzxa/WceoPbno44r7z7Qhx1eioY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SLJf2v8hEejssbPR01Tj2/A/wIryXbN0voAiZ6/Lm087eksrq31aOcBsL/0S71klr
+	 b1Gb5Zw/RmCftZB36g8EGidgctqXwMTypk96G0moqwOGcWOIb+W//XTJwxBdwGBPDf
+	 StRRNSnx1yuCQV3K+1NeppyDOrjdkIur0MEI23GQ78JsQXAXLji9Dr9am2NdHjv2D4
+	 7paYtgQxa3jlQICY82f5hCO6JKjvWmSAUMY59vLN6g0Y6Zx1SQCTmofOUtf2UkrAbT
+	 lAfqHGGO/u6Ki9dk5wUX1mvfx82cXWk/FXWgZC5XoClRbTJ3m2RYtUtjjb3OjwTCQV
+	 3ONLn9gsrLxnQ==
+Date: Tue, 1 Apr 2025 18:03:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add MTIP L2 switch description
+Message-ID: <20250401230346.GA28557-robh@kernel.org>
+References: <20250331103116.2223899-1-lukma@denx.de>
+ <20250331103116.2223899-2-lukma@denx.de>
+ <20250331235518.GA2823373-robh@kernel.org>
+ <20250401123507.2e3bf0a6@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401123507.2e3bf0a6@wsk>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, Apr 01, 2025 at 12:35:07PM +0200, Lukasz Majewski wrote:
+> Hi Rob,
+> 
+> > On Mon, Mar 31, 2025 at 12:31:13PM +0200, Lukasz Majewski wrote:
+> > > This patch provides description of the MTIP L2 switch available in
+> > > some NXP's SOCs - e.g. imx287.
+> > > 
+> > > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > > ---
+> > > Changes for v2:
+> > > - Rename the file to match exactly the compatible
+> > >   (nxp,imx287-mtip-switch)
+> > > 
+> > > Changes for v3:
+> > > - Remove '-' from const:'nxp,imx287-mtip-switch'
+> > > - Use '^port@[12]+$' for port patternProperties
+> > > - Drop status = "okay";
+> > > - Provide proper indentation for 'example' binding (replace 8
+> > >   spaces with 4 spaces)
+> > > - Remove smsc,disable-energy-detect; property
+> > > - Remove interrupt-parent and interrupts properties as not required
+> > > - Remove #address-cells and #size-cells from required properties
+> > > check
+> > > - remove description from reg:
+> > > - Add $ref: ethernet-switch.yaml#
+> > > ---
+> > >  .../bindings/net/nxp,imx287-mtip-switch.yaml  | 154
+> > > ++++++++++++++++++ 1 file changed, 154 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/net/nxp,imx287-mtip-switch.yaml
+> > > 
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/net/nxp,imx287-mtip-switch.yaml
+> > > b/Documentation/devicetree/bindings/net/nxp,imx287-mtip-switch.yaml
+> > > new file mode 100644 index 000000000000..98eba3665f32 --- /dev/null
+> > > +++
+> > > b/Documentation/devicetree/bindings/net/nxp,imx287-mtip-switch.yaml
+> > > @@ -0,0 +1,154 @@ +# SPDX-License-Identifier: (GPL-2.0-only OR
+> > > BSD-2-Clause) +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/net/nxp,imx287-mtip-switch.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NXP SoC Ethernet Switch Controller (L2 MoreThanIP switch)
+> > > +
+> > > +maintainers:
+> > > +  - Lukasz Majewski <lukma@denx.de>
+> > > +
+> > > +description:
+> > > +  The 2-port switch ethernet subsystem provides ethernet packet
+> > > (L2)
+> > > +  communication and can be configured as an ethernet switch. It
+> > > provides the
+> > > +  reduced media independent interface (RMII), the management data
+> > > input
+> > > +  output (MDIO) for physical layer device (PHY) management.
+> > > +
+> > > +$ref: ethernet-switch.yaml#  
+> > 
+> > This needs to be: ethernet-switch.yaml#/$defs/ethernet-ports
+> > 
+> > With that, you can drop much of the below part. More below...
+> > 
+> > > +
+> > > +properties:
+> 
+> So it shall be after the "properties:"
+> 
+> $ref: ethernet-switch.yaml#/$defs/ethernet-ports   [*]
 
-Some architectures do not have data cache coherency between user and
-kernel space. For these architectures, the cache needs to be flushed on
-both the kernel and user addresses so that user space can see the updates
-the kernel has made.
-
-Instead of using flush_dcache_folio() and playing with virt_to_folio()
-within the call to that function, use flush_kernel_vmap_range() which
-takes the virtual address and does the work for those architectures that
-need it.
-
-This also fixes a bug where the flush of the reader page only flushed one
-page. If the sub-buffer order is 1 or more, where the sub-buffer size
-would be greater than a page, it would miss the rest of the sub-buffer
-content, as the "reader page" is not just a page, but the size of a
-sub-buffer.
-
-Link: https://lore.kernel.org/all/CAG48ez3w0my4Rwttbc5tEbNsme6tc0mrSN95thjXUFaJ3aQ6SA@mail.gmail.com/
-
-Cc: stable@vger.kernel.org
-Fixes: 117c39200d9d7 ("ring-buffer: Introducing ring-buffer mapping functions");
-Suggested-by: Jann Horn <jannh@google.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index d8d7b28e2c2f..c0f877d39a24 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6016,7 +6016,7 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- 	meta->read = cpu_buffer->read;
- 
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->meta_page));
-+	flush_kernel_vmap_range(cpu_buffer->meta_page, PAGE_SIZE);
- }
- 
- static void
-@@ -7319,7 +7319,8 @@ int ring_buffer_map_get_reader(struct trace_buffer *buffer, int cpu)
- 
- out:
- 	/* Some archs do not have data cache coherency between kernel and user-space */
--	flush_dcache_folio(virt_to_folio(cpu_buffer->reader_page->page));
-+	flush_kernel_vmap_range(cpu_buffer->reader_page->page,
-+				buffer->subbuf_size + BUF_PAGE_HDR_SIZE);
- 
- 	rb_update_meta_page(cpu_buffer);
- 
--- 
-2.47.2
+It can stay where it is, just add "/$defs/ethernet-ports"
 
 
+> > > +  compatible:
+> > > +    const: nxp,imx287-mtip-switch
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  phy-supply:
+> > > +    description:
+> > > +      Regulator that powers Ethernet PHYs.
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: Register accessing clock
+> > > +      - description: Bus access clock
+> > > +      - description: Output clock for external device - e.g. PHY
+> > > source clock
+> > > +      - description: IEEE1588 timer clock
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: ipg
+> > > +      - const: ahb
+> > > +      - const: enet_out
+> > > +      - const: ptp
+> > > +
+> > > +  interrupts:
+> > > +    items:
+> > > +      - description: Switch interrupt
+> > > +      - description: ENET0 interrupt
+> > > +      - description: ENET1 interrupt
+> > > +
+> > > +  pinctrl-names: true
+> > > +  
+> > 
+> > > +  ethernet-ports:
+> 
+> And then this "node" can be removed as it has been referenced above [*]?
+
+Well, you have to keep it to have 'required' in the child nodes.
+
+> 
+> (I shall only keep the properties, which are not standard to [*] if
+> any).
+> 
+> > > +    type: object
+> > > +    additionalProperties: false
+> > > +
+> > > +    properties:
+> > > +      '#address-cells':
+> > > +        const: 1
+> > > +      '#size-cells':
+> > > +        const: 0
+> > > +
+> > > +    patternProperties:
+> > > +      '^port@[12]+$':  
+> > 
+> > Note that 'ethernet-port' is the preferred node name though 'port' is 
+> > allowed.
+> 
+> Ok. That would be the correct define:
+> 
+> ethernet-ports {
+>      mtip_port1: ethernet-port@1 {
+>                reg = <1>;
+>                label = "lan0";
+>                local-mac-address = [ 00 00 00 00 00 00 ];
+>                phy-mode = "rmii";
+>                phy-handle = <&ethphy0>;
+> 	       };
+> 
+>                mtip_port2: port@2 {
+
+And here...
+
+> 		....
+> 	       };
+> 
+> > 
+> > > +        type: object
+> > > +        description: MTIP L2 switch external ports
+> > > +
+> > > +        $ref: ethernet-controller.yaml#
+> > > +        unevaluatedProperties: false
+> > > +
+> > > +        properties:
+> > > +          reg:
+> > > +            items:
+> > > +              - enum: [1, 2]
+> > > +            description: MTIP L2 switch port number
+> > > +
+> > > +          label:
+> > > +            description: Label associated with this port
+> > > +
+> > > +        required:
+> > > +          - reg
+> > > +          - label
+> > > +          - phy-mode
+> > > +          - phy-handle  
+> > 
+> > All the above under 'ethernet-ports' can be dropped though you might 
+> > want to keep 'required' part.
+> 
+> Ok, I will keep it.
+
+So I think you just want this:
+
+ethernet-ports:
+  type: object
+  additionalProperties: true  # Check if you need this
+
+  patternProperties:
+    '^ethernet-port@[12]$':
+      required:
+        - label
+        - phy-mode
+        - phy-handle
+
+Rob
 
