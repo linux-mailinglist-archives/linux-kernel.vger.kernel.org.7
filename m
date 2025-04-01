@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-584098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2091BA78341
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004BCA7834D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84583188F939
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEA63AE42E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8E720E70D;
-	Tue,  1 Apr 2025 20:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="DLsPkpwo"
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A233120B81D;
+	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A3E1E1C29
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743539096; cv=pass; b=gzt8Bo67smAVxQzkwhhtvMcQI9/Sr8BbGR3I7RUupaU1Z94IZ3/3a1VN2MapPnGREJ+LQjWxgc5cytXZSWU19O3HSn4Hhkoo4sA6Sd8gBKiTZxadaJCkLp1mmu6XKga7hl6egDJzYe0Kk4GM4pTdl8Tz3pqAYTpqa5ozXrOrdss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743539096; c=relaxed/simple;
-	bh=kkWavh5PNiM0ciEo9kqPCh2u3LTLA00fSnlFs7BiHa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nVLpMESK5vz8PAxUtTKshR++9IrUnQR6yn1Hz6IxmxtFgczi2u4CPPazeOb30rzvjiAlkQl7yMNZcpQQROvllyfqtKZs54IXTPftzV8LBPPV7acRzpQv5E7GLOsy6xRgK69YaUbRYqQaJop/F7rnTj234RlffvTUoIdZ0u435Mw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=DLsPkpwo; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1743539065; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nVudeP4HRTu5n6x8T1kjhZ9lFBAIcFkeUZcWcCRlPbxbnQwC44HjoJ2asVO+njogrhAFBWiuZVQ5q9evu+ZaeTkU9+Mk+vTDEummX+QsAoM2d1qzu0VbO/Q0sO48BVqZ0retUsOWynmdIA5Lc8RU+yhy9frEtgpxphI3konFD4k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1743539065; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=J2P0Ic2aVRrBbXcHSHgdkSjSn8amYT/Pw5QVusBb3qg=; 
-	b=LErVpSmuRttut35FgdqocVT5vRgDLwUKSWE4KmuOgyaxb5oHaWs9he+PKPx78BupcY3fL018xcdIc/jFlJUHgkokVyrn+I0qTuL+SEQ38HdAQU75jRU6bR4I+SDY55QTgGqBTB/6XHvHvmM19No6HG01MffP8/e0kfeS2h3TR6U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743539065;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=J2P0Ic2aVRrBbXcHSHgdkSjSn8amYT/Pw5QVusBb3qg=;
-	b=DLsPkpwokYbjjdPkgRazsC4bS0DE+Pactxb2YADSstoQSoQ5IkLowZ7ZSO/JjfrS
-	G6JO2PvIRNeC8/rYdant2Smbnx3DAdVNbsbps6GDxAYKNjnE8T3T1Espu79HW8s0aJj
-	HKPmI1zK63Uq36+eK+i8OaRF/H5xlWjDpmJ51EFE=
-Received: by mx.zohomail.com with SMTPS id 174353906464838.705516079159906;
-	Tue, 1 Apr 2025 13:24:24 -0700 (PDT)
-Message-ID: <0f16673f-9758-4790-ae6c-e81150241ba2@collabora.com>
-Date: Tue, 1 Apr 2025 23:24:20 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F104C85;
+	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743539550; cv=none; b=J8DftLjIijkg5o+urtXYpy5CkB2whAv3xQ6ykvIWIjbOilTb+KChGGWR2imXqbuwq0Qx8ejs5QNDkChoJGVo98xTkopTJF6vCcCz5hqX6RlBKR9QsHCYIZm+ko79jRsq505l6KEED8/Bpi6ub5mLXJSF6yocaXLG9JSsJcSere8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743539550; c=relaxed/simple;
+	bh=rEmdcZLXYxDN2vfbOB7BVcj2LM4H14D/E3gVEVWZP94=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=mNh1Vx6C9tDfhJCVrxtpNxvtD8Z8MpgRQdSDIYgBShPyUWL+QUWV/qH591X6RyNVUW1EyILOBqlX93fNmRgysYxoqXQfBOOz8CG+h6hqEv0kflOBari4pUBlgZwutKrJGithVE+nF8DQgXFK+Tgglvzas77kaV6P/tW/1lR+fFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12ABFC4CEE8;
+	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tziId-00000006Ico-2DnA;
+	Tue, 01 Apr 2025 16:33:31 -0400
+Message-ID: <20250401202549.409271454@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 01 Apr 2025 16:25:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>,
+ Jann Horn <jannh@google.com>
+Subject: [PATCH v3 0/5] ring-buffer: Allow persistent memory to be user space mmapped
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/virtio: Don't attach GEM to a non-created
- context in gem_object_open()
-To: Rob Clark <robdclark@gmail.com>
-Cc: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Vivek Kasireddy <vivek.kasireddy@intel.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel@collabora.com
-References: <20250401123842.2232205-1-dmitry.osipenko@collabora.com>
- <CAF6AEGu8XZktM9Y0t=KEF68uGLz7D_+9H1GnAPnZqc1YsT8iGA@mail.gmail.com>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAF6AEGu8XZktM9Y0t=KEF68uGLz7D_+9H1GnAPnZqc1YsT8iGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-On 4/1/25 22:53, Rob Clark wrote:
-> On Tue, Apr 1, 2025 at 5:39 AM Dmitry Osipenko
-> <dmitry.osipenko@collabora.com> wrote:
->>
->> The vfpriv->ctx_id is always initialized to a non-zero value. Check whether
->> context was created before attaching GEM to this context ID. This left
->> unnoticed previously because host silently skips attachment if context
->> doesn't exist, still we shouldn't do that for consistency.
->>
->> Fixes: 086b9f27f0ab ("drm/virtio: Don't create a context with default param if context_init is supported")
->> Cc: <stable@vger.kernel.org> # v6.14+
->> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> 
-> Reviewed-by: Rob Clark <robdclark@gmail.com>
 
-Thanks, applied both patches to misc-fixes
+Now that I learned that the memory passed back from reserve_mem is part
+of the memory allocator and just "reserved" and the memory is already
+virtually mapped, it can simply use phys_to_virt() on the physical memory
+that is returned to get the virtual mapping for that memory!
+  (Thanks Mike!)
 
--- 
-Best regards,
-Dmitry
+That makes things much easier, especially since it means that the memory
+returned by reserve_mem is no different than the memory retrieved by
+page_alloc(). This allows that memory to be memory mapped to user space
+no differently than it is mapped by the normal buffer.
+
+This new series does the following:
+
+- Enforce the memory mapping is page aligned (both the address and the
+  size). If not, it errors out.
+
+- Use phys_to_virt() to get to the virtual memory from the reserve_mem
+  returned addresses. Also use free_reserved_area() to give it
+  back to the buddy allocator when it is freed.
+
+- Treat the buffer allocated via memmap differently. It still needs to
+  be virtually mapped (cannot use phys_to_virt) and it must not be
+  freed nor memory mapped to user space. A new flag is added when a buffer
+  is created this way to prevent it from ever being memory mapped to user
+  space and the ref count is upped so that it can never be freed.
+
+- Use vmap_page_range() instead of using kmalloc_array() to create an array
+  of struct pages for vmap().
+
+- Use flush_kernel_vmap_range() instead of flush_dcache_folio()
+
+- Allow the reserve_mem persistent ring buffer to be memory mapped.
+  There is no difference now with how the memory is mapped to user space,
+  only the accounting of what pages are mapped where is updated as
+  the meta data is different between the two.
+
+Note, the first 4 patches makes the code a bit more correct. Especially
+since the vunmap() does not give the buffer back to the buddy allocator.
+I will be looking to get the first 4 patches into this merge window.
+
+The last patch which enables he persistent memory mapping to user space can
+wait till the 6.16.
+
+Changes since v2: https://lore.kernel.org/all/20250331143426.947281958@goodmis.org/
+
+- Basically a full rewrite once I found out that you can get the virtual
+  address of the memory returned by reserve_mem via phys_to_virt()!
+
+Steven Rostedt (5):
+      tracing: Enforce the persistent ring buffer to be page aligned
+      tracing: Have reserve_mem use phys_to_virt() and separate from memmap buffer
+      tracing: Use vmap_page_range() to map memmap ring buffer
+      ring-buffer: Use flush_kernel_vmap_range() over flush_dcache_folio()
+      ring-buffer: Allow reserve_mem persistent ring buffers to be mmapped
+
+----
+ Documentation/admin-guide/kernel-parameters.txt |  2 +
+ Documentation/trace/debugging.rst               |  2 +
+ kernel/trace/ring_buffer.c                      | 54 ++++++++++++++++--
+ kernel/trace/trace.c                            | 75 ++++++++++++++++---------
+ kernel/trace/trace.h                            |  1 +
+ 5 files changed, 102 insertions(+), 32 deletions(-)
 
