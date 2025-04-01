@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-582879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137DCA7737D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3AAA77380
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF787A32FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:26:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5412F7A15DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102901D516F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0731DA617;
 	Tue,  1 Apr 2025 04:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kX0hD9pt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ2qtfEO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAB91AF0BB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DCA1C863F
 	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 04:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743481652; cv=none; b=GitwE7qydxXyW67oOTAYA+tdnCcPdKCzu+ceLSDtCcJdyto0sgCTGI9UQWPHJPuPbvStfhhdZ5hgq6H6YBOQCP8Itz+zhvRFsLaY1I/lZkvhFSpNVegFRFCAdJo7UPJwOVctQRCv74fqWd9Saelyh5H+3bBCMQYIFvuOyEoFuJA=
+	t=1743481652; cv=none; b=js9RVs+eIpKc4QwWhlPUrdNSPODfDPR4iQLOgE/fvjF0IQCBeYkc4eMbB9e9zCNYnUFd3p6WXtxa9dLQ9wI6bpolQwBY54oQApzatN1HiSDauBdQmUbF5JIs/bNABhF9si2MLfskjdcvFPQySBuWsqW/TwQaxn+jUEEC2esa4V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743481652; c=relaxed/simple;
-	bh=7RjqPboHQASJpceG4THLuaASsoA3mFeOFyDYIbAxa4M=;
+	bh=IjOKdxlBYugNhuleDznGFP9F/v+6SATan/Ji53JS+9M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bypj+p5QddAvAHEHXPpex5L4hnnl2r9ntN5uZ2zwNnAT2BLKcSav4a6G8xp6m7T0PPQiYJZVMk2AXnzfqiSBQScIceKujDhrgwWwlnGx/8d51ex+fAPt3OqDV4kV73xKuQm/qBoic15NUTKyZBLSw3Rajp1VTOO+AEEiU1BK1dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kX0hD9pt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD69C4CEEF;
-	Tue,  1 Apr 2025 04:27:31 +0000 (UTC)
+	 MIME-Version; b=A2R/foFCPsntT/PRF2gWKh4tL6R+MxsNSdHw7kh5XgWRbZ753DYWvHM4UhigZOMuf2QUmC5Z3ym+fj050JbxhF7vHRkkZhG8UN6/DKb55jZJOu4T+v0VpBHB8h9Gm6nMFq6IyP0mC5HDazc2QmTXOL6HOqKTs0/ph0HxU8qu0Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ2qtfEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AB8C4CEE8;
+	Tue,  1 Apr 2025 04:27:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743481651;
-	bh=7RjqPboHQASJpceG4THLuaASsoA3mFeOFyDYIbAxa4M=;
+	s=k20201202; t=1743481652;
+	bh=IjOKdxlBYugNhuleDznGFP9F/v+6SATan/Ji53JS+9M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kX0hD9pt8+VLhl38eaZvLBMtdoIE6apl8snjs3NckBu946tlaOL6b5AfYTph3a1b+
-	 dfyi70NQq2j3UO3vHD5W9baLyDuvXmYnM6J2SxLAr3nMJlK5luN2oz2G44E+F5edd4
-	 lISwVgJ5E58QlRJlBdiWiIQfIEkALEwafX/x0vvl5O5Ha6dA14D9OYaJ4ywh9lkFq3
-	 Oa+j4dRF37y/KEjZdd+5FpzGtvV8KtFZvnwQAd3z8hO7TbMWLC5kRNZAb9CJi/q/mm
-	 eb8T5Ze9F9Gr4J2fbJzm6TlqXbF3C3nhFDNM+hew3VvUWECu5UQPYUApVGkGbPH6g+
-	 tysRXLDHwdX3w==
+	b=UZ2qtfEOT2yevbrixKL9g3TQwQt9eZMwv2yWjYYVaghMkDKZ4PhmDGZOOKchn+8G5
+	 3WtiyPUO0+stiHUNJcVb4goC6YGvjHa1EXVPDtpNSmoeGahp+ioU7AFdiwvpXYpxSU
+	 tlQxJclkpJUkGdI0inyBJxXkYuS8uriOhXvs2CI0f3kFCQoJKVjv3s+KhQr0S8wk8u
+	 MPVJlJnGtIOHJ9+vPGsd+1H0zf4zT02fWwrUbkCWnlbTbZ9ptTbUpIOWZTwcehvgIX
+	 gZ0W8FkhBz9CyUXXVxmJ+UNLlMeugkW40tIfDc8EsZGcURceUeO7agCGYQ0vFbSOOq
+	 gXOvgw7hhfdiQ==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 02/11] objtool: Ignore end-of-section jumps for KCOV/GCOV
-Date: Mon, 31 Mar 2025 21:26:37 -0700
-Message-ID: <08fbe7d7e1e20612206f1df253077b94f178d93e.1743481539.git.jpoimboe@kernel.org>
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 03/11] objtool: Append "()" to function name in "unexpected end of section" warning
+Date: Mon, 31 Mar 2025 21:26:38 -0700
+Message-ID: <692e1e0d0b15a71bd35c6b4b87f3c75cd5a57358.1743481539.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1743481539.git.jpoimboe@kernel.org>
 References: <cover.1743481539.git.jpoimboe@kernel.org>
@@ -60,97 +59,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When KCOV or GCOV is enabled, dead code can be left behind, in which
-case objtool silences unreachable and undefined behavior (fallthrough)
-warnings.
+Append with "()" to clarify it's a function.
 
-Fallthrough warnings, and their variant "end of section" warnings, were
-silenced with the following commit:
+Before:
 
-  6b023c784204 ("objtool: Silence more KCOV warnings")
+  vmlinux.o: warning: objtool: cdns_mrvl_xspi_setup_clock: unexpected end of section .text.cdns_mrvl_xspi_setup_clock
 
-Another variant of a fallthrough warning is a jump to the end of a
-function.  If that function happens to be at the end of a section, the
-jump destination doesn't actually exist.
+After:
 
-Normally that would be a fatal objtool error, but for KCOV/GCOV it's
-just another undefined behavior fallthrough.  Silence it like the
-others.
+  vmlinux.o: warning: objtool: cdns_mrvl_xspi_setup_clock(): unexpected end of section .text.cdns_mrvl_xspi_setup_clock
 
-Fixes the following warning:
-
-  drivers/iommu/dma-iommu.o: warning: objtool: iommu_dma_sw_msi+0x92: can't find jump dest instruction at .text+0x54d5
-
-Fixes: 6b023c784204 ("objtool: Silence more KCOV warnings")
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/314f8809-cd59-479b-97d7-49356bf1c8d1@infradead.org/
+Fixes: c5995abe1547 ("objtool: Improve error handling")
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- tools/objtool/check.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ tools/objtool/check.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index fff9d7a2947a..e6c4eefe295b 100644
+index e6c4eefe295b..bd0c78bfe90c 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -1488,6 +1488,8 @@ static int add_jump_destinations(struct objtool_file *file)
- 	int ret;
+@@ -3761,7 +3761,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 				return 0;
  
- 	for_each_insn(file, insn) {
-+		struct symbol *func = insn_func(insn);
-+
- 		if (insn->jump_dest) {
- 			/*
- 			 * handle_group_alt() may have previously set
-@@ -1513,7 +1515,7 @@ static int add_jump_destinations(struct objtool_file *file)
- 		} else if (reloc->sym->return_thunk) {
- 			add_return_call(file, insn, true);
- 			continue;
--		} else if (insn_func(insn)) {
-+		} else if (func) {
- 			/*
- 			 * External sibling call or internal sibling call with
- 			 * STT_FUNC reloc.
-@@ -1548,6 +1550,15 @@ static int add_jump_destinations(struct objtool_file *file)
- 				continue;
- 			}
- 
-+			/*
-+			 * GCOV/KCOV dead code can jump to the end of the
-+			 * function/section.
-+			 */
-+			if (file->ignore_unreachables && func &&
-+			    dest_sec == insn->sec &&
-+			    dest_off == func->offset + func->len)
-+				continue;
-+
- 			WARN_INSN(insn, "can't find jump dest instruction at %s+0x%lx",
- 				  dest_sec->name, dest_off);
- 			return -1;
-@@ -1574,8 +1585,7 @@ static int add_jump_destinations(struct objtool_file *file)
- 		/*
- 		 * Cross-function jump.
- 		 */
--		if (insn_func(insn) && insn_func(jump_dest) &&
--		    insn_func(insn) != insn_func(jump_dest)) {
-+		if (func && insn_func(jump_dest) && func != insn_func(jump_dest)) {
- 
- 			/*
- 			 * For GCC 8+, create parent/child links for any cold
-@@ -1592,10 +1602,10 @@ static int add_jump_destinations(struct objtool_file *file)
- 			 * case where the parent function's only reference to a
- 			 * subfunction is through a jump table.
- 			 */
--			if (!strstr(insn_func(insn)->name, ".cold") &&
-+			if (!strstr(func->name, ".cold") &&
- 			    strstr(insn_func(jump_dest)->name, ".cold")) {
--				insn_func(insn)->cfunc = insn_func(jump_dest);
--				insn_func(jump_dest)->pfunc = insn_func(insn);
-+				func->cfunc = insn_func(jump_dest);
-+				insn_func(jump_dest)->pfunc = func;
- 			}
+ 			WARN("%s%sunexpected end of section %s",
+-			     func ? func->name : "", func ? ": " : "",
++			     func ? func->name : "", func ? "(): " : "",
+ 			     sec->name);
+ 			return 1;
  		}
- 
 -- 
 2.48.1
 
