@@ -1,281 +1,214 @@
-Return-Path: <linux-kernel+bounces-584134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A7FA78391
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:51:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2ECDA7837C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE0E188F447
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:50:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4827A462B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3D2221F29;
-	Tue,  1 Apr 2025 20:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D3721D3C7;
+	Tue,  1 Apr 2025 20:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zxwvX8bz"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="DqhOAfP7"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C104221DBC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 20:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743540430; cv=none; b=FG+DmG6SeQSrmt5+sa1NTeDKZ8wXXBX3ZOD0bQVxKxBZQykAOEkR8j3WXoJ2dfkJTCoWbUopntF0wTMGI+yK6EhaBjpCUG5p+oCIv7MyJdBmU9p4BBy+L6MlkoR6oUYLpY2VBrqhBC8qKOwPwczyykBQ5Z3YoBNcjHPTgLG9laM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743540430; c=relaxed/simple;
-	bh=fUs07VOggshpPVb5iKIZY5UPq/g/qmxhlixbhOP2Vg0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G41/rc+EdTUk8npKFN3Jx2EUG9KxttysCUm3OuIqu7o+0V1tYIRzlP3K6tcDGFr3abXYgebbXrsfYN4QRxsEElMg1psH6Ky2dqCykU2tuqXKi36fu1InAs+7IGYtCo+FImYtnpaq+WhJgKUFkWbr6dEhOOvkYI+6omSYgCoeL0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zxwvX8bz; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff854a2541so9883786a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 13:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743540428; x=1744145228; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2Nlc70kYoEVZE2tPVykbAae+uvb1zAI7sPIwdhW1oA=;
-        b=zxwvX8bztPmDuoJqe4yW5FSqwAy9wE9NIkV0IBRBTYRj3mXSPpN72m7XO+rZjRM0Ip
-         VgDy2sU1rY2dQhjr8U4ceO8oNxI2Zrd5bBOV5X9WTLZdt+mDiTeG/Mom2LvB2MWFBsa3
-         RYyK883pPqu8JnYKz5FsZ5XdhRlK1rkZVYNI2gxfyZfvZscnEYmNK9lGoqiuMzI3qZxs
-         xWHY/jnAhcdOffGVkaQ4LGaBMtccO3tl9USqg/Mof83IXsSJsf/4oO5mDSQmJDLODlp/
-         UnYQbX87FI5+PSthUuYtipU8KDYm3rwJiDqr2HsoAqzqnJkvQKe+Psp0lhbryfR4t6rQ
-         CICw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743540428; x=1744145228;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2Nlc70kYoEVZE2tPVykbAae+uvb1zAI7sPIwdhW1oA=;
-        b=As1Oe8Xo9jYbhyB6Vn6c6t7RoKwIojyVd0/KWcw+UEgMMt4MBU76/0WTOCoKHrUEtv
-         TEZqyOsjzWAoXwfn9P+KHFsJjPGfzoO88al3DHL1nPZc5JF8gPbNVHLVVrMTb0PAUmsF
-         S1jIqzPZ4ZeoCHmH3oMH6ghEe/WYIfMpsLqTHCtYOmTUOHxrci0Rk/TXGZm34QpKcqZd
-         bJU9pPG4Okmx4qx2B/IdvNxJfXt4CwXfMXYbDyGzEIIOlNu3nUC/AxShPDt8fktxQulH
-         7ewdacWMuD17W6kqgHbecVIxAS7kwViN0PPFvNexc8s+yh8+JAiuz1+Eq4vwuVfyxujy
-         hiiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXI14gZwpTcjSYeQvugjtK2m3Sm5ZadXGjVYEpO/TxFDwdRZrPQUXBnwSvATWEYW5kYVhJDd4HWAt276vQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYhjNUGZ2VrnBMWa3oy2tkQ33DuYlsR7e4xXGlEzu2wAk7uTx5
-	7YmP8RpEVCnM6ssvly8S3Fh7i+mA0BuoPEaKm78qt0pWcxYyGQ9JJElk7yhk31wn5cJjyaglSAW
-	vrA==
-X-Google-Smtp-Source: AGHT+IGsvgxu0cKjG5RuKP235RGuqLz8GTYqfRRM08+3tGkeZ2vVqfJM8i9w8mVMsttD6aUmHocD7/45nSY=
-X-Received: from pfbdh1.prod.google.com ([2002:a05:6a00:4781:b0:730:8e17:ed13])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1410:b0:725:96f2:9e63
- with SMTP id d2e1a72fcca58-73980477740mr24146728b3a.24.1743540428601; Tue, 01
- Apr 2025 13:47:08 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  1 Apr 2025 13:44:24 -0700
-In-Reply-To: <20250401204425.904001-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622E21B91F;
+	Tue,  1 Apr 2025 20:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743540418; cv=pass; b=qg37rgxXHV93bQdY9Qt7M1913LL6Vd+LXoTjvzZ8xkFtwS9E05r+IfEWainkq+ReZCP2wx97ktKPg8uPZzK6hPqymUWtRd4jmJjiG+V3U7wIFJPE4TqMn2HeaSOXnkSN+HTQJMl4RMLtFQ8zKmckCsBiDsGXHFKDKGnQ6S/LA5E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743540418; c=relaxed/simple;
+	bh=ykNK66j1CazBrZP9CHPI3BUzn02GTKCILRduWrU/G7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yl/DM9Avoddm/FxroLQT4EW4f4dcqqwjnLAzAPXSXZENroDkVsWSRoxXqAar4X8739uvK2k86+X1wg6K5JUYFbAQDaXKU+4MjfIxP3LucIFK2rai/of1XQUctN0dtKT3s17v7anK6+SEHOCW8X5FuZ2RORa/lDLVXblWmOA7aE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=DqhOAfP7; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743540398; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PN5bYGeqXLvmp2/TycPIAPO5A62oJmUbeSau36lmUibgJRei9L0BGXG4mOEMt0pRJmOz2NaF7fa7fhqtLonPLzkECyUiPnNMww8DplzKRec0tYRLEnLtRbnxmuSuhoO9feoTWcks1DERJen7ch52U8lDOMFqCIh4sQSkba+oGQE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743540398; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Nwoofyd9hzvVQbQplsmXjWgL9RWGfB+EP1jAWvqqixw=; 
+	b=hjhWbEITx355cUzmz/Lz4w1lug59q2FlhYbFrvR4L12EaC9hiorFdDxrom7mKWRBZZnRxuq4O++O/R+pfYTr51O6DyBTTGPZvzfCpT6kirr3e72ydJi0sQZVgKA4sonQLCZUDpIpEuNBxEplETT1pAOYc8a0gZinQJWvzK83TWA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743540398;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Nwoofyd9hzvVQbQplsmXjWgL9RWGfB+EP1jAWvqqixw=;
+	b=DqhOAfP7s+x3awV10qSgOHGLpEl+4TV62M+3VSQI7W2enL3XCajX+9LpKk4kZUw6
+	WtNRlWYZt9XnfPoUJZwIJL7vwlMYybQABEzwJmbKgta84eNlCZzhbVDA4ghz7P9JNEP
+	CZ6g3toZEkl2qtQIm1cIZuH5ePUJy68KDXktQs1Y=
+Received: by mx.zohomail.com with SMTPS id 1743540396592221.6940754924799;
+	Tue, 1 Apr 2025 13:46:36 -0700 (PDT)
+Message-ID: <ff614cb7-94ca-4d74-9bbb-f97c95893113@collabora.com>
+Date: Tue, 1 Apr 2025 23:46:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250401204425.904001-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250401204425.904001-13-seanjc@google.com>
-Subject: [PATCH 12/12] KVM: selftests: Add a KVM_IRQFD test to verify
- uniqueness requirements
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Sean Christopherson <seanjc@google.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, David Matlack <dmatlack@google.com>, 
-	Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>, 
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] drm/syncobj: Extend EXPORT_SYNC_FILE for timeline
+ syncobjs
+To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Rob Clark <robdclark@chromium.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b"
+ <linux-media@vger.kernel.org>,
+ "moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b"
+ <linaro-mm-sig@lists.linaro.org>
+References: <20250401155758.48855-1-robdclark@gmail.com>
+ <CAF6AEGsKbjq_q7ezQTn5vyAF1cjXahgbv84uYK35BJH1KBXSpw@mail.gmail.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <CAF6AEGsKbjq_q7ezQTn5vyAF1cjXahgbv84uYK35BJH1KBXSpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Add a selftest to verify that eventfd+irqfd bindings are globally unique,
-i.e. that KVM doesn't allow multiple irqfds to bind to a single eventfd,
-even across VMs.
+On 4/1/25 23:40, Rob Clark wrote:
+> On Tue, Apr 1, 2025 at 8:58 AM Rob Clark <robdclark@gmail.com> wrote:
+>>
+>> From: Rob Clark <robdclark@chromium.org>
+>>
+>> Add support for exporting a dma_fence fd for a specific point on a
+>> timeline.  This is needed for vtest/vpipe[1][2] to implement timeline
+>> syncobj support, as it needs a way to turn a point on a timeline back
+>> into a dma_fence fd.  It also closes an odd omission from the syncobj
+>> UAPI.
+>>
+>> [1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33433
+>> [2] https://gitlab.freedesktop.org/virgl/virglrenderer/-/merge_requests/805
+>>
+>> v2: Add DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE
+>> v3: Add unstaged uabi header hunk
+>> v4: Also handle IMPORT_SYNC_FILE case
+>> v5: Address comments from Dmitry
+>> v6: checkpatch.pl nits
+>>
+>> Signed-off-by: Rob Clark <robdclark@chromium.org>
+>> Reviewed-by: Christian König <christian.koenig@amd.com>
+>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> ---
+>>  drivers/gpu/drm/drm_syncobj.c | 47 +++++++++++++++++++++++++++--------
+>>  include/uapi/drm/drm.h        |  4 +++
+>>  2 files changed, 41 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+>> index 4f2ab8a7b50f..636cd83ca29e 100644
+>> --- a/drivers/gpu/drm/drm_syncobj.c
+>> +++ b/drivers/gpu/drm/drm_syncobj.c
+>> @@ -741,7 +741,7 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
+>>  }
+>>
+>>  static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
+>> -                                             int fd, int handle)
+>> +                                             int fd, int handle, u64 point)
+>>  {
+>>         struct dma_fence *fence = sync_file_get_fence(fd);
+>>         struct drm_syncobj *syncobj;
+>> @@ -755,14 +755,24 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
+>>                 return -ENOENT;
+>>         }
+>>
+>> -       drm_syncobj_replace_fence(syncobj, fence);
+>> +       if (point) {
+>> +               struct dma_fence_chain *chain = dma_fence_chain_alloc();
+>> +
+>> +               if (!chain)
+>> +                       return -ENOMEM;
+>> +
+>> +               drm_syncobj_add_point(syncobj, chain, fence, point);
+>> +       } else {
+>> +               drm_syncobj_replace_fence(syncobj, fence);
+>> +       }
+>> +
+>>         dma_fence_put(fence);
+>>         drm_syncobj_put(syncobj);
+>>         return 0;
+>>  }
+>>
+>>  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+>> -                                       int handle, int *p_fd)
+>> +                                       int handle, u64 point, int *p_fd)
+>>  {
+>>         int ret;
+>>         struct dma_fence *fence;
+>> @@ -772,7 +782,7 @@ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+>>         if (fd < 0)
+>>                 return fd;
+>>
+>> -       ret = drm_syncobj_find_fence(file_private, handle, 0, 0, &fence);
+>> +       ret = drm_syncobj_find_fence(file_private, handle, point, 0, &fence);
+>>         if (ret)
+>>                 goto err_put_fd;
+>>
+>> @@ -869,6 +879,9 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
+>>                                    struct drm_file *file_private)
+>>  {
+>>         struct drm_syncobj_handle *args = data;
+>> +       unsigned int valid_flags = DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE |
+>> +                                  DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE;
+>> +       u64 point = 0;
+>>
+>>         if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ))
+>>                 return -EOPNOTSUPP;
+>> @@ -876,13 +889,18 @@ drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
+>>         if (args->pad)
+>>                 return -EINVAL;
+>>
+>> -       if (args->flags != 0 &&
+>> -           args->flags != DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
+>> +       if (args->flags & ~valid_flags)
+>>                 return -EINVAL;
+>>
+>> +       if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_TIMELINE)
+>> +               point = args->point;
+>> +
+>>         if (args->flags & DRM_SYNCOBJ_HANDLE_TO_FD_FLAGS_EXPORT_SYNC_FILE)
+>>                 return drm_syncobj_export_sync_file(file_private, args->handle,
+>> -                                                   &args->fd);
+>> +                                                   point, &args->fd);
+>> +
+>> +       if (args->point)
+>> +               return -EINVAL;
+>>
+>>         return drm_syncobj_handle_to_fd(file_private, args->handle,
+>>                                         &args->fd);
+>> @@ -893,6 +911,9 @@ drm_syncobj_fd_to_handle_ioctl(struct drm_device *dev, void *data,
+>>                                    struct drm_file *file_private)
+>>  {
+>>         struct drm_syncobj_handle *args = data;
+>> +       unsigned int valid_flags = DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_TIMELINE |
+>> +                                  DRM_SYNCOBJ_FD_TO_HANDLE_FLAGS_IMPORT_SYNC_FILE;
+>> +       u64 point = 0;
+>>
+>>         if (!drm_core_check_feature(dev, DRIVER_SYNCOBJ))
+>>                 return -EOPNOTSUPP;
+> 
+> oh, I suppose I should add a check for DRIVER_SYNCOBJ_TIMELINE?  I'll
+> send a v7 a bit later
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/Makefile.kvm |   4 +
- tools/testing/selftests/kvm/irqfd_test.c | 130 +++++++++++++++++++++++
- 2 files changed, 134 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/irqfd_test.c
+Christian already applied to misc-test, please rebase and make it as a
+new patch
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index f773f8f99249..9e5128d9f22c 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -125,6 +125,7 @@ TEST_GEN_PROGS_x86 += dirty_log_perf_test
- TEST_GEN_PROGS_x86 += guest_memfd_test
- TEST_GEN_PROGS_x86 += guest_print_test
- TEST_GEN_PROGS_x86 += hardware_disable_test
-+TEST_GEN_PROGS_x86 += irqfd_test
- TEST_GEN_PROGS_x86 += kvm_create_max_vcpus
- TEST_GEN_PROGS_x86 += kvm_page_table_test
- TEST_GEN_PROGS_x86 += memslot_modification_stress_test
-@@ -163,6 +164,7 @@ TEST_GEN_PROGS_arm64 += dirty_log_test
- TEST_GEN_PROGS_arm64 += dirty_log_perf_test
- TEST_GEN_PROGS_arm64 += guest_print_test
- TEST_GEN_PROGS_arm64 += get-reg-list
-+TEST_GEN_PROGS_arm64 += irqfd_test
- TEST_GEN_PROGS_arm64 += kvm_create_max_vcpus
- TEST_GEN_PROGS_arm64 += kvm_page_table_test
- TEST_GEN_PROGS_arm64 += memslot_modification_stress_test
-@@ -185,6 +187,7 @@ TEST_GEN_PROGS_s390 += s390/ucontrol_test
- TEST_GEN_PROGS_s390 += demand_paging_test
- TEST_GEN_PROGS_s390 += dirty_log_test
- TEST_GEN_PROGS_s390 += guest_print_test
-+TEST_GEN_PROGS_s390 += irqfd_test
- TEST_GEN_PROGS_s390 += kvm_create_max_vcpus
- TEST_GEN_PROGS_s390 += kvm_page_table_test
- TEST_GEN_PROGS_s390 += rseq_test
-@@ -199,6 +202,7 @@ TEST_GEN_PROGS_riscv += demand_paging_test
- TEST_GEN_PROGS_riscv += dirty_log_test
- TEST_GEN_PROGS_riscv += get-reg-list
- TEST_GEN_PROGS_riscv += guest_print_test
-+TEST_GEN_PROGS_riscv += irqfd_test
- TEST_GEN_PROGS_riscv += kvm_binary_stats_test
- TEST_GEN_PROGS_riscv += kvm_create_max_vcpus
- TEST_GEN_PROGS_riscv += kvm_page_table_test
-diff --git a/tools/testing/selftests/kvm/irqfd_test.c b/tools/testing/selftests/kvm/irqfd_test.c
-new file mode 100644
-index 000000000000..286f2b15fde6
---- /dev/null
-+++ b/tools/testing/selftests/kvm/irqfd_test.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <errno.h>
-+#include <pthread.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <signal.h>
-+#include <stdint.h>
-+#include <sys/sysinfo.h>
-+
-+#include "kvm_util.h"
-+
-+static struct kvm_vm *vm1;
-+static struct kvm_vm *vm2;
-+static int __eventfd;
-+static bool done;
-+
-+/*
-+ * KVM de-assigns based on eventfd *and* GSI, but requires unique eventfds when
-+ * assigning (the API isn't symmetrical).  Abuse the oddity and use a per-task
-+ * GSI base to avoid false failures due to cross-task de-assign, i.e. so that
-+ * the secondary doesn't de-assign the primary's eventfd and cause assign to
-+ * unexpectedly succeed on the primary.
-+ */
-+#define GSI_BASE_PRIMARY	0x20
-+#define GSI_BASE_SECONDARY	0x30
-+
-+static void juggle_eventfd_secondary(struct kvm_vm *vm, int eventfd)
-+{
-+	int r, i;
-+
-+	/*
-+	 * The secondary task can encounter EBADF since the primary can close
-+	 * the eventfd at any time.  And because the primary can recreate the
-+	 * eventfd, at the safe fd in the file table, the secondary can also
-+	 * encounter "unexpected" success, e.g. if the close+recreate happens
-+	 * between the first and second assignments.  The secondary's role is
-+	 * mostly to antagonize KVM, not to detect bugs.
-+	 */
-+	for (i = 0; i < 2; i++) {
-+		r = __kvm_irqfd(vm, GSI_BASE_SECONDARY, eventfd, 0);
-+		TEST_ASSERT(!r || errno == EBUSY || errno == EBADF,
-+			    "Wanted success, EBUSY, or EBADF, r = %d, errno = %d",
-+			    r, errno);
-+
-+		/* De-assign should succeed unless the eventfd was closed. */
-+		r = __kvm_irqfd(vm, GSI_BASE_SECONDARY + i, eventfd, KVM_IRQFD_FLAG_DEASSIGN);
-+		TEST_ASSERT(!r || errno == EBADF,
-+			    "De-assign should succeed unless the fd was closed");
-+	}
-+}
-+
-+static void *secondary_irqfd_juggler(void *ign)
-+{
-+	while (!READ_ONCE(done)) {
-+		juggle_eventfd_secondary(vm1, READ_ONCE(__eventfd));
-+		juggle_eventfd_secondary(vm2, READ_ONCE(__eventfd));
-+	}
-+
-+	return NULL;
-+}
-+
-+static void juggle_eventfd_primary(struct kvm_vm *vm, int eventfd)
-+{
-+	int r1, r2;
-+
-+	/*
-+	 * At least one of the assigns should fail.  KVM disallows assigning a
-+	 * single eventfd to multiple GSIs (or VMs), so it's possible that both
-+	 * assignments can fail, too.
-+	 */
-+	r1 = __kvm_irqfd(vm, GSI_BASE_PRIMARY, eventfd, 0);
-+	TEST_ASSERT(!r1 || errno == EBUSY,
-+		    "Wanted success or EBUSY, r = %d, errno = %d", r1, errno);
-+
-+	r2 = __kvm_irqfd(vm, GSI_BASE_PRIMARY + 1, eventfd, 0);
-+	TEST_ASSERT(r1 || (r2 && errno == EBUSY),
-+		    "Wanted failure (EBUSY), r1 = %d, r2 = %d, errno = %d",
-+		    r1, r2, errno);
-+
-+	/*
-+	 * De-assign should always succeed, even if the corresponding assign
-+	 * failed.
-+	 */
-+	kvm_irqfd(vm, GSI_BASE_PRIMARY, eventfd, KVM_IRQFD_FLAG_DEASSIGN);
-+	kvm_irqfd(vm, GSI_BASE_PRIMARY + 1, eventfd, KVM_IRQFD_FLAG_DEASSIGN);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	pthread_t racing_thread;
-+	int r, i;
-+
-+	/* Create "full" VMs, as KVM_IRQFD requires an in-kernel IRQ chip. */
-+	vm1 = vm_create(1);
-+	vm2 = vm_create(1);
-+
-+	WRITE_ONCE(__eventfd, kvm_new_eventfd());
-+
-+	kvm_irqfd(vm1, 10, __eventfd, 0);
-+
-+	r = __kvm_irqfd(vm1, 11, __eventfd, 0);
-+	TEST_ASSERT(r && errno == EBUSY,
-+		    "Wanted EBUSY, r = %d, errno = %d", r, errno);
-+
-+	r = __kvm_irqfd(vm2, 12, __eventfd, 0);
-+	TEST_ASSERT(r && errno == EBUSY,
-+		    "Wanted EBUSY, r = %d, errno = %d", r, errno);
-+
-+	kvm_irqfd(vm1, 11, READ_ONCE(__eventfd), KVM_IRQFD_FLAG_DEASSIGN);
-+	kvm_irqfd(vm1, 12, READ_ONCE(__eventfd), KVM_IRQFD_FLAG_DEASSIGN);
-+	kvm_irqfd(vm1, 13, READ_ONCE(__eventfd), KVM_IRQFD_FLAG_DEASSIGN);
-+	kvm_irqfd(vm1, 14, READ_ONCE(__eventfd), KVM_IRQFD_FLAG_DEASSIGN);
-+	kvm_irqfd(vm1, 10, READ_ONCE(__eventfd), KVM_IRQFD_FLAG_DEASSIGN);
-+
-+	close(__eventfd);
-+
-+	pthread_create(&racing_thread, NULL, secondary_irqfd_juggler, vm2);
-+
-+	for (i = 0; i < 10000; i++) {
-+		WRITE_ONCE(__eventfd, kvm_new_eventfd());
-+
-+		juggle_eventfd_primary(vm1, __eventfd);
-+		juggle_eventfd_primary(vm2, __eventfd);
-+		close(__eventfd);
-+	}
-+
-+	WRITE_ONCE(done, true);
-+	pthread_join(racing_thread, NULL);
-+}
 -- 
-2.49.0.504.g3bcea36a83-goog
-
+Best regards,
+Dmitry
 
