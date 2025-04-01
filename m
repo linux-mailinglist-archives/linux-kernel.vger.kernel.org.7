@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-583402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CF6A77A66
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:09:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57180A77A6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D023A6F1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EECA3A74EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AE0202C43;
-	Tue,  1 Apr 2025 12:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B080202C34;
+	Tue,  1 Apr 2025 12:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8Xl44Rd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TR+z+lH5"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD32202961
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB791EFFB2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743509346; cv=none; b=RuiJkjRlQ6qgOElqn0qk5/koLYxq1d4rZc+fMpBLZSMue1WoDgTr+Ttz/cdSFarpVSNegJbTBFvgJEiOBpW4y8JyzOPsXRljO6YzwWuPG2xxsZP5cDzlDvVwJmQPyZdl9dd1vDUUw3qB56rrjhpg68mGNhIJ6GmmDaAJdsz3cKY=
+	t=1743509509; cv=none; b=rujS6LKeUyUYp18iYFlQ/mACmT8V5L/BjhZttx6YOuOiLbJxAzYJvUQgjb1sRkscSV/3SLUGCDdoovcdYY2snMkMBVaCvlMZFAlXFt+Ti9qjL7aDyDyqSCoXgmipVpQ2PeYj9buzZIJcsmWIfP2/SM9fyyvhIJbEqhd9KcEsqVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743509346; c=relaxed/simple;
-	bh=ymWxHJh8c39lUSfpJKhiztgKbex2vJHoHlvT/jj0qw8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oEXhWbXJpdv6ONW7Y9ZU7Nyx4amvNRrn6yeSMMhm/V0mpJ1sm/qURnOTDnHfIGyMu//s0aZRV+Axfy0l1fVrHC3Gt9vhCCVF8s9OdYOJy0mh2obO2CZzELv0gpxTR1LQAwxRgsE+AWMrcTVY3SY27lZ5q+fQv43pXjWZG8+rlzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8Xl44Rd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABC9C4CEE4;
-	Tue,  1 Apr 2025 12:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743509345;
-	bh=ymWxHJh8c39lUSfpJKhiztgKbex2vJHoHlvT/jj0qw8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c8Xl44RdgcqzUYzufvsO+bwS9V8stcy/6+rGYQOF6yHaGEav3H/Xtu3wGshLiRTE5
-	 MnSNn/I5d6+jSWUz+jjyMEVCh0VlcCz8yGoolR6YcsqAHXJhumxidmXZWM4kWWaokZ
-	 oGblYRCEzVEufXJDPWR3a+dI/utNj/xC3fblwY4MAPkwNLx8MxKtVPXPHlBigmbdqX
-	 Dl+9ECoE8BkK5WJHJeZkdzOPcPKPNGfl5pimMqHQowo2v2q6fLWO+k+0IkEsEaMwrB
-	 1wCChtF/BBfJYSsqEhIK0X1LS8bSlC2Hn50wR0B54zSPoJrDRFRBp0teRoajsfCpMF
-	 v3slwexRKFk0A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tzaQR-001Jxh-F1;
-	Tue, 01 Apr 2025 13:09:03 +0100
-Date: Tue, 01 Apr 2025 13:09:04 +0100
-Message-ID: <87plhwytgf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	James Morse
-	 <james.morse@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Mingcong Bai
- <jeffbai@aosc.io>
-Subject: Re: [PATCH] arm64: Add overrride for MPAM
-In-Reply-To: <46ed31b37b4b92720b26be66f3e6366a714024cf.camel@xry111.site>
-References: <20250401055650.22542-1-xry111@xry111.site>
-	<409f6d27-3efe-4c45-8319-d360ded80f16@arm.com>
-	<46ed31b37b4b92720b26be66f3e6366a714024cf.camel@xry111.site>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1743509509; c=relaxed/simple;
+	bh=8qD5qO5+7E8zgiI2yY8R0PZ3fXssoswUz7X9iLaeToQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PpvHe7Ln2VbKA38mGc2MWEbwHElDiqEreH/q2ULfWjaMiSgKH3eIuHSX7FC3nNc3SN68EL49R3GFGFoEQEy/OFTLytH8kTKjOs2SNuF/Ymczg9tVO1p2xHDu2Cf41WnuEQBaqkew+4O8t3hME6Vsp0LjNOFJueS6ioF17SM5MvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TR+z+lH5; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743509495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9Eag8zpNG7MxnvJb1CH9xtij6aAJ0k6ycnZNJhZrMEk=;
+	b=TR+z+lH5gX+s/ffz9qiNvdgBmaNWAoct5wLLA4LDCl22t5CGgci9jyS/gEk6nLde+4tQ4h
+	Fl4/+g0ZwBeakpl7o+cZXIO3NsSWVRDwNbcGAD/qUUTEHIEhKmiwSRlnNxN+iDoBwy6kTL
+	rhKPIDfnmcS70E6/Uk9IwlTBKkVZ8yg=
+From: sunliming@linux.dev
+To: miriam.rachel.korenblit@intel.com,
+	johannes.berg@intel.com,
+	emmanuel.grumbach@intel.com,
+	benjamin.berg@intel.com,
+	pagadala.yesu.anjaneyulu@intel.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: sunliming <sunliming@kylinos.cn>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] wifi: iwlwifi: fix uninitialized variable warning
+Date: Tue,  1 Apr 2025 20:10:40 +0800
+Message-Id: <20250401121040.618791-1-sunliming@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: xry111@xry111.site, anshuman.khandual@arm.com, james.morse@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com, jeffbai@aosc.io
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 01 Apr 2025 12:47:03 +0100,
-Xi Ruoyao <xry111@xry111.site> wrote:
->=20
-> On Tue, 2025-04-01 at 14:04 +0530, Anshuman Khandual wrote:
-> > On 4/1/25 11:26, Xi Ruoyao wrote:
-> > > As the message of the commit 09e6b306f3ba ("arm64: cpufeature: discov=
-er
-> > > CPU support for MPAM") already states, if a buggy firmware fails to
-> > > either enable MPAM or emulate the trap as if it were disabled, the
-> > > kernel will just fail to boot.=C2=A0 While upgrading the firmware sho=
-uld be
-> > > the best solution, we have some hardware of which the vender have made
-> > > no response 2 months after we requested a firmware update.=C2=A0 Allow
-> > > overriding it so our devices don't become some e-waste.
-> >
-> > There could be similar problems, where firmware might not enable arch
-> > features as required. Just wondering if there is a platform policy in
-> > place for enabling id-reg overrides for working around such scenarios
-> > to prevent a kernel crash etc ?
->=20
-> In https://lore.kernel.org/all/87jzcfsuep.wl-maz@kernel.org/:
->=20
->    > For such cases, when MPAM is incorrectly advertised, can we have ker=
-nel
->    > command line parameter like mpam=3D0 to override it's detection?
->   =20
->    We could, but only when we can confirm what the problem is.
->=20
-> And there was prior arts like:
->=20
-> commit 892f7237b3ffb090f1b1f1e55fe7c50664405aed
-> Author: Marc Zyngier <maz@kernel.org>
-> Date:   Wed Jul 20 11:52:19 2022 +0100
->=20
->     arm64: Delay initialisation of cpuinfo_arm64::reg_{zcr,smcr}
->    =20
->     Even if we are now able to tell the kernel to avoid exposing SVE/SME
->     from the command line, we still have a couple of places where we
->     unconditionally access the ZCR_EL1 (resp. SMCR_EL1) registers.
->    =20
->     On systems with broken firmwares, this results in a crash even if
->     arm64.nosve (resp. arm64.nosme) was passed on the command-line.
->    =20
->     To avoid this, only update cpuinfo_arm64::reg_{zcr,smcr} once
->     we have computed the sanitised version for the corresponding
->     feature registers (ID_AA64PFR0 for SVE, and ID_AA64PFR1 for
->     SME). This results in some minor refactoring.
+From: sunliming <sunliming@kylinos.cn>
 
-That particular patch has caused quite a few issues, see d3c7c48d004f.
-So don't use it as a reference.
+Fix below kernel warning:
+drivers/net/wireless/intel/iwlwifi/mld/mac80211.c:513:16: warning: variable 'ret'
+is uninitialized when used here [-Wuninitialized]
 
-Now, while I think an option is probably acceptable in the face of an
-unresponsive vendor, I don't think the way you implement it is the
-correct approach.
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: sunliming <sunliming@kylinos.cn>
+---
+ drivers/net/wireless/intel/iwlwifi/mld/mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It should be possible to handle the override in the assembly code,
-like we do for other bits and pieces, and deal with MPAMIDR_EL1 later
-down the line, once the sanitised ID registers are known to be valid.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
+index 6851064b82da..7146116b067c 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
+@@ -475,7 +475,7 @@ static
+ int iwl_mld_mac80211_start(struct ieee80211_hw *hw)
+ {
+ 	struct iwl_mld *mld = IWL_MAC80211_GET_MLD(hw);
+-	int ret;
++	int ret = 0;
+ 	bool in_d3 = false;
+ 
+ 	lockdep_assert_wiphy(mld->wiphy);
+-- 
+2.25.1
 
-Overall, we don't have a great story with feature-specific ID
-registers that can undef when the feature isn't present (such as
-MPAMIDR_EL1, SMIDR_EL1, PMSIDR_EL1), and we should adopt a common
-behaviour for those.
-
-Thanks,
-
-	M.
-
---=20
-Jazz isn't dead. It just smells funny.
 
