@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-583615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDD6A77D84
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:19:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627AFA77D7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B6D16C909
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250953ABC99
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5564204C1D;
-	Tue,  1 Apr 2025 14:18:40 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A97204879;
+	Tue,  1 Apr 2025 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gPKUVHb5"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790451DF25C;
-	Tue,  1 Apr 2025 14:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562841DF25C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743517120; cv=none; b=TNXAeOW515KmuIy6sJWDQ/Qar3xL4ih5+v0nSttdckSTtiI0Yp7yVkHwJ7iK6JosWXd/+Kr7/UrCh+E4OYoolUeN/ioO5qMfvaeGeDvpNWvFS9SINIPKCxPEKoFr0U8VOST+s643GKSCuiU0FKwzO/GFZAbx7M/QElhRcrcUp70=
+	t=1743517081; cv=none; b=EZp4tyLCx6fewgugcpiIYbthUhxauw/75rmOgi3wzYmQabslJ313Vj+aZg/Vq5RuwmcBU+TOujREVKOTzUnFJJrU3A+PtUv/S2YNpMPntPPAs0P+kg4q2mvP/vXYHbydQwlraIYFv5jOuCVKoUtXLZmHKpSY0pMnBacSbnu75hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743517120; c=relaxed/simple;
-	bh=+H8Y4inqSqA/NnBib4Aj5cYm+YX0DahBQFwcHapTRR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K+Sdlai1FG04SLxxrq183TTPvv0o3+Vf9LAKsIjV0qSEMQ/3nDynWJ7tOuHJAAIAG+0F4uSqAApEcBreM39lvTV+mpb73ipkAkCBCj5BPFuZAZMYxiCdNto2KvoOyOyKYjPBeT8dvk4Ita0sNMi83Zl7MB+8B4OIPWdgWLMXQRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowACn5g6W9etnbEPBBA--.49542S2;
-	Tue, 01 Apr 2025 22:18:00 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] perf/x86/intel/uncore: Add error handling for uncore_msr_box_ctl()
-Date: Tue,  1 Apr 2025 22:17:41 +0800
-Message-ID: <20250401141741.2705-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1743517081; c=relaxed/simple;
+	bh=FJlsgq2QzOzhVpe+zVW0YCghAx8UZtTofJGeg+Vorl4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mkPU7Y3hOQeRgMDlS5b3jKEwLBrklTRhGqlVvqb5LP+tCusbTazTeStxwz9dW1mSbzzjwetVUhU+vqvIL4dRk4DoIHtFdHoKATXWGDNKx1K3fu25XQCHLZ5nBPPXHe5fgnshf+nGenD+QwlHbUBGl+a+54XTQ4FvBrHigoLCvCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gPKUVHb5; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-548409cd2a8so6045574e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1743517077; x=1744121877; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fMBJRbWhFak+sAV1ZffRRNyDINUZZx4eH4dy87DFJ8c=;
+        b=gPKUVHb5VtTjwaz/PikMCdUN3+CqkjB4bOK0etWQhE5MUcB+Cv2mTyf5bh1N5sNkYu
+         DoPBT4arcgbUDg3F/WNHeVV7bxRkeHmH4KemE2aLp3DvV5Qd8jncoDZ9kMriqoJjHWXU
+         DzFJPiNqhzsNCtVUHZeQxctcZEZWnvYVQVIug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743517077; x=1744121877;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fMBJRbWhFak+sAV1ZffRRNyDINUZZx4eH4dy87DFJ8c=;
+        b=VyM9wR+VcTIL0oUdEMEdcxDoD2cCtwswj2S8gA8sMdbIhc9+SZTWVxz334fesxR9H0
+         eyY5FsZe3jJ5Lq0b9ftxI/bSc51xWR2P5u+8w9DvqGAaPZEQwmqzmUrFsqdTgWnqQFal
+         GjoC6asS+OP1CJlAPy6xdAeAs8mf7IpfVQQM6SWLAHuhUvGIum9IlzeDbalxcWWkLYN5
+         LF0EG4d/DqLKdsde0FPrVw+v3UIUh65+P6YIQ74JW8hOMcTDhOYuTsYhxI/UObKdIigk
+         Wrpe2ZEMly85eQ1rpQMNjYeAoFvO8hbk8zNPPHJWeH4ogEHt+5l9QBUvdZMT1XLGfWRL
+         1luA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJu0j5bBwk/1KT6yc+o7Bu5djFwCY32RxvVomAunasLNKqgbCnguy9GD5YS0GN1tdA1isTBEDVGrnug00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsVgREJoklqGZBM+Eic5WWcoEfjtXtVW1HXtqjZgDHpu3jVwxy
+	uBdOONExHySe2qKZ9nkcL5XsaLvHuhd/Y+jGj/H7Ken9XAQ5a3X3J4t7AwAddA==
+X-Gm-Gg: ASbGncsfRfQZ0IC+RAV9VbJxbgygwgW5PzJqByL7lrjCnt4xulSG3AsEtVsY9izReMi
+	6U623A2rrwAKJ4hAJUKbG0q7mR24fr7PtIWQyVFI04zLM19eXm7mQPKHMwLUQAaUHaYobJlGDKB
+	h/WDdxNQMAAf2VjGH8pb4ExN6KIanu65DRyr0IZSv6UeTbBp6l0wVQ75EiGz8oUX4j7ovEvmMGm
+	j0ftyMPhvT/5i9/L41Rric2t0OtYYjbXmoUGZw9lz96aZG96BXFpBsQ3z2jMmwdJ7mrVXqVlLPJ
+	J9IHCK7Wjzxz7gOAFWUx6Krx952v/gRNUufTPZd0H2qc64pyAHBX0FqBZzWyK0AZvrUDhgiaBas
+	WsVkOpldIAGnJXV7bwAc3eCrr
+X-Google-Smtp-Source: AGHT+IFJq5w2B0dugOC2Oo+nxGo04pCzcOgC1humRSBZ8othsPmNpBduKudyA9YdVBqoa7doalBKFA==
+X-Received: by 2002:a05:6512:3d16:b0:544:ca1:da41 with SMTP id 2adb3069b0e04-54b11128170mr4067328e87.44.1743517077405;
+        Tue, 01 Apr 2025 07:17:57 -0700 (PDT)
+Received: from ribalda.c.googlers.com (216.148.88.34.bc.googleusercontent.com. [34.88.148.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54b094c19a3sm1377789e87.80.2025.04.01.07.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 07:17:56 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/2] media: Fix gcc8 warnings
+Date: Tue, 01 Apr 2025 14:17:53 +0000
+Message-Id: <20250401-v614-v2-0-53024c4fcdc7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACn5g6W9etnbEPBBA--.49542S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrZw4xGrWrJF1rKFyUGFW7Jwb_yoW8JF1Dpr
-	W29r9Iqry3ua95WayDGF18ArWayFWrGas8Wr4DG34fCrn8Jr13Gr47K3Waka95Gry8KFyx
-	Zr18Xr4UGayDAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7sRE2Q6tUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRETA2fr2Lpa7gAAsS
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJH162cC/13MSw6CMBSF4a2QO7amDwqtI/dhGGCp9A6g5FYbD
+ enerQwd/icn3w7JE/oEl2YH8hkTxrWGPDXgwrjOnuFUGySXmislWO5Ey0xr9KSUkVZpqNeN/AP
+ fB3MbagdMz0ifQ83it/4BWTDO7N11djS96iW/ukBxwddyjjTDUEr5ApzoCtybAAAA
+X-Change-ID: 20250331-v614-8485d3382935
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Andy Shevchenko <andy@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-In mtl_uncore_msr_init_box(), the return value of uncore_msr_box_ctl()
-needs to be checked before being used as the parameter of wrmsrl().
-A proper implementation can be found in ivbep_uncore_msr_init_box().
+Kernel 6.14 has increased its minimum gcc requirements. After bumping
+the "ancient" test in media-ci 2 new warnings have been found. Let's try
+to fix them.
 
-Add error handling for uncore_msr_box_ctl() to ensure the MSR write
-operation is only performed when a valid MSR address is returned.
-
-Fixes: c828441f21dd ("perf/x86/intel/uncore: Add Meteor Lake support")
-Cc: stable@vger.kernel.org # v6.3+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- arch/x86/events/intel/uncore_snb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Changes in v2:
+- Incorporate Hans changes.
+- Add comment (Thanks Andy).
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20250331-v614-v1-0-9bc69a873720@chromium.org
 
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 3934e1e4e3b1..84070388f495 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -691,7 +691,10 @@ static struct intel_uncore_type mtl_uncore_hac_cbox = {
- 
- static void mtl_uncore_msr_init_box(struct intel_uncore_box *box)
- {
--	wrmsrl(uncore_msr_box_ctl(box), SNB_UNC_GLOBAL_CTL_EN);
-+	unsigned int msr = uncore_msr_box_ctl(box);
-+
-+	if (msr)
-+		wrmsrl(msr, SNB_UNC_GLOBAL_CTL_EN);
- }
- 
- static struct intel_uncore_ops mtl_uncore_msr_ops = {
+---
+Hans Verkuil (1):
+      media: cec: extron-da-hd-4k-plus: Fix Wformat-truncation
+
+Ricardo Ribalda (1):
+      media: atomisp: Fix Wformat-truncation warning
+
+ drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c  | 4 ++--
+ drivers/staging/media/atomisp/pci/runtime/debug/src/ia_css_debug.c | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+---
+base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+change-id: 20250331-v614-8485d3382935
+
+Best regards,
 -- 
-2.42.0.windows.2
+Ricardo Ribalda <ribalda@chromium.org>
 
 
