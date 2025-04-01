@@ -1,287 +1,243 @@
-Return-Path: <linux-kernel+bounces-584221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49B4A784AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604A8A784B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6CC3AB79E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567211890BE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D39215045;
-	Tue,  1 Apr 2025 22:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208E7215045;
+	Tue,  1 Apr 2025 22:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="a5U5X5Yo"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cJK1QrJw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964065103F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 22:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CBA5103F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 22:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743546358; cv=none; b=jiNNZFpluFfNFhRHEQQcFyHhWGYIaPwMvA/eYjdaHQB5bSFhCT5fCpY5n1AEcuSnNDmKI5f+dYav4FDvj1JMaL0eYac+72DJ4IEkNBR8ckxiJP8pDDWuhh+9hq9x3/GzNSRfO1rlwwuCAMGFjlGeAZ5SXPuPkEp+obyjgWtAEQg=
+	t=1743546435; cv=none; b=AftBviQDQ2cMuE5OMrtDVsc6sNjMxKy50eI7fksKZLptQY1JvKwi+JC0ZHRwVFDeLIO1LudjUsJmbFgPSiwjnxaA5WanPy6NzrqgX93gcwImoISb3ZxSkcmLtxQxm2Ze06Z6rVnm5di4MoSvXkmHfT+rnKGfQNZLELjZ6IUPOCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743546358; c=relaxed/simple;
-	bh=JN/QycLrGKr/wbtswaQkxhJvnjze1O+6FHHC4go8UgY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=NNhvjTEE9dw/gOWQB31IbyltKxU/sajMFY8LgxxxQvfe4Sg7zpB/MRNr1Xy7hjcXzh2pO0qJzfJ+kFKMidDGrTS/H1qt2mDuqOv88+38jFr2TPYu/4NHhCt3wr4ca+6+SzSQn0cUlbmsBORCb34YyFPCc4+MZ1E8DGayrIeTmXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=a5U5X5Yo; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=PDVQm3Mkn38EYRoBI8UUfEVJrc7olWqPUg/H33d4eJo=;
-  b=a5U5X5YoGYPrDs7mhCka0jcahsR48ofd2tGuKw+kcDk2ARI50kFS8mM3
-   +zwHiY5OMN0sBYuw9A4Nmj/aehFLz+4nHdkbT3e3KNSgO5+uMsiiU5Xy2
-   G2X90ks+uXUmJQuJFmksScCCFBO5JuVKVRlcukPZR6OjCi+LzapCmwd+I
-   8=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,294,1736809200"; 
-   d="scan'208";a="215888912"
-Received: from a81-173-67-6.dsl.pocosnet.nl (HELO hadrien) ([81.173.67.6])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 00:25:53 +0200
-Date: Wed, 2 Apr 2025 00:25:53 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Erick Karanja <karanja99erick@gmail.com>
-cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
-    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] staging: rtl8723bs: no space before tabs
-In-Reply-To: <4e39b1295d68aea947aa5757e3148a2e401b72bc.1743524096.git.karanja99erick@gmail.com>
-Message-ID: <8f286d26-6a9f-2d24-10dd-e5f12e28564a@inria.fr>
-References: <cover.1743524096.git.karanja99erick@gmail.com> <4e39b1295d68aea947aa5757e3148a2e401b72bc.1743524096.git.karanja99erick@gmail.com>
+	s=arc-20240116; t=1743546435; c=relaxed/simple;
+	bh=v/g9zwh3OzwnTLMnGe1Vm4twb5YtumkJJRU+R4HT89w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1B3noI0q+a87Mgc8btXCJXwKLlDauYKp5OxXiiSqZF2CgQNUsnQpOOFMuOJsnKqpDIW3J0p8cEj0VFbEAZ/2+ZFq/+gQB2km8cShlRAGRJ2YP1xxfdfTwlMucv3CpZedEckT9cxHDaG09OzElkr6AhLnXYlpCthHOVXL9NueWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cJK1QrJw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743546432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rEfaUporEJdMtOjtaAta+61j+hvqxkmfjY7Q+CDNSWY=;
+	b=cJK1QrJwuvnGHGoUIFo1yEDijfXLQef+nc97wa94QVoa0H92l3hmiM0Tdho1u85RGfW02X
+	LZ05LdpRU2ML1TOrTc4Vrk5I/2t+dmO7ctni7hNXqrf27fSw0Xaia0McIhPJ6lLXapb9Ss
+	J7NJdICFR0AOiIP4urFbcTTTGXkjUbo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-341-LI4snRHDMlCiiskoEMCyBQ-1; Tue, 01 Apr 2025 18:27:10 -0400
+X-MC-Unique: LI4snRHDMlCiiskoEMCyBQ-1
+X-Mimecast-MFC-AGG-ID: LI4snRHDMlCiiskoEMCyBQ_1743546430
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so34177335e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 15:27:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743546429; x=1744151229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rEfaUporEJdMtOjtaAta+61j+hvqxkmfjY7Q+CDNSWY=;
+        b=purGcgXnXbmuQGO9LlXD9954RIdeFoU9/uR3egb7YgSrS6zrpvmpb2/OKxxw1rZjbg
+         Z+o6xqqOY8UFnRuDzFJ9oK1F+ySiNW4IaaH3MLVj418sQeCZDCBOvz7EuqWuqySeog58
+         m1O6ZNSTQh4B7Rd0M+dtlx9N0OM6/C/0YOHsCHxRXjTUfDHmRDQmDZZizAkPpdf6Gylm
+         Tdna1B1peQWsAXgv21TEcUmr1u6Tsk5jIWn1RiZ6/qPTxft+YgbRuZQjeeDVdrTAHLmt
+         zV7L1w6FJUmj7fGsSRH933bOogLz2seMcJaRGo6tc/i+OtznQTWDC5uhplKgMLUabE9G
+         WdFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzPEWxudDz8LzXurd6Fxo7jWlLai74H84yhc5hlImusqiwVoXrKthDAzm6fSFhTxY948XRfGbZn/hMa8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjIw6kJGVZX6IkDY1mGnML6KbDxfL64ZsnmWzsFCnuEjhYYeRw
+	S5S/hfk8Ttdg1qMfAgHq5CB6WLxejHlrsU4hz3h3cnen/IeafZmxwaWr5FQYCvx2dQkDEE7V8SH
+	8fY+ZZyHp+hASMx6lvGCzoALIYIR190wUYi00/afTyJ6OR5ZRu62t8ijfzC8ItlupCClRUA==
+X-Gm-Gg: ASbGncuy1Pcf1rTifvu0FALet7N8YIEudIucWKIcwBHQWhOyA9sGPBlQ7CJqshh01mc
+	cS4VJb9aBXTY79yrQZcgWmxvjuECQZd+/j+h1q8X+Cm3vu/9VCk1uLsLFV/KDjjk5DPuwXH9Oog
+	yZkS8FlfQogYZe//iHEc/XPdEkVdhQpo7fILOq8BAk6GS2wTWoqiDHF9cUXnCNbuXiflNoRbuBs
+	b1bmJm6tnT2J92hGcJm9qr0X7IT8z1sZJY/p3Z74FhCTIKEUD8CVy0+y84dm0qY+P7d3VDP/nsz
+	luXcQJTHaI40JCy0dYeQdj69hwehc43RuxL28oHOj+Gt2rY1Cpwpgz0=
+X-Received: by 2002:a05:600c:1c97:b0:43c:eeee:b706 with SMTP id 5b1f17b1804b1-43ea9d8dc29mr38348005e9.24.1743546429315;
+        Tue, 01 Apr 2025 15:27:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmNO0N3qfaT9LYTWddsRxRxiZUgNapeHyB1i0Kb5nmUn/nYEF/e2sPAkDX5eBfLm1QHONpgw==
+X-Received: by 2002:a05:600c:1c97:b0:43c:eeee:b706 with SMTP id 5b1f17b1804b1-43ea9d8dc29mr38347855e9.24.1743546428877;
+        Tue, 01 Apr 2025 15:27:08 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb5fcd3d7sm1973685e9.12.2025.04.01.15.27.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 15:27:08 -0700 (PDT)
+Message-ID: <ed68d414-ddbc-4472-9663-e6728a1f1eef@redhat.com>
+Date: Wed, 2 Apr 2025 00:27:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/8] drm/i915/gem: Add i915_gem_object_panic_map()
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250401125818.333033-1-jfalempe@redhat.com>
+ <20250401125818.333033-5-jfalempe@redhat.com> <Z-wmxijRKQiZFyup@intel.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <Z-wmxijRKQiZFyup@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 01/04/2025 19:47, Ville Syrjälä wrote:
+> On Tue, Apr 01, 2025 at 02:51:10PM +0200, Jocelyn Falempe wrote:
+>> Prepare the work for drm_panic support. This is used to map the
+>> current framebuffer, so the CPU can overwrite it with the panic
+>> message.
+>>
+>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+>> ---
+>>
+>> v5:
+>>   * Use iosys_map for intel_bo_panic_map().
+>>
+>>   drivers/gpu/drm/i915/display/intel_bo.c    |  5 ++++
+>>   drivers/gpu/drm/i915/display/intel_bo.h    |  1 +
+>>   drivers/gpu/drm/i915/gem/i915_gem_object.h |  2 ++
+>>   drivers/gpu/drm/i915/gem/i915_gem_pages.c  | 29 ++++++++++++++++++++++
+>>   drivers/gpu/drm/xe/display/intel_bo.c      | 10 ++++++++
+>>   5 files changed, 47 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/display/intel_bo.c b/drivers/gpu/drm/i915/display/intel_bo.c
+>> index fbd16d7b58d9..ac904e9ec7d5 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_bo.c
+>> +++ b/drivers/gpu/drm/i915/display/intel_bo.c
+>> @@ -57,3 +57,8 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
+>>   {
+>>   	i915_debugfs_describe_obj(m, to_intel_bo(obj));
+>>   }
+>> +
+>> +void intel_bo_panic_map(struct drm_gem_object *obj, struct iosys_map *map)
+>> +{
+>> +	i915_gem_object_panic_map(to_intel_bo(obj), map);
+>> +}
+>> diff --git a/drivers/gpu/drm/i915/display/intel_bo.h b/drivers/gpu/drm/i915/display/intel_bo.h
+>> index ea7a2253aaa5..5b6c63d99786 100644
+>> --- a/drivers/gpu/drm/i915/display/intel_bo.h
+>> +++ b/drivers/gpu/drm/i915/display/intel_bo.h
+>> @@ -23,5 +23,6 @@ struct intel_frontbuffer *intel_bo_set_frontbuffer(struct drm_gem_object *obj,
+>>   						   struct intel_frontbuffer *front);
+>>   
+>>   void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj);
+>> +void intel_bo_panic_map(struct drm_gem_object *obj, struct iosys_map *map);
+>>   
+>>   #endif /* __INTEL_BO__ */
+>> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+>> index a5f34542135c..b16092707ea5 100644
+>> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
+>> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+>> @@ -692,6 +692,8 @@ i915_gem_object_unpin_pages(struct drm_i915_gem_object *obj)
+>>   int __i915_gem_object_put_pages(struct drm_i915_gem_object *obj);
+>>   int i915_gem_object_truncate(struct drm_i915_gem_object *obj);
+>>   
+>> +void i915_gem_object_panic_map(struct drm_i915_gem_object *obj, struct iosys_map *map);
+>> +
+>>   /**
+>>    * i915_gem_object_pin_map - return a contiguous mapping of the entire object
+>>    * @obj: the object to map into kernel address space
+>> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+>> index 8780aa243105..718bea6474d7 100644
+>> --- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+>> +++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+>> @@ -355,6 +355,35 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj,
+>>   	return vaddr ?: ERR_PTR(-ENOMEM);
+>>   }
+>>   
+>> +/* Map the current framebuffer for CPU access. Called from panic handler, so no
+>> + * need to pin or cleanup.
+>> + */
+>> +void i915_gem_object_panic_map(struct drm_i915_gem_object *obj, struct iosys_map *map)
+>> +{
+>> +	enum i915_map_type has_type;
+>> +	void *ptr;
+>> +
+>> +	ptr = page_unpack_bits(obj->mm.mapping, &has_type);
+>> +
+>> +
+>> +	if (!ptr) {
+>> +		if (i915_gem_object_has_struct_page(obj))
+>> +			ptr = i915_gem_object_map_page(obj, I915_MAP_WB);
+>> +		else
+>> +			ptr = i915_gem_object_map_pfn(obj, I915_MAP_WB);
+> 
+> WB mapping would require clflushing to make it to the display.
+> Is that being done somewhere?
 
+Yes, it's done in intel_panic_flush() in patch 5, otherwise the panic 
+screen is not displayed.
 
-On Tue, 1 Apr 2025, Erick Karanja wrote:
+> 
+>> +
+>> +		if (IS_ERR(ptr))
+>> +			return;
+> 
+> What happens when the mapping fails?
 
-> Remove spaces before tabs to comply with the Linux kernel coding style
-> guidelines. Proper indentation using tabs improves code consistency
-> and readability.
+In intel_get_scanout_buffer(), the iosys_map is cleared before calling 
+this function. Then it checks iosys_map_is_null(), and returns an error 
+if it is.
+I can add a comment, or I can change the function type to return an int, 
+  that would probably be cleaner.
 
-Now you are mixing spaces and tabs with simply deleting commented code in
-one patch.  They should be in separate patches, because those are
-different things.
+> 
+>> +
+>> +		obj->mm.mapping = page_pack_bits(ptr, I915_MAP_WB);
+>> +	}
+>> +
+>> +	if (i915_gem_object_has_iomem(obj))
+>> +		iosys_map_set_vaddr_iomem(map, (void __iomem *) ptr);
+>> +	else
+>> +		iosys_map_set_vaddr(map, ptr);
+>> +}
+>> +
+>>   /* get, pin, and map the pages of the object into kernel space */
+>>   void *i915_gem_object_pin_map(struct drm_i915_gem_object *obj,
+>>   			      enum i915_map_type type)
+>> diff --git a/drivers/gpu/drm/xe/display/intel_bo.c b/drivers/gpu/drm/xe/display/intel_bo.c
+>> index 27437c22bd70..c68166a64336 100644
+>> --- a/drivers/gpu/drm/xe/display/intel_bo.c
+>> +++ b/drivers/gpu/drm/xe/display/intel_bo.c
+>> @@ -59,3 +59,13 @@ void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj)
+>>   {
+>>   	/* FIXME */
+>>   }
+>> +
+>> +void intel_bo_panic_map(struct drm_gem_object *obj, struct iosys_map *map)
+>> +{
+>> +	struct xe_bo *bo = gem_to_xe_bo(obj);
+>> +	int ret;
+>> +
+>> +	ret = ttm_bo_vmap(&bo->ttm, map);
+>> +	if (ret)
+>> +		iosys_map_clear(map);
+>> +}
+>> -- 
+>> 2.49.0
+> 
 
->
-> Reported by checkpatch:
->
->     WARNING: please, no space before tabs
->
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/hal/hal_btcoex.c | 33 ++++------------------
->  1 file changed, 6 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/hal/hal_btcoex.c b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
-> index 9105594d2dde..44f73baf1cb4 100644
-> --- a/drivers/staging/rtl8723bs/hal/hal_btcoex.c
-> +++ b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
-> @@ -9,14 +9,14 @@
->  #include <hal_btcoex.h>
->  #include <Mp_Precomp.h>
->
-> -/* 		Global variables */
-> +/*Global variables */
-
-There should be a space after the /*
-
->
->  struct btc_coexist GLBtCoexist;
->  static u8 GLBtcWiFiInScanState;
->  static u8 GLBtcWiFiInIQKState;
->
->  /*  */
-> -/* 		Debug related function */
-> +/*Debug related function */
->  /*  */
->  static u8 halbtcoutsrc_IsBtCoexistAvailable(struct btc_coexist *pBtCoexist)
->  {
-> @@ -84,9 +84,9 @@ static void halbtcoutsrc_LeaveLowPower(struct btc_coexist *pBtCoexist)
->  	ready = _FAIL;
->  #ifdef LPS_RPWM_WAIT_MS
->  	timeout = LPS_RPWM_WAIT_MS;
-> -#else /*  !LPS_RPWM_WAIT_MS */
-> +#else
->  	timeout = 30;
-> -#endif /*  !LPS_RPWM_WAIT_MS */
-> +#endif
-
-I would be inclined to keep the comments on the #else and #endif.  That's
-more documentation about which #if they belong with.
-
-julia
-
->
->  	stime = jiffies;
->  	do {
-> @@ -401,9 +401,6 @@ static u8 halbtcoutsrc_Get(void *pBtcContext, u8 getType, void *pOutBuf)
->
->  	case BTC_GET_U1_MAC_PHY_MODE:
->  		*pu8 = BTC_SMSP;
-> -/* 			*pU1Tmp = BTC_DMSP; */
-> -/* 			*pU1Tmp = BTC_DMDP; */
-> -/* 			*pU1Tmp = BTC_MP_UNKNOWN; */
->  		break;
->
->  	case BTC_GET_U1_AP_NUM:
-> @@ -561,7 +558,7 @@ static u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
->  }
->
->  /*  */
-> -/* 		IO related function */
-> +/* IO related function */
->  /*  */
->  static u8 halbtcoutsrc_Read1Byte(void *pBtcContext, u32 RegAddr)
->  {
-> @@ -772,7 +769,7 @@ static void halbtcoutsrc_FillH2cCmd(void *pBtcContext, u8 elementId, u32 cmdLen,
->  }
->
->  /*  */
-> -/* 		Extern functions called by other module */
-> +/* Extern functions called by other module */
->  /*  */
->  static u8 EXhalbtcoutsrc_BindBtCoexWithAdapter(void *padapter)
->  {
-> @@ -808,8 +805,6 @@ void hal_btcoex_Initialize(void *padapter)
->
->  	pBtCoexist = &GLBtCoexist;
->
-> -	/* pBtCoexist->statistics.cntBind++; */
-> -
->  	pBtCoexist->chipInterface = BTC_INTF_SDIO;
->
->  	EXhalbtcoutsrc_BindBtCoexWithAdapter(padapter);
-> @@ -900,14 +895,12 @@ void EXhalbtcoutsrc_IpsNotify(struct btc_coexist *pBtCoexist, u8 type)
->  		ipsType = BTC_IPS_ENTER;
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_IpsNotify(pBtCoexist, ipsType);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_IpsNotify(pBtCoexist, ipsType);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_LpsNotify(struct btc_coexist *pBtCoexist, u8 type)
-> @@ -952,14 +945,12 @@ void EXhalbtcoutsrc_ScanNotify(struct btc_coexist *pBtCoexist, u8 type)
->  	}
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_ScanNotify(pBtCoexist, scanType);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_ScanNotify(pBtCoexist, scanType);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_ConnectNotify(struct btc_coexist *pBtCoexist, u8 action)
-> @@ -978,14 +969,12 @@ void EXhalbtcoutsrc_ConnectNotify(struct btc_coexist *pBtCoexist, u8 action)
->  		assoType = BTC_ASSOCIATE_FINISH;
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_ConnectNotify(pBtCoexist, assoType);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_ConnectNotify(pBtCoexist, assoType);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_MediaStatusNotify(struct btc_coexist *pBtCoexist, enum
-> @@ -1006,14 +995,12 @@ void EXhalbtcoutsrc_MediaStatusNotify(struct btc_coexist *pBtCoexist, enum
->  		mStatus = BTC_MEDIA_DISCONNECT;
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_MediaStatusNotify(pBtCoexist, mStatus);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_MediaStatusNotify(pBtCoexist, mStatus);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_SpecialPacketNotify(struct btc_coexist *pBtCoexist, u8 pktType)
-> @@ -1037,14 +1024,12 @@ void EXhalbtcoutsrc_SpecialPacketNotify(struct btc_coexist *pBtCoexist, u8 pktTy
->  	}
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_SpecialPacketNotify(pBtCoexist, packetType);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_SpecialPacketNotify(pBtCoexist, packetType);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_BtInfoNotify(struct btc_coexist *pBtCoexist, u8 *tmpBuf, u8 length)
-> @@ -1055,14 +1040,12 @@ void EXhalbtcoutsrc_BtInfoNotify(struct btc_coexist *pBtCoexist, u8 *tmpBuf, u8
->  	pBtCoexist->statistics.cntBtInfoNotify++;
->
->  	/*  All notify is called in cmd thread, don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_BtInfoNotify(pBtCoexist, tmpBuf, length);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_BtInfoNotify(pBtCoexist, tmpBuf, length);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_HaltNotify(struct btc_coexist *pBtCoexist)
-> @@ -1102,14 +1085,12 @@ void EXhalbtcoutsrc_Periodical(struct btc_coexist *pBtCoexist)
->
->  	/*  Periodical should be called in cmd thread, */
->  	/*  don't need to leave low power again */
-> -/* 	halbtcoutsrc_LeaveLowPower(pBtCoexist); */
->
->  	if (pBtCoexist->boardInfo.btdmAntNum == 2)
->  		EXhalbtc8723b2ant_Periodical(pBtCoexist);
->  	else if (pBtCoexist->boardInfo.btdmAntNum == 1)
->  		EXhalbtc8723b1ant_Periodical(pBtCoexist);
->
-> -/* 	halbtcoutsrc_NormalLowPower(pBtCoexist); */
->  }
->
->  void EXhalbtcoutsrc_SetAntNum(u8 type, u8 antNum)
-> @@ -1119,10 +1100,8 @@ void EXhalbtcoutsrc_SetAntNum(u8 type, u8 antNum)
->  		GLBtCoexist.boardInfo.btdmAntNum = antNum;
->  	} else if (type == BT_COEX_ANT_TYPE_ANTDIV) {
->  		GLBtCoexist.boardInfo.btdmAntNum = antNum;
-> -		/* GLBtCoexist.boardInfo.btdmAntPos = BTC_ANTENNA_AT_MAIN_PORT; */
->  	} else if (type == BT_COEX_ANT_TYPE_DETECTED) {
->  		GLBtCoexist.boardInfo.btdmAntNum = antNum;
-> -		/* GLBtCoexist.boardInfo.btdmAntPos = BTC_ANTENNA_AT_MAIN_PORT; */
->  	}
->  }
->
-> --
-> 2.43.0
->
->
->
 
