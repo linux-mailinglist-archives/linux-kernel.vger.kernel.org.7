@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-583364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6076A779D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E771A779DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB6916A224
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3C318911B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162EF1FBCB5;
-	Tue,  1 Apr 2025 11:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E8E1FCF78;
+	Tue,  1 Apr 2025 11:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U2Dz3VS6"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TosWkRj0"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A31F12F1;
-	Tue,  1 Apr 2025 11:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4DD1F03EC;
+	Tue,  1 Apr 2025 11:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743507719; cv=none; b=QgthpJrLA+50tm1OpGMgsPTFpBuTCXwNHn5Sfjau8pkQ51yku5Cv8N8o68Z+Zepu+FP+pZkcRenM7OHYhxhO35Ze2S4J9afTBzxXr3nxcFxtrQrMIDVcoWVll/MMDdbdZ1DJs422JSMg66bREK1mTNQOAPjJj/CfHzTCKIwM6Wk=
+	t=1743507696; cv=none; b=LWadZXxVBLBWbTwe+hbP78hpx1iVw4pNPFEHtompU3msU4cf5ExtGyEJoT3LEpv7VrvlAbcCnvh/G6R0H879gP+yWqBtsvqkaHCr7+1Fc2TRadeQ6rY/3kzgqgp63gtB6pFB8Pvg8IIhKf/d4vmMKZ7Xx1H/XbquOm3Ft4mxJbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743507719; c=relaxed/simple;
-	bh=WW2thohQUypeCDl+pZKBzRL9fDDiLQ40+CIeZ/GqJy4=;
+	s=arc-20240116; t=1743507696; c=relaxed/simple;
+	bh=RV+iGshMrC+9r6SHrOspLyrg1Voc/w7g/UMEUB6KjPo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bp1C/ZR3SUFMvmtWUvqvocWojzadbNbTqCeCNj6X1m1Z2PUaTID3ynaVBLx8B5dWhnroUJA3iK+dkJ0u58HlX60Bi0F0j+Oepo5+rJjgsALV7lbvnZ5o8DgJ5gnipR+UrI8Y6UvEM9U3aUFHrr1NE7PTSy2baSDE/jNe6KnNSyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=U2Dz3VS6; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=Un+zo0mDPYr3dZMG9vOGwhCDQvQOyDPa6Jydp7TCAoFVokA19mG2imbQK8AdlWLV5DFsk9KNe9pF/9CWU4FCBW4jKvAnfcF9pMSBXpNumvO9cnpIH3gq4CSjO/D4YgIW132KSGg6BTLld2GSvDhLVm3SxbqFgp0cYVxgk86d/kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TosWkRj0; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 531BfNia3601592
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 531BfSQZ3089036
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Apr 2025 06:41:23 -0500
+	Tue, 1 Apr 2025 06:41:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1743507683;
-	bh=+vk5C8ntbZPIMi2E8R0MSXO+ugQ7pL3SiOiAdSg40FQ=;
+	s=ti-com-17Q1; t=1743507688;
+	bh=+S/aKlsk2mdQepb+fp2vmnEhnrrpJ4ouwj54dR6kpRc=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=U2Dz3VS6mERSkVnDcLSDBScvnsFi2Qdzlne++2+FKPxHxq7AdlfWDsNUOh+pvYir3
-	 5seLRZAqsR7w0gDVvDDJs+n7TJqrgDfiqrP8edgsaVF3JqkZTifVWB/NR/UE3/okr/
-	 b03h/HeQJZrnQNuVFcK0RiwzyWWCzOt67qgtws+s=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 531BfNJe065442
+	b=TosWkRj0VO4ZmxraBxatGXQhw9yoRZGvr1NajN98NnxlWfWKgVtEJt9a/wMq/5CHL
+	 HFEwkUZKlzreNi238og3PXEP/48vQ3PwyjgKuGWY9DvQxAGMssY8zRzb5YKg6bu9fx
+	 HBp7rHz+DbsqS6su05in44puFeB/b97LUTEMRh3k=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 531BfSsC037825
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 1 Apr 2025 06:41:23 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 1 Apr 2025 06:41:28 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
- Apr 2025 06:41:22 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 06:41:27 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 1 Apr 2025 06:41:22 -0500
+ Frontend Transport; Tue, 1 Apr 2025 06:41:27 -0500
 Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [172.24.227.115])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 531Bevm4099961;
-	Tue, 1 Apr 2025 06:41:19 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 531Bevm5099961;
+	Tue, 1 Apr 2025 06:41:24 -0500
 From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
         <u-kumar1@ti.com>, <y-abhilashchandra@ti.com>
-Subject: [PATCH 4/5] arm64: dts: ti: k3-am62x: Fix a few minor dtbs_check warnings in IMX219 overlay
-Date: Tue, 1 Apr 2025 17:10:52 +0530
-Message-ID: <20250401114053.229534-5-y-abhilashchandra@ti.com>
+Subject: [PATCH 5/5] arm64: dts: ti: k3-am62x: Rename I2C switch to I2C mux in OV5640 overlay
+Date: Tue, 1 Apr 2025 17:10:53 +0530
+Message-ID: <20250401114053.229534-6-y-abhilashchandra@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250401114053.229534-1-y-abhilashchandra@ti.com>
 References: <20250401114053.229534-1-y-abhilashchandra@ti.com>
@@ -79,23 +79,22 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The IMX219 sensor device tree bindings do not include a clock-names
-property. Remove the incorrectly added clock-names entry and also the
-device tree incorrectly defined an I2C switch instead of an I2C mux.
-According to the DT bindings, the correct terminology and node definition
-should use "i2c-mux" instead of "i2c-switch". Hence, update the same to
-avoid dtbs_check warnings.
+The OV5640 device tree overlay incorrectly defined an I2C switch instead
+of an I2C mux. According to the DT bindings, the correct terminology and
+node definition should use "i2c-mux" instead of "i2c-switch". Hence,
+update the same to avoid dtbs_check warnings.
 
-Fixes: 4111db03dc05 ("arm64: dts: ti: k3-am62x: Add overlay for IMX219")
+Fixes: 635ed9715194 ("arm64: dts: ti: k3-am62x: Add overlays for OV5640")
 Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso      | 2 +-
+ arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
-index 76ca02127f95..dd090813a32d 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-imx219.dtso
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
+index ccc7f5e43184..7fc7c95f5cd5 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-ov5640.dtso
 @@ -22,7 +22,7 @@ &main_i2c2 {
  	#size-cells = <0>;
  	status = "okay";
@@ -105,14 +104,19 @@ index 76ca02127f95..dd090813a32d 100644
  		compatible = "nxp,pca9543";
  		#address-cells = <1>;
  		#size-cells = <0>;
-@@ -39,7 +39,6 @@ ov5640: camera@10 {
- 				reg = <0x10>;
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+index 4eaf9d757dd0..b6bfdfbbdd98 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-csi2-tevi-ov5640.dtso
+@@ -22,7 +22,7 @@ &main_i2c2 {
+ 	#size-cells = <0>;
+ 	status = "okay";
  
- 				clocks = <&clk_imx219_fixed>;
--				clock-names = "xclk";
- 
- 				reset-gpios = <&exp1 13 GPIO_ACTIVE_HIGH>;
- 
+-	i2c-switch@71 {
++	i2c-mux@71 {
+ 		compatible = "nxp,pca9543";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 2.34.1
 
