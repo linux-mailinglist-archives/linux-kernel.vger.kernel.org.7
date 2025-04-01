@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-583189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7FFA777BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A293A7779E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D073ABFA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F373A9F9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670D1EEA3B;
-	Tue,  1 Apr 2025 09:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D391EE00C;
+	Tue,  1 Apr 2025 09:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="gzvIZiOZ"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJLDwTJ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F3E1EA7CC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211291DF24A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 09:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743499712; cv=none; b=Jz1na5NbjV30ExgBetLUEbKj9ZdDZwKz2PRIflgz2FTePMtgfJK4C/Gv8ZGYkP+pCHX9IIlwJPiM7KD7VPHJQv3BY06H3nxqt/4tHNIUXHtLVaM0F2yYRnozIVs4hOfZw5/xnsgfj/c6uf8CaSiS6C3jEWE4MPpXtBI606rRscw=
+	t=1743499388; cv=none; b=jyUyVGEqVwIEb9S1yKQ5XM+oIp4mn07opbnYdswCgFDIQ8BU8Oh76X4L02gtTDO2P++EGGS5UwEJjfe8Rv9Xte6cVM6S13uOVeEkyTOUBvXMuG+3SPDo0hYOpghVfw23LJKMLlUa5gP5ANfFa15l8RTruVJpuRgnMiGpkxleKBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743499712; c=relaxed/simple;
-	bh=544eZHKsXae6Y6rhCh1hXH8ERSQGUzvVjAB22Wono2o=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=CY8W1wDq/FQiHPvWscfPF97Ers3mYeU+8HFRkhiglysuIo+yRCzjo1aZzOGhszZt2BIw9MuB6sF9t/9FTYe0oT2dM3c4qfBRFgxfQeMbH6tGiFgARmcoVO3bYCb1j9rpxKBhLP5NS4miunR7rG0nq4nz1uN9HtPwRwzh4hbaPck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=gzvIZiOZ; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743499699; bh=dlneKC/ndU61i/vPL9mVRRu3chChSKIVHzfvKbs7t8A=;
-	h=From:To:Cc:Subject:Date;
-	b=gzvIZiOZLsYZ3s1yIkkMIMi43w5IC+41uxFAQm55YLSa8PFcM5n60+2oNSHvax/iY
-	 W8JXfwUs2Y7x0F9UxlSALJhNSjMGGdK6Bmm/Tt4GZt8T0Ti71PUSR+ySlwWYRfZOUV
-	 9T9vZdtsweVWboHZIOMrsL4CghzVlCJEDyLKvq7A=
-Received: from localhost.localdomain ([116.128.244.169])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 58789A4C; Tue, 01 Apr 2025 17:22:07 +0800
-X-QQ-mid: xmsmtpt1743499327ta9d3odcd
-Message-ID: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
-X-QQ-XMAILINFO: OATpkVjS499uBTf0thpdaQtwQw+psHU6CMRV3bJoz671wedWm4NBKI0+89TFUP
-	 34w0fHIr4V4aypPuB/y1i3lhRi1vq4jDnBbi9wYMGyu+MV/tlO2VPSLHJuNwgwpCZcz+e4MF5Lw5
-	 0VlAUMba7YjDAnk0qBHOYh0GQx2kPtBsfbCX4RbisjJk5WVGrHIDJFjwkIQTgLXb11t2qsFQ9qzF
-	 iYehbgdhi2mb2Tyo+PsAIy5wHYXcpON10vJb/ZzEIvdsdiDNjk8h4lDRDPQdSHD0+R5uvcbEkgz4
-	 Hf8JEcS0GJEIBHXGEXCQKfgajE7v+bWXgA+3oIQflxmPK/qGcQ7PplAnjbGEuO1yeEV3S0bdFPHr
-	 TlXIomiEvPmhF0mDso84izHEuqchxLR2C4O/oDEwM3V6o2Q8YfgrvoRUjhuhm4W+qRGiDxYkkoy6
-	 tOxvXYPatkxvPg2XKis9i0jV+rLv1HOqEJXpHO7v+QOOWS56bjY4XIeW8cxxFTfSe/HOa2yTvEFq
-	 qmM7lRgCGvSjsmD/NRKBjSch6HMxx9ml296sU1vq/VptZhaTcDR47EOO0QbMqaUI7NqljYfNemuS
-	 RKbvNCOw76K2yWxfM6XYe6zgRSUiPTPe7MOOyHmEwlavoGvdGPOVaWauwc48jfM4jKXdPgBdpYbb
-	 VQBBf/ZH5F6xjth0zHboXRCgp1bmDAcKQjeNmjS639Zi/dFmTT0yG3y46fZJkNSFgKr71HRP5keV
-	 PhLfUNcHhMvHesEYy1kVwg/fL/ZTeygO0FaB9Uytr9qPaIgROys99Lb1ksyRiO7ar9uOxAsIY3/p
-	 y0juuugnpAK6oks0BaEBZQS1I1bgbUTcEtqEquB/lAUsv4nE3xcfeaPwvW3Mw6Gj5+6C/VIy1y/r
-	 q1MhLCNyS/nkW66LV4ul51nczaR6d1VfOYi6ISgNrysjoTwfG9cY1g8WGspB9lL5uCX8yh4t48CM
-	 uyLvuH+LiKg9rj3w2NLhmmygIETImS7qdDV43xhGM=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Yaxiong Tian <iambestgod@qq.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	chaitanyak@nvidia.com
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v3 0/3] nvme: Add sysfs interface for APST configuration management
-Date: Tue,  1 Apr 2025 17:22:06 +0800
-X-OQ-MSGID: <20250401092206.1542479-1-iambestgod@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743499388; c=relaxed/simple;
+	bh=lLp1G3vvH2lkW8aBOpotaD1tve6BpjnMM2Zj1jzUZME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F7S7H2a6clJji79DcrjztEHD+ILvJEHKBw8y59a3LbxCYH7lj2XcXAaY32UduxUVO2WE8nIwMqSwfnGu8COE/8EubZEnUTAwnLuyNrx/6cwlDVq6wKfWGwTafdpFYGKLYSWEdBlokwqJwoC2FPGHEcrmXCO9suKsK9xCCAlDg8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJLDwTJ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01C7C4CEE4;
+	Tue,  1 Apr 2025 09:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743499387;
+	bh=lLp1G3vvH2lkW8aBOpotaD1tve6BpjnMM2Zj1jzUZME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJLDwTJ0ExcsjRVMAmvREaEMgmKmFa7+iXUR6dhmVvZHexJup9lFqZuGZ7+iecDR4
+	 4TqnrtLOWX8TwFSkdUlmaOIRCEqT1JtkIvaeoKLSRj+hcilHruB2BcInjQp+prS3vx
+	 LT/e0/trIj9OzMSt+bAyIrri18ezvoipN4gpzBNRZv254lR1vylCyAD7tR52r0faaS
+	 sbxOCb2QR//eKKCdvmYooj5pLojBM+oXbH6eoVD/C61PIXT7CkqhqrNdEncQS5abGM
+	 dyr/7Hz3dv3wUTeLa6SRjGbBzK9xdH8qmpacXGtNSOBTfbe6f/Tt4csQ8/kRwE5JpS
+	 MhWIvaSK26iXg==
+Date: Tue, 1 Apr 2025 11:23:03 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Fernando Fernandez Mancera <ffmancera@riseup.net>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	dwmw@amazon.co.uk, mhkelley@outlook.com
+Subject: [PATCH -v4] x86/i8253: Call clockevent_i8253_disable() with
+ interrupts disabled
+Message-ID: <Z-uwd4Bnn7FcCShX@gmail.com>
+References: <20250327234357.3383-1-ffmancera@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327234357.3383-1-ffmancera@riseup.net>
 
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
 
-This series enhances NVMe APST (Autonomous Power State Transition) support by:
-1. Adding warnings for PST table allocation failures
-2. Exposing APST tables via sysfs for runtime inspection
-3. Providing per-controller sysfs interface for APST configuration
+I've cleaned up and simplified the changelog, see the patch below.
 
-The changes allow better visibility and control of power management settings
-through userspace tools while maintaining the existing functionality.
+Thomas, does this look good to you too?
 
-Yaxiong Tian (3):
-  nvme: Add warning for PST table memory allocation failure in
-    nvme_configure_apst
-  nvme: add sysfs interface for APST table updates
-  nvme: add per-controller sysfs interface for APST configuration
+Thanks,
 
-Changes in v2
+	Ingo
 
-Add mutex_lock in nvme_set_latency_tolerance() for Potential competition 
-between nvme_set_latency_tolerance() and apst_update_store().
+=========================>
+From: Fernando Fernandez Mancera <ffmancera@riseup.net>
+Date: Fri, 28 Mar 2025 00:43:57 +0100
+Subject: [PATCH] x86/i8253: Call clockevent_i8253_disable() with interrupts disabled
 
-Changes in v3
-In  PACH nvme: add sysfs interface for APST table updates,Add why dynamic APST 
-updates are needed in the commit message, fix code formatting issues. 
+There's a lockdep false positive warning related to i8253_lock:
 
- drivers/nvme/host/core.c  | 24 ++++++++++------
- drivers/nvme/host/nvme.h  |  6 ++++
- drivers/nvme/host/sysfs.c | 59 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 8 deletions(-)
+  WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+  ...
+  systemd-sleep/3324 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+  ffffffffb2c23398 (i8253_lock){+.+.}-{2:2}, at: pcspkr_event+0x3f/0xe0 [pcspkr]
 
--- 
-2.25.1
+  ...
+  ... which became HARDIRQ-irq-unsafe at:
+  ...
+    lock_acquire+0xd0/0x2f0
+    _raw_spin_lock+0x30/0x40
+    clockevent_i8253_disable+0x1c/0x60
+    pit_timer_init+0x25/0x50
+    hpet_time_init+0x46/0x50
+    x86_late_time_init+0x1b/0x40
+    start_kernel+0x962/0xa00
+    x86_64_start_reservations+0x24/0x30
+    x86_64_start_kernel+0xed/0xf0
+    common_startup_64+0x13e/0x141
+  ...
 
+Lockdep complains due pit_timer_init() using the lock in an IRQ-unsafe
+fashion, but it's a false positive, because there is no deadlock
+possible at that point due to init ordering: at the point where
+pit_timer_init() is called there is no other possible usage of
+i8253_lock because the system is still in the very early boot stage
+with no interrupts.
+
+But in any case, pit_timer_init() should disable interrupts before
+calling clockevent_i8253_disable() out of general principle, and to
+keep lockdep working even in this scenario.
+
+Use scoped_guard() for that, as suggested by Thomas Gleixner.
+
+[ mingo: Cleaned up the changelog. ]
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20250327234357.3383-1-ffmancera@riseup.net
+---
+ arch/x86/kernel/i8253.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/i8253.c b/arch/x86/kernel/i8253.c
+index 80e262bb627f..cb9852ad6098 100644
+--- a/arch/x86/kernel/i8253.c
++++ b/arch/x86/kernel/i8253.c
+@@ -46,7 +46,8 @@ bool __init pit_timer_init(void)
+ 		 * VMMs otherwise steal CPU time just to pointlessly waggle
+ 		 * the (masked) IRQ.
+ 		 */
+-		clockevent_i8253_disable();
++		scoped_guard(irq)
++			clockevent_i8253_disable();
+ 		return false;
+ 	}
+ 	clockevent_i8253_init(true);
 
