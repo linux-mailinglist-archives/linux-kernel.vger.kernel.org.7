@@ -1,97 +1,101 @@
-Return-Path: <linux-kernel+bounces-583392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12233A77A3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:59:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37FFEA77A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42D9F16C005
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DA11621F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2354202968;
-	Tue,  1 Apr 2025 11:58:06 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4DA202C4F;
+	Tue,  1 Apr 2025 12:00:32 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496A201266;
-	Tue,  1 Apr 2025 11:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D091EC01F;
+	Tue,  1 Apr 2025 12:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743508686; cv=none; b=h71G3a2PKt7lexvU0bfLtTvkYbCQOIz3ZSFJzSBSPUm45aOLif/GhkgjssInpPaZb+5Q2UqOYBC4ptbRCWLk3SeToTJ8mvqkHRDzRyItOg5Yq5kmuDEx7yA45/jvEqe6T/ABbj/ykdX6wX9VVFB7EKx+pl92d0TeP+W+H/00WvI=
+	t=1743508831; cv=none; b=SaAv0FP0I/WhLNFSdRmzyAJfvx4iomM6+CUCUF3KkpfBNOtleW7Iq55wg0k7PHIOxeEn4yvDaxe35NwoWtGL/B7wbO+p4FzJk3MV10CdHc8HrWbXVjM8PwE7wM/+mxYriVwcEnoVwRpFe76/GMGCoSVwaCkIBQv6LbaNavmLRPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743508686; c=relaxed/simple;
-	bh=1dB6vMoeG9NxkQ32fN8guBf+8If7k9F5IrEVO2t6XwY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Bu+PLJJrMkL4DcHUvLI7277uxmPerc5qdVTYSql2nB9gHORWPeS0kwLqq9l9qvx1W1KYqGUe1+Z671KlgrQIk1+MyBSmT9EG2ejLZkXSyzmNkGdfY8NjPTWG9epU8VMpYaG3FNfpHQqiTjVtNoEMnyzncUVTD3DZVcP+9B4G68E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZRmj55VtFz5B1Jc;
-	Tue,  1 Apr 2025 19:58:01 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 531Bvmo9004249;
-	Tue, 1 Apr 2025 19:57:48 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 1 Apr 2025 19:57:51 +0800 (CST)
-Date: Tue, 1 Apr 2025 19:57:51 +0800 (CST)
-X-Zmail-TransId: 2af967ebd4bf489-ba3de
-X-Mailer: Zmail v1.0
-Message-ID: <20250401195751834zbm34YDvwPeQf7ooZBCdh@zte.com.cn>
+	s=arc-20240116; t=1743508831; c=relaxed/simple;
+	bh=I8dvb9lL/6jU+u8XkzlgOGRv5ZHFgs4L6aRWHau1HJ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kRYYBQ1+2PypILTkcfVAEZMiUCcYgFepkN70AXW3a1J2WhJh69G/vPtc/uoHubp1ji6uHie6hPRhmj46IY2ZyrHdYRxxIcBvqUP7Ge/4Wd9D7xihDKfBx13v1uf2MkVAyOL8VwsE5gADzgrQNbG9U14EAdbeu2pGIEyN+du/OZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:430:ae31:3177:4f09:da96])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1053fa3ed;
+	Tue, 1 Apr 2025 20:00:23 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
+	Rob Herring <robh@kernel.org>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 0/2] arm64: dts: rockchip: Add pwm nodes for RK3528
+Date: Tue,  1 Apr 2025 20:00:18 +0800
+Message-Id: <20250401120020.976343-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <ulf.hansson@linaro.org>
-Cc: <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <feng.wei8@zte.com.cn>, <u.kleine-koenig@baylibre.com>,
-        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBtbWM6IGFsY29yOiBVc2Ugc3RyX3JlYWRfd3JpdGUoKSBoZWxwZXI=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 531Bvmo9004249
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67EBD4C9.001/4ZRmj55VtFz5B1Jc
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTENMVh5NSR5PHU4aSRhCGlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQU9IS0EaHkhKQUhKTExBTx1LQkEfGkJNWVdZFhoPEh
+	UdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQktLWQY+
+X-HM-Tid: 0a95f1395ecd03a2kunm1053fa3ed
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KzI6NRw*EDJIHwoiTDM5MA02
+	CTlPCilVSlVKTE9ITktDQ0lPT0xLVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0tBT0hLQRoeSEpBSEpMTEFPHUtCQR8aQk1ZV1kIAVlBSkxJSTcG
 
-From: Feng Wei <feng.wei8@zte.com.cn>
+Add pwm nodes for RK3528. Most rk3528 boards use pwm-regulator to
+supply to CPU, add node to enable them. The PWM core on RK3528 is
+the same as RK3328, but the driver doesn't support interrupts yet.
 
-Remove hard-coded strings by using the str_read_write() helper.
+Note that pwm regulator needs to be initialized in U-Boot:
+```
+&vdd_arm {
+	regulator-init-microvolt = <953000>;
+};
 
-Signed-off-by: Feng Wei <feng.wei8@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/mmc/host/alcor.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+&vdd_logic {
+	regulator-init-microvolt = <900000>;
+};
+```
 
-diff --git a/drivers/mmc/host/alcor.c b/drivers/mmc/host/alcor.c
-index b6b6dd677ae5..24abd3a93da9 100644
---- a/drivers/mmc/host/alcor.c
-+++ b/drivers/mmc/host/alcor.c
-@@ -20,6 +20,7 @@
- #include <linux/irq.h>
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
-+#include <linux/string_choices.h>
+Changes in v3:
+  Adjust regulators order of E20C dts nodes
+  Use PWM_POLARITY_INVERTED in pwm-regulator
 
- #include <linux/mmc/host.h>
- #include <linux/mmc/mmc.h>
-@@ -208,7 +209,7 @@ static void alcor_trf_block_pio(struct alcor_sdmmc_host *host, bool read)
- 	len = min(host->sg_miter.length, blksize);
+Changes in v2:
+  Remove merged bindings patch
+  Remove pwm pinctrl in rk3528.dtsi
+  Enable pwm regulator for Radxa E20C
 
- 	dev_dbg(host->dev, "PIO, %s block size: 0x%zx\n",
--		read ? "read" : "write", blksize);
-+		str_read_write(read), blksize);
+Chukun Pan (2):
+  arm64: dts: rockchip: Add pwm nodes for RK3528
+  arm64: dts: rockchip: Enable regulators for Radxa E20C
 
- 	host->sg_miter.consumed = len;
- 	host->blocks--;
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 73 +++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 80 +++++++++++++++++++
+ 2 files changed, 153 insertions(+)
+
 -- 
 2.25.1
+
 
