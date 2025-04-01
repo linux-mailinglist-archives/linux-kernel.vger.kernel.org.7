@@ -1,146 +1,290 @@
-Return-Path: <linux-kernel+bounces-584186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E35EA7841E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB31A7842B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BB116CA9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 21:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F46C188E8D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 21:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B241EE7B6;
-	Tue,  1 Apr 2025 21:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B69520FAA8;
+	Tue,  1 Apr 2025 21:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkC38HzC"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtcXzen6"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC31E571A;
-	Tue,  1 Apr 2025 21:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF59B1EE034;
+	Tue,  1 Apr 2025 21:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743544060; cv=none; b=XprjmZPLFOKKp/HdMagpci5ekr6NcRbkGkFYXIWuM8pTvK7FSJCeVFl4ijZLcLiUhdWym8EyEF6BN4kpF+iHkHQ95x9XOD4vidYn9GZtaCfOtc7S8TUD4CDOGzNpeTyJ/aoGLWaDkUY7pQWbc/BJ+Kr3+BPZ1NycmNj7BEnm7gA=
+	t=1743544257; cv=none; b=jjhITPYvxUb4J50cEwS4XgFlef4wF1DZGRv9awEONy7ttIMfgADV2vUbLjRwxODhjYgHrIwObTt7/Q7EQxR/LIt0L3QVY3XUKPpvGFomDSkvv9ZPZgSkzQre92ZVt9SC2bE7o7y6hUTH4mHnTYsDocsqHZmkiKu2mmasSioHSYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743544060; c=relaxed/simple;
-	bh=CvA6UwveG3bS2kf2hFjNracef5KDX97VUsZ0lmH+bfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TXVPxl8HyaGin32T6H/gdUWVUMwIwax5rWv3uSx8SJ8cY8ktREKwZqCjGmy7GRLrSL6BDfBLJCkdpiMY44JubTo3a0TAeBDlrHDcVfLB/2m45ce+cgOdTm8h7BdyuJ+14NpYMEuvJBiZNnbxgzQpWa4wWV7HzgEeI4li7EfiAxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkC38HzC; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1743544257; c=relaxed/simple;
+	bh=gmcrgRP4fA6+lKBgGEJyMoZHH6u64n1CPOLGacIyvps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVXP7S9CJ/mUih6scfprJ++eAGdPUD/UQk536aeD9xZxi5Fq5iZMmtbmcqmTGAhmLX71D3ByuHCJgoUjDbpjduxyFOmBzyWX/85j8RJqa6ber4ge4Q3WVvjp2W1YY+Iw9dj6aHU9zsnSYbHq5UdgJqHnizYylY4arg1he7oaIe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtcXzen6; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3913958ebf2so4608228f8f.3;
-        Tue, 01 Apr 2025 14:47:38 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f2f391864so3638438f8f.3;
+        Tue, 01 Apr 2025 14:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743544057; x=1744148857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sMvJif03h5Plq8yKKl4hxQHkJT/0k2MiFgQENlo2UEg=;
-        b=gkC38HzCPzgw3j+HS5eEBsZ+tDGXSwdSV7sLulAnzocVjkmYmm1cvOVmBBspeY1IS1
-         EwHQOxlhkOv8emYctTIslXswheal5VMEfj35Gdg/Qqjf50vdLI2AtRKxuyZgtAwx9tdn
-         EVO6wqZP1hqL3tNx925M1OV/bkgCc0IqG03J03weHHVdM9QfopORK0XDbJfzEW8E5ePO
-         eI5Nm7FOpC/12bv0RR5pVmBUgZoKRJoKQ8wZhK8Nh6jw7L30DU9T9yxksSchPY0JDj8X
-         iaWklnNy3eeaqGxfhCBoOGzRRRCDnfc87ciYgqQ8qNB3om+7NRwmuNnDVTUb1IZixwOY
-         wYiA==
+        d=gmail.com; s=20230601; t=1743544254; x=1744149054; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bj1Qrbt7flnOfY4sCj4gZ44wqy0H0z7fYnmzu+9/yJs=;
+        b=dtcXzen6cVf0TKY/zFHV+w+B6W5PAo0kiSRrM90PiQ+rwieeksTU0U25ZvCSKyinBi
+         0ONROyUOlG7fuY/8IOw01ljqsKS5QKwfQPLRRRYv1gEK22aVpqrd5i8mj2R+KOLd3ODx
+         +FVKuHrO0wpXhbllNXyBG4YStlRxVQSwbby3a4ZQnecilR4tcBEkWmT4tjxgmCzpx2YH
+         az8SaZG4zCITlQs6Hb49fNHvyoRAusVXAYNtSkP++xjKzFFaLMiYdsmgdtIrZn4+sjuy
+         Zb+2kvQf6ANQCtvSMt5hIJ3/4sHa+uwN1bnRUq310GQ3ho3nmmE6Ei4QbWypFk2YHLpS
+         Mz0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743544057; x=1744148857;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1743544254; x=1744149054;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sMvJif03h5Plq8yKKl4hxQHkJT/0k2MiFgQENlo2UEg=;
-        b=o1TUKqsHG9PyNya9dknzfLGTxP0jQNJbp0+Jr6dYpm3i7b0M9Yfqa7S4HEBdCbXkoO
-         CzrKwsBqeoNF4+nlNpf9m5pCPhQnT4O8/rsn9JUMIC1REeK/1Y29qx1NTObZfXImL7As
-         DWUlyDXDTRxC/0rUz00V/kX2hUOGpC3+658rcbSfgm83mK/KEu4Je5hnh6+t9EfIAnpY
-         AAFdfqBmi7JCauUItxCTuQT6ZB/7cBwf8F0Ig3da6TQFKRxbiIhNlsiw6kmX7RPaUQk4
-         193hvFHXbBuoKkqrPSlduEY49o0PaQLLq4TIfSIbRo6oWrGqmU5qIjLwymlLUkQj81QY
-         RQuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUt5W8YjHGe4rgmFDdDaHbwjeCGNmFVgkTtupi2DsTNNMNkgKLfb1wjYxseOZKhQ9dZ7wZlcu3W@vger.kernel.org, AJvYcCVrd/21nAyzhsL1DXXqF9g4XZk3ayLpfRkbukyB1mKVRQz9TNZGnmm0REmsx4yGU4FywQxxNfzXprQ2f80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDW5F7zlsYyFomkQxpH0xtbY5BAXSZT51sAsmJCG1Vp3psYkVE
-	K6WV2gtSPbdi1RKtJhqPL0PmvAeVwYWOOmcsQLheOgt9DUWETMYr
-X-Gm-Gg: ASbGnctANi8aRgTpU/5UjGyC++iVvERouKjZtdCmjDR3Qx+UEgL1wQXlM4UmgDFQnh1
-	opO5hQ+RV0qQMwH+BWJTCBQzZo3KkXjFofeMr9P6V3spWf9IgIhMSQhcx15wR285O1V4spDNluq
-	ImhIhVXD3d6i+bW0b02XDwjteL2usrgkY+Osa03z/PTcpbkbA9oAxf5MRVjHmYtJaqwBht7aQ/n
-	Fsm2+lsHCmcLRrPx96D7uSK6cBQPzFDZXJMyXgfQgf5JSO9sbg6zVEGplGW9PDvL1XBSeuxaNAl
-	qIPmSJ3wjFn7RQky/+ccZ415SgPUEN64kpnJJ7VjCaf9qVbr7f8GwP5juA==
-X-Google-Smtp-Source: AGHT+IGu50MAktN7TpMx8eFMcnMTJh3E1UYjvLI4/mCGVHm4ePbf3RP+pkDt5QEIb1mt3Y9NaSnJ5Q==
-X-Received: by 2002:a5d:5f91:0:b0:39c:d05:3779 with SMTP id ffacd0b85a97d-39c29806115mr68057f8f.49.1743544056564;
-        Tue, 01 Apr 2025 14:47:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:c7c:6696:8300:e7ad:5b60:9085:6c8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a8e0asm15043178f8f.101.2025.04.01.14.47.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 14:47:36 -0700 (PDT)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: ping.cheng@wacom.com,
-	jason.gerecke@wacom.com,
-	jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot <syzbot+d5204cbbdd921f1f7cad@syzkaller.appspotmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] HID: wacom: fix shift OOB in kfifo allocation for zero pktlen
-Date: Tue,  1 Apr 2025 22:47:03 +0100
-Message-Id: <20250401214703.7809-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        bh=bj1Qrbt7flnOfY4sCj4gZ44wqy0H0z7fYnmzu+9/yJs=;
+        b=oLzg5ztnGGFuGPM7fG4Jnue/pG+F7GaVGE9fWdylRA3fiRJX18Dqixn+S/m63YSLf2
+         VoliM9SSbziSPyKALQDTFfyI+MQogu4r0b0DXTyc7loYV4YYfBR/d9Psd2whNw5lr3Au
+         iMBOdB7UT307JK1EhlvkKQDre62wzdMPdCYqgjTdxdv+9Mkho2acvCUgSuBG9TbIF2wN
+         NqGYICILPEKxF5GQiX7LWkZbkx8NXhFmeyawm8aauTXWt3RAF4EdRFwlVRcwUEaleex/
+         BvdKdb3RBf8v791mo9lFHEptRz5NOhtnnGe47FIfupc6FK9w3DdtpdT2LWYiT238rwGK
+         /FVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIDBcyPiWvMZwwP4BYQxdIPpwOLKPw7DolemY2/uUq6vTOGM/FssR8VkFmeOvB7G9mhUKfgQC2Z5h8NXFdA==@vger.kernel.org, AJvYcCVP8fVsZJqK4OVqb4GeaXvFqcMfYZ0pYbLyIJ4yDoNSqM5ivdJd+fJREVwRdqu5Zf/xNYHeJTbGoi5n@vger.kernel.org, AJvYcCVZaFM1RnzUY1FV3fRK/HWeu6u4zMcabs2VEPMEL6odZv0MKJ6wbZrZDb5WtN21o5TNLo3rXqbbPCrO@vger.kernel.org, AJvYcCWrzP5SAO5Rznvo1UYwKeCNxY6DNAfeyKJbuz1XYDOjorzuzFUxpxoQlErWbwctM0VsCbl28rYIpzGR2wED@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/C/Z30k6R68dAu1UZll/z72yrwPJn7Rg0d+izhtNc29ygG4Vk
+	4Tget743iqYfHMv1RxaRz5Lx3R/e4xBwvZ6kfbqLJZjxBqK3OEiUHkskX4oNhJF7VcB3jMdNHVc
+	UlhhQuNT8RWlYZ7PhxlG+pYMOcQ==
+X-Gm-Gg: ASbGncso8YeHeHuZoH1hjeEP9i9vyp58YIn6QG552gNgPIfABHvXrcaNjlYziwzZt7O
+	WhjbgcNc1b81iQJ294FUlRIGpyCcQgAdSEybB+aWItIVi6NB130cnxMBEWlXGM3Jq2u6Svbs59l
+	Yf9llceFCfvmnLsr+9c42p7tAKdQ==
+X-Google-Smtp-Source: AGHT+IH+nE3yYY238SmLUlr5Tf6eAoBkJh1OEpYZbPxT6Fmyg5IdupbyKe8C8Et2YT7E9ZscBJPT6cw5hsyNbp0w8VY=
+X-Received: by 2002:a5d:6d8a:0:b0:39c:dcc:f589 with SMTP id
+ ffacd0b85a97d-39c120dd036mr13002419f8f.20.1743544253818; Tue, 01 Apr 2025
+ 14:50:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250331215720.19692-1-alex.vinarskis@gmail.com>
+ <20250331215720.19692-7-alex.vinarskis@gmail.com> <ef783edb-c966-4ef7-b496-564420c1b852@oss.qualcomm.com>
+ <CAMcHhXq8kjsbDGHBn=63JutD1TcD6=KVxCQtPHRoLOwE+FY-sA@mail.gmail.com> <93f916d1-83b9-41c0-bb05-a785fb730088@oss.qualcomm.com>
+In-Reply-To: <93f916d1-83b9-41c0-bb05-a785fb730088@oss.qualcomm.com>
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Date: Tue, 1 Apr 2025 23:50:42 +0200
+X-Gm-Features: AQ5f1JrU_u_uQLps4ycNd1PU0smu4anSzKOXyBaWJwfxWAxm7Svz7wvxve828dc
+Message-ID: <CAMcHhXqbQ-6SLotNfQDStr5B0KAMxFRuSiLnjdg+UrtqA1phXw@mail.gmail.com>
+Subject: Re: [PATCH v1 6/6] arm64: dts: qcom: Add support for X1-based Asus
+ Zenbook A14
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-During wacom_parse_and_register() the code calls wacom_devm_kfifo_alloc 
-to allocate a fifo. During this operation it passes kfifo_alloc a 
-fifo_size of 0. Kfifo attempts to round the size passed to it to the 
-next power of 2 via roundup_pow_of_two (queue-type data structures
-do this to maintain efficiency of operations). 
+On Tue, 1 Apr 2025 at 23:15, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 4/1/25 8:05 PM, Aleksandrs Vinarskis wrote:
+> > On Tue, 1 Apr 2025 at 17:59, Konrad Dybcio
+> > <konrad.dybcio@oss.qualcomm.com> wrote:
+> >>
+> >> On 3/31/25 11:53 PM, Aleksandrs Vinarskis wrote:
+> >>> Initial support for Asus Zenbook A14. Particular moddel exists
+> >>> in X1-26-100, X1P-42-100 (UX3407QA) and X1E-78-100 (UX3407RA).
+> >>>
+> >>> Mostly similar to other X1-based laptops. Notable differences are:
+> >>> * Wifi/Bluetooth combo being Qualcomm FastConnect 6900 on UX3407QA
+> >>>   and Qualcomm FastConnect 7800 on UX3407RA
+> >>> * USB Type-C retimers are Parade PS8833, appear to behave identical
+> >>>   to Parade PS8830
+> >>> * gpio90 is TZ protected
+> >>
+>
+> [...]
+>
+> >>
+> >>> +&spi10 {
+> >>> +     status = "disabled";
+> >>> +
+> >>> +     /* Unknown device */
+> >>> +};
+> >>
+> >> Does the device crash if you enable this bus? Keeping it 'okay' would
+> >> make it easier for folks to poke at it
+> >
+> > It does boot just fine, but does not initialize:
+> > ```
+> > geni_spi a88000.spi: Invalid proto 9
+> > ...
+> > qnoc-x1e80100 interconnect-1: sync_state() pending due to a88000.spi
+> > ...
+> > ```
+> >
+> > I only quickly checked that 9 is indeed invalid state, iirc should've
+> > been 2. But haven't looked deeper into it, so left it disabled. So I
+> > thought best to leave it off for now. Unless you prefer to drop it
+> > altogether?
+>
+> That means this QUP is configured to work as a QSPI host, which is not yet
+> supported upstream. I looked at the DSDT you submitted to aa64-laptops, but
+> there doesn't seem to be anything connected there, perhaps it's loaded at
+> runtime. Since your keyboard and touchpad work, maybe it's a touchscreen?
+>
 
-However during this phase a problem arises when the roundup_pow_of_two() 
-function utilises a shift exponent of fls_long(n-1), where n is the 
-fifo_size. Since n is 0 in this case and n is also an unsigned long, 
-doing n-1 causes unsigned integer wrap-around to occur making the 
-fifo_size 4294967295. So the code effectively does fls_long(4294967295) 
-which results in 64. Returning back to roundup_pow_of_two(), the code 
-utilises a shift exponent of 64. When a shift exponent of 64 is used 
-on a 64-bit type such as 1UL it results in a shift-out-of-bounds.
+Indeed it is just defined without anything attached. I am suspecting
+it also may be just leftover, won't be the first one...
+No, this particular laptop doesn't have a touchscreen in any of the
+three screen configurations announced.
 
-The root cause of the issue seems to stem from insufficient validation 
-of wacom_compute_pktlen(), since in this case the fifo_size comes 
-from wacom_wac->features.pktlen. During wacom_parse_and_register() 
-the wacom_compute_pktlen() function sets the pktlen as 0.
+It also does not have a fingerprint reader, nor hardware TPM2.0 (yet
+SPI11 typically used for it is still TZ protected :). EC seems to be
+over i2c5. Asus's touchpad supports some fancy gesture controls, but
+there is in fact another 'extra' hidraw device 'hdtl', I assume that's
+the one. No sdcard reader.
+Only other still unsupported features are audio (i guess unlikely that
+they used different smart amp?), camera (ov02c01, pm8010, so also no)
+and DP-HDMI bridge PS185HDM, which from what I can guesstimate is i2c.
 
-To fix this, we should handle cases where wacom_compute_pktlen() 
-results in 0.
+So I am a bit out of ideas of what it could be...only thing that comes
+to my mind is headphone jack smart amp, ifff they did not use qcom amp
+one there as well?
 
-Reported-by: syzbot <syzbot+d5204cbbdd921f1f7cad@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=d5204cbbdd921f1f7cad
-Fixes: 5e013ad20689 ("HID: wacom: Remove static WACOM_PKGLEN_MAX limit")
-Tested-by: Qasim Ijaz <qasdev00@gmail.com>
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
----
-v2:
-- Added Fixes tag as suggested by Jason Gerecke
+>
+> >
+> >>
+> >>> +
+> >>> +&tlmm {
+> >>> +     gpio-reserved-ranges = <44 4>,  /* SPI11, TZ Protected */
+> >>> +                            <90 1>;  /* Unknown, TZ Protected */
+> >>> +
+> >>> +     bt_en_default: bt-en-sleep {
+> >>> +             pins = "gpio116";
+> >>> +             function = "gpio";
+> >>> +             output-low;
+> >>> +             bias-disable;
+> >>> +             qcom,drive-strength = <16>;
+> >>
+> >> drop "qcom," and please keep the order of:
+> >>
+> >> pins
+> >> function
+> >> drive-strength
+> >> bias
+> >> output/input
+> >>
+> >> as you did below
+> >
+> > Will do.
+> >
+> > Should I also drop 'qcom,' from the 'misc_3p3_reg_en' and adjust order
+> > the same way, or that one is somehow special?
+>
+> Sort of. &tlmm and &pm8xxx_gpios use two different drivers, each one
+> of which has slightly different expectations about their subnodes.
 
- drivers/hid/wacom_sys.c | 2 ++
- 1 file changed, 2 insertions(+)
+Ah I see. Okay, will fix the order, but will leave `qcom,` as is.
 
-diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-index 97393a3083ca..9b2f3dbca467 100644
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -2361,6 +2361,8 @@ static int wacom_parse_and_register(struct wacom *wacom, bool wireless)
- 	unsigned int connect_mask = HID_CONNECT_HIDRAW;
- 
- 	features->pktlen = wacom_compute_pktlen(hdev);
-+	if (!features->pktlen)
-+		return -ENODEV;
- 
- 	if (!devres_open_group(&hdev->dev, wacom, GFP_KERNEL))
- 		return -ENOMEM;
--- 
-2.39.5
+>  >
+> >>
+> >>> +
+> >>> +/ {
+> >>> +     model = "ASUS Zenbook A14 UX3407RA";
+> >>
+> >> There's no strict policy, but variants usually go in braces
+> >
+> > Parenthesis I guess, "ASUS Zenbook A14 (UX3407RA)" ?
+>
+> Ugh, yes!
 
+Sounds reasonable and looks a bit better, will update.
+
+>
+> [...]
+>
+> >>> +
+> >>> +&gpu_zap_shader {
+> >>> +     firmware-name = "qcom/x1p42100/ASUSTeK/zenbook-a14/qcdxkmsuc8380.mbn";
+> >>> +};
+> >>
+> >> This file is not going to work on this SoC, you can drop it
+> >
+> > I guess it would need a different firmware name? If yes, can we
+> > already add the new name, such that once x1p42100 gains GPU support it
+> > will get enabled 'automatically'?
+>
+> The filename is different indeed. You can add it, as currently this
+> property is not yet consumed by anything, anyway.
+
+Just checked, should be the `qcdxkmsucpurwa.mbn` then. Will update it,
+thanks for confirmation.
+
+>
+> [...]
+>
+> >>
+> >>> +
+> >>> +&remoteproc_adsp {
+> >>> +     firmware-name = "qcom/x1p42100/ASUSTeK/zenbook-a14/qcadsp8380.mbn",
+> >>> +                     "qcom/x1p42100/ASUSTeK/zenbook-a14/adsp_dtbs.elf";
+> >>> +
+> >>> +     status = "okay";
+> >>> +};
+> >>> +
+> >>> +&remoteproc_cdsp {
+> >>> +     firmware-name = "qcom/x1p42100/ASUSTeK/zenbook-a14/qccdsp8380.mbn",
+> >>> +                     "qcom/x1p42100/ASUSTeK/zenbook-a14/cdsp_dtbs.elf";
+> >>> +
+> >>> +     status = "okay";
+> >>
+> >> Are the DSP firmware files actually different between the two?
+> >
+> > CDSP is the same. ADSP blobs to my surprise are different, both '.elf'
+> > and '.mbn'. But like I wrote in the cover letter, perhaps Asus just
+> > forgot to update adsp firmware? Though according to changelong on
+> > device pages [2],[4] both have "ADSP Driver : 2.0.4135.0200"
+> >
+> > Compared by:
+> > * Downloading UX3407QA's drivers [1], from the device page [2] and
+> > UX3407RA'a drivers [3] from the device page [4]
+> > * Extract and flatten with `7z e filename.exe`
+> > * Compare via `md5sum *dsp*elf *dsp*mbn *dsp*jsn`
+> >
+> > Though, even if the blobs would be/will be the same, I think it is
+> > still beneficial to define firmware path per model, as this makes
+> > firmware extraction from driver/Windows partition and placement much
+> > easier. Unfortunately, as it seems so far, most of the devices besides
+> > Lenovos are not having firmware upstreamed, so this is pretty
+> > relevant. Eg. Ubuntu already has 'firmware extracting tool' [5] (draft
+> > MR to include Zenbook as well), I'm guessing other distros have
+> > something similar, though I haven't followed up.
+> >
+> > On the other hand, these tools could of course get path from device
+> > tree directly, eg. via `cat
+> > /sys/firmware/devicetree/base/soc@0/remoteproc@32300000/firmware-name`,
+> > then having all the blobs for the device in one location is less
+> > relevant...
+>
+> More importantly, different blobs may (but don't necessarily have to) include
+> different, hardcoded expectations about the board (or platform) they run on.
+> So let's keep them separate.
+
+Ah okay. Perfect, keeping as is.
+
+Thanks,
+Alex
+
+>
+> Konrad
 
