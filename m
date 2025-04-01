@@ -1,63 +1,74 @@
-Return-Path: <linux-kernel+bounces-584220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BFAA784A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA9FA784AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C542A160F45
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237583ABBCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BC9215F76;
-	Tue,  1 Apr 2025 22:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C321638D;
+	Tue,  1 Apr 2025 22:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kn5LRtuj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqbYFHvR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2621DB13A;
-	Tue,  1 Apr 2025 22:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343601EE001
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 22:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743546112; cv=none; b=jOfkRQnJ7GBqtyrbLvKVeiBXVbB77Y0WHXasGzGgqP/i1EG8Ivcy506+R6IFT1Ign+4JsSp+GdFYg273YwutTguqNC3ekfSmlokmrl7KKYbzqShZml531w59aBKdglYDSDvljkkWdphFg5+nZ7REVLSRqCFCGzg1X6iu/mGeE2s=
+	t=1743546373; cv=none; b=KxQUoLuYjLQlLAcTItYDTcC+wcqu/OOQ6fhng+zmSBSa3RImUSMyzilJRYWezfE7+mArPYWTXprvxL+t/4g4weCTm0hIHJzPvifKpMubNED1+cAEz7jeXHabC3ESKPNql7wsIi4QgRMHlpykvnugpsmiLghr7RRAb/DkoVhHwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743546112; c=relaxed/simple;
-	bh=ENKysy1w5gXYqZNN3vEbRv1hbxW5lAmjngNmDqFJPAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mllxruPYpYETLbcCxlJes0jG9ZCB8lzd/8AC0MBDCew99vDLopVycfum/Qh5L8SRJs6D+dztwR8KU0CvxBA2o/IkhDjFofjAPSknaGu8LTwrHD8FRa8ytrZkdpP4FH3du4YtucNGx+haX7hl3/44CZmK+HPlRYdCYeLosZ7PvPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kn5LRtuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEE9C4CEE4;
-	Tue,  1 Apr 2025 22:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743546111;
-	bh=ENKysy1w5gXYqZNN3vEbRv1hbxW5lAmjngNmDqFJPAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kn5LRtujRd0syaL524zkiotqAQiyuuNadY0yL/uSzkCntMS7DF33tHXFv3yNCtLyn
-	 UqKwsy9MCLqTERNzOJ684np6ayYNooJTZ+j2OpR+9771xhjKs4sWL0iXVCUf8QNLX4
-	 CvC5LLod5e/YOaYRitQTKgPK5Hx1yJveG6XSmRHxKw2d7BNHKYzl9KeG2qIMYJl5qq
-	 K45xPbu7MDzv1JHlPhXSZ9l4IRKi2xyL86qr93p/dyE2CB6cJ+HXM8CGhVPUyrwplm
-	 BiFMOb/H3FM2d8ruHW3JOc4cAAJyAlSSqxtRdWjtp7E3m7STV/zuL8PDqy7q/Y2lCm
-	 q+kQw+kbvLAdQ==
-Date: Tue, 1 Apr 2025 17:21:47 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3 2/7] dt-bindings: firmware: Add i.MX95 SCMI LMM and
- CPU protocol
-Message-ID: <174354610735.4103067.17720099043816826170.robh@kernel.org>
-References: <20250303-imx-lmm-cpu-v3-0-7695f6f61cfc@nxp.com>
- <20250303-imx-lmm-cpu-v3-2-7695f6f61cfc@nxp.com>
+	s=arc-20240116; t=1743546373; c=relaxed/simple;
+	bh=bNCnRyJ71qC9x59DQFLXj9G8Kxb1wKq4Z03PGoAdBTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hqWooBLBEd0cba4Fc4LsylpnzESfkm6/4RDAkfZiibtROiLBC0p8BwYqb5j4DCDYMHX26HtA3y7GmfWAk3xnJlabkrbAzF4L/2u/FPwCGV307t0J97m52ZTEiyDKPBHVaCt7dwYbn3ZmFOwaVeUhvN0nD7HO5RYXDEXgyST6uEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqbYFHvR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743546372; x=1775082372;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=bNCnRyJ71qC9x59DQFLXj9G8Kxb1wKq4Z03PGoAdBTc=;
+  b=dqbYFHvRKMx9DLfF1UEHggc8KVWZTnVZnzftdpYvfOiuHlHMADa136jw
+   fJtrVBVouIttIUjBOdAu2MxzEyuQlROSJg3utOcXkBuSZJnzUXMxMTBK9
+   ZDVrb9cKnOyDcZvNFWWOkvfn6YO+kWu5iuC0HH0DIZmcwW7+g4Hf64Nnd
+   hpbN1ZUqR+Mq7T3P/fYgaK1gndnNm99nUnge/+DWaevtXvug3djO+O+bx
+   jAvpsCYdNtDHQV8trNaFk45dFBSZqfWRB/o3Z/zd6tHj0I+XU9pNt+Tq9
+   UA22wjGprCVDVI+SurBIi/y9rz2ZQOfZJz3Mte56d+FgD+ZcoNefMY1s6
+   w==;
+X-CSE-ConnectionGUID: OXslKXteSlGRQwKoE4P8Dg==
+X-CSE-MsgGUID: lTk+AlIeRaqVoVqvHvl6tA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="67362043"
+X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
+   d="scan'208";a="67362043"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 15:26:12 -0700
+X-CSE-ConnectionGUID: DjaJtEvQTP6zAoI6+JQSiQ==
+X-CSE-MsgGUID: m4bbaJNwTTybL+yRx0sLXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
+   d="scan'208";a="126473231"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 01 Apr 2025 15:26:10 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tzk3c-000ACC-14;
+	Tue, 01 Apr 2025 22:26:08 +0000
+Date: Wed, 2 Apr 2025 06:25:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>
+Subject: drivers/acpi/acpi_processor.o: warning: objtool:
+ acpi_processor_get_info+0x178: stack state mismatch: reg1[29]=-1+0
+ reg2[29]=-2-64
+Message-ID: <202504020608.4vIsaUWL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,27 +77,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303-imx-lmm-cpu-v3-2-7695f6f61cfc@nxp.com>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+commit: 5685d7fcb55fd729d7e0452c157a0ac8d72ca7b6 LoongArch: Give a chance to build with !CONFIG_SMP
+date:   11 months ago
+config: loongarch-randconfig-002-20250402 (https://download.01.org/0day-ci/archive/20250402/202504020608.4vIsaUWL-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250402/202504020608.4vIsaUWL-lkp@intel.com/reproduce)
 
-On Mon, 03 Mar 2025 10:53:23 +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Add i.MX SCMI Extension protocols bindings for:
-> - Logic Machine Management(LMM) Protocol
->   intended for boot, shutdown, and reset of other logical machines (LM).
->   It is usually used to allow one LM to manager another used as an offload
->   or accelerator engine..
-> - CPU Protocol.
->   allows an agent to start or stop a CPU. It is used to manage auxiliary
->   CPUs in an LM (e.g. additional cores in an AP cluster).
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../bindings/firmware/nxp,imx95-scmi.yaml          | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504020608.4vIsaUWL-lkp@intel.com/
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+All warnings (new ones prefixed by >>):
 
+>> drivers/acpi/acpi_processor.o: warning: objtool: acpi_processor_get_info+0x178: stack state mismatch: reg1[29]=-1+0 reg2[29]=-2-64
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GENERIC_IRQ_EFFECTIVE_AFF_MASK
+   Depends on [n]: SMP [=n]
+   Selected by [y]:
+   - IRQ_LOONGARCH_CPU [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
