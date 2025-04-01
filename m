@@ -1,78 +1,54 @@
-Return-Path: <linux-kernel+bounces-583072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D47A7763F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD228A77643
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D25188DF56
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80DD3A998A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C7B1EA7CB;
-	Tue,  1 Apr 2025 08:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFF31EA7D6;
+	Tue,  1 Apr 2025 08:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiWQDaVX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FJmDqwPY"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4BF29405
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA691E9B1B;
+	Tue,  1 Apr 2025 08:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743495587; cv=none; b=R1g80KPaaVRyaDzTp4zQtshdImYjcorMXuL4Sebc/m1QOfF+BCo8U1TG/UvIMLIFZuUak8JNlGu0d67yRcdc55LTwzMn2U/GFZ489iWNGzeWU5Z2iRYkT962J7bbW0qLcUYpKRQfzcUt9s+9giFtEU58RjzH6GihHT1cbeKDYrw=
+	t=1743495673; cv=none; b=se0S1D9x1eNvIEryBZz0B6f7FKKgMi2m8rcdOeD+ytqVu4/ijWK8SHJ4c0VUJIFkk9U0b/bc4LEZmaQldkP5FyIvZpbpJZiPs+VYqt4PoOJPkueb0LuLq1i0Rw+Jxk80t8O67gonN7KF5b2mqZOSk6SqELztyK8uc2NpnNZvs4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743495587; c=relaxed/simple;
-	bh=VzWE95JHu+6ps8xODaiUXmqGRdbgYos34f1SFJJi3sE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G3O1WU2n7lTve3qFS0YMvq+yXGgWK85Z4I/R3QF/C2GU555MvSvhRMMks4rRUofPTJJuBx6T69Z/f8zFaiu/ElhvQjX/9rkBN93WJGEWzTSWmEZGiDZ3Pp86DIQ2JDNlhUfXI/59mCEwwrCeIgC0E7mSjkyP5R5Xu/xEz3P4HII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiWQDaVX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab771575040so1237729466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 01:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743495583; x=1744100383; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EwtHrPoTP0MDyEQ74ZkW34WnWGYPrTsvxWZOlLCWzQ8=;
-        b=fiWQDaVX+xqvrxycgYJ0yA4uPM+xgyPS+oV2ku2ze8dNBRIKjNeZvRymbNvg6F/hTx
-         1zxefPKvHtdrYq6K18ITeLGzxTht6fY0p3IKE+5HxO4rrDG5LarVwWG+jMMl6bFSb3I0
-         MuB1OKXpZfJ79twyVzYXiLI+rHhV10hkdjUkgwVMQdFdQ9mcW8oKvzpLPXtCPrHsZ23p
-         ILxjNmFOpnFScyXSLWuAFWMPCgLfu12bFlJqmyLRtP5fWSax2mQImwJcqHSql1Cfg0QD
-         4ThRMaqXPEOu48eimT/kmTv36TI+dNEu4j5BWZUuDCGqRyWgKPVRNR8A8wtm1E/QW1bo
-         VUTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743495583; x=1744100383;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwtHrPoTP0MDyEQ74ZkW34WnWGYPrTsvxWZOlLCWzQ8=;
-        b=MD6+8ju3zIbssJkAH5YSXswAvERqpt+/wrPAV1ki25MVRYAO+SQBNGDJQRkkWF41P4
-         RW4wuYnH6j/UovJJ7W35LwL43yoWR5r53LE6j2LsbmIAe5OzKSt508gRvez/IfJKtVay
-         DrV6nByv2JpbiGh4kygq92WNqNRhQrHjP3YxNfTmL7+BwCcS51qo6j/Da7TlVjynZsme
-         7HN6WhkGx6679cn555DP3uRnax+4CQ8AXJ7jIP6UFRi30/N6nQ0g6fGRQbrJTxlvUTtt
-         OdXZZ4P3T1U+12VakpwMuU6zZ7QWMmC4SpM9noV9N7hT0E9TXXIt/nuI48tI+hHrIJs8
-         WAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCValtX3KTLtlrdJwidmrAMnLLT6IeodxqRSh4H+wlsfSq+5GgQ9M0FoULLnlIYY2tzS4yzeGzMNp1VrFtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywX4Ha8DkGbaAVG/BJ7hYKquEElMPcfuRJtZejyv6OqQYprBq+
-	eu+7d/NMhstelbEYqVbqcTBilPdTrDTm2BPjN24Y8pCTQNezt5Ba
-X-Gm-Gg: ASbGncuNYvD+RDmfEM9F056Wkqj4vBPDNZMKgThVT5A8JyblB3DLSVLKjUUZOcn0bEt
-	VqVwgT4BBfQR24k214FBoIWVZy8g3QgtX8ObYo/d1It3uhaLYlYtVVMZSeRiHx09nzOi7dETDgW
-	duU/gqLiFao4/wZrHb86k5aL7yJdUdxnLs7myrVHSH8+STCJBQFAOoEfwCrstO2DbmzyORnV60r
-	bctUxFu5T95AtJh4biyXlU8zD1wBypSQ9mfXc3AknkE+LbPiRKTLEK+D/zOH/D8wYKWny+FMz68
-	bDAvghYYa1FMjdlJZ9wu88ZQrSc1hEBpfrhfmwJWS/sN2QaTZmJgi5Th
-X-Google-Smtp-Source: AGHT+IGKr+MQFIo3P82CvDwGJOrUXdKgu3VLF97KXOk4u98EuL08eGssm6MgVKcpdxdTXJ65fQA8AQ==
-X-Received: by 2002:a17:907:3d9e:b0:ac3:25ea:822 with SMTP id a640c23a62f3a-ac71eac4628mr1240525866b.4.1743495582401;
-        Tue, 01 Apr 2025 01:19:42 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::83? ([2620:10d:c092:600::1:2418])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7196f561esm745920566b.175.2025.04.01.01.19.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Apr 2025 01:19:41 -0700 (PDT)
-Message-ID: <84da7efa-4069-4a00-9f0d-0612e1edf12b@gmail.com>
-Date: Tue, 1 Apr 2025 09:21:01 +0100
+	s=arc-20240116; t=1743495673; c=relaxed/simple;
+	bh=iDp3i76P7nltLE56CGPuQknvLt6dx4P35+X9ePCkn+E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=VXN0zA5G2ui8TK2CAtQsuh3GspvHm4Z9D+iw90zKV7k2mHF0KmBqEnM32/hNDuEkK+Tnk3IyhqaDpFayeA1XZrNsil7/YRh3aqdDwReZkT0bkv0uJpIb7guDkieOvNWqhgCtNvz1DNldJSw6+5xXgTCMAUclOckS7q1zs76ifSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FJmDqwPY; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743495663; x=1744100463; i=markus.elfring@web.de;
+	bh=uC5wNSqw1TVoR6gwih/W0kkJUpvzGVmrpS7xhNb79n0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FJmDqwPYaCgxeiTnQH2BeTN1ZwqTAOiCUuRjQKjl4nG2ZT1e4xkskDg71P7A/eXT
+	 QP/uemlZ3XiWuhpD4DjNZ8wykR3h6og8CJtDqxWRmYl8qpeH+16anheqjDzsZXpJV
+	 b+Q4sIY9Md94qPSOP6xpo2rl1pgg8m3FZO6cq+BlHi/aQSPou+HK9Gv9+kRYcWvcf
+	 SR6pIeJFKAzmaKZHzOgJxkFR0TmEDDf0GuiqFRNDkZ0lKOcmBiYFm+kF3t+CAQRBu
+	 FnFBBjXeYtTJWtim2p4CVK2Q+RDC/30Tw41YzZbKEttXoJa5QC2ot8cyGREEa8c+p
+	 4njqG2RawF2A3qWAqw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.54]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMXx5-1tiHMW0JjL-00LC1o; Tue, 01
+ Apr 2025 10:21:03 +0200
+Message-ID: <a73250f0-8fbd-40a7-b4b6-bc45050c9289@web.de>
+Date: Tue, 1 Apr 2025 10:21:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,102 +56,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/4] Split iowait into two states
-To: Christian Loehle <christian.loehle@arm.com>, Jens Axboe
- <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, tglx@linutronix.de,
- "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20240819154259.215504-1-axboe@kernel.dk>
- <8380f7f3-fd9f-45a0-b66b-85ec0b5d0144@gmail.com>
- <48408728-f062-46f8-867f-61c6d91d410d@arm.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <48408728-f062-46f8-867f-61c6d91d410d@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>
+References: <20250401063157.19655-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v2] HID: uclogic: Add NULL check in
+ uclogic_input_configured
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250401063157.19655-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:858SxB372tSJkxHmXDAP//8ot2/jHXlBSCnO91dFuM7RXH3CzXn
+ fGAoJcIdv6ZvVQnFZDx7W22j7WRjrmZL3IhnlleOK4sHn6z0v9NPOl9/plBZNj6B8gOi49U
+ 3r1ISPX6NaRS3rwDwVIKwx30tzGvbrjG6fmFWh8C9xzrsFdpyyHjRdz4gM6TQ0bhVTD5ym4
+ o7g4rlsaxmj7auPPppX5g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Q4kB+EsBL+E=;e8VkyjdCBx3ODDNLfLSFlvpL7xe
+ wPqoKA9lWH3/r3HWPxpJ8xacZJZmZzhUkJA7bGBwq6gWv6dl5CvVANEGWBhm1UbWWBw1atzf/
+ MZkUp/ozdql/D4Jewat3wvsALAvqIkLIoyXQRhh79slWx2CyOG/wYFfqykEhy2sEs5bDr+XXq
+ a3aLMbTvtEwSq9YMtiVJFFk8mZDsh/cu7Y68Iax8CrAmWyGN/T/cznJ6++4Y4L3bF83ZNe1qW
+ TVH0sXy/Mnmcfc5Y1Qz2Thu3E9Jz6OyFfhegeTsklQytSPW2O81uXSw/U1UShwcwu+VgT3+VU
+ 3kA3HAh5oF0msMwErklef4M5NHyoq4Fzpx/uBA/VnCgCUqPRiZo6C9cTOUp8bp7x9wUop4dDN
+ I3z4z/6p2RaZauamzSh5JSZwPGJ8rBLtg88xFXzUBBZw2XLHGoqtT+JY3WwMmsQSbByZ9vipR
+ gbqZ1SsDtnQGS716dlOgAdFgbas1lFwc1yacfDl4EfZzpbjGvtRfjC76ZnBAXOWhtE5h+WhtX
+ X4soo2qJYju3e5wCe+gEbOwNLYwZRsNpnsGQ1nEMNGpROXZeH/7/ir+KBIvtLs+cXsuKJ46RN
+ vdBd3FvwnpPtpJAJIskUga3BmIgHreALriglywreL7F73IFWiYdCEVJUQ8qYOhxRD7ScbElfb
+ adbJebBDogUaBUL2HJA4jo5l697Og33XNuEe9tUzwNkked1QyIZGoEJsifBParBxXgCg2sXPy
+ Ek1NUvnmiAk8mRszQL5AIOkYD9Tbf6jP0/6O4Rnn3wyX753uz4WFYq1cYN0QfRWAz9knjS548
+ MZOzmll3Ac1RlK2uIcu5NDD6c+BRRERNh7CK2TmdhgtzFhL9vsrWl1p2ufT7Wylb/5q7Y2cf/
+ J+4qbn89WNXh+Qw2XgSq45DE+1e4byHF19PzAdCqwXXV5Zytjr+eVraUxv8gi7bbgAkXNo/8X
+ DWpzfRKGnpMMksa/LMtTvfMmusdVPZ4KIZYy3glndFveCYKEM0NuTJDLyBazz1trRUmNl36Lx
+ aQVpm5ySDShk1JCJzDTynZZBxMteANjbU4NORET8EOnYYbqfMg7685Q/eq6Ypo50UxsZa4g4E
+ mMc+i2+QfZp09N9r+b78VcrA/Q5rXsNOQl6LxGXBsJs13XABCa2xoQ1S7HlbJZYWO4aBquyq2
+ rnfrgdUZxMa13CreMEjrLfHl210GA4Bqhd6Mpk0sRVMV0n9PMdBIZo7zeTuSmNKBuSgQVwPoB
+ XSZCWSurK1mfATjywfblh3h95v4482vd4QA2nm8SNcWlzZWf4+gAhGUirkfVv6ENzGZZoE0Ll
+ cBv55udXpkXPyh0fvS4pSvZ1xw3fPv99qubyHAJ3sxtmZ2FeXy5DeIgOZx48HplpEaBFJe7YB
+ 5Bm6zrZlz3XalNXZzBlbdog44MJNePQhQeznuM63keiucRQWz3PeiyP5i/ymeuDCXXMhmFoVX
+ /DiRjNMepYv1a0zrxo49XuBfgs9nM4UUb3HWWEKOaDQIHYHcG
 
-On 3/31/25 11:33, Christian Loehle wrote:
-> On 3/31/25 10:02, Pavel Begunkov wrote:
->> On 8/19/24 16:39, Jens Axboe wrote:
->>> Hi,
->>>
->>> This is v6 of the patchset where the current in_iowait state is split
->>> into two parts:
->>>
->>> 1) The "task is sleeping waiting on IO", and would like cpufreq goodness
->>>      in terms of sleep and wakeup latencies.
->>> 2) The above, and also accounted as such in the iowait stats.
->>>
->>> The current ->in_iowait covers both, this series splits it into two types
->>> of state so that each can be controlled seperately.
->>>
->>> Patches 1..3 are prep patches, changing the type of
->>> task_struct->nr_iowait and adding helpers to manipulate the iowait counts.
->>>
->>> Patch 4 does the actual splitting.
->>>
->>> This has been sitting for a while, would be nice to get this queued up
->>> for 6.12. Comments welcome!
->>
->> Good day,
->>
->> Did anything good happened with these patches or related work?
->> Christian>
-> 
-> Hi Pavel,
-> so for cpuidle part we've had commit ("38f83090f515 cpuidle: menu: Remove iowait influence")
-> for a while now without much complaints, hopefully that means it stays in.
-> So I'd really like to know how the results still compare for relevant workloads.
+> devm_kasprintf() return NULL if memory allocation fails. Currently,
+=E2=80=A6
+                call?                               failed?
 
-Sounds great
 
-> cpufreq iowait boosting is still a thing in schedutil and intel_pstate,
-> and so far I've failed to convince Rafael and Peter to get rid of it.
-> I still think that is the right thing to do, but it does come with a
-> regression in most of the simple synthetic fio tests.
+> Add NULL check after devm_kasprintf() to prevent this issue.
 
-IOW, from the io_uring iowait stat problem perspective it got stuck
-and is unlikely to move short term.
+Do you propose to improve this function implementation a bit more?
 
->> Reminder: the goal is to let io_uring to keep using iowait boosting
->> but avoid reporting it in the iowait stats, because the jump in the
->> stat spooks users. I know at least several users carrying out of tree
->> patches to work it around. And, apparently, disabling the boosting
->> causes perf regressions.
-> 
-> Details would be appreciated, I looked the the postgres workload that
-> justified it initially and that was on cpuidle iowait which is no
-> longer a thing.
 
-I wasn't involved and afraid don't have any extra numbers.
+=E2=80=A6
+> ---
+> V1 -> V2:
+> Simplify the handing of the condition "suffix" with if/else suggested by=
+ =E2=80=A6
 
->> I'm reading through the thread, but unless I missed something, it looks
->> like the patchset is actually aligned with future plans on iowait
->> mentioned in the thread, in a sense that it reduces the exposure to
->> the user space, and, when it's time, a better approach will be able
->> replaces it with no visible effect to the user.
-> 
-> I'm not against $subject necessarily, it's clearly a hack tapering
-> over this but as I've mentioned I'm fine carrying a revert of $subject
-> for a future series on iowait boosting.
-> 
->>
->> On the other hand, there seems to be a work around io_uring patch
->> queued for, which I quite dislike from io_uring perspective but also
->> because it exposes even more of iowait to the user.
->> I can understand why it's there, it has been over a year since v1,
->> but maybe we can figure something out before it's released? Would
->> it be fine to have something similar to this series? Any other
->> ideas?
-> 
-> Ah thank you, I've missed this
-> https://lore.kernel.org/io-uring/f548f142-d6f3-46d8-9c58-6cf595c968fb@kernel.dk/
-> Would be nice if this lead to more numbers comparing the two at least.
+* I imagine that there is a need to offer such adjustments
+  in separate update steps.
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/Documentation/process/submitting-patches.rst?h=3Dv6.14#n81
 
-Sure, but I'd rather avoid adding this type of a uapi just to test
-it and solve the problem a different way after.
+* Can another tag become more helpful?
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/Documentation/process/submitting-patches.rst?h=3Dv6.14#n598
 
--- 
-Pavel Begunkov
 
+> The current implementation (directly returning -ENOMEM) is reasonable be=
+cause:
+=E2=80=A6
+
+How much will such information influence the refinement of the change desc=
+ription?
+
+
+How do you think about to append parentheses to a function name
+also in the summary phrase?
+
+Regards,
+Markus
 
