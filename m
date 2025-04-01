@@ -1,117 +1,76 @@
-Return-Path: <linux-kernel+bounces-582860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C602A77338
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:06:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3286A7733E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 06:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B213ADFE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A46116CCD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 04:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B831A7253;
-	Tue,  1 Apr 2025 04:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Na0zForS"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66F54AEE0;
-	Tue,  1 Apr 2025 04:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37231DE8B3;
+	Tue,  1 Apr 2025 04:06:17 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8381DD889
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 04:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743480371; cv=none; b=PP03lJU6Tdt/5b/JVLrpHfvy6Snh6HvkxlAidSYUoL6ffGmfYeggCGHzNvVIqfhrkOWhRKhaFE3KLplyyCcd44ozT2aV1mPBdzEd2iHfGRhBlsdWA25iYMc1RzUjSWhgLsaalp4wZJ0ghmV462mf/uUvGQZltJvZX9KbxPcWpho=
+	t=1743480377; cv=none; b=BhypEldoRp+XA6WHTfqq9ZQ2Tt6cwlFzWqe2Nvx4pJbWQXDMOfX75A2Y2G22Cl19Ck3KKLARxSCtn20Z+Wk+zFj9iklEkQvqlp2LRYV5mcfMkHwVA0hiMWxSSf0eMF4fUVpyxUvRB6CFZpA1LD2yW2MvrHzHIOYr+NRVVVYYL4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743480371; c=relaxed/simple;
-	bh=AOFkwiMxE25CkrPfbOCrU6wMEe3EHjZDX79rsju8ecA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so0x4+T5JH7knf7vmYreOF7kz9vbCkUD/AcGmLEwHjsEvfPsep6kN//QzJe+My+nxBHMz7ZxEYpkZGYLJmScq2I+hutu2SsYkvb0QQQ4EwzOvx9Cj4wV8pYnsz80ZKxxEkNsRed17m3kET2lnZbHVOSHB30FGJS2N7GrIJfSiE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Na0zForS; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 6D3C6210B176; Mon, 31 Mar 2025 21:06:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6D3C6210B176
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743480369;
-	bh=RlgM5HIy5B8eV6GCaYb9TDY0d3e1TibeLyeK88C+tl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Na0zForStOuvVEUECCGmU/TkrjsbeSt5LuZf+cRbFHXd/CwmzPfrs1GkE49x9Ertn
-	 aTXCHhoEVhBI+nXSUCSDlEu1uWlylV0UBaxA82JnFzxKg2rcC2BQRQ356KAFou4XzB
-	 mGWOBmltNXH9EHO3MkkvyRN0sHXPA/Z5tLfUIgYs=
-Date: Mon, 31 Mar 2025 21:06:09 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH v2] hv/hv_kvp_daemon: Enable debug logs for hv_kvp_daemon
-Message-ID: <20250401040609.GA11465@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1743401688-1573-1-git-send-email-shradhagupta@linux.microsoft.com>
- <BL4PR21MB462765E191592754911DB67BBFAD2@BL4PR21MB4627.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1743480377; c=relaxed/simple;
+	bh=FZvyO+CH+waPGu0bUdSrHBMNWzHkAiiI7Y/QcwEqSk4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OBf95Gb+OMeccWKwuhJYmrFaY4/BtcZaJIC1MRpyGbv4M5E6XWHwx41bnur6jWEsRX0hW/nNBEp/0eb1DVk5QO0NYmdqcK0x9Yufkz0Z9tfrzdoEGb3Bn6Zb2doX3crcUNRZ74YojfhtbBeQfcd4cENzxVNTAql2bJ+VCRmzPtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so54768575ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 21:06:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743480375; x=1744085175;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PzG2Y/TurTR7M2S+S/zPulC1BtJ09P274Dqqe0OY7h8=;
+        b=nfRFQcQ5g6CltU8ImYk3Kc17SZY/GxM89Oe3wFgRGxeBFgQ4bThCphA0sK5pNCIY0m
+         v42Iq2nJDtsKyv5GWu8/jCLQRswaGAC9QKXKjzlt4xUb9l5rJkU71+KBn80WMGxwQv8y
+         FNRxENDJrlJUcj/JQItoJYRE5Wjfe0FSiI0wbS0CJyht06CS2WneU4veTQUjkvu8pUfO
+         xqXvKHqRK7WBSpTL8itqaLCfSYUijNo24p/duL7uS6HBRC2PzFl9Rn9e+uEGM6uAK1cA
+         R2eS+HcfMjbOwHFPoMNJu6cphXuFhxdBoZo6EYnz37brwZCvFU2Psxrz2JuBOXkjPJyo
+         mhzQ==
+X-Gm-Message-State: AOJu0Yx3fA+jmtGu95yDtxgAhb2EJ9QS1wUe9I0CfU6rBHHuG1byEYxN
+	1ce0P0HXN1NP10tdnEB9sil0you38AHRYAVgY3JlNeXiK34sxOF+S8WpfDkf99r+RClkJv4BPlX
+	7n1qP5ZyTeYEypUzm0EROmQMxXnuWob2a1kE+KPajtEiIfVkxey+8esM=
+X-Google-Smtp-Source: AGHT+IG9zuK9bOkY6qDjhR3HNREnXwqnkexQs+w8XrFEv1CWN1JnVgDqGutvjS+L1Qzhgnzaha9WkCOxC8RxhZ33LQPU8M0+vvcB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL4PR21MB462765E191592754911DB67BBFAD2@BL4PR21MB4627.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6e02:156c:b0:3d3:dcc4:a58e with SMTP id
+ e9e14a558f8ab-3d5e09119d6mr116171105ab.8.1743480375383; Mon, 31 Mar 2025
+ 21:06:15 -0700 (PDT)
+Date: Mon, 31 Mar 2025 21:06:15 -0700
+In-Reply-To: <675be8a8.050a0220.1a2d0d.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67eb6637.050a0220.3a8a08.0009.GAE@google.com>
+Subject: Re: [syzbot] 
+From: syzbot <syzbot+983249082bd062b1c4ef@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 31, 2025 at 11:20:09PM +0000, Dexuan Cui wrote:
-> > From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> > Sent: Sunday, March 30, 2025 11:15 PM
-> > [...]
-> > +static void convert_tm_to_string(char *tm_str, size_t tm_str_size)
-> > +{
-> > +	struct tm tm;
-> > +	time_t t;
-> > +
-> > +	time(&t);
-> > +	gmtime_r(&t, &tm);
-> > +	strftime(tm_str, tm_str_size, "%Y-%m-%dT%H:%M:%S", &tm);
-> > +}
-> 
-> Now the function is unnecessary since v2 uses syslog(), which already prefixes every
-> message with a timestamp.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Hi Dexuan,
-I have deliberately kept this timestamp in the raw message so that
-if/whenever they are redirected to other file, irrespective of the
-configuration of the syslog we have valid timestamp for debugging
-> 
-> > +static void kvp_dump_initial_pools(int pool)
-> > +{
-> > +	char tm_str[50];
-> > +	int i;
-> > +
-> > +	convert_tm_to_string(tm_str, sizeof(tm_str));
-> This is unnecessary now.
-> 
-> > +	syslog(LOG_DEBUG, "===Start dumping the contents of pool %d
-> > ===\n",
-> > +	       pool);
-> > +
-> > +	for (i = 0; i < kvp_file_info[pool].num_records; i++)
-> > +		syslog(LOG_DEBUG, "[%s]: pool: %d, %d/%d key=%s
-> > val=%s\n",
-> > +		       tm_str, pool, i, kvp_file_info[pool].num_records,
-> 
-> Can you change the 'i' to 'i+1'? This makes the messages a little more natural to
-> users who are not programmers :-)
-sure, but I am just worried that might cause confusion when someone
-tried to co-relate it with the actual kv_pool_{i} contents that start
-with 0.
-> 
-> >  static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
-> 
-> Can you add a log message for KVP_OP_DELETE as well?
-sure, I can add this.
-> 
-> Thanks,
-> Dexuan
+***
+
+Subject: 
+Author: kent.overstreet@linux.dev
+
+#syz fix bcachefs: Disable asm memcpys when kmsan enabled
 
