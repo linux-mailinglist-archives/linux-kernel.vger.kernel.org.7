@@ -1,217 +1,164 @@
-Return-Path: <linux-kernel+bounces-583144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D31A7772B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49631A77735
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61133169DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88B9169DFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 09:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726D61EB9FD;
-	Tue,  1 Apr 2025 09:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D7C1EC011;
+	Tue,  1 Apr 2025 09:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IlQp4/q8"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVwlp5Q2"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C981E378C;
-	Tue,  1 Apr 2025 09:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723A51EB184;
+	Tue,  1 Apr 2025 09:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743498305; cv=none; b=C1gwEpSQPgeLB7wdwHAQU1ZrfrAmm5uBEJlfa10rFtSqgU4JTlPAU9u5GLFxADDLy1L3dVuQ3a1MEmrjGbvz85hm6iDbVZQt9gxAJGf9U7hgJ9BS4VSpI+8Kbr1cZYKjxz3dLVv+wCO6R6ggAZMV1jWZHXtWIwgca71I11YVuQE=
+	t=1743498403; cv=none; b=IvC3EnsRgFprDabgUgP2MdgxLTNqBzs29/ARFvERYZgm6a9FU5THxEP0bTB5pk66Kj6IIaLZ6qDa79LO7VAvHEWDQXZoXFBb9sOJlMwVQIgu/Ffgsk14jlCSrm/TNXo/s6wJOAwenADSekhKXc8C4RJz/Kv02FWfj65rt7eWHX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743498305; c=relaxed/simple;
-	bh=ozmt19GvbEEBobaOV8eXtfFF+gY55KKZwRmKk1gIpUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jydrkSfgqagDxU43hgb8+wk2PD4MUDUSEmO/VeqgA+/WkofMY3OHo8p5ZLVhdWBwxnmHzVznr7niQtowDbEGEhIM6yqZJ+ytaz3xoZ2NV6COrjmpAQs7g+yL09w42d2gXBdd+3aoj4t2eG3kpb2aaSQTW0RbefPv+TMSJ8OlYLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IlQp4/q8; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D80BC20486;
-	Tue,  1 Apr 2025 09:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743498295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d9pmeIEW/9O7W8wmb+t+48ls33PS37BbHr+WoLvC2sc=;
-	b=IlQp4/q8FMW2heV5Lrg35Gw7Qinca5/2aXgPmemfGuYOt5c//gVcTjPS+Yh4ZToHmWekY+
-	qUge8KnuBtzIcMESBfwwl6parBYZQCalvJq1HfvB4dkjKHnvY3epgo5m8vG8HCyy2PmG/J
-	7bnzgkd6puFzLtEgv//qkZHMPzYBAZiJNXKPWUHhFjWpA6+S6dCcNlN1nbWKHY/6pwosIE
-	oGW0sZhB5KJZjGqp/CcPGZHP77FLf/BOiRP+/VQ4K5UT99pqsjsQKSj0kLyclOCiS+EaH8
-	jY7BoX9tiSFLLWwMayTIjuH8D7qdwgvzbGyNpq1YvvKdtAlwvE0m871/Wk8lTQ==
-Date: Tue, 1 Apr 2025 11:04:54 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: nmydeen@mvista.com
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cminyard@mvista.com
-Subject: Re: [PATCH] rtc-m41t62: kickstart ocillator upon failure
-Message-ID: <20250401090454fb0ccf16@mail.local>
-References: <20250116062641.366679-1-nmydeen@mvista.com>
+	s=arc-20240116; t=1743498403; c=relaxed/simple;
+	bh=bBVMwoBL8LR8zOwYGi5TeDtaPBOUxSmU0D75RDFB+V4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MJImIZjaZM83/yyTizPZUuGClO3CUVP4YOO2BYbs6OV2S4tMl+Hxbj2m6mzUM3xa/1HH5KwpJ9h7RcxsqivwwJRqHaceLK4Q3rkjkEKO9AP7564ITdHWFRAx4cMpqWKV+fFq2s1I+dt7CYEz38OWeonnx1YwmJUCzNavI5Owq5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVwlp5Q2; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227cf12df27so74929875ad.0;
+        Tue, 01 Apr 2025 02:06:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743498401; x=1744103201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZeibnPf6F/j2ao9xre27sq9y+syyRAsUdBCPrAKj20=;
+        b=NVwlp5Q22qhtVgAgEZAfoGpcYNEeReK0Xk/CTEORkV67rS1r61/Xh8pUrh3yDPPvNp
+         JeTRLLe9lM7sBLzSPW+llZ1DJtLnAN9OvSFFXEd2q6HtKrOwLlBAsEV0ss90fmgfhCfG
+         Q6Tp2H+mSFoiY1/h83lWLGM7RMdRwlJH+JtxglruSqCaqMG2DZF9/40CHhOKtAMtw4SA
+         PjmimfdPj27V3iODODFcG4X28/lZEwuyt1m6W8QvQ/rXMe//v7kDuhIzhm0/uVMWjivg
+         ou5R5cNFnJwy5FoBCbj/r5ft36hpNcLvHkHnwvpE789jhnS6gA4NTXJPs0nZ2rrFg7e6
+         4waA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743498401; x=1744103201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lZeibnPf6F/j2ao9xre27sq9y+syyRAsUdBCPrAKj20=;
+        b=AKmP61SnhwckoP5Z3C43NhTCH9GSZRABNaVqBOqrc/SkV1UVFA0tAr1l0s4ZHya0X2
+         4W56qOCpQ+WkFelSPf0/CCPShk6nAslqWdWptcyZxPhhtLCFeWk5Shhcir58bCJNbcRL
+         j7rrYSY8Qyjg5CpUiR7t+81MNJn6CDZ386WJdusZeaky6Vuk9iDET7Tnmz2tkpnEv5Y3
+         53n5q6L4vMHlCDQe42BiK/a+DnvmF46gsCT39rCzDGAQQ+fx9LXuP8w2fDG7TDolGlM9
+         er6RU13GRwoVbpgHmMcr8/YuGK2hBSBWagD7nFvIJ0OBNSkYvmPCAZBgO/9Ow0ou9V29
+         J9Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUmMf3OKYc/MI+Cy5Fne6/MXUJ5mhy8qkaFwQYfSBPXEcyS6SYXB0y48qS4ZiF19QBrjixU50xQCiNM4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxluH4BftDIcy10yZ+mgmZoFA8Bf//BJqKlTaW75ymjFovN/VqE
+	sC0G14fp5zmG1UnQV/2poKqiRNrzg8zp/+y7Q4sjC4QeVarmRq40hewq+KEI8is=
+X-Gm-Gg: ASbGncvpHlYy/E5E3Ljd0jkygWubxdvavRVNgHHRi4UzQEMpfCEkNq4vRxzZR7LSIh1
+	2QF49h3PBHu7SCTFilzGrUW9Q3YMs4TYc0RLw1HA8paOW61rhfwsYS/uqny4YP29rgEh8ujHcN5
+	NPkcEhCNsyt1Gd/X2zV9rzKJeZZFXutaD7RJUnC8g7vE68npyq/yrvbo+b6j0sDanpGuPtADs/2
+	ure/0kBRMEvtwFbi2H9Bdy7iHKwIrLAtcgSewOd66xxqjs8FOiJ71azhWZHJLDe13AYGx6GJ4xQ
+	oEAt1etN6UO2redPitwsd1Wj99SSUur0MU6CuTWjhuTPtcsG1f3SkdMztnauNIoamh36x4zKDyQ
+	=
+X-Google-Smtp-Source: AGHT+IG0bnk3kuG045+To5X7Apkw1uxbIVmYAPpm8jfEhLoa/xUxQ6HYwKkOQY476h55fgBRW3mzWg==
+X-Received: by 2002:a17:902:f545:b0:215:ba2b:cd55 with SMTP id d9443c01a7336-2292ec073d0mr205536655ad.2.1743498401286;
+        Tue, 01 Apr 2025 02:06:41 -0700 (PDT)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1f7cc2sm82791875ad.258.2025.04.01.02.06.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 02:06:40 -0700 (PDT)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCHv2 net] bonding: use permanent address for MAC swapping if device address is same
+Date: Tue,  1 Apr 2025 09:06:31 +0000
+Message-ID: <20250401090631.8103-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250116062641.366679-1-nmydeen@mvista.com>
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvfeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeefleehkeehvedvfedvudeigffhfffftdfhffdtlefhjeehvedtvedttefffedvffenucffohhmrghinhepshhtrdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemrggutdefmeegfheltgemfeefjehfmehffeefugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemrggutdefmeegfheltgemfeefjehfmehffeefugdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopehnmhihuggvvghnsehmvhhishhtrgdrtghomhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvg
- hgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghmihhnhigrrhgusehmvhhishhtrgdrtghomh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
+fail_over_mac policy"). The fail_over_mac follow mode requires the formerly
+active slave to swap MAC addresses with the newly active slave during
+failover. However, the slave's MAC address can be same under certain
+conditions:
 
-On 16/01/2025 11:56:41+0530, nmydeen@mvista.com wrote:
-> From: "A. Niyas Ahamed Mydeen" <nmydeen@mvista.com>
-> 
-> The ocillator on the m41t62 (and other chips of this type) needs
-> a kickstart upon a failure; the RTC read routine will notice the
-> oscillator failure and fail reads.  This is added in the RTC write
-> routine; this allows the system to know that the time in the RTC
-> is accurate.  This is following the procedure described in section
-> 3.11 of  "https://www.st.com/resource/en/datasheet/m41t62.pdf"
-> 
-> Signed-off-by: A. Niyas Ahamed Mydeen <nmydeen@mvista.com>
-> Reviewed-by: Corey Minyard <cminyard@mvista.com>
-> ---
->  drivers/rtc/rtc-m41t80.c | 70 ++++++++++++++++++++++++++++------------
->  1 file changed, 49 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-> index 1f58ae8b151e..77c21c91bae3 100644
-> --- a/drivers/rtc/rtc-m41t80.c
-> +++ b/drivers/rtc/rtc-m41t80.c
-> @@ -22,6 +22,7 @@
->  #include <linux/slab.h>
->  #include <linux/mutex.h>
->  #include <linux/string.h>
-> +#include <linux/delay.h>
->  #ifdef CONFIG_RTC_DRV_M41T80_WDT
->  #include <linux/fs.h>
->  #include <linux/ioctl.h>
-> @@ -204,7 +205,7 @@ static int m41t80_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  		return flags;
->  
->  	if (flags & M41T80_FLAGS_OF) {
-> -		dev_err(&client->dev, "Oscillator failure, data is invalid.\n");
-> +		dev_err(&client->dev, "Oscillator failure, time may not be accurate, write time to RTC to fix it.\n");
->  		return -EINVAL;
->  	}
->  
-> @@ -227,21 +228,60 @@ static int m41t80_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  	return 0;
->  }
->  
-> -static int m41t80_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> +static int m41t80_rtc_set_time(struct device *dev, struct rtc_time *in_tm)
->  {
->  	struct i2c_client *client = to_i2c_client(dev);
->  	struct m41t80_data *clientdata = i2c_get_clientdata(client);
-> +	struct rtc_time tm = *in_tm;
->  	unsigned char buf[8];
->  	int err, flags;
-> +	time64_t time = 0;
->  
-> +	flags = i2c_smbus_read_byte_data(client, M41T80_REG_FLAGS);
-> +	if (flags < 0)
-> +		return flags;
-> +	if (flags & M41T80_FLAGS_OF) {
-> +		/* OF cannot be immediately reset: oscillator has to be restarted. */
-> +		dev_warn(&client->dev, "OF bit is still set, kickstarting clock.\n");
-> +		err = i2c_smbus_write_byte_data(client, M41T80_REG_SEC, M41T80_SEC_ST);
-> +		if (err < 0) {
-> +			dev_err(&client->dev, "Can't set ST bit\n");
+1) ip link set eth0 master bond0
+   bond0 adopts eth0's MAC address (MAC0).
 
-This is super verbose, please use dev_dbg or drop the dev_errs. The only
-user action after a failure would be to restart the operation anyway.
+1) ip link set eth1 master bond0
+   eth1 is added as a backup with its own MAC (MAC1).
 
-> +			return err;
-> +		}
-> +		err = i2c_smbus_write_byte_data(client, M41T80_REG_SEC,
-> +						    flags & ~M41T80_SEC_ST);
-> +		if (err < 0) {
-> +			dev_err(&client->dev, "Can't clear ST bit\n");
-> +			return err;
-> +		}
-> +		/* oscillator must run for 4sec before we attempt to reset OF bit */
-> +		msleep(4000);
-> +		/* Clear the OF bit of Flags Register */
-> +		err = i2c_smbus_write_byte_data(client, M41T80_REG_FLAGS,
-> +					flags & ~M41T80_FLAGS_OF);
+3) ip link set eth0 nomaster
+   eth0 is released and restores its MAC (MAC0).
+   eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
 
-checkpatch --strict complains about some style issues, please fix those.
+4) ip link set eth0 master bond0
+   eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
+   breaking the follow policy.
 
-> +		if (err < 0) {
-> +			dev_err(&client->dev, "Unable to write flags register\n");
-> +			return err;
-> +		}
-> +		flags = i2c_smbus_read_byte_data(client, M41T80_REG_FLAGS);
-> +		if (flags < 0)
-> +			return flags;
-> +		else if (flags & M41T80_FLAGS_OF) {
-> +			dev_err(&client->dev, "Can't clear the OF bit check battery\n");
-> +			return err;
-> +		}
-> +		/* add 4sec of oscillator stablize time otherwise we are behind 4sec */
-> +		time = rtc_tm_to_time64(&tm);
-> +		rtc_time64_to_tm(time+4, &tm);
-> +	}
+To resolve this issue, we need to swap the new active slave’s permanent
+MAC address with the old one. The new active slave then uses the old
+dev_addr, ensuring that it matches the bond address. After the fix:
 
-The main issue is that now, you have cleared OF so if any read/write to
-the RTC fails, you would return from the function without having set the
-time. So when OF is set, you should first add the 4s, then set the time,
-then kickstart the RTC.
+5) ip link set bond0 type bond active_slave eth0
+   dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
+   Swap new active eth0's permanent MAC (MAC0) to eth1.
+   MAC addresses remain unchanged.
 
->  	buf[M41T80_REG_SSEC] = 0;
-> -	buf[M41T80_REG_SEC] = bin2bcd(tm->tm_sec);
-> -	buf[M41T80_REG_MIN] = bin2bcd(tm->tm_min);
-> -	buf[M41T80_REG_HOUR] = bin2bcd(tm->tm_hour);
-> -	buf[M41T80_REG_DAY] = bin2bcd(tm->tm_mday);
-> -	buf[M41T80_REG_MON] = bin2bcd(tm->tm_mon + 1);
-> -	buf[M41T80_REG_YEAR] = bin2bcd(tm->tm_year - 100);
-> -	buf[M41T80_REG_WDAY] = tm->tm_wday;
-> +	buf[M41T80_REG_SEC] = bin2bcd(tm.tm_sec);
-> +	buf[M41T80_REG_MIN] = bin2bcd(tm.tm_min);
-> +	buf[M41T80_REG_HOUR] = bin2bcd(tm.tm_hour);
-> +	buf[M41T80_REG_DAY] = bin2bcd(tm.tm_mday);
-> +	buf[M41T80_REG_MON] = bin2bcd(tm.tm_mon + 1);
-> +	buf[M41T80_REG_YEAR] = bin2bcd(tm.tm_year - 100);
-> +	buf[M41T80_REG_WDAY] = tm.tm_wday;
->  
->  	/* If the square wave output is controlled in the weekday register */
->  	if (clientdata->features & M41T80_FEATURE_SQ_ALT) {
-> @@ -261,18 +301,6 @@ static int m41t80_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  		return err;
->  	}
->  
-> -	/* Clear the OF bit of Flags Register */
-> -	flags = i2c_smbus_read_byte_data(client, M41T80_REG_FLAGS);
-> -	if (flags < 0)
-> -		return flags;
-> -
-> -	err = i2c_smbus_write_byte_data(client, M41T80_REG_FLAGS,
-> -					flags & ~M41T80_FLAGS_OF);
-> -	if (err < 0) {
-> -		dev_err(&client->dev, "Unable to write flags register\n");
-> -		return err;
-> -	}
-> -
->  	return err;
->  }
->  
-> -- 
-> 2.34.1
-> 
+6) ip link set bond0 type bond active_slave eth1
+   dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
+   Swap new active eth1's permanent MAC (MAC1) to eth0.
+   The MAC addresses are now correctly differentiated.
 
+Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+---
+v2: use memcmp directly instead of adding a redundant helper (Jakub Kicinski)
+---
+ drivers/net/bonding/bond_main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index e45bba240cbc..1e343d8fafa0 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *bond,
+ 			old_active = bond_get_old_active(bond, new_active);
+ 
+ 		if (old_active) {
+-			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
+-					  new_active->dev->addr_len);
++			if (memcmp(old_active->dev->dev_addr, new_active->dev->dev_addr,
++				   new_active->dev->addr_len) == 0)
++				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
++						  new_active->dev->addr_len);
++			else
++				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
++						  new_active->dev->addr_len);
+ 			bond_hw_addr_copy(ss.__data,
+ 					  old_active->dev->dev_addr,
+ 					  old_active->dev->addr_len);
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.46.0
+
 
