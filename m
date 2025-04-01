@@ -1,157 +1,92 @@
-Return-Path: <linux-kernel+bounces-583962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8199EA781F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA80A78202
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0278188C7B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF34188F707
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C120E01B;
-	Tue,  1 Apr 2025 18:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE1D20E33D;
+	Tue,  1 Apr 2025 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A91Zp0wG"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HFik6kdn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D3D204866
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D27D1DE2B4;
+	Tue,  1 Apr 2025 18:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743530980; cv=none; b=V3ik9/LfrEiHcz8jwESOqoRkxe/LRODmJZJKoHYpV9PNPqAytLCK1ArsgbP+miU0+mFXUJaBE068lx0cT1IWox2KXdjwFKSsuh1a6I/ddQ9MdRHzbAqN/oh5OCQBCsIlRZTzTpux0GYs3wxbYpgqXKqLcLj+lPQLTgiOfITPbV4=
+	t=1743531588; cv=none; b=SjgJH3O8kP3lXkX0AtVqbCjp7eRdPb9K/naXAaw7tllC2DDk7sbUyhHq7UGmM0+XhsDlEEHSZhM5c534pJG77AscGAOzqaz4i7BuVaDC2QemIfpBPtVnQkAXl7eXRPPZkpBmL79qn2A9xtoMlSmlV1MZ1A1HYUjq7KBGFNZJlFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743530980; c=relaxed/simple;
-	bh=TTC1zB76YN+CveMePfWYPOQo5XC+cQkIkEFO825685U=;
+	s=arc-20240116; t=1743531588; c=relaxed/simple;
+	bh=ClhLBqaaVAVwuLwx4kJiSRWeU6HgIOPkC9lnkchsc9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QemjOaGZpAilSNhl0Auy/jcMiRBlw9qF2xNBIpnEvu2X7O/BEaNA0H3IzachUBgvc10yOQm8xC97dW3c+VRVPXuKeCJvh8z95Sp7CLRJOc77SLtoRmo8y/I3A41f33LeGuZRvJUAb2wOnjerFy0aJfBlq9U3o5HwHpCs5WRKloA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A91Zp0wG; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30384072398so7934995a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:09:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743530978; x=1744135778; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L3d1znKqMC7VOlS2a3pEGw5g/7whO3ATqwDLPzCjVS4=;
-        b=A91Zp0wGP1QC4l1/mvLpaxxoXzIkufWM/Ne8MvIjqg/5hXFvXmIx0UexytBM0vM52U
-         fSh5UK+Bn8UtT/MkIZ7sO+sHc7NbleBZ4o+wEuSCZJARM7RKiunCmSO8DdBJvkJApm/r
-         cECPN/aBC9lmxP8DTCrD2IcneeUMESmvRI3JKqKE+rU7C5YKy97EBsNdmfIwEZHKB+CT
-         jjj5uZTuDBjAU0nPN7qqmenXpGS1Qpqv9M8OmdO5yh4C4rxwclMtW/GaTRRsF5bICrvV
-         fgpWwTVEr19B/qtSG/iJaDtc6cHC7pwAQbmLG5eDOA52X9SO/FjL7mNOwGfVAMU0C5dH
-         FWVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743530978; x=1744135778;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3d1znKqMC7VOlS2a3pEGw5g/7whO3ATqwDLPzCjVS4=;
-        b=FX7FAPPvYhMYUWXfGFejk6tII1xlG4eEYzwFgCa89iUXFg6+AUGnvOamZJXMsxYRAx
-         5BZ6yCgVn4zU+90NSsCGGdKZuPr65U1bCeK3zGxrpMIwxOzPpxSOvhpKL3M4tGeKdyXR
-         mFMvcSgN7urOk0pq8ZZcL2NW8zHzC1C8xJmBZVqMfLCTB8A2vS79IWS6fdrlzt/KmRjI
-         T8ifpbKELX5PORKgwImGQ/StoqTRF636e19C4Q1RhJN9z0jb4ptRvzqhpzczYKG/rNPT
-         zf54yjXnTydPZ5TSaWZDSvhBbh7hdgmPK66Zex195MzOa0VKeVqL/XrJlsFtB9bwm1BD
-         T1IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUemXrw/I3XeffumJvL8aWcbZVCzajPEqVU4URrSN5W0UvQZcO3xcSSgQQtUaQ+rnK8KNJIhxuj8aCvdL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhQtOOEW7Rk8Md/7VGldNU+h5ZD8svFz5HWCBllBuqjWL8rX2h
-	1KcVsvEy5b7XQUJ7z549aCN8hLHpFCqh8IFcsCHNiY0ZQ+cpDR3dfQoOL+s0
-X-Gm-Gg: ASbGncsR0/ZmU6XV82FxB47qwFK7tIVjsk8fFwe4zc87hUu3ajcHBKCCuigmdzeiMwT
-	xMZjjwBytb1vFFvputagudctsaNa+g26YykgTVwfnQVw6G6oriDt+a0S572lD4UFMj+/OivyV/h
-	b1XtSzI595pj21zErSGCW03REWX/5FggKu44YM3xJQRY0ndIYPZkuCDWTjVDQO7b34cPpUklur7
-	Iq6yyFsxuB51j3TFnT53hPxjkplFZuZsOWvD+hqU5nRWrVKKYC6LMz1+hBbpShC3ByU6gEzsszo
-	Hw+rXXkvteWAgWhAUfaqWt96QRm61k9MpuZj8jCjd7jhC/DJ/ckJaEQg36sKHOYx9k9seQ9sgF1
-	3
-X-Google-Smtp-Source: AGHT+IFoWcXlJ2Y2kt5E6hphyINvqSYZoaxpblol2GK31vLmIEJl4Bw3fjiMfbEvKXqLDdPFLWSWYA==
-X-Received: by 2002:a17:90b:384d:b0:2ff:7b28:a519 with SMTP id 98e67ed59e1d1-30532158ee8mr19492718a91.30.1743530978404;
-        Tue, 01 Apr 2025 11:09:38 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30516d55fbasm9696288a91.15.2025.04.01.11.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 11:09:37 -0700 (PDT)
-Date: Tue, 1 Apr 2025 11:09:35 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, muchun.song@linux.dev,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH] mm/compaction: Fix bug in hugetlb handling pathway
-Message-ID: <Z-wr3-eKLv0_ChZ-@fedora>
-References: <20250401021025.637333-1-vishal.moola@gmail.com>
- <4B989B13-EB96-4EA3-B3E4-18763941ABF3@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ulwkldzzfG8G8pEyUqdcT5Yq2a/QMbsJv3bzdfWr3PWLSG+cjMLEnoulokqet5jTc+kWXBm5QojjO142uWqhxYQ8eVEt0fsxge9+ksn5y5i38ml3HYAP4c+BjIKDCv4RGGM8NxpFvOAFg5hC8Qwa/UvbkwO46EnBiHerdy5ui+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HFik6kdn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F205FC4CEE5;
+	Tue,  1 Apr 2025 18:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743531587;
+	bh=ClhLBqaaVAVwuLwx4kJiSRWeU6HgIOPkC9lnkchsc9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HFik6kdn543No8iUJKzXH8F7Q76TXOTw2X/EJM8kK1QhGCrVke6A3tvO17lQ/O1tC
+	 DEw8zhMkk+YTfnIHemBnIhyAhl2OA+ooQaGkwKX95/wsNMfV9X2Ojg6ZGnGR5spYcz
+	 8QQRzSO6Q26WW/ZC/GH0kK3raTZVc/KztZwi2AI8=
+Date: Tue, 1 Apr 2025 19:18:21 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: outreachy@lists.linux.dev, philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] staging: rtl8723bs: no space before tabs
+Message-ID: <2025040127-unretired-veto-b056@gregkh>
+References: <cover.1743524096.git.karanja99erick@gmail.com>
+ <4e39b1295d68aea947aa5757e3148a2e401b72bc.1743524096.git.karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4B989B13-EB96-4EA3-B3E4-18763941ABF3@nvidia.com>
+In-Reply-To: <4e39b1295d68aea947aa5757e3148a2e401b72bc.1743524096.git.karanja99erick@gmail.com>
 
-On Tue, Apr 01, 2025 at 11:20:48AM -0400, Zi Yan wrote:
-> On 31 Mar 2025, at 22:10, Vishal Moola (Oracle) wrote:
+On Tue, Apr 01, 2025 at 07:59:37PM +0300, Erick Karanja wrote:
+> Remove spaces before tabs to comply with the Linux kernel coding style
+> guidelines. Proper indentation using tabs improves code consistency
+> and readability.
 > 
-> > The compaction code doesn't take references on pages until we're certain
-> > we should attempt to handle it.
-> >
-> > In the hugetlb case, isolate_or_dissolve_huge_page() may return -EBUSY
-> > without taking a reference to the folio associated with our pfn. If our
-> > folio's refcount drops to 0, compound_nr() becomes unpredictable, making
-> > low_pfn and nr_scanned unreliable.
-> > The user-visible effect is minimal - this should rarely happen (if ever).
-> >
-> > Fix this by storing the folio statistics earlier on the stack (just like
-> > the THP and Buddy cases).
-> >
-> > Also revert commit 66fe1cf7f581 ("mm: compaction: use helper compound_nr
-> > in isolate_migratepages_block")
-> > to make backporting easier.
-> >
-> > Fixes: 369fa227c219 ("mm: make alloc_contig_range handle free hugetlb pages")
-> > Cc: Miaohe Lin <linmiaohe@huawei.com>
-> > Cc: Oscar Salvador <osalvador@suse.de>
-> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > ---
-> >  mm/compaction.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
+> Reported by checkpatch:
 > 
-> <snip>
+>     WARNING: please, no space before tabs
 > 
-> > @@ -1011,8 +1011,8 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
-> >  				 /* Do not report -EBUSY down the chain */
-> >  				if (ret == -EBUSY)
-> >  					ret = 0;
-> > -				low_pfn += compound_nr(page) - 1;
-> > -				nr_scanned += compound_nr(page) - 1;
-> > +				low_pfn += (1UL << order) - 1;
-> > +				nr_scanned += (1UL << order) - 1;
-> >  				goto isolate_fail;
-> >  			}
-> >
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/hal/hal_btcoex.c | 33 ++++------------------
+>  1 file changed, 6 insertions(+), 27 deletions(-)
 > 
-> Right after this, there is “low_pfn += folio_nr_pages(folio) - 1” for
-> isolated hugetlb. I wonder if that can use order as well. Maybe not,
-> since the order is obtained without taking a reference, but folio_nr_pages()
-> is called with a reference. They might be different.
+> diff --git a/drivers/staging/rtl8723bs/hal/hal_btcoex.c b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+> index 9105594d2dde..44f73baf1cb4 100644
+> --- a/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+> +++ b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+> @@ -9,14 +9,14 @@
+>  #include <hal_btcoex.h>
+>  #include <Mp_Precomp.h>
+>  
+> -/* 		Global variables */
+> +/*Global variables */
 
-I thought about that as well. There's a very unlikely case where they
-could be different: We had a hugetlb page, free'd it, then allocated it
-to another hugetlb page. At this point (the success path) we would want
-the rest of the compaction counters all the sync up to whichever folio
-we ended up isolating anyways.
+Does that look right?  (hint, it isn't...)
 
-> Anyway, Reviewed-by: Zi Yan <ziy@nvidia.com>
+Always put a space after the /* and before text.  You removed the one
+that was there already :(
 
-Thanks!
+thanks,
 
-> 
-> Best Regards,
-> Yan, Zi
+greg k-h
 
