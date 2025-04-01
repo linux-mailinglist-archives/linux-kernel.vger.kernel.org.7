@@ -1,276 +1,104 @@
-Return-Path: <linux-kernel+bounces-583059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D338A775EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0294AA775E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3733A9A39
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4366E3A996A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142161EB193;
-	Tue,  1 Apr 2025 08:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AECD1E8855;
+	Tue,  1 Apr 2025 08:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NQQPT4xg"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECtBp3TQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1FC1E9B00;
-	Tue,  1 Apr 2025 08:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3221E5B88
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743495065; cv=none; b=Ep/iEybKRqoi3bXHEyeo2oXqBpib6+4xcUjfuMJeVwiWTsjqTIm9S9sAYAuy8Mg49Xn92LYdv/Mcmoo8yD7IFkXGvhqsA/mIGopD5waQNl5EmM5KQ5c7kb0y/0i058BQfASUzGo3T5zL4fyV7NxJrNEBfIbXAJ0/J5y8w+Riq2Y=
+	t=1743495060; cv=none; b=hjCXuYYY51phB1AoobEk+Dz/zDNNOKPUueuKyr3khEmkaBFd3VF3l9VPbXEzy4EkPmIcxz+g+ebIcnORfT1dD+q+0WCYXIi07LlF8J8XgBdOTtPI5wZQ6AuFCfjTstHjd8AmzAQW60Fo8XJPFM8ewZiSuLfMmuydmVatJSV+zIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743495065; c=relaxed/simple;
-	bh=tkCjRPi4FgO+9xzbgaJ6uPZ+TD9w57gzzaDTHbIFUgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H+d+P4TcwYGw5tS2PlqxrfznMAePerR+355Oo1rzDo/flpbXpnGKZMlHZ4Mo9y9wz4BfOX5WMLNbKzBkRRK418/QPHFDy74dvDpfb97/rUZh/wLxKwgSVI6OuzL36s3AVXKtboEA4sNT1wMZwtMdwkea//d6NRcrxqKGNGtWFWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NQQPT4xg; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id C26FA433E9;
-	Tue,  1 Apr 2025 08:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743495060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c1pNziZfZZIH7XSR1sTc/u8QqrFfQOPsIYe5ZDNfFK4=;
-	b=NQQPT4xgjDAuaec16lHAZjD3ckPxh+fyl8H8mZug6HqWn60DoLI5NUGiKzrXelCz2kOMRh
-	5vdJBFweXhG7BS2pfFleNDDxnTaE7t927tfL7pLeEw+cZOcPgcPrGy538uMiyOz8QFU539
-	KgbpbfXTZh9cXbW0zco1WrPGaoOFV/lOE5K5Dt3kw3LCk+v2af5KrqS5UrtL2U3m30OVqZ
-	tv1mTm1FUBHrX7NVcBNLUManRFY16IGHGxE9IB/5ivR+7SsXADUskYtRD8CA+1/EvTeucn
-	vNnBUky2sYQBbScgP2yjpnu79L2HRIJ4K0Uaetbc8aECXQTuP2fmqj/mCXl3OQ==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree-spec@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH 2/2] schemas: i2c: Introduce I2C bus extensions
-Date: Tue,  1 Apr 2025 10:10:40 +0200
-Message-ID: <20250401081041.114333-3-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250401081041.114333-1-herve.codina@bootlin.com>
-References: <20250401081041.114333-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1743495060; c=relaxed/simple;
+	bh=4QLP2iKRZxI/ONaeX1kR9vrNKb8yEDCxd/NQXakruhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiNR9QcHitVnw9jwZ0r+HYNBIc0jIRyzCwwDyhPU8tjJh4vMzqqZLI15AGc6AdHhAuQBnGHCWeHbHdxvB7n2wyWzwcy0I4w6GcHfcKwl3tiCM/Cdgr5RyuzTBp37d/HvBeSwPp9NBBD4eIy7tuX5GEwjTFD1/neGJBD7vGD7OzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECtBp3TQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F27C4CEE4;
+	Tue,  1 Apr 2025 08:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743495060;
+	bh=4QLP2iKRZxI/ONaeX1kR9vrNKb8yEDCxd/NQXakruhA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ECtBp3TQqyooslkWP5Ybn1EFQMcipB8Kb4ILAMUi15FPdGhsyctpwX+bdJXWZi7gS
+	 6n9EEBQHyhL90aJ2FLLth59qaI1fNDsgzfaSO/3hGQxhZy8UNkV2okiIyvh80a8ADv
+	 Sypr45H9YerF2NcEhngMGMe6PDE0va8Q6nx4z6/6J/NXhZaafTdkLt6wmS2ptFvryW
+	 zFFw1lM81qbcj+DpztsjTJF6ft8tIPJB82FmV/54YIu9tT6E9YhVXJyoef4R0DYvD1
+	 f+FbYFB/NL0/48/TvUbTDiZQSXrGdKB/UHsRKONReviNhPzDc4+ITfruhFbY9wfMN6
+	 T+S1jhB9H/w0g==
+Date: Tue, 1 Apr 2025 10:10:56 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	kernel test robot <lkp@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 08/11] objtool/loongarch: Add unwind hints in
+ prepare_frametrace()
+Message-ID: <Z-ufkGy0hPbwMUYI@gmail.com>
+References: <cover.1743481539.git.jpoimboe@kernel.org>
+ <270cadd8040dda74db2307f23497bb68e65db98d.1743481539.git.jpoimboe@kernel.org>
+ <Z-uQ7NqMzqAShWcH@gmail.com>
+ <2e25fe84-f772-5d87-c7a7-bf40055fb4bc@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvvdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheffiefgjeeuleeuueffleeufefglefhjefhheeigedukeetieeltddthfffkeffnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopegrnhguihdrshhhhihtiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtt
- hhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e25fe84-f772-5d87-c7a7-bf40055fb4bc@loongson.cn>
 
-An I2C bus can be wired to the connector and allows an add-on board to
-connect additional I2C devices to this bus.
 
-Those additional I2C devices could be described as sub-nodes of the I2C
-bus controller node however for hotplug connectors described via device
-tree overlays there is additional level of indirection, which is needed
-to decouple the overlay and the base tree:
+* Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
 
-  --- base device tree ---
+> On 04/01/2025 03:08 PM, Ingo Molnar wrote:
+> > 
+> > * Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > 
+> > > If 'regs' points to a local stack variable, prepare_frametrace() stores
+> > > all registers to the stack.  This confuses objtool as it expects them to
+> > > be restored from the stack later.
+> > > 
+> > > The stores don't affect stack tracing, so use unwind hints to hide them
+> > > from objtool.
+> > > 
+> > > Fixes the following warnings:
+> > > 
+> > >   arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-160
+> > >   arch/loongarch/kernel/traps.o: warning: objtool: show_stack+0xe0: stack state mismatch: reg1[23]=-1+0 reg2[23]=-2-152
+> > > 
+> > > Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+> > > Fixes: cb8a2ef0848c ("LoongArch: Add ORC stack unwinder support")
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202503280703.OARM8SrY-lkp@intel.com/
+> > > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > 
+> > Note, I skipped this fix from tip:objtool/urgent for the time being,
+> > because Tiezhu Yang indicated that he'd be reviewing and testing this
+> > patch.
+> 
+> Tested-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 
-  i2c1: i2c@abcd0000 {
-      compatible = "xyz,i2c-ctrl";
-      i2c-bus-extension@0 {
-          i2c-bus = <&i2c_ctrl>;
-      };
-      ...
-  };
+Thank you! Is it fine with you if I send this fix with tonight's 
+objtool/urgent pull request to Linus?
 
-  i2c5: i2c@cafe0000 {
-      compatible = "xyz,i2c-ctrl";
-      i2c-bus-extension@0 {
-          i2c-bus = <&i2c-sensors>;
-      };
-      ...
-  };
+Thanks,
 
-  connector {
-      i2c_ctrl: i2c-ctrl {
-          i2c-parent = <&i2c1>;
-          #address-cells = <1>;
-          #size-cells = <0>;
-      };
-
-      i2c-sensors {
-          i2c-parent = <&i2c5>;
-          #address-cells = <1>;
-          #size-cells = <0>;
-      };
-  };
-
-  --- device tree overlay ---
-
-  ...
-  // This node will overlay on the i2c-ctrl node of the base tree
-  i2c-ctrl {
-      eeprom@50 { compatible = "atmel,24c64"; ... };
-  };
-  ...
-
-  --- resulting device tree ---
-
-  i2c1: i2c@abcd0000 {
-      compatible = "xyz,i2c-ctrl";
-      i2c-bus-extension@0 {
-          i2c-bus = <&i2c_ctrl>;
-      };
-      ...
-  };
-
-  i2c5: i2c@cafe0000 {
-      compatible = "xyz,i2c-ctrl";
-      i2c-bus-extension@0 {
-          i2c-bus = <&i2c-sensors>;
-      };
-      ...
-  };
-
-  connector {
-      i2c-ctrl {
-          i2c-parent = <&i2c1>;
-          #address-cells = <1>;
-          #size-cells = <0>;
-
-          eeprom@50 { compatible = "atmel,24c64"; ... };
-      };
-
-      i2c-sensors {
-          i2c-parent = <&i2c5>;
-          #address-cells = <1>;
-          #size-cells = <0>;
-      };
-  };
-
-Here i2c-ctrl (same goes for i2c-sensors) represent the part of I2C bus
-that is on the hot-pluggable add-on. On hot-plugging it will physically
-connect to the I2C adapter on the base board. Let's call the 'i2c-ctrl'
-node an "extension node".
-
-In order to decouple the overlay from the base tree, the I2C adapter
-(i2c@abcd0000) and the extension node (i2c-ctrl) are separate nodes.
-
-The extension node is linked to the I2C bus controller in two ways. The
-first one with the i2c-bus-extension available in I2C controller
-sub-node and the second one with the i2c-parent property available in
-the extension node itself.
-
-The purpose of those two links is to provide the link in both direction
-from the I2C controller to the I2C extension and from the I2C extension
-to the I2C controller.
-
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- dtschema/schemas/i2c/i2c-controller.yaml | 67 ++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
-
-diff --git a/dtschema/schemas/i2c/i2c-controller.yaml b/dtschema/schemas/i2c/i2c-controller.yaml
-index 018d266..509b581 100644
---- a/dtschema/schemas/i2c/i2c-controller.yaml
-+++ b/dtschema/schemas/i2c/i2c-controller.yaml
-@@ -30,6 +30,13 @@ properties:
-     minimum: 1
-     maximum: 5000000
- 
-+  i2c-parent:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      In case of an I2C bus extension, reference to the I2C bus controller
-+      this extension is connected to. In other word, reference the I2C bus
-+      controller on the fixed side that drives the bus extension.
-+
-   i2c-scl-falling-time-ns:
-     description:
-       Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
-@@ -159,6 +166,25 @@ allOf:
-         - i2c-scl-has-clk-low-timeout
- 
- patternProperties:
-+  'i2c-bus-extension@[0-9a-f]+$':
-+    type: object
-+    description:
-+      An I2C bus extension connected to an I2C bus. Those extensions allow to
-+      decouple I2C busses when they are wired to connectors.
-+
-+    properties:
-+      reg:
-+        maxItems: 1
-+
-+      i2c-bus:
-+        $ref: /schemas/types.yaml#/definitions/phandle
-+        description:
-+          Reference to the extension bus.
-+
-+    required:
-+      - reg
-+      - i2c-bus
-+
-   '@[0-9a-f]+$':
-     type: object
- 
-@@ -221,3 +247,44 @@ dependentRequired:
-   i2c-digital-filter-width-ns: [ i2c-digital-filter ]
- 
- additionalProperties: true
-+
-+examples:
-+  # I2C bus extension example involving an I2C bus controller and a connector.
-+  #
-+  #  +--------------+     +-------------+     +-------------+
-+  #  | i2c@abcd0000 |     |  Connector  |     | Addon board |
-+  #  |    (i2c1)    +-----+ (i2c-addon) +-----+ (device@10) |
-+  #  |              |     |             |     |             |
-+  #  +--------------+     +-------------+     +-------------+
-+  #
-+  # The i2c1 I2C bus is wired from a I2C controller to a connector. It is
-+  # identified at connector level as i2c-addon bus.
-+  # An addon board can be connected to this connector and connects a device
-+  # (device@10) to this i2c-addon extension bus.
-+  - |
-+    i2c1: i2c@abcd0000 {
-+        compatible = "xyz,i2c-ctrl";
-+        reg = <0xabcd0000 0x100>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        i2c-bus-extension@0 {
-+            reg = <0>;
-+            i2c-bus = <&i2c_addon>;
-+        };
-+    };
-+
-+    connector {
-+        i2c_addon: i2c-addon {
-+            i2c-parent = <&i2c1>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            device@10 {
-+                compatible = "xyz,foo";
-+                reg = <0x10>;
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.49.0
-
+	Ingo
 
