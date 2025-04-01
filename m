@@ -1,204 +1,406 @@
-Return-Path: <linux-kernel+bounces-584108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A78A78350
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:32:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E9EA78348
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07F6188B751
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDAD2188B945
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D7E215160;
-	Tue,  1 Apr 2025 20:32:31 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462C214213;
+	Tue,  1 Apr 2025 20:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NFi5Ce6Q"
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF319214221;
-	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1B11D63F7;
+	Tue,  1 Apr 2025 20:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743539550; cv=none; b=TaXtyx4HU6N171CHkg5KNF1eRiJfPV6VCF90nDPXLnk5DPtdRd1pnVMqvdBpZuUBzkjA4EJw6/qzCSQ2tO5mQhULTWyuQSQoU1KDuln4b3FRqZE8BbD8N46h4iqcsKkE2AkC5yVFagAB5hKEWRqmyoV/LhGDzzMii1Uei7b9hCo=
+	t=1743539314; cv=none; b=QnPHrKNLLbIGL/Vp5/p7cmXhW7tsDMlqpAQAC/Y7QIuVATs6pSt5A5bgtIZgx/EWhBQoZxuLjSa5r1Y4+9kg1PruL03Lk+Vc8F2FjqtMdK1zwp54bMr9L08Q4cxzTvM+W4PvzPyKBZeAmI6XKnNGXKnUywagCSKu7XEU0Y7PzWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743539550; c=relaxed/simple;
-	bh=Gp13WAunse4VyJM266TXO63VppQOLLyoxgk8UnWLdwU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=bNByDEs1OSwv1/71huR0jAsDIEu3AMD1brlomXgPKAN4Aq7Pnz065OpbQMZt2kfJXMdWltEPqVk4majIDLZaPtse0C/GQVTENignWsgKKQjmh3eECUayzP6aWy+bHoErRC2trXMcca4Vb2na9Rv7zqWLVTzS4GHqsgvk8bCaUVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5F47C4CEE4;
-	Tue,  1 Apr 2025 20:32:30 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tziIe-00000006IfI-1fDZ;
-	Tue, 01 Apr 2025 16:33:32 -0400
-Message-ID: <20250401203332.246646011@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 01 Apr 2025 16:25:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>,
- Jann Horn <jannh@google.com>
-Subject: [PATCH v3 5/5] ring-buffer: Allow reserve_mem persistent ring buffers to be mmapped
-References: <20250401202549.409271454@goodmis.org>
+	s=arc-20240116; t=1743539314; c=relaxed/simple;
+	bh=4/NM3XJzRUUbK5X7KkX6rM9YpT7Dlzh0IpyRQ6BbuxE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NEIQY79dAFE1f9oDk6auCwMqMJ4A/6ryOwCxfe+WN9+FfTxCPaPAX76rudQl8K/vjxb+XaDSGQi3SmS8gfARr6kbJPwDG/i8Q2LJ2lxycHrvVaqbBP8BvDGMxE7R246fuK/uVofiZA0mxVuuKSQjVPypdTjhk6LR9Yj+8dbc8RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=NFi5Ce6Q; arc=none smtp.client-ip=207.171.188.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743539313; x=1775075313;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kZsPR3wZGH/NSnR4U+uGISyjSHKjirvQiPgZaYO8CkI=;
+  b=NFi5Ce6Qwq+iTMCNEgzan1Uz8Zy7UC+Lle8Eh93xal/H6FTRrx1aPbp6
+   YDAbt7GR3bj7QgyBVaGvZvjsmGVVl8FLssG99v68bLcjSgqGEylm1cjjl
+   X9LTXOUs4u25ibbdhcqNudSuCQcZf+p+ul4lSOXIIXXy+rRj+FC46tbLA
+   U=;
+X-IronPort-AV: E=Sophos;i="6.14,294,1736812800"; 
+   d="scan'208";a="6530687"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 20:28:25 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:15174]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.26.232:2525] with esmtp (Farcaster)
+ id 131f1fb7-2b38-486a-89f5-87c8ebe927ca; Tue, 1 Apr 2025 20:28:24 +0000 (UTC)
+X-Farcaster-Flow-ID: 131f1fb7-2b38-486a-89f5-87c8ebe927ca
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 1 Apr 2025 20:28:24 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.94.43.60) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 1 Apr 2025 20:28:18 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <wangzhaolong1@huawei.com>
+CC: <edumazet@google.com>, <ematsumiya@suse.de>, <kuniyu@amazon.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <smfrench@gmail.com>, <zhangchangzhong@huawei.com>
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Date: Tue, 1 Apr 2025 13:26:54 -0700
+Message-ID: <20250401202810.81863-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <ac39f5a1-664a-4812-bb50-ceb9771d1d66@huawei.com>
+References: <ac39f5a1-664a-4812-bb50-ceb9771d1d66@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Steven Rostedt <rostedt@goodmis.org>
+(corrected netdev list)
 
-When the persistent ring buffer is created from the memory returned by
-reserve_mem there is nothing prohibiting it to be memory mapped to user
-space. The memory is the same as the pages allocated by alloc_page().
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+Date: Tue, 1 Apr 2025 21:54:47 +0800
+> Hi.
+> 
+> My colleagues and I have been investigating the issue addressed by this patch
+> and have discovered some significant concerns that require broader discussion.
+> 
+> ### Socket Leak Issue
+> 
+> After testing this patch extensively, I've confirmed it introduces a socket leak
+> when TCP connections don't complete proper termination (e.g., when FIN packets
+> are dropped). The leak manifests as a continuous increase in TCP slab usage:
+> 
+> I've documented this issue with a reproducer in Bugzilla:
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=219972#c0
+> 
+> The key issue appears to stem from the interaction between the SMB client and TCP
+> socket lifecycle management:
+> 
+> 1. Removing `sk->sk_net_refcnt = 1` causes TCP timers to be terminated early in
+>     `tcp_close()` via the `inet_csk_clear_xmit_timers_sync()` call when
+>     `!sk->sk_net_refcnt`
+> 2. This early timer termination prevents proper reference counting resolution
+>     when connections don't complete the 4-way TCP termination handshake
+> 3. The resulting socket references are never fully released, leading to a leak
+> 
+> #### Timeline of Related Changes
+> 
+> 1. v4.2-rc1 26abe14379f8 ("net: Modify sk_alloc to not reference count the netns of kernel sockets")
+>     - Added `sk_net_refcnt` field to distinguish user sockets (=1) from kernel sockets (=0)
+>     - Kernel sockets don't hold netns references, which can lead to potential UAF issues
+> 
+> 2. v6.9-rc2 151c9c724d05: ("tcp: properly terminate timers for kernel sockets")
+>     - Modified `tcp_close()` to check `sk->sk_net_refcnt` and explicitly terminate timers for kernel sockets (=0)
+>     - This prevents UAF when netns is destroyed before socket timers complete
+>     - **Key change**: If `!sk->sk_net_refcnt`, call `inet_csk_clear_xmit_timers_sync()`
+> 
+> 3. v6.12-rc7 ef7134c7fc48: ("smb: client: Fix use-after-free of network namespace")
+>     - Fixed netns UAF in CIFS by manually setting `sk->sk_net_refcnt = 1`
+>     - Also called `maybe_get_net()` to maintain netns references
+>     - This effectively made kernel sockets behave like user sockets for reference counting
+> 
+> 4. v6.13-rc4 e9f2517a3e18: ("smb: client: fix TCP timers deadlock after rmmod")
+>     - Problem commit: Removed `sk->sk_net_refcnt = 1` setting
+>     - Changed to using explicit `get_net()/put_net()` at CIFS layer
+>     - This change leads to socket leaks because timers are terminated early
+> 
+> ### Lockdep Warning Analysis
+> 
+> I've also investigated the lockdep warning mentioned in the patch. My analysis
+> suggests it may be a false positive rather than an actual deadlock.
 
-The way the memory is managed by the ring buffer code is slightly
-different though and needs to be addressed.
+Note that the 'deadlock' in the description is simply wrong as I mentioned
+before.  The 'deadlock' means a lock which belongs to an unloaded module,
+and not actual deadlock like circular locking etc.
 
-The persistent memory uses the page->id for its own purpose where as the
-user mmap buffer currently uses that for the subbuf array mapped to user
-space. If the buffer is a persistent buffer, use the page index into that
-buffer as the identifier instead of the page->id.
+https://lore.kernel.org/netdev/20241219084100.33837-1-kuniyu@amazon.com/
 
-That is, the page->id for a persistent buffer, represents the order of the
-buffer is in the link list. ->id == 0 means it is the reader page.
-When a reader page is swapped, the new reader page's ->id gets zero, and
-the old reader page gets the ->id of the page that it swapped with.
 
-The user space mapping has the ->id is the index of where it was mapped in
-user space and does not change while it is mapped.
+> The crash
+> actually occurs in the lockdep subsystem itself (null pointer dereference in
+> `check_wait_context()`), not in the CIFS or networking code directly.
+> 
+> The procedure for the null pointer dereference is as follows:
+> 
+> When lockdep is enabled, the lock class "slock-AF_INET-CIFS" is set when a socket
+> connection is established.
+> 
+> ```
+> cifs_do_mount
+>    cifs_mount
+>      mount_get_conns
+>        cifs_get_tcp_session
+>          ip_connect
+>            generic_ip_connect
+>              cifs_reclassify_socket4
+>                sock_lock_init_class_and_name(sk, "slock-AF_INET-CIFS",
+>                  lockdep_init_map
+>                    lockdep_init_map_wait
+>                      lockdep_init_map_type
+>                        lockdep_init_map_type
+>                          register_lock_class
+>                            __set_bit(class - lock_classes, lock_classes_in_use);
+> ```
+> 
+> When the module is unloaded, the lock class is cleaned up.
+> 
+> ```
+> free_mod_mem
+>    lockdep_free_key_range
+>      __lockdep_free_key_range
+>        zap_class
+>          __clear_bit(class - lock_classes, lock_classes_in_use);
+> ```
+> 
+> After the module is uninstalled and the network connection is restored, the
+> timer is woken up.
+> 
+> ```
+> run_timer_softirq
+>    run_timer_base
+>      __run_timers
+>        call_timer_fn
+>          tcp_write_timer
+>            bh_lock_sock
+>              spin_lock(&((__sk)->sk_lock.slock))
+>                _raw_spin_lock
+>                  lock_acquire
+>                    __lock_acquire
+>                      check_wait_context
+>                        hlock_class
+>                         if (!test_bit(class_idx, lock_classes_in_use)) {
+>                            return NULL;
+>                        hlock_class(next)->wait_type_inner; // Null pointer dereference
+> ```
+> 
+> The problem lies within lockdep, as Kuniyuki says:
+> 
+> > I tried the repro and confirmed it triggers null deref.
+> > 
+> > It happens in LOCKDEP internal, so for me it looks like a problem in
+> > LOCKDEP rather than CIFS or TCP.
+> > 
+> > I think LOCKDEP should hold a module reference and prevent related
+> > modules from being unloaded.
+> 
+> Regarding the deadlock issue, it is clear that the locks mentioned in the deadlock warning
+> do not belong to the same lock instance. A deadlock should not occur.
+> 
+> ### Discussion Points
+> 
+> 1. API Design Question: Is this fundamentally an issue with how CIFS uses the socket
+>     API, or is it a networking layer issue that should handle socket cleanup differently?
+> 
+> 2. Approach to Resolution: Would it be better to:
+>     - Revert to the original solution (setting `sk->sk_net_refcnt = 1`) from ef7134c7fc48?
+>     - Work with networking subsystem maintainers on a more comprehensive solution that
+>       handles socket cleanup properly?
 
-Since the persistent buffer is fixed in its location, the index of where
-a page is in the memory range can be used as the "id" to put in the meta
-page array, and it can be mapped in the same order to user space as it is
-in the persistent memory.
+Could you test this patch with e9f2517a3e18 reverted ?
 
-A new rb_page_id() helper function is used to get and set the id depending
-on if the page is a normal memory allocated buffer or a physical memory
-mapped buffer.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 49 ++++++++++++++++++++++++++++++++++----
- kernel/trace/trace.c       |  4 ----
- 2 files changed, 45 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index d4b0f7b55cce..f7a10f754066 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6000,6 +6000,39 @@ static void rb_clear_buffer_page(struct buffer_page *page)
- 	page->read = 0;
+---8<---
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 8daf1b3b12c6..1e15a1209ea6 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -547,6 +547,10 @@ struct sock {
+ 	struct rcu_head		sk_rcu;
+ 	netns_tracker		ns_tracker;
+ 	struct xarray		sk_user_frags;
++
++#if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(MODULE)
++	struct module		*sk_owner;
++#endif
+ };
+ 
+ struct sock_bh_locked {
+@@ -1583,6 +1587,15 @@ static inline void sk_mem_uncharge(struct sock *sk, int size)
+ 	sk_mem_reclaim(sk);
  }
  
-+/*
-+ * When the buffer is memory mapped to user space, each sub buffer
-+ * has a unique id that is used by the meta data to tell the user
-+ * where the current reader page is.
-+ *
-+ * For a normal allocated ring buffer, the id is saved in the buffer page
-+ * id field, and updated via this function.
-+ *
-+ * But for a fixed memory mapped buffer, the id is already assigned for
-+ * fixed memory ording in the memory layout and can not be used. Instead
-+ * the index of where the page lies in the memory layout is used.
-+ *
-+ * For the normal pages, set the buffer page id with the passed in @id
-+ * value and return that.
-+ *
-+ * For fixed memory mapped pages, get the page index in the memory layout
-+ * and return that as the id.
-+ */
-+static int rb_page_id(struct ring_buffer_per_cpu *cpu_buffer,
-+		      struct buffer_page *bpage, int id)
++#if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(MODULE)
++static inline void sk_set_owner(struct sock *sk, struct module *owner)
 +{
-+	/*
-+	 * For boot buffers, the id is the index,
-+	 * otherwise, set the buffer page with this id
-+	 */
-+	if (cpu_buffer->ring_meta)
-+		id = rb_meta_subbuf_idx(cpu_buffer->ring_meta, bpage->page);
-+	else
-+		bpage->id = id;
-+
-+	return id;
++	sk->sk_owner = module_get(owner);
 +}
++#else
++#define sk_set_owner(sk, owner)
++#endif
 +
- static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- {
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
-@@ -6008,7 +6041,9 @@ static void rb_update_meta_page(struct ring_buffer_per_cpu *cpu_buffer)
- 		return;
- 
- 	meta->reader.read = cpu_buffer->reader_page->read;
--	meta->reader.id = cpu_buffer->reader_page->id;
-+	meta->reader.id = rb_page_id(cpu_buffer, cpu_buffer->reader_page,
-+				     cpu_buffer->reader_page->id);
+ /*
+  * Macro so as to not evaluate some arguments when
+  * lockdep is not enabled.
+@@ -1592,6 +1605,7 @@ static inline void sk_mem_uncharge(struct sock *sk, int size)
+  */
+ #define sock_lock_init_class_and_name(sk, sname, skey, name, key)	\
+ do {									\
++	sk_set_owner(sk, THIS_MODULE);					\
+ 	sk->sk_lock.owned = 0;						\
+ 	init_waitqueue_head(&sk->sk_lock.wq);				\
+ 	spin_lock_init(&(sk)->sk_lock.slock);				\
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 323892066def..2d91a92ed26d 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2324,6 +2324,11 @@ static void __sk_destruct(struct rcu_head *head)
+ 		__netns_tracker_free(net, &sk->ns_tracker, false);
+ 		net_passive_dec(net);
+ 	}
 +
- 	meta->reader.lost_events = cpu_buffer->lost_events;
++#if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(MODULE)
++	if (sk->sk_owner)
++		module_put(sk->sk_owner);
++#endif
+ 	sk_prot_free(sk->sk_prot_creator, sk);
+ }
  
- 	meta->entries = local_read(&cpu_buffer->entries);
-@@ -6924,23 +6959,29 @@ static void rb_setup_ids_meta_page(struct ring_buffer_per_cpu *cpu_buffer,
- 	struct trace_buffer_meta *meta = cpu_buffer->meta_page;
- 	unsigned int nr_subbufs = cpu_buffer->nr_pages + 1;
- 	struct buffer_page *first_subbuf, *subbuf;
-+	int cnt = 0;
- 	int id = 0;
- 
--	subbuf_ids[id] = (unsigned long)cpu_buffer->reader_page->page;
--	cpu_buffer->reader_page->id = id++;
-+	id = rb_page_id(cpu_buffer, cpu_buffer->reader_page, id);
-+	subbuf_ids[id++] = (unsigned long)cpu_buffer->reader_page->page;
-+	cnt++;
- 
- 	first_subbuf = subbuf = rb_set_head_page(cpu_buffer);
- 	do {
-+		id = rb_page_id(cpu_buffer, subbuf, id);
-+
- 		if (WARN_ON(id >= nr_subbufs))
- 			break;
- 
- 		subbuf_ids[id] = (unsigned long)subbuf->page;
--		subbuf->id = id;
- 
- 		rb_inc_page(&subbuf);
- 		id++;
-+		cnt++;
- 	} while (subbuf != first_subbuf);
- 
-+	WARN_ON(cnt != nr_subbufs);
-+
- 	/* install subbuf ID to kern VA translation */
- 	cpu_buffer->subbuf_ids = subbuf_ids;
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 1d7d2b772a74..5e7f8113c024 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8497,10 +8497,6 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
- 	if (iter->tr->flags & TRACE_ARRAY_FL_MEMMAP)
- 		return -ENODEV;
- 
--	/* Currently the boot mapped buffer is not supported for mmap */
--	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
--		return -ENODEV;
--
- 	ret = get_snapshot_map(iter->tr);
- 	if (ret)
- 		return ret;
--- 
-2.47.2
+---8<---
 
 
+> 
+> 3.  CVE Process Question: Given that CVE-2024-54680 appears to "fix" a non-existent issue
+>      while introducing an actual vulnerability, what's the appropriate way to address this?
+> 
+> What's the best path forward?
+> 
+> Best regards,
+> Wang Zhaolong
+> 
+> > Adding fsdevel and networking in case any thoughts on this fix for
+> > network/namespaces refcount issue (that causes rmmod UAF).
+> > 
+> > Any opinions on Enzo's proposed Fix?
+> > 
+> > ---------- Forwarded message ---------
+> > From: Steve French <smfrench@gmail.com>
+> > Date: Tue, Dec 17, 2024 at 9:24 PM
+> > Subject: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+> > To: CIFS <linux-cifs@vger.kernel.org>
+> > Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Enzo Matsumiya <ematsumiya@suse.de>
+> > 
+> > 
+> > Enzo had an interesting patch, that seems to fix an important problem.
+> > 
+> > Here was his repro scenario:
+> > 
+> >       tw:~ # mount.cifs -o credentials=/root/wincreds,echo_interval=10
+> > //someserver/target1 /mnt/test
+> >       tw:~ # ls /mnt/test
+> >       abc  dir1  dir3  target1_file.txt  tsub
+> >       tw:~ # iptables -A INPUT -s someserver -j DROP
+> > 
+> > Trigger reconnect and wait for 3*echo_interval:
+> > 
+> >       tw:~ # cat /mnt/test/target1_file.txt
+> >       cat: /mnt/test/target1_file.txt: Host is down
+> > 
+> > Then umount and rmmod.  Note that rmmod might take several iterations
+> > until it properly tears down everything, so make sure you see the "not
+> > loaded" message before proceeding:
+> > 
+> >       tw:~ # umount /mnt/*; rmmod cifs
+> >       umount: /mnt/az: not mounted.
+> >       umount: /mnt/dfs: not mounted.
+> >       umount: /mnt/local: not mounted.
+> >       umount: /mnt/scratch: not mounted.
+> >       rmmod: ERROR: Module cifs is in use
+> >       ...
+> >       tw:~ # rmmod cifs
+> >       rmmod: ERROR: Module cifs is not currently loaded
+> > 
+> > Then kickoff the TCP internals:
+> >       tw:~ # iptables -F
+> > 
+> > Gets the lockdep warning (requires CONFIG_LOCKDEP=y) + a NULL deref
+> > later on.
+> > 
+> > 
+> > Any thoughts on his patch?  See below (and attached)
+> > 
+> >      Commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
+> > namespace.")
+> >      fixed a netns UAF by manually enabled socket refcounting
+> >      (sk->sk_net_refcnt=1 and sock_inuse_add(net, 1)).
+> > 
+> >      The reason the patch worked for that bug was because we now hold
+> >      references to the netns (get_net_track() gets a ref internally)
+> >      and they're properly released (internally, on __sk_destruct()),
+> >      but only because sk->sk_net_refcnt was set.
+> > 
+> >      Problem:
+> >      (this happens regardless of CONFIG_NET_NS_REFCNT_TRACKER and regardless
+> >      if init_net or other)
+> > 
+> >      Setting sk->sk_net_refcnt=1 *manually* and *after* socket creation is not
+> >      only out of cifs scope, but also technically wrong -- it's set conditionally
+> >      based on user (=1) vs kernel (=0) sockets.  And net/ implementations
+> >      seem to base their user vs kernel space operations on it.
+> > 
+> >      e.g. upon TCP socket close, the TCP timers are not cleared because
+> >      sk->sk_net_refcnt=1:
+> >      (cf. commit 151c9c724d05 ("tcp: properly terminate timers for
+> > kernel sockets"))
+> > 
+> >      net/ipv4/tcp.c:
+> >          void tcp_close(struct sock *sk, long timeout)
+> >          {
+> >              lock_sock(sk);
+> >              __tcp_close(sk, timeout);
+> >              release_sock(sk);
+> >              if (!sk->sk_net_refcnt)
+> >                      inet_csk_clear_xmit_timers_sync(sk);
+> >              sock_put(sk);
+> >          }
+> > 
+> >      Which will throw a lockdep warning and then, as expected, deadlock on
+> >      tcp_write_timer().
+> > 
+> >      A way to reproduce this is by running the reproducer from ef7134c7fc48
+> >      and then 'rmmod cifs'.  A few seconds later, the deadlock/lockdep
+> >      warning shows up.
+> > 
+> >      Fix:
+> >      We shouldn't mess with socket internals ourselves, so do not set
+> >      sk_net_refcnt manually.
+> > 
+> >      Also change __sock_create() to sock_create_kern() for explicitness.
+> > 
+> >      As for non-init_net network namespaces, we deal with it the best way
+> >      we can -- hold an extra netns reference for server->ssocket and drop it
+> >      when it's released.  This ensures that the netns still exists whenever
+> >      we need to create/destroy server->ssocket, but is not directly tied to
+> >      it.
+> > 
+> >      Fixes: ef7134c7fc48 ("smb: client: Fix use-after-free of network
+> > namespace.")
+> > 
+> > 
+> > --
+> > Thanks,
+> > 
+> > Steve
 
