@@ -1,181 +1,193 @@
-Return-Path: <linux-kernel+bounces-583482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5534FA77B68
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474F2A77B8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE693A8897
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417093AF1C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302AF20371C;
-	Tue,  1 Apr 2025 12:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E41C203719;
+	Tue,  1 Apr 2025 12:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+lesDyf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Vc0m+rgi"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5D1DB92A;
-	Tue,  1 Apr 2025 12:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743512195; cv=none; b=RCOkAaufXbJejyGySjTnJcdGi1DvDKSKm4pbiI/vt9If8MxzwT/3rs21s3FZy7osCUUxlTCkUDQMAKlUCYWKSXvCCnPOXUSjWLYYklq5eEAqbPVPTCdD4By3WnaDkKzy/nx2zDgI1rkqmhyHy2bdbjNXaEB0T8gkBRNbRCA8Nys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743512195; c=relaxed/simple;
-	bh=rQ48vlkFN0XufVs3SokIZaBepH7ggvd+Qm0OnwbfbUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkNhCvj/aNZPs23/D99Du3uL2F1Xhdn+WK4xyeaNdDzKv17Njh2dF1rjlZjrv55r+eJPYGT1YKMnqoyKHGKrhzHXlyzVZyAqO9Ho+SS0LE6cfGDzNg6S4gTgkC5fZ3bY6as40jMfjTP758fVdTeCz+jiMclNUvvrGODj9E5ohRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+lesDyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB97C4CEE5;
-	Tue,  1 Apr 2025 12:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743512194;
-	bh=rQ48vlkFN0XufVs3SokIZaBepH7ggvd+Qm0OnwbfbUk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L+lesDyfO2BPqpLsGxy1+fsHUoXiSM4+phDx6oaUDVTSSV9IV/GqsPmuREl2bNSoo
-	 1xelS54Yh0U7bdATOx6z64ofyjn7LMnfDP5h1MiuGbmiiT2XT1wm6E/3SA28rSIQzH
-	 HBYeqKo34x6H8I8xO9JH64xtmcGiYoLMGsykWKS4B2Byc4DTzzoSoQwWKTLeZ9Szx6
-	 NioJkLujk66DpW0LkFRXP/e2L9h/6TMNOiqn/mKUMgIW34Vg2vNcUg7AF7PcMf06ay
-	 +mMmuKdjmBCoHD8atGdhFmSsgntyFno6PzWTDPZTP7mgkNOfabMAGl9tliSaII0kHZ
-	 NKNwTKLWi6isw==
-Message-ID: <e193aefe-d7fb-4650-b227-7db483adde04@kernel.org>
-Date: Tue, 1 Apr 2025 14:56:25 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22491519B8;
+	Tue,  1 Apr 2025 12:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743512389; cv=pass; b=uHW+NrvF9SSBYk5uyDyogsJj1rbiB8tvUFXCaFQkOQ3HLmMy+FoGEI6dX0xVxU2ldjCHYhCuzh1g9AJJX0vuGikM1wxqiTNNTgwtFEjMZrfrj8TTdnZVIwl+f0LRLb9FjWDq2qdKJru65L2AwXzGfLurdVk+bRy4X3LQ1MwkfPw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743512389; c=relaxed/simple;
+	bh=f6mLAQf6ewULXu0GR7bfELaoivoxdxwjFEP5/+g8KrU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hoUukwRY6SKLDS76HtLA2atAGS+y0VPGhMt7ZpNi5KNMqAKklsr2MGia1a4c2tjfAg3gIPQNisG+icMJFrGXJQGg+29SQFRIZot593pb5WjiUW3JTK9iHJqPjmppEXtJktLPBMfqXiysdxX1L37cR4UITOjpKCG+WV3hAt1A0+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Vc0m+rgi; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743512357; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GBtYm76tIuinjoE7owRCKgat8CjJ44vGLLpu70elbdQfmwNC/MEGhAh8Pl/zcw5RW7ZeEIlVEdrSsW91OzwLhhn0n9AY24WKps0LPG0eWGUuGIlCgSZ7980ObhPddqjotF7m4PkRosMiaESTtyYP9j25V5K2wAF5MeNbMWN7hvs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743512357; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eVppIKvmTMpG1wI2U0Pa+9csa+B4U5fgzTpOMWMirjY=; 
+	b=MyF/VXeb1iPpnlJF0rRVMhk/yjVw1tnVj/ItwKgZMmbWJyZrhkGCU2U9B2JL+ODRjOYewT9A7+4UZiRP0t85+T4erwxbWZhcOpyIdaqF1g/SUKe0V2qfXfUoF26JGihZLbrZs4sS1Ow7eYamPD1YL60a7eHZ4QP2GqABleRyLEE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743512357;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=eVppIKvmTMpG1wI2U0Pa+9csa+B4U5fgzTpOMWMirjY=;
+	b=Vc0m+rgi44hW3Wp47u+sygY5LrN6TY2w+C+S/4k6kLSBtjkYNDaTI5KvmN1Ku3QY
+	rsBNYOvyPh4L59a3oyFBWhE4coD00NfLZJLfzmysZTtpArTWva3Pr/hS+9F7M4IGUZE
+	U/bzLuw93/whRo1xeXT8RT3zyy/GxYX8l33vm2mk=
+Received: by mx.zohomail.com with SMTPS id 1743512339761844.7601541518382;
+	Tue, 1 Apr 2025 05:58:59 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/6] dt-bindings: arm: qcom: Add Asus Zenbook A14
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <lumag@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan+linaro@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <20250331215720.19692-1-alex.vinarskis@gmail.com>
- <20250331215720.19692-5-alex.vinarskis@gmail.com>
- <fb1fc0aa-4921-4ee3-9b8a-6167ef6558eb@linaro.org>
- <CAMcHhXoxLx9SiUcntp1vmmK7BF0SO_uo3DCBx_3Ldd3tx+rBXg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMcHhXoxLx9SiUcntp1vmmK7BF0SO_uo3DCBx_3Ldd3tx+rBXg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v5 07/13] scripts: generate_rust_analyzer.py: avoid
+ optional arguments
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250325-rust-analyzer-host-v5-7-385e7f1e1e23@gmail.com>
+Date: Tue, 1 Apr 2025 09:58:40 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CCB6D89D-D513-4514-8992-AC37313F5588@collabora.com>
+References: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com>
+ <20250325-rust-analyzer-host-v5-7-385e7f1e1e23@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On 01/04/2025 12:16, Aleksandrs Vinarskis wrote:
-> On Tue, 1 Apr 2025 at 07:38, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 31/03/2025 23:53, Aleksandrs Vinarskis wrote:
->>> Document the X1E-78-100 and X1P-42-100/X1-26-100 variants.
->>>
->>> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/arm/qcom.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
->>> index 08c329b1e919..1b7e2ed56baa 100644
->>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
->>> @@ -1133,6 +1133,7 @@ properties:
->>>        - items:
->>>            - enum:
->>>                - asus,vivobook-s15
->>> +              - asus,x1e80100-zenbook-a14
->>
->> asus,zenbook-a14-x1e80100
->>
->> asus did not make a component of x1e80100 soc.
-> 
-> I see, I misunderstood the meaning of qcom,x1e80100-crd, clear now.
-> In that case, perhaps follow pattern of other devices, describe by
+Hi Tamir,
 
-Qualcomm dev boards follow such pattern, even though actual name is for
-example mtp8750.
+This patch looks good to me but,
 
-> model differences (eg. -oled) instead of soc? eg:
-> 
-> `asus,zenbook-a14-ux3407ra` (for x1e variant)
-> `asus,zenbook-a14-ux3407qa` (for x1/x1p variants)
+> On 25 Mar 2025, at 17:06, Tamir Duberstein <tamird@gmail.com> wrote:
+>=20
+> Make all arguments required to reduce the probability of incorrect
+> implicit behavior. Use keyword arguments for clarity.
+>=20
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+> scripts/generate_rust_analyzer.py | 90 =
++++++++++++++++++++++++++++------------
+> 1 file changed, 62 insertions(+), 28 deletions(-)
+>=20
+> diff --git a/scripts/generate_rust_analyzer.py =
+b/scripts/generate_rust_analyzer.py
+> index b37d8345486a..badcef4126cf 100755
+> --- a/scripts/generate_rust_analyzer.py
+> +++ b/scripts/generate_rust_analyzer.py
+> @@ -69,9 +69,10 @@ def generate_crates(
+>     def build_crate(
+>         display_name: str,
+>         root_module: pathlib.Path,
+> +        *,
+>         deps: List[str],
+> -        cfg: List[str] =3D [],
+> -        is_workspace_member: bool =3D True,
+> +        cfg: List[str],
+> +        is_workspace_member: bool,
+>     ) -> Crate:
+>         return {
+>             "display_name": display_name,
+> @@ -92,21 +93,34 @@ def generate_crates(
+>     def append_crate(
+>         display_name: str,
+>         root_module: pathlib.Path,
+> +        *,
+>         deps: List[str],
+> -        cfg: List[str] =3D [],
+> -        is_workspace_member: bool =3D True,
+> +        cfg: List[str],
+>     ) -> None:
+>         register_crate(
+> -            build_crate(display_name, root_module, deps, cfg, =
+is_workspace_member)
+> +            build_crate(
+> +                display_name,
+> +                root_module,
+> +                deps=3Ddeps,
+> +                cfg=3Dcfg,
+> +                is_workspace_member=3DTrue,
+> +            )
+>         )
+>=20
+>     def append_proc_macro_crate(
+>         display_name: str,
+>         root_module: pathlib.Path,
+> +        *,
+>         deps: List[str],
+> -        cfg: List[str] =3D [],
+> +        cfg: List[str],
+>     ) -> None:
+> -        crate =3D build_crate(display_name, root_module, deps, cfg)
+> +        crate =3D build_crate(
+> +            display_name,
+> +            root_module,
+> +            deps=3Ddeps,
+> +            cfg=3Dcfg,
+> +            is_workspace_member=3DTrue,
+> +        )
+>         proc_macro_dylib_name =3D (
+>             subprocess.check_output(
+>                 [
+> @@ -133,66 +147,75 @@ def generate_crates(
+>=20
+>     def append_sysroot_crate(
+>         display_name: str,
+> +        *,
+>         deps: List[str],
+> -        cfg: List[str] =3D [],
+> +        cfg: List[str],
+>     ) -> None:
+> -        append_crate(
+> -            display_name,
+> -            sysroot_src / display_name / "src" / "lib.rs",
+> -            deps,
+> -            cfg,
+> -            is_workspace_member=3DFalse,
+> +        register_crate(
+> +            build_crate(
+> +                display_name,
+> +                sysroot_src / display_name / "src" / "lib.rs",
+> +                deps=3Ddeps,
+> +                cfg=3Dcfg,
+> +                is_workspace_member=3DFalse,
+> +            )
+>         )
 
-I am fine with both, just wanted the actual generic/common product name
-first.
+Why the change from append to register+build here? Maybe this change
+should be in another patch?
 
-> 
-> Thanks for the review,
-> Alex
-> 
->>
->>>                - dell,xps13-9345
->>>                - hp,omnibook-x14
->>>                - lenovo,yoga-slim7x
->>> @@ -1144,6 +1145,7 @@ properties:
->>>
->>>        - items:
->>>            - enum:
->>> +              - asus,x1p42100-zenbook-a14
->>
->> Same here.
->>
->>
->> Best regards,
->> Krzysztof
-
-
-Best regards,
-Krzysztof
+=E2=80=94 Daniel=
 
