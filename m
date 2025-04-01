@@ -1,126 +1,189 @@
-Return-Path: <linux-kernel+bounces-583074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4A6A7763D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A717EA77635
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1973AA289
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B583A92C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 08:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB7C1EB1B9;
-	Tue,  1 Apr 2025 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97481EA7DE;
+	Tue,  1 Apr 2025 08:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chir.rs header.i=lotte@chir.rs header.b="lHTViPUX"
-Received: from sender-op-o17.zoho.eu (sender-op-o17.zoho.eu [136.143.169.17])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="RV7b9Dch"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429431EB184
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 08:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743495603; cv=pass; b=pjA5nM/b0PIzEuJI0M2JvK6DnJOmQ13FKlTZuPWBIxwUi9Yc9IKT0EbUCv39iwmKNzVD2FPfjSvweuY44D1iVtNJ8zwxJv52Mk2IQaqSIMMbs3gdSdWcLBx91uBaFybpMPv/8alvkNoGypr3bbsH6Xoa3oi4rcSGjEAb/j17348=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743495603; c=relaxed/simple;
-	bh=jhqJx49fcj3gKJzueL2kABZtIxhFn3/O3aOgaS3apgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZllqeE+UBKr7gBQuIlOGsRPF92uoV2eeElzjmWFoZU50DYfEFR0vKuep4GTjFCA5F6CRn6e5oTOyFWU2OehNfN610M3+6EJd5mPGGoGfB6Jq+JIHpWT42dwGQUDreiq4ckQLyHA0/m2/AAtiU1PaM+t9h16xB/d16NqAuGN+m0w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chir.rs; spf=pass smtp.mailfrom=chir.rs; dkim=pass (1024-bit key) header.d=chir.rs header.i=lotte@chir.rs header.b=lHTViPUX; arc=pass smtp.client-ip=136.143.169.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chir.rs
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chir.rs
-ARC-Seal: i=1; a=rsa-sha256; t=1743495566; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=XtaKPhUQtTwLDVpUSo8dsL2Beh7oqdbJ2TJ2gyCgpfT3qsz+sivmBGYma+IyqLICuGnQb64oy6ls0CYazbKhLpRnQ8YU7/GgXVJHE04W7m4425VGAAVC2DSwd48OhNJd3c67lUdkph6Xj6FJiB7R5btPoh9bgDI9WsPuuGZPkqE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1743495566; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4G4q5PPDuHxsYayqZRtqQV33u9pG2D0fN2i5JuYeBHg=; 
-	b=CzH4Kc0RbxaH5Eja9VkRHyJywHT77YCbCyRvKsnRkzdGPVpNQ9RCcZwIwU/6wMqo14D9aBZ2UQS3dWWM2xsRVIoQKPMHFJU109F+d3fr1lQ9rpnX8h+G8OhrET451rhAxp3YiiMJcRIICVxSA3ZncTgCTT//roKRypAVTSYnseg=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=chir.rs;
-	spf=pass  smtp.mailfrom=lotte@chir.rs;
-	dmarc=pass header.from=<lotte@chir.rs>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743495566;
-	s=zmail; d=chir.rs; i=lotte@chir.rs;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=4G4q5PPDuHxsYayqZRtqQV33u9pG2D0fN2i5JuYeBHg=;
-	b=lHTViPUXa197dLfXEloBaD2zZkTADqppm0F7xn8aIOG3J8jA6BVkSpXhSbbqGHKL
-	wmrZpqbLfgzQ22eS0i8dWpmcnMnt+vTubOEfFLe18pnjS9OEf6RBxwJErkuZUc8o79G
-	VXDUwnvE/552o5IWaZ70Mc+ZVJGnE0IoMxhMV54A=
-Received: by mx.zoho.eu with SMTPS id 1743495563988807.3819207227426;
-	Tue, 1 Apr 2025 10:19:23 +0200 (CEST)
-From: =?UTF-8?q?Charlotte=20=Dele=C5=84kec?= <lotte@chir.rs>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	max@maxfierke.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] drm/panel: clockworkpi-cwd686: Implement .get_orientation callback
-Date: Tue,  1 Apr 2025 09:18:33 +0100
-Message-ID: <20250401081852.283532-4-lotte@chir.rs>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250401081852.283532-1-lotte@chir.rs>
-References: <20250401081852.283532-1-lotte@chir.rs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2781E261F;
+	Tue,  1 Apr 2025 08:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743495560; cv=none; b=n+nNNrhEm/i30t4yqDoBPP8TVg4t84feV/cgPmcOdnJCaxYwgPnDF5aVbaFyPcD+ik26JA/vDNmnSieQhQ629qTfwvgvSnKX8V6HBnXWFple3x2SPkywFWjObvg4s5j8GVgA8rJoc70lNk5qPU6pSguAON/Auddyw2k44cfRpEo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743495560; c=relaxed/simple;
+	bh=qlsGP9nYpg9ECwWOf+7L3C+s5nRg0js3AhgwMO+0GnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WYKJJuzxEtWepFLwZN/Q37B3sKEBndoZLi2DNj37vrhJ3R7/q8L7Z8+b97YfGewB2ro8JpzZTvWIPnriDMjMPFlA99w1L4AKoSXmPXvHFN+Xu7DtRANP0Lo4Sf5HqbCz9xkcqvH+nuyZBU/P7nbbAunoEwCbp96hgBugHTud0ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=RV7b9Dch; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=vJej1gym8PffvPJkpcAVY4oHxH7PtcR6PiojZNvFt9M=; b=RV7b9DchSX6L/1eGwqFQrmPoMe
+	hf0+MvUSe77ZEvXnOMKdaDfI72KNjrnBHp4+fOyw74E/OKn4qz/xPPhyS7jysMN32ED0nZFh+bSWt
+	qNTdeC9sUxWNSlUy3fPjumM8AyZcbA0ZmlEpLcU9V+2QwUoXZ7eQfcl2nXK+BF86z5eiOUe5W+1UA
+	0QlMB9Ew/iDDfZQz1e7CZjakP0NXtY+bs+HEsN/fv3tTiQvAZhGTsamRKtNDHQAO89fEIE3KeBJf8
+	xcd8vRDXXIUCf417uDpOhlMncOdHNgBrwgFPS3pKv66oe2Gxh7inZx1qK9sSIbFAyQV3hRiMvLECg
+	thVcgrdmcYk8AM8eIrag2xACAnicTWSHEjTexxvojrRysCeGDc29D6smjQ2phM7X9otv3Fm5Phnsk
+	JXkUjKNwFhUfQWuhXXq7lO+xH6aXarbwoeT3Oz7x9XbnXQJv7YBaLBY2zEYjoaVXXS037eARPx8fj
+	gfrHfFqPkn/4/n7sGmBOfAQs;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tzWpu-007dNX-35;
+	Tue, 01 Apr 2025 08:19:07 +0000
+Message-ID: <39515c76-310d-41af-a8b4-a814841449e3@samba.org>
+Date: Tue, 1 Apr 2025 10:19:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] net/io_uring: pass a kernel pointer via optlen_t
+ to proto[_ops].getsockopt()
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ Breno Leitao <leitao@debian.org>, Jakub Kicinski <kuba@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Karsten Keil <isdn@linux-pingi.de>,
+ Ayush Sawal <ayush.sawal@chelsio.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, David Ahern <dsahern@kernel.org>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>, Neal Cardwell <ncardwell@google.com>,
+ Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Robin van der Gracht <robin@protonic.nl>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+ Alexander Aring <alex.aring@gmail.com>,
+ Stefan Schmidt <stefan@datenfreihafen.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Alexandra Winter <wintera@linux.ibm.com>,
+ Thorsten Winkler <twinkler@linux.ibm.com>,
+ James Chapman <jchapman@katalix.com>, Jeremy Kerr <jk@codeconstruct.com.au>,
+ Matt Johnston <matt@codeconstruct.com.au>,
+ Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Remi Denis-Courmont <courmisch@gmail.com>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+ "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>,
+ Wen Gu <guwen@linux.alibaba.com>, Jon Maloy <jmaloy@redhat.com>,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Stefano Garzarella <sgarzare@redhat.com>,
+ Martin Schiller <ms@dev.tdt.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Magnus Karlsson <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org,
+ linux-hams@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-can@vger.kernel.org, dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
+ linux-s390@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ linux-afs@lists.infradead.org, tipc-discussion@lists.sourceforge.net,
+ virtualization@lists.linux.dev, linux-x25@vger.kernel.org,
+ bpf@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
+ io-uring@vger.kernel.org
+References: <cover.1743449872.git.metze@samba.org>
+ <Z-sDc-0qyfPZz9lv@mini-arch>
+Content-Language: en-US, de-DE
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <Z-sDc-0qyfPZz9lv@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Max Fierke <max@maxfierke.com>
+Am 31.03.25 um 23:04 schrieb Stanislav Fomichev:
+> On 03/31, Stefan Metzmacher wrote:
+>> The motivation for this is to remove the SOL_SOCKET limitation
+>> from io_uring_cmd_getsockopt().
+>>
+>> The reason for this limitation is that io_uring_cmd_getsockopt()
+>> passes a kernel pointer as optlen to do_sock_getsockopt()
+>> and can't reach the ops->getsockopt() path.
+>>
+>> The first idea would be to change the optval and optlen arguments
+>> to the protocol specific hooks also to sockptr_t, as that
+>> is already used for setsockopt() and also by do_sock_getsockopt()
+>> sk_getsockopt() and BPF_CGROUP_RUN_PROG_GETSOCKOPT().
+>>
+>> But as Linus don't like 'sockptr_t' I used a different approach.
+>>
+>> @Linus, would that optlen_t approach fit better for you?
+> 
+> [..]
+> 
+>> Instead of passing the optlen as user or kernel pointer,
+>> we only ever pass a kernel pointer and do the
+>> translation from/to userspace in do_sock_getsockopt().
+> 
+> At this point why not just fully embrace iov_iter? You have the size
+> now + the user (or kernel) pointer. Might as well do
+> s/sockptr_t/iov_iter/ conversion?
 
-Returns the panel's configured orientation
+I think that would only be possible if we introduce
+proto[_ops].getsockopt_iter() and then convert the implementations
+step by step. Doing it all in one go has a lot of potential to break
+the uapi. I could try to convert things like socket, ip and tcp myself, but
+the rest needs to be converted by the maintainer of the specific protocol,
+as it needs to be tested. As there are crazy things happening in the existing
+implementations, e.g. some getsockopt() implementations use optval as in and out
+buffer.
 
-Signed-off-by: Max Fierke <max@maxfierke.com>
----
- drivers/gpu/drm/panel/panel-clockwork-cwd686.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+I first tried to convert both optval and optlen of getsockopt to sockptr_t,
+and that showed that touching the optval part starts to get complex very soon,
+see https://git.samba.org/?p=metze/linux/wip.git;a=commitdiff;h=141912166473bf8843ec6ace76dc9c6945adafd1
+(note it didn't converted everything, I gave up after hitting
+sctp_getsockopt_peer_addrs and sctp_getsockopt_local_addrs.
+sctp_getsockopt_context, sctp_getsockopt_maxseg, sctp_getsockopt_associnfo and maybe
+more are the ones also doing both copy_from_user and copy_to_user on optval)
 
-diff --git a/drivers/gpu/drm/panel/panel-clockwork-cwd686.c b/drivers/gpu/drm/panel/panel-clockwork-cwd686.c
-index 53d65e6df1b0..49db20de06c1 100644
---- a/drivers/gpu/drm/panel/panel-clockwork-cwd686.c
-+++ b/drivers/gpu/drm/panel/panel-clockwork-cwd686.c
-@@ -340,7 +340,10 @@ static int cwd686_get_modes(struct drm_panel *panel, struct drm_connector *conne
- 	drm_mode_set_name(mode);
- 	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
- 
--	/* Set up connector's "panel orientation" property */
-+	/*
-+	 * TODO: Remove once all drm drivers call
-+	 * drm_connector_set_orientation_from_panel()
-+	 */
- 	drm_connector_set_panel_orientation(connector, ctx->orientation);
- 
- 	drm_mode_probed_add(connector, mode);
-@@ -348,10 +351,19 @@ static int cwd686_get_modes(struct drm_panel *panel, struct drm_connector *conne
- 	return 1; /* Number of modes */
- }
- 
-+ 
-+static enum drm_panel_orientation cwd686_get_orientation(struct drm_panel *panel)
-+{
-+	struct cwd686 *ctx = panel_to_cwd686(panel);
-+
-+	return ctx->orientation;
-+}
-+
- static const struct drm_panel_funcs cwd686_drm_funcs = {
- 	.unprepare = cwd686_unprepare,
- 	.prepare = cwd686_prepare,
- 	.get_modes = cwd686_get_modes,
-+	.get_orientation = cwd686_get_orientation,
- };
- 
- static int cwd686_probe(struct mipi_dsi_device *dsi)
--- 
-2.48.1
+I come also across one implementation that returned -ERANGE because *optlen was
+too short and put the required length into *optlen, which means the returned
+*optlen is larger than the optval buffer given from userspace.
 
+Because of all these strange things I tried to do a minimal change
+in order to get rid of the io_uring limitation and only converted
+optlen and leave optval as is.
+
+In order to have a patchset that has a low risk to cause regressions.
+
+But as alternative introducing a prototype like this:
+
+         int (*getsockopt_iter)(struct socket *sock, int level, int optname,
+                                struct iov_iter *optval_iter);
+
+That returns a non-negative value which can be placed into *optlen
+or negative value as error and *optlen will not be changed on error.
+optval_iter will get direction ITER_DEST, so it can only be written to.
+
+Implementations could then opt in for the new interface and
+allow do_sock_getsockopt() work also for the io_uring case,
+while all others would still get -EOPNOTSUPP.
+
+So what should be the way to go?
+
+metze
 
