@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-583598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2593FA77D42
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:09:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1E4A77D5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4833AD54E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DFA16410D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2C6204685;
-	Tue,  1 Apr 2025 14:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1118204866;
+	Tue,  1 Apr 2025 14:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoxX2dIb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F491C8639
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFA11FAC55;
+	Tue,  1 Apr 2025 14:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743516563; cv=none; b=UMNVbY0ASPSIruV2FFBHdfjit8SQ0yElsYN6NcjmoQ1aIFiisfMW77omihNhRdvj02zN32vVxosPlWd409cDSfFPs7gpG4yXXZrOOUxr/114Do7/Veoqd6cJ4q3iXLjLxQkP9qRiw3A8K50orXZr1jOkmdfIpJG4oa7rqkQ8JUc=
+	t=1743516626; cv=none; b=rQ+hjpygVQ7pHtwusmN8IcoK2JBhwa5LZ4YtbvghrJGEB7zLD2jrMG7/iU+d7xTsO5cS0FczADRwO6VGPDXiDPLCGvd/U7xgW00gre1JBvYQ4cuJQMjV3DWRayJb2XFhm+6mHgDpAwPfzBtgmQXzG5GfDO1aobk927zfZ36k15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743516563; c=relaxed/simple;
-	bh=Ln/Jhjdpj0qhjAeyWPIXMtnNvatkI3c6UijQ4s6epMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r0P+akZ7K2Ve2IRdrknrHoDdAcZHYa100kBr3OVzE8i7dc/ssXqCRvSgWyf/sLniTc2KasvDGqyvUhbKOtGwD8VZsIpzF015rdS/ttmehJsI2XkXp1W6+6UswMIbUgQu7baL7H3srYG6ZmVN4Z47VpSzzS/75PHlvF8UO87iK1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F247C4CEE4;
-	Tue,  1 Apr 2025 14:09:21 +0000 (UTC)
-Date: Tue, 1 Apr 2025 10:10:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christian Loehle <Christian.Loehle@arm.com>, "pr-tracker-bot@kernel.org"
- <pr-tracker-bot@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Hongyan Xia <Hongyan.Xia2@arm.com>, LKML
- <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <Mark.Rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Haiyue Wang <haiyuewa@163.com>, Jiapeng Chong
- <jiapeng.chong@linux.alibaba.com>, Sasha Levin <sashal@kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Tengda Wu <wutengda@huaweicloud.com>
-Subject: Re: [GIT PULL] ftrace: Updates for 6.15
-Message-ID: <20250401101021.2aa9ed2c@gandalf.local.home>
-In-Reply-To: <20250401113159.GA83216@unreal>
-References: <20250325193935.66020aa3@gandalf.local.home>
-	<174312059712.2290382.15769886213616422661.pr-tracker-bot@kernel.org>
-	<DB9PR08MB75820599801BAD118D123D7D93AD2@DB9PR08MB7582.eurprd08.prod.outlook.com>
-	<20250401113159.GA83216@unreal>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743516626; c=relaxed/simple;
+	bh=jLjkyOQuOzBl4oTWHSyJ7vkYp1bKwM67FwX5cSCD6vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOwvwiPMe8q7/HFWLXgNm5sZKcfbWGGgi/egP2Qrypt8Hb2XVLwpPVsuezeLVnY55/1/SdaRO4GiSf3Unu4P4QVYz+Jkidd2f+ofqs+7jNgiWl+lvN4agngQb+O3TJhMp68NTZa+W9mGreGodgjFfyQko0sleUZrIbe/THuIxuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoxX2dIb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F457C4CEE4;
+	Tue,  1 Apr 2025 14:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743516625;
+	bh=jLjkyOQuOzBl4oTWHSyJ7vkYp1bKwM67FwX5cSCD6vs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VoxX2dIbEW9bqMjkL0WMPeD4YIvXgphDS0TT/yVI4schin0F26yJ+22HXWV4eklIZ
+	 M6F/ldkGjXQPYKtCr8rRe/pEPJqJaBm+FK+xOztmRAFJWEe3gYKGG0ovI1h4iwE9+E
+	 uU4WRHZmn+2fXWyGtnqIAdH0KoDsurqBqCxoSxwB6XmtJsSL+6phAAgepkpyAGO68z
+	 4Qg/lGuvQgGkkE0HC5UcB7CeMjr4jbqLH7ICgNMSJ9XQf4kbiUhphLuo+6u+/wRwBM
+	 Sm3JICUecmw4FSscPUTFhVw8Xw+k+EGKKGYhaBPvtHfdkS2HH1rHw1V/JZkE2p3Y9K
+	 waV3H39f/bsZw==
+Date: Tue, 1 Apr 2025 09:10:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree-spec@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/2] schemas: i2c: Avoid extra characters in i2c nodename
+ pattern
+Message-ID: <20250401141024.GA3313904-robh@kernel.org>
+References: <20250401081041.114333-1-herve.codina@bootlin.com>
+ <20250401081041.114333-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401081041.114333-2-herve.codina@bootlin.com>
 
-On Tue, 1 Apr 2025 14:31:59 +0300
-Leon Romanovsky <leon@kernel.org> wrote:
-
-> We see same issue in our CI systems.
+On Tue, Apr 01, 2025 at 10:10:39AM +0200, Herve Codina wrote:
+> Current nodename pattern doesn't limit the end of name for an i2c node.
+> It can match 'i2c@10-foo'.
 > 
-> 13:29:09  + make -s -j64 ARCH=x86
-> 13:32:31  ld: kernel/trace/trace_output.o: in function `print_function_args':
-> 13:32:31  /home/jenkins/agent/workspace/kernel_build/linux/kernel/trace/trace_output.c:713:(.text+0x20f1): undefined reference to `btf_find_func_proto'
-> 13:32:31  ld: /home/jenkins/agent/workspace/kernel_build/linux/kernel/trace/trace_output.c:717:(.text+0x210d): undefined reference to `btf_get_func_param'
-> 13:32:31  make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
-> 13:32:31  make[1]: *** [/home/jenkins/agent/workspace/kernel_build/linux/Makefile:1234: vmlinux] Error 2
-> 13:32:31  make: *** [Makefile:251: __sub-make] Error 2
+> In order to avoid matching to an incorrect name, avoid any extra
+> characters in nodename pattern.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  dtschema/schemas/i2c/i2c-controller.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks like a dependency is missing and/or an #ifdef block needs to be added.
-
-Thanks for the report, I'll take a look into it.
-
--- Steve
+Applied.
 
