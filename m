@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-582766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-582768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74153A77268
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 03:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33DAA7726B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 03:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B37188E13C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 01:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CE313ABBF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 01:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D311A84039;
-	Tue,  1 Apr 2025 01:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B87B14658C;
+	Tue,  1 Apr 2025 01:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TzWs9kPY"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NK82w01b"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F470200A3
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 01:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C93613635E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 01:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743472091; cv=none; b=FRTZAgStDL0+s5P0JiWWeEFvM2C7gCVL2E1hiXAr3u7iFdq4u3fRKqZa/8bCuWynlzg+DuNI07eC33ELLhVpp6k6j4KaXrCGXLGoUYR8//XJZFeMskygsSojTied+1+SAWSiwrBu+2kTSRt/aqEX5qY3A6MkGbeL7fDVQUjYcWc=
+	t=1743472227; cv=none; b=JV+QxMnzzOJ54PVYX0PwkKk8Ogf7eAFnty2SgZtt8nZOi1/bfBrusK7gtFqgIRqw9mER7fOMlQJHaR/vxMt7vsC5DrQ5ogZI5dqceGvQGmpsdtbMH/XZGf35tr7McskxLfXP/jhWnBuuKIhqCJnzhygU6+GcbUqe0an07mzhW3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743472091; c=relaxed/simple;
-	bh=ZE0TLzMHZSX0EcpVfEOzg+w2gwf5mz1cfK8sc4JCTf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KqVqXcx1JfuIaUx9TkABhNEzBK6Gboa4kbi0r6KPsgdmI33590I9lu0Xh1blCFvLH6UaqlVWxCXV1v6XKhCoF+UeHZh/NYntjxptsVZWEIhIqCptnRx7fQhKcN/k3atQYnH9EMPGEycqjWjE7jndgShzvVs67yFvtCVpaf6AHeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TzWs9kPY; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e61375c108so6592179a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 18:48:09 -0700 (PDT)
+	s=arc-20240116; t=1743472227; c=relaxed/simple;
+	bh=+ouH6MfI+4ZLNik7fBSUo+bubc71z47WVA/0RfhbfrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLhVHTUC3pR6I0qDh8S9FQbu6kCc50xMXCJhH6jF/wwyQpRDY6Hfh5NYB9YF9nXjIm7JYoogvWy+QOGWDhaAuYvxByru7qafhC6qfHJVPDVP4P3g1HCHWp1jkz9GbXktRmixRle7YqT2QIgftGYh0Qt64oVCKw4FEJzmRfLa61I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NK82w01b; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22409077c06so136979585ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 31 Mar 2025 18:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743472088; x=1744076888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+TAj1iyOp+p+CcqC5d0+RxCmt4F8A3u8yV+2RU6uu0=;
-        b=TzWs9kPYlMpqnFfd56yw8K6BZo5bRY31wdhYrYKfBC4isGiJH6nLMRdL2NOrzsqHnC
-         pmiRFw608+HynUsPJeOmBm2wUOgsG26Xqk6YaP2lbyEuQ4GRrdvwD2fIGSvMwgtvoBCh
-         PUn+nlwaFIhPxe4ZDggzT/aUvKOIGEDLI0xaLs0x9KI2cKjkoDwXABsgiYAkdByxe8J0
-         a4Uy0HCgLkYEtcXUuWSRsMgGT49RYjfyFNX093radoGC8DHDkANl8FWGKLkEGRmc8ITY
-         gAcuaBAhqylo3Fr//dEwF1qXp9NT2gQWkQ/DTGvjKjEbjqAgFUI/Zl27dXb/FmEwRAtH
-         F0gg==
+        d=gmail.com; s=20230601; t=1743472225; x=1744077025; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8DR6/7Rb3+f7hTr23XIdL/GaAPLwuiXpD3LtU+Twlhs=;
+        b=NK82w01bQlSmIvti8nfjuD/yhQoh+AZVTLbbGKVvdxYToei7eHb/KkZshcdj/dcu6Q
+         e3IYY8RcagB9x/+TwOrowhYXf9qfeoDQK0ZT3J3FgHWVULvxIfJk/c2IHRGPk29+ocIU
+         8ozyyk6wtyCdA700I5sU3SapifGpze1Vxv/GsGQxmP4ni6ne6/chkvk69lIlZKR7bDqy
+         kgwCh9dD5r25AiqAergyRW3fYiRtjlCwKFEWqiQVBC/Vgqc6mk0snvrLbRhJsMjls6Gd
+         T40jbSLiTas8n0Wv0h4PSQpQTg+mfxS3LgJPXqDB0EGRaS28icFhkT7sRz3pUqmM4vJQ
+         qVAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743472088; x=1744076888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k+TAj1iyOp+p+CcqC5d0+RxCmt4F8A3u8yV+2RU6uu0=;
-        b=mXP2Iz0BOl8+FPVdcCT+aKfs/qOqqygfq5Ybahag7i99ChiNF97UmNVvv9Q46qwOhL
-         UMMnZc+n7kQZXIrSJSGUsZqajGPxdsZwQReqXiWvtIQA9q6V6+6Ctjd02ejsMka0HF65
-         0HZMiCD57NONoGSzuOD3UUtlgsxd4GU9fB82andJvg5AAuT5s1wTp9kU1YYEmfahY2Tm
-         2/fWh3tc3dXUHawyonE4kCztarKRfDG+7Fkgrjp47I+yW5MbR0G4FlKz6CxyPOlRFaVD
-         ugaJv2P7TrkWb6pgfeorPpsS+vG8kNnvP652esjH8QjBF0UXuZzRDyrfXw/tl+dNvXQ7
-         9zGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmKQPjjNzaF1CFuRzU8rtr7IoecVnq36OwVl81UiL2RuT43Myg5ArPcbNgWtIHMPxEGpggqp4oeGIOoyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLr6AZsYgrDvsu6vGIvWuQ4UHGH+HebcnSJVqTSkCdDX18bUnQ
-	pOcLp3HV5HnbBZOKun3ctZOtZuKPMB7uMq+ktoRADY1hmbmbDnnSreLAJEMfySV5RA5ELD6oxWA
-	+rMV7p7dWq3pN7HIRkQW2MIMVWc4h7OHpWlio
-X-Gm-Gg: ASbGnct1ZLSZMp3hAD2r1frts47qUHZNgsCROH74aaBQemxeUKOeC+JK1fnjtbd15aB
-	vAdeTdjQ69evc9pDkYwhzGcfwp0bCpVAC8gDx/aSGrIXSY7yLHLtxzeDgPDcyrWE6SdB6N4xV3K
-	qQ+sDxbkoeXhCYIsvWvC0mt3oYvygeXJV1HwnVUjcj5pB6fDnwjz3Z6ySI
-X-Google-Smtp-Source: AGHT+IETo1denFEedN7D3QEKuncrCuPvMuwDPxe/hUsUn0x2mryF+a39piabr5hR8q1+/nlLvG0nTxN94/k8Rl9ocOs=
-X-Received: by 2002:a05:6402:5cb:b0:5e4:cbed:cb3e with SMTP id
- 4fb4d7f45d1cf-5edfcec61ecmr7826050a12.12.1743472087619; Mon, 31 Mar 2025
- 18:48:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743472225; x=1744077025;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DR6/7Rb3+f7hTr23XIdL/GaAPLwuiXpD3LtU+Twlhs=;
+        b=tiZUNFnus6CLdQfQ6Z53NxuK2BT5NkBjIvAAdtGgAuHtGnsLHyX8QEy1AVYqiaPbl8
+         i6FtOsI7NSKmHpZzAoVQPh7BCBQV5wTmzvC5r1LQe4WVFoMmyQhUNHnfUxWCDvQSBQci
+         th9uYkaw8O95jvZK8ncJ5E0Kc8y8LNGyXGosZrkcnd4XrmAnZh79HcCNhE7u7AGSfmvq
+         kvW7N2f1NdSC1UYBXOYHB8PtBIcq0MNbXAWFxi95cI7zKBB0irmrQ0htBzFWpdbC4zsw
+         FN9Hrw2a5v2G/haLIcWkOIsNTKMtsprNCOV7zbBni5TImg1bdhMK5lMezUrUu0EUIvi9
+         RtMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxwh+cwQl/1FlvJQp4pjgJkr1XXgmfIsKYrbZX1E1h5bootvvEByNz6UDFAhlmma16saao5Cu1hbnu328=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRNuDgXp8jPcCd23dfIgvb6krgl7YMnKoud7u96gwBoqKpEM2c
+	HsGY+5GB8e+U/rMI2pkSycgbXdzdI4DA/GskvT0nzL5L5HXsOt8wVaIuB0KZ
+X-Gm-Gg: ASbGncsJoySAZqc4cMOvAvhuA3FUG5Zi0KwCSg1R4I1DBPNR1DE9wE2H580mb7vLQWC
+	RbNckhuJAXzpG5rR+OIQEVLSQMTIqGSZEGxDTw/q+JHeaXfN7uPyrD04jKKFrh8+qu5h5lWqUVB
+	BLkvW9hL++Y1RHvtVaAQFXtVXsGMrRpKa69lP4U+BLz6pHKd0AqV9/Qkp2n+KAbibg1XNhRhFXF
+	XmbHqCQZnG1DLhF0THbxlSbmSUe8Pf4+dpWqeOhI+jDE42nupaArdHtSrX2Aqev+GaBuau2BpEX
+	ykiiAUnu9OJbNmxS5KzX3lddqz5c/jeq+thu8FlmGwNDmmiHsA4eLepznI6AS+Bo29PwtdPJJBb
+	s
+X-Google-Smtp-Source: AGHT+IHtI0piyfctYHl/2LDM631SG2KQBeqHfKgiXx+fJ+ld+X2QEuuYWayk5WgzDYrz5IBcvUxxzg==
+X-Received: by 2002:a17:902:e950:b0:224:2717:7993 with SMTP id d9443c01a7336-2292fa0e25emr168033925ad.45.1743472224684;
+        Mon, 31 Mar 2025 18:50:24 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73971063dedsm7944649b3a.96.2025.03.31.18.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Mar 2025 18:50:24 -0700 (PDT)
+Date: Mon, 31 Mar 2025 18:50:21 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Huan Yang <link@vivo.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/1] Introduce vmap_file()
+Message-ID: <Z-tGXf5mfTclxZgl@fedora>
+References: <20250328211349.845857-1-vishal.moola@gmail.com>
+ <02ba63ed-ef1c-426d-b469-09878c5f03d7@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <81c040d54209627de2d8b150822636b415834c7f.1742900213.git.karolina.stolarek@oracle.com>
-In-Reply-To: <81c040d54209627de2d8b150822636b415834c7f.1742900213.git.karolina.stolarek@oracle.com>
-From: Jon Pan-Doh <pandoh@google.com>
-Date: Mon, 31 Mar 2025 18:47:55 -0700
-X-Gm-Features: AQ5f1Jomk7lsPt2dF6-TylkfAyS1tokmiYnIpRJlkKyBYOSIZKt-gI4sMXPgaz4
-Message-ID: <CAMC_AXXPKsat846r==J_OYQA2j8kT-kZriuSqoH3F_nYEN8ATg@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI/AER: Consolidate CXL, ACPI GHES and native AER
- reporting paths
-To: Karolina Stolarek <karolina.stolarek@oracle.com>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Terry Bowman <terry.bowman@amd.com>, Len Brown <lenb@kernel.org>, 
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
-	Borislav Petkov <bp@alien8.de>, Ben Cheatham <Benjamin.Cheatham@amd.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Shuai Xue <xueshuai@linux.alibaba.com>, 
-	Liu Xinpeng <liuxp11@chinatelecom.cn>, Darren Hart <darren@os.amperecomputing.com>, 
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <02ba63ed-ef1c-426d-b469-09878c5f03d7@vivo.com>
 
-On Tue, Mar 25, 2025 at 8:08=E2=80=AFAM Karolina Stolarek
-<karolina.stolarek@oracle.com> wrote:
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a1cf8c7ef628..ec34bc9b2332 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -760,47 +760,42 @@ int cper_severity_to_aer(int cper_severity)
->  EXPORT_SYMBOL_GPL(cper_severity_to_aer);
->  #endif
->
-> -void pci_print_aer(struct pci_dev *dev, int aer_severity,
-> -                  struct aer_capability_regs *aer)
-> +static void populate_aer_err_info(struct aer_err_info *info, int severit=
-y,
-> +                                 struct aer_capability_regs *aer_regs)
->  {
-> [...]
-> +       if (severity =3D=3D AER_CORRECTABLE) {
-> +               info->id =3D aer_regs->cor_err_source;
-> +               info->status =3D aer_regs->cor_status;
-> +               info->mask =3D aer_regs->cor_mask;
-> +       } else {
-> +               info->id =3D aer_regs->uncor_err_source;
+On Mon, Mar 31, 2025 at 10:05:53AM +0800, Huan Yang wrote:
+> HI Vishal,
+> 
+> 在 2025/3/29 05:13, Vishal Moola (Oracle) 写道:
+> > Currently, users have to call vmap() or vmap_pfn() to map pages to
+> > kernel virtual space. vmap_pfn() is for special pages (i.e. pfns
+> > without struct page). vmap() handles normal pages.
+> > 
+> > With large folios, we may want to map ranges that only span
+> > part of a folio (i.e. mapping half of a 2Mb folio).
+> > vmap_file() will allow us to do so.
+> 
+> You mention vmap_file can support range folio vmap, but when I look code, I can't figure out
+> 
+> how to use, maybe I missed something? :)
 
-info->id isn't filled in pci_print_aer(). Is the addition due to
-aer_print_error() having a conditional/log for info->id =3D=3D id? From a
-brief look at the code, FW-first (e.g. errors from GHES), I think it
-will always be true. However, that doesn't always seem to be the case
-for CXL (e.g. when cxl_dev_state.rcd =3D=3D true).
+I took a look at the udma-buf code. Rather than iterating through the
+folios using pfns, you can calculate the corresponding file offsets 
+(maybe you already have them?) to map the desired folios.
 
-Disclaimer: not a CXL/GHES expert though.
+> And this API still aim to file vmap, Maybe not suitable for the problem I mentioned in:
+> 
+> https://lore.kernel.org/lkml/20250312061513.1126496-1-link@vivo.com/
 
-> +void aer_print_platform_error(struct pci_dev *pdev, int severity,
-> +                             struct aer_capability_regs *aer_regs)
+I'm not sure which problem you're referring to, could you be more
+specific?
 
-I like the encapsulation.
-
-Reviewed-by: Jon Pan-Doh <pandoh@google.com>
-
-Thanks,
-Jon
+> Thanks,
+> Huan Yang
+> 
+> > Create a function, vmap_file(), to map a specified range of a given
+> > file to kernel virtual space. vmap_file() is an in-kernel equivalent
+> > to mmap(), and can be useful for filesystems.
+> > 
+> > ---
+> > v2:
+> >    - Reword cover letter to provide a clearer overview of the current
+> >    vmalloc APIs, and usefulness of vmap_file()
+> >    - EXPORT_SYMBOL_GPL() instead of EXPORT_SYMBOL()
+> >    - Provide support to partially map file folios
+> >    - Demote this to RFC while we look for users
+> > --
+> > I don't have a user for this function right now, but it will be
+> > useful as users start converting to using large folios. I'm just
+> > putting it out here for anyone that may find a use for it.
+> > 
+> > This seems like the sensible way to implement it, but I'm open
+> > to tweaking the functions semantics.
+> > 
+> > I've Cc-ed a couple people that mentioned they might be interested
+> > in using it.
+> > 
+> > Vishal Moola (Oracle) (1):
+> >    mm/vmalloc: Introduce vmap_file()
+> > 
+> >   include/linux/vmalloc.h |   2 +
+> >   mm/vmalloc.c            | 113 ++++++++++++++++++++++++++++++++++++++++
+> >   2 files changed, 115 insertions(+)
+> > 
 
