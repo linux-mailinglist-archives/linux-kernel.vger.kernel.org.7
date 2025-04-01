@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-583233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34E2A77862
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:02:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3EDA77864
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82BE3A7488
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2320318898FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581FA1F03D4;
-	Tue,  1 Apr 2025 10:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEED1F0994;
+	Tue,  1 Apr 2025 10:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="Qnit6ZkA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="I1bf62y+"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UetnMjUU"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA991EEA32;
-	Tue,  1 Apr 2025 10:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97F21F03C8;
+	Tue,  1 Apr 2025 10:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743501741; cv=none; b=Ta7PxhFo9sPQmO41DVPTHL+NpQETg9c5lO9RzDRrMb5UMrS3m8EFSaVET9BrwJeCCsn+c8E+gl1hX1nFUdkretXOGjSMUmKs5Vgp0PvRGhd2K2ioZDQzll7ff1O57XndlyFtuFaphhGFTG/MMdv19I+kSZZOojy86tFJrlWn2tY=
+	t=1743501778; cv=none; b=PJWdgjB0HUkQKAo0Hy2q2VNaJO303p781cLgvwg5DqWyuY4X0wbk7aPG/nIEUr6AylhTuI5y+49o6zDh7c79dDcWvTNAYyd9Zu9dL+NGqbDbGw4AfHV1qYadd3OESAOgylFA8UOrqbng9ISV77mFmqPXfFSKg+tG1oMJ0LatumQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743501741; c=relaxed/simple;
-	bh=0G+OT2pQwUNKSHab5Fy4mnmlGrelRgXgUBd1aoOUvP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BUeD7g/odjocHf0yMpRNKUo6hFLqAgIZ2NeesZOLF7IXFCo5OV5AZOU4VpzZ1DjTWscYfxAexcICgotfH0uyqPI0i2jU0qjT8drN+Ip5kssrnsGOCEZ+pENpszAFp/VFC6O7TFLyG0EWHwKykvwMKYVLkqHsTTkyfuaC4OFX6yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=Qnit6ZkA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=I1bf62y+; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id A9470254015C;
-	Tue,  1 Apr 2025 06:02:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 01 Apr 2025 06:02:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1743501738; x=
-	1743588138; bh=naKOvTTnyh/Yn6zwyw/B/wVoUWu8X7hEjoOiqbRrAeY=; b=Q
-	nit6ZkA8iHx7Mn48PHhyEvKdumdVge8QJmXbVOL4C5/+TF0cL/hEe+PI36qlQ3v0
-	6MG7IL/rKBbp0ZaV1ulQhFJytOdQ5JZZ1Z9ZYoih8m109lhdfwIxjDT4uAnWqChU
-	uH9GN08pwFTvE+FX3NOMdmQXz3WQ5c+w3G+uOhpjlVAo4Tdxeta799JvdCfRKoUX
-	HwmWf/zOKOevymTamh3nHeVw+LZZ3D6jrGYMXuOITP4ZmWJk7n/LrKcJvyaoP5G/
-	gKxQFuVoCzpZgveWkYKzsd+YlttnFwcEaPVTObH8i1Ipfa0rNieiKm9ReueLsljT
-	3rjVrxTzoWxVyGyh7lPDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1743501738; x=1743588138; bh=naKOvTTnyh/Yn6zwyw/B/wVoUWu8X7hEjoO
-	iqbRrAeY=; b=I1bf62y+BB6FEA6WzhMAvqoEIWoC6bKTPgHfdNy9p4yvyM5ZnhP
-	JjwNNSqto6qfIPbz4HfqfLI2sd8XLlo0oWh5UzQv2d00D9OFExCJamav1gwOieyJ
-	+U4k1i7tzrIJX3lk3cXlA/W++Xx8xFqNpykI/PB6tnoTNvbCrSX93ZjI7rrg2uAt
-	n5xW3tSa/U4jOP4gzu9PpubCHAx92GZXuwA7EkN+qwHy/n/73GUbOASgBUy4UL6x
-	fnStn3zCFoKLiqosopfnlWwNdfCI1GpizdDqsHlaqvSZQjV/GnQBCSLJRZRtZCLh
-	ZQFwoDsMvng4/ZWHi4wtwrrc4CPHqzJ5iHQ==
-X-ME-Sender: <xms:qrnrZ5BRn5c6Nf6IGBbup6Gzu98wgU5FNNCwg3QQKRBoyZpYyd3wAw>
-    <xme:qrnrZ3g20wqlTmIHjTB7kZBQ6K-roxoXNlNDETPZyZ0rK0lBtb0Y1xab-4LGgNtMF
-    NXsRLf_y_o1PQLu-fo>
-X-ME-Received: <xmr:qrnrZ0lZ3pwGYOZB3onQH8yOMEfAUt6Rja_iV-zVzJicIGLl1X_qer1KheTC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvheduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:qrnrZzwGE3HVSm-s5eWnY69wBxKE8Bk0UpFfO_vVmJtOcJtR8UJNdg>
-    <xmx:qrnrZ-RTR0BQAVYHsBPgYhx6G3YwxiIUuqCnqI8ZnCxFyJG78PGcIw>
-    <xmx:qrnrZ2Ys1ALpmj9bojQqmbs_TgR2g9UiHc8h0h5Xq6oXyUu1vc60Ow>
-    <xmx:qrnrZ_Qc4KhnYyJNbJS-5QqhGfiQfSsgbbyC4YlGzrdJL79luwoOmQ>
-    <xmx:qrnrZ6pL-5RsRoLjbDzjG6MOgtWHQqodR5W1I8fpAJwM9-NnBBundA0h>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 1 Apr 2025 06:02:17 -0400 (EDT)
-Date: Tue, 1 Apr 2025 12:02:15 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
-	David Ahern <dsahern@kernel.org>
-Subject: Re: [PATCH net-next v24 11/23] ovpn: implement TCP transport
-Message-ID: <Z-u5p_QLkLKtcxsb@krikkit>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-11-3ec4ab5c4a77@openvpn.net>
+	s=arc-20240116; t=1743501778; c=relaxed/simple;
+	bh=u2i4mlN/0Dmrd2yO9FNTt299FDdaLIVxK3E6+jXa8Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RepM4OP6gthjsgz+3RArZBB0VObAIiHjxDYgauvbAoGJYSKk5w/iYItMWJsaMGAZjb7efO2n8IDZQNmqvMx+axEsucyQ2NaJDCHp2foQt05PbFDmxp18mZS4WvbXOAbOGxMiR/neClxIELoWHS/ym6dUrEKJta6WjQwFXXN7A7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UetnMjUU; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 531A2aVu3072633
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 1 Apr 2025 05:02:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743501756;
+	bh=X9wRt7wss9ZrIeV++Wc1A527R0EIL7GzO7MaVVI+mas=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=UetnMjUUWQlCq4LcsKytSq2lLWX3IoLwG4tblaahnNh2LP+X7YZhMLe2yBnKGA4Ge
+	 pfR3ZIk4ebPEQ2WyHm7ELCbJ58TxG2pKC/k6RL1cczYVpm4RSHPF+HqLJ4K/NEjuMx
+	 yqhGCaN7okaMjI4Wg3DLIXXP4y4Zt9a0YihVVfRQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 531A2Z4b116224
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 1 Apr 2025 05:02:35 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Apr 2025 05:02:35 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Apr 2025 05:02:35 -0500
+Received: from [172.24.18.65] (lt5cd2489kgj.dhcp.ti.com [172.24.18.65])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 531A2VZq127627;
+	Tue, 1 Apr 2025 05:02:32 -0500
+Message-ID: <e2a37e72-d9c8-4329-8a5a-f2c9865cdb5d@ti.com>
+Date: Tue, 1 Apr 2025 15:32:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-b4-ovpn-v24-11-3ec4ab5c4a77@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62p-j722s: add rng node
+To: Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <u-kumar1@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250313144155.2382316-1-mwalle@kernel.org>
+ <837cba5f-f49e-4cbf-9cbe-2b25f7c9d4b8@ti.com>
+ <D8UECOJ2NMCU.3ALYIKSODJ479@kernel.org>
+ <1ad2d8c2-6a0d-419d-984d-4974adb0e1f0@ti.com>
+ <D8V323NBB32P.3P8H103L83HZK@kernel.org>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <D8V323NBB32P.3P8H103L83HZK@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-2025-03-18, 02:40:46 +0100, Antonio Quartulli wrote:
-> +static void ovpn_tcp_rcv(struct strparser *strp, struct sk_buff *skb)
-> +{
-[...]
-> +	/* we need the first byte of data to be accessible
+Hi Michael
 
-nit: and "first byte" here too (that comment could maybe just be dropped?)
+On 4/1/2025 11:50 AM, Michael Walle wrote:
+> Hi Udit,
+>
+>>>>> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+>>>>> [..]
+>>>> For completeness , this is ok to add this node but should be kept disabled
+>>> Shouldn't it be "reserved" then, see [1].
+>> yes, should be reserved.
+>>
+>> With marking status as reserved.
+>>
+>> Please use Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+> Thanks.
+>
+>>>> similar to
+>>>>
+>>>> https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi#L662
+>>> j784s4, j721e and j721s2 have them enabled. What is the rule here?
+>> J784s4, j721e and j721s2 SOCs has two TRNG blocks,
+>>
+>> example for j721e, one is used by kernel [0] and another by optee [1].
+>>
+>>
+>>> You also disable the hwrng in optee in your evm according to [2]:
+>>> CFG_WITH_SOFTWARE_PRNG=y
+>> We are planning to use this hardware block by secure firmware.
+>>
+>> Therefore request not to use by optee as well
+> How will you be able to access the RNG from linux and u-boot? I'm
+> asking because I'll need it in u-boot for the lwip stack and the
+> HTTPS protocol.
 
-> +	 * to extract the opcode and the key ID later on
-> +	 */
-> +	if (!pskb_may_pull(skb, OVPN_OPCODE_SIZE)) {
-> +		net_warn_ratelimited("%s: packet too small to fetch opcode for peer %u\n",
-> +				     netdev_name(peer->ovpn->dev), peer->id);
-> +		goto err;
-> +	}
+For now,  If you need TRNG then I can suggest to use optee TRNG (ie 
+build optee with HW TRNG).
 
--- 
-Sabrina
+
+>
+> -michael
 
