@@ -1,147 +1,145 @@
-Return-Path: <linux-kernel+bounces-583658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949BBA77E0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:41:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCF8A77E02
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640523AF50C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:40:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5DCB7A20B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3BE2054E5;
-	Tue,  1 Apr 2025 14:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8282F204F70;
+	Tue,  1 Apr 2025 14:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Jz7A4Din"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="atFd0yKa"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AFB204F6A;
-	Tue,  1 Apr 2025 14:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F4D204F61
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 14:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743518449; cv=none; b=JvLveu9IQJPb6AURcCYWc7Zvb/7mOjNTfaOizVjfiuQ8EevM6/Urg6SSdGak53DwCPwPgrLb9OTFp/IgXqVteeacBZzrjGEHsoqSp6gClK7tEC0yOS9xphL62UpQKZQu9UseDaCBym9g82VwwQ0TJPH3l4os1MrJGQ07LpmipjI=
+	t=1743518414; cv=none; b=qL7y0ePeEy+TpStTG8/SBzJn8vYolri3sT3iztX5CwdR75pA0oeYmid2WbE9SqW8zDBlrxDtrTScUMtJ3cvbeZ3egwgr/IAo48pIWDAxIGZzbbENxgLy4TdrfMaF0pk6J8GS5OkwirX+tWcjUGVAcDpl8Sqx3/qy97u+c2fCunI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743518449; c=relaxed/simple;
-	bh=Mu9MHZa3fft97on/5nyitcoLVmWrL9uWsEPwIreNy8A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=XL6ngi2WR62ZOX5/N1jYthNTf/QYsXbD/YykwAa1lCus5mzC9LZvOyxMPiVY316CYEwjkvrSkifuukEJOi9hQy68XLam8idhYjphghnAoVBAC0GeOhPiOHpWHTkvU2M2A+aPQn8R2Xp3kIv6R3gawNBm0Gl+FbHMWCxtVuIaRzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Jz7A4Din; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 531Edwfb3790452
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 1 Apr 2025 07:39:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 531Edwfb3790452
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1743518399;
-	bh=ZcgxQiKrDYB/GpBLGYEzKqgEh7UmE7j84JDP2jnMUIY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Jz7A4DinHGlQDcHQcNzNjsQopdBFsBQ7QUgSGXfKBsLhOGsq7mA8gv1rXwCFVS/Mg
-	 3HpHcFgEu7wLsCmPzMMIYUdsFbrSO6E1SQWqCu3eg1YhfuI3psqy9zmXT9M57TG/rw
-	 +0LvJkVNxTMwPWC0cYpvvyQj0Fc3RpmLVm5h7OAE+L6WCfmGPgpZff661s9zCmb0Wo
-	 ES6YqJpgUXXGCb1ZxYA+05YjHAbwrqUx72zaxCmQsKTlnOXJyi2zK8Oi4PIb82zl9a
-	 3JJfvEXa8iQg2SKYnL+qJHwHt+ly0vUL6rJD8fhrxhYUShn7QeNSB9fUeLGt+DOFn/
-	 jZVYMbG7KGklQ==
-Date: Tue, 01 Apr 2025 07:39:56 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Xin Li (Intel)" <xin@zytor.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: rafael@kernel.org, pavel@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        luto@kernel.org, brgerst@gmail.com, jgross@suse.com,
-        torvalds@linux-foundation.org, xi.pardee@intel.com,
-        todd.e.brandt@intel.com, xin@zytor.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/1=5D_x86/fred=3A_Fix_system?=
- =?US-ASCII?Q?_hang_during_S4_resume_with_FRED_enabled?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250401075728.3626147-1-xin@zytor.com>
-References: <20250401075728.3626147-1-xin@zytor.com>
-Message-ID: <2C7E3D1D-0391-43DF-8D72-02C4C742573F@zytor.com>
+	s=arc-20240116; t=1743518414; c=relaxed/simple;
+	bh=37CXOnT5gVmWSF86orv67Bi2S0ye3+YwEdKEuruGIcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bjso99WNaUmihzHdyjb9TC7KwdjwcX5K8JgjU7qWCK3RAM73p+eTJvnV3EOR+lVrWmhHGKkmLyimi/i8iAzPHHIXBK+y8wK/kkCGXn+gBIcjBt5OvbTbS9qRrznYKZPd7dClnZI6MWAY4o8Yo7JotTcTjJDozaD1xawJOJMmoSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=atFd0yKa; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c592764e24so589957885a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 07:40:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1743518411; x=1744123211; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=59lR8fyAGZtnyL5JxvCFtODoufn1dWPFxTxyktTFZ+U=;
+        b=atFd0yKa+CmxXBBPTL4BqenHYayFz1tW2yoEjhiGHdh1mK5oPh7QEGMjY0RG8iBJSR
+         19cFuh67GDbz8ow9EyEMxnt0JoMPSVTcJ9sPE8K61tXHdtZ5wzrt0NXcdhCItB0TrxTt
+         M9Cu5Z9kZ2frmSsNbpuCdH+7AoUDrn6av3QIs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743518411; x=1744123211;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=59lR8fyAGZtnyL5JxvCFtODoufn1dWPFxTxyktTFZ+U=;
+        b=cDroo3c6dI6n2cPpG8zCgDVsmZ8veSYxCcpRRuxjIASpCoLNO++lV94FMA3Aur4qKn
+         OBiWk5Uc+T2ph01S7ni136WWN+8SCIQ5L8QbR51+bi61sPv4/M1flKzP7sMfLyGX0dIV
+         OKDseMmFwdlqcQoMi8FW3OjGuKuZiqdj8G5KVF8+YfOPxXcqRcTBm2yBL7VnzxTDZQ8/
+         gdGiLa7wqSuUx8257bz2PUNbrfodvy7ny43k096mgbtDnLaYe2Q3J9fYG9P9agWt1KEA
+         b6JbrXnnAdWmal9IMeywVxleR3mXttayxPStWLMtgVAevfVhxbwkCPdmmFYmEhDnOkMp
+         O9RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGM9DP4Nr8XphRrvhvl/c2AZakoZ/9fKoIfd5NRqHZJhx4yz3kp97vcD+agvoo6RbVog7mk/1V8vn80oA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiBT/PogQNC88ppkQ2C8pMyetAv8YGruaRq/r17SbjDnJeCK58
+	TDhnYheLG6GTGe1aUu4NnJ31pVTWvGECEOxHjduwWRpkw1YtM9StMFcYqRf1aSBXwK2Q80fgPv4
+	NWmSoTyY6mKnCgLlv/Kgm1baJyI7ieIOQJdN4hg==
+X-Gm-Gg: ASbGncubiU6PZnvCxhMP2EXBxNjROm5KdSgslPfPPCTAf+VMog5adTjQYc2VnErVcNv
+	tGb7IU5aYWL78XmRUWOevzXC1OELpZU6htNGTCxRttiUrzs0oAcAiA0qVafpqvlWwEcbYW3bAaB
+	pcdnCnbvEa/yjqwRhP3m1gPjcX7Q==
+X-Google-Smtp-Source: AGHT+IHhI8O7b5ijP+loZV7+ENRm+l4fKn9ZXF7CCFAuMczCuXhabLgBeJHdh/tlFRjneE5K6thzWwDmic3IRpqnakk=
+X-Received: by 2002:a05:620a:171f:b0:7c5:93bd:fbf2 with SMTP id
+ af79cd13be357-7c762a3f261mr25104785a.19.1743518411252; Tue, 01 Apr 2025
+ 07:40:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250314221701.12509-1-jaco@uls.co.za> <20250401142831.25699-1-jaco@uls.co.za>
+ <20250401142831.25699-3-jaco@uls.co.za>
+In-Reply-To: <20250401142831.25699-3-jaco@uls.co.za>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 1 Apr 2025 16:40:00 +0200
+X-Gm-Features: AQ5f1JrNAk59O3RgftyW1Wtjx9nrelwARZc0n62ROmOd-FEHaOpq2bCBIDppVoM
+Message-ID: <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer size.
+To: Jaco Kroon <jaco@uls.co.za>
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr, 
+	joannelkoong@gmail.com, rdunlap@infradead.org, trapexit@spawn.link, 
+	david.laight.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On April 1, 2025 12:57:27 AM PDT, "Xin Li (Intel)" <xin@zytor=2Ecom> wrote:
->Upon a wakeup from S4, the restore kernel starts and initializes the
->FRED MSRs as needed from its perspective=2E  It then loads a hibernation
->image, including the image kernel, and attempts to load image pages
->directly into their original page frames used before hibernation unless
->those frames are currently in use=2E  Once all pages are moved to their
->original locations, it jumps to a "trampoline" page in the image kernel=
-=2E
+On Tue, 1 Apr 2025 at 16:29, Jaco Kroon <jaco@uls.co.za> wrote:
+> After:
 >
->At this point, the image kernel takes control, but the FRED MSRs still
->contain values set by the restore kernel, which may differ from those
->set by the image kernel before hibernation=2E  Therefore, the image kerne=
-l
->must ensure the FRED MSRs have the same values as before hibernation=2E
->Since these values depend only on the location of the kernel text and
->data, they can be recomputed from scratch=2E
->
->Reported-by: Xi Pardee <xi=2Epardee@intel=2Ecom>
->Reported-by: Todd Brandt <todd=2Ee=2Ebrandt@intel=2Ecom>
->Suggested-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
->Signed-off-by: Xin Li (Intel) <xin@zytor=2Ecom>
->Tested-by: Todd Brandt <todd=2Ee=2Ebrandt@intel=2Ecom>
->Cc: Andy Lutomirski <luto@kernel=2Eorg>
->Cc: Brian Gerst <brgerst@gmail=2Ecom>
->Cc: Juergen Gross <jgross@suse=2Ecom>
->Cc: Linus Torvalds <torvalds@linux-foundation=2Eorg>
->Cc: stable@vger=2Ekernel=2Eorg # 6=2E9+
->---
->
->Change in v2:
->* Rewrite the change log and in-code comments based on Rafael's feedback=
-=2E
->---
-> arch/x86/power/cpu=2Ec | 14 ++++++++++++++
-> 1 file changed, 14 insertions(+)
->
->diff --git a/arch/x86/power/cpu=2Ec b/arch/x86/power/cpu=2Ec
->index 63230ff8cf4f=2E=2E08e76a5ca155 100644
->--- a/arch/x86/power/cpu=2Ec
->+++ b/arch/x86/power/cpu=2Ec
->@@ -27,6 +27,7 @@
-> #include <asm/mmu_context=2Eh>
-> #include <asm/cpu_device_id=2Eh>
-> #include <asm/microcode=2Eh>
->+#include <asm/fred=2Eh>
->=20
-> #ifdef CONFIG_X86_32
-> __visible unsigned long saved_context_ebx;
->@@ -231,6 +232,19 @@ static void notrace __restore_processor_state(struct=
- saved_context *ctxt)
-> 	 */
-> #ifdef CONFIG_X86_64
-> 	wrmsrl(MSR_GS_BASE, ctxt->kernelmode_gs_base);
->+
->+	/*
->+	 * Reinitialize FRED to ensure the FRED MSRs contain the same values
->+	 * as before hibernation=2E
->+	 *
->+	 * Note, the setup of FRED RSPs requires access to percpu data
->+	 * structures=2E  Therefore, FRED reinitialization can only occur after
->+	 * the percpu access pointer (i=2Ee=2E, MSR_GS_BASE) is restored=2E
->+	 */
->+	if (ctxt->cr4 & X86_CR4_FRED) {
->+		cpu_init_fred_exceptions();
->+		cpu_init_fred_rsps();
->+	}
-> #else
-> 	loadsegment(fs, __KERNEL_PERCPU);
-> #endif
->
->base-commit: 535bd326c5657fe570f41b1f76941e449d9e2062
+> getdents64(3, 0x7ffae8eed040 /* 276 entries */, 131072) = 6696
+> getdents64(3, 0x7ffae8eed040 /* 0 entries */, 131072) = 0
 
-Reviewed-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
+This looks great.  But see below.
+
+>
+> Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+> ---
+>  fs/fuse/readdir.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+> index 17ce9636a2b1..a13534f411b4 100644
+> --- a/fs/fuse/readdir.c
+> +++ b/fs/fuse/readdir.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/posix_acl.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/highmem.h>
+> +#include <linux/minmax.h>
+>
+>  static bool fuse_use_readdirplus(struct inode *dir, struct dir_context *ctx)
+>  {
+> @@ -337,11 +338,21 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+>         struct fuse_mount *fm = get_fuse_mount(inode);
+>         struct fuse_io_args ia = {};
+>         struct fuse_args_pages *ap = &ia.ap;
+> -       struct fuse_folio_desc desc = { .length = PAGE_SIZE };
+> +       struct fuse_folio_desc desc = { .length = ctx->count };
+>         u64 attr_version = 0, evict_ctr = 0;
+>         bool locked;
+> +       int order;
+>
+> -       folio = folio_alloc(GFP_KERNEL, 0);
+> +       desc.length = clamp(desc.length, PAGE_SIZE, fm->fc->max_pages << PAGE_SHIFT);
+> +       order = get_count_order(desc.length >> CONFIG_PAGE_SHIFT);
+> +
+> +       do {
+> +               folio = folio_alloc(GFP_KERNEL, order);
+> +               if (folio)
+> +                       break;
+> +               --order;
+> +               desc.length = PAGE_SIZE << order;
+> +       } while (order >= 0);
+>         if (!folio)
+>                 return -ENOMEM;
+
+Why not use kvmalloc instead?
+
+We could also implement allocation based on size of result in dev.c to
+optimize this, as most directories will be small, but that can be done
+later.
+
+Thanks,
+Miklos
 
