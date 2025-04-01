@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-583405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ED8A77A6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0382EA77A74
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FB63A7949
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D7C188EF8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7CD202C4F;
-	Tue,  1 Apr 2025 12:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D907202F90;
+	Tue,  1 Apr 2025 12:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOeGSze7"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2EDj0IM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB761EFFB2;
-	Tue,  1 Apr 2025 12:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5336C202F9A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743509570; cv=none; b=nWdRCwYQKN9LjfPCW6neJNvaAwfrtpXXMAB1Wp/AacKKqGP6yFYhfzTEhpVN1qxxF1Tgs0zgwoU33m/bAS70HemjvjJsqNE28X0oPJq43tx9oeys3Yk0uL4m1nxqsFsMYSG22CsR/2GcdBjEHnkBVCuh2FPQ8E8DPplg2M6MXsI=
+	t=1743509652; cv=none; b=O8Kg261JKziIIn1z9NLG84GMziRPPqgs2Dv9vSx1VsZadtUhA+3KvD5R9/j8tdIJaaI4kEEZVesbACS0wf2CcoBWjIuZ5Zue4vT/PncpgEsjBaVgDhLmQNHnwRILw0bAvtOsAneZWFzyiMOcy3XF/mry01jhfZjiGK3axJuw/1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743509570; c=relaxed/simple;
-	bh=knCnkkwxfCa4lLEVbhONUxiuYykKQ35GfgIida0h9Z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GGAkKAJTWTl1PaikRbqUU3kmsuhZpg3lXP1UYuE4XyxZFgTirAaNDaciQ3aG3hLIb5rXtYfX53qhfDi4Ww0noDK4NmvrvsSdhcWjW0hnsxdUwKpbNfaofPa3BAipd3Q9yk3X0OsIgEVJtrJgmlkjIq0ETOvxv2SKI8FUB0gDD5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOeGSze7; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac73723b2d5so604227766b.3;
-        Tue, 01 Apr 2025 05:12:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743509567; x=1744114367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ttvd/FU9GliLSJnLsshyif2Zg4QG1YVDozGF70kbh4w=;
-        b=KOeGSze7U8rF55WItYlqy004mIgyQMdABQ46Ai/COS9laYIwUfb1NOsHErOpEKCbyz
-         i8h6TnKgw8XH+tdZtNZ4VVhQbds9aWoYxaI2AyqNMqTEIhRrZa5liT6g2w9wzCa04gs9
-         tGDxZS4lZzZzI27PCRj3XOvJnW2xUumTn6b5eMcLAbAW6XstqaqPYXrFODiLyjWPoyZG
-         ezYZrvB6cIvv3tqMxmV3JkkKp1bRlq13I66nsGfScl7XlrEuDiQ3fY3lwgNHifq/ZXi0
-         NryZLJxt2XZwAiqgYQ3dLEtCNJnI+wW9TJg/K8jMNBOz8zRRYKd7UnxFSwB3ozUMz8nb
-         QbGw==
+	s=arc-20240116; t=1743509652; c=relaxed/simple;
+	bh=YGXFqr4IfFV6Vu7eYniP5uzR9SdS+C3yWU1Sa7ToHIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gr+QGGp5OBzCh9YdusPFeMvFypaaSpQJovSvbazIkBR6FoDeq02KzPBhwnM9DStMm43AStWFF08DNMO/ObJZHNpnz08jz0QJa/IUwGGzJNT5CV0930069hme6DAmmCW2oq4UTzsvulzN1QkEL6IJC+FZO2qynvUisA6Vt2UYMa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2EDj0IM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743509649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bobstMjPMV8DhfUNqC1sgNZKJxQFcOqPnhEWn4RzBRc=;
+	b=A2EDj0IMDQneKmVvVrctFKC9v7sIsHQRZmF0BmosiRvaFrCgStTAd+o2bgaZvg98SDM1OD
+	B/GKLhM7UG1w5YE3hOGRwCJ87O++4yn6gmXmHPw3R11cnMYSJqRHEKypS5kkRazGweHudh
+	gpFZJvEV6XRiLVuinljrWAjZ2JODunA=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-474-KiF_w3H7M9-DhaM6JA8xSg-1; Tue, 01 Apr 2025 08:14:06 -0400
+X-MC-Unique: KiF_w3H7M9-DhaM6JA8xSg-1
+X-Mimecast-MFC-AGG-ID: KiF_w3H7M9-DhaM6JA8xSg_1743509645
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac2db121f95so443885166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 05:14:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743509567; x=1744114367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ttvd/FU9GliLSJnLsshyif2Zg4QG1YVDozGF70kbh4w=;
-        b=c4NR0DL3pUS8rmMPtgAw6TdBHie6Hj5sfrtjpGETj0tAY2T6R+t3o63M/gArEFCNny
-         Ut8JUybFeMGka+VGOHuEnzGT3b59Yc8ohDMuBFR8EiPUmOu4X/Rjbx4UDl9OJvYH5zq9
-         Du9eNDv0AKML20UBTofJVIm+3HsIMO/wTxxlIWBiZYzpCqRlZExhQLtXWXSz6P28aCoO
-         baKaDfrbjWlS47cDMkyaBTXppzWQGc8cBKVU+yeoVmueBq58OooXPJ1/6S/3JZz3Ws/K
-         0L57/WzF5hRgNCqhbQBfhMFEYzaxk6z+aml/EFdCh3qp8kWc/mZ1eUeFy8lOcwhlAP61
-         YQGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh4A+FYEFRNn/Yc3VSn6s0XusxKGaPtR0H2puRhPttoLc4D4Sw0jOMGIyPl2FwrVSOrbGBq2hehn2y3D6g@vger.kernel.org, AJvYcCXTJ3WvaVr5VAgNRpIbjpWjoas43hmAFKu+bE5w2E1XUaEL0SMOz19T/Jx1TnIzVWxzGEkGdH4xL8I1q1MJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwt2SamktlR3SC4pM9QZd+xSHHKJxLgRpSKGtYzWs/K0TTNPXv
-	gAz0YRARRAfYXyrdVzWrO7VTdcu0l80tXQ0As1uNcKoJF4Ko+V5NOkMq8I6tlyw77hF8jOqCxLQ
-	Sa3ngHGoW5nyGlHqxQ4q1pBE7fM0=
-X-Gm-Gg: ASbGncumolXMLnGDwGp29sv4W9Cg5Px7LAcZYlvmyS0cJ+Re/lXOCatLhsrE5RfDYsG
-	TauKRJ2sN3y+wW6NlXA1pG0q/VEnfdwjD58RjQ/wBmzVqHFqJX772pgUv8Cy3WLgfQRMY4RQiSY
-	0n8i26L3ZuzGUQZB7vUveLW9NX
-X-Google-Smtp-Source: AGHT+IGY6gqFjHlNJ0Psb1PqUb4iCC58bx68X71kLnLB+BblrscpEbBl1WGCDY68G4o8ArXnr51fyd+Oa6UBiG+CAM0=
-X-Received: by 2002:a17:907:d26:b0:ac3:bd68:24e4 with SMTP id
- a640c23a62f3a-ac738c222a0mr1036879966b.53.1743509567100; Tue, 01 Apr 2025
- 05:12:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743509645; x=1744114445;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bobstMjPMV8DhfUNqC1sgNZKJxQFcOqPnhEWn4RzBRc=;
+        b=cte75OxQmHTuc28OQBNoFI1xfW5+IbGW35WxwsCUulpnfIPydjYCorf/yn6I1vcQzB
+         SAMpws1tavX/XmgHa3BlMiUiGFxG65Yy4gwMqdxF/wp4EQe0TBKT17I3PG4IWi4HhsnR
+         JNTThdlMCKKxAg0sDP8WdFjYZQh43Dud+t4QnEMiYmKZ8hSho5DUPMb85H+hsUjnFtsJ
+         8UTKuKWN5afry7to7aF7Xu86BuKJ1FeBQ+xCA00lGdi7Wv9/jV5BBf5FuPUxI24Ca7T5
+         CTQN2G9cyQW0xLTZEM7OgVbB8vI/vYnpBkQ41IvkQ+YP3xh6L2J/odd5DhpDjdnu26zU
+         fSgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQBIp4p7a+uHJeaVkpFUc3jvoSWjB74wfwDNhkoFExzSQwJf4bm8LuDvd0ZjmEhVjdaKRDlTG4c1hsUqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziYUFxnvLqWvsF1UkqeqqBkhCG3DclX9D8buSxuusDFi+QFC+m
+	6a78BBelh7xDgBasKG3IFLpr1MHZVUZ9iGdwLizFV+8FrI8gh5ixKEqo7uOZVGd9Et4WX3Rx97e
+	EDyJuw7BsdLbtCsFFt7Me/gdWEK3m+lyMYqsF8WuplX1PnqCjn69O5tMbzCSKAQ==
+X-Gm-Gg: ASbGncvATdjZ29CXSiRWEsl5Vujyk4ZCZZBq0sAR2GVtrVMvCJcVDR4IojZSHwP+pY1
+	LPSOBTmB7mM6LFeKg6kvsN2WCA4DkHcCq8WI2p05VWr795e1PFyTSXT6wHPohvSn17SHJ1aLOZ9
+	xtKifzXqZZ+s5az38XqL6dqMbHJt3ZzhP2cwch4N/ZXzYQodAdc6/IttkO03EW8VbL2ZeeF6D0p
+	xf2BLIBz2GN4X3uebz8K5MZWP0zx7dkrbTh1nns81KxW1Nq3uxgqIZZPC2IFMYe1A8mhnpF5DL6
+	O180S5GwR02XoB7FaJwyEqWO320bDbjyHXd9jgokPO1kCae7BE/kDp4w+XVY3kM=
+X-Received: by 2002:a17:907:7f0d:b0:ac7:150b:57b2 with SMTP id a640c23a62f3a-ac738b61acfmr1115335066b.41.1743509644914;
+        Tue, 01 Apr 2025 05:14:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHAUNzsyCaoMuUKp8KrX5TmH5LqHQTBd4duJrOAEcTk1GtfF5/Q9pgFHfstQ4EV56ENzCLV9A==
+X-Received: by 2002:a17:907:7f0d:b0:ac7:150b:57b2 with SMTP id a640c23a62f3a-ac738b61acfmr1115332366b.41.1743509644468;
+        Tue, 01 Apr 2025 05:14:04 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:bf5b:f273:a506:f71f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7192ea03esm753963866b.84.2025.04.01.05.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 05:14:03 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Hannes Reinecke <hare@kernel.org>,
+	Keith Busch <kbusch@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] crypto: Kconfig - correct references in config CRYPTO_HKDF
+Date: Tue,  1 Apr 2025 14:13:54 +0200
+Message-ID: <20250401121354.20897-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250329192821.822253-1-mjguzik@gmail.com> <20250329192821.822253-3-mjguzik@gmail.com>
- <20250401-fernhalten-lockvogel-ba56b2b108d2@brauner>
-In-Reply-To: <20250401-fernhalten-lockvogel-ba56b2b108d2@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 1 Apr 2025 14:12:34 +0200
-X-Gm-Features: AQ5f1JomYiaVAhBSzMDo4Ka0dgwxOzGnw63hneixUfWHSIDBOrRIQVSlNKqu1kE
-Message-ID: <CAGudoHEEPYFUfSkBY93KWinOXQJeS89dMK+HKSwuzpeF8YZX_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fs: cache the string generated by reading /proc/filesystems
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 1, 2025 at 12:31=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Sat, Mar 29, 2025 at 08:28:21PM +0100, Mateusz Guzik wrote:
-> > It is being read surprisingly often (e.g., by mkdir, ls and even sed!).
-> >
-> > This is lock-protected pointer chasing over a linked list to pay for
-> > sprintf for every fs (32 on my boxen).
-> >
-> > Instead cache the result.
-> >
-> > While here mark the file as permanent to avoid atomic refs on each op
-> > (which can also degrade to taking a spinlock).
-> >
-> > open+read+close cycle single-threaded (ops/s):
-> > before:       450929
-> > after:        982308 (+117%)
-> >
-> > Here the main bottleneck is memcg.
-> >
-> > open+read+close cycle with 20 processes (ops/s):
-> > before:       578654
-> > after:        3163961 (+446%)
-> >
-> > The main bottleneck *before* is spinlock acquire in procfs eliminated b=
-y
-> > marking the file as permanent. The main bottleneck *after* is the
-> > spurious lockref trip on open.
-> >
-> > The file looks like a sterotypical C from the 90s, right down to an
-> > open-code and slightly obfuscated linked list. I intentionally did not
-> > clean up any of it -- I think the file will be best served by a Rust
-> > rewrite when the time comes.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
->
-> > +     pde =3D proc_create_single("filesystems", 0, NULL, filesystems_pr=
-oc_show);
-> > +     proc_make_permanent(pde);
-> >       return 0;
->
-> This all looks good enough for me especially if it's really that much of
-> a bottleneck for some workloads. But the above part is broken because
-> proc_create_single() may return NULL afair and that means
-> proc_make_permanent()->pde_make_permanent() will NULL-deref.
->
-> I'll fix that up locally.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-oh huh, indeed my bad. But in that case it should perhaps complain? WARN_ON=
-?
+Commit 3241cd0c6c17 ("crypto,fs: Separate out hkdf_extract() and
+hkdf_expand()") adds the new config option CRYPTO_HKDF, which intends to
+select further hash algorithms when crypto manager tests are enabled.
 
-I would argue if this fails then something really went wrong.
+However, the select command accidentally refers to
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS with the CONFIG prefix, whereas the
+references here in the Kconfig file work without the CONFIG prefix.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Correct the references here to its proper form.
+
+Fixes: 3241cd0c6c17 ("crypto,fs: Separate out hkdf_extract() and hkdf_expand()")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ crypto/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index dbf97c4e7c59..f601a4ec6d1a 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -143,8 +143,8 @@ config CRYPTO_ACOMP
+ 
+ config CRYPTO_HKDF
+ 	tristate
+-	select CRYPTO_SHA256 if !CONFIG_CRYPTO_MANAGER_DISABLE_TESTS
+-	select CRYPTO_SHA512 if !CONFIG_CRYPTO_MANAGER_DISABLE_TESTS
++	select CRYPTO_SHA256 if !CRYPTO_MANAGER_DISABLE_TESTS
++	select CRYPTO_SHA512 if !CRYPTO_MANAGER_DISABLE_TESTS
+ 	select CRYPTO_HASH2
+ 
+ config CRYPTO_MANAGER
+-- 
+2.49.0
+
 
