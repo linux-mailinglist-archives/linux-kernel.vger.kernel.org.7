@@ -1,108 +1,198 @@
-Return-Path: <linux-kernel+bounces-584216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE81A78497
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2523BA7847E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455F27A42F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD3E016D483
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 22:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB5720E704;
-	Tue,  1 Apr 2025 22:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE3A2163B9;
+	Tue,  1 Apr 2025 22:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lc3F5AXN"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFWiuBeW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACA422154A;
-	Tue,  1 Apr 2025 22:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C972F4ED;
+	Tue,  1 Apr 2025 22:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743545790; cv=none; b=q52i3XA4H5OziNedysRKUQMxmLOTsu6xke0WSTYg4Okce6L/mTpq33cVIBC4r5kcC45IE4lHJlxabL1cozA4eW/FNj5UDeDTi1SLBwCl+q7IhXV5iRmT0yXI4t0q+15wkWfO8jIVOtEu2aqLVItVGpBq56NHONlBhUce7Vojfyc=
+	t=1743545781; cv=none; b=KdskU/wGZWJZPHM8pggtih6tZe6HGbzwmjzyZxie5ahPaWNlpUNb89Cmu86B3uwvg7WjfFpfzulahjpI+5izIP79YbDgEQ4q0A9AE3SxCMCibYbj0HrDlX3cxfIrmjhovr19o2PUBd+gH4zpfyJQCfZ6lhg5IBGOznSjXeSVFpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743545790; c=relaxed/simple;
-	bh=4ZZoMk7Bzxg7EPnIPY4kMYP5TXrvahs3Zqj6VZqMzGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pt5JBherCbAaGZqf2Zkx7j8pjjo4XKlcVN/fCYP8TgZGNUxNoW1Ak7x46uEp7Zmgp+k6ffiqsR/S5kKyYg3jZH+MFfYRhY/uOioKU7t8BdqD9Bz0NoMxuqR/GWSnqZIVa48kRH8WRv6a8jrzHsaT+gQHfxdBRoJRC+mJ3T1GMVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lc3F5AXN; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6dd991a0e6so1113206276.1;
-        Tue, 01 Apr 2025 15:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743545787; x=1744150587; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZZoMk7Bzxg7EPnIPY4kMYP5TXrvahs3Zqj6VZqMzGM=;
-        b=lc3F5AXNccPhfFVI5WVz16JVtagdxy8jwpZYO/z2ezaC0TquM/bnMTJycj8wjspJb3
-         JsDAlSatlmCOEQo8dQEUfCuvNbvPFhuWCeOBU55EuYQlVCgLO82FOVkrD0Xk44sYpL7M
-         k/aLD61+ZFhH7zwSlZlRr95LA0myPBzYQJjHs/Hk9wLv9YpBlvNstIvopYjSUdW16m1I
-         D3MUhRxK0PVvsD/y4LlXX7NSxNaljPOatHvuZhlEiwhSYVpozl2KyaVraHzcFvIA6NV4
-         +b2dxTaxte6VvsC6XCvDesC7Pq5BctwuiY4KYAK1p2w7A7WY4BFOiwGyNdRw1FfaNhgk
-         S2EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743545787; x=1744150587;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ZZoMk7Bzxg7EPnIPY4kMYP5TXrvahs3Zqj6VZqMzGM=;
-        b=efTH64R6+DCuGTlG9r6KHXGFMOVDiqiNvufJZ1Lyusr9h7LnEnbpJ6PS3GtTwQ1wSf
-         LrslimZ7kM7NyRFTX0DYmvJV7JXrz5a5xMr3Fjm3zD/cpTx4JU5HG1YMu7xvF8yinBfN
-         SbTLEwopI0VvFuTSwOoFTkeHjc04fZXgy7elbwbP5mZ2sT811jHPEzX4K32zomz+2dEl
-         6zHLe43f4B/wu3GlY/0B2V/D8RxuKm/OrP098aLquYpHYEPOrZTMD2QXUT+GOOFxBzxc
-         atfzxrvaDOx4yzZHVKhJ8UQKSCJxfijXsRfEA568ec/KrYdfXRQp0Lzkh2M3iWZVYPqa
-         S2Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCXu2nJSnw6UVdLKybZ/USWijxsZA6uw7XWsRptArgUbwepLdMZPajpyMVfC/okxLcsF6zqAlUnc3JA+g7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDv9wsFP5jswaOFqNCwtB/dcSsN8q0TvuBP7YWADM4ou8+38Sc
-	pTRl20W3T7kUcPIgZBtKG8sBiTFqD2Rw2KVo0JF/9Keu3Nv/Z2J0yE7iJK+YDwOSuA5vHlaIwcZ
-	IvDf+cz54fq+BXypU4bqnt1Ocw2c=
-X-Gm-Gg: ASbGncthxThGQAubeDmXDarGtX2/h0FlUR39L1dKFLojAxpW2TLlRm/kjvSorrStEbI
-	SDV7oyuOlGRHW/9Y9uhg5Mr/+gpQihuiWS9xSoxt6FQ7+y6xMsbRXjnF1TihgXxCUAm+8SXQxET
-	0eoX2w2IuiW+lvBF2y8dTFAYIHgcs=
-X-Google-Smtp-Source: AGHT+IFyrBa8Q+V3emMv0/lFeitl4RCHClPtJE1kMBHwIgnDpEGVlYmEqnl5qU4nw4mkToEp+7y4aeRAOhEpWv50Gqs=
-X-Received: by 2002:a05:6902:2747:b0:e6d:f287:bf3 with SMTP id
- 3f1490d57ef6-e6df2870d3cmr1158460276.28.1743545787458; Tue, 01 Apr 2025
- 15:16:27 -0700 (PDT)
+	s=arc-20240116; t=1743545781; c=relaxed/simple;
+	bh=zBOpo8bHXqPXz1TKBORySxRo5vy6/1PRYjj0iSPTP7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HyjT261+7uK9i20qBaRejtlRqORIlyoDPVeqveZGi4BfrmEhVds/GNyRqV++YV1lWzztt5o/7wFt5HhuIeRodAY0u0zjid2wVP73PAgEX32QG9ePiEEzIo7DBXK/o00n4afMU+jHfJf3BoxYJGb1zYlrzOa6V+Th39l+doj68Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFWiuBeW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37DBC4CEE4;
+	Tue,  1 Apr 2025 22:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743545781;
+	bh=zBOpo8bHXqPXz1TKBORySxRo5vy6/1PRYjj0iSPTP7s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nFWiuBeWydsoQhHsMN54IcYviFkxoHmAoM6Mkt6uzDGgHqXfEHac7ObSGdYhzsQfH
+	 VUbu40MZ+QZXu64pLdgRqCi72h3TOLFtzt9WgjdB/lEouA50hSdLxPsUqjKKda2aeJ
+	 XuTFFNhDOzvsbum5gsQbyn7YyqmLoZUyR66gqtzGwXrtlJ+vN4cxfwuPus4tWA2nhw
+	 SDaRr8vuRFHftuhj23ARqGY6A3O+Cd84Qpx+2CyRh6O96dcsoAWqXEgEpRy9ESPQMn
+	 uqcNvJS2/og+3Bt1QZBLQYpE5VYN/dx3VF2TVMC+zD24eEux+W6W6i/2Rxgk7QAkRP
+	 /te9vO0qBa21w==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	linux-crypto@vger.kernel.org,
+	linux-arch@vger.kernel.org
+Subject: [PATCH 0/7] More CRC kconfig option cleanups
+Date: Tue,  1 Apr 2025 15:15:53 -0700
+Message-ID: <20250401221600.24878-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330135402.105418-1-simeddon@gmail.com> <Z-lm8l1ILFuJE5YS@debian-BULLSEYE-live-builder-AMD64>
-In-Reply-To: <Z-lm8l1ILFuJE5YS@debian-BULLSEYE-live-builder-AMD64>
-From: Siddharth Menon <simeddon@gmail.com>
-Date: Wed, 2 Apr 2025 03:45:51 +0530
-X-Gm-Features: AQ5f1JqRj0rIFNX3PN0empxqba0H3yBaX-Fa98HS939Csdmd4a9CT6Ad5e9h1pQ
-Message-ID: <CAGd6pzPe71oY=+cy3WqKPyZ150q3pOM3LrPE0_ENeKgd+OvnfQ@mail.gmail.com>
-Subject: Re: [PATCH v5] iio: frequency: ad9832: Use FIELD_PREP macro to set
- bit fields
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-staging@lists.linux.dev, gregkh@linuxfoundation.org, jic23@kernel.org, 
-	Michael.Hennerich@analog.com, lars@metafoo.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 30 Mar 2025 at 21:13, Marcelo Schmitt
-<marcelo.schmitt1@gmail.com> wrote:
-> The previous implementation would set ctrl_fp if val == 1 and unset it if val == 0.
-> This patch seems to be doing the reverse (setting ctrl_fp if val == 0, and
-> unsetting it if val != 0). Was the previous implementation potentially buggy?
+This series finishes cleaning up the CRC kconfig options by removing the
+remaining unnecessary prompts and an unnecessary 'default y', removing
+CONFIG_LIBCRC32C, and documenting all the options.
 
-My apologies, I seem to have made a mistake here.
+I'm planning to take this series through the CRC tree.
 
-> Hmm, this is modifying behavior. AD9832_SLEEP and AD9832_CLR were only being
-> modified if something other than 0 was written to output enable sysfs file.
-> Is the patch code mode appropriate than how the driver was before?
+Eric Biggers (7):
+  lib/crc: remove unnecessary prompt for CONFIG_CRC32 and drop 'default
+    y'
+  lib/crc: remove unnecessary prompt for CONFIG_CRC_CCITT
+  lib/crc: remove unnecessary prompt for CONFIG_CRC16
+  lib/crc: remove unnecessary prompt for CONFIG_CRC_T10DIF
+  lib/crc: remove unnecessary prompt for CONFIG_CRC_ITU_T
+  lib/crc: document all the CRC library kconfig options
+  lib/crc: remove CONFIG_LIBCRC32C
 
-I shall address the aforementioned issues along with the ones pointed out by
-Jonathan in my next patch.
+ arch/arm/configs/at91_dt_defconfig            |  1 -
+ arch/arm/configs/collie_defconfig             |  1 -
+ arch/arm/configs/davinci_all_defconfig        |  1 -
+ arch/arm/configs/dove_defconfig               |  1 -
+ arch/arm/configs/exynos_defconfig             |  1 -
+ arch/arm/configs/imx_v6_v7_defconfig          |  2 -
+ arch/arm/configs/lpc18xx_defconfig            |  1 -
+ arch/arm/configs/lpc32xx_defconfig            |  1 -
+ arch/arm/configs/milbeaut_m10v_defconfig      |  2 -
+ arch/arm/configs/mmp2_defconfig               |  1 -
+ arch/arm/configs/multi_v4t_defconfig          |  1 -
+ arch/arm/configs/multi_v5_defconfig           |  1 -
+ arch/arm/configs/mvebu_v5_defconfig           |  1 -
+ arch/arm/configs/mxs_defconfig                |  1 -
+ arch/arm/configs/omap2plus_defconfig          |  3 -
+ arch/arm/configs/orion5x_defconfig            |  1 -
+ arch/arm/configs/pxa168_defconfig             |  1 -
+ arch/arm/configs/pxa910_defconfig             |  1 -
+ arch/arm/configs/pxa_defconfig                |  2 -
+ arch/arm/configs/s5pv210_defconfig            |  1 -
+ arch/arm/configs/sama7_defconfig              |  2 -
+ arch/arm/configs/spitz_defconfig              |  1 -
+ arch/arm/configs/stm32_defconfig              |  1 -
+ arch/arm/configs/wpcm450_defconfig            |  2 -
+ arch/hexagon/configs/comet_defconfig          |  3 -
+ arch/m68k/configs/amcore_defconfig            |  1 -
+ arch/mips/configs/ath79_defconfig             |  1 -
+ arch/mips/configs/bigsur_defconfig            |  1 -
+ arch/mips/configs/fuloong2e_defconfig         |  1 -
+ arch/mips/configs/ip22_defconfig              |  1 -
+ arch/mips/configs/ip27_defconfig              |  1 -
+ arch/mips/configs/ip30_defconfig              |  1 -
+ arch/mips/configs/ip32_defconfig              |  1 -
+ arch/mips/configs/omega2p_defconfig           |  1 -
+ arch/mips/configs/rb532_defconfig             |  1 -
+ arch/mips/configs/rt305x_defconfig            |  1 -
+ arch/mips/configs/sb1250_swarm_defconfig      |  1 -
+ arch/mips/configs/vocore2_defconfig           |  1 -
+ arch/mips/configs/xway_defconfig              |  1 -
+ arch/parisc/configs/generic-32bit_defconfig   |  2 -
+ arch/parisc/configs/generic-64bit_defconfig   |  1 -
+ arch/powerpc/configs/44x/sam440ep_defconfig   |  1 -
+ arch/powerpc/configs/44x/warp_defconfig       |  2 -
+ .../configs/83xx/mpc832x_rdb_defconfig        |  1 -
+ .../configs/83xx/mpc834x_itx_defconfig        |  1 -
+ .../configs/83xx/mpc834x_itxgp_defconfig      |  1 -
+ .../configs/83xx/mpc837x_rdb_defconfig        |  1 -
+ arch/powerpc/configs/85xx/ge_imp3a_defconfig  |  2 -
+ arch/powerpc/configs/85xx/stx_gp3_defconfig   |  2 -
+ .../configs/85xx/xes_mpc85xx_defconfig        |  1 -
+ arch/powerpc/configs/86xx-hw.config           |  1 -
+ arch/powerpc/configs/amigaone_defconfig       |  1 -
+ arch/powerpc/configs/chrp32_defconfig         |  1 -
+ arch/powerpc/configs/fsl-emb-nonhw.config     |  1 -
+ arch/powerpc/configs/g5_defconfig             |  1 -
+ arch/powerpc/configs/gamecube_defconfig       |  1 -
+ arch/powerpc/configs/linkstation_defconfig    |  2 -
+ arch/powerpc/configs/mpc83xx_defconfig        |  1 -
+ arch/powerpc/configs/mpc866_ads_defconfig     |  1 -
+ arch/powerpc/configs/mvme5100_defconfig       |  2 -
+ arch/powerpc/configs/pasemi_defconfig         |  1 -
+ arch/powerpc/configs/pmac32_defconfig         |  1 -
+ arch/powerpc/configs/ppc44x_defconfig         |  1 -
+ arch/powerpc/configs/ppc64e_defconfig         |  1 -
+ arch/powerpc/configs/ps3_defconfig            |  2 -
+ arch/powerpc/configs/skiroot_defconfig        |  2 -
+ arch/powerpc/configs/storcenter_defconfig     |  1 -
+ arch/powerpc/configs/wii_defconfig            |  1 -
+ arch/sh/configs/ap325rxa_defconfig            |  1 -
+ arch/sh/configs/ecovec24_defconfig            |  1 -
+ arch/sh/configs/edosk7705_defconfig           |  1 -
+ arch/sh/configs/espt_defconfig                |  1 -
+ arch/sh/configs/hp6xx_defconfig               |  2 -
+ arch/sh/configs/kfr2r09-romimage_defconfig    |  1 -
+ arch/sh/configs/landisk_defconfig             |  1 -
+ arch/sh/configs/lboxre2_defconfig             |  1 -
+ arch/sh/configs/magicpanelr2_defconfig        |  2 -
+ arch/sh/configs/migor_defconfig               |  1 -
+ arch/sh/configs/r7780mp_defconfig             |  1 -
+ arch/sh/configs/r7785rp_defconfig             |  1 -
+ arch/sh/configs/rts7751r2d1_defconfig         |  1 -
+ arch/sh/configs/rts7751r2dplus_defconfig      |  1 -
+ arch/sh/configs/sdk7780_defconfig             |  1 -
+ arch/sh/configs/se7206_defconfig              |  3 -
+ arch/sh/configs/se7712_defconfig              |  1 -
+ arch/sh/configs/se7721_defconfig              |  1 -
+ arch/sh/configs/se7724_defconfig              |  1 -
+ arch/sh/configs/sh03_defconfig                |  1 -
+ arch/sh/configs/sh2007_defconfig              |  2 -
+ arch/sh/configs/sh7724_generic_defconfig      |  1 -
+ arch/sh/configs/sh7763rdp_defconfig           |  1 -
+ arch/sh/configs/sh7770_generic_defconfig      |  1 -
+ arch/sh/configs/titan_defconfig               |  1 -
+ arch/sparc/configs/sparc64_defconfig          |  1 -
+ drivers/block/Kconfig                         |  2 +-
+ drivers/block/drbd/Kconfig                    |  2 +-
+ drivers/md/Kconfig                            |  2 +-
+ drivers/md/persistent-data/Kconfig            |  2 +-
+ drivers/net/ethernet/broadcom/Kconfig         |  4 +-
+ drivers/net/ethernet/cavium/Kconfig           |  2 +-
+ fs/bcachefs/Kconfig                           |  2 +-
+ fs/btrfs/Kconfig                              |  2 +-
+ fs/ceph/Kconfig                               |  2 +-
+ fs/erofs/Kconfig                              |  2 +-
+ fs/gfs2/Kconfig                               |  1 -
+ fs/xfs/Kconfig                                |  2 +-
+ lib/Kconfig                                   | 57 +++++++++----------
+ net/batman-adv/Kconfig                        |  2 +-
+ net/ceph/Kconfig                              |  2 +-
+ net/netfilter/Kconfig                         |  4 +-
+ net/netfilter/ipvs/Kconfig                    |  2 +-
+ net/openvswitch/Kconfig                       |  2 +-
+ net/sched/Kconfig                             |  2 +-
+ net/sctp/Kconfig                              |  2 +-
+ tools/testing/selftests/bpf/config.x86_64     |  1 -
+ tools/testing/selftests/hid/config.common     |  1 -
+ 116 files changed, 46 insertions(+), 170 deletions(-)
 
-Thank you for taking the time to review my patches.
 
-Regards,
-Siddharth Menon
+base-commit: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+-- 
+2.49.0
+
 
