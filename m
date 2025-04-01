@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-583860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629E0A780C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95667A780C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80703A4E83
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9C83A4F21
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 16:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FF6211282;
-	Tue,  1 Apr 2025 16:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D51215F6B;
+	Tue,  1 Apr 2025 16:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XDct9ytc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IB82jXoQ"
 Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C46820FAB9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 16:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994B9213230
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 16:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743525802; cv=none; b=aw3XqLTud9TlEwIsR+IP1oFd4yflmeHrMmUhJ3Z5de/zF60l+5gyGCbrItPauCFVxRAC+f3Teabm087J0JzNcF9tia+/K8A1+12GTMR/pCrmavfGXgE2kGOm59zDq68oAtM3X4luX5mvUT2xGKrHW1pxzxr8CY9NPW1nZ+R1YCw=
+	t=1743525807; cv=none; b=P30ZQ37J2unvT4dRPJiSxzEWQmJJ4jhHD73XayBi9nz2OFyCbmTp1+PraDHgO8v6a4Z8nBe+2SVw/ZVW25Ts/aXjQfjyo66d9FalveA1QCAR2+1UjYmpyMLUQ93qfomXZAfH3uvrBCWpBP1Pt+ovt+qUJ6Eq9e6IfgcBIkHzmrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743525802; c=relaxed/simple;
-	bh=/GjbkA6Kd7hsHZq/P/3sF3zT4FudF94Hv2Bxy1AVK8U=;
+	s=arc-20240116; t=1743525807; c=relaxed/simple;
+	bh=5iq6Ej0JukMZOt4v5A++8d64xSPyqQ5v5er7/1iuZW4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ATt4WbkohnM1/L8SA/fq5JcStIroDvZVrwRkBUUdBBjxgL9QZPFdnP4NcFo+EWtJifYoctyz4kMiAK7v6QtBlETldk+5EcYEBD2x42QxBvzdYP6C+NyqROMvMUeadX1QdPBtwcqYNqw4lVTLuBGM0lZNselsoqYNy2iX2kAjTok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XDct9ytc; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=Wa3Jo+vUt0GU1ipq2PO9quXzc1i/qTqMHRZbrdMMQZHU6R/xHvavAmLqtCaCQp2HwGNH9n74F9fYVYmL/cOgkJCADK5KhiCR5Vvq7cjXw9OQ2mlpYUnDgczZ0Y3EyPJZjBalZHlySbili5tO5V8r6lmaeyswL+KLbEg9ZJkjjWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IB82jXoQ; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224191d9228so5985605ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 09:43:20 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2255ae39f8fso276975ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 09:43:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743525800; x=1744130600; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743525802; x=1744130602; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zwrym7xxEAtgq4x4qvWpfuf9S76CNXdDvpgAdSnAM4Y=;
-        b=XDct9ytcdGerG8zJTTQxiKoEpO8dmphUu3EL8CFqbq15SUkZCDb8YTza4FcCi5VICZ
-         PfM7nJn7bHWVkj4NPA4WxIQ5Dqwoejd2H1q6gAjs0O4iqOF7uHWeSu5gH68xII52PX9t
-         MMNz1U/R4VSgAt2mDP2vOEuwDN3A1/IMnP+cq8wfAc5JxHqbh9Ttm2CVks7J3Ge92+o3
-         Ly/R5mjckJCXdqS2GBi/D+7nMfrUf8F201xsK7Ladn/UMb4MByif9r5TMnx90cx4wBUt
-         5Uu1qWYirvbdNLjJdx4mnesAOxIZ2N4BBEDWnzj1NFGi8kr+zJxEs24nuh1MJWlGz/56
-         NLkg==
+        bh=/XYYrhooXHNQcqBoobC7D5bK0XS2jFQGb7UC9bcI9h8=;
+        b=IB82jXoQ/BkQnpCN7Rnwso7yq0sh9Olsv/ISZOjrxCNXY38HN21itGuR8GTyHGf5QT
+         elKTjYZKc0bXe7hovNqFTEKchRz5UlBPzDilS+eSSz4Ek6pGZ+j8pDbPHD7rU/xm2IOp
+         FfFptLjn4aizDgbDhMESnlL8jF+KDt0ecpZnxYvi9AzUzt1XMMX/5oSc/UHa2owTPg/g
+         9jVjaJFdqd1DB7wZJHIg3/bY5u1INOUwXBLOlX+j7yuXxFNWOfK8uj53110xYeHxDJ+w
+         iyv0WPoY+M0BnIZRVGN1LSrtD9FctfBHdKZXyOhcomhuWmiWK6wC7DhjuD5O94ELMmIY
+         qjyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743525800; x=1744130600;
+        d=1e100.net; s=20230601; t=1743525802; x=1744130602;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Zwrym7xxEAtgq4x4qvWpfuf9S76CNXdDvpgAdSnAM4Y=;
-        b=IgSO6IxfELcZkwC7N5DyEFVkcKGj3OJrRE+oB/Tpfid06WaW/DfTnci8n8RLmuHO5J
-         nEb052e5asci2YqId+w4VJTpth3seoOk+mJU7KiyhPYQJ8OqIv03p+gDaDzUW9NrZcXI
-         kQqfqttbvr6Whqn4S9pn5QA4Po3TXAOXM5V9jRiZjeVDDIkpbTxUkrM8b6wOnjxyNcrK
-         l3vxQpkBatIhqPp6/1QtfE/KI7qQ6DQHPu7aUoCq7gWbJByYkmL0hWlaQKNWSPAEritm
-         l3eQigBPEoyvvF7GgtVaHG7KvQgrT53ukvU0E0MMyyF57yy+Zzewtj9cRecQVh4e7/ei
-         dysQ==
-X-Gm-Message-State: AOJu0Yz6kP8cO2g2qMVNSp1geGAUNYQTBmqxNyspC42kP0vUv0C3Sjcs
-	N8rDbpHFa7VytiEmy+31GshgzgMUCZF/U+RJxIvwOqal529UNmu6/f0nGDvO4w78KNZVoyiDT/t
-	jwg==
-X-Google-Smtp-Source: AGHT+IFbVo2sDfRTB5QdrlauwzOsHEHDj5i2PQ/L+ccHkR2b9gPNztMxgVK194+kKMnHLMvn4E7liI+Holc=
-X-Received: from pfbln19.prod.google.com ([2002:a05:6a00:3cd3:b0:736:a1eb:1520])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e74e:b0:220:f59b:6e6
- with SMTP id d9443c01a7336-2292f9494e1mr156226415ad.8.1743525800423; Tue, 01
- Apr 2025 09:43:20 -0700 (PDT)
+        bh=/XYYrhooXHNQcqBoobC7D5bK0XS2jFQGb7UC9bcI9h8=;
+        b=D2ji8HemsJ/+jv/jsK4wmYIg9IvMfs4vCfZY+fYHIEYrAndeLIMROPd5h5H7/zgBGi
+         RRPq/+KaJmhORj0mznWSP+YI74/q6jeMUSSrF28Ky9nMWETUKckkUhUtmFxYwfAQGXZo
+         p9Jmiw3Cw5IzjsDyP8kk94JAW7h2r3CxTYSAD+hcyzKf46ezSQQdODSlqKnBpYRkcmdH
+         FmqoEi87Z4EEqGpMFtYXzFzCsCSRVqjyMKK131vHcxj8sR67pyE4nuGJ33WiCnjv2LXw
+         Ml5wz2vq5P7j4WddqHFJ+eSaXym1H4t1/At6HzjxiVcbk+CcIRVpKD120+zfaqzmPhkv
+         NbBg==
+X-Gm-Message-State: AOJu0YyubQf35cp88tW9YP2mJAcoeAnNdYeTNOidRaa13TdGxkw961Zo
+	lGzTvsgNfBypcqYcJrtZ4yG7uQZkvrXzF4SrcdmKk3NOfMHaU87f+wxIWDYqKiNmWUAKnrr0/31
+	RKw==
+X-Google-Smtp-Source: AGHT+IFy0IhgEaHcg00977nQlGMuEOMnb3oYwKlOFTc/u3M4G7iMNsSXATt5UTOpWjp44DoW3ZbtcVNrt4s=
+X-Received: from pfbfo6.prod.google.com ([2002:a05:6a00:6006:b0:736:3cd5:ba36])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:8186:b0:736:b400:b58f
+ with SMTP id d2e1a72fcca58-739c3f771bcmr873231b3a.0.1743525801845; Tue, 01
+ Apr 2025 09:43:21 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  1 Apr 2025 09:34:43 -0700
+Date: Tue,  1 Apr 2025 09:34:44 -0700
 In-Reply-To: <20250401163447.846608-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250401163447.846608-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250401163447.846608-5-seanjc@google.com>
-Subject: [PATCH v2 4/8] x86/irq: KVM: Track PIR bitmap as an "unsigned long" array
+Message-ID: <20250401163447.846608-6-seanjc@google.com>
+Subject: [PATCH v2 5/8] KVM: VMX: Process PIR using 64-bit accesses on 64-bit kernels
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -84,188 +84,63 @@ Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
 	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Track the PIR bitmap in posted interrupt descriptor structures as an array
-of unsigned longs instead of using unionized arrays for KVM (u32s) versus
-IRQ management (u64s).  In practice, because the non-KVM usage is (sanely)
-restricted to 64-bit kernels, all existing usage of the u64 variant is
-already working with unsigned longs.
+Process the PIR at the natural kernel width, i.e. in 64-bit chunks on
+64-bit kernels, so that the worst case of having a posted IRQ in each
+chunk of the vIRR only requires 4 loads and xchgs from/to the PIR, not 8.
 
-Using "unsigned long" for the array will allow reworking KVM's processing
-of the bitmap to read/write in 64-bit chunks on 64-bit kernels, i.e. will
-allow optimizing KVM by reducing the number of atomic accesses to PIR.
+Deliberately use a "continue" to skip empty entries so that the code is a
+carbon copy of handle_pending_pir(), in anticipation of deduplicating KVM
+and posted MSI logic.
 
-Opportunstically replace the open coded literals in the posted MSIs code
-with the appropriate macro.  Deliberately don't use ARRAY_SIZE() in the
-for-loops, even though it would be cleaner from a certain perspective, in
-anticipation of decoupling the processing from the array declaration.
-
-No functional change intended.
-
+Suggested-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/posted_intr.h | 14 +++++++-------
- arch/x86/kernel/irq.c              | 12 ++++++------
- arch/x86/kvm/lapic.c               |  9 +++++----
- arch/x86/kvm/lapic.h               |  4 ++--
- arch/x86/kvm/vmx/posted_intr.h     |  2 +-
- 5 files changed, 21 insertions(+), 20 deletions(-)
+ arch/x86/kvm/lapic.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/posted_intr.h b/arch/x86/include/asm/posted_intr.h
-index de788b400fba..c3e6e4221a5b 100644
---- a/arch/x86/include/asm/posted_intr.h
-+++ b/arch/x86/include/asm/posted_intr.h
-@@ -8,12 +8,12 @@
- 
- #define PID_TABLE_ENTRY_VALID 1
- 
-+#define NR_PIR_VECTORS	256
-+#define NR_PIR_WORDS	(NR_PIR_VECTORS / BITS_PER_LONG)
-+
- /* Posted-Interrupt Descriptor */
- struct pi_desc {
--	union {
--		u32 pir[8];     /* Posted interrupt requested */
--		u64 pir64[4];
--	};
-+	unsigned long pir[NR_PIR_WORDS];     /* Posted interrupt requested */
- 	union {
- 		struct {
- 			u16	notifications; /* Suppress and outstanding bits */
-@@ -43,12 +43,12 @@ static inline bool pi_test_and_clear_sn(struct pi_desc *pi_desc)
- 
- static inline bool pi_test_and_set_pir(int vector, struct pi_desc *pi_desc)
- {
--	return test_and_set_bit(vector, (unsigned long *)pi_desc->pir);
-+	return test_and_set_bit(vector, pi_desc->pir);
- }
- 
- static inline bool pi_is_pir_empty(struct pi_desc *pi_desc)
- {
--	return bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
-+	return bitmap_empty(pi_desc->pir, NR_VECTORS);
- }
- 
- static inline void pi_set_sn(struct pi_desc *pi_desc)
-@@ -105,7 +105,7 @@ static inline bool pi_pending_this_cpu(unsigned int vector)
- 	if (WARN_ON_ONCE(vector > NR_VECTORS || vector < FIRST_EXTERNAL_VECTOR))
- 		return false;
- 
--	return test_bit(vector, (unsigned long *)pid->pir);
-+	return test_bit(vector, pid->pir);
- }
- 
- extern void intel_posted_msi_init(void);
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 5d732ff357ef..3753a8acd009 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -407,12 +407,12 @@ void intel_posted_msi_init(void)
-  * instead of:
-  *		read, xchg, read, xchg, read, xchg, read, xchg
-  */
--static __always_inline bool handle_pending_pir(u64 *pir, struct pt_regs *regs)
-+static __always_inline bool handle_pending_pir(unsigned long *pir, struct pt_regs *regs)
- {
--	unsigned long pir_copy[4], pending = 0;
-+	unsigned long pir_copy[NR_PIR_WORDS], pending = 0;
- 	int i, vec = FIRST_EXTERNAL_VECTOR;
- 
--	for (i = 0; i < 4; i++) {
-+	for (i = 0; i < NR_PIR_WORDS; i++) {
- 		pir_copy[i] = READ_ONCE(pir[i]);
- 		pending |= pir_copy[i];
- 	}
-@@ -420,7 +420,7 @@ static __always_inline bool handle_pending_pir(u64 *pir, struct pt_regs *regs)
- 	if (!pending)
- 		return false;
- 
--	for (i = 0; i < 4; i++) {
-+	for (i = 0; i < NR_PIR_WORDS; i++) {
- 		if (!pir_copy[i])
- 			continue;
- 
-@@ -460,7 +460,7 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_posted_msi_notification)
- 	 * MAX_POSTED_MSI_COALESCING_LOOP - 1 loops are executed here.
- 	 */
- 	while (++i < MAX_POSTED_MSI_COALESCING_LOOP) {
--		if (!handle_pending_pir(pid->pir64, regs))
-+		if (!handle_pending_pir(pid->pir, regs))
- 			break;
- 	}
- 
-@@ -475,7 +475,7 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_posted_msi_notification)
- 	 * process PIR bits one last time such that handling the new interrupts
- 	 * are not delayed until the next IRQ.
- 	 */
--	handle_pending_pir(pid->pir64, regs);
-+	handle_pending_pir(pid->pir, regs);
- 
- 	apic_eoi();
- 	irq_exit();
 diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index cb4aeab914eb..893e7d06e0e6 100644
+index 893e7d06e0e6..e4f182ee9340 100644
 --- a/arch/x86/kvm/lapic.c
 +++ b/arch/x86/kvm/lapic.c
-@@ -655,8 +655,9 @@ static u8 count_vectors(void *bitmap)
- 	return count;
- }
+@@ -657,26 +657,32 @@ static u8 count_vectors(void *bitmap)
  
--bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr)
-+bool __kvm_apic_update_irr(unsigned long *pir, void *regs, int *max_irr)
+ bool __kvm_apic_update_irr(unsigned long *pir, void *regs, int *max_irr)
  {
-+	u32 *__pir = (void *)pir;
+-	u32 *__pir = (void *)pir;
++	unsigned long pir_vals[NR_PIR_WORDS];
++	u32 *__pir = (void *)pir_vals;
  	u32 i, vec;
- 	u32 pir_val, irr_val, prev_irr_val;
+-	u32 pir_val, irr_val, prev_irr_val;
++	u32 irr_val, prev_irr_val;
  	int max_updated_irr;
-@@ -668,10 +669,10 @@ bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr)
+ 
+ 	max_updated_irr = -1;
+ 	*max_irr = -1;
+ 
++	for (i = 0; i < NR_PIR_WORDS; i++) {
++		pir_vals[i] = READ_ONCE(pir[i]);
++		if (!pir_vals[i])
++			continue;
++
++		pir_vals[i] = xchg(&pir[i], 0);
++	}
++
+ 	for (i = vec = 0; i <= 7; i++, vec += 32) {
  		u32 *p_irr = (u32 *)(regs + APIC_IRR + i * 0x10);
  
  		irr_val = READ_ONCE(*p_irr);
--		pir_val = READ_ONCE(pir[i]);
-+		pir_val = READ_ONCE(__pir[i]);
+-		pir_val = READ_ONCE(__pir[i]);
+-
+-		if (pir_val) {
+-			pir_val = xchg(&__pir[i], 0);
  
- 		if (pir_val) {
--			pir_val = xchg(&pir[i], 0);
-+			pir_val = xchg(&__pir[i], 0);
- 
++		if (__pir[i]) {
  			prev_irr_val = irr_val;
  			do {
-@@ -691,7 +692,7 @@ bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr)
- }
- EXPORT_SYMBOL_GPL(__kvm_apic_update_irr);
- 
--bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, u32 *pir, int *max_irr)
-+bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, unsigned long *pir, int *max_irr)
- {
- 	struct kvm_lapic *apic = vcpu->arch.apic;
- 	bool irr_updated = __kvm_apic_update_irr(pir, apic->regs, max_irr);
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 1a8553ebdb42..0d41780852e4 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -101,8 +101,8 @@ bool kvm_apic_match_dest(struct kvm_vcpu *vcpu, struct kvm_lapic *source,
- 			   int shorthand, unsigned int dest, int dest_mode);
- int kvm_apic_compare_prio(struct kvm_vcpu *vcpu1, struct kvm_vcpu *vcpu2);
- void kvm_apic_clear_irr(struct kvm_vcpu *vcpu, int vec);
--bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr);
--bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, u32 *pir, int *max_irr);
-+bool __kvm_apic_update_irr(unsigned long *pir, void *regs, int *max_irr);
-+bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, unsigned long *pir, int *max_irr);
- void kvm_apic_update_ppr(struct kvm_vcpu *vcpu);
- int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
- 		     struct dest_map *dest_map);
-diff --git a/arch/x86/kvm/vmx/posted_intr.h b/arch/x86/kvm/vmx/posted_intr.h
-index ad9116a99bcc..4ff9d720dec0 100644
---- a/arch/x86/kvm/vmx/posted_intr.h
-+++ b/arch/x86/kvm/vmx/posted_intr.h
-@@ -18,7 +18,7 @@ static inline int pi_find_highest_vector(struct pi_desc *pi_desc)
- {
- 	int vec;
- 
--	vec = find_last_bit((unsigned long *)pi_desc->pir, 256);
-+	vec = find_last_bit(pi_desc->pir, 256);
- 	return vec < 256 ? vec : -1;
- }
+-				irr_val = prev_irr_val | pir_val;
++				irr_val = prev_irr_val | __pir[i];
+ 			} while (prev_irr_val != irr_val &&
+ 				 !try_cmpxchg(p_irr, &prev_irr_val, irr_val));
  
 -- 
 2.49.0.472.ge94155a9ec-goog
