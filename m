@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-583345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED02A779BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AD5A779BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6523ADF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DDC6188C739
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 11:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10411FBEAA;
-	Tue,  1 Apr 2025 11:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="be2L2WzG"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677241FBE9F;
+	Tue,  1 Apr 2025 11:38:49 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1E61FAC5F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 11:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876041F1932;
+	Tue,  1 Apr 2025 11:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743507495; cv=none; b=H3kW4R14XWglsqEijQPQWBlz5cfKAZycM8D2siOgrFRAQVCnf8rvN/ghLniDh80zM5A6LHVOhkL4N/9VhJ6cyI5igVtHQy0V0q8gxIZCAbSyzl0BUbN6gxhjojHG2OVxN+ctc5/isfh7Cjkp+wz3e0fWM8dQQ8zgx6Xv3bCFFNU=
+	t=1743507529; cv=none; b=aYmjk3mdGQAcIS6IeF4zi1jbDYtGX8YBhvltiQ4OtoChV5wNEJE7S/wcHe1Aevpk2cwqO5+SxBHQ+VGLhIKqOgGpOuBoJMzBpuc0hABnshWhPbu9kAmBXUF29BGK5ln9vTf2bar/KyhWjIDJoyZ4OKv7/JJ/4kP5DHvBH1qvHzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743507495; c=relaxed/simple;
-	bh=5ewUIkcDYDp5CI8gkXADDwYJIM1RS38PD14UJnHj13U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7L7bN3HEqVrbahjGsVOHZhtvFyD3+Cd5hhKbUl/EF/9t3L1h+emsz8I7I2Ji+9/J/p8znpMh3cAYvpshix07tlxD+eBiMsA9/+fzzLnYtUc6Nmv5yLw7dfqoIKhTc8i2S3LyOOc8Rq9XvKCodh+Ey8gc+Gv//5+QdDKZAoeiOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=be2L2WzG; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1743507489; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=dPsW6zzNsJ8iBAR6uGrinqus+uX+vXrhwBfcxZTSSyE=;
-	b=be2L2WzGFT9HVNS9qtNj6+ldb0AgRPjgQACc5sed6xmxdtfi/uCRm9JOR38pf4tlb3T7fKc5yszDK+PFOqz3AVpzKvLpcYkRaCTp2YQRJktMTsrrVRE5eCd7XqtG4scjANUQ4O66SwWmJuyudqRVOA/naTMi4ZLeawKIuTBhfuQ=
-Received: from 30.221.147.144(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WU041zZ_1743507487 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 01 Apr 2025 19:38:07 +0800
-Message-ID: <e1014674-51a4-4d40-9bc9-0906ffbeadac@linux.alibaba.com>
-Date: Tue, 1 Apr 2025 19:38:06 +0800
+	s=arc-20240116; t=1743507529; c=relaxed/simple;
+	bh=LHedbrkVzlmaH1psxYjSEYlxzv0irFgDo399ghA9vvI=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=ILTpWc9FZyiJDv6q4ny4fgSJYxOUTXAXQkXn7LnR92HdN9Cjm+EJof+DpVZLDbKIB0MuOhjdQ4c1wR/MdsaLrPD4Yes13ZB2c1KMA+ERPIE5jcswErdR+q4I32TvCuoCFzYUbjYuDAIEdbxBAR5Bo1HqqFssu5PyJqFZlqsW+JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZRmGs2HkXz5B1KS;
+	Tue,  1 Apr 2025 19:38:45 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 531BcX0u087176;
+	Tue, 1 Apr 2025 19:38:33 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 1 Apr 2025 19:38:36 +0800 (CST)
+Date: Tue, 1 Apr 2025 19:38:36 +0800 (CST)
+X-Zmail-TransId: 2afa67ebd03c78c-9d6fe
+X-Mailer: Zmail v1.0
+Message-ID: <20250401193836885cYSO33OlICvYYYmEMlB5J@zte.com.cn>
+In-Reply-To: <20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn>
+References: 20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: fixing global bitmap allocating failure for
- discontig type
-To: Heming Zhao <heming.zhao@suse.com>
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- gautham.ananthakrishna@oracle.com
-References: <20250327062209.19201-1-heming.zhao@suse.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20250327062209.19201-1-heming.zhao@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <miquel.raynal@bootlin.com>, <jckuo@nvidia.com>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <ye.xingchen@zte.com.cn>, <xie.ludan@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIDEvMl0gcGh5OiBtYXJ2ZWxsOiBhMzcwMC1jb21waHk6IFVzZcKgZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlX2J5bmFtZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 531BcX0u087176
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67EBD045.001/4ZRmGs2HkXz5B1KS
 
+From: Xie Ludan <xie.ludan@zte.com.cn>
 
+Introduce devm_platform_ioremap_resource_byname() to simplify resource
+retrieval and mapping.This new function consolidates
+platform_get_resource_byname() and devm_ioremap_resource() into
+a single call, improving code readability and reducing API call overhead.
 
-On 2025/3/27 14:22, Heming Zhao wrote:
-> The commit 4eb7b93e0310 ("ocfs2: improve write IO performance when
-> fragmentation is high") introduced a regression. In the discontiguous
-> extent allocation case, ocfs2_cluster_group_search() is comparing with
-> the wrong target length, which causes allocation failure.
-> 
-> Call stack:
-> ocfs2_mkdir()
->  ocfs2_reserve_new_inode()
->   ocfs2_reserve_suballoc_bits()
->    ocfs2_block_group_alloc()
->     ocfs2_block_group_alloc_discontig()
->      __ocfs2_claim_clusters()
->       ocfs2_claim_suballoc_bits()
->        ocfs2_search_chain()
->         ocfs2_cluster_group_search()
-> 
-> Reported-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-> Fixes: 4eb7b93e0310 ("ocfs2: improve write IO performance when fragmentation is high")
-> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
-> ---
->  fs/ocfs2/suballoc.c | 14 +++++++++++---
->  fs/ocfs2/suballoc.h |  1 +
->  2 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-> index f7b483f0de2a..3dea082f6e91 100644
-> --- a/fs/ocfs2/suballoc.c
-> +++ b/fs/ocfs2/suballoc.c
-> @@ -698,10 +698,12 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
->  
->  	bg_bh = ocfs2_block_group_alloc_contig(osb, handle, alloc_inode,
->  					       ac, cl);
-> -	if (PTR_ERR(bg_bh) == -ENOSPC)
-> +	if (PTR_ERR(bg_bh) == -ENOSPC) {
-> +		ac->ac_which = OCFS2_AC_USE_MAIN_DISCONTIG;
->  		bg_bh = ocfs2_block_group_alloc_discontig(handle,
->  							  alloc_inode,
->  							  ac, cl);
-> +	}
->  	if (IS_ERR(bg_bh)) {
->  		status = PTR_ERR(bg_bh);
->  		bg_bh = NULL;
-> @@ -2365,7 +2367,8 @@ int __ocfs2_claim_clusters(handle_t *handle,
->  	BUG_ON(ac->ac_bits_given >= ac->ac_bits_wanted);
->  
->  	BUG_ON(ac->ac_which != OCFS2_AC_USE_LOCAL
-> -	       && ac->ac_which != OCFS2_AC_USE_MAIN);
-> +	       && ac->ac_which != OCFS2_AC_USE_MAIN
-> +	       && ac->ac_which != OCFS2_AC_USE_MAIN_DISCONTIG);
->  
->  	if (ac->ac_which == OCFS2_AC_USE_LOCAL) {
->  		WARN_ON(min_clusters > 1);
-> @@ -2427,7 +2430,12 @@ int ocfs2_claim_clusters(handle_t *handle,
->  			 u32 *cluster_start,
->  			 u32 *num_clusters)
->  {
-> -	unsigned int bits_wanted = ac->ac_bits_wanted - ac->ac_bits_given;
-> +	unsigned int bits_wanted;
-> +
-> +	if (ac->ac_which == OCFS2_AC_USE_MAIN)
-> +		bits_wanted = ac->ac_bits_wanted - ac->ac_bits_given;
-> +	else /* ac_which == OCFS2_AC_USE_MAIN_DISCONTIG */
-> +		bits_wanted = min_clusters;
+Signed-off-by: Xie Ludan <xie.ludan@zte.com.cn>
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+---
+ drivers/phy/marvell/phy-mvebu-a3700-comphy.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-This looks wried. Why can not be other alloc type?
+diff --git a/drivers/phy/marvell/phy-mvebu-a3700-comphy.c b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
+index 1d1db1737422..e629a1a73214 100644
+--- a/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
++++ b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
+@@ -1253,26 +1253,20 @@ static int mvebu_a3700_comphy_probe(struct platform_device *pdev)
 
-Or it seems you intend to:
+ 	spin_lock_init(&priv->lock);
 
-unsigned int bits_wanted = ac->ac_bits_wanted - ac->ac_bits_given;
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "comphy");
+-	priv->comphy_regs = devm_ioremap_resource(&pdev->dev, res);
++	priv->comphy_regs = devm_platform_ioremap_resource_byname(pdev, "comphy");
+ 	if (IS_ERR(priv->comphy_regs))
+ 		return PTR_ERR(priv->comphy_regs);
 
-if (ac->ac_which == OCFS2_AC_USE_MAIN_DISCONTIG)
-	bits_wanted = min_clusters;
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-					   "lane1_pcie_gbe");
+-	priv->lane1_phy_regs = devm_ioremap_resource(&pdev->dev, res);
++	priv->lane1_phy_regs = devm_platform_ioremap_resource_byname(pdev, "lane1_pcie_gbe");
+ 	if (IS_ERR(priv->lane1_phy_regs))
+ 		return PTR_ERR(priv->lane1_phy_regs);
 
-Thanks,
-Joseph
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-					   "lane0_usb3_gbe");
+-	priv->lane0_phy_regs = devm_ioremap_resource(&pdev->dev, res);
++	priv->lane0_phy_regs = devm_platform_ioremap_resource_byname(pdev, "lane0_usb3_gbe");
+ 	if (IS_ERR(priv->lane0_phy_regs))
+ 		return PTR_ERR(priv->lane0_phy_regs);
 
->  
->  	return __ocfs2_claim_clusters(handle, ac, min_clusters,
->  				      bits_wanted, cluster_start, num_clusters);
-> diff --git a/fs/ocfs2/suballoc.h b/fs/ocfs2/suballoc.h
-> index b481b834857d..bcf2ed4a8631 100644
-> --- a/fs/ocfs2/suballoc.h
-> +++ b/fs/ocfs2/suballoc.h
-> @@ -29,6 +29,7 @@ struct ocfs2_alloc_context {
->  #define OCFS2_AC_USE_MAIN  2
->  #define OCFS2_AC_USE_INODE 3
->  #define OCFS2_AC_USE_META  4
-> +#define OCFS2_AC_USE_MAIN_DISCONTIG  5
->  	u32    ac_which;
->  
->  	/* these are used by the chain search */
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+-					   "lane2_sata_usb3");
+-	priv->lane2_phy_indirect = devm_ioremap_resource(&pdev->dev, res);
++	priv->lane2_phy_indirect = devm_platform_ioremap_resource_byname(pdev,
++									 "lane2_sata_usb3");
+ 	if (IS_ERR(priv->lane2_phy_indirect))
+ 		return PTR_ERR(priv->lane2_phy_indirect);
 
+-- 
+2.25.1
 
