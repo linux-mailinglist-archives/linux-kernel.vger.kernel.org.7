@@ -1,225 +1,145 @@
-Return-Path: <linux-kernel+bounces-583475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79EDA77B52
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7474A77B6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 14:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EF01890017
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59943188FF4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 12:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB2F2036F5;
-	Tue,  1 Apr 2025 12:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363AF202C43;
+	Tue,  1 Apr 2025 12:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wVaoi1nA"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BLq2FijJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24609202F9C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5111FBE83
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 12:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743511867; cv=none; b=PsE2RwIHR0ntlAbbdoIOBTwLQ0J4JGrCDhvM+4MBflhtOcaX2IJ06FdY84hK8egnJ/5pbbWnHWBN4Z19kszLWldY6DC5VfwCvU+NTfKw2S9e36OcT6XCXRmPAIHh3R7x9gX3BjI5n9qLpCD4syb5yW2NmhD8zyLB4+1i6DIp18s=
+	t=1743512322; cv=none; b=pEtZ0vprGgr/ghZiDLAzPX0qD+rk/Fvwuh5NG1LPvfkIn+CYb7vxEcnZgfqSt4YoPz43sE0aKtTvjS979tTQmkv55RVsJY4GYztlkskEqJjhhLIvIVUIqfk1t19anBmIBEcIvVbsAZIAiJXd8tlFzIyWPeDiVc4pplzayGMtmL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743511867; c=relaxed/simple;
-	bh=ZOFsi3litqhCgJS1jihO7XF23Gp1ddwfq7GOwxxIK5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X4Fu6TiuY492SAn6jV5lMnNjDQlV13CeM6E3BIwzjuS4UvqCLSIEZEyXaujkqCSBjRYrfZB9INe6zZBwSdMFpBZXI8Xb13MkGJOmJCgD57JJfA2lbq2uUlus3w2jznbZqzvmoP3RVyZ0whbKht6LxEi+hYFkqrlZDygAxNUEoa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wVaoi1nA; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2241053582dso87596605ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 05:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743511863; x=1744116663; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yn6iujXamPOMTSSX+tFE3E9MwwaCnXbxRAwBn2smIRI=;
-        b=wVaoi1nAJ+7GZPu8/AIPFolXYuzlFaG2ukGsF1aFUlnfooIw8wi1DVN+H7EyOcpVM0
-         a2JVf+fYwmyZ3SAMFvbK1cQ08OGqBfi8Ae6Jb5q52wZswBiGomPhOotPBgPxA9Fc2a2q
-         NPBD8A0VrCGLUdfh56Mfi4AGdqp9w0MjvraRy+kTA9kciRslsu30eR7nIidWkAg4TFbF
-         DO1LF++BCYkH9zt8hrmZypCM4NFJUM9tb586plobcqpyk5pQFKS+NYcefN6iBDE3EANE
-         9DXQdWUR0TQo/XuEr/o4Ad+3rHowwKimKM5vBo7UJBY0Ew6M3K+Y91z1f+tYsELeYUHU
-         D3lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743511863; x=1744116663;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yn6iujXamPOMTSSX+tFE3E9MwwaCnXbxRAwBn2smIRI=;
-        b=sIb+NphuM6fEVmqa5faNd1DuDY4l9fKjMSx0CFZswG2+ZzG+RClFD8Cv87/BGGVwqD
-         pn15+pMjDGLsHGdZEYllbRFqkCmNiexAvau0XmIkLNfpRAYRkErCVoh9mtUMUtvYrJsR
-         vpUOorI9u36owvpF7ocVOXOe1udesw4iH0tt3onQ44mp8kueAaataqm/YNr2Y8NccDNA
-         3/6U0mpcs3et0Hc6u++ucarpygYXHSbsRJAH+5VNL1X9d2HFmzRePliPOvCbDGVTBnaS
-         nUeOWgIAhAUutun4aYEixpJAeXIuteWdwQTFKmw2PJrXDeD+pDa6Me0u8AzgScP/cqe+
-         x0cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwnu68kZUA49v/lVzidKXXQhkhoZwtzNKwDYQS1ailk38K6UXxhXSjwWf58rf2GbgUrg3Bhz97aACgWbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIxpIbKPoDIfk2cr9nym5I5NQzevyvHYA+PO8YhSWKUKz/wjFp
-	MK7r+zMXDu6mjS+Kv7dedxRZjSHZAv6QaF93ySOZMxTcuJ1x5SWMn4juyojCjJE6w5vR2AEed0z
-	UDaOmGbCZ32MmSiddJOxKG+cehaNxchOOG63ggQ==
-X-Gm-Gg: ASbGnctqJTygc+uW730KhnZDTGV2RGLAfurOMFDxF47Dwz4yUpoD0L/9aV9Hjzg+A0d
-	W5ggRt+fZZaTjF0WlTQQ0JhRkUe5GIACYpRJ3wSEzgs+EpWQfGCpdJTDiPR2aMCjEjOyNtzo8H2
-	toy60+tQVHd/RDPqcxz8a/Ysl3Vnb4yQwKHBYWbA==
-X-Google-Smtp-Source: AGHT+IGJ4D6WlyWRmXCY7tI860Hkqd5R2026ZqBanuazeSj4V5Z2viAo41F6x1U8U43Rxn2+DKU1Wn2n4dsVbHHsNpQ=
-X-Received: by 2002:a05:6a00:2383:b0:736:34a2:8a18 with SMTP id
- d2e1a72fcca58-7398044db06mr16843430b3a.24.1743511863245; Tue, 01 Apr 2025
- 05:51:03 -0700 (PDT)
+	s=arc-20240116; t=1743512322; c=relaxed/simple;
+	bh=7ownRNrp8waqDTJNjAMNHZWNVU7/bS7YjQdsU9lba7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ehZ5kO+drDI2kY1yLRirEkhyBgiFLD8Ypd1Oi5XfI7myvLHzshqVCbcIGelUgWxKzyfoeMed+psI3pLTvCPWo/PyGeur9ttjSf034Uja+bx9oqTomsB+Uj2rwnlpvaYlwFZj/CR2TaZz6hVeIQ7pSYFm13ScyYA1LWjl5nqlqc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BLq2FijJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743512318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZBPHk9cZuedRDs9pl9r5KL5+x0frCOEG1GupmWjuGtI=;
+	b=BLq2FijJZSJ44hXunFrgWYS0HRf46Xht8o4jVwibP7ZPnVPtLOnCpWBcVkE8rr7+vSCFJ6
+	eY3o8XqT6aWPJM1m8d11G8tmrXmar3t/3N+TNUjAD1r+RpSrDy1d+6YMHlcCEPvCuvFNCl
+	pn+OCWTYVhq+vwERplG1OIgGgc2ORA4=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-7bo5vYdoNfK-elKO9zWT7Q-1; Tue,
+ 01 Apr 2025 08:58:35 -0400
+X-MC-Unique: 7bo5vYdoNfK-elKO9zWT7Q-1
+X-Mimecast-MFC-AGG-ID: 7bo5vYdoNfK-elKO9zWT7Q_1743512314
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 936451800258;
+	Tue,  1 Apr 2025 12:58:33 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.44.32.206])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C0A731956094;
+	Tue,  1 Apr 2025 12:58:29 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v6 0/8] drm/i915: Add drm_panic support
+Date: Tue,  1 Apr 2025 14:51:06 +0200
+Message-ID: <20250401125818.333033-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311170451.611389-1-leo.yan@arm.com> <20250311170451.611389-5-leo.yan@arm.com>
-In-Reply-To: <20250311170451.611389-5-leo.yan@arm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 1 Apr 2025 13:50:52 +0100
-X-Gm-Features: AQ5f1JrG6rHLtjrc-40BATWpK-5ZTpp_JctZAVhjYGTU8Y716TkHgEMEmzg3WSs
-Message-ID: <CAJ9a7VjqGbpPPeR3-PH5vYHNMwqnPLJ+Ouik017Qh717wFOJ0g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] coresight: perf: Support AUX trace pause and resume
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Leo,
+This is a draft of drm_panic support for i915.
 
-On Tue, 11 Mar 2025 at 17:05, Leo Yan <leo.yan@arm.com> wrote:
->
-> This commit supports AUX trace pause and resume in a perf session for
-> Arm CoreSight.
->
-> First, we need to decide which flag can indicate the CoreSight PMU event
-> has started.  The 'event->hw.state' cannot be used for this purpose
-> because its initial value and the value after hardware trace enabling
-> are both 0.
->
-> On the other hand, the context value 'ctxt->event_data' stores the ETM
-> private info.  This pointer is valid only when the PMU event has been
-> enabled. It is safe to permit AUX trace pause and resume operations only
-> when it is not a NULL pointer.
->
-> To achieve fine-grained control of the pause and resume, only the tracer
-> is disabled and enabled.  This avoids the unnecessary complexity and
-> latency caused by manipulating the entire link path.
->
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  .../hwtracing/coresight/coresight-etm-perf.c  | 45 ++++++++++++++++++-
->  1 file changed, 44 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index f4cccd68e625..2dcf1809cb7f 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -365,6 +365,18 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->                         continue;
->                 }
->
-> +               /*
-> +                * If AUX pause feature is enabled but the ETM driver does not
-> +                * support the operations, clear this CPU from the mask and
-> +                * continue to next one.
-> +                */
-> +               if (event->attr.aux_start_paused &&
-> +                   (!source_ops(csdev)->pause_perf || !source_ops(csdev)->resume_perf)) {
-> +                       dev_err_once(&csdev->dev, "AUX pause is not supported.\n");
-> +                       cpumask_clear_cpu(cpu, mask);
-> +                       continue;
-> +               }
-> +
->                 /*
->                  * No sink provided - look for a default sink for all the ETMs,
->                  * where this event can be scheduled.
-> @@ -450,6 +462,15 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->         goto out;
->  }
->
-> +static int etm_event_resume(struct coresight_device *csdev,
-> +                            struct etm_ctxt *ctxt)
-> +{
-> +       if (!ctxt->event_data)
-> +               return 0;
-> +
-> +       return coresight_resume_source(csdev);
-> +}
-> +
->  static void etm_event_start(struct perf_event *event, int flags)
->  {
->         int cpu = smp_processor_id();
-> @@ -463,6 +484,14 @@ static void etm_event_start(struct perf_event *event, int flags)
->         if (!csdev)
->                 goto fail;
->
+I've tested it on the 4 intel laptops I have at my disposal.
+ * Haswell with 128MB of eDRAM.
+ * Comet Lake  i7-10850H
+ * Raptor Lake i7-1370P (with DPT, and Y-tiling).
+ * Lunar Lake Ultra 5 228V (with DPT, and 4-tiling, and using the Xe driver.
 
-Is it possible here that the first call to etm_event_start() also has
-the PERF_EF_RESUME flag set?
-If so it looks like we need to fall through and do a "normal" start to
-get all the ctxt->event_data set up.
+I tested panic in both fbdev console and gnome desktop.
 
-> +       if (flags & PERF_EF_RESUME) {
-> +               if (etm_event_resume(csdev, ctxt) < 0) {
-> +                       dev_err(&csdev->dev, "Failed to resume ETM event.\n");
-> +                       goto fail;
-> +               }
-> +               return;
-> +       }
-> +
->         /* Have we messed up our tracking ? */
->         if (WARN_ON(ctxt->event_data))
->                 goto fail;
-> @@ -545,6 +574,16 @@ static void etm_event_start(struct perf_event *event, int flags)
->         return;
->  }
->
-> +static void etm_event_pause(struct coresight_device *csdev,
-> +                           struct etm_ctxt *ctxt)
-> +{
-> +       if (!ctxt->event_data)
-> +               return;
-> +
-> +       /* Stop tracer */
-> +       coresight_pause_source(csdev);
-> +}
-> +
->  static void etm_event_stop(struct perf_event *event, int mode)
->  {
->         int cpu = smp_processor_id();
-> @@ -555,6 +594,9 @@ static void etm_event_stop(struct perf_event *event, int mode)
->         struct etm_event_data *event_data;
->         struct coresight_path *path;
->
-> +       if (mode & PERF_EF_PAUSE)
-> +               return etm_event_pause(csdev, ctxt);
-> +
->         /*
->          * If we still have access to the event_data via handle,
->          * confirm that we haven't messed up the tracking.
-> @@ -899,7 +941,8 @@ int __init etm_perf_init(void)
->         int ret;
->
->         etm_pmu.capabilities            = (PERF_PMU_CAP_EXCLUSIVE |
-> -                                          PERF_PMU_CAP_ITRACE);
-> +                                          PERF_PMU_CAP_ITRACE |
-> +                                          PERF_PMU_CAP_AUX_PAUSE);
->
->         etm_pmu.attr_groups             = etm_pmu_attr_groups;
->         etm_pmu.task_ctx_nr             = perf_sw_context;
-> --
-> 2.34.1
->
+Best regards,
 
-If the possible issue above is prevented by perf internals
+v2:
+ * Add the proper abstractions to build also for Xe.
+ * Fix dim checkpatch issues.
 
-Reviewed-by: Mike Leach <mike.leach@linaro.org>
+v3:
+ * Add support for Y-tiled framebuffer when DPT is enabled.
+
+v4:
+ * Add support for Xe driver, which shares most of the code.
+ * Add support for 4-tiled framebuffer found in newest GPU.
+
+v5:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private.
+ * Use iosys_map for intel_bo_panic_map().
+
+v6:
+ * Rebase on top of git@gitlab.freedesktop.org:drm/i915/kernel.git drm-intel-next
+ * Use struct intel_display instead of drm_i915_private for intel_atomic_plane.c
+
+Jocelyn Falempe (8):
+  drm/i915/fbdev: Add intel_fbdev_get_map()
+  drm/i915/display/i9xx: Add a disable_tiling() for i9xx planes
+  drm/i915/display: Add a disable_tiling() for skl planes
+  drm/i915/gem: Add i915_gem_object_panic_map()
+  drm/i915/display: Add drm_panic support
+  drm/i915/display: Flush the front buffer in panic handler
+  drm/i915/display: Add drm_panic support for Y-tiling with DPT
+  drm/i915/display: Add drm_panic support for 4-tiling with DPT
+
+ drivers/gpu/drm/i915/display/i9xx_plane.c     |  23 +++
+ .../gpu/drm/i915/display/intel_atomic_plane.c | 169 +++++++++++++++++-
+ drivers/gpu/drm/i915/display/intel_bo.c       |   5 +
+ drivers/gpu/drm/i915/display/intel_bo.h       |   1 +
+ .../drm/i915/display/intel_display_types.h    |   2 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.c   |   5 +
+ drivers/gpu/drm/i915/display/intel_fb_pin.h   |   2 +
+ drivers/gpu/drm/i915/display/intel_fbdev.c    |   5 +
+ drivers/gpu/drm/i915/display/intel_fbdev.h    |   6 +-
+ .../drm/i915/display/skl_universal_plane.c    |  27 +++
+ drivers/gpu/drm/i915/gem/i915_gem_object.h    |   2 +
+ drivers/gpu/drm/i915/gem/i915_gem_pages.c     |  29 +++
+ drivers/gpu/drm/i915/i915_vma.h               |   5 +
+ drivers/gpu/drm/xe/display/intel_bo.c         |  10 ++
+ drivers/gpu/drm/xe/display/xe_fb_pin.c        |   5 +
+ 15 files changed, 294 insertions(+), 2 deletions(-)
 
 
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+base-commit: 010363c4618920838ca8777fdabd46871d289bf9
+-- 
+2.49.0
+
 
