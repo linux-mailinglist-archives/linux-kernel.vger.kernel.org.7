@@ -1,465 +1,213 @@
-Return-Path: <linux-kernel+bounces-583761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08533A77F93
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:53:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F5CA77F6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 17:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1E43B278F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:49:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2CAC7A4CB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4FA20E33E;
-	Tue,  1 Apr 2025 15:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7486C20C48C;
+	Tue,  1 Apr 2025 15:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Brc2ZYea";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Brc2ZYea"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2055.outbound.protection.outlook.com [40.107.103.55])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Vc56S7NH"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011046.outbound.protection.outlook.com [40.107.74.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744D020E03F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 15:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.55
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743522552; cv=fail; b=AsyvpylzNjM6uw/6AQmOUCBJ7vqiHVFykRLIBEsHRQ884PcA3ivtOz473mhZXhqq+CO7SStIkuCsj4Dgz+A7aYsahAaPNUPFdhLUeQeA5VQuPCV96/zCq/b4RlxOXLUWmp9/yXM6Sy2a29i4MpvfGAmF94HmdhdExF6LN3xpsuQ=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743522552; c=relaxed/simple;
-	bh=/8o3cFgnnrgWoQjy9f42CHMAGgoGSsKkTA+lJgfF2v8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VAvnbb/XiXVSC7h9Rn5XGjidvKkfTUT/yByCQwR/4jms6W2Wn3AbITudlfr2vrgTj3kiUpFDUjY2lyDotyFgltrSz+La/hrW7559RALAsv5vq4NRVaw54X3N2h1G4lH0gqPyjQLpeTmJvqleK0BvBpyCkQ9uJdhXlreHy7EmRLc=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Brc2ZYea; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Brc2ZYea; arc=fail smtp.client-ip=40.107.103.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=NTyPPSEI3e8fuCneML29ou6AnWRDjIByIAs0ezUSTRuLYMoj5pERcVbjDSmbw0xq7yGC5uc9qsKYUcYGoHYChNST0uehUofkFmnK2OXhc8IHXa52Y0q0IDPP66gj7YxQ3uvAhg9g0o90W8hiPJOuGrAYNbSDNgKo/jQZP/NftQggBF4JEyXChTMVchxhuYXei7oZ34EI/Jy9uaZEe1Yyoy2JATZ2CWouBDyPXgH/DoUwhyQavXBIvFkcqsEyNoIPp6igTl8kAdG3OIgBk5TW8Xa1w6je9RalhK7U4p8bfDfRO1uaCUprguPaLXAo4WTgJ8kj7KZqNgUUHM2G47Nxtw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=Wk8IUMfYXSF6xzlO4cqR//mbthzvuWmI/zifl9xddDg3D/mcBXPg77TVlVCNllTJaBIm3x+vFV71P7HA5AZ0q/etWvpqxiMMeD6r+WX+SFBOwRuOs2Mf9AEr+RrlcBiG1kPui/rOMzgd12g32o1/VtVlFPA63RJzlMVqwckJ3CtEAeQp7vPUz+18sohp03uw1rCioIoYDHj0oe5/cjf2biwUD0q8rwWINvCqrbm8PV/wO7XJF1gdmIj7OfWUvXU3iy9GxgtchBDKmDVZZJGYcMzTVoTkENmOXekkECqHzVj0i/96l7tBlnVI+enxgSpmqGNFKLknhAUtPHZLdLeqVA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=Brc2ZYeawqTOE4b0ZRYihd13CtrWN9bW953r+DXsJJ1nCFK/dcN/rAfPwV9/0dqcDqb4sB7XdhHXD9694xtsucPybid+YeQ2VaGDurMSw/yIoKocZzAjfOHZowKPULk2mFKs9UdpRLMNVCKnKzNGJQh/FnXc8ISFUWE9O3zI3gw=
-Received: from DU6P191CA0050.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::13)
- by AM8PR08MB5780.eurprd08.prod.outlook.com (2603:10a6:20b:1c4::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.47; Tue, 1 Apr
- 2025 15:49:03 +0000
-Received: from DU6PEPF0000B61D.eurprd02.prod.outlook.com
- (2603:10a6:10:53e:cafe::c3) by DU6P191CA0050.outlook.office365.com
- (2603:10a6:10:53e::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.54 via Frontend Transport; Tue,
- 1 Apr 2025 15:49:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DU6PEPF0000B61D.mail.protection.outlook.com (10.167.8.137) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.22
- via Frontend Transport; Tue, 1 Apr 2025 15:49:03 +0000
-Received: ("Tessian outbound eb3c789b7dfa:v604"); Tue, 01 Apr 2025 15:49:03 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 054820aff8357f30
-X-TessianGatewayMetadata: V9GQzal8YZ2Ke0O9w0rhnllqJQWy0U0aVPUNZ/GoNGOHAeXOg2xgPreGwImCkDXf2Bgx65yR9Tyo0bB2GoesCYCzE7bSgsRb/bynKuu+DdaO/TJnUFUv9avSuWu+76DvvbEjMY06N2qYsHMfJMxyIhf/qDJ73fGFwFaPZKvwsm+8UxEEsxMpQOHMutL+Iuz/sq/oDgZdHyt6Dol/n0GL5w==
-X-CR-MTA-TID: 64aa7808
-Received: from L09bc3a1ed403.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id FF6A9144-F857-42B2-841E-E4C600CA087C.1;
-	Tue, 01 Apr 2025 15:48:52 +0000
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L09bc3a1ed403.2
-    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Tue, 01 Apr 2025 15:48:52 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A1B20B1E6;
+	Tue,  1 Apr 2025 15:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743522518; cv=fail; b=Nd8QkJyonXlRsUnJCs6vD/xh6HGhVdaGt5XEJHtYsdmrR1rhBPG4UT3dgX6ErfPACNHvHYyQucyKUOjyCxz/1gS4f147gq00ZdmHUix7BSdJE7AAH6F6p4fyu0zOqY1l3iwQtj5Q1jd5hFDW3m/sHQ3U2mqHwMbVM6Y2WgJGePU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743522518; c=relaxed/simple;
+	bh=NYJorftXppmU28FDH88ORpKoO6CtN1DWJBKvBmMSDbA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XyLuHiCqtZlbaYRc3O73JXkLzGYr3JXA4OhbsArxWzd6PGjQIAfnautUbFsrLeokjWcaLtSeXZto2BG/OwtSzhlq7VmJ+aJJGGiMk1pNEafbBLyyPXrFwtNBNG9jtr3h1WVapIcuNBcRzUhg6pPI4VOJ+K8M5CiMHIuK60elXkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Vc56S7NH; arc=fail smtp.client-ip=40.107.74.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NyAB7QIyXG61lgi9Xaz0bX++huN4J08+PIyBPl3ZIm6WIjAxzz9j0xtnIhotRGaZoOtYRfBAqzng2o2PJueKD3fhid8AK6MK+wKrNBmLfoBEJulgJyLNqoC5tTtKLWiYUvp5VATUss0W7aKQgqikHdW0utogjqf4xoMIITbxnOtVK+KSbOvggVfyyo+VPkNRdlOMYzOHlEsBVem3sPmSVpqFNX18TYGnkh1aMV7ld6EW4ARSHReFGgkHxaDxGCdKHy5o8d2HApIuJt+rzR5v770mBaLg2oWf7+Nn1lgkULt2Cv+LbLCmM7nQ+tMw/y5u+3NyLnLRKphUg51g30IhWA==
+ b=YdFpttx3yPZd59Q1gR4FhWve4XncylJPoOsFSCBL/uqXRV0zCCBJJzkXGL7xea9fGOj8GzanrECGuI4pmzs59wglnAfv033QvnXz9IWTOxpTGYP3R+IHZ9+SWcTdPNsqx5deRnzusfTFfQmvJsvbu9/78p3Kyrd2l12Lg0UHiuqwUlw+69Eaw6YE7pz//HUz606AfKiLUBjQqFE5vDa13rjQefBCmRIVzYnQPue5M/rY75HInMdveM6Pmf5b1juG4wHht3ktOumB0W8HfammrsUR2akb/WQF5DAACxKm+gui6MewHvwreKVsNIx1OC+OoUm7Pw4vjoyy72jy85yc8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=ftUvpiqY9W5jR4nV5qVcwagxv0jCXX3EliNqmORytGAFfbNbDhgj5LhDEevkME7gERxc9S/mWHyVZFF9V0HA4BU1xBmpF6UEf1+3YjW+W/NFOirrpCeUgoJR+f2Krfd658HmXXNqg2P1K4+z0d3G3U2zBT5UT0gqK3ZaFtaDVQ8Pgw/7cmYRPXEGQ3nRAlR9/AhFQS2NNazfCk1eGw0IA8Kbco/gsbJ/MBYIxA2KypmChmD0bBi/3N6TMEqA3uVPsKcqs34obZelEvtluhiw4mEIfRWMpUpYi9pQRtwEwgV/ljUeNGd7RfJHlpktjYjFPUAVntjix24aHssOY0LPGg==
+ bh=RFk1d6Cfg/oJlxLlrKT4aszLRe08I8yerbpUmudcx3I=;
+ b=I3Exs3Br2wWEhvdydJIM0NcWfmlfm0t1SpiVJgZqKeoFCMl3eqQyNAxOXM6z2/3j8qwkSOZp4zUdyQYF4XWzznOqvGACFy7cGbSymOsmYbkeS2B27RK+/oVhTuilsddeAOJGdDaDwoooSShCUjM7nDxxaDdgAnV4Ac7fi8l6aRq1D5BExFHSO9Wo2CBm1gWu+pWIywimqnc3VBZC73YkdXhQiFoM1x57pLszgPgUQNrOSZuhUOs3mBR6GkmPWuCMTVb7O+XEF1W1jBNSbEydNyVK7LnP/ONtsJ6Gp37hgDMWf9x/U6SMAqsGuU++gD7aq7803C/EaDTFT/QEkkc1eA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZotHG/NiHZdV7jEQZVPj2JqaAhiLixdocbppNgllw8=;
- b=Brc2ZYeawqTOE4b0ZRYihd13CtrWN9bW953r+DXsJJ1nCFK/dcN/rAfPwV9/0dqcDqb4sB7XdhHXD9694xtsucPybid+YeQ2VaGDurMSw/yIoKocZzAjfOHZowKPULk2mFKs9UdpRLMNVCKnKzNGJQh/FnXc8ISFUWE9O3zI3gw=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM0PR08MB3315.eurprd08.prod.outlook.com (2603:10a6:208:5c::16)
- by DU0PR08MB8279.eurprd08.prod.outlook.com (2603:10a6:10:40d::20) with
+ bh=RFk1d6Cfg/oJlxLlrKT4aszLRe08I8yerbpUmudcx3I=;
+ b=Vc56S7NH0ocxkBJ7UL/5SmPLxGWDynEg8VisLJ+UBfk9rcsiBql4XJrU0d1kIZ94xvVUryuVJDCwaN/2421SlzL52D7622JKwaYx3YEWqQpa0qswYFwnugTjxMvo+ZigD6y1n5R66X6ArAiFtc5VraK5fnAk26k7i4fvHdDcyvE=
+Received: from TY3PR01MB12089.jpnprd01.prod.outlook.com (2603:1096:400:3cf::5)
+ by TYTPR01MB11045.jpnprd01.prod.outlook.com (2603:1096:400:39e::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Tue, 1 Apr
- 2025 15:48:49 +0000
-Received: from AM0PR08MB3315.eurprd08.prod.outlook.com
- ([fe80::42a0:1b6e:cf98:d8fc]) by AM0PR08MB3315.eurprd08.prod.outlook.com
- ([fe80::42a0:1b6e:cf98:d8fc%6]) with mapi id 15.20.8534.048; Tue, 1 Apr 2025
- 15:48:49 +0000
-From: Lukas Zapolskas <lukas.zapolskas@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Lukas Zapolskas <lukas.zapolskas@arm.com>
-Subject: [PATCH v3 7/7] drm/panthor: Expose the panthor perf ioctls
-Date: Tue,  1 Apr 2025 16:48:22 +0100
-Message-Id: <1db5077232173ec63bb16e953422c55efcd41e69.1743517880.git.lukas.zapolskas@arm.com>
-X-Mailer: git-send-email 2.33.0.dirty
-In-Reply-To: <cover.1743517880.git.lukas.zapolskas@arm.com>
-References: <cover.1743517880.git.lukas.zapolskas@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0584.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:276::15) To AM0PR08MB3315.eurprd08.prod.outlook.com
- (2603:10a6:208:5c::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.37; Tue, 1 Apr
+ 2025 15:48:28 +0000
+Received: from TY3PR01MB12089.jpnprd01.prod.outlook.com
+ ([fe80::2ac2:8829:306b:5772]) by TY3PR01MB12089.jpnprd01.prod.outlook.com
+ ([fe80::2ac2:8829:306b:5772%4]) with mapi id 15.20.8583.038; Tue, 1 Apr 2025
+ 15:48:28 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Andi Shyti
+	<andi.shyti@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] i2c: rzv2m: Constify struct i2c_algorithm
+Thread-Topic: [PATCH] i2c: rzv2m: Constify struct i2c_algorithm
+Thread-Index: AQHboLgU7WCeDLLJ7U2SPExWI5D3XLOO+Wxw
+Date: Tue, 1 Apr 2025 15:48:27 +0000
+Message-ID:
+ <TY3PR01MB12089EC8451B0701770BCAA72C2AC2@TY3PR01MB12089.jpnprd01.prod.outlook.com>
+References:
+ <537d93441ced53bffa6553b8ec93d007e64cb9a5.1743258995.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To:
+ <537d93441ced53bffa6553b8ec93d007e64cb9a5.1743258995.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB12089:EE_|TYTPR01MB11045:EE_
+x-ms-office365-filtering-correlation-id: 63ecc832-ddcb-4193-acd0-08dd7134a531
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?//0kCRnLQkr6sj3k/bqhwOpsatUnE2RdVtQnnKbs07SFrsxctCf2C1b4aHce?=
+ =?us-ascii?Q?G7GBXK6PgT4+hU2Bm7lqEKs5zW5tMEDvxI1bJeklUX5b+k3FS6t1C92UScqx?=
+ =?us-ascii?Q?kmHCj3FWX7+vDBO/DK/GZ+TcHZF1ua91Pv4T8In5BGmpvX38E57kJvwfY/xv?=
+ =?us-ascii?Q?vBhmy6Iug6NcCH2g23Rqv6ot6ET7RosvYYnmgEe5tZi4r4Xcdj0pBN75Idok?=
+ =?us-ascii?Q?DftWl6mpDZ0Rux1gB2wkI3aSjyyV6JWgBIubLbLsyEPiyzsOMDh+h5vZmqPd?=
+ =?us-ascii?Q?hENne3PtjobmlneE9Misy5HqFa4mXm0FyhhFCbob3Dl50NKwxQR+vTR2Eq9N?=
+ =?us-ascii?Q?EBVhboTHLnmz6zexpDb7wNZ0Tf484aeNVxkLGUUJ64LTRQaLNDAr4ZU17QE+?=
+ =?us-ascii?Q?zS2ElDvH2cXTV2Tq7r1q0nZOy5ZhrmtZCUqnsBVUxqI05wD2J7ljSQ9UdDBU?=
+ =?us-ascii?Q?KYuM7O6oTOt6gxUUHG+973Fc2E2BB/fuXVBqsD4K90PZhXUYvX1ygoZ9JV3O?=
+ =?us-ascii?Q?5/msKSgtjV07fI+EhwBDrRwV+VaKUwifPk/wdPNyVKXRR628nLbgXEQSfpZS?=
+ =?us-ascii?Q?YSDm93I6fvh/DpLf6rCYgwtVZUksoG1PYrXiMwH97Ba+xCT/KdQqyPPZj48E?=
+ =?us-ascii?Q?6tlnnkqXo5rOIiLO9rHm42/vB6Jbmmp4/JLugdbExDZz6l72E8/CNcVXk2Qg?=
+ =?us-ascii?Q?0kp4AqMxQY974ekbQBsZkIOZw4HfiwoFa2g3jsH4Bf79z26NsSEp9/JGkOGT?=
+ =?us-ascii?Q?qWB0gyU3pwgzZ3JXvXSIpmQygWu47f6A2VJzkR/416+jpORq0jbMEVKY4VfF?=
+ =?us-ascii?Q?PqZqHGuUHVAywsllRGbrKQnuk2uE1MDibPgQRzPAXb05R9dXz6pr1Zm2i7V+?=
+ =?us-ascii?Q?bbpTEuWs/4Z5gRiBSrBwLzcUvFT/haNp3iFP+meEGof/N7hO6G1/q7722mfb?=
+ =?us-ascii?Q?wLQPmCZ8LZ+rbPw3Y3p5IqvQKUpDQFCOX9/Bv741hWqRLJsygp+nuHkH20AP?=
+ =?us-ascii?Q?ejer9IERLpRE4bdOWb4jB2oOJzJwKSgH7L+S1S6DlB4nXD1To4mvzQ8u+6tV?=
+ =?us-ascii?Q?YFhX8IGL/KZ9lAjTKWd+IwOcXYvVGyJViOSrVVb8W5Bb3MAxxX0rEUWtts9J?=
+ =?us-ascii?Q?I4uj/hZ9rymVMOfH6bQ7w7cHdN7UuGZALbwlZmWkc0GgguovHbWOrsdvwrby?=
+ =?us-ascii?Q?MCDJMAJN2KDZcS52kVDBuL3Mf/1s1IQ5u2fJhXvFB5iSg6IhD5bWuNjePbJ+?=
+ =?us-ascii?Q?JR0x8aq9DdsBzrlMWlNhaHdSfFTB6JOKtIJ8D9pofIL/SeRdplg65cxdZYCE?=
+ =?us-ascii?Q?1Z5+oU2E+Je9PMc7mKyOXdo/1VBZOumR+OIaVxJ2rDt8uYyK/b18R9xaWv5B?=
+ =?us-ascii?Q?tbset9QZZbHp6l+FJLKSl0nOeO8G1zxdYqvKyvB55TekfinJdBH3i0io19nh?=
+ =?us-ascii?Q?KaB0zO6vxZp8uIhCgSSPfz+zXUmCosT8?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB12089.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?c0gEbyeMN32Vzk/a58DLMsjsdfPhJb6iOE3SqjnTJ5nLsbiq3h1mQpPo/fxN?=
+ =?us-ascii?Q?LtLKGhvCQrRQ4uegUkO2HjwKyTuOiisf40wL3JFETh6zYr2AHvC5sQ/J1Rfj?=
+ =?us-ascii?Q?4Whpmj6US97xj3Yg1oEkBM5gXcyzW7S7xwBrjK+0dIAxaT6RASClpEk1LKDE?=
+ =?us-ascii?Q?QgYaEfTjYaslC4F7CF9Mb4FGPxUmXQ4QOxdaj7B+ZicL8CE7cCWxNhTLFmYY?=
+ =?us-ascii?Q?D6Vi+aCipRcG92jNRHGHasQFbtaMXEgnwQnCfvxRUSkacEaTiLHwcWfV1tP3?=
+ =?us-ascii?Q?L139FF1h0a+KjHzys912jVCdgbsitwbXx3ZOJrr3atiSJQO1S/1J14SeVxJh?=
+ =?us-ascii?Q?wEdPO3i7K3baaYlQcO/e4A+HV4uTC0I8dXAgidhvdFwRoys8cKs8hlIThIEv?=
+ =?us-ascii?Q?bGsnBN7QjzQdlwvTvGuoN9T5G4WV2r3d2Ay7qZrJmD6dqLCQ8I3JY6pZp3IG?=
+ =?us-ascii?Q?gYX2a9Vl6AkyAtIW2fvyinI/hHMke2VFxx2nLBA9ToKJfArg8gFkLqwHL5Gp?=
+ =?us-ascii?Q?2xRsvq9/benUuTc8JVx0iALOIk6vjrN1NXarBVz/y09UXW0HJCGa0BIRmDum?=
+ =?us-ascii?Q?N4KAiSxN0EXJdxjFhez8nKRFHK1Q3H222FUcJXC33bI4SgGlP6ToGaY7tw0C?=
+ =?us-ascii?Q?5W5kuX+IMiH8kxnv59K+CaeCNMTNG0IkXSqzZbPgqFKs5WV9gqXr7bAyKZcC?=
+ =?us-ascii?Q?6DAzZqg25uirdLtGDhrE5eY4JscY3nbHb+9RsisepDG7i/tZ3PcXk3yqXNOU?=
+ =?us-ascii?Q?GT0beogudyCagA2EfgNySJE17JI3QO5l538m2ERRmsue6sV9IptnyARG/Q+d?=
+ =?us-ascii?Q?STRZAQ1kPBDa0tDzSHoiAw8H8OGVbRgXma3zmOPnbFAvs+5ftTCPnBQY0eyy?=
+ =?us-ascii?Q?MU4p1PpPRpwi4gUe1Zg8sdfFIvHQS+ELrh5B/ucPs6Ncww1qaJseTATC+PAm?=
+ =?us-ascii?Q?12FdDfqmYQ9JeaiJCFW1tgIc0WFHseHAajeqxjX3+8BGL3kyPdzBSqmZT6Q9?=
+ =?us-ascii?Q?NAY9IqnqvY+Apm3J1+uu0B1vAwQFknrBbzrpTTstTlqXufb+3mxQNdIu1gdI?=
+ =?us-ascii?Q?3yXv7H1ehK1npx3/ozo73yHxXpX+wIYzD/yTbScJg6St+58hD/kvj7lL4c1d?=
+ =?us-ascii?Q?pU+wTFvVeR0/io6t2mfOolK/8rb/7P076buIHwt71DXBBCx6Gtxc4Yvgmyaz?=
+ =?us-ascii?Q?VyPIx0iToZlNNPTk7rFjI46vI3SREeWfkGyRw+9SVNThkDixFlwoKKaOaxfh?=
+ =?us-ascii?Q?Hb9NBpN88nJeciOamd9SZRHyRaE+QLXA8pkDWbg1juQqmxWcDwSYsfy6lhJ3?=
+ =?us-ascii?Q?XEjuGxNeTEUc2cBdm4a5yeD+nB/1jbOfw3/7W5vhDMowPp4bqn6chs39YY5d?=
+ =?us-ascii?Q?su/4xU0D9+RDGFkwhHhK9eDq51/MsZx0ym+8ax53Di0LvwWDBOHbGO1I5isU?=
+ =?us-ascii?Q?I46FEPD1jmjWUgup8wKs8z4A5TSbgdbiHPDQz1trEvVI7DyU44JTDmIOHjMz?=
+ =?us-ascii?Q?gclcHDA/gqiJyIDtzpcoHIDUIoYVqripTAQbL8Wpr9P/HIW27lX/BoT8I00J?=
+ =?us-ascii?Q?junpZa3fYHFkg95207YBDA5HrhSB5bj+IyJYDh9OYIvRLKwzNb5PAjPmzfgn?=
+ =?us-ascii?Q?vg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM0PR08MB3315:EE_|DU0PR08MB8279:EE_|DU6PEPF0000B61D:EE_|AM8PR08MB5780:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cf1e56d-d877-481d-8f7b-08dd7134ba79
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|921020;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?dVZ5VlRWS2F2bVQ0RW5PMEprKzFOY0g0eCt5eGFQdENhMW1MQlArcnJGclI4?=
- =?utf-8?B?a3BqNGFrNWZpeDVqdWFhV2lnbUlnbmZ0clJOT0JxVGhRd3JmTWRjMUpsK1h4?=
- =?utf-8?B?aURqTDYrZDk3NGtzWitVVlJXeU1vT0JZdndsZWp0S3F4UnNtekR3Y0JDc0xY?=
- =?utf-8?B?akxCR3VRWmgrVk04UG4yb2xOenp0U0dJR1gvOURZTmI2RmYrdVRhVElqejhv?=
- =?utf-8?B?N2p3aXRxenJjN2xUdVo1Yi9oWGRaRGhuZWFTYlJiaGtIK1AvNXhrenZkRlRs?=
- =?utf-8?B?cUR6ektCWHlVTjNHYWYwQjlESERZS2t6bVdxaXh4TS8xWlFFYldCdCtJaEky?=
- =?utf-8?B?UTJHdmpKQnB2OFFUR0d3bnBBTlA0bmVaNW1tTzBXMGtVNEhJdFY1OVphdm9x?=
- =?utf-8?B?R3NzcWtDeFVlYUx1N00zM05ESUlmUTR1YS9jZ25IMGw5QWNla2xGVmxKQ3ZX?=
- =?utf-8?B?WFhxdnBQSFF1WkFMK2h3aEJrbmw2NEg0N2V3cDN1dmNLUm5CNGYrV1A1bnpF?=
- =?utf-8?B?a2kzbDFuSXFEK0FKLzNFS0o5ZkJVYWhheW1xbDkxbGVFVHFVeHBHaU5GU0F4?=
- =?utf-8?B?OGlxWldaMkNjbE1xc2szTVByajdWbEJlNVBJM0dUNmJYZ1lhVC9mblN2bytF?=
- =?utf-8?B?bG56SDJmRUdLSXRWVVozYnJRb0IzaVlld3pNa3RrOHRSdXJTZFNQU2JhalZN?=
- =?utf-8?B?bU1xL0NVWVZiNFJ4cGtVR0RLeHJRYTk5NUhsZ2hpbFR0MVZKTWVyWUg0QTNh?=
- =?utf-8?B?c3kzeElocTU3YzRKbHhxK0tqSUNrRFBnY3pUa2RBdDIxUSs0QW5Pd1ZSV24w?=
- =?utf-8?B?QXRadWZnNlhXYVQ0VUlmVU9OMmVsSldCOG5RWkZIcmp2YktoUHF5d1grOWVt?=
- =?utf-8?B?MnozVG5KVDlVcXpPRkZVU3BKTnhpS25vSEg2NGplNW13REx1cnB0cnJIZXpM?=
- =?utf-8?B?aGRPRHBwSWl2NUhBU1VmYVZadVRpS3dPK2NScG9pblkwcEwzaXFLK3hDcWt3?=
- =?utf-8?B?Umg3RDIrWWcrZ1dLRmdnRVlYTkVUa08rNEEzWmZXQ3ZHNm8rZGxMNDdkc0Y2?=
- =?utf-8?B?R21IS2R6eUw1ZFJ2bTdyR3RnTUV3alMvL1JEbzN2S3BtK256UktyS0txeHFF?=
- =?utf-8?B?VEVqZFcydDBuamZYSkN2YmhqelllaE03NTZIZjIxS3FMZlliRnhqR0pjeGhM?=
- =?utf-8?B?a3dTbU1FSktIRUkyVW9NT3hjRGpiaVdDV1BoZVBDVC9uZzhiQjZDZHNoeFBO?=
- =?utf-8?B?MWoyMm5PK3Vsdy9CalpWSENFWmRMK0FkVlptMWRyUWZXTjlBbEhzSXB1RS9j?=
- =?utf-8?B?R0IxbktrMC9oV25MVHNsVFVNK3BVRzIrSFMwdnVRcllRUTdzdEtqeTBzaDBa?=
- =?utf-8?B?cDF4WVpvcURBSy9xT3h6SmcrR05uVXgxZ0tUZllMcm1lUEN6ZmVpL1BRRkJI?=
- =?utf-8?B?UENVNWRZbTIrbUxCTS9pL0FxaHl1ajhjV0ROZFB1Ujg0OVRxNEFZbjhtNEZk?=
- =?utf-8?B?Y25rcmNtSG5xVTJsR252aUNFbDAzell1amExeCtrdWhWZHZ3Y2ZPckNtdVhv?=
- =?utf-8?B?WVI5bVA0ZmFtMUJEK2NqTmVQOTNyeHJ4a2c0ckZzM3RPT0ZoVkYwS0c4a0hL?=
- =?utf-8?B?cWpQUVJ0V3VmZmcvODd6ZDlxV01VZ21JRWRkZHZYd1QxVEJpNnVFUExMejhv?=
- =?utf-8?B?K2c3cDJRV0dJM0hja3FsRUlkOEFTaVczVFlkdnhBejgrZ0cybXNjTnpHdCta?=
- =?utf-8?B?b0hHVUdwbU4zZ2dScjlXTS9oNS9lSytpTSszR21Qc0w5bmJ4M2pCbTB1L3Nz?=
- =?utf-8?B?NlVNV2F6T1MrZHB4cFpwdUd1RU9Pa2tIaG9NS002L1RzMnh5MTg2ODVWVkdC?=
- =?utf-8?B?ck1Edk9pclk1Qkd5dWp5am5WMWZDT0tNeDBsQTE1VFowWk1lZXpzUXQ4UFR3?=
- =?utf-8?Q?UeHQ81MNJEg=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB3315.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8279
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:208:5c::16];domain=AM0PR08MB3315.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF0000B61D.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	73bd0a7d-bf87-41c5-2a3e-08dd7134b21d
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|35042699022|14060799003|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c3JyVnF0NEpIKzg4M1dGN05lQ0IvdmZXbzJmclUvN1h5RE13ZVc2aXhERERG?=
- =?utf-8?B?WlR5UkJ3R2JiWFd4V0RXcTV1eEpqZDR1TnYyZnl1R2JGUndEbUh2cGs4TVJv?=
- =?utf-8?B?NWhMelM2UWlOY0cxR0JkamlQNGs1RzlwaGxiYkhSUlM4d1pZMFFodXo1QTdG?=
- =?utf-8?B?UnNNRW9IWExINGgzbTJINEVxQkpCMk5NQWVaTWM3TFBydnF3T25tT0YrNVZh?=
- =?utf-8?B?K1p5eEJaOWc3SFFGMEN6Zy9vQVdOMmNaSlg0L2lmS3VCczBWVWp5VXhxN0RI?=
- =?utf-8?B?cURDdDYzMlp0Y2JqRnVHcysvZkFNd1NDbVFDaGhoQmlkbCtpYnZIR2tSaGtW?=
- =?utf-8?B?aU96UTFUMHBkN1dsSXRrR1dPS2Rnb01ldVY5NWZvYzhVWk9EQVdTU1FZSlht?=
- =?utf-8?B?Y2VMRTFXU0RrRE5Qc3VoQ2ZTTGxzaTBUdnhwMFNCdUk4dmtjM0hwcGdhV01s?=
- =?utf-8?B?c1NhSzg1eWZLT0NXVEJFZStPNGpqVVd2MVYrN0hHWW1PaEVQN0NJVU5teFhN?=
- =?utf-8?B?VGJ0UC9lQmVvUnBRYW03OTBwblFUVkNFN3hxd0ltOGRVQ0ZlL0dFdE1IUVVN?=
- =?utf-8?B?eFZMOUljaE1ZajBjZzFXNG91WDdJenFkdUFkNW1lVEsrWStVRkhZQWtiVXZ5?=
- =?utf-8?B?YXduSGpVeUFjVEdpYnNWbzBsVjNCeDdpajdHY1ZvVGVVL3JKdEVneHdLVTdJ?=
- =?utf-8?B?czlCdlZLeHFRb0hicW5DVno5azY4bkVHcXJSQ2FyRElqS1JBazJ2dE1yZ0to?=
- =?utf-8?B?cVhsT2pKMVNiTmd2NnBNaXZROGZJRnJRMmZkZXpVT2VWVEtSdW5LR1hxemU5?=
- =?utf-8?B?blBCVTU1Ritmck8wMFk4cXRobnVzdzU3TGFZd2FOQURPdGk4SzVidnM4b3lL?=
- =?utf-8?B?TkJQZU9ob2tSZ3EvZDB0c1BBaGxIMEtaN2ZjZlNsOU9qSmpQUGpGQ3lIaFZv?=
- =?utf-8?B?eWErZG9SL3k4c1hQTVRUUm9VOXM3aTVUb084d2VaOW55cXhtS0VoZHU5eGkx?=
- =?utf-8?B?blVKV1JQbFJLcFZkVWFqVnRkNVFSNTFsTmtYM2pJK2RLOEtZOTFtbGYvMTRW?=
- =?utf-8?B?dVpIMmhONkJMcmkxK3NFVWs4T24xZUNtZXNsMkVSUW53cjVmRGtmRHFBWlFP?=
- =?utf-8?B?WlR6M1BNS2hLYktxV2ljR1F5RUFVMi9Sa2lQVDhlMTNidklUS3RqS3hTd2o1?=
- =?utf-8?B?OUNpUkFxRkVHTDJDajZKM01ScEJjcExualhlQndzL2thbnFmRHdsbTZkaXE1?=
- =?utf-8?B?dzhpZktHUTJoR3RKQlZiZHhDOUxFYVpKUjM1OW1NRUxWUWVjWW8wMnp1ZkxY?=
- =?utf-8?B?Mm1wODdEamNpSVQ5c0JIcENXMW9IdzNjYzBUNW5kTEo0STYyMS92aEVPQ1R0?=
- =?utf-8?B?Wm1ieFBYcWF5RWlQZFkrOHBUcGd4eWRsYmRDWnQvbWxmSStDVVFZSm5maHNu?=
- =?utf-8?B?TURaa2QzNjBhbWMxQWJGTkJjQWhNNW9pay95dUJSa0lwZm9mc2NBOXB2UFp5?=
- =?utf-8?B?QUM4K3duRGhXM1pwRENoTkhQMWFFSmtIeFFJaFo0N2IxNk1hdUpud0h5VDlv?=
- =?utf-8?B?TVBpRzhWM1B5aU5yM2oyOFkwYWR1dGhueTZqUkN3bUZ5TFUvNnhTWkRYUUM4?=
- =?utf-8?B?ZXl6dzJhRC9rNE1hcHNyN3Bqend1bFkxWlZkbGdoQWhWeUZZUG1YZ2lCOE02?=
- =?utf-8?B?YkpvbnE1M2dsSk1GcWNVK3pqSjV3NkZ1T0tLWFlFeXBwaGNMRzhwYXhHM1Mv?=
- =?utf-8?B?dmJOcmk1U2lUYjluT041WC9wdENneUlsL2ZhbjFuMXNVY3g0ekVJZE5MZ3p0?=
- =?utf-8?B?ZndncnV1SVJVS0ZNUVovc0lqSmVqUk94bGtaM2pMTUxaTnBOZzYvZFZHNzhN?=
- =?utf-8?B?TXRVcTQrTW13cnd3SWY1RWs4NHY3RzNWY3ZEV1VBT0FKOExaWVE5M3RHS05t?=
- =?utf-8?B?Q3ErQ0Qzbmg3aGNMclcvbkVuZkJLcGUrSlVXeERqVG01dVVwV2VIZEJSeFBv?=
- =?utf-8?B?cWdFVFhLVDlDRVpnQVh6RmM1emszKzhpdVdYUG01Q0JDQ2REeUR3cENSUEJz?=
- =?utf-8?Q?zv2dQ5?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(35042699022)(14060799003)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2025 15:49:03.6620
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB12089.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63ecc832-ddcb-4193-acd0-08dd7134a531
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2025 15:48:27.9903
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf1e56d-d877-481d-8f7b-08dd7134ba79
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61D.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB5780
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9n6GrKNJ1M4Bu1Nna056i3IyOzdmXwiQGt7t9W51dL2rm7mjGPvb165dnLiQ2MODtkFTJoKkmLYPRkTPGKLZ+P1FLBWOzGu9UkhQsWuqtyU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYTPR01MB11045
 
-This patch implements the PANTHOR_PERF_CONTROL ioctl series, and
-a PANTHOR_GET_UOBJ wrapper to deal with the backwards and forwards
-compatibility of the uAPI.
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Sent: 29 March 2025 14:37
+> Subject: [PATCH] i2c: rzv2m: Constify struct i2c_algorithm
+>=20
+> 'struct i2c_algorithm' is not modified in this driver.
+>=20
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+>=20
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>   11027	    646	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
+>=20
+> After:
+> =3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>   11107	    566	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The minor version is bumped to indicate that the feature is now
-supported.
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
-Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c | 141 +++++++++++++++++++++++++-
- 1 file changed, 139 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 4c1381320859..850a894fe91b 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -31,6 +31,7 @@
- #include "panthor_gpu.h"
- #include "panthor_heap.h"
- #include "panthor_mmu.h"
-+#include "panthor_perf.h"
- #include "panthor_regs.h"
- #include "panthor_sched.h"
- 
-@@ -73,6 +74,39 @@ panthor_set_uobj(u64 usr_ptr, u32 usr_size, u32 min_size, u32 kern_size, const v
- 	return 0;
- }
- 
-+/**
-+ * panthor_get_uobj() - Copy kernel object to user object.
-+ * @usr_ptr: Users pointer.
-+ * @usr_size: Size of the user object.
-+ * @min_size: Minimum size for this object.
-+ *
-+ * Helper automating kernel -> user object copies.
-+ *
-+ * Don't use this function directly, use PANTHOR_UOBJ_GET() instead.
-+ *
-+ * Return: valid pointer on success, an encoded error code otherwise.
-+ */
-+static void*
-+panthor_get_uobj(u64 usr_ptr, u32 usr_size, u32 min_size)
-+{
-+	int ret;
-+	void *out_alloc __free(kvfree) = NULL;
-+
-+	/* User size shouldn't be smaller than the minimal object size. */
-+	if (usr_size < min_size)
-+		return ERR_PTR(-EINVAL);
-+
-+	out_alloc = kvmalloc(min_size, GFP_KERNEL);
-+	if (!out_alloc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = copy_struct_from_user(out_alloc, min_size, u64_to_user_ptr(usr_ptr), usr_size);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return_ptr(out_alloc);
-+}
-+
- /**
-  * panthor_get_uobj_array() - Copy a user object array into a kernel accessible object array.
-  * @in: The object array to copy.
-@@ -176,7 +210,12 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
--		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_setup, shader_enable_mask), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_start, user_data), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_stop, user_data), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_cmd_sample, user_data))
-+
- 
- /**
-  * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
-@@ -191,6 +230,24 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 			 PANTHOR_UOBJ_MIN_SIZE(_src_obj), \
- 			 sizeof(_src_obj), &(_src_obj))
- 
-+/**
-+ * PANTHOR_UOBJ_GET() - Copies a user object from _usr_ptr to a kernel accessible _dest_ptr.
-+ * @_dest_ptr: Local variable
-+ * @_usr_size: Size of the user object.
-+ * @_usr_ptr: The pointer of the object in userspace.
-+ *
-+ * Return: Error code. See panthor_get_uobj().
-+ */
-+#define PANTHOR_UOBJ_GET(_dest_ptr, _usr_size, _usr_ptr) \
-+	({ \
-+		typeof(_dest_ptr) _tmp; \
-+		_tmp = panthor_get_uobj(_usr_ptr, _usr_size, \
-+				PANTHOR_UOBJ_MIN_SIZE(_tmp[0])); \
-+		if (!IS_ERR(_tmp)) \
-+			_dest_ptr = _tmp; \
-+		PTR_ERR_OR_ZERO(_tmp); \
-+	})
-+
- /**
-  * PANTHOR_UOBJ_GET_ARRAY() - Copy a user object array to a kernel accessible
-  * object array.
-@@ -1339,6 +1396,83 @@ static int panthor_ioctl_vm_get_state(struct drm_device *ddev, void *data,
- 	return 0;
- }
- 
-+#define perf_cmd(command) \
-+	({ \
-+		struct drm_panthor_perf_cmd_##command *command##_args __free(kvfree) = NULL; \
-+		int _ret = PANTHOR_UOBJ_GET(command##_args, args->size, args->pointer); \
-+		if (_ret) \
-+			return _ret; \
-+		return panthor_perf_session_##command(pfile, ptdev->perf, args->handle, \
-+				command##_args->user_data); \
-+	})
-+
-+static int panthor_ioctl_perf_control(struct drm_device *ddev, void *data,
-+				      struct drm_file *file)
-+{
-+	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
-+	struct panthor_file *pfile = file->driver_priv;
-+	struct drm_panthor_perf_control *args = data;
-+	int ret;
-+
-+	if (!args->pointer) {
-+		switch (args->cmd) {
-+		case DRM_PANTHOR_PERF_COMMAND_SETUP:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_setup);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-+			args->size = 0;
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_START:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_start);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_STOP:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_stop);
-+			return 0;
-+
-+		case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-+			args->size = sizeof(struct drm_panthor_perf_cmd_sample);
-+			return 0;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	switch (args->cmd) {
-+	case DRM_PANTHOR_PERF_COMMAND_SETUP:
-+	{
-+		struct drm_panthor_perf_cmd_setup *setup_args __free(kvfree) = NULL;
-+
-+		ret = PANTHOR_UOBJ_GET(setup_args, args->size, args->pointer);
-+		if (ret)
-+			return -EINVAL;
-+
-+		return panthor_perf_session_setup(ptdev, ptdev->perf, setup_args, pfile);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_TEARDOWN:
-+	{
-+		return panthor_perf_session_teardown(pfile, ptdev->perf, args->handle);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_START:
-+	{
-+		perf_cmd(start);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_STOP:
-+	{
-+		perf_cmd(stop);
-+	}
-+	case DRM_PANTHOR_PERF_COMMAND_SAMPLE:
-+	{
-+		perf_cmd(sample);
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static int
- panthor_open(struct drm_device *ddev, struct drm_file *file)
- {
-@@ -1409,6 +1543,7 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
- 	PANTHOR_IOCTL(TILER_HEAP_CREATE, tiler_heap_create, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
- 	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
-+	PANTHOR_IOCTL(PERF_CONTROL, perf_control, DRM_RENDER_ALLOW),
- };
- 
- static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
-@@ -1518,6 +1653,8 @@ static void panthor_debugfs_init(struct drm_minor *minor)
-  * - 1.2 - adds DEV_QUERY_GROUP_PRIORITIES_INFO query
-  *       - adds PANTHOR_GROUP_PRIORITY_REALTIME priority
-  * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
-+ * - 1.4 - adds DEV_QUERY_PERF_INFO query
-+ *       - adds PERF_CONTROL ioctl
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1531,7 +1668,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.name = "panthor",
- 	.desc = "Panthor DRM driver",
- 	.major = 1,
--	.minor = 3,
-+	.minor = 4,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
--- 
-2.33.0.dirty
+> ---
+> Compile tested-only.
+> ---
+>  drivers/i2c/busses/i2c-rzv2m.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-rzv2m.c b/drivers/i2c/busses/i2c-rzv2=
+m.c
+> index 53762cc56d28..b0e9c0b62429 100644
+> --- a/drivers/i2c/busses/i2c-rzv2m.c
+> +++ b/drivers/i2c/busses/i2c-rzv2m.c
+> @@ -402,7 +402,7 @@ static const struct i2c_adapter_quirks rzv2m_i2c_quir=
+ks =3D {
+>  	.flags =3D I2C_AQ_NO_ZERO_LEN,
+>  };
+>=20
+> -static struct i2c_algorithm rzv2m_i2c_algo =3D {
+> +static const struct i2c_algorithm rzv2m_i2c_algo =3D {
+>  	.xfer =3D rzv2m_i2c_xfer,
+>  	.functionality =3D rzv2m_i2c_func,
+>  };
+> --
+> 2.49.0
 
 
