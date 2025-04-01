@@ -1,60 +1,90 @@
-Return-Path: <linux-kernel+bounces-583966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F11A7820E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:24:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98972A7824C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 20:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4ED188D784
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E28167F1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 18:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2332E20F07D;
-	Tue,  1 Apr 2025 18:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E711421C18C;
+	Tue,  1 Apr 2025 18:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPzhVCcn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="UtTp4c5G"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0A61D86C6;
-	Tue,  1 Apr 2025 18:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC8321B199
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743531852; cv=none; b=AbBVb+NiusSJtFWUi4yWsHqoRoIXuMFe1Q/tHFAyg7cjTPKO0gwFSBWyx9dnXnQJG1ALPooRBqBUcXH5g0CFNmy5Ta8ovicjAk5Knj64eDtmSgqHfb/qWJdiy+FzrHSmj3Gb51EIdM7kR9WhGJguWQZCs+CM8vUxLSUM5rJ/WwE=
+	t=1743532026; cv=none; b=R7sAumGEtDeCM4M4gcrdLpwPWYr03pNikZAhrgCVFz0daHOBj+z8mFdkA8LRol8Z4Uq2NTOYLOC6bNXxO8ReoU6+Z6JZ7G1KTpZtGj4VghwMoYZ+xxUynAN0geZUwu3N4z7ljmE+KgEbuOdeBRWopozW3zUs5SFD08Mut6PKtb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743531852; c=relaxed/simple;
-	bh=KTcMGgyL2q1le24N8XakU/yxOfOsOdvydsbqXqMm6d0=;
+	s=arc-20240116; t=1743532026; c=relaxed/simple;
+	bh=VmOW25Uu18kqJ/Q/c2B326aYuZrol3Vn7zIK9xewLxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8abGwDf4empDmVA/2t8oMKRHmnO1TULHSj/h0VFn9E2bSXMoVUiiHT4LNy8S4n+9bM1Fmxvhmj7P7+DwsbSPYLReIB2y9a/pfnZgzrFI817jmkGtE5ofI/dFXYCRt6HQYr2eAD2NBR2zto+O6j6wF03R5QoKUoIV5tCQXzoZOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPzhVCcn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E37C4CEE4;
-	Tue,  1 Apr 2025 18:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743531852;
-	bh=KTcMGgyL2q1le24N8XakU/yxOfOsOdvydsbqXqMm6d0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UPzhVCcnqf7ZhwYLw+1gfp9L15fi+g7ZCxtt9zGXruJPgmj/WCIgb9gnuFqcjqYpC
-	 hQffMxhpf7Xk6GxzcgD/yHxWkpTYzplqLXYwiYt+6S2o9RryHfE1jKJLYMUS/xZGT+
-	 cL0roMEKfdzQm6Afk7ANtfKPaO4/+YGOGDZnHuQhP8WN39jQME12tfF/QiShy3ZM9B
-	 qdC00t0QGR/Znpbh+STbHucdR1MzcW6GgRrWv2iJsFMYj7ijr3wI4R6sbKlzTKqgeh
-	 IG4fVilpyLTJLJseWlQTlovNtwsFJV3gY8povBmN8rZ3enK+ayh3HFQD64DpXc7mN9
-	 1gEjs5j/oKhKQ==
-Date: Tue, 1 Apr 2025 20:24:04 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel/uncore: Add error handling for
- uncore_msr_box_ctl()
-Message-ID: <Z-wvRLi55EnMGniG@gmail.com>
-References: <20250401141741.2705-1-vulab@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVwW2X9UqldD0YCHJ1z/3NdqqCkqCafLApXV7yibiLLfM6jYA8oAaguKEVxmf8KK/46/smFbR8+5CySxCj+jHEKFMHnkNihldP/Fx97SfK+mJpsxXIxAaNTK94tvMeHv6B6vH36lJoNQyWX6NBormd5a0kWI/FkGn6chUJLbWEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=UtTp4c5G; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c560c55bc1so622208185a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 11:27:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1743532023; x=1744136823; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R4nLQiuuG0BM5akZJEC7W4RuhjTkTJm6pS8m+94wOjs=;
+        b=UtTp4c5Gs09ZmKoZkUbZqjunORUlq8JaZqnGGkVxIvSxAB8OC8421Wn1EiTa4WWLL7
+         HdPFAEy4Sh3Em8R3BSKAxqd6+i2wFUZ028F6JvmfuBTSR3AdqQuzaWWiQ+S6HU3hmTCX
+         KD9pLRExYC6CEqyGrXq39s9R9YqWUkKIC1s6XAuD302V46GuOalaMCqhyVeVYZyex8KP
+         rOX+kysvGXTvoOaU1a+waCEz9L/3d7gFLVD+riOTfwYYQsvvfpkjCyP3GstnCZuCeD1T
+         YutXPWoD8s3smOZ5pK/ol5j8/rdxVFxee3yzjR/GSXG50/jhwYq6atDR5VIPoQE4f7gt
+         QUKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743532023; x=1744136823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R4nLQiuuG0BM5akZJEC7W4RuhjTkTJm6pS8m+94wOjs=;
+        b=SNgPu3JYlWzJXOcWlagAM1UGiNnuFqxEE7aoNQUKonnmLjiAT4UH8EMcS20rry/zxS
+         cfVIOdmU+N5zP4gFqCihOCcHWZXM7YpTiPJQ2Uq5+5GGlQn5CSvro0ic0k+5qWmzy4Ld
+         h6fTspbMBSzJXypxHznQYny4gntb2ijtUzK3uCFl7qyHpblDP3x8dvYM3J7EnwyfmwE/
+         RgbljYrmBqPMBL9q9slLb0cET44KXhf1EEvgFS07bo4R5eVfWTKWAGXC1bF4PuUbTO+d
+         MJLVKge15BKlijRqDIkvL/6VbRE+R1cgasmO1FAI8R6VgBQfUGOGdjzMF8hILNG0zx72
+         9+Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmOwq39/dgpRDQrx8U9n2f1YCbOhR/VnN3EI2grhzpLoSibYZVbTAHXZTYl0OXfYSGM3yvqLhqzArTwko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKobeLdZo4wgKh2OrCSn3Lv3DIjepuRRSD0YhlP4VMYdti9iEM
+	9cKdbzXdSTbYcGQwgzhxyrad6UZ4qQL6aczQ/T3nDRs7x4b6mAPa4nHae5P6+9TP+Y2DqshrYl7
+	Y
+X-Gm-Gg: ASbGnctHuNg29ciX5OXtlap4iXtxdvzY3hPmUWoUZlhacqGHfjsPw4NEBADYTYYNSWR
+	VmH4RfslXR2sdXNtVlqlohCZYaAEcFdQjF9hzJDr/PUFyGWRwwo4CRdVisUJb1Fj5nkeQJb/VQP
+	D3ScIXYSIXKUE3p9gojcttFgshkkKo8XffCitzuVBDRPdzNMCRrjzhVmMsBGqygeuBo4nP1maRZ
+	iVzjk6hZY+QKHjocKqbj5i0op26t+CXuynhzU3JDTR1E/U+MFsjLSm73tclcC9eI33rvqZZsHtw
+	AqnTZIGbGO8uNxQ2OiiMrM4R8WOi5Mv9HO1WaWg8ouQ7Oi4DTz0VJy8thR7O9XBtdXAN/6UZkZl
+	z/KigWWxdSkzjfesZ5klIv/w6W2fNz6acRh7GTA==
+X-Google-Smtp-Source: AGHT+IE//7WmRy4WvbmmnLPRDvsXu2U7k4fZcFYB5c3Vi7xo2dtuIJzgM4INTs+uuefr8FqjZv2loQ==
+X-Received: by 2002:a05:620a:4507:b0:7c5:5206:5823 with SMTP id af79cd13be357-7c75bbde5c9mr527101585a.29.1743532023000;
+        Tue, 01 Apr 2025 11:27:03 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f765f94fsm687963385a.20.2025.04.01.11.27.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 11:27:02 -0700 (PDT)
+Date: Tue, 1 Apr 2025 14:27:00 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com
+Subject: Re: [PATCH] DAX: warn when kmem regions are truncated for memory
+ block alignment.
+Message-ID: <Z-wv9NQr2pE1U8w5@gourry-fedora-PF4VCD3F>
+References: <20250321180731.568460-1-gourry@gourry.net>
+ <88bce46e-a703-4935-b10e-638e33ea91b3@redhat.com>
+ <67ec269dc51da_1d47294c8@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,43 +93,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250401141741.2705-1-vulab@iscas.ac.cn>
+In-Reply-To: <67ec269dc51da_1d47294c8@dwillia2-xfh.jf.intel.com.notmuch>
 
-
-* Wentao Liang <vulab@iscas.ac.cn> wrote:
-
-> In mtl_uncore_msr_init_box(), the return value of uncore_msr_box_ctl()
-> needs to be checked before being used as the parameter of wrmsrl().
-> A proper implementation can be found in ivbep_uncore_msr_init_box().
+On Tue, Apr 01, 2025 at 10:47:09AM -0700, Dan Williams wrote:
+> David Hildenbrand wrote:
+> > diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
+> > index e97d47f42ee2e..23a68ff809cdf 100644
+> > --- a/drivers/dax/kmem.c
+> > +++ b/drivers/dax/kmem.c
+> > @@ -67,8 +67,8 @@ static void kmem_put_memory_types(void)
+> >   
+> >   static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+> >   {
+> > +       unsigned long total_len = 0, orig_len = 0;
+> >          struct device *dev = &dev_dax->dev;
+> > -       unsigned long total_len = 0;
+> >          struct dax_kmem_data *data;
+> >          struct memory_dev_type *mtype;
+> >          int i, rc, mapped = 0;
+> > @@ -97,6 +97,7 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+> >          for (i = 0; i < dev_dax->nr_range; i++) {
+> >                  struct range range;
+> >   
+> > +               orig_len += range_len(&dev_dax->ranges[i].range);
+> >                  rc = dax_kmem_range(dev_dax, i, &range);
+> >                  if (rc) {
+> >                          dev_info(dev, "mapping%d: %#llx-%#llx too small after alignment\n",
+> > @@ -109,6 +110,9 @@ static int dev_dax_kmem_probe(struct dev_dax *dev_dax)
+> >          if (!total_len) {
+> >                  dev_warn(dev, "rejecting DAX region without any memory after alignment\n");
+> >                  return -EINVAL;
+> > +       } else if (total_len != orig_len) {
+> > +               dev_warn(dev, "DAX region truncated by %lu bytes due to alignment\n",
+> > +                        orig_len - total_len);
 > 
-> Add error handling for uncore_msr_box_ctl() to ensure the MSR write
-> operation is only performed when a valid MSR address is returned.
+> This looks good, I agree with it being a warn because the user has lost
+> usable capacity and maybe this eventually pressures platform BIOS to
+> avoid causing Linux warnings.
 > 
-> Fixes: c828441f21dd ("perf/x86/intel/uncore: Add Meteor Lake support")
-> Cc: stable@vger.kernel.org # v6.3+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  arch/x86/events/intel/uncore_snb.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> In terms of making that loss easier for people to report / understand
+> how about use string_get_size() to convert raw bytes to power of 10 and
+> power of 2 values? I.e.
 > 
-> diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-> index 3934e1e4e3b1..84070388f495 100644
-> --- a/arch/x86/events/intel/uncore_snb.c
-> +++ b/arch/x86/events/intel/uncore_snb.c
-> @@ -691,7 +691,10 @@ static struct intel_uncore_type mtl_uncore_hac_cbox = {
->  
->  static void mtl_uncore_msr_init_box(struct intel_uncore_box *box)
->  {
-> -	wrmsrl(uncore_msr_box_ctl(box), SNB_UNC_GLOBAL_CTL_EN);
-> +	unsigned int msr = uncore_msr_box_ctl(box);
-> +
-> +	if (msr)
-> +		wrmsrl(msr, SNB_UNC_GLOBAL_CTL_EN);
+> "DAX region truncated by X.XX GiB (Y.YY GB) due to alignment."
 
-Exactly what happens without this patch, do we crash during boot due to 
-the incorrect wrmsr()?
-
-Thanks,
-
-	Ingo
+Will pick this up in v2.
 
