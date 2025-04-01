@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-583561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-583558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E89A77C91
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A287FA77C88
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 15:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D49C189090E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00CF3188F7E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 13:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648D320468A;
-	Tue,  1 Apr 2025 13:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2jIBIrIQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150DE204594;
+	Tue,  1 Apr 2025 13:47:58 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A708D20371A;
-	Tue,  1 Apr 2025 13:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A91202997;
+	Tue,  1 Apr 2025 13:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743515289; cv=none; b=Jqzk1SxpW6vvXFTwwWSXOrF72pvdbMPsPUc7g5ABm1QDRDObUy5TPFylweqD+tDWJi3+s1Gos1AKYSxb+zjgyf/NLp2Esfzbp+jumENhHxiwjBlK+vVpsNyCYnkw4e+UrLLNT5Z6pTafY8kvPPp4neiqXpKRigxy6CBzFuW8F+Q=
+	t=1743515277; cv=none; b=Sgdmnf+Xcn9RqVBjZCjv2vXm1zBgAUtKS/DnFPkrvm8CYLBDYsQbBF1Zqg8nWAEkojkrCKeeFWnjR8J4edm0MmJpev5VKqMDmvtNMjne+zlodZgRHKwgFEaKSEU6uEzl0oEBesua7FQ9THZrDnt/tGwbKPKq4N5l6Vwybh5LcUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743515289; c=relaxed/simple;
-	bh=XP6Hcbmk/zkfwvAVnWwB1djHn3B4hIRqVoZ7XYY1hY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twdWj3O4fBuWmIzr2WuhSKzl9GaeUvtUEi8mSukMcEhKhQFt1ROA4vncXjpuCbobqkbJL5J12iL1Tbk1m4FzytVC1eOfk1L1tRgFSXZ/Uw3NuMKtGtbpPPYFZ53tL0e/CQP0H6vQBGlY1Httq/BMjqBeyie4yBr+XbQ2Py8m7r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2jIBIrIQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9C7C4CEE5;
-	Tue,  1 Apr 2025 13:48:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743515289;
-	bh=XP6Hcbmk/zkfwvAVnWwB1djHn3B4hIRqVoZ7XYY1hY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2jIBIrIQPo+ylLfP0xAye/ISgG+cmtKHuz8L2rhbhTf4npQJaVfFSlDYKgChQbOO7
-	 vrA+9zJECqdg68p8yYHzC72dBA4Ktf655jr+nhww5kZeKPvtC7VNQ6vZeYmyMrEayc
-	 5AknbyI/u7xzZEAl+Fzq9GexejT4ye5wRQl416j0=
-Date: Tue, 1 Apr 2025 14:46:38 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ying Lu <luying526@gmail.com>
-Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, luying1 <luying1@xiaomi.com>
-Subject: Re: [PATCH v1 1/1] usbnet:fix NPE during rx_complete
-Message-ID: <2025040121-compactor-lumpiness-e615@gregkh>
-References: <cover.1743497376.git.luying1@xiaomi.com>
- <e3646459ea67f10135ab821f90f66d8b6e74456c.1743497376.git.luying1@xiaomi.com>
- <2025040110-unknowing-siding-c7d2@gregkh>
- <CAGo_G-f_8w9E388GOunNJ329W8UqOQ0y2amx_gMvbbstw4=H2A@mail.gmail.com>
+	s=arc-20240116; t=1743515277; c=relaxed/simple;
+	bh=plbqHQAdAtAR1q4ivEyKIZ7VRmxPumwIeLB/itxoJZg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=exqI0d19uDU6lj0rMRtgbpK/0nv6Nc7a+05oS7EyUqykOURblNs1HuN3XQTIvsxvE+dBXYx2BnKTJmW1UED7TLDme312Uh5jWPq7tBDrRTkv7QB4t36pUzSjb7o8f32rDQ3+3JmEY2O/1M9EeBP5rpcsXNmit1uInlHVREwD8IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25520a289so939334666b.3;
+        Tue, 01 Apr 2025 06:47:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743515274; x=1744120074;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GL8jOK1XCsQsfuuvCNPaoHk+TSkQNrLHkh/dsbTKalc=;
+        b=n9HvQPlP6r67eNNkVonAjs/5Mp4B/OrbkfeuGnlJMxmduHI0QbZ7OKee/fKnMF8snC
+         PyAuZk06wPZ5FKSjZRNMmBfdJl+B+0eb26/1Nuz7fXfplh7M2dWt1tp8ceJy0eywcw8f
+         GEH6eh6fVHO6PL9Ssm4asf4CvH4Ko4vZ/M1W6pjRHd+JY1GiBhAcGCieMXpyizzhu82B
+         yGrb1LYpmdzXTvfzhnY2O2essCT/o/WtuiNk4JGTvCwst+/wWgicpYSWMm8j9zpfZMTZ
+         CfBLI6lvwvmttEcSZC9KaiH7/gmnxyrJR+WOkpI/x4iVbFUnayiof6T8my/AJEnI0y1v
+         f7yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe9fr/uWB3fC4rWLp2LaoH8Ul8fmqoNeZ5ECa+BHUGOwuP6cmzFTCUnOFxeRiS0kx+UoakPw7YrLbRGqY=@vger.kernel.org, AJvYcCXuk7Yn5frN7x2VkoVYdp6q0C0TxHAaVynFG9nYGfardAAcgM+IQ+g4Mze8oipVvwsbO+vVIipWwI7E@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvxyCzaC72oG7tPxHxX5jL2bsy1gm4L/wdvl4yHkuCHbxqzzJT
+	YyYXcttSmlFsjRvZyV1AgcadBGzzEEgEgGo0MyaQib8Q5YnKxHLG
+X-Gm-Gg: ASbGncu2Heo7wYp9dBRPCV6KgPrOISyKMDxza1mrldBQMkWGNkJXeiMufu2t8EU5UbQ
+	Z8hYhryAU6RmeM6YOr6GsEObWEWl7Hi+Fj6IxbnHLjKoR1Tkeqa3x9NgW4FB6a5gnIUF4JLwELo
+	eAf/oFFingq6aogEx6P4ZxzNGApEP87vmTE4b1bBqDoaxtlypNI4NotU5pKaRQCTpKE7hIyZvp2
+	/qLQjqyJmq1gpkQkg1qC5NlwuQo7n3cB5HTCjcU6Iqj9M2l/+0PWkdQvAPsrh8h/qLjFe4P/lHH
+	x4VzbtWDM4XDL4x5/UzH5hGT6F8xWLvk8zw=
+X-Google-Smtp-Source: AGHT+IEduLK5xe6YgJYcJbObZxyf2G0a6w9ZWd8D3pQBZUU1StAhYUaqKZt3ovhRS2+K05FzYCfmHA==
+X-Received: by 2002:a17:907:3d8f:b0:ac2:4d65:bd72 with SMTP id a640c23a62f3a-ac738bc07e6mr1086769966b.36.1743515273926;
+        Tue, 01 Apr 2025 06:47:53 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71973097dsm756403566b.184.2025.04.01.06.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Apr 2025 06:47:53 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH v2 0/2] spi: tegra210-quad: Improve messages on
+ pathological case
+Date: Tue, 01 Apr 2025 06:47:48 -0700
+Message-Id: <20250401-tegra-v2-0-126c293ec047@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGo_G-f_8w9E388GOunNJ329W8UqOQ0y2amx_gMvbbstw4=H2A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAITu62cC/13MMQ6DIBQA0KuQP0MDSMEweY/GgeoX/wINGNLGc
+ Pemjl3f8E6oWAgreHZCwUaVcgLPNGew7CFFFLSCZ6ClvstBOXFgLEEopzRaaaVBC5zBq+BG7+t
+ 5zJzBTvXI5XO1Tf30f2hKSOFG4wxuixxGO634pJBuuUSYe+9fg0UqDpsAAAA=
+X-Change-ID: 20250317-tegra-1712e60604e6
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, rmikey@meta.com, 
+ Breno Leitao <leitao@debian.org>, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1517; i=leitao@debian.org;
+ h=from:subject:message-id; bh=plbqHQAdAtAR1q4ivEyKIZ7VRmxPumwIeLB/itxoJZg=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn6+6IpXKODkNNTJLE2h8Gyik5JGsGQfvQJq6Ao
+ dYbi0SFO+2JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ+vuiAAKCRA1o5Of/Hh3
+ bWAgD/46V2r/AzVhSSba4QVSKb01AxfZELXncSVlawyu3stWHbTHoZksIzmoZJ3pwhsSpUQc0GJ
+ GupgIIEWHmPS2mlK/+nxYh5MI0O2hCSAt7VrDp/EagL/vMwOHwdJbO7y+19ArJCzI3MQKV1gedp
+ +ivYVsa+ZkveAdV+o1NyA0cmuf6ZupTT/WLTvqVvmMVbWQ+/txK31EtiEDpdPYuGe2vCm5AaiNx
+ +vt1u1+Ubx8GlyErFcKdm9BZ9oL7c1U1TYCxHN4ok2WPvPVomrZrcLXrrdSwxoNcpdCCOGiVhnj
+ rE5J5oPSvCC19ecLtf9HeQU2qUhgoflrS45DpVz0Ye2HEgjkaUx6EbD7oRHnHVCyhRvmJAc4o3d
+ ahgZ6lsGBjwFJtzuwZG6ymOykRxKvvtSko9mY+M1AzAU57ABS9VkS20x3uRsIP7TsYn662oiJbf
+ Q6ehlz8bSOWGQMwyBmb0MpoS7sMWoQrHHFUgH2ECzzjogjyEVhI3GKx/qmuYOx/agP3KnyaTSsO
+ fdI8w8vJ1WsxjwBNDYy3BFUWFpXRAoY4EW4BB5lVC6fZUxBmL0lX5Tq5g0LFBSCH0C6TtqxF0nA
+ VBJIJgKFuZ0944E7duphedXCTvVbcZn57lv2dZjZlSYPlbovhu6MOz3vwmIt1Pu/QHwea7pB0ym
+ J7rq75OxaeARL0w==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Tue, Apr 01, 2025 at 08:48:01PM +0800, Ying Lu wrote:
-> On Tue, Apr 1, 2025 at 6:31 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Apr 01, 2025 at 06:18:01PM +0800, Ying Lu wrote:
-> > > From: luying1 <luying1@xiaomi.com>
-> > >
-> > > Missing usbnet_going_away Check in Critical Path.
-> > > The usb_submit_urb function lacks a usbnet_going_away
-> > > validation, whereas __usbnet_queue_skb includes this check.
-> > >
-> > > This inconsistency creates a race condition where:
-> > > A URB request may succeed, but the corresponding SKB data
-> > > fails to be queued.
-> > >
-> > > Subsequent processes:
-> > > (e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
-> > > attempt to access skb->next, triggering a NULL pointer
-> > > dereference (Kernel Panic).
-> > >
-> > > Signed-off-by: luying1 <luying1@xiaomi.com>
-> >
-> > Please use your name, not an email alias.
-> >
-> OK, I have updated. please check the Patch v2
-> 
-> > Also, what commit id does this fix?  Should it be applied to stable
-> > kernels?
-> The commit  id is 04e906839a053f092ef53f4fb2d610983412b904
-> (usbnet: fix cyclical race on disconnect with work queue)
-> Should it be applied to stable kernels?  -- Yes
+I maintain several hosts with tegra210-quad controllers, some of which
+experience data transmission failures. Debugging these issues has been
+challenging due to excessive log messages from the driver.
 
-Please mark the commit with that information, you seem to have not done
-so for the v2 version :(
+Since these devices do not have a way to reset[1], then we want to avoid
+warning and printing a bunch of messages, otherwise the host will
+overflow the serial. Fix it by:
+
+ 1. Using WARN_ON_ONCE instead of WARN_ON to reduce stack trace spam
+ 2. Rate-limiting error messages and removing redundant information
+
+These improvements maintain necessary error reporting while
+significantly reducing log noise, making debugging of actual issues more
+feasible.
+
+Link: https://lore.kernel.org/all/q53apce4sltvnyd75j4o7taatocxiduq56fqsoxp3vrjmaqphk@o5kce2wb3dnz/ [1]
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Dropped patch 1, which is still being discussed. 
+   * See https://lore.kernel.org/all/20250328-cinnamon-mushroom-of-proficiency-a17ba8@leitao/
+
+- Link to v1: https://lore.kernel.org/r/20250317-tegra-v1-0-78474efc0386@debian.org
+
+---
+Breno Leitao (2):
+      spi: tegra210-quad: use WARN_ON_ONCE instead of WARN_ON for timeouts
+      spi: tegra210-quad: add rate limiting and simplify timeout error message
+
+ drivers/spi/spi-tegra210-quad.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+---
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+change-id: 20250317-tegra-1712e60604e6
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
