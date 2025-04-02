@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-585799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A94A797C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EEA0A797C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 302A87A4E47
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8F8216E01E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72B81F429C;
-	Wed,  2 Apr 2025 21:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFA51F4628;
+	Wed,  2 Apr 2025 21:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gd1zNfiK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRkO0LkY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AEC78C91;
-	Wed,  2 Apr 2025 21:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037CE1F429C
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743629951; cv=none; b=Jd700IWr4GzrjztplhhdXdX2l20yNgjqrh55nW1GrTEEg719FkCNSIrJOyTsVcL7SVa8ecTpmgUhHqeVY8ZoEc9Ddp53nhcMZfo6h0xchDhfM7rMo/UnGTL6atM17+RiHTWatqhQL8sLU4jlEn464sRkzBsPdVERJD2G8V4SajA=
+	t=1743630083; cv=none; b=AZeO6W1wSuuv+U1okPt+VB/q6XyxWL0hDFj2Fyj0dppaNNkvuFNxQcKki+3eoElEjo8+0F1nfX1nkPxDdiy1fAEpQM5HnkQyxayuKkHxWetzYCt8RMlUjHn/a6Hg4S1JNSmRb90ALVzTLBDE6z6/cSsm+IcthSMCHcp79HSHUYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743629951; c=relaxed/simple;
-	bh=TSUZ/BtivkLRiKLsU2XCL8Ugofa5D2b//TRkx+fWb90=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QLkVgokIt+4yC+zGVavDIeaUulAB+KVZVgXKi0yZHp43aOrFNYd2Z0WjxZ9IWFdXsKWFlN1TieECixHn2Uurw+UTneAkiB+yLdsTUACFanAeIjQRTswxu59klGA6HCThwuikL2lEgbBrkkva5HYj/QPEPnd1f6Y9aS/Kf93i0u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gd1zNfiK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B5DC4CEEA;
-	Wed,  2 Apr 2025 21:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743629950;
-	bh=TSUZ/BtivkLRiKLsU2XCL8Ugofa5D2b//TRkx+fWb90=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Gd1zNfiK12s9/7C+9AiJxdL37Jazmrvm2NVQveKCMeStcTD8bdgZ4g5vPmXFMZfF4
-	 FHo9du/fzkGCwZ6RbnqQnnVAVTt+70lJqq33GWG6m8wnNDEJG0w9azwVqpdI0drjyN
-	 SX9I/vDWWXiKYFWADa0UgE06UZ6rTQpjCh+6YX3USklPSEWgm+OBqxTdVdy48yA4Rf
-	 VmUWYuaI3hNv7gHNaztS5eNgFmjMoxwKmtQV/qrGAnNbI+ja3b4L9wRCf89rBLRD4U
-	 MOqD3nKvhtoWRiyUN9WLal56LDporgVl4J9aJyQe6ORkhNHcgcwcZarkc6Qu7g2mr0
-	 tR8TzxA8/8sYw==
-Date: Wed, 2 Apr 2025 15:39:07 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] drm/nouveau: svm: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <Z-2uezeHt1aaHH6x@kspp>
+	s=arc-20240116; t=1743630083; c=relaxed/simple;
+	bh=s1i2efafUocD8B1FsnmEzNkQUh09IlxbAwEz0Pc0PHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aAw1mKmf4KkYMjmGUmGPt4rnwxTxCbKTJDgJttrsUcf4TDJfatbqqDr8exH9CrhSrbCD405HhPLCiyOJd+7Dnb1SP0X2rZHlkDwKUOY9rGY8t3eSj8XwHq9YGWG/Se9P4QeJasHxPFw5dTy/kftNmIAQdnWdgSk3D9Zh5M4OCt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRkO0LkY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743630080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tFmXaoae9vzjlYX5SpA0XBLQfjUbxrFvPjU9PznbSk4=;
+	b=TRkO0LkYZq2ywnu1scodUxOlnZuJ/RIUS0KNFYgWRTJWn5ExkXrOWEGZeatO1emF3BTUBa
+	L+gF6CyQH21Z9DlPnOMf+4DcwRLrWqRpoBhAgpQGGkGrZH7svWSHRRyCqYC7OaQx9XDrY5
+	Y3EiNpMj5DXw/G5vv5QmTjV0jivc894=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-513--BI9VzxrO3G87IArOAplww-1; Wed,
+ 02 Apr 2025 17:41:19 -0400
+X-MC-Unique: -BI9VzxrO3G87IArOAplww-1
+X-Mimecast-MFC-AGG-ID: -BI9VzxrO3G87IArOAplww_1743630078
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA44B180034D;
+	Wed,  2 Apr 2025 21:41:17 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.80.95])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37A3A3000704;
+	Wed,  2 Apr 2025 21:41:15 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH 0/6] rust/hrtimer: Various hrtimer + time additions
+Date: Wed,  2 Apr 2025 17:40:28 -0400
+Message-ID: <20250402214109.653341-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+This is a collection of various bindings that I added to hrtimer when I
+was originally getting it ready to be used in rvkms. I've mostly been
+waiting for Andreas's hrtimer series to go upstream before submitting
+these.
 
-Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+All of these are currently being used within rvkms for vblank emulation.
 
-So, with these changes, fix the following warning:
+Lyude Paul (6):
+  rust: time: Add Ktime::from_ns()
+  rust: hrtimer: Add HrTimerCallbackContext and ::forward()
+  rust: hrtimer: Add HrTimerClockBase
+  rust: hrtimer: Add HrTimerClockBase::time()
+  rust: hrtimer: Add HrTimerCallbackContext::forward_now()
+  rust: hrtimer: Add HrTimerCallback::expires()
 
-drivers/gpu/drm/nouveau/nouveau_svm.c:724:44: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+ rust/kernel/time.rs                 |  10 ++-
+ rust/kernel/time/hrtimer.rs         | 127 +++++++++++++++++++++++++++-
+ rust/kernel/time/hrtimer/arc.rs     |   7 +-
+ rust/kernel/time/hrtimer/pin.rs     |   7 +-
+ rust/kernel/time/hrtimer/pin_mut.rs |   9 +-
+ rust/kernel/time/hrtimer/tbox.rs    |   7 +-
+ 6 files changed, 157 insertions(+), 10 deletions(-)
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/gpu/drm/nouveau/nouveau_svm.c | 39 +++++++++++++--------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-index e12e2596ed84..6fa387da0637 100644
---- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-@@ -720,10 +720,7 @@ nouveau_svm_fault(struct work_struct *work)
- 	struct nouveau_svm *svm = container_of(buffer, typeof(*svm), buffer[buffer->id]);
- 	struct nvif_object *device = &svm->drm->client.device.object;
- 	struct nouveau_svmm *svmm;
--	struct {
--		struct nouveau_pfnmap_args i;
--		u64 phys[1];
--	} args;
-+	DEFINE_RAW_FLEX(struct nouveau_pfnmap_args, args, p.phys, 1);
- 	unsigned long hmm_flags;
- 	u64 inst, start, limit;
- 	int fi, fn;
-@@ -772,11 +769,11 @@ nouveau_svm_fault(struct work_struct *work)
- 	mutex_unlock(&svm->mutex);
- 
- 	/* Process list of faults. */
--	args.i.i.version = 0;
--	args.i.i.type = NVIF_IOCTL_V0_MTHD;
--	args.i.m.version = 0;
--	args.i.m.method = NVIF_VMM_V0_PFNMAP;
--	args.i.p.version = 0;
-+	args->i.version = 0;
-+	args->i.type = NVIF_IOCTL_V0_MTHD;
-+	args->m.version = 0;
-+	args->m.method = NVIF_VMM_V0_PFNMAP;
-+	args->p.version = 0;
- 
- 	for (fi = 0; fn = fi + 1, fi < buffer->fault_nr; fi = fn) {
- 		struct svm_notifier notifier;
-@@ -802,9 +799,9 @@ nouveau_svm_fault(struct work_struct *work)
- 		 * fault window, determining required pages and access
- 		 * permissions based on pending faults.
- 		 */
--		args.i.p.addr = start;
--		args.i.p.page = PAGE_SHIFT;
--		args.i.p.size = PAGE_SIZE;
-+		args->p.addr = start;
-+		args->p.page = PAGE_SHIFT;
-+		args->p.size = PAGE_SIZE;
- 		/*
- 		 * Determine required permissions based on GPU fault
- 		 * access flags.
-@@ -832,16 +829,16 @@ nouveau_svm_fault(struct work_struct *work)
- 
- 		notifier.svmm = svmm;
- 		if (atomic)
--			ret = nouveau_atomic_range_fault(svmm, svm->drm,
--							 &args.i, sizeof(args),
-+			ret = nouveau_atomic_range_fault(svmm, svm->drm, args,
-+							 __struct_size(args),
- 							 &notifier);
- 		else
--			ret = nouveau_range_fault(svmm, svm->drm, &args.i,
--						  sizeof(args), hmm_flags,
--						  &notifier);
-+			ret = nouveau_range_fault(svmm, svm->drm, args,
-+						  __struct_size(args),
-+						  hmm_flags, &notifier);
- 		mmput(mm);
- 
--		limit = args.i.p.addr + args.i.p.size;
-+		limit = args->p.addr + args->p.size;
- 		for (fn = fi; ++fn < buffer->fault_nr; ) {
- 			/* It's okay to skip over duplicate addresses from the
- 			 * same SVMM as faults are ordered by access type such
-@@ -855,14 +852,14 @@ nouveau_svm_fault(struct work_struct *work)
- 			if (buffer->fault[fn]->svmm != svmm ||
- 			    buffer->fault[fn]->addr >= limit ||
- 			    (buffer->fault[fi]->access == FAULT_ACCESS_READ &&
--			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_V)) ||
-+			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_V)) ||
- 			    (buffer->fault[fi]->access != FAULT_ACCESS_READ &&
- 			     buffer->fault[fi]->access != FAULT_ACCESS_PREFETCH &&
--			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_W)) ||
-+			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_W)) ||
- 			    (buffer->fault[fi]->access != FAULT_ACCESS_READ &&
- 			     buffer->fault[fi]->access != FAULT_ACCESS_WRITE &&
- 			     buffer->fault[fi]->access != FAULT_ACCESS_PREFETCH &&
--			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_A)))
-+			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_A)))
- 				break;
- 		}
- 
+base-commit: 142d93914b8575753f56f0c3571bd81f214b7418
 -- 
-2.43.0
+2.48.1
 
 
