@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-584540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D428A7886B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F71A7886F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C123AF51A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A95C1891A43
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A6233153;
-	Wed,  2 Apr 2025 06:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB04233152;
+	Wed,  2 Apr 2025 06:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUO2iYpD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCzygV5L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD20233132;
-	Wed,  2 Apr 2025 06:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C1D1EFFB8;
+	Wed,  2 Apr 2025 06:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577025; cv=none; b=jIjFAI5V+MZ/gpJ58C2j3qIvBCXGJk/VW8d1uVQZewybygJkg9WRLIF6AfxJ27qUWU5eZTJ16kTrANruhAzGFc1YSI1Xn/xCfzGiOl66YSx4NN9qMDN6JA6KjkFyvYAC6GvPD7kSZSOx5j8NR76VF/zht2P0Sf6Xk/FJ5BDRHEY=
+	t=1743577080; cv=none; b=PNxv9Cc+e6YtWbnLAz6vH7PX7rej/ttdqlC5NZbuD2WmfU5tkURh3O4hkJslvIDB/TYF18/9oEQnjRGXBjGut8opLm7BrJLjMDePfTMo18MP6qfJBvaTAQlKBZsDqc8lNEhexMAqH9lEUQOjTF4aXygV4ogd1LOryqMtekvcW6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743577025; c=relaxed/simple;
-	bh=ZjxKa3EH5gnYVi2rRzveSeRufpa3TKGNMebTJ5cbVlY=;
+	s=arc-20240116; t=1743577080; c=relaxed/simple;
+	bh=/ReR74AqW+2ovWUhx/D/V435Fe49QxlP4iDfaeTDCak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDRksj40aoELXhgatPbSUBThsVwq8HdinwiCefU1eAg7oxn1QTf/NPD0n/5RTWrM+HRLrej48ZmEMEUsjNSNz20rvPTTdUZE5TrzmP3dlBffAAuHA5YV2hVNwcliVhEd6nQkY98/yOYf0UhGOK13AFcKmrma13P9Hah+y1/st3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUO2iYpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60683C4CEDD;
-	Wed,  2 Apr 2025 06:57:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpIZFwaO7vBqjvfUckH8L6IGruZdUPgLut5FaTSlYkaAjI9lXoE0Kr+wX523n3j37AQnQ1KzLUL+mrrnhpuQLYI4U3qhi80ZlpKOlroc5eBkhjgKHdpT/6KSXzot0xDu8RIyuyEfVTte1GaTjHjc1KjGD4euofLBx3iOf0VTOoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCzygV5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430F5C4CEDD;
+	Wed,  2 Apr 2025 06:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743577025;
-	bh=ZjxKa3EH5gnYVi2rRzveSeRufpa3TKGNMebTJ5cbVlY=;
+	s=k20201202; t=1743577080;
+	bh=/ReR74AqW+2ovWUhx/D/V435Fe49QxlP4iDfaeTDCak=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XUO2iYpDJZOOtPfFrJVEMMnzvp5DimyzjA5oK0l2o5lXOeWFUFciLkAjZvmWXjV7J
-	 x+RERJDOIhVmBfZPYAX7Mz5N4dkIfuVYCL0b9XIxQySmZhIA22fCjszjPR7XqFwBUU
-	 yIYyhVSb0zMfxzgO2gotJsAWagOMPM+Z5fiBHXHqB6/jcLwA/RtNPJewdyKeAQCmVe
-	 vkDFi0p7sSLZv2LUjR1LgRzJMdJfEcdBwJiCJh7TA5bn1UyzAJBpuOAIdAU/yPFifL
-	 PHLO/aczJI4c44yvttagWdGyGI6XejCRpgbfG2DswBF4Q83PowkfBTZyP0iBQfBQGs
-	 4SAvJca6V9ivQ==
-Date: Wed, 2 Apr 2025 08:57:01 +0200
+	b=OCzygV5Ld/VQmDeRSQ2gQcH8MRCnVAzJM9G8SFaNmPTycpg4OwkRx1Jyx3hjLS/mi
+	 u6simDXRfJh3ZtcH0nLqF2+4fuHN4nGUh9Dvx5qN70KpP5xp5flnm0VLackiV3xlBC
+	 4eiAf5GFd+cOsYqVR3ZE+xoEBGjBR/Yu3PvPWFinhmHm74NpfYk4RyyX7uLFKmi1D9
+	 SzFYj8FuG5ZtOA9iMWwtOqcafii4Ij5bDjOkZkdnC8EVruKGgXsXEPx3HJPH6YrPuu
+	 hopum6WCRCDBOQQGVt3MU1o5/RGuuEV6A6RpggNsCGf1X+L03i2aed0Ee69v2WS3kl
+	 25o/Nr0hXH0MQ==
+Date: Wed, 2 Apr 2025 08:57:56 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
@@ -48,10 +48,11 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 0/3] Add USB2PHY Port Reset Control driver for Renesas
- RZ/V2H(P) SoC
-Message-ID: <20250402-adamant-myrtle-raptor-40e19f@krzk-bin>
+Subject: Re: [PATCH v3 1/3] dt-bindings: reset: Document RZ/V2H(P) USB2PHY
+ reset driver
+Message-ID: <20250402-beneficial-dark-mosquito-6c3641@krzk-bin>
 References: <20250401171432.101504-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250401171432.101504-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,34 +61,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250401171432.101504-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250401171432.101504-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Apr 01, 2025 at 06:14:29PM +0100, Prabhakar wrote:
+On Tue, Apr 01, 2025 at 06:14:30PM +0100, Prabhakar wrote:
 > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> Hi All,
+> Add a device tree binding document for the Renesas RZ/V2H(P) USB2PHY reset
+> driver. This driver controls the reset and power-down of the USB2.0 PHY,
+> which is used for both host and function modes.
 > 
-> This patch series adds support for the USB2PHY Port Reset control driver
-> for the Renesas RZ/V2H(P) SoC. The changes include documenting the USB2PHY
-> Port Reset control bindings and adding the driver.
-> 
-> v2->v3
-> - Dropped Acks from Conor and Fabrizio, due to below changes
-> - Renamed binding renesas,rzv2h-usb2phy-ctrl.yaml to
->   renesas,rzv2h-usb2phy-reset.yaml
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../reset/renesas,rzv2h-usb2phy-reset.yaml    | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
 
-That's not really justifying dropping review.
-
-Still not possible to compare it:
-
-b4 diff '20250401171432.101504-1-prabhakar.mahadev-lad.rj@bp.renesas.com'
-Grabbing thread from lore.kernel.org/all/20250401171432.101504-1-prabhakar.mahadev-lad.rj@bp.renesas.com/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-Nothing matching that query.
----
-Analyzing 4 messages in the thread
-Could not find lower series to compare against.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
