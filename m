@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-584360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14ACCA7865F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9A5A78662
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22F516DB71
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:22:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BB41892620
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0141C69;
-	Wed,  2 Apr 2025 02:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIjrjUJV"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA75131E2D;
+	Wed,  2 Apr 2025 02:22:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A53612E5D;
-	Wed,  2 Apr 2025 02:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541F2E3385
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 02:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743560543; cv=none; b=EV4+B0yHanpmbZ/IlY3BLh+y9gNejxuW9i9gUjCg5MxMBbd+w+zlF8LtLfVFrAqocJsfkvDdVTfefL8iBvSzOos7Ybq4RecW247WiGqKAbZRaWCEcdwH81nUo1yECMfPi++vHB4XoBbueQcrsQvxjOxN3TzzkDpm028e6UT88M0=
+	t=1743560553; cv=none; b=KDeYRTuFjMqKnAY2STOt4GcfqdNbyL91eOOd34P6oGCkWq40ZAoPdtCU/FnvdTSlho/dJhAmlSl1QLBligLuuG5DvepDLSlYtgVFbGRKy+BTKu5hiw5RDfOpTx4qTj/6peXdqnXbKQ2LJ64maCAIDCVl4NsHy2WQ8Onom0qQIaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743560543; c=relaxed/simple;
-	bh=Ezb0gXYiADCJFtFN0p1p0sirzr0898/9abeWN2mwekw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hyEOR8d1UrzK5I/SGk82RgRzt/h8iHzpmMdrv/wR9mKKbJaOl0iWT0mYyYJU7HjYyDMYvFFY6NzJd3MOT8D9MGm1azunBczZdKkqQ5ExHYiT4Q7sdhlQvnQT6To4bCXzhTJCkrDCtvmf+LUnMmS5x0A3XcwIfOM2MiVhuPK3KlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIjrjUJV; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2295d78b433so29188375ad.2;
-        Tue, 01 Apr 2025 19:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743560541; x=1744165341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8MPdUgh8f/qNoFhRiTrVF2+aMX5OLujKTxRfKz1h/h8=;
-        b=MIjrjUJVjGG/YkQ54/EEp/N9FGRR2QWnfLX+RGXpZ8Kv+ZJWrvVqKxJoFkfyNJcmzl
-         ygGylJknC8Rq3B/MQaACByxXWZEriJcOFElcqFoAUiZ2BZolujRJAuScmIsZNgpbNxUk
-         rAjl/54uhxsStx0L9d/96rS2gWEM0s5F4NeaH6ybuC5lI2mWxdIAWKJg2NQZfeCxQO4o
-         zLh6W16y7LHUdTq3iyE5QU/gYzxtWRQW5F+ieYS4EYYicg/508yK5pfsasFGRK6PcOcG
-         3oYy0AxF7HlAr1UN16yIl09gixyyzE1aV20TAbAUtRtmyVAEEeVc3Fv8CGUFXHUmvB1v
-         uE7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743560541; x=1744165341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MPdUgh8f/qNoFhRiTrVF2+aMX5OLujKTxRfKz1h/h8=;
-        b=A+NIiku/3wyZzE/LkqgqPfHhCgG2QRwE/5XgLQ0mBtNpH7aUCa5QUQZKQyL1LaxqAk
-         e3ZdJ1LI448AL4JGtpUzQpwZbCRO30brEHin+1YcLckTLoNsHz6DW3KRFOzSHhqA+0nD
-         xoXZesojtOm9JToDQvOvvmQc+HN2ORdtwb27WgQbfHGdzU+9XCCow0/mqme/PeSVz2DP
-         O9WtPYr1IvjB6hz5cWhvORbVR36OtA5FzCzpgWPbFiVgf0igscIHL8wIYWyUk8HFdc+U
-         sdd13EKtUf0KOYybdWNt9qOn1muet1ojDVGYyV8EBZuVAOoTtCyzi2hPNvQLETRlgtFF
-         DJHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfeWYuFTDL2FCs96w5z9N7hsK9vYUPkkOgaPcM4YTf1W1S5v8rWgc89L/iKC2XIKe7eosK5+emQDanQEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHd701cU9MRLfO4iic23WLiFD2WEIsYJASx0WsqtZF0OPlPjjo
-	EaI+PyJUv5JzqDuR4gMXWBffElz1n7QfRM/09lhbWKtooCfJVfHs
-X-Gm-Gg: ASbGncuEsyxT2ltZSn1CQNwHJS8ESBGElVzKrBjZOEuf5duRUMBhIjlphC59oFvvVWz
-	mg/EE5Nlx+grLrugWZwv1nVfuW4SgGcL9e/9QIej2hUuQlxedi4e5DQYGfOyCOh9mIVqbFMp1od
-	X5gnPP6jIx/e0VJxcjSC0YyeJtRdm3TD5g2Ngh1t9ZMlcvWShsHo+WBmwdJlDX/y5AqM8fsiFzF
-	oOKl3WRK19h6NcxxFVgUfHjV4idKDUQDCk6et/diN9lq4MNt1OJEwm1V/OtQrhFqtG0zkTm4LX1
-	iR8V0e3MVSAf7Ie4Q5g7T1rMCy8PZJP92r+3g4vB4CUK6eGdtGNA/Oo+U32Oc1HlMkpeTos=
-X-Google-Smtp-Source: AGHT+IGthaBJm3CXEP2yCOB9RHfLuP8APhDG0hC12B14aou92sDbgmPo84Jth75Yx54QYIPHG7/gTg==
-X-Received: by 2002:a17:903:2311:b0:227:eb61:34b8 with SMTP id d9443c01a7336-2292f9777d6mr214498325ad.25.1743560541421;
-        Tue, 01 Apr 2025 19:22:21 -0700 (PDT)
-Received: from henry.localdomain ([111.202.148.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eeca2cbsm97204115ad.52.2025.04.01.19.22.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 19:22:20 -0700 (PDT)
-From: Henry Martin <bsdhenrymartin@gmail.com>
-To: arend.vanspriel@broadcom.com
-Cc: linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: bcm: rpi: Fix NULL check after devm_kasprintf()
-Date: Wed,  2 Apr 2025 10:22:15 +0800
-Message-Id: <20250402022215.42834-1-bsdhenrymartin@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <195f2498f70.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-References: <195f2498f70.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+	s=arc-20240116; t=1743560553; c=relaxed/simple;
+	bh=Xp9TtxQmYXW4JYsRoq3qW7k3jmLkOuXV9LSGlq6Qwlk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=JWnw+ia74uvOfF6pVQCpwGgnc7zWXv9d9wMuGh0ZHlzi+G00X268xHIpOjCe9IwpCYFpUzcOOodR8YzMmOAwVW4TP5Ik9KRX4U0PtBM3Qi1KfJldYyV9Mp38j6wZWjK47Q0wEFANW/xKbew/2RxLQscWi5IEoa0L0b/8ICrSWlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B219C4CEEB;
+	Wed,  2 Apr 2025 02:22:32 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tznlO-00000006MMq-2kBc;
+	Tue, 01 Apr 2025 22:23:34 -0400
+Message-ID: <20250402022308.372786127@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 01 Apr 2025 22:23:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/4] tracing: Fixes for 6.15
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Hi Arend,  
 
-Thank you for your thorough review and catching the return type mismatch. Upon
-further investigation, I’ve confirmed that this issue was flagged by static
-analysis but appears to be a false positive, as all call sites already handle
-NULL checks appropriately.  
+tracing fixes for 6.15
 
-I appreciate your time and insight—please let me know if you’d like me to drop
-this patch or revise it differently.  
+- Fix build error when CONFIG_PROBE_EVENTS_BTF_ARGS is not enabled
 
-Best regards,  
-Henry Martin  
+  The tracing of arguments in the function tracer depends on some
+  functions that are only defined when PROBE_EVENTS_BTF_ARGS is enabled.
+  In fact, PROBE_EVENTS_BTF_ARGS also depends on all the same configs
+  as the function argument tracing requires. Just have the function
+  argument tracing depend on PROBE_EVENTS_BTF_ARGS.
+
+- Free module_delta for persistent ring buffer instance
+
+  When an instance holds the persistent ring buffer, it allocates
+  a helper array to hold the deltas between where modules are loaded
+  on the last boot and the current boot. This array needs to be freed
+  when the instance is freed.
+
+- Add cond_reschd() to loop in ftrace_graph_set_hash()
+
+  The hash functions in ftrace loop over every function that can be
+  enabled by ftrace. This can be 50,000 functions or more. This
+  loop is known to trigger soft lockup warnings and requires a
+  cond_resched(). The loop in ftrace_graph_set_hash() was missing it.
+
+- Fix the event format verifier to include "%*p.." arguments
+
+  To prevent events from dereferencing stale pointers that can
+  happen if a trace event uses a dereferece pointer to something
+  that was not copied into the ring buffer and can be freed by the
+  time the trace is read, a verifier is called. At boot or module
+  load, the verifier scans the print format string for pointers
+  that can be dereferenced and it checks the arguments to make sure
+  they do not contain something that can be freed. The "%*p" was
+  not handled, which would add another argument and cause the verifier
+  to not only not verify this pointer, but it will look at the wrong
+  argument for every pointer after that.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
+
+Head SHA1: 1bf4f0161e70a33c602732c5e0f0fdb268f130e1
+
+
+Steven Rostedt (3):
+      ftrace: Have tracing function args depend on PROBE_EVENTS_BTF_ARGS
+      tracing: Free module_delta on freeing of persistent ring buffer
+      tracing: Verify event formats that have "%*p.."
+
+zhoumin (1):
+      ftrace: Add cond_resched() to ftrace_graph_set_hash()
+
+----
+ kernel/trace/Kconfig                       | 3 +--
+ kernel/trace/ftrace.c                      | 1 +
+ kernel/trace/trace.c                       | 1 +
+ kernel/trace/trace_events.c                | 7 +++++++
+ samples/trace_events/trace-events-sample.h | 8 ++++++--
+ 5 files changed, 16 insertions(+), 4 deletions(-)
 
