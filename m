@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-585545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3475AA794A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C8AA793EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922381729E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4293E3B4709
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3771EB198;
-	Wed,  2 Apr 2025 17:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1C61D7E2F;
+	Wed,  2 Apr 2025 17:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RN14Bfu8"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zrqu4c5X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF82205ABA;
-	Wed,  2 Apr 2025 17:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205E21B4248
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743615804; cv=none; b=Bf7fxA+2qADiu23aKVT2LLr2JpwsgvG1undL7i84aCxF1LMqf4P74gN3zAbI8VQxY2rLnlS2gWhrNrt49ASxFICTr1cUAEAcHF8bCsJwPOkArc0TvDLzidG2/Db2ijJoi/QuvT4fe6yNLDMfVVfau4s5WZ/Vk5jMi7OgbmxUQjg=
+	t=1743615553; cv=none; b=ik6bommqkcVzKWta2fjfhND6LXOaL/gmE4052Z/UbRboLYShUoSMaNWa87SMkW1WVav7za/walxpZFKdx7Eit28jV7O1DyfZLBH9tkLvUYnU64sGSf21C1+OQWZMoHCnJOPjXVmAcRjKmHI8eP9JrVcj363b2rDfTYkS+D8g5cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743615804; c=relaxed/simple;
-	bh=EdEVmmkX+S4GMM0uG7YW19UqaiTt/5KBZ0AUymRBHvo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IPPIecklp6BNWSu9OKf7p5Q9rcnWdi125Vz02FXYvZxcaQiGpIZb3skGcsJWz4LyBnnPFbcV5T4PSItkGApORDsttWHTPZE53qM0JxmjkQ8PcjMj+Oj+xR+wMIS1qnGhfhgzHbgpI675vDerRqDuXhEu5JPgJByK1rW78Gf8aVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RN14Bfu8; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c1efc4577so49134f8f.0;
-        Wed, 02 Apr 2025 10:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743615801; x=1744220601; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=85BXoAka61PsKzqS2du3Xktdbs8BPrJV0lx84vuPwX0=;
-        b=RN14Bfu8q8sCldYFZok/gsGQiybnsymLWZ8xe8bms1OQwUPcUbuWjz3uV8ouhf/f8T
-         hM1MQ5vEXgsba0seob5UsqRKRrP/axdlyyBfkui6gGN7W0GpDQyyGqmoJzA/qmR/vgZV
-         vRuUNgQrkyJs28x4tVN5OOUeGIRFLsxuVjCXv9+sxubrk5NO2/LaF1e8iA3Pwq35UjEM
-         a2sDkkZi76l0R5cGJ+v0HezrQ0TtPpGOGwQsAPDyPgQeeA2YOxFjNGYL6KBfhLS/6Ua1
-         JcSF9Yi62lDgkC8ML6MVBBkfUNyVjO4qigwqN9YqkX1IjlNPpAw5Bi7by7wjIDQRXWeD
-         UBaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743615801; x=1744220601;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=85BXoAka61PsKzqS2du3Xktdbs8BPrJV0lx84vuPwX0=;
-        b=onyaYkabyD+MkheRKOc+ELO0Bh6r1GdE4AOIwXVneBoVkIeCSnMpExyVOxIifQwG2J
-         6+qBcVwxBpOo3mdd0jdgpa4h/f/y1vqoKsFeAD1+guWCHlmwgqTXejSoj1cvpMK1/DoX
-         xv7dPx3uOXQ2P6cgc9VHAUks5GRivKxohT7z7ZjwlgA/qvn0rpJj4Rpn4Ej8jm2tsAXA
-         C/W5CuSADENfZLcCrZnZFAV3NctK3ODSGPqiMDoPGmatbrWMD3J/pCsScxgJJBnKLcKH
-         aMa6JBWLsanHdEUrvJSgPoWqUuKvT3S7DcXGujosLzMNYG1AwbeACgduNmlLLy0U35qK
-         UPVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYtMLcXhF/xNBuN1jvVgT371aEp84VTGmc7pqAFRj/0XOHqxodDbuvOwFaJkXh9WnHgMw6JXY8RaXpCo9d@vger.kernel.org, AJvYcCWbs+9ZBLrzBXTN/QGiZKUaqTz9I6i0Tt3BHQWuoV2bDQsU8Z0Dy0d2jnFE09YqjXP/BFWF82wefg4HIU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP78kANpVavePOwDD3FSf2Xqaw39iWoLTHY7TRJl074VN5F8tc
-	2kTqGSeXnJOB5zT4xFGLKhJR8sV1DsZarOEmNzX0RvYJummLWX+y
-X-Gm-Gg: ASbGncvTwO/doLm20dIW2lEUQ3hgbviQ7K1d9bvyynVMLrZl+lvi+Uh58nnGpKKLlJ8
-	IQn2uNK5lUgnuNvXd4D6mx85NVPF5iaj5WwtppidSaEwYqYEg8+VRW18aeUFku9CauBeN5AiPHD
-	C2bb8mTVaguIigV2Gcg+ZX9FJtjGjyfklfS66NqibuZZkFeR9pNShkZYg70zHHPvtU1ER3/92gE
-	lMdvE7Vnc8QMq0SZ6lglL8jplzzYCMvCrTd77/VeKHxebXzmHgS3vNm1aCq+4x6hWq9yunmQHyL
-	ClxpuHpISCz9orOTIx7yIZ8F45JBicehYIyMGWk6wx67oei6qUY4aZFokqo=
-X-Google-Smtp-Source: AGHT+IG9DUifRlG9+hsS76jvaP6M4UBq35TMncCzYo6w9ipzl12h0GydswQHYbtTi42HbfpSVPpG/Q==
-X-Received: by 2002:a05:6000:4387:b0:394:d0c3:da5e with SMTP id ffacd0b85a97d-39c2366aeaemr6560810f8f.47.1743615800796;
-        Wed, 02 Apr 2025 10:43:20 -0700 (PDT)
-Received: from localhost.localdomain ([78.170.183.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c266c132fsm4819700f8f.13.2025.04.02.10.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 10:43:20 -0700 (PDT)
-From: goralbaris <goralbaris@gmail.com>
-To: martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	goralbaris <goralbaris@gmail.com>
-Subject: [PATCH] change strncpy to strscpy strncpy is now depricated. It may not NUL-terminate the destination string, resulting in potential memory content exposures, unbounded reads, or crashes. Link: https://github.com/KSPP/linux/issues/90
-Date: Wed,  2 Apr 2025 20:33:09 +0300
-Message-Id: <20250402173308.102487-1-goralbaris@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743615553; c=relaxed/simple;
+	bh=0NPUBoy2loyt6tqRRM60YK0H/NHlrATTvTCzJqRWV+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BaMQG7fOIoYRCY3mkCvVmR54UJbkMxg+PQO4osE8DZ5JZzx41vPd0wepP2IGjANK/AMSPWLIrQaS3ypFIBHFLf8Vy/0mRqtIWY7MbKvoZrlacaaY0G2iRU22TsjhrzEcZ+bSWUh053Gr7fClx8F3jQaIZ7kDY9AS7RpDz4KnZMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zrqu4c5X; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743615552; x=1775151552;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0NPUBoy2loyt6tqRRM60YK0H/NHlrATTvTCzJqRWV+8=;
+  b=Zrqu4c5XHhF34u/4Mv5+Bsj8Kq8XiDQgJpYxd6C6540YdB2wZObmWzjn
+   MScWSmd0a6NGtoG0AJoW6JmvotktNZa4G7I/KcD+qcw9YmtM0Vi9JQQ7D
+   I9c4G9xWoT3BgdBuXkCQhwvkGOg2dH838/H2QsuwbFXgdNJpYSty1/v54
+   6AgDGBlAF+C7hfgH3BmOsAfKnp+5lYUnaK7I1JMfXvFouuidxF8wiZ0JF
+   0fgeMSSpf1itgUzd9WS5/kP94Ew4sssb6AbDJT3yE2Kj1hilt9LrYX2YC
+   4yT3c6QrXoa8voD26pxdtQFJbRz+nfUXnxtq1DkaCXBI9dWoVT2sVgQc4
+   w==;
+X-CSE-ConnectionGUID: SSKgKf9KSWuhHJzlX9zrTg==
+X-CSE-MsgGUID: o6AABx+fSJ2MWrHWugz4Zw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="55661743"
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="55661743"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 10:39:11 -0700
+X-CSE-ConnectionGUID: KXqu4740SiCPMXM/OCosPw==
+X-CSE-MsgGUID: fg082SzFRiOsQrNvGpd2zQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="127669066"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.124.222.41]) ([10.124.222.41])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 10:35:04 -0700
+Message-ID: <67274a07-eac9-4d60-9737-c730c25a9fea@intel.com>
+Date: Wed, 2 Apr 2025 10:35:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86/idle: Remove MFENCEs for X86_BUG_CLFLUSH_MONITOR
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+References: <20250402172458.1378112-1-andrew.cooper3@citrix.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250402172458.1378112-1-andrew.cooper3@citrix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The strncpy is depricated. 
-It may not NUL-terminate the destination string, resulting in potential memory
-content exposures, unbounded reads, or crashes. Link: https://github.com/KSPP/linux/issues/90
-Signed-off-by: goralbaris <goralbaris@gmail.com>
----
- drivers/target/target_core_configfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 4/2/25 10:24, Andrew Cooper wrote:
+...
+> i.e. The SDM was incorrect at the time, and barriers should not have been
+> inserted.  Double checking the original AAI65 errata (not available from
+> intel.com any more) shows no mention of barriers either.
+> 
+> Note: If this were a general codepath, the MFENCEs would be needed, because
+>       AMD CPUs of the same vintage do sport otherwise-unordered CLFLUSHs.
+> 
+> Furthermore, use a plain alternative, rather than static_cpu_has_bug() and/or
+> no optimisation.  The workaround is a single instruction.
 
-diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-index c40217f44b1b..5c0b74e76be2 100644
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
- 	}
- 	filp_close(fp, NULL);
- 
--	strncpy(db_root, db_root_stage, read_bytes);
-+	strscpy(db_root, db_root_stage, read_bytes);
- 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
- 
- 	r = read_bytes;
-@@ -3664,7 +3664,7 @@ static void target_init_dbroot(void)
- 	}
- 	filp_close(fp, NULL);
- 
--	strncpy(db_root, db_root_stage, DB_ROOT_LEN);
-+	strscpy(db_root, db_root_stage, DB_ROOT_LEN);
- 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
- }
- 
--- 
-2.34.1
+Nit: this never comes out and says that it removes the unnecessary
+barriers. But we can fix that up when we apply this by adding:
+
+	Remove the unnecessary barriers. Furthermore, use a plain
+	alternative, rather than static_cpu_has_bug() and/or
+	no optimisation.  The workaround is a single instruction.
+
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
 
