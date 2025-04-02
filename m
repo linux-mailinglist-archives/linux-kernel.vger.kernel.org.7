@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-584384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463C9A78696
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:48:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBA3A7869E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DB4016E8F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D0B3ADAC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A554B195985;
-	Wed,  2 Apr 2025 02:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E46327452;
+	Wed,  2 Apr 2025 02:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mp2xI/sF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SbItZ3fr"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA07191F66;
-	Wed,  2 Apr 2025 02:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E95B29A1
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 02:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743562009; cv=none; b=sxo+ha5ystgKTtym1VCDptE5HwX9HuYLW/L4huBW7BkL5spi39hAi1ruqtOVT8DBGb70fIMxkSmbHGrxnmt/TEfG7wcwndsGhGMVmThVBzdlsM8+fLpHRD9OIH+C2qNJfyiCCr8M/9B0Qh1W79M2ufxf911IiNbUjcfbciTnLq4=
+	t=1743562177; cv=none; b=a1nwISqZTrTn7ICu5thFOe9lmnWfp0X4/u1E7NV/tp8fGwfYtuEx/T5JgLqbG07Mf4ayeoGLU3VU3lctfQmhGrrVBVQzO8yjx2Mqmpq2dP5sQ2OvN1P3wHyxoquNk03p09Gwh4BxGhvQR63uTI9P4TSrSKrDDPw0hhd+AQn/VTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743562009; c=relaxed/simple;
-	bh=uu/FegJsB7dpd9wwwzCMc53ucsF3L57vLMQ1/7MEZxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=gVMW8gKBWKy40JP/iPpu+PS71UVpomnh6prZP0ewUpNIoJcYfdM32w30hPp2TJPcvfFOMgC7QlWNqUMpEC7+yAC/sJrhR4wSwYhMR3iJ8rZZ4165qRdh75003weYCjm/pmelQHUyklafXlh3urhBYEujUsh2c0aXLC9h6nBfhmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mp2xI/sF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 531NfYAg002553;
-	Wed, 2 Apr 2025 02:46:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LQB/8Xwxn+GI2VQUG0gc9ANTGXkv5eT88f7DvRvlduw=; b=mp2xI/sFcSpLWYMW
-	XAvZ4e0rVJBM1gJEc9ewk3nmUQWkhcFqMdQAER+H8UvGjCj2Pzl0eoOvcS3Uofue
-	4aPCcvix7jpPH12f8BVDHFbxVg3ROBsVK8PGx9RKANNAHl+DicpIAw1YRKenfvfm
-	j8B46u57BUT/JPRXkLLA5lYkOIb8OVm1nRbvz4Nq0Y/D4OhG6m2HjO9z4poDMXDh
-	t8po0Vt/AdI3q0zWSD+cssNwSQuRxhdcRCJv2k6ZEJVCoB83vSYd7noAcY5Cio12
-	+tq/PXPPISyxIAccp+icGu3N22kHkVwUf/4gh65tSQqtuNLXAYiXBFIt1/Y2hh8m
-	CDA2WA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45pa5bsu3h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Apr 2025 02:46:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5322kUZX006272
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Apr 2025 02:46:30 GMT
-Received: from [127.0.1.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Apr 2025
- 19:46:28 -0700
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-Date: Wed, 2 Apr 2025 10:45:48 +0800
-Subject: [PATCH ath-next 9/9] wifi: ath12k: support 2 channels for single
- pdev device
+	s=arc-20240116; t=1743562177; c=relaxed/simple;
+	bh=aTL4FNA8QNZKN83QLAV4YPGttM0hIgQPX7bbmhjKx9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxN4m7NZhzFid7680/fIE9zEO/F22IBIjamgHQWvKmNLpmxR5k19BSZqiC+oGs+IHGg/v3v23UlYwbXFqckGZqLLz40cxeWuFiIbzX4sypWzbi9MrtkkPswKmxn0EAlzIBQ0PSXyE3aERlru/hd3bUGXFE8/1uXiOc8uP6FuBkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SbItZ3fr; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6cd78595-f9d3-4f26-8ca3-d1a0bf4e8dff@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743562171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ShkV8Eez8zF2yiacsvlXmljeTgs0yVxUyt2LGsKil6c=;
+	b=SbItZ3fr5KIGsi/J/LEd8siyokZSoxxjxgcV51j1Rh7ilbJDtvKRPgVYJZ4guZtGI3TbD6
+	S7BiSRlrUzRwRO/4+2uzOrsVUnKcUmWzuFEdtDijsUmuX0pH/ZmX4NElF+SxLoek4HJYQm
+	GSukYhXHv1LULJFGiNlurgs+BLWHGww=
+Date: Wed, 2 Apr 2025 10:49:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250402-ath12k-wcn7850-mlo-support-v1-9-bad47cf00704@quicinc.com>
-References: <20250402-ath12k-wcn7850-mlo-support-v1-0-bad47cf00704@quicinc.com>
-In-Reply-To: <20250402-ath12k-wcn7850-mlo-support-v1-0-bad47cf00704@quicinc.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson
-	<jjohnson@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1AXIsSK52P7JRn1XWVo6tzMzjXNr8bHj
-X-Authority-Analysis: v=2.4 cv=YqcPR5YX c=1 sm=1 tr=0 ts=67eca507 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=TnHeXv7htJ03pNrsuFYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 1AXIsSK52P7JRn1XWVo6tzMzjXNr8bHj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-02_01,2025-04-01_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=865 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504020017
+Subject: Re: [PATCH v4] mm/page_alloc: Consolidate unlikely handling in
+ page_expected_state
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Markus.Elfring@web.de,
+ Ye Liu <liuye@kylinos.cn>, Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>
+References: <20250328014757.1212737-1-ye.liu@linux.dev>
+ <Z-ayTt8o656AkGfz@casper.infradead.org>
+ <8720c775-c0fb-4fbf-a1a8-409fef2b67ad@linux.dev>
+ <Z-q71LlcCQ5I-2D-@casper.infradead.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <Z-q71LlcCQ5I-2D-@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-For single pdev device, radio number of a device is forced as 1 in
-ath12k_wmi_ext_soc_hal_reg_caps_parse(). This leads to ah->num_radio == 1
-and then in ath12k_mac_setup_iface_combinations() we report to
-mac/cfg80211 that only 1 channel is supported. In MLO case, it finally
-results in failing to bring up the second link as it is in another
-channel.
 
-Change num_different_channels to 2 to allow a second link. Since DFS on
-multiple channels are not supported yet, remove radar_detect_widths.
+在 2025/3/31 23:59, Matthew Wilcox 写道:
+> On Mon, Mar 31, 2025 at 08:08:01PM +0800, Ye Liu wrote:
+>> 在 2025/3/28 22:29, Matthew Wilcox 写道:
+>>> On Fri, Mar 28, 2025 at 09:47:57AM +0800, Ye Liu wrote:
+>>>> Consolidate the handling of unlikely conditions in the 
+>>>> page_expected_state() function to reduce code duplication and improve 
+>>>> readability.
+>>> I don't think this is an equivalent transformation.
+>> Could you explain it in detail?
+> page_expected_state() is called both at free and alloc.  I think
+> the correct behaviour on encountering a HWPOISON page should be
+> different at alloc and free, don't you?
+In the alloc process, this patch does not modify the code behavior.
+Regarding the free process, the if (unlikely(PageHWPoison(page)) && !order)
+code handles the case where order is 0. When order is not 0, it does not
+matter if __ClearPageBuddy is used to process the last page of the compound
+page, because page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP; will also clear it.
+Is that right?                                                             
 
-For now WCN7850 is the only single pdev device, so others should not be
-affected.
+>>> Please, stop with these tweaky patches to incredibly sensitive core code.
+>>> Fix a problem, or leave it alone.  We are primarily short of reviewer
+>>> bandwidth.  You could help with that by reviewing other people's patches.
+>>> Sending patches of your own just adds to other people's workload.
+>> Thank you for your feedback. I understand the sensitivity of core code
+>> and respect the limitations on reviewer bandwidth. However, I believe
+>> that reasonable optimizations should not be rejected solely because
+>> they involve core code. If an improvement enhances performance,
+>> readability, or maintainability without introducing risks, wouldn't
+>> it be worth considering for review?
+> If it's a reasonable optimisation, absolutely!  But if it's an
+> optimisation, it should be accompanied with a benchmark showing an
+> improvement.  As far as improving readability, I'm not yet convinced
+> that you have the expertise to make that call.  Every change that is
+> made invalidates everybody else's mental model of "how this works".
+> So all changes carry a cost.  Sometimes that cost is worth paying,
+> other times it isn't.
+So we need to discuss the technical aspects first, right?
+>> Regarding the reviewer shortage, I’d be happy to help by reviewing
+>> other patches as well. Could you please share the process for becoming
+>> a reviewer? What are the requirements or steps to get involved?
+> There is no process!  Choose a patch, read it, think about it.  What
+> problems might there be with it?  What may have been overlooked?
+> Is the commit message unclear to you, how could it be improved?
+> When you're done, send a Reviewed-by: tag (read the kernel process
+> documents for the full meaning of that tag).
+>
+Thanks for your advice, I will try.
 
-Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.1.c5-00284-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00209-QCAHKSWPL_SILICONZ-1
 
-Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/mac.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+Thanks,
 
-diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-index d1695432168bb3db054f0c65797a2d32413034ad..353f6341e1b96e533bdae5fa5697949b72f00921 100644
---- a/drivers/net/wireless/ath/ath12k/mac.c
-+++ b/drivers/net/wireless/ath/ath12k/mac.c
-@@ -10915,13 +10915,18 @@ ath12k_mac_setup_radio_iface_comb(struct ath12k *ar,
- 	comb[0].limits = limits;
- 	comb[0].n_limits = n_limits;
- 	comb[0].max_interfaces = max_interfaces;
--	comb[0].num_different_channels = 1;
- 	comb[0].beacon_int_infra_match = true;
- 	comb[0].beacon_int_min_gcd = 100;
--	comb[0].radar_detect_widths = BIT(NL80211_CHAN_WIDTH_20_NOHT) |
--					BIT(NL80211_CHAN_WIDTH_20) |
--					BIT(NL80211_CHAN_WIDTH_40) |
--					BIT(NL80211_CHAN_WIDTH_80);
-+
-+	if (ar->ab->hw_params->single_pdev_only) {
-+		comb[0].num_different_channels = 2;
-+	} else {
-+		comb[0].num_different_channels = 1;
-+		comb[0].radar_detect_widths = BIT(NL80211_CHAN_WIDTH_20_NOHT) |
-+						BIT(NL80211_CHAN_WIDTH_20) |
-+						BIT(NL80211_CHAN_WIDTH_40) |
-+						BIT(NL80211_CHAN_WIDTH_80);
-+	}
- 
- 	return 0;
- }
+Ye
 
--- 
-2.25.1
+
 
 
