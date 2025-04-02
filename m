@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-584968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC4CA78E12
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF19FA78E0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495433ACF50
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D78171677
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABDE238D42;
-	Wed,  2 Apr 2025 12:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FC8Yn2z4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1E92376E6;
-	Wed,  2 Apr 2025 12:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A23239570;
+	Wed,  2 Apr 2025 12:17:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA802376E6
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596306; cv=none; b=jDNiJbVI7al99rGRaa9tnlf/NTd1aB+Iw2UcWa92FyNPfAgU7sBxtphD7WVXK/OAJnyjoW2udI5WNJ9a4dUTvHz5H7qq1pSqQNCps1HCF52Odh8WRsYcIryQ9w0G9m1/V0cNQ/wJI/kKp6S0H/0QyRAx8TFPH7pFbTiIJblw2sA=
+	t=1743596248; cv=none; b=UKvcx5zL7ltd+LlqH02WBA3iv1vLThk5nUusKGuNcHufp1Gx55PVeUxb0ytNwiyUEnldKpWIQTXd3lfdQYVk6q2TLNB8QXu9JgVxtco7uzBKWo63EII7ipSAPC59pt2xv2QMVY5UPLgMj0D0FZYXZuomxEv/hDNdeIVsteWUGIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596306; c=relaxed/simple;
-	bh=ggqz5lWHakn7J6Ha4/MaJKM/TUSGVUDkL/qWbNeHIzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6tB4beAqIAz3zGVs9fSi/NKkCOWV0WDyb+pXwQ0Hhux2XuEk/GHKawaq6bP3AyfIOEnfX9SmHtwPoDZWL1liEGHxFKY+fz/2Jw+Mz+/OEYi11wSKpMQncE6m/F34KX2tN59cBBOc7w+bIsIba91aPPePFoKaTpNJS6L6iIqzqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FC8Yn2z4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D171EC4CEDD;
-	Wed,  2 Apr 2025 12:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743596306;
-	bh=ggqz5lWHakn7J6Ha4/MaJKM/TUSGVUDkL/qWbNeHIzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FC8Yn2z4v08go6nDgD7NKILEDLsuUOktHQwGyl+HRIqjIj0QjeKZnlNFvC9EYyUR1
-	 Vj3voJwcmAdfdShj9SldXpO+ZFs7/Oiky2ix9i0SKpx3PRUzduL99/YjXmHmJR/4Y5
-	 NFmK5WVyIAhihzZ3Fvu950X88DtRPsS1FdtUhZFo=
-Date: Wed, 2 Apr 2025 13:16:58 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Akshay Gupta <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	shyam-sundar.s-k@amd.com, gautham.shenoy@amd.com,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
-Subject: Re: [PATCH v7 07/10] misc: amd-sbi: Add support for CPUID protocol
-Message-ID: <2025040258-snap-aerospace-6e43@gregkh>
-References: <20250402055840.1346384-1-akshay.gupta@amd.com>
- <20250402055840.1346384-8-akshay.gupta@amd.com>
- <c7efb154-9e44-402f-b0fb-c9bce54645b2@app.fastmail.com>
+	s=arc-20240116; t=1743596248; c=relaxed/simple;
+	bh=r5inOR0ZcptfLFBSCXQu2chHbp7Y7JyY4Avw/EU3Ct4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q6zJKmRvEtlbklMjxaqo2cou78CKyWMMCVNfYbwt192cZpSzZ+j/uG56buSCk+L4m/w1yh+M0x2kQpPqtFFALHmJezWZaNNkZVvhWqv5Eu/HCsV28RouuTsXqLoD0eIj14SJFqQP6yIPoIX89h2FMlkpd78rfz4azNd9NfiKADk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3783106F;
+	Wed,  2 Apr 2025 05:17:26 -0700 (PDT)
+Received: from [10.57.67.12] (unknown [10.57.67.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99B7C3F63F;
+	Wed,  2 Apr 2025 05:17:22 -0700 (PDT)
+Message-ID: <2f594c55-6fce-445f-b838-ea518916103f@arm.com>
+Date: Wed, 2 Apr 2025 13:17:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7efb154-9e44-402f-b0fb-c9bce54645b2@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf: arm-ni: Fix list_add() corruption in
+ arm_ni_probe()
+To: HongBo Yao <andy.xu@hj-micro.com>, will@kernel.org
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, allen.wang@hj-micro.com, peter.du@hj-micro.com
+References: <20250331121536.2626552-1-andy.xu@hj-micro.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250331121536.2626552-1-andy.xu@hj-micro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 02, 2025 at 02:13:22PM +0200, Arnd Bergmann wrote:
-> On Wed, Apr 2, 2025, at 07:58, Akshay Gupta wrote:
-> > - AMD provides custom protocol to read Processor feature
-> >   capabilities and configuration information through side band.
-> >   The information is accessed by providing CPUID Function,
-> >   extended function and thread ID to the protocol.
-> >   Undefined function returns 0.
-> >
-> > Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-> > Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
-> > ---
-> > Changes since v6:
-> > - Address Arnd comment
-> >   - Add padding to the uapi structure
-> > - Rebased patch, previously patch 8
+On 2025-03-31 1:15 pm, HongBo Yao wrote:
+> From: Hongbo Yao <andy.xu@hj-micro.com>
 > 
-> This changes the UAPI again. since you change the common structure
-> layout.
+> When a resource allocation fails in one clock domain of an NI device,
+> we need to properly roll back all previously registered perf PMUs in
+> other clock domains of the same device.
 > 
-> > @@ -134,6 +279,9 @@ static long sbrmi_ioctl(struct file *fp, unsigned 
-> > int cmd, unsigned long arg)
-> >  		/* Mailbox protocol */
-> >  		ret = rmi_mailbox_xfer(data, &msg);
-> >  		break;
-> > +	case APML_CPUID:
-> > +		ret = rmi_cpuid_read(data, &msg);
-> > +		break;
-> >  	default:
-> >  		return -EINVAL;
+> Otherwise, it can lead to kernel panics.
 > 
-> As I previously commented, I would prefer to have a highl-level
-> interface per specific mailbox item you transfer, but I think that
-> is something we can debate, in particular if Greg or the x86
-> maintainers think it's ok, I'm not going to object.
-> 
-> However, having a combined ioctl command and data structure
-> for rmi_mailbox_xfer(), rmi_cpuid_read() and the commands
-> you add later seems to cause a lot of the extra complexity,
-> and I think this really has to be done differently, using
-> distinct ioctl command numbers for each of them, with an
-> appropriate structure to go along with it.
-> 
-> This does mean the existing userspace tool will be incompatible
-> with the upstream driver, but it can be easily updated to
-> support both kernel interfaces (trying the new one first,
-> and falling back to the old on after -ENOTTY).
+> Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
+> arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
+> arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
+> list_add corruption: next->prev should be prev (fffffd01e9698a18),
+> but was 0000000000000000. (next=ffff10001a0decc8).
+> pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : list_add_valid_or_report+0x7c/0xb8
+> lr : list_add_valid_or_report+0x7c/0xb8
+> Call trace:
+>   __list_add_valid_or_report+0x7c/0xb8
+>   perf_pmu_register+0x22c/0x3a0
+>   arm_ni_probe+0x554/0x70c [arm_ni]
+>   platform_probe+0x70/0xe8
+>   really_probe+0xc6/0x4d8
+>   driver_probe_device+0x48/0x170
+>   __driver_attach+0x8e/0x1c0
+>   bus_for_each_dev+0x64/0xf0
+>   driver_add+0x138/0x260
+>   bus_add_driver+0x68/0x138
+>   __platform_driver_register+0x2c/0x40
+>   arm_ni_init+0x14/0x2a [arm_ni]
+>   do_init_module+0x36/0x298
+> ---[ end trace 0000000000000000 ]---
+> Kernel panic - not syncing: Oops - BUG: Fatal exception
+> SMP: stopping secondary CPUs
 
-Different structures per ioctl is the way to go.  It's more
-self-describing and easier to audit for reviewing that the code is
-working properly both in userspace and in the kernel (i.e. tools like
-strace work better.)
+This, and the subject, are really confusing, since apparent list
+corruption is just one of many possible symptoms, and the fact that it
+happens to be a second instance of arm_ni_probe() hitting it is pure
+coincidence. The bug is that probe failure can lead to PMUs being freed
+without being unregistered, which can obviously lead to all manner of
+use-after-free conditions in the perf core.
 
-So I agree with you here.
+> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+> Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
+> ---
+>   drivers/perf/arm-ni.c | 44 +++++++++++++++++++++++++++++--------------
+>   1 file changed, 30 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+> index fd7a5e60e963..ee85577e86b9 100644
+> --- a/drivers/perf/arm-ni.c
+> +++ b/drivers/perf/arm-ni.c
+> @@ -102,6 +102,7 @@ struct arm_ni_unit {
+>   struct arm_ni_cd {
+>   	void __iomem *pmu_base;
+>   	u16 id;
+> +	bool pmu_registered;
+>   	int num_units;
+>   	int irq;
+>   	int cpu;
+> @@ -571,10 +572,31 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
+>   	err = perf_pmu_register(&cd->pmu, name, -1);
+>   	if (err)
+>   		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
+> +	else
+> +		cd->pmu_registered = true;
+>   
+>   	return err;
+>   }
+>   
+> +static void arm_ni_remove_cds(struct arm_ni *ni)
+> +{
+> +	for (int i = 0; i < ni->num_cds; i++) {
+> +		struct arm_ni_cd *cd = ni->cds + i;
+> +
+> +		if (!cd->pmu_base)
+> +			continue;
+> +
+> +		if (!cd->pmu_registered)
+> +			continue;
 
-thanks,
+It's clearly redundant to have both checks here - TBH I'd be inclined to
+just do the minimal fix with the existing pmu_base logic:
 
-greg k-h
+@@ -656,8 +673,11 @@ static int arm_ni_probe(struct platform_device *pdev)
+  				reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
+  				arm_ni_probe_domain(base + reg, &cd);
+  				ret = arm_ni_init_cd(ni, &cd, res->start);
+-				if (ret)
++				if (ret) {
++					ni->cds[cd.id].pmu_base = NULL;
++					arm_ni_remove(pdev);
+  					return ret;
++				}
+  			}
+  		}
+  	}
+
+...however I'm not against replacing that use of pmu_base with an
+explicit flag if you think that's nicer. As implied, though, I really
+don't see any point in splitting up arm_ni_remove() itself, we can just
+move the whole definition up and call it for this purpose too (with your
+other drvdata fix).
+
+Thanks,
+Robin.
 
