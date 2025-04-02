@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-584435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AA4A78736
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C86AA7873B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CF618930B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D843AFE0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE34233132;
-	Wed,  2 Apr 2025 04:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F68E230D1E;
+	Wed,  2 Apr 2025 04:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="c1/9Ws5d"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwzBHp7Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC4A23237C;
-	Wed,  2 Apr 2025 04:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E2B230D08;
+	Wed,  2 Apr 2025 04:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743567695; cv=none; b=n4kmqx8fvz7PNFk5R48cjvuKtk4f+tD+I1Tq7p7s6up72sKXLgzp2C0d0eruQLRIyWKvOHLq6bEF7oar/YltFu1J4aUsi1Cvyka+cJWsJOJNsH54Wmqn0EZX387KbkVIFhg41bFV/YtlFW+J7NbPI6qHDAPASFJvRtcTyQMvw/A=
+	t=1743567712; cv=none; b=HCzuWq6ZzkW2V4/9djacZQX5cr8HfaNee5ZQTO8vUuvE/rj3cOD1N3ahttJT+9Ef0zuGH7ycx6r2FUvAIBf24MDIXvH+zL9WOLAr/Lk149rZbM2uN8tCHhmZDoOA6bKshYDoUPxn/ZbA3Zq4PVMoCdlvDsiU0E58i71G7Jv3pDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743567695; c=relaxed/simple;
-	bh=iVrNvGutPDYzqsgoah6jHfsjPdQqHhlL3O1BSV3F40w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rIWUovU17S7sTj1byOtwDZFi8z+JsFT4NqkBXWVJDptQ6ivvQ8JZ2cdZb638xkGKrf6Wo4Ds5Ky5ITiyZZYFszfCgn3NhWkrrcOUkJYQ6WN047R8qwsFwSGDwZaxmzrIgG0xHBhDzW5vZosKcgId/1S4CGaxWyUdg88vGr/ICg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=c1/9Ws5d; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZSBWq0ZZ7zlvfnd;
-	Wed,  2 Apr 2025 04:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1743567684; x=1746159685; bh=CPTmykr03XExO8Q7/kKxhPyv
-	u3/fKiEb4C4kJE4nYkg=; b=c1/9Ws5dTpi5Ze+i9vyAhoFqR+tQByeoYFp7tT4H
-	FOIP4fApEj6zVS/cB6iUih6BwA+v4FK/iZT0scZ07bFxOolLk1aDp37wVQwc+HXz
-	/2tu/4gLr1B4c8ejs6TKxRqiLQtNf9KhDf/m16Dxgtt/3wvZHDizaAC8SKPl9c9F
-	SD0WmABPS++sWwPFHaqQZcqUxzHBPb3MNPVQyQcRR/aGPlC1tMASbDo8D7XWcg4t
-	u24LvmwCfE4rANED14Zt/Vt3u6pygAIsv73T+dAvSqvTTjIYJhLLNOJVqKWTyONh
-	dE1XqvuMlJHaPkrhZ/2O4U8fLcaRFFzvmBFnPg0fJyK1yw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id B8t3pmhoC4BC; Wed,  2 Apr 2025 04:21:24 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZSBWL4vCGzlv629;
-	Wed,  2 Apr 2025 04:21:00 +0000 (UTC)
-Message-ID: <467b9ba0-5dea-49c5-ab43-435d3d3fd6bc@acm.org>
-Date: Tue, 1 Apr 2025 21:20:59 -0700
+	s=arc-20240116; t=1743567712; c=relaxed/simple;
+	bh=m0SY0aMz6VYqx7I6tJ28nDq+/OGv6gq3bFTK7dq4V6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+iZOnt/77fAnKzh0M+zjZx/0x86yhl5uazCrYGy+kjqCW0Lp3lNPsi85D3NmzIDBiLzhOeC7kuvTx/VxP8I1iXWrcl1IU3oHnT//+J316JoC2EJyOk0/cDl03zSMKj3QFcxL9L1S1GTflcaSUK8gGeVP2ZXpSD504GU7XctmOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwzBHp7Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFCDC4CEDD;
+	Wed,  2 Apr 2025 04:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743567711;
+	bh=m0SY0aMz6VYqx7I6tJ28nDq+/OGv6gq3bFTK7dq4V6U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=LwzBHp7ZxYE3JDyc5xbuPO/aTzibLn5bXlb275iEVz8lnt+aPR2Gm9F0XHp75mrDt
+	 ASTMnXRoZE3jm5l3l1+13EKaQ9wWhWmPUPS2RP4eOk+hSSNz/s/npXp8odcaDC7Vzy
+	 AVZ58stfxu2KUXJYzcSUNHYTxxpHNLw+n0D86dZIuc5q1xtW8vrTbITgxN3XJBuV/C
+	 gnMu8JAukWxJOebacn/G5H+WEKU8045UyFJ8uUhzmx5h/yNgNenK8Zf0sapFdZ73nr
+	 uAWhq0W0VTIJc5LoHGSRsUlxkYGwmbB0tofIYUo8L6rOlDsqIcdQ4WhCLse+lSKlLD
+	 X0p0Tga44OAuQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id ED877CE160D; Tue,  1 Apr 2025 21:21:50 -0700 (PDT)
+Date: Tue, 1 Apr 2025 21:21:50 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-cxl@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, gourry@gourry.net,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [BUG -next] ./usr/include/cxl/features.h:11:10: fatal error:
+ uuid/uuid.h: No such file or directory
+Message-ID: <478264e8-af94-462b-929f-f7afdf8466bd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <1f48ba3b-9ba8-44e5-98c7-4c9abf95a935@intel.com>
+ <20250331132439.GD10839@nvidia.com>
+ <67eac8df3e217_201f02948d@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250331171755.GC289482@nvidia.com>
+ <67eaf14b7c611_201f0294ba@dwillia2-xfh.jf.intel.com.notmuch>
+ <4641ce2f-74eb-45ea-a2f8-c7d0db905b7a@linux.ibm.com>
+ <79a032b5-b13d-43fd-b56e-01098122e104@intel.com>
+ <66ae49a8-d7f9-4fd9-b94e-9be26fd9aea4@paulmck-laptop>
+ <e9c57344-43f3-4f90-9894-eb4f5a1b22f2@intel.com>
+ <20250402114722.35cbd9d5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] ufs: core: Add WB buffer resize support
-To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, beanhuo@micron.com, luhongfei@vivo.com,
- quic_cang@quicinc.com, keosung.park@samsung.com, viro@zeniv.linux.org.uk,
- quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
- manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
- quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
- minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20250402014536.162-1-tanghuan@vivo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250402014536.162-1-tanghuan@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402114722.35cbd9d5@canb.auug.org.au>
 
-On 4/1/25 9:45 PM, Huan Tang wrote:
-> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-> index ae0191295d29..efa1e2df292c 100644
-> --- a/Documentation/ABI/testing/sysfs-driver-ufs
-> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-> @@ -1604,3 +1604,55 @@ Description:
->   		prevent the UFS from frequently performing clock gating/ungating.
->   
->   		The attribute is read/write.
-> +
-> +What:		/sys/bus/platform/drivers/ufshcd/*/wb_resize_enable
-> +What:		/sys/bus/platform/devices/*.ufs/wb_resize_enable
-> +Date:		April 2025
-> +Contact:	Huan Tang <tanghuan@vivo.com>
-> +Description:
-> +		The host can decrease or increase the WriteBooster Buffer size by setting
-> +		this attribute.
-> +
-> +		========  ======================================
-> +		IDLE      There is no resize operation
-> +		DECREASE  Decrease WriteBooster buffer size
-> +		INCREASE  Increase WriteBooster buffer size
-> +		Others    Reserved
-> +		========  ======================================
-> +
-> +		The attribute is write only.
+On Wed, Apr 02, 2025 at 11:47:22AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 1 Apr 2025 17:18:23 -0700 Dave Jiang <dave.jiang@intel.com> wrote:
+> >
+> > > I of course do have some concerns about the number of userspace packages
+> > > that might be required if CXL is adding seven of them...  ;-)  
+> > 
+> > Technically it's only 1 package. libuuid-devel. Do the other 6 come
+> > with the installation of libuuid-devel?
+> 
+> On my debian build machine, I only need uuid-dev and libuuid1 installed ...
 
-The description of the attribute contradicts the name of the attribute.
-Wouldn't wb_resize_enable be a better name for this attribute?
-Additionally, that name will be easier to recognize for anyone who is
-familiar with the UFS 4.1 standard.
+And libuuid-devel works on my Fedora systems.
 
-To be consistent with other sysfs attributes, the names of the verbs
-should be changed from upper case to lower case and "Others - Reserved"
-should be left out. This comment also applies to the other attributes.
+So the various kernel-build howtos will be updated?  Or is a patch
+forthcoming?
 
-> +static const char *ufs_wb_resize_hint_to_string(enum wb_resize_hint hint)
-> +{
-> +	switch (hint) {
-> +	case WB_RESIZE_HINT_KEEP:	return "KEEP";
-> +	case WB_RESIZE_HINT_DECREASE:	return "DECREASE";
-> +	case WB_RESIZE_HINT_INCREASE:	return "INCREASE";
-> +	default:	return "UNKNOWN";
-> +	}
-> +}
-
-The formatting of the above switch/case statement is not compliant with
-the Linux kernel coding style.
-
-Thanks,
-
-Bart.
+							Thanx, Paul
 
