@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-584880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D82A78D2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFF2A78D1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D29170FC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C342170823
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE7D1DB13A;
-	Wed,  2 Apr 2025 11:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0DF23815D;
+	Wed,  2 Apr 2025 11:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w81fkxkT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MXAwXoil"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C55823B0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5722356BD;
+	Wed,  2 Apr 2025 11:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743593562; cv=none; b=lj5ejZQaQIfYskKmqQ6z1+0peOIt7w9frlLv5HIrxr6eHaL4cV4p7TZ6xg3TIQ82xpk5/XYrA2ty0tGqnRJbEgt/mjfL/Qw0RCiGNseHlkCmX6rVBDk1HS8ZYuu7PnxiVEPd/G7/JP7WcLDVOwnEHres6fHEvxHoqoWM8GtJuD8=
+	t=1743593532; cv=none; b=iXL6RqGvRBQ8edHuK4t2mzEGgXqoW7qxiBeOdEIERD7vetEZMJ45RU0Tk6hZMjnSE0uSI+C4LFDVf4mqorO7D3bnVr/B0rm9uqMvLVQ8qC+jzDdE1h4QWwLQvrok1o9XkFSPcDxiQs/ck2GJE/08vdk0uPgg8OyXUxe/vEUHTCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743593562; c=relaxed/simple;
-	bh=gNk/zMMaqpLafbWxUi/179z92vD/Vp4e8IIgTDjRBjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEb4hjMcDJKPii6zaiVmbN2SCG5z8tUaOqdvifnl82+oTP4YUYJwIVkDaHnGZh+I5QZe2VjG79+HVWx+JQrIJF4axalp3DHFbGkav2YmciIlD9u1qLy3JQIlSYeuG36mr8grPsMJYShdQ3szhmSMc+nIpBRpIHMf4XNTwLX+Y3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w81fkxkT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975D2C4CEDD;
-	Wed,  2 Apr 2025 11:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743593561;
-	bh=gNk/zMMaqpLafbWxUi/179z92vD/Vp4e8IIgTDjRBjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=w81fkxkTblcTNXlJngwnCkdoDtSDivqZegHb6Y0PtWz2D9uG1Vkv5B2iaWrpLHzT6
-	 lxaSxEy3NNbzi6QvOJc+CnEMnPHAtzAAKRRTJsBUR9vJFnNtZLX1fkp/YmTLxfjwLj
-	 dw8yi8nj2kHF9fCgQaGnAOigZRDBIUGYlM33rdbo=
-Date: Wed, 2 Apr 2025 12:31:13 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 00/13] nvmem: patches (set 1) for 6.15
-Message-ID: <2025040230-showoff-spray-ac83@gregkh>
-References: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
- <2025040143-espionage-poison-2345@gregkh>
- <47a3a851-f737-4772-87c6-98613347435c@linaro.org>
+	s=arc-20240116; t=1743593532; c=relaxed/simple;
+	bh=Jqq+tZb2iwvIgau84/D9AjPWpg3COyHfFgvOtSB+djA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UmfbDv1LYcye0n01VOJA8wc57xQTtqRB8OPJm/72TzSFdELHJZGTdQecj7agwMr3we6O+bzHEETKv3cbG5pgAPZEBbVc/Ee2GYoypdEKZ0hEelAcabxExMqLbZNFgFz0NAoP2JwXs2B9jFO4esMhFuEBrnBPUFWnToqzRfgtFas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MXAwXoil; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 532BW34r3915796
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Apr 2025 06:32:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743593523;
+	bh=sX5h5CFojGv8LnhPEfyz9Mo/ZRxnuXNUcaxTQXypESI=;
+	h=From:To:CC:Subject:Date;
+	b=MXAwXoil58eJQ8IWzzweFdwgwECINiQYjhl8HmFBDifDlzNSj1wd7VnQe+mYlrl6z
+	 AAAMhWayMGWrToZ2jXvO3RexlcBY3aOtl0XmVyVxmlW7orr4H+Sh8PY894bW2wQNdv
+	 E/nll3EicOETX6va6myashBGoMw6Yu1bgtbZ2mFk=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 532BW3Dd013316
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 2 Apr 2025 06:32:03 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
+ Apr 2025 06:32:03 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 2 Apr 2025 06:32:03 -0500
+Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.210])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 532BW1jn017249;
+	Wed, 2 Apr 2025 06:32:02 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <s-vadapalli@ti.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <kristo@kernel.org>, <rogerq@kernel.org>, <kishon@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <j-choudhary@ti.com>
+Subject: [PATCH v2 0/5] Use ti,j784s4-pcie-ctrl for PCIe CTRL spaces
+Date: Wed, 2 Apr 2025 17:01:56 +0530
+Message-ID: <20250402113201.151195-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47a3a851-f737-4772-87c6-98613347435c@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Apr 02, 2025 at 09:19:17AM +0100, Srinivas Kandagatla wrote:
-> HI Greg,
-> 
-> On 01/04/2025 20:18, Greg KH wrote:
-> > On Sun, Mar 09, 2025 at 02:56:50PM +0000, srinivas.kandagatla@linaro.org wrote:
-> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > 
-> > > Hi Greg,
-> > > 
-> > > Here are few nvmem patches for 6.15, Could you queue
-> > > these for 6.15.
-> > > 
-> > > patche include
-> > > 	- updates to bindings to include MSM8960, X1E80100, MS8937,
-> > > 	  IPQ5018
-> > > 	- add support to bit offsets for register strides exceeding
-> > > 	  single byte
-> > > 	- add rockchip-otp variants.
-> > > 	- Few enhancements in qfprom and rochchip nvmem providers.
-> > 
-> > Ok, I wanted to apply these, and tried to, but they fail horribly
-> > because:
-> > 
-> > Commit: 1b14625bd6d4 ("nvmem: qfprom: switch to 4-byte aligned reads")
-> > 	Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's raw_len")
-> > 	Has these problem(s):
-> > 		- Target SHA1 does not exist
-> > Commit: a8a7c7e34093 ("nvmem: core: update raw_len if the bit reading is required")
-> > 	Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's raw_len")
-> > 	Has these problem(s):
-> > 		- Target SHA1 does not exist
-> > Commit: d44f60348d8c ("nvmem: core: fix bit offsets of more than one byte")
-> > 	Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's raw_len")
-> > 	Has these problem(s):
-> > 		- Target SHA1 does not exist
-> 
-> Looks some of your scripts or b4 is picking up older version v1 of the
-> patchset
-> 
-> None of the above patches have Fixes tags in the V2 patches that I shared
-> aswell as patches in linux-next.
+Hello all,
 
-Yes, that looks odd, it looks like b4 pulled in the wrong series, yes.
+Now that we have ti,j784s4-pcie-ctrl[0] let's use it. This makes these
+K3 SoCs all match what is already done for J784s4.
 
-But, that's even worse.  Those "fixes" are now not actually marked as
-fixes of the previous patch.  So that information is totally lost, and
-again, the first commit here, "nvmem: core: verify cell's raw_len" is
-broken so much that it took 3 other changes to fix it, which implies
-that bisection would cause problems if you hit it in the middle here.
+No functional change, DT changes are fully backwards and forwards
+compatible.
 
-While fixing patches is great, and something we do in the tree all the
-time, let's not purposefully break things and then fix them up in the
-same exact patch series please.  That's just sloppy engineering.
+[0]: commit cc1965b02d6c ("dt-bindings: mfd: syscon: Add ti,j784s4-pcie-ctrl compatible")
+<https://lore.kernel.org/all/20240204090336.3209063-1-s-vadapalli@ti.com/>
 
-Please redo this series completely.  I can take the "new device support"
-patches at any time, and really, those should be marked with Cc: stable
-to get backported, right?  The other ones are written as if they are
-fixes, so again, I can take them any time, no need to wait for the -rc1
-merge cycle.
+Posting next revision for PCIe control node cleanup with minor changes
+to new overlays added after v1 was posted.
 
-thanks,
+NOTE: Once the bindings are in the mainline tree, scm_conf will be
+converted to "simple-bus" compatible which will unblock other
+items like audio_refclk in scm_conf required for audio support
+for TI SoC J721S2-EVM (currently giving dtbs_check warnings)
 
-greg k-h
+v1: <https://lore.kernel.org/all/20241016233044.240699-1-afd@ti.com/>
+
+Changelog v1->v2:
+- Change property description and add example in the binding
+- Add changes in additional overlays using pcie*_ctrl node
+
+Andrew Davis (5):
+  dt-bindings: soc: ti: ti,j721e-system-controller: Add PCIe ctrl
+    property
+  arm64: dts: ti: k3-j721e: Add PCIe ctrl node to scm_conf region
+  arm64: dts: ti: k3-j7200: Add PCIe ctrl node to scm_conf region
+  arm64: dts: ti: k3-j721s2: Add PCIe ctrl node to scm_conf region
+  arm64: dts: ti: k3-am64: Add PCIe ctrl node to main_conf region
+
+ .../soc/ti/ti,j721e-system-controller.yaml    | 10 +++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      |  7 ++++-
+ .../boot/dts/ti/k3-am642-evm-pcie0-ep.dtso    |  2 +-
+ .../ti/k3-am68-sk-base-board-pcie1-ep.dtso    |  2 +-
+ .../boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso    |  2 +-
+ arch/arm64/boot/dts/ti/k3-j7200-main.dtsi     |  7 ++++-
+ .../boot/dts/ti/k3-j721e-evm-pcie0-ep.dtso    |  2 +-
+ .../boot/dts/ti/k3-j721e-evm-pcie1-ep.dtso    |  2 +-
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 28 ++++++++++++++++---
+ .../boot/dts/ti/k3-j721s2-evm-pcie1-ep.dtso   |  2 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  7 ++++-
+ 11 files changed, 58 insertions(+), 13 deletions(-)
+
+-- 
+2.34.1
+
 
