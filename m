@@ -1,228 +1,192 @@
-Return-Path: <linux-kernel+bounces-585145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCF2A79020
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:45:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D38A7902C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F2A1700C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E63B3A4927
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168D23A98D;
-	Wed,  2 Apr 2025 13:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C76B23A9B5;
+	Wed,  2 Apr 2025 13:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SxqjsjSV"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HatgSIyQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fMpfRdxo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SdjRtG2X";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sj3fTrbk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D191DA5F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 13:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047D123A980
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 13:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743601480; cv=none; b=HlajLKGoWVaEsQSOBRwlXQd0IABjAkuFoWzSKOVwaujDD0MHuT/nqG6zWXkFfI3dKp3AbBSArZ8WkuDIJEE24aInVISgSPAZ7ztvx718xCYeAvGsbaQQ6YFRNjdO42CgFqPfig8yf4ro15tFxJrRyTknp/N4ahYc+n4D/ArfPec=
+	t=1743601519; cv=none; b=l72fJNguSzq5/4oGllf1GPCHX3hSb156UpO8H99o6P0I9fHF+BHbq7QXLktTgTQgF/Qm068Q2JD/QQ2PYn2UpMriDKtmfwoLShSJKBKzlMQ2k318ibMKNwDGN2GrnCQCwDvnm7OooqX67K5I9WtO6QeTaadDjqvqi+fHRcE9iG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743601480; c=relaxed/simple;
-	bh=bAFtZQ4n74TeKqgW1UVgdxDBZQaL32TNRNDJ8hM/0w4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bUJmPAjkzxcu3TelJGEGLdfaHfEQbIIL7qNNuaXYICMJUNjWUZ6Fw4enbFJxoFAVL2cTHmr3B7frPrIDC76J4zwesvbd5D/VlYolM+t2oY9fP8WQvim4zaL8nrJ5aFcqmPPyA9QiD7m7+0/h723vN/DQklxfItvY2VBvnLRQIB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SxqjsjSV; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39c1efc457bso1746063f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 06:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743601476; x=1744206276; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+KPScMUK+AO9N4U8oKua6WTB7J2b7ytXODSOml94Zo=;
-        b=SxqjsjSV7bmQM2wzwYHBDlcdxHLeP6Qz2wZghJM7QY3/kEB9ryZ6HVgvxTme2ENT90
-         y/eaGAaMw3LDR277H3buNfjki3GoiuHA+A2cmLLa0xxtda2y5PfkLsPuBBuRkpYsqIE0
-         Z86d2X/pET+O7pHei8eUCHEQCzCbDsdRG3CMhv+lILVnsCX+9W1igH2Bt7yDJJLDeX6l
-         5NDC1xE9MOrkHyZWhJGvQIAoh9gd+033yx+R5r0IuS6CXSKbjBc4HIjQ0UBppkrKY/v6
-         GjKGG4fLQ2qeO97OjwZ5oyEYphRSqmxNF4xHBLKDGEAj3ZmZtEZfaeETkXw8ddKfve4a
-         UtSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743601476; x=1744206276;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M+KPScMUK+AO9N4U8oKua6WTB7J2b7ytXODSOml94Zo=;
-        b=dDIF4rWuUHcvbxoiQk0hgbD9QeHFw4B9Jfmuta8U7BEsvczspgill3BdTw+MY8Q5tQ
-         JI6ppL9u543qNrn9O+pqUUNu5ZQhHbfg3SetecwhyndOUYcFqi6ne/ZZmex8eAZrBTZ5
-         +7vRRb8X9S/uqsPYIpGpuF6x4ka18bEeHOp8NMVPR6NcQdSZw2kBkpsPb6KySOBjPJH1
-         hQ3VFLb7x7dTlfT0kJL1i5qDoNASGtJR+Yne78HgGcz+1VwmGR7/mbvR10kDxmSUXpGR
-         BXzBVPgNlHTwTt0BCY0BZd1EcOfKAKImf/KaFzM8tgbNXpwFryFx2PH13XV/3wD02qLD
-         d1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCX066v5A2qkTACLvjoMDKehKFPya6XeJt9lX5lM/V/R0L+90yuANs4GWge02Dy9QAGL9KgaAEZ19M9ofAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr8L+ZFoAmdnnHQD+4J6EFKX4M+TZjBcnnfiPyb4dcYB9+bPmI
-	7KP4/lhyaHI0gvKjFUtlTzwrJOXj1cw2jFW+w+JoRXQfZl4uEqS2/TrNkdTBlOQ=
-X-Gm-Gg: ASbGncuMyiHGWLLAEYIw4Rm9Iuis75a9CgkpeaI63NAanPJaVxiwRSr7CGEYSvsq6j+
-	ESfPQnh40KDRVi5wrxGbgU2UHY/kCFN7rQl8p4osquxB08hjFZWYqdUcxmsJ+5IoPxSneoOxSYg
-	qybBR/I5U4pcvHBp9bvfV/PhUXFFf52xhLjtdldGYgg3D82GkXRauT2P/ClewouAfQcijumIdri
-	QgVaDWCfiFe9lHBn9xh0YSOPpRCPT4ZNwLcgo4AC6Jh94VVGaE8XMpebGkNrx7z4bQPqUgdhEGA
-	s2mhJFXP2aaPo51xv5MaUr7ILMcORf/oYVd9CrKiyyo=
-X-Google-Smtp-Source: AGHT+IH2Shn9J0awqYD8blIWstPWQg0xn0kUnMPetVi0klBHYvCu+x/je/Jcfw4sK2CLrMVB6OxOdA==
-X-Received: by 2002:a5d:6d84:0:b0:39c:dfa:d41f with SMTP id ffacd0b85a97d-39c120cb81fmr11722261f8f.3.1743601475734;
-        Wed, 02 Apr 2025 06:44:35 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:bcc0:32e:c479:20d5])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c0b7a8e0asm16873922f8f.101.2025.04.02.06.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 06:44:35 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,  Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,  Kishon Vijay Abraham I
- <kishon@kernel.org>,
-  Bjorn Helgaas <bhelgaas@google.com>,  Lorenzo Pieralisi
- <lpieralisi@kernel.org>,  Jon Mason <jdmason@kudzu.us>,  Dave Jiang
- <dave.jiang@intel.com>,  Allen Hubbe <allenbh@gmail.com>,  Marek Vasut
- <marek.vasut+renesas@gmail.com>,  Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>,  Yuya Hamamachi
- <yuya.hamamachi.sx@renesas.com>,  linux-pci@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  ntb@lists.linux.dev
-Subject: Re: [PATCH 2/2] PCI: endpoint: pci-epf-vntb: simplify ctrl/spad
- space allocation
-In-Reply-To: <Z+v+Uni7PV9Nlstq@lizhi-Precision-Tower-5810> (Frank Li's message
-	of "Tue, 1 Apr 2025 10:55:14 -0400")
-References: <20250328-pci-ep-size-alignment-v1-0-ee5b78b15a9a@baylibre.com>
-	<20250328-pci-ep-size-alignment-v1-2-ee5b78b15a9a@baylibre.com>
-	<Z+qrWleCthbAfDxf@lizhi-Precision-Tower-5810>
-	<1jr02ctjoh.fsf@starbuckisacylon.baylibre.com>
-	<Z+v+Uni7PV9Nlstq@lizhi-Precision-Tower-5810>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 02 Apr 2025 15:44:34 +0200
-Message-ID: <1jldsiu18d.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1743601519; c=relaxed/simple;
+	bh=ou38J16lzWKPyDmRIHSMAl2iCcJKb2PNXf+krDDPR4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TkkDGCmUpMLa5Slj6+vnzPlIHay3zj8inpd93N3RtAEA3REtQe8EAJFK1V08vTN2jtMIUjRaLGW98pJJsgZZynOLoEV14r209+086mBddzGQqyp3yOqzbXdny7qV0e7X+dG3mqANofloh4YGCVgAvSlnS8f5zJSwnY2KmfiYcvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HatgSIyQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fMpfRdxo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SdjRtG2X; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sj3fTrbk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F0A1E21196;
+	Wed,  2 Apr 2025 13:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743601513; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbEg7ZiTEcX7WNOb0hyQDt4lxFKLBGaAQx0+L1oQigo=;
+	b=HatgSIyQRsBnqxqOQftX+HatIxARuUBUMTOhzxEpPcv3EA5S0vmYme+rzSTGD9XigFEntk
+	4QorRtNu/UP/9geXawFWW7AtkVXuhzjPXgJU3LIG0NkdZI6POkNKRdzjVo++37Ah9EQMa8
+	rFiWJcQ2Xbq74+gxyj/a839d4O1eXSM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743601513;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbEg7ZiTEcX7WNOb0hyQDt4lxFKLBGaAQx0+L1oQigo=;
+	b=fMpfRdxoSpyAGqrUslxujMrLZ5SBhInrN40/w6glk5WQpaqBW2gTMA6IFDyL1M4XcaLwt2
+	57v8DJfo+Vy8KkCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743601512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbEg7ZiTEcX7WNOb0hyQDt4lxFKLBGaAQx0+L1oQigo=;
+	b=SdjRtG2XZmUxG3VNE36RHMtp7lHY4jmeDZ2kzWxXcFc11dDfuokPZMRX9XUAsuzUhLx0Z4
+	crbC62kcNoU2szLQqdEMS9Cc4H0gcUgfwuCy7eGlBUP86x18V++6KKpl9kg/xxEPgHMaor
+	WE8X+i+lFixaPpS4LeZk6BhzFhA7iZg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743601512;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dbEg7ZiTEcX7WNOb0hyQDt4lxFKLBGaAQx0+L1oQigo=;
+	b=sj3fTrbkRnZpqcnrGy37fIpH64BZwBA6iP7umXiHt7yX69empsDox680/7t1MLTWtNiZ9f
+	DxmTUmVhwm4uLVCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DFD5C13A4B;
+	Wed,  2 Apr 2025 13:45:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UGhPNmg/7WdCHAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 02 Apr 2025 13:45:12 +0000
+Message-ID: <64b5a8d5-6e58-401b-8cf4-404df0a11d07@suse.cz>
+Date: Wed, 2 Apr 2025 15:45:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] lib/iov_iter: fix to increase non slab folio refcount
+Content-Language: en-US
+To: Sheng Yong <shengyong2021@gmail.com>, akpm@linux-foundation.org,
+ willy@infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@archiver.kernel.org,
+ Sheng Yong <shengyong1@xiaomi.com>
+References: <20250401144712.1377719-1-shengyong1@xiaomi.com>
+ <b2c07fdf-5ab1-4a65-9ce2-38638b7c718e@suse.cz>
+ <15dfe0c4-c1cb-4146-ab06-cd36b7412b2e@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <15dfe0c4-c1cb-4146-ab06-cd36b7412b2e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org,infradead.org];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[xiaomi.com:email,suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Tue 01 Apr 2025 at 10:55, Frank Li <Frank.li@nxp.com> wrote:
+On 4/2/25 15:36, Sheng Yong wrote:
+> On 4/1/25 23:22, Vlastimil Babka wrote:
+>> On 4/1/25 16:47, Sheng Yong wrote:
+>>> From: Sheng Yong <shengyong1@xiaomi.com>
+> [...]
+>>>
+>>> Fixes: b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page")
+>> 
+>> Sigh. That went to v6.14
+>> 
+>> mm-hotfixes and Cc: stable then?
+> 
+> Hi, Vlastimil,
 
-> On Tue, Apr 01, 2025 at 09:39:10AM +0200, Jerome Brunet wrote:
->> On Mon 31 Mar 2025 at 10:48, Frank Li <Frank.li@nxp.com> wrote:
->>
->> > On Fri, Mar 28, 2025 at 03:53:43PM +0100, Jerome Brunet wrote:
->> >> When allocating the shared ctrl/spad space, epf_ntb_config_spad_bar_alloc()
->> >> should not try to handle the size quirks for the underlying BAR, whether it
->> >> is fixed size or alignment. This is already handled by
->> >> pci_epf_alloc_space().
->> >>
->> >> Also, when handling the alignment, this allocate more space than necessary.
->> >> For example, with a spad size of 1024B and a ctrl size of 308B, the space
->> >> necessary is 1332B. If the alignment is 1MB,
->> >> epf_ntb_config_spad_bar_alloc() tries to allocate 2MB where 1MB would have
->> >> been more than enough.
->> >>
->> >> Just drop all the handling of the BAR size quirks and let
->> >> pci_epf_alloc_space() handle that.
->> >>
->> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> >> ---
->> >>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 24 ++----------------------
->> >>  1 file changed, 2 insertions(+), 22 deletions(-)
->> >>
->> >> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
->> >> index 874cb097b093ae645bbc4bf3c9d28ca812d7689d..c20a60fcb99e6e16716dd78ab59ebf7cf074b2a6 100644
->> >> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
->> >> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
->> >> @@ -408,11 +408,9 @@ static void epf_ntb_config_spad_bar_free(struct epf_ntb *ntb)
->> >>   */
->> >>  static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb)
->> >>  {
->> >> -	size_t align;
->> >>  	enum pci_barno barno;
->> >>  	struct epf_ntb_ctrl *ctrl;
->> >>  	u32 spad_size, ctrl_size;
->> >> -	u64 size;
->> >>  	struct pci_epf *epf = ntb->epf;
->> >>  	struct device *dev = &epf->dev;
->> >>  	u32 spad_count;
->> >> @@ -422,31 +420,13 @@ static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb)
->> >>  								epf->func_no,
->> >>  								epf->vfunc_no);
->> >>  	barno = ntb->epf_ntb_bar[BAR_CONFIG];
->> >> -	size = epc_features->bar[barno].fixed_size;
->> >> -	align = epc_features->align;
->> >> -
->> >> -	if ((!IS_ALIGNED(size, align)))
->> >> -		return -EINVAL;
->> >> -
->> >>  	spad_count = ntb->spad_count;
->> >>
->> >>  	ctrl_size = sizeof(struct epf_ntb_ctrl);
->> >
->> > I think keep ctrl_size at least align to 4 bytes.
->>
->> Sure, makes sense
->>
->> > keep align 2^n is more safe to keep spad area start at align
->> > possition.
->>
->> That's something else. Both region are registers (or the emulation of
->> it) so a 32bits aligned is enough, AFAICT.
->>
->> What purpose would 2^n aligned serve ? If it is safer, what's is the risk
->> exactly ?
->
-> After second think, it should be fine if 4 bytes align.
->
-> Frank
+Hi,
 
-Ok. Thanks for the feedback.
+> Shall I resend this patch with Cc: tag to the stable list?
 
-I think the same type of change should probably be applied to the NTB
-endpoint function. It also tries to handle the alignment on its own, but
-that's mixed up with msix doorbell things
+Andrew can do it when picking up the patch so no need to. Thanks.
 
-I don't have the necessary HW to test that function so it would be a bit
-risky for me to modify it, but it would be nice for the two endpoint
-functions to be somehow aligned, especially since they share the same RC
-side driver.
+> thanks,
+> sheng
+> 
+>> 
+>>> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+>> 
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>> 
+>> Thanks.
+>> 
+>>> ---
+>>>   lib/iov_iter.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>> ---
+>>> v2:
+>>>    * update commit message
+>>>    * update coding style
+>>>
+>>> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+>>> index 8c7fdb7d8c8f..bc9391e55d57 100644
+>>> --- a/lib/iov_iter.c
+>>> +++ b/lib/iov_iter.c
+>>> @@ -1191,7 +1191,7 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+>>>   			return -ENOMEM;
+>>>   		p = *pages;
+>>>   		for (int k = 0; k < n; k++) {
+>>> -			struct folio *folio = page_folio(page);
+>>> +			struct folio *folio = page_folio(page + k);
+>>>   			p[k] = page + k;
+>>>   			if (!folio_test_slab(folio))
+>>>   				folio_get(folio);
+>> 
+> 
 
-If anyone is able to help on this, that would be greatly appreciated :)
-
->
->>
->> >
->> > 	ctrl_size = roundup_pow_of_two(sizeof(struct epf_ntb_ctrl));
->> >
->> > Frank
->> >
->> >>  	spad_size = 2 * spad_count * sizeof(u32);
->> >>
->> >> -	if (!align) {
->> >> -		ctrl_size = roundup_pow_of_two(ctrl_size);
->> >> -		spad_size = roundup_pow_of_two(spad_size);
->> >> -	} else {
->> >> -		ctrl_size = ALIGN(ctrl_size, align);
->> >> -		spad_size = ALIGN(spad_size, align);
->> >> -	}
->> >> -
->> >> -	if (!size)
->> >> -		size = ctrl_size + spad_size;
->> >> -	else if (size < ctrl_size + spad_size)
->> >> -		return -EINVAL;
->> >> -
->> >> -	base = pci_epf_alloc_space(epf, size, barno, epc_features, 0);
->> >> +	base = pci_epf_alloc_space(epf, ctrl_size + spad_size,
->> >> +				   barno, epc_features, 0);
->> >>  	if (!base) {
->> >>  		dev_err(dev, "Config/Status/SPAD alloc region fail\n");
->> >>  		return -ENOMEM;
->> >>
->> >> --
->> >> 2.47.2
->> >>
->>
->> --
->> Jerome
-
--- 
-Jerome
 
