@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-584768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F60A78B34
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E67BA78B44
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53AF3188EEA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E150D16D901
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E792356A8;
-	Wed,  2 Apr 2025 09:38:26 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC7A236424;
+	Wed,  2 Apr 2025 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QuBfI1hB"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B7B2356A6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 09:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FF42356BE;
+	Wed,  2 Apr 2025 09:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743586705; cv=none; b=ZKJbOIPxlfSm9Ng6XuqkXodfI6J/Vy6DfSNlnd0hawUzD30/dZWRC9D9gb2+Okzc66E+KMcaUajFuZveeKKl6lePW0nwyvYMW9nsbYAFpH02ddltGgC/H8o97wpYwA/IW+oS/UO0v2Hxk59DN1uKehN6XSuNJNgAmnHgQfc8ef8=
+	t=1743586827; cv=none; b=FFKB/ZTIGoGVvUCNgx4AtgbHb/chT8i/j/bR+xJ107kBfj0lta01g1vBeGcjfjswE7hSakWvzdu1qi3/mlZJk2ShKoGZ7AG753FWnP0K3yIQsukBk907qn2ISKHgbsA2vSfF/VWEO7y5aMDBBjlK3E5G+9yWunV6lyCXGjmYbc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743586705; c=relaxed/simple;
-	bh=TxOdn7zfMJ1G4ABuFDhrvNKGIFsxHeCl5qtcdIukllg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ETGtwnI3DaOwLeHAsnnWVkiSHtucPS2WW5W6BKre8UwvnX8k7OconCga85VzLXzrrGOpqp5XHzMjMz6re+IqeX33spbDXTgMa4853s0F+cnWD6wKvCSIm2iHTrGa2VfHEnRa+KGGpuE3dtgzbUchgrzed398ggNoVdfOWcQ94CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d43d1df18bso70541835ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 02:38:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743586703; x=1744191503;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cFAFcDdeatsk0rIUEwRZMxS5vX6WVqCabbcWXMXHWEc=;
-        b=wWIvYfSjfOQkuyEYY/BTfaYoh8dZfxIO8zVpDTfVtbF56sMq7uDABWDh15tnS+iqLZ
-         umMKpbP25mODCSwJWNECPBq7lv3k/hhgiPQ8/5YK20TL+eUObgF3Js3oh9OjWj2oe8vP
-         ED4OQH8DC8ZrzcS7eB9FHgItsy7az9zOhEicFwVuNuF0nXjlyiMAI+l+6pTJqt6I68Qa
-         lkyaal3q+hxn8GNmREjzPfIi6EZA4bzxeWDYkbkf5lgjVE1BHyUQy6PB2JItAbQDEpWy
-         HV0YQwfd8gLQXjyrT6AG2v9R8tQIHw3PVduZZo4ItD0nDwJgCs1YRG/zPNfNBVIpwZis
-         H59w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+60Rx6Qfg7dwxZLGdpz7v6hCkC7Y4d5Vz/8DKiuPxkFlpc07FqcTdaH0IZ5JXaEByFAELICtkworqM+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHNwJ5z5dcVnfM/fJGUt/fKQfonrHFAmu8LYzJ35usr+W+jMCa
-	InIJZjqzr3owkWiOS6Pnuh2n0z+xmUa0gpm5qiU68eykSjM1B4dDV3yIaO6V8x5+WqiIMnPRxrN
-	qlUMhfousMHKTA0MyAMkvY7Y7jZfBgDKdmag91btS8GKF4yLFsZkT1gQ=
-X-Google-Smtp-Source: AGHT+IHLCNtKlZQUNTx1aPxdQlS77LFaF4uvBLk2+xCqBEWq6nfh5H96ofCOufzihjvGjl+6za0RD++QASHqV6IexKQvbxHiUiWm
+	s=arc-20240116; t=1743586827; c=relaxed/simple;
+	bh=DjrMlEk0NWBojiuwg0BSTZ8eio5kC51l3XiOG/v3D38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LfT3JEe0coXJgwRe9IfHq4ZsdStusypg71tYuaDbbzPWX/Ji28mlHlqE6fdJ8vJTK0xK68d+oo9noBx+4eAYNmEQlJwjRIL02Y4HD7pjGkuyo/qyslXWtrbOTDObU7C+kdk/PChDLCU+rpoPMB4qSV4EphRyDSYeYTWB8y4NCtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QuBfI1hB; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53299wvc024169;
+	Wed, 2 Apr 2025 11:40:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	L5755YSGx4fXv+HeBYR+jRn7wQr+9kPgl7qTQ6N5t1Q=; b=QuBfI1hBQ5aCplZA
+	n9KBNaSTrmIg05Sm1OSbvvqMUknizo1E8hmMLwgcN5uZh8OitLhEoF3DPYA+AAnm
+	EDSOiuLK0hphKV6l+ie2r8r6bRey9y0zhOGSpWATRNqr1Pdk5r/OjOznkaVkadso
+	qt+hl7x+aGqOQF9kvFQqZzl/5GBTWscC2AMGT2PZgieol1EsojmNjsu4rPHbiVpJ
+	pK6GGP3Vh3zHttbWl5ed+z3yJSs1/guvGyBHa1vrgzvLLIkrgNVgA3wYx5OpnvqR
+	OSGBF4B+fj5nxLKJWygzl8r2BX5Ti8dzF7DQzRVA/ta68+DXeBRyfiunFOWXQe+z
+	KyBvzg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45s2c785ba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 11:40:12 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4A14340045;
+	Wed,  2 Apr 2025 11:39:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 23F908903D6;
+	Wed,  2 Apr 2025 11:38:28 +0200 (CEST)
+Received: from [10.252.30.87] (10.252.30.87) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Apr
+ 2025 11:38:27 +0200
+Message-ID: <a0c62797-3c4c-453c-938b-d43666f3b264@foss.st.com>
+Date: Wed, 2 Apr 2025 11:38:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152e:b0:3d2:6768:c4fa with SMTP id
- e9e14a558f8ab-3d5e09fdbf6mr170165725ab.21.1743586703538; Wed, 02 Apr 2025
- 02:38:23 -0700 (PDT)
-Date: Wed, 02 Apr 2025 02:38:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ed058f.050a0220.31979b.0040.GAE@google.com>
-Subject: [syzbot] Monthly kvm report (Apr 2025)
-From: syzbot <syzbot+list005eb7ef44f63424b8ba@syzkaller.appspotmail.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD55G1 camera sensor
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250401-b4-vd55g1-v2-0-0c8ab8a48c55@foss.st.com>
+ <20250401-b4-vd55g1-v2-1-0c8ab8a48c55@foss.st.com>
+ <20250402-curvy-seriema-of-blizzard-b1c4d9@krzk-bin>
+ <228ddf41-e1d0-4d06-9e0e-9e0dad841688@foss.st.com>
+ <fd874f4d-d68c-4443-8bb6-115246f4407b@kernel.org>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <fd874f4d-d68c-4443-8bb6-115246f4407b@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_03,2025-04-01_01,2024-11-22_01
 
-Hello kvm maintainers/developers,
+On 4/2/25 11:11, Krzysztof Kozlowski wrote:
+> On 02/04/2025 10:34, Benjamin Mugnier wrote:
+>> Hi Krzysztof,
+>>
+>> On 4/2/25 09:08, Krzysztof Kozlowski wrote:
+>>> On Tue, Apr 01, 2025 at 01:05:58PM +0200, Benjamin Mugnier wrote:
+>>>> +    properties:
+>>>> +      endpoint:
+>>>> +        $ref: /schemas/media/video-interfaces.yaml#
+>>>> +        unevaluatedProperties: false
+>>>> +
+>>>> +        properties:
+>>>> +          data-lanes:
+>>>> +            items:
+>>>> +              const: 1
+>>>
+>>> Not what I asked. Now you miss number of items. Just use the syntax I
+>>> proposed. Or was there any issue with it?
+>>
+>> No issue I just misunderstood and thought const: 1 was impliying
+>> maxItems: 1. I'll add maxItems back.
+> 
+> That's just longer way to express what I asked for. So I repeat the
+> question: why not using the syntax I asked for?
 
-This is a 31-day syzbot report for the kvm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kvm
+I guess I didn't understand what you asked for.
+May I ask you to write it ? That will help me a lot.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 129 have already been fixed.
+> 
+> Best regards,
+> Krzysztof
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 323     Yes   WARNING: locking bug in kvm_xen_set_evtchn_fast
-                  https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-<2> 147     Yes   WARNING in handle_exception_nmi (2)
-                  https://syzkaller.appspot.com/bug?extid=4688c50a9c8e68e7aaa1
-<3> 6       Yes   WARNING in vcpu_run
-                  https://syzkaller.appspot.com/bug?extid=1522459a74d26b0ac33a
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+Regards,
+Benjamin
 
