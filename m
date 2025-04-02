@@ -1,131 +1,173 @@
-Return-Path: <linux-kernel+bounces-585590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AF1A7951C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E98C0A7952A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F523A61A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CC93AE2BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8560D13D8B2;
-	Wed,  2 Apr 2025 18:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139C11CD21C;
+	Wed,  2 Apr 2025 18:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PySjimlQ"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkAlJ+cF"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0277E1C863B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 18:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A130C19E826;
+	Wed,  2 Apr 2025 18:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743618630; cv=none; b=lm2q1+W+uIrDW4ZBLhu5MLoVrKE4Is8BIQa7aqcXVZ1p8a9F3BmdaAyRrkOcAqAhu8CExKC8GImMiwj3B4SmhwjL6qmdk82PdBXeBvlCPzbyhktyOBKEwJsJhPtgrrHL+TiZ4D/U98fFjPJODcTPksEbUc5PN1sjtdwbeYG2OFg=
+	t=1743618993; cv=none; b=jcjTvpGhtnD0RLaePSeROmrk7P5YuFr2aFElyordo1oEgoF6oJBvoTb04WZspPR5sqWYNiSntClE4GAD7Y5/kp3cnEkdZj9UZNty4ZHgxkQze0wN5j8fu2o0exZFLOM4ZA/sD8/3clInsrpnk5aREkNUXEhRT7r7gqREzGl3VtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743618630; c=relaxed/simple;
-	bh=5x2issN15vB42zgZIfNc/uBiGhxFXgYG5j4rbXf2OPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEzK6+Bt7RmCzttoFdvUImC6UahwkoNwSKxaluP+lnZQxM2VSaXwkI/3h8yQ6oOcksydDdRy2sauSU07qI1+/l92wSUl+ndqlELqQPLwfXvkiPXUYgnCUOPK5EUVhucaMLxPG8hMjyPoi10qnRLwpgDbGM8L5ZFQOegHjEjPsZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PySjimlQ; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Apr 2025 11:30:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743618615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RRd3SQcvztMwM6nVkcAFoWMZZ4yVqjmYprozJgTEDhQ=;
-	b=PySjimlQBSxDpoJBYRyJxPQX5UpQ3bEXK4WqSxSBQq3lQsdjcZ3pft3X45O3k9kKcmTIxp
-	qnZtHY0MvLbowPwWBVCXOWBHpr/KAWGybO6i7YS4frnUMuYCtrHjbTedEihOjnwzqkxHpt
-	YUA+D+cNrQ4LgfNb3wc5WN7NV3Szmak=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Yafang Shao <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>, 
-	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <vwlkfkkz3hezfwedklvybe3lhy2haz2l5fmcojmcjjwj3axye7@ac7junf6ay2f>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area>
- <Z-0sjd8SEtldbxB1@tiehlicka>
- <Z-1yui_QgubgRAmL@casper.infradead.org>
+	s=arc-20240116; t=1743618993; c=relaxed/simple;
+	bh=FKIHSf5cZYkWbmp/d0E/1oP5l7pPs5lu6mv9+5xDjFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gZOqCIUb4rGHzb31eQxo6shh6QGzgSOwNkJPYBV6BdNvaSvHaeQ1Bog5ODStwEoFbRk49YQJlpeHzBzVQq5iKvLJiO4kaZgPL1hJFNQt8sQiy+yhDgwXqtImWc7+0yB9QOjpKep75Jxld5Q5F3RJ5ZN1dBIWCvxUTU6FPTppQxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkAlJ+cF; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so133964e87.1;
+        Wed, 02 Apr 2025 11:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743618990; x=1744223790; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=teeXejL/Hd5zYG3KzJj1/Ymk9cghk5Bn0HSSl08+gVQ=;
+        b=YkAlJ+cFkpmkMtrRzdLG9QBDPmQIR9peHXRKdgnEs2ICQ1V763tGZ0EXxE1OIFKD6E
+         KIZHdampxG2FEsFCKiTfPDh88oUvuCZlaPsoQuWVUf+Jk9a0g16oPRI0XytLzk7UFArr
+         3y/u9OTzrwhKDVf7w5Vgc6Fy3FliBzq6ZF0N3dFpqU354atmLslussyLFObwodDCBwCv
+         2X3pJnyUFQZZZu/N7nAGKgbYq5B/OhqOpLg/IFHDqzNUT13Dh2NxhGj5eIDG2SEzr6gI
+         DzoC0iWocszvJb9qD7NlWGdO7NVXtULBGriA6HP0AXf+DaYgRLN4sq7wm9QAXhoYGCpk
+         KKpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743618990; x=1744223790;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=teeXejL/Hd5zYG3KzJj1/Ymk9cghk5Bn0HSSl08+gVQ=;
+        b=Uq7oVoyOWRm/khQXfcSmQUPjEha4QRZoHRs8s8+EUdXnKzut/Ujx+qLdiRmijOUhnj
+         qIBhl6gBCAUCql8sZKoGVpFfu36VaA09PZxG5iScUWQ5klXETOWCHLGgaCfZJIN4yEgb
+         GOlRuTF6X+O+zgWqmNpIaPMOiwHrvEg4gtIxQ/fx82vmZMy7hnIt6wZpEKORfPML86IM
+         tylSulTc8K+pZZE2oL1V/Wh4xlK74l+UCxAhOm4JYlEkFbDLYtEebwC0dl8m7yCoY620
+         cG0evnBEzU65jJBshaljLpHzEI+b+kyzD9QUChM403k5dYeJhbQ/xZl0thipbINp5Tbm
+         a9GA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIswdIrV8uiTU5/iuoMFWUlVIkjZSurvFaigMdVkpR+mnJ+qLbFRy0HaWc6IMldx6zGULnrXCAQO9aI9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7YxWvewEMs5M9Y+bB2wGNbv/WjIuwMkbmCgJIMTH64+Ojwkj0
+	VS6M74utFU7gBvVsRBHuOACIUB2NIwyXIzXJEjZXX3NrUTrrqB88YUFzrNWiIT+rU/az+V41vSR
+	uNoiamWzmE+KWre2UxM3oTUtA2bvK+MbL
+X-Gm-Gg: ASbGncvYWxMxQw+/iZYdTUY7uVeds7N3j+1O8R5YdRDqYkBGA2P0vpsq5jKi54mIfmx
+	lP3eT64gJGBQcmQRfif1Zz8oeaBlrzEdw/Dzl9Wassia6uvNT6cC5pETx6exzXGV5bq6NVOhcVC
+	aiLB2aDNqvdGuqeWufGFBQY9BSZ2PzzSLkNC6hMOPfXKeMs6dHQbrFiDW5gpwL
+X-Google-Smtp-Source: AGHT+IG6tIKLi8Y1e3xKYYecej6SvVuqlTPnJ8DZQtIr4L7+/movsrG9weMDGjS5CKM42BvcD412xJIK1IHhW2Z1cH4=
+X-Received: by 2002:a05:6512:68a:b0:549:8f4a:6ba7 with SMTP id
+ 2adb3069b0e04-54b110109a6mr6006225e87.36.1743618989412; Wed, 02 Apr 2025
+ 11:36:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-1yui_QgubgRAmL@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20250402085856.3348-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250402085856.3348-1-vulab@iscas.ac.cn>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 3 Apr 2025 03:36:12 +0900
+X-Gm-Features: AQ5f1JqCEBeAdU1cscafNKjqu6N8tmDqzGBuNtzEsQ_845TclGUwLFsnpsdJdRU
+Message-ID: <CAKFNMomBZBVZZ_ohHDuZpJJWJHz_5FE+6EDxVoiFDvRCfFb_HQ@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: Add pointer check for nilfs_direct_propagate()
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 02, 2025 at 06:24:10PM +0100, Matthew Wilcox wrote:
-> On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
-> > On Wed 02-04-25 22:32:14, Dave Chinner wrote:
-> > > > > > >+    /*
-> > > > > > >+     * Use vmalloc if the count is too large to avoid costly high-order page
-> > > > > > >+     * allocations.
-> > > > > > >+     */
-> > > > > > >+    if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-> > > > > > >+            kbuf = kvzalloc(count + 1, GFP_KERNEL);
-> > > > > >
-> > > > > > Why not move this check into kvmalloc family?
-> > > > >
-> > > > > Hmm should this check really be in kvmalloc family?
-> > > > 
-> > > > Modifying the existing kvmalloc functions risks performance regressions.
-> > > > Could we instead introduce a new variant like vkmalloc() (favoring
-> > > > vmalloc over kmalloc) or kvmalloc_costless()?
-> > > 
-> > > We should fix kvmalloc() instead of continuing to force
-> > > subsystems to work around the limitations of kvmalloc().
-> > 
-> > Agreed!
-> > 
-> > > Have a look at xlog_kvmalloc() in XFS. It implements a basic
-> > > fast-fail, no retry high order kmalloc before it falls back to
-> > > vmalloc by turning off direct reclaim for the kmalloc() call.
-> > > Hence if the there isn't a high-order page on the free lists ready
-> > > to allocate, it falls back to vmalloc() immediately.
-> 
-> ... but if vmalloc fails, it goes around again!  This is exactly why
-> we don't want filesystems implementing workarounds for MM problems.
-> What a mess.
-> 
-> >  	if (size > PAGE_SIZE) {
-> >  		flags |= __GFP_NOWARN;
-> >  
-> >  		if (!(flags & __GFP_RETRY_MAYFAIL))
-> >  			flags |= __GFP_NORETRY;
-> > +		else
-> > +			flags &= ~__GFP_DIRECT_RECLAIM;
-> 
-> I think it might be better to do this:
-> 
-> 		flags |= __GFP_NOWARN;
-> 
-> 		if (!(flags & __GFP_RETRY_MAYFAIL))
-> 			flags |= __GFP_NORETRY;
-> +		else if (size > (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-> +			flags &= ~__GFP_DIRECT_RECLAIM;
+I will comment inline.
 
-The above seems more appropriate then the Michal's bigger hammer.
-In addition I think Vlastimil has a very good point about the kswapd
-reclaim for such cases (the patch explicitly complains about kcompactd
-cpu usage).
+On Wed, Apr 2, 2025 at 5:59=E2=80=AFPM Wentao Liang wrote:
+>
+> In nilfs_direct_propagate(), the printer get from nilfs_direct_get_ptr()
+> need to be checked to ensure it is not an invalid pointer. A proper
+> implementation can be found in nilfs_direct_delete(). Add a value check
+> and return -ENOENT when it is an invalid pointer.
 
-> 
-> I think it's entirely appropriate for a call to kvmalloc() to do
-> direct reclaim if it's asking for, say, 16KiB and we don't have any of
-> those available.  Better than exacerbating the fragmentation problem by
-> allocating 4x4KiB pages, each from different groupings.
+nilfs_direct_propagate() (and its caller nilfs_bmap_propagate()) are
+internal operations called only by the log writer, which writes back
+new or modified blocks, so we must ensure that -ENOENT is not
+erroneously propagated to system calls.
+
+In nilfs_direct_propagate(), if the pointer value obtained by
+nilfs_direct_get_ptr() is NILFS_BMAP_INVALID_PTR, it means that the
+metadata (in this case, i_bmap in the nilfs_inode_info struct) that
+should point to the data block at the buffer head of the argument is
+corrupted and the data block is orphaned, meaning that the file system
+has lost consistency.
+
+To handle this case, return -EINVAL instead of -ENOENT.
+
+If you do so, the caller nilfs_bmap_propagate() will treat it as
+metadata corruption via nilfs_bmap_convert_error() and the error code
+will be converted appropriately.
+
+And please don't cite nilfs_direct_delete() as an example.  It
+intentionally returns -ENOENT as an error indicating that the block
+you tried to delete did not exist, regardless of whether the
+filesystem is corrupted or not.  On the other hand,
+nilfs_direct_propagate() assumes that the block associated with the
+buffer head of the argument can be looked up.  So, these are based on
+different assumptions.
+
+Please revise the changelog description and the returned error code
+with the above in mind.
+
+>
+> Fixes: 10ff885ba6f5 ("nilfs2: get rid of nilfs_direct uses")
+
+The commit that should be pointed to as the cause is:
+
+Fixes: 36a580eb489f (=E2=80=9Cnilfs2: direct block mapping=E2=80=9D)
+
+> Cc: stable@vger.kernel.org # v2.6+
+
+Please remove this tag. If it becomes a real issue and becomes a
+higher priority, I will add it.  (At least with the Fixes tag, it will
+be picked up automatically and eventually backported to the stable
+trees will be attempted.)
+For now I will send it for the next cycle as an extra sanity check,
+after making sure it doesn't introduce any new issues.
+
+Again, when you send patches with git send-email, please be careful
+not to include stable@vger.kernel.org in the recipient list.
+To avoid being noisy, at this stage, it is sufficient to only send the
+patch to me (the maintainer), the linux-nilfs ML and LKML.
+
+Thanks,
+Ryusuke Konishi
+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  fs/nilfs2/direct.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/nilfs2/direct.c b/fs/nilfs2/direct.c
+> index 893ab36824cc..ff1c9fe72bec 100644
+> --- a/fs/nilfs2/direct.c
+> +++ b/fs/nilfs2/direct.c
+> @@ -273,6 +273,9 @@ static int nilfs_direct_propagate(struct nilfs_bmap *=
+bmap,
+>         dat =3D nilfs_bmap_get_dat(bmap);
+>         key =3D nilfs_bmap_data_get_key(bmap, bh);
+>         ptr =3D nilfs_direct_get_ptr(bmap, key);
+> +       if (ptr =3D=3D NILFS_BMAP_INVALID_PTR)
+> +               return -ENOENT;
+> +
+>         if (!buffer_nilfs_volatile(bh)) {
+>                 oldreq.pr_entry_nr =3D ptr;
+>                 newreq.pr_entry_nr =3D ptr;
+> --
+> 2.42.0.windows.2
+>
 
