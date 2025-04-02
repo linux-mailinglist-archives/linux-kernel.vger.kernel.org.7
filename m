@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-585298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4C5A791FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052C7A79208
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17473B24FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631E41892B2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F8223BFA6;
-	Wed,  2 Apr 2025 15:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E264A23A981;
+	Wed,  2 Apr 2025 15:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uihdAEGm"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jVStg4s5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F662E3385
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2C728382;
+	Wed,  2 Apr 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743607063; cv=none; b=Wun9cnW7PufwhBMYMEbQqxcH0HCl9jqeR/2KxaGSWSvuCyLH0iz8rcSPh7qx1fmBr/iSFt4bdNFsw8qOE2l6BskSszDQKeqmsnkKpsI5ED1P6hbEe/K6N3sFeY3hktj7oSN/4Dhvh4M+9zD/QDuzpufs+EbbwI5a6+t3+qsB1Jw=
+	t=1743607206; cv=none; b=udqiyJNIhRwROCTQC+bCv1568j20sZCkwXusm7yH3FEHZPcmHGdSPTGwcC1t5xtG07vRBVdxi/oqdaAW08pbJ7P9FvPVIZeqj7gTBWX+MLPkKp5lKFtV1oxDDW7ohWXE2aNlMkwRAvOx8KZwxSJPWHttpJrjzR6gjSyTyhyoMuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743607063; c=relaxed/simple;
-	bh=bz3rHQ1LEZ5GlZRhjsHjlZAaWas133zf2WZHx8MQBRw=;
+	s=arc-20240116; t=1743607206; c=relaxed/simple;
+	bh=RF67FA7KLWM7yXZbl1Og9wynn8w4dU551JL/aWox2SY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZuUX0Y+Gj2khE2poxode1Rs4B5z8CSxusj4Tgbexg2WXO5pQhkRXbja7tOpMnnzbRrLwU51LW1b2+92Ph/EWC0uXkbEFdJfQFzAEqFExxkxtQh/zyrOqUeEXtnBTxFzWGNLkncs8dEA9SdRfR4Yoi6xJAb6EyBzYbmB6Frpnaac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uihdAEGm; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-301302a328bso11534984a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743607060; x=1744211860; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A1VmkVlpRc4WSi9FaO0aW2j/f9rNxZ3VMxxdj/njEz0=;
-        b=uihdAEGm4PcmfdflyqkzuBZmJG3CKxvzbghFT48jhXFYejBMVyVTMYL99PS9Sbtk+s
-         NF1von7CcABHbFDLGxrqNgVV+P4ZHKnik/lMlvczg8lMvOv4xT6SN1w5a0SAy0JTebO/
-         5gOkOtwpKjHUTMMBvqhBYlA+nDS27B+0b1IU9VgDpkIMPHq/TdkGj3LsU0Vz1hyaS5Sb
-         DeASb8RjvcPYqZWJNB1eKEnyfLY8M/zVOE8xI+WgX5YfcWizXeAbAwp2tK/pz8ipNDvo
-         2daIy4zErCe3sVPvah9cNzvjTFJ9DBRscHDUwFF0Eq6OtQt/hVtBINl2NLZJjP3Gz2CC
-         NBYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743607060; x=1744211860;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A1VmkVlpRc4WSi9FaO0aW2j/f9rNxZ3VMxxdj/njEz0=;
-        b=fryQ5EhE2pv27cgOpx4cLUkg6BxCEw/GIwSFY37F0R/IFv+aZ9BBPPLayGkUyVvWVZ
-         zf1OW+7Y1wb4GdyVNuR4LvqG+FpTLkqGCc+ZsA94YrpU3RFy/O5oq9y49lPq4qnU3SdL
-         Z7+15lhznX9J+TiukxoTc4fxne5p5POLB+tHOj3VZQP6yjqt1YzE8cPSQXDvenAqN12E
-         GqUrUzL/6KOgKQ/zF8s9XHtRFGRBkhG7Eg6PZtot+4+u5rz2+vNVAxhFicSk6LxKmI/Z
-         HP3q+qPpMJv2EBZF6nN/a33j4cUM2WDfWl5Y87Wsr4GVTxICj0cq03DYAZ7+e57vO3C7
-         jkjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXd2pMw7JAP/1aldRo8/rM2/zkMPKQZzrDyyBHtxa7V30gx6JkutGu+LxtGKAN7Z2T78kqOWo3Ww9nEbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRhuYMTUBF0iAS1seiY517IJ/+zu1SC0w7b4GEF6n7A0XRvlaQ
-	8djmkZwONk5z9ex61/H0dc5F4XZj2yhKQ/IhYS4SVGD3fPlWdnNDXY6EncpEIQ==
-X-Gm-Gg: ASbGncvGlqR/eGnmi1OGjZ/FQ2kj2EETqdlcC0rrp+Del3pg+tvjjibhSrlNQWJvL3B
-	FMfKp5rDbRvxmdf1eiD5BewQPJHU1a8hpOdUyUEtsd7pgxuD/VPavpCRrywQnlUtc04XJ+W42gZ
-	NLQ5AB9IeJCwU/+nVn37ZSo72eucaducDIdht3GAvgx975Ee0DZv0GgdUfMZIAyr2YP2tV0kkrn
-	qbNlO+Pzcknmi9db2/BZL1bTTJGBu+BfunTb/Q0cCSr20FF1frKuiuT26hQx0HSc3XdUFHbZYFg
-	hdsVtd1Ck0qYDaT1OETbZISLuPlR750Pcb1WQ6wtd7Jr0GcJsyTFSFVM
-X-Google-Smtp-Source: AGHT+IG16MivObzWU33JTwzx5znIxU6+vnQt0ROoOp8Kq1NbarWsZJpr2IHBGg06IH61ZT+KYFb1+A==
-X-Received: by 2002:a17:90a:e7c7:b0:2f4:432d:250d with SMTP id 98e67ed59e1d1-305320b166emr18279561a91.21.1743607059436;
-        Wed, 02 Apr 2025 08:17:39 -0700 (PDT)
-Received: from thinkpad ([120.56.205.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eedf9b4sm109376755ad.84.2025.04.02.08.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 08:17:38 -0700 (PDT)
-Date: Wed, 2 Apr 2025 20:47:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, 
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/6] PCI: imx6: Workaround i.MX95 PCIe may not exit
- L23 ready
-Message-ID: <rqgl5jjauppyudgmugp34fillkeli3qkwf4uf2djghi6nslebg@pyi6rbwyduxd>
-References: <20250328030213.1650990-1-hongxing.zhu@nxp.com>
- <20250328030213.1650990-4-hongxing.zhu@nxp.com>
- <ovaomfvo7b3uxoss3tzhrkgdy6cvxi4kr2zxmqsfjxds5qfohl@t6kc4rswq6gp>
- <AS8PR04MB8676687332C78840B927E7568CAF2@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y3A6WoVLMKREeovUrp0FKxd5gblIMOdhZ6T/NFxv/0LjwyivW1ILF4EBN/urwaEBRe9OIcSOXFvQZKfo19RjF543QGKwuAh8JbAiEwUedg2Zcl69INgzSLY/2TEIAG3W7AwRS603b9E4AMqWjp7+BhS6+bS7G2InaqX+X0yvRcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jVStg4s5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C255C4CEDD;
+	Wed,  2 Apr 2025 15:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743607205;
+	bh=RF67FA7KLWM7yXZbl1Og9wynn8w4dU551JL/aWox2SY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVStg4s59mQvS3H6luFFXqrZZr7oeovy6DGIH4c08aDLWBDBjpHQ7+PGhIjXHvHRd
+	 yph+HtUtbfxYXsGD/Dlvrdz2wdztsy8mxSMAf+jF9rhP9j/wIBVGFgEUxgXw9p2RmB
+	 9x4pUNf4iqO9+/KK70lM+AIWYgWuhweYRzrR4s00=
+Date: Wed, 2 Apr 2025 16:18:37 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Wang Zhaolong <wangzhaolong1@huawei.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, edumazet@google.com,
+	ematsumiya@suse.de, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-net@vger.kernel.org,
+	smfrench@gmail.com, zhangchangzhong@huawei.com, cve@kernel.org,
+	sfrench@samba.org
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Message-ID: <2025040248-tummy-smilingly-4240@gregkh>
+References: <ac39f5a1-664a-4812-bb50-ceb9771d1d66@huawei.com>
+ <20250402020807.28583-1-kuniyu@amazon.com>
+ <36dc113c-383e-4b8a-88c1-6a070e712086@huawei.com>
+ <2025040200-unchanged-roaming-52b3@gregkh>
+ <e6537aa9-6fe7-47e4-afd3-9da549ce12a1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676687332C78840B927E7568CAF2@AS8PR04MB8676.eurprd04.prod.outlook.com>
+In-Reply-To: <e6537aa9-6fe7-47e4-afd3-9da549ce12a1@huawei.com>
 
-On Wed, Apr 02, 2025 at 07:59:26AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Sent: 2025年4月2日 15:08
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: Frank Li <frank.li@nxp.com>; l.stach@pengutronix.de; lpieralisi@kernel.org;
-> > kw@linux.com; robh@kernel.org; bhelgaas@google.com;
-> > shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
-> > festevam@gmail.com; linux-pci@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; imx@lists.linux.dev;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3 3/6] PCI: imx6: Workaround i.MX95 PCIe may not exit L23
-> > ready
+On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
+> > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+> > > Yes, it seems the previous description might not have been entirely clear.
+> > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+> > > does not actually address any real issues. It also fails to resolve the null pointer
+> > > dereference problem within lockdep. On top of that, it has caused a series of
+> > > subsequent leakage issues.
 > > 
-> > On Fri, Mar 28, 2025 at 11:02:10AM +0800, Richard Zhu wrote:
-> > > ERR051624: The Controller Without Vaux Cannot Exit L23 Ready Through
-> > > Beacon or PERST# De-assertion
+> > If this cve does not actually fix anything, then we can easily reject
+> > it, please just let us know if that needs to happen here.
 > > 
-> > Is it possible to share the link to the erratum?
+> > thanks,
 > > 
-> Sorry, the erratum document isn't ready to be published yet.
-> > >
-> > > When the auxiliary power is not available, the controller cannot exit
-> > > from
-> > > L23 Ready with beacon or PERST# de-assertion when main power is not
-> > > removed.
-> > >
-> > 
-> > I don't understand how the presence of Vaux affects the controller. Same goes
-> > for PERST# deassertion. How does that relate to Vaux? Is this erratum for a
-> > specific endpoint behavior?
-> IMHO I don't know the exact details of the power supplies in this IP design.
-> Refer to my guess , maybe the beacon detect or wake-up logic in designs is
->  relied on the status of SYS_AUX_PWR_DET signals in this case.
+> > greg k-h
+> Hi Greg,
+> 
+> Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+> should be rejected. Our analysis shows:
+> 
+> 1. It fails to address the actual null pointer dereference in lockdep
+> 
+> 2. It introduces multiple serious issues:
+>    1. A socket leak vulnerability as documented in bugzilla #219972
+>    2. Network namespace refcount imbalance issues as described in
+>      bugzilla #219792 (which required the follow-up mainline fix
+>      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+>      causing leaks and use-after-free")
+> 
+> The next thing we should probably do is:
+>    - Reverting e9f2517a3e18
+>    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+>      problems introduced by the problematic CVE patch
 
-Can you please try to get more details? I couldn't understand the errata.
+Great, can you please send patches now for both of these so we can
+backport them to the stable kernels properly?
 
-- Mani
+>    - Addressing the original lockdep issue properly (Kuniyuki is working
+>      on a module ownership tracking patch, though it hasn't been merged yet)
+> 
+> Regardless of the status of Kuniyuki's lockdep fix, the CVE patch itself
+> is fundamentally flawed and should be rejected as it creates more problems
+> than it solves.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Ok, I'll go reject that now, thanks.
+
+greg k-h
 
