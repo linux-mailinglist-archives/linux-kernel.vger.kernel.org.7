@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-585175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA50EA79083
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04ED9A79063
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6280188AF5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888B4169854
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDE223AE95;
-	Wed,  2 Apr 2025 13:54:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9653423A9B7;
+	Wed,  2 Apr 2025 13:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="rAybODNf"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E011A1F0E2C;
-	Wed,  2 Apr 2025 13:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12B821B905;
+	Wed,  2 Apr 2025 13:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743602040; cv=none; b=JPA0sXKoPSrYjW5+MQfH6UDNgtlAULQkrBFPTzOdCPMOtIbn9m8fZZkreR1Srap3bZCbiZwVGCcVUM7z+CXdCojYHvgnwnnN+eFEsneDz54z6refH3eVS487PLvgbNX9voq8UYVwiTpEvCjwNMry9CeEUaUsVomvBGmu0KEVMxw=
+	t=1743602085; cv=none; b=T9zdqUCYn8Qjq2zYCwvituejJAYdDMhRGTpCDutykfLmCjMNs6vdxYES7PxL1Z7a3xD5EQCfoi49IfLINlg4dbJRs3FPg6Ov4pYS6d8T2nkcFekfqvdmE65zsz3CJLrVKTwOGyDvcu34OJBbWVqWNfIkiRfUGeA0mWpBb280j4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743602040; c=relaxed/simple;
-	bh=aOZNgvVLBoypuzGsbqohzl0A1wyP5ZOeZNvJPxVLBI8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mI/g+c4BJILsxfCgeer4GMPsWXABGjkpoX7V7xQ+OloBa3zVYe4gEHitmIomt8OyKGNg1UPg0E9UDjMWLgv1oKZw3As/QM06kOJPFSnhwKyODnADEuCqg6CtLoniVPQ8lA3dSne5dopGE/pS0/XNPcX/rFxqFoZq2wvf+L89iSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZSRCg0QHcz6L4vn;
-	Wed,  2 Apr 2025 21:53:19 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 377B11400D7;
-	Wed,  2 Apr 2025 21:53:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 2 Apr
- 2025 15:53:54 +0200
-Date: Wed, 2 Apr 2025 14:53:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Philipp Stanner <pstanner@redhat.com>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Philipp Stanner
-	<phasta@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jens Axboe
-	<axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, Mark Brown
-	<broonie@kernel.org>, David Lechner <dlechner@baylibre.com>, Damien Le Moal
-	<dlemoal@kernel.org>, Yang Yingliang <yangyingliang@huawei.com>, Zijun Hu
-	<quic_zijuhu@quicinc.com>, Hannes Reinecke <hare@suse.de>, Al Viro
-	<viro@zeniv.linux.org.uk>, Li Zetao <lizetao1@huawei.com>, Anuj Gupta
-	<anuj20.g@samsung.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 0/2] PCI: Remove pcim_iounmap_regions()
-Message-ID: <20250402145352.00007531@huawei.com>
-In-Reply-To: <323da53fe2ec06c9cc5d1939a9e003c5bd2a0716.camel@redhat.com>
-References: <20250327110707.20025-2-phasta@kernel.org>
-	<Z-U5vIbVDZLe9QnM@smile.fi.intel.com>
-	<323da53fe2ec06c9cc5d1939a9e003c5bd2a0716.camel@redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1743602085; c=relaxed/simple;
+	bh=XR6WIesc11FIiICCuBhuVwuxtB1xAi1SbnYyzYIMNNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Grtyrrs9QHQDRBmcKbUenmJjGXL8ZaWPJX9QtIY2GeUkkFORNSWAFIp/iad9f7n+5nOTd7m4v+nqAsTF2pYWECCfhDSQdaYuYiFVu0psTLOD1xY5Ygbvg+MsrbEXYSgafMK/SpW5MWqF6oRYxPCcvpq9eMD2bbJwoYVMoTdRN0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=rAybODNf; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=z5MarQ5YKizAAclNCE/wY8mFO4mvhwZ27LtrepgwAhU=; b=rAybODNfz7a7BS8efx2JwS86wq
+	9N93tbReerqJIonphw6UvNfVmeeirLBhBWh82YvX1Q3lgF2nXG2bkrnVsFplFxDGEAUJUkVVBJzaO
+	I9yceKK616vIueBEKIRCLL8BjCCYUBax6m9gd+WlAy0Wj7zXEcBttvpmo7Pb/q403MUHASfNCSd/p
+	heKlExqmnfm/1CegEkKGS2Qug7wccxHznbOBs0RVcPdhmYS55ElnR3wkDdNNJ0UYtWVazX+ZEldDu
+	5kj2iTXPppEGboZ0a8mcE9xBDTmr+4H9cre9ThUEFm/p2gKpgri6YEdDiPxIDtvqVIU3Y3Af1MCqi
+	EhJa0qYg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tzyY9-00C8ls-0c;
+	Wed, 02 Apr 2025 21:54:38 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 02 Apr 2025 21:54:37 +0800
+Date: Wed, 2 Apr 2025 21:54:37 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: T Pratham <t-pratham@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Kamlesh Gurudasani <kamlesh@ti.com>,
+	Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: Re: [PATCH RFC 1/2] crypto: ti: Add support for SHA224/256/384/512
+ in DTHE V2 driver
+Message-ID: <Z-1BnSGNab34W6eU@gondor.apana.org.au>
+References: <20250218104943.2304730-1-t-pratham@ti.com>
+ <20250218104943.2304730-2-t-pratham@ti.com>
+ <Z8QSVLoucZxG1xlc@gondor.apana.org.au>
+ <f7105c10-7e36-4914-a9e8-e83eb61f0189@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f7105c10-7e36-4914-a9e8-e83eb61f0189@ti.com>
 
-On Wed, 02 Apr 2025 09:58:24 +0200
-Philipp Stanner <pstanner@redhat.com> wrote:
+On Wed, Apr 02, 2025 at 07:01:25PM +0530, T Pratham wrote:
+> 
+> How are you planning to restore such states in import if the export is
+> to be made compatible with sha512_state? Do you have any pointers for me
+> on how to change the import/export before sending the next revision of
+> my driver?
 
-> On Thu, 2025-03-27 at 13:42 +0200, Andy Shevchenko wrote:
-> > On Thu, Mar 27, 2025 at 12:07:06PM +0100, Philipp Stanner wrote: =20
-> > > The last remaining user of pcim_iounmap_regions() is mtip32 (in
-> > > Linus's
-> > > current master)
-> > >=20
-> > > So we could finally remove this deprecated API. I suggest that this
-> > > gets
-> > > merged through the PCI tree. =20
-> >=20
-> > Good god! One API less, +1 to support this move.
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >  =20
-> > > (I also suggest we watch with an eagle's
-> > > eyes for folks who want to re-add calls to that function before the
-> > > next
-> > > merge window opens). =20
-> >=20
-> > Instead of this I suggest that PCI can take this before merge window
-> > finishes
-> > and cooks the (second) PR with it. In such a case we wouldn't need to
-> > care,
-> > the developers will got broken builds.
-> >  =20
->=20
-> Normally Bjorn / PCI lets changes settle on a branch for >1 week before
-> throwing them at mainline =E2=80=93 but if we ask him very very nicely, m=
-aybe
-> he would make an exception for this special case? :)
->=20
-linux-next should deal with any new users anyway so I wouldn't worry
-about it.  Anyone who still has trees destined for the next merge window
-that aren't in next gets to deal with Linus being very grumpy at them.
+In struct sha512_state buflen is simply stored in the lower bits of
+count[0].  So when you import count[0] you can derive buflen from it
+as
 
-Jonathan
+	buflen = count[0] & (SHA512_BLOCK_SIZE - 1);
 
-> P.
->=20
->=20
->=20
+Of course when you're exporting don't forget to put buflen into
+the lower bits of count[0] before you write it out.
 
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
