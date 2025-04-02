@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-584590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0775AA788F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:41:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EC2A78905
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CE6188FE28
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4381891DBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213F4233152;
-	Wed,  2 Apr 2025 07:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135F233152;
+	Wed,  2 Apr 2025 07:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NhDBYqSx"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Atneoo/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54789205502
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DCA1F5FD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743579682; cv=none; b=EbMzL3vbOG1Dl2Ap6bs/CJgzlVzG/B/qKsbRS9MlbnlK59rSewmGI+a3UH+K4h0EDxWcnC79J4vLC0YscrRmTc7AJQLrC+9RqdEvkUFcyp2CGZYfKmHT0yn8EYYHr1NBcaWbpZaPZFZOi3G+B4iUP1asBYNsFUBXtxcT7+crZAs=
+	t=1743579810; cv=none; b=o1t0jB0h7B2Pxa7amBtHYalQJSwQh7pcDDZYvicm5CKhUUROHgjfhWEmX1n29SzuW4XV7aZfehfqrLkeKQ8Yv4bu0h49y6S2/apv2OMYTihHR5LLHD8Ib9jbQkunLhuEwRfJ83Mgh9YkroDdeV/jS+Bs6lcVUWm8rKZgkgS/ZtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743579682; c=relaxed/simple;
-	bh=cbjW4XvTseA70wn+Uo1fUUwawm85B+R26v8UyoKvA0Q=;
-	h=Mime-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Lle9v0VOVOQ/A8jgNnrEgig/5C4WHjXZQsRsS9q6fJQj+wA4eprTgUQeZ72uIj7CpCNjSMVrpQT48xnk1VqLqcnUpp6VMcAhMrHBZo3KgzkAeP7Xmpw3OsSGBUZfcJvgpscUa6FfMyJOvn77duT6sNV4r5fKzsA6Cjukoyl2xRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NhDBYqSx; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3054ef26da3so3854456a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 00:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1743579677; x=1744184477; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4i96T5V9k3vmZpu844wwAM9EtCVL0KJkJhUh5REbcPQ=;
-        b=NhDBYqSx4aO6JZsua8Qxbm88YzvDII7mrRkinWtKEnzOyeoi6ZruKkcEyaJ3bkgJlH
-         ZUOPkPhAMM8MhogAl9l9WtXMfNotUztI+UkaINd0l9vuHu9r5pBJxS/FF8pGhEr5qjK+
-         //R73Rtkj1/OBQ7qBjGS6EQSLjt8RRXBW/745OqlGfaqGTs+df1djYWrSjnZM3D7ZqIj
-         8rAZvfPYu/yRDn3GAEeqkDprNtirxvhDyyvbiq1xveGbyzszEjHD77E11xAj8rNckvlC
-         i7QPueEcVzoBZ1u5ceveq6bnOrnRqFoE0/qsyuL35Mo9yAi4q+gI2XdJhP6Pz10U7c6n
-         34kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743579677; x=1744184477;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4i96T5V9k3vmZpu844wwAM9EtCVL0KJkJhUh5REbcPQ=;
-        b=dMb1vmSn4o/VFwazGqF0hOAj+nOkkCmANBqshEpAJYk3e7xA1DV0YhirhGYGuG4CiI
-         eowQOXmzoaI8pr7iSQ74OChx9EyoK6iLfpKaUDb3RLrA60E9YNNczN5eZmlOzveERJK4
-         AFStiIppLFfMg3lHp4//6yxLpBq0l/NlJ9DyOXElO2ndmIn7+d5BNgO1f3YtZLZtYnMj
-         lcg/lND7btucdCftyON1/iCFyHxnWdzodrO7vn3Kjtmn0QBPNDX6MCIFbhU1AUFkMpyu
-         w4r1NyQ6UhVhr48oRoOw8qGbkhbqfRxmCV0oFbrz9eFO+gnJ8P77yOg0hwhvWV3a0V0h
-         bu5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUV4SrmY3Kd2vmgNt4cdHdXdPck0ChHsSHcqOecGh42rPNVx7A+q8pDO/bDwDCkQlr6EWN+hDv7vrMuRvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb0RDO+OhPC/qS1I/YywHUqoM5oS39xwu1ksPSEuI+Z0oK99ID
-	M4BivNcw+04SZnAPd5BOxO9sdU84gSVUCunYKK/vEjZwilT3rlOHLcKQkLSf5dVot0yP9txSu6f
-	feH5I2llUdkzOggtxD1VvLkbrf6+6kTkToJlLeQ==
-X-Gm-Gg: ASbGncsGTwof4oFXzA/iyTqj9qmifmpE6ZNqkKCjn1gmxnDXagq6KnGDXwJJYa4FYwB
-	Ksyh1Sqa5+RkauAqELtCthORbmIZqA9Vj8cTL4iZFkaEGgdzFWr84ZqpNXP4QP7MMjOVSgxef0D
-	OEzphlF/pXo7/xtBuYQOqzAdImrXeN
-X-Google-Smtp-Source: AGHT+IGm9Y961h45rVaXB5V314Bn0z+G+3R2yIWCaHEVb/7THBOWkoIKipQJc2UaOxlfeUkCHApw8UKveBTn3FEuvh0=
-X-Received: by 2002:a17:90b:51c3:b0:2fe:8a84:e033 with SMTP id
- 98e67ed59e1d1-3056085c01cmr9342886a91.2.1743579677410; Wed, 02 Apr 2025
- 00:41:17 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Wed, 2 Apr 2025 03:41:16 -0400
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Wed, 2 Apr 2025 03:41:16 -0400
-X-Original-From: Songtang Liu <liusongtang@bytedance.com>
+	s=arc-20240116; t=1743579810; c=relaxed/simple;
+	bh=IiOhZa2RGc/ELLYpE693fE82sDNLJ1amZ3QlPXMsue8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujJZowEHXP9jYlqhpNdz2htr9e+nE4HD3oR7KjXtP5nk5LNz104Hr7SXxoPTwfiv8PHRUWY23zCWywfWWto1A5yuqf2mZutHlmGJGuyFhZHIsmpvbGrsSoW0RQhImEVQZYe1X0d+A+48UOGzJbIO4qKEehH3NmBKFq2gNYyEVeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Atneoo/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D9DC4CEDD;
+	Wed,  2 Apr 2025 07:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743579810;
+	bh=IiOhZa2RGc/ELLYpE693fE82sDNLJ1amZ3QlPXMsue8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Atneoo/5ap3o0C3HV0oQytsTPtd0CWYrFgCTd9vQQuPtvdgtTQq4zYa9PLWvBGyCq
+	 ZWpZB9NMUOc35Qz/TTn0e5y4drqVwWWNmziVLqX2NEXZme+om8x6awUxu5SzwWI/My
+	 +UsJtqlTgdQKAGs18HAIy3BLHftDb69OhJlu17wU=
+Date: Wed, 2 Apr 2025 08:41:59 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: "cve@kernel.org" <cve@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] published: CVE-2025-0927: Fix up JSON schema.
+Message-ID: <2025040221-curtain-walnut-2540@gregkh>
+References: <2025033057-CVE-2025-0927-1436@gregkh>
+ <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
+ <2025040248-hut-sevenfold-82c3@gregkh>
+ <4d521717c418c873225d220ca65fd6740c496c8f.camel@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1
-From: Songtang Liu <liusongtang@bytedance.com>
-Date: Wed, 2 Apr 2025 03:41:16 -0400
-X-Gm-Features: AQ5f1Jpq9pj52as74KFEAbnUi6bgkoodsPYmo63WpbfX_F6JJmM_VLu1PGhAMM0
-Message-ID: <CAA=HWd1kn01ym8YuVFuAqK2Ggq3itEGkqX8T6eCXs_C7tiv-Jw@mail.gmail.com>
-Subject: [PATCH] mm: page_alloc: Remove redundant READ_ONCE
-To: akpm@linux-foundation.org, ying.huang@linux.alibaba.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	zhengqi.arch@bytedance.com, songmuchun@bytedance.com, 
-	Songtang Liu <liusongtang@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d521717c418c873225d220ca65fd6740c496c8f.camel@oracle.com>
 
-In the current code, batch is a local variable, and it cannot be
-concurrently modified. It's unnecessary to use READ_ONCE here,
-so remove it.
+On Wed, Apr 02, 2025 at 07:16:33AM +0000, Siddh Raman Pant wrote:
+> On Wed, Apr 02 2025 at 12:36:20 +0530, Greg Kroah-Hartman wrote:
+> > On Wed, Apr 02, 2025 at 12:21:52PM +0530, Siddh Raman Pant wrote:
+> > > It doesn't match the schema of other CVEs as it was not generated
+> > > by bippy.
+> > 
+> > It was created by vulnogram for obvious reasons :(
+> > 
+> > Also, please cc: cve@kernel.org for stuff like this.
+> 
+> Okay, noted.
+> 
+> > 
+> > > Fixed by hand / manually.
+> > > 
+> > > programFiles were added from the info in mbox.
+> > 
+> > So this did two different things?  Why does the layout matter here?
+> > Eventually it will be created properly when someone gets the fix
+> > upstream, I'm waiting for Canonical to do it as they are responsible for
+> > fixing this mess at the moment, but don't seem to be responding to my
+> > emails anymore...
+> 
+> Apparently, they fixed it in February and backported it:
+> 
+> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/commit/?h=Ubuntu-6.8.0-54.56&id=09ad3b1e99befe042ae5219e4020eb54411d98ef
+> 
+> https://ubuntu.com/security/CVE-2025-0927
 
-Fixes: 51a755c56dc0 ("mm: tune PCP high automatically")
-Signed-off-by: Songtang Liu <liusongtang@bytedance.com>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, they did that without telling anyone, and assigned a CVE for it
+which they are not allowed to do at all, which is why I had to
+hand-create this one when it was transferred to kernel.org.  They should
+be working to get that change upstream properly, but again, they seem to
+be ignoring us totally at the moment :(
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e3ea5bf5c459..6edc6e57d4f8 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2661,7 +2661,7 @@ static void free_frozen_page_commit(struct zone *zone,
- 		free_high = (pcp->free_count >= batch &&
- 			     (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) &&
- 			     (!(pcp->flags & PCPF_FREE_HIGH_BATCH) ||
--			      pcp->count >= READ_ONCE(batch)));
-+			      pcp->count >= batch));
- 		pcp->flags |= PCPF_PREV_FREE_HIGH_ORDER;
- 	} else if (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) {
- 		pcp->flags &= ~PCPF_PREV_FREE_HIGH_ORDER;
--- 
-2.20.1
+greg k-h
 
