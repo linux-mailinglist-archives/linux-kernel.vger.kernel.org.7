@@ -1,78 +1,70 @@
-Return-Path: <linux-kernel+bounces-585310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2069AA79213
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:22:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354EEA79214
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AA71894D9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DED916A6ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB730211299;
-	Wed,  2 Apr 2025 15:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA1022612;
+	Wed,  2 Apr 2025 15:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p8gGpW6K"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q7BMGh9Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2122E3385
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E3E39FD9;
+	Wed,  2 Apr 2025 15:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743607367; cv=none; b=FGp5O1eG9wfahb2bHWdB5lvBt5aZ1y/N75mx5nDuu8YIVWp873DmCd6u/qNSWLfn4kGYNooRPy6r2qUp+gVC3KUWSsRTg9aGEYB5jmkqYwdK2LuohAQsyUuWgFaTpmY3ImggfrYvYQhHHQLqogMM2sMO10o5rLUvoxuwIJHhW84=
+	t=1743607399; cv=none; b=XTZHMivsf7OjUyzvb0tmCcY+0cS6S2ZXxMt7Tm9Ggza1wDyko51SUFhmMhRmZHzpM9DcmDuWidtExhB+DS9pOoFP92JOfYr2QuzwSSMdTTBmYSPnriDWxqgDfyuk5/Nxp+gHjcizUlAj+S+PmiaA42mxP0pGQhyu0L7MVrnjS1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743607367; c=relaxed/simple;
-	bh=3Y99YLi0vRUddSPZnSmuZjqueccVv5vRDRozcI2VZjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O2KZ1/3SVWO4O2CHdeDfhIeMc22KH5lG2UfmMe08/6PoJL/pAx1gwyZlcR7/cP7khbCIvPvyuldr0fbCppFeQB6b2OowtDvxQIUBkbpccbFs6HxA2RLhXWlMGecSSIAOv4oZKwGVAFlKCy6NI4gORraS6j7se6mNOvL0ViMSNwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p8gGpW6K; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so54019655e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743607364; x=1744212164; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iBqRC267cLlF1qxs/ldypQv5XB794Feq9Jx7xZZeR6M=;
-        b=p8gGpW6KFqXJx4rQKahyyNtg4B3yg+3KR/NasjXHazoM5in4yc9BSP44w71rd51uHw
-         qP098eGTsymXGvsN1DdY27XEpdEJoy6t+z+Vz4CIGSOQgzZKPYerrGCJ0NGc51a6NYxV
-         edYRRAlf7vCEIEKr/diZhhQ6fgR9gA+PKtdCyuU8/XngpthWW496sayr377LKTuKZ2zu
-         PMZZBpQhbQMVb0CPNphm/o2Roc+4L7AbVGWgRRPqUzvrPUzxi+U0aIN1GMJqaUa9tACY
-         3WZKDUXQCzAICo/lDMQdYtvm/+lHBHOHOp2XfuQ+so6qyoF/eIHGkRvPAOfWGSH00nYH
-         pnHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743607364; x=1744212164;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBqRC267cLlF1qxs/ldypQv5XB794Feq9Jx7xZZeR6M=;
-        b=MODC80ahgKm5D6IBjsawf6uvPa92+3oW1b6b8fP8oHYEa4NxJSL6RiKMRnxKtXwgfV
-         mVIc94kMjJV60ZDwt1juzstTPfxTsxx9FNsNlDQzowTo89OOuvMhCmg2biat7GZYQKPq
-         vwRVHdt8OW2kWmxu9lvTz/It50Pn6AQcSftVS44QmgaVxY/xiA/dreUWH6dI26v0qFJe
-         dsh9EEUIJAGviQuNJ6935nnyYpzowHmr52JdvM7Jry2KOpquuKiqYZ7SpexFXqqB4kVG
-         4Zkk8d/vT6d7HhQeI3+JCc2Yu4CGzI0mU5ayV79f8DY5eep9PdGqGEhusLfIwAog+nJX
-         lvuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvYLDho6bFeF4Oh2/GNc2v521uGWHoJDAstoizv9ErOnUAE+CZxbCdjs1+zeD+FgHLq2NXUh2KM/9mxdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiLBVT50K1N1MWCg2TUZbnVM0f3U232yUmVR5bmSJtTeAab1Ro
-	0RCicWWqILkEOgYLDXsfogdN+WzMJArkpTp3Y6DEXTQDprPqU5f/VLg+9vigAqU=
-X-Gm-Gg: ASbGncu4GwRaSvIvUiar3lyUBP+qBBWR22j++Oo1vXr5+BBXZztxUCkFLCJ5mRqQlOh
-	aFgfG9EiMoGPHoxvSuK9Ca5H84E8vT1rWN7HxNqXtlhBMysuc+xkrhlCem/GH5HWzJtoGOSr7o1
-	/UFFB1MmKLEMT8D9Nc7BhQd4sItMBL0mtMmqTrPkQtFuA3Wc/ZY6wEPe5FUq4IQbkwbN032KCFS
-	nc1BX5awZ2WpuwLQKxuT2Fgt6DZsK2UZVk90YvKjFt6OVYC6OrZ8UyJWVGHU3aMC3thd4xMNySW
-	zAm7x6BL7D6dWMmV+MII+MhgRTdBZ4BDb61ZXIWTpzIb+BEE3kB+SA==
-X-Google-Smtp-Source: AGHT+IHgmckXCfIJjyAgdgh7HICnvf/RXlS+ITSeKLvapKO6U8Xg3MjxSo581r6gfWjbctoGhQbwhQ==
-X-Received: by 2002:a05:600c:314b:b0:43c:fe15:41cb with SMTP id 5b1f17b1804b1-43db6249672mr172386895e9.15.1743607363638;
-        Wed, 02 Apr 2025 08:22:43 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb60eb012sm24047505e9.27.2025.04.02.08.22.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 08:22:43 -0700 (PDT)
-Message-ID: <94ed8cf8-1e0d-412d-9f8f-959fe4b5b505@linaro.org>
-Date: Wed, 2 Apr 2025 16:22:41 +0100
+	s=arc-20240116; t=1743607399; c=relaxed/simple;
+	bh=Agn5aIC+UecWPsNBD+cdpqGxkV91aebLchMrY17IwdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O88dGVa/UZtW96Aln4QZYSBnsXKY19RphYnlN/wRns9dBrciSWTvWCr5DXzJiEr1//VFkrMatmlTMp31NpRLg3rnE09h3H9BTeYOZYP6QezA+5hcnH3aX+TF8J/etV873d3UDNWrPIRx1q0ZXq8RnVzltRUfCFW+mOf+bZfLru8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q7BMGh9Q; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743607399; x=1775143399;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=Agn5aIC+UecWPsNBD+cdpqGxkV91aebLchMrY17IwdE=;
+  b=Q7BMGh9QA+DGFvoAmVrvFtUxSMel41DVBF0lCCUZszGpEY5cFXShOxNQ
+   MpcnZFnjkhN+7iyQuyKtdFPZ2FPjpr6OPj2N4DaTDEAPy0qrHaZjLt0tf
+   dpktx4CWAfydLHqXyPxY1j/IQnqjwFjju7MfUTflRIxfAlEVouvSviwle
+   e0uW6O6E5bnchFUdbzqRIuKhMFH97DJ5O+PD3xBnaC9tIjkX5QL87HlMC
+   c/CSiuLsA+NhvZI2caM7OLqMlF8a+mdBOCtqA71pID8Hf/aqPRyQ0/gfc
+   MuTKjax9178oqtl3FnriN5R+9TIr0dHV8JwK93klnQX+7ALsj223Q4XKk
+   w==;
+X-CSE-ConnectionGUID: vlcKkkWhTpCuxQtUI0NYyw==
+X-CSE-MsgGUID: aw7cjXz9Ts6jsRzAm1+pRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44875679"
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="44875679"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 08:23:18 -0700
+X-CSE-ConnectionGUID: PmUwmW5hRFevmQz7BX717w==
+X-CSE-MsgGUID: XxgHLJR9T+ipQ/TXGpO+yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="126628542"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 08:23:18 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 511DB20B5736;
+	Wed,  2 Apr 2025 08:23:13 -0700 (PDT)
+Message-ID: <28016335-385c-48b9-8767-9b087a0ec4cc@linux.intel.com>
+Date: Wed, 2 Apr 2025 11:23:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,47 +72,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/21] mtd: spinand: winbond: Add support for W35N01JW in
- single mode
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Santhosh Kumar K <s-k6@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-16-45c1e074ad74@bootlin.com>
+Subject: Re: [PATCH v1 1/5] perf stat: Better hybrid support for the NMI
+ watchdog warning
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+ Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, Andi Kleen <ak@linux.intel.com>,
+ James Clark <james.clark@linaro.org>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250318041442.321230-1-irogers@google.com>
+ <20250318041442.321230-2-irogers@google.com>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-16-45c1e074ad74@bootlin.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250318041442.321230-2-irogers@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 3/7/25 3:08 PM, Miquel Raynal wrote:
-> Add support for the W35N series by describing the smaller (single die)
-> chip. It has 1b/512B ECC support and its own OOB layout.
+On 2025-03-18 12:14 a.m., Ian Rogers wrote:
+> Prior to this patch evlist__has_hybrid would return false if the
+> processor wasn't hybrid or the evlist didn't contain any core
+> events. If the only PMU used by events was cpu_core then it would
+> true even though there are no cpu_atom events. For example:
 > 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/mtd/nand/spi/winbond.c | 54 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
+> ```
+> $ perf stat --cputype=cpu_core -e '{cycles,cycles,cycles,cycles,cycles,cycles,cycles,cycles,cycles}' true
 > 
-> diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-> index 99b9f333eb3142999d8f73d43537f1ed9789c975..9b0369a077efadac8bd6be632f15b822d42a7227 100644
-> --- a/drivers/mtd/nand/spi/winbond.c
-> +++ b/drivers/mtd/nand/spi/winbond.c
-> @@ -23,6 +23,16 @@
->   * "X4" in the core is equivalent to "quad output" in the datasheets.
->   */
->  
-> +static SPINAND_OP_VARIANTS(read_cache_octal_variants,
-> +		SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(0, 1, NULL, 0),
-> +		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0));
+>  Performance counter stats for 'true':
+> 
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+>      <not counted>      cpu_core/cycles/                                                        (0.00%)
+> 
+>        0.001981900 seconds time elapsed
+> 
+>        0.002311000 seconds user
+>        0.000000000 seconds sys
+> ```
+> 
+> This patch changes evlist__has_hybrid to return true only if the
+> evlist contains events from >1 core PMU. This means the NMI watchdog
+> warning is shown for the case above.
 
-strange to see octal variants name, but just single SPI ops defined. I
-see you define octal in the next two patches. How about squashing all 3?
+Nit:
+The function name may still bring confusions.
+It may be better to change the function name as well, e.g.,
+evlist__has_hybrid_pmus()? It implies more than one PMU.
+
+Thanks,
+Kan>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/stat-display.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> index e852ac0d9847..f311f1960e29 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -825,13 +825,25 @@ static bool is_mixed_hw_group(struct evsel *counter)
+>  static bool evlist__has_hybrid(struct evlist *evlist)
+>  {
+>  	struct evsel *evsel;
+> +	struct perf_pmu *last_core_pmu = NULL;
+>  
+>  	if (perf_pmus__num_core_pmus() == 1)
+>  		return false;
+>  
+>  	evlist__for_each_entry(evlist, evsel) {
+> -		if (evsel->core.is_pmu_core)
+> +		if (evsel->core.is_pmu_core) {
+> +			struct perf_pmu *pmu = evsel__find_pmu(evsel);
+> +
+> +			if (pmu == last_core_pmu)
+> +				continue;
+> +
+> +			if (last_core_pmu == NULL) {
+> +				last_core_pmu = pmu;
+> +				continue;
+> +			}
+> +			/* A distinct core PMU. */
+>  			return true;
+> +		}
+>  	}
+>  
+>  	return false;
 
 
