@@ -1,123 +1,81 @@
-Return-Path: <linux-kernel+bounces-584952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BD8A78DED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979D0A78DF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6285716FE19
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:12:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5287A5049
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70231239561;
-	Wed,  2 Apr 2025 12:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFWwaADS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C58238D33;
+	Wed,  2 Apr 2025 12:12:28 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D55239072;
-	Wed,  2 Apr 2025 12:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF0E23371D;
+	Wed,  2 Apr 2025 12:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595912; cv=none; b=YAi4P72bxFNG6JOSue6NUVximjjbSuTvD6OBzAsBzM2AXRzpO7Z7STgFfctQwAxkJhe1WtzkvjqPe0ZGXksL4DK8ytYHy9dVUIc1asnbZuJAHXFrcNjeBS+pj2AF03QfSQzmc0JhX4v+PM6h1D7UzjfjQglNEBVQIGf65mcPdjI=
+	t=1743595947; cv=none; b=bkts13eEkXiA7VT4E4KsPGvOjUNSiLC20uawM4nTLq6uH0CyT9u5B+djnUXa8H+PiMzy7vpUW9FWUw4BVxclY3ITTB/gspWov4l5ZrCHK9g9+oZxkh/j9o+IbfNwM4zsBARHxJH/7AJrjj6pm9XxDvBq+BhVL6Li6rzeLOphBUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595912; c=relaxed/simple;
-	bh=6BMk32WsDiJe2rDQkrMTPjrC92B9rfDzpLMv4hg2VqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LugjqrlfB6em88/12lyw5Wq7DqBSJXq1MdL0mhNoEUhMxhnbToiqX04yUgpYzRvWpE3alJbotxfJ7gqHz5jBnfFSc60m/FNKEEDBoWjc5Ylefzgx7JrElv/lBB7ma70+6yuEWToAFZVv6vFa938ZNYrSDmerGzuufly0EFp+jdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cFWwaADS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B38CAC4CEE9;
-	Wed,  2 Apr 2025 12:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743595912;
-	bh=6BMk32WsDiJe2rDQkrMTPjrC92B9rfDzpLMv4hg2VqY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=cFWwaADS9Wkn09Lt5D2J/EZSE+IqeFjheDVEPHxugC2LHmMtJMJBVPhbMSOK4qdqs
-	 3TqEQtoqNev5trDdZHMqDbjOZMnzojr6CH2Jg7jswbgsS+JFCWr6HUTTb6cARM5bQ1
-	 pQ0je6vqGqmyfelepvg8uIQ5YJkVKYoKztUNzQqOUdB84lL0BKZdE5nSHvD1h0Rn7T
-	 5vy5l1A9q0Y7QtRQ+J0ADWngsoyPtDPyneB3aja1ik1o3VTuDJ6ymGpZ6pJ0Hj80wH
-	 humcWixSoFKobHJZpJzVHr7ZAMKXIXlkgCfMqs+483+m7bY+EMh6pi+VN1tm0pEoyl
-	 v0VJv2SCEQEnw==
-Message-ID: <7aefa588-9f64-4bb4-8782-05eb1ef9d5b2@kernel.org>
-Date: Wed, 2 Apr 2025 15:11:47 +0300
+	s=arc-20240116; t=1743595947; c=relaxed/simple;
+	bh=93MsZgHZPuKgHFlXUFE5ODJyARsiBlTJ4w2tRPzDcsY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z+zceAKZd4dHM4ZTI0Ns1wJpf9tpTxL/hDDSU1GDOA8O7KggwXaHrE0tgNTKrP2qkW5fIWG1U8wiUwwySKCL+REp7vupVQg7OeR8ACFU2yCtvxFpfHbKTgxeb5eki6VpGyDaQJZ1NRk45nmc3JV3SmgL66Mu6cyU2sjO/6JEB3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZSNxS5C5BztQfs;
+	Wed,  2 Apr 2025 20:10:52 +0800 (CST)
+Received: from kwepemg200016.china.huawei.com (unknown [7.202.181.67])
+	by mail.maildlp.com (Postfix) with ESMTPS id D71F518007F;
+	Wed,  2 Apr 2025 20:12:17 +0800 (CST)
+Received: from localhost.localdomain (10.175.124.27) by
+ kwepemg200016.china.huawei.com (7.202.181.67) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Apr 2025 20:12:17 +0800
+From: gaoxingwang <gaoxingwang1@huawei.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>
+CC: <kuba@kernel.org>, <yanan@huawei.com>
+Subject: [Discuss]ipv6: send ns packet while dad
+Date: Wed, 2 Apr 2025 20:12:05 +0800
+Message-ID: <20250402121205.305919-1-gaoxingwang1@huawei.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] ARM: dts: omap4: panda: fix resources needed for
- Panda
-To: Andreas Kemnade <andreas@kemnade.info>, Rob Herring <robh@kernel.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-omap@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Aaro Koskinen <aaro.koskinen@iki.fi>, devicetree@vger.kernel.org,
- Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250330151401.444956-1-andreas@kemnade.info>
- <20250330151401.444956-2-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20250330151401.444956-2-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemg200016.china.huawei.com (7.202.181.67)
 
+Hello, everyone:
 
+I have an RFC-related question when using ipv6.
 
-On 30/03/2025 18:14, Andreas Kemnade wrote:
-> The Pandaboard needs a 32k clock in the TWL6030 to be enabled
-> to work. With some luck, it is enabled by some U-Boot fork.
-> Do not rely on it and properly specify the requirement.
+Configure an IPv6 address on network adapter A. The IP address is being used for DAD and is unavailable.
+In this case, the application sends an NS packet to resolve the tentative IP address. The target address
+in the multicast packet contains the tentative IP address, and the source address is set to the link-local address.
+Is this allowed to be sent? Does it contradict the following description in the RFC 4862?
+(https://datatracker.ietf.org/doc/html/rfc4862#section-5.4)
 
-It would be nice to mention who exactly needs the 32K clock.
-From your changes it looks like the wl12xx module needs it?
+>Other packets addressed to the
+>tentative address should be silently discarded.  Note that the "other
+>packets" include Neighbor Solicitation and Advertisement messages
+>that have the tentative (i.e., unicast) address as the IP destination
+>address and contain the tentative address in the Target Address field.
 
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> index 97706d6296a6..c860b590142a 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> @@ -130,6 +130,12 @@ hsusb1_phy: hsusb1_phy {
->  		clock-frequency = <19200000>;
->  	};
->  
-> +	wl12xx_pwrseq: wl12xx-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		clocks = <&twl 0>;
-> +		clock-names = "ext_clock";
-> +	};
-> +
->  	/* regulator for wl12xx on sdio5 */
->  	wl12xx_vmmc: wl12xx_vmmc {
->  		pinctrl-names = "default";
-> @@ -408,6 +414,7 @@ twl: twl@48 {
->  		reg = <0x48>;
->  		/* IRQ# = 7 */
->  		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N cascaded to gic */
-> +		#clock-cells = <1>;
->  		system-power-controller;
->  	};
->  
-> @@ -488,6 +495,7 @@ &mmc5 {
->  	non-removable;
->  	bus-width = <4>;
->  	cap-power-off-card;
-> +	mmc-pwrseq = <&wl12xx_pwrseq>;
->  
->  	#address-cells = <1>;
->  	#size-cells = <0>;
+Or is this description just for receiving packets?
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
-
--- 
-cheers,
--roger
-
+The actual problem I encountered was that when proxy ND was enabled
+on the switch, the reply ND packet would cause the dad to fail. 
+So I'm not sure if it's the NS sending problem.
+Thank you very much, if anyone can reply!
 
