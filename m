@@ -1,271 +1,189 @@
-Return-Path: <linux-kernel+bounces-584268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4492DA78560
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7B6A78564
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E9216D524
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Apr 2025 23:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909EB1891677
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FAE21C171;
-	Tue,  1 Apr 2025 23:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b="DIP2NIJw"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537AB16EB42;
+	Wed,  2 Apr 2025 00:00:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9EE21859F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Apr 2025 23:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363712AE99
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 00:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743551797; cv=none; b=XHdsg0W8dt+xAiz4sHbkTNAMl5AMol9JpS1oF3j8fPy7isPMVUPaN5ivLo9hyG7JYQpmFYHuO2+nJJOUhdRQw0d4CU55E6TCXFk79AimD7MlGvwC7hCuR8V55tISlVm68rX2DtJGvWvY+WcKVxRot8G5XHy8tLo00qYpKypMbwY=
+	t=1743552022; cv=none; b=H5aHXIrtQCRbY2SMKkEoe96BigzV2FDCHUgZMHJhaJUmdtdA8VMSEsZ2Bc14aZzFIbVBji6rY1iEuNHqme1C7uO7qswSix5zFHSDhQEWaBF7r9SvJH2v7M7ggc59qCiH+439U9zBW1b6chg9ZI5Ldu4mMmf5t11A5s7kpRSRK0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743551797; c=relaxed/simple;
-	bh=/oLB4lfTgEqsm45al5pc3NIWRfW5hWKG0WWTFCddDho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LIxQhw32EJRBn8dt3mbAA+hn8Na93Jfuo/ZXN59Qc98lMFgsevV1ZecRpZs3PVFSpmXRj1zbiBn4tdsvKQBP8zFDLTHFVu2OhtD9Er5BiUCBG1UICCqNnN3MB5gFgNsVJj1/5DAeffxyQXXaqF0EhjvZPBenwhU6y7dRliZRFBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com; spf=none smtp.mailfrom=wkennington.com; dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b=DIP2NIJw; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=wkennington.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22423adf751so114498925ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 16:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wkennington-com.20230601.gappssmtp.com; s=20230601; t=1743551794; x=1744156594; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6ihHnN8ilmRZM8hNAaeCWLomeBOtyWBXorZNgeS24M=;
-        b=DIP2NIJwv7+ufEqpvnAlpksAqCUtbwOxe4qZyDmZlwRvo5uoKLDxS6jtqc3KpATcke
-         zmIaMXdYYZAR3UTHHUKfFoq0UI9ldLRvXPvHQeoS55pod0uNVKi7JslSSS3/K9PWVj50
-         xX57jsFHSb2/obx663FahJBoi5o4m5pxw55H3lNgXYLOTFqEHRq9SMl5rdvYLcxWU18o
-         ATd7Ufoi09x/w0ZcwC4nGfRyAysG6JOOVka5Re3M46s5jsnP/irycK09sFQURaN+ui5X
-         u7AI3wSMhLKx2NY/HZeEYueMsobKGt5k009ScA57y+B9Wpx8808iBB3ZWdxkUN0WZeob
-         FlVA==
+	s=arc-20240116; t=1743552022; c=relaxed/simple;
+	bh=3rkgxyqLOHChSRJv0W0kIyjKBNMP+kyP/Jh+71vHql8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IvZ/1MwyL5KEehjRcBT34VNZVnOuWrAxavgyRHPy8ws5POnrVZJsYL1usmS37EfziCfwoadACUldfZnRP6bH0JgoH8YebCVvADp8Uv8CucmN3r4q9yEAXFIEd878X2AH9V1Xt2R8vnnL9DuwrfwlkVwbNEeb6c6mrWcTlsmWoDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d458e61faaso4492245ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 17:00:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743551794; x=1744156594;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b6ihHnN8ilmRZM8hNAaeCWLomeBOtyWBXorZNgeS24M=;
-        b=lBigobaqaou4eZ6B1C8C5iyUsyvvZY+55vRK6hVN/YgJn/+kaY/8pyOEDXhN8R2hdD
-         Lz3i3beQ494Omr4BxIw2C/ioWG21czQixxyUboJuXAHkFb6MmrGA4m0b8LPdXvTuyjW6
-         gGpMu92YeNWhei/4CzruMR/6WooWagX4x3PIfQfW2rrQhFiBNIUH7pYeMrzE7p8RlrBV
-         T8cRnyKnBCHYPsng/HUj0dUnH9z2Au+Q7hNOJrCAjRHnLVLytw62LAqt0Dvlg659sOP1
-         +OmH7rVRaLk4YC9TezZMHn0/f+ByJWqpXaAlA9hH8bL42PI85eGvmIpy5AaLB9hxf3yf
-         UvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP89/kd5uZLawJG5OMafOTYXY4TTQNly/x1rFnE9urXkmhaTs10jQ3/SMNMfUaK2jqIcrbSo5sVYZ8XYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC+p6PrPWX0F01dfbKNTbMm6hW2a3k+6gHmuC42iSac4GttuMZ
-	zKKP5xT1HcO9VH9LjmF7kqOqVLSz+bYEWnk2EA/k+5YLRUeL8oFYSTgG0NcLrPc=
-X-Gm-Gg: ASbGnctgwRtqCaR/PWPzt+qqAULEVfxdkGXRP6pHda/c4u066GjzSiixkfFmnnsMBJK
-	VIAymolhU1PoYwAfCDh4KS3223O91q3qVLhu2/9NJzsR80Yt2sZ/u0ifYVxIwlmsR9IEYdAH73U
-	8l7w4eZNs05R2fYzEfxZQGX7TtFEpoBujjfHtGuHLI/I8qw16Y23nWLmherCqRYiduHAAtjxreC
-	iGVqQwu+XuxEaFAHWQm0Ozslc+lJ/cC/Q0Q4Z6c3Z9B1IeRMZFLMledtkmCtCgqFP5Wz8+ug5l9
-	ubldTfLrLa/D6kX5KRRzqWOHsa5rzwqllbpySrn77gxc1PNOpCoEJL0nonTtT+rRSE6qLOlzyUC
-	ydK47se/KxAx6nNdOLwuNaScYvMsKz8g=
-X-Google-Smtp-Source: AGHT+IFylzDbhBQ/sL2ExeIt5kLtcQJnLm0bfmikXo5VViRiVMSH4IaRuk3kFMVNKPfBS80Y7hZfgQ==
-X-Received: by 2002:a05:6a00:1486:b0:736:6ecd:8e32 with SMTP id d2e1a72fcca58-739b611955fmr5416229b3a.21.1743551794244;
-        Tue, 01 Apr 2025 16:56:34 -0700 (PDT)
-Received: from wak-linux.svl.corp.google.com ([2a00:79e0:2e5b:9:895:611e:1a61:85c1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970def428sm9646836b3a.32.2025.04.01.16.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 16:56:33 -0700 (PDT)
-From: "William A. Kennington III" <william@wkennington.com>
-To: Tomer Maimon <tmaimon77@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	"William A. Kennington III" <william@wkennington.com>
-Subject: [PATCH v2] ARM: dts: nuvoton: Add UDC nodes
-Date: Tue,  1 Apr 2025 16:56:30 -0700
-Message-ID: <20250401235630.3220150-1-william@wkennington.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Reply-To: 20240925093956.2449119-1-william@wkennington.com
+        d=1e100.net; s=20230601; t=1743552020; x=1744156820;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yMAfIYcFj1qjq2nRYNfobHVPBwq21ej/2TORAiiD/+s=;
+        b=eJb18EMfsPUtX70U+yCK06D+tQeU3jJRz12W+SIdqrVM9wwKNkyXP1WlKtzMIdRZe5
+         7BC/RS/VZXenuXXmvwzkIkULdefnFYopI2Ti69lTSx+czPL9BYgaCv/q1C0LwoEhLwGR
+         QL3aeCE7gpYFSUH2xFUrLVpUEoSvZkHRr6tvCED/d4q6E94ZudDNmoKA7bTpRFpi2zpa
+         e4XU1+WSmFJgez3UlDt74vtC/ArLvsnfrrQDVG8Tq0WG8IulzRJ1ME9ny8E0xtAEzFHY
+         HNwpzXrBLVdvbsoE+pg7IpFdiyEQ+gnByXzrit6NDrYSmxKcsF6z6aRnc4utrnKY5Ag8
+         pA3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVY95/R58S4B0YCauNj7AXorMOKulMA8OX76nI8u+K3BWZCQUFUeZd06ZcRIPPqk6Pa/FBSAJshkSiZNLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyB0g5v0H7q3Lqh4Bz6e6ldV3vhzqDCR9AoAZNaREkYk6doQr/
+	RxGorE2oI6zGnXk88qcr8B5ZZy+c4XAZuvp/zRh1GVBB5OrGqBM/hsW9dlEKGCOj3NRvQIcuWRs
+	pD8rf51DM9lt7gO18lMjlpEMkZjk4PoAh1/xey3delbN9Ftm7Kv2Vtlk=
+X-Google-Smtp-Source: AGHT+IF+QsByIZQoylrcRV90u6uZIfirICTRvZm4Iz5qF99s6r7+2pxjlr1qAsH+QT0M3ZuZlyRjbUWUej2MmMfjNh8MMSzP89N/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3498:b0:3d3:f15e:8e23 with SMTP id
+ e9e14a558f8ab-3d6d6884cc7mr108795ab.10.1743552020298; Tue, 01 Apr 2025
+ 17:00:20 -0700 (PDT)
+Date: Tue, 01 Apr 2025 17:00:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ec7e14.050a0220.31979b.0030.GAE@google.com>
+Subject: [syzbot] [mm?] general protection fault in sys_mremap
+From: syzbot <syzbot+e3385f43b2897a19be24@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-The driver support was already added but we are missing the nodes in our
-common devicetree.
+Hello,
 
-Signed-off-by: William A. Kennington III <william@wkennington.com>
+syzbot found the following issue on:
+
+HEAD commit:    405e2241def8 Add linux-next specific files for 20250331
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=164c9bcf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f2054704dd53fb80
+dashboard link: https://syzkaller.appspot.com/bug?extid=e3385f43b2897a19be24
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7f800beaa14a/disk-405e2241.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a573ae9a8887/vmlinux-405e2241.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f4f732eedbc9/bzImage-405e2241.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e3385f43b2897a19be24@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000004: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
+CPU: 0 UID: 0 PID: 6953 Comm: syz.1.290 Not tainted 6.14.0-next-20250331-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:vrm_uncharge mm/mremap.c:964 [inline]
+RIP: 0010:expand_vma_in_place mm/mremap.c:1566 [inline]
+RIP: 0010:expand_vma mm/mremap.c:1621 [inline]
+RIP: 0010:mremap_at mm/mremap.c:1682 [inline]
+RIP: 0010:do_mremap mm/mremap.c:1727 [inline]
+RIP: 0010:__do_sys_mremap mm/mremap.c:1784 [inline]
+RIP: 0010:__se_sys_mremap+0x25fa/0x2c00 mm/mremap.c:1752
+Code: c0 0f 85 0e 05 00 00 0f b6 9c 24 20 03 00 00 31 ff 89 de e8 c8 16 ab ff 85 db 0f 84 7b 01 00 00 e8 bb 13 ab ff e9 9e 00 00 00 <80> 78 04 00 74 0a bf 20 00 00 00 e8 c6 2d 15 00 4c 8b 34 25 20 00
+RSP: 0018:ffffc9001c347b40 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff92003868fca
+RDX: ffffc9000d093000 RSI: 00000000000000e0 RDI: 00000000000000e1
+RBP: ffffc9001c347f00 R08: ffffffff821d1414 R09: ffffffff8c2734a7
+R10: 0000000000000004 R11: ffff888026f55a00 R12: 0000200000ff8000
+R13: ffff888034282000 R14: 0000000018000098 R15: ffffc9001c347cd0
+FS:  00007f975bfad6c0(0000) GS:ffff888124f95000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f975bf8bf98 CR3: 000000005c0a6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f975b18d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f975bfad038 EFLAGS: 00000246 ORIG_RAX: 0000000000000019
+RAX: ffffffffffffffda RBX: 00007f975b3a6080 RCX: 00007f975b18d169
+RDX: 0000000000002000 RSI: 0000000000001000 RDI: 0000200000ff8000
+RBP: 00007f975b20e2a0 R08: 0000200000ff8000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f975b3a6080 R15: 00007ffe4ecc7008
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vrm_uncharge mm/mremap.c:964 [inline]
+RIP: 0010:expand_vma_in_place mm/mremap.c:1566 [inline]
+RIP: 0010:expand_vma mm/mremap.c:1621 [inline]
+RIP: 0010:mremap_at mm/mremap.c:1682 [inline]
+RIP: 0010:do_mremap mm/mremap.c:1727 [inline]
+RIP: 0010:__do_sys_mremap mm/mremap.c:1784 [inline]
+RIP: 0010:__se_sys_mremap+0x25fa/0x2c00 mm/mremap.c:1752
+Code: c0 0f 85 0e 05 00 00 0f b6 9c 24 20 03 00 00 31 ff 89 de e8 c8 16 ab ff 85 db 0f 84 7b 01 00 00 e8 bb 13 ab ff e9 9e 00 00 00 <80> 78 04 00 74 0a bf 20 00 00 00 e8 c6 2d 15 00 4c 8b 34 25 20 00
+RSP: 0018:ffffc9001c347b40 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffff92003868fca
+RDX: ffffc9000d093000 RSI: 00000000000000e0 RDI: 00000000000000e1
+RBP: ffffc9001c347f00 R08: ffffffff821d1414 R09: ffffffff8c2734a7
+R10: 0000000000000004 R11: ffff888026f55a00 R12: 0000200000ff8000
+R13: ffff888034282000 R14: 0000000018000098 R15: ffffc9001c347cd0
+FS:  00007f975bfad6c0(0000) GS:ffff888124f95000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f74d4f78ab8 CR3: 000000005c0a6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	0f 85 0e 05 00 00    	jne    0x514
+   6:	0f b6 9c 24 20 03 00 	movzbl 0x320(%rsp),%ebx
+   d:	00
+   e:	31 ff                	xor    %edi,%edi
+  10:	89 de                	mov    %ebx,%esi
+  12:	e8 c8 16 ab ff       	call   0xffab16df
+  17:	85 db                	test   %ebx,%ebx
+  19:	0f 84 7b 01 00 00    	je     0x19a
+  1f:	e8 bb 13 ab ff       	call   0xffab13df
+  24:	e9 9e 00 00 00       	jmp    0xc7
+* 29:	80 78 04 00          	cmpb   $0x0,0x4(%rax) <-- trapping instruction
+  2d:	74 0a                	je     0x39
+  2f:	bf 20 00 00 00       	mov    $0x20,%edi
+  34:	e8 c6 2d 15 00       	call   0x152dff
+  39:	4c                   	rex.WR
+  3a:	8b                   	.byte 0x8b
+  3b:	34 25                	xor    $0x25,%al
+  3d:	20 00                	and    %al,(%rax)
+
+
 ---
-V1 -> V2: Fix udc -> udc nodenames, fix reg values for npcm750
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- .../dts/nuvoton/nuvoton-common-npcm7xx.dtsi   | 71 +++++++++++++++++++
- .../arm/boot/dts/nuvoton/nuvoton-npcm750.dtsi | 65 +++++++++++++++++
- 2 files changed, 136 insertions(+)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
-index 5a466e97955a..e337f40ae0f2 100644
---- a/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
-+++ b/arch/arm/boot/dts/nuvoton/nuvoton-common-npcm7xx.dtsi
-@@ -99,6 +99,11 @@ rst: rst@801000 {
- 		};
- 	};
- 
-+	udc0_phy: usb-phy {
-+		compatible = "usb-nop-xceiv";
-+		#phy-cells = <0>;
-+	};
-+
- 	ahb {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -193,6 +198,72 @@ fiux: spi@fb001000 {
- 			status = "disabled";
- 		};
- 
-+		udc5: usb@f0835000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0835000 0x1000
-+			       0xfffd2800 0x800>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc6: usb@f0836000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0836000 0x1000
-+			       0xfffd3000 0x800>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc7: usb@f0837000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0837000 0x1000
-+			       0xfffd3800 0x800>;
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc8: usb@f0838000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0838000 0x1000
-+			       0xfffd4000 0x800>;
-+			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc9: usb@f0839000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0839000 0x1000
-+			       0xfffd4800 0x800>;
-+			interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			nuvoton,sysgcr = <&gcr>;
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
- 		apb {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750.dtsi
-index 30eed40b89b5..f42ad259636c 100644
---- a/arch/arm/boot/dts/nuvoton/nuvoton-npcm750.dtsi
-+++ b/arch/arm/boot/dts/nuvoton/nuvoton-npcm750.dtsi
-@@ -58,5 +58,70 @@ gmac1: eth@f0804000 {
- 					&rg2mdio_pins>;
- 			status = "disabled";
- 		};
-+
-+		udc0: usb@f0830000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0830000 0x1000
-+			       0xfffd0000 0x800>;
-+			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc1: usb@f0831000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0831000 0x1000
-+			       0xfffd0800 0x800>;
-+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc2: usb@f0832000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0832000 0x1000
-+			       0xfffd1000 0x800>;
-+			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc3: usb@f0833000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0833000 0x1000
-+			       0xfffd1800 0x800>;
-+			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
-+
-+		udc4: usb@f0834000 {
-+			compatible = "nuvoton,npcm750-udc";
-+			reg = <0xf0834000 0x1000
-+			       0xfffd2000 0x800>;
-+			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk NPCM7XX_CLK_SU>;
-+			clock-names = "clk_usb_bridge";
-+			phys = <&udc0_phy>;
-+			phy_type = "utmi_wide";
-+			dr_mode = "peripheral";
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.49.0.472.ge94155a9ec-goog
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
