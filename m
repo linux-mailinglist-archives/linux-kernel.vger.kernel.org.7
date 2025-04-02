@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-585489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3479A793FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6937A7942E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58CA3B434C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28BF3AC6DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD461C84DE;
-	Wed,  2 Apr 2025 17:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004D1D8DEE;
+	Wed,  2 Apr 2025 17:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmHcxBcr"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSkVZBjz"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B271C5F07
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8151B21BD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743615733; cv=none; b=UNJmnKVBw3E19/N0q6hAwManWJetcRRU974XHeayC3IkSUtEV5LJ/eSUL8H3pLVYeESK9xpbehPDm1mxKc6EjCSLcA7E4sC3w7rlR+QM2Mlmh+lfbA62EURcHPqwXlanJhHivRlue10aUfyxOj8CzewAyYuyObQLjkL6oK4oqzg=
+	t=1743615738; cv=none; b=a1Nf5zSYE4eNfYDDb9m0cqk+L+fdxzt+nWDjopcS+kN9TawPIOYoasBv/X0inYYl20o/12CSNM+tuJzHCLS/1G2515UzD+SDOlb/0OL5Ze8X0jJjttYVuQdWWMxJUOplFQAFtLXvavyBue8buC4n63SvtgvO2VFDI9vwY8YC1RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743615733; c=relaxed/simple;
-	bh=4AJQ9/fTZnBfTNmr54vZ5hCXDEoIiB04E+EP8sWh27c=;
+	s=arc-20240116; t=1743615738; c=relaxed/simple;
+	bh=w+l1IxbKwn5+Odqn0uWbE42u8ngJlWpn+SjVKSxHY6M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lEm6rZMgs1QlKSu3pQSwxbA7Tl9Gk9QfIzxYZoqcMtZ4ZKLeawgFoYZ/Qs5zYQ2ZZvFoPGGtnfGLA69pXc3419k1eNi0r0NksExym3KaqvEdu2g3TGitS4H0egJ1ri0gabrSHDK46nNTBq1PauhLm4zjLn89b9z3+EVFkHbhVew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmHcxBcr; arc=none smtp.client-ip=209.85.166.44
+	 MIME-Version; b=qoJTLoySehjnKhQgDIgf9PbXYEn5DV1PE7tnpg8Ppxjw7V21HuU1RAr8P80Aw/xElg92pcsx5Ba03emAq4AuYuZ9YoT7eICm8nNJl24OYz06pfJ/KY7uq6TKaNHrhN8blMW6528ceG97yo8yvWJrS/gZwG5yEZY6hSDml0j0CsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSkVZBjz; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-854a68f5a9cso2501639f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:42:11 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso910485ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743615730; x=1744220530; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743615735; x=1744220535; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GcpeXIgBKTB5NFbofa9/asJwSsA0oVZhqq9QNH8OPg4=;
-        b=VmHcxBcr2hZ01NnTR9xBZIntoO3yIRGKdmyRXhAMjUpxTOTlMC1Q0SaCYwE/ulz4aq
-         IEsIbctePD1/UUxjqpFsEAZhvaJYyQYJiDg39V4/kVUnESvv1VSL202iYbt6xAKXQtlL
-         KrgiluG7sRFGY2cABh6LKiZloecwiNtOSPRYc/D3sEwvjVB4arWhKSh7R6vBrRE8EqZU
-         suegwG9z/Z9dJ7+VNGkeK3ie4p3pyq9931Ys7coBHbAKWPUcOwr6Pb3EgC7YOMZ3sWXN
-         5EYA8ncLUuLG3Utyc3Q3wb5bxTXlX53Nyedjqslt9EIH/lheF8F5q6MguSHSOCcZrDhp
-         6KZA==
+        bh=d8krvmT3hXiuiccuxDpOYGdDtTsrrIwxKLxWjX0uKEg=;
+        b=iSkVZBjzb1QE2tuXv9Z+3zgKk5AAkxlVuzx+OZ5Wrxllh999UmJu7nK5RJe78ULCem
+         lb5TU+R4o5dFefgP8w10gRwdOrw58wBmqIKtLdjTYopHsHSb6KnEoOFYqphE6MaNkyGd
+         4QL5GpO6tq4VKwqh68WX9A1It1mwALwcPLRnwnlec6O4fbXNcoUO/snWrE8wPHxvqXcA
+         TM2k+g2T7etOIRtW08+ugXHyHspIVLgpvs0FWvHTNofwEBygsKrPP6s6g1dYakzC/qSh
+         jcDCVNFEdlCZvlhW3+9kQJlGlpPIIIyQQzYqDVtb109WehEECpBkUf9l+VUaJjb2juXf
+         Cu5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743615730; x=1744220530;
+        d=1e100.net; s=20230601; t=1743615735; x=1744220535;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GcpeXIgBKTB5NFbofa9/asJwSsA0oVZhqq9QNH8OPg4=;
-        b=E0KlpH8uqyZA0Y2SA2x8KGmDhJE2FQ7wNuhsaMDJjrJqZXIlyeeiVjvMbxxq3Ky18q
-         CBRjLpf7/n+D4vrzMKBWaYE5eHDAa3/ckBXgBgxAi6JFhlwJAKIWETopXLovxbeMSZj5
-         /RGCwAGPP5Fl0FMICqdxNhqPPYGYwL13bcfMs0v0iZB1D8iHaMVx37nplG1MKZCcQXL6
-         MQxKa5psF3ASmTsgPpUSi5i0ryZLu1zYQT0cAWeX7x8xRtzYS8Ubh7JU9fudcJMTpPZ+
-         EmWlxeZlssiOvTuEVQSl95EfxOuifCkNyVxenQYEgxtMH+Tv9cE6n3WfRtkGvmgMAOls
-         yrxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3TnaqVrnsX3Rnd8lxTLEhzJyiKcwEYoiodzx7etu+vOkeJQB/qogwtZGjYBx5Nrl3LIjFThqYt+V5VAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj32wiiko4bpq6dwbz6njoZepxYd6nyeAYBWZZLDPRsk6grQ0x
-	Pn5bujBqRnmurwb3R4UvHe8kVI2ASSK1TytWL0szvjmokvLtODI7
-X-Gm-Gg: ASbGncuTW6mszbYfowo2qrwuAOKOvd4AfSwhh2cx05ZPTawv382oDI4ajR+ICmhJnYx
-	pdZ8wnvHlV1zwxSH+EwT/iLQmXK7g18vJTWjtRsxq5UNpakulVP+CNHocdog+qYY04bkE5oBnEC
-	bOogKKvx9I33qexvkq+7y+br9CSbRlDAfjikt1XISWPCh0Dfg8m1gpCMTteOxbVBiMxobzrMlHR
-	u70/xggTryCe58BFG1pe+Lh6o9S14pOcUtf34jjeH423Kt+dLP5sOvH42Zrl4bh4PJSHgTYuu6y
-	Oz0+CasFd6g7gPXzpQpfXlgHC+AThzlkMnDq6H60AMRQLTgSgK2fAEbWYCP3Yywn96Y8ZZrleiD
-	BFw==
-X-Google-Smtp-Source: AGHT+IG7YC+Vg8rHRD/pZ45k6AmgmMsM50hI2xsY+GPn38wgc2sLRnIWJcTpkNONdPZL6YQH7t5jCQ==
-X-Received: by 2002:a05:6e02:3006:b0:3d0:4c9c:965f with SMTP id e9e14a558f8ab-3d6d55761b0mr45283835ab.20.1743615730610;
-        Wed, 02 Apr 2025 10:42:10 -0700 (PDT)
+        bh=d8krvmT3hXiuiccuxDpOYGdDtTsrrIwxKLxWjX0uKEg=;
+        b=QFFjGq5UbrDG0AbZVmmJHzTdrpBvcH2o/1kpSczCMHj+TFxR9ZsDE1dGzrQZ49nhsJ
+         K+pEdSFm/qIVmh/qaXCFo5eElzBXNnBGwgYgzyBD0YijgFYMs/FgNeF9NbCPIxYhbM7m
+         nZ/wa62NubNx3zfFtcejNHhvCKkyHMjQK3ZUs5jpOW6yJQHfiu610Ml5mbeSmiuZeqge
+         U7PBM++edJ2Pb5lcRnFNq08zOttjm9wRsGqHOeC+T3NinHH6VMyWBVtriwIXKAAdlDrJ
+         5zPVO9FnNx5soigroFP9PAk1RWMlKQcKzkcSKojKol4+jX5StSBpbC+xhlOQGnN6Qxus
+         EIbw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9erTYk4G4lDnAxQvmIoH0ZmBCk0QGb8Bh/Jp0Bf8eW++G3n2sw+3rIqQFtNFtbDuUm1IRkZJoy0ROIU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaPa807XxVFZVDOjEaDQ2ko5Op2BMmT5TFj+KTJVH0TEio/p4V
+	tDwdW2uzxaFTI254r74vYrVFju25XQ9t3OipUPcoP6Asxhh/RuEH
+X-Gm-Gg: ASbGncsKGl+kq76OmvjhxoSdkr0uNGoP/kjUY7Rjxr87MhPS8MieTHSTgzFGIRgzqwG
+	Vaf8CvLdNPPsevurPxJqqt4n9RLoWo2ksEvMAccKBmp/2invrvZ8dS08ag+JeJcOqZ6NPXba2yC
+	2YHzyLlc7pjlZSXBHPnuX/l5pAe6fZd6GpN/IaKnnIF9NiXpp1yckYkrefHHMLDM/DncdTi9z+C
+	WgEm23w9IjTfL9hiEa1wLNuIfSe0TeStL9lnKRXtXyAe7YxS2TH37v8XLd/R65RLN9hq0CWW/rL
+	sbWH4tHcHJIl3Pf/8V8LP7ulevM+uZIYPpUVAZyB2tN/x/aAS3J2eV7ZVxFKmKUOkYGW8N32QsG
+	ON5vmvdylPASM
+X-Google-Smtp-Source: AGHT+IFfosceATDKvJJ46yRHWVuAnvPMdP3MQ3uyX0/XQ3xbrKDap7g3FuGUZOEfht1KRhM3yUM73Q==
+X-Received: by 2002:a05:6e02:1a09:b0:3d4:3c21:ba71 with SMTP id e9e14a558f8ab-3d6d5543888mr41235455ab.18.1743615734827;
+        Wed, 02 Apr 2025 10:42:14 -0700 (PDT)
 Received: from gandalf.. (c-67-165-245-5.hsd1.co.comcast.net. [67.165.245.5])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d5d5af8369sm33439725ab.71.2025.04.02.10.42.09
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d5d5af8369sm33439725ab.71.2025.04.02.10.42.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 10:42:10 -0700 (PDT)
+        Wed, 02 Apr 2025 10:42:14 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: jbaron@akamai.com,
 	gregkh@linuxfoundation.org,
@@ -87,9 +87,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	jani.nikula@intel.com,
 	ville.syrjala@linux.intel.com,
 	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH v3 01/54] vmlinux.lds.h: fixup HEADERED_SECTION{,_BY} macros
-Date: Wed,  2 Apr 2025 11:41:03 -0600
-Message-ID: <20250402174156.1246171-2-jim.cromie@gmail.com>
+Subject: [PATCH v3 02/54] docs/dyndbg: update examples \012 to \n
+Date: Wed,  2 Apr 2025 11:41:04 -0600
+Message-ID: <20250402174156.1246171-3-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250402174156.1246171-1-jim.cromie@gmail.com>
 References: <20250402174156.1246171-1-jim.cromie@gmail.com>
@@ -101,35 +101,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-commit 1d926e259d8f ("vmlinux.lds.h: add HEADERED_SECTION_* macros")
-
-I flubbed the defn of the outer 2 macros; they missed the extra arg
-needed: _front/_hdr.  Fix it now, before anyone notices.
+commit 47ea6f99d06e ("dyndbg: use ESCAPE_SPACE for cat control")
+changed the control-file to display format strings with "\n" rather
+than "\012".  Update the docs to match the new reality.
 
 Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Tested-by: Louis Chauvet<louis.chauvet@bootlin.com>
 ---
- include/asm-generic/vmlinux.lds.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+-v2 fix missed \012's
+---
+ .../admin-guide/dynamic-debug-howto.rst       | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 0d5b186abee8..c9c66089ea2f 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -219,10 +219,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	KEEP(*(.gnu.linkonce.##_sec_))					\
- 	BOUNDED_SECTION_POST_LABEL(_sec_, _label_, _BEGIN_, _END_)
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 7c036590cd07..4ac18c0a1d95 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -38,12 +38,12 @@ You can view the currently configured behaviour in the *prdbg* catalog::
  
--#define HEADERED_SECTION_BY(_sec_, _label_)				\
--	HEADERED_SECTION_PRE_LABEL(_sec_, _label_, __start, __stop)
-+#define HEADERED_SECTION_BY(_sec_, _label_, _front)			\
-+	HEADERED_SECTION_PRE_LABEL(_sec_, _label_, __start, __stop, _front)
+   :#> head -n7 /proc/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  init/main.c:1179 [main]initcall_blacklist =_ "blacklisting initcall %s\012
+-  init/main.c:1218 [main]initcall_blacklisted =_ "initcall %s blacklisted\012"
+-  init/main.c:1424 [main]run_init_process =_ "  with arguments:\012"
+-  init/main.c:1426 [main]run_init_process =_ "    %s\012"
+-  init/main.c:1427 [main]run_init_process =_ "  with environment:\012"
+-  init/main.c:1429 [main]run_init_process =_ "    %s\012"
++  init/main.c:1179 [main]initcall_blacklist =_ "blacklisting initcall %s\n"
++  init/main.c:1218 [main]initcall_blacklisted =_ "initcall %s blacklisted\n"
++  init/main.c:1424 [main]run_init_process =_ "  with arguments:\n"
++  init/main.c:1426 [main]run_init_process =_ "    %s\n"
++  init/main.c:1427 [main]run_init_process =_ "  with environment:\n"
++  init/main.c:1429 [main]run_init_process =_ "    %s\n"
  
--#define HEADERED_SECTION(_sec)	 HEADERED_SECTION_BY(_sec, _sec)
-+#define HEADERED_SECTION(_sec, _front) \
-+	HEADERED_SECTION_BY(_sec, _sec, _front)
+ The 3rd space-delimited column shows the current flags, preceded by
+ a ``=`` for easy use with grep/cut. ``=p`` shows enabled callsites.
+@@ -59,10 +59,10 @@ query/commands to the control file.  Example::
  
- #ifdef CONFIG_TRACE_BRANCH_PROFILING
- #define LIKELY_PROFILE()						\
+   :#> ddcmd '-p; module main func run* +p'
+   :#> grep =p /proc/dynamic_debug/control
+-  init/main.c:1424 [main]run_init_process =p "  with arguments:\012"
+-  init/main.c:1426 [main]run_init_process =p "    %s\012"
+-  init/main.c:1427 [main]run_init_process =p "  with environment:\012"
+-  init/main.c:1429 [main]run_init_process =p "    %s\012"
++  init/main.c:1424 [main]run_init_process =p "  with arguments:\n"
++  init/main.c:1426 [main]run_init_process =p "    %s\n"
++  init/main.c:1427 [main]run_init_process =p "  with environment:\n"
++  init/main.c:1429 [main]run_init_process =p "    %s\n"
+ 
+ Error messages go to console/syslog::
+ 
 -- 
 2.49.0
 
