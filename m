@@ -1,189 +1,82 @@
-Return-Path: <linux-kernel+bounces-584750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF6AA78B03
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C21FA78B0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806BD3B1D5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCAA16FD88
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A61236420;
-	Wed,  2 Apr 2025 09:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f9Bo4ohS"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C53B235BF4;
+	Wed,  2 Apr 2025 09:25:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B1C2356D7;
-	Wed,  2 Apr 2025 09:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E93A1E8837;
+	Wed,  2 Apr 2025 09:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743585863; cv=none; b=uylIN8ygoPpK0BbmNbaGA1kuIJaQUg+chP/r0bDNBCKYxBeZOA2GTziwOyxR2w+oX9CwWqIECgfGpud72r2xW7VRYQScmBfpbzug6swfpyIS2y6GpEM1s7yhsq78oIqVoixQtaCvovwzHymBg0MWyxn3eknBEskOJtEzKCn+yKc=
+	t=1743585930; cv=none; b=o+k/Ow6huXc2tEa+RoRWV8f00Fg6UhGypkUkdh5PvhEpM+bYZXiwqzJJQf4ROZiXrkCrpytnw0ctQ7rxBZolvU7XARRcfDHVHvquYmOyEv3bXZd39bjF6hQC82TWwMK1C6GgtlJdCE7TTiqsn4nIfkrN4y2jpXPGTg67GO9C+Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743585863; c=relaxed/simple;
-	bh=C3XotoUexJAu0axISvav3t2Bl12OZSkmJVdzrk20j4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duVads5zPe3IWtuZsqWs22kfRyIajF1vnIITjEHsCuC6gna2/vk6yvyPZczCqBnuO30EcRgVz9sKo55tkTNd9BZkAelSmgIOwFCbkmtBUUFVII7UhEHdl9w4u9lkURa+OHfp154o26v83+a/vv2r4MydpGBfG5vC7nG2/VSzXPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f9Bo4ohS; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1743585859;
-	bh=C3XotoUexJAu0axISvav3t2Bl12OZSkmJVdzrk20j4w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f9Bo4ohS74A0fke56j5NVf6RcpCx5zkYMAxEJF5Dnfou5QXznemiAIk6JbS4moAyD
-	 mEZCgWFbe9JUN8phOpckNscZ0Y0zXq2aBPm1+uOrQ8ZoHhx+DBiubzcV50DkdT9EBD
-	 KHcJDHdiKOl42PYvNiJc11RTmRRWeSj+SR8qU9UJU17NoJdxjTpixnsn7DBp7ERUrm
-	 pBJmZacGxqKfH26R/U0Gckw6zCnpXOleu+eRvhTyNgNYJyFXCU9a3y7e2OWj9rohOM
-	 4zaq9uhtzPX3ez5ma4WRMOv8kmrnkuQ0LlOyGBIiQCkQIMZH9309cd06pkCJWJTkQO
-	 IXii4fbJyBeIQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1E5BC17E0809;
-	Wed,  2 Apr 2025 11:24:19 +0200 (CEST)
-Message-ID: <30ff6b8c-befc-4233-8e61-c131b1f037ff@collabora.com>
-Date: Wed, 2 Apr 2025 11:24:18 +0200
+	s=arc-20240116; t=1743585930; c=relaxed/simple;
+	bh=y90OORQmQst754NgohihyeKjzbwkvGiSh/5wkUbDPBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LNBsezSgps+fSDGAV7cub/Q81Vc/vwqAN53iuapnLW7sREujsGRnx71rMlz4c/O1nNzPMjElFBUOqeXCPFokuIjy9jGAMUqh3V/60HoKVrwpQj9a6no8BkOwMZxT3iaDXw8dcKf4hcOn3aheidUe5iOCnbzhfbPDItsazJRViPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051CEC4CEDD;
+	Wed,  2 Apr 2025 09:25:27 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Xuefeng Li <lixuefeng@loongson.cn>,
+	Huacai Chen <chenhuacai@gmail.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org,
+	Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH] irqchip/loongson-liointc: Support to set IRQ_TYPE_EDGE_BOTH
+Date: Wed,  2 Apr 2025 17:25:00 +0800
+Message-ID: <20250402092500.514305-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3,1/2] dt-bindings: memory-controllers: Add MediaTek DRAM
- controller interface
-To: =?UTF-8?B?Q3J5c3RhbCBHdW8gKOmDreaZtik=?= <Crystal.Guo@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk@kernel.org" <krzk@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20250326063041.7126-1-crystal.guo@mediatek.com>
- <20250326063041.7126-2-crystal.guo@mediatek.com>
- <fb154077-e650-480e-a4d7-0a141b563dfc@collabora.com>
- <4bad42c867a838da413154fa0a779547d642642c.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <4bad42c867a838da413154fa0a779547d642642c.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 02/04/25 05:51, Crystal Guo (郭晶) ha scritto:
-> On Wed, 2025-03-26 at 11:18 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 26/03/25 07:30, Crystal Guo ha scritto:
->>> A MediaTek DRAM controller interface to provide the current DDR
->>> data rate.
->>>
->>> Signed-off-by: Crystal Guo <crystal.guo@mediatek.com>
->>> ---
->>>    .../memory-controllers/mediatek,dramc.yaml    | 44
->>> +++++++++++++++++++
->>>    1 file changed, 44 insertions(+)
->>>    create mode 100644 Documentation/devicetree/bindings/memory-
->>> controllers/mediatek,dramc.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-
->>> controllers/mediatek,dramc.yaml
->>> b/Documentation/devicetree/bindings/memory-
->>> controllers/mediatek,dramc.yaml
->>> new file mode 100644
->>> index 000000000000..8bdacfc36cb5
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/memory-
->>> controllers/mediatek,dramc.yaml
->>
->> The filename should be "mediatek,mt8196-dramc.yaml"
->>
-> 
-> For other MediaTek SOCs, the method of calculating current ddr data
-> rate is similar to that of MT8196. After changing "mediatek,dramc.yaml"
-> to "mediatek,mt8196-dramc.yaml", would future Mediatek SOCs need to add
-> a separate yaml file again? or could they reuse mediatek,mt8196-
-> dramc.yaml? Thank you for your guidance.
-> 
+Some peripheral subsystems request IRQ_TYPE_EDGE_BOTH interrupt type and
+report request failures on LIOINTC. To avoid such failures we support to
+set IRQ_TYPE_EDGE_BOTH type on LIOINTC, by setting LIOINTC_REG_INTC_EDGE
+to true and keep LIOINTC_REG_INTC_POL as is.
 
-Other MediaTek SoC will be able to reuse mediatek,mt8196-dramc.yaml if the
-hardware is similar.
+Cc: stable@vger.kernel.org
+Signed-off-by: Yinbo Zhu <zhuyinbo@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ drivers/irqchip/irq-loongson-liointc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Cheers,
-Angelo
+diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
+index 2b1bd4a96665..c0c8ef8d27cf 100644
+--- a/drivers/irqchip/irq-loongson-liointc.c
++++ b/drivers/irqchip/irq-loongson-liointc.c
+@@ -128,6 +128,10 @@ static int liointc_set_type(struct irq_data *data, unsigned int type)
+ 		liointc_set_bit(gc, LIOINTC_REG_INTC_EDGE, mask, false);
+ 		liointc_set_bit(gc, LIOINTC_REG_INTC_POL, mask, true);
+ 		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		liointc_set_bit(gc, LIOINTC_REG_INTC_EDGE, mask, true);
++		/* Requester need "both", keep LIOINTC_REG_INTC_POL as is */
++		break;
+ 	case IRQ_TYPE_EDGE_RISING:
+ 		liointc_set_bit(gc, LIOINTC_REG_INTC_EDGE, mask, true);
+ 		liointc_set_bit(gc, LIOINTC_REG_INTC_POL, mask, false);
+-- 
+2.47.1
 
-> Best regards,
-> Crystal
-> 
->>
->>> @@ -0,0 +1,44 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +# Copyright (c) 2025 MediaTek Inc.
->>> +%YAML 1.2
->>> +---
->>> +$id:
->>> https://urldefense.com/v3/__http://devicetree.org/schemas/memory-controllers/mediatek,dramc.yaml*__;Iw!!CTRNKA9wMg0ARbw!gH5hMTJ34ZcYfNMfLUNL-dH9SMyQGr06kJ4jij1anezByF7IBOSbkYNdqysgHoz-rSRNwM9r6RaaTC1MO2882ojif26oaBzg$
->>> +$schema:
->>> https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!gH5hMTJ34ZcYfNMfLUNL-dH9SMyQGr06kJ4jij1anezByF7IBOSbkYNdqysgHoz-rSRNwM9r6RaaTC1MO2882ojifw8f6sUH$
->>> +
->>> +title: MediaTek DRAM Controller (DRAMC)
->>> +
->>> +maintainers:
->>> +  - Crystal Guo <crystal.guo@mediatek.com>
->>> +
->>> +description:
->>> +  A MediaTek DRAM controller interface to provide the current data
->>> rate of DRAM.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - mediatek,mt8196-dramc
->>
->> P.S.: bindings maintainers: this driver is expected to get more
->> compatibles soon.
->>
->> Cheers,
->> Angelo
->>
->>
->>> +
->>> +  reg:
->>> +    items:
->>> +      - description: anaphy registers
->>> +      - description: ddrphy registers
->>> +
->>> +additionalProperties: false
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +
->>> +examples:
->>> +  - |
->>> +    soc {
->>> +        #address-cells = <2>;
->>> +        #size-cells = <2>;
->>> +
->>> +        memory-controller@10236000 {
->>> +            compatible = "mediatek,mt8196-dramc";
->>> +            reg = <0 0x10236000 0 0x2000>,
->>> +                  <0 0x10238000 0 0x2000>;
->>> +        };
->>> +    };
->>
->>
 
