@@ -1,173 +1,100 @@
-Return-Path: <linux-kernel+bounces-585312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354EEA79214
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CE7A79238
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DED916A6ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C246188E0D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA1022612;
-	Wed,  2 Apr 2025 15:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7838D3FBA7;
+	Wed,  2 Apr 2025 15:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q7BMGh9Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="hCNnZOBh"
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E3E39FD9;
-	Wed,  2 Apr 2025 15:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A2E1FC3;
+	Wed,  2 Apr 2025 15:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743607399; cv=none; b=XTZHMivsf7OjUyzvb0tmCcY+0cS6S2ZXxMt7Tm9Ggza1wDyko51SUFhmMhRmZHzpM9DcmDuWidtExhB+DS9pOoFP92JOfYr2QuzwSSMdTTBmYSPnriDWxqgDfyuk5/Nxp+gHjcizUlAj+S+PmiaA42mxP0pGQhyu0L7MVrnjS1Q=
+	t=1743608014; cv=none; b=Zrg0Cb12VCWQVZxAWv5rpkiDfUwMN6xaAcmxfeIT9DVlLJHtMXXLUIl0HgT/5LiCppYYAM4Bs9DT2GiwREjxbQkKCkLavsZcoqnWdFLCdU1CE9KEG7AM+nSKoikJT4iqia1YFAKCXIAuhFy8onGkzTG5djyIfxeSUi0q2cuhwjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743607399; c=relaxed/simple;
-	bh=Agn5aIC+UecWPsNBD+cdpqGxkV91aebLchMrY17IwdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O88dGVa/UZtW96Aln4QZYSBnsXKY19RphYnlN/wRns9dBrciSWTvWCr5DXzJiEr1//VFkrMatmlTMp31NpRLg3rnE09h3H9BTeYOZYP6QezA+5hcnH3aX+TF8J/etV873d3UDNWrPIRx1q0ZXq8RnVzltRUfCFW+mOf+bZfLru8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q7BMGh9Q; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743607399; x=1775143399;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=Agn5aIC+UecWPsNBD+cdpqGxkV91aebLchMrY17IwdE=;
-  b=Q7BMGh9QA+DGFvoAmVrvFtUxSMel41DVBF0lCCUZszGpEY5cFXShOxNQ
-   MpcnZFnjkhN+7iyQuyKtdFPZ2FPjpr6OPj2N4DaTDEAPy0qrHaZjLt0tf
-   dpktx4CWAfydLHqXyPxY1j/IQnqjwFjju7MfUTflRIxfAlEVouvSviwle
-   e0uW6O6E5bnchFUdbzqRIuKhMFH97DJ5O+PD3xBnaC9tIjkX5QL87HlMC
-   c/CSiuLsA+NhvZI2caM7OLqMlF8a+mdBOCtqA71pID8Hf/aqPRyQ0/gfc
-   MuTKjax9178oqtl3FnriN5R+9TIr0dHV8JwK93klnQX+7ALsj223Q4XKk
-   w==;
-X-CSE-ConnectionGUID: vlcKkkWhTpCuxQtUI0NYyw==
-X-CSE-MsgGUID: aw7cjXz9Ts6jsRzAm1+pRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44875679"
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="44875679"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 08:23:18 -0700
-X-CSE-ConnectionGUID: PmUwmW5hRFevmQz7BX717w==
-X-CSE-MsgGUID: XxgHLJR9T+ipQ/TXGpO+yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="126628542"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 08:23:18 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 511DB20B5736;
-	Wed,  2 Apr 2025 08:23:13 -0700 (PDT)
-Message-ID: <28016335-385c-48b9-8767-9b087a0ec4cc@linux.intel.com>
-Date: Wed, 2 Apr 2025 11:23:12 -0400
+	s=arc-20240116; t=1743608014; c=relaxed/simple;
+	bh=syfpsvuH5wQhbNS8WDq0kgGOJr6aNvZQnc8jHmVdMQU=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=rGn6ij54qI6YLU552+PcGkhKXkc99M//rZhhpxmfzYAI4XCAwlxW4PdL61R1uaHEJfPJy7CwE6GOCSbAasu6mi9MnVXggkwo4/5QWidb/r/A/BWU77budd7AcrlJWpP7J9VwIz1HXRkQ7wDflfZlhg8ARowGtnDTF7fwq2Ttm+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=hCNnZOBh; arc=none smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <bac53deae60fbf5dbcb19feb403d9e9f@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1743607433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FawFq1pnlpgkOhxfSYjHGUQvx87dCGjnpIvU2tRWtLc=;
+	b=hCNnZOBhOpJXFp6DW1Enxrx/rOhffbmqXEUTtHWGRP4PcPMqMH1H/wgD1SNQBAvGxOfln2
+	VrU5UJtP7bhhD/jecJGW6/6w5a7j1vRPG7LrwZuhTZk1BVw8DDfaDnW9+VAnqWKhLcIOFu
+	wQEzFQYDTvNInXNmNSCvQE+3QKPw6Ur7t+6hAobgHhu+wK6OXafzugOJ7PKsVrjZXp4yP3
+	mnoaBk53KQOlQhJtL3MAUfkLYU+3AswWadZh3dbW5jbbsawacB6jlTdzMsiH4t0HLcjr0y
+	xr2b2OX4lt4dCXPOT/bjxWo+QQ8ShDhd5JMu4h+EN2122HLPSZQIbIi3Mp7a0w==
+From: Paulo Alcantara <pc@manguebit.com>
+To: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>
+Cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+ linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Remove cifs_truncate_page() as it should be
+ superfluous
+In-Reply-To: <559573.1743519662@warthog.procyon.org.uk>
+References: <559573.1743519662@warthog.procyon.org.uk>
+Date: Wed, 02 Apr 2025 12:23:48 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] perf stat: Better hybrid support for the NMI
- watchdog warning
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
- Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert"
- <linux@treblig.org>, Andi Kleen <ak@linux.intel.com>,
- James Clark <james.clark@linaro.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250318041442.321230-1-irogers@google.com>
- <20250318041442.321230-2-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250318041442.321230-2-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+David Howells <dhowells@redhat.com> writes:
 
+> The calls to cifs_truncate_page() should be superfluous as the places that
+> call it also call truncate_setsize() or cifs_setsize() and therefore
+> truncate_pagecache() which should also clear the tail part of the folio
+> containing the EOF marker.
+>
+> Further, smb3_simple_falloc() calls both cifs_setsize() and
+> truncate_setsize() in addition to cifs_truncate_page().
+>
+> Remove the superfluous calls.
+>
+> This gets rid of another function referring to struct page.
+>
+> [Should cifs_setsize() also set inode->i_blocks?]
 
-On 2025-03-18 12:14 a.m., Ian Rogers wrote:
-> Prior to this patch evlist__has_hybrid would return false if the
-> processor wasn't hybrid or the evlist didn't contain any core
-> events. If the only PMU used by events was cpu_core then it would
-> true even though there are no cpu_atom events. For example:
-> 
-> ```
-> $ perf stat --cputype=cpu_core -e '{cycles,cycles,cycles,cycles,cycles,cycles,cycles,cycles,cycles}' true
-> 
->  Performance counter stats for 'true':
-> 
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
->      <not counted>      cpu_core/cycles/                                                        (0.00%)
-> 
->        0.001981900 seconds time elapsed
-> 
->        0.002311000 seconds user
->        0.000000000 seconds sys
-> ```
-> 
-> This patch changes evlist__has_hybrid to return true only if the
-> evlist contains events from >1 core PMU. This means the NMI watchdog
-> warning is shown for the case above.
+I don't think that's necessary as the current inode will be marked for
+revalidation (e.g. cifsInodeInfo::time is set to 0), so next call to
+cifs_fattr_to_inode() will update inode->i_blocks.  If it isn't being
+updated, then I'm missing something else.
 
-Nit:
-The function name may still bring confusions.
-It may be better to change the function name as well, e.g.,
-evlist__has_hybrid_pmus()? It implies more than one PMU.
-
-Thanks,
-Kan>
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <stfrench@microsoft.com>
+> cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
 > ---
->  tools/perf/util/stat-display.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> index e852ac0d9847..f311f1960e29 100644
-> --- a/tools/perf/util/stat-display.c
-> +++ b/tools/perf/util/stat-display.c
-> @@ -825,13 +825,25 @@ static bool is_mixed_hw_group(struct evsel *counter)
->  static bool evlist__has_hybrid(struct evlist *evlist)
->  {
->  	struct evsel *evsel;
-> +	struct perf_pmu *last_core_pmu = NULL;
->  
->  	if (perf_pmus__num_core_pmus() == 1)
->  		return false;
->  
->  	evlist__for_each_entry(evlist, evsel) {
-> -		if (evsel->core.is_pmu_core)
-> +		if (evsel->core.is_pmu_core) {
-> +			struct perf_pmu *pmu = evsel__find_pmu(evsel);
-> +
-> +			if (pmu == last_core_pmu)
-> +				continue;
-> +
-> +			if (last_core_pmu == NULL) {
-> +				last_core_pmu = pmu;
-> +				continue;
-> +			}
-> +			/* A distinct core PMU. */
->  			return true;
-> +		}
->  	}
->  
->  	return false;
+>  fs/smb/client/cifsfs.h  |    1 -
+>  fs/smb/client/inode.c   |   19 -------------------
+>  fs/smb/client/smb2ops.c |    2 --
+>  3 files changed, 22 deletions(-)
 
+Looks good,
+
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
 
