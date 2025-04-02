@@ -1,89 +1,58 @@
-Return-Path: <linux-kernel+bounces-584558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14ADA78894
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33279A78897
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70C018934C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487FF1891B92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A87C233706;
-	Wed,  2 Apr 2025 07:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEBA2343C9;
+	Wed,  2 Apr 2025 07:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yWOfaga9"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ei2LYmz2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12323237C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F90233736;
+	Wed,  2 Apr 2025 07:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577662; cv=none; b=Ha6Kxo7wZ5QODA0Yx3U55Cu3Ricg274H9V+JbMQl/B1Cijinv7ioLzbo6tmndpe+wi6DVPX9iZPl3yJKXSfF2eFe7Lj/0a9JRx+m+zsQmw8r9xgCo0PEEuQnzNU+A9ed8PjW93oHp0864WHdQk4nR23xpDFr3tfd+LUcts3UiVo=
+	t=1743577688; cv=none; b=DQNNCSlxfW4Ch5BU+EGK4044SPgx4gq2/AInAeRovDw1TKxLufaGRgJswQ78/3L74I3ql5vu8qD/K6n3+Ol0BWzLUFFLtTygTZH+5kg9hNnFGVS2CW0NP0MBEdLNV5QbZjN4fZQoCBjsFpb66eMujo6ExL3Hl8IdZDeKXZTVMrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743577662; c=relaxed/simple;
-	bh=NnWGuHjIyJg5ukrQmVNz2nsRNWILWqsyGsXJg48Opm0=;
+	s=arc-20240116; t=1743577688; c=relaxed/simple;
+	bh=wtHLJiYIWI8qlPwCMFuVGNMagth1T5fWPZ+oOrKc2iA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+BKOzUWJFRE7DIWnZ6So9wGucW2lI/wm6rJVgbcueK1Dt+bb9oz8sHkFqLVgvU22xqD/W4V6GLRb8jfR4CXKkdAwVuqFcpYCEYYAWxf0+OTCapzQfBKyD9uw45dZBVU5zoe+SFw3zDZXK9eMUY/KJXYmkt75jmjZCVsdiA/AzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yWOfaga9; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so11125612a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 00:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743577660; x=1744182460; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IhuADULP2/DYR+/MqPtSI6Cci67OQxTxzfXSmiaFrjc=;
-        b=yWOfaga96sPMKnoUq/D32CtFrXpWQpkvt3cee+Dec1xlVgHfB684xB4BxDOQCI46ma
-         jLFWnAPGLTJmcoZSpxq5XDLQRKTo1R9IkoD+o5xxFNwfMj8gAmykjrVRHQTVI8he13jz
-         lAJ6GbFt0mOK/OiwnrAHqiOEQjQP/WWg+1lQEViG8TIr0d+yIq67nynxR9xQq+tLq5uF
-         UjjJ0+xxWHjUqbXcpmrefZ/PDpv6kagd1ck1EoYJbW/mWxM8nHBjkJhLHtv725SJRYuc
-         vBZSjRJqZjvrK/se34oZTi9BNl4V0f4FQPNK3HmZSjHvOOoC/kwP8QZQgjEVO6AVmOhx
-         exvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743577660; x=1744182460;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IhuADULP2/DYR+/MqPtSI6Cci67OQxTxzfXSmiaFrjc=;
-        b=ubM+5x1AvhKNp4JuadqZg4Qv+ngIIgg4wjaREd+asXmpzwYKHPnf+VZU/TPPVhRN5k
-         StM6E8f1IuIB9uR3mq7l8P90niahF2Ejmppa3rE2m7Ii3/VQ9s5Ct+YpJtchcL0rF4oS
-         JK//68Su9EaxIVDeMrgp4y1WFAb3yRDzOCE+obh3xYZaufHHOsGG84Tbj137UIUPaOvI
-         kUe8wpKMoL8IuLz76nvNi6eGPZiyDSOZUnJz8FWtPn02kjMOsCp17HBFz2AdzT3tuciA
-         XIzwxfe2xbGJoiHNgA57Q2xlcnsYhC27LqHr+HFliAlDcTRv8KEGc3qR2Xjnrgc7SvlA
-         vG1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXD6pdxBWk5RHH+0tZwiSKEOU9V2b7S/SLTZhLhlQGG1szixufK9ke2hcRm9oaQSehkHiHtUG2Vey7f/q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx30k39ftUpqBDmsDKrEHKXDWgNffqOC2qbTiN/F89jQgLWc4W7
-	BrABW6QHxnTw7u/z5EHWCWUC4CHQlxEHYPc9diAzwdJjOk4oJmiOaRs8K2hy7w==
-X-Gm-Gg: ASbGncviK4oBOc3tocOyeTF5fFk8KHqTZv6Qwg4vVJEhmTPZpBI+D6aMGF45joVPq05
-	A74ENnNSA9bWS3tQJ6DinwG3kTRsk7UWSzOS0iO2meZToITjLen3jdU1rOnXnFXlRZPIaT7m11c
-	pHzdIEo+gCO1yzYKUlTRgqN0GID2ubWAqpHHxAxYitiCITlhuq4PmsmFNMS7cYfk9kgBd4CRbGq
-	XMLTxUvRASJuX7VOoo4C97CB5UIxYEz56pg1i5hMoMPlLGBgZFXTn9rEK4FhgCBLsxSuKLAUJ/Z
-	RTzxy6lWqymV54o7qHqndKfXp9qp6hhpm3dFhVH4b77rgTdvgZa2RyIF0B66GEDogyU=
-X-Google-Smtp-Source: AGHT+IE4wHP6J9GXf8X7N3O4gyhGdGcC+e9u9+l3c8VFMifgnYsypn4gjUxr5vUgHQch7GtGcGvLkQ==
-X-Received: by 2002:a17:90b:4f4b:b0:2ee:c2b5:97a0 with SMTP id 98e67ed59e1d1-3053214596cmr20228761a91.25.1743577659803;
-        Wed, 02 Apr 2025 00:07:39 -0700 (PDT)
-Received: from thinkpad ([120.56.205.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eec71besm101393275ad.14.2025.04.02.00.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 00:07:39 -0700 (PDT)
-Date: Wed, 2 Apr 2025 12:37:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImET9A1JGXXun1sO1qEDe7JH+JJHNv0NJJ++uoIc5oOR8qL9sWRxB5JiO9ExKZe1j6s2H9ul4l9VkVsfKU1oBfY1M5C4b4yf+ihAkXMnlt4TvwpIaC3ELlThm+5EoyKNtMlL2aszJfgW5HMWG04y175l8W3x/OyoQH7+23GyWDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ei2LYmz2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51B0EC4CEDD;
+	Wed,  2 Apr 2025 07:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743577688;
+	bh=wtHLJiYIWI8qlPwCMFuVGNMagth1T5fWPZ+oOrKc2iA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ei2LYmz2/fPHvHiR+TLt9UUelL7skuDHlxfVx2r/PSe+ro7kExx4TF+zegIcUWDDh
+	 2ly1qqmDBeoMg3kp62QoGDaWAqEniW9Z9OWvKPfnoQ6KgMFTBERzQBi/Omu/r8Bi1w
+	 zZ3iWM1tN91weW4PqlhuukzX7jwzi2qV0fIiHzHFYi+/DGffjfk1hTIdoLdTR1yzAd
+	 UDaIuqqY1WOETVLeW9BGQPXgWIsXhpHi3L9cdoaDbeoTFV0UGjJ332YtgDZOMFLUMP
+	 /poi9THdlSRjPMdB648iX7WBiiEqzUO0yqoYFMNMmcoUM7Ut28fU4YmCV49+wm+I0i
+	 jtdXMSNcMsYpA==
+Date: Wed, 2 Apr 2025 09:08:04 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] PCI: imx6: Workaround i.MX95 PCIe may not exit
- L23 ready
-Message-ID: <ovaomfvo7b3uxoss3tzhrkgdy6cvxi4kr2zxmqsfjxds5qfohl@t6kc4rswq6gp>
-References: <20250328030213.1650990-1-hongxing.zhu@nxp.com>
- <20250328030213.1650990-4-hongxing.zhu@nxp.com>
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD55G1 camera sensor
+ binding
+Message-ID: <20250402-curvy-seriema-of-blizzard-b1c4d9@krzk-bin>
+References: <20250401-b4-vd55g1-v2-0-0c8ab8a48c55@foss.st.com>
+ <20250401-b4-vd55g1-v2-1-0c8ab8a48c55@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,27 +61,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250328030213.1650990-4-hongxing.zhu@nxp.com>
+In-Reply-To: <20250401-b4-vd55g1-v2-1-0c8ab8a48c55@foss.st.com>
 
-On Fri, Mar 28, 2025 at 11:02:10AM +0800, Richard Zhu wrote:
-> ERR051624: The Controller Without Vaux Cannot Exit L23 Ready Through Beacon
-> or PERST# De-assertion
+On Tue, Apr 01, 2025 at 01:05:58PM +0200, Benjamin Mugnier wrote:
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            items:
+> +              const: 1
 
-Is it possible to share the link to the erratum?
+Not what I asked. Now you miss number of items. Just use the syntax I
+proposed. Or was there any issue with it?
 
-> 
-> When the auxiliary power is not available, the controller cannot exit from
-> L23 Ready with beacon or PERST# de-assertion when main power is not
-> removed.
-> 
+> +
+> +          link-frequencies:
+> +            maxItems: 1
+> +            items:
+> +              minimum: 125000000
+> +              maximum: 600000000
 
-I don't understand how the presence of Vaux affects the controller. Same goes
-for PERST# deassertion. How does that relate to Vaux? Is this erratum for
-a specific endpoint behavior?
+Best regards,
+Krzysztof
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
