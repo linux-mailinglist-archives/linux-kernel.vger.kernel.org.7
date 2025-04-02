@@ -1,226 +1,171 @@
-Return-Path: <linux-kernel+bounces-584674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61B5A78A1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CADA78A2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3ECF188B7DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4313B36EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06C62376F8;
-	Wed,  2 Apr 2025 08:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39461236430;
+	Wed,  2 Apr 2025 08:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hIUC9uBY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VDsWAyZW"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AC0234973;
-	Wed,  2 Apr 2025 08:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B1235C1B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743583010; cv=none; b=fS99ewqn9sepqLYdbD46QThBcJZJP+YHaHVe7PuX5b+ofo8sCOwZWAoUSkngfi9m1ucahVYszvOKHCDUpzGVrZ1JAOdtHsltg5+QiEyQkITw5k781bmQcgl1BGQKFN/w93W66OJ3fxazCYExKswOyZOoM7aluXUmJBVqpgksJbo=
+	t=1743583083; cv=none; b=r9I3SRiBDzgee9pKPJKQHIKAFxx/fFEyKIXurCy+xaz6qLKPU0qK8J2/j5+M7yQBiG59dAcO5I2/ZanV9t/UVfWPn171UPcqgA2K9oQTt2hclopHTb/2ceDrl5zVP8gczPyWfkNPsraUpOdkQ0akAQNmQ5BWtL3M/qIDUnvZ1bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743583010; c=relaxed/simple;
-	bh=xMDFVO13IET0puhB2hPIb7ZAxgTcZW/65nx8wRbcD1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J8nLqJnxZRnFW3kG9NZI+Zv4eNhb/i5PNFRdJHj50xe6NEUQPccmtuIt3XBm0yhq6caJAtzpuc47VyCNXRpyYqmBagW0cjbfl8A+fuyW3sMeX3bdefk6c7LBYxKoIIvO6d9aMY3MuMPL7T1jfTu/m3piIZiY2UG4i954w1/2PgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hIUC9uBY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5324ZaRC012757;
-	Wed, 2 Apr 2025 08:36:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cV/25+M3mVCF1xGJGR6r9EgMoCqdCNdpGsojXDr1yEU=; b=hIUC9uBYbE+K/2hx
-	EiCV5R48bOepeVoediCtYby0kgElzgVOYY9ALXhlK7GmuMyxwjvCr9yF1ZayiuEO
-	uHyG9vtkqcZ+OIv9GEGj/VLpo46olBgMFZd15V8BOatQN1DBU7UQkGpxD4iNpc0D
-	lKvwNrUDi3l20xp/G7+OXD2LaRIg4Hz3LoJjdGU15zzB4PNIww2oXUBScD6mGd9M
-	l5t0b4Y/r1PfdHnJn2ofl0RRyrEkkFLsOqKyHTvI63IloYBGbrnhGSMMW+J5wFZ8
-	49uOPz2M7zNrlL7fLrQTrsktqEkK6uwraaTLTNG0CVWH3E/cX343l9hl8ZSwbEls
-	eJezSg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45rxbf0ma9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Apr 2025 08:36:39 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5328acRO028342
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Apr 2025 08:36:38 GMT
-Received: from [10.133.33.107] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Apr 2025
- 01:36:33 -0700
-Message-ID: <731bacf0-a0b6-4dfd-aff0-01723a879a7c@quicinc.com>
-Date: Wed, 2 Apr 2025 16:36:31 +0800
+	s=arc-20240116; t=1743583083; c=relaxed/simple;
+	bh=KpLcYbrHVfCU5lpqyLtXrasc+74ajQ6IUD1JAcxOssI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=egtg/5PhtLz1a1Njl/tERO7aaWkSo0GXRG/NuN+sKG/R/bIAfF40U+qHNytY3Xfj6Ad19YFp+nSDFUnkdsI95ssivpRQ6+KNlXF0ZlW38nKWZWQ6EyNz4xVq7RBK5aHrfo6df9CGHN7bg9RrW14jZfqoHJ0D3tSqURdGot3QLgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VDsWAyZW; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac297cbe017so117186666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1743583079; x=1744187879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ewjxji6IY/5vNR6ri48+Aciv3sy2R06Z/j3CAF5o8hg=;
+        b=VDsWAyZWa8oGdeKEyrcuV7inTTvGPSC0WG1Wsox+VALJdx+v1ieNDjD0u3j76/HUbT
+         kaj0xw9FiZj/ZaaFpqGeFS+n2MZUDihy2SmDaYN0ElgjjbC5WfNK4ZxunwUBHPHQxzhn
+         kuZrC2smFs4QT/b4ZIOxiiO97DKyETJDUHeCzwZQkd3tk/isLpYORuCHAVFZta5lysgZ
+         msrWT+RK8yXLkA44Bb92gsknVXIEL8aDSpLJTLis4x5iIpJJRHcNicsCIq+BNbJufAuX
+         b1QtslmlyM0MpLdtyo4JwydDWfv6RWyMVCqSf+uJO1rFfOsKwv9CCGeCsV1SKXxpeTrf
+         nHVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743583079; x=1744187879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ewjxji6IY/5vNR6ri48+Aciv3sy2R06Z/j3CAF5o8hg=;
+        b=Kl+WGZCy+AM0cxdSzX+JwJycIsccA5SrVklbYNgGOp8KGJjZCSY6GfTQDMaPqXKa7p
+         28j+ZgSnAzYTbyilFtdCJqjRES1ymCXFFU4p+2ztBuNBXteR1ESqrpWEtirpWkAUI6I+
+         wtmZBpQ29qyVmgx0eBXRGpcBpagHqV+bZ6GqTXeYyEstTjz6B9mQ7qqPXrPpl7b3MSrG
+         BtjMY+82Xj8gcefqeVOihWFxbCv4UsukUel35JBgajyKlDDoca69mXkalITxYIZMujrZ
+         lgwTWpQMhKdPZc5jaEnuoAVWedI/Y9ubsnk2Z5ilA21iZp8O12sBePViIoDeYYnMfQ1A
+         DIjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2zDW+/Hr3N4lxdnUExzd/lFcy69iWHAECyvcxYE7J9IaiS48l1cmuB9LhCbphR8bw4NUkjON7SfdxHNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3zyk86wbjPsvB34v8Kk0km5Bx6KkbovMsQJ/vv/tBu90bCIWm
+	CjQoIBCKiRNYJZtLmBHeNcNN71+M+sAW4DO+NmFMpdUGAed3gXd0qlG/V6wiHxqSPoUahjDU0kE
+	AyitGxtGPgR1yIMMmxeHheigXtx0WHOBn+iSqOA==
+X-Gm-Gg: ASbGnctTgmVt4Dqsjuc5ng0RxWj6Pm5uv4Gd7tzUXtJUnoV45WXNY+dx7jvrY1/T0Jh
+	azkd7hLgCEbka6mWCw6vdquq5u4oPUSlW6pBkoXBJdRvn7nlucgf0hYFpWXYfQEukdlm2roLNjf
+	ohDLT/1/fF+W/MsjWQ9UJWxnx1
+X-Google-Smtp-Source: AGHT+IH0pZQXPIsyshZNcJikLUSgvoN+xfTfjXFKehtu6edO0p2rSXRH03DqtByAaVQ7BKiVGBgd3Q7D/uaupNVEq/E=
+X-Received: by 2002:a17:907:3f29:b0:ac3:ef17:f6f0 with SMTP id
+ a640c23a62f3a-ac7a5a670ebmr93213666b.5.1743583079476; Wed, 02 Apr 2025
+ 01:37:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight: fix the wrong type of the trace_id in
- coresight_path
-To: Mike Leach <mike.leach@linaro.org>
-CC: Anshuman Khandual <anshuman.khandual@arm.com>,
-        Jie Gan
-	<jie.gan@oss.qualcomm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "James
- Clark" <james.clark@linaro.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-References: <20250401014210.2576993-1-jie.gan@oss.qualcomm.com>
- <470e4a90-41c3-4974-a4d7-3073a7fcc737@arm.com>
- <CAJ9a7VinQSx9FYvw4ww0KQgMqapLhWTaU9D2qcc-120YywUu2Q@mail.gmail.com>
- <92dc9b50-5e58-4cfd-a78c-e32a4bec8e26@quicinc.com>
- <CAJ9a7Vjhm5B=3mDHQpuRj2JSE1hfYzOx5wq-yQcC3k+QqEcvAQ@mail.gmail.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <CAJ9a7Vjhm5B=3mDHQpuRj2JSE1hfYzOx5wq-yQcC3k+QqEcvAQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h9cPj4DcIr7JbeRIHrqO8skenXZKCKkZ
-X-Proofpoint-ORIG-GUID: h9cPj4DcIr7JbeRIHrqO8skenXZKCKkZ
-X-Authority-Analysis: v=2.4 cv=F/5XdrhN c=1 sm=1 tr=0 ts=67ecf717 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=rk3Ip3wbNkCNmIt9PQkA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-02_03,2025-04-01_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
- mlxscore=0 spamscore=0 bulkscore=0 clxscore=1015 adultscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504020054
+References: <20250331082347.1407151-1-neelx@suse.com> <2a759601-aebf-4d28-8649-ca4b1b3e755c@suse.com>
+ <CAPjX3Fdru3v6vezwzgSgkBcQ28uYvjsEquWHBHPFGNFOE8arjQ@mail.gmail.com>
+ <b1437d32-8c85-4e5d-9c68-76938dcf6573@gmx.com> <20250331225705.GN32661@twin.jikos.cz>
+In-Reply-To: <20250331225705.GN32661@twin.jikos.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 2 Apr 2025 10:37:47 +0200
+X-Gm-Features: AQ5f1Jqo0iwFCHxqBfuK--cN0_u5G5hQolFpGNc8fxZ9Qu7JV6qFHZhlP6qRpV8
+Message-ID: <CAPjX3Ff2nTrF6K+6Uk707WBfvgKOsDcmbSfXLeRyzWbqN7-xQw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: zstd: add `zstd-fast` alias mount option for fast modes
+To: dsterba@suse.cz
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Nick Terrell <terrelln@fb.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 1 Apr 2025 at 00:57, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Tue, Apr 01, 2025 at 07:44:01AM +1030, Qu Wenruo wrote:
+> >
+> >
+> > =E5=9C=A8 2025/3/31 20:36, Daniel Vacek =E5=86=99=E9=81=93:
+> > [...]
+> > >>>                        btrfs_set_opt(ctx->mount_opt, COMPRESS);
+> > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+> > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+> > >>> +             } else if (strncmp(param->string, "zstd-fast", 9) =3D=
+=3D 0) {
+> > >>> +                     ctx->compress_type =3D BTRFS_COMPRESS_ZSTD;
+> > >>> +                     ctx->compress_level =3D
+> > >>> +                             -btrfs_compress_str2level(BTRFS_COMPR=
+ESS_ZSTD,
+> > >>> +                                                       param->stri=
+ng + 9
+> > >>
+> > >> Can we just use some temporary variable to save the return value of
+> > >> btrfs_compress_str2level()?
+> > >
+> > > I don't see any added value. Isn't `ctx->compress_level` temporary
+> > > enough at this point? Note that the FS is not mounted yet so there's
+> > > no other consumer of `ctx`.
+> > >
+> > > Or did you mean just for readability?
+> >
+> > Doing all the same checks and flipping the sign of ctx->compress_level
+> > is already cursed to me.
+> >
+> > Isn't something like this easier to understand?
+> >
+> >       level =3D btrfs_compress_str2level();
+> >       if (level > 0)
+> >               ctx->compress_level =3D -level;
+> >       else
+> >               ctx->compress_level =3D level;
+> >
+> > >
+> > >> );
+> > >>> +                     if (ctx->compress_level > 0)
+> > >>> +                             ctx->compress_level =3D -ctx->compres=
+s_level;
+> > >>
+> > >> This also means, if we pass something like "compress=3Dzstd-fast:-9"=
+, it
+> > >> will still set the level to the correct -9.
+> > >>
+> > >> Not some weird double negative, which is good.
+> > >>
+> > >> But I'm also wondering, should we even allow minus value for "zstd-f=
+ast".
+> > >
+> > > It was meant as a safety in a sense that `s/zstd:-/zstd-fast:-/` stil=
+l
+> > > works the same. Hence it defines that "fast level -3 <=3D=3D=3D> fast=
+ level
+> > > 3" (which is still level -3 in internal zstd representation).
+> > > So if you mounted `compress=3Dzstd-fast:-9` it's understood you actua=
+lly
+> > > meant `compress=3Dzstd-fast:9` in the same way as if you did
+> > > `compress=3Dzstd:-9`.
+> > >
+> > > I thought this was solid. Or would you rather bail out with -EINVAL?
+> >
+> > I prefer to bail out with -EINVAL, but it's only my personal choice.
+>
+> I tend to agree with you, the idea for the alias was based on feedback
+> that upstream zstd calls the levels fast, not by the negative numbers.
+> So I think we stick to the zstd: and zstd-fast: prefixes followed only
+> by the positive numbers.
 
+Hmm, so for zlib and zstd if the level is out of range, it's just
+clipped and not failed as invalid. I guess zstd-fast should also do
+the same to be consistent.
 
-On 4/2/2025 4:17 PM, Mike Leach wrote:
-> Hi,
-> 
-> On Wed, 2 Apr 2025 at 01:50, Jie Gan <quic_jiegan@quicinc.com> wrote:
->>
->>
->>
->> On 4/1/2025 5:56 PM, Mike Leach wrote:
->>> Hi,
->>>
->>> On Tue, 1 Apr 2025 at 07:11, Anshuman Khandual
->>> <anshuman.khandual@arm.com> wrote:
->>>>
->>>> On 4/1/25 07:12, Jie Gan wrote:
->>>>> The trace_id in coresight_path may contain an error number which means a
->>>>> negative integer, but the current type of the trace_id is u8. Change the
->>>>> type to int to fix it.
->>>>>
->>>>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
->>>>> Fixes: 3c03c49b2fa5 ("Coresight: Introduce a new struct coresight_path")
->>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>>
->>>> LGTM
->>>>
->>>> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>>
->>>>> ---
->>>>>    include/linux/coresight.h | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->>>>> index d79a242b271d..c2bf10c43e7c 100644
->>>>> --- a/include/linux/coresight.h
->>>>> +++ b/include/linux/coresight.h
->>>>> @@ -337,7 +337,7 @@ static struct coresight_dev_list (var) = {                                \
->>>>>     */
->>>>>    struct coresight_path {
->>>>>         struct list_head        path_list;
->>>>> -     u8                      trace_id;
->>>>> +     int                     trace_id;
->>>>>    };
->>>>>
->>>>>    enum cs_mode {
->>>
->>> There are many places in the Coresight drivers that assign a u8
->>> traceid from the path trace ID.
->>>
->>> e.g.
->>> In coresight-etm4x-core.c : etm4_enable_perf()
->>>
->>> drvdata->trcid = path->trace_id;
->>>
->>> drvdata->trcid is defined as a u8  - the reason being trace IDs are
->>> 128 bits wide with some reserved values.
->>>
->>> Will this not just trigger the same issue if path->trace_id is changed
->>> to an int? Even if not it is inconsistent handling of the trace ID
->>> values.
->>>
->>> Trace ID errors should be handled by returning an invalid trace ID
->>> value - were the trace ID value will fail the macro
->>> IS_VALID_CS_TRACE_ID(), or separate the return of a trace ID from an
->>> error return in a function.
->>>
->>
->> Hi Mike,
->>
->> The path->trace_id is verified after it has been assigned with the logic
->> you mentioned:
->>
->> if (!IS_VALID_CS_TRACE_ID(path->trace_id))
->>          goto err_path;
->>
->> So it should be safe to assign to another u8 parameter, like you mentioned:
->>
->> In coresight-etm4x-core.c : etm4_enable_perf()
->>
->> drvdata->trcid = path->trace_id;
->>
-> 
-> It is safe but will it not trigger a warning just like the one you are
-> trying to fix as the types are mismatched?
-
-Hi Mike,
-
-It should trigger another type mismatch warning.
-
-This patch aims to fix the situation like assign a negative value to u8 
-will cause a integer toggle(it may happen and I think I should fix it), 
-e.g. -22 for 234.
-
-Thanks,
-Jie
-
-> 
-> Mike
-> 
->> Thanks,
->> Jie
->>
->>
->>> Regards
->>>
->>> Mike
->>>
->>>
->>>
->>> --
->>> Mike Leach
->>> Principal Engineer, ARM Ltd.
->>> Manchester Design Centre. UK
->>
-> 
-> 
-
+> We can make this change before 6.15 final so it's not in any released
+> kernel and we don't have to deal with compatibility.
 
