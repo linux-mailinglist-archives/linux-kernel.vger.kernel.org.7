@@ -1,203 +1,137 @@
-Return-Path: <linux-kernel+bounces-585445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E56A7937C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:54:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78240A7937E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B988516B919
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF24816C2C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72D31922E7;
-	Wed,  2 Apr 2025 16:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09541925A0;
+	Wed,  2 Apr 2025 16:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pGjGoVBV"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SYvGSHae"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75495139D0A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA2C139D0A
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743612852; cv=none; b=NH1BeWHn7WLsvRaJJOigNEWLeLASSpFUMLB1gMVw/aKnNiAFrzGqSOy1AcZ6i4oauFIWbGRxw1Tuie4r+GziTUcPwHNjI+4z0N4OkCMTndfv4nhDEuWZcGQ2yD7Spaov6WOeWciZ78u1wP+kA8MTMbOvpRkSlyxlJGdQTmJ/Ts4=
+	t=1743612927; cv=none; b=Cwj3Z61L+ELFeIlQIHBSR1mTB/WHWjHzrxg9mZGfUOZ1v5qsi3Zg3wMh7OGj5Oz/yMQYNORB8I5Vval3k79CZmKS4L01S8CPpT0a6Kx3/UQFtdhs//tJRv7C8V/DrfsjhQg1oz5mIfyp2lGWJ+YMPBsXs8tPnGLL3kwQHRST2g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743612852; c=relaxed/simple;
-	bh=tle6duRwPEEC/Ha2cZUoR+2UZyDqi9zAHSt0TfUBxHA=;
+	s=arc-20240116; t=1743612927; c=relaxed/simple;
+	bh=ulrdwPEfmjUk8IT8rXc1Llbn11efOcN2yH0jBBhPp3g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SxZk3LFuH2s//zbtOsSprkFletzn0Wo3+cAyspXLSsQnrFuQPVCAuvsoK871bUsYKKSxuZFT1m1IUBQTSchtASwu6HgaOeL3L9ZJCpGdkk87slcHmrmtetYQYbGim8px879PXwKa1cfpvVnDzV+Swbc0mhqLUDBkzo+U2pG1lGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pGjGoVBV; arc=none smtp.client-ip=209.85.214.176
+	 To:Cc:Content-Type; b=NuwFpjrLY6SGpIG4KSaYTCRoTtdvnr/KvCyAt323f/lPDXjgUJ62vp4VlxZ9RqkboOISo+kYIIhcriVvrKbjtMmNtDqu5t1brmeh9pj2O4vfOnlS/iDV+lsWmGsHp7pBGZ0EtbfQ+vooVAg7825XeK44SkrvQG/zCe1uO9s6Bj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SYvGSHae; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2263428c8baso223635ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 09:54:09 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2240aad70f2so298955ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 09:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743612848; x=1744217648; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743612925; x=1744217725; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mqjKQl11kZjyZ0aXwFqo8Ho/IO+qXomdqflXA7OMXxs=;
-        b=pGjGoVBVTzpNMKfz54TFElTYGGDnI3xP+IAfOhXweVr9L4cF98q/brLPUtbo6+6meI
-         GoWwRFqsl5QrtXQpsOQuJvl45AvMJihS9HW0i1Hyv14+tbh0nXD3a1EpH4HL3nptyKP/
-         VwSupniuQb6t18SGGVnNoEvuzclNjkNRQJerQdsL+JZM6zv5mb9yKDCPkjlE8H0jgZYU
-         rDuRG96mZ27zywyeLjM7bTleg+GKD3u1SMs7et3oVs/khRKdD2IckvsOCUFKgJd5pIO3
-         2rzaKnsGE3tPm9HNOai0Fm2evbAzNs18NMwInpjwxSPOBeyto6MCmqBwBD3RW4mT3ARq
-         d7Bw==
+        bh=g1+p+u7oJ2fOG6rupJyrqrL/J3r7aOOvHki3BBz9/Y4=;
+        b=SYvGSHaexKJ9udT1dfaiiML5+yF5J/wlcE1Gy1wLZ+Q6Sz6tc88yKJYOTXXI5dXhd6
+         x5T+T2IlNiaAsXCsV/ZoTnWIOfSgqDR8dFA1nM2bd0mk24x0B09gSGzrHtYDMoQaNBPp
+         ZRKTULvv59Ud2b/ecsLh5yvuHO8FtXIZnuw0AHIXeoB22VNmje7K05qpJcQgZDwl033r
+         /63YLyWVyS3GibvbEdI213zS8XYCw+6ztVPxPH1v4iI1QUUf52/XnQ0lSIaqLkmPM/OT
+         QKRNx/7iR0+wBfM14ZqovkBknHAN7rSwonKop+tojhGBmPyjgQV+BL3RrQ1qAKX7n+jO
+         8h2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743612848; x=1744217648;
+        d=1e100.net; s=20230601; t=1743612925; x=1744217725;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mqjKQl11kZjyZ0aXwFqo8Ho/IO+qXomdqflXA7OMXxs=;
-        b=g5XMRa/KxEflKNSdvCHOmhhQGn4+pkDy8uyVkvoVTwmjxtfwUBtbys4sA18pM3Hkmu
-         /y2PuBWgKuPmJNN729vBIV29AefpjJnzimo8xTBvs792LWpuStLHFIk3gCtdSVEaTgjb
-         OnCqnlfw9pfDE8/jGhN98NdYsNN9Njv1RViSG7jBI6QKPoF/ntrgsp/VCPzXstIFaly8
-         YVZBu56d6TbQ3OtmPR5TFMO9hG328ZLbURLgMms8lyJsR14fmEK/f09ZrYq5Pzg1uGOl
-         qhAsStFMeQK7VU4Sqpu+dRePFogxim5Xi3psutjVkMx93Yq8zeXaDSCenyOYZ5oxgn9T
-         oKUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqjXtxLYp/F/K/uBtuqru2HvnBR8Deb2Ml5KdGq6phsrDg9pX0C/SivDPezrdXkc4Jxpx/T5ctHAoyEHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxhZ28sky2YEWkBtq9WBUGw+aEB1EovlZghsypOBCoyjVrxPzt
-	f/5J5LU2JgDUwHhNvQ0qjy9MSiCoAmManpxQ6pHDbKc/Ez9VSLWYfv6sxAtbktsGjL5+aMZqdyA
-	M7YHfGL/C1Y+d1MemnL5etGW4ouCDLX+qiyKd
-X-Gm-Gg: ASbGnctIbK4Ue/6RWXEZVniKQ4vsiDzMJhOTysN5M9nAhVFpJ4mTXLNGDXlbtAD6Z2e
-	AEW7shgdz16rzPoOE5I5oH22kCg7qOkM0KUf0glPfxbE+D500W6bxa2QN48/GAn8X//VGhKBCUv
-	2cCgcajUxKXGzWkr2+LezHCvluq6jsrSLGsrQQYzxZIvyy9Mf9rurVJQ==
-X-Google-Smtp-Source: AGHT+IHMGTEKbDZlRb6V2dq3HbsnXrTWGUpjKL9SDibSI62p5nEhvEuTU3gR331+Azc4os47D0y4V10nwFQkKnpcJc4=
-X-Received: by 2002:a17:903:244a:b0:215:8723:42d1 with SMTP id
- d9443c01a7336-22969dca593mr3833475ad.10.1743612848273; Wed, 02 Apr 2025
- 09:54:08 -0700 (PDT)
+        bh=g1+p+u7oJ2fOG6rupJyrqrL/J3r7aOOvHki3BBz9/Y4=;
+        b=PTDQmaiVz5r7/ZWMTCPo1PNdPyGYhRvDEOCxWW04fAjwXistH1I5o1aTeJcBfr1jSw
+         KpAaSW0arsQgTaaChzJjYUWuAE+4RXz9WwIkDOMpy8SWVFGNRDXBIQ8nHaZwoJmTVeMv
+         Dbs2UqEb71ga2LbRYO9eD+JUUDHL5lG1TQ8Kg21T0efSaAdUVXYj3wGreEC5wazJcZQ6
+         ByV8WGeXJeMqUfE2gKiqw2m1dlcozY3pQQI6BkYxxBMg6gCjCkuTRO3LOyPHBgdeDRNV
+         fKP4OHpb/tVcML558teG+P+H8/JixoHdValZudJfwPKu9enoEZALij6j20lMSGMmRcDj
+         b5Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxfzU/XCuAZ3mazEfhM7JvcHMM0oxctey0fq940wWnZ5k7voQX2Adyu7b07JDsGzoFdBMaZPHsNokXyx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/vWTFfTMp+NTnLcKbI0E++bW1i6eAVooFQJXDAe8gkyKGEmFT
+	gW8vRgz+vLu/d6t/ew19aqi37B9LWjsMtP1XhwnY6bxmzWjZoAJ+pNZJbpN/sbp1JzdhwNTT1pO
+	Ali8+5hmCTlwDACY4bwv42ezoc+IW+1EsJyr7
+X-Gm-Gg: ASbGncsQjA7RpBF5pllrzfmjXt2ckehK6oLo7tDxUuPakuJpcvQ1SczyFjE1iYwMM5D
+	inuKx/YkC3+KZBrU/cUD7hTssxqEMhEhv4Q5DvISjR1MVHQFYWIArMpfXmBobEvYmMOgw7UjiJi
+	bJRWykcFnbFwcc8nUPyRZIhqsyKIA0kL12x8+UizyAew4lfC2sqE4jqw==
+X-Google-Smtp-Source: AGHT+IFxeDB0yIrClam9o1iXY8gJunDBb+Z/vkv/PhtQ8HyON4Llg9ykIV90m3xXDAPGCFc76xoWv1HznNT8aLnAlQ4=
+X-Received: by 2002:a17:903:3dc8:b0:216:21cb:2e06 with SMTP id
+ d9443c01a7336-2296bdaebffmr2098315ad.19.1743612924583; Wed, 02 Apr 2025
+ 09:55:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401182347.3422199-1-irogers@google.com> <20250401182347.3422199-10-irogers@google.com>
- <20250402143541.GM115840@e132581.arm.com> <CAP-5=fVqax8cxdZ4HLBP4AMxL6jADfYNrORC97T6F23mjf3N1w@mail.gmail.com>
- <20250402163807.GP115840@e132581.arm.com>
-In-Reply-To: <20250402163807.GP115840@e132581.arm.com>
+References: <20250402082106.103318-1-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250402082106.103318-1-dapeng1.mi@linux.intel.com>
 From: Ian Rogers <irogers@google.com>
-Date: Wed, 2 Apr 2025 09:53:57 -0700
-X-Gm-Features: AQ5f1Jrx_PpgbdF0w_CjiN8USfw20TRsMymiExqPxSfc7wkhTf_DN_Bd6IZx4Mo
-Message-ID: <CAP-5=fVJkJ39_qx2T9ZHn-fdxjECP_2G+cyfRRAjLvZZt5vz2A@mail.gmail.com>
-Subject: Re: [PATCH v1 09/48] perf tests: Silence -Wshorten-64-to-32 warnings
-To: Leo Yan <leo.yan@arm.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+Date: Wed, 2 Apr 2025 09:55:13 -0700
+X-Gm-Features: AQ5f1Jrf4VkU9NzoUMTfo2fkSLhuzPQGMbEaKh67unWrJZb2x80Qvws2gcP6TGc
+Message-ID: <CAP-5=fU3Tam3PXd94ibVQZU=Kk4Q_=z0i9o7kx-Vgm9qwK-mHA@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Fix incorrect --user-regs comments
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kyle Meyer <kyle.meyer@hpe.com>, Ben Gainey <ben.gainey@arm.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Eder Zulian <ezulian@redhat.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Kuan-Wei Chiu <visitorckw@gmail.com>, 
-	He Zhe <zhe.he@windriver.com>, Dirk Gouders <dirk@gouders.net>, 
-	Brian Geffon <bgeffon@google.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
-	Howard Chu <howardchu95@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Jann Horn <jannh@google.com>, Masahiro Yamada <masahiroy@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Yang Jihong <yangjihong@bytedance.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andi Kleen <ak@linux.intel.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Hao Ge <gehao@kylinos.cn>, Tengda Wu <wutengda@huaweicloud.com>, 
-	Gabriele Monaco <gmonaco@redhat.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Casey Chen <cachen@purestorage.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Li Huafei <lihuafei1@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Andrew Kreimer <algonell@gmail.com>, 
-	=?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Steve Clevenger <scclevenger@os.amperecomputing.com>, Zixian Cai <fzczx123@gmail.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Yujie Liu <yujie.liu@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dapeng Mi <dapeng1.mi@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 2, 2025 at 9:38=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+On Tue, Apr 1, 2025 at 8:58=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel.co=
+m> wrote:
 >
-> Hi Ian,
+> The comment of "--user-regs" option is not correct, fix it.
 >
-> On Wed, Apr 02, 2025 at 08:42:58AM -0700, Ian Rogers wrote:
->
-> [...]
->
-> > On Wed, Apr 2, 2025 at 7:35=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
-> > >
-> > > On Tue, Apr 01, 2025 at 11:23:07AM -0700, Ian Rogers wrote:
-> > >
-> > > [...]
-> > >
-> > > > @@ -478,13 +478,14 @@ static int __cmd_test(struct test_suite **sui=
-tes, int argc, const char *argv[],
-> > > >       int err =3D 0;
-> > > >
-> > > >       for (struct test_suite **t =3D suites; *t; t++) {
-> > > > -             int i, len =3D strlen(test_description(*t, -1));
-> > > > +             int i;
-> > > > +             int len =3D (int)strlen(test_description(*t, -1));
-> > >
-> > > Thanks for huge polish.
-> > >
-> > > Just a concern from me.  Throughout this patch, the methodology is no=
-t
-> > > consistent.  Some changes update variable types which is fine for me.
-> > >
-> > > But the case above it simply cast size_t to int.  Should we update th=
-e
-> > > variable type as 'size_t' at here?
-> >
-> > Thanks Leo, I played around with it, but don't mind if someone wants
-> > to do it a different way. I was trying to make the changes minimal.
-> > The problem typically with size_t is we then use the value, for
-> > example, as a printf size modifier and need to introduce lots of casts
-> > back to being an int.
->
-> This conclusion is not quite right, see:
-> https://stackoverflow.com/questions/2524611/how-can-one-print-a-size-t-va=
-riable-portably-using-the-printf-family
->
-> > When this isn't too great I've done it, but in
-> > this case I think keeping the int, the lack of casts but a cast here
-> > to capture that we expect test descriptions to fit in the size of an
-> > int is the least worst option.
->
-> I would say in another way.  After we enabled a compiler warning
-> option, this will give us a chance to improve code by dismissing
-> the warnings (and avoid potential bugs).
->
-> If we use casts just to silence warnings, we also lose the opportunity
-> to improve code quality.  The changes in this series that fix type
-> mismatches are good, but I think the use of casts is not particularly
-> helpful - we're simply switching from implicit compiler casts to
-> explicit ones.
+> "on interrupt," -> "on user space,"
 
-Right, but I think changing function parameters, return types would
-turn into an epic refactor and the patch series is already unwieldy.
-With the casts we can see the behavior is deliberate but that's not to
-say it couldn't be better. With the warnings gone it allows
--Wshorten-64-to-32 to find the truly errant 64 to 32 bit implicit
-casts. Anyway, I don't have time to do such a larger refactor so
-somebody else is going to need to pick that up. I did refactor the
-cases where I thought it mattered more, but as you say that does lead
-to a feeling of inconsistency in the series.
+nit: I think "in user space" is more grammatical.
+
+> Fixes: 84c417422798 ("perf record: Support direct --user-regs arguments")
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/builtin-record.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index ba20bf7c011d..f21b133691d7 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -3480,7 +3480,7 @@ static struct option __record_options[] =3D {
+>                     "sample selected machine registers on interrupt,"
+>                     " use '-I?' to list register names", parse_intr_regs)=
+,
+>         OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs=
+, NULL, "any register",
+> -                   "sample selected machine registers on interrupt,"
+> +                   "sample selected machine registers on user space,"
+
+nit: "sample selected machine registers in user space"
+
+Reviewed-by: Ian Rogers <irogers@google.com>
 
 Thanks,
 Ian
 
-> Thanks,
-> Leo
+>                     " use '--user-regs=3D?' to list register names", pars=
+e_user_regs),
+>         OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
+>                     "Record running/enabled time of read (:S) events"),
+>
+> base-commit: 35d13f841a3d8159ef20d5e32a9ed3faa27875bc
+> --
+> 2.40.1
+>
 
