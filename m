@@ -1,197 +1,121 @@
-Return-Path: <linux-kernel+bounces-584916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6CCA78D84
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:54:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3714A78D93
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0953AEF8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEABB189358E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48240238155;
-	Wed,  2 Apr 2025 11:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C72B238D32;
+	Wed,  2 Apr 2025 11:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoQnwDAz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="ING4b2v2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947C620F07D;
-	Wed,  2 Apr 2025 11:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743594858; cv=none; b=tL969HYseCKdvfM391hPHIIUggxttSl/X+LFHCp5j+TdRV37MM3nl1uwn6WZQH9bNw5U+lagfUWNOHPz8mZHM9PAubqWUrJpalJ/QI/LiYY6OYE9f7scpQPZrk0n36KRyKjTcj09UT8Ih6qogg0OEf0cKtVXCYmuFTtdkdvpIOg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743594858; c=relaxed/simple;
-	bh=2Ua8xGnzQmFoDDoihWOJWU4MrZ5rcLtSCeGpEWXLOCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gy2uFlpQTncxXfa1kgTqSPyyh0mckQaF3bySzJ0UPrep+xel9WCo/Hwqb/mUwtxDvPg0v/4sdPcFEoMgQmixtSsQ+A6tZLNfQHOI2tuJdfJya08oQyBsUKaXLHtuO/ykXoXMzgG7pqucrWHjouZeBz4xNy6f1UlzvGqGIP0w2fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoQnwDAz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34E4C4CEDD;
-	Wed,  2 Apr 2025 11:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743594858;
-	bh=2Ua8xGnzQmFoDDoihWOJWU4MrZ5rcLtSCeGpEWXLOCU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VoQnwDAz8UNT7tYFJN1lQ76ONyM3sSJhMpKElJSzTQUQ1Sw6Vv2fXzkrjY05pZe13
-	 UhNQLf8YzsoY7bAzyy7MZK7hOD6v+IqgxCEpIAofSzK0FlqyvMhKvO4kM5tXnUUifZ
-	 MT8jfP6y80HrJx+MWEsMhHlK1XltQBPIHGdgwDFprW8BvGEJO3TC1TWhqR/rkvyvHI
-	 Om9a2NG1vsMJw/IbmOAj3bzZvmC0LHWbRAkKva9P0qkVdcYgL2TFAczC1GM4pMQZtP
-	 iFOuwBAj94CQ+z5qPWpSBmccjxIJiYsno4aZeN2rILbMTIHtGcNAe+AcGFAXQYqyfo
-	 TjcoXHii66FGA==
-Message-ID: <aded0940-45d8-4063-a1a2-f0763d509095@kernel.org>
-Date: Wed, 2 Apr 2025 14:54:12 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554B4235BFB;
+	Wed,  2 Apr 2025 11:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743594944; cv=pass; b=gUufNaH3Cbatrkmeox09Bn7ijVKvLLQsCnBDCJwKFRNLHuW5ZrjrTyRNkANsK9KWKOXFXckbH5ENbTcvAUqLlU/c0c9jFxbe+luyJbNr1ymjcsphuVbYht2mkSwHKd20duzNMAJQkk2GwQgjXvaNwjftZGG9SSq28nqAvySK53M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743594944; c=relaxed/simple;
+	bh=dyJeFJYs7KZgd0hGuPcwev7dmphLf6d468l2zUbdeHI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gbo62dtcBmld9Lq1ANTk4WQrT0dZ+wttpikqq5cRncBfjC8/XAUWxpeVFaJ0ZsEY6vS/CnoBkOncDnpUdJohbzfq0dliidvwSTDL0rGQm6HXd599IcHGWUSEXqLsoacjLp6yC5PhHf2oUubCFN/zetRb19827aweg1JLM65Y42o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=ING4b2v2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743594916; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TWbAZ0GuL4bb0ioqgLS5EFNyQXLo5Q+g4oLtUX4jkpSORY43djSHcBUuGsEqRJFpzKeKAklVByyALPvxWW8dOfPZBeKdy4iyJ2tb82HWDGTHl1WBOPlblAvAZDPhxZM7Ol9L6yfESF+xVmCITRGz7OCzKVOkquYf2Zm9apxjeCw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743594916; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fdb2gePj9volh90yF+EA/VsRgGfn41mWCZbj8hlhP5E=; 
+	b=W5hEdy4LmbsdLqfB2mUKv0wqyfEKaAvfjY+aLBNpHO5TIgH5Qu4NhcwR18Gu8QF3SIruU21oyzjYODl1LKS8IJgO1au8r2Zk4aHSLV6nG1WGwiaEtnXhF5AYs09jLsGpDLOiensiYlXR+TGTaYzNc0Y2tUpUCNyQMg772kb9OhU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743594916;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=fdb2gePj9volh90yF+EA/VsRgGfn41mWCZbj8hlhP5E=;
+	b=ING4b2v2STBn5dJpZGDXGXDRo25gy1KhbHCb262ZqZngYibiM9QQPtlYqJDcFAc9
+	jNqc+qF5PrHIVx5SqDIVYF1a/L3RZWydtl3joXTdCPPkCILXqR9fRN8MUPnyBc6LXRs
+	ZiuVW5G2cFhyPNiE9mc2ee0ge5ZwL7Ih8yjuGqh8=
+Received: by mx.zohomail.com with SMTPS id 1743594914170334.5265743347172;
+	Wed, 2 Apr 2025 04:55:14 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v4 0/4] Panthor BO tagging and GEMS debug display
+Date: Wed,  2 Apr 2025 12:54:25 +0100
+Message-ID: <20250402115432.1469703-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ARM: dts: omap4: panda: cleanup bluetooth
-To: Andreas Kemnade <andreas@kemnade.info>, Rob Herring <robh@kernel.org>,
- Kevin Hilman <khilman@baylibre.com>, linux-omap@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Aaro Koskinen <aaro.koskinen@iki.fi>, devicetree@vger.kernel.org,
- Tony Lindgren <tony@atomide.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250330151401.444956-1-andreas@kemnade.info>
- <20250330151401.444956-3-andreas@kemnade.info>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20250330151401.444956-3-andreas@kemnade.info>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Andreas,
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
 
-On 30/03/2025 18:14, Andreas Kemnade wrote:
-> Bluetooth is available on the other Panda board versions, too, so move
-> stuff to common and specify the needed clock properly.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  .../boot/dts/ti/omap/omap4-panda-common.dtsi  | 31 ++++++++++++++++--
->  arch/arm/boot/dts/ti/omap/omap4-panda-es.dts  | 32 -------------------
->  2 files changed, 28 insertions(+), 35 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> index c860b590142a..05c871d31d7b 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
-> @@ -367,10 +367,8 @@ OMAP4_IOPAD(0x130, PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c4_sda */
->  	 */
->  	wl12xx_gpio: wl12xx-gpio-pins {
->  		pinctrl-single,pins = <
-> -			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 */
-> -			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a22.gpio_46 */
-> +			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 - WLAN_EN */
->  			OMAP4_IOPAD(0x070, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a24.gpio_48 */
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
+To test this functionality from UM, please refer to this Mesa patch series:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34224
 
-Apparently GPIO 48 is FM audio related and has nothing to do with wl12xx?
-So should we drop it from here?
+Discussion of previous revision of this patch series can be found at:
+https://lore.kernel.org/dri-devel/20250327140845.105962-1-adrian.larumbe@collabora.com/
 
-> -			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a25.gpio_49 */
->  		>;
->  	};
->  
-> @@ -393,6 +391,22 @@ button_pins: button-pins {
->  			OMAP4_IOPAD(0x114, PIN_INPUT_PULLUP | MUX_MODE3)	/* gpio_121 */
->  		>;
->  	};
-> +
-> +	bt_pins: bt-pins {
-> +		pinctrl-single,pins = <
-> +			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)	  /* gpmc_a22.gpio_46 - BTEN */
-> +			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3) /* gpmc_a25.gpio_49 - BTWAKEUP */
-> +		>;
-> +	};
-> +
-> +	uart2_pins: uart2-pins {
-> +		pinctrl-single,pins = <
-> +			OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)  /* uart2_cts.uart2_cts - HCI */
-> +			OMAP4_IOPAD(0x11a, PIN_OUTPUT | MUX_MODE0)	  /* uart2_rts.uart2_rts */
-> +			OMAP4_IOPAD(0x11c, PIN_INPUT_PULLUP | MUX_MODE0)  /* uart2_rx.uart2_rx */
-> +			OMAP4_IOPAD(0x11e, PIN_OUTPUT | MUX_MODE0)	  /* uart2_tx.uart2_tx */
-> +		>;
-> +	};
->  };
->  
->  &omap4_pmx_wkup {
-> @@ -531,8 +545,19 @@ &twl_usb_comparator {
->  };
->  
->  &uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart2_pins>;
->  	interrupts-extended = <&wakeupgen GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH
->  			       &omap4_pmx_core OMAP4_UART2_RX>;
-> +
-> +	bluetooth {
-> +		compatible = "ti,wl1271-st";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&bt_pins>;
-> +		enable-gpios = <&gpio2 14 GPIO_ACTIVE_HIGH>;	/* GPIO_46 */
-> +		clocks = <&twl 0>;
-> +		clock-names = "ext_clock";
-> +	};
->  };
->  
->  &uart3 {
-> diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts b/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-> index fe7b156d10ed..a933fe560834 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-> +++ b/arch/arm/boot/dts/ti/omap/omap4-panda-es.dts
-> @@ -49,22 +49,6 @@ button_pins: button-pins {
->  			OMAP4_IOPAD(0x0fc, PIN_INPUT_PULLUP | MUX_MODE3) /* gpio_113 */
->  		>;
->  	};
-> -
-> -	bt_pins: bt-pins {
-> -		pinctrl-single,pins = <
-> -			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a22.gpio_46 - BTEN */
-> -			OMAP4_IOPAD(0x072, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a25.gpio_49 - BTWAKEUP */
-> -		>;
-> -	};
-> -
-> -	uart2_pins: uart2-pins {
-> -		pinctrl-single,pins = <
-> -			OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart2_cts.uart2_cts - HCI */
-> -			OMAP4_IOPAD(0x11a, PIN_OUTPUT | MUX_MODE0)		/* uart2_rts.uart2_rts */
-> -			OMAP4_IOPAD(0x11c, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart2_rx.uart2_rx */
-> -			OMAP4_IOPAD(0x11e, PIN_OUTPUT | MUX_MODE0)		/* uart2_tx.uart2_tx */
-> -		>;
-> -	};
->  };
->  
->  &led_wkgpio_pins {
-> @@ -96,19 +80,3 @@ buttonS2 {
->  &gpio1_target {
->  	 ti,no-reset-on-init;
->  };
-> -
-> -&wl12xx_gpio {
-> -	pinctrl-single,pins = <
-> -		OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 */
-> -		OMAP4_IOPAD(0x070, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a24.gpio_48 */
-> -	>;
-> -};
-> -
-> -&uart2 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&uart2_pins &bt_pins>;
-> -	bluetooth: tiwi {
-> -		compatible = "ti,wl1271-st";
-> -		enable-gpios = <&gpio2 14 GPIO_ACTIVE_HIGH>;	/* GPIO_46 */
-> -	};
-> -};
+Changelog:
 
-otherwise,
+v4:
+ - Labelled all kernel BO's, not just heap chunks.
+ - Refactored DebugGFs GEMs list handling functions
+ - Added debugfs GEMS node mask to tell different kinds of BO's
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: Label all kernel BO's
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
 
--- 
-cheers,
--roger
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  66 ++++++++
+ drivers/gpu/drm/panthor/panthor_fw.c     |   8 +-
+ drivers/gpu/drm/panthor/panthor_gem.c    | 190 ++++++++++++++++++++++-
+ drivers/gpu/drm/panthor/panthor_gem.h    |  56 ++++++-
+ drivers/gpu/drm/panthor/panthor_heap.c   |   6 +-
+ drivers/gpu/drm/panthor/panthor_sched.c  |   9 +-
+ include/uapi/drm/panthor_drm.h           |  19 +++
+ 9 files changed, 360 insertions(+), 10 deletions(-)
 
+--
+2.48.1
 
