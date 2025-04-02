@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-585273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6570A791C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83759A791C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EA9170BCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A751894EC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CE023BD0C;
-	Wed,  2 Apr 2025 15:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF7623BD1D;
+	Wed,  2 Apr 2025 15:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pbmacwc9"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRVJTw3B"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BCE136E37;
-	Wed,  2 Apr 2025 15:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5277081C;
+	Wed,  2 Apr 2025 15:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743606067; cv=none; b=BTc72Uq/yQ9yP/Ksfi6EASVpeQ1swvH3dTV+10rVGUAsdK67RpwSXjG6WGnHp+cFSWZbvxDai2YxVFdCTafzSfSfJYPPELoU+0ts4KEdqbXNQa2WLY90y/De7AcKwiE62SJGcnRRegLTntmWDbZDeznnwBxxUB8N4vvAWQX0Ci4=
+	t=1743606087; cv=none; b=flpObtyjLTQaVq/K8N0V0/1gPtUD6hhGIsFnpbFDekpcJirGwILtZ0ZdHIRHTIIwxmOrfnnGq1lpT/tJF85dfMbAEIAUvE6GpwD4b54YZutiqWuMlbJPzov3XZxXLM63pJM4VjBjiXGmcc46Aksn2vYGNkicM6cyRG4mvz8xw7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743606067; c=relaxed/simple;
-	bh=HWaiGYuV0VEOmcJE20/AGfW9FnIR1dtXvQ2Bjv/00rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbmaXk631tRUs3qnaPuHwW5S6RdhN6YPAeuCJGuTUgij5jhh89eMQTa/Lm2V5wYC59uaSDfJkqnH9RvTdmlxWJXuL0L1RhFYOSRIlB5VZWP9ieQNUJU62NHL5EB3rf7b8G9WwBPX5OPfaeiNMJpwg+5JHNhXmmHGkffKIFw2aGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pbmacwc9; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1743606087; c=relaxed/simple;
+	bh=Pay5SvCgNwdBymfzqKMZrYyLmxZ7nRMRW2EgfFyo61s=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MIwTcLv92UH2TM5mSry+SxuNgUQYM9PHnxF/IN/BuYk1Hcd/B9HzqoP1FV8SoxMlmkGv2APin5BDfIVkRTFNKI9OxauU1+ESk1mQkfIlZJn3GhTh2jsMmYW8hyqD4JbhvDJj9uxy9zzxRQilQAFonIZOZKcjYRJkNnv6+kMeugE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRVJTw3B; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227d6b530d8so122186145ad.3;
-        Wed, 02 Apr 2025 08:01:05 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2c7f876b321so1981811fac.1;
+        Wed, 02 Apr 2025 08:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743606065; x=1744210865; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EUiH0FYCKYkr+LcT4ygOAPJY5Rbbt4eomVzmffJpVeA=;
-        b=Pbmacwc9Xk+XAoIEVg3aMdLmEL5y2TfPLxfGL5BFmHV7oq3UfCLEYREj7iLW25bYYK
-         EkrcK1cZAmksQHf7UGuYJWF8/qXhJUAcQsILdfcodXs9ZCRr2lQwbpWztnVzIs05ymNJ
-         5VBl1Eu5M26c5FwvW1arhk4BeWm+yhSBfaY7tHdappx+XyfkCuANHJIypgRvaMWaetRb
-         Qr8kGf0ImbE4MzVUMLIQYKOCqFbSefnTAmCElYofYwAGaGAzdmryPcEzxRShbIpoevVk
-         VY/JFzhm0qzrk7PKrbSJwXrWhv98OFls7PlLdVGKscJe5qrWn81Bp+E7oCDTuQvRnsYt
-         wEQQ==
+        d=gmail.com; s=20230601; t=1743606085; x=1744210885; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BkJd7ujSnv4CgArdpWVGlVRCnEQfxLIx1UY5sjCYk9Y=;
+        b=FRVJTw3BhzMyZ0pA8Ek2En0Wg2DA9h2BqCwL46l0qCHAc038fSFuOSc4f838dtirjE
+         2Ocx5S1cGZ3hOqh0yoQXtirje2C8k5E8AWjJ3V1ba5YPGUTNzYcmxbyKcLnjcXIy+bjH
+         LxhtWGH5V7YSRZ/a1C1q5AgPDyi6+mSIOJBDK54MG6nFSLpT2KPXwAo1ZepbBC47NAFj
+         uHO2aQ2U6vHLXfdU28UVhwyioyLtaT4oVPVOXkRP2c08IC5P0IfyMGAsBrzGz2lSa5SA
+         IBeaTsHt0AgcIIKSjAw6NoO0A9ovrjYDH4lgyjhEiHfI7v7hkSkz3nIFrVnCs+JDO8zn
+         6XKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743606065; x=1744210865;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUiH0FYCKYkr+LcT4ygOAPJY5Rbbt4eomVzmffJpVeA=;
-        b=gkSTvECkrDbnr4ebposmIIIzY2G2ztKsjQPfMt7RejgwF5DKJvySvjALNxj9XskU9E
-         M3sz5Z5WzL0eXnmxnjWBL+FVJ5ekmNR1OndkBA57/+OhrFwdoLOdA4iuqNJDT3c9R2J4
-         7f6S0hcN0/YEKfQ+Sqf7lUUuDlV9NtpfuXRSsdXgeSr9XzzjxDKGcr9iAhH4h5DYSFek
-         IBxX2Q2zfGu9HoZE0WvntBg5uTSMdyxVvG5v1dpDO+JU1OCyWX03r2Mbts6f5in7N+s0
-         p3MqMvBQJLe7s9y8TE/k4zvz83fqNOg2XMzWQgXIUrtbK96aOnRgGegSTvxdU1gmAq3X
-         9D9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUBzp97V12a8sF46JLZJUhwQ0kzUeZ5z9NtxI5OQk7Z+8YsZR+8GevlMGgY7AN9CPQjYGyDhsMtD1p+nS0=@vger.kernel.org, AJvYcCWjYOzG+uuBlUeqFkgVUMAr6QizR8lWPwpU+P5toTkftv5FUvw+s4f8QGiXUJC2bjK13MeAbxfYtcnFrlWOc0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywus9UX88ke8s9dDiHaPWiIplyBQIGL1Qx+IcOC/ThIMmCKt9Ek
-	H3GpPQHj8Yt5sM1A+bJ2X6ZvoROEfLj+8ajdBaCJv2os6ynh5Z3+
-X-Gm-Gg: ASbGncu9j3i00UUtpyEuQFf7ZRrbzvgXl8q/IXHHZjahQ/UisZBP8pttpQ3g44M3doS
-	nDdIPpZj3yJv+MvWjqsOp90lyKnXUwEpIiVZu4+LnqkO7Xt71252Zi+p1uqnfOEbvqx1Kt760bT
-	1aqFWxDDdSLoeSCYLALGwmGqvAX4TjbW0mbK1P0yyzg6LN5pSraJg6PyvBUJqPUyaTjhkYmwHwV
-	zvrGC6fQbwB+YWqRqZ3J9vzbZ5iwdz6WY/KHAWN7fn5OYD9FO0H1J1NGFKu/yOZvkfXfPOwP7+e
-	Mnq3YR3OTgpTDrgEHu+FT/hOQYCxu76zjijo1/W+5zdg
-X-Google-Smtp-Source: AGHT+IEZvG1NHT8sw/7Vm1ozDKIXwtfdO89dYij0WaV8MAn+FqQaycdaWRy2qM91FDW7m7+MMZbGQg==
-X-Received: by 2002:a17:902:cec3:b0:223:2630:6b82 with SMTP id d9443c01a7336-2295be30cd6mr113199135ad.10.1743606064603;
-        Wed, 02 Apr 2025 08:01:04 -0700 (PDT)
-Received: from localhost ([216.228.125.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1dece6sm109409055ad.192.2025.04.02.08.01.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 08:01:03 -0700 (PDT)
-Date: Wed, 2 Apr 2025 11:01:01 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
-	rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Burak Emir <bqe@google.com>
-Subject: Re: [PATCH V4 2/2] MAINTAINERS: Add entry for Rust bitmap API
-Message-ID: <Z-1RLYyTE7pxAyzk@thinkpad>
-References: <cover.1743572195.git.viresh.kumar@linaro.org>
- <bf2d798034e5f2c6fd5fbc561a8bd19431e6a9cb.1743572195.git.viresh.kumar@linaro.org>
- <CANiq72nzrjh6S2bh0GQOKtjFqMcDzrBbtSVhaL-i1kja1zW3HA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1743606085; x=1744210885;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BkJd7ujSnv4CgArdpWVGlVRCnEQfxLIx1UY5sjCYk9Y=;
+        b=nHQmEoVmL3+y0P0eY2s6WLXwfUHTeFZr3E/KBQUpTlN8IK+QWvDFOJvpjJES3uZe2r
+         pn5tdt0hGMfEU07LAKxx7N28EUdiTihwiYxTIyJYegNA7GotL48qrr6W4vv5kNGzDaRi
+         bLpM6urQQY+rK73fNgv39woje34nGrIhD55C8hFHAnLhxDtF8cbzwkOLVR9Hpr3Q5piU
+         E35vxP5TdaCwXrP/Llz31NondClpJ+2mIPiDNUSWWq67te34HzwYJRtJ6JL/rqB4S0kH
+         SojzaXxTjfyLRX8BleDMZ/ZvwL1zBa3K9DsD/SvktU8cM4WhdUmKympVdcE66yE0yg3J
+         8G/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW1sY9MA01OGETjJLZoyaWrHT+f0LIa1lM2TUmbBUVdI7fh4uI/FGCK4LTogqaNEfYiv4KgMYE93jak@vger.kernel.org, AJvYcCWPSG+oHI5ZpTtDSUh/SdL+wlsi49rTUNwUf2azoOnJvrwAzsdT/lMY+/niDs4SkcCCRGYnpbQaMcbcOZO9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLKL0lGqhiVJVknN02qnLQu2KtG8RXWjy9Xjop6uZJ5Wvl+COG
+	ZvilU2nP3VlKuPfjCtnNo6neyRq9PfJQ8Ml3sTFYBh/CExG3TkqXwAYwHV+nKNIN4/MCnGxCUvO
+	RA5axU3G61C0YUsjs0BZjCKhDP3+JCXLl
+X-Gm-Gg: ASbGncuw8FPVmsAbze2S/wQ5knNYj6UQyw0oRtHcMbCgSbRtZ0iSwGn1Hq5YVCDqSrd
+	4ZkIRNl433U+MVhidQ7Z59riQOVnLoQIzlm8AnL4xHYUxUqQt+6jfItMhX2CYpwt9GsADngCUOh
+	ej6y5uR6pDcpmNWdGuBaroGwZ0zA==
+X-Google-Smtp-Source: AGHT+IHkGPensKtSx0Kqhjq8p/pZzlVb+CzAEvvywG9S0Ch8RxC+IU6YVIn0JYYRbxp8HgoYDYLzHs6VVSvT5sWqR+Y=
+X-Received: by 2002:a05:6871:530e:b0:2c8:3411:df19 with SMTP id
+ 586e51a60fabf-2cbcf7afa78mr9983218fac.37.1743606084913; Wed, 02 Apr 2025
+ 08:01:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nzrjh6S2bh0GQOKtjFqMcDzrBbtSVhaL-i1kja1zW3HA@mail.gmail.com>
+From: =?UTF-8?Q?Rafa=C5=82_Wysocki?= <rjwysocki@gmail.com>
+Date: Wed, 2 Apr 2025 17:01:14 +0200
+X-Gm-Features: AQ5f1JrX9cFvgUplNqLWVYYVGPY3K08rmNKx-VLmzjhOGeX9vQ6lj-rEvKLJtUM
+Message-ID: <CAJZ5v0gEidr++vOdw9rAe3z=TCU5jfAY6_6WJrm3_VD1nq=8Kw@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v6.15-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Apr 02, 2025 at 01:39:22PM +0200, Miguel Ojeda wrote:
-> On Wed, Apr 2, 2025 at 7:38 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > Update the MAINTAINERS file to include the Rust abstractions for bitmap
-> > API.
-> >
-> > Yury has indicated that he does not wish to maintain the Rust code but
-> > would like to be listed as a reviewer.
-> 
-> Will patches go through the BITMAP API tree, then? i.e. you will
-> maintain it by sending patches to Yury's tree, right? That is great,
-> just wanted to confirm after all the discussions if I missed anything.
+Hi Linus,
 
-I didn't plan to, but I can move the bindings if you find it
-reasonable.
+Please pull from the tag
 
-> (By the way, the BITMAP API entry does not seem to have a `T:` field
-> -- from a quick look at the latest pull, is it
-> https://github.com/norov/linux?)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.15-rc1-2
 
-Yes, it is. I'll add the 'T' section. 
+with top-most commit 9e4e249018d208678888bdf22f6b652728106528
+
+ cpufreq: Reference count policy in cpufreq_update_limits()
+
+on top of commit 7d20aa5c32ac8bd272b5470ddbd7ac6e0cb35714
+
+ Merge tag 'pm-6.15-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+
+to receive a power management fix for 6.15-rc1.
+
+This prevents cpufreq_update_limits() from crashing the kernel due
+to a NULL pointer dereference when it is called before registering
+a cpufreq driver, for instance as a result of a notification
+triggered by the platform firmware (Rafael Wysocki).
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      cpufreq: Reference count policy in cpufreq_update_limits()
+
+---------------
+
+ drivers/cpufreq/cpufreq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
