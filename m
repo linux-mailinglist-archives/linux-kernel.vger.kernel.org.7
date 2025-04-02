@@ -1,198 +1,148 @@
-Return-Path: <linux-kernel+bounces-585051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBD7A78F14
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA74A78F2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5479E1705CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259CA3B9114
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198C241689;
-	Wed,  2 Apr 2025 12:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345F923958A;
+	Wed,  2 Apr 2025 12:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UFpZgsLj"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p2revYZX"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923D23BCE7;
-	Wed,  2 Apr 2025 12:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2E7238D3B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598089; cv=none; b=YGunlsKyuW2pcWK1R7xfMUUVtjF0fYrM1wy0eIjLU0kfykUbZDIdmrxYbrEqXRINUaZrnIDlwmvGdmetA/oG48A4DWa1Rd18V/d7DrugGSe4ymtKtCarIKVzsgFDI3aDjmgleVelwwX6sOx1tGa9hV9fOXzxMk05VXJNKp6o47E=
+	t=1743598175; cv=none; b=N6N8sSc0w1Cvr9iL4qt8cfxUnrQyHlVx2aWn5b5I5gHUh81Vq5D8FDCREHwFHtUGipHVN/EhK/Y+LZ8k/Nwuwb7PDbn+nMbiSsjM7hWXxcUFlv+3PEtkbBtSsu6HSSrNo86GD3qSA4s97jZcLn3ur4D4zPGwP7JdXU5yn4php+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598089; c=relaxed/simple;
-	bh=ZbrgI1QMiyPzXZtbXyqIrXqGXB55hdcp4jkmMe1pbUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1YUHZApkZTIiTdq2laLdCyq7lWgB+YZ4xPWEI22oPUJl3Cyvkv7KJn3E8Ux0n5UKa6EVPx+NySoQueOG6NM2dYNjaPPaCqAn9jSUkNKPSN1QunFIGs88pzfwSnzliRqMGbOQBBNsXb40sfRLomW5jbIPusbrs/dDR7IiQYQLwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UFpZgsLj; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=yibjlCzMj7db36Ncl+n+k08WtHR8TCTohVRGWqYmZg0=; b=UFpZgsLjYa47uMUX+kbAWXcqXj
-	EAXRsVbFGjyOEQDht4LLsjdX2i6zX1P/detZLCGKl4B2bZqBP3vuGsDj76g6F2j2Je6VWPDl7nVYP
-	UatDa/505MPVEy3wGGZrB+COxlRk+tMXa/YhSgMarkAYW4y/gXTQkgS/PzfN31YyzEdo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tzxVc-007n1N-8p; Wed, 02 Apr 2025 14:47:56 +0200
-Date: Wed, 2 Apr 2025 14:47:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 4/4] net: mtip: The L2 switch driver for imx287
-Message-ID: <8f431197-474e-4cd5-9c3e-d573c3f3e6b5@lunn.ch>
-References: <20250331103116.2223899-1-lukma@denx.de>
- <20250331103116.2223899-5-lukma@denx.de>
+	s=arc-20240116; t=1743598175; c=relaxed/simple;
+	bh=iy8gPSknBpYANxR3oDbou+tV9uyY16PAcTCT3p0TVTQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=SVk+zediXD1eByOAxUAqhc+ak9E6kKuy5QG2fTonJ3e0znSL6Q8H3jfumMRuIgFfHH3cE6EuC1wjsxGuilr7CTRrgDLH3cVqbWRZWLPddMPygoX0QyuFx2goJtTmGjiEi8oygL5mH0L8UfMAgm+dmb6Q5AkqjIfcxWMrjJnjHLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p2revYZX; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-86fea8329cdso5533452241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743598172; x=1744202972; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y+3sJL5+WsmkUHEYm1BzR/GyrjVHVNtLDIyVC85cNdI=;
+        b=p2revYZX57bC3SE0rF3qEGnzfbBliYjtZVJ05uoY0cI/8uMHAJLoXqNwMVOForv7PF
+         MESTEjhq7HQyOtti+Eu1vSnYfHhm2HmKtm/hcDfGsAQgdePlvOZBMFetT1qGVvDEo6oj
+         7KjU48t8qP06hoPzQMeNJdxd7lsHf8G2OEqlJ/DtlDDGXamR8/hGNNrB95+I/J633rqV
+         SXMCqW8ZTPMcNPcuXqTXF4d5q7JbSmUtnlbiDDN+5m1bH0jsutTdEBJIIrX2wpoZEqR5
+         N+Bj7cTFlbFu4SXX95pdeyoBi6HcX0U5XGezv3u77NrwpaHhRElaAlZ/bhczQJeFxLDE
+         R/Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743598172; x=1744202972;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+3sJL5+WsmkUHEYm1BzR/GyrjVHVNtLDIyVC85cNdI=;
+        b=JuG8drrcuXvx6y5VA2befvnXgOA3H8jv+shEZoeu8AbluIcfJyVaHPF00La7EGshbN
+         vPD67N5oZJn2T+fBP2+coUr+M4WD5OrsoNzz/R0dNqzVcV8U8ebAOlKusjRApWt5rCvm
+         C2lfIpIzu2exydkMDsQUYn47PV4yUvUqScfUxRTCgxFKX5SmOz3io6Q4uLzdI4iCubtq
+         iWJhTiW28HS5Xgz8r0KCeftkD4ifdkYqert/zyvQW6YuT9nA347Rtmx9w0WNxRzOvwWE
+         nyvfukicBBu1frTuY0iK53D9g2f3uDeeBuDBy3XPu8bp8FvwW2DUacOsJLjk3ScvRVM7
+         XQcg==
+X-Gm-Message-State: AOJu0YzhYCNMbpsZKCabqOFxxMCVT47hNkOo1g7JjHeXzWVcm3z/tGdD
+	pXcJ3/wKCIEGMxYXlgnHGOaL8dXoYoXC2Na0l6WHBDKkGYqu9SVV+eeKTLSk335+oSOWZNkXWWn
+	W+rjwLCOfdNI2jORKHRHc1fM48nQH/5FJBCZDC4Hp4aBiv+ObxCk=
+X-Gm-Gg: ASbGncv2A9G4y93EdnmnVztzNUocGMatodakkBDVHKzohIwseRkRCQDXD5dKowTF86m
+	393RclKHEwudXl3LqY93ERWbjhmP/OCuKNCFDryJKzdezed1pGfgA6esa/Boh7RnejuUdp4ePKT
+	TOOFkLuSHMNbW0eQMEhYyLnhRdHbPsa107y5dUGKBC7+M/IPq2GC9mukGbbkk=
+X-Google-Smtp-Source: AGHT+IEZPV71xCZFRaiMP7CnHUqII0vri11WJXA0JOvFvWq6jg//KmbiEFno6N5n8nVLL7zZFwNgKtdEbJvUoV78150=
+X-Received: by 2002:a05:6102:f8f:b0:4c1:9bdb:6188 with SMTP id
+ ada2fe7eead31-4c839e38348mr1583448137.13.1743598172341; Wed, 02 Apr 2025
+ 05:49:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331103116.2223899-5-lukma@denx.de>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 2 Apr 2025 18:19:19 +0530
+X-Gm-Features: AQ5f1JrYBDqdwedr2g0EeIuRXqX4Zi5GT7DMBhpK7McR8fimUhQCIrzEPDNgmhA
+Message-ID: <CA+G9fYve7+nXJNoV48TksXoMeVjgJuP8Gs=+1br+Qur1DPWV4A@mail.gmail.com>
+Subject: v6.14-12245-g91e5bfe317d8: Boot regression: rk3399-rock-pi-4b
+ dragonboard-410c dragonboard-845c no console output
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> +static void read_atable(struct switch_enet_private *fep, int index,
-> +			unsigned long *read_lo, unsigned long *read_hi)
-> +{
-> +	unsigned long atable_base = (unsigned long)fep->hwentry;
-> +
-> +	*read_lo = readl((const void *)atable_base + (index << 3));
-> +	*read_hi = readl((const void *)atable_base + (index << 3) + 4);
-> +}
-> +
-> +static void write_atable(struct switch_enet_private *fep, int index,
-> +			 unsigned long write_lo, unsigned long write_hi)
-> +{
-> +	unsigned long atable_base = (unsigned long)fep->hwentry;
-> +
-> +	writel(write_lo, (void *)atable_base + (index << 3));
-> +	writel(write_hi, (void *)atable_base + (index << 3) + 4);
-> +}
+Regressions on rk3399-rock-pi-4b, dragonboard-410c and dragonboard-845c
+the lto-thing, hardening and lto-full config boot failed with toolchain
+clang-nightly on the mainline master branch with no console output.
 
-It would be nice to have the mtip_ prefix on all functions.
+First seen on the v6.14-12245-g91e5bfe317d8
+ Good: v6.14-11270-g08733088b566
+ Bad: v6.14-12245-g91e5bfe317d8
 
-> +static int mtip_open(struct net_device *dev)
-> +{
-> +	struct mtip_ndev_priv *priv = netdev_priv(dev);
-> +	struct switch_enet_private *fep = priv->fep;
-> +	int ret, port_idx = priv->portnum - 1;
-> +
-> +	if (fep->usage_count == 0) {
-> +		clk_enable(fep->clk_ipg);
-> +		netif_napi_add(dev, &fep->napi, mtip_rx_napi);
-> +
-> +		ret = mtip_alloc_buffers(dev);
-> +		if (ret)
-> +			return ret;
+Regressions found on rk3399-rock-pi-4b:
+  - boot/clang-nightly-lkftconfig-kselftest
+  - boot/clang-nightly-lkftconfig-lto-thing
+  - boot/clang-nightly-lkftconfig-hardening
+  - boot/clang-nightly-lkftconfig-lto-full
 
-nitpick: You might want to turn the clock off before returning the
-error.
+Regressions found on dragonboard-410c:
+  - boot/clang-nightly-lkftconfig-lto-thing
+  - boot/clang-nightly-lkftconfig-lto-full
+  - boot/clang-nightly-lkftconfig-hardening
 
-> +	}
-> +
-> +	fep->link[port_idx] = 0;
-> +
-> +	/* Probe and connect to PHY when open the interface, if already
-> +	 * NOT done in the switch driver probe (or when the device is
-> +	 * re-opened).
-> +	 */
-> +	ret = mtip_mii_probe(dev);
-> +	if (ret) {
-> +		mtip_free_buffers(dev);
+Regressions found on dragonboard-845c:
+  - boot/clang-nightly-lkftconfig-hardening
+  - boot/clang-nightly-lkftconfig-lto-thing
 
-I've not checked. Does this do the opposite of netif_napi_add()?
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
 
-> +static void mtip_set_multicast_list(struct net_device *dev)
-> +{
-> +	unsigned int i, bit, data, crc;
-> +
-> +	if (dev->flags & IFF_PROMISC) {
-> +		dev_info(&dev->dev, "%s: IFF_PROMISC\n", __func__);
+Boot regression: rk3399-rock-pi-4b dragonboard-410c dragonboard-845c
+no console output
 
-You can save one level of indentation with a return here.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> +	} else {
-> +		if (dev->flags & IFF_ALLMULTI) {
-> +			dev_info(&dev->dev, "%s: IFF_ALLMULTI\n", __func__);
+## Boot log
+Starting kernel
+...
+<No console output>
 
-and other level here.
 
-> +		} else {
-> +			struct netdev_hw_addr *ha;
-> +			u_char *addrs;
-> +
-> +			netdev_for_each_mc_addr(ha, dev) {
-> +				addrs = ha->addr;
-> +				/* Only support group multicast for now */
-> +				if (!(*addrs & 1))
-> +					continue;
+## Source
+* Kernel version: 6.14.0
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+* Git sha: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+* Git describe: v6.14-12245-g91e5bfe317d8
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/
+* Architectures: arm64 (rk3399-rock-pi-4b, dragonboard-410c, dragonboard-845c)
+* Toolchains: clang-nightly (Debian clang version 21.0.0 )
+* Kconfigs: lto-thing, hardening, lto-full
 
-You could pull there CRC caluclation out into a helper. You might also
-want to search the tree and see if it exists somewhere else.
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27859063/suite/boot/test/clang-nightly-lkftconfig-lto-thing/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27859063/suite/boot/test/clang-nightly-lkftconfig-lto-thing/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27859063/suite/boot/test/clang-nightly-lkftconfig-lto-thing/details/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2v9EdkI9AGWWvuT5OzYdgSgXEeH/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2v9EdkI9AGWWvuT5OzYdgSgXEeH/config
 
-> +
-> +				/* calculate crc32 value of mac address */
-> +				crc = 0xffffffff;
-> +
-> +				for (i = 0; i < 6; i++) {
 
-Is 6 the lengh of a MAC address? There is a #define for that.
-
-> +					data = addrs[i];
-> +					for (bit = 0; bit < 8;
-> +					     bit++, data >>= 1) {
-> +						crc = (crc >> 1) ^
-> +						(((crc ^ data) & 1) ?
-> +						CRC32_POLY : 0);
-> +					}
-> +				}
-> +			}
-> +		}
-> +	}
-> +}
-> +
-
-> +struct switch_enet_private *mtip_netdev_get_priv(const struct net_device *ndev)
-> +{
-> +	if (ndev->netdev_ops == &mtip_netdev_ops)
-> +		return netdev_priv(ndev);
-> +
-> +	return NULL;
-> +}
-> +
-
-> +static int __init mtip_switch_dma_init(struct switch_enet_private *fep)
-> +{
-> +	struct cbd_t *bdp, *cbd_base;
-> +	int ret, i;
-> +
-> +	/* Check mask of the streaming and coherent API */
-> +	ret = dma_set_mask_and_coherent(&fep->pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret < 0) {
-> +		dev_warn(&fep->pdev->dev, "No suitable DMA available\n");
-
-Can you recover from this? Or should it be dev_err()?
-
-More later...
-
-	Andrew
+--
+Linaro LKFT
+https://lkft.linaro.org
 
