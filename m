@@ -1,109 +1,177 @@
-Return-Path: <linux-kernel+bounces-585603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7424BA79546
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF7DA79557
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0621C3AD909
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D9B1894BA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689EE1DDC00;
-	Wed,  2 Apr 2025 18:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE6D1EB198;
+	Wed,  2 Apr 2025 18:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kuMBi+ph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbyjZYmW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDEA5C96;
-	Wed,  2 Apr 2025 18:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D506C1DDA18;
+	Wed,  2 Apr 2025 18:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743619460; cv=none; b=CzQzT7wEEAL6bK1jncuxhbT0/S5yMQhqpdmmIE5pjlMP4HWVc8X9fF6yZGpssTD3hcet/rBgT8LftJuFUSaN0615lWyxhHPr1tjojN4VCmCbbCTNEXjX9I/gpYW+FdyACKsVju67Sd5IgAnmE2eocKH61dHEBojAbO9A2I2j38M=
+	t=1743619497; cv=none; b=X0nELYGvKhBYNZPHVCOTBzFXaPkOGGT2n2ne+Tainu1B5+r9GdfmjDElhORzaz3e/NQGy1FYZZjpj2ja201olzK+2Fi9aQ5xqV91OnWF6eVn8FGG6VzZ8DlnAfpurGoOWdBZg1P4eA1XeyD8kp3Ws5K4KV/9UsAqlWH5+So2cVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743619460; c=relaxed/simple;
-	bh=ND8lroqTcplq3wtyZqj1iCMd280vWD/+F8ldsuATLmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zg1z1txjncwmoj83vzYpN0qxHiI4N+6/V+XK33aX+3HaJCYTJp33yLnmy7TWuw7fOBaSQlJb40/bbXmXo1iO+jz+VP/yCCviqTECs5fLwGxrCNOvSoPncSmYxM6HPWK+V5OSSCD91idv+So3+BUed/8gNIfV46SYjNVtGUVA5MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kuMBi+ph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A14DC4CEDD;
-	Wed,  2 Apr 2025 18:44:17 +0000 (UTC)
+	s=arc-20240116; t=1743619497; c=relaxed/simple;
+	bh=pIWHLhDHIvkDvzeT0c9GVKxW7jhxM9Ip1jV2sZ+5hpI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bPWnWpuRJUYo3unSJhpHzHSLB09q4niRvELY2d99PWSgkTTQP0iOF/L4Tqik2BnD2lhlHDk18OwQWtkqaj1cJ8Nfeee6OWGbvPSue9sFUcOnQQwndbBp24ENiR6wQErn/63qY1/g3hMRpywmQ7qMRxoD1ASf2hfyIR9pgo+83zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WbyjZYmW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4B075C4CEDD;
+	Wed,  2 Apr 2025 18:44:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743619459;
-	bh=ND8lroqTcplq3wtyZqj1iCMd280vWD/+F8ldsuATLmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kuMBi+phTtBs+RheZJzbBnVFv3JUwXDks02tVP1DSBV59ZH9dO3ZQDbWn3fVb7Dwv
-	 oQZ50hrwn26++h5vM03jPBI6Bz1BWIxIxJLUsLwFqsO0tRFVeIbsRpvm4vnB6ZPG+/
-	 mZhSPjcZg6Zy3dPQN0bfPJqJietwQbfzUXhajoWXtYf6Ok6jeClaqzYW0+96MggdY4
-	 mvnlcMRqq2jPY7/5K9duJVKbX8wNk20CeYfTQPbH2/mkn7KaO6EjM04nBf5PFgsagL
-	 URgD3AwfR21o0upP2laDjFnbv3gYP/UUrYTC8N+Sqh7WnpSCPaakXZxX5woKVVaNW9
-	 XWEO4a1Dq7fig==
-Date: Wed, 2 Apr 2025 11:44:15 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, amit@kernel.org, 
-	kvm@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com, tglx@linutronix.de, 
-	peterz@infradead.org, pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com, 
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com, kai.huang@intel.com, 
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com, Babu.Moger@amd.com, 
-	david.kaplan@amd.com, dwmw@amazon.co.uk, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 1/6] x86/bugs: Rename entry_ibpb()
-Message-ID: <qeg7tr5jvmyyxvftl4k4qsa4hxga7hzvqcs2xbhfpeun5yhn3r@ua6pawrgxix5>
-References: <cover.1743617897.git.jpoimboe@kernel.org>
- <a3ce1558b68a64f52ea56000f2bbdfd6e7799258.1743617897.git.jpoimboe@kernel.org>
- <20250402182928.GAZ-2CCBR2BAgpwVLf@fat_crate.local>
+	s=k20201202; t=1743619497;
+	bh=pIWHLhDHIvkDvzeT0c9GVKxW7jhxM9Ip1jV2sZ+5hpI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=WbyjZYmWT3/Pqy/j2crputn4GHUuJTcAKfvfxkgQzG60toYVxzrleW+KCvJzTd8vv
+	 oZw0zNoty9YO2fUh+SX9YuNBpYwaY5r5kBzFfn89qWsalMpVOqv63Z+uE7T8EuFbgf
+	 mqK1qbiy1w2QmNXMSAoH5iLGI+Mh7RZtpdi4SDCjM3zbpizKaSClbiYvjOoIdlOd7n
+	 pLE1Pn5fkxpCjWhP7TuaajaL7Q2Z34hd6CIxlHWw9U1hYnCzyWFMhflDttnssuTYkR
+	 jLpFkydhvUeGzq/7OxUOGWJ0kDmnDex6wvN539pDT/oG/b822jwFXloAMR7BIH/QUO
+	 P7rjgwRgH2mQQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C46C28B20;
+	Wed,  2 Apr 2025 18:44:57 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v4 0/7] Input: synaptics-rmi4 - add quirks for third party
+ touchscreen controllers
+Date: Wed, 02 Apr 2025 20:44:51 +0200
+Message-Id: <20250402-synaptics-rmi4-v4-0-1bb95959e564@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250402182928.GAZ-2CCBR2BAgpwVLf@fat_crate.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKOF7WcC/3XMQQ6DIBCF4auYWZeGDhppV96jcYE41lkUDRCiN
+ dy91H2X/0ved0AgzxTgUR3gKXHgxZWoLxXY2bgXCR5LA0pspJJahN2ZNbINwr+5FlYrHHBqlaU
+ Bymn1NPF2gs++9MwhLn4//aR+618qKSEF3ppRUYv6brDjjePVfqDPOX8BuTQulaoAAAA=
+X-Change-ID: 20250308-synaptics-rmi4-c832b2f73ceb
+To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
+ Vincent Huang <vincent.huang@tw.synaptics.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Caleb Connolly <caleb.connolly@linaro.org>, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3953; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=pIWHLhDHIvkDvzeT0c9GVKxW7jhxM9Ip1jV2sZ+5hpI=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn7YWmuQ1rjT3O6Af1rG12h0ug1JyFw6mOq7FaZ
+ 1gEJuEvVj+JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ+2FpgAKCRBgAj/E00kg
+ cnB8EADGb26JxIaacAPG1ZzutxzjVacHj0ib/WBo+suGhyKhFrLvtG2XzdJCNEqj7HtT0SpdciE
+ Rzj8+5SLNhVBjOOTgJkJtwjRWWVvNRF5TfIP2llzqqPPJl7ITKDByzHHaUkYbgyL3ChgsFEWC25
+ G8BR1iLAig2LYM60N4mgauJ2hMkZ4JQWgx8DJNU0SPXbsaB0nz6G4wOfPqcNiVUNmTxEiwojgk0
+ 5L4rAOxr+n4UpSeuhtFIAvnla4bkyvI2QdsigkHbRu1E2CMboSMJ8QR6nWV4mbfXE82k3nFrpEn
+ FEsONqz+JDD+l7429efJ7Kfdu4ilYEVDpuf97Uf2s6fGDmHQMFqab/Gc0MYIQ70pFQHRjXcw6wA
+ uOrxiLWU+SGa/L39Z8P7sxTV2n5HG4b07SaqIvUS/mnS/T8qz344qG5NGe0xQcXrh9l3ouilpUJ
+ WcnyLCAtY07j0IDn/kHYPSlFaigRqpMrpt86DTCDyi5grevKb53k7UtkW14yzd+9NtIUhtbLT5P
+ GpUJ8rmWU1xY5TaJwTxrFuRp9BuScQpjhX7e0HS/9YLr0SP5qjzMDdm4DDzFdQbupWKXZJ2R2In
+ cbsHe4Bjd3wx3WETgWeusTilg+QyNXX1aJTIcKq/cwnRZq8muNTjuVH8+BNPKtkBVDm2gOm2xm2
+ Qg8qT8/nWyfFDBA==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Wed, Apr 02, 2025 at 08:29:28PM +0200, Borislav Petkov wrote:
-> On Wed, Apr 02, 2025 at 11:19:18AM -0700, Josh Poimboeuf wrote:
-> > There's nothing entry-specific about entry_ibpb().  In preparation for
-> 
-> Not anymore - it was done on entry back then AFAIR.
-> 
-> > calling it from elsewhere, rename it to __write_ibpb().
-> > 
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
-> >  arch/x86/entry/entry.S               | 7 ++++---
-> >  arch/x86/include/asm/nospec-branch.h | 6 +++---
-> >  arch/x86/kernel/cpu/bugs.c           | 6 +++---
-> >  3 files changed, 10 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/x86/entry/entry.S b/arch/x86/entry/entry.S
-> > index d3caa31240ed..3a53319988b9 100644
-> > --- a/arch/x86/entry/entry.S
-> > +++ b/arch/x86/entry/entry.S
-> > @@ -17,7 +17,8 @@
-> >  
-> >  .pushsection .noinstr.text, "ax"
-> >  
-> > -SYM_FUNC_START(entry_ibpb)
-> > +// Clobbers AX, CX, DX
-> 
-> Why the ugly comment style if the rest of the file is already using the
-> multiline one...
+With the growing popularity of running upstream Linux on mobile devices,
+we're beginning to run into more and more edgecases. The OnePlus 6 is a
+fairly well supported 2018 era smartphone, selling over a million units
+in it's first 22 days. With this level of popularity, it's almost
+inevitable that we get third party replacement displays, and as a
+result, replacement touchscreen controllers.
 
-It helps it stand out more? :-)
+The OnePlus 6 shipped with an extremely usecase specific touchscreen
+driver, it implemented only the bare minimum parts of the highly generic
+rmi4 protocol, instead hardcoding most of the register addresses.
+  
+As a result, the third party touchscreen controllers that are often
+found in replacement screens, implement only the registers that the 
+downstream driver reads from. They additionally have other restrictions
+such as heavy penalties on unaligned reads.
+ 
+This series attempts to implement the necessary workaround to support  
+some of these chips with the rmi4 driver. Although it's worth noting
+that at the time of writing there are other unofficial controllers in
+the wild that don't work even with these patches.
+ 
+We have been shipping these patches in postmarketOS for the last several
+years, and they are known to not cause any regressions on the OnePlus
+6/6T (with the official Synaptics controller), however I don't own any
+other rmi4 hardware to further validate this.
 
-> > +SYM_FUNC_START(__write_ibpb)
-> 
-> ... and why the __ ?
+---
+Changes in v4:
+- Replaced patch "dt-bindings: input: syna,rmi4: document syna,pdt-fallback-desc"
+  with patch documenting specific touchscreen model used in OnePlus 6 and 6T.
+- Fixed zero electrode return code (Dmitry).
+- Switched the duplicate detection algo to bitmap (Dmitry).
+- Optimized rmi_device_platform_data struct to avoid unnecessary
+  padding.
+- Changed fallback_size from int to unsigned int.
+- Changed SoB from nickname and old address (methanal <baclofen@tuta.io>) to
+  Kaustabh Chakraborty <kauschluss@disroot.org>.
+  Verified ownership through the sdm845 chatroom on Matrix.
+- Link to v3: https://lore.kernel.org/r/20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz
 
-I was thinking the calling interface is a bit nonstandard.  But actually
-it's fine to call from C as those registers are already caller-saved
-anyway.  So yeah, let's drop the '__'.
+Changes in v3:
+- reworded dt-bindings property description
+- fixed the rmi_driver_of_probe definition for non device-tree builds.
+- fixed some indentation issues reported by checkpatch
+- change rmi_pdt_entry_is_valid() variable to unsigned 
+- Link to v2: https://lore.kernel.org/all/20230929-caleb-rmi4-quirks-v2-0-b227ac498d88@linaro.org
 
+Changes in v2:
+- Improve dt-bindings patch (thanks Rob)
+- Add missing cast in patch 5 to fix the pointer arithmetic
+- Link to v1: https://lore.kernel.org/r/20230929-caleb-rmi4-quirks-v1-0-cc3c703f022d@linaro.org
+
+---
+Caleb Connolly (1):
+      Input: synaptics-rmi4 - handle duplicate/unknown PDT entries
+
+David Heidelberg (1):
+      dt-bindings: input: syna,rmi4: Document syna,rmi4-s3706b-i2c
+
+Kaustabh Chakraborty (5):
+      Input: synaptics-rmi4 - f12: use hardcoded values for aftermarket touch ICs
+      Input: synaptics-rmi4 - f55: handle zero electrode count
+      Input: synaptics-rmi4 - don't do unaligned reads in IRQ context
+      Input: synaptics-rmi4 - read product ID on aftermarket touch ICs
+      Input: synaptics-rmi4 - support fallback values for PDT descriptor bytes
+
+ .../devicetree/bindings/input/syna,rmi4.yaml       |  11 +-
+ drivers/input/rmi4/rmi_driver.c                    | 124 +++++++++++++++++----
+ drivers/input/rmi4/rmi_driver.h                    |  10 ++
+ drivers/input/rmi4/rmi_f01.c                       |  14 +++
+ drivers/input/rmi4/rmi_f12.c                       | 117 ++++++++++++++-----
+ drivers/input/rmi4/rmi_f55.c                       |   5 +
+ include/linux/rmi.h                                |   3 +
+ 7 files changed, 234 insertions(+), 50 deletions(-)
+---
+base-commit: fefb886b1344e222b3218f3c0165b0fd770e8b88
+change-id: 20250308-synaptics-rmi4-c832b2f73ceb
+
+Best regards,
 -- 
-Josh
+David Heidelberg <david@ixit.cz>
+
+
 
