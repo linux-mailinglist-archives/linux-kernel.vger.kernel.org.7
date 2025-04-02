@@ -1,186 +1,125 @@
-Return-Path: <linux-kernel+bounces-585482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925E5A793DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:31:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3475AA794A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6423B3478
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922381729E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75E61C84C0;
-	Wed,  2 Apr 2025 17:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3771EB198;
+	Wed,  2 Apr 2025 17:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Ht7+YlnS"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RN14Bfu8"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE86E1A38E1;
-	Wed,  2 Apr 2025 17:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF82205ABA;
+	Wed,  2 Apr 2025 17:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743615070; cv=none; b=HAWUsRDZJEsRW+rVhZ+myYBnHQlkKwCIyeXKdO85WwpetZtEvN54enxcOrqgfJ/t4YYd4E7a2dBLUtZSvvhcrcmsEA0pG6xkQwoYidOM6kfaqxKPLLYLPC+wEKECA3xaWGmlBClICJ7Sa5LStx+XkgmkPPK1dh9e5yJ/hJztHP0=
+	t=1743615804; cv=none; b=Bf7fxA+2qADiu23aKVT2LLr2JpwsgvG1undL7i84aCxF1LMqf4P74gN3zAbI8VQxY2rLnlS2gWhrNrt49ASxFICTr1cUAEAcHF8bCsJwPOkArc0TvDLzidG2/Db2ijJoi/QuvT4fe6yNLDMfVVfau4s5WZ/Vk5jMi7OgbmxUQjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743615070; c=relaxed/simple;
-	bh=hQZElL9dtPmCVL0Z4NkiVaj24cdfHIudayPnvK6PQFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KftbyNogyOzJk7odov2040DkhJas614v1NKyDvYCTLKNR8B+FbH/7BvdUwqd3zeAeBdfJKugsiRZ3dBuDOx9qSsy6UMjvkvTwyxFS0l33FyGvUB0WXHpfs28OBRRzQNsUNKnTGZysQ7dcQUPrT4AoMdS2GAvBQEexPuDYbdoRG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Ht7+YlnS; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=owalu71vA94GLpyhv8YYokgK8S4IScde/oftkQ21Km8=; b=Ht7+YlnSYGbsiOiQ
-	B4VMnt5Pn2AHoxyaLjRZ/hiVfzaT7nmsa45kyqvhbeTU56fAdPqPgcWxmQSMfWlyAdsgud/vbGtlL
-	Vwx7SNbpyC6L6PfgyTwVY/CMYx2NHM6IBwE/PQDFDtzhSC8iOezeeWLAxztP+qmYIa1grlb/YKhoD
-	QsO4/KOIMxM95aYq0iLBCrYPWsyY5/ydRD+lsRY5U5HyTGLiKOZy4oRgvzxl/qGPkpLTbIK2VTWQw
-	7j55hR1AVq1HVek5grOLz17rMKDnrwuJGsG6nXsyru1ajESjpRGfbTzWzIfM+N6oPOZ/TmbrGJOJS
-	ycL8DO14Gdd7fSPuGQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1u01vY-008d5h-1k;
-	Wed, 02 Apr 2025 17:31:00 +0000
-Date: Wed, 2 Apr 2025 17:31:00 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: trondmy@kernel.org, anna@kernel.org, linux-nfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] NFS: Remove unused function nfs_umount
-Message-ID: <Z-10VGi6E8g3gi4Q@gallifrey>
-References: <20250218215250.263709-1-linux@treblig.org>
+	s=arc-20240116; t=1743615804; c=relaxed/simple;
+	bh=EdEVmmkX+S4GMM0uG7YW19UqaiTt/5KBZ0AUymRBHvo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IPPIecklp6BNWSu9OKf7p5Q9rcnWdi125Vz02FXYvZxcaQiGpIZb3skGcsJWz4LyBnnPFbcV5T4PSItkGApORDsttWHTPZE53qM0JxmjkQ8PcjMj+Oj+xR+wMIS1qnGhfhgzHbgpI675vDerRqDuXhEu5JPgJByK1rW78Gf8aVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RN14Bfu8; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c1efc4577so49134f8f.0;
+        Wed, 02 Apr 2025 10:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743615801; x=1744220601; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=85BXoAka61PsKzqS2du3Xktdbs8BPrJV0lx84vuPwX0=;
+        b=RN14Bfu8q8sCldYFZok/gsGQiybnsymLWZ8xe8bms1OQwUPcUbuWjz3uV8ouhf/f8T
+         hM1MQ5vEXgsba0seob5UsqRKRrP/axdlyyBfkui6gGN7W0GpDQyyGqmoJzA/qmR/vgZV
+         vRuUNgQrkyJs28x4tVN5OOUeGIRFLsxuVjCXv9+sxubrk5NO2/LaF1e8iA3Pwq35UjEM
+         a2sDkkZi76l0R5cGJ+v0HezrQ0TtPpGOGwQsAPDyPgQeeA2YOxFjNGYL6KBfhLS/6Ua1
+         JcSF9Yi62lDgkC8ML6MVBBkfUNyVjO4qigwqN9YqkX1IjlNPpAw5Bi7by7wjIDQRXWeD
+         UBaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743615801; x=1744220601;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=85BXoAka61PsKzqS2du3Xktdbs8BPrJV0lx84vuPwX0=;
+        b=onyaYkabyD+MkheRKOc+ELO0Bh6r1GdE4AOIwXVneBoVkIeCSnMpExyVOxIifQwG2J
+         6+qBcVwxBpOo3mdd0jdgpa4h/f/y1vqoKsFeAD1+guWCHlmwgqTXejSoj1cvpMK1/DoX
+         xv7dPx3uOXQ2P6cgc9VHAUks5GRivKxohT7z7ZjwlgA/qvn0rpJj4Rpn4Ej8jm2tsAXA
+         C/W5CuSADENfZLcCrZnZFAV3NctK3ODSGPqiMDoPGmatbrWMD3J/pCsScxgJJBnKLcKH
+         aMa6JBWLsanHdEUrvJSgPoWqUuKvT3S7DcXGujosLzMNYG1AwbeACgduNmlLLy0U35qK
+         UPVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYtMLcXhF/xNBuN1jvVgT371aEp84VTGmc7pqAFRj/0XOHqxodDbuvOwFaJkXh9WnHgMw6JXY8RaXpCo9d@vger.kernel.org, AJvYcCWbs+9ZBLrzBXTN/QGiZKUaqTz9I6i0Tt3BHQWuoV2bDQsU8Z0Dy0d2jnFE09YqjXP/BFWF82wefg4HIU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP78kANpVavePOwDD3FSf2Xqaw39iWoLTHY7TRJl074VN5F8tc
+	2kTqGSeXnJOB5zT4xFGLKhJR8sV1DsZarOEmNzX0RvYJummLWX+y
+X-Gm-Gg: ASbGncvTwO/doLm20dIW2lEUQ3hgbviQ7K1d9bvyynVMLrZl+lvi+Uh58nnGpKKLlJ8
+	IQn2uNK5lUgnuNvXd4D6mx85NVPF5iaj5WwtppidSaEwYqYEg8+VRW18aeUFku9CauBeN5AiPHD
+	C2bb8mTVaguIigV2Gcg+ZX9FJtjGjyfklfS66NqibuZZkFeR9pNShkZYg70zHHPvtU1ER3/92gE
+	lMdvE7Vnc8QMq0SZ6lglL8jplzzYCMvCrTd77/VeKHxebXzmHgS3vNm1aCq+4x6hWq9yunmQHyL
+	ClxpuHpISCz9orOTIx7yIZ8F45JBicehYIyMGWk6wx67oei6qUY4aZFokqo=
+X-Google-Smtp-Source: AGHT+IG9DUifRlG9+hsS76jvaP6M4UBq35TMncCzYo6w9ipzl12h0GydswQHYbtTi42HbfpSVPpG/Q==
+X-Received: by 2002:a05:6000:4387:b0:394:d0c3:da5e with SMTP id ffacd0b85a97d-39c2366aeaemr6560810f8f.47.1743615800796;
+        Wed, 02 Apr 2025 10:43:20 -0700 (PDT)
+Received: from localhost.localdomain ([78.170.183.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c266c132fsm4819700f8f.13.2025.04.02.10.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 10:43:20 -0700 (PDT)
+From: goralbaris <goralbaris@gmail.com>
+To: martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	goralbaris <goralbaris@gmail.com>
+Subject: [PATCH] change strncpy to strscpy strncpy is now depricated. It may not NUL-terminate the destination string, resulting in potential memory content exposures, unbounded reads, or crashes. Link: https://github.com/KSPP/linux/issues/90
+Date: Wed,  2 Apr 2025 20:33:09 +0300
+Message-Id: <20250402173308.102487-1-goralbaris@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250218215250.263709-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 17:30:34 up 329 days,  4:44,  1 user,  load average: 0.06, 0.04,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> nfs_umount() has been unused since 2013's
-> commit 4580a92d44e2 ("NFS: Use server-recommended security flavor by
-> default (NFSv3)")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+The strncpy is depricated. 
+It may not NUL-terminate the destination string, resulting in potential memory
+content exposures, unbounded reads, or crashes. Link: https://github.com/KSPP/linux/issues/90
+Signed-off-by: goralbaris <goralbaris@gmail.com>
+---
+ drivers/target/target_core_configfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hi,
-  I'd appreciate a review on this one please.
-
-Dave (just going cleaning up his old patch list)
-> ---
->  fs/nfs/internal.h   |  1 -
->  fs/nfs/mount_clnt.c | 68 ---------------------------------------------
->  2 files changed, 69 deletions(-)
-> 
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index fae2c7ae4acc..36dcbb928c5f 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -207,7 +207,6 @@ struct nfs_mount_request {
->  };
->  
->  extern int nfs_mount(struct nfs_mount_request *info, int timeo, int retrans);
-> -extern void nfs_umount(const struct nfs_mount_request *info);
->  
->  /* client.c */
->  extern const struct rpc_program nfs_program;
-> diff --git a/fs/nfs/mount_clnt.c b/fs/nfs/mount_clnt.c
-> index 57c9dd700b58..db8dfb920394 100644
-> --- a/fs/nfs/mount_clnt.c
-> +++ b/fs/nfs/mount_clnt.c
-> @@ -223,74 +223,6 @@ int nfs_mount(struct nfs_mount_request *info, int timeo, int retrans)
->  	goto out;
->  }
->  
-> -/**
-> - * nfs_umount - Notify a server that we have unmounted this export
-> - * @info: pointer to umount request arguments
-> - *
-> - * MOUNTPROC_UMNT is advisory, so we set a short timeout, and always
-> - * use UDP.
-> - */
-> -void nfs_umount(const struct nfs_mount_request *info)
-> -{
-> -	static const struct rpc_timeout nfs_umnt_timeout = {
-> -		.to_initval = 1 * HZ,
-> -		.to_maxval = 3 * HZ,
-> -		.to_retries = 2,
-> -	};
-> -	struct rpc_create_args args = {
-> -		.net		= info->net,
-> -		.protocol	= IPPROTO_UDP,
-> -		.address	= (struct sockaddr *)info->sap,
-> -		.addrsize	= info->salen,
-> -		.timeout	= &nfs_umnt_timeout,
-> -		.servername	= info->hostname,
-> -		.program	= &mnt_program,
-> -		.version	= info->version,
-> -		.authflavor	= RPC_AUTH_UNIX,
-> -		.flags		= RPC_CLNT_CREATE_NOPING,
-> -		.cred		= current_cred(),
-> -	};
-> -	struct rpc_message msg	= {
-> -		.rpc_argp	= info->dirpath,
-> -	};
-> -	struct rpc_clnt *clnt;
-> -	int status;
-> -
-> -	if (strlen(info->dirpath) > MNTPATHLEN)
-> -		return;
-> -
-> -	if (info->noresvport)
-> -		args.flags |= RPC_CLNT_CREATE_NONPRIVPORT;
-> -
-> -	clnt = rpc_create(&args);
-> -	if (IS_ERR(clnt))
-> -		goto out_clnt_err;
-> -
-> -	dprintk("NFS: sending UMNT request for %s:%s\n",
-> -		(info->hostname ? info->hostname : "server"), info->dirpath);
-> -
-> -	if (info->version == NFS_MNT3_VERSION)
-> -		msg.rpc_proc = &clnt->cl_procinfo[MOUNTPROC3_UMNT];
-> -	else
-> -		msg.rpc_proc = &clnt->cl_procinfo[MOUNTPROC_UMNT];
-> -
-> -	status = rpc_call_sync(clnt, &msg, 0);
-> -	rpc_shutdown_client(clnt);
-> -
-> -	if (unlikely(status < 0))
-> -		goto out_call_err;
-> -
-> -	return;
-> -
-> -out_clnt_err:
-> -	dprintk("NFS: failed to create UMNT RPC client, status=%ld\n",
-> -			PTR_ERR(clnt));
-> -	return;
-> -
-> -out_call_err:
-> -	dprintk("NFS: UMNT request failed, status=%d\n", status);
-> -}
-> -
->  /*
->   * XDR encode/decode functions for MOUNT
->   */
-> -- 
-> 2.48.1
-> 
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index c40217f44b1b..5c0b74e76be2 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+ 	}
+ 	filp_close(fp, NULL);
+ 
+-	strncpy(db_root, db_root_stage, read_bytes);
++	strscpy(db_root, db_root_stage, read_bytes);
+ 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+ 
+ 	r = read_bytes;
+@@ -3664,7 +3664,7 @@ static void target_init_dbroot(void)
+ 	}
+ 	filp_close(fp, NULL);
+ 
+-	strncpy(db_root, db_root_stage, DB_ROOT_LEN);
++	strscpy(db_root, db_root_stage, DB_ROOT_LEN);
+ 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+ }
+ 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.34.1
+
 
