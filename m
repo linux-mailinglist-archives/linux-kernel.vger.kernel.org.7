@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-585720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA60A79670
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:25:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49183A7966B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB0D3B3CF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B5C16F5DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7CC1EB18F;
-	Wed,  2 Apr 2025 20:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11ECF1F03C7;
+	Wed,  2 Apr 2025 20:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pU7IOxhs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="sT2tP2dF"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6422B674
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757F71917E7;
+	Wed,  2 Apr 2025 20:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743625500; cv=none; b=KhfTgDSy3qcqQvy0A+L0RMLITGWLeS2dEvMwJQ0vvDwLgpw9Yv2bikYVQbKqRoSqAK8Cjk81jzF8nWHsZrauQy56ga+jXlJqxz2UPrvskBzc8h9EiibrjyT0KyuOgKEoPqjCEFSC6qlOXRjFlFpQ11MLSJYmwAVOBixnqajqy18=
+	t=1743625400; cv=none; b=AYBsGiTsw6fSPNFJTI6d8NmdiDIEkCFM/siE9jKfm6PIDrHHZJQH55I+9SfjY2vBHGcyzdMQo4rdxAgYgE9Mm6H/grDf/C15NA+5IdVqIDgdR0lPgm55BrPUTEoHtPC21U5HKT1KUsnvayEmTQQM92p8oA+1qa7s9V55FLN2VIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743625500; c=relaxed/simple;
-	bh=3wiNHrGJCrOQUSc/gV7EKEKCVN+ZvFLYbqcNYBD/b/Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YJbO8G1bXjyXYJNnDRz2T6PRPzgpGLRHHKYCaYI67lTHCxRPGhBt/I7xzxriSCyVSzUS0UpPYbm93SXm5+GqqtssHQj00dEn+TPMcQTMC18hXtn3T3zJJYA03/JTuF69xG7RMmSGTsyzOOQK/yFsSm0GNy1GvN3GFxxcaEzro1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pU7IOxhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEBDC4CEDD;
-	Wed,  2 Apr 2025 20:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743625500;
-	bh=3wiNHrGJCrOQUSc/gV7EKEKCVN+ZvFLYbqcNYBD/b/Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=pU7IOxhsePyUaf6+Fuogsjeg+KqzKCCCI44RFWo+NH34KvsW/CKXAwHawHM2h8kl5
-	 3PnhHZS4seV8kxtRrGgBPypZkfcwHeHWm5hwVpUDQFo1fRn1WeJcN5O6D3vHKkSaSe
-	 xvHkp0NDkD8oL/KV957plkrfTgeK7lLhP7szLdSsEL6LxuupT9uTuSBAZd6kaXPpEu
-	 JADKRcwpBJGIwOHIrn53+Tcs4A90gjwttYZdtdgDIFYIZMMeA6cqXn3f387fwf2hQL
-	 UgFcLc8Q3AZkM1/Sd+d3DLg4Gve2nqhndtTYab9josbCjeWKjZCKzgWt9V7bVCaKMe
-	 b3Nra0VryBggg==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 02 Apr 2025 21:21:57 +0100
-Subject: [PATCH] tools/include: make uapi/linux/types.h usable from
- assembly
+	s=arc-20240116; t=1743625400; c=relaxed/simple;
+	bh=B+O36yg5A5XPoTzoaWJvC8inENWYX8yWdPtFHWC748k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SzcVgw6YAVlXFS1XvFvDM/0FLYKnC1/8L37+ySyWDzs90IiwyjhUlyROTcIJZcPn4EudCyluPJdsdl79a+/DHq0hYvICOwceQn+ZtryQSCAHeEK5vX7hrctWGLvezNPwhBGph3UsQEHLzBb7dpkp01fpf6LsXK4DoKEODVtg5SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=sT2tP2dF; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743625399; x=1775161399;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ctb6POoyh404vH+KjFkWC9B4g7iEU94Mtl3qduoJtog=;
+  b=sT2tP2dF+FbexGa4gIx8owprD4407tD/KG9I07kvSg97uVwynTDnA91T
+   K+0XJ89IFhRQjhaOEroLDpAmGpBVDnQrkyRrSpLonePuhPgImb3wMK5o9
+   u5DAQDemhtrrLtzLDTpDpLFHiiG4Olal6A/kIue+/pcgwZCmhw3hfmHHZ
+   w=;
+X-IronPort-AV: E=Sophos;i="6.15,183,1739836800"; 
+   d="scan'208";a="476947229"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 20:23:14 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:34346]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.98:2525] with esmtp (Farcaster)
+ id 4fa530bb-68b7-4087-a078-61c6eba0c003; Wed, 2 Apr 2025 20:23:14 +0000 (UTC)
+X-Farcaster-Flow-ID: 4fa530bb-68b7-4087-a078-61c6eba0c003
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 20:23:08 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.101.8) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 20:23:05 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <gregkh@linuxfoundation.org>
+CC: <cve@kernel.org>, <edumazet@google.com>, <ematsumiya@suse.de>,
+	<kuniyu@amazon.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-net@vger.kernel.org>,
+	<sfrench@samba.org>, <smfrench@gmail.com>, <wangzhaolong1@huawei.com>,
+	<zhangchangzhong@huawei.com>
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Date: Wed, 2 Apr 2025 13:22:11 -0700
+Message-ID: <20250402202257.5845-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <2025040233-tuesday-regroup-5c66@gregkh>
+References: <2025040233-tuesday-regroup-5c66@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250402-kselftest-vdso-fix-v1-1-71b68f1c27e3@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGWc7WcC/x2MSQqAMAwAvyI5G4hFcfmKeFCbalCsNCKC9O8Wj
- zMw84JyEFboshcC36LijwRFnsG8jsfCKDYxGDIVlWRwU97dxXrhbdWjkwdtW7upmaglQ5DCM3D
- S/7QfYvwA7UJCAWQAAAA=
-X-Change-ID: 20250402-kselftest-vdso-fix-d97fb8b09020
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1883; i=broonie@kernel.org;
- h=from:subject:message-id; bh=Nkt5GR0WOOcCXmdD6PdanESRtWi4YNRoSchI0vF6bhQ=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn7Z0ZBKu74myNZqTNWaq1ueGrMW+h9+KsIf+JQzhr
- urtJv5+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ+2dGQAKCRAk1otyXVSH0Kb4CA
- CCqDdFle4UTGPJJQaYR3wI2pTg81Uakog2U4PN8pcmZDzxxdv7p6FBgWSwkq33YwGA+wZBc38QUCPw
- wkzncGymNL9zpNlj1H5FYzv83/dMd18GXyS30u9KIdwqGQUjbNaCGQd5+92fXzJh8C/xYZtYhoe2Jy
- sfqjLhvbTfOj0xAGkJ786B4Qlhi1v/sYvj5Zbw0YhJJ2uXcnaIT6l00lEGgQ52VQ7VcKbnDumtzjuu
- ogElYNICDgtewsBCLXdixMN2wzcd3OMrPoSGk94wsx+sCtKQLn2Zs8I4rJWD8SrCKFh28kEZB6khmu
- eyEh8DjsEyY/WIcZo2bV8ffiuRBmp5
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWA004.ant.amazon.com (10.13.139.9) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Wed, 2 Apr 2025 21:15:58 +0100
+> On Wed, Apr 02, 2025 at 01:09:19PM -0700, Kuniyuki Iwashima wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Date: Wed, 2 Apr 2025 16:18:37 +0100
+> > > On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
+> > > > > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+> > > > > > Yes, it seems the previous description might not have been entirely clear.
+> > > > > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+> > > > > > does not actually address any real issues. It also fails to resolve the null pointer
+> > > > > > dereference problem within lockdep. On top of that, it has caused a series of
+> > > > > > subsequent leakage issues.
+> > > > > 
+> > > > > If this cve does not actually fix anything, then we can easily reject
+> > > > > it, please just let us know if that needs to happen here.
+> > > > > 
+> > > > > thanks,
+> > > > > 
+> > > > > greg k-h
+> > > > Hi Greg,
+> > > > 
+> > > > Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+> > > > should be rejected. Our analysis shows:
+> > > > 
+> > > > 1. It fails to address the actual null pointer dereference in lockdep
+> > > > 
+> > > > 2. It introduces multiple serious issues:
+> > > >    1. A socket leak vulnerability as documented in bugzilla #219972
+> > > >    2. Network namespace refcount imbalance issues as described in
+> > > >      bugzilla #219792 (which required the follow-up mainline fix
+> > > >      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+> > > >      causing leaks and use-after-free")
+> > > > 
+> > > > The next thing we should probably do is:
+> > > >    - Reverting e9f2517a3e18
+> > > >    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+> > > >      problems introduced by the problematic CVE patch
+> > > 
+> > > Great, can you please send patches now for both of these so we can
+> > > backport them to the stable kernels properly?
+> > 
+> > Sent to CIFS tree:
+> > https://lore.kernel.org/linux-cifs/20250402200319.2834-1-kuniyu@amazon.com/
+> 
+> You forgot to add a Cc: stable@ on the patches to ensure that they get
+> picked up properly for all stable trees :(
 
-The "real" linux/types.h UAPI header gracefully degrades to a NOOP when
-included from assembly code.
+Ah sorry, I did the same with netdev.  netdev patches usually do
+not have the tag but are backported fine, maybe netdev local rule ?
 
-Mirror this behaviour in the tools/ variant.
 
-Test for __ASSEMBLER__ over __ASSEMBLY__ as the former is provided by the
-toolchain automatically.
+> 
+> Can you redo them?
 
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/lkml/af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk/
-Fixes: c9fbaa879508 ("selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers")
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Link: https://patch.msgid.link/20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-This is a fix for a build break in the vDSO selftests which was
-introduced some time ago in the tip tree, Thomas posted the fix on 21st
-March the day after I reported it but it's not been picked up and the
-issue is now in mainline.  I'm sending it directly to try to avoid -rc1
-being broken.
----
- tools/include/uapi/linux/types.h | 3 +++
- 1 file changed, 3 insertions(+)
+Sure, will resend.
 
-diff --git a/tools/include/uapi/linux/types.h b/tools/include/uapi/linux/types.h
-index 91fa51a9c31d..85aa327245c6 100644
---- a/tools/include/uapi/linux/types.h
-+++ b/tools/include/uapi/linux/types.h
-@@ -4,6 +4,8 @@
- 
- #include <asm-generic/int-ll64.h>
- 
-+#ifndef __ASSEMBLER__
-+
- /* copied from linux:include/uapi/linux/types.h */
- #define __bitwise
- typedef __u16 __bitwise __le16;
-@@ -20,4 +22,5 @@ typedef __u32 __bitwise __wsum;
- #define __aligned_be64 __be64 __attribute__((aligned(8)))
- #define __aligned_le64 __le64 __attribute__((aligned(8)))
- 
-+#endif /* __ASSEMBLER__ */
- #endif /* _UAPI_LINUX_TYPES_H */
-
----
-base-commit: acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
-change-id: 20250402-kselftest-vdso-fix-d97fb8b09020
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+Thanks!
 
