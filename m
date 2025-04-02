@@ -1,175 +1,164 @@
-Return-Path: <linux-kernel+bounces-585763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0468EA7970C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFCCA7976A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B78172450
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C1F166ABE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99D51F3B89;
-	Wed,  2 Apr 2025 21:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D261EFFA0;
+	Wed,  2 Apr 2025 21:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SS+3ShvU"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RZa/+h6H"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB941EF0A5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E317555
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743627855; cv=none; b=EEh6tk/xquT7PaIQFxFnuDSWwGjFVG5t816WHCrnPN0SvBKoriakrIpme+AJnVojfgDVOEHS3/wzEg18+iY+iQRs3kELtdeB7uo9A9+zg6W2XSmslidr7cI3UVTrADVpjLXzCeSMowlNcCKCRPVo9/GaP9Hc+3ray+wIUX3lpyk=
+	t=1743628545; cv=none; b=sfSfJOhugGt0Sqj1noYXInw1bK54RTVz63SiSbu6qzmtvZGiLaqd6G3fhBa84yRWP+EnNEtIONN2Et/oyF1+AYpmxVgXeAwM9YzI/MckWv52+XTr7OydD8KEub0aGdmp497B9cI2SoZy7Xga1OqB6YuNALX/+ycSSFOarROnPY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743627855; c=relaxed/simple;
-	bh=9bl7Al8TcmucJOZ1piV9ws4Byidkq2KDSTJ0/uuMIxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bx3ENpXSY2V9D3vZ2/SMJReE/zkvee4DJAKhIi2sOGFhB+sSbOTDoYb2NZMHAAb36amM663RZJpZCMZmoJisimvlTtkeoptrrGVL/t6bOd9qFf5Q/mrAZCMtpW7g9czvzlqHXJNtHjNb/aN3i4Xsf0Ttr0x+kgxJZygrSZArOEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SS+3ShvU; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72a4793d4e2so167833a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:04:12 -0700 (PDT)
+	s=arc-20240116; t=1743628545; c=relaxed/simple;
+	bh=yMtg/5bd9WuFFPh1QUVVbVzPyQ8PxgEFM//QPDYEqaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lr35ee2R9XwSGrrSx2GQIv4VKFNq2xNN49GTzXmixqRfPXYbToyQAAAtm/RuUcK9JDeT3f1JY3DVaukCDTeZE/lXksAy+FKqnXW+lMyVXPG54PxcADxg5BOfGQ635e/btPW/kns8Oqp0XRHyKAivjOg8AHUKShrV/cWYNE69lxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RZa/+h6H; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so433432a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743627851; x=1744232651; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EHVmZKYaU8HGt5WXf4UlaDB5Ev+RO33OxezFlT9Bya8=;
-        b=SS+3ShvUqPMNzb+6vyxvjILN42fyLoWSpwng8YktRmx8r/JW8F7p7zZv49W/pzdSDd
-         QYz83PaJTvypPQ16hx9Pyd5H5L6h6/eXeKAV5KkZUi2EfdlRvPRi8bRtdeDJnOF6p3Du
-         yAiFPMS4vr9CFrx8Bnmhq6J6qTLkwLzwEK1NkN0t2ok1qwZceu9bCi+aOiMpkpc2sVfU
-         JYZE/8kj51njSsqXSV36xkh5YcMN7ai+sLeo75V40Eb/wEbqrLP4sbD573E36eQae1av
-         x3CxtBG1Zsr6T1ek1vvB+9mQ+JKiuR6Bz7OAZnPrUVb4482la3OnlVBY9ZdfUy9Ki+Zx
-         AwDQ==
+        d=linux-foundation.org; s=google; t=1743628542; x=1744233342; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vOkaWbZeGW9ejcyKHqKRgGRaPzQmhuks1cZQp6R9ag=;
+        b=RZa/+h6HEjsYLq3HkITnh9KcuXtV6l1/HrWHOKlfjwJoEoG+vVh50SSBqnHy3tUnjK
+         XZfLYbZ56P9oJVs1R5/dJX0izYo/9GZ5itxtUgV/pxy/BBqQn2b7eNPgnUdzqav7r8q/
+         +yrvKK9f6OmdosVym50HCISw2QMZI4FChmOz8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743627851; x=1744232651;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHVmZKYaU8HGt5WXf4UlaDB5Ev+RO33OxezFlT9Bya8=;
-        b=CtXiNOK0Mag6yOHMyXojOc9E8Ge4StgRmfmiY3ki6amCjPS6Br7WtNwhUeBGwAmlVu
-         ngqBeMzmS1ftd2Qxb6KvSw/BE9dBdDuf/di6xFBP1Qid14FcafLjnbGzADNepGsRCLkS
-         S3E4svmSkNi3aMgmEa4W5BCpF9gEKSvlc4tyGzsi7XQ81ruJxuhWPLIaaNaOMDTC1AY3
-         tGwwDTcYe669Fwb3Ndb30ii3Rk61XHpnOraycHZPioRJmF1wfsaaxBW/g90hGhmVurzW
-         cpTuZHFlT6Lm9fWqm0MOr3RAjvsVno8ASdPkqz7BHPwBzsIku+fsNWu5Z/k+HBBdBton
-         e9Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdrbRnCCD4mqoyAgb32t0hEe7hVbflbx8aZN1CB3W7xz5293VQYGC9ts0Hl9Pff05WJ37XxUhUEzBFD7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe2u7hzYIb0faNNh2f149WNy5BFq4WR5BSR0GZgk+1JU8hDbzd
-	nnJzK/orjiovn+5EU7N8NMVhCbPE/1S9hghuqQ6nY4DPSd0X5tt3hwqTXPaV5wY=
-X-Gm-Gg: ASbGncsWYmHGoq2tj58LW2jHHxVqpLy3H2fqwTOlwQuSOJGmmdSSQfeANbAysjRjqnG
-	gxZ1qN8lNLJDdRGz97nVXZFcOz3nPd+ZAJ6Dfn4LkIG7eDiyAvg6nYgNyR5hX2njTiajXNVx8sN
-	7LO54cNzP71UGVxaO8jecq5egpqwilCA0Nqny8I9ETB/7wFfWtrG9rNC7ohT3K391YH29QmKXsi
-	3AQNs+iDOguKjWt3/mab/Zldnp0Z34KMCvJZ6rtt9Cab26bkJoAWeHNkU22Xl/c/Co0NL3AhEQv
-	+9oL4cCehTyfpxtMXNXwCZJuSELlitKsQe7TZcYMF6nJOwUKbnEGAj3XX7pBdHGVVB4RgXqgTZu
-	MHAnt2Q==
-X-Google-Smtp-Source: AGHT+IEm6MEi4+/aDKfkND/DEKKXrfRXQ/0xgqv8Xqad87ZQdhhW5rDXRo5jjzJ8TnjkHIGd06rHlA==
-X-Received: by 2002:a05:6830:61c5:b0:72c:320b:fc8c with SMTP id 46e09a7af769-72dae738ce3mr6840871a34.21.1743627851291;
-        Wed, 02 Apr 2025 14:04:11 -0700 (PDT)
-Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72c58285654sm2386290a34.57.2025.04.02.14.04.09
+        d=1e100.net; s=20230601; t=1743628542; x=1744233342;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6vOkaWbZeGW9ejcyKHqKRgGRaPzQmhuks1cZQp6R9ag=;
+        b=wS+nUfMDj0CLLAinQEVrwq/8tm0u5BvhRR6Q04QyLO1ZMnOLMH5F8jY9up9YLl27ZF
+         dRzBJCy6kRzVilETFvwJ2W0D+ONxt3w++t3fQ8wZWR4X4WtkXjJtlRBiCxS60zs0swjl
+         i8hBnKzvEWvJDhhuTiYOAZsJJxx9AkMXVEgidpROIA0sCBii7sYle54uY1IB4hDxVg5n
+         VtvVnYzBJ94HJTGQ53R9rYfDu2K3OOHan1la8RP2tiVIYrrxCi6pjwGHiRUxBbeyGkCf
+         sw5cfZ2MDpWFhCFyT8WhFHMjR2giXsSQWrzel4tcFxID0z5HYdjLIh/CRNMf3HqAfR75
+         B5Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCW57hlKEkwSd9rH8g8jVpUBU7rXeyC5ELdtiXJokbxz01VcH2j1WP8ah5KyA99Wqp0hgz2TZj0ffKbvypc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyklE3lNfFQM/dgzTdIYS5tyOjB+ZGGfml1dCAtabnNw7RuTQ2U
+	sxvtv4uYXKmSHP7X/ob77ysC4sSVue2nDUmzbphS2Qd+MSYdlAgiPZI9tENsfoc4nz+hqnUdlsK
+	yi4l7Mw==
+X-Gm-Gg: ASbGncsH+N7jjZfTsQjhiAbx2LXlkgCjgIUyRX7VaYio5PJdLQ6TSvdFVvS8GrHMJqB
+	Py+Oe/0zGWGAcOWWBnhr75wpi6AoAmvoWENFGNBXBYMm17R8JEtWo0y94xAmKZIgOIxYQR81QnV
+	n7M2bF5I1lr0Qov2o5S3V4WVhfbBBjwEmOhcevCguGvq+9MyKayMVmJBY6SDtTpVfFjHTZYYerb
+	xvhLpG86xahAkAL1AqGJAl0AHFGEVC1o8DJAo9S9qp5hSc28wslCVTpI0erxVkXpohjbEcKY92+
+	opu36o+sql9aDD+lBQEsTG0BgPCn6+gwaBLqsgaqMU6EciAnxfwRDcqQNRD65/bQgpneIEtuez+
+	w50Whvt2aEU5D6g/++tmCYC90GkQvjw==
+X-Google-Smtp-Source: AGHT+IHKvMhA12/Q9Qf9ljlMiGKycMopgTw+clKHOcWQoJKAejrVAzYVuElbEUDkYt8RaiZsmDoaoA==
+X-Received: by 2002:a17:907:728c:b0:ac7:31a4:d4e9 with SMTP id a640c23a62f3a-ac7bc03af17mr20633166b.4.1743628541632;
+        Wed, 02 Apr 2025 14:15:41 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71961f8fbsm968126366b.107.2025.04.02.14.15.41
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 14:04:10 -0700 (PDT)
-Message-ID: <4c3e0d23-2582-4acf-8e90-542c8f8c385f@baylibre.com>
-Date: Wed, 2 Apr 2025 16:04:09 -0500
+        Wed, 02 Apr 2025 14:15:41 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac298c8fa50so36527166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:15:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYnuBeXsvf3T2gEWG6Dz1KX7IWVpiSptlbBsRFtSixJWI9LAarXVSdyrTRDKpUxhmBgHUqy8BPsfuQcmY=@vger.kernel.org
+X-Received: by 2002:a17:907:9409:b0:ac7:970b:8ee5 with SMTP id
+ a640c23a62f3a-ac7bc126208mr19593966b.27.1743628091735; Wed, 02 Apr 2025
+ 14:08:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] iio: adc: ti-adc128s052: Simplify using
- be16_to_cpu()
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1743573284.git.mazziesaccount@gmail.com>
- <feeabbfd3d3916c7497dfd94423ff83ef5f654f1.1743573284.git.mazziesaccount@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <feeabbfd3d3916c7497dfd94423ff83ef5f654f1.1743573284.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Z-sDc-0qyfPZz9lv@mini-arch> <39515c76-310d-41af-a8b4-a814841449e3@samba.org>
+ <407c1a05-24a7-430b-958c-0ca78c467c07@samba.org> <ed2038b1-0331-43d6-ac15-fd7e004ab27e@samba.org>
+ <Z+wH1oYOr1dlKeyN@gmail.com> <Z-wKI1rQGSgrsjbl@mini-arch> <0f0f9cfd-77be-4988-8043-0d1bd0d157e7@samba.org>
+ <Z-xi7TH83upf-E3q@mini-arch> <4b7ac4e9-6856-4e54-a2ba-15465e9622ac@samba.org>
+ <20250402132906.0ceb8985@pumpkin> <Z-1Hgv4ImjWOW8X2@mini-arch> <20250402214638.0b5eed55@pumpkin>
+In-Reply-To: <20250402214638.0b5eed55@pumpkin>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 2 Apr 2025 14:07:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi7p9bKgZt1E1BWE-NjwSRDBQs=Coviiz0ZTQy9OhHvPg@mail.gmail.com>
+X-Gm-Features: AQ5f1JpKVAIlc4pALP5yKNCr8F3ijIqVBIOCCdqoIfNZomenel-ajZbKWJ5EdvE
+Message-ID: <CAHk-=wi7p9bKgZt1E1BWE-NjwSRDBQs=Coviiz0ZTQy9OhHvPg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] net/io_uring: pass a kernel pointer via optlen_t
+ to proto[_ops].getsockopt()
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Stanislav Fomichev <stfomichev@gmail.com>, Stefan Metzmacher <metze@samba.org>, 
+	Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Karsten Keil <isdn@linux-pingi.de>, Ayush Sawal <ayush.sawal@chelsio.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, 
+	Neal Cardwell <ncardwell@google.com>, Joerg Reuter <jreuter@yaina.de>, 
+	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Oliver Hartkopp <socketcan@hartkopp.net>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Robin van der Gracht <robin@protonic.nl>, 
+	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de, 
+	Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Alexandra Winter <wintera@linux.ibm.com>, 
+	Thorsten Winkler <twinkler@linux.ibm.com>, James Chapman <jchapman@katalix.com>, 
+	Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, 
+	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Remi Denis-Courmont <courmisch@gmail.com>, Allison Henderson <allison.henderson@oracle.com>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
+	"D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
+	Wen Gu <guwen@linux.alibaba.com>, Jon Maloy <jmaloy@redhat.com>, 
+	Boris Pismenny <borisp@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, Martin Schiller <ms@dev.tdt.de>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sctp@vger.kernel.org, linux-hams@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org, 
+	dccp@vger.kernel.org, linux-wpan@vger.kernel.org, linux-s390@vger.kernel.org, 
+	mptcp@lists.linux.dev, linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com, 
+	linux-afs@lists.infradead.org, tipc-discussion@lists.sourceforge.net, 
+	virtualization@lists.linux.dev, linux-x25@vger.kernel.org, 
+	bpf@vger.kernel.org, isdn4linux@listserv.isdn4linux.de, 
+	io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/2/25 1:09 AM, Matti Vaittinen wrote:
-> The register data is 12-bit big-endian data. Use be16_to_cpu() to do
-> the conversion, and simple bitwise AND for masking to make it more
-> obvious.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
-> Revision history:
-> v1 => v2:
->  - Fix commit msg to reflect the fact there was no bug
->  - Drop Fixes tag
->  - Use union for rx / tx buffer to avoid casting
->  - Keep the shared message protected by the mutex
-> ---
->  drivers/iio/adc/ti-adc128s052.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-> index a456ea78462f..3e69a5fce010 100644
-> --- a/drivers/iio/adc/ti-adc128s052.c
-> +++ b/drivers/iio/adc/ti-adc128s052.c
-> @@ -28,32 +28,34 @@ struct adc128 {
->  	struct regulator *reg;
->  	struct mutex lock;
->  
-> -	u8 buffer[2] __aligned(IIO_DMA_MINALIGN);
-> +	union {
-> +		__be16 rx_buffer;
-> +		u8 tx_buffer[2];
-> +	} __aligned(IIO_DMA_MINALIGN);
->  };
->  
->  static int adc128_adc_conversion(struct adc128 *adc, u8 channel)
->  {
->  	int ret;
-> +	char *msg = &adc->tx_buffer[0];
->  
->  	mutex_lock(&adc->lock);
->  
-> -	adc->buffer[0] = channel << 3;
-> -	adc->buffer[1] = 0;
-> +	msg[0] = channel << 3;
-> +	msg[1] = 0;
->  
-> -	ret = spi_write(adc->spi, &adc->buffer, 2);
-> +	ret = spi_write(adc->spi, msg, sizeof(adc->tx_buffer));
->  	if (ret < 0) {
->  		mutex_unlock(&adc->lock);
->  		return ret;
->  	}
->  
-> -	ret = spi_read(adc->spi, &adc->buffer, 2);
-> -
-> +	ret = spi_read(adc->spi, &adc->rx_buffer, 2);
->  	mutex_unlock(&adc->lock);
-> -
->  	if (ret < 0)
->  		return ret;
->  
-> -	return ((adc->buffer[0] << 8 | adc->buffer[1]) & 0xFFF);
-> +	return be16_to_cpu(adc->rx_buffer) & 0xFFF;
+On Wed, 2 Apr 2025 at 13:46, David Laight <david.laight.linux@gmail.com> wrote:
+>
+> The problem is that the generic code has to deal with all the 'wild stuff'.
+> It is also common to do non-sequential accesses - so iov_iter doesn't match
+> at all.
+> There also isn't a requirement for scatter-gather.
 
+Note that the generic code has special cases for the simple stuff,
+which is all that the sockopt code would need.
 
-The cast isn't exactly beautiful, but this would save a lot of
-lines of diff and a few lines of code by avoiding the need for
-the union and the local msg variable.
+Now, that's _particularly_ true for the "single user address range"
+thing, where there's a special ITER_UBUF thing.
 
-	return be16_to_cpup((__be16 *)adc->buffer) & 0xFFF;
+We don't actually have a "single kernel range" version of that, but
+ITER_KVEC is simple to use, and the sockopt code could say "I only
+ever look at the first buffer".
 
->  }
->  
->  static int adc128_read_raw(struct iio_dev *indio_dev,
+It's ok to just not handle all the cases, and you don't *have* to use
+the generic "copy_from_iter()" routines if you don't want to.
 
+In fact, I would expect that something like sockopt generally wouldn't
+want to use the normal iter copying routines, since those are
+basically all geared towards "copy and update the iter".
+
+           Linus
 
