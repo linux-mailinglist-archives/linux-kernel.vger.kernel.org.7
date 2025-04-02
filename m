@@ -1,197 +1,189 @@
-Return-Path: <linux-kernel+bounces-584748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EEEEA78B00
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:24:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF6AA78B03
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 533C37A2DB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806BD3B1D5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0022356C1;
-	Wed,  2 Apr 2025 09:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A61236420;
+	Wed,  2 Apr 2025 09:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exZp2R/X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f9Bo4ohS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4A719F40F;
-	Wed,  2 Apr 2025 09:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B1C2356D7;
+	Wed,  2 Apr 2025 09:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743585860; cv=none; b=fL8G59h0pt/Dz2UoZYLIfdMMN8CdO1I19kX12N61h9bClJ84WybqiUlKN5vrcv4n1YmrNoIG/NGiEdDXyCeI1ejLcpPeQw85pufUXmn8Sm/sqg6sBGNBITAvWr5K2kt/0LOeZwAUe3ctkaDtdx1hEltePCMC+v2+sUh9cotAJ0c=
+	t=1743585863; cv=none; b=uylIN8ygoPpK0BbmNbaGA1kuIJaQUg+chP/r0bDNBCKYxBeZOA2GTziwOyxR2w+oX9CwWqIECgfGpud72r2xW7VRYQScmBfpbzug6swfpyIS2y6GpEM1s7yhsq78oIqVoixQtaCvovwzHymBg0MWyxn3eknBEskOJtEzKCn+yKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743585860; c=relaxed/simple;
-	bh=S+RammdvGgPNtJem3pUChnkx0mUdR8uHfmfIr5vdu+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYcesJPgEI0GnuJjxsehbUqyFJsAMfhUrkPORjUhEJe+Ix7egjocNLoPPvn2QECR4AVLN5nnawDh2DRr24ynIqt9EoPX0fa3DQkqxIyaZryTXmwjLfel78N+kRS0CVhqexcZllahDnQpKsHy1djnp+kG4DITLKCVeH9O65VfHNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exZp2R/X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BDAC4CEDD;
-	Wed,  2 Apr 2025 09:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743585860;
-	bh=S+RammdvGgPNtJem3pUChnkx0mUdR8uHfmfIr5vdu+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=exZp2R/X99eCiYjF/oaz5HTlQ9d4p5R+yI1ZlBwLewSLWYpT8mFZAaf2hDMdXT+YO
-	 UDrdiY1FUneyZKMmugVo0jziVpDpelufoOnnVcsOQ2DNPAWBgCG7f6NnHDzNE6E0bE
-	 fjlIz77sKyHfy2iqG+QlwUSGt61wjaKGAjVxo1VfvjC+18H5Qnvft4g3NEw9m4qlJC
-	 Nbt2UTMgz9ocSDp5brO6YB31zUUemL9MVzbhH2tYX87NOzucgFSIN3QrlDDwPFOR2t
-	 AHwTSV3OS7IRwz2P3aqn7vzbHyZ+jfY0tEMcsfi23ZugdfSm654i+oisuS6LUDzjTT
-	 4Sj3pY1DG6Jtw==
-Date: Wed, 2 Apr 2025 12:24:12 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v5 2/4] tracing: Have reserve_mem use phys_to_virt() and
- separate from memmap buffer
-Message-ID: <Z-0CPFGDqcUt-fMp@kernel.org>
-References: <20250401225811.008143218@goodmis.org>
- <20250401225842.429332654@goodmis.org>
+	s=arc-20240116; t=1743585863; c=relaxed/simple;
+	bh=C3XotoUexJAu0axISvav3t2Bl12OZSkmJVdzrk20j4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duVads5zPe3IWtuZsqWs22kfRyIajF1vnIITjEHsCuC6gna2/vk6yvyPZczCqBnuO30EcRgVz9sKo55tkTNd9BZkAelSmgIOwFCbkmtBUUFVII7UhEHdl9w4u9lkURa+OHfp154o26v83+a/vv2r4MydpGBfG5vC7nG2/VSzXPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f9Bo4ohS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743585859;
+	bh=C3XotoUexJAu0axISvav3t2Bl12OZSkmJVdzrk20j4w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f9Bo4ohS74A0fke56j5NVf6RcpCx5zkYMAxEJF5Dnfou5QXznemiAIk6JbS4moAyD
+	 mEZCgWFbe9JUN8phOpckNscZ0Y0zXq2aBPm1+uOrQ8ZoHhx+DBiubzcV50DkdT9EBD
+	 KHcJDHdiKOl42PYvNiJc11RTmRRWeSj+SR8qU9UJU17NoJdxjTpixnsn7DBp7ERUrm
+	 pBJmZacGxqKfH26R/U0Gckw6zCnpXOleu+eRvhTyNgNYJyFXCU9a3y7e2OWj9rohOM
+	 4zaq9uhtzPX3ez5ma4WRMOv8kmrnkuQ0LlOyGBIiQCkQIMZH9309cd06pkCJWJTkQO
+	 IXii4fbJyBeIQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1E5BC17E0809;
+	Wed,  2 Apr 2025 11:24:19 +0200 (CEST)
+Message-ID: <30ff6b8c-befc-4233-8e61-c131b1f037ff@collabora.com>
+Date: Wed, 2 Apr 2025 11:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401225842.429332654@goodmis.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3,1/2] dt-bindings: memory-controllers: Add MediaTek DRAM
+ controller interface
+To: =?UTF-8?B?Q3J5c3RhbCBHdW8gKOmDreaZtik=?= <Crystal.Guo@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk@kernel.org" <krzk@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+References: <20250326063041.7126-1-crystal.guo@mediatek.com>
+ <20250326063041.7126-2-crystal.guo@mediatek.com>
+ <fb154077-e650-480e-a4d7-0a141b563dfc@collabora.com>
+ <4bad42c867a838da413154fa0a779547d642642c.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <4bad42c867a838da413154fa0a779547d642642c.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 01, 2025 at 06:58:13PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+Il 02/04/25 05:51, Crystal Guo (郭晶) ha scritto:
+> On Wed, 2025-03-26 at 11:18 +0100, AngeloGioacchino Del Regno wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> Il 26/03/25 07:30, Crystal Guo ha scritto:
+>>> A MediaTek DRAM controller interface to provide the current DDR
+>>> data rate.
+>>>
+>>> Signed-off-by: Crystal Guo <crystal.guo@mediatek.com>
+>>> ---
+>>>    .../memory-controllers/mediatek,dramc.yaml    | 44
+>>> +++++++++++++++++++
+>>>    1 file changed, 44 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/memory-
+>>> controllers/mediatek,dramc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-
+>>> controllers/mediatek,dramc.yaml
+>>> b/Documentation/devicetree/bindings/memory-
+>>> controllers/mediatek,dramc.yaml
+>>> new file mode 100644
+>>> index 000000000000..8bdacfc36cb5
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/memory-
+>>> controllers/mediatek,dramc.yaml
+>>
+>> The filename should be "mediatek,mt8196-dramc.yaml"
+>>
 > 
-> The reserve_mem kernel command line option may pass back a physical
-> address, but the memory is still part of the normal memory just like
-> using memblock_reserve() would be. This means that the physical memory
-
-... using memblock_alloc() would be
-
-> returned by the reserve_mem command line option can be converted directly
-> to virtual memory by simply using phys_to_virt().
-> 
-> When freeing the buffer there's no need to call vunmap() anymore as the
-> memory allocated by reserve_mem is freed by the call to
-> reserve_mem_release_by_name().
-> 
-> Because the persistent ring buffer can also be allocated via the memmap
-> option, which *is* different than normal memory as it cannot be added back
-> to the buddy system, it must be treated differently. It still needs to be
-> virtually mapped to have access to it. It also can not be freed nor can it
-> ever be memory mapped to user space.
-> 
-> Create a new trace_array flag called TRACE_ARRAY_FL_MEMMAP which gets set
-> if the buffer is created by the memmap option, and this will prevent the
-> buffer from being memory mapped by user space.
-> 
-> Also increment the ref count for memmap'ed buffers so that they can never
-> be freed.
-> 
-> Link: https://lore.kernel.org/all/Z-wFszhJ_9o4dc8O@kernel.org/
-> 
-> Suggested-by: Mike Rapoport <rppt@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace.c | 23 ++++++++++++++++-------
->  kernel/trace/trace.h |  1 +
->  2 files changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index de9c237e5826..2f9c91f26d5b 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8505,6 +8505,10 @@ static int tracing_buffers_mmap(struct file *filp, struct vm_area_struct *vma)
->  	struct trace_iterator *iter = &info->iter;
->  	int ret = 0;
->  
-> +	/* A memmap'ed buffer is not supported for user space mmap */
-> +	if (iter->tr->flags & TRACE_ARRAY_FL_MEMMAP)
-> +		return -ENODEV;
-> +
->  	/* Currently the boot mapped buffer is not supported for mmap */
->  	if (iter->tr->flags & TRACE_ARRAY_FL_BOOT)
->  		return -ENODEV;
-> @@ -9614,9 +9618,6 @@ static void free_trace_buffers(struct trace_array *tr)
->  #ifdef CONFIG_TRACER_MAX_TRACE
->  	free_trace_buffer(&tr->max_buffer);
->  #endif
-> -
-> -	if (tr->range_addr_start)
-> -		vunmap((void *)tr->range_addr_start);
->  }
->  
->  static void init_trace_flags_index(struct trace_array *tr)
-> @@ -10710,6 +10711,7 @@ static inline void do_allocate_snapshot(const char *name) { }
->  __init static void enable_instances(void)
->  {
->  	struct trace_array *tr;
-> +	bool memmap_area = false;
->  	char *curr_str;
->  	char *name;
->  	char *str;
-> @@ -10778,6 +10780,7 @@ __init static void enable_instances(void)
->  					name);
->  				continue;
->  			}
-> +			memmap_area = true;
->  		} else if (tok) {
->  			if (!reserve_mem_find_by_name(tok, &start, &size)) {
->  				start = 0;
-> @@ -10800,7 +10803,10 @@ __init static void enable_instances(void)
->  				continue;
->  			}
->  
-> -			addr = map_pages(start, size);
-> +			if (memmap_area)
-> +				addr = map_pages(start, size);
-> +			else
-> +				addr = (unsigned long)phys_to_virt(start);
->  			if (addr) {
->  				pr_info("Tracing: mapped boot instance %s at physical memory %pa of size 0x%lx\n",
->  					name, &start, (unsigned long)size);
-> @@ -10827,10 +10833,13 @@ __init static void enable_instances(void)
->  			update_printk_trace(tr);
->  
->  		/*
-> -		 * If start is set, then this is a mapped buffer, and
-> -		 * cannot be deleted by user space, so keep the reference
-> -		 * to it.
-> +		 * memmap'd buffers can not be freed.
->  		 */
-> +		if (memmap_area) {
-> +			tr->flags |= TRACE_ARRAY_FL_MEMMAP;
-> +			tr->ref++;
-> +		}
-> +
->  		if (start) {
->  			tr->flags |= TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT;
->  			tr->range_name = no_free_ptr(rname);
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index c20f6bcc200a..f9513dc14c37 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -447,6 +447,7 @@ enum {
->  	TRACE_ARRAY_FL_BOOT		= BIT(1),
->  	TRACE_ARRAY_FL_LAST_BOOT	= BIT(2),
->  	TRACE_ARRAY_FL_MOD_INIT		= BIT(3),
-> +	TRACE_ARRAY_FL_MEMMAP		= BIT(4),
->  };
->  
->  #ifdef CONFIG_MODULES
-> -- 
-> 2.47.2
-> 
+> For other MediaTek SOCs, the method of calculating current ddr data
+> rate is similar to that of MT8196. After changing "mediatek,dramc.yaml"
+> to "mediatek,mt8196-dramc.yaml", would future Mediatek SOCs need to add
+> a separate yaml file again? or could they reuse mediatek,mt8196-
+> dramc.yaml? Thank you for your guidance.
 > 
 
--- 
-Sincerely yours,
-Mike.
+Other MediaTek SoC will be able to reuse mediatek,mt8196-dramc.yaml if the
+hardware is similar.
+
+Cheers,
+Angelo
+
+> Best regards,
+> Crystal
+> 
+>>
+>>> @@ -0,0 +1,44 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +# Copyright (c) 2025 MediaTek Inc.
+>>> +%YAML 1.2
+>>> +---
+>>> +$id:
+>>> https://urldefense.com/v3/__http://devicetree.org/schemas/memory-controllers/mediatek,dramc.yaml*__;Iw!!CTRNKA9wMg0ARbw!gH5hMTJ34ZcYfNMfLUNL-dH9SMyQGr06kJ4jij1anezByF7IBOSbkYNdqysgHoz-rSRNwM9r6RaaTC1MO2882ojif26oaBzg$
+>>> +$schema:
+>>> https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!gH5hMTJ34ZcYfNMfLUNL-dH9SMyQGr06kJ4jij1anezByF7IBOSbkYNdqysgHoz-rSRNwM9r6RaaTC1MO2882ojifw8f6sUH$
+>>> +
+>>> +title: MediaTek DRAM Controller (DRAMC)
+>>> +
+>>> +maintainers:
+>>> +  - Crystal Guo <crystal.guo@mediatek.com>
+>>> +
+>>> +description:
+>>> +  A MediaTek DRAM controller interface to provide the current data
+>>> rate of DRAM.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - mediatek,mt8196-dramc
+>>
+>> P.S.: bindings maintainers: this driver is expected to get more
+>> compatibles soon.
+>>
+>> Cheers,
+>> Angelo
+>>
+>>
+>>> +
+>>> +  reg:
+>>> +    items:
+>>> +      - description: anaphy registers
+>>> +      - description: ddrphy registers
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    soc {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +
+>>> +        memory-controller@10236000 {
+>>> +            compatible = "mediatek,mt8196-dramc";
+>>> +            reg = <0 0x10236000 0 0x2000>,
+>>> +                  <0 0x10238000 0 0x2000>;
+>>> +        };
+>>> +    };
+>>
+>>
 
