@@ -1,130 +1,124 @@
-Return-Path: <linux-kernel+bounces-585765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DD8A79737
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:09:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D565FA7976F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C55FC7A44E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574531893EBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34B01F3BAE;
-	Wed,  2 Apr 2025 21:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC73B1F4179;
+	Wed,  2 Apr 2025 21:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYN5a+XL"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="jqch+iqd"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D2242A87;
-	Wed,  2 Apr 2025 21:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398991EB1A7
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743628179; cv=none; b=c8FrQ8C5sh+BntOgJgQqrUAnnKHRExRTtV3R0DvfyGL+F0R57E2JZ/1tGoRsDBZQMudDJKq7hze5pLixzV5ROckqdPK6MvWAUk9Dmqamurmde0a62LlBxQRQzOg4PNmkxl/iKtC6voDYLLPGG33ZoZ0WyCIx9/2mQhZbMWoQJKY=
+	t=1743628572; cv=none; b=mGPO2y+DBtBTzugzV2MX/0PvJBLbTLqNl5KvGIIHGbOPQRBnF360g3a87ny69dyrFN+NSygULqQetDNnHbf6E5nEIiwFHHX/sHSElpCOOBFIT2sQzIryF2k3nyEUFphZg+8YKnYvykZC4mXcvS/6VcQKmdZWqzHvLrOkE4KjNr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743628179; c=relaxed/simple;
-	bh=pDdg2pUujsuHDByxjg2MMuLuk8ydhxrM9P7TiksmsU4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ep4SuLNoIn4a2vbhhNfCTA/FJbdCc5DP12UMw3xkojR1jQG9D7fom6dfaCqZNvuJfk2PlQBgRFoSYaFKKqg8QhPfckHwCfkRjHI7WRs3zqnzEvgUm8LYOK/pcU/w8qg6Z+Qmy6ISYDJ3gBDVS2zOTkwjybQGhiz59bQqEGisMTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYN5a+XL; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so1896841fa.2;
-        Wed, 02 Apr 2025 14:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743628176; x=1744232976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pDdg2pUujsuHDByxjg2MMuLuk8ydhxrM9P7TiksmsU4=;
-        b=TYN5a+XLYkB0PiHhZmVQVXbb/GS0qEJ0wWAqtRW6IyXjweU0xzu2t8IkJ9YOWPzVJA
-         L5nBGmj3flpA+18JpSy65nDjd/5dHyrIaQ/zlYEAG/JZ/K733dPOL+OkjGMCmoOZbU+O
-         psTIEYm5fDyvI6nF2T3p4sA2V/vv6Edsb8N7kOV77dWYvRi7nKLrb4+w24ju8s8I4zPi
-         d59wkYREI1Bx15+wDnZ42ET6pLzKfCyMQ3uL0WN/m+/b1RiA97cdU5aAQIzn0aSNW2zU
-         YuGu6e3QuJM/GbCozTkgXtIV1d4IVQESpzQx61N6RjW6Ru4tzA4+VCgN9fqiGzcP/GaQ
-         rMdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743628176; x=1744232976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pDdg2pUujsuHDByxjg2MMuLuk8ydhxrM9P7TiksmsU4=;
-        b=L+TkORIBN4hlQ9cH+X/RT9gMFSP1YQuLGQzQcpnot4cZRFPbOj4y8JW8r+LnP8H+iq
-         5LRIXVON0HGLwFah1wvL1Vs0i6uvBCx0Au6avxMNM3FNluNgwW73L60va342FrQUi3+C
-         x/DFwMNY0KAkhU1ZABr+YWHQdE3VLCMJhQBSm05P8/nT1822zYbDY5zaLwTLRIzL5rli
-         GFfrudFN7JUExzOsm2bqjiLnyWm0QwAJK1s5OTwMCkeZLAR3e28btLrcxI8OezeO4dvj
-         3SGlvD54t/t4aPCt1l72fEuqTy1jFDSa8DPXIu6RRyccLFh68eRdKINaQEWjegm0mlzJ
-         g+uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuiaOQQ+pf5jaiQtw6tTOr9G1HbDXdtCvh86Fri2PrR2ZLu5eQFedJp8VzKcbOHNwCljgFEa1AZ6daPyHQa1Q=@vger.kernel.org, AJvYcCXZJlZnJUqJCLVHqIXoj+uti1SFB63jn/O5Euphht+y3V2u3l27K9rA/FFCcpkstJJIME11TJdODit6rQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9owQarIU7UuvUpEVvLCGADNRYt2T8PSMOElrsGLJLYioFOY3/
-	BGTUGqzAa9YuQvAGHR1UpEQuRmyxaRxQ1mcKJKhPq3COcH1mdzFNxTQVRH2UKm+XGP1aA6VdNqM
-	fMwpoLawb+0nsKBqQ1VVsnmabvYE=
-X-Gm-Gg: ASbGncttkAxV/VrU2oB+d8o8GvJHPsZ+rpX6EijbMzs24BtFNv1fMGqPfWwvlwfZD5b
-	aXESU2yI4g47E6PulrZtX77oYOpyE/fnStJLOMF8SE8k5cnTp6IOV0q6HGf+0+wPXY+4T6xTvdS
-	qhb6kFhL8ahzf+gZ9oL6WbgGKGxdKmMGSkKYr3SutA6A==
-X-Google-Smtp-Source: AGHT+IElNaah8ZmJP3TMXN4F2GDMv6Ww8Z37dhvkzK+TjpR8HD1UlkHAgeiXaBGrv90H564RXc8F3aY70RS/85mde+I=
-X-Received: by 2002:a05:651c:554:b0:30b:f274:d1e2 with SMTP id
- 38308e7fff4ca-30eeccf60e9mr31325291fa.1.1743628175418; Wed, 02 Apr 2025
- 14:09:35 -0700 (PDT)
+	s=arc-20240116; t=1743628572; c=relaxed/simple;
+	bh=NxU1qh4rEZ3galaYLuwWXch0mLJidkZNwrsLm5kun38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Onb2FzRRuZezS0vYNIHJJPjeSXTONNxGa46Zs4Dex78WibiM0y7qCHjbs3eqMfK2xCQIhNP6fbiA/p/LG9oF3OMOKHPhpkLH/ioijnjSEHn+zWAo1UthkPS+1HVTWAj0xUw56vCxWBD/pNA7OLUc8641/OOYfq/SBdbbxo6nBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=jqch+iqd; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1743628147; bh=NxU1qh4rEZ3galaYLuwWXch0mLJidkZNwrsLm5kun38=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=jqch+iqdF1HrmRSVsRvaiDzIazDlj460v0RiPrW6fX8k0OLkha4r9GXYn52s+HdTg
+	 Avh6wXWHlXw7GhVOEkaNyRYQILZOlS+nMUSHG8rQ7puw1ZoAo6jQ+ajg9fQj/bi4Ca
+	 4JkaiYZUeHryIItxpdaxsOca0xFD8PN7+pX6IUTI=
+Date: Wed, 2 Apr 2025 23:09:06 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, 
+	Linus Walleij <linus.walleij@linaro.org>, Jianhua Lu <lujianhua000@gmail.com>, 
+	Stefan Mavrodiev <stefan@olimex.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/30] panel/ilitek-ili9341: Use refcounted allocation in
+ place of devm_kzalloc()
+Message-ID: <75q6u7kgyhveuzlxujoocvqfzilaxsvh3udzeltk2itwigy2n3@f5sqxddtjxuf>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Anusha Srivatsa <asrivats@redhat.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Icenowy Zheng <icenowy@aosc.io>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
+	Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>, 
+	Linus Walleij <linus.walleij@linaro.org>, Jianhua Lu <lujianhua000@gmail.com>, 
+	Stefan Mavrodiev <stefan@olimex.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20250402-b4-drm_panel_mass_convert_part2-v1-0-903b70999ea6@redhat.com>
+ <20250402-b4-drm_panel_mass_convert_part2-v1-7-903b70999ea6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401221205.52381-1-ojeda@kernel.org> <D8VPGBN60E61.1Z48FQW6TL3A@proton.me>
- <CANiq72mdvnHvWbVNQbiXSRxd1xrF+A=v0RdJO74xeY3HyhRmcg@mail.gmail.com>
- <CAJ-ks9nAAcoJoFF+qNPbhsM32kOh9u+LGYUwFN_n9qqudB6YhA@mail.gmail.com>
- <CANiq72k36Tvwbzkg6nRdxB8VNRHLf8QzLeCXZq7sEPewccsWNw@mail.gmail.com>
- <CAJ-ks9nfEg=sdn_-q+xOc+k9mU0pdMuumwRb76LXzE3RcOtg6w@mail.gmail.com> <CANiq72mERwbmXYq-pi=WUAZ_VYGcBVS7tzH4P5zSUVCMcL4-CQ@mail.gmail.com>
-In-Reply-To: <CANiq72mERwbmXYq-pi=WUAZ_VYGcBVS7tzH4P5zSUVCMcL4-CQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 2 Apr 2025 17:08:58 -0400
-X-Gm-Features: AQ5f1JqXiOgjgjbHiCZGQl5CAfHUvDvozUzbxrFGGJDQOEgolwWGp0Hhm3b85BE
-Message-ID: <CAJ-ks9kJiCGAkzW9M6q-62kcyvwBea5Zt2EoeeY0T3aN7jK+ng@mail.gmail.com>
-Subject: Re: [PATCH] rust: clean Rust 1.86.0 new `clippy::needless_continue` cases
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402-b4-drm_panel_mass_convert_part2-v1-7-903b70999ea6@redhat.com>
 
-On Wed, Apr 2, 2025 at 4:29=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Wed, Apr 2, 2025 at 6:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > The counterfactual is hard to prove - you don't know what true
-> > positives the lint would catch. In my opinion disabling lints is
-> > risking throwing the baby out with the bathwater.
->
-> It is true that it is not easy to know what we will exactly lose right
-> now (apart from what it claims in the docs and its examples), but one
-> can easily test enabling it in a couple cycles and we would have some
-> data from kernel code.
->
-> To be clear, disabling now does not mean forever -- we can reevaluate
-> with that data and possible improvements to the lint that happened
-> meanwhile (sometimes they get improved or split due to feedback).
+Hi Anusha,
 
-My experience in industrial settings is that this happens very rarely.
+On Wed, Apr 02, 2025 at 11:23:45AM -0400, Anusha Srivatsa wrote:
+> Move to using the new API devm_drm_panel_alloc() to allocate the
+> panel.
+> 
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>  drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> index ff39f5dd4097e8da0a0e16c50c5bfd45c078d91c..d87b7eefe9beedd290fb59065b389b3315c85720 100644
+> --- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> @@ -490,9 +490,11 @@ static int ili9341_dpi_probe(struct spi_device *spi, struct gpio_desc *dc,
+>  	struct ili9341 *ili;
+>  	int ret;
+>  
+> -	ili = devm_kzalloc(dev, sizeof(struct ili9341), GFP_KERNEL);
+> -	if (!ili)
+> -		return -ENOMEM;
+> +	ili = devm_drm_panel_alloc(dev, struct ili9341, panel,
+> +				   &ili9341_dpi_funcs,
+> +				   DRM_MODE_CONNECTOR_DPI);
+> +	if (IS_ERR(ili))
+> +		return PTR_ERR(ili);
+>  
+>  	ili->dbi = devm_kzalloc(dev, sizeof(struct mipi_dbi),
+>  				GFP_KERNEL);
 
-> By the way, the lint is in "pedantic" in Clippy and disabled by
-> default -- so we are "only" disabling w.r.t. what we do nowadays.
+Unlike in other patches, in this one you did not remove:
 
-> In any case, my main concern is cost: we already require a lot from
-> Rust kernel developers, typically more than in C, and while one goal
-> of the project is trying to see how far we can go on being strict
-> about things like lints, I worry we may overdo it at times.
+https://elixir.bootlin.com/linux/v6.13.7/source/drivers/gpu/drm/panel/panel-ilitek-ili9341.c#L529
 
-=F0=9F=91=8D
+	drm_panel_init(&ili->panel, dev, &ili9341_dpi_funcs,
+		       DRM_MODE_CONNECTOR_DPI);
 
-I don't have any new information to inject into this debate. It's a
-judgement call.
+Unintentional?
+
+kind regards,
+	o.
+
+> -- 
+> 2.48.1
+> 
 
