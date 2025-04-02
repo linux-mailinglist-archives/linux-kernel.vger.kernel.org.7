@@ -1,82 +1,90 @@
-Return-Path: <linux-kernel+bounces-585770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D532A79755
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 664A5A79776
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C34F3A6508
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:12:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A10416E5E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067171F3BAE;
-	Wed,  2 Apr 2025 21:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="omvOSSVu"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEBF1F4179;
+	Wed,  2 Apr 2025 21:18:40 +0000 (UTC)
+Received: from webmail.webked.de (webmail.webked.de [159.69.203.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD96742A87
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84A126F0A;
+	Wed,  2 Apr 2025 21:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.203.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743628352; cv=none; b=eUHBUJ1OXMsS1Qw3vlN5iQDn7ugLN6TBLLmOkAp62k0QmBcQpiDnSOGaVolYUjuxTrJ4cmHzBI1tlkcrYEk9r4LEpWLeWFmARC1D8appdf9XKVBwRTDzNTkjTvj/Mkz6MCoxCmhCwQGqbbWgANQxYVkz+L9rcg0Rxpkj09g6xnc=
+	t=1743628719; cv=none; b=D/nLhtaPvi4N+utrH58o4Hm5l3N9X7JGkfnnbv63ja+0TIZWEDvETwthP3qNE4fkvEoGnxSIHDUo36ffJXocys/3+sd1IpIFDo87NVym0z3lO1Vowz3e0p97FZY88hLIxVbLd1NdNBIR4eQHAQ1ZTxLAUJfHCjF5incQVLpD2Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743628352; c=relaxed/simple;
-	bh=SfCs2dFk9sj4rEfKUcEhZVANi/RKjAIx5Xg372hU3xo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RXiO7vrfEf03JDnJJ2LcH8PXsNF1IP5v8qECM1gP+LGDqcPXozeFICLBPnDPRQLCr16O19rQAIdGELj2BKtogIH6awU+n4H2++6pT7AT2TkEVcbPIbjxWXZ7vBMoYzJjwLus53QZL6f/gAtA127HVgf7RD9CqwfkaC15bkz2GCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=omvOSSVu; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743628347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9dCoGpCwH6RrLl/7QL1y9s7XKeVIbd2DmNC4uWlkFd4=;
-	b=omvOSSVuBmj7jlYvpyMuRjtPDPyhP3FKDP04H1y2CgwawijSONQ8gZsXpybmYSqNUbAfA8
-	geUJfJ4tVHct1UVuFAuPvbESC/LSlz6xeC5b7il+jDlPPtCyzWuUSOJ1kubQHdLAQKy6C6
-	NsFUmYbbjSKkpqqTjfSKQY5XSOgsbfw=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: mark.rutland@arm.com,
-	lpieralisi@kernel.org,
-	sudeep.holla@arm.com,
-	Chen Ni <nichen@iscas.ac.cn>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] smccc: kvm_guest: Remove unneeded semicolon
-Date: Wed,  2 Apr 2025 14:11:14 -0700
-Message-Id: <174362825118.2996340.1658211451849411034.b4-ty@linux.dev>
-In-Reply-To: <20250326040659.1190696-1-nichen@iscas.ac.cn>
-References: <20250326040659.1190696-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1743628719; c=relaxed/simple;
+	bh=TRKe2C2yWQUuu/9WP0Vtkv/UsPx1qc3XdDhBsmf2WZs=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Wa5aoscKWgrAX24asCoWkAYPGZ46M8ouw6gNx9biIJR/VEJiykU0+40kaWI/tUG68embEeJWevvBr0nzwj68LWFoY0ptsnOt5Xwa1dnB07AwU8rgcoEKOJI4tSFAHGqOaUpuDtkqkTJOJZvT83/PCVr8tRudqHR00P5bovwoNQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=webked.de; spf=pass smtp.mailfrom=webked.de; arc=none smtp.client-ip=159.69.203.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=webked.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=webked.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C65AF62B75;
+	Wed,  2 Apr 2025 23:12:13 +0200 (CEST)
+Message-ID: <1d388413ab9cfd765cd2c5e05b5e69cdb2ec5a10.camel@webked.de>
+Subject: [REGRESSION] Massive virtio-net throughput drop in guest VM with
+ Linux 6.8+
+From: Markus Fohrer <markus.fohrer@webked.de>
+To: virtualization@lists.linux-foundation.org
+Cc: mst@redhat.com, jasowang@redhat.com, davem@davemloft.net,
+ edumazet@google.com,  netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 02 Apr 2025 23:12:07 +0200
+Organization: WEBKED IT Markus Fohrer
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 26 Mar 2025 12:06:59 +0800, Chen Ni wrote:
-> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
-> 
-> 
+Hi,
 
-Applied to fixes, thanks!
+I'm observing a significant performance regression in KVM guest VMs using v=
+irtio-net with recent Linux kernels (6.8.1+ and 6.14).
 
-[1/1] smccc: kvm_guest: Remove unneeded semicolon
-      https://git.kernel.org/kvmarm/kvmarm/c/1f5bdd3b0c70
+When running on a host system equipped with a Broadcom NetXtreme-E (bnxt_en=
+) NIC and AMD EPYC CPUs, the network throughput in the guest drops to 100=
+=E2=80=93200 KB/s. The same guest configuration performs normally (~100 MB/=
+s) when using kernel 6.8.0 or when the VM is moved to a host with Intel NIC=
+s.
 
---
-Best,
-Oliver
+Test environment:
+- Host: QEMU/KVM, Linux 6.8.1 and 6.14.0
+- Guest: Linux with virtio-net interface
+- NIC: Broadcom BCM57416 (bnxt_en driver, no issues at host level)
+- CPU: AMD EPYC
+- Storage: virtio-scsi
+- VM network: virtio-net, virtio-scsi (no CPU or IO bottlenecks)
+- Traffic test: iperf3, scp, wget consistently slow in guest
+
+This issue is not present:
+- On 6.8.0=20
+- On hosts with Intel NICs (same VM config)
+
+I have bisected the issue to the following upstream commit:
+
+  49d14b54a527 ("virtio-net: Suppress tx timeout warning for small tx")
+  https://git.kernel.org/linus/49d14b54a527
+
+Reverting this commit restores normal network performance in affected guest=
+ VMs.
+
+I=E2=80=99m happy to provide more data or assist with testing a potential f=
+ix.
+
+Thanks,
+Markus Fohrer
+
 
