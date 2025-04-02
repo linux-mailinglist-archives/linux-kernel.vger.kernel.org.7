@@ -1,138 +1,179 @@
-Return-Path: <linux-kernel+bounces-584305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33695A785D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:47:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EABAA785D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B911892F9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:46:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B233D7A1F04
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65725C96;
-	Wed,  2 Apr 2025 00:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9108C8E0;
+	Wed,  2 Apr 2025 00:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b="Ycc4JtKw"
-Received: from mailgate01.uberspace.is (mailgate01.uberspace.is [95.143.172.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UmEN6TA9"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB61853
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 00:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFD5B667;
+	Wed,  2 Apr 2025 00:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743554795; cv=none; b=S38JATQ9G9DlSuoUIcvBostwaNvonqSubIJviZGqoS8MfOjvVegd9ChibKpIjnCtbVrO28SLP8sYib/YkojYcAQ63e8wR5vSVRCLzhx45jQCUcMnOdf2eKfkB59dCjFjk6nsyPHUJ8aYv0J56CI2rE2JL3Kqb5JoveF20YYJBCo=
+	t=1743554853; cv=none; b=MYMUBHQtb/aqnKxiNx1IzbNMRwOg3VXB+xAyZFcYM/QGuhyQPHoGC5/ZCfCUJ+ZaxFT9KffGCyzrhZ7Fwk0lkc6KQy24qr48jmI65i/wmXdaWoKFy5VjuiopHJIWyD3epqMfC8n5aXBxwOr5GmMRlprMucKoSBupOqchUv0o1Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743554795; c=relaxed/simple;
-	bh=ZDX/F/uaex4ndiB551575kE2oTtysLodPUsWsi6X8BQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YhlJEuqp1qJiNrdVm6Bu/9DJHOaUcDSxNT4YPAYJ90pFsPG9CwNUDjg8KqmeoOnA/Fac4UDyyAGpGZmFEWaAEICAQGfFvVuqCDU8yd9HMBf4exdMV5vxmu/oAG9Xf1616ccQIVIr5iMSod+76xaOHvV+KNskYU300yxPx0m9G4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net; spf=pass smtp.mailfrom=david-bauer.net; dkim=pass (4096-bit key) header.d=david-bauer.net header.i=@david-bauer.net header.b=Ycc4JtKw; arc=none smtp.client-ip=95.143.172.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=david-bauer.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=david-bauer.net
-Received: from perseus.uberspace.de (perseus.uberspace.de [95.143.172.134])
-	by mailgate01.uberspace.is (Postfix) with ESMTPS id 1FBC160A62
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 02:46:24 +0200 (CEST)
-Received: (qmail 23192 invoked by uid 988); 2 Apr 2025 00:46:23 -0000
-Authentication-Results: perseus.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by perseus.uberspace.de (Haraka/3.0.1) with ESMTPSA; Wed, 02 Apr 2025 02:46:23 +0200
-From: David Bauer <mail@david-bauer.net>
-To: Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH 3/3] mt7915: mcu: re-init MCU before loading FW patch
-Date: Wed,  2 Apr 2025 02:45:27 +0200
-Message-ID: <20250402004528.1036715-3-mail@david-bauer.net>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250402004528.1036715-1-mail@david-bauer.net>
-References: <20250402004528.1036715-1-mail@david-bauer.net>
+	s=arc-20240116; t=1743554853; c=relaxed/simple;
+	bh=RDNr9Hsb1XfzaAhPQbNZFZt0taatMC1TNb3OEsf9mEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUsHcCuF2uT9gQYYRzke5y6kppURKdF2FEuLpr14wuIZGRKlEbcog2HKvFX1orHgBBIXdNu2sPUgF+GL1REXf1IDf50wh69MIcAhdm2zP5adytKiNDvNRX/zAS3tPLjCcBLUnSsN5lUEbKIr6CZYiMARIyziz4XKEctuCcIb4s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UmEN6TA9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 467BF6A2;
+	Wed,  2 Apr 2025 02:45:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743554737;
+	bh=RDNr9Hsb1XfzaAhPQbNZFZt0taatMC1TNb3OEsf9mEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UmEN6TA9fz0IlPCdxNwMeJEdrdSuy6+oXp0MFnA5D29e9tkbF0aUEDFnh6vjIP4oh
+	 Y9pRXtn2CJHZodR5D8is6Ru6DWPO0GiF16KDqyE8oxQCmK2tXjEbbdnKJwdZLusvxq
+	 wt4DqWBQ64QZfHm2EwUDnlKQRwYBq6M4RTDsddIQ=
+Date: Wed, 2 Apr 2025 03:47:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 13/17] media: rzg2l-cru: Add image_conv offset to OF
+ data
+Message-ID: <20250402004706.GE4845@pendragon.ideasonboard.com>
+References: <20250328173032.423322-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250328173032.423322-14-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: /
-X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-2.999999) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: -0.099999
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=david-bauer.net; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=ZDX/F/uaex4ndiB551575kE2oTtysLodPUsWsi6X8BQ=;
-	b=Ycc4JtKw/MQH+qC74VcmTdBWEb/Kw9qqatf42KdbSJM79kDfAr51QTqkK0mA/AdZnwy2rvV+r6
-	Kqrvl7AE1fDHgDP32FkpUdwQbTOCmQt0Hj8A8sK+31WXUnBNJBHG6nZwGq6LqGwZeIhbflsD18J/
-	HvHCrVLcniISeJPI2P6BNx8VmR+TakIaNQZbEBp+K6YM1LoaPj2UtM4J/GpQq5CVj2WFuZFnFb2Y
-	gCQLIgjZKCitFR8Sr8EyERX/F+lAao2SOzDMHKLBdOD9vVUrSO52cr0e6oh5ndbXA2+1wpTIMfVB
-	phmA3c9vUlHOsXdIHHLdBkcSBk51QjeX4StnEpyQBsAau02Ep4yse6g4TLgIKM5MKD4wcGk9EnHP
-	p9n+9tyb5pH6sUhPKoWChxdK/JFiOvwSVYPaSPJn3n0/jDJ8dAjfmdmgsQnrBLdaM0eMUXYR0A8z
-	zkx+LmUQ+bBWH5v2t/b6wHsvMnd5y7VQDqJq1tslqzyctmLRqc7/A8m/QN492a4i4swpVURHXoRP
-	nYID2YffFTsONxXmEFxZhPR0frZR7zrOqVDPs93FspR+mtRqospCOPisja59xVBPao2t3RcI22vA
-	gp3AfwpBd3RtEtZwby7trfO1UvQyMZodd8LozqkcaMG537T+DPYBcePw9O1h5P/ueksKot4pesJ2
-	o=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250328173032.423322-14-tommaso.merciai.xr@bp.renesas.com>
 
-Restart the MCU and release the patch semaphore before loading the MCU
-patch firmware from the host.
+Hi Tommaso,
 
-This fixes failures upon error recovery in case the semaphore was
-previously taken and never released by the host.
+Thank you for the patch.
 
-This happens from time to time upon triggering a full-chip error
-recovery. Under this circumstance, the hardware restart fails and the
-radio is rendered inoperational.
+On Fri, Mar 28, 2025 at 06:29:49PM +0100, Tommaso Merciai wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add `image_conv` field to the `rzg2l_cru_info` structure to store the
+> register offset for image conversion control. RZ/G2L uses `ICnMC`, while
+> RZ/G3E and RZ/V2H(P) use `ICnIPMC_C0`.
+> 
+> Update `rzg2l_cru_initialize_image_conv()` and `rzg2l_cru_csi2_setup()`
+> to use this `image_conv` offset from the OF data, facilitating future
+> support for RZ/G3E and RZ/V2H(P) SoCs.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+>  .../media/platform/renesas/rzg2l-cru/rzg2l-core.c  |  1 +
+>  .../media/platform/renesas/rzg2l-cru/rzg2l-cru.h   |  1 +
+>  .../media/platform/renesas/rzg2l-cru/rzg2l-video.c | 14 ++++++++------
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> index 19f93b7fe6fb9..7e94ae8039677 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> @@ -357,6 +357,7 @@ static const u16 rzg2l_cru_regs[] = {
+>  static const struct rzg2l_cru_info rzgl2_cru_info = {
+>  	.max_width = 2800,
+>  	.max_height = 4095,
+> +	.image_conv = ICnMC,
+>  	.regs = rzg2l_cru_regs,
+>  };
+>  
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> index 6a621073948aa..ca156772b949b 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> @@ -81,6 +81,7 @@ struct rzg2l_cru_ip_format {
+>  struct rzg2l_cru_info {
+>  	unsigned int max_width;
+>  	unsigned int max_height;
+> +	u16 image_conv;
+>  	const u16 *regs;
+>  };
+>  
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index 395c4d3d0f0fa..e13f633a687b2 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -246,20 +246,22 @@ static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+>  				 const struct rzg2l_cru_ip_format *ip_fmt,
+>  				 u8 csi_vc)
+>  {
+> +	const struct rzg2l_cru_info *info = cru->info;
+>  	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
+>  
+> -	icnmc |= (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
+> +	icnmc |= (rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK);
 
-Signed-off-by: David Bauer <mail@david-bauer.net>
----
- .../net/wireless/mediatek/mt76/mt7915/mcu.c   | 25 +++++++++++--------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+While at it you can drop the outer parentheses.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-index d93a72d0a78a..41eba991acef 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.c
-@@ -2097,16 +2097,21 @@ static int mt7915_load_firmware(struct mt7915_dev *dev)
- {
- 	int ret;
- 
--	/* make sure fw is download state */
--	if (mt7915_firmware_state(dev, false)) {
--		/* restart firmware once */
--		mt76_connac_mcu_restart(&dev->mt76);
--		ret = mt7915_firmware_state(dev, false);
--		if (ret) {
--			dev_err(dev->mt76.dev,
--				"Firmware is not ready for download\n");
--			return ret;
--		}
-+	/* Release Semaphore if taken by previous failed attempt */
-+	ret = mt76_connac_mcu_patch_sem_ctrl(&dev->mt76, false);
-+	if (ret != PATCH_REL_SEM_SUCCESS) {
-+		dev_err(dev->mt76.dev, "Could not release semaphore\n");
-+		/* Continue anyways */
-+	}
-+
-+	/* Always restart MCU firmware */
-+	mt76_connac_mcu_restart(&dev->mt76);
-+
-+	/* Check if MCU is ready */
-+	ret = mt7915_firmware_state(dev, false);
-+	if (ret) {
-+		dev_err(dev->mt76.dev, "Firmware did not enter download state\n");
-+		return ret;
- 	}
- 
- 	ret = mt76_connac2_load_patch(&dev->mt76, fw_name_var(dev, ROM_PATCH));
+>  
+>  	/* Set virtual channel CSI2 */
+>  	icnmc |= ICnMC_VCSEL(csi_vc);
+>  
+> -	rzg2l_cru_write(cru, ICnMC, icnmc);
+> +	rzg2l_cru_write(cru, info->image_conv, icnmc);
+>  }
+>  
+>  static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  					   struct v4l2_mbus_framefmt *ip_sd_fmt,
+>  					   u8 csi_vc)
+>  {
+> +	const struct rzg2l_cru_info *info = cru->info;
+>  	const struct rzg2l_cru_ip_format *cru_video_fmt;
+>  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+>  
+> @@ -276,11 +278,11 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  
+>  	/* If input and output use same colorspace, do bypass mode */
+>  	if (cru_ip_fmt->yuv == cru_video_fmt->yuv)
+> -		rzg2l_cru_write(cru, ICnMC,
+> -				rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
+> +		rzg2l_cru_write(cru, info->image_conv,
+> +				rzg2l_cru_read(cru, info->image_conv) | ICnMC_CSCTHR);
+>  	else
+> -		rzg2l_cru_write(cru, ICnMC,
+> -				rzg2l_cru_read(cru, ICnMC) & (~ICnMC_CSCTHR));
+> +		rzg2l_cru_write(cru, info->image_conv,
+> +				rzg2l_cru_read(cru, info->image_conv) & (~ICnMC_CSCTHR));
+
+And here you can drop the parentheses around ~ICnMC_CSCTHR.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+>  
+>  	/* Set output data format */
+>  	rzg2l_cru_write(cru, ICnDMR, cru_video_fmt->icndmr);
+
 -- 
-2.47.2
+Regards,
 
+Laurent Pinchart
 
