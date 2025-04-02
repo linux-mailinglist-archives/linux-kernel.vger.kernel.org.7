@@ -1,145 +1,203 @@
-Return-Path: <linux-kernel+bounces-585924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC8A79922
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7F4A79927
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECEB0188BFF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:52:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593EE18857EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BC31F7919;
-	Wed,  2 Apr 2025 23:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184181F8921;
+	Wed,  2 Apr 2025 23:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLX+Ktmb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dpH1DHpc"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939861F55E0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643D61F8744
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743637932; cv=none; b=AxiUK6uGHMY4akcKfJ6LJV+xgf8CEo62bbynXnWIalamUXglypmUD+cQOvhKR28h/gMneAPJ9f71ch8tb+k6Dum1/AvUfHOdSsUVrqdlIemU29JtMwqyXnb/e2vZF9Li21zC8QCHi2owAxsYw9v6UT81EaOhWioLLFbz+LeM5s4=
+	t=1743638188; cv=none; b=r4PciknX2odl89WIticav1/lnr7GZcQwjwSN04xaWOTTK9ekXmiAmjZvtApDMoswB7Dl7Sn2pU9IwaqOsjXRrXWUdIW/VCOrLoXzxwfNKlQCFbnw91WEbqUWlDJidZtfc2LWFne2bT250N3dt1OfFqRVxemqsxwgEYfIBZet6RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743637932; c=relaxed/simple;
-	bh=jMLyU6i1wwQTrBMKiV8dfyZD/y9tvNEeMglIXxnMzwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=erI0h+WMlgNOBGbRWFzRqQZZtLSpzYAUDtrPjljY8Uae4PgBdT35ij7aQsjqhiBkYLKpHukuU1wsMGvGG4iun5b2Jeg0e9es8T+y2jZ6AXc7lMudRgdkXD2VovaISJgTn4pp8llSCsgU0Ow9aMyoFRcjixeEkr8xcB2ilTr7Gvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLX+Ktmb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54af20849bbso391889e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:52:09 -0700 (PDT)
+	s=arc-20240116; t=1743638188; c=relaxed/simple;
+	bh=uiizrBkkBTqW3XgNsdY+NKHr9C+xFnQzIJMmto1lSL0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uWPujAHiuaBRzjBGYcvJWnFRqwXGivYy0xGqOpsem/4oD2hQh5g5dcre/2+pzv/r7ITOx7IKf31C11l6hWGxsGJ/sQeGkXFv7jGWRvx+2cBQt6/g7xIRVX2rqeUQVI3gjGud/6GqcgfC7h2VeJQiInHOxHlo2oqTqyxaKF5u6xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dpH1DHpc; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72c0cf1922bso57830a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:56:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743637928; x=1744242728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZY8otkMYxUzAC1QwZ9rYHNq5MXftY+mTN4XwBPSLJk=;
-        b=FLX+KtmbffTRczIrxBTVM58L3T2qwstq/D0tdJEq6WjT60z99cBmqzOm5RSMo9uyXm
-         YGWHO/Do10lnM/1qNsr9G+Sp+TS36zaDeWRc6MIUIpH9oHMo1AZLTgqlDuvjA8KOkTN7
-         zxUyfqDvP6GAlly1c9r7kEinHVyhA2tRP+BdQjeqjOKgAhjmfmPVK4Vo/5nlhy9+x6Pp
-         UqvBDHgge3eM+mK01oK8ice/4Faem4dIkeeR7oGIgkgKifOYdilD7GVy7V3Qrh2/ZzL3
-         zYZbTEM8bT+z2utPNQIPwSZZARMNxusK2LFS1hiMFAw0WqUchnN37H3gxoD5Eh8rIxyw
-         +7SQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743638183; x=1744242983; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U84fsGmbM0MYlvtDoSFJcWVBHsJh/MexnRXMIlE8VF0=;
+        b=dpH1DHpca1nitaWCr18zuw/64GnG8wadNesVW/dntc5vV1MnXG+zfR+YzlftRCoPFR
+         vcSIltzhihU6rcgc79F71KTPsms/2qI/ZjfM1Qi3D/zU5M/5P96z6TK1+jjWK0EEifaU
+         vZEQ1NYkkDUojDuszZkLxVlGq3/HrQMuvLUGXYFNWpwKObh9anTzUGOgvBl8Tl79FnFs
+         GcPsplnsqWTkhDxLsD2AAHflF/dlGDL4t4ZMGcSQ6DmhayFP8bJ5WjsRMqhhAx4pk5w6
+         3+akVkD5S0VjJ1SyyHlNR/XnukD8qa+lSWO4ZgWhfBEIN8ugtJLj6EQpssgAsu/nKwf3
+         SIMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743637928; x=1744242728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QZY8otkMYxUzAC1QwZ9rYHNq5MXftY+mTN4XwBPSLJk=;
-        b=Pqrm9rFtdWODkYW+8bF3pKsEloqbYwpe1l99m+Lb54lHgxneY7fMiqs58f0OtkBOvs
-         EyE8QYpcPls8CuL2tuY8qX5sEG3fHpqE/6YZ7GWwUvJc2TeDxbLXryVWlMPdo2dSWrN7
-         Bk5DOa/ahAygYAJxPILNCsxTUAHPSv/A0hW70l+TRywAnajkgh0W86o8X29Bu5FNe8N5
-         LLtwm4OJOg7wTOzbV2L1HNTnbC2Wt/S9edeoBaMcOgMrUo5zd9MdQdukZ3gFlBDctZa9
-         /Rr9V4OyPKtVJ0spgFAemaPShYgUyzK4xAbWvuLAyJUp1/YJjb3UR+b5c1fz3IYFBQBU
-         to2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVXw/LsCQs718QBv32ZpLciwqBFgprVDXJsbmu+fi15s5VBnYSwgPczTf6aQAnUC9BZwHTd5JnaxW89B1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIxX6jhsaq9tPIPAEHxyqfy580U93CGt+AYqFq7gIWcA0nBVNR
-	7b5sRko6uaNYBg1X8kZZdzFE3TgXV/S9cK3kfrndO5w4bpeBFNiMKk9tvW+Ed7b8VvUtDOYMKU6
-	l6DBcO4bxly5bzYrltijvqb73L2g0NfdQAN+GyRbJa/dDnOghGlo=
-X-Gm-Gg: ASbGncuPzodo1+bAWjgYCcKxC8J8Ip6NWzDxWJxdHqOzM1YcQCqDk0IiU1Im57kwQkS
-	4gHK0hIQNNDKlpaAfnnuplxGfqdSbLlHXq7eHgzzX4Mqbn0rGQgzBLyZJFlZOyi8yxifuUWLXmP
-	lP46gf5Pfzns1p6xUss/lUpsVlBxQHLmoSDM6dW869N1LIKs4AXuP2wv8=
-X-Google-Smtp-Source: AGHT+IHlbF+Rcpq4SNzQqBS7VAxDQsrV3ZwngjWYjf5S0S28hVedbHbtxlbFZnmwmOWaFBpWoJrxhCkIAdvd/qI3WYE=
-X-Received: by 2002:a2e:a817:0:b0:30d:62c1:3bdd with SMTP id
- 38308e7fff4ca-30f0213b687mr1914151fa.23.1743637927467; Wed, 02 Apr 2025
- 16:52:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743638183; x=1744242983;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U84fsGmbM0MYlvtDoSFJcWVBHsJh/MexnRXMIlE8VF0=;
+        b=reOsGt5g6Z4403Vk0qFkvU2HXtsmT+z35ah3DWTMuws10kH0WdjL5hgi8wyhQbSKl3
+         CzW5/s8qIZ5/KMag2QvjWhKFMRdGwsgMyfVav9VmBnt1HRtONk/qPcZUCxpZs1+D7Sb/
+         YS3TBshL9bV0/IaTn55tr3KQ+56owUPQYdQyLx1lVu6KSLjV9BIEjUb5/T2pBh7gTgbN
+         8h4YdX/Iml7wTi24PeCoL7yDRffF0WLFaLcKJMBU4Z5MpHw6oH44QvAG6TkXEig9UZ6E
+         odg+7UC2J9nqIUrO6m8vlZFEOZ61Xi1vZVoj7L1UGCbnqydwF+GXh/rXX6b9Byhcnbfg
+         OHZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxugOAgb4TGHJcv0Qv3WFz0V7g4PxQiYdFmvjnoDIc5auO86Cu6g1FN001Rt81RBUf9USI4DXjOQ41NSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNOISHsGprD4eU/LYxWjvjmLQW7u/KU8DdIPVwufGwEvHwINWr
+	9rWQWgu7Qtgvs1RKR+K6sLyjPba08hzDSlUs4oOvrbpkVtw+/3DqF/RQHyoIsTtlHpI/Ukkpi6t
+	fYYY=
+X-Gm-Gg: ASbGncvFsRYEAb6QEWHHGSXmq/WEMTtQcR0N28jVArninMGjJmgFfwEX6qyZYEw+6oO
+	uvgP1bCcA9N/ElktBjcyR0abnhF+sw0gms62EZwiy0LcPL6YZiMhz29diIiYQGJYNlMcrPXHOWU
+	2nZXu1rij7xjVoPv964YFhLnMdCU1aMap2UtKIti/UbFA7SRjDPph2Z4CG8BwfevQZN+7oVl8CQ
+	unA1VBV7EsPkMSVCEQONrvYbfkIK7XgSoquiFA39+MpikbN0CJAqaZm+iEN5Gabs5GDw5O5+gPK
+	k269BIuF3b9TRUHzVomGZEJ2cOpQ4FHIoTXplwdcS93ZlBIF9VR+4NSYmEQ4ukf3KxSOgQEh1dw
+	M
+X-Google-Smtp-Source: AGHT+IHxwavlcu3eVlrKaPi0mNNmlbrWHSl3n8JBOTFFwrww1D/K6A1MV5UrnbV0rAf1H/jNtJ/cAQ==
+X-Received: by 2002:a05:6820:1849:b0:603:fada:ac47 with SMTP id 006d021491bc7-6040b699933mr372311eaf.1.1743638183135;
+        Wed, 02 Apr 2025 16:56:23 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6040c58f694sm46205eaf.30.2025.04.02.16.56.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 16:56:22 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 02 Apr 2025 18:55:58 -0500
+Subject: [PATCH] iio: adc: ad7380: fix event threshold shift
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402233407.2452429-1-willmcvicker@google.com> <20250402233407.2452429-3-willmcvicker@google.com>
-In-Reply-To: <20250402233407.2452429-3-willmcvicker@google.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 2 Apr 2025 16:51:55 -0700
-X-Gm-Features: AQ5f1JpHnrRyIgSkaS_9jCoC0VsbpgZrv9QWyrsHr40oDXAIBk4dIsCvT_HYCMU
-Message-ID: <CANDhNCpGxedaxjZ=6Trai3exbQGf7WRJUeTC1jqoHOhup2mNLg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] clocksource/drivers/exynos_mct: Don't register as
- a sched_clock on arm64
-To: Will McVicker <willmcvicker@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan <saravanak@google.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Donghoon Yu <hoony.yu@samsung.com>, 
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Youngmin Nam <youngmin.nam@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250402-iio-adc-ad7380-fix-event-threshold-shift-v1-1-ad4975c296b2@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAI3O7WcC/x2NQQrDMAwEvxJ0rkB20qb0KyUHJ5ZrQbGLZUIh5
+ O8VPcxhYNg9QLkJKzyGAxrvolKLibsMsOVQXowSzcGTv9JEHkUqhrgZ83gnTPJF3rl07Lmx5vq
+ OqFlSx/Xmpri6MNKcwOY+jS3+Xz2X8/wBsgAs0XoAAAA=
+X-Change-ID: 20250402-iio-adc-ad7380-fix-event-threshold-shift-b614db1a307f
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Julien Stephan <jstephan@baylibre.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2994; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=uiizrBkkBTqW3XgNsdY+NKHr9C+xFnQzIJMmto1lSL0=;
+ b=owEBgwJ8/ZANAwAKAR+K+IyC93wDAcsmYgBn7c6PQwT/FsqVTGfQ+Cy2P7sFYLqv9X/lN5muy
+ RCBYSwd77yJAkkEAAEKADMWIQSKc9gqah9QmQfzc4gfiviMgvd8AwUCZ+3OjxUcZGF2aWRAbGVj
+ aG5vbG9neS5jb20ACgkQH4r4jIL3fAPjig//aH3rHftvitgIbG1fMeJqdqD5hG4fTb59GJse2Wm
+ nAdW0NWgLl1M0OyQTrlAAKqLPB6NTx3Ewb0youn4YLBnQCGwWWD8AwBkbzl93uPDZn0dO8VSPdL
+ pQ/Gh91TFDZjXM1YehCUPc+3o/9NAhTjip72kktBi+KbTaTbv1uQSwsauADVjNcF3Fgz30tCYKV
+ Fb0NW3SuidglwqTWn6+cnT7KYjOtB/ruuI16GvT1IjEa0JR8EPFpVdL8CCF5ZZxSfKu56zbAzg5
+ Y0k4THWlgpk2/Jj0tYlhNCmRN/7QjwDd/nAPl5p4LjewYjFFzs/3b6RM5dAG7ACQLPpP78ryCpM
+ 85wL3OCNA6SW7Il7qJi1V8AmsSq3h/nCApdWlQNnfDA5SKmLwj/ipmvoXu/nZ+TOEDZ3yolDMD/
+ 3x2nUCIJqRoHL2A2q8St7bjyXOPi6pierP6gELmyxbnkvtkb7iskE6jZDs7YpT7PaT0w+fw0CYO
+ 1C2UqcJCYii4AO1EjnXHolb6IX3n4I9boWzZJO83rioQXqUICb2BAQPIh6TghTLqsuNMq7if/KB
+ kD5LhYswrsc1UxhuZVGgoGUssAf8lAnWDsvKZ8YXA4rLLsD7XPwO8gWlnbyw2noUEtXWpBQa+Ip
+ UFWCkcmmI84VN/ozIbiZwLqo6tg3rtqwalsCMOtjfhrg=
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Wed, Apr 2, 2025 at 4:34=E2=80=AFPM 'Will McVicker' via kernel-team
-<kernel-team@android.com> wrote:
->
-> To use the MCT as a sched_clock, the timer value has to be accessed vi
-> an MCT register which is extremely slow. To improve performance on Arm64
-> SoCs, use the Arm architected timer as the default clocksource. Note, we
+Add required bit shift to the event threshold read function to get
+correct scaling.
 
-Nit:  sched_clock is sort of separate from the "default clocksource",
-and after this patch we still register MCT as a clocksource, so this
-doesn't sound quite right.
+When alert support was added, the write function correctly included the
+required shift needed to convert the threshold register value to the
+same scale as the raw ADC value. However, the shift got missed in the
+read function.
 
-I'd probably reword this slightly to:
-"The MCT register is unfortunately very slow to access, but importantly
-does not halt in the c2 idle state.  So for ARM64, we can improve
-performance by not registering the MCT for sched_clock, allowing the
-system to use the faster ARM architected timer for sched_clock instead.
+Fixes: 27d1a4dbe1e1 ("iio: adc: ad7380: add alert support")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/iio/adc/ad7380.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-The MCT is still registered as a clocksource, and a clockevent in order
-to be a wakeup source for the arch_timer to exit the "c2" idle state.
+diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+index 4fcb49fdf56639784098f0147a9faef8dcb6b0f6..f3962a45e1e5b88cebf712cc867fbb576d3ca058 100644
+--- a/drivers/iio/adc/ad7380.c
++++ b/drivers/iio/adc/ad7380.c
+@@ -1611,11 +1611,25 @@ static int ad7380_write_event_config(struct iio_dev *indio_dev,
+ 	return ret;
+ }
+ 
+-static int ad7380_get_alert_th(struct ad7380_state *st,
++static int ad7380_get_alert_th(struct iio_dev *indio_dev,
++			       const struct iio_chan_spec *chan,
+ 			       enum iio_event_direction dir,
+ 			       int *val)
+ {
+-	int ret, tmp;
++	struct ad7380_state *st = iio_priv(indio_dev);
++	const struct iio_scan_type *scan_type;
++	int ret, tmp, shift;
++
++	scan_type = iio_get_current_scan_type(indio_dev, chan);
++	if (IS_ERR(scan_type))
++		return PTR_ERR(scan_type);
++
++	/*
++	 * The register value is 12-bits and is compared to the most significant
++	 * bits of raw value, therefore a shift is required to convert this to
++	 * the same scale as the raw value.
++	 */
++	shift = scan_type->realbits - 12;
+ 
+ 	switch (dir) {
+ 	case IIO_EV_DIR_RISING:
+@@ -1625,7 +1639,7 @@ static int ad7380_get_alert_th(struct ad7380_state *st,
+ 		if (ret)
+ 			return ret;
+ 
+-		*val = FIELD_GET(AD7380_ALERT_HIGH_TH, tmp);
++		*val = FIELD_GET(AD7380_ALERT_HIGH_TH, tmp) << shift;
+ 		return IIO_VAL_INT;
+ 	case IIO_EV_DIR_FALLING:
+ 		ret = regmap_read(st->regmap,
+@@ -1634,7 +1648,7 @@ static int ad7380_get_alert_th(struct ad7380_state *st,
+ 		if (ret)
+ 			return ret;
+ 
+-		*val = FIELD_GET(AD7380_ALERT_LOW_TH, tmp);
++		*val = FIELD_GET(AD7380_ALERT_LOW_TH, tmp) << shift;
+ 		return IIO_VAL_INT;
+ 	default:
+ 		return -EINVAL;
+@@ -1648,7 +1662,6 @@ static int ad7380_read_event_value(struct iio_dev *indio_dev,
+ 				   enum iio_event_info info,
+ 				   int *val, int *val2)
+ {
+-	struct ad7380_state *st = iio_priv(indio_dev);
+ 	int ret;
+ 
+ 	switch (info) {
+@@ -1656,7 +1669,7 @@ static int ad7380_read_event_value(struct iio_dev *indio_dev,
+ 		if (!iio_device_claim_direct(indio_dev))
+ 			return -EBUSY;
+ 
+-		ret = ad7380_get_alert_th(st, dir, val);
++		ret = ad7380_get_alert_th(indio_dev, chan, dir, val);
+ 
+ 		iio_device_release_direct(indio_dev);
+ 		return ret;
 
-Since ARM32 SoCs don't have an architected timer, the MCT must continue
-to be used for sched_clock. Detailed discussion on this topic can be
-found at [1]. "
+---
+base-commit: f8ffc92ae9052e6615896052f0c5b808bfc17520
+change-id: 20250402-iio-adc-ad7380-fix-event-threshold-shift-b614db1a307f
 
-> can't completely disable the MCT on Arm64 since it needs to be used as
-> the wakeup source for the arch_timer to exit the "c2" idle state.
->
-> Since ARM SoCs don't have an architectured timer, the MCT will continue
-> to be the default clocksource. Detailed discussion on this topic can be
-> found at [1].
->
-> [1] https://lore.kernel.org/linux-samsung-soc/1400188079-21832-1-git-send=
--email-chirantan@chromium.org/
->
-> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> [Original commit from https://android.googlesource.com/kernel/gs/+/630817=
-f7080e92c5e0216095ff52f6eb8dd00727
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-Otherwise, looks good.
-Acked-by: John Stultz <jstultz@google.com>
-
-thanks
--john
 
