@@ -1,165 +1,204 @@
-Return-Path: <linux-kernel+bounces-584598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1F2A78910
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA86A7890B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6767B16FBCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01D03A7444
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD3423371D;
-	Wed,  2 Apr 2025 07:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F60233714;
+	Wed,  2 Apr 2025 07:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NTMll+tp"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tIArEPdS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE737231A4D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D7B1F5FD
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743579892; cv=none; b=oNcdobkSGxJk8dFJNWExre/spHjK1k3QCzUJmo/Ss06yHqu/txgJT202UqP0ppDWnkYZ59U7u4VVnxSjhtjb7qiP2/ch+d8ZAkX1doqsj0dSDcJH2jSNG2mQzzqjw1KscNFc4YldSIativtS6IS8oJKuokdb0Tjb5589Ltb9CsA=
+	t=1743579869; cv=none; b=c5RdV8/2SnyHHajSonyhopwEnGF/VA/aKKCXLiYP3apjJ/gu5arIR/zrUKb4WbXLg1eQ2A694/OjPMH7w8K6LiKtzqeLFONHtb8EaQ53Vssg4torUxQIeJU8OSzP8fpT399QjXGLH2YFJw331edyX/bQEm8jRI4XlBcmzb6ulz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743579892; c=relaxed/simple;
-	bh=q3joKWG8cD/wnp5eHdybyAYlMFfRlxEGpfL+hS22K6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZYotdJbTrtAA0iGqD3O01D9W5zYg3yRgjqNiPkGL+cpJfFIpEHUheC1oZRJpJm7x20wZXoE0aPH+FdNrdX0rHZIHGa6oE+0WTIDdaFWLlX6yP7qkvgjD9185W4Itt1EmRuGUyWCFHigrGVspUmmPwxu8GGhycTvHzdWFN5TJxMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NTMll+tp; arc=none smtp.client-ip=114.132.124.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1743579783;
-	bh=IdRmZ2JBex4jUMOaecKtPJHj559XDfi8d/7kI9nzLXE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=NTMll+tpcwyLZdU10Ew5UEXtQneoMxVjPHgE4HA+Od3B1WCziO3hhfrTNL9gsrsta
-	 HALDNqp0CYYOcKWzVwcoSDnrO4rbg78/e98sqgwD/d7sBd/exubnxW3xY++EMG780h
-	 bUumJynnowbRmVrosHX8jBY9poCJv2UkjxoajTtw=
-X-QQ-mid: bizesmtpip3t1743579772tmnkz9o
-X-QQ-Originating-IP: VXfI5PZC7A5F6pu2hcWgPmH22j/MPc1MoA5fwl1MiuU=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 02 Apr 2025 15:42:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18110157691820490132
-EX-QQ-RecipientCnt: 14
-From: WangYuli <wangyuli@uniontech.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: wangyuli@uniontech.com,
-	chenhuacai@kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	vincent.chen@sifive.com,
-	palmerdabbelt@google.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH v2] riscv: KGDB: Do not inline arch_kgdb_breakpoint()
-Date: Wed,  2 Apr 2025 15:42:47 +0800
-Message-ID: <330B3BAFC6FDB763+20250402074247.64483-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743579869; c=relaxed/simple;
+	bh=yjZZzDbFLgRCER335g45rHCkxAKw5okUXIMJri+Kffs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPxRn0uOBs/YHkn4YZdf934H4X7q+anKUzsrvVRe7R8JJUDindslMDi+AuyFqG2iSx8Q0Z5nXK/CrMffvXC6onU4mZag1Ot5GcuRSdG00ahpWJmSCWA0HlN50A6kjnzXIVhfmTdCF11m2YQoNSYewHV5vHwYsNwnyhf4iju9eW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tIArEPdS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 531NDik6030354;
+	Wed, 2 Apr 2025 07:43:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=exQLhMyg9qLptoM0qd7l3TQfUiHvZ6in9+giMllRWIQ=; b=tIArEPdSR4/p
+	TOSU5exMpxX+iVuTzGk6OjWQ0mLySQwvrjveFS/pYs6wK/k5367vCcPIDS3Z1juS
+	Xt8VVFzwIv/wTht7rYzX1Lq9kUQVq6W+C4asnrLuvE/AHZoXz8E81vevDgWyNf3h
+	+/zO0q/lSL9BgTHkTraTJCQzjRlqooc6mbi20rNNztbU+updCzwOOBPNSO37lgMs
+	oAphWmQPHORQoPri/8+e+H78iZI7s183269YnsG7cjYpzYLxxYrQ7t+qr1bvQyUd
+	x5nE1dyJ5ez6ZBQcDjc1LWQoW/HHZRPmC+4JGeuY9zmBsrXvhfIyVHiFm9ZN9xpp
+	n6exZC/7dA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45rmax3k4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 07:43:49 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5327aqFD029555;
+	Wed, 2 Apr 2025 07:43:49 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45rmax3k4a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 07:43:48 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5323XGlI005210;
+	Wed, 2 Apr 2025 07:43:48 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45pujyxvca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 07:43:48 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5327hicx28901764
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Apr 2025 07:43:44 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4137E20043;
+	Wed,  2 Apr 2025 07:43:44 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 981B520040;
+	Wed,  2 Apr 2025 07:43:41 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.126.150.29])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Apr 2025 07:43:41 +0000 (GMT)
+Date: Wed, 2 Apr 2025 13:13:40 +0530
+From: Srikar Dronamraju <srikar@linux.ibm.com>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yosry Ahmed <yosry.ahmed@linux.dev>,
+        Tamir Duberstein <tamird@gmail.com>,
+        Shrikanth Hegde <sshegde@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] powerpc/defconfigs: Set HZ=1000 on ppc64 and powernv
+ defconfigs
+Message-ID: <Z-zqrE-8YQVHDyFS@linux.ibm.com>
+Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
+References: <20250330074734.16679-1-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NiCl4APqUksb+8HYj8boGusd5DTPUqgW3qoll054UBU0TkRQh0V0q3ne
-	EQoc9ymysg322gFqmqWQ5lx6WmEAD9rZc7+j3RL20acHO01ZbeS0BubpCCf/UO7JOMKUWa9
-	z6ZOzPOveOkrvyeRuj2krj3TzTyiBR8hx8HsZv3JealRu8WG+Nw8yDSX58/wU6WPqNm5U+G
-	F5IY45AP71n5UrUEtl5QpDBe/YD9oB0ddp6eNgoKeok+KhbYs+vBKIRMnNTSGlAxGt4u/8L
-	bSt7NIFkA4oBvqoFfdGowNlGzEYyh4K5eVbK7O83kCi04v96pavjSw5bfJlnCjA35FiJjtv
-	UQjgsDp7PNfSk5igm73r5azOnmvGJT/coW4ZP/VaPJAyJZqkvaGRjyV5VzomZfG4LCuvAfD
-	Axxm62C6owno1SxCIUyfFtAp1+iDTwXQ0QnH296RBGJunjh7innihXi65IrbwMUdv3Uzcio
-	D/jHLSg9afS/FeZOGKvVGuyrRcTSH2+KcBYwQvB9H4UrYg1Km4ugiyE9J5UMG/iZ0LMltT9
-	29o/s80Tet2lxIMaxijDMwEK2zKHpefyYi/DcQMDclTw+NbWHHfv5kNerFaMO65D4RySa+g
-	n07/z0gtsntYnxvMDgWDUQJ66rW9r4JWerxh0/eaMc3RrgTb7nW5LDN8akNDeVtoaUgCbjs
-	oqkIo4yag9gYJU3/z/Dyad7TQfl9h4qKKAC6fs+RKmRgyTe2HBEJKgX1Nd0fGLBxpgIjwt2
-	SOUjTgQJZgcYgjVFH2Q02q+16lHXVf/8T2jYjtTAxI9GizM11ZcCzIT1fw9bOwqbBEE8vac
-	+MQ2YF5Ar3kFwt9Df2zreHmpAaWojb0Du8mzAAM2ZIw3wTZDqjai09Vr5XGNyx6ibrbBIcZ
-	Q8VximK+XfSHaH+gQqxOuJsePL4xGQHHnS5q+U0cY33pRjqgLRiY7rdKRD5UommlOjWcvun
-	17ArpFcNulC7fRas1Cn+G/+mA2BrYHCvQcwvC6Wk+3r/ikqaqeySpcv/kKAVPN+fSJfpqg9
-	tjirjWAg==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20250330074734.16679-1-vineethr@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hdZSBzQdGfFgFP7umnSi1s2PSOrMTdc_
+X-Proofpoint-ORIG-GUID: luMiqcKl4tJtqmQ67hpumliGVgpaNFzL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_02,2025-04-01_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 clxscore=1011 lowpriorityscore=0 mlxscore=0 spamscore=0
+ adultscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504020043
 
-The arch_kgdb_breakpoint() function defines the kgdb_compiled_break
-symbol using inline assembly.
+* Madadi Vineeth Reddy <vineethr@linux.ibm.com> [2025-03-30 13:17:34]:
 
-There's a potential issue where the compiler might inline
-arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
-symbol multiple times, leading to fail to link vmlinux.o.
+> Commit 030bdc3fd080 ("powerpc/defconfigs: Set HZ=100 on pseries and ppc64
+> defconfigs") lowered CONFIG_HZ from 250 to 100, citing reduced need for a
+> higher tick rate due to high-resolution timers and concerns about timer
+> interrupt overhead and cascading effects in the timer wheel.
+> 
+> However, improvements have been made to the timer wheel algorithm since
+> then, particularly in eliminating cascading effects at the cost of minor
+> timekeeping inaccuracies. More details are available here
+> https://lwn.net/Articles/646950/. This removes the original concern about
+> cascading, and the reliance on high-resolution timers is not applicable
+> to the scheduler, which still depends on periodic ticks set by CONFIG_HZ.
+> 
+> With the introduction of the EEVDF scheduler, users can specify custom
+> slices for workloads. The default base_slice is 3ms, but with CONFIG_HZ=100
+> (10ms tick interval), base_slice is ineffective. Workloads like stress-ng
+> that do not voluntarily yield the CPU run for ~10ms before switching out.
+> Additionally, setting a custom slice below 3ms (e.g., 2ms) should lower
+> task latency, but this effect is lost due to the coarse 10ms tick.
+> 
+> By increasing CONFIG_HZ to 1000 (1ms tick), base_slice is properly honored,
+> and user-defined slices work as expected. Benchmark results support this
+> change:
+> 
+> Latency improvements in schbench with EEVDF under stress-ng-induced noise:
+> 
+> Scheduler       CONFIG_HZ  Custom Slice  99th Percentile Latency (µs)
+> --------------------------------------------------------------------
+> EEVDF           1000       No            0.30x
+> EEVDF           1000       2 ms          0.29x
+> EEVDF (default) 100        No            1.00x
+> 
+> Switching to HZ=1000 reduces the 99th percentile latency in schbench by
+> ~70%. This improvement occurs because, with HZ=1000, stress-ng tasks run
+> for ~3ms before yielding, compared to ~10ms with HZ=100. As a result,
+> schbench gets CPU time sooner, reducing its latency.
+> 
+> Daytrader Performance:
+> 
+> Daytrader results show minor variation within standard deviation,
+> indicating no significant regression.
+> 
+> Workload (Users/Instances)  Throughput 1000HZ vs 100HZ (Std Dev%)
+> --------------------------------------------------------------------------
+> 30 u, 1 i                   +3.01% (1.62%)
+> 60 u, 1 i                   +1.46% (2.69%)
+> 90 u, 1 i                   –1.33% (3.09%)
+> 30 u, 2 i                   -1.20% (1.71%)
+> 30 u, 3 i                   –0.07% (1.33%)
+> 
+> Avg. Response Time: No Change (=)
+> 
+> pgbench select queries:
+> 
+> Metric                         1000HZ vs 100HZ (Std Dev%)
+> ------------------------------------------------------------------
+> Average TPS Change             +2.16% (1.27%)
+> Average Latency Change         –2.21% (1.21%)
+> 
+> Average TPS: Higher the better
+> Average Latency: Lower the better
+> 
+> pgbench shows both throughput and latency improvements beyond standard
+> deviation.
+> 
+> Given these results and the improvements in timer wheel implementation,
+> increasing CONFIG_HZ to 1000 ensures that powerpc benefits from EEVDF’s
+> base_slice and allows fine-tuned scheduling for latency-sensitive
+> workloads.
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 
-This isn't merely a potential compilation problem. The intent here
-is to determine the global symbol address of kgdb_compiled_break,
-and if this function is inlined multiple times, it would logically
-be a grave error.
+Good work Vineeth,
 
-Link: https://lore.kernel.org/all/4b4187c1-77e5-44b7-885f-d6826723dd9a@sifive.com/
-Fixes: fe89bd2be866 ("riscv: Add KGDB support")
-Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
-Changelog:
- *v1->v2: Add the missing __ASSEMBLY__ check and substitute
-".option rvc/norvc" with ".option push/pop".
----
- arch/riscv/include/asm/kgdb.h | 9 +--------
- arch/riscv/kernel/kgdb.c      | 8 ++++++++
- 2 files changed, 9 insertions(+), 8 deletions(-)
+As pointed by you, the base slice is 3ms and having base slice as a multiple
+of tick will help.  The numbers also support this change.
 
-diff --git a/arch/riscv/include/asm/kgdb.h b/arch/riscv/include/asm/kgdb.h
-index 46677daf708b..d9f6a8fc387f 100644
---- a/arch/riscv/include/asm/kgdb.h
-+++ b/arch/riscv/include/asm/kgdb.h
-@@ -19,16 +19,9 @@
- 
- #ifndef	__ASSEMBLY__
- 
-+extern void arch_kgdb_breakpoint(void);
- extern unsigned long kgdb_compiled_break;
- 
--static inline void arch_kgdb_breakpoint(void)
--{
--	asm(".global kgdb_compiled_break\n"
--	    ".option norvc\n"
--	    "kgdb_compiled_break: ebreak\n"
--	    ".option rvc\n");
--}
--
- #endif /* !__ASSEMBLY__ */
- 
- #define DBG_REG_ZERO "zero"
-diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
-index 2e0266ae6bd7..5873d3970360 100644
---- a/arch/riscv/kernel/kgdb.c
-+++ b/arch/riscv/kernel/kgdb.c
-@@ -254,6 +254,14 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
- 	regs->epc = pc;
- }
- 
-+noinline void arch_kgdb_breakpoint(void)
-+{
-+	asm(".global kgdb_compiled_break\n"
-+	    ".option push\n"
-+	    "kgdb_compiled_break: ebreak\n"
-+	    ".option pop\n");
-+}
-+
- void kgdb_arch_handle_qxfer_pkt(char *remcom_in_buffer,
- 				char *remcom_out_buffer)
- {
+Looks good to me.
+
+Reviewed-by: Srikar Dronamraju <srikar@linux.ibm.com>
+
 -- 
-2.49.0
-
+Thanks and Regards
+Srikar Dronamraju
 
