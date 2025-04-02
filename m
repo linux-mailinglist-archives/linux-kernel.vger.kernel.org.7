@@ -1,174 +1,163 @@
-Return-Path: <linux-kernel+bounces-585012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29677A78EAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFEFA78ECE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235BA18857C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5073ADFD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A712376E1;
-	Wed,  2 Apr 2025 12:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57E023BF88;
+	Wed,  2 Apr 2025 12:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fXPF+hrW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vQdOo3Fh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fXPF+hrW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vQdOo3Fh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gDeoq9iu"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD303236A98
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C757823BCF2;
+	Wed,  2 Apr 2025 12:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743597390; cv=none; b=gFLA9ZV2E9sqKj+K1UWm+JpsE9fXgBCsNYbzE+EfoS1MKs6cwlRMKf6tiB3lPbqKwOYBn1j/IvAiTHF15NfB1kLB4eJeoBt+EIHcjAboXTgAtRG2z27vdxu6u/fLhFDWIT0bWFzYHfuiNQ7m0EaFSJim7Bx1T2jsBjV9M5m/p0k=
+	t=1743597505; cv=none; b=WDVMCJ7cOqeUgZw53CvOa8iyp2ol/RIYDOSuDNgu+8PbKv27E4geEnVtcSFAA+JW1p52o/Xrs3erz/T7wYCky6yLn3f7Rv+sP8wwK1tHC5JchR3wxLZ9lpFV0oiEoeu6GZqiBabGeUtCsnpR8DIjM+FLup04rQN7rtuoJ/R4l/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743597390; c=relaxed/simple;
-	bh=wLXCvrQkypVg4hlEhY6JXt6xgl1mkrVJGg1FXS9VB3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lo+lGqoM2B7CulDh74JWremPWzOdumv/cvECX4BzrWX21iv/m6zXQied+m1o4/VCElerqLkW1HtE2xYZw5oMY5nk6KcSMZiNWttiXotQYwxBupYvhdNMI2peMMAsqQ/AeCh5wzh9LZFmW2UyR+mczFsSM/sITzjYcEiL2OJIYjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fXPF+hrW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vQdOo3Fh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fXPF+hrW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vQdOo3Fh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BD8561F461;
-	Wed,  2 Apr 2025 12:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743597386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OIq2yKV0kL+PNrsufhF/VS7j84XZ7TdP3HdOB/g4idM=;
-	b=fXPF+hrW9OESPG2JyNmFiJbWfZw+aOLT2am3EsXDEEaawlck8775kXMFtH5spghsHMtUcX
-	VscVu7TO3WxbGcWVnIsoPCJSY1e1WH3u5dN21madec0+Ca0cTDA90HvBCB0+Z7x25FU3Lo
-	30xD+e0cl4e5ygj3jNeB1ccwj/BZJbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743597386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OIq2yKV0kL+PNrsufhF/VS7j84XZ7TdP3HdOB/g4idM=;
-	b=vQdOo3FhPZcMU3Ga27uied2qPElJlsEC94vV77CszZY2lWe+IWZ6FmtskR9LkIDLS/caXd
-	Q3C9ciRZxeK1NsAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743597386; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OIq2yKV0kL+PNrsufhF/VS7j84XZ7TdP3HdOB/g4idM=;
-	b=fXPF+hrW9OESPG2JyNmFiJbWfZw+aOLT2am3EsXDEEaawlck8775kXMFtH5spghsHMtUcX
-	VscVu7TO3WxbGcWVnIsoPCJSY1e1WH3u5dN21madec0+Ca0cTDA90HvBCB0+Z7x25FU3Lo
-	30xD+e0cl4e5ygj3jNeB1ccwj/BZJbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743597386;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OIq2yKV0kL+PNrsufhF/VS7j84XZ7TdP3HdOB/g4idM=;
-	b=vQdOo3FhPZcMU3Ga27uied2qPElJlsEC94vV77CszZY2lWe+IWZ6FmtskR9LkIDLS/caXd
-	Q3C9ciRZxeK1NsAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B0D52137D4;
-	Wed,  2 Apr 2025 12:36:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id XEknK0ov7WdpBAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 02 Apr 2025 12:36:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 69067A07E6; Wed,  2 Apr 2025 14:36:26 +0200 (CEST)
-Date: Wed, 2 Apr 2025 14:36:26 +0200
-From: Jan Kara <jack@suse.cz>
-To: Murad Masimov <m.masimov@mt-integration.ru>
-Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Jan Kara <jack@suse.cz>, ocfs2-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH 1/2] ocfs2: Fix possible memory leak in
- ocfs2_finish_quota_recovery
-Message-ID: <ategbetdbjc3vxgablimxrche2dv4ndaqq3fkrd6lu64e3ggce@m76fa6gjhdh2>
-References: <20250402065628.706359-1-m.masimov@mt-integration.ru>
- <20250402065628.706359-2-m.masimov@mt-integration.ru>
+	s=arc-20240116; t=1743597505; c=relaxed/simple;
+	bh=dTjL5EFXoS0czJKKji+k4G9YaMQT5DMND5Dnr5uRJm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jgTyGYoyUuDtL+QbDSwFubVN6x7qOgquQsquD41/dwVKZU7KgIHgiCpN72oem0Eadw4yEyZ/AyCYKfmn4eWWhr3yNL0oLteD2jPiTDhy3/RUD518WNZkwRSKBNWEc91BeJNMb3E4ue9Aukrc15rv9b7uj9ZTwdwFHSIDROpgDbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gDeoq9iu; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 532CbN0f3241854
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Apr 2025 07:37:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743597443;
+	bh=4qOoA3LVJAeCTkVPfMbm4Vm9pRsN9xHcsiNmubFd1nM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gDeoq9iu0w5moioITpXaWzK1YWwZkMwmmrVhnKQM60yYkUx9zFlXdUoaRrIxuyxu3
+	 0876/n+IAnhhIimjd/X49IGjjUrJI6o8G7PgO1bG3dvYdb7f1qXxe2mE+yFca+Nd9p
+	 4qa2UqZOzY1pOof5+dgSWzCV+YknEskwRNCJ363U=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 532CbNrc019560
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 2 Apr 2025 07:37:23 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
+ Apr 2025 07:37:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 2 Apr 2025 07:37:22 -0500
+Received: from [172.24.17.211] (lt9560gk3.dhcp.ti.com [172.24.17.211])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 532CbGDp101576;
+	Wed, 2 Apr 2025 07:37:17 -0500
+Message-ID: <b0a099a6-33b2-49f9-9af7-580c60b98f55@ti.com>
+Date: Wed, 2 Apr 2025 18:07:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250402065628.706359-2-m.masimov@mt-integration.ru>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 3/3] net: ti: icss-iep: Fix possible NULL pointer
+ dereference for perout request
+To: Roger Quadros <rogerq@kernel.org>, <dan.carpenter@linaro.org>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <namcao@linutronix.de>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>,
+        <jacob.e.keller@intel.com>, <john.fastabend@gmail.com>,
+        <hawk@kernel.org>, <daniel@iogearbox.net>, <ast@kernel.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <danishanwar@ti.com>
+References: <20250328102403.2626974-1-m-malladi@ti.com>
+ <20250328102403.2626974-4-m-malladi@ti.com>
+ <0fb67fc2-4915-49af-aa20-8bdc9bed4226@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <0fb67fc2-4915-49af-aa20-8bdc9bed4226@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed 02-04-25 09:56:27, Murad Masimov wrote:
-> If ocfs2_finish_quota_recovery() exits due to an error before passing all
-> rc_list elements to ocfs2_recover_local_quota_file() then it can lead to
-> a memory leak as rc_list may still contain elements that have to be freed.
-> 
-> Release all memory allocated by ocfs2_add_recovery_chunk() using
-> ocfs2_free_quota_recovery() instead of kfree().
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 2205363dce74 ("ocfs2: Implement quota recovery")
-> Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
 
-Looks good. Thanks for debugging this! Feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On 4/2/2025 5:58 PM, Roger Quadros wrote:
+> Meghana,
+> 
+> On 28/03/2025 12:24, Meghana Malladi wrote:
+>> ICSS IEP driver has flags to check if perout or pps has been enabled
+>> at any given point of time. Whenever there is request to enable or
+>> disable the signal, the driver first checks its enabled or disabled
+>> and acts accordingly.
+>>
+>> After bringing the interface down and up, calling PPS/perout enable
+>> doesn't work as the driver believes PPS is already enabled,
+> 
+> How? aren't we calling icss_iep_pps_enable(iep, false)?
+> wouldn't this disable the IEP and clear the iep->pps_enabled flag?
+> 
 
-								Honza
+The whole purpose of calling icss_iep_pps_enable(iep, false) is to clear 
+iep->pps_enabled flag, because if this flag is not cleared it hinders 
+generating new pps signal (with the newly loaded firmware) once any of 
+the interfaces are up (check icss_iep_perout_enable()), so instead of 
+calling icss_iep_pps_enable(iep, false) I am just clearing the 
+iep->pps_enabled flag.
 
-> ---
->  fs/ocfs2/quota_local.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> And, what if you brought 2 interfaces of the same ICSS instances up
+> but put only 1 interface down and up?
 > 
-> diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-> index 2956d888c131..e60383d6ecc1 100644
-> --- a/fs/ocfs2/quota_local.c
-> +++ b/fs/ocfs2/quota_local.c
-> @@ -678,7 +678,7 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
->  	}
->  out:
->  	up_read(&sb->s_umount);
-> -	kfree(rec);
-> +	ocfs2_free_quota_recovery(rec);
->  	return status;
->  }
+
+Then the flag need not be disabled if only one interface is brought down 
+because the IEP is still alive and all the IEP configuration (including 
+pps/perout) is still valid.
+
+please refer for more details: 
+https://lore.kernel.org/all/20241211135941.1800240-1-m-malladi@ti.com/
+
+>> (iep->pps_enabled is not cleared during interface bring down)
+>> and driver will just return true even though there is no signal.
+>> Fix this by setting pps and perout flags to false instead of
+>> disabling perout to avoid possible null pointer dereference.
+>>
+>> Fixes: 9b115361248d ("net: ti: icssg-prueth: Fix clearing of IEP_CMP_CFG registers during iep_init")
+>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> Closes: https://lore.kernel.org/all/7b1c7c36-363a-4085-b26c-4f210bee1df6@stanley.mountain/
+>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>> ---
+>>
+>> Changes from v2(v3-v2):
+>> - Add Reported-by tag and link to the bug reported by Dan Carpenter <dan.carpenter@linaro.org>
+>> - drop calling icss_iep_perout_enable() for disabling perout and set perout to false instead
+>>
+>>   drivers/net/ethernet/ti/icssg/icss_iep.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>> index b4a34c57b7b4..b70e4c482d74 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icss_iep.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>> @@ -820,9 +820,9 @@ int icss_iep_exit(struct icss_iep *iep)
+>>   	icss_iep_disable(iep);
+>>   
+>>   	if (iep->pps_enabled)
+>> -		icss_iep_pps_enable(iep, false);
+>> +		iep->pps_enabled = false;
+>>   	else if (iep->perout_enabled)
+>> -		icss_iep_perout_enable(iep, NULL, false);
+>> +		iep->perout_enabled = false;
+>>   
+>>   	return 0;
+>>   }
 > 
-> --
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
 
