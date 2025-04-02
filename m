@@ -1,52 +1,103 @@
-Return-Path: <linux-kernel+bounces-585639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D92A795AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:13:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7DBA795BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9143B24BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC55C3B24F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DC01DF975;
-	Wed,  2 Apr 2025 19:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B271E8326;
+	Wed,  2 Apr 2025 19:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clgBGfau"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="e5B4MHAJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JzTYmOoZ"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE08C139CF2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 19:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB0D1ACED1;
+	Wed,  2 Apr 2025 19:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743621231; cv=none; b=NvSB5lo4ZkOO5tSw5IPKUqfMBPexuBTM0URVTESo5MrhI340RXGUp073WXOKDgBqL8cwVrorZwJhM5UgsMx4/wWS0O0ScxBUaryvfVMK7PY4PD/pbEwY1n71kBkuYGXGlfdNggainKle8hvvS+rY+jTIOPs/rN2Iyvd3TLaQkRs=
+	t=1743621374; cv=none; b=mfpy+VLPZOEZhEX//PQeO/xHfhcJ70+xM84DcKgYJaoLLBACOYIlVtr38bzJr2H3I6JfVgd899TlEHiyrcrCW4BB9UW2L3cpXqHu7pD30pYLO/3DQ6R90On9afXtK/hi2OYDQsBSQdjgfjFKD1o//cjtxztvZLn2//hqPeznbD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743621231; c=relaxed/simple;
-	bh=YpofQFwIvCVyxZPNWfzHdfjvLBjY8hOmPZucYsVbXJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=r8TybvaQUaLUiEdd2AhsBt9PKvEw3iuiLakerhmfjEt3q/mwuHi6HwHVjjdQ51CZLL51zoVRNL7QSpe8z7la7CgslIQCYX4f0ktbdhiW5WGoyizMH1edHalwleqzPFpn971nPKMgCVDIqOcxSstZ6YnLwa1hcm7lVvw3/CNLqHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clgBGfau; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B47C4CEDD;
-	Wed,  2 Apr 2025 19:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743621231;
-	bh=YpofQFwIvCVyxZPNWfzHdfjvLBjY8hOmPZucYsVbXJI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=clgBGfauWI15UmY4C2mGjxk6lLCWsSrbHIX2m1Anzk391Qhs4/xmij4x+w58Tb8QW
-	 aZFabx42ey1JCtkeKf86mpqtjDM7GycrF4d9kjPWiutC9AnnN56cxWKAFM+RKsXz9g
-	 YbCDl9kh8h7N7naxhz4Dv6M4BpKZR8n0YRqAwdBNiD4+jIdq7NKnjp2T5JxjSgCshx
-	 SR37h/hQPM6TlVJ9Z/nHpDQrv6Wlko+NgbaPpuEkDOZIXW7OyC2ikvPhs3LlW1eAVE
-	 9/m5jIx9sEQb78m/KD23XxKEIzbspyvNM8UAL33K+JunC9MZtkqELoImD7ar+MVw6E
-	 N2cvW9LsUfDrQ==
-Date: Wed, 2 Apr 2025 09:13:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.15-fixes] tools/sched_ext: Sync with scx repo
-Message-ID: <Z-2Mbg1BWnTUwaua@slm.duckdns.org>
+	s=arc-20240116; t=1743621374; c=relaxed/simple;
+	bh=0WH1sGWtFYZtIVHWq6dERmJQ3aaewZqD4RXfkPSUVwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JM2awkidhYdpL0LK69f6JNMgg1AKU35kU9HV8dPmodPYp7OdangyNC+5Q8B69o0juUzGwIrdVx8051NL5eLbLBtMa22IFmQfu1/nJ/LRSiIbh6F3yxDixNYQbJ38ujSJlg9I2fiFymxRfjP/SJDAtB9Jj8cmlAMSsai/WBzgYwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=e5B4MHAJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JzTYmOoZ; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id BBB5611400F4;
+	Wed,  2 Apr 2025 15:15:37 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 02 Apr 2025 15:15:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1743621337; x=1743707737; bh=0WH1sGWtFY
+	ZtIVHWq6dERmJQ3aaewZqD4RXfkPSUVwU=; b=e5B4MHAJgYkrv1yYQXHRdsq0K5
+	dIj2GWoH6v4eZP9M3wJES3FQWLIvg6nNfxgmCzNe/fyWm0LVFWwGr93gJ3MWAqO0
+	6y0j0v4Lzz01a8FfAk7LGx5OX65JoaPTp5InvOgpVmcllduUQQRc12URTj7rWjIj
+	qKlAf6kSaJKqjo6IAqZ9CS0JCuERM+hOtl12qGXCGuU6QI4JDq4R1pt19JmWRoGK
+	V9R5sKhY9BZftQ3Kmp6ADQVa/6gowrOAX672B3CirrB8errvvUxJONCPimihEKJW
+	Erl46D4aAhM2d6mWg8VGYv8O6ALAl0fYhJPet8n2CKQoJ702P3YGUeQ5XKug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1743621337; x=1743707737; bh=0WH1sGWtFYZtIVHWq6dERmJQ3aaewZqD4RX
+	fkPSUVwU=; b=JzTYmOoZkUbUc/j5PQNdimyZWySdNdwHs38pwBAz+I2lKneGCfr
+	/s9HCta1QtmKbunM/NSoXYcLqLch33En7AKXdpVpGsM07PN/WC6vTbXdY8bAD8b6
+	xW/7pkorsaxUyz8D3Vt3fXXOWtMS3DGbcSXPGvhHOj57GklOhtF41SdYGIBh+C1p
+	wD2VNtroczLlKdqzyFG4a7yfZb17I+YFow54u8ANRoGRjbEbf+5oxzevOBXVM/pa
+	Qw7ksSQ9lt52IvdlE8OpF6FBvGzdoIQTFTYTrwAYr/S1G1jNUjxG4Tdnw6vgGF1S
+	g/g8vVoKX21gwR3fexWdrRLLYWpn/+hmmyA==
+X-ME-Sender: <xms:2YztZwsHUXGev0I_oUl9ZJi9QAiuz3jI4bVkuqCgBtakPXSohgUanA>
+    <xme:2YztZ9f97Vte9PZfY4Fc0xOupKaTGCVQEm141WRL86rgDYVucJz4X6YTEzTGjsXBL
+    yuxI3vH5uUxCg>
+X-ME-Received: <xmr:2YztZ7yW-GG4UfGEacZq97iZwnafYnbOhT2jZIyGFyFmVWpDmQW1ZACHutSd>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeeigeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
+    fvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcumffjuceoghhr
+    vghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpedvjefhvefhjeejfeefle
+    ejteegtedvgeeghfeuveevgfffueelhffhhedugffhkeenucffohhmrghinhepghhithhh
+    uhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedugedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepghhorhgrlhgsrghrihhssehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepmhgrrhhtihhnrdhpvghtvghrshgvnhesohhrrggtlhgvrdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqshgtshhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepthgrrhhgvghtqdguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepshhkhhgrnheslhhinhhugihfohhunhgurghtihhonhdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhishhtshdrlh
+    hinhhugidruggvvh
+X-ME-Proxy: <xmx:2YztZzOCeFAxSuIaiWb8IMCWa8x9PaM54bFkCOSgSZr2oG8iLOA_Hg>
+    <xmx:2YztZw8GkQWjFBFWcwv8Oi_suR38H1AquawY4UicLI8YB9q2gKmRcg>
+    <xmx:2YztZ7Wq68LGcHt_f3fpVmrvT3uw8FlGQmSQ3M8YzoW28anqlOkuBw>
+    <xmx:2YztZ5feL4HPdDJV7uoQp1sI9714JCRw3SnqtW5sgYXw7JPIGMmv8Q>
+    <xmx:2YztZ0HM9n_NvRHVTqIif6dinptlCwb5zQ2akYWAmLcdWdahze89sehz>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Apr 2025 15:15:36 -0400 (EDT)
+Date: Wed, 2 Apr 2025 20:14:10 +0100
+From: Greg KH <greg@kroah.com>
+To: goralbaris <goralbaris@gmail.com>
+Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] change strncpy to strscpy strncpy is now depricated. It
+ may not NUL-terminate the destination string, resulting in potential memory
+ content exposures, unbounded reads, or crashes. Link:
+ https://github.com/KSPP/linux/issues/90
+Message-ID: <2025040244-onward-attain-8e91@gregkh>
+References: <20250402172504.101576-1-goralbaris@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,231 +106,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250402172504.101576-1-goralbaris@gmail.com>
 
-From 2bac648dab395be0ad0d55b9c2ae7723e71e233e Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Wed, 2 Apr 2025 09:08:33 -1000
+On Wed, Apr 02, 2025 at 08:25:04PM +0300, goralbaris wrote:
+> Signed-off-by: goralbaris <goralbaris@gmail.com>
 
-Synchronize with https://github.com/sched-ext/scx at dc44584874f0 ("kernel:
-Synchronize with kernel tools/sched_ext").
+I think something went wrong with your subject line :(
 
-- READ/WRITE_ONCE() is made more proper and READA_ONCE_ARENA() is dropped.
+Also, don't use your email alias for signed-off-by please.
 
-- scale_by_task_weight[_inverse]() helpers added.
+thanks,
 
-- Enum defs expanded to cover more and new enums.
-
-- Don't trigger fatal error when some enums are missing from kernel BTF.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
-Applied to sched_ext/for-6.15-fixes.
-
-Thanks.
-
- tools/sched_ext/include/scx/common.bpf.h      | 85 +++++++++++++------
- .../sched_ext/include/scx/enum_defs.autogen.h |  3 +
- .../sched_ext/include/scx/enums.autogen.bpf.h | 24 ++++++
- tools/sched_ext/include/scx/enums.autogen.h   |  8 ++
- tools/sched_ext/include/scx/enums.h           |  3 +-
- 5 files changed, 94 insertions(+), 29 deletions(-)
-
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index dc4333d23189..8787048c6762 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -586,36 +586,48 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
- 	}
- }
- 
--#define READ_ONCE(x)					\
--({							\
--	union { typeof(x) __val; char __c[1]; } __u =	\
--		{ .__c = { 0 } };			\
--	__read_once_size(&(x), __u.__c, sizeof(x));	\
--	__u.__val;					\
--})
--
--#define WRITE_ONCE(x, val)				\
--({							\
--	union { typeof(x) __val; char __c[1]; } __u =	\
--		{ .__val = (val) }; 			\
--	__write_once_size(&(x), __u.__c, sizeof(x));	\
--	__u.__val;					\
--})
--
--#define READ_ONCE_ARENA(type, x)				\
--({								\
--	union { type __val; char __c[1]; } __u =		\
--		{ .__c = { 0 } };				\
--	__read_once_size((void *)&(x), __u.__c, sizeof(x));	\
--	__u.__val;						\
-+/*
-+ * __unqual_typeof(x) - Declare an unqualified scalar type, leaving
-+ *			non-scalar types unchanged,
-+ *
-+ * Prefer C11 _Generic for better compile-times and simpler code. Note: 'char'
-+ * is not type-compatible with 'signed char', and we define a separate case.
-+ *
-+ * This is copied verbatim from kernel's include/linux/compiler_types.h, but
-+ * with default expression (for pointers) changed from (x) to (typeof(x)0).
-+ *
-+ * This is because LLVM has a bug where for lvalue (x), it does not get rid of
-+ * an extra address_space qualifier, but does in case of rvalue (typeof(x)0).
-+ * Hence, for pointers, we need to create an rvalue expression to get the
-+ * desired type. See https://github.com/llvm/llvm-project/issues/53400.
-+ */
-+#define __scalar_type_to_expr_cases(type) \
-+	unsigned type : (unsigned type)0, signed type : (signed type)0
-+
-+#define __unqual_typeof(x)                              \
-+	typeof(_Generic((x),                            \
-+		char: (char)0,                          \
-+		__scalar_type_to_expr_cases(char),      \
-+		__scalar_type_to_expr_cases(short),     \
-+		__scalar_type_to_expr_cases(int),       \
-+		__scalar_type_to_expr_cases(long),      \
-+		__scalar_type_to_expr_cases(long long), \
-+		default: (typeof(x))0))
-+
-+#define READ_ONCE(x)								\
-+({										\
-+	union { __unqual_typeof(x) __val; char __c[1]; } __u =			\
-+		{ .__c = { 0 } };						\
-+	__read_once_size((__unqual_typeof(x) *)&(x), __u.__c, sizeof(x));	\
-+	__u.__val;								\
- })
- 
--#define WRITE_ONCE_ARENA(type, x, val)				\
--({								\
--	union { type __val; char __c[1]; } __u =		\
--		{ .__val = (val) }; 				\
--	__write_once_size((void *)&(x), __u.__c, sizeof(x));	\
--	__u.__val;						\
-+#define WRITE_ONCE(x, val)							\
-+({										\
-+	union { __unqual_typeof(x) __val; char __c[1]; } __u =			\
-+		{ .__val = (val) }; 						\
-+	__write_once_size((__unqual_typeof(x) *)&(x), __u.__c, sizeof(x));	\
-+	__u.__val;								\
- })
- 
- /*
-@@ -648,6 +660,23 @@ static inline u32 log2_u64(u64 v)
-                 return log2_u32(v) + 1;
- }
- 
-+/*
-+ * Return a value proportionally scaled to the task's weight.
-+ */
-+static inline u64 scale_by_task_weight(const struct task_struct *p, u64 value)
-+{
-+	return (value * p->scx.weight) / 100;
-+}
-+
-+/*
-+ * Return a value inversely proportional to the task's weight.
-+ */
-+static inline u64 scale_by_task_weight_inverse(const struct task_struct *p, u64 value)
-+{
-+	return value * 100 / p->scx.weight;
-+}
-+
-+
- #include "compat.bpf.h"
- #include "enums.bpf.h"
- 
-diff --git a/tools/sched_ext/include/scx/enum_defs.autogen.h b/tools/sched_ext/include/scx/enum_defs.autogen.h
-index 6e6c45f14fe1..c2c33df9292c 100644
---- a/tools/sched_ext/include/scx/enum_defs.autogen.h
-+++ b/tools/sched_ext/include/scx/enum_defs.autogen.h
-@@ -88,6 +88,8 @@
- #define HAVE_SCX_OPS_ENQ_LAST
- #define HAVE_SCX_OPS_ENQ_EXITING
- #define HAVE_SCX_OPS_SWITCH_PARTIAL
-+#define HAVE_SCX_OPS_ENQ_MIGRATION_DISABLED
-+#define HAVE_SCX_OPS_ALLOW_QUEUED_WAKEUP
- #define HAVE_SCX_OPS_HAS_CGROUP_WEIGHT
- #define HAVE_SCX_OPS_ALL_FLAGS
- #define HAVE_SCX_OPSS_NONE
-@@ -104,6 +106,7 @@
- #define HAVE_SCX_RQ_BAL_PENDING
- #define HAVE_SCX_RQ_BAL_KEEP
- #define HAVE_SCX_RQ_BYPASSING
-+#define HAVE_SCX_RQ_CLK_VALID
- #define HAVE_SCX_RQ_IN_WAKEUP
- #define HAVE_SCX_RQ_IN_BALANCE
- #define HAVE_SCX_TASK_NONE
-diff --git a/tools/sched_ext/include/scx/enums.autogen.bpf.h b/tools/sched_ext/include/scx/enums.autogen.bpf.h
-index 0e941a0d6f88..2f8002bcc19a 100644
---- a/tools/sched_ext/include/scx/enums.autogen.bpf.h
-+++ b/tools/sched_ext/include/scx/enums.autogen.bpf.h
-@@ -13,6 +13,30 @@ const volatile u64 __SCX_SLICE_DFL __weak;
- const volatile u64 __SCX_SLICE_INF __weak;
- #define SCX_SLICE_INF __SCX_SLICE_INF
- 
-+const volatile u64 __SCX_RQ_ONLINE __weak;
-+#define SCX_RQ_ONLINE __SCX_RQ_ONLINE
-+
-+const volatile u64 __SCX_RQ_CAN_STOP_TICK __weak;
-+#define SCX_RQ_CAN_STOP_TICK __SCX_RQ_CAN_STOP_TICK
-+
-+const volatile u64 __SCX_RQ_BAL_PENDING __weak;
-+#define SCX_RQ_BAL_PENDING __SCX_RQ_BAL_PENDING
-+
-+const volatile u64 __SCX_RQ_BAL_KEEP __weak;
-+#define SCX_RQ_BAL_KEEP __SCX_RQ_BAL_KEEP
-+
-+const volatile u64 __SCX_RQ_BYPASSING __weak;
-+#define SCX_RQ_BYPASSING __SCX_RQ_BYPASSING
-+
-+const volatile u64 __SCX_RQ_CLK_VALID __weak;
-+#define SCX_RQ_CLK_VALID __SCX_RQ_CLK_VALID
-+
-+const volatile u64 __SCX_RQ_IN_WAKEUP __weak;
-+#define SCX_RQ_IN_WAKEUP __SCX_RQ_IN_WAKEUP
-+
-+const volatile u64 __SCX_RQ_IN_BALANCE __weak;
-+#define SCX_RQ_IN_BALANCE __SCX_RQ_IN_BALANCE
-+
- const volatile u64 __SCX_DSQ_FLAG_BUILTIN __weak;
- #define SCX_DSQ_FLAG_BUILTIN __SCX_DSQ_FLAG_BUILTIN
- 
-diff --git a/tools/sched_ext/include/scx/enums.autogen.h b/tools/sched_ext/include/scx/enums.autogen.h
-index 88137a140e72..fedec938584b 100644
---- a/tools/sched_ext/include/scx/enums.autogen.h
-+++ b/tools/sched_ext/include/scx/enums.autogen.h
-@@ -8,6 +8,14 @@
- 	SCX_ENUM_SET(skel, scx_public_consts, SCX_OPS_NAME_LEN); \
- 	SCX_ENUM_SET(skel, scx_public_consts, SCX_SLICE_DFL); \
- 	SCX_ENUM_SET(skel, scx_public_consts, SCX_SLICE_INF); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_ONLINE); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_CAN_STOP_TICK); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_BAL_PENDING); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_BAL_KEEP); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_BYPASSING); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_CLK_VALID); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_IN_WAKEUP); \
-+	SCX_ENUM_SET(skel, scx_rq_flags, SCX_RQ_IN_BALANCE); \
- 	SCX_ENUM_SET(skel, scx_dsq_id_flags, SCX_DSQ_FLAG_BUILTIN); \
- 	SCX_ENUM_SET(skel, scx_dsq_id_flags, SCX_DSQ_FLAG_LOCAL_ON); \
- 	SCX_ENUM_SET(skel, scx_dsq_id_flags, SCX_DSQ_INVALID); \
-diff --git a/tools/sched_ext/include/scx/enums.h b/tools/sched_ext/include/scx/enums.h
-index 34cbebe974b7..8e7c91575f0b 100644
---- a/tools/sched_ext/include/scx/enums.h
-+++ b/tools/sched_ext/include/scx/enums.h
-@@ -14,7 +14,8 @@ static inline void __ENUM_set(u64 *val, char *type, char *name)
- 	bool res;
- 
- 	res = __COMPAT_read_enum(type, name, val);
--	SCX_BUG_ON(!res, "enum not found(%s)", name);
-+	if (!res)
-+		*val = 0;
- }
- 
- #define SCX_ENUM_SET(skel, type, name) do {			\
--- 
-2.49.0
-
-
+greg k-h
 
