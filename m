@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-585188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CED4A7909E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E69A790A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6C11886D4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C84D8188B5B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401274315F;
-	Wed,  2 Apr 2025 14:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B39B23771C;
+	Wed,  2 Apr 2025 14:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BmhCAixz"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNM0G15I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEE61096F;
-	Wed,  2 Apr 2025 14:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DA817BA9;
+	Wed,  2 Apr 2025 14:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743602476; cv=none; b=mJOUMu9vBygG7xXV4+Pao6ZhGvg0ZhuH9SPlLcjX+Ca2WJlZWh58avQXCFy3puMq0CGkvZqHwjE3CQcFtVIm3svH1awgUHJzdYlPPKd/9hdtru0WV7wWlm81fED+j3l17kD85vreVEorB9WKSI5VCvdMsbuaCog41DMD8bVCIK4=
+	t=1743602521; cv=none; b=tWQtgDfXhsaMeBTIMf//4IwXbmPe65yszO8uvCi8mtOYl/CRxMqDCyDn+MTBoH2Eo4wWZJr0E/Kru2GzHWi91OxUzk18oVE9tNJKHSOnx0R0p4plMT/ORZn7mpgeKOC+6toLC+z8JrCWWJvTr1wj5mt2naLZU+PaJt7CBwpUNYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743602476; c=relaxed/simple;
-	bh=Dr2t55OpW1GrH/hocApAIXTppSrYNfmY6dXRSidyODc=;
+	s=arc-20240116; t=1743602521; c=relaxed/simple;
+	bh=qv4cI4IVPumb8gQlQrRDmy3higF3YPD27DBX4liEeVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3BGOfGsOMXQKr+Xr/oz1h961ySkK0j1cg5zw6pE7gD1iq1olZJf2YmnIrwmTKKpkelrNp7zbUVTrzCa/Kx2sf/mdSwgS4dwuhVcROdT9cCmZubqVxs195CgrolQCcm2OJWckxUHU8uK5bMhe00OFMN6Ob2Cw8Uz3P9Ny+Ip+3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BmhCAixz; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Apr 2025 10:01:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743602471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8oHVQ5oCNgw1ju/7pFOtSR61vGXzimnYD1atSgbbvrM=;
-	b=BmhCAixzZkdSqHpl07myyEhniPLMn5v0Acer5VqiZK+nk9EedZaV/6WvM4jMDHjoXzvMcN
-	GXJFU3xYt4dd/MvCWFk+2G5dJV2F+MjCi8JB9KfvdPBw6hOztK2/WvuHystC+iemxsLago
-	b5AZ5fLy4yTnqX5fcF+sXBKQewj2OsE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, "Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH] bcachefs: use library APIs for ChaCha20 and Poly1305
-Message-ID: <icwysnfc3v7b2hpwvm6ay6567sb5zcmcctmlt44cag6gblaylv@ubrzwcmphci2>
-References: <20250402043333.352723-1-ebiggers@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QC2ITNCp6FOSWQtIeOXBxOP9p77++2DOx9ekhxqvXedWxIVS+vT3Mnmnx8swYzZR7oDyDW0z1CIYcS0cPgo/ih/blNswn2R+G603VQGg5Rpw79izgRBAjHb6MXgLo4D/0kks3jsLMce7hc1lNV1d2V41ibc27sz71xMSxf+2pYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNM0G15I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A434EC4CEDD;
+	Wed,  2 Apr 2025 14:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743602520;
+	bh=qv4cI4IVPumb8gQlQrRDmy3higF3YPD27DBX4liEeVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNM0G15I0imaT8eiWhXWeyPjobe4XO9GumN5JmqtiLmjDyCVar0EjcxzmJzetBLyD
+	 PXYUadepbQEkoMg61BBcuxBNhF2aXIeRDQJceZJfCp7mpnNWLRycMXYoxomQrDAcEA
+	 a6hQ5yTmBAt63YSH3J5uc0hA98Ff4RbW/PJgpGV6DE5h2ThLxx+cWn+lRy8rdNbbKf
+	 zsTUuVifUEUGR2faKBbR/OZ2yBS55Q6OeHyRVIi6M8B9bIpaYcHAlcdUaBIMPkfNZQ
+	 0q91nJyDaljd+rlI6urFClTI1VuponIAD3OorNf743e5TfO+8kK06lu44TSgSBhAN4
+	 J1r6TgdQtV8yw==
+Date: Wed, 2 Apr 2025 15:01:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, jonathan.cameron@huawei.com,
+	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 3/3] net: hns3: store rx VLAN tag offload state for VF
+Message-ID: <20250402140155.GR214849@horms.kernel.org>
+References: <20250402121001.663431-1-shaojijie@huawei.com>
+ <20250402121001.663431-4-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,25 +61,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402043333.352723-1-ebiggers@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250402121001.663431-4-shaojijie@huawei.com>
 
-On Tue, Apr 01, 2025 at 09:33:33PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Wed, Apr 02, 2025 at 08:10:01PM +0800, Jijie Shao wrote:
+> From: Jian Shen <shenjian15@huawei.com>
 > 
-> Just use the ChaCha20 and Poly1305 libraries instead of the clunky
-> crypto API.  This is much simpler.  It is also slightly faster, since
-> the libraries provide more direct access to the same
-> architecture-optimized ChaCha20 and Poly1305 code.
+> The VF driver missed to store the rx VLAN tag strip state when
+> user change the rx VLAN tag offload state. And it will default
+> to enable the rx vlan tag strip when re-init VF device after
+> reset. So if user disable rx VLAN tag offload, and trig reset,
+> then the HW will still strip the VLAN tag from packet nad fill
+> into RX BD, but the VF driver will ignore it for rx VLAN tag
+> offload disabled. It may cause the rx VLAN tag dropped.
 > 
-> I've tested that existing encrypted bcachefs filesystems can be continue
-> to be accessed with this patch applied.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Fixes: b2641e2ad456 ("net: hns3: Add support of hardware rx-vlan-offload to HNS3 VF driver")
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-Fantastic!
+Overall this looks good to me.
 
-Applied, and this should go into 6.15 - this should get the strange bugs
-in the poly1305 path that I wasn't able to reproduce off the dashboard
-(and if they're still there, they'll be much easier to debug.)
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
+
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+> index cccef3228461..1e452b14b04e 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+> @@ -252,7 +252,8 @@ struct hclgevf_dev {
+>  	u16 *vector_status;
+>  	int *vector_irq;
+>  
+> -	bool gro_en;
+> +	u32 gro_en :1;
+> +	u32 rxvtag_strip_en :1;
+
+FWIIW, as there is space I would have used two bools here.
+
+>  
+>  	unsigned long vlan_del_fail_bmap[BITS_TO_LONGS(VLAN_N_VID)];
+>  
+> -- 
+> 2.33.0
+> 
 
