@@ -1,145 +1,194 @@
-Return-Path: <linux-kernel+bounces-585345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876B0A7927B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:55:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8AC6A79267
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463907A59C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CA4B3B5D1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4439165F1F;
-	Wed,  2 Apr 2025 15:55:09 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D26158524;
+	Wed,  2 Apr 2025 15:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MpYc9hYC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0796AA7;
-	Wed,  2 Apr 2025 15:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80FD1E511
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743609309; cv=none; b=frv7oXuXRuuf0gXfvTDfRb3gVJSlzK1a/6iCgL48zEt0Fnqu2IMOP8De4nDcwqXSgHXFQ7KsdhpawofPy6RI+t8bOcncavIf0StXtQEbJDXF/YVmulD0yCcg4uk9GINf8gDNpdsmoMpkGILkLhMNLcpycoQ1drmnpKOPossZ/Qw=
+	t=1743608971; cv=none; b=ohDiO0+R1jpS61tLqbeYgvhQJgBVZ03TMXvTcPNccrgQ/WFgbXuMgJyUHlE3NPt8iMFZK5Kpzg9xBtrLjyq+JSQj8gOlLmIteVTvLjiekQlWE2XphodF4pnILpH3w0D1PSX33AiIFr63p8WYuGBbmDu0724R4TlQbtEonFVsav4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743609309; c=relaxed/simple;
-	bh=vlPh5PCSARRxi39gaSvhG0GHKkjN6gue9AuWiipJ7tk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tIFWsIWmTmmIldqFByo8V6dKR56mHvbkz1GC00hCA9NEvY8A/dKRXiEsYQdKjvcqnh4K0rCi53+zCtRt4htDFiNV3wCGtAb+L2xE94VYvQ8ce2HgByzAEHSCPXy3WpjG27Fjbzg+AUVfa1zIZ+Jm0e0EI2wYVjl8ciE1XIN8pHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	(Authenticated sender: kovalevvv)
-	by air.basealt.ru (Postfix) with ESMTPSA id 35B07233C5;
-	Wed,  2 Apr 2025 18:47:46 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lvc-project@linuxtesting.org,
-	kovalev@altlinux.org
-Subject: [PATCH] Input: pegasus-notetaker - fix slab-out-of-bounds in pegasus_irq
-Date: Wed,  2 Apr 2025 18:47:45 +0300
-Message-Id: <20250402154745.399226-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1743608971; c=relaxed/simple;
+	bh=6Ut/cxV+1k+mMg16QR1xNb0eR0mJR8T1x3alISxrsuA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qC6nBIA7JonfizdY47H2qPAZgP+ViEtmMfo31QSbN+dDFdMSNKBgGv95SbMe1sQ6X6mKB35FmLZ8SxSUZREqdX8e+cYv5UenZk/x5PzfWQs6xWc8PorWkt4tej8m4fP/ZtxZBSMHWaK/+6JKHKgwPlIpQcgmDTu/0BrYOM3yPT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MpYc9hYC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2242ac37caeso164915ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743608969; x=1744213769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+IHTKGBDG1tL7KtJr5lbczP6OiCQttkkS8rRMUhy8do=;
+        b=MpYc9hYCWv1rbSMrz+YC9x63GJf0EOLkY8/Vk73jaArkh+p1bj3Wfoxg7dDz+wblVc
+         Mf7sPqxVYqbVNx0IJxcfT+hhEYwb/2fd2b6Jm6gppupdDiaUcODulHzVUwpEvvfqkuGb
+         FlhTgjkTH91eIs/S+09SEBQTCbYDvUyZLOxs7mtMLip6ikW07QQCp9FD26KCbCvgSKRd
+         RAnJ6uhZ8mAq0oxv6bxuCfgtoEZ1VVV0CEOlZC8yaZHnFs5onRaTLiOs7tGfR/nlXlad
+         0uzI/lgeDlUUs/0QdiH1TmOsx7gbWJoauMgWoPnTfukDTrkGQq5YBYWiObSV+NvwQzMG
+         geBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743608969; x=1744213769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+IHTKGBDG1tL7KtJr5lbczP6OiCQttkkS8rRMUhy8do=;
+        b=XeG/YtmFgBw31fKgY3Mg20SQ3ynb5kXhn4xb2pP0WCD3XfplbR0FFiqHkVpBJcvrTa
+         xUPKwDmre9zAwCZrdZac80lLxQ0QmXa+uk7jTJCO7kRqAfKEFdhJxpoAlWg87Iu5WBt7
+         F+do+tAIILIo+8dFktX0kNDj0yF211J59mueF8DO8pcaQ9vZjQMZP7tetfegmFxiNQx3
+         SqVLZFLAydmHoEk9SVWNilLj6UbdndmFQSR0+Nf2KioNs0yaHGsq0ZzOzMgfEsdChmt5
+         DK3tlbZSYO/pXc/WAla19y2szlkCYQ4bHWW9cD365OsswiRKaMXxnDsjDRe58dhqd5+/
+         Pmcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW48TGtp2F2ad3mPYjtU+SgFkS6GNJQjE0dAFyP0o1KLb39zLDQChJRnKlEiDCJhohHSM5OTcYq2ZBnfwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzoANGwmObQHhVG6cs8m6ddiJgxC+04zJ6QGOS+WGmup3KecYd
+	TkduOsRU8Rsu211uDsw0M3/IH4QXvdIntgDlHydIiEQjkD0/+tS1J4HD+c7PK3yijJLYqO9j3lj
+	xt2MfvAZK4oZBgDMknnpNESmy+z8tUO9MMm0R
+X-Gm-Gg: ASbGncsMbRalXZB6qOaURFV11X5EqsTcsvDOLPOJiKrsrAOgendmXx5j0tfQ1G8StDJ
+	SBo3p1C6UvvjkZQU9A85QUlV/LyuYcGpQurfosc7a8rAMBEptAg38PqL+yko1fClgceUKfZn8wk
+	9vRFID391L66QHQ+FaoyW2Wabhm//v0+gUnhMWJrTyqecCZPCIqkjbyA==
+X-Google-Smtp-Source: AGHT+IExsoUmdM23Q1D/YLx8O4wuDufR1G6fK8eyvYNjtBDUzTicQjnkOegdTzdtcaUf/k57Fsc+dCi/WVW1TekL2jo=
+X-Received: by 2002:a17:902:d2c8:b0:216:21cb:2e14 with SMTP id
+ d9443c01a7336-2296bdaea5dmr2668875ad.21.1743608968491; Wed, 02 Apr 2025
+ 08:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250318041442.321230-1-irogers@google.com> <20250318041442.321230-2-irogers@google.com>
+ <28016335-385c-48b9-8767-9b087a0ec4cc@linux.intel.com>
+In-Reply-To: <28016335-385c-48b9-8767-9b087a0ec4cc@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Apr 2025 08:49:17 -0700
+X-Gm-Features: AQ5f1Jq796U52_aSe_Kn7pKTK2dssVS2u53PYYYmR2NIr6w3FH4-0stY0FgCoDY
+Message-ID: <CAP-5=fXJ9pi+B_ppA93mE6gd8XYP4TDJThUreZeZxQtGwQ7Fug@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] perf stat: Better hybrid support for the NMI
+ watchdog warning
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Andi Kleen <ak@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Dominique Martinet <asmadeus@codewreck.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix a slab-out-of-bounds error in pegasus_irq reported by KASAN,
-caused by insufficient packet size validation. The driver relied
-on usb_maxpacket() to set the data length, which could be smaller
-than the 6 bytes expected by pegasus_parse_packet(), leading to
-oob reads at le16_to_cpup() calls when accessing coordinates.
+On Wed, Apr 2, 2025 at 8:23=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 2025-03-18 12:14 a.m., Ian Rogers wrote:
+> > Prior to this patch evlist__has_hybrid would return false if the
+> > processor wasn't hybrid or the evlist didn't contain any core
+> > events. If the only PMU used by events was cpu_core then it would
+> > true even though there are no cpu_atom events. For example:
+> >
+> > ```
+> > $ perf stat --cputype=3Dcpu_core -e '{cycles,cycles,cycles,cycles,cycle=
+s,cycles,cycles,cycles,cycles}' true
+> >
+> >  Performance counter stats for 'true':
+> >
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >      <not counted>      cpu_core/cycles/                               =
+                         (0.00%)
+> >
+> >        0.001981900 seconds time elapsed
+> >
+> >        0.002311000 seconds user
+> >        0.000000000 seconds sys
+> > ```
+> >
+> > This patch changes evlist__has_hybrid to return true only if the
+> > evlist contains events from >1 core PMU. This means the NMI watchdog
+> > warning is shown for the case above.
+>
+> Nit:
+> The function name may still bring confusions.
+> It may be better to change the function name as well, e.g.,
+> evlist__has_hybrid_pmus()? It implies more than one PMU.
 
-Introduce NOTETAKER_PKGLEN_SIZE define with a value of 6 bytes,
-reflecting the typical interrupt IN endpoint packet format for this
-device family. Add a check in pegasus_probe() to ensure the data
-length is at least this size, logging an info message if usb_maxpacket()
-returns a smaller value and adjusting it accordingly. This prevents
-buffer under-allocation while accommodating devices that might send
-shorter packets, as various brandings (e.g., Pegasus Mobile Notetaker,
-IRISnotes Express) may differ in implementation.
+Thanks, I'll change in v2.
 
-KASAN report:
-BUG: KASAN: slab-out-of-bounds in pegasus_irq (little_endian.h:67 pegasus_notetaker.c:153 pegasus_notetaker.c:183)
-Read of size 2 at addr ffff888009a01da2 by task (udev-worker)/985
-CPU: 0 PID: 985 Comm: (udev-worker) Tainted: G OE 6.14.0-un-def-alt0.rc6.kasan #1
-Hardware: QEMU Standard PC (Q35 + ICH9, 2009)
-Call Trace:
- <IRQ>
-  dump_stack_lvl (lib/dump_stack.c:122)
-  print_report (mm/kasan/report.c:521)
-  kasan_report (mm/kasan/report.c:636)
-  pegasus_irq (little_endian.h:67 pegasus_notetaker.c:153 pegasus_notetaker.c:183)
-  __usb_hcd_giveback_urb (drivers/usb/core/hcd.c:1650)
-  usb_hcd_giveback_urb (drivers/usb/core/hcd.c:1735)
-  dummy_timer (drivers/usb/gadget/udc/dummy_hcd.c:1995)
-  __hrtimer_run_queues (kernel/time/hrtimer.c:1865)
-  hrtimer_run_softirq (kernel/time/hrtimer.c:1884)
-  handle_softirqs (kernel/softirq.c:561)
-  __irq_exit_rcu (kernel/softirq.c:662)
-  irq_exit_rcu (kernel/softirq.c:680)
-  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1049)
- </IRQ>
+Ian
 
-Found by Linux Verification Center (linuxtesting.org) with
-"USB Gadget Tests"[1]:
-
-$ make input-tab-pegasus
-$ sudo ./src/input-tab-pegasus/input-tab-pegasus --invalid_ep_int_len
-
-[1] Link: https://github.com/kovalev0/usb-gadget-tests
-Fixes: 1afca2b66aac ("Input: add Pegasus Notetaker tablet driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
----
- drivers/input/tablet/pegasus_notetaker.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/input/tablet/pegasus_notetaker.c b/drivers/input/tablet/pegasus_notetaker.c
-index 8d6b71d5979316..e578720585c2c8 100644
---- a/drivers/input/tablet/pegasus_notetaker.c
-+++ b/drivers/input/tablet/pegasus_notetaker.c
-@@ -70,6 +70,15 @@
- #define PEN_BUTTON_PRESSED		BIT(1)
- #define PEN_TIP				BIT(0)
- 
-+/* Minimum packet size for interrupt IN endpoint.
-+ * Packet format  (expected 6 bytes, though some devices may send less):
-+ *  - Byte 0: Packet type (command or status)
-+ *  - Byte 1: Button/tip state
-+ *  - Bytes 2-3: X coordinate (16-bit, little-endian)
-+ *  - Bytes 4-5: Y coordinate (16-bit, little-endian)
-+ */
-+#define NOTETAKER_PKGLEN_SIZE		6
-+
- struct pegasus {
- 	unsigned char *data;
- 	u8 data_len;
-@@ -311,6 +320,16 @@ static int pegasus_probe(struct usb_interface *intf,
- 	}
- 
- 	pegasus->data_len = usb_maxpacket(dev, pipe);
-+	/* Ensure buffer is at least NOTETAKER_PKGLEN_SIZE to avoid oob
-+	 * access in pegasus_parse_packet(). Adjust if endpoint reports a
-+	 * smaller size, as some devices might send shorter packets.
-+	 */
-+	if (pegasus->data_len < NOTETAKER_PKGLEN_SIZE) {
-+		dev_info(&intf->dev,
-+			 "Int in endpoint data_len adjusted from %d to minimum %d\n",
-+			 pegasus->data_len, NOTETAKER_PKGLEN_SIZE);
-+		pegasus->data_len = NOTETAKER_PKGLEN_SIZE;
-+	}
- 
- 	pegasus->data = usb_alloc_coherent(dev, pegasus->data_len, GFP_KERNEL,
- 					   &pegasus->data_dma);
--- 
-2.42.2
-
+> Thanks,
+> Kan>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/stat-display.c | 14 +++++++++++++-
+> >  1 file changed, 13 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-disp=
+lay.c
+> > index e852ac0d9847..f311f1960e29 100644
+> > --- a/tools/perf/util/stat-display.c
+> > +++ b/tools/perf/util/stat-display.c
+> > @@ -825,13 +825,25 @@ static bool is_mixed_hw_group(struct evsel *count=
+er)
+> >  static bool evlist__has_hybrid(struct evlist *evlist)
+> >  {
+> >       struct evsel *evsel;
+> > +     struct perf_pmu *last_core_pmu =3D NULL;
+> >
+> >       if (perf_pmus__num_core_pmus() =3D=3D 1)
+> >               return false;
+> >
+> >       evlist__for_each_entry(evlist, evsel) {
+> > -             if (evsel->core.is_pmu_core)
+> > +             if (evsel->core.is_pmu_core) {
+> > +                     struct perf_pmu *pmu =3D evsel__find_pmu(evsel);
+> > +
+> > +                     if (pmu =3D=3D last_core_pmu)
+> > +                             continue;
+> > +
+> > +                     if (last_core_pmu =3D=3D NULL) {
+> > +                             last_core_pmu =3D pmu;
+> > +                             continue;
+> > +                     }
+> > +                     /* A distinct core PMU. */
+> >                       return true;
+> > +             }
+> >       }
+> >
+> >       return false;
+>
 
