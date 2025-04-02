@@ -1,151 +1,142 @@
-Return-Path: <linux-kernel+bounces-584707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48A8A78A75
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8038EA78A8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331511891160
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:59:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87680167C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382AA235C1B;
-	Wed,  2 Apr 2025 08:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6015323645F;
+	Wed,  2 Apr 2025 09:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ts9DatLm"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="i5T7LZdI"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE4C1514F6;
-	Wed,  2 Apr 2025 08:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66BE2356CA;
+	Wed,  2 Apr 2025 09:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743584359; cv=none; b=iK88nYM535IHQTc5NlX/Bel9Wc2ib/RqhTErFcLyTX76NggY8wZSmyspxqXjfcOaqmdEBIIhkkC27J0QKyDH2eX1SujLii4/AyXOq37fV+YMUXoqV6lTXOiYePTR9FY/Sozakk48WeBfWku+2Sa2tW/5FXuQ8SNMy3pqN0CqIZE=
+	t=1743584582; cv=none; b=RkNa9FnLI7tAXkoYo4+1wDguSpSZOC5t8UjggzEyymKtttCkLQiQfOISs31eY1HVyC6mJu8/jb63AQV166GwsIcyMMnIvAn6sY4SulQEfR4R83BoRqrM/sEZMxHAK5+8ROacIOeCXHnsE8hYpnCoqNjRTX56Aiib/Wok4NdwYrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743584359; c=relaxed/simple;
-	bh=zvhBFDJD/NQkSOSdd1xN85qPAdYMy5AaqSXyRKKDQho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hc+ZU9sEyU9TuPvEIhlBVErbpJc6amGjVSGXQn6/ooQd/PORXxtLMCi7I8uyK9HQ4B/64oqi7Eu8pRAak2NeVapzkUD45StbxkfOpcTNcNLKdhZWecxIJYRtnbSVZwZo1wZx3y2MrvKErV13JMZBLofXdLo7nrBGbTYv+WZuJv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ts9DatLm; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22438c356c8so124605365ad.1;
-        Wed, 02 Apr 2025 01:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743584354; x=1744189154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJPesJ9u7hxBIZyJ3YQPpH4TNpyDS3MW5BiB4rLe8ZA=;
-        b=Ts9DatLmavymJS8Z01KF8PmqVHVMjt8/GNMsFRjBb7q0Vx7AuCFFGaNiCaeNuj2Lnp
-         fd5C+Xc9hRILAUJoPpnRAwIzYmmeZvqDYMC+fdzEKrotr3Wzp1pjh6t9RXnhrcoh+ymG
-         YnlQPm0fEHDvVEvLQkTWlk0SPuMmfCzs3zeYyAQKQfRaJx95yd0n1iZM6Rps2g5kJaVi
-         s110KAffD2tPZA4SzffL2cSqooIX89TuUNl46u+MHMSuGS9QfasAYi8At8ib0HO+P1ct
-         nclhV+hNjg2mqK1tU+wq82Dpw3RlWlPTb+7uKR6FiHuh8n1d3F6iBJEP5CvbCs3JalM5
-         P5Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743584354; x=1744189154;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jJPesJ9u7hxBIZyJ3YQPpH4TNpyDS3MW5BiB4rLe8ZA=;
-        b=haturW3xJUSO4z/WTIlZt4C5qS9bd6fJCFIk32nJrdSIeOUjetmSCl2xWsT2UdKOfB
-         Wufp14R7sNFYUfq/MuoAveqPa+t1qZYuUwgSFSwEQDsM/1maVFB/tNQePQxr3Ushie81
-         7jLCOksd0VvtsU8yeNz1bDDejwcVjz2AXqVq83nvnQH+pOD7NgivQHvZW3+jMgcXbeYA
-         xFS99s3OuQtOjl0QzmYlkPO+C5WXsZHOiuM1SRePEHX3pT4HFZziMhxL2QZxoC4j7wRi
-         xfsWPKfoVOs00r/v3fizDxvX67E5TvRlKTQ35MRwiNR5RmoFd0kP8KHmGEEt09kkacpR
-         0Wog==
-X-Forwarded-Encrypted: i=1; AJvYcCUyALxS9/HPX7O3ox2EPqqy9WzizEaSdPpnB6dg6RQwiN+GOmDrxOpyJ2nDTM70aJ4reO99Mp2mLHGF@vger.kernel.org, AJvYcCWjzqhmGT41iY6xXjTPpV2aB0qsSkULfMfRoLTPvixSiMJTg/+NzVuz7zGiuUarq8b/XiNXVpnv@vger.kernel.org, AJvYcCXTU2SYnnfmeW6ya3Jlltkm3XRpO+GEcKh5op5Kvx2igVIbJPxxmorCuK3DZ+CXH0erL3KfGRRLLaVIS6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo27FVoHLs2L+kI5T9IlpPzcygwmkQ0DuiGPkgALLwrR4ZGUlP
-	XWS3WMD11K32tbXfSwGYAJt2BPtlGOGeUy6vZUHCk3EUq2YV3XNx
-X-Gm-Gg: ASbGnctiVadqanNxlhPsCTVPW918fDdCXgHYUrNdJP9uGoREjRD5+Nn/tFU+zeRLK+C
-	c7E3C7j6apnuIPb4I8nFHRW1XNa+APGtOwjthjunbJdDhwfggPmfEnjqSwOyxzJqQUPAESjlSkz
-	nOOGelwCcHHckEKVLpPoP+NSxfV3LayK+7fmQva8qoVPu0x/LFWv+dEWugQaYoOhUG/XiTPOkeY
-	gNQNGCoB6t1zalKNeF14KQlDd+oP/3EJgQMekrhmIrEG7Hzva5h3lL+yQWm5HxuJFpCaUbZK1MA
-	aRjP24MdjjUms5lHINkyJIx49LOZNUATl0h8z57CeAN5aNXvCwOLBXlVo99IDZhqmGLA
-X-Google-Smtp-Source: AGHT+IG0QOR/eegQ5jpsDzvfXIfWd3tr80odWWEuLDBHoglnXdXs+WCgec4VqfDfOBL7wHXaoEYSGQ==
-X-Received: by 2002:a17:902:e549:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-2292f95d954mr223072675ad.14.1743584354350;
-        Wed, 02 Apr 2025 01:59:14 -0700 (PDT)
-Received: from mi-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1cf6dcsm102249465ad.113.2025.04.02.01.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 01:59:14 -0700 (PDT)
-From: Ying Lu <luying526@gmail.com>
-To: oneukum@suse.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Ying Lu <luying1@xiaomi.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v4 1/1] usbnet:fix NPE during rx_complete
-Date: Wed,  2 Apr 2025 16:58:59 +0800
-Message-ID: <4c9ef2efaa07eb7f9a5042b74348a67e5a3a7aea.1743584159.git.luying1@xiaomi.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743584159.git.luying1@xiaomi.com>
-References: <cover.1743584159.git.luying1@xiaomi.com>
+	s=arc-20240116; t=1743584582; c=relaxed/simple;
+	bh=kPI8+m6kjrBpwYbQqzYKlo2bm8lf82CiCj4PT2Ly8Yk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=YfAQDLvjd7Ceyq1oykscZxcaUfLMFDX8H00YCv1luY6Gja+J0XsioK/Rj1BLG+REGVbNfdhxIEzGWN1VVATWovXF+MtN66ytLOPiICGs018HOq+3L0bYxavLq0m1NLrbgolFNgZmTAl72Q9OUR1ZYKD6RDosNIKtB5RkBxynTbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=i5T7LZdI; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5325gfaI010091;
+	Wed, 2 Apr 2025 11:02:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=eskE5Y77HHK+7D5qMo1eVg
+	7hZS0cZSUbXVc6OhLjd/k=; b=i5T7LZdIOu29jzuGSXLTk+bXTYdWcjnB+ZybW4
+	jAA4mX1bYf61x4wCAsZ7zoq2V/yR7pS8jSqmdkNWNoSGE2KQHd1vcZOwbVMsXcbd
+	kk+yd4EoUIaiA2NyCAZveHU37oXaWUgbCljDpTnAp2hazrhErH+fD5qbCUeebBxu
+	oC7Du1IlC/ZGeVyCtj4JsxfL8NKOoMJI8R//WJHOca+BJjCk3a2h7KKM2MY0nNSj
+	HFFg19o9nckWfwJ/3qOOShlX9TLvWJaC0tjd/tLrLWOXm5RTu7a0FERm2OUZXEi2
+	ZCXFtfIIyy0ScqNhwxpbbno5WP9vvHGmdGBXebArW711jmOQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45p6vd9g36-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 11:02:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E7160400B3;
+	Wed,  2 Apr 2025 11:01:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 45DDB8FCAFC;
+	Wed,  2 Apr 2025 11:00:38 +0200 (CEST)
+Received: from localhost (10.252.30.87) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Apr
+ 2025 11:00:37 +0200
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Subject: [PATCH v3 0/2] media: Add support for ST VD55G1 camera sensor
+Date: Wed, 2 Apr 2025 11:00:18 +0200
+Message-ID: <20250402-b4-vd55g1-v3-0-393985404759@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKL87GcC/22NzQ7CIBAGX6XhLA0sRcGT72E88NtysBhoiKbpu
+ 0t70RqPs9mZb0bZpeAyOjczSq6EHOJYgR0aZAY19g4HWxkBAU4AONYdLpbznmJttSRWOyY1Q/X
+ /kZwPz611vVUeQp5iem3pQtfrv0qhmGBmuSICPPFKXnzMuc1Ta+J9zW4OA/HrCEuPulMn6WHvr
+ NsFPnsdod8uVJcYobRQnTCc791lWd7gzTAPFAEAAA==
+X-Change-ID: 20250225-b4-vd55g1-bdb90dbe39b3
+To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+        Sylvain Petinot
+	<sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>
+CC: <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_03,2025-04-01_01,2024-11-22_01
 
-From: Ying Lu <luying1@xiaomi.com>
+Hi,
 
-Missing usbnet_going_away Check in Critical Path.
-The usb_submit_urb function lacks a usbnet_going_away
-validation, whereas __usbnet_queue_skb includes this check.
+This serie adds support for the STMicroelectronics VD55G1 camera sensor.
+The VD55G1 is a monochrome global shutter camera with a 804x704 maximum
+resolution with RAW8 and RAW10 bytes per pixel.
+Datasheets and other documentation can be found at st.com [1].
+A lot of inspiration was taken from the imx219 and the vd56g3 serie.
+It is compatible with libcamera. Tested on Raspberry Pi 4 and 5, with and
+without libcamera.
 
-This inconsistency creates a race condition where:
-A URB request may succeed, but the corresponding SKB data
-fails to be queued.
+[1] https://www.st.com/en/imaging-and-photonics-solutions/vd55g1.html#documentation
 
-Subsequent processes:
-(e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
-attempt to access skb->next, triggering a NULL pointer
-dereference (Kernel Panic).
+Regards,
+Benjamin
 
-Fixes: 04e906839a05 ("usbnet: fix cyclical race on disconnect with work queue")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ying Lu <luying1@xiaomi.com>
 ---
- drivers/net/usb/usbnet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v3:
+- Add maxItems to data-lanes in binding
+- Drop redondant 'binding' in binding commit message
+- Link to v2: https://lore.kernel.org/r/20250401-b4-vd55g1-v2-0-0c8ab8a48c55@foss.st.com
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 44179f4e807f..5161bb5d824b 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -519,7 +519,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 	    netif_device_present (dev->net) &&
- 	    test_bit(EVENT_DEV_OPEN, &dev->flags) &&
- 	    !test_bit (EVENT_RX_HALT, &dev->flags) &&
--	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags)) {
-+	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags) &&
-+	    !usbnet_going_away(dev)) {
- 		switch (retval = usb_submit_urb (urb, GFP_ATOMIC)) {
- 		case -EPIPE:
- 			usbnet_defer_kevent (dev, EVENT_RX_HALT);
-@@ -540,8 +541,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 			tasklet_schedule (&dev->bh);
- 			break;
- 		case 0:
--			if (!usbnet_going_away(dev))
--				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-+			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
- 		}
- 	} else {
- 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
+Changes in v2:
+- Fix device tree binding mistakes
+- Drop linux media git from MAINTAINERS file
+- Fix coding style mistakes
+- Drop vd55g1_err_probe wrapper
+- Fix 32bits build
+- Fix config symbol help paragraph being too short for checkpatch
+- Link to v1: https://lore.kernel.org/r/20250328-b4-vd55g1-v1-0-8d16b4a79f29@foss.st.com
+
+---
+Benjamin Mugnier (2):
+      media: dt-bindings: Add ST VD55G1 camera sensor
+      media: i2c: Add driver for ST VD55G1 camera sensor
+
+ .../devicetree/bindings/media/i2c/st,vd55g1.yaml   |  133 ++
+ MAINTAINERS                                        |    9 +
+ drivers/media/i2c/Kconfig                          |   11 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/vd55g1.c                         | 1993 ++++++++++++++++++++
+ 5 files changed, 2147 insertions(+)
+---
+base-commit: b2c4bf0c102084e77ed1b12090d77a76469a6814
+change-id: 20250225-b4-vd55g1-bdb90dbe39b3
+
+Best regards,
 -- 
-2.49.0
+Benjamin Mugnier <benjamin.mugnier@foss.st.com>
 
 
