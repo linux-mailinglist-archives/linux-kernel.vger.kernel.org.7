@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-585131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350F2A79000
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7ACA79007
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AA018965F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2321885588
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974D23AE84;
-	Wed,  2 Apr 2025 13:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9873223875A;
+	Wed,  2 Apr 2025 13:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USYAC7D9"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W1P3ZIDm"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CBB238168;
-	Wed,  2 Apr 2025 13:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E40F23957D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 13:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743600885; cv=none; b=phHh3ZBa3gosQu1f9Ks6PDD8dcgXgcULpLKY9o9pQ46CHAyEYIblA1pcIfUq2+u6i1KyytjoED+zxlpdUYuEqI68dCGYhCZW4GBcLywzBBDndEcCdv9GX8JDznmaPEDKoz6358ntvThr5by583TCkStTwbD9RY5s5yFCobiAuKo=
+	t=1743600947; cv=none; b=D8R/AsuWTFBZs0bv77B++/uZAex2+i3EjApR3hi26yx9TZ3m9ycLhsJarFYKSJXw6H+O1DKRos7LEM3GyTataSEfphFOk/BtCOOciPu2osRxvSilbyTRyXRtxYhwkL5pJ894vUbpiFdaRZRoI/aQ4QZplye1UdhY6co2hiVKOZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743600885; c=relaxed/simple;
-	bh=1Vvlfk1WR61JSY4I6mA0KbR0jL8QIxca3L6B0pHyd/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=diEF8UoxEfoqiSVdcl6Lj+MLQXMsVjsvCs5Oa5ywuz81hTlNfp1bfS4RPnK4iWa0MNChykAsA2hiVTixAbWHswucLjlfpJwNihY63ACwAy5OPcJ7OVckb55Zuh9N1dVrJALBlCw4p5sg9++3BD2hZpJGs8+Dwa2U8GaSZqr8emQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USYAC7D9; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-73972a54919so121349b3a.3;
-        Wed, 02 Apr 2025 06:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743600883; x=1744205683; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=oM4dIlENBzmCrkF/MVmHBr9o/bxamEKafWPRvKH+k5Q=;
-        b=USYAC7D99epuAN6e8Y4FDZbOsmThebeQv47bmh4FL8ntQKQf0tLPSM+Ht1PwR4i12U
-         xq5IRdD+bgL5kiUMgmvSm52cPwCtnK+c9FLO3mb3gVhGVuZUSNOZ3PJJpS4ZAHyUpRyZ
-         uV1tF+keGwN4Cyaznb0sPxqMdV73/IXjI/IpK9FSFILmshVns0S6kFZu1++XE4/Ie1/R
-         5MVJ3ql18jzhCRenAOHR6d3mjUNREeuPiqCPeAUlvavfVyNPU2taBininvz/ZTCPQD/g
-         0roiKAHhUW9cUrkRhJyjdZcCZS57/QukdIqVKsz+0vBaO+BVhF+ytV1SGBmM8YAmgLDA
-         QKUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743600883; x=1744205683;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oM4dIlENBzmCrkF/MVmHBr9o/bxamEKafWPRvKH+k5Q=;
-        b=NNpNhSxN12wsbhRy21WSHdtv7/mD/tcolAM0WPvEKxEFlJB+Zn8mpnS9cGyjiko9bq
-         B3zaOs/vr2NBJxzz/bfoP5LW7ahJCMl4TbPr2fXhax0mBO0O3p5x873cBcZ/r+fKKLEl
-         BYxAo5grQK7fvQarTN2kR2ZgX3AmdjDt6WZU435u5Wtl6iv3tOSBJQzIe0rY+nMV6FUK
-         0qErAP2rLEzsVgzhyltZFwmoI314/wPBRMwJmYBaTrRY8RcWA+4D+MG2Wyf+BtTsJku0
-         fmFtJ6gapttRmVso63ermXRFibx85ca03XCBx2HRB8urXI6GWrr2xuNnJzUk4UudBZ/W
-         ZGug==
-X-Forwarded-Encrypted: i=1; AJvYcCXRaJQIp7U700ba0Nwkf/x80BYeTCoKC3sfn16RBnjHIpSC4RqipANuMzJufaAgnbgMI8lCb9a26y7uvQ==@vger.kernel.org, AJvYcCXw40b+EWyK24hHARKaLhB0EfhYwpG8MDDyOS17P0+99OJ48laiOauKT9m315P3Ep1qC5+kIf7tZQLuJEJl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFCldQc9fdEHGM1/uf8I2/G7pkVbdKjR4k7O7SxZgKg22aKilk
-	g8aT4CAHlmYuTIPOLV5MGv0udJYTv3oSqCb/HgPAbYoPgJi7KeZZ
-X-Gm-Gg: ASbGncuGqXQwBHwQoZaP2ysw5v3ypH3S5V5ZJntLPjf44f3j7tPw/OFuLxNPQjDWVZX
-	z5PZj5c91tCB9PIVkXHkgH7cV+ojefz4K9KbCoOn+NGfBEWKBw2OYavGRm2vbKqe8e9e8kuZlBJ
-	NROk07uU6DLxjmGOhPYdouRgTxP/0ZHYXXALeCz7yzwyhEmtis2lOLLc49gy9wPId8J6AJrIDqZ
-	0DhKahBBqzUzEkcKHiR49VAR8PbS8Fl2Iotyps4l/YJf5SrykGkYUiGldYM3/75R669Pw9LGN7M
-	PNpUAjjb7s3eT5xjc8Gy+j3luhW+awL9+DNo55qqhN8eOhd5+XEE8eUVfdbGonxiqAe6EBOsIIF
-	5CUeN6KqN+utIy3JSPw==
-X-Google-Smtp-Source: AGHT+IEIhvroKxYlDv/3ZMvAZuAXQz4vMLWwCVmGJDXd8YcRbaeyhMlDmhOD1GHhqpSudUbhmqouCQ==
-X-Received: by 2002:a05:6a20:9f99:b0:1f5:80a3:b003 with SMTP id adf61e73a8af0-2009f7ee203mr25401787637.37.1743600882757;
-        Wed, 02 Apr 2025 06:34:42 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73971069b62sm10871531b3a.112.2025.04.02.06.34.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 06:34:42 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ae38b526-520f-45ae-b9d3-7628058d56d8@roeck-us.net>
-Date: Wed, 2 Apr 2025 06:34:41 -0700
+	s=arc-20240116; t=1743600947; c=relaxed/simple;
+	bh=Qys6J8PDiLhasTTX/Rv8L+IBTqtGpF6FBQOXsR9xULc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uNmP9QkA1V2qNMeC+frL4NmMQsMV5S6OvzVROzwWBDwRcl3HhPgc2hbbnGmbFPSIYd41FVsdPBBCvVR4OL3jGeiEssjqqr4WQqXIBx+sLfBxQpdxUP4t8zki6A5j93pXfonRoNjkOZqhg99ngeIzymspmocDaEVa1z4LNGbeREA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W1P3ZIDm; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 532DZP2l3250588
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Apr 2025 08:35:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743600925;
+	bh=ISpC0S/bifWyOLFGjqR1WFw8r/9cAgNMXnYHnloxEbA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=W1P3ZIDmxQ37wf5L2VnsoRmvAZFk9FPK/urf7QxBA99vv6FyXdxBWVLcHsLU7JCLI
+	 uEX3RQh7Fh0wkgdqrDkuFF6ntNHJUhIGrV6dAwac26FjY66GwCSwkhtsMu0oXCvYyN
+	 au9+DUEx/J1nWoSvv9MnSiiWpLux59BLVFOmP9S4=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 532DZP5f029496
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 2 Apr 2025 08:35:25 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
+ Apr 2025 08:35:25 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 2 Apr 2025 08:35:25 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 532DZLh4043983;
+	Wed, 2 Apr 2025 08:35:22 -0500
+Message-ID: <223da324-4de7-4e62-b001-ea89c4768a13@ti.com>
+Date: Wed, 2 Apr 2025 19:05:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,153 +65,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: max34451: Workaround for lost page
-To: William Kennington <william@wkennington.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-References: <20250401220850.3189582-1-william@wkennington.com>
- <5a602ffc-5cbb-4f39-b815-545f3f1f4c98@roeck-us.net>
- <CAD_4BXgzvFavEcfhY5_BEi9y6pK0wJ1q4oqFYC5ctP53c57=wg@mail.gmail.com>
- <84d37c25-197b-44b4-b181-f71f5e8b81d8@roeck-us.net>
- <CAD_4BXhUVRpNjORSHYiwhxXAGbAv5=4SYekWZhK+r9Wi=n5+Lw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] phy: cadence: cdns-dphy: Update calibration wait
+ time for startup state machine
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+CC: <sakari.ailus@linux.intel.com>, <u.kleine-koenig@baylibre.com>,
+        <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>, <s-jain1@ti.com>,
+        <r-donadkar@ti.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <mripard@kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250326152320.3835249-1-devarsht@ti.com>
+ <20250326152320.3835249-3-devarsht@ti.com>
+ <5465d2dd-d81a-4e33-b76f-cbbd3386c725@ideasonboard.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAD_4BXhUVRpNjORSHYiwhxXAGbAv5=4SYekWZhK+r9Wi=n5+Lw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <5465d2dd-d81a-4e33-b76f-cbbd3386c725@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 4/2/25 01:33, William Kennington wrote:
-> On Tue, Apr 1, 2025 at 5:19 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> On 4/1/25 15:55, William Kennington wrote:
->>> On Tue, Apr 1, 2025 at 3:52 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>> On 4/1/25 15:08, William A. Kennington III wrote:
->>>>> When requesting new pages from the max34451 we sometimes see that the
->>>>> firmware doesn't update the page on the max34451 side fast enough. This
->>>>> results in the kernel receiving data for a different page than what it
->>>>> expects.
->>>>>
->>>>> To remedy this, the manufacturer recommends we wait 50-100us until
->>>>> the firmware should be ready with the new page.
->>>>>
->>>>> Signed-off-by: William A. Kennington III <william@wkennington.com>
->>>>> ---
->>>>>     drivers/hwmon/pmbus/max34440.c | 7 +++++++
->>>>>     1 file changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/drivers/hwmon/pmbus/max34440.c b/drivers/hwmon/pmbus/max34440.c
->>>>> index c9dda33831ff..ac3a26f7cff3 100644
->>>>> --- a/drivers/hwmon/pmbus/max34440.c
->>>>> +++ b/drivers/hwmon/pmbus/max34440.c
->>>>> @@ -12,6 +12,7 @@
->>>>>     #include <linux/init.h>
->>>>>     #include <linux/err.h>
->>>>>     #include <linux/i2c.h>
->>>>> +#include <linux/delay.h>
->>>>>     #include "pmbus.h"
->>>>>
->>>>>     enum chips { max34440, max34441, max34446, max34451, max34460, max34461 };
->>>>> @@ -241,6 +242,12 @@ static int max34451_set_supported_funcs(struct i2c_client *client,
->>>>>                 if (rv < 0)
->>>>>                         return rv;
->>>>>
->>>>> +             /* Firmware is sometimes not ready if we try and read the
->>>>
->>>> This is not the networking subsystem. Standard multi-line comments, please.
->>>
->>> Okay, let me fix that.
->>>
->>>>
->>>>> +              * data from the page immediately after setting. Maxim
->>>>> +              * recommends 50-100us delay.
->>>>> +              */
->>>>> +             fsleep(50);
->>>>
->>>> I would suggest to wait 100uS to be safe. The function is only called during probe,
->>>> so that should be ok.
->>>
->>> Yeah, I don't think they did strenuous measurement of these values on
->>> their end. We have been using this patch for 4-5 years now with
->>> seemingly good robustness on the 50us value. I just pulled up an old
->>> email from the vendor that gives this context.
->>>
->>>>
->>>> Is this a generic problem with this chip when changing pages ?
->>>
->>> I believe that is the case, but this patch is pretty old at this
->>> point. Is there somewhere to add in quirks for such chips that would
->>> allow us to build in such a delay?
->>>
->>
->> So far we only have delays for all accesses and for write operations.
->> See access_delay and write_delay in struct pmbus_data. If the problem
->> only affects page changes, we might have to add page_change_delay or
->> something similar. Alternatively, maybe we could just set write_delay.
->> If the chip has trouble with page changes, it might well be that it has
->> trouble with write operations in general.
->>
+Hi Tomi,
+
+Thanks for the review.
+
+On 02/04/25 17:12, Tomi Valkeinen wrote:
+> Hi,
 > 
-> So I did some digging and asked the original contributors to the
-> patch. It would appear that it's specifically an issue with this IC
-> around page switches and not any arbitrary write command. There is an
-> issue where it does not correctly respond to the second command issued
-> after a PAGE switch occurs, if the commands come in too quickly. They
-> believe it's an issue with max34451 (and other derivative ICs) not
-> correctly clock stretching while the PAGE command is processed.
+> On 26/03/2025 17:23, Devarsh Thakkar wrote:
+>> Use system characterized reset value specified in TRM [1] to program
+>> calibration wait time which defines number of cycles to wait for after
+>> startup state machine is in bandgap enable state.
+>>
+>> This fixes PLL lock timeout error faced while using RPi DSI Panel on TI's
+>> AM62L and J721E SoC [2].
+>>
+>> [1] AM62P TRM (Section ):
+>> https://www.ti.com/lit/pdf/spruj83
+>>
+>> [2]:
+>> Link: https://gist.github.com/devarsht/89e4830e886774fcd50aa6e29cce3a79
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 7a343c8bf4b5 ("phy: Add Cadence D-PHY support")
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V2: Introduced this as as separate patch
+>>
+>>   drivers/phy/cadence/cdns-dphy.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/phy/cadence/cdns-dphy.c 
+>> b/drivers/phy/cadence/cdns-dphy.c
+>> index c4de9e4d3e93..11fbffe5aafd 100644
+>> --- a/drivers/phy/cadence/cdns-dphy.c
+>> +++ b/drivers/phy/cadence/cdns-dphy.c
+>> @@ -30,6 +30,7 @@
+>>   #define DPHY_CMN_SSM            DPHY_PMA_CMN(0x20)
+>>   #define DPHY_CMN_SSM_EN            BIT(0)
+>> +#define DPHY_CMN_SSM_CAL_WAIT_TIME    GENMASK(8, 1)
+>>   #define DPHY_CMN_TX_MODE_EN        BIT(9)
+>>   #define DPHY_CMN_PWM            DPHY_PMA_CMN(0x40)
+>> @@ -405,6 +406,8 @@ static int cdns_dphy_configure(struct phy *phy, 
+>> union phy_configure_opts *opts)
+>>       reg = FIELD_PREP(DPHY_BAND_CFG_LEFT_BAND, band_ctrl) |
+>>             FIELD_PREP(DPHY_BAND_CFG_RIGHT_BAND, band_ctrl);
+>>       writel(reg, dphy->regs + DPHY_BAND_CFG);
+>> +    writel(FIELD_PREP(DPHY_CMN_SSM_CAL_WAIT_TIME, 0x14) | 
+>> DPHY_CMN_SSM_EN | DPHY_CMN_TX_MODE_EN,
+>> +           dphy->regs + DPHY_CMN_SSM);
 > 
-> Let me know what approach you would prefer to take here. It seems like
-> it would be most optimal to have a quirk specifically to delay
-> commands after a PAGE.
+> This sounds like a TI specific characterized value, but the function 
+> here is a generic one. Also, is the value same for all TI SoCs? Or is it 
+> per-soc?
 > 
 
-I think we should add page_change_delay to struct pmbus_data, plus its handling
-in the pmbus core.
+No this is not TI specific value. As mentioned in commit message, 0x14 
+is the cadence characterized default value for calibration wait time 
+which they put in as reset value in the IP (if you reset the IP you will 
+see calibration wait time as 0x14) to be used by software for optimal 
+initialization.
 
-Thanks,
-Guenter
-
+Regards
+Devarsh
 
