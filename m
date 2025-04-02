@@ -1,185 +1,98 @@
-Return-Path: <linux-kernel+bounces-584705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB31FA78A72
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBABA78A7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B4D16EC0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:58:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B5D3B24A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B060235348;
-	Wed,  2 Apr 2025 08:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gb9GUmO7"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4DB2356D8;
+	Wed,  2 Apr 2025 08:59:28 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445601514F6
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF551514F6;
+	Wed,  2 Apr 2025 08:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743584332; cv=none; b=KEPL1rqDXATvVsge89/1v/F9nWd5uMqr3H1sn3rbOjvvWbqun4wDFVFb+1cXGAFtX7wI840iCcDtsxTiLal213wRDnK3FlnTqtU/g5jVWihy5nJ/cJbCi5c9J1dyJCUmXBLT9/hRbIti2VvWJ1ZKKgTw85HegCVWybVxvgzs8Os=
+	t=1743584368; cv=none; b=D6iz6e/kBvswC/K1Ck/z3ZB4dfna/AvZmEqTx38Vd7tJ9wrYRBp2Jncpd04SIHtGlRCNfaP4Nctv+KsU9bTPJ/GHNnYSSNm1PJgHQPtzepN0InSmiyUOQvPvXPqL7O+lxAqNpzmDWAitQQJEfZvC25vZ24FpBowmKusysWOGeV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743584332; c=relaxed/simple;
-	bh=tG3IqQSM1JM8+zeznsJDYfGwMpe6GqfXuPUshXBYWNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UkhZtBzyd7bL2Fp3gBuuPkCby0YpB+lhWHGwDMNB3BCMeso3uEyb0kJs4e7oNl+0RGH9rt+jsC60HXnlzQwlayHsLzcD8/nNbSeqZ8Inks5FvVOB+0iT0HXJ9ZFk3tXcCIpg5TUD6F2VU9puvCwJzX36coKiSDbB73AsA4xLHp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gb9GUmO7; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a0eb561e-9fa9-46ab-bb0a-6e68a8e0d834@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743584318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nzfseE+lZYIxN42APnDpBaex01U5HHenpc2kDTQzd5k=;
-	b=Gb9GUmO720zCgsplouJP090LeEgPOcTjCRF8e6DIAtCOEccgEIuRXhLqDF0tlCgAzp7l2K
-	iUL/zicPP+qRai1oBX1kgBTvVWcbUZwyxBSdggEpfeDQ3MuWMt0V4vtEs+Eb9jfQB6WV9s
-	gYDzaiXrntUhKq1dAHmdUGGfZUX8EVI=
-Date: Wed, 2 Apr 2025 10:58:34 +0200
+	s=arc-20240116; t=1743584368; c=relaxed/simple;
+	bh=m+ytt/uyuNFiuMVG/2fqcdWnTukVvPWuh3DBXrSuYMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/ZTU+xnX7J6lMuUMt9GFXo0P/peNpPwgjMIAEMNpoZRiRmugkcaWQPdH/i3ipS0ojMhWUFM33GciPl09GzCeX2wp8i707fD0j+zAAtwLV8fUlcvvMNnKIXhyJWvyVQswISAMvPOnacppMRC5WMHEVmRcQ+005bhMZiI+N1MDIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-03 (Coremail) with SMTP id rQCowAA34z9g_Oxnew8gBQ--.16811S2;
+	Wed, 02 Apr 2025 16:59:14 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: konishi.ryusuke@gmail.com
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] nilfs2: Add pointer check for nilfs_direct_propagate()
+Date: Wed,  2 Apr 2025 16:58:56 +0800
+Message-ID: <20250402085856.3348-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] RDMA/rxe: Fix null pointer dereference in ODP MR check
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-rdma@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, zyjzyj2000@gmail.com, jgg@ziepe.ca,
- leon@kernel.org, matsuda-daisuke@fujitsu.com,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-References: <20250402032657.1762800-1-lizhijian@fujitsu.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20250402032657.1762800-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:rQCowAA34z9g_Oxnew8gBQ--.16811S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF1DAr4ktr48Xr1xWF1xXwb_yoWDCrb_G3
+	WkJF95Z3y7KF4DA3Z3CrW3KF1IqF1fta48GFZ2vF45tF95ArsxZr1DZrn29F1xJry8uFnI
+	9rnFyr98ZF42kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjO6pDUUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwoAA2fszLPTjwAAsm
 
-在 2025/4/2 5:26, Li Zhijian 写道:
-> The blktests/rnbd reported a null pointer dereference as following.
-> Similar to the mxl5, introduce a is_odp_mr() to check if the odp
-> is enabled in this mr.
-> 
-> Workqueue: rxe_wq do_work [rdma_rxe]
-> RIP: 0010:rxe_mr_copy+0x57/0x210 [rdma_rxe]
-> Code: 7c 04 48 89 f3 48 89 d5 41 89 cf 45 89 c4 0f 84 dc 00 00 00 89 ca e8 f8 f8 ff ff 85 c0 0f 85 75 01 00 00 49 8b 86 f0 00 00 00 <f6> 40 28 02 0f 85 98 01 00 00 41 8b 46 78 41 8b 8e 10 01 00 00 8d
-> RSP: 0018:ffffa0aac02cfcf8 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: ffff9079cd440024 RCX: 0000000000000000
-> RDX: 000000000000003c RSI: ffff9079cd440060 RDI: ffff9079cd665600
-> RBP: ffff9079c0e5e45a R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000003c000000 R11: 0000000000225510 R12: 0000000000000000
-> R13: 0000000000000000 R14: ffff9079cd665600 R15: 000000000000003c
-> FS:  0000000000000000(0000) GS:ffff907ccfa80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000028 CR3: 0000000119498001 CR4: 00000000001726f0
-> Call Trace:
->   <TASK>
->   ? __die_body+0x1e/0x60
->   ? page_fault_oops+0x14f/0x4c0
->   ? rxe_mr_copy+0x57/0x210 [rdma_rxe]
->   ? search_bpf_extables+0x5f/0x80
->   ? exc_page_fault+0x7e/0x180
->   ? asm_exc_page_fault+0x26/0x30
->   ? rxe_mr_copy+0x57/0x210 [rdma_rxe]
->   ? rxe_mr_copy+0x48/0x210 [rdma_rxe]
->   ? rxe_pool_get_index+0x50/0x90 [rdma_rxe]
->   rxe_receiver+0x1d98/0x2530 [rdma_rxe]
->   ? psi_task_switch+0x1ff/0x250
->   ? finish_task_switch+0x92/0x2d0
->   ? __schedule+0xbdf/0x17c0
->   do_task+0x65/0x1e0 [rdma_rxe]
->   process_scheduled_works+0xaa/0x3f0
->   worker_thread+0x117/0x240
-> 
-> Fixes: d03fb5c6599e ("RDMA/rxe: Allow registering MRs for On-Demand Paging")
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-> ---
->   drivers/infiniband/sw/rxe/rxe_loc.h  | 6 ++++++
->   drivers/infiniband/sw/rxe/rxe_mr.c   | 4 ++--
->   drivers/infiniband/sw/rxe/rxe_resp.c | 4 ++--
->   3 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_loc.h b/drivers/infiniband/sw/rxe/rxe_loc.h
-> index feb386d98d1d..0bc3fbb6554f 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_loc.h
-> +++ b/drivers/infiniband/sw/rxe/rxe_loc.h
-> @@ -140,6 +140,12 @@ static inline int qp_mtu(struct rxe_qp *qp)
->   		return IB_MTU_4096;
->   }
->   
-> +static inline bool is_odp_mr(struct rxe_mr *mr)
+In nilfs_direct_propagate(), the printer get from nilfs_direct_get_ptr()
+need to be checked to ensure it is not an invalid pointer. A proper
+implementation can be found in nilfs_direct_delete(). Add a value check
+and return -ENOENT when it is an invalid pointer.
 
-Previously I once discussed with Bob Pearson about the function names.
-Perhaps it is better to rename is_odp_mr to rxe_is_odp_mr?
+Fixes: 10ff885ba6f5 ("nilfs2: get rid of nilfs_direct uses")
+Cc: stable@vger.kernel.org # v2.6+
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ fs/nilfs2/direct.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Since sometimes we debug in rdma, with a lot of functions with the same 
-name, it is difficult to recognize the modules that this function 
-belongs to.
-
-Thus, in rxe module, it is better to add rxe_ prefix to the function 
-name. But anyway, this commit is fine.
-
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-
-Zhu Yanjun
-
-> +{
-> +	return IS_ENABLED(CONFIG_INFINIBAND_ON_DEMAND_PAGING) && mr->umem &&
-> +	       mr->umem->is_odp;
-> +}
-> +
->   void free_rd_atomic_resource(struct resp_res *res);
->   
->   static inline void rxe_advance_resp_resource(struct rxe_qp *qp)
-> diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
-> index 868d2f0b74e9..432d864c3ce9 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_mr.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_mr.c
-> @@ -323,7 +323,7 @@ int rxe_mr_copy(struct rxe_mr *mr, u64 iova, void *addr,
->   		return err;
->   	}
->   
-> -	if (mr->umem->is_odp)
-> +	if (is_odp_mr(mr))
->   		return rxe_odp_mr_copy(mr, iova, addr, length, dir);
->   	else
->   		return rxe_mr_copy_xarray(mr, iova, addr, length, dir);
-> @@ -536,7 +536,7 @@ int rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value)
->   	u64 *va;
->   
->   	/* ODP is not supported right now. WIP. */
-> -	if (mr->umem->is_odp)
-> +	if (is_odp_mr(mr))
->   		return RESPST_ERR_UNSUPPORTED_OPCODE;
->   
->   	/* See IBA oA19-28 */
-> diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
-> index 54ba9ee1acc5..5d9174e408db 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_resp.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-> @@ -650,7 +650,7 @@ static enum resp_states process_flush(struct rxe_qp *qp,
->   	struct resp_res *res = qp->resp.res;
->   
->   	/* ODP is not supported right now. WIP. */
-> -	if (mr->umem->is_odp)
-> +	if (is_odp_mr(mr))
->   		return RESPST_ERR_UNSUPPORTED_OPCODE;
->   
->   	/* oA19-14, oA19-15 */
-> @@ -706,7 +706,7 @@ static enum resp_states atomic_reply(struct rxe_qp *qp,
->   	if (!res->replay) {
->   		u64 iova = qp->resp.va + qp->resp.offset;
->   
-> -		if (mr->umem->is_odp)
-> +		if (is_odp_mr(mr))
->   			err = rxe_odp_atomic_op(mr, iova, pkt->opcode,
->   						atmeth_comp(pkt),
->   						atmeth_swap_add(pkt),
+diff --git a/fs/nilfs2/direct.c b/fs/nilfs2/direct.c
+index 893ab36824cc..ff1c9fe72bec 100644
+--- a/fs/nilfs2/direct.c
++++ b/fs/nilfs2/direct.c
+@@ -273,6 +273,9 @@ static int nilfs_direct_propagate(struct nilfs_bmap *bmap,
+ 	dat = nilfs_bmap_get_dat(bmap);
+ 	key = nilfs_bmap_data_get_key(bmap, bh);
+ 	ptr = nilfs_direct_get_ptr(bmap, key);
++	if (ptr == NILFS_BMAP_INVALID_PTR)
++		return -ENOENT;
++
+ 	if (!buffer_nilfs_volatile(bh)) {
+ 		oldreq.pr_entry_nr = ptr;
+ 		newreq.pr_entry_nr = ptr;
+-- 
+2.42.0.windows.2
 
 
