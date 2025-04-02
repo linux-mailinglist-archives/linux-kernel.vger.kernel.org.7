@@ -1,184 +1,148 @@
-Return-Path: <linux-kernel+bounces-584605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D19DA7892D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:51:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C216A78924
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0346916F6D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:51:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 924297A50FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013C4233707;
-	Wed,  2 Apr 2025 07:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9CB233720;
+	Wed,  2 Apr 2025 07:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CyUKlCXr"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLz/UdiN"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA33F20B7EA
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1B20E6E3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743580310; cv=none; b=GFIMLDKzjI/522THauQiuLydCaSDHKpQRlSiojZ+iwDPfYx8kvJ0k0J3etgI55/YT9wvWOu0VigrnSaPHv6zD1i060TFk+0f+x4cE7tvtVlRCM0ts1osjCrWIPIltEdm2K/OuyHvoEAkcq6WlTbWu5Fhl6alhqQz8T3JtHxL7jU=
+	t=1743580173; cv=none; b=trdiadmmYi8JHKpC0YpV1v9J5vbBvEnWb9L42pFVrApFjL5vS+JAKaCUkfiQBuqIRx+3w4pwnU+WncrlhtFXgXgfHoJd7txcu7DTGY3vxTyyt9MY6ylA4E1uNH6RUecv6Sab5HMlPgWGd9N6aW/khm345VEx1SGSt6L3JxnqISA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743580310; c=relaxed/simple;
-	bh=F0KOdYBX44bBWreqooR/YTwb2uTv5LltwgfPROc7mf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EOdOI5PRrsL42wsx2TgDpaFUYmsh1EsQL0FSLUyOh6bBf8PescSF2XJj9vTlC7S4LjalVggEIvq8UDC4uSxamysw7L3qXSv4hp9gpRffZWaWbVD0tr7hAiQclTYowrrmxyVI9uRMosT/nmFcGDq6v7gT/MqBXeN3UH50pEaG4No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CyUKlCXr; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=B8AiNSptqMEvFsMfI5jyx79B10U1DkDao5ESEb572/M=; t=1743580308; x=1744789908; 
-	b=CyUKlCXr6L7kErt/zO5PWFCsot3XDLzYnhhtcvKARJhQv3nQ9oU6IDcPikT80KkN5K63xSKVsGo
-	EtDvgDAP5dJYrx36rh8Vqm9h0sxKvzox7lpPDbxK2P+UQDsdZGpdOV4WIrzdYassGyf0tiMP1uVkW
-	yHtNBKe0a1oZwu7Vq27VSYORXAFfwoo0bwOH+jDI+lKv/EncLSBdAW9sUn2VdUenVsMqwP36hCtHy
-	jsUJ3kWqdjrqfdl6D7F8QG9ooJ2QIfpCnuG4x8Ukd3keVefxFbz1EZLKu0XGNPQI67A4vASlLIxwv
-	hjoM5uUO49lCVLb3ELg43H0Gmqst2xo/toFQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tzssx-0000000DGNC-180A;
-	Wed, 02 Apr 2025 09:51:44 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: pull-request: uml 6.15-rc1 [resend]
-Date: Wed,  2 Apr 2025 09:49:03 +0200
-Message-ID: <20250402075115.12455-3-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743580173; c=relaxed/simple;
+	bh=xmsf9FMkTnLa6YAKeXtlG8+Rxsp/QvAWVR2i827suLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hw+v2pvJJc8i3bNoQQqP2RAv1f7weAKH1BI3JHSo9bT5+Moeh0KW4Q4EDq7KohxZMDfG3sOZs5YdMdbfRRG26ZQyW7j/F/oiAeUorSzTA/X1PcqlU0YPSu4HVtpJ/iGpIpsMyRaY3WciGA0J92sMOCS3szm8T9Zm8vePJEvB7Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLz/UdiN; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff799d99dcso11260628a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 00:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743580171; x=1744184971; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2aqgbCkNx0PW0vbsTMdXqyfUcPH4h5hP0whKc+xvuD8=;
+        b=XLz/UdiNOeZYPvTlaxBXuCF4iyGbtGkpwLGU2CdXzfEHhWDDUToWKOj62SV4eLL/3X
+         PNQrjiTWzlrwQlQysPxAmSqdZ3YmDSeijR4pFNX4EpkfNIZ7+3RlB/UV/Ua2d4Sh0DyD
+         kNbYn8yw5i73p5ipWIcOdGkxI5k06wDcXZl2hGQ7+M8HD+mRLyKxuZFA33HlAQMsk4jS
+         r2Qc0D39PYtaaMjsC+q9BewowLdm0f5SuJU2XWd7N5dncbVb3y8ogmqY5n3lhoi7d132
+         agcypRSlU6ryt5uIqxrEZjz5BAOL3OnR24mlZoSuMGZXJwmuAHW4L0XOaN8bqg7WMaul
+         onDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743580171; x=1744184971;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2aqgbCkNx0PW0vbsTMdXqyfUcPH4h5hP0whKc+xvuD8=;
+        b=KqJUWIybOZe1PLAFTFlSohAnWQJ3gIZUYYvy2oKdkCNepVDjRShJEZyHwFfO6BrTBv
+         Y0yivfzZJ1sTmQVermvq1Sumu8ckSvoIpIJe1HUUiaU4J6jKWGy75C18HCUGN6HWsAE1
+         eyiSXX7kDIf8LiJb1r+EmzpFSwNaTkqafkIucDoo6Zc5vj2ry7WxODggJLThInPBe9ao
+         9DfTcW834Kv9RMDKD8P6le36B9DQ68raSZaH14iEN3Lx6mrr+q9ehaiOxesf4S1Wjf/b
+         8UHNATmrguPmqiNsjEhdJU1oM7+TIZSD2hjwExQEf/02ZFOCJaxNi9B5f8BvvdHGLUyK
+         R0Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKELyUGxlpccslsdmdm1/9XG+XYGyuBCiwqxdHYU1zVNny7IoDTsuJiv1gTHTOx1fv27M1KeCdVKVIIiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwprhxM3VI7RqKSkVhn4zlc1w3v2P5FQhWaF8cBWW7nzg4SlR2n
+	/CrVL5j8pOkmFwqo4enNkioqrOqIel8I0ntTCvefCaOceF4f+09alokGQUwNWw==
+X-Gm-Gg: ASbGncvQXWwIteu8QFL3Jpgxmtx52TqPFB1q3tGoyTHyAPOJ1OhotsP2r2kybzzAnFc
+	QzHpfbxYIOAUEcEBG1UDO3Xx8CSAjp3YiugPu8lOS8PPIEwnxrIwavAYy/mgSF8D3KX7xbFmSa6
+	o5avGC7Xh2mBPNrsGcZhb98CMbt8YjCjdsdHCnH+hCe3KQawU8SnvvFbEBWs9f1TZavrxdyk888
+	v/gCMaTDZVX9NCZkFuMVQaD4xSo9ADEJyCHv6qs3xAtGmhqfsK0bZTblJuLb+Wo/KZjlZAeUjYE
+	6nMoe+TJrf3V/eQ80GqI/qULJS3flz0rGx6v43pMJ7usnEtne0pHhsA6
+X-Google-Smtp-Source: AGHT+IH8Jzdp+kwIVinSdsTnAiNYI68lWe6D/QP0YRmgVUgFc10NP2fNsve2H8szQGsEUFhU7VB1aA==
+X-Received: by 2002:a17:90b:2b88:b0:2ff:62f3:5b31 with SMTP id 98e67ed59e1d1-3053216ddc9mr24513921a91.29.1743580171478;
+        Wed, 02 Apr 2025 00:49:31 -0700 (PDT)
+Received: from thinkpad ([120.56.205.103])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3056f83ca51sm892730a91.13.2025.04.02.00.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 00:49:30 -0700 (PDT)
+Date: Wed, 2 Apr 2025 13:19:23 +0530
+From: 
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, 
+	Arthur Simchaev <Arthur.Simchaev@sandisk.com>, "quic_cang@quicinc.com" <quic_cang@quicinc.com>, 
+	"quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>, 
+	"peter.wang@mediatek.com" <peter.wang@mediatek.com>, "minwoo.im@samsung.com" <minwoo.im@samsung.com>, 
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bean Huo <beanhuo@micron.com>, 
+	Keoseong Park <keosung.park@samsung.com>, Ziqi Chen <quic_ziqichen@quicinc.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Gwendal Grignou <gwendal@chromium.org>, 
+	Eric Biggers <ebiggers@google.com>, open list <linux-kernel@vger.kernel.org>, 
+	"moderated list:ARM/Mediatek SoC support:Keyword:mediatek" <linux-arm-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support:Keyword:mediatek" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v4 1/1] scsi: ufs: core: add device level exception
+ support
+Message-ID: <yzy7oad77h744vf2bdylkm4fronemjwvrmlstnj6x5lzjxg672@zya6toqv4aeg>
+References: <4370b3a3b5a5675bb3e75aaa48a273674c159339.1742526978.git.quic_nguyenb@quicinc.com>
+ <SA2PR16MB4251229744D717821D3D8353F4A72@SA2PR16MB4251.namprd16.prod.outlook.com>
+ <c5ab13ec-f650-ea10-5cb8-d6a2ddf1e825@quicinc.com>
+ <0a68d437-5d6a-42aa-ae4e-6f5d89cfcaf3@acm.org>
+ <ad246ef4-7429-63bb-0279-90738736f6e3@quicinc.com>
+ <3d7b543c-1165-42e0-8471-25b04c7572ac@acm.org>
+ <4cb20c80-9bb0-e147-e3c0-467f4c8828ba@quicinc.com>
+ <989e695e-e6a4-4427-9041-e39ecf5b5674@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <989e695e-e6a4-4427-9041-e39ecf5b5674@acm.org>
 
-Hi Linus, again,
+On Fri, Mar 28, 2025 at 07:02:20AM -0700, Bart Van Assche wrote:
+> On 3/27/25 5:45 PM, Bao D. Nguyen wrote:
+> > Thanks Bart. How about we change the current utp_upiu_query_v4_0 to
+> > 
+> > struct utp_upiu_query_v4_0 {
+> >          __u8 opcode;
+> >          __u8 idn;
+> >          __u8 index;
+> >          __u8 selector;
+> >          __u8 cmd_specifics[8];
+> >          /* private: */
+> >          __be32 reserved;
+> > };
+> > 
+> > Depending on the opcode/transaction, the cmd_specifics[] can be type
+> > casted to access the LENGTH, FLAG_VALUE, VALUE[0:63] fields of the QUERY
+> > UPIU. The __u8 array[8] would also prevent the compiler padding to the
+> > data.
+> 
+> Are there any user space applications that use the osf3/4/5/6/7 member
+> names?
 
-And of course only I can get it wrong and mess up the most
-basic list address. Sorry. This is just resend with the
-correct address for linux-kernel this time, for the archive.
+Yeah, we should be cautious in changing the uAPI header as it can break the
+userspace applications. Annotating the members that need packed attribute seems
+like the way forward to me.
 
-So I'm filling in for Richard (CC'ed) since he's been busy
-and I've been mostly working on getting things reviewed and
-merged this cycle. Nothing super exciting, see the summary
-in the tag below.
+Though, I'd like to understand which architecture has the alignment constraint
+in this structure. Only if an architecture requires 8 byte alignment for __be32
+would be a problem. That too only for osf7 and reserved. But I'm not aware of
+such architectures in use.
 
-Please pull and let us know if there's any problem.
+- Mani
 
-Thanks,
-johannes
-
-
-
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
-
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.15-rc1
-
-for you to fetch changes up to 33c9da5dfb18c2ff5a88d01aca2cf253cd0ac3bc:
-
-  um: Rewrite the sigio workaround based on epoll and tgkill (2025-03-20 09:28:44 +0100)
-
-----------------------------------------------------------------
-Updates for UML for this cycle, notably:
- - proper nofault accesses and read-only rodata
- - hostfs fix for host inode number reuse
- - fixes for host errno handling
- - various cleanups/small fixes
-
-----------------------------------------------------------------
-Benjamin Berg (4):
-      um: remove copy_from_kernel_nofault_allowed
-      um: hostfs: avoid issues on inode number reuse by host
-      um: work around sched_yield not yielding in time-travel mode
-      um: Store full CSGSFS and SS register from mcontext
-
-David Gow (1):
-      um: Pass the correct Rust target and options with gcc
-
-Ethan Carter Edwards (1):
-      um: use str_yes_no() to remove hardcoded "yes" and "no"
-
-Hajime Tazaki (1):
-      um: x86: clean up elf specific definitions
-
-Johannes Berg (1):
-      um: mark rodata read-only and implement _nofault accesses
-
-Tiwei Bie (8):
-      um: Allocate vdso page pointer statically
-      um: Update min_low_pfn to match changes in uml_reserved
-      um: virt-pci: Refactor virtio_pcidev into its own module
-      um: Add pthread-based helper support
-      um: ubd: Switch to the pthread-based helper
-      um: Switch to the pthread-based helper in sigio workaround
-      um: Prohibit the VM_CLONE flag in run_helper_thread()
-      um: Rewrite the sigio workaround based on epoll and tgkill
-
-Uros Bizjak (1):
-      um/locking: Remove semicolon from "lock" prefix
-
- arch/um/Kconfig                          |   1 +
- arch/um/drivers/Kconfig                  |  12 +-
- arch/um/drivers/Makefile                 |   3 +-
- arch/um/drivers/random.c                 |   2 +-
- arch/um/drivers/rtc_user.c               |   2 +-
- arch/um/drivers/ubd.h                    |   6 +-
- arch/um/drivers/ubd_kern.c               |  25 +-
- arch/um/drivers/ubd_user.c               |  14 +-
- arch/um/drivers/virt-pci.c               | 743 ++++++-------------------------
- arch/um/drivers/virt-pci.h               |  41 ++
- arch/um/drivers/virtio_pcidev.c          | 628 ++++++++++++++++++++++++++
- arch/um/include/asm/Kbuild               |   1 +
- arch/um/include/asm/processor-generic.h  |   2 +
- arch/um/include/asm/uaccess.h            |  20 +-
- arch/um/include/linux/time-internal.h    |   2 +
- arch/um/include/shared/arch.h            |   2 +
- arch/um/include/shared/as-layout.h       |   2 +-
- arch/um/include/shared/irq_user.h        |   3 +-
- arch/um/include/shared/kern_util.h       |  12 +-
- arch/um/include/shared/os.h              |   8 +-
- arch/um/include/shared/sigio.h           |   1 -
- arch/um/kernel/Makefile                  |   2 +-
- arch/um/kernel/irq.c                     |   3 +-
- arch/um/kernel/maccess.c                 |  19 -
- arch/um/kernel/mem.c                     |  11 +
- arch/um/kernel/sigio.c                   |  26 --
- arch/um/kernel/skas/syscall.c            |  11 +
- arch/um/kernel/trap.c                    |  28 +-
- arch/um/kernel/um_arch.c                 |   3 +-
- arch/um/os-Linux/helper.c                |  67 +++
- arch/um/os-Linux/process.c               |  51 ---
- arch/um/os-Linux/sigio.c                 | 358 +++------------
- arch/um/os-Linux/signal.c                |   4 +-
- arch/um/os-Linux/skas/process.c          |   8 +-
- arch/x86/Makefile.um                     |   7 +-
- arch/x86/um/asm/barrier.h                |   6 +-
- arch/x86/um/asm/module.h                 |  24 -
- arch/x86/um/os-Linux/mcontext.c          |  15 +-
- arch/x86/um/shared/sysdep/faultinfo_32.h |  12 +
- arch/x86/um/shared/sysdep/faultinfo_64.h |  12 +
- arch/x86/um/vdso/vma.c                   |  17 +-
- fs/hostfs/hostfs.h                       |   2 +-
- fs/hostfs/hostfs_kern.c                  |   7 +-
- fs/hostfs/hostfs_user.c                  |  59 +--
- 44 files changed, 1146 insertions(+), 1136 deletions(-)
- create mode 100644 arch/um/drivers/virt-pci.h
- create mode 100644 arch/um/drivers/virtio_pcidev.c
- delete mode 100644 arch/um/kernel/maccess.c
- delete mode 100644 arch/x86/um/asm/module.h
+-- 
+மணிவண்ணன் சதாசிவம்
 
