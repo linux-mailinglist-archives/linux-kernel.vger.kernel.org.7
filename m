@@ -1,145 +1,185 @@
-Return-Path: <linux-kernel+bounces-585272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1309CA791BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:01:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22254A791C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12183B249E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9686172581
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D0023C393;
-	Wed,  2 Apr 2025 15:00:33 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D6C23BD1D;
+	Wed,  2 Apr 2025 15:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O24XNBs8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6Zrpjao9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O24XNBs8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6Zrpjao9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ADE1DA5F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060E01DA5F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743606033; cv=none; b=uHNXsheAuQdtx/J01ekVyWBY+Jwf+YJ0AnRSsq49aTECy2SbFXg+rBAsI6ToJR9WXiUYPiNROihBxr1y4dceMKmIMHGmC/fjI5lFuQFU48UmdgoYV7kZYork/RyuqKuJh31/N/Q+QvABdRPz/5kPAnubl76VvcGSzIOP8824cGE=
+	t=1743606067; cv=none; b=HYufNgIQxRHBEyGRvtvbp4YORWC/EVeoPD9nI8bK/wPz1/MEbSoC55Q7XIANob4YllMX5+Lcg3U5A6/Ok+qTVHFSgViJt/H09+3G1cmePaH7GE3qUUB9q5GDhfEmTeYXgwO8uBWduI7DtSiH4K6Tg5oi6dP5gBmvuGg46NTfRvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743606033; c=relaxed/simple;
-	bh=f4O6sv3eZ30NvzM284f3G5Oa8bN+72v/oVfzjI0rhSI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PdDfjcnGY+ZekjTLJQB/SjKWgtzn01IXDnhBgzOsIuDZldcjgeSfJoPA+Qv07JQsanHLQgUbe7SuMZ/8rdrK/0RF9McvfWdOXcMGth/EGGf72TNM5Cu6CuZ5RxBMn8wYSwc932rkQNFB1J0vsvd0eH72jitLFBZ20D9r4dBHr3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from [192.168.2.19] (51b692a2.dsl.pool.telekom.hu [::ffff:81.182.146.162])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000080D7C.0000000067ED510D.000838A8; Wed, 02 Apr 2025 17:00:29 +0200
-Message-ID: <dfe09171d1968fd3a03784b04de23f9127adff8d.camel@irl.hu>
-Subject: Re: amdgpu_dm_connector_mode_valid regression
-From: Gergo Koteles <soyer@irl.hu>
-To: Dmitry Baryshkov <dbaryshkov@gmail.com>
-Cc: Dmitry Baryshkov <lumag@kernel.org>, regressions@lists.linux.dev,
-  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-  amd-gfx@lists.freedesktop.org, Hans de Goede <hdegoede@redhat.com>,
-  Alex Deucher <alexander.deucher@amd.com>,
-  Mario Limonciello <mario.limonciello@amd.com>,
-  Alex Hung <alex.hung@amd.com>,
-  Harry Wentland <harry.wentland@amd.com>
-Date: Wed, 02 Apr 2025 17:00:29 +0200
-In-Reply-To: <CALT56yPvDW1dLNdZK0kkn53kTa0HcVXgYXp9Gim4MH4YjgEncw@mail.gmail.com>
-References: <ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu>
-	 <8963a409dd575e040e5f07e4ad5e9c1d26b421f2.camel@irl.hu>
-	 <CALT56yPd-xfd=47xRxrCk4F3jib4Ti7kg8pRXy-gVAQpbOc=pw@mail.gmail.com>
-	 <e323219b52cda1891a55d12ad77a2b34edc8688b.camel@irl.hu>
-	 <CALT56yPvDW1dLNdZK0kkn53kTa0HcVXgYXp9Gim4MH4YjgEncw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1743606067; c=relaxed/simple;
+	bh=9UfJyk/t+XFUbADNbcaQiEQ/D03Nyq6bdU+IIG/4FuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CA4fVloeh0MtllnEpGKT0hGeVA/YDf50d1K8I9T5IsLQyvh8L/mLWf/AQ/a1N6FspGidCHRkRci6HtXuiUb8m8VQQArJFFu9siXSSz805B/IuRit4Y5VlmE9rUHH3ik//HS+dHSGzXYABOdwoYU9ZzZxxvRvt3I/8+uQv3GxxZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O24XNBs8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6Zrpjao9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O24XNBs8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6Zrpjao9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B20A1F38E;
+	Wed,  2 Apr 2025 15:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743606059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vT8nPzlOT1lU8ebYpJie/X1Ap1hIbW88MbUW9YrYAqU=;
+	b=O24XNBs8UVVAi1baqmzIhyKkmFifqnUFRf34CmLjNWAicmj7e4mNJ8ccK9YCpLaBL8puBr
+	ZvwmEWUvipAaDaPke6Ggr1mtwYRWeo7cocARoCdztZu3EyEZz/qjdJ86vMdr4NpnasHb98
+	87vQ9Wvu0qknpGjDB4wTCrb8Lg+f74I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743606059;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vT8nPzlOT1lU8ebYpJie/X1Ap1hIbW88MbUW9YrYAqU=;
+	b=6Zrpjao9YnlzRAbXvGetaQjcD6SMITwZsedpMtKk3jN6oGXQxWY6JtJdgE++rWa+BPLF+X
+	txEm8gBRpFzVnoCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=O24XNBs8;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6Zrpjao9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743606059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vT8nPzlOT1lU8ebYpJie/X1Ap1hIbW88MbUW9YrYAqU=;
+	b=O24XNBs8UVVAi1baqmzIhyKkmFifqnUFRf34CmLjNWAicmj7e4mNJ8ccK9YCpLaBL8puBr
+	ZvwmEWUvipAaDaPke6Ggr1mtwYRWeo7cocARoCdztZu3EyEZz/qjdJ86vMdr4NpnasHb98
+	87vQ9Wvu0qknpGjDB4wTCrb8Lg+f74I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743606059;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vT8nPzlOT1lU8ebYpJie/X1Ap1hIbW88MbUW9YrYAqU=;
+	b=6Zrpjao9YnlzRAbXvGetaQjcD6SMITwZsedpMtKk3jN6oGXQxWY6JtJdgE++rWa+BPLF+X
+	txEm8gBRpFzVnoCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE190137D4;
+	Wed,  2 Apr 2025 15:00:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tEPBOSpR7WcvOAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 02 Apr 2025 15:00:58 +0000
+Message-ID: <d9a8d187-a05f-45b1-ac4b-ed6bd04b99a5@suse.cz>
+Date: Wed, 2 Apr 2025 17:00:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Ask help about this patch c0cd6f557b90 "mm: page_alloc: fix
+ freelist movement during block conversion"
+Content-Language: en-US
+To: Carlos Song <carlos.song@nxp.com>, "hannes@cmpxchg.org"
+ <hannes@cmpxchg.org>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "ying.huang@intel.com" <ying.huang@intel.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "ziy@nvidia.com" <ziy@nvidia.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <VI2PR04MB11147E11724F867F4FCB6677DE8AF2@VI2PR04MB11147.eurprd04.prod.outlook.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <VI2PR04MB11147E11724F867F4FCB6677DE8AF2@VI2PR04MB11147.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1B20A1F38E
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Dmitry,
+On 4/2/25 13:31, Carlos Song wrote:
+> Hi, all
 
-On Wed, 2025-04-02 at 17:40 +0300, Dmitry Baryshkov wrote:
-> On Wed, 2 Apr 2025 at 17:35, Gergo Koteles <soyer@irl.hu> wrote:
-> >=20
-> > Hi Dmitry,
-> >=20
-> > On Wed, 2025-04-02 at 16:36 +0300, Dmitry Baryshkov wrote:
-> > > > >=20
-> > > > > It works if I call
-> > > > > drm_mode_set_crtcinfo((struct drm_display_mode *)mode, 0) before
-> > > > > create_validate_stream_for_sink()
-> > > > > in amdgpu_dm_connector_mode_valid()
-> > > > >=20
-> > > > > or
-> > > > >=20
-> > > > > if I comment out the decide_crtc_timing_for_drm_display_mode() in
-> > > > > create_stream_for_sink()
-> > > > >=20
-> > > > > but a better fix than these can be imagined :)
-> > >=20
-> > > Would it help if you force recalculate_timings to be true if
-> > > (drm_mode->crtc_clock =3D=3D 0)
-> > >=20
-> >=20
-> > Yes, it works with that one.
-> >=20
-> > But the code would start to become quite untraceable.
-> > duplicate mode in amdgpu_dm_connector_mode_valid()
-> > call drm_mode_set_crtcinfo() in amdgpu_dm_connector_mode_valid()
-> > duplicate mode in create_stream_for_sink()
-> > overwrite ctrc in decide_crtc_timing_for_drm_display_mode()
-> > if crtc_clock =3D=3D 0 call drm_mode_set_crtcinfo() again in
-> > create_stream_for_sink()
->=20
-> Well... Unfortunately I don't know AMD driver details to comment on
-> this. The fix that you've posted below at least resolves a regression
-> without requiring us to revert r/o drm_mode argument patches.
->=20
-> >=20
-> > saved_mode is never used after this, so I can't add the condition here
-> >         if (recalculate_timing)
-> >                 drm_mode_set_crtcinfo(&saved_mode, 0);
->=20
-> Agree
->=20
-> >=20
-> > This commit is related, I think:
-> > 1101185 ("drm/amd/display: fix the ability to use lower resolution
-> > modes on eDP")
-> >=20
-> > Regards,
-> > Gergo
-> >=20
-> > ---
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > index bae83a129b5f..83c8c81d4015 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > @@ -6984,6 +6984,9 @@ create_stream_for_sink(struct drm_connector
-> > *connector,
-> >         if (recalculate_timing)
-> >                 drm_mode_set_crtcinfo(&saved_mode, 0);
-> >=20
-> > +       if (mode.crtc_clock =3D=3D 0)
-> > +               drm_mode_set_crtcinfo(&mode, 0);
-> > +
->=20
-> I'd say, please post this and let AMD maintainers act upon it.
->=20
->=20
+Hi,
 
-This patch is probably not good yet, because I think it would bring up
-the problem mentioned in=C2=A01101185 ("drm/amd/display: fix the ability to
-use lower resolution modes on eDP") again.
+> I found a 300ms~600ms IRQ off when writing 1Gb data to storage device at I.MX7d SDB board at Linux-kernel-v6.14.
+> From this discussion I find the regression root cause:
+> https://lore.kernel.org/linux-mm/CAJuCfpGajtAP8-kw5B5mKmhfyq6Pn67+PJgMjBeozW-qzjQMkw@mail.gmail.com/T/
+> 
+> Before add this patch c0cd6f557b90 "mm: page_alloc: fix freelist movement during block conversion", this longest IRQ off time is only 1ms~2ms.
+> After add this patch c0cd6f557b90 "mm: page_alloc: fix freelist movement during block conversion", this longest IRQ off time is only ~100ms.
+> This patch is added in linux-kernel 6.10.
+> In the same test case and environment. From 6.10, as other PATCHs are added, the spinlock time gradually increases. At 6.12 the IRQ off is ~150ms
+> and at 6.14, the IRQ off time is ~300ms.
+> 
+> Run this cmd to test:
+> dd if=/dev/zero of=/dev/mmcblk0p3 bs=4096 seek=12500 count=256000 conv=fsync
+> 
+> I use Ftrace irqoff tracer to trace the longest IRQ off event. Here is my test log. Do I trigger a bug?
+> 
+> 4 Ftrace logs of irqoff tracing on the same environment using the same case only with different kernel version: 
+> 1. Not add the patch 2. Add the patch 3. At 6.12 4. At 6.14.
+> 
+> Log is here:
 
-Maybe someone will come up with a better one.
+Do you have CONFIG_DEBUG_VM enabled? Or maybe what's the .config in general?
 
-Regards,
-Gergo
+I guess we do more work in __rmqueue_fallback() now under the lock but it
+should not take *that* long, hm. I'm not however sure if we can split the
+zone lock holding here.
 
+Guess we could at least optimize account_freepages() done as part of
+__move_freepages_block() -> move_to_free_list() as the migratetypes are
+always the same so it could be a single pair of calls on an accumulated
+nr_pages count instead of pair for every page moved. And the loop in
+__move_freepages_block() could have an extra struct page * iterator instead
+of pfn_to_page() in every iteration.
 
