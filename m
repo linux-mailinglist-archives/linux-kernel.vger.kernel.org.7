@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-584578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F292A788D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:29:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC63A788DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB7A3188D48C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:30:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59DC16D3B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27D8233136;
-	Wed,  2 Apr 2025 07:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B83C231CAE;
+	Wed,  2 Apr 2025 07:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPgxWjGe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNtpCe71"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D441E7C02;
-	Wed,  2 Apr 2025 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1632E336E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743578987; cv=none; b=iGJ6i1/8dakR00cBr95uYWG39Cc6WbXJ+/Pbv5x3D3Y9VQDCq7TQkNePz4gIOQtCx2nAYv2CzKGirY/CgqWuCNf2qFGErqu8lWVgDm30A/E1zvqJ9jCA6Uf04O5mc3aphbHGTD8RrwMuo20dsBx+ez2+V6JFx2ew3zsqclxskiE=
+	t=1743579218; cv=none; b=Ak+UHgovlM4A5CEMI1BVfTqq0od+h6cfaL7kYMtQj/WRF6rjO9cpaFLl2tpudvioGKNLtw383vb7BBP3IoMlh3Zr4aC8DiUuIngJUcfsqUMHreTeykg7Y4xdYRqA3T/eVARBkBQVrXYNxCQXSmbRJhnNvG0j1guwCTd0Ozj8bsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743578987; c=relaxed/simple;
-	bh=usOYs71EVRwET8DRul2z/o7eI2PPzs9KfwwYn5Vohgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s4BmA7wzljAMqIBx2B/X6H4QMau22ORK6fW5lhw8RPFKzThXCtGRIghX5Jdh3S5VoZWYqbjr+hF4cBN74pHcOEsDTyGHyeJeD/aMTqGpbmbP+5oDb5rx/Z80y45XK8cx1ie/0oIrsu2aLYV6TOeynF+pW0G0XPVGnL7SQCuCq5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPgxWjGe; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743578985; x=1775114985;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=usOYs71EVRwET8DRul2z/o7eI2PPzs9KfwwYn5Vohgg=;
-  b=CPgxWjGeqNLGE85NjeYAwJsfID/UmKiNxyAtOviyQbnZRbP48EBBRteu
-   +Xef/+iCwMPPxd6Tf7R0JWpVSOeT3yls5iqQfhZSpYK2NZhIeD0xwPn8O
-   /S3uJYBzEsQ3JEEVCFx4CX6X624u/JfLH++pts9VGSxBN4nSHatt6Wd/q
-   nOtVQ4NYY+DfusoV6mOB2c5kx6I1TPUISCTaR38Ku/ChMBGkw4x3wrD6O
-   5yFZ7PhDkPYgc+VitQWiqQcwKp/RH88dHEumsacHeSRgktE9q93gOZMEN
-   xDROMYy+ZZTmokqLx0A3gSrVuA2kD6ZC7mXU8seyEUpTm+zXXfUqAscL6
-   Q==;
-X-CSE-ConnectionGUID: BiW+96NBSrSDuZAhg+B6eg==
-X-CSE-MsgGUID: pot1kmUTQ5qFsR+OGQ6Tvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="70289056"
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="70289056"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 00:29:45 -0700
-X-CSE-ConnectionGUID: UPVDciK2RB622J31kC/G6Q==
-X-CSE-MsgGUID: JxOeqwSqSRO9wzUxvRmQ5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="130733562"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa003.fm.intel.com with ESMTP; 02 Apr 2025 00:29:42 -0700
-Message-ID: <93950cc2-3b9a-422c-a139-f09dd5ba8d52@intel.com>
-Date: Wed, 2 Apr 2025 10:30:52 +0300
+	s=arc-20240116; t=1743579218; c=relaxed/simple;
+	bh=b7/z+v+dRK3PsbS6by6MwpH6N9jR2YN5LuzxOdBQ5Mo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jGqXEnsuAKFogzFoaqb1Cow379HqM/m0MpLgM/PnYTtDmouf8GlAGBhH9rfUgH3sKlnFNCQIaGWMZ+EukKXpW9bkI4dcAXKb/6Bkq39qU1gL2Gq8TUScnEFy3XUwFHyMKg5CkE3xxQcPIfgdXSMUyXq9Sm+Z8ggNZPvVN8yl7Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNtpCe71; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E2BC4CEDD;
+	Wed,  2 Apr 2025 07:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743579217;
+	bh=b7/z+v+dRK3PsbS6by6MwpH6N9jR2YN5LuzxOdBQ5Mo=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=YNtpCe711Nye01QngIJFBtC/uDDptYD02pfHLQnsiwI2jvWBmIPITGz095PdWRwJQ
+	 22vowJSoC6C3Qw7/EgagYDR1OsDt+GWhjXVXzJHpxlhUtaScSnYMdZ72ZljN133Pid
+	 /aV+ldylK4s/ZHOwZzYPEr3FFYHM9pVB7EYxwYAiAVshaKOvY9dyir8kYmw6VudIRq
+	 GTjdaeSu+IGkk9V13cBbDKCBCllGQTMpwwkuwszR+BEsAFCaDCkia1HNj7//pS7M9z
+	 XPA0OoBfPNzPT3UC1sWkzl7bTr7wGlqVlc8BZoiiV/oj1NO46OZmXi3LBLKvOKxKgd
+	 bGPOqipzMRPjw==
+Message-ID: <7440d324-03f4-44a6-b6bf-4f569c829214@kernel.org>
+Date: Wed, 2 Apr 2025 15:33:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,32 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH V6] usb:xhci: Add debugfs support for xHCI port
- bandwidth
-To: raoxu <raoxu@uniontech.com>, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- wangyuli@uniontech.com, zhanjun@uniontech.com
-References: <20250402023047.26719-1-raoxu@uniontech.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, pilhyun.kim@sk.com
+Subject: Re: [PATCH v2] f2fs: prevent the current section from being selected
+ as a victim during GC
+To: "yohan.joung" <yohan.joung@sk.com>, jaegeuk@kernel.org
+References: <20250402005219.2759-1-yohan.joung@sk.com>
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@intel.com>
-In-Reply-To: <20250402023047.26719-1-raoxu@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250402005219.2759-1-yohan.joung@sk.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi
-
-On 2.4.2025 5.30, raoxu wrote:
-> From: Xu Rao <raoxu@uniontech.com>
+On 4/2/25 08:52, yohan.joung wrote:
+> When selecting a victim using next_victim_seg in a large section, the
+> selected section might already have been cleared and designated as the
+> new current section, making it actively in use.
+> This behavior causes inconsistency between the SIT and SSA.
 > 
-> In many projects, you need to obtain the available bandwidth of the
-> xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-> command to obtain it.
+> F2FS-fs (dm-54): Inconsistent segment (70961) type [0, 1] in SSA and SIT
+> Call trace:
+> dump_backtrace+0xe8/0x10c
+> show_stack+0x18/0x28
+> dump_stack_lvl+0x50/0x6c
+> dump_stack+0x18/0x28
+> f2fs_stop_checkpoint+0x1c/0x3c
+> do_garbage_collect+0x41c/0x271c
+> f2fs_gc+0x27c/0x828
+> gc_thread_func+0x290/0x88c
+> kthread+0x11c/0x164
+> ret_from_fork+0x10/0x20
+> 
+> issue scenario
+> segs_per_sec=2
+> - seg#0 and seg#1 are all dirty
+> - all valid blocks are removed in seg#1
+> - gc select this sec and next_victim_seg=seg#0
+> - migrate seg#0, next_victim_seg=seg#1
+> - checkpoint -> sec(seg#0, seg#1)  becomes free
+> - allocator assigns sec(seg#0, seg#1) to curseg
+> - gc tries to migrate seg#1
+> 
+> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/segment.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 0465dc00b349..14d18bcf3559 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -460,6 +460,7 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+>  		unsigned int segno, bool inmem)
+>  {
+>  	struct free_segmap_info *free_i = FREE_I(sbi);
+> +	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>  	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+>  	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
+>  	unsigned int next;
+> @@ -476,6 +477,11 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+>  		if (next >= start_segno + usable_segs) {
+>  			if (test_and_clear_bit(secno, free_i->free_secmap))
+>  				free_i->free_sections++;
+> +
+> +			if (test_and_clear_bit(secno, dirty_i->victim_secmap)) {
+> +				sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+> +				sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
 
-We are currently in the middle of the merge window.
-I'll try this series out on top of 6.15-rc1 once its released, and
-then send it forward if everything works as expected
+sbi->next_victim_seg[FG_GC] relies on sbi->cur_victim_sec?
 
-Thanks
-Mathias
+If sbi->next_victim_seg[BG_GC] is not equal to secno, will we still need to
+nullify sbi->next_victim_seg[BG_GC]?
+
+We have cleared bit in victim_secmap after we tag a section as prefree, right?
+
+- locate_dirty_segment
+ - __locate_dirty_segment
+ - __remove_dirty_segment
+  - clear_bit(GET_SEC_FROM_SEG(sbi, segno), dirty_i->victim_secmap);
+
+Thanks,
+
+> +			}
+>  		}
+>  	}
+>  skip_free:
 
 
