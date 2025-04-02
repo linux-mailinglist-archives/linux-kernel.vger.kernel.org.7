@@ -1,153 +1,177 @@
-Return-Path: <linux-kernel+bounces-585808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B494A797CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD97DA797C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F923A1F1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDC1E3AC73C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BE31F873A;
-	Wed,  2 Apr 2025 21:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312B01F4628;
+	Wed,  2 Apr 2025 21:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gRHyicqt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPuSWme5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CA41F78F3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B5278C91;
+	Wed,  2 Apr 2025 21:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743630105; cv=none; b=hjibLCVtb15ANuEA2V+ijtC+Q1dBdPDm5t1e07fVnJ5PPevtRgJIbWWUaFIq+0E2clSXKXtzR8D96djtfcgSHITyYQCBHdTQ48x0dOIN5lQdwexAreNHfgUZbqRgcAYXewnnQKWcna59CwzcCNle1wb+T6DxLdzLzwq5kYcCCSY=
+	t=1743630061; cv=none; b=HMKt18IcT/WKkADSMYLngEQS4MA6/Qvf3kRI+xE3HQOkDkUyzagqGYLgkO8E4+gTcixTqipdtx+YWekgMU/AGykuLqIJ4HDhbNIHqd/q0JU/SGW6egLbhTbMKY8k59ItJQRyoqTsz/r+6fjIjzaSj7l8q3iITZOe+ZzOECbebzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743630105; c=relaxed/simple;
-	bh=Je12764JTUiy+W/iiKjPImD2rYohU2GEdNzf9MOA5Jk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otl3rGXsuwYlDFg62yFLlyJmKxh7/4UREhqoIh0WUlA0zFluV+wOvMBVoYTUegIBTDbLhG2v1hAYZv6VVtAp9KrVF7ypreJwxtkMsr5LZqFsDXZCF4UvScrvCV4YObprROdHEQFTnWLcRBkogyve7cPMAz/xREeRqoYM0oOgCuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gRHyicqt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743630103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ysHQ7r1S5oI0I97dPALUJn4xw1ohknTDswpZN4NdyM=;
-	b=gRHyicqttZEvuQxLQhc9vrQsYWFgN1rjnKJfSgdCJpczLdfWcWfjAgm03awlQuvmW3ZVK8
-	I3nT5sW8476a1W6d1ewDOen9JXiAp8v0BOG31O15sm8zqOYDmmFH5/Ou78CVGh/GFj33OQ
-	rcVMUiMjVCKhJcoCx2wiuBJun9tJWSE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-1rOnHx3nMlmKTsPcwMi7QA-1; Wed,
- 02 Apr 2025 17:41:40 -0400
-X-MC-Unique: 1rOnHx3nMlmKTsPcwMi7QA-1
-X-Mimecast-MFC-AGG-ID: 1rOnHx3nMlmKTsPcwMi7QA_1743630098
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0EECC180034D;
-	Wed,  2 Apr 2025 21:41:38 +0000 (UTC)
-Received: from chopper.lyude.net (unknown [10.22.80.95])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 820633000704;
-	Wed,  2 Apr 2025 21:41:35 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Subject: [PATCH 6/6] rust: hrtimer: Add HrTimerCallback::expires()
-Date: Wed,  2 Apr 2025 17:40:34 -0400
-Message-ID: <20250402214109.653341-7-lyude@redhat.com>
-In-Reply-To: <20250402214109.653341-1-lyude@redhat.com>
-References: <20250402214109.653341-1-lyude@redhat.com>
+	s=arc-20240116; t=1743630061; c=relaxed/simple;
+	bh=FWgFicx3R6GR1dcwhsobS/nee2ZFoLoCDiDadGdYIws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XiagXEEd4uxLgrAChtSdMP8C6ee10DI6PqZRBwuwINKe9LlyMkRxK1BB7Nd/gcwoyenPNTnVNmzHKX5Xq/eGK9145hMj6S+LyWfRMkdi3n1PVjpzLcSJwZv4UwyPHB28tIpeOsKY6T7JV8IikwDnjHjqV+zCTbvVnXUex5QUT5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPuSWme5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso1161115e9.3;
+        Wed, 02 Apr 2025 14:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743630058; x=1744234858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rrWOLaML/b83w97VJppoWPqmsyehVsKuYGtUNHZ100g=;
+        b=KPuSWme5SXsQYpDLOH+Fw/jlM1gjQ1mJa6tO7+fUTfA9W/zma+T0F/NRvCQkZ099o1
+         iYC0C5wSV79GffdJcSN4/y7ZHk2yMfTWi0P9RQpmz2TDob8qWBb0R0mrOKeDnThGeEQH
+         btJviYWShvEBMoK9zlRxS77PRiSrUbki7W367ZIiZR8ucjVWMKvCyipq6YcuqscR+Ynd
+         I4ueQCZszzZjQ/wtnA8gDPEJeL1/vO2RpF44ACl9qfH/zMbbXyvGk9eb/2gnBbFNq1QH
+         /mSlHUUoKK61IGL7+rvPk+LdWOgap6kQVkVgCiH6jGpRfHElhcPsw068qboOr50U/RPs
+         of5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743630058; x=1744234858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rrWOLaML/b83w97VJppoWPqmsyehVsKuYGtUNHZ100g=;
+        b=dP41UlOacF9szY53Wl849aDiEg70WflFhr22CIQAmZlwl0/dqardrT7AboZn7zVrTk
+         BovN0G62TWsIDEDwMi4GVczVXRD8uv62c8wLL79FEM7dGrmDjuqljGMTXsIWcBKucrsZ
+         jlFt8Ct0wtQ3BQ8TUTsAiKrxXGa+O5po3uBFrDybBuoNgHqNnVrvbnwmPzfHM65C5pyn
+         /Be3zgJDcEaa+HS4mVDelT3AMh6l/gaZeOitTAXS6rSOABEap0WzqqwMXJm1amzUq7bm
+         mnZXIzn76xlc1aw6I585PiFXxSreqoXoIjErBIKdKvnPyZWvQ9//a6K87bvpWU8oQDin
+         fssw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbBCs658nCeWmTgi1eyVPppD4V1Je04grwu2DIU+ZQhtjEBNH29HmACVsjF6W82H3IfAhg2PCnlyvaWGsL@vger.kernel.org, AJvYcCXA1WsYJECvIBdf3Nwt6ByeT/GnLhVaHKbvRY0ijLLooYs5NGoKrSNACtpyRS2TxxwlyJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQR1cursw7cm87wPT49XInaApcMmfcP01cEgQCOTnozH1X5jNc
+	JyusJSau7KXmSx7Q12IETeNoPnYPpjronoGgGL3udHhxT5YCMJtYOnUOg4xpnfQqynT2v8ABJYy
+	xzeUqT/uY52pzCADXNb/H6C9CHK0=
+X-Gm-Gg: ASbGncuXQrPVNI6V+6/uEI2G7M6RQp3BWzGNWN35jtQMoofw7jXI04S3c6X+j1IrHxg
+	CPPhbiy0wkEnjHp0v1zIC7rWurLHhQskMfCTVU6U0BNK4wWGlnNTjVXfbG++J9d7+lBTkh9g/2b
+	sSVWR/I9ReMElPcP0JWnQooagDBhf0Opv425EvX8IQ8A==
+X-Google-Smtp-Source: AGHT+IGLrFnL5gA0ju1EqpbuuknG7HTGLWI5EOuD+T3KVXz9uu/m3gLfat2JhyGRlukZnEkTx2qsIvmDaWgjmgvvz24=
+X-Received: by 2002:a05:600c:1d16:b0:43c:f513:9591 with SMTP id
+ 5b1f17b1804b1-43ec13fc2d4mr2591885e9.14.1743630057985; Wed, 02 Apr 2025
+ 14:40:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250401205245.70838-1-alexei.starovoitov@gmail.com> <umfukiohyxcxxw5g6ca5g7stq7oonnr3sbvjyjshnbqalzffeq@2nrwqsmwcrug>
+In-Reply-To: <umfukiohyxcxxw5g6ca5g7stq7oonnr3sbvjyjshnbqalzffeq@2nrwqsmwcrug>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 2 Apr 2025 14:40:46 -0700
+X-Gm-Features: AQ5f1JpPI0en9HyxhZYVLh2AoPDXtKe0u1fBU4PxVcauG58LjnEl74wDeNoCNSY
+Message-ID: <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com>
+Subject: Re: [PATCH v2] locking/local_lock, mm: Replace localtry_ helpers with
+ local_trylock_t type
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Sebastian Sewior <bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+	Michal Hocko <mhocko@suse.com>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds the ability to read the expiry time of the current timer from the
-HrTimerCallbackContext.
+On Wed, Apr 2, 2025 at 1:56=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.dev=
+> wrote:
+>
+> On Tue, Apr 01, 2025 at 01:52:45PM -0700, Alexei Starovoitov wrote:
+> > From: Alexei Starovoitov <ast@kernel.org>
+> >
+> > Partially revert commit 0aaddfb06882 ("locking/local_lock: Introduce lo=
+caltry_lock_t").
+> > Remove localtry_*() helpers, since localtry_lock() name might
+> > be misinterpreted as "try lock".
+> >
+> > Introduce local_trylock[_irqsave]() helpers that only work
+> > with newly introduced local_trylock_t type.
+> > Note that attempt to use local_trylock[_irqsave]() with local_lock_t
+> > will cause compilation failure.
+> >
+> > Usage and behavior in !PREEMPT_RT:
+> >
+> > local_lock_t lock;                     // sizeof(lock) =3D=3D 0
+> > local_lock(&lock);                     // preempt disable
+> > local_lock_irqsave(&lock, ...);        // irq save
+> > if (local_trylock_irqsave(&lock, ...)) // compilation error
+> >
+> > local_trylock_t lock;                  // sizeof(lock) =3D=3D 4
+>
+> Is there a reason for this 'acquired' to be int? Can it be uint8_t? No
+> need to change anything here but I plan to change it later to compact as
+> much as possible within one (or two) cachline for memcg stocks.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/time/hrtimer.rs | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+I don't see any issue. I can make it u8 right away.
 
-diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index d52cbb6cfc57f..e28b7895d8f37 100644
---- a/rust/kernel/time/hrtimer.rs
-+++ b/rust/kernel/time/hrtimer.rs
-@@ -69,7 +69,7 @@
- 
- use super::ClockId;
- use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
--use core::{marker::PhantomData, ptr::NonNull};
-+use core::{marker::PhantomData, ptr::{NonNull, addr_of}};
- 
- /// A timer backed by a C `struct hrtimer`.
- ///
-@@ -131,7 +131,7 @@ unsafe fn raw_get(this: *const Self) -> *mut bindings::hrtimer {
-         // SAFETY: The field projection to `timer` does not go out of bounds,
-         // because the caller of this function promises that `this` points to an
-         // allocation of at least the size of `Self`.
--        unsafe { Opaque::raw_get(core::ptr::addr_of!((*this).timer)) }
-+        unsafe { Opaque::raw_get(addr_of!((*this).timer)) }
-     }
- 
-     /// Cancel an initialized and potentially running timer.
-@@ -163,6 +163,31 @@ pub(crate) unsafe fn raw_cancel(this: *const Self) -> bool {
-         // handled on the C side.
-         unsafe { bindings::hrtimer_cancel(c_timer_ptr) != 0 }
-     }
-+
-+    /// Return the time expiry for the given timer pointer.
-+    ///
-+    /// This value should only be used as a snapshot, as the actual expiry time could change after
-+    /// this function is called.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `self_ptr` must point to a valid `Self`.
-+    unsafe fn raw_expires(self_ptr: *const Self) -> Ktime {
-+        // SAFETY: self_ptr points to an allocation of at least `HrTimer` size.
-+        let c_timer_ptr = unsafe { HrTimer::raw_get(self_ptr) };
-+
-+        // SAFETY: There's no actual locking here, a racy read is fine and expected.
-+        Ktime::from_raw(unsafe { core::ptr::read(addr_of!((*c_timer_ptr).node.expires)) })
-+    }
-+
-+    /// Return the time expiry for this [`HrTimer`].
-+    ///
-+    /// This value should only be used as a snapshot, as the actual expiry time could change after
-+    /// this function is called.
-+    pub fn expires(&self) -> Ktime {
-+        // SAFETY: By our type invariants, `self.0` always points to a valid `HrTimer<T>`.
-+        unsafe { HrTimer::raw_expires(self) }
-+    }
- }
- 
- /// The timer base for a specific clock.
--- 
-2.48.1
+> > local_lock(&lock);                     // preempt disable, acquired =3D=
+ 1
+> > local_lock_irqsave(&lock, ...);        // irq save, acquired =3D 1
+> > if (local_trylock(&lock))              // if (!acquired) preempt disabl=
+e
+> > if (local_trylock_irqsave(&lock, ...)) // if (!acquired) irq save
+>
+> For above two ", acquired =3D 1" as well.
 
+I felt it would be too verbose and not accurate anyway,
+since irq save will be done before the check.
+It's a pseudo code.
+But sure, I can add.
+
+>
+> >
+> > The existing local_lock_*() macros can be used either with
+> > local_lock_t or local_trylock_t.
+> > With local_trylock_t they set acquired =3D 1 while local_unlock_*() cle=
+ars it.
+> >
+> > In !PREEMPT_RT local_lock_irqsave(local_lock_t *) disables interrupts
+> > to protect critical section, but it doesn't prevent NMI, so the fully
+> > reentrant code cannot use local_lock_irqsave(local_lock_t *) for
+> > exclusive access.
+> >
+> > The local_lock_irqsave(local_trylock_t *) helper disables interrupts
+> > and sets acquired=3D1, so local_trylock_irqsave(local_trylock_t *) from
+> > NMI attempting to acquire the same lock will return false.
+> >
+> > In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+> > Map local_trylock_irqsave() to preemptible spin_trylock().
+> > When in hard IRQ or NMI return false right away, since
+> > spin_trylock() is not safe due to explicit locking in the underneath
+> > rt_spin_trylock() implementation. Removing this explicit locking and
+> > attempting only "trylock" is undesired due to PI implications.
+> >
+> > The local_trylock() without _irqsave can be used to avoid the cost of
+> > disabling/enabling interrupts by only disabling preemption, so
+> > local_trylock() in an interrupt attempting to acquire the same
+> > lock will return false.
+> >
+> > Note there is no need to use local_inc for acquired variable,
+> > since it's a percpu variable with strict nesting scopes.
+> >
+> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+Thanks!
 
