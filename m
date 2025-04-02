@@ -1,149 +1,206 @@
-Return-Path: <linux-kernel+bounces-585617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2931A79574
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:51:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCF0A7957F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFE61894893
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6428216F87D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85D81DB346;
-	Wed,  2 Apr 2025 18:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC321DE2BB;
+	Wed,  2 Apr 2025 18:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj+lpFdo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Cs0LP1ld"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AE838DE1;
-	Wed,  2 Apr 2025 18:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BC718A93F;
+	Wed,  2 Apr 2025 18:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743619902; cv=none; b=CBMDhZV5QROFFrEhNFPsZjtnKnEwJRb8ts8Ys3gkIPtN78Z1YBdgVUWVsaXFAmOOr1Ew6STCEBMrDBrfHPnLew2F0G3h+Q7GN4bsoydUgoMfmHS2y5MEVLouGi8eUAkiRAf0ix5MnbIJPWn2ajPv2rWAes3QhtRg/s3+BtWwZc0=
+	t=1743620115; cv=none; b=GUXmBH5tgIWxQevLkCu5ca0BpVoLgyhWBqNLdYjR4FncRHsk/+bZia+o2Z52kqItAu+9QRH0g/rY+s5AW1B7ya7B/jeXCaXeesoDTEJ0oc/0NIjJtQO69g+59EYW/R/7OV4pYopOTLk7Gf2HnOgVo3rn5sbHjrACPvX0iIVbbYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743619902; c=relaxed/simple;
-	bh=a0GdHAAg36usb9mQAnpTtq8MdLA+2pFVqyVoOrfvCvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtZqjq9G5EfpVYN75csfJSLex38K/OwgCresnHrtEwkrX4dJ6xpYAjllEtSGaEJC3SUTKwImTdjknhUlMeq1IupKG9qu3lwI+VAkCERY7kAKuUQl1GTE7bWnpMxuFKwmFS5568FwypyVxmT9kRDVOvSUEKdEb5T6lJsJeYWEdw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj+lpFdo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A40C4CEDD;
-	Wed,  2 Apr 2025 18:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743619901;
-	bh=a0GdHAAg36usb9mQAnpTtq8MdLA+2pFVqyVoOrfvCvw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Bj+lpFdoONC0tRN/vK2b6x1rjWhdFYWqY1QsXIPJQO4nwsooKfPCoI4KThQl8zZlW
-	 cBLz8bjzlHwm4OArISaBbfqJorreZbc0twTbpZZhLn3+x5onFEMJ5GLltER7LAAXZO
-	 xgw1c7DnxaglnJldR6pPwo0gm4X/zCJ7zpaIpOr3AsTJsYadm4RkslcGyAB96ODzc1
-	 Q55MKpfJlBBOJT3SBJ54VdL6HTKwto4unuyj6ye2huT846cF75BRzrzzj98BB/WdFU
-	 PM2EqUxwtWNJg/xiXBbCZvdbwtWYcYYz5JheMJgbAoHR9UcXODnbou49kqFq94lemd
-	 Ptp21Xp8msz2g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1E524CE079A; Wed,  2 Apr 2025 11:51:41 -0700 (PDT)
-Date: Wed, 2 Apr 2025 11:51:41 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: rcu@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH v2 04/12] rcutorture: Make torture.sh --do-rt use
- CONFIG_PREEMPT_RT
-Message-ID: <52b014c0-8f3e-401a-9598-99a6a264601c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
- <20250331210314.590622-4-paulmck@kernel.org>
- <20250402074211.tibxg1fJ@linutronix.de>
+	s=arc-20240116; t=1743620115; c=relaxed/simple;
+	bh=2gM32VkBZFx/KkYq/5WSx6uUZJuzRdYUIyjnnWs44dI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QPunDK6iIVjeDqdmiAekLHobS4JBeO1QzRrv0EmrxK0fiWTg5xpWHwVav5mWopUglcTvi6JeiUvLZxoViJR4eihdnNMh/kIa8VDD4tLgmQd4tforMggW9nU1d5qW1qEpghZRgzVl92cpONQWIQjAqTitwGyGbbQzswj4Tz9uKw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Cs0LP1ld; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.228] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 1F5CF166734;
+	Wed,  2 Apr 2025 20:54:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1743620099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wy44fi9lg9n1CgNhcLGpSaP71J6yoU5UoZG4QwGVZ9c=;
+	b=Cs0LP1ld9FYRiaH8W07d41vNx/hxqAkEnXz9h3ANmYP3uFOnibDSRLcR46zx0JTEtdOUOe
+	QoqdND2x7sCFrR6FunpQdZ3RlK8FQMc5lTvJfLgN2mKn7Ii0yoUu5MuKDumvTAWbfca3dc
+	lqxn9OW9f1/WGtGI6HMiqFsQZ1VZbvI=
+Message-ID: <988dfca9-0dcb-481a-9352-efbe20532267@ixit.cz>
+Date: Wed, 2 Apr 2025 20:54:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250402074211.tibxg1fJ@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] Input: synaptics-rmi4 - handle duplicate/unknown
+ PDT entries
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Caleb Connolly <caleb.connolly@linaro.org>, methanal <baclofen@tuta.io>
+References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
+ <20250308-synaptics-rmi4-v3-2-215d3e7289a2@ixit.cz>
+ <Z885Jw0K6d2h_2pl@google.com>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <Z885Jw0K6d2h_2pl@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 02, 2025 at 09:42:11AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-03-31 14:03:06 [-0700], Paul E. McKenney wrote:
-> > The torture.sh --do-rt command-line parameter is intended to mimic -rt
-> > kernels.  Now that CONFIG_PREEMPT_RT is upstream, this commit makes this
-> > mimicking more precise.
-> > 
-> > Note that testing of RCU priority boosting is disabled in favor
-> > of forward-progress testing of RCU callbacks.  If it turns out to be
-> > possible to make kernels built with CONFIG_PREEMPT_RT=y to tolerate
-> > testing of both, both will be enabled.
+On 10/03/2025 20:10, Dmitry Torokhov wrote:
+> Hi David,
 > 
-> Not sure what you point at here: You can build a PREEMPT_RT kernel and
-> RCU boosting is enabled by default. You could disable it if needed.
+> On Sat, Mar 08, 2025 at 03:08:38PM +0100, David Heidelberg via B4 Relay wrote:
+>> From: Caleb Connolly <caleb.connolly@linaro.org>
+>>
+>> Some third party rmi4-compatible ICs don't expose their PDT entries
+>> very well. Add a few checks to skip duplicate entries as well as entries
+>> for unsupported functions.
+>>
+>> This is required to support some phones with third party displays.
+>>
+>> Validated on a stock OnePlus 6T (original parts):
+>> manufacturer: Synaptics, product: S3706B, fw id: 2852315
+>>
+>> Co-developed-by: methanal <baclofen@tuta.io>
+>> Signed-off-by: methanal <baclofen@tuta.io>
+>> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>>   drivers/input/rmi4/rmi_driver.c | 47 +++++++++++++++++++++++++++++++++++------
+>>   drivers/input/rmi4/rmi_driver.h |  6 ++++++
+>>   2 files changed, 47 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
+>> index 2168b6cd7167334d44553c9c566f870a4e034179..51c23a407b2731d5b6eaefe9cae6288f97316e34 100644
+>> --- a/drivers/input/rmi4/rmi_driver.c
+>> +++ b/drivers/input/rmi4/rmi_driver.c
+>> @@ -493,12 +493,44 @@ static void rmi_driver_copy_pdt_to_fd(const struct pdt_entry *pdt,
+>>   	fd->function_version = pdt->function_version;
+>>   }
+>>   
+>> +static bool rmi_pdt_entry_is_valid(struct rmi_device *rmi_dev,
+>> +				   struct pdt_scan_state *state, u8 fn)
+>> +{
+>> +	unsigned int i;
+>> +
+>> +	switch (fn) {
+>> +	case 0x01:
+>> +	case 0x03:
+>> +	case 0x11:
+>> +	case 0x12:
+>> +	case 0x30:
+>> +	case 0x34:
+>> +	case 0x3a:
+>> +	case 0x54:
+>> +	case 0x55:
+> 
+> This mean that we need to update this code any time there is new
+> function introduced. I'd rather we did not do that. The driver should be
+> able to handle unknown functions.
 
-The issue is not the enabling of RCU priority boosting itself, but
-instead the rcutorture testing of it.  And if it makes you feel better,
-this problem is now sometimes affecting mainline testing.  So maybe
-rcutorture will need to do only one form of overload testing at a time,
-maybe using a mutex or some such.
+Hello Dmitry,
 
-> Config wise you set CONFIG_PREEMPT_LAZY=n but in general
-> CONFIG_PREEMPT_LAZY=y should be used if possible. The preemption while
-> holding a sleeping spinlock is somehow bad for performance if a lot of
-> threads ask for it. But then it probably doesn't matter for testing.
+I hope the final state of Synaptics RMI4 described by Caleb was 
+convincing for you, I sent v4, if you insist on re-doing this part, I'll 
+do in v5 :)
 
-For general use, agreed.  But in this case, I want CONFIG_PREEMPT_RT=y,
-so I must also end up with CONFIG_PREEMPT_LAZY=n, right?  Though to your
-point, that happens by default, so I don't need to explicitly specify it.
+> 
+>> +		break;
+>> +
+>> +	default:
+>> +		rmi_dbg(RMI_DEBUG_CORE, &rmi_dev->dev,
+>> +			"PDT has unknown function number %#02x\n", fn);
+>> +		return false;
+>> +	}
+>> +
+>> +	for (i = 0; i < state->pdt_count; i++) {
+>> +		if (state->pdts[i] == fn)
+>> +			return false;
+>> +	}
+>> +
+>> +	state->pdts[state->pdt_count++] = fn;
+> 
+> Duplicate detection could be handled thorough a bitmap.
 
-Or if the concern is general rcutorture testing of CONFIG_PREEMPT_LAZY=y,
-that is done by the TREE07 and TREE10 rcutorture scenarios, both of
-which I run regularly.
+Done
 
-> You do set rcupdate.rcu_normal and rcupdate.rcu_expedited but RT has
-> rcu_normal_after_boot set by default. Not sure if this makes any
-> difference but I *think* that normal wins here.
+Thank you
+David>
+> Thanks.
+> 
 
-I should definitely align with -rt common practice regardless.  Plus
-rcupdate.rcu_normal_after_boot is set by default by PREEMPT_RT, so
-there is no need to separately specify it.
+-- 
+David Heidelberg
 
-On the other hand, the variant that does use expedited grace periods
-needs to explicitly disable rcu_normal_after_boot.
-
-Do real-time kernels normally enable NO_HZ_FULL?  Or do event-driven
-real-time workloads prefer NO_HZ_IDLE?  I am currently guessing
-NO_HZ_IDLE.  (I test NO_HZ_FULL in conjunction with expedited grace
-periods in the second run.)
-
-Please see incremental patch below, which I am testing.
-
-						Thanx, Paul
-
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-------------------------------------------------------------------------
-
-diff --git a/tools/testing/selftests/rcutorture/bin/torture.sh b/tools/testing/selftests/rcutorture/bin/torture.sh
-index ed43aea91c7d9..6d1a84f3f6315 100755
---- a/tools/testing/selftests/rcutorture/bin/torture.sh
-+++ b/tools/testing/selftests/rcutorture/bin/torture.sh
-@@ -481,13 +481,13 @@ then
- 	# -rt doesn't like its interaction with testing of callback
- 	# flooding.
- 
--	# With all post-boot grace periods forced to normal.
--	torture_bootargs="rcupdate.rcu_cpu_stall_suppress_at_boot=1 torture.disable_onoff_at_boot rcupdate.rcu_task_stall_timeout=30000 rcutorture.test_boost=0 rcupdate.rcu_normal=1"
--	torture_set "rcurttorture" tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration "$duration_rcutorture" --configs "TREE03" --kconfig "CONFIG_PREEMPT_LAZY=n CONFIG_PREEMPT_RT=y CONFIG_EXPERT=y" --trust-make
-+	# With all post-boot grace periods forced to normal (default for PREEMPT_RT).
-+	torture_bootargs="rcupdate.rcu_cpu_stall_suppress_at_boot=1 torture.disable_onoff_at_boot rcupdate.rcu_task_stall_timeout=30000 rcutorture.test_boost=0 rcutorture.preempt_duration=0"
-+	torture_set "rcurttorture" tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration "$duration_rcutorture" --configs "TREE03" --kconfig "CONFIG_PREEMPT_RT=y CONFIG_EXPERT=y CONFIG_HZ_PERIODIC=n CONFIG_NO_HZ_IDLE=y" --trust-make
- 
- 	# With all post-boot grace periods forced to expedited.
--	torture_bootargs="rcupdate.rcu_cpu_stall_suppress_at_boot=1 torture.disable_onoff_at_boot rcupdate.rcu_task_stall_timeout=30000 rcutorture.test_boost=0 rcupdate.rcu_expedited=1"
--	torture_set "rcurttorture-exp" tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration "$duration_rcutorture" --configs "TREE03" --kconfig "CONFIG_PREEMPT_LAZY=n CONFIG_PREEMPT_RT=y CONFIG_EXPERT=y" --trust-make
-+	torture_bootargs="rcupdate.rcu_cpu_stall_suppress_at_boot=1 torture.disable_onoff_at_boot rcupdate.rcu_task_stall_timeout=30000 rcutorture.test_boost=0 rcupdate.rcu_normal_after_boot=0 rcupdate.rcu_expedited=1 rcutorture.preempt_duration=0"
-+	torture_set "rcurttorture-exp" tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration "$duration_rcutorture" --configs "TREE03" --kconfig "CONFIG_PREEMPT_RT=y CONFIG_EXPERT=y CONFIG_HZ_PERIODIC=n CONFIG_NO_HZ_FULL=y" --trust-make
- fi
- 
- if test "$do_rcu_rust" = "yes"
 
