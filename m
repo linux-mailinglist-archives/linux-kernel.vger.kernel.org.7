@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-584698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3B6A78A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:53:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C74DA78A81
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2FB188BD16
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A02D3A6DCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B0D233D91;
-	Wed,  2 Apr 2025 08:53:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14CE23535D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602BD1607B4;
+	Wed,  2 Apr 2025 09:01:00 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DABD1514F6;
+	Wed,  2 Apr 2025 09:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743584007; cv=none; b=BX2YL8XqSw3En76EHsuu94h6h4XGYcjBoePLEpoZJSvmfhFixh4f4hBDnd36GKzATqMxgQR+VyB1xX3HnElaoEb/6plgW9eVE3KnLGvflJ86tCw6SsrbRTxG/DxbbJMaBAtchgi8dQwn2uKY3Gz7WNb6gUfO3fIUGgTge816Ze4=
+	t=1743584460; cv=none; b=VCD9zLUwc9tS0wn4WbZ/7kAhVltDVx7AQXH1PTevNrKc/FNO/EOZLFKupbB8eYXjAFtoeYWYl9q9553x3zGtEci6c4//MkS7HKj9vV9TLxWjg+0bHl0kVut/DWZ5w9zwRBQW+oHZVW9BGN0jXK/WxsVOsEiGDwWWzzoLqat5Icw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743584007; c=relaxed/simple;
-	bh=kFkMQOJNByPYxbMTiA/Z69Qr5pi6vG08oeda8QGr/ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YLcYRLyLYv79sNYGa7Bvuv9KRfjyhepyZ5g72726Kra/59m5Tqxc8r/LEsrbooroP/G9aEsEYV7FgoK81CQsPwXP5tmosVhkJMi+GkrZ4nYopOAAl39g89BBNTkaReWZKHr7RbGelg+KqJn+MtgK+c+5Z/eXcm6vh/YW521FtXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0B1812FC;
-	Wed,  2 Apr 2025 01:53:26 -0700 (PDT)
-Received: from [10.162.16.153] (unknown [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75D963F694;
-	Wed,  2 Apr 2025 01:53:21 -0700 (PDT)
-Message-ID: <bdecbb1e-96c3-4b91-b21c-ab1ec3ffa3be@arm.com>
-Date: Wed, 2 Apr 2025 14:23:18 +0530
+	s=arc-20240116; t=1743584460; c=relaxed/simple;
+	bh=G40FTHvvefX8hQBeAd4JXX9O6yhMx0LCfXFbr95mreo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qHZJp1hmrUr4flVADZx0foFrcZhyvRLFMURxEXRf60mhjyonmarQWdR4rkLcIFQDD0t/fZMUGR687KcU2RtELS7WqoFBI+0e0wE/Zeo9U7yQxuiNcWWjw+Q6CQvtYn6gk00/VVJXdLvsIGrYkIhyUqReUJnJAANpiCvLQSoBYdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZSJjY3wD6z13LHQ;
+	Wed,  2 Apr 2025 17:00:17 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4CAFC180116;
+	Wed,  2 Apr 2025 17:00:49 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 2 Apr 2025 17:00:48 +0800
+From: Jie Hai <haijie1@huawei.com>
+To: <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wangzhou1@hisilicon.com>,
+	<liulongfang@huawei.com>
+CC: <haijie1@huawei.com>
+Subject: [PATCH] MAINTAINERS: Maintainer change for hisi_dma
+Date: Wed, 2 Apr 2025 16:54:23 +0800
+Message-ID: <20250402085423.347526-1-haijie1@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: page_alloc: Remove redundant READ_ONCE
-To: Songtang Liu <liusongtang@bytedance.com>, akpm@linux-foundation.org,
- ying.huang@linux.alibaba.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhengqi.arch@bytedance.com, songmuchun@bytedance.com
-References: <CAA=HWd1kn01ym8YuVFuAqK2Ggq3itEGkqX8T6eCXs_C7tiv-Jw@mail.gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <CAA=HWd1kn01ym8YuVFuAqK2Ggq3itEGkqX8T6eCXs_C7tiv-Jw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-On 4/2/25 13:11, Songtang Liu wrote:
-> In the current code, batch is a local variable, and it cannot be
-> concurrently modified. It's unnecessary to use READ_ONCE here,
-> so remove it.
-> 
-> Fixes: 51a755c56dc0 ("mm: tune PCP high automatically")
+I am moving on to other things and longfang is going to
+take over the role of hisi_dma maintainer. Update the
+MAINTAINERS accordingly.
 
-Although READ_ONCE() should not have been used here with the above
-commit - does this cause any problem though ? So in other words is
-the Fixes: tag necessary here ?
+Signed-off-by: Jie Hai <haijie1@huawei.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Songtang Liu <liusongtang@bytedance.com>
-> ---
->  mm/page_alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index e3ea5bf5c459..6edc6e57d4f8 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2661,7 +2661,7 @@ static void free_frozen_page_commit(struct zone *zone,
->  		free_high = (pcp->free_count >= batch &&
->  			     (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) &&
->  			     (!(pcp->flags & PCPF_FREE_HIGH_BATCH) ||
-> -			      pcp->count >= READ_ONCE(batch)));
-> +			      pcp->count >= batch));
->  		pcp->flags |= PCPF_PREV_FREE_HIGH_ORDER;
->  	} else if (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) {
->  		pcp->flags &= ~PCPF_PREV_FREE_HIGH_ORDER;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e0045ac4327b..a9866eefda15 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10651,7 +10651,7 @@ F:	net/dsa/tag_hellcreek.c
+ 
+ HISILICON DMA DRIVER
+ M:	Zhou Wang <wangzhou1@hisilicon.com>
+-M:	Jie Hai <haijie1@huawei.com>
++M:	Longfang Liu <liulongfang@huawei.com>
+ L:	dmaengine@vger.kernel.org
+ S:	Maintained
+ F:	drivers/dma/hisi_dma.c
+-- 
+2.22.0
 
-Otherwise LGTM
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
