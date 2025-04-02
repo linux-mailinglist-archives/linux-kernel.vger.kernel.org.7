@@ -1,44 +1,64 @@
-Return-Path: <linux-kernel+bounces-584666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBD2A78A0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE1FA78A20
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053D018859FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C18E16F289
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C14D235345;
-	Wed,  2 Apr 2025 08:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A4C235374;
+	Wed,  2 Apr 2025 08:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="phb0QmiN"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BFE19F40F;
-	Wed,  2 Apr 2025 08:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OIfpcDOc"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156D16BE17;
+	Wed,  2 Apr 2025 08:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743582870; cv=none; b=XSXp3u4ZMA7I89r+1u0qFfgfvGYAkKnogzt8RFTQQsbaCSQ4USEoIRI07BbNC35HmatlOOCP8lsQPeJTfRWS/2UgeZzeI2ld9fwC1ydUjOniqMlSq+w++VTFWRIBhp/EFZei7ppcB5JMFA1D3JXDn/yRz5yd4Xve+7HM14xGKW8=
+	t=1743583076; cv=none; b=iEcvcG/4F14sfpuDqqrzLmJyU+hAzw2tsUHzCY4CMkZr58+azovQmPmyVAkYr4wV4U+YztB83t8leSU/pJcw8/rdFI9xDY7Wgl5Ok6hBzGKgcFQZ8/5IGeYv138ta8bVSfjOIfQVJVH4+PusgTQ8itoWkPtXf0dlbvX/Ckad2g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743582870; c=relaxed/simple;
-	bh=lKeikN9azWuW6BHlS4lrSyXtbeUm9u4e3+OgYNrqA3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhDlgxrBjIyuypSkpvBh0CJwCP3xlvVOVXW1QBCKKPSf8VsdjtEZNgbrwWNDQqJOktG+0DGX+hvTG2XuKalFxREDQ/Gnl2DSW6t9fycxQiXNd1qsNBwAIpGX0FvtSa023Wk1gb8LgC1ZQeEpdC2Or7QV3HfMRIp1M83frOQNeAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=phb0QmiN; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=Nt14CP8peI1k8Bn46zWTZfy+pg1IfssuPQ6bs44nZUo=;
-	b=phb0QmiNgfmacNPJCpBeGVIicfftkf8UODQOiTGBRpCbg4mbIppRNKazpCp6Yv
-	igB8icMwbOpdOUXL+nGfJDIbcsB4Y16O9T24EGVz1vcvgKgB8gg6HUKhosqssh6x
-	RkiH0FQfuL6ZUpKDV6aIXUdvrBUu4yBguXdnvwSrxY6+I=
-Received: from [10.42.12.155] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3p8yA9uxn5WmkDg--.33608S2;
-	Wed, 02 Apr 2025 16:34:10 +0800 (CST)
-Message-ID: <6b970291-c9f7-4a5f-9b82-210a3c4d2739@163.com>
-Date: Wed, 2 Apr 2025 16:34:08 +0800
+	s=arc-20240116; t=1743583076; c=relaxed/simple;
+	bh=yDctradIe4zqjP7A5QDrgdagjOau/z8asowkNepwXeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=osx+nOZxH7LBVG7hY2eAYhi+L2pMpyRduSKVpGLkxHvqOkV4B83cRLocqFZzwhHt8qEme+5SQUsx6SdND9/FQoX8JSUVfe+jJgVA1ZjbCt2b0hsL4IxGTfiPk9YcPh0FuwRLpH/hlXQx1uCf/+061V8Xz5zL27G4CheQQ/SfQ9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OIfpcDOc; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5324cptZ010077;
+	Wed, 2 Apr 2025 10:37:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NNHR3YjaW7zDVlyL4yp5QsCMZPduZJ4h+U4jaf/4lpg=; b=OIfpcDOcTSHDMimh
+	Zes0ZcWs3/1a6rGoDkERxK/D1fYA/v0OZsGPkGcGK3b1jOCSvP9W4i0ai2XstgjS
+	Htn8uT5ejA3reYIlREUxibRmf5H9Q+QV3tlUQonbWC/6DXVj90+rA6rRYrbnxW1n
+	3ivh49oOw+oQTguVHjYH8t3R++0Vusq/N5hxFXmYBE9VHUSPPk/p3yI7C2riknPK
+	Cidr9WRqR5L3jdXEEaTFVtC6sEVvpolb+DVPpML2pFY/wLKs3jFlrGQYL3T7pajM
+	HnIklS7rHkktuzac1kpS6OxlfMB2H5ScasVvXcg//gM4qKIPb/IOcmI+cr8aNTxO
+	bzUgbg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45pua7y8by-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 10:37:40 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2EE384004A;
+	Wed,  2 Apr 2025 10:36:28 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 986D98CEC80;
+	Wed,  2 Apr 2025 10:34:18 +0200 (CEST)
+Received: from [10.252.30.87] (10.252.30.87) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Apr
+ 2025 10:34:17 +0200
+Message-ID: <228ddf41-e1d0-4d06-9e0e-9e0dad841688@foss.st.com>
+Date: Wed, 2 Apr 2025 10:34:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,126 +66,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
- usbip device
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>
-References: <20250219092555.112631-1-min_halo@163.com>
- <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
- <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
- <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
- <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
- <c49917d2-5157-4878-9866-be6053b5124d@linuxfoundation.org>
- <6d47fef6.9eef.19565c308e5.Coremail.min_halo@163.com>
- <803b43c6-9aab-4380-9753-fd2efa8061fa@linuxfoundation.org>
- <7e9db4d9-0a22-44b4-a981-0de25d6a2aa4@163.com>
- <99a8b726-726a-4e26-bafc-9ff2b1e4d7be@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD55G1 camera sensor
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250401-b4-vd55g1-v2-0-0c8ab8a48c55@foss.st.com>
+ <20250401-b4-vd55g1-v2-1-0c8ab8a48c55@foss.st.com>
+ <20250402-curvy-seriema-of-blizzard-b1c4d9@krzk-bin>
 Content-Language: en-US
-From: Zongmin Zhou <min_halo@163.com>
-In-Reply-To: <99a8b726-726a-4e26-bafc-9ff2b1e4d7be@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3p8yA9uxn5WmkDg--.33608S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWF4UWF1DJF4xJr17Ww45KFg_yoW5Ww47pF
-	W8XFy7KFZrta10yFnFyw1rX3WFya1xKry3Wr9xGw1UX390vF13WF4ktFWruay3WFnxu3W2
-	yr4DZa43WrnIyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UseOXUUUUU=
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbixxwjq2fs8Iy2EgAAsA
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <20250402-curvy-seriema-of-blizzard-b1c4d9@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_03,2025-04-01_01,2024-11-22_01
 
+Hi Krzysztof,
 
-On 2025/3/29 05:14, Shuah Khan wrote:
-> On 3/13/25 04:02, Zongmin Zhou wrote:
->>
->> On 2025/3/11 00:49, Shuah Khan wrote:
->>> On 3/5/25 03:03, Zongmin Zhou wrote:
->>>> At 2025-03-05 03:45:28, "Shuah Khan" <skhan@linuxfoundation.org> 
->>>> wrote:
->>>>
->>>>> On 3/2/25 05:37, Zongmin Zhou wrote:
->>>>>> Dear shuah,
->>>>>>
->>>>>>
->>>>>> Yes, I agree with you.It would be better if there have a more 
->>>>>> simpler fixes than This patch.
->>>>>>
->>>>>> I can just think of the two possible solutions that mentioned 
->>>>>> before.
->>>>>
->>>>  >What are the two possible solutions?
->>>> 1. The patch we are discussing now,have to change the API between 
->>>> the kernel and user-space.
->>>
->>> 2. Simply set vhci-hcd dma mask to 64 by default,just modify the 
->>> vhci-hcd driver. Then dma_max_mapping_size() will always return 
->>> SIZE_MAX.
->>>
->>> I prefer option #2 - What are the downsides if any with this option?
->>>
->> If set vhci-hcd dma mask to 64 by default,I can't predict what will 
->> happen when the real USB controller support less than 64bit?
->>
->> After all, the data flows from vhci-hcd to usbip-host and finally to 
->> the USB controller to which the device is actually connected.
->>
->> the data is ultimately processed through the real USB controller?
->
-> Sorry for the delay.
->
-> That is the case. I have to check the code to see what the host
-> would do if it receives larger buffers from the client (vhci)
->>
->> However, the default setting to 64-bit is equivalent to eliminating 
->> the impact of
->>
->> the patch(commit d74ffae8b8dd) on usbip protocol devices, sounds 
->> feasible?
->>
->> I am not very professional in this field, waiting for your evaluation.
->
-> We can give this a try. Send me the patch with default testing the
-> following cases:
->
-> Host - swiotlb enabled and disabled in your environment to see what
-> happens when there is a mismatch swiotlb enabled case and client
-> side doesn't limit the size.
+On 4/2/25 09:08, Krzysztof Kozlowski wrote:
+> On Tue, Apr 01, 2025 at 01:05:58PM +0200, Benjamin Mugnier wrote:
+>> +    properties:
+>> +      endpoint:
+>> +        $ref: /schemas/media/video-interfaces.yaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          data-lanes:
+>> +            items:
+>> +              const: 1
+> 
+> Not what I asked. Now you miss number of items. Just use the syntax I
+> proposed. Or was there any issue with it?
 
-If you want to test swiotlb disabled mode, you can modify the kernel cmd 
-to force disable swiotlb:
+No issue I just misunderstood and thought const: 1 was impliying
+maxItems: 1. I'll add maxItems back.
 
-modify the grub.cfg, add the swiotlb=noforce parameter to kernel command 
-line,and reboot.
+> 
+>> +
+>> +          link-frequencies:
+>> +            maxItems: 1
+>> +            items:
+>> +              minimum: 125000000
+>> +              maximum: 600000000
+> 
+> Best regards,
+> Krzysztof
+> 
 
-cat /proc/cmdline to check whether modified successfully.
-
-
-The patch set vhci-hcd dma mask to 64 by default like below:
-
----
-  drivers/usb/usbip/vhci_hcd.c | 3 +++
-  1 file changed, 3 insertions(+)
-
-diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-index e70fba9f55d6..fca3a4a6e94d 100644
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -1345,6 +1345,9 @@ static int vhci_hcd_probe(struct platform_device 
-*pdev)
-
-      usbip_dbg_vhci_hc("name %s id %d\n", pdev->name, pdev->id);
-
-+    /* Set the dma mask to support 64bit for vhci-hcd driver. */
-+    dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
-+
-      /*
-       * Allocate and initialize hcd.
-       * Our private data is also allocated automatically.
 -- 
-2.34.1
-
->
-> thanks,
-> -- Shuah
-
+Regards,
+Benjamin
 
