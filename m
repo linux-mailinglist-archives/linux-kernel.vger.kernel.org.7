@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-584695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FD2A78A5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:51:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24289A78A69
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79439188F73A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:51:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375A27A2D32
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DFD235371;
-	Wed,  2 Apr 2025 08:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4BB235BE1;
+	Wed,  2 Apr 2025 08:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmrlQJaq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrnM/MDW"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB781F9F7A;
-	Wed,  2 Apr 2025 08:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3981E570D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743583873; cv=none; b=jgPm/V8SL/uOpP5hwv6OmcQ6hEb1J3qL/gu11EshQmyjpskXh8bibJVWipiDbSapdmXmgAGFQ5LR1oC49MpkzGgNehmEe0/i0wkRA24Pi8R1t1Za5OgmETkH4tNaTh3WpkJX5dULtsWlavXbYOHLIHrrOMG0eUIJ+3TY3Bp31Io=
+	t=1743584228; cv=none; b=WnmTsfW9ZT1qkJL6e0oM1ChFm0KTq7xxTL6UnMMch5Da9PL9Hm8q82TTRb9eT5rpNAvo/o31m3tEwNHbXFBR8MGGWfJq+EAlifBqN/rl71a6maE+Ko4dc6yxsWhvigiVQGbYwfq9NRzY+ZYH/vpJMO1mQw7VFZeM9M/KeAqLPtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743583873; c=relaxed/simple;
-	bh=2C014mxROCRDtsO04srHF5zNmW+l8l4FbGKJiZ0rRnc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yj4U5bgXf+V+cVUhYY38Mh6HuK+a5LGO6U7Kv5r2WDhP5pqFvOSOKZYgUCzVoE1A6zbL7Qw41dpfUEdyJUlmbzuCAiucmmn9TGueyAeNxIVQXXI7tDmqNK6WgKqW4ZRT4Q2BaJdu3IfxrBxL/qqlPke8Dwusq/aKRJkm1dt+D7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmrlQJaq; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1743584228; c=relaxed/simple;
+	bh=6NgScVSRCxQPArmwrHQqHy9fGcOIqZ7rlPAL2ePUTzw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LrzvbAqhHAIHiLhprXNb1nVFOKEyip7wledmPIuMvl0MG1uKC5ZtkvNSo6eP1EC2O5mQnvlzptw+na1zA3B5amr0D/FqpimQe6/Mp2GnNr1YvPEau9GdmXMfAsIn5mSe5vq6nXB+1oukdYznaLNKCqH1EDGGkMjh2F6tXNvActk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrnM/MDW; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab771575040so122909466b.1;
-        Wed, 02 Apr 2025 01:51:09 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22622ddcc35so55604935ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:57:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743583868; x=1744188668; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2C014mxROCRDtsO04srHF5zNmW+l8l4FbGKJiZ0rRnc=;
-        b=MmrlQJaqzjSP9GFbGwJ/JCFsdIC7nP+RwhPqBL3wWP+uQpHtSVijDvnQ0bIk+bU5vl
-         8Olv9uxiXiSXDjBWssY5T/hDjR/n3zu2wrRtqDmu3TQQliGtQ1n+6Tun23tw+lzBrOnD
-         kpQjH53cok2d1Mh6yL3TeTer0nBbgSY41FXkSHrzJV0mKPr3RbNxbnyTdxf0ilM3A3hD
-         7olD4MXpk806iUt0pQgedHui1As2QA/ZSg0TGNNAOTkS19j3TE9pG98o2aFQ/ertZC7z
-         atsjAjshwKnUOw+BvfFhagG8O4A3eyu3u2VM5fMFOmsKhIXFWol0BINTuJ36oRIiZD8x
-         xpQw==
+        d=gmail.com; s=20230601; t=1743584225; x=1744189025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O2mbatOTqN6UfvBI6qk+3sG7bqlcGJu5b7iy5tWOUeU=;
+        b=QrnM/MDWKmp4mLJzqCCRTpfrJ5upZvpZIpAboTEJP/We7x7366q/cwogAjrNdxvL4C
+         emYdAjqodjFRWI69V+8jK2LmUF8yO3SQrN7YkaIfWiZC65IAjrUIIXhi16DrWL42E0zk
+         PwEkjp499F9wmMByvvLYp9iO+0Kxxxade4W6jbQE72zOqCCVvDOiDEIPia2/51rbHBcP
+         kj/EsZnloRHdFOLjkhubHhrqIGPbaHHh/vpAbrWRQt0B0UT/jBPdftt2NeOAfWWzSEIs
+         AhtVFOO9PxM12nC1h/m7HIheNXQPa2kSIWYFuVsO2hYmuE2XKgvzZmfgvNqL1dptWCmB
+         25qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743583868; x=1744188668;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2C014mxROCRDtsO04srHF5zNmW+l8l4FbGKJiZ0rRnc=;
-        b=mAYcOtSU3Mx6yRk1HZ95D4Wd//PROkEPz1dvAJk9eiRIW6uYNk3avBu0JadP+33rAc
-         1zfpMKqBeFd22rjPaD5L0ZN7+CUdC8zvavjFfvK7lHE5fyo5dP5d7a0KHh1DAJKIpNO+
-         fkH7oiio1VyAP5RvDhJFI7XpjY1hJh8gm9FpPwq3+bK5pF160V2wYDlj3vCAkE8Q//wd
-         bi+/QLgAEHo1E3hnJAmaWIf8QKqsrOCcYFICz1wyN3X/Or2Tv51A0IqqjCWn6/T7lPnz
-         vLNAeDSxGJOOUcXEWwW8BLvRNhdsOkgIv/UiaTR/9smceh9eXK9tOxaP+GrjBEARZx5d
-         F5yw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ql72Jfe5AQwEEma6w4xsaI0XqUSLY0LtkzBzeRlZGwTc/Wbt60MKepbCics2YV2+nfV45+NoGvot5A==@vger.kernel.org, AJvYcCX4z6hqXlWzjo384DETA8MlLZgNdVyxVRBuVhjtILhrLb7jNABaOZuDO6AUJNaUlk/pfvP78MT5cwBb0J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx8SUZIQgs3AJ2sXUoiuU1eTakct2l9Ie8qs3AX0GK7sW1gRu/
-	bUhXuoArulbOUdmbxhXlFPdGJs5ua/DtCVY3G68vsq6M5zLZRYiS
-X-Gm-Gg: ASbGncsp5H3RQgdFq9X9XsaOJVVRWETdH29usHxO85WOlCCmWh9X9dut4Xf7Xvu87p+
-	LUBvnmMi0xD+Ot5Je4sErTQFPjy1hrTcyx1hbz9Cqjh/+uMPRMHjevxogErTDer7r9zj8rwMsQr
-	uLmL4A9blRkVHPqo9pCPV6Sbdf+JgsZh3eTZFuI+nXwIaSMr4ALwssuAJHI6Xoj0b9szI7AteTP
-	GXs6VRvOeB1Imp1Pt0Cv/3ppjI9jEur5wBAAOIQac4av4J84eR9XMH0kjVmhI53Xwu6axGdJUe2
-	fKnn2Hafqh6gBdGpowgXKyFaoFvcD4SjLyojyH8lQauzkT4=
-X-Google-Smtp-Source: AGHT+IF2peLlZz8CtWJ7CfbJ8NEYEHGPninGbEcHAIlNnUR3fipLckbBovlkHaOZmUGNuky8TbYuJA==
-X-Received: by 2002:a17:907:3f29:b0:ac3:ef17:f6f0 with SMTP id a640c23a62f3a-ac7a5a670ebmr96209966b.5.1743583868302;
-        Wed, 02 Apr 2025 01:51:08 -0700 (PDT)
-Received: from [10.176.234.34] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7192e7d36sm881646466b.77.2025.04.02.01.51.03
+        d=1e100.net; s=20230601; t=1743584225; x=1744189025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O2mbatOTqN6UfvBI6qk+3sG7bqlcGJu5b7iy5tWOUeU=;
+        b=COI5CGFV+Km+/Crt1TL1QX3Sfoh/GpxR2n9khm5eFJfRdKug6WYQhNKDG7DsdC9nAG
+         6J9CeJ274/Q5t9LDpC4u5NRw67Bv8hgK+EEBlCLVB+8XlVVZpDedtbzRCdtIQV7jAlLC
+         GcEQW6NdKMc2+1SEMYPGcYGNlhQDevZv8x1shHNgBabU/km3ZQG9IrEjkQUL2BeYm5wD
+         LJxxKrbDqrvJDfXqMJitTkVHd4ahlwIpIS5iHgnSyKrq1LMsxsUxP0bc23LGfm6Q/e7g
+         R1xQLffo2IBQgwx6QFkT4hGKg10N6vA7ClMHuHVrQk6eO1STVnNqH05PK2/j0GSqPO5D
+         1l1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2VOttEa764sSNiQEk6o+FLGu6U5R+tarHkoYtnmZ2nvC6kiJdJAop0SMmYZlwSPo55Sen0jpnPKkBPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjfEVicKVkcuPAqMWICau57TGtEVqQjbIg+unYaioyqnapa56C
+	vrYxHa+/zFl9Qg2h+LWG5SrwawrJJPNiWeSCgFIpCe8r+oPrflUd
+X-Gm-Gg: ASbGncvXi2/CKInkMNwmv2vIzUIjXJiwbr3upC/ofk2JgKyzdFUC/B673I22lKDfcZ9
+	ACFsWBdN5ggJ+jQsh25ZMacFtJ/9z+hYLiNbKnOXtAR7ewodkrY0yrHm43BCj1+aYEs4WVlDHJO
+	qjzoiVM2tKx/B9HNlR9bjxwLZJsAd0O9zNb/RNyL1M6wbVWTq08orOSpD3ZfsKw1BRuznc24qVo
+	BN5ZtMOuiFiRBYVDPm+Umr0xrHsVDPZ/Voj4EoTN4BcmjNMgUx993rZkpSKbRNK9DbouIhC8ggZ
+	KDrTrx1T9zqsujt/QV/tveMDj0Oxinz5agFlZWsC0yEvmjPjN8qAdKj/yNzN3SgO9zQ4
+X-Google-Smtp-Source: AGHT+IEXNQJWNGxGPFphNpnCitbqmQow7c6fvYmWsF6o1jzldCLf2QxqB7RbaqQ5StpVjcJvAXDsBQ==
+X-Received: by 2002:a17:902:ce84:b0:224:5a8:ba2c with SMTP id d9443c01a7336-2296c87eb4bmr15812525ad.52.1743584225535;
+        Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e22449sm10393367b3a.49.2025.04.02.01.57.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 01:51:07 -0700 (PDT)
-Message-ID: <1a7a6e077f3750b0385388187cd52010eef4a085.camel@gmail.com>
-Subject: Re: [PATCH v8] ufs: core: Add WB buffer resize support
-From: Bean Huo <huobean@gmail.com>
-To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com,  bvanassche@acm.org,
- James.Bottomley@HansenPartnership.com,  martin.petersen@oracle.com,
- beanhuo@micron.com, luhongfei@vivo.com,  quic_cang@quicinc.com,
- keosung.park@samsung.com, viro@zeniv.linux.org.uk, 
- quic_mnaresh@quicinc.com, peter.wang@mediatek.com, 
- manivannan.sadhasivam@linaro.org, quic_nguyenb@quicinc.com,
- linux@weissschuh.net,  ebiggers@google.com, minwoo.im@samsung.com,
- linux-kernel@vger.kernel.org,  linux-scsi@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Date: Wed, 02 Apr 2025 10:51:01 +0200
-In-Reply-To: <20250402075710.224-1-tanghuan@vivo.com>
-References: <20250402075710.224-1-tanghuan@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id E07F480531;
+	Wed,  2 Apr 2025 17:06:09 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: tudor.ambarus@linaro.org,
+	pratyush@kernel.org,
+	mwalle@kernel.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH 0/3] mtd: spi-nor: macronix: Cleanup macronix flash info
+Date: Wed,  2 Apr 2025 16:51:26 +0800
+Message-Id: <20250402085129.1027670-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-T24gV2VkLCAyMDI1LTA0LTAyIGF0IDE1OjU3ICswODAwLCBIdWFuIFRhbmcgd3JvdGU6Cj4gwqAK
-PiAraW50IHVmc2hjZF93Yl9zZXRfcmVzaXplX2VuKHN0cnVjdCB1ZnNfaGJhICpoYmEsIHUzMiBl
-bl9tb2RlKQoKCnlvdSBtdXN0IGVuc3VyZSB0aGUgbW9kZSBlbl9tb2RlIGlzIHdpdGhpbiB2YWxp
-ZCByYW5nZSAoMC0yKSwgd2h5IG5vdAp1c2UgZW51bT8KCgo+ICt7Cj4gK8KgwqDCoMKgwqDCoMKg
-aW50IHJldDsKPiArwqDCoMKgwqDCoMKgwqB1OCBpbmRleDsKPiArCj4gK8KgwqDCoMKgwqDCoMKg
-aW5kZXggPSB1ZnNoY2Rfd2JfZ2V0X3F1ZXJ5X2luZGV4KGhiYSk7Cj4gK8KgwqDCoMKgwqDCoMKg
-cmV0ID0gdWZzaGNkX3F1ZXJ5X2F0dHJfcmV0cnkoaGJhLAo+IFVQSVVfUVVFUllfT1BDT0RFX1dS
-SVRFX0FUVFIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgUVVFUllfQVRUUl9JRE5fV0JfQlVGX1JFU0laRV9FTiwKPiBpbmRl
-eCwgMCwgJmVuX21vZGUpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyZXQpCj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGRldl9lcnIoaGJhLT5kZXYsICIlczogRW5hYmxlIFdCIGJ1ZiBy
-ZXNpemUgb3BlcmF0aW9uCj4gZmFpbGVkICVkXG4iLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgX19mdW5jX18sIHJldCk7Cj4gKwo+ICvCoMKgwqDCoMKg
-wqDCoHJldHVybiByZXQ7Cj4gK30KCg==
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+
+Organize Macronix flash info to make it more readable.
+
+Cheng Ming Lin (3):
+  mtd: spi-nor: macronix: Drop the redundant flash info fields
+  mtd: spi-nor: macronix: Remove duplicate flash info entries
+  mtd: spi-nor: macronix: Move macronix_nor_default_init logic to
+    macronix_nor_late_init
+
+ drivers/mtd/spi-nor/macronix.c | 50 +++++++---------------------------
+ 1 file changed, 10 insertions(+), 40 deletions(-)
+
+-- 
+2.25.1
 
 
