@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-584363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A80BA78663
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:23:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9EAA78666
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B789A7A38E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:21:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17A17A488A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971F2139D0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18BA1411DE;
 	Wed,  2 Apr 2025 02:22:33 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EA929CE1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 02:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EA0130AC8;
+	Wed,  2 Apr 2025 02:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743560553; cv=none; b=SQuVeHAe4F3eLRuqNn9fSRkixVhtRgWSlX/TjqWyOo5cPO1Otl8RCsqPbsdE18NVoz5QIWrChSRI2LcjNNxf0PPX91VoETIV6WdovcWuJNJznIMUDJy5RC8S8fsokOc6e0dC8Mb/Sfbfy4K1/3YcoMb2CHgUFAPloC+PbNu47LE=
+	t=1743560553; cv=none; b=iLTl6XzLbkYQN4J8hg+27IzA5eUIHr46zyKThcj3CH4JtWS/EwrkAwbY5P6bljw3QngJa7RJ3jd4cX97bLcLGLBwWVZdCSZLRavMWe/niATDxofZ1fGAMr8I6edfiPF81iikVQhmXQqbBJIf/tt+6Ae35DqE0zMISJg+VbJSmR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743560553; c=relaxed/simple;
-	bh=DCxRafmm3bkIwxe7XnDiqfCO1qxNMhwVeQxCFNCrA6w=;
+	bh=15RPTBSgkhteI6iwl9RvCu+jgBMqWKn7/VmkChot5b4=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=WOueT1xuwRwi9JiiJXQ3uyvFRrJlgvFQN2SybnOLpFVMGH+9RgPw+dJQxehn9jo0/vMIiuYrLXpOTBFkwFx8w6zg0AkWu9eX8+6y6A4eHhtncYsPpdT5IuiaMds0nlQ5eNbpwekVl7q8DxfQ+OtW7xZdpPITw1UcDPwutL/JQZU=
+	 Content-Type; b=Kh9a3Ura+ITJhbL1fIWmMk3OBPXz+xpmJAwzA89iK9NrmFwqQW4wub7D9YxJmCt8Lk/55viJ1+Xcu5T3m4D8fPVz6SPYEV2AAlsQ79qWNXMdX+2TtBZSE5QgAhYcmx2R4k1XbFHohoUQUT1fQbAFR0+pDrUCGLhIDounVuBOQio=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB5DC4CEE8;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C08C4CEEF;
 	Wed,  2 Apr 2025 02:22:32 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tznlP-00000006MNq-02B2;
+	id 1tznlP-00000006MOK-0jvp;
 	Tue, 01 Apr 2025 22:23:35 -0400
-Message-ID: <20250402022334.856216750@goodmis.org>
+Message-ID: <20250402022335.029884348@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 01 Apr 2025 22:23:10 -0400
+Date: Tue, 01 Apr 2025 22:23:11 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-linus][PATCH 2/4] tracing: Free module_delta on freeing of persistent ring buffer
+ Andrew Morton <akpm@linux-foundation.org>,
+ stable@vger.kernel.org,
+ zhoumin <teczm@foxmail.com>
+Subject: [for-linus][PATCH 3/4] ftrace: Add cond_resched() to ftrace_graph_set_hash()
 References: <20250402022308.372786127@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,34 +53,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: zhoumin <teczm@foxmail.com>
 
-If a persistent ring buffer is created, a "module_delta" array is also
-allocated to hold the module deltas of loaded modules that match modules
-in the scratch area. If this buffer gets freed, the module_delta array is
-not freed and causes a memory leak.
+When the kernel contains a large number of functions that can be traced,
+the loop in ftrace_graph_set_hash() may take a lot of time to execute.
+This may trigger the softlockup watchdog.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250401124525.1f9ac02a@gandalf.local.home
-Fixes: 35a380ddbc65 ("tracing: Show last module text symbols in the stacktrace")
+Add cond_resched() within the loop to allow the kernel to remain
+responsive even when processing a large number of functions.
+
+This matches the cond_resched() that is used in other locations of the
+code that iterates over all functions that can be traced.
+
+Cc: stable@vger.kernel.org
+Fixes: b9b0c831bed26 ("ftrace: Convert graph filter to use hash tables")
+Link: https://lore.kernel.org/tencent_3E06CE338692017B5809534B9C5C03DA7705@qq.com
+Signed-off-by: zhoumin <teczm@foxmail.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 1 +
+ kernel/trace/ftrace.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 103b193875b3..de6d7f0e6206 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -9609,6 +9609,7 @@ static void free_trace_buffers(struct trace_array *tr)
- 		return;
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 92015de6203d..1a48aedb5255 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -6855,6 +6855,7 @@ ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer)
+ 				}
+ 			}
+ 		}
++		cond_resched();
+ 	} while_for_each_ftrace_rec();
  
- 	free_trace_buffer(&tr->array_buffer);
-+	kfree(tr->module_delta);
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	free_trace_buffer(&tr->max_buffer);
+ 	return fail ? -EINVAL : 0;
 -- 
 2.47.2
 
