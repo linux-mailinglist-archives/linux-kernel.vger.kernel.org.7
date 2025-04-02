@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-584557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84437A78892
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:09:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A136A7888E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2763B0AD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978B37A4BF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615842356DC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4448B2356D8;
 	Wed,  2 Apr 2025 07:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmbG9SoS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/O3E6mh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A9A233703;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8B23315D;
 	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577642; cv=none; b=VbwSoF7iLzpMxasRyQNl/cLn8YqbTf6r+CzfVb5gsk5fKZUx2i1i4LrT4T46vjFOK/cFLspS5TbY6FPYN2/8oEWCiB8jKF51/bc8k7meAq86lxZ2F/7tCr6xes/75wNxvdQQO6K7Zh1aH4v/iIGXevFyw+35PJ2ereG/SM2CZ04=
+	t=1743577642; cv=none; b=pEdCaQrJ6C/RdOgudpyI3tUMcJyvei5kFJuteCQV7RsRSQo1SuIkcoIiOp3wNchBzo5t0rMzEwZHeELw1kWUvYQe6TwTAP7cPOP/3/JxpUAKTu3w5mBbDkR60cl/XtKvAdCpmCFQNunAOwX7y7BwEqDvINSCuAlWGo/MJRmWY6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1743577642; c=relaxed/simple;
-	bh=XhGh4KWbPw6pg0bsHBmrK4nesThP3rTPxXXdYWM9y/c=;
+	bh=4IGWq8kONdx8Xhp5mZ3r2W3pZwmJWa0C5jGrABb7mW4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ykuzuk9ZWzxQ5FKHDaZfqAth7E7UUIAt++Vmb1eXkocmzHekKI4g4I7rSpL60Zz00nRx7L735ZXjsFbkpnSaIIK3r/xhx/O8QxQNNFwNx/wHRqh0kj6tPNlCCXoTUAprSCoFRbX/bxSOOIb0MSRwm0+MSGuOwW/+YqnZzQbY4/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmbG9SoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7E139C4AF0F;
+	 In-Reply-To:To:Cc; b=NobtDHdVUBCYHW8gY7iBsAfbKczhG2uKD2oJzkq+VPu95/r49K52efaCszGqiGEwPZYqrxwnrq+brWth9idw0NtdKHRyVRmtrFtgf8TCyDzy1Mw3VC90ovBoUMCi7hoVc1789uEwNR3CcWkbx7L1S2vFnvxjPM5G1DCvpT9VB6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/O3E6mh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CD24C4CEED;
 	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1743577642;
-	bh=XhGh4KWbPw6pg0bsHBmrK4nesThP3rTPxXXdYWM9y/c=;
+	bh=4IGWq8kONdx8Xhp5mZ3r2W3pZwmJWa0C5jGrABb7mW4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=jmbG9SoSJ5E3WonlyK8E83gE/NEew9ZPM6pB7j78kAyC/Py+NCTo1uftf8RuehZff
-	 rT6s4BwSIjQf/o2nRrSR5s+IJs7HcqwYojdhGEZ7N5blqenPSeeyCU5lFg/K+4LJvS
-	 65rDdNyyiKGgpwKPEylA4edvkA0ESrVtKwQ75868wzsV+ZRLy5yzieVuV5hW4ck7mY
-	 VX0dd+/0pyFG/1dbDtcAKKpYbLk5h7ng27+1p10lufiALAK2boLq/fOCoHCFN22fHs
-	 hhudnl2Frh2VwIF8eZwyaNa4o3rrVKg3L+KgZHcbvRE/yXjCiHyvEb6fS2WptWyH46
-	 qSJ/fEEd/vwKg==
+	b=e/O3E6mhp8oO/Whi3xEfGWjfINj0VVWR6e4dyBthDZK8g1xxzbzn1ArffFD95wqBz
+	 Lh7oZJV6JMFmgwitevdLz6W9es9LYg3xhHJaJ9Hx7e/is7mvv1lVaBWWP82vqTvpTP
+	 JO0YlhwXeQRq8aEnCOHxBJsE+oJXXc1B9OEDprJ1vMZ8TlPJ6vvYPQnCgzIIvkLDeX
+	 8soBim5zvmzKE/1Y6N9jeJ3lU1y5p9NaZnfTsROIh7ZnsWuv/FyvCvPIdSaISbNnL+
+	 zmbCDGmBElyUEDLGBISTuERqixX4taQ0BmbEiJrIdi2bK+jtnyukzTNjp7E4nyKryF
+	 a9HqhzRTVEzrA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73728C3601B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85145C28B20;
 	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
 From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Wed, 02 Apr 2025 09:07:11 +0200
-Subject: [PATCH v4 8/9] arm64: dts: freescale: Add the BOE av123z7m-n17
- variant of the Moduline Display
+Date: Wed, 02 Apr 2025 09:07:12 +0200
+Subject: [PATCH v4 9/9] arm64: dts: Add Moduline Display boards to Makefile
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250402-initial_display-v4-8-9f898838a864@gocontroll.com>
+Message-Id: <20250402-initial_display-v4-9-9f898838a864@gocontroll.com>
 References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
 In-Reply-To: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -67,11 +66,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  Maud Spierings <maudspierings@gocontroll.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743577640; l=3591;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743577640; l=1452;
  i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=SW8C2Ezl9yFyeS4dPDEpBmoVGHoMsH1oLf123qVEKYk=;
- b=4auH9859vkQxbcTaH9n0JGF5j85iALCSA+Ify5jR5o86LVm1vb1zF7FCUaDOGDJBRiWhPF/H5
- /sbGx1GeVe2Co58A5FHlk9E1+D/5ki9K6/ihF5jGYljNSatpT6efLvu
+ bh=DJFfIfqgbp2F9LatQLx7SmTKtl83KZxKW6du5QHFG4A=;
+ b=cbWzSnDPRBr6SF0lOfGsuCU7LN31OqgF6hAzRq2l87Li8zvGVzMru0KBDKDLoTk6lJ6pcKcKy
+ KcRSnLuEavVDtTFtFBq9aZTwAtJr18VtCPlBa3VhTsduAw3FFmLjfD2
 X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
  pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
 X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
@@ -81,163 +80,31 @@ Reply-To: maudspierings@gocontroll.com
 
 From: Maud Spierings <maudspierings@gocontroll.com>
 
-Add the BOE av123z7m-n17 variant of the Moduline Display, this variant
-comes with a 12.3" 1920x720 display.
+Add the new Moduline Display boards to the Makefile to allow building
+them.
 
 Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-
 ---
-Currently the backlight driver is not available, this will be upstreamed
-in a future patch series. It is a Maxim max25014atg.
----
- ...x8p-ml81-moduline-display-106-av123z7m-n17.dtso | 139 +++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..dc0f86ca55fb6c21f10fbd333374a89002bb71c0
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtso
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2025 GOcontroll B.V.
-+ * Author: Maud Spierings <maudspierings@gocontroll.com>
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+#include "imx8mp-pinfunc.h"
-+
-+/dts-v1/;
-+/plugin/;
-+
-+/ {
-+	model = "GOcontroll Moduline Display with BOE av123z7m-n17 display";
-+
-+	panel {
-+		compatible = "boe,av123z7m-n17";
-+		enable-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&pinctrl_panel>;
-+		pinctrl-names = "default";
-+		power-supply = <&reg_3v3_per>;
-+		reset-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+
-+				panel_in0: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+
-+				panel_in1: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	/* sn65dsi85 */
-+	bridge@2d {
-+		compatible = "ti,sn65dsi84";
-+		reg = <0x2d>;
-+		enable-gpios = <&gpio4 14 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&pinctrl_lvds_bridge>;
-+		pinctrl-names = "default";
-+		vcc-supply = <&reg_1v8_per>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				dsi_lvds_bridge_in: endpoint {
-+					data-lanes = <1 2 3 4>;
-+					remote-endpoint = <&mipi_dsi_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				lvds0_out: endpoint {
-+					remote-endpoint = <&panel_in1>;
-+				};
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+
-+				lvds1_out: endpoint {
-+					remote-endpoint = <&panel_in0>;
-+				};
-+			};
-+		};
-+	};
-+
-+	/* max25014 @ 0x6f */
-+};
-+
-+&iomuxc {
-+	pinctrl_lvds_bridge: lvdsbridgegrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_TXD2__GPIO4_IO14
-+			MX8MP_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_panel: panelgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO07__GPIO1_IO07
-+			MX8MP_DSE_X1
-+			MX8MP_IOMUXC_GPIO1_IO09__GPIO1_IO09
-+			MX8MP_DSE_X1
-+		>;
-+	};
-+};
-+
-+&lcdif1 {
-+	status = "okay";
-+};
-+
-+&mipi_dsi {
-+	/*
-+	 * burst has to be at least 2x dsi clock that the sn65dsi85 expects
-+	 * display pixelclock * bpp / lanes / 2 = dsi clock
-+	 * 88.000.000 * 24 / 4 / 2 = 264.000.000
-+	 * range gets rounded up to 265.000.000 - 270.000.000
-+	 * 267.500.000 * 2 = 535.000.000
-+	 */
-+	samsung,burst-clock-frequency = <535000000>;
-+	samsung,esc-clock-frequency = <12000000>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			mipi_dsi_out: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = < &dsi_lvds_bridge_in>;
-+			};
-+		};
-+	};
-+};
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index b6d3fe26d621234ab84353165d20af9d2536f839..fea25c7f997cda9aef73cd643f0f0279ee0bfffe 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -214,6 +214,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-bd500.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-tian-g07017.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314.dtb
++imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10-dtbs += imx8mp-tx8p-ml81-moduline-display-106.dtb \
++	imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10.dtbo
++imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17-dtbs += imx8mp-tx8p-ml81-moduline-display-106.dtb \
++	imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtbo
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-var-som-symphony.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw71xx-2x.dtb
+ dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw72xx-2x.dtb
 
 -- 
 2.49.0
