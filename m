@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-584873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4AFA78D22
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F4EA78D24
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C77189552E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456FC18953E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72493238168;
-	Wed,  2 Apr 2025 11:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F2123A98A;
+	Wed,  2 Apr 2025 11:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BoLlrrsr"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFsIMfwe"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22673236A99;
-	Wed,  2 Apr 2025 11:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE57E23A566
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743593532; cv=none; b=IkmcyJJahvNthpFvm/pkP64cGGV9LxA/DRvm8/wu8Cn2Q0vKkITtOg8hOBpriXD6+80i8hyQW98o4VXNVWdhA6iMlWlxAlvFWXjuwE7mxrTQWMO7uuOLaynPu4SkvjV2DoOVpjEULQU6cqyHVJHxKLrmZ58Tr32chInTgFOs93A=
+	t=1743593546; cv=none; b=hM2YaHpd/EiCprWWS7dBMNnbUMYncIy4U1/7lIajgP2Qf/p48139f5CTfRK7GkXNTDIY0GkqAPEE7mTuV6bxupIlz2DBvq1FsFSbseCXSTzFUlTaYZ20oN9uG8hH0D+sEPbz5QuQ3F/iAvp5ZNlGqAhTiXJBkaiRlxHcRVOSoeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743593532; c=relaxed/simple;
-	bh=8WhNYugsSqHYYkJ5SfOI8qiq7dZYIPTnffMpuptuLHI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TTn/eOjZ/NoPsXqn/q47laNLiRwwfWQu0yJvdA+ggW64/U05wmz4BpONN0VIey2uO0HU1kPqno8Hn9kFNkWHarH8aaCIekedIsE3ydTTTJMTXzxHZpHmj02i/RLuChX+/Fl7Hg1kL/sqFUdM4ZWgxFEycGTJBHrmZKebMEppLC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BoLlrrsr; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 532BW5iW3915800
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Apr 2025 06:32:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1743593525;
-	bh=aMs2O+a+TiQUYN0V8AKxd4jss6ijSi+/4hLvnBJOlks=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=BoLlrrsrE+X0b/LBEXf6dH1ajnK91L8NDlsMoCIpOCJNl5pMhxvch6CFrFqr6RTBw
-	 a1nmVR/m4HsvpKArf+xofLuca2xz8l27/emVEIHw7rY6+SOXkXvr6ncuBGIk5dQ2pR
-	 TKLd2YNnkBzgouuuOoqjGuF7bcsIrIXzX2oQUfIc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 532BW5ku123244
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 2 Apr 2025 06:32:05 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
- Apr 2025 06:32:04 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 2 Apr 2025 06:32:04 -0500
-Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.210])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 532BW3Vx017352;
-	Wed, 2 Apr 2025 06:32:04 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <s-vadapalli@ti.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <kristo@kernel.org>, <rogerq@kernel.org>, <kishon@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <j-choudhary@ti.com>
-Subject: [PATCH v2 1/5] dt-bindings: soc: ti: ti,j721e-system-controller: Add PCIe ctrl property
-Date: Wed, 2 Apr 2025 17:01:57 +0530
-Message-ID: <20250402113201.151195-2-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250402113201.151195-1-j-choudhary@ti.com>
-References: <20250402113201.151195-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1743593546; c=relaxed/simple;
+	bh=BQLUAOp8hcz96+CVPWzJUqpppAiY0RYSuWrm0lq7OXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IGwE0A3wq2ekn/yyt7/AYa9C1TCNMJkFlkXBO4pNwrmMcQdhQUmbziR419+Mmeu2mgSzmxqnnwBhC62ZNeO6sG3y4eooXQOsECUQSi7SNzE87TvMZxy0uXqQ4k//0p6AX7w3Yzp1cf9M6AQKmr4BnFUWnD9gX4oRCjIDcfDqvRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFsIMfwe; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c54b651310so823648285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743593544; x=1744198344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DCEThd8C9jqT4F27805omvPg19dzW3dBb7AMvXXeLjo=;
+        b=gFsIMfwe22UsO4fH0j51HRcwMtFZhsl1Y8fQ+BDduMBO/vCySQlWF4VRGUmrYb+uXa
+         CaTxn+/NlM/lqiQaXEuRrN79Bm4hClps9iw6EO3lql5GfcyG74v/r79/fPi6wLzWZggw
+         x9VKUWHAzjRrz+t1oaw+yRPCmRu7YTuUX3R0WmKQCfR7ktZTGkBK1oNnqK7HFZKv+SQK
+         Bk+9i658bCtD/mLEnVBbD6Kh1TpFaNPfQUtTkyrm2cDeyyISnYPKIcDN2JTVegUs/OZa
+         MCozlX12QbQ0RzLF24gvjsv83V5u07qqn44DBI0L5AW9mxAtRkIarDF9s+vOOVyptNWQ
+         a8mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743593544; x=1744198344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DCEThd8C9jqT4F27805omvPg19dzW3dBb7AMvXXeLjo=;
+        b=m5rr7vcmJrQUbbDTkY1/kSuzay/L11ZQCS0lF1LCljOjDJZHVTpcaj+czFWcQnHBnC
+         bpIlwVjxja8+2sE+6bNINVeNX/PumpE/uiRW0xn0DOGat+CdYjtGpQiez2GvxN6D0Nk/
+         oSKXLzH+hVWqmUwhOpXwLBI4vrvoGf5aeQstFDewCkBD4BehUbeQ3YXAE3aCaQ48Fenw
+         j5jenZPyPplQEN53g7LH/2Gg1c9TJ7IwDog1BnRBwJbCcAqCRxjOxyi96A9LDWu8Qr3f
+         ceCKwI4kZ3fIpg6tAiUL0VVmjixFbSdBJujqx5XxwQ4QVv8sgbeYSBudwIFyJB9ZGnVb
+         nrxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtZOWv8GI6xaVxJ45jnYcGExJUd+4RJPOO1n0QKhxAC63dW379G06GyxvwSXGfCAgm6V6gYhmaDKnhshE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDSk+LlZuwY87auOyccsuIy4EbhdsDtxltDq4Xr0nOTLu9FQtJ
+	0/anihdFpHlcPgN5FjdLpykx2HnaC1VFcDXzUx7IammEI0HUCbjo7jCJ3ROiyns=
+X-Gm-Gg: ASbGncuDf84ZT1DzpWlaH2Fipq/6DXSorMA15hCikGYYf8bvXEMH5BhC68mfHELuWy4
+	5eABeo8p7U8I6nEZR/zMLImBsFxKxlndjAAqHRMmWLG/E92w2axQVk3a/jGoaH2sTE/vlswgY4I
+	BAm8F2n3NrmRuUazsbRtIu9RW3EezvDebOz7TeMK7eF0xUw+uR0wwH0rV1/2U6h4xJxleVhp9/I
+	IId37aS3wFbvc+0E8IsqaiKotQA0E5vS+LzVoArcJltbjlE739UHGIeei6F41QOaXgK2BEiq0K1
+	q59LNqtUgHmyXE6Od9ox5zspR1e3r+lJbx1+causW1J0CRoG9s58vI3ooEg=
+X-Google-Smtp-Source: AGHT+IHXQUOQ4MUkeVIP8CSDJIrsR3b+i6sounU51uvTk7vk1bAa+2aCEmd5MUwLwXE94lWa1jKKDg==
+X-Received: by 2002:a05:620a:2a0b:b0:7c5:43c2:a907 with SMTP id af79cd13be357-7c69072edbcmr2178988285a.26.1743593543771;
+        Wed, 02 Apr 2025 04:32:23 -0700 (PDT)
+Received: from theriatric.mshome.net ([73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5f777dea3sm779839985a.102.2025.04.02.04.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 04:32:23 -0700 (PDT)
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+To: linux-staging@lists.linux.dev
+Cc: philipp.g.hortmann@gmail.com,
+	eamanu@riseup.net,
+	linux-kernel@vger.kernel.org,
+	kernelmentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: Remove trailing whitespace
+Date: Wed,  2 Apr 2025 07:31:58 -0400
+Message-ID: <20250402113158.45760-1-gshahrouzi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,48 +88,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Andrew Davis <afd@ti.com>
+Remove trailing whitespace to comply with kernel coding style.
 
-Add a pattern property for pcie-ctrl which can be part of this controller.
-
-Signed-off-by: Andrew Davis <afd@ti.com>
-[j-choudhary@ti.com: Change description and add example]
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
 ---
- .../bindings/soc/ti/ti,j721e-system-controller.yaml    | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/staging/rtl8723bs/include/hal_pwr_seq.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-index 378e9cc5fac2..13b6b6fa5dee 100644
---- a/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,j721e-system-controller.yaml
-@@ -68,6 +68,11 @@ patternProperties:
-     description:
-       The node corresponding to SoC chip identification.
+diff --git a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+index b93d74a5b9a5..48bf7f66a06e 100644
+--- a/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
++++ b/drivers/staging/rtl8723bs/include/hal_pwr_seq.h
+@@ -209,7 +209,7 @@
+ #define RTL8723B_TRANS_END															\
+ 	/* format */																\
+ 	/* { offset, cut_msk, fab_msk|interface_msk, base|cmd, msk, value }, comments here*/								\
+-	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0}, 
++	{0xFFFF, PWR_CUT_ALL_MSK, PWR_FAB_ALL_MSK, PWR_INTF_ALL_MSK, 0, PWR_CMD_END, 0, 0},
  
-+  "^pcie-ctrl@[0-9a-f]+$":
-+    type: object
-+    description:
-+      The node corresponding to PCIe control register.
-+
- required:
-   - compatible
-   - reg
-@@ -110,5 +115,10 @@ examples:
-             compatible = "ti,am654-chipid";
-             reg = <0x14 0x4>;
-         };
-+
-+        pcie0_ctrl: pcie-ctrl@4070 {
-+            compatible = "ti,j784s4-pcie-ctrl", "syscon";
-+            reg = <0x4070 0x4>;
-+        };
-     };
- ...
+ 
+ extern struct wlan_pwr_cfg rtl8723B_power_on_flow[RTL8723B_TRANS_CARDEMU_TO_ACT_STEPS+RTL8723B_TRANS_END_STEPS];
 -- 
-2.34.1
+2.43.0
 
 
