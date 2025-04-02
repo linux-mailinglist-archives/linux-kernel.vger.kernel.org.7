@@ -1,187 +1,125 @@
-Return-Path: <linux-kernel+bounces-585699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA7EA79642
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:07:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64237A79647
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A652188F2D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:08:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E0FC7A3B1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1801EF38E;
-	Wed,  2 Apr 2025 20:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D84C1F09AB;
+	Wed,  2 Apr 2025 20:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0M8f6CAK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r41Fkh3m";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0M8f6CAK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r41Fkh3m"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cbIJZk4n"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC51EF0A3
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E89919CCEC;
+	Wed,  2 Apr 2025 20:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743624463; cv=none; b=PdvG6aeEBezUb78IrMSdv234U5ZM+d+cU1ocRs3MUbtZ1rCEAdik2TVcNF0TgWbFaxnnZZOMhimb6O1ugZq25kmZsZKPedikLKNbqfBuTsTgc27+9dZGTISnFr2/W0oTBzce5PN7IQc0kBGYiBv4JNRgmsMDlMwIrI68gzQQ1RY=
+	t=1743624589; cv=none; b=beQWdBzUowMXAKGrcSQTz/yqqtKCgz4ZDPLdcvCtPhd6uONn9IENvdn1XLWTPcJhupLBPffXdEeJ5Yh0vQgW1EOZsxUgmoKz9RmvPeC5ZOZTp8ggR5KDDJOV2RsNyvMk4LTCvb5AnGXS+DqBY8dITO38nohtdw6fHt+7itPYXqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743624463; c=relaxed/simple;
-	bh=poh+U8UleCOeSwYeg2OLhmlTvH7tkKlO9s0Kva+gGho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4G2fBZ48ROKjE3UNtR7jzUvupJkQXiXnK55k3Mv+X7HyxvxBYgJdjrviVuWIMcTQvsQcAhmg7qxD0C851wiDz9Ae0gVm/v1h1w3L+836wVYMV9jnQvW1svIlt/xHsUwGwnHNhrWXtv1n8v711x/ET8FvJEn+mNgYUgQEUeNXh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0M8f6CAK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r41Fkh3m; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0M8f6CAK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r41Fkh3m; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2242E1F385;
-	Wed,  2 Apr 2025 20:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743624460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
-	b=0M8f6CAKlAV0wm8SXL2AP2ITBuMRrnrmw6iQPHxudPETSh2YNfT2RDryC7w6BoNsdVEmul
-	ULjNyePBQgh09KiQkwpOGlWIagsvi0kttQGUQy5ytKqytxhiZzZcHe/m8iqTKbXqj7o25g
-	e/7/6qcNLduhr/RbCAV63tAR+V1SMps=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743624460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
-	b=r41Fkh3msYjJV7kOkSA1cy88LQ+b2ZOHmnNx2juVMraBtYiOm2lORIZAabf8c8qagrPR53
-	v1dfPDC4UEtplvAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743624460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
-	b=0M8f6CAKlAV0wm8SXL2AP2ITBuMRrnrmw6iQPHxudPETSh2YNfT2RDryC7w6BoNsdVEmul
-	ULjNyePBQgh09KiQkwpOGlWIagsvi0kttQGUQy5ytKqytxhiZzZcHe/m8iqTKbXqj7o25g
-	e/7/6qcNLduhr/RbCAV63tAR+V1SMps=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743624460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
-	b=r41Fkh3msYjJV7kOkSA1cy88LQ+b2ZOHmnNx2juVMraBtYiOm2lORIZAabf8c8qagrPR53
-	v1dfPDC4UEtplvAg==
-Date: Wed, 2 Apr 2025 22:07:39 +0200
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: tis: Increase the default for timeouts B and C
-Message-ID: <Z-2ZC2Ew2EtNAW6-@kitsune.suse.cz>
-References: <20250402172134.7751-1-msuchanek@suse.de>
- <Z-13xOebA3LvQQ-8@earth.li>
+	s=arc-20240116; t=1743624589; c=relaxed/simple;
+	bh=ivLCqn6fTGToftoyRExLPUaf+cLv2vyeXoLLN8P3lqw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eXfxYvlL0PIOSmMlZE9VNbSIC+tW6Gm3dfsHCvBlD+yLY31aSQl9hSyK8Hy0pfPdgxGXlZS4belPbco3uKfxR+glheOmMr5BSy6NB3eDmDEUsPLP0WYW2iJLFrv2koCcJreg73650kuXhBB5k5s3STxxQKPnNRvYkjYkiNqxjSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cbIJZk4n; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743624587; x=1775160587;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=G95KGNCXOqN2ZdoOM6HrRr/31MrkehfIMvurjTouN0k=;
+  b=cbIJZk4ntUbS5oIQ7G1eJUxWlYUj0wu8aTZC7QonEz14xqNJey5SJDMx
+   jwWK4bUJWOgr6L6mkTI236UlcnTAnTF6DQsSzQVpCwmuE5C5MdwK8ZWwK
+   9WoCdAHCC4NkogaBIERgZGOgSkYHvAKp8RCSPP3n1zp1xXmm9GMEcBCNf
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.15,183,1739836800"; 
+   d="scan'208";a="812782096"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 20:09:41 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:2205]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.224:2525] with esmtp (Farcaster)
+ id 614af337-dd4a-4850-9165-dd168ccf4a23; Wed, 2 Apr 2025 20:09:40 +0000 (UTC)
+X-Farcaster-Flow-ID: 614af337-dd4a-4850-9165-dd168ccf4a23
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 20:09:40 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.101.8) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 20:09:36 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <gregkh@linuxfoundation.org>
+CC: <cve@kernel.org>, <edumazet@google.com>, <ematsumiya@suse.de>,
+	<kuniyu@amazon.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-net@vger.kernel.org>,
+	<sfrench@samba.org>, <smfrench@gmail.com>, <wangzhaolong1@huawei.com>,
+	<zhangchangzhong@huawei.com>
+Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
+Date: Wed, 2 Apr 2025 13:09:19 -0700
+Message-ID: <20250402200928.4320-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <2025040248-tummy-smilingly-4240@gregkh>
+References: <2025040248-tummy-smilingly-4240@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-13xOebA3LvQQ-8@earth.li>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWA003.ant.amazon.com (10.13.139.46) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Wed, Apr 02, 2025 at 06:45:40PM +0100, Jonathan McDowell wrote:
-> On Wed, Apr 02, 2025 at 07:21:30PM +0200, Michal Suchanek wrote:
-> > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
-> > C) can reach up to about 2250 ms.
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Wed, 2 Apr 2025 16:18:37 +0100
+> On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
+> > > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
+> > > > Yes, it seems the previous description might not have been entirely clear.
+> > > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
+> > > > does not actually address any real issues. It also fails to resolve the null pointer
+> > > > dereference problem within lockdep. On top of that, it has caused a series of
+> > > > subsequent leakage issues.
+> > > 
+> > > If this cve does not actually fix anything, then we can easily reject
+> > > it, please just let us know if that needs to happen here.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > Hi Greg,
 > > 
-> > Extend the timeout duration to accommodate this.
-> 
-> The problem here is the bump of timeout_c is going to interact poorly with
-> the Infineon errata workaround, as now we'll wait 4s instead of 200ms to
-> detect the stuck status change.
-
-Yes, that's problematic. Is it possible to detect the errata by anything
-other than waiting for the timeout to expire?
-
-> 
-> (Also shouldn't timeout_c already end up as 750ms, as it's
-> max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C), and TIS_SHORT_TIMEOUT is 750 vs 200
-> for TPM2_TIMEOUT_C? That doesn't seem to be borne out by your logs, nor my
-> results.)
-
-Indeed, it should be 750ms but the logs show 200ms. I do not see
-where it could get reduced, nor any significan difference between the
-mainline code and the kernel I am using in this area.
-
-Thanks
-
-Michal
-
-> 
-> > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> > An alternative would be to add an entry to vendor_timeout_overrides but
-> > I do not know how to determine the chip IDs to put into this table.
-> > ---
-> > drivers/char/tpm/tpm_tis_core.h | 4 ++--
-> > 1 file changed, 2 insertions(+), 2 deletions(-)
+> > Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
+> > should be rejected. Our analysis shows:
 > > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-> > index 970d02c337c7..1ff565be2175 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.h
-> > +++ b/drivers/char/tpm/tpm_tis_core.h
-> > @@ -54,7 +54,7 @@ enum tis_int_flags {
-> > enum tis_defaults {
-> > 	TIS_MEM_LEN = 0x5000,
-> > 	TIS_SHORT_TIMEOUT = 750,	/* ms */
-> > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
-> > +	TIS_LONG_TIMEOUT = 4000,	/* 2 sec */
-> > 	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
-> > 	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
-> > };
-> > @@ -64,7 +64,7 @@ enum tis_defaults {
-> >  */
-> > #define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
-> > #define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
-> > -#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
-> > +#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_C)
-> > #define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
+> > 1. It fails to address the actual null pointer dereference in lockdep
 > > 
-> > #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
-> > -- 
-> > 2.47.1
+> > 2. It introduces multiple serious issues:
+> >    1. A socket leak vulnerability as documented in bugzilla #219972
+> >    2. Network namespace refcount imbalance issues as described in
+> >      bugzilla #219792 (which required the follow-up mainline fix
+> >      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
+> >      causing leaks and use-after-free")
 > > 
+> > The next thing we should probably do is:
+> >    - Reverting e9f2517a3e18
+> >    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
+> >      problems introduced by the problematic CVE patch
 > 
-> J.
-> 
-> -- 
-> ... "Tom's root boot is the Linux world equivalent of a 'get out of jail
->     free' card. The man is a *hero*." -- Simon Brooke, ucol.
+> Great, can you please send patches now for both of these so we can
+> backport them to the stable kernels properly?
+
+Sent to CIFS tree:
+https://lore.kernel.org/linux-cifs/20250402200319.2834-1-kuniyu@amazon.com/
+
+Thanks!
 
