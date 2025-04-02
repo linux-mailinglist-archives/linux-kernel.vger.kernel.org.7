@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-584608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA36A78935
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C514DA78934
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A85E3B1381
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:54:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3224E189247E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AAB233728;
-	Wed,  2 Apr 2025 07:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="grhnVAI/"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C03323372A;
+	Wed,  2 Apr 2025 07:55:18 +0000 (UTC)
+Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D3D2746C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956012F5A;
+	Wed,  2 Apr 2025 07:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743580463; cv=none; b=uuuBCNQ4v7p+st5nXVZzZSS7dO86/L7GLwJu1UniZCYGY6N7nUUN+Oi44uXXujss5Oe7WctR/0PDvkmx5xiL6mddnV8K72LY7sQXxJb7GEg8UqEnfv9kw5kvUVYbleG0eDmAs22IMw1/BAwr8I1vWVv1gVV/a+J7DKrpjg27zxk=
+	t=1743580517; cv=none; b=UFkHvIHmICODvkq0srTy0TzeyT8k/tt9ak5hbNX5eQpCZqA8wVWzHLJM21umBqwwcXQKuoF6Ct0afn3TGsuxK2GG1lMn1EiHmQiWIy+IEVwd+KpH3nxFa+vdGUbwhTt0EGhcp+uZ2PwQ0bexFBb/sjanClctdJv0OIEKOxXnldU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743580463; c=relaxed/simple;
-	bh=c509z78gLwInA8mWC4l1f86kaUPKhKxnSr2LvkkSCJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbrG+HD1/wRxxcQxt10CERng7lW9VZnhZ+pfnwB1FsXtxDmHbVwFyoM3ARuOnGXW6dN9HHxeN8HAlvJBYwmR29Nk9+/j//rTPGIvvltA4zM/SwcnrlK4lpQIFyEfuxAYfzcwhhY8pIgB6+ynDnk/B1/Zeff3j1jyIv0ImwmsDc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=grhnVAI/; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EPaGWIUiXvI5cFuhDoTAev3QSns7G4LVvZrvmwGMQfU=; b=grhnVAI/7cW/wQ/p81PWH/eGdb
-	K9dy8mQqv7zc3GeXC1s0YHJ7jcbNsI8b9RLZimF4J8uuzy+bWzXOLNwBQwONegWqKuQPwu6PhRV6V
-	5UEqG6SUtTTn2g2tvwLABxK3IxvgPGiO516wt/QuKGhQ1H6mwqRxudAHsfhhsCTQwWjKUXXd2kXyR
-	kpbf4wAOYPGr+TVyQKaLGq1uMCaqMaPyk/OJ1Zs9vtCV/dgsVAHFvkMkpHsFKgm28p0HD3wtk8729
-	6PAe4KV/WkQAlpshXGT8BE8IEhX9WXxsFqsV42UvPbj3m4hjv3TxKCM7t/0Ixfa0vxpO8m5x7eneF
-	NppkCIAQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tzsvS-00000006zPX-0Jxj;
-	Wed, 02 Apr 2025 07:54:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A625530049D; Wed,  2 Apr 2025 09:54:17 +0200 (CEST)
-Date: Wed, 2 Apr 2025 09:54:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 11/49] x86/alternatives: Remove the confusing, inaccurate
- & unnecessary 'temp_mm_state_t' abstraction
-Message-ID: <20250402075417.GS5880@noisy.programming.kicks-ass.net>
-References: <20250328132704.1901674-1-mingo@kernel.org>
- <20250328132704.1901674-12-mingo@kernel.org>
- <20250401143624.GI5880@noisy.programming.kicks-ass.net>
- <Z-w5INj77OkbFDQe@gmail.com>
- <Z-y3958dG_giqfjw@gmail.com>
+	s=arc-20240116; t=1743580517; c=relaxed/simple;
+	bh=4YO5TIvnXhsRP13fJXk665Ug4/x4CRmu0+dMycblV30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f2Id/9g5xQJH6rQp0ctt/9QvPhWwbdi3NJDDhTem+7Yp6RVuwtlMNJ6LQ5obXgGw7hhmNDbzfCUWNX4pZlWTwZZbHnYx8drQl5pHiNkRNkhws0DwaKqEDW+sbznPYnA0dUJMg7UlS4OXkphhEQkT4drz832JWqbzxXes63vJ8SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
+Received: from [192.168.42.36]
+	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.97.1)
+	(envelope-from <jaco@uls.co.za>)
+	id 1tzsw2-000000004KP-1AsD;
+	Wed, 02 Apr 2025 09:54:54 +0200
+Message-ID: <3f71532b-4fed-458a-a951-f631155c0107@uls.co.za>
+Date: Wed, 2 Apr 2025 09:54:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-y3958dG_giqfjw@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
+ size.
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr,
+ joannelkoong@gmail.com, rdunlap@infradead.org, trapexit@spawn.link,
+ david.laight.linux@gmail.com
+References: <20250314221701.12509-1-jaco@uls.co.za>
+ <20250401142831.25699-1-jaco@uls.co.za>
+ <20250401142831.25699-3-jaco@uls.co.za>
+ <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
+ <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
+ <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
+Content-Language: en-GB
+From: Jaco Kroon <jaco@uls.co.za>
+Autocrypt: addr=jaco@uls.co.za; keydata=
+ xsBNBFXtplYBCADM6RTLCOSPiclevkn/gdf8h9l+kKA6N+WGIIFuUtoc9Gaf8QhXWW/fvUq2
+ a3eo4ULVFT1jJ56Vfm4MssGA97NZtlOe3cg8QJMZZhsoN5wetG9SrJvT9Rlltwo5nFmXY3ZY
+ gXsdwkpDr9Y5TqBizx7DGxMd/mrOfXeql57FWFeOc2GuJBnHPZQMJsQ66l2obPn36hWEtHYN
+ gcUSPH3OOusSEGZg/oX/8WSDQ/b8xz1JKTEgcnu/JR0FxzjY19zSHmbnyVU+/gF3oeJFcEUk
+ HvZu776LRVdcZ0lb1bHQB2K9rTZBVeZLitgAefPVH2uERVSO8EZO1I5M7afV0Kd/Vyn9ABEB
+ AAHNG0phY28gS3Jvb24gPGphY29AdWxzLmNvLnphPsLAdwQTAQgAIQUCVe2mVgIbAwULCQgH
+ AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAILcSxr/fungCPB/sHrfufpRbrVTtHUjpbY4bTQLQE
+ bVrh4/yMiKprALRYy0nsMivl16Q/3rNWXJuQ0gR/faC3yNlDgtEoXx8noXOhva9GGHPGTaPT
+ hhpcp/1E4C9Ghcaxw3MRapVnSKnSYL+zOOpkGwye2+fbqwCkCYCM7Vu6ws3+pMzJNFK/UOgW
+ Tj8O5eBa3DiU4U26/jUHEIg74U+ypYPcj5qXG0xNXmmoDpZweW41Cfo6FMmgjQBTEGzo9e5R
+ kjc7MH3+IyJvP4bzE5Paq0q0b5zZ8DUJFtT7pVb3FQTz1v3CutLlF1elFZzd9sZrg+mLA5PM
+ o8PG9FLw9ZtTE314vgMWJ+TTYX0kzsBNBFXtplYBCADedX9HSSJozh4YIBT+PuLWCTJRLTLu
+ jXU7HobdK1EljPAi1ahCUXJR+NHvpJLSq/N5rtL12ejJJ4EMMp2UUK0IHz4kx26FeAJuOQMe
+ GEzoEkiiR15ufkApBCRssIj5B8OA/351Y9PFore5KJzQf1psrCnMSZoJ89KLfU7C5S+ooX9e
+ re2aWgu5jqKgKDLa07/UVHyxDTtQKRZSFibFCHbMELYKDr3tUdUfCDqVjipCzHmLZ+xMisfn
+ yX9aTVI3FUIs8UiqM5xlxqfuCnDrKBJjQs3uvmd6cyhPRmnsjase48RoO84Ckjbp/HVu0+1+
+ 6vgiPjbe4xk7Ehkw1mfSxb79ABEBAAHCwF8EGAEIAAkFAlXtplYCGwwACgkQCC3Esa/37p7u
+ XwgAjpFzUj+GMmo8ZeYwHH6YfNZQV+hfesr7tqlZn5DhQXJgT2NF6qh5Vn8TcFPR4JZiVIkF
+ o0je7c8FJe34Aqex/H9R8LxvhENX/YOtq5+PqZj59y9G9+0FFZ1CyguTDC845zuJnnR5A0lw
+ FARZaL8T7e6UGphtiT0NdR7EXnJ/alvtsnsNudtvFnKtigYvtw2wthW6CLvwrFjsuiXPjVUX
+ 825zQUnBHnrED6vG67UG4z5cQ4uY/LcSNsqBsoj6/wsT0pnqdibhCWmgFimOsSRgaF7qsVtg
+ TWyQDTjH643+qYbJJdH91LASRLrenRCgpCXgzNWAMX6PJlqLrNX1Ye4CQw==
+Organization: Ultimate Linux Solutions (Pty) Ltd
+In-Reply-To: <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-report: Relay access (ida.uls.co.za).
 
-On Wed, Apr 02, 2025 at 06:07:19AM +0200, Ingo Molnar wrote:
-> 
-> * Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > 
-> > * Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > On Fri, Mar 28, 2025 at 02:26:26PM +0100, Ingo Molnar wrote:
-> > > > So the temp_mm_state_t abstraction used by use_temporary_mm() and
-> > > > unuse_temporary_mm() is super confusing:
-> > > 
-> > > I thing I see what you're saying, but we also still have these patches
-> > > pending:
-> > > 
-> > >   https://lkml.kernel.org/r/20241119162527.952745944@infradead.org
-> > > 
-> > > :-(
-> > 
-> > Yeah, so I think we should do your queue on top of mine, the
-> > whole temp_mm_state_t abstraction was rather nonsensical,
-> > and we shouldn't be iterating confusing code...
-> > 
-> > I've ported patches #1 and #3 from your queue on top, see
-> > attached below - these should be the two that represent 99%
-> > of the conflicts between these two efforts AFAICS.
-> > 
-> > Does that work for you?
-> 
-> To make this an easier decision, I've ported Andy's and your patches on 
-> top of the x86/alternatives series, into WIP.x86/mm, resolving the 
-> conflicts, with a few touchups:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/mingo/tip.git WIP.x86/mm
-> 
-> Seems to work fine, after some light testing.
-> 
-> I'll send it out for another round of review if that's fine to you.
+Hi,
 
-Yep, that looks right, Thanks!
+I can definitely build on that, thank you.
+
+What's the advantage of kvmalloc over folio's here, why should it be 
+preferred?
+
+Kind regards,
+Jaco
+
+On 2025/04/01 17:33, Miklos Szeredi wrote:
+> On Tue, 1 Apr 2025 at 17:04, Jaco Kroon <jaco@uls.co.za> wrote:
+>
+>> Because fuse_simple_request via fuse_args_pages (ap) via fuse_io_args
+>> (ia) expects folios and changing that is more than what I'm capable off,
+>> and has larger overall impact.
+> Attaching a minimally tested patch.
+>
+> Thanks,
+> Miklos
 
