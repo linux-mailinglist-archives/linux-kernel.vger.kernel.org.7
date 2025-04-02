@@ -1,189 +1,206 @@
-Return-Path: <linux-kernel+bounces-585715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6EAA79663
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:19:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E65A79664
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036B7169A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B427A1895507
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298FA1F03D8;
-	Wed,  2 Apr 2025 20:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5771EFFA9;
+	Wed,  2 Apr 2025 20:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="axLO7djj"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNsGv5RE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214CB1925AB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6241925AB;
+	Wed,  2 Apr 2025 20:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743625135; cv=none; b=QFVgamEekXXVkOgiNLjg8XSLNYScRrKLwZ1oJhN6eyshkxr3wzG5qRyBeHLsaPuBFDRBN3cs4EvTMatvKzAz/C4pV/RvhoHNRxPIE7C2ZvvRg25aTbatS9X3vgzDLhQyYMlRDd9tuq0JGQ6Q5u2HO14OyPSxDsjQs0w2uDbX0ik=
+	t=1743625150; cv=none; b=lCo4UbHg2iwt5DnMJTWE8KrmNCkXYYuMMxZLNqJTDdpn+YhPgv0kI1Mvmi16hYF6d67V5aKOocxh0IRieSOrmwxbKypUbdfVa+Nxlr9nkDA4KCtmmQfmsO10/zU9UIa4blMN/A9RvMRtv/78lX11qGDMfSHpOTpaqveY4dsE7vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743625135; c=relaxed/simple;
-	bh=XHyDFP0jYnL7x023MINILK7M6WdT8s1+oUeFwb4rg/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rLVJGr2ObcGa0ynS52QOfov45OYDayX27gQl1eL1tVm2rtmNmKCmZNc41B+kxTlm7am58z2Ma+GyQWsUdGotF8w6zmisz1FNpbg+RX0dspRPCDk1DVQ7kMP9i9FH2fzBH8zFle5+G9j1jNNfMLqdDOqopd7/x6lueSr76RlUEaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=axLO7djj; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ARg7i8/7R/o0DITALlPq6tBgDHCD4rhJgI/lZjiTKt0=; b=axLO7djjobtsjWQ1aIARrbP65F
-	sOZyGGv5vn7VsWGTopSz4jE35s4eP5zwPrrImxq/C644MBHgOGC05qmUvm76DgKwDekfCVsjxlfcX
-	860G3h6nkqsvQRlUQlRevVJvKDMZCAtT4kMLrJirp3zuXSiJrQvgHT/dq5SKvFhhdO/vcZtfzdHko
-	FdvcCldiguFQGQbGGTHDO1X2cWrG1vNlhXLCPw/Ce2YrNAMkN44SHkJsv0VfmFyOaOCOrgSZbniVl
-	XzXZAEIUy8WRW9zhgDRymfDslmSgybEJWSkV67MyJDaKb1Kp8mq572qB/MgU6TydUFI6w5x6xew4L
-	7Hyj9v5w==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u04Xr-0000000759o-0W4X;
-	Wed, 02 Apr 2025 20:18:43 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u04Xp-0000000DcHF-31hz;
-	Wed, 02 Apr 2025 21:18:41 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>
+	s=arc-20240116; t=1743625150; c=relaxed/simple;
+	bh=PBAlCXXoeZYK4hLqIaAvGTjwa5glXZM1tJS6eSjSSww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj+LJsDdHWGyBOc2IKv6FE29RfFdLPiGTJOZgRpNQPyEBAA7/1mNxBb2oH5bHFd+Tz9vnZCQmJMvCQ3TRqHfkzoVwSf/OrFO7iUkgoaL3kUd7i4UWnECPtkD1XJc2DNJrmbaSoju/aiwDSfn//DRO+nak/4yA8xPURyj1XGMySM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNsGv5RE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5554BC4CEDD;
+	Wed,  2 Apr 2025 20:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743625150;
+	bh=PBAlCXXoeZYK4hLqIaAvGTjwa5glXZM1tJS6eSjSSww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TNsGv5REBUv5cCT3Y6XQje0aF3DB0+YmNtT4Z8Guj8UnqP9RDvNkPh30jZCNJ6ym/
+	 ZYe5NowHojMJrVjp7O1ai7s2tjouVNUHS0RUE7OZayzmNTZNGUgq36PRUDhK0aZaFU
+	 ujflV2XCHpWTbN2b6vk/r5o9Ttku8oPuqsL8H1j410RsfZ4NlTatOVmbdm4guXXZqp
+	 bVKxgqmn5hngT7OjGOvj5fCLkUw0lcHgNdtXqygBbwQaJl+A9AwUNeCv70o9iFpba5
+	 4yoqbCjOIKhAZBP1SyDDZKiTsH2KyjMsLt9ILHAC85utAuq/POgnQVkBFhnZ21G4md
+	 h4MoLQ9RrqesQ==
+Date: Wed, 2 Apr 2025 23:18:55 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	kvmarm@lists.cs.columbia.edu,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 3/3] mm: Implement for_each_valid_pfn() for CONFIG_SPARSEMEM
-Date: Wed,  2 Apr 2025 21:18:41 +0100
-Message-ID: <20250402201841.3245371-3-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250402201841.3245371-1-dwmw2@infradead.org>
-References: <Z-vn-sMtNfwyJ9VW@kernel.org>
- <20250402201841.3245371-1-dwmw2@infradead.org>
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>
+Subject: Re: [PATCH v2 10/13] arch, mm: set high_memory in free_area_init()
+Message-ID: <Z-2br1vk8lf9V40T@kernel.org>
+References: <20250313135003.836600-1-rppt@kernel.org>
+ <20250313135003.836600-11-rppt@kernel.org>
+ <20250402140521-bf9b3743-094e-4097-a189-10cdf1db9255@linutronix.de>
+ <Z-0xrWyff9-9bJRf@kernel.org>
+ <20250402145330-3ff21a6b-fb03-4bc8-8178-51a535582c6f@linutronix.de>
+ <20250402181842-f25872a1-00f7-4a8f-ae6d-3927899ee3a6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250402181842-f25872a1-00f7-4a8f-ae6d-3927899ee3a6@linutronix.de>
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Wed, Apr 02, 2025 at 06:31:02PM +0200, Thomas Weißschuh wrote:
+> On Wed, Apr 02, 2025 at 03:07:51PM +0200, Thomas Weißschuh wrote:
+> > On Wed, Apr 02, 2025 at 03:46:37PM +0300, Mike Rapoport wrote:
+> > > On Wed, Apr 02, 2025 at 02:19:01PM +0200, Thomas Weißschuh wrote:
+> > > > (drop all the non-x86 and non-mm recipients)
+> > > > 
+> > > > On Thu, Mar 13, 2025 at 03:50:00PM +0200, Mike Rapoport wrote:
+> > > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > > > > 
+> > > > > high_memory defines upper bound on the directly mapped memory.
+> > > > > This bound is defined by the beginning of ZONE_HIGHMEM when a system has
+> > > > > high memory and by the end of memory otherwise.
+> > > > > 
+> > > > > All this is known to generic memory management initialization code that
+> > > > > can set high_memory while initializing core mm structures.
+> > > > > 
+> > > > > Add a generic calculation of high_memory to free_area_init() and remove
+> > > > > per-architecture calculation except for the architectures that set and
+> > > > > use high_memory earlier than that.
+> > > > 
+> > > > This change (in mainline as commit e120d1bc12da ("arch, mm: set high_memory in free_area_init()")
+> > > > breaks booting i386 on QEMU for me (and others [0]).
+> > > > The boot just hangs without output.
+> > > > 
+> > > > It's easily reproducible with kunit:
+> > > > ./tools/testing/kunit/kunit.py run --arch i386
+> > > > 
+> > > > See below for the specific problematic hunk.
+> > > > 
+> > > > [0] https://lore.kernel.org/lkml/CA+G9fYtdXHVuirs3v6at3UoKNH5keuq0tpcvpz0tJFT4toLG4g@mail.gmail.com/
+> > > > 
+> > > > 
+> > > > > diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+> > > > > index 6d2f8cb9451e..801b659ead0c 100644
+> > > > > --- a/arch/x86/mm/init_32.c
+> > > > > +++ b/arch/x86/mm/init_32.c
+> > > > > @@ -643,9 +643,6 @@ void __init initmem_init(void)
+> > > > >  		highstart_pfn = max_low_pfn;
+> > > > >  	printk(KERN_NOTICE "%ldMB HIGHMEM available.\n",
+> > > > >  		pages_to_mb(highend_pfn - highstart_pfn));
+> > > > > -	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
+> > > > > -#else
+> > > > > -	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
+> > > > >  #endif
+> > > > 
+> > > > Reverting this hunk fixes the issue for me.
+> > >  
+> > > This is already done by d893aca973c3 ("x86/mm: restore early initialization
+> > > of high_memory for 32-bits").
+> > 
+> > Thanks. Of course I only noticed this shortly after sending my mail.
+> > But this usecase is indeed broken on mainline.
+> > Some further bisecting lead to the mm merge commit being broken, while both its
+> > parents work. That lead the bisection astray.
+> > eb0ece16027f ("Merge tag 'mm-stable-2025-03-30-16-52' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm")
+> > 
+> > As unlikely as it sounds, it's reproducible. I'll investigate a bit.
+> 
+> The issue is fixed with the following diff:
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 284154445409..8cd95f60015d 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -2165,7 +2165,8 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
+>                                  phys_addr_t end)
+>  {
+>         unsigned long start_pfn = PFN_UP(start);
+> -       unsigned long end_pfn = PFN_DOWN(end);
+> +       unsigned long end_pfn = min_t(unsigned long,
+> +                                     PFN_DOWN(end), max_low_pfn);
 
-Introduce a pfn_first_valid() helper which takes a pointer to the PFN and
-updates it to point to the first valid PFN starting from that point, and
-returns true if a valid PFN was found.
+This will leave HIGHMEM completely unusable. The proper fix is
 
-This largely mirrors pfn_valid(), calling into a pfn_section_first_valid()
-helper which is trivial for the !CONFIG_SPARSEMEM_VMEMMAP case, and in
-the VMEMMAP case will skip to the next subsection as needed.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- include/linux/mmzone.h | 65 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32ecb5cadbaf..a389d1857b85 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -2074,11 +2074,37 @@ static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 64ae678cd1d1..d7ff8dfe5f88 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -2166,6 +2166,9 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
+ 	unsigned long start_pfn = PFN_UP(start);
+ 	unsigned long end_pfn = PFN_DOWN(end);
  
- 	return usage ? test_bit(idx, usage->subsection_map) : 0;
- }
++	if (!IS_ENABLED(CONFIG_HIGHMEM) && end_pfn > max_low_pfn)
++		end_pfn = max_low_pfn;
 +
-+static inline bool pfn_section_first_valid(struct mem_section *ms, unsigned long *pfn)
-+{
-+	struct mem_section_usage *usage = READ_ONCE(ms->usage);
-+	int idx = subsection_map_index(*pfn);
-+	unsigned long bit;
-+
-+	if (!usage)
-+		return false;
-+
-+	if (test_bit(idx, usage->subsection_map))
-+		return true;
-+
-+	/* Find the next subsection that exists */
-+	bit = find_next_bit(usage->subsection_map, SUBSECTIONS_PER_SECTION, idx);
-+	if (bit == SUBSECTIONS_PER_SECTION)
-+		return false;
-+
-+	*pfn = (*pfn & PAGE_SECTION_MASK) + (bit * PAGES_PER_SUBSECTION);
-+	return true;
-+}
- #else
- static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
- {
- 	return 1;
- }
-+
-+static inline bool pfn_section_first_valid(struct mem_section *ms, unsigned long *pfn)
-+{
-+	return true;
-+}
- #endif
- 
- void sparse_init_early_section(int nid, struct page *map, unsigned long pnum,
-@@ -2127,6 +2153,45 @@ static inline int pfn_valid(unsigned long pfn)
- 
- 	return ret;
- }
-+
-+static inline bool first_valid_pfn(unsigned long *p_pfn)
-+{
-+	unsigned long pfn = *p_pfn;
-+	unsigned long nr = pfn_to_section_nr(pfn);
-+	struct mem_section *ms;
-+	bool ret = false;
-+
-+	ms = __pfn_to_section(pfn);
-+
-+	rcu_read_lock_sched();
-+
-+	while (!ret && nr <= __highest_present_section_nr) {
-+		if (valid_section(ms) &&
-+		    (early_section(ms) || pfn_section_first_valid(ms, &pfn))) {
-+			ret = true;
-+			break;
-+		}
-+
-+		nr++;
-+		if (nr > __highest_present_section_nr)
-+			break;
-+
-+		pfn = section_nr_to_pfn(nr);
-+		ms = __pfn_to_section(pfn);
-+	}
-+
-+	rcu_read_unlock_sched();
-+
-+	*p_pfn = pfn;
-+
-+	return ret;
-+}
-+
-+#define for_each_valid_pfn(_pfn, _start_pfn, _end_pfn)	       \
-+	for ((_pfn) = (_start_pfn);			       \
-+	     first_valid_pfn(&(_pfn)) && (_pfn) < (_end_pfn);  \
-+	     (_pfn)++)
-+
- #endif
- 
- static inline int pfn_in_present_section(unsigned long pfn)
+ 	if (start_pfn >= end_pfn)
+ 		return 0;
+
+I've sent it along with the fix for x86 [1] (commit 7790c9c9265e
+("memblock: don't release high memory to page allocator when HIGHMEM is
+off") in mm-unstable), but for some reason it didn't make it to the Linus
+tree :/
+
+@Andrew, are you going to send it to Linus or you prefer if I take it via
+memblock tree? 
+
+[1] https://lore.kernel.org/all/20250325114928.1791109-3-rppt@kernel.org/
+
+>         if (start_pfn >= end_pfn)
+>                 return 0;
+> 
+> 
+> Background:
+> 
+> This reverts part of commit 6faea3422e3b ("arch, mm: streamline HIGHMEM freeing")
+> which is the direct child of the partially reverted 
+> commit e120d1bc12da ("arch, mm: set high_memory in free_area_init()").
+> The assumptions the former commit became invalid with the partial revert the latter.
+> 
+> This bug only triggers when CONFIG_HIGHMEM=n. When mm was branched from mainline
+> the i386 configuration generated by kunit ended up with CONFIG_HIGHMEM=y.
+> With some recent changes in mainline the kunit configuration switched to
+> CONFIG_HIGHMEM=n, triggering this specific reproducer only when mm got merged
+> into mainline again.
+> 
+> New kunit reproducer:
+> ./tools/testing/kunit/kunit.py run --arch i386 example --timeout 10 --kconfig_add CONFIG_HIGHMEM=n
+> 
+> Does this sound reasonable?  If so I'll send a patch tomorrow.
+> 
+> @Naresh, could you test this, too?
+> 
+> 
+> Thomas
+
 -- 
-2.49.0
-
+Sincerely yours,
+Mike.
 
