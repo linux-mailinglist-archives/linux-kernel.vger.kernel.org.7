@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-584555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A136A7888E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A184FA788A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978B37A4BF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0A016FB2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4448B2356D8;
-	Wed,  2 Apr 2025 07:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227B1235BFB;
+	Wed,  2 Apr 2025 07:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/O3E6mh"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JjtCivvn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF8B23315D;
-	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDEF231CB0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577642; cv=none; b=pEdCaQrJ6C/RdOgudpyI3tUMcJyvei5kFJuteCQV7RsRSQo1SuIkcoIiOp3wNchBzo5t0rMzEwZHeELw1kWUvYQe6TwTAP7cPOP/3/JxpUAKTu3w5mBbDkR60cl/XtKvAdCpmCFQNunAOwX7y7BwEqDvINSCuAlWGo/MJRmWY6w=
+	t=1743577735; cv=none; b=cKIAG0kqgpXLksIg0mtfeq9AheOwnMgCwoDDDNUYiLYOzP221Ex7Ol8Sp438FpPdEGi/e3LvDfM0GdSdbJzIOoCO5PEHhlmbGQq9NXHd5iVNkifnGCv/S/lHUhVipxu86k+J/MWJORbYdacIbVul59hLeT9TzekmGePPpsQbR9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743577642; c=relaxed/simple;
-	bh=4IGWq8kONdx8Xhp5mZ3r2W3pZwmJWa0C5jGrABb7mW4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NobtDHdVUBCYHW8gY7iBsAfbKczhG2uKD2oJzkq+VPu95/r49K52efaCszGqiGEwPZYqrxwnrq+brWth9idw0NtdKHRyVRmtrFtgf8TCyDzy1Mw3VC90ovBoUMCi7hoVc1789uEwNR3CcWkbx7L1S2vFnvxjPM5G1DCvpT9VB6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/O3E6mh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CD24C4CEED;
-	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743577642;
-	bh=4IGWq8kONdx8Xhp5mZ3r2W3pZwmJWa0C5jGrABb7mW4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=e/O3E6mhp8oO/Whi3xEfGWjfINj0VVWR6e4dyBthDZK8g1xxzbzn1ArffFD95wqBz
-	 Lh7oZJV6JMFmgwitevdLz6W9es9LYg3xhHJaJ9Hx7e/is7mvv1lVaBWWP82vqTvpTP
-	 JO0YlhwXeQRq8aEnCOHxBJsE+oJXXc1B9OEDprJ1vMZ8TlPJ6vvYPQnCgzIIvkLDeX
-	 8soBim5zvmzKE/1Y6N9jeJ3lU1y5p9NaZnfTsROIh7ZnsWuv/FyvCvPIdSaISbNnL+
-	 zmbCDGmBElyUEDLGBISTuERqixX4taQ0BmbEiJrIdi2bK+jtnyukzTNjp7E4nyKryF
-	 a9HqhzRTVEzrA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85145C28B20;
-	Wed,  2 Apr 2025 07:07:22 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Wed, 02 Apr 2025 09:07:12 +0200
-Subject: [PATCH v4 9/9] arm64: dts: Add Moduline Display boards to Makefile
+	s=arc-20240116; t=1743577735; c=relaxed/simple;
+	bh=bExcCDmBZlCX1aOgbCveWtXDckRC8NiIN7Cm2e07oiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbmAVJ6C9gNAHzXB2gjswN89dde2boXfnXg0Z+Cmq46d7QiAt1aar41fGAp/jpxljMXgHyukU5BC5VIBBlmeymDxyd5uBn5hWQDITeBxVLXZnD8iWDNWCOBN+cra5Rz2bYewK0zlVQDL7YUb6wyd6J48md3d3+MSvotuNAJOK4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JjtCivvn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36F4C4CEDD;
+	Wed,  2 Apr 2025 07:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743577734;
+	bh=bExcCDmBZlCX1aOgbCveWtXDckRC8NiIN7Cm2e07oiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JjtCivvnN/jFBCdr6zznbzvh182sVdODr9M8rlop7XmXj9MUlWN1fwOF6HduY7JvK
+	 4G9etlq34sgTsrVqRcTv5uMjDpTvoQIHQV9lzClMG4arB0l2INxu8BNSLokUDGQChC
+	 NIjXFLKW6wLgFr0+EQ+XzjDWiEK3y7FCK1cygwv8=
+Date: Wed, 2 Apr 2025 08:07:21 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] published: CVE-2025-0927: Fix up JSON schema.
+Message-ID: <2025040258-props-most-a34f@gregkh>
+References: <2025033057-CVE-2025-0927-1436@gregkh>
+ <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250402-initial_display-v4-9-9f898838a864@gocontroll.com>
-References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
-In-Reply-To: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743577640; l=1452;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=DJFfIfqgbp2F9LatQLx7SmTKtl83KZxKW6du5QHFG4A=;
- b=cbWzSnDPRBr6SF0lOfGsuCU7LN31OqgF6hAzRq2l87Li8zvGVzMru0KBDKDLoTk6lJ6pcKcKy
- KcRSnLuEavVDtTFtFBq9aZTwAtJr18VtCPlBa3VhTsduAw3FFmLjfD2
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
 
-From: Maud Spierings <maudspierings@gocontroll.com>
+On Wed, Apr 02, 2025 at 12:21:52PM +0530, Siddh Raman Pant wrote:
+> It doesn't match the schema of other CVEs as it was not generated
+> by bippy.
+> 
+> Fixed by hand / manually.
+> 
+> programFiles were added from the info in mbox.
+> 
+> Signed-off-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+> ---
+>  cve/published/2025/CVE-2025-0927.json | 36 ++++++++-------------------
+>  1 file changed, 11 insertions(+), 25 deletions(-)
+> 
+> diff --git a/cve/published/2025/CVE-2025-0927.json b/cve/published/2025/CVE-2025-0927.json
+> index 0a61961ede76..743e70d4b100 100644
+> --- a/cve/published/2025/CVE-2025-0927.json
+> +++ b/cve/published/2025/CVE-2025-0927.json
+> @@ -4,8 +4,13 @@
+>              "affected": [
+>                  {
+>                      "defaultStatus": "unaffected",
+> -                    "product": "Linux Kernel",
+> +                    "product": "Linux",
+>                      "vendor": "Linux",
+> +                    "repo": "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git",
+> +                    "programFiles": [
+> +                        "fs/hfs/bnode.c",
+> +                        "fs/hfsplus/bnode.c",
+> +                    ]
 
-Add the new Moduline Display boards to the Makefile to allow building
-them.
+Also, I think the files are more than just this, so this would be
+incorrect to add at this point in time.
 
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
----
- arch/arm64/boot/dts/freescale/Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
+thanks,
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index b6d3fe26d621234ab84353165d20af9d2536f839..fea25c7f997cda9aef73cd643f0f0279ee0bfffe 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -214,6 +214,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-bd500.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revc-tian-g07017.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mpxl.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-tqma8mpql-mba8mp-ras314.dtb
-+imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10-dtbs += imx8mp-tx8p-ml81-moduline-display-106.dtb \
-+	imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10.dtbo
-+imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17-dtbs += imx8mp-tx8p-ml81-moduline-display-106.dtb \
-+	imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tx8p-ml81-moduline-display-106-av101hdt-a10.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-tx8p-ml81-moduline-display-106-av123z7m-n17.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-var-som-symphony.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw71xx-2x.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-venice-gw72xx-2x.dtb
-
--- 
-2.49.0
-
-
+greg k-h
 
