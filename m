@@ -1,113 +1,136 @@
-Return-Path: <linux-kernel+bounces-584967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B763A78E18
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:19:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C880AA78E17
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54FC18965B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E703ABFDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22D8239097;
-	Wed,  2 Apr 2025 12:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB3B236A8B;
+	Wed,  2 Apr 2025 12:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cLsHekaW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C877B2376F5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p3QW2AVX"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF10E239094;
+	Wed,  2 Apr 2025 12:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596287; cv=none; b=NZh2U+4hul1DR7qW9qwnt83dabTSlgXASG42VbJ/8L6O5agINIIzigj6VgNuDpZdDbLDthNzOb7u++MWVZsxonvv2Q5yKBPuvA6fnthQ9p3FaIATyAV8NkwwxlxZtrCc9rKgcd1AlWwegAtvZ2zmjE796aoRbaiL87lq9eHzIcQ=
+	t=1743596356; cv=none; b=J2xjMBDYvOX4eeA9Tf+haHeSNcBERN/Kvdqv2F0qXA8PX6gpcePoZ/W4LqnMDMfY5ud3wdPvW5LsKbyrlL/lsxzWK7eBkDqf0l+kerWMssX9rgg2owqux+YgWuIlYZ5hcSk//j+b6s94P4AhWJ/K5tiMjUjVtasKqihvjuJ6tc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596287; c=relaxed/simple;
-	bh=cXmfE8Zo73fyB/QHPWw+99Wun31tm3+a46xHnHmRHs0=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=oNLxZ8kdfkzJMChrx+MGitrOZpAA+aPNpR9/cFm0NIY0oHHQy0C2OqZs8K2chRYs9caxFQT4DFq+oiBPUhsy5Ia+139H8DORr4RCAYBoE7fa5qdYtWWOtkC2hP+XGmR75DQc4ydRTY0soXE3L8cSmCAW5DMArD+9n0HVkQ64k6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cLsHekaW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743596284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=68lHblWFUM177oZ82WUmwq6fKcjyGzBb+/ilfrtKAuU=;
-	b=cLsHekaWgSXX8qAnQe1mjgBbBA2oPRhH5ooR2sntazdnWAQnZ/gg/D4xliWkSZbwDEMAaS
-	5TNE7DgqBUHlfU4HWQ8kZg2eskSkqnlyeQzPgZJuXC6w4QV6hqzqOc3jjHe4bRyUjDYqL9
-	EvJ56quJGyTYaPrQtFQ8dm52shwknSI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-aCqRoR2WMt2CF3Di-QaNGQ-1; Wed,
- 02 Apr 2025 08:18:01 -0400
-X-MC-Unique: aCqRoR2WMt2CF3Di-QaNGQ-1
-X-Mimecast-MFC-AGG-ID: aCqRoR2WMt2CF3Di-QaNGQ_1743596278
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 69F24180AF52;
-	Wed,  2 Apr 2025 12:17:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D46033001D14;
-	Wed,  2 Apr 2025 12:17:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Giuseppe Scrivano <gscrivan@redhat.com>,
-    Debarshi Ray <dray@redhat.com>, Eric Sandeen <sandeen@redhat.com>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] devpts: Fix type for uid and gid params
+	s=arc-20240116; t=1743596356; c=relaxed/simple;
+	bh=v9o/0GsG9hlpEVMILiuT/UXu6Gay+7R0EoqjQXNBKw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cYRkt1EL7QjRD4hwxtGNS+FAnMIfOaF505hMZUMSy/iJaBA1x+ccTPG5zqFGe/EXUnvJbQC4P3RGQDVmiNVBCx6o/MIyXRLiZ0LbnHp5SIqqxJ05lBxVPmRuvzOCMitxO6R1UWJaZZs6r/X1AlaZjLzJPudqBNP3iTsBj5yxz2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p3QW2AVX; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=1K93p+jfwwbKax5M8o/f4XaPFLFEtqliG2k63r4obes=;
+	b=p3QW2AVXL9zWuzV1dY8TkMfEAeCT3p/8khNHcr/3YBtVlrVNnqbA56Uk5aGT8c
+	L8KLxkvlKSjEWI2udr55Nf9//va0LYD8e3GKX0FDOUq7/tPwo01etlwR0S3Bc/Ch
+	ZEaFxorIdTmey363pUQpg/7N4d4YAuePZD+//XgyXQBDQ=
+Received: from [192.168.60.52] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3t9gUK+1nh2qGDg--.42426S2;
+	Wed, 02 Apr 2025 20:18:30 +0800 (CST)
+Message-ID: <ad119d32-0755-4ca1-9db8-28f6a8f17c43@163.com>
+Date: Wed, 2 Apr 2025 20:18:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <759133.1743596274.1@warthog.procyon.org.uk>
-Date: Wed, 02 Apr 2025 13:17:54 +0100
-Message-ID: <759134.1743596274@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 3/5] PCI: dwc: Use common PCI host bridge APIs for finding
+ the capabilities
+To: kernel test robot <lkp@intel.com>, lpieralisi@kernel.org,
+ bhelgaas@google.com
+Cc: oe-kbuild-all@lists.linux.dev, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, ilpo.jarvinen@linux.intel.com,
+ robh@kernel.org, jingoohan1@gmail.com, thomas.richard@bootlin.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250402042020.48681-4-18255117159@163.com>
+ <202504021958.YeTPCsW1-lkp@intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <202504021958.YeTPCsW1-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3t9gUK+1nh2qGDg--.42426S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAr17tF17urW5tr1rZw13Arb_yoW5Cr4xpa
+	yUAa13ZFyrJF4Sgw48t3WF93WaqF1DAry7G3ykG3W7WFy7Zry5GryIkFyagFy7tw4qgrya
+	kryqq3Z7Ars8AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULyCXUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwQjo2ftJx1vAgAAsW
 
-    
-Fix devpts to parse uid and gid params using the correct type so that they
-get interpreted in the context of the user namespace.
 
-Fixes: cc0876f817d6 ("vfs: Convert devpts to use the new mount API")
-Reported-by: Debarshi Ray <dray@redhat.com>
-Closes: https://github.com/containers/podman/issues/25751
-Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Eric Sandeen <sandeen@redhat.com>
-cc: linux-fsdevel@vger.kernel.org
----
- fs/devpts/inode.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
-index 42e4d6eeb29f..9c20d78e41f6 100644
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -89,12 +89,12 @@ enum {
- };
- 
- static const struct fs_parameter_spec devpts_param_specs[] = {
--	fsparam_u32	("gid",		Opt_gid),
-+	fsparam_gid	("gid",		Opt_gid),
- 	fsparam_s32	("max",		Opt_max),
- 	fsparam_u32oct	("mode",	Opt_mode),
- 	fsparam_flag	("newinstance",	Opt_newinstance),
- 	fsparam_u32oct	("ptmxmode",	Opt_ptmxmode),
--	fsparam_u32	("uid",		Opt_uid),
-+	fsparam_uid	("uid",		Opt_uid),
- 	{}
- };
- 
+On 2025/4/2 19:58, kernel test robot wrote:
+> Hi Hans,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on acb4f33713b9f6cadb6143f211714c343465411c]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Refactor-capability-search-into-common-macros/20250402-122544
+> base:   acb4f33713b9f6cadb6143f211714c343465411c
+> patch link:    https://lore.kernel.org/r/20250402042020.48681-4-18255117159%40163.com
+> patch subject: [v7 3/5] PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
+> config: loongarch-randconfig-001-20250402 (https://download.01.org/0day-ci/archive/20250402/202504021958.YeTPCsW1-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250402/202504021958.YeTPCsW1-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202504021958.YeTPCsW1-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>     In file included from drivers/pci/controller/dwc/pcie-designware.c:23:
+>     drivers/pci/controller/dwc/pcie-designware.c: In function 'dw_pcie_find_capability':
+>>> drivers/pci/controller/dwc/pcie-designware.c:218:38: error: 'pcie' undeclared (first use in this function); did you mean 'pci'?
+>       218 |                                      pcie);
+>           |                                      ^~~~
+>     drivers/pci/controller/dwc/../../pci.h:114:18: note: in definition of macro 'PCI_FIND_NEXT_CAP_TTL'
+>       114 |         read_cfg(args, __pos, 1, (u32 *)&__pos);                        \
+>           |                  ^~~~
+>     drivers/pci/controller/dwc/pcie-designware.c:218:38: note: each undeclared identifier is reported only once for each function it appears in
+>       218 |                                      pcie);
+>           |                                      ^~~~
+>     drivers/pci/controller/dwc/../../pci.h:114:18: note: in definition of macro 'PCI_FIND_NEXT_CAP_TTL'
+>       114 |         read_cfg(args, __pos, 1, (u32 *)&__pos);                        \
+>           |                  ^~~~
+>     drivers/pci/controller/dwc/pcie-designware.c: In function 'dw_pcie_find_ext_capability':
+>     drivers/pci/controller/dwc/pcie-designware.c:224:71: error: 'pcie' undeclared (first use in this function); did you mean 'pci'?
+>       224 |         return PCI_FIND_NEXT_EXT_CAPABILITY(dw_pcie_read_cfg, 0, cap, pcie);
+>           |                                                                       ^~~~
+>     drivers/pci/controller/dwc/../../pci.h:156:34: note: in definition of macro 'PCI_FIND_NEXT_EXT_CAPABILITY'
+>       156 |                 __ret = read_cfg(args, __pos, 4, &__header);                    \
+>           |                                  ^~~~
+> 
+
+Copy the errors carried over. Will change.
+
+Best regards,
+Hans
+
+> 
+> vim +218 drivers/pci/controller/dwc/pcie-designware.c
+> 
+>     214	
+>     215	u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+>     216	{
+>     217		return PCI_FIND_NEXT_CAP_TTL(dw_pcie_read_cfg, PCI_CAPABILITY_LIST, cap,
+>   > 218					     pcie);
+>     219	}
+>     220	EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
+>     221	
+> 
 
 
