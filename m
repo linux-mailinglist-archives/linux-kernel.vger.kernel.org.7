@@ -1,250 +1,153 @@
-Return-Path: <linux-kernel+bounces-585031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6214FA78EEA
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE691A78EEB
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD3918968D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D00B16B998
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBC8239581;
-	Wed,  2 Apr 2025 12:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCE923A9BB;
+	Wed,  2 Apr 2025 12:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dlDLPCQC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iAPsw+WH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xz/WrCm2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w1q0GM1x"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F/Yn087g"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752241EA7DE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF9923A9A4;
+	Wed,  2 Apr 2025 12:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598028; cv=none; b=I6nIjyL3wQK9UEuc7vOIWmP3YDKG0NtM8HZWHnaZgh58T3Tkp9KSI5kUF2vdUBSh4XJVhxbzoVIPm8O0O5PAc/w8ThYcfHD7hqN5CPH9Q2T1OSBUfZux0KD1Z8Trqzwfy9oMvRgFAz68gG67mPuk7fS8Qk4wSVNCGuAIW9UIc1A=
+	t=1743598043; cv=none; b=hLxwtbjmNLOVIwKJBrfQ8+P1z7zxzq7mV2Ux4IxqDtQBq3EFnrt4tGc6u6p3/YExpZ/9iPvD/GwQJsZFENhCxviUZZFdWPpyhkG43VxvtrcPOXBM78KQcuLDGCUceJDP1cYDgtTmmkVREsgDtfyfYIpbYg283B0H1hjgJbO928c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598028; c=relaxed/simple;
-	bh=q4QAZWL05vzCVVCfGsFAB1fGWnJTOhsJMa6MRoKeV7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oC6D5/f+9En7BfmKPOAU4C0RXdtFId/jqc52ocbOHmj4AAQJq3+p9waisR/sID7786DWPzYf8vb4T5Qc2iyolrsyeEG/nWh4NjwgAmN/8CLgP0DJ4faOzOQ2w41LJ+M86ut+eToiUASAhkkvhf82xA9pwLaNUbs8dYKE0EJ0Hro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dlDLPCQC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iAPsw+WH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xz/WrCm2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w1q0GM1x; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D9EFA21172;
-	Wed,  2 Apr 2025 12:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743598024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ElqFvgxjPkjYF8Bx7orqIMCixUoDwOI1ydmXi7drOuk=;
-	b=dlDLPCQC38s2Vt6YYlfh0ut1JJ8AsrLItkXFLL4AILVBIEGekiycdqRzY0QdAssUG3WxYg
-	ZUf1VbRecELLcC6kwo0nZ1PvVLL/RAl5ixpYUSt3ZE0ipGNCsD3uZpCDT//thyprqqN5JB
-	9/V2mBQ3gYWiajkO++UprZQMlBm9Q1k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743598024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ElqFvgxjPkjYF8Bx7orqIMCixUoDwOI1ydmXi7drOuk=;
-	b=iAPsw+WHlZ6ogDEFS8dDqdqBcmo/HrZb4GS4lUV9KIJ2s782QTZe45/JYP12CDQXWs0JfM
-	AJoXCKnIC09+RACQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743598023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ElqFvgxjPkjYF8Bx7orqIMCixUoDwOI1ydmXi7drOuk=;
-	b=xz/WrCm29cg4d7/Lt5WxE9R5HtWiI518of+Ew5FF1FdSG7fIQ+CsVOTPn1DN6dHif8fr34
-	lPXdtHUTaWv/gaiMKbrB1aAef1doNrGouQrDHkRVH5rw87gD6HqWgGJJ4MyaqFdIKENjVG
-	++fl+7cT3xhEGqZK8gr6SnaesSZEAy4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743598023;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ElqFvgxjPkjYF8Bx7orqIMCixUoDwOI1ydmXi7drOuk=;
-	b=w1q0GM1xEyIPatRyh7jNfqyudtvlDS2FNfqnM55Ml+hrnEXjv4R/8t9t1jP4flzkVLqt7g
-	69puapUqy2yVZmCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79111137D4;
-	Wed,  2 Apr 2025 12:47:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VaUzHMcx7WfsBwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 02 Apr 2025 12:47:03 +0000
-Message-ID: <ea4f4059-7748-4bfd-9205-8e95222144da@suse.de>
-Date: Wed, 2 Apr 2025 14:47:03 +0200
+	s=arc-20240116; t=1743598043; c=relaxed/simple;
+	bh=I0q8yuccgOTwPasdvh8g2GR8Zcmx2hyT3zKwoj4ieVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TaNXjCaXmqQBok5jkMpceextMCQFhF9X/Mzf91VDbkg9omiTSNHMHGMajpjc7+tL6BeWoUjv1aZn88YG4aGkMB2voIYgHIPtQOiZlHF69mxFijq9TOgtvSjju38+hwToRqvpmWz99uXdElmmHiHt4P3km1lW+/SI6gsjvGGpP94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F/Yn087g; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=iNrXwLiaCyxw5lMHmTmgzkArPeaL8QrC1vfZuM5wnc4=; b=F/Yn087gqPQgTAh2YdjKH/VtZ5
+	NU/GYeFc9oCxswyI2Y0uLKR+owwsSciPOgIoAkecu/HWGBS7g0rEdkJ0FXrVo5E39sbEooN8Nv8k4
+	ZJlpu+UdPZDOwuRUHnP2vjxNxnnLOZUaBVlwW4gD+4US5UPYYeZ7MsP2N8QatRVoSuv8nGyj4CyG3
+	brkMQRuxSOc17oj+BYJejgnoMSEtJTb8RkXJ0YVHKtvw/o6xR/Ovyp1GCBjjwlvPBw+vhUS0AA/ax
+	u8qTbhqPFkJoi0kVc1TR+hEgmUrREjo51ZfXVD00KIa6BjqwCm5UMPucUkMwseDLYhaA/ztgyDFES
+	ye1dYBHA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tzxUu-000000071Gk-2xtB;
+	Wed, 02 Apr 2025 12:47:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4A6CF30049D; Wed,  2 Apr 2025 14:47:12 +0200 (CEST)
+Date: Wed, 2 Apr 2025 14:47:12 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Harshit Agarwal <harshit@nutanix.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Jon Kohler <jon@nutanix.com>,
+	Gauri Patwardhan <gauri.patwardhan@nutanix.com>,
+	Rahul Chunduru <rahul.chunduru@nutanix.com>,
+	Will Ton <william.ton@nutanix.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] sched/rt: Fix race in push_rt_task
+Message-ID: <20250402124712.GN25239@noisy.programming.kicks-ass.net>
+References: <20250225180553.167995-1-harshit@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 09/10] drm/shmem-helper: Switch
- drm_gem_shmem_vmap/vunmap to use pin/unpin
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Qiang Yu <yuq825@gmail.com>,
- Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com
-References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
- <20250322212608.40511-10-dmitry.osipenko@collabora.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250322212608.40511-10-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[collabora.com,gmail.com,ffwll.ch,linux.intel.com,kernel.org,amd.com,redhat.com,arm.com,imgtec.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,collabora.com:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250225180553.167995-1-harshit@nutanix.com>
 
-Hi
+On Tue, Feb 25, 2025 at 06:05:53PM +0000, Harshit Agarwal wrote:
 
-Am 22.03.25 um 22:26 schrieb Dmitry Osipenko:
-> The vmapped pages shall be pinned in memory and previously get/put_pages()
-> were implicitly hard-pinning/unpinning the pages. This will no longer be
-> the case with addition of memory shrinker because pages_use_count > 0 won't
-> determine anymore whether pages are hard-pinned (they will be soft-pinned),
-> while the new pages_pin_count will do the hard-pinning. Switch the
-> vmap/vunmap() to use pin/unpin() functions in a preparation of addition
-> of the memory shrinker support to drm-shmem.
-
-I've meanwhile rediscovered this patch and I'm sure this is not correct. 
-Vmap should not pin AFAIK. It is possible to vmap if the buffer has been 
-pinned, but that's not automatic.  For other vmaps it is necessary to 
-hold the reservation lock to prevent the buffer from moving.
-
-Best regards
-Thomas
-
->
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Details
+> =======
+> Let's look at the following scenario to understand this race.
+> 
+> 1) CPU A enters push_rt_task
+>   a) CPU A has chosen next_task = task p.
+>   b) CPU A calls find_lock_lowest_rq(Task p, CPU Z’s rq).
+>   c) CPU A identifies CPU X as a destination CPU (X < Z).
+>   d) CPU A enters double_lock_balance(CPU Z’s rq, CPU X’s rq).
+>   e) Since X is lower than Z, CPU A unlocks CPU Z’s rq. Someone else has
+>      locked CPU X’s rq, and thus, CPU A must wait.
+> 
+> 2) At CPU Z
+>   a) Previous task has completed execution and thus, CPU Z enters
+>      schedule, locks its own rq after CPU A releases it.
+>   b) CPU Z dequeues previous task and begins executing task p.
+>   c) CPU Z unlocks its rq.
+>   d) Task p yields the CPU (ex. by doing IO or waiting to acquire a
+>      lock) which triggers the schedule function on CPU Z.
+>   e) CPU Z enters schedule again, locks its own rq, and dequeues task p.
+>   f) As part of dequeue, it sets p.on_rq = 0 and unlocks its rq.
+> 
+> 3) At CPU B
+>   a) CPU B enters try_to_wake_up with input task p.
+>   b) Since CPU Z dequeued task p, p.on_rq = 0, and CPU B updates
+>      B.state = WAKING.
+>   c) CPU B via select_task_rq determines CPU Y as the target CPU.
+> 
+> 4) The race
+>   a) CPU A acquires CPU X’s lock and relocks CPU Z.
+>   b) CPU A reads task p.cpu = Z and incorrectly concludes task p is
+>      still on CPU Z.
+>   c) CPU A failed to notice task p had been dequeued from CPU Z while
+>      CPU A was waiting for locks in double_lock_balance. If CPU A knew
+>      that task p had been dequeued, it would return NULL forcing
+>      push_rt_task to give up the task p's migration.
+>   d) CPU B updates task p.cpu = Y and calls ttwu_queue.
+>   e) CPU B locks Ys rq. CPU B enqueues task p onto Y and sets task
+>      p.on_rq = 1.
+>   f) CPU B unlocks CPU Y, triggering memory synchronization.
+>   g) CPU A reads task p.on_rq = 1, cementing its assumption that task p
+>      has not migrated.
+>   h) CPU A decides to migrate p to CPU X.
+> 
+> This leads to A dequeuing p from Y's queue and various crashes down the
+> line.
+> 
+> Solution
+> ========
+> The solution here is fairly simple. After obtaining the lock (at 4a),
+> the check is enhanced to make sure that the task is still at the head of
+> the pushable tasks list. If not, then it is anyway not suitable for
+> being pushed out.
+> 
+> Testing
+> =======
+> The fix is tested on a cluster of 3 nodes, where the panics due to this
+> are hit every couple of days. A fix similar to this was deployed on such
+> cluster and was stable for more than 30 days.
+> 
+> Co-developed-by: Jon Kohler <jon@nutanix.com>
+> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> Co-developed-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Signed-off-by: Gauri Patwardhan <gauri.patwardhan@nutanix.com>
+> Co-developed-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Rahul Chunduru <rahul.chunduru@nutanix.com>
+> Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
+> Tested-by: Will Ton <william.ton@nutanix.com>
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Cc: stable@vger.kernel.org
 > ---
->   drivers/gpu/drm/drm_gem_shmem_helper.c | 6 +++---
->   include/drm/drm_gem_shmem_helper.h     | 2 +-
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> index 6fb96e790abd..84a196bbe44f 100644
-> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-> @@ -360,7 +360,7 @@ int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
->   			return 0;
->   		}
->   
-> -		ret = drm_gem_shmem_get_pages_locked(shmem);
-> +		ret = drm_gem_shmem_pin_locked(shmem);
->   		if (ret)
->   			goto err_zero_use;
->   
-> @@ -383,7 +383,7 @@ int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
->   
->   err_put_pages:
->   	if (!drm_gem_is_imported(obj))
-> -		drm_gem_shmem_put_pages_locked(shmem);
-> +		drm_gem_shmem_unpin_locked(shmem);
->   err_zero_use:
->   	shmem->vmap_use_count = 0;
->   
-> @@ -420,7 +420,7 @@ void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
->   			return;
->   
->   		vunmap(shmem->vaddr);
-> -		drm_gem_shmem_put_pages_locked(shmem);
-> +		drm_gem_shmem_unpin_locked(shmem);
->   	}
->   
->   	shmem->vaddr = NULL;
-> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
-> index 3a4be433d5f0..8b9bba87ae63 100644
-> --- a/include/drm/drm_gem_shmem_helper.h
-> +++ b/include/drm/drm_gem_shmem_helper.h
-> @@ -130,7 +130,7 @@ int drm_gem_shmem_madvise_locked(struct drm_gem_shmem_object *shmem, int madv);
->   static inline bool drm_gem_shmem_is_purgeable(struct drm_gem_shmem_object *shmem)
->   {
->   	return (shmem->madv > 0) &&
-> -		!shmem->vmap_use_count && shmem->sgt &&
-> +		!refcount_read(&shmem->pages_pin_count) && shmem->sgt &&
->   		!shmem->base.dma_buf && !drm_gem_is_imported(&shmem->base);
->   }
->   
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Thanks, I've picked this up to land after -rc1.
+
 
 
