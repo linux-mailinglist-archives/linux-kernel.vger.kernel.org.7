@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-585477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71EAA793CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BBFA793D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3771894320
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677DA18944AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CABD1A3173;
-	Wed,  2 Apr 2025 17:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1861C84AB;
+	Wed,  2 Apr 2025 17:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="VgMaMrPA"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUtoo639"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B4219C54C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076041A238F;
+	Wed,  2 Apr 2025 17:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743614705; cv=none; b=lm8Ptmo61+stmIW+XzLAXnW0hh/OgWZnE4u+/kKXOJYUzFbObjWybXmv+WI08D+9f6WsdfMMGd/mGuQ4r6XxMxtypCEy1MgPD5MZVpO8M0hCZLQRKl0t1iPEPbhKsnk1Tqqwb5mtpW1fQeD56LfltV7U7EZWrhHohoN5LNLMV0s=
+	t=1743614714; cv=none; b=qxiJXrzQ08wrA3wpUTOec9DhsI3LA/pNvUlFIUZKtfI/y5XW8hkDT+gbGvd3d0WMbnX32SNKjbBzIzyLwq3lG66UiEC61n3G9juKj4cGiwu0vt1QfkGPf+uXOinES1/Wlf79N+4kh3gPSsrNzC+2wdsk7L0SG34qoh0ofZM/s78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743614705; c=relaxed/simple;
-	bh=TgIr2NDKkj74x/2NbOGJikktGxZikty6LWZP3F1uGPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uEILTGclnIfaRHbOp1PDRmU+kBZNCe4IzBUmAZRWqbsNIJThOKmITdMzKiRHlTf9rp3mMU5p4UHgwyC8uLP3uirWAVLFpO9HoryvqdffQ8TderKVEkEEqjkETC57T+HzuD4AHOu075n6Kh+djng914vK3NnU/10U3ZVcrEBPKl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=VgMaMrPA; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so8510605e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:25:03 -0700 (PDT)
+	s=arc-20240116; t=1743614714; c=relaxed/simple;
+	bh=0I4gf4qOzqd/dz3inFosaXWL+uusZbW4kRowm48cadc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QyJD3UnYgtUhl+RKCk4B54LgSueWrDW9TpmZADDQqUSGQ3wFyEDY/l4bs517j2hrI5WLA9vJ08yUqYl44It/clrE+0FWu1gg06vgz5YtQPh9QuSN5kWrcYhaE+gGq0HaQ3vQH0a5xzIf04WgE6oek1x2fxYGA0lHTS0+rM0gJpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUtoo639; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43948021a45so70863735e9.1;
+        Wed, 02 Apr 2025 10:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1743614701; x=1744219501; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743614711; x=1744219511; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+vmCFRBwsqvZP2d/t/KmjCWvMFBtPU1+nLgWVJPIwg=;
-        b=VgMaMrPAH9O0nRDPCCcMccyM6jD4hTrwHnwSxEASFUkA+WjWyfC4gS1jG/EPvQmUgN
-         o5ExZ+BfM03xq6ijh7WRT5NNEVPGBT0exPJBF0JJ5OzAv5Cmd6XKsy4pb/sTvnTp+w6e
-         9WZHNUtBNARwy8Gq0pVpIJ9Bbpoc52NrfZz1M=
+        bh=VFKKbFIB0gA4Lwa0ZRTmZZ0kPFvmHe9B0sAjPCWOPmI=;
+        b=FUtoo639ATBvmct0wFF9rZZ9PUwUeUQEaOQHmXvgBzU+Oth9xtYY9EJiIBMxXNdXBT
+         iovPYiAYS29GY6MeYgFW0rADU8gZ2KHnQb9wvwewHxU4ujLx4zXjF+0HUGNb/VYR3cVl
+         YncOQXrbbmFB2+ulbit0rZX7ziZ4jzYVloMYq0liVA2Q+WYJPxB37KjjIXaOtQlDPDMQ
+         /Nclz8tzIVcywI2ELBfZQoEAkpVQy5slMZqA7w69nZWHfWF7/c5Qm7cXz1wf283WXjhI
+         /eR795DuUH4RDLZSd8C5PPza6ziw2gzidxdjYbxgsTYiR0jd2d+3V3tiNaUMG9/Lwo7X
+         hxoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743614701; x=1744219501;
+        d=1e100.net; s=20230601; t=1743614711; x=1744219511;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G+vmCFRBwsqvZP2d/t/KmjCWvMFBtPU1+nLgWVJPIwg=;
-        b=fVan/RGaImOhgfcl1AOz3I1U9ViFUrQBxmuN2aqZnWuOiOk1nK0A+nC7pLzz+Ps72L
-         +1mY7i0hmInLYqN3TRextCPKbObDcLhaIM6GQa4OJP4g+VDpMRf53ATLdJp6HKdUVWhK
-         4hEra1bRsViQJo7JVwXJMshGw8S3Sf1YVVTQzS7dRECm3YQf53oCBYC5MUViJuZY+Btb
-         zZ23S1p8VrR33M00NnOwJzXPkolNkbR04tvUObvXrUcod9qyFNtysz03IgL3A4ouDyuA
-         Wrvdawg/9cLpP8NYic0JSMNis5c8PjpBZZbW4CVgnKPEsuZyKEKYTtZMHjIO2YKeLpk+
-         vBPA==
-X-Gm-Message-State: AOJu0YwOUW4x2weXzP6jE2/ZJsm8VXMulDOBdQcNcjGlVxnVTl/VCF47
-	8ZAIoXLbkhLLkP1opm33FoLaV6Y4tk29jji48xiSQx/piYc3kbZbmZ4aLEYnbZuSjI40XnM3nhE
-	g4kY=
-X-Gm-Gg: ASbGncurYJKc/kT1OpICrR7/stEWnn9qc2frmfKT/5TwS5IU+KFZlTtZ7xVTrbd/bU0
-	N1n0mIHZRgPPaTSbgEBaiuNhpWwOhE3wynU1Qxic6MVR8KOF3B2x+NjlRICIeWBXFDj9MnpIwWL
-	jyRLBZmCfBLH3/TudfrElGHksq9MyH6LBqsv3KTCSEHWTn9oInoOlf14hmvm9sW5r7eVRtESJZJ
-	qVEmartxpL09g8YSre204J+dvb9plUu43kAzCJdgOTSMXe4ce2hy8L5EiHk6v7FpBu0YhZQBEAm
-	ggvJRao/SIWlVk6zQrLy3nR4/Pb9jepZcAKpklzs6EmiD6/LIPKJvF8Yy0KGqgjArGPKpAuNAJL
-	Y+Hf9Ezz1SMmNp2Rzeg==
-X-Google-Smtp-Source: AGHT+IFVMVbp+Z6UWb19aspj30De+0ix7H7P9nLAnGm2POjhbpHWclm3cNODMyt3jprEFsvMCC3UcQ==
-X-Received: by 2002:a05:6000:2401:b0:399:6d8a:3f with SMTP id ffacd0b85a97d-39c2e636a70mr410726f8f.27.1743614701339;
-        Wed, 02 Apr 2025 10:25:01 -0700 (PDT)
-Received: from localhost.localdomain (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b66a8d4sm17424016f8f.45.2025.04.02.10.25.00
+        bh=VFKKbFIB0gA4Lwa0ZRTmZZ0kPFvmHe9B0sAjPCWOPmI=;
+        b=U2KLxb3dUuMefpZVHEkTvIssqiIntMPqEsii+3zYCTJY6iKEyf4+plXDzpyJZHzm4r
+         O+bPh0L9gAdIEpUjskp6lpPlF9WBn8541Z2YB3gcOVxcCUopWrhV7AcEJGl/xjbHJ72f
+         uq1bpGa3GhN1QGY/Mwyp9cdJ8wj3/aFCHc/Ala4YMGoCDpO5AyuR6fq7k63F/ybG8laB
+         KXSgVZBVXnW3448DIao5/KZMc22FmFmPw7SIntYsIR0td9bLDPUdBsUOMHeqvWBwMHoS
+         gZhrlTXNE6+MarPHTpGSJUEefCypF0dLTPkKtuKSTOgruVj/PfEPml6RbYTQ8D7EJ3Vt
+         AiSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaCo24DBHxdWG+j77Jkk1zPG/kDj+hmxMEoVzxhY2/+XWt+oOsHdyQfNAe4Jc/WgVa+dnSEPzHAW0PPso=@vger.kernel.org, AJvYcCXHq9oUkDvtfX6NNur1Z1eVQdxJbBuXrpHM0PiLEXj7V37mEXz35Y/oQJE7IcCaEYucVvJVItiOetRK8IBP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze78N8RGU8UvNuRJBFi94Gp0qkPMYDozHngUr2zqWoEtaKl1cC
+	LFPPdWU8qHEJN6rX8kvLTKnMlNl2sqYvEs/6Dfoc9yKW1GILnDol
+X-Gm-Gg: ASbGnctwtCGovhzOYu2k4Q5GFb5Ce5rJWismIlLSvjFgCb8GxFejDY/65Qz/sfM7nFh
+	jdRODcoML13DdYAjlr0ufMVJsY0SriULdpVFOL/4uLzGgC+U/vRl+BgnEzCkACOEGW8cQgN1ej8
+	SgpEXC782t09JH3HDUqGP8/qLUJaktrBs4xwhUztAoDkZMap9Efdw6cnSaJMectvnHt6NA26U6f
+	EgBNgv5MGFA5VFIw8CdJSlSqqi42o9PSXSCCvpHzPROv6oxxTW3kYtrrmhtquR9+pyNme8y8d34
+	QA0vyOraQCRD2OcVs/Phksb78vLuo0B1t8692BHlHgJGQ80qe7PRVvsy4IA=
+X-Google-Smtp-Source: AGHT+IFoN9OKQZvEAPW0TgURl/4JHMogdjPbJRS9b++IQ3ngDtteLtDe+TYiljYQr3uSBN5W86+M1Q==
+X-Received: by 2002:a5d:64c3:0:b0:38f:2a32:abbb with SMTP id ffacd0b85a97d-39c120cb586mr12147320f8f.4.1743614711132;
+        Wed, 02 Apr 2025 10:25:11 -0700 (PDT)
+Received: from localhost.localdomain ([78.170.183.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b79e0basm17854445f8f.63.2025.04.02.10.25.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 10:25:00 -0700 (PDT)
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2] x86/idle: Remove MFENCEs for X86_BUG_CLFLUSH_MONITOR
-Date: Wed,  2 Apr 2025 18:24:58 +0100
-Message-Id: <20250402172458.1378112-1-andrew.cooper3@citrix.com>
-X-Mailer: git-send-email 2.39.5
+        Wed, 02 Apr 2025 10:25:10 -0700 (PDT)
+From: goralbaris <goralbaris@gmail.com>
+To: martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	goralbaris <goralbaris@gmail.com>
+Subject: [PATCH] change strncpy to strscpy strncpy is now depricated. It may not NUL-terminate the destination string, resulting in potential memory content exposures, unbounded reads, or crashes. Link: https://github.com/KSPP/linux/issues/90
+Date: Wed,  2 Apr 2025 20:25:04 +0300
+Message-Id: <20250402172504.101576-1-goralbaris@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,113 +89,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 7e98b7192046 ("x86, idle: Use static_cpu_has() for CLFLUSH
-workaround, add barriers") adds barriers, justified with:
-
-  ... and add memory barriers around it since the documentation is explicit
-  that CLFLUSH is only ordered with respect to MFENCE.
-
-This also triggered the same adjustment in commit
-f8e617f45829 ("sched/idle/x86: Optimize unnecessary mwait_idle() resched
-IPIs") during development, although it failed to get the static_cpu_has_bug()
-treatment.
-
-X86_BUG_CLFLUSH_MONITOR (a.k.a the AAI65 errata) is specific to Intel CPUs,
-and the SDM currently states:
-
-  Executions of the CLFLUSH instruction are ordered with respect to each
-  other and with respect to writes, locked read-modify-write instructions,
-  and fence instructions[1].
-
-With footnote 1 reading:
-
-  Earlier versions of this manual specified that executions of the CLFLUSH
-  instruction were ordered only by the MFENCE instruction.  All processors
-  implementing the CLFLUSH instruction also order it relative to the other
-  operations enumerated above.
-
-i.e. The SDM was incorrect at the time, and barriers should not have been
-inserted.  Double checking the original AAI65 errata (not available from
-intel.com any more) shows no mention of barriers either.
-
-Note: If this were a general codepath, the MFENCEs would be needed, because
-      AMD CPUs of the same vintage do sport otherwise-unordered CLFLUSHs.
-
-Furthermore, use a plain alternative, rather than static_cpu_has_bug() and/or
-no optimisation.  The workaround is a single instruction.
-
-Use an explicit %rax pointer rather than a general memory operand, because
-MONITOR takes the pointer implicitly in the same way.
-
-Link: https://web.archive.org/web/20090219054841/http://download.intel.com/design/xeon/specupdt/32033601.pdf
-Fixes: 7e98b7192046 ("x86, idle: Use static_cpu_has() for CLFLUSH workaround, add barriers")
-Fixes: f8e617f45829 ("sched/idle/x86: Optimize unnecessary mwait_idle() resched IPIs")
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: goralbaris <goralbaris@gmail.com>
 ---
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Borislav Petkov <bp@alien8.de>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: x86@kernel.org
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: linux-kernel@vger.kernel.org
+ drivers/target/target_core_configfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v2:
- * Fix the same pattern in mwait_idle() too
- * Expand on why we're not using a general memory operand.
----
- arch/x86/include/asm/mwait.h | 11 +++++------
- arch/x86/kernel/process.c    | 10 ++++------
- 2 files changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index ce857ef54cf1..108d25bd4597 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -116,13 +116,12 @@ static __always_inline void __sti_mwait(unsigned long eax, unsigned long ecx)
- static __always_inline void mwait_idle_with_hints(unsigned long eax, unsigned long ecx)
- {
- 	if (static_cpu_has_bug(X86_BUG_MONITOR) || !current_set_polling_and_test()) {
--		if (static_cpu_has_bug(X86_BUG_CLFLUSH_MONITOR)) {
--			mb();
--			clflush((void *)&current_thread_info()->flags);
--			mb();
--		}
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index c40217f44b1b..5c0b74e76be2 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+ 	}
+ 	filp_close(fp, NULL);
  
--		__monitor((void *)&current_thread_info()->flags, 0, 0);
-+		const void *addr = &current_thread_info()->flags;
-+
-+		alternative_input("", "clflush (%[addr])", X86_BUG_CLFLUSH_MONITOR,
-+				  [addr] "a" (addr));
-+		__monitor(addr, 0, 0);
+-	strncpy(db_root, db_root_stage, read_bytes);
++	strscpy(db_root, db_root_stage, read_bytes);
+ 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
  
- 		if (!need_resched()) {
- 			if (ecx & 1) {
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 91f6ff618852..a1a41b3d94d2 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -907,13 +907,11 @@ static __init bool prefer_mwait_c1_over_halt(void)
- static __cpuidle void mwait_idle(void)
- {
- 	if (!current_set_polling_and_test()) {
--		if (this_cpu_has(X86_BUG_CLFLUSH_MONITOR)) {
--			mb(); /* quirk */
--			clflush((void *)&current_thread_info()->flags);
--			mb(); /* quirk */
--		}
-+		const void *addr = &current_thread_info()->flags;
+ 	r = read_bytes;
+@@ -3664,7 +3664,7 @@ static void target_init_dbroot(void)
+ 	}
+ 	filp_close(fp, NULL);
  
--		__monitor((void *)&current_thread_info()->flags, 0, 0);
-+		alternative_input("", "clflush (%[addr])", X86_BUG_CLFLUSH_MONITOR,
-+				  [addr] "a" (addr));
-+		__monitor(addr, 0, 0);
- 		if (!need_resched()) {
- 			__sti_mwait(0, 0);
- 			raw_local_irq_disable();
-
-base-commit: acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
+-	strncpy(db_root, db_root_stage, DB_ROOT_LEN);
++	strscpy(db_root, db_root_stage, DB_ROOT_LEN);
+ 	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+ }
+ 
 -- 
-2.39.5
+2.34.1
 
 
