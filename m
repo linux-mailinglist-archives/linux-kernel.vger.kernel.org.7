@@ -1,414 +1,199 @@
-Return-Path: <linux-kernel+bounces-585356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814B5A7929C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:04:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5C7A7929B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75CFA1896645
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB003B5394
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9141218DB1E;
-	Wed,  2 Apr 2025 16:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E499518DB1E;
+	Wed,  2 Apr 2025 16:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mNMIPNRN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCIKwRDF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mNMIPNRN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCIKwRDF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nokia-sbell.com header.i=@nokia-sbell.com header.b="QdHdKF/G"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2047.outbound.protection.outlook.com [40.107.22.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B2538DE9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743609789; cv=none; b=Hk5Iz3m3PPFmbM0thx5DqlpkhBPLtd7ciZ6ZZFy/4W2VlyANgOYkHcBMr8tIWEUvhG8PfsXyIrcNmpFBTC8kkMPwdqoxmVikeRr4weLj+wwV6xu2JoVwq/iNSXKHSxZW1M3b74KJPlP/6FjSrOM22h1sgTeLr/gNAdsUixf/UUE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743609789; c=relaxed/simple;
-	bh=SUDY5nKAMEtXCnKWrW+qPfrHTE62Vcd8gTQDFv3L7ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUwK0GLtKUrL0FVsQFS0jqSr8R3AZrtwSMNLTIshDrfiydbfOdPkMIuBSZnZ6jTK4GlzFcoohqU5fWLkn3J7KW9ee/uT0MxyVrcpogmADZ7tp4qq7s+xj2UBdF78ZuMl3XepSQizmk68WlDLThlUdywebF8NHT5irNGqgfZ/MI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mNMIPNRN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCIKwRDF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mNMIPNRN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCIKwRDF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 171741F38A;
-	Wed,  2 Apr 2025 16:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743609785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ADREL8QGgcrkjimY1Iz7jNMHOBnx1JQ4bxule2Z1cc0=;
-	b=mNMIPNRNWkvY8L60WnD8Oy5XR5o3nXzHmrvq/VVNJ4ZftdM0s8vIjptdMM/Hx2OH35SbVj
-	n9uEbh3EkPa9S0L1TmYGA7jcwrb0XBTrnfDcmF8PTmcjpq/wDxyBDiIv3YLK0m9zqrUEYY
-	TRuNJGh79gskOu3rztd2zv5gaYtvkqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743609785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ADREL8QGgcrkjimY1Iz7jNMHOBnx1JQ4bxule2Z1cc0=;
-	b=UCIKwRDFeVpl66gvGP0+toM6Z0/FXQV2iAcj9hCpQ4mpYbOWuKuYhNE9x/D6RGKQ5ODU6y
-	BGQtnfDQo2rqCCBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mNMIPNRN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UCIKwRDF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743609785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ADREL8QGgcrkjimY1Iz7jNMHOBnx1JQ4bxule2Z1cc0=;
-	b=mNMIPNRNWkvY8L60WnD8Oy5XR5o3nXzHmrvq/VVNJ4ZftdM0s8vIjptdMM/Hx2OH35SbVj
-	n9uEbh3EkPa9S0L1TmYGA7jcwrb0XBTrnfDcmF8PTmcjpq/wDxyBDiIv3YLK0m9zqrUEYY
-	TRuNJGh79gskOu3rztd2zv5gaYtvkqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743609785;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ADREL8QGgcrkjimY1Iz7jNMHOBnx1JQ4bxule2Z1cc0=;
-	b=UCIKwRDFeVpl66gvGP0+toM6Z0/FXQV2iAcj9hCpQ4mpYbOWuKuYhNE9x/D6RGKQ5ODU6y
-	BGQtnfDQo2rqCCBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEF4713A4B;
-	Wed,  2 Apr 2025 16:03:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZwYgObhf7WfGTAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 02 Apr 2025 16:03:04 +0000
-Message-ID: <4e122668-6f6a-4874-85df-e6869b9ccb24@suse.cz>
-Date: Wed, 2 Apr 2025 18:03:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F1D18DF80;
+	Wed,  2 Apr 2025 16:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743609817; cv=fail; b=mFTGsaz6hi1z3EHiPkvCypjhL/lacCwpLRRpJag6SOps8lO1mD49XKfpu13cSWyo7nmuqdau327ypLWBJZJfIeoBS2K26TC2lVH7l5X6JwQmM/oRfkGzxa21aAAVmIEh9ltqKaEs/1qw+b9x7oQH3x91d/CJbOPjBh/z6rBA7e8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743609817; c=relaxed/simple;
+	bh=CKyuptKILTN5KunSljAak7rzQk3/mAkmnsaXP4vyY6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BqUkoiRhwrZTSkvDDKrme9ukfXz77bg7CicDRx/M9/QTVe4UrDJHUJhxkI1J615hjQwVxmzKuV3eHGvJ4rMqkEwwoEqxlTKy0RTrruW6Vo9S6ClD2imwulBllbzIm/ejCHk6wBzEEG6VZcSPF9BA3sgaDMpMN2zYXLIDuAGWYIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nokia-sbell.com; spf=pass smtp.mailfrom=nokia-sbell.com; dkim=pass (2048-bit key) header.d=nokia-sbell.com header.i=@nokia-sbell.com header.b=QdHdKF/G; arc=fail smtp.client-ip=40.107.22.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nokia-sbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nokia-sbell.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Npy2ALK0ME8RmxBJHr/s/rKVE/FphvMQlIILP7j0tnWtr6WFvgZs4KXYj1yIQCUmD6pX4AIWjs+7aiI3etg602YOcG4KU0QkcG5Cz9ek1BBszuz6hQvUHFSlnbd2snAwgKwFENY3RnsxeWWvt1JUzdUaD2FlgN2pLIDiQo86nRJQy8/831Yximl8V3DZujn62bSR04qbihm7EPgFYw49wdde/mhSMqFOS1SMxc+G8rRBK7UH3/1KooWPS9uZ/sSzPbg23U7ZkpRnUT/tN5UPxcE4wAKchPUygRsDZL2Pm4RRaMyTNrhuTE859ZbmwztacATgpTmT92lTJQ8FtnBHjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0DrURSzleIDTma6uwHFndChg5VAx80xNmUsWYYE5I4U=;
+ b=UqpK9GxxGutUTKP2SfmOq31RdnnOWrZENsqzgjzgmuXE5JhOI8CwDrZuKg5eYdo+9/au6oFpsK5MDDn4IsTq/o/QE05EgUo3v+igr3Ln8KLF/eksrc5pW+GzdLz9taFO4Cl2wZV14Yh7nUTUuCpkuC1pWwcI5w4pebMOjJzp8irOrGOFHMrU1WMde9qyFIk9SLiSjR7+js2rPBNbgq51iAXD9rvp3+9lqe3osEzS92pDC5bs5K9nupsH/55EB9KSs5UuUhSnHeca1KBKQ4Yc9VyPoQx545y3h/r1/IYCU/s6ceg+kM3pTGtj7DsOIfwzbMm7Mbr8D799ZaybDTmrWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia-sbell.com; dmarc=pass action=none
+ header.from=nokia-sbell.com; dkim=pass header.d=nokia-sbell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia-sbell.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0DrURSzleIDTma6uwHFndChg5VAx80xNmUsWYYE5I4U=;
+ b=QdHdKF/GRiTvGQzElyzPEHMUsH7d86vPD8RobR0hJNFAPphYGWgwsCI2epw+1B3WPlkxD7tH/d0pXxeNQXTKg6ekxfAzhxxBdcovZPL2Zk2pZ5HUtBoAMhqcSnv/J1KYx2wFlZJPliT8lOfA/ewXvCALb/abTfit8hB+cZj+3tjLGeebMHLapiwjBx35ET8w9YeU5vmfCJpcwGDEXpk3AjvtyqrMgS+duHqnFBptku+lgNOn0fyHRGb3GJD2No/5rDVN+z7Fd03XM/5a4DHwTI+2ooVhhPI5mXLO/FjOOM3pyhzdNeOfXl2mmMqodbm7HqSIS00mGHYTVOucf/9HyQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia-sbell.com;
+Received: from DBBPR07MB7481.eurprd07.prod.outlook.com (2603:10a6:10:1f0::11)
+ by AM9PR07MB7201.eurprd07.prod.outlook.com (2603:10a6:20b:2d0::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 2 Apr
+ 2025 16:03:29 +0000
+Received: from DBBPR07MB7481.eurprd07.prod.outlook.com
+ ([fe80::884b:f4bb:e97b:b9d5]) by DBBPR07MB7481.eurprd07.prod.outlook.com
+ ([fe80::884b:f4bb:e97b:b9d5%2]) with mapi id 15.20.8583.028; Wed, 2 Apr 2025
+ 16:03:29 +0000
+From: Zhen XIN <zhen.xin@nokia-sbell.com>
+To: linux-wireless@vger.kernel.org
+Cc: pkshih@realtek.com,
+	linux-kernel@vger.kernel.org,
+	martin.blumenstingl@googlemail.com,
+	Zhen XIN <zhen.xin@nokia-sbell.com>
+Subject: [RFC -v1] wifi: rtw88: sdio: Tx status for management frames
+Date: Wed,  2 Apr 2025 16:03:10 +0000
+Message-Id: <20250402160310.996141-1-zhen.xin@nokia-sbell.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0048.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::17) To DBBPR07MB7481.eurprd07.prod.outlook.com
+ (2603:10a6:10:1f0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm,memory_hotplug: Implement numa node notifier
-Content-Language: en-US
-To: Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- mkoutny@suse.com, Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250401092716.537512-1-osalvador@suse.de>
- <20250401092716.537512-2-osalvador@suse.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250401092716.537512-2-osalvador@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 171741F38A
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,kvack.org,vger.kernel.org,gmail.com,suse.com,intel.com,huawei.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.cz:mid,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR07MB7481:EE_|AM9PR07MB7201:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87b12a5b-c867-4b7e-ea27-08dd71ffe8ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9TSupn5H/APzmv4SDu7HfOm4IXrlltcPFyoEKWh8ATan+2BZGUW/ZO11nja5?=
+ =?us-ascii?Q?mO2DPXl6C3xGs7KEpxsakQrzUnMfBnsEbdzRVaAJE+qPIK0DNbLC8BPr25Bl?=
+ =?us-ascii?Q?KaUEPL5aHxhvIqI1Vm80aVGVAtiCtFB6iKRNowKrJ0umECDzS60oo7qQ1QDN?=
+ =?us-ascii?Q?9tJzcvj6PVuieqxMTcZfhhuIp2O86SZkYHSmwUCunMvlxyCUC6kkf2eN00oK?=
+ =?us-ascii?Q?kekidjSls9tV802mKHTDZN4VdUVYabTGSM4kmvb/lAPenpIOWyhZjKIp2sXz?=
+ =?us-ascii?Q?IU+V+SuQt2fBZw74FKoncYd7ND+/w26bwDyrsCFsU8cAZFuQ1o2qP33cnJDV?=
+ =?us-ascii?Q?i6ek6xmpToj4ff2OKuwz01lEx1e0KMw86QOv1C3SGBM4jEtmrPlu6x35GpEh?=
+ =?us-ascii?Q?+t1WuxzwrllQXtaLw7gxN8LpR113n9CIQRubmVgFwX6WbCMCarvEdQ2ZLn76?=
+ =?us-ascii?Q?denzQ8K0GQGo8se33rmqZxJnrvOkYlGhQHKLRM27cJKSqhnC/M+uanWEpUcy?=
+ =?us-ascii?Q?kK1vHn1RWFxhqDqPDUv2OKVCgOOd+niSOS0OjAuntiBGun6AyMacVduz2wsp?=
+ =?us-ascii?Q?6FLE5Rs1cd+uoODB7n6pnxHy77MZOEiMo+9APT/9tiGxErDZuDgdvBiPMYd4?=
+ =?us-ascii?Q?+tvhU5Yh9AsONPP0yWe0AllG8AzD6q5tPVe1r1ndl2nFpGC03gHWBEPK47SV?=
+ =?us-ascii?Q?OacJ0Cx+2mLJdnxh0PabJKTzHBHO7wxHY3rw7evSn7+I+awkCNdRN460F6fQ?=
+ =?us-ascii?Q?Xotw2Xl483lwPcOahiVYMG2uvza2vOCeqF4hE4g+R4FFD8fhV7I0yHeiLbKf?=
+ =?us-ascii?Q?3ceeEqXFu01poY9mvIiiVCEmFejCzdM9JXeETUkLsWyDBXm+EiW8B5WlTyP0?=
+ =?us-ascii?Q?LJarVplBF3nkeEXua8O1Ifvc8Y3K79CWD4SRlYICOEu9v6SRheAMXR4zXwij?=
+ =?us-ascii?Q?soprhOQnmS/E7+2CL06Emsa+AcFzeTKGjhYAFjfKdeX5Gi31Hceo+BDDvVBI?=
+ =?us-ascii?Q?sngiPr4NsnYQHhIjK49L5Yj53JVHgttEi1117uq6WtW0pAc/vieZ5rL701wJ?=
+ =?us-ascii?Q?Em2nWpMbv+h+YRkiYtzg+hDeOG6DEdcCv1vY4m66R3Xeneh0NTaAwrERSui/?=
+ =?us-ascii?Q?nrPto/yOONgzQSD1HzOgoH+R2R3/ONfVbKKiejUvHST4gs+RqQ8rvp+kuNIX?=
+ =?us-ascii?Q?NkzgXAaIap+E9aQIOputqvRIcZn8uwVYhVFOaySKu2ffm7rPTYMy84huXLyr?=
+ =?us-ascii?Q?TKNsQJujVbIq8AjEF7XQ0nmneJsRrswiVG8+Ldi0rPh+osfFYgas+J2e7HMz?=
+ =?us-ascii?Q?WLhMefdF4DRlXtY1A5CgzMVboB3wrH2scc01HFvDtmvDjOJaWZJrqwe1BwC+?=
+ =?us-ascii?Q?AZGcRIPk6+fQ6DS8RhRbWlIV9wsNe//k1p6lRyb/MdJlfHnA0w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR07MB7481.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?u4m/U+nRKDrMAcHJv/hKbDMcT8Uyv7OzUDIXfChhHShHhp+ZRgg1hBAZi8lU?=
+ =?us-ascii?Q?Z4IKWiqk54fHrXRdaezD0jASWFlzJ2M8TH0uvZE6UeXJy9RA5BE4l07pP8MC?=
+ =?us-ascii?Q?XQP1nDCrlCn1YStb5anw5IlYgpBIpyF+D0YxxeHE3Ip4FWEh1DgdjPKLbDka?=
+ =?us-ascii?Q?EvbYYDC90A9ImtQnTLWAhCWVRF5YjriZdMsVLojl/uWaCOmbVUHSDkJVitlP?=
+ =?us-ascii?Q?vzp8BRzVJA4Z/s/YGebGVh55Q8LLyl1uc/dELakIK/9p0cByONu92nNfYKZ9?=
+ =?us-ascii?Q?B0LwSTw2L1MHv0W22Ix0drqWB7SwTb0NZW3Sy51Az/0szqxX1FQi4PiFyfFQ?=
+ =?us-ascii?Q?lCWL39m5j9V+BsxalRmLz/SCBwuNy+BNV1tt7f9nPaIR6VRbGh0SSz3wW9G5?=
+ =?us-ascii?Q?fE3sNmMMrhdYKDC8vc2bUh5VbuWWq+pySejd54e+TKYHDmooqUakrcey54PN?=
+ =?us-ascii?Q?CUzYL3okO+LEupBjtxqK5jB0JztFrrWx664ryKEQL+7p67P4L7ds15TNJ0wY?=
+ =?us-ascii?Q?tPWgKZal1/DZxZVkhnhmhH3PtCJECrveTvtDQOUtexz3qxWeTLPVMvAK+xaH?=
+ =?us-ascii?Q?W4Y8A/rf5F2Z8mBusi7m7e1isgG+4tnws+/nRv1nNHN3nukCKnwXEjZQ1nJX?=
+ =?us-ascii?Q?n4gBaw0StwD0EghN+d22CPd4lEDmrND6D9h8byxTvIUAPs+ljnRVKlyDLwxp?=
+ =?us-ascii?Q?Ma5RhJMZb+l4XG55wt0wwx10grzOhhyAyZtLMI3ikvS3G5p5WZSnd0/2wdiT?=
+ =?us-ascii?Q?KE41UqEKxKRwr8ic9LADjkvLxKDob1n/AeehjmnfwhljEBMhsgYnoinwYQK1?=
+ =?us-ascii?Q?e2n/P7tivJJY1kXWY1Nq0FaGmMe9oBX5s0KiLK/Fw5BvCN72cljrt0Uf9Tg5?=
+ =?us-ascii?Q?nUUsgOALGWlk0FadNETsiO6oqEWsHg0QZ+9QAlIxeeBhqb4a5cXsbD47zIIk?=
+ =?us-ascii?Q?QDPZSI6+UW7jiUaYBkY88uiIRKFAM2/oQvyZxSL5VE27pGSy2cY0SMoWLRtT?=
+ =?us-ascii?Q?fA2xXmWu+nASvqIsXQZ9km5jjTE1Og+LzY/YqnSyMv7ise98W1toWa0Xa2GN?=
+ =?us-ascii?Q?YCGzs2nGOT0wsN52a6uyH5KlDttKGMq9o2ASu3bRzfluih7aa3aJZ9536A1u?=
+ =?us-ascii?Q?/6lVIWm22NXUoq23aHZe/YUkdLIz+F0uW5jADMjx0/8OTqH0cmwFo8qZKBem?=
+ =?us-ascii?Q?rHdohF831u+Yte8LxG5enMwx4ORsuuyLTqvsisetT7FH4ggNvsRd3uMKxWYF?=
+ =?us-ascii?Q?HqEiGFMZ2H7ZxvTsyEw+3msyUkWJS8VVcZSWlo2jy1PNLTkDdSZ7MNNZr+rt?=
+ =?us-ascii?Q?LZsBirvXvlCyuia+59lYbZrnsOAGTgZLOW5/JIjku5TEHmksxs9BAXYeK1AE?=
+ =?us-ascii?Q?ryoY4Vrgc/5gCNmyfFnNdc6gURzoXonbPAbkitRAtv97itK8MCJTAwhnGaGE?=
+ =?us-ascii?Q?4tQgyEtsZpKaej05QaO+SJxIa2yZ88E5Qg8v5atqkWEJINmTtFGfU7PVfIxC?=
+ =?us-ascii?Q?710l99bYnfIJtj9buaZE11hF6F7IBiXuyxJF49pYESAiiZskBxyG7BvY0gX3?=
+ =?us-ascii?Q?5J+uLHbKWPFZ3fsoOvN8ObwPd/s0OG8Uwvf/5BSjPKPrdvHOMDIUYvlqLcHC?=
+ =?us-ascii?Q?ow=3D=3D?=
+X-OriginatorOrg: nokia-sbell.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87b12a5b-c867-4b7e-ea27-08dd71ffe8ac
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR07MB7481.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2025 16:03:29.3399
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bWqrJWWsSTZp9G31sOsk5w21oYGeRuXh2Yq2RPYW+9l+Vho4cvr/QnJ7rVuCBdE8S9vQ7bVNtDN6cyE69PiHA70Cho70mrEKafq7dYNQubc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR07MB7201
 
-On 4/1/25 11:27, Oscar Salvador wrote:
-> There are at least four consumers of hotplug_memory_notifier that what they
-> really are interested in is whether any numa node changed its state, e.g: going
-> from being memory aware to becoming memoryless.
-> 
-> Implement a specific notifier for numa nodes when their state gets changed,
-> and have those consumers that only care about numa node state changes use it.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Rtl8732ds doesn't work in AP-Mode due to the missing tx status for management frames
+This patch enables tx status report for all tx skbs
 
-<snip>
+Signed-off-by: Zhen XIN <zhen.xin@nokia-sbell.com>
+---
+ drivers/net/wireless/realtek/rtw88/sdio.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-> -static void node_states_set_node(int node, struct memory_notify *arg)
-> +static void node_states_set_node(int node, struct node_notify *arg)
->  {
->  	if (arg->status_change_nid_normal >= 0)
->  		node_set_state(node, N_NORMAL_MEMORY);
-> @@ -1177,7 +1177,9 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	int need_zonelists_rebuild = 0;
->  	const int nid = zone_to_nid(zone);
->  	int ret;
-> -	struct memory_notify arg;
-> +	struct memory_notify mem_arg;
-> +	struct node_notify node_arg;
-> +	bool cancel_mem_notifier_on_err = false, cancel_node_notifier_on_err = false;
->  
->  	/*
->  	 * {on,off}lining is constrained to full memory sections (or more
-> @@ -1194,11 +1196,23 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	/* associate pfn range with the zone */
->  	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL, MIGRATE_ISOLATE);
->  
-> -	arg.start_pfn = pfn;
-> -	arg.nr_pages = nr_pages;
-> -	node_states_check_changes_online(nr_pages, zone, &arg);
-> +	mem_arg.start_pfn = pfn;
-> +	mem_arg.nr_pages = nr_pages;
-> +	node_states_check_changes_online(nr_pages, zone, &node_arg);
->  
-> -	ret = memory_notify(MEM_GOING_ONLINE, &arg);
-> +	if (node_arg.status_change_nid >= 0) {
-
-Hmm, don't we need to add "|| node_arg.status_change_nid_normal >= 0"? Or we
-fail to notify addition of normal memory to a node that already has !normal
-memory?
-
-> +		/* Node is becoming memory aware. Notify consumers */
-> +		cancel_node_notifier_on_err = true;
-> +		ret = node_notify(NODE_BECOMING_MEM_AWARE, &node_arg);
-> +		ret = notifier_to_errno(ret);
-> +		if (ret)
-> +			goto failed_addition;
-> +	}
-> +
-> +	cancel_mem_notifier_on_err = true;
-> +	mem_arg.status_change_nid = node_arg.status_change_nid;
-> +	mem_arg.status_change_nid_normal = node_arg.status_change_nid_normal;
-> +	ret = memory_notify(MEM_GOING_ONLINE, &mem_arg);
->  	ret = notifier_to_errno(ret);
->  	if (ret)
->  		goto failed_addition;
-> @@ -1224,7 +1238,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	online_pages_range(pfn, nr_pages);
->  	adjust_present_page_count(pfn_to_page(pfn), group, nr_pages);
->  
-> -	node_states_set_node(nid, &arg);
-> +	node_states_set_node(nid, &node_arg);
->  	if (need_zonelists_rebuild)
->  		build_all_zonelists(NULL);
->  
-> @@ -1245,16 +1259,26 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
->  	kswapd_run(nid);
->  	kcompactd_run(nid);
->  
-> +	if (node_arg.status_change_nid >= 0)
-> +		/*
-> +		 * Node went from memoryless to have memory. Notifiy interested
-> +		 * consumers
-> +		 */
-> +		node_notify(NODE_BECAME_MEM_AWARE, &node_arg);
-> +
->  	writeback_set_ratelimit();
->  
-> -	memory_notify(MEM_ONLINE, &arg);
-> +	memory_notify(MEM_ONLINE, &mem_arg);
->  	return 0;
->  
->  failed_addition:
->  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
->  		 (unsigned long long) pfn << PAGE_SHIFT,
->  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
-> -	memory_notify(MEM_CANCEL_ONLINE, &arg);
-> +	if (cancel_node_notifier_on_err)
-> +		node_notify(NODE_CANCEL_MEM_AWARE, &node_arg);
-> +	if (cancel_mem_notifier_on_err)
-> +		memory_notify(MEM_CANCEL_ONLINE, &mem_arg);
-
-Switch the order of those just for symmetry? :)
-
->  	remove_pfn_range_from_zone(zone, pfn, nr_pages);
->  	return ret;
->  }
-> @@ -1898,7 +1922,7 @@ early_param("movable_node", cmdline_parse_movable_node);
->  
->  /* check which state of node_states will be changed when offline memory */
->  static void node_states_check_changes_offline(unsigned long nr_pages,
-> -		struct zone *zone, struct memory_notify *arg)
-> +		struct zone *zone, struct node_notify *arg)
->  {
->  	struct pglist_data *pgdat = zone->zone_pgdat;
->  	unsigned long present_pages = 0;
-> @@ -1935,7 +1959,7 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
->  		arg->status_change_nid = zone_to_nid(zone);
->  }
->  
-> -static void node_states_clear_node(int node, struct memory_notify *arg)
-> +static void node_states_clear_node(int node, struct node_notify *arg)
->  {
->  	if (arg->status_change_nid_normal >= 0)
->  		node_clear_state(node, N_NORMAL_MEMORY);
-> @@ -1963,7 +1987,9 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
->  	unsigned long pfn, managed_pages, system_ram_pages = 0;
->  	const int node = zone_to_nid(zone);
->  	unsigned long flags;
-> -	struct memory_notify arg;
-> +	struct memory_notify mem_arg;
-> +	struct node_notify node_arg;
-> +	bool cancel_mem_notifier_on_err = false, cancel_node_notifier_on_err = false;
->  	char *reason;
->  	int ret;
->  
-> @@ -2022,11 +2048,22 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
->  		goto failed_removal_pcplists_disabled;
->  	}
->  
-> -	arg.start_pfn = start_pfn;
-> -	arg.nr_pages = nr_pages;
-> -	node_states_check_changes_offline(nr_pages, zone, &arg);
-> +	mem_arg.start_pfn = start_pfn;
-> +	mem_arg.nr_pages = nr_pages;
-> +	node_states_check_changes_offline(nr_pages, zone, &node_arg);
-> +
-> +	if (node_arg.status_change_nid >= 0) {
-
-Ditto.
-
-> +		cancel_node_notifier_on_err = true;
-> +		ret = node_notify(NODE_BECOMING_MEMORYLESS, &node_arg);
-> +		ret = notifier_to_errno(ret);
-> +		if (ret)
-> +			goto failed_removal_isolated;
-> +	}
->  
-> -	ret = memory_notify(MEM_GOING_OFFLINE, &arg);
-> +	cancel_mem_notifier_on_err = true;
-> +	mem_arg.status_change_nid = node_arg.status_change_nid;
-> +	mem_arg.status_change_nid_normal = node_arg.status_change_nid_normal;
-> +	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
->  	ret = notifier_to_errno(ret);
->  	if (ret) {
->  		reason = "notifier failure";
-> @@ -2106,27 +2143,32 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
->  	 * Make sure to mark the node as memory-less before rebuilding the zone
->  	 * list. Otherwise this node would still appear in the fallback lists.
->  	 */
-> -	node_states_clear_node(node, &arg);
-> +	node_states_clear_node(node, &node_arg);
->  	if (!populated_zone(zone)) {
->  		zone_pcp_reset(zone);
->  		build_all_zonelists(NULL);
->  	}
->  
-> -	if (arg.status_change_nid >= 0) {
-> +	if (node_arg.status_change_nid >= 0) {
->  		kcompactd_stop(node);
->  		kswapd_stop(node);
-> +		/*Node went memoryless. Notifiy interested consumers */
-> +		node_notify(NODE_BECAME_MEMORYLESS, &node_arg);
->  	}
->  
->  	writeback_set_ratelimit();
->  
-> -	memory_notify(MEM_OFFLINE, &arg);
-> +	memory_notify(MEM_OFFLINE, &mem_arg);
->  	remove_pfn_range_from_zone(zone, start_pfn, nr_pages);
->  	return 0;
->  
->  failed_removal_isolated:
->  	/* pushback to free area */
->  	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
-> -	memory_notify(MEM_CANCEL_OFFLINE, &arg);
-> +	if (cancel_node_notifier_on_err)
-> +		node_notify(NODE_CANCEL_MEMORYLESS, &node_arg);
-> +	if (cancel_mem_notifier_on_err)
-> +		memory_notify(MEM_CANCEL_OFFLINE, &mem_arg);
-
-Ditto.
-
->  failed_removal_pcplists_disabled:
->  	lru_cache_enable();
->  	zone_pcp_enable(zone);
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 184fd2b14758..74350f6c8ddd 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5928,10 +5928,10 @@ static int slab_mem_going_offline_callback(void *arg)
->  
->  static void slab_mem_offline_callback(void *arg)
->  {
-> -	struct memory_notify *marg = arg;
-> +	struct node_notify *narg = arg;
->  	int offline_node;
->  
-> -	offline_node = marg->status_change_nid_normal;
-> +	offline_node = narg->status_change_nid_normal;
->  
->  	/*
->  	 * If the node still has available memory. we need kmem_cache_node
-> @@ -5954,8 +5954,8 @@ static int slab_mem_going_online_callback(void *arg)
->  {
->  	struct kmem_cache_node *n;
->  	struct kmem_cache *s;
-> -	struct memory_notify *marg = arg;
-> -	int nid = marg->status_change_nid_normal;
-> +	struct node_notify *narg = arg;
-> +	int nid = narg->status_change_nid_normal;
->  	int ret = 0;
->  
->  	/*
-> @@ -6007,18 +6007,18 @@ static int slab_memory_callback(struct notifier_block *self,
->  	int ret = 0;
->  
->  	switch (action) {
-> -	case MEM_GOING_ONLINE:
-> +	case NODE_BECOMING_MEM_AWARE:
->  		ret = slab_mem_going_online_callback(arg);
->  		break;
-> -	case MEM_GOING_OFFLINE:
-> +	case NODE_BECOMING_MEMORYLESS:
->  		ret = slab_mem_going_offline_callback(arg);
->  		break;
-> -	case MEM_OFFLINE:
-> -	case MEM_CANCEL_ONLINE:
-> +	case NODE_BECAME_MEMORYLESS:
-> +	case NODE_CANCEL_MEM_AWARE:
->  		slab_mem_offline_callback(arg);
->  		break;
-> -	case MEM_ONLINE:
-> -	case MEM_CANCEL_OFFLINE:
-> +	case NODE_BECAME_MEM_AWARE:
-> +	case NODE_CANCEL_MEMORYLESS:
->  		break;
->  	}
->  	if (ret)
-> @@ -6094,7 +6094,7 @@ void __init kmem_cache_init(void)
->  			sizeof(struct kmem_cache_node),
->  			SLAB_HWCACHE_ALIGN | SLAB_NO_OBJ_EXT, 0, 0);
->  
-> -	hotplug_memory_notifier(slab_memory_callback, SLAB_CALLBACK_PRI);
-> +	hotplug_node_notifier(slab_memory_callback, SLAB_CALLBACK_PRI);
->  
->  	/* Able to allocate the per node structures */
->  	slab_state = PARTIAL;
+diff --git a/drivers/net/wireless/realtek/rtw88/sdio.c b/drivers/net/wireless/realtek/rtw88/sdio.c
+index e024061bdbf7..84f71e13b5ae 100644
+--- a/drivers/net/wireless/realtek/rtw88/sdio.c
++++ b/drivers/net/wireless/realtek/rtw88/sdio.c
+@@ -1186,7 +1186,7 @@ static int rtw_sdio_request_irq(struct rtw_dev *rtwdev,
+ }
+ 
+ static void rtw_sdio_indicate_tx_status(struct rtw_dev *rtwdev,
+-					struct sk_buff *skb)
++					struct sk_buff *skb, enum rtw_tx_queue_type queue)
+ {
+ 	struct rtw_sdio_tx_data *tx_data = rtw_sdio_get_tx_data(skb);
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+@@ -1195,7 +1195,7 @@ static void rtw_sdio_indicate_tx_status(struct rtw_dev *rtwdev,
+ 	skb_pull(skb, rtwdev->chip->tx_pkt_desc_sz);
+ 
+ 	/* enqueue to wait for tx report */
+-	if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
++	if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS && queue <= RTW_TX_QUEUE_VO) {
+ 		rtw_tx_report_enqueue(rtwdev, skb, tx_data->sn);
+ 		return;
+ 	}
+@@ -1227,10 +1227,7 @@ static void rtw_sdio_process_tx_queue(struct rtw_dev *rtwdev,
+ 		return;
+ 	}
+ 
+-	if (queue <= RTW_TX_QUEUE_VO)
+-		rtw_sdio_indicate_tx_status(rtwdev, skb);
+-	else
+-		dev_kfree_skb_any(skb);
++	rtw_sdio_indicate_tx_status(rtwdev, skb, queue);
+ }
+ 
+ static void rtw_sdio_tx_handler(struct work_struct *work)
+-- 
+2.25.1
 
 
