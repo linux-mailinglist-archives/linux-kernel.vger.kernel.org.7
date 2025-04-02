@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-584702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26ED1A78A6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E64A78A5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1366D7A2C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215FD3A504C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAE235C04;
-	Wed,  2 Apr 2025 08:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTdK5wJo"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500972356A2;
+	Wed,  2 Apr 2025 08:53:08 +0000 (UTC)
+Received: from ida.uls.co.za (ida.uls.co.za [154.73.32.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91C82356BF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960C51E570D;
+	Wed,  2 Apr 2025 08:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.73.32.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743584229; cv=none; b=djySpvQ8wvjyP1/F+9wJrGTvM9ZWtwkmuaI6TmV2m6p7Ykv1ZnlhkbbCsGmJy4kstja7cbfPdl2cjQ1ZFV+Vxf25CnXgVWg+DEhhM+nqsz+BkO4nUvCHko+ud0A9WyDOavPu9pkcA6DgB6FSRiutGrY7qob6YPszQ+/1ZNoq4fY=
+	t=1743583988; cv=none; b=Hsry/5eHARgzOFLOLPXuaaTxoC2GVsPFuzKySRufQcRQ45En6hx8C8Pch6oL1apTQjq56WuLjJ/3SES9T4wFcxF3u1T6lAwPeU8x2Dr6A/1H8thjzG6SrtYwuiDjIoWEiAhyDD4CNsak9RMNU1gtbsaY1kGmjPyxHFhJEE8uZVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743584229; c=relaxed/simple;
-	bh=gJiKCmOVGHHXuA+rW+U1+1ikV/iMBetNjbldM/AKP2U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ECoeYS6xBprEWH1vrANLr6Fa9MoX1qQySrV7WAcRD+FZnEdT1iYE38ztseh8Z208OADgbx3BmlErXjp51vCu7jxBHQCU68plvAp+XXCGo1adwI6LHGUWHC1WIojUHaBznIoP1M1pXLFLieH7GrwK2C9m9/NzIBCZSSFYNBPdtHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTdK5wJo; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-227b828de00so112919885ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:57:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743584227; x=1744189027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2L6fD6nlIa393DR0GjOYRfyiTfAg8gVxKRvxkE78qM8=;
-        b=GTdK5wJoilLJecuT7t9n5EoAG8ecvNkdFPLxqehYlSLPDLLcISHEYtlw48WsFVZYuS
-         joy7AT6m1R43Cwekwwt0iIgBzzih+Q9Oj+BjW6nr79GpwjPWU+6UqtjnTgZ+omfyEpXo
-         71VsDxu3CjNcyDIabnBvOj+mT6YL8RVpWXa2nGwAhKg5iIC9cCAST+TJFwhhWL1zlz8F
-         +UkA62Fjz0L3pWUOhEh8KmvAjzAwoEMVX3p5forK1vn1ClDiNYPycenUXTwtJQyZXVc/
-         GyBfnhfaPmVWXLCTmiP5XwfgO3mQ6N4VJf45fr6c8KwesfG4YdKeP82VydWKng9y35dB
-         wntQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743584227; x=1744189027;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2L6fD6nlIa393DR0GjOYRfyiTfAg8gVxKRvxkE78qM8=;
-        b=pUZkGvh6GoyCTpgB87c+Vf1KeAgsmEMv7aoPOZ/MNloC4FUoYZoHp1HUvuM06ABLtQ
-         GSDE5oHRURakbpCfvV0sIGxvKC4FsSx2+/gVVBTl8T5DZs7mE6XD7p0INT5EFrLd73Ch
-         FLF2JkTejcnYkicRHK3FnV9/xiqLyZksdLTJ6d/cUdhzuapdBe4zX+CxYx9dBdVyZBjb
-         YARhNELaUZ5P7CD4TMhRomxfnRsg9hTw5+c+12DpnOqAL0MiAaWWaPS2Ppcx2BfZkJwW
-         10FJ28UE19y8mJYVHT+n0m6ixrxl4TXbpzoT0clQEjcs5ZX1XZUK9ySttZ61eQBbjvDa
-         RlUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhjTCJeWhuGz5OMvqJeFM0BpBDYOEd+9amLMd0+RofEYRaCERBrOfOvt59jSQqVBUY4Hfm6xVrZoX7eGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwucEr2NHbQGzQFHbEP3hARkwaw4Zz2tomrj1xyuZ2vIY4uDyD8
-	vQVt1c5KjDEIvbOVZwHjRwj/vpGV2m0B17u5NcrjW4iN5n6n6q7L
-X-Gm-Gg: ASbGncuqv1nZh6pnGxJtBwBwmnQ9jdx0x/qEFtuH6R1QP/K2hLDprger5xrWrEvXB6y
-	Dpert65OxI8KKkzWYqUTCGIX8DyGQ+GhiiBiilic7caYL87tlrZds8KK3dhFbRiZGpxG91McFX8
-	n7GDIf6g+BCT4RYMj188JCEB6MW9BjY+1Tre4DbgYCeXda6OBrxbQx28BpuqI8J4ndPfgPExBvB
-	C/fjE5BAR+weAgaPMAemkYFYcMsE7gmHjbB6BeDt45ElKiYHziGaUtuMKvUHn5g7DxpRYrtT+v9
-	QLH1iJVqnBTub0Q+H/VkbrazcUIBV8Jz0HVMhlefLsobXy+gnqDyI97mnC15YIw4UufatA/XbJq
-	xB1g=
-X-Google-Smtp-Source: AGHT+IGZgi69Abih38Lloz1v9kLCgGQu6o9alyyOKDi5TM595XFdyW5Z+Sc4LA3KYAlvCBtd3nkQfQ==
-X-Received: by 2002:a17:902:e549:b0:223:325c:89f6 with SMTP id d9443c01a7336-2296c605374mr25463065ad.10.1743584226867;
-        Wed, 02 Apr 2025 01:57:06 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1dedb5sm103221535ad.176.2025.04.02.01.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 0368E80642;
-	Wed,  2 Apr 2025 17:06:10 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: tudor.ambarus@linaro.org,
-	pratyush@kernel.org,
-	mwalle@kernel.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 3/3] mtd: spi-nor: macronix: Move macronix_nor_default_init logic to macronix_nor_late_init
-Date: Wed,  2 Apr 2025 16:51:29 +0800
-Message-Id: <20250402085129.1027670-4-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250402085129.1027670-1-linchengming884@gmail.com>
-References: <20250402085129.1027670-1-linchengming884@gmail.com>
+	s=arc-20240116; t=1743583988; c=relaxed/simple;
+	bh=4Wd1pFjhkfUvMqEoDP4TNMiNLHfXrhW0EPQG0Y6rGsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4IPM5Wh8qa5VE+8Ia1MoTZpdV6pXw2EEoOqzZ0npnZpWRrwTItEbOLvz2FFjf4AVTtGl1Qw+UHJGqoTBLE8dDBkXBvcXMuGQsh7mvqs7Djn57CCY58rwIiXaCQCNbLky8nmjDW4jlJw5xtNQn0fA20W/GE7wXlYtsx3BomCJbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za; spf=pass smtp.mailfrom=uls.co.za; arc=none smtp.client-ip=154.73.32.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uls.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uls.co.za
+Received: from [192.168.42.36]
+	by ida.uls.co.za with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.97.1)
+	(envelope-from <jaco@uls.co.za>)
+	id 1tztqB-0000000027F-08XU;
+	Wed, 02 Apr 2025 10:52:55 +0200
+Message-ID: <0cf44936-57ef-42f2-a484-7f69b87b2520@uls.co.za>
+Date: Wed, 2 Apr 2025 10:52:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
+ size.
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr,
+ joannelkoong@gmail.com, rdunlap@infradead.org, trapexit@spawn.link,
+ david.laight.linux@gmail.com
+References: <20250314221701.12509-1-jaco@uls.co.za>
+ <20250401142831.25699-1-jaco@uls.co.za>
+ <20250401142831.25699-3-jaco@uls.co.za>
+ <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
+ <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
+ <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
+ <3f71532b-4fed-458a-a951-f631155c0107@uls.co.za>
+ <CAJfpegtutvpYYzkW91SscwULcLt_xHeqCGLPmUHKAjozPAQQ8A@mail.gmail.com>
+Content-Language: en-GB
+From: Jaco Kroon <jaco@uls.co.za>
+Autocrypt: addr=jaco@uls.co.za; keydata=
+ xsBNBFXtplYBCADM6RTLCOSPiclevkn/gdf8h9l+kKA6N+WGIIFuUtoc9Gaf8QhXWW/fvUq2
+ a3eo4ULVFT1jJ56Vfm4MssGA97NZtlOe3cg8QJMZZhsoN5wetG9SrJvT9Rlltwo5nFmXY3ZY
+ gXsdwkpDr9Y5TqBizx7DGxMd/mrOfXeql57FWFeOc2GuJBnHPZQMJsQ66l2obPn36hWEtHYN
+ gcUSPH3OOusSEGZg/oX/8WSDQ/b8xz1JKTEgcnu/JR0FxzjY19zSHmbnyVU+/gF3oeJFcEUk
+ HvZu776LRVdcZ0lb1bHQB2K9rTZBVeZLitgAefPVH2uERVSO8EZO1I5M7afV0Kd/Vyn9ABEB
+ AAHNG0phY28gS3Jvb24gPGphY29AdWxzLmNvLnphPsLAdwQTAQgAIQUCVe2mVgIbAwULCQgH
+ AgYVCAkKCwIEFgIDAQIeAQIXgAAKCRAILcSxr/fungCPB/sHrfufpRbrVTtHUjpbY4bTQLQE
+ bVrh4/yMiKprALRYy0nsMivl16Q/3rNWXJuQ0gR/faC3yNlDgtEoXx8noXOhva9GGHPGTaPT
+ hhpcp/1E4C9Ghcaxw3MRapVnSKnSYL+zOOpkGwye2+fbqwCkCYCM7Vu6ws3+pMzJNFK/UOgW
+ Tj8O5eBa3DiU4U26/jUHEIg74U+ypYPcj5qXG0xNXmmoDpZweW41Cfo6FMmgjQBTEGzo9e5R
+ kjc7MH3+IyJvP4bzE5Paq0q0b5zZ8DUJFtT7pVb3FQTz1v3CutLlF1elFZzd9sZrg+mLA5PM
+ o8PG9FLw9ZtTE314vgMWJ+TTYX0kzsBNBFXtplYBCADedX9HSSJozh4YIBT+PuLWCTJRLTLu
+ jXU7HobdK1EljPAi1ahCUXJR+NHvpJLSq/N5rtL12ejJJ4EMMp2UUK0IHz4kx26FeAJuOQMe
+ GEzoEkiiR15ufkApBCRssIj5B8OA/351Y9PFore5KJzQf1psrCnMSZoJ89KLfU7C5S+ooX9e
+ re2aWgu5jqKgKDLa07/UVHyxDTtQKRZSFibFCHbMELYKDr3tUdUfCDqVjipCzHmLZ+xMisfn
+ yX9aTVI3FUIs8UiqM5xlxqfuCnDrKBJjQs3uvmd6cyhPRmnsjase48RoO84Ckjbp/HVu0+1+
+ 6vgiPjbe4xk7Ehkw1mfSxb79ABEBAAHCwF8EGAEIAAkFAlXtplYCGwwACgkQCC3Esa/37p7u
+ XwgAjpFzUj+GMmo8ZeYwHH6YfNZQV+hfesr7tqlZn5DhQXJgT2NF6qh5Vn8TcFPR4JZiVIkF
+ o0je7c8FJe34Aqex/H9R8LxvhENX/YOtq5+PqZj59y9G9+0FFZ1CyguTDC845zuJnnR5A0lw
+ FARZaL8T7e6UGphtiT0NdR7EXnJ/alvtsnsNudtvFnKtigYvtw2wthW6CLvwrFjsuiXPjVUX
+ 825zQUnBHnrED6vG67UG4z5cQ4uY/LcSNsqBsoj6/wsT0pnqdibhCWmgFimOsSRgaF7qsVtg
+ TWyQDTjH643+qYbJJdH91LASRLrenRCgpCXgzNWAMX6PJlqLrNX1Ye4CQw==
+Organization: Ultimate Linux Solutions (Pty) Ltd
+In-Reply-To: <CAJfpegtutvpYYzkW91SscwULcLt_xHeqCGLPmUHKAjozPAQQ8A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-report: Relay access (ida.uls.co.za).
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+Hi,
 
-Remove macronix_nor_default_init and move its functionality to
-macronix_nor_late_init to ensure proper quad_enable initialization.
+On 2025/04/02 10:18, Miklos Szeredi wrote:
+> On Wed, 2 Apr 2025 at 09:55, Jaco Kroon <jaco@uls.co.za> wrote:
+>> Hi,
+>>
+>> I can definitely build on that, thank you.
+>>
+>> What's the advantage of kvmalloc over folio's here, why should it be
+>> preferred?
+> It offers the best of both worlds: first tries plain malloc (which
+> just does a folio alloc internally for size > PAGE_SIZE) and if that
+> fails, falls back to vmalloc, which should always succeed since it
+> uses order 0 pages.
 
-For MX25L3255E, SFDP follows JESD216, which does not include the Quad
-Enable bit Requirements field in its version. When the size field is
-removed, manufacturer->fixups->default_init hook is not executed, causing
-params->quad_enable not being overwritten with the intended function.
-Consequently, it remains as the default spi_nor_sr2_bit1_quad_enable.
+So basically assigns the space, but doesn't commit physical pages for 
+the allocation, meaning first access will cause a page fault, and single 
+page allocation at that point in time?  Or is it merely the fact that 
+vmalloc may return a virtual contiguous block that's not physically 
+contiguous?
 
-By moving quad_enable setup from default_init to late_init, quad_enable
-is correctly assigned after spi_nor_init_params, regardless of the size
-field removal.
+Sorry if I'm asking notoriously dumb questions, I've got a VERY BASIC 
+grasp of memory management at kernel level, I work much more in 
+userspace, and I know there usually first access generates a page fault 
+which will then result in memory being physically allocated by the 
+kernel.  Generally I ignore these complexities and just assume that the 
+"lower down" layers know what they're doing and I've got a "flat, 
+contiguous" memory space, and that malloc knows what it's doing and will 
+communicate with the kernel regarding which regions of virtual space 
+should be mapped.  Love the learning though, so appreciate the feedback 
+very much.
 
-Additionally, according to spi-nor/core.h, quad_enable is more
-appropriately placed in late_init, as older SFDP versions did not define
-the Quad Enable bit Requirements. This change removes default_init and
-moves quad_enable handling to late_init accordingly.
+>
+> This saves the trouble of iterating the folio alloc until it succeeds,
+> which is both undeterministic and complex, neither of which is
+> desirable.
 
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/spi-nor/macronix.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Agreed.
 
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index 07e0bd0b70a0..216c02b92bfe 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -282,22 +282,17 @@ static int macronix_nor_set_octal_dtr(struct spi_nor *nor, bool enable)
- 	return enable ? macronix_nor_octal_dtr_en(nor) : macronix_nor_octal_dtr_dis(nor);
- }
- 
--static void macronix_nor_default_init(struct spi_nor *nor)
--{
--	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
--}
--
- static int macronix_nor_late_init(struct spi_nor *nor)
- {
- 	if (!nor->params->set_4byte_addr_mode)
- 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
-+	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
- 	nor->params->set_octal_dtr = macronix_nor_set_octal_dtr;
- 
- 	return 0;
- }
- 
- static const struct spi_nor_fixups macronix_nor_fixups = {
--	.default_init = macronix_nor_default_init,
- 	.late_init = macronix_nor_late_init,
- };
- 
--- 
-2.25.1
 
+>
+> Thanks,
+> Miklos
 
