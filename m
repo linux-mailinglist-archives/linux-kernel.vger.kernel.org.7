@@ -1,233 +1,126 @@
-Return-Path: <linux-kernel+bounces-584927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77FFA78D9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:58:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302DAA78DAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08E61885591
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C03B41F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B32237706;
-	Wed,  2 Apr 2025 11:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD30F238177;
+	Wed,  2 Apr 2025 11:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ELUm4BIi"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n8H+C9zY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9029323718F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58418235BFB;
+	Wed,  2 Apr 2025 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595133; cv=none; b=NBgauQLd7NnoolI134aaEGz9Zst54YI09g1k7vCcgquDyj+QZW4lZgLX9K5HOeu5Po8MVqIXOUf6E7LGKZEwjCWVSVznUonDOshL3jX7pK7W0btenc5Td67UQFAjrAT2eIJ4PFjMNXHZHNV4mv4+nUXnROhc2jXq8C4qjKAlE7M=
+	t=1743595189; cv=none; b=KeGQ8iXRDRPGlGLTpsNWzbvutZ1eE36BRDPMNptAyJWnFRpZJQDxKtlq3XuFvcczOb4ePIRvKhPw4JpvtzPibitkvfnuLfpa1M6uuD9baf8KXCMW3wPIPe0/HG7ZrbBIW5DALYBuIuDN8pw7FFyXXXjE6strz8uyrpTU2p51p6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595133; c=relaxed/simple;
-	bh=yz2g4VlGJxKRTtOW8OVXla1bJm6KVYLvKyCbxgeOuKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RzZsD6u/BXp2DjQo4q0fSH+DMQMkEkL96jBPyU1OU6/J0t9v44UlYCLvZFnAj7vwWvvFKGAftlYhfu9+jcG7oglmoF9MXJxv7GAOFHtndoU/4ryNlHWvn/wMs1Ji5iJDKGxQHQjmX03VLthwr/0RQC4rQdLx9oo6Kiau24Ndfuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ELUm4BIi; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so11302103a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:58:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1743595130; x=1744199930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qpOpISsK92nzP8u+mrCrBVvlHehBgWb2S+ejZtPgHRk=;
-        b=ELUm4BIi7v5+Gy9Vy/jGLtAaT01El6sbRwRuGZpT/ypYuN8Li/glsAleo3FcCcQM31
-         /NNSpXMWMKdzF6V8vUMxmkmxsdFgebEQBU5vrUs3cJVXLC9zmnU/vQ8fLCs7kM1t4fWl
-         6XWhVBtVHN7ZhLh6gjQf4jGU88Rj9GkaMsH0fl0fntT40/XYYpucNFfXMrWQ4V1uoXMI
-         B8wHl4Ivklf/rlfRxG0dNRnO2YHqqoxHvoPVycnqJEnBbM9TR20HR6E6Jf1BTWfDvJCq
-         Un5jEzLCtjGWlaI7etNIhfeCHpyOM8fqmef2XY7e/dKGUOg6f+aRjt+oWulHjwi6YX2F
-         ykxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743595130; x=1744199930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qpOpISsK92nzP8u+mrCrBVvlHehBgWb2S+ejZtPgHRk=;
-        b=FGiRDrc0awHgTGYUY86LNyvvnyehhpQVYRV0+dzStwARDS6AV1OU9dzLVx65vnjez1
-         cJanL3PSJTtS7G1AXbzllhfzjl/mH2tLTTpFGPCxcYMTINqkWXHeH/ZJ0iFlFpm9Lk0p
-         vUgdOlNAVkAblIZLD4kKs7p007r6rU8KWEKRiI90yAfv1bktaCqsS+F9DuLmQt0untp/
-         U5zCcSM9LOebPvWdOlBRPoR4qsD0H5pSaPN0hRWz2G7HbXd2L80mqRUOovn8Y51SwwjU
-         lUq0csCJ1iT8i8IpKZNayDLp2jtmhf/8LHsrAViksftZ5eYjY8t3NEYn23bODmWhisDL
-         kkyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOy87VOjKPLWm8dS3+fGpHewcHgBBwtpBy952SR9/cKMVtOmWz5avS1/REnUHyC0aV/fxHIcGG8NT3eHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycd7S71/9YGZ/Kq/3d5244WrfF6BM4E2d5TMkDFltAXGdLtCVc
-	NB/jJlKf3IUSquOCiV+lEONeh1eS5EtgX5u9N7hU4uewKAEPNrlnTBnhVxz+wmUeVeB6TR3NIIB
-	EA7ITew81g4cktEDJNFp7EdrYz05mZ4pEl0MSaw==
-X-Gm-Gg: ASbGnctYkT8v6DrZtlHtIdSRVQtIXURWdsMozI0Wi7hEQfes5PxJn7iw2OY8vbadAMQ
-	gfJ8MMNPDKGg6xwRwdV3cQUe2wU+Ohe+J2auL5STXOMWotgqyhAbjSeSgTw1FvaTc/staBnONgs
-	oWoiOp855fFkRqd7WA22Op/s2nWbNTAIHZz8EzWUs=
-X-Google-Smtp-Source: AGHT+IF3cEFgXzdw0KASyYJbIgo8CjfwnxgRulQ8O3ZcGZVY1greNWnfIf6SArRocnrBaky8kBjQ3GFF0cDB7r4EhsM=
-X-Received: by 2002:a17:90b:2711:b0:2ee:aed2:c15c with SMTP id
- 98e67ed59e1d1-3056ef08027mr3048369a91.28.1743595129770; Wed, 02 Apr 2025
- 04:58:49 -0700 (PDT)
+	s=arc-20240116; t=1743595189; c=relaxed/simple;
+	bh=8dl7ISQ+eM000+lZIQEPv+hiZRsdlSbP98vxWvDTalc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JZZNdmrm+3nSK/sA6aLhYE9uYK61WyTnejvq6KbRAuAUysEuCj49rJdhHw2wqDRdLA47l6fkfs31YKelkMh8OTePP7Gd2r5BcUDda8TMWi9ZypbA9UhsrYtRnZkLwH4lZdwiyIZUAfSt0RFdjAGzhzK7481//g+G7XVzFVKBxNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n8H+C9zY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532AtCja032650;
+	Wed, 2 Apr 2025 11:59:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=n+iodew5GmsQ4lOHSz2keCNpjNVT3ejieh7tZZjFLp0=; b=n8
+	H+C9zY9aRX0pxmQs5UXKwjxo6U0zedV/Zh6ZotzySXJZ64PXFHoWvEOUqdYfjmNw
+	jmEr1EtVHtyYV85RZ0QgKv1RdlzbLX6WNrjJ+fIXFe7GBY59rwTijepKdFFqssz+
+	wI7o9Xn1rh1MPMPt0tRZErgH09FE5k2p/qRa1njnVAZfIiNXc8EupkAjJ0CtPv2S
+	fog9aYA/qNu48zAjs/jX28MZVrzO0msOHvboHLB9eDomosciG4tt22uxYEob72fe
+	Kz94bbyZBQm77/4zg9XJh3j0UZ3qPEiMqr0j4I9DugHNIPW313z4jYXiY28XdoTW
+	6V04TF3rDl+yR+jxYEgw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45p67qkm2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 11:59:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 532Bxg5b012802
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Apr 2025 11:59:42 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 2 Apr 2025 04:59:39 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH V5 0/3] scsi: ufs-qcom: Enable Hibern8, MCQ, and Testbus registers Dump
+Date: Wed, 2 Apr 2025 17:29:19 +0530
+Message-ID: <20250402115922.27874-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325144252.27403-1-luxu.kernel@bytedance.com> <8cfe938f-5eff-483e-95a1-c4029993e287@arm.com>
-In-Reply-To: <8cfe938f-5eff-483e-95a1-c4029993e287@arm.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Wed, 2 Apr 2025 19:58:38 +0800
-X-Gm-Features: AQ5f1JrCmdbPvgxjXXBONrqT24lyujGReyf184CCKAQbeGFTcfNc41gd0CSYnb8
-Message-ID: <CAPYmKFv_qRmsR+4s3evxCJjzVavtNb6UFRX6+JmepUW23X=ZLg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] iommu: riscv: Split 8-byte accesses on 32
- bit I/O bus platform
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: tjeznach@rivosinc.com, joro@8bytes.org, will@kernel.org, alex@ghiti.fr, 
-	lihangjing@bytedance.com, xieyongji@bytedance.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=fMI53Yae c=1 sm=1 tr=0 ts=67ed26af cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=pyQEGUW01KN_hzJh80EA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 8yRP_j5TW9CB5zVMQSrRaegCucJ6i0sz
+X-Proofpoint-GUID: 8yRP_j5TW9CB5zVMQSrRaegCucJ6i0sz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_04,2025-04-01_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 impostorscore=0 clxscore=1015
+ mlxlogscore=335 bulkscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504020075
 
-Hi Robin and Jason,
+Adding support to enhance the debugging capabilities of the Qualcomm UFS
+Host Controller, including HW and SW Hibern8 counts, MCQ registers, and
+testbus registers dump.
+---
+Changes in v5:
+- Addressed Mani's comment and used cond_resched() instead of usleep().
+Changes in v4:
+- Addressed Mani's comment and used kmalloc_array() for testbus mem allocation.
+- Removed usleep_range from ufs_qcom_dump_testbus.
+- Updated commit text.
+Changes in v3:
+- Addressed Bart's comment and Annotated the 'testbus' declaration with __free.
+- Converted the switch-statements into an array lookup.
+- Introduced struct testbus_info{} for handling testbus switch-statements to an array lookup.
+Changes in v2:
+- Rebased patchsets.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20241025055054.23170-1-quic_mapa@quicinc.com/
 
-Thanks for your comments and sorry for the late reply.
+---
+Manish Pandey (3):
+  scsi: ufs-qcom: Add support for dumping HW and SW hibern8 count
+  scsi: ufs-qcom: Add support to dump MCQ registers
+  scsi: ufs-qcom: Add support to dump testbus registers
 
-The iohpmcycles register is handled specially because unlike the other
-IOMMU registers, its effective bits lies in the upper half. I want to
-ensure that all effective bits are the last ones to update. For
-example, when updating DDTP register, we update the upper half first
-which only contains its table PPN, and then update its lower half
-which contains the MODE bits which really enable translation. The main
-reason is that when software splits an 8-byte write to two 4-byte
-writes, the hardware is not aware whether it is an 8-byte write or a
-4-byte write when it receives the first write. Thus it will always
-make the value effective every time it receives a 4-byte write.
+ drivers/ufs/host/ufs-qcom.c | 119 ++++++++++++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.h |  11 ++++
+ 2 files changed, 130 insertions(+)
 
-On Wed, Apr 2, 2025 at 7:29=E2=80=AFPM Robin Murphy <robin.murphy@arm.com> =
-wrote:
->
-> On 2025-03-25 2:42 pm, Xu Lu wrote:
-> > Introduce a new configuration CONFIG_RISCV_IOMMU_32BIT to enable
-> > splitting 8-byte access into 4-byte transactions for hardware platform
-> > whose I/O bus limits access to 4-byte transfers.
-> >
-> > Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
-> > ---
-> >   drivers/iommu/riscv/Kconfig |  9 +++++++++
-> >   drivers/iommu/riscv/iommu.h | 28 +++++++++++++++++++++++-----
-> >   2 files changed, 32 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/iommu/riscv/Kconfig b/drivers/iommu/riscv/Kconfig
-> > index c071816f59a6..b7c9ea22d969 100644
-> > --- a/drivers/iommu/riscv/Kconfig
-> > +++ b/drivers/iommu/riscv/Kconfig
-> > @@ -18,3 +18,12 @@ config RISCV_IOMMU_PCI
-> >       def_bool y if RISCV_IOMMU && PCI_MSI
-> >       help
-> >         Support for the PCIe implementation of RISC-V IOMMU architectur=
-e.
-> > +
-> > +config RISCV_IOMMU_32BIT
-> > +     bool "Support 4-Byte Accesses on RISC-V IOMMU Registers"
-> > +     depends on RISCV_IOMMU
-> > +     default n
-> > +     help
-> > +       Support hardware platform whose I/O bus limits access to 4-byte
-> > +       transfers. When enabled, all accesses to IOMMU registers will b=
-e
-> > +       split into 4-byte accesses.
-> > diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
-> > index 46df79dd5495..0e3552a8142d 100644
-> > --- a/drivers/iommu/riscv/iommu.h
-> > +++ b/drivers/iommu/riscv/iommu.h
-> > @@ -14,6 +14,10 @@
-> >   #include <linux/iommu.h>
-> >   #include <linux/types.h>
-> >   #include <linux/iopoll.h>
-> > +#ifdef CONFIG_RISCV_IOMMU_32BIT
-> > +#include <linux/io-64-nonatomic-hi-lo.h>
-> > +#include <linux/io-64-nonatomic-lo-hi.h>
-> > +#endif
-> >
-> >   #include "iommu-bits.h"
-> >
-> > @@ -69,21 +73,35 @@ void riscv_iommu_disable(struct riscv_iommu_device =
-*iommu);
-> >   #define riscv_iommu_readl(iommu, addr) \
-> >       readl_relaxed((iommu)->reg + (addr))
-> >
-> > -#define riscv_iommu_readq(iommu, addr) \
-> > -     readq_relaxed((iommu)->reg + (addr))
-> > -
-> >   #define riscv_iommu_writel(iommu, addr, val) \
-> >       writel_relaxed((val), (iommu)->reg + (addr))
-> >
-> > +#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > +     readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, con=
-d, \
-> > +                        delay_us, timeout_us)
-> > +
-> > +#ifndef CONFIG_RISCV_IOMMU_32BIT
-> > +#define riscv_iommu_readq(iommu, addr) \
-> > +     readq_relaxed((iommu)->reg + (addr))
-> > +
-> >   #define riscv_iommu_writeq(iommu, addr, val) \
-> >       writeq_relaxed((val), (iommu)->reg + (addr))
-> >
-> >   #define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, t=
-imeout_us) \
-> >       readx_poll_timeout(readq_relaxed, (iommu)->reg + (addr), val, con=
-d, \
-> >                          delay_us, timeout_us)
-> > +#else /* CONFIG_RISCV_IOMMU_32BIT */
-> > +#define riscv_iommu_readq(iommu, addr) \
-> > +     hi_lo_readq_relaxed((iommu)->reg + (addr))
-> >
-> > -#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > -     readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, con=
-d, \
-> > +#define riscv_iommu_writeq(iommu, addr, val) \
-> > +     ((addr =3D=3D RISCV_IOMMU_REG_IOHPMCYCLES) ? \
-> > +      lo_hi_writeq_relaxed((val), (iommu)->reg + (addr)) : \
-> > +      hi_lo_writeq_relaxed((val), (iommu)->reg + (addr)))
->
-> Echoing Jason's comment, what is this even trying to achieve? Nothing in
-> the spec suggests that the cycle counter register is functionally
-> different from the other PMU counter registers (other than its
-> self-contained overflow bit).
->
-> It is not, in general, safe to do a split write to a running counter
-> either way - low-high vs. high-low just moves the problem around,
-> changing *which* combinations of values are problematic and capable of
-> overflowing into each other between the writes. If the PMU driver can't
-> write counters atomically, it will need to ensure that it only ever
-> write them while stopped (at which point the order surely shouldn't
-> matter). Conversely, though, reading from running counters is a bit more
-> reasonable, but it needs more than just hi_lo_readq to guarantee it's
-> not got a torn result.
+-- 
+2.17.1
 
-You are right. It is more appropriate to ensure update iohpmcycles
-with cycle counting disabled. I will remove this redundant branch in
-the next version.
-
->
-> Thanks,
-> Robin.
->
-> > +
-> > +#define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, ti=
-meout_us) \
-> > +     readx_poll_timeout(hi_lo_readq_relaxed, (iommu)->reg + (addr), va=
-l, cond, \
-> >                          delay_us, timeout_us)
-> > +#endif /* CONFIG_RISCV_IOMMU_32BIT */
-> >
-> >   #endif
->
-
-Best regards,
-Xu Lu
 
