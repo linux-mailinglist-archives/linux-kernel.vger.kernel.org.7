@@ -1,240 +1,435 @@
-Return-Path: <linux-kernel+bounces-584947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8084CA78DDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E61A78DE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D043416E075
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790FE170C70
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65237238D32;
-	Wed,  2 Apr 2025 12:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C61238D2F;
+	Wed,  2 Apr 2025 12:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="fW/lYQdO"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="DFQvhVXu"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A25238167
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595704; cv=none; b=i2MncD1eQb3eFAiAoYZUyW4qa8TpvZEkcUs3ZInWN0XxncjSWvTo0Y1+ohiIcp/HgBFPJsDiNeLhaXSa3V8b2gX0QaH6CfNwxOd9Lv4xqvisafYjGT2m5uXQRo5UPt4eGHZV/nc1EBYnoTuI0IEmAE1gPRsRcNng1OTEMYyrgJs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595704; c=relaxed/simple;
-	bh=0cyQ8kfbsOP5CL/OayFEvuviX2pQwjWQA09VE+ucdsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lNcl1SxHI15EW1embkbgXEeHqh5fWFBzUVDoPBgu6Vib7Ju7As6ff6D6Gj+BbikdP2XraHyeSCXVc2DJYxXrFjgk4iDAzyFAOAHlXqNQjF6L2Q24bhw1GVrLTnu23BXSE/AAow1oXFL21DKfHGDSiSNZTi37VGJbwzeIXchLp1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=fW/lYQdO; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfba946so2922007f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1743595701; x=1744200501; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5Jfe36OUwvVyT9LS7eCwDhDtrMpAORzy0WnLrxsyVY=;
-        b=fW/lYQdOMx3ShdTtWtuKZ5d+28JswJ8BaFOm1WGuv/4f1OD982+RdjTFucLBEyIeQ3
-         RWk1CPytGQVcqwKH/bvu7bH1gBwAHxI4miaFtmaPrLJZnf/swb840NBNAYmEZqco350/
-         idi8zBo9gcGD8R7dymMV5P2MrRaXC1AX3cGaYi1AMu88rd/dLmvJgHHebajBXvDj9Lep
-         HP9HP3smrNFjx9kYtzr86iK1sZnCPsltQ6aCwCPN3fLx33E4QojpvA00064hJHmr4Uga
-         zIsc9yj2v9F8jKS1EOH/5SHwLMSjfdV2NM84L8IWMswqqI8vvTMu2OZo734qkdOpxrwP
-         vtgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743595701; x=1744200501;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j5Jfe36OUwvVyT9LS7eCwDhDtrMpAORzy0WnLrxsyVY=;
-        b=MMuCEfKtQpD+eBAI/rSvYL751DQ7360qAGx45ILZUfzmyZjsEMY4HPQVqxSOXz4V4C
-         lUn9fgMqxoeIbPc1ftV/qin7k98ud0EVcO3nfXRlqz9cuYv94jVv2IX1dWFel/dROKXe
-         8n4h8euqyzpteyc5fJi+8JeHRuq249mIg4AU45UU5aFNPbuD1+xNh01x82/NoTBTifXy
-         T/woBqMif3oQvAvrkT9lZA27ZllJcIEF8kLd4uydoPtxMbFtL5DtlLi0pxvgSRWnnumB
-         l+MuXHKJaAjFMkiJe5NYP2V3zfiHLtAoSQDeJP2mBHlQLg0iRPQpy89zqW4QTFHEEbcn
-         3CIg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/IC9b4aoUkroBKqrXSsV8RS3TT0NBf0DBlfhtwE3ou8MwSsYZF/O4gfDAKdf183NQlof0FljCFCSc2gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEfreYIWWjIfJ0k7Qwj4p6YJP0vIlkicmctszBqcJLWn6kH1Un
-	NsDzk1AC0VLyKW8x9cA1JmdOPij7/BPrevSruHXJvgDT+x4Ymq1v1cwnVBpV4Ie8sgSi3x+VM4H
-	VSOl108ZyRM6rDIwMQi+VLtCPZct1kZIybmjP+8bVbdpxWm6oiulHvyE=
-X-Gm-Gg: ASbGncsKjZDAYNmzK+Du0CVaMR2FYmGSqjX/KYU4sFXRni47E91kOPR5FbVTLhfRYmN
-	Va8s8LmtnUn9986tm2MCJEDdGXpC8B/O9K70e69yNydBKCCVqwFiBrwp8Su65ehVEpsE7ExSqSm
-	E71ymq5Jmq7yFc0RS7dw7OBnUON+qkZUl5jo9O9DXA9VBnxhgOGwDybMurhxPjj6YCMCQDgfjjZ
-	g3Cd3p+eKf4mhAVa7D6deZJh+WFXeL+tpHdHRO974Zxcm9/I8osPO+2klUx0oUTvxugtUGsP9Tp
-	Hc645UpQ72OAKB242WEwJ42ShNEdbIXq6PQKBWgFv6E4i9c2gm8hbDDAz7xWHw+3WVIhojDK+WY
-	+kMG9Xf8=
-X-Google-Smtp-Source: AGHT+IG3b1s4SCLE8l25O6MvYbGYEYTk0hwlT/ofXoHltCEE2yp+1M9ogrjFly9DqCR7bodW1lSJ6w==
-X-Received: by 2002:a05:6000:40e0:b0:39a:ca0c:fb0c with SMTP id ffacd0b85a97d-39c120e3590mr13131376f8f.28.1743595700585;
-        Wed, 02 Apr 2025 05:08:20 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:9a9c:dc9e:39c6:2380? ([2001:67c:2fbc:1:9a9c:dc9e:39c6:2380])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b79e304sm16841996f8f.73.2025.04.02.05.08.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 05:08:19 -0700 (PDT)
-Message-ID: <cd992750-2b8b-4793-8575-89d69ff3624c@openvpn.net>
-Date: Wed, 2 Apr 2025 14:08:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DA3802;
+	Wed,  2 Apr 2025 12:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743595793; cv=pass; b=QPR/eINR2SUwRAIJGws7L4U/OeJhtyW5gABnm6a8WVwMFdbl3cRUjXARD/uvIljXy/mRdC30+JVvi1xp0uV4GdDSRVu7uGM/dKd+A/2n642PC5ge115TyZ4ne8xgjSw7DtCRXRCfCTSW+PYv/ywfWGSuEMA7EVk1/HrkzvV4teM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743595793; c=relaxed/simple;
+	bh=knRIGVhHikY8mZPCJ8h1mjLRRK+CocWcKmwdMKg2Vx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gykRs+5CXCJ5HKQgfkO5KQ1fiVjbcZUjCkgd9ie36F0/9knQG/FbAv9Dnn3EYOvEdKMKjs5y0jnrhmJxOlI8MlkFnY7K9gCw34A7Cox9gS6xv6GlEOE4SE3fweOO0xVZnb9FaLUKEzmRyPiuMFQu1X3WV5LQx8jybTbK878LDHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=DFQvhVXu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743595764; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nMgSOnMmc/i0G4cTcSxOW5xk+TcYaetnCBGeY8ArULwRc3pQ4Uwj1GSviY0ovD5QnR875ku3oKxr8qrbuJYojxMDiq71HSQQ3svfToCdYHD4MdLwMigFTaPfOBpXopt1dSju/3Y+PzAmu4IKP5EPENSRTB29RWbDjUruMI1JArg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743595764; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iemR2NYAuKXyioFOgWXj6IGCm6kPv82HDIe5ZrApkpQ=; 
+	b=FW8qXm2bFwMIX0RFmCU7OjgvJLWccPXcaPGiUUOLNGrh0G+VWe/kQdkHkGSND1ore6M5tvhLOt/yo1SftTzYaZQ9gPYSYdji3ecX+97MKBIsxHbaFOhJHVdynrB6OP2cwzSoOQPK3hC8bl4A2pPSMGuw+o/tgUh5eUjYlI3p4A8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743595764;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=iemR2NYAuKXyioFOgWXj6IGCm6kPv82HDIe5ZrApkpQ=;
+	b=DFQvhVXuC2qHYWBEMORufHCiaIKbyUpcPrx9cECokp4yP5lnyMZ7PlqS1qfXc7GU
+	eSyKtPDI6je2YqhzzZhma3yXqlX522p2X90X6S1SP7LkgW9mHVWWyZQyyHcr0mmbnM6
+	J2XfmbRdiP9vVuC5M6Zewwgsa6PTUV2eWiCa3rRk=
+Received: by mx.zohomail.com with SMTPS id 1743595762281805.0706698202463;
+	Wed, 2 Apr 2025 05:09:22 -0700 (PDT)
+Date: Wed, 2 Apr 2025 13:09:13 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v3 3/4] drm/panthor: show device-wide list of DRM GEM
+ objects over DebugFS
+Message-ID: <6axzrtsyny3ruedslzq3f3m5dg3gh67utjz7cnccytprktymbc@7iawu52m23su>
+References: <20250327140845.105962-1-adrian.larumbe@collabora.com>
+ <20250327140845.105962-4-adrian.larumbe@collabora.com>
+ <20250328153027.2c0641f1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net> <Z-u46_82tkR8TsOa@krikkit>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z-u46_82tkR8TsOa@krikkit>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250328153027.2c0641f1@collabora.com>
 
-On 01/04/2025 11:59, Sabrina Dubroca wrote:
-> 2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
->> +/* this swap is not atomic, but there will be a very short time frame where the
->> + * old_secondary key won't be available. This should not be a big deal as most
->> + * likely both peers are already using the new primary at this point.
->> + */
-> 
-> This is not the case anymore.
+Hi Boris,
 
-Oh right - this comment can go.
+On 28.03.2025 15:30, Boris Brezillon wrote:
+> On Thu, 27 Mar 2025 14:08:36 +0000
+> Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
+>
+> > Add a device DebugFS file that displays a complete list of all the DRM GEM
+> > objects that are exposed to UM through a DRM handle.
+> >
+> > Since leaking object identifiers that might belong to a different NS is
+> > inadmissible, this functionality is only made available in debug builds
+> > with DEBUGFS support enabled.
+> >
+> > File format is that of a table, with each entry displaying a variety of
+> > fields with information about each GEM object.
+> >
+> > Each GEM object entry in the file displays the following information
+> > fields: Client PID, BO's global name, reference count, BO virtual size, BO
+> > resize size, VM address in its DRM-managed range, BO label and a flag
+> > bitmask.
+> >
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > ---
+> >  drivers/gpu/drm/panthor/panthor_device.c |   5 +
+> >  drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+> >  drivers/gpu/drm/panthor/panthor_drv.c    |  26 +++++
+> >  drivers/gpu/drm/panthor/panthor_gem.c    | 130 +++++++++++++++++++++++
+> >  drivers/gpu/drm/panthor/panthor_gem.h    |  29 +++++
+> >  5 files changed, 201 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> > index a9da1d1eeb70..bae1a74d7111 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_device.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> > @@ -263,6 +263,11 @@ int panthor_device_init(struct panthor_device *ptdev)
+> >  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
+> >  	pm_runtime_use_autosuspend(ptdev->base.dev);
+> >
+> > +#ifdef CONFIG_DEBUG_FS
+> > +	drmm_mutex_init(&ptdev->base, &ptdev->gems.lock);
+> > +	INIT_LIST_HEAD(&ptdev->gems.node);
+> > +#endif
+> > +
+> >  	ret = drm_dev_register(&ptdev->base, 0);
+> >  	if (ret)
+> >  		goto err_disable_autosuspend;
+> > diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> > index da6574021664..86206a961b38 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_device.h
+> > +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> > @@ -205,6 +205,17 @@ struct panthor_device {
+> >
+> >  	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+> >  	unsigned long fast_rate;
+> > +
+> > +#ifdef CONFIG_DEBUG_FS
+> > +	/** @gems: Device-wide list of GEM objects owned by at least one file. */
+> > +	struct {
+> > +		/** @gems.lock: Protects the device-wide list of GEM objects. */
+> > +		struct mutex lock;
+> > +
+> > +		/** @node: Used to keep track of all the device's DRM objects */
+> > +		struct list_head node;
+> > +	} gems;
+> > +#endif
+> >  };
+> >
+> >  struct panthor_gpu_usage {
+> > diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> > index 488d17466494..0ba68a51b4ef 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> > @@ -1534,9 +1534,35 @@ static const struct file_operations panthor_drm_driver_fops = {
+> >  };
+> >
+> >  #ifdef CONFIG_DEBUG_FS
+> > +static int panthor_gems_show(struct seq_file *m, void *data)
+> > +{
+> > +	struct drm_info_node *node = m->private;
+> > +	struct drm_device *dev = node->minor->dev;
+> > +	struct panthor_device *ptdev = container_of(dev, struct panthor_device, base);
+> > +
+> > +	panthor_gem_debugfs_print_bos(ptdev, m);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +
+> > +static struct drm_info_list panthor_debugfs_list[] = {
+> > +	{"gems", panthor_gems_show, 0, NULL},
+> > +};
+> > +
+> > +static int panthor_gems_debugfs_init(struct drm_minor *minor)
+> > +{
+> > +	drm_debugfs_create_files(panthor_debugfs_list,
+> > +				 ARRAY_SIZE(panthor_debugfs_list),
+> > +				 minor->debugfs_root, minor);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static void panthor_debugfs_init(struct drm_minor *minor)
+> >  {
+> >  	panthor_mmu_debugfs_init(minor);
+> > +	panthor_gems_debugfs_init(minor);
+> >  }
+> >  #endif
+> >
+> > diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+> > index 7d017f9d1d52..fbf560920194 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_gem.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_gem.c
+> > @@ -2,6 +2,7 @@
+> >  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
+> >  /* Copyright 2023 Collabora ltd. */
+> >
+> > +#include <linux/cleanup.h>
+> >  #include <linux/dma-buf.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/err.h>
+> > @@ -13,11 +14,49 @@
+> >  #include "panthor_gem.h"
+> >  #include "panthor_mmu.h"
+> >
+> > +#ifdef CONFIG_DEBUG_FS
+> > +static void panthor_gem_debugfs_bo_init(struct panthor_gem_object *bo)
+> > +{
+> > +	INIT_LIST_HEAD(&bo->gems.node);
+> > +	bo->gems.creator.tgid = current->group_leader->pid;
+> > +	get_task_comm(bo->gems.creator.process_name, current->group_leader);
+> > +}
+> > +
+> > +static void panthor_gem_debugfs_bo_add(struct panthor_gem_object *bo)
+> > +{
+> > +	struct panthor_device *ptdev =  container_of(bo->base.base.dev,
+> > +						     struct panthor_device, base);
+> > +
+> > +	mutex_lock(&ptdev->gems.lock);
+> > +	list_add_tail(&bo->gems.node, &ptdev->gems.node);
+> > +	mutex_unlock(&ptdev->gems.lock);
+> > +}
+> > +
+> > +static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo)
+> > +{
+> > +	struct panthor_device *ptdev = container_of(bo->base.base.dev,
+> > +						    struct panthor_device, base);
+> > +
+> > +	if (list_empty(&bo->gems.node))
+> > +		return;
+> > +
+> > +	mutex_lock(&ptdev->gems.lock);
+> > +	list_del_init(&bo->gems.node);
+> > +	mutex_unlock(&ptdev->gems.lock);
+> > +}
+> > +#else
+> > +static void panthor_gem_debugfs_bo_init(struct panthor_gem_object *bo) {}
+> > +static void panthor_gem_debugfs_bo_add(struct panthor_gem_object *bo) {}
+> > +static void panthor_gem_debugfs_bo_rm(struct panthor_gem_object *bo) {}
+> > +#endif
+> > +
+> >  static void panthor_gem_free_object(struct drm_gem_object *obj)
+> >  {
+> >  	struct panthor_gem_object *bo = to_panthor_bo(obj);
+> >  	struct drm_gem_object *vm_root_gem = bo->exclusive_vm_root_gem;
+> >
+> > +	panthor_gem_debugfs_bo_rm(bo);
+> > +
+> >  	/*
+> >  	 * Label might have been allocated with kstrdup_const(),
+> >  	 * we need to take that into account when freeing the memory
+> > @@ -206,6 +245,8 @@ struct drm_gem_object *panthor_gem_create_object(struct drm_device *ddev, size_t
+> >  	drm_gem_gpuva_set_lock(&obj->base.base, &obj->gpuva_list_lock);
+> >  	mutex_init(&obj->label.lock);
+> >
+> > +	panthor_gem_debugfs_bo_init(obj);
+> > +
+> >  	return &obj->base.base;
+> >  }
+> >
+> > @@ -254,6 +295,8 @@ panthor_gem_create_with_handle(struct drm_file *file,
+> >  	/* drop reference from allocate - handle holds it now. */
+> >  	drm_gem_object_put(&shmem->base);
+> >
+> > +	panthor_gem_debugfs_bo_add(bo);
+>
+> As mentioned in the other thread, I'd be tempted to:
+>
+> - merge panthor_gem_debugfs_bo_init() into panthor_gem_debugfs_bo_add()
+ - call panthor_gem_debugfs_bo_add() from panthor_gem_create_object()
 
-> 
->> +void ovpn_crypto_key_slots_swap(struct ovpn_crypto_state *cs)
->> +{
->> +	const struct ovpn_crypto_key_slot *old_primary, *old_secondary;
->> +	u8 idx;
->> +
->> +	spin_lock_bh(&cs->lock);
->> +	idx = cs->primary_idx;
->> +	old_primary = rcu_dereference_protected(cs->slots[idx],
->> +						lockdep_is_held(&cs->lock));
->> +	old_secondary = rcu_dereference_protected(cs->slots[!idx],
->> +						  lockdep_is_held(&cs->lock));
->> +	/* perform real swap by switching the index of the primary key */
->> +	WRITE_ONCE(cs->primary_idx, !cs->primary_idx);
->> +
->> +	pr_debug("key swapped: (old primary) %d <-> (new primary) %d\n",
->> +		 old_primary ? old_primary->key_id : -1,
->> +		 old_secondary ? old_secondary->key_id : -1);
->> +
->> +	spin_unlock_bh(&cs->lock);
->> +}
-> 
-> [...]
->> +int ovpn_aead_encrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
->> +		      struct sk_buff *skb)
->> +{
-> [...]
->> +	/* encrypt it */
->> +	return crypto_aead_encrypt(req);
->> +free_iv:
->> +	kfree(ovpn_skb_cb(skb)->iv);
->> +	ovpn_skb_cb(skb)->iv = NULL;
->> +free_sg:
->> +	kfree(ovpn_skb_cb(skb)->sg);
->> +	ovpn_skb_cb(skb)->sg = NULL;
-> 
-> nit: Those shouldn't really be needed, since we'll call
-> ovpn_encrypt_post that will take care of iv/sg/req. But it's fine if
-> you leave them.
+I did this at first, but then realised it would make it harder to pass a
+bo_type mask to the add function to be able to tell kernel or FW-bound
+BO's apart from UM or GPU ones, because this would be decided by the
+code path in which they're created.
 
-Right!
-This code flow was re-arranged a couple of times, and I have missed that 
-we now always hit those free()s in post().
+> - have a way to differentiates kernel and user BOs.
+>
+> > +
+> >  	return ret;
+> >  }
+> >
+> > @@ -285,3 +328,90 @@ panthor_gem_kernel_bo_set_label(struct panthor_kernel_bo *bo, const char *label)
+> >
+> >  	panthor_gem_bo_set_label(bo->obj, kstrdup_const(str, GFP_KERNEL));
+> >  }
+> > +
+> > +#ifdef CONFIG_DEBUG_FS
+> > +static bool panfrost_gem_print_flag(const char *name,
+> > +				    bool is_set,
+> > +				    bool other_flags_printed,
+> > +				    struct seq_file *m)
+> > +{
+> > +	if (is_set)
+> > +		seq_printf(m, "%s%s", other_flags_printed ? "," : "", name);
+> > +
+> > +	return is_set | other_flags_printed;
+> > +}
+> > +
+> > +struct gem_size_totals {
+> > +	size_t size;
+> > +	size_t resident;
+> > +	size_t reclaimable;
+> > +};
+> > +
+> > +static void panthor_gem_debugfs_bo_print(struct panthor_gem_object *bo,
+> > +					 struct seq_file *m,
+> > +					 struct gem_size_totals *totals)
+> > +{
+> > +	unsigned int refcount = kref_read(&bo->base.base.refcount);
+> > +	char creator_info[32] = {};
+> > +	bool has_flags = false;
+> > +	size_t resident_size;
+> > +
+> > +	/* Skip BOs being destroyed. */
+> > +	if (!refcount)
+> > +		return;
+> > +
+> > +	resident_size = bo->base.pages != NULL ? bo->base.base.size : 0;
+> > +
+> > +	snprintf(creator_info, sizeof(creator_info),
+> > +		 "%s/%d", bo->gems.creator.process_name, bo->gems.creator.tgid);
+> > +	seq_printf(m, "%-32s%-16d%-16d%-16zd%-16zd%-16lx",
+> > +		   creator_info,
+> > +		   bo->base.base.name,
+> > +		   refcount,
+> > +		   bo->base.base.size,
+> > +		   resident_size,
+> > +		   drm_vma_node_start(&bo->base.base.vma_node));
+> > +
+> > +	seq_puts(m, "(");
+> > +	has_flags = panfrost_gem_print_flag("imported", bo->base.base.import_attach != NULL,
+> > +					    has_flags, m);
+> > +	has_flags = panfrost_gem_print_flag("exported", bo->base.base.dma_buf != NULL,
+> > +					    has_flags, m);
+> > +	if (bo->base.madv < 0)
+> > +		has_flags = panfrost_gem_print_flag("purged", true, has_flags, m);
+> > +	else if (bo->base.madv > 0)
+> > +		has_flags = panfrost_gem_print_flag("purgeable", true, has_flags, m);
+> > +	if (!has_flags)
+> > +		seq_puts(m, "none");
+> > +	seq_puts(m, ")");
+> > +
+> > +	mutex_lock(&bo->label.lock);
+> > +	seq_printf(m, "%-16s%-60s", "", bo->label.str ? : NULL);
+> > +	mutex_unlock(&bo->label.lock);
+> > +	seq_puts(m, "\n");
+> > +
+> > +	totals->size += bo->base.base.size;
+> > +	totals->resident += resident_size;
+> > +	if (bo->base.madv > 0)
+> > +		totals->reclaimable += resident_size;
+> > +}
+> > +
+> > +void panthor_gem_debugfs_print_bos(struct panthor_device *ptdev,
+> > +				   struct seq_file *m)
+> > +{
+> > +	struct gem_size_totals totals = {0};
+> > +	struct panthor_gem_object *bo;
+> > +
+> > +	seq_puts(m, "created-by                      global-name     refcount        size            resident-size   file-offset     flags           label\n");
+> > +	seq_puts(m, "------------------------------------------------------------------------------------------------------------------------------------------------\n");
+> > +
+> > +	scoped_guard(mutex, &ptdev->gems.lock) {
+> > +		list_for_each_entry(bo, &ptdev->gems.node, gems.node)
+> > +			panthor_gem_debugfs_bo_print(bo, m, &totals);
+> > +	}
+> > +
+> > +	seq_puts(m, "================================================================================================================================================\n");
+> > +	seq_printf(m, "Total size: %zd, Total resident: %zd, Total reclaimable: %zd\n",
+> > +		   totals.size, totals.resident, totals.reclaimable);
+> > +}
+> > +#endif
+> > diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+> > index 0582826b341a..7c896ec35801 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_gem.h
+> > +++ b/drivers/gpu/drm/panthor/panthor_gem.h
+> > @@ -13,6 +13,26 @@
+> >
+> >  struct panthor_vm;
+> >
+> > +/**
+> > + * struct panthor_gem_debugfs - GEM object's DebugFS list information
+> > + */
+> > +struct panthor_gem_debugfs {
+> > +	/**
+> > +	 * @node: Node used to insert the object in the device-wide list of
+> > +	 * GEM objects, to display information about it through a DebugFS file.
+> > +	 */
+> > +	struct list_head node;
+> > +
+> > +	/** @creator: Information about the UM process which created the GEM. */
+> > +	struct {
+> > +		/** @creator.process_name: Group leader name in owning thread's process */
+> > +		char process_name[TASK_COMM_LEN];
+> > +
+> > +		/** @creator.tgid: PID of the thread's group leader within its process */
+> > +		pid_t tgid;
+> > +	} creator;
+>
+> Add a
+>
+> 	bool kernel_only;
+>
+> to reflect the fact the BO can't be accessed by the UMD.
+>
+> > +};
+> > +
+> >  /**
+> >   * struct panthor_gem_object - Driver specific GEM object.
+> >   */
+> > @@ -60,6 +80,10 @@ struct panthor_gem_object {
+> >  		/** @lock.str: Protects access to the @label.str field. */
+> >  		struct mutex lock;
+> >  	} label;
+> > +
+> > +#ifdef CONFIG_DEBUG_FS
+> > +	struct panthor_gem_debugfs gems;
+>
+> s/gems/debugfs/
+>
+> > +#endif
+> >  };
+> >
+> >  /**
+> > @@ -155,4 +179,9 @@ panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+> >
+> >  void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
+> >
+> > +#ifdef CONFIG_DEBUG_FS
+> > +void panthor_gem_debugfs_print_bos(struct panthor_device *pfdev,
+> > +				   struct seq_file *m);
+> > +#endif
+> > +
+> >  #endif /* __PANTHOR_GEM_H__ */
 
-I prefer to drop them and put a comment indicating that cleanup happens 
-in post().
-
-> 
-> (same thing on the decrypt side)
-
-Yep
-
-> 
->> +	return ret;
->> +}
-> 
-> 
-> [...]
->> +/**
->> + * ovpn_key_id_from_skb - extract key ID from the skb head
->> + * @skb: the packet to extract the key ID code from
->> + *
->> + * Note: this function assumes that the skb head was pulled enough
->> + * to access the first byte.
-> 
-> nit: another "first byte" that I missed previously :(
-
-ACK!
-
-> 
->> + *
->> + * Return: the key ID
->> + */
->> +static inline u8 ovpn_key_id_from_skb(const struct sk_buff *skb)
->> +{
->> +	u32 opcode = be32_to_cpu(*(__be32 *)skb->data);
->> +
->> +	return FIELD_GET(OVPN_OPCODE_KEYID_MASK, opcode);
->> +}
-> 
-
-Regards,
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Adrian Larumbe
 
