@@ -1,265 +1,159 @@
-Return-Path: <linux-kernel+bounces-585795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB78EA797BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:37:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22574A79773
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3B1B18949F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:37:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD0A37A3B75
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F541F4295;
-	Wed,  2 Apr 2025 21:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F31F3D56;
+	Wed,  2 Apr 2025 21:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="t/ESMrOg"
-Received: from mx10.gouders.net (mx10.gouders.net [202.61.206.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gc+pmdpQ"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2B478C91;
-	Wed,  2 Apr 2025 21:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.206.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8014B12D1F1
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743629851; cv=none; b=K/YRQ3snpJhLcmySVxEWB0YZbKeBGI6iSlAXcshKGjRfGz9qCtscGKwu9w96Qxk4IFb2dWIC2Qev2GrDpM/8dJYMSbFB6BIE0q7ZDTWN+fFuKAGsy0cevyuv6X0klvv5MmR05JFAVexgHo4M2fvTfr1bPR19Fv0/CMBKnNkqMWU=
+	t=1743628623; cv=none; b=Xo+3ORV9FqV0+tLrMldhm8oHdYbOucYxvLin21icGesxbMKn0jbgBTV3JorrCDjRN//NdvZd3mwbTunsFkt31f4mIQd0wW406VFDx+nvs+6wgTIuutU+CU6s8pOXvVeSuhdZfRpdGxt/jKJWCIIXP89s0wYTdJwC5coiRY9i+3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743629851; c=relaxed/simple;
-	bh=AUCydmqSmVOFaOQ2zh4o1+wyn38LB7IyJpt6YlS8YA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lUNfUU5JWnFUd8y8SVAiS4R0WyAbSR3xgvzCZVlxNKTZzAWl3pMuf2J1XX3JmiVm5NG+nHMPJw8yWLa2Q6ABlR+ixa4V0i2D1jxtvFFuIrsScRUk9X3Tw2UmsUQGp6WV7AKxPuS5tz3vVhLtSlgRV4THpYMWLtveGVwgzOEAIjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net; spf=pass smtp.mailfrom=gouders.net; dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b=t/ESMrOg; arc=none smtp.client-ip=202.61.206.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gouders.net
-Received: from localhost (ip-109-42-179-236.web.vodafone.de [109.42.179.236])
-	(authenticated bits=0)
-	by mx10.gouders.net (8.17.1.9/8.17.1.9) with ESMTPSA id 532LPLq1030794
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 2 Apr 2025 23:25:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-	t=1743629121; bh=AUCydmqSmVOFaOQ2zh4o1+wyn38LB7IyJpt6YlS8YA8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=t/ESMrOgBxbLcv78M+ChSoLvK0CA+TcGc58RevoTHS8y59Po0jJTRUEDwH+YlRDqX
-	 jw6QDM/2nkestVDvMidjFDdqsC48vPRW7HZGI7lRSfe4qeTz8YGBRmW/6aeXFd7kA7
-	 mo1I4jVsd/VUqMpAGH8A43lPY4SlOViiPdw2CyfQ=
-From: Dirk Gouders <dirk@gouders.net>
-To: Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-        Dirk Gouders <dirk@gouders.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH 3/3] perf bench sched pipe: introduce multipliers for number of processes
-Date: Wed,  2 Apr 2025 23:15:28 +0200
-Message-ID: <20250402212402.15658-4-dirk@gouders.net>
-X-Mailer: git-send-email 2.45.3
-In-Reply-To: <20250402212402.15658-2-dirk@gouders.net>
-References: <20250402212402.15658-2-dirk@gouders.net>
+	s=arc-20240116; t=1743628623; c=relaxed/simple;
+	bh=yRY4i3WLmUWyAE8o8P8TYb1tByrQrsV7UggoX7SedcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kw/MrE1vOJiHcW9rx6+NcZ9p714bYz7Y8wOVxoc3A/WQmbb9c+xo1YIxsYYWRvLKc+UCq0yupwudoMAfckfNgeas5+P0+cItpGfeqC4Jz10ffaGsvZtw9mCtlk8PvgLPMRa5wqzmPWKCpU3QknbsovA7Ba+24kOIq4FC81nJEcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gc+pmdpQ; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7399838db7fso207849b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743628621; x=1744233421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xc/zZ+DuPIPBwVNZBMJ0HujjjSUEiZ7ohcynsD7aA4A=;
+        b=gc+pmdpQ0+9siX5+vh2aTvHczGfhbe/dnXiKMxqGEozOM+vqaV5XQqsXQzykxl5Vwo
+         Nih5jA3YnBHYGVSAHafQtJ0btXDHDkL7rGAnmijaDWvnNCyEhaUzme0QytW49n4kiZVe
+         HdarkrdOZxyqT6ysO33SUv2vg0QEiV5x3yg5iU9467esk+te3gSYy4Cv7NLAKQdwljp0
+         N11HwzgMVhjZCAUaimSRcd2IgOimlYRxXO0EB7CmK2iEuvczPOiTtLiMtbR54t9Jnv4y
+         Yl4ABma7Ogqt7yv2z7lcHmue6KGy2ip5KPV5M6gA7SorGVy2+zqplRTDgKhVknCHOAsF
+         AIMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743628621; x=1744233421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xc/zZ+DuPIPBwVNZBMJ0HujjjSUEiZ7ohcynsD7aA4A=;
+        b=D0eN3Vuz9mCLaU0r5UpU/0Z5XQePq3jP36kJ5er5p/4Ln1QmJqFvsg4BlFFCymxjR7
+         sidlEq6GirmwZ6MzeOaoYUNLLmMyLCpL4wQq7I5JaezlXXynrR3WGzQeihFA/4mYmZYC
+         sJ3ZEIPfq+UKohm/TwFxnlUvNdh1daQzK+Ftnv5r9yfGrNDEsdBD2dh6DhpD1ZtNMdhk
+         RMsoYBnbJ1/3wUsAMDiuTwaf5+sP8Oyct6fqdmOi+Q9rzdIzO3myN8Xq4zLovAl75yLT
+         UVH9GMqwrz7UiJvXKf7bK54qcHJ1dTciMe0bUksdiOdZ9aSROF1tKdi2/jXn1eHtmQno
+         ViRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBgBqzXG1nbxpOP+jWlhM6TmOCI4sKq0RMsaZce3UlHCMaVL6fOtaIvHeT8Fby2KvWqlX0POMqk9wZ1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNTPFQG8kFs43LaPJ4P+h2gWel6gLXWHvypwqw3kMsqhBXQHsI
+	3jFK6KIMC0wVbYbNkUG+stn+P4XO2QNo0DnHibDRMem6QhjTOc9AaIN+JJrpI/E=
+X-Gm-Gg: ASbGncuETbqXqbXuT7QQSUDsjds+gPYiSb47+jKJ3l7xY7aUxpPyVRrrfWuyvnTA70Q
+	DvcaENdNA0gH4yEEC7Ll6BDbY9NrQK9mrzOtfFTmNrDfbJFPDr3cksZNvcxu0HS4wl5Z6CbxHCb
+	nk3w+bKxa5qPNVKjAG10JeDWMvbqpjGLHgnTBlhVYzFcYyYQb0YlhlIi77QG/O68WycX/PpBBmr
+	TubS0E53nuGTVRLrUdc4PgMlsKGHj0Y6H6AYhFJyOg5HW9pVFX1AEEqbOsLK4vlgQc+POAKx6VZ
+	WrL3Z6oyiOm8HCCY9BEZPhm0CEUnLLtDzxdzkX3oCBe7p7O9Tjk+kZh/VwL9rt4j5vsC1W4e6TA
+	Zf1uQEYVzNICVlXFbJgdS+ApbHYGZ
+X-Google-Smtp-Source: AGHT+IETTieNbw/k3oeNyL1K32Iu4F4JpFYjFu/JJSEnpgavTw/4tVMQ23H2f0Cx5addp90wkEKvIA==
+X-Received: by 2002:a05:6a00:4c17:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-739d6457e2dmr1406094b3a.9.1743628620577;
+        Wed, 02 Apr 2025 14:17:00 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739710636a3sm11855554b3a.94.2025.04.02.14.16.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 14:17:00 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1u05SC-00000003h3r-2yeA;
+	Thu, 03 Apr 2025 08:16:56 +1100
+Date: Thu, 3 Apr 2025 08:16:56 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Kees Cook <kees@kernel.org>, joel.granados@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
+ reading proc files
+Message-ID: <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
+References: <20250401073046.51121-1-laoar.shao@gmail.com>
+ <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
+ <Z-y50vEs_9MbjQhi@harry>
+ <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+ <Z-0gPqHVto7PgM1K@dread.disaster.area>
+ <Z-0sjd8SEtldbxB1@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-0sjd8SEtldbxB1@tiehlicka>
 
-Introduce multipliers to specify the number of processes to run:
+On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
+> On Wed 02-04-25 22:32:14, Dave Chinner wrote:
+> > Have a look at xlog_kvmalloc() in XFS. It implements a basic
+> > fast-fail, no retry high order kmalloc before it falls back to
+> > vmalloc by turning off direct reclaim for the kmalloc() call.
+> > Hence if the there isn't a high-order page on the free lists ready
+> > to allocate, it falls back to vmalloc() immediately.
+> > 
+> > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
+> > overhead by around 80% when compared to a standard kvmalloc()
+> > call. Numbers and profiles were documented in the commit message
+> > (reproduced in whole below)...
+> 
+> Btw. it would be really great to have such concerns to be posted to the
+> linux-mm ML so that we are aware of that.
 
-K|K|m|M: multiply leading number by 2^10 or 2^20, respectively
+I have brought it up in the past, along with all the other kvmalloc
+API problems that are mentioned in that commit message.
+Unfortunately, discussion focus always ended up on calling context
+and API flags (e.g. whether stuff like GFP_NOFS should be supported
+or not) no the fast-fail-then-no-fail behaviour we need.
 
-p|P: multiply intermediate result by number of online processors
+Yes, these discussions have resulted in API changes that support
+some new subset of gfp flags, but the performance issues have never
+been addressed...
 
-Examples:
+> kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
+> to express - I prefer SLAB allocator over vmalloc.
 
--p  2K = 2048
--p 10p = 10 * number of online processors
--p 1kp = 1024 * number of online processors
+The conditional use of __GFP_NORETRY for the kmalloc call is broken
+if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
+mask to hold __GFP_NOFAIL | __GFP_NORETRY....
 
-Signed-off-by: Dirk Gouders <dirk@gouders.net>
----
- tools/perf/Documentation/perf-bench.txt | 14 ++++++
- tools/perf/bench/sched-pipe.c           | 32 ++++++++++++++
- tools/perf/util/string.c                | 58 +++++++++++++++++++++++++
- tools/perf/util/string2.h               |  1 +
- 4 files changed, 105 insertions(+)
+We have a hard requirement for xlog_kvmalloc() to provide
+__GFP_NOFAIL semantics.
 
-diff --git a/tools/perf/Documentation/perf-bench.txt b/tools/perf/Documentation/perf-bench.txt
-index c1f479de9ded..ed74532ee28d 100644
---- a/tools/perf/Documentation/perf-bench.txt
-+++ b/tools/perf/Documentation/perf-bench.txt
-@@ -149,6 +149,20 @@ make sure that the cgroups exist and are accessible before use.
- -p::
- --nprocs=::
- Number of processes to use for sending tokens along the pipes.
-+This option accepts a number follwed by optional (case insensitive)
-+multipliers in this order:
-+
-+- k, m
-++
-+Multipliers 1024 and 1048576 for the leading number.
-+
-+- p
-++
-+Multiplier replaced by the number of online processors.
-+
-+Example:
-+
-+        -p 1kP means: 1024 * number of online processors
- 
- Example of *pipe*
- ^^^^^^^^^^^^^^^^^
-diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.c
-index 553e5ead254f..1540cf46290a 100644
---- a/tools/perf/bench/sched-pipe.c
-+++ b/tools/perf/bench/sched-pipe.c
-@@ -47,6 +47,8 @@ struct thread_data {
- #define LOOPS_DEFAULT 1000000
- static	unsigned int		loops = LOOPS_DEFAULT;
- 
-+static const char *nproc_str;	/* String that specifies a number of processes. */
-+
- /* Use processes by default: */
- static bool			threaded;
- static unsigned int		nr_threads = 2;
-@@ -91,6 +93,8 @@ static int parse_two_cgroups(const struct option *opt __maybe_unused,
- 
- static const struct option options[] = {
- 	OPT_BOOLEAN('n', "nonblocking",	&nonblocking,	"Use non-blocking operations"),
-+	OPT_STRING('p', "nprocs",	&nproc_str,	"2P",
-+		   "Number of processes (2P := 2 * online processors)"),
- 	OPT_UINTEGER('p', "nprocs",	&nr_threads,    "Number of processes"),
- 	OPT_UINTEGER('l', "loop",	&loops,		"Specify number of loops"),
- 	OPT_BOOLEAN('K', "Kn",		&Kn_mode,	"Send tokens in a complete graph instead of a ring."),
-@@ -279,6 +283,31 @@ static void *worker_thread_ring(void *__tdata)
- /* Ring mode is the default. */
- void * (*worker_thread)(void *) = worker_thread_ring;
- 
-+/*
-+ * Get number of processes from the given string,
-+ * e.g. "1k" => 1024 or
-+ *      "8p" => 8 * number of online processors.
-+ */
-+static unsigned int get_nprocs(const char *np_str)
-+{
-+	unsigned int np;
-+
-+	np = (unsigned int)perf_nptou(np_str);
-+
-+	if (np == -1U) {
-+		fprintf(stderr, "Cannot parse number of processes/threads: %s\n",
-+			nproc_str);
-+		exit(1);
-+	}
-+
-+	if (np < 2) {
-+		fprintf(stderr, "Two processes are the minimum requirement.\n");
-+		exit(1);
-+	}
-+
-+	return np;
-+}
-+
- static int create_pipes(struct thread_data *tdata)
- {
- 	int __maybe_unused flags = 0;
-@@ -338,6 +367,9 @@ int bench_sched_pipe(int argc, const char **argv)
- 
- 	argc = parse_options(argc, argv, options, bench_sched_pipe_usage, 0);
- 
-+	if (nproc_str)
-+		nr_threads = get_nprocs(nproc_str);
-+
- 	if (Kn_mode)
- 		worker_thread = worker_thread_kn;
- 
-diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
-index c0e927bbadf6..72deb3df9c99 100644
---- a/tools/perf/util/string.c
-+++ b/tools/perf/util/string.c
-@@ -3,6 +3,7 @@
- #include <linux/kernel.h>
- #include <linux/string.h>
- #include <stdlib.h>
-+#include <unistd.h>
- 
- #include <linux/ctype.h>
- 
-@@ -68,6 +69,63 @@ s64 perf_atoll(const char *str)
- 	return -1;
- }
- 
-+/*
-+ * perf_nptou()
-+ *
-+ * Parse given string to a number of processes and return that number.
-+ * Multipliers up to 'm' are accepted, and an optional final unit suffix
-+ * 'p' meaning "number of online processors".
-+ *
-+ * str must match: (\d+)(k|K|m|M)?(p|P)?
-+ *
-+ * (e.g. "8P" meaning "8 * number of online processors",
-+ *  or   "1k" meaning "1024",
-+ *  or   "1Kp" meaning "1024 * number of online processors")
-+ */
-+u32 perf_nptou(const char *str)
-+{
-+	s32 length;
-+	char *p;
-+	char c;
-+
-+	if (!isdigit(str[0]))
-+		goto out_err;
-+
-+	length = strtol(str, &p, 10);
-+
-+	switch (c = *p++) {
-+		case 'p': case 'P':
-+			if (*p)
-+				goto out_err;
-+			goto handle_p;
-+		case '\0':
-+			return length;
-+		default:
-+			goto out_err;
-+
-+		/* Multipliers */
-+		case 'k': case 'K':
-+			length <<= 10;
-+			break;
-+		case 'm': case 'M':
-+			length <<= 20;
-+			break;
-+	}
-+
-+	if (*p == '\0')
-+		return length;
-+
-+	if (strcmp(p, "p") != 0 && strcmp(p, "P") != 0)
-+		goto out_err;
-+
-+handle_p:
-+	length *= sysconf(_SC_NPROCESSORS_ONLN);
-+	return length;
-+
-+out_err:
-+	return -1U;
-+}
-+
- /* Character class matching */
- static bool __match_charclass(const char *pat, char c, const char **npat)
- {
-diff --git a/tools/perf/util/string2.h b/tools/perf/util/string2.h
-index 4c8bff47cfd3..bca2c1687924 100644
---- a/tools/perf/util/string2.h
-+++ b/tools/perf/util/string2.h
-@@ -12,6 +12,7 @@ extern const char *graph_dotted_line;
- extern const char *dots;
- 
- s64 perf_atoll(const char *str);
-+u32 perf_nptou(const char *str);
- bool strglobmatch(const char *str, const char *pat);
- bool strglobmatch_nocase(const char *str, const char *pat);
- bool strlazymatch(const char *str, const char *pat);
+IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
+performance with fallback to vmalloc(__GFP_NOFAIL) for
+correctness...
+
+> I think we could make
+> the default kvmalloc slab path weaker by default as those who really
+> want slab already have means to achieve that. There is a risk of long
+> term fragmentation but I think this is worth trying
+
+We've been doing this for a few years now in XFS in a hot path that
+can make in the order of a million xlog_kvmalloc() calls a second.
+We've not seen any evidence that this causes or exacerbates memory
+fragmentation....
+
+-Dave.
 -- 
-2.45.3
-
+Dave Chinner
+david@fromorbit.com
 
