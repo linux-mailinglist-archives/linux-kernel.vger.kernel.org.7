@@ -1,132 +1,78 @@
-Return-Path: <linux-kernel+bounces-585549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C616A794B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:57:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5202AA794AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952363B5201
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A54C1716F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432EF1F03C3;
-	Wed,  2 Apr 2025 17:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CCF1D86E8;
+	Wed,  2 Apr 2025 17:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iGeuX9i8"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWEBdPD2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE621F03CA
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585281DDA32;
+	Wed,  2 Apr 2025 17:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743616021; cv=none; b=BMkex0bOtsKGNH6Xb0ydZ+v/4JM3AMGbjleRMrXb61/Cg+0NBwLJ0d4MFyjvfhfvR8NlI7F2tmnhLSnlnXFthwMjo65FR0TdPqe8OMgNmMc64GgADWiKKQN0IN7Myk+pI+Ua11aBdencuEvJasvPrtEwQltqdbyEAeCKZf8caRU=
+	t=1743616060; cv=none; b=kKgUN/TOgA+YMnoxVXzIZQpZTcLDxJdRc/rsUDw0iLb+xeja37uOWGiCCHfy068Aj+2ncJy7fzKu+sN1VZBGG0n1KKNEncUq/BnfdDmPicD2ntHZ9dV/XRb04XWuKkhRxDj8tjsT3OTbAsfLB0IJbGjWZqM04zaiy3YN2zmxPfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743616021; c=relaxed/simple;
-	bh=EOlZcnFOrqCflQFwOYTy+1h7jZlZEe2uY8Lc98YJXQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjeS0KQWrjin4eqL2U/km18/gG+wEfL/9+dd1aMx2Jk2LxuJfdJtPZyGNAMyj2R6Iu1ZvnZTWyrcWmmmUVpWOpxASpm5O++96UyatRuAuCTTU0LvyfXU0LDfVTUUkkCKEUVMyjBtlOMylFXLWfrmHrxj87B4g0y+hwHZxXvKJ78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iGeuX9i8; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5eb92df4fcbso178954a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743616017; x=1744220817; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xorHSeXHZOAo+fDlPKYms7iJ4xhfFELkMJgrAoSH+BU=;
-        b=iGeuX9i8A5GO+tyZhqym/5POB6RZ/hU3tBxXHU0f1J3BYeqvd7eVsYybr05+56bh3M
-         6esQBHs4AOsdoBrCNjkCU6R4RrNUzqcdLlOOU33NBhDLnOGZUO5A+6kmyWGBPJRrW6mL
-         ngB7obD9Fn6A1XiKjT3d8nQAB7c5CwziHPFro=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743616017; x=1744220817;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xorHSeXHZOAo+fDlPKYms7iJ4xhfFELkMJgrAoSH+BU=;
-        b=Xuge8glGwu8uay8I1v5WXu/55F1/BfHBINWyuaTGnliba6qogQhAjjVH39ZEQYOD3F
-         edlHDHluQgc2t4TEYvPibDL+Ngo+oFrJfzpzYET1xqwsBHeU9ro5RYq8481femZxdvDU
-         9FeuXYh28XMFoUMe4NqNW9ySfuHUcxhieK9EK9c14JoAajx/1EUEnqMbhhg+BB7oLHWO
-         /Cky3kUKvAADcuMhEzS9QTSesY4gbZYR3goSTBHgKqn/Mgr+S8YDJHY8uHgSYfGPW+5F
-         YzyovNXrwMLYVEK23UjWBgK0LuIzN5Ie66EnBaSZR+4BZgqhFSS4N/lrBsqSUn6yIGZ3
-         VP1A==
-X-Gm-Message-State: AOJu0YxjS1j6dDJBIvX4glD0XjBUHcZEks9615pODGsI0AKr3wjqWr/9
-	Ej7kIKlmKC5pe9OCMJN9HW9idZR3JtgDz/HFDHVA7lnd+kl48GdQFrF3oxri3ddx78UIJtBldJV
-	Dd2A=
-X-Gm-Gg: ASbGnctTUoKxPSnKVhD0ZAhjKagA7dzpmlKT3CLCygiY8fKesooDEVB6h/g4bfhooOp
-	hH0SYlWqfivijishiW1Yck14ja4CQLjwdr/DafvVoW8q7m5SXDRTbxu0Vp6fn9vCfbzG6LrXwRv
-	wJN5zGjMw3a5Kdf63PY3Chu1OU9ROgbmSpuWFbxcl6kDLkxr/ULYHn4rYNzW0ThI5np53FNjx6P
-	CKLUx6Ed4lzN4LHJIqon0QIscK21tqIPeuryH360ySx3MOKipDUbE+R6mmUxLMib/e8g+xP/hsC
-	G/GOxlHJA5aZavhbV/dhwwjvnRw6VjCSPwfDasac3UgWdkvdwjbPk90sWpkSH77uxB3KRM/auia
-	9RI+fsYxXg8nYlWtTTZTLx33u3tpsTQ==
-X-Google-Smtp-Source: AGHT+IHGn+BF0j8rwQeuYN2LSfPqTGn4tvp+Mewc3w9PiI4CALVOiiLo+GNhnsV9yE0qeBS3h/aDbw==
-X-Received: by 2002:a05:6402:4310:b0:5e0:8c55:536 with SMTP id 4fb4d7f45d1cf-5edfcbd2529mr16290720a12.4.1743616017414;
-        Wed, 02 Apr 2025 10:46:57 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc16ef7a7sm9006500a12.36.2025.04.02.10.46.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 10:46:55 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so4024566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:46:55 -0700 (PDT)
-X-Received: by 2002:a17:907:7f87:b0:ac3:f0b7:6ad3 with SMTP id
- a640c23a62f3a-ac738c1b69fmr1516270266b.40.1743616015142; Wed, 02 Apr 2025
- 10:46:55 -0700 (PDT)
+	s=arc-20240116; t=1743616060; c=relaxed/simple;
+	bh=r+bIMNU16rm/aHZcFKK/UubMhI9ff0TZAd3Lb1i6ILY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=g372y4CYwmeaI4gPC9FMnFqkYM6hYBytGqRh/nE0PL5X6p4w2k/IDc78vVTeWOu5VWjgI8eQ60RH3zEXeqMnAU7M2c1mqBvbz/ML9CskelEO0j5q5HiTR6dobJQug4ghINZgw5jCNGdICPiqkpmKZM+/HY2wO7XK16HPkaOid3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWEBdPD2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2118FC4CEDD;
+	Wed,  2 Apr 2025 17:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743616060;
+	bh=r+bIMNU16rm/aHZcFKK/UubMhI9ff0TZAd3Lb1i6ILY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=AWEBdPD2deC2gG75t06sB3AX4FtwVO1TIlx2ZG+vpiNCLiHpWVx5Z9b5/SDmgPBab
+	 PMJfQs8NT8CG996QOGCfOyJChziUQgHHcIWRdRlhkeeaMa/1RgKEKiLZ+dje89F7xm
+	 2OUChBecWC3Rr27Ksr5suTO97MnrqWZobGckLu3JyBaRsbJ5gsIWrT6ECW4leK5vtP
+	 e1tm0kNphjN7lfpQa8O1FaWB5Gm6TGZqJ+8m9lX2+BzmRv9aO7SXBFg2qx0syBDVv1
+	 jv9XGdI/KzffT++IqnPPrHN4rlXr35bpsshHTNqOi2qfAkCwXDJYebwTsTV9U3Mc2N
+	 yEeHv5sYuhaDw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DB7380DBDE;
+	Wed,  2 Apr 2025 17:48:18 +0000 (UTC)
+Subject: Re: [GIT PULL] RCU fixes for v6.15
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z-zWJj-pYdvuUYPE@Mac.home>
+References: <Z-zWJj-pYdvuUYPE@Mac.home>
+X-PR-Tracked-List-Id: <rcu.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z-zWJj-pYdvuUYPE@Mac.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git tags/rcu-fixes-v6.15
+X-PR-Tracked-Commit-Id: 1dc1e0b9d694eb9016d3105ca4ba8bd90eba888a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: da0512b2a3b4124b1483751f090d7ac13a713f0e
+Message-Id: <174361609686.1617726.14301012725477903008.pr-tracker-bot@kernel.org>
+Date: Wed, 02 Apr 2025 17:48:16 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250401225811.008143218@goodmis.org> <20250401225842.597899085@goodmis.org>
- <CAHk-=wifCDa6FfRKzeioYuEqJFTeXnYQ1DpeuYsmmn59NWuakQ@mail.gmail.com>
- <20250402125548.02cc57d0@gandalf.local.home> <20250402130337.5de5a8cf@gandalf.local.home>
- <20250402131431.218d3458@gandalf.local.home> <CAHk-=wh8=QAC0jjcjDRnmsmd2xDf97j8h25=aSFGeh9x+1X8UA@mail.gmail.com>
- <20250402134030.26a9b141@gandalf.local.home>
-In-Reply-To: <20250402134030.26a9b141@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 2 Apr 2025 10:46:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjAW=WHnmP3+B8dF_U91FEzkesUW0JPGMsip2CJ9e0hgw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpSafEjStqfGbLJ11HrwQUxXblIlVdAsWMZyIwfr8HJB2qb6iMxdcPchKA
-Message-ID: <CAHk-=wjAW=WHnmP3+B8dF_U91FEzkesUW0JPGMsip2CJ9e0hgw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] tracing: Use vmap_page_range() to map memmap ring buffer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vincent Donnefort <vdonnefort@google.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2 Apr 2025 at 10:39, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> This has nothing to do with admins. This would only occur if the kernel
-> itself created a buffer from some random physical address and then tried to
-> mmap it to user space (which would be a bug).
+The pull request you sent on Tue, 1 Apr 2025 23:16:06 -0700:
 
-Do *not* try to check for bugs like that with virt_addr_valid().
+> git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git tags/rcu-fixes-v6.15
 
-It literally snakes debugging harder.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/da0512b2a3b4124b1483751f090d7ac13a713f0e
 
-You're much better off getting an oops,. and then you have stack
-traces, distro bug trackers, and various other automated tools that
-give you information.
+Thank you!
 
-Trying to "validate" buggy data is crazy. It's absolutely the opposite
-of safety. It's going to cause more bugs, it's going to only work for
-the validation scenarios you thought about, and it's going to make it
-harder to debug the cases it actually catches.
-
-And if you are trying to catch kernel bugs, *any* data could be that
-buggy data. So the whole concept is insane.
-
-Yes, you could make every single line be a "WARN_ON()" with some
-random check for the particular data you are using.
-
-Or you could just write good solid code that is actually readable and
-maintainable, and doesn't have random pointless checks in it.
-
-          Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
