@@ -1,100 +1,170 @@
-Return-Path: <linux-kernel+bounces-585813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0211DA797DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A94A797C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF863A5C6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:46:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 302A87A4E47
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF071F4C9C;
-	Wed,  2 Apr 2025 21:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72B81F429C;
+	Wed,  2 Apr 2025 21:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="k7ICMfPz"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gd1zNfiK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381D015575B;
-	Wed,  2 Apr 2025 21:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AEC78C91;
+	Wed,  2 Apr 2025 21:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743630402; cv=none; b=UQaDTrwQ496OBNjRmaAmMcqPbi2H5So8vONKbozc39VYCodIoOSUVimW7ThR1LrU9q80nGxwB24CXuTImFHbDOwty6bppTh3HXMQB8TawmuSxCTbGVc5fw0JT5nmXtcE8d07yYUh3hG5XGLrSsqlsgYMT/DJpkdGqKXfz9Vucr4=
+	t=1743629951; cv=none; b=Jd700IWr4GzrjztplhhdXdX2l20yNgjqrh55nW1GrTEEg719FkCNSIrJOyTsVcL7SVa8ecTpmgUhHqeVY8ZoEc9Ddp53nhcMZfo6h0xchDhfM7rMo/UnGTL6atM17+RiHTWatqhQL8sLU4jlEn464sRkzBsPdVERJD2G8V4SajA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743630402; c=relaxed/simple;
-	bh=OrpOFY06YktwnFU5O13rxBuoIxGvGFPh3gIGitQWkQo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fUALqXzIfHviF+AizDX18JFW6sEbmpRtg6HsHLvgyQ0lOTmlatlbuN+srHQoDmm3oi2OiXTwcVlAVw+wxByYRzevHdCm8QwJxEmZDMhtbyi0JdoJcedT6KLJHxxUilvK8nGyrZxrpQdllv30L2PwLL2IraAYn0Hb/fg4DbNCsns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=k7ICMfPz; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1743629944;
-	bh=OrpOFY06YktwnFU5O13rxBuoIxGvGFPh3gIGitQWkQo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k7ICMfPz37jDyiRN8TWMTIy3ilQcJIxv9wB8QcEzO7M5LNaFTrIKYMY+mEGQjD0wu
-	 tujUDu8girmF26aTZ97yaGqEIhUTuaVlt/XqBsw8UAvgMycforDQ99KUPROm/YS6N8
-	 W+jG/qnvAbbtFtco3LbaKKmXbnU2sgcCfy7w25u0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 02 Apr 2025 23:39:00 +0200
-Subject: [PATCH 2/2] selftests/nolibc: only consider XARCH for CFLAGS when
- requested
+	s=arc-20240116; t=1743629951; c=relaxed/simple;
+	bh=TSUZ/BtivkLRiKLsU2XCL8Ugofa5D2b//TRkx+fWb90=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QLkVgokIt+4yC+zGVavDIeaUulAB+KVZVgXKi0yZHp43aOrFNYd2Z0WjxZ9IWFdXsKWFlN1TieECixHn2Uurw+UTneAkiB+yLdsTUACFanAeIjQRTswxu59klGA6HCThwuikL2lEgbBrkkva5HYj/QPEPnd1f6Y9aS/Kf93i0u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gd1zNfiK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B5DC4CEEA;
+	Wed,  2 Apr 2025 21:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743629950;
+	bh=TSUZ/BtivkLRiKLsU2XCL8Ugofa5D2b//TRkx+fWb90=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Gd1zNfiK12s9/7C+9AiJxdL37Jazmrvm2NVQveKCMeStcTD8bdgZ4g5vPmXFMZfF4
+	 FHo9du/fzkGCwZ6RbnqQnnVAVTt+70lJqq33GWG6m8wnNDEJG0w9azwVqpdI0drjyN
+	 SX9I/vDWWXiKYFWADa0UgE06UZ6rTQpjCh+6YX3USklPSEWgm+OBqxTdVdy48yA4Rf
+	 VmUWYuaI3hNv7gHNaztS5eNgFmjMoxwKmtQV/qrGAnNbI+ja3b4L9wRCf89rBLRD4U
+	 MOqD3nKvhtoWRiyUN9WLal56LDporgVl4J9aJyQe6ORkhNHcgcwcZarkc6Qu7g2mr0
+	 tR8TzxA8/8sYw==
+Date: Wed, 2 Apr 2025 15:39:07 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] drm/nouveau: svm: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <Z-2uezeHt1aaHH6x@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250402-nolibc-nolibc-test-native-v1-2-62f2f8585220@weissschuh.net>
-References: <20250402-nolibc-nolibc-test-native-v1-0-62f2f8585220@weissschuh.net>
-In-Reply-To: <20250402-nolibc-nolibc-test-native-v1-0-62f2f8585220@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743629943; l=1340;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=OrpOFY06YktwnFU5O13rxBuoIxGvGFPh3gIGitQWkQo=;
- b=y7rOLmC0yuFSSMk+akQoVKInkOn7cD446cYeeD3AYTnlHKJTC/XRq7zjVsQhi15uyHqRJrhhb
- /stD0fmZbHkDXBvWXIiSWId6/oCPBehMwR1OTUx4SN56w/K1+1nb0NT
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If no explicit XARCH is specified, use the toolchains default.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Suggested-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Link: https://lore.kernel.org/lkml/20250326205434.bPx_kVUx@breakpoint.cc/
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+a flexible structure where the size of the flexible-array member
+is known at compile-time, and refactor the rest of the code,
+accordingly.
+
+So, with these changes, fix the following warning:
+
+drivers/gpu/drm/nouveau/nouveau_svm.c:724:44: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- tools/testing/selftests/nolibc/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_svm.c | 39 +++++++++++++--------------
+ 1 file changed, 18 insertions(+), 21 deletions(-)
 
-diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
-index 34d01e473c013a1400bf6023132017a5f663f75c..89ee265f7467e2e5e32edf3eb51b4ec758e8004f 100644
---- a/tools/testing/selftests/nolibc/Makefile
-+++ b/tools/testing/selftests/nolibc/Makefile
-@@ -174,10 +174,13 @@ CFLAGS_s390x = -m64
- CFLAGS_s390 = -m31
- CFLAGS_mips32le = -EL -mabi=32 -fPIC
- CFLAGS_mips32be = -EB -mabi=32
-+ifeq ($(origin XARCH),command line)
-+CFLAGS_XARCH = $(CFLAGS_$(XARCH))
-+endif
- CFLAGS_STACKPROTECTOR ?= $(call cc-option,-mstack-protector-guard=global $(call cc-option,-fstack-protector-all))
- CFLAGS  ?= -Os -fno-ident -fno-asynchronous-unwind-tables -std=c89 -W -Wall -Wextra \
- 		$(call cc-option,-fno-stack-protector) $(call cc-option,-Wmissing-prototypes) \
--		$(CFLAGS_$(XARCH)) $(CFLAGS_STACKPROTECTOR) $(CFLAGS_EXTRA)
-+		$(CFLAGS_XARCH) $(CFLAGS_STACKPROTECTOR) $(CFLAGS_EXTRA)
- LDFLAGS :=
+diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+index e12e2596ed84..6fa387da0637 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_svm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+@@ -720,10 +720,7 @@ nouveau_svm_fault(struct work_struct *work)
+ 	struct nouveau_svm *svm = container_of(buffer, typeof(*svm), buffer[buffer->id]);
+ 	struct nvif_object *device = &svm->drm->client.device.object;
+ 	struct nouveau_svmm *svmm;
+-	struct {
+-		struct nouveau_pfnmap_args i;
+-		u64 phys[1];
+-	} args;
++	DEFINE_RAW_FLEX(struct nouveau_pfnmap_args, args, p.phys, 1);
+ 	unsigned long hmm_flags;
+ 	u64 inst, start, limit;
+ 	int fi, fn;
+@@ -772,11 +769,11 @@ nouveau_svm_fault(struct work_struct *work)
+ 	mutex_unlock(&svm->mutex);
  
- LIBGCC := -lgcc
-
+ 	/* Process list of faults. */
+-	args.i.i.version = 0;
+-	args.i.i.type = NVIF_IOCTL_V0_MTHD;
+-	args.i.m.version = 0;
+-	args.i.m.method = NVIF_VMM_V0_PFNMAP;
+-	args.i.p.version = 0;
++	args->i.version = 0;
++	args->i.type = NVIF_IOCTL_V0_MTHD;
++	args->m.version = 0;
++	args->m.method = NVIF_VMM_V0_PFNMAP;
++	args->p.version = 0;
+ 
+ 	for (fi = 0; fn = fi + 1, fi < buffer->fault_nr; fi = fn) {
+ 		struct svm_notifier notifier;
+@@ -802,9 +799,9 @@ nouveau_svm_fault(struct work_struct *work)
+ 		 * fault window, determining required pages and access
+ 		 * permissions based on pending faults.
+ 		 */
+-		args.i.p.addr = start;
+-		args.i.p.page = PAGE_SHIFT;
+-		args.i.p.size = PAGE_SIZE;
++		args->p.addr = start;
++		args->p.page = PAGE_SHIFT;
++		args->p.size = PAGE_SIZE;
+ 		/*
+ 		 * Determine required permissions based on GPU fault
+ 		 * access flags.
+@@ -832,16 +829,16 @@ nouveau_svm_fault(struct work_struct *work)
+ 
+ 		notifier.svmm = svmm;
+ 		if (atomic)
+-			ret = nouveau_atomic_range_fault(svmm, svm->drm,
+-							 &args.i, sizeof(args),
++			ret = nouveau_atomic_range_fault(svmm, svm->drm, args,
++							 __struct_size(args),
+ 							 &notifier);
+ 		else
+-			ret = nouveau_range_fault(svmm, svm->drm, &args.i,
+-						  sizeof(args), hmm_flags,
+-						  &notifier);
++			ret = nouveau_range_fault(svmm, svm->drm, args,
++						  __struct_size(args),
++						  hmm_flags, &notifier);
+ 		mmput(mm);
+ 
+-		limit = args.i.p.addr + args.i.p.size;
++		limit = args->p.addr + args->p.size;
+ 		for (fn = fi; ++fn < buffer->fault_nr; ) {
+ 			/* It's okay to skip over duplicate addresses from the
+ 			 * same SVMM as faults are ordered by access type such
+@@ -855,14 +852,14 @@ nouveau_svm_fault(struct work_struct *work)
+ 			if (buffer->fault[fn]->svmm != svmm ||
+ 			    buffer->fault[fn]->addr >= limit ||
+ 			    (buffer->fault[fi]->access == FAULT_ACCESS_READ &&
+-			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_V)) ||
++			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_V)) ||
+ 			    (buffer->fault[fi]->access != FAULT_ACCESS_READ &&
+ 			     buffer->fault[fi]->access != FAULT_ACCESS_PREFETCH &&
+-			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_W)) ||
++			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_W)) ||
+ 			    (buffer->fault[fi]->access != FAULT_ACCESS_READ &&
+ 			     buffer->fault[fi]->access != FAULT_ACCESS_WRITE &&
+ 			     buffer->fault[fi]->access != FAULT_ACCESS_PREFETCH &&
+-			     !(args.phys[0] & NVIF_VMM_PFNMAP_V0_A)))
++			     !(args->p.phys[0] & NVIF_VMM_PFNMAP_V0_A)))
+ 				break;
+ 		}
+ 
 -- 
-2.49.0
+2.43.0
 
 
