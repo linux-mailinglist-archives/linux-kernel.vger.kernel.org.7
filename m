@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-585305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052C7A79208
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB3EA79205
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631E41892B2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19D716ADA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E264A23A981;
-	Wed,  2 Apr 2025 15:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EE9236437;
+	Wed,  2 Apr 2025 15:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jVStg4s5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dODhFCJM"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2C728382;
-	Wed,  2 Apr 2025 15:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FEA2E3385
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743607206; cv=none; b=udqiyJNIhRwROCTQC+bCv1568j20sZCkwXusm7yH3FEHZPcmHGdSPTGwcC1t5xtG07vRBVdxi/oqdaAW08pbJ7P9FvPVIZeqj7gTBWX+MLPkKp5lKFtV1oxDDW7ohWXE2aNlMkwRAvOx8KZwxSJPWHttpJrjzR6gjSyTyhyoMuM=
+	t=1743607145; cv=none; b=dEfz2vFazH+Jf9gvyNoTkNxw04dlPeM45ELoE8qH+QyjqPTU7/dSbZMrLj1F/41OTYpvMFT0594G3GSGLTcolDC1ihDx/KFyobdIrj6zEKp7V3e2C8PthXGntN4d9Xhw7UJTYeSN5aKLc35UikxFbQREUwKcPrvLVb7QlF4htvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743607206; c=relaxed/simple;
-	bh=RF67FA7KLWM7yXZbl1Og9wynn8w4dU551JL/aWox2SY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y3A6WoVLMKREeovUrp0FKxd5gblIMOdhZ6T/NFxv/0LjwyivW1ILF4EBN/urwaEBRe9OIcSOXFvQZKfo19RjF543QGKwuAh8JbAiEwUedg2Zcl69INgzSLY/2TEIAG3W7AwRS603b9E4AMqWjp7+BhS6+bS7G2InaqX+X0yvRcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jVStg4s5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C255C4CEDD;
-	Wed,  2 Apr 2025 15:20:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743607205;
-	bh=RF67FA7KLWM7yXZbl1Og9wynn8w4dU551JL/aWox2SY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jVStg4s59mQvS3H6luFFXqrZZr7oeovy6DGIH4c08aDLWBDBjpHQ7+PGhIjXHvHRd
-	 yph+HtUtbfxYXsGD/Dlvrdz2wdztsy8mxSMAf+jF9rhP9j/wIBVGFgEUxgXw9p2RmB
-	 9x4pUNf4iqO9+/KK70lM+AIWYgWuhweYRzrR4s00=
-Date: Wed, 2 Apr 2025 16:18:37 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Wang Zhaolong <wangzhaolong1@huawei.com>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, edumazet@google.com,
-	ematsumiya@suse.de, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-net@vger.kernel.org,
-	smfrench@gmail.com, zhangchangzhong@huawei.com, cve@kernel.org,
-	sfrench@samba.org
-Subject: Re: Fwd: [PATCH][SMB3 client] fix TCP timers deadlock after rmmod
-Message-ID: <2025040248-tummy-smilingly-4240@gregkh>
-References: <ac39f5a1-664a-4812-bb50-ceb9771d1d66@huawei.com>
- <20250402020807.28583-1-kuniyu@amazon.com>
- <36dc113c-383e-4b8a-88c1-6a070e712086@huawei.com>
- <2025040200-unchanged-roaming-52b3@gregkh>
- <e6537aa9-6fe7-47e4-afd3-9da549ce12a1@huawei.com>
+	s=arc-20240116; t=1743607145; c=relaxed/simple;
+	bh=GlysUqLOtsPNkV/QiNl3yOcjs2Ox34WviGlejoVRthA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FB6DJT602WsrN3WjBvJFiiXxFPU3t6GmBZZKpw/dqSK0RRW1beF4KVWFUfOxEFUfGD4cry2abT7G5RUCCQRxI73ii73UbPeMhy9B2tdWaaKSLHnd8Wp9gjP3DA7Qoi2KCfSGpoNi0j0vQ177f3KFDLXwWSVvFfDZVjg7WlLWgdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dODhFCJM; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso65908845e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743607142; x=1744211942; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GlysUqLOtsPNkV/QiNl3yOcjs2Ox34WviGlejoVRthA=;
+        b=dODhFCJMqLVSaXoqJu7+CDJvwPa7EB5FON6uWsfLPEW8x61Ah7JGChsVD6sOW4+M1v
+         vuIf4M0KUh/eFScmtfVULCZ419uuUmN6PmO7I0zq4RaTzoUcQUi7+D5ig4gjpgMjqoQW
+         NqHFhaM5NDK3pPLmtigyhaZrP11nbXC6+LZR9PB2lESKPn6xXa1dntS15FGWQ4KcmIuH
+         6msoWFWNpe7mD+9mr5Vne1epnk8TQMbJFSVXTXu9DXV2b77CrZaDDTi6vAQyJj1XEIwM
+         ZG7qZuZKjwD9t3F9+toismdB20oLKUiFbHohqRkGCbKjtcfRTF2WAisY4Vts5no5A8aa
+         vGEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743607142; x=1744211942;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlysUqLOtsPNkV/QiNl3yOcjs2Ox34WviGlejoVRthA=;
+        b=ugpAjmc/Sh9KISfFSCSzbQDx2xA5RIEUXuODRERs3Un9dx5c5PUKaDOTe9L9d192YU
+         yf/vctJmMIAduRMT26w7Ld/IHXbE396JEsvfEwwNJEn/zFYP0YNqWg+Lvw3hFoTBdrQK
+         0k55qT2H5ovJPkb5lqE59VCfczTm70wDqLSwTfKVJ3yhPdbvCRz67EJa0NeRSnQwlKYZ
+         PkywKwWWjgauSAZQ4GlO55UcAVitkvqx6d8GzpQcL3EI0B4mpo2Ya4Z32zdYff5ywHFI
+         Htn77G4xbMZKHmn3DkkeZihfFHKi2CcsBz8PGGt3abePcKFBwmplmwWmnT6GhPEA5VTf
+         IiZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWscMUvSs0o4hdJMmhXtNLfin/fSvykcUZduKASSreybQDDgRp87SAZ0j7DPVWJYS/1HqjC7ki0Gzs5vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhHZRefVzUQfuliysUmfYQ3ojw0rowM2F4THuJLvckuuMAdZ8k
+	ib3IHuHRBklrQ5X9svxIEcxEl1v+O7Cq5OGyWXaYSOUBoR7Sh8aVdK395N4cEJI=
+X-Gm-Gg: ASbGncvOR/YOH1unWWr80I8xZvIdCSvl9EAHKF766o/GjhMdoAT5yzKnKvVxouLE9qC
+	1Pu3Ei7ERgJzKhYwEEbOeDNk1gFjWU2onxIr2IgI6RIn7tu6820t+5r1Wos5rhZa4eubSLUn98P
+	3aG7exWFE5hjv7ayVtpPJRI9/rAjdT5w7Fc4Mh0EX5yiVgmnUjWdF+ld89Wuz921nPt4LitYVsR
+	iUfNp0C4bCVham9KHHLSYHwEJOI+Ly9YWc7h8We1Fe96+B9xANpjCZAU3PH8PtuvCZxJ6BUg8QY
+	akoDrS5v5Phrbwyqk5xlD4Yx7F7pesjj2jwMx4feZkgXRQhGJPBWXg==
+X-Google-Smtp-Source: AGHT+IGwv2MsdCnsG2Kqybof4F/W5PPqZj6tCbp/AEjtdMPrsS/kXPnFlt7D8CDkoHBhANFtHeAn0g==
+X-Received: by 2002:a05:600c:8411:b0:43c:fcbc:968c with SMTP id 5b1f17b1804b1-43eb3af4581mr30858685e9.7.1743607142241;
+        Wed, 02 Apr 2025 08:19:02 -0700 (PDT)
+Received: from [192.168.0.14] ([79.115.63.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb5fd0a46sm24297325e9.9.2025.04.02.08.19.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Apr 2025 08:19:01 -0700 (PDT)
+Message-ID: <3ebd53ef-c7fd-4c8c-96f3-32e97b355b6b@linaro.org>
+Date: Wed, 2 Apr 2025 16:19:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6537aa9-6fe7-47e4-afd3-9da549ce12a1@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 15/21] mtd: spinand: winbond: Rename DTR variants
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Santhosh Kumar K <s-k6@ti.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
+ <20250307-winbond-6-14-rc1-octal-v1-15-45c1e074ad74@bootlin.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-15-45c1e074ad74@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 02, 2025 at 05:15:44PM +0800, Wang Zhaolong wrote:
-> > On Wed, Apr 02, 2025 at 12:49:50PM +0800, Wang Zhaolong wrote:
-> > > Yes, it seems the previous description might not have been entirely clear.
-> > > I need to clearly point out that this patch, intended as the fix for CVE-2024-54680,
-> > > does not actually address any real issues. It also fails to resolve the null pointer
-> > > dereference problem within lockdep. On top of that, it has caused a series of
-> > > subsequent leakage issues.
-> > 
-> > If this cve does not actually fix anything, then we can easily reject
-> > it, please just let us know if that needs to happen here.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> Hi Greg,
-> 
-> Yes, I can confirm that the patch for CVE-2024-54680 (commit e9f2517a3e18)
-> should be rejected. Our analysis shows:
-> 
-> 1. It fails to address the actual null pointer dereference in lockdep
-> 
-> 2. It introduces multiple serious issues:
->    1. A socket leak vulnerability as documented in bugzilla #219972
->    2. Network namespace refcount imbalance issues as described in
->      bugzilla #219792 (which required the follow-up mainline fix
->      4e7f1644f2ac "smb: client: Fix netns refcount imbalance
->      causing leaks and use-after-free")
-> 
-> The next thing we should probably do is:
->    - Reverting e9f2517a3e18
->    - Reverting the follow-up fix 4e7f1644f2ac, as it's trying to fix
->      problems introduced by the problematic CVE patch
+Hi, Miquel,
 
-Great, can you please send patches now for both of these so we can
-backport them to the stable kernels properly?
+On 3/7/25 3:08 PM, Miquel Raynal wrote:
+> -static SPINAND_OP_VARIANTS(read_cache_dtr_variants,
+> +static SPINAND_OP_VARIANTS(read_cache_dual_quad_dtr_variants,
 
->    - Addressing the original lockdep issue properly (Kuniyuki is working
->      on a module ownership tracking patch, though it hasn't been merged yet)
-> 
-> Regardless of the status of Kuniyuki's lockdep fix, the CVE patch itself
-> is fundamentally flawed and should be rejected as it creates more problems
-> than it solves.
-
-Ok, I'll go reject that now, thanks.
-
-greg k-h
+why not read_cache_single_dual_quad_dtr_variants? I see single dtr too
+in the supported ops.
 
