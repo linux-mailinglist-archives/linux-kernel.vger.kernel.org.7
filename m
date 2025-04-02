@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-585917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B41A798F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:35:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904AAA798FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1D516F9F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA48816FD12
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFAB1FBCB8;
-	Wed,  2 Apr 2025 23:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB69E1F869F;
+	Wed,  2 Apr 2025 23:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4UcdrfyL"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="BIrnec7i"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60AB1FAC48
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130FC1F5852
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743636899; cv=none; b=QelUks9HqXfwBEak2uj6PZ2VpnLQITwpMI/3jwbb9PtQTJwjAlvjTLVz0bAPOwwKvXdZ+9xe2Lp5w1mdr0CJwqEV0aULDmLlCEg0i6xxw7sx9PEX5SxOC/4JULXaa0YroPQAIPnHdqqhHvxRMlqO4AcM6AxjrWS1GMs7GwJ/krg=
+	t=1743637074; cv=none; b=R16JJv9oFjJC52Cdknln0J9YBdq3DKlnK7581EBg62RU6ZujmxGw8xnGfnv5UedpJryFQZsXBjk+n4p37vxLMkK1XUqg/bL8P83txTamaUkc+9mfG4PXJKYnTtG0xBvGjpQhg7Wlk0ZsJ8+XFJ4KFp7h0U6k/6nsd7nGZLkwO/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743636899; c=relaxed/simple;
-	bh=BHqjnEz8Bqub0+5tOgaodvHpe7VxxoEtAWRFbgVwkX4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=vAdrBXkNc+Bo8PUYjK6xCqu2D+fNYYmxT49u6KMhgh9P2yApr2NBWdwzQ4AY/aj9BGzs3HNfP56Hi97K0G8dBRMBNQGZsuJiJRnYBj7/qzcWiyetaJjW9wB9rBPFXnp3gwVubd4pnWZAvauqVGCejRrG4p/1aT1SlwMCGslVwJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4UcdrfyL; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff5296726fso443439a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:34:57 -0700 (PDT)
+	s=arc-20240116; t=1743637074; c=relaxed/simple;
+	bh=ZZsMtMrosl1AIceTIQnLYdW9Uz2x9VViE3xqFN0/+yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t1JJfBmkZaTA1nICv/8do9zOGTIRMVG7YIX78c+ZLF/ezIf8QFpud0WVkH0ugeX5xcabskAlPMe19sG3OtC38pxLRmoJ6roHHnVVZeXtJEoEogtEEAG0oIRt/TUYRQu2IdFxdpI7Ck6cjQWDA8iWZi8g5+8XpdtUgBcwz6yKndc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=BIrnec7i; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so1841155e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:37:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743636897; x=1744241697; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqQfU5MFNX+M9dMbS6b209zYYBr6gV4W0L8ERj/h45U=;
-        b=4UcdrfyLO6lyFuhkBTdxNC/z2Ht8B3bBMZbqD6KyAw4B1bq6oTv7wfO511EFtNDsbd
-         hoVRsXO3arf56YP1+FJXcQyfjNEnZp/YBf09fhujfaSFtCZfCD3IwoAr1TP49x6Ij17X
-         j+bdC/YYZ8zBGk6eJHdHt7AVYQFZoMRc8HrJxNl9QO9UDS0l4EeRE0IyAZqRFzhbXoba
-         FdoTbDaGtHVoSvIBnHqRzFz1YT2T82vLwWYu/sKXQWHyM+eLZTkxFuGWIk0b1Jl8Nw9O
-         JMQd+vkNDTUlIv75JujMs9+MDHLO9mwAdr/bkBisr/7jVOa8aiDdOcKwSNbr1E9L/kvy
-         cjXw==
+        d=openvpn.net; s=google; t=1743637070; x=1744241870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=W61q1y0gCFvlI6JDcXrPYkIT1lseWSl+GG45DZFG1F0=;
+        b=BIrnec7i4s/pFDUfbhKhz4Dp1diJaKQYlR0HXwaZUpOwSyod2PjZmLRkRUqxj6xpeN
+         IJZIZtHo86uqgYj9+K6H8gFurh9BMOutZ9L0nUtvhsYJfMskXD25YfOjqKpH18q8wZem
+         Cud5g2zRwEfg7u0wFluXAg64DRY2ajLL7yTl91vF/Lo4CLPnpH3KFSp908aY0o0RWaRx
+         nxh1gOKRpaQD0ckEeYRLvwG6DEL9Kcl3B5eb82W7iYeM6s1M461/sipKlRWlhN0VRsCj
+         VUfDTT714EpbB5c8ylg9dwnJiFR1CHj77HBZI+trQqv8mA+p97HccXLQu9Tkxo/MK3yP
+         a3GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743636897; x=1744241697;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqQfU5MFNX+M9dMbS6b209zYYBr6gV4W0L8ERj/h45U=;
-        b=Xl5S2J1LAcOk2R3sUYe4EtpSiEa4Qkndnj8QgqGZsKZ8zzTqlD2QuqkvOq6HmjY8Pr
-         Rps/Snobr2mxJ47bKZtTSl+bH3hlStCLtL2L6h5Sci9nEjoeXWHABB0AQa4lBSIp8+HM
-         sWnLzv17M2RGNY1Uy1M2N3b3xgNW27XZNPJRn2DUAjKv6Jv2KYxsPykH1QYJmB/UIjHw
-         zDqSGVm9jNM1+Q1g/N8gJS1n5nJ8D0TU5PgLpEFCCc1fqYyWJLuchq1W32yrBSsYjoNc
-         dTF8fbPOr5yM6FAqkSG0e4x23ztJZo1Z92PyQ7zs/DA0N2xk7AjoayM9t7uzz6OKP4bL
-         1OYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQwfq9DLhgEXezL6+ZW1B8eAGiZW61QdS7KOkXNH9b8ZgWEqMwCb5JKZtch+1Y7pgPHpxFxMqx/Iq+5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHSJhEx2ww7QTevX0ig1IezTJeapXxJTS+YKAgl6CSZYYP8P1a
-	G0dx6M9Cm/8T+nJn+mgOmYjgt22biJ8tGgmvyMD8+jomFgB0wMWb6DFRRL9vYXcdEmIpKb0Oo+U
-	cnmpjVTkLgChJ+j3znX/CyPKFsw==
-X-Google-Smtp-Source: AGHT+IHNjNoLSXpuoWq8MvyOWd0aQH4vReKV9zSqeimLC//wD66A6paRAKR65MmP1wxkBUjus4xLZlsJIhNOroJPqoE=
-X-Received: from pjbov3.prod.google.com ([2002:a17:90b:2583:b0:2f7:d453:e587])
- (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:56cf:b0:2f9:c56b:6ec8 with SMTP id 98e67ed59e1d1-3056ee3608dmr6316456a91.10.1743636897333;
- Wed, 02 Apr 2025 16:34:57 -0700 (PDT)
-Date: Wed,  2 Apr 2025 16:33:58 -0700
-In-Reply-To: <20250402233407.2452429-1-willmcvicker@google.com>
+        d=1e100.net; s=20230601; t=1743637070; x=1744241870;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W61q1y0gCFvlI6JDcXrPYkIT1lseWSl+GG45DZFG1F0=;
+        b=A2Cv3vb4Xgshj/+HH7VGguJnDu+EZ/8wRRl9h0O/nYlGjo4ixp/ocTYiu9gexG+cWV
+         T5ZLS8/OkA0Qx8BYhbeXBWWaAt3NtiQ4JRikZeCimBYETQ1q+40SoWw5vW0RPz/tccgN
+         QVBgUUjO+/yXix174J8a49B23sgHk1PnEdP4QLIiihWNObaBpX6I3fBnWw2WWzCPETWs
+         N5U7mPVXL0qde9+bwyKRZcGKpCblOYtTRCQXoQaxPXP6+SlhtxfJJ+1SYbEDisA/smFL
+         QRo/ya9gMbFCrK55GQ7TWc1vvWDJHZYeFQafc8YDGo1GfjO2CRHFgPmAo4d+qvg58Uln
+         +OSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJQDyCd9bCwmPXdII4u2n+BzrMDkkgNRsTQU/RoNmMKNjThjV96SJQojrgdxrF+ZvQEl8Rz5C9040m3mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW0cqY8ZPaNNGXQjnGlaXXljX7qf10TrJtOVfH00wSiqw9xyrl
+	PWTh7UACt3hlLdewPVX1nQpJ1t4j4KW/iq+8VevgfrJ+k2WV26HByU8DFweOzbV4trDTss8IFo3
+	JqtU45Cxg6vrtcnjKVxYG8C+BWO1VQCeRfIbhBsiHQmMIT2PHiC2xUYA=
+X-Gm-Gg: ASbGncv5uTV3s0+IvmS3ZAgof3mznEV/y6TvkiMboPvSx+6Pv5L3Jad59Pw+XH2iC9a
+	P4bD2Ch8dkUP6c+PoRoE11K2uh2o2lQIi/tsRARyUUeQ+fZOihqjiSOhcp2ljVMCfeYdpd5sAXh
+	0RYrYFK7UqzW7gEjeWnxth+lRjPzlDTof7mnBAdyFB8t459gWi/p6JwBOpMUH1Vcf187mWX3xTv
+	q9rK2/F02kdxDtg8W+iD2s2WxRhmiFvyBiGD/+eFGl7oBJ8nHqzevV3Kd+b64KQMn/ooda1dJlS
+	DQd7ThlvlaH50UIKnoniyg5xXZot/hBtMyNOgT0jzXzi3Q8frKsX2Xy06sJwSs6UmFlrJ1skHVg
+	t7P84
+X-Google-Smtp-Source: AGHT+IGmXfUesLAV8RjVVzxO44B2DnEvoYBx2M268pdRUhUh4bUu5rXcCLR84zMgAaAcbxmfSkxDjw==
+X-Received: by 2002:a05:600c:3b0a:b0:43d:16a0:d98d with SMTP id 5b1f17b1804b1-43ebef77ba7mr9564345e9.15.1743637070303;
+        Wed, 02 Apr 2025 16:37:50 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:c56:43d3:d3c0:365d? ([2001:67c:2fbc:1:c56:43d3:d3c0:365d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec16602bbsm5264215e9.9.2025.04.02.16.37.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Apr 2025 16:37:49 -0700 (PDT)
+Message-ID: <d997447e-8348-48ba-9c72-5deb7fdac8ff@openvpn.net>
+Date: Thu, 3 Apr 2025 01:37:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250402233407.2452429-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
-Message-ID: <20250402233407.2452429-8-willmcvicker@google.com>
-Subject: [PATCH v2 7/7] arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
-From: Will McVicker <willmcvicker@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan <saravanak@google.com>
-Cc: Will McVicker <willmcvicker@google.com>, Donghoon Yu <hoony.yu@samsung.com>, 
-	Hosung Kim <hosung0.kim@samsung.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Youngmin Nam <youngmin.nam@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v24 06/23] ovpn: introduce the ovpn_socket object
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+ willemdebruijn.kernel@gmail.com
+References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
+ <20250318-b4-ovpn-v24-6-3ec4ab5c4a77@openvpn.net> <Z-vkl4NqfrkoJn-l@krikkit>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z-vkl4NqfrkoJn-l@krikkit>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since the Exynos MCT driver can be built as a module for some Arm64 SoCs
-like gs101, drop force-selecting it as a built-in driver by ARCH_EXYNOS
-and instead depend on `default y if ARCH_EXYNOS` to select it
-automatically. This allows platforms like Android to build the driver as
-a module if desired.
+On 01/04/2025 15:05, Sabrina Dubroca wrote:
+> 2025-03-18, 02:40:41 +0100, Antonio Quartulli wrote:
+>> +void ovpn_socket_release(struct ovpn_peer *peer)
+>> +{
+>> +	struct ovpn_socket *sock;
+>> +
+>> +	might_sleep();
+>> +
+>> +	/* release may be invoked after socket was detached */
+>> +	rcu_read_lock();
+>> +	sock = rcu_dereference_protected(peer->sock, true);
+>> +	if (!sock) {
+>> +		rcu_read_unlock();
+>> +		return;
+>> +	}
+>> +	rcu_assign_pointer(peer->sock, NULL);
+> 
+> minor nit: that could be rcu_replace_pointer instead of rcu_deref + rcu_assign_pointer
+> 
+> (and I don't think the rcu_read_lock does much here)
 
-Signed-off-by: Will McVicker <willmcvicker@google.com>
----
- arch/arm64/Kconfig.platforms | 1 -
- 1 file changed, 1 deletion(-)
+Right - will fix this too.
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 8b76821f190f..325279193e2c 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -109,7 +109,6 @@ config ARCH_BLAIZE
- config ARCH_EXYNOS
- 	bool "Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
--	select CLKSRC_EXYNOS_MCT
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select PINCTRL
+Regards,
+
+> 
+
 -- 
-2.49.0.472.ge94155a9ec-goog
+Antonio Quartulli
+OpenVPN Inc.
 
 
