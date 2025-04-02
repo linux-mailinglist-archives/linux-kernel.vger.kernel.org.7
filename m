@@ -1,130 +1,128 @@
-Return-Path: <linux-kernel+bounces-585865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83256A7988A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:10:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46344A798A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEBDD1895C3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0677173435
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95671F585A;
-	Wed,  2 Apr 2025 23:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449621F7076;
+	Wed,  2 Apr 2025 23:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oHzJphOF"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1DZvw1D"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86911F4187
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092091E4A4;
+	Wed,  2 Apr 2025 23:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743635426; cv=none; b=AnA2dSGgl+9iOSUzTeIKmCAz03fSfVAWrCMYQyUCR8gJ0YB2DsNXymH9pAjK1XC1D7RsON0RRPCA74gY/DfJyJsDke9CTbwQOudtiSUyQDIO8B7qK5BdtDsy4ystUMXT17ccaAdIh28LMRT+J1E8XQwaTtvIy+v8h+jcovPZcrw=
+	t=1743635725; cv=none; b=Cu9AdQvWE/C16w1SBr8IDy5Ewhux6za4QXlzRC5YYHlOq+Tmp3QRPf9YUwyvTW7w7P5jBoo7Rr6vd9OAnSXua56/NYCEbTkUs1gwF9G0hMMk2q9KrEcwpxzCAnNA6JOXLZLN1OjEb+nVdhWqXtcdHGeRdhGr9Qfgynuq4/FEgHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743635426; c=relaxed/simple;
-	bh=Z5E+Ul9vRx/jedHULA901e1CtpGaie0FTu1DOwKgGRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix2G1QEnNJ2RAoezICU7HztS7bq3NU4+MiPQpQLhV6/it0X3glLryoF8W86PuNt2yx5TnE38ftaXv/YM/T+Ezxg1rs115zxCZc4sWvL5iduhX6A2IHANg+v8P+gc6Zbxn0Fl7Y307HL9cLxgyO27QNolo9qvCAgpH1Bt1hEEzaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oHzJphOF; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Apr 2025 16:10:06 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743635411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LQmokx6Rzrba+kqyKTeF3C/N0r3WG9zBf0JGb6uUwnA=;
-	b=oHzJphOFyUFATELdREX2cGOk0OBVZWQ8ZI28+8TjnKNSqGGuTFtPk0k2flq2xYpSz7jtcS
-	CNpWZwJb7sOSIfUuImj1P/dTorBxzVB5cwF+wdiC9LS/DeELwM3H5TxVVYyrxzzBsQfQmR
-	knDEKvvnkfJOWGG8ToFzliDiACvY94o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@suse.com>, Yafang Shao <laoar.shao@gmail.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>, joel.granados@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <b7qr6djsicpkecrkjk6473btzztfrvxifiy34u2vdb4cp5ktjf@lvg3rtwrbmsx>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area>
- <Z-0sjd8SEtldbxB1@tiehlicka>
- <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
+	s=arc-20240116; t=1743635725; c=relaxed/simple;
+	bh=wopiahh7HeOH1pqXjqshlIKTF9TiCQkO3PM56q4nLcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ytosj0DVllAMMKm1YAj13O2P7PorarJOPeVwkYsCUYEuZozqWF8fhqKzCXyKFMypQiGovT6MXaoHycrwiBE3Pt7K8R37cpNlYXCb9t92ThxAKYtOLNHMZCUf6SyRCgK0y6bvEnDpUmEZM1eG+gP+g6FcGrpfps/TgFaICJzt2y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1DZvw1D; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac34257295dso55260566b.2;
+        Wed, 02 Apr 2025 16:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743635722; x=1744240522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Re3At2LIdr3MH8poGKxEc8VAoYJtk80ZXXMm4kh2d5U=;
+        b=B1DZvw1Dk1NgtUQbvEZt7i5dcWhrMAbCrU3VsTgxFcK+kTg6ZakawAWZv7rSaf5mC/
+         hX76pDlhb7e5d8zOBhW602l9xagblTtInGOCHGDShyZhMYl+kIO5kW2MihbiWMbduEfn
+         LcCR8G1eZWBCoso8mzDzaZxW8+6t43zZnA408kJlymNzNB2gQs+rH/alT1z7GyV/q+ZY
+         0Qdk3w/PCKUUjcK8n/5K2AnM6EGJw63bByYPta88rhGalyGLj48MyV0+G+MNwMnU68H8
+         AQjGqifYTTFd7icoVGsAg6lPNvVUF8pLEJqg+MGr9yYwoTF1NhKiJWWWL/2M7kiCQZPC
+         N/jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743635722; x=1744240522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Re3At2LIdr3MH8poGKxEc8VAoYJtk80ZXXMm4kh2d5U=;
+        b=QOtuq/m+7gKzaN84E/Qszsabmy0n6q8OGHAMJ8+FmxAGSeaxd5wS6SOPL1gjVaNMXf
+         UWBjBNqCf65CkPxAio0+T8gncGRBNpOyncRB8TJ5eURR8fJMbSAr0FgkkvOlukMXxrPe
+         Wj8KySNU1Bu0q6udTJMtWNvUR429Eip+qXjsk2ozlNXp5Q0ZH3FNFY2dEswjOb99y4Fy
+         JEuX0LL9qqYRqllCOeQxu+/54srEqGYN/CMtKX8Z7kwvSIQOkayeizu0PtHnPDxlon8c
+         pjFbY4wzCCxGsu2VZBMGSjPBvzdMx0uHrCqHH1w1f5EaRGKj9J2h1BmWwp04p6Srm1eT
+         7dWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUD6VdbHLqzohjJhv2u0U9ZPMu/dDFciser17URWlqG9DptJ5oHLII19Spus6/YpOei8OQWTsNaTICGZA==@vger.kernel.org, AJvYcCXt8N6FnwGEZ3i8gb2LbkgmeIGmSb1HHR8hhla1ciupONEoERandH972TYq3V7CvaEe5IX0YwmQf5FbItY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2cACkmZVwAFp1WEGX0mg4p89OEeO0EAR4kN9WjOshs40xzjHJ
+	tmigp4oyjAZDnkk9lnYabP7I1Up9Q+HXUTA2Z8DKqLY9wUnnumRwXyRQBVR3YfOUxA==
+X-Gm-Gg: ASbGncsHnvrqV8H+e/sGUAPuUUqGNujcwVxBtf7ZxRxZ0Znbbr4BqMajekpMGSwQD4j
+	s01kRt6RqfM9JAVvgaLkClwug8EPEDW98g8mf6JkbxV74UL0LsolvpdZpAj7pEH6//F50XRHaxH
+	Cfj6NHsp03gePtrjVHAzY9WkklKHwl3PGaMMyYj5pMAYV2zYjk3xP1Vhdwbcsza6SstYUw+Q0Kg
+	sWcMhzhowiheiaB+mg+XKoj4hWDuPWOilX6ADdKm8AfCigAdbLb2FUqnrHzWMeoX/44QmVuWcMJ
+	v5uD97axeV4SN/L1KwWl0HDAQfd4cVNnZwN2xHG/GZoiBiwFzNfP3N/mOYc=
+X-Google-Smtp-Source: AGHT+IF2y9Sff6yr9ULKxR1iSNk2yKG2X6bb94ewdbZD/kmlZIDGChEY1I3eUQCq4D+B+LSTZXa2iw==
+X-Received: by 2002:a17:906:2351:b0:ac7:3916:327b with SMTP id a640c23a62f3a-ac739163359mr1470226866b.58.1743635721899;
+        Wed, 02 Apr 2025 16:15:21 -0700 (PDT)
+Received: from localhost.localdomain ([5.122.63.66])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe5d794sm1448466b.11.2025.04.02.16.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 16:15:21 -0700 (PDT)
+From: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+To: hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com
+Cc: borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Amir Mohammad Jahangirzad" <a.jahangirzad@gmail.com>
+Subject: [PATCH] s390/boot: replace strncpy() with strscpy()
+Date: Thu,  3 Apr 2025 02:44:34 +0330
+Message-ID: <20250402231433.117505-1-a.jahangirzad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 08:16:56AM +1100, Dave Chinner wrote:
-> On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
-> > On Wed 02-04-25 22:32:14, Dave Chinner wrote:
-> > > Have a look at xlog_kvmalloc() in XFS. It implements a basic
-> > > fast-fail, no retry high order kmalloc before it falls back to
-> > > vmalloc by turning off direct reclaim for the kmalloc() call.
-> > > Hence if the there isn't a high-order page on the free lists ready
-> > > to allocate, it falls back to vmalloc() immediately.
-> > > 
-> > > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
-> > > overhead by around 80% when compared to a standard kvmalloc()
-> > > call. Numbers and profiles were documented in the commit message
-> > > (reproduced in whole below)...
-> > 
-> > Btw. it would be really great to have such concerns to be posted to the
-> > linux-mm ML so that we are aware of that.
-> 
-> I have brought it up in the past, along with all the other kvmalloc
-> API problems that are mentioned in that commit message.
-> Unfortunately, discussion focus always ended up on calling context
-> and API flags (e.g. whether stuff like GFP_NOFS should be supported
-> or not) no the fast-fail-then-no-fail behaviour we need.
-> 
-> Yes, these discussions have resulted in API changes that support
-> some new subset of gfp flags, but the performance issues have never
-> been addressed...
-> 
-> > kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
-> > to express - I prefer SLAB allocator over vmalloc.
-> 
-> The conditional use of __GFP_NORETRY for the kmalloc call is broken
-> if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
-> mask to hold __GFP_NOFAIL | __GFP_NORETRY....
-> 
-> We have a hard requirement for xlog_kvmalloc() to provide
-> __GFP_NOFAIL semantics.
-> 
-> IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
-> performance with fallback to vmalloc(__GFP_NOFAIL) for
-> correctness...
-> 
+From: "Amir Mohammad Jahangirzad" <a.jahangirzad@gmail.com>
 
-Are you asking the above kvmalloc() semantics just for xfs or for all
-the users of kvmalloc() api? 
+strncpy() is deprecated for use on NUL-terminated destination strings
+as it doesn't guarantee NUL-termination when the source string length
+exceeds the destination buffer size. strscpy() is a safer alternative
+as it always NUL-terminates the destination and returns the number of
+characters copied (excluding the NUL).
 
-> > I think we could make
-> > the default kvmalloc slab path weaker by default as those who really
-> > want slab already have means to achieve that. There is a risk of long
-> > term fragmentation but I think this is worth trying
-> 
-> We've been doing this for a few years now in XFS in a hot path that
-> can make in the order of a million xlog_kvmalloc() calls a second.
-> We've not seen any evidence that this causes or exacerbates memory
-> fragmentation....
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+Replace strncpy() with strscpy() for copying the bootdebug_filter value,
+using sizeof(bootdebug_filter) rather than sizeof()-1 since strscpy()
+takes the full buffer size as parameter.
+
+
+Link: https://github.com/KSPP/linux/issues/90
+Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+---
+ arch/s390/boot/ipl_parm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/boot/ipl_parm.c b/arch/s390/boot/ipl_parm.c
+index d04e9b89d14a..8b153f7b4112 100644
+--- a/arch/s390/boot/ipl_parm.c
++++ b/arch/s390/boot/ipl_parm.c
+@@ -309,7 +309,7 @@ void parse_boot_command_line(void)
+ 		if (!strcmp(param, "bootdebug")) {
+ 			bootdebug = true;
+ 			if (val)
+-				strncpy(bootdebug_filter, val, sizeof(bootdebug_filter) - 1);
++				strscpy(bootdebug_filter, val, sizeof(bootdebug_filter));
+ 		}
+ 		if (!strcmp(param, "quiet"))
+ 			boot_console_loglevel = CONSOLE_LOGLEVEL_QUIET;
+-- 
+2.43.0
+
 
