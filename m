@@ -1,122 +1,95 @@
-Return-Path: <linux-kernel+bounces-585444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB8EA79376
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:50:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A02A79360
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861F0165BD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BAB188E89C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092761917F0;
-	Wed,  2 Apr 2025 16:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D225718FC80;
+	Wed,  2 Apr 2025 16:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCVW+1sj"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b="L/viaXhn"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34F339FD9;
-	Wed,  2 Apr 2025 16:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E5215A86B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743612611; cv=none; b=pKbNsm3ZablyGkvn18I4fBcmOY7FwyktRdct8aIwZDEg51kRAHLgwTpyjt7dSan+M2FXQqKoApoTosy4oay2Nufru+74AK/TslQCtakbg8W+43YRgbAHWxbnT8vkiSS8IoVipmwG0fwMkZbKpkAq/UTmdJPIm5QzpiVtqBzC6Wg=
+	t=1743612091; cv=none; b=rIM7td446ih1ZPTrcRktHT25ADEy2jQvjCWMen0voDl6PnOpO5r/YORrc7z4ap0mU3YPXHGWWoA+zy4brKJSsgTmLWrgUUeC3Bdh7QSuRarbPlhwGz9/6Q6W4nnhrLwWHRGGoZIe6tOwt2UBJ3G6GcUfTy7r3sETsKDs1ccR4Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743612611; c=relaxed/simple;
-	bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SaZbMqzoHmKkDtROPtItVwN9EzF84qlSpsxZPNgsZyRjJHBDShUoX3J7sOKbSlqb6VwdPlQ/eqiTNBfG8LB/sn+O90bQegb7yR8zg1La+3s/zwwPldfed7YR2AYC97j1W+gv1JZDPcFobWDGzd/W+YM0XWc9BJh2rFicChQRSUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCVW+1sj; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30c461a45f8so71071751fa.1;
-        Wed, 02 Apr 2025 09:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743612608; x=1744217408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
-        b=DCVW+1sj40fGUKRxLGUivVW/+w7Wi2PN6NL0RiGN/86O9L/XELZi9rhNBOL5ZybJzR
-         fyeF8r9TsDvoQe37fmXpVNprmcFDypjZAlfEZ1pvC/2snMJOrjDGsrRZEjT+eaEOGrGt
-         TfS5pKUWrSOd5kfT+PO1yQIEC2L7h4ZeFYfq6Inh65iYvbZW1AxHTFvDiP4l+rh8EbtV
-         MVpp7rcFj0UJn+BLB77FziAdWHy/5tlPdOSKhsO7WvCzv9cKSpnpDDfHzIhW2irZfI6j
-         SMW8FiXbUCUYLbxD8RRf+qGDMdY3iBlSKJQdhvHtkNkIj4GGJYNaHVzQkG/YvUtVg9mw
-         U67g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743612608; x=1744217408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
-        b=g0wOde8P8+RGEK6hprMA1xfbwdBphMfnA5dt1rKa5+DdeW6ny9DZnDTjB+7ID2nod7
-         cFfgpvU/T+qFdjd2dKMJe+6dInJL+EwbmeL5iCsXyd0zwXzlcv4AbWPMfeLZkELesU8/
-         JBgCG9ZjdZyIGGRg3lIj/UYMLXGedrf93/M79iRI+JZlxd3loBQjO8zS3IhP38xJoZCs
-         8Ntjs+JN6L+E+Fp/fukU+RO7MddzSjPhki84+2ACtuA9/+FPJ2f/D08ju/r5tYknTXw8
-         7qID3a0TPziHzpc29lTqbre9MaHY9+Yp+PG1TJxf0JFfF2Y9uFpueLKj7lx8JvfBRI4L
-         op8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUITJpw9tkVXHXIKIHB8UY7dsGvwRser6IN+GNlT92Xox6h7que4hb+GYtI0tJAoz0EVUcHWciU9sb9SoQ=@vger.kernel.org, AJvYcCUJehDlI6JcWAK8RHBFTykJUisa0OM1mdUTRKhdhp2F9T/IEBqtmqfdSHTJWIjtVwdXylsQmouCJynfMS6v4Xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfDlsuNUINNArNslpnxI9DnoQspA7v7YRRwnZ2fR+noliAvZXl
-	BqY8EGcwBVWU9dwjns1BH3u8NPk6jcRa2ofhGnzN1IkcvaWgpoW9Epz6sav4SYNP5eOKu6xV2Hs
-	Biaa6qls/+CXI2C0Q4OikT52LqWib/iMK
-X-Gm-Gg: ASbGncvGUKau8cf9milB1uerPzsJWpWBhz96HQctTBolXcpldXsZsHMgMI9CXAWFkFS
-	Xhn5EuROF10zVJ9iQ88dRa/qkOK48/fKoIAELsY0Tx8EPcWEGEQ/JTBq/chriIpC0PMP/jBsh3f
-	BRAXqXmVXpP1q5FMRwTCI4Rv3/1UD+DomIRt4lL0DozQ==
-X-Google-Smtp-Source: AGHT+IE8elyosTdcge4gKh9yer1gFMOPkHrLQdRFSkE8Vt/zBXv7geZvsuea4+ZxrXW5DeT89Anmh1JfpH4cJv9vJiA=
-X-Received: by 2002:a05:6512:1597:b0:54b:e9b:db23 with SMTP id
- 2adb3069b0e04-54b1110d348mr4845013e87.37.1743612103286; Wed, 02 Apr 2025
- 09:41:43 -0700 (PDT)
+	s=arc-20240116; t=1743612091; c=relaxed/simple;
+	bh=nmsaXvfnIFl6NmwVoYD46lxTCuO515WxPZdTX66Qo3Q=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=YXNbGSNliifZDr6lG5rXjLJ0jBCo6U79Z2VzP4oVSSLgtA3UHJNX2o7QypCBlC9GGKobZ8wqvInfH7dnCMVDkmpaZeRDIlwUgQmm0u8uNOxG6ODxlPQh8kQA0CfWFDcG8EAYMXrPeNrHAruXOQXALVeDqjV9gsBhqAvRYnJ0g6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net; spf=pass smtp.mailfrom=bit-philosophy.net; dkim=pass (2048-bit key) header.d=bit-philosophy.net header.i=@bit-philosophy.net header.b=L/viaXhn; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-philosophy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-philosophy.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=bit-philosophy.net; s=ds202411; h=Content-Transfer-Encoding:Content-Type:
+	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+A+81ucsh8zPhiyFojiWYCgzq0MGXiREO35Wvym6X50=; b=L/viaXhnz57XdEjH6QZHbDsyOZ
+	G3xa8PS0HkXltx0UQxnXJ/RSqZI7lEDdgu1mfn5GfGFvgPumvQOuY3MHTgSiX37vT6/GK5MninqYH
+	CgCbZ8JAet0M5F7JtpCRK3Mg29b4C/cn2RZq2Md98UCS2iG0VtUfPO09ud7xGHgZoHdVJi0uEJIWg
+	1uZO3EbnADp4hiSj9Sm6Xs5fx1a8DLBJn+WsA+QR3Th54imseWQOXyp8DpsjMfTxs7C6XUdA64kXN
+	8edlI9oLCxDh5ghh27+Qa2pAT5N4FfU277IHDWibKQ/gR/xaaSVXn2v0fIuSoCWeMLCdG6Eokia+c
+	s3NjuadA==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1u019V-000Up2-Er
+	for linux-kernel@vger.kernel.org;
+	Wed, 02 Apr 2025 18:41:21 +0200
+Message-ID: <28b2454d-61fe-430b-846e-d3727552f257@bit-philosophy.net>
+Date: Wed, 2 Apr 2025 18:41:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401221205.52381-1-ojeda@kernel.org> <D8VPGBN60E61.1Z48FQW6TL3A@proton.me>
- <CANiq72mdvnHvWbVNQbiXSRxd1xrF+A=v0RdJO74xeY3HyhRmcg@mail.gmail.com>
- <CAJ-ks9nAAcoJoFF+qNPbhsM32kOh9u+LGYUwFN_n9qqudB6YhA@mail.gmail.com> <CANiq72k36Tvwbzkg6nRdxB8VNRHLf8QzLeCXZq7sEPewccsWNw@mail.gmail.com>
-In-Reply-To: <CANiq72k36Tvwbzkg6nRdxB8VNRHLf8QzLeCXZq7sEPewccsWNw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 2 Apr 2025 12:41:06 -0400
-X-Gm-Features: AQ5f1JpBg-RQ9FN1Bi9_jh02mPTTG_EQqJu7_lcW5lhfKYW7j632XCXjTVZcM4Q
-Message-ID: <CAJ-ks9nfEg=sdn_-q+xOc+k9mU0pdMuumwRb76LXzE3RcOtg6w@mail.gmail.com>
-Subject: Re: [PATCH] rust: clean Rust 1.86.0 new `clippy::needless_continue` cases
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe@bit-philosophy.net>
+Subject: Seinfeld Satan
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 2, 2025 at 11:27=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Wed, Apr 2, 2025 at 3:59=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > Rather than disabling globally, why not `#[expect]` these instances
-> > with a reason?
->
-> That is an option sometimes, yeah, but in this case, writing those
-> lines is also a burden -- one that is, I would say, worse than just
-> using `()`.
->
-> It would also need to be `allow` here, not `expect`, because older
-> versions do not complain, which makes it even worse...
+Some may have noticed how some people laugh when mentioning Satan. 
+Seinfeld actually used the effect for his comedy show.
 
-=F0=9F=91=8D
+On c64 a "coding genious" knew how to use the interrupt for rasterline 
+effects, such as "border scroll". (Changing screenmode on bottom, doing 
+scroll via sprites.
 
-> So it is all about what a lint gives us in exchange of those false
-> positives, and about how much time people would need to spend on it. I
-> have always supported adding lints (I think I added this one, long
-> ago, in fact), but I don't want that we overdo it either, so I am
-> happy disabling it if it is going to be too painful.
+On Amiga the 7chan playroutine known through Chris Huelsbeck and the 
+Turrican game, was even more genious.
 
-The counterfactual is hard to prove - you don't know what true
-positives the lint would catch. In my opinion disabling lints is
-risking throwing the baby out with the bathwater.
+However this 7 chan fed sample-by-sample to the processor without use of 
+hardware looping in the soundchip.
+
+But this is forbidden for Satan.
+
+If appropriate resouces was used it could have been much better.
+
+Hans Reiser axed his wife, due to Satanic belief. He, in confusion 
+thought it was good for the cause.
+
+It also means to Satan, do not use cache appropriately.
+
+"Hahaha" ?
+
+I do not really think so.
+
+Light,
+Ywe.
+https://bit-philosophy.net/
 
