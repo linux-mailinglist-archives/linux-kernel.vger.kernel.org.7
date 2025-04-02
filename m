@@ -1,272 +1,265 @@
-Return-Path: <linux-kernel+bounces-584542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663F5A7886D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:57:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83583A78868
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DC3188E070
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:57:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C9E1887CD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D5D23371B;
-	Wed,  2 Apr 2025 06:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAAB233151;
+	Wed,  2 Apr 2025 06:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="mfrzpAud"
-Received: from ksmg02.maxima.ru (ksmg02.mt-integration.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NzPxw+do"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8115C233145
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 06:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB431EFFB8
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 06:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577038; cv=none; b=vCAn+1SPzJNljb4O/fibiyzbzY7eUkriZBdWmvwGxkuslSafrYQRX6MGRbQAnG2+3t0zNePUjLYoPd2lzHb0+i7yq3byQ9ZIkFJaGvrfQbmzEYsw3bqgCjEYnTR9irQtVg8rSo84fPSU2TB524P+cHXUMazJ7i5aEoQ94WmgxnE=
+	t=1743577016; cv=none; b=LhgfrXSPlWucx+QhSEoNonhxyq4gUCBzjaCkWAY71SZKHYwDoAz6vdnYmqi2TEFvYK6PUzqKhXIzo0Jri4mk0J8HjUEtlWaP5yKa3Xzy394ur4KEhzwvow78EVmI+ig4FKrDU3a2R7CSWt6Wz27zrUqmdiU5y3xMcpRmr5ctj2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743577038; c=relaxed/simple;
-	bh=Nlx7yleWhdsq0o5oxSbApN2URkCpdx6fdnWZkqCTaA4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hpPWIZOoTiTzZNKTpjWWTe8QFhVENekPWjR9SwMzKRAGic7U0XS94qSf2ryDxJe1olMhJ0C4yMX3WHvAVeMvy9d51CkygKY6fxlu1JG5wpU/r/NpVh5Dz5VYbj85y/VzsP7wvC6y+BWtUyFxy1MoazY8hGpOFgbLeuvXsCzDxyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=mfrzpAud; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 362F41E0009;
-	Wed,  2 Apr 2025 09:57:12 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 362F41E0009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1743577032; bh=GZplQYKq4Ek0jQUSSrhTx9i5W5X6I3hWOHDLuXtV9GQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=mfrzpAudbq3p7Tw3JgTQ37nh6adsStCzO3e+f/1OX79eUW5uSdm5Fb1kr3RAd+tuY
-	 NWfqbMaOfBTo7Mi1PG8xTtp6rdC/ZBkdOlMeNO9JaRWgdJwmxjAknZHX1qQ8Cwz4dC
-	 H6f0wHxKUNg4iGBSD8uE8aHqUT/U4+4F+pEJFRN9ys1zPs6IsJVwWR41tM+kpTYg+U
-	 Xk6/Q8NWP+qYz6hPQFv9RHJKl7mhAGqjeuFvpntDZ5KSwU0VlIo/xVPPDbI44S3IrO
-	 SQiVJlJzwJkRUqA7en+adDmYf8kpHAdRIcGtkGR8F5JVYmKzu2rZcvugC77QFQMCXK
-	 n4q/yDuOu+gkQ==
-Received: from ksmg02.maxima.ru (autodiscover.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Wed,  2 Apr 2025 09:57:12 +0300 (MSK)
-Received: from deb16-01-masimov-t-build.mti-lab.com (172.25.20.25) by
- mmail-p-exch02.mt.ru (81.200.124.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 2 Apr 2025 09:57:10 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: Mark Fasheh <mark@fasheh.com>
-CC: Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Jan Kara <jack@suse.cz>, <ocfs2-devel@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>, Murad Masimov
-	<m.masimov@mt-integration.ru>,
-	<syzbot+f59a1ae7b7227c859b8f@syzkaller.appspotmail.com>
-Subject: [PATCH 2/2] ocfs2: Fix deadlock in ocfs2_finish_quota_recovery
-Date: Wed, 2 Apr 2025 09:56:28 +0300
-Message-ID: <20250402065628.706359-3-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250402065628.706359-1-m.masimov@mt-integration.ru>
-References: <20250402065628.706359-1-m.masimov@mt-integration.ru>
+	s=arc-20240116; t=1743577016; c=relaxed/simple;
+	bh=fJ/BtvsK+6L1p7nRw/xMxEqOGWQ9YBxiQfrNkYjekH8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L5tnlavAXOyqoh6g/K4Z+OwAQutfbmdSktl8Mb3FE0NRaTidofxMgO+uxghqXYEbA0UMtJ/6GyubtWKqhgoIJtaM/u1E9SMTY1lCmHBgIltZSOc0g2p6no990zVSEbcDcP1/knG9HY6rYxgBrgP3P2b0+0uqxSY3seamqg0+7oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NzPxw+do; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A246B3F84D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 06:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1743577005;
+	bh=iJCjafL5T3uwEbRIx6/ivF1Ot4vyx5UZkygzmWgtBWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=NzPxw+doBi4A/vYEi7ZyqZkkxVGBvQbmAuQLa3mgK7sdTlqGZ+BURBeGpadXiW3NT
+	 piQRyTIFdY1TwwmVSX8Itdf4zmQDtc1s3V+s5TLfHZMQr//S1K+Ag9ua5c+10KwM5Q
+	 4uIOHzvK7wp+uS6hmHDTtd9FoRnj3dk4VUqVNONwW4VlFpDoKtdF+2AFFRQnFFbMaR
+	 xSxh/N9UyIcBvwIpqDZnEV85FZc1aix+K8YkVe4WxFEAPsbAeWohH+pOEftUUaPB8M
+	 fq1RuvCiK9nmp0TxYkX/vvlgSMcRkS1uc4dveCfrvo3+CUcaGV+YbJM56su/LW1ar0
+	 wX+3UiG88KfcQ==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac384a889easo49335866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 23:56:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743577005; x=1744181805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iJCjafL5T3uwEbRIx6/ivF1Ot4vyx5UZkygzmWgtBWQ=;
+        b=Pd4uWEmAtKcZ+rsIt/+axpaEsrfCS1+EPvlcPOZYbg54KfISmbVnYOcQcX64ErWuSP
+         KmIaSESlxZFfSFZ7J/SFLi74xCWwdKOvjYAANLXA4Sr9p8HOEbEv377w2RkZ4aG7QfZq
+         tQU7Si/P296Z5UQvItiiaan6YJD2tVnj7yEn1gRwlHiFE0RXUDSfY0XOOddT+gDyuxqn
+         kq6JctM2YWJcWUduFBOUXWG1sZ907ukPninbgr+3fhBu/r/JZzV9IC5jcxAnM/1GO4NK
+         RrP7C7dcZe21kj/OlRlwJ5Zo+N5QCi+qhtQZ3zFWxtxfgV/i1hD/zOay4wifvBGAowI8
+         AxHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAf/Pkhtbd48UIZR+IQedG2Pugz5iAvETzY47Vf2ettBWjZZFSr6vjD9TTcOpPk5k71VYa6CYaS64xIs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOjmXAKrbdHqo9L0Wa78FrnEUabodtc0c0BwvOXBO/6r61rdz8
+	oSMElCC+ZvChYv7o4JpnPZKVEf3aeVq5Swi2jCYr2DjppmNwjw4n03LforT7rUcyBWbeGATo9mK
+	ahbWHCZgbHsOcRmSjaIF5GoAQra6PE1HEw1p5hLT9F9v1Xy06zBPuEogEQ/Ix+kWQ6QymT4OqjA
+	v0D4pLgTMHA6pZX22YI6SGKbIozmMmoMYLWY6CoNdJjpaB1LlivOuY
+X-Gm-Gg: ASbGnctMbn82uO5gh9LRx/o3CFouVxN8Oue+WZOfDMcTOb6k92iHGgMxdXNVAm0k3v3
+	xENrTb87KFQlmH+rjxwufjbxUeZCDDKPOJsfSUOdUPR7CaOTIQxTqat2wnB1eD2vSQtUr7ulecH
+	Na3Qhy0aXK95J9X/By
+X-Received: by 2002:a17:906:6d8c:b0:ac3:4228:6e00 with SMTP id a640c23a62f3a-ac7a5a6ace0mr73302866b.6.1743577005026;
+        Tue, 01 Apr 2025 23:56:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnByrU9JRG0DAMgNafNLSf28PK8EcYeDsl7ldlIC7zxv+U9ffEaSE9z1Rsy68HNpm8PyZ73Oq1b/ipZnOneUo=
+X-Received: by 2002:a17:906:6d8c:b0:ac3:4228:6e00 with SMTP id
+ a640c23a62f3a-ac7a5a6ace0mr73301366b.6.1743577004608; Tue, 01 Apr 2025
+ 23:56:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch01.mt.ru (81.200.124.61) To
- mmail-p-exch02.mt.ru (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/04/02 05:33:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 53 0.3.53 da91f386ac5d59a1df8d7a7d55ad5b472b5df140, {rep_avail}, {Tracking_phishing_log_reg_50_60}, {Tracking_one_url}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;81.200.124.62:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;syzkaller.appspot.com:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192297 [Apr 02 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/04/02 03:33:00 #27848807
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/04/02 05:33:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+References: <CAFv23QnqgTVoB-XRe5yNndRz4-Z_3y38+QpKRxQMeZ2xQTg=gw@mail.gmail.com>
+ <180d8a88-52d9-4b83-83de-0184ed7cb4a5@huawei.com> <z6wlwwcbrmr3mcws6wmn5r6z45kosinvq6wyfq6hxfvcuxdjp5@ucjecgmhqp42>
+ <59a1fa13-888e-4fe0-9de0-cd0e63c91265@huawei.com> <hshsylujj64nlrakfeboyriwhnfvmo2kodju6mrznrf56mttmv@3nuxifxmo6yc>
+In-Reply-To: <hshsylujj64nlrakfeboyriwhnfvmo2kodju6mrznrf56mttmv@3nuxifxmo6yc>
+From: AceLan Kao <acelan.kao@canonical.com>
+Date: Wed, 2 Apr 2025 14:56:33 +0800
+X-Gm-Features: AQ5f1JoVlUCXaWINEjljNnyGsYN8nzQE5dUNmwv8EqKv2yuL5g-TVBsldQ-xJOs
+Message-ID: <CAFv23Q=Wkko7VEVcztJSC+R8sfwzUDz4G4yLohhv_QfZozGARw@mail.gmail.com>
+Subject: Re: Regression found in memory stress test with stress-ng
+To: Baokun Li <libaokun1@huawei.com>
+Cc: linux-block@vger.kernel.org, axboe@kernel.dk, 
+	Christoph Hellwig <hch@infradead.org>, 
+	"Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, yangerkun@huawei.com, houtao1@huawei.com, 
+	yukuai3@huawei.com, Dirk Su <dirk.su@canonical.com>, jani.nikula@linux.intel.com, 
+	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, tursulin@ursulin.net, 
+	airlied@gmail.com, simona@ffwll.ch, intel-gfx@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When filesystem is unmounted all pending recovery work is processed. This
-may lead to a deadlock in ocfs2_finish_quota_recovery() as it locks the
-s_umount semaphore while it is already exclusively locked in
-deactivate_super().
+Chia-Lin Kao (AceLan) <acelan.kao@canonical.com> =E6=96=BC 2025=E5=B9=B43=
+=E6=9C=8821=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=883:47=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+>
+> On Thu, Mar 20, 2025 at 02:32:55PM +0800, Baokun Li wrote:
+> > On 2025/3/20 13:23, Chia-Lin Kao (AceLan) wrote:
+> > > On Thu, Mar 20, 2025 at 11:52:20AM +0800, Baokun Li wrote:
+> > > > On 2025/3/20 10:49, AceLan Kao wrote:
+> > > > > Hi all,
+> > > > >
+> > > > > We have found a regression while doing a memory stress test using
+> > > > > stress-ng with the following command
+> > > > >      sudo stress-ng --aggressive --verify --timeout 300 --mmapman=
+y 0
+> > > > >
+> > > > > This issue occurs on recent kernel versions, and we have found th=
+at
+> > > > > the following commit leads to the issue
+> > > > >      4e63aeb5d010 ("blk-wbt: don't throttle swap writes in direct=
+ reclaim")
+> > > > >
+> > > > > Before reverting the commit directly, I wonder if we can identify=
+ the
+> > > > > issue and implement a solution quickly.
+> > > > > Currently, I'm unable to provide logs, as the system becomes
+> > > > > unresponsive during testing. If you have any idea to capture logs=
+,
+> > > > > please let me know, I'm willing to help.
+> > > > Hi AceLan,
+> > > >
+> > > > I cannot reproduce this issue. The above command will trigger OOM.
+> > > > Have you enabled panic_on_oom? (You can check by sysctl vm.panic_on=
+_oom).
+> > > > Or are there more kernel Oops reports in dmesg?
+> > > Actually, there is no kernel panic during the testing.
+> > > I tried using kernel magic key to trigger crash and this is what I
+> > > got.
+> > > It repeats the "Purging GPU memory" message over and over again.
+> > >
+> > > [ 3605.341706] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> >
+> > The messages are coming from i915_gem_shrinker_oom(), so it looks like
+> > it's still an OOM issue. I'm just not sure why the OOM is happening so
+> > often, like every 0.05 seconds.
+> >
+> > I'm not familiar with gpu/drm/i915/gem, so I CCed the relevant maintain=
+ers
+> > to see if they have any thoughts.
+> Hi Baokun,
+>
+> Right, how the i915 shrinks its memory may need some tweak to check if
+> it can really shrink the memory.
+> But this issue is more likely from the swap.
+>
+> We found the issue can't be reproduced after reverts that commit, and
+> the issue can't be reproduced if we run swapoff to disable swap.
+> I'm worrying that there might be a bug in the swap code that it can't
+> handle the OOM situation well.
+>
+> Do you think should we try adding some debug messages to the block driver
+> to see if we can find any clues?
+A gentle ping.
 
-Use down_read_trylock() instead and return if it fails, since that possibly
-means that unmount may be in progress so it is not possible to finish quota
-recovery. According to the description of ocfs2_complete_recovery(), which
-is the caller of ocfs2_finish_quota_recovery(), by the point this job is
-started the node can already be considered recovered. There is also no
-error handling in ocfs2_complete_recovery() which indicates that fail is
-not critical in this context.
+Does anyone have ideas on how to debug this issue?
 
-The following warning has been reported by Syzkaller:
-
-================================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc6-syzkaller-00022-gb7f94fcf5546 #0 Not tainted
-------------------------------------------------------
-kworker/u4:10/1087 is trying to acquire lock:
-ffff88803c49e0e0 (&type->s_umount_key#42){++++}-{4:4}, at: ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
-
-but task is already holding lock:
-ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
-ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3319
-
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       process_one_work kernel/workqueue.c:3214 [inline]
-       process_scheduled_works+0x9e4/0x18e0 kernel/workqueue.c:3319
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3400
-       kthread+0x7a9/0x920 kernel/kthread.c:464
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 ((wq_completion)ocfs2_wq){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       touch_wq_lockdep_map+0xc7/0x170 kernel/workqueue.c:3907
-       __flush_workqueue+0x14a/0x1280 kernel/workqueue.c:3949
-       ocfs2_shutdown_local_alloc+0x109/0xa90 fs/ocfs2/localalloc.c:380
-       ocfs2_dismount_volume+0x202/0x910 fs/ocfs2/super.c:1822
-       generic_shutdown_super+0x139/0x2d0 fs/super.c:642
-       kill_block_super+0x44/0x90 fs/super.c:1710
-       deactivate_locked_super+0xc4/0x130 fs/super.c:473
-       cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1413
-       task_work_run+0x24f/0x310 kernel/task_work.c:227
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
-       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&type->s_umount_key#42){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
-       ocfs2_complete_recovery+0x17c1/0x25c0 fs/ocfs2/journal.c:1357
-       process_one_work kernel/workqueue.c:3238 [inline]
-       process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3400
-       kthread+0x7a9/0x920 kernel/kthread.c:464
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  &type->s_umount_key#42 --> (wq_completion)ocfs2_wq --> (work_completion)(&journal->j_recovery_work)
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock((work_completion)(&journal->j_recovery_work));
-                               lock((wq_completion)ocfs2_wq);
-                               lock((work_completion)(&journal->j_recovery_work));
-  rlock(&type->s_umount_key#42);
-
- *** DEADLOCK ***
-
-2 locks held by kworker/u4:10/1087:
- #0: ffff8880403eb148 ((wq_completion)ocfs2_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
- #0: ffff8880403eb148 ((wq_completion)ocfs2_wq){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3319
- #1: ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
- #1: ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3319
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 1087 Comm: kworker/u4:10 Not tainted 6.14.0-rc6-syzkaller-00022-gb7f94fcf5546 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: ocfs2_wq ocfs2_complete_recovery
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
- ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
- ocfs2_complete_recovery+0x17c1/0x25c0 fs/ocfs2/journal.c:1357
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-================================================================
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Fixes: 5f530de63cfc ("ocfs2: Use s_umount for quota recovery protection")
-Reported-by: syzbot+f59a1ae7b7227c859b8f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f59a1ae7b7227c859b8f
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
- fs/ocfs2/quota_local.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
-index e60383d6ecc1..d3304bb03163 100644
---- a/fs/ocfs2/quota_local.c
-+++ b/fs/ocfs2/quota_local.c
-@@ -600,7 +600,16 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
- 	printk(KERN_NOTICE "ocfs2: Finishing quota recovery on device (%s) for "
- 	       "slot %u\n", osb->dev_str, slot_num);
-
--	down_read(&sb->s_umount);
-+	/*
-+	 * We have to be careful here not to deadlock on s_umount as umount
-+	 * disabling quotas may be in progress and it waits for this work to
-+	 * complete. If trylock fails, we have to skip this step.
-+	 */
-+	if (!down_read_trylock(&sb->s_umount)) {
-+		status = -ENOENT;
-+		goto out;
-+	}
-+
- 	for (type = 0; type < OCFS2_MAXQUOTAS; type++) {
- 		if (list_empty(&(rec->r_list[type])))
- 			continue;
-@@ -608,7 +617,7 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
- 		lqinode = ocfs2_get_system_file_inode(osb, ino[type], slot_num);
- 		if (!lqinode) {
- 			status = -ENOENT;
--			goto out;
-+			goto out_up;
- 		}
- 		status = ocfs2_inode_lock_full(lqinode, NULL, 1,
- 						       OCFS2_META_LOCK_NOQUEUE);
-@@ -676,8 +685,9 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
- 		if (status < 0)
- 			break;
- 	}
--out:
-+out_up:
- 	up_read(&sb->s_umount);
-+out:
- 	ocfs2_free_quota_recovery(rec);
- 	return status;
- }
---
-2.39.2
-
+> >
+> > > [ 3605.346295] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.350815] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.355463] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.360105] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.364743] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.369426] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.374044] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.378467] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.382958] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.387534] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.392130] [   T5739] Purging GPU memory, 0 pages freed, 0 pages =
+still pinned, 2787 pages left available.
+> > > [ 3605.394571] [     C11] sysrq: Trigger a crash
+> > > [ 3605.394575] [     C11] Kernel panic - not syncing: sysrq triggered=
+ crash
+> > > [ 3605.394580] [     C11] CPU: 11 UID: 0 PID: 0 Comm: swapper/11 Kdum=
+p: loaded Not tainted 6.11.0-1016-oem #16-Ubuntu
+> > > [ 3605.394586] [     C11] Hardware name: HP HP ZBook Fury 16 G11 Mobi=
+le Workstation PC/8CA7, BIOS W98 Ver. 01.01.12 11/25/2024
+> > > [ 3605.394588] [     C11] Call Trace:
+> > > [ 3605.394591] [     C11]  <IRQ>
+> > > [ 3605.394596] [     C11]  dump_stack_lvl+0x27/0xa0
+> > > [ 3605.394605] [     C11]  dump_stack+0x10/0x20
+> > > [ 3605.394608] [     C11]  panic+0x352/0x3e0
+> > > [ 3605.394613] [     C11]  sysrq_handle_crash+0x1a/0x20
+> > > [ 3605.394618] [     C11]  __handle_sysrq+0xf0/0x290
+> > > [ 3605.394623] [     C11]  sysrq_handle_keypress+0x2f4/0x550
+> > > [ 3605.394627] [     C11]  sysrq_filter+0x45/0xa0
+> > > [ 3605.394631] [     C11]  ? sched_balance_find_src_group+0x51/0x280
+> > > [ 3605.394637] [     C11]  input_handle_events_filter+0x46/0xb0
+> > > [ 3605.394643] [     C11]  input_pass_values+0x142/0x170
+> > > [ 3605.394647] [     C11]  input_event_dispose+0x167/0x170
+> > > [ 3605.394651] [     C11]  input_handle_event+0x41/0x80
+> > > [ 3605.394656] [     C11]  input_event+0x51/0x80
+> > > [ 3605.394659] [     C11]  atkbd_receive_byte+0x805/0x8f0
+> > > [ 3605.394664] [     C11]  ps2_interrupt+0xb4/0x1b0
+> > > [ 3605.394668] [     C11]  serio_interrupt+0x49/0xa0
+> > > [ 3605.394673] [     C11]  i8042_interrupt+0x196/0x4c0
+> > > [ 3605.394677] [     C11]  ? enqueue_hrtimer+0x4d/0xc0
+> > > [ 3605.394682] [     C11]  ? ktime_get+0x3f/0xf0
+> > > [ 3605.394686] [     C11]  ? lapic_next_deadline+0x2c/0x50
+> > > [ 3605.394691] [     C11]  __handle_irq_event_percpu+0x4c/0x1b0
+> > > [ 3605.394696] [     C11]  ? sched_clock_noinstr+0x9/0x10
+> > > [ 3605.394700] [     C11]  handle_irq_event+0x39/0x80
+> > > [ 3605.394706] [     C11]  handle_edge_irq+0x8c/0x250
+> > > [ 3605.394710] [     C11]  __common_interrupt+0x4e/0x110
+> > > [ 3605.394715] [     C11]  common_interrupt+0xb1/0xe0
+> > > [ 3605.394718] [     C11]  </IRQ>
+> > > [ 3605.394720] [     C11]  <TASK>
+> > > [ 3605.394721] [     C11]  asm_common_interrupt+0x27/0x40
+> > > [ 3605.394726] [     C11] RIP: 0010:poll_idle+0x4f/0xac
+> > > [ 3605.394731] [     C11] Code: 00 00 65 4c 8b 3d a1 78 7b 63 f0 41 8=
+0 4f 02 20 49 8b 07 a8 08 75 32 4c 89 ef 48 89 de e8 d9 fe ff ff 49 89 c5 b=
+8 c9 00 00 00 <49> 8b 17 83 e2 08 75 17 f3 90 83 e8 01 75 f1 e8 bd d1 ff ff=
+ 4c 29
+> > > [ 3605.394735] [     C11] RSP: 0000:ffff9c57001f7dc8 EFLAGS: 00000206
+> > > [ 3605.394740] [     C11] RAX: 000000000000003c RBX: ffffbc56ff59b618=
+ RCX: 0000000000000000
+> > > [ 3605.394743] [     C11] RDX: 0000000000000000 RSI: 0000000000000000=
+ RDI: 0000000000000000
+> > > [ 3605.394744] [     C11] RBP: ffff9c57001f7df0 R08: 0000000000000000=
+ R09: 0000000000000000
+> > > [ 3605.394747] [     C11] R10: 0000000000000000 R11: 0000000000000000=
+ R12: 0000034772423b38
+> > > [ 3605.394749] [     C11] R13: 000000000000f424 R14: 0000000000000000=
+ R15: ffff912c8122a900
+> > > [ 3605.394754] [     C11]  ? poll_idle+0x63/0xac
+> > > [ 3605.394757] [     C11]  cpuidle_enter_state+0x8e/0x720
+> > > [ 3605.394762] [     C11]  ? sysvec_apic_timer_interrupt+0x57/0xc0
+> > > [ 3605.394766] [     C11]  cpuidle_enter+0x2e/0x50
+> > > [ 3605.394771] [     C11]  call_cpuidle+0x22/0x60
+> > > [ 3605.394775] [     C11]  cpuidle_idle_call+0x119/0x190
+> > > [ 3605.394778] [     C11]  do_idle+0x82/0xe0
+> > > [ 3605.394781] [     C11]  cpu_startup_entry+0x29/0x30
+> > > [ 3605.394784] [     C11]  start_secondary+0x127/0x160
+> > > [ 3605.394788] [     C11]  common_startup_64+0x13e/0x141
+> > > [ 3605.394794] [     C11]  </TASK>
+> > >
+> > > >
+> > > > Regards,
+> > > > Baokun
+> > > > > Best regards,
+> > > > > AceLan Kao.
+> > > > >
+> >
 
