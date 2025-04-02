@@ -1,238 +1,125 @@
-Return-Path: <linux-kernel+bounces-584279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF9AA7857B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:15:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A74A78588
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086441892956
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DEFD3AD1C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E763F9E8;
-	Wed,  2 Apr 2025 00:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBD6B661;
+	Wed,  2 Apr 2025 00:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="evzWyLH/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SkuismLY"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B748FD299;
-	Wed,  2 Apr 2025 00:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C1223A9;
+	Wed,  2 Apr 2025 00:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743552886; cv=none; b=dsXUn2zL5ByHJccncUwp/+J3QHg1h0CWnSh5MhobPIEYGr8vAVp20rNH8mIw65LkaMafoV2XJerUoXz9eBLVrxY+ar3e3drULVVzqLcxySQvto5dbGINB5TeBrglMn7ZdUeCHY5wK9wvNvzoG6Tul8lBkqppbJDLp0UUAEvlKWQ=
+	t=1743553117; cv=none; b=fGZ9i7u5yO1cEBIkE7euTJHF38wMsjOsgKAN5vg7oRlsCLUukVpvG9FmJzrlCW7MhAMXDZqAw71E/uAulVs02L8j6CJELaCjSmpjwAUQFWTxgJ7q6OE6n2ls1OGozrruA2kz+q0rCKjqcfropZXWxtjwCVfpZkPejvyEwoqrE10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743552886; c=relaxed/simple;
-	bh=hUu4erfW+ZiEvDkdXZ3B9e9R73Dq0czvJdocU9VCsBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lM2Yec5+9D0wrS95swkHjvOpPfRr63peKlLK6Ijtcm9KDB9JapaOqnXRjazyG6dQ2xuOIiLKaoBeDLsJVqEUe3YxJt54HVVa7kH6v6lCaHEz/Zrntfosgac9/IhjhBmlbWrifR3huHhscfOd+IRvahpdbg3iXILtF0V0+uy+uMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=evzWyLH/; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743552885; x=1775088885;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hUu4erfW+ZiEvDkdXZ3B9e9R73Dq0czvJdocU9VCsBM=;
-  b=evzWyLH//X9db9i/dp1EW4NAwbvZufcdec3nh1oJozZiYQ1dpqfVbe1M
-   4aHZShI0y3QPVNHoXnHrUg0G8RfJCKzcyxJKgyta6hZl5Tt8BjN+zvEGR
-   io29nh2RRsWm1b67Bn0ak8LSs8KzHsRM3rRYQuDdafJyekbgb7Nz+CBbZ
-   vQ0iyidavS4n/vueOWYkXLkgIkKnCXP+iG+yXs2Q2jJZjABP0rPcaucCK
-   Pva9+3ZJIh3D4O8Sn/NGJrdhdjyo0aBwfCmD0SQOfgFMDZw5Ph/yqyFYt
-   whIXSyQoaIKIuzqjSE0Inf9TVL3UVPD0bxUz77X754p7I1QJGnu/qc94V
-   A==;
-X-CSE-ConnectionGUID: fpxcYdNXSd6xBf1T19VJKQ==
-X-CSE-MsgGUID: emnfDKncTuuHeHBsGSPsOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="44148837"
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="44148837"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 17:14:44 -0700
-X-CSE-ConnectionGUID: wmdeQkMDTwCzLWj8MWgE1A==
-X-CSE-MsgGUID: HUj/ozpPTfWc8XEIydR/jA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="131673952"
-Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 17:14:41 -0700
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	isaku.yamahata@intel.com,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com,
-	mikko.ylinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	binbin.wu@linux.intel.com
-Subject: [PATCH 2/2] KVM: TDX: Handle TDG.VP.VMCALL<SetupEventNotifyInterrupt>
-Date: Wed,  2 Apr 2025 08:15:57 +0800
-Message-ID: <20250402001557.173586-3-binbin.wu@linux.intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250402001557.173586-1-binbin.wu@linux.intel.com>
-References: <20250402001557.173586-1-binbin.wu@linux.intel.com>
+	s=arc-20240116; t=1743553117; c=relaxed/simple;
+	bh=V3qJk+ThYKNoDXM7IjDAmGSrHmw4IjEnzkLDri6Ldvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBwnbcb3asOL6S9zjdZoEeqyR13zs2smkTcp5ojX8rt7vfU8z8UkQ+VcaAxXArubXfd1QOsXGlFLPeFT+fJpofwac0z88Ycz2AP0T9xZ1Y38dougdHzQg1c0PQhfZ9hThuFcN9uN+3oY8cqEA1N+Vk2/P2fVEOLeq8SNelbx56g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SkuismLY; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AD6AE6A2;
+	Wed,  2 Apr 2025 02:16:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1743553000;
+	bh=V3qJk+ThYKNoDXM7IjDAmGSrHmw4IjEnzkLDri6Ldvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SkuismLYLHOuNjD6so1SaFLJyhBwsuC8eeo++le6sbXpn/J/xQHVL9fPK3mjhePLO
+	 PoEXFWg0n2G+O3e83yYEdPJZym69LiQNJNG8Yd/9MTZfLUB0jEHQfSA5Mol10FJINm
+	 G1UvaJsLxaXhNXOTYHeoEWejUwzt3QkozE59I53Q=
+Date: Wed, 2 Apr 2025 03:18:09 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Nirujogi, Pratap" <pnirujog@amd.com>
+Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+	dave.stevenson@raspberrypi.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.chan@amd.com, bin.du@amd.com,
+	gjorgji.rosikopulos@amd.com, king.li@amd.com,
+	dominic.antony@amd.com
+Subject: Re: [PATCH] media: i2c: Add OV05C camera sensor driver
+Message-ID: <20250402001809.GB4845@pendragon.ideasonboard.com>
+References: <20250228165317.3468075-1-pratap.nirujogi@amd.com>
+ <20250228173556.GB14076@pendragon.ideasonboard.com>
+ <844a1936-572b-476a-9cab-8797c7da2040@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <844a1936-572b-476a-9cab-8797c7da2040@amd.com>
 
-Handle TDVMCALL for SetupEventNotifyInterrupt to set up an event-notify
-vector.
+Hello Pratap,
 
-TDX guests can make a request to host VMMs to specify which interrupt
-vector to use as an event-notify vector.  E.g., for GetQuote operation,
-which may take several seconds, if a TDX guest has set up the event-notify
-vector, the host VMM can inject an interrupt with the specified vector
-to the TDX guest on the completion of the operation.
+On Fri, Mar 28, 2025 at 06:10:41PM -0400, Nirujogi, Pratap wrote:
+> Hi Laurent,
+> 
+> Thanks for reviewing and extremely sorry for the delayed response. We 
+> have submitted V2 patch based on your review feedback.
+> 
+> Can you please help to review latest V2 patch and let us know your feedback.
 
-KVM itself doesn't use this mechanism.  Add KVM_EXIT_TDX_SETUP_EVENT_NOTIFY
-as a new exit reason to userspace to forward the request to userspace VMM
-(e.g., QEMU) after sanity checks, so that userspace can inject an interrupt
-with the event-notify vector to the TDX guest when the operation completes.
+Sure. It will take a bit of time though, as my review backlog is big.
+Please see below for additional comments.
 
-Since there is nothing special for SetupEventNotifyInterrupt beyond setting
-the return code in the complete_userspace_io() callback, the code reuses
-the version developed for GetQuote.
+> On 2/28/2025 12:35 PM, Laurent Pinchart wrote:
+> > 
+> > Hi Pratap,
+> > 
+> > Thank you for the patch.
+> > 
+> > A few assorted comments to start with, I'll try to do a more in-depth
+> > review later.
+> > 
+> > On Fri, Feb 28, 2025 at 11:53:12AM -0500, Pratap Nirujogi wrote:
+> >> Add driver for OmniVision 5.2M OV05C10 sensor. This driver
+> >> supports only the full size normal 2888x1808@30fps 2-lane
+> >> sensor profile.
+> > 
+> > What have you tested this driver with ? I see no OF device ID or ACPI
+> > device ID.
+> 
+> We have tested this driver on the "AMD RYZEN AI MAX PRO 385 w/ Radeon 
+> 8050S" target supporting ISP HW v4.1. OMNI5C10 is ACPI HID for this 
+> sensor on the target.
 
-Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
----
- Documentation/virt/kvm/api.rst    | 22 +++++++++++++++++++++-
- arch/x86/include/asm/shared/tdx.h |  1 +
- arch/x86/kvm/vmx/tdx.c            | 25 +++++++++++++++++++++++--
- include/uapi/linux/kvm.h          |  6 ++++++
- 4 files changed, 51 insertions(+), 3 deletions(-)
+That's interesting. Do you have plans to post a driver for the ISP ?
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 90aa7a328dc8..16e15f151620 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -7179,7 +7179,27 @@ TDX guest passes a TD report. When completed, the generated quote is returned
- via the same buffer. The 'ret' field represents the return value. The userspace
- should update the return value before resuming the vCPU according to TDX GHCI
- spec. It's an asynchronous request. After the TDVMCALL is returned and back to
--TDX guest, TDX guest can poll the status field of the shared-memory area.
-+TDX guest, TDX guest can poll the status field of the shared-memory area. Or TDX
-+guest can register an event-notify vector by TDVMCALL_SETUP_EVENT_NOTIFY, so
-+that on completion, an interrupt can be injected to TDX guest.
-+
-+::
-+
-+		/* KVM_EXIT_TDX_SETUP_EVENT_NOTIFY */
-+		struct tdx_get_quote {
-+			__u64 ret;
-+			__u8 vector;
-+		};
-+
-+If the exit reason is KVM_EXIT_TDX_SETUP_EVENT_NOTIFY, then it indicates that a
-+TDX guest has requested to specify an interrupt vector used as the event-notify
-+vector. E.g., for GetQuote operation, which may take several seconds, if the
-+TDX guest has set up the event-notify vector, the host injects an interrupt
-+with the specified vector to the guest on the completion of the operation. The
-+'vector' field specifies the interrupt vector, with a valid range [32, 255], to
-+be used for the event-notify. The 'ret' field represents the return value. The
-+userspace should update the return value before resuming the vCPU according
-+to TDX GHCI spec.
- 
- ::
- 
-diff --git a/arch/x86/include/asm/shared/tdx.h b/arch/x86/include/asm/shared/tdx.h
-index 606d93a1cbac..eddc3f696b38 100644
---- a/arch/x86/include/asm/shared/tdx.h
-+++ b/arch/x86/include/asm/shared/tdx.h
-@@ -71,6 +71,7 @@
- #define TDVMCALL_MAP_GPA		0x10001
- #define TDVMCALL_GET_QUOTE		0x10002
- #define TDVMCALL_REPORT_FATAL_ERROR	0x10003
-+#define TDVMCALL_SETUP_EVENT_NOTIFY	0x10004
- 
- /*
-  * TDG.VP.VMCALL Status Codes (returned in R10)
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 535200446c21..48461520cb44 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1463,7 +1463,10 @@ static int tdx_get_td_vm_call_info(struct kvm_vcpu *vcpu)
- 	return 1;
- }
- 
--static int tdx_complete_get_quote(struct kvm_vcpu *vcpu)
-+static_assert(offsetof(struct kvm_run, tdx_setup_event_notify.ret) ==
-+	      offsetof(struct kvm_run, tdx_get_quote.ret));
-+
-+static int tdx_complete_tdcall_common(struct kvm_vcpu *vcpu)
- {
- 	tdvmcall_set_return_code(vcpu, vcpu->run->tdx_get_quote.ret);
- 	return 1;
-@@ -1491,7 +1494,23 @@ static int tdx_get_quote(struct kvm_vcpu *vcpu)
- 	vcpu->run->tdx_get_quote.gpa = gpa;
- 	vcpu->run->tdx_get_quote.size = size;
- 
--	vcpu->arch.complete_userspace_io = tdx_complete_get_quote;
-+	vcpu->arch.complete_userspace_io = tdx_complete_tdcall_common;
-+
-+	return 0;
-+}
-+
-+static int tdx_setup_event_notify(struct kvm_vcpu *vcpu)
-+{
-+	u64 vector = to_tdx(vcpu)->vp_enter_args.r12;
-+
-+	if (vector < 32 || vector > 255) {
-+		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
-+		return 1;
-+	}
-+
-+	vcpu->run->exit_reason = KVM_EXIT_TDX_SETUP_EVENT_NOTIFY;
-+	vcpu->run->tdx_setup_event_notify.vector = (u8)vector;
-+	vcpu->arch.complete_userspace_io = tdx_complete_tdcall_common;
- 
- 	return 0;
- }
-@@ -1507,6 +1526,8 @@ static int handle_tdvmcall(struct kvm_vcpu *vcpu)
- 		return tdx_get_td_vm_call_info(vcpu);
- 	case TDVMCALL_GET_QUOTE:
- 		return tdx_get_quote(vcpu);
-+	case TDVMCALL_SETUP_EVENT_NOTIFY:
-+		return tdx_setup_event_notify(vcpu);
- 	default:
- 		break;
- 	}
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index eca86b7f0cbc..1a9397e8997b 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -179,6 +179,7 @@ struct kvm_xen_exit {
- #define KVM_EXIT_LOONGARCH_IOCSR  38
- #define KVM_EXIT_MEMORY_FAULT     39
- #define KVM_EXIT_TDX_GET_QUOTE    41
-+#define KVM_EXIT_TDX_SETUP_EVENT_NOTIFY 42
- 
- /* For KVM_EXIT_INTERNAL_ERROR */
- /* Emulate instruction failed. */
-@@ -454,6 +455,11 @@ struct kvm_run {
- 			__u64 gpa;
- 			__u64 size;
- 		} tdx_get_quote;
-+		/* KVM_EXIT_TDX_SETUP_EVENT_NOTIFY */
-+		struct {
-+			__u64 ret;
-+			__u8 vector;
-+		} tdx_setup_event_notify;
- 		/* Fix the size of the union. */
- 		char padding[256];
- 	};
+> > Please provide a v4l2-compliance report.
+> 
+> Please refer the attached screenshot for the v4l2-compliance test 
+> report. This test is ran with V2 patch. Fixed some of the compliance 
+> test failures on V1 and ensured it is 100% compliant for the supported 
+> IOCTLS.
+
+Could you please post the v4l2-compliance report in a reply to v2, in
+text format instead of a screenshot ?
+
+> >> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> >> ---
+> >>   drivers/media/i2c/Kconfig  |   10 +
+> >>   drivers/media/i2c/Makefile |    1 +
+> >>   drivers/media/i2c/ov05c.c  | 1031 ++++++++++++++++++++++++++++++++++++
+
+[snip]
+
 -- 
-2.46.0
+Regards,
 
+Laurent Pinchart
 
