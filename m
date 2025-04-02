@@ -1,212 +1,134 @@
-Return-Path: <linux-kernel+bounces-585059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703D9A78F24
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:54:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61E8A78F46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6E8116D941
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E69263B2F57
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F8823959E;
-	Wed,  2 Apr 2025 12:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0983323959A;
+	Wed,  2 Apr 2025 12:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9LbGOmC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="r2csHdH/"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D70238D25;
-	Wed,  2 Apr 2025 12:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5A223909E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598401; cv=none; b=EWzp+a/1atZ6evzf8Se5z1zWzzSjhgD1Ho2ySFLJlKQPCAX38d69DH/kRcMlQElYoSkaCIdnyDoTbS4tJfYrwjnmTwqLOevSJK6sOPiiJJ9YBY44iGe3d2U2y2/Dva+BKaFv7Wcl/4GLUzPifTlP17oEBghCqJEX/DHsVS0KNU8=
+	t=1743598453; cv=none; b=Tj03GsN4sUyjXlJk1shbkTAmE+RGbSDNyrs7XRKHFMOrSLqkPFc+vSDiNib4sDIzuSRfEbSoc28QHJXm/gvKHtIx27zmZAKZBsgpWnoNKNlMEQ3IfbasOOpjK6zFxkmE4KVFbyPX+ALZibm0U0Ru5T3p4/2v86nZF3OzmIEPO1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598401; c=relaxed/simple;
-	bh=i+12HA/1ppKzVebGQz08npfbBGPLxXTUCObabmI6qu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYK2dgns5/4kCjyyhzA0LeReJi3Cv7Jb6jIK5rH5y0zDnHB0C1Vr5hyyg/7ZkQq2Exw+UYI56jMdtIPm7bmAHC88kofMYpBDA78wd0kJTjTUcz99LQs4GjDdYUaOzi3bC8h52dSF7DMaOzmrAZ1PamnfXZJl++7ZRCih0ve7nlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9LbGOmC; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743598400; x=1775134400;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=i+12HA/1ppKzVebGQz08npfbBGPLxXTUCObabmI6qu8=;
-  b=g9LbGOmC7KawHpNWP3tIlDBcVxXaLnx5b+XDwsDCNUj6FsyDA2Qqxz/g
-   MfB8VLHyKCgE1SipTA7TJjajopypfSgCMBlkkpGUTu1YEXYWmVZZPe3tf
-   F6Ik4eRu5csYEy+Fn09SMOD9RgMH5vCjDEGmrgEBZ85Wl0qg1bv9grdX+
-   8kvN2tMOjl+ErctXE99kscm4aSeGbN5wmBVFu3HhbRlGMqEh/J0lM3BUI
-   oP/lrprFSMmjlpFim8JU8hT2KxYGM+Plr8a+KNYNo2QybzYYR4w+5X6hi
-   JDppb9QAzusXFrXmzYCcmHhuJwOBC1H7O2EkJhtZ4Ry13oKZt6x5ECIlT
-   A==;
-X-CSE-ConnectionGUID: e9f6x1nlRY65jXaXal2Sig==
-X-CSE-MsgGUID: /HQJmEMASmOl3K9RgT4WEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44844882"
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="44844882"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:53:19 -0700
-X-CSE-ConnectionGUID: 4nNe4TxNSf2rbxkyi6MlcQ==
-X-CSE-MsgGUID: 4YUvaZTmQZOfmnN+/ALpAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="131885922"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.242.208]) ([10.124.242.208])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:53:12 -0700
-Message-ID: <112c4cdb-4757-4625-ad18-9402340cd47e@linux.intel.com>
-Date: Wed, 2 Apr 2025 20:53:08 +0800
+	s=arc-20240116; t=1743598453; c=relaxed/simple;
+	bh=5INxPsuOE6270fFWGYFq15y/ebioY3u8KiI0+M4WPMk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fJziJC2HQDm73P+vNjbqXW7NAOCgylP5zrbo3EneaZaxoj6bg8bU436PD+k6uf4QUs11kFSRyN22Bou11vTm5INfbWAv4VMEqRR+3ZcD9HoB/SXWNExSNkqnCzNBrMY66bgLVBnrnWGTc+rui1tatTuDKcfhZqdEuTaFSbKCK+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=r2csHdH/; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=UGPDN/CtUITf4gTg1aiWC2eiejfhU3hysLculSlUEkg=;
+  b=r2csHdH/5fPj8zgjiRfr/a1nfYvP3Pvt7857lOEpkoK0o2/toTlAtxpP
+   lcAamEsVU2HS32vimNIOEyqpKpv1tXBEVYeWR/MocfGOR/i5ezlacLbG1
+   yuMCg6ggGM79lI3/KynhCCEQS5Kgl83a7+woT0MXvDv8qgCPRNqZVIoyB
+   o=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.15,182,1739833200"; 
+   d="scan'208";a="216010297"
+Received: from powered-by.xenosite.net (HELO hadrien) ([89.255.17.162])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 14:54:08 +0200
+Date: Wed, 2 Apr 2025 14:54:08 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Erick Karanja <karanja99erick@gmail.com>
+cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
+    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] staging: rtl8723bs: Use true/false instead of 1/0
+In-Reply-To: <49c14bf7475d121e7b3f600e46b93c003851abd1.1743596287.git.karanja99erick@gmail.com>
+Message-ID: <72eb7f-52ce-60f5-6c56-52c644084f7@inria.fr>
+References: <cover.1743596287.git.karanja99erick@gmail.com> <49c14bf7475d121e7b3f600e46b93c003851abd1.1743596287.git.karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] KVM: TDX: Handle TDG.VP.VMCALL<GetQuote>
-To: "Huang, Kai" <kai.huang@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "seanjc@google.com" <seanjc@google.com>
-Cc: "Gao, Chao" <chao.gao@intel.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "Lindgren, Tony" <tony.lindgren@intel.com>,
- "Hunter, Adrian" <adrian.hunter@intel.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>
-References: <20250402001557.173586-1-binbin.wu@linux.intel.com>
- <20250402001557.173586-2-binbin.wu@linux.intel.com>
- <40f3dcc964bfb5d922cf09ddf080d53c97d82273.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <40f3dcc964bfb5d922cf09ddf080d53c97d82273.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-810343527-1743598448=:3176"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323329-810343527-1743598448=:3176
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On 4/2/2025 8:53 AM, Huang, Kai wrote:
+You have three patches with the same subject line, which is not allowed.
+You can be more specific about the files name or the structure name and
+field.
 
-[...]
->
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index b61371f45e78..90aa7a328dc8 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -7162,6 +7162,25 @@ The valid value for 'flags' is:
->     - KVM_NOTIFY_CONTEXT_INVALID -- the VM context is corrupted and not valid
->       in VMCS. It would run into unknown result if resume the target VM.
->   
-> +::
-> +
-> +		/* KVM_EXIT_TDX_GET_QUOTE */
-> +		struct tdx_get_quote {
-> +			__u64 ret;
-> +			__u64 gpa;
-> +			__u64 size;
-> +		};
-> +
-> +If the exit reason is KVM_EXIT_TDX_GET_QUOTE, then it indicates that a TDX
-> +guest has requested to generate a TD-Quote signed by a service hosting
-> +TD-Quoting Enclave operating on the host. The 'gpa' field and 'size' specify
-> +the guest physical address and size of a shared-memory buffer, in which the
-> +TDX guest passes a TD report.
->
-> "TD report" -> "TD Report"?  The changelog uses the latter.
->
->> When completed, the generated quote is returned
-> "quote" -> "Quote"?
->
->> +via the same buffer. The 'ret' field represents the return value.
->>
-> return value of the GetQuote TDVMCALL?
-Yes, thereturn code of the GetQuote TDVMCALL.
->
->> The userspace
->> +should update the return value before resuming the vCPU according to TDX GHCI
->> +spec.
->>
-> I don't quite follow.  Why userspace should "update" the return value?
-Because only userspace knows whether the request has been queued successfully.
+julia
 
-According to GHCI, TDG.VP.VMCALL<GetQuote> API allows one TD to issue multiple
-requests. This is implementation specific as to how many concurrent requests
-are allowed.  The TD should be able to handle TDG.VP.VMCALL_RETRY if it chooses
-to issue multiple requests simultaneously.
-So the userspace may set the return code as TDG.VP.VMCALL_RETRY.
+On Wed, 2 Apr 2025, Erick Karanja wrote:
 
-
+> Standardize boolean representation by replacing 1/0
+> with true/false in cases where boolean logic is implied.
+> This improves code clarity and aligns with the kernel’s bool type usage.
 >
->> It's an asynchronous request. After the TDVMCALL is returned and back to
->> +TDX guest, TDX guest can poll the status field of the shared-memory area.
->> +
->>   ::
->>   
->>   		/* Fix the size of the union. */
->> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->> index b952bc673271..535200446c21 100644
->> --- a/arch/x86/kvm/vmx/tdx.c
->> +++ b/arch/x86/kvm/vmx/tdx.c
->> @@ -1463,6 +1463,39 @@ static int tdx_get_td_vm_call_info(struct kvm_vcpu *vcpu)
->>   	return 1;
->>   }
->>   
->> +static int tdx_complete_get_quote(struct kvm_vcpu *vcpu)
->> +{
->> +	tdvmcall_set_return_code(vcpu, vcpu->run->tdx_get_quote.ret);
->> +	return 1;
->> +}
->> +
->> +static int tdx_get_quote(struct kvm_vcpu *vcpu)
->> +{
->> +	struct vcpu_tdx *tdx = to_tdx(vcpu);
->> +
->> +	u64 gpa = tdx->vp_enter_args.r12;
->> +	u64 size = tdx->vp_enter_args.r13;
->> +
->> +	/* The buffer must be shared memory. */
->> +	if (vt_is_tdx_private_gpa(vcpu->kvm, gpa) || size == 0) {
->> +		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
->> +		return 1;
->> +	}
-> It is a little bit confusing about the shared buffer check here.  There are two
-> perspectives here:
+> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_ap.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 >
-> 1) the buffer has already been converted to shared, i.e., the attributes are
-> stored in the Xarray.
-> 2) the GPA passed in the GetQuote must have the shared bit set.
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> index d46a04b9a05e..199727f04516 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> @@ -386,10 +386,10 @@ void update_bmc_sta(struct adapter *padapter)
 >
-> The key is we need 1) here.  From the spec, we need the 2) as well because it
-> *seems* that the spec requires GetQuote to provide the GPA with shared bit set,
-> as it says "Shared GPA as input".
+>  		pmlmeinfo->FW_sta_info[psta->mac_id].psta = psta;
 >
-> The above check only does 2).  I think we need to check 1) as well, because once
-> you forward this GetQuote to userspace, userspace is able to access it freely.
-
-Right.
-
-Another discussion is whether KVM should skip the sanity checks for GetQuote
-and let the userspace take the job.
-Considering checking the buffer is shared memory or not, KVM seems to be a
-better place.
-
+> -		psta->qos_option = 0;
+> +		psta->qos_option = false;
+>  		psta->htpriv.ht_option = false;
 >
-> As a result, the comment
+> -		psta->ieee8021x_blocked = 0;
+> +		psta->ieee8021x_blocked = false;
 >
->    /* The buffer must be shared memory. */
+>  		memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
 >
-> should also be updated to something like:
+> @@ -1967,17 +1967,17 @@ void sta_info_update(struct adapter *padapter, struct sta_info *psta)
 >
->    /*
->     * The buffer must be shared. GetQuote requires the GPA to have
->     * shared bit set.
->     */
-
+>  	/* update wmm cap. */
+>  	if (WLAN_STA_WME & flags)
+> -		psta->qos_option = 1;
+> +		psta->qos_option = true;
+>  	else
+> -		psta->qos_option = 0;
+> +		psta->qos_option = false;
+>
+>  	if (pmlmepriv->qospriv.qos_option == 0)
+> -		psta->qos_option = 0;
+> +		psta->qos_option = false;
+>
+>  	/* update 802.11n ht cap. */
+>  	if (WLAN_STA_HT & flags) {
+>  		psta->htpriv.ht_option = true;
+> -		psta->qos_option = 1;
+> +		psta->qos_option = true;
+>  	} else {
+>  		psta->htpriv.ht_option = false;
+>  	}
+> --
+> 2.43.0
+>
+>
+>
+--8323329-810343527-1743598448=:3176--
 
