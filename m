@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-584985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD59A78E4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E44A78E4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8DB3B3020
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:23:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADCEB18873CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECF323AE7C;
-	Wed,  2 Apr 2025 12:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A7323371D;
+	Wed,  2 Apr 2025 12:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bLpZ6hHr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oTvPllBL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA49239565;
-	Wed,  2 Apr 2025 12:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3BF20E01D;
+	Wed,  2 Apr 2025 12:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596591; cv=none; b=cLZ7Y2IKOOmUFkTrk+FCVvoBmLtUf0di1nFVAdkNmP7D9EKRs//gwEOTrTTQW1SU9S6vu0soAhXuUOFrdz2AlTEarCDTC6ITTpon1rW7jz0WaGgrjzKP67U0yUwKZBPIN7u23+O/9uU1yibJE9iIKk3TtmWGNsklPR5MaHMcpLc=
+	t=1743596623; cv=none; b=OUOrlSsQZQldqcnYSo16go3xxtokFFFNxXEhIogsmRwB+2wdNrgm0weG7WyIGSBiOvLWehKUv64T8ba/9IWBwSjF9/UnK3PC4+T6jcFa96DM06+JMsfW255VY+TntriKolbYTEHqBxy103Jk81hkyMK2KGhpwSdXjoEgZR+vR04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596591; c=relaxed/simple;
-	bh=hyIORvcjc8cnOrwXJJLDQlnMlsVxwobtC9HnweVC5sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GceIoZVk0dKlpUxyFCzOEvLm1NEZDNqvNUchYzp72gb3Cm8Y2SM1thDy8WKvyfn1SRjduOkHgWCHX1/rd2t3plo0I0g9w6cSWHoCLG2IXIjO+Mtf8oSR2IPldCtCfRXz9WGntWz9RstxXm/5BlNfVuW3wECswPzTZ90R/fIMVnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bLpZ6hHr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=m5oPUg4ARF8TnNRDBE3jh/Qug56RDVjQifVvp49cFpw=; b=bLpZ6hHr1wVANQ2fF9WBWqeuN5
-	HVjQWpQ1OlZggMUP4tufjE3uKqSb0br7f/rT6FWm8LhBf6MhyCRlxMQs6R1eqCC9lnu1A6+Eobou1
-	m1u67bO/yEmqZ75JIdUdL/wSSunPuHVf26lfRw+VeWvfOXSXW13frBpp8eGw8qPszd/w=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tzx7O-007mpD-0W; Wed, 02 Apr 2025 14:22:54 +0200
-Date: Wed, 2 Apr 2025 14:22:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/4] ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2
- switch description
-Message-ID: <82fde123-4783-4d4c-a061-e07731ae7bfd@lunn.ch>
-References: <20250331103116.2223899-1-lukma@denx.de>
- <20250331103116.2223899-3-lukma@denx.de>
+	s=arc-20240116; t=1743596623; c=relaxed/simple;
+	bh=sxRCMN2UqFzJH+4agENHp4HExEaVEUjCHCJeJ/xTgX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XFxW6WjooFvPu8TmkF3Ahl4L0oVufXwE7Tw2uUlpu/YmgcACSlrQ+JMhEPvJvS1uWzVIJGhjPK8bPUHVABqwdnP7oIxZ1yGTGKt1fTO3oxiR2eQsjTxnQ1OGpvweKLfbc173VPnvooP7tNCDEFzChAh0GT63yXRmg84bAFHagJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oTvPllBL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532C0JZY007268;
+	Wed, 2 Apr 2025 12:23:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xkcFHpWEAlY4rM9aIyFAYhMCRoLN5VKa+BwF+yLsfpc=; b=oTvPllBLGAaIe5u+
+	OmbTk8Im+MvIdNV3CJREpZ4yrkl+jITWrbvM2mKbOp7xe01eCoB9Vpiyw1g9pFy8
+	tXWfy6KJLnirJ+IaweQMrA3c0ZjzclLO5/BbOEBjroqJpV7Cg2EgP7UjfYbgwuBg
+	06gVEQtZHVFQ01cY3r3oRHElotfs46J+h3z/qFwuGALsipAviWg1OAa7TL9MmTkY
+	OZ3XWeUXLHXOBwl42D5Ady7H95ZlySWzCerm8oNEOHRs9Z9SDRBv9izc617JumQk
+	CqZm+P6NohzDA+cDHnjzlOqampYFP6Od+dPhtLswOsYY3bINrtYYtUwRVXXeKwt6
+	uN4+bA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45rh7yk8gc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 12:23:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 532CNRO8021059
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Apr 2025 12:23:28 GMT
+Received: from [10.231.195.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Apr 2025
+ 05:23:25 -0700
+Message-ID: <1eb3933d-9aac-4e47-a7a5-818aa18b137a@quicinc.com>
+Date: Wed, 2 Apr 2025 20:23:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250331103116.2223899-3-lukma@denx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
+ are supported
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
+References: <d410576f-2fc7-4de1-af51-29fbe8b14948@quicinc.com>
+ <20250115130359.138890-1-jtornosm@redhat.com>
+ <748a5a75-1385-4691-85c1-e9cc5eb4ffc2@oss.qualcomm.com>
+Content-Language: en-US
+From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+In-Reply-To: <748a5a75-1385-4691-85c1-e9cc5eb4ffc2@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=IYWHWXqa c=1 sm=1 tr=0 ts=67ed2c41 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=tPUOBYC6UmroMFteW7gA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 4Q3ha7XTLwWm7TH7As6SR4qYtZIU77iW
+X-Proofpoint-ORIG-GUID: 4Q3ha7XTLwWm7TH7As6SR4qYtZIU77iW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_05,2025-04-01_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=786
+ priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1011 spamscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504020078
 
-On Mon, Mar 31, 2025 at 12:31:14PM +0200, Lukasz Majewski wrote:
-> The current range of 'reg' property is too small to allow full control
-> of the L2 switch on imx287.
+
+
+On 1/16/2025 8:31 AM, Jeff Johnson wrote:
+> On 1/15/2025 5:03 AM, Jose Ignacio Tornos Martinez wrote:
+>> Hello Yuriy,
+>>
+>> Thank you for the information.
+>> My platform, as you said, is just wcn6855 hw2.1, but using NetworkManager
+>> with the default configuration.
+>> If this is the only stopper, you can skip and not consider as a wrong case,
+>> because (sorry for repeating) it is just a matter of the number of available
+>> resources that can be adjusted after some research from us.
+>>
+>> Thanks
+>>
+>> Best regards
+>> Jose Ignacio
 > 
-> As this IP block also uses ENET-MAC blocks for its operation, the address
-> range for it must be included as well.
+> Thanks,
 > 
-> Moreover, some SoC common properties (like compatible, clocks, interrupts
-> numbers) have been moved to this node.
+> I was hesitant to take Yuriv's patch since your problem was not fixed. But I
+> guess you are already broken with the current code, so I'll take his patch,
+> and then we can work on fixing any other issues from there.
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Kalle, can you review? You currently have this deferred in patchwork:
+> https://patchwork.kernel.org/project/linux-wireless/patch/20240829064420.3074140-1-quic_yuzha@quicinc.com/
+> 
+> /jeff
+> 
+Jeff
 
-Assuming it passed the DT checking:
+Could you help it?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Thanks,
+Yuriy
 
-    Andrew
 
