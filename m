@@ -1,124 +1,174 @@
-Return-Path: <linux-kernel+bounces-585593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A0AA7952D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:37:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19635A79531
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424071704E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC00C1704C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AD81DB34E;
-	Wed,  2 Apr 2025 18:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC4E1DB34E;
+	Wed,  2 Apr 2025 18:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gq5FCNE7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="UpeHXMHl"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64B019F461;
-	Wed,  2 Apr 2025 18:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3401D63D3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 18:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743619013; cv=none; b=fJ0mCg1E8d9JpfAUSbJvl4nUjmVQg4/IPNGMS7bjIuhocmFmCMtX7SgPJu8Ueo/GrrTEvR0M2GoM0EUG/Lejv7qjesbhB9/5BqoPw4Rff0hYLmR+8TltYsT2brCDzkLOLVERH/NJgbl3tfIy5AajBiZ0QfCYNVnNiI+P+KYmYRk=
+	t=1743619073; cv=none; b=sMDtShg/0S1+5t76B/AFdUkmAJJUcwSXt2q+v2TDPBYSCtoxdY+A8lHKCwagn2DWWJwx/czVWmhSJxvA0MM0L6oDH2re4dJDtx1S+6NDArwwdaLHMdAcscyooQYX3n/y8ZWDAbGb/XibKimIxOkDJ7x+ZrqKAqfvPa8fWQLCtPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743619013; c=relaxed/simple;
-	bh=T9HEaphgU5cdwWb8kPp71K4HhVRdXvd3dgDPUUnkj4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d40bx7UB4yUhyLIF8QXZzhwqyMhFZw2bjhFxc5t8KhcyvYjhSwUmObCJWC/PMaW8tFeLz2QzLQMCoddiTjnyTH3xBZ8L4ZBLIoa/St4Um9k2sIywWUiBO18adpJdFc2c9gKaoTeHyB8VsaSkeaj0sHQBAUojjEg69KdEZVRJ0xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gq5FCNE7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B46DC4CEDD;
-	Wed,  2 Apr 2025 18:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743619013;
-	bh=T9HEaphgU5cdwWb8kPp71K4HhVRdXvd3dgDPUUnkj4s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gq5FCNE72NRO/l/ADgK+O39tb7sTUNCs8q3SMz4MuVY3wPingjlW4Ncjtsn1IxQZx
-	 4VEqxhDFd1loKMJ7vsT9laMIM9KVkd21aU9O636zUxxdIV+2yFOPBDkvR17Td0tZaB
-	 MMQCNm3Fc/k4cGDYtwwhOiwSZXYImakJ8y6E2AaiiOJ84QA6bBtxML8sErNH82cRfQ
-	 9VGuxFSstCTe394GBABEPFj+9uVZxxs0FpqWs2yvRaYt+N5XFzI4Dk1CICoqFHyNdG
-	 2r/Jihr2KgmUNIf0cSf4gRe+9igR8oHOuZ7UnnynXxh4EYDAMDNFJNNBQS/a6ZGih6
-	 VXb8CEYVJr/AA==
-Message-ID: <54de6707-dca5-4547-acd0-2cd93a0ee9cf@kernel.org>
-Date: Wed, 2 Apr 2025 20:36:46 +0200
+	s=arc-20240116; t=1743619073; c=relaxed/simple;
+	bh=8sGZeCa0sKqwzNT7+OssvY0XCe1f29aCSfnouhi7cVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=chKyTxxT4FgcyMJHuoScjPCvA7VMAXj+3fNpCrqqGP3UnV4jzgvbq5Trl4qYVkm4zgAb6g1hukSu1mEUu9CqlHMPvlyudg55DproJ+Y6zLXiMAAsFDu28HD/VtYrE/GF2fJ032cXEPA8gWBHlah4m0AGLLs4AWFzwrkoKplQq/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=UpeHXMHl; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47664364628so1270481cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 11:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1743619071; x=1744223871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8sGZeCa0sKqwzNT7+OssvY0XCe1f29aCSfnouhi7cVM=;
+        b=UpeHXMHlzqKf09a80PpbFREcBUIZ1dqQ8ZbaBTyd5+mEK78huJs0wY6ewTjVNf34JI
+         VitV8Kn+IbDJVYPpr9GDRPkSWUzpvarn9sX/frxInxyzs4SLCrP89PQYpv0Bj6egULPj
+         4SdHto9LJGUIDuQXBxsXhtbAgvDkRvqi4kYYiLtv+Zj3fuU305AZrJEO+wPgVYMRmhU+
+         MUMk5cP6Vr2aDYTlO3BkMXPW3ayHvgCRQHL1CwWfVDVvm4lbv+uyoGV8oAzTKTtU//4C
+         5NBeMdOZijjZI+0vLDB1vRusk6rpeYQGwkuwd47CbOa7FG0JiaXlT3UIs24b/lD+3/9g
+         2S4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743619071; x=1744223871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8sGZeCa0sKqwzNT7+OssvY0XCe1f29aCSfnouhi7cVM=;
+        b=RLSbzJvL7UYgGm+WbJCWWct5GC67imfMTyHRTOCV4TSx/kthN0YCvLnDOa62QZYCMX
+         Qe+ZdyF0RV6owqkxjYBHTofjiJDV4gi92eMCySEuweyz1TVUF9AuSAYBBLn684AuQnqD
+         OEfWujwm8lX9m67tx4KefFTflpHL+p36Ez7sHTwjvmyyoKsJ4LCVp9+en/EceGHEMxBd
+         wheucV8AoYMiNc9QR1U+dQuuXKZkyBFHi1e17H7m1jV73FpPLZbh6eCIWhRD/iBeH/iO
+         sMzMrC+FJ4N1SFj4E4Tp1Fh8MxXp3UD0hd3HaDwrpGMbbvcyiKNjypyDh8EriZtLgvIR
+         HUCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgEXjJMKj1KVceVfIm0hBvp63WLCTx10wcXPGHDIT7OUN4zgOqa2Hg20R/y6aY04E9O5a6U04ztYwUQd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkWFBRKjbQqxciY8udfpz+K2+Z40F71O+serFIQ8rQFtrTCoCm
+	l+L7f5gt//fx4ktPIoKYS6W0Jbsdyva6Gj3qKfgWBy5YgYHd9VwtcPPvbzjCDK2SaG9RYg/0Ybr
+	lfmGEpuBCvY7e6nM4+liIZaD0bwOb+cW/hIE0wA==
+X-Gm-Gg: ASbGncuj0xD3saFrXhAbbw9DmHNXdLq52XAxm9BaetC0qLUgOeyHQo/2/+d/m4gCIQT
+	kqe5PaPb+Usr5mb4d0Cs4nQDIKIAfYVov/yHP7gny9Ba8rTW5Pd8h1JLnyU3ARiCIwzIe3d5Cwm
+	Ge7CHGTDbAM6aSNgPWL1jqKeA=
+X-Google-Smtp-Source: AGHT+IGBm8eRAZTRRIQNHm7hrKsMWsRZO7yaRU5V8qu8Hz4XTnZI9DQTzhglhyasNi+RSLHZS4pwai1XiiNO0rfUKEY=
+X-Received: by 2002:a05:622a:255:b0:472:145:3e02 with SMTP id
+ d75a77b69052e-4791615e607mr11970971cf.8.1743619070935; Wed, 02 Apr 2025
+ 11:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] media: dt-bindings: Add ST VD55G1 camera sensor
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250402-b4-vd55g1-v4-0-84b1f54c670c@foss.st.com>
- <20250402-b4-vd55g1-v4-1-84b1f54c670c@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250402-b4-vd55g1-v4-1-84b1f54c670c@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <mafs0tt7eqt6f.fsf@amazon.de> <20250402164453.2470750-1-changyuanl@google.com>
+ <mafs0ecyaqzmd.fsf_-_@amazon.de>
+In-Reply-To: <mafs0ecyaqzmd.fsf_-_@amazon.de>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 2 Apr 2025 14:37:12 -0400
+X-Gm-Features: AQ5f1Jr9Neh0jFNvgUt9co1Ay0Junb4b6fkF7RtFZQf-u5XIPaKITjI68-n5adU
+Message-ID: <CA+CK2bBnbEtw7jL2fbukJ3aBCjn=-OVT70oEAsZ435vtFe18Vw@mail.gmail.com>
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory preservation
+To: Pratyush Yadav <ptyadav@amazon.de>
+Cc: Changyuan Lyu <changyuanl@google.com>, akpm@linux-foundation.org, 
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com, 
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com, 
+	corbet@lwn.net, dave.hansen@linux.intel.com, devicetree@vger.kernel.org, 
+	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, 
+	jgg@nvidia.com, jgowans@amazon.com, kexec@lists.infradead.org, 
+	krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	luto@kernel.org, mark.rutland@arm.com, mingo@redhat.com, pbonzini@redhat.com, 
+	peterz@infradead.org, robh+dt@kernel.org, robh@kernel.org, 
+	rostedt@goodmis.org, rppt@kernel.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	will@kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/04/2025 15:50, Benjamin Mugnier wrote:
-> Also update MAINTAINERS file accordingly.
-> 
-> Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-> ---
->  .../devicetree/bindings/media/i2c/st,vd55g1.yaml   | 132 +++++++++++++++++++++
->  MAINTAINERS                                        |   7 ++
->  2 files changed, 139 insertions(+)
+On Wed, Apr 2, 2025 at 12:47=E2=80=AFPM Pratyush Yadav <ptyadav@amazon.de> =
+wrote:
+>
+> Hi,
+>
+> On Wed, Apr 02 2025, Changyuan Lyu wrote:
+>
+> > Hi Pratyush, Thanks for suggestions!
+> >
+> > On Thu, Mar 27, 2025 at 17:28:40 +0000, Pratyush Yadav <ptyadav@amazon.=
+de> wrote:
+> >> On Thu, Mar 27 2025, Jason Gunthorpe wrote:
+> >>
+> >> > On Thu, Mar 27, 2025 at 10:03:17AM +0000, Pratyush Yadav wrote:
+> >> >
+> >> >> Of course, with the current linked list structure, this cannot work=
+. But
+> >> >> I don't see why we need to have it. I think having a page-table lik=
+e
+> >> >> structure would be better -- only instead of having PTEs at the low=
+est
+> >> >> levels, you have the bitmap.
+> >> >
+> >> > Yes, but there is a trade off here of what I could write in 30 mins
+> >> > and what is maximally possible :) The xarray is providing a page tab=
+le
+> >> > implementation in a library form.
+> >> >
+> >> > I think this whole thing can be optimized, especially the
+> >> > memblock_reserve side, but the idea here is to get started and once =
+we
+> >> > have some data on what the actual preservation workload is then
+> >> > someone can optimize this.
+> >> >
+> >> > Otherwise we are going to be spending months just polishing this one
+> >> > patch without any actual data on where the performance issues and ho=
+t
+> >> > spots actually are.
+> >>
+> >> The memblock_reserve side we can optimize later, I agree. But the memo=
+ry
+> >> preservation format is ABI and I think that is worth spending a little
+> >> more time on. And I don't think it should be that much more complex th=
+an
+> >> the current format.
+> >>
+> >> I want to hack around with it, so I'll give it a try over the next few
+> >> days and see what I can come up with.
+> >
+> > I agree with Jason that "nothing is ABI at this
+> > point" and it will take some time for KHO to stabilize.
+> >
+> > On the other hand if you have already came up with something working an=
+d
+> > simple, we can include it in the next version.
+>
+> I already have something that works with zero-order pages. I am
+> currently implementing support for other orders. It is almost done, but
+> I need to test it and do a performance comparison with the current
+> patch. Will post something soon!
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Pratyush,
 
-Best regards,
-Krzysztof
+Just to clarify, how soon? We are about to post v6 for KHO, with all
+other comments in this thread addressed.
+
+Thanks,
+Pasha
+
+>
+> --
+> Regards,
+> Pratyush Yadav
 
