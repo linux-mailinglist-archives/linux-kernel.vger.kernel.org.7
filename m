@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-584283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFA4A78587
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:18:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A623A7858C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418B5169AFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B33427A4BE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB6817E0;
-	Wed,  2 Apr 2025 00:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1C139D;
+	Wed,  2 Apr 2025 00:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P8zxsW+E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPC76FJ9"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56CF195;
-	Wed,  2 Apr 2025 00:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663B417E0;
+	Wed,  2 Apr 2025 00:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743553114; cv=none; b=GEWlDNhWqLADI8Fzq5hud5Y2wQim7gZrgAydvt1kjLHd1x4MHKYNCqwJUK42rxw4aSJJXQ0c67xIf8b0nnJmgPcyabkRBOoh0PrFiwBiFjsYnn9qCCwb52YHgpjOgFD4Q4Eg7DqpA/DZ0R+bLo3eA4VFOENiyvJI4TFTFKPEBFc=
+	t=1743553157; cv=none; b=O21r6iig+ivrsQ+jMc/NM5az9vpkiO7FEcaapRP9y/SiREAcaWj8CfvEzbDTrgNZTwMOsb7QdCUud2nx1oqnCZTHxlXKvp7aIKKmIcy/wWmbMJep6RB6W0FqhkER5tDT8seY9+us24xk0F2//654QY0R8uxnFKeQpdu6Xx6EyRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743553114; c=relaxed/simple;
-	bh=ccAKzxQuNmt3LvtlfbAmImG+73lCyCnoUNwZHy6EtfY=;
+	s=arc-20240116; t=1743553157; c=relaxed/simple;
+	bh=02yG6laXOGLaOVyzrKEeTyoIYwMKqopyPivxPcvDbiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hYyjvLY5poQn6t7eV1oo/xZGZQO5X8Asim3WCgrA+4ErSgeNeDvWrpL4+iYAsAtETcQU+sZoLfWQd6GHkLiptL2Ar824JL1TCSZwIYSR2dHTGarcDKEcA4B+V1XlhvoT36MSmVvHKc0Pv6/iUeN15PFFzslDn14thEf2ZvvXA1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P8zxsW+E; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743553112; x=1775089112;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ccAKzxQuNmt3LvtlfbAmImG+73lCyCnoUNwZHy6EtfY=;
-  b=P8zxsW+EQRSxR3sUhR37kKPvVZ9U640/e4M1LTgPTv3uzJ39JsKpUaZl
-   +gtEnP6AAp1RiJw35PRgqLCFZV7lFOPMXMt07EKvwaPDtzac/fwamhl2u
-   n36L6fIKBh3FsLv6iiuWvCGHs3mZ7eWlWwGfKxaMJcm6jFGK8KS66VTXg
-   Sy8hWDNsKXRJOnL8eE7+aHxpUxchHRmG1b3vqEUldh+X04pJt/FmHQVIG
-   LhYlSd5NP/J8IbGF6wq2cr8fznzoKIWcugp25KvfcVRf9X9e7JPzVbCiA
-   7E+oT6nZZcb8OHvqDEOz+krkclCtiTgbrUG1UEstlhvIC4jH67bgZHFAq
-   Q==;
-X-CSE-ConnectionGUID: 7nySN8GWQ8S4h/ZRs3MB0A==
-X-CSE-MsgGUID: WF2UhJgqS5qstNKbi5TGtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="47615682"
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="47615682"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 17:18:27 -0700
-X-CSE-ConnectionGUID: DEVPRNE5SK2bYAvpFkiRmA==
-X-CSE-MsgGUID: NXvLi6JZRyiNnxBUUHAEJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="149715513"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.109.176]) ([10.125.109.176])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 17:18:26 -0700
-Message-ID: <e9c57344-43f3-4f90-9894-eb4f5a1b22f2@intel.com>
-Date: Tue, 1 Apr 2025 17:18:23 -0700
+	 In-Reply-To:Content-Type; b=Qil5MDXNBUDmOkYVyWKXhC0w99o/dPOrUGp8/I9XCulpg6k5/p/wt8X/cloEhm8cJiPfbSMLRRn/R9fdBPUhkfKqgJw4p3pIIkk1DvbMGB4wohP05WAcPRutBPz3v10tDNQ7WfmBdTngwACnol/+7jKvCKfLM0Y3zPVO7CACMBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPC76FJ9; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227b828de00so108117675ad.1;
+        Tue, 01 Apr 2025 17:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743553155; x=1744157955; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=w0OuXo81szmST2NQBpsdRDPeT/B1BcrZH/KOhIskzf8=;
+        b=GPC76FJ9ToAFvoT9WZDQkFXVSZHNXd7xioa38i9SLTQy3IP8TOInf/LYhqu6I5xKaq
+         u2WDShY7cjmm6f4qOzhh+DAuDqdU6Ka7YZRwfhm00vrsPo3umrx5vMG0iGSktlG6dt/F
+         5ZA9xk8uIX2U8ON9ApZpx7podTOniG6+2iG0KWkjILi7dEA83tlAUHWkD2QBEgG1SjS+
+         5kZzIYJxss6E54DdCkDH70/exubO7IoWxzkoy05S0wc8uJRuNlMR3OyZ2u3LRfqN7EkU
+         MXJkxuRu/t0/GNajIaPfnxJN8xYkyqfu5T0+wtwsrb39M3UAtSzr/jpc9Sw2KESQ1+Zc
+         NksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743553155; x=1744157955;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w0OuXo81szmST2NQBpsdRDPeT/B1BcrZH/KOhIskzf8=;
+        b=u0NANDRV1uMyRZHRDdEPgBy9U0fx/QKO0jltMEl6d6NpdOP7PMY/cSshzw8ktXUXEG
+         GEvrrkyrvk0vHk8SavN58+mYpiB7hFStNIxXRtLq9ClgQ8/zw5pt/QFQ0QieQcD3esHP
+         FOu6YA7NOTQgwYCXquJaDZWS+C9/4iRW+uCSK1B6OIOwGvzvv4UaJSnZXbRybf4Eq5uz
+         voHuxY0ghzkE6SwcaOBTbuT55SAfNZeP6rYYV78gSU395unDQbyuBdOKo1LPCp5WleSS
+         x23cyvSq3LCE20BnSqEAbHzjIN9rNnUM3VHYSFopQuUhnRTFLp0BCsJMuN1wZaV/Go9i
+         goOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIsDqQvo6a6HZaikUxlm5CFgm0IYjTX1f9vGdAhGZ2+tf4X65OW7C5QRpEap+CQJlKk15eotvF4e/5HAxp@vger.kernel.org, AJvYcCXpKEUtSn9zq+znr1eIUbiX9yZ/UGt7xQkH5tFSQLZQuyjRYoTtUtNuBPDQo1aDagr1w5aOA5qJNcnkEQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoURl+3HWZKnpdZ6Pow1bZn8NmBCMS1tm5DApa+d/Mw9N1WCcg
+	9BgRNbJDnWG10TGYGX1nzgD9hm9VJID64Jk+PL/KRpLQfUbS4Ewv
+X-Gm-Gg: ASbGncsvn96rvfFR5bzo3i6PGkSeXzVR0Ud9sd7aK/TCSyOUGkcJG1AnO0l3/hv+86a
+	LiU/4ixTuEc2JmeSZ3LGrCoO3mUhkbMsfE2NL6LdloGrB/BXwafIrgyLi9BZrVXjSdPa72gK7B6
+	fPnW3DQeupw1i/JCdvK87TpnGWf+LUS0mMY7+HSJM87JWiAmBobI3WQerhA5zMbK/HffYSvjosh
+	+VhfIrS3C9mkmy5U3FhASRLxT4ckOfZmKsAt1H46rwcwqYJGpe4kys/KDZShRZ4enL4Am1lkBjL
+	Mh94mirAr/tScX3DXsJiApliJWBNb79F4zP4rskgC+MR7es5E7uLHqohy/O1f1S3bOFYlsj5N21
+	r2bu6/xUExkZvKbQ6IA==
+X-Google-Smtp-Source: AGHT+IHH6ZUYp4yQWN2YMFakZmCz4t5heWPmMTPxGuco+vUEUX8dD8PdstOQqlQBr86QeW72DQcVrw==
+X-Received: by 2002:a17:902:ecd1:b0:223:35cb:e421 with SMTP id d9443c01a7336-2296c86c830mr5478745ad.49.1743553154601;
+        Tue, 01 Apr 2025 17:19:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73970e2230dsm9604317b3a.40.2025.04.01.17.19.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Apr 2025 17:19:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <84d37c25-197b-44b4-b181-f71f5e8b81d8@roeck-us.net>
+Date: Tue, 1 Apr 2025 17:19:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,175 +83,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG -next] ./usr/include/cxl/features.h:11:10: fatal error:
- uuid/uuid.h: No such file or directory
-To: paulmck@kernel.org
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Dan Williams <dan.j.williams@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- linux-cxl@vger.kernel.org, dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- gourry@gourry.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- sfr@canb.auug.org.au, Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <30a7f782-4388-45b6-bb3c-a0faf85b7445@intel.com>
- <51e9823c-784c-4b91-99d4-0500aaf5cec0@paulmck-laptop>
- <67e7301dc8ad7_201f0294a5@dwillia2-xfh.jf.intel.com.notmuch>
- <1f48ba3b-9ba8-44e5-98c7-4c9abf95a935@intel.com>
- <20250331132439.GD10839@nvidia.com>
- <67eac8df3e217_201f02948d@dwillia2-xfh.jf.intel.com.notmuch>
- <20250331171755.GC289482@nvidia.com>
- <67eaf14b7c611_201f0294ba@dwillia2-xfh.jf.intel.com.notmuch>
- <4641ce2f-74eb-45ea-a2f8-c7d0db905b7a@linux.ibm.com>
- <79a032b5-b13d-43fd-b56e-01098122e104@intel.com>
- <66ae49a8-d7f9-4fd9-b94e-9be26fd9aea4@paulmck-laptop>
+Subject: Re: [PATCH] hwmon: max34451: Workaround for lost page
+To: William Kennington <william@wkennington.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+References: <20250401220850.3189582-1-william@wkennington.com>
+ <5a602ffc-5cbb-4f39-b815-545f3f1f4c98@roeck-us.net>
+ <CAD_4BXgzvFavEcfhY5_BEi9y6pK0wJ1q4oqFYC5ctP53c57=wg@mail.gmail.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <66ae49a8-d7f9-4fd9-b94e-9be26fd9aea4@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAD_4BXgzvFavEcfhY5_BEi9y6pK0wJ1q4oqFYC5ctP53c57=wg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+On 4/1/25 15:55, William Kennington wrote:
+> On Tue, Apr 1, 2025 at 3:52 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 4/1/25 15:08, William A. Kennington III wrote:
+>>> When requesting new pages from the max34451 we sometimes see that the
+>>> firmware doesn't update the page on the max34451 side fast enough. This
+>>> results in the kernel receiving data for a different page than what it
+>>> expects.
+>>>
+>>> To remedy this, the manufacturer recommends we wait 50-100us until
+>>> the firmware should be ready with the new page.
+>>>
+>>> Signed-off-by: William A. Kennington III <william@wkennington.com>
+>>> ---
+>>>    drivers/hwmon/pmbus/max34440.c | 7 +++++++
+>>>    1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/hwmon/pmbus/max34440.c b/drivers/hwmon/pmbus/max34440.c
+>>> index c9dda33831ff..ac3a26f7cff3 100644
+>>> --- a/drivers/hwmon/pmbus/max34440.c
+>>> +++ b/drivers/hwmon/pmbus/max34440.c
+>>> @@ -12,6 +12,7 @@
+>>>    #include <linux/init.h>
+>>>    #include <linux/err.h>
+>>>    #include <linux/i2c.h>
+>>> +#include <linux/delay.h>
+>>>    #include "pmbus.h"
+>>>
+>>>    enum chips { max34440, max34441, max34446, max34451, max34460, max34461 };
+>>> @@ -241,6 +242,12 @@ static int max34451_set_supported_funcs(struct i2c_client *client,
+>>>                if (rv < 0)
+>>>                        return rv;
+>>>
+>>> +             /* Firmware is sometimes not ready if we try and read the
+>>
+>> This is not the networking subsystem. Standard multi-line comments, please.
+> 
+> Okay, let me fix that.
+> 
+>>
+>>> +              * data from the page immediately after setting. Maxim
+>>> +              * recommends 50-100us delay.
+>>> +              */
+>>> +             fsleep(50);
+>>
+>> I would suggest to wait 100uS to be safe. The function is only called during probe,
+>> so that should be ok.
+> 
+> Yeah, I don't think they did strenuous measurement of these values on
+> their end. We have been using this patch for 4-5 years now with
+> seemingly good robustness on the 50us value. I just pulled up an old
+> email from the vendor that gives this context.
+> 
+>>
+>> Is this a generic problem with this chip when changing pages ?
+> 
+> I believe that is the case, but this patch is pretty old at this
+> point. Is there somewhere to add in quirks for such chips that would
+> allow us to build in such a delay?
+> 
 
+So far we only have delays for all accesses and for write operations.
+See access_delay and write_delay in struct pmbus_data. If the problem
+only affects page changes, we might have to add page_change_delay or
+something similar. Alternatively, maybe we could just set write_delay.
+If the chip has trouble with page changes, it might well be that it has
+trouble with write operations in general.
 
-On 4/1/25 5:07 PM, Paul E. McKenney wrote:
-> On Tue, Apr 01, 2025 at 08:15:55AM -0700, Dave Jiang wrote:
->>
->>
->> On 4/1/25 12:01 AM, Venkat Rao Bagalkote wrote:
->>>
->>> On 01/04/25 1:17 am, Dan Williams wrote:
->>>> Jason Gunthorpe wrote:
->>>>> On Mon, Mar 31, 2025 at 09:54:55AM -0700, Dan Williams wrote:
->>>>>> Jason Gunthorpe wrote:
->>>>>>> On Fri, Mar 28, 2025 at 05:26:42PM -0700, Dave Jiang wrote:
->>>>>>>>> For now the following builds for me, but it is a quite a mess to undo
->>>>>>>>> the assumption that that the hardware object definitions can not use
->>>>>>>>> uuid_t:
->>>>>>>> +Jason.
->>>>>>> Seems invasive?
->>>>>> Yeah, it left a bad taste for me as well.
->>>>>>
->>>>>>> Maybe just like below?
->>>>>> I like that this avoids converting to the kernel's uuid API, however,
->>>>>> not quite happy that it forces userspace to contend with the
->>>>>> type-conflict with uuid/uuid.h.
->>>>> Oh I see
->>>>>  
->>>>>> So how about one more riff on your idea?
->>>>> Sure, works for me, please post it..
->>>> b4 am supports scissors lines, so:
->>>>
->>>> b4 am -P _  67eac8df3e217_201f02948d@dwillia2-xfh.jf.intel.com.notmuch
->>>>
->>>> ...works for me. Do you still need a separate posting?
->>>>
->>>
->>> This issue got introduced in next-20250307 and got fixed in next-20250311(not sure what fixed).
->>>
->>> But again got re-introduced in  next-20250318. I tried bisection, below are the logs.
->>>
->>> One of the things I tried is to install the UUID packages on my set up and after installing those packages, issue is not seen.
->>>
->>> rpm -qa | grep uuid
->>>
->>> libuuid-2.37.4-20.el9.ppc64le
->>> uuid-1.6.2-55.el9.ppc64le
->>> uuid-c++-1.6.2-55.el9.ppc64le
->>> uuid-dce-1.6.2-55.el9.ppc64le
->>> uuid-devel-1.6.2-55.el9.ppc64le
->>> uuidd-2.37.4-20.el9.ppc64le
->>> libuuid-devel-2.37.4-20.el9.ppc64le
->>>
->>> So wondering is this not a setup issue?  Please advice.
->>
->> uuid/uuid.h only exists if the libuuid-devel package gets installed. And it seems that's where it resides in userspace.
-> 
-> Just to double-check...
-> 
-> As of some fairly recent time, it is now necessary to install the above
-> seven userspace packages if one wants to do an allmodconfig build of
-> the kernel?  Or will there be a change similar to the ones put forward
-> earlier in this thread that will allow such builds to be carried out
-> without additional userspace packages needing to be installed?
-> 
-> I of course do have some concerns about the number of userspace packages
-> that might be required if CXL is adding seven of them...  ;-)
-
-Technically it's only 1 package. libuuid-devel. Do the other 6 come with the installation of libuuid-devel?
-
-> 
-> 							Thanx, Paul
-> 
->> DJ
->>
->>>
->>>
->>> Bisect Log:
->>>
->>> git bisect log
->>> git bisect start
->>> # status: waiting for both good and bad commits
->>> # bad: [c4d4884b67802c41fd67399747165d65c770621a] Add linux-next specific files for 20250318
->>> git bisect bad c4d4884b67802c41fd67399747165d65c770621a
->>> # status: waiting for good commit(s), bad commit known
->>> # good: [4701f33a10702d5fc577c32434eb62adde0a1ae1] Linux 6.14-rc7
->>> git bisect good 4701f33a10702d5fc577c32434eb62adde0a1ae1
->>> # good: [cda4d1b29991d4500e9f65c6936b5d3ccd99ecbb] Merge branch 'spi-nor/next' of git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git
->>> git bisect good cda4d1b29991d4500e9f65c6936b5d3ccd99ecbb
->>> # good: [9b22611592aa21d10f7d1b89352a618436dea7ac] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
->>> git bisect good 9b22611592aa21d10f7d1b89352a618436dea7ac
->>> # good: [264791f7669a8246d129cbb935c861debba2f116] Merge branch 'driver-core-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
->>> git bisect good 264791f7669a8246d129cbb935c861debba2f116
->>> # good: [3c51cb2d6ec7cecf724cd5d78a0633f61f31e726] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
->>> git bisect good 3c51cb2d6ec7cecf724cd5d78a0633f61f31e726
->>> # good: [612481dbc16505cf5e940809ebf36d8460d174cf] Merge branch 'main' of git://git.infradead.org/users/willy/xarray.git
->>> git bisect good 612481dbc16505cf5e940809ebf36d8460d174cf
->>> # bad: [892715be4379deb333376e573113fd75672eca6c] Merge branch 'rust-next' of https://github.com/Rust-for-Linux/linux.git
->>> git bisect bad 892715be4379deb333376e573113fd75672eca6c
->>> # bad: [b33f4167a8a2b9b9cc6b3e06f79b030db82cf530] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git
->>> git bisect bad b33f4167a8a2b9b9cc6b3e06f79b030db82cf530
->>> # good: [3b5d43245f0a56390baaa670e1b6d898772266b3] Merge branch 'for-6.15/features' into cxl-for-next
->>> git bisect good 3b5d43245f0a56390baaa670e1b6d898772266b3
->>> # good: [d11af4ae2169672b690a4d07a9dfdfd76c082683] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-auxdisplay.git
->>> git bisect good d11af4ae2169672b690a4d07a9dfdfd76c082683
->>> # bad: [5908f3ed6dc209e5c824e63afda7545805f75a7e] cxl: Add support to handle user feature commands for get feature
->>> git bisect bad 5908f3ed6dc209e5c824e63afda7545805f75a7e
->>> # good: [18285acc2c047cda2449f426c09fc8969b04b8b1] fwctl: Add documentation
->>> git bisect good 18285acc2c047cda2449f426c09fc8969b04b8b1
->>> # good: [15a26c223fff58d9fa4ada12a8c35697f8ecdf6c] Merge branch 'for-6.15/features' into fwctl
->>> git bisect good 15a26c223fff58d9fa4ada12a8c35697f8ecdf6c
->>> # bad: [9b8e73cdb1418f7c251c43b2082218ed9c0d0fee] cxl: Move cxl feature command structs to user header
->>> git bisect bad 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee
->>> # good: [858ce2f56b5253063f61f6b1c58a6dbf5d71da0b] cxl: Add FWCTL support to CXL
->>> git bisect good 858ce2f56b5253063f61f6b1c58a6dbf5d71da0b
->>> # first bad commit: [9b8e73cdb1418f7c251c43b2082218ed9c0d0fee] cxl: Move cxl feature command structs to user header
->>>
->>> 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee is the first bad commit
->>> commit 9b8e73cdb1418f7c251c43b2082218ed9c0d0fee
->>> Author: Dave Jiang <dave.jiang@intel.com>
->>> Date:  Fri Mar 7 13:55:32 2025 -0700
->>>
->>>   cxl: Move cxl feature command structs to user header
->>>
->>>   In preparation for cxl fwctl enabling, move data structures related to
->>>   cxl feature commands to a user header file.
->>>
->>>   Reviewed-by; Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>>
->>>   Link: https://patch.msgid.link/r/20250307205648.1021626-3-dave.jiang@intel.com
->>>   Reviewed-by: Dan Williams <dan.j.williams@intel.com>
->>>   Reviewed-by: Li Ming <ming.li@zohomail.com>
->>>   Signed-off-by: Dave Jiang <dave.jiang@intel.com>
->>>   Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
->>>
->>>  include/cxl/features.h   | 112 +----------------------------
->>>  include/uapi/cxl/features.h | 169 ++++++++++++++++++++++++++++++++++++++++++++
->>>  2 files changed, 170 insertions(+), 111 deletions(-)
->>>  create mode 100644 include/uapi/cxl/features.h
->>>
->>>
->>> Regards,
->>>
->>> Venkat.
->>>
->>
+Thanks,
+Guenter
 
 
