@@ -1,116 +1,79 @@
-Return-Path: <linux-kernel+bounces-585184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F09DA79084
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B1EA7909A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C532916C0AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2172A3A787B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3AB23AE7E;
-	Wed,  2 Apr 2025 13:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8tz5lF8"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B86023AE8B;
+	Wed,  2 Apr 2025 13:57:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7287B367;
-	Wed,  2 Apr 2025 13:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD51F367;
+	Wed,  2 Apr 2025 13:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743602344; cv=none; b=YNG4+b0ByhQRQdDquEv40hgdtt8NQ64pZO6xlMHtjouqVbdHJOKHYa3+TBk/e2KUC34bBkuidpSL6QOXFauS5QWxK07jz9ZxlGo1pEd/VcQ1rFfv6J+4W/EqWONdkKdDiTTiHLJGW6M90ztqjyIUteXjw4rhx1Uca2n3riLbt0A=
+	t=1743602269; cv=none; b=LZilSmoST0qTzW6oIYO0CrimZkDlasrbpdcENATCiHL1NDixuxGMNFdcqBTRuoe3bL0hA0t3q3m702nlAuNxNMlIzSrbvmENbw7QAj9hRrtS1p44nUhzkayqMC1ElZ/4/eIJFHNe1qRi1Vuw/Dk9M8+xskCPTZDX+wIN2Xp4+vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743602344; c=relaxed/simple;
-	bh=vTMqK5JsGJkV3D9uwxiRrS81D76Lq1lchZmymzYuSgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p3Nhrm9QTTs9rnNUXnGwF8dNTM/k+FxvA1Y3/ifRl0P2XwAC0FtweGYvJnn3gmKv4OoIdRdGw1QAbkhJOd0aYcsLiVX5k+gCt7tgtW5OVVIusv2uJVn+wcYK6HBSmeuxX5r38TXwLiytkcrhOV7uuu7F5fPvLJVDDNcP9NbZ2j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8tz5lF8; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bfed67e08so68579891fa.2;
-        Wed, 02 Apr 2025 06:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743602341; x=1744207141; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vTMqK5JsGJkV3D9uwxiRrS81D76Lq1lchZmymzYuSgQ=;
-        b=i8tz5lF8BiXzlz5YFY5MWXZCfPz60ra/Iz69MzG+wN9Y6BulyBgnl2ST3uTSkAaXwr
-         x3hwChQM3L4pVJivcAP6KMSqAXwYUecxN/oTalq7hzE0zjXo+L/vMwPornaorkjhqF8l
-         Wlt6Bme3N9D+h+BHlpRs5LcMOClmfs2rApmWuxqsdTp6t5ZyTd++QK7oLUK7ys1sIE6f
-         hAxFrCVD212DI9UJCVE30Pu+eIIIYPHGXHqE+TcPOx6w7yUG1od3Zz6qvDEiYAA4GAmt
-         f+7lUUGrJ3750QPyBjUpVzEWZ0wfb5K6QwRIUCTiSkSc+ga395xv6/A/faJz5BIVDcCD
-         CFFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743602341; x=1744207141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vTMqK5JsGJkV3D9uwxiRrS81D76Lq1lchZmymzYuSgQ=;
-        b=YUnEcb3vGuYeXg2q3zT0d2rwUL3fA6BMum1UoBZ4jzpu4ecCDVUyLRbyafafkDnpCz
-         xoQGlVO23UCoD8zXizKJCdoE8R46PIUQ1SzMdIZS3boBMFlqeT2s5Hhi8su+D5ZzvVqE
-         9JXmWyslTF/k6dsv7MOVCq0/CWqEz2uTBRg6dYxUShDqPwMT9CidgVfhjTQwGVI5cakw
-         /rW3K+5je6qs0SVFvk4Ir+nEJkG+dhS8CTU1f1USmg7HTMa9g1AGy2cJ1cHWHpR1V6O7
-         qvrgVdligStc/97zyaN9HJdKeeYh/znad+rCfSdPMkf5LBRL3TIlkO9D/3yUecoJG5gt
-         5P+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfIoKtBuhXCH7Cx3L2Pc6lL5nAUOtMimKkJtrKekLLgvW2VlUDkbROQD9FCgT4PQX8H183jB0nl8kILMQ=@vger.kernel.org, AJvYcCWtrhY8TPhZ4/NQ5qIbWVRU5w8G63ASoXeHSgpwXMTMVFSKONuOVq0G5ZxPHLk+E5aff3Jkdk4/Dq7Ci04Zwz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbT9LsNbIBGJQD4xUcJj35jkFC6pDZusaq1foL7jLrvqTTs3EZ
-	MdaKQLa7VyFIpAlGdsI6DRg45Xp0AkBspfGUmXLNAR8kF/s+Muxyfa/lqV29xfjQvFH08NSqUbH
-	/fRhAvkfU1vni7hmUNC1Mi+Oe988=
-X-Gm-Gg: ASbGncsnNVkVjKP5VFqZzA/6GM2AB0EdPEqMochkrTQDInScVfvlVEQsshuz6/7c6HX
-	wRTdGHc6pvQybKpGVcs7YSyfQXXnimgPPFB80khG3PAD0xXYyFqJj/SOZQcDoGj8oxG1R85z91n
-	CWbOYrBZ8W3tSkTE5fxcfRmlo7dqKSCMDdkF3Lk7ht1g==
-X-Google-Smtp-Source: AGHT+IEoOP9OJacFp4ypS6GUG779N/1XqdaJI4YYpqIYC5vpdqMDP+fGMWlF4r2D8VUDYn6eHoqMl8exjta7+xc7RV0=
-X-Received: by 2002:a05:651c:2203:b0:30c:3099:13d0 with SMTP id
- 38308e7fff4ca-30de027899dmr64849571fa.21.1743602340379; Wed, 02 Apr 2025
- 06:59:00 -0700 (PDT)
+	s=arc-20240116; t=1743602269; c=relaxed/simple;
+	bh=gw+yZ1EmcAbmQtjWuOkq30chzTyn1/moTvDIAjO11q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g+awXa0qSoZgsFHPWJ6T5j7Q09f569kY1wrojRqqRyL83DNKLB9Dg16uFVb/pzpKHeFTnghWRYBVhQ8KJrT03dq2NFoyxKhI6IgqsW25F9hmyk14ZdOfvNK3fR8PpYFWqFXJ56rCFm9hOAxgd3afJvKzEX7mstTGfvSIOAt8kQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFEBC4CEDD;
+	Wed,  2 Apr 2025 13:57:47 +0000 (UTC)
+Date: Wed, 2 Apr 2025 09:58:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Andrii Nakryiko
+ <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ peterz@infradead.org, mingo@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, oleg@redhat.com,
+ brauner@kernel.org, glider@google.com, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org
+Subject: Re: [PATCH] exit: add trace_task_exit() tracepoint before
+ current->mm is reset
+Message-ID: <20250402095850.1f617dd4@gandalf.local.home>
+In-Reply-To: <Z-zlRSo6G1xWcd7I@tiehlicka>
+References: <20250401184021.2591443-1-andrii@kernel.org>
+	<20250401173249.42d43a28@gandalf.local.home>
+	<CAEf4BzYB1dvFF=7x-H3UDo4=qWjdhOO1Wqo9iFyz235u+xp9+g@mail.gmail.com>
+	<Z-zlRSo6G1xWcd7I@tiehlicka>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401221205.52381-1-ojeda@kernel.org> <D8VPGBN60E61.1Z48FQW6TL3A@proton.me>
- <CANiq72mdvnHvWbVNQbiXSRxd1xrF+A=v0RdJO74xeY3HyhRmcg@mail.gmail.com>
-In-Reply-To: <CANiq72mdvnHvWbVNQbiXSRxd1xrF+A=v0RdJO74xeY3HyhRmcg@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 2 Apr 2025 09:58:22 -0400
-X-Gm-Features: AQ5f1Jq2gyAHyF-tCYUwI-tokOiFWHXkHJV1fpYwtQRaEhz50SkLmO1wNlDMOqA
-Message-ID: <CAJ-ks9nAAcoJoFF+qNPbhsM32kOh9u+LGYUwFN_n9qqudB6YhA@mail.gmail.com>
-Subject: Re: [PATCH] rust: clean Rust 1.86.0 new `clippy::needless_continue` cases
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 2, 2025 at 7:15=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Wed, Apr 2, 2025 at 1:53=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
-> >
-> > I'm not too sure about this change, if the loop is longer than one
-> > screen, it makes a lot of sense to have a `continue` instead of `()`,
-> > since one might not see that there is nothing after the `match`.
-> >
-> > I also think that an explicit `continue` is nicer from a expressability
-> > standpoint. So I think we should keep them.
->
-> Yeah, I feel similarly. It is sad because the lint did find other
-> cases in the past that were useful.
->
-> If nobody else cares about keeping this one enabled, then I will send
-> the alternative patch. Hopefully we can re-enable it at some point in
-> the future.
+On Wed, 2 Apr 2025 09:20:37 +0200
+Michal Hocko <mhocko@suse.com> wrote:
 
-Rather than disabling globally, why not `#[expect]` these instances
-with a reason?
+> Is it important to tell the difference between thread and the
+> whole process group exiting?
+> 
+> Please keep in mind that even group exit doesn't really imply the mm is
+> going away (clone allows CLONE_VM without CLONE_SIGNAL - i.e. mm could
+> be shared outside of thread group).
+
+The main reason I'm OK with just updating the sched_process_exit()
+tracepoint is because it is in an arbitrary location. The process is
+exiting, but because the tracepoint is basically in the middle of the
+routine, it doesn't really give us any information about the actual exit.
+
+This tracepoint does give us if a task is exiting from an mm. You are
+correct, it doesn't tell us if the mm is going away. If that is the
+purpose, then here should be a tracepoint in the exit_mm() code or perhaps
+even in the mput() function.
+
+-- Steve
 
