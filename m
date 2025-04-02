@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-585570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F20A794DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:13:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34F9A794CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0BEF3A6734
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 665EA188B9B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F431C84C6;
-	Wed,  2 Apr 2025 18:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3CE19F436;
+	Wed,  2 Apr 2025 18:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="NiCNAVF6"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="M70sHcsc"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F511E4A4;
-	Wed,  2 Apr 2025 18:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A475819DF81;
+	Wed,  2 Apr 2025 18:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743617560; cv=none; b=tRQxpZcpCcccCRvPTNsLrUerFQexRqIm0FmoWN95NHHFXXDTxiN13uQMJdk39xlY8TLu9mr+OhUqLyDUrHH5S0vtZcfWb8HcL/7C1JTJktX13aSMUk+Re4Lvs6fLqW20aHrm1I/wztTw7jg0hBwi6G51EBGLPfzsjVJBO2mMgXU=
+	t=1743617190; cv=none; b=jsK7MANC2gPruxiEFr8F4DvW+Se0AXyyzcO2gZxI4RrNB29ExoNympkCt6Q0BIp4b6cLHKU4I+vnEKn3FWo24VtpJstJJRFjWhpbZn4Dn/wgR/CZCjL+1ojJ6pcZwDnzbWa4YGdR+IQXEHIgKE4xtuzu4rVQMSzikURirHxxkq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743617560; c=relaxed/simple;
-	bh=0n6pbPbBFXO6F6NC6Z8YzjeEVwNH4KpdqQGNkLICOSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6oB1G2Va2k1G8WOuF6eAxpq0Se69eBtT51CrkLA7Oo7vd7eMEiIt+l89gl/schnorjc+nY7d6CzQ5G5xWve9bniDtNJpUt+PH3hS8RqRTI2uB73uE0Azc1B/4r1AL4ROZBMtBdRS6cKvSDbnoaM3Ii1qRmfXrmccArakXwsZ50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=NiCNAVF6; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=bFVTcaoOHvzB77kRb/8KCMv+VqWoJTJ1wosVmH/V6QY=; b=NiCNAVF68Pb2JNgYYfkMpVbvxG
-	CuACbSWFHjMoKQczDbAhaPGBZq/siPTkUG6e7E8SbEzmYZ0uBvrl3YbCvQ7PN/WWGW8FNwtPlFtDI
-	doG+XLolNz6FjMvTQvH9Rkei5k7Qzm/UytZ6Li8wgA1WVhbkSgU99pXqeYpXpTGTngvdWYhKu2ieF
-	Om0qLwvMKz2kKDXb/n0hCqttoZLi1sVpRq8pXmttHzrnX9mqWcdnA/KoRHwOOUcmEVI+m+abdwavL
-	QPPotbDfAN1ParlfI3WbMkZhq+0zOhJnynj1/ZCCii7+MQeqQhPIDnsRUdBITX1J2Woaoi9qKHHHe
-	MJnJvVWQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1u029k-00BzfB-2S;
-	Wed, 02 Apr 2025 18:45:40 +0100
-Date: Wed, 2 Apr 2025 18:45:40 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Michal Suchanek <msuchanek@suse.de>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: tis: Increase the default for timeouts B and C
-Message-ID: <Z-13xOebA3LvQQ-8@earth.li>
-References: <20250402172134.7751-1-msuchanek@suse.de>
+	s=arc-20240116; t=1743617190; c=relaxed/simple;
+	bh=9pQGGuSouKXoS8qG0zRttHnAPodUpm8bR+nFZgvVr3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GHSoSp6+UgkSt9OVpiGAdiBv6jJZNU2fjH21k397CMvSJmztXz/uqUybq4H8J2nGeNl61NojefrTtgoA5agLzlBxY1gkIX/oO30/dOYPmdbk13d5JE+ik8zNMJdNt7LfZhLQlZdTDVYvpqxWk+3Zl0yotlN5H7Za0mfrHHWWQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=M70sHcsc; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=7VdTECC2N6MiKQNDMTygCmE5/bjawPj1l5VgBhhTh2I=; b=M70sHcsc8pTsjpaScMMBOWc044
+	1pcXqmpoQpvbfg4oMB/RNHpvOWrAyTPjzw8BVQJHCah/JbAvFTahgtmAC8Z/+2sABBefFRE7GX6Bb
+	DWbA6aNY2EqdGlrmpiEqC25OKbfhTiXX8JyJT1UhHBBU02qGEFFJn5bh/mPh3jsxbcvaTn+qh41Zr
+	DyeNo+Noj4MZP7qpPLSnulbI5OKGKYjeqb+Wut+zg6SN77lgRZe3pw93qJKqn4IXfKlTQ0y1jfPaI
+	yTqwcKb3bTU29592SPyuFjQoIU5F01ExwAQJcfzDP36scINgw/WuM+8A1daAaYBKsRLkWQvuvmuUL
+	l/zZFzJQ==;
+Date: Wed, 2 Apr 2025 20:06:17 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-omap@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ devicetree@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 2/2] ARM: dts: omap4: panda: cleanup bluetooth
+Message-ID: <20250402200617.0482a150@akair>
+In-Reply-To: <aded0940-45d8-4063-a1a2-f0763d509095@kernel.org>
+References: <20250330151401.444956-1-andreas@kemnade.info>
+	<20250330151401.444956-3-andreas@kemnade.info>
+	<aded0940-45d8-4063-a1a2-f0763d509095@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250402172134.7751-1-msuchanek@suse.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 02, 2025 at 07:21:30PM +0200, Michal Suchanek wrote:
->With some Infineon chips the timeouts in tpm_tis_send_data (both B and
->C) can reach up to about 2250 ms.
->
->Extend the timeout duration to accommodate this.
+Am Wed, 2 Apr 2025 14:54:12 +0300
+schrieb Roger Quadros <rogerq@kernel.org>:
 
-The problem here is the bump of timeout_c is going to interact poorly 
-with the Infineon errata workaround, as now we'll wait 4s instead of 
-200ms to detect the stuck status change.
+> Hi Andreas,
+> 
+> On 30/03/2025 18:14, Andreas Kemnade wrote:
+> > Bluetooth is available on the other Panda board versions, too, so move
+> > stuff to common and specify the needed clock properly.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  .../boot/dts/ti/omap/omap4-panda-common.dtsi  | 31 ++++++++++++++++--
+> >  arch/arm/boot/dts/ti/omap/omap4-panda-es.dts  | 32 -------------------
+> >  2 files changed, 28 insertions(+), 35 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
+> > index c860b590142a..05c871d31d7b 100644
+> > --- a/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
+> > +++ b/arch/arm/boot/dts/ti/omap/omap4-panda-common.dtsi
+> > @@ -367,10 +367,8 @@ OMAP4_IOPAD(0x130, PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c4_sda */
+> >  	 */
+> >  	wl12xx_gpio: wl12xx-gpio-pins {
+> >  		pinctrl-single,pins = <
+> > -			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 */
+> > -			OMAP4_IOPAD(0x06c, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a22.gpio_46 */
+> > +			OMAP4_IOPAD(0x066, PIN_OUTPUT | MUX_MODE3)		/* gpmc_a19.gpio_43 - WLAN_EN */
+> >  			OMAP4_IOPAD(0x070, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_a24.gpio_48 */  
+> 
+> Apparently GPIO 48 is FM audio related and has nothing to do with wl12xx?
+> So should we drop it from here?
+> 
+Well, FM audio is part of the wl12xx, so it is a bit related. There is
+no driver for the FM part upstream. It is a bit suboptimal, so feel
+free to submit a patch to put it somewhere else.
 
-(Also shouldn't timeout_c already end up as 750ms, as it's 
-max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C), and TIS_SHORT_TIMEOUT is 750 vs 
-200 for TPM2_TIMEOUT_C? That doesn't seem to be borne out by your logs, 
-nor my results.)
-
->Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
->Signed-off-by: Michal Suchanek <msuchanek@suse.de>
->---
->An alternative would be to add an entry to vendor_timeout_overrides but
->I do not know how to determine the chip IDs to put into this table.
->---
-> drivers/char/tpm/tpm_tis_core.h | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
->index 970d02c337c7..1ff565be2175 100644
->--- a/drivers/char/tpm/tpm_tis_core.h
->+++ b/drivers/char/tpm/tpm_tis_core.h
->@@ -54,7 +54,7 @@ enum tis_int_flags {
-> enum tis_defaults {
-> 	TIS_MEM_LEN = 0x5000,
-> 	TIS_SHORT_TIMEOUT = 750,	/* ms */
->-	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
->+	TIS_LONG_TIMEOUT = 4000,	/* 2 sec */
-> 	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
-> 	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
-> };
->@@ -64,7 +64,7 @@ enum tis_defaults {
->  */
-> #define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
-> #define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
->-#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
->+#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_C)
-> #define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
->
-> #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
->-- 
->2.47.1
->
-
-J.
-
--- 
-... "Tom's root boot is the Linux world equivalent of a 'get out of jail
-     free' card. The man is a *hero*." -- Simon Brooke, ucol.
+Regards,
+Andreas
 
