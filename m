@@ -1,79 +1,100 @@
-Return-Path: <linux-kernel+bounces-584978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D232FA78E27
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:22:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1760FA78E31
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D993AAF09
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:21:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD5C7A525D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2847223A987;
-	Wed,  2 Apr 2025 12:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20A223957D;
+	Wed,  2 Apr 2025 12:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ubXR4d7k"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WaglpUHh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C663F238D39;
-	Wed,  2 Apr 2025 12:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476B4237703;
+	Wed,  2 Apr 2025 12:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596472; cv=none; b=NQnCRUTX9oKGsmFfPGePgXYDzzfp7Qw6r719dNMgHUbZSym056eZv7/tmvzWNfVnVBQ08P232bX/bvRb6aanUqDvsGXVhFoio+IqdrJuWS7ZS9qeeR85Rk+5TKBA4q0CfPSZW/KIcsWHtdzNAdljBZzOa2iShOFlqkIhoUi59Gs=
+	t=1743596589; cv=none; b=HdOPjHoQL8RmMVasdkHYfrHzcrdlqkwLlTuzcaABlI190LtCiIkfKl3zZoRsKj3WU2Y3i0txvQ+J6er0DWo3h9GOte+YvAWP2sbMC++P6/TkTeOHtlI5+KrJVdL0ZRvRHOOqKa7cE2Mgd1a2YOoaqE0rAZ55Ly/nesjXibYGujM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596472; c=relaxed/simple;
-	bh=+Ds8HgjZZO+CP6jfwATICVt4PfCpv+l3LbQfdw5ZnQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6aLFwpKX7jppH/ouSehtd5g0UBJPJmTXFIyL7WDlqmapI7CS9sLjbUJlf4yugAs2W58Et+cBjNMyIWozU47zBWhi1E1H/Pzplo2R7zpfX+PU63hf7aJ1CNaQ4p0HUYgZ0NwTz66/LeaSU1dDrca5Q1XsxocIa7xI3TddeKlh9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ubXR4d7k; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=g6S1SZ66evHddI0d0mVypp923OoaFor/bIVE2U1Pgsc=; b=ubXR4d7kUAA/nRulsdV6sYIsTB
-	+PDpjYSpFirN3jL4jd9bRMNf0XfhGpR48ZyEjANimmVSMWEEKF7JDwybsWeISvFuyotquqibaFWoB
-	jbGxsmk0VB3P3u2FcbGBpf9OpnFFFPINRHQcS/rR+Fj4a1KYNQWD3WWoVpXuQNyI+yj53O0Q3ete9
-	xUwdzFsxTtV3DBENz3QyglkvwnEGH09ROHpUe8HFAIyNr+N1pCXa4mzhCQFkhClpJyB3OFsPDUIso
-	PdqbLUIi1wz/xgrTZ968kjFaLEIBCk/d0FwYhkmGnOl2LrhsEne559XltLAvddTri0mdyOyJzvpjh
-	YTDpBuXA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tzx5c-00000009RmX-34Nr;
-	Wed, 02 Apr 2025 12:21:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5614130049D; Wed,  2 Apr 2025 14:21:04 +0200 (CEST)
-Date: Wed, 2 Apr 2025 14:21:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, vbabka@suse.cz,
-	torvalds@linux-foundation.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org
-Subject: Re: [RFC] slab: introduce auto_kfree macro
-Message-ID: <20250402122104.GK25239@noisy.programming.kicks-ass.net>
-References: <20250401134408.37312-1-przemyslaw.kitszel@intel.com>
- <Z-0SU8cYkTTbprSh@smile.fi.intel.com>
+	s=arc-20240116; t=1743596589; c=relaxed/simple;
+	bh=EQIiQqn4MEuK9eRh7/WW34wPqEOkWU+1ubSWfaDXEcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sRX3Tg+aGMKP/31PcgiBBPOnLwd9B/N3ZrSh6LZHaRqtmYH5w7NNFNbK2pl0+iultddqwJZtvLsw4aTfNLwa2WtHo6uPXdXPUf17QrwBXotVPzhd97kNqOyBn6tSAEgGCtaH8I2JR3rfGmdZtmGldIy6GCzkkfI98CDeo5gabWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WaglpUHh; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743596588; x=1775132588;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EQIiQqn4MEuK9eRh7/WW34wPqEOkWU+1ubSWfaDXEcs=;
+  b=WaglpUHhQ+Q6JImqMXlTIZ5jdFI0s4x8rwUWqCPmxKqA0MCVw15siy18
+   c3TF3geQl56wvPuXjCmwCX4xYgaswhkI4NQQqe44hoOO+Yv64wyKBt6kp
+   CKfLhQMglK7aQ6wWUVbkV28n1laLeN3iTivMZcmnjjQmPNxhUywb5x5QM
+   zT01GAqlGFd9zC0Pz1JoFwdvds2uB7iVDweEbxeoqs9F98FbeJr6DTK9d
+   ZaxxIPt55dsIDSY5trO/8GMyjiVeziQOfTOItzCBd1K157acwZHrA8h/G
+   79Wt9zSYpA4hLzi15mgRAMQMX7hBpUKiviY8PGmnVXXLe9bhpf64AyoPC
+   g==;
+X-CSE-ConnectionGUID: u8VQcyC3QJSlZxTumiwSCQ==
+X-CSE-MsgGUID: GJgxNa+IROyMhbflAXokpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44865037"
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="44865037"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:23:07 -0700
+X-CSE-ConnectionGUID: aITze/OwShipQqa5VGs2VA==
+X-CSE-MsgGUID: S3J+iroVQKK53DugNUhDKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="157635537"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 02 Apr 2025 05:23:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3719026D; Wed, 02 Apr 2025 15:23:02 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 0/5] gpiolib: acpi: Refactor to shrink the code by ~8%
+Date: Wed,  2 Apr 2025 15:21:15 +0300
+Message-ID: <20250402122301.1517463-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-0SU8cYkTTbprSh@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 02, 2025 at 01:32:51PM +0300, Andy Shevchenko wrote:
-> What would be better in my opinion is to have it something like DEFINE_*()
-> type, which will look more naturally in the current kernel codebase
-> (as we have tons of DEFINE_FOO().
-> 
-> 	DEFINE_AUTO_KFREE_VAR(name, struct foo);
+A simple refactoring of the GPIO ACPI library parts to get an impressive
+~8% code shrink on x86_64 and ~2% on x86_32. Also reduces a C code a bit.
 
-Still weird. Much better to have the compiler complain about the
-obvious use of uninitialized.
+Andy Shevchenko (5):
+  gpiolib: acpi: Improve struct acpi_gpio_info memory footprint
+  gpiolib: acpi: Remove index parameter from acpi_gpio_property_lookup()
+  gpiolib: acpi: Reduce memory footprint for struct acpi_gpio_params
+  gpiolib: acpi: Reuse struct acpi_gpio_params in struct
+    acpi_gpio_lookup
+  gpiolib: acpi: Deduplicate some code in __acpi_find_gpio()
+
+ drivers/gpio/gpiolib-acpi.c   | 138 +++++++++++++++++-----------------
+ include/linux/gpio/consumer.h |   2 +-
+ 2 files changed, 68 insertions(+), 72 deletions(-)
+
+-- 
+2.47.2
+
 
