@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-585484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703C3A793E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:36:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381D6A793EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0293B435A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D309318951BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909D61AAE17;
-	Wed,  2 Apr 2025 17:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzY+zyLP"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A58C1C6FF4;
+	Wed,  2 Apr 2025 17:39:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78251373;
-	Wed,  2 Apr 2025 17:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF791AAE2E;
+	Wed,  2 Apr 2025 17:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743615374; cv=none; b=Dx2dfL2Or9OkbQl9n16D279sVy1z1q0OzTlpe75M/Fn68I57m8VTSJvED3FFoXdWV5ihKtA+kf3oe5BSX2s3TCXXqwjv9CWxCH27aoyr4cVSZtf9eiC2EagCUVvwDfb6wqkOahv6Krzke23oSq9CTmDpeGfizQ15bq6v2JxIbIA=
+	t=1743615569; cv=none; b=UKt5A2OzQj3BuYic3Y9JIA/0nKBIYNzyMHWZ2idGifF/w/bnaRTnT5hth9Z+IXp0lWa0PV5pIhzqDtiuDpsuFKtsgU6T0vHF2qLbXlbkPJkcsZOgBaZQxQVoKoBiXaU1kDUM52F4IxujZlh2CaHbvVvgXieCoUPK/JgGGmqKHh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743615374; c=relaxed/simple;
-	bh=XYepnn+4Z6u72L9tQoVt8YSYl3/VkaS1Sw16suZ3Lnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BIySjB335t3/KbQhMWSoYzaY2vWxgHllAVVXkvYET7I6jkZWt9vQrn0/7wTSETMZfBD1ILlpsnRHRpnASPhraNYVRAba43MHgeNP7xu/wYCL/Zd0BZqESmid9uNiqGOP7zmZ9JNfjYuDZHqevbv7S5Jom+/i6xYIP3Lf3H3+iwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzY+zyLP; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39129fc51f8so72821f8f.0;
-        Wed, 02 Apr 2025 10:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743615370; x=1744220170; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xJF/yDLwsfW5UrwVXzqdx75NmNQKrLzOg1Gm4WonWkE=;
-        b=EzY+zyLPCzD7dvy0BGiC5yBBXyAtKkCJxK8C6VUn52k0ZcXxUSG06cdePOOSdZjaqz
-         KeLQgL49kd698JsOuMZw6wutysYHg4jZ5kEFfEI648cTss4tL6ss9yZNi27TbgPntWU3
-         2mM3Rqec88xK/BeOQOg323gARIxGGouNnNZwM5MRCBKVLWn88bQeyK+z10l32b4DqhgT
-         WpVYq7R4A1krdsiU0A53vHtJh+uYB0W1Ki+elgM/zS1egLw+l4NQSE5NzQLy4ISXSo0h
-         z4xUnrIPjF2qSA4yTzj8BRV+utgAGlDS0jilwB1qf+SV8drvMEzdswiZbPB8bSvKohVq
-         6rtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743615370; x=1744220170;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xJF/yDLwsfW5UrwVXzqdx75NmNQKrLzOg1Gm4WonWkE=;
-        b=eSNba3HDmVMXitTVmHToUNc2W2i1b0suEsrW85/p9N9IwjoksdD0aWOAVXfA3MwfIU
-         qSKGK0hyX7Ow7lD4+OPBPPKhMA0uRbRdej95zz2LlF6WrapIrRdqB/A/6j3bPwXlcT/v
-         4aMirCYwemzsrJpNagTO7dtbDgAezjGzPPqqmkD5Bt7KJjs3SJVo7jYxyis7nV48tVE/
-         bJtrIP3d/PrSCztzhXghetHuMuNcDqHOtjHh2DEfEpDIJrDD9E4qGXJbb5dXaW1KsssY
-         Ih+XaaNo1Su+6ey4Q29qUk7GwK7dhmNqgcSc23j7qEfwMEV5rbr/eKpzBpvuosVh4xlS
-         Alww==
-X-Forwarded-Encrypted: i=1; AJvYcCU+z86DYvLaABM0P3cWUWSI7nfzVf4eUS5Sx8BTVLwSDwySj/AkgWWh9HPw3cAQg9IgDA/z2BJKxvRdVQ==@vger.kernel.org, AJvYcCUs0JR28gWP+IOrQiQ657C7FLry3lswFrMbT6KJRY0J66EBC25Z8jyGrveV9o7OaLfKwlqVf40LaChJ+0M=@vger.kernel.org, AJvYcCVtDhc1xMzfSG7oQsnvjLxD/ym1pbqWmsF3X5ov9vYGWfM5pHhIE+1EFzzRfOkYgYQ0vw+i61cy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1gStJKRMvKr87U++DHmkLquRxDMmdGh9WJD5VRM+5QwUArK6j
-	0c5cLJjYGIcpAN+NKBTxsxXHBgnQIit9TczwzZH42Mz89iF3niRyPMCiMA==
-X-Gm-Gg: ASbGncvuNqByKnwFB6xbOAp3Evi7NT9YNho08lLLPsySJN20fODG3gEHZDctT4366EI
-	+SiQEwTocxBzWke22sT1gSItOh6FVLMIVoDoLmVZmjKU7Xsi1OVcLGbmSEyChNJbwEipHegvImQ
-	vxDOl0f30JWkgPfMCUJ2B41imlYzXlaINhAU9EoKhIEJvF8nocxKQoOeg3BGJ9P35Eob9HeBQ5U
-	LaEYCrP+C28puMmVVdouyAWD+1AE4yDLGYLx9a9LWXnWi2xxhv4Sih7XBW5ZU/I75HRj/6Clkj0
-	qkDVYBUr+me6q4Z30zqz4yzY4ElA9xDaTLxw7wf486RdeDJUabps5jBbN9UpjlrVdw==
-X-Google-Smtp-Source: AGHT+IEKaq5swH+Ld/WaSM+FM2PRUctpPNIAzaLPfh6179lOd77dDsKSDCZuW45hwzdmjqiQ95AdYg==
-X-Received: by 2002:a05:6000:4014:b0:391:3f4f:a17f with SMTP id ffacd0b85a97d-39c12114f62mr13489731f8f.42.1743615369806;
-        Wed, 02 Apr 2025 10:36:09 -0700 (PDT)
-Received: from [172.27.62.155] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b6656afsm17369462f8f.40.2025.04.02.10.36.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 10:36:09 -0700 (PDT)
-Message-ID: <afae7a4b-e39a-4775-89e4-bd967d1fdf4e@gmail.com>
-Date: Wed, 2 Apr 2025 20:36:05 +0300
+	s=arc-20240116; t=1743615569; c=relaxed/simple;
+	bh=T/M1oTnlfLgHDNNa9JJTluIXHs7D5y6ziqiRpkUvPPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WwQsrpbDH4nFWLq4W4xisqpXGzmOBEZG+Szj+vutYS/LwHqwV/tcpcJjeEmeXvodsH7qxu77VxLGO8cvm6Z2LAMgtyJXnoNBagv5Cy/VJHFuWN0cuaph/MuzkrgPFUMd03nNmXGs6o5T3j+4w9uLA9sKq279VvQI9r7tlv3bIi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F4EC4CEDD;
+	Wed,  2 Apr 2025 17:39:27 +0000 (UTC)
+Date: Wed, 2 Apr 2025 13:40:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Jann
+ Horn <jannh@google.com>
+Subject: Re: [PATCH v5 3/4] tracing: Use vmap_page_range() to map memmap
+ ring buffer
+Message-ID: <20250402134030.26a9b141@gandalf.local.home>
+In-Reply-To: <CAHk-=wh8=QAC0jjcjDRnmsmd2xDf97j8h25=aSFGeh9x+1X8UA@mail.gmail.com>
+References: <20250401225811.008143218@goodmis.org>
+	<20250401225842.597899085@goodmis.org>
+	<CAHk-=wifCDa6FfRKzeioYuEqJFTeXnYQ1DpeuYsmmn59NWuakQ@mail.gmail.com>
+	<20250402125548.02cc57d0@gandalf.local.home>
+	<20250402130337.5de5a8cf@gandalf.local.home>
+	<20250402131431.218d3458@gandalf.local.home>
+	<CAHk-=wh8=QAC0jjcjDRnmsmd2xDf97j8h25=aSFGeh9x+1X8UA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx4_en: Remove the redundant NULL check for the
- 'my_ets' object
-To: =?UTF-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
- <a.vatoropin@crpt.ru>, Tariq Toukan <tariqt@nvidia.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-References: <20250401061439.9978-1-a.vatoropin@crpt.ru>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250401061439.9978-1-a.vatoropin@crpt.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 2 Apr 2025 10:20:58 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
+> You should damn well keep track of where the memory comes from.
 
-On 01/04/2025 9:15, Ваторопин Андрей wrote:
-> From: Andrey Vatoropin <a.vatoropin@crpt.ru>
-> 
-> Static analysis shows that pointer "my_ets" cannot be NULL because it
-> points to the object "struct ieee_ets".
-> 
-> Remove the extra NULL check. It is meaningless and harms the readability
-> of the code.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
-> ---
->   drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c b/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-> index 752a72499b4f..be80da03a594 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-> @@ -290,9 +290,6 @@ static int mlx4_en_dcbnl_ieee_getets(struct net_device *dev,
->   	struct mlx4_en_priv *priv = netdev_priv(dev);
->   	struct ieee_ets *my_ets = &priv->ets;
->   
-> -	if (!my_ets)
-> -		return -EINVAL;
-> -
->   	ets->ets_cap = IEEE_8021QAZ_MAX_TCS;
->   	ets->cbs = my_ets->cbs;
->   	memcpy(ets->tc_tx_bw, my_ets->tc_tx_bw, sizeof(ets->tc_tx_bw));
+And it does.
 
-Thanks for your patch.
-You can add my tag when you resend, once the submission window opens.
+> 
+> You can't just say "I'll take random shit, and then I'll ask the VM what it is".
+> 
+> Stop it.
+> 
+> If the address came from something you consider trustworthy, then just
+> trust it. If some admin person gave you garbage, it's better to just
+> get a random oops than to have random bogus code.
 
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+This has nothing to do with admins. This would only occur if the kernel
+itself created a buffer from some random physical address and then tried to
+mmap it to user space (which would be a bug).
+
+My early career came from the military industry (I worked on the C17 engine
+control systems in the early '90s). It was drilled in my head to have
+safety checks throughout the code, in case something buggy happened, it
+would be caught quickly later on.
+
+The virt_addr_valid() would only be a debugging feature, hence the
+added "WARN_ON()" for it.
+
+But I'm fine to not do that.
+
+-- Steve
+
 
