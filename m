@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-585431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8513BA7935F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:41:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB8EA79376
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71C8016B47B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 861F0165BD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D56F1917F0;
-	Wed,  2 Apr 2025 16:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092761917F0;
+	Wed,  2 Apr 2025 16:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZ9/WGpi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCVW+1sj"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C5118C936;
-	Wed,  2 Apr 2025 16:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34F339FD9;
+	Wed,  2 Apr 2025 16:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743612064; cv=none; b=EQTw1EJlqv6z545S0tJ8zEjTQWMuwd96MUrx4MRe/cD/TFtSZAkq8TBzFR4x6/KBTeAbDxjXAC8VAmAErcXymVyieHuvIcUEtj1sUqXyg5ZXr389+A007MLgvOlKhFx2ihiGbmG59UM/FIyp+a2aK9xRJWRJJ0yWNq5KVK+6lLg=
+	t=1743612611; cv=none; b=pKbNsm3ZablyGkvn18I4fBcmOY7FwyktRdct8aIwZDEg51kRAHLgwTpyjt7dSan+M2FXQqKoApoTosy4oay2Nufru+74AK/TslQCtakbg8W+43YRgbAHWxbnT8vkiSS8IoVipmwG0fwMkZbKpkAq/UTmdJPIm5QzpiVtqBzC6Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743612064; c=relaxed/simple;
-	bh=JL3Fc6Tx+Y7KKkGF51EOD/8yZESEW5Hbu4AYBc2UUrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJuLUIgHZ5uDCweDuKyAefuDOfL4JyPalIlTltWr7GoKN0VEHbpRAWI13OSAqmmvEPp2oIREa3l37iBqCHHOys00fzy2JjokWiBMPkghHU1sADq36iKmAIlFcA+k/BkDUzwa6FxZTGwGBs3i/TFnWdyBO0mfWwY+rjxGbrjSafw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZ9/WGpi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14142C4CEDD;
-	Wed,  2 Apr 2025 16:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743612063;
-	bh=JL3Fc6Tx+Y7KKkGF51EOD/8yZESEW5Hbu4AYBc2UUrI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZ9/WGpiBdApatkU/d5aXIEl+WX0smTkXKrSB3ldd+SYl+KKwiJfRxS3Ffosk/QIE
-	 A870YcJT/MKSH0geGokVXHyBKxhEKl1t0PSQ3m9qS+S+0lKlTK/PIZGvwzlGIQRB+l
-	 5QEm0Een/ahWUEQpOxsWE83ohXUbfW86/OPkRrGjtLmUejFzt14QHVHVFqtcWsHjMl
-	 loy/psVrs21p1kTL0YmeuH06KfbmZJdWlZJyQnzRhiVjfM2mIXmAXplt7qZgUOazFv
-	 jsaeCLzl7m1UFch4Whr5CPBrxwEUTL9BO35nPnQ8R8vq/PPhNbLOOTlgoUUKvEZuak
-	 m/O6nScePRV5g==
-Date: Wed, 2 Apr 2025 09:41:01 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	linux-crypto@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH 1/7] lib/crc: remove unnecessary prompt for CONFIG_CRC32
- and drop 'default y'
-Message-ID: <20250402164101.GC1235@sol.localdomain>
-References: <20250401221600.24878-1-ebiggers@kernel.org>
- <20250401221600.24878-2-ebiggers@kernel.org>
- <2c1cbb51-cc16-4292-ad30-482d93935d91@infradead.org>
- <20250402035107.GA317606@sol.localdomain>
- <81aac5ff-8698-4059-92a2-bccb998eb000@infradead.org>
- <20250402050234.GB317606@sol.localdomain>
- <b5589b7d-d4a1-4b12-a845-afdbb26ed845@infradead.org>
+	s=arc-20240116; t=1743612611; c=relaxed/simple;
+	bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SaZbMqzoHmKkDtROPtItVwN9EzF84qlSpsxZPNgsZyRjJHBDShUoX3J7sOKbSlqb6VwdPlQ/eqiTNBfG8LB/sn+O90bQegb7yR8zg1La+3s/zwwPldfed7YR2AYC97j1W+gv1JZDPcFobWDGzd/W+YM0XWc9BJh2rFicChQRSUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCVW+1sj; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30c461a45f8so71071751fa.1;
+        Wed, 02 Apr 2025 09:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743612608; x=1744217408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
+        b=DCVW+1sj40fGUKRxLGUivVW/+w7Wi2PN6NL0RiGN/86O9L/XELZi9rhNBOL5ZybJzR
+         fyeF8r9TsDvoQe37fmXpVNprmcFDypjZAlfEZ1pvC/2snMJOrjDGsrRZEjT+eaEOGrGt
+         TfS5pKUWrSOd5kfT+PO1yQIEC2L7h4ZeFYfq6Inh65iYvbZW1AxHTFvDiP4l+rh8EbtV
+         MVpp7rcFj0UJn+BLB77FziAdWHy/5tlPdOSKhsO7WvCzv9cKSpnpDDfHzIhW2irZfI6j
+         SMW8FiXbUCUYLbxD8RRf+qGDMdY3iBlSKJQdhvHtkNkIj4GGJYNaHVzQkG/YvUtVg9mw
+         U67g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743612608; x=1744217408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iSZjFV4FMkeVCtteZT6YTkC//p4kPDrkkcJ34PwkHrM=;
+        b=g0wOde8P8+RGEK6hprMA1xfbwdBphMfnA5dt1rKa5+DdeW6ny9DZnDTjB+7ID2nod7
+         cFfgpvU/T+qFdjd2dKMJe+6dInJL+EwbmeL5iCsXyd0zwXzlcv4AbWPMfeLZkELesU8/
+         JBgCG9ZjdZyIGGRg3lIj/UYMLXGedrf93/M79iRI+JZlxd3loBQjO8zS3IhP38xJoZCs
+         8Ntjs+JN6L+E+Fp/fukU+RO7MddzSjPhki84+2ACtuA9/+FPJ2f/D08ju/r5tYknTXw8
+         7qID3a0TPziHzpc29lTqbre9MaHY9+Yp+PG1TJxf0JFfF2Y9uFpueLKj7lx8JvfBRI4L
+         op8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUITJpw9tkVXHXIKIHB8UY7dsGvwRser6IN+GNlT92Xox6h7que4hb+GYtI0tJAoz0EVUcHWciU9sb9SoQ=@vger.kernel.org, AJvYcCUJehDlI6JcWAK8RHBFTykJUisa0OM1mdUTRKhdhp2F9T/IEBqtmqfdSHTJWIjtVwdXylsQmouCJynfMS6v4Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfDlsuNUINNArNslpnxI9DnoQspA7v7YRRwnZ2fR+noliAvZXl
+	BqY8EGcwBVWU9dwjns1BH3u8NPk6jcRa2ofhGnzN1IkcvaWgpoW9Epz6sav4SYNP5eOKu6xV2Hs
+	Biaa6qls/+CXI2C0Q4OikT52LqWib/iMK
+X-Gm-Gg: ASbGncvGUKau8cf9milB1uerPzsJWpWBhz96HQctTBolXcpldXsZsHMgMI9CXAWFkFS
+	Xhn5EuROF10zVJ9iQ88dRa/qkOK48/fKoIAELsY0Tx8EPcWEGEQ/JTBq/chriIpC0PMP/jBsh3f
+	BRAXqXmVXpP1q5FMRwTCI4Rv3/1UD+DomIRt4lL0DozQ==
+X-Google-Smtp-Source: AGHT+IE8elyosTdcge4gKh9yer1gFMOPkHrLQdRFSkE8Vt/zBXv7geZvsuea4+ZxrXW5DeT89Anmh1JfpH4cJv9vJiA=
+X-Received: by 2002:a05:6512:1597:b0:54b:e9b:db23 with SMTP id
+ 2adb3069b0e04-54b1110d348mr4845013e87.37.1743612103286; Wed, 02 Apr 2025
+ 09:41:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5589b7d-d4a1-4b12-a845-afdbb26ed845@infradead.org>
+References: <20250401221205.52381-1-ojeda@kernel.org> <D8VPGBN60E61.1Z48FQW6TL3A@proton.me>
+ <CANiq72mdvnHvWbVNQbiXSRxd1xrF+A=v0RdJO74xeY3HyhRmcg@mail.gmail.com>
+ <CAJ-ks9nAAcoJoFF+qNPbhsM32kOh9u+LGYUwFN_n9qqudB6YhA@mail.gmail.com> <CANiq72k36Tvwbzkg6nRdxB8VNRHLf8QzLeCXZq7sEPewccsWNw@mail.gmail.com>
+In-Reply-To: <CANiq72k36Tvwbzkg6nRdxB8VNRHLf8QzLeCXZq7sEPewccsWNw@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 2 Apr 2025 12:41:06 -0400
+X-Gm-Features: AQ5f1JpBg-RQ9FN1Bi9_jh02mPTTG_EQqJu7_lcW5lhfKYW7j632XCXjTVZcM4Q
+Message-ID: <CAJ-ks9nfEg=sdn_-q+xOc+k9mU0pdMuumwRb76LXzE3RcOtg6w@mail.gmail.com>
+Subject: Re: [PATCH] rust: clean Rust 1.86.0 new `clippy::needless_continue` cases
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 01, 2025 at 10:56:32PM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 4/1/25 10:02 PM, Eric Biggers wrote:
-> > On Tue, Apr 01, 2025 at 09:50:57PM -0700, Randy Dunlap wrote:
-> >>
-> >>
-> >> On 4/1/25 8:51 PM, Eric Biggers wrote:
-> >>> On Tue, Apr 01, 2025 at 08:42:41PM -0700, Randy Dunlap wrote:
-> >>>> Hi 
-> >>>>
-> >>>> On 4/1/25 3:15 PM, Eric Biggers wrote:
-> >>>>> From: Eric Biggers <ebiggers@google.com>
-> >>>>>
-> >>>>> All modules that need CONFIG_CRC32 already select it, so there is no
-> >>>>> need to bother users about the option, nor to default it to y.
-> >>>>>
-> >>>>
-> >>>> My memory from 10-20 years ago could be foggy, but ISTR that someone made at least
-> >>>> CRC16 and CRC32 user-selectable in order to support out-of-tree modules...
-> >>>> FWIW.
-> >>>> But they would not need to be default y.
-> >>>
-> >>> That's not supported by upstream, though.
-> >>
-> >> Which part is not supported by upstream?
-> > 
-> > Having prompts for library kconfig options solely because out-of-tree modules
-> > might need them.
-> 
-> Well, I think that is was supported for many years. I don't see how it would become
-> unsupported all of a sudden. IMHO.
+On Wed, Apr 2, 2025 at 11:27=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Wed, Apr 2, 2025 at 3:59=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > Rather than disabling globally, why not `#[expect]` these instances
+> > with a reason?
+>
+> That is an option sometimes, yeah, but in this case, writing those
+> lines is also a burden -- one that is, I would say, worse than just
+> using `()`.
+>
+> It would also need to be `allow` here, not `expect`, because older
+> versions do not complain, which makes it even worse...
 
-Most kernel-internal options aren't user-selectable, though.  It's mainly just
-some older ones that were made user-selectable for some reason, and that is a
-mistake that has been getting cleaned up over time.
+=F0=9F=91=8D
 
-Consider that the upstream community has no visibility into out-of-tree modules
-in general, so there is no reasonable policy that could be applied in deciding
-which options should be user-selectable purely for the benefit of out-of-tree
-modules.  The only reasonable policy is to consider in-tree users only.  Just
-like we don't add EXPORT_SYMBOL() just because an out-of-tree module wants it.
+> So it is all about what a lint gives us in exchange of those false
+> positives, and about how much time people would need to spend on it. I
+> have always supported adding lints (I think I added this one, long
+> ago, in fact), but I don't want that we overdo it either, so I am
+> happy disabling it if it is going to be too painful.
 
-And of course downstreams always can, and do, just add a new kconfig option that
-selects any non-visible options they want.
-
-- Eric
+The counterfactual is hard to prove - you don't know what true
+positives the lint would catch. In my opinion disabling lints is
+risking throwing the baby out with the bathwater.
 
