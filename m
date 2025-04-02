@@ -1,279 +1,192 @@
-Return-Path: <linux-kernel+bounces-585644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C1EA795B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3340DA795C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D463B4217
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:15:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BE518919C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8410E1EDA2E;
-	Wed,  2 Apr 2025 19:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75BE1E47B3;
+	Wed,  2 Apr 2025 19:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzhYOeS4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="iRHE1Dob"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A5C1E9907;
-	Wed,  2 Apr 2025 19:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DA31442F4;
+	Wed,  2 Apr 2025 19:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743621305; cv=none; b=eWAko5hzwwQ9+kgt1vfmwel47Qkj6qi5BngQg5Ks4zPGZmGMpLHktK7T2ys0N8wnULDtNHYk12+OCqrqcJjnH1Q/T/PcG/6BZRBjPJeYXnpMbw1Rjc1WDFPnCLZG2kXAwCWYvb/xPpOmHC5ozfd08SRuuhSaa0xyVorlcOUCkn0=
+	t=1743621398; cv=none; b=Z2vibACnhPGF40s8UwONZN2X6R+FFDvuuNkdlU4/g5pvJUHhdrKZy7kFfMzD75Vofuzf1wPXdY2s5/2iwaiEl/Th5PcC/KC076XIXMCoMLryn5ffQm6bjjtGuENvax20IqRKOGXwzzrMPcIwRaMrrgIMB4HRPD6l1xcob86ld7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743621305; c=relaxed/simple;
-	bh=/6ORwPGEylk2ensJ45ZIl+JuJVNYG1Rvk/NerUkupug=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V5UohpC9Ci6YuYPzuKjcRVlAXioRVfmAt1yEhta5ewxEPK3Dmi9EeLIF7GiJSc7pL+78asKGPGhX9oJjpJ15aZ4X+dtENMtflO10vUfmERK1hx1L83sK+f/2l0ORFzx3AJgfV/YHrLe6Z+tp0kitYUGQ5rGrn+p5wByaOBKkR+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzhYOeS4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B141C4CEEA;
-	Wed,  2 Apr 2025 19:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743621305;
-	bh=/6ORwPGEylk2ensJ45ZIl+JuJVNYG1Rvk/NerUkupug=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=PzhYOeS4NRLsh4sJf+eypzdtQPJJxbI3KdhTBTmR0KJgQqMhHXj4PoMYSR7I4c0vk
-	 rhcXGW5M9WQMt4hTgHjDM0zB+poLLZno9n1tY9qrdHZsU7LF9N/KpLLL9iC40V7Pmv
-	 oQjcbov0CjyaZodOAGwSmXbZDUlmboTPKShiCU4/7LT0C0skkoFXLlPENABvDgEfN9
-	 zkJFGn/Z7NUwq5Mj/f+QuEkXayIX2Kn5frzgI65KI0CPM95JsqmKQ/aaLQ1G/iwjTE
-	 +kVRE0Rg6FYgWOOowDzU+c7QyStLSTBbuTzHrWh+zvPMpnjiUSO8lR2EodG9r4TaKp
-	 FbskvvKeG0ZWQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CB4C3601B;
-	Wed,  2 Apr 2025 19:15:05 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Wed, 02 Apr 2025 21:14:17 +0200
-Subject: [PATCH v3 5/5] iio: light: al3320a: Implement regmap support
+	s=arc-20240116; t=1743621398; c=relaxed/simple;
+	bh=cAs+wIf0YxeeJJc1k2FwvxC4kPJYJUIJfrDRhxRP4Us=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B0HbxwPs6DVcTM5Cwl0d2jG5SVCPvXjGWkHoRCxxgaPn+ZPKOOE4/lCePi+NK7B8EDQmVQzYOkZont5JLZV4OuxDY0CXQ11GKwk7wMvvRj50eVhXe4d8ELTRQh/IhHZ8zrSR8LoPKH5/pX9es3/84HwUpFticWc3xglTD8QlahY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=iRHE1Dob; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1743621397; x=1775157397;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=8umj+ndDF/ipCfwtuKdMZkQWmOijnGXaazU2k4hwCNY=;
+  b=iRHE1DobpITxvIKwFSr7VZ3/+YI7EtW6fBkoKLP9AVJoEHINPrYiYYIf
+   TCn4mwAQ/2r0kxyeg9XIcaWoMT8XCXQ9N/RqnyvgyO2gZKAyXJORopRBJ
+   D052Je+b6KT8dTDxXUnQGOcV9Gvqx2MhUe9fRpXp9i2nshqSlw3S5cJzP
+   I=;
+X-IronPort-AV: E=Sophos;i="6.15,183,1739836800"; 
+   d="scan'208";a="37530635"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 19:16:34 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:8453]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.61.148:2525] with esmtp (Farcaster)
+ id 3d208980-fd57-4d9c-b742-ec30a98b0997; Wed, 2 Apr 2025 19:16:33 +0000 (UTC)
+X-Farcaster-Flow-ID: 3d208980-fd57-4d9c-b742-ec30a98b0997
+Received: from EX19D020UWC002.ant.amazon.com (10.13.138.147) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 19:16:29 +0000
+Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
+ EX19D020UWC002.ant.amazon.com (10.13.138.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Wed, 2 Apr 2025 19:16:28 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com
+ (10.43.8.6) by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Wed, 2 Apr 2025 19:16:28 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com (Postfix) with ESMTP id 88B30A046F;
+	Wed,  2 Apr 2025 19:16:27 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id 1CF466148; Wed,  2 Apr 2025 19:16:27 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Changyuan Lyu <changyuanl@google.com>
+CC: <linux-kernel@vger.kernel.org>, <graf@amazon.com>,
+	<akpm@linux-foundation.org>, <luto@kernel.org>, <anthony.yznaga@oracle.com>,
+	<arnd@arndb.de>, <ashish.kalra@amd.com>, <benh@kernel.crashing.org>,
+	<bp@alien8.de>, <catalin.marinas@arm.com>, <dave.hansen@linux.intel.com>,
+	<dwmw2@infradead.org>, <ebiederm@xmission.com>, <mingo@redhat.com>,
+	<jgowans@amazon.com>, <corbet@lwn.net>, <krzk@kernel.org>, <rppt@kernel.org>,
+	<mark.rutland@arm.com>, <pbonzini@redhat.com>, <pasha.tatashin@soleen.com>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <robh+dt@kernel.org>,
+	<robh@kernel.org>, <saravanak@google.com>,
+	<skinsburskii@linux.microsoft.com>, <rostedt@goodmis.org>,
+	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, <usama.arif@bytedance.com>,
+	<will@kernel.org>, <devicetree@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory preservation
+In-Reply-To: <20250320015551.2157511-10-changyuanl@google.com>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+	<20250320015551.2157511-10-changyuanl@google.com>
+Date: Wed, 2 Apr 2025 19:16:27 +0000
+Message-ID: <mafs05xjmqsqc.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250402-al3010-iio-regmap-v3-5-cc3da273b5b2@ixit.cz>
-References: <20250402-al3010-iio-regmap-v3-0-cc3da273b5b2@ixit.cz>
-In-Reply-To: <20250402-al3010-iio-regmap-v3-0-cc3da273b5b2@ixit.cz>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
- Robert Eckelmann <longnoserob@gmail.com>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5785; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=VF2IB659WVA5EWuUppV3rVlQHRbT5K4V8Zm1qxQVpcY=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn7Yy3UYYbdVwzWjvefWbwlC9fPFuWVa7X+c7J7
- glWpj6MxlSJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ+2MtwAKCRBgAj/E00kg
- cnieEADOUjVWO+EZ7SnPPLT/MviCrwZLrkrhnBolAMv/Mc9PWIh5Frxn77DKupA0yQlvNw4wSx0
- rqV3rk3g70E0v/hr3Xchouc9htwHFLMqwLY4POatTRIH83HvX8BvTACMT2xxHhCGcdxEdz57Uby
- uJ5GJxfOPn59l6wfgsG/gc7JXH0HUYUoWFAq61IGyD5/XZ16J3XW1eeJ7vad5b8fvWta644tSlz
- TKB4n+cF6yQA5mV9lfoSZqs/3mfjon7M5Opt/HKvkzuH8QLg7s7RGHCCufwU2C348OZGTgg5Oa8
- RyA4WuygFPrBYWY+38Pk64b+Q932ZOgKG5GNkjmxOtKfGcHtf5/U3S3331xlf/0DqFg1SS95voE
- f7BGR3I5R81U0U2l00q5rI+CPmaC7EnpwwWGQEOaq4na+ZYK5GfuFYErwkkzrm4+OOR6Fo590vw
- dipW06/DWvZqKN+uSeBbjvRkbsAS8aFz231pplz7KpEutM1ocyzX7Wnd+izdHtzS6Jy5J0no3zq
- 5MiYZKLyo23Jd4UwIzcOJUmBkZgOGomYkZLk1A/9AJqiX3pYV00OhVgtWkSJHJV4HyEVuT/BhQI
- Mrfgocgel+YmxN+iM0Inss30L4K/Ewifwdd3B/kp9e50mhvOszCY3ztpuLSP9i1qjx043OzmfFr
- ZiINJ5K29vUxqSA==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain
 
-From: David Heidelberg <david@ixit.cz>
+Hi Changyuan,
 
-Modernize and clean up the driver using the regmap framework.
+On Wed, Mar 19 2025, Changyuan Lyu wrote:
 
-With the regmap implementation, the compiler produces
-a significantly smaller module.
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> Introduce APIs allowing KHO users to preserve memory across kexec and
+> get access to that memory after boot of the kexeced kernel
+>
+> kho_preserve_folio() - record a folio to be preserved over kexec
+> kho_restore_folio() - recreates the folio from the preserved memory
+> kho_preserve_phys() - record physically contiguous range to be
+> preserved over kexec.
+> kho_restore_phys() - recreates order-0 pages corresponding to the
+> preserved physical range
+>
+> The memory preservations are tracked by two levels of xarrays to manage
+> chunks of per-order 512 byte bitmaps. For instance the entire 1G order
+> of a 1TB x86 system would fit inside a single 512 byte bitmap. For
+> order 0 allocations each bitmap will cover 16M of address space. Thus,
+> for 16G of memory at most 512K of bitmap memory will be needed for order 0.
+>
+> At serialization time all bitmaps are recorded in a linked list of pages
+> for the next kernel to process and the physical address of the list is
+> recorded in KHO FDT.
+>
+> The next kernel then processes that list, reserves the memory ranges and
+> later, when a user requests a folio or a physical range, KHO restores
+> corresponding memory map entries.
+>
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Co-developed-by: Changyuan Lyu <changyuanl@google.com>
+> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
+> ---
+>  include/linux/kexec_handover.h |  38 +++
+>  kernel/kexec_handover.c        | 486 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 522 insertions(+), 2 deletions(-)
+[...]
+> +int kho_preserve_phys(phys_addr_t phys, size_t size)
+> +{
+> +	unsigned long pfn = PHYS_PFN(phys), end_pfn = PHYS_PFN(phys + size);
+> +	unsigned int order = ilog2(end_pfn - pfn);
 
-Size before: 72 kB
-Size after:  58 kB
+This caught my eye when playing around with the code. It does not put
+any limit on the order, so it can exceed NR_PAGE_ORDERS. Also, when
+initializing the page after KHO, we pass the order directly to
+prep_compound_page() without sanity checking it. The next kernel might
+not support all the orders the current one supports. Perhaps something
+to fix?
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- drivers/iio/light/al3320a.c | 82 +++++++++++++++++++++++++--------------------
- 1 file changed, 46 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/iio/light/al3320a.c b/drivers/iio/light/al3320a.c
-index 005a7664568667b5cf9419baba6764f7b4e8fc39..05b6ec217ee8103e3527948aa2da1af75c2a495e 100644
---- a/drivers/iio/light/al3320a.c
-+++ b/drivers/iio/light/al3320a.c
-@@ -15,6 +15,7 @@
- #include <linux/bitfield.h>
- #include <linux/i2c.h>
- #include <linux/module.h>
-+#include <linux/regmap.h>
- #include <linux/mod_devicetable.h>
- 
- #include <linux/iio/iio.h>
-@@ -57,8 +58,14 @@ static const int al3320a_scales[][2] = {
- 	{0, 512000}, {0, 128000}, {0, 32000}, {0, 10000}
- };
- 
-+static const struct regmap_config al3320a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = AL3320A_REG_HIGH_THRESH_HIGH,
-+};
-+
- struct al3320a_data {
--	struct i2c_client *client;
-+	struct regmap *regmap;
- };
- 
- static const struct iio_chan_spec al3320a_channels[] = {
-@@ -80,25 +87,28 @@ static const struct attribute_group al3320a_attribute_group = {
- 	.attrs = al3320a_attributes,
- };
- 
--static int al3320a_set_pwr_on(struct i2c_client *client)
-+static int al3320a_set_pwr_on(struct al3320a_data *data)
- {
--	return i2c_smbus_write_byte_data(client, AL3320A_REG_CONFIG, AL3320A_CONFIG_ENABLE);
-+	return regmap_write(data->regmap, AL3320A_REG_CONFIG, AL3320A_CONFIG_ENABLE);
- }
- 
- static void al3320a_set_pwr_off(void *_data)
- {
- 	struct al3320a_data *data = _data;
-+	struct device *dev = regmap_get_device(data->regmap);
-+	int ret;
- 
--	i2c_smbus_write_byte_data(data->client, AL3320A_REG_CONFIG, AL3320A_CONFIG_DISABLE);
-+	ret = regmap_write(data->regmap, AL3320A_REG_CONFIG, AL3320A_CONFIG_DISABLE);
-+	if (ret)
-+		dev_err(dev, "failed to write system register\n");
- }
- 
- static int al3320a_init(struct al3320a_data *data)
- {
- 	int ret;
- 
--	ret = al3320a_set_pwr_on(data->client);
--
--	if (ret < 0)
-+	ret = al3320a_set_pwr_on(data);
-+	if (ret)
- 		return ret;
- 
- 	ret = devm_add_action_or_reset(&data->client->dev,
-@@ -107,23 +117,18 @@ static int al3320a_init(struct al3320a_data *data)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to add action\n");
- 
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_CONFIG_RANGE,
--					FIELD_PREP(AL3320A_GAIN_MASK,
--						   AL3320A_RANGE_3));
--	if (ret < 0)
--		return ret;
--
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_MEAN_TIME,
--					AL3320A_DEFAULT_MEAN_TIME);
--	if (ret < 0)
-+	ret = regmap_write(data->regmap, AL3320A_REG_CONFIG_RANGE,
-+			   FIELD_PREP(AL3320A_GAIN_MASK, AL3320A_RANGE_3));
-+	if (ret)
- 		return ret;
- 
--	ret = i2c_smbus_write_byte_data(data->client, AL3320A_REG_WAIT,
--					AL3320A_DEFAULT_WAIT_TIME);
--	if (ret < 0)
-+	ret = regmap_write(data->regmap, AL3320A_REG_MEAN_TIME,
-+			   AL3320A_DEFAULT_MEAN_TIME);
-+	if (ret)
- 		return ret;
- 
--	return 0;
-+	return regmap_write(data->regmap, AL3320A_REG_WAIT,
-+			    AL3320A_DEFAULT_WAIT_TIME);
- }
- 
- static int al3320a_read_raw(struct iio_dev *indio_dev,
-@@ -131,7 +136,7 @@ static int al3320a_read_raw(struct iio_dev *indio_dev,
- 			    int *val2, long mask)
- {
- 	struct al3320a_data *data = iio_priv(indio_dev);
--	int ret;
-+	int ret, gain, raw;
- 
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
-@@ -140,21 +145,21 @@ static int al3320a_read_raw(struct iio_dev *indio_dev,
- 		 * - low byte of output is stored at AL3320A_REG_DATA_LOW
- 		 * - high byte of output is stored at AL3320A_REG_DATA_LOW + 1
- 		 */
--		ret = i2c_smbus_read_word_data(data->client,
--					       AL3320A_REG_DATA_LOW);
--		if (ret < 0)
-+		ret = regmap_read(data->regmap, AL3320A_REG_DATA_LOW, &raw);
-+		if (ret)
- 			return ret;
--		*val = ret;
-+
-+		*val = raw;
-+
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
--		ret = i2c_smbus_read_byte_data(data->client,
--					       AL3320A_REG_CONFIG_RANGE);
--		if (ret < 0)
-+		ret = regmap_read(data->regmap, AL3320A_REG_CONFIG_RANGE, &gain);
-+		if (ret)
- 			return ret;
- 
--		ret = FIELD_GET(AL3320A_GAIN_MASK, ret);
--		*val = al3320a_scales[ret][0];
--		*val2 = al3320a_scales[ret][1];
-+		gain = FIELD_GET(AL3320A_GAIN_MASK, gain);
-+		*val = al3320a_scales[gain][0];
-+		*val2 = al3320a_scales[gain][1];
- 
- 		return IIO_VAL_INT_PLUS_MICRO;
- 	}
-@@ -175,9 +180,8 @@ static int al3320a_write_raw(struct iio_dev *indio_dev,
- 			    val2 != al3320a_scales[i][1])
- 				continue;
- 
--			return i2c_smbus_write_byte_data(data->client,
--					AL3320A_REG_CONFIG_RANGE,
--					FIELD_PREP(AL3320A_GAIN_MASK, i));
-+			return regmap_write(data->regmap, AL3320A_REG_CONFIG_RANGE,
-+					    FIELD_PREP(AL3320A_GAIN_MASK, i));
- 		}
- 		break;
- 	}
-@@ -203,7 +207,11 @@ static int al3320a_probe(struct i2c_client *client)
- 
- 	data = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
--	data->client = client;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &al3320a_regmap_config);
-+	if (IS_ERR(data->regmap))
-+		return dev_err_probe(dev, PTR_ERR(data->regmap),
-+				     "cannot allocate regmap\n");
- 
- 	indio_dev->info = &al3320a_info;
- 	indio_dev->name = "al3320a";
-@@ -230,7 +238,9 @@ static int al3320a_suspend(struct device *dev)
- 
- static int al3320a_resume(struct device *dev)
- {
--	return al3320a_set_pwr_on(to_i2c_client(dev));
-+	struct al3320a_data *data = iio_priv(dev_get_drvdata(dev));
-+
-+	return al3320a_set_pwr_on(data);
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(al3320a_pm_ops, al3320a_suspend,
+> +	unsigned long failed_pfn;
+> +	int err = 0;
+> +
+> +	if (!kho_enable)
+> +		return -EOPNOTSUPP;
+> +
+> +	down_read(&kho_out.tree_lock);
+> +	if (kho_out.fdt) {
+> +		err = -EBUSY;
+> +		goto unlock;
+> +	}
+> +
+> +	for (; pfn < end_pfn;
+> +	     pfn += (1 << order), order = ilog2(end_pfn - pfn)) {
+> +		err = __kho_preserve(&kho_mem_track, pfn, order);
+> +		if (err) {
+> +			failed_pfn = pfn;
+> +			break;
+> +		}
+> +	}
+[...
+> +struct folio *kho_restore_folio(phys_addr_t phys)
+> +{
+> +	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
+> +	unsigned long order = page->private;
+> +
+> +	if (!page)
+> +		return NULL;
+> +
+> +	order = page->private;
+> +	if (order)
+> +		prep_compound_page(page, order);
+> +	else
+> +		kho_restore_page(page);
+> +
+> +	return page_folio(page);
+> +}
+[...]
 
 -- 
-2.49.0
-
-
+Regards,
+Pratyush Yadav
 
