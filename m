@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-585623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE1BA79587
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:57:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A553A79584
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8E6A188ACD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2830E7A50DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B01E2847;
-	Wed,  2 Apr 2025 18:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA4D2E3374;
+	Wed,  2 Apr 2025 18:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fiqer87X"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGqamARA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FF5195985
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 18:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2071DB92A;
+	Wed,  2 Apr 2025 18:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743620213; cv=none; b=i19srPKW/LXl7qCWopshlXqWYnmkOuRrJ46q4UXm1C5ArxyRDFzCEs0T9n8klej8KVvXJtFEEbHGy1P9HXKfSphR2HbyBoNQGD0XMjQ+o8Dx4bDTdYekE6Iufukb0CYxnl8/RLAZWXkeKlzuWZGmULftggy6q+NEY4tDBnwlB3w=
+	t=1743620196; cv=none; b=Ay8WH50Qnn0ac4lAlsZaADv0G3JNc2HedEop3LoabdJiwGXb0bBoGmly6Htay5+9juJZkM1vqrm0JJZt4CE2RVjaANr6bU7WEFK5XVU/6SbY0z+wfk8YxRkD2ybB3zt6C9dbpM6Biz2MQzBuFhbgPgELUpc4OU4Fcbm/6KXOVNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743620213; c=relaxed/simple;
-	bh=wwsSS1JZOJ1V9xZomLo12YUzYojC76SUgcPHLSSooOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZU/Hbr0VNz1ldLv9CkgJBOW81F4Xdaj16OcBEbrRaUKzWCddADRBPod9cicGO9AZUjIF6hEv2uPtoJ7I/n6F27V6L3OIOSwdI3lfQj5hSzvoGftISuGckJY/eTLdUZ1csgv+MwI2qJjaTGf2GFhrJOJbzQYfRv9OUX7lPqNS6h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fiqer87X; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso15311566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 11:56:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743620209; x=1744225009; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yh1jFp7ObhLBDGOSbL83dYMEFRG1k6cE2Qucdq1E4jQ=;
-        b=fiqer87X6c1F4hw/5EGL1TcMxK7EwSCmd3jmlIsGAjuPUIHGp5vb4E/c/Y5UfztgVb
-         uxGUPb1V8HfCSqA/EwQAqddCBL1GOkEYdfU7VRqD00ZuPEuV5p8ROaCr4X/6PV6PVGwU
-         DnIQFrhD5AX5vF9sGAbGK7cN/gKp3TIDe26eI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743620209; x=1744225009;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yh1jFp7ObhLBDGOSbL83dYMEFRG1k6cE2Qucdq1E4jQ=;
-        b=FylP1oqfUHw/H+QBXPDd8jplvH/2ltAl7mMdBDDs0F/5NAnCb9XAj+mrtLai6K6hH7
-         Qj1GJO+NBjhhnqzkJfA4xXTZFFfAXiH2UMYYU690tOzcttJIi3NhIzK/uqHuCJt7O68w
-         dvXWAL0vweFU9hDBC6u4zTRZGuJ7kOPZWIh0ue4ZZxNGN66rEdLPGCWq+UCSulYemInt
-         Mi98WDrk8/G2F1g1+Fpr7RLkGpGE/NcXaKxOooKzXB1FxRpCdYnG7VCodGLnonUmd+ci
-         D/GKl9RbAEPqZwN17AhCoCg4n1yEg/HbfAqLB1m0G3Z0gd2TN7vCsgK2lxBe4ByTISDU
-         MuSw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/r7IytXFviUGQ/tkm3C2B5PsQYeK8GLJcVvwNcQMi3Un8JhFwR5qM/5+YzWWK/ktqC70opLj1LfzXkd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt3hQetgPfdP4qx9iu/Is2bFxk5fIjduZPdp8j9ywxk2wnKg4Y
-	ryeMEMn4s0RV5rSsT827PLB3lMXZSMt36LoOxyL4asRLJ45EsO5pn3vhWx3T5E52jkOXLCH8uhP
-	Zw4c=
-X-Gm-Gg: ASbGnctB3T7WwhPctt2AP8PdXrEISowMFdoQjW+PcfRm5BIo2iqDZVjffSNFlqWbHoi
-	f/uahgzWfS6kcVb5C6rCT4pPnYi4gm8SqzR913TFT574nEXx5I426nud7fJSHHx1QtJytW9e8cl
-	/xeUGu8j9WKsrj6Py9bHeFwt9KHRaEaSVYOR51UokeGOT4rKNzI8/Qcpm92P5RZtI6k7oW4ZawL
-	M5c2JcDhc/+lY7ksdYWG+yxsZssxCdb5F67xptLD1HkQ4h2X0NkBQvWXwTv81jzpb1xtXaOvuBR
-	MsV7AFX+FGqTKiVeJ1qPplTtYPQwg5Z6oUtXpVWIT8uZatswU8h+S+Ows5smG+4jt6NkSNBq3je
-	eraxL3PGHgFaj8NMlM04=
-X-Google-Smtp-Source: AGHT+IE/mfIDh0K7x5d3aIuol2wI4B87U2Xc+G6KAFf/anYB4XvpcOP6VeGqq95KHjFCRACK9eRGvQ==
-X-Received: by 2002:a17:906:8465:b0:ac7:3916:327e with SMTP id a640c23a62f3a-ac73916334dmr1312722466b.61.1743620209446;
-        Wed, 02 Apr 2025 11:56:49 -0700 (PDT)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719621b73sm950753766b.120.2025.04.02.11.56.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 11:56:48 -0700 (PDT)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso20281166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 11:56:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXhWTCMOsRIZhscfkcqdV52av6Fw5bOm3Ib83I10q2pqP/qHQfqWIOrUyxuqk+B8gJqNDBtn+RJgHaaU0M=@vger.kernel.org
-X-Received: by 2002:a17:907:9708:b0:ac1:fab4:a83 with SMTP id
- a640c23a62f3a-ac738a50828mr1664165966b.25.1743620208069; Wed, 02 Apr 2025
- 11:56:48 -0700 (PDT)
+	s=arc-20240116; t=1743620196; c=relaxed/simple;
+	bh=xmznKTQXjh7m9NClIWACppmUCWNDHM2Fnwfp/mZYh6A=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=SNJQp3wQGBpyp/qLi+Tm0Wy7zjBNHoYpYOBRtFM4WjapL43pCqskhEbn4a9l0QpSmD975Idx/UEdllNuuTMpfodGuoEo2GdqdZDG+dSZQnm8ENyOirENhlO6wdSR/sJuUEmPxdLlGX/T0yUJ6wBBsqZqO1oYFLSBBMYEaxrjQWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGqamARA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BFDC4CEDD;
+	Wed,  2 Apr 2025 18:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743620196;
+	bh=xmznKTQXjh7m9NClIWACppmUCWNDHM2Fnwfp/mZYh6A=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=VGqamARAY3FnSJ1x5qs7X/OPBN/OpQ0Ta2ueXCo5bQ8PdUmmeJ6+czpzt1198ht0R
+	 1Q6iRYdLqBLZiGHeB83NXgMyVlEdlZ1XWX+IFU+R4jKiLHziNwF8NlbVzo+Ficb/Ol
+	 VxAGgO5rFBN+7idluRIu5vxeDCknUY8kweQ72biok6Z29e8IqoXljRUr3dPO6Gbz+Z
+	 QRz9FUAWZjJrH9FC67w/h5ltxZP0o7vy7z/C6Fi+qtsmGi1oufS2X1Lt3uv3p5nnUx
+	 k/i4nmJ0LKLlNVeK14g58NzXu3sey+HCJtu34U9PVUAc2m5v3zL2djhO9BUrhL2dA0
+	 AcqJxL9YXtUrg==
+Date: Wed, 02 Apr 2025 13:56:34 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGudoHEV-PFSr-xKUx5GkTf4KasJc=aNNzQbkoTnFVLisKti+A@mail.gmail.com>
- <948fffdc-d0d8-49c4-90b6-b91f282f76c9@citrix.com> <CAHk-=wg4syfXPBgQhq50ePOnB=zP9Jk1U+GmjXWmDMwcQ7X7WA@mail.gmail.com>
- <e0021746-d43c-4c45-83b6-bcf3982b2548@citrix.com>
-In-Reply-To: <e0021746-d43c-4c45-83b6-bcf3982b2548@citrix.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 2 Apr 2025 11:56:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjYrfUDOd3VYhn8HvH7MCnampXt1TdtaXo86UDrT_rbMQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrrVhUnMsUkzWzSSax1GicAp9nGS9Vsx6_O3y8isGA3p7sqzHU5bmX7gZs
-Message-ID: <CAHk-=wjYrfUDOd3VYhn8HvH7MCnampXt1TdtaXo86UDrT_rbMQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86: prevent gcc from emitting rep movsq/stosq for
- inlined ops
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: mjguzik@gmail.com, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	x86@kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, S32@nxp.com, 
+ wim@linux-watchdog.org, krzk+dt@kernel.org, linux@roeck-us.net, 
+ conor+dt@kernel.org, ghennadi.procopciuc@nxp.com, 
+ linux-kernel@vger.kernel.org, thomas.fossati@linaro.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250402154942.3645283-2-daniel.lezcano@linaro.org>
+References: <20250402154942.3645283-1-daniel.lezcano@linaro.org>
+ <20250402154942.3645283-2-daniel.lezcano@linaro.org>
+Message-Id: <174362019496.367085.18177836404576070514.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add NXP Software
+ Watchdog Timer
 
-On Wed, 2 Apr 2025 at 11:40, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
->
-> You still want the compiler to be able to do a first-pass optimisation
-> over __builtin_mem*(), for elimination/merging/etc
 
-Absolutely.
+On Wed, 02 Apr 2025 17:49:39 +0200, Daniel Lezcano wrote:
+> Describe the Software Watchdog Timer available on the S32G platforms.
+> 
+> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Cc: Thomas Fossati <thomas.fossati@linaro.org>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  .../bindings/watchdog/nxp,s32g2-swt.yaml      | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml
+> 
 
-That's literally why the kernel ends up using __builtin_memcpy() in
-the first place - so that the compiler can turn the (very common)
-small fixed-size cases into just regular moves.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-The function call would only be for actual big moves and/or unknown sizes.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml:17:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
 
-That said, it can be advantageous to have more than one function call.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml: ignoring, error in schema: properties: compatible
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml: properties:compatible: [{'const': 'nxp,s32g2-swt'}, {'items': [{'const': 'nxp,s32g3-swt'}, {'const': 'nxp,s32g2-swt'}]}] is not of type 'object', 'boolean'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.yaml: properties:compatible: [{'const': 'nxp,s32g2-swt'}, {'items': [{'const': 'nxp,s32g3-swt'}, {'const': 'nxp,s32g2-swt'}]}] is not of type 'object', 'boolean'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.example.dts:18.29-23.11: Warning (unit_address_format): /example-0/watchdog@0x40100000: unit name should not have leading "0x"
+Documentation/devicetree/bindings/watchdog/nxp,s32g2-swt.example.dtb: /example-0/watchdog@0x40100000: failed to match any schema with compatible: ['nxp,s32g2-swt']
 
-For the user copy case (where we control the horizontal and the
-vertical in the kernel) at one point I did have a patch that did
-something fancier than just a single call-out.
+doc reference errors (make refcheckdocs):
 
-Because even when the compiler doesn't know the exact length, it's
-often known that it's a multiple of four, for example. It's not all
-that uncommon to see code like this:
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250402154942.3645283-2-daniel.lezcano@linaro.org
 
-        memcpy(image->segment, segments, nr_segments * sizeof(*segments));
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-and an even more common case is "I'm doing an out-of-line call not
-because the size is unknown, but because the size is big".
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-So I noted the size alignment of the size in the function name, so
-that I could have different versions for the most obvious
-straight-forward cases (notably the "just do word-at-a-time copies").
+pip3 install dtschema --upgrade
 
-Admittedly my main use case for that was the big fixed-size case in
-the stat code, which just does
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-        return copy_to_user(statbuf,&tmp,sizeof(tmp)) ? -EFAULT : 0;
-
-and shows up like a sore thumb on some benchmarks.
-
-But I've always hated the patch because it turns out that the real fix
-is to get rid of the temporary buffer on the stack, and just copy the
-fields one-by-one with 'unsafe_put_user()' and friends, but every time
-I do that - and I've done it several times - I end up throwing the
-patch away because it ends up being problematic on non-x86
-architectures
-
-(Reason: INIT_STRUCT_STAT64_PADDING(). Ugh).
-
-              Linus
 
