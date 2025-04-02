@@ -1,264 +1,236 @@
-Return-Path: <linux-kernel+bounces-585809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36E2A797D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA43A797DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E902170D87
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36CF1894D6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEE81F4C84;
-	Wed,  2 Apr 2025 21:43:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063041F4C92;
+	Wed,  2 Apr 2025 21:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky+Zcp0X"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0A21EB183
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE9B1EB9EB
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743630227; cv=none; b=aJ9XCep93/2+CQuUTeHz7x4JAZWQX18vVeIGECwFkGdXldAXhEYA/Ds9EJ1R0QHbzxWiPoPUWEZLE0FrpgexnHTe9x2yn2AzY/yEdePPhBfhTxeSnt2wnouxznByprkTDUjiUGQRJ5Wlqyxhe3pUxpFLRxMNMUUIcLOfD9JnF5s=
+	t=1743630418; cv=none; b=WobgREX4K3hDNE6KThs5e51JcQY8/j9X2EftYA+Z30tec+VKYRwWiAK2W8Oq4qzc8nm5nZygUsaRWiADC9eyHr6FmY/gYCUcmgme7nenctzxg0dGBf7ohtDeBlgG5eWQYdP1OriHHran5kHh3hvzA0+tlPPBMkvNaGpWrQwrMiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743630227; c=relaxed/simple;
-	bh=EmL5cMh4rUmabqQUX/yuAijaaalAS3/NDu1kKDHndk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aJ9oxiBlLi+dTI+TPjUmxfv+no5WEfKaL9QPcVzYkxweN5l4Wk7k3sbQ6rXp3Zi6JmMJgphVC8vFRS5ct+Sqp0M2A8Li2GlZweYNVekm4KErysQrZuSZ4cu0LXWA18exHaGWl10hl3DlHUME4sAvh0WYyx26TQDO5yr3tfhUaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D24C4CEDD;
-	Wed,  2 Apr 2025 21:43:45 +0000 (UTC)
-Date: Wed, 2 Apr 2025 17:44:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Andrew Morton
- <akpm@linux-foundation.org>, Gabriele Monaco <gmonaco@redhat.com>, Vasily
- Gorbik <gor@linux.ibm.com>, zhoumin <teczm@foxmail.com>
-Subject: [GIT PULL] tracing: Fixes for 6.15
-Message-ID: <20250402174449.08caae28@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743630418; c=relaxed/simple;
+	bh=BAjq9C9fRZjELJQ8Vrb12QIgx+28LxEWhkHuCxrYAes=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Uki9RIAcoPrt6AXKF+0ekHB6HiT7bjR/sNI/ew6obqu7jcp5dnu0JVa1Wlazhe3ViWsa9f59s3qAWjPmWwjhk/VjLJdXoCkclHHgmbtrUWDeWihdIpkl8oB6Yzs6T6clKashSqITaEUNWd4jUTrVo0KNA0mG6sEeFPbyvh+tqOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky+Zcp0X; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso242925f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743630415; x=1744235215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1xRVm9klxaIdtAVf8mizHRMZsJy7B1VQj9wccFwe1a4=;
+        b=Ky+Zcp0Xutl6QAU/00bKCMucjM3p2xYo7yAnNdmXTVbgCuzBqgQ8FfUKkwSwPEaw+u
+         2ZR3dm46tpq6UOoG314vUWhXK6G8eGngHLQrWciwgO/eSTYdAwIAlbfMtKEksCfoN/C6
+         vz1iJgfMHfoUzHQg4nfxghg+lqOQGREtY79HscPneK9EK5zwZwAV4PYodrQbJdaz94C+
+         wJvVe9BEDPmEN2GAlpoh1idEAC748GEEzm5Ez2CVCOq7lSucx6Ksul+7eLkQJDpuakh+
+         BpLvzS1JTlf6KUwO/OuktQzVoqxetjsEqiRecCQUWK7V0Ex4aVF2+e+6xoSEFBGjyKDs
+         DWiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743630415; x=1744235215;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1xRVm9klxaIdtAVf8mizHRMZsJy7B1VQj9wccFwe1a4=;
+        b=iydKUDmqaWwcmYfvkzi/XnQNxBRnWg0fVaemI1Ulaq7tunD7TEZ1GVjItwhTniy+gE
+         Qzplq+DpqBKedvf9N3XVBUHUDxebZ2zT3t9hSlwh4ZxprkdMCC10HHgoRNd1sz0x1Vld
+         Vl39QKKB2q37v7jH9yrmWUkIwu7/0N2FFM2GGk+ulqSjQe3pq+zB9sDcqTBjc43tYwPG
+         bA7+sKQ3LSPOiFa1ECwgnmoyGfxJXjjaUB8I2DGjKBmG3sBPf1Fmfwl0o3I3hTjPXGuG
+         u/FswT/M8dWrc7XMk1i/93ImYtKr3JMM0kb199+rag8DHYiq2wnPOdhd4Tea+zb4zjaE
+         V34A==
+X-Forwarded-Encrypted: i=1; AJvYcCXHEWR5HQ85NblU6B0Zqpd2mPt9oFvFEOb5u2qnxxkPKPUT3D8aM0Jjkg4o+3tnWAXcHqWHrYa1qs0/koQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHEUXGcSjfWXPZyj/GLxFaPgO4Pnf37hCpBoEniyIQo7u8gH/+
+	Q+Izmkp5OX3XiOFdAxvZ46ZXRYGLD6P+0kuYwJYP9owkSZnlgcpS
+X-Gm-Gg: ASbGnctsYkCoSPxUd2llqmvE3nkUTMJlO/K1wXOXL3/8pCPbhPOCcVPvowx3V29dGs+
+	Vd6ErAvmqLGfMC59es4pWk4cBs6g1DcEbQ/94ydiVFMDV2hno0sVzYCsHWOtkPMJxx4ee5DU79Y
+	FJ7lFA/eqRY346xNX5xPnrhO84FvjjswWjTGYdDTqmAQz5eXsPEtrLHjCLfu25QoXrxZ7Lnbp6Z
+	KZV55iWNONIJo4eOLoWY9Xg1PYp5qh6edfFEzs674Yxbxu+ToIyRmc7Bw9LSCoIL7qajsBLfRol
+	fuU/g5JY6uIwiLHC0iSteRkmoxP79MgKgkvBNKLCcrI3YvjZEHOjyaJwly4xAxEPp0wsw9YcqZY
+	ERpkG6EY=
+X-Google-Smtp-Source: AGHT+IHWXMwJiJM76P81B1uDs6kCZvMGAkHnd92MC9Wf02QNyFsF8jaLJNYYpN7u5CA4Ys8qdAexUg==
+X-Received: by 2002:a5d:64ec:0:b0:39b:330d:9719 with SMTP id ffacd0b85a97d-39c120de108mr14226573f8f.17.1743630414449;
+        Wed, 02 Apr 2025 14:46:54 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1794efesm2857995e9.28.2025.04.02.14.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 14:46:53 -0700 (PDT)
+Date: Wed, 2 Apr 2025 22:46:52 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] math64: Provide an uprounding variant of
+ mul_u64_u64_div_u64()
+Message-ID: <20250402224652.1bb38f6b@pumpkin>
+In-Reply-To: <gqqxuoz5jfrlsmrxdhwevfo7kflxjqhbkfy2ksnsdcadbk52hd@yaitrauy52xg>
+References: <20250321131813.6a332944@pumpkin>
+	<epuk3zijp2jt6jh72z3xi2wxneeunf5xx2h77kvim6xmzminwj@4saalgxu3enu>
+	<20250331195357.012c221f@pumpkin>
+	<mjqzvj6pujv3b3gnvo5rwgrb62gopysosg4r7su6hcssvys6sz@dzo7hpzqrgg2>
+	<20250401202640.13342a97@pumpkin>
+	<15qr98n0-q1q0-or1r-7r32-36rrq93p9oq6@onlyvoer.pbz>
+	<46368602-13n7-s878-s7o2-76sr0q67n9q4@syhkavp.arg>
+	<20250401223731.7102103d@pumpkin>
+	<2wwrj6aid2elnnotzfkazierqmzmzpfywyf33ahqs36xh5xz32@rszeetrztsiz>
+	<20250402135219.28b24e94@pumpkin>
+	<gqqxuoz5jfrlsmrxdhwevfo7kflxjqhbkfy2ksnsdcadbk52hd@yaitrauy52xg>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 2 Apr 2025 17:01:49 +0200
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
 
-Linus,
+How about (tab damaged):
 
-tracing fixes for 6.15
+Compile tested only, on x86-x64 (once with the local definitions removed).
 
-- Fix build error when CONFIG_PROBE_EVENTS_BTF_ARGS is not enabled
+Looking at the object code, if u128 is supported then checking n_hi
+is always going to be better than a pre-check.
+Remember multiply is cheap.
 
-  The tracing of arguments in the function tracer depends on some
-  functions that are only defined when PROBE_EVENTS_BTF_ARGS is enabled.
-  In fact, PROBE_EVENTS_BTF_ARGS also depends on all the same configs
-  as the function argument tracing requires. Just have the function
-  argument tracing depend on PROBE_EVENTS_BTF_ARGS.
+	David
 
-- Free module_delta for persistent ring buffer instance
+diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
+index 9931e4c7d73f..6115f3fcb975 100644
+--- a/arch/x86/include/asm/div64.h
++++ b/arch/x86/include/asm/div64.h
+@@ -84,21 +84,28 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+  * Will generate an #DE when the result doesn't fit u64, could fix with an
+  * __ex_table[] entry when it becomes an issue.
+  */
+-static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
++static inline u64 mul_u64_add_u64_div_u64(u64 a, u64 mul, u64 add, u64 div)
+ {
+        u64 q;
 
-  When an instance holds the persistent ring buffer, it allocates
-  a helper array to hold the deltas between where modules are loaded
-  on the last boot and the current boot. This array needs to be freed
-  when the instance is freed.
+-       asm ("mulq %2; divq %3" : "=3Da" (q)
+-                               : "a" (a), "rm" (mul), "rm" (div)
+-                               : "rdx");
++       if (statically_true(!add)) {
++               asm ("mulq %2; divq %3" : "=3Da" (q)
++                                       : "a" (a), "rm" (mul), "rm" (div)
++                                       : "rdx");
++       } else {
++               asm ("mulq %2; addq %4,%rax; addc $0,%rdx; divq %3"
++                       : "=3Da" (q)
++                       : "a" (a), "rm" (mul), "rm" (div), "rm" (add)
++                       : "rdx");
++       }
 
-- Add cond_resched() to loop in ftrace_graph_set_hash()
+        return q;
+ }
+-#define mul_u64_u64_div_u64 mul_u64_u64_div_u64
++#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64
 
-  The hash functions in ftrace loop over every function that can be
-  enabled by ftrace. This can be 50,000 functions or more. This
-  loop is known to trigger soft lockup warnings and requires a
-  cond_resched(). The loop in ftrace_graph_set_hash() was missing it.
+ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
+ {
+-       return mul_u64_u64_div_u64(a, mul, div);
++       return mul_u64_add_u64_div_u64(a, mul, 0, div);
+ }
+ #define mul_u64_u32_div        mul_u64_u32_div
 
-- Fix the event format verifier to include "%*p.." arguments
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index 6aaccc1626ab..1544dc37e317 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -282,7 +282,10 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 =
+divisor)
+ }
+ #endif /* mul_u64_u32_div */
 
-  To prevent events from dereferencing stale pointers that can
-  happen if a trace event uses a dereferece pointer to something
-  that was not copied into the ring buffer and can be freed by the
-  time the trace is read, a verifier is called. At boot or module
-  load, the verifier scans the print format string for pointers
-  that can be dereferenced and it checks the arguments to make sure
-  they do not contain something that can be freed. The "%*p" was
-  not handled, which would add another argument and cause the verifier
-  to not only not verify this pointer, but it will look at the wrong
-  argument for every pointer after that.
+-u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
++u64 mul_u64_add_u64_div_u64(u64 a, u64 mul, u64 add, u64 div);
++#define mul_u64_u64_div_u64(a, mul, div) mul_u64_add_u64_div_u64(a, mul, 0=
+, div)
++#define mul_u64_u64_div_u64_roundup(a, mul, div) \
++       ({ u64 _tmp =3D (div); mul_u64_add_u64_div_u64(a, mul, _tmp - 1, _t=
+mp); })
 
-- Fix mcount sorttable building for different endian type target
+ /**
+  * DIV64_U64_ROUND_UP - unsigned 64bit divide with 64bit divisor rounded up
+diff --git a/lib/math/div64.c b/lib/math/div64.c
+index 5faa29208bdb..efcc8d729c74 100644
+--- a/lib/math/div64.c
++++ b/lib/math/div64.c
+@@ -183,16 +183,13 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *=
+remainder)
+ }
+ EXPORT_SYMBOL(iter_div_u64_rem);
 
-  When modifying the ELF file to sort the mcount_loc table in the
-  sorttable.c code, the endianess of the file and the host is used
-  to determine if the bytes need to be swapped when calculations are
-  done. A change was made to the sorting of the mcount_loc that read
-  the values from the ELF file into an array and the swap happened
-  on the filling of the array. But one of the calculations of the
-  array still did the swap when it did not need to. This caused building
-  on a little endian machine for a big endian target to not find
-  the mcount function in the 'nm' table and it zeroed it out, causing
-  there to be no functions available to trace.
+-#ifndef mul_u64_u64_div_u64
+-u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
++#ifndef mul_u64_add_u64_div_u64
++u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 add, u64 c)
+ {
+-       if (ilog2(a) + ilog2(b) <=3D 62)
+-               return div64_u64(a * b, c);
+-
+ #if defined(__SIZEOF_INT128__)
 
-- Add goto out_unlock jump to rv_register_monitor() on error path
+        /* native 64x64=3D128 bits multiplication */
+-       u128 prod =3D (u128)a * b;
++       u128 prod =3D (u128)a * b + add;
+        u64 n_lo =3D prod, n_hi =3D prod >> 64;
 
-  One of the error paths in rv_register_monitor() just returned the
-  error when it should have jumped to the out_unlock label to release
-  the mutex.
+ #else
+@@ -201,6 +198,11 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
+        u32 a_lo =3D a, a_hi =3D a >> 32, b_lo =3D b, b_hi =3D b >> 32;
+        u64 x, y, z;
 
-These are all fixes that have been made within the last week.
-I based the tag off of the last pull request you did on one of my topic
-branches so that it included all the topic branches and all the fixes can
-be added together in this pull request.
++#if BITS_PER_LONG =3D=3D 32
++       if (!(a_hi | b_hi))
++               return div64_u64(a_lo * b_lo + add, c);
++#endif
++
+        x =3D (u64)a_lo * b_lo;
+        y =3D (u64)a_lo * b_hi + (u32)(x >> 32);
+        z =3D (u64)a_hi * b_hi + (u32)(y >> 32);
+@@ -208,10 +210,13 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
+        z +=3D (u32)(y >> 32);
+        x =3D (y << 32) + (u32)x;
 
-Please pull the latest trace-v6.15-2 tree, which can be found at:
+-       u64 n_lo =3D x, n_hi =3D z;
++       u64 n_lo =3D x + add, n_hi =3D z + (n_lo < x);
 
+ #endif
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.15-2
++       if (!n_hi)
++               return div64_u64(n_lo, c);
++
+        /* make sure c is not zero, trigger exception otherwise */
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Wdiv-by-zero"
+@@ -265,5 +270,5 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
 
-Tag SHA1: ffc2ad5b831176f95fc2406a812cee19c0005815
-Head SHA1: fc0585c7faa9fffa0ecdd6e2466e3293cd3239ac
+        return res;
+ }
+-EXPORT_SYMBOL(mul_u64_u64_div_u64);
++EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
+ #endif
 
-
-Gabriele Monaco (1):
-      rv: Fix missing unlock on double nested monitors return path
-
-Steven Rostedt (3):
-      ftrace: Have tracing function args depend on PROBE_EVENTS_BTF_ARGS
-      tracing: Free module_delta on freeing of persistent ring buffer
-      tracing: Verify event formats that have "%*p.."
-
-Vasily Gorbik (1):
-      scripts/sorttable: Fix endianness handling in build-time mcount sort
-
-zhoumin (1):
-      ftrace: Add cond_resched() to ftrace_graph_set_hash()
-
-----
- kernel/trace/Kconfig                       | 3 +--
- kernel/trace/ftrace.c                      | 1 +
- kernel/trace/rv/rv.c                       | 3 ++-
- kernel/trace/trace.c                       | 1 +
- kernel/trace/trace_events.c                | 7 +++++++
- samples/trace_events/trace-events-sample.h | 8 ++++++--
- scripts/sorttable.c                        | 2 +-
- 7 files changed, 19 insertions(+), 6 deletions(-)
----------------------------
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 033fba0633cf..a3f35c7d83b6 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -265,8 +265,7 @@ config FUNCTION_GRAPH_RETADDR
- 
- config FUNCTION_TRACE_ARGS
-        bool
--	depends on HAVE_FUNCTION_ARG_ACCESS_API
--	depends on DEBUG_INFO_BTF
-+	depends on PROBE_EVENTS_BTF_ARGS
- 	default y
- 	help
- 	  If supported with function argument access API and BTF, then
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 92015de6203d..1a48aedb5255 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -6855,6 +6855,7 @@ ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer)
- 				}
- 			}
- 		}
-+		cond_resched();
- 	} while_for_each_ftrace_rec();
- 
- 	return fail ? -EINVAL : 0;
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 50344aa9f7f9..968c5c3b0246 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -809,7 +809,8 @@ int rv_register_monitor(struct rv_monitor *monitor, struct rv_monitor *parent)
- 	if (p && rv_is_nested_monitor(p)) {
- 		pr_info("Parent monitor %s is already nested, cannot nest further\n",
- 			parent->name);
--		return -EINVAL;
-+		retval = -EINVAL;
-+		goto out_unlock;
- 	}
- 
- 	r = kzalloc(sizeof(struct rv_monitor_def), GFP_KERNEL);
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 103b193875b3..de6d7f0e6206 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -9609,6 +9609,7 @@ static void free_trace_buffers(struct trace_array *tr)
- 		return;
- 
- 	free_trace_buffer(&tr->array_buffer);
-+	kfree(tr->module_delta);
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	free_trace_buffer(&tr->max_buffer);
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 8638b7f7ff85..069e92856bda 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -470,6 +470,7 @@ static void test_event_printk(struct trace_event_call *call)
- 			case '%':
- 				continue;
- 			case 'p':
-+ do_pointer:
- 				/* Find dereferencing fields */
- 				switch (fmt[i + 1]) {
- 				case 'B': case 'R': case 'r':
-@@ -498,6 +499,12 @@ static void test_event_printk(struct trace_event_call *call)
- 						continue;
- 					if (fmt[i + j] == '*') {
- 						star = true;
-+						/* Handle %*pbl case */
-+						if (!j && fmt[i + 1] == 'p') {
-+							arg++;
-+							i++;
-+							goto do_pointer;
-+						}
- 						continue;
- 					}
- 					if ((fmt[i + j] == 's')) {
-diff --git a/samples/trace_events/trace-events-sample.h b/samples/trace_events/trace-events-sample.h
-index 999f78d380ae..1a05fc153353 100644
---- a/samples/trace_events/trace-events-sample.h
-+++ b/samples/trace_events/trace-events-sample.h
-@@ -319,7 +319,8 @@ TRACE_EVENT(foo_bar,
- 		__assign_cpumask(cpum, cpumask_bits(mask));
- 	),
- 
--	TP_printk("foo %s %d %s %s %s %s %s %s (%s) (%s) %s", __entry->foo, __entry->bar,
-+	TP_printk("foo %s %d %s %s %s %s %s %s (%s) (%s) %s [%d] %*pbl",
-+		  __entry->foo, __entry->bar,
- 
- /*
-  * Notice here the use of some helper functions. This includes:
-@@ -370,7 +371,10 @@ TRACE_EVENT(foo_bar,
- 
- 		  __get_str(str), __get_str(lstr),
- 		  __get_bitmask(cpus), __get_cpumask(cpum),
--		  __get_str(vstr))
-+		  __get_str(vstr),
-+		  __get_dynamic_array_len(cpus),
-+		  __get_dynamic_array_len(cpus),
-+		  __get_dynamic_array(cpus))
- );
- 
- /*
-diff --git a/scripts/sorttable.c b/scripts/sorttable.c
-index 7b4b3714b1af..deed676bfe38 100644
---- a/scripts/sorttable.c
-+++ b/scripts/sorttable.c
-@@ -857,7 +857,7 @@ static void *sort_mcount_loc(void *arg)
- 		for (void *ptr = vals; ptr < vals + size; ptr += long_size) {
- 			uint64_t key;
- 
--			key = long_size == 4 ? r((uint32_t *)ptr) : r8((uint64_t *)ptr);
-+			key = long_size == 4 ? *(uint32_t *)ptr : *(uint64_t *)ptr;
- 			if (!find_func(key)) {
- 				if (long_size == 4)
- 					*(uint32_t *)ptr = 0;
 
