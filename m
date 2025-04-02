@@ -1,132 +1,94 @@
-Return-Path: <linux-kernel+bounces-585684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D774A79621
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7ABA79628
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB9C188D084
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45643AC985
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BA01E8325;
-	Wed,  2 Apr 2025 19:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0DD1EF084;
+	Wed,  2 Apr 2025 19:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W713Yh8X"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q81R00as"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D6F2AF14
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 19:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ED12AF14
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743623554; cv=none; b=pJO03DYuwP2JLtDAdusEySp5Xl9WOXkZCNVzp0dUteXyIIFlq0nucxCZV/zl/XYlwSSDJ6/9Suo2lwu6RgANUOB26V9PnDZI15JtEnScw++tfeEmUjYAWTDk64cOvn7K9GfyMQauhw5BuTqICOYc5MKecaAIdhTCJrho895tsgI=
+	t=1743623862; cv=none; b=Jo4d8+QeB947L1eAQ1OciNFexjADOek5ef4JzYM+qf9RIu4h6SdW81Hk2KJJtp3SMf6y7XQ4MkzeAfQtYS8GaBpQpdBH76IjYZHeUamM/3C+RZ5OxcaaeVeyJszyml5wUHC6UXGQc/DpByVm4z9G/lCN3QsgqSUMYYXT6XAl9x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743623554; c=relaxed/simple;
-	bh=IB6ZkuoV2vDr4OXC5s+rpdDJA4ldHRMYJPksYO0FIKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXTYRzPBjFshnW2ZAIXSRiY0jjiw6bI9VQcP8xBKeoc03Cq7fxOPE+eFUgdlxAxdn6c5pmDtRnY+aoefhnt9DKXusGbSuOE/XD4c/tzW/3EpgSXo/aCfBEZnqdB+4CBV2mfeb6mOye07OMSLlW9l/lC1SrNs6C1kGLQzFyi2Dxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W713Yh8X; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so305245a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 12:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743623550; x=1744228350; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZya6J5BpAGmb7b1zJX3sjNEF08P/OfzkmyDGESG8aE=;
-        b=W713Yh8X2EVFO2Rh9tM7SVcrghK8l6noFiTTLzhBmnYwpMTAagS1CCZR/cLbO1oEFj
-         dCQCY4o2xCMFIsI4bNLclvQSrczTtdKTPGRUJrDzD+hvFMKAeQenQWYQSaEptGLy6BPc
-         FVSXGOyCa/RWzmSmgG7NHRUmt1QM9Ll6NbzH8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743623550; x=1744228350;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mZya6J5BpAGmb7b1zJX3sjNEF08P/OfzkmyDGESG8aE=;
-        b=GfmCplBdTZCIp/CPRVtpoxUTzyoJ1W0yVXMUFk6NMl2xR6MxyXy0xaVxiMmna6lCq/
-         DKe4B39gPPE89R51SYnDHXIf/G5UIeDz3vHb25YBtse5WlGyX7K8FDU/waXAmcHU1Wja
-         MWLlVHZxpcTam57jCRQBdVWLeMqEYbuxMCZ5WLUM+Bkfbh5i61hAdflaMX4ufVe3bITy
-         1Y6LY4Rps4euYMWeyTLmXpgLFvkM/yRGHXVCItrIDfsLKog0rspl6l9qIetCFscGKyk1
-         CsUXfUnzZSxrPFGtFr+zioksAo1rHKJ/BB7qmOUM/q8dTeM2N93rco9rSTnSA8j+K9iX
-         hNag==
-X-Forwarded-Encrypted: i=1; AJvYcCWnGd31YIQN5764cyabZRRCJikTYXsdQe2/f8yg4Bx2zVgmsu4Pf1d9pn1gIWVdyfDQx5aABog48tbtluQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ4//geFerKRA+q8nRfFldL002RMDWs5zn15T4xYg42zznta0Q
-	EHlLbiPxMFgwxRA1l0xGuyNAx+zv5kHgHV2Q39PVeiBKoADSlnKE1Ykjf5Oxhcaua7NLA9FFKkH
-	9kAw=
-X-Gm-Gg: ASbGncvunQIH5pGMCHkzqXhomkJTKIfqeoxpNhA/rAYl0R/T4MXmU9/MmRfb1flvoDy
-	273dqmf8+CsHtc9kV6saTJ+ShZhkum08ThFz19xv0eQVcIsj2TlcV5CfzgPnGY1W++US3bTQvNm
-	lZhYrl399CB+AkSGgekMcQYiLl8sJLo9jWdLWdAzfMrAtRpoFJTbFnxxHB/ZqlJm/CP/o2X+Db0
-	xqkChm+mVjtR7vGrImbEZaXGgOf2PHZmYklWcfhVoTtAyyQycyDfkJyvj1SP/KJMKdD55q8ylD/
-	cCHo63vFWlYypNOaNqEwJGurk1X1tzDUHckWCw3NLhWTVYhlbjVw3u6tLGkCrzEe/FkgeSwuBFr
-	tXirbus4aBvha9I6L3z98Stx5bvIbVQ==
-X-Google-Smtp-Source: AGHT+IFV/fyLSplnVtH8K8wj99Yk+3bDsRH2mCkjkYIoOPpqrfQkMkigv8T5oiFurpY8yFXzxwZrgQ==
-X-Received: by 2002:a05:6402:35cd:b0:5e6:23c:a242 with SMTP id 4fb4d7f45d1cf-5edfcfd4ef6mr16099670a12.18.1743623550196;
-        Wed, 02 Apr 2025 12:52:30 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71922bf43sm952281666b.6.2025.04.02.12.52.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 12:52:29 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so24330966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 12:52:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAdzxoYA8lV7hUdweLcdfYKUUCcSeTv0RNvs5JZcPhPPYjDgXBPpGx7se4TSdJJCo5DQHahTcilUkeEJk=@vger.kernel.org
-X-Received: by 2002:a17:907:72d4:b0:abf:4c82:22b1 with SMTP id
- a640c23a62f3a-ac7bc165ecemr3759866b.32.1743623549115; Wed, 02 Apr 2025
- 12:52:29 -0700 (PDT)
+	s=arc-20240116; t=1743623862; c=relaxed/simple;
+	bh=y3JVmLGpCtCfcuyraejjYQhoD8SSnVO/VvVoJaMKtDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NIo/nVMTptdoxN6YvXGN7fIEDywRskCK1cITQbAejwndzjQ61ougcfn65qrvOOeT/tg35jwBVqYkW6VVDB5etjCEAsw+vU+hclR1bDwOFFgaj8tcxG3nSwoPHwUtN/U/9yUYHZ3eigiXSBCCqxGUhIBNruGk39VpkZxvMJCb6Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q81R00as; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE70C4CEDD;
+	Wed,  2 Apr 2025 19:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743623862;
+	bh=y3JVmLGpCtCfcuyraejjYQhoD8SSnVO/VvVoJaMKtDU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=q81R00asJsrom0gEE/ufD7oWYMXFcxic65vcYEeTh3G/92xFh59O791dEYpTi/vvv
+	 agQfUMtFWAfhm4pkK0sViKyOa6eYz92vaCFTAUZI3cGfoCpzn6vJnNotShALWUqSz/
+	 3LPYL7wx/jTwrXMkWCtWZofbRy7XRY2a30DTD9h8=
+Date: Wed, 2 Apr 2025 20:56:14 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 6.15-rc1
+Message-ID: <Z-2WXkaNHGqsvPNm@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z-00cAEKkfvyNto2@pathway.suse.cz> <CAHk-=wgfX9nBGE0Ap9GjhOy7Mn=RSy=rx0MvqfYFFDx31KJXqQ@mail.gmail.com>
- <Z-2EVf5BvJ-BoYkU@surfacebook.localdomain> <CAHk-=wgfX7yfDYVOF8VqRR60RaBFbK=FZMLqOx0nT4ckMnS0ug@mail.gmail.com>
- <CAHk-=wgWT4AOFgMxSBVqYD9dVPXTr775UAwyX9cUOz=0ahf3_Q@mail.gmail.com> <20250402154435.5b0aad22@gandalf.local.home>
-In-Reply-To: <20250402154435.5b0aad22@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 2 Apr 2025 12:52:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjcYW9Kf6Yrua_+RqB32RB9aVnvwzzXEC_6sdWinA1AoQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrl8WnpKeV4q8-2bLWoylOrfuY_gNAau7cMCrJgPdXdDxuriSrHzWABTOg
-Message-ID: <CAHk-=wjcYW9Kf6Yrua_+RqB32RB9aVnvwzzXEC_6sdWinA1AoQ@mail.gmail.com>
-Subject: Re: [GIT PULL] more printk for 6.15
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Petr Mladek <pmladek@suse.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, John Ogness <john.ogness@linutronix.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2 Apr 2025 at 12:43, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> I would also argue that it's good for the actual ack, because it gives you
-> a link back to email were it was likely acked, in case you want to confirm
-> it was acked.
+The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
 
-Let's make the rule that you can have your useless Link: tags for the
-pointless patch source if you want.
+  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
 
-IF YOU ALSO PUT THE ACTUALLY USEFUL LINKS IN THERE!
+are available in the Git repository at:
 
-In other words - don't make me go look at the patch submission and be
-disappointed.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.15-rc1-2
 
-Make the *first* link be something useful, like the *reason* for the
-patch in the first place.
+for you to fetch changes up to 2dc25093218f5d42391549de6fe45e1aa9325676:
 
-Then you can add your pointless noise afterwards.
+  Merge tag 'counter-fixes-for-6.14' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus (2025-03-14 08:50:49 +0100)
 
-Because no, "it has an actual ack" is not a good reason. Nobody cares
-about the ack. The *reason* people look at the link is because
-something went wrong, and you want some serious explanation for why
-the patch exists.
+----------------------------------------------------------------
+Char/Misc fixes for 6.15-rc1
 
-Seeing extra "Acks" is not a reason.
+Here are 2 counter that I realized I never sent to you for 6.14-final.
+They have been in my for weeks, as well as linux-next, my fault for not
+sending them earlier.  They are:
+  - bugfix for stm32-lptimer-cnt counter driver
+  - bugfix for microchip-tcb-capture counter driver
 
-           Linus
+Again, these have been in linux-next for weeks with no reported issues.
 
-             Linus
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Fabrice Gasnier (1):
+      counter: stm32-lptimer-cnt: fix error handling when enabling
+
+Greg Kroah-Hartman (1):
+      Merge tag 'counter-fixes-for-6.14' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus
+
+William Breathitt Gray (1):
+      counter: microchip-tcb-capture: Fix undefined counter channel state on probe
+
+ drivers/counter/microchip-tcb-capture.c | 19 +++++++++++++++++++
+ drivers/counter/stm32-lptimer-cnt.c     | 24 +++++++++++++++---------
+ 2 files changed, 34 insertions(+), 9 deletions(-)
 
