@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-585726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED47AA79693
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:29:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59047A79695
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699BB16EC2F
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F93B51D3
 	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71391F09B5;
-	Wed,  2 Apr 2025 20:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8891F2BBB;
+	Wed,  2 Apr 2025 20:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnZkSB/7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD3dbwl8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B4F19E826
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37041F1521;
+	Wed,  2 Apr 2025 20:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743625779; cv=none; b=BgI2Muqf3ToqNEkJgrhsVEwRsFEPfdSiBy+sq/95TSpq4CopMjnFsthr7mvok+2J2/WJxaAgKHPxE70R21CeDUBkvv4bCd9FrhLXpUETWV6+ffCWn47gjVSyGgtqTFP89BksYNcmKwhyprpUaE9fOkU3kordEtCEJ60rGmqF3eQ=
+	t=1743625781; cv=none; b=tGJU7ZXNnTK7TtNIN3ANCzserv7RLsG9yENaLvlqtacoEZEMhFU072AoWq70ZB4DWY03SJZnsxqWcs2V2UUPtEhgFn0A3Zb6i+KWkhEZafCVeuJJHLC0bnmdq3dKhaUNVIsk5AczoPWoUSQIM0gDmWsxWLV+ZCVEyzN0j2u4YnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743625779; c=relaxed/simple;
-	bh=sGiYg3z/tFgNP8/WeX2yozEZiRzk47zD4QucahjSTzs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FZn20G843B9ijQ90aJh+8vai8GTPK3KChDyPQLe6B1G89gXHnI8EXp0twQqu1wbsPmV9nUAq8/kKOZnR6331eGBjedCgeTOxGxEdB2gw9ttFQIRmmaWRgKqSs+nAnBDVVHxTc/PMVzg56Bb9wmVRD7KZ+cprf2BgJA1+y5noSCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnZkSB/7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1851AC4CEDD;
-	Wed,  2 Apr 2025 20:29:39 +0000 (UTC)
+	s=arc-20240116; t=1743625781; c=relaxed/simple;
+	bh=2xZiyApAQj6FWAXDa4C0e8IhwZeJzDAPI4MOaonkTI4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=t2Mu5nWpHA78Yy3IRICPpfrOVoal+L4et1uugjvcIvg6+xwQDCav/0cuF1GJ+raE9G1gdRrCDg8FLP5IdtzTgQQRzT15lsNQKK0Jz91hXH/WXC5AihGF8acI19OWPOaYuGlwUVSaxC0dWqEtEOocdD7N2n60ZiE1Bchg1e0q46U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD3dbwl8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17988C4CEDD;
+	Wed,  2 Apr 2025 20:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743625779;
-	bh=sGiYg3z/tFgNP8/WeX2yozEZiRzk47zD4QucahjSTzs=;
+	s=k20201202; t=1743625781;
+	bh=2xZiyApAQj6FWAXDa4C0e8IhwZeJzDAPI4MOaonkTI4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ZnZkSB/74Ls5R4iJsmRMHuLbE92jjVw+CBPZqqRaNyHF1nCVgqv43Nf4/samwkh35
-	 fJ5bxCzgK2LNh+mVebmnygkw4l3hYrXIQ5dER0EabI92wJLNORI9YMTHAo35sU/wZ2
-	 gPISmu0Bzt2jpHp445UKvl+8N/QtOVyQeGpb2/Ars7TFpLq84EF27llsAp9AyTU9QX
-	 9UE4jhNhy8hVP9CSnWF+ficX3SoLMRHhFMvUunLpnYs1FMk6Tku9E/n+hBGOrS3IPp
-	 xjd6oo2E80WhnITklYXR55NxiF0ah/1Svts/ykQ2P2pK0M2cKnKovAwzXIO2CHYvSy
-	 vmQPPqldS1YWQ==
+	b=aD3dbwl89hO72bt86xs4Sa2+fmcv60TxKJK9AcnTIrWeMzQZB1ChJyMuLSu/dXS7O
+	 MCjHWMemL7GWkj+wWagcRcGTt+E+aJzoYEyxF7B9Ceihfe3SfBdJDWv361uFS8DtdM
+	 hsLaU2Hwy4E9ZTUz/iiG1rz66Mtzd4lyFMVdwQBU28joDj5qmC2u74+W5GXQBNoBp3
+	 Fsg3/4dwjkGw8WF8FH44c2t6u0/6A84lZCuXBoFBua34TJ13owGC8cPboTdJ/351d8
+	 yrBPqn9YJtSkh0H/vTYNu92cvILT3m/e9LyzIbRiHc12Xweo+XmEuZtAbsLzj9z2w+
+	 sC3ZtH8nIyqpg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34412380665A;
-	Wed,  2 Apr 2025 20:30:17 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-6.15-2 tag
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341AD380665A;
+	Wed,  2 Apr 2025 20:30:19 +0000 (UTC)
+Subject: Re: [GIT PULL] LoongArch changes for v6.15
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <87zfgyivld.fsf@mpe.ellerman.id.au>
-References: <87zfgyivld.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-List-Id: <linuxppc-dev.lists.ozlabs.org>
-X-PR-Tracked-Message-Id: <87zfgyivld.fsf@mpe.ellerman.id.au>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-2
-X-PR-Tracked-Commit-Id: 892c4e465c360d07f529bc3668fde7cbd4ea6b32
+In-Reply-To: <20250401121945.3814892-1-chenhuacai@loongson.cn>
+References: <20250401121945.3814892-1-chenhuacai@loongson.cn>
+X-PR-Tracked-List-Id: <loongarch.lists.linux.dev>
+X-PR-Tracked-Message-Id: <20250401121945.3814892-1-chenhuacai@loongson.cn>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.15
+X-PR-Tracked-Commit-Id: 17ba839c3c6c95562f329340e67da432309dd0d4
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0a87d6bb6fd274cde3bf217a821153714374198f
-Message-Id: <174362581579.1664588.10759501812226685205.pr-tracker-bot@kernel.org>
-Date: Wed, 02 Apr 2025 20:30:15 +0000
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, naveen@kernel.org, npiggin@gmail.com, ajd@linux.ibm.com, christophe.leroy@csgroup.eu, fbarrat@linux.ibm.com, linux-kernel@vger.kernel.org, martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com
+X-PR-Merge-Commit-Id: 1c241cba196decd73b6959e851bfb71d0a1c1767
+Message-Id: <174362581767.1664588.3464451912801210611.pr-tracker-bot@kernel.org>
+Date: Wed, 02 Apr 2025 20:30:17 +0000
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Wed, 02 Apr 2025 23:41:50 +1100:
+The pull request you sent on Tue,  1 Apr 2025 20:19:44 +0800:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.15-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.15
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0a87d6bb6fd274cde3bf217a821153714374198f
+https://git.kernel.org/torvalds/c/1c241cba196decd73b6959e851bfb71d0a1c1767
 
 Thank you!
 
