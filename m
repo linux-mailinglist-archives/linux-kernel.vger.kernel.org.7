@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-584604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF76A78927
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:50:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F38A7892E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638B53B1A31
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE243AFFD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C11233728;
-	Wed,  2 Apr 2025 07:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDE5233157;
+	Wed,  2 Apr 2025 07:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2rCDwF9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l1GG/c//"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C222220E6E3;
-	Wed,  2 Apr 2025 07:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E171EF38B;
+	Wed,  2 Apr 2025 07:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743580186; cv=none; b=H31MWcIzoerWRBy+tqrxce9uTwQr7pN7pS9+zj3Oi+WayZgXC+krrMbqBc0d0XAyWjwfo1oIiZP8IQS1/Do424n6d18QSnbzL9W9ckkyb6KV0kapmqDST6RT5XreGaf7vxlR33ZrMwKVoWWXM2vQzEhDkCWNeQdWYhDx9EGcjPY=
+	t=1743580335; cv=none; b=AFgEV+MLeRptgy+c/NZ+AtBae18n2C6ec1C8M5+FpcR+38h3d6mvTdggHql+QqllLUboQJ9bLEAQiAv9FTHjMpfCTHMASCTrSMP90VeUOhLhjmiIh5OhC0oHD+Ye3UNEJdeK0g3KexCAcJ5zfaKEj6BeSGHIgGtrWSmREIqWjJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743580186; c=relaxed/simple;
-	bh=u9HKDWdKPmOemTxsFQ9btUD3Wrgam41mvMrBts7MGXY=;
+	s=arc-20240116; t=1743580335; c=relaxed/simple;
+	bh=UAr1Z+AxXev6VsfCf/rRanRitQOy9kGFIc+s7ksn0s8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJBUZ4LOzodBZLKJXfp0VCT5ZeYKu/OLZaG2tAQn2s6ZT3lqwbUy4nSJquizN/mQHT2nFItUzO+S6F+RtKHNIhSOx9uIOe0hVQ+Um4K2dLIZFKaCYfWWmLlvH+H7w66o3cVRnOm9tAOKCWt8Uul2mpONf8Iu/yJnr5AHCkRUReI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2rCDwF9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA5DC4CEDD;
-	Wed,  2 Apr 2025 07:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743580186;
-	bh=u9HKDWdKPmOemTxsFQ9btUD3Wrgam41mvMrBts7MGXY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y2rCDwF9vyCniKjVEcF0QNuoverj/TfxcghMBkvVZiWJKP5tK3+gura3RUUBTQOee
-	 EmrxGaNKUmeRExXfDqYNKPvxhgu4j1QxrrxEw/cj1RBvjX9oXWJgGjFrY7sO0vas6W
-	 qYj52AzSI4bpJ1SDH2zliaJpPyP5lM5EFQXFTZa0Mlm2K1zoi+t5qCq8+yRiyRkfOU
-	 ZoZcyk3Mt5JUl3xlDxCxdXixxiNtops9gbSOgIaahAf9Ri3FWo0XEvbtJ35LDiwybB
-	 yfllzsRs/jqfeNAGSP6FpucqFMCKOuloqCFRptqfug5ufC6Y+RExwenJmJj1ONs7eL
-	 AWgA/w/ThZBVQ==
-Date: Tue, 1 Apr 2025 21:49:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 01/10] cgroup/cpuset: Fix race between newly created
- partition and dying one
-Message-ID: <Z-zsGazxeHK9uaA6@slm.duckdns.org>
-References: <20250330215248.3620801-1-longman@redhat.com>
- <20250330215248.3620801-2-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GC1zhePyPKU4xpofT3ksHslS1DP27yaI6uPrB/eFR4ga7rou14OwfEADnJbDhX1udepefH7ss5C+4FxAKR94eaEoExO8w72ki99uCM7jO1bNtaY6zzJXvXj6qe8aLB83imi/0NwPbYs2ZEepssrpw8npcORAtyKKmaCyRP3cAFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l1GG/c//; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QcJX0K8Yl0giGfzJVWrled6+/qbBHVkKw4ZT7UuEPXI=; b=l1GG/c//fbkOLLhclF5wAgkWMR
+	g0IbNLiU5l7vGPt+ReYRfa/NxMcsGJbBG2pzzasy1YsVolQ8IuV+EJjalGSCV0SO5L+vZBuNnaGUY
+	0mW1Otgz7OAcynUOlQngIJQC7gYlZPhD5IoOvyqYcWeqUCRDymHEreWq/yUQkO8JViuEv8OslMngw
+	YEDz1Dv1EplrY0qElzaYBuq2Z90c318axGUpg4fm5OmiZx+Su/qXyFMyC8WA2TLgSoLBM6PsS/iDO
+	XsL+uVTijCSQ/KorFnoMFFEsbIjqKlLYEiqyc8Bi4LC5rG7eOlof/UNSKuyQpaC8lGDMkgP3XKQXX
+	XeNY7/lw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tzstN-000000091wg-3A3Z;
+	Wed, 02 Apr 2025 07:52:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3BEF030049D; Wed,  2 Apr 2025 09:52:09 +0200 (CEST)
+Date: Wed, 2 Apr 2025 09:52:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, Randy Dunlap <rdunlap@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] iommu: Convert unreachable() to BUG()
+Message-ID: <20250402075209.GR5880@noisy.programming.kicks-ass.net>
+References: <0c801ae017ec078cacd39f8f0898fc7780535f85.1743053325.git.jpoimboe@kernel.org>
+ <20250327123718.GB31358@noisy.programming.kicks-ass.net>
+ <6zzyjtvkqc4ipj7ngtkx3jithfwpwuxlix677urlehgdnljwbl@wfoa5futari6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,50 +66,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250330215248.3620801-2-longman@redhat.com>
+In-Reply-To: <6zzyjtvkqc4ipj7ngtkx3jithfwpwuxlix677urlehgdnljwbl@wfoa5futari6>
 
-On Sun, Mar 30, 2025 at 05:52:39PM -0400, Waiman Long wrote:
-> There is a possible race between removing a cgroup diectory that is
-> a partition root and the creation of a new partition.  The partition
-> to be removed can be dying but still online, it doesn't not currently
-> participate in checking for exclusive CPUs conflict, but the exclusive
-> CPUs are still there in subpartitions_cpus and isolated_cpus. These
-> two cpumasks are global states that affect the operation of cpuset
-> partitions. The exclusive CPUs in dying cpusets will only be removed
-> when cpuset_css_offline() function is called after an RCU delay.
+On Tue, Apr 01, 2025 at 05:50:32PM -0700, Josh Poimboeuf wrote:
+> On Thu, Mar 27, 2025 at 01:37:18PM +0100, Peter Zijlstra wrote:
+> > On Wed, Mar 26, 2025 at 10:28:46PM -0700, Josh Poimboeuf wrote:
+> > > Bare unreachable() should be avoided as it generates undefined behavior,
+> > > e.g. falling through to the next function.  Use BUG() instead so the
+> > > error is defined.
+> > 
+> > Right; I did a pass like this a while ago and thought I'd removed all
+> > unreachable() abuse.
 > 
-> As a result, it is possible that a new partition can be created with
-> exclusive CPUs that overlap with those of a dying one. When that dying
-> partition is finally offlined, it removes those overlapping exclusive
-> CPUs from subpartitions_cpus and maybe isolated_cpus resulting in an
-> incorrect CPU configuration.
-> 
-> This bug was found when a warning was triggered in
-> remote_partition_disable() during testing because the subpartitions_cpus
-> mask was empty.
-> 
-> One possible way to fix this is to iterate the dying cpusets as well and
-> avoid using the exclusive CPUs in those dying cpusets. However, this
-> can still cause random partition creation failures or other anomalies
-> due to racing. A better way to fix this race is to reset the partition
-> state at the moment when a cpuset is being killed.
-> 
-> Introduce a new css_killed() CSS function pointer and call it, if
-> defined, before setting CSS_DYING flag in kill_css(). Also update the
-> css_is_dying() helper to use the CSS_DYING flag introduced by commit
-> 33c35aa48178 ("cgroup: Prevent kill_css() from being called more than
-> once") for proper synchronization.
-> 
-> Add a new cpuset_css_killed() function to reset the partition state of
-> a valid partition root if it is being killed.
-> 
-> Fixes: ee8dde0cd2ce ("cpuset: Add new v2 cpuset.sched.partition flag")
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> Any reason not to just "#define unreachable() BUG()" and convert UD2 and
+> similar to use __builtin_unreachable()?
 
-Applied to cgroup/for-6.15-fixes.
+Just remove unreachable() entirely at that point. But you're going to
+have to update all the various arch code that does use it correctly :/
 
-Thanks.
+There are a few sites besides BUG() that need it; eg, long jumps when
+bootstrapping etc.
 
--- 
-tejun
+But basically nothing outside of arch code should ever need or want
+unreachable.
 
