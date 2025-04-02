@@ -1,199 +1,148 @@
-Return-Path: <linux-kernel+bounces-585058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D95A78F39
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:58:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0CDA78F28
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAC63A56F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E01BF16BDE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5123F23A98D;
-	Wed,  2 Apr 2025 12:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8813923A995;
+	Wed,  2 Apr 2025 12:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XaVyva+f"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgpS6NSX"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8622376F7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E41238D25;
+	Wed,  2 Apr 2025 12:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598344; cv=none; b=dgxYJuFzo3ygnHpaOZGmX8Ya784rwaoOjKB36YFWVNW2+JDRIdziX5BMlHyICE/SEKGHrH9aJeAgmZZClotOg+O04l3acbI1FNYEcIQ/mwx3+RXpuEQTmACAQPYKhBWIbiJJFeDrsNeU+Fkxy9Bzv3LE2NCZvaS98QDkAyQsnJ0=
+	t=1743598420; cv=none; b=RUa35taEkiFaLCSSsAxbGWa63Ksd+Ru2mYDq+S7CIR/mX2XSS9IqRTjggw+rMG2XC4XXpvcQBpJXtNUfhsGuOK/UHS/6rJ+vySIcZ5b7LhmrZMvKKmeeD0zZ54IZw0VpEVPS51wRs3TU1ez7ksLd4JxPLwyXK/cq11YHLtXbU0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598344; c=relaxed/simple;
-	bh=89doMQQqTUXXMsk02oDFiQQEN9CjVR0H9vwo89xlW4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NYO0MFybO5X1Zjc41PEX6lKmTEKmJLPP6dbYxEsHrGORMSVpflXMZPswlLloUGRiEI5SKYosk20adwNMRKc3yb4AuA3SMWR8pqJeZPvULRZ2OpHI3n1Mn8/Pr1vus7NZAhkwvLoiZgJjy2AAsokA2Yk8M/o0aQcS9M4ipa5LuEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XaVyva+f; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1743598420; c=relaxed/simple;
+	bh=QWAHrdoHZQWrK4dNu2Qq9in6lH220oPuPQXNfKYeiJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=deqUaxpcVOiNfoe+DNcpZFNrgmBNaC2QRY9jXFB4GVdKN+8SYl1yaG2wMM8rcHUBpT8jPpfm6zD9KNdI70cYetxtlu4k8tcPuA057mJ7LkbCSOl3zrB/zTXcLAB3p+ECJ4x+1pIHP+2LsNhxGVBj+hWumEVI9kwuk4X4LDkWjaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EgpS6NSX; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so1731743f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:52:22 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso6051460a12.3;
+        Wed, 02 Apr 2025 05:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743598341; x=1744203141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743598417; x=1744203217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8nef0ixQU1wmsLTpO1b+Z0WKnVoF/EZ475EXUb+E8QY=;
-        b=XaVyva+fL4KTso/SDJp2RWax/RAjfElApgfjl6BhSuh5/z1NEVaV36HyIGMbNhq/Uz
-         i54RtNh5sKJc3j0/AHKjZasVkFkmbakkLlVABUCALXKKcpPAS82ecaNVJeEE6dF58y0f
-         FCR5DUVHDXJ2pAtYAkXZhfVjMfRdMdIym0fonCF6czkLWjOKuWpl0coI5+QyFLBEhwRg
-         9fSeJTrOGG6gHUUn/F4DSgdhEHoVKlTQjQ+t2bLiTnxWLft6YGDwnWIWDzk8wBaXa+eX
-         MaomuvHuONhm1R86/6bbYJth8pD+5mXGicaQFGzJpuN17/7qhljPyhjDTApZmyY9j4t0
-         EsTw==
+        bh=QWAHrdoHZQWrK4dNu2Qq9in6lH220oPuPQXNfKYeiJU=;
+        b=EgpS6NSXnqOTQAIJU98K8tAar5bA0gF42DZu5boRp9Pd070HYbxTEAnzOcrC9FvOJJ
+         0Fe8Yu4qdb6R++x2duj9yMPo9hBOXMZu4WdrMwp4H+XLpU00sok0Jn6pBMIeuM5u8LJU
+         Xzr+iEIeEyGUtcXlI8Fndac2127tcI2deqmSut4FSTOJ8zadWJOE/0npr37748bFmf9R
+         gjeMdQS9wDGyi051SORP+tL092SIwrFAWHaEStbwf0QEawe4zdc1MLVM5FH/W/mGP4NZ
+         42Q1jzoAixzdvSstJ9yZGFziTGNqsL4OCujBHuhwN/s9ZknsWvoila4RNBBWAXQnReNG
+         7Ylg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743598341; x=1744203141;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1743598417; x=1744203217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8nef0ixQU1wmsLTpO1b+Z0WKnVoF/EZ475EXUb+E8QY=;
-        b=OV//FP+02AxGeKcGKxhev6PEzR5pmpnuNvmfXHfzNojWuy0T3I3Vlwj+DQxgIQqx7s
-         bC7wbf94Mf/KK5VemPB0OhHNKr+gjqzbzfVeE0hndgS9L1YKWC5WOdtaV8W49P4Lnmmg
-         azqSQxDWF9GOx2UmgLTICaPdScBgfwjKMYRnK4WDVkCWZqz0KsmJdLEIwXbJOXX+LW8I
-         JE3KkUiItbjSN/3QpLRjUs0JktM4UQTMIdjygSNwqXUJujKRfBq809jANH9jsxjHWVKI
-         QyJM05OqxrPTf9AF72SOX+nnKfBHwuB7gEUAI8D/LoP6BuQ6W+5lwrp15YOo3luz2Psu
-         r6Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyVUcMwyTSuNLZpPVsn2GB5mJCYLO7DiumowZ2Fagbh+Pm0MrlAZiyeMZTe17zbsXuY/wk9g3B+goDMag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYe5jOyqtPwKnG67cvkTuj0FTBehHUAfYNMv9NjPFO8TdeaE1t
-	wNzcRS4yzMYa7RjjVbB/q6OJRqu6eqlDFBzoXP4cqN1j7jcKEQyY
-X-Gm-Gg: ASbGncsVF7m5NEduk4Q1KJ9+i9oItlBRc+WoaoAJ42nqB+a4V6sQrZqMnFPvakWzygf
-	VTfyDRMb97yTUFAwM/d0tbbOUGF1GXVbJhvin9rE7PY3Z51H6VSGZu/OnN3kXCO2rk4RmAxxC/Z
-	hvJceZ9he/uP/zfxxQIej3GJsvvxeyikRr8FQn4Rcp+WuPdSloQxIkYIQ6zF/VcE99GRWv1ws2M
-	IPIh7tsMazKBqQDCU29A7BirCYGubzdimzpLoEunDp3rbNfsRJG3/H39RZwbsBJqiO/2cn+M24A
-	5fqkXUPwe5tCjvbDmu20HB0t5gYuImlD8TXu4JOy2IYFf0jGEKYhd3ApKkFZWqN799aZLfh+1UB
-	339Y/jPW7m5cJQ9+ZUA==
-X-Google-Smtp-Source: AGHT+IFn02P1ukvJ8y/QRJMuhLrjtzdIpEcbiaPHVb4vw4w0ZAKBrYX5UbrSJMPI6LA4r05gYUSbyA==
-X-Received: by 2002:a05:6000:1889:b0:390:fb37:1bd with SMTP id ffacd0b85a97d-39c1211beabmr15544458f8f.46.1743598340981;
-        Wed, 02 Apr 2025 05:52:20 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b7a4498sm17307668f8f.99.2025.04.02.05.52.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 05:52:20 -0700 (PDT)
-Date: Wed, 2 Apr 2025 13:52:19 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>, Andrew Morton
- <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] math64: Provide an uprounding variant of
- mul_u64_u64_div_u64()
-Message-ID: <20250402135219.28b24e94@pumpkin>
-In-Reply-To: <2wwrj6aid2elnnotzfkazierqmzmzpfywyf33ahqs36xh5xz32@rszeetrztsiz>
-References: <20250319171426.175460-2-u.kleine-koenig@baylibre.com>
-	<20250321131813.6a332944@pumpkin>
-	<epuk3zijp2jt6jh72z3xi2wxneeunf5xx2h77kvim6xmzminwj@4saalgxu3enu>
-	<20250331195357.012c221f@pumpkin>
-	<mjqzvj6pujv3b3gnvo5rwgrb62gopysosg4r7su6hcssvys6sz@dzo7hpzqrgg2>
-	<20250401202640.13342a97@pumpkin>
-	<15qr98n0-q1q0-or1r-7r32-36rrq93p9oq6@onlyvoer.pbz>
-	<46368602-13n7-s878-s7o2-76sr0q67n9q4@syhkavp.arg>
-	<20250401223731.7102103d@pumpkin>
-	<2wwrj6aid2elnnotzfkazierqmzmzpfywyf33ahqs36xh5xz32@rszeetrztsiz>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=QWAHrdoHZQWrK4dNu2Qq9in6lH220oPuPQXNfKYeiJU=;
+        b=Z0JO4Dg9QcGUCx8nZ3D+41/EyN5OIcCLGqXMLx0OYAuZJ+8AUC8wZ+Escj7ZTt5vTZ
+         lS1ydUeHRI4Y4+JMpwJyF95Ajgshfrl92oimH4b7uVCRq1k2kwcOAgvweCU/9ji2XBMs
+         QNHPboqFzCjiIAZbyJA+/JoqHuj7YpKcYP8Ztpl8Cxl9R5QKyngcW2OsdwAwN679yuSb
+         KtvDExK6unTpxFuG7RbPSll7eauvpJ/T3aZGKeQt2RgJ8Nmfn8mA9Q3RUjR7uSl7dqbq
+         FWfYRUw/g8mToBWbkcslOqHdHgki91iI59+6/GHtfEzTL8iuzqdPGWrZAQ1cBAenXrjb
+         3kAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUccaZyYkirq9bTsMj0N5DZIeFeorRpD/CGSnX32kVXsqqTiCLmwKiT8YdBFBmxKcP0St8j0kEExnIBfMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztbdbXI3dACorNjaiAuu2GBumkSET1Sa/Em5kmb7NQaKxI3sEe
+	riROsZIzuXhVNYAtfgVKzyfaQFJfRwxZNsIjxmEdN0ox3m228IoM8nEmJXVzte1qtfYeQdjKhSA
+	IfxKQIwhuSsDLf0d7Y66XXnV2kIo=
+X-Gm-Gg: ASbGnctCeM5445x/402F94JfMVKB+8OOo/H9X4/sac9PsvCvK6YoIO5bJsB2bEsp9p6
+	NQbP1/mpu+HU6vIhG9KNwHZyOZGssymRLODL60WltB9pJ3aJKWG9/sf0aDsk9ytFxeOh92AQLCa
+	3BOkyFFEeVDuyGmhVCvt4Q+dnFCjfkBDPgwy61oSQ=
+X-Google-Smtp-Source: AGHT+IGxDgr+/GaLpKlsw9St3w6GJvEPpvjphaV5hDOM2BUJ91HNibOwkf5Ij8wA/sKQqWEOmB+VBIEys451X/p7yBI=
+X-Received: by 2002:a17:906:6a0b:b0:ac7:9937:e259 with SMTP id
+ a640c23a62f3a-ac79937e35bmr225555866b.0.1743598417114; Wed, 02 Apr 2025
+ 05:53:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <67eca38a.d40a0220.22c3d5.88f3@mx.google.com> <CAHp75Vf4abzcNFwo2W-=-fOr1_j51RAUPxDbGNVX9F-Soxbs3A@mail.gmail.com>
+ <CAKUZ0z+mqGwyEt8oem7gLMXbNp6D3MPPMXEH5GCdA4_768d=5g@mail.gmail.com>
+In-Reply-To: <CAKUZ0z+mqGwyEt8oem7gLMXbNp6D3MPPMXEH5GCdA4_768d=5g@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 2 Apr 2025 15:53:00 +0300
+X-Gm-Features: AQ5f1JpDktiw_Kd3xROZdIkDbnI11lgI5EHYRPHPVopQZ4eLDQiCWlbTGKfxrq0
+Message-ID: <CAHp75Vdr9YO6GJmomumP=tksZfVj4BtDHx=Rb9Cr4gSQPnt+eg@mail.gmail.com>
+Subject: Re: [PATCH] staging: media: Fix indentation to use tabs instead of spaces
+To: Gabriel <gshahrouzi@gmail.com>
+Cc: linux-media@vger.kernel.org, andy@kernel.org, hdegoede@redhat.com, 
+	mchehab@kernel.org, sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2 Apr 2025 10:16:19 +0200
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
+On Wed, Apr 2, 2025 at 3:28=E2=80=AFPM Gabriel <gshahrouzi@gmail.com> wrote=
+:
+> On Wed, Apr 2, 2025 at 3:12=E2=80=AFAM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Apr 2, 2025 at 5:40=E2=80=AFAM <gshahrouzi@gmail.com> wrote:
+> >
+> > Is it your first patch to the Linux kernel? See my comments below.
+> It's among the first patches I've submitted.
 
-> On Tue, Apr 01, 2025 at 10:37:31PM +0100, David Laight wrote:
-> > On Tue, 1 Apr 2025 16:30:34 -0400 (EDT)
-> > Nicolas Pitre <nico@fluxnic.net> wrote:
-> >  =20
-> > > On Tue, 1 Apr 2025, Nicolas Pitre wrote:
-> > >  =20
-> > > > On Tue, 1 Apr 2025, David Laight wrote:
-> > > >    =20
-> > > > > Looking at the C version, I wonder if the two ilog2() calls are n=
-eeded.
-> > > > > They may not be cheap, and are the same as checking 'n_hi =3D=3D =
-0'.   =20
-> > > >=20
-> > > > Which two calls? I see only one.   =20
-> > >=20
-> > > Hmmm, sorry. If by ilog2() you mean the clz's then those are cheap. M=
-ost=20
-> > > CPUs have a dedicated instruction for that. The ctz, though, is more=
-=20
-> > > expensive (unless it is ARMv7 and above with an RBIT instruction). =20
-> >=20
-> > The code (6.14-rc6) starts:
-> >=20
-> > u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
-> > {
-> > 	if (ilog2(a) + ilog2(b) <=3D 62)
-> > 		return div64_u64(a * b, c);
-> >=20
-> > Now ilog2() is (probably) much the same as clz - but not all cpu have i=
-t.
-> > Indeed clz(a) + clz(b) >=3D 64 would be a more obvious test. =20
->=20
-> Ack, the more intuitive check might be
->=20
-> 	if (fls64(a) + fls64(b) <=3D 64)
->  		return div64_u64(a * b, c);
->=20
-> then, but maybe "intuitive" is subjective here?
+Good start!
 
-Depends on whether you grok 'clz' or 'fls' :-)
+...
 
->=20
-> > On 32bit a check for a >> 32 | b >> 32 before the multiply might be san=
-e. =20
->=20
-> Not 100% sure I'm following. `a >> 32 | b >> 32` is just an indicator
-> that a * b fits into an u64 and in that case the above check is the
-> better one as this also catches e.g. a =3D (1ULL << 32) and b =3D 42.
+> > > >From d6a08153171ac52b438b6ddc1da50ebdd3550951 Mon Sep 17 00:00:00 20=
+01
+> > > From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+> > > Date: Tue, 1 Apr 2025 22:04:25 -0400
+> > > Subject: [PATCH] staging: media: Fix indentation to use tabs instead =
+of spaces
+> >
+> > First of all, your patch is mangled. You want to use proper tools,
+> > perhaps. One of which is `git format-patch ...` and another one is
+> > `git send-email ...`
+> I was using git format-patch but not git send-email which seems to
+> have been the issue. The meta-data from the patch was getting appended to
+> the top.
 
-That is to optimise the multiple as well as the divide.
-It is also a very cheap test.
+These are just normal headers for an email. They may be used by tools
+such as `git send-email ...` or `mutt -H ...`.
 
->=20
-> > > > And please explain how it can be the same as checking 'n_hi =3D=3D =
-0'.   =20
-> > >=20
-> > > This question still stands. =20
-> >=20
-> > 'ni_hi =3D=3D 0' is exactly the condition under which you can do a 64 b=
-it divide.
-> > Since it is when 'a * b' fits in 64 bits.
-> >=20
-> > If you assume that most calls need the 128bit product (or why use the f=
-unction)
-> > then there is little point adding code to optimise for the unusual case=
-. =20
->=20
-> n_hi won't be zero when the branch
->=20
-> 	if (ilog2(a) + ilog2(b) <=3D 62)
-> 		return div64_u64(a * b, c);
->=20
-> wasn't taken?
+...
 
-Right, but you can remove that test and check n_hi instead.
-The multiplies are cheap compared to the divide loop.
-(Especially when uint128 exists.)
+> > Change itself is okay, but is this the only one case in the entire
+> > driver (which is something like 100k LoCs long)? Even though, and
+> > while for the training purposes this is fine, you can also think about
+> > checking the common style of other functions, which may be shifted
+> > with TABs, but still having not enough spaces or so.
 
-I also think you can do a much better divide loop (for many cpu).
-Shift 'c' so that clz(c) is 32.
-Shift 'n_hi/n_lo' so that clz(n_hi) is 1.
-Do a 64 by 32 divide and remainder (probably about 32 or 64 clocks).
-If bits of 'c' were discarded multiple and subtract (with overflow check).
-'Rinse and repeat' with the remainder.
-Build the quotient out of all the partial values.
+> Good point. Regarding formatting, it probably makes the most sense to
+> address these issues comprehensively in a single cleanup pass (similar
+> to https://lore.kernel.org/linux-staging/cover.1743524096.git.karanja99er=
+ick@gmail.com/T/#t).
+> This particular instance caught my attention because I initially
+> thought the author might have accidentally used spaces instead of
+> tabs. The line in question used 2 tabs + 8 spaces, while subsequent
+> similarly-aligned lines used 3 tabs. However, after examining
+> different files in the driver, I noticed that while the formatting
+> appears inconsistent, it likely exists for specific reasons. It's
+> probably better to avoid changing a single detail without considering
+> the broader formatting approach, and to treat checkpatch.pl more as a
+> guide than the final authority.
 
-	David
+Okay! In any case this patch is fine to me in case you want to send a v2.
 
->=20
-> Best regards
-> Uwe
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
