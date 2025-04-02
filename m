@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-585004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE9CA78EA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:37:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92369A78E7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30FE3AA089
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:32:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 538317A2F5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB92323A9A3;
-	Wed,  2 Apr 2025 12:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BF23959B;
+	Wed,  2 Apr 2025 12:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="M7F54b6X"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66672238D2D;
-	Wed,  2 Apr 2025 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FHHYmnk8"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651D1238D22;
+	Wed,  2 Apr 2025 12:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743597166; cv=none; b=Ju3dAtDIbYaLD0LtYfzyyH04M8v80jZUOCGQ68vTQBx4maplJfXgMhcYQ17Fzrge8xSaeytbNa9awb+iMiq86pCLz0JhGnE+DADEQEfSuVHt/+sWXWGQfmT+swjjqFYt1VAM+xsYi5eBsi8wC4zbvkE0yWlUpPfcY71Qx7/B/gg=
+	t=1743597165; cv=none; b=cXb2gI3Y5Crvw1oURaQNhg86AhYgufN31Bze5XkCHNbn1/Xun+55d13QOiaUsK0t3j88JSRAtExbrHzSzA47wcdtjRg7b6qSi0we0+Ghrv1ZA6/t6CZmUSxL+lMEwWmDA+eN23AoyB7XWNczz4SJYtUyC6dAbzC7ahXoTCtC3po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743597166; c=relaxed/simple;
-	bh=RY1wOESZWxNAL6kdiDv+BIzI3pjPPM9sK0ZV9d7NMYk=;
+	s=arc-20240116; t=1743597165; c=relaxed/simple;
+	bh=J/FkQ+SkHYYoPQcELkb+tIcpNOe26kLfqD3rb2wWEoo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uscBzd/av9a9WMo+tWjjx8UBDVICTLRIvy/PQcX9zFhW8JeZlmhCD+P/3VsNrDwkNsoK6WMGvHnT3VJIs7/lpzlS7H+vdLfDhbSlldqxbMfTSLnBtsAQd00jw07zsjSvVLvxBW49u54NKE0yivGX/ZOeAu4eTWVfsUqI09szt60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=M7F54b6X; arc=none smtp.client-ip=220.197.31.3
+	 MIME-Version; b=D7hYScEvjTLsA+H5oSJF7L/lkm1cBmksjpWqDWvEu5d25T/u1DINJ3Jp/GBZ4fHKgPRgBNIRvASlw53V6VTS2CY/ZGnHV5KeY1RobTWAvE0Dp1e/mZKSu6C0VGCbzIlhJBbJa5PyJbHwAbHdoQ94pxyV7aONnWe1Ky45zrbH8RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FHHYmnk8; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=CBuVD
-	5mLxW1qWVh3yysFaNPsNmOWSZ6Qe90zC/Vn6b4=; b=M7F54b6XJU+kRYft5LtkL
-	Z6VagWP+2LCz3EVq3DxVZzZKAdHopIr1/Y079LCLE2IzRkka9P7h7LxY0BAjQrtB
-	HOISEyKLKPyUe2qVBgZs7NKURvHtA5f+BWNtW1qLkWaZpBUqvk/LChH7EVjrDkE8
-	FN9cRUgvV71k5ayvX5R75E=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=XjB5C
+	GDy56iSBUj/onMIQC1Fw0WRXap96Du59NyDvPE=; b=FHHYmnk8bBtXKyHUfklTf
+	ByPqOdQhLfYcPUAXIit/E/u8aIJEEQlnqPHFDfG7pI07pE75Z3GpSPrfJogpk3y/
+	6azwa6yItgQ2lAbwwmY41qCq5E2Oefcc/gYAtbmfIBa/i9Z01MbF/ebiIVkSDhqS
+	J2cZvffcu4tlw/MsM/9Iuw=
 Received: from ProDesk.. (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDnd405Lu1nJwOJBA--.36321S6;
-	Wed, 02 Apr 2025 20:32:01 +0800 (CST)
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDnd405Lu1nJwOJBA--.36321S7;
+	Wed, 02 Apr 2025 20:32:02 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: conor+dt@kernel.org,
@@ -52,9 +52,9 @@ Cc: conor+dt@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v3 4/7] drm/rockchip: inno-hdmi: Fix video timing HSYNC/VSYNC polarity setting for rk3036
-Date: Wed,  2 Apr 2025 20:31:38 +0800
-Message-ID: <20250402123150.238234-5-andyshrk@163.com>
+Subject: [PATCH v3 5/7] ARM: dts: rockchip: Add ref clk for hdmi
+Date: Wed,  2 Apr 2025 20:31:39 +0800
+Message-ID: <20250402123150.238234-6-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250402123150.238234-1-andyshrk@163.com>
 References: <20250402123150.238234-1-andyshrk@163.com>
@@ -65,132 +65,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDnd405Lu1nJwOJBA--.36321S6
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr17Gry3Ar18CFW5Xw4xZwb_yoWrJF4xpa
-	yUCFyUJF43Xa13Jw4xAa97Cr1aga97ta12yry7W3Wa9w12gr9YyF1kZF43uF1rAF93Was7
-	trWkGa4UG3W7Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07js2-5UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqB0jXmftKV94EgAAse
+X-CM-TRANSID:PygvCgDnd405Lu1nJwOJBA--.36321S7
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF1xJw4kAFWfZry3tw4xWFg_yoWDWFX_t3
+	WIgw15GF4fGrZIq34Dtr4UW39F9w4fC397XrnYqr4UJF9aqr4UXF4kGayIyry5Jay2g3sx
+	CFZ5Xw4aya1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU03CztUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gUjXmftK+o5lQAAsN
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-The HSYNC/VSYNC polarity of rk3036 HDMI are controlled by GRF.
-Without the polarity configuration in GRF, it can be observed
-from the HDMI protocol analyzer that the H/V front/back timing
-output by RK3036 HDMI are currently not in line with the specifications.
+The RK3036 HDMI DDC bus requires it's PHY's reference clock to be
+enabled first before normal DDC communication can be carried out.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-
 ---
 
-(no changes since v2)
+(no changes since v1)
 
-Changes in v2:
-- First included in this series
+ arch/arm/boot/dts/rockchip/rk3036.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/rockchip/inno_hdmi.c | 36 +++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-index e891d42dd08a4..db4b4038e51d5 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-@@ -10,10 +10,12 @@
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/hdmi.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-@@ -29,8 +31,19 @@
- 
- #include "inno_hdmi.h"
- 
-+#define HIWORD_UPDATE(val, mask)	((val) | (mask) << 16)
-+
- #define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
- 
-+#define RK3036_GRF_SOC_CON2	0x148
-+#define RK3036_HDMI_PHSYNC	BIT(4)
-+#define RK3036_HDMI_PVSYNC	BIT(5)
-+
-+enum inno_hdmi_dev_type {
-+	RK3036_HDMI,
-+	RK3128_HDMI,
-+};
-+
- struct inno_hdmi_phy_config {
- 	unsigned long pixelclock;
- 	u8 pre_emphasis;
-@@ -38,6 +51,7 @@ struct inno_hdmi_phy_config {
- };
- 
- struct inno_hdmi_variant {
-+	enum inno_hdmi_dev_type dev_type;
- 	struct inno_hdmi_phy_config *phy_configs;
- 	struct inno_hdmi_phy_config *default_phy_config;
- };
-@@ -58,6 +72,7 @@ struct inno_hdmi {
- 	struct clk *pclk;
- 	struct clk *refclk;
- 	void __iomem *regs;
-+	struct regmap *grf;
- 
- 	struct drm_connector	connector;
- 	struct rockchip_encoder	encoder;
-@@ -374,7 +389,15 @@ static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
- static int inno_hdmi_config_video_timing(struct inno_hdmi *hdmi,
- 					 struct drm_display_mode *mode)
- {
--	int value;
-+	int value, psync;
-+
-+	if (hdmi->variant->dev_type == RK3036_HDMI) {
-+		psync = mode->flags & DRM_MODE_FLAG_PHSYNC ? RK3036_HDMI_PHSYNC : 0;
-+		value = HIWORD_UPDATE(psync, RK3036_HDMI_PHSYNC);
-+		psync = mode->flags & DRM_MODE_FLAG_PVSYNC ? RK3036_HDMI_PVSYNC : 0;
-+		value |= HIWORD_UPDATE(psync, RK3036_HDMI_PVSYNC);
-+		regmap_write(hdmi->grf, RK3036_GRF_SOC_CON2, value);
-+	}
- 
- 	/* Set detail external video timing polarity and interlace mode */
- 	value = v_EXTERANL_VIDEO(1);
-@@ -904,6 +927,15 @@ static int inno_hdmi_bind(struct device *dev, struct device *master,
- 		goto err_disable_pclk;
- 	}
- 
-+	if (hdmi->variant->dev_type == RK3036_HDMI) {
-+		hdmi->grf = syscon_regmap_lookup_by_phandle(dev->of_node, "rockchip,grf");
-+		if (IS_ERR(hdmi->grf)) {
-+			ret = dev_err_probe(dev, PTR_ERR(hdmi->grf),
-+					    "Unable to get rockchip,grf\n");
-+			goto err_disable_clk;
-+		}
-+	}
-+
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		ret = irq;
-@@ -988,11 +1020,13 @@ static void inno_hdmi_remove(struct platform_device *pdev)
- }
- 
- static const struct inno_hdmi_variant rk3036_inno_hdmi_variant = {
-+	.dev_type = RK3036_HDMI,
- 	.phy_configs = rk3036_hdmi_phy_configs,
- 	.default_phy_config = &rk3036_hdmi_phy_configs[1],
- };
- 
- static const struct inno_hdmi_variant rk3128_inno_hdmi_variant = {
-+	.dev_type = RK3128_HDMI,
- 	.phy_configs = rk3128_hdmi_phy_configs,
- 	.default_phy_config = &rk3128_hdmi_phy_configs[1],
- };
+diff --git a/arch/arm/boot/dts/rockchip/rk3036.dtsi b/arch/arm/boot/dts/rockchip/rk3036.dtsi
+index 6039a0908af1c..22685cd23a708 100644
+--- a/arch/arm/boot/dts/rockchip/rk3036.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3036.dtsi
+@@ -403,8 +403,8 @@ hdmi: hdmi@20034000 {
+ 		compatible = "rockchip,rk3036-inno-hdmi";
+ 		reg = <0x20034000 0x4000>;
+ 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cru  PCLK_HDMI>;
+-		clock-names = "pclk";
++		clocks = <&cru PCLK_HDMI>, <&cru SCLK_LCDC>;
++		clock-names = "pclk", "ref";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&hdmi_ctl>;
+ 		#sound-dai-cells = <0>;
 -- 
 2.43.0
 
