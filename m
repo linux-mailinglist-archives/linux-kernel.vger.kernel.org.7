@@ -1,145 +1,164 @@
-Return-Path: <linux-kernel+bounces-584953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8B2A78DF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 964BAA78DD4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA743AC97C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8774B3B33B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2DA238D2B;
-	Wed,  2 Apr 2025 12:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F03238D25;
+	Wed,  2 Apr 2025 12:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="Qow0NEHv"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="SPhxsz0m"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C997238176
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EADE1EE001
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595922; cv=none; b=nR3a8pmV3blytLutbvtKy1H0jEPQ6/+8rrVaIZyAx6866EA5oMkBr0KhR9iDFCUWeqehHJCCZVoKeKpprZXoCVPZ+dXNjyER+m1/cVLWoBwHqWgDNWVi234pd3f0O23+jrCs4tltkmY1Of9Rc08MmTDFFJs5yrAs+LRxtfXNE4w=
+	t=1743595459; cv=none; b=cNT7nESC7UQLqI6N7B2DDsNvGbiTUumnaKQDOs3e01GGuyvroL7i5CeFM7GXvtohNDGJf+iWv+f11tNGvCZXUWXqW/rwbPsWKLM7zL48I8X3P25SMvJvZLQnWf88q2ZjBYfpXxx0EHPvboxkBhhvjhbmCfPFouSYVPaLBi4ztuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595922; c=relaxed/simple;
-	bh=FkETGtd5oirHcqy7UomTzHR0h/ZNKqneE/L9DrFUULE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LE9V9oIaaVGTFgfx+6xmUyo8SzdFhv9LBWHkIBLQnTx3ae8+TV6c/A8CUUShD0rCVgptKyoaNU4Tp+w1P2JTrNw5qTpJyB7myHKG63S1tSnlaJkNZnW3IR38dUd/RQoQQbOJF5uaCCBPbTP+sz1n30ChQy8W7/PpTMRe4TJuxgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=Qow0NEHv; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=NHSR5BStKwi1555Ad2VJ4FWLFRVBPtFtaXf27EPrHpo=; b=Qow0NEHvhROtmsdaPYA3K9Nhdi
-	iItGrN3VPudWnDfBIfeQwZfZsP414JRduZQb9hCagbv+ilAo2eHvsCpE5W8HcHGUjufwhuTHdno4j
-	um0wvtBTcXt4jowdu3KbCr7hrW/2DbSsAEKBYn8tPqiyLh2YH7EXjWjB6Haa5+EUgxEdUEr0ZwaD1
-	DxTbH8CDbnnI7sOQ2dS7FhN2UYVNZF6i4lX3taWIXEMLZKaUitpYxncJTvS2KEz7PjV/dRTiJe3oA
-	IwiZYfubaCmjRd2q/GsgWRwanlEcfiMPKM7oIj3KYtSpFwAtZpjf7F8PeNsowyoxTiGEtWORwyViF
-	n8dZ3erw==;
-Received: from [122.175.9.182] (port=29799 helo=zimbra.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1tzwaz-000000002g4-2ckb;
-	Wed, 02 Apr 2025 17:19:25 +0530
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id E40B017821E7;
-	Wed,  2 Apr 2025 17:19:19 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id CEDCE1783FDC;
-	Wed,  2 Apr 2025 17:19:19 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id KkYWWDFBf6_1; Wed,  2 Apr 2025 17:19:19 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id A534E17821E7;
-	Wed,  2 Apr 2025 17:19:19 +0530 (IST)
-Date: Wed, 2 Apr 2025 17:19:19 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: nm <nm@ti.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: basharath <basharath@couthit.com>, ssantosh <ssantosh@kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	danishanwar <danishanwar@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, afd <afd@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>, parvathi <parvathi@couthit.com>
-Message-ID: <706306271.973226.1743594559548.JavaMail.zimbra@couthit.local>
-In-Reply-To: <1365068627.843903.1742210370862.JavaMail.zimbra@couthit.local>
-References: <20250108125937.10604-1-basharath@couthit.com> <20250108125937.10604-2-basharath@couthit.com> <20250307210517.5xjfc6wntcbj3s4k@precision> <1365068627.843903.1742210370862.JavaMail.zimbra@couthit.local>
-Subject: Re: [PATCH v2 1/1] soc: ti: PRUSS OCP configuration
+	s=arc-20240116; t=1743595459; c=relaxed/simple;
+	bh=lpW/o2RA5tgkWP0FqFy/0nwz89bljtXDM1MP0hykgC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IFEOmD/veBSATcJDHmCvPRu6YokEM2kTGm4nMK96YHmVmHLZexiEa69SydhXN43kutYZDkJU42gX87l6yvipO/Jsq4f35gRYHr0NuBeWCoLw+rsvBYwmPGI8XxyZ3xJ7wY3MijysJ18EUYgL3rezwCFysK54e0CXDqWXs/q5FXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=SPhxsz0m; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac34257295dso222147866b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1743595454; x=1744200254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mBYrvzIL73mZMnAvFss/1pIbuShofo0k+zpJBk1+x0Y=;
+        b=SPhxsz0mP9ZMm31nLvRUZxoj2z9V77zJ3Fl+u9ScmhdboA8SdUYL0d4ygqwSH+3DNV
+         /ZB0I4GWkK0VmU2OyNiYP5BEiLoLB05AeTtYXNAYQ8tfIXM2MSOTcsP00eHGf2NvAqqJ
+         FU127bwW62pKYhgDSr47/Ozn6aX674BP158U1WUy8QRHx7H6+OgpZWs/9SZfs0s9KgOU
+         1iX03SozPyT0VBRNtGJgrFyDlni7wYaRcy+hv25VGhYdudN92Z8tnfLTOdM/c3FZ/Wur
+         OCRfNBLiyXjHOJgZow1GfJzmvAIQMXoW3Oo9YOaGmo/oGgnUEho4G9J+7z+m9hRR/hNd
+         tw6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743595454; x=1744200254;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mBYrvzIL73mZMnAvFss/1pIbuShofo0k+zpJBk1+x0Y=;
+        b=feBMTI6hbw+HZG+6/p+wI2wW0pkO/m/EvWUudlSO2Hpgx05ccdOdKTBJcUAL8RJ+hH
+         rEZdgNHzpfmGO87bUItQXxUBOfLLgtkN2/9wb/4EpI6ypeQdBfkHhZ6huLFaeGCqjiT8
+         9HzS0oclYRez6BlS9/LVHVlmfvj3+SngOKKMWv4HDFsJXR8Xh8cwca1IETLUYRtOw6n0
+         NjYjXsUQRmNhCCSarA9cb5F3hORpsJltLiU2WMqhqTRhEpYSjEekV7R3w+E4h0s28ajm
+         U9pS9ye9K72/FzjVDhN06lQ5Uf1SDyqxslr9C/7NScF+ouGVS6WYtFtt5jmU49WjnywO
+         jnKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVd3Irj5hyqc+mArTJx/iSLjoR5KgwdeApVpJfDXIrU3cNuNy2cuWl4y2r/UFDKEpthzy/JwBBzyny1NOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyu4gtr0Clg2lganBiVP+ds7CI9inlbfAFlQCtKuOpDD/xdKyc
+	qdXB3kiyT2mO7dcp7gVwb36qu6Elb/Q2lkcbVFjjrGOBGOtIlLB0WekP++9yYJHN2t1wD3qbM2N
+	966U1pZPQj0ckOiwk78agR7yN5CU0FK8uCYtDoKW0/M2cXoQcfDlHDkw=
+X-Gm-Gg: ASbGncuM4mqWnzj3tAogfOnGUwvOgUI1b1wDiKy23/zWWjGSrsitAgKC1I3C8tAGN3m
+	jEVL1dylwpeTZRAM7p8RdFlkbgOZod07D98ROq9uqevyLV5I3h0PVUaD0wrBGdpA4jw8Px+ERWJ
+	hNqywx8mD6XcSxw/4kkRzgcimcHEb5a7ORpFkA+kYYMy1nj5wlycKRiIg3Bf9eQJibwDDc9Qo4i
+	ni92unXdsOIs/Rtu27ew4ao9CCMz5I9yFl5oZNkDChFoDegtBWvXWmo2+WJTwKt04c1p/Vfnjt7
+	/Wjg0OymvLPDSZ8S2aX+Prg6ZfaWgOqv8C8kke3Lcu5cjJH0EpkOK0G5PKy90MHnUxAhalTuSI/
+	VwuP1qqA=
+X-Google-Smtp-Source: AGHT+IGYQ7kJJcuc8T9fvq2VTLjEsxmhNZWdeJxeOjlwY3o7lDQ6wZyc5AdoMU86aeVCa3KRFhv3uA==
+X-Received: by 2002:a17:906:5908:b0:ac7:3a23:569c with SMTP id a640c23a62f3a-ac73a235730mr1305943866b.1.1743595454094;
+        Wed, 02 Apr 2025 05:04:14 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:9a9c:dc9e:39c6:2380? ([2001:67c:2fbc:1:9a9c:dc9e:39c6:2380])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac71922cc94sm907520266b.28.2025.04.02.05.04.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Apr 2025 05:04:13 -0700 (PDT)
+Message-ID: <82ed4c04-d143-42a8-88a6-6dceea2518cc@openvpn.net>
+Date: Wed, 2 Apr 2025 14:04:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v24 08/23] ovpn: implement basic RX path (UDP)
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
+ <20250318-b4-ovpn-v24-8-3ec4ab5c4a77@openvpn.net> <Z-u2NqykODnOrEgl@krikkit>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z-u2NqykODnOrEgl@krikkit>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - FF113 (Linux)/8.8.15_GA_3968)
-Thread-Topic: PRUSS OCP configuration
-Thread-Index: DvRQZaXzAimB/uZVNUsWawvfCP38JsM+ekCT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi Nishanth,
- 
->> On 18:29-20250108, Basharath Hussain Khaja wrote:
->>> From: Roger Quadros <rogerq@ti.com>
->>> 
->>> Updates OCP master port configuration to enable memory access outside
->>> of the PRU-ICSS subsystem.
->>> 
->>> This set of changes configures PRUSS_SYSCFG.STANDBY_INIT bit either
->>> to enable or disable the OCP master ports (applicable only on SoCs
->>> using OCP interconnect like the OMAP family).
->>> 
->>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
->>> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
->> 
->> On the verge of applying this patch, looking deeper, I noticed
->> drivers/bus/ti-sysc.c managing the sysc controls. infact, I wonder if
->> b2745d92bb015cc4454d4195c4ce6e2852db397e ("bus: ti-sysc: Add support
->> for PRUSS SYSC type") could be merged with this?
->> 
->> 
->> Could you say why drivers/bus/ti-sysc.c would'nt be the right solution?
->> 
->> Ccying Kevin if he has any ideas about this.
->> 
+On 01/04/2025 11:47, Sabrina Dubroca wrote:
+> 2025-03-18, 02:40:43 +0100, Antonio Quartulli wrote:
+>> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+>> index 024458ef163c9e24dfb37aea2690b2030f6a0fbc..b30175e34230d3dbf5d253838df894f0625c705c 100644
+>> --- a/net/ipv6/udp.c
+>> +++ b/net/ipv6/udp.c
+>> @@ -1933,6 +1933,7 @@ struct proto udpv6_prot = {
+>>   	.h.udp_table		= NULL,
+>>   	.diag_destroy		= udp_abort,
+>>   };
+>> +EXPORT_SYMBOL_GPL(udpv6_prot);
 > 
-> Thank you for the feedback.
-> 
-> We will analyze ti-sysc and revert back with an update shortly.
+> This is not needed anymore.
 > 
 
-We've reviewed the code and decided to bypass the SOC patch posted here.
-Instead, we have implemented the required changes in the "drivers/bus/ti-sysc.c"
-file to enable OCMC access to the PRU-ICSS and verified the Ethernet
-functionality over PRUETH on AM335x, AM437x and AM57x platforms.
-
-This patch will be abandoned and a new patch will be posted with
-"drivers/bus/ti-sysc.c" changes shortly.
+ACK
 
 
-Thanks and Regards,
-Parvathi.
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
