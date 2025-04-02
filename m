@@ -1,163 +1,187 @@
-Return-Path: <linux-kernel+bounces-585698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A241A79641
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:07:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA7EA79642
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FF21890CA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A652188F2D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CE41DF970;
-	Wed,  2 Apr 2025 20:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1801EF38E;
+	Wed,  2 Apr 2025 20:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHHTC4MP"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0M8f6CAK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r41Fkh3m";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0M8f6CAK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r41Fkh3m"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E811EFFB8
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC51EF0A3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743624416; cv=none; b=PUfjjBnNaqJ2bPbGVOXPVzfe/LFhZogktQrHu2TDk91r0YuAdpeJUURxeHlUQ4BhfE23Fwn9H9g7b1p2En4tSN4CkG2kqUbrJyG/hrbFFU2Cjr6qFU2fpu9moObX7+j6m5//9ZMjPC1OjQQY27/a5WiRktXuxy+el4ma8/y39Jw=
+	t=1743624463; cv=none; b=PdvG6aeEBezUb78IrMSdv234U5ZM+d+cU1ocRs3MUbtZ1rCEAdik2TVcNF0TgWbFaxnnZZOMhimb6O1ugZq25kmZsZKPedikLKNbqfBuTsTgc27+9dZGTISnFr2/W0oTBzce5PN7IQc0kBGYiBv4JNRgmsMDlMwIrI68gzQQ1RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743624416; c=relaxed/simple;
-	bh=p73LCpHyBrpzAB0TulDmZtS18EAqYiS+JFxO487Otm8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LkW+vWgkvZLR6gmKde61+CmyllEKilvTg1pD2DqzmGo5Un6ee/PeX2ibvHGQ8dOksIRZCFrAPhbhHJzk32k9Ry/Q37oihuBHS75dOWB/58uiyzrIg96nnt0TiNXsfynzSGoSmEtWfuRFQG1+kxtUPnwqsIqEAgOkxmNke29qZxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHHTC4MP; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e549b0f8d57so164147276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 13:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743624414; x=1744229214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ovp/3q2Ql4SNo8orFSiM0VLKdTHZcpZiyaTbFpXtnKU=;
-        b=jHHTC4MPTDKIIYibMxqKrlB4I5Fn1Es2BoOU4GL332/X0tyn9B0JXa5mi1ZuIoEZ5G
-         KUdGlP4mIx/riYs4nIx2GqVj/D9r0bpJtLkBhflZ7/vCi51X26nSiEakVXCJrivZoaYm
-         FXgUR9wfO8hJboZAczaAluRLwRcwK1lg9Xx7Ebbfb0Jd/fMNjLkVeAFYT5BvkKpA3W1z
-         vikY49D+kaj5Q5RF/CI2yVihM8tc7na9mu04GxUpRFloKS1xvFaLgth5Ss7yDWORtJpX
-         Itb9Ejnl3g00njEsSGBoXOnomVh6ia3KUS6tB6UhmVsTk8lIV0YLUGbRZu1/hVbdCU0w
-         WjdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743624414; x=1744229214;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ovp/3q2Ql4SNo8orFSiM0VLKdTHZcpZiyaTbFpXtnKU=;
-        b=cvAAMoFi2NdfKsy7u0DDPQYtMrTeYxR41WmC+vQxpfAa+TjobeVsgtop1SKyyNJTAd
-         WO/3/+tqmqtCByQULtDSPuUCl5N/4lEQNNjwewP9k1IRETroVXV2llziLZ3sMaGBBJMU
-         7KNcDMb5bNC+ptBCJsPPEDZRkr6mZUwNr70Z/dcfV2n0alcghxhWTqouRVEMy2oaVSuL
-         hYFYknMHynq2Absw/T3WvCkyAH+GZglOGnbHkWT5kl7JEY0uvv5WfWF6KvW/SLPGxJx6
-         21GHz7NSUGF5VS23OUeNB8ymI/fsZGbUN2HTM9o9RN1a83hO9CIZfU+GfL+lUyZoc/ym
-         u60w==
-X-Forwarded-Encrypted: i=1; AJvYcCU63t5YdMhm26psAYAsg9K2+dD0kFnAgxhjyOCon/xBd6og+BrjUqQCgtrWugR0jkv2Z2E1nK+tFiPyGBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyssYfGs2UoqdTyvYwov6czNmltvyeqWYH6FdONYLsm4ieuj2ci
-	EsjdpdDc8WviGfk4/DOskOhf39n0CXkxDhKEVTM5htx/V6eDQrKD
-X-Gm-Gg: ASbGncur0OsjYkwxRgaUX+TWweckw7tLoGKVwar0IAccfQDuCsblp4HEfWEHkHj9rnK
-	YtgPX4/1Ui9mbm9u1pSAssYEkW5eO3K9nDg9LkItP3JICXSGNniC3AD/PIV2j9fX4EM4lUGuJKc
-	kMzJPV/X7Gw/MlSDXAFV3U90v86VRP560aiHyhs/842LYkkdvGUdVAaikBMD+s9wOlZkSCJM9bW
-	6pYYaVICsfMzkaIpJ0Srfv1HxMcZ8fMpRIS25p9g5vcEDiA7vkUyjWzYQME8lMoZeQe+zoNSAO3
-	ht0rWrTY6m7ljkoTMVL69ZRn3SF0t6toIYKcFrgBeN5p
-X-Google-Smtp-Source: AGHT+IENa3JuIhpq8gLK1UO7q0UVxsVc37TtBAYFggpxhZ9V2d0HIgX4uMiKRlW+XpWaKKf0qKtdug==
-X-Received: by 2002:a05:6902:1b04:b0:e69:1efc:9855 with SMTP id 3f1490d57ef6-e6b83aaafb8mr25705751276.38.1743624413896;
-        Wed, 02 Apr 2025 13:06:53 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:72::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e6df6a4b667sm452073276.57.2025.04.02.13.06.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 13:06:53 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Nhat Pham <nphamcs@gmail.com>,
-	akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	cerasuolodomenico@gmail.com,
-	sjenning@redhat.com,
-	ddstreet@ieee.org,
-	vitaly.wool@konsulko.com,
-	hughd@google.com,
-	corbet@lwn.net,
-	konrad.wilk@oracle.com,
-	senozhatsky@chromium.org,
-	rppt@kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	david@ixit.cz
-Subject: Re: [PATCH 0/2] minimize swapping on zswap store failure
-Date: Wed,  2 Apr 2025 13:06:49 -0700
-Message-ID: <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=vMGhfF4iN2B4VKw@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1743624463; c=relaxed/simple;
+	bh=poh+U8UleCOeSwYeg2OLhmlTvH7tkKlO9s0Kva+gGho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4G2fBZ48ROKjE3UNtR7jzUvupJkQXiXnK55k3Mv+X7HyxvxBYgJdjrviVuWIMcTQvsQcAhmg7qxD0C851wiDz9Ae0gVm/v1h1w3L+836wVYMV9jnQvW1svIlt/xHsUwGwnHNhrWXtv1n8v711x/ET8FvJEn+mNgYUgQEUeNXh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0M8f6CAK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r41Fkh3m; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0M8f6CAK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r41Fkh3m; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2242E1F385;
+	Wed,  2 Apr 2025 20:07:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743624460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
+	b=0M8f6CAKlAV0wm8SXL2AP2ITBuMRrnrmw6iQPHxudPETSh2YNfT2RDryC7w6BoNsdVEmul
+	ULjNyePBQgh09KiQkwpOGlWIagsvi0kttQGUQy5ytKqytxhiZzZcHe/m8iqTKbXqj7o25g
+	e/7/6qcNLduhr/RbCAV63tAR+V1SMps=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743624460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
+	b=r41Fkh3msYjJV7kOkSA1cy88LQ+b2ZOHmnNx2juVMraBtYiOm2lORIZAabf8c8qagrPR53
+	v1dfPDC4UEtplvAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743624460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
+	b=0M8f6CAKlAV0wm8SXL2AP2ITBuMRrnrmw6iQPHxudPETSh2YNfT2RDryC7w6BoNsdVEmul
+	ULjNyePBQgh09KiQkwpOGlWIagsvi0kttQGUQy5ytKqytxhiZzZcHe/m8iqTKbXqj7o25g
+	e/7/6qcNLduhr/RbCAV63tAR+V1SMps=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743624460;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4i+Fvnqz37OGx7w5VW2ghtTc8cJeR10UxKS3UMJtaRU=;
+	b=r41Fkh3msYjJV7kOkSA1cy88LQ+b2ZOHmnNx2juVMraBtYiOm2lORIZAabf8c8qagrPR53
+	v1dfPDC4UEtplvAg==
+Date: Wed, 2 Apr 2025 22:07:39 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: tis: Increase the default for timeouts B and C
+Message-ID: <Z-2ZC2Ew2EtNAW6-@kitsune.suse.cz>
+References: <20250402172134.7751-1-msuchanek@suse.de>
+ <Z-13xOebA3LvQQ-8@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-13xOebA3LvQQ-8@earth.li>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, 16 Oct 2023 17:57:31 -0700 Yosry Ahmed <yosryahmed@google.com> wrote:
+On Wed, Apr 02, 2025 at 06:45:40PM +0100, Jonathan McDowell wrote:
+> On Wed, Apr 02, 2025 at 07:21:30PM +0200, Michal Suchanek wrote:
+> > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
+> > C) can reach up to about 2250 ms.
+> > 
+> > Extend the timeout duration to accommodate this.
+> 
+> The problem here is the bump of timeout_c is going to interact poorly with
+> the Infineon errata workaround, as now we'll wait 4s instead of 200ms to
+> detect the stuck status change.
 
-> On Mon, Oct 16, 2023 at 5:35 PM Nhat Pham <nphamcs@gmail.com> wrote:
+Yes, that's problematic. Is it possible to detect the errata by anything
+other than waiting for the timeout to expire?
 
-> I thought before about having a special list_head that allows us to
-> use the lower bits of the pointers as markers, similar to the xarray.
-> The markers can be used to place different objects on the same list.
-> We can have a list that is a mixture of struct page and struct
-> zswap_entry. I never pursued this idea, and I am sure someone will
-> scream at me for suggesting it. Maybe there is a less convoluted way
-> to keep the LRU ordering intact without allocating memory on the
-> reclaim path.
+> 
+> (Also shouldn't timeout_c already end up as 750ms, as it's
+> max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C), and TIS_SHORT_TIMEOUT is 750 vs 200
+> for TPM2_TIMEOUT_C? That doesn't seem to be borne out by your logs, nor my
+> results.)
 
-Hi Yosry,
+Indeed, it should be 750ms but the logs show 200ms. I do not see
+where it could get reduced, nor any significan difference between the
+mainline code and the kernel I am using in this area.
 
-Apologies for reviving an old thread, but I wasn't sure whether opening an
-entirely new thread was a better choice : -)
+Thanks
 
-So I've implemented your idea, using the lower 2 bits of the list_head's prev
-pointer (last bit indicates whether the list_head belongs to a page or a
-zswap_entry, and the second to last bit was repurposed for the second chance
-algorithm).
+Michal
 
-For a very high level overview what I did in the patch:
-- When a page fails to compress, I remove the page mapping and tag both the
-  xarray entry (tag == set lowest bit to 1) and the page's list_head prev ptr,
-  then store the page directly into the zswap LRU.
-- In zswap_load, we take the entry out of the xarray and check if it's tagged.
-  - If it is tagged, then instead of decompressing, we just copy the page's
-    contents to the newly allocated page. 
-- (More details about how to teach vmscan / page_io / list iterators how to
-  handle this, but we can gloss over those details for now)
-
-I have a working version, but have been holding off because I have only been
-seeing regressions. I wasn't really sure where they were coming from, but
-after going through some perf traces with Nhat, found out that the regressions
-come from the associated page faults that come from initially unmapping the
-page, and then re-allocating it for every load. This causes (1) more memcg
-flushing, and (2) extra allocations ==> more pressure ==> more reclaim, even
-though we only temporarily keep the extra page.
-
-Just wanted to put this here in case you were still thinking about this idea.
-What do you think? Ideally, there would be a way to keep the page around in
-the zswap LRU, but do not have to re-allocate a new page on a fault, but this
-seems like a bigger task.
-
-Ultimately the goal is to prevent an incompressible page from hoarding the
-compression algorithm on multiple reclaim attempts, but if we are spending
-more time by allocating new pages... maybe this isn't the correct approach :(
-
-Please let me know if you have any thoughts on this : -)
-Have a great day!
-Joshua
-
-Sent using hkml (https://github.com/sjp38/hackermail)
-
+> 
+> > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> > An alternative would be to add an entry to vendor_timeout_overrides but
+> > I do not know how to determine the chip IDs to put into this table.
+> > ---
+> > drivers/char/tpm/tpm_tis_core.h | 4 ++--
+> > 1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> > index 970d02c337c7..1ff565be2175 100644
+> > --- a/drivers/char/tpm/tpm_tis_core.h
+> > +++ b/drivers/char/tpm/tpm_tis_core.h
+> > @@ -54,7 +54,7 @@ enum tis_int_flags {
+> > enum tis_defaults {
+> > 	TIS_MEM_LEN = 0x5000,
+> > 	TIS_SHORT_TIMEOUT = 750,	/* ms */
+> > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
+> > +	TIS_LONG_TIMEOUT = 4000,	/* 2 sec */
+> > 	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
+> > 	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
+> > };
+> > @@ -64,7 +64,7 @@ enum tis_defaults {
+> >  */
+> > #define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
+> > #define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
+> > -#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
+> > +#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_C)
+> > #define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
+> > 
+> > #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
+> > -- 
+> > 2.47.1
+> > 
+> 
+> J.
+> 
+> -- 
+> ... "Tom's root boot is the Linux world equivalent of a 'get out of jail
+>     free' card. The man is a *hero*." -- Simon Brooke, ucol.
 
