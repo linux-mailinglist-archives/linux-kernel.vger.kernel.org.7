@@ -1,338 +1,145 @@
-Return-Path: <linux-kernel+bounces-584876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542B9A78D2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E24A78D34
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DB03B36A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498863B1C66
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55E8239591;
-	Wed,  2 Apr 2025 11:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D010238168;
+	Wed,  2 Apr 2025 11:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FCtpzpqw"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="MEIVzlYi"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6CE23814D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882901E9B20
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743593540; cv=none; b=bgJi8OhyKIAmAgMcQG6cyuyVEfSDea+D08Lps0E3WtzGzK0dHcjKRvYbZYmLgFL4MBY+GB/Xj5P2A6/qE+pzkboiwEUujcqVnm8sjYIelP12ZRA9ZdidiSW/anQpeFxW2iN4ldhRy1X6Cql42WP/Wtjbee6OI81dLffjHzHNp6E=
+	t=1743593723; cv=none; b=hhQSuSnIpDApcGJUXOllFCgM/rI0/uxBhfuLOwcQWSEd/rtuihtr6U9EBOr1y03qUJZblGQc/PmBxOdxTietV52rpsNPZxEzFnfzMUiqiCA0sUV0qLiIDB8gmzKdAzFitCf59RzrIkbEdwxEhIMKMwGWYoS9QGTCiYHGRiMNmmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743593540; c=relaxed/simple;
-	bh=LOeha8JnM6j/2lraRrsmhBtaJNpDdb8TcHHFT6ZBwgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOZTQzalX0UXWDlnK80Gox3sooGvg78Wl3D+3WkGWL4j5DEHVsgH9SUqDVgNS+jZQj9kF7DHtOzKZlwFg45i2kDShQiN1dqnPXFO6OAe981RKhiWe/69dNYMkzCIahcjpPNuysc1JItH1sTKd/5m9KxXpSuOHgxWYGXFxb9ckVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FCtpzpqw; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af589091049so10299a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:32:18 -0700 (PDT)
+	s=arc-20240116; t=1743593723; c=relaxed/simple;
+	bh=CMMMlPjZNL2MskP5JZ2m0ywYhfJzY2Vi/GF+ouYfsUQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O30bTs8/UVU5Ss/9reyKhfxzLargrLcp8OBtBg5u814lHvU3JLczyEb7RnC9gKppAaaLqpQb1BNAEMOF4JCoKdIh2tU3BJpjGiftV11UH3oTACoHZWYhg2Hy7Psv0Eh5XKUzxNqwRLwAGnPOhm/OW6nwxeW9+59eyLymuKF/IQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=MEIVzlYi; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6fead015247so55735297b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743593538; x=1744198338; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LXwOcJIfsNDmkh8KBv4r5tSOmCSgR5wa5mtpqDG75es=;
-        b=FCtpzpqw4PdMQKAPuTYZ9UkBkhqlpbAfHn4PWQmHEkdWf7UFloLYsfZxsLZauphQOq
-         2q8RNVU2xe9TPlKiziVKIZH1nzx/JFKGkWvj+7GfDOnMD1TRwclHEYAxs2+o5nNpRRap
-         OdWr4wHLEL3JBK5vESQTv/SH9lgaUmCX9KuHTw9XDxYmtfFs/atI2wdDHTfe7peDOA0g
-         st8+PYqNmyh/rsThKskVCdxJ1h5c4mw6JxJtqKaDWhAMkP8kC29ObhEfnwdLbzdyrwmw
-         nKyj4aeX9N9Ry6bL46qsnhqw/jdR4zEJdZTGDL84QDT5xbeKygzJmvdOl9sk7hIk/Axn
-         zI1Q==
+        d=raspberrypi.com; s=google; t=1743593719; x=1744198519; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s1/KlpYm3UM4GjlGHXNbUdwP3FIBF3TOQzxxk/M8qKo=;
+        b=MEIVzlYiB5Ftp78/K6i4LEEXLcfhY9MZ7/YUNtkBsB9E7sy1bxuW+Um/TuqRWXVtWH
+         Lk6WU2AgUQ9MWocnIaztPZ5fhsVwcS4/Ia1cMJ3HPFG0IQQr/QmNMgFIp833KON2tc04
+         m2wRMZLXpqVWDe5Pbr0FqIwhjV5JVzXksZkrE8Lh0jvRfB/kFsxqW4cuUce4kf9b58EH
+         6DS0Eyuczwys+mc0Qf8s1P4JHIvvYcYuW2cQevL4RC95Qc23YPX6gLB4/K+kWB9P6uqR
+         t9yubM6FSI8Xd3vfhkOUH34WZswdkucLuF7J1vAJnIgFkjFpA/D65VI69K0tiCLy0z/f
+         VQvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743593538; x=1744198338;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LXwOcJIfsNDmkh8KBv4r5tSOmCSgR5wa5mtpqDG75es=;
-        b=mcGaNGHYtKQns+QkTZWmGiwvHljwz5iUom2csUUCh5Up/MzIG17UF8KDrYCWadbAGN
-         5Xv27uSobYW7V5yTcQ30jzKjVEwmLhDqkL2s0z/R4DKA/gKiz+WI9YLTHTWBBMHSAPf4
-         yRRx9qqB6YIOW4meDJrn4CzZvdot+2q0l3X9BOPodSTEWRY/1bSSDcCqctbCVZPlEUqP
-         ZGXKuKACpuMm1neui0Rqcsp1Na9QZ/iaiEz2DZ7CmJk1hFNv+KYA1hDf1lrGi5mAjnxZ
-         Sl4u8zu55lWjJvVZkVcgE/BA0ySQ+r+0GFqLgPVBF4SGEKAqTLvCL/wbtVR25Hns1vcF
-         JD5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWcAXPnt4mV+XeHA/dsRr/qKXliqB/aehga9yncmaa5i+aV1toiqEPZGNKMBbVHOON6nZRTGLdkl/lp+mI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm+TT07nZg+Eepqg5orgEeIqYxuqrWaIOwtQK7tzNSLPWOzV6f
-	PnN8PzqyE3dM6OtUmCCXg8Sv9ZVK6R900uZVC+VjEfRy0RdUk5cnTyRmbQEmpaMCM09Hjt1NcTq
-	p
-X-Gm-Gg: ASbGnctn2VCuRPjBj9azcj2O5YT8KeirDhET1G3nnzVH63Z41dlwwQr7xhD1G4Eqdo4
-	V8LwRY8IlXKNyP7pWSkFXcIomoysMVp8kdXsMxMQSymhJjQ0FFxiIdTUfCzNZsEksZsUqEQxmKx
-	imWX2s0/E03dEiSFDzWpHzzstqysrjuuHbxF+57/QdwklwXqCMpubEe7KffYlekMHFmqmlD9/PZ
-	JhxlVTAiAVtk+2KiMNsEb0tOzdJ4/By0v+rj52m1DeI2wnz7OYD4BUAAfYwQ04uADVf6BUccoki
-	2f0/WcdKk0D2S7TDZwbU9NO6VAfcNrqqk6ujXbM9carLSzEWbTbqlU8CD5LiQE0N9Bv4D6yiI3a
-	aQIaaGWUwrY6MhyzoOg==
-X-Google-Smtp-Source: AGHT+IEW0RkUkaqsfmHCYcslKY/K1pIkzGv7tJkMVsZIwP9qMwmTC4V+xh/sZ6DBeQUvji7VXgaIWQ==
-X-Received: by 2002:a17:90b:1344:b0:2ff:6788:cc67 with SMTP id 98e67ed59e1d1-3056096950cmr7891522a91.34.1743593538155;
-        Wed, 02 Apr 2025 04:32:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3056f8d6c17sm1335390a91.41.2025.04.02.04.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 04:32:17 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tzwKM-00000003WFl-0iwn;
-	Wed, 02 Apr 2025 22:32:14 +1100
-Date: Wed, 2 Apr 2025 22:32:14 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Kees Cook <kees@kernel.org>,
-	joel.granados@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <Z-0gPqHVto7PgM1K@dread.disaster.area>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1743593719; x=1744198519;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s1/KlpYm3UM4GjlGHXNbUdwP3FIBF3TOQzxxk/M8qKo=;
+        b=O3Ts/Rf7l0Zm4yjVNhhiEc1H35QZHdD+nCZEDkMaW/+ynehSITVHtDoovRW4en+fAN
+         WnZcfL2Mst79D8BA0qBBfW+Qdj2Y9DV++coV81SAmyX0x13QH9Hd8Ym37dlXr4Wov+9k
+         NJtEkn3w9b2FWK9YIkwBIuywOmAf6nX72+GT1aR17R9JL6V3IPFD3XRnjqDea71b7wRH
+         NpUc/r4xCWnhgF5pwaskJjbPZgND26E3jRWgmukXYGCUnRscdGkemAkxJhiptIwwJ4tO
+         0gKT9cK3J0iiMyDQaJtWb7HugszZhLofUoFWNLkwnxI/EA32B8snQUJXBAUD9wtxMhiA
+         YWUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJBh2FwTi8WsbbRdD4cTsk+TJ9sj3N4yr2B4P5HaHHBUoB/eXRooGk4ckTiHMbJlfBg6wXTs11Aahemnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZPMD7134AaWlGKVKSlV6BlPeq3L4BfU5TUjAR9ymXp8aJ2Roy
+	FQ3Ekgs+oAzb/XERsPbXuKnorMoxRenzneM247rH+tS9S+5B5mT3/NlZdxmkyahU477FTHwpfBA
+	6XMnjFjhutkHMZSHxjkTud9s0vSbm7QA+iiZi7g==
+X-Gm-Gg: ASbGncvBon2icwArz7LSbhhwd2bRFvyMVNUVrC+59lRP6IJkJwFvNN6Z0nWACgcO4M5
+	44JtTQDq5+XwgktVwdVpXnv7Ky2gqGaYMlLpOWdp6fDZnFqnySNF2Ef7HxSA4YpsrBM4THoOTEB
+	wCS/QhiBhWd02DxEeSQgNIMhOUL62Otbt4vflAOHGGIAK+cMdCQumBRgM13nq+LwErknLM
+X-Google-Smtp-Source: AGHT+IGr8Yxz3zfQtp5zVjqj96xcJ11TwxaJBj5hp4ypVaFwNYzSnui2oiuDQ1M/uFDaiwTUhmCsnNbBU6oKxM6+wWo=
+X-Received: by 2002:a05:690c:4d82:b0:6fb:1f78:d9ee with SMTP id
+ 00721157ae682-702571161cfmr249550377b3.15.1743593719430; Wed, 02 Apr 2025
+ 04:35:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
+References: <8305d098-bd28-45e6-acda-29e629dfccc9@stanley.mountain>
+In-Reply-To: <8305d098-bd28-45e6-acda-29e629dfccc9@stanley.mountain>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Wed, 2 Apr 2025 11:34:58 +0000
+X-Gm-Features: AQ5f1JrgSH9_HopXXMS8ZOVaiXusrf2OzR6y0mAxNfEdCRKuLRfnxeiLZ3pZEkA
+Message-ID: <CAPY8ntCtAdWg1yN+DgxRe3np4Nu3aDUrrdqe4Q9WeqJMtbrrAg@mail.gmail.com>
+Subject: Re: [PATCH] drm/vc4: release firmware on error paths in vc4_hvs_bind()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Apr 02, 2025 at 04:42:06PM +0800, Yafang Shao wrote:
-> On Wed, Apr 2, 2025 at 12:15 PM Harry Yoo <harry.yoo@oracle.com> wrote:
-> >
-> > On Tue, Apr 01, 2025 at 07:01:04AM -0700, Kees Cook wrote:
-> > >
-> > >
-> > > On April 1, 2025 12:30:46 AM PDT, Yafang Shao <laoar.shao@gmail.com> wrote:
-> > > >While investigating a kcompactd 100% CPU utilization issue in production, I
-> > > >observed frequent costly high-order (order-6) page allocations triggered by
-> > > >proc file reads from monitoring tools. This can be reproduced with a simple
-> > > >test case:
-> > > >
-> > > >  fd = open(PROC_FILE, O_RDONLY);
-> > > >  size = read(fd, buff, 256KB);
-> > > >  close(fd);
-> > > >
-> > > >Although we should modify the monitoring tools to use smaller buffer sizes,
-> > > >we should also enhance the kernel to prevent these expensive high-order
-> > > >allocations.
-> > > >
-> > > >Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > >Cc: Josef Bacik <josef@toxicpanda.com>
-> > > >---
-> > > > fs/proc/proc_sysctl.c | 10 +++++++++-
-> > > > 1 file changed, 9 insertions(+), 1 deletion(-)
-> > > >
-> > > >diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> > > >index cc9d74a06ff0..c53ba733bda5 100644
-> > > >--- a/fs/proc/proc_sysctl.c
-> > > >+++ b/fs/proc/proc_sysctl.c
-> > > >@@ -581,7 +581,15 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
-> > > >     error = -ENOMEM;
-> > > >     if (count >= KMALLOC_MAX_SIZE)
-> > > >             goto out;
-> > > >-    kbuf = kvzalloc(count + 1, GFP_KERNEL);
-> > > >+
-> > > >+    /*
-> > > >+     * Use vmalloc if the count is too large to avoid costly high-order page
-> > > >+     * allocations.
-> > > >+     */
-> > > >+    if (count < (PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-> > > >+            kbuf = kvzalloc(count + 1, GFP_KERNEL);
-> > >
-> > > Why not move this check into kvmalloc family?
-> >
-> > Hmm should this check really be in kvmalloc family?
-> 
-> Modifying the existing kvmalloc functions risks performance regressions.
-> Could we instead introduce a new variant like vkmalloc() (favoring
-> vmalloc over kmalloc) or kvmalloc_costless()?
+Hi Dan
 
-We should fix kvmalloc() instead of continuing to force
-subsystems to work around the limitations of kvmalloc().
+On Wed, 2 Apr 2025 at 12:00, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Call rpi_firmware_put() on these two error paths before returning.
 
-Have a look at xlog_kvmalloc() in XFS. It implements a basic
-fast-fail, no retry high order kmalloc before it falls back to
-vmalloc by turning off direct reclaim for the kmalloc() call.
-Hence if the there isn't a high-order page on the free lists ready
-to allocate, it falls back to vmalloc() immediately.
+Ack that there is an issue here, but it seems easier to me to move the block
 
-For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
-overhead by around 80% when compared to a standard kvmalloc()
-call. Numbers and profiles were documented in the commit message
-(reproduced in whole below)...
+        max_rate = rpi_firmware_clk_get_max_rate(firmware,
+                             RPI_FIRMWARE_CORE_CLK_ID);
+        rpi_firmware_put(firmware);
+        if (max_rate >= 550000000)
+            hvs->vc5_hdmi_enable_hdmi_20 = true;
 
-> > I don't think users would expect kvmalloc() to implictly decide on using
-> > vmalloc() without trying kmalloc() first, just because it's a high-order
-> > allocation.
+        if (max_rate >= 600000000)
+            hvs->vc5_hdmi_enable_4096by2160 = true;
 
-Right, but users expect kvmalloc() to use the most efficient
-allocation paths available to it.
+        hvs->max_core_rate = max_rate;
 
-In this case, vmalloc() is faster and more reliable than
-direct reclaim w/ compaction. Hence vmalloc() should really be the
-primary fallback path when high-order pages are not immediately
-available to kmalloc() when called from kvmalloc()...
+to before we make the devm_clk_get calls. It has no dependencies on
+having retrieved the clocks, and hopefully means we don't get the same
+type of leaks creeping back in in future.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks
+  Dave
 
-commit 8dc9384b7d75012856b02ff44c37566a55fc2abf
-Author: Dave Chinner <dchinner@redhat.com>
-Date:   Tue Jan 4 17:22:18 2022 -0800
-
-    xfs: reduce kvmalloc overhead for CIL shadow buffers
-
-    Oh, let me count the ways that the kvmalloc API sucks dog eggs.
-
-    The problem is when we are logging lots of large objects, we hit
-    kvmalloc really damn hard with costly order allocations, and
-    behaviour utterly sucks:
-
-         - 49.73% xlog_cil_commit
-             - 31.62% kvmalloc_node
-                - 29.96% __kmalloc_node
-                   - 29.38% kmalloc_large_node
-                      - 29.33% __alloc_pages
-                         - 24.33% __alloc_pages_slowpath.constprop.0
-                            - 18.35% __alloc_pages_direct_compact
-                               - 17.39% try_to_compact_pages
-                                  - compact_zone_order
-                                     - 15.26% compact_zone
-                                          5.29% __pageblock_pfn_to_page
-                                          3.71% PageHuge
-                                        - 1.44% isolate_migratepages_block
-                                             0.71% set_pfnblock_flags_mask
-                                       1.11% get_pfnblock_flags_mask
-                               - 0.81% get_page_from_freelist
-                                  - 0.59% _raw_spin_lock_irqsave
-                                     - do_raw_spin_lock
-                                          __pv_queued_spin_lock_slowpath
-                            - 3.24% try_to_free_pages
-                               - 3.14% shrink_node
-                                  - 2.94% shrink_slab.constprop.0
-                                     - 0.89% super_cache_count
-                                        - 0.66% xfs_fs_nr_cached_objects
-                                           - 0.65% xfs_reclaim_inodes_count
-                                                0.55% xfs_perag_get_tag
-                                       0.58% kfree_rcu_shrink_count
-                            - 2.09% get_page_from_freelist
-                               - 1.03% _raw_spin_lock_irqsave
-                                  - do_raw_spin_lock
-                                       __pv_queued_spin_lock_slowpath
-                         - 4.88% get_page_from_freelist
-                            - 3.66% _raw_spin_lock_irqsave
-                               - do_raw_spin_lock
-                                    __pv_queued_spin_lock_slowpath
-                - 1.63% __vmalloc_node
-                   - __vmalloc_node_range
-                      - 1.10% __alloc_pages_bulk
-                         - 0.93% __alloc_pages
-                            - 0.92% get_page_from_freelist
-                               - 0.89% rmqueue_bulk
-                                  - 0.69% _raw_spin_lock
-                                     - do_raw_spin_lock
-                                          __pv_queued_spin_lock_slowpath
-               13.73% memcpy_erms
-             - 2.22% kvfree
-
-    On this workload, that's almost a dozen CPUs all trying to compact
-    and reclaim memory inside kvmalloc_node at the same time. Yet it is
-    regularly falling back to vmalloc despite all that compaction, page
-    and shrinker reclaim that direct reclaim is doing. Copying all the
-    metadata is taking far less CPU time than allocating the storage!
-
-    Direct reclaim should be considered extremely harmful.
-
-    This is a high frequency, high throughput, CPU usage and latency
-    sensitive allocation. We've got memory there, and we're using
-    kvmalloc to allow memory allocation to avoid doing lots of work to
-    try to do contiguous allocations.
-
-    Except it still does *lots of costly work* that is unnecessary.
-
-    Worse: the only way to avoid the slowpath page allocation trying to
-    do compaction on costly allocations is to turn off direct reclaim
-    (i.e. remove __GFP_RECLAIM_DIRECT from the gfp flags).
-
-    Unfortunately, the stupid kvmalloc API then says "oh, this isn't a
-    GFP_KERNEL allocation context, so you only get kmalloc!". This
-    cuts off the vmalloc fallback, and this leads to almost instant OOM
-    problems which ends up in filesystems deadlocks, shutdowns and/or
-    kernel crashes.
-
-    I want some basic kvmalloc behaviour:
-
-    - kmalloc for a contiguous range with fail fast semantics - no
-      compaction direct reclaim if the allocation enters the slow path.
-    - run normal vmalloc (i.e. GFP_KERNEL) if kmalloc fails
-
-    The really, really stupid part about this is these kvmalloc() calls
-    are run under memalloc_nofs task context, so all the allocations are
-    always reduced to GFP_NOFS regardless of the fact that kvmalloc
-    requires GFP_KERNEL to be passed in. IOWs, we're already telling
-    kvmalloc to behave differently to the gfp flags we pass in, but it
-    still won't allow vmalloc to be run with anything other than
-    GFP_KERNEL.
-
-    So, this patch open codes the kvmalloc() in the commit path to have
-    the above described behaviour. The result is we more than halve the
-    CPU time spend doing kvmalloc() in this path and transaction commits
-    with 64kB objects in them more than doubles. i.e. we get ~5x
-    reduction in CPU usage per costly-sized kvmalloc() invocation and
-    the profile looks like this:
-
-          - 37.60% xlog_cil_commit
-            16.01% memcpy_erms
-          - 8.45% __kmalloc
-             - 8.04% kmalloc_order_trace
-                - 8.03% kmalloc_order
-                   - 7.93% alloc_pages
-                      - 7.90% __alloc_pages
-                         - 4.05% __alloc_pages_slowpath.constprop.0
-                            - 2.18% get_page_from_freelist
-                            - 1.77% wake_all_kswapds
-    ....
-                                        - __wake_up_common_lock
-                                           - 0.94% _raw_spin_lock_irqsave
-                         - 3.72% get_page_from_freelist
-                            - 2.43% _raw_spin_lock_irqsave
-          - 5.72% vmalloc
-             - 5.72% __vmalloc_node_range
-                - 4.81% __get_vm_area_node.constprop.0
-                   - 3.26% alloc_vmap_area
-                      - 2.52% _raw_spin_lock
-                   - 1.46% _raw_spin_lock
-                  0.56% __alloc_pages_bulk
-          - 4.66% kvfree
-             - 3.25% vfree
-                - __vfree
-                   - 3.23% __vunmap
-                      - 1.95% remove_vm_area
-                         - 1.06% free_vmap_area_noflush
-                            - 0.82% _raw_spin_lock
-                         - 0.68% _raw_spin_lock
-                      - 0.92% _raw_spin_lock
-             - 1.40% kfree
-                - 1.36% __free_pages
-                   - 1.35% __free_pages_ok
-                      - 1.02% _raw_spin_lock_irqsave
-
-    It's worth noting that over 50% of the CPU time spent allocating
-    these shadow buffers is now spent on spinlocks. So the shadow buffer
-    allocation overhead is greatly reduced by getting rid of direct
-    reclaim from kmalloc, and could probably be made even less costly if
-    vmalloc() didn't use global spinlocks to protect it's structures.
-
-    Signed-off-by: Dave Chinner <dchinner@redhat.com>
-    Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
-    Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-    Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> Fixes: 2fa4ef5fb943 ("drm/vc4: hvs: Create hw_init function")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hvs.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> index 4811d794001f..41e9d0aff757 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> @@ -1678,6 +1678,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+>                 hvs->core_clk = devm_clk_get(&pdev->dev,
+>                                              (vc4->gen >= VC4_GEN_6_C) ? "core" : NULL);
+>                 if (IS_ERR(hvs->core_clk)) {
+> +                       rpi_firmware_put(firmware);
+>                         dev_err(&pdev->dev, "Couldn't get core clock\n");
+>                         return PTR_ERR(hvs->core_clk);
+>                 }
+> @@ -1685,6 +1686,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+>                 hvs->disp_clk = devm_clk_get(&pdev->dev,
+>                                              (vc4->gen >= VC4_GEN_6_C) ? "disp" : NULL);
+>                 if (IS_ERR(hvs->disp_clk)) {
+> +                       rpi_firmware_put(firmware);
+>                         dev_err(&pdev->dev, "Couldn't get disp clock\n");
+>                         return PTR_ERR(hvs->disp_clk);
+>                 }
+> --
+> 2.47.2
+>
 
