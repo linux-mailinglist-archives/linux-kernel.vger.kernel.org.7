@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-585733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019AFA796A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:33:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D10F3A796A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF5477A52C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:32:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D62171580
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA061F0E4A;
-	Wed,  2 Apr 2025 20:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6A11EF0B5;
+	Wed,  2 Apr 2025 20:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VDDYmRCY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="S1+tUC9c"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEA62E3360;
-	Wed,  2 Apr 2025 20:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B75A1F151B
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743626011; cv=none; b=IhGfMegeuFuR47UZ5ACH2fWKjIXspPzMqR8RAyqWjA4bri+9Z5PP1TttgzqUqa31nbEt6MozZfAKeKUH/JoR2/1hR5MTIL82IfxUzEoq9VANiit3AIjSM0Fopu6TjTMhsM+vwci7V/IQnXKjIpPFTsstI/DNyIJaX5fj+zZoCuA=
+	t=1743626073; cv=none; b=BiVJPd6QgKzIFJc6n5+ySYEuPz6kJD85zAXNamfbQPJtO5WS7MkIZTX1gsItHJj1aIKSOWMq93g3wzPGCPUncI/lX1+7caDHo3UCvmIBquqJK/tLr36JztAsZIOvz7QASIxIFUgRFH7GEO5LY7XDvgKmBUH3Tvn3S+zg87R/W7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743626011; c=relaxed/simple;
-	bh=Ky2oDARbnBISRNFB24tJGN0+lhE4zfoNlYttXQ5NtRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=c5UA2CFdoFf3MeG7JZ5InDcL5m622eow7L+7W60eqLeJ3wfvCqCf3rWbB8qVBQedWNL4ZAutGX3Fqwkeu5aGFfrCx7sA1FmGuUC4CuJt43YB0pmOjvwMi7G4ppTLEOfyzFSqgjcVmrWf9MJbyDj2ZgiH47KpDI/YZi3cxxx7uSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VDDYmRCY; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743626010; x=1775162010;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=Ky2oDARbnBISRNFB24tJGN0+lhE4zfoNlYttXQ5NtRY=;
-  b=VDDYmRCYXGm4NjoCo569UUQkbsKUBAuygV5z7WheTfUfNr90jd7GaJr1
-   GQAPnihFbaTrzmzQzWsWmKLkC2US5OyhwXnicCtibZ7p6cDcBLIP26X4Y
-   Paqnlj65+S5UMx0iaEfNmmHCp5Xq2qejAXB8aaqoZcJwT431Gu/9vi5+u
-   sUwcIqduL+1loaM4bcUwcOVu7BrRsZiLOmyy2rOpIvzYxAsZcediGQrhZ
-   IOkoz8tdaREGOULGmPbd9svhQTjrxOHdArqasy+CQywtlED7JQm7Jg0FS
-   lfsox2zmlKS1gGmdyhVDXdS3bPv9Gs8yBDvvXS33Eyovbgu2nadZjHNcZ
-   g==;
-X-CSE-ConnectionGUID: Ay3Zd135QMa1s+OYe3ring==
-X-CSE-MsgGUID: rJHJWE+TSkuX8DaghCohEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="55207241"
-X-IronPort-AV: E=Sophos;i="6.15,183,1739865600"; 
-   d="scan'208";a="55207241"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 13:33:29 -0700
-X-CSE-ConnectionGUID: pC++GfITSmSZ+9DVxlAD3Q==
-X-CSE-MsgGUID: sqitUD0ZTlWA5WrYeIByVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,183,1739865600"; 
-   d="scan'208";a="157799585"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 13:33:28 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 5199B20B5736;
-	Wed,  2 Apr 2025 13:33:26 -0700 (PDT)
-Message-ID: <18c2fb33-2b3a-4ebe-ab26-8cebe0b6b94c@linux.intel.com>
-Date: Wed, 2 Apr 2025 16:33:25 -0400
+	s=arc-20240116; t=1743626073; c=relaxed/simple;
+	bh=t13ChJdfZcyB2oLRzhdA1SW3Z11asTQR/3qPJS36vrQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GcnC+BJhxNXNau7TAP4FoPqLjwpPGJ3THtF3SePa4tq0k5VPSaU7Y0cGtWB5zLPwFKa2s7+0Lrlpg7jO8ZpU7xbQEU/HXPwAmger2xDAe90ySR5ABxSrUuxHPaVQLCJXMStJgAmaJiSlWEondzxHJYXbjgpk6cQW5ONrAo6GvIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=S1+tUC9c; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=YdY9NjVGP/c1hDSuiBo1YTsoSfUzfjUsbe9MkbnllRs=;
+  b=S1+tUC9cZfGverL42ZTwQZe9danfPE1Xj4d6YVvA0CIMVw7AcQup82XI
+   Lbp47wdADR0WX8I4+QVWcysWP5phXr3u9tM2HFBqHQSpzJZOipPpKZ3fQ
+   lTZvuLHG77uOBCyNQWSYxsFOUxsFPK9KNQKpZcx16dQOhypn6fd9YfTYa
+   Y=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.15,183,1739833200"; 
+   d="scan'208";a="216085620"
+Received: from powered-by.xenosite.net (HELO hadrien) ([89.255.17.162])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 22:34:23 +0200
+Date: Wed, 2 Apr 2025 22:34:22 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Greg KH <gregkh@linuxfoundation.org>
+cc: Erick Karanja <karanja99erick@gmail.com>, outreachy@lists.linux.dev, 
+    philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] staging: rtl8723bs: Modify struct rx_pkt_attrib
+ attribute bdecrypted
+In-Reply-To: <2025040215-confusing-sibling-f99f@gregkh>
+Message-ID: <3c235d91-efd6-ddf8-7c9-d8d35c7585@inria.fr>
+References: <cover.1743613025.git.karanja99erick@gmail.com> <00287fa9f40c643b8451a0d2df8e2fb97235ee46.1743613025.git.karanja99erick@gmail.com> <2025040215-confusing-sibling-f99f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] NMI warning and debug improvements
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Howard Chu <howardchu95@gmail.com>,
- Dominique Martinet <asmadeus@codewreck.org>, Levi Yun <yeoreum.yun@arm.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>, Andi Kleen
- <ak@linux.intel.com>, James Clark <james.clark@linaro.org>,
- Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250402201549.4090305-1-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250402201549.4090305-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-2051585220-1743626063=:3363"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-2051585220-1743626063=:3363
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
 
 
-On 2025-04-02 4:15 p.m., Ian Rogers wrote:
-> The NMI warning wouldn't fire even if all the events were for one PMU
-> type. Remove a nearby, and no longer useful, mixed hardware event
-> group function. Improve the evlist to string function and dump it in
-> verbose mode after the reordered events warning.
-> 
-> As commonly happens legacy events like instructions will be uniquified
-> to hybrid events like cpu_core/instructions/, even though the
-> encodings differ. To make this correct either:
-> https://lore.kernel.org/lkml/20250312211623.2495798-1-irogers@google.com/
-> or:
-> https://lore.kernel.org/linux-perf-users/20250109222109.567031-1-irogers@google.com/
-> needs merging.
-> 
-> v3: Increase the verbose dump length from 1024 to 2048 as requested by
->     Kan Liang.
-> 
-> v2: Rename evlist__has_hybrid to evlist__has_hybrid_pmus and add a
->     max_length parameter to evlist__format_evsels as suggested by Kan
->     Liang.
-> 
-> Ian Rogers (5):
->   perf stat: Better hybrid support for the NMI watchdog warning
->   perf stat: Remove print_mixed_hw_group_error
->   perf evlist: Refactor evlist__scnprintf_evsels
->   perf evlist: Add groups to evlist__format_evsels
->   perf parse-events: Add debug dump of evlist if reordered
+On Wed, 2 Apr 2025, Greg KH wrote:
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> On Wed, Apr 02, 2025 at 08:16:42PM +0300, Erick Karanja wrote:
+> > Standardize boolean representation by ensuring consistency,
+> > replace instances of 1/0 with true/false where boolean logic is implied,
+> > as some definitions already use true/false.
+> > This improves code clarity and aligns with the kernel’s bool type usage.
+> >
+> > Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+> > ---
+> >  drivers/staging/rtl8723bs/core/rtw_recv.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/rtl8723bs/core/rtw_recv.c b/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > index a389ba5ecc6f..fd04dbacb50f 100644
+> > --- a/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > +++ b/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > @@ -1358,7 +1358,7 @@ static signed int validate_80211w_mgmt(struct adapter *adapter, union recv_frame
+> >  			u8 *mgmt_DATA;
+> >  			u32 data_len = 0;
+> >
+> > -			pattrib->bdecrypted = 0;
+> > +			pattrib->bdecrypted = false;
+>
+> but bdecrypted is a u8, not a boolean type.  So setting it to "false"
+> does not seem correct here, right?
 
-Thanks,
-Kan
+Is false different than 0?
 
-> 
->  tools/perf/builtin-record.c    |  9 ++++---
->  tools/perf/util/evlist.c       | 34 ++++++++++++++++-------
->  tools/perf/util/evlist.h       |  3 ++-
->  tools/perf/util/parse-events.c | 16 ++++++++---
->  tools/perf/util/stat-display.c | 49 +++++++++++-----------------------
->  tools/perf/util/stat.h         |  1 -
->  6 files changed, 60 insertions(+), 52 deletions(-)
-> 
+Elsewhere there is an assignment to true.
 
+julia
+
+>
+> Also, the name of the variable should really be changed.
+>
+> But, step back, are you _SURE_ you can change this structure at all?
+> At a quick glance it kind of looks like it comes directly from the
+> hardware, or am I mis-reading the driver code?
+>
+> Have you tested this series on an actual device?
+>
+> thanks,
+>
+> greg k-h
+>
+>
+--8323329-2051585220-1743626063=:3363--
 
