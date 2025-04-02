@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-585731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593D9A79699
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:30:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CD8A79698
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCD31895720
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EF71716B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B111F152C;
-	Wed,  2 Apr 2025 20:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172401F12FD;
+	Wed,  2 Apr 2025 20:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9omKV1a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljkecdzG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAD81917E7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DE71F0E25
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743625826; cv=none; b=RzKyAPtMzjnjL08smD76LYFxkST5S4WQOKAQxST/DFcTiPUcqYdSsN0zC3hZuJ8/JOu8AYrD/r9jQ9sHJBV9N7s6wh1VJKCV2D9ZKPQktgfCk2qO/VTlm1RI+FPz+d0FP7/9E/o4fGz3WWvTIFjpOqqmvfSezfetYRo/EaEXCJ8=
+	t=1743625794; cv=none; b=NA95zUKPVKFP83tZ06KG7bGCHT1S+DA5gNa8ES3FyWIFZg6EMtBxSPpccqhK0YTob9tAf5D5h40R8KEmr4sBbaOPh56mzGrtif5XwecCO1Ez4HaySfCrS5CatoDxAx9BrgEIw9HGXUvSgH0PZLsvvAugTpFKCSdKmXk7os8xfOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743625826; c=relaxed/simple;
-	bh=RLONw20lGO+tRITzrVnK2W01Z85JtRqJFfoLO5wknFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcLrWLxwBzXB6QyJs+r1qlSGZZ89O0iXE/xoXhYMoUKiemaziZzdx6Obs/ADvap+lRtXDozqbJwvF7+9szb36+UEiIxLDo5WkqdLtlpwr295mi4eJ3EIU/dJXwyD9d+4/wItLG48dPRKeyfUDeGStxsvyW5QHZovlUIRiR0wtpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9omKV1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9949FC4CEDD;
-	Wed,  2 Apr 2025 20:30:24 +0000 (UTC)
+	s=arc-20240116; t=1743625794; c=relaxed/simple;
+	bh=th8O4e0urOjYGapJM61mCpGL06tmA5caSdHWtqiRNCs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tHrYG1afm1YS2B0AwuDbbvBORexOfZRkeeEmS6rjpyiBWI32RRNTnV1hvCL79eoTZ11nCyTKL8L1ez9E0IXopwLHsIUbp6fv4YbyunKWSECSUuWTpCggUM6ypNbUBblfC0/Eo8six8RJmIjMAcFEg8lLTc+bIJ+cEr79ZIp9g8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljkecdzG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5369CC4CEDD;
+	Wed,  2 Apr 2025 20:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743625826;
-	bh=RLONw20lGO+tRITzrVnK2W01Z85JtRqJFfoLO5wknFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G9omKV1aweowffnaD4V5AUpAs01/S8dJOsQ7pbEb1+mNhhY8CFBXK6N5d1YjNr0fv
-	 mN7/Xs+I9EJR53WeeP47XFngbLRrz2Iy5Q6kk8B7b0K1lZ43Wr/AXpLKcA86opF9Rl
-	 LfKNMv7x0c/ARjX/tJRRtyUgM/0W29wO/KT8JjEOuwiQSYT68X3Xv6KejQtI87Zbfo
-	 rmtZkpQj+vLA9xIulagoe5TZ/LGn/xr12NNGlkimKaquz38c88O0tFfu8RDKOvvLrs
-	 pU9nlmBp+X3atMrxNnTS47F4uByB492pbFJ/7gDGeVIYvx3+idOSx0eoHu3zP/h2k0
-	 NZuJyFEIWuCxQ==
-Date: Wed, 2 Apr 2025 22:30:21 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] objtool fixes
-Message-ID: <Z-2eXbKvyJG8a4xt@gmail.com>
-References: <Z-xFKa5hiQ5urVwS@gmail.com>
- <CAHk-=wgqa0B9OV+EAQ34-VOUAeVB2o2bXnZXQDG7u+Z=4Cmw8w@mail.gmail.com>
+	s=k20201202; t=1743625794;
+	bh=th8O4e0urOjYGapJM61mCpGL06tmA5caSdHWtqiRNCs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ljkecdzGlKGc7LUkvXuVUynDBJv4iok6jbR07+9it+lHxujujqyuy+lbbmNNEa/cR
+	 J5L4JJcyBEcGBV32v3I2GbSXcxZkLr/FC5rjpRK3bel5j3nfcanGjLdylapkuMwxn2
+	 20IK2K6a8mfJMyrX/P/kppbhoLQlmFRoGqPK5VggPIh0/Fp/bGP2PlN81FY3pFzM/S
+	 mheyAbQUIqIcrbBOjqkT8i6aJQB5LdgOSs5UdkjmHP8QMg4o+a4RCmpvwTRegrqIuC
+	 G4OHcz16JHmbBhf8hFJMDFL01j4NKpMgE+tYSF9tR3pMNsCD9S8RPgqLO0lc+tX32n
+	 MyBo54ExM575Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E1D380665A;
+	Wed,  2 Apr 2025 20:30:32 +0000 (UTC)
+Subject: Re: [GIT PULL] x86/tdx for 6.15-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250401224312.3264346-1-dave.hansen@linux.intel.com>
+References: <20250401224312.3264346-1-dave.hansen@linux.intel.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250401224312.3264346-1-dave.hansen@linux.intel.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_tdx_for_6.15-rc1
+X-PR-Tracked-Commit-Id: e8f45927ee5d99fa52f14205a2c7ac3820c64457
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6cb094583aef6533d0fd47ae7d134718da3399da
+Message-Id: <174362583105.1664588.18125512390847233333.pr-tracker-bot@kernel.org>
+Date: Wed, 02 Apr 2025 20:30:31 +0000
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: torvalds@linux-foundation.org, x86@kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgqa0B9OV+EAQ34-VOUAeVB2o2bXnZXQDG7u+Z=4Cmw8w@mail.gmail.com>
 
+The pull request you sent on Tue,  1 Apr 2025 15:43:12 -0700:
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_tdx_for_6.15-rc1
 
-> On Tue, 1 Apr 2025 at 12:57, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >  - Fix a number of objtool warnings in various drivers, core kernel
-> >    code and architecture code. About half of them are potential
-> >    problems related to out-of-bounds accesses or potential undefined
-> >    behavior, the other half are additional objtool annotations.
-> 
-> So I've pulled this, but I really dislike some of it.
-> 
-> That
-> 
-> > Josh Poimboeuf (35):
-> >       objtool: Fix X86_FEATURE_SMAP alternative handling
-> 
-> makes a bad thing even worse.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6cb094583aef6533d0fd47ae7d134718da3399da
 
-Sorry about that, we'll fix it!!
+Thank you!
 
-Thanks,
-
-	Ingo
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
