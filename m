@@ -1,233 +1,144 @@
-Return-Path: <linux-kernel+bounces-584326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A957FA7860B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B55A78603
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955B51891457
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE103A32A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A89F9E8;
-	Wed,  2 Apr 2025 01:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99257F4ED;
+	Wed,  2 Apr 2025 01:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PTovjPzm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQPOsnGS"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373AF80B;
-	Wed,  2 Apr 2025 01:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9360780B;
+	Wed,  2 Apr 2025 01:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743556384; cv=none; b=fMOudGL8NqBzzwdkDiFvi75N3Tu2TraPjJ/O8/XckDeo165opGWnbNXz/ElTs94dxdctkTR2zFutCSZ/CAkrfAs5w6pcsmDx4fQQ/mOOtGIY5j97uq4srR1Whja0HjnH+qsKmqTpD7IK0e+VbmOXC/gKjUtbRktTn3PwxRbOvGc=
+	t=1743556049; cv=none; b=lzoVLpp7zdGke0otlX+c+51sHCxNPS6MkwRn2KgIOlO9UoTa/xCR4+6dcaA4JZ+5kLQCCUmcJ/YH8GYDePe7Ydjm7lRF3rBkhPmeTHnyjVwzlPqEhysAkDw91t36K2Y5KVmsCdjjbi7XTr2CfGlzib7ZZkS2gq27ZY5rfTFThvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743556384; c=relaxed/simple;
-	bh=dkDDZ46+D6s06CwT6yuA2JUG7qQMBQcORO4mUIRvv0U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iyuUUJjIMHESLoa3vh5GcgEVEYdCN7tX/RHwaYXC8D1oPvIi5cg8YCv8BjjATrXXxs9egJ2UUXVcq9rzvpPUZnxwXuwvCna70N5ppHsbelZS/DRO+554Zf08yPBPZzxx+pLcFXjRJ5ZSqr7A8y+HFXa3MLxDSOw+5QwArS7bbIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PTovjPzm; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743556383; x=1775092383;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=dkDDZ46+D6s06CwT6yuA2JUG7qQMBQcORO4mUIRvv0U=;
-  b=PTovjPzm9pzfeLQ5eiKgtZfbUBdIJ5prn+TpJUHQ5NIt52AbWsenjCPA
-   Q1FIfM3db6XyueP5laDNZO+vhQVM7v2Ih1BBWjqzrl0UU2830FffBu/mM
-   r0sH3m2LAP7DKxhu1DDju8hqw/+sSd9EHaEtd3Zl5IM4JJBQfV+L/Fze1
-   3YYrA9/OURUWCN7gJZGxw7CWGLOKPi3Gvp0LMb6xSOVhMAeIZXEr+AXfi
-   mPQdTfMessvrJCbvoaDHCmZjp9kPW7aYQBN/9ZXeny0C9hTLbbrKokX1f
-   zA6fE+P7AXpoZUi+9WWCrBT9nWqkwnSXRALDGI7dJA5+RDkjGEbXoYs4W
-   w==;
-X-CSE-ConnectionGUID: GtJN5vepRruvxmTYlsQu7w==
-X-CSE-MsgGUID: YNTCTUhdRRWsQYrGJb8ubw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="45075100"
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="45075100"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 18:13:02 -0700
-X-CSE-ConnectionGUID: LZY7pB2pQB+rTQoopQpl9g==
-X-CSE-MsgGUID: +9HhSE1MSECtq6/USqK3Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,294,1736841600"; 
-   d="scan'208";a="157529943"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by fmviesa001.fm.intel.com with ESMTP; 01 Apr 2025 18:12:57 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Mel Gorman <mgorman@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Tim Chen <tim.c.chen@intel.com>,
-	Aubrey Li <aubrey.li@intel.com>,
-	Rik van Riel <riel@surriel.com>,
-	Raghavendra K T <raghavendra.kt@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Xunlei Pang <xlpang@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	Chen Yu <yu.chen.surf@foxmail.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH] sched/numa: Add statistics of numa balance task migration and swap
-Date: Wed,  2 Apr 2025 09:06:11 +0800
-Message-Id: <20250402010611.3204674-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743556049; c=relaxed/simple;
+	bh=5PZesHeW3FmH0zI46qagmvpB3+cAWyaw3+Q+BiOdv20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c6o3++RXWYL4HL2oUOdHVrXFmKqXkfcNx2vexRtK0idc2ZEWYTkdycsB2T4iYz077/s4Bvk7nji94iielOie1nF/4zVJTLzZOaRMA1fL2DvT7WBlVeCBssfGIAWH3xg/F3nFk59PUhUby7hmwjiPRBmDRguuEw60JsKpHJlwLhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQPOsnGS; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6f74b78df93so70874457b3.0;
+        Tue, 01 Apr 2025 18:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743556046; x=1744160846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/oxF+p5em2VYpqRHWZtHX7g5OjoPMVbjbFeP48P7SxY=;
+        b=gQPOsnGS2sCUEE4wTvFZvGDH04QfBzyHJONXs4poQQpzLgpOzDaAHQb7k/mdsTe2d4
+         gWfjin16k2wZmKpoSbRHTMXkjOx1K3f0VlBPVQXl7AZXBDR9b2fB7/Xytxs7R1VYcgps
+         beVpxZqA/am+nUCQ1ioRcBwqK/pJcq66looj/TmT4PA/ieaq+ZZvky+ipnq5ynh0eZHF
+         kK59zVJRQ0+VqA6/NuyyiFfyt8yo7o5VlfbomZB9e3lJyO3roYVLEuWnj9M79P30i+DP
+         q1yuswtBHE/bbxRl+Vn20Wyp1Nl5CUWHcafP5oqIkqeUwA+S1Utrcns0paOcL+qOycrS
+         WrcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743556046; x=1744160846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/oxF+p5em2VYpqRHWZtHX7g5OjoPMVbjbFeP48P7SxY=;
+        b=L+1f1juCbFizwtAcHhmcHipjJK1UgIjiFCsEVtB6/cx4Gtk80GCehVKWJN7ZCDBiXB
+         +YRuaB3Wb8ytBCQ8wAp1Frb4qGbrcwsG40DvQs16d1DZkqMvbrPu86jbP2rFaLZZaOvC
+         cs2ZQBKynUr4UDUw78ge9j1EGbqxzWCMY5fXTws6g1IfcU+viExFX3OB6BXmtfb20wDI
+         526vs2blJWx0jYE5dPg8EGGJ+O8I28dUK2lKj5eiOFiXzKfQ8+2upBH8HxypKnqVmfH5
+         anR+cQyXpBto/LEjP5coGmNFHYFl15fLPaDqnMr6am+94JEeQof25ZeibdPP/a+0scSv
+         Rhlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDnG/zLAprHJAINz7FLZcWfjyPhGdicvbwt3HTkVpenUbmbSjYxFVEd2m7lhZOmEPz0vinriqZXxlU2a4=@vger.kernel.org, AJvYcCXL+5rtGzsYfkrTg6cIlshjzIGUcH+l1/LJ14EU3unefszyj1k1VUrajYKAj5CoS2YhLJYs+UO2zN2zI9f0GFcNcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZuiCPj6VfryMhnvi6+s+D6JFXTWai6sk0fRGFxa7hcgYYOS2f
+	e3jhvyxgy5KkmfMBdOtCq19Mh33GstCTVp/ASFSCIBoI6PewngBn6G9qufUZ2x9xHGJvuJ5l8Br
+	v8z6CbI6wKMJJ+sKDsD282sPB+Es=
+X-Gm-Gg: ASbGnctgolvKA3ThPk84eRexJVvDWnGXy5kVg63VsWpyk+o8DG4HyfNwL5TLzwSU6Rv
+	+K+Y8DAdu1E24M7SdVRVRU2cTrl0o2nQAeCGKVfKAqL/YCOULX1BnxppBqlwbjs8UX+kX/rxxOP
+	e1GxdaQMz1pTsKtPiUm8457p4E
+X-Google-Smtp-Source: AGHT+IGHdyt7ATG8saEPHInkDsfS2SbzdYlFSB9ZTEx7N29oPWAzPreH+Xdjio/K7RgguyLPJxjDyW69EylaCYAoStY=
+X-Received: by 2002:a05:690c:6e08:b0:6fd:34c7:280b with SMTP id
+ 00721157ae682-702570df85cmr198241777b3.5.1743556046330; Tue, 01 Apr 2025
+ 18:07:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250331184638.3856982-1-namhyung@kernel.org>
+In-Reply-To: <20250331184638.3856982-1-namhyung@kernel.org>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 1 Apr 2025 18:07:15 -0700
+X-Gm-Features: AQ5f1JoORAAUrvTsmhzebYXpG_ZOK_mFZj1KngdWpqGDjQqPlObv2dxbUQOZF6A
+Message-ID: <CAH0uvohL4cFXukxhY6G4WfAWXqPOi3HbEHv=_KWixBQmgon2KQ@mail.gmail.com>
+Subject: Re: [PATCH] perf trace: Fix some leaks of struct thread
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On system with NUMA balancing enabled, it is found that tracking
-the task activities due to NUMA balancing is helpful. NUMA balancing
-has two mechanisms for task migration: one is to migrate the task to
-an idle CPU in its preferred node, the other is to swap tasks on
-different nodes if they are on each other's preferred node.
+Hello Namhyung,
 
-The kernel already has NUMA page migration statistics in
-/sys/fs/cgroup/mytest/memory.stat and /proc/{PID}/sched.
-but does not have statistics for task migration/swap.
-Add the task migration and swap count accordingly.
+On Mon, Mar 31, 2025 at 11:46=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> I've found some leaks from 'perf trace -a'.  It seems there are more
+> leaks but this is what I can find for now.
+>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/builtin-trace.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 3d0c0076884d34cb..10cd99888a9a11b5 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2835,7 +2835,7 @@ static int trace__fprintf_sys_enter(struct trace *t=
+race, struct evsel *evsel,
+>         e_machine =3D thread__e_machine(thread, trace->host);
+>         sc =3D trace__syscall_info(trace, evsel, e_machine, id);
+>         if (sc =3D=3D NULL)
+> -               return -1;
+> +               goto out_put;
+>         ttrace =3D thread__trace(thread, trace);
+>         /*
+>          * We need to get ttrace just to make sure it is there when sysca=
+ll__scnprintf_args()
+> @@ -4123,8 +4123,10 @@ static int trace__set_filter_loop_pids(struct trac=
+e *trace)
+>                         pids[nr++] =3D thread__tid(parent);
 
-The following two new fields:
+I suggest adding a:
+thread_put(parent);
+here, just before the break.
 
-numa_task_migrated
-numa_task_swapped
+>                         break;
+>                 }
+> +               thread__put(thread);
+>                 thread =3D parent;
+>         }
+> +       thread__put(thread);
+>
+>         err =3D evlist__append_tp_filter_pids(trace->evlist, nr, pids);
+>         if (!err && trace->filter_pids.map)
+> --
+> 2.49.0.472.ge94155a9ec-goog
+>
 
-will be displayed in both
-/sys/fs/cgroup/{GROUP}/memory.stat and /proc/{PID}/sched
-
-Previous RFC version can be found here:
-https://lore.kernel.org/lkml/1847c5ef828ad4835a35e3a54b88d2e13bce0eea.1740483690.git.yu.c.chen@intel.com/
-
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
-RFC->v1: Rename the nr_numa_task_migrated to
-         numa_task_migrated, and nr_numa_task_swapped
-         numa_task_swapped in /proc/{PID}/sched,
-         so both cgroup's memory.stat and task's
-         sched have the same field name.
----
- include/linux/sched.h         |  4 ++++
- include/linux/vm_event_item.h |  2 ++
- kernel/sched/core.c           | 10 ++++++++--
- kernel/sched/debug.c          |  4 ++++
- mm/memcontrol.c               |  2 ++
- mm/vmstat.c                   |  2 ++
- 6 files changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 0785268c76f8..9623e5300453 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -532,6 +532,10 @@ struct sched_statistics {
- 	u64				nr_failed_migrations_running;
- 	u64				nr_failed_migrations_hot;
- 	u64				nr_forced_migrations;
-+#ifdef CONFIG_NUMA_BALANCING
-+	u64				numa_task_migrated;
-+	u64				numa_task_swapped;
-+#endif
- 
- 	u64				nr_wakeups;
- 	u64				nr_wakeups_sync;
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index f70d0958095c..aef817474781 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -64,6 +64,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		NUMA_HINT_FAULTS,
- 		NUMA_HINT_FAULTS_LOCAL,
- 		NUMA_PAGE_MIGRATE,
-+		NUMA_TASK_MIGRATE,
-+		NUMA_TASK_SWAP,
- #endif
- #ifdef CONFIG_MIGRATION
- 		PGMIGRATE_SUCCESS, PGMIGRATE_FAIL,
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c86c05264719..314d5cbce2b6 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3348,6 +3348,11 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
- #ifdef CONFIG_NUMA_BALANCING
- static void __migrate_swap_task(struct task_struct *p, int cpu)
- {
-+	__schedstat_inc(p->stats.numa_task_swapped);
-+
-+	if (p->mm)
-+		count_memcg_events_mm(p->mm, NUMA_TASK_SWAP, 1);
-+
- 	if (task_on_rq_queued(p)) {
- 		struct rq *src_rq, *dst_rq;
- 		struct rq_flags srf, drf;
-@@ -7948,8 +7953,9 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
- 	if (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
- 		return -EINVAL;
- 
--	/* TODO: This is not properly updating schedstats */
--
-+	__schedstat_inc(p->stats.numa_task_migrated);
-+	if (p->mm)
-+		count_memcg_events_mm(p->mm, NUMA_TASK_MIGRATE, 1);
- 	trace_sched_move_numa(p, curr_cpu, target_cpu);
- 	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
- }
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 56ae54e0ce6a..f971c2af7912 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -1206,6 +1206,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
- 		P_SCHEDSTAT(nr_failed_migrations_running);
- 		P_SCHEDSTAT(nr_failed_migrations_hot);
- 		P_SCHEDSTAT(nr_forced_migrations);
-+#ifdef CONFIG_NUMA_BALANCING
-+		P_SCHEDSTAT(numa_task_migrated);
-+		P_SCHEDSTAT(numa_task_swapped);
-+#endif
- 		P_SCHEDSTAT(nr_wakeups);
- 		P_SCHEDSTAT(nr_wakeups_sync);
- 		P_SCHEDSTAT(nr_wakeups_migrate);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4de6acb9b8ec..1656c90b2381 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -460,6 +460,8 @@ static const unsigned int memcg_vm_event_stat[] = {
- 	NUMA_PAGE_MIGRATE,
- 	NUMA_PTE_UPDATES,
- 	NUMA_HINT_FAULTS,
-+	NUMA_TASK_MIGRATE,
-+	NUMA_TASK_SWAP,
- #endif
- };
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 16bfe1c694dd..7de1583a63c9 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1339,6 +1339,8 @@ const char * const vmstat_text[] = {
- 	"numa_hint_faults",
- 	"numa_hint_faults_local",
- 	"numa_pages_migrated",
-+	"numa_task_migrated",
-+	"numa_task_swapped",
- #endif
- #ifdef CONFIG_MIGRATION
- 	"pgmigrate_success",
--- 
-2.25.1
-
+Thanks,
+Howard
 
