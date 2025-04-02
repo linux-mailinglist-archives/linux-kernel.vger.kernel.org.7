@@ -1,103 +1,174 @@
-Return-Path: <linux-kernel+bounces-584905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C90FA78D6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE34A78D6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2461894421
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576603B3483
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FCA238172;
-	Wed,  2 Apr 2025 11:44:17 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9504F23875D;
+	Wed,  2 Apr 2025 11:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f7MNR61L"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99B3236451;
-	Wed,  2 Apr 2025 11:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F352523817D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743594257; cv=none; b=cgl4KRJdHt4be4+q9ITUdYV7v07SKDi61XNkyn94jrJJJSRZnqLDsw09WpF7baIQ7BVVx67po714A0E/eX/Bs26OAjc3i1imc3dzUuFQzzv1dnAWsk48Us/vH7FyTecB/n/zLGEErfdVVa5+fZCLPOA+9Gu8xoYudnMEyYPzuDs=
+	t=1743594259; cv=none; b=TJNOzNQJ9kxGU5dkAA/2C0jUbK2os3QrgUeq1Njo/YyLrWuGRhAxXnUVd8Fq4H2N0no5dEoftzY93bdGaUFe+gK1nZ40qsBdlBuWG1/rnvotYN9xioCxT1K4qGxquWT9psB27Kb7xwSOquaf0HFrIU1KoNC75Pb5frc58503TI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743594257; c=relaxed/simple;
-	bh=Z0NePWjC0usRfphBp4RYVUXKLMLWOyek6WqP11WZt3M=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=g3L1AwUYlngreUDV0Uudi18eTyxVdHKgzIkCPWLaUOi6oHmR9LvvgZI/r0xRVkm1Xm50LtoXaaCE+f43Fi6CquZe412/D8NoEJiOl5xp3Nff9G9XwHehY4Asb9TYyYdjPacqTL4G+ydViGYzJoMFgtpGWULNTD3dDCB9eItIz0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZSNLk0g6Rz5B1Jd;
-	Wed,  2 Apr 2025 19:44:14 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 532BhsZv019636;
-	Wed, 2 Apr 2025 19:43:54 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 2 Apr 2025 19:43:57 +0800 (CST)
-Date: Wed, 2 Apr 2025 19:43:57 +0800 (CST)
-X-Zmail-TransId: 2af967ed22fd046-2b930
-X-Mailer: Zmail v1.0
-Message-ID: <20250402194357404aoSxd3G74tojxA7uCZXiy@zte.com.cn>
-In-Reply-To: <20250402194100610qY6KQ4JPISk-4v214Qs36@zte.com.cn>
-References: 20250402194100610qY6KQ4JPISk-4v214Qs36@zte.com.cn
+	s=arc-20240116; t=1743594259; c=relaxed/simple;
+	bh=gg299aIBo0h7KU2NkhsXnk65DPIe/9LaoqfuKARNUFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fBAOF2M4GtMx2B6J0txOrBEvYvUbZe3DMqmY2eUf6NuX6/WWS4LS6wn0qkcuD15xjGGmQVLfFOVlS9YjwE0WvhKHCGB7rPz4VP7k76//MnWOqOgqzvmBAZ3IQsrnSFLNBIY1d6QFl3tNN2PAzfBIvk/TiiYpUrRyE5DsgVwBKG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f7MNR61L; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so1599845e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743594256; x=1744199056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9Yx8HGWWz6hgTPomrXgKhcRZgBSmV4fN3I8vYiFJco=;
+        b=f7MNR61LPk1qFGkBwWTVkyhgXFOlcrseMnNrrkcFlvm2drbUYeeXnMlpvtukXm4LIl
+         Q5HmyG3za8UEN095/WpTOyKgdTgFSO5goCPTIrlwCt3N5COgp+ARHQYb2oTbrh3qA16j
+         1kkcGieL2rQ0/O5Ynq9+DTgmr6VN9270ZVHa2TgLUnh8gceoD3vPuPXc3YvvQ3LWt3sF
+         11Ui+3EIoukrFsAj9TBFB5cxKN9Dr91usJLXOSL9kbrGkgVGtjMCCN+39+bOarfI7s5T
+         nuiWc+7YcE1q3wBLf7jnvpicj/N/GIbxds1MDc7N7tUjQgY+Zav9vhhN+yrGdtqSR911
+         g9iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743594256; x=1744199056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T9Yx8HGWWz6hgTPomrXgKhcRZgBSmV4fN3I8vYiFJco=;
+        b=F1Ey6hTvS+PN/tnwXYJ4/2/9NomycttpoAfFZPR0g0r/kBEwa+AEmUBTUp0EhgaJS4
+         lnPEbC1EOHzTOgKZhfrbfJWrl/m17B0p13VhwvfGXyOAtDYzUr96LEGxqZeGuY0iGa9w
+         nVVuB5Nwor6m4/BVmcY+vflSxgqiwa5XNWgN7X+V+SC24OXUk3VOCMxs7qmP78zqQgCY
+         r/x0SyVeC1XDXvcE0UxCe3M7Ly9oxNOdiooG+QvIWCBn4TroWyjUMrWLnDNLBVXOS4GB
+         695LCBzlgeSlgQCWvOovqmAJWJwXwTSmRpgSrr7IP4yJwwuunUrBM73STEZrGpBn8mHy
+         EM0g==
+X-Gm-Message-State: AOJu0YywXxA2uZwHwmySmgn5WCek87pCm9JBAPt/fpXgTrxCxeFvx+jl
+	ewzASQcAJSuw7iBTUD5W2Z7VUZNrauYYUc4JoIHdP4h6PY03CRDm7wBGKwwn4UFvw66ZsEILNfi
+	F/JdACZbJF9eTJ+fGGQ5o2kJPJQO81IkbOh6URw==
+X-Gm-Gg: ASbGnctXBvUmAwWXGjs63AT56I2gfWECHQhTtnNx+tr9ItF7xThg/ZMZ922tVAvSfmX
+	Zng6k/mR0aJHrgCxML5YbQvBfgPPEZGyRAGUhO2wksvVCEWrRQfooDh3qJKX5JbQ/CO5vrESjPO
+	VS0TR4IVcaTkPcaaxtnwTwOGzHH76WTHg08g9JAN3+JZBYXMKKJPgX8j6UvQ==
+X-Google-Smtp-Source: AGHT+IHW/kGqImrLP2FvLwHemjcshG451ryY8vcg74Qlr22qJBaIDv63Gcij3j/k2qFPQPNOKFQ4n1acyWCMv+TErZQ=
+X-Received: by 2002:a05:651c:98b:b0:30b:963e:9b1a with SMTP id
+ 38308e7fff4ca-30eecd3b6c8mr23076271fa.23.1743594255916; Wed, 02 Apr 2025
+ 04:44:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <vkoul@kernel.org>, <robert.marko@sartura.hr>
-Cc: <kishon@kernel.org>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-        <samuel@sholland.org>, <zhang.enpei@zte.com.cn>,
-        <linux-phy@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>, <luka.perkov@sartura.hr>,
-        <linux-arm-msm@vger.kernel.org>, <heiko@sntech.de>,
-        <linux-rockchip@lists.infradead.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgMy81XSBwaHk6IHF1YWxjb21tOiBwaHktcWNvbS1pcHE0MDE5LXVzYjogVXNlwqBkZXZfZXJyX3Byb2JlKCk=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 532BhsZv019636
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67ED230E.000/4ZSNLk0g6Rz5B1Jd
+MIME-Version: 1.0
+References: <20250401233603.2938955-1-florian.fainelli@broadcom.com>
+In-Reply-To: <20250401233603.2938955-1-florian.fainelli@broadcom.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 2 Apr 2025 13:44:04 +0200
+X-Gm-Features: AQ5f1JpN-sWsvmePPYG3vEIc3GLu6mXVKUC_Me1qpDGqIHgBjPryChV7V6bxiug
+Message-ID: <CAMRc=MeiALzO3XAmH9BLjxrB3EA1br1tpzHd5Qucw2NCVQ2q7g@mail.gmail.com>
+Subject: Re: [PATCH] spi: bcm2835: Restore native CS probing when
+ pinctrl-bcm2835 is absent
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhang Enpei <zhang.enpei@zte.com.cn>
+On Wed, Apr 2, 2025 at 1:37=E2=80=AFAM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+>
+> The lookup table forces the use of the "pinctrl-bcm2835" GPIO chip
+> provider and essentially assumes that there is going to be such a
+> provider, and if not, we will fail to set-up the SPI device.
+>
 
-Replace the open-code with dev_err_probe() to simplify the code.
+Yeah, the consumer driver itself is an unfortunate place to define the
+provider data. This could potentially be moved to gpiolib-of.c quirks.
 
-Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> While this is true on Raspberry Pi based systems (2835/36/37, 2711,
+> 2712), this is not true on 7712/77122 Broadcom STB systems which use the
+> SPI driver, but not the GPIO driver.
+>
+> There used to be an early check:
+>
+>        chip =3D gpiochip_find("pinctrl-bcm2835", chip_match_name);
+>        if (!chip)
+>                return 0;
+>
+> which would accomplish that nicely, bring something similar back by
+> checking for the compatible strings matched by the pinctrl-bcm2835.c
+> driver, if there is no Device Tree node matching those compatible
+> strings, then we won't find any GPIO provider registered by the
+> "pinctrl-bcm2835" driver.
+>
+> Fixes: 21f252cd29f0 ("spi: bcm2835: reduce the abuse of the GPIO API")
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/spi/spi-bcm2835.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+> index a5d621b94d5e..5926e004d9a6 100644
+> --- a/drivers/spi/spi-bcm2835.c
+> +++ b/drivers/spi/spi-bcm2835.c
+> @@ -1226,7 +1226,12 @@ static int bcm2835_spi_setup(struct spi_device *sp=
+i)
+>         struct bcm2835_spi *bs =3D spi_controller_get_devdata(ctlr);
+>         struct bcm2835_spidev *target =3D spi_get_ctldata(spi);
+>         struct gpiod_lookup_table *lookup __free(kfree) =3D NULL;
+> -       int ret;
+> +       const char *pinctrl_compats[] =3D {
+> +               "brcm,bcm2835-gpio",
+> +               "brcm,bcm2711-gpio",
+> +               "brcm,bcm7211-gpio",
+> +       };
+> +       int ret, i;
+>         u32 cs;
+>
+>         if (!target) {
+> @@ -1291,6 +1296,14 @@ static int bcm2835_spi_setup(struct spi_device *sp=
+i)
+>                 goto err_cleanup;
+>         }
+>
+> +       for (i =3D 0; i < ARRAY_SIZE(pinctrl_compats); i++) {
+> +               if (of_find_compatible_node(NULL, NULL, pinctrl_compats[i=
+]))
+> +                       break;
+> +       }
+> +
+> +       if (i =3D=3D ARRAY_SIZE(pinctrl_compats))
+> +               return 0;
+> +
+>         /*
+>          * TODO: The code below is a slightly better alternative to the u=
+tter
+>          * abuse of the GPIO API that I found here before. It creates a
+> --
+> 2.34.1
+>
+>
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
-index da6f290af722..738b3015747f 100644
---- a/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
-+++ b/drivers/phy/qualcomm/phy-qcom-ipq4019-usb.c
-@@ -109,11 +109,9 @@ static int ipq4019_usb_phy_probe(struct platform_device *pdev)
- 	}
+The fix is good for now but I'd still try to move this out of the
+driver at some point.
 
- 	phy->por_rst = devm_reset_control_get(phy->dev, "por_rst");
--	if (IS_ERR(phy->por_rst)) {
--		if (PTR_ERR(phy->por_rst) != -EPROBE_DEFER)
--			dev_err(dev, "POR reset is missing\n");
--		return PTR_ERR(phy->por_rst);
--	}
-+	if (IS_ERR(phy->por_rst))
-+		return dev_err_probe(dev, PTR_ERR(phy->por_rst),
-+				     "POR reset is missing\n");
-
- 	phy->srif_rst = devm_reset_control_get_optional(phy->dev, "srif_rst");
- 	if (IS_ERR(phy->srif_rst))
--- 
-2.25.1
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
