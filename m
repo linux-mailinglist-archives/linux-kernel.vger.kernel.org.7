@@ -1,107 +1,74 @@
-Return-Path: <linux-kernel+bounces-585455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A516A79397
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD05A79393
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2094189240E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DFF1892A00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711AC19C54A;
-	Wed,  2 Apr 2025 17:04:27 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576919CCEA;
+	Wed,  2 Apr 2025 17:02:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB90617E8E2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF99C199FA2;
+	Wed,  2 Apr 2025 17:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743613467; cv=none; b=bCEu69bUyaozQ4bOiRAORpkU6Xwpd5nB2u7vQMqzhHm/BjFInIHaLJUtspIE8A4PemQVCf4zb1SVD5nc3ftnHcnIUVqxU1/bHSzOBpN/Y5tFu2bzrgjD3qyg1J8pZMw+qMgc1Apu0h9Dq5tlud86c4YrrGR3XdgtKQkFrtyxYDc=
+	t=1743613355; cv=none; b=cNapctv6gQajpUcpJ5/+XJcmb7myZC/x5pJsv0RyLFBWyoXTlFNeBfKg0nju/hxI/JGWRVodu/jedIdgT30RWdNYB49ekTDBETEL7zEez5EAxCqCVkRodXA0aLhLXrljpaesxphV3e25RSvOiGNMOI1f9uxzSkaznflz4jrozbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743613467; c=relaxed/simple;
-	bh=Gc7Ragp9iuXOBeoHG5WqCjVo9Y/rcXtltf26po39z+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:Mime-Version:Content-Type; b=lNpqaVI67TppccPpNMmnMClnnXTh8iiRrq307C7euFk6wFxWWFwPkMdcecEjGDxyTvEbTUzq7s6Wkc0wk0eaUUmzxfWdXBWGw4LVRqYF0klGXX6TKmhhgFDH0p9dhzM9gX7+4f6eeyotQRa7sM8eTaTYp9/iO6RCTqcOkdgD3zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.lan (51b692a2.dsl.pool.telekom.hu [::ffff:81.182.146.162])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000080D7C.0000000067ED6E16.0008406E; Wed, 02 Apr 2025 19:04:21 +0200
-From: Gergo Koteles <soyer@irl.hu>
-To: Harry Wentland <harry.wentland@amd.com>,
-  Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>,
-  Alex Deucher <alexander.deucher@amd.com>,
-  =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-  Alex Hung <alex.hung@amd.com>,
-  Mario Limonciello <mario.limonciello@amd.com>,
-  Tom Chung <chiahsuan.chung@amd.com>,
-  Sunil Khatri <sunil.khatri@amd.com>,
-  Aurabindo Pillai <aurabindo.pillai@amd.com>,
-  Hersen Wu <hersenxs.wu@amd.com>, Melissa Wen <mwen@igalia.com>,
-  Maxime Ripard <mripard@kernel.org>,
-  Dmitry Baryshkov <lumag@kernel.org>,
-  Thomas Zimmermann <tzimmermann@suse.de>,
-  Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-  linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-  Gergo Koteles <soyer@irl.hu>
-Subject: [PATCH] drm/amd/display: do not copy invalid CRTC timing info
-Date: Wed,  2 Apr 2025 19:03:31 +0200
-Message-ID: <24439c13a014e1cd200785db6f3dcf08f4773eb3.1743612701.git.soyer@irl.hu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743613355; c=relaxed/simple;
+	bh=ypZ5lkdCw6hIZocAdkwLv0dHgZuinRcp9WIhOipqeZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RsTsVm7d/x0VG/W3MNthmY1fERbKFeLyha4EIX7HPqptdbd1ZnLrueBc8gE5fRYGVUUMsR13APvZXRg/2ZFR4J6ZY6DsN0/IhQ4ZVguc2RBwbdh0BSmQpuWzIKXE+TrxshboZALcnKDp/1IFRH6JGBl19Er0+t7YX787BejjrB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74577C4CEDD;
+	Wed,  2 Apr 2025 17:02:34 +0000 (UTC)
+Date: Wed, 2 Apr 2025 13:03:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Vincent Donnefort <vdonnefort@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Jann
+ Horn <jannh@google.com>
+Subject: Re: [PATCH v5 3/4] tracing: Use vmap_page_range() to map memmap
+ ring buffer
+Message-ID: <20250402130337.5de5a8cf@gandalf.local.home>
+In-Reply-To: <20250402125548.02cc57d0@gandalf.local.home>
+References: <20250401225811.008143218@goodmis.org>
+	<20250401225842.597899085@goodmis.org>
+	<CAHk-=wifCDa6FfRKzeioYuEqJFTeXnYQ1DpeuYsmmn59NWuakQ@mail.gmail.com>
+	<20250402125548.02cc57d0@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-Since b255ce4388e0, it is possible that the CRTC timing
-information for the preferred mode has not yet been
-calculated while amdgpu_dm_connector_mode_valid() is running.
+On Wed, 2 Apr 2025 12:55:48 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-In this case use the CRTC timing information of the actual mode.
+> This patch series fixes that miscommunication and separates out a memmap'ed
+> buffer from reserve_mem buffer and simplifies everything.
 
-Fixes: b255ce4388e0 ("drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()")
-Closes: https://lore.kernel.org/all/ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu/
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4085
-Signed-off-by: Gergo Koteles <soyer@irl.hu>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Since I only care about memory mapping a buffer from reserve_mem to user
+space, this series makes sure that a buffer created from memmap (or any
+other physical memory area) is never used for mapping to user space. It
+also prevents that buffer from being freed, as it is not part of the buddy
+allocator and can't be added later.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index bae83a129b5f..0eb25cdcb52f 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -6500,12 +6500,12 @@ decide_crtc_timing_for_drm_display_mode(struct drm_display_mode *drm_mode,
- 					const struct drm_display_mode *native_mode,
- 					bool scale_enabled)
- {
--	if (scale_enabled) {
--		copy_crtc_timing_for_drm_display_mode(native_mode, drm_mode);
--	} else if (native_mode->clock == drm_mode->clock &&
--			native_mode->htotal == drm_mode->htotal &&
--			native_mode->vtotal == drm_mode->vtotal) {
--		copy_crtc_timing_for_drm_display_mode(native_mode, drm_mode);
-+	if (scale_enabled || (
-+	    native_mode->clock == drm_mode->clock &&
-+	    native_mode->htotal == drm_mode->htotal &&
-+	    native_mode->vtotal == drm_mode->vtotal)) {
-+		if (native_mode->crtc_clock)
-+			copy_crtc_timing_for_drm_display_mode(native_mode, drm_mode);
- 	} else {
- 		/* no scaling nor amdgpu inserted, no need to patch */
- 	}
--- 
-2.49.0
+That also means all the tricks to determine where the page in the ring
+buffer came from can go away.
 
+-- Steve
 
