@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-584818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DF9A78C52
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:28:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A94A78C5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88D61892F71
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:28:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D260316F534
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DE9237706;
-	Wed,  2 Apr 2025 10:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AA6237170;
+	Wed,  2 Apr 2025 10:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjMalyPr"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k33toONX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE3E236454;
-	Wed,  2 Apr 2025 10:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA4A23496B;
+	Wed,  2 Apr 2025 10:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743589672; cv=none; b=PcVrdY/bMxSPzLlHFcI1SevqJQt2j3I7lV8jXb7nyisaFDFCqBbi8hv3RjaGbdoLk4u32GJQkBvHneA3WbsEoj/3ArgUUMNy2JwKvxqPwuMXmAtMiQ00E+4PANPsQiUzMoMNLppjAIvWs5B5/TzlgMVkuY3ZYfAh+h7xVe4MruU=
+	t=1743589765; cv=none; b=W76ujwyyElb+pXr6r19K9jCOyYwAXTMhRR0lAK6uD2dztd1LhWEjrMhnSn2pGZMPINdDlRnNUka/egffik5aLTB9wg6+ZZVn/rDW/7iFBee16ddfiQWx93zbx1x/NjtcMJt77NbuMpEWJ6yQzrAVia2InYu2BlO4hhdTObvr+0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743589672; c=relaxed/simple;
-	bh=eeLoqleT0q+WUMWnv3fDw55O+C1cpprufM4gJ9k/rd4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpqOkCMGwbw2AesC1l6eD8cFErMye6TcG5AwTdDBA5+V3Zf/pmrh9sw2Y9EeY6bDuFAEQR3JTGGA12XSxtNORwgX95z1hqQej9K2Tv5xmTlPL81eGNVRoCEtQw1MiU3IgWo1fXUWZCpjO7CRu3ootWv7inR8JnEQ4hZqdUM5NlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjMalyPr; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d0782d787so43199325e9.0;
-        Wed, 02 Apr 2025 03:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743589668; x=1744194468; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+k78tSb5ZA1zmXxb3m00fnDBewWredn7OcohwmOAeu4=;
-        b=PjMalyPrLAiQtT7u2pMITMyICfPFLl1fqEn6HwTdVNz3dBbceeBYb4uBb1eI0v7nKI
-         HhDVs3yFjkUM/Z4yc8b+M8CItRJP4xoHUdBPByuZtFCuA3hZ233boHfx8Y8L+xtEWBu1
-         QrDj98zx5PBb9ZltPvblk7AnN+zL9VTMy9041RFVhK3RIka/x9JwwqoyBsj6r7lf4FFt
-         +71YlKuomBSYUp8WbKHcfL+aQuYHGPkItI1UqaUpt/ex8gTZ15TuyuCnByCLkps5rXPZ
-         9CuHM/E4GwxJ04JIziGsoXdXTOVtpwNJCIEgBxTiNBhtEBnGXQwxnE4PlyCCCyiivJFZ
-         cvsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743589668; x=1744194468;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+k78tSb5ZA1zmXxb3m00fnDBewWredn7OcohwmOAeu4=;
-        b=TLjsKNlA5TIZ6vmU2fIOggqmOOTj1Uzj46OFjOtJazzX5XN8GvEnTSPqIaYNOahifu
-         VMbsR9wV+F3dB7wujx0Sp80w8PsYDu6SIl6V2vpkvgUgYEXOYws5kw+9uBKYi1ZgLQG/
-         HaUhGAhTeWcGkG8H4uFWaU2oeRLdsqZe3I0znvSCXPBjFOjo2oSn7Xki/1Ny7qhz/cCW
-         c55742OiILGda95ILOJag8d+rTVV6TbeKy/Drh6jALEh+ctsY2VSHgTorWt1jZ/nJDbX
-         NMydAYgAU699GUTYG0M8hQ42mdhqGKLOMN4UHl0j+XdGehwLGf5ilZf7kVVfgQgHXVVF
-         26MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Q+5Fg+25C8X+NWNXcGLKqlBlSsoiRW4WHda71sTX6jJZo36vImr/DZsGQh5xQNcCrD/qwSz9OF6DOHCj@vger.kernel.org, AJvYcCWssWXdNNLkH70kKsnwNUSEnB0tnjMB9LJfcvh6TQnratSa7R4XosrCtNCCmMgRZUxWevQ=@vger.kernel.org, AJvYcCWtXa+nteArVEXovTtg8xbWb7QKQZU75hCCCqmi0OYZ4me2boNRaZulh2oNG2j0DN08ZGYJQRU5Jfitkcs7qoRC1jFU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc6NTra5/QVvhfXTmQIxSqcwMZwfGItleWMb84XwcDbvDz7tu3
-	UyWJ9bSJg5KGk1EAWxpU5IoCUL9RzJhl5paMJSwH9bhzQBrE+u4s
-X-Gm-Gg: ASbGncu/uPG8aNPCqgqW7uIvZuHSr2v7dN1Ud/E8tyOqnFCqbFfwfNrmC6cRTos62Ng
-	uzVO4K651iqSaM0fZQ5vFx6EuD1/CHvhgsrsrdF+al89TXArFxW/eA9CfukgcJq04b+OK3riuoi
-	+ug9jJYriAnxSrBSZsVwQKtRMoy2cw/yu5d8t/GFo5zKC9+Pq91BuLDGUJ0f9ZHQfm+vk/H5nPP
-	Xc9aw4ioDseEB52so4JDL5I2dMoSP3FjimIH/MqAVYiyVUpGIYHOkqz5Ztg3A6Ev/rdTR0jkP4x
-	5lb422DDFqjlnXq0N6FHM61i6SL38WhAMQHwNnAe4xL56G85tS2mAMq5o2l8l1tMMxgd9A==
-X-Google-Smtp-Source: AGHT+IFleKFYOWRpC3v9vuGJk33DcAzU872/yQKBydvXVfpJMSmUuNbUIfy+XpRWiVZAvuvoODgrEA==
-X-Received: by 2002:a05:600c:314b:b0:43c:ea1a:720c with SMTP id 5b1f17b1804b1-43db624b452mr173766045e9.18.1743589668387;
-        Wed, 02 Apr 2025 03:27:48 -0700 (PDT)
-Received: from krava (pokorny-hyundai2.faster.cz. [77.240.177.173])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb5fd0d36sm16067175e9.10.2025.04.02.03.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 03:27:47 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 2 Apr 2025 12:27:45 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mhocko@kernel.org, oleg@redhat.com,
-	brauner@kernel.org, glider@google.com, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org
-Subject: Re: [PATCH] exit: add trace_task_exit() tracepoint before
- current->mm is reset
-Message-ID: <Z-0RIXmHHGrXb5HH@krava>
-References: <20250401184021.2591443-1-andrii@kernel.org>
- <20250401173249.42d43a28@gandalf.local.home>
- <CAEf4BzYB1dvFF=7x-H3UDo4=qWjdhOO1Wqo9iFyz235u+xp9+g@mail.gmail.com>
- <20250401181315.524161b5@gandalf.local.home>
- <CAEf4Bzbq1AMdpBysK-OqJPwrKpibyLk9RffiwEU9xdGwwHC_3w@mail.gmail.com>
+	s=arc-20240116; t=1743589765; c=relaxed/simple;
+	bh=wq9t4p/0e3SKoovLNHQmyQCYfBKOxcHqBT4NKrzawq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQEbbWHQdsuIZGGI+DIB0iekR+Rj17JQKL3NC05ENimWLxXkqM9CX+/jW860UIhIkXAyvHwbYZY4LHrT3ggZG3xkMuOIB8l82c8JWVKCHgNB8kLuJi6/bTWmmdA41Sgaz1ZUri+htwrqRXIJA9FZ/VTYycjYLeO66MA90m7nRg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k33toONX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5843C4CEDD;
+	Wed,  2 Apr 2025 10:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743589764;
+	bh=wq9t4p/0e3SKoovLNHQmyQCYfBKOxcHqBT4NKrzawq8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k33toONXVO/I6aI3BNil8rcGJioy2RMSp+ayO3KkFHLo8xUB5zKHIEVc6D0kwQuSY
+	 1VvsA6AJbqL7PYgOOgtWyR4yjLyLwffAM8FFW9RJhCYsoivfnRqS0WMCLX40bT+dc5
+	 XpOvmOPT3sHm6lJed2KHr0uaHc5G8bbShwI9X8nPSPRaDkhgfde4fb/5UYW6gkIyLl
+	 6K16uqHZpBv01mMu5u+LuKIgMXhDFZb9GOMpfdRJbhoMV3hTTSId6a7AZGuvHepUrU
+	 Gmq6zle9/Gs6tgF8JyFYr+tUXxW2KvDiHYDkjP121Hrn5T0EYTURvX43c+bW+X4Msl
+	 JOlR0NRlSL5rA==
+Message-ID: <32d36aba-9d7c-45f7-ab04-cb28ef31d159@kernel.org>
+Date: Wed, 2 Apr 2025 12:29:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: media: i2c: imx219: Remove redundant
+ description of data-lanes
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250401145759.3253736-1-niklas.soderlund+renesas@ragnatech.se>
+ <20250402-real-enthusiastic-ostrich-dcc243@krzk-bin>
+ <20250402095749.GJ1240431@ragnatech.se>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250402095749.GJ1240431@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzbq1AMdpBysK-OqJPwrKpibyLk9RffiwEU9xdGwwHC_3w@mail.gmail.com>
 
-On Tue, Apr 01, 2025 at 03:17:01PM -0700, Andrii Nakryiko wrote:
-> On Tue, Apr 1, 2025 at 3:12 PM Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> > On Tue, 1 Apr 2025 15:04:11 -0700
-> > Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> >
-> > > How bad would it be to just move trace_sched_process_exit() then? (and
-> > > add group_dead there, as you mentioned)?
-> >
-> > I personally don't have an issue with that. In fact, the one place I used
-> > the sched_process_exit tracepoint, I had to change to use
-> > sched_process_free because it does too much after that.
+On 02/04/2025 11:57, Niklas Söderlund wrote:
+>>
+>>> Support four-lane operation") the driver errored out if not 2 lanes
+>>> where used, and after it if not 2 or 4 lanes where used.
+>>
+>> Then... fix the driver?
+>>
+>> This property describes hardware, not driver. Why current driver
+>> implementation, e.g. 1 year ago or now, would change the hardware (so
+>> the bindings)?
 > 
-> heh, I ran into that as well just recently and also had to use
-> sched_process_free instead of sched_process_exit, because between exit
-> and free we still can get sched_switch tracepoint trigger (so it's a
-> bit too early to clean up whatever per-task state I maintain in BPF
-> program).
-> 
-> So yeah, I'm up for that as well, will send v2 just moving and
-> extending the existing tracepoint. Thanks!
+> I agree, I thought that here we have a case where the bindings predate 
+> the standardisation. The driver do not match the bindings, in fact it 
+> breaks if the imx219 specific instructions are followed. So the risk of 
+> breaking stuff is likely low. And this was an opportunity to align the 
+> imx219 with video-interfaces.yaml.
 
-+1, it'd be great to have the group_dead info, we also need
-to have some workarounds for that
+I am sorry, but what breaks exactly?
 
-thanks,
-jirka
+Is the device supporting two and four lanes setups? If yes, then the
+binding is correct.
 
-> 
-> >
-> > OK, let's just move the sched_process_exit tracepoint. It's in an arbitrary
-> > location anyway.
-> >
-> > -- Steve
-> 
+
+Best regards,
+Krzysztof
 
