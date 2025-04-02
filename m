@@ -1,119 +1,168 @@
-Return-Path: <linux-kernel+bounces-584977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6787A78E20
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:21:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44E6A78E29
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C30267A1F28
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447A016780A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99FD469D;
-	Wed,  2 Apr 2025 12:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD267236451;
+	Wed,  2 Apr 2025 12:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wln9Nji0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ul1s+NGl"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F51239082;
-	Wed,  2 Apr 2025 12:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805A51E1C29
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596467; cv=none; b=IbGz6quupazIL/bgAT1KtBk9NB6JYl7iuEFUHWkJnJiVzpZjPwTAzg6qysA+X3n1exwzQoqWT+L0UJ+STTphnKttYP+9loaTlIShC8kNuSGrPJ0XCO/3nka2f9KyAxYIop7EvFJL3YTz/w5K4tspH4fSEYzxL43FVB3vnQbTusU=
+	t=1743596418; cv=none; b=RVNp5hrGG8Q+a9cbZJ6sA4/bvJ7w3KqNNuAaG+Qh6iHXdz3YO4q28j5Wq9i8V/HPYUoxYLiPjKF8shpClN6yrcXsdjU/xifv02aO4IYJ1AVbu0yX+73dF8HGMZTqLteZZ7BMvG2NLAzqpMkp5BlD3KX6+qsDqNryCj9M7PhjCLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596467; c=relaxed/simple;
-	bh=n8S2byZR5SUZKqPL8dvy9unDTv3hjcY6QS1TvVw8b7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iDoRkDcesfB9qSVwuudeXVgmx9Sk3/JnJyPGmQpUuVepbpZS1EqoOnPuqKHBWEwa+uhhtRfRshKtssTcO5TsnEvDyUeUwHlzTKzf/YlxVBEZsIGPXLv1PZEZWI3o8LiRWGYbfv+zWHb2yFxsJB5ITBaR5GPU8ZpDfgtB81f8EFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wln9Nji0; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743596466; x=1775132466;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=n8S2byZR5SUZKqPL8dvy9unDTv3hjcY6QS1TvVw8b7o=;
-  b=Wln9Nji0Rbrk4yzK6oujZjH6x/Rx1b2wbWMTbyazPed6jStbp66FWd32
-   n1ISK8/E7o6D+wRxSuYMFgvZNam3gfDFV9SD+akKjaJVaqtKHFu2CPOXo
-   3YBWXdTOn5XupOzfdakY5446FRAkBd/t052EUmTqTRPpfZJ5U2/Rkqcn8
-   /fap0vsqcVJ5kSMlq7Dg2xoSHeXUssAR2pIU9TXYsvaStb/inN/EDuJfM
-   rtnznCbo6MM656KF40il5mS1sOcVgX5cfRULGT5VpxwThC+REmMwobTvD
-   f+MVAQFfBrnuRw8rBDwRh0W1kJ0ix8iFupbycVJx/8MGyBogklXzX1Let
-   w==;
-X-CSE-ConnectionGUID: 4tY0R4SkTD+MnsUkq3hbTA==
-X-CSE-MsgGUID: 5W1mvg1UTGy+yNv1wxRs2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="62357538"
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="62357538"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:21:02 -0700
-X-CSE-ConnectionGUID: Gt280GVVQdSNBmNU5NI8dg==
-X-CSE-MsgGUID: 1Hyf3AiMTpi9UKSewvGZoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="127584273"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 02 Apr 2025 05:21:01 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 92F2526F; Wed, 02 Apr 2025 15:20:59 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 2/2] gpiolib: of: Move Atmel HSMCI quirk up out of the regulator comment
-Date: Wed,  2 Apr 2025 15:20:01 +0300
-Message-ID: <20250402122058.1517393-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250402122058.1517393-1-andriy.shevchenko@linux.intel.com>
-References: <20250402122058.1517393-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1743596418; c=relaxed/simple;
+	bh=2bqiVwG6B9b93pHmMU3Wt9WeVY2w2INe21iLiS7fKnA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fv6DPPpYV3fY/Exxh5x4T2MyGZvKq6lnfs99sJZMgs68xLrRAQOajE2cAlNXMOTLkRWyHXi3YkSyEzPtUYevqugvb6YoHpg9g2SaozTO2YpzjfxMaC+iTSzNd6HIpi7vil933nKTD6/xAHMB68K0jKzn0iuFr/ys79N2nQMOStQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ul1s+NGl; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3014cb646ecso8471930a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1743596416; x=1744201216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YWJxBNwkAmqL2G8fzcWM9thfWI+FACEvfsrq+gEk/S0=;
+        b=Ul1s+NGlPF2GqNKPp1xdCWj+kSUqbvHYVWTO5lTTf6IS04xFPpnB4fVrDjc8IS/FCM
+         aItwAASZoDeYz7APR8kOhp07jBbeRRkmHxSJFXCcAxygO+ceDduJD+mGcKD2176a7C1M
+         8fEYVum0/giaj7ClXK55hutpT9HjcMwY0Pd5YjHh1Ajdf/sW0w4alRpQ7P/gY2CdKAya
+         KzI+55YPGBR1jlnxHpfKnzFcOuSzp8sC7alqDA+tS0nHc5RJqtnH4JJ9/B841GLjfLR2
+         klHb8L4OTduRpVb32LCoEMT1agt41YaZJI0YGHCXPRiQ0mGO7VPziSlDD1NYvcFNenwV
+         cBdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743596416; x=1744201216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YWJxBNwkAmqL2G8fzcWM9thfWI+FACEvfsrq+gEk/S0=;
+        b=vUKTmlbA7I5wDDzAmZu+mPpgZaWy5xTBAs3g0VNMDdK2e9RHN+EfKc/GBTxhW+l8AS
+         ori/oLZydMs0upysQzstc7HZ/A6JFsRUiauEt4dSZegJ65BFmWbyt2tErpTbvfUqMFoX
+         Ju5dOzW+GNCUuhRXmyC3OtlGf2LjazgJvW+9YKB/q7Sf5Zb8Svl4aor6aKNxImVGZjeB
+         VvzbrWygqMv0vUDU0i6KJ911SnokRNaMrYnSJjA4hZ932oKpA7d1zfZBJ2P2Mo7O9K3I
+         HfTovjRFlvFoFKYK1MffiQAfQqU4ct3JEDovZyh8unxA3F4QDR4Tw/uZoiYrspso3p7h
+         5G7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUEwmASXfC+i01nxDSW9WK1wNbO9Cgcdh7pB/fjMmdWHpdtXOKNTARgzkqlwYLNPacORSpgSHGEqsl1VH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqPdgWI/gpUeuTEmMlEE7cVxbrnHmhKHyx4d5ZvBIRSAuFFr6t
+	/1pAMzQ0HyGjcOPiMxT23jkppuZI7Nr1REfsZSvnASS8GoHxJJtbrgzN7YuFuA9ltH0zq0QDnLv
+	UPnMOFq3kjVI7loBr4m4TIz88RSsRO9Lucde7dw==
+X-Gm-Gg: ASbGncvwXzqCCYd2Qu11Wl/IY8FaOTBNSDQi6WAkUXV94pfVj5ChF55M8Tq2+2xDdV2
+	EgT6aTETD+dXpmM6rm0tZJjLylW3VhMYoHw5JwOs3qsY6rFE48Tv7fgYGFNkK/I9ztriNNev3WW
+	HUTg+VX4rb+LFqylI4XjR6p5FB6iOG3/629Ce77Q+PKXedP23KJQ==
+X-Google-Smtp-Source: AGHT+IG9C4OmAcA1BcvJZJK8vgSK/DWCvtCqpq1tzxaqNCtVF3YEFGKjwNPiS170vkEx7SYXHsTEXZvGHRmNASAO4vI=
+X-Received: by 2002:a17:90b:28c4:b0:2ff:58a4:9db3 with SMTP id
+ 98e67ed59e1d1-3053215d8aemr22113172a91.35.1743596415763; Wed, 02 Apr 2025
+ 05:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250325144252.27403-1-luxu.kernel@bytedance.com>
+ <9F043708-3BB6-46CF-BEC3-2636E9A388B7@jrtc27.com> <CAPYmKFtAWNz7nCDDD7rjGeV2fRBgy5Kt6KR60pEyXAM=bb7r4g@mail.gmail.com>
+ <20250401154412.GI186258@ziepe.ca> <20250401220201.1fa3ec76@pumpkin>
+In-Reply-To: <20250401220201.1fa3ec76@pumpkin>
+From: Xu Lu <luxu.kernel@bytedance.com>
+Date: Wed, 2 Apr 2025 20:20:04 +0800
+X-Gm-Features: AQ5f1JoCpzXNEfUDVMpNcZU9VBfEeMyRz89Td3As3soGZh_OUSrxjWt-F5xQW4s
+Message-ID: <CAPYmKFtOV6JfAudcw4gfWpgQv8k3Q6dNrTynqYo2tSdZEAwKHA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] iommu: riscv: Split 8-byte accesses on 32
+ bit I/O bus platform
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Jessica Clarke <jrtc27@jrtc27.com>, tjeznach@rivosinc.com, 
+	joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, alex@ghiti.fr, 
+	lihangjing@bytedance.com, xieyongji@bytedance.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The regulator comment in of_gpio_set_polarity_by_property()
-made on top of a couple of the cases, while Atmel HSMCI quirk
-is not related to that. Make it clear by moving Atmel HSMCI
-quirk up out of the scope of the regulator comment.
+Hi David,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-of.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+All these 64 bit registers are updated during initialization (when
+allocating page table and iommu queues) and destruction (when
+disabling interrupts and iommu queues) in the existing iommu driver.
+There won't be multiple cpu operating simultaneously.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 8fff6fdfb4a1..65f6a7177b78 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -268,6 +268,9 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
- 		{ "fsl,imx8qm-fec",  "phy-reset-gpios", "phy-reset-active-high" },
- 		{ "fsl,s32v234-fec", "phy-reset-gpios", "phy-reset-active-high" },
- #endif
-+#if IS_ENABLED(CONFIG_MMC_ATMELMCI)
-+		{ "atmel,hsmci",       "cd-gpios",     "cd-inverted" },
-+#endif
- #if IS_ENABLED(CONFIG_PCI_IMX6)
- 		{ "fsl,imx6q-pcie",  "reset-gpio", "reset-gpio-active-high" },
- 		{ "fsl,imx6sx-pcie", "reset-gpio", "reset-gpio-active-high" },
-@@ -293,9 +296,6 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
- #if IS_ENABLED(CONFIG_REGULATOR_GPIO)
- 		{ "regulator-gpio",    "enable-gpio",  "enable-active-high" },
- 		{ "regulator-gpio",    "enable-gpios", "enable-active-high" },
--#endif
--#if IS_ENABLED(CONFIG_MMC_ATMELMCI)
--		{ "atmel,hsmci",       "cd-gpios",     "cd-inverted" },
- #endif
- 	};
- 	unsigned int i;
--- 
-2.47.2
+Some 64 bit pmu registers are also updated during pmu event
+initialization and overflow handling in the oncoming iommu pmu
+driver[1]. There will also be no concurrency issues due to the pmu
+framework unless the ACPI/DTS is misconfigured and two iommus get the
+same register resources.
 
+So maybe a lock is not necessary. Please correct me if I missed anything.
+
+[1] https://lore.kernel.org/all/20250115030306.29735-1-zong.li@sifive.com/
+
+Best regards,
+Xu Lu
+
+On Wed, Apr 2, 2025 at 5:02=E2=80=AFAM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Tue, 1 Apr 2025 12:44:12 -0300
+> Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> > On Wed, Mar 26, 2025 at 11:26:07AM +0800, Xu Lu wrote:
+> > > Hi Jessica,
+> > >
+> > > > Is such a platform conformant to the specification?
+> > >
+> > > We have talked about this before [1]. I think the IOMMU spec does not
+> > > mandate the implementation of 8-byte access functionality. The relate=
+d
+> > > sentences are listed below:
+> > >
+> > > "The 8-byte IOMMU registers are defined in such a way that software
+> > > can perform two individual 4-byte accesses, or hardware can perform
+> > > two independent 4-byte transactions resulting from an 8-byte access,
+> > > to the high and low halves of the register, in that order, as long as
+> > > the register semantics, with regard to side-effects, are respected
+> > > between the two software accesses, or two hardware transactions,
+> > > respectively."
+> >
+> > I think the commit message should explain an anyalsis that the code is
+> > safe against the mentioned side effects due to ordering.
+> >
+> > And a comment should explain this:
+> >
+> > +#define riscv_iommu_writeq(iommu, addr, val) \
+> > +       ((addr =3D=3D RISCV_IOMMU_REG_IOHPMCYCLES) ? \
+> > +        lo_hi_writeq_relaxed((val), (iommu)->reg + (addr)) : \
+> > +        hi_lo_writeq_relaxed((val), (iommu)->reg + (addr)))
+> >
+> > As the naive reading of the above spec paragraph doesn't seem like
+> > there are exceptions or why one register has to be the opposite order.
+> >
+> > Also missing () around addr
+>
+> It is also double-evaluating (addr).
+>
+> I hope there is a lock, interleaved accesses from multiple cpu
+> may not work.
+
+
+
+>
+>         David
+>
+> >
+> > Jason
+> >
+>
 
