@@ -1,181 +1,96 @@
-Return-Path: <linux-kernel+bounces-585241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0376CA79139
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:32:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FF4A7913B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D492C188A813
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098D03A7DF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0E323BD01;
-	Wed,  2 Apr 2025 14:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B9F20E328;
+	Wed,  2 Apr 2025 14:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L+P3yVcU"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSUx5PNi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DCA2D7BF
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 14:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E7C219306;
+	Wed,  2 Apr 2025 14:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743604278; cv=none; b=oD40gogB0pdnl+jvpy5EfKB7tJh4prkcNFMxj3iSMN1/QLiJbAsqmezAgalRYDjLtzM7aGnekpI5Y7uKLvHJB16O1tugYNVPXxjQk5tYRueGmgb04d5grNoQDXYEW86NFzlNyFoF4Ol9SWDRYxdq4q6oPv+FqsG/LD9g7DI0hZc=
+	t=1743604319; cv=none; b=CzS31G/ytiTOiwEfH4rAHL0i6ti14rUjkC/7f874sc6PlSHjt48nnlDdGPkg+UXqQvuhn7O3yweEScF0s1ixeme5vbURWwUyxGwoG/CXmIvyv17jZfaWCjpzB4v3YRaNSt8NKULL8pvTvLmOQEWcReeYrxnNDRH2cvyJkQyLTis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743604278; c=relaxed/simple;
-	bh=YpYJRk1fqwew8uO6OLpw+y5a+3bMGS6IUxUD4ARDgMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZomTPtGx/phWxJ3BXzoV82Afz9GXCJ6ScPwWhihPK2OiMcTuSS2w244mJH9cj1OqHMVqa242ZATLBxXTEjqdbf5osK6tRgTidCmN7N+441txhORiy6cnsIrjsKexh45eZE22QNMP1xU6jSn7XPBxH+c8bGHPAW1l5l9RuPkW8hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L+P3yVcU; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5dce099f4so9283489a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 07:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743604273; x=1744209073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GZXeR3AOyrqMIL/S02Uc1Qq3QuVgipSFuMWKMSod7OE=;
-        b=L+P3yVcU7dyeLJdXcooeAPTlPK0X0AWQ1AJ73KzbMP42iOPIer/LR3J/vo8TCFvJxK
-         QGHZ1bhXTkHXAPgcsSJHUMxJ75HG7aDkRT4UjkIIZ8B9MnEr/aad/P58dx9eqSeP0FgK
-         5bpTvYnkGuNhsFkghBZGWIOWqnk1QvRMEyq3lWrFHTF/jY5AVUjNaII2IFJJNX6Oltyu
-         bV7B/+vLQQtQA0nDRh1XsqNTBr4ZhgIRpiNNxt9pzTMY6Y4E8da6i7O7+gq5UhO1vOaW
-         APtJ2mwty7Lvm7Z8D5JzbnVWxCE/q03AegjtmB70s3dGf9o6arnbm2zJyA3mWmEW3aLT
-         kvWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743604273; x=1744209073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZXeR3AOyrqMIL/S02Uc1Qq3QuVgipSFuMWKMSod7OE=;
-        b=cqyeOTBjA82Du+kJ/pHFzyzo3pxClG3HUJcb2jwROjSJaH2hNVgbAztvqUrPzf/GfN
-         O1cBtXTV/pl5SZSbDsAOOM0oAhSDjRiKwByj0DgEH9kawbA3ZAXZMhplgeWpFvp/nHLv
-         bf9924fqHnBwstEYbe+z7hSvtcKlEgAAO6MMa0BJpoDE1GGNkCCQ+epOoEOX7jefpXId
-         NZGox/YCMHtuu0HNJXfDQyqw2Geh7uEh3WgQe3FHJUboUhgUI1m42lxXexmzN+RQwKSE
-         kudnjrUccWwvjg0or7xlY2QNbUzasYi4UAhkPrxDhr+ooCzckYEGz2Ncfbs1Y0m9dsBZ
-         eRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIgpOoxDyzBXIuqbYJBnaufmU/ri36GuIVmVED6APAnD/PDeqFuapsXzwNICWtkfuAysTQ6t7SHkwoPjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznTtUX1ya6NsstsOkyXF2wRGXeuW+u/rVs0fOlDvB2SbVvZq++
-	0ScF7D9ket6igqqsXGh6QIWHyS8aZbyBhl9YjGWxhz8rOTAEOK9fEwhY+vCwazoXZtv83Rht1n7
-	aoDQeC4zVY2NjIT8u/Ai0bPT1ba4IS+Hbl+3mTg==
-X-Gm-Gg: ASbGncuE4F0NMypc0yALgmIh9avpKLlXUYC0erDlJZfHm021tOik+YLadjoO4oRNKVX
-	CfexaB7W8OdCLjQtPD1h5FTyyObrOPlNcnH0QIsB9uJqcrwG9wVjti8qKDVORNPYBKIyIVyQVm3
-	+MxlJEEND0Hk0QLPtrsiKG+TVco2ElHD9NZ+A=
-X-Google-Smtp-Source: AGHT+IGQQr6tSI/y6KGq/mkyeb3dIgsskInkIrWoOxeRv/LNuwn85mZmYAfm1T0V3zZqekUev9RiElshHrZ88+BpJ8w=
-X-Received: by 2002:a17:907:9625:b0:ac2:a5c7:7fc9 with SMTP id
- a640c23a62f3a-ac738c13711mr1500877066b.51.1743604272919; Wed, 02 Apr 2025
- 07:31:12 -0700 (PDT)
+	s=arc-20240116; t=1743604319; c=relaxed/simple;
+	bh=d3HO0by06NGB3AnL1TDQXs+J5kO79f27JvV/QUX6/qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwfTrLYY0SXzJHWlvLRjyqxmT5Rws4XPtemgX+79SS1aGmjLomSasCER3gDgUQpUzbMhmVFgokXLWc6VWhAP6EIRxGdkjnn72Ej+nwGjT5fPd36W4IcMgXWzlGsSQ3SgfdVx3zA2yIDTTqpNGNnWRW5nR7W1/4uI4nmKuS7g8HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSUx5PNi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFF6C4CEDD;
+	Wed,  2 Apr 2025 14:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743604319;
+	bh=d3HO0by06NGB3AnL1TDQXs+J5kO79f27JvV/QUX6/qU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qSUx5PNi/HCgEaurtM28iXWavW1rSrYdA1ZRVSe8HouTPdhy6PezxIDO0/fxCSXbJ
+	 ijuQUGu9m9dscRURCmHx5HAnPtZnxfFaQ7f+buvP6zLvOcJ2zXhpPkmIXAMD7JdE+Q
+	 dg5qQ6ProLWyosHNDJgn6OST2bAOY1zZ8IaCdVB/y3UbwKMJojEhBajKryvzwCKv6w
+	 8n00cvWkNb+SRhMNlIY28aKzS83MYCQujZVN39YVrvwJ1AY7kJhEx62f1TTYwx425k
+	 ylTu7EoQmBPzHp0KkjxPubM0gKSg0JWWh/UaGwi/+77oo5UwjXf/k7W5WGq+XfKTvp
+	 nGUrUnSlC9QIA==
+Date: Wed, 2 Apr 2025 09:31:57 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v4 1/2] dt-bindings: hwmon: amc6821: add fan and PWM
+ output
+Message-ID: <174360431679.216370.1049216368114674934.robh@kernel.org>
+References: <20250402102146.65406-1-francesco@dolcini.it>
+ <20250402102146.65406-2-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250331082347.1407151-1-neelx@suse.com> <2a759601-aebf-4d28-8649-ca4b1b3e755c@suse.com>
- <CAPjX3Fdru3v6vezwzgSgkBcQ28uYvjsEquWHBHPFGNFOE8arjQ@mail.gmail.com>
- <b1437d32-8c85-4e5d-9c68-76938dcf6573@gmx.com> <20250331225705.GN32661@twin.jikos.cz>
-In-Reply-To: <20250331225705.GN32661@twin.jikos.cz>
-From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 2 Apr 2025 16:31:01 +0200
-X-Gm-Features: AQ5f1JreI7_MwIaFFCGj7DmjbzaZf2psYvmmr8gsj6fcp71_gIbVniN6_ARIJgs
-Message-ID: <CAPjX3FfVgmmqbT2O0mg9YyMnNf3z7mN5ShnXiN1cL9P=4iUrTg@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: zstd: add `zstd-fast` alias mount option for fast modes
-To: dsterba@suse.cz
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Qu Wenruo <wqu@suse.com>, Chris Mason <clm@fb.com>, 
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Nick Terrell <terrelln@fb.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402102146.65406-2-francesco@dolcini.it>
 
-On Tue, 1 Apr 2025 at 00:57, David Sterba <dsterba@suse.cz> wrote:
->
-> On Tue, Apr 01, 2025 at 07:44:01AM +1030, Qu Wenruo wrote:
-> >
-> >
-> > =E5=9C=A8 2025/3/31 20:36, Daniel Vacek =E5=86=99=E9=81=93:
-> > [...]
-> > >>>                        btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-> > >>>                        btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-> > >>> +             } else if (strncmp(param->string, "zstd-fast", 9) =3D=
-=3D 0) {
-> > >>> +                     ctx->compress_type =3D BTRFS_COMPRESS_ZSTD;
-> > >>> +                     ctx->compress_level =3D
-> > >>> +                             -btrfs_compress_str2level(BTRFS_COMPR=
-ESS_ZSTD,
-> > >>> +                                                       param->stri=
-ng + 9
-> > >>
-> > >> Can we just use some temporary variable to save the return value of
-> > >> btrfs_compress_str2level()?
-> > >
-> > > I don't see any added value. Isn't `ctx->compress_level` temporary
-> > > enough at this point? Note that the FS is not mounted yet so there's
-> > > no other consumer of `ctx`.
-> > >
-> > > Or did you mean just for readability?
-> >
-> > Doing all the same checks and flipping the sign of ctx->compress_level
-> > is already cursed to me.
-> >
-> > Isn't something like this easier to understand?
-> >
-> >       level =3D btrfs_compress_str2level();
-> >       if (level > 0)
-> >               ctx->compress_level =3D -level;
-> >       else
-> >               ctx->compress_level =3D level;
-> >
-> > >
-> > >> );
-> > >>> +                     if (ctx->compress_level > 0)
-> > >>> +                             ctx->compress_level =3D -ctx->compres=
-s_level;
-> > >>
-> > >> This also means, if we pass something like "compress=3Dzstd-fast:-9"=
-, it
-> > >> will still set the level to the correct -9.
-> > >>
-> > >> Not some weird double negative, which is good.
-> > >>
-> > >> But I'm also wondering, should we even allow minus value for "zstd-f=
-ast".
-> > >
-> > > It was meant as a safety in a sense that `s/zstd:-/zstd-fast:-/` stil=
-l
-> > > works the same. Hence it defines that "fast level -3 <=3D=3D=3D> fast=
- level
-> > > 3" (which is still level -3 in internal zstd representation).
-> > > So if you mounted `compress=3Dzstd-fast:-9` it's understood you actua=
-lly
-> > > meant `compress=3Dzstd-fast:9` in the same way as if you did
-> > > `compress=3Dzstd:-9`.
-> > >
-> > > I thought this was solid. Or would you rather bail out with -EINVAL?
-> >
-> > I prefer to bail out with -EINVAL, but it's only my personal choice.
->
-> I tend to agree with you, the idea for the alias was based on feedback
-> that upstream zstd calls the levels fast, not by the negative numbers.
-> So I think we stick to the zstd: and zstd-fast: prefixes followed only
-> by the positive numbers.
 
-I'd still opt for keeping full range and functionality including
-negative levels using the plain `zstd:N` option and having the other
-just as an additional alias (for maybe being a bit nicer to some
-humans, but not a big deal really and a matter of preference).
-Checking the official documentation, it still mentions "negative
-compression levels" being the fast option.
+On Wed, 02 Apr 2025 12:21:45 +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Add properties to describe the fan and the PWM controller output.
+> 
+> Link: https://www.ti.com/lit/gpn/amc6821
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+> v4:
+>  - add #pwm-cells description
+>  - remove useless first #pwm-cells, that was supposed to be the instance
+>    number
+> v3: https://lore.kernel.org/all/20250331155229.147879-2-francesco@dolcini.it/
+>  - explicitly describe the fan, use standard PWM and FAN bindings
+>  - pwm.yaml cannot be referenced, because of the $nodename pattern that is
+>    enforced there
+> v2: https://lore.kernel.org/all/20250224180801.128685-2-francesco@dolcini.it/
+>  - no changes
+> v1: https://lore.kernel.org/all/20250218165633.106867-2-francesco@dolcini.it/
+> ---
+>  .../devicetree/bindings/hwmon/ti,amc6821.yaml  | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
 
-https://facebook.github.io/zstd/
-https://facebook.github.io/zstd/zstd_manual.html
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-The deprecation part looks like just some gossip. It looks more about
-the cli tool api and we are defining a kernel mount api - perfectly
-unrelated.
-
-> We can make this change before 6.15 final so it's not in any released
-> kernel and we don't have to deal with compatibility.
 
