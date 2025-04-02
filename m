@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-584805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C942CA78BE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0845BA78C01
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD31916EFD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C813216E27E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AAB236A72;
-	Wed,  2 Apr 2025 10:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0926236A61;
+	Wed,  2 Apr 2025 10:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dknpKXcf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="jny5Ptsj"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A2D23496B;
-	Wed,  2 Apr 2025 10:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1B021ABC3;
+	Wed,  2 Apr 2025 10:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743589220; cv=none; b=Vq+pDsqyPC3VBzxNV0N7aW9kt08XyDSHaRM/UboFa9M44QDhjurui6Z7cjPS9CeddYMVgOC4cUCOOmJO56SdP8nNRi6WdEjcnP0Igp5wtxSLGeSD6CE3w/v0QYUCWGCi6J78fEplaterya8RvptL+jpqLQrCMTIGyQiZnnqQhfc=
+	t=1743589324; cv=none; b=INGpBkhGDJClogQvRltl5AdA2HaQxeLuyL+1gfsaBsVI84zeeQ1NB8xtmTJ03v374NWh9S5lRphVio4pgy8i1IckmVtqDxyUXrx8W+JnsI45zjjaFOFoJ9Gw8JuUAS4C8+b78cmbwh8rqftyA4+Hk0xIc9HSfa4+lFYpznzwbzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743589220; c=relaxed/simple;
-	bh=TyyPs0p5eFVUOyDW73JSTQcX2PCR1IQY7elIRNEAOJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLCAP9gh5/TiRa+lsx3URObZIjN8AH+f1gTfdHgRavFsOLDkqd5l2KmmstNzstDNqr1JruRs9WLZpqlkPQRVDJ5ZkdIE2kDVYxS/pYQzAhjC510Ms6/ENc9QrNmrvphzwzj3DTfxmdNvGQN7aUowLmR1UGHsF16vYUD14nN2iEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dknpKXcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25939C4CEDD;
-	Wed,  2 Apr 2025 10:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743589220;
-	bh=TyyPs0p5eFVUOyDW73JSTQcX2PCR1IQY7elIRNEAOJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dknpKXcfkk26yr7R2zIPj/4hceyMDvdWxMAylqFtjZjFcTOKPvqqI8P4OZbmFphHx
-	 hDfeIotH46h+drHQAXprsQilnxcugWHp9figMekJEEOcIZATyVXIyJhzqjYYsoLOVe
-	 tmMqsAhvFiiWce+5XB2ZgyVpl82KTUbMotGm/pTfSwRP92v6aQLUX/2JfxRxZQMufH
-	 MCiaVnVGBMyV8/yk2Q9dv09O9tuf7XJUbHYa8W0dHZtaEih9adUtxMoaCGKvnT5hy/
-	 F6XWwg0nBi2ctbx4zCZ7V6R/Gq3jzt1XIKpO5DeWXYScAAku2xzvvoTYyhzlhwFiqb
-	 t1p1uzmfOEB3Q==
-Date: Wed, 2 Apr 2025 11:20:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org,
-	jeroendb@google.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	pkaligineedi@google.com, willemb@google.com, joshwash@google.com,
-	shailend@google.com, jrkim@google.com, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net] gve: handle overflow when reporting TX consumed
- descriptors
-Message-ID: <20250402102015.GL214849@horms.kernel.org>
-References: <20250402001037.2717315-1-hramamurthy@google.com>
- <Z+zGrWljk7u91VMY@mev-dev.igk.intel.com>
+	s=arc-20240116; t=1743589324; c=relaxed/simple;
+	bh=BdORvnXoGJLZV9Q+UHKAr4GajfyQXVCoCL4Hlvs5oxY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QFrt/k+VRCIhK26sgMJlBZyZCpo2o8OMFt8KDDAUglVkp1nCwuAdoYzMMsIB3udGI3R7GeRy5rMavwyYqelBynsCgT3azmg5igv0zbZPGWcOLQEkgfU+3+T3r9pCMrSdjB3X8nQmz8RL5iO0jtSe1iTpYhCH9VwA9rqZQ3urkP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=jny5Ptsj; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.corp.toradex.com (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 5A5E21F8BD;
+	Wed,  2 Apr 2025 12:21:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1743589312;
+	bh=CQYsomTp7PnswtMuL1xQSA60xFVOu9qYyptJXh/jGag=; h=From:To:Subject;
+	b=jny5PtsjG0wPoGRtXXHg0zU5JdKj0Qr+PNc8BNB/H6R0B162IrlBy4b5meL0fJxLs
+	 Sf/ayIAaWpveluejxUxUlHir62C+dv0s/5bouZennpXysxI0QED2+sjeZYhyBwBGaI
+	 y9PRsNa+yZfUaGT3euy6AUKjQid3AcpygE8P9arKbKCR2EM5RdrfTvK/RFQCwQcApK
+	 PUoIfI08Dm56dNmV4WHJjxSY3TLYKZiK1s9q0KVAiIbr4vd95YacIeCb6UPpZxIO0y
+	 uOdIeEylTliL+yFH2S6jZ8LuJsvm9e6oNjmnVKDBKUcAy7wYfieA7VOYmmU3ZOT38Q
+	 TKIq3RgK8ECYg==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] hwmon: (amc6821) Add PWM polarity configuration with OF
+Date: Wed,  2 Apr 2025 12:21:44 +0200
+Message-Id: <20250402102146.65406-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z+zGrWljk7u91VMY@mev-dev.igk.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 02, 2025 at 07:10:18AM +0200, Michal Swiatkowski wrote:
-> On Wed, Apr 02, 2025 at 12:10:37AM +0000, Harshitha Ramamurthy wrote:
-> > From: Joshua Washington <joshwash@google.com>
-> > 
-> > When the tx tail is less than the head (in cases of wraparound), the TX
-> > consumed descriptor statistic in DQ will be reported as
-> > UINT32_MAX - head + tail, which is incorrect. Mask the difference of
-> > head and tail according to the ring size when reporting the statistic.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 2c9198356d56 ("gve: Add consumed counts to ethtool stats")
-> > Signed-off-by: Joshua Washington <joshwash@google.com>
-> > Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> > ---
-> >  drivers/net/ethernet/google/gve/gve_ethtool.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> > index 31a21ccf4863..4dea1fdce748 100644
-> > --- a/drivers/net/ethernet/google/gve/gve_ethtool.c
-> > +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> > @@ -392,7 +392,9 @@ gve_get_ethtool_stats(struct net_device *netdev,
-> >  				 */
-> >  				data[i++] = 0;
-> >  				data[i++] = 0;
-> > -				data[i++] = tx->dqo_tx.tail - tx->dqo_tx.head;
-> > +				data[i++] =
-> > +					(tx->dqo_tx.tail - tx->dqo_tx.head) &
-> > +					tx->mask;
-> 
-> Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-> 
-> I will add it in gve_tx_dqo.c as num_used_tx_slots() and simplify
-> num_avail_tx_slots()
-> {
-> 	return tx->mask - num_used_tx_slots();
-> }
-> but it isn't needed, even maybe unwanted as this is just fix.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-I think that would be a nice cleanup, but should be as a follow-up
-to this minimal fix.
+Add support for configuring the PWM polarity of the amc6821 fan controller.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Francesco Dolcini (2):
+  dt-bindings: hwmon: amc6821: add fan and PWM output
+  hwmon: (amc6821) Add PWM polarity configuration with OF
+
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml | 18 ++++++-
+ drivers/hwmon/amc6821.c                       | 50 +++++++++++++++++--
+ 2 files changed, 62 insertions(+), 6 deletions(-)
+
+-- 
+2.39.5
 
 
