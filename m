@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-585212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2A8A790ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:18:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CE6A790DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2280F3B49A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9C93B11AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415C23ED5A;
-	Wed,  2 Apr 2025 14:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E24723BD01;
+	Wed,  2 Apr 2025 14:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="miYnPYII"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neKzBAz7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E77A23E353;
-	Wed,  2 Apr 2025 14:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBC723BCE0;
+	Wed,  2 Apr 2025 14:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743603140; cv=none; b=oxxkqOLjJPhZvGZTWgCLKx331V7gJv0CZnKGl48li19jUVxpQ3M0k1O8zAVfPEjuLDVo0XoP/Dl6a7gcpT9ea30Yb398mdqW0U8i9996OX+Gepiqs4luExmUnihjDqDKOPJbKXGII7YcqeiT/VdpNChRpk/Gch+vzvIw9Ykc2i0=
+	t=1743603129; cv=none; b=EnrXKBrr3Ofsayp6AXxc7SmU8J06Fj1uGCcErAQ59YjlBzhgPpc5hPQnR49r4ReZCZDxCw2hCcD3RQR8FjGrRiXE04u3cKQPizRUjrIJ6Y8YPSQaTTY8CZKwf4eF+1Jplte3EUTQmlWlMP1HLsoX6MOpDsEFgPlBLC5vp6aZn9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743603140; c=relaxed/simple;
-	bh=8pobs8kkVx5NrgVJv8sO1zgsqGx5B98jV6dE3pZbOvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZF+j4CH7Rj+HBKxk+WgbBSsr7E8dPxzoOhXlKHE171Tcs8DCtui8dX8Y0uMOyr8UBGJOIwfZy+A/zJUoCp5L8iJZBLpasDV56zy0x35At3pXYEcUtmxcHUMxYmbmznQh+/lMWcPqsxiuNgsZUDAbfRCN0njypsD+f22m17LoXCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=miYnPYII; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 532ECCxH3982460
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 2 Apr 2025 09:12:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1743603132;
-	bh=kenBoeloxYsujPtfJZxqmcFSGl2ijQbloYkE6+412Dw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=miYnPYIIa2dG2izACaJVukBom5N/pZyv4y0h6HKrwpZHfs2RMKaUpe6S9fzqi3BNu
-	 ABDbsWrULj2XTYbp+/9Q36MyxgZ4grZngATXB8E9MgEYfLAvTib2kepHJfhuOnhqJU
-	 QLz9ukHvqaMmGBU7CVVsC3Hxr2YtjaatuA4q/N6c=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 532ECCZb020524
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 2 Apr 2025 09:12:12 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 2
- Apr 2025 09:12:12 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 2 Apr 2025 09:12:12 -0500
-Received: from [172.24.227.40] (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 532EC9we090321;
-	Wed, 2 Apr 2025 09:12:10 -0500
-Message-ID: <c86a5251-a165-41be-9238-53fb133206a4@ti.com>
-Date: Wed, 2 Apr 2025 19:42:08 +0530
+	s=arc-20240116; t=1743603129; c=relaxed/simple;
+	bh=PVRPqr/BtL+masoenUwjEJdENPdv0i8K/nXz1oB6Sek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+4a0XL/eEZK6js1eGWtSSV5aNBNEVuSZb8PWZd/59djZdr9f7Bd63AmXtRx6EkEsN4HPdjdw3dhTBcPQrDGTDcHuUW9lrGRzMj9PUuiNBUTnhWz5Gb0bgrqPSD1xRktC3eW8EdQwmDzHynsHWvP8n+XCEoi8IabiOuqZm7kARs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neKzBAz7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B8F2C4CEEB;
+	Wed,  2 Apr 2025 14:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743603129;
+	bh=PVRPqr/BtL+masoenUwjEJdENPdv0i8K/nXz1oB6Sek=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=neKzBAz7Eh9ln2UtxSQo7H916Fwuy1/+IdT4ICk2lPa/zVAa4pZ1270VuZipw0hZ4
+	 AhYbnhCjKwjGsrQcjn7OE2Nfuf0K+Nk+X5ExEqjIU0NZQ1BBXTKGugbQwToOunBbcq
+	 nRMOSqNBdUcAmVjzpnzLgaF+WQc3pyOoNnsUy0Oupqe0Iiib8pycBKEtgXJwgFzbAw
+	 rJUcOuHXmKlUqOFi0YMtzRFSf95URNm4B5Y+AilTc64NwBpnmy5WjxXHl0GFOcZjQz
+	 0MnyxSPFk4axPg+KWkoM7B2I0S5GhbThDmfV3IrgRyvcSbd1rN3KJ3aTLU5yWBxhsj
+	 Oqdl6zDVumqbQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C8A88CE04AF; Wed,  2 Apr 2025 07:12:08 -0700 (PDT)
+Date: Wed, 2 Apr 2025 07:12:08 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: rcu@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH v2 10/12] checkpatch: Deprecate srcu_read_lock_lite() and
+ srcu_read_unlock_lite()
+Message-ID: <611ea05f-e7e7-4983-93cc-ee2995250e91@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
+ <20250331210314.590622-10-paulmck@kernel.org>
+ <5588e91ab302e21bf4e30b5208cf3d387f8e7de4.camel@perches.com>
+ <0cbd404a-856a-4bc3-ab76-eeb839065a2d@paulmck-laptop>
+ <d03ed9d9f7d5e9d8fddca4071e044d26c55a10e2.camel@perches.com>
+ <62ef3d73-1a33-4357-925e-9c2fdf1ac8fb@paulmck-laptop>
+ <18c590c303e23b90efaa698b2e21017153c1945f.camel@perches.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] crypto: ti: Add support for SHA224/256/384/512 in
- DTHE V2 driver
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Manorit Chawdhry <m-chawdhry@ti.com>
-References: <20250218104943.2304730-1-t-pratham@ti.com>
- <20250218104943.2304730-2-t-pratham@ti.com>
- <Z8QSVLoucZxG1xlc@gondor.apana.org.au>
- <f7105c10-7e36-4914-a9e8-e83eb61f0189@ti.com>
- <Z-1BnSGNab34W6eU@gondor.apana.org.au>
-Content-Language: en-US
-From: T Pratham <t-pratham@ti.com>
-In-Reply-To: <Z-1BnSGNab34W6eU@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18c590c303e23b90efaa698b2e21017153c1945f.camel@perches.com>
 
+On Tue, Apr 01, 2025 at 09:49:11PM -0700, Joe Perches wrote:
+> On Tue, 2025-04-01 at 21:23 -0700, Paul E. McKenney wrote:
+> > On Tue, Apr 01, 2025 at 08:48:44PM -0700, Joe Perches wrote:
+> > > On Tue, 2025-04-01 at 07:05 -0700, Paul E. McKenney wrote:
+> > > > On Mon, Mar 31, 2025 at 11:53:25PM -0700, Joe Perches wrote:
+> > > > > On Mon, 2025-03-31 at 14:03 -0700, Paul E. McKenney wrote:
+> > > > > > Uses of srcu_read_lock_lite() and srcu_read_unlock_lite() are better
+> > > > > > served by the new srcu_read_lock_fast() and srcu_read_unlock_fast() APIs.
+> > > > > > As in srcu_read_lock_lite() and srcu_read_unlock_lite() would never have
+> > > > > > happened had I thought a bit harder a few months ago.  Therefore, mark
+> > > > > > them deprecated.
+> > > > > 
+> > > > > Would it be better to convert the 3 existing instances?
+> > > > 
+> > > > Both are needed.  The point of these checkpatch.pl changes is to prevent
+> > > > other instances from being added.
+> > > 
+> > > If those are changed, why not remove the prototypes & functions too?
+> > > That would stop more instances being added no?
+> > 
+> > Deprecating it for a cycle then removing the prototypes and functions
+> > seems a bit more friendly to me.
+> 
+> OK, please remember to push a checkpatch revert or equivalent
+> when it's done.  Thanks.
 
-On 02/04/25 19:24, Herbert Xu wrote:
-> On Wed, Apr 02, 2025 at 07:01:25PM +0530, T Pratham wrote:
->> How are you planning to restore such states in import if the export is
->> to be made compatible with sha512_state? Do you have any pointers for me
->> on how to change the import/export before sending the next revision of
->> my driver?
-> In struct sha512_state buflen is simply stored in the lower bits of
-> count[0].  So when you import count[0] you can derive buflen from it
-> as
->
-> 	buflen = count[0] & (SHA512_BLOCK_SIZE - 1);
+Agreed, and at the same time as I remove the prototypes and functions.
+I expect that to be during the 6.17 merge window.
 
-Thanks! I'm assuming then count[1] will store the digest count in sha512
-here.
-
-Is this the same for SHA256? Since there the count is not an array, so
-is it then count = (digestcnt << 32) & buflen? 
-
->
-> Of course when you're exporting don't forget to put buflen into
-> the lower bits of count[0] before you write it out.
->
-> Cheers,
+							Thanx, Paul
 
