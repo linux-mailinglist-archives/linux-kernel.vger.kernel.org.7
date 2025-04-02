@@ -1,97 +1,54 @@
-Return-Path: <linux-kernel+bounces-584933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E317CA78DAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1694A78DB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6492F16F543
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:00:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D8A171209
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C03423A995;
-	Wed,  2 Apr 2025 12:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D242C238D53;
+	Wed,  2 Apr 2025 12:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="AZOEzLoA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pbzbP/jd"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="g+urfrPC"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F45923956E;
-	Wed,  2 Apr 2025 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEE1EFFB8;
+	Wed,  2 Apr 2025 12:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595200; cv=none; b=eSBllvcUOFkq22LzgziynYImxnq0QOx4cRLEiPk2qu42D63hXw9YfjPsqHISCxm6Un0d95sBqGkymaV2tbmd3EGYj7xW6ohcfVdVNPvhUCGO0hX5Udq0prNEfbKSDlT71eqoeryH52yUqKMjuo7DGI2Si8XGSAFhJ5UNSpVXzLw=
+	t=1743595247; cv=none; b=GuHpcwjVGR7tqiT3rGWTTgO6Jj04MSL7SiWQGZAkPLd5oKw/81zrZ5xBFTN+iQ5GHcGchPc4CgpxNjfeMFTC5h4/1JXk11776W0MwlJVjOdd74oTOdqKq63IROvm4cyedmSHggs5quNWbHuD9V6xVaxLCyt28i1ZI2VEt/UXX3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595200; c=relaxed/simple;
-	bh=vKsrwMMUSVkpYl3Wjc7iXyjyDZ/VVLnSOVOfX+Qs+WM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPaR/1c0Oikxyr/FO0yRY5UcVC/0n3HSNSwGJ4JfpSRNtBvKhPnt+O3ZD1r2yWTFqLlcwK+sHjcd0PxvNwV8R4hszkcABUiIxcyOc4Va2UOxlyeSjg/V/wUztFUULceYFAtnKrZbkuNbtQXHBToq1NToWnJvqd6ciCUbT5x2IyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=AZOEzLoA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pbzbP/jd; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 2A89725401C1;
-	Wed,  2 Apr 2025 07:59:57 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Apr 2025 07:59:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1743595197;
-	 x=1743681597; bh=v92FjPBWjebyZcMwb5OIw0ehvZf97+SV1L6dSZLgD8Q=; b=
-	AZOEzLoA7QUVKb5shewnFGBFgw89klcM9Y1m2+zFKF7aCC2zYpH6Iz/UyUHaBvrh
-	x5fvAO7Bo1BKzcVrWjePRm0F2LZReoPqkQmjloKfbVd7dQywtirkZX3A6TW+YtNz
-	UoIVPXN1/PbEuXxTEiPGPO1MGWUCiFuYQC6f70Fu7a/A6mr9d5vyvWFEkfZfFUvI
-	Nyo9I5qVJ61+y14gMufrwCWR4k4bxHZL8ixK2DvLRuUM/7mUEuOpNiEdy67OEOmh
-	79B1OB6x6Eyb3NTHaQJpmPU7jy9NReHesScQYvHX4J44EDNk5xkJhlVJOu+lXiDL
-	OjliMcHihYJBjC8EiZbOAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743595197; x=
-	1743681597; bh=v92FjPBWjebyZcMwb5OIw0ehvZf97+SV1L6dSZLgD8Q=; b=p
-	bzbP/jd+lIqiZ3u5udtNVNXsVvC+Prq5lWYYt4Fq2cZ+vCFehUMPsAmdbGTDr5F1
-	Sjsdy+Q7sIjIZv1XwjmSuhkAP5MS/l6IUTGxEcuMzqS075APYA+e4rrrU0OYV+MC
-	Yf9m3e/YOh/zlFgoBCVsA31hYS+h6sp8Vi4Eeo2E1PQQbO2yHt3xejoP1+chIryz
-	bhQ8fPIjrAHF83+1xXa/6x3DwHs3KbQxaMtUOyyX1YA3PM7Y7DsyJ5WaZhUrcMu1
-	iASmnYY3gxGGDZizV5MXfeK7NDjTHVljVBvFJKBrM6bM1p2G0pX5Hi3LCqLqtoDU
-	ah09p6+c46CRjdD8esk3Q==
-X-ME-Sender: <xms:vCbtZ_DxDpvl_xxHg8jAOo8ku2myQK5qZESS5TQmu4qTa703eG5__A>
-    <xme:vCbtZ1i_8ONZJD6Rympc0yLmKrhaC0_PFJ1tHwHhVIKJbztU1ZD-QLyVY3IudJ4pB
-    nVLoMPzWFybWlWe>
-X-ME-Received: <xmr:vCbtZ6ng6gVt7D0w1GnmBfovTJMbnNp_AtXIs86KloLsJh_XsxpdJE-niKrRUIGYEAnqRLm2FnNqKH2lvIDzE_S118jaW_G-AiMuZLy55_xZYS3T_s3M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepudelfedvudev
-    udevleegleffffekudekgeevlefgkeeluedvheekheehheekhfefnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjrggtohesuhhlshdrtghordiirgdprhgtphhtthhopehm
-    ihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhhrihhsthhoph
-    hhvgdrjhgrihhllhgvthesfigrnhgrughoohdrfhhrpdhrtghpthhtohepjhhorghnnhgv
-    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhguuhhnlhgrphesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehtrhgrphgvgihithesshhprgifnhdrlhhi
-    nhhkpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrd
-    gtohhm
-X-ME-Proxy: <xmx:vCbtZxzqiHmhAbL5HnOPDoFMEY8KQzKUJMVPQVQRp4nOsEGh1q260A>
-    <xmx:vCbtZ0SatBdiyWWwltRb0dwmMxslrJ7eiwIcAZ8bPMjrKWLIyaGl6Q>
-    <xmx:vCbtZ0ZjFQoXmgZarF03DcoSeyF88ik-CaqrP25yDK4dT-GBK3t7Vw>
-    <xmx:vCbtZ1S6cS20eVI9rS-Fp5u91Vahu9HehSpLZeTXAPg_z8GFsIaDOQ>
-    <xmx:vSbtZ6ZEsbgJWxtystLd_OgRGHKV6QeWuh0ml0JqAl_zwL8fOOr06xLE>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Apr 2025 07:59:55 -0400 (EDT)
-Message-ID: <cbc597b2-52a4-4c29-b240-427d353eb442@fastmail.fm>
-Date: Wed, 2 Apr 2025 13:59:54 +0200
+	s=arc-20240116; t=1743595247; c=relaxed/simple;
+	bh=biiHfzYRwZ2WB4z1Udj7tWwwJsZRXda9wz+GtB2FHUI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=KHU/XGbnjCpM+m7jDi5y2CPh86y1UJsELAtkNuydHsx2R6oF5XsA3EWuDm7Cj5xNABzV24lTRBQAw3x8QhCBAOcof/xFJVaQDuyZ2Y7elkbZeOWIvRfxW6nU5VmLJbuo5MbWZD3bWAZtfnkgJey5jjhyYIq7UZVTxZIP1u0Kjh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=g+urfrPC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743595235; x=1744200035; i=markus.elfring@web.de;
+	bh=+kTTVKp8MB5zMDhSJalEGqfKtggbtbQDZdY2yroZ2bA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=g+urfrPCOOslY/iYoKewDhn/hrgfpsdnTw1hIrFIy42q8yg4PDq7WQZKLqJ61nNx
+	 bK+tcjMih0MCWZfusa5RH8MRoVLJFzWXbY4hpB4fIUtpBzarZod1ijno/rnzfFcjx
+	 atcMbITvvCqJwvfpPTR35CqE2dlfUQJTeIvDPHHkOXtQ59xWflNCci7cE9kK3atYX
+	 kUYhBhMvBTTb5wTDKPdRktDhAn168ugSBKj7atLqBBKRCQbHLvppx1IQ2yBLsn9d0
+	 8DmEaLwtyozoUg3Ak4fGhocjkw1CqPPzhs1vDlmZ+CpoNxzUh6F15IOwjNcAAMgiI
+	 RTL6ko4PwoMPOMMdNQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.83]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMXxF-1thaPE0Sil-00S9Hn; Wed, 02
+ Apr 2025 14:00:35 +0200
+Message-ID: <ed1be43c-99e0-4afb-8f98-9c7f39611610@web.de>
+Date: Wed, 2 Apr 2025 14:00:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,66 +56,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: Adjust readdir() buffer to requesting buffer
- size.
-To: Jaco Kroon <jaco@uls.co.za>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.jaillet@wanadoo.fr, joannelkoong@gmail.com,
- rdunlap@infradead.org, trapexit@spawn.link, david.laight.linux@gmail.com
-References: <20250314221701.12509-1-jaco@uls.co.za>
- <20250401142831.25699-1-jaco@uls.co.za>
- <20250401142831.25699-3-jaco@uls.co.za>
- <CAJfpegtOGWz_r=7dbQiCh2wqjKh59BqzqJ0ruhtYtsYBB+GG2Q@mail.gmail.com>
- <19df312f-06a2-4e71-960a-32bc952b0ed2@uls.co.za>
- <CAJfpegseKMRLpu3-yS6PeU2aTmh_qKyAvJUWud_SLz1aCHY_tw@mail.gmail.com>
- <3f71532b-4fed-458a-a951-f631155c0107@uls.co.za>
- <CAJfpegtutvpYYzkW91SscwULcLt_xHeqCGLPmUHKAjozPAQQ8A@mail.gmail.com>
- <0cf44936-57ef-42f2-a484-7f69b87b2520@uls.co.za>
- <0b0a6adf-348e-425d-b375-23da3d6668d0@fastmail.fm>
- <f22c14e1-43d9-4976-b13e-a664f5195233@uls.co.za>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <f22c14e1-43d9-4976-b13e-a664f5195233@uls.co.za>
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-sound@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Cezary Rojewski <cezary.rojewski@intel.com>,
+ Ethan Carter Edwards <ethan@ethancedwards.com>,
+ Jaroslav Kysela <perex@perex.cz>, Jerome Brunet <jbrunet@baylibre.com>,
+ Julia Lawall <julia.lawall@inria.fr>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+ Mark Brown <broonie@kernel.org>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20250401143222.30344-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH] ASoC: Intel: avs: Add NULL check in avs_component_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250401143222.30344-1-bsdhenrymartin@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KW5W/WGVFkIkd6FI9+9Xb/yvurVcGFNnAATSjSVWSEaAH00wpUN
+ hFn9pG5j75zN7uHYMB6XdTChv85LGu+gIE5UiWWfqgNVws9tkrVMz4P/HB3W9v65+669QLZ
+ Uhbk0vyLcZb71Gl28Kak1JBmA7vxY5qz9nRQgpjQwaQn9fU2VKCRSHOLOEFf00GvbRD1JhO
+ vmMvGGOewokU1qWv0jl3A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6IpDgYfJbHI=;RALsUgA0qQXtKAennUfzkr6t0DA
+ EkJxPZQZuMG1GtF/bhjmhPIEu5wpxorfeL0Lq3eofIO3gMd7LvM+CZw3Pdd7Jv53uTQfzFy0a
+ F7rf2VlwBxq+YdAi7PiKjB/t8Cv/0k00mbEPDSdLcb4JhiwR6non6iZASPZ+kMM2wFi1i/syy
+ aQBQsfQlPjAsnTA+V03vqfKqaY3ANbLunf+S/nx1Q3ASR/cRzIhjBZAkwZM+1GUESPrrsuGHC
+ hdk/yMxeZLm9YDS1YLQzeeOSMcK2wgbkRWp+UJVtCIJ8ngR+5grluzepK+Bg1cM9e+cLdeuEa
+ Y02nUBZXIWnUvYzUN87fWRDW7XupbV1ll7jhwxTaDb4jUfKBFlcIyBcFgVGEWMfVA0HH3su/Q
+ NU/XotTWZJBZPLBQtoYCpgeyx+I8Tq2vLhbO3zhUPb8uBqcrwxMqaHfrySXF7FcMKfEEQQK+f
+ bLRrJDI9hFGv4unZa7WGjdaSEz7E4Ld40zQko84qb73dowfNn+K0uLcq8iXSsEQ3x+zkg0mrD
+ 9+KNx8fIUF475IHPct+rW+28OdXW3fGMwulBlwYuWOa1wXmCe//ze11RdDoD6H9WAvNLpFG17
+ /Yoy6n+KtxnO8eodYROPO7LcY4MnmLT6+WOd6to5GI+IW1QAsbPgBKIVJocKamTLiWH9y3P+4
+ JE6Yjjnd+Vax9bzgSzFLRVF0judsF68+8jHrT3tvw1ZuyaT0ufoR0g7r/FhdivMPqvCfPlmvz
+ hRJ/NZrl6tbUZNFKFMaJpoE2AU80bkrEv4VETgUGyqeYEbaqGbWoGl+2UtxAQKZCp/WGz1bmw
+ e47AhSSt3On6I039WQ98SpXLQblTBptf5XU1evdI6aTsEf3ydWTP6TPd8+V4tpmCLlXM6gR4P
+ ufTMNc29xeQUKQgIzCnD2P8cD0ioQlzaN7eHKnNmfmbaLGuKb6qTgvKQkxxxH0FiZ8sI5tuah
+ AXJbuzQ0+kbMdnmaPEFIRPvoiEDcY34p5jsXcm16s3ASf01mxRQWEVCFqPyV2Xuf/DAwE/gPQ
+ FS/Je8kyK47kS5fhdin3vUPK9oU+aU6B+0ABfX8V24m9OjNsOzINvRULXampb3+u6/S5DcFhB
+ sRlHpEdWBYVhY3a+d0q5PYTx3iyGUujBMXl2yrcfDpUmUQf07c3f3Ra5ON6EUhssUJMGTeAcO
+ 3HIdSZ4VqliNUeKlRcCVE1C3PihYn3vGDB/SLZTB5mPq0xJwTLaBzXP8wDBOYNWP8L7eei3OT
+ RQo1Ki8JRlet0/OAyrXH7BsWGRi3hbYNkC0SUCKeAbl+ET4QY5kuw5JsY929HSKGwxSdaLmXt
+ dUHmmQQnkBJQsz1FlhugDLYyzgZjuRZ3RovITuDW7lqvyohac8lM8C40jHy5vDyfu96zfDMyE
+ thKTT0AkjLXG3jdHsGm3n9uYQhPBf3L+D/nFPhcnj5Ylnsv/SqdhkoAoE7uTz6D0IyiWkvPv5
+ CDTFQ2DureKctMD1V9FxtPltnb8ijVThhZ4tjfE/6FSRHsb8WobVrVfmGMU7x9hWBTAte5g==
+
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+=E2=80=A6
+                call?                                  failed?
 
 
+> Add NULL check after devm_kasprintf() to prevent this issue.
 
-On 4/2/25 13:13, Jaco Kroon wrote:
-> Hi,
-> 
-> On 2025/04/02 11:10, Bernd Schubert wrote:
->>
->> On 4/2/25 10:52, Jaco Kroon wrote:
->>> Hi,
->>>
->>> On 2025/04/02 10:18, Miklos Szeredi wrote:
->>>> On Wed, 2 Apr 2025 at 09:55, Jaco Kroon <jaco@uls.co.za> wrote:
->>>>> Hi,
->>>>>
->>>>> I can definitely build on that, thank you.
->>>>>
->>>>> What's the advantage of kvmalloc over folio's here, why should it be
->>>>> preferred?
->>>> It offers the best of both worlds: first tries plain malloc (which
->>>> just does a folio alloc internally for size > PAGE_SIZE) and if that
->>>> fails, falls back to vmalloc, which should always succeed since it
->>>> uses order 0 pages.
->>> So basically assigns the space, but doesn't commit physical pages for
->>> the allocation, meaning first access will cause a page fault, and single
->>> page allocation at that point in time?  Or is it merely the fact that
->>> vmalloc may return a virtual contiguous block that's not physically
->>> contiguous?
->>
->> Yes vmalloc return buffers might not be physically contiguous - not
->> suitable for hardware DMA. And AFAIK it is also a blocking allocation.
-> How do I go about confirming?  Can that behaviour be stopped so that in
-> the case where it would block we can return an EAGAIN or EWOULDBLOCK
-> error code instead?  Is that even desired?
-> 
-> Don't think hardware DMA is an issue here, so that's at least not an
-> issue, but the blocking might be?
+Do you generally propose here to improve the error handling?
 
-I was just writing what vmalloc does - neither of its disadvantages will
-have an issue here
+
+=E2=80=A6
+> +++ b/sound/soc/intel/avs/pcm.c
+> @@ -927,7 +927,8 @@ static int avs_component_probe(struct snd_soc_compon=
+ent *component)
+>  		else
+>  			mach->tplg_filename =3D devm_kasprintf(adev->dev, GFP_KERNEL,
+>  							     "hda-generic-tplg.bin");
+> -
+> +		if (!mach->tplg_filename)
+> +			return -ENOMEM;
+
+Can a blank line be desirable after such a statement?
+
+
+Would another source code transformation become helpful with an additional=
+ update step?
+
+-		if (((vendor_id >> 16) & 0xFFFF) =3D=3D 0x8086)
+-			mach->tplg_filename =3D devm_kasprintf(adev->dev, GFP_KERNEL,
+-							     "hda-8086-generic-tplg.bin");
+-		else
+-			mach->tplg_filename =3D devm_kasprintf(adev->dev, GFP_KERNEL,
+-							     "hda-generic-tplg.bin");
++		mach->tplg_filename =3D devm_kasprintf(adev->dev, GFP_KERNEL,
++						     (((vendor_id >> 16) & 0xFFFF) =3D=3D 0x8086)
++						     ? "hda-8086-generic-tplg.bin"
++						     : "hda-generic-tplg.bin");
+
+
+Regards,
+Markus
 
