@@ -1,138 +1,116 @@
-Return-Path: <linux-kernel+bounces-585405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C31AA79328
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:31:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FA6A79339
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB5E7171CC4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2091173368
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C4D1EDA04;
-	Wed,  2 Apr 2025 16:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwmcdSes"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0201D1DFD83;
+	Wed,  2 Apr 2025 16:28:36 +0000 (UTC)
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA4519C54C
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E0E1DC9BB;
+	Wed,  2 Apr 2025 16:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743611238; cv=none; b=abgzDHQzZqeFRx2x6k2813ArYwXeL3e5/WjlcO4PXU9aSKMbnp2an5IxUtwpH9k8oOBNUJZ2jniB562NI4G1ssJWGHe+L5BhWrlCeg64+nHhN0zlo4i6QBs1HwBl1HUUxIev90Z0rwn7YhmVWmvrsYy+E68zTrl0v+HGzjqYdao=
+	t=1743611315; cv=none; b=oraKAseQqkT9yvX7Rt+DGUMv+wlYW3WJwGvZWw0ZRDgGf8NNn/G5SmvA2bM1vh1D+KOMMf0nq58iYGobgzWXByzt5yGbKFawyvpebrMfrlY2iDQTbsBEb2ElW0wjh6dTIE+ZYH9fM1yGrbqXwg35ZWzR4oUdvk54w20qs30eWF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743611238; c=relaxed/simple;
-	bh=44k7kmF9Heh1axcX60vhvBSddhWWyYlpyTedqElkVy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IYPOxCAh6okN+GE/iH9txBrn6za5GsdD2TXFmUcmAQt4ZebSmHqm6k4GMQNsG542b25SvADOPLtjsJqan3RMrS4diut0QUG/OUmZ+an3BBYjRxLUsi8BI1CxjQsSjsqROxqKuA5jgdYW9yoUjenOqvNa03TcArli4lNbrivVols=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OwmcdSes; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5eb92df4fcbso33234a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 09:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743611234; x=1744216034; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=44k7kmF9Heh1axcX60vhvBSddhWWyYlpyTedqElkVy8=;
-        b=OwmcdSesdWannAZEv6wpwSsXAebR76OvLFJUPjXdZFnbYFQi5L+IqwCoGr3JZJAnbp
-         CsUQVol0IQPBDBE+WLoISMkRNiOlo1O3svLuo4TzmGSrGTi53cDMY0SDtj31b0Oy95eG
-         HQiTAPreJkg5JUF4bHX8Jgv0te7AKhKsOiztnjPmsmYE6D93DfhOQJW2rzeyCW+spe/T
-         msCW3lrDfLcmUFRdeoYc1BIJf62CiXJhjWgQQmrh/TsXKqyt2hoFLHMCklmhcqHAEjzh
-         1c6cd6ZfZsXzyRqNg5L+f1OJnXQdhqTldjl9caTQTMnn7ptcqG58FObHo2Ff0o8+J88u
-         7YnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743611234; x=1744216034;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=44k7kmF9Heh1axcX60vhvBSddhWWyYlpyTedqElkVy8=;
-        b=D0bXKUolb0R6TsqvTZlofc7x1pHzg0HFcCKb3QUGOdFJ//cg08CSY95wZeySM5c5z8
-         p3VBdw8BcDGB3v03Q25AHpnPi8K0LHK2k43w4Xlm1lO7RoVZeeSHfk0ISScYpItgizFM
-         6VQaILurqll6retCLprpNGBG85HvLfxCn7nnczf8P7JgY8z25w1hqzSXKuiDaPukINp7
-         o0XbTgyYsiesbOxzBRP9RwPOVOhao8c4TCx07cE9YSrs79kbQIk6gqe4ak93YmQ75z61
-         U1iamXHY3q4qsdrAk27IZ5Pc/RAz3/NtxD7lxRk4ICdHKL/S+/7l4RRDFSFUPufnavAS
-         WWlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbPN+OZ91zo6+jQJBTy06erBxhmhxoMrWRCdJzhSVVr/4Ezchg3hdwO6lyiRekQHFUfmibHonRfyY1UvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqrmLAodXPj4bFFMMLSG0i3zmxMQyo1DGVwPmPTWkgxd2lNdMS
-	LR5AMWmBX4LkMu4wzi7lTeR8gCky7plwsvWLYxEtk+mEonBbmEYuktTkjU2Dma7mQ+RqQYmR2wE
-	aZXB5GLqUs2IVDEDoc/EdkhpWSiI=
-X-Gm-Gg: ASbGncvIhRcYEH5Guc/wgy0j9BKW4oqr165wFNHBfeQ5sSmhsYe+FtBP9c3L40H9zp3
-	hvH9ZccaP36yRPCqTSL80eOGCUByuDX5ME3+gpFHm2yGaKfS2DfT+7PTvxM/AmjncXBOfdVxbcq
-	Vc2lyzWnCYg7X4eLdr4HH7q50z3/iPcrs0wI4=
-X-Google-Smtp-Source: AGHT+IEnOHT6hOVDHiNqwvM3gOQnQeSxW+1KveJ2xpZBmOQfzfFxPoaWlwyo7ThKDEbEHo5q7T2hTL1FbZ2eK4mhbTQ=
-X-Received: by 2002:a05:6402:2706:b0:5e5:3610:8b7a with SMTP id
- 4fb4d7f45d1cf-5edfcfe6179mr14596201a12.17.1743611234211; Wed, 02 Apr 2025
- 09:27:14 -0700 (PDT)
+	s=arc-20240116; t=1743611315; c=relaxed/simple;
+	bh=0KerdkcffqZmlgoEUS22zRUxvbQYQdYxl/T66d4Qje8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=joqjOk3jij/2Bncw9vbDr3EjFu/J6orV/iPGws5x+xj2Azd3YxPcxU22XybGluSk60lV1XtKiZKM6MQbm2i/NL0dDM6IFr9wWFdT6tEzRz1ttjipeCKrXGrkQeoW2mtT8E/DQm39vQ74k7qQijk+439kJfAHYtm8iYt7aUc9Rwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4ZSVfZ1Wfcz9tyS;
+	Wed,  2 Apr 2025 18:28:22 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <xmzxiwno5q3ordgia55wyqtjqbefxpami5wevwltcto52fehbv@ul44rsesp4kw> <CAHk-=wgk+upuXn7-wsDs4psxOJO4wW7G2g-Sxvv0axCibFua1w@mail.gmail.com>
-In-Reply-To: <CAHk-=wgk+upuXn7-wsDs4psxOJO4wW7G2g-Sxvv0axCibFua1w@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 2 Apr 2025 18:27:02 +0200
-X-Gm-Features: AQ5f1JoDofdtjUwMStWknBzTyrnCYW_pJ4WVgjQ6yTTt1NBqqY87USBqCHJng_M
-Message-ID: <CAGudoHEV-PFSr-xKUx5GkTf4KasJc=aNNzQbkoTnFVLisKti+A@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86: prevent gcc from emitting rep movsq/stosq for
- inlined ops
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Apr 2025 18:28:17 +0200
+Message-Id: <D8WAMBXFOO2O.1Q3YT6FC05EKO@buenzli.dev>
+Cc: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Daniel Scally"
+ <djrscally@gmail.com>, "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>, "Dirk Behme"
+ <dirk.behme@de.bosch.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Saravana Kannan"
+ <saravanak@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 04/10] rust: Add bindings for reading device properties
+From: "Remo Senekowitsch" <remo@buenzli.dev>
+To: "Rob Herring" <robh@kernel.org>
+References: <20250326171411.590681-1-remo@buenzli.dev>
+ <20250326171411.590681-5-remo@buenzli.dev>
+ <20250326212753.GA2844851-robh@kernel.org>
+In-Reply-To: <20250326212753.GA2844851-robh@kernel.org>
 
-On Wed, Apr 2, 2025 at 6:22=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed Mar 26, 2025 at 10:27 PM CET, Rob Herring wrote:
+> On Wed, Mar 26, 2025 at 06:13:43PM +0100, Remo Senekowitsch wrote:
+>> +    pub fn property_read_string(&self, name: &CStr) -> Result<CString> =
+{
+>> +        let mut str =3D core::ptr::null_mut();
+>> +        let pstr: *mut _ =3D &mut str;
+>> +
+>> +        // SAFETY: `name` is non-null and null-terminated. `self.as_raw=
+` is
+>> +        // valid because `self` is valid.
+>> +        let ret =3D unsafe {
+>> +            bindings::fwnode_property_read_string(self.as_raw(), name.a=
+s_char_ptr(), pstr as _)
+>> +        };
+>> +        to_result(ret)?;
+>> +
+>> +        // SAFETY: `pstr` contains a non-null ptr on success
+>> +        let str =3D unsafe { CStr::from_char_ptr(*pstr) };
+>> +        Ok(str.try_into()?)
+>> +    }
 >
-> On Wed, 2 Apr 2025 at 06:42, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> >
-> > +ifdef CONFIG_CC_IS_GCC
-> > +#
-> > +# Inline memcpy and memset handling policy for gcc.
-> > +#
-> > +# For ops of sizes known at compilation time it quickly resorts to iss=
-uing rep
-> > +# movsq and stosq. On most uarchs rep-prefixed ops have a significant =
-startup
-> > +# latency and it is faster to issue regular stores (even if in loops) =
-to handle
-> > +# small buffers.
-> > +#
-> > +# This of course comes at an expense in terms of i-cache footprint. bl=
-oat-o-meter
-> > +# reported 0.23% increase for enabling these.
-> > +#
-> > +# We inline up to 256 bytes, which in the best case issues few movs, i=
-n the
-> > +# worst case creates a 4 * 8 store loop.
-> > +#
-> > +# The upper limit was chosen semi-arbitrarily -- uarchs wildly differ =
-between a
-> > +# threshold past which a rep-prefixed op becomes faster, 256 being the=
- lowest
-> > +# common denominator. Someone(tm) should revisit this from time to tim=
-e.
-> > +#
-> > +KBUILD_CFLAGS +=3D -mmemcpy-strategy=3Dunrolled_loop:256:noalign,libca=
-ll:-1:noalign
-> > +KBUILD_CFLAGS +=3D -mmemset-strategy=3Dunrolled_loop:256:noalign,libca=
-ll:-1:noalign
-> > +endif
+> There's a problem with the C version of this function that I'd like to=20
+> not repeat in Rust especially since ownership is clear.=20
 >
-> Please make this a gcc bug-report instead - I really don't want to
-> have random compiler-specific tuning options in the kernel.
+> The issue is that we never know when the returned string is no longer=20
+> needed. For DT overlays, we need to be able free the string when/if an=20
+> overlay is removed. Though overlays are somewhat orthogonal to this.=20
+> It's really just when the property's node refcount goes to 0 that the=20
+> property value could be freed.
 >
-> Because that whole memcpy-strategy thing is something that gets tuned
-> by a lot of other compiler options (ie -march and different versions).
->
+> So this function should probably return a copy of the string that the=20
+> caller owns.
 
-Ok.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+I think the function already does that. The variable `str` is of type `&CSt=
+r`,
+so the expression `str.try_into()?` on the last line calls the implementati=
+on
+of `impl TryFrom<&CStr> for CString`, which is documented here:
+https://rust.docs.kernel.org/kernel/str/struct.CString.html#impl-TryFrom%3C=
+%26CStr%3E-for-CString
+
+And looking at the source, it shows that the `CString` is created with a ne=
+w
+owned memory allocation:
+https://rust.docs.kernel.org/src/kernel/str.rs.html#878-890
+
+Remo
 
