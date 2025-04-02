@@ -1,201 +1,165 @@
-Return-Path: <linux-kernel+bounces-585048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D32A78F25
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4116AA78F1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCFE3B05A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0523B843B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80FA2405E3;
-	Wed,  2 Apr 2025 12:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621023F267;
+	Wed,  2 Apr 2025 12:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kxGfbjaH"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFEE23F41A;
-	Wed,  2 Apr 2025 12:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzHjJq0z"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E8923E357
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598080; cv=none; b=CfZZuIW1v51xmrea21tR10IoWP/0UQQMcrUfcDV/2gXrLKspkisNZgMWfpJBlFd5Yoyr/ax3bROot/eOLrtj0gYCu+zf4FCSoj+dJ2R5Anr6V1DO1N8CNLM+2h1K0ZQ7cWfp6p899eysJ8inI/FxMGhGbOnnvPw04mmYHgW3Nek=
+	t=1743598075; cv=none; b=B68BoJE4c8UOEPJ3PpKDspTCfbwuwprhb955ECiBUobWhxyfvc89RhpRFdFdHN/YLEVSiAtx9GvJ6GXxe4nUqzai1xHk4uhSyDzqxFFM+eILMgmjQ48ZVcAh7HFwckj/2YUtNz69t+2/xNgm9ykGsl1HUUeNAz38JBtnPwhOnq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598080; c=relaxed/simple;
-	bh=a7Y67Ezcs0uoJZtr8MYFzNKr69g69RsgDYsE1YLKUCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lOJ101VqV2IpNKD5Fxi0lnhKFzFu4cwbm7U/TvB5x6OEGIqFKwsaGsHnn+O5+kMvdyrRLwl0t7qulP6WzVF1gBqVgMiXojszMHlsJCr84ErLkYA5msx9SDJBaEFWfcEt129qOEISJ65bV2P6rSjibUzDPiK//q6nyjTthLb7i64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kxGfbjaH; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-VOT081N.hsd1.ga.comcast.net (unknown [20.114.144.49])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5EB142041317;
-	Wed,  2 Apr 2025 05:47:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5EB142041317
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743598078;
-	bh=hVxQ6Kg9GsCvIcW+Huga3a+Zb9j2IJqZ3DFDTnkF5rI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kxGfbjaHVRlu8UyhJav0auww1bCs3mcX4GvckI7MbbH+HB/yrsk9xwGHFlwmE7BMn
-	 EQTD5z6Y3wdStplhmXYJOK6kv+Lf0z1WRKOIMV4teDxu5omEXaxhuHCGQxS87xahCg
-	 woEjUMMFYYUlj70qdUpzo2FGiPfFkbo54ZbgFfAc=
-From: steven chen <chenste@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com,
-	ebiederm@xmission.com,
-	paul@paul-moore.com,
-	code@tyhicks.com,
-	bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1743598075; c=relaxed/simple;
+	bh=zSoehIniU8jm04IOOedJamJbm8GIIQPM5e7PJNzDOKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hLipKCgYRF1V3XyAy+TEJBYjAvbrJFZU+D+lP0oiEIGYMBAjiYwRAsRS3U5oBmSQKR9wBGUatiUxUR2l3OtW3p9CyUsNymO10HQ4knGZyZClQv1lpSZa89xQ4lnvGeunItSw/5OoSBmQSlveWeSFAxl3Rm8+KgMPTMObzJgAh5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WzHjJq0z; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3965c995151so3712873f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743598072; x=1744202872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LEWeMCeaswgmteuyJgZbeIbf8aY5zFHTFf+liUe5LTg=;
+        b=WzHjJq0zQiMdPOzkTeFGCO87ZhT9Sh9KGnUSgxDFiH7PDwBaIJgdqRYLFZV/nTsGW1
+         Q9L6xFfh19xi/JUKXijXLL44GYJyRIyDF/pg8L2fch7WNOhfSnedNgV0igU+GzVGEYzn
+         3y7AdBnETuNqHt5Pywd/dj3j5EBtiG4qPnhSWqzhfWeaxc4A4UU6UJXgpNitaxijudUP
+         gj+1VWu8GIQ5yiH+AYcM8H4xHeMS0nLk96pRwL9qf4PcNXMJ6ShIyPDV0Z6GyuXbiw3c
+         g/SyaSbBXY1+Pja4PQDli1bbKoScJfWluot3xmheliQLV8UpNdDLiAY/05h7kMPZhhA+
+         lbVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743598072; x=1744202872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LEWeMCeaswgmteuyJgZbeIbf8aY5zFHTFf+liUe5LTg=;
+        b=HQrd1CHoo/CpTRr+VI28NOqwOMluAQqn2VpRkuNb56wmbEcRxxHGn3VbbzOIU4bbXa
+         NJBTbUcBaIgbLm3hMQ3/t0asDe2A7Oh92NHmFcB+ZI86U9vdJgjc4xp66fxkmaAPTHg5
+         VEAuZoLDgcj5KWC0xe0VABFIX54r9eUdJ8LzuMrSdDyekVEghcyVThSHqv6AVI91I5A2
+         9Qod5iFCp6mlL23l3fEB2CANJuQyewSPhKr37IxpHoi1hsm2w2wWCxp2YxO/SmHOBpvs
+         Nkc6TuWMYFw3uVLdBRNc5bXlATUgp2LmoBbejyWtpIjAiv39j66Y1gMgoLNsqlxhK0AZ
+         N8QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWH5p+E6VXAJ38HTMrt69st46NquF4JkKiFdDl5w80nVjOl9+fneDAXTXC2ll8z2Wca2hxgb4CRDVWF0LU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywYV2w+gZQva+QZvIIiDmJo4w3tj5b8zwQT+MuORiEXV3sA2L+
+	j2HRjxmoa/TOY6l4O7dCTxZmoJeZnH0M5KRxYHidhrbqYFtSk793
+X-Gm-Gg: ASbGncveFZjfXKkMo/1uagiw2sExPWTIIXzH63griEVtkJEsxR4vn13WjNSivPYvt0O
+	0540YR2CeK2A8dkwwu6galmskcrfR/6/cwoT2CGVvecJ4z8DHVESegUuCBY7lQ1kHk7Gknjk0BL
+	KDtaPoNZTU+Gu3pRmfaFBMuTq/o+j8XCfSRak67qs+rBU8ZxFq1SHLSZTlWVL+nibi6kCjr5wbj
+	TpsTuFNxVwoiTWVJdMq/6xQwmD4tvQwckOTlAA2KtNpdOO95BaXS7zjXdAf+BzZ5geOAEnQC1b2
+	TBFFfR8uu2/okia8s10sjbJeVh/+s1k1+S+/c64GxA==
+X-Google-Smtp-Source: AGHT+IEOTmnpf9qGDadsLtbYyixVKFrhrd0ujtS0ksf/cMhCW8I+X2FWzaYLi0rLTArKqpzOW2dvHA==
+X-Received: by 2002:a5d:598b:0:b0:39a:c80b:8288 with SMTP id ffacd0b85a97d-39c297698fcmr2134047f8f.33.1743598071795;
+        Wed, 02 Apr 2025 05:47:51 -0700 (PDT)
+Received: from pc.. ([197.155.71.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb61b6cd2sm19675985e9.39.2025.04.02.05.47.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 05:47:51 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: gregkh@linuxfoundation.org,
+	outreachy@lists.linux.dev
+Cc: karanja99erick@gmail.com,
+	philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: [PATCH v11 9/9] ima: measure kexec load and exec events as critical data
-Date: Wed,  2 Apr 2025 05:47:22 -0700
-Message-ID: <20250402124725.5601-10-chenste@linux.microsoft.com>
+Subject: [PATCH 0/3] staging: rtl8723bs: Code cleanup patches
+Date: Wed,  2 Apr 2025 15:47:40 +0300
+Message-ID: <cover.1743596287.git.karanja99erick@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250402124725.5601-1-chenste@linux.microsoft.com>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The amount of memory allocated at kexec load, even with the extra memory
-allocated, might not be large enough for the entire measurement list.  The
-indeterminate interval between kexec 'load' and 'execute' could exacerbate
-this problem.
-
-Define two new IMA events, 'kexec_load' and 'kexec_execute', to be 
-measured as critical data at kexec 'load' and 'execute' respectively.
-Report the allocated kexec segment size, IMA binary log size and the
-runtime measurements count as part of those events.
-
-These events, and the values reported through them, serve as markers in
-the IMA log to verify the IMA events are captured during kexec soft
-reboot.  The presence of a 'kexec_load' event in between the last two
-'boot_aggregate' events in the IMA log implies this is a kexec soft
-reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-after kexec soft reboot implies missing events in that window which
-results in inconsistency with TPM PCR quotes, necessitating a cold boot
-for a successful remote attestation.
-
-These critical data events are displayed as hex encoded ascii in the
-ascii_runtime_measurement_list.  Verifying the critical data hash requires 
-calculating the hash of the decoded ascii string.  
-
-For example, to verify the 'kexec_load' data hash:
-
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
 
 
-To verify the 'kexec_execute' data hash:
+This patchset refactors the rtl8723bs driver by replacing
+integer literals (1 and 0) with true and false,
+improving code readability and consistency with standard kernel practices.
+The transformation was performed using Coccinelle.
 
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
+below is the coccinelle script used:
+@initialize:ocaml@
+@@
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: steven chen <chenste@linux.microsoft.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
----
- security/integrity/ima/ima.h       |  6 ++++++
- security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
- security/integrity/ima/ima_queue.c |  5 +++++
- 3 files changed, 32 insertions(+)
+let same_function p q =
+  (List.hd p).Coccilib.current_element = (List.hd q).Coccilib.current_element
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 24d09ea91b87..34815baf5e21 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   unsigned long flags, bool create);
- #endif
- 
-+#ifdef CONFIG_IMA_KEXEC
-+void ima_measure_kexec_event(const char *event_name);
-+#else
-+static inline void ima_measure_kexec_event(const char *event_name) {}
-+#endif
-+
- /*
-  * The default binary_runtime_measurements list format is defined as the
-  * platform native format.  The canonical format is defined as little-endian.
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index d1c9d369ba08..38cb2500f4c3 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -17,6 +17,8 @@
- #include "ima.h"
- 
- #ifdef CONFIG_IMA_KEXEC
-+#define IMA_KEXEC_EVENT_LEN 256
-+
- static bool ima_kexec_update_registered;
- static struct seq_file ima_kexec_file;
- static size_t kexec_segment_size;
-@@ -31,6 +33,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
- 	sf->count = 0;
- }
- 
-+void ima_measure_kexec_event(const char *event_name)
-+{
-+	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-+	size_t buf_size = 0;
-+	long len;
-+	int n;
-+
-+	buf_size = ima_get_binary_runtime_size();
-+	len = atomic_long_read(&ima_htable.len);
-+
-+	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-+		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-+		      "ima_runtime_measurements_count=%ld;",
-+		      kexec_segment_size, buf_size, len);
-+
-+	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
-+}
-+
- static int ima_alloc_kexec_file_buf(size_t segment_size)
- {
- 	/*
-@@ -53,6 +73,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
- out:
- 	ima_kexec_file.read_pos = 0;
- 	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-+	ima_measure_kexec_event("kexec_load");
- 
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 83d53824aa98..590637e81ad1 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
- 			       unsigned long action,
- 			       void *data)
- {
-+#ifdef CONFIG_IMA_KEXEC
-+	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
-+		ima_measure_kexec_event("kexec_execute");
-+#endif
-+
- 	ima_measurements_suspend();
- 
- 	return NOTIFY_DONE;
+@r@
+expression e;
+position p;
+symbol true,false;
+@@
+
+e =@p \(true\|false\)
+
+@@
+expression r.e;
+position q : script:ocaml(r.p) { same_function p q };
+@@
+
+e =@q
+(
+- 1
++ true
+|
+- 0
++ false
+)
+
+@s@
+type T;
+T e;
+identifier fld;
+symbol true,false;
+@@
+
+e.fld = \(true\|false\)
+
+@@
+type s.T;
+T e;
+identifier s.fld;
+@@
+
+e.fld =
+(
+- 1
++ true
+|
+- 0
++ false
+)
+
+Erick Karanja (3):
+  staging: rtl8723bs: Use true/false instead of 1/0
+  staging: rtl8723bs: Use true/false instead of 1/0
+  staging: rtl8723bs: Use true/false instead of 1/0
+
+ drivers/staging/rtl8723bs/core/rtw_ap.c       | 12 ++++++------
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  4 ++--
+ drivers/staging/rtl8723bs/core/rtw_recv.c     |  2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
 -- 
-2.25.1
+2.43.0
 
 
