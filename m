@@ -1,206 +1,132 @@
-Return-Path: <linux-kernel+bounces-585717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E65A79664
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:20:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA60A79670
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B427A1895507
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB0D3B3CF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5771EFFA9;
-	Wed,  2 Apr 2025 20:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7CC1EB18F;
+	Wed,  2 Apr 2025 20:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNsGv5RE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pU7IOxhs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6241925AB;
-	Wed,  2 Apr 2025 20:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6422B674
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 20:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743625150; cv=none; b=lCo4UbHg2iwt5DnMJTWE8KrmNCkXYYuMMxZLNqJTDdpn+YhPgv0kI1Mvmi16hYF6d67V5aKOocxh0IRieSOrmwxbKypUbdfVa+Nxlr9nkDA4KCtmmQfmsO10/zU9UIa4blMN/A9RvMRtv/78lX11qGDMfSHpOTpaqveY4dsE7vc=
+	t=1743625500; cv=none; b=KhfTgDSy3qcqQvy0A+L0RMLITGWLeS2dEvMwJQ0vvDwLgpw9Yv2bikYVQbKqRoSqAK8Cjk81jzF8nWHsZrauQy56ga+jXlJqxz2UPrvskBzc8h9EiibrjyT0KyuOgKEoPqjCEFSC6qlOXRjFlFpQ11MLSJYmwAVOBixnqajqy18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743625150; c=relaxed/simple;
-	bh=PBAlCXXoeZYK4hLqIaAvGTjwa5glXZM1tJS6eSjSSww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fj+LJsDdHWGyBOc2IKv6FE29RfFdLPiGTJOZgRpNQPyEBAA7/1mNxBb2oH5bHFd+Tz9vnZCQmJMvCQ3TRqHfkzoVwSf/OrFO7iUkgoaL3kUd7i4UWnECPtkD1XJc2DNJrmbaSoju/aiwDSfn//DRO+nak/4yA8xPURyj1XGMySM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNsGv5RE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5554BC4CEDD;
-	Wed,  2 Apr 2025 20:19:02 +0000 (UTC)
+	s=arc-20240116; t=1743625500; c=relaxed/simple;
+	bh=3wiNHrGJCrOQUSc/gV7EKEKCVN+ZvFLYbqcNYBD/b/Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YJbO8G1bXjyXYJNnDRz2T6PRPzgpGLRHHKYCaYI67lTHCxRPGhBt/I7xzxriSCyVSzUS0UpPYbm93SXm5+GqqtssHQj00dEn+TPMcQTMC18hXtn3T3zJJYA03/JTuF69xG7RMmSGTsyzOOQK/yFsSm0GNy1GvN3GFxxcaEzro1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pU7IOxhs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCEBDC4CEDD;
+	Wed,  2 Apr 2025 20:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743625150;
-	bh=PBAlCXXoeZYK4hLqIaAvGTjwa5glXZM1tJS6eSjSSww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNsGv5REBUv5cCT3Y6XQje0aF3DB0+YmNtT4Z8Guj8UnqP9RDvNkPh30jZCNJ6ym/
-	 ZYe5NowHojMJrVjp7O1ai7s2tjouVNUHS0RUE7OZayzmNTZNGUgq36PRUDhK0aZaFU
-	 ujflV2XCHpWTbN2b6vk/r5o9Ttku8oPuqsL8H1j410RsfZ4NlTatOVmbdm4guXXZqp
-	 bVKxgqmn5hngT7OjGOvj5fCLkUw0lcHgNdtXqygBbwQaJl+A9AwUNeCv70o9iFpba5
-	 4yoqbCjOIKhAZBP1SyDDZKiTsH2KyjMsLt9ILHAC85utAuq/POgnQVkBFhnZ21G4md
-	 h4MoLQ9RrqesQ==
-Date: Wed, 2 Apr 2025 23:18:55 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>
-Subject: Re: [PATCH v2 10/13] arch, mm: set high_memory in free_area_init()
-Message-ID: <Z-2br1vk8lf9V40T@kernel.org>
-References: <20250313135003.836600-1-rppt@kernel.org>
- <20250313135003.836600-11-rppt@kernel.org>
- <20250402140521-bf9b3743-094e-4097-a189-10cdf1db9255@linutronix.de>
- <Z-0xrWyff9-9bJRf@kernel.org>
- <20250402145330-3ff21a6b-fb03-4bc8-8178-51a535582c6f@linutronix.de>
- <20250402181842-f25872a1-00f7-4a8f-ae6d-3927899ee3a6@linutronix.de>
+	s=k20201202; t=1743625500;
+	bh=3wiNHrGJCrOQUSc/gV7EKEKCVN+ZvFLYbqcNYBD/b/Q=;
+	h=From:Date:Subject:To:Cc:From;
+	b=pU7IOxhsePyUaf6+Fuogsjeg+KqzKCCCI44RFWo+NH34KvsW/CKXAwHawHM2h8kl5
+	 3PnhHZS4seV8kxtRrGgBPypZkfcwHeHWm5hwVpUDQFo1fRn1WeJcN5O6D3vHKkSaSe
+	 xvHkp0NDkD8oL/KV957plkrfTgeK7lLhP7szLdSsEL6LxuupT9uTuSBAZd6kaXPpEu
+	 JADKRcwpBJGIwOHIrn53+Tcs4A90gjwttYZdtdgDIFYIZMMeA6cqXn3f387fwf2hQL
+	 UgFcLc8Q3AZkM1/Sd+d3DLg4Gve2nqhndtTYab9josbCjeWKjZCKzgWt9V7bVCaKMe
+	 b3Nra0VryBggg==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 02 Apr 2025 21:21:57 +0100
+Subject: [PATCH] tools/include: make uapi/linux/types.h usable from
+ assembly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250402181842-f25872a1-00f7-4a8f-ae6d-3927899ee3a6@linutronix.de>
+Message-Id: <20250402-kselftest-vdso-fix-v1-1-71b68f1c27e3@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAGWc7WcC/x2MSQqAMAwAvyI5G4hFcfmKeFCbalCsNCKC9O8Wj
+ zMw84JyEFboshcC36LijwRFnsG8jsfCKDYxGDIVlWRwU97dxXrhbdWjkwdtW7upmaglQ5DCM3D
+ S/7QfYvwA7UJCAWQAAAA=
+X-Change-ID: 20250402-kselftest-vdso-fix-d97fb8b09020
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1883; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=Nkt5GR0WOOcCXmdD6PdanESRtWi4YNRoSchI0vF6bhQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn7Z0ZBKu74myNZqTNWaq1ueGrMW+h9+KsIf+JQzhr
+ urtJv5+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ+2dGQAKCRAk1otyXVSH0Kb4CA
+ CCqDdFle4UTGPJJQaYR3wI2pTg81Uakog2U4PN8pcmZDzxxdv7p6FBgWSwkq33YwGA+wZBc38QUCPw
+ wkzncGymNL9zpNlj1H5FYzv83/dMd18GXyS30u9KIdwqGQUjbNaCGQd5+92fXzJh8C/xYZtYhoe2Jy
+ sfqjLhvbTfOj0xAGkJ786B4Qlhi1v/sYvj5Zbw0YhJJ2uXcnaIT6l00lEGgQ52VQ7VcKbnDumtzjuu
+ ogElYNICDgtewsBCLXdixMN2wzcd3OMrPoSGk94wsx+sCtKQLn2Zs8I4rJWD8SrCKFh28kEZB6khmu
+ eyEh8DjsEyY/WIcZo2bV8ffiuRBmp5
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Apr 02, 2025 at 06:31:02PM +0200, Thomas Weiﬂschuh wrote:
-> On Wed, Apr 02, 2025 at 03:07:51PM +0200, Thomas Weiﬂschuh wrote:
-> > On Wed, Apr 02, 2025 at 03:46:37PM +0300, Mike Rapoport wrote:
-> > > On Wed, Apr 02, 2025 at 02:19:01PM +0200, Thomas Weiﬂschuh wrote:
-> > > > (drop all the non-x86 and non-mm recipients)
-> > > > 
-> > > > On Thu, Mar 13, 2025 at 03:50:00PM +0200, Mike Rapoport wrote:
-> > > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > > > > 
-> > > > > high_memory defines upper bound on the directly mapped memory.
-> > > > > This bound is defined by the beginning of ZONE_HIGHMEM when a system has
-> > > > > high memory and by the end of memory otherwise.
-> > > > > 
-> > > > > All this is known to generic memory management initialization code that
-> > > > > can set high_memory while initializing core mm structures.
-> > > > > 
-> > > > > Add a generic calculation of high_memory to free_area_init() and remove
-> > > > > per-architecture calculation except for the architectures that set and
-> > > > > use high_memory earlier than that.
-> > > > 
-> > > > This change (in mainline as commit e120d1bc12da ("arch, mm: set high_memory in free_area_init()")
-> > > > breaks booting i386 on QEMU for me (and others [0]).
-> > > > The boot just hangs without output.
-> > > > 
-> > > > It's easily reproducible with kunit:
-> > > > ./tools/testing/kunit/kunit.py run --arch i386
-> > > > 
-> > > > See below for the specific problematic hunk.
-> > > > 
-> > > > [0] https://lore.kernel.org/lkml/CA+G9fYtdXHVuirs3v6at3UoKNH5keuq0tpcvpz0tJFT4toLG4g@mail.gmail.com/
-> > > > 
-> > > > 
-> > > > > diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-> > > > > index 6d2f8cb9451e..801b659ead0c 100644
-> > > > > --- a/arch/x86/mm/init_32.c
-> > > > > +++ b/arch/x86/mm/init_32.c
-> > > > > @@ -643,9 +643,6 @@ void __init initmem_init(void)
-> > > > >  		highstart_pfn = max_low_pfn;
-> > > > >  	printk(KERN_NOTICE "%ldMB HIGHMEM available.\n",
-> > > > >  		pages_to_mb(highend_pfn - highstart_pfn));
-> > > > > -	high_memory = (void *) __va(highstart_pfn * PAGE_SIZE - 1) + 1;
-> > > > > -#else
-> > > > > -	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
-> > > > >  #endif
-> > > > 
-> > > > Reverting this hunk fixes the issue for me.
-> > >  
-> > > This is already done by d893aca973c3 ("x86/mm: restore early initialization
-> > > of high_memory for 32-bits").
-> > 
-> > Thanks. Of course I only noticed this shortly after sending my mail.
-> > But this usecase is indeed broken on mainline.
-> > Some further bisecting lead to the mm merge commit being broken, while both its
-> > parents work. That lead the bisection astray.
-> > eb0ece16027f ("Merge tag 'mm-stable-2025-03-30-16-52' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm")
-> > 
-> > As unlikely as it sounds, it's reproducible. I'll investigate a bit.
-> 
-> The issue is fixed with the following diff:
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 284154445409..8cd95f60015d 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -2165,7 +2165,8 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
->                                  phys_addr_t end)
->  {
->         unsigned long start_pfn = PFN_UP(start);
-> -       unsigned long end_pfn = PFN_DOWN(end);
-> +       unsigned long end_pfn = min_t(unsigned long,
-> +                                     PFN_DOWN(end), max_low_pfn);
+From: Thomas Wei√üschuh <thomas.weissschuh@linutronix.de>
 
-This will leave HIGHMEM completely unusable. The proper fix is
+The "real" linux/types.h UAPI header gracefully degrades to a NOOP when
+included from assembly code.
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 64ae678cd1d1..d7ff8dfe5f88 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -2166,6 +2166,9 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
- 	unsigned long start_pfn = PFN_UP(start);
- 	unsigned long end_pfn = PFN_DOWN(end);
+Mirror this behaviour in the tools/ variant.
+
+Test for __ASSEMBLER__ over __ASSEMBLY__ as the former is provided by the
+toolchain automatically.
+
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/lkml/af553c62-ca2f-4956-932c-dd6e3a126f58@sirena.org.uk/
+Fixes: c9fbaa879508 ("selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers")
+Signed-off-by: Thomas Wei√üschuh <thomas.weissschuh@linutronix.de>
+Link: https://patch.msgid.link/20250321-uapi-consistency-v1-1-439070118dc0@linutronix.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+This is a fix for a build break in the vDSO selftests which was
+introduced some time ago in the tip tree, Thomas posted the fix on 21st
+March the day after I reported it but it's not been picked up and the
+issue is now in mainline.  I'm sending it directly to try to avoid -rc1
+being broken.
+---
+ tools/include/uapi/linux/types.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/include/uapi/linux/types.h b/tools/include/uapi/linux/types.h
+index 91fa51a9c31d..85aa327245c6 100644
+--- a/tools/include/uapi/linux/types.h
++++ b/tools/include/uapi/linux/types.h
+@@ -4,6 +4,8 @@
  
-+	if (!IS_ENABLED(CONFIG_HIGHMEM) && end_pfn > max_low_pfn)
-+		end_pfn = max_low_pfn;
+ #include <asm-generic/int-ll64.h>
+ 
++#ifndef __ASSEMBLER__
 +
- 	if (start_pfn >= end_pfn)
- 		return 0;
+ /* copied from linux:include/uapi/linux/types.h */
+ #define __bitwise
+ typedef __u16 __bitwise __le16;
+@@ -20,4 +22,5 @@ typedef __u32 __bitwise __wsum;
+ #define __aligned_be64 __be64 __attribute__((aligned(8)))
+ #define __aligned_le64 __le64 __attribute__((aligned(8)))
+ 
++#endif /* __ASSEMBLER__ */
+ #endif /* _UAPI_LINUX_TYPES_H */
 
-I've sent it along with the fix for x86 [1] (commit 7790c9c9265e
-("memblock: don't release high memory to page allocator when HIGHMEM is
-off") in mm-unstable), but for some reason it didn't make it to the Linus
-tree :/
+---
+base-commit: acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
+change-id: 20250402-kselftest-vdso-fix-d97fb8b09020
 
-@Andrew, are you going to send it to Linus or you prefer if I take it via
-memblock tree? 
-
-[1] https://lore.kernel.org/all/20250325114928.1791109-3-rppt@kernel.org/
-
->         if (start_pfn >= end_pfn)
->                 return 0;
-> 
-> 
-> Background:
-> 
-> This reverts part of commit 6faea3422e3b ("arch, mm: streamline HIGHMEM freeing")
-> which is the direct child of the partially reverted 
-> commit e120d1bc12da ("arch, mm: set high_memory in free_area_init()").
-> The assumptions the former commit became invalid with the partial revert the latter.
-> 
-> This bug only triggers when CONFIG_HIGHMEM=n. When mm was branched from mainline
-> the i386 configuration generated by kunit ended up with CONFIG_HIGHMEM=y.
-> With some recent changes in mainline the kunit configuration switched to
-> CONFIG_HIGHMEM=n, triggering this specific reproducer only when mm got merged
-> into mainline again.
-> 
-> New kunit reproducer:
-> ./tools/testing/kunit/kunit.py run --arch i386 example --timeout 10 --kconfig_add CONFIG_HIGHMEM=n
-> 
-> Does this sound reasonable?  If so I'll send a patch tomorrow.
-> 
-> @Naresh, could you test this, too?
-> 
-> 
-> Thomas
-
+Best regards,
 -- 
-Sincerely yours,
-Mike.
+Mark Brown <broonie@kernel.org>
+
 
