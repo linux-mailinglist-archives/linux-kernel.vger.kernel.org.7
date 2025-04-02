@@ -1,296 +1,512 @@
-Return-Path: <linux-kernel+bounces-584367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDA2A78669
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:29:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81BF2A78670
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080D218912EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1A63AF8DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E747082F;
-	Wed,  2 Apr 2025 02:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4FC78F45;
+	Wed,  2 Apr 2025 02:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHpT2R0K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="GfUeAtHn"
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCD3175A5;
-	Wed,  2 Apr 2025 02:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743560942; cv=fail; b=rYzeqlrR53lfywJOqpKgSel62e4Khxqcozx26m/KHWZNCh3MMhl9ZkzUpwmPX+wIPKqxUKtG4jig3qNthqR4XPg5F/vHK9sJlKP5CpGOn+qNIXpR+ximfcLLMWVR4zT4mtpzLjQZL8r+CTHrfa6BbcEPjtw6PNVcnOvclRAlDBY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743560942; c=relaxed/simple;
-	bh=FJxASc0OViCDioarPZcr/wajEJ5FFZTF9gmOxKIGDZU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=k34dJn5d4MY83az1dzo3y04AtKzcakcAg5ZlJlbSk0L9ZpmNykgPEP5X1teDVjca2Z+cm1KcSNdgCU8P+A8Et1eeZPNRJVg77N5neAwYjYZ3c+aE9hA0xQ8es61bIyLb9CLuPOQhQjb5KIvlAKheQj1SQ6K8MNDBOHlrbFDF7bk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHpT2R0K; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743560940; x=1775096940;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=FJxASc0OViCDioarPZcr/wajEJ5FFZTF9gmOxKIGDZU=;
-  b=bHpT2R0KzR7WYLedz14CYYoKkxJxrsA923YD/7mnKvZCqSq3sqoQQCLi
-   bsQL5EhhoFy3LRPfXMZZk098zh3jsLG9LXOJ57CorCiHxu/ysxJnyjFKr
-   cuZkcrjvN+6L8uxlHq+g0P0tigfsaZCoFqxwzoLdJDwm24NcuR3oMCAxZ
-   puZOYYjpe3mR8cSnUUzFsZtYWKuVxi+AKf1jOuGq8mXvKqZzmeAqaFegx
-   HZ1uCZxaw4jfXVnEll1cvivwiAJ8xhwIU17I17nmTmbw4ZTOTPfZXg9Y7
-   qXmDidbJsXgzuFZqXJTJxnnbw5mBu6HGrac0Ndt6weR31J9ZSlmS/YugK
-   Q==;
-X-CSE-ConnectionGUID: 2+bXUd8STH+UlP8gKdx6lQ==
-X-CSE-MsgGUID: HP/m1XDMRfiGX9/0FNJ14A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="56274001"
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="56274001"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 19:28:59 -0700
-X-CSE-ConnectionGUID: YoBg+zp2Sg25nSkAtifjhA==
-X-CSE-MsgGUID: V06SfFbQRjGZfFwfOBQriA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="149740342"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 19:28:59 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.14; Tue, 1 Apr 2025 19:28:58 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Tue, 1 Apr 2025 19:28:58 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.173)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 1 Apr 2025 19:28:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pV7sMAeALiUC9VS0pgy036hkHhaPrUWxOCYK3aVS129jqexYiNX8d+XV588P5KpGl8+MfR7Hw1l3e76//Ov6+mYviGDyFLp5F9N/C17JrgT/hwG1T46UAWETEi0OczfKwz82MHZutB7rFDO1NDLYmaSoxueq89YORZbGiA+dCAewx1B0aOECX64zyEMQ5kBPuh/OjDzukCwhSpQVw0UIwc+5VRLVNugSaQB8ThYwhK5lMN+FPd/6ntqHSH+2FF9LKBm41/NOM6fSgq90N9k3zKzgLcLn5UXSymjS8D+WS3MPbXIDP4LaaVQsH7ABICS4PsmL6RcHOApNarAqOc1xbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=erHKb5o7lLrDVSEnHAa11YU2xKkMWwX5UaamPPyqNO4=;
- b=wkbyQhXpQCp/VATFq4anOaLt1JN7OmW6fadCJhpgGJS9Fou/7tkIn6bJNb7k52tZvLd9GghRLEU+cGUIH9nxPRImcPcQ6uMJGGfzWFUtVe4h6x+nF3+HJgRWd19LkGJWwypz77VkHzH9u8cwXb4KhFkrpd6XWZr14nDueDVWzbd89lMETN0CemTt6vaNNm8Cpzx1vvVhWCn7bkRNr0maA+CvFIX9ebuAn6TJ6fblu9c0EBZqMjVLKut3skUaGnMyIiD0rmnI1TCl/8ioE7hVsrpUjD1fa25mIt1LEejztF5U/M/VWh/7ZFRgvXI+yiL3HgLO/VXjV6hWqehRq3Ox+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by SA1PR11MB8838.namprd11.prod.outlook.com (2603:10b6:806:46b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 2 Apr
- 2025 02:28:29 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8534.048; Wed, 2 Apr 2025
- 02:28:29 +0000
-Date: Wed, 2 Apr 2025 10:28:16 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Chang S. Bae" <chang.seok.bae@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<tglx@linutronix.de>, <dave.hansen@intel.com>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
-	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>,
-	<xin3.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, Ingo Molnar
-	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Mitchell Levy <levymitchell0@gmail.com>, "Samuel
- Holland" <samuel.holland@sifive.com>, Aruna Ramakrishna
-	<aruna.ramakrishna@oracle.com>, Vignesh Balasubramanian <vigbalas@amd.com>
-Subject: Re: [PATCH v4 3/8] x86/fpu/xstate: Add CET supervisor xfeature
- support
-Message-ID: <Z+ygwMmxRJQIRGoy@intel.com>
-References: <20250318153316.1970147-1-chao.gao@intel.com>
- <20250318153316.1970147-4-chao.gao@intel.com>
- <d472f88d-96b3-4a57-a34f-2af6da0e2cc6@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d472f88d-96b3-4a57-a34f-2af6da0e2cc6@intel.com>
-X-ClientProxiedBy: SG2PR02CA0052.apcprd02.prod.outlook.com
- (2603:1096:4:54::16) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19EAEEB2;
+	Wed,  2 Apr 2025 02:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743561186; cv=none; b=U5CA/1ss6b+FCKHeuZ+7g791Z+FpgkgQTqooqppFfQCXBuNC4pps12yHgDCjV/rO+l9SAYI/0YWJhhDtx/30lfIMLX44vNdih8eQHDZU6CjouN0r9qJ44GiVXI4B9JFiTFbR5DkdMfCOUTt4lIhkBb1Q1+rxE1cLow+AVjwTtTM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743561186; c=relaxed/simple;
+	bh=EAiy6oQESp4bH9RUWapq0zzIPxcPEcBVLvInJtCoZL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TKzcxgaZ+OAQJjuUHbJm2WVQxUD/nRfqPMObScaROetMGKu1KVZ2py2aMt+79nrR9gI+0fkFzTcOPcKXVCCiAuGXHpDP0A8Kujxbs7JuV4Csb5aYRyMWW4C6w8X5cIp9aottHZWbIKJ4AUb5PTNUrfZfvTbXcXLW+VbZKPweoy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=GfUeAtHn; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1743561161;
+	bh=eGU5KbXO6e1/HojDQxT8SCCrYwesKSvunfoPBk+eObk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=GfUeAtHnLGK9MJQ7Cw+iGUwjPive3iXdhoQ+eAglrx5VIsNLTDjH0PUwqCurH8asU
+	 Q8VYbr+7NSOG9YYg/USABt2uwrbOfayQsTcSomvJMYFtoX3jh0WQPy4IIg0MEiUcFB
+	 Z81V3pq8RtAypkbu0Q6hD7tfKZowEukTMk77OJCY=
+X-QQ-mid: bizesmtpip4t1743561052tc8e308
+X-QQ-Originating-IP: jKwJ6CYMPd9lPExsLpd+vLwoRtPbgYC/T8e0Byx4OGw=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 02 Apr 2025 10:30:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15527068167197107366
+EX-QQ-RecipientCnt: 7
+From: raoxu <raoxu@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	zhanjun@uniontech.com,
+	Xu Rao <raoxu@uniontech.com>
+Subject: [RESEND PATCH V6] usb:xhci: Add debugfs support for xHCI port bandwidth
+Date: Wed,  2 Apr 2025 10:30:47 +0800
+Message-Id: <20250402023047.26719-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB8838:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2d5c833-740a-4b7b-bcd2-08dd718e0e07
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?N0szNThPemNwWk4yU0pDalRZTUp0dEE3Q3lud0lFanY3SEVOUTFGTlNpWmxz?=
- =?utf-8?B?bnlJRXNiaG9aZkcxbngvQnd2M25FdDFBTys1OXhINXU0UGt6cTUxWlMrOFhJ?=
- =?utf-8?B?czdGbm5XUWsxZXZsNlhLc0xHNjNoK2RicHRyMGZSY0kwclh5eXZxL1F4WVk4?=
- =?utf-8?B?Z1NqK3VIVWoyRDhtdkdWUlBLUG1BTnBucW0zTVlTU01wMnlnbHNpbmo0Rm1Z?=
- =?utf-8?B?eEJadVNYT2N1dXAxbEhUb1BQMVppWTdQQ1ZDRmNCV2xHdEhyRTJYbi9WUEhG?=
- =?utf-8?B?U011cnVWUjdnOE9lSmpIQU44SGFzT3ppZ3NLQ3NPMkc3TzZIN1U1OEtGcGly?=
- =?utf-8?B?WEhHZHhuYmxGZWd5dklNRStaa1llWXRjVG9kV3VTQnBLbkJUYkhwYWJGWlcz?=
- =?utf-8?B?QTM0bEJ1QU1UUmRQbFhYVi9xUnd4Y1M2VytaUnpjditSc3NTcW1sd3Fhc0dZ?=
- =?utf-8?B?QjZNbFloUzZvSWE3UWxkVFR3dVR0SnJ3R1FwWGpjemozSEw3TmVoMDZKWVFE?=
- =?utf-8?B?SWNtMTltZlZPMFgxc3kydE93MUNNMVZCdkptSUZWbGlpUDNTUUhqbjE1NFJB?=
- =?utf-8?B?RXhLL3V1eGJxSThyZEwxd21HM2VoWXhyY1UveDNRUDdLQ2dna29HSkFoUHBl?=
- =?utf-8?B?dzlKQ3V3bnUvYlM4Q3l5Ui96Z0hPSnNXZ2tuOTIyRmdIcndIZ0ZidlVKVWlP?=
- =?utf-8?B?aUlNWEp5UW8yNkJCTzJTMkdKazB2cmV2RC9NaWlMbGtCa1NTSlFxaWdaZFRj?=
- =?utf-8?B?UW52SjVDaTZ4cjZIbWNBbG51azFqUXdhblM1eCtpMy9OclZEazN2ZUJyYmRu?=
- =?utf-8?B?SUV6MW1PVmNIcHJwOUJVM0NtaEF6WEViK0x2WXZFaFdYeE8wTTBGeHpCNEFM?=
- =?utf-8?B?UlhNeXh0bnp1QzU0azQ3OXpQRnVDUjYvYjJkamZEZUVJZ3IybTU4aUwwemlP?=
- =?utf-8?B?TDBZRXJ3bXlxK3JWQW02eEVCNi84UFhLZlZxV2oxQlNiM2hHNUppZ3dJdDNM?=
- =?utf-8?B?WDZtUjBaeUNRK2lHeGhVZ2c4UjFQemM0V3l6OUtuV0NQTFJTVkQ3KzV1dlc2?=
- =?utf-8?B?bXArSVNESjhidlhCVjlhUTZTUWdVeDZLL1FVTFZCbGpnYmFUaWZSVFZ0R25j?=
- =?utf-8?B?STRRL3Ezek1Oem5LekJEd0F4UE9uRjhYb1QxUTlEcXdUVXF1MXJTa1VUN0Ix?=
- =?utf-8?B?SXJESlhPR1MzRkRsSDZGcHNEZEh2QmlnalcyM2Zka0R2M2tVTkwyODVtb1Jt?=
- =?utf-8?B?SklrSEJVczBMdGdsa092dmxBMzlxNGNXeGVIR3R4Ylc4Q0FZL1dnZDkwQmtr?=
- =?utf-8?B?dEppVmorcGc4RnJkdjd3TUlHV21pUmhiZXhIckFPVHVlMEt3N3doSjNsanAz?=
- =?utf-8?B?cjJwZTUxVmYxVG5JYnZaTE9JMVdFMVIwMmJYVU1tckFKeW94SXFPT3p6ZmJm?=
- =?utf-8?B?YVIrOXZrQmgxUExiZjNYRElGb2loOENZaXNNVkFHVnNSUmVhQWgrMVJId0E2?=
- =?utf-8?B?TmNmZE40UEMzZUZqM29ZZFp0N2pWY3EvSTZIUVdldjNTRGFkVEI1c0FycXZa?=
- =?utf-8?B?WE9ENFArdVRURjdkYmxNa2tuMXIxVmlIdEMvb25zNTVRTUR3RkZvb0NkNDlh?=
- =?utf-8?B?MW5xdUxlbjQyVFVhZ21UZjJ1SFVDd0ZuZGwrWUxZZ0NHMU9pQzNNaWNISCs4?=
- =?utf-8?B?Yy9wYmJCS3FTZlp4dmx6L3cxM2VYVEp0c3haMnBVQ3Z2QTFmTlNZVFFORENp?=
- =?utf-8?B?Z3FnT2JNWWsvRERnMmtvaXZoZXNvdXJSM1VaUy9iNDhlUTMvbUZZRW9XUzN4?=
- =?utf-8?B?Ym4rUk1KenJqZjRYaHVJZUh3R3Jwc2hNRFoxeDhGa3ppeXFmSHFmRjFWNE80?=
- =?utf-8?Q?6Er6uZ/q4qFUS?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Zk1WK3lRMmZpQmdhWEtHVFh5L0Q0NXRVNk5LSmxSckdqWFlxVG9Pc2FTeG1n?=
- =?utf-8?B?d2l3TnR6eTUvaVFiMjIwcDh5dHo1VU40ZUtiSCtDSHVybkFDTmZ0M2g4eUt0?=
- =?utf-8?B?dExtTUhkV2lzc0NVUWY5bTh3T0gwZmhnMlZGQXB3YmxZRUJ0cmcrZ1NLVHR1?=
- =?utf-8?B?RlJjeGpMQzJUWW5pSDlOMFlyZkVoajM2TzVNaThRcnJuQzJUS2dKRW11TXVi?=
- =?utf-8?B?emxMa2RNUE9aaVhENC9VUGRnVnl4bDJScjluemZQYWZhSFp5a1M4VzZsZTZQ?=
- =?utf-8?B?REdQTzF6eENLcWZpS2U5ZWdRRnJVK0dBK0JFTXF2TnBzeEhPMDZaWjQxZDl4?=
- =?utf-8?B?RTNDcks0RnpudG5xb2dubC9HWTlXK3J5STF4NFZVRENENDFUaUdLRXNXMjB1?=
- =?utf-8?B?SHZZRzQzMWIvZ2l0MHZUYlpJUEpFalQ0akZNK1NobGVBYVJ3VStjTDJPYXBO?=
- =?utf-8?B?dHgyemZwZTVFTXVLT3ZlU0V6cGxQN1R3ZUNoanBjMlpHUVUxbWF4UndZTGtz?=
- =?utf-8?B?NWM4TUpzb3RpYkp0NWF4OXFiYlZCTkVqWm1ML3IzT051NkNJTStmUTR3TUFX?=
- =?utf-8?B?aVZTY1pEelZzOHk5RlJiQUxMSWdMZUZSQlRKQTJXb1dONmgzeWlCNllTT05H?=
- =?utf-8?B?ZlFpeDIxOTlmL1puM1hsQkdEU3c2QXNVM0ZLYldrQUYxSUg2aDJZWG5MSElq?=
- =?utf-8?B?VDRYQlR2bnlOQUNXKzhVZ1BLZy9rMVpsZUVOUEVFaDBIZzB0YmR3WTNVR1Ev?=
- =?utf-8?B?RUJDRG1ndDU2TXBoNkwvRzg0a3JtYllnYmNyOENGbGhkNko5SjlQUGRnKzc4?=
- =?utf-8?B?Y0JpRHJUM01iUFhIV1lQcWxsYzJEZkVueXc3MFN0KzJwNjBheEVZa2pwNnhZ?=
- =?utf-8?B?c2l5QXViV2pUbUFPZGpDeE9KUXpwdHpOaHp0L2xKU1hKaDZrZFhTQkpFQ2tu?=
- =?utf-8?B?ZnpVbE45eTNVTXV2RHdqZWQ0bmJoalRadHc0RkwweXZWUmRpL3JyWXhGaXpl?=
- =?utf-8?B?ZFIvemdoNjlDb0ZTbmFuZ29LQzZpL0UxNkpSalRsM2FtWWd5dnYybWRoTlBn?=
- =?utf-8?B?RmxqUUtHSjBlUWNVb3N3enhXYTU4TnRrSk03QmhuczNsbGdzLzEvdGl0RFl4?=
- =?utf-8?B?clFSeDNUUFlSeG45NzNXY1A3Z1lKUlNibUNFNWpBRlRERTRZUE1QMHpFb1J5?=
- =?utf-8?B?T1lXa0hSU2VCbWkzUFVBb1Q5V3lLekZjYmNiNHg1Wk1qSElVUTBrdW5HZUdP?=
- =?utf-8?B?S1VjUW9tSjZPSnhOVmJUUGFMcjhXS09DYmNqbUdRRjdXRDFQdzQvOW9KZHdI?=
- =?utf-8?B?OWRBaW9XL3AvQm9SWjlqcjdyWStKWHRFT1ZQK0FOS0dKaXN0WVlMclVnbGR6?=
- =?utf-8?B?NnZtdndOaXF5MkZnRXdja29YVVNTZnAwNmpYdkp1N2QvcDBwbzBjL3I3L1Fr?=
- =?utf-8?B?cHpKZzhRcERwVjQyWnFZbFFlMlhDZVY5S1hHa2UvaEYvdXRIc2dLd011dVhO?=
- =?utf-8?B?NCtvOUpHS3ppT3dLTkFsRVdaZjVzUzhpVHVNQ2JHVkdab1pCelh2Wk1uUDZy?=
- =?utf-8?B?SUdNWWZjdlRhYjlTY2cxR3lEa2dSTWl5TVJVSjQvUmZONm8zbFNGOGxRclk2?=
- =?utf-8?B?UXJTSlFkM3B6bDFOcDh3cFkyYlR5UWpuSWZkSkZWK2VLSlNOWW9SODdobUgz?=
- =?utf-8?B?UGZlY3U1RXZJNzd4UjI5L1g1Y1NaZUdLZjBmSmVTRTFjblYwam5YV081VGQv?=
- =?utf-8?B?QnlBTFE3bGNJZGxtd0pMZWtBR0RKTHJkdGtPY1V2S0hXM243anFyK2M2WEJM?=
- =?utf-8?B?TWFUZVF1NENka1NmbmQwOFpJWlN4TkUzN3B4SUJQNlcxWkExNTNRNHZYd1lu?=
- =?utf-8?B?ZzdDaENZQzJRNUt2WUVvY25Ja09LaTkwc1hOaDZ2S1RrKzhiZFl1RHUxdVZj?=
- =?utf-8?B?Yko3clFCbFZ2clRScnhzdjBzY0R0VXlLNEFTRlRPd2Q0V2pCMzJYd0FOU2NJ?=
- =?utf-8?B?K01XSmVCVEJNeFBsZmlUR2FkalVJM1NkU0h1ZUVDeE1nVTQxOWh1MXdSbjJU?=
- =?utf-8?B?Y090VUdZdXBQZjlLMDU4cnVkcWhDYS9EU244Rk9FdzFEelN2QnhuU0YyVTdj?=
- =?utf-8?Q?REded0x5+1bvCII+UUuoXzpLL?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2d5c833-740a-4b7b-bcd2-08dd718e0e07
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2025 02:28:29.3450
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IZ4O1NciWPNkvpwq8iryXOBxApl8+YnV/R7SybkKb+TK81YvTHmftqfcJUtLqbRoTwqcslrHg589Fhwd/+xuVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8838
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: NIvXgkk7mfUglAlRqZUtKE4p1EzyqTOIDUk1Y3wKzf4xzV8mcIY43un/
+	7QRkmkCHdf9hg+PXTV7ls7Gj5RLKD4ZzM+wlSTOxVFJb5HDyXjXnYbLQMRcHNaKgOHxqve5
+	6mVHtD/+9GN2pwnxAMc1FkNdwgVljGcH4ZjtSdleQBQtJRwc2T9PvQENC6R+LNLi9LigxP0
+	Q2Y0KH5ES+b/PXRU2IoFyyGxHpZAkmZPyZNaFeB9NRyp1GH2ZOHQC3KaAvbAxp3MPZ7MdxW
+	s7nOGmyIIX9yT2Y/TpPN+jfzLo+sRUFF/EKe8hdJClkGmjUNIgXbVJZyKCRogUmU8mHcKOH
+	dWz9ZrTU+uSuM5OZLcrD7pLzVfoI8A+TSf9G8D+4bMCxqAcfi0w2DSV7gwYbCxDxAQX64g5
+	GaBQX0P7syYJ9+RrGTbBJ+hGK2KiwY76p8JDMYVq9inA06xGMkRFMTnZibSk4OsfudfY1gB
+	vbHnwAGNUp3+9ltrbEKFwLj2NGKvbr7w83+5er+sptDTCZ408Jbxw0T38X4aKJ0blIG8gn6
+	qkPouk1UxJx+a5rO5eAyXxeCufqWS2po53XGAACbGoj2oIEZcDnFtdoWEjoO2a0lXm+HZZz
+	T5lXMhfgWeFQ3F/Wj26PS0efHvZh0THVV7Pd4rkjXcNST/MLXCV2lfkhZTurNuI3vHYUg9+
+	kYRuVII9GeSMsrMk31fIxGy95uut1du+Fjg8TzGiLTyMlJtP286yDAiWWXNdALREHqGj7cH
+	3Qetsjcgf2E7FvCNT9166AzeS561NTlDP58CpAyPs1xpaDfr7JJNzTN1C0Y6zE+CTdkzbek
+	RHkOIU46S2i1YT3dQygsAuiJHYJG5kjjIhKuXvb1VK3bCMjJp49ElwfgNjthQERi5fN2bRz
+	UANbX38ERA5sigys32LN7AOTz/yk1vnIF+OvngcryRjyyeedU/+tW00kqnEFBXxhW1kDIod
+	yjeRk2ktlQFLj0FK1CeEQHuP0nvtgdcHLYMq9q6b+OMOYfQOnRmNU23uIQD9o0wj0ud2b/t
+	aLP+Mbox2W1V1sRko8m8Q9p0Tuxso=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Apr 01, 2025 at 10:15:50AM -0700, Chang S. Bae wrote:
->On 3/18/2025 8:31 AM, Chao Gao wrote:
->> From: Yang Weijiang <weijiang.yang@intel.com>
->> 
->> To support CET virtualization, KVM needs the kernel to save and restore
->> the CET supervisor xstate in guest FPUs when switching between guest and
->> host FPUs.
->> 
->> Add CET supervisor xstate support in preparation for the upcoming CET
->> virtualization in KVM.
->> 
->> Currently, host FPUs do not utilize the CET supervisor xstate. Enabling
->> this state for host FPUs would lead to a 24-byte waste in the XSAVE buffer
->> on CET-capable parts.
->> 
->> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
->> Signed-off-by: Chao Gao <chao.gao@intel.com>
->> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
->
->Placing this patch immediately after a few mainline fixes looks to suggest
->that supervisor CET state can be enabled as-is, implying that the follow-up
->patches are merely optional optimizations.
+From: Xu Rao <raoxu@uniontech.com>
 
-Yes, this is intentional. I mentioned it in the cover letter:
+In many projects, you need to obtain the available bandwidth of the
+xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
+command to obtain it.
 
-"""
-Reorder the patches to put the CET supervisor state patch before the
-"guest-only" optimization, allowing maintainers to easily adopt or omit the
-optimization.
-"""
+hardware tested:
+03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
+(prog-if 30 [XHCI])
+Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
+Flags: bus master, fast devsel, latency 0, IRQ 30
+Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
+Capabilities: [48] Vendor Specific Information: Len=08 <?>
+Capabilities: [50] Power Management version 3
+Capabilities: [64] Express Endpoint, MSI 00
+Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
+Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
+Kernel driver in use: xhci_hcd
 
->
->In V2, Dave provided feedback [1] when you placed this patch second out of
->six:
+test progress:
+1. cd /sys/kernel/debug/usb/xhci/0000:03:00.3/port_bandwidth# ls
+FS_BW  HS_BW  SS_BW
+2. test fs speed  device
+cat FS_BW
+port[1] available bw: 90%.
+port[2] available bw: 90%.
+port[3] available bw: 90%.
+port[4] available bw: 90%.
+port[5] available bw: 0%.
+port[6] available bw: 0%.
+port[7] available bw: 0%.
+port[8] available bw: 0%.
+plug in fs usb audio ID 0d8c:013c
+cat FS_BW
+port[1] available bw: 76%.
+port[2] available bw: 76%.
+port[3] available bw: 76%.
+port[4] available bw: 76%.
+port[5] available bw: 0%.
+port[6] available bw: 0%.
+port[7] available bw: 0%.
+port[8] available bw: 0%.
+3. test hs speed device
+cat HS_BW
+port[1] available bw: 79%.
+port[2] available bw: 79%.
+port[3] available bw: 79%.
+port[4] available bw: 79%.
+port[5] available bw: 0%.
+port[6] available bw: 0%.
+port[7] available bw: 0%.
+port[8] available bw: 0%.
+plug in hs usb video ID 0408:1040
+cat HS_BW
+port[1] available bw: 39%.
+port[2] available bw: 39%.
+port[3] available bw: 39%.
+port[4] available bw: 39%.
+port[5] available bw: 0%.
+port[6] available bw: 0%.
+port[7] available bw: 0%.
+port[8] available bw: 0%.
+4.cat SS_BW
+port[1] available bw: 0%.
+port[2] available bw: 0%.
+port[3] available bw: 0%.
+port[4] available bw: 0%.
+port[5] available bw: 90%.
+port[6] available bw: 90%.
+port[7] available bw: 90%.
+port[8] available bw: 90%.
 
-In my opinion, he wasn't referring to the patch introducing the CET supervisor
-xstate (i.e., this patch). Rather, he requested that the patch making the CET
-supervisor xstate a guest-only feature should follow the introduction of
-fpu_guest_cfg and the relevant cleanups.
+Signed-off-by: Xu Rao <raoxu@uniontech.com>
+---
+Changelog:
+ *v1->v2: modify the patch subject no code changes.
+  v2->v3: separate files in debugfs for each speed (SS HS FS).
+	  queue one command for each speed not queuing three commands on one file.
+	  print value from context not array on stack.
+  v3->v4: Fix compilation warnings for W=1 build. Delete unused variable
+  v4->v5: Add pm_runtime_get_sync operation before get port bandwidth.
+	  When obtaining port bandwidth, alloc a new command structure with
+	  context for each time.
+	  Create dma pool instead of allocating one shared.
+  v5->v6: The memory of port bandwidth context structure shall be aligned 16-
+	  byte not 8-byte
+---
+ drivers/usb/host/xhci-debugfs.c | 108 ++++++++++++++++++++++++++++++++
+ drivers/usb/host/xhci-mem.c     |  45 ++++++++++++-
+ drivers/usb/host/xhci-ring.c    |  13 ++++
+ drivers/usb/host/xhci.c         |  36 +++++++++++
+ drivers/usb/host/xhci.h         |  14 +++++
+ 5 files changed, 215 insertions(+), 1 deletion(-)
 
->
-> > This series is starting to look backward to me.
-> >
-> > The normal way you do these things is that you introduce new
-> > abstractions and refactor the code. Then you go adding features.
-> >
-> > For instance, this series should spend a few patches introducing
-> > 'fpu_guest_cfg' and using it before ever introducing the concept of a
-> > dynamic xfeature.
->
->In V3, you moved this patch further back to position 8 out of 10. Now, in
->this version, you've placed it at position 3 out of 8.
->
->This raises the question of whether you've fully internalized his advice.
->
->If your intent is to save kernel memory, the xstate infrastructure should
->first be properly adjusted. Specifically:
->
->  1. Initialize the VCPU’s default xfeature set and its XSAVE buffer
->     size.
->
->  2. Reference them in the two sites:
->
->    (a) for fpu->guest_perm
->
->    (b) at VCPU allocation time.
->
->  3. Introduce a new feature set (you named "guest supervisor state") as
->     a placeholder and integrate it into initialization, along with the
->     XSAVE sanity check.
->
->With these adjustments in place, you may consider enabling a new xfeature,
->defining it as a guest-supervisor state simply.
+diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
+index 1f5ef174abea..c6d44977193f 100644
+--- a/drivers/usb/host/xhci-debugfs.c
++++ b/drivers/usb/host/xhci-debugfs.c
+@@ -631,6 +631,112 @@ static void xhci_debugfs_create_ports(struct xhci_hcd *xhci,
+ 	}
+ }
 
-I believe you are suggesting that the CET supervisor xstate should be
-introduced directly as a guest-only feature, rather than first introducing it
-in one patch and then converting it to guest-only in a subsequent patch.
++static int xhci_port_bw_show(struct xhci_hcd *xhci, u8 dev_speed,
++				struct seq_file *s)
++{
++	unsigned int			num_ports;
++	unsigned int			i;
++	int				ret;
++	struct xhci_container_ctx	*ctx;
++	struct usb_hcd			*hcd = xhci_to_hcd(xhci);
++	struct device			*dev = hcd->self.controller;
++
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0)
++		return ret;
++
++	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
++
++	ctx = xhci_alloc_port_bw_ctx(xhci, 0);
++	if (!ctx) {
++		pm_runtime_put_sync(dev);
++		return -ENOMEM;
++	}
++
++	/* get roothub port bandwidth */
++	ret = xhci_get_port_bandwidth(xhci, ctx, dev_speed);
++	if (ret)
++		goto err_out;
++
++	/* print all roothub ports available bandwidth
++	 * refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved
++	 */
++	for (i = 1; i < num_ports+1; i++)
++		seq_printf(s, "port[%d] available bw: %d%%.\n", i,
++				ctx->bytes[i]);
++err_out:
++	pm_runtime_put_sync(dev);
++	xhci_free_port_bw_ctx(xhci, ctx);
++	return ret;
++}
++
++static int xhci_ss_bw_show(struct seq_file *s, void *unused)
++{
++	int ret;
++	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
++
++	ret = xhci_port_bw_show(xhci, USB_SPEED_SUPER, s);
++	return ret;
++}
++
++static int xhci_hs_bw_show(struct seq_file *s, void *unused)
++{
++	int ret;
++	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
++
++	ret = xhci_port_bw_show(xhci, USB_SPEED_HIGH, s);
++	return ret;
++}
++
++static int xhci_fs_bw_show(struct seq_file *s, void *unused)
++{
++	int ret;
++	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
++
++	ret = xhci_port_bw_show(xhci, USB_SPEED_FULL, s);
++	return ret;
++}
++
++static struct xhci_file_map bw_context_files[] = {
++	{"SS_BW",	xhci_ss_bw_show, },
++	{"HS_BW",	xhci_hs_bw_show, },
++	{"FS_BW",	xhci_fs_bw_show, },
++};
++
++static int bw_context_open(struct inode *inode, struct file *file)
++{
++	int			i;
++	struct xhci_file_map	*f_map;
++	const char		*file_name = file_dentry(file)->d_iname;
++
++	for (i = 0; i < ARRAY_SIZE(bw_context_files); i++) {
++		f_map = &bw_context_files[i];
++
++		if (strcmp(f_map->name, file_name) == 0)
++			break;
++	}
++
++	return single_open(file, f_map->show, inode->i_private);
++}
++
++static const struct file_operations bw_fops = {
++	.open			= bw_context_open,
++	.read			= seq_read,
++	.llseek			= seq_lseek,
++	.release		= single_release,
++};
++
++static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
++					struct dentry *parent)
++{
++	parent = debugfs_create_dir("port_bandwidth", parent);
++
++	xhci_debugfs_create_files(xhci, bw_context_files,
++			  ARRAY_SIZE(bw_context_files),
++			  xhci,
++			  parent, &bw_fops);
++}
++
+ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ {
+ 	struct device		*dev = xhci_to_hcd(xhci)->self.controller;
+@@ -681,6 +787,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
+ 	xhci->debugfs_slots = debugfs_create_dir("devices", xhci->debugfs_root);
 
-This is a valid point, and I have considered it. However, I chose to split them
-into two patches because the guest-only aspect is merely an optimization, and
-the decision on whether to accept it is still pending. This order and split-up
-make it easier for maintainers to make a decision.
+ 	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
++
++	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
+ }
+
+ void xhci_debugfs_exit(struct xhci_hcd *xhci)
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 92703efda1f7..31549b37f61e 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -484,6 +484,35 @@ void xhci_free_container_ctx(struct xhci_hcd *xhci,
+ 	kfree(ctx);
+ }
+
++struct xhci_container_ctx *xhci_alloc_port_bw_ctx(struct xhci_hcd *xhci,
++						    gfp_t flags)
++{
++	struct xhci_container_ctx *ctx;
++	struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
++
++	ctx = kzalloc_node(sizeof(*ctx), flags, dev_to_node(dev));
++	if (!ctx)
++		return NULL;
++
++	ctx->size = GET_PORT_BW_ARRAY_SIZE;
++
++	ctx->bytes = dma_pool_zalloc(xhci->port_bw_pool, flags, &ctx->dma);
++	if (!ctx->bytes) {
++		kfree(ctx);
++		return NULL;
++	}
++	return ctx;
++}
++
++void xhci_free_port_bw_ctx(struct xhci_hcd *xhci,
++			     struct xhci_container_ctx *ctx)
++{
++	if (!ctx)
++		return;
++	dma_pool_free(xhci->port_bw_pool, ctx->bytes, ctx->dma);
++	kfree(ctx);
++}
++
+ struct xhci_input_control_ctx *xhci_get_input_control_ctx(
+ 					      struct xhci_container_ctx *ctx)
+ {
+@@ -1907,6 +1936,11 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+ 			"Freed small stream array pool");
+
++	dma_pool_destroy(xhci->port_bw_pool);
++	xhci->port_bw_pool = NULL;
++	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
++			"Freed xhci port bw array pool");
++
+ 	dma_pool_destroy(xhci->medium_streams_pool);
+ 	xhci->medium_streams_pool = NULL;
+ 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+@@ -2463,7 +2497,16 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
+ 	 * will be allocated with dma_alloc_coherent()
+ 	 */
+
+-	if (!xhci->small_streams_pool || !xhci->medium_streams_pool)
++	/* refer to xhci rev1_2 protocol 5.3.3 max ports is 255.
++	 * refer to xhci rev1_2 protocol 6.4.3.14 port bandwidth buffer need
++	 * to be 16-byte aligned.
++	 */
++	xhci->port_bw_pool =
++		dma_pool_create("xHCI 256 port bw ctx arrays",
++			dev, GET_PORT_BW_ARRAY_SIZE, 16, 0);
++
++	if (!xhci->small_streams_pool || !xhci->medium_streams_pool ||
++		!xhci->port_bw_pool)
+ 		goto fail;
+
+ 	/* Set up the command ring to have one segments for now. */
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 965bffce301e..0a01753075b4 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
+ 	case TRB_NEC_GET_FW:
+ 		xhci_handle_cmd_nec_get_fw(xhci, event);
+ 		break;
++	case TRB_GET_BW:
++		break;
+ 	default:
+ 		/* Skip over unknown commands on the event ring */
+ 		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
+@@ -4414,6 +4416,17 @@ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
+ 			command_must_succeed);
+ }
+
++/* Queue a get root hub port bandwidth command TRB */
++int xhci_queue_get_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, bool command_must_succeed)
++{
++	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
++		upper_32_bits(in_ctx_ptr), 0,
++		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed),
++		command_must_succeed);
++}
++
+ /* Queue an evaluate context command TRB */
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 45653114ccd7..fde774408a13 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3088,6 +3088,42 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
+ }
+ EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
+
++/* Get the available bandwidth of the ports under the xhci roothub */
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx,
++		u8 dev_speed)
++{
++	struct xhci_command *cmd;
++	unsigned long flags;
++	int ret;
++
++	if (!ctx || !xhci)
++		return -EINVAL;
++
++	cmd = xhci_alloc_command(xhci, true, GFP_KERNEL);
++	if (!cmd)
++		return -ENOMEM;
++
++	cmd->in_ctx = ctx;
++
++	/* get xhci port bandwidth, refer to xhci rev1_2 protocol 4.6.15 */
++	spin_lock_irqsave(&xhci->lock, flags);
++
++	ret = xhci_queue_get_port_bw(xhci, cmd, ctx->dma, dev_speed, 0);
++	if (ret) {
++		spin_unlock_irqrestore(&xhci->lock, flags);
++		goto err_out;
++	}
++	xhci_ring_cmd_db(xhci);
++	spin_unlock_irqrestore(&xhci->lock, flags);
++
++	wait_for_completion(cmd->completion);
++err_out:
++	kfree(cmd->completion);
++	kfree(cmd);
++
++	return ret;
++}
++
+ static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
+ 		struct xhci_container_ctx *in_ctx,
+ 		struct xhci_container_ctx *out_ctx,
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 8c164340a2c3..51bf99787ec9 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -586,6 +586,7 @@ struct xhci_stream_info {
+
+ #define	SMALL_STREAM_ARRAY_SIZE		256
+ #define	MEDIUM_STREAM_ARRAY_SIZE	1024
++#define	GET_PORT_BW_ARRAY_SIZE		256
+
+ /* Some Intel xHCI host controllers need software to keep track of the bus
+  * bandwidth.  Keep track of endpoint info here.  Each root port is allocated
+@@ -999,6 +1000,9 @@ enum xhci_setup_dev {
+ /* bits 16:23 are the virtual function ID */
+ /* bits 24:31 are the slot ID */
+
++/* bits 19:16 are the dev speed */
++#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
++
+ /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
+ #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
+ #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
+@@ -1554,6 +1558,7 @@ struct xhci_hcd {
+ 	struct dma_pool	*device_pool;
+ 	struct dma_pool	*segment_pool;
+ 	struct dma_pool	*small_streams_pool;
++	struct dma_pool	*port_bw_pool;
+ 	struct dma_pool	*medium_streams_pool;
+
+ 	/* Host controller watchdog timer structures */
+@@ -1837,6 +1842,10 @@ struct xhci_container_ctx *xhci_alloc_container_ctx(struct xhci_hcd *xhci,
+ 		int type, gfp_t flags);
+ void xhci_free_container_ctx(struct xhci_hcd *xhci,
+ 		struct xhci_container_ctx *ctx);
++struct xhci_container_ctx *xhci_alloc_port_bw_ctx(struct xhci_hcd *xhci,
++		gfp_t flags);
++void xhci_free_port_bw_ctx(struct xhci_hcd *xhci,
++		struct xhci_container_ctx *ctx);
+ struct xhci_interrupter *
+ xhci_create_secondary_interrupter(struct usb_hcd *hcd, unsigned int segs,
+ 				  u32 imod_interval);
+@@ -1907,6 +1916,11 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
+ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
+ 		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
+ 		bool command_must_succeed);
++int xhci_queue_get_port_bw(struct xhci_hcd *xhci,
++		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
++		u8 dev_speed, bool command_must_succeed);
++int xhci_get_port_bandwidth(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx,
++		u8 dev_speed);
+ int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
+ int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
+--
+2.43.4
+
 
