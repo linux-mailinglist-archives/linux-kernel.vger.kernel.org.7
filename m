@@ -1,185 +1,262 @@
-Return-Path: <linux-kernel+bounces-584415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC9BA786F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 05:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFB9A786FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 05:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 818BA3AC341
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 306E916D31B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3AF2309B0;
-	Wed,  2 Apr 2025 03:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54FE230BC4;
+	Wed,  2 Apr 2025 03:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h13qjSew"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFP9ZNlU"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BFF2BD1B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 03:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9885D2309AA
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 03:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743566273; cv=none; b=a7N7f8Jx5zG57wZdkFgQVvMUVBWmS6mttSYR7aAaXWknGKt9fjXz8olPHHDG+VjX6/NfzOSiENWEBf23M9OVN618cRFsb9/9rI6UP7Cv2hKcMJoN/whLkw8C+9mTo+sk8iAHwt5vl4D9kzv5XaPkyevqB55NfqyPjhfV1JaLPGs=
+	t=1743566392; cv=none; b=Zd/Z/Z17NnnZjZHWmTCPYNMlmJlwRlGnfagY1H5PB1VQVJ8dwU/IZewKzhUBVdS32DrpPDNcfpN9wPoiDjmzuVTgTDPm1E55uklrNyIDc72heSUeNmLqusvSfs+cuE82i4q8CGqVGqWanP8tFutoVtvO1ZnxL5aMOXycAWQJIrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743566273; c=relaxed/simple;
-	bh=DH0xkte9wSZlLFbj86lkczi4h1F+DZB1Qssy9mm2Sps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bl0Fl2bMzrx3hW2a7iTsvv5lNGxD4xwJTj2w45DeDbouaTm7ihv0ztcKUdghWFxx5qfsPXKMRamYPAyoZ0CG9n3SgmxkvF79S1GMYn45sySo+XVWrCPDx8EZ0FuKJGh+jcqGIi8fhbNrrQRu/zR9jsMtzAUO7VHWr85bZXfdq5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h13qjSew; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1743566392; c=relaxed/simple;
+	bh=5XAaBVK3PYlu5jmU+rZarTc0x0/lrq+TgCeHcJRWMng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5zYkFWrmLk4Z3hQw6yVjGxPyGuvUUZB/BvDEiQkTDvQBR9XX/CCWjqoqEnv1k03XqjmXbprGZUofrBnuzEsJOJcoleT9uwkzX7j7TiKYE81vtp1Sv0lqaGEHUUM3mTg+6Eq8HeFCR1KuX7akYmwnwAGtNDMYGTg3UAQ8SimkeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFP9ZNlU; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743566269;
+	s=mimecast20190719; t=1743566388;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3EHpwcZb7JUmljhMaKtSiGAnELfOUqWRS3brLGJeZJs=;
-	b=h13qjSewOus44eq8Q5UPNFcCeCrVWSvmAxJoA/dbkWZvRLZyJtR6FvxKmEY7a1u5ww0E4f
-	3aQMT7S7hmWp7jMDdYVQZNfw+vriZCi6z3Whwi6htKmmlnC0nXnxE//63Ia8ihEviGP3RG
-	2BEHnUlvxcfxXqpDzThWXNI3GjEbxUg=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-503-vDQtu9J1POiCrCJy63mJkg-1; Tue, 01 Apr 2025 23:57:48 -0400
-X-MC-Unique: vDQtu9J1POiCrCJy63mJkg-1
-X-Mimecast-MFC-AGG-ID: vDQtu9J1POiCrCJy63mJkg_1743566268
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6eb1e240eddso108021546d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Apr 2025 20:57:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743566268; x=1744171068;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3EHpwcZb7JUmljhMaKtSiGAnELfOUqWRS3brLGJeZJs=;
-        b=R2La4bNXHADc64y/aaPIXCdFzWsVli+sQPGVs4fWeht30DEMLTczChQHgVHl2q9HKD
-         SsjBr69YTSX6l00FvR5SJ9BEhmMxRBQFc09WqLZSqY9bjqSLltxJT+ZojwDFSllwTUeR
-         NDth6XLK+OmoIZ1LMGG3d6IIc6Mriw3CrjP+zmUbI7ufJ7oBoXQIXegNACo8oCmLgWFX
-         ZnE9/NdgySC83zIpBFwP86UPpB04hAvf+WEIhkwHGu0rJiA57D8PnKzCLsRXlQXGcizU
-         smSTXR3sHr60MDWdsPu64VAnrTVoFHqooYpUzdyU1JTHk04Yz/sivBGlGRXHMiuKBGQH
-         38PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUGYege/lSODz8/s4fVl4ZE1vv+YoviRSjcB/yTxnSgtoKHvwITkvuMAu+5/OFAbJCoAjbjMiYRXi+bBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB2uls48dOwCCNkCyUN0tg4NFv9MfyzIvN2EsR8l5Ld5tY+/FA
-	t2NGofncjqJtuD6Tn0qyECB9IGMlGME5rgSS/L/G00MsUPN0HRbDlWYsRCCwBYe/zNg7X9qKzlP
-	Sw/8deWa1ljVEPs8ipyYlnS/yf67aiIAhfusA9qbl69eh1fBf+38sF66FBpMPCQ==
-X-Gm-Gg: ASbGnctZ3S22wYHJM1RP5IFN0BER9k7k7wt7VhSOT75dgHy7YAGNUbNE+eriCw2HtoH
-	eEMhUr3Iw/krE0oxS8aFaICznc6pXIGJ2Zq2+HQPSaswNYxTUt7vC2b+jSAwPPnH0ul7rPAGbsH
-	JdnjeCx9kE8t6H7/xlqQPIj/2OiPzvFzH1wRBA4XvUHYvE+T0fmAIMuDy/qCKnD5qd6Zbdag/oB
-	hZFl56D1nFKBCCk04XdkRFIT7rIXvc6Wm85E3ZAC/VSG8ZB590uPltr1l4Hn4NBHHl1Z7bQFIOu
-	OI3g9i1vS4s49sc=
-X-Received: by 2002:a05:6214:2aa5:b0:6e8:9e8f:cfb with SMTP id 6a1803df08f44-6eed6206676mr224142886d6.24.1743566267944;
-        Tue, 01 Apr 2025 20:57:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTy8f/TqXcAZv/pjj+xQyEtLlNlg8iTt+rX63O+3pxxtogDwH24TIpcDDtJ6plNopV6w6gMw==
-X-Received: by 2002:a05:6214:2aa5:b0:6e8:9e8f:cfb with SMTP id 6a1803df08f44-6eed6206676mr224142706d6.24.1743566267609;
-        Tue, 01 Apr 2025 20:57:47 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eec9643e23sm70638476d6.26.2025.04.01.20.57.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 20:57:47 -0700 (PDT)
-Message-ID: <1b0fbad5b2be164da13034fe486c207d8a19f5e7.camel@redhat.com>
-Subject: Re: [PATCH v3 0/6] KVM: SVM: Fix DEBUGCTL bugs
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Ravi Bangoria
-	 <ravi.bangoria@amd.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	rangemachine@gmail.com, whanos@sergal.fun
-Date: Tue, 01 Apr 2025 23:57:46 -0400
-In-Reply-To: <20250227222411.3490595-1-seanjc@google.com>
-References: <20250227222411.3490595-1-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	bh=tGXy3CN7gC6EypnGhzzb76sSaOem2BZqrJYP6QEGJ/4=;
+	b=MFP9ZNlUQHp2FMg0eX9FK8JLXdNp6trpGDAzRLNTx++XLWqkygSo83+L1Qu09CHOpISxwk
+	YtiR8ZQrMx9Q/SfzNBUbUd7/cl96abMB2mC16as+7zX4HZa/aSq2Qx2cIvRvue9VI/0DsQ
+	lDAlxWPn97OvCQmxK1iERA0peQqSB+c=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-2mGvHwF1Pd6akDJCiMkKNA-1; Tue,
+ 01 Apr 2025 23:59:45 -0400
+X-MC-Unique: 2mGvHwF1Pd6akDJCiMkKNA-1
+X-Mimecast-MFC-AGG-ID: 2mGvHwF1Pd6akDJCiMkKNA_1743566384
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 069D719560BB;
+	Wed,  2 Apr 2025 03:59:44 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.17])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B21BD180A803;
+	Wed,  2 Apr 2025 03:59:38 +0000 (UTC)
+Date: Wed, 2 Apr 2025 11:59:32 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Uday Shankar <ushankar@purestorage.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] ublk: improve handling of saturated queues when ublk
+ server exits
+Message-ID: <Z-y2JGJC56ZhdYHP@fedora>
+References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
+ <20250325-ublk_timeout-v1-4-262f0121a7bd@purestorage.com>
+ <Z-OS2_J7o0NKHWmj@fedora>
+ <Z+Q/SNmX+DpVQ5ir@dev-ushankar.dev.purestorage.com>
+ <Z-SoibOdOmzOWB-C@fedora>
+ <Z+sifI6fujsc186S@dev-ushankar.dev.purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z+sifI6fujsc186S@dev-ushankar.dev.purestorage.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, 2025-02-27 at 14:24 -0800, Sean Christopherson wrote:
-> Fix a long-lurking bug in SVM where KVM runs the guest with the host's
-> DEBUGCTL if LBR virtualization is disabled.  AMD CPUs rather stupidly
-> context switch DEBUGCTL if and only if LBR virtualization is enabled (not
-> just supported, but fully enabled).
+On Mon, Mar 31, 2025 at 05:17:16PM -0600, Uday Shankar wrote:
+> On Thu, Mar 27, 2025 at 09:23:21AM +0800, Ming Lei wrote:
+> > On Wed, Mar 26, 2025 at 11:54:16AM -0600, Uday Shankar wrote:
+> > > On Wed, Mar 26, 2025 at 01:38:35PM +0800, Ming Lei wrote:
+> > > > On Tue, Mar 25, 2025 at 04:19:34PM -0600, Uday Shankar wrote:
+> > > > > There are currently two ways in which ublk server exit is detected by
+> > > > > ublk_drv:
+> > > > > 
+> > > > > 1. uring_cmd cancellation. If there are any outstanding uring_cmds which
+> > > > >    have not been completed to the ublk server when it exits, io_uring
+> > > > >    calls the uring_cmd callback with a special cancellation flag as the
+> > > > >    issuing task is exiting.
+> > > > > 2. I/O timeout. This is needed in addition to the above to handle the
+> > > > >    "saturated queue" case, when all I/Os for a given queue are in the
+> > > > >    ublk server, and therefore there are no outstanding uring_cmds to
+> > > > >    cancel when the ublk server exits.
+> > > > > 
+> > > > > The second method detects ublk server exit only after a long delay
+> > > > > (~30s, the default timeout assigned by the block layer). Any
+> > > > > applications using the ublk device will be left hanging for these 30s
+> > > > > before seeing an error/knowing anything went wrong. This problem is
+> > > > > illustrated by running the new test_generic_02 against a ublk_drv which
+> > > > > doesn't have the fix:
+> > > > > 
+> > > > > selftests: ublk: test_generic_02.sh
+> > > > > dev id is 0
+> > > > > dd: error writing '/dev/ublkb0': Input/output error
+> > > > > 1+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 30.0611 s, 0.0 kB/s
+> > > > > DEAD
+> > > > > dd took 31 seconds to exit (>= 5s tolerance)!
+> > > > > generic_02 : [FAIL]
+> > > > > 
+> > > > > Fix this by instead handling the saturated queue case in the ublk
+> > > > > character file release callback. This happens during ublk server exit
+> > > > > and handles the issue much more quickly than an I/O timeout:
+> > > > 
+> > > > Another solution is to override default 30sec 'timeout'.
+> > > 
+> > > Yes, but that still will introduce unnecessary delays, since it is a
+> > > polling-based solution (very similar to monitor_work we used to have).
+> > > Also it will add complexity to the unprivileged case, since that
+> > > actually cares about timeout and we will have to track the "real"
+> > > timeout separately.
+> > > 
+> > > > 
+> > > > > 
+> > > > > selftests: ublk: test_generic_02.sh
+> > > > > dev id is 0
+> > > > > dd: error writing '/dev/ublkb0': Input/output error
+> > > > > 1+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 0.0376731 s, 0.0 kB/s
+> > > > > DEAD
+> > > > > generic_02 : [PASS]
+> > > > > 
+> > > > > Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+> > > > > ---
+> > > > >  drivers/block/ublk_drv.c                        | 40 +++++++++++------------
+> > > > >  tools/testing/selftests/ublk/Makefile           |  1 +
+> > > > >  tools/testing/selftests/ublk/kublk.c            |  3 ++
+> > > > >  tools/testing/selftests/ublk/kublk.h            |  3 ++
+> > > > >  tools/testing/selftests/ublk/null.c             |  4 +++
+> > > > >  tools/testing/selftests/ublk/test_generic_02.sh | 43 +++++++++++++++++++++++++
+> > > > >  6 files changed, 72 insertions(+), 22 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> > > > > index c060da409ed8a888b7e414c9065efd2cbd6d57d7..1816b2cac01056dc9d01455759594af43c5f78d6 100644
+> > > > > --- a/drivers/block/ublk_drv.c
+> > > > > +++ b/drivers/block/ublk_drv.c
+> > > > > @@ -1247,8 +1247,6 @@ static void ublk_queue_cmd(struct ublk_queue *ubq, struct request *rq)
+> > > > >  static enum blk_eh_timer_return ublk_timeout(struct request *rq)
+> > > > >  {
+> > > > >  	struct ublk_queue *ubq = rq->mq_hctx->driver_data;
+> > > > > -	unsigned int nr_inflight = 0;
+> > > > > -	int i;
+> > > > >  
+> > > > >  	if (ubq->flags & UBLK_F_UNPRIVILEGED_DEV) {
+> > > > >  		if (!ubq->timeout) {
+> > > > > @@ -1259,26 +1257,6 @@ static enum blk_eh_timer_return ublk_timeout(struct request *rq)
+> > > > >  		return BLK_EH_DONE;
+> > > > >  	}
+> > > > >  
+> > > > > -	if (!ubq_daemon_is_dying(ubq))
+> > > > > -		return BLK_EH_RESET_TIMER;
+> > > > > -
+> > > > > -	for (i = 0; i < ubq->q_depth; i++) {
+> > > > > -		struct ublk_io *io = &ubq->ios[i];
+> > > > > -
+> > > > > -		if (!(io->flags & UBLK_IO_FLAG_ACTIVE))
+> > > > > -			nr_inflight++;
+> > > > > -	}
+> > > > > -
+> > > > > -	/* cancelable uring_cmd can't help us if all commands are in-flight */
+> > > > > -	if (nr_inflight == ubq->q_depth) {
+> > > > > -		struct ublk_device *ub = ubq->dev;
+> > > > > -
+> > > > > -		if (ublk_abort_requests(ub, ubq)) {
+> > > > > -			schedule_work(&ub->nosrv_work);
+> > > > > -		}
+> > > > > -		return BLK_EH_DONE;
+> > > > > -	}
+> > > > > -
+> > > > >  	return BLK_EH_RESET_TIMER;
+> > > > >  }
+> > > > >  
+> > > > > @@ -1351,6 +1329,24 @@ static int ublk_ch_open(struct inode *inode, struct file *filp)
+> > > > >  static int ublk_ch_release(struct inode *inode, struct file *filp)
+> > > > >  {
+> > > > >  	struct ublk_device *ub = filp->private_data;
+> > > > > +	bool need_schedule = false;
+> > > > > +	int i;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * Error out any requests outstanding to the ublk server. This
+> > > > > +	 * may have happened already (via uring_cmd cancellation), in
+> > > > > +	 * which case it is not harmful to repeat. But uring_cmd
+> > > > > +	 * cancellation does not handle queues which are fully saturated
+> > > > > +	 * (all requests in ublk server), because from the kernel's POV,
+> > > > > +	 * there are no outstanding uring_cmds to cancel. This code
+> > > > > +	 * handles such queues.
+> > > > > +	 */
+> > > > > +
+> > > > > +	for (i = 0; i < ub->dev_info.nr_hw_queues; i++)
+> > > > > +		need_schedule |= ublk_abort_requests(ub, ublk_get_queue(ub, i));
+> > > > > +
+> > > > > +	if (need_schedule)
+> > > > > +		schedule_work(&ub->nosrv_work);
+> > > > 
+> > > > ublk_abort_requests() should be called only in case of queue dying,
+> > > > since ublk server may open & close the char device multiple times.
+> > > 
+> > > Sure that is technically possible, however is any real ublk server doing
+> > > this? Seems like a strange thing to do, and seems reasonable for the
+> > > driver to transition the device to the nosrv state (dead or recovery,
+> > > depending on flags) when the char device is closed, since in this case,
+> > > no one can be handling I/O anymore.
+> > 
+> > ublk server should be free to open & close the char device multiple times,
+> > but you patch limits ublk server to open & close the char device just once.
+> > 
+> > The limit looks too strong...
 > 
-> The bug has gone unnoticed because until recently, the only bits that
-> KVM would leave set were things like BTF, which are guest visible but
-> won't cause functional problems unless guest software is being especially
-> particular about #DBs.
+> Tying a userspace daemon lifetime to the file seems to also be done in
+> fuse, which is very similar to ublk_drv. See e.g. the description here:
 > 
-> The bug was exposed by the addition of BusLockTrap ("Detect" in the kernel),
-> as the resulting #DBs due to split-lock accesses in guest userspace (lol
-> Steam) get reflected into the guest by KVM.
+> https://lore.kernel.org/lkml/20240524064030.4944-1-jefflexu@linux.alibaba.com/T/
 > 
-> Note, I don't love suppressing DEBUGCTL.BTF, but practically speaking that's
-> likely the behavior that SVM guests have gotten the vast, vast majority of
-> the time, and given that it's the behavior on Intel, it's (hopefully) a safe
-> option for a fix, e.g. versus trying to add proper BTF virtualization on the
-> fly.
+> This seems required to support certain workflows, e.g. using an fdstore
+> with ublk devices. While we still keep task references in ublk_drv,
+> these workflows will be broken.
 > 
-> v3:
->  - Suppress BTF, as KVM doesn't actually support it. [Ravi]
->  - Actually load the guest's DEBUGCTL (though amusingly, with BTF squashed,
->    it's guaranteed to be '0' in this scenario). [Ravi]
-> 
-> v2:
->  - Load the guest's DEBUGCTL instead of simply zeroing it on VMRUN.
->  - Drop bits 5:3 from guest DEBUGCTL so that KVM doesn't let the guest
->    unintentionally enable BusLockTrap (AMD repurposed bits). [Ravi]
->  - Collect a review. [Xiaoyao]
->  - Make bits 5:3 fully reserved, in a separate not-for-stable patch.
-> 
-> v1: https://lore.kernel.org/all/20250224181315.2376869-1-seanjc@google.com
-> 
+> I am not familiar with fuse so I don't know for sure, but it sounds like
+> if the file is closed after some setup is performed, then the connection
+> is aborted. The analogy in ublk might be - if the file is closed while
+> the device is LIVE, then we transition to the nosrv state. Otherwise
+> nothing happens and the file can be reopened freely. This will allow
+> libublksrv to continue working as it opens/closes the fd early to
+> determine if it is accessible. Does that sound any better?
+
+Yes, my point is that the close shouldn't delete disk, since it may
+be one normal close().
+
+Actually I think your patch should work by the following change:
+
+- remove 'schedule_work(&ub->nosrv_work);' done in ublk_ch_release()
+
+- re-initialize each ublk_queue in open()
+
+Then disk won't be deleted, but any IO is `aborted` by ubq->canceling
+if the char device isn't opened. After the char device is re-opened,
+everything will become fine.
 
 
-Hi,
-
-Amusingly there is another DEBUGCTL issue, which I just got to the bottom of.
-(if I am not mistaken of course).
-
-We currently don't let the guest set DEBUGCTL.FREEZE_WHILE_SMM and neither
-set it ourselves in GUEST_IA32_DEBUGCTL vmcs field, even when supported by the host
-(If I read the code correctly, I didn't verify this in runtime)
-
-This means that the host #SMIs will interfere with the guest PMU.
-In particular this causes the 'pmu' kvm-unit-test to fail, which is something that our CI caught.
-
-I think that kvm should just set this bit, or even better, use the host value of this bit,
-and hide it from the guest, because the guest shouldn't know about host's smm, 
-and we AFAIK don't really support freezing perfmon when the guest enters its own emulated SMM.
-
-What do you think? I'll post patches if you think that this is a good idea.
-(A temp hack to set this bit always in GUEST_IA32_DEBUGCTL fixed the problem for me)
-
-I also need to check if AMD also has this feature, or if this is Intel specific.
-
-Best regards,
-	Maxim Levitsky
-
-> 
-> Sean Christopherson (6):
->   KVM: SVM: Drop DEBUGCTL[5:2] from guest's effective value
->   KVM: SVM: Suppress DEBUGCTL.BTF on AMD
->   KVM: x86: Snapshot the host's DEBUGCTL in common x86
->   KVM: SVM: Manually context switch DEBUGCTL if LBR virtualization is
->     disabled
->   KVM: x86: Snapshot the host's DEBUGCTL after disabling IRQs
->   KVM: SVM: Treat DEBUGCTL[5:2] as reserved
-> 
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/svm/svm.c          | 24 ++++++++++++++++++++++++
->  arch/x86/kvm/svm/svm.h          |  2 +-
->  arch/x86/kvm/vmx/vmx.c          |  8 ++------
->  arch/x86/kvm/vmx/vmx.h          |  2 --
->  arch/x86/kvm/x86.c              |  2 ++
->  6 files changed, 30 insertions(+), 9 deletions(-)
-> 
-> 
-> base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
-
+Thanks,
+Ming
 
 
