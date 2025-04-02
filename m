@@ -1,102 +1,212 @@
-Return-Path: <linux-kernel+bounces-585295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E1AA791EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:14:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871A4A791F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8D97A3A23
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D221690EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06223BD19;
-	Wed,  2 Apr 2025 15:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815A323BCFC;
+	Wed,  2 Apr 2025 15:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JvDZ6fXb"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwQSPFv3"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9611D211299
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD70828382
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743606843; cv=none; b=U9OJ8LT9/HDiBSyRJtrk4dz5hVsQq0rpcEJjyBKJ/42e8Ept9M3RwcLMg16JWyLemn3WWcOCpFBWLwTXMnV0VxLcCkzX9ipLu2a1jmRyjw82ayi8LjCXaI9ymxtfBUjxZWvBvOTsj7o6jLE4VnIKZ3wn6svNVAMgIaqnWHtAd54=
+	t=1743607061; cv=none; b=RpEQ5BFrXOSMbwAuEucT0pi6yDaL876EMlNpWuur3FcXo9KkJ9BBZM3rfqXuP4To7VauCwmMrpTvCjM7dZLqsVje2O71VuFduR5ZCYiTEIRnJ3QmnB3UlbyBsc/5B1wtcwpsOvBjFZNbbpfpz0BwEGOjENPYRoMNOhw7K5Hv4ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743606843; c=relaxed/simple;
-	bh=AmsS7TeoR5lfEkPA/4hWMzBs7ZLo8pjbDxlnDnyGR5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WXjt7qteXK95Le2RVLv7sRe6Vxw7C1g6PIoI8Q8ykv34i9IYhtVTkSmZ+72uwZmpSDRlTKT8La3C71Lm5ePsCtwBNGgj8Xfp0ZVPne1mBh+4e7Dy7+L+zZJ5ZzwYhH6+4g+dCj8rF8rNfyXNoXJsFfWYd7204NdHYPpLUYR9T1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JvDZ6fXb; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1743607061; c=relaxed/simple;
+	bh=NyHdU17b3BYKcxSflMYDwmeiHSv8J8KHGYTpcsjLvEc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FtgB2Kl0NiF8LttMOjqgGmcINrGYyrPRhpgHirf9hBNLzh1VhqV6tCeTcLE5P3sQEZuLSQksi1ZxcZRdkQdDQtiHSmCPWAdcEK0PxU4jyyYO9nLJX3/OazOzMWsMxcMkRbcEeBsN8Z12PEZU11Kxv5KXYGvnO2ArFQeG/koLgxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QwQSPFv3; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso32581165e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:14:01 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3914a5def6bso3979436f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 08:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743606840; x=1744211640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AmsS7TeoR5lfEkPA/4hWMzBs7ZLo8pjbDxlnDnyGR5I=;
-        b=JvDZ6fXbDHuNjqOCj4zmYm8QDr2d7BfWPaBvV6gl0mGDfWtA4GgcldMpCPxfyEjqpt
-         +FS42RFFcB8mrYIZ9EwH43uBJoh3ffdAUhm+iRXq6KfbWa6nzo1FL+mzVWKTOwV0F4Ci
-         XxKF74K/jxBEQUR/4N7xScSD2RnyN1RaRltEmG6gemBkg6YjfciOaVbidkyhWZHWJacz
-         wPhv2AwCKJyNRaJy43BT/BkGcQfIf7WDjGr83LaphzVegAZfIA5ixL/wF0dVLOq74A37
-         351vRNPZ2Alzhz568OymABnFTf7JhRyZeaJ5I8PwWGCbcs7b43h/j3Fy891Ve9HwkXrD
-         F4cQ==
+        d=linaro.org; s=google; t=1743607058; x=1744211858; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yx2R8pO0Ra3Nc8Y0LIAf122qHZ5vDc7iiej3dPjF8G4=;
+        b=QwQSPFv3onTb5O+ZQBcO4g8cTiZjqdVQURhNFiUXFzOIQcCF8pNRoUAfqTmBYUMkUz
+         OEaUoMfnvSrLtEXhkiAtPUk4SyTUAV5qJacaS4oLC+cbougR51oRMRrKL+0DdimjP1z2
+         Vv2HjPiQRtKsN9FwynTy8HzIzH8igklSs0UCwPylssIJKlNAYFS2fTE/JFBz0ZSoJbp0
+         yx8lqy7DDCYEtyji7LhbW8ky0vPanMrDGAPpuXrihHOpYQsBqZnNw4mUOxbyXRRjpxx6
+         lDmTD5t+ZZEJPKiot/ki0u9zVNL1i5EjdY3qV4iLp21hfCXC6r0WoibHux6VnY6aTkIm
+         r88w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743606840; x=1744211640;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AmsS7TeoR5lfEkPA/4hWMzBs7ZLo8pjbDxlnDnyGR5I=;
-        b=f86jqIo1gIcTmOrVvBM91UfulfPFsxsqpKgH03mlPBTp6LUo5PxmuNH3+qg9RWer3q
-         m6VMUcgC71xIreiP+GksQigZ/ojTIoiFfZXmXKufGhhFSFnzkPBMGkFQZgPbgJNIg4Ll
-         E61EJe/D1FEICcy8aobog90xrKn89AZj8FlAPIONP+aCpxdo6xQuTwgwIg5K3tvrWazf
-         1iI19pG2VRNod9XV6WRRRuVohBAqPoJZRa6I71TKUmlGdOxWpHSQsdF+9ZV9TldzU/nO
-         wJx1wRGUVOIbF3R/jGwJgtD2IF3v32f0SGJP1klnjA52uY40abFWXBWR7mPvjkKkG6Pv
-         qK2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWE7kqvsLM218S4qg54Wh9HWlbiTjFkgSuHYrrvwc0yApue3zSvBVV9wKnQtCJlVKlQQk/jFRYGEmX90No=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxavCtQ06Hr/JKybL1lLSO0UECpfwHgqnkiTeWs8WmP+jq7Uq47
-	DHNYmTYzV/GGtbvVwdWGdxZ4eVS1R4OTwpLoOWPf1qWO8CSkV95wjjm72SbY/nU=
-X-Gm-Gg: ASbGncvlm0G5Uc+HXMtKQomo09TiHgiD/7iLoLDi4Uwym4YL0/g0f8TMZtIIi1hc2sc
-	e/LqxCsi5HD54DFJVzxjNACjbbqp7FYrBkuX7Pw53vGzk4qYPGyawXay2mjTj5/ro8qRmHkQ+W2
-	wmqRdy2CRMZDxpWu5vDGXCvB6m2Kt69q9ZJ+ca0t1En2x9+EU8KUSCsxhkYybRYvr5lKB0Fh1qk
-	1+agsz3GO+vx5MnbP53gwosaVEza9pxx+8b95J4REed7d+Z9eTaxbL56BEOU/5kbrbFVfWYFQKH
-	iUBZIwrNK/oc99MWuE7SJsIIQQ3zr5Vbwwa1AAHj3UZymyJGSWC4VA==
-X-Google-Smtp-Source: AGHT+IG6p3UHT9VfN8elbbIcomUrX8igQSBx7GXK+qu6zBuYsACWtZ6EtMj3y0kC69/t3Mx0577lqA==
-X-Received: by 2002:a05:600c:4e87:b0:43d:8ea:8d80 with SMTP id 5b1f17b1804b1-43db61d5fd2mr142290465e9.5.1743606839846;
-        Wed, 02 Apr 2025 08:13:59 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43eb60ec915sm23620405e9.28.2025.04.02.08.13.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 08:13:59 -0700 (PDT)
-Message-ID: <da84d300-0af5-4ee0-a6ca-4bad3df39eb9@linaro.org>
-Date: Wed, 2 Apr 2025 16:13:58 +0100
+        d=1e100.net; s=20230601; t=1743607058; x=1744211858;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yx2R8pO0Ra3Nc8Y0LIAf122qHZ5vDc7iiej3dPjF8G4=;
+        b=Tq3RQnYQDkQRp7+XStThUlxjYElPzHhxBeGb3t84YoDdyJQUqDc/vsHA5LnoGRrSNh
+         fpgoH4zMnu0xLwrC1N0eJoh2UuEKhHO0KFM15VfU/q0xAO6Bm9bkAtIMsPjrlhtu7hpU
+         d8U0j5fUwFi7Sq6aUQ54fjwByTohTugkdmtwCecAqk9iigcvqzW8U7wid+kgdT+HjwVb
+         /QRZaWTNIeC1JglIbEKa95PhbjPqpRLu0LwP9cJOgLp5AMC9onSqLUpLm478aCrS0Gsf
+         V8ddMV20lOjtqBt0KYX2rZbrCd6t/TDAtebetcRNtEsrxeD1qCpfINpdhw754KyhGtMU
+         DWOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE7MC9HlB19UPuBp8T6nK65KVuwR3jFxeQ0U1VWKpCC87FvbXAFt3on3GgIYhHsmRT+CrdyRETWInX69w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx8nSM/dCzQLxAVB4TX8k1Z9v0bcF5SEsx5EUSK9uXQZu5zWW3
+	yIO5t+qJE8YKQZ+EqAw0tib+JiGlA/ZT2m7HuU5hGHFL3cbZgtpvVGkyKVA55GY=
+X-Gm-Gg: ASbGncvzAYvdUwiaW+Kwq2wO1vOiIQoMEA0ejMzZaH472wBWIzvWHkG2FBCT45aJd/y
+	lC6O6+OLVB19eteEUgKyos7prDyjG3wWDHR5LqELaReRJ3yeW7Y90H+R08qUZUE2pJ4ZBGY76cb
+	+bKUXL2jSykTkJRgpblNMPwaHvzYMQR3qSM83hbm00ZqzT50V0VsSgY7ULzsO9L4mf239SAz769
+	Jmfzci4E1lJ1EUBWK2pZ4386iWAu9AZ2r5oBhwMuxmV3z+hugHp5A4P1uKJkNfDLLq63UK32Fq+
+	oHtBbyrC+ddCr/wMSFv/sJGxEZ2t6UZVVbKPVM9HBDddyuuePz8fTCjmQGNgY00KTVEivaB+tw=
+	=
+X-Google-Smtp-Source: AGHT+IGtw/YaMynhE0C3M4qaV2783kGrZos1104coVh6+inJZg+GE5x2GivvB2wyhudpC0AEWiHjvQ==
+X-Received: by 2002:a5d:6d8d:0:b0:39a:ca04:3dff with SMTP id ffacd0b85a97d-39c1211805dmr13821255f8f.40.1743607057958;
+        Wed, 02 Apr 2025 08:17:37 -0700 (PDT)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.90])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c0b663860sm17469190f8f.39.2025.04.02.08.17.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 08:17:37 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v6 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Wed, 02 Apr 2025 16:17:29 +0100
+Message-Id: <20250402-pinctrl-fltcon-suspend-v6-0-78ce0d4eb30c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/21] mtd: spinand: Use more specific naming for the
- (quad) program load op
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Santhosh Kumar K <s-k6@ti.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <michael@walle.cc>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Steam Lin <stlin2@winbond.com>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
- <20250307-winbond-6-14-rc1-octal-v1-14-45c1e074ad74@bootlin.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-14-45c1e074ad74@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAlV7WcC/4XNQW7DIBCF4atErEsFM2OIs+o9qi7AHhIkCyxwr
+ VaR716STVNFVpf/k+abq6hcIldxOlxF4TXWmFML83IQw8WlM8s4thagoFMalJxjGpYyyTAtQ06
+ yftaZ0ygBEZ1GO9BIoh3PhUP8usPvH60vsS65fN//rPq2/kuuWirJ1vZKeXDHjt6mmFzJr7mcx
+ c1c4ddBpXcdaI6zzKH3ngj9k4OPjtl1sDmhd55CMA6Inxx6dOyuQ82B0dqO6WgUmj/Otm0/Ix/
+ uwJUBAAA=
+X-Change-ID: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3882;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=NyHdU17b3BYKcxSflMYDwmeiHSv8J8KHGYTpcsjLvEc=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBn7VUOIpQvmKF+MMYf64vqTmU0WTMgiEeFEpShA
+ AynK1joXv+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ+1VDgAKCRDO6LjWAjRy
+ uoeJD/4+BiSfIgPVMI5fRAx6Coxh8/ggZfvF1RkO524nX45fsdiIaMPS1QR+Y7a9CdVb6L4Q3HX
+ V+NY7G4o32bDe69CQ20fjklp3fu/QwxXMMENII1Zebp3Mkwt0wAlkTGNwQ/cjsVvRZSlywJUehF
+ r5cdRDOGh94HHVuyQST+GQ9u4oMxyoiBardHYbuCLytcuXeieBnVg96fbn/ETxeMdWAkeiBQCd2
+ 1AX8VGBu00u9VUf3OB4e4X6fVkrp/7wC3MZ3Ty45olPqDf6NOCnLesQp9An9aqKnDkB1i72Gg/X
+ U/WsJcAmOLe+Rzw12qSgWtBRGLhCKv/pzfUKsVGzfPRnafo4WJc5fK74OKQg/gN2qzNAbdQ4hQI
+ bv5+mDP+IkAigc1yjYm31kZuUnt0kk8iLq6jzznvbaUWBhbI9ir/Tl++qA2iM5+hf1OBzyfEvGd
+ XVLwHGmbavNBjHtKWVUVOwVAyx6XPgr2koESdSNiArZ0hGZNiv9mu5HCZkJoxhbu2zlsTcPp2uJ
+ DfvD6979BXD2CWh5UBwUz2o/5jJuzeFUYUZLcVO8l3Zcd2wa54LrTiS15RZoR59InWWGEMnH0sl
+ +CMBzDDa2i7TdzdRkTWVqqmNTxoqJBRW+5MFzd3+NP0ZHremI3HWNzMsByood+77Rhz+Yz3R64V
+ syq/O8iBenmJoaA==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Hi folks,
+
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
+
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
+
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
+
+regards,
+
+Peter
+
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v6:
+- Make drvdata->suspend/resume symmetrically reversed (Krzysztof)
+- rebase on linux-next
+- Link to v5: https://lore.kernel.org/r/20250312-pinctrl-fltcon-suspend-v5-0-d98d5b271242@linaro.org/
+
+Changes in v5:
+- Split drvdata suspend & resume callbacks into a dedicated patch (Krzysztof)
+- Add comment about stable dependency (Krzysztof)
+- Add back in {} braces (Krzysztof)
+- Link to v4: https://lore.kernel.org/r/20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org
+
+Changes in v4:
+- save->eint_fltcon1 is an argument to pr_debug(), not readl() change alignment accordingly (Andre)
+- Link to v3: https://lore.kernel.org/r/20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org
+
+Changes in v3:
+- Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
+- Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
+- Make it obvious exynos_set_wakeup() is conditional on bank type (Andre)
+- Align style where the '+' is placed first (Andre)
+- Remove unnecessary braces (Andre)
+- Link to v2: https://lore.kernel.org/r/20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org
+
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
+
+---
+Peter Griffin (4):
+      pinctrl: samsung: refactor drvdata suspend & resume callbacks
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
+
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  52 ++---
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 294 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  28 ++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  21 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |   8 +-
+ 5 files changed, 252 insertions(+), 151 deletions(-)
+---
+base-commit: cd37a617b4bfb43f84dbbf8058317b487f5203ae
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
 
 
