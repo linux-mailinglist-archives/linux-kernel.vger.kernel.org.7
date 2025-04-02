@@ -1,464 +1,504 @@
-Return-Path: <linux-kernel+bounces-585853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8101A7986D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 00:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29958A79871
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 00:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47144189305C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC0C3B3A16
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 22:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1F51F8690;
-	Wed,  2 Apr 2025 22:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043D21F5844;
+	Wed,  2 Apr 2025 22:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V3v92yqt"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3/NRJUYd"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4861F585E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 22:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743634066; cv=none; b=En1pYQ+nr7IxZO8Ym8m/M+0oz++drUWQS9g9Ndr3+OyhDLUSG101hPt1ZKUK0X+SYVAhqmuyrB93uRWGE30P+Tsq/zS5PUeCnLI8nQ56j1Ra1HCcJLycZELRiooAwXYB8qRStbTdhvfqmvXMQVn6dHQeZuV4YNbKF8T4ZKzKX58=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743634066; c=relaxed/simple;
-	bh=GgWj+fQeAvPcu8cN1/Pm6FPr+NyoKyAJy6sRaAN26j4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VdRXNPXOfqTyOkx9id+jYrzw4vz9jmEov/sPG6iDIDA6YROaTCTECaC7bg/tIGHe3KepBNolu/wHeRNH5F9kP1m5lLzFaqsyOJxZwIrvjSTSJkjIXA1MGoRwFbmG7/YuXLIN/BPgtW8888sSEmg2p0W3tSOs1n0Yq6ML8kDtSNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V3v92yqt; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2254e500a73so2416035ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 15:47:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743634063; x=1744238863; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yVS32r6P7HhM3YCVDZgLF/iwv9cjL6Vhe6YAQ3BUrjk=;
-        b=V3v92yqtaSQbXmV0N/70a06rGIqZq17VPUAkFXujsgN4miVPDn6DTqaVuu+AGQO1N3
-         FrkLnn/B8QGbrQb1+1xL/Bfx/zE5SPufjEvZYmWyFzcrTd7Cxwm5ZDzgm3NLJC0SPQRS
-         0UBYvmZ9uGoa3qRQh5CNjdmOAuIqxJ79Obslle5unQcjW2vpCBdyhEyvNiSdaC8mgdV4
-         MRMpclpPS3jl4gFmqGvsVbfl17NZsO74YQ1ceA2OGU19/8rEQKv1CU7wZMr2K4n5y8vS
-         l59pBIr52wBJGW08Osv332n9xAYLmqDcvwU76u/KZd7683mZW7CfaEr3hv9Onz1JLcE4
-         8y1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743634063; x=1744238863;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yVS32r6P7HhM3YCVDZgLF/iwv9cjL6Vhe6YAQ3BUrjk=;
-        b=sFU4hAurBQgkTZLDmKEmmt10JFsvYSymBeytROtVrZA4EPZxK/AzSBhtc3m9wfl0x4
-         r8ZosVzvlc7qUHAyvyLEVrEdjKryo1oB/obctPTwUOyy1QGcvTmdQOhYBmBtF0vybxOb
-         2y3MStOhrD6rNPtia42y6YSGzmH/nnTw1m2oROQzOxObv7jmg1xhnJd1D/ctScVfw4uH
-         kUST7mtRrH/a4RPO4kFpTeKjK22NjsHV8yIo+lxu1FcfJTV0/+DJgc8THqUZXGNrsAY/
-         Ts9wf9fw5lEJCmS2ieyf5iMi8c2csWTM/uEf6Ct41gbZlANs1PznqvSylnm/s6SomTXD
-         nBmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0C77K70cc+Ksxa9oBbfhA/xU8MALxRw4FOyz8bdWpTwUdlX3V83oN659LcGDkvoX4kcYFC3gtKdQ+WYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm/DykTeTYJmB+sTcmX/Yf6VofY4p7kuguJHMEFYsNrPzSHwFW
-	pCQDSuY8AriUYkKPWzoXCScH2+7jKMNUakW+d3T4VO5Xk+p7PaxAGg3JqBYWHeLRl1p12xaPDx5
-	i8y2QrQ==
-X-Google-Smtp-Source: AGHT+IHAWTDU70xnWeDxi1VwzW8XRkOwWLHCWFL5cxcgsPSayHsP950evCbJDRlL82R6WiS4GzOnS3KCojyx
-X-Received: from plqg24.prod.google.com ([2002:a17:902:9f98:b0:21f:429a:36b5])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d543:b0:225:abd2:5e4b
- with SMTP id d9443c01a7336-2295be65eb7mr120694595ad.16.1743634063547; Wed, 02
- Apr 2025 15:47:43 -0700 (PDT)
-Date: Wed,  2 Apr 2025 15:47:22 -0700
-In-Reply-To: <20250402224722.88740-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75711CBA;
+	Wed,  2 Apr 2025 22:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743634647; cv=fail; b=RxpZKYY5ggyQJbnLfRIcUfthqMNCfXNMYLPBn/hnvQBDuwDqJLug9IqoaexrLETPbmMHcZyLJdhlK6R6R+MnULDTBaVHUKk22biMOKbjKCJDYeksiMIki1jRZuSq0JaVdyyYBwLexAZwoM7Vw2VbzPFT/d0t912JnIxYsxlJrHg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743634647; c=relaxed/simple;
+	bh=/DT5YW4Wk1xcGkNqKDse5InGaXwvOmZ2GDFh7wXomS8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=atUKapg1Q+QnwXvzafYQMUuxVg+4YcNotsSeY5qoiJgExSepM0hTOQ5/91brsfXPaEZ2fRruUOMAHyt08oHcsQP1f4HOco8dBihmOeXhyAHrdxkUWd7BbjMIJPeNJnsgrYweWWGFidZBt6T2/5YL/T6KCjrtnEqkKmK4srhkiTg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3/NRJUYd; arc=fail smtp.client-ip=40.107.94.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x9RioOBh/wWbJqjSuGMfS7RxOIWFmGWTD9TRh1u8mOAmwhi8B5iagSbJgpkGOOE+EKj1qaHNQxgx/lHLnaqMYwpyJE/Vd4x90ffaLnHiUtgwGcSuSLtFd8TD3RqNs3vYVz6S72xPTjKri5qiLiPcOvm3cUuRkzp5aph6mjlsaxLqY8j7L1ZszqMdUc4b5Q2e2WuMcEyEmMLNJmgEcGiMw/mPq3I4BG6Vqz3Zo+V0mt/PtXdHq6xTfFfRCFsmjPjfRHfLhiPNbzeOV5R1mFRXDjONUOFbcIhIN/0NngQmjIn/ehqLYO2dFFvlffYYr73xruiQdh192hTsKCgBSRTNMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eqTdAfEqnyMLqH2MwK4zCO1AXZsV6j3SJXJlGdp+7qQ=;
+ b=Z5jf6xr47TGuyNacxqGZ32HbwYb4ynt2wN9PM/SxWyqixUEPV17jk+eLQQvadeQjZl4OvVmQhlFhAjqWtHNDBxbGRS6GzXLmI3ihSNap/eIesoXM2HhO+zQwFTwldAf9Y9oHf3nOzIdeH0WL/rACrR1jPZXV9X7CXzD5pAFyIUcZuEbHsVqDqxGODQMQr+FhNfa6QlEAz6/WNjzO8f5ia3TOIkvcn51lsGjPA7s4PFF5MVwQockmUvodkhHqCng6/e8XZOkSVnjYP4dzVz/XfjK/2IodVA0nVHWX0HVOB1HL6TEPa1WjGic70bJ3DS3k4b8fV6V8mSaZkZZJQV7T6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eqTdAfEqnyMLqH2MwK4zCO1AXZsV6j3SJXJlGdp+7qQ=;
+ b=3/NRJUYdL3KW8EHXbPFS87v+255uHy1i/0R2CjReXFxNK5FpeN7na6cPulsGQn+dDkiY+64X4JG7VaZ9/G1xZM0PR0qlriGn9pjYVf1gS2HFogZzpirFRIjiqNd+8kAP4w8CHr9AJ+iLI74ppm/Zoo8tpCEuAGVJn95i333tsmo=
+Received: from SA0PR11CA0054.namprd11.prod.outlook.com (2603:10b6:806:d0::29)
+ by DS4PR12MB9561.namprd12.prod.outlook.com (2603:10b6:8:282::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.54; Wed, 2 Apr
+ 2025 22:57:20 +0000
+Received: from SA2PEPF00003AE6.namprd02.prod.outlook.com
+ (2603:10b6:806:d0:cafe::e0) by SA0PR11CA0054.outlook.office365.com
+ (2603:10b6:806:d0::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.26 via Frontend Transport; Wed,
+ 2 Apr 2025 22:57:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003AE6.mail.protection.outlook.com (10.167.248.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8606.22 via Frontend Transport; Wed, 2 Apr 2025 22:57:20 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 2 Apr 2025 17:57:19 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
+	<mario.limonciello@amd.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<benjamin.chan@amd.com>, <bin.du@amd.com>, <grosikop@amd.com>,
+	<king.li@amd.com>, <dantony@amd.com>, Pratap Nirujogi
+	<pratap.nirujogi@amd.com>
+Subject: [PATCH v4] platform/x86: Add AMD ISP platform config for OV05C10
+Date: Wed, 2 Apr 2025 18:56:53 -0400
+Message-ID: <20250402225658.4003616-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250402224722.88740-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250402224722.88740-3-irogers@google.com>
-Subject: [PATCH v7 2/2] perf parse-events: Reapply "Prefer sysfs/JSON hardware
- events over legacy"
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>, Leo Yan <leo.yan@arm.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Atish Patra <atishp@rivosinc.com>
-Cc: Beeman Strong <beeman@rivosinc.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE6:EE_|DS4PR12MB9561:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9f7583e4-807d-4381-b3db-08dd7239b97e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|30052699003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uGFAdHCC+w5k39QKNKtJo2S6fzL/+Ac5Rvx97T3ZJXqv7aWZuUHKJZ5Zywjg?=
+ =?us-ascii?Q?eEBQHcsDUtH38pE4BpVkgyftN1uEYyudmE04R7s5wj+FBmEMtcc3VDwc6KwR?=
+ =?us-ascii?Q?UWB+kAtx9Isj7j6Qdz8pUoM7glVg2DeLF5t/YxLIVCktbO6LJv4e4+sUhIPv?=
+ =?us-ascii?Q?TkeuMHiBi2dw/m0W9p5XD1lnLyzcZiPR9CSVDyGkfWF3G268B3AU/eiIXA+w?=
+ =?us-ascii?Q?WndfvPfd/z05wFR7CrCZPuNZZXqE7WCMlE6FuNOvlIPbpDAU20Pj2rlJy0Bq?=
+ =?us-ascii?Q?IfyeuDNsRy+5pohWvs/ubOPwplzZwW8dVgUOjmUWZNrdGSLawxFhKyzXh2N0?=
+ =?us-ascii?Q?POJdanH2Ko3IA/OBV2GTWmD5VQpUlpfPxK/MA8ReedcF0plRWv7Kombesxrb?=
+ =?us-ascii?Q?AZCnGD6VFO4NQsijyDQItZsOUjJBWG7q44O5vNrP44ezG/ElKsYdyP+kwr6H?=
+ =?us-ascii?Q?MSgRsG3KE4zIt3Hl8iWUysSOK3UkGtcFOXgD8Ev4EKJAZ9pIWhS5ZtzO0taf?=
+ =?us-ascii?Q?YPEgwxd7l4AvACj6UnKTkaPYKbgV+psIayCWWG7wws3G7xlRH1pRA8kraFVE?=
+ =?us-ascii?Q?JIBCdIVe0IOhvQbBtmsb3AXObWZH8erfFdxQHWOXZAKGvbKouTTdUf6h81Jd?=
+ =?us-ascii?Q?kXK9qjnTi0ElSG1l1ako2Ft5yD401dhQG3oslroX2ZISxCB+ARkxxARi5i7Y?=
+ =?us-ascii?Q?CsdwdUISsgiCwregIrEgwDwWygcj1LnvLyApc91JZvHt6Ej72LvTeLzloede?=
+ =?us-ascii?Q?DC8ZwKaPbprVwLPvQtHNDqzTzoZ2LzF328rkBb7XdccG0c6SZWak5ujBX3X6?=
+ =?us-ascii?Q?ZW28bUV1XAIPfAKW3jGMjKv+Rg1dxC3m0UGiKgzkbsMfZrv9+xr501pS4hK0?=
+ =?us-ascii?Q?G9vDVmZNmLbypczNM0mZu5a24fZouFvtlTF286QNnyPBypMa3dPLU1QlkdGN?=
+ =?us-ascii?Q?aVLEaKITtlqfEkasNzg1X2V8nsca+hRJqD7CXGnOjPWQRPP2r1VK4M6BTz6Z?=
+ =?us-ascii?Q?SH1T/p+pWC4I/TAcFRN7Wpff/kJkPmS+yutiRRi/jIf/ym2tq2Z1eD+7GOr6?=
+ =?us-ascii?Q?QJvV90ZwDt8XNXeq7EDHn63oBx+TMTJBBWGuE7a2dUjdMJexbhG7aen29Qsa?=
+ =?us-ascii?Q?Xqk5gGrvPH/VWPFTD5P12+u3L4tKqRJRLxELXsWpxZoxyNEECF/sMcrttLYt?=
+ =?us-ascii?Q?HSmv5On4QY6lnIYvsNUYVDNHmdE7cIt74iU7r+AOEXG3gj8Rz+5f0EZ0XQ5p?=
+ =?us-ascii?Q?3m2BgC1dOjRnn2mxJucnJTzCCogg7f/Mws7owpfpcBJWYw1Ju21l3PCXhuc8?=
+ =?us-ascii?Q?q+mIK1XpcbVaBjB57l35+D9JW1Z7mVG5shM8RFi/6ekQU+hkD7jM/aoTBoM+?=
+ =?us-ascii?Q?wMFkWyqgS7TdQFKPK4YJGEEmFwU6qzXY7S9+oMblqXnfxUP3a9ZOFmCFiL6s?=
+ =?us-ascii?Q?ZpXPLxd3Ks5/QE+7hxKmdTBWVavqj9L2DQWJnNAyd5CO3KpvkKVK7xcw3bL2?=
+ =?us-ascii?Q?oK9Evexutfrmcu4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(30052699003)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2025 22:57:20.6644
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f7583e4-807d-4381-b3db-08dd7239b97e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AE6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9561
 
-Originally posted and merged from:
-https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-This reverts commit 4f1b067359ac8364cdb7f9fda41085fa85789d0f although
-the patch is now smaller due to related fixes being applied in commit
-22a4db3c3603 ("perf evsel: Add alternate_hw_config and use in
-evsel__match").
-The original commit message was:
+ISP device specific configuration is not available in ACPI. Add
+swnode graph to configure the missing device properties for the
+OV05C10 camera device supported on amdisp platform.
 
-It was requested that RISC-V be able to add events to the perf tool so
-the PMU driver didn't need to map legacy events to config encodings:
-https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
+Add support to create i2c-client dynamically when amdisp i2c
+adapter is available.
 
-This change makes the priority of events specified without a PMU the
-same as those specified with a PMU, namely sysfs and JSON events are
-checked first before using the legacy encoding.
-
-The hw_term is made more generic as a hardware_event that encodes a
-pair of string and int value, allowing parse_events_multi_pmu_add to
-fall back on a known encoding when the sysfs/JSON adding fails for
-core events. As this covers PE_VALUE_SYM_HW, that token is removed and
-related code simplified.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Tested-by: Atish Patra <atishp@rivosinc.com>
-Tested-by: James Clark <james.clark@linaro.org>
-Tested-by: Leo Yan <leo.yan@arm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Beeman Strong <beeman@rivosinc.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+Signed-off-by: Benjamin Chan <benjamin.chan@amd.com>
 ---
- tools/perf/util/parse-events.c | 27 +++++++++---
- tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
- tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
- 3 files changed, 99 insertions(+), 64 deletions(-)
+Changes v3 -> v4:
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 5152fd5a6ead..f4236570aa4c 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1551,8 +1551,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 	struct list_head *list = NULL;
- 	struct perf_pmu *pmu = NULL;
- 	YYLTYPE *loc = loc_;
--	int ok = 0;
--	const char *config;
-+	int ok = 0, core_ok = 0;
-+	const char *tmp;
- 	struct parse_events_terms parsed_terms;
+* Updated AMD_ISP_PLATFORM as tristate driver
+
+* Removed initialize_ov05c10_swnode_props() and release_amdisp_swnode_props(). Its
+because page fault errors observed on accessing the variables in __initconst section
+when the driver is loaded as module instead of feature-builtin. To fix the issue moved
+all property_entry vairables outside __initconst section and also skipped
+initialize_ov05c10_swnode_props() and release_amdisp_swnode_props() as they are no longer
+required.
+
+* Address review comments.
+
+ drivers/platform/x86/amd/Kconfig    |  11 ++
+ drivers/platform/x86/amd/Makefile   |   1 +
+ drivers/platform/x86/amd/amd_isp4.c | 297 ++++++++++++++++++++++++++++
+ 3 files changed, 309 insertions(+)
+ create mode 100644 drivers/platform/x86/amd/amd_isp4.c
+
+diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/amd/Kconfig
+index c3e086ea64fc..0281c4286619 100644
+--- a/drivers/platform/x86/amd/Kconfig
++++ b/drivers/platform/x86/amd/Kconfig
+@@ -32,3 +32,14 @@ config AMD_WBRF
  
- 	*listp = NULL;
-@@ -1565,15 +1565,15 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			return ret;
- 	}
- 
--	config = strdup(event_name);
--	if (!config)
-+	tmp = strdup(event_name);
-+	if (!tmp)
- 		goto out_err;
- 
- 	if (parse_events_term__num(&term,
- 				   PARSE_EVENTS__TERM_TYPE_USER,
--				   config, /*num=*/1, /*novalue=*/true,
-+				   tmp, /*num=*/1, /*novalue=*/true,
- 				   loc, /*loc_val=*/NULL) < 0) {
--		zfree(&config);
-+		zfree(&tmp);
- 		goto out_err;
- 	}
- 	list_add_tail(&term->list, &parsed_terms.terms);
-@@ -1604,6 +1604,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			pr_debug("%s -> %s/%s/\n", event_name, pmu->name, sb.buf);
- 			strbuf_release(&sb);
- 			ok++;
-+			if (pmu->is_core)
-+				core_ok++;
- 		}
- 	}
- 
-@@ -1617,9 +1619,22 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			pr_debug("%s -> fake/%s/\n", event_name, sb.buf);
- 			strbuf_release(&sb);
- 			ok++;
-+			core_ok++;
- 		}
- 	}
- 
-+	if (hw_config != PERF_COUNT_HW_MAX && !core_ok) {
-+		/*
-+		 * The event wasn't found on core PMUs but it has a hardware
-+		 * config version to try.
-+		 */
-+		if (!parse_events_add_numeric(parse_state, list,
-+						PERF_TYPE_HARDWARE, hw_config,
-+						const_parsed_terms,
-+						/*wildcard=*/true))
-+			ok++;
+ 	  This mechanism will only be activated on platforms that advertise a
+ 	  need for it.
++
++config AMD_ISP_PLATFORM
++	tristate "AMD platform with ISP4 that supports Camera sensor device"
++	depends on I2C && X86_64 && ACPI && AMD_ISP4
++	help
++	  For AMD platform that support Image signal processor generation 4, it
++	  is necessary to add platform specific camera sensor module board info
++	  which includes the sensor driver device id and the i2c address.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called amd_isp4.
+diff --git a/drivers/platform/x86/amd/Makefile b/drivers/platform/x86/amd/Makefile
+index c6c40bdcbded..b0e284b5d497 100644
+--- a/drivers/platform/x86/amd/Makefile
++++ b/drivers/platform/x86/amd/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_AMD_PMC)		+= pmc/
+ obj-$(CONFIG_AMD_HSMP)		+= hsmp/
+ obj-$(CONFIG_AMD_PMF)		+= pmf/
+ obj-$(CONFIG_AMD_WBRF)		+= wbrf.o
++obj-$(CONFIG_AMD_ISP_PLATFORM)	+= amd_isp4.o
+diff --git a/drivers/platform/x86/amd/amd_isp4.c b/drivers/platform/x86/amd/amd_isp4.c
+new file mode 100644
+index 000000000000..0b52042d92ce
+--- /dev/null
++++ b/drivers/platform/x86/amd/amd_isp4.c
+@@ -0,0 +1,297 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AMD ISP platform driver for sensor i2-client instantiation
++ *
++ * Copyright 2025 Advanced Micro Devices, Inc.
++ */
++
++#include <linux/acpi.h>
++#include <linux/device/bus.h>
++#include <linux/dmi.h>
++#include <linux/gpio/machine.h>
++#include <linux/init.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/property.h>
++#include <linux/units.h>
++
++#define AMDISP_OV05C10_I2C_ADDR		0x10
++#define AMDISP_OV05C10_PLAT_NAME	"amdisp_ov05c10_platform"
++#define AMDISP_OV05C10_HID		"OMNI5C10"
++#define AMDISP_OV05C10_REMOTE_EP_NAME	"ov05c10_isp_4_1_1"
++#define AMD_ISP_PLAT_DRV_NAME		"amd-isp4"
++
++/*
++ * AMD ISP platform definition to configure the device properties
++ * missing in the ACPI table.
++ */
++struct amdisp_platform {
++	const char *name;
++	u8 i2c_addr;
++	u8 max_num_swnodes;
++	struct i2c_board_info board_info;
++	struct i2c_client *i2c_dev;
++	struct software_node **swnodes;
++};
++
++static struct amdisp_platform *ov05c10_amdisp;
++
++/* Top-level OV05C10 camera node property table */
++static const struct property_entry ov05c10_camera_props[] = {
++	PROPERTY_ENTRY_U32("clock-frequency", 24 * HZ_PER_MHZ),
++	{ }
++};
++
++/* Root AMD ISP OV05C10 camera node definition */
++static const struct software_node camera_node = {
++	.name = AMDISP_OV05C10_HID,
++	.properties = ov05c10_camera_props,
++};
++
++/*
++ * AMD ISP OV05C10 Ports node definition. No properties defined for
++ * ports node for OV05C10.
++ */
++static const struct software_node ports = {
++	.name = "ports",
++	.parent = &camera_node,
++};
++
++/*
++ * AMD ISP OV05C10 Port node definition. No properties defined for
++ * port node for OV05C10.
++ */
++static const struct software_node port_node = {
++	.name = "port@",
++	.parent = &ports,
++};
++
++/*
++ * Remote endpoint AMD ISP node definition. No properties defined for
++ * remote endpoint node for OV05C10.
++ */
++static const struct software_node remote_ep_isp_node = {
++	.name = AMDISP_OV05C10_REMOTE_EP_NAME,
++};
++
++/*
++ * Remote endpoint reference for isp node included in the
++ * OV05C10 endpoint.
++ */
++static const struct software_node_ref_args ov05c10_refs[] = {
++	SOFTWARE_NODE_REFERENCE(&remote_ep_isp_node),
++};
++
++/* OV05C supports one single link frequency */
++static const u64 ov05c10_link_freqs[] = {
++	925 * HZ_PER_MHZ,
++};
++
++/* OV05C supports only 2-lane configuration */
++static const u32 ov05c10_data_lanes[] = {
++	1,
++	2,
++};
++
++/* OV05C10 endpoint node properties table */
++static const struct property_entry ov05c10_endpoint_props[] = {
++	PROPERTY_ENTRY_U32("bus-type", 4),
++	PROPERTY_ENTRY_U32_ARRAY_LEN("data-lanes", ov05c10_data_lanes,
++				     ARRAY_SIZE(ov05c10_data_lanes)),
++	PROPERTY_ENTRY_U64_ARRAY_LEN("link-frequencies", ov05c10_link_freqs,
++				     ARRAY_SIZE(ov05c10_link_freqs)),
++	PROPERTY_ENTRY_REF_ARRAY("remote-endpoint", ov05c10_refs),
++	{ }
++};
++
++/* AMD ISP endpoint node definition */
++static const struct software_node endpoint_node = {
++	.name = "endpoint",
++	.parent = &port_node,
++	.properties = ov05c10_endpoint_props,
++};
++
++/*
++ * AMD ISP swnode graph uses 5 nodes and also its relationship is
++ * fixed to align with the structure that v4l2 expects for successful
++ * endpoint fwnode parsing.
++ *
++ * It is only the node property_entries that will vary for each platform
++ * supporting different sensor modules.
++ */
++#define NUM_SW_NODES 5
++
++static const struct software_node *ov05c10_nodes[NUM_SW_NODES + 1] = {
++	&camera_node,
++	&ports,
++	&port_node,
++	&endpoint_node,
++	&remote_ep_isp_node,
++	NULL
++};
++
++/* OV05C10 specific AMD ISP platform configuration */
++static const struct amdisp_platform amdisp_ov05c10_platform_config = {
++	.name = AMDISP_OV05C10_PLAT_NAME,
++	.board_info = {
++		.dev_name = "ov05c10",
++		I2C_BOARD_INFO("ov05c10", AMDISP_OV05C10_I2C_ADDR),
++	},
++	.i2c_addr = AMDISP_OV05C10_I2C_ADDR,
++	.max_num_swnodes = NUM_SW_NODES,
++	.swnodes = (struct software_node **)ov05c10_nodes,
++};
++
++static const struct acpi_device_id amdisp_sensor_ids[] = {
++	{ AMDISP_OV05C10_HID },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, amdisp_sensor_ids);
++
++static bool is_isp_i2c_adapter(struct i2c_adapter *adap)
++{
++	return !strcmp(adap->owner->name, "i2c_designware_amdisp");
++}
++
++static void instantiate_isp_i2c_client(struct i2c_adapter *adap)
++{
++	struct i2c_board_info *info = &ov05c10_amdisp->board_info;
++	struct i2c_client *i2c_dev = ov05c10_amdisp->i2c_dev;
++
++	if (i2c_dev)
++		return;
++
++	if (!info->addr) {
++		dev_err(&adap->dev, "invalid i2c_addr 0x%x detected\n",
++			ov05c10_amdisp->i2c_addr);
++		return;
 +	}
 +
- out_err:
- 	parse_events_terms__exit(&parsed_terms);
- 	if (ok)
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 7ed86e3e34e3..324b7dc8a0d3 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -117,12 +117,12 @@ do {								\
- 	yyless(0);						\
- } while (0)
- 
--static int sym(yyscan_t scanner, int type, int config)
-+static int sym(yyscan_t scanner, int config)
- {
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 
--	yylval->num = (type << 16) + config;
--	return type == PERF_TYPE_HARDWARE ? PE_VALUE_SYM_HW : PE_VALUE_SYM_SW;
-+	yylval->num = config;
-+	return PE_VALUE_SYM_SW;
- }
- 
- static int term(yyscan_t scanner, enum parse_events__term_type type)
-@@ -133,13 +133,13 @@ static int term(yyscan_t scanner, enum parse_events__term_type type)
- 	return PE_TERM;
- }
- 
--static int hw_term(yyscan_t scanner, int config)
-+static int hw(yyscan_t scanner, int config)
- {
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 	char *text = parse_events_get_text(scanner);
- 
--	yylval->hardware_term.str = strdup(text);
--	yylval->hardware_term.num = PERF_TYPE_HARDWARE + config;
-+	yylval->hardware_event.str = strdup(text);
-+	yylval->hardware_event.num = config;
- 	return PE_TERM_HW;
- }
- 
-@@ -335,16 +335,16 @@ aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
- aux-action		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_ACTION); }
- aux-sample-size		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE); }
- metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
--cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return hw_term(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
-+cpu-cycles|cycles				{ return hw(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
-+stalled-cycles-frontend|idle-cycles-frontend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-+stalled-cycles-backend|idle-cycles-backend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-+instructions					{ return hw(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
-+cache-references				{ return hw(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
-+cache-misses					{ return hw(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
-+branch-instructions|branches			{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
-+branch-misses					{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
-+bus-cycles					{ return hw(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
-+ref-cycles					{ return hw(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
- r{num_raw_hex}		{ return str(yyscanner, PE_RAW); }
- r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- ,			{ return ','; }
-@@ -390,28 +390,28 @@ r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- <<EOF>>			{ BEGIN(INITIAL); }
- }
- 
--cpu-cycles|cycles				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_REF_CPU_CYCLES); }
--cpu-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_CLOCK); }
--task-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_TASK_CLOCK); }
--page-faults|faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS); }
--minor-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MIN); }
--major-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MAJ); }
--context-switches|cs				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES); }
--cpu-migrations|migrations			{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS); }
--alignment-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_ALIGNMENT_FAULTS); }
--emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EMULATION_FAULTS); }
--dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
--bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
--cgroup-switches					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CGROUP_SWITCHES); }
-+cpu-cycles|cycles				{ return hw(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
-+stalled-cycles-frontend|idle-cycles-frontend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-+stalled-cycles-backend|idle-cycles-backend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-+instructions					{ return hw(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
-+cache-references				{ return hw(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
-+cache-misses					{ return hw(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
-+branch-instructions|branches			{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
-+branch-misses					{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
-+bus-cycles					{ return hw(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
-+ref-cycles					{ return hw(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
-+cpu-clock					{ return sym(yyscanner, PERF_COUNT_SW_CPU_CLOCK); }
-+task-clock					{ return sym(yyscanner, PERF_COUNT_SW_TASK_CLOCK); }
-+page-faults|faults				{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS); }
-+minor-faults					{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS_MIN); }
-+major-faults					{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS_MAJ); }
-+context-switches|cs				{ return sym(yyscanner, PERF_COUNT_SW_CONTEXT_SWITCHES); }
-+cpu-migrations|migrations			{ return sym(yyscanner, PERF_COUNT_SW_CPU_MIGRATIONS); }
-+alignment-faults				{ return sym(yyscanner, PERF_COUNT_SW_ALIGNMENT_FAULTS); }
-+emulation-faults				{ return sym(yyscanner, PERF_COUNT_SW_EMULATION_FAULTS); }
-+dummy						{ return sym(yyscanner, PERF_COUNT_SW_DUMMY); }
-+bpf-output					{ return sym(yyscanner, PERF_COUNT_SW_BPF_OUTPUT); }
-+cgroup-switches					{ return sym(yyscanner, PERF_COUNT_SW_CGROUP_SWITCHES); }
- 
- {lc_type}			{ return str(yyscanner, PE_LEGACY_CACHE); }
- {lc_type}-{lc_op_result}	{ return str(yyscanner, PE_LEGACY_CACHE); }
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index f888cbb076d6..d2ef1890007e 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -55,7 +55,7 @@ static void free_list_evsel(struct list_head* list_evsel)
- %}
- 
- %token PE_START_EVENTS PE_START_TERMS
--%token PE_VALUE PE_VALUE_SYM_HW PE_VALUE_SYM_SW PE_TERM
-+%token PE_VALUE PE_VALUE_SYM_SW PE_TERM
- %token PE_EVENT_NAME
- %token PE_RAW PE_NAME
- %token PE_MODIFIER_EVENT PE_MODIFIER_BP PE_BP_COLON PE_BP_SLASH
-@@ -65,11 +65,9 @@ static void free_list_evsel(struct list_head* list_evsel)
- %token PE_DRV_CFG_TERM
- %token PE_TERM_HW
- %type <num> PE_VALUE
--%type <num> PE_VALUE_SYM_HW
- %type <num> PE_VALUE_SYM_SW
- %type <mod> PE_MODIFIER_EVENT
- %type <term_type> PE_TERM
--%type <num> value_sym
- %type <str> PE_RAW
- %type <str> PE_NAME
- %type <str> PE_LEGACY_CACHE
-@@ -85,6 +83,7 @@ static void free_list_evsel(struct list_head* list_evsel)
- %type <list_terms> opt_pmu_config
- %destructor { parse_events_terms__delete ($$); } <list_terms>
- %type <list_evsel> event_pmu
-+%type <list_evsel> event_legacy_hardware
- %type <list_evsel> event_legacy_symbol
- %type <list_evsel> event_legacy_cache
- %type <list_evsel> event_legacy_mem
-@@ -102,8 +101,8 @@ static void free_list_evsel(struct list_head* list_evsel)
- %destructor { free_list_evsel ($$); } <list_evsel>
- %type <tracepoint_name> tracepoint_name
- %destructor { free ($$.sys); free ($$.event); } <tracepoint_name>
--%type <hardware_term> PE_TERM_HW
--%destructor { free ($$.str); } <hardware_term>
-+%type <hardware_event> PE_TERM_HW
-+%destructor { free ($$.str); } <hardware_event>
- 
- %union
- {
-@@ -118,10 +117,10 @@ static void free_list_evsel(struct list_head* list_evsel)
- 		char *sys;
- 		char *event;
- 	} tracepoint_name;
--	struct hardware_term {
-+	struct hardware_event {
- 		char *str;
- 		u64 num;
--	} hardware_term;
-+	} hardware_event;
- }
- %%
- 
-@@ -264,6 +263,7 @@ PE_EVENT_NAME event_def
- event_def
- 
- event_def: event_pmu |
-+	   event_legacy_hardware |
- 	   event_legacy_symbol |
- 	   event_legacy_cache sep_dc |
- 	   event_legacy_mem sep_dc |
-@@ -306,24 +306,45 @@ PE_NAME sep_dc
- 	$$ = list;
- }
- 
--value_sym:
--PE_VALUE_SYM_HW
-+event_legacy_hardware:
-+PE_TERM_HW opt_pmu_config
-+{
-+	/* List of created evsels. */
-+	struct list_head *list = NULL;
-+	int err = parse_events_multi_pmu_add(_parse_state, $1.str, $1.num, $2, &list, &@1);
-+
-+	free($1.str);
-+	parse_events_terms__delete($2);
-+	if (err)
-+		PE_ABORT(err);
-+
-+	$$ = list;
++	i2c_dev = i2c_new_client_device(adap, info);
++	if (IS_ERR(i2c_dev)) {
++		dev_err(&adap->dev, "error %pe registering isp i2c_client\n",
++			i2c_dev);
++		i2c_dev = NULL;
++	} else {
++		dev_dbg(&adap->dev, "registered amdisp i2c_client on address 0x%02x\n",
++			info->addr);
++	}
++	i2c_put_adapter(adap);
 +}
- |
--PE_VALUE_SYM_SW
-+PE_TERM_HW sep_dc
-+{
-+	struct list_head *list;
-+	int err;
 +
-+	err = parse_events_multi_pmu_add(_parse_state, $1.str, $1.num, NULL, &list, &@1);
-+	free($1.str);
-+	if (err)
-+		PE_ABORT(err);
-+	$$ = list;
++static int isp_i2c_bus_notify(struct notifier_block *nb,
++			      unsigned long action, void *data)
++{
++	struct device *dev = data;
++	struct i2c_client *client;
++	struct i2c_adapter *adap;
++	struct i2c_client *i2c_dev = ov05c10_amdisp->i2c_dev;
++
++	switch (action) {
++	case BUS_NOTIFY_ADD_DEVICE:
++		adap = i2c_verify_adapter(dev);
++		if (!adap)
++			break;
++		if (is_isp_i2c_adapter(adap))
++			instantiate_isp_i2c_client(adap);
++		break;
++	case BUS_NOTIFY_REMOVED_DEVICE:
++		client = i2c_verify_client(dev);
++		if (!client)
++			break;
++		if (i2c_dev == client) {
++			dev_dbg(&client->adapter->dev, "amdisp i2c_client removed\n");
++			i2c_dev = NULL;
++		}
++		break;
++	default:
++		break;
++	}
++
++	return NOTIFY_DONE;
 +}
- 
- event_legacy_symbol:
--value_sym '/' event_config '/'
-+PE_VALUE_SYM_SW '/' event_config '/'
- {
- 	struct list_head *list;
--	int type = $1 >> 16;
--	int config = $1 & 255;
- 	int err;
--	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
- 
- 	list = alloc_list();
- 	if (!list)
- 		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list, type, config, $3, wildcard);
-+	err = parse_events_add_numeric(_parse_state, list,
-+				/*type=*/PERF_TYPE_SOFTWARE, /*config=*/$1,
-+				$3, /*wildcard=*/false);
- 	parse_events_terms__delete($3);
- 	if (err) {
- 		free_list_evsel(list);
-@@ -332,18 +353,17 @@ value_sym '/' event_config '/'
- 	$$ = list;
- }
- |
--value_sym sep_slash_slash_dc
-+PE_VALUE_SYM_SW sep_slash_slash_dc
- {
- 	struct list_head *list;
--	int type = $1 >> 16;
--	int config = $1 & 255;
--	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
- 	int err;
- 
- 	list = alloc_list();
- 	if (!list)
- 		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list, type, config, /*head_config=*/NULL, wildcard);
-+	err = parse_events_add_numeric(_parse_state, list,
-+				/*type=*/PERF_TYPE_SOFTWARE, /*config=*/$1,
-+				/*head_config=*/NULL, /*wildcard=*/false);
- 	if (err)
- 		PE_ABORT(err);
- 	$$ = list;
++
++static struct notifier_block isp_i2c_nb = { .notifier_call = isp_i2c_bus_notify };
++
++static struct amdisp_platform *prepare_amdisp_platform(const struct amdisp_platform *src)
++{
++	struct amdisp_platform *isp_ov05c10;
++	const struct software_node **sw_nodes;
++	const struct software_node *sw_node;
++	struct i2c_board_info *info;
++	int ret;
++
++	isp_ov05c10 = kmemdup(src, sizeof(*isp_ov05c10), GFP_KERNEL);
++	if (!isp_ov05c10)
++		return ERR_PTR(-ENOMEM);
++
++	info = &isp_ov05c10->board_info;
++
++	sw_nodes = (const struct software_node **)src->swnodes;
++	ret = software_node_register_node_group(sw_nodes);
++	if (ret)
++		goto error_unregister_sw_node;
++
++	sw_node = (const struct software_node *)src->swnodes[0];
++	info->fwnode = software_node_fwnode(sw_node);
++	if (IS_ERR(info->fwnode)) {
++		ret = PTR_ERR(info->fwnode);
++		goto error_unregister_sw_node;
++	}
++
++	return isp_ov05c10;
++
++error_unregister_sw_node:
++	software_node_unregister_node_group(sw_nodes);
++	kfree(isp_ov05c10);
++	return ERR_PTR(ret);
++}
++
++static int amd_isp_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ov05c10_amdisp = prepare_amdisp_platform(&amdisp_ov05c10_platform_config);
++	if (IS_ERR(ov05c10_amdisp)) {
++		return dev_err_probe(&pdev->dev, PTR_ERR(ov05c10_amdisp),
++				     "failed to prepare amdisp platform fw node\n");
++	}
++
++	ret = bus_register_notifier(&i2c_bus_type, &isp_i2c_nb);
++	if (ret)
++		goto error_free_platform;
++
++	return ret;
++
++error_free_platform:
++	kfree(ov05c10_amdisp);
++	return ret;
++}
++
++static void amd_isp_remove(struct platform_device *pdev)
++{
++	bus_unregister_notifier(&i2c_bus_type, &isp_i2c_nb);
++	i2c_unregister_device(ov05c10_amdisp->i2c_dev);
++	software_node_unregister_node_group((const struct software_node **)
++					    ov05c10_amdisp->swnodes);
++	kfree(ov05c10_amdisp);
++}
++
++static struct platform_driver amd_isp_platform_driver = {
++	.driver	= {
++		.name			= AMD_ISP_PLAT_DRV_NAME,
++		.acpi_match_table	= amdisp_sensor_ids,
++	},
++	.probe	= amd_isp_probe,
++	.remove	= amd_isp_remove,
++};
++
++module_platform_driver(amd_isp_platform_driver);
++
++MODULE_AUTHOR("Benjamin Chan <benjamin.chan@amd.com>");
++MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
++MODULE_DESCRIPTION("AMD ISP4 Platform Driver");
++MODULE_LICENSE("GPL");
 -- 
-2.49.0.504.g3bcea36a83-goog
+2.43.0
 
 
