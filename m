@@ -1,158 +1,164 @@
-Return-Path: <linux-kernel+bounces-585154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6117EA7903B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D068DA7901B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91AC31896100
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F4318886EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED5C23E33D;
-	Wed,  2 Apr 2025 13:46:11 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2D323A9B0;
+	Wed,  2 Apr 2025 13:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DNQjBjHv"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B33923AE84;
-	Wed,  2 Apr 2025 13:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC14C201271;
+	Wed,  2 Apr 2025 13:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743601570; cv=none; b=M463ZppCeF7HCkjS9M3y5SInUusWWImOlLa3IeUag1o/IeJvSYT2hZ4WB0ltRdmI3RSfWDS1ZDqxOunTFRZYu+NshKMa1PGBxYyUkVQIhqsvFc+3Ma3I96ftvYLNW7RxCWHIPLds0g3b0XJ8LhV1xHf3/KXkF+Gy/hej2NVgV5s=
+	t=1743601315; cv=none; b=HNZVeEt5i77z0QXt163mmiGlHBQgk3sPGS3bUerq6KwDQ8ClQ0xE4/rO2EWDjbtvgDfLKaGMxykP2jsfgz/GenBUyrmCfAkVonbKAVRVCD9PjGsDLyIcGbs7rxrfEvrC7H9RRUAdmR9HMajzTVFCydqtvPNlTrhBQwyo2zTK2Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743601570; c=relaxed/simple;
-	bh=ZT64E9vDOl3T0E1t51JkFyLP1D+hI/J8QvK0uSQWAdI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aHnNHD1uH3leDatQbkXQGdv4yGqhAfz7fiVHslx9wYuk0O/dUYTvkTDmtGfPzB3H9R22A6zDutHusnK+BnmEFW4SiJbNtLmgHFJ2JCEaGKq+csbnPPoK5yi5hvRMmsei+BeHLLXzY8S0IJ7go3buYRvRVcbOiQWoCVgnA0RUCDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZSQzS3RGSzHrDr;
-	Wed,  2 Apr 2025 21:42:44 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D69DE140360;
-	Wed,  2 Apr 2025 21:46:04 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 2 Apr 2025 21:46:04 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH net 7/7] net: hibmcge: fix multiple phy_stop() issue
-Date: Wed, 2 Apr 2025 21:39:05 +0800
-Message-ID: <20250402133905.895421-8-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250402133905.895421-1-shaojijie@huawei.com>
-References: <20250402133905.895421-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1743601315; c=relaxed/simple;
+	bh=RlUxE1BH6NTHyg/TNSVKth95REvW2dDq2+0GHexae5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bPZfvZqsmz9Vbn2YduJbTgfyESM9pkbRUqoftiwx7MToCpnHqs20lFKCfRUdgFWL5rHNJQHbMX3aixEXHPn9F5wrdNL14PJPUYfwY4OMDF0W4jAZyWfg5+wAt+RpDuLr0Z+kyGIswpt/86UqvyYAQgctYa+qgxaTStQdXmN8tnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DNQjBjHv; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532CcSaj008047;
+	Wed, 2 Apr 2025 15:41:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	UapWujuoCP1cmnh3Upr64ky5/xFIxLVPaPTaREX+7jU=; b=DNQjBjHv8fS2U7sE
+	fL/D3IDpFNX/FZdmjz1c9hWqgwdJ6mac1u89V/4hPOaxNtbbf3PGwH6YqwNUhcST
+	K6YcngG74K/boLFf4ndBnWT6lgYe3Io852JBeUSBUuvNYxBD9L5WkvTo8zE/F7Hf
+	2/7mLiRzaGHiG/LPs+ggWMIKMTAb1zYillZfcfHIPfk4nc0wAGnVQ/30Yz/Q/cnl
+	lbGfZz20Uk4BM6bznGNtAzoEopWCkkz/V0mKqHbyUeRdij4YuiMaOJnndiGjE40/
+	vruiu52+k4FlgdP8HeFddG+/FGfQx8Xe0cvpLkOPFaOfrRznU4FiNLkblEU6sbTh
+	4OtPog==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45p9363dvc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 15:41:36 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CE8B540048;
+	Wed,  2 Apr 2025 15:40:43 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 567B083BD66;
+	Wed,  2 Apr 2025 15:40:01 +0200 (CEST)
+Received: from [10.252.30.87] (10.252.30.87) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Apr
+ 2025 15:40:00 +0200
+Message-ID: <58e6a6a1-7f7c-4232-a212-59850ab03a41@foss.st.com>
+Date: Wed, 2 Apr 2025 15:39:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: Add ST VD55G1 camera sensor
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250401-b4-vd55g1-v2-0-0c8ab8a48c55@foss.st.com>
+ <20250401-b4-vd55g1-v2-1-0c8ab8a48c55@foss.st.com>
+ <20250402-curvy-seriema-of-blizzard-b1c4d9@krzk-bin>
+ <228ddf41-e1d0-4d06-9e0e-9e0dad841688@foss.st.com>
+ <fd874f4d-d68c-4443-8bb6-115246f4407b@kernel.org>
+ <a0c62797-3c4c-453c-938b-d43666f3b264@foss.st.com>
+ <7d501bf2-a017-4c02-a96f-184a7d648b6a@foss.st.com>
+ <9f128ce9-6a26-435c-b133-0da80120de2d@kernel.org>
+ <20250402124605.GB13181@pendragon.ideasonboard.com>
+ <6f832ce4-03d3-46bc-afcc-86983b2ec47a@kernel.org>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <6f832ce4-03d3-46bc-afcc-86983b2ec47a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_05,2025-04-02_02,2024-11-22_01
 
-After detecting the np_link_fail exception,
-the driver attempts to fix the exception by
-using phy_stop() and phy_start() in the scheduled task.
 
-However, hbg_fix_np_link_fail() and .ndo_stop()
-may be concurrently executed. As a result,
-phy_stop() is executed twice, and the following Calltrace occurs:
 
- hibmcge 0000:84:00.2 enp132s0f2: Link is Down
- hibmcge 0000:84:00.2: failed to link between MAC and PHY, try to fix...
- ------------[ cut here ]------------
- called from state HALTED
- WARNING: CPU: 71 PID: 23391 at drivers/net/phy/phy.c:1503 phy_stop...
- ...
- pc : phy_stop+0x138/0x180
- lr : phy_stop+0x138/0x180
- sp : ffff8000c76bbd40
- x29: ffff8000c76bbd40 x28: 0000000000000000 x27: 0000000000000000
- x26: ffff2020047358c0 x25: ffff202004735940 x24: ffff20200000e405
- x23: ffff2020060e5178 x22: ffff2020060e4000 x21: ffff2020060e49c0
- x20: ffff2020060e5170 x19: ffff20202538e000 x18: 0000000000000020
- x17: 0000000000000000 x16: ffffcede02e28f40 x15: ffffffffffffffff
- x14: 0000000000000000 x13: 205d313933333254 x12: 5b5d393430303233
- x11: ffffcede04555958 x10: ffffcede04495918 x9 : ffffcede0274fee0
- x8 : 00000000000bffe8 x7 : c0000000ffff7fff x6 : 0000000000000001
- x5 : 00000000002bffa8 x4 : 0000000000000000 x3 : 0000000000000000
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff20202e429480
- Call trace:
-  phy_stop+0x138/0x180
-  hbg_fix_np_link_fail+0x4c/0x90 [hibmcge]
-  hbg_service_task+0xfc/0x148 [hibmcge]
-  process_one_work+0x180/0x398
-  worker_thread+0x210/0x328
-  kthread+0xe0/0xf0
-  ret_from_fork+0x10/0x20
- ---[ end trace 0000000000000000 ]---
+On 4/2/25 14:55, Krzysztof Kozlowski wrote:
+> On 02/04/2025 14:46, Laurent Pinchart wrote:
+>> On Wed, Apr 02, 2025 at 12:27:08PM +0200, Krzysztof Kozlowski wrote:
+>>> On 02/04/2025 11:41, Benjamin Mugnier wrote:
+>>>> On 4/2/25 11:38, Benjamin Mugnier wrote:
+>>>>> On 4/2/25 11:11, Krzysztof Kozlowski wrote:
+>>>>>> On 02/04/2025 10:34, Benjamin Mugnier wrote:
+>>>>>>> Hi Krzysztof,
+>>>>>>>
+>>>>>>> On 4/2/25 09:08, Krzysztof Kozlowski wrote:
+>>>>>>>> On Tue, Apr 01, 2025 at 01:05:58PM +0200, Benjamin Mugnier wrote:
+>>>>>>>>> +    properties:
+>>>>>>>>> +      endpoint:
+>>>>>>>>> +        $ref: /schemas/media/video-interfaces.yaml#
+>>>>>>>>> +        unevaluatedProperties: false
+>>>>>>>>> +
+>>>>>>>>> +        properties:
+>>>>>>>>> +          data-lanes:
+>>>>>>>>> +            items:
+>>>>>>>>> +              const: 1
+>>>>>>>>
+>>>>>>>> Not what I asked. Now you miss number of items. Just use the syntax I
+>>>>>>>> proposed. Or was there any issue with it?
+>>>>>>>
+>>>>>>> No issue I just misunderstood and thought const: 1 was impliying
+>>>>>>> maxItems: 1. I'll add maxItems back.
+>>>>>>
+>>>>>> That's just longer way to express what I asked for. So I repeat the
+>>>>>> question: why not using the syntax I asked for?
+>>>>>
+>>>>> I guess I didn't understand what you asked for.
+>>>>> May I ask you to write it ? That will help me a lot.
+>>>>
+>>>> By 'it' I mean the binding.
+>>>
+>>> I wrote it last time. I don't think that copying the same here would
+>>> change anything. If I can look at v1, you can do as well.
+>>
+>> Reading your comment on v1, I would have come up with the exact same
+>> result as Benjamin's v2. I can't figure out what alternative description
+>> you meant.
+> What do you mean by description? I pasted code. The *exact* code to use.
+> Benjamin used different code. Two times I asked why you cannot use the
+> code I pasted. Still no answer.
 
-This patch adds the rtnl_lock to hbg_fix_np_link_fail()
-to ensure that other operations are not performed concurrently.
-In addition, np_link_fail exception can be fixed
-only when the PHY is link.
+I'm sorry, thanks to the help over #linux-media we realized I missed the
+'-' before const. I'm not very knowledgeable in device tree binding syntax.
+I'll push a v4 with that.
 
-Fixes: e0306637e85d ("net: hibmcge: Add support for mac link exception handling feature")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> Best regards,
+> Krzysztof
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-index f29a937ad087..42b0083c9193 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-@@ -2,6 +2,7 @@
- // Copyright (c) 2024 Hisilicon Limited.
- 
- #include <linux/phy.h>
-+#include <linux/rtnetlink.h>
- #include "hbg_common.h"
- #include "hbg_hw.h"
- #include "hbg_mdio.h"
-@@ -133,12 +134,17 @@ void hbg_fix_np_link_fail(struct hbg_priv *priv)
- {
- 	struct device *dev = &priv->pdev->dev;
- 
-+	rtnl_lock();
-+
- 	if (priv->stats.np_link_fail_cnt >= HBG_NP_LINK_FAIL_RETRY_TIMES) {
- 		dev_err(dev, "failed to fix the MAC link status\n");
- 		priv->stats.np_link_fail_cnt = 0;
--		return;
-+		goto unlock;
- 	}
- 
-+	if (!priv->mac.phydev->link)
-+		goto unlock;
-+
- 	priv->stats.np_link_fail_cnt++;
- 	dev_err(dev, "failed to link between MAC and PHY, try to fix...\n");
- 
-@@ -147,6 +153,9 @@ void hbg_fix_np_link_fail(struct hbg_priv *priv)
- 	 */
- 	hbg_phy_stop(priv);
- 	hbg_phy_start(priv);
-+
-+unlock:
-+	rtnl_unlock();
- }
- 
- static void hbg_phy_adjust_link(struct net_device *netdev)
 -- 
-2.33.0
-
+Regards,
+Benjamin
 
