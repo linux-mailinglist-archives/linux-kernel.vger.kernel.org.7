@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-584700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E87A78A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:57:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26ED1A78A6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F97D1890E24
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:57:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1366D7A2C69
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE412356C0;
-	Wed,  2 Apr 2025 08:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAE235C04;
+	Wed,  2 Apr 2025 08:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWmzGZjW"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTdK5wJo"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D7231CAE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91C82356BF
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743584227; cv=none; b=shS3HKGcTTs6hHQMt2icFtQcH1vLQkk2eBku1gX2EPWe5PhlE5sLKe4ocEO2bkGAa1RX0aBHtFs8otTFj+ulltnR+hr3lPj4QT1kocuNP0MU1qvtASPNg3GtumKGbH5pPztbFjN5LztYBL1gOk9ARzUY4u/bZ0fUzmj12YIUELE=
+	t=1743584229; cv=none; b=djySpvQ8wvjyP1/F+9wJrGTvM9ZWtwkmuaI6TmV2m6p7Ykv1ZnlhkbbCsGmJy4kstja7cbfPdl2cjQ1ZFV+Vxf25CnXgVWg+DEhhM+nqsz+BkO4nUvCHko+ud0A9WyDOavPu9pkcA6DgB6FSRiutGrY7qob6YPszQ+/1ZNoq4fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743584227; c=relaxed/simple;
-	bh=EDLEgtEdlcFXO9FrxUMsvd2X/o5lf0PxVMZuhrerVdQ=;
+	s=arc-20240116; t=1743584229; c=relaxed/simple;
+	bh=gJiKCmOVGHHXuA+rW+U1+1ikV/iMBetNjbldM/AKP2U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DZlVy3kl2OtGFR50fR7q/X6xPhv7drRjo16zukYziSiKHK9462pmVFx7yoNe6BNJV/Lc93sDHynzNJsOIbDIrEGZHKA/HXH+VwusN6PqLuiW20Rb5bbFt+PxIXG4Ts1/9OIikEnl4HwJbpxFoNCOzaL7Hpj4Baw5mJ1ivSOMY7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWmzGZjW; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=ECoeYS6xBprEWH1vrANLr6Fa9MoX1qQySrV7WAcRD+FZnEdT1iYE38ztseh8Z208OADgbx3BmlErXjp51vCu7jxBHQCU68plvAp+XXCGo1adwI6LHGUWHC1WIojUHaBznIoP1M1pXLFLieH7GrwK2C9m9/NzIBCZSSFYNBPdtHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTdK5wJo; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-224171d6826so104978865ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-227b828de00so112919885ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743584225; x=1744189025; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743584227; x=1744189027; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WWAPszpWlvrmrWFqRVfzalTuSm2t7m4HZ4+y2asZ5jM=;
-        b=RWmzGZjWuCRc0AR3uuNDHmpK32S0A/JgpDczKzhfKpqg5U7zMkKXImA+JyoM5idzKX
-         yVStGt5EA3AL+XuTH55MJhueQQdpZ3b4M0XF2UZ36D5mVkE7qz2uUV+OtuJX4Z7XAGA3
-         BAgIQ6pbVLEBMxfbc5aGV+CfjH5pTFrsCJ5+f+uF+kYajFshm/gHEhtcVHcR6yfwXapM
-         iIN8Xot+iDoTNmI7c1kZqoqq3K965OvwaoK5Yx1LS5oQ87UUiqCHApgA3XtY0skfgwX8
-         2negglIN0EV6+ZkAHOm2+kpPoCG315tbLBLWZEpsWFwyIbJHu31T07lrp0RuvfonMmyv
-         ZxEg==
+        bh=2L6fD6nlIa393DR0GjOYRfyiTfAg8gVxKRvxkE78qM8=;
+        b=GTdK5wJoilLJecuT7t9n5EoAG8ecvNkdFPLxqehYlSLPDLLcISHEYtlw48WsFVZYuS
+         joy7AT6m1R43Cwekwwt0iIgBzzih+Q9Oj+BjW6nr79GpwjPWU+6UqtjnTgZ+omfyEpXo
+         71VsDxu3CjNcyDIabnBvOj+mT6YL8RVpWXa2nGwAhKg5iIC9cCAST+TJFwhhWL1zlz8F
+         +UkA62Fjz0L3pWUOhEh8KmvAjzAwoEMVX3p5forK1vn1ClDiNYPycenUXTwtJQyZXVc/
+         GyBfnhfaPmVWXLCTmiP5XwfgO3mQ6N4VJf45fr6c8KwesfG4YdKeP82VydWKng9y35dB
+         wntQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743584225; x=1744189025;
+        d=1e100.net; s=20230601; t=1743584227; x=1744189027;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WWAPszpWlvrmrWFqRVfzalTuSm2t7m4HZ4+y2asZ5jM=;
-        b=o9JFPzz7OXE2NhCGTUoeSP4Dac7iz57AFOEXZ/Q/0M7z9PSd0dgTw7I/Bb5JVkIQEh
-         oXoNO7Af1cmZK6naciqkJKGElHozS4vXp//X7HA1Xx//35+LBYmpgAtQdrWs36gn7F6p
-         MgQTTQc8lDCQ7vne2JfDV1ybyl/bLupV4bktNHf1cECkSfdRAaSG+kScQoXdwTxsRNXZ
-         CC45ZZEFA8kHKm5+YXaHGXNCA6d04AiNbsl/0d6MnISRU862Qq2sS1Fv++TBUA6RKCas
-         ZY5TZErSTSmH9UScXXYGFHgPV6gbaAwckl1vn29Zk61wMZLn1YLi1M2CQRmRN5y2rxiP
-         omxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaGXb5c0GdmcHqmu/i3YbvuCiEJHxIiSOPdJDjy78Pc21tKDtwpIH7hpxLbrW0GNGKB6VRBH/dt7ulKR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzkodf4IAzWJISGAjNYH8N8SjnVpljf7/UXqPOWALzAF6Ft1h44
-	5YDBB05T1Z8f4G/+jVF3Iil+orxcSOtJ3PkoE3jk2zkJ2bbd5R+GpZimgxu+7r8=
-X-Gm-Gg: ASbGncswrNaRLxuY3x+0ac80qsGjdXeLefUDlCbZkpFyyXr+5u6v9uuhol3wPagPkLB
-	uAlyMG5MKUscTSzko6hNlK+7sC9XTW90ke7qrDTIgESXawtt2KHQMmOEYVElvpdmbXGxBLqft2u
-	Kw50R0icKL+9hU7x17Q6/CzLXzFFn+5Drm53RoegMCwHDGvi/o2YSmczKl3jbA3PpeQ3M7Z8qWx
-	GjNZE87oXiguCM9SfM2v+LM/vSmmgiuFhnzVxEv2Ud9bHhBCpMB6hlbtSFBdIWvs71nLnQhVuTm
-	vynJOCSR6Us/+UetZv4iQ5+DP+KMdAIGKl5BT3ZFEa1+qPXV27YdQ/ebX0KQ1WgV9sJ6
-X-Google-Smtp-Source: AGHT+IEB11GBk+GAE4+ZVetVY/CYu/AG8QyTGlgekDHi/jvsC7njBUNP5H6KE5bwxY7hZlGb8lzR/g==
-X-Received: by 2002:a17:903:1c7:b0:224:c46:d166 with SMTP id d9443c01a7336-2292f9e53camr256175075ad.40.1743584225005;
-        Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
+        bh=2L6fD6nlIa393DR0GjOYRfyiTfAg8gVxKRvxkE78qM8=;
+        b=pUZkGvh6GoyCTpgB87c+Vf1KeAgsmEMv7aoPOZ/MNloC4FUoYZoHp1HUvuM06ABLtQ
+         GSDE5oHRURakbpCfvV0sIGxvKC4FsSx2+/gVVBTl8T5DZs7mE6XD7p0INT5EFrLd73Ch
+         FLF2JkTejcnYkicRHK3FnV9/xiqLyZksdLTJ6d/cUdhzuapdBe4zX+CxYx9dBdVyZBjb
+         YARhNELaUZ5P7CD4TMhRomxfnRsg9hTw5+c+12DpnOqAL0MiAaWWaPS2Ppcx2BfZkJwW
+         10FJ28UE19y8mJYVHT+n0m6ixrxl4TXbpzoT0clQEjcs5ZX1XZUK9ySttZ61eQBbjvDa
+         RlUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhjTCJeWhuGz5OMvqJeFM0BpBDYOEd+9amLMd0+RofEYRaCERBrOfOvt59jSQqVBUY4Hfm6xVrZoX7eGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwucEr2NHbQGzQFHbEP3hARkwaw4Zz2tomrj1xyuZ2vIY4uDyD8
+	vQVt1c5KjDEIvbOVZwHjRwj/vpGV2m0B17u5NcrjW4iN5n6n6q7L
+X-Gm-Gg: ASbGncuqv1nZh6pnGxJtBwBwmnQ9jdx0x/qEFtuH6R1QP/K2hLDprger5xrWrEvXB6y
+	Dpert65OxI8KKkzWYqUTCGIX8DyGQ+GhiiBiilic7caYL87tlrZds8KK3dhFbRiZGpxG91McFX8
+	n7GDIf6g+BCT4RYMj188JCEB6MW9BjY+1Tre4DbgYCeXda6OBrxbQx28BpuqI8J4ndPfgPExBvB
+	C/fjE5BAR+weAgaPMAemkYFYcMsE7gmHjbB6BeDt45ElKiYHziGaUtuMKvUHn5g7DxpRYrtT+v9
+	QLH1iJVqnBTub0Q+H/VkbrazcUIBV8Jz0HVMhlefLsobXy+gnqDyI97mnC15YIw4UufatA/XbJq
+	xB1g=
+X-Google-Smtp-Source: AGHT+IGZgi69Abih38Lloz1v9kLCgGQu6o9alyyOKDi5TM595XFdyW5Z+Sc4LA3KYAlvCBtd3nkQfQ==
+X-Received: by 2002:a17:902:e549:b0:223:325c:89f6 with SMTP id d9443c01a7336-2296c605374mr25463065ad.10.1743584226867;
+        Wed, 02 Apr 2025 01:57:06 -0700 (PDT)
 Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1de7d7sm102753925ad.173.2025.04.02.01.57.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1dedb5sm103221535ad.176.2025.04.02.01.57.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 01:57:04 -0700 (PDT)
+        Wed, 02 Apr 2025 01:57:05 -0700 (PDT)
 Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 0103E80605;
+	by twhmp6px (Postfix) with ESMTPS id 0368E80642;
 	Wed,  2 Apr 2025 17:06:10 +0800 (CST)
 From: Cheng Ming Lin <linchengming884@gmail.com>
 To: tudor.ambarus@linaro.org,
@@ -86,9 +87,9 @@ To: tudor.ambarus@linaro.org,
 Cc: alvinzhou@mxic.com.tw,
 	leoyu@mxic.com.tw,
 	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 2/3] mtd: spi-nor: macronix: Remove duplicate flash info entries
-Date: Wed,  2 Apr 2025 16:51:28 +0800
-Message-Id: <20250402085129.1027670-3-linchengming884@gmail.com>
+Subject: [PATCH 3/3] mtd: spi-nor: macronix: Move macronix_nor_default_init logic to macronix_nor_late_init
+Date: Wed,  2 Apr 2025 16:51:29 +0800
+Message-Id: <20250402085129.1027670-4-linchengming884@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250402085129.1027670-1-linchengming884@gmail.com>
 References: <20250402085129.1027670-1-linchengming884@gmail.com>
@@ -102,31 +103,57 @@ Content-Transfer-Encoding: 8bit
 
 From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-To clean up the code and reduce duplication, this entry is removed.
+Remove macronix_nor_default_init and move its functionality to
+macronix_nor_late_init to ensure proper quad_enable initialization.
+
+For MX25L3255E, SFDP follows JESD216, which does not include the Quad
+Enable bit Requirements field in its version. When the size field is
+removed, manufacturer->fixups->default_init hook is not executed, causing
+params->quad_enable not being overwritten with the intended function.
+Consequently, it remains as the default spi_nor_sr2_bit1_quad_enable.
+
+By moving quad_enable setup from default_init to late_init, quad_enable
+is correctly assigned after spi_nor_init_params, regardless of the size
+field removal.
+
+Additionally, according to spi-nor/core.h, quad_enable is more
+appropriately placed in late_init, as older SFDP versions did not define
+the Quad Enable bit Requirements. This change removes default_init and
+moves quad_enable handling to late_init accordingly.
 
 Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 ---
- drivers/mtd/spi-nor/macronix.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/mtd/spi-nor/macronix.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index 2acd8e28d1c4..07e0bd0b70a0 100644
+index 07e0bd0b70a0..216c02b92bfe 100644
 --- a/drivers/mtd/spi-nor/macronix.c
 +++ b/drivers/mtd/spi-nor/macronix.c
-@@ -160,13 +160,6 @@ static const struct flash_info macronix_nor_parts[] = {
- 		/* MX25U51245G */
- 		.id = SNOR_ID(0xc2, 0x25, 0x3a),
- 		.fixups = &macronix_qpp4b_fixups,
--	}, {
--		.id = SNOR_ID(0xc2, 0x25, 0x3a),
--		.name = "mx66u51235f",
--		.size = SZ_64M,
--		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
--		.fixup_flags = SPI_NOR_4B_OPCODES,
--		.fixups = &macronix_qpp4b_fixups,
- 	}, {
- 		/* MX66U1G45G */
- 		.id = SNOR_ID(0xc2, 0x25, 0x3b),
+@@ -282,22 +282,17 @@ static int macronix_nor_set_octal_dtr(struct spi_nor *nor, bool enable)
+ 	return enable ? macronix_nor_octal_dtr_en(nor) : macronix_nor_octal_dtr_dis(nor);
+ }
+ 
+-static void macronix_nor_default_init(struct spi_nor *nor)
+-{
+-	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
+-}
+-
+ static int macronix_nor_late_init(struct spi_nor *nor)
+ {
+ 	if (!nor->params->set_4byte_addr_mode)
+ 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
++	nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
+ 	nor->params->set_octal_dtr = macronix_nor_set_octal_dtr;
+ 
+ 	return 0;
+ }
+ 
+ static const struct spi_nor_fixups macronix_nor_fixups = {
+-	.default_init = macronix_nor_default_init,
+ 	.late_init = macronix_nor_late_init,
+ };
+ 
 -- 
 2.25.1
 
