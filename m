@@ -1,142 +1,136 @@
-Return-Path: <linux-kernel+bounces-584994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD99A78E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B8EA78E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D50D188BA2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA17C3B4084
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF7C239099;
-	Wed,  2 Apr 2025 12:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B8223958B;
+	Wed,  2 Apr 2025 12:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lm9i3+9V"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="fycD4w5h"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B72623817C;
-	Wed,  2 Apr 2025 12:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4857F239573
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596898; cv=none; b=AfkXerO/mHvhy2FDuIdRckHQoa7tE6aj7C/QfV8csUG2/Oq4jnMWrN4ituyhpM9FI5t+8yAS493kvCYNxfKJMw+3U6XC50rY/+HKA5TpUSBMEACiUc9c5qGrAc/rHW4QtMJYWVaJaHEvfHWg3SPWDlev1/H3I/U1kK5hrS75d1Y=
+	t=1743596917; cv=none; b=rBUJE2+wPVhwHJ6+cCzgThp2HNOl+0hLQcPM/rdpXCeSEgRaoHaCPj/uTIEGWlhdOEvnMH90XZdRoBEBp9HxK1h5QK60B0UUdPdm2mTdG93CdPQYFMqhMuZf7L5eVWgBJHGA6N/YFbeb29q+Rd2lD0ZWVtgQPCxeF2r5CZvugDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596898; c=relaxed/simple;
-	bh=2mm9KFjYjNf73RC5x1w602N1nefzxhdPIiqoHpUiVo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SjOuEstbgbnd5Mf5UATxPHhILm8PwOBbs7+eC/4OtrCJkJTKI4Oh+Ik3KFxuMnP7FQII36KnGCUJb/Jhwh3q6imxMd4Hi3CRzVuy5NmD71ff6djmrgH0OHmBTS/2NZdrsuSBNFiH1GWBCBAsyx1mISRLSUixrMKeO48mUa8+Kno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lm9i3+9V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532BA6RY014253;
-	Wed, 2 Apr 2025 12:28:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dcDYKKitdpNOvO1VTTPjo/3sWBMoWldqeBnLnFSuCDY=; b=Lm9i3+9VKnXPYkuJ
-	PgpybJcCo5p7IwLRYVHXtSZeGKbkLchZ2KBMr8lM4Zc3SJuS0V5zIs2z53/AbnUZ
-	G0p778z8rvqrrCPu2infYOAcHloXnPi2tCLU+hqJVLToa+JUjYSbMlCK2J9TKwa/
-	DjMqfG2lmKgLbG5RAjH4Mc6Iqgwsdohq41yOyI1zFlrO46ecvjYwR4OpKZrqetaQ
-	bwtieOSs5VcOC7/biG30x4A+5f9U4cUxFtnjJ7GDrHqRrd7hPN0yuSBtPEx52Vpq
-	+qwOV71kyU0vS4Cr4DRiDRWkYwv1S+ZdNcFmlbKudZ1iPpI7eqUjs1apSG30Gm+T
-	t7B2ig==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45p7tvkd6g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Apr 2025 12:28:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 532CSCLc029089
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 2 Apr 2025 12:28:12 GMT
-Received: from [10.50.50.175] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Apr 2025
- 05:28:08 -0700
-Message-ID: <15220033-ef42-a1bb-6cff-931efbb5cf62@quicinc.com>
-Date: Wed, 2 Apr 2025 17:58:05 +0530
+	s=arc-20240116; t=1743596917; c=relaxed/simple;
+	bh=+SCZDfxxA2B0yMBUNsxCv14vdfyPf9VIXiifo3cM7E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsTHCYeh2k5vUtyN3ugk2ZL3BhBXeXmsYP3pzuAkZcY3foAl4ghZVTLadqWp+UGRlrYdkdtwL5gaqS5ZfT8IHHpb3FqqfyAXqPfQNCtXz34ITtZJ0p9GG7b18cw034PL6MaATiYNRlmKo0fyc2ObZ+fBlPKllnMCUtl77X7RYhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=fycD4w5h; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6ecf0e07954so86517396d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1743596914; x=1744201714; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=boUrn1HsQb1nnElScm6m0UUoO1nwQ5hUNZv8OXQnxS4=;
+        b=fycD4w5hl8zQ+c+s4YlxTzZyeHpZuk1jyhLbOqT1dg3oM8DUc0tfb4Y1cvLuGbE7eg
+         eWxRYQqE9g7ZyzG3hgvOrfBE/swcal6U2ose/Ch1rL4f16EbIlz6sxYT372Gl4wiy1YJ
+         XRDcNX4/UOg66XVOLY50HHqhddNwr/qscppg0ajkPIYSpn/pcQa9yzDSbc+O4Q2jrdJp
+         IsAq4Dj4lQoiq91FXQBI5HiqoCHcTdjA1dHqro3+65lTxSZ8uQnzo0WREXVHXw1/HBP4
+         tAAm7xXrMVxkNHccoDgEOmIPl+LYO9PyU4e0XO8TjpS3qvqpzYW4Sj6UtroRGQgsYRjv
+         1ajA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743596914; x=1744201714;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=boUrn1HsQb1nnElScm6m0UUoO1nwQ5hUNZv8OXQnxS4=;
+        b=NAaSkMc7RWiIWG/MHu7TOpeE4tgFpBizlWPZJ8foRx+1UpP9qjgYKh+SSsCaRjsQkN
+         q9k4Nz62k+aF9n24xk+5RN/D4OJ2yv9PnnAOgma2o34tadTDUEEf9tArPctiLalvWA4N
+         BW22WoWS9HAGIspCMxp6GDnD4PdpP0H5a6Yugq6Gee1PJdJ4JpXxPnitTD5vFbwAjEYH
+         yRwuAo/WyhB1XIi5vFQT+PMZzl1rtoCFiTo/cbINgw8fTB9lfzktNHIugTb5WDkvat15
+         OMytnqPiW7mz5Gj6+9XGJBUQwvSoADBfcjtamc1UMviiCkdxqo7MC2PdW+9pXAH+60Pa
+         ehMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrPopjDxn95/+HFR4fqeb3F1F8KJCWdXC15uD5soHS+jeRMnlCMQsCJh3a2i5x10vPROSkifpQ6MmVE/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynEAPcDxnwO5kiJUZva9OtI+RzZjlfqcPI3pVzhEOIZBHeSeVg
+	WN5owujwrPJo7OWwZ+hdgWWwlwamWqLToWRN9Tm/OrNYjht3PgLzg13ioPRaODE=
+X-Gm-Gg: ASbGncuzg35BIJQa4YtCIlu1SSzrMSlBa42ykRt67daX0GGSUi7MUBdi3dYcZcJM8F3
+	eQKhbJ9Kpy0fe6rlSzfGZwZXOa3m+Htysw0YgWG8tZhU2MlpTiQ0OuNm7FsanTh9iARWr8jvpUc
+	cbD3My+UWoBQqAmXdx1ZJrqzxDI6uAYqFvPOR8yiK4gM0HYiF9LPXwtiDVr7nbYhTOQ9GtRtMUc
+	V32GOvFnApacm4VdyQ/mc1lh4d945CukA8GRLQn8uWiTT8w5QulHNsx1/egFU5+mnv4Z9Wo37Kz
+	iqNvdwOu3yn+BE0JntKtpRSWDM0gb6D85Jy38+fWAQzeLCu0q9nY9aYloxHHlLMCQsvT3VD0Wet
+	q8KYBxtwNghtwBWFeOLrZDydDipK2gV55bw==
+X-Google-Smtp-Source: AGHT+IGDCkSbFp8f8ItZCaq6vv36bzHaTEtd7quznYJdA2LK9gJlZ7Yqkvb5oveXIQ6Y2NtbpB/TGw==
+X-Received: by 2002:a05:6214:268f:b0:6ea:d40e:2bc5 with SMTP id 6a1803df08f44-6eed5f513acmr258929926d6.9.1743596914105;
+        Wed, 02 Apr 2025 05:28:34 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eec9643d6asm74291336d6.28.2025.04.02.05.28.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 05:28:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tzxCr-00000001Wk7-0YpL;
+	Wed, 02 Apr 2025 09:28:33 -0300
+Date: Wed, 2 Apr 2025 09:28:33 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: kernel test robot <lkp@intel.com>,
+	Shannon Nelson <shannon.nelson@amd.com>
+Cc: Brett Creeley <brett.creeley@amd.com>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: drivers/fwctl/pds/main.c:113:65: sparse: sparse: restricted
+ __le32 degrades to integer
+Message-ID: <20250402122833.GB327284@ziepe.ca>
+References: <202504020246.Dfbhxoo9-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 1/2] media: MAINTAINERS: Amend venus Maintainers and
- Reviewers
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        <stanimir.k.varbanov@gmail.com>, <hverkuil@xs4all.nl>,
-        <quic_vgarodia@quicinc.com>, <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-0-2b2434807ece@linaro.org>
- <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250402-b4-25-03-29-media-committers-venus-iris-maintainers-v3-1-2b2434807ece@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=OIon3TaB c=1 sm=1 tr=0 ts=67ed2d5c cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8
- a=VwQbUJbxAAAA:8 a=xuRo_m5TypiDwJUHZtcA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: aCqb6TSIeyP-4Umm5I6KhXUvjTp4aaOy
-X-Proofpoint-GUID: aCqb6TSIeyP-4Umm5I6KhXUvjTp4aaOy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-02_05,2025-04-01_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- adultscore=0 bulkscore=0 phishscore=0 suspectscore=0 impostorscore=0
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504020079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202504020246.Dfbhxoo9-lkp@intel.com>
 
+On Wed, Apr 02, 2025 at 02:46:38AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   08733088b566b58283f0f12fb73f5db6a9a9de30
+> commit: 92c66ee829b99a860a90f62ef16df3e42f92edac pds_fwctl: add rpc and query support
+> date:   11 days ago
+> config: loongarch-randconfig-r111-20250401 (https://download.01.org/0day-ci/archive/20250402/202504020246.Dfbhxoo9-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20250402/202504020246.Dfbhxoo9-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202504020246.Dfbhxoo9-lkp@intel.com/
 
+Shannon, can you send a patch to fix all the sparse errors?
 
-On 4/2/2025 5:54 PM, Bryan O'Donoghue wrote:
-> Stan has stepped back from active venus development as a result I'd like to
-> volunteer my help in keeping venus maintained upstream.
-> 
-> Discussing with the qcom team on this we agreed
-> 
-> +M for Dikshita
-> +R for me
-> 
-> Many thanks to Stan for his hard work over the years from originating this
-> driver upstream to his many years of maintenance of it too.
-> 
-> Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 29b4471574982bf3f8d03158cd5edcb94bc9fab9..1d03530f3298703c5f3d025010511451f878f822 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19590,8 +19590,8 @@ F:	Documentation/devicetree/bindings/usb/qcom,pmic-*.yaml
->  F:	drivers/usb/typec/tcpm/qcom/
->  
->  QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
-> -M:	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
->  M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-> +M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
->  R:	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->  L:	linux-media@vger.kernel.org
->  L:	linux-arm-msm@vger.kernel.org
-> 
-Thanks for the patch.
+Thanks
 
-Acked-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-
-Thanks,
-Dikshita
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/fwctl/pds/main.c:113:65: sparse: sparse: restricted __le32 degrades to integer
+> >> drivers/fwctl/pds/main.c:202:50: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] endpoint @@     got restricted __le32 [usertype] id @@
+>    drivers/fwctl/pds/main.c:202:50: sparse:     expected unsigned int [usertype] endpoint
+>    drivers/fwctl/pds/main.c:202:50: sparse:     got restricted __le32 [usertype] id
+>    drivers/fwctl/pds/main.c:250:29: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:288:39: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:294:40: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:300:41: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:329:44: sparse: sparse: restricted __le32 degrades to integer
+> >> drivers/fwctl/pds/main.c:330:21: sparse: sparse: cast to restricted __le32
+>    drivers/fwctl/pds/main.c:330:21: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:330:21: sparse: sparse: restricted __le32 degrades to integer
+> >> drivers/fwctl/pds/main.c:330:21: sparse: sparse: cast to restricted __le32
+>    drivers/fwctl/pds/main.c:330:21: sparse: sparse: restricted __le32 degrades to integer
+>    drivers/fwctl/pds/main.c:330:21: sparse: sparse: restricted __le32 degrades to integer
+> >> drivers/fwctl/pds/main.c:405:56: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __le16 [usertype] flags @@     got int @@
+>    drivers/fwctl/pds/main.c:405:56: sparse:     expected restricted __le16 [usertype] flags
+>    drivers/fwctl/pds/main.c:405:56: sparse:     got int
 
