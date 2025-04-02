@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-585919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63935A79906
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5062A79910
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649173B4081
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0843B58CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55A1F76C2;
-	Wed,  2 Apr 2025 23:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7751F8BDF;
+	Wed,  2 Apr 2025 23:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sqKp6OWM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maY5YrJi"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329FE1F4CB8;
-	Wed,  2 Apr 2025 23:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5BD1F8BC5
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743637113; cv=none; b=MuGufjpNI/H+lgRfWPNCxWsvxOM5YV31z/OJd5qElmggu14OQCyyM750hfMy6WzMB1RxfMQ8gD2iljU2KD4vNME6GCdf8/nt7CLToxpwlQ9cpZv9gvEO+4hrnjpGHuRRJIHn4OoRAXFFYMG4fBO4XtlJVYGj0mAKQjGK/Q5VPsY=
+	t=1743637166; cv=none; b=lmNiSgNbDd2Jz3N3sflEVpeUAwLoZd93SXBCuO2b3jhQ3Y+lNkrMZm3ChZx6LM3q4Fomv8tDFzwi/WDlTE9gOot7ckcvRFRVYbm5G/iztSpTRPBeUyV4mjq7Dw7AOk5V51ojTlYaZdPrxNNUV7N1boxJrxrDJT3ffay/8SMI7i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743637113; c=relaxed/simple;
-	bh=2XeX6reZQIkEtta33Of2B34VLo2hpft5Lu0BhoUZGwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RwCfKL2+XVXSE5VkeJF+t+s+LaBg5Cl3/pVPN8TZg1IVp8Qf72N2fHmg9Lw6XkJl66KlMZ+FaPLudiVbJSJC7t+OLqEz3qRayINb6+6o9nk4j+zgryfQLPIKqxBSsmUKqbo22OtzZRuKgKuzPy+aEfh6K7mYNguBp8RGVKKCfX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sqKp6OWM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1743637099;
-	bh=I60cN/LVSrQmxHMlDueTW+uQvkO4ol03jteCLzYO/hc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sqKp6OWMucJ6E2Oi/qZS6coURYX36YXauHHLMzougCQwNQ0/4O2L37Hl/SnUeUZZu
-	 m2cy0ro7RU+mkyby/Ma4/Rxr43nbSkEovyM1tsgMHqLBwcJJZpcIeQnFUZL4JTN8iC
-	 ILbCIZFnHAs6hQ8WumWBigUVeO9QXYXmkC5UkdQ5tw46YdMV/SwoeJhfmVfHxo0uJY
-	 xz3uKn1tH4HgknzOqDyBp1mjp8ufF+OBQFdOD/64Y9ZSpWoxOvjGoh12tQDwJoU3Di
-	 0Zwa9RPcVfy/hG6MCc4Jrab9ejiV+oh5UFp/B2wk/csJQ4AYXVW4ZskRSJTZLUr99E
-	 B2GkKpqua4ZyQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZShBg3TxPz4xN1;
-	Thu,  3 Apr 2025 10:38:19 +1100 (AEDT)
-Date: Thu, 3 Apr 2025 10:38:17 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport
- <rppt@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the mm-stable tree
-Message-ID: <20250403103817.1b0cb26a@canb.auug.org.au>
+	s=arc-20240116; t=1743637166; c=relaxed/simple;
+	bh=dNwwA9O4m64y6yXRySB+PnQLilzg4NVSA35tpcvwWKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ef4OI4WzQvq5BlnIzV4ITPsb17vK3yFsy/Jyxlod6sjZel8/SjrQWKctAl+MQm6796kKk7QNzzJOhlmcRq8JJCf6pA1sv67RXDAIHv9t+3kjnqgMPDOl2mJVvCKgJGzoVfvundfpRRkUyo5NYiJ5I0QrzuigT1uuoDKD3ZiUKpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maY5YrJi; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2aeada833so67375466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743637163; x=1744241963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YudTlNEpaAEFNWXAJfFj34JKspVfdSXBGtUKkahvOIQ=;
+        b=maY5YrJiI5gWZcYM4Kz+6f/IuhJDRHrctT22qySXtvFfKNZmLeVeYpCAhYYZyi+T54
+         iauUBqMFrtKxgG27oY4/ByTSiQS6QaL5WbLDWvF59h0+m0xM25yoniH6BsFDQojsRkNC
+         LSkecULVR4SJUt8hukpJXBzeOrYvYRV7BemZDTrWWPNPKmGtTZMOj4GtR+PHuBI4YIzf
+         6jFs1tsnoMmcruVMPs4+TaMUg0LB8j4tHq/mOvno434d+UUpaFvTpNkmhvYQ9/muUY6s
+         AReJxjEGu5BaQYwCvWR3uOCcqAkvzbUhsUIjCB3SCNydjr4DuDq4mVoInHrVyMQRfZki
+         19zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743637163; x=1744241963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YudTlNEpaAEFNWXAJfFj34JKspVfdSXBGtUKkahvOIQ=;
+        b=S+5iv5KJP3MynYOR08OBRk3CJaIRPp25KQTpvWFU+JtSPd45TzdBkWISIWhgxBnKY+
+         dRKvv88z81gYLvgRlSO/o+sjOuG1i6fOm2+0QEF6BWqxlOqZ5xHYuR8sXTW0C3y1atLq
+         uX9yYOpPH3eday/o70QM+Vj4y4PZBQIZ+QmkbvWWwAKlXZYCSZ63yqhboqeaWB/Yq/wz
+         K+fNr+GRVCJmRxgzjOlYj9dcFwtwK7cUl8ngkFY0zFZCjHeen6R0t2sjhRXNxcOSGPEo
+         qCshYDnbvRIMRxme6yRszc9gglWKYhFphRgoygybg/rBTiEPDjm65AueMOngQDN/QMPi
+         ocig==
+X-Forwarded-Encrypted: i=1; AJvYcCUGZLYhqi5Ss7bFGNcOb3uJYeASO8JqKq5gToIXY0gCe8+1DKqY9IXWg27gQxiD6ean/Nuf6mj7lBKuINg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoJ1vHhveCZWUUUwxosYh+u0c/646x3hDvBXqSahDhm0lbMEJU
+	bW/QrflmYu6OQD+49Kn4Iz8TaN4BB3M+J49fQh1oZ77/LFYwXNTdaiG4MjjKF67yQuYnet/xn3f
+	N2x4H7m+K5w6sLfYc1PBTcbK4ma4=
+X-Gm-Gg: ASbGncsMNqKx5zuU4dsBDGb2ZgmIgX1MqY7LxClppSCzuz1tMZINzSkBm/FTDJyN44v
+	2IBk+HbiN99KgEM9SLwP1VsG36Ti8KSjPXSbDjL6OelHgVeHxmDjXKcV7MWpV8itH7WoYa7Jgxg
+	dxjmtdF3FsbiIDO9VfVigfnswB
+X-Google-Smtp-Source: AGHT+IF2Mt7utW00d8zs0H6dSeLFf72pzQmblSH0oIpDvCfb0iiU4fkbc7a14aJOurMcEim3aRxhlMN6XXNBmCRx2Uw=
+X-Received: by 2002:a17:906:70d:b0:ac3:4228:6e00 with SMTP id
+ a640c23a62f3a-ac7b6b499ebmr124619366b.6.1743637162423; Wed, 02 Apr 2025
+ 16:39:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.ENouaDWSfi9Rkmal1WYC=F";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/.ENouaDWSfi9Rkmal1WYC=F
-Content-Type: text/plain; charset=US-ASCII
+References: <CAGudoHEV-PFSr-xKUx5GkTf4KasJc=aNNzQbkoTnFVLisKti+A@mail.gmail.com>
+ <948fffdc-d0d8-49c4-90b6-b91f282f76c9@citrix.com> <CAHk-=wg4syfXPBgQhq50ePOnB=zP9Jk1U+GmjXWmDMwcQ7X7WA@mail.gmail.com>
+ <e0021746-d43c-4c45-83b6-bcf3982b2548@citrix.com> <CAHk-=wjYrfUDOd3VYhn8HvH7MCnampXt1TdtaXo86UDrT_rbMQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjYrfUDOd3VYhn8HvH7MCnampXt1TdtaXo86UDrT_rbMQ@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 3 Apr 2025 01:39:09 +0200
+X-Gm-Features: AQ5f1Jqh3LZBVSFXS-E6Zy77Llv46PD7ibzGTWbDuL2iigIT0fUPPNwvJ7NBgpw
+Message-ID: <CAGudoHFwa3Wa-SYHJ7VVHoQMoB2ZkZqzq=Pth5xeovSGON_YHA@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86: prevent gcc from emitting rep movsq/stosq for
+ inlined ops
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, x86@kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Apr 2, 2025 at 8:56=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> Admittedly my main use case for that was the big fixed-size case in
+> the stat code, which just does
+>
+>         return copy_to_user(statbuf,&tmp,sizeof(tmp)) ? -EFAULT : 0;
+>
+> and shows up like a sore thumb on some benchmarks.
+>
+> But I've always hated the patch because it turns out that the real fix
+> is to get rid of the temporary buffer on the stack, and just copy the
+> fields one-by-one with 'unsafe_put_user()' and friends, but every time
+> I do that - and I've done it several times - I end up throwing the
+> patch away because it ends up being problematic on non-x86
+> architectures
+>
+> (Reason: INIT_STRUCT_STAT64_PADDING(). Ugh).
 
-The following commit is also in the memblock-fixes tree as a different
-commit (but the same patch):
+Well, one could do ugliness as follows, opt-in for interested uarchs,
+pseudocode-wise:
 
-  7790c9c9265e ("memblock: don't release high memory to page allocator when=
- HIGHMEM is off")
+__stat_fill_padding_start(user);
+unsafe_put_user(user->somefield0, stat->somefield0);
+__stat_fill_padding0(user);
+unsafe_put_user(user->somefield1, stat->somefield1);
+__stat_fill_padding1(user);
+.....
+__stat_fill_padding_end(user);
 
-This is commit
+Where archs would provide padding macros as needed, expanding to
+nothing or zeroing something. I don't know if everyone has fields in
+the same order, it may be the stores would not be clean here. I guess
+the two archs which really matter are amd64 and arm64? Archs not
+interested still get copy_to_user.
 
-  e499d00056a9 ("memblock: don't release high memory to page allocator when=
- HIGHMEM is off")
+Anyhow, for stat specifically, I think there is a different way out
+and I suspect it will be faster.
 
-in the memblock-fixes tree.
+Things start with memsetting struct kstat and populating some of it,
+and only some of the populated stuff is used to begin with. There is
+some getattr calls to further fill out kstat. Finally the kstack thing
+gets converted into userspace stat and copied out.
 
+While you can coalesce kstat -> stat conversion and copyout into one
+thing, there is still the cost paid for doing work the syscall is not
+looking at.
+
+Instead the vfs layer could fill out an on-stack stat buffer
+immediately and copy that out. This should be less work (no kstat
+memset for example) and not require anyone to mess with
+unsafe_put_user.
+
+I don't know if this is worth pursuing, maybe I'll hack it up out of curios=
+ity.
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.ENouaDWSfi9Rkmal1WYC=F
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmftymkACgkQAVBC80lX
-0GytHAf/YT2D9jgCYdKucsoovdsadHn1iVnupGKzumpLL8nsNoVC82XZdvPDWC3q
-EGKtdQdIBgvqg1OBmDIbtW5i8dhKsS6+z3D67tE2c0gSBWQp/uLxyr25QhgCNrak
-D0AUX4w0/6zoRqh2AqB1urb+BRUMOwGL2mMY2pBQ+cZT6gkHEmFC5HGC23p2fzPW
-Zv5FiHIkvkn/Hy5K84ehyxvY+oShZlOJRHmigi46YNziaAxD8mAzsL4GcWhXsBeT
-/dEmlJUX7cxQiaWjhOWb+t2EiaaL5UdZUBU7t/l9wjiKCvX4VHOtajmZXolOGals
-wBYB24R/GD+ecgodgT9kBI7rYtHosg==
-=PNE/
------END PGP SIGNATURE-----
-
---Sig_/.ENouaDWSfi9Rkmal1WYC=F--
+Mateusz Guzik <mjguzik gmail.com>
 
