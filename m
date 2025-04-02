@@ -1,219 +1,173 @@
-Return-Path: <linux-kernel+bounces-584787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA624A78B9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A7EA78BA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFD737A27E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A4C189308A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADED6236453;
-	Wed,  2 Apr 2025 09:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B21236421;
+	Wed,  2 Apr 2025 09:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="r5HTYuj9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oo+BcD0S"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lwYUsLMI"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AF72356B5;
-	Wed,  2 Apr 2025 09:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4CC235BF1
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 09:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743587877; cv=none; b=WuPXggaNRy6T71LobKuR53TK8XkK9Hbw63NNbG/DOttGo5c0o8WpDgg7Un7mPv1jAvawZK/1C1XO1QDHqiAbZM/byPrOJufgxU6RWjfO+fe9P5CbCj7Oe25Amd5USvWD7iYbofltwYKUjQxdm9dIluOSEFFzRN0J3okT6QrtTpw=
+	t=1743587928; cv=none; b=H60lhVIyXkrjrkV7cJcOLRr5BKo1+SrwH6WHOQr/VPCGTInqOm+ateiK6qjvwtLgkvtd3d9IxxT84xkFlm2i4MUlx2bvmTDD6R4+z73wV55j0IdceURLfnfgbmh9oBX8AbBiI+K9aGhkQvcNByrQ5ISN0d84bUkSuUUS5QXFufo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743587877; c=relaxed/simple;
-	bh=Wzmiam7fC2XrJAx0ApWPltrQIlXQu8gNNfucIjVSzrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ui3SFVqdZ3WY25x5rhGgN6mbTrgPHRL4OktVhLsHsmjjBwryhzCMZ215/lpJD0AVaNox2yyUIRV376kM/ykSEDheLWY9BwY44t0NCVoV+wDp5gKeLcJ+tTVMmmNXjRyXm8tkUSFRc52BTyfWa0kB1o4kVX4E2mMlibUED5uramM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=r5HTYuj9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oo+BcD0S; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 83CCE1140141;
-	Wed,  2 Apr 2025 05:57:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 02 Apr 2025 05:57:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1743587873;
-	 x=1743674273; bh=rak6b2Fa/8kffSjsRHf56Le1CRC43LwC4W2VuTrqGwE=; b=
-	r5HTYuj93IzPjwXpww5oC0WxIKuNrPueiuF75hPA6bFQ8YDPhtV544udfHIaCvty
-	pVcAX8z5pGjl7fBYZo/Q5N/cao8YkUQMcsqy/pxRX/pi1l9AHXMoBFFyP6vb+KqB
-	t33WXs5et3tq7RsuZWYkt6zu8tGfdDrVK/cadO+nXVfwqQ5vq8SXvaYg1q1flWQe
-	1ELifkijWyUB4neEHuY1X3PhFJcJ+tNH70iPAllEkBHHhcfKsxqxBkbLdisQUDqr
-	LxD1VSpWpYrRr7Ikz9SHY4dDQI+csnhZRGc64Yztjh8XkE4ArLUU0iKmsUcMdJXo
-	6mnVsLfSUlsmCP/6TTZ2Aw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743587873; x=
-	1743674273; bh=rak6b2Fa/8kffSjsRHf56Le1CRC43LwC4W2VuTrqGwE=; b=o
-	o+BcD0S/UnhqG9r8DBpolomNhnM7ZzsU+CSqObWvIdInQ1doqScqh8/FQB6gxOku
-	5tVLRR7+SIxtcjD1iwT6mKNfYc1VpM5ufHCTqfXK5AFTL/Uepa9p0VcVgbYSCWPM
-	7jrQMt68xfuwjgBaBYpgpPr2aiw98MprwgFGybyDockFQdxm0hg0JfTkX6vcWEN2
-	1NVpBl1/u/QKwGtmXRcEFR6ZjZsC/6rUYKIoN+T2dtK5hMEF/O2Fb6/LnRNl1/2g
-	ki1LPzf+QseJJw3Acz7zsEU8616yD2Mb7fZx+B4JhjxjNxEa6WeoFl0L7AnqTV79
-	LBx8udlQD9BUZ06LrbnFQ==
-X-ME-Sender: <xms:IQrtZzrfM7sUGpPGhTzNGjp_jmtWO9GqMD-du44R5RJVw6zIBOObog>
-    <xme:IQrtZ9pDEq3kCqz10OcNYIM-8FuIeZwETUI3ml6wseRrejtcalR0lCjroqwhrYMsz
-    2kDeypO4EDhL_VdZmQ>
-X-ME-Received: <xmr:IQrtZwMYFareqeYCCX0SPiUiMGDSP5NDr_Zao2IpTc0bAc8Qrg9oNd5-oLrMxqsCGPia0B1uYM7tEScMNvcP606hGzTS0nFBkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehfeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrsh
-    houggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffr
-    rghtthgvrhhnpeefhfellefhffejgfefudfggeejlefhveehieekhfeulefgtdefueehff
-    dtvdelieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthh
-    drshgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvgdrshhtvghvvg
-    hnshhonhesrhgrshhpsggvrhhrhihpihdrtghomhdprhgtphhtthhopehmtghhvghhrggs
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptgho
-    nhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhi
-    gidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:IQrtZ25XNWAt2JiLikQ61Hm1dbZeL42qEQtmpQJmZ0f2zRKZOyzDfg>
-    <xmx:IQrtZy7S7hyJxtl1GdJ9fmuvJ-FkDS6-U29Ch9-MrgbQAsS7X0uzXQ>
-    <xmx:IQrtZ-ht0wnqSzS4PM2T0kN7vyk6nCppkmtdosuCDXjuIN5yQbsrZQ>
-    <xmx:IQrtZ07NQRhBWKqx3sLq7bPZFwHpNnl2ugGoielE2NNaBGMy9VxfCQ>
-    <xmx:IQrtZ3IBkyDMLtbzpQVLWoLLTQ-kVmlWdREII44eNI7kh-f2HVSKGGJK>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Apr 2025 05:57:52 -0400 (EDT)
-Date: Wed, 2 Apr 2025 11:57:49 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: media: i2c: imx219: Remove redundant
- description of data-lanes
-Message-ID: <20250402095749.GJ1240431@ragnatech.se>
-References: <20250401145759.3253736-1-niklas.soderlund+renesas@ragnatech.se>
- <20250402-real-enthusiastic-ostrich-dcc243@krzk-bin>
+	s=arc-20240116; t=1743587928; c=relaxed/simple;
+	bh=IlA4UvDfErox3kVQzczkwY1GjiDHyTr52IErFszm38M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gOnVAKqj3fvzBSSe1LW8S5PBe2CmF+trhMGtDgY4OPu+cxLAIh0EUEYmhRgneSxoobHA32GfhIUB9qojUMDYovqW32ZTLlszt+lyn8FnVizSYS+tLagvo8PsDD+BV3O14tKTHSf3ulSOTdwYiP3M7pa0CDVUn2fjki888ofLihk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lwYUsLMI; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394a823036so60782595e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 02:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743587924; x=1744192724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F64Bhf8JcqE2NyBcccVmI5z7F2vvtYs8PqVACVDcoJ4=;
+        b=lwYUsLMIWeeYICUE4CRsTsMPqjGKHdQ3X8h8NXsnStwvJp7xr4XH2ruYrVwM+l8kQK
+         I/wZ4emHf1Vep1Je/5TfNKMd6ShrbtHk+MFOshJJ+FKOWdMos99Zx7q28BJq2icSDUv3
+         gjNGqUn00DS05J3dS8x7bVMXqivFLAPK8WJ44d09fwFDuPmHMXAo9vHym2OSQZq49PLL
+         cLaHBygv5YVCITz7XUTbZv3uNUvhg4/TMTgCyj+aygmjbTniraoGwFqMiMds/DbTDjai
+         82dKh9xzCNby/M7gNRyGabp2tdQSWCIYEh9nZQqAf16yqclpuxjua+lx5afHNPiBO1oX
+         n5Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743587924; x=1744192724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F64Bhf8JcqE2NyBcccVmI5z7F2vvtYs8PqVACVDcoJ4=;
+        b=SOgq3HieNLAv4P/w0wlgaUs91jPcPkycAMTSMh4/gc8BrZEzhLnEsr1qyPtxVOImG7
+         iEa5odOZxIX147Ema0V0Xpjjs7bBFZDSbZcwrpXmM54w+BW/3QmN3zJXzgRhQhcB49KE
+         a9naDLQJouIeu1Kc1j8gKY8e9e93w7V01to33YdXNE76NATM+afai+Db1H+LcUEBfPAW
+         3yyYcOKG3wRs8dFwCuo4BrRsk6CFI/UzUs8Fb/n/mjlNUZkQTNYtTlNQjkDcZ+1vYqRe
+         YxyD0Quz0ALr/dVV5DezQYZvRocn3I2iK1z+Fxo94BuFTRTX1AQNaqhofTBJc6RUeQkh
+         wxVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgGkO5MFdkpvsNXFKiHwZ/Jboy1QlbM3ipQgAWMHj/RFpE/yylbN1hNK+vL5ou4TFBqSXu/WKepSBRzB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRnoHu6NnF/6wxHyNbdbO2IHpe6L78nKEYArT2uBZ0SvdFj98G
+	Q06GWlTLe/EZlAnMQ10fi96N9vNn4HH/B1VtyYfnYxYROo6HqpR7l7tz/DS4+J4=
+X-Gm-Gg: ASbGnctgtCPWfG4gJLK6bXzJrCG7DG1WkCCByo1lAM1hx1UiuO1SCQXXnIeJf7GytgV
+	DIs4TEPiuE98sJ2izxXEvMyuQvW2MnE+BLJaffBR0Yg/qmvOPgnH4bRwS4PdT6uOi9oX2dT8B7I
+	Ch/6tOhfrBnLgix/YMwhOBYfeQZFmIG+rXl24kLff2as4a7SQeOijFtEMnVUF7XOqwAboiFKdjS
+	2Zp/ifvtZLj8W8LPLCb5TgfYKiBdJijrJ7BCsVbiK8rObK1fZjIKalFvKA1YnNHSBgh/6rCbq/S
+	bKvg6+AcaBdF/dnPbQclmpRhD1u+6sjJaAl/eNbdDpVPxjZ5TIS8yBTBjmz7L0DkxMk=
+X-Google-Smtp-Source: AGHT+IFF+LY0kUxsYN1yucCu27iDkU8fohgx1eaXgcBCwuhTj6Le9wBHGbHQPhPbt6iIdhv/R5hh1w==
+X-Received: by 2002:a05:6000:4014:b0:391:2a9a:478c with SMTP id ffacd0b85a97d-39c297543b5mr1431926f8f.23.1743587924276;
+        Wed, 02 Apr 2025 02:58:44 -0700 (PDT)
+Received: from localhost ([213.215.212.194])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c0b65b985sm16581662f8f.12.2025.04.02.02.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 02:58:43 -0700 (PDT)
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Subject: [PATCH v4 0/2] Add support for OLED panel used on Snapdragon
+ Lenovo T14s Gen6
+Date: Wed, 02 Apr 2025 10:58:31 +0100
+Message-Id: <20250402-wip-obbardc-qcom-t14s-oled-panel-v4-0-41ba3f3739d0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250402-real-enthusiastic-ostrich-dcc243@krzk-bin>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEcK7WcC/5XNu24CMRCF4VdBrpnIV8xS5T0iCntmFiwt68VGS
+ yK07x5DRZQGyv8U37mJyiVxFbvVTRSeU015bGHXK4HHMB4YErUWWmonjZZwTRPkGEMhhDPmE1y
+ UrZAHJpjCyANEb3smrWgjpWjMVLhP34+Lr33rY6qXXH4ej7O6r2/gswIF0kW0kZC2OnwOaQwlf
+ +RyEHd91s+ie0HUIIG7iB47MhLxn2ieRf+CaJpoHblee+tNt/0jLsvyCz7jerZ1AQAA
+X-Change-ID: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
+To: Douglas Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+ Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ devicetree@vger.kernel.org, 
+ Christopher Obbard <christopher.obbard@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2101;
+ i=christopher.obbard@linaro.org; h=from:subject:message-id;
+ bh=IlA4UvDfErox3kVQzczkwY1GjiDHyTr52IErFszm38M=;
+ b=owEBbQKS/ZANAwAKAWNNxPBocEb4AcsmYgBn7QpPRoqhp0uCFc1qfUTwfMlvTteUzDKNC76k/
+ ZxU7VoUoRyJAjMEAAEKAB0WIQTxi9yLbCX5CqI9UXRjTcTwaHBG+AUCZ+0KTwAKCRBjTcTwaHBG
+ +OuZD/4q4OrxLfM5IQZJdlfHMtgt6pBL2NUTwms3NT0YVSZguUAkuGXPQq9EaAlqyIed58qWrJ/
+ 44+r7asNQ4rhp96wGMY3QuiMWVcDMkz3uIy1bkOYhxNY82kt1eDE6dtusJOuoM0BU/d16gV2qSt
+ 9gs8CCH7cUeL0auRWoSJiZ1vNcP1QnwGXl01x9po7YUaEUe1BWAxpQPP7DWh2J+DWfjPm+ySBIS
+ zibb2tgf3U6ffJst8RbEjypQZ3Bs9/mymnqUBHustX6D9vBMPn6/q5+IwfzQTngDZEnIDyZDTpQ
+ D7IYQBx4OpSQfO7NZA2/z2361xC3zXZqH1+ZE2On3Yfkw4Cwa+s2voOEfPgtoswePcQ+9U7UoYi
+ o1xTepR9clFspYYwzj8TH5y9YP4im+K5oBO2K3q5k88lyDDPq6v3t2QC58i/Id23zUBgxCtejxY
+ Tl/ulhlDvjXe6wNSsFTLLq9wKS+s92QqjB5EeTobkVrQpKvtbbb89p7/tdUSskMz25M5NdojAxL
+ SIZge2SXxTogRI3mQ1AG9IZ1q1HTL00pWMof4rfQizh3NoYInBFHvUoHz0GdrnSX1V3Hw3IVJRg
+ inSMaDlt7fhnVLLTplZILt+F6pPGvEt0QTa8q88Q1jao0/iAXbDcJp1fm/qnOpYZg7F003wZqwc
+ XXcCA+pNCd0oFDw==
+X-Developer-Key: i=christopher.obbard@linaro.org; a=openpgp;
+ fpr=F18BDC8B6C25F90AA23D5174634DC4F0687046F8
 
-Hi Krzysztof,
+The Snapdragon Lenovo T14s Gen6 can be bought with a number of different
+panels. This patch series adds support for the OLED model which has a
+Samsung ATNA40YK20 panel.
 
-Thanks for your feedback.
+With this patch series the backlight of the OLED eDP panel does not
+illuminate since the brightness is incorrectly read from the eDP panel
+as (to be clear this is not a regression). This is fixed in [0].
 
-On 2025-04-02 10:21:42 +0200, Krzysztof Kozlowski wrote:
-> On Tue, Apr 01, 2025 at 04:57:58PM +0200, Niklas Söderlund wrote:
-> > The bindings already reference video-interfaces.yaml in the endpoint
-> > node, there is no need to duplicate the description of the data-lanes
-> > property.
-> > 
-> >   An array of physical data lane indexes. Position of an entry determines
-> >   the logical lane number, while the value of an entry indicates physical
-> >   lane, e.g. for 2-lane MIPI CSI-2 bus we could have "data-lanes = <1 2>;",
-> >   assuming the clock lane is on hardware lane 0. If the hardware does not
-> >   support lane reordering, monotonically incremented values shall be used
-> >   from 0 or 1 onwards, depending on whether or not there is also a clock
-> >   lane. This property is valid for serial busses only (e.g. MIPI CSI-2).
-> 
-> Please do not quote bindings in commit. It's never helpful.
-> 
-> > 
-> > What the generic binding do not cover is the behavior if the property
-> > would be omitted. But the imx219 driver have never agreed with the
-> > description neither. Before commit ceddfd4493b3 ("media: i2c: imx219:
-> 
-> It did not have to agree. See discussion for v3 of patch adding this binding.
+[0]: https://lore.kernel.org/all/20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org/
 
-Thar discussion was in 2020, the common definition video-interfaces.yaml 
-was merged in 2021 AFIK.
+Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+---
+Changes in v4:
+- Rework HPD GPIO into eDP device rather than panel (Johan).
+- Drop review tags for HPD GPIO patch.
+- Link to v3: https://lore.kernel.org/r/20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org
 
-> 
-> > Support four-lane operation") the driver errored out if not 2 lanes
-> > where used, and after it if not 2 or 4 lanes where used.
-> 
-> Then... fix the driver?
-> 
-> This property describes hardware, not driver. Why current driver
-> implementation, e.g. 1 year ago or now, would change the hardware (so
-> the bindings)?
+Changes in v3:
+- Added review trailers from v2.
+- Dropped dt-binding documentation patch (applied by Douglas Anderson into
+  drm-misc-next).
+- Dropped eDP maximum brightness patch (will be sent in separate
+  series).
+- Removed duplicate nodes in T14s OLED device tree.
+- Reworked WIP comments from commit messages.
+- Link to v2: https://lore.kernel.org/r/20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org
 
-I agree, I thought that here we have a case where the bindings predate 
-the standardisation. The driver do not match the bindings, in fact it 
-breaks if the imx219 specific instructions are followed. So the risk of 
-breaking stuff is likely low. And this was an opportunity to align the 
-imx219 with video-interfaces.yaml.
+Changes in v2:
+- Use the existing atna33xc20 driver rather than panel-edp.
+- Add eDP panel into OLED devicetree.
+- Add patch to read the correct maximum brightness from the eDP panel.
+- Link to v1: https://lore.kernel.org/r/20250320-wip-obbardc-qcom-t14s-oled-panel-v1-1-05bc4bdcd82a@linaro.org
 
-I wasted time trying to use the imx219 bindings when bringing up a 
-device, only wanted to try to help others avoid that.
+---
+Christopher Obbard (2):
+      arm64: dts: qcom: x1e78100-t14s: add hpd gpio to dp controller
+      arm64: dts: qcom: x1e78100-t14s-oled: add edp panel
 
-> 
-> > 
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> > Hello,
-> > 
-> > The data-lanes property is a common property and the driver have always
-> > operated as the common description, it seemed silly to break the driver
-> > to adhere to odd specification, then to correct the bindings. However a
-> > more correct solution would be to do the work on the driver of course.
-> > 
-> > This is just a drive-by fix in the hope of sparing others the time to
-> > discover this oddity themself. This is only tested by using the bindings
-> > themself and by 'make dt_binding_check'.
-> > ---
-> >  Documentation/devicetree/bindings/media/i2c/imx219.yaml | 9 ---------
-> >  1 file changed, 9 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/i2c/imx219.yaml b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > index 07d088cf66e0..31beeb2be2ea 100644
-> > --- a/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > +++ b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > @@ -55,15 +55,6 @@ properties:
-> >          unevaluatedProperties: false
-> >  
-> >          properties:
-> > -          data-lanes:
-> > -            description: |-
-> > -              The sensor supports either two-lane, or four-lane operation.
-> > -              If this property is omitted four-lane operation is assumed.
-> > -              For two-lane operation the property must be set to <1 2>.
-> > -            items:
-> > -              - const: 1
-> > -              - const: 2
-> 
-> So 1 lane is also fine? 8 lanes are as well? Previously lack of the
-> property in DTS meant 4 lanes, now lack of property means anything.
+ arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts | 8 ++++++++
+ arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi     | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+---
+base-commit: b6ae34803e82511009e2b78dc4fd154330ecdc2d
+change-id: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
 
-Good point, if this patch where to be followed the data-lanes should be 
-made a required property.
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
+Best regards,
 -- 
-Kind Regards,
-Niklas Söderlund
+Christopher Obbard <christopher.obbard@linaro.org>
+
 
