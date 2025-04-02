@@ -1,305 +1,158 @@
-Return-Path: <linux-kernel+bounces-584987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC31A78E50
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72D3A78E2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F6D3B5BDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D333A5C6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6C723BF83;
-	Wed,  2 Apr 2025 12:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEAC238D39;
+	Wed,  2 Apr 2025 12:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PvRjJ+/L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BV3YxtRH"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED4423A98F;
-	Wed,  2 Apr 2025 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA3521B199
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 12:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743596593; cv=none; b=ldpS1n1IRGC3Qks8Y5oIXW0p2Z0Xs66TBuPx5K937dvYmCOWDODoZY36jVjLfhGjfy6vCtHiClUPUtLv9Ov1Me4P0TvhriSovm3gWiSQivvKe7kJnWk1ltMshimym4zwIlBGc1SEJQX5/co7Let/z2bj4rR2SVeX41QmBRcuTeE=
+	t=1743596524; cv=none; b=VTMmn2yRLmYnF17iUzzkWhj01Mp73XGYqYrnsAGxqDSsHYsvFPQEqj4oy4KBcfSN6709SStrkic2Bicae5JoV71wh5zmbd8oDG/H09FdTZAEFZ/dFzQAUld7GNU/D44eapJxtDeN88aEjb6MLQwJzPsO6cDFAqPWfRZNSh9AEFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743596593; c=relaxed/simple;
-	bh=ipW7SukMx+y4OYBPi1rirqi+iPYrDFo8757SlZ1abVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=foKKQ0KH1a1tmhWtFZvWMeRAK/T+O0WL2vloPAYFch0sZ3LQST+gkjzhSo1VW8p51NXuX5YnPxLctz7H+HBphlPo/OzhcxfZ82wC6Z8ltmVZRcWAQc/YGjzdymGNWKN47UKrQaXv1LTNjcVz1cFrYPv+8XUtmLcfKZM4+mQvSJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PvRjJ+/L; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743596592; x=1775132592;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ipW7SukMx+y4OYBPi1rirqi+iPYrDFo8757SlZ1abVc=;
-  b=PvRjJ+/Len21IgzbPBU9jMWsaCE/TduAPe32MNAhjJfWveWGgmy2gQoU
-   n6CDkXzvgtt2tfxblZsmKu9QH5kCRsFyfomXzMNJa/1bcTNcUN15UP5oq
-   nxf+m/CX3gHOPIBIg4skF8RoxS3K/7ooneV9l16uIWxlEhY0xSSZESTxd
-   2d64kuCciqk/cMcR7qUUYumoEeSfrNWM+pwNsEoswkNzXqFX55R3ZqI4+
-   H2SBSLdJQXPTiaSlpAJXG1bX6KQQdrtr9Dcg4jrlJekImq0+TIz7FMk2y
-   Qin6IeZfYm5VZ5OvnM7ECWWzNDJc0qCYNe6rmFLs2lg6UuyuQdKMk0Lg2
-   Q==;
-X-CSE-ConnectionGUID: 3iLmoYUuS4qBxuosFrARFA==
-X-CSE-MsgGUID: vrbLpepmS9Cx6BNS2V763w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44865054"
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="44865054"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 05:23:10 -0700
-X-CSE-ConnectionGUID: wM3iTc2ITBevt+9P9ReMjQ==
-X-CSE-MsgGUID: Y+IjvnIMTXCANZURAb0Jtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="157635548"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 02 Apr 2025 05:23:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 804CB597; Wed, 02 Apr 2025 15:23:03 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v1 5/5] gpiolib: acpi: Deduplicate some code in __acpi_find_gpio()
-Date: Wed,  2 Apr 2025 15:21:20 +0300
-Message-ID: <20250402122301.1517463-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250402122301.1517463-1-andriy.shevchenko@linux.intel.com>
-References: <20250402122301.1517463-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1743596524; c=relaxed/simple;
+	bh=hFmt9tVTbnzz6IMTCrEPKn6NiL3yOalLnxXBtm1hJ0I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ue638SB++qt6MrKykURhggeI6/xg9GNBQ9NWCeQ6mE8ewtBH/l6Qw1/NRMyQHUNiQfJPiwROWVCpBcdGHAIOe+/tZ9ciUn5SX94URbfpGejkwjZ7GbP8bO8v+jKtubE9Iq0P4O+t1Xzqa8Zf0Ow7FBi0jdj03vc96uWKDz3rG3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BV3YxtRH; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-525da75d902so2857961e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 05:22:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743596521; x=1744201321; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qD/PMOyx9XK9R1d/xQ4M0XKWGpm4ZEHxb/f9TzxVDzc=;
+        b=BV3YxtRHwmumFk4OibmAdJCeTgwWG3pKwGnOwegbztZp6nmrtL67W4+P0p4hClb/WF
+         SdtFnXuDSP7VJG6GtRfAHHpGzvC0KAxw5hODZ8mVXBb8vlIIWbGrL+9JUQ8/AcpMNarm
+         4vVxjyIB0j2LlB8LLhCgORbnSnff/f4pKepG/58wL9pnPQgIcYH04ay/GgR3DegiBrbO
+         IHPq/PpVKqQnM4SAUA9bWK43EdWcRWj2ZTNy3uCM9MEcS9CEdHoHZVICBBsa9Zgfl9qv
+         INpQoNalbSjITd8GgEpUHu83+uyPm8HVq4ZcKeXrzZumbYVXSlzC24Ak3keH/HcADeQj
+         yqwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743596521; x=1744201321;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qD/PMOyx9XK9R1d/xQ4M0XKWGpm4ZEHxb/f9TzxVDzc=;
+        b=cY2NZvwNdGC/igzxPzZNg7wCYWY7J2KdMJIrYxi3V90SVv/RCKV1dFWacM1zRShrCZ
+         zzPnIjKsHA6yHYWHTNYxyh3vXxGL/U3wOkZ7kzkOk1dZD6GYD1zMRuFIPj+muRQ9UUbT
+         SsriEIZ8Ci7L+Toj5P/wFwiYk6U3vR9TIipHfUa/HdWlMqGBc+KGEfRzLdKPkWoequ1J
+         VpeWUiiJ/hnzCe8Dp4HJMLa73u4dsuQcEso7L5YpUUE/TtwETcLwHVdg13+BDbTwg6LC
+         8PMYRjyypnl4p3SRDtso5RHzKytJO3YNOCwHS7Wk1HQPKofl6VDRaW5gqI3MTdK4G5aj
+         enhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeIdsiP3Zapzjs7jcxkt4aGpEttQRuwPjT5OJSF8YfCKno+hsSKwHTLL91f1TmnX8SWBnzuPYSrURDmeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC3l8I0R04Bk+apB0C0zs6Qb+sZXlp/PCXnfxZa6X5c1IRGJK4
+	eixf9NuPg+9sZKQHh8V44NZg3R76dJUichryJiiZI7uQI6WgP1Gh+zGqk9mseFhAuQs7XJ816z8
+	j41igRPIhF2BVWpPgyPeBZdNqIlAK7sonKZRLuQ==
+X-Gm-Gg: ASbGncvumTnx5YuGpWgPFFGo8uOe7tvGIYz7MBs2tqiPx7S0urruhxek6OZuP2Rc0lS
+	ZVSoOYMjDJ8fkym+Wcis0BkrbunCR6UDucQa4TheStKNI2L9JGONwCh3LgLTQiTK74eBT0ScqFk
+	zNNmjeEloftILnp7ISe/RQutGrcJ66nv7dxlMJWnyHawTK+aUpO9db24cOMzM=
+X-Google-Smtp-Source: AGHT+IGZd1b5fqfa6pHXvxexGDlAKss+FYCovowlkAi3Xj1GtUKyZmc4loNHv1qXkrx3HBYz8r1MbDuMAFYoP6L8Qfw=
+X-Received: by 2002:a05:6122:1ad0:b0:525:9440:243c with SMTP id
+ 71dfb90a1353d-5274cfb95a2mr1043348e0c.11.1743596521224; Wed, 02 Apr 2025
+ 05:22:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 2 Apr 2025 17:51:48 +0530
+X-Gm-Features: AQ5f1JqYWbXD84vj9qiHXH7fpaSiEYXFSjnm4-yFz-CnOCSphgOZJOvkdDjcXGE
+Message-ID: <CA+G9fYuQHeGicnEx1d=XBC0p1LCsndi5q0p86V7pCZ02d8Fv_w@mail.gmail.com>
+Subject: clang-nightly: ERROR: modpost: "wcslen" [fs/smb/client/cifs.ko] undefined!
+To: clang-built-linux <llvm@lists.linux.dev>, Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, samba-technical@lists.samba.org, 
+	linux-cifs@vger.kernel.org
+Cc: Steve French <sfrench@samba.org>, bharathsm@microsoft.com, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 
-__acpi_find_gpio() calls two functions depending on the supplied con_id
-and possibility to fallback to _CRS lookup. Those functions have the same
-pieces of code that can be done only in one place. Do it so.
+Regressions on arm, powerpc, s390 defconfig builds failed with
+toolchain clang-nightly on the mainline master branch.
 
-This gives an impressive shrink of the generated code for x86_64:
+First seen on the v6.14-12245-g91e5bfe317d8
+ Good: v6.14-11270-g08733088b566
+ Bad: v6.14-12245-g91e5bfe317d8
 
-add/remove: 0/2 grow/shrink: 0/4 up/down: 0/-1204 (-1204)
-Function                                     old     new   delta
-acpi_find_gpio.__UNIQUE_ID_ddebug478          56       -     -56
-acpi_dev_gpio_irq_wake_get_by.__UNIQUE_ID_ddebug480      56       -     -56
-acpi_find_gpio                               354     216    -138
-acpi_get_gpiod_by_index                      456     307    -149
-__acpi_find_gpio                             877     638    -239
-acpi_dev_gpio_irq_wake_get_by                695     129    -566
-Total: Before=15358, After=14154, chg -7.84%
+Regressions found on arm:
+  - build/clang-nightly-nhk8815_defconfig
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 103 +++++++++++++++++-------------------
- 1 file changed, 49 insertions(+), 54 deletions(-)
+Regressions found on powerpc:
+  - build/clang-nightly-lkftconfig-lto-full
+  - build/clang-nightly-ppc64e_defconfig
+  - build/clang-nightly-lkftconfig-lto-thing
+  - build/clang-nightly-defconfig
+  - build/clang-nightly-lkftconfig-hardening
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 750724601106..5c6ef419f875 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -804,8 +804,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 	return 1;
- }
- 
--static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
--				     struct acpi_gpio_info *info)
-+static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup)
- {
- 	struct acpi_device *adev = lookup->info.adev;
- 	struct list_head res_list;
-@@ -824,8 +823,6 @@ static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
- 	if (!lookup->desc)
- 		return -ENOENT;
- 
--	if (info)
--		*info = lookup->info;
- 	return 0;
- }
- 
-@@ -871,97 +868,83 @@ static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode, const char *p
-  * acpi_get_gpiod_by_index() - get a GPIO descriptor from device resources
-  * @adev: pointer to a ACPI device to get GPIO from
-  * @propname: Property name of the GPIO (optional)
-- * @index: index of GpioIo/GpioInt resource (starting from %0)
-- * @info: info pointer to fill in (optional)
-+ * @lookup: pointer to struct acpi_gpio_lookup to fill in
-  *
-- * Function goes through ACPI resources for @adev and based on @index looks
-+ * Function goes through ACPI resources for @adev and based on @lookup.index looks
-  * up a GpioIo/GpioInt resource, translates it to the Linux GPIO descriptor,
-- * and returns it. @index matches GpioIo/GpioInt resources only so if there
-- * are total %3 GPIO resources, the index goes from %0 to %2.
-+ * and returns it. @lookup.index matches GpioIo/GpioInt resources only so if there
-+ * are total 3 GPIO resources, the index goes from 0 to 2.
-  *
-  * If @propname is specified the GPIO is looked using device property. In
-  * that case @index is used to select the GPIO entry in the property value
-  * (in case of multiple).
-  *
-  * Returns:
-- * GPIO descriptor to use with Linux generic GPIO API.
-- * If the GPIO cannot be translated or there is an error an ERR_PTR is
-- * returned.
-+ * 0 on success, negative errno on failure.
-+ *
-+ * The @lookup is filled with GPIO descriptor to use with Linux generic GPIO API.
-+ * If the GPIO cannot be translated an error will be returned.
-  *
-  * Note: if the GPIO resource has multiple entries in the pin list, this
-  * function only returns the first.
-  */
--static struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
--						 const char *propname,
--						 int index,
--						 struct acpi_gpio_info *info)
-+static int acpi_get_gpiod_by_index(struct acpi_device *adev, const char *propname,
-+				   struct acpi_gpio_lookup *lookup)
- {
--	struct acpi_gpio_lookup lookup;
--	struct acpi_gpio_params *par = &lookup.par;
-+	struct acpi_gpio_info *info = &lookup->info;
-+	struct acpi_gpio_params *par = &lookup->par;
- 	int ret;
- 
--	memset(&lookup, 0, sizeof(lookup));
--	par->crs_entry_index = index;
--
- 	if (propname) {
- 		dev_dbg(&adev->dev, "GPIO: looking up %s\n", propname);
- 
--		ret = acpi_gpio_property_lookup(acpi_fwnode_handle(adev), propname, &lookup);
-+		ret = acpi_gpio_property_lookup(acpi_fwnode_handle(adev), propname, lookup);
- 		if (ret)
--			return ERR_PTR(ret);
-+			return ret;
- 
- 		dev_dbg(&adev->dev, "GPIO: _DSD returned %s %u %u %u\n",
--			dev_name(&lookup.info.adev->dev),
-+			dev_name(&info->adev->dev),
- 			par->crs_entry_index, par->line_index, par->active_low);
- 	} else {
--		dev_dbg(&adev->dev, "GPIO: looking up %d in _CRS\n", index);
--		lookup.info.adev = adev;
-+		dev_dbg(&adev->dev, "GPIO: looking up %u in _CRS\n", par->crs_entry_index);
-+		info->adev = adev;
- 	}
- 
--	ret = acpi_gpio_resource_lookup(&lookup, info);
--	return ret ? ERR_PTR(ret) : lookup.desc;
-+	return acpi_gpio_resource_lookup(lookup);
- }
- 
- /**
-  * acpi_get_gpiod_from_data() - get a GPIO descriptor from ACPI data node
-  * @fwnode: pointer to an ACPI firmware node to get the GPIO information from
-  * @propname: Property name of the GPIO
-- * @index: index of GpioIo/GpioInt resource (starting from %0)
-- * @info: info pointer to fill in (optional)
-+ * @lookup: pointer to struct acpi_gpio_lookup to fill in
-  *
-  * This function uses the property-based GPIO lookup to get to the GPIO
-  * resource with the relevant information from a data-only ACPI firmware node
-  * and uses that to obtain the GPIO descriptor to return.
-  *
-  * Returns:
-- * GPIO descriptor to use with Linux generic GPIO API.
-- * If the GPIO cannot be translated or there is an error an ERR_PTR is
-- * returned.
-+ * 0 on success, negative errno on failure.
-+ *
-+ * The @lookup is filled with GPIO descriptor to use with Linux generic GPIO API.
-+ * If the GPIO cannot be translated an error will be returned.
-  */
--static struct gpio_desc *acpi_get_gpiod_from_data(struct fwnode_handle *fwnode,
--						  const char *propname,
--						  int index,
--						  struct acpi_gpio_info *info)
-+static int acpi_get_gpiod_from_data(struct fwnode_handle *fwnode, const char *propname,
-+				    struct acpi_gpio_lookup *lookup)
- {
--	struct acpi_gpio_lookup lookup;
--	struct acpi_gpio_params *par = &lookup.par;
- 	int ret;
- 
- 	if (!is_acpi_data_node(fwnode))
--		return ERR_PTR(-ENODEV);
-+		return -ENODEV;
- 
- 	if (!propname)
--		return ERR_PTR(-EINVAL);
-+		return -EINVAL;
- 
--	memset(&lookup, 0, sizeof(lookup));
--	par->crs_entry_index = index;
--
--	ret = acpi_gpio_property_lookup(fwnode, propname, &lookup);
-+	ret = acpi_gpio_property_lookup(fwnode, propname, lookup);
- 	if (ret)
--		return ERR_PTR(ret);
-+		return ret;
- 
--	ret = acpi_gpio_resource_lookup(&lookup, info);
--	return ret ? ERR_PTR(ret) : lookup.desc;
-+	return acpi_gpio_resource_lookup(lookup);
- }
- 
- static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
-@@ -983,17 +966,24 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
- 		 bool can_fallback, struct acpi_gpio_info *info)
- {
- 	struct acpi_device *adev = to_acpi_device_node(fwnode);
-+	struct acpi_gpio_lookup lookup;
- 	struct gpio_desc *desc;
- 	char propname[32];
-+	int ret;
-+
-+	memset(&lookup, 0, sizeof(lookup));
-+	lookup.par.crs_entry_index = idx;
- 
- 	/* Try first from _DSD */
- 	for_each_gpio_property_name(propname, con_id) {
- 		if (adev)
--			desc = acpi_get_gpiod_by_index(adev,
--						       propname, idx, info);
-+			ret = acpi_get_gpiod_by_index(adev, propname, &lookup);
- 		else
--			desc = acpi_get_gpiod_from_data(fwnode,
--							propname, idx, info);
-+			ret = acpi_get_gpiod_from_data(fwnode, propname, &lookup);
-+		if (ret)
-+			continue;
-+
-+		desc = lookup.desc;
- 		if (PTR_ERR(desc) == -EPROBE_DEFER)
- 			return desc;
- 
-@@ -1002,8 +992,13 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
- 	}
- 
- 	/* Then from plain _CRS GPIOs */
--	if (can_fallback)
--		return acpi_get_gpiod_by_index(adev, NULL, idx, info);
-+	if (can_fallback) {
-+		ret = acpi_get_gpiod_by_index(adev, NULL, &lookup);
-+		if (ret)
-+			return ERR_PTR(ret);
-+
-+		return lookup.desc;
-+	}
- 
- 	return ERR_PTR(-ENOENT);
- }
--- 
-2.47.2
+Regressions found on s390:
+  - build/clang-nightly-lkftconfig-lto-thing
+  - build/clang-nightly-lkftconfig-lto-full
+  - build/clang-nightly-defconfig
+  - build/clang-nightly-lkftconfig-hardening
 
+
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
+
+Build regression: arm powerpc s390 modpost "wcslen" fs smb client
+cifs.ko undefined
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+
+ERROR: modpost: "wcslen" [fs/smb/client/cifs.ko] undefined!
+
+## Source
+* Kernel version: 6.14.0
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+* Git sha: 91e5bfe317d8f8471fbaa3e70cf66cae1314a516
+* Git describe: v6.14-12245-g91e5bfe317d8
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/
+* Arcitures: arm, powerpc, s390
+* Toolchains: clang-nightly
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27856145/suite/build/test/clang-nightly-nhk8815_defconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27856145/suite/build/test/clang-nightly-nhk8815_defconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.14-12245-g91e5bfe317d8/testrun/27856145/suite/build/test/clang-nightly-nhk8815_defconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2v9EdO7KHQCCZBICM0MvpaTUbLm/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2v9EdO7KHQCCZBICM0MvpaTUbLm/config
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch arm --toolchain
+clang-nightly --kconfig nhk8815_defconfig LLVM=1 LLVM_IAS=1
+ - tuxmake --runtime podman --target-arch powerpc --toolchain
+clang-nightly --kconfig defconfig LLVM=1 LLVM_IAS=0
+LD=powerpc64le-linux-gnu-ld
+ - tuxmake --runtime podman --target-arch s390 --toolchain
+clang-nightly --kconfig defconfig LLVM_IAS=1
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
