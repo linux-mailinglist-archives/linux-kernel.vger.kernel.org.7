@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-585270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87B3A79198
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1309CA791BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0AE3B1F17
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12183B249E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 15:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9F323BFA6;
-	Wed,  2 Apr 2025 14:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T5j+Ew71"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D0023C393;
+	Wed,  2 Apr 2025 15:00:33 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB091E521;
-	Wed,  2 Apr 2025 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ADE1DA5F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 15:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743605971; cv=none; b=DfQnHoKUeY3tYOqZ8nGAC7gX7cqin9YBjzGsu3Khjl7OQj+GKFxTSFzVS7kdAeopEvhnJGwtvTfq2gLVoG5tR/rpnpEhmqGvHW/GFo3mF7tNkTnQ17gj+4WOGtAEkZf2/uaS8xqdHn3yj5grEPzRjhSF26rDKyVTH+YH9FOk8iU=
+	t=1743606033; cv=none; b=uHNXsheAuQdtx/J01ekVyWBY+Jwf+YJ0AnRSsq49aTECy2SbFXg+rBAsI6ToJR9WXiUYPiNROihBxr1y4dceMKmIMHGmC/fjI5lFuQFU48UmdgoYV7kZYork/RyuqKuJh31/N/Q+QvABdRPz/5kPAnubl76VvcGSzIOP8824cGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743605971; c=relaxed/simple;
-	bh=dlLqY1u1t6/c8205XqJOIrRCz/YhzQT9F0ssufJpEow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X48WgzAzJJoGtMJnMLi7ohKWM1Bx25dzthK0vCvw8yaKcWHv8hQkyW7Gm+STqah2Ffu3YKrILHN5gnwhDc6DZ1gAXZQCm/eMhzxJP0A+GtoCUrNQ0h150jRBsUDHGNwENMC8ubWlclhGri01Luq226floReZ6PxTmIQoNfN+NBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T5j+Ew71; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743605970; x=1775141970;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=dlLqY1u1t6/c8205XqJOIrRCz/YhzQT9F0ssufJpEow=;
-  b=T5j+Ew716casl2pfjn9n7XMxkniwD5/Zd+D3ZDLxvSTWTxesXBbo9GZk
-   l6cs8AblYoVgmDeEGblqfmMz17/XfMcCUT5lCuCNkzdRvJJG7Rnyq2XLb
-   Zc6deg3rdaxuxM+G3Wk6j3BRx8g7SGkS70+m0QSD2meAQC3NRL23XucH7
-   jyoJl4wr7JhzQZXiyiSA6s0VTllsSFpUUO6G37GYnYmeA1EMUw94MLUZj
-   KK0ZM7GOMCnDUtU2hlQ1uoY6IX1HYpOy5s0PCLhshys6CrNlj6wv6sUcg
-   RMQWOBudgiH+nk1AgiDdMKvAot9EiQ7LVSz4FIErtd52zvXN1YwrkttB/
-   A==;
-X-CSE-ConnectionGUID: mkyhhZz4QtWPxYP8mAs7bw==
-X-CSE-MsgGUID: LOOKeM1rT0qLEpxaGkIsVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44232459"
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="44232459"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 07:59:29 -0700
-X-CSE-ConnectionGUID: UlGiov7MSou8TYTSDLOb1Q==
-X-CSE-MsgGUID: AlQg4rPaTtq3pa3PjFbrBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
-   d="scan'208";a="131848576"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 02 Apr 2025 07:59:26 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id B3A6426D; Wed, 02 Apr 2025 17:59:25 +0300 (EEST)
-Date: Wed, 2 Apr 2025 17:59:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] spi: bcm2835: Do not call gpiod_put() on invalid
- descriptor
-Message-ID: <Z-1QzesPs7A3_FQY@black.fi.intel.com>
-References: <20250401224238.2854256-1-florian.fainelli@broadcom.com>
- <CAMRc=Mefks5RMDkO-w-WT1279rKKyz8Up9UbuNdcF+WpsOxioA@mail.gmail.com>
+	s=arc-20240116; t=1743606033; c=relaxed/simple;
+	bh=f4O6sv3eZ30NvzM284f3G5Oa8bN+72v/oVfzjI0rhSI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PdDfjcnGY+ZekjTLJQB/SjKWgtzn01IXDnhBgzOsIuDZldcjgeSfJoPA+Qv07JQsanHLQgUbe7SuMZ/8rdrK/0RF9McvfWdOXcMGth/EGGf72TNM5Cu6CuZ5RxBMn8wYSwc932rkQNFB1J0vsvd0eH72jitLFBZ20D9r4dBHr3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from [192.168.2.19] (51b692a2.dsl.pool.telekom.hu [::ffff:81.182.146.162])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000080D7C.0000000067ED510D.000838A8; Wed, 02 Apr 2025 17:00:29 +0200
+Message-ID: <dfe09171d1968fd3a03784b04de23f9127adff8d.camel@irl.hu>
+Subject: Re: amdgpu_dm_connector_mode_valid regression
+From: Gergo Koteles <soyer@irl.hu>
+To: Dmitry Baryshkov <dbaryshkov@gmail.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>, regressions@lists.linux.dev,
+  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+  amd-gfx@lists.freedesktop.org, Hans de Goede <hdegoede@redhat.com>,
+  Alex Deucher <alexander.deucher@amd.com>,
+  Mario Limonciello <mario.limonciello@amd.com>,
+  Alex Hung <alex.hung@amd.com>,
+  Harry Wentland <harry.wentland@amd.com>
+Date: Wed, 02 Apr 2025 17:00:29 +0200
+In-Reply-To: <CALT56yPvDW1dLNdZK0kkn53kTa0HcVXgYXp9Gim4MH4YjgEncw@mail.gmail.com>
+References: <ed09edb167e74167a694f4854102a3de6d2f1433.camel@irl.hu>
+	 <8963a409dd575e040e5f07e4ad5e9c1d26b421f2.camel@irl.hu>
+	 <CALT56yPd-xfd=47xRxrCk4F3jib4Ti7kg8pRXy-gVAQpbOc=pw@mail.gmail.com>
+	 <e323219b52cda1891a55d12ad77a2b34edc8688b.camel@irl.hu>
+	 <CALT56yPvDW1dLNdZK0kkn53kTa0HcVXgYXp9Gim4MH4YjgEncw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mefks5RMDkO-w-WT1279rKKyz8Up9UbuNdcF+WpsOxioA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Apr 02, 2025 at 01:36:28PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Apr 2, 2025 at 12:43 AM Florian Fainelli
-> <florian.fainelli@broadcom.com> wrote:
-> >
-> > If we are unable to lookup the chip-select GPIO, the error path will
-> > call bcm2835_spi_cleanup() which unconditionally calls gpiod_put() on
-> > the cs->gpio variable which we just determined was invalid.
+Hi Dmitry,
 
-...
+On Wed, 2025-04-02 at 17:40 +0300, Dmitry Baryshkov wrote:
+> On Wed, 2 Apr 2025 at 17:35, Gergo Koteles <soyer@irl.hu> wrote:
+> >=20
+> > Hi Dmitry,
+> >=20
+> > On Wed, 2025-04-02 at 16:36 +0300, Dmitry Baryshkov wrote:
+> > > > >=20
+> > > > > It works if I call
+> > > > > drm_mode_set_crtcinfo((struct drm_display_mode *)mode, 0) before
+> > > > > create_validate_stream_for_sink()
+> > > > > in amdgpu_dm_connector_mode_valid()
+> > > > >=20
+> > > > > or
+> > > > >=20
+> > > > > if I comment out the decide_crtc_timing_for_drm_display_mode() in
+> > > > > create_stream_for_sink()
+> > > > >=20
+> > > > > but a better fix than these can be imagined :)
+> > >=20
+> > > Would it help if you force recalculate_timings to be true if
+> > > (drm_mode->crtc_clock =3D=3D 0)
+> > >=20
+> >=20
+> > Yes, it works with that one.
+> >=20
+> > But the code would start to become quite untraceable.
+> > duplicate mode in amdgpu_dm_connector_mode_valid()
+> > call drm_mode_set_crtcinfo() in amdgpu_dm_connector_mode_valid()
+> > duplicate mode in create_stream_for_sink()
+> > overwrite ctrc in decide_crtc_timing_for_drm_display_mode()
+> > if crtc_clock =3D=3D 0 call drm_mode_set_crtcinfo() again in
+> > create_stream_for_sink()
+>=20
+> Well... Unfortunately I don't know AMD driver details to comment on
+> this. The fix that you've posted below at least resolves a regression
+> without requiring us to revert r/o drm_mode argument patches.
+>=20
+> >=20
+> > saved_mode is never used after this, so I can't add the condition here
+> >         if (recalculate_timing)
+> >                 drm_mode_set_crtcinfo(&saved_mode, 0);
+>=20
+> Agree
+>=20
+> >=20
+> > This commit is related, I think:
+> > 1101185 ("drm/amd/display: fix the ability to use lower resolution
+> > modes on eDP")
+> >=20
+> > Regards,
+> > Gergo
+> >=20
+> > ---
+> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > index bae83a129b5f..83c8c81d4015 100644
+> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > @@ -6984,6 +6984,9 @@ create_stream_for_sink(struct drm_connector
+> > *connector,
+> >         if (recalculate_timing)
+> >                 drm_mode_set_crtcinfo(&saved_mode, 0);
+> >=20
+> > +       if (mode.crtc_clock =3D=3D 0)
+> > +               drm_mode_set_crtcinfo(&mode, 0);
+> > +
+>=20
+> I'd say, please post this and let AMD maintainers act upon it.
+>=20
+>=20
 
-> > -       gpiod_put(bs->cs_gpio);
-> > +       if (!IS_ERR(bs->cs_gpio))
-> > +               gpiod_put(bs->cs_gpio);
+This patch is probably not good yet, because I think it would bring up
+the problem mentioned in=C2=A01101185 ("drm/amd/display: fix the ability to
+use lower resolution modes on eDP") again.
 
-> We could also just set it to NULL on error in bcm2835_spi_setup() but
-> I'm fine either way.
+Maybe someone will come up with a better one.
 
-I think this patch papers over the real issue:
-1) the cleanup call does everything and not split to have the exact reversed order of the setup;
-2) the GPIO here as far as I understand is not optional and on errors may contain an error pointer
-but gpiod_put() ignores that.
-
-TL;DR: I think the proper fix is to make gpio_put() to accept an error pointer as NULL. I.o.w.
-if (desc) --> if (!IS_ERR_OR_NULL(desc)) in all conditionals related to gpiod*put*() calls.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Regards,
+Gergo
 
 
