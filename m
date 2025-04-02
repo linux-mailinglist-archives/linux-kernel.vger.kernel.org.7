@@ -1,217 +1,181 @@
-Return-Path: <linux-kernel+bounces-585616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED14A79573
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:50:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D018A79577
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23223ACF3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28BC7A4EB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D086E1DB92A;
-	Wed,  2 Apr 2025 18:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC25C1A3156;
+	Wed,  2 Apr 2025 18:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GoFAAjPT"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WLmQq/Dz"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3938DE1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 18:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A648918A93F;
+	Wed,  2 Apr 2025 18:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743619778; cv=none; b=Z7bG5ZAyxbNw28KFXvZowSVdldTukg+HNp0pGeeRgClY4fejVX+y7c/boxKnqfTjmuTzoapAdaxDio4SUBkcmWEesZASDJYazb+5rzOtjHHnHtrNwHCqNAiixSanOjPo7L1ecWSLUPi7KCPjt/J3o0S4p4Hj/yOt9ITt24STgd0=
+	t=1743619913; cv=none; b=TEqMZBpNvZ+y6BGb5j+t/QCq3anpyFgvopf51b0YiJNYsS2aPC9d8wuA79uILJUZaNMBQV+A+29zIamAcwzWdyBz453uI7OBJcBI9eT88UIxFtFX5TX1Vhttie20ApN5nIVTUxXl+SegAsPgeYWyCY3SFHxMAiMVGMcL1x1TaiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743619778; c=relaxed/simple;
-	bh=DTgOX/151O8AkIoG0weYiwor68xFKUhgPCcZqlnQvkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izlvlXmdAlxF9grd6dmMxIoBQM9CoVzwUZljVpymQMww5PpWXQIQO52FujhzwVL0gdhXKwnQ+J0/m3oCSo5w/7sHpLwNr/o5LFxHngkEibdoDIyeY/GT22riwboj1BQhd/YksIwU7ci6IN36LN9fiMz3h/CxtgS1qtiuP8pJRPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GoFAAjPT; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 2 Apr 2025 14:49:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743619761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cl6AmJc4QSFewNJX9IUpcE3oBggxGDnS2myz9NtWjEs=;
-	b=GoFAAjPTdcU+aED178JtfBJmVkJnY4ZB3NybpI+ZgfAYshDEI4O1spjDmx6rW4ax+mkRq5
-	/Mwgshz4L18edmVwotEQf4QpVqVUUHNy6fJUDs91XQUcEdynrbs4RC0z4bktjzjtctFIvO
-	Gyi9XMbGgSq1lZB1z44AFZExwhtgQ2o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+64fe47118b53a051c3d7@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_opt_check_may_set
-Message-ID: <iviif2qfocn5yap7os2ddltfi6p7a3ogs3yxalw4sjupajh75s@zhmmu4ayc4qm>
-References: <67eb568b.050a0220.e5efe.0001.GAE@google.com>
+	s=arc-20240116; t=1743619913; c=relaxed/simple;
+	bh=IKFtIfujl6w1fXs8MvpVq7RHyw1mm7U9SCIeKJRjke8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SEV8LvLKPLh1GkcuoxcPDbwPq5y8ULwdA9XxLscRkJDvgx6mOYFHMosV49kU5OVDDqZYokmck/iY8SwoV9GThLGusGun7zppIFJjj5wi0wmCPUQod+ik/aXpKqscJppAWchxKRJQqyKSPQXOxwT36uUIi2zbZpesvZur2wQC2gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WLmQq/Dz; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 532HC6LN020790;
+	Wed, 2 Apr 2025 18:51:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=6bE4SBM+FwuyNcAR95oXFclKRAI6VKjLu495Gc/0C9Y=; b=WLmQq/DzMtt8
+	DeYjBK+P+7MclC9GlMNDFjqCA8SZuLlb+Gv+d977CZdn/2aFXjv2tQFD6DmCNALj
+	vs2nO+zSwuyZHurPSYz8Fa48DJcpLaROhqD4eLseQG3zpiB/OVM2QgvdTd2eh99U
+	YiwB3PmHCZxBbTP19YRf8w7OqgGvnB3K94qVjSE09BnpyDVdy2zv9MlXN8PjZfxv
+	BlIEPEFTP8sE+UBn5Dc+ouEngT0ZspSWHfcCn3QNF+Fhbr7saP8HExn6o7kkMMNX
+	edBCuaPL4kqdkuKhpGfRihqn8XnTRwjOhc/3TTfr3Dz+PtCNNMK9MxCvuqmIbwNd
+	sI7gRogJ/w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45s9dx8g6s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 18:51:04 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 532IlErc032276;
+	Wed, 2 Apr 2025 18:51:03 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45s9dx8g6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 18:51:03 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 532H8T9q001724;
+	Wed, 2 Apr 2025 18:51:02 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45rddkygdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 18:51:02 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 532Ip1oj34341412
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Apr 2025 18:51:01 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F6015805D;
+	Wed,  2 Apr 2025 18:51:01 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7C29A5805A;
+	Wed,  2 Apr 2025 18:50:52 +0000 (GMT)
+Received: from [9.43.25.190] (unknown [9.43.25.190])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Apr 2025 18:50:52 +0000 (GMT)
+Message-ID: <44b7d213-cca6-45d6-a48a-a3f358e7bca3@linux.ibm.com>
+Date: Thu, 3 Apr 2025 00:20:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67eb568b.050a0220.e5efe.0001.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/numa: Add statistics of numa balance task migration
+ and swap
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeel.butt@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@intel.com>, Aubrey Li <aubrey.li@intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Raghavendra K T <raghavendra.kt@amd.com>,
+        K Prateek Nayak <kprateek.nayak@amd.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Xunlei Pang <xlpang@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        Chen Yu <yu.chen.surf@foxmail.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20250402010611.3204674-1-yu.c.chen@intel.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Reply-To: 20250402010611.3204674-1-yu.c.chen@intel.com
+In-Reply-To: <20250402010611.3204674-1-yu.c.chen@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: oJbx8o8m1fjFkfgZHqP3VfiVKjbV2RxB
+X-Proofpoint-ORIG-GUID: KtlAFmNiB-Pr_cVYA3bnVU1pBGwJqN5P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-02_08,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ clxscore=1015 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504020118
 
-#syz fix bcachefs: Recovery no longer holds state_lock
+Hi Chen Yu,
 
-On Mon, Mar 31, 2025 at 07:59:23PM -0700, syzbot wrote:
-> Hello,
+On 02/04/25 06:36, Chen Yu wrote:
+> On system with NUMA balancing enabled, it is found that tracking
+> the task activities due to NUMA balancing is helpful. NUMA balancing
+> has two mechanisms for task migration: one is to migrate the task to
+> an idle CPU in its preferred node, the other is to swap tasks on
+> different nodes if they are on each other's preferred node.
 > 
-> syzbot found the following issue on:
+> The kernel already has NUMA page migration statistics in
+> /sys/fs/cgroup/mytest/memory.stat and /proc/{PID}/sched.
+> but does not have statistics for task migration/swap.
+> Add the task migration and swap count accordingly.
 > 
-> HEAD commit:    4fa118e5b79f Merge tag 'trace-tools-v6.15' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=101d3804580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14976ddc05593f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=64fe47118b53a051c3d7
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> The following two new fields:
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
+> numa_task_migrated
+> numa_task_swapped
 > 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4fa118e5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/75d19710545a/vmlinux-4fa118e5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8e9456ff5bb7/bzImage-4fa118e5.xz
+> will be displayed in both
+> /sys/fs/cgroup/{GROUP}/memory.stat and /proc/{PID}/sched
+
+I was able to see the fields and their corresponding values for schbench:
+
+numa_task_swapped                            :                    2
+numa_task_migrated                           :                    0
+numa_task_swapped                            :                    1
+numa_task_migrated                           :                    0
+numa_task_swapped                            :                    0
+numa_task_migrated                           :                    0
+numa_task_swapped                            :                    1
+
+Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+
+Thanks,
+Madadi Vineeth Reddy
+
+> Previous RFC version can be found here:
+> https://lore.kernel.org/lkml/1847c5ef828ad4835a35e3a54b88d2e13bce0eea.1740483690.git.yu.c.chen@intel.com/
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+64fe47118b53a051c3d7@syzkaller.appspotmail.com
-> 
->   u64s 8 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 0, fixing
-> snapshot points to missing/incorrect tree:
->   u64s 8 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 0, fixing
->  done
-> bcachefs (loop0): check_subvols... done
-> bcachefs (loop0): check_subvol_children... done
-> bcachefs (loop0): delete_dead_snapshots... done
-> bcachefs (loop0): check_inodes... done
-> bcachefs (loop0): check_extents... done
-> bcachefs (loop0): check_indirect_extents... done
-> bcachefs (loop0): check_dirents... done
-> bcachefs (loop0): check_xattrs... done
-> bcachefs (loop0): check_root... done
-> bcachefs (loop0): check_unreachable_inodes... done
-> bcachefs (loop0): check_subvolume_structure... done
-> bcachefs (loop0): check_directory_structure... done
-> bcachefs (loop0): check_nlinks... done
-> bcachefs (loop0): resume_logged_ops... done
-> bcachefs (loop0): delete_dead_inodes... done
-> bcachefs (loop0): set_fs_needs_rebalance... done
-> bcachefs (loop0): Fixed errors, running fsck a second time to verify fs is clean
-> bcachefs (loop0): check_alloc_info... done
-> bcachefs (loop0): check_lrus... done
-> bcachefs (loop0): check_btree_backpointers... done
-> bcachefs (loop0): check_backpointers_to_extents... done
-> bcachefs (loop0): check_extents_to_backpointers...
-> bcachefs (loop0): scanning for missing backpointers in 1/128 buckets
->  done
-> bcachefs (loop0): check_alloc_to_lru_refs... done
-> bcachefs (loop0): bucket_gens_init... done
-> bcachefs (loop0): check_snapshot_trees... done
-> bcachefs (loop0): check_snapshots... done
-> bcachefs (loop0): check_subvols... done
-> bcachefs (loop0): check_subvol_children... done
-> bcachefs (loop0): delete_dead_snapshots... done
-> bcachefs (loop0): check_inodes... done
-> bcachefs (loop0): check_extents... done
-> bcachefs (loop0): check_indirect_extents... done
-> bcachefs (loop0): check_dirents... done
-> bcachefs (loop0): check_xattrs... done
-> bcachefs (loop0): check_root... done
-> bcachefs (loop0): check_unreachable_inodes... done
-> bcachefs (loop0): check_subvolume_structure... done
-> bcachefs (loop0): check_directory_structure... done
-> bcachefs (loop0): check_nlinks... done
-> bcachefs (loop0): resume_logged_ops... done
-> bcachefs (loop0): delete_dead_inodes... done
-> bcachefs (loop0): set_fs_needs_rebalance... done
-> bcachefs (loop0): done starting filesystem
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5325 at fs/bcachefs/opts.c:485 bch2_opt_check_may_set+0x189/0x1c0 fs/bcachefs/opts.c:485
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5325 Comm: syz.0.0 Not tainted 6.14.0-syzkaller-07318-g4fa118e5b79f #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:bch2_opt_check_may_set+0x189/0x1c0 fs/bcachefs/opts.c:485
-> Code: e8 fc a1 3f fd eb 0c e8 f5 a1 3f fd eb 05 e8 ee a1 3f fd 31 c0 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 d8 a1 3f fd 90 <0f> 0b 90 e9 f3 fe ff ff 48 c7 c1 30 04 5e 90 80 e1 07 80 c1 03 38
-> RSP: 0018:ffffc9000d505e88 EFLAGS: 00010283
-> RAX: ffffffff8483e478 RBX: 0000000000000000 RCX: 0000000000100000
-> RDX: ffffc9000ea2a000 RSI: 0000000000007706 RDI: 0000000000007707
-> RBP: 0000000000000041 R08: ffffffff8483e360 R09: 1ffffffff20bbaae
-> R10: dffffc0000000000 R11: fffffbfff20bbaaf R12: ffff888053380000
-> R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
-> FS:  00007efcdf4256c0(0000) GS:ffff88808c5f1000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000001240 CR3: 000000004348a000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  bch2_xattr_bcachefs_set+0x3a7/0xb10 fs/bcachefs/xattr.c:526
->  __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
->  __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
->  vfs_setxattr+0x223/0x430 fs/xattr.c:321
->  ovl_do_setxattr fs/overlayfs/overlayfs.h:315 [inline]
->  ovl_copy_xattr+0x861/0xb60 fs/overlayfs/copy_up.c:156
->  ovl_copy_up_metadata+0x269/0xef0 fs/overlayfs/copy_up.c:668
->  ovl_copy_up_tmpfile fs/overlayfs/copy_up.c:893 [inline]
->  ovl_do_copy_up fs/overlayfs/copy_up.c:999 [inline]
->  ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
->  ovl_copy_up_flags+0x20b2/0x47f0 fs/overlayfs/copy_up.c:1257
->  ovl_open+0x14f/0x320 fs/overlayfs/file.c:211
->  do_dentry_open+0xdec/0x1960 fs/open.c:956
->  vfs_open+0x3b/0x370 fs/open.c:1086
->  dentry_open+0x61/0xa0 fs/open.c:1109
->  ima_calc_file_hash+0x16a/0x1af0 security/integrity/ima/ima_crypto.c:553
->  ima_collect_measurement+0x52b/0xb20 security/integrity/ima/ima_api.c:293
->  process_measurement+0x1353/0x1fb0 security/integrity/ima/ima_main.c:375
->  ima_file_check+0xdb/0x130 security/integrity/ima/ima_main.c:603
->  security_file_post_open+0xb9/0x280 security/security.c:3130
->  do_open fs/namei.c:3847 [inline]
->  path_openat+0x2cf7/0x35d0 fs/namei.c:4004
->  do_filp_open+0x284/0x4e0 fs/namei.c:4031
->  do_sys_openat2+0x12b/0x1d0 fs/open.c:1429
->  do_sys_open fs/open.c:1444 [inline]
->  __do_sys_openat fs/open.c:1460 [inline]
->  __se_sys_openat fs/open.c:1455 [inline]
->  __x64_sys_openat+0x249/0x2a0 fs/open.c:1455
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7efcde58d169
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007efcdf425038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 00007efcde7a5fa0 RCX: 00007efcde58d169
-> RDX: 0000000000000083 RSI: 0000200000000000 RDI: ffffffffffffff9c
-> RBP: 00007efcde60e2a0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007efcde7a5fa0 R15: 00007fffc7b7c218
->  </TASK>
-> 
-> 
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+> RFC->v1: Rename the nr_numa_task_migrated to
+>          numa_task_migrated, and nr_numa_task_swapped
+>          numa_task_swapped in /proc/{PID}/sched,
+>          so both cgroup's memory.stat and task's
+>          sched have the same field name.
+> ---
+>  include/linux/sched.h         |  4 ++++
+>  include/linux/vm_event_item.h |  2 ++
+>  kernel/sched/core.c           | 10 ++++++++--
+>  kernel/sched/debug.c          |  4 ++++
+>  mm/memcontrol.c               |  2 ++
+>  mm/vmstat.c                   |  2 ++
+>  6 files changed, 22 insertions(+), 2 deletions(-)
 
