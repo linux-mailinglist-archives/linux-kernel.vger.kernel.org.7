@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-584884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5496CA78D35
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2612A78D3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7EF1895B67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E891C3B01A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD70238D22;
-	Wed,  2 Apr 2025 11:35:39 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188D023875D;
+	Wed,  2 Apr 2025 11:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JonVyCoC"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32553238159;
-	Wed,  2 Apr 2025 11:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D10F238166
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 11:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743593739; cv=none; b=fpjWJ08ZYPZ8JuUMmtiTS2fnyuYGlmgr5AWi1ZNExsmK9HUvfWGiVk9VECS2/121yhQqVoxf7RIJHrRjigoXiU6RNCyaL2XGZN/qS3ucIyH2C7OxAVpYXvdDQEXDy1XzMgd61T+swI/UqOLQTW61WQmf6hS2rHrKfVHwPMzPl3A=
+	t=1743593803; cv=none; b=ETLPAphk+/GZ3/we6cmoFXpM5K5t2lrXeb+VoGoK9lslMBs+Xx3qKvoR5YvLMTJ9fr5ohWKfKFvGITZSA5EiG3tFGgLnYnt4HrGnBYNDGk+TGWPipMAO4z3sD+eULtXDEUmVhBOuxHc/vvHTRbSi5G+k998tZoJG5jjFdrNM4wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743593739; c=relaxed/simple;
-	bh=TbdnfG8wkwkQNcCDVtClAVzFHhMRXauh/c7m5Sv6VTg=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=OJM/mqH+qQe+IbM/XLDbuZwDTBLtFYv4d36KU2AYNrherD4AZmuZ1vYTf/e021m/4ihRO5YUbFEG1cIsMKMZIi3y9Y6ZuaD7Hnml2zFvtZgYk5Dmf8kKOmfzXSE2ZnoTdgqAsK+q3o/atffkaTEbPUxO1t8wIgmPsD8quyseJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZSN8X20fdz8R049;
-	Wed,  2 Apr 2025 19:35:24 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 532BZKTK064113;
-	Wed, 2 Apr 2025 19:35:20 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 2 Apr 2025 19:35:22 +0800 (CST)
-Date: Wed, 2 Apr 2025 19:35:22 +0800 (CST)
-X-Zmail-TransId: 2afc67ed20fa174-1da6c
-X-Mailer: Zmail v1.0
-Message-ID: <20250402193522517tlQ-zKtbUFsLKAMwRTF6-@zte.com.cn>
+	s=arc-20240116; t=1743593803; c=relaxed/simple;
+	bh=K/IxOeoGpLWd0tF2MZP/yWzEs17gKVZtkgJ6ev+aWm4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KTfljn2dHnIN99haPajZ8vkQDvcv0TPZ3dbLQLqn0y66LsyK2QNbFov+bh6rtsdt6VsPNPvJ/RhikGu9SxHJo0K7X/SPEw5LKIcx4Wa8PgB25Jdy4eE8gRD2G559A/EwxIePTfIv03zcZMpjrGJMLT7aUSQCuwZFn1dQg+V2r6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JonVyCoC; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54b10594812so5274187e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 04:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743593799; x=1744198599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2AKdoyoCSvRsoZGSSFw8MoqljRP5EvFB4ozAvbpb1Ao=;
+        b=JonVyCoCFPknaBmca8mds5pzV52jmq9pZraFiiG37Kvyhh8kh62yPeTNV3ssO0rLyY
+         tg/wyZRs/DS6SgaztXxx+spduB0gl0i7F0VQ0ja2bj5NRw9HArG8pw2LDMBGeFvtcYhI
+         QfwN/WG68XOqKH7scQ0sOU6SGRc9/iguusQjINdIhfGvgV6E12yebXHMNt6R5ihulGO3
+         AH2aHTLCBbCYjeS1enhuTkrG5wZsNvMIMvorgn7hqdigPOHJTqb1An2HbVQ7BpnOXq4a
+         w2UxjgksjVb2LkPuDFmvHjiYr8W6guJj5zOUMALbUm+s7TGUFbN6IDTlmqSa/AdqVoE9
+         2AOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743593799; x=1744198599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2AKdoyoCSvRsoZGSSFw8MoqljRP5EvFB4ozAvbpb1Ao=;
+        b=u96kYGoABJqlTbVtNi3u0i9PJDD6/WZGjGUvpKEF3kazKjiuYn+H4H4pu+DlE7Nfep
+         sCSA5YRt2PifRmVTJ1do4cR5qpPBs4KG6iEUPi/Z7xzflB+Ix6jilEIIK0qezkV90yXL
+         e9Umw21GuoP+XiSuoc78IQT1bjR2msfngjvMOCXFOuB8OaDykhelXHoEtR2h2qVU9hXY
+         l4HyOyvRwLlgcwjWo9CiawRpzYXEaQnnFj9B0jul22POC2+0vHwnY6TKQY8m26pvmug0
+         Fk5khDP5MabykDUMcqlGZWeoZSwpetcbPi7rmSECa8JEW/3AU6nadm3rZM9zN5usRcP+
+         1bGA==
+X-Gm-Message-State: AOJu0Ywnz7mSSXEJ2n8B0a3DVPzZMJYD3UBOwCT5kMUqfpnEzz7juHq5
+	6vi2od42rBF/i45XCeYjeQVAv59xKWZp6ej3yyLl5p7VJCQdmldSaWHV1lsZsJoAgYyOdYWoEC1
+	V4CRCXziiHTYDpxRxASwSf30EwP/LNLLG9dzTww==
+X-Gm-Gg: ASbGnctt7z3kWzTHgbpAh8dhHFn0/XjdXrT0iEhRuVWQUB16B56tZ/XOW7mE5/aK7gs
+	WY+fHzNSQeGcv/xiob3gaEQ0PtD7YTpmVrQJsqXpphkpXQ7RZ6kxVvLfSnAN5GY3Y+bg42VMrYH
+	yNp/QuDpq7wZJi+i+dOm5nwS8P8AysuW26qysrFDLroJDm2c4PHHWzYyOT/g==
+X-Google-Smtp-Source: AGHT+IGsnbfXwvFZVuoC9UDDv3Npd3hZvi9h1Pp8wvqwNQjg5U9HC70EwnrQvmAWsGN56Cs2yZSGmu1+vFuYnT3C5tg=
+X-Received: by 2002:a05:6512:334f:b0:54b:117c:118a with SMTP id
+ 2adb3069b0e04-54b117c1200mr3694523e87.55.1743593799153; Wed, 02 Apr 2025
+ 04:36:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <andersson@kernel.org>
-Cc: <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xie.ludan@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBidXM6IHFjb20tc3NjLWJsb2NrLWJ1czogVXNlwqBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2VfYnluYW1l?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 532BZKTK064113
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67ED20FC.001/4ZSN8X20fdz8R049
+MIME-Version: 1.0
+References: <20250401224238.2854256-1-florian.fainelli@broadcom.com>
+In-Reply-To: <20250401224238.2854256-1-florian.fainelli@broadcom.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 2 Apr 2025 13:36:28 +0200
+X-Gm-Features: AQ5f1JrJhtH8_ur3V9au8mD0Q0X31nTvcx7xt8ybgxveuCtP18Bl-AMF_VqywNs
+Message-ID: <CAMRc=Mefks5RMDkO-w-WT1279rKKyz8Up9UbuNdcF+WpsOxioA@mail.gmail.com>
+Subject: Re: [PATCH] spi: bcm2835: Do not call gpiod_put() on invalid descriptor
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xie Ludan <xie.ludan@zte.com.cn>
+On Wed, Apr 2, 2025 at 12:43=E2=80=AFAM Florian Fainelli
+<florian.fainelli@broadcom.com> wrote:
+>
+> If we are unable to lookup the chip-select GPIO, the error path will
+> call bcm2835_spi_cleanup() which unconditionally calls gpiod_put() on
+> the cs->gpio variable which we just determined was invalid.
+>
+> Fixes: 21f252cd29f0 ("spi: bcm2835: reduce the abuse of the GPIO API")
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/spi/spi-bcm2835.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+> index e1b9b1235787..a5d621b94d5e 100644
+> --- a/drivers/spi/spi-bcm2835.c
+> +++ b/drivers/spi/spi-bcm2835.c
+> @@ -1162,7 +1162,8 @@ static void bcm2835_spi_cleanup(struct spi_device *=
+spi)
+>                                  sizeof(u32),
+>                                  DMA_TO_DEVICE);
+>
+> -       gpiod_put(bs->cs_gpio);
+> +       if (!IS_ERR(bs->cs_gpio))
+> +               gpiod_put(bs->cs_gpio);
+>         spi_set_csgpiod(spi, 0, NULL);
+>
+>         kfree(target);
+> --
+> 2.34.1
+>
+>
 
-Introduce devm_platform_ioremap_resource_byname() to simplify resource
-retrieval and mapping.This new function consolidates
-platform_get_resource_byname() and devm_ioremap_resource() into a single
-call, improving code readability and reducing API call overhead.
+We could also just set it to NULL on error in bcm2835_spi_setup() but
+I'm fine either way.
 
-Signed-off-by: Xie Ludan <xie.ludan@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/bus/qcom-ssc-block-bus.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/bus/qcom-ssc-block-bus.c b/drivers/bus/qcom-ssc-block-bus.c
-index 7f5fd4e0940d..c542ef8ae4a6 100644
---- a/drivers/bus/qcom-ssc-block-bus.c
-+++ b/drivers/bus/qcom-ssc-block-bus.c
-@@ -255,7 +255,6 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
- 	struct qcom_ssc_block_bus_data *data;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct of_phandle_args halt_args;
--	struct resource *res;
- 	int ret;
-
- 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-@@ -265,14 +264,14 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, data);
-
- 	/* low level overrides for when the HW logic doesn't "just work" */
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config0");
--	data->reg_mpm_sscaon_config0 = devm_ioremap_resource(&pdev->dev, res);
-+	data->reg_mpm_sscaon_config0 = devm_platform_ioremap_resource_byname(pdev,
-+																		 "mpm_sscaon_config0");
- 	if (IS_ERR(data->reg_mpm_sscaon_config0))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(data->reg_mpm_sscaon_config0),
- 				     "Failed to ioremap mpm_sscaon_config0\n");
-
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config1");
--	data->reg_mpm_sscaon_config1 = devm_ioremap_resource(&pdev->dev, res);
-+	data->reg_mpm_sscaon_config1 = devm_platform_ioremap_resource_byname(pdev,
-+																		 "mpm_sscaon_config1");
- 	if (IS_ERR(data->reg_mpm_sscaon_config1))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(data->reg_mpm_sscaon_config1),
- 				     "Failed to ioremap mpm_sscaon_config1\n");
--- 
-2.25.1
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
