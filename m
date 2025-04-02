@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-585909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A43A798E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCBAA798C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F063B2A11
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FF216AB14
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC071F5845;
-	Wed,  2 Apr 2025 23:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="E27K1Q7d"
-Received: from nix1.peacevolution.org (nix1.peacevolution.org [159.89.94.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE221F2377
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.89.94.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F771F5845;
+	Wed,  2 Apr 2025 23:23:42 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09B21F2377;
+	Wed,  2 Apr 2025 23:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743636823; cv=none; b=XpzvH5Vz1klZeEWMYm8QqVCrzk8UFKFVmGh7zIPXrtz5Ax8zhFjeJ8o1z046OMzsR44v4iAjnhXGck/Bd7X0qHkytq8tGzBaSpW87agPQ0Du9n1KKsjaND44xGCh3HipbtPg2PkDLfouBP5MfFzsBVcSSsAAwV3E3+6NHbQTlCQ=
+	t=1743636221; cv=none; b=QumObWdl9LTVEJX+2iQh1g9cTA+jBN/vq9bdmWVyc7I3p1aJkWcSCVgCCjJAHibcEz/HkXv3q2fxL9PcZN6eKxMtouss4Svvyb4pGenXRN3hmU4CadBAj7hrjgy5cE1STPNV87yD/cdfyDhm7eJ1em0I54BT0stoU4YqL3GLjK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743636823; c=relaxed/simple;
-	bh=B81ocLy7n6LM1Oo2r5m9Ud8pj4meMbxLHulaXQ192J4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HBFluHGGbK0XpGCiuQ1Spu0F4wVTEQzsZv90i0TvHTsN/XX9PjMaoOiEAN+hnZ5LKTyg7x9pPdiKipYscHNqweYWIgJV5hlihF4mvRIaTkTUlnPCFKArHun05BaGgTOHmH3l55OioAqrhQEulzD9XJGzxBcO1XxyaUzQHBz+RFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=E27K1Q7d; arc=none smtp.client-ip=159.89.94.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-From: Aren Moynihan <aren@peacevolution.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=mail; t=1743636447;
-	bh=ElatTB23kjK54XH3ciOgFJuLYKTbQoZaotjymkfK17s=;
-	h=From:To:Cc:Subject:Date;
-	b=E27K1Q7d24TVBNN+uH6xXmUbrrR5ZXnM2n9y/tMmNUHt7hY8VjDHCvOs/OYCBtAlF
-	 ocEm4/C889v7GFMfa2W6A/iGpWbOhc9Do3PAAlrf9C3aT4kGFa7LF5+5VNK4wnD/aQ
-	 k4a7ki51P5d64spb1MjBp3WSq/e5XycEEkuoHnKI=
-To: Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	linux-kernel@vger.kernel.org
-Cc: Aren Moynihan <aren@peacevolution.org>
-Subject: [PATCH] checkpatch: only check signature styles in the commit message
-Date: Wed,  2 Apr 2025 19:22:52 -0400
-Message-ID: <20250402232251.734324-2-aren@peacevolution.org>
+	s=arc-20240116; t=1743636221; c=relaxed/simple;
+	bh=jarzM8bV+gfpjOb7MSUI3rF4XdVi+5ZvGMZgQtIhcWA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=EYPosuSbCfBWiiyRNqWbrryWdYZ0wjyc4UU2wCwBAsoK5Y/wLuIfI7fC/0ZfsLvBJ4mRyslDiqd0bl+rV+X31TNaVrZ03VL7SgZDrLc69IJU2fr7XNhj2NbRClTnePqLFSpCaYc4RWI7sb9Lgp0A6kS9CFjyLhFOqi7R/4OJw+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 406FC92009C; Thu,  3 Apr 2025 01:23:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 31C1492009B;
+	Thu,  3 Apr 2025 00:23:31 +0100 (BST)
+Date: Thu, 3 Apr 2025 00:23:31 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Alejandro Colomar <alx@kernel.org>
+cc: Alex Elder <elder@riscstar.com>, Kees Cook <kees@kernel.org>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Azeem Shaikh <azeemshaikh38@gmail.com>, Alex Elder <elder@kernel.org>, 
+    Sumit Garg <sumit.garg@kernel.org>, linux-kernel@vger.kernel.org, 
+    linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] EISA: Increase length of device names
+In-Reply-To: <y5hkfx6tld2khsv2rb7w3k5hlkhfjfn7ndwwj5g75hkdebvjat@mypbmvg5brfi>
+Message-ID: <alpine.DEB.2.21.2504021652130.53907@angie.orcam.me.uk>
+References: <20250310222424.work.107-kees@kernel.org> <3c6bc732-bd90-4a29-bcbc-f545b0ed79ad@riscstar.com> <y5hkfx6tld2khsv2rb7w3k5hlkhfjfn7ndwwj5g75hkdebvjat@mypbmvg5brfi>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Patches removing lines ending in "by:" will cause false-positive
-warnings about non-standard / malformed signatures. Only looking for
-malformed signatures in the commit message avoids this.
+On Sat, 15 Mar 2025, Alejandro Colomar wrote:
 
-Given this patch:
-> From: Aren Moynihan <aren@peacevolution.org>
-> Date: Wed, 2 Apr 2025 16:34:53 -0400
-> Subject: [PATCH] Test commit
->
-> This is a test commit
->
-> Signed-off-by: Aren Moynihan <aren@peacevolution.org>
-> ---
->  test-file.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/test-file.c b/test-file.c
-> index 1527673..71c7e44 100644
-> --- a/test-file.c
-> +++ b/test-file.c
-> @@ -1,3 +1,2 @@
->  int foo() {
-> -err_standby:
->  }
+> > > GCC 15's -Wunterminated-string-initialization warned about truncated
+> > > name strings. Instead of marking them with the "nonstring" attribute[1],
+> > > increase their length to correctly include enough space for the
+> > > terminating NUL character, as they are used with %s format specifiers.
+> 
+> It might be interesting to mention where they are used with %s.
 
-Before:
-> WARNING: Non-standard signature: -err_standby:
-> #19: FILE: test-file.c:1:
-> -err_standby:
->
-> WARNING: Use a single space after -err_standby:
-> #19: FILE: test-file.c:1:
-> -err_standby:
->
-> ERROR: Unrecognized email address: ''
-> #19: FILE: test-file.c:1:
-> -err_standby:
->
-> total: 1 errors, 2 warnings, 3 lines checked
+ Indeed.  I seem to be missing something here as I can't see an issue in 
+reality:
 
-After:
-> total: 0 errors, 0 warnings, 3 lines checked
+# cat /proc/ioports | sed -n '/EISA/,$p'
+0c80-0c83 : 486EI EISA System Board
+5000-50ff : DEC FDDIcontroller/EISA Adapter
+  5000-503f : defxx
+  5040-5043 : defxx
+5400-54ff : DEC FDDIcontroller/EISA Adapter
+5800-58ff : DEC FDDIcontroller/EISA Adapter
+5c00-5cff : DEC FDDIcontroller/EISA Adapter
+  5c80-5cbf : defxx
+6000-60ff : Network Peripherals NP-EISA-3E Enhanced FDDI Inte
+6400-64ff : Network Peripherals NP-EISA-3E Enhanced FDDI Inte
+6800-68ff : Network Peripherals NP-EISA-3E Enhanced FDDI Inte
+6c00-6cff : Network Peripherals NP-EISA-3E Enhanced FDDI Inte
+8000-80ff : 3Com 3C509-Combo Network Adapter
+  8000-800f : 3c579-eisa
+8400-84ff : 3Com 3C509-Combo Network Adapter
+8800-88ff : 3Com 3C509-Combo Network Adapter
+8c00-8cff : 3Com 3C509-Combo Network Adapter
+# 
 
-A real world example of this can be found here:
-https://lore.kernel.org/lkml/20250208211325.992280-4-aren@peacevolution.org/
+nor why incrementing the length specifically to 51 (where eisa.ids names 
+are up to 73 characters; one of the longer entries can be seen truncated 
+above) is going to change anything here.  Overall since the string length 
+is fixed I'd expect just using `%.50s' instead.
 
-Signed-off-by: Aren Moynihan <aren@peacevolution.org>
----
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > For what it's worth, it looks fine to me.
+> 
+> LGTM too.  Assuming that changing the size of the arrays doesn't break
+> something else, it looks good.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 784912f570e9d..a7bb6df8510d1 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3014,7 +3014,7 @@ sub process {
- 		}
- 
- # Check signature styles
--		if (!$in_header_lines &&
-+		if ($in_commit_log &&
- 		    $line =~ /^(\s*)([a-z0-9_-]+by:|$signature_tags)(\s*)(.*)/i) {
- 			my $space_before = $1;
- 			my $sign_off = $2;
--- 
-2.49.0
+ ISTM increasing to 74 instead might make more sense (I don't know what 
+the actual maximum size was according to the ECU standard, but it might 
+not be that we'll ever add any new entries to our list), once the origin 
+of the problem is known, though I think we need to evaluate what effect 
+such a change will have on the size of the compiled kernel.
 
+  Maciej
 
