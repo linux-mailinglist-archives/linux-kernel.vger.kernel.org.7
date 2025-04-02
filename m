@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-584633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956F3A78989
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14620A78992
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5781716EFA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EC93B1570
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC682343C7;
-	Wed,  2 Apr 2025 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106D1234963;
+	Wed,  2 Apr 2025 08:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQGgFccE"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u9TICkSl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3491233729
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 08:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5429923371F;
+	Wed,  2 Apr 2025 08:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743581495; cv=none; b=iyUuOE7YxqfWFgdK9Nhk0aPoctDhm/cB8aH5G8eynR6SAMv0PZbDwp98z7H9nBoyboZo4KEEM7neowncXTD59MUByXRS6fzcIGzmTGuQw1bxMd8gGWyzxfR1H2TInq9xcFSgLnQXMGwRRerMS3986GDtRZSqqD+t+gZk70BASM0=
+	t=1743581581; cv=none; b=pLY0w9YVwXVg3WX7f5HHXu5IeNMXuP2bn38p/dH2Vlc6yXO3GqRYWhAoDmKJB1PFxse46EwbLRPL5t7xG8E9eq2UUs3RyS5w9qsCFQu6/dhFf8hbL8mKcZKnIDLR07J8KbeFFKkfStt3txUwab5/yioZKHzflxlHCzNX+QkQCl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743581495; c=relaxed/simple;
-	bh=0cjdRtAyc7Px1cY6aHSxrqx02qbVdI+k/2UMUqPwMk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sm71n+OOiYSgzheWF6WLW5HjZPHAJkknStaEoy3kVeo4a0b0awRzP1etyKDKqu6YLv5/hPrApnAT40iI907brf5Tl4v0EPW9ROxtefeVSidVllwqUG81SAMB2CzgOgq8pJf5fXJvZnqO641EvMgGow74x/sfVeV8wRHZlIzjfc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CQGgFccE; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfb6e9031so57586005e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 01:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743581492; x=1744186292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dWB4iyOPjGa3JvhHFf0OgRFJSrqP/oOM2ls8icvbkUg=;
-        b=CQGgFccEALP9ATYuS6WWClLU+UeHbfI0FthAwXU8cbcQBFktL1D0xJ0XHkOmy2rSaK
-         gt8he5G87QlBoyTp/r+FL9A2m+bAihWL2heWRrygtkl9Ce4aEpHKaxLgGronwissRVGN
-         9QqZSmScWW0YtQZOeqw0wlKsBZLltx1vqTQiva4VG7x/8WQgJrlbS6tHRcv0bhIxqf8U
-         aByF/Yw9TXVU269LzVTeDFn23YMcH7VdBbR0HTXbmlBvLkOD5cXQdYcwVd0zVmwN8F53
-         WcbH5+RUvH++fZhfU/luv7KRhfg2Dqof3T43OwCBZ5COjSq7nlGrhi12Bpc7gFA5ij+/
-         Kc7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743581492; x=1744186292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dWB4iyOPjGa3JvhHFf0OgRFJSrqP/oOM2ls8icvbkUg=;
-        b=liirGLJiKOlv6of5DSQlbFHjGWuQ1jWCD436YkHkMigNL/Ag/wY5pJDBW01LczJa78
-         ujQucjj4/rChU2IgBLjLYlo0PDAPyPTR3lOqfAutdPx+2pYuLwRVxe44yTxAzIYqBztG
-         K7tvRQtA6p8sBA9YraCoGWfVk8YMIT2rVQcuMutLvu873a2z1vqOEhPGsXHXaLkys4Pn
-         pnmmjitdKePcu90gdwX8XenQBJSyShA3YIoGfDfvhnGCrn2S6ZCiJSy15Vmxk9K3gb9s
-         qqvtzWaxf0X2WmC0Jynz2DrUWvqOTsnzTDRpB/B/mpU4CM4hWdjOls11aHE958YRVFj4
-         S0sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE1UUknCC9iNabDDT0bKlch3jKKPuMrunoDQ7TXNH/Uo2FjQyvV5L+KltpQXH00QiYpJAoxoNfNhJxJ44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg9qLk7JrneK/X7kJRqcDCM5k9xRzmdHwshNiYgq+lAoJ5QB70
-	gUrmUcTAs8SVS4vTKsxI4boT5H/yocn9j4oF/xRlxz40AcS3JXWFVd0ShSHdkTI=
-X-Gm-Gg: ASbGnctN0vv21cGtFHkfcgI9hfl3ahnH6wUEsW393oOfgTI2m+mvg+qvTYc3AL4NWE3
-	QlyWQR8nnOyqSSWV0W6NvvrK8JFWJq9/1aqcaZ+ER+oceSDTNiRB0/aHGrgnCxR1PIeLU0h7OEj
-	UDNcsTtVPUqI3P6+tXf++UlrhrIV6X8Ygvuo1QJP421EXjmvjRD067Po3XLbpVLjtEzgJ0ENj7g
-	1SqMjfi4V7XgTeDkmSgJJEux6TDgcpbHwizqi9SBcPN9wEIVqDN94SS0mmeiw6tqVxwp9GouGx2
-	6jx2oprcyNvyGLx41I0Gbz0cmxLUlZhBEBdyN1xFMzM7XLZuPwl95QQxSHGsEJM=
-X-Google-Smtp-Source: AGHT+IGBlatt9XRxf1VEZzEp39rZq64LmfgcstZnSIvck/QvLxH5SbIITWq2cnYOJybXJkyGikBbpw==
-X-Received: by 2002:a05:600c:8411:b0:43c:fcbc:968c with SMTP id 5b1f17b1804b1-43eb3af4581mr16487215e9.7.1743581491995;
-        Wed, 02 Apr 2025 01:11:31 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c0b79e0afsm16439234f8f.65.2025.04.02.01.11.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 01:11:31 -0700 (PDT)
-Message-ID: <e1ce7e09-0398-41e5-ace8-50b9547622d1@linaro.org>
-Date: Wed, 2 Apr 2025 09:11:29 +0100
+	s=arc-20240116; t=1743581581; c=relaxed/simple;
+	bh=Lyya/ZVyn5QzEBxnwriP42fEj//LfFO2/h8nHMyeiyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oV5GwK0Wi87xKGK5lG2g4LX1isZOFJdQmhrVcChE5BoNGd0ssGIKI4n39uF8Aht+7rK2pRdacDO2b0XdUcAkK0ePbNx49syE5gFZgRsgPhkH/x36Dx5nLxE5Pgw0lMStsEnLgplDK3Z665vZbCa/ZaZBhlZ3vsC1FjCObWVJQkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u9TICkSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA1AC4CEDD;
+	Wed,  2 Apr 2025 08:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743581580;
+	bh=Lyya/ZVyn5QzEBxnwriP42fEj//LfFO2/h8nHMyeiyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9TICkSlZ2eKvRQS+knKIop8M/MS6Q4dv1+j/VEHKLpqz8EK5WRuDnZrQFuW9db+T
+	 DMyJVPx/Brg3RjeDtgpq6RpLQKNBhK/oU3ZAC8fXXjpbHFrk809/W6c4ShxaOmKyPf
+	 VvouVoHFlat8fgMotqnKHEczfwJfURxeDut4qx/E=
+Date: Wed, 2 Apr 2025 09:11:30 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ying Lu <luying526@gmail.com>
+Cc: oneukum@suse.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ying Lu <luying1@xiaomi.com>
+Subject: Re: [PATCH v3 1/1] usbnet:fix NPE during rx_complete
+Message-ID: <2025040218-uphill-mouth-c528@gregkh>
+References: <cover.1743580881.git.luying1@xiaomi.com>
+ <11211b6967816ce4eac2ff5341d78b09de4f6747.1743580881.git.luying1@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/6] mux: gpio: add optional regulator support
-To: Mark Brown <broonie@kernel.org>
-Cc: peda@axentia.se, andersson@kernel.org, krzk+dt@kernel.org,
- ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- johan+linaro@kernel.org, Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250327100633.11530-1-srinivas.kandagatla@linaro.org>
- <20250327100633.11530-3-srinivas.kandagatla@linaro.org>
- <e8bf5dca-16b1-4bcf-b3ab-3367f29264db@sirena.org.uk>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <e8bf5dca-16b1-4bcf-b3ab-3367f29264db@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11211b6967816ce4eac2ff5341d78b09de4f6747.1743580881.git.luying1@xiaomi.com>
 
-
-
-On 01/04/2025 11:16, Mark Brown wrote:
-> On Thu, Mar 27, 2025 at 10:06:29AM +0000, srinivas.kandagatla@linaro.org wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>
->> Some of the external muxes needs powering up using a regulator.
->> This is the case with Lenovo T14s laptop which has a external audio mux
->> to handle US/EURO headsets.
+On Wed, Apr 02, 2025 at 04:06:29PM +0800, Ying Lu wrote:
+> From: Ying Lu <luying1@xiaomi.com>
 > 
-> The ASoC bits of this series look fine, what's the plan with the mux
-> bits?  It looks like the two parts can just get merged independently.
-ASoC bits and codec bindings can go independently, there is no compile 
-time dependency.
+> Missing usbnet_going_away Check in Critical Path.
+> The usb_submit_urb function lacks a usbnet_going_away
+> validation, whereas __usbnet_queue_skb includes this check.
+> 
+> This inconsistency creates a race condition where:
+> A URB request may succeed, but the corresponding SKB data
+> fails to be queued.
+> 
+> Subsequent processes:
+> (e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
+> attempt to access skb->next, triggering a NULL pointer
+> dereference (Kernel Panic).
+> 
+> Fixes: 04e906839a05 ("usbnet: fix cyclical race on disconnect with work queue")
+> Signed-off-by: Ying Lu <luying1@xiaomi.com>
+> ---
+>  drivers/net/usb/usbnet.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+> index 44179f4e807f..5161bb5d824b 100644
+> --- a/drivers/net/usb/usbnet.c
+> +++ b/drivers/net/usb/usbnet.c
+> @@ -519,7 +519,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
+>  	    netif_device_present (dev->net) &&
+>  	    test_bit(EVENT_DEV_OPEN, &dev->flags) &&
+>  	    !test_bit (EVENT_RX_HALT, &dev->flags) &&
+> -	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags)) {
+> +	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags) &&
+> +	    !usbnet_going_away(dev)) {
+>  		switch (retval = usb_submit_urb (urb, GFP_ATOMIC)) {
+>  		case -EPIPE:
+>  			usbnet_defer_kevent (dev, EVENT_RX_HALT);
+> @@ -540,8 +541,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
+>  			tasklet_schedule (&dev->bh);
+>  			break;
+>  		case 0:
+> -			if (!usbnet_going_away(dev))
+> -				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+> +			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+>  		}
+>  	} else {
+>  		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
+> -- 
+> 2.49.0
+> 
+> 
 
---srini
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
