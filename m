@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-585688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7ABA79628
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C8DA79624
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45643AC985
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD33170639
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0DD1EF084;
-	Wed,  2 Apr 2025 19:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74301EF084;
+	Wed,  2 Apr 2025 19:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q81R00as"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW/0Up+W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ED12AF14
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 19:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095042AF14;
+	Wed,  2 Apr 2025 19:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743623862; cv=none; b=Jo4d8+QeB947L1eAQ1OciNFexjADOek5ef4JzYM+qf9RIu4h6SdW81Hk2KJJtp3SMf6y7XQ4MkzeAfQtYS8GaBpQpdBH76IjYZHeUamM/3C+RZ5OxcaaeVeyJszyml5wUHC6UXGQc/DpByVm4z9G/lCN3QsgqSUMYYXT6XAl9x0=
+	t=1743623789; cv=none; b=LSsXPEjat9TVHcVEVGUzobUqB/fuC3yMMJfYKH8jGrO/vgTLJdPQXNJAWjeI4+ZvKfT5bY+oMttSb0wW0EAm24LCKJeWXJDsUXIzk5W+z6NNakRUa/6PA1ueH031A7XJ7E0hnXfrsi2hBliVuu1SbEk2JhgwPAdud4P0I3Xi4T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743623862; c=relaxed/simple;
-	bh=y3JVmLGpCtCfcuyraejjYQhoD8SSnVO/VvVoJaMKtDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NIo/nVMTptdoxN6YvXGN7fIEDywRskCK1cITQbAejwndzjQ61ougcfn65qrvOOeT/tg35jwBVqYkW6VVDB5etjCEAsw+vU+hclR1bDwOFFgaj8tcxG3nSwoPHwUtN/U/9yUYHZ3eigiXSBCCqxGUhIBNruGk39VpkZxvMJCb6Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=q81R00as; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE70C4CEDD;
-	Wed,  2 Apr 2025 19:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743623862;
-	bh=y3JVmLGpCtCfcuyraejjYQhoD8SSnVO/VvVoJaMKtDU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=q81R00asJsrom0gEE/ufD7oWYMXFcxic65vcYEeTh3G/92xFh59O791dEYpTi/vvv
-	 agQfUMtFWAfhm4pkK0sViKyOa6eYz92vaCFTAUZI3cGfoCpzn6vJnNotShALWUqSz/
-	 3LPYL7wx/jTwrXMkWCtWZofbRy7XRY2a30DTD9h8=
-Date: Wed, 2 Apr 2025 20:56:14 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 6.15-rc1
-Message-ID: <Z-2WXkaNHGqsvPNm@kroah.com>
+	s=arc-20240116; t=1743623789; c=relaxed/simple;
+	bh=4lEN8IIdybiPB+uzxrd44PlgsotJF2cfI48sBavvbjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lL9dVXNIvAUFBCJCVuRqrsZX7s2H0VQuc9btrGCUsXz55wyJA4hGReDLTKxct+E+f9pEH05KMKyxcTsJiKhb1EueYoj/bzlw4sWQoW6P3p1ksL8StjXMSkl/ZmWAoln+FAcVN5i8max9tFwUJ09KhMTd/1xRPSToZCFWKD445Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UW/0Up+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7F9C4CEDD;
+	Wed,  2 Apr 2025 19:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743623788;
+	bh=4lEN8IIdybiPB+uzxrd44PlgsotJF2cfI48sBavvbjI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UW/0Up+Wt3pNphtpXBq/5KyKrnCxJTyvPjkg8vbpBh5QdD2dzkvWomBsunXefqnC1
+	 tK2vtwHp8sUr7K3E9l6elDO1xo6BigThgjtHSTLGHQhCc260lZ50zT+QE5Ts6SZ3p3
+	 cnVVPfpL6KDjDMOKfrCsXA+7ZrPfI0R3OBJYRnKEQ7c5oBMycsSVjfE8hJ3znaC8Iv
+	 ymsboMjlYqmvJamA43IMEnWd9lACmnMSTR9YoJJV1O/Yti2/dSuWa2zaFqrVfTjeta
+	 cxJ4ewcW2CSoGEimaCwF6SBsd0K2PxRqM1a75t3JBPxtBLmhpc7lATlQ8cD+Nc+gme
+	 Ium76H0d56wEA==
+From: cel@kernel.org
+To: linux-nfs@vger.kernel.org,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Eric Biggers <ebiggers@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nfs: add missing selections of CONFIG_CRC32
+Date: Wed,  2 Apr 2025 15:56:23 -0400
+Message-ID: <174362375580.124554.17129111199347955680.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250401220221.22040-1-ebiggers@kernel.org>
+References: <20250401220221.22040-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+From: Chuck Lever <chuck.lever@oracle.com>
 
-  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+On Tue, 01 Apr 2025 15:02:21 -0700, Eric Biggers wrote:
+> nfs.ko, nfsd.ko, and lockd.ko all use crc32_le(), which is available
+> only when CONFIG_CRC32 is enabled.  But the only NFS kconfig option that
+> selected CONFIG_CRC32 was CONFIG_NFS_DEBUG, which is client-specific and
+> did not actually guard the use of crc32_le() even on the client.
+> 
+> The code worked around this bug by only actually calling crc32_le() when
+> CONFIG_CRC32 is built-in, instead hard-coding '0' in other cases.  This
+> avoided randconfig build errors, and in real kernels the fallback code
+> was unlikely to be reached since CONFIG_CRC32 is 'default y'.  But, this
+> really needs to just be done properly, especially now that I'm planning
+> to update CONFIG_CRC32 to not be 'default y'.
+> 
+> [...]
 
-are available in the Git repository at:
+Applied to nfsd-testing, thanks!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.15-rc1-2
+[1/1] nfs: add missing selections of CONFIG_CRC32
+      commit: 3d28468e53a519bb8adc0675e5000f56f11e0602
 
-for you to fetch changes up to 2dc25093218f5d42391549de6fe45e1aa9325676:
+--
+Chuck Lever
 
-  Merge tag 'counter-fixes-for-6.14' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus (2025-03-14 08:50:49 +0100)
-
-----------------------------------------------------------------
-Char/Misc fixes for 6.15-rc1
-
-Here are 2 counter that I realized I never sent to you for 6.14-final.
-They have been in my for weeks, as well as linux-next, my fault for not
-sending them earlier.  They are:
-  - bugfix for stm32-lptimer-cnt counter driver
-  - bugfix for microchip-tcb-capture counter driver
-
-Again, these have been in linux-next for weeks with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Fabrice Gasnier (1):
-      counter: stm32-lptimer-cnt: fix error handling when enabling
-
-Greg Kroah-Hartman (1):
-      Merge tag 'counter-fixes-for-6.14' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/wbg/counter into char-misc-linus
-
-William Breathitt Gray (1):
-      counter: microchip-tcb-capture: Fix undefined counter channel state on probe
-
- drivers/counter/microchip-tcb-capture.c | 19 +++++++++++++++++++
- drivers/counter/stm32-lptimer-cnt.c     | 24 +++++++++++++++---------
- 2 files changed, 34 insertions(+), 9 deletions(-)
 
