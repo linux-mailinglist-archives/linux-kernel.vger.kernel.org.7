@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-584594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EC2A78905
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A44A788F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4381891DBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D77B3AE3E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135F233152;
-	Wed,  2 Apr 2025 07:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F6723370A;
+	Wed,  2 Apr 2025 07:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Atneoo/5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pfU5ory4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P8t/0myE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DCA1F5FD
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DB0205502;
+	Wed,  2 Apr 2025 07:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743579810; cv=none; b=o1t0jB0h7B2Pxa7amBtHYalQJSwQh7pcDDZYvicm5CKhUUROHgjfhWEmX1n29SzuW4XV7aZfehfqrLkeKQ8Yv4bu0h49y6S2/apv2OMYTihHR5LLHD8Ib9jbQkunLhuEwRfJ83Mgh9YkroDdeV/jS+Bs6lcVUWm8rKZgkgS/ZtY=
+	t=1743579736; cv=none; b=cvZr/BU33X48DHsCex6LOzYTZpwqd4hqg2CZ9p5SaAPMOeLuRCcyRMrhBl8RcS/faYOVIlyEv1QEueuUyAP3RI78Ru29kV3S5RrG9aXHruug2BvwPGrVoIhYam6UsnBcb/SuwAxbiMbRr/yarI2PUdS67Z4nMDUmgcXCgiETuRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743579810; c=relaxed/simple;
-	bh=IiOhZa2RGc/ELLYpE693fE82sDNLJ1amZ3QlPXMsue8=;
+	s=arc-20240116; t=1743579736; c=relaxed/simple;
+	bh=KnKbDJA1kA48viXbmllalTvS/2sX0nni1xgBkhX6wLc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujJZowEHXP9jYlqhpNdz2htr9e+nE4HD3oR7KjXtP5nk5LNz104Hr7SXxoPTwfiv8PHRUWY23zCWywfWWto1A5yuqf2mZutHlmGJGuyFhZHIsmpvbGrsSoW0RQhImEVQZYe1X0d+A+48UOGzJbIO4qKEehH3NmBKFq2gNYyEVeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Atneoo/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D9DC4CEDD;
-	Wed,  2 Apr 2025 07:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743579810;
-	bh=IiOhZa2RGc/ELLYpE693fE82sDNLJ1amZ3QlPXMsue8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Atneoo/5ap3o0C3HV0oQytsTPtd0CWYrFgCTd9vQQuPtvdgtTQq4zYa9PLWvBGyCq
-	 ZWpZB9NMUOc35Qz/TTn0e5y4drqVwWWNmziVLqX2NEXZme+om8x6awUxu5SzwWI/My
-	 +UsJtqlTgdQKAGs18HAIy3BLHftDb69OhJlu17wU=
-Date: Wed, 2 Apr 2025 08:41:59 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "cve@kernel.org" <cve@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] published: CVE-2025-0927: Fix up JSON schema.
-Message-ID: <2025040221-curtain-walnut-2540@gregkh>
-References: <2025033057-CVE-2025-0927-1436@gregkh>
- <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
- <2025040248-hut-sevenfold-82c3@gregkh>
- <4d521717c418c873225d220ca65fd6740c496c8f.camel@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CB3Zbp6+WvpgjCrEfG2CZRjVMEFR83/E4NrHeDc8tFsEgI4w+/VrYViP46kYYHfF225CaEl5S8Jv6ZPHVpIATK+LvsefREVwse7H0b3fMpAdHN5i6F+JkFINuVRhZ+lKIC36sTrrbO1ek3MAC5US6YYANuZWG00+0BBZhL3zumU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pfU5ory4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P8t/0myE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 2 Apr 2025 09:42:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743579732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7FoU9Vn5b2mEEwL/fDfrwVAr2Y7ezbsNixs5npufvg=;
+	b=pfU5ory4Vq6J/siMf0uJWhDmeZ3kyBAkJWUq8udLJ9qH3frYbj21h5In3ZCtEls0OTYlww
+	7rklEfQaclTpAqzowSyGh19m4iQZ1bzZYhyLnzLgT/VH8ERYbbLFwsErG+7l67ccysZRf7
+	klNNkm4xoTb8+pO6C+EpaZ9qPd7+Uoax5NEXIu3G0MXbqgPyUqPbPYCTD2nrcf3aTnjRFF
+	y5xh9Qrt+3yyQUIB2Emz4b15q/HRmTMUc+76jKmPCd98zjlFW0qaRu5EPF+LDeS47YpGTX
+	ByzEuKSgCXIfI5EOsLws9MI+k11MPtEsN+7zsR/xvLhVX1Dd/8rNrzbySDAPkg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743579732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7FoU9Vn5b2mEEwL/fDfrwVAr2Y7ezbsNixs5npufvg=;
+	b=P8t/0myEb6v6yO7Nz73hdPoQ2klxdTV2NGQ2gTlMf454meWGTnnKcFZy7jK3sxYoOxtURW
+	Fg+qtoE+S1EiUSCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH v2 04/12] rcutorture: Make torture.sh --do-rt use
+ CONFIG_PREEMPT_RT
+Message-ID: <20250402074211.tibxg1fJ@linutronix.de>
+References: <eea8d42f-6d2d-485b-9bb9-4eb77a0e1f95@paulmck-laptop>
+ <20250331210314.590622-4-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4d521717c418c873225d220ca65fd6740c496c8f.camel@oracle.com>
+In-Reply-To: <20250331210314.590622-4-paulmck@kernel.org>
 
-On Wed, Apr 02, 2025 at 07:16:33AM +0000, Siddh Raman Pant wrote:
-> On Wed, Apr 02 2025 at 12:36:20 +0530, Greg Kroah-Hartman wrote:
-> > On Wed, Apr 02, 2025 at 12:21:52PM +0530, Siddh Raman Pant wrote:
-> > > It doesn't match the schema of other CVEs as it was not generated
-> > > by bippy.
-> > 
-> > It was created by vulnogram for obvious reasons :(
-> > 
-> > Also, please cc: cve@kernel.org for stuff like this.
+On 2025-03-31 14:03:06 [-0700], Paul E. McKenney wrote:
+> The torture.sh --do-rt command-line parameter is intended to mimic -rt
+> kernels.  Now that CONFIG_PREEMPT_RT is upstream, this commit makes this
+> mimicking more precise.
 > 
-> Okay, noted.
-> 
-> > 
-> > > Fixed by hand / manually.
-> > > 
-> > > programFiles were added from the info in mbox.
-> > 
-> > So this did two different things?  Why does the layout matter here?
-> > Eventually it will be created properly when someone gets the fix
-> > upstream, I'm waiting for Canonical to do it as they are responsible for
-> > fixing this mess at the moment, but don't seem to be responding to my
-> > emails anymore...
-> 
-> Apparently, they fixed it in February and backported it:
-> 
-> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/commit/?h=Ubuntu-6.8.0-54.56&id=09ad3b1e99befe042ae5219e4020eb54411d98ef
-> 
-> https://ubuntu.com/security/CVE-2025-0927
+> Note that testing of RCU priority boosting is disabled in favor
+> of forward-progress testing of RCU callbacks.  If it turns out to be
+> possible to make kernels built with CONFIG_PREEMPT_RT=y to tolerate
+> testing of both, both will be enabled.
 
-Yes, they did that without telling anyone, and assigned a CVE for it
-which they are not allowed to do at all, which is why I had to
-hand-create this one when it was transferred to kernel.org.  They should
-be working to get that change upstream properly, but again, they seem to
-be ignoring us totally at the moment :(
+Not sure what you point at here: You can build a PREEMPT_RT kernel and
+RCU boosting is enabled by default. You could disable it if needed.
 
-greg k-h
+Config wise you set CONFIG_PREEMPT_LAZY=n but in general
+CONFIG_PREEMPT_LAZY=y should be used if possible. The preemption while
+holding a sleeping spinlock is somehow bad for performance if a lot of
+threads ask for it. But then it probably doesn't matter for testing.
+
+You do set rcupdate.rcu_normal and rcupdate.rcu_expedited but RT has
+rcu_normal_after_boot set by default. Not sure if this makes any
+difference but I *think* that normal wins here.
+
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Sebastian
 
