@@ -1,112 +1,94 @@
-Return-Path: <linux-kernel+bounces-584416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BADCA786F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 05:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B1AA78707
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 06:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED60916CE4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6781188F5FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 04:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005E62309A7;
-	Wed,  2 Apr 2025 03:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1F42309B9;
+	Wed,  2 Apr 2025 04:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S0hvL+fQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="RZsmeRfC"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD6023098D;
-	Wed,  2 Apr 2025 03:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522C92BD1B;
+	Wed,  2 Apr 2025 04:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743566294; cv=none; b=TKYIIBFvehf9JDAQ1GnzKpN7LzS9y+k7H712Mwb1EBRWV0dLZmlKM5v6U9Zc0QotIut5psRjF4a1+X0JguSLABPxkHSoEIhge40uzxeiGfp2BRw4PxgdyjpFbcNOGEVNglLkXbjxQYR+W21ZsRculMEtpedErnCixnv96YyiZ3M=
+	t=1743566715; cv=none; b=sIXUVwm4qREYZgpRn0P4FpTpdYro9mhrq5EPOSaLSoPzuHPC1/azhHRg7tYGky3/jHW1Fpbuqcj50ghtUSg35Xzlgh/FxUkjwIeKUxhIT09CJmqSQVANeOUvrujPePW0ANkUWCQ96QAG2jkTLZ6wD5Ibv3hSH3SQSeDfoWVgeu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743566294; c=relaxed/simple;
-	bh=eBve3m1+iXUenIvEryfD971S58qgsjLVqfWCGwmSnfc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ppWXp117A9GB0/Wzjt9jdFhRlhcgmec6sEGG7My6HMN/8N8yUGQ+OO8MwG83i0efbbqROsOpjxFTqwsQ0pKN5C2Mr+7VansD9e19quDoX+xPXn8Ab1YPFPJNY8J8APedQfQWEGYIaydt707dS2MedUwHB1kNF4+qKzyqze3my4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S0hvL+fQ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743566293; x=1775102293;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eBve3m1+iXUenIvEryfD971S58qgsjLVqfWCGwmSnfc=;
-  b=S0hvL+fQPjz/J+p4Lt/Z7iEQUltrlau0Fb9Yf6PtAflCbK/cFsUosfDj
-   9i+4mv487R21r7xcGsdV7k6gOLsqbRT/bZI/sxjQ/YvWnN4WGk07kjrLP
-   x4dGx1PYuPlrvwemDsGv+nhY+o1AzibrMPZuUF02o7m9TG5BCcul5nDm9
-   XWNgdtrsZZ8UnyAYD2l0Xn2HZXU80PWpOgkGEM433XMiiY3BDrvGnx9Hd
-   Ba4iYC9s+DvwkLMm9iMX0iNZ04nnPz/nYJLdBuvIXq8bIPGGowv0cPlox
-   AXunGCEdNI4IxvisAPgopSOsTL7iimNB3KMQKfTv0lLpnlXFqC++k8gUi
-   w==;
-X-CSE-ConnectionGUID: NxizW64aRZ6dSQczr56PjA==
-X-CSE-MsgGUID: Wnrqs27LTJWCtD12MhpSyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11391"; a="44804415"
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="44804415"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Apr 2025 20:58:12 -0700
-X-CSE-ConnectionGUID: S5M2XaKtQEy1CoamwyhxOw==
-X-CSE-MsgGUID: P6RCeMuaSACoQ7jLgC3LPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,295,1736841600"; 
-   d="scan'208";a="126464354"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by orviesa010.jf.intel.com with ESMTP; 01 Apr 2025 20:58:09 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH] perf tools: Fix incorrect --user-regs comments
-Date: Wed,  2 Apr 2025 08:21:06 +0000
-Message-Id: <20250402082106.103318-1-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1743566715; c=relaxed/simple;
+	bh=hWiyRl/X/9yeimNvdCKJD8krnNXHk+4afQS0MlH+8vs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QsWQZs5MmniWG0fV0MvMEEczyE1SJhHI1m9+GoDRMoKKljKUz326nLcLcCF8XXUz8XhdigfHmWJ3q8wclUz3AvFFELVskUFO7DsUajXZFhqz8kovNC8J2fXSZaYIWgJTICFtjWTqgEBs87O2kYWCVv2zRLktYosBGzcskY4TO50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=RZsmeRfC; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZSB940VhBzm0ysj;
+	Wed,  2 Apr 2025 04:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1743566710; x=1746158711; bh=hWiyRl/X/9yeimNvdCKJD8kr
+	nNXHk+4afQS0MlH+8vs=; b=RZsmeRfCr1psvAgRfghl3TT75+T22z/B8oZVqmE3
+	JtvttOv97mUwumG0OQKG6zYuvFY+PzrqsPlMkQSYyhyPt3P4Skf2vwnE8ILv4ufC
+	QiagAkoqOBe1Cr18F/nMqm9uGZAiHzO8Zl5THL0DGfB7Vm0PRqC9ZmC7jlEtEik/
+	ji9WQRS+C3tPU4JPZ22R4L11oO0Nn8swzRO6S+CtMGTt4D40Jk9GVirgHk0iJJ1X
+	EqoCjxM4oY5Ml+ZDlOh78IDhZ+S6yQQ3FpJ/Im2MuIyP2993Wc52wVt79L38xryg
+	plScsK7DH/3CbtiR3qXTOgxN/h6Q+/+/R7s3ra+TpsQDHg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id GLPDgmGgjL2c; Wed,  2 Apr 2025 04:05:10 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZSB8p2NFGzm0yVc;
+	Wed,  2 Apr 2025 04:04:56 +0000 (UTC)
+Message-ID: <37bc5aef-2c88-4e7e-99dd-8407e988c355@acm.org>
+Date: Tue, 1 Apr 2025 21:04:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] scsi: ufs: core: Rename
+ ufshcd_wb_presrv_usrspc_keep_vcc_on()
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
+ avri.altman@wdc.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
+ adrian.hunter@intel.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <02ae5e133f6ebf23b54d943e6d1d9de2544eb80e.1743192926.git.quic_nguyenb@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <02ae5e133f6ebf23b54d943e6d1d9de2544eb80e.1743192926.git.quic_nguyenb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The comment of "--user-regs" option is not correct, fix it.
+On 3/28/25 4:17 PM, Bao D. Nguyen wrote:
+> The ufshcd_wb_presrv_usrspc_keep_vcc_on() function has deviated
+> from its original implementation. The "_keep_vcc_on" part of the
+> function name is misleading. Rename the function to
+> ufshcd_wb_curr_buff_threshold_check() to improve the
+> readability. Also, updated the comments in the function.
+> There is no change to the functionality.
+Thanks!
 
-"on interrupt," -> "on user space,"
-
-Fixes: 84c417422798 ("perf record: Support direct --user-regs arguments")
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- tools/perf/builtin-record.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index ba20bf7c011d..f21b133691d7 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -3480,7 +3480,7 @@ static struct option __record_options[] = {
- 		    "sample selected machine registers on interrupt,"
- 		    " use '-I?' to list register names", parse_intr_regs),
- 	OPT_CALLBACK_OPTARG(0, "user-regs", &record.opts.sample_user_regs, NULL, "any register",
--		    "sample selected machine registers on interrupt,"
-+		    "sample selected machine registers on user space,"
- 		    " use '--user-regs=?' to list register names", parse_user_regs),
- 	OPT_BOOLEAN(0, "running-time", &record.opts.running_time,
- 		    "Record running/enabled time of read (:S) events"),
-
-base-commit: 35d13f841a3d8159ef20d5e32a9ed3faa27875bc
--- 
-2.40.1
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
 
