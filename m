@@ -1,163 +1,177 @@
-Return-Path: <linux-kernel+bounces-585568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689A2A794D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:09:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C68A794E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 20:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5173B1266
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729C316D4C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDE51C860F;
-	Wed,  2 Apr 2025 18:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D431C84D0;
+	Wed,  2 Apr 2025 18:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YG4y6sUt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xVBKCsDz"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7915E19F461;
-	Wed,  2 Apr 2025 18:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9095F86353
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 18:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743617369; cv=none; b=qIk6Iop0RBTIFAB88h8ox2yTozRcqb15qqeLr2SmnckuLASCOK8n3FsArP6QmnI3h7elqid5pwQFAGeYRY34PfQWAIZB7rZBT9iMjXm0cBOAHM++YnzSkEQiKu+DK+KP6s0ajwWwgsJwI4yme4VZtrCCiOYTFVxwn7WruwC16tQ=
+	t=1743617727; cv=none; b=B7gv3QjtuHuTj6PGsUYgFFrPDfKU1sMpxkACrzqUpTpZI+uy45SODksmXd5GxfPg/kKOMBt64DMINExRtWNa74uPnc22CuH9mLSWtimb4fH8H1oysOtGfrb265PQOHeWqGnrKTOXObauXdoO/eDtzhGmMT/spNQPb945DMeWTDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743617369; c=relaxed/simple;
-	bh=rNmMO+u09D5zPnq+/pg7RkMy9c5EPySrQWya/Jy4H60=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kn8nSLod5pxA4rO4fy5OjzmNCfBLkDP4i45mOj9oN8ZwmQYOs5b6fiPxJEIDKGg09YL66OmesKbcmFiWvrgyABSo1Nojh9QUlTNBbKBPWNU6cE8FcwJ8QOG3Rq605lxq1Vk3wmvvLF/9cKfavxVN2PmefX/PvJK/fH27LNHU5uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YG4y6sUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9B0C4CEDD;
-	Wed,  2 Apr 2025 18:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743617368;
-	bh=rNmMO+u09D5zPnq+/pg7RkMy9c5EPySrQWya/Jy4H60=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YG4y6sUtR4ioGK8k00znOECE6AwnW1jKHtU3d4Yo28ZvmRpHcn9dZNADVqHntSJri
-	 UQeLbECJ0saH0Y62Xrx95BcgTHsGuvTAa0eFkV01Lq8wFZuMdumb8zU+aEHDU7NY0c
-	 rN0lSmFlt8dLaZFaxhr0e3p1I+hqUI8d8COStuGRNgnb3JgbFKRYUuLuvOlbk7Dtl+
-	 6GqUXKzIe22z7+gmSUNiXPl4m0Os7dohc3a705Wh4dq3cgE8kxR2+1PUQfpQCVbX6J
-	 xLQ+EmuLzsBKEabhRgZ45b1ndmLr9D0vrauaE4U79ZSWbOzQtAT87TBJqiOd4me1C0
-	 eiHXf7kQTTTZQ==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	mingo@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	mhocko@kernel.org,
-	rostedt@goodmis.org,
-	oleg@redhat.com,
-	brauner@kernel.org,
-	glider@google.com,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	akpm@linux-foundation.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v2] exit: move and extend sched_process_exit() tracepoint
-Date: Wed,  2 Apr 2025 11:09:25 -0700
-Message-ID: <20250402180925.90914-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1743617727; c=relaxed/simple;
+	bh=YbVw1bgCZBM/8Ivthj91i0k+tWYSbUMBaUUe4eP2L0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wc6e/1tAp8dIHImo4ZQVFLbSfVLwyeVWfj5/JxDhefOmAqYmsMAPC+jlZldGldCbmmCVrBfUvtlWni6cSa8r9q15S6OhegJ/KuNJ2M1MXtaWSbQomuMg2HfMgF1BO6U3LKPp8C9WihTj4lm359GoUF5cbT523TgfKvcX4b55jnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xVBKCsDz; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2242ac37caeso195475ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 11:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743617725; x=1744222525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IkpVgtqumussxG6Af6cXfWN7sUk6r8XQdfsIxt/L8BM=;
+        b=xVBKCsDzm2UAgYMto08Js/T2zWdGqOwZXN4NAfYly+e3j8cCRor2FdLRsL6b1M232p
+         kDYnKJ5ZAknuxk/bHPpETJuzaJy9FxrBtI89obrORyceCjkW+BijrBh5Z+6mG7CB+8BK
+         4skq4gqUJ+RAVBZJYWlZImMsvuGxBAkX/VrWjeVm+9haWzl2zfPblU10rGCSAspwhLgo
+         IkAeROjuWny22ocpXphICW5TI5XERDWH3Ri2c2EUlrrA3/6LamtycCFSDBEJQ+IqBD5q
+         y33Fcbd29BdZaMYz91g8n2zTjyAgdF64UeNfsEh65MB8chBh6brUmtwbV6fwLjVHPLdy
+         rRcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743617725; x=1744222525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IkpVgtqumussxG6Af6cXfWN7sUk6r8XQdfsIxt/L8BM=;
+        b=pNOWnO8N6OVd0bD39/cGHXn7ANja/eart8ieMWEA/4nj8+bloxeSwxsSn4HF8L9m8n
+         iweK27PA8its0E47TfsHhjaGA6/TW3yOOV6n4qAt9oR3frrkwrpylOxcusJlk1qy1vre
+         vWrsVlb8pxNPBrII5S8pt7e8UzGN1a8QWtB6Dh8O5fN1ceJ0Pi93th9Z/LUnCsubb9s9
+         ZzHN7PyscvnLtI9kS/5OPxoW9qIbALn09JIFtFxRoVUwl2uHzBOYr5cxTEVBnbQUNUVq
+         almgB2wLi502LXRnDnL3QeJptAzQWe9ae4Vm1TUhDzj88FHozWFBmvGc2RMJV/tAjKa7
+         QANg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YxA9590be02X2HjXuGv4MbBLU0dx17/3aDrcQMpD8DpDjMGV8GeVRM0K5+q3JKH5C78JemyAshEYNmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycZG5ZFa8+K0JwfWiei0c/4ZO310R1pwnLiUU9UwvRn7u0MbqN
+	6vhy0rQYhvJ9WhTcNiEdde8GUJNTZAotOvZvoEAeqAKOCUHfjnTiv3inYJeP5rD019AOe2CSVit
+	xncH8wkJsB8P0kTFEbUwOGiSzC0DsoNW9Yn0B
+X-Gm-Gg: ASbGnct2n/DUVMXlrVjbfEbN+ivScL6atBStY1bIPc/EnB3lma6wyZrCPwlJSP7HT+v
+	9+wFWkCvBCS1oi9HxV4QWSrRf7Lg5yAoalT7RA3ODrkObrjkfG+rlh2AVn9gdGIYCFwJS7boPmM
+	YMnuI1APCWwHUxfTYXdgIHLQGTBJdY4tei2H+eM/k1XmLXmp7yD0HoAQ==
+X-Google-Smtp-Source: AGHT+IHnbca1Y9vyZMDDL+SMwwosmZ7ZcbHHIyClQIMXHMkZahyXmx37xfgXXOa2yZOv017YzZiS5I70nAnBrVyADdM=
+X-Received: by 2002:a17:902:b183:b0:21d:dca4:21ac with SMTP id
+ d9443c01a7336-22977502449mr183555ad.6.1743617724455; Wed, 02 Apr 2025
+ 11:15:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250402164720.3847573-1-irogers@google.com> <20250402164720.3847573-6-irogers@google.com>
+ <6ba85605-39ea-40e0-a6f6-379deec30db7@linux.intel.com>
+In-Reply-To: <6ba85605-39ea-40e0-a6f6-379deec30db7@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 2 Apr 2025 11:15:13 -0700
+X-Gm-Features: AQ5f1JraLvZ-cTYtm5Av7f4N1Vg6zyqVG__idpn80RcGPHYwPd0MJMvz_jz6_yU
+Message-ID: <CAP-5=fXhpx7O-BRLaaCpiXaG+vdcD+s8jpBJwzk3qptFRXsZEg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] perf parse-events: Add debug dump of evlist if reordered
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Levi Yun <yeoreum.yun@arm.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Andi Kleen <ak@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It is useful to be able to access current->mm at task exit to, say,
-record a bunch of VMA information right before the task exits (e.g., for
-stack symbolization reasons when dealing with short-lived processes that
-exit in the middle of profiling session). Currently,
-trace_sched_process_exit() is triggered after exit_mm() which resets
-current->mm to NULL making this tracepoint unsuitable for inspecting
-and recording task's mm_struct-related data when tracing process
-lifetimes.
+On Wed, Apr 2, 2025 at 10:52=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
+om> wrote:
+>
+>
+>
+> On 2025-04-02 12:47 p.m., Ian Rogers wrote:
+> > Add debug verbose output to show how evsels were reordered by
+> > parse_events__sort_events_and_fix_groups. For example:
+> > ```
+> > $ perf record -v -e '{instructions,cycles}' true
+> > Using CPUID GenuineIntel-6-B7-1
+> > WARNING: events were regrouped to match PMUs
+> > evlist after sorting/fixing: '{cpu_atom/instructions/,cpu_atom/cycles/}=
+,{cpu_core/instructions/,cpu_core/cycles/}'
+> > ```
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/parse-events.c | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-eve=
+nts.c
+> > index 5152fd5a6ead..0f8fd5bee3a7 100644
+> > --- a/tools/perf/util/parse-events.c
+> > +++ b/tools/perf/util/parse-events.c
+> > @@ -28,6 +28,7 @@
+> >  #include "util/evsel_config.h"
+> >  #include "util/event.h"
+> >  #include "util/bpf-filter.h"
+> > +#include "util/stat.h"
+> >  #include "util/util.h"
+> >  #include "tracepoint.h"
+> >
+> > @@ -2196,14 +2197,23 @@ int __parse_events(struct evlist *evlist, const=
+ char *str, const char *pmu_filte
+> >       if (ret2 < 0)
+> >               return ret;
+> >
+> > -     if (ret2 && warn_if_reordered && !parse_state.wild_card_pmus)
+> > -             pr_warning("WARNING: events were regrouped to match PMUs\=
+n");
+> > -
+> >       /*
+> >        * Add list to the evlist even with errors to allow callers to cl=
+ean up.
+> >        */
+> >       evlist__splice_list_tail(evlist, &parse_state.list);
+> >
+> > +     if (ret2 && warn_if_reordered && !parse_state.wild_card_pmus) {
+> > +             pr_warning("WARNING: events were regrouped to match PMUs\=
+n");
+> > +
+> > +             if (verbose > 0) {
+> > +                     struct strbuf sb =3D STRBUF_INIT;
+> > +
+> > +                     evlist__uniquify_name(evlist);
+> > +                     evlist__format_evsels(evlist, &sb, 1024);
+>
+> Why is the size even less than the one in pr_err?
+>
+> The user probably prefer to get the complete list in the debug.
 
-There is a particularly suitable place, though, right after
-taskstats_exit() is called, but before we do exit_mm() and other
-exit_*() resource teardowns. taskstats performs a similar kind of
-accounting that some applications do with BPF, and so co-locating them
-seems like a good fit. So that's where trace_sched_process_exit() is
-moved with this patch.
+I thought the previous 2048 excessive but kept it for the previous
+case to not change anything. If you are happier with 2048 here I don't
+particularly mind, it is a lot to display in verbose output.
 
-Also, existing trace_sched_process_exit() tracepoint is notoriously
-missing `group_dead` flag that is certainly useful in practice and some
-of our production applications have to work around this. So plumb
-`group_dead` through while at it, to have a richer and more complete
-tracepoint.
+Thanks,
+Ian
 
-Note that we can't use sched_process_template anymore, and so we use
-TRACE_EVENT()-based tracepoint definition. But all the field names and
-order, as well as assign and output logic remain intact. We just add one
-extra field at the end in backwards-compatible way.
-
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- include/trace/events/sched.h | 28 +++++++++++++++++++++++++---
- kernel/exit.c                |  2 +-
- 2 files changed, 26 insertions(+), 4 deletions(-)
-
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 8994e97d86c1..05a14f2b35c3 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -328,9 +328,31 @@ DEFINE_EVENT(sched_process_template, sched_process_free,
- /*
-  * Tracepoint for a task exiting:
-  */
--DEFINE_EVENT(sched_process_template, sched_process_exit,
--	     TP_PROTO(struct task_struct *p),
--	     TP_ARGS(p));
-+TRACE_EVENT(sched_process_exit,
-+
-+	TP_PROTO(struct task_struct *p, bool group_dead),
-+
-+	TP_ARGS(p, group_dead),
-+
-+	TP_STRUCT__entry(
-+		__array(	char,	comm,	TASK_COMM_LEN	)
-+		__field(	pid_t,	pid			)
-+		__field(	int,	prio			)
-+		__field(	bool,	group_dead		)
-+	),
-+
-+	TP_fast_assign(
-+		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__entry->pid		= p->pid;
-+		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
-+		__entry->group_dead	= group_dead;
-+	),
-+
-+	TP_printk("comm=%s pid=%d prio=%d group_dead=%s",
-+		  __entry->comm, __entry->pid, __entry->prio,
-+		  __entry->group_dead ? "true" : "false"
-+	)
-+);
- 
- /*
-  * Tracepoint for waiting on task to unschedule:
-diff --git a/kernel/exit.c b/kernel/exit.c
-index c2e6c7b7779f..4abd307b1586 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -937,12 +937,12 @@ void __noreturn do_exit(long code)
- 
- 	tsk->exit_code = code;
- 	taskstats_exit(tsk, group_dead);
-+	trace_sched_process_exit(tsk, group_dead);
- 
- 	exit_mm();
- 
- 	if (group_dead)
- 		acct_process();
--	trace_sched_process_exit(tsk);
- 
- 	exit_sem(tsk);
- 	exit_shm(tsk);
--- 
-2.47.1
-
+> Thanks,
+> Kan> +                  pr_debug("evlist after sorting/fixing: '%s'\n", s=
+b.buf);
+> > +                     strbuf_release(&sb);
+> > +             }
+> > +     }
+> >       if (!ret) {
+> >               struct evsel *last;
+> >
+>
 
