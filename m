@@ -1,128 +1,175 @@
-Return-Path: <linux-kernel+bounces-585461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE45A793A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:12:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE34A793AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 19:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A38189294B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1EA16FF8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 17:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C1A199FA2;
-	Wed,  2 Apr 2025 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028B319CC36;
+	Wed,  2 Apr 2025 17:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YlYnM2oy"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdF+MCkp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935D52AEE9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA49186287
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 17:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743613970; cv=none; b=AJKDrsEDiQENPooXwVqesKkWUNhemiVqRP8I3kHTQ/b8df/Om1ntuPIrC5IJ/Yk6RwKcHgzQpbOxe3JE8FktNH6m7qr2GDrdqCfel5FkZn1Wuf8XQA0bhw8O86BlKoAncYbZVmEjwLzmhTeU2eocNmISuEUnqUPiU49B8sElPyE=
+	t=1743614053; cv=none; b=SSZwV19MM6UGRfS2PqW4MWeGkeXwEIpaPWXIA2FL3UC2uQ06kEjaU+eMSbHqsl8MkCTxQ5hj/Wf4RXXaZlvMgbg/pjIv4I22atZ74nSMdodFdwrwZ8LMuQKkxZFrSwcnTPVGz1SrGOf9umKYzZbRLQSJdiuREQjhTgYyooiocR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743613970; c=relaxed/simple;
-	bh=M+88wIcibNXlkVrU9mXUvjqfg/rJqIG5T8+nWXQU314=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyanZKbk0e+JrDjAPx6uLvrPr2TmfSdQFMW3IgND5RhhxUeFAYytQ/gM5yqjzxCuVDT9UCHMSt61W3hSWZSK8Y6sLWAP6uDPGNsE6MvnIXccCP+F+InZHC/Nu/xzrI+XBydTEvx/mkTclTd5wOHXJx5EKVr5J2FKV9LCtA3MVkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YlYnM2oy; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2963dc379so1099231866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:12:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743613966; x=1744218766; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVV1LWawFo1VyqHoXteM+f/Aj3/PTJr9pv2oltZdO1I=;
-        b=YlYnM2oy43gAUaX0eLXeyQkm8k9lpGXmPYqja1J7UgJBvRXOCD35K6l4m9iaHUgfLw
-         tIspvPoBQS6DcnWvC8fIjEuEzQtyyxl/npIY5opZw2Gsw60izkJBRuSA+hR4MGfLVNUh
-         63ZSi10NO42j4REjFJcZRWgnJKgL6KuBQwQWo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743613966; x=1744218766;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YVV1LWawFo1VyqHoXteM+f/Aj3/PTJr9pv2oltZdO1I=;
-        b=CjGhgMeyigNuI9NxG06w1sX1PTJKrBaGWkvfjsrrynQnFmFJiQ+e1y4Pur3ZCersW9
-         2dsbGAiuiKX4EIlwNy0lslY/8zK0OfTYbvMtXMr/BxBrkELurAqUn0fcse4Ne3RHO6w6
-         yb1JuRtP2FK4REav0jFiB1KTZjIEonQ7g8rD+yE9iOrN8QS1dGvzDLfACPDNCnowwDZ/
-         3t4/JkgZ7sUOtRUyD/ywQv3vRv5KtEygQz1NAQ4dM7kVBFG7NqS+l9IMpCWHRTzamrfN
-         Bn7teNv4fCJefVj9z+EMSQDX0mjiHOhB5CFBLRhErEQSO2jT1ZDBzLU7OA+SsoNmvQue
-         IulQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP2CY9y0TtOW5U6xlwOkZ+8TfonaqDS3KMpXm9PqkZxuJmA6hz+Bx+YdbJ7ccP/3cs9YQBk9TVWgCowDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXoeT8jbKcIwRn3EwnFRC5a5N/0Z0/Co361oyDqwkFPC0baT5t
-	MgwyKiaK/u/BjtMuN2aHSfJotapvKYYiFTWIqGw5hcsJ28ddF6FzQNhQ97V10YTBDD3aGqDdBlP
-	cL6g=
-X-Gm-Gg: ASbGncs+OIE3bECNpO/okHZd5cO7bY79GXEhPFwx1AJOsvqOGp+Gw/qjgQ7Q+KdQhfS
-	Gz6BqMGUbqxWZQOPvPhbGJa+q37wG2bVKwEF5CwUryAyOyg0kceqRN+LryJqT6JHE/xr+suePwT
-	peeqHsnvbtACbBHNS+Rsi55tQASaGaDJHtE0TP9jq5gZ90lwjy+YbKu7bME1WdeXfcgTQQYk7P/
-	1djC59gcT3ynLuAYnDGHFQ3IH6z7dZO7kJkHPmI53hdrh757rWar1aCNMzn8g2r5WU4b7973mjK
-	xPJhH7ooqxspfbbM75pVe2+MxB0ZzsJSM3p0fFCeN8qxf1Wup/33cvfmI7MbQPG9u4i7UGdMTjI
-	1hWtYDxoEkOUMNhLXXy5WYavgPEW62A==
-X-Google-Smtp-Source: AGHT+IGG3JUuP822hqdQW5IsmYQT6ztBRZk6sWVBBGdwFSh2t0rdGr4tkMrfZ35RGLYgL486/to/7w==
-X-Received: by 2002:a17:907:94c1:b0:ac6:ba91:ca4d with SMTP id a640c23a62f3a-ac738a5ad2emr1606213166b.31.1743613965574;
-        Wed, 02 Apr 2025 10:12:45 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc16d3634sm8696411a12.19.2025.04.02.10.12.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Apr 2025 10:12:44 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac298c8fa50so1151514766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 10:12:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWA04szTHfKFN3wO+yAd4TJJRmZ4RpODTYdEIawfB4aUyJQ0UeG6BQC2oL7V+3fub2y6fBeIwRU61HZmaA=@vger.kernel.org
-X-Received: by 2002:a17:907:c1f:b0:aaf:103a:e6e3 with SMTP id
- a640c23a62f3a-ac738b4fa46mr1501644166b.43.1743613963920; Wed, 02 Apr 2025
- 10:12:43 -0700 (PDT)
+	s=arc-20240116; t=1743614053; c=relaxed/simple;
+	bh=WuHN/piHcY7kYULbd2Y1notYfHLl9mGaf7tFXMISNt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yy4D2cC9cbEUrYhBMp7NNGLnZvAZNy+LQeXRFDb21T+a61pr2ws29Zb6TBp3PXaLrE3gDSc6wvPQSV1ppwaK3ZKNm2FpoBtL36Nx4xp8h/Zo4UJg623xO+U45ovnlpOvUispN95wWIktF4vY/3atZ4vZC8NHZwpviLbTBgYbX7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdF+MCkp; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743614052; x=1775150052;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WuHN/piHcY7kYULbd2Y1notYfHLl9mGaf7tFXMISNt8=;
+  b=kdF+MCkpNADFeDFXRV0w/Rk1JXtxvRZglNqfcJ6VYphz4tNGEdXZ5Qum
+   bq4m+wZJC/VkA+o/QpxYV3OWSjlzByEsXfK5uddAfLYTg/kjZp78UmD9c
+   1cENxJSntko6aNfqcYWbPOlEMZVrzkr97Z4TKZRB0zsjKSvdaUFWPFTo7
+   31xlSBiNWepE6KM1Xc2YbksOsmmoXsiQcysNbUpwgaBLm+PoWCwmb0ODe
+   ZtnrSvP2z9w4Ywe6DhOQ6AkW4KyoI+m274CX96zgyO9k+snXdj8EVVyEg
+   kDgkKf+tdJycKZz7Q3eM0abdMRq9HhAwJewsr6RM11HT67TwzceSTPoi8
+   g==;
+X-CSE-ConnectionGUID: fr/FoennRV2JQyt4ozlvng==
+X-CSE-MsgGUID: n81sIhmnRQe84I+9ldFzJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="55658954"
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="55658954"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 10:14:11 -0700
+X-CSE-ConnectionGUID: 452aB8zGRa+niL2CLaBh0g==
+X-CSE-MsgGUID: nWELuBnIQQ6HDDCZZyA/Qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,182,1739865600"; 
+   d="scan'208";a="157756874"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.124.222.41]) ([10.124.222.41])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 10:14:10 -0700
+Message-ID: <54308373-7867-4b76-be34-63730953f83c@intel.com>
+Date: Wed, 2 Apr 2025 10:14:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z-00cAEKkfvyNto2@pathway.suse.cz>
-In-Reply-To: <Z-00cAEKkfvyNto2@pathway.suse.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 2 Apr 2025 10:12:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgfX9nBGE0Ap9GjhOy7Mn=RSy=rx0MvqfYFFDx31KJXqQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jrz4B-YeMv0VReyLm0sNwe0AKkz4BT05CVKnHGwIakoT1rqvU-uAhJPiUE
-Message-ID: <CAHk-=wgfX9nBGE0Ap9GjhOy7Mn=RSy=rx0MvqfYFFDx31KJXqQ@mail.gmail.com>
-Subject: Re: [GIT PULL] more printk for 6.15
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	John Ogness <john.ogness@linutronix.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] x86/microcode: Support for Intel Staging Feature
+To: Colin Mitchell <colinmitchell@google.com>
+Cc: bp@alien8.de, chang.seok.bae@intel.com, dave.hansen@linux.intel.com,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+ x86@kernel.org
+References: <526df712-6091-4b04-97d5-9007789dc750@intel.com>
+ <20250326212928.2360063-1-colinmitchell@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250326212928.2360063-1-colinmitchell@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2 Apr 2025 at 05:58, Petr Mladek <pmladek@suse.com> wrote:
->
-> please pull few more printk-related changes from
+On 3/26/25 14:29, Colin Mitchell wrote:
+>> On 2/28/25 15:23, Dave Hansen wrote:
+>> You seem to be saying that you'd rather be (for instance) insecure
+>> running old microcode than have the latency blip from a legacy microcode
+>> load.
+>> What action would you take if a staging-load fails? Retry again a few
+>> times? Go back to the CPU vendor and get a new image? Or just ignore it?
+> That's correct, but the latency tradeoff scales with the platform specific
+> size of the microcode patch. I'd prefer to have a more deterministic
+> update path and believe the potential latency blip would be significant
+> enough to justify the option.
+> 
+> Adding configuration would allow me to handle the error as needed.
+> A retry loop would be a first step but I could also look to migrate VMs
+> off the machine if the platform specific latency blip would negatively 
+> affect sensitive guest VMs. While an ideal solution imo would then
+> allow me to force legacy loading, I could also settle with it being done
+> through a reboot where early boot would already skip staging.
 
-Pulled. However, I reacted to this mess:
+There's a lot to unpack there.
 
-  +#pragma GCC diagnostic push
-  +#ifndef __clang__
-  +#pragma GCC diagnostic ignored "-Wsuggest-attribute=format"
-  +#endif
+But, for the purposes of this series, I think what's here is fine for
+now. Let's leave staging _purely_ as an opportunistic optimization.
 
-do we really need a "#ifndef __clang__" there? It's "#pragma GCC"
-after all, and the diagnostic push/pop are done unconditionally.
+If folks want to make this more configurable like making staging
+*mandatory* and disabling legacy loading then we'll look at the patches
+(and their justifications) as folks submit them. A good justification
+would be something along these lines:
 
-I can well imagine that yes, we need it for some strange and stupid
-reason, but it looks wrong, and the commit message doesn't explain why
-we'd need it.
+	Legacy microcode loading causes a 5,000ms latency blip. Our
+	customers have been complaining to us for years about those
+	legacy loading blips. Migrating a VM causes a 1ms latency blip.
+	Those 4,999ms mean a lot to the folks running those VMs. As a
+	CSP, we would like the flexibility to avoid the gigantic legacy
+	microcode loading blips because they are bad and getting worse.
 
-And once again the "Link" is completely useless and doesn't point to
-any explanation, only points to the submission that has all the same
-info.
+It becomes less compelling if it's something like this:
 
-I hate those things. The disappointment is real: "Oh, an explanation"
-followed by "No, just useless noise, doing a google search would
-almost certainly have been more productive".
+	Legacy microcode loading causes a 50ms latency blip. Migrating a
+	VM causes a 49ms latency blip. That millisecond is super
+	important.
 
-              Linus
+... and increasingly less so as it becomes:
+
+	We like knobs and flexibility for $REASONS.
+
+You don't have to have down-to-the-millisecond numbers here. Orders of
+magnitude are fine. But if you can't demonstrate (or don't anticipate)
+orders of magnitude improvement from the knob, then it's probably not
+worth it. It better be a 10x improvement, not 10%.
 
