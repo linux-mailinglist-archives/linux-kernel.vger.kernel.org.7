@@ -1,270 +1,419 @@
-Return-Path: <linux-kernel+bounces-584344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275ACA78633
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 03:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C00A785C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 02:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7CF1890FCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 01:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517D91891C51
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 00:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7987117BB6;
-	Wed,  2 Apr 2025 01:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9A34C7D;
+	Wed,  2 Apr 2025 00:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lUSdWcAj"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="KzDKXcQJ"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2080.outbound.protection.outlook.com [40.107.249.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FC01096F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 01:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743557978; cv=none; b=igOe+oK/GClzgAxUuCHKLnagaSpmOKMBAUTqYMq6mFgRG7gevaXTyMTflyZMiRYOyVg+4n6mCVSjGXTxI6uWOKJVCp3zD5lGKFj17tHkiM+uRh/dXkM+uy2iAqFEtFABTcReycdILXaaWNe+E6BKqwvFPx9/BaiF+ud6Vaz4jTo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743557978; c=relaxed/simple;
-	bh=4jOlb4ACh1sxX01IRIAhnIypJo4e6WZooU1luTyg1wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=YoU9R76QAH2fkv+2A2TUIsxc8yUSYIw6HyLz9V8WhAyY4jvfeEAC7SMq/E2IKaLW8fiyidGmlxaDYagGBJpEqTG8Hlm8BkCUAtDCnVWtPgEXkxRnpv4Y/fK3wj1a1ResFVi5AlFXGy+feSNXeRO6hGIXWles9zYWjpkNWUR4Jbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lUSdWcAj; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250402013933epoutp012077c7c8ad32b83b41651f5d69a9514a~yXL0ogDf80859808598epoutp01g
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 01:39:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250402013933epoutp012077c7c8ad32b83b41651f5d69a9514a~yXL0ogDf80859808598epoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743557973;
-	bh=eVjNkH/V/fv1Y45uPpNZVysJT11oKFePxebtI4FVQb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lUSdWcAjH6lkI9zgwx0zmjLt2pwDM5AQDK2n3KOnfDQ1tk+0WnkWb3Bzz3BZlWH2h
-	 kBkMz4jL8b/SSZzHukoyOgYwR+JA85yLfNwlxwGA8CDcGamqeyL9tNt3SJR69hsLiN
-	 /5CXZoxqreq19qxALmHmNkPgfZD41cGJApBi9rcg=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250402013932epcas2p232ccdd795d488406778169393bc21e9c~yXLz87yQg2124221242epcas2p2m;
-	Wed,  2 Apr 2025 01:39:32 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZS6wz6bdrz6B9mJ; Wed,  2 Apr
-	2025 01:39:31 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BC.94.10159.3559CE76; Wed,  2 Apr 2025 10:39:31 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250402013931epcas2p31d16291742c84025c363b3783b8ac18e~yXLy7VQ151103811038epcas2p3Z;
-	Wed,  2 Apr 2025 01:39:31 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250402013931epsmtrp2131d2f748c2191a3ab6278be721eba4b~yXLy6GJXg3008130081epsmtrp2Q;
-	Wed,  2 Apr 2025 01:39:31 +0000 (GMT)
-X-AuditID: b6c32a46-9fefd700000027af-e9-67ec9553e5d8
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	82.A7.08766.3559CE76; Wed,  2 Apr 2025 10:39:31 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250402013931epsmtip2f0edf5faf9a071f540f43c5c9feea055~yXLypyyek1331713317epsmtip2B;
-	Wed,  2 Apr 2025 01:39:30 +0000 (GMT)
-Date: Wed, 2 Apr 2025 10:43:46 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: William McVicker <willmcvicker@google.com>
-Cc: John Stultz <jstultz@google.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter Griffin
-	<peter.griffin@linaro.org>, =?iso-8859-1?Q?Andr=E9?= Draszik
-	<andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Rob
-	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
-	Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Daniel
-	Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Donghoon Yu
-	<hoony.yu@samsung.com>, Youngmin Nam <youngmin.nam@samsung.com>
-Subject: Re: [PATCH v1 2/6] clocksource/drivers/exynos_mct: Don't register
- as a sched_clock on arm64
-Message-ID: <Z+yWUj5ZLftPrbht@perf>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710F36D;
+	Wed,  2 Apr 2025 00:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743554172; cv=fail; b=s/Kp9EJF+OJ0yy/c6dwfQoMjG1w4MD+mUkzkIWAUd56vnuWCR3cZf30HCtvNg/tDc/3Iy/SBufyptTt+hReHJ2N/89vwxGbC4nGO/a9T+tsoD263VdU5oZKAVcR/gj3ty/DxPT2RjyVGQLzipzvjAuAD1j6zdIZLGqRBRQ2fEak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743554172; c=relaxed/simple;
+	bh=JgS59AkE1hzEFnXK6J8PyWscZSwGOPVZipq5vm+kSrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=toi9Xs+ikcOFvcCT6kfWpxaYBANhdAp4zouEg5fu8mGI2rYCRcSDBgt7oHYs0h2geZ6w1YhvhtAiBIBz9+vzlF8vshvEgQ2ezdyVW3PyeLwBFD/c9u9Lyjzi8dnQAdefN/UDK7l19pZHdWT5k+ZXqBETKjDwaScJk665rfHysAs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=KzDKXcQJ; arc=fail smtp.client-ip=40.107.249.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D3Wjz+4fezR+9DInguA5MjUW6olvh/3ePKJhKRynGuDB4XOEhNlkxUiaNSt2D2rAku8L2dLToMC6ook/sb5xMw1JCP4XhJzzIO7gLQqmLZGLVkNN+i1QCmeenj0RmdpNM9L02qxEUIy7qIvnejgOcaIqcmxKLlcV45bML/zP6aymrZ3uIHUi0DKfPQ8r2XHMYg3YOHhNdTCw4/UnN6d2dvzDUUrnFUltWP9yKrbgx4s8IhJugwEuHhiIJy/Y5ZUFExDDlJRnMx9VvNFbvIiFzDYuu2Ld0A1U1a6BnTySvkIiEHaF5+00KiHHzEMLVXRXRopl20/Sy6fkRUkLdFbPAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RFS63nGsOAKS5Sc0Opr8DOQm2801kLN2XKXxXcA9EdM=;
+ b=IRYjiiUEpXpbEaf6pBvYF8cwM52TA23Dbl6bt7ZgJsMv4ANnozJs8DpvKsnsJlvnQrfsRIYXhQ5gxRGuYCtlYnoC/1cf+CzyJieBvfVdQbd8ZTIpgxmPZDzaPy2eONUmrt088Y4SMQsGgA/bB38r0hsIZZJb12tUW/wcm1QrpcU5h1o2lvEUUC503DV+Kyq3iA47e2RHNEOR9qXsgfUjgJENuIlOgiQiMmdTDkyXQ6XWQ8RXtl4sR9FyDeTO3LzDYlJx4fFr73rrWD2QOsrRr72Dx2fymwtUE6jktU82Jwar+LK5jSwVyboG/UixKTLXshsYQ23rluLRtLNIwfwgTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RFS63nGsOAKS5Sc0Opr8DOQm2801kLN2XKXxXcA9EdM=;
+ b=KzDKXcQJMZNt2sQL+THpp5bsIixobecPdz2Iy8EisKJEfJZvcJ0+FVxLTtnrwf6zWiY1zYjt4SdwYpxLA4mr5xHI2TozoYsyf3ceV2t205kj73myzc2Ka2Cr5IMsKGjs+Azkzr3/Qo0q/pExo14N+soS/2/OZTV4g5NpPTiJyKzD+XajUbWW/tJaFYIxLxva2gIyLzrMmuCiQnrtvBm2Q3CGImeO/68j35o4Q28qDpghvYN9sb5EXgPUlCfH5qTO9VB28GYl7pOxqwd3eE6iyOWSzNzUIEbBvXODd4ZVkRlyPeWVJAVkus04LKmtFEI+tsuSUdYb8uTqcSzIKRzRtg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM0PR04MB6882.eurprd04.prod.outlook.com (2603:10a6:208:184::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.45; Wed, 2 Apr
+ 2025 00:36:06 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8534.048; Wed, 2 Apr 2025
+ 00:36:06 +0000
+Date: Wed, 2 Apr 2025 09:43:55 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+	"open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: core: Clear table_sz when rproc_shutdown
+Message-ID: <20250402014355.GA22575@nxa18884-linux>
+References: <20250326020215.3689624-1-peng.fan@oss.nxp.com>
+ <Z-WO-fhDJKyG7hn2@p14s>
+ <20250328045012.GA16723@nxa18884-linux>
+ <Z-au0USkvoDYTF7A@p14s>
+ <20250329125629.GA11929@nxa18884-linux>
+ <Z-q3ebPSjkSPVlgP@p14s>
+ <20250401014124.GB15525@nxa18884-linux>
+ <Z-wOr3eLaX9myqb4@p14s>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-wOr3eLaX9myqb4@p14s>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SG2PR04CA0170.apcprd04.prod.outlook.com (2603:1096:4::32)
+ To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z-wZV3RCXKPzpZGl@google.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUxTVxT39rWvLVvN43N3iNDVDcOnLVJ6WcSBMNK4ZWGTRLNlwgt9tIzS
-	Nv1YmJuIyiiCIZBJJoUBA+ekAe0KAuPLURDZspQBhmmnKENQkMEoYJYpsNaHC//9zu+c37m/
-	c8+9HMxrEffnZKn0lFZFKgW4B7OtPyQm4lDFvFx4xb4X3a9pw1HrXAsTLV48C1BTj52BapZ3
-	otoBOwvdaH7MQs+GfsBRR7sPmjVN4Gh42MJG1qlxFhrrrMbR+eFeBrKcX2eije4ONiq2reGo
-	xVqBIafjKCq4I0Zm5wZADT852fF+0rauNpa0qaYJSOusBqnVfAaX3hnvxqULdjtb2nLhhLS0
-	1Qyky9bAFO6H2fsUFCmjtHxKlaGWZankcYJ3DqUlpoljhKIIUSySCPgqMoeKEyS9mxKRnKV0
-	zSfgf0oqDS4qhdTpBHv279OqDXqKr1Dr9HECSiNTaiSaSB2ZozOo5JEqSv+mSCiMErsK07MV
-	1/pm2Zra3bld9iFGPhgIKgZcDiSi4b2xa3gx8OB4ER0A1p+sZtGBE0D7yAaDDp4A2Gw7zX4h
-	aV+9zqYTPQDeGi4BdDAJoOO7MlczDodJvA6rl4RuAU5EwLahdeCmfYhI+OzLXHc5RrTgcHBy
-	nuHmvYlMODEa6C7nEbvg+KKZRWNP+HPlA6Ybc4lQWFjS+NwqJIxcWGTuZNGGkuCpi2c3zXnD
-	uRutm9gfLi/04DTWwfx7DowWFwD4y++PMDqxF5pmjMCNMUIB+8/0st2GoMvFgINJ09thUf/a
-	Js2DRYVetDIY/nvOAmgcALsaLm12lMKZh0ubF9fEgCOOaWYZCDRtmce05TSTqy1GhMArnXto
-	OgievlqF0fQO+P06Z0tFHcDNwI/S6HLklC5KE/X/rjPUOVbw/OWHJneAc3/9HWkDDA6wAcjB
-	BD68I6uzci+ejPzsGKVVp2kNSkpnA2LXlsoxf98MtevrqPRpouhYYXRMjEgSJRZKBK/wbEvT
-	ci9CTuqpbIrSUNoXOgaH65/POG5zpMbxybWZhPG+qQ9mSm6PrH9TnljdfDA2yCPn8mu5VaO7
-	3veDX2xPndaITE9lPYMGf42z7uSP9ZfIE2thxrybJbvj8yqPPWRI+AFvKxIza5s/KRpZlfW/
-	NF/mW+Bd3uBZIbxuGby5GqwokV8d725tP5De3nv3cJ9PzcFXM0uVTwZi3qifDA8/PHY0/StJ
-	ob4Vdh7Z9l7D7ctvHY/fYOdBy8qAfM7XKh695dH4sSTsW+yR56k15dSK7WVjZS3P+NFcQtVO
-	clBv4j4dXKlPTYLBv31NfV46UtX4IF9VsA3yYpN/9cD/YO1Iflwb3vNP+wS0XPjz7kJA6f6m
-	hJCwdCP3voCpU5CiUEyrI/8DjLkHzYIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvG7w1DfpBi//Clo8mLeNzWLLq80s
-	Fu+X9TBarNl7jsli3mdZi/lHzrFaHF/7mtXiz4mNbBY7totYvJx1j83i/PkN7BabHl9jtbi8
-	aw6bxYzz+5gsNsz4x2Lxf88OdouuQ3/ZLDZvmsps8elWnEXLHVOLVZ/+M1osPvCJ3UHMY9vu
-	bawea+atYfRYsKnUY9OqTjaPO9f2sHm8O3eO3WPzknqPvi2rGD0+b5IL4IzisklJzcksSy3S
-	t0vgyngw4xpjwUGViiUz/jM2MDbJdjFyckgImEhs/3qUvYuRi0NIYDejxJdF7awQCRmJ2ysv
-	Q9nCEvdbjrBCFN1nlDh84zRbFyMHB4uAisScjwYgNWwCuhLbTvxjBAmLCOhJ/GmtAClnFtjP
-	JtHV18MEUiMskCYxcdoZRhCbV0BZ4tr7VVAz1zBJPF/4lQkiIShxcuYTFhCbWUBd4s+8S8wg
-	Q5kFpCWW/+OACMtLNG+dzQxicwpoSbR1r2SbwCg4C0n3LCTdsxC6ZyHpXsDIsopRMrWgODc9
-	t9iwwDAvtVyvODG3uDQvXS85P3cTIziatTR3MG5f9UHvECMTB+MhRgkOZiUR3oivL9OFeFMS
-	K6tSi/Lji0pzUosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJxcEo1MO2fLckYmt4kzbZR
-	/NN/zwWpAaoMzjHHfutk/T+2zS1pw/env0sfR9t9X27XvfvHjgut/U3FW0Qjwxx71iueLVcJ
-	1WaYKL094MbHo/NzHL7f1Xh3qM+063YBM6PTrJnVcyLuOyzdvUNFqMEp5MEE+9keW1f2dfQ9
-	/fP94Au+yin1omZSlo1JC/dbBq6WvCqyMWYhoxlLqOqBCc/M4mbudNdZn8126vn/8LjHKf8/
-	GKZcZ9UQOKS5vWvvpLmNjfosfBm1zZkuC1qZz91f3blaf4a9YIxnXBXLwQk95b5Niq5TjzRs
-	iF/mM1muUHFBwe26CZPXXTBiVnyRxjP5HFOAwvfiS9x8LP7H/WqVeptTlFiKMxINtZiLihMB
-	zitcEVUDAAA=
-X-CMS-MailID: 20250402013931epcas2p31d16291742c84025c363b3783b8ac18e
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_73402_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250401165039epcas2p16b954647b0c1c79e48450ad91d19f525
-References: <20250331230034.806124-1-willmcvicker@google.com>
-	<20250331230034.806124-3-willmcvicker@google.com>
-	<CANDhNCrxTTkeq3ewos=07jD67s3t6rXOv=u=_qV6d+JEVoXeUA@mail.gmail.com>
-	<CGME20250401165039epcas2p16b954647b0c1c79e48450ad91d19f525@epcas2p1.samsung.com>
-	<Z-wZV3RCXKPzpZGl@google.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM0PR04MB6882:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21f3ec10-f5c6-4676-1869-08dd717e5aa7
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CyHAB85+cSQt+tFbm7/WTp6D+M12p5+ctoLRTiMjp1TLPRw3sdjjP+xkgmA+?=
+ =?us-ascii?Q?U/iAXOoENfHpi9L6IDCAQg5kZhEkRZZCAA42IQlvNxOpZERs62qA181epLwe?=
+ =?us-ascii?Q?ylnMvL4Nku+jyNdpQ8rKGoc59HKnidFSQWP1cqajkXYj//UFpBZgiX6tgkaR?=
+ =?us-ascii?Q?82vMq1sHz0AUcId3QGOo5cNaSWdUUaTho2P+MRYG0HU/Q8Fte75d1s2TlIrB?=
+ =?us-ascii?Q?xCmzBA8ptfosQeJfa2/0ew+ZTjDADh2D+u+1uJDATBpyccVqApi5Gox4yyFr?=
+ =?us-ascii?Q?mpeI+8SAY8QmLAtdSfOwJ2Q3LjEOBq3ulgGp/s0SLhetAstFyhwhWnBojrB/?=
+ =?us-ascii?Q?mnnGap5FnsGpN5H5TIngHSqI5QLnCpgBNok+lkInODo8DIhaHfDzA/5S0Fn2?=
+ =?us-ascii?Q?UwsHRqqok30ncSc1dqKMEbBZGB/nlKO03D38silD0RW1oE+Fwt6XFAwUjZ87?=
+ =?us-ascii?Q?WKBsOTOCPyOtJ2XY25rrZ+0km+J9anntCGQBSnzWUDi3M95DZY7MeMOUJCeA?=
+ =?us-ascii?Q?lK6rbQmUGXKmHPRMKHBZXWUb/qHrviza7+MBz36/PwXMEvcYDedAMBglL6XT?=
+ =?us-ascii?Q?5t8RCH+BNWKhvGlzwllOdKx3B9hT/ez3iTfZ8+D2EwVNzaCMk6l61H5AOCsK?=
+ =?us-ascii?Q?DIq6BV1UCTvY83OPVwnldI8B/dvI/NEhivVN00VQwKF6HgahD2p8xYS6tELB?=
+ =?us-ascii?Q?2mXt4FSJ+FUhxt7zFBU/vsLZ8Qtvm4EFXZEZwVi7ujl1kNDjOyqm34viEdqd?=
+ =?us-ascii?Q?cUgA2F5szpqGzGWFKm9S5/zopdgEj2VWszucbGXmwS0gPgmLIHw5twelO9Ye?=
+ =?us-ascii?Q?Sdmh1/1IaJFgEHFTa+w1MQrjQ9zsLYUWXdAzmWLUG2GK0r0uZyIORGKZba2+?=
+ =?us-ascii?Q?YnAy7ww8KBbd1B0SRnJLQfw76XQRLgqgk1dYzz1Wy8uaJaqvXVgiSkchzIGo?=
+ =?us-ascii?Q?4tEdfts9dM4YGYCxM7j/1rzHIq20qc3GTwmFAl8ohLt5FgGqPx7dEYzujaEx?=
+ =?us-ascii?Q?VsJXmRaLlJSPkiFLysg1AFgbYztCadu5zRiwNNN8j1OkhdDiTysov8YlpcmG?=
+ =?us-ascii?Q?JHWW//U/jxjkfTK78nQRGywWI7y/ilHEs7rIYJceRhqlmUpMVgwd03qvvjGT?=
+ =?us-ascii?Q?HFJ2xUhnl9vTWGo224viWs+/IKqbnPjFuP8t523PVOXq4xt4XoaykOmkblsc?=
+ =?us-ascii?Q?gFOaOb5L6IhLzUjpX2CSzN45l8OmMcwm4vNPSoNZJ3knXGfhnj59OVvQaC9K?=
+ =?us-ascii?Q?Sp0dWF3VwXpXUa8Y5nIiEcH3pdKbJ0aAcRc0i0Oby4fZqwNsS5gZ4GLhgvl8?=
+ =?us-ascii?Q?4ursR3l+kPVJKHJflj8jlnDvLaEYVmWjnMuWm7ohHQK4crtxUq8FfmvFuPPy?=
+ =?us-ascii?Q?8Xgk9dAtfkZ5ZkZv6YL+iC+wwo21YQWibQQo4gSw1s2ynOM8Gw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8hW83U26gZf5+//fR8YYigtQ0eneRFqZZp+gf5un2LyH8qqUw9IBhbuYlYuk?=
+ =?us-ascii?Q?4Ort5HPaqiXVtezFk8TZfGSljKha+WMLVkThDXO1kKlk/HbxVO6c90vrdskr?=
+ =?us-ascii?Q?9i6P1b3EUgzGYlh/Gz/cKa18z580jxdNWAbXs8o7Xl9Y7vVSZl8Np72kVeFW?=
+ =?us-ascii?Q?SkwaJlYsAI+Lcr182xF9Ah+amB5oxJVjq5zCvqpqd0Gdg065X090rZy2a8q3?=
+ =?us-ascii?Q?fz0ne/ksbw+5gn0Jrr4JfB32QwpylM48tjeOjR2JizRo17QSNcsGMp+siZGY?=
+ =?us-ascii?Q?YZGtMGgjcdkumkFcAxOxBThWknelwTshTjc5b8PlaMOrGCxcKABDgqiiIiwJ?=
+ =?us-ascii?Q?T39sy1h3vCgDg1PbqxlUiwUHMpf98FyOM9BVCBE02u7kxQmVnzLnuEGiBAQz?=
+ =?us-ascii?Q?2E7H6Yi6e9xebictd/Z9TqYAXGK3kWQcYNDWTRThtJdmu9gRCTqAiGDtjgBu?=
+ =?us-ascii?Q?gaWE3qX1TFLLxJDvRHKPXryI6DtMfCPLretFfoNfZ+7TWa32kcuDcwerYnoI?=
+ =?us-ascii?Q?VmMCT1AsdHsTj1q5Vmo53xqq8wc1zuNS7T8WHfVHEoFXX4Wiz6TH1am1UtnN?=
+ =?us-ascii?Q?0OR8Iwq2Mz374IR9wHOKNZFePbkkmzjW4tCCN+WI7aVAXADVsr4q+5rRJBco?=
+ =?us-ascii?Q?HQx3ZMUOmR0nD9K+CRq0AV4rBIScCeGRCghB3wMRptzKk3wekuk0j93dE5QL?=
+ =?us-ascii?Q?YzWZw0aPdUAQT2JMAVLFLYtQBOx16hgkQw+pLuFjq2XFdy8/XLyszQ+EYrzd?=
+ =?us-ascii?Q?187ciOnkG1CoHVsWuqsqUqHaxcaUVExx1xCkPlZOlMJA5x5gnoscKmSaScXE?=
+ =?us-ascii?Q?AiV/eG4bWcAJdF/WRqs/4qagGFtO74rQVRWFg7QYPoOCNVdu1KmbfP4Aj9J0?=
+ =?us-ascii?Q?OaGMscII9O9z5r31w4QqniA+54cft2T4dfbtwq1htTQz8DUuXNK2Gw83RWah?=
+ =?us-ascii?Q?wm/Wcgnmj7mBYbqbR0FFJUV30EMvDqSiQJTbWDq5L6M+OrWp970Btz11RkD6?=
+ =?us-ascii?Q?X4UKzpB4T799LOfnCT413usoO1qZxV5zKRXCtKpmpxOb14eQq9Cc8ISLCJtA?=
+ =?us-ascii?Q?piGgGvPgtiZoXMioP5yrRtscxahW3BrkKVBywRraT3+K6SkPeVGZUYkCEdAL?=
+ =?us-ascii?Q?bBzh1DCrz5E4wd0TlHDnIg8v2RMPrwVuvfzMHmKdgymhtjQ0RsnPUiljxVpC?=
+ =?us-ascii?Q?M7y68aksffNardcl56vYXY9LslWO6iwWMtQURqqWTaQcHXJO4pwlte8whAjg?=
+ =?us-ascii?Q?13bU3E5LNRPM7bU77cyT0rkF/5A0NRmnOcWi5KhBeEf1M+hbRS7ty+WkjPJ5?=
+ =?us-ascii?Q?pSbt6Il8zCRsE8LToGQtP4uNgyS99/PoBBej1auCjIl+a2JB8zXl/gFWxXDb?=
+ =?us-ascii?Q?ijmCmz5v0oxoHLa+97TlOreuMEgdy/GiY8+ixC/jSvaZDqxEWSNJnu3Zairp?=
+ =?us-ascii?Q?7chX3pwMD3M1xGv/do6WRV33RPSy+PQ6FyphgAIymLZrBgt5/xNkjseBGAtc?=
+ =?us-ascii?Q?jJkAp4W8cgz+kdZ1sBVF84Q6dW1E7LIo+Fkzy0sO+9Wp3I9t+cnhrLIA6Q/S?=
+ =?us-ascii?Q?C+7M5E1iYzMIIRb1niwjxECFXopYudmZV4vOEUk0?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21f3ec10-f5c6-4676-1869-08dd717e5aa7
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2025 00:36:05.9761
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JbhmstK6BI/xMIP2shmxFdh5sDF2VRoQGgLvzCsvtSDEBJUMBvJp5y3fan6RB6aNX5pl4TbVXw7tDZrZ7XWdyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6882
 
-------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_73402_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+On Tue, Apr 01, 2025 at 10:05:03AM -0600, Mathieu Poirier wrote:
+>On Tue, Apr 01, 2025 at 09:41:24AM +0800, Peng Fan wrote:
+>> On Mon, Mar 31, 2025 at 09:40:41AM -0600, Mathieu Poirier wrote:
+>> >On Sat, Mar 29, 2025 at 08:56:29PM +0800, Peng Fan wrote:
+>> >> On Fri, Mar 28, 2025 at 08:14:41AM -0600, Mathieu Poirier wrote:
+>> >> >On Fri, Mar 28, 2025 at 12:50:12PM +0800, Peng Fan wrote:
+>> >> >> On Thu, Mar 27, 2025 at 11:46:33AM -0600, Mathieu Poirier wrote:
+>> >> >> >Hi,
+>> >> >> >
+>> >> >> >On Wed, Mar 26, 2025 at 10:02:14AM +0800, Peng Fan (OSS) wrote:
+>> >> >> >> From: Peng Fan <peng.fan@nxp.com>
+>> >> >> >> 
+>> >> >> >> There is case as below could trigger kernel dump:
+>> >> >> >> Use U-Boot to start remote processor(rproc) with resource table
+>> >> >> >> published to a fixed address by rproc. After Kernel boots up,
+>> >> >> >> stop the rproc, load a new firmware which doesn't have resource table
+>> >> >> >> ,and start rproc.
+>> >> >> >>
+>> >> >> >
+>> >> >> >If a firwmare image doesn't have a resouce table, rproc_elf_load_rsc_table()
+>> >> >> >will return an error [1], rproc_fw_boot() will exit prematurely [2] and the
+>> >> >> >remote processor won't be started.  What am I missing?
+>> >> >> 
+>> >> >> STM32 and i.MX use their own parse_fw implementation which allows no resource
+>> >> >> table:
+>> >> >> https://elixir.bootlin.com/linux/v6.13.7/source/drivers/remoteproc/stm32_rproc.c#L272
+>> >> >> https://elixir.bootlin.com/linux/v6.13.7/source/drivers/remoteproc/imx_rproc.c#L598
+>> >> >
+>> >> >Ok, that settles rproc_fw_boot() but there is also rproc_find_loaded_rsc_table()
+>> >> >that will return NULL if a resource table is not found and preventing the
+>> >> >memcpy() in rproc_start() from happening:
+>> >> >
+>> >> >https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_core.c#L1288
+>> >> 
+>> >> 
+>> >> Sorry, I forgot to mention below code:
+>> >> loaded_table is a valid pointer for i.MX, see
+>> >> https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/imx_rproc.c#L666,
+>> >
+>> >(SIGH)
+>> >
+>> >The changelong for this patch says "... load a new firmware which doesn't have a
+>> >resource table..." and now you are telling me that @load_table is valid.  As
+>> >such I have to _guess_ that @priv->rsc_table is not null.  So which is it -
+>> >valid or not valid?  
+>> 
+>> As wrote in commit log, bootloader kicks the m7 and m7 publishes a valid
+>> resource table to a fixed address.
+>> 
+>> When linux boots up, first stop m7, then load a new firmware which does not
+>> have resource table, then stop m7.
+>> 
+>> Even the new firmware does not have resource table, the imx_rproc driver
+>> still returns a valid resource table address which is got from device tree
+>> (rsrc_table) in imx DTS when the driver probe.
+>> 
+>> @priv->rsc_table is always valid even the firwmare does not have a valid
+>
+>And that is where the problem is - why can't that situation be fixed instead of
+>pushing it to the subsystem core?  Why can't you have code in
+>imx_rproc_elf_find_loaded_rsc_table() that checks if there is a valid resource
+>table at the address held by @priv->rsc_table and return NULL if there isn't?
 
-Hi Will.
+It is ok address the issue in imx_rproc.c without touching core code.
 
-I'm really glad to see our work on Pixel being upstreamed.
+priv->rsc_table contains valid resource table which is published when
+m7 is kicked by bootloader, and m7 publishes a valid table to
+priv->rsc_table.
 
-On Tue, Apr 01, 2025 at 09:50:31AM -0700, William McVicker wrote:
-> On 03/31/2025, John Stultz wrote:
-> > On Mon, Mar 31, 2025 at 4:00 PM 'Will McVicker' via kernel-team
-> > <kernel-team@android.com> wrote:
-> > >
-> > > When using the Exynos MCT as a sched_clock, accessing the timer value
-> > > via the MCT register is extremely slow. To improve performance on Arm64
-> > > SoCs, use the Arm architected timer instead for timekeeping.
-> > 
-> > This probably needs some further expansion to explain why we don't
-> > want to use it for sched_clock but continue to register the MCT as a
-> > clocksource (ie: why not disable MCT entirely?).
-> 
-> Using the MCT as a sched_clock was originally added for Exynos4 SoCs to improve
-> the gettimeofday() syscalls on ChromeOS. For ARM32 this is the best they can do
-> without the Arm architected timer. ChromeOS perf data can be found in [1,2]
-> 
-> [1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
-> [2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
-> 
-> I think it's valid to still register the MCT as a clocksource to make it
-> available in case someone decides they want to use it, but by default it
-> doesn't make sense to use it as the default clocksource on Exynos-based ARM64
-> systems with arch_timer support. However, we can't disable the Exynos MCT
-> entirely on ARM64 because we need it as the wakeup source for the arch_timer to
-> support waking up from the "c2" idle state, which is discussed in [3].
-> 
-> [3] https://lore.kernel.org/linux-arm-kernel/20210608154341.10794-1-will@kernel.org/
-> 
+It still contains valid content when linux stops m7.
 
-Exactly right.
+To make it invalid when linux starts m7 with a firwmare(the elf image not has
+resource table), need to clear the content of priv->rsc_table or
+write some magic number when stop the m7 which was started by bootloader.
 
-> > 
-> > > Note, ARM32 SoCs don't have an architectured timer and therefore
-> > > will continue to use the MCT timer. Detailed discussion on this topic
-> > > can be found at [1].
-> > >
-> > > [1] https://lore.kernel.org/all/1400188079-21832-1-git-send-email-chirantan@chromium.org/
-> > 
-> > That's a pretty deep thread (more so with the duplicate messages, as
-> > you used the "all" instead of a specific list). It might be good to
-> > have a bit more of a summary here in the commit message, so folks
-> > don't have to dig too deeply themselves.
-> 
-> Ah, sorry about the bad link. The above points should be a good summary of that
-> conversation with regards to this patch.
-> 
-> > 
-> > > Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> > > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> > > [Original commit from https://android.googlesource.com/kernel/gs/+/630817f7080e92c5e0216095ff52f6eb8dd00727
-> > > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > > ---
-> > >  drivers/clocksource/exynos_mct.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> > > index da09f467a6bb..05c50f2f7a7e 100644
-> > > --- a/drivers/clocksource/exynos_mct.c
-> > > +++ b/drivers/clocksource/exynos_mct.c
-> > > @@ -219,12 +219,12 @@ static struct clocksource mct_frc = {
-> > >         .resume         = exynos4_frc_resume,
-> > >  };
-> > >
-> > > +#if defined(CONFIG_ARM)
-> > 
-> > I'd probably suggest adding a comment here explaining why this is kept
-> > on ARM and not on AARCH64 as well.
-> 
-> Sure, I can add my comments above here in v2.
-> 
-> > 
-> > >  static u64 notrace exynos4_read_sched_clock(void)
-> > >  {
-> > >         return exynos4_read_count_32();
-> > >  }
-> > >
-> > > -#if defined(CONFIG_ARM)
-> > >  static struct delay_timer exynos4_delay_timer;
-> > >
-> > >  static cycles_t exynos4_read_current_timer(void)
-> > > @@ -250,12 +250,13 @@ static int __init exynos4_clocksource_init(bool frc_shared)
-> > >         exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
-> > >         exynos4_delay_timer.freq = clk_rate;
-> > >         register_current_timer_delay(&exynos4_delay_timer);
-> > > +
-> > > +       sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-> > >  #endif
-> > >
-> > >         if (clocksource_register_hz(&mct_frc, clk_rate))
-> > >                 panic("%s: can't register clocksource\n", mct_frc.name);
-> > >
-> > > -       sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
-> > >
-> > >         return 0;
-> > 
-> > Otherwise, this looks ok to me.
-> > 
-> > thanks
-> > -john
-> 
-> Thanks for taking the time to review!
-> 
-> Regards,
-> Will
-> 
+Then it is possible to check priv->rsc_table in
+imx_rproc_elf_find_loaded_rsc_table.
 
-Along with John's comment,
-Reviewed-by:: Youngmin Nam <youngmin.nam@samsung.com>
-
-------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_73402_
-Content-Type: text/plain; charset="utf-8"
+The 2nd approach is to clear rproc->table_sz and rproc->table_ptr in
+imx_rproc_parse_fw before rproc_elf_load_rsc_table.
 
 
-------caUwc_dC5aEw_I.xGS0GMYyTEPKysFRHRKa1IoFNAgiy-i3F=_73402_--
+>
+>The core is already checking if @loaded_table is valid in rproc_start(), why
+>can't that be used instead of adding yet another check?
+
+Ah. I was thinking clear table_sz in rpoc_shutdown is an easy approach and
+could benifit others in case other platforms meet similar issue in future.
+
+If you think the current patch is not proper, I could do a v3 with the upper
+2nd approach.
+
+>
+>> resource table. The TCM area is not writeable by Linux, so the firmware will
+>> copy the resource table from TCM to DDR if the firmware has a resource table.
+>> 
+>> Hope this is clear.
+>
+>What is clear is that I spend 4 sessions on a 3-line patch, valuable time I
+>could have spent reviewing other peoples' patches.
+
+Sorry. Not intend to waste your time.
+
+Thanks,
+Peng
+>
+>> 
+>> >
+>> >If my assumption above is valid than fix that instead of hacking the remoteproc
+>> >core.
+>> 
+>> I just found V1 was picked up by Bjorn.
+>
+>I am currently working with Bjorn on that.
+>
+>> It is not hack, clearing table_sz in core code does not hurt, I think.
+>
+>It is a hack for as long as you haven't provided a valid explanation for the
+>changes you are proposing.  
+>
+>> 
+>> If my assumption is not valid the changelog and your justification for
+>> >this patch are wrong.  Either way I have spent way too much time on this patch
+>> >already and dropping it.  The same goes for your other patch [1] - resent it
+>> >when you will have properly address the work herein.   
+>> 
+>
+>And yet you just sent a V2.
+>
+>> sure.
+>> 
+>> Thanks,
+>> Peng
+>> 
+>> >
+>> >[1]. [PATCH] remoteproc: imx_rproc: Add mutex protection for workqueue
+>> >
+>> >> 
+>> >> So loaded_table is valid, it is memcpy trigger kernel panic because table_sz is
+>> >> not zero while cached_table is NULL.
+>> >> 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+>> >> 	if (loaded_table) {
+>> >> 		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+>> >> 		rproc->table_ptr = loaded_table;
+>> >> 	}
+>> >> 
+>> >> Thanks,
+>> >> Peng
+>> >> 
+>> >> >
+>> >> >> 
+>> >> >> Thanks,
+>> >> >> Peng
+>> >> >> 
+>> >> >> >
+>> >> >> >[1]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_elf_loader.c#L338
+>> >> >> >[2]. https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/remoteproc_core.c#L1411 
+>> >> >> >
+>> >> >> >> When starting rproc with a firmware not have resource table,
+>> >> >> >> `memcpy(loaded_table, rproc->cached_table, rproc->table_sz)` will
+>> >> >> >> trigger dump, because rproc->cache_table is set to NULL during the last
+>> >> >> >> stop operation, but rproc->table_sz is still valid.
+>> >> >> >> 
+>> >> >> >> This issue is found on i.MX8MP and i.MX9.
+>> >> >> >> 
+>> >> >> >> Dump as below:
+>> >> >> >> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+>> >> >> >> Mem abort info:
+>> >> >> >>   ESR = 0x0000000096000004
+>> >> >> >>   EC = 0x25: DABT (current EL), IL = 32 bits
+>> >> >> >>   SET = 0, FnV = 0
+>> >> >> >>   EA = 0, S1PTW = 0
+>> >> >> >>   FSC = 0x04: level 0 translation fault
+>> >> >> >> Data abort info:
+>> >> >> >>   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>> >> >> >>   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> >> >> >>   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> >> >> >> user pgtable: 4k pages, 48-bit VAs, pgdp=000000010af63000
+>> >> >> >> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+>> >> >> >> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>> >> >> >> Modules linked in:
+>> >> >> >> CPU: 2 UID: 0 PID: 1060 Comm: sh Not tainted 6.14.0-rc7-next-20250317-dirty #38
+>> >> >> >> Hardware name: NXP i.MX8MPlus EVK board (DT)
+>> >> >> >> pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> >> >> >> pc : __pi_memcpy_generic+0x110/0x22c
+>> >> >> >> lr : rproc_start+0x88/0x1e0
+>> >> >> >> Call trace:
+>> >> >> >>  __pi_memcpy_generic+0x110/0x22c (P)
+>> >> >> >>  rproc_boot+0x198/0x57c
+>> >> >> >>  state_store+0x40/0x104
+>> >> >> >>  dev_attr_store+0x18/0x2c
+>> >> >> >>  sysfs_kf_write+0x7c/0x94
+>> >> >> >>  kernfs_fop_write_iter+0x120/0x1cc
+>> >> >> >>  vfs_write+0x240/0x378
+>> >> >> >>  ksys_write+0x70/0x108
+>> >> >> >>  __arm64_sys_write+0x1c/0x28
+>> >> >> >>  invoke_syscall+0x48/0x10c
+>> >> >> >>  el0_svc_common.constprop.0+0xc0/0xe0
+>> >> >> >>  do_el0_svc+0x1c/0x28
+>> >> >> >>  el0_svc+0x30/0xcc
+>> >> >> >>  el0t_64_sync_handler+0x10c/0x138
+>> >> >> >>  el0t_64_sync+0x198/0x19c
+>> >> >> >> 
+>> >> >> >> Clear rproc->table_sz to address the issue.
+>> >> >> >> 
+>> >> >> >> While at here, also clear rproc->table_sz when rproc_fw_boot and
+>> >> >> >> rproc_detach.
+>> >> >> >> 
+>> >> >> >> Fixes: 9dc9507f1880 ("remoteproc: Properly deal with the resource table when detaching")
+>> >> >> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>> >> >> >> ---
+>> >> >> >> 
+>> >> >> >> V2:
+>> >> >> >>  Clear table_sz when rproc_fw_boot and rproc_detach per Arnaud
+>> >> >> >> 
+>> >> >> >>  drivers/remoteproc/remoteproc_core.c | 3 +++
+>> >> >> >>  1 file changed, 3 insertions(+)
+>> >> >> >> 
+>> >> >> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> >> >> >> index c2cf0d277729..1efa53d4e0c3 100644
+>> >> >> >> --- a/drivers/remoteproc/remoteproc_core.c
+>> >> >> >> +++ b/drivers/remoteproc/remoteproc_core.c
+>> >> >> >> @@ -1442,6 +1442,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>> >> >> >>  	kfree(rproc->cached_table);
+>> >> >> >>  	rproc->cached_table = NULL;
+>> >> >> >>  	rproc->table_ptr = NULL;
+>> >> >> >> +	rproc->table_sz = 0;
+>> >> >> >>  unprepare_rproc:
+>> >> >> >>  	/* release HW resources if needed */
+>> >> >> >>  	rproc_unprepare_device(rproc);
+>> >> >> >> @@ -2025,6 +2026,7 @@ int rproc_shutdown(struct rproc *rproc)
+>> >> >> >>  	kfree(rproc->cached_table);
+>> >> >> >>  	rproc->cached_table = NULL;
+>> >> >> >>  	rproc->table_ptr = NULL;
+>> >> >> >> +	rproc->table_sz = 0;
+>> >> >> >>  out:
+>> >> >> >>  	mutex_unlock(&rproc->lock);
+>> >> >> >>  	return ret;
+>> >> >> >> @@ -2091,6 +2093,7 @@ int rproc_detach(struct rproc *rproc)
+>> >> >> >>  	kfree(rproc->cached_table);
+>> >> >> >>  	rproc->cached_table = NULL;
+>> >> >> >>  	rproc->table_ptr = NULL;
+>> >> >> >> +	rproc->table_sz = 0;
+>> >> >> >>  out:
+>> >> >> >>  	mutex_unlock(&rproc->lock);
+>> >> >> >>  	return ret;
+>> >> >> >> -- 
+>> >> >> >> 2.37.1
+>> >> >> >> 
+>> >> >> >
+>> >> >
+>> >
+>
 
