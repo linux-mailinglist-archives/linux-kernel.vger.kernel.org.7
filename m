@@ -1,139 +1,147 @@
-Return-Path: <linux-kernel+bounces-585414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354E1A79332
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:33:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10C0A792A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 18:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3261894D39
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:31:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3883B0140
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 16:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996A11F3BBF;
-	Wed,  2 Apr 2025 16:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5DbXHFU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE754190057;
+	Wed,  2 Apr 2025 16:04:30 +0000 (UTC)
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9171F3BBE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 16:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5538DE9;
+	Wed,  2 Apr 2025 16:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743611271; cv=none; b=coVXSA+PkbTo/fuPw77sq0PmmBIiq3YOzf/8t//52aXi9XinNvl3u6JF1wqKB1UAFMcZg0n5V5nxvRQ+TIFH5SxqeO0443D6akF9GqC3CSiAlmklh1+sMoYsf6oQOXb0hDkumR4uqDKNu/l6qK9vvakE2P9WRNWI2YkXY75v+lY=
+	t=1743609870; cv=none; b=c9M0vHB9uieAvB/vG18gmsLQwf8G1hSbj4jrWQiigR+KZ6bCboHCbEbk0mUiGAobYARq/vMt4nA4SQYcPSI2nS3j04KDQE0d127EeUpa7pAzYr4r3gIZ+k975GzcJ++qlMTxMnXQtTj3BJPKnG5SexbRgCU75a0k4NvwUcDLDHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743611271; c=relaxed/simple;
-	bh=o4EPDV0aZd5aebRCtAzJHstJ3xqapBa1C3808IhKyF4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=shi5J+KvWm9zqzk7kzc3lNsrsGen/bTL86szc8X2QD+lifp6/fW/9tnN4KNnZrg3vuTZj9WJ+RWDqPWtrjSJJzBLOVgxOL7qFr7hsXKeEKvVqdAMMdyrQV0ELfsIlTyKESTUxNRasb/vNs8aAxD8yeRZ9KvXBdDptvBKZ5fxM8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5DbXHFU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743611268;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9PD6OmDX45LDR7+nbtGPkK9QX6P2gjTV1BpF+hq9cvw=;
-	b=h5DbXHFUICCuuIpPRActnunhMIA1OeduoSiwMZ9slBbtSGaiX3s93Thse1s+fjhMaMXTIj
-	ZCtbZeVPaN8LtReReMjf/T+52ut6YdCfNWcdM3u3WQjiwneaR1K17Y/69FIu42LOHdqViw
-	RsPCkJHVr5Milk+glVEM47f5o9z+2To=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-MnCVOWQlOE-CQsqJq256Vw-1; Wed,
- 02 Apr 2025 12:27:45 -0400
-X-MC-Unique: MnCVOWQlOE-CQsqJq256Vw-1
-X-Mimecast-MFC-AGG-ID: MnCVOWQlOE-CQsqJq256Vw_1743611263
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1743609870; c=relaxed/simple;
+	bh=H8RhS+K+2lmf/4O1CUzjViFWSlESvTAkGL1rAkqQEYI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Ues9CrVqbZhCvJjsZFVqTeV4XXPV+cnGvx+k3MXdWZTi7SSL2/C44oRvZ1dpz9ZadDnUhAABfa4Lhl0ALwlmpWwXWFcRi2QJ8l/KoMrfezejsq+RBfRvEOpZKj+eGRGPAt9VXDBZgvv2lqgSaqt14BqRQ1ZZTlcXhlzEeLqDzrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev; spf=pass smtp.mailfrom=buenzli.dev; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=buenzli.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buenzli.dev
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D00771954B32;
-	Wed,  2 Apr 2025 16:27:42 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB2D8195609D;
-	Wed,  2 Apr 2025 16:27:38 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Wed, 02 Apr 2025 11:24:08 -0400
-Subject: [PATCH 30/30] panel/orisetech-ota5601a: Use refcounted allocation
- in place of devm_kzalloc()
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZSV6q0XTmz9scX;
+	Wed,  2 Apr 2025 18:04:19 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250402-b4-drm_panel_mass_convert_part2-v1-30-903b70999ea6@redhat.com>
-References: <20250402-b4-drm_panel_mass_convert_part2-v1-0-903b70999ea6@redhat.com>
-In-Reply-To: <20250402-b4-drm_panel_mass_convert_part2-v1-0-903b70999ea6@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Icenowy Zheng <icenowy@aosc.io>, Jagan Teki <jagan@amarulasolutions.com>, 
- Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Jianhua Lu <lujianhua000@gmail.com>, Stefan Mavrodiev <stefan@olimex.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743607440; l=1321;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=o4EPDV0aZd5aebRCtAzJHstJ3xqapBa1C3808IhKyF4=;
- b=BVaohY7WGETvX3RovtLsktqY1+PIhCXrnlCpEDxR1cOZ7BoVwBKiBqXeM8stZxc4dq9T+HT71
- nCF/6+64E/tB79uroCVimFiZs0E49dwNfoqF8e/78jY3L2Z7iGs9Scu
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Apr 2025 18:04:13 +0200
+Message-Id: <D8WA3WIHEQRN.3LQS84K8Z46OW@buenzli.dev>
+From: "Remo Senekowitsch" <remo@buenzli.dev>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "Daniel Scally" <djrscally@gmail.com>, "Heikki Krogerus"
+ <heikki.krogerus@linux.intel.com>, "Sakari Ailus"
+ <sakari.ailus@linux.intel.com>, "Rob Herring" <robh@kernel.org>, "Dirk
+ Behme" <dirk.behme@de.bosch.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Saravana Kannan"
+ <saravanak@google.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 03/10] device property: Add
+ fwnode_property_read_int_array()
+References: <20250326171411.590681-1-remo@buenzli.dev>
+ <20250326171411.590681-4-remo@buenzli.dev>
+ <Z-UPJyD41LOMM3o2@smile.fi.intel.com>
+In-Reply-To: <Z-UPJyD41LOMM3o2@smile.fi.intel.com>
+X-Rspamd-Queue-Id: 4ZSV6q0XTmz9scX
 
-Move to using the new API devm_drm_panel_alloc() to allocate the
-panel.
+On Thu Mar 27, 2025 at 9:41 AM CET, Andy Shevchenko wrote:
+> On Wed, Mar 26, 2025 at 06:13:42PM +0100, Remo Senekowitsch wrote:
+>> The rust bindings for reading device properties has a single
+>> implementation supporting differing sizes of integers. The fwnode C API
+>> already has a similar interface, but it is not exposed with the
+>> fwnode_property_ API. Add the fwnode_property_read_int_array() wrapper.
+>
+> ...
+>
+>> +EXPORT_SYMBOL_GPL(fwnode_property_read_int_array);
+>
+> I'm not sure about this. We have a lot of assumptions in the code that th=
+e
+> arrays beneath are only represented by the selected number of integer typ=
+es.
+> This opens a Pandora's box, e.g., reading in u24, which is not supported =
+by
+> the upper layers..
+>
+>> +int fwnode_property_read_int_array(const struct fwnode_handle *fwnode, =
+const char *propname,
+>> +				   unsigned int elem_size, void *val, size_t nval);
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/panel/panel-orisetech-ota5601a.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Here's an alternative approach using a macro to map each integer type expli=
+citly
+to its corresponding read function. There are some additional changes that =
+will
+be necessary to make the rest work, but this is the gist of it.
 
-diff --git a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-index fc87f61d4400d49814953d7f453a7c6e84004f29..3231e84dc66c2bf319f5287fd53bc437e24e0d5b 100644
---- a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-+++ b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-@@ -237,9 +237,11 @@ static int ota5601a_probe(struct spi_device *spi)
- 	struct ota5601a *panel;
- 	int err;
- 
--	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
--	if (!panel)
--		return -ENOMEM;
-+	panel = devm_drm_panel_alloc(dev, struct ota5601a, drm_panel,
-+				     &ota5601a_funcs,
-+				     DRM_MODE_CONNECTOR_DPI);
-+	if (IS_ERR(panel))
-+		return PTR_ERR(panel);
- 
- 	spi_set_drvdata(spi, panel);
- 
-@@ -273,9 +275,6 @@ static int ota5601a_probe(struct spi_device *spi)
- 		return PTR_ERR(panel->map);
- 	}
- 
--	drm_panel_init(&panel->drm_panel, dev, &ota5601a_funcs,
--		       DRM_MODE_CONNECTOR_DPI);
--
- 	err = drm_panel_of_backlight(&panel->drm_panel);
- 	if (err) {
- 		if (err != -EPROBE_DEFER)
-
--- 
-2.48.1
-
++macro_rules! impl_property_for_int {
++    ($($int:ty: $f:ident),* $(,)?) =3D> {
++        $(
++            impl<const N: usize> Property for [$int; N] {
++                fn read(fwnode: &FwNode, name: &CStr) -> Result<Self> {
++                    let mut val: [MaybeUninit<$int>; N] =3D [const { Maybe=
+Uninit::uninit() }; N];
++
++                    // SAFETY: `name` is non-null and null-terminated. `fw=
+node.as_raw` is valid
++                    // because `fwnode` is valid. `val.as_ptr` is valid be=
+cause `val` is valid.
++                    let ret =3D unsafe {
++                        bindings::$f(
++                            fwnode.as_raw(),
++                            name.as_char_ptr(),
++                            val.as_mut_ptr().cast(),
++                            val.len(),
++                        )
++                    };
++                    to_result(ret)?;
++
++                    // SAFETY: `val` is always initialized when
++                    // fwnode_property_read_$t_array is successful.
++                    Ok(val.map(|v| unsafe { v.assume_init() }))
++                }
++            }
++            impl Property for $int {
++                fn read(fwnode: &FwNode, name: &CStr) -> Result<Self> {
++                    let val: [_; 1] =3D <[$int; 1] as Property>::read(fwno=
+de, name)?;
++                    Ok(val[0])
++                }
++            }
++        )*
++    };
++}
++impl_property_for_int! {
++    u8: fwnode_property_read_u8_array,
++    u16: fwnode_property_read_u16_array,
++    u32: fwnode_property_read_u32_array,
++    u64: fwnode_property_read_u64_array,
++    i8: fwnode_property_read_u8_array,
++    i16: fwnode_property_read_u16_array,
++    i32: fwnode_property_read_u32_array,
++    i64: fwnode_property_read_u64_array,
++}
 
