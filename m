@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-584546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C9EA7887D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD73A78893
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78D016DF7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A775916F88B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 07:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7C320F07C;
-	Wed,  2 Apr 2025 07:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27D9233737;
+	Wed,  2 Apr 2025 07:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f1MxB4dQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AE73C17
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB5E23372D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 07:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743577545; cv=none; b=rPkM0COSmB+TE0xOg6tjec9r+kb7vFTsV26Goz25Zh28qojeZWIXA41dqtBqVvl22m4KTGWUA0pDm8OpYG4MkhTWvue9z25fDlIb7KA1ti9ufILvP8JRxqlhrD44HrZ0nYNMBsw2hua5RCL4k9UMMbLd4nOkHYNTVELp5Q0Bsos=
+	t=1743577673; cv=none; b=rZ5ZCFQI0SLYCMidKMEtn3SY32tZ9ZbquaoIOEa8tSLO8L06g3eMwUcrwUwqA3/gNaOCEge/Pg2HWKrJrIlSOWkO5XBYBtHwODDoBMfZ3K/F/0EnEyW0rL2x4uEyUNqoWfs1XzFHk/dVs6zb3py82KyCHBFp3hpQ5FgCJFkw0DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743577545; c=relaxed/simple;
-	bh=RvVuEhU6H4q0EhDx1tiAt5dp2ujQ9LsTsA8B4iwksyk=;
+	s=arc-20240116; t=1743577673; c=relaxed/simple;
+	bh=TJ3PZbqHkQs/4tukT/mVpA5HaQGninFtVcz7pGCCY/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IslDkAXM4l9ojFUB6nEg68VMM3dOggszlS+1q3Js2UUFcj+MeXzSNJh8gfNJ3cugIwddhE3uOAYEr89Mo+XpADBWvpLn5N9sfFZzsMRKIMhSMcCOCio9phLNZvtkrccGSxqznx0xN+tBt3UaCNxi4zlhKibRsVfzDOvebtnSlaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BACCBC4CEE5;
-	Wed,  2 Apr 2025 07:05:42 +0000 (UTC)
-Date: Wed, 2 Apr 2025 09:05:39 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, 
-	thomas.fossati@linaro.org, Larisa.Grigore@nxp.com, ghennadi.procopciuc@nxp.com, S32@nxp.com, 
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 2/2] clocksource/drivers/nxp-timer: Add the System
- Timer Module for the s32gx platforms
-Message-ID: <20250402-ginger-hare-of-action-dc3fff@krzk-bin>
-References: <20250401224644.3389181-1-daniel.lezcano@linaro.org>
- <20250401224644.3389181-3-daniel.lezcano@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdCrNgUN4rnkxtvKlKoiLvzTNULFFZFM1CDXzP5h1SGw3ikgSjWurLrUECvSvJSqcMYynkPgTWMulTp6DzaXPDmrXbqZjcc8wjknAl7al0mnAC9tHCHa/vTT/SkAhUOW9KhEdT2/j0V4ZmjBfalfue5We6keorbFTH6eYLn+u8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f1MxB4dQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA360C4CEDD;
+	Wed,  2 Apr 2025 07:07:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743577673;
+	bh=TJ3PZbqHkQs/4tukT/mVpA5HaQGninFtVcz7pGCCY/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1MxB4dQilCYg/3ooTBqzYah3QEO/MnPyJzRWYWPtDLkxsxV0DGYQnx9h5PL9tET8
+	 pK+AXPfBr3YG48cutXO+zIdMX0t99giI6xTvZ00Ao6nxtTow1HR80jSu1bqQeJlJWG
+	 W+ng2hTQql5oM7axIAtMJ/FwgbgdWOVSLYEevbZs=
+Date: Wed, 2 Apr 2025 08:06:20 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] published: CVE-2025-0927: Fix up JSON schema.
+Message-ID: <2025040248-hut-sevenfold-82c3@gregkh>
+References: <2025033057-CVE-2025-0927-1436@gregkh>
+ <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250401224644.3389181-3-daniel.lezcano@linaro.org>
+In-Reply-To: <80cd3f46783cd5702b3abd40c11f3f08f64717ec.1743576485.git.siddh.raman.pant@oracle.com>
 
-On Wed, Apr 02, 2025 at 12:46:42AM +0200, Daniel Lezcano wrote:
-> +
-> +static const struct of_device_id nxp_stm_of_match[] = {
-> +	{ .compatible = "nxp,s32g2-stm" },
-> +	{ .compatible = "nxp,s32g3-stm" },
+On Wed, Apr 02, 2025 at 12:21:52PM +0530, Siddh Raman Pant wrote:
+> It doesn't match the schema of other CVEs as it was not generated
+> by bippy.
 
-Drop, the entire point of me asking for compatibility is not to have
-useless entries for the same devices.
+It was created by vulnogram for obvious reasons :(
 
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, nxp_stm_of_match);
-> +
-> +static struct platform_driver nxp_stm_probe = {
-> +	.probe	= nxp_stm_timer_probe,
-> +	.driver	= {
-> +		.name		= "nxp-stm",
-> +		.of_match_table	= of_match_ptr(nxp_stm_of_match),
+Also, please cc: cve@kernel.org for stuff like this.
 
-Drop of_match_ptr, you have here a warning.
-
-> +	},
-> +};
-> +module_platform_driver(nxp_stm_probe);
-> +
-> +MODULE_DESCRIPTION("NXP System Timer Module driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.43.0
+> Fixed by hand / manually.
 > 
+> programFiles were added from the info in mbox.
+
+So this did two different things?  Why does the layout matter here?
+Eventually it will be created properly when someone gets the fix
+upstream, I'm waiting for Canonical to do it as they are responsible for
+fixing this mess at the moment, but don't seem to be responding to my
+emails anymore...
+
+thanks,
+
+greg k-h
 
