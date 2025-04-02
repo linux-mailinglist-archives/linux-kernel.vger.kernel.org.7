@@ -1,128 +1,112 @@
-Return-Path: <linux-kernel+bounces-584861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466A1A78CFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:21:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C86A78D10
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 13:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697EC3B1730
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2E93A557A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EDE238143;
-	Wed,  2 Apr 2025 11:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C971E238144;
+	Wed,  2 Apr 2025 11:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSs2B4Gh"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cd3AEkyr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25AE214A8D;
-	Wed,  2 Apr 2025 11:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038032376F2;
+	Wed,  2 Apr 2025 11:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743592894; cv=none; b=n6gS9T9t6rRxYhFlNWFpgt5pNfVDuqT/TYheZR5gwEX8rvR4RaeMWoKxLbmT4ytaD0+kuBdQxAQR7j6nNyevadaX1ghrpRsxEMlsraqk9LzmkfkvZ7LDFNyFaly5dBBx4g2/Yk7rUKWk9C/4igrVH25iDg1DtaG9eZViJH+TyRE=
+	t=1743593252; cv=none; b=AsNoPA7m9jSgRUGi4FjW8oyfbdaBTgBjWARSEyxLk7dGmdSzddLfowduyFalK1d30BkYP5BoVJzxzy243GcVQN6yvWmx6DHm+fDpbd4753p2gEqYcJrj/euVxBSqEBcfV4uVeC2dlQwIpA7RNm+nWlH47enbbolRdCFYeJZWJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743592894; c=relaxed/simple;
-	bh=uw7YZxMSPgwgS0/w0ttLN3VboYk2jJM2s2mmZ6bJuKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HHg/bt3fOZl3AHgQeIYbCDRAjKFtGRUJTyFbXypW/Pra/zItkg3wXspjCe2oPecMx0MZ22tTcVN2vnnoDXW1p+2Aw0bE/SyKxywLmdv9UyG/SBFJTuu9Fv8QcDIMRFyyF+8kjf/KWY29t1Vi09Q+0kSnJwTpLAI4QE8yn9+g0TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSs2B4Gh; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39149bccb69so5796315f8f.2;
-        Wed, 02 Apr 2025 04:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743592891; x=1744197691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPzQ7GZzqncp+Ak5yeGvcwYVrSmu2MRVGApRTYglHVU=;
-        b=GSs2B4GhKWmYhjIIz+kZltKAujsWx2Wm5u2kirV1YCZaxxJPTuGJtkq3b5iloWYWAV
-         SH/5tWZLbpnpV8d9r9dxDNw1eSCrJ9p7dI+RPd0i7ut6E0zRtBXEpVeVsf21ZWHD/rOv
-         S9SaebMA0cM5IQLDhBmvhm4jthOehgb48R0HHNlYE8lJq7U0XosQjdTDKDr7Kzl733D/
-         8YJucKR273vePevqNdzf5Fa3i5NIIElLJt/mvG4+Z20vmk7mvbtkt7BzA0OA6/TpWqkQ
-         +E/CTYCVNMOWZzPQW03eOlMQAlOj3ymUbWJLWQxe41ifiwaPpoTBTCSoTYdZPUh+WPg0
-         kEAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743592891; x=1744197691;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FPzQ7GZzqncp+Ak5yeGvcwYVrSmu2MRVGApRTYglHVU=;
-        b=oz7nQJKypz5pAHuFrQWXeTQVOmScDm8BjoKU12d5+NwHVQLAUv1ibrVfQ+AkpHTj93
-         EHlo+v9K2JeVmXvDmICDo2ZY5ONvhddCFbHFnz2xVLeNrdZpKDiL1bWr3M5l+UaLpBUW
-         GVmjpGRekvqzNdU2Gqk22k8D3IgmwDJDx9RMRp6sMBwEmfcGVJxD0UWLe2LH7XuatSYU
-         VtPD//NMv+ugHFDs9480X42lid9tekKVsfCqMxSHqzeUig+tFYbfHTX2KbfI8IZaJ9Fl
-         rs2nJPd9cSN7S+UHSDjZMmiQTI4YV7nneU9NCmVo6CRyPwL+G7J/wM5eNtLH1n05sNib
-         8nqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7SoRK6+Je6prHf1d4AlwCGhppEPA3mjkynkKyX+DGejALdgKO06/naqdC57yh+sTt+AqDxFr+FFq10g==@vger.kernel.org, AJvYcCUNDh96GTPtMmc/EkP8nHz9DGkhR1zvP2YPj2ZsHOkhWxGp0INAIG1pes2Qy0FdZlKVnYwGg9unJrNU0QFr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsWR6ygH+W11/MopxNQmXutr8VPK6rVlNS+ZY9bKxnTO7B563k
-	QugugFJDfuTgH5n/icobh0JUxS8/9tgfPYhBbya+C1Fm1kVkB75C
-X-Gm-Gg: ASbGnctgY5nv/Q3/bETjFjZhSl4g4k3Zy6mEuV2Ui+YxPMub+ku5YgiGoMH/8w5q3lX
-	hCHpf3Pu+LOLHmEfFLFoi1AoNYy4tEo+/PUqdzDOrQ0+y8JMwdGQzPWyl0yZxPJrcIZqMXb1Wc2
-	m8qzCjhrNDWr4MVKmUzYfm2F1Sln6jF+6xQyaxc9dbcJZOWRv0fk7XmYpuEzP/gKWBY+6pIeqj5
-	yrW/6GDzdvn1AvFHVZZ5no2XeZi2DaPKWLKfpZxbbREULe8a5SAxVMnlQcdwfujUjrSkSD/iDSB
-	kUiv6sL8I93+G25RbjSRhU7GWSCHQbWevgDCcksatPPhxg==
-X-Google-Smtp-Source: AGHT+IFtLceKzRoy2pv/fkhslNAg68rmy5sUu4mawdA0Qc9efkyj/+Q7apuHGHok1OVMvfuuCqRKrw==
-X-Received: by 2002:a5d:6dad:0:b0:38d:e304:7470 with SMTP id ffacd0b85a97d-39c297675dbmr1560992f8f.25.1743592890830;
-        Wed, 02 Apr 2025 04:21:30 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43eb6138f3esm17406925e9.36.2025.04.02.04.21.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 04:21:30 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Even Xu <even.xu@intel.com>,
-	Xinpeng Sun <xinpeng.sun@intel.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: intel-thc-hid: intel-thc: make read-only arrays static const
-Date: Wed,  2 Apr 2025 12:21:29 +0100
-Message-ID: <20250402112129.410320-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743593252; c=relaxed/simple;
+	bh=iEoq3UvTqn/5QK8ZcHJXTxGcN+fBGRghIFseAgrMVyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrQEz8pBboZoLlwmyK1XsxDd3bECcYKog8vFDqZqOI8tP9NNphq71Od/ebK0/SwLuUQ0Ar64w8nXf5VYRuigqUwp/+sRnNLniQRxVxU3ldkqrLsJpMsMUHic+LCgraiO6XGnjl8rjU7L2L3YsFv6GDAYdm/U5BWEzsUmHUoW79w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cd3AEkyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6B1C4CEDD;
+	Wed,  2 Apr 2025 11:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743593251;
+	bh=iEoq3UvTqn/5QK8ZcHJXTxGcN+fBGRghIFseAgrMVyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cd3AEkyr040b+TETjzuMWBd/5Bw3uF2EgUsp2fm3UCeTffYTNz/vYO5IaEZlp6EuX
+	 CGbTz1/hpG3Y0hgJDcxDmqjXHnRG9bKCbCD8eTiaeQxDFW3Gzw4ZgWQgFTbaurpTXd
+	 6Ag18G7ZXJmcNDN10vQvD8OQxoNaJ4qeh2oFqu8U=
+Date: Wed, 2 Apr 2025 12:26:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+	linux-mm <linux-mm@kvack.org>, lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: qemu-i386 boot failed on mainline master - no console output
+Message-ID: <2025040216-directive-unmapped-5301@gregkh>
+References: <CA+G9fYtdXHVuirs3v6at3UoKNH5keuq0tpcvpz0tJFT4toLG4g@mail.gmail.com>
+ <CA+G9fYuHhz2YCafabKK+QMJiDuM65OcxpaW9TN-=u56r_kyGSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYuHhz2YCafabKK+QMJiDuM65OcxpaW9TN-=u56r_kyGSA@mail.gmail.com>
 
-Don't populate the read-only arrays frequency and frequency_div on
-the stack at run time, instead make them static const.
+On Wed, Apr 02, 2025 at 02:24:53PM +0530, Naresh Kamboju wrote:
+> + Linus
+> + Greg KH
+> 
+> On Wed, 2 Apr 2025 at 14:14, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > Regressions on qemu-i386 devices boot tests failed with defconfig on
+> > the mainline master no console output.
+> >
+> 
+> The qemu-i386 boot failed with no console output and is still happening on
+> the latest mainline master branch.
+> 
+> > First seen on the char-misc-6.15-rc1 merge 25601e85441d ("Merge tag
+> > 'char-misc-6.15-rc1' of...)
+> >  Good: [08733088b566b58283f0f12fb73f5db6a9a9de30] Merge tag
+> > 'rust-fixes-6.15-merge'
+> >  Bad:  [91e5bfe317d8f8471fbaa3e70cf66cae1314a516] Merge tag 'dmaengine-6.15-rc1'
+> >
+> > * qemu-i386
+> >  - boot
+> >
+> > Regression Analysis:
+> >  - New regression? Yes
+> >  - Reproducibility? Yes
+> >
+> > Test regression: qemu-i386 boot failed on mainline master
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > Anders bisected this to,
+> >   # first bad commit:
+> >     [eb0ece16027f8223d5dc9aaf90124f70577bd22a]
+> >     Merge tag 'mm-stable-2025-03-30-16-52' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+But this is bisected to the mm merge, not the char-misc merge, right?
 
-diff --git a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-index 4fc78b5a04b5..c105df7f6c87 100644
---- a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-+++ b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-@@ -1121,7 +1121,7 @@ EXPORT_SYMBOL_NS_GPL(thc_port_select, "INTEL_THC");
- 
- static u8 thc_get_spi_freq_div_val(struct thc_device *dev, u32 spi_freq_val)
- {
--	int frequency[] = {
-+	static const int frequency[] = {
- 		THC_SPI_FREQUENCY_7M,
- 		THC_SPI_FREQUENCY_15M,
- 		THC_SPI_FREQUENCY_17M,
-@@ -1130,7 +1130,7 @@ static u8 thc_get_spi_freq_div_val(struct thc_device *dev, u32 spi_freq_val)
- 		THC_SPI_FREQUENCY_31M,
- 		THC_SPI_FREQUENCY_41M,
- 	};
--	u8 frequency_div[] = {
-+	static const u8 frequency_div[] = {
- 		THC_SPI_FRQ_DIV_2,
- 		THC_SPI_FRQ_DIV_1,
- 		THC_SPI_FRQ_DIV_7,
--- 
-2.49.0
+And is this just on i386?  Nothing arch-specific in the char-misc merge
+that I can see, so I would place bets on mm doing something accidentally
+on 32bit systems.
 
+thanks,
+
+greg k-h
 
