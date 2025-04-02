@@ -1,81 +1,218 @@
-Return-Path: <linux-kernel+bounces-584954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979D0A78DF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:12:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC7DA78DF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 14:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5287A5049
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449633A8FC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 12:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C58238D33;
-	Wed,  2 Apr 2025 12:12:28 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6486238D2F;
+	Wed,  2 Apr 2025 12:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Rbz6e/Ky";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="irhf6zkT"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF0E23371D;
-	Wed,  2 Apr 2025 12:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548311DE3CA;
+	Wed,  2 Apr 2025 12:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743595947; cv=none; b=bkts13eEkXiA7VT4E4KsPGvOjUNSiLC20uawM4nTLq6uH0CyT9u5B+djnUXa8H+PiMzy7vpUW9FWUw4BVxclY3ITTB/gspWov4l5ZrCHK9g9+oZxkh/j9o+IbfNwM4zsBARHxJH/7AJrjj6pm9XxDvBq+BhVL6Li6rzeLOphBUg=
+	t=1743596054; cv=none; b=hdRqBvy/KbA8RYseHPpN5xmjP6s/D43P6bkXQLDkPVshAo18xGpzniuNUFpAqwS4Vailqnk69FsxENarNpFLvTd1jnCJbwM3Z972NH4OP6DeG873GTCfOjEaYWEV2GGNr6InHEosFDzL7epcIZGbjfPwVUsqSZdw6ZD+AMjsy+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743595947; c=relaxed/simple;
-	bh=93MsZgHZPuKgHFlXUFE5ODJyARsiBlTJ4w2tRPzDcsY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z+zceAKZd4dHM4ZTI0Ns1wJpf9tpTxL/hDDSU1GDOA8O7KggwXaHrE0tgNTKrP2qkW5fIWG1U8wiUwwySKCL+REp7vupVQg7OeR8ACFU2yCtvxFpfHbKTgxeb5eki6VpGyDaQJZ1NRk45nmc3JV3SmgL66Mu6cyU2sjO/6JEB3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZSNxS5C5BztQfs;
-	Wed,  2 Apr 2025 20:10:52 +0800 (CST)
-Received: from kwepemg200016.china.huawei.com (unknown [7.202.181.67])
-	by mail.maildlp.com (Postfix) with ESMTPS id D71F518007F;
-	Wed,  2 Apr 2025 20:12:17 +0800 (CST)
-Received: from localhost.localdomain (10.175.124.27) by
- kwepemg200016.china.huawei.com (7.202.181.67) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 2 Apr 2025 20:12:17 +0800
-From: gaoxingwang <gaoxingwang1@huawei.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>
-CC: <kuba@kernel.org>, <yanan@huawei.com>
-Subject: [Discuss]ipv6: send ns packet while dad
-Date: Wed, 2 Apr 2025 20:12:05 +0800
-Message-ID: <20250402121205.305919-1-gaoxingwang1@huawei.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1743596054; c=relaxed/simple;
+	bh=4vP1zg4NZRz6pKqIx6I2YGi9rhlnszDVD/oz83EGiNc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DKY2Wvh9s2nY1ln8bNtfBE6plITzDxPIUC0ENd6s68COridTAemgJnc+QVzUGif4mO72Hcq9Epikwat4ldT7v1hoZeM5YdIHrHEP++xcMdiyZMqMNr+8GwZdbiXsa3X4PlEnoe3YnRnRKSiSteKgvXcCzN3haCPMQI0BSb2QGDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Rbz6e/Ky; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=irhf6zkT; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 431211140214;
+	Wed,  2 Apr 2025 08:14:10 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Wed, 02 Apr 2025 08:14:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1743596050;
+	 x=1743682450; bh=FKDNjdFnETrwUcjHp4ivsB/tkaU6T/LRyMcbCEGcodM=; b=
+	Rbz6e/KyIEj/j76qr1DrEXSbc5ZQ8Jl3gkPl12w6JZnhVVBOXUPfdv/d13EYYNoR
+	DTNxN5OZgQEWQBTbt8tf1+2ZHNxGs9sH2YqtUmo3UXN29XKnCor+S9tqNp5yfCgM
+	UqUSpnsk0m42aL8pSLCLsMZtYuIc7kviipP/IymPh/2mvljfFGz3sCuL8p9775TQ
+	oNynbD8rd+cJhBuJcQnElZgDDYOJRDckDgMJ2Aj+63PKDfQK3oczQDFrprWy0JNo
+	5jd8GwCHwWvpPgKiKnQYyy2vlOMJQfM9pUNFZFxD2J7wKWf2UnXjixSXMSWTjFPD
+	HNOphkFXlzkpENYwns5RfQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743596050; x=
+	1743682450; bh=FKDNjdFnETrwUcjHp4ivsB/tkaU6T/LRyMcbCEGcodM=; b=i
+	rhf6zkTwa0vSHsNdwecBh925dAMBBayG+bAsI5SOFCf8ttHFNlZ4JLQ84+gnNVbb
+	M4bjUy3JvuTxMCJ/aA6abJ7eBPnpQBYiU4SXMwJjNEzBcbzIfyRbUSs2QzBfNMb/
+	3luqP6rXqfQB3BouutlR53uSrzfDWd8E6gXE1sCcjBv1fcMk1tXedU//jOCLyhRl
+	QDr9e7G9++anZBdSAI+yqRHH3uStFU+5VsD5es9P6sIw5Ik41F5LcvOB87ZwumRW
+	8X0AiSpR8oI5lGU2HVtLqVXrlagm4dGQ52DBqyiTHxAv4UHXBs2aczt+nQWFDRd+
+	4aGwly0fluQv8uQCWbcyA==
+X-ME-Sender: <xms:ESrtZxQtgVxmVopG6orknIeo1eegYgVWqzJqJIXmtCBx7f8o5ZSVRQ>
+    <xme:ESrtZ6xF5p8NnRxSsgsOkhAZ1HXgFJkHvFtsL5seS7dEpZ8TBZYjlWAmjXf6I3iCo
+    52ePjvKHuPqwPbTk0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeehieegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrg
+    esrghmugdrtghomhdprhgtphhtthhopegrnhgrnhgurdhumhgrrhhjihesrghmugdrtgho
+    mhdprhgtphhtthhopehgrghuthhhrghmrdhshhgvnhhohiesrghmugdrtghomhdprhgtph
+    htthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthht
+    ohepnhgrvhgvvghnkhhrihhshhhnrgdrtghhrghtrhgrughhihesrghmugdrtghomhdprh
+    gtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomhdprhgtphht
+    thhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
+    hopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhh
+    fihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ESrtZ22KlFG16JI7xd-R1JCkE4gysN35sglxVKo1uSvJiQa9N80khA>
+    <xmx:ESrtZ5BK_JcUUxm_gDmndGTegCvLTfxvsjrV94Vvh4XKYexlMlwjnA>
+    <xmx:ESrtZ6jjbDqnaedWHB-P1DUXMWb1UutARsqG9D4sYi8WlmHux-wLMA>
+    <xmx:ESrtZ9p6rMSN3e6Y_RL1QvClEIA3dg-hH0RVbxh0bF9-dLo32AnpJA>
+    <xmx:EirtZ-mj9veMXKqXpL236kgklIqoi97VXiUywJfZRirbbftxGyezERCl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C2EBF2220072; Wed,  2 Apr 2025 08:14:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T26b50819d8e1d81f
+Date: Wed, 02 Apr 2025 14:13:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
+ gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
+ naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
+Message-Id: <c7efb154-9e44-402f-b0fb-c9bce54645b2@app.fastmail.com>
+In-Reply-To: <20250402055840.1346384-8-akshay.gupta@amd.com>
+References: <20250402055840.1346384-1-akshay.gupta@amd.com>
+ <20250402055840.1346384-8-akshay.gupta@amd.com>
+Subject: Re: [PATCH v7 07/10] misc: amd-sbi: Add support for CPUID protocol
 Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200016.china.huawei.com (7.202.181.67)
+Content-Transfer-Encoding: 7bit
 
-Hello, everyone:
+On Wed, Apr 2, 2025, at 07:58, Akshay Gupta wrote:
+> - AMD provides custom protocol to read Processor feature
+>   capabilities and configuration information through side band.
+>   The information is accessed by providing CPUID Function,
+>   extended function and thread ID to the protocol.
+>   Undefined function returns 0.
+>
+> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+> ---
+> Changes since v6:
+> - Address Arnd comment
+>   - Add padding to the uapi structure
+> - Rebased patch, previously patch 8
 
-I have an RFC-related question when using ipv6.
+This changes the UAPI again. since you change the common structure
+layout.
 
-Configure an IPv6 address on network adapter A. The IP address is being used for DAD and is unavailable.
-In this case, the application sends an NS packet to resolve the tentative IP address. The target address
-in the multicast packet contains the tentative IP address, and the source address is set to the link-local address.
-Is this allowed to be sent? Does it contradict the following description in the RFC 4862?
-(https://datatracker.ietf.org/doc/html/rfc4862#section-5.4)
+> @@ -134,6 +279,9 @@ static long sbrmi_ioctl(struct file *fp, unsigned 
+> int cmd, unsigned long arg)
+>  		/* Mailbox protocol */
+>  		ret = rmi_mailbox_xfer(data, &msg);
+>  		break;
+> +	case APML_CPUID:
+> +		ret = rmi_cpuid_read(data, &msg);
+> +		break;
+>  	default:
+>  		return -EINVAL;
 
->Other packets addressed to the
->tentative address should be silently discarded.  Note that the "other
->packets" include Neighbor Solicitation and Advertisement messages
->that have the tentative (i.e., unicast) address as the IP destination
->address and contain the tentative address in the Target Address field.
+As I previously commented, I would prefer to have a highl-level
+interface per specific mailbox item you transfer, but I think that
+is something we can debate, in particular if Greg or the x86
+maintainers think it's ok, I'm not going to object.
 
-Or is this description just for receiving packets?
+However, having a combined ioctl command and data structure
+for rmi_mailbox_xfer(), rmi_cpuid_read() and the commands
+you add later seems to cause a lot of the extra complexity,
+and I think this really has to be done differently, using
+distinct ioctl command numbers for each of them, with an
+appropriate structure to go along with it.
 
-The actual problem I encountered was that when proxy ND was enabled
-on the switch, the reply ND packet would cause the dad to fail. 
-So I'm not sure if it's the NS sending problem.
-Thank you very much, if anyone can reply!
+This does mean the existing userspace tool will be incompatible
+with the upstream driver, but it can be easily updated to
+support both kernel interfaces (trying the new one first,
+and falling back to the old on after -ENOTTY).
+
+
+>  struct apml_message {
+>  	/*
+>  	 * [0]...[3] mailbox 32bit input
+> +	 *	     cpuid,
+> +	 * [4][5] cpuid: thread
+> +	 * [6] cpuid: ext function & read eax/ebx or ecx/edx
+> +	 *	[7:0] -> bits [7:4] -> ext function &
+> +	 *	bit [0] read eax/ebx or ecx/edx
+>  	 * [7] read/write functionality
+>  	 */
+>  	union {
+> +		__u64 cpu_msr_in;
+>  		__u32 mb_in[2];
+>  		__u8 reg_in[8];
+>  	} data_in;
+>  	/*
+>  	 * 8 bit data for reg read,
+>  	 * 32 bit data in case of mailbox,
+> +	 * up to 64 bit in case of cpuid
+>  	 */
+>  	union {
+> +		__u64 cpu_msr_out;
+>  		__u32 mb_out[2];
+>  		__u8 reg_out[8];
+>  	} data_out;
+>  	/* message ids:
+>  	 * Mailbox Messages:	0x0 ... 0x999
+> +	 * APML_CPUID:		0x1000
+>  	 */
+>  	__u32 cmd;
+>  	/*
+> +	 * Status code is returned in case of CPUID access
+>  	 * Error code is returned in case of soft mailbox
+>  	 */
+>  	__u32 fw_ret_code;
+> +	/* Add padding to align the structure */
+> +	__u32 padding[2];
+>  };
+
+So this structure would become something like
+
+struct apml_mailbox_message {
+      __u32 cmd;
+      __u32 mb_data[2];
+      __u32 fw_ret_code;
+};
+#define SBRMI_IOCTL_MBOX_CMD	_IOWR(SB_BASE_IOCTL_NR, 0, struct apml_mbox_message)
+
+struct apml_cpuid_message {
+       __u64 cpu_msr;
+       __u32 fw_ret_code;
+       __u32 pad;
+};
+#define SBRMI_IOCTL_MBOX_CMD	_IOWR(SB_BASE_IOCTL_NR, 1, struct apml_cpuid_message)
+
+       Arnd
 
