@@ -1,159 +1,158 @@
-Return-Path: <linux-kernel+bounces-585775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22574A79773
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:17:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B12A79777
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD0A37A3B75
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17401893F2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 21:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F31F3D56;
-	Wed,  2 Apr 2025 21:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AB71F2367;
+	Wed,  2 Apr 2025 21:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gc+pmdpQ"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcGdIPdE"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8014B12D1F1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F61F1936
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 21:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743628623; cv=none; b=Xo+3ORV9FqV0+tLrMldhm8oHdYbOucYxvLin21icGesxbMKn0jbgBTV3JorrCDjRN//NdvZd3mwbTunsFkt31f4mIQd0wW406VFDx+nvs+6wgTIuutU+CU6s8pOXvVeSuhdZfRpdGxt/jKJWCIIXP89s0wYTdJwC5coiRY9i+3Q=
+	t=1743628744; cv=none; b=CrEl2PuZf33dYR3PVAbcy/S+jcx2ByveXYIeNbcyWLpSxWJGF9bhSW0WUXK5pzGWjw+VT6Sk0hM4w1HqCsmBNJRF798IlLhDlM0iq98eZboKG17GXwFN2TAFUE5sjrqOYF18Gofqq0ZGlg+vaji7iDaHdFWfTDPDpcVsFRXTc08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743628623; c=relaxed/simple;
-	bh=yRY4i3WLmUWyAE8o8P8TYb1tByrQrsV7UggoX7SedcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kw/MrE1vOJiHcW9rx6+NcZ9p714bYz7Y8wOVxoc3A/WQmbb9c+xo1YIxsYYWRvLKc+UCq0yupwudoMAfckfNgeas5+P0+cItpGfeqC4Jz10ffaGsvZtw9mCtlk8PvgLPMRa5wqzmPWKCpU3QknbsovA7Ba+24kOIq4FC81nJEcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gc+pmdpQ; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7399838db7fso207849b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:17:01 -0700 (PDT)
+	s=arc-20240116; t=1743628744; c=relaxed/simple;
+	bh=dXZiBEzCPR8zIhSJ/3EQzcjD2Aj3iZGZmtOt3Co7nV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jAENbswdVGLj2TI12xTwoKqz+yH5hPETCssaV5YcwkItbGQvtBYEzvuBLwDjXVIOK8Ir6A1lOBa5e+9wj50ALvfaLvY2D9szQcLCQXjA1LDBEnepODI1tFOGwno1gk92cZT/zvS5jiCEcK5pLcfXdKXiFO6NprhHn4M263AVxps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AcGdIPdE; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54acc0cd458so330962e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 14:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1743628621; x=1744233421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xc/zZ+DuPIPBwVNZBMJ0HujjjSUEiZ7ohcynsD7aA4A=;
-        b=gc+pmdpQ0+9siX5+vh2aTvHczGfhbe/dnXiKMxqGEozOM+vqaV5XQqsXQzykxl5Vwo
-         Nih5jA3YnBHYGVSAHafQtJ0btXDHDkL7rGAnmijaDWvnNCyEhaUzme0QytW49n4kiZVe
-         HdarkrdOZxyqT6ysO33SUv2vg0QEiV5x3yg5iU9467esk+te3gSYy4Cv7NLAKQdwljp0
-         N11HwzgMVhjZCAUaimSRcd2IgOimlYRxXO0EB7CmK2iEuvczPOiTtLiMtbR54t9Jnv4y
-         Yl4ABma7Ogqt7yv2z7lcHmue6KGy2ip5KPV5M6gA7SorGVy2+zqplRTDgKhVknCHOAsF
-         AIMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743628621; x=1744233421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743628741; x=1744233541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xc/zZ+DuPIPBwVNZBMJ0HujjjSUEiZ7ohcynsD7aA4A=;
-        b=D0eN3Vuz9mCLaU0r5UpU/0Z5XQePq3jP36kJ5er5p/4Ln1QmJqFvsg4BlFFCymxjR7
-         sidlEq6GirmwZ6MzeOaoYUNLLmMyLCpL4wQq7I5JaezlXXynrR3WGzQeihFA/4mYmZYC
-         sJ3ZEIPfq+UKohm/TwFxnlUvNdh1daQzK+Ftnv5r9yfGrNDEsdBD2dh6DhpD1ZtNMdhk
-         RMsoYBnbJ1/3wUsAMDiuTwaf5+sP8Oyct6fqdmOi+Q9rzdIzO3myN8Xq4zLovAl75yLT
-         UVH9GMqwrz7UiJvXKf7bK54qcHJ1dTciMe0bUksdiOdZ9aSROF1tKdi2/jXn1eHtmQno
-         ViRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJBgBqzXG1nbxpOP+jWlhM6TmOCI4sKq0RMsaZce3UlHCMaVL6fOtaIvHeT8Fby2KvWqlX0POMqk9wZ1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNTPFQG8kFs43LaPJ4P+h2gWel6gLXWHvypwqw3kMsqhBXQHsI
-	3jFK6KIMC0wVbYbNkUG+stn+P4XO2QNo0DnHibDRMem6QhjTOc9AaIN+JJrpI/E=
-X-Gm-Gg: ASbGncuETbqXqbXuT7QQSUDsjds+gPYiSb47+jKJ3l7xY7aUxpPyVRrrfWuyvnTA70Q
-	DvcaENdNA0gH4yEEC7Ll6BDbY9NrQK9mrzOtfFTmNrDfbJFPDr3cksZNvcxu0HS4wl5Z6CbxHCb
-	nk3w+bKxa5qPNVKjAG10JeDWMvbqpjGLHgnTBlhVYzFcYyYQb0YlhlIi77QG/O68WycX/PpBBmr
-	TubS0E53nuGTVRLrUdc4PgMlsKGHj0Y6H6AYhFJyOg5HW9pVFX1AEEqbOsLK4vlgQc+POAKx6VZ
-	WrL3Z6oyiOm8HCCY9BEZPhm0CEUnLLtDzxdzkX3oCBe7p7O9Tjk+kZh/VwL9rt4j5vsC1W4e6TA
-	Zf1uQEYVzNICVlXFbJgdS+ApbHYGZ
-X-Google-Smtp-Source: AGHT+IETTieNbw/k3oeNyL1K32Iu4F4JpFYjFu/JJSEnpgavTw/4tVMQ23H2f0Cx5addp90wkEKvIA==
-X-Received: by 2002:a05:6a00:4c17:b0:736:4c3d:2cba with SMTP id d2e1a72fcca58-739d6457e2dmr1406094b3a.9.1743628620577;
-        Wed, 02 Apr 2025 14:17:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739710636a3sm11855554b3a.94.2025.04.02.14.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 14:17:00 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1u05SC-00000003h3r-2yeA;
-	Thu, 03 Apr 2025 08:16:56 +1100
-Date: Thu, 3 Apr 2025 08:16:56 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Yafang Shao <laoar.shao@gmail.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Kees Cook <kees@kernel.org>, joel.granados@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] proc: Avoid costly high-order page allocations when
- reading proc files
-Message-ID: <Z-2pSF7Zu0CrLBy_@dread.disaster.area>
-References: <20250401073046.51121-1-laoar.shao@gmail.com>
- <3315D21B-0772-4312-BCFB-402F408B0EF6@kernel.org>
- <Z-y50vEs_9MbjQhi@harry>
- <CALOAHbBSvMuZnKF_vy3kGGNOCg5N2CgomLhxMxjn8RNwMTrw7A@mail.gmail.com>
- <Z-0gPqHVto7PgM1K@dread.disaster.area>
- <Z-0sjd8SEtldbxB1@tiehlicka>
+        bh=ZQs975IggfZ0tiYBcKSuTM1eOZ7bH4aXf5Bdj66xDSY=;
+        b=AcGdIPdEkO2r3nRWzLl5aY1VI66Ty3MNpYk63qNEK+gr5rbuwcNqjaZ/HDMrwKEYe4
+         S3U5Jn3EA/X2mg9rWVDJ/WF5qqozC9iL+l1ur88uaXhGI7ZFs2jpwBdLa/uGiNI4OaFo
+         5/3BXZRk6L75ldP9b+p03fLV8YlU5b0ScdDfrye7Bsv0zAIqQ9iNt1ktHYHvF521OO1K
+         8Hwj8Y+gSZyqA4h0I7nQAzZW5iRKVQWOa4HF4189ixBATRlNPP/8OLsHVgF4VSsx302e
+         GWYgeGLRspmTTo3CjCWx2NLrEDWFLr2zSIcyed+H8Gzmsiky8VjmP7mmPZcHC8A7ESwv
+         iHXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743628741; x=1744233541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQs975IggfZ0tiYBcKSuTM1eOZ7bH4aXf5Bdj66xDSY=;
+        b=AhKKZvC+OQsNtlIKO7vUBC6X0YPCaKaOE7ehSe7hdvqsv/tkQSqDJH0MMKAxoihOF/
+         n1TAOo+may0zgWzbxLsVjZNS9iw4NjPWJDpV3t9HMcNehCb+n/mYglKYTgtanfQUJQkP
+         UoW7jJeIjKJv1SD/bFVBR+MnqHpdkccjtEZedpMilSf0RoAHGy4RR9rbh1qHmTlHG4No
+         5NHjbkNjX77JdUmGV+4/1TJXP9i8QmAkuqZ/xjdmKBRwo7byXEAtY+D5YkFWebBzGw5r
+         m2cJ3QK49jBAqf1Mf/EXFS9hu7CN76+kOy4Xnsoc/atFxuYBXlfT/vjZ2pdcVmVxzDHr
+         QdXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWv3bauH+789C4NR96kRWIboxUP37x9DCYX3mm5Xwk4Y3FMsU5W6SV05VTGZapC6VXepy85HGsda+hA3JI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgpxFqR96f5YfBTugmvq385zivxL1p8K/nn8RIo/csxldbLyA0
+	IrH5hYAz4sJSwACU0mG++KmbU2hCNUvHbxnqshSk4vNAHdoSpHVew+LivoJ3ZS7z8QM9FFveLpt
+	qDE5oMVJIsTGOtWBIMg3puUlMBZAx/tYd4kQ=
+X-Gm-Gg: ASbGncsA+J6NnCA6zx1aLoJsZ0zPGLBhQQartngKBxsOQTPXNCPLzOvtBmKtwWalg6A
+	q+9reTJgnMzeRQTOhScKsS63f/rQH1gQLxclvAe9YAHx1R6RqZ/5ttYC7urWRUD2vZTNnjZzHNC
+	q+HqKOFCLpFcb0rUvdAS9j7q7coQ==
+X-Google-Smtp-Source: AGHT+IHpxLqiEUZVkxgBhrOFVSglejZSFFGJJFqmchJakstMzsH6oxrpYouZ0C/aIEksX+7cdD3rMRnufjnf+gtSsC4=
+X-Received: by 2002:a05:6512:118e:b0:54a:f6e9:2c04 with SMTP id
+ 2adb3069b0e04-54c19c6af75mr1194851e87.26.1743628740438; Wed, 02 Apr 2025
+ 14:19:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-0sjd8SEtldbxB1@tiehlicka>
+References: <20250402180827.3762-1-ubizjak@gmail.com> <Z-2ii-KgGSsMMTvB@gmail.com>
+In-Reply-To: <Z-2ii-KgGSsMMTvB@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 2 Apr 2025 23:18:48 +0200
+X-Gm-Features: AQ5f1JosY90Is0A4FOjBBnk-SgVXM0u55VBbaXfxlAZtFL4ng9w28AtjgyGR6Xo
+Message-ID: <CAFULd4YBRcWhjwg_kMcDi4rN2rL61hAOwbe=b8FJfhxaS7VDhg@mail.gmail.com>
+Subject: Re: [PATCH -tip 1/4] x86/idle: Fix argument type for MONITOR{,X} and
+ MWAIT{,X} instructions
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 02, 2025 at 02:24:45PM +0200, Michal Hocko wrote:
-> On Wed 02-04-25 22:32:14, Dave Chinner wrote:
-> > Have a look at xlog_kvmalloc() in XFS. It implements a basic
-> > fast-fail, no retry high order kmalloc before it falls back to
-> > vmalloc by turning off direct reclaim for the kmalloc() call.
-> > Hence if the there isn't a high-order page on the free lists ready
-> > to allocate, it falls back to vmalloc() immediately.
-> > 
-> > For XFS, using xlog_kvmalloc() reduced the high-order per-allocation
-> > overhead by around 80% when compared to a standard kvmalloc()
-> > call. Numbers and profiles were documented in the commit message
-> > (reproduced in whole below)...
-> 
-> Btw. it would be really great to have such concerns to be posted to the
-> linux-mm ML so that we are aware of that.
+On Wed, Apr 2, 2025 at 10:48=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > MONITOR and MONITORX expect 32-bit unsigned integer argument in %ecx
+> > and %edx registers. MWAIT and MWAITX expect 32-bit usigned int
+> > argument in %eax and %ecx registers.
+>
+> Please always include a 0/4 cover letter as well for such series, which
+> gives people a chance to reply to the whole series, instead of having
+> to awkwardly pick a patch to reply to. :-)
+>
+> Such as this general feedback:
+>
+> I've applied this series with edits to the changelogs, note in
+> particular:
+>
+>  patch #1:
+>
+>  - Changed verbiage from 'fix' to 'standardize to u32'. There was no
+>    bug to fix, using 'long' instead of 'int' is at worst an ineffiency.
 
-I have brought it up in the past, along with all the other kvmalloc
-API problems that are mentioned in that commit message.
-Unfortunately, discussion focus always ended up on calling context
-and API flags (e.g. whether stuff like GFP_NOFS should be supported
-or not) no the fast-fail-then-no-fail behaviour we need.
+Indeed, but when patch #2 introduces insn mnemonic:
 
-Yes, these discussions have resulted in API changes that support
-some new subset of gfp flags, but the performance issues have never
-been addressed...
+asm volatile("monitor %0, %1, %2" :: "a" (eax), "c" (ecx), "d" (edx));
 
-> kvmalloc currently doesn't support GFP_NOWAIT semantic but it does allow
-> to express - I prefer SLAB allocator over vmalloc.
+then the type decides between %rcx/%rdx and %ecx/%edx. Assembler
+checks arguments of MONITOR insn mnemonic and fails compilation with
+the former.
 
-The conditional use of __GFP_NORETRY for the kmalloc call is broken
-if we try to use __GFP_NOFAIL with kvmalloc() - this causes the gfp
-mask to hold __GFP_NOFAIL | __GFP_NORETRY....
+>  patch #3:
+>
+>  - Provided much needed historic context behind ;, \t, \n beautifiers
+>    used in asm() statements. These aren't just random noise added in.
 
-We have a hard requirement for xlog_kvmalloc() to provide
-__GFP_NOFAIL semantics.
+Please note that removed delimiters were at the end of asm template.
+The compiler adds \n\t at the end on its own, as demonstrated with the
+following example:
 
-IOWs, we need kvmalloc() to support kmalloc(GFP_NOWAIT) for
-performance with fallback to vmalloc(__GFP_NOFAIL) for
-correctness...
+void foo (unsigned int a, unsigned long b)
+{
+ asm ("foo %0 %1" :: "r" (a), "r" (b));
+}
 
-> I think we could make
-> the default kvmalloc slab path weaker by default as those who really
-> want slab already have means to achieve that. There is a risk of long
-> term fragmentation but I think this is worth trying
+gcc -S (unredacted dump):
 
-We've been doing this for a few years now in XFS in a hot path that
-can make in the order of a million xlog_kvmalloc() calls a second.
-We've not seen any evidence that this causes or exacerbates memory
-fragmentation....
+foo:
+.LFB0:
+       .cfi_startproc
+#APP
+# 3 "tt.c" 1
+       foo %edi %rsi
+# 0 "" 2
+#NO_APP
+       ret
+       .cfi_endproc
+.LFE0:
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Please note that asm instructions are perfectly aligned. So, at the
+end of the day, the delimiters at the end of asm templates *are* just
+noise.
+
+Thanks,
+Uros.
 
