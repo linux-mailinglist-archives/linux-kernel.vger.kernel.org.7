@@ -1,149 +1,119 @@
-Return-Path: <linux-kernel+bounces-584629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-584746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B214A7897C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 10:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6E7A78AFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 11:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652FE3AD169
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 08:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EBFC189429C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 09:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4389233D86;
-	Wed,  2 Apr 2025 08:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232F0235C03;
+	Wed,  2 Apr 2025 09:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbyweyVm"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ezHqbO70"
+Received: from mail-m15595.qiye.163.com (mail-m15595.qiye.163.com [101.71.155.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2E72AE77;
-	Wed,  2 Apr 2025 08:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1689F2356C3;
+	Wed,  2 Apr 2025 09:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743581215; cv=none; b=cWrEH6TiQNRxbAPEdRJMRiPK0ZfzV3T1CuDxebL+wUinxkxCjGvWwWeTQtlM2blwm8LFOLeoF009OlaFdAEo97/vLESV05xVHwAEVqSb3597yfh1EVRYqTOed4m8XURQ6BwEOhynDyf4aQzscsgwFp7ld9QVyeJTXjvYmKwIdfk=
+	t=1743585768; cv=none; b=qsZx/xugdkmL0ctvHTz9UMPzEMgxOwktMj8Afa4P+FblBx9Tdf+RQwDKowsNBDCIA2io/DkhlemUsTit0kGleIoEbOCvrXA4CMGi+ZoJXMuWaufMOxhEzq4bNg9EOSQ0bWQd0SmdXhd8SaRaWfnNMzdDbZElj7dM8ggyBCP79LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743581215; c=relaxed/simple;
-	bh=/VjWcZ5cH+0vCcujemH1+2cZi3cTODx4qemJPcVGxqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jBlRV5LJh/F9+rrXqgJ5QJmZ1jKZusJoGKmLUP5veYFO6hhVo1z1i/7F5jRx1BB6d3Qzuv+BmravGYnQjcdbX/BU2kfEtLrg2iSfUI4cC5B0tfCTCfGB9cHT0Wg6v0DE8wRWXCCnpH5a9ft4VZFP7yNaPdcdzsaueXeuy7J7jnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbyweyVm; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22622ddcc35so54767975ad.2;
-        Wed, 02 Apr 2025 01:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743581212; x=1744186012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKmxocXjRUA/4+7XD5VePtJPwnQ6HQ3HUsu9TwT0U+k=;
-        b=mbyweyVm18wNPgYVsVVIosOcHGlMsdziUE8wJDyHMtPrEYQ6dhGFFjpsjP21PS0Vjp
-         gRkRM2Qk57OJ/TirXoi+iq4Uem57lBNZipFCv7Obgord6K6LOW3OpBs01qTVz2degCGU
-         8iR8S4/U+o7AEU8pmXp5JM63O6ume6RCaeRH8ziSLvoW4nXONAYzUczS75/p30t/gg84
-         WhBtYxgKJBW0NiiuKSoDq53ar5No66+D+ZjZmA8atCa0j1dtnbGs4RSJmJVai0kP1s1f
-         ypJrYNjiiOoSpTy12z78/ZRf8IZpGM0wFkB7oBixk8lm8AfXZK69l1mOuRo8BJQXFN0A
-         Wayw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743581212; x=1744186012;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKmxocXjRUA/4+7XD5VePtJPwnQ6HQ3HUsu9TwT0U+k=;
-        b=VOnhvo/3HvdoeKQ+LTc9zkqOXjRMygCJPuh8ilrW2+3Vv1jL4wpXJbjf6dniXynC9F
-         bFSuJqmRuXojP+apdoRDbplx2cyMvY+0241vIg0KmIgLoFjukSps8IYYfj6mb+R2+O8X
-         SYuxASjloUoouS3DrgySUQbZer5s5Xi+nVjREnTGLDWIdZL70sp+Lp3Hdt8g8sP91BmL
-         IEZcgBvZoGdCotWKbD7W8eTxZ8U4u5+ZRwLpWUX1A37ghuOy7HZs72dNJzlcFoOE56AN
-         Xnyvjyl3kLher1ykrX/pRqYOxOtJ3ImJm7c1DS8fTequ3645u7HqI/C/jKQ7zN2S+T6p
-         3Gpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMk5/NPa8KAetucwFUeyNQgGatGNpvJefnMTijNrDiRY7vT+jV8m0VwMdyFEny10U6ljN6sSqqiY5r/c0=@vger.kernel.org, AJvYcCX4aymH/Ju3YIhM2gUOtQV5BmOZ7CD72nf06PL3i8DmJNAtxPWuyge9MPvmOWD2abSlO4MnuGM6/ykD@vger.kernel.org
-X-Gm-Message-State: AOJu0YynalgDbEUfcujj1LLLm7+oD4IJ0tJyvK7hKZY8CIzvzSKvD+wF
-	h0X8xQeGk0mWJuJypu6dy8sb4sm+Sq6Mwc/IjPsINYxRygj1yK5/
-X-Gm-Gg: ASbGncsuorqi6CSXFPfG6/8A0SluLhtfRORlJnbLafhF2O+UUFZlQvKPOblrjceYXlr
-	rfikwQTuq5dKYcryQBlnhL4PKPf9U7fEk7JBtTyZAcjfvK6kPU8dScuJ3WJ4vqm6HY8EGPvEfCI
-	CrNNsYSu3Bs3c/axqgeG2TR59aTVQQf5gEqAjTReVlTEcMzIUDlFOUaBzJNAOwud57ZPIS9noQh
-	rqBdA+RKIrkUld+T4McU6rMpVujhfVUq8vD9JXhlM2ZcsMTRwNh3EQYC7/RbBkbb87zDqoe93SX
-	OK8rF6fNfbSJOmh4AB1AbCyzwx6JbxTW98ZoHrQmUoxy9zuqKs//IbeMOnTrUsP3mmB6
-X-Google-Smtp-Source: AGHT+IG2F8OBzvyqb24RWg2VBhzCvhJab9tiERehzg+VCEhjAAZnxtN+DMo7uNe4mpJxkLUIzqh6TA==
-X-Received: by 2002:a05:6a00:1945:b0:736:a8db:93b8 with SMTP id d2e1a72fcca58-739c784f91bmr2353308b3a.3.1743581211895;
-        Wed, 02 Apr 2025 01:06:51 -0700 (PDT)
-Received: from mi-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739710dccbdsm10639665b3a.179.2025.04.02.01.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Apr 2025 01:06:51 -0700 (PDT)
-From: Ying Lu <luying526@gmail.com>
-To: oneukum@suse.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Ying Lu <luying1@xiaomi.com>
-Subject: [PATCH v3 1/1] usbnet:fix NPE during rx_complete
-Date: Wed,  2 Apr 2025 16:06:29 +0800
-Message-ID: <11211b6967816ce4eac2ff5341d78b09de4f6747.1743580881.git.luying1@xiaomi.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743580881.git.luying1@xiaomi.com>
-References: <cover.1743580881.git.luying1@xiaomi.com>
+	s=arc-20240116; t=1743585768; c=relaxed/simple;
+	bh=3bUvsKQx9rR3VdIidIu3W5+wjactKFssNxj9ejgwtzM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F+c5tjzat0p1qC67NHvxyww/AJMTtQKqWPTjvItMk8MLyq07gTQZX8KX8Xl36G4+2F0fxuiGHT4wU/oAQlLltas4iBOY/h7hV7DN5JlTfeb7lvnkDgPeBNrapx88DjOpIYQ8/d2rYq36dVD97LC0qRrR2ikmabIysOi6LJ7nFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ezHqbO70; arc=none smtp.client-ip=101.71.155.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 10721275b;
+	Wed, 2 Apr 2025 16:06:59 +0800 (GMT+08:00)
+Message-ID: <e340a408-2e21-1bca-7267-46b84690f66f@rock-chips.com>
+Date: Wed, 2 Apr 2025 16:06:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Cc: shawn.lin@rock-chips.com, =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+ <kwilczynski@kernel.org>, linux-pci@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: rockchip: Fix order of rockchip_pci_core_rsts
+To: Jensen Huang <jensenhuang@friendlyarm.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Anand Moon <linux.amoon@gmail.com>
+References: <20250328105822.3946767-1-jensenhuang@friendlyarm.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20250328105822.3946767-1-jensenhuang@friendlyarm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh0aQ1YdTE4aSB1IGhhPQkhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a95f58a0bdb09cckunm10721275b
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NT46SDo*HTIBCw49PC8JDjEi
+	PQsaFE1VSlVKTE9ITkNKSUlKTkxKVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlMSkk3Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=ezHqbO70EDBQxmzrLCl8NxYSVUIU6/oSSOrrNjkXlFPkG0MhWO2zqfrPwMD+crfahb9VQ1m3kShzgfpQbI8wgdNEnAHGAtsDOuLtpEIdG+1QMvlGT+S5LhC/FOXk1qrMY7NsgRhBCxRrvsvg0BnAuJl1ih/3WP2Qg3lLjEQY2yE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=tNpsgBqjJ9UNRLTVKNe5wOYMfZoRUBD/vq55ueB1bPY=;
+	h=date:mime-version:subject:message-id:from;
 
-From: Ying Lu <luying1@xiaomi.com>
+在 2025/03/28 星期五 18:58, Jensen Huang 写道:
+> The order of rockchip_pci_core_rsts follows the previous comments suggesting
+> to avoid reordering. However, reset_control_bulk_deassert() applies resets in
+> reverse, which may lead to the link downgrading to 2.5 GT/s.
+> 
+> This patch restores the deassert order and comments for core_rsts, introduced in
+> commit 58c6990c5ee7 ("PCI: rockchip: Improve the deassert sequence of four reset pins").
+> 
+> Tested on NanoPC-T4 with Samsung 970 Pro.
 
-Missing usbnet_going_away Check in Critical Path.
-The usb_submit_urb function lacks a usbnet_going_away
-validation, whereas __usbnet_queue_skb includes this check.
+Acked-by:  Shawn Lin <shawn.lin@rock-chips.com>
 
-This inconsistency creates a race condition where:
-A URB request may succeed, but the corresponding SKB data
-fails to be queued.
-
-Subsequent processes:
-(e.g., rx_complete → defer_bh → __skb_unlink(skb, list))
-attempt to access skb->next, triggering a NULL pointer
-dereference (Kernel Panic).
-
-Fixes: 04e906839a05 ("usbnet: fix cyclical race on disconnect with work queue")
-Signed-off-by: Ying Lu <luying1@xiaomi.com>
----
- drivers/net/usb/usbnet.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 44179f4e807f..5161bb5d824b 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -519,7 +519,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 	    netif_device_present (dev->net) &&
- 	    test_bit(EVENT_DEV_OPEN, &dev->flags) &&
- 	    !test_bit (EVENT_RX_HALT, &dev->flags) &&
--	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags)) {
-+	    !test_bit (EVENT_DEV_ASLEEP, &dev->flags) &&
-+	    !usbnet_going_away(dev)) {
- 		switch (retval = usb_submit_urb (urb, GFP_ATOMIC)) {
- 		case -EPIPE:
- 			usbnet_defer_kevent (dev, EVENT_RX_HALT);
-@@ -540,8 +541,7 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 			tasklet_schedule (&dev->bh);
- 			break;
- 		case 0:
--			if (!usbnet_going_away(dev))
--				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-+			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
- 		}
- 	} else {
- 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
--- 
-2.49.0
-
+> 
+> Fixes: 18715931a5c0 ("PCI: rockchip: Simplify reset control handling by using reset_control_bulk*() function")
+> Signed-off-by: Jensen Huang <jensenhuang@friendlyarm.com>
+> ---
+>   drivers/pci/controller/pcie-rockchip.h | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+> index 11def598534b..4f63a03d535c 100644
+> --- a/drivers/pci/controller/pcie-rockchip.h
+> +++ b/drivers/pci/controller/pcie-rockchip.h
+> @@ -320,11 +320,15 @@ static const char * const rockchip_pci_pm_rsts[] = {
+>   	"aclk",
+>   };
+>   
+> +/*
+> + * Please don't reorder the deassert sequence of the following
+> + * four reset pins.
+> + */
+>   static const char * const rockchip_pci_core_rsts[] = {
+> -	"mgmt-sticky",
+> -	"core",
+> -	"mgmt",
+>   	"pipe",
+> +	"mgmt",
+> +	"core",
+> +	"mgmt-sticky",
+>   };
+>   
+>   struct rockchip_pcie {
 
