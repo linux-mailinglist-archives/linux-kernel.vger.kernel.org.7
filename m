@@ -1,197 +1,195 @@
-Return-Path: <linux-kernel+bounces-586634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D347A7A1DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6237BA7A1E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653471899676
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62AAD3A7074
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BBA24C06A;
-	Thu,  3 Apr 2025 11:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9336F24C06A;
+	Thu,  3 Apr 2025 11:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kcQjTFBV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bHlecIag"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="M4lqDWVu"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2114.outbound.protection.outlook.com [40.107.22.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0C9746E;
-	Thu,  3 Apr 2025 11:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743679682; cv=none; b=ACTFp6l8SPx7KjMfJQwo7DvF0g463mgV4tzhucZ4LdQxu9JdwEyzM9gj9Sqd5oOespo+1r0mThgAOoij9ZKE+3ytiosbP5BCpPWezEe0LVvyH4LzmUvGbJ9HJQhXaLJEbl09BM3Mjqx2wgxElgyaw8xG9Z3Qul7CJFTH+JCVfuI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743679682; c=relaxed/simple;
-	bh=lJ0dKaplxjD5Q53RzYO5RBlz8rk3koJ2tUjQ8RdStt8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LFc6CUDsjTe3OMGJNpBczq04VQSt/I4nKlyVrTnoPkjbTVvIZAwgDLpbeLIwyXhlAbBgRIWT3v0dI766ireonJuGYMRYzVmReCT6i5/QAR+ScaoC5stdjphyHr8mpz8DmDCYicrFxow4Uqr2XWfAPecOTEgy2aX3TDUmyKEv4qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kcQjTFBV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bHlecIag; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 03 Apr 2025 11:27:58 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743679679;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tbfhp4hasnZEVgpYXbVu42QINcVsMLbc5OZvQDdHDsI=;
-	b=kcQjTFBVpEY7YxiUC/whftFvMOuvZK61OkHtBtbVjtkOgIu9GW1JjUYFE0bawn3Mwmlqi3
-	TujScTeFeLtY6QUc+92naZcrV3Tm9cKWhwLYTdVpzfYFGMaOiGLjta1AnZDTKgQVus/oHD
-	DPeymgJPq7xIpnN2eZNFKwJWDZZpv7ZR0UyHzHPFyXYEoLhUkmFIZdmTf4y7qIUNoQKwNz
-	rsQr60SLn0waeZxxw91hmGq6wOK4VkUNcKUmgALyEFqt9WngzmuS7qb2aAwaD4NcT5obyY
-	wgBs1w1qNcMdETEh3G2yrilEnScSx17PrrO7gkxw5Pu3AjK+DdGQ7OtNVqj+YQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743679679;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tbfhp4hasnZEVgpYXbVu42QINcVsMLbc5OZvQDdHDsI=;
-	b=bHlecIagMCwUJPxL0pJtRE4VXR5u8FMfqREcaE9r1+wuPeJB17VqhZt3CzZCiYMCV1qnfJ
-	JYkL3NQG/+q1buBA==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/idle: Remove .s output beautifying delimiters from
- simpler asm() templates
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- Juergen Gross <jgross@suse.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
- Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250402180827.3762-3-ubizjak@gmail.com>
-References: <20250402180827.3762-3-ubizjak@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34218161320;
+	Thu,  3 Apr 2025 11:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.114
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743679815; cv=fail; b=bc8S4TYEf5s18AspT5vnmzMUsolI7MR4gOj5fMoflBX+wzPlKgaCyNo5sG1RIH/RMOOV+XPdCxUsJ0VxxN3qbLA6Py7mMRxz7SeaoDhlFLC7QzUy0nCJqkBGkCuWQ2x00pS5BllPc8p+O/YCTSTjd2hmy5bIpu6LHUYehSxUyZo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743679815; c=relaxed/simple;
+	bh=MxRNmr0gkTlNIOR7Qc+eTuv/jvL2ZEmyLjKP5D6Imfg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Kt+olYAk64ZdnGsqWNW1GSu4qN6qCMQXxOg9x9xd7A7TA6lsgvmryq+HEpI7IHPPY+QQVZKT9zkX3t+y7E3sPerX6WZ39+kCPHpRMlEIXZvFLzDpBrn8VpE+Q89zGB8UNEmLVVdkc1GPaUus9QTKHyAHPCbvh6kM1b/J+kHzMoo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=M4lqDWVu; arc=fail smtp.client-ip=40.107.22.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g3h/kuKg9sF18kGz2KK8UnOenIA49FtoMfhDjdcONK+He5tHeE/HXyzxZfssr6HvarbBnKIz0/JlsVXD8X0PS67yzUIKqWJ2hwPensyXRzcHSz8jvgevyimuhWfgqXkpY2X5joNz2JgckezQ2mQP0LXQT+oGe3GCZ7JiFX3mo1cWptol66N0mYArKyL0jPmsdNXT3ZI9r9zJIIVoZnJ7CGo9zpihr+gUfbk7t59ZVx1e/5bhmbqzEmThLA9uaaolW4GDsIAlmswmgVlPPpg+VnpAeL31hgVpqM+erYjj1JcEUyJliILFe9CV9nxAHe4o4oFlmF1GvQUZkzuxio0rAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=93NFwUcA6Vek59lEvx/wAojtyxbhMP87zKqqcQ+hP3U=;
+ b=cFEYEV5+Uk4KEAjgAxo3/lp96/k1SEJEQi4dB3W3Up/08UhefR1cj5Qvj3rU8kc9vZnXeI49BUs4XdBV4ok9TeCMV7NQDwYtS7edbiFaQymOfULmbat8rmDVN+W9fUiwea/VvgHAIVX6RbnIysiswraSQvacHaNmdaecY+k0Y0HWWYekrEXZSdQCBxmo9H8SPmh5ehRHs2GLun5NsKiqxvJE0OAPm98a7q3P2mVax6dZiyCguU+ae3SZrGsGg64NWk4vI2AODg0sXVvSYChsld55NPaArO6OcD9JrLNi5NGJtG9dM629N1+P0eCHy4ckndF54SLAFNM5nG0eVQxT/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=kernel.org smtp.mailfrom=phytec.de;
+ dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=phytec.de; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=93NFwUcA6Vek59lEvx/wAojtyxbhMP87zKqqcQ+hP3U=;
+ b=M4lqDWVuUxnhfktaGsgmWZ91Sn3du7zpz3oDBO687vGqGHj4sk9mB2Y5kFV9P9beVYMmfalkAAINPqv7HhVI4pCmTi5A2TYuRgBTd9CSeWH2rC492ajEwftPQ8xVwpGr+mhZQsxT4DOq3IIulW2suZG9JxPbeB0djxRmHV2D1m8hE4ufX9BwALXNIDTe5oAdSxmGE0OOKXhiWcBoYM7jC5SVOQSs/YeijgS6DRXg2bXKQYnEbI3yH2vMVmVRxuwVOY64QCEjJxmHBS54NRXb20mPOx64b44psOMcsXxR25KkeyvQ34k8RJ3gbcv1wWeumVP9JZatLziPDJtopHTDbA==
+Received: from PAZP264CA0039.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1fc::21)
+ by PA2P195MB2520.EURP195.PROD.OUTLOOK.COM (2603:10a6:102:40d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.54; Thu, 3 Apr
+ 2025 11:30:08 +0000
+Received: from AM2PEPF0001C716.eurprd05.prod.outlook.com
+ (2603:10a6:102:1fc:cafe::be) by PAZP264CA0039.outlook.office365.com
+ (2603:10a6:102:1fc::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.26 via Frontend Transport; Thu,
+ 3 Apr 2025 11:30:08 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ AM2PEPF0001C716.mail.protection.outlook.com (10.167.16.186) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8606.22 via Frontend Transport; Thu, 3 Apr 2025 11:30:08 +0000
+Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 3 Apr
+ 2025 13:30:07 +0200
+Received: from [127.0.1.1] (172.25.39.168) by Florix.phytec.de (172.25.0.13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 3 Apr
+ 2025 13:30:07 +0200
+From: Yannic Moog <y.moog@phytec.de>
+Subject: [PATCH v2 0/3] Add new imx imx8mp-libra-rdk-fpsc SBC
+Date: Thu, 3 Apr 2025 13:29:26 +0200
+Message-ID: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174367967838.14745.10060419709387905574.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABZx7mcC/5WNvQ6CMBRGX8V09pr28ledfA/DgOUWOkCbliCE8
+ O62uDjqeL58OWdjgbyhwG6njXmaTTB2jIDnE1N9M3YEpo3MkGMuUHB4GQcrDNZ24Pp1IgVt/Ay
+ LHFwalPUE2gUFCquMY1FK1MiiznnSZjlSjzpyb8Jk/XqUZ5HWFCm4EPnvkVkAh4Jzap9XQaqk+
+ +d/aSk1D2GG8k8hygxzVWkpdPMlrPd9fwNlIoh2MQEAAA==
+X-Change-ID: 20241210-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-c273025682f2
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: <upstream@lists.phytec.de>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, Benjamin Hahn <b.hahn@phytec.de>,
+	"Jan Remmet" <j.remmet@phytec.de>, Teresa Remmet <t.remmet@phytec.de>,
+	"Yashwanth Varakala" <y.varakala@phytec.de>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Yannic Moog <y.moog@phytec.de>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Florix.phytec.de
+ (172.25.0.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM2PEPF0001C716:EE_|PA2P195MB2520:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fcda1d9-3039-4ef0-f239-08dd72a2e379
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d0NsdVZ4VHhlMmFUZCsySnZqOXVkM0cwcXdOdGppL1FlNTJ1NklpaHZRUjU4?=
+ =?utf-8?B?TENzRCtpZmsyTW5JWitpN1NvZ0FGU0tCUTN3UGhKQTIrcDZ0citocnF3Y0No?=
+ =?utf-8?B?d1NDZkRpcmZaOWRDSTErc2lwUUNUWnJlOFFwNk50UytZR1o1RS9hNFNvbDJm?=
+ =?utf-8?B?WGludklRQkh6T1h6em1KZS8yNytCQ0NWV1FERFhaZUJaT0RjWmUxUmh6eVNU?=
+ =?utf-8?B?VFZIRGJyM0gvMWxtUmRZdjE4L0JQQWNMd2RPOHhLNnFXbGJpOEgrMkhlekMy?=
+ =?utf-8?B?K200bHBRTklRQ1gxbit4YVpoQ1VZbytrakZIWGpPNHVlbEhJTFZNNERlOFpG?=
+ =?utf-8?B?M3VqR3o0eEY5UU9KN3M3dm1aMjU4L2QrQ2djUFp0Q2M3YlF5SCtBUnhjdnBC?=
+ =?utf-8?B?WTU2NlpUMktYTnczenhDMjZ3c2E3SFZWaitPekRDWW9yaGZ1NXluQXN1cjNE?=
+ =?utf-8?B?clQ3ZkVlbE9nalBsU2YyaExwbE9BSDJSZjN2bG1OVlQ3djBaR1ZCdGFhOWkx?=
+ =?utf-8?B?QXE3bGQ1MXhtUTRLbzJpRGluUlYyOU5Ya3VHWXBHNVkxSERGWWw0MlEvRkds?=
+ =?utf-8?B?SE1ZSUhNUHR5N0QrVjczWlBIdTEvNERseXpLbHhaUDJXRjA3ZG1NcGZ3cFh0?=
+ =?utf-8?B?SXltdTF6eGgxbmcwdDhXa252M3V5eHpDREpYMHVyNXhQT1ZUYkdEWk9oa0tP?=
+ =?utf-8?B?QktSc1hYNFdPTTBiK05oblNJWHE4cktWWVNOQ2pJWjRzTjdnMXRpaTFVZnIv?=
+ =?utf-8?B?NDZva1Y4M1dRN0t3a2NRaG1rdzdIcmxSU1dQWmVlS2diUFcxcm9Cc2s3L09r?=
+ =?utf-8?B?M09XU0xEYWhGc3BKSngxcE1LcENLMzluMzFNd3Yxelg4c0FWRjFmNXdFNzFX?=
+ =?utf-8?B?QWFtaVlyK09JempLQUVHMlNPcjJNVGtjVmtWbXFhN2dpR0w0Nys0KzRVK2g0?=
+ =?utf-8?B?ckZTd3cxTitzeUVDaFFkallKdzhmUXhPdnhpT2Z6Zit4VDZTQUR0MWdCN2xL?=
+ =?utf-8?B?VUNSV2J1ZCtmUlhUdjRES1ZtWmk4NjNRT2hnbkR4YzJ0SGo4dlQybDlqRE41?=
+ =?utf-8?B?eFBVb0dsZmVyMzJISHUvNlgxSnBjUXZmLzV4dGxzWVoxRWRSdjd0UWNOU2hk?=
+ =?utf-8?B?M2xiK3B5TjJ2bVI1U050V1RVVjhtUC9kZGZhMGhTb2ZlRW5wOTNTSHh0bmNp?=
+ =?utf-8?B?MFV1OHE3d29mSDA2dWtoZ0p5K0FDL3RINjFuZnEydjZMaVFCVzZUY3dVcThJ?=
+ =?utf-8?B?UWxTYzBsZ0VuUXVmWXJuUkJ0SU1EYlJpcVhCM1FWRTM1b1RCbkFvWFBtc0hu?=
+ =?utf-8?B?eUFnOXh5QWZiMkNDazJ1WUlWL3g3MkFpSndqeS8zSm85bEhFcEFRMFRXaENk?=
+ =?utf-8?B?T01xQlBTMUNVZW05bS9ydDdyd0tsaVpueFhFY1FrSk93K0ZuSDZ4S0Jsb0ZU?=
+ =?utf-8?B?UlhZSXQ4bkxpV2xZS2JEY3BHQmsxRldQTUhGSDE0amlPakZyaDlZeWNkZHFC?=
+ =?utf-8?B?cmlZT0J4cExwYzJzNEdJb1ZPeU83cncrcVBGWUZvM25oWWZhZml4dEZLVHI3?=
+ =?utf-8?B?ODNKbmpoWit3M0h4d3NJNXZ6djlHWTE4cDB0ZTdLa3BSOW1tTm1NQ1d1ak5k?=
+ =?utf-8?B?b3R5WTI3MTJJb0ZNLytVQ1p2V0ptenlNbC9PamtQR3BkUGlhY1FHMElqb21I?=
+ =?utf-8?B?WjlYNEtLZUNqc0xZSnJ4d1hMcVhtSVg4b2JKcU1rUnBwaXBYUG11T1BtUndi?=
+ =?utf-8?B?ZkVBV1dhM1dkaG5NVkZ0a0hIMXdlOWs2cUsxbmIwNmw5TXNROWNpeVdqc2RZ?=
+ =?utf-8?B?N0N1V25WNXJOa3IwN3pJM1FZM1Y1amVBejlRSHZrZGwxMWd4cGJHZjZCTTIx?=
+ =?utf-8?B?QkNyYjdRYWxQRGh0NC9DamZrd0l5QzhmeGMxVGlLdFNxQlVickJvOU9GMGNr?=
+ =?utf-8?B?d09ZZmtEK3NyZmtEZHc4K0M1ek15a0tsQkxwY1piSkR2c0JPN1RHaWd4a0xm?=
+ =?utf-8?Q?ocnZ18qkb3aAv4MjmepIDBaRhM6N1U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2025 11:30:08.2854
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcda1d9-3039-4ef0-f239-08dd72a2e379
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C716.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2P195MB2520
 
-The following commit has been merged into the x86/mm branch of tip:
+The Libra i.MX 8M Plus is a SBC that consists of the Libra base board
+and the phyCORE i.MX 8M Plus FPSC SoM.
+This series adds its binding and device trees.
+In addition add an overlay for an LVDS display that may optionally be
+connected to the Libra board.
 
-Commit-ID:     19c3dcd953bc8961ab486cf05f5dd45455393c42
-Gitweb:        https://git.kernel.org/tip/19c3dcd953bc8961ab486cf05f5dd45455393c42
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Wed, 02 Apr 2025 20:08:07 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 03 Apr 2025 13:19:18 +02:00
-
-x86/idle: Remove .s output beautifying delimiters from simpler asm() templates
-
-Delimiters in asm() templates such as ';', '\t' or '\n' are not
-required syntactically, they were used historically in the Linux
-kernel to prettify the compiler's .s output for people who were
-looking at compiler generated .s output.
-
-Most x86 developers these days are primarily looking at:
-
-  1) objdump --disassemble-all .o
-
-  2) perf top's live kernel function annotation and disassembler
-     feature that uses /dev/mem.
-
-... because:
-
- - this kind of assembler output is standardized regardless of
-   compiler used,
-
- - it's generally less messy looking,
-
- - it gives ground-truth instead of being some intermediate layer
-   in the toolchain that might or might not be the real deal,
-
- - and on a live kernel it also sees through the kernel's various
-   layers of runtime patching code obfuscation facilities, also
-   known as: alternative-instructions, tracepoints and jump labels.
-
-There are some cases where the .s output is the most useful
-tool, such as alternatives() code generation, but other than
-that these delimiters used in simple asm() statements mostly
-add noise to the source code side, which isn't desirable for
-assembly code that is fragile enough already.
-
-Remove the delimiters for <asm/mwait.h>, which also happens to
-make the GCC inliner's asm() instruction length heuristics
-more accurate...
-
-[ mingo: Wrote a new changelog to give historic context and
-         to give people a chance to object. :-) ]
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250402180827.3762-3-ubizjak@gmail.com
 ---
- arch/x86/include/asm/mwait.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Changes in v2:
+- reorder device tree nodes of SoM and board device trees according to https://github.com/lznuaa/dt-format
+- fix typo in reg: regulator-12v0 -> regulator-vdd-12v0
+- add to binding commit description the difference between phycore-som and phycore-fpsc
+- Link to v1: https://lore.kernel.org/r/20250328-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v1-0-28324c7f81fa@phytec.de
 
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index 3377869..0e020a6 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -34,8 +34,8 @@ static __always_inline void __monitor(const void *eax, u32 ecx, u32 edx)
- 
- static __always_inline void __monitorx(const void *eax, u32 ecx, u32 edx)
- {
--	/* "monitorx %eax, %ecx, %edx;" */
--	asm volatile(".byte 0x0f, 0x01, 0xfa;"
-+	/* "monitorx %eax, %ecx, %edx" */
-+	asm volatile(".byte 0x0f, 0x01, 0xfa"
- 		     :: "a" (eax), "c" (ecx), "d"(edx));
- }
- 
-@@ -78,8 +78,8 @@ static __always_inline void __mwaitx(u32 eax, u32 ebx, u32 ecx)
- {
- 	/* No MDS buffer clear as this is AMD/HYGON only */
- 
--	/* "mwaitx %eax, %ebx, %ecx;" */
--	asm volatile(".byte 0x0f, 0x01, 0xfb;"
-+	/* "mwaitx %eax, %ebx, %ecx" */
-+	asm volatile(".byte 0x0f, 0x01, 0xfb"
- 		     :: "a" (eax), "b" (ebx), "c" (ecx));
- }
- 
-@@ -138,13 +138,13 @@ static __always_inline void mwait_idle_with_hints(unsigned long eax, unsigned lo
-  */
- static inline void __tpause(u32 ecx, u32 edx, u32 eax)
- {
--	/* "tpause %ecx, %edx, %eax;" */
-+	/* "tpause %ecx, %edx, %eax" */
- 	#ifdef CONFIG_AS_TPAUSE
--	asm volatile("tpause %%ecx\n"
-+	asm volatile("tpause %%ecx"
- 		     :
- 		     : "c"(ecx), "d"(edx), "a"(eax));
- 	#else
--	asm volatile(".byte 0x66, 0x0f, 0xae, 0xf1\t\n"
-+	asm volatile(".byte 0x66, 0x0f, 0xae, 0xf1"
- 		     :
- 		     : "c"(ecx), "d"(edx), "a"(eax));
- 	#endif
+---
+Yannic Moog (3):
+      dt-bindings: add imx8mp-libra-rdk-fpsc
+      arm64: dts: add imx8mp-libra-rdk-fpsc board
+      arm64: dts: add imx8mp-libra-rdk-fpsc LVDS panel overlay
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   7 +
+ arch/arm64/boot/dts/freescale/Makefile             |   3 +
+ .../imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso  |  44 ++
+ .../boot/dts/freescale/imx8mp-libra-rdk-fpsc.dts   | 290 ++++++++
+ .../boot/dts/freescale/imx8mp-phycore-fpsc.dtsi    | 796 +++++++++++++++++++++
+ 5 files changed, 1140 insertions(+)
+---
+base-commit: 90453dc4dee29b96b9162895f45776bc25526e07
+change-id: 20241210-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-c273025682f2
+
+Best regards,
+-- 
+Yannic Moog <y.moog@phytec.de>
+
 
