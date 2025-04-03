@@ -1,231 +1,136 @@
-Return-Path: <linux-kernel+bounces-587089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF11BA7A7BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:17:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35A4A7A7C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F78F3AB547
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96361189252C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A3E2512DF;
-	Thu,  3 Apr 2025 16:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC162512FA;
+	Thu,  3 Apr 2025 16:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="es+zoAxQ"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aN1cneoN"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C7F33DB;
-	Thu,  3 Apr 2025 16:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726CC2512E0
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 16:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743697042; cv=none; b=L7w7OLeHN8wNLs+3Z2+kL43I6cfCFG+UnFOb/WLo93DxqNF9pjgounPmiD5pByR6MWqKlL5UdK5Cz/unLwHJdSsjEWmXSQVO7CCHv8ZUPx+JpYAXfrEsH9MZ7+Ixmy96vAUEb4E2pL9iKarPKWjte3veIDOx+XY+Xu/c5Sxe6b8=
+	t=1743697229; cv=none; b=jYor9cDZ4FvlN/aV0rNrNevIXh/u8REzSo6Ax5R7NGlCGuWNfrdM9o4DwRZFHrrLJaxivLBfL3nvWpbgQeXMNxxKLgztnoxtLzEUJ5Ap8r2AJLmfuIEf/Iwe5Mh/Ej913YislN6ZGfqKl88IifbX0tEXnMgW8PKDG8KgDTbT6G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743697042; c=relaxed/simple;
-	bh=mciINuOiA6SXlEiQqq7znATGm/qWXcLyL5KKYNRmH7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbY8sOdrRtQ0krQk2hAMG+TWqZ+DmPrXL4Ged2oZxbauvCwHmfGO/i9YfGKsG8dXoWqTi3V6l5VET34xZP582CYm8ESp6pHVVQV6YM7S8uHbJ2stdK5aq+gazEBZy88cSiwC9Sitikhz1wxxx5CLz33yrbjCSbnIFK0zwqcG46I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=es+zoAxQ; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7359aca7ef2so1353622b3a.2;
-        Thu, 03 Apr 2025 09:17:20 -0700 (PDT)
+	s=arc-20240116; t=1743697229; c=relaxed/simple;
+	bh=1iOywepJB9D1Cs5fFJUAHOEJHl07Klqnogg9LfO9XxY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aklFEvDKnArAY4/MRvOrQ7jtJH/DXLsXaaN4YmP/9aFTM7r33rYdbZ0bX5B2zep9G+a718q7IgGPBZxNtaMaN75afRA8yh0AQ9GFthmouqe20VFYAwwxSiFRaCdkVpcMsFXTHeRBkvUPDBaex/0cSJS6Otihdc4SMXP3bL0eE+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aN1cneoN; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so7735175e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743697040; x=1744301840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lrlDtqZMiFT4AIYDXfp4xswJ1nrQcwl2WHvmHsEcdj8=;
-        b=es+zoAxQgbEHnjDdf6BClK7WR9mNJhulDsXV7dezKBoj4j9G4rjQIeodRzQ54AVK9E
-         1H0lTt/XlxuCOGLH5DtsMtnNHf4fpWbjppkYbtj2WrAg/ABwS96xUOQueH8QCkRliPSN
-         wywVW0trPRwEkCOhAF9xA7TXqLCpk7tFEIrOiupJWm7BrzzgXL0D/aX7BWRQXw/ZvJ7a
-         XI3p+00UKunOdUP2vrRtnZ1Ig33dyj9THWQi5FSSbKDywAaDMjvx20FbC9Qwjt6fp6Kf
-         yrD6q2Yt+o07bZSHJxbuNpbfqK2mLhlXX+rYnpJDkE5M5kLAPhCwtOk2R1Ma9T+dEqVN
-         TkJA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743697226; x=1744302026; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBVhL7yTpzF4aCvVs+zDC3x7gXGoHrEnyJnBgzx0lPI=;
+        b=aN1cneoN4fAGjeNete/43fsr05bCaB9UZ//8VKbsomTvqXPUU+ivTk6AnZXcw1KCFP
+         askYWR7CGm8DFTPCSAxRiBCHPVK0ynEDymmz4hR3MkEVU36WYY7U9GYnBQV3okcHN+ho
+         u/eqSR1dSWPmO95JK5D9lDOTAS6q6AxWwZKafvYP3o+iORT5OVKotQn3y3znQD0ZHB5j
+         Uw2/EMugWItXYH55T48AUCBk0z44FHgnPD3NdUgaxK65n3EUAVRICeDrCktmbMKvST5O
+         iThSNX13BaOmMiXn3Oj8ggclNyptogjmoM79YTNhttjwZJuI0m6HIMjSED4vWSo3wZDf
+         Z8MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743697040; x=1744301840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lrlDtqZMiFT4AIYDXfp4xswJ1nrQcwl2WHvmHsEcdj8=;
-        b=KiQFEVWO+/vAcZyjmT/Esci0PUKZN70fT/GZSBCexdDwVshAadtng0pn0S1Hq4+zCV
-         pHEpKNc2VjSOOGDR9tvIvzBztibrLlJTXG+uuhmBlzR6pNfask9Ao9ekFLrdJwWGb/1o
-         4A2TH6mAYWyQj7Drdr3re/Gk0XxeyMc9fqkjT6Hc7kdDjhejs+EWGXBmpTvXzbFTjy6Z
-         KKqxVg56QGsb0rsChcPvEMYzzma2cKLxpvHQJuhAB2RtZzeUzmMxAQFE4ULyYrmNGWKR
-         kgPCH9/kCI5U/S54gV7aKgg6blNmkGGMJbDQP4r7LLgRbS4DxTNR242uxWWGOq/V4/IX
-         RpVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+vaCTYgcZKNGhjSMYkPuZHiH/XrlwehPuGI/9+mYVEgaekH36brZ73JFCs31Y5hgkKLLn1OFQ3dVsF7kLcORA5w==@vger.kernel.org, AJvYcCVQHmdBgh0XHQXjMXWPlgYasYLf8/moRqDeugQiIa8jso5Z4wl5t2wwY7yg7Ot1/IsO6Gw=@vger.kernel.org, AJvYcCWEu1EMHEFfE1vJ11WOgjWT08cJqBSSE7Zp26FXr2nUTmT1MMRnMqRzMdzBI70ayiWPbFpVNNaDdCpUvT1WQw==@vger.kernel.org, AJvYcCXOAkPoJGyT+ZqcUJVCIJkBhQH3G8A1S9JXYuw2aYcJ8MRn4TCnTQsdvIL9965Lrq29GX1kX6wnmV7GkBsV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVVX1ilvAqyeaOLqFXypMao24/Hvv7G6GyaoBqNi0wkCNA9yzd
-	gfPUpZdaqVdDJ8e9FkPLzJPwWWR0rqAULcdnoqZ26sEqiELwyzhw/9btcvNJSo4EgCxxX17jE2Z
-	k0WF51giDxAePGfx/86R5ifBfdZ0=
-X-Gm-Gg: ASbGncs7POnPp9w/Amd0I4IfJvh94mJs2+zCeQ4RZsuMm2enToT3vt8HfjY9ss6MPRG
-	AGzF8JdgXsi78UGmUK0e9elifbKOhex8ue7iAGHKH2SkHH+81aO6fUuVEMeCjiQqz29xpMOk2zP
-	wBDNYV9sZgLDmqMJd7A4O7UtcdtX7GH//WXpRbT4FhdQ==
-X-Google-Smtp-Source: AGHT+IEBSskNXsIbuqDvn/U9LSu6LemK4P3tlqREkuD8KUd3EhC5S8wl7sbDcR2Rt95XQ/sMlfmu/6VNCXsvhSJaXm8=
-X-Received: by 2002:a05:6a00:3a1e:b0:730:95a6:3761 with SMTP id
- d2e1a72fcca58-739e48f9521mr216458b3a.3.1743697040257; Thu, 03 Apr 2025
- 09:17:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743697226; x=1744302026;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uBVhL7yTpzF4aCvVs+zDC3x7gXGoHrEnyJnBgzx0lPI=;
+        b=xK4EvNBO0SqYT3awOQPpHANP8TnY5iiGyDhiIBds54BTpm7SUywGgZhHKG1PrNRqT/
+         HlpZ+ZxuRbh82ys/upTTNv8ikO0nWso6hl8qCxZTF0tKvg2x+Tps0NS5hTpDFbWlptub
+         myWOH1Ztsrgx3LZiQ5QFzVzyU8NGoIJs++nuD4KeBqWy55HH6mC3aH9qyS+i+0b1Wh9/
+         4ZtpZj5HX28z8nE9nfnuKNeBD2UCT13YuEmX6pu93pXcNSxTFqOfGWgF7Vac8i+WIlMT
+         6S6CMzP41F+DGkASCyqk5NgggN+2i7BaomquGmAxcOeQjO7nDzFpT5yq7njMXKz3CaND
+         V3rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQBjkkv4uVfPTUugqG7CKuO1kYZVaAwACOSDCbWoUnoMuQt6C5va8pPGvGnTjTGurbJ3ky9apL8tLcElc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUXsN2nl+vo2HSvhRCPjgePQl3uX3hjGy/LRUhAvj6VWbEftBZ
+	Z3bhrS8+Y6w+U2ykFomuhYzUxmeHhdRyFBf/02VdyYC+Dx069f74WwkMFOnpYtQ=
+X-Gm-Gg: ASbGncsIPZJ+PeSYG7xAveu1o534Q6Y9qsmju16eOXxqEZF9N9K8U2dn8SRVw/8N12j
+	wYDnemCEU6TYe2oJu6duckooYKMwJr12AQ6qz+SehQJiMXf49fcWXAcFDq4nkpx+UOuVRP5QIN4
+	XbopicUIqDTH5Xk51hOby0rc1llZj+jYbolLSLpLmW8evEiYkhEzDwRVetPdBdXEhyJ3bLJB0Ng
+	pPTjSD+yjTwyQykSOoh7pZCAXoI3iVASOJIkAFI+e7Xgw7beAbnPua+hmzYMsLnHM+emevdcTPq
+	1wFmNeLFXlPlLHAtnSxxI+1tUCkQLERUl3kR5wjSG43ZDE+64cmdHG58IjCqpHDPJGAurkIa/Oe
+	3DmSpKmzQYDwOXHStxDxj1Q==
+X-Google-Smtp-Source: AGHT+IGJDhMx8oCC7Tp11JFpxULIlT3VQCaTVwlQL+bVnYZZqD0E+NDnAZopToyMwMZDTLy+RipN5g==
+X-Received: by 2002:a05:6000:402b:b0:391:ab2:9e71 with SMTP id ffacd0b85a97d-39c2975188dmr6368451f8f.20.1743697225664;
+        Thu, 03 Apr 2025 09:20:25 -0700 (PDT)
+Received: from [192.168.0.2] (host-79-30-116-65.retail.telecomitalia.it. [79.30.116.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d68esm2197657f8f.67.2025.04.03.09.20.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 09:20:25 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH 0/3] iio: ad7606: add SPI offload support
+Date: Thu, 03 Apr 2025 18:19:03 +0200
+Message-Id: <20250403-wip-bl-spi-offload-ad7606-v1-0-1b00cb638b12@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250331121820.455916-1-bhupesh@igalia.com> <20250331121820.455916-2-bhupesh@igalia.com>
-In-Reply-To: <20250331121820.455916-2-bhupesh@igalia.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 3 Apr 2025 09:17:07 -0700
-X-Gm-Features: AQ5f1JoPHx0PeSv2IqtIqL5NZPMMksgJM8eq0HuoqlbPglyYkI1vhpYvqJ-LgI4
-Message-ID: <CAEf4Bza1xjSD9KPkB0gE6AN0vc=xejW-jkn0M_Z_pSQ4_7e7Jw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
- full name
-To: Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, 
-	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org, 
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com, 
-	alexei.starovoitov@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org, 
-	willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk, 
-	keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org, 
-	jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPe07mcC/x3MQQqDMBBA0avIrDuQRk1rryIuYmZiB4IJCagg3
+ t3g8i3+P6FwFi7wa07IvEmRuFa8Xw24v10XRqFq0Er3qlMt7pJwDliSYPQ+REto6WOUQedpGDT
+ pr7Ed1D5l9nI873G6rhsqmluEawAAAA==
+X-Change-ID: 20250403-wip-bl-spi-offload-ad7606-cfd992d286a4
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1005;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=1iOywepJB9D1Cs5fFJUAHOEJHl07Klqnogg9LfO9XxY=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYkh/t5XxyIyq2Z9+3MsNaDwlUKCz5WuTZU6c5d+tlRu/W
+ c34UfXMoqOUhUGMi0FWTJGlLjHCJPR2qJTyAsbZMHNYmUCGMHBxCsBE/EwY/tnq7rt2g8v7o9eW
+ D3Psb20S0j39u/xx2oL1ATOCpxgzcS5k+Ct+VvX4JbVNfBoNVduPz2IrrFhqW3z0mnfw0qxzrH8
+ /xrMCAA==
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On Mon, Mar 31, 2025 at 5:18=E2=80=AFAM Bhupesh <bhupesh@igalia.com> wrote:
->
-> Provide a parallel implementation for get_task_comm() called
-> get_task_full_name() which allows the dynamically allocated
-> and filled-in task's full name to be passed to interested
-> users such as 'gdb'.
->
-> Currently while running 'gdb', the 'task->comm' value of a long
-> task name is truncated due to the limitation of TASK_COMM_LEN.
->
-> For example using gdb to debug a simple app currently which generate
-> threads with long task names:
->   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->   # cat log
->
->   NameThatIsTooLo
->
-> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
-> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
-> that all the legacy / existing ABI, continue to work as before using
-> '/proc/$pid/task/$tid/comm'.
->
-> This patch only adds a parallel, dynamically-allocated
-> 'task->full_name' which can be used by interested users
-> via '/proc/$pid/task/$tid/full_name'.
->
-> After this change, gdb is able to show full name of the task:
->   # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
->   # cat log
->
->   NameThatIsTooLongForComm[4662]
->
-> Signed-off-by: Bhupesh <bhupesh@igalia.com>
-> ---
->  fs/exec.c             | 21 ++++++++++++++++++---
->  include/linux/sched.h |  9 +++++++++
->  2 files changed, 27 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index f45859ad13ac..4219d77a519c 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
->  {
->         struct task_struct *me =3D current;
->         int retval;
-> +       va_list args;
-> +       char *name;
-> +       const char *fmt;
->
->         /* Once we are committed compute the creds */
->         retval =3D bprm_creds_from_file(bprm);
-> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
->                  * detecting a concurrent rename and just want a terminat=
-ed name.
->                  */
->                 rcu_read_lock();
-> -               __set_task_comm(me, smp_load_acquire(&bprm->file->f_path.=
-dentry->d_name.name),
-> -                               true);
-> +               fmt =3D smp_load_acquire(&bprm->file->f_path.dentry->d_na=
-me.name);
-> +               name =3D kvasprintf(GFP_KERNEL, fmt, args);
+Add SPI offload support for the ad7606 ADC.
 
-this `args` argument, it's not initialized anywhere, right? It's not
-clear where it's coming from, but you are passing it directly into
-kvasprintf(), I can't convince myself that this is correct. Can you
-please explain what is happening here?
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Angelo Dureghello (3):
+      dt-bindings: iio: adc: adi,ad7606: add SPI offload properties
+      doc: iio: ad7606: describe offload support
+      iio: adc: ad7606: add SPI offload support
 
-Also, instead of allocating a buffer unconditionally, maybe check that
-comm is longer than 16, and if not, just use the old-schoold 16-byte
-comm array?
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |   8 +
+ Documentation/iio/ad7606.rst                       |  45 +++++
+ drivers/iio/adc/Kconfig                            |   2 +
+ drivers/iio/adc/ad7606.c                           |  50 ++++-
+ drivers/iio/adc/ad7606.h                           |  12 ++
+ drivers/iio/adc/ad7606_spi.c                       | 210 +++++++++++++++++++++
+ include/dt-bindings/iio/adc/adi,ad7606.h           |   9 +
+ 7 files changed, 326 insertions(+), 10 deletions(-)
+---
+base-commit: 8f159ea5a253d40682e041daec007933d6caf01b
+change-id: 20250403-wip-bl-spi-offload-ad7606-cfd992d286a4
 
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
 
-> +               if (!name)
-> +                       return -ENOMEM;
-> +
-> +               me->full_name =3D name;
-> +               __set_task_comm(me, fmt, true);
->                 rcu_read_unlock();
->         } else {
-> -               __set_task_comm(me, kbasename(bprm->filename), true);
-> +               fmt =3D kbasename(bprm->filename);
-> +               name =3D kvasprintf(GFP_KERNEL, fmt, args);
-> +               if (!name)
-> +                       return -ENOMEM;
-> +
-> +               me->full_name =3D name;
-> +               __set_task_comm(me, fmt, true);
->         }
->
->         /* An exec changes our domain. We are no longer part of the threa=
-d
-> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
->         return 0;
->
->  out_unlock:
-> +       kfree(me->full_name);
->         up_write(&me->signal->exec_update_lock);
->         if (!bprm->cred)
->                 mutex_unlock(&me->signal->cred_guard_mutex);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 56ddeb37b5cd..053b52606652 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1166,6 +1166,9 @@ struct task_struct {
->          */
->         char                            comm[TASK_COMM_LEN];
->
-> +       /* To store the full name if task comm is truncated. */
-> +       char                            *full_name;
-> +
->         struct nameidata                *nameidata;
->
->  #ifdef CONFIG_SYSVIPC
-> @@ -2007,6 +2010,12 @@ extern void __set_task_comm(struct task_struct *ts=
-k, const char *from, bool exec
->         buf;                                            \
->  })
->
-> +#define get_task_full_name(buf, buf_size, tsk) ({      \
-> +       BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);      \
-> +       strscpy_pad(buf, (tsk)->full_name, buf_size);   \
-> +       buf;                                            \
-> +})
-> +
->  #ifdef CONFIG_SMP
->  static __always_inline void scheduler_ipi(void)
->  {
-> --
-> 2.38.1
->
 
