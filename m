@@ -1,196 +1,217 @@
-Return-Path: <linux-kernel+bounces-586425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031B4A79F9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:10:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BB1A79F8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7215E3B2DA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:07:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01E277A2DD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B944324418E;
-	Thu,  3 Apr 2025 09:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5F024BC06;
+	Thu,  3 Apr 2025 09:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YOKoqQ16"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BouCKMcz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE48924501C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D289A24BC00
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743671020; cv=none; b=sQimeCaDFGIXfl5G+jl1k9QOxN6lHUCFYWHOwAzVdlevyO3n0iH2evW4P50zL2Wv8vsmbIQl7gYPWXIwQd3WZz08OnUHDJSQuP8YOMImVYHdUDziELEWRiEfpW7x6yK7TCQbpK6GOXwcV1IzpDNEiiLlXVsNcR8w23SmYHxkNTU=
+	t=1743671031; cv=none; b=DUeukoDPfKhYdaZSWqrdZ2WmUnh2QfR74u0ydDnyzltuaK6jWgZJrFZpyc+z0eBgJNRzdF4CEDfwwk/ATsFsq0MTUdvbGo7wdr/N01v7mT2iIAegNFjKkJIE7CDdXYBXifvD8oO2XUS9N4kwExFdDH8678VyPytI5FAluuDB0V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743671020; c=relaxed/simple;
-	bh=qpQuP7aJIpBc+ziv8rKOH8KUF+cK15F9uJSNbo1YcKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUS6TPj8KgEMTy0lpKfXB+VAWJA4gmnZSo10T71qI2g34aywPCigdliVVDp6H199GF9i2uI3slwTA90TbIs6uZ7TXBe8cMMW6l7QsaheW6VATpBIlIKz+gCqUWE/u1ttGffoVgZpkNbQg6mUYMnmZQ4fM3KgpUegdHwfN+IkQ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YOKoqQ16; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=3h+3
-	XYPl+tcNEfQHM9GEv4E2JWrUtW/fBGgb/yLhisg=; b=YOKoqQ16rBBcIkqTQBWK
-	qAYr07P0UM9F8ETKKwFDodhdAd9vfnebEJlUIDDoUaR8xMnpNSmZb1XNKD538PfM
-	v5T2ookcaEQwVIVbH06TYzSEi1BcWslQtSEhB+q3o7+wNQXQrUeabsjQVgoioSSb
-	loBRJPY+8abrGZ8cL5gTS001jYrloSwiubOly7cRNcWpUZ5YQWPEqUalud/RBm/r
-	Azb0xtRC7X9dSHLe28z21FE/c1KeTY3BR0dAlZAYkBVbrXTtkRLH7zPWR+DmayAG
-	h8QWZaAcCDqabVmbLc76EYIM5kJd9d0DN6KH+Eln63PLpzuw/efZfHTeF4a2Zg/N
-	8g==
-Received: (qmail 2310687 invoked from network); 3 Apr 2025 11:03:28 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Apr 2025 11:03:28 +0200
-X-UD-Smtp-Session: l3s3148p1@VGsHC9wxFMYgAwDPXwaqAEtIN5mYkFJw
-Date: Thu, 3 Apr 2025 11:03:27 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [RFC PATCH 1/3] i2c: core: Follow i2c-parent when retrieving an
- adapter from node
-Message-ID: <Z-5O3-FSsHbn27lW@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250205173918.600037-1-herve.codina@bootlin.com>
- <20250205173918.600037-2-herve.codina@bootlin.com>
+	s=arc-20240116; t=1743671031; c=relaxed/simple;
+	bh=Zm3UfkLkf9JOvDt1YLZ1WiQhqcQXN2ei5hUgD3649oM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D9y5C6m3sA8geHrJ0DaHczNxzpPugLJidJADk1LJbNLbRZWQlSdK9MQfTrwqT/knVH1NQtYCNS7EfSLUZcoGs1pXnauCpH7yk9RQoXUwYrplWOV961GsbC/AG5lPmyaV93DyUT06HM223GDrcEqSXnw525zCxVVrCuV+YsZxTkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BouCKMcz; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2295d78b433so6660545ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1743671029; x=1744275829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AHPTYMQZL/LE7wiI5rF/tVcf8BGV6JGb59TmAXBJq30=;
+        b=BouCKMczgK/BlPXhpLuFL/F3awCRzmgFQkrHNouSmn6vXiBUrqIc3FW++7q+3J4m70
+         exZPa5Y2WtX5zZtxHwD8o8O7RyJUepYkirxCBtpDiNR/Hd8qvD0F20shjI4RrkQlrpzx
+         GW2cm7BRY0+o5AaD0ORTxObQsuxg7g/WfgGX2WDkI5V80juQV28ow4gf2VnUPJhZQwHa
+         GNUDqB8m2H9XMbcmszg9AFDdy9N3T6R0+xl5CwhZohNuTq/b8XBM7Up0FNHJTqNPVtKZ
+         fm5GaBmCrkKpw95AwlSwBFnDkyOtY/g21gjc1l/ihQNFF2gHB1TXEoTPdvPAZfqDnmOR
+         0iZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743671029; x=1744275829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AHPTYMQZL/LE7wiI5rF/tVcf8BGV6JGb59TmAXBJq30=;
+        b=bLksWSu3kB91FvI52ow6VGio1bQUH16Me6oaZEgfz3kHTMv3nXfCGNmcL0C4KCX8Jt
+         IwZ3sMvzCTGZJd7FT8+FSWqG4ToaLTvLmnGBY/DJ9ZT79jLna4lV5nwo19aJ8UlpGfvb
+         FqfLCIrM7AAiPxWOMXJFbQtyhzpGbY3dsJsRhGL1PWFKK8Ma1FDC1JClli5kOo+JZPC3
+         HHAszbs3GxRnU36GQ4w/F9A3yKe9chdGJUNlB/9mxyqk8IcTz3RFsaixp++N1dql4l1E
+         bi4xo+7okixacUgUOH94HRhiPItfFx9kFVJ3PF50vioxweH4xVbAZ9MRkv6SrrJIj41B
+         RRwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpO5xxB2Hu8PN8lzsW+XfTiMosy5JfHhZjMUgpXZuMhyuLP6KngUm3P2SaD2T/RLuoGjtLrMpk+RJhfIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn/+iLkpUfh/BRsTT6SLvO1GivWsdRfkgfhP0ZLth1XuKuJNQD
+	LAZPaM4fshxbMrNEgUxoB6+6wsMQwBm+QiNV6j+j+yjkxxHvXcQ5NKwaJ9SOQpw=
+X-Gm-Gg: ASbGnctBBCdF6lxtfkrPBxkrlo6sbwMZ1hAetga7tolJ+1CXpiwD4klFYMy8w6fJpNZ
+	LXbD64i/D7bqRMBTXxxD+YiL4085PnrJ6RMKbeXYsrFbqHbIvfViZjc/ky4yMUHWr4aWfSQsafq
+	NyVHrnpWtYF8ZW1bEYTvx31rQ/zDUrCA4vJE0z6bVwIcuX4Necly6sgS9dM5unm0Fe0yIMUiHXT
+	vuHWdZJzJ+DhDtv0G4Sb5YOp2KZ0XGtpmpcRIZKBf/14GmNWvvZmusojn0rxGId/7FgbOqv4jHa
+	PtgRiVRlhxjQuGHyx8vUbS+IPSIW2scwZx7m8gnBYIIu2+liHRaqTEajvSNbuqI73qWZXqtpQwF
+	9ZPHVkCEdhWG0Uw==
+X-Google-Smtp-Source: AGHT+IHJTH5IXTdhlfHTNlklonReyoT3ZXsvJX9ID9s0cIQoqLFk+sBnhdfnbbBFM7qc+8LKQFWG+A==
+X-Received: by 2002:a17:902:cf0f:b0:220:fe51:1aab with SMTP id d9443c01a7336-22977e0fa71mr33414205ad.38.1743671029007;
+        Thu, 03 Apr 2025 02:03:49 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.251])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e90dsm9421275ad.196.2025.04.03.02.03.43
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 03 Apr 2025 02:03:48 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	john.ogness@linutronix.de,
+	pmladek@suse.com,
+	arnd@arndb.de,
+	andriy.shevchenko@linux.intel.com,
+	namcao@linutronix.de,
+	benjamin.larsson@genexis.eu,
+	schnelle@linux.ibm.com,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH] serial: 8250: fix panic due to PSLVERR
+Date: Thu,  3 Apr 2025 17:03:36 +0800
+Message-Id: <20250403090336.16643-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U3h06jO4XCyQwGmf"
-Content-Disposition: inline
-In-Reply-To: <20250205173918.600037-2-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+an error response if an attempt is made to read an empty RBR (Receive
+Buffer Register) while the FIFO is enabled.
 
---U3h06jO4XCyQwGmf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In serial8250_do_startup, calling serial_port_out(port, UART_LCR,
+UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
+dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
+function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
+Execution proceeds to the dont_test_tx_en label:
+...
+serial_port_in(port, UART_RX);
+This satisfies the PSLVERR trigger condition.
 
+Because another CPU(e.g., using printk) is accessing the UART (UART
+is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) ==
+(lcr & ~UART_LCR_SPAR), causing it to enter dw8250_force_idle().
 
-> Extend i2c_find_adapter_by_fwnode() to perform the walking from the
-> given fwnode through i2c-parent references up to the adapter.
+To resolve this issue, relevant serial_port_out operations should be
+placed in a critical section, and UART_RX data should only be read
+when the UART_LSR DR bit is set.
 
-Even with the review of the schema going on, here are some comments
-already.
+Panic message:
+[    0.442336] Oops - unknown exception [#1]
+[    0.442337] Modules linked in:
+[    0.442339] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.13-00102-gf1f43e345877 #1
+[    0.442342] Tainted: [W]=WARN
+[    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
+[    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
+[    0.442354] epc : ffffffff8064efca ra : ffffffff8064af28 sp : ffff8f8000103990
+[    0.442355]  gp : ffffffff815bad28 tp : ffffaf807e36d400 t0 : ffffaf80804cf080
+[    0.442356]  t1 : 0000000000000001 t2 : 0000000000000000 s0 : ffff8f80001039a0
+[    0.442358]  s1 : ffffffff81626fc0 a0 : ffffffff81626fc0 a1 : 0000000000000000
+[    0.442359]  a2 : 0000000000000000 a3 : 0000000000000000 a4 : ffffffff81626fc0
+[    0.442360]  a5 : ffff8f800012d900 a6 : 000000000000000f a7 : 000000000fc648c1
+[    0.442361]  s2 : 0000000000000000 s3 : 0000000200000022 s4 : 0000000000000000
+[    0.442362]  s5 : ffffffff81626fc0 s6 : ffffaf8085227000 s7 : ffffffff81073c58
+[    0.442363]  s8 : 0000000000500000 s9 : ffffaf80851a5a60 s10: ffffaf80851a5a60
+[    0.442365]  s11: ffffffff80e85980 t3 : ffffaf807e324600 t4 : 0000000000000002
+[    0.442365]  t5 : 0000000000000003 t6 : ffffaf80804cf072
+[    0.442366] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000013
+[    0.442368] [<ffffffff8064efca>] dw8250_serial_in32+0x1e/0x4a
+[    0.442371] [<ffffffff8064af28>] serial8250_do_startup+0x2c8/0x88e
+[    0.442373] [<ffffffff8064b514>] serial8250_startup+0x26/0x2e
+[    0.442375] [<ffffffff806428a2>] uart_startup+0x13a/0x308
+[    0.442377] [<ffffffff80642aa4>] uart_port_activate+0x34/0x50
+[    0.442378] [<ffffffff8062ab6a>] tty_port_open+0xb4/0x110
+[    0.442383] [<ffffffff8063f548>] uart_open+0x22/0x36
+[    0.442389] [<ffffffff806234b4>] tty_open+0x1be/0x5e6
+[    0.442396] [<ffffffff802f2d52>] chrdev_open+0x10a/0x2a8
+[    0.442400] [<ffffffff802e7ab6>] do_dentry_open+0xf6/0x34e
+[    0.442405] [<ffffffff802e9456>] vfs_open+0x2a/0xb4
+[    0.442408] [<ffffffff80300124>] path_openat+0x676/0xf36
+[    0.442410] [<ffffffff80300a58>] do_filp_open+0x74/0xfa
+[    0.442412] [<ffffffff802e9900>] file_open_name+0x84/0x144
+[    0.442414] [<ffffffff802e99f6>] filp_open+0x36/0x54
+[    0.442416] [<ffffffff80a01232>] console_on_rootfs+0x26/0x70
+[    0.442420] [<ffffffff80a0154e>] kernel_init_freeable+0x2d2/0x30e
+[    0.442422] [<ffffffff8099c730>] kernel_init+0x2a/0x15e
+[    0.442427] [<ffffffff809a7666>] ret_from_fork+0xe/0x1c
+[    0.442430] Code: e022 e406 0800 4683 0c15 691c 872a 96bb 00d5 97b6 (439c) 851b
+[    0.442432] ---[ end trace 0000000000000000 ]---
+[    0.442434] Kernel panic - not syncing: Fatal exception in interrupt
+[    0.442435] SMP: stopping secondary CPUs
+[    0.451111] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
->=20
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/i2c/i2c-core-base.c | 43 ++++++++++++++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 5546184df05f..cb7adc5c1285 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1827,14 +1827,55 @@ static int i2c_dev_or_parent_fwnode_match(struct =
-device *dev, const void *data)
->   */
->  struct i2c_adapter *i2c_find_adapter_by_fwnode(struct fwnode_handle *fwn=
-ode)
->  {
-> +	struct fwnode_reference_args args;
-> +	struct fwnode_handle *adap_fwnode;
->  	struct i2c_adapter *adapter;
->  	struct device *dev;
-> +	int err;
-> =20
->  	if (!fwnode)
->  		return NULL;
-> =20
-> -	dev =3D bus_find_device(&i2c_bus_type, NULL, fwnode,
-> +	adap_fwnode =3D fwnode_handle_get(fwnode);
-> +
-> +	/* Walk extension busses (through i2c-parent) up to the adapter node */
-> +	while (fwnode_property_present(adap_fwnode, "i2c-parent")) {
-> +		/*
-> +		 * A specific case exists for the i2c demux pinctrl. The i2c bus
-> +		 * node related this component (the i2c demux pinctrl node
-> +		 * itself) has an i2c-parent property set. This property is used
-> +		 * by the i2c demux pinctrl component for the demuxing purpose
-> +		 * and is not related to the extension bus feature.
-> +		 *
-> +		 * In this current i2c-parent walking, the i2c demux pinctrl
-> +		 * node has to be considered as an adapter node and so, if
-> +		 * the adap_fwnode node is an i2c demux pinctrl node, simply
-> +		 * stop the i2c-parent walking.
-> +		 */
-> +		if (fwnode_property_match_string(adap_fwnode, "compatible",
-> +						 "i2c-demux-pinctrl") >=3D 0)
-> +			break;
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ drivers/tty/serial/8250/8250_port.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-I understand the unlikeliness of another demux driver showing up, yet
-relying on compatible-values here is too easy to get stale. What about
-checking if the i2c-parent property has more than one entry? That should
-be only true for demuxers.
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 3f256e96c722..6909c81109db 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -2264,13 +2264,16 @@ int serial8250_do_startup(struct uart_port *port)
+ 	 * Clear the FIFO buffers and disable them.
+ 	 * (they will be reenabled in set_termios())
+ 	 */
++	uart_port_lock_irqsave(port, &flags);
+ 	serial8250_clear_fifos(up);
++	uart_port_unlock_irqrestore(port, flags);
+ 
+ 	/*
+ 	 * Clear the interrupt registers.
+ 	 */
+-	serial_port_in(port, UART_LSR);
+-	serial_port_in(port, UART_RX);
++	lsr = serial_port_in(port, UART_LSR);
++	if (lsr & UART_LSR_DR)
++		serial_port_in(port, UART_RX);
+ 	serial_port_in(port, UART_IIR);
+ 	serial_port_in(port, UART_MSR);
+ 
+@@ -2380,9 +2383,9 @@ int serial8250_do_startup(struct uart_port *port)
+ 	/*
+ 	 * Now, initialize the UART
+ 	 */
++	uart_port_lock_irqsave(port, &flags);
+ 	serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+ 
+-	uart_port_lock_irqsave(port, &flags);
+ 	if (up->port.flags & UPF_FOURPORT) {
+ 		if (!up->port.irq)
+ 			up->port.mctrl |= TIOCM_OUT1;
+@@ -2435,8 +2438,9 @@ int serial8250_do_startup(struct uart_port *port)
+ 	 * saved flags to avoid getting false values from polling
+ 	 * routines or the previous session.
+ 	 */
+-	serial_port_in(port, UART_LSR);
+-	serial_port_in(port, UART_RX);
++	lsr = serial_port_in(port, UART_LSR);
++	if (lsr & UART_LSR_DR)
++		serial_port_in(port, UART_RX);
+ 	serial_port_in(port, UART_IIR);
+ 	serial_port_in(port, UART_MSR);
+ 	up->lsr_saved_flags = 0;
+-- 
+2.39.2
 
-> +
-> +		/*
-> +		 * i2c-parent property available in a i2c bus node means that
-> +		 * this node is an extension bus node. In that case,
-> +		 * continue i2c-parent walking up to the adapter node.
-> +		 */
-> +		err =3D fwnode_property_get_reference_args(adap_fwnode, "i2c-parent",
-> +							 NULL, 0, 0, &args);
-> +		if (err)
-> +			break;
-> +
-> +		pr_debug("Find adapter for %pfw, use parent: %pfw\n", fwnode,
-> +			 args.fwnode);
-
-Is this useful when creating the overlays? I tend to ask you to remove
-it one RFC phase is over. If it is useful, it should be at least
-dev_dbg?
-
-> +
-> +		fwnode_handle_put(adap_fwnode);
-> +		adap_fwnode =3D args.fwnode;
-> +	}
-> +
-> +	dev =3D bus_find_device(&i2c_bus_type, NULL, adap_fwnode,
->  			      i2c_dev_or_parent_fwnode_match);
-> +	fwnode_handle_put(adap_fwnode);
->  	if (!dev)
->  		return NULL;
-> =20
-> --=20
-> 2.47.1
->=20
-
---U3h06jO4XCyQwGmf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfuTtsACgkQFA3kzBSg
-KbYfVQ/9G27Iyj9jcvQ3xDFK3Bn1ABTFAiX24F9Tgio5mv2gijX1Z/uTDv5+0ZPJ
-iHWRA+UYz38UnirzIoTdq+0Xb4wdjaLS8oC1N17yitM6fgvmXXrpNTYWM4/qThMP
-3twQOfu5tD3g6KICVKjaxG+iuJNz3m4E2YpiltALvjo2mrIOa0eBAH3FZJH8whUr
-KJF+q6umhJ8QQCw/+xpj2F9PWEhW9l2lotwfpVZr5cjWpXt4nrdT7DHh1YSTChC6
-srL6TZdcIXgNiKZEqlTlU2DAPcKUpBhWuvBCnuRFnF+DVYeCgwZJvv6LoQXYJSFm
-PzuuoOTKLMHmThPBfQqb+Dq/GLuLRz0pANiie/bXX9NQkGyET3rpVxKZ382s4I41
-du6Yufi/lYsTMgdk8D1JtMrafgjzbT2EKkO9HLlBgjPUnnFvjVgKjYMZrOrUcyYk
-6Y0vXNmODy4belvRWIeIfokp7+gHLqAFTHSrePILn7s69cm61lPxxYI9Ml9wC70z
-/Q0yVL9DYrsEIk3F36dvXZ8MspeRYROourZJXMMR2dt2DAL8ifAeG+kumX9/LYgz
-aO602J8xtSIG8wi53tgICILdYKgtcKPIms2IzamGncj7WSpEy3NqK9StWH61glNK
-lo4Uu+PacwVVcRWJsFyRPW/LxlXGbIkRQNTT2I8nvVGKXR13+8c=
-=Eryw
------END PGP SIGNATURE-----
-
---U3h06jO4XCyQwGmf--
 
