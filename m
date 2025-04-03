@@ -1,206 +1,112 @@
-Return-Path: <linux-kernel+bounces-586781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFCCA7A3BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C32A7A3C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14BA71895AF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD50116D10E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C806224EAB4;
-	Thu,  3 Apr 2025 13:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728FF24EF96;
+	Thu,  3 Apr 2025 13:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cyTSjyqc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TflsDi0B"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eghYFj7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8512441A7;
-	Thu,  3 Apr 2025 13:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF74824EA8F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 13:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743687210; cv=none; b=AO92fSQv6U/iNgkgH1I+EyV03kzWxlLvNfM6hEDmUvjR6qKbWgqVJkL44FdQADN9NLmv2fTpJJWhNjG22rDRIai/cE1jEgdOOT7Ssx54wGw/UVxaTpHGM1ByeG7lQiTXym5rfJsuF3nEA1oNLGoMet97GxeNxVa9nJtk1G0PqFE=
+	t=1743687222; cv=none; b=EcnTwtrPVB3TNjzx1k7X487W/nfRVwetlU+58frX/HEW0z6gON94t8sXyUhSmDKPnK9aYB04SwiHjy6vaSpk3jLPqo+1ELtggWDnc+N5BL58C4Tj7wXsyWI1gCiTKmwkkPWZ1c6wGpJeaa9xO2mbqaPspMflx1qOim6msFFefp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743687210; c=relaxed/simple;
-	bh=4ziQfrcHD4RvZipomyPNvQbGP5Wxyu/1VDNA2VQ6dgs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=TjWQ8j1Shrk9s3kte73vKNNUzjqqlc/4dV9JYPfqCOYqjsco5qCpD/NAK07JaHXG+jV4uk4p6w8zloiv4h4gFvgNx6qSQ6WNIP2/8kiEydnuxBHLNCG0UvW1W/FDkUj79PN0rcK1qtlkIQ0eIghW/XrKeox81g6Hxn/N5a1WGCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cyTSjyqc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TflsDi0B; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 03 Apr 2025 13:33:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743687205;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0PdppgWzNSPGPeLiV0fRP8qNH/M0RuituLwAkmGmwA=;
-	b=cyTSjyqciwHGXzMPeyJaujLLskxt5XmoFXIAjSIOVDZJu0B3r8/Z7UGRK00myuWYQNCr+K
-	GLdFllbx8LzUzBFBL9NMGMEkjhOxeMF+MFxrPpsDfzVOMrn+1qrCzMzpNpvwsJxStSJQIH
-	BQH3dLf4PahetKuzL6G4+N68yCTbh3BClkj+rhh22z10JpeKLbYugM4jfCWfWHqdM5ykpO
-	UZ2anF/2ZJP5wND+BsXN7W40VbODmdpVahthB19QAEQJ2ppXllplthRFW3dzOPY3jjosgM
-	tiNlzmNlagg8INIGbUF+8m4fEwdFZGbj9G+mvPRhCQ5yam+OugoO63lTVjQ+gA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743687205;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0PdppgWzNSPGPeLiV0fRP8qNH/M0RuituLwAkmGmwA=;
-	b=TflsDi0BjDIu8yVXXNiA9p3zGWyXUBp9VOHmTw+kGjj1cWJHFgNP0djuWHC6ylz/cckxy8
-	V6d/XX/37JT3AwDA==
-From: "tip-bot2 for Tor Vic" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/kconfig] x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU
- option to locally optimize the kernel with '-march=native'
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Tor Vic <torvic9@mailbox.org>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- Juergen Gross <jgross@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Kees Cook <keescook@chromium.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250321142859.13889-1-torvic9@mailbox.org>
-References: <20250321142859.13889-1-torvic9@mailbox.org>
+	s=arc-20240116; t=1743687222; c=relaxed/simple;
+	bh=rl01/FdFtTK1ESwz6xo4DRwQE6TYQX0rQmwJ/UODmaM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Sdv/I8eQScL6NNAumXn7/z1fLBWJJVUJFe6DTfuoVp9g99Nv3UG46bK+Z+dfrz5ptsb3y06X/pBr5AA5GMllJkpPa4XcpFg7vDS0/hyoD3ui4u4yIzzhDsTu8Dst711jEH5vOaSBVX/mlupWiLsEoFDcLajSR1oN+DBlnhKY36I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eghYFj7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AA1C4CEEB;
+	Thu,  3 Apr 2025 13:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743687222;
+	bh=rl01/FdFtTK1ESwz6xo4DRwQE6TYQX0rQmwJ/UODmaM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=eghYFj7m1Ar1NSkqJGxsJJdqsFzr66HttynSzabWV/sRjxIe6KMH2Zs7QCTvEPU1g
+	 pBuL/a4fIGafl3FLWZ/5dfSZ3yORSZfzH7jQqGJWP1GHUdG7QlMV6ob6xU02d200EY
+	 CnQLigRfhAHY9zmWpprNCwjda5T7O6L2gK0mJkJy3Ld2XKFSZfGqFkP04ZyUe6t8WX
+	 qP7XffRLaMsY8r+sUWCqJJ/YAgj+EkkSDYoGSOma0XH4pu2FQ0krSsjyQpjYnAaSwC
+	 DZmEtew5XJFcKfgyppWlHFQJGZWsdvk2OaF4paZn044CovJeR9RUBMXzVQLwrlEEPo
+	 kIl2Y32lZCeDQ==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v2 0/4] drm/vc4: tests: Fix locking failures
+Date: Thu, 03 Apr 2025 15:33:29 +0200
+Message-Id: <20250403-drm-vc4-kunit-failures-v2-0-e09195cc8840@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174368720522.30396.1418171893248214427.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACmO7mcC/4WNTQ6CMBBGr0Jm7RhKiwVX3sOw4GeACVjMFBoN4
+ e5WL+DyveR73w6ehMnDNdlBKLDnxUXITgm0Y+0GQu4iQ5ZmeapVgZ08MLQGp83xin3N8ybkUSv
+ dGGvz1ugC4vgp1PPrF75XkUf26yLv309QX/s3GRSmaG1ZXExX1o22t4nE0XxeZIDqOI4Pf/+T+
+ r0AAAA=
+X-Change-ID: 20250318-drm-vc4-kunit-failures-313b4775c438
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1038; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=rl01/FdFtTK1ESwz6xo4DRwQE6TYQX0rQmwJ/UODmaM=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnv+vRvTnm0d8eEkzyff9lzVl2ak7c/pkpc3EVQWGPW4
+ i/SQbYhHaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZiIeCgjQ8dN7b935afoffNQ
+ XfheI/9phkJTzcuktXa/5/1fM0HCg43hn05cTtv+x9lHArYWGOz+IXJps3vkPOupW3gvnY5YPt2
+ 5khcA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-The following commit has been merged into the x86/kconfig branch of tip:
+Hi,
 
-Commit-ID:     ea1dcca1de129dfdf145338a868648bc0e24717c
-Gitweb:        https://git.kernel.org/tip/ea1dcca1de129dfdf145338a868648bc0e24717c
-Author:        Tor Vic <torvic9@mailbox.org>
-AuthorDate:    Fri, 21 Mar 2025 15:28:58 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 08:24:06 +01:00
+This series deals with (lack of) EDEADLK handling in vc4 PV muxing
+tests.
 
-x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU option to locally optimize the kernel with '-march=native'
+This was leading to failures with CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+enabled.
 
-Add a 'native' option that allows users to build an optimized kernel for
-their local machine (i.e. the machine which is used to build the kernel)
-by passing '-march=native' to CFLAGS.
+Maxime
 
-The idea comes from Linus' reply to Arnd's initial proposal:
-
-  https://lore.kernel.org/all/CAHk-=wji1sV93yKbc==Z7OSSHBiDE=LAdG_d5Y-zPBrnSs0k2A@mail.gmail.com/
-
-Here are some numbers comparing 'generic' to 'native' on a Skylake dual-core
-laptop (generic --> native):
-
-  - vmlinux and compressed modules size:
-      125'907'744 bytes --> 125'595'280 bytes  (-0.248 %)
-      18'810 kilobytes --> 18'770 kilobytes    (-0.213 %)
-
-  - phoronix, average of 3 runs:
-      ffmpeg:
-      130.99 --> 131.15                        (+0.122 %)
-      nginx:
-      10'650 --> 10'725                        (+0.704 %)
-      hackbench (lower is better):
-      102.27 --> 99.50                         (-2.709 %)
-
-  - xz compression of firefox tarball (lower is better):
-      319.57 seconds --> 317.34 seconds        (-0.698 %)
-
-  - stress-ng, bogoops, average of 3 15-second runs:
-      fork:
-      111'744 --> 115'509                      (+3.397 %)
-      bsearch:
-      7'211 --> 7'436                          (+3.120 %)
-      memfd:
-      3'591 --> 3'604                          (+0.362 %)
-      mmapfork:
-      630 --> 629                              (-0.159 %)
-      schedmix:
-      42'715 --> 43'251                        (+1.255 %)
-      epoll:
-      2'443'767 --> 2'454'413                  (+0.436 %)
-      vm:
-      1'442'256 --> 1'486'615                  (+3.076 %)
-
-  - schbench (two message threads), 30-second runs:
-      304 rps --> 305 rps                      (+0.329 %)
-
-There is little difference both in terms of size and of performance, however
-the native build comes out on top ever so slightly.
-
-[ mingo: Renamed the option to CONFIG_X86_NATIVE_CPU, expanded the help text
-         and added Linus's Suggested-by tag. ]
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Tor Vic <torvic9@mailbox.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lore.kernel.org/r/20250321142859.13889-1-torvic9@mailbox.org
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- arch/x86/Kconfig.cpu | 14 ++++++++++++++
- arch/x86/Makefile    |  5 +++++
- 2 files changed, 19 insertions(+)
+Changes in v2:
+- Fix typo in commit log.
+- Enhance the backoff code 
+- Link to v1: https://lore.kernel.org/r/20250318-drm-vc4-kunit-failures-v1-0-779864d9ab37@kernel.org
 
-diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-index 753b876..9d108a5 100644
---- a/arch/x86/Kconfig.cpu
-+++ b/arch/x86/Kconfig.cpu
-@@ -245,6 +245,20 @@ config MATOM
- 
- endchoice
- 
-+config X86_NATIVE_CPU
-+	bool "Build and optimize for local/native CPU"
-+	depends on X86_64
-+	default n
-+	help
-+	  Optimize for the current CPU used to compile the kernel.
-+	  Use this option if you intend to build the kernel for your
-+	  local machine.
-+
-+	  Note that such a kernel might not work optimally on a
-+	  different x86 machine.
-+
-+	  If unsure, say N.
-+
- config X86_GENERIC
- 	bool "Generic x86 support"
- 	depends on X86_32
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 0fc7e8f..436635e 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -173,8 +173,13 @@ else
- 	# Use -mskip-rax-setup if supported.
- 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
- 
-+ifdef CONFIG_X86_NATIVE_CPU
-+        KBUILD_CFLAGS += -march=native
-+        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
-+else
-         KBUILD_CFLAGS += -march=x86-64 -mtune=generic
-         KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
-+endif
- 
-         KBUILD_CFLAGS += -mno-red-zone
-         KBUILD_CFLAGS += -mcmodel=kernel
+---
+Maxime Ripard (4):
+      drm/vc4: tests: Use return instead of assert
+      drm/vc4: tests: Document output handling functions
+      drm/vc4: tests: Stop allocating the state in test init
+      drm/vc4: tests: Retry pv-muxing tests when EDEADLK
+
+ drivers/gpu/drm/vc4/tests/vc4_mock_output.c    |  62 ++++++++--
+ drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c | 154 ++++++++++++++++++++++---
+ 2 files changed, 189 insertions(+), 27 deletions(-)
+---
+base-commit: c0988d693eb10e115d95747f8a0cccc83babb3fc
+change-id: 20250318-drm-vc4-kunit-failures-313b4775c438
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
 
