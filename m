@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-586631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D7BA7A1D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:27:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AD7A7A1D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9863B5FFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1DF1894130
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67624BC15;
-	Thu,  3 Apr 2025 11:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4AC24BCF9;
+	Thu,  3 Apr 2025 11:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I73Gcbmw"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hu2oZ9Y2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="odzNzDws"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71E2161320
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 11:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AC9161320;
+	Thu,  3 Apr 2025 11:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743679634; cv=none; b=uDWkHQvVEKcaFylQhH5XRdzFs7klfMWVSk+w6oflvDaCCgUna9+Zb+UPTlpnLymam20822dsXaF/KvZa8ow96fGIn4Ckn/Fl3MJv7s5tG9Yc6SD4B7Ps1r+vPyDzWbboj442YgoCAbrwfqlBhBY+AgK4UbpvJvG4NeE6sxggfOU=
+	t=1743679600; cv=none; b=HefGAPkuJIPH7SNZGP1FVQn18v5+VJG5eRFIBoe342tQPpHoQHDo9Re1Y14gHzU++T81qis4WZmbhMP93WHP7gV+GGZXtLcddJjL3wCgsck/dnBN7yVMhdwcDjvewZkvdAFXFwk6tIYAVkwjE3tvRnhF3w4x4N29ny8UY96zqdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743679634; c=relaxed/simple;
-	bh=2gJ9YMvADs+Ckr8MjvuYDoJfEHRTKTBwC7wmPSCp1EI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqizwJxX5/ZavQR+e2Mfq4/81oxvEzAVdgAg0M7syNduEEqvtVBIe3+bizS/v7jCDvJ/HsaNREWMv0WKoNufVidGsb5G8QXyMh3iKKxG9GB67cmolE+2FpLQnkRvjyxvqpfH0yVzFH1z+iVRVtGUlAkL+1X1OX16ao39d4HsESw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I73Gcbmw; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-af579e46b5dso517165a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 04:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743679632; x=1744284432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CiqmOnUNPKkUQrs/FCsSX+P5TPxGAsS5AllkVPo2fs=;
-        b=I73GcbmwiOFmIYmZXd8vf4zvtZ2h0BE0VIU1lFMmhGKosxdf0FJ9ha6S3Kgy0oJpeD
-         RfzcLLC0W3aeYYmIXl4Apy8d1dv5X2mAPixQZbiJ9WUJRg6XpFm/XzmFLFactLHO6O0x
-         3AexIJCNMWfIv5i4cF+A9GKAvKihgA9UZTP6+GbA0GKeYivjCWX6GnnamQBvqFT5Y6c1
-         runYzAjusi7bFvtXCodoYc6Sg8sTaRHOwhGjdpyElwDEPqyzQPWsFtWDnkdJIvawAVUq
-         L7/1+s5n488RMhVUNH9cSLRKRYMV7JaDk/Bj/2RUKIharO82zF36gdFSQIyM1hhe4/gk
-         FcYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743679632; x=1744284432;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8CiqmOnUNPKkUQrs/FCsSX+P5TPxGAsS5AllkVPo2fs=;
-        b=iAX467QjBrmYNceVIBq4q5cIgYISOwmNO1kfExO0FfElIn4kFB1R0zl2Eo+JVq58I7
-         dad6IiIgc8OwXM0EOVRDmSSwlT8c8TBDXeC6NRczd5JHf3AH9Akq8aJSMIDvP5IeQgQ+
-         FZJAOzpHO69RWG2jbSB0iDIDlvNxpYkeLrplV/BMbuX5CLM7Ep+AKK3aRR56913oKtfY
-         iF+Bx8ORzM85hnSFvSRcBb3AYn3Sizn9M3cScY3xiHSA78i7EAhBbhN6B9inkYEddw+T
-         dPSbgiy6ykxz35cWFdzoKDpjqNIuzXL6FSDCr2Hyb77bYUmNNHJf9t6yaA1VtM3P1OE4
-         Cw4g==
-X-Gm-Message-State: AOJu0Yyu4x/oS03ft/PtTEa0d+UWtOVgov5AHqUlM1cSvnQAMfx5PvWj
-	5NnRWBrpVz2iQPlYSmDyG1jy/oGHyWpvub9/TOhlIqh9RjC+9VWA
-X-Gm-Gg: ASbGncu+xsrRhfeTbyORyrmjSxO0lx0TgpyLwHkJ7/+CC/LSHFG8bDILyIO0UQxWVGD
-	LLZrdcXIldvBplkk0aZ+N59fi0XeOYe+TAgNSdv5gLUPe5385RIPircqxyOXXgyv/Rw5865D8Ro
-	ad8oBBQ0NlNuGKxrwRPBOq6FP37aU75Bv0fKF6FfHhPh+q9Oyjs0vRvHI8fH92IczKx0+L/30ED
-	RqXnVISS+db9fyvVft2N+6gA30whDUcaf1peWaRXfvrZX6io8UY7m5lSJtnGlk3wk+cbGk5nCzX
-	90cvMTCD23xbcSJJv6UW14VarvPx/WR8eOqrWZ1mJdCNkl5ya7FPiwwZ6rw83zKoeq8n810L5wA
-	mixn63n1n3hLl9xydQ+NV3OUNDR0In0+3JNU5vw==
-X-Google-Smtp-Source: AGHT+IFqVMlM1m6lHGf9510XeU/c7RvU/k4qiI4dOuF9xl9mJ/NjNz6rztoXeWoPSDCnYRLuJbvdXQ==
-X-Received: by 2002:a17:90b:1b09:b0:2ef:67c2:4030 with SMTP id 98e67ed59e1d1-30532146ef2mr30265539a91.27.1743679631779;
-        Thu, 03 Apr 2025 04:27:11 -0700 (PDT)
-Received: from rota1001.localdomain (118-171-71-10.dynamic-ip.hinet.net. [118.171.71.10])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305983b9954sm1206097a91.32.2025.04.03.04.27.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 04:27:11 -0700 (PDT)
-From: Chisheng Chen <johnny1001s000602@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Chisheng Chen <johnny1001s000602@gmail.com>
-Subject: [PATCH] lib/rbtree.c: Fix the example typo
-Date: Thu,  3 Apr 2025 19:26:14 +0800
-Message-ID: <20250403112614.570140-1-johnny1001s000602@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743679600; c=relaxed/simple;
+	bh=rS3BIFhO7Scj/OffZVUYYibFEFSgamdlXu2+hANWw6Y=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Bpcd8PnE5nge+uyJV42ILDl5NO2Pg6WF7FGsZbFOmZk6QDS63R6IbKZyupQeDnbANP76jMdWDhO/JwO+/MGE1bM7VWlvTe9zwwCuQ997tPlmtO2ba9sGL9FBqS5gE6Nf5E+Wy9sBxjCApe2dwXvak++ngLIOzkgd4dKTZR9YLVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hu2oZ9Y2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=odzNzDws; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 03 Apr 2025 11:26:32 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743679597;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWRQuXR+O4982s+lGdZM8l5ZKghIETw9NPkFGg+OkNM=;
+	b=Hu2oZ9Y2iI1t/3iQXm5dR1OFrtjocgmIqcv2tdEWTCObT0Qm4VVViioxB18ioEeybCf/5x
+	bMdFMbrbH9ylOVouH7CbrAjcCGabdlL0veCSy9taB/Z0pu4G7wKqllj3fwFGVSwspVHvhi
+	d/N9Z6giRpeFdZo0qT8FfUnh8+FIQ/FGKY5FWXtVd6KQ0MQO2Qgmy+3UdU1ZKdt7ltaw/B
+	kWO1X5tKgZoOe+Ujgj3YAsWc8zDJbZh639IlJCfSNOnnbaZf8HuDg1iXqU3t43wAUMlt5w
+	rf2UlKzU0EWgT0VnoRsJA99QjY2Gt/Y8aVbfz78av+b2Lr6spFbMSL/SqtLhIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743679597;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWRQuXR+O4982s+lGdZM8l5ZKghIETw9NPkFGg+OkNM=;
+	b=odzNzDwsL1XGLerWVckFdR58eOYAg8SlSzDuq8Syr4NDMNWVkFLdc2O+BFsR5UXXo+T6v2
+	qZpz4dQwY/xj8KBQ==
+From: "tip-bot2 for Mathieu Desnoyers" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] rseq: Eliminate useless task_work on execve
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250327132945.1558783-1-mathieu.desnoyers@efficios.com>
+References: <20250327132945.1558783-1-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174367959256.14745.905696151357329121.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Replace `sr` with `Sr`. The condition `!tmp1 || rb_is_black(tmp1)`
-ensures that `tmp1` (which is `sibling->rb_right`) is either NULL
-or a black node. Therefore, the right child of the sibling must be
-black, and the example should use `Sr` instead of `sr`.
+The following commit has been merged into the sched/urgent branch of tip:
 
-Signed-off-by: Chisheng Chen <johnny1001s000602@gmail.com>
+Commit-ID:     169eae7711ea4b745e2d33d53e7b88689b10e1a0
+Gitweb:        https://git.kernel.org/tip/169eae7711ea4b745e2d33d53e7b88689b10e1a0
+Author:        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+AuthorDate:    Thu, 27 Mar 2025 09:29:45 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 03 Apr 2025 13:10:47 +02:00
+
+rseq: Eliminate useless task_work on execve
+
+Eliminate a useless task_work on execve by moving the call to
+rseq_set_notify_resume() from sched_mm_cid_after_execve() to the error
+path of bprm_execve().
+
+The call to rseq_set_notify_resume() from sched_mm_cid_after_execve() is
+pointless in the success case, because rseq_execve() will clear the rseq
+pointer before returning to userspace.
+
+sched_mm_cid_after_execve() is called from both the success and error
+paths of bprm_execve(). The call to rseq_set_notify_resume() is needed
+on error because the mm_cid may have changed.
+
+Also move the rseq_execve() to right after sched_mm_cid_after_execve()
+in bprm_execve().
+
+[ mingo: Merged to a recent upstream kernel, extended the changelog. ]
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250327132945.1558783-1-mathieu.desnoyers@efficios.com
 ---
-Commit cedb08caac58 ("lib/rbtree.c: fix the example typo") stated
-that the example was incorrect if `sl` and `N` did not have child
-nodes, and it changed `Sr` to `sr`. However, after further review,
-I do not see this issue.
+ fs/exec.c           | 3 ++-
+ kernel/sched/core.c | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- lib/rbtree.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/lib/rbtree.c b/lib/rbtree.c
-index 989c2d615f92..5114eda6309c 100644
---- a/lib/rbtree.c
-+++ b/lib/rbtree.c
-@@ -297,9 +297,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 				 *   / \           / \
- 				 *  N   S    -->  N   sl
- 				 *     / \             \
--				 *    sl  sr            S
-+				 *    sl  Sr            S
- 				 *                       \
--				 *                        sr
-+				 *                        Sr
- 				 *
- 				 * Note: p might be red, and then both
- 				 * p and sl are red after rotation(which
-@@ -312,9 +312,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 				 *   / \            /  \
- 				 *  N   sl   -->   P    S
- 				 *       \        /      \
--				 *        S      N        sr
-+				 *        S      N        Sr
- 				 *         \
--				 *          sr
-+				 *          Sr
- 				 */
- 				tmp1 = tmp2->rb_right;
- 				WRITE_ONCE(sibling->rb_left, tmp1);
--- 
-2.43.0
-
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d1c0d2..8e4ea5f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1864,9 +1864,9 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 		goto out;
+ 
+ 	sched_mm_cid_after_execve(current);
++	rseq_execve(current);
+ 	/* execve succeeded */
+ 	current->in_execve = 0;
+-	rseq_execve(current);
+ 	user_events_execve(current);
+ 	acct_update_integrals(current);
+ 	task_numa_free(current, false);
+@@ -1883,6 +1883,7 @@ out:
+ 		force_fatal_sig(SIGSEGV);
+ 
+ 	sched_mm_cid_after_execve(current);
++	rseq_set_notify_resume(current);
+ 	current->in_execve = 0;
+ 
+ 	return retval;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index cfaca30..c81cf64 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10703,7 +10703,6 @@ void sched_mm_cid_after_execve(struct task_struct *t)
+ 		smp_mb();
+ 		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, t, mm);
+ 	}
+-	rseq_set_notify_resume(t);
+ }
+ 
+ void sched_mm_cid_fork(struct task_struct *t)
 
