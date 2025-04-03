@@ -1,237 +1,99 @@
-Return-Path: <linux-kernel+bounces-586638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C5DA7A1E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:30:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2018A7A1DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72966176354
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62523AD7C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57824C67F;
-	Thu,  3 Apr 2025 11:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BCA24BD04;
+	Thu,  3 Apr 2025 11:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="VOpnrqv0"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2120.outbound.protection.outlook.com [40.107.21.120])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sQE8DGal";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="td2iEtUv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD30024BBF5;
-	Thu,  3 Apr 2025 11:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743679818; cv=fail; b=lMtyvzQ31NADzXJ4ciVvBCl/Iohv/gzuM6hOUXablRy23Hz3IA4F6JN3SE378sxi0JB048WbDfJDDqDekHg9VsLY+n87weJKoQtQ1Gzy+tIDsRBUbAFFfSHSGCXsNINwMtefQhHjfLUteij6OuF2yrSESNvH6M1IAclNl8TScWw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743679818; c=relaxed/simple;
-	bh=9WBkdyFAeajkna399VkCXM77pPebS1WMbZveb6cywZU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=I49LMOZiwiFWvdNlcYTyxkHdZRsKAcBLToH7999EvRpmy8ot+1KxwJdyejK7bdKjOWRlePMIGcGcuEaZvQTlPtUyKQH7/z/Ao+YjGWPn4r3WBh/53uBQkn911FpbUpsdwvBh8X4lezMCYwFF94ehS2NqekAPEZYmZxqXcAVubW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=VOpnrqv0; arc=fail smtp.client-ip=40.107.21.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CxXQ35PtHo0vN6UhONQeNhbAoma0cVrntcI8x6oEzRhdLctt7ag7xXu9OmjN+sXfDI6VYxOEcy20ZvbZnnc810EWkMOsyFJ2N8PEKnGefpJvNZ0MuCW0iZp38XKi/hhHXvJAEcM+JzyyupBtc8PoZZwfkuBpqCupwcXtvoyvpXH3cFvhAWpCl4GeeTZMCrq99o5tuyUF7E+OAH1ud1IZ+OEIMSG1YaQ/nxiPPN40LS9jpPESR7qrJvs27795/Bh/wakysgF/3pfRLT8p2SHSdIWUO4qG69TBvofFrkbUr5+5Ej45oNMg6ykGsEedAMPXh7GumHuex6cbR8CqGCnz2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jjov56LUBoRQX68sHGn6BZmrDJZifE5y7ubMWaOecVs=;
- b=TviRourtPPSjtSCOtv6TkzgsOBzd2tIm3MpPBVG3VjtSTjZCgT9sA6X1yYZIgv8N663zf/f6iMDb7baTUqWb31Cwo4LlHGwEBuTvhx2x6njEXsDiz+ajuzn5APs3K1A5Lkl3O8JOoEdfLh1kZzGa0/auAQ2suPiNEgUO3TC92BzfBcCCDPRhH6TdWQHlM0igj428Ii0vlffeNgjdtmsHqsNAI29l898fvMBS4PD2D9wbiHRHMaXBm+ZwUz+C4jLt60MYB6tTfhdTuKIpw6EAfWjZgYghlqURifBSr58tsbg9JEDoaesAiCbEwdKaUHhfMn+cZ8AO2vnK7hVHuHh2lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 91.26.50.189) smtp.rcpttodomain=kernel.org smtp.mailfrom=phytec.de;
- dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=phytec.de; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jjov56LUBoRQX68sHGn6BZmrDJZifE5y7ubMWaOecVs=;
- b=VOpnrqv0PdIhJObJkSu+bxh8wnpziGcaOba0OEvWaaGE0lRb8idrCYNbFtPlfcUk3Bth+L8KCWtdA+kfI1KdGNQY5Zud++BT7LtJIgham9lNtl/Rqw7gJpqlbc3nHL6GoSXHNeL7mbz8Ar1qp3qJSW+Q+6spf6H2C4cYlkqlGULZhp46uNTBOCkVL2CfEySECp2DuS6htZMPw2h0Ai0vEbyVaE9RFRR9FxomTZY4aq2grKZlKnLbWEF2bIKomq72enEd3r5+q6vyi9NiKRG3SreZIrKBe+n1NULINLb1Ec788mvF30pKlPoTZXmNak2Ri3eZruVaGGdqTCdGpfdADQ==
-Received: from PAZP264CA0045.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1fc::14)
- by AM9P195MB1364.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:3a6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.41; Thu, 3 Apr
- 2025 11:30:09 +0000
-Received: from AM2PEPF0001C716.eurprd05.prod.outlook.com
- (2603:10a6:102:1fc:cafe::ed) by PAZP264CA0045.outlook.office365.com
- (2603:10a6:102:1fc::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.26 via Frontend Transport; Thu,
- 3 Apr 2025 11:30:09 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
- smtp.mailfrom=phytec.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- phytec.de discourages use of 91.26.50.189 as permitted sender)
-Received: from Diagnostix.phytec.de (91.26.50.189) by
- AM2PEPF0001C716.mail.protection.outlook.com (10.167.16.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8606.22 via Frontend Transport; Thu, 3 Apr 2025 11:30:09 +0000
-Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
- (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 3 Apr
- 2025 13:30:09 +0200
-Received: from [127.0.1.1] (172.25.39.168) by Florix.phytec.de (172.25.0.13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 3 Apr
- 2025 13:30:08 +0200
-From: Yannic Moog <y.moog@phytec.de>
-Date: Thu, 3 Apr 2025 13:29:29 +0200
-Subject: [PATCH v2 3/3] arm64: dts: add imx8mp-libra-rdk-fpsc LVDS panel
- overlay
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCDC746E;
+	Thu,  3 Apr 2025 11:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743679775; cv=none; b=lzE1o4zQgid8ZWBTPIR21ebGSzNQqc4lfFpDyQNqSIbFxXr3LyTU/wVMiCXqRrCS8gSJpKhF9s2rt9AJKYoPT90C9k4N2AUEVM17zyYP6FZHOboEPJOwmmyESpIBP5+aWOLumeb5ZIWLXYTZFUONCx/CZ+vTBjtipVx1qyvzsq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743679775; c=relaxed/simple;
+	bh=5KsUfJCRg0Fk/4yM4/GbtR8fkLfnX/M6ZgFZZ4qIp+w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S0gYxo9+p2BAPGZGGQfvizQWfbeQ7GMaNV1mhGZbMcUpYlV1FKOAnPH58mcccXb3/N5GfKc8wSye9qQMTYBy9enKJq0xBiC725IMTF7TNZgPjlzBBeLVx3lanH0SMcpj0HYIKUcDL6TWgVuDVBByU42RJkOrU89TCSuMVhZ8l84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sQE8DGal; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=td2iEtUv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743679771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mCQZFIU3aQA8UI8RgbhFajYkKtNNKh+uMd0lvANG1Q4=;
+	b=sQE8DGalZObUjmBaKP4ABnp4h1A5JPfIX/gc+9P0d8wQfuSIcZjr++2oxF/57GMoH/WBMG
+	QRXlAIRxWlGr0aewpopP7EpDLzZg1lW6h5GA222TPQZZh8+rZpizm22OZlA8DkcKAfd6tQ
+	817qerM6E8Q3t41+andndj5W/Ywf8p/m8x13TrMPYXfJMQHMb6v68oa/6L+y9/q4E9MqXE
+	wc3h6s0H5wXfEnNHV3N1gyW+SiIX3aD/WOPOb1AZtW01oPmwxmElI7LELc1rRW84qL0pLW
+	AB+ByPmEFJ8MV3n/h13TWrK5JINPE9sfBimz4W+BnIUfwuAux5ymu1SQbiftZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743679771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mCQZFIU3aQA8UI8RgbhFajYkKtNNKh+uMd0lvANG1Q4=;
+	b=td2iEtUvROtFzoz4lOGQeRRlRv/wau1YT9t0eTFL38D+YO/pVKhB/qyzoPvnUybLz/M3uZ
+	tj+434/XhRFEs5Bw==
+To: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
+Subject: Re: [PATCH v2 1/2] time/timekeeping: Fix possible inconsistencies
+ in _COARSE clockids
+In-Reply-To: <Z-5HlSUEh1xgCi4f@localhost>
+References: <20250320200306.1712599-1-jstultz@google.com>
+ <Z-KURRE_Gr72Xv_n@localhost> <874izezv3c.ffs@tglx>
+ <Z-Vx8kV4M3khPknC@localhost> <Z-qsg6iDGlcIJulJ@localhost>
+ <87o6xgwftc.ffs@tglx> <Z-vL3cVZuQ8XQXhG@localhost> <87iknnwxa4.ffs@tglx>
+ <Z-5HlSUEh1xgCi4f@localhost>
+Date: Thu, 03 Apr 2025 13:29:31 +0200
+Message-ID: <877c41wkis.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-3-c0d2eff683ac@phytec.de>
-References: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
-In-Reply-To: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: <upstream@lists.phytec.de>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, Benjamin Hahn <b.hahn@phytec.de>,
-	"Jan Remmet" <j.remmet@phytec.de>, Teresa Remmet <t.remmet@phytec.de>,
-	"Yashwanth Varakala" <y.varakala@phytec.de>, Yannic Moog <y.moog@phytec.de>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Florix.phytec.de
- (172.25.0.13)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM2PEPF0001C716:EE_|AM9P195MB1364:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05b61b5a-0ac9-46b0-0f9d-08dd72a2e45a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QWU4blZEVmViSnlVNUhHVzdpN3JVVzJ6MHhmUnY1TGwyVURGc1J3c3hXUVRI?=
- =?utf-8?B?Vkt4cHFPWjVTY01RRVhkTzZZaWJIaS9KU0NyK3Y5a3UzbVlveTA4V0NqQXRz?=
- =?utf-8?B?MDZoNWdRMUhKYysrVTFQMCtKZ0JPbUhaTkNLOUs5TGpZVDFZbUdWdXVmSUw5?=
- =?utf-8?B?MzJMeE84MFRmL0xPRGJ4cEU5TE1TMlhrOUhFa1hzV3pOMWFVTnNHUnU2YUlT?=
- =?utf-8?B?ejJ2RytzcUcrb2VFWTlORzBNM0Y4V1hCdkYyMkhqb1VnVk1zaDR0dGM4a3Ix?=
- =?utf-8?B?S2MxUFpGK2J0ZlJWNWgvZTBFR3RtRVY3UG9rYktPN1o1TTByZStCMHREUVFx?=
- =?utf-8?B?TmtoQyt3ZmNnWGU0Z3BpMUhtcmluTVhDMFZ6NFJla0tGc1BBUVhrZ01lN1du?=
- =?utf-8?B?ODZNbGVyVG15ZkNlZHREN1FwTGsxZDlWb21pTVBnd254VEo1VDhBRGdpdnp4?=
- =?utf-8?B?OUZOMXpZcEpJWXdwSVpNYmF2WkFkMmFBNHhZbHl6bnNSRTJBY0J2UjQ0ckla?=
- =?utf-8?B?SVZhOUJlQXVwbWRWWFdqUlEwd1FwNm5oa1pPa2FZa0x0aXVxZWRsampXZnRj?=
- =?utf-8?B?NUhVRXNLWDVPemU1YUFFR25IT1pUTFZrWWZRelVGS1J3TUNFc1Vaa1lpWmJm?=
- =?utf-8?B?QVNMdzNlb0VkS1dsUUxlZENTMVZHUXptVjRrckRzMG84SzJhb2pucXdQWkVr?=
- =?utf-8?B?UEdWZlZKZnoxK3RmVlo5KzZUeTU4eHpOQ1dLME1hR1NseGNKejhhWjgwamtx?=
- =?utf-8?B?aDY2T0FQb0tZN0EyNFBXYU1YelJ4dzU2L0FJL1h6TzQyTTlGdm5yejFxNTFa?=
- =?utf-8?B?eTFmYWtqNWpEOW0vZlhXdTE3OUhUUVdFQmxaWE9Ub1d6TnR2N2JCTHlFZnBo?=
- =?utf-8?B?NjlvWElTK1FXaFVPaDBoRDFjZE1OMmdRMkkzamoyNmNVQVFURUQxN1NuRHBC?=
- =?utf-8?B?M1RERVF3dVFWUTNrZE9qMHBMREQ1NkExdHplc21xWFlpc0g2R2lpRTczbWJm?=
- =?utf-8?B?SUNoZzJMak93b2NLd1dnUkF0bGFMYzIvSU5xRTJqb0hzUDVyOGhXTzlhS08w?=
- =?utf-8?B?eENlMXdsNkRqTmdQSEh4bFN0a3BOSzJ2dnFFYjFzMHN6UEY3K1d3bzUwdjJt?=
- =?utf-8?B?YWNSSjNTQVIyMTJHRXh6ZTRYUlFodk9DNnlxN2JCT3ZpcjBqaWRUVGRJK2VT?=
- =?utf-8?B?QkdmZXNYSHJmTXZZOE1MQ2pWd3NyRlVMRnlNS0E4dnFCeHVTem9zaWVncXJa?=
- =?utf-8?B?RTBRaVM3aFNGOGJDYWt5VFVsYVNiNUF3dkd0bklJRnN6czdPTXVhOEtkS2hh?=
- =?utf-8?B?OEJaRHd5akRSZG91ZVZaVVJQSjlmM2lWd2w3VTBiUjBqNnI4eDlhQW5DclR5?=
- =?utf-8?B?dkhjVlIxNlJSWTVVS3lkTTgxY29lM0t2eGt0RXVYNDY5Vzh2L2JLSTQ2Nm8x?=
- =?utf-8?B?dDBaVi9kaTRxbm9EdTgrMWxNSmJZT1o0THpzQStzV2VLcDJBbjBFUWtmWUNV?=
- =?utf-8?B?OWFiby9EVTB2UlJ4dDd4dEREdUFxYnVBZ01SSlNMaGp4dGRBczU3VzFIK25F?=
- =?utf-8?B?cHRSbnJnRWNzTmtnd1FzU0s4aWMvLzd5TVBWcWpUclNsRkhjajdoYWg0Qzdo?=
- =?utf-8?B?ZDBrbWNsSnhKR0E4T0FEdVptSHdoUUMvdG5zMmt1ZDBTbXQrVk9uT3QrOTZo?=
- =?utf-8?B?aHNERG42OVBWWkxoNVhCN2FWTDJ3VEZ2NHhZUXVZN1lJVUQvT1JVSUZpSURp?=
- =?utf-8?B?dDl3Wm5VU0lVMG9ETzEzVFNNNk0vMVoxNlF5U2tlQldBcHpTVWVRWnAySVJm?=
- =?utf-8?B?TkR4ZU0yZmFNQ3NXenFldFNUTmpTbEhOV1ZCMDBoWGR1U0dSa2tFMk4wSmJF?=
- =?utf-8?B?dFIrZEhpTjZhbjF0K2puMWsvaDd2SmI1dk5ZcWlmbDJrMGpRUlhlaHRqdkha?=
- =?utf-8?B?TFJtSm84Y0E1ZEVDNDQ5amlyMTlQdDBBRkhGbHJqK2p4Y1QyUUJ1QXNhSjFq?=
- =?utf-8?B?c1ljWEhTUTR3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: phytec.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2025 11:30:09.7541
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05b61b5a-0ac9-46b0-0f9d-08dd72a2e45a
-X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C716.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P195MB1364
+Content-Type: text/plain
 
-The Libra board has an LVDS connector. Add an overlay for an
-etml1010g3dra LVDS panel supported for the phyCORE-i.MX 8M Plus that may
-be connected to it.
+On Thu, Apr 03 2025 at 10:32, Miroslav Lichvar wrote:
+> On Tue, Apr 01, 2025 at 08:29:23PM +0200, Thomas Gleixner wrote:
+>> > 64		64		0.138
+>> 
+>> That's weird as it only delays the update to the next tick.
+>
+> Ok, so it's not an instability of the clock, but rather an instability
+> of the chronyd synchronization loop, which since kernel 4.19 expects
+> the frequency to be applied as soon as the adjtimex call is finished.
 
-Signed-off-by: Yannic Moog <y.moog@phytec.de>
----
- arch/arm64/boot/dts/freescale/Makefile             |  2 +
- .../imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso  | 44 ++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+Interesting.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index df792553be479afcb6fa50dcd25a7eb63b67bc44..aa349ee35d5b310512f05c92390d5c2a27df81bb 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -201,6 +201,8 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-kontron-dl.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-kontron-smarc-eval-carrier.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-libra-rdk-fpsc.dtb
-+imx8mp-libra-rdk-fpsc-lvds-dtbs += imx8mp-libra-rdk-fpsc.dtb imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-libra-rdk-fpsc-lvds.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-nitrogen-smarc-universal-board.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso b/arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..1dcf249ca90d2b4d9720a55de39e3f8564780dc3
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&backlight_lvds0 {
-+	brightness-levels = <0 8 16 32 64 128 255>;
-+	default-brightness-level = <8>;
-+	enable-gpios = <&gpio5 23 GPIO_ACTIVE_LOW>;
-+	num-interpolated-steps = <2>;
-+	pwms = <&pwm1 0 66667 0>;
-+	status = "okay";
-+};
-+
-+&lcdif2 {
-+	status = "okay";
-+};
-+
-+&lvds_bridge {
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>, <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_VIDEO_PLL1_OUT>;
-+	/*
-+	 * The LVDS panel uses 72.4 MHz pixel clock, set IMX8MP_VIDEO_PLL1 to
-+	 * 72.4 * 7 = 506.8 MHz so the LDB serializer and LCDIFv3 scanout
-+	 * engine can reach accurate pixel clock of exactly 72.4 MHz.
-+	 */
-+	assigned-clock-rates = <0>, <506800000>;
-+	status = "okay";
-+};
-+
-+&panel0_lvds {
-+	compatible = "edt,etml1010g3dra";
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
+>> Patch applies after reverting 757b000f7b93 ("timekeeping: Fix possible
+>> inconsistencies in _COARSE clockids").
+>
+> I ran multiple longer tests to be able to compare the small values in
+> the noise and yes, from the adjtimex point of view this seems to work
+> as well as before the first COARSE fix. I didn't run any tests of the
+> COARSE clock.
 
--- 
-2.49.0
-
+I did run those, but did not run the adjtimex() muck :)
 
