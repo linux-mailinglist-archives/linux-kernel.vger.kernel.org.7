@@ -1,119 +1,132 @@
-Return-Path: <linux-kernel+bounces-586709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6256BA7A2D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E7AA7A2E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68E018981B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:30:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03D983B7CBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A624E017;
-	Thu,  3 Apr 2025 12:30:02 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7385924E01C;
+	Thu,  3 Apr 2025 12:31:11 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA9724E002;
-	Thu,  3 Apr 2025 12:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DAA24E003
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 12:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743683402; cv=none; b=t+Jq3uzQLWs7zdrl+VL6puOVCTs80GjlwRClSQ5FL3zzqnf8Br5fek4PYIT4ke+TUeGVQPWFrMzcN0xHIXXWCFDgMKk6Em4mdqeU6JKNwImT0ELKNFBFW5S9WjLOcHmUualDWpl81nuWUs3kE9o8Cyvd5kTk0j08ktVZ9Ehv6bM=
+	t=1743683471; cv=none; b=kJHYadwEHZB0SpEf5uAWrn5ADl5suiSPej8wlD/VDYBjW+VeHPTWhlStjBqCeNNQbYKvGLcsNxP31ECvXTFrizB7UWvYL8BiduhtlR0C9I+VfMuTcFwFLVlPCQ2zEPcH+xlQOk6478CBVMCHEdrwYVKz0FrWEgdiyPJgPcEHoig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743683402; c=relaxed/simple;
-	bh=0RmaEk9oTb0vgvKAW0oPD/3qyuPhFRsSlfy/FfKh3q0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OOeMkDcWnOPY841hO1mk7hXtcHW9V8+2Jy4GFr4I/O7DFi9nPaU5MoQt+lWEy0itdiG+1oODcWi7hzdGkpnm5LeSjhWXSA3iOUSVkfvNdIRY3j8rRIED9a7Os3+8CO4jcUSRvMkO0FQanfDUkvpazMEroGZ+LVy6+N6Y2GnpnJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZT1Dm3dg6z6M4j7;
-	Thu,  3 Apr 2025 20:26:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C576A14050C;
-	Thu,  3 Apr 2025 20:29:56 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 3 Apr
- 2025 14:29:56 +0200
-Date: Thu, 3 Apr 2025 13:29:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Oscar Salvador <osalvador@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand
-	<david@redhat.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	<mkoutny@suse.com>, Dan Williams <dan.j.williams@intel.com>,
-	<linux-cxl@vger.kernel.org>
-Subject: Re: [PATCH 0/2] Implement numa node notifier
-Message-ID: <20250403132954.0000779f@huawei.com>
-In-Reply-To: <20250401092716.537512-1-osalvador@suse.de>
-References: <20250401092716.537512-1-osalvador@suse.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1743683471; c=relaxed/simple;
+	bh=iSUo5pKSTWFOjmR7BDdYf2T7egjMjm5IhmeEnM/9FKY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gMgkna2JwR6SLk3PX+ONvY+qLsuxUUTsnztxjTrK/eT3J9ecgYu3oBYR2bAglqjDQ2/fJ4rrVRThvC7UnFtmqozhu7VM5kAI4ethc+mZ667RvBhtQ8mpqKy5ooN2IX7nNFZRt61yuPjS5vzYk7F4vv0qEO+wQFmop+ovM2eP7KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5ae856.dynamic.kabel-deutschland.de [95.90.232.86])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4753361E6487C;
+	Thu, 03 Apr 2025 14:30:22 +0200 (CEST)
+Message-ID: <f8ab4b21-0afc-4956-a324-12c0c67bb5de@molgen.mpg.de>
+Date: Thu, 3 Apr 2025 14:30:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: New warning `cryptd: no symbol version for this_cpu_off`
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Uros Bizjak <ubizjak@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, regressions@lists.linux.dev,
+ Brian Gerst <brgerst@gmail.com>, Nadav Amit <nadav.amit@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <81a25a60-de78-43fb-b56a-131151e1c035@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <81a25a60-de78-43fb-b56a-131151e1c035@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue,  1 Apr 2025 11:27:14 +0200
-Oscar Salvador <osalvador@suse.de> wrote:
+#regzbot ^introduced: 6a367577153a
 
-> Memory notifier is a tool that allow consumers to get notified whenever
-> memory gets onlined or offlined in the system.
-> Currently, there are 10 consumers of that, but 5 out of those 10 consumers
-> are only interested in getting notifications when a numa node has changed its
-> state.
-> That means going from memoryless to memory-aware of vice versa.
-> 
-> Which means that for every {online,offline}_pages operation they get
-> notified even though the numa node might not have changed its state.
-> 
-> The first patch implements a numa node notifier that does just that, and have
-> those consumers register in there, so they get notified only when they are
-> interested.
-> 
-> The second patch replaces 'status_change_normal{_normal}' fields within
-> memory_notify with a 'nid', as that is only what we need for memory
-> notifer and update the only user of it (page_ext).
-> 
-> Consumers that are only interested in numa node states change are:
-> 
->  - memory-tier
->  - slub
->  - cpuset
->  - hmat
->  - cxl
-> 
-Hi Oscar,
+[To: +Uros, Cc: +Nadav, +Andrew]
 
-Idea seems good to me.
 
-+CC linux-cxl for information of others not on the thread.
+Dear Linux folks,
 
-> 
-> Oscar Salvador (2):
->   mm,memory_hotplug: Implement numa node notifier
->   mm,memory_hotplug: Replace status_change_nid parameter in
->     memory_notify
-> 
->  drivers/acpi/numa/hmat.c  |  6 +--
->  drivers/base/node.c       | 19 +++++++++
->  drivers/cxl/core/region.c | 14 +++----
->  drivers/cxl/cxl.h         |  4 +-
->  include/linux/memory.h    | 37 ++++++++++++++++++
->  kernel/cgroup/cpuset.c    |  2 +-
->  mm/memory-tiers.c         |  8 ++--
->  mm/memory_hotplug.c       | 82 +++++++++++++++++++++++++++++----------
->  mm/page_ext.c             | 12 +-----
->  mm/slub.c                 | 22 +++++------
->  10 files changed, 146 insertions(+), 60 deletions(-)
-> 
 
+Am 03.04.25 um 09:35 schrieb Paul Menzel:
+
+> On the Intel Kaby Lake laptop Dell XPS 13 9360, updating from 
+> 6.14.0-11270-g08733088b566 to 6.14.0-12456-gacc4d5ff0b61, Linux logs the 
+> new warning below:
+> 
+>      cryptd: no symbol version for this_cpu_off
+> 
+> I haven’t bisected it, but could it be commit 06aa03056f90 (x86/smp: 
+> Move this_cpu_off to percpu hot section). It says to have no functional 
+> change though.
+
+`git bisect` led to commit 6a367577153a (percpu/x86: enable strict 
+percpu checks via named AS qualifiers).
+
+     $ git bisect start
+     $ git bisect good 08733088b566
+     $ git bisect bad acc4d5ff0b61
+
+Kind regards,
+
+Paul
+
+
+$ git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# good: [08733088b566b58283f0f12fb73f5db6a9a9de30] Merge tag 
+'rust-fixes-6.15-merge' of 
+git://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux
+git bisect good 08733088b566b58283f0f12fb73f5db6a9a9de30
+# status: waiting for bad commit, 1 good commit known
+# bad: [acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1] Merge tag 
+'net-6.15-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+git bisect bad acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
+# bad: [2cd5769fb0b78b8ef583ab4c0015c2c48d525dac] Merge tag 
+'driver-core-6.15-rc1' of 
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
+git bisect bad 2cd5769fb0b78b8ef583ab4c0015c2c48d525dac
+# bad: [0e2f80afcfa699ce722c01afc9286a942bd57211] fs/dax: ensure all 
+pages are idle prior to filesystem unmount
+git bisect bad 0e2f80afcfa699ce722c01afc9286a942bd57211
+# bad: [5b47c02967ab770aa7661c8863a21b2fd59e35ff] mm/hugetlb: convert 
+cmdline parameters from setup to early
+git bisect bad 5b47c02967ab770aa7661c8863a21b2fd59e35ff
+# bad: [94ba17adaba0f651fdcf745c8891a88e2e028cfa] mm/damon: avoid 
+applying DAMOS action to same entity multiple times
+git bisect bad 94ba17adaba0f651fdcf745c8891a88e2e028cfa
+# bad: [f495bd7e0d9bd00c9a76c49f792b532bbb0efd0a] mm/rmap: keep mapcount 
+untouched for device-exclusive entries
+git bisect bad f495bd7e0d9bd00c9a76c49f792b532bbb0efd0a
+# bad: [9b2f764933eb5e3ac9ebba26e3341529219c4401] mm/huge_memory: allow 
+split shmem large folio to any lower order
+git bisect bad 9b2f764933eb5e3ac9ebba26e3341529219c4401
+# bad: [1c81f1a699263aeae9aa1ac777058846c546e3c0] memcg: use 
+OFP_PEAK_UNSET instead of -1
+git bisect bad 1c81f1a699263aeae9aa1ac777058846c546e3c0
+# good: [8a3c392388c6a6e0c8937a24712b630ec9ac7016] percpu: use 
+TYPEOF_UNQUAL() in variable declarations
+git bisect good 8a3c392388c6a6e0c8937a24712b630ec9ac7016
+# good: [6cea5ae714ba47ea4807d15903baca9857a450e6] percpu: repurpose 
+__percpu tag as a named address space qualifier
+git bisect good 6cea5ae714ba47ea4807d15903baca9857a450e6
 
