@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-586377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD0DA79E6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:48:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E17A79E79
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B151896474
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E73189644D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECF2242902;
-	Thu,  3 Apr 2025 08:48:42 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE8E241C8C;
+	Thu,  3 Apr 2025 08:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AkomH2ry"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEF219E7D1;
-	Thu,  3 Apr 2025 08:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935D819E7D1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743670122; cv=none; b=Zmje+tFEMiD32DlvpyEKAsOK9SLwtr29MgoDpJWFmLDFWAnFN2x50E9ga21RL2qVVVM3LZ2fZ3d3O7zeDgNkLctRKX5ZVdjACr0lf7Ex/l3gZMU9CYcOcJSkc02F75FWe+NcFFvMO0cKV6SIBeR0GQIEbNLeWXDRF3GIG87086k=
+	t=1743670189; cv=none; b=bNgNTtC89hwgUy2+Ksy7ZgyFIYP6O+hYta7F/anmxnK+IjVK0Cxa14y74FWTecPXpkLctR/7zwl+gk14BNuspyN03jQwROLI8bWFnNIwouS0pgmFrvBwFdN6xBEWZRGYcYkGf2yQl2gIhq40xk+VX9Hh81lq1KKURH0dwI3PueY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743670122; c=relaxed/simple;
-	bh=LMGWh7K8oa5KrX+W3kbg21yUcMQUNfXpXVe35Aqq1Mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPlSh0kBlJPaF35f4/NNx1gg8/GR3jLcMIC7/3TA9SGj8imaRU0lRZKKAdwkeCb67Z/XWaVqa6+t74FG1zgokIaqSEpovk939LanEZX4UO9TuyfHQZL2lM05KnmV7cQDf4P5ClPI4jDFgJ3Tqqzp2ctPlA64A+pw6CeunlZp2XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowACXPP1SS+5nfWhxBQ--.16368S2;
-	Thu, 03 Apr 2025 16:48:20 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: m.chetan.kumar@intel.com,
-	loic.poulain@linaro.org,
-	ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] net: wwan: Add error handling for ipc_mux_dl_acb_send_cmds().
-Date: Thu,  3 Apr 2025 16:48:00 +0800
-Message-ID: <20250403084800.2247-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1743670189; c=relaxed/simple;
+	bh=soxayd4c4IiDLMOfZJwndk9fJPj+0hKVhHlYZta+Z0k=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K1tCRGWx4JcudeRdvHExlyAXj18CLOeLkRQKWFqFxVycKlrO/JJX6DV6kkYq1WNL1xrwyPitGWKUneK+UYOXMjXGMFq81kDexIn3CH2yhUB/WHKhOGy1L8P+bNZayTpzOw0hkOMXUhmm6c1q+993nzPyRmgFyD5ly7uDn5kRTa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AkomH2ry; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so3657475e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 01:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743670186; x=1744274986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VBu8J27ftlzEshktz7zCJQ/1Jp+jqvvKxGVjR8a7qWQ=;
+        b=AkomH2ryrfE8NaImqKT6rj+SR2M0rg/pv4t/xEll6/xyBDSfbfNUyHAj/tSjWlHAfy
+         m36HoUSiPMkl4DnD24Am6IfFAtYh3J0jM7FiX2rPE//GdPjuH04LdIXxKjxCe7yikbkg
+         iE4xQIysBiy5Q6YtgWCuWCi4MiNeWnAmjWVVvJIEWWZVgJAuDHlyYAZPPGl+coOLZIid
+         E+tyjj5CZFuwN2YOm00Om7WIsGkABCmR6wEbDTegKoPVkgXY4KNnwAw/FWWvfwmBxLKy
+         qMiKHlB8Ja7RO65Y5T2u0du/NPPztfiL2R216kuQN0v3Eg1LZaViZ3IpfGh8wpwhA5YK
+         1+Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743670186; x=1744274986;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VBu8J27ftlzEshktz7zCJQ/1Jp+jqvvKxGVjR8a7qWQ=;
+        b=pZEkERqcTF0W6DTk7LvitH+/uJe0NWfwWXdTqFdp2Cuoa1aB9mZpE5JSvGa6odYdvh
+         dlQcqpLZ3mOhvnKVQLn7D314WjAjtQEksL72sxTqpF9eFkEUJm5ySKN2VkalcjpsDFYq
+         9d/ofS0ec/PS6lwUSpRv9iECGNbtQJVK5GIvjIUp0/Qshgx7xcDt8zTSAqLRGF4xaHWA
+         qW07rpXqDSn6qIAKL+ElMeQALXZYBvTMIEycE5+IV9K46xtionuexgKpgGSoyzN8ZTFu
+         edKjLPXcmGXhyBjJZuvGqmZJVzG/GP9om/8CO7dF48vWcok4yJUJxrjMEtW8LB9DjQAr
+         i5kg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3JOylJobBcHN30+YfYsBuZHb0/FoB4D7pNlS9yo2k5F8fF6B1eupB7AEK6YPKTQ5GEx1Yo19jVuR3rf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo3LFU1ZjqijS9ewb+9Td4GkhS2UA6lsx7PcNsRfqBk/mVHceD
+	KLfS19K2/8z0b75LEI3dUQ3KwlmcyeRHo9kTWoC7rxg/ceE5j21sI0GmDGR8OlI=
+X-Gm-Gg: ASbGncu7ifphgqUWrwa4t4UcaPnLSgWWjSWsQ+vBs+zuU4wNfnU+tYLdYo7cSgRc5p8
+	q6F39OYlMe3k56qwZjbrkV8mbUxPa2Ep8Zs2ghM4ibKOTyYHB2bRIVIR4nJ6bJ/Ko9JYamaVxZx
+	0tQ/rOQny886HB2MCdpFW4eXUPGsqPdByB6/prcaW29l970xcTgmmsSDitVQVmaw8cnlaUFgYyC
+	s2lxpXmTbHhrpFGP6okmeqayn6WwAwjmPw1jhtgKt92Infk0o4p4yRn5pSudI2lfkUn4OFGG+nz
+	K5tGbPW9KXjmjJIT1HVM2umvDgz77f0XYP4dwF++0pSQ0njb7KW8ryaAmdzpeYU+NQ==
+X-Google-Smtp-Source: AGHT+IHXc5iNcd+rK/nAzT2TA4Y/VmWE4yJGK6u8qDCUGXOzUoFZeO8r9utVgQgnH5ORrul8GFjY2w==
+X-Received: by 2002:a05:600c:1c22:b0:43b:c5a3:2e1a with SMTP id 5b1f17b1804b1-43eb5bfc50cmr55015725e9.2.1743670185785;
+        Thu, 03 Apr 2025 01:49:45 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364d07csm11578105e9.28.2025.04.03.01.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 01:49:45 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Chuan Liu <chuan.liu@amlogic.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250205-optimize_memory_size_of_clk_measure-v2-1-4f546053495d@amlogic.com>
+References: <20250205-optimize_memory_size_of_clk_measure-v2-1-4f546053495d@amlogic.com>
+Subject: Re: [PATCH v2] soc: amlogic: clk-measure: Optimize the memory size
+ of clk-measure
+Message-Id: <174367018513.531300.4479678290582017713.b4-ty@linaro.org>
+Date: Thu, 03 Apr 2025 10:49:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACXPP1SS+5nfWhxBQ--.16368S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4DArW3JFyrKrWDKF48Zwb_yoW8Gry7pF
-	WrWw109F98AF4rAa18CrWDZa4YqayDXr97Kw1jv3Z5WFsrCr47trWxX3429rn7JF45W3Zr
-	Ar4jyry3G3WUGF7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPjb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14
-	v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
-	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
-	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
-	6r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
-	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTR2hFcDUUU
-	U
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCREBA2fuKvd1oAABsa
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The ipc_mux_dl_acbcmd_decode() calls the ipc_mux_dl_acb_send_cmds(),
-but does not report the error if ipc_mux_dl_acb_send_cmds() fails.
-This makes it difficult to detect command sending failures. A proper
-implementation can be found in ipc_mux_dl_cmd_decode().
+Hi,
 
-Add error reporting to the call, logging an error message using dev_err()
-if the command sending fails.
+On Wed, 05 Feb 2025 15:58:43 +0800, Chuan Liu wrote:
+> Drop "CLK_MSR_MAX" and replace it with adding a member "msr_count" in
+> the structure to specify the count of msr_id.
+> 
+> Mark the table of msr_id as const.
+> 
+> 
 
-Fixes: 1f52d7b62285 ("net: wwan: iosm: Enable M.2 7360 WWAN card support")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/net/wwan/iosm/iosm_ipc_mux_codec.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.16/drivers)
 
-diff --git a/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c b/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
-index bff46f7ca59f..478c9c8b638b 100644
---- a/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
-+++ b/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
-@@ -509,8 +509,11 @@ static void ipc_mux_dl_acbcmd_decode(struct iosm_mux *ipc_mux,
- 			return;
- 			}
- 		trans_id = le32_to_cpu(cmdh->transaction_id);
--		ipc_mux_dl_acb_send_cmds(ipc_mux, cmd, cmdh->if_id,
--					 trans_id, cmd_p, size, false, true);
-+		if (ipc_mux_dl_acb_send_cmds(ipc_mux, cmd, cmdh->if_id,
-+					     trans_id, cmd_p, size, false, true))
-+			dev_err(ipc_mux->dev,
-+				"if_id %d: cmd send failed",
-+				cmdh->if_id);
- 	}
- }
- 
+[1/1] soc: amlogic: clk-measure: Optimize the memory size of clk-measure
+      https://git.kernel.org/amlogic/c/37021be47d02d2913d6767795a6f4c72b4e63a4f
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.16/drivers branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
 -- 
-2.42.0.windows.2
+Neil
 
 
