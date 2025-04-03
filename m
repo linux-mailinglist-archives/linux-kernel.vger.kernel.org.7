@@ -1,128 +1,113 @@
-Return-Path: <linux-kernel+bounces-587615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7722CA7AEBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB85A7AEE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19C61729B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:28:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9667A189D552
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C69922157B;
-	Thu,  3 Apr 2025 19:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2BD227EB9;
+	Thu,  3 Apr 2025 19:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8p5Q01G"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6k4O5gJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E87C221542;
-	Thu,  3 Apr 2025 19:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E00227EA0;
+	Thu,  3 Apr 2025 19:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707853; cv=none; b=jOKax9BgSfkqAr3ZFFaMWxfqs8oJraTd76c/SOqot9DYHOJj5jky1q8OaFPHZ+cfM0CyHYcGYUX/nAd4cu3ptVwAdUoyPnNh3XsdPpnxIqOzGwmrRy+R//QcJ9CDFA6sHIgCgpKGVx6oie68Ap9UGppM3z0332Se49vIhM4zukY=
+	t=1743707901; cv=none; b=Z7oOgHEOxKeyYssRojPZ5AxeJKv4RI9eWHWK21lXr0WLs2xLZyyJmUTclKIb2MRTElCbaBUvz4ctHASIidmdNSSz5Lg7Wl6/1BX07it6VMwXTNjRbB8AE3Pa7j6T4N1LM7UJ177fR19UFr5j7aFt3OKP9NGAcO4QnzxteN1zGRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707853; c=relaxed/simple;
-	bh=OTjo/tKLR3WPYodETfsXfLg8VM23UquBH+KKE8wFJN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XhKeX4BfqVvi3/0g5R7CpzHH3U6pxJjQX+iD4DCxAl0XlAmC+/Zh8i3JNDQxOZdD5yJwoV3ili4Mit2SFZ2nOYAqlZFccmf6R0x67EC67Q4K0IcHbfaMf8+1rnkxbKykdxIKjmxPO+Il2y7YRTMm0e93cjRrj8zd0FO8asOZ7Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8p5Q01G; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e673822f76so2189742a12.2;
-        Thu, 03 Apr 2025 12:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743707849; x=1744312649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ahbiwhoPrwAtlrPFF2tpPZpPMZGZnu56TSDKHCE8CL8=;
-        b=Q8p5Q01GULPzNChio9m5AwznU8sGMSa7GCsm1gHjA20V/fwjzMhDUYI4DEU5MxK9Cz
-         gVYg0gt98GeoUJ8KQCNq5LEurYuo7Yxgxw/4Md3hcW226FGPx9Au76H5uXqmowRRlCUv
-         GoHIe0aKHw3N6uLuqeC62tr64TrsF1BNBycczB8q9XbMJX9Fb6JK0CP/jjtvwl2kX2+t
-         75I3HkYZDAWttMHMxMij1/tOjvtrTTNSuBmlVhSbCByMcOLs+nhdyfH0vz0y0cl8sA4Y
-         k6Zm9ZsxjbcnRlZu0SyipbuR0ccepM3eaENLdpsQLpzPYcqX2TF/JUhnT3nByulGhigN
-         r1aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743707849; x=1744312649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ahbiwhoPrwAtlrPFF2tpPZpPMZGZnu56TSDKHCE8CL8=;
-        b=pL0YxoQAQAiASYg1uhe8M9UcQi5QX7GBSBsYP9kuCS8/+dTbhArZKjU3FKo/9sdNu2
-         JYpZIZjvlqcqx9LE9au/AyCRe3y7IyOroVpTbKwZiy4vQcBes0MhjNFbOms83q9H6gUT
-         qCkTfomhR9m/Nthdl9uzwZCSdINzAvrkSrwQVn/t+lSx8OWmE7/luzL6TXosczzS8Ha8
-         cQ15bRc3q4gbJ9exKx/MwKeuvgwgIT9XXpc+52I/NhXN7iFMhHzVvBk0H8pVrGWpFScS
-         Sh3AOyBWKUbm8xK9Vn4Pdr7OX3Jb46JDPvVDVZ5xZp2FpJWcawEd+UE5poFvTQYnBUNE
-         H2YA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsAcM6rGL0rVc2Fchfb7nNhqj/GAJisfALFqurWsfCVNmXVl0b0tJFlp+uMGk2kKYaqsStSP0NpCMZlKA7@vger.kernel.org, AJvYcCXyzb9ZH6twrUHMMNmwu1l881KYquOCZpuAIqzNM7d7DP5wdrG9lorAfqSrI/b27bVRtRmb3w9N2JVqQ3+U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCheHMlzRMIgrY5eIzccP/1L5gtjzDktdJyTMr8KJl9IvKHGM2
-	11eNHbRyIRvcOfGLfWJVO72EzBpkWZPpy1E0XonJTsOVtAch5JNWjrhB276Z0edMhKw4K027Q9P
-	zjGHTZpTAaCIUuc6jyFvzSlmg848=
-X-Gm-Gg: ASbGncujT7pmQSSyhdQmyCAAQiBRRwHEco1Ag2yu+pQ7V3RxHXsMpGdBn/jZdiv6QBC
-	PKJsiFaczHXUhO4htUUkKJSZBe2byX74hznyXTXSTUObqWNoz509un2DL7+Vm18gx5IXZZa8nKQ
-	9brmk+f8z1zW+2yZuh8tql0RvV
-X-Google-Smtp-Source: AGHT+IH8kmO6We3wFONetMQCKiv24i6fWBwcHdiR+O3u1Fe8qu0kbN1q7zkh0YFqhbHmFn48xCDXX9FestFkdMNkzjU=
-X-Received: by 2002:a05:6402:5186:b0:5ec:c990:b578 with SMTP id
- 4fb4d7f45d1cf-5f0b3bc6eb1mr261159a12.19.1743707849176; Thu, 03 Apr 2025
- 12:17:29 -0700 (PDT)
+	s=arc-20240116; t=1743707901; c=relaxed/simple;
+	bh=6G55NMBSzBPke3/x+W4yLOHysx1XiBrKV3Gi+nsYFTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S7HGrhg13TDKBcTn9xpBw4HHP9JV/8eq+Bf45p8FmbByTvJsgZR3/eJ2cRhzrC1qrRIWPvUd/VP3dlSrh5y0K8uLe4TLkp9zjDuS0Nj+4pBuSiy8GN2XjvO8d/WhB663QdgeNhNut5XSE0zRJbAHP9eNd/AH74pNvMOzijIaz+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6k4O5gJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11C00C4CEE9;
+	Thu,  3 Apr 2025 19:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707901;
+	bh=6G55NMBSzBPke3/x+W4yLOHysx1XiBrKV3Gi+nsYFTA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g6k4O5gJ3XnPJZTfR0g/KKQAeg6ozKMtEjgNu9wFZBhcuw8BNf/AqqRjZJiz/qGiY
+	 C6gYy3TOLiKzKVkVTmgRMPEwuba1KXRdUaxRY54dbZclsO2dVZjt7hGEo9qfg4Y+OF
+	 x7ct3xXLnZ+Ji+1n9L9DF6zn/VmKSE+2icHrXAEe2hVVyNXIp0kGOCX5tCcRe+8ePE
+	 VusCikSJ6/XtAmQpLyd5ykc1kzXITfs0TZ8uX1RzjxDIc5RnPEtvCy5IrJT0TU4LQF
+	 po/5boGtfWyTdoPCpnSoxMduJF6ofE5QcCTZCVmSMl7mc4ToIforFgTHKu+RSU6wGa
+	 d3QJuk7cpcnBw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 01/23] drm: allow encoder mode_set even when connectors change for crtc
+Date: Thu,  3 Apr 2025 15:17:54 -0400
+Message-Id: <20250403191816.2681439-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322-vfs-mount-b08c842965f4@brauner> <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal> <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner> <196c53c26e8f3862567d72ed610da6323e3dba83.camel@HansenPartnership.com>
- <6pfbsqikuizxezhevr2ltp6lk6vqbbmgomwbgqfz256osjwky5@irmbenbudp2s> <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 3 Apr 2025 21:17:17 +0200
-X-Gm-Features: ATxdqUF2zQ0e3bF2DBKrGyKkJNg9jf0JTVYCRhBFeO2UlZcU_IpR7khItHLIALs
-Message-ID: <CAGudoHGOxs0V0VHxt5MBO0axvCK0ucByXpvzFiADOVbTvhv_yA@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs mount
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Christian Brauner <brauner@kernel.org>, Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.85
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 3, 2025 at 8:10=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 3 Apr 2025 at 10:21, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > I would argue it would be best if a language wizard came up with a way
-> > to *demand* explicit use of { } and fail compilation if not present.
->
-> I tried to think of some sane model for it, but there isn't any good synt=
-ax.
->
-> The only way to enforce it would be to also have a "end" marker, ie do
-> something like
->
->         scoped_guard(x) {
->                 ...
->         } end_scoped_guard;
->
-> and that you could more-or-less enforce by having
->
->     #define scoped_guard(..) ... real guard stuff .. \
->                 do {
->
->     #define end_scope } while (0)
->
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-Ye I was thinking about something like that would was thoroughly
-dissatisfied with the idea.
+[ Upstream commit 7e182cb4f5567f53417b762ec0d679f0b6f0039d ]
 
-Perhaps a tolerable fallback would be to rely on checkpatch after all,
-but have it detect missing { } instead of relying on indentation
-level?
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
+
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
+
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241211-abhinavk-modeset-fix-v3-1-0de4bf3e7c32@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 554d4468aa7c0..f3681970887cc 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1373,7 +1373,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
+ 
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
+ 
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
+-- 
+2.39.5
+
 
