@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-586894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D57A7A521
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8851A7A52D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D8D18970FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C638189A0F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDD124EF6D;
-	Thu,  3 Apr 2025 14:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F8124EF62;
+	Thu,  3 Apr 2025 14:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ka40iZjP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="hElxKqev"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5F24EA95
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690315; cv=none; b=Uq7U+luK2nr5JDambkbobWOnmjlg6NlQsoztj9J/OyC2ByBFNedV8Fu1YnFrmUiPlxYJPhnw5KPz9OwToSqriY2fMrvYS964rpwiGfOzqCTHVGjd0M23djCqMOxPlEWT/W9ZXNvWFRpEtdHRhwKyFBB7h5ZUJwYXf+mIdRtM1uo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690315; c=relaxed/simple;
-	bh=tkMdYu9t5824/EU4dyTb0cxwDhM/gxde1CbSplGldzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udacb6Q2U0N4kltAFGkgtLmTCG/AvI/AzQWtE37n0l2HV5sGGqGqB2/MzPmtM3Xx8cLZCVAWAdVvp0CdgSgvJ4jKFIq6y6DwlgVhHd77Qhkbqu6TbQu6Lh7+5dAsZ+9Z3Y9erN9WHHpGPifi4tux/rhdBSGmJB9FcRY04Op80vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ka40iZjP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908ADC4CEE3;
-	Thu,  3 Apr 2025 14:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690315;
-	bh=tkMdYu9t5824/EU4dyTb0cxwDhM/gxde1CbSplGldzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ka40iZjPw89KP7aEPQCTzPyRorfgRmK7zTLjMQrT4UuOS8V2Bbk/H20fNhAlXnUvt
-	 mOAyIGNrj/h0x0BxRGyLZ3CLoNKMQ4UKu2PcRBnC98hblDubLwHjV5NTv/ZiQ2xggF
-	 bydhXqc2xYMsTTG5PBELGVSAomByAJbFYT1KsFupzIsBPw0MJ8YybS0T2xAOb2uYwU
-	 LHnoy8zABqx9FxwcvkcCzb+aWKu4BWGaQuzCpzq3Z2lG5GToYbBTt41AAD8bOZfF50
-	 Xjg49Bl0RfFtF77JKdgvgirBQlNJL/qgQFCxudletSKhQ+MJ76sO5fJBVD2pnuUgf1
-	 SGTkEH3ZqJ1fg==
-Date: Thu, 3 Apr 2025 17:25:06 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>, Will Deacon <will@kernel.org>,
-	kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 3/3] mm: Implement for_each_valid_pfn() for
- CONFIG_SPARSEMEM
-Message-ID: <Z-6aQjOB_aU4CEAp@kernel.org>
-References: <Z-vn-sMtNfwyJ9VW@kernel.org>
- <20250402201841.3245371-1-dwmw2@infradead.org>
- <20250402201841.3245371-3-dwmw2@infradead.org>
- <Z-4phOInXZlxFwk9@kernel.org>
- <e465ba32fb34b31eddb18890587960671b73234f.camel@infradead.org>
- <380d9bff359150f67ca6e0468f99ee746c1abdea.camel@infradead.org>
- <Z-6XexJWecbxnrmK@kernel.org>
- <0d89238f3ad9444abfc905a79ff14388a61cf00d.camel@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36F72E3386
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743690465; cv=pass; b=BDrWbRvcwqeR4xw5N9SqvNY+H9oELLtyb4iuUFEsjYXvunNsRRu1S12WDAsEfRzxkGGexVYTuVer4Cn9ioGovQiTmhKMH6env2tRK/WKj4SmieGO9JvFxqKnthNTEYSzqWOD8bdntqJJxlFl4Sxu6ab7zYdfrhqcGvYAKRyFsUI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743690465; c=relaxed/simple;
+	bh=ZmDPtog8qHxaaMJj3rw/TV2BLW+r2M2AjxkMTRmax3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tZfg5ZfTF6PL+VKlUbSTQDk23XiICy/9Yr2xKFjhM7L1cMJlz8i0hS3ChUTxIwBdUuRLhxChiDMTHrDWR0G0yH/wBqnG51Su71rcfAeI3qPU3CRCOLRSORjc+2ozOP4gyoej7GBHWDP6TwTRcRc6p/j2X8T49rruYepSC6TAM00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=hElxKqev; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1743690443; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K3Nb25MxH7+0OhMRLOA9J8O+lKajw4+NwyzfBzURx/xSAlKkILvGWBPFklyrDj2FBW492riINvSHw5I8gpeaK1+lS6ZchP5gPRkUD10udY84rk+fxgA606gtbEt28zR+AVLTVj3kJ/W1svCdzeXCgMIhQU+RgqiMYqVQr4pti9g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1743690443; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oirO8kcN/r9uSBJ+v9FYpxLcssDHYsJBhsQlC7HHKrc=; 
+	b=EK5s6x9g9Dvc7ua2PLaP4NpXKj7AZdaGosdqE3MCurx3GNIBFsirfGKDOAcPDEkKzc24QDFRqJcK8E+NzW0E7lcg/+mvyPyJjx2MvTKVu5YYXth8bdMBmIx/SRYoP2BYjiOgJGafRn/IlcZl6357hC3Q7WV7nHKrI/mKdWx6SaA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1743690443;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=oirO8kcN/r9uSBJ+v9FYpxLcssDHYsJBhsQlC7HHKrc=;
+	b=hElxKqevrUCM0CvLsy7NDdP7+0ZbxCIQFqO7uT1VPB+nX9nw5W1mfGzsvsW//TLo
+	u0IctGTqk1X2xHGBTeOvoDO/3Y91EzocXrbSgThWkkpgpuMd0/giHK2ERM05Kc8EZ2n
+	bl9XFfmRZ3Qeg5PvdpS4PnOdQ4De5jBtVy/RVL5U=
+Received: by mx.zohomail.com with SMTPS id 1743690441799662.414689971647;
+	Thu, 3 Apr 2025 07:27:21 -0700 (PDT)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v1] drm/shmem-helper: Fix unsetting shmem vaddr while vmap refcount > 0
+Date: Thu,  3 Apr 2025 17:26:33 +0300
+Message-ID: <20250403142633.484660-1-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d89238f3ad9444abfc905a79ff14388a61cf00d.camel@infradead.org>
+X-ZohoMailClient: External
 
-On Thu, Apr 03, 2025 at 03:17:44PM +0100, David Woodhouse wrote:
-> On Thu, 2025-04-03 at 17:13 +0300, Mike Rapoport wrote:
-> >  
-> > > static inline bool first_valid_pfn(unsigned long *p_pfn)
-> > > {
-> > >  	unsigned long pfn = *p_pfn;
-> > >  	unsigned long nr = pfn_to_section_nr(pfn);
-> > >  	struct mem_section *ms;
-> > > 
-> > >  	rcu_read_lock_sched();
-> > > 
-> > >  	while (nr <= __highest_present_section_nr) {
-> > >  		ms = __pfn_to_section(pfn);
-> > 
-> > Maybe move the declaration here:
-> > 
-> >  	struct mem_section *ms = __pfn_to_section(pfn);
-> 
-> Ack.
-> 
-> https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/for_each_valid_pfn
+We switched to use refcount_t for vmaps and missed to change the vunmap
+code to properly unset the vmap pointer, which is now cleared while vmap's
+refcount > 0. Clear the cached vmap pointer only when refcounting drops to
+zero to fix the bug.
 
-Fine with me, keep the RB tag :)
+Fixes: e1fc39a92332 ("drm/shmem-helper: Use refcount_t for vmap_use_count")
+Reported-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Closes: https://lore.kernel.org/dri-devel/20250403105053.788b0f6e@collabora.com/T/#m3dca6d81bedc8d6146a56b82694624fbc6fa4c96
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index 2d924d547a51..aa43265f4f4f 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -415,11 +415,11 @@ void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+ 
+ 		if (refcount_dec_and_test(&shmem->vmap_use_count)) {
+ 			vunmap(shmem->vaddr);
++			shmem->vaddr = NULL;
++
+ 			drm_gem_shmem_unpin_locked(shmem);
+ 		}
+ 	}
+-
+-	shmem->vaddr = NULL;
+ }
+ EXPORT_SYMBOL_GPL(drm_gem_shmem_vunmap_locked);
+ 
 -- 
-Sincerely yours,
-Mike.
+2.49.0
+
 
