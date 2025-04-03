@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-587247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C13A7A99C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DFBA7A9A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80051890870
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:39:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 727487A6819
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C275325334B;
-	Thu,  3 Apr 2025 18:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27301253B50;
+	Thu,  3 Apr 2025 18:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iGS4weRP"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZ1cxQEE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611E51DA5F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 18:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC2D253334;
+	Thu,  3 Apr 2025 18:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743705571; cv=none; b=U01thMP3Aa9n0zji7j9wlF+7Cb5KZdiWFzMxgEzn17VtCtwi2dJ6gg39ifLpQe76Dz7MzswHkHqQvMFKA1ct/65ik5y45TgIIELqLbPupRNPaox6kR/P7kBHE+/24QNHtDhCc4wg4zDPlK4Hr6n0CAcLJbPr8ESi995ayF7G0tk=
+	t=1743705648; cv=none; b=ny66BZRxZMSOszD2T9nh8nQbw6MZt2SAKsBW/iJYRPjRM8iNkEHVif1P0UFqvHLvt4ixSJk3txyZ6RS+3LaUxXpdnxy86eSUaP3fmj4Yw9eDVQqdaLKJ60DsHZkSdaaOO6PB3LuQ3B/sbC1v1AFaI6b2/diCI3Z/m9owawDhO8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743705571; c=relaxed/simple;
-	bh=MI0PfKYpQBkW3noUT5Lwg4IeL13JXEDg3xWq9pSaoG8=;
+	s=arc-20240116; t=1743705648; c=relaxed/simple;
+	bh=+67JXDQx5zChjcnw+v0CCW6m/RXyD81jjti8pA7/2Gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMzB68L0REg7BWyHdrxTIxQ00WN1PH80rdld3z+JwDOY27PmLqjs/IxsMiOw1UaUuduyCBt0+uewhUqwU4V9qPS3hScWN1H3/9j5SMZJaeeo5jPGYCQ2kkghj6oxIYg1wlDd3x1hL0T9Amn3R+n5yhp0YzvTEGo3tOT+0lUlW4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iGS4weRP; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-736b98acaadso1305096b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 11:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743705569; x=1744310369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=09ptcXZfcBhfJGnGO0uRHBsRknDiljVX3LNPLnOx7vU=;
-        b=iGS4weRPMLJMa+0G6Dxucj5p7Lsbodmkubc42VKmuFXeIHazvq8M2WGTxtaFG4ABWk
-         NvqQgzzlrTr1E0ORUJ1wqM6HuWAXD4AjE8gCv76WmCMqvXK5OYuRjC61gtzrEyjZAQIb
-         7CY9/znW0h1ovE+WQCGolm79IyE83XD44spvEm4lLkpiRosLE2heuIqsJlrygOCnKsUY
-         96OCQva14LJBh/nS3ecRi5SFZ7mbKpHWum6A0tRuCwprKMBNQ6j3re7s8TRxMZzJSKbl
-         qGWeppvyiMoHITiHKu/fsPOYrECAeLNXVS9rOPRpwtl2y1+nVfJV2ois76dM6wNE89Ir
-         PINA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743705569; x=1744310369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=09ptcXZfcBhfJGnGO0uRHBsRknDiljVX3LNPLnOx7vU=;
-        b=FTABbdwzecxxsEmti1Q7nOfWOCmq2CxGAPhSDEUhTjay/tGJGsjU5QQ86uspy8ihEU
-         wz9UVllwG4A/j630HFj84wwR5LITdYM0dI1+GyV9OPmZXsJFRyK+dT64eImt9IoPL+HW
-         J7Jbo+MNg6Eqn1OFgQ1yl5xMbTZ0g6xMnBBXVwmCIeHP/P3mOeoy6J0+xnrPST0dOM42
-         kgckrJi4z3istN1m/Sk3oSE3UZnD4dB3P3X/0JN6Aml9dNhWrA/pJW5InsJmxoJctbdL
-         r/lPxbglF/RQcyQY551b0YXHpRx8Vh2dT6n4R85YWEA7cYKm/k+sddKLF3NdSlcQDJ7z
-         RaLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3btyVbRlVO5xTPfyKuqHjEaJ3wm8IyaYwyTHW6kFPpHMKjbBeGStq7LPq88P48JK/HeE1/PbhgmEBATY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrfp8HDhNX6QaXy7wqyFWcHWjLtn3v9CV12Ou4IvgouSVkL1+o
-	kKkyQAC7qVwL/FU6ogLvqvER4awKDjA5eoYvIDDLWR/oFvAjt4/aGRgEhc4Xjw==
-X-Gm-Gg: ASbGncvr45Myb55YTTauc5Z5MZ5cQkEhlwq4Ck8foEk5ne7ubnKEmffPp01yzPf7wCT
-	sZFxfOLsbdMthiptRkgN7oeOcGmP07vfL/6swvYJDgRw9pFocCloLXkQGm00Lkz3q/vgDoIxXWp
-	dYim7ioO+7WATls9pBuxzveJBHPWatpvuAcVNrCx/tfDrCM6Jcdt4baUS14tVF6WMFPRSUGhjhJ
-	ZY8ggLvYe1580O9/ujSl0P9q61rXzue1LdTp7HITNW30l9s/W0fge0BuNYRh+jfqLnCKfAuXEEw
-	L2dPzFIemOZ1yo86kSuwGgWEYKT+SHIQN7hYeTaOhE4EmovuXRq6b1SO2efLk4HT99PaNN441gO
-	KoDpI/Y7j9WHMGnZFjVYPLZZ3fQ==
-X-Google-Smtp-Source: AGHT+IHKo1uB12F2qz0Bx8hQv5MdUl4S9SkNNYXXluY/VdcwwTA2jfjTiNcrEuMi7fkWuEP6PC+AGA==
-X-Received: by 2002:a05:6a21:338e:b0:1ee:e655:97ea with SMTP id adf61e73a8af0-2010474336emr652313637.41.1743705568300;
-        Thu, 03 Apr 2025 11:39:28 -0700 (PDT)
-Received: from google.com (198.103.247.35.bc.googleusercontent.com. [35.247.103.198])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af9bc3fd70csm1548787a12.56.2025.04.03.11.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 11:39:27 -0700 (PDT)
-Date: Thu, 3 Apr 2025 11:39:23 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Will Deacon <willdeacon@google.com>
-Subject: Re: [PATCH v1 4/6] arm64: dts: exynos: gs101: Add 'local-timer-stop'
- to cpuidle nodes
-Message-ID: <Z-7V27GKU85vba0B@google.com>
-References: <20250331230034.806124-1-willmcvicker@google.com>
- <CGME20250331230151epcas2p486a7c6d7153737f4168cfef74249742f@epcas2p4.samsung.com>
- <20250331230034.806124-5-willmcvicker@google.com>
- <Z+y4zxfifkQqLxKF@perf>
- <Z-2zQ-PcvxFTBc6M@google.com>
- <Z+4Hve9pQoLeh9sZ@perf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVAK8P7jRUmAUW5ntzwug5q1qu0BTteM63iH7KPOG0+yJYOA4WbbfesmqZ+C6aSTvRiNDjsm2GAshwKedEQ7VYfyWtQ56yLU+VsQf6XGWuccq3WGkU+EtNkFIMlr1y2PavJhTTk31tzQlVbvErTipk11ScVSSlB19Z2jIhZaj98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZ1cxQEE; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743705647; x=1775241647;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+67JXDQx5zChjcnw+v0CCW6m/RXyD81jjti8pA7/2Gs=;
+  b=HZ1cxQEE9rs7++vCZFtAuNxaFSDCClfvBTuZKsQ/DKqKkQUL5X9zFkPv
+   ZQcsv1D/VsZ0sR60dA2n6FoZhC2DX/TYZ7Bwtjp9aFnpWddz3ay9AekBh
+   hs0WUIu2pm5Md1lfygKxu5cNg+MOPK8BX1V/Co5uwOO9PHxe9+Ztq9qWr
+   HvCcRgyPRafo1K0OhyWjBgcR2iPVsIoDHpXWoQXXwPbQo6SHMEi2P4kpg
+   C0W6yhiBJMQy93NqWQxVpEDtQiNHA1dte5Kzo+fLKhMxo8v5Be5rLl2n7
+   m5IjNLpLipJACJzG84+TAfqFGY7FyesTrxPoot6HUAjIB8QEbBzxEa9Tt
+   w==;
+X-CSE-ConnectionGUID: xWp9VgJQSWyNiNQYHmxZPg==
+X-CSE-MsgGUID: XsQtsyDSRNmLnDJ7IAFVeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="56499559"
+X-IronPort-AV: E=Sophos;i="6.15,186,1739865600"; 
+   d="scan'208";a="56499559"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 11:40:46 -0700
+X-CSE-ConnectionGUID: TVhG7cbDTtWeBxtqRj9yjw==
+X-CSE-MsgGUID: grr0MWSBT7SIPiKQr34ZDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,186,1739865600"; 
+   d="scan'208";a="131215334"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 11:40:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u0PUQ-00000008tz0-2eZc;
+	Thu, 03 Apr 2025 21:40:34 +0300
+Date: Thu, 3 Apr 2025 21:40:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com, willy@infradead.org,
+	jack@suse.cz, rafael@kernel.org, len.brown@intel.com, pavel@ucw.cz,
+	ming.li@zohomail.com, nathan.fontenot@amd.com,
+	Smita.KoralahalliChannabasappa@amd.com,
+	huang.ying.caritas@gmail.com, yaoxt.fnst@fujitsu.com,
+	peterz@infradead.org, gregkh@linuxfoundation.org,
+	quic_jjohnson@quicinc.com, ilpo.jarvinen@linux.intel.com,
+	bhelgaas@google.com, mika.westerberg@linux.intel.com,
+	akpm@linux-foundation.org, gourry@gourry.net,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-pm@vger.kernel.org, rrichter@amd.com,
+	benjamin.cheatham@amd.com, PradeepVineshReddy.Kodamati@amd.com,
+	lizhijian@fujitsu.com
+Subject: Re: [PATCH v3 1/4] kernel/resource: Provide mem region release for
+ SOFT RESERVES
+Message-ID: <Z-7WImoc5Dg3Xtyq@smile.fi.intel.com>
+References: <20250403183315.286710-1-terry.bowman@amd.com>
+ <20250403183315.286710-2-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,101 +93,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z+4Hve9pQoLeh9sZ@perf>
+In-Reply-To: <20250403183315.286710-2-terry.bowman@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 04/03/2025, Youngmin Nam wrote:
-> On Wed, Apr 02, 2025 at 02:59:31PM -0700, William McVicker wrote:
-> > Hi Youngmin,
-> > 
-> > On 04/02/2025, Youngmin Nam wrote:
-> > > On Mon, Mar 31, 2025 at 04:00:26PM -0700, Will McVicker wrote:
-> > > > From: Will Deacon <willdeacon@google.com>
-> > > > 
-> > > > In preparation for switching to the architected timer as the primary
-> > > > clockevents device, mark the cpuidle nodes with the 'local-timer-stop'
-> > > > property to indicate that an alternative clockevents device must be
-> > > > used for waking up from the "c2" idle state.
-> > > > 
-> > > > Signed-off-by: Will Deacon <willdeacon@google.com>
-> > > > [Original commit from https://android.googlesource.com/kernel/gs/+/a896fd98638047989513d05556faebd28a62b27c]
-> > > > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > > > ---
-> > > >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > > index 3de3a758f113..fd0badf24e6f 100644
-> > > > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > > @@ -155,6 +155,7 @@ ananke_cpu_sleep: cpu-ananke-sleep {
-> > > >  				idle-state-name = "c2";
-> > > >  				compatible = "arm,idle-state";
-> > > >  				arm,psci-suspend-param = <0x0010000>;
-> > > > +				local-timer-stop;
-> > > >  				entry-latency-us = <70>;
-> > > >  				exit-latency-us = <160>;
-> > > >  				min-residency-us = <2000>;
-> > > > @@ -164,6 +165,7 @@ enyo_cpu_sleep: cpu-enyo-sleep {
-> > > >  				idle-state-name = "c2";
-> > > >  				compatible = "arm,idle-state";
-> > > >  				arm,psci-suspend-param = <0x0010000>;
-> > > > +				local-timer-stop;
-> > > >  				entry-latency-us = <150>;
-> > > >  				exit-latency-us = <190>;
-> > > >  				min-residency-us = <2500>;
-> > > > @@ -173,6 +175,7 @@ hera_cpu_sleep: cpu-hera-sleep {
-> > > >  				idle-state-name = "c2";
-> > > >  				compatible = "arm,idle-state";
-> > > >  				arm,psci-suspend-param = <0x0010000>;
-> > > > +				local-timer-stop;
-> > > >  				entry-latency-us = <235>;
-> > > >  				exit-latency-us = <220>;
-> > > >  				min-residency-us = <3500>;
-> > > > -- 
-> > > > 2.49.0.472.ge94155a9ec-goog
-> > > > 
-> > > Hi Will.
-> > > 
-> > > Are you using this property in production?
-> > > If so, have you noticed any performance improvements?
-> > 
-> > On Pixel 6, I have only recently switched to using the arch_timer as the
-> > default clocksource. I haven't noticed any major perf improvements to the main
-> > benchmarks, but also haven't seen any regressions. Based on the ChromeOS perf
-> > analysis in [1,2], there was a significant perf difference found.
-> > 
-> > [1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
-> > [2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
-> > 
-> > If it helps, I found that Pixel 8 and 9 devices (didn't check Pixel 7)
-> > are already using the arch_timer with this 'local-timer-stop' as the default
-> > clocksource in the production kernel.
-> > 
-> > Thanks,
-> > Will
-> > 
-> > [...]
-> > 
+On Thu, Apr 03, 2025 at 01:33:12PM -0500, Terry Bowman wrote:
+> From: Nathan Fontenot <nathan.fontenot@amd.com>
 > 
-> Hi Will,
+> Add a release_Sam_region_adjustable() interface to allow for
+> removing SOFT RESERVE memory resources. This extracts out the code
+> to remove a mem region into a common __release_mem_region_adjustable()
+> routine, this routine takes additional parameters of an IORES
+> descriptor type to add checks for IORES_DESC_* and a flag to check
+> for IORESOURCE_BUSY to control it's behavior.
 > 
-> Thanks for sharing the status of Pixel devices.
-> 
-> I agree that using the arch_timer as a clock source device brings significant benefits.
-> The links you shared are definitely related to that.
-> 
-> However, I would also like to know whether arch_timer is used as a clock event device in Pixel production.
+> The existing release_mem_region_adjustable() is a front end to the
+> common code and a new release_srmem_region_adjustable() is added to
+> release SOFT RESERVE resources.
 
-For Pixel 8 and 9, the arch_timer is used as both the clocksource and
-clockevent device which is what my series is proposing for Pixel 6 upstream.
-The MCT device is solely being used as the alternative clockevents device for
-waking up from the "c2" state. The reason for using the arch_timer as the
-clockevents device is because we were seeing hrtimer stability issues where
-a 10ms interval timer would delay about 300ms-1s before starting the callback.
-This resulted in several media-related latency issues.
+...
 
-Thanks,
-Will
+> +void release_mem_region_adjustable(resource_size_t start, resource_size_t size)
+> +{
+> +	return __release_mem_region_adjustable(start, size,
 
-[...]
+You have still room on the previous line for the parameters.
+
+> +					       true, IORES_DESC_NONE);
+
+Return on void?! Interesting... What do you want to do here?
+
+> +}
+> +EXPORT_SYMBOL(release_mem_region_adjustable);
+> +#endif
+> +
+> +#ifdef CONFIG_CXL_REGION
+> +void release_srmem_region_adjustable(resource_size_t start,
+> +				     resource_size_t size)
+
+This can be put on a single line.
+
+> +{
+> +	return __release_mem_region_adjustable(start, size,
+> +					       false, IORES_DESC_SOFT_RESERVED);
+
+Same comments as per above function.
+
+> +}
+> +EXPORT_SYMBOL(release_srmem_region_adjustable);
+> +#endif
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
