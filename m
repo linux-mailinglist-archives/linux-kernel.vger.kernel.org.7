@@ -1,105 +1,78 @@
-Return-Path: <linux-kernel+bounces-587724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1876A7AFB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7FCA7AFBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBDB5176728
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B5D3A4E3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D124266568;
-	Thu,  3 Apr 2025 19:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD77D264FBA;
+	Thu,  3 Apr 2025 19:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abD0OX1/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArkuhQYp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0963253F24;
-	Thu,  3 Apr 2025 19:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6E4264FA5
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743708823; cv=none; b=OppHiNZ6qdIBOCizW+VxhNhTfL2G4xiNsdWYxn5WQkrDLkzboKoyp7xzWwlEm2tUZALIy1BLhef2odTGWVDksNQ9DQntuT78z0c5ZbZOfz0MZaK0vhBQC5yeAlO0GpvA0p64UkA5kND/4+8GwBW/8ue1xmerxcITUIcyH2BElMs=
+	t=1743708797; cv=none; b=ljmGyYrSc68KXRudxvi6YkHBcccyGbCq/RgDDg5Kzf67S42faIqBMS+jAnqIl0uphVXXUuTrSekijZgrswUyqED5ksGE/UVe3pOQab8Cr/hhCdiiDPUTYjysUWnh7EWD0ZG6uwoU9gMevmosWpk9yK+CZrJkyPJdnKcq4oiy+QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743708823; c=relaxed/simple;
-	bh=wAXRn9yzJMIqnspk40RHmhT1W8V47pEbNLicMxRvDzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DywK536fFMpk+Xlb6iPvxYByW/DYC8Aepkf0jamDA+XsLXmEOXWEtCoy2mMiaXpv2h66qW/E2M+TEdi/UZjY6X3ZnWI+YYsvg2roZhqAUx3vvKw+Gf+hmGZbN3DZa826QKBq9i096BltQRpSqP4K+wzNJ1pV3JpxRie9mWMrCGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abD0OX1/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099C8C4CEE3;
-	Thu,  3 Apr 2025 19:33:39 +0000 (UTC)
+	s=arc-20240116; t=1743708797; c=relaxed/simple;
+	bh=Z+NPFKyR/BWMNNcuzNft9Hlawsjf1oqc2930OXUKl8Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=QunuLpzZF69sCkuSYTSIrIqu+Ea3Mafc5SBZFMTdMreYWvoo66dbwOxrKD+2+TmOfb+HVSYrUoAtQjESglj7OLapMk+PbOU3uYXHdOg57cPEFqcSV7nN7mpyoDhbXeZePaPqN6/VKZahLY7WkICX4Z//qIavsuAuf6Z2siAsV60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArkuhQYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A421C4CEE3;
+	Thu,  3 Apr 2025 19:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743708823;
-	bh=wAXRn9yzJMIqnspk40RHmhT1W8V47pEbNLicMxRvDzU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=abD0OX1/JRVXeua20p28B8YfKIiRqsH7xmnkGPA4IGi5Ck+LhawMGpXU8yd2RlsmI
-	 +EwYQWBqjsucQi+KxBoaQepInKmhW71O+2jsX1VMruwVNxHoa1n/T5uu4C8qGb1EQ2
-	 JsWQYc92qX9S5rQM2MVDEYjfsdXI3NQCnOOpaDAt4PZsmLouKZrbjV5FJjiy8nc5TI
-	 /gqOnx3O37vCCyjr+mrlNfEkOieUcsGlKBPdgiZPnMBdcJFfTX8Mv9Jvxfc9Ktb6LJ
-	 QdDA5/uvlcdjUoPyhWGP0N8WatJsQuBlWbr/kqna6aLkqVTmsL/j2RNRhTDHtPHP2r
-	 2/kqlr9S+b0Dw==
-Date: Thu, 3 Apr 2025 21:33:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
-	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 1/4] fs: add owner of freeze/thaw
-Message-ID: <20250403-behielt-erhaben-c228a6958d11@brauner>
-References: <20250402-work-freeze-v2-0-6719a97b52ac@kernel.org>
- <20250402-work-freeze-v2-1-6719a97b52ac@kernel.org>
- <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
+	s=k20201202; t=1743708797;
+	bh=Z+NPFKyR/BWMNNcuzNft9Hlawsjf1oqc2930OXUKl8Q=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ArkuhQYpCO8im1IvYIzZ0Vlnk/Au5w3UoF8D5YeLh96VcXyWUu4geTHRY8Dlt98VI
+	 YvrAy9Wi1/Evms802FGWgv/xxEHf5J0iam62nVjnQZsBC86troOS5ylrHPktdsOAKY
+	 ISLaAJPGJduNYzoMzKLZBjeFk1VpK1pLgHmHpyMbo3GsLKK0Vtv07nXfCY+8fNlEoP
+	 oPOEWEETcC/gNT81vzlNFkiIi0STItzlgIe1fLTez3g607g4sbtrCyi49DhL4PnPWz
+	 gcF3a+2QbDVDTK4J59mU9rDmVeM/nXBCrGBVCndCMBCY7V41SnTqnhiMnl+WjpPDXF
+	 tuxBaH1x7drOg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BEE380664C;
+	Thu,  3 Apr 2025 19:33:55 +0000 (UTC)
+Subject: Re: [GIT PULL] arm64 fixes for 6.15-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z-5c6hCqQb3s5GxI@arm.com>
+References: <Z-5c6hCqQb3s5GxI@arm.com>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <Z-5c6hCqQb3s5GxI@arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+X-PR-Tracked-Commit-Id: c28f31deeacda307acfee2f18c0ad904e5123aac
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: aa18761a447fac41287a5c3c41f26b9380bc72b7
+Message-Id: <174370883384.2657822.3324006319698061766.pr-tracker-bot@kernel.org>
+Date: Thu, 03 Apr 2025 19:33:53 +0000
+To: Catalin Marinas <cmarinas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
 
-On Thu, Apr 03, 2025 at 04:56:57PM +0200, Jan Kara wrote:
-> On Wed 02-04-25 16:07:31, Christian Brauner wrote:
-> > For some kernel subsystems it is paramount that they are guaranteed that
-> > they are the owner of the freeze to avoid any risk of deadlocks. This is
-> > the case for the power subsystem. Enable it to recognize whether it did
-> > actually freeze the filesystem.
-> > 
-> > If userspace has 10 filesystems and suspend/hibernate manges to freeze 5
-> > and then fails on the 6th for whatever odd reason (current or future)
-> > then power needs to undo the freeze of the first 5 filesystems. It can't
-> > just walk the list again because while it's unlikely that a new
-> > filesystem got added in the meantime it still cannot tell which
-> > filesystems the power subsystem actually managed to get a freeze
-> > reference count on that needs to be dropped during thaw.
-> > 
-> > There's various ways out of this ugliness. For example, record the
-> > filesystems the power subsystem managed to freeze on a temporary list in
-> > the callbacks and then walk that list backwards during thaw to undo the
-> > freezing or make sure that the power subsystem just actually exclusively
-> > freezes things it can freeze and marking such filesystems as being owned
-> > by power for the duration of the suspend or resume cycle. I opted for
-> > the latter as that seemed the clean thing to do even if it means more
-> > code changes.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> I have realized a slight catch with this approach that if hibernation races
-> with filesystem freezing (e.g. DM reconfiguration), then hibernation need
-> not freeze a filesystem because it's already frozen but userspace may thaw
-> the filesystem before hibernation actually happens (relatively harmless).
-> If the race happens the other way around, DM reconfiguration may
-> unexpectedly fail with EBUSY (rather unexpected). So somehow tracking which
-> fs was frozen by suspend while properly nesting with other freeze users may
-> be actually a better approach (maybe just a sb flag even though it's
-> somewhat hacky?).
+The pull request you sent on Thu, 3 Apr 2025 11:03:22 +0100:
 
-The approach that I originally had was to add FREEZE_POWER which adds a
-simple boolean into the sb_writers instead of a holder and then this
-simply nests with the rest. I'll try to post that diff tomorrow.
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/aa18761a447fac41287a5c3c41f26b9380bc72b7
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
