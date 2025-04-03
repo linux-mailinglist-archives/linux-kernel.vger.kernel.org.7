@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-587499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC282A7AD4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EA2A7AD5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64D0C7A4CAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:00:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 041337A4CF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B60328BF4A;
-	Thu,  3 Apr 2025 19:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5996228EA6E;
+	Thu,  3 Apr 2025 19:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qau9bcZR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlgCDi5s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E41254AE3;
-	Thu,  3 Apr 2025 19:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE9928EA54;
+	Thu,  3 Apr 2025 19:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707455; cv=none; b=UxaIoLXw3UMjQBr4N+6K16cB3z8gNc6bs7zI7n7hbO4zMOrZB6oxI2KlcwlQFoGi0FioYKrzMsCXWRyzeMEw0iqa7p3t5cWy1lina9nAvM2mqRU3hK2J1lix4tpzpRVE5wxGANBzbt9L5hZ5hdkVb2KEkPtUDOfD9gUZURTn67s=
+	t=1743707566; cv=none; b=l7gKEtFPpWUshsnasa7wf8SGOQg9D8/koiKNlmpDPaeb/9clE3+/wDZssbnIVfimxIJJ8LpnrrN9HrCVdC6Fnza2ToBbK4/kzPsGlZ53Tin0OYourNSZOR9FZ5bGWSQbuUqG7sdEY1tV3zcF89kgHsnSbTG7plhCyTLEPBq1ukw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707455; c=relaxed/simple;
-	bh=f5YKTnamBjEsR/fBbDUCvgiVZj2WSeGqvwF5XaWCWx4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XQAG18oAH6NB/PNPcqH05GUj6Mxh8Qo9q0jCruWpCOLMJByzVbLSD55tCupnfureS0xAILjcKXkBc8hyfLD2fzeEhxUtNim8dwBcUXgQdk2w7RW2C7ITvnV4AM810TLsIcjJ68XpIHzvbKoqQEvycHEpt/BxHS82kcC0rxGsnao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qau9bcZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C6FCC4CEEB;
-	Thu,  3 Apr 2025 19:10:54 +0000 (UTC)
+	s=arc-20240116; t=1743707566; c=relaxed/simple;
+	bh=ti7BnFPRNxZsXgYT542e+xpuaGAeILN68OLZFikaWow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuJ7Nwi55rrSHMnur4JDASEU+aYNDbKEHUhDYNFUSWhQznlGZk7d5DZ5fo7YaTEF9rd57heoV/4eFRrKh2f9Cx9WeMIria/n697mhhYk0K85SUs5lfP/CPm2CRsZ9FSgXqaaCOQeeklZuqvQgdOjl0w6ZgzJe3eABCeDiJIFOYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlgCDi5s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3C9C4CEE3;
+	Thu,  3 Apr 2025 19:12:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707455;
-	bh=f5YKTnamBjEsR/fBbDUCvgiVZj2WSeGqvwF5XaWCWx4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qau9bcZR8BsCaxCAoLshbVEAr6ZmV1MvLbbodiDPw5MYndu/By6Zso/38roLiZP1B
-	 z7nlWiJQ0g4EPMZQMTfzCOxII2vixYzGlCUkylVoH3MW/sL/q/F+Y82sMNyxCU5Wb2
-	 DuMOTDGVH+Y57Eo8QsADAkCQMNBTkNWqkhusDDALQjhb8ujO0ZJ1eTPKSeBIh6nDhi
-	 bwhYTpLZDiEkIqh33xiOVgL5mhD4CP1D3S/5EiravAB1Jy7KfZVLeBjhE54ZgcTaQ1
-	 4S87mjE/Zg94iIOa9FW68VpwnCsadsNpOFjRoZJFuf19p5IxHKQhjzAYbq8avqyw/C
-	 YlF7vIpLn7XTA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Daniel Kral <d.kral@proxmox.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	dlemoal@kernel.org,
-	linux-ide@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 07/14] ahci: add PCI ID for Marvell 88SE9215 SATA Controller
-Date: Thu,  3 Apr 2025 15:10:29 -0400
-Message-Id: <20250403191036.2678799-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403191036.2678799-1-sashal@kernel.org>
-References: <20250403191036.2678799-1-sashal@kernel.org>
+	s=k20201202; t=1743707566;
+	bh=ti7BnFPRNxZsXgYT542e+xpuaGAeILN68OLZFikaWow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WlgCDi5sjxy5cssmx2bWJiubLmFGbFQMqDTYkizHNxGUJR2jr6DZGqKeqUQ9BWM76
+	 7pp5KS/oktb7tp879Teyy+sklLOyVdzNZ/tlpVU8CoUcu7IxDuF968QRHEGxPTpoF6
+	 c1LjANMobPQSLVbs7CE4Ol4VMeKIfek1MD7uy0TODFQ1RBJw1lXDUH1cLXC7LejF/d
+	 ElIItSylmAc881BhB8AkhG+YXDQ4PZyHP0TB8LV0f6BTtyBcnt0aq9nvIpG+QP0mzC
+	 4uEhTGu6N5VfClttHIYslj7K2nGQGCRB6EGpUxQTSojJf1SAchg9f1SvY7KFcpgKrk
+	 x07NsG1x7FNqw==
+Date: Thu, 3 Apr 2025 22:12:41 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: "Annapurve, Vishal" <vannapurve@google.com>,
+	"Hansen, Dave" <dave.hansen@intel.com>,
+	"linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
+	"Cai, Chong" <chongc@google.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>,
+	"dionnaglaze@google.com" <dionnaglaze@google.com>,
+	"bondarn@google.com" <bondarn@google.com>,
+	"Raynor, Scott" <scott.raynor@intel.com>
+Subject: Re: [PATCH v2 2/2] x86/sgx: Implement EUPDATESVN and
+ opportunistically call it during first EPC page alloc
+Message-ID: <Z-7dqQCiu5fWZ9a9@kernel.org>
+References: <20250328125859.73803-1-elena.reshetova@intel.com>
+ <20250328125859.73803-3-elena.reshetova@intel.com>
+ <Z-bhczXA6aHdCYHq@kernel.org>
+ <Z-blOQ94ymUsDwPn@kernel.org>
+ <DM8PR11MB5750C88DFC518EB77B0D613FE7AD2@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <Z-rU_JXWn0vCdBr_@kernel.org>
+ <DM8PR11MB5750A46718F899A43C52A984E7AC2@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <Z-v4WfcLhmXbYvaa@kernel.org>
+ <DM8PR11MB575087BDAFA223EDCE9EC69EE7AF2@DM8PR11MB5750.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.291
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR11MB575087BDAFA223EDCE9EC69EE7AF2@DM8PR11MB5750.namprd11.prod.outlook.com>
 
-From: Daniel Kral <d.kral@proxmox.com>
+On Wed, Apr 02, 2025 at 01:11:25PM +0000, Reshetova, Elena wrote:
+> > > current SGX kernel code does not handle such errors in any other way
+> > > than notifying that operation failed for other ENCLS leaves. So, I don't
+> > > see why ENCLS[EUPDATESVN] should be different from existing behaviour?
+> > 
+> > While not disagreeing fully (it depends on call site), in some
+> > situations it is more difficult to take more preventive actions.
+> > 
+> > This is a situation where we know that there are *zero* EPC pages in
+> > traffic so it is relatively easy to stop the madness, isn't it?
+> > 
+> > I guess the best action would be make sgx_alloc_epc_page() return
+> > consistently -ENOMEM, if the unexpected happens.
+> 
+> But this would be very misleading imo. We do have memory, even page
+> allocation might function as normal in EPC, the only thing that is broken
+> can be EUPDATESVN functionality. Returning -ENOMEM in this case seems
+> wrong.
 
-[ Upstream commit 885251dc35767b1c992f6909532ca366c830814a ]
+This makes it not misleading at all:
 
-Add support for Marvell Technology Group Ltd. 88SE9215 SATA 6 Gb/s
-controller, which is e.g. used in the DAWICONTROL DC-614e RAID bus
-controller and was not automatically recognized before.
+	pr_err("EUPDATESVN: unknown error %d\n", ret);
 
-Tested with a DAWICONTROL DC-614e RAID bus controller.
+Since hardware should never return this, it indicates a kernel bug.
 
-Signed-off-by: Daniel Kral <d.kral@proxmox.com>
-Link: https://lore.kernel.org/r/20250304092030.37108-1-d.kral@proxmox.com
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/ata/ahci.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index 2d2a070c1efcb..3c8fa08f5d970 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -558,6 +558,8 @@ static const struct pci_device_id ahci_pci_tbl[] = {
- 	  .driver_data = board_ahci_yes_fbs },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x91a3),
- 	  .driver_data = board_ahci_yes_fbs },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9215),
-+	  .driver_data = board_ahci_yes_fbs },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
- 	  .driver_data = board_ahci_yes_fbs },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TTI, 0x0642), /* highpoint rocketraid 642L */
--- 
-2.39.5
-
+BR, Jarkko
 
