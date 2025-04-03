@@ -1,50 +1,66 @@
-Return-Path: <linux-kernel+bounces-586868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59145A7A4DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971C7A7A4E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8899617927F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0A8189DF17
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931FB2505AD;
-	Thu,  3 Apr 2025 14:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3876C24EA8B;
+	Thu,  3 Apr 2025 14:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ck5Bic97"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4tCPFYY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB602500DE;
-	Thu,  3 Apr 2025 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9536F7F7FC
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689465; cv=none; b=EKxXlg7VdircQDwmMsSpI5PnTYYc8INte/XRtrA9zeP7iqALL5brCuqBUobYn8FDpP0JHkhrV5gtCbulVoEG0xius+pDdPr4IHymjZOkI0Yd9Fqd3+FvfhXb3anbL+tKbxAWgTKS0sLdfsI0YhjVIT2Qm4X9Fdqfadf6lrCGoR8=
+	t=1743689412; cv=none; b=TYm8alCi8lIP4dFCrdtYPlqnRH1aOjTPqWYTRdzH/xEPtbHZs/CV8VjoMclUDUC+8q1xs+1j/2sHtw7xW8VcvMcLl+IXMDuRwYv78terUXT7AQM4XtWllMaozOTa1a6flSvBiY4v9tXyQSGHJM8QR/J2yB/GHqqtolLQ1VrhHbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689465; c=relaxed/simple;
-	bh=nQl3cTdTbatl1g2M9BKMpP0FL0R93Xmbz3gVBMTA+1c=;
+	s=arc-20240116; t=1743689412; c=relaxed/simple;
+	bh=HehmzWN07oImSDzOXjOMFAC9bLomTxZFRkiMNjxI5FQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uF9LhBYVW1lh7STPBUgiXTl8KG6E/gDxm4uf/1IxE32BIy4t/eTZSn8e9lAN2x7Q8UeEgsB/QPQWwkF0ekKvwpqWtZlZWqyaGJw69TR4iEiTjSWql9I+cRV1RdsAsI5fTIlNt47Z2S/2f9oXhP0VIZh73qoEuNuiG0sKitYp09Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ck5Bic97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1CBC4CEE5;
-	Thu,  3 Apr 2025 14:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743689464;
-	bh=nQl3cTdTbatl1g2M9BKMpP0FL0R93Xmbz3gVBMTA+1c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=icmOizhuEMDttNTeeCWfAS11uEOhxveKpMxD39UgfVGu2XlRivD5ryrLVna3I5kJ1jqKM0NLcPYF2JYVYHR8PJQEGYHKfbtrYTCwRnfs+MUyupUC/Sf97WXzi/loe2W0EC8R15lMExyA2rETQOuDhBv2FDZETMl8alRRR8FJr0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4tCPFYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A22C4CEE3;
+	Thu,  3 Apr 2025 14:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743689412;
+	bh=HehmzWN07oImSDzOXjOMFAC9bLomTxZFRkiMNjxI5FQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ck5Bic97/mCQ3d+8QIehgZa4Qtq0CZK+lTbYWcWyWXKO+FV2tDN+OrRepgE3YK04W
-	 zP4OuYcXZy6GrJKNjuI+oepwK1TQc2jzh6NxfflkN6Chdv9LEhtulY1pOCcKw+IsFF
-	 qlRQTopj4nzPa3rTNBUvHfCXS3mOWhAl0Cqaom1A=
-Date: Thu, 3 Apr 2025 15:09:36 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: nancyenos <nicymimz@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	outreachy@lists.linux.dev
-Subject: Re: [PATCH] staging: octeon: Fix unused macro Argument 'x'
-Message-ID: <2025040315-squid-gloating-e0df@gregkh>
-References: <20250325100952.2956-1-nicymimz@gmail.com>
+	b=p4tCPFYYYPGoaZWejEYhyx1y7zD3cp3NTUeFqKkYekF1dCNx8KDC4P0g66yoeO4fj
+	 IwQeRmrNwV+NXJciR0mgdgA6w6dLUogofUeFKcS6brgieJ4VEzsExBZsOaZYHtc5fR
+	 sLRe6uQRvYTJw2G5EZMRtQ8sydPfG4I8GEmaP/Gm2jeQtdppNQCAGEDSHnU9vhK7Hq
+	 SFXipEe7jLpRvLbkwRKX3pJWCXfRBYqfkk9EXc8forpXVlHdDUfdZ3Vo4TcIpD8vk9
+	 ui6dBY5E6bgi5+Ffe916I7e/DwfPLsM9iBqNRXH9PJO1hX3BTGEisqGFtMeFiPRumM
+	 2X0cBdR7DNuXg==
+Date: Thu, 3 Apr 2025 17:10:03 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Sauerwein, David" <dssauerw@amazon.de>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Rapoport <rppt@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 3/3] mm: Implement for_each_valid_pfn() for
+ CONFIG_SPARSEMEM
+Message-ID: <Z-6WuzNDSwPN4Enn@kernel.org>
+References: <Z-vn-sMtNfwyJ9VW@kernel.org>
+ <20250402201841.3245371-1-dwmw2@infradead.org>
+ <20250402201841.3245371-3-dwmw2@infradead.org>
+ <Z-4phOInXZlxFwk9@kernel.org>
+ <e465ba32fb34b31eddb18890587960671b73234f.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,42 +69,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250325100952.2956-1-nicymimz@gmail.com>
+In-Reply-To: <e465ba32fb34b31eddb18890587960671b73234f.camel@infradead.org>
 
-On Tue, Mar 25, 2025 at 03:09:52AM -0700, nancyenos wrote:
-> warning found by checkpath.pl
+On Thu, Apr 03, 2025 at 08:07:22AM +0100, David Woodhouse wrote:
+> On Thu, 2025-04-03 at 09:24 +0300, Mike Rapoport wrote:
+> > with a small nit below
+> > 
+> > > +static inline bool first_valid_pfn(unsigned long *p_pfn)
+> > > +{
+> > > +	unsigned long pfn = *p_pfn;
+> > > +	unsigned long nr = pfn_to_section_nr(pfn);
+> > > +	struct mem_section *ms;
+> > > +	bool ret = false;
+> > > +
+> > > +	ms = __pfn_to_section(pfn);
+> > > +
+> > > +	rcu_read_lock_sched();
+> > > +
+> > > +	while (!ret && nr <= __highest_present_section_nr) {
+> > 
+> > This could be just for(;;), we anyway break when ret becomes true or we get
+> > past last present section.
 > 
-> Signed-off-by: nancyenos <nicymimz@gmail.com>
-> ---
->  drivers/staging/octeon/octeon-stubs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> True for the 'ret' part but not *nicely* for the last present section.
+> If the original pfn is higher than the last present section it could
+> trigger that check before entering the loop.
 > 
-> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
-> index 44cced319c11..0155f3c41657 100644
-> --- a/drivers/staging/octeon/octeon-stubs.h
-> +++ b/drivers/staging/octeon/octeon-stubs.h
-> @@ -8,8 +8,8 @@
->  #define OCTEON_IRQ_WORKQ0 0
->  #define OCTEON_IRQ_RML 0
->  #define OCTEON_IRQ_TIMER1 0
-> -#define OCTEON_IS_MODEL(x) 0
-> -#define octeon_has_feature(x)	0
-> +#define OCTEON_IS_MODEL(x) ((void)(x), 0)
-> +#define octeon_has_feature(x) ((void)(x), 0)
->  #define octeon_get_clock_rate()	0
->  
->  #define CVMX_SYNCIOBDMA		do { } while (0)
-> -- 
-> 2.25.1
+> Yes, in that case 'ms' will be NULL, valid_section(NULL) is false and
+> you're right that it'll make it through to the check in the loop
+> without crashing. So it would currently be harmless, but I didn't like
+> it. It's relying on the loop not to do the wrong thing with an input
+> which is arguably invalid.
 > 
+> I'll see if I can make it neater. I may drop the 'ret' variable
+> completely and just turn the match clause into unlock-and-return-true.
+> I *like* having a single unlock site. But I think I like simpler loop
+> code more than that.
 > 
+> FWIW I think the check for (PHYS_PFN(PFN_PHYS(pfn)) != pfn) at the
+> start of pfn_valid() a few lines above is similarly redundant. Because
+> if the high bits are set in the PFN then pfn_to_section_nr(pfn) is
+> surely going to be higher than NR_MEM_SECTIONS and it'll get thrown out
+> at the very next check, won't it?
 
-You sent this twice?
+I believe the check for (PHYS_PFN(PFN_PHYS(pfn)) != pfn) got to the generic
+version from arm64::pfn_valid() that historically supported both FLATMEM
+and SPARSEMEM.
 
-And always test-build your patches before submitting them.  This
-obviously will not build :(
+I can't think of a configuration in which (PHYS_PFN(PFN_PHYS(pfn)) != pfn)
+and pfn_to_section_nr(pfn) won't be higher than NR_MEM_SECTIONS, but with
+all variants that arm64 has for PAGE_SHIFT and ARM64_PA_BITS I could miss
+something.
+ 
+> I care because I didn't bother to duplicate that 'redundant' check in
+> my first_valid_pfn(), so if there's a reason for it that I'm missing, I
+> should take a closer look.
+> 
+> I'm also missing the reason why the FLATMEM code in memory_model.h does
+> 'unsigned long pfn_offset = ARCH_PFN_OFFSET' and then uses its local
+> pfn_offset variable, instead of just using ARCH_PFN_OFFSET directly as
+> I do in the FLATMEM for_each_valid_pfn() macro.
 
-thanks,
+Don't remember now, but I surely had some $REASON for that :) 
 
-greg k-h
+-- 
+Sincerely yours,
+Mike.
 
