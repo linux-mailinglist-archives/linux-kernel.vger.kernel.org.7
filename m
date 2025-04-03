@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-586790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA56A7A3CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:35:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBEAA7A3DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A601F1895215
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:35:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A960D1888B3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E115E250BED;
-	Thu,  3 Apr 2025 13:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFE32517A1;
+	Thu,  3 Apr 2025 13:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uh8OhBy+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2Jg+8bL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB5F2505BF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 13:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E397251780
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 13:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743687226; cv=none; b=l2BG6tI8ZgJm80fazyqPPJWMkZ3/4lvVHZ1M7tLWVJ1PWUUtKltEa/DtNnzZN8iKbvO2ZVPSv3oRgCP3sJaiTuBIJV99fZWNRWElNSSEGOZwpAqWP3fkX+HXaX9SuBK5+wLxxHVTJxzy+fyVSdMMehgn7n1n0Nn7yNsoRyJySjo=
+	t=1743687229; cv=none; b=YfpXyA6C5KDFlNl8GECaWFrBS35x7skiuaFdn8nvCm9323Uk6V2+MzRX7ZNXBAsJ49HWwdaFJfVPTcHk3sNd3lSayrxJq9kmnMXYdtCSzWbQNJlHuDScnC3PMP40DCqrwuHJq6CCUxwzVLqhpoPpkSTcp3+aB1H+x7bnCoIempE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743687226; c=relaxed/simple;
-	bh=nMRbYAhzi3enpxzVWvpdbPA24kzrQi4IdGrQ69iIiXs=;
+	s=arc-20240116; t=1743687229; c=relaxed/simple;
+	bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UN2TjvRQebmBt+IwT57djsekbDIR7siAH8tYahNuV/9xnbOvgPXwzm8bkCDsr4F6M/4LKX40T2LPq5wElO5rKs45lZaFkB2u3mCTZx0UTJoLsQONp7h+w4sNodNZeJEjJ/9zyeB77x0UDKtzyFRmLMpr7+ZgoOFf3Ike2ZMitOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uh8OhBy+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128E8C4CEED;
-	Thu,  3 Apr 2025 13:33:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Vp8uIACDb9Uk+3jgKqv+DIVzEfr/Ylr6nRrVLgQrO94xWE7+xexJ11sc/ogUTQ3UKS0T9tKWfVsiVsAZ2koYlDb4rl0DjUKg48pjUw1hreHEr8r+lCxomCeg0Krpb8pWKhFuobF18xyvuUOFzkrIWw5Iya6LmcuSaMuj0rQd4v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2Jg+8bL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38033C4CEE5;
+	Thu,  3 Apr 2025 13:33:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743687225;
-	bh=nMRbYAhzi3enpxzVWvpdbPA24kzrQi4IdGrQ69iIiXs=;
+	s=k20201202; t=1743687228;
+	bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Uh8OhBy+yWs2hAhTylquklZOGQ/W7Y3EUaHYY7PMf1SQXvYb5xu9QoLv8M18gj+cZ
-	 OfM6JLRFp/uU73pr7grNCuVElwaT4FcL4Vitexze99M9Z1/62v9U4hgpeyTRBSmoaZ
-	 l4Wlj52mQ/zjpefezL43jtD95O5St4+3Rqzk/UXXJD9mNmz6BMKEue2tpki7o3IxIQ
-	 xD+pephrLBVBfQzGpp5WboeElWrDEkSrbDAVSlqHCdAk0ouNOsyNWP1K7XFITsiRhr
-	 iId554RZ+VEE1QLqrY2eNDsloOUw39r90iYb5zxmxB9NhhpZSYGhEzzwv3CsXTqdtE
-	 Z2r1C2mtWWGaA==
+	b=W2Jg+8bLEje7Ib31DEYv5NlcbQ4c29t9zWQ16iXiBvn0k2FbAhJX9SwUBDzxblhz9
+	 qDDtuCshshgxbQK719bD5GVjVROMaBwyGk8u2kJzDY8uGmPFOBFhiNjVSAhJ+xzPXw
+	 45QfQkrg/CamteDliPtJgBXZGfGig/hiAvubojWOEFuadMT+GIh8chI7hHs2ADtuhE
+	 i6YgZXt25gfbWLMgutO/cMHfc6HxcgzOxhTC068nUaXpHwKOoVysTO0p4An3hMBSVT
+	 1dmtvbTGb3OmwmTkrUkU3dWjbHga7JcyL1sk/VIAtjLVakGY64Fbl/u7PEAPriNpim
+	 qQ2gfeBpBgWZw==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 03 Apr 2025 15:33:30 +0200
-Subject: [PATCH v2 1/4] drm/vc4: tests: Use return instead of assert
+Date: Thu, 03 Apr 2025 15:33:31 +0200
+Subject: [PATCH v2 2/4] drm/vc4: tests: Document output handling functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250403-drm-vc4-kunit-failures-v2-1-e09195cc8840@kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250403-drm-vc4-kunit-failures-v2-2-e09195cc8840@kernel.org>
 References: <20250403-drm-vc4-kunit-failures-v2-0-e09195cc8840@kernel.org>
 In-Reply-To: <20250403-drm-vc4-kunit-failures-v2-0-e09195cc8840@kernel.org>
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
@@ -63,117 +63,77 @@ To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Maxime Ripard <mripard@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3363; i=mripard@kernel.org;
- h=from:subject:message-id; bh=nMRbYAhzi3enpxzVWvpdbPA24kzrQi4IdGrQ69iIiXs=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnv+gz3h1xKWRZ2syrt7q/t/23sxZexTOxlXpOnPd/G9
- Vz8tZVHOkpZGMS4GGTFFFlihM2XxJ2a9bqTjW8ezBxWJpAhDFycAjARN09Ghs3zp7z8kPU+6/pG
- 9b1vF7OfM3Xd56h9If4D08L1T0Km5qgyMpz7nz7Tcb9b6c/Lxi0Xha0qT/iyBIYdqLt04OEVFu7
- ZjjwA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2286; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnv+gz/HhUKeDzXV2aDuMFiTWXmuq1HHBILhba7a8kUb
+ hdt2GDeUcrCIMbFICumyBIjbL4k7tSs151sfPNg5rAygQxh4OIUgIlEBjL80zftCknMs5BYP9n3
+ +N79gZuFd2vxRhnHls+x2RYrnMzXzsjwRZzz5ZHUtalzXk4M3PnUhaM6Jat71seM4Ctrjy760bm
+ WHQA=
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-The vc4_mock_atomic_add_output() and vc4_mock_atomic_del_output() assert
-that the functions they are calling didn't fail. Since some of them can
-return EDEADLK, we can't properly deal with it.
+vc4_mock_atomic_add_output() and vc4_mock_atomic_del_output() are public
+but aren't documented. Let's provide the documentation.
 
-Since both functions are expected to return an int, and all caller check
-the return value, let's just properly propagate the errors when they
-occur.
+In particular, special care should be taken to deal with EDEADLK.
 
-Fixes: f759f5b53f1c ("drm/vc4: tests: Introduce a mocking infrastructure")
-Fixes: 76ec18dc5afa ("drm/vc4: tests: Add unit test suite for the PV muxing")
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/gpu/drm/vc4/tests/vc4_mock_output.c | 36 +++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/vc4/tests/vc4_mock_output.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/drivers/gpu/drm/vc4/tests/vc4_mock_output.c b/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
-index e70d7c3076acf168782c48301f3b3dfb9be21f22..f0ddc223c1f839e8a14f37fdcbb72e7b2c836aa1 100644
+index f0ddc223c1f839e8a14f37fdcbb72e7b2c836aa1..577d9a9563696791632aec614c381a214886bf27 100644
 --- a/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
 +++ b/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
-@@ -73,28 +73,34 @@ int vc4_mock_atomic_add_output(struct kunit *test,
- 	struct drm_encoder *encoder;
- 	struct drm_crtc *crtc;
- 	int ret;
+@@ -59,10 +59,23 @@ struct vc4_dummy_output *vc4_dummy_output(struct kunit *test,
  
- 	encoder = vc4_find_encoder_by_type(drm, type);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, encoder);
-+	if (!encoder)
-+		return -ENODEV;
+ static const struct drm_display_mode default_mode = {
+ 	DRM_SIMPLE_MODE(640, 480, 64, 48)
+ };
  
- 	crtc = vc4_find_crtc_for_encoder(test, drm, encoder);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc);
-+	if (!crtc)
-+		return -ENODEV;
- 
- 	output = encoder_to_vc4_dummy_output(encoder);
- 	conn = &output->connector;
- 	conn_state = drm_atomic_get_connector_state(state, conn);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-+	if (IS_ERR(conn_state))
-+		return PTR_ERR(conn_state);
- 
- 	ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	if (ret)
-+		return ret;
- 
- 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
- 
- 	ret = drm_atomic_set_mode_for_crtc(crtc_state, &default_mode);
--	KUNIT_EXPECT_EQ(test, ret, 0);
-+	if (ret)
-+		return ret;
- 
++/**
++ * vc4_mock_atomic_add_output() - Enables an output in a state
++ * @test: The test context object
++ * @state: Atomic state to enable the output in.
++ * @type: Type of the output encoder
++ *
++ * Adds an output CRTC and connector to a state, and enables them.
++ *
++ * Returns:
++ * 0 on success, a negative error code on failure. If the error is
++ * EDEADLK, the entire atomic sequence must be restarted. All other
++ * errors are fatal.
++ */
+ int vc4_mock_atomic_add_output(struct kunit *test,
+ 			       struct drm_atomic_state *state,
+ 			       enum vc4_encoder_type type)
+ {
+ 	struct drm_device *drm = state->dev;
+@@ -103,10 +116,23 @@ int vc4_mock_atomic_add_output(struct kunit *test,
  	crtc_state->active = true;
  
  	return 0;
  }
-@@ -111,28 +117,34 @@ int vc4_mock_atomic_del_output(struct kunit *test,
- 	struct drm_encoder *encoder;
- 	struct drm_crtc *crtc;
- 	int ret;
  
- 	encoder = vc4_find_encoder_by_type(drm, type);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, encoder);
-+	if (!encoder)
-+		return -ENODEV;
- 
- 	crtc = vc4_find_crtc_for_encoder(test, drm, encoder);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc);
-+	if (!crtc)
-+		return -ENODEV;
- 
- 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
- 
- 	crtc_state->active = false;
- 
- 	ret = drm_atomic_set_mode_for_crtc(crtc_state, NULL);
--	KUNIT_ASSERT_EQ(test, ret, 0);
-+	if (ret)
-+		return ret;
- 
- 	output = encoder_to_vc4_dummy_output(encoder);
- 	conn = &output->connector;
- 	conn_state = drm_atomic_get_connector_state(state, conn);
--	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-+	if (IS_ERR(conn_state))
-+		return PTR_ERR(conn_state);
- 
- 	ret = drm_atomic_set_crtc_for_connector(conn_state, NULL);
--	KUNIT_ASSERT_EQ(test, ret, 0);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
++/**
++ * vc4_mock_atomic_del_output() - Disables an output in a state
++ * @test: The test context object
++ * @state: Atomic state to disable the output in.
++ * @type: Type of the output encoder
++ *
++ * Adds an output CRTC and connector to a state, and disables them.
++ *
++ * Returns:
++ * 0 on success, a negative error code on failure. If the error is
++ * EDEADLK, the entire atomic sequence must be restarted. All other
++ * errors are fatal.
++ */
+ int vc4_mock_atomic_del_output(struct kunit *test,
+ 			       struct drm_atomic_state *state,
+ 			       enum vc4_encoder_type type)
+ {
+ 	struct drm_device *drm = state->dev;
 
 -- 
 2.49.0
