@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-586824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23A1A7A466
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38FB8A7A460
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D003A176309
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD061898B80
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D85424E4B2;
-	Thu,  3 Apr 2025 13:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E048624EA83;
+	Thu,  3 Apr 2025 13:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cQKTeSgb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4R2uHOn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BE529408;
-	Thu,  3 Apr 2025 13:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE3F29408;
+	Thu,  3 Apr 2025 13:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743688529; cv=none; b=kO3WhnulGmtBmhH+8WGN93L1XvTU4/R9r48ZFg6mq5vuHYN67kzD+LPehM9AW+J7u+9y3WM2Zt8Y+hyIYHeYnEWdQ17zEV5xNl9f4AzoXwb+JWaZSEheVg3QxXGOVZpDb9J/ug9pAdmyYSBZRY4mi1pvGsApAZZa0/qQVZE9jkQ=
+	t=1743688469; cv=none; b=meO4chdVylIh+4t+2xW3f2c8WNkooUj4p1ejPcPnMNJtb5DYRC+AXFbhRkLBKsjMGp+7zu6ZsI/pJMKOGesMW3t4TRqo8Mrui6fBVKcZvDN5qxbjEIqosdF4zSHdFV1eOzc4dDi1y8uky8dc7B6iPLZtt9JcV3CVPDRDgMzZl70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743688529; c=relaxed/simple;
-	bh=jMcUJTuyrHqWUvUZgo2jQWpaqg+ikyXlBK4xmCiiM6Y=;
+	s=arc-20240116; t=1743688469; c=relaxed/simple;
+	bh=lyNXz735Z2cTKcDUQuDQ893qwBJi5amYRPfXvdsMpwM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpwsKuv3hXD18Fx/mYT8zzPKSjYAP2GmtHX4XlMZWUOlGj4OQFGFrmK4nj6hqjhc7aXuJLGX3LJOg2RPTBrWuxo83kkiOVHoFMGUZJzxN+otiy3JvUPgDyBNAqEOObdx3GKaMCmdeb0xZCXOLALGaJdhxph3ZzhX5tuk1sKdonE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cQKTeSgb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61F5C4CEE5;
-	Thu,  3 Apr 2025 13:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743688529;
-	bh=jMcUJTuyrHqWUvUZgo2jQWpaqg+ikyXlBK4xmCiiM6Y=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrrAl1bKlo3uRFilk8z5F13rCzz7u29YhQiAM8Wfa1TqHogtuRQy4EetWkk5APGCTrZEI4lobLnsdC+WATULE+JtDzkf7pnfzkSIdboTgrL+aEo9tvOLFdP7cFjmGNYaxfO/rNxrtj5pGDNDXeuk1ux6VXWbTt7dLs2ZJCSHNBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4R2uHOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE2AC4CEE3;
+	Thu,  3 Apr 2025 13:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743688468;
+	bh=lyNXz735Z2cTKcDUQuDQ893qwBJi5amYRPfXvdsMpwM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQKTeSgbgRY4KNuIF5I2rjU5L/WvPQkY7n0cgDO4/bwmQa/hoE6Evnn8CTudbbHfg
-	 stJuWukj0FZwXyJinzNI7pfWwiNrCos5e9LbpE9Xhw5bG7NZvmCMPX3vTQAwaMi6mh
-	 mPLR65P/cdOl00ewRLIAYmtSRoJlkNk+usLn57T0=
-Date: Thu, 3 Apr 2025 14:54:01 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Samuel Abraham <abrahamadekunle50@gmail.com>
-Cc: Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: modify struct field to use standard
- bool type
-Message-ID: <2025040304-overdrive-snugness-8b05@gregkh>
-References: <Z+05IEjV3pczMLNQ@HP-650>
- <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
- <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
+	b=q4R2uHOnSA+w0i5dCg4AB8+JL2u7dKOIXLE5xx2LjUYq/Qw49cqeVRKqbviu8I9ro
+	 uzzMb1hZGQ16Rrew5uc2TA9u9w0vo4MzIVcsYmEPwtMLNWuFVoeleFvrwxjAG8OVnX
+	 LbZ90j0P0jaxFWfNHKZvROWMafJlqr9KpuMZUsne2fFKyxA0T0Q5Kp3cpWmB3+gyck
+	 NiUolxQ53qG5fzVwqIfsrpdX9IX8WZ9+RN5NvwPNAyU/EAvOTJD2C0CMMuL+4OBg18
+	 JFI1sY6a4MHEDlkakmwfjJcwL3Rux2ZC+7G3ydjQIQGECEmKW2R0l7B7HB7EK/3M4H
+	 uONVovjMtNU9Q==
+Date: Thu, 3 Apr 2025 15:54:22 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mhocko@kernel.org, rostedt@goodmis.org,
+	oleg@redhat.com, brauner@kernel.org, glider@google.com,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH v2] exit: move and extend sched_process_exit() tracepoint
+Message-ID: <Z-6TDh1MUT49lvjk@gmail.com>
+References: <20250402180925.90914-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
+In-Reply-To: <20250402180925.90914-1-andrii@kernel.org>
 
-On Thu, Apr 03, 2025 at 10:33:49AM +0100, Samuel Abraham wrote:
-> On Thu, Apr 3, 2025 at 6:06 AM Julia Lawall <julia.lawall@inria.fr> wrote:
-> >
-> >
-> >
-> > On Wed, 2 Apr 2025, Abraham Samuel Adekunle wrote:
-> >
-> > > The struct field uses the uint values 0 and 1 to represent false and
-> > > true values respectively.
-> > >
-> > > Convert cases to use the bool type instead to conform to Linux
-> > > coding styles and ensure consistency.
-> >
-> > This is vague.  Ensure consistency with what?  You can point out that true
-> > or false was already being used elsewhere in the code.
-> >
-> > >
-> > > reported by Coccinelle:
-> > >
-> > > Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-> > > ---
-> > >  drivers/staging/rtl8723bs/core/rtw_ap.c      | 2 +-
-> > >  drivers/staging/rtl8723bs/include/sta_info.h | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-> > > index ed6942e289a5..82f54f769ed1 100644
-> > > --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-> > > +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-> > > @@ -389,7 +389,7 @@ void update_bmc_sta(struct adapter *padapter)
-> > >               psta->qos_option = 0;
-> > >               psta->htpriv.ht_option = false;
-> > >
-> > > -             psta->ieee8021x_blocked = 0;
-> > > +             psta->ieee8021x_blocked = false;
-> > >
-> > >               memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
-> > >
-> > > diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/staging/rtl8723bs/include/sta_info.h
-> > > index b3535fed3de7..63343998266a 100644
-> > > --- a/drivers/staging/rtl8723bs/include/sta_info.h
-> > > +++ b/drivers/staging/rtl8723bs/include/sta_info.h
-> > > @@ -86,7 +86,7 @@ struct sta_info {
-> > >       uint qos_option;
-> > >       u8 hwaddr[ETH_ALEN];
-> > >
-> > > -     uint    ieee8021x_blocked;      /* 0: allowed, 1:blocked */
-> > > +     bool ieee8021x_blocked;
+
+* Andrii Nakryiko <andrii@kernel.org> wrote:
+
+> It is useful to be able to access current->mm at task exit to, say,
+> record a bunch of VMA information right before the task exits (e.g., for
+> stack symbolization reasons when dealing with short-lived processes that
+> exit in the middle of profiling session). Currently,
+> trace_sched_process_exit() is triggered after exit_mm() which resets
+> current->mm to NULL making this tracepoint unsuitable for inspecting
+> and recording task's mm_struct-related data when tracing process
+> lifetimes.
 > 
-> > You should also check whether this is a structure that is read from the
-> > hardware.  In that case, it would be a concern if the bool field does not
-> > have the same size as the uint one.
-> Hello Julia
-> So following the conversation here,
-> https://lore.kernel.org/outreachy/bf8994cc-b812-f628-ff43-5dae8426e266@inria.fr/T/#u
-> I was able to compare the assembly code of the file before and after
-> my patch and this were my findings
+> There is a particularly suitable place, though, right after
+> taskstats_exit() is called, but before we do exit_mm() and other
+> exit_*() resource teardowns. taskstats performs a similar kind of
+> accounting that some applications do with BPF, and so co-locating them
+> seems like a good fit. So that's where trace_sched_process_exit() is
+> moved with this patch.
 > 
-> Original assembly code for
-> # drivers/staging/rtl8723bs/core/rtw_ap.c:392    psta->ieee8021x_blocked = 0;
-> movl  $0, 436(%r12)    #,  psta->ieee8021x_blocked
+> Also, existing trace_sched_process_exit() tracepoint is notoriously
+> missing `group_dead` flag that is certainly useful in practice and some
+> of our production applications have to work around this. So plumb
+> `group_dead` through while at it, to have a richer and more complete
+> tracepoint.
 > 
-> Assembly Code After Patch
-> # drivers/staging/rtl8723bs/core/rtw_ap.c:392
-> psta->ieee8021x_blocked = false;
-> movb  $0, 434(%r12)    #,  psta->ieee8021x_blocked
+> Note that we can't use sched_process_template anymore, and so we use
+> TRACE_EVENT()-based tracepoint definition.
 
-So the structure size changed?  That's not good at all, and is what I
-was worried about :(
+ But all the field names and
+> order, as well as assign and output logic remain intact. We just add one
+> extra field at the end in backwards-compatible way.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  include/trace/events/sched.h | 28 +++++++++++++++++++++++++---
+>  kernel/exit.c                |  2 +-
+>  2 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> index 8994e97d86c1..05a14f2b35c3 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -328,9 +328,31 @@ DEFINE_EVENT(sched_process_template, sched_process_free,
+>  /*
+>   * Tracepoint for a task exiting:
+>   */
+> -DEFINE_EVENT(sched_process_template, sched_process_exit,
+> -	     TP_PROTO(struct task_struct *p),
+> -	     TP_ARGS(p));
+> +TRACE_EVENT(sched_process_exit,
+> +
+> +	TP_PROTO(struct task_struct *p, bool group_dead),
+> +
+> +	TP_ARGS(p, group_dead),
+> +
+> +	TP_STRUCT__entry(
+> +		__array(	char,	comm,	TASK_COMM_LEN	)
+> +		__field(	pid_t,	pid			)
+> +		__field(	int,	prio			)
+> +		__field(	bool,	group_dead		)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
+> +		__entry->pid		= p->pid;
+> +		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
+> +		__entry->group_dead	= group_dead;
+> +	),
+> +
+> +	TP_printk("comm=%s pid=%d prio=%d group_dead=%s",
+> +		  __entry->comm, __entry->pid, __entry->prio,
+> +		  __entry->group_dead ? "true" : "false"
+> +	)
 
-Also, the tool 'pahole' might help out here to verify what exactly
-changed, if you want to dig in further here.
+This feels really fragile, could you please at least add a comment that 
+points out that this is basically an extension of 
+sched_process_template, and that it should remain a subset of it, or 
+something to that end?
 
-thanks,
+Thanks,
 
-greg k-h
+	Ingo
 
