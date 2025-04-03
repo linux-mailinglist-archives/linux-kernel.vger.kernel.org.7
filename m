@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-586498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17660A7A04E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157AAA7A058
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAA13B4C9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5C717323B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5196724BC14;
-	Thu,  3 Apr 2025 09:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76992248891;
+	Thu,  3 Apr 2025 09:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s5Rrs3fl"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUJdLl/o"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6A824A06C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDCD246348;
+	Thu,  3 Apr 2025 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743673484; cv=none; b=inVAeIfiruM/AGd0bxBgwlyxVJDbz+TuabOmsvMgPwvSm8kRGJ70ECk/l3f4CM9E5gJiT7H+InOe7uPwcKapjGFMTmpX2AFPEVhyG8Nx1TrK0ZXdjG07d0ogJ90Vury1Ut4F45qniYgoTVtetcBznwyPeF4VxngWWiTm83g9r6E=
+	t=1743673587; cv=none; b=tRjqxVpS3y+YW19C9PUIHWNczGrapFYpu20AXfwm/6om6ET+VD9NC1zcM/z8qaKhD6HzByHFlGneKLho0TXyvfDzHbHMo0Mhr/g0s8crILFs555xAAm6kowJlABslhhJ3f5aEUUyW197ospXaRlqzKpar6cREziQvIz9wViuA2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743673484; c=relaxed/simple;
-	bh=/f9RUGuRkg81S+9vEr4rF6E2a7sH/TZ3cI1ZNfn6e/M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=dq0cbfimBDG9TewfDJv2vY+ksf+GeF0z3NH34YP8S0kMpimq8O9CvB0vnkyna0yyMcEiueP5MpRZZf90y0ZedINjKLxZJeeudyfRZyVWo7kipDyLtK7OGESK7nAntrFo6n+s5WmUyDQ/RyO6BkBl29NkKPywCMwDuKAPb2TwonQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s5Rrs3fl; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250403094434euoutp02849fad85052aa3b16f0edc1fc4c70d9c~yxclaAvah0179501795euoutp02I
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:44:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250403094434euoutp02849fad85052aa3b16f0edc1fc4c70d9c~yxclaAvah0179501795euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1743673474;
-	bh=zWpSPctGzB1QFcIv8f8mPGsvFF5oZ87O6t+skARlCj4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s5Rrs3flXjXZLCH6rEqIfZpjYdYq25Gt4vADUmgHTsaYdYD+DZA/+nye2N2joEmjK
-	 KEkq0Ol1Hv4ekBvDjs64ivkx2ZhS43A6v1vAIl8DBOHpOR3TDKKk7y0AFOLurLrOoq
-	 5lCGbEHRL46NLfLDPjDPIyrsE4TVjORAvJ/tQsn4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250403094433eucas1p2ac0ecff48840a11e974d418b3f372fc9~yxck5OjcX1404914049eucas1p2O;
-	Thu,  3 Apr 2025 09:44:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C2.79.20409.1885EE76; Thu,  3
-	Apr 2025 10:44:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319~yxckiSN4R0789407894eucas1p2U;
-	Thu,  3 Apr 2025 09:44:33 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250403094433eusmtrp2885ba86520c1e37e943077d94852f880~yxckhi9os1352013520eusmtrp2n;
-	Thu,  3 Apr 2025 09:44:33 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-ea-67ee5881f257
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id A4.FF.19654.1885EE76; Thu,  3
-	Apr 2025 10:44:33 +0100 (BST)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250403094432eusmtip24ab6de2b4e1d8767ed3f8da4f00574ba~yxcjocdlD1024010240eusmtip2W;
-	Thu,  3 Apr 2025 09:44:32 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal
-	Wilczynski <m.wilczynski@samsung.com>
-Subject: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
- controller
-Date: Thu,  3 Apr 2025 11:44:25 +0200
-Message-Id: <20250403094425.876981-4-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250403094425.876981-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1743673587; c=relaxed/simple;
+	bh=f7/JdFZweTL9sZCJ3WX6y1bZJitz0ltdKba9U93IM8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VTICrpVzr/V9XwACd8LUm5qyQDM7VSYWJHo/drXbMvZMSfMJ5a3oGcbD0VKUp7vzm56G8NPfplmXI5BF0w5ek5tYgn0hZ4aMaqgwxpmUJQRgWXNXlftVgc0iIiSW0MmeIsJ4mfPyWL4qWx6RzpA4z1r1xDGBqwEZX6J/jcmA1GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUJdLl/o; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac41514a734so117034366b.2;
+        Thu, 03 Apr 2025 02:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743673584; x=1744278384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZH3Z5u0O8jlyrpJi+WGB/bJYyOlKyywTUoHDeURBX8=;
+        b=JUJdLl/o4c40J5tBTNyEHCS68uZDH20qVGJFlQBZrLIsXQoeDzaEwsOiRIrNKJxiEW
+         4izg8CPXEzNnIaj5Onyd/3hQxH3YssZxE/uRy37Xkx1vWQxyVS1uGaHCXpQ3uG1ZGGDa
+         7T4vJxE4q/TyoOXlie8MwLfsdO/NhuBZgfYemVgJ8H1OhibZ2SC5OZQ3FYkk74VRE6FK
+         RLSLOEGnbWA8u/DZIXl1beFV27C3SWtOBS5WmcIz8eqDFWQprYCHrUvhP7WQndOUopGE
+         3yCsA7p3q2eikXQWqCZUhHJfB46VgJBOqVjEs0chnxcsefdoeIiDlz8IZpnG4YsBNQFN
+         PjsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743673584; x=1744278384;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LZH3Z5u0O8jlyrpJi+WGB/bJYyOlKyywTUoHDeURBX8=;
+        b=V45y5kdnQdxqpE1gwT846P2vWdQ2cpKx4Z1wtA5iWoFheT5CEW9uo1rnLQRZbBpL+W
+         gksfvBcAPYGXpOlgnCa4PB9Ds+riOs8pCSHWvxhOawJE7fZ3ZLKiZYu7UMqLPymVyJY8
+         DopUtTeOF84ZJTWskleXIJbkEh/uNioHoozBUDjGDw7X4L11ws001Whe0We0m9SPNdvp
+         VwACODyAr2x+o0bZHpRBcfbDfQ6OK9V/b2DREqEKNrYZM5T66biJERcFCNUicykfgnnP
+         Md+YFr8yTN9c4ljTmEN7K0mvcuJaNhAwJVqUVyaW3x+qU/RFJSrUJO2SHZUhMtGajEIY
+         bVgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzTaWJaRmV1wyun0cv+Icc2ELHYtBTn64yqfB+GrD0Z2jBM8ui82xZzvk2qpVjmrtVG1lEOHznOwVQOKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTe7kL282DTPEPw27CBuq4ZrwEXeUXdd2c2ll1hSA1u4f9Jcq5
+	5sza6CkVUhPtiI6JOp76Ufb1Jw/IdWDa12xVPZRTZlr53Wc3ewQqHZkaD8iQ
+X-Gm-Gg: ASbGncsubpqOyO55OjfzjiqRNHk0Sj7YXDFCrCVge+cRjxnuMpNksBUj5U6wryQyygY
+	Pj6JM5le7w/18TsYl0tCWKE4m8ItJTgiOQkoCJjYiqVSrmmB9bcPsWQJ/4YqZvqACW6M6ZFBSRS
+	A3gbdilsgCzgDSIGbZDZWOVmDyH1Z2o71oq7btTQAHoVnw1kNPPhMFyavvikdNDA1YLUkdCdo5+
+	a75OXL9rqh4zVWI3Mqsjzax2bVZ1h3ECPgqJiIM4ryrdp+eW8ahDEkrrKNwSVZrm5lsPd5RINMA
+	CqRGfKNIDjSQ3KKS1spq+uaHYwt4RwBgfhThH2JpIcynGEA=
+X-Google-Smtp-Source: AGHT+IGFqWnPl0sjgbK7qmDHo/YasyrcTXdwfvqMVUVFqFJFGq1uTP5FIsQzrRjpUhqbs46QGD6xog==
+X-Received: by 2002:a17:906:478c:b0:abf:7776:7e0c with SMTP id a640c23a62f3a-ac7a173d2a7mr457970766b.33.1743673583593;
+        Thu, 03 Apr 2025 02:46:23 -0700 (PDT)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfeed008sm65054666b.85.2025.04.03.02.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 02:46:23 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-crypto@vger.kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 1/3] crypto: x86 - Remove CONFIG_AS_SHA1_NI
+Date: Thu,  3 Apr 2025 11:44:39 +0200
+Message-ID: <20250403094527.349526-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,79 +92,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7djPc7qNEe/SDf4u0LF4ducrq8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsPvbcY7W4vGsOm8W2zy1sFmuP3GW3
-	WP91PpPFxVOuFnfvnWCxeHm5h9mibRa/xf89O9gt/l3byGLRsn8Ki4OIx/sbreweb16+ZPE4
-	3PGF3ePeiWmsHptWdbJ5bF5S79Gy9hiTR/9fA4/3+66yefRtWcXocan5OrvH501yATxRXDYp
-	qTmZZalF+nYJXBkfumcyF5xir1jftJmtgXEOWxcjJ4eEgInElmPzWbsYuTiEBFYwShz9eIkJ
-	wvnCKLGvdwojhPOZUeLc3jfMMC2bb7cwQySWM0r8mdbIAuG8AervucMCUsUmYCTxYDnEYBGB
-	PUwS37//BGthFljFKPHk20f2LkYODmGBAInjfzlAGlgEVCXaZuwBu4pXwE5i7r0jUOvkJfYf
-	PAtmcwrYS2yY8pgRokZQ4uTMJ2DLmIFqmrfOhqo/xSkxd0kFhO0ice3NLXYIW1ji1fEtULaM
-	xP+d85kg7HyJB1s/QfXWSOzsOQ5lW0vcOfeLDeRMZgFNifW79CHCjhKTfm8CC0sI8EnceCsI
-	cQGfxKRt05khwrwSHW1CENVqElN7euGWnluxDWqph8Tt1ulMExgVZyH5ZRaSX2Yh7F3AyLyK
-	UTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMFWe/nf8yw7G5a8+6h1iZOJgPMQowcGsJMJb
-	qPU2XYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvov2t6UIC6YklqdmpqQWpRTBZJg5OqQam3Zbn
-	HFktm9ZOdyrtYixZ76eh/s9BQ3tWt5FcSkf5XP178Z5PPkiXnWGIm/Lb9MJ0p5Pti91jnoZw
-	m+nOvxLzLKaC75qu21mlojSP0vJtD2/XhX2yl/bfxHsjdE9F+c9k40/CbwJypT2OLml88nAZ
-	10mLs2wTrsw/tIafdWbgrvV9zGWnRLqlttiVMNp5i2YemsJSWvP6aQH77VKp/OCXNbZxp5Km
-	+yY8N1iWKim9eUX2zZaUyWrC/BMur1291vS7hNfTkH0MHI/bnjisu23B7HKz/ODCNQa3Qs4x
-	PI/aeS+Nf45m7G6nNRvWGP4UuSYgajF9qc+tLK4gn5P5swPc3ZMUCzRtgme+ObDW/YwSS3FG
-	oqEWc1FxIgDUxk5BBAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRmVeSWpSXmKPExsVy+t/xe7qNEe/SDQ61iFg8u/OV1WLr71ns
-	Fmv2nmOymH/kHKvFvUtbmCxe7G1ksWg+tp7N4uWse2wWH3vusVpc3jWHzWLb5xY2i7VH7rJb
-	rP86n8ni4ilXi7v3TrBYvLzcw2zRNovf4v+eHewW/65tZLFo2T+FxUHE4/2NVnaPNy9fsngc
-	7vjC7nHvxDRWj02rOtk8Ni+p92hZe4zJo/+vgcf7fVfZPPq2rGL0uNR8nd3j8ya5AJ4oPZui
-	/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYwP3TOZC06x
-	V6xv2szWwDiHrYuRk0NCwERi8+0WZhBbSGApo8TyhxoQcRmJa90vWSBsYYk/17rYIGpeMUp8
-	n8QBYrMJGEk8WD6ftYuRi0NE4AKTxK51q5lAHGaBdYwSU7bvYAKpEhbwkzi68B7YBhYBVYm2
-	GXvAJvEK2EnMvXeEGWKDvMT+g2fBbE4Be4kNUx4zQmyzk/hzs58Zol5Q4uTMJ2AXMQPVN2+d
-	zTyBUWAWktQsJKkFjEyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAqN627GfW3Ywrnz1Ue8Q
-	IxMH4yFGCQ5mJRHeQq236UK8KYmVValF+fFFpTmpxYcYTYHunsgsJZqcD0wreSXxhmYGpoYm
-	ZpYGppZmxkrivGxXzqcJCaQnlqRmp6YWpBbB9DFxcEo1MDW67Vw3abf9lf9rStZfXi1wqUlu
-	XekdqW/nzZ9PW3X5/c1LZQdiDtZcnvlh6+nyf/+0Da/7et58+foZG+fTlYxr2r+q5nzYcb7I
-	3mSLysHJIu+LVnv5tMzzd46qeSWg6p72NSJROD33/ua2jwaXJnz8pvvpQO4iER2eqKN5N/+d
-	yf73rvH9f3ad5sKwVlVf0wxNT/td5+x1DvbGb++fG7O/w9Hmw6wDXU/lX13ZnTL5+OeThWyJ
-	/yY4uadPSYliCG5ruj8jX/xL8u2GjZEnxRkaJn5tWLf7uXwRh+mP2Ath/RVJm9i+vNELag5c
-	sv6tpvmP2fyRS/0kdlsnLBCZKx93WtHdaA6zvcWlf53TuXSVWIozEg21mIuKEwFp71JucwMA
-	AA==
-X-CMS-MailID: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
-References: <20250403094425.876981-1-m.wilczynski@samsung.com>
-	<CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
 
-VO clocks reside in a different address space from the AP clocks on the
-T-HEAD SoC. Add the device tree node of a clock-controller to handle
-VO address space as well.
+Current minimum required version of binutils is 2.25,
+which supports SHA-1 instruction mnemonics.
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+Remove check for assembler support of SHA-1 instructions
+and all relevant macros for conditional compilation.
+
+No functional change intended.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 ---
- arch/riscv/boot/dts/thead/th1520.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/Kconfig.assembler        |  5 -----
+ arch/x86/crypto/Makefile          |  3 +--
+ arch/x86/crypto/sha1_ssse3_glue.c | 10 ----------
+ 3 files changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 527336417765..d4cba0713cab 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -489,6 +489,13 @@ clk: clock-controller@ffef010000 {
- 			#clock-cells = <1>;
- 		};
+diff --git a/arch/x86/Kconfig.assembler b/arch/x86/Kconfig.assembler
+index 6d20a6ce0507..70fe87bb1055 100644
+--- a/arch/x86/Kconfig.assembler
++++ b/arch/x86/Kconfig.assembler
+@@ -6,11 +6,6 @@ config AS_AVX512
+ 	help
+ 	  Supported by binutils >= 2.25 and LLVM integrated assembler
  
-+		clk_vo: clock-controller@ffef528050 {
-+			compatible = "thead,th1520-clk-vo";
-+			reg = <0xff 0xef528050 0x0 0xfb0>;
-+			clocks = <&clk CLK_VIDEO_PLL>;
-+			#clock-cells = <1>;
-+		};
-+
- 		dmac0: dma-controller@ffefc00000 {
- 			compatible = "snps,axi-dma-1.01a";
- 			reg = <0xff 0xefc00000 0x0 0x1000>;
+-config AS_SHA1_NI
+-	def_bool $(as-instr,sha1msg1 %xmm0$(comma)%xmm1)
+-	help
+-	  Supported by binutils >= 2.24 and LLVM integrated assembler
+-
+ config AS_SHA256_NI
+ 	def_bool $(as-instr,sha256msg1 %xmm0$(comma)%xmm1)
+ 	help
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index 5d19f41bde58..97c1dbc3b7d6 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -56,8 +56,7 @@ aesni-intel-$(CONFIG_64BIT) += aes-gcm-avx10-x86_64.o
+ endif
+ 
+ obj-$(CONFIG_CRYPTO_SHA1_SSSE3) += sha1-ssse3.o
+-sha1-ssse3-y := sha1_avx2_x86_64_asm.o sha1_ssse3_asm.o sha1_ssse3_glue.o
+-sha1-ssse3-$(CONFIG_AS_SHA1_NI) += sha1_ni_asm.o
++sha1-ssse3-y := sha1_avx2_x86_64_asm.o sha1_ssse3_asm.o sha1_ni_asm.o sha1_ssse3_glue.o
+ 
+ obj-$(CONFIG_CRYPTO_SHA256_SSSE3) += sha256-ssse3.o
+ sha256-ssse3-y := sha256-ssse3-asm.o sha256-avx-asm.o sha256-avx2-asm.o sha256_ssse3_glue.o
+diff --git a/arch/x86/crypto/sha1_ssse3_glue.c b/arch/x86/crypto/sha1_ssse3_glue.c
+index ab8bc54f254d..abb793cbad01 100644
+--- a/arch/x86/crypto/sha1_ssse3_glue.c
++++ b/arch/x86/crypto/sha1_ssse3_glue.c
+@@ -28,9 +28,7 @@
+ #include <asm/simd.h>
+ 
+ static const struct x86_cpu_id module_cpu_ids[] = {
+-#ifdef CONFIG_AS_SHA1_NI
+ 	X86_MATCH_FEATURE(X86_FEATURE_SHA_NI, NULL),
+-#endif
+ 	X86_MATCH_FEATURE(X86_FEATURE_AVX2, NULL),
+ 	X86_MATCH_FEATURE(X86_FEATURE_AVX, NULL),
+ 	X86_MATCH_FEATURE(X86_FEATURE_SSSE3, NULL),
+@@ -256,7 +254,6 @@ static void unregister_sha1_avx2(void)
+ 		crypto_unregister_shash(&sha1_avx2_alg);
+ }
+ 
+-#ifdef CONFIG_AS_SHA1_NI
+ asmlinkage void sha1_ni_transform(struct sha1_state *digest, const u8 *data,
+ 				  int rounds);
+ 
+@@ -306,11 +303,6 @@ static void unregister_sha1_ni(void)
+ 		crypto_unregister_shash(&sha1_ni_alg);
+ }
+ 
+-#else
+-static inline int register_sha1_ni(void) { return 0; }
+-static inline void unregister_sha1_ni(void) { }
+-#endif
+-
+ static int __init sha1_ssse3_mod_init(void)
+ {
+ 	if (!x86_match_cpu(module_cpu_ids))
+@@ -360,6 +352,4 @@ MODULE_ALIAS_CRYPTO("sha1");
+ MODULE_ALIAS_CRYPTO("sha1-ssse3");
+ MODULE_ALIAS_CRYPTO("sha1-avx");
+ MODULE_ALIAS_CRYPTO("sha1-avx2");
+-#ifdef CONFIG_AS_SHA1_NI
+ MODULE_ALIAS_CRYPTO("sha1-ni");
+-#endif
 -- 
-2.34.1
+2.49.0
 
 
