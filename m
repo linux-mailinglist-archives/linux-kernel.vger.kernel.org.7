@@ -1,228 +1,193 @@
-Return-Path: <linux-kernel+bounces-586911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F8BA7A544
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B18A7A56F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD39318960A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1328D16BE22
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818FA24EF85;
-	Thu,  3 Apr 2025 14:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F0024F587;
+	Thu,  3 Apr 2025 14:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak0LtGE7"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="aGFoUDH2"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2329524C08A;
-	Thu,  3 Apr 2025 14:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185AC24EF65;
+	Thu,  3 Apr 2025 14:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690733; cv=none; b=ivThEpJPkfjx6h6BcWngIgqPmmuk4Se7lpkOtD9JfdMID+CRybs4OVTE5UFBy5w2xKpIGe+uRnT28/L1Hp38sou/7grymiI9xQauF7THvUltWeOKu7xxVqfkz4WgboEUNqj90XxJrvwup3WFDUj81SmwwccGGVmmWK1b/FLeuVk=
+	t=1743691082; cv=none; b=sgUCyVVYw3j4Ovzit29qTMXLhOIhjpLmuMXzuU8ndPHAnox+LZzYdgnG4MyxN6IjfzTbulDcPDeoqbPaBJvZkebv9VpL3T0HGjhZVts2wqPPEn7Zz7raUDBs0oBGcDVWv4g/L93C3L4Cmr1OC8+u/+RjlEJW4NfBeRewCFw/4Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690733; c=relaxed/simple;
-	bh=vVR4dzjbwximKMFz2GolQ+usgSrCBodydLu3KgERStE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=MOXoDMhT/2FvuvJoKM3UWJbwxQOkCLiwjgR0bDufB8rfAS0usVpydeb3f34mJQyfk02XygZxC/0n4m36EjHVXAjbjSGLfy5bcQG9HPwxxfm1rfFZz/n4R7/BT7vz82uvTtsfvREvhSBuefEk/TZQEpvehbtsePHVGu72fzar3UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ak0LtGE7; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4774d68c670so13065661cf.0;
-        Thu, 03 Apr 2025 07:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743690731; x=1744295531; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4cM/Hf3taQ82kW/fJqiW37cU3vX6rk2UxXpAJR5iIVQ=;
-        b=Ak0LtGE7xBASbInCTu1D7e/P4BQhde5JHbcAgyy5etK6a2oMLHxBooZGnoZTB7ytK2
-         cMBfuG2pRRlNnzbExHVI7mLBY3+nh2UOdinHNE13FOmYqqp5dhEUyZMsUsOJgXvAQGLW
-         lfuuKTZnR6DIaRI84Rl/6/bGQNelVl/TPSEjhkH49VcDs3uuq4R5OBkS/bnR5N8/7Efu
-         r93cWC6Ml6PWcmZTmpGtrb0qFX6BgH+MgZ2phE/DBmYIQo2zbH6VXB1INnTTBYBPDy2d
-         RC1jHR3segbex1Or8imL+4HeUUzAdHr3VOfC4wDU7E7HytrujghIWx1tsHudAt9cqIMX
-         /IuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743690731; x=1744295531;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4cM/Hf3taQ82kW/fJqiW37cU3vX6rk2UxXpAJR5iIVQ=;
-        b=WZLBrN7HvCaxgNr24FgL7KD+rIEqwpbDMNfYDvmXzx4aTmc8icTaM2UR4lB2JrHNpF
-         JDQn8wWyPlPNPKZnUPSh+e7QKgBkToahgsZme77b4qlNCOutwuhOxXsR8Q7GGHbPZTZI
-         VgxQAR5tWSIZL9KEBFbvJ6Ch6nbwvWy5J6fWVP+yIqY9JYzKYzZr50P4DOHp0HV48n2D
-         gqdwgxd6y5zaznLLEEfEsy0b/m/q29hxu02FVK5bfH3lx650QBD+3xLKYr58UggxO7wu
-         dK+467WN1hJmZj5cMGFvgd4R1TYDADIEtBwY5/BcBpyckwvpRYibKGm1wMhv+dOO5jsB
-         2YkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRpyn2jn3FuWeZsoZ9fc+fsDEVeWo+b/9lPBJAmKxJ24kubk0qx+pyPZ3G0oFk0a3Rjk10z2dw@vger.kernel.org, AJvYcCWRBaGRR8L2BF/7Okap/KqmZokGbIDP0FQsisoyqhWS6rIaNW0jElOWWNfAw75Bt5Rhd+y0vsxPWpE4SI8=@vger.kernel.org, AJvYcCXYKazXa5W07mhpiSJ9zFumUIb21DHhkiHTIvPrxSpHkP2RnB5Z1/VeC+FMMIj/XcywjatzJY0Lpp3VxCjhh/sO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK5Gx8Ajnn7v0Ays88IoxfHvhDLDasbh0SRCyfFGkaPO8rNS8v
-	kYPuSXq8x6kiKqhabVHfXOWZzgH6vOpC21ZMiIV7lhDX/YBP1VO+
-X-Gm-Gg: ASbGncuVZ+lEqDcU1kpDxEbjMLDHf4eG8iZXLWmhXphAk8qGQ9s1zvbmjmxywNyGPhz
-	QnV4ipCzwUMjwnb6MCj7bIhDhbOHUfB0FjDLj6RmoJvaBATNaQbucnvQO5j1m6MlkVvqfenrR7L
-	c7jiog1mCP1PdpvWH0I0p4ic9voFWsnvXk9VCJAW0eBywEsBn/oALoVBl0LAIxAMGpL4U5EmoMp
-	S4f+yIq9S8wzo23gRFXGuPmr63Wf32UIr5hpaEH0+1PrlVdXvUH3FolpULInIiw0SnY83gfFkAt
-	TWNkPeMnzVPytNo0BdxJGHM6p9thHNbFfaWydmUhV1swzmYlJfT3TR+t0Wy/c6tpp4rss3vrfGZ
-	Z3pqShvP8m8rYDEZ1pJ2YiA==
-X-Google-Smtp-Source: AGHT+IG5js78IwTVCo0mnbgZawwpmTGNCA/TG7sieG+24V1Gv+bkWWNlJPo/KnhB+g6blu3Sxt7EGg==
-X-Received: by 2002:ac8:59cf:0:b0:476:a4eb:10a5 with SMTP id d75a77b69052e-4791925bd09mr33748561cf.12.1743690730655;
-        Thu, 03 Apr 2025 07:32:10 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76e734fc8sm83989885a.5.2025.04.03.07.32.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 07:32:10 -0700 (PDT)
-Date: Thu, 03 Apr 2025 10:32:09 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
- Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: bpf <bpf@vger.kernel.org>, 
- Jiayuan Chen <mrpre@163.com>, 
- syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, 
- Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, 
- Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, 
- KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, 
- Willem de Bruijn <willemb@google.com>, 
- Jason Xing <kerneljasonxing@gmail.com>, 
- Anton Protopopov <aspsk@isovalent.com>, 
- Abhishek Chauhan <quic_abchauha@quicinc.com>, 
- Jordan Rome <linux@jordanrome.com>, 
- Martin Kelly <martin.kelly@crowdstrike.com>, 
- David Lechner <dlechner@baylibre.com>, 
- LKML <linux-kernel@vger.kernel.org>, 
- Network Development <netdev@vger.kernel.org>, 
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Message-ID: <67ee9be9db59b_138964294b7@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
-References: <20250331032354.75808-1-jiayuan.chen@linux.dev>
- <20250331032354.75808-2-jiayuan.chen@linux.dev>
- <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
-Subject: Re: [PATCH bpf v2 1/2] bpf, xdp: clean head/meta when expanding it
+	s=arc-20240116; t=1743691082; c=relaxed/simple;
+	bh=EGDrURtfG5yFHwcUAchmVR+dug88BgT7eHBywOOr/gs=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rSAnCRqpFD5TRB71OartswccldoAg0EIDwly6ABIhWPRLYK76QsJNNAI0jnIC9FPsw0BR54Ei6sGEfxI9/FRvECGbvYkf+p81IGZoibqUfkn93IC6Gp2dfGNOmH3HgMQEuE3WxD6XAxKuHq0zE6e0Cppd5HWHgLyo6JvFNgjNfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=aGFoUDH2; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id A0D7E10CEBC3;
+	Thu,  3 Apr 2025 17:32:31 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru A0D7E10CEBC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1743690752; bh=0kH8yCOJxBoXdRUYBya9BNYFEjEa0yk3zYUKsrPhS8E=;
+	h=From:To:CC:Subject:Date:From;
+	b=aGFoUDH2sGyQbA6y/3ck69ucv+NkHWUdR0RTVr9tCbiaEtoI8fKjTZTNx2CO2MDmg
+	 cASNKCueBcT3Kw47VQfLaj9RntHRTAKru6zR0NQWm6fBLN0mrFu6RE7Q3JT4rID9tE
+	 a6nktyJ3RgHiBBWm4NN3qMsWYhs1XtsU3gXMG3Oc=
+Received: from msk-exch-01.infotecs-nt (msk-exch-01.infotecs-nt [10.0.7.191])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 9A4923052D09;
+	Thu,  3 Apr 2025 17:32:31 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: "stable@vger.kernel.org" <stable@vger.kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+	"dm-devel@redhat.com" <dm-devel@redhat.com>, Luo Meng <luomeng12@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, Ming-Hung Tsai
+	<mtsai@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>, Joe Thornber
+	<thornber@redhat.com>
+Subject: [PATCH 5.10/5.15] dm cache: fix flushing uninitialized delayed_work
+ on cache_ctr error
+Thread-Topic: [PATCH 5.10/5.15] dm cache: fix flushing uninitialized
+ delayed_work on cache_ctr error
+Thread-Index: AQHbpKU7QX5+wT/V+U2UI5y/KVFTOg==
+Date: Thu, 3 Apr 2025 14:32:31 +0000
+Message-ID: <20250403143230.1601620-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/04/03 10:37:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/04/03 13:33:00 #27853030
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-Alexei Starovoitov wrote:
-> On Sun, Mar 30, 2025 at 8:27=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linu=
-x.dev> wrote:
-> >
-> > The device allocates an skb, it additionally allocates a prepad size
-> > (usually equal to NET_SKB_PAD or XDP_PACKET_HEADROOM) but leaves it
-> > uninitialized.
-> >
-> > The bpf_xdp_adjust_head function moves skb->data forward, which allow=
-s
-> > users to access data belonging to other programs, posing a security r=
-isk.
-> >
-> > Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@goog=
-le.com/T/
-> > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> > ---
-> >  include/uapi/linux/bpf.h       | 8 +++++---
-> >  net/core/filter.c              | 5 ++++-
-> >  tools/include/uapi/linux/bpf.h | 6 ++++--
-> >  3 files changed, 13 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > index defa5bb881f4..be01a848cbbf 100644
-> > --- a/include/uapi/linux/bpf.h
-> > +++ b/include/uapi/linux/bpf.h
-> > @@ -2760,8 +2760,9 @@ union bpf_attr {
-> >   *
-> >   * long bpf_xdp_adjust_head(struct xdp_buff *xdp_md, int delta)
-> >   *     Description
-> > - *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
-Note that
-> > - *             it is possible to use a negative value for *delta*. T=
-his helper
-> > + *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
-Note that
-> > + *             it is possible to use a negative value for *delta*. I=
-f *delta*
-> > + *             is negative, the new header will be memset to zero. T=
-his helper
-> >   *             can be used to prepare the packet for pushing or popp=
-ing
-> >   *             headers.
-> >   *
-> > @@ -2989,7 +2990,8 @@ union bpf_attr {
-> >   * long bpf_xdp_adjust_meta(struct xdp_buff *xdp_md, int delta)
-> >   *     Description
-> >   *             Adjust the address pointed by *xdp_md*\ **->data_meta=
-** by
-> > - *             *delta* (which can be positive or negative). Note tha=
-t this
-> > + *             *delta* (which can be positive or negative). If *delt=
-a* is
-> > + *             negative, the new meta will be memset to zero. Note t=
-hat this
-> >   *             operation modifies the address stored in *xdp_md*\ **=
-->data**,
-> >   *             so the latter must be loaded only after the helper ha=
-s been
-> >   *             called.
-> > diff --git a/net/core/filter.c b/net/core/filter.c
-> > index 46ae8eb7a03c..5f01d373b719 100644
-> > --- a/net/core/filter.c
-> > +++ b/net/core/filter.c
-> > @@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff=
- *, xdp, int, offset)
-> >         if (metalen)
-> >                 memmove(xdp->data_meta + offset,
-> >                         xdp->data_meta, metalen);
-> > +       if (offset < 0)
-> > +               memset(data, 0, -offset);
-> >         xdp->data_meta +=3D offset;
-> >         xdp->data =3D data;
-> >
-> > @@ -4239,7 +4241,8 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_buff=
- *, xdp, int, offset)
-> >                 return -EINVAL;
-> >         if (unlikely(xdp_metalen_invalid(metalen)))
-> >                 return -EACCES;
-> > -
-> > +       if (offset < 0)
-> > +               memset(meta, 0, -offset);
-> =
+From: Ming-Hung Tsai <mtsai@redhat.com>
 
-> Let's make everyone pay a performance penalty to silence
-> KMSAN warning?
-> =
+commit 135496c208ba26fd68cdef10b64ed7a91ac9a7ff upstream.
 
-> I don't think it's a good trade off.
-> =
+An unexpected WARN_ON from flush_work() may occur when cache creation
+fails, caused by destroying the uninitialized delayed_work waker in the
+error path of cache_create(). For example, the warning appears on the
+superblock checksum error.
 
-> Soft nack.
+Reproduce steps:
 
-I also assumed that this was known when the feature was originally
-introduced and left as is for performance reasons.
+dmsetup create cmeta --table "0 8192 linear /dev/sdc 0"
+dmsetup create cdata --table "0 65536 linear /dev/sdc 8192"
+dmsetup create corig --table "0 524288 linear /dev/sdc 262144"
+dd if=3D/dev/urandom of=3D/dev/mapper/cmeta bs=3D4k count=3D1 oflag=3Ddirec=
+t
+dmsetup create cache --table "0 524288 cache /dev/mapper/cmeta \
+/dev/mapper/cdata /dev/mapper/corig 128 2 metadata2 writethrough smq 0"
 
-Might be good to have that explicit. And that it is deemed safe by
-virtue of XDP requiring superuser privileges anyway. Or at least I
-guess that was the thought process?
+Kernel logs:
+
+(snip)
+WARNING: CPU: 0 PID: 84 at kernel/workqueue.c:4178 __flush_work+0x5d4/0x890
+
+Fix by pulling out the cancel_delayed_work_sync() from the constructor's
+error path. This patch doesn't affect the use-after-free fix for
+concurrent dm_resume and dm_destroy (commit 6a459d8edbdb ("dm cache: Fix
+UAF in destroy()")) as cache_dtr is not changed.
+
+Signed-off-by: Ming-Hung Tsai <mtsai@redhat.com>
+Fixes: 6a459d8edbdb ("dm cache: Fix UAF in destroy()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Acked-by: Joe Thornber <thornber@redhat.com>
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+---
+Backport fix for CVE-2024-50280
+ drivers/md/dm-cache-target.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+index 63eac25ec881..8a03357f8c93 100644
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -1960,16 +1960,13 @@ static void check_migrations(struct work_struct *ws=
+)
+  * This function gets called on the error paths of the constructor, so we
+  * have to cope with a partially initialised struct.
+  */
+-static void destroy(struct cache *cache)
++static void __destroy(struct cache *cache)
+ {
+-	unsigned i;
+-
+ 	mempool_exit(&cache->migration_pool);
+=20
+ 	if (cache->prison)
+ 		dm_bio_prison_destroy_v2(cache->prison);
+=20
+-	cancel_delayed_work_sync(&cache->waker);
+ 	if (cache->wq)
+ 		destroy_workqueue(cache->wq);
+=20
+@@ -1997,13 +1994,22 @@ static void destroy(struct cache *cache)
+ 	if (cache->policy)
+ 		dm_cache_policy_destroy(cache->policy);
+=20
++	bioset_exit(&cache->bs);
++
++	kfree(cache);
++}
++
++static void destroy(struct cache *cache)
++{
++	unsigned int i;
++
++	cancel_delayed_work_sync(&cache->waker);
++
+ 	for (i =3D 0; i < cache->nr_ctr_args ; i++)
+ 		kfree(cache->ctr_args[i]);
+ 	kfree(cache->ctr_args);
+=20
+-	bioset_exit(&cache->bs);
+-
+-	kfree(cache);
++	__destroy(cache);
+ }
+=20
+ static void cache_dtr(struct dm_target *ti)
+@@ -2616,7 +2622,7 @@ static int cache_create(struct cache_args *ca, struct=
+ cache **result)
+ 	*result =3D cache;
+ 	return 0;
+ bad:
+-	destroy(cache);
++	__destroy(cache);
+ 	return r;
+ }
+=20
+@@ -2667,7 +2673,7 @@ static int cache_ctr(struct dm_target *ti, unsigned a=
+rgc, char **argv)
+=20
+ 	r =3D copy_ctr_args(cache, argc - 3, (const char **)argv + 3);
+ 	if (r) {
+-		destroy(cache);
++		__destroy(cache);
+ 		goto out;
+ 	}
+=20
+--=20
+2.39.5
 
