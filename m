@@ -1,203 +1,189 @@
-Return-Path: <linux-kernel+bounces-586892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976E2A7A4FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8B7A7A501
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D657A5F6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:23:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CE3C7A61C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B4024EAB1;
-	Thu,  3 Apr 2025 14:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A410824EF83;
+	Thu,  3 Apr 2025 14:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fs+Rgh/E"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2076.outbound.protection.outlook.com [40.107.244.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGts9A16"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0B324BC06;
-	Thu,  3 Apr 2025 14:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690286; cv=fail; b=X9xnRg6FltWbzNH8hmbkNwHee7ThPPMf7KZsaSfzJy8AReC/eTDIPbMpcwQVU4iS5OgDKQRCx4yigKtN9ZZi98Nl5S8eXEOPTFZlbT/O1oi2kEu+MYXUGREEKiF64PAdHBlJezcspikZ5dN3QiptW9m2mmax6ISsNHWQsmwAhB4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690286; c=relaxed/simple;
-	bh=Smu6Q7pYfw3lEvIjAod+cia8QeQ7u4I7IELg07DSjZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=vA35OVQVluAoiJkByzs5TfAZIrWPgqRMkWU2pLdvnOHs05Gs4m9fUoKqCVPaJ28HYSRo1QZ2AGNHVeqV71J6vXgP+KKIxs07ru8w2LmgilF6St24Rq7FLHIabdPwSrpEe0STs4p+TcbDL6MhRCVJThDqQsVzr1ridaceRoUVrVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fs+Rgh/E; arc=fail smtp.client-ip=40.107.244.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pCGLtNbTuE+7kZxezcvm3MlL6bv0kWJjJU2DPL1gCHTeNM+V5PcxwZiuvr+MHq8Os0kZY0fZqIGLLdPinCt1sHcilK/YEuC3ZfvXGiM8bwCiMNm1XdG1ik9dzbpJWc3g4SLEqsH04YP0NGKXm6g98eWUuxM2r5PE2lsVzydgaT5Jf1P8pCrN9BlfNSPSKM2C+veskwkPklvgSQhf32XM7v+TTTuwRi+BWMwBjXnRXDfTQhW2g6uXduEvyc270Yn6kfGt0wVOfs9iQsjiAMWLumX3kM2BJARWkf4L4duWsLfYbxbj3xl7DibtazkmSYZ7N4KsGvHnMQeGE5AHCSVeVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zcxb1TyYLuc3X7y+lEKBuJZsHzYdnESch1ylf3Y7h3s=;
- b=qwbebHLhAl7UAqLuZDj6wLF1ncHXH+3XfCm8nWtix4ApRauGxYIB6Afz2t9yaIe8A7Tle3pjQLlafRPsfEvqghsoKQuTAFAucYIsGxtk3L27y7RP6FOvC1gEUSb3+cb7t6XxQZnW9i0PL6dzZLi/6BoGzeDPlyzgWD2fdHtOSFkVLyNrd7RbeXC40AmUf5aCoSCzCCxGnyJGB2MTQbKR8mBdOIpwLh2osxCXUad07wUjVGoL4CFCFaE8nqpk7W/VhqTxbUa6wkYS5oDG3SUVM+Ru1vAuxbvfruOV6F6zrC00XluoT8EXZu/MUl3bznxQIXHdxSYjmVeAK1RD/QWP4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zcxb1TyYLuc3X7y+lEKBuJZsHzYdnESch1ylf3Y7h3s=;
- b=fs+Rgh/EoICVT9KB/nBIgLZkFc1tQohGlDKZfVOrvViClEHMkuHYmU1wM+dHi54yCB/KS1vghBfkhlZc2K9hzet7ExhJ55D1YqOHWHxPocM3OSFOtrLT07VkeFrp9dB85DtCncuo0DcmRaXNuHp2l0tvSkzfsMdj6PPk7ai8PKQGBPsttjoAVqVGvKZ69BC0ygZUQ8zJubAZOyu68XWcFW4pXD61R4Nz7WUgpzx5zlU8yyOM1ypHXILfF4xh3aAVndI6l7APRguA2ALqXtoLmoAzC2/ibPg31s9jB08bOdS+ij12rtT2LT0CO/YoD0FdeLJQIWbudvMhE547j/Axkg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ0PR12MB6904.namprd12.prod.outlook.com (2603:10b6:a03:483::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 3 Apr
- 2025 14:24:40 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.043; Thu, 3 Apr 2025
- 14:24:39 +0000
-Date: Thu, 3 Apr 2025 11:24:38 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
-	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
-	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, dwmw2@infradead.org,
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
-	corbet@lwn.net, krzk@kernel.org, mark.rutland@arm.com,
-	pbonzini@redhat.com, pasha.tatashin@soleen.com, hpa@zytor.com,
-	peterz@infradead.org, robh+dt@kernel.org, robh@kernel.org,
-	saravanak@google.com, skinsburskii@linux.microsoft.com,
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, will@kernel.org,
-	devicetree@vger.kernel.org, kexec@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
- preservation
-Message-ID: <20250403142438.GF342109@nvidia.com>
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-10-changyuanl@google.com>
- <mafs05xjmqsqc.fsf@amazon.de>
- <20250403114209.GE342109@nvidia.com>
- <Z-6UA3C1TPeH_kGL@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-6UA3C1TPeH_kGL@kernel.org>
-X-ClientProxiedBy: BN9PR03CA0580.namprd03.prod.outlook.com
- (2603:10b6:408:10d::15) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B98C24EA90;
+	Thu,  3 Apr 2025 14:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743690315; cv=none; b=qdJdBn1OamqUP0NslYJRI2JRiwMd6JC3J3xvDxlgaWhMkff5niqenXDd8KCL33jzfKhs+PaYCovBKWBxbtrNkdLXB0CkFw2eRyFdJ3wEK/HIcBLTrU0ZqxJWtoqu57276HbOZKh6bJJch1JLBWKM5cJUc03FIJNW5WM3Ftg+mKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743690315; c=relaxed/simple;
+	bh=tKG4mgxr/waIXYy3UE25TN/Cf98+hnU2uITZp+axu1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=towyJEHmxYeaA5ZWm1XAILh2Zeysr1I+MclcqkHZ5urKbQnGl2HOpN6lD+pjV8b6KHLaN0xSF+NquMayoocY2Kgg5QooDPe9uuIvYuxsL8SQwhsT+W4iT48FQfVWv2SDqmF7yGWOwrbxqLiC2tgwi8WrLBhyJ1+I3moOd8xuZcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGts9A16; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0782d787so6340625e9.0;
+        Thu, 03 Apr 2025 07:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743690312; x=1744295112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bYt3/DwYVuXN5SPjLpQjF/KbDAzdmiI9+JL6XuVsme4=;
+        b=CGts9A16taOdsG7gm1S5QeyBfdl/JTbajDjeV8bO4RBcxL9lWd1FEL9SE8zC2dSplG
+         EMzy7B93b4v34nYprCYwTv0n/vCgnQ0pp4QIXZznGZtDSTNMmyDcCkyy6f+a9vYO/9aY
+         Q2KNJndfS8ObjqOfD2+9g90qRq2+GmFy/0DB8bumF3W0h358z6XxK+2B42iLhrj83kVB
+         8mBiv9uRvVjwCkJeU3vJhwlFQ5IClk20GUqgsGZBbXBSPAtuJ7KITASYLEP9l3/ibYDL
+         gSuGCWtuKgQbnBiqQU4FatFj1gkbN0u94z2sstImS5rbp5zggs/dKNhT0p2MX8eqvkzA
+         EHbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743690312; x=1744295112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bYt3/DwYVuXN5SPjLpQjF/KbDAzdmiI9+JL6XuVsme4=;
+        b=AXivcSxbACqfwfi6eOpMcvI5Bjh1VTHxD4xLIFF+O8COg6qGlijztF+Sr2wvFZ6oPY
+         TTmWFvt1pNkC91/kczTh+RFsTER586AKsx5hwgLDrCqsuOkihmjxhkYWC6QmN4r+EONC
+         OJTt8cPShcOjUI5Ky0nIMXStSVPVfcQHk8xGObCgdYrx5bKOdRAmpMk8jGO7fOVAVh8N
+         P+Hvjd2dsAvH/XOrdZqDKV2bPiHAvZF9zOU46kNbHe49l1oUuLjP29HlkKEhxyy5Leva
+         LbY6yPN0+prbiSI6YamtgzOI+eT54kDPTTOZ4XSqD9oafn90J8bTFYi1t0v2izenhq+t
+         dfYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmdh2IpD2pDTL/dG6Mdyf1OzG0L8+h4Q6yBt7r9w6N67KE8ChCbiayzISXml7yTqVIIW0tC8pCuHui/iAk1S2+@vger.kernel.org, AJvYcCUmgOA1ehczkB9hZEsmCs6gf16JN5WoyC8EyA+UF7I+KSyBRBLVg5ciAh7lqXS5p1Xdq/becMsM@vger.kernel.org, AJvYcCV0Z4EfcaBJPm02t1xKcx9KrPRvW8JEpqhiEF/qkgEgHRuRKKcowMzjnzk6msF72uzELl8i89L9HhTfP3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3kCEEmg1/0C1jFHk+l5AOCZ5sy19+P9SvfkJJpyM82c+yntBy
+	WelkTAdq5VkXaRAHRfgtH8NmH96EeHLxXzp5Gpf0OgnWMagx7J6VFxk4OE/gW47JnuwonIDD9I8
+	NzY64c6JDoDKT/1kTKpc+Ova2Vrk=
+X-Gm-Gg: ASbGncv9UXOoIfpzk4sOquGBiPH7f3yl4UMmA37/3Dt2KiuksUtsshosNrhuOcVCamq
+	loYYlSp06RJH05scdGjqe/FPsZ+Qy6M2BLohru0sGWu/wv3zrgr9OLhGloNHjiSn6vns4Hisoz3
+	B3SPLXgZ2t8boDX/WLLnF6U5rucygk3+7jkuIQoCJRgw==
+X-Google-Smtp-Source: AGHT+IHUkOyw3ev23XqXHBt0KxfVIhLR/1X4BbNWvcbsg0kdXKegScCaWHDKnAMpZBX6hw7sIGdWPn1U4w8qAoQQkB0=
+X-Received: by 2002:a05:6000:1862:b0:390:f6aa:4e7c with SMTP id
+ ffacd0b85a97d-39c120e0bc1mr17240592f8f.28.1743690312134; Thu, 03 Apr 2025
+ 07:25:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ0PR12MB6904:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96d234a8-7268-4f0f-4f47-08dd72bb44e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Gr2t65HNO6lx6QfixVXZJk2k2iXpd0nKd1ivbIrsTpDejgG43EhTdjL88Idp?=
- =?us-ascii?Q?jBP+m/VRAUOTlHFAiDaLRkeAR2HB9vGox1swNM5n20zGDmuESynTW71ZN11J?=
- =?us-ascii?Q?Gw4Wxh06bg8FYnAQvNAgQo1+nUTwhfzWNc6RpCoFXy/nER4NbPey8K6lNjyD?=
- =?us-ascii?Q?HwQDEzT7BNs9iMjHRarg5JLZOb7c7j5xKi6OHK6Li2BAjR6lbLjHRJyDTOIE?=
- =?us-ascii?Q?LXZlKc7DslwooxGyaU8QupPoidFLGfZbqUkVnH5E4utAhOMIxK1hjKYg7lAe?=
- =?us-ascii?Q?25SePoQFKbP/IW4+fTZFuSaWbldh+E95y1AR0Nl51ZiDvGSZqBFsaIyR6HPT?=
- =?us-ascii?Q?7QB6Bxx4FdQYedS33YIIEv7hkMT4khhAKi+WNuTrhPXivms7pcpTs4otFiKI?=
- =?us-ascii?Q?dr45GiRqUw/j8zAZ2hEXLHEVPdFXwJKfPSPi2IUHeSsS4/5etRu1PkZdp8L0?=
- =?us-ascii?Q?urTZ+1eB9j4pyvpETa72uHddHbzcDEzft2XY010cvJx+MmBUY/5QhqNO8VB2?=
- =?us-ascii?Q?aGsq5hYL517hZh09w3Dt/gQ6xmIFihuixFRoBj7tv8p1OWyNpT69S7/pr9/C?=
- =?us-ascii?Q?Ld2iYfL/w1M804UUz0rUYZEgUO/z1Y9DvsMAqOviVNhcoV+z/MVhMuESGfzy?=
- =?us-ascii?Q?JQZD7j51YVtMkzxIFdC2VNKrZGhG+1QH6nlHzbcmOqgqdw4zCHFmEpa7bpt/?=
- =?us-ascii?Q?Bf+r92Kn8KE7WRD6YSrWGX9SshzT+cvIYaaW2X7pmiVRM1k0NMDNo0oOsz6A?=
- =?us-ascii?Q?X2VaM9s66EPSiMHiEonFiAQiiIJvk9wX2nvBhYJ49Iyc59I1Zptva6zycZ2x?=
- =?us-ascii?Q?iHYiA7giDYrx+vPRwrd7vB8/to/F8xkqeKfAfdUd+9C/jJv+6WB+A0KS1scv?=
- =?us-ascii?Q?kqARlUwL2r3IiCtuOenezpwvieH7pYMIKo2InchS0wuqQyFVICnsh49HLp22?=
- =?us-ascii?Q?I5OmbNSeIr9LXvFdfrOiERE/XX9ziawNKi2dO4t8YuiH54sV2YNES/5Xxw/S?=
- =?us-ascii?Q?tE3jUJoONWa7iTzuZhS85hT28UqDBBEkd3U3g6uIl33777vqde6bLU6/exyl?=
- =?us-ascii?Q?tmNYc5RaA4rqlcs9oSKPtGnvWLUn+twtfWQN2PV5wu+iYE/JMtya4x4vsLpC?=
- =?us-ascii?Q?Yve+yYV9RIgG/vEMvCuhEGNUVy0Q47oTKL7SpufhZVsbSaGlG8NgznWV86JU?=
- =?us-ascii?Q?tXNS1W5v+MKOB5lIcLVCDVx5qorEdHYRPnmf+TIqd7VBGs8Or0QVcycqA0qK?=
- =?us-ascii?Q?lbiS+vNKqcZGFspd7cUP7Na/vKAj013jdhI5IdEO1crlnh5NmKIUl7VEJFvB?=
- =?us-ascii?Q?5jg1k72zwrTS6pyRWlzDinxpXax+PxF8LLLaB1xiehq5QLK5ldIOPTCE7cjU?=
- =?us-ascii?Q?NDg8ByWz0YAVexD1aizZd61VHtGu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?afP0D4sM78HxXM2rjcp1Vsd+RsRKWOt/qhDkogyiRM10Fc/98uRUYuxT90/d?=
- =?us-ascii?Q?UA32dGGlpGckATSJypHjXa1DhyO8vUMIYKYZys6U1jyqx0N8Jkii4Opibhfa?=
- =?us-ascii?Q?kHPB31zG7gZyChY5hvdWCzIV5YCftBaW8v8PHPMQq0K17+MBLxH+OjKtOELG?=
- =?us-ascii?Q?6vkPBus5OFegcrBQ+Jmqppr4ScvJI5+enM0VR9Ydu1W8gjS64fleIOkoTUzR?=
- =?us-ascii?Q?4FpAxOGD93DAx8c1YDKBAjDIpVKMZasPyW16CzMaz+RI/UUPCqbWLL0Dw9u4?=
- =?us-ascii?Q?uJtsmXo2o1pJ9VvFdoIgWuPKaMJMbyq4LVEGnnoE8QdG3qJgaePlZpeIRvcv?=
- =?us-ascii?Q?8CTR94pPuc3CgKLR51i83hkhF708jzBLNjeAikzwRj8AGWkHC5YkXWTKFiCe?=
- =?us-ascii?Q?0wB0SeA9qRJ9J5lKvo54tQC6+e8sfe+a91OBKN0yU/7s22KFz1ToBdxJ/USE?=
- =?us-ascii?Q?ueAyX4rtooRHfee/flmz/CLOg7thUfnq1IODbchdmW1Hfkp5I/Blj4Th69aw?=
- =?us-ascii?Q?U765jww3AZSMru37VV0XYLHzXeDRDqYYI3PgZu3Hh90eAhCpJbpWszPRMUx7?=
- =?us-ascii?Q?Ud+v349xgBpAfUbqs01fPOdBd6euBFr5Xv2hAOYoglhVxETAWnngJmxgz2yo?=
- =?us-ascii?Q?XChlHytCG8IYjNlonPn8myu7MeE9fW1PjmbZ/h2RgtouzrURPn3jKpwjKpL7?=
- =?us-ascii?Q?K+n2UI11dar/XRHzeFsdtfj3J/og3eG+GLvCc/8gz8v2MaTuiOslUX1PGU/L?=
- =?us-ascii?Q?L8hBSwK2WGkB1MqJW27V5N71tbu43sd6s4tfXbFJ0SAm5nHqCKTTqcPvsDj8?=
- =?us-ascii?Q?xmHz6IqfynszvjBMsDimqB+3PRlAiCzxsQ9/jYhWme3Eo3PNRGIG0G4zRPPH?=
- =?us-ascii?Q?moo8765RST6tgw3LevKEO3/fkz7v6wS3Qaq5XFLeEnyJalyohVdxnAnBvjq2?=
- =?us-ascii?Q?xcnUXxC8x5ZgUITKoxu6vjk4FkZ0qVsI5sv3bi313IdPc+rTK+k0MfwTY1cX?=
- =?us-ascii?Q?VKAhqK8FoGA0uL/bZrQXlx8mO7lmJ9PPWKqpsjoM1J9jl+T8U2QlkKpSsxqM?=
- =?us-ascii?Q?vaddSmSqDM4udIgfHOL7yy+2lgmNMQJrPWj5x8IU0Pg4q/cgtiLb5O4zdUsf?=
- =?us-ascii?Q?S4XgVZIy4XU9pTfueXif8sIkM1Is2N8WaHPeLm28FutmiBLmTcmqV1V9EOK3?=
- =?us-ascii?Q?EGamv6PmOSWBISd1a/JPVY0WlNSj2UsKqp02I9e/Pv32XQGnymeVPVsE75ZR?=
- =?us-ascii?Q?kZiOrJHh1wxdcWciHXSKWOyhelmR3xx636c2riw7a10gfWCyAZsnWREc3qHQ?=
- =?us-ascii?Q?zWKFY8puLVcAV+vQtwNbfJc8vKeLR2EynGygj0+1NIgBO2yYs6Rzk/0gdJSI?=
- =?us-ascii?Q?HSOSnuUTzhyB371yLtHvhvmIG5V3KyQ30q6CbGrtxppiHF9SxOyrTAQPp5Qt?=
- =?us-ascii?Q?MjH6H7uX6GQbcdqgj2cR7DgRHs6RjzIfhtelJz2pa3otT3IhPOoltMcx1NYN?=
- =?us-ascii?Q?4AFwdYnEmhREjgHsYRl/BchupOQl3cR5B9cH4NzJxTxo1zpxgmNWIcItUIa0?=
- =?us-ascii?Q?fvDRqQmN+aq/HHcKu7ljZAYMUq5U+/CcLaKXSig4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96d234a8-7268-4f0f-4f47-08dd72bb44e1
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2025 14:24:39.8626
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZOwlAhfFenug3nBqT6UtprNPUH6GitiLcWh4mAGunjp5UXjEcb7JI+VIZ9R/v70x
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6904
+References: <20250331032354.75808-1-jiayuan.chen@linux.dev> <20250331032354.75808-2-jiayuan.chen@linux.dev>
+In-Reply-To: <20250331032354.75808-2-jiayuan.chen@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 3 Apr 2025 07:24:58 -0700
+X-Gm-Features: ATxdqUHpnDryxsVQqbU7wXWf5I9AbRjQwuexib-K1AFMMQc4NlaNR5RWjUUlZVo
+Message-ID: <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
+Subject: Re: [PATCH bpf v2 1/2] bpf, xdp: clean head/meta when expanding it
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: bpf <bpf@vger.kernel.org>, Jiayuan Chen <mrpre@163.com>, 
+	syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+	Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, 
+	Jason Xing <kerneljasonxing@gmail.com>, Anton Protopopov <aspsk@isovalent.com>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Jordan Rome <linux@jordanrome.com>, 
+	Martin Kelly <martin.kelly@crowdstrike.com>, David Lechner <dlechner@baylibre.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 03, 2025 at 04:58:27PM +0300, Mike Rapoport wrote:
-> On Thu, Apr 03, 2025 at 08:42:09AM -0300, Jason Gunthorpe wrote:
-> > On Wed, Apr 02, 2025 at 07:16:27PM +0000, Pratyush Yadav wrote:
-> > > > +int kho_preserve_phys(phys_addr_t phys, size_t size)
-> > > > +{
-> > > > +	unsigned long pfn = PHYS_PFN(phys), end_pfn = PHYS_PFN(phys + size);
-> > > > +	unsigned int order = ilog2(end_pfn - pfn);
-> > > 
-> > > This caught my eye when playing around with the code. It does not put
-> > > any limit on the order, so it can exceed NR_PAGE_ORDERS. Also, when
-> > > initializing the page after KHO, we pass the order directly to
-> > > prep_compound_page() without sanity checking it. The next kernel might
-> > > not support all the orders the current one supports. Perhaps something
-> > > to fix?
-> > 
-> > IMHO we should delete the phys functions until we get a user of them
-> 
-> The only user of memory tracker in this series uses kho_preserve_phys()
+On Sun, Mar 30, 2025 at 8:27=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linux.de=
+v> wrote:
+>
+> The device allocates an skb, it additionally allocates a prepad size
+> (usually equal to NET_SKB_PAD or XDP_PACKET_HEADROOM) but leaves it
+> uninitialized.
+>
+> The bpf_xdp_adjust_head function moves skb->data forward, which allows
+> users to access data belonging to other programs, posing a security risk.
+>
+> Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@google.c=
+om/T/
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+>  include/uapi/linux/bpf.h       | 8 +++++---
+>  net/core/filter.c              | 5 ++++-
+>  tools/include/uapi/linux/bpf.h | 6 ++++--
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index defa5bb881f4..be01a848cbbf 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -2760,8 +2760,9 @@ union bpf_attr {
+>   *
+>   * long bpf_xdp_adjust_head(struct xdp_buff *xdp_md, int delta)
+>   *     Description
+> - *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. Note=
+ that
+> - *             it is possible to use a negative value for *delta*. This =
+helper
+> + *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. Note=
+ that
+> + *             it is possible to use a negative value for *delta*. If *d=
+elta*
+> + *             is negative, the new header will be memset to zero. This =
+helper
+>   *             can be used to prepare the packet for pushing or popping
+>   *             headers.
+>   *
+> @@ -2989,7 +2990,8 @@ union bpf_attr {
+>   * long bpf_xdp_adjust_meta(struct xdp_buff *xdp_md, int delta)
+>   *     Description
+>   *             Adjust the address pointed by *xdp_md*\ **->data_meta** b=
+y
+> - *             *delta* (which can be positive or negative). Note that th=
+is
+> + *             *delta* (which can be positive or negative). If *delta* i=
+s
+> + *             negative, the new meta will be memset to zero. Note that =
+this
+>   *             operation modifies the address stored in *xdp_md*\ **->da=
+ta**,
+>   *             so the latter must be loaded only after the helper has be=
+en
+>   *             called.
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 46ae8eb7a03c..5f01d373b719 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff *, =
+xdp, int, offset)
+>         if (metalen)
+>                 memmove(xdp->data_meta + offset,
+>                         xdp->data_meta, metalen);
+> +       if (offset < 0)
+> +               memset(data, 0, -offset);
+>         xdp->data_meta +=3D offset;
+>         xdp->data =3D data;
+>
+> @@ -4239,7 +4241,8 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_buff *, =
+xdp, int, offset)
+>                 return -EINVAL;
+>         if (unlikely(xdp_metalen_invalid(metalen)))
+>                 return -EACCES;
+> -
+> +       if (offset < 0)
+> +               memset(meta, 0, -offset);
 
-But it really shouldn't. The reserved memory is a completely different
-mechanism than buddy allocator preservation. It doesn't even call
-kho_restore_phys() those pages, it just feeds the ranges directly to:
+Let's make everyone pay a performance penalty to silence
+KMSAN warning?
 
-+       reserved_mem_add(*p_start, size, name);
+I don't think it's a good trade off.
 
-The bitmaps should be understood as preserving memory from the buddy
-allocator only.
-
-IMHO it should not call kho_preserve_phys() at all.
-
-Jason
+Soft nack.
 
