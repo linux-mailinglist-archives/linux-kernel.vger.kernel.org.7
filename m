@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-586459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB8EA79FEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:23:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5F5A79FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38DF71897F73
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63ED53B23EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A26C24C08D;
-	Thu,  3 Apr 2025 09:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D47324CEE8;
+	Thu,  3 Apr 2025 09:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nFYZqfx9"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i8zdl7bX"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D0D24500A
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E4324C07B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743671987; cv=none; b=Qq9nHoLN7ouB386kd/AhvPPlahfAA+SQZbuXfmJ+ie/gIcU7ohwbnuvNfZGCWn5yvY/Xd9EB6KIAwimTFSpkUhCAZ0Pzmz80tsjlrOzg02jBYQO00FV4r65sKn5jCt2WgtUBAtP5TIW1CCAS3ZCrI9oO9Duj2DjfOXYc5mmNjhs=
+	t=1743671988; cv=none; b=Ks3yr8bEK/sfgm6IelDTLwdVb709W87eNc5OKdTx+8MmIsW/THmdbWUtGUHFi34OSugPTvSWWs6eR1n/5p1WEQTR7kVsVVKbiCDRJI92gVTFlg5zo7l3Jj0sTR+DLV+TzTENhlSmArK2RkqVFaubmgm+n3hap3cMsGtR/I2YHy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743671987; c=relaxed/simple;
-	bh=4rMyFNV7jMhDeBw4Q7b3dwCpebBj0MM1O/UFlQh56dQ=;
+	s=arc-20240116; t=1743671988; c=relaxed/simple;
+	bh=Kqzg3z2XwKg9lPhPDxuuJaOmez7rJbNgAA/4Ar2K44I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k3JiL/3k0I/4qAn3XazjN7KezU0lDsNKlyZrjYKDgYZkb9uSI1U1XOr6HaicZN8Dw5mObe8HhadzRqF50dtTty5jNr77eSwPGU7U8ZjM67671H30SfpOh7z6hl962HGt76xyG9lj/dTb2WR1VKDvlrl9FCIWYOIAFZNJZ8BBCek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nFYZqfx9; arc=none smtp.client-ip=217.70.183.200
+	 In-Reply-To:To:Cc; b=BMLGIudnnpOXBjk3sH/Yq79sXtAPrxx2w8XqDJwS9lkjLkKOACkwb9LBgFZ/QZxhm7MZaTdObuZraedh3/1NJaWtwPbVhDU3ZmAsge9zqlyqXfFNbh8hzFQXo+Sx6IBJq8mcrBFJvyE7V9oeiNEt2DKiYGQ+DJrJ1gD3/BYsSLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i8zdl7bX; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B2D3B43220;
-	Thu,  3 Apr 2025 09:19:42 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1A1F943231;
+	Thu,  3 Apr 2025 09:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743671983;
+	t=1743671985;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9JtPhqzZVmdqPC67x47vwEHc/WUncNGpdjBWNwNOwq0=;
-	b=nFYZqfx9UhYCbutm1EMYciMe3j15DBLVp7zfC9N8txjK1y8T0sJkB5Yk+SqTcbfztOgvBp
-	80KaKNKueJowqW7ocU6ozZzJggvF3UWCbeFSJ+d6EFO6/NAuN04ntYx97RjpEooShMlZRP
-	a2FsigmkbTN6GolAEWveLgRr8HpcZsaqYVp/r5bSdCm4ues/RHOEZ9KkS0Znx3rT2AJgZb
-	cibsDGt7Tsg7d8IpNtUc6N6IH9sTMSBbN9a8cL+EwZdSowolXUJH7dEHcBAVG88k58fXQd
-	f8Fxu7wtIHkt/cghd+/YO5/xH5o2wCLW4pZYHgWy2EOpqodhK7Q8C7wDbmwk6w==
+	bh=Y666on2pUo05s7SFk3AWKKYFxcfy7Oy/E6qTMRf1BnY=;
+	b=i8zdl7bXBOAuz+gDyTilhE3r9aMPcmdoAepANPycV4YrJYAuURuOo8ivH+3Yn8af0MqwiV
+	rkJuX6Y7fiLXRXscW5lt55qun+r+PnqUz55Qj+0qxEk5e5cBFfkyGxAPkZgbF+VD0khFTH
+	p9EAWBst99qBZrosi0bjq2/JlL3gk+B8CUZB4Pl51lVIDCd8SUAsDarpkkzkPmU/uz2/8n
+	qGiuAaJ13FqWXN/6lMLkzrE9yT6rytmweK2qcXwupUByQobHk4xnQ4ETbCD0AB7qRLDzWd
+	yZIngZRbDic4jcGgp+7/QcGxE7qupPnqQ2uy5iDQfyZu7j3VBog3nyk13zEXCA==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 03 Apr 2025 11:19:26 +0200
-Subject: [PATCH v2 16/19] mtd: spinand: winbond: Rename DTR variants
+Date: Thu, 03 Apr 2025 11:19:27 +0200
+Subject: [PATCH v2 17/19] mtd: spinand: winbond: Add support for W35N01JW
+ in single mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-winbond-6-14-rc1-octal-v2-16-7846bd88fe83@bootlin.com>
+Message-Id: <20250403-winbond-6-14-rc1-octal-v2-17-7846bd88fe83@bootlin.com>
 References: <20250403-winbond-6-14-rc1-octal-v2-0-7846bd88fe83@bootlin.com>
 In-Reply-To: <20250403-winbond-6-14-rc1-octal-v2-0-7846bd88fe83@bootlin.com>
 To: Richard Weinberger <richard@nod.at>, 
@@ -72,49 +73,94 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekudelucetufdoteggode
  gesnhhougdrrghtpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtuhguohhrrdgrmhgsrghruhhssehlihhnrghrohdrohhrghdprhgtphhtthhopehsqdhkieesthhirdgtohhm
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-So far all the chips supported in the driver apparently have support for
-the same kind of operation (typically, single, dual and quad). The
-future introduction of W35N chips will change that as these chips only
-support single and octal modes. Let's rename the variants accordingly to
-make these future additions more understandable.
+Add support for the W35N series by describing the smaller (single die)
+chip. It has 1b/512B ECC support and its own OOB layout.
 
 Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/spi/winbond.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/spi/winbond.c | 54 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-index 861fb8d59760c83c3fa31879cb6ff027e7dc92ff..99b9f333eb3142999d8f73d43537f1ed9789c975 100644
+index 99b9f333eb3142999d8f73d43537f1ed9789c975..9b0369a077efadac8bd6be632f15b822d42a7227 100644
 --- a/drivers/mtd/nand/spi/winbond.c
 +++ b/drivers/mtd/nand/spi/winbond.c
-@@ -23,7 +23,7 @@
+@@ -23,6 +23,16 @@
   * "X4" in the core is equivalent to "quad output" in the datasheets.
   */
  
--static SPINAND_OP_VARIANTS(read_cache_dtr_variants,
-+static SPINAND_OP_VARIANTS(read_cache_dual_quad_dtr_variants,
++static SPINAND_OP_VARIANTS(read_cache_octal_variants,
++		SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0));
++
++static SPINAND_OP_VARIANTS(write_cache_octal_variants,
++		SPINAND_PROG_LOAD_1S_1S_1S_OP(true, 0, NULL, 0));
++
++static SPINAND_OP_VARIANTS(update_cache_octal_variants,
++		SPINAND_PROG_LOAD_1S_1S_1S_OP(false, 0, NULL, 0));
++
+ static SPINAND_OP_VARIANTS(read_cache_dual_quad_dtr_variants,
  		SPINAND_PAGE_READ_FROM_CACHE_1S_4D_4D_OP(0, 8, NULL, 0, 80 * HZ_PER_MHZ),
  		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_4D_OP(0, 2, NULL, 0, 80 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
-@@ -213,7 +213,7 @@ static const struct spinand_info winbond_spinand_table[] = {
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xbc, 0x21),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(1, 512),
--		     SPINAND_INFO_OP_VARIANTS(&read_cache_dtr_variants,
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_dual_quad_dtr_variants,
- 					      &write_cache_variants,
+@@ -141,6 +151,41 @@ static const struct mtd_ooblayout_ops w25n02kv_ooblayout = {
+ 	.free = w25n02kv_ooblayout_free,
+ };
+ 
++static int w35n01jw_ooblayout_ecc(struct mtd_info *mtd, int section,
++				  struct mtd_oob_region *region)
++{
++	if (section > 7)
++		return -ERANGE;
++
++	region->offset = (16 * section) + 12;
++	region->length = 4;
++
++	return 0;
++}
++
++static int w35n01jw_ooblayout_free(struct mtd_info *mtd, int section,
++				   struct mtd_oob_region *region)
++{
++	if (section > 7)
++		return -ERANGE;
++
++	region->offset = 16 * section;
++	region->length = 12;
++
++	/* Extract BBM */
++	if (!section) {
++		region->offset += 2;
++		region->length -= 2;
++	}
++
++	return 0;
++}
++
++static const struct mtd_ooblayout_ops w35n01jw_ooblayout = {
++	.ecc = w35n01jw_ooblayout_ecc,
++	.free = w35n01jw_ooblayout_free,
++};
++
+ static int w25n02kv_ecc_get_status(struct spinand_device *spinand,
+ 				   u8 status)
+ {
+@@ -227,6 +272,15 @@ static const struct spinand_info winbond_spinand_table[] = {
  					      &update_cache_variants),
  		     0,
-@@ -242,7 +242,7 @@ static const struct spinand_info winbond_spinand_table[] = {
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xbf, 0x22),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 2, 1),
- 		     NAND_ECCREQ(1, 512),
--		     SPINAND_INFO_OP_VARIANTS(&read_cache_dtr_variants,
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_dual_quad_dtr_variants,
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     0,
+ 		     SPINAND_ECCINFO(&w25n01kv_ooblayout, w25n02kv_ecc_get_status)),
++	SPINAND_INFO("W35N01JW", /* 1.8V */
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xdc, 0x21),
++		     NAND_MEMORG(1, 4096, 128, 64, 512, 10, 1, 1, 1),
++		     NAND_ECCREQ(1, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_octal_variants,
++					      &write_cache_octal_variants,
++					      &update_cache_octal_variants),
++		     0,
++		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL)),
+ 	/* 2G-bit densities */
+ 	SPINAND_INFO("W25M02GV", /* 2x1G-bit 3.3V */
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xab, 0x21),
 
 -- 
 2.48.1
