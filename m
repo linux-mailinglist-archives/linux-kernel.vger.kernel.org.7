@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-586140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A090CA79BAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:02:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1A1A79BB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670C9174E94
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938641896873
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C589319B586;
-	Thu,  3 Apr 2025 06:02:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6312CA6B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FAA19F130;
+	Thu,  3 Apr 2025 06:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KWoFBuzK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A76918DB18
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743660138; cv=none; b=g0wSCZ1d0QNMSX6eowe5ODXlePGNvBR8yt3V8myH6Fh+pa6VzkfZL2e1c9AjcYNcbDEIYnbxR2Qq1O2PlS9uUD6hdeYh97pKciJSq+D7Osh3afu8SLrpmor45YEOdjzml5NZhYe3waBBcgjdvx2DrWBnyf/l4eGyDXoL5wOOn4Q=
+	t=1743660157; cv=none; b=NGbXRvxQGOhSTD3tkXsVucLeLlqXF9ich+Ymrc18RX81iq2tzWKd4tlNVGkdlArxkznjzGU6+k3I4qsWQDSPdw4TzPNI5xhRx9NJBn947boLxqlI7zXwATL57YHJsE2eoBaDAID0DwbyDs1aXkP5DxJ+qLE/Ozx1TdyqZQtXGP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743660138; c=relaxed/simple;
-	bh=UternMxNt5JGIOUjRa6Fx+Q0hrWmT3oQrDhzMa6KVzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aJze0Rlu+rGoiqTX5hyBX2LncvaXhGWBF0gO+NaPBv62q0aRfJ62qGfmiv4FXM2xBQGWYkRGddY/ZKCvJhJ/fRDcgnGjFdXe0TnTvEW3GjSxUTPhiBi7MKdo8cyBrgikKaKRH8btT8fRV04h5KvaOj4oPe324hjLpUUM0bDaRzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45803106F;
-	Wed,  2 Apr 2025 23:02:17 -0700 (PDT)
-Received: from [10.163.48.25] (unknown [10.163.48.25])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 417283F59E;
-	Wed,  2 Apr 2025 23:02:09 -0700 (PDT)
-Message-ID: <e36c9a12-bfd3-469d-b619-a90229311635@arm.com>
-Date: Thu, 3 Apr 2025 11:32:05 +0530
+	s=arc-20240116; t=1743660157; c=relaxed/simple;
+	bh=icMjSlKatgQx/TbsI4RIJckayqYv3CovYnZn2GdTQDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YvoY5Il4dQYOAOPoWkLQPbEGGzr9u2iz24gm4A0IXJanfNVEfqcMZoD1RtFmh8/vBvavyH7tzap0J04bZubH9GKC0eJOSTHm8617n09eFMepTGUV5aDSzUQQKa/pbyaAueWNDUlDv1891f+/XCU3zLGPMAbghdycF4U7nB0Fl8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KWoFBuzK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743660153;
+	bh=icMjSlKatgQx/TbsI4RIJckayqYv3CovYnZn2GdTQDQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=KWoFBuzKhUO2rIVo/tQbcH+RflY2dP9IgW9yhlHe3qg7S9OPrnU6c1fv5LE5HT1Pn
+	 SWN8aPuycGyRZA+S2P+f4ohIx8nwVqTFFFHjm0HwbRmSiDrrr9xymiZk0dUzYMcv3u
+	 knb7SGHinimZJoHcRwoVGwDE/59GGnA/jXGtrp/OowmflEUy6rsJRTxlPpJ0TsvLtJ
+	 1r6OGIOzRcxY+5SN9OQaDJ+EkS6Vh6LJ9N54f+BkAtLjeW9G+OT03AZWGjzEugZIIh
+	 cJr1BH5cYpvloYjT6Qt6RRQQyDnkuCWn9Sxt45KK7QA6sY5ZgL+K74dqqrA2W1vFU7
+	 faGDcQipGjLkQ==
+Received: from [192.168.50.250] (unknown [171.76.83.191])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6E84117E0B0B;
+	Thu,  3 Apr 2025 08:02:30 +0200 (CEST)
+Message-ID: <544e78ca-4288-4d3f-97ce-0f8bda68bb19@collabora.com>
+Date: Thu, 3 Apr 2025 11:32:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,99 +56,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/9] coresight: catu: Support atclk
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250327113803.1452108-1-leo.yan@arm.com>
- <20250327113803.1452108-3-leo.yan@arm.com>
+Subject: Re: [PATCH v1 2/3] drm/ci: check-patch: unshallow repository before
+ fetching
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
+ robdclark@gmail.com, guilherme.gallo@collabora.com,
+ sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
+ lumag@kernel.org, quic_abhinavk@quicinc.com, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
+ linux-kernel@vger.kernel.org
+References: <20250328110239.993685-1-vignesh.raman@collabora.com>
+ <20250328110239.993685-3-vignesh.raman@collabora.com>
+ <CAPj87rNLqMxBgKGTSHMHT39agzu=GY-Dgk6Zma1oM1ztkTch3Q@mail.gmail.com>
+ <6da17cd3-77f2-4bf4-86b8-296c2f295960@collabora.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250327113803.1452108-3-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <6da17cd3-77f2-4bf4-86b8-296c2f295960@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/27/25 17:07, Leo Yan wrote:
-> The atclk is an optional clock for the CoreSight CATU, but the driver
-> misses to initialize it.
-> 
-> This change enables atclk in probe of the CATU driver, and dynamically
-> control the clock during suspend and resume.
-> 
-> The checks for driver data and clocks in suspend and resume are not
-> needed, remove them.  Add error handling in the resume function.
-> 
-> Fixes: fcacb5c154ba ("coresight: Introduce support for Coresight Address Translation Unit")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-catu.c | 22 +++++++++++++++++-----
->  drivers/hwtracing/coresight/coresight-catu.h |  1 +
->  2 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> index fa170c966bc3..9fcda5e49253 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.c
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -513,6 +513,10 @@ static int __catu_probe(struct device *dev, struct resource *res)
->  	struct coresight_platform_data *pdata = NULL;
->  	void __iomem *base;
->  
-> +	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-> +	if (IS_ERR(drvdata->atclk))
-> +		return PTR_ERR(drvdata->atclk);
-> +
->  	catu_desc.name = coresight_alloc_device_name(&catu_devs, dev);
->  	if (!catu_desc.name)
->  		return -ENOMEM;
-> @@ -659,18 +663,26 @@ static int catu_runtime_suspend(struct device *dev)
->  {
->  	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
->  
-> -	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
-> -		clk_disable_unprepare(drvdata->pclk);
-> +	clk_disable_unprepare(drvdata->atclk);
-> +	clk_disable_unprepare(drvdata->pclk);
-> +
->  	return 0;
->  }
->  
->  static int catu_runtime_resume(struct device *dev)
->  {
->  	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
-> +	int ret;
->  
-> -	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
-> -		clk_prepare_enable(drvdata->pclk);
-> -	return 0;
-> +	ret = clk_prepare_enable(drvdata->pclk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(drvdata->atclk);
-> +	if (ret)
-> +		clk_disable_unprepare(drvdata->pclk);
-> +
-> +	return ret;
->  }
->  #endif
->  
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-> index 141feac1c14b..2fe31fed6cf1 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.h
-> +++ b/drivers/hwtracing/coresight/coresight-catu.h
-> @@ -62,6 +62,7 @@
->  
->  struct catu_drvdata {
->  	struct clk *pclk;
-> +	struct clk *atclk;
->  	void __iomem *base;
->  	struct coresight_device *csdev;
->  	int irq;
+Hi Daniel,
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On 28/03/25 17:40, Vignesh Raman wrote:
+> Hi Daniel,
+> 
+> On 28/03/25 17:05, Daniel Stone wrote:
+>> Hi Vignesh,
+>>
+>> On Fri, 28 Mar 2025 at 11:03, Vignesh Raman 
+>> <vignesh.raman@collabora.com> wrote:
+>>> Ensure the repository is not shallow before fetching branches in
+>>> check-patch job. This prevents issues where git merge-base fails
+>>> due to incomplete history. Set the timeout of check-patch job to 1h.
+>>
+>> Ouch - an hour is pretty brutal. Is there a way to unshallow only back
+>> to the merge base?
+> 
+> I set it to 1h, but the job is completed in ~15min for
+> https://gitlab.freedesktop.org/vigneshraman/linux/-/merge_requests/18 
+> which has 486 commits.
+> 
+> I will check if we can unshallow only up to the merge base.
+
+I tried this and still checkpatch failed. Below is the sequence.
+
+- GitLab starts with a shallow fetch (depth=10).
+- Script fetches full commit history (--unshallow --filter=blob:none). 
+We need this to calculate the merge-base commit.
+- Calculates how much history to fetch using the merge-base commit.
+- Refetch with depth (--depth=N) until the merge-base commit
+- checkpatch.pl fails because the earlier blobless fetch (--unshallow 
+--filter=blob:none) skipped file contents.
+
+Please see the commit and pipeline,
+https://gitlab.freedesktop.org/vigneshraman/linux/-/commit/40a3fc31c2405f90f3fc3177a575a66a10b33324
+https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/73884148
+
+Looks like the reliable solution is to fully unshallow the repository 
+(without any --filter) and set a 30m timeout? Would this be acceptable?
+
+Regards,
+Vignesh
+
+> 
+> Regards,
+> Vignesh
+> 
+>>
+>> Cheers,
+>> Daniel
+> 
+
 
