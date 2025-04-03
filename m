@@ -1,78 +1,85 @@
-Return-Path: <linux-kernel+bounces-586464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE91A79FF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C25A79FFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9F3B5CB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C95D3B3910
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F80242914;
-	Thu,  3 Apr 2025 09:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B586F24336B;
+	Thu,  3 Apr 2025 09:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="As0Gg9+t"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oBYJSVhe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2B524166D;
-	Thu,  3 Apr 2025 09:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0029D1F236B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672200; cv=none; b=Jz3kAr/yWXRkaWl89UU+/ZcbeGUZkNEXsQghXlCZPNehN/Mrl7m+P/shwpy6Qb4LbpZX6w05Ti5wg+4Rm7mvMZAcTEmPyxlENzfzJoXeaTP4tht4Grnh+1A/FyaH+AOmjWz+/ky3JaZi3So3fUQAmAC/gGDInvd0UyMGYEf0or4=
+	t=1743672326; cv=none; b=se2JPS9k+jgjVjo0qzRDRF1TGhtGiwRSZEalOuvKOh7+PEs5xmeDWQl1MuYaZvXmTE6pgpfiphpYpjXCOxrXx/6MVrrMONs+Vt3xEy0hS2D8bW4ZPVU07oxOjgZP7jAoPKicNbjkTUf/vORqDCDtkYseVZZh40sEWrvT74lzrm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672200; c=relaxed/simple;
-	bh=N9b1V6CdmaW7F29XZvMGIsaoGCxay6Bf9zquuc1bzM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pp+80ZqXYeqvqjtMxe5jv/Xy1j5MBpD0EEnCFMt1PJTzne44wG+fQqP7DeXmocoGqKuUwsoA0OmosPzeMtd3EfZmV/9gefSC45eJRGH0NEkoqZfO9/zwfKmyCZKtISmILX27ppdRQwFNzgBuw5xyb5S/A9HlWjh5nJ/oUdyz6mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=As0Gg9+t; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac41514a734so113301766b.2;
-        Thu, 03 Apr 2025 02:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743672197; x=1744276997; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=exPJhyprvwS7fDK4cgybdTAY3YzrLn/mjakVTSTU8mc=;
-        b=As0Gg9+tIAIOFm/SiSHPf3BjXegH1u60bsW2WQsMMWgvOy1ase4qO3BdjVOO1cV04Z
-         YaEifwGQ3bEpnhJ6lvChvBVjD6IL+KrfzqwYn4bYky33PU9MBrJ9GnYaX/igl9pZLfOg
-         ksoQNONnQNlz2XWYo7ZH7HTDXppcbprHpBCxBG6L49YoNJp38lgpM70dALwtU7QICmU8
-         gJhHMB9x+3LET4xSRiOMzaMTmGdDvkqpHvOZETN8/sAs6Y35sn4VgarFxPyfh4BsORut
-         IGtgTtmXfrduqSfzkzVB0wMSJrpuvtYvsfQNsNe/WbWPsAMchetvzRfYPsaJIaKdLHY2
-         9Zqw==
+	s=arc-20240116; t=1743672326; c=relaxed/simple;
+	bh=v+yXhd3n199Tq6scR0gIFmMZ0TbnnNTcY8LWNdx4FOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O98iXkTfzPGl/7PN63kFLSLfaTxuO4bRr8mi+xKvqlBO88N9gfpLl2mRXAcZYJlFnMSfWBApTu4a34BEScE/uwmruEZ9BjchDdr+P0/FE0vJMFTfR7Z2mV3+smixNKEi+LFudEcoJl9szuGwUkZPX+eSHwPaPV/NDoLEaBQGCIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oBYJSVhe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53382oBO019895
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Apr 2025 09:25:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	C0Vg33IwnJZ9MdiHdwgCrTwMljCHdTwbcvcaY9TkMxk=; b=oBYJSVheXTxlIFkm
+	uDzfSi3C8uG0CcQjjrqJcMSA4rzvzwV5wFDubayEpXv9XA6axcbeD8Iq6WVX/L1u
+	IKmemMEUS3BBurt/cBk4NgeUo1XtCkEO3vueT8NPQ3N0z7uTqk8YDfO3D182coQB
+	vIZPCyPvj8Ulg62vT2/9AVsOPz3MsObndDLdENaarfPsF3DfpVxHCXPcI8gsKa8k
+	hZ0lTc5wyDGpTzRzZp60v52jYX+mQ98/fnQQtSi9IUCVzW2aDJUcXwbSH1XiXN5e
+	09jEqO9tSfpLFoQ1cV83h82+YtZw17DIHD4di7BGBOAHuxWQN0CjKx8rteHvCSsr
+	mqA70Q==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45s36a34ru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:25:23 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c54767e507so110072785a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:25:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743672197; x=1744276997;
+        d=1e100.net; s=20230601; t=1743672322; x=1744277122;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=exPJhyprvwS7fDK4cgybdTAY3YzrLn/mjakVTSTU8mc=;
-        b=n46yvCaQWJFxW7e1rH3Xg828rMZCQfMxQkQfeunT+scVvfhjMZBMPO49+3HSH1gnlq
-         pfOjjCxJ0wyJVPIRqPjQm3XcfmimzlYdkP4I0VBCafgOEIqPWpTT1/7764rFLDs6anq/
-         yOzkM8fGraMT5H+yiYyC+ybgvX/Vw8+59EFBCcGhlagngUx9aauqJLCHWxAB789wy71W
-         zJb97mb+HXYBro8wiV+nrQuFzaAdCB/abEe5VZ2duXOxpykSUgvlkNg2e9nUJhp8MQHL
-         86DOVvYNcD/ycNdfeTPlj1+ihrAQjueoj+6ueBSBobF1l1AeYQBZ/N5VYgIRDpBTkDDP
-         V48w==
-X-Forwarded-Encrypted: i=1; AJvYcCULDC5PU5l+ZM6QAi0wgun/fcxLiPqaP8rQFo8NWLflE7rx8RwjZfq25uAOVzU2JWdW13WXTChNog==@vger.kernel.org, AJvYcCV2larLCrxJXbdjRIHNLY6Zb5OwfkFwaMZAxqxYpFOcJVBTN5Ie99Ppa7kpQpQVXBPuJbs3He+Xh/bMdcdv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHNkeDlGXebf8AHsTmT5M0FCH85WJMXSiXB74eHRiH49yLJX1t
-	0Mvdzdw1YewJ9Hngk2fajTjmQrQOOXqQgeyYpt3jgNhd4dJruHmwbAsGMQ==
-X-Gm-Gg: ASbGncsvCocvEZwz6qohOT7lT74vOr4F9yH+PYl/tH2AdRsvDVUuM5zS+pRvjXjdwJE
-	nh6izALCMuGNZyUrwkDz72p5ab0m/OvZB2nbN3n5aOSO9c7FU7OkLLiSxg4rUFECt3Dj/aN98QY
-	stTZWkUCA/LoGTPYx7gNLt6Zi9po1bpzZWnTnpVsbhA6nR0XHB7APoVdsgLF9ttbgnviWFWEoGx
-	qxIFWuNCmjqSWLk+gw0vwvx2Czxn1BFD/eL8bY3BkGYdDeps2aObAhCMEJO9R3TCHe4v65h9iSk
-	qi0gUvVuUEEWpk/S4GLfyxISeTpDvhSSRCF6RPQKpiL0Uc7vv3gSqRkawTBQKIeR3aLv
-X-Google-Smtp-Source: AGHT+IE/3z/YaoSAMyKn8ZSk+y/PpRn/DKRL8782yHX+u07rx+ATTyFbOC7QjrVzzvXk0OuQVzwNzg==
-X-Received: by 2002:a17:907:2da7:b0:ac1:ea6e:ad64 with SMTP id a640c23a62f3a-ac7a1731d04mr503075366b.28.1743672196558;
-        Thu, 03 Apr 2025 02:23:16 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::2ef? ([2620:10d:c092:600::1:7d8b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013eb4csm61916866b.96.2025.04.03.02.23.15
+        bh=C0Vg33IwnJZ9MdiHdwgCrTwMljCHdTwbcvcaY9TkMxk=;
+        b=U+8gddqTNyxW5S7yRmjpuwL3TzXa/U1xEIhIr3S1EZYoGsLzZrCycE53+NVqhjFnqb
+         FXD0DAL5fTW11zRyEJEmn70YGZnEOjpYbWpH555jwzwFD7My9iYIppPpKX7Va72stfjP
+         hXoceq3AUymXrf5sO5QKEpQsMhG3wwfmdC8ZACWgnaK7dtI2ydzZLggycdiZBSj3IjuN
+         REYQmuPZ6f5V4+rFf/zP1UDzakSVIkBZxgklurOHDPJ+h1FXug5bS8alluc2fziRuOKf
+         TXfqVq80TRS24IghVgeqLf2hb0mhy3pjwU5Chm7Vl1vs+5XrX1lKqBEWB38F6DsNK01z
+         Naag==
+X-Gm-Message-State: AOJu0YwKwX2dq7CzyfIX2QyGbmlJWKKx7MBasCbR2EGKZeYSvUElfNCL
+	wblWH6eApWFevJAfNH0szzukIopbLoTN+EfHp/VvZHj3yNyXpZmC3i39oTHfeUjvQoeqd59tNaM
+	pJXqssYgoWgG89ya7nmY22JbeHXeQnIzE87rYuVkKjDhtoDlZjCY8/bQIma9l3GJoByfvoio=
+X-Gm-Gg: ASbGncunROuRf2qcEgO9btjbuzl3rPIU7yNAKfK3FBq5I2vTCCy4/xUzvSaPQkdeiWv
+	FZp3S48ptoNr3vf1D1eD4CnUWuFkKjqDtp4zrw+4HoyZz9HWM6fkB0xTLZ7KEfd6mWEeBxbdFzY
+	RV5qp/b72AxSLCmG37sBLVPkNWHuUh7+VKAHN0vclISgR9Dsam95jaPKVrtX9aapUnHmdal0Wdb
+	TVbOXpJ8lSmQiZLPACnOJvUQI+Pf882IA1ZjnuUWVr6X1NxkPnfwGZgcZc+8sN6ZMyzss8+heMH
+	hfXgJoiATRzeXRnQDlPiGPy7nyGnXsZ6e11t70Dfei9aAlEm1pTI7tcSlFKBjlVsQpYD
+X-Received: by 2002:a05:620a:179f:b0:7c3:d7ef:f7f5 with SMTP id af79cd13be357-7c6865ea96dmr3052825085a.18.1743672321954;
+        Thu, 03 Apr 2025 02:25:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhv1b18a2Pk4OgOo06j00H+IcS8+nfs5vIx/e4kAhfZyohrHQiRNxvA3q/yVZTwLT25KQnRw==
+X-Received: by 2002:a05:620a:179f:b0:7c3:d7ef:f7f5 with SMTP id af79cd13be357-7c6865ea96dmr3052822485a.18.1743672321519;
+        Thu, 03 Apr 2025 02:25:21 -0700 (PDT)
+Received: from [10.151.160.223] (87-95-44-167.bb.dnainternet.fi. [87.95.44.167])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031ce93bsm1402841fa.103.2025.04.03.02.25.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 02:23:15 -0700 (PDT)
-Message-ID: <ad93b770-803f-4480-95d9-6061f9e778e0@gmail.com>
-Date: Thu, 3 Apr 2025 10:24:31 +0100
+        Thu, 03 Apr 2025 02:25:20 -0700 (PDT)
+Message-ID: <b6e7abf3-b263-410a-8f4c-eb9a8e2efa2b@oss.qualcomm.com>
+Date: Thu, 3 Apr 2025 12:25:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,47 +87,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in io_req_task_cancel /
- io_wq_free_work
-To: syzbot <syzbot+903a2ad71fb3f1e47cf5@syzkaller.appspotmail.com>,
- axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <67ee32f2.050a0220.9040b.014d.GAE@google.com>
+Subject: Re: [PATCH v2 00/13] nvmem: patches (set 1) for 6.15
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
+ <2025040143-espionage-poison-2345@gregkh>
+ <47a3a851-f737-4772-87c6-98613347435c@linaro.org>
+ <2025040230-showoff-spray-ac83@gregkh>
+ <283ac88b-c8d4-47c8-9ff7-935770eca566@linaro.org>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <67ee32f2.050a0220.9040b.014d.GAE@google.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <283ac88b-c8d4-47c8-9ff7-935770eca566@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=W6M4VQWk c=1 sm=1 tr=0 ts=67ee5403 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=CnknO/h8B0MWpypvlE+5Zw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=MYKY4rXoaqJdCg_V_F0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: cH3tiXQG7rKCLaQoh4KZVNmt9_Okeklg
+X-Proofpoint-GUID: cH3tiXQG7rKCLaQoh4KZVNmt9_Okeklg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_03,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ adultscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 phishscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504030033
 
-On 4/3/25 08:04, syzbot wrote:
-> Hello,
+On 03/04/2025 12:18, Srinivas Kandagatla wrote:
 > 
-> syzbot found the following issue on:
 > 
-> HEAD commit:    92b71befc349 Merge tag 'objtool-urgent-2025-04-01' of git:..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11195404580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a8120cade23cf14e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=903a2ad71fb3f1e47cf5
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> On 02/04/2025 12:31, Greg KH wrote:
+>> On Wed, Apr 02, 2025 at 09:19:17AM +0100, Srinivas Kandagatla wrote:
+>>> HI Greg,
+>>>
+>>> On 01/04/2025 20:18, Greg KH wrote:
+>>>> On Sun, Mar 09, 2025 at 02:56:50PM +0000, 
+>>>> srinivas.kandagatla@linaro.org wrote:
+>>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>>>
+>>>>> Hi Greg,
+>>>>>
+>>>>> Here are few nvmem patches for 6.15, Could you queue
+>>>>> these for 6.15.
+>>>>>
+>>>>> patche include
+>>>>>     - updates to bindings to include MSM8960, X1E80100, MS8937,
+>>>>>       IPQ5018
+>>>>>     - add support to bit offsets for register strides exceeding
+>>>>>       single byte
+>>>>>     - add rockchip-otp variants.
+>>>>>     - Few enhancements in qfprom and rochchip nvmem providers.
+>>>>
+>>>> Ok, I wanted to apply these, and tried to, but they fail horribly
+>>>> because:
+>>>>
+>>>> Commit: 1b14625bd6d4 ("nvmem: qfprom: switch to 4-byte aligned reads")
+>>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
+>>>> raw_len")
+>>>>     Has these problem(s):
+>>>>         - Target SHA1 does not exist
+>>>> Commit: a8a7c7e34093 ("nvmem: core: update raw_len if the bit 
+>>>> reading is required")
+>>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
+>>>> raw_len")
+>>>>     Has these problem(s):
+>>>>         - Target SHA1 does not exist
+>>>> Commit: d44f60348d8c ("nvmem: core: fix bit offsets of more than one 
+>>>> byte")
+>>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
+>>>> raw_len")
+>>>>     Has these problem(s):
+>>>>         - Target SHA1 does not exist
+>>>
+>>> Looks some of your scripts or b4 is picking up older version v1 of the
+>>> patchset
+>>>
+>>> None of the above patches have Fixes tags in the V2 patches that I 
+>>> shared
+>>> aswell as patches in linux-next.
+>>
+>> Yes, that looks odd, it looks like b4 pulled in the wrong series, yes.
+>>
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
+> Even that looked incorrect, as the v1 series only had one patch("[PATCH 
+> 12/14] nvmem: make the misaligned raw_len non-fatal") that had fixes 
+> tag. Not sure how these 3 patches are tagged as fixes.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/2e7df7bc2f52/disk-92b71bef.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/be59123d5efb/vmlinux-92b71bef.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7c9eff86053e/bzImage-92b71bef.xz
+>> But, that's even worse.  Those "fixes" are now not actually marked as
+>> fixes of the previous patch.  So that information is totally lost, and
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+903a2ad71fb3f1e47cf5@syzkaller.appspotmail.com
+> Its because this patch("PATCH 12/14] nvmem: make the misaligned raw_len 
+> non-fatal") is taken as fixup patch and wrapped into the original patch 
+> ("nvmem: core: verify cell's raw_len"), Also the sha will not be valid 
+> for linus or char-misc tree.
+> 
+>> again, the first commit here, "nvmem: core: verify cell's raw_len" is
+>> broken so much that it took 3 other changes to fix it, which implies
+>> that bisection would cause problems if you hit it in the middle here.
+>>
+> 
+> All the patches related to this are enhancements to nvmem core to allow 
+> specifying bit offsets for nvmem cell that have 4 bytes strides.
+> 
+> Specially this check is also an additional check in core to make sure 
+> that cell offsets are aligned to register strides.
+> 
+>> While fixing patches is great, and something we do in the tree all the
+>> time, let's not purposefully break things and then fix them up in the
+>> same exact patch series please.  That's just sloppy engineering.
+>>
+>> Please redo this series completely.  I can take the "new device support"
+> 
+> I can send them but its going to be exactly same series, I dont think 
+> anything will change as all of these patches are enhancements and there 
+> are no fixes.
+> 
+> I hope this clarifies a bit, Please let me know if you still want me to 
+> resend this series, which is going to be exactly same.
 
-It's benign, the write is for unrelated bits and the flag used in
-the read path is set before there could be any races, the compiler
-would need to make up a value to anything bad to happen.
+I think Greg is asking to squash the fixup into the relevant patch.
 
-We can improve it a little bit though, it'll try that.
+> 
+> --srini
+>> patches at any time, and really, those should be marked with Cc: stable
+>> to get backported, right?  The other ones are written as if they are
+>> fixes, so again, I can take them any time, no need to wait for the -rc1
+>> merge cycle.
+>>
+>> thanks,
+>>
+>> greg k-h
+
 
 -- 
-Pavel Begunkov
-
+With best wishes
+Dmitry
 
