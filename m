@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-587884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6577A7B157
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C6FA7B03E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE9E1890282
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8AF1893ACA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C620013E;
-	Thu,  3 Apr 2025 21:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16F51EF088;
+	Thu,  3 Apr 2025 20:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cFSkF6po"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="DO7i7CQv"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26631F429C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2231EEA42;
+	Thu,  3 Apr 2025 20:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743715567; cv=none; b=ZuD9sU4ReFzll3FH+w1SHEaj1MAKgd4jmMZqDgO+3fpn74A/7GqZSkcIKaPqGg2P/Yg10rLEuL31injZ1XhcKMyGxCN/Io1v5onbiqjEW6lyZkOgmF3Xiiiu41s2iGbw7is2a0s/tsZ/2HRsgubWThVuZGDrZWQsvQHND5p/55c=
+	t=1743711782; cv=none; b=qzPbF0v6L6gtP4XYT/ydvB0Knn2hhiEIrgGckFxAZgBdCE1UU9gQGcGuiIZvCKVcg9dyOTfq7tibPgwr5Vy6tuOz3aa8Nyw5kokayfoB8rYwufxSrc5qkgEN00Mqy6bOg0X4MwuksBd3iLCsU4n4YpsTTGwx/6pAFW+fGCxpDBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743715567; c=relaxed/simple;
-	bh=zmk7pM4zUFxP8zRUkY8Z6LycAMaLij94htuAzyPh1gM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OMd+h1eB1ouDADFyVMKjxrE9yQWCWn2T0hr584IvvmPwHv9pyUnuGukxu0JheP4ym30o6CWU9N4QP6lZN/Ng7W4KrMZ6rfUxrD2ZwUnby4u+7DiIEGvzSVQqgRjdHpQCkCi39m9aXvvI4jbo/6UfUNJ7fmaMxp/YauZGdARxaSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cFSkF6po; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743715565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQZmoEoHHMWJOWX6FSnXoplhBUtLobxJ6QjeQfN5Yng=;
-	b=cFSkF6povIdp6cxmlbo2R76Q3orV/TN+RLq9gzjvq+UbnIi1B8yXE4ZfonOp1lvi+DWV8y
-	CUoC+mSQvXs+Icq47bFG7CNivY37ESTmeIMBU0r4IkexJypZJT1OGOGcpPeD8A3h6nxc5G
-	W5sOG7vjMaP2bKOo1mIzGF19NqGu4dU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-9LWrhFxGNUyv8OyB5kxTvw-1; Thu,
- 03 Apr 2025 17:25:58 -0400
-X-MC-Unique: 9LWrhFxGNUyv8OyB5kxTvw-1
-X-Mimecast-MFC-AGG-ID: 9LWrhFxGNUyv8OyB5kxTvw_1743715555
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5101F1956050;
-	Thu,  3 Apr 2025 21:25:55 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05B2B180A803;
-	Thu,  3 Apr 2025 21:25:50 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 03 Apr 2025 16:21:17 -0400
-Subject: [PATCH 46/46] panel/lg-lb035q02: Use refcounted allocation in
- place of devm_kzalloc()
+	s=arc-20240116; t=1743711782; c=relaxed/simple;
+	bh=kv/27SbJuSIXTmhWnb+qdl98yr6+5eeCmGZTis71NNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+WgJCfnDOOE4EpVMyR4OHDM4YDWvYRHSR+YBkQQ4IrbeXb/LbJcbjToLglss++7yymIke6G02nvF62upl0DwvbsYTqHC/64wp3eOnXiqU6DxMb0+GTKDuyQk2Y/VCncUmNrIBZmRpX4dlA0q/RKdh75/zzPu6GqootZ/+JM020=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=DO7i7CQv; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 950041026A6C2;
+	Thu,  3 Apr 2025 22:22:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1743711777; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=1ArlMQj8XeUapHC5sD+RKab7T/b16esGJcv/bEjH5F8=;
+	b=DO7i7CQv5w/dFaob6mQGKF0njph1dSN+yZiEHUgvsy11ZnsJCQ9N70DXau4xaiphIFSBcL
+	RJ7YYgir3PhyVgztMYl5gkExJIdz7p9pNGjEAe2kCb1R1XdjdigRd0mriHnLDRi1o7x3hs
+	miPRi6uc4mLBTzCmKBp3xl6oQi5ryk/cr6hB+RJynQVxRKLI6WV7JN1mbAWHOZKg2TALEB
+	09lplowOE7v/92hcXgw71E/gl+XaKqxiuZcuh+q4c/hV5RUCfg2UbFJLZqLIBly0YfUZOh
+	l/C0hj0yOXkl6+P0RAOMkYhFFyTxGktS/paOhdFiqNiEnWlr9D5OdL2VjbD4mg==
+Date: Thu, 3 Apr 2025 22:22:51 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.13 00/23] 6.13.10-rc1 review
+Message-ID: <Z+7uG8SUFmksDP8w@duo.ucw.cz>
+References: <20250403151622.273788569@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-46-965b15ad5b8e@redhat.com>
-References: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-0-965b15ad5b8e@redhat.com>
-In-Reply-To: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-0-965b15ad5b8e@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Robert Chiras <robert.chiras@nxp.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Markuss Broks <markuss.broks@gmail.com>, 
- Artur Weber <aweber.kernel@gmail.com>, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, Janne Grunau <j@jannau.net>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- asahi@lists.linux.dev, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743711639; l=1245;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=zmk7pM4zUFxP8zRUkY8Z6LycAMaLij94htuAzyPh1gM=;
- b=7HxQoapcNJ/QWW1ObXq0uQfPoC2dJ23Wc1zGuVS0eU0EFP3OgFepBvQCXzMOl6CU1WTFmsQn8
- hgfbmMOGG0UD+KIZCsZSRhucCleVfoG6FFENAeEMq2bgwy4DwXZX+XS
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PpefqU26Knk83jul"
+Content-Disposition: inline
+In-Reply-To: <20250403151622.273788569@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Move to using the new API devm_drm_panel_alloc() to allocate the
-panel.
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/panel/panel-lg-lb035q02.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+--PpefqU26Knk83jul
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/panel/panel-lg-lb035q02.c b/drivers/gpu/drm/panel/panel-lg-lb035q02.c
-index 9d0d4faa3f58aa4950e48d082352e0013880ee30..b2be6727bf73d34c8a9fdc9ad2f52b11d22d3b28 100644
---- a/drivers/gpu/drm/panel/panel-lg-lb035q02.c
-+++ b/drivers/gpu/drm/panel/panel-lg-lb035q02.c
-@@ -178,9 +178,10 @@ static int lb035q02_probe(struct spi_device *spi)
- 	struct lb035q02_device *lcd;
- 	int ret;
- 
--	lcd = devm_kzalloc(&spi->dev, sizeof(*lcd), GFP_KERNEL);
--	if (!lcd)
--		return -ENOMEM;
-+	lcd = devm_drm_panel_alloc(&spi->dev, struct lb035q02_device, panel,
-+				   &lb035q02_funcs, DRM_MODE_CONNECTOR_DPI);
-+	if (IS_ERR(lcd))
-+		return PTR_ERR(lcd);
- 
- 	spi_set_drvdata(spi, lcd);
- 	lcd->spi = spi;
-@@ -195,9 +196,6 @@ static int lb035q02_probe(struct spi_device *spi)
- 	if (ret < 0)
- 		return ret;
- 
--	drm_panel_init(&lcd->panel, &lcd->spi->dev, &lb035q02_funcs,
--		       DRM_MODE_CONNECTOR_DPI);
--
- 	drm_panel_add(&lcd->panel);
- 
- 	return 0;
+Hi!
 
--- 
-2.48.1
+> This is the start of the stable review cycle for the 6.13.10 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+
+6.12 and 6.6 pass our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--PpefqU26Knk83jul
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+7uGwAKCRAw5/Bqldv6
+8nI9AJ9n3dCc30mlD5FEu+5km7wAefpR/gCcCMS6ey3eUMOtWjN4CHpCMgwPgR0=
+=nTr+
+-----END PGP SIGNATURE-----
+
+--PpefqU26Knk83jul--
 
