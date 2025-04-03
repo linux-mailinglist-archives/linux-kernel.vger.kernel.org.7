@@ -1,87 +1,102 @@
-Return-Path: <linux-kernel+bounces-587261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C51CA7A9C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:59:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E37A7A9CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBF93B42B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30ABC7A6AAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766FA252906;
-	Thu,  3 Apr 2025 18:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33EC253B5C;
+	Thu,  3 Apr 2025 19:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZw5u8+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9n5dyQi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D251DED76
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 18:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C325253342;
+	Thu,  3 Apr 2025 19:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743706790; cv=none; b=dnjG4HFMc2vFA9JGgIZ/7G4lydK8mDJGsj5xhMxct6D+zDkbExFEys8FuiPy/cdeanICD3Ke2uFh41vRF49V1S5S4gEgpuZEl+QcwUkhcM5C1bIvZPhg86HLraWZt+u3a+RRVqf/MDTWYIlp+saVHgR9bNz++2wG0eTDg0vBodM=
+	t=1743706938; cv=none; b=KTlSB2E3tyogLs4HXDQn+K1tu4tZ/20QRR34pR9J+to3lME4tBPevZFhncSKluUjtd/chrtt4oxTKjQ3unQvpXFh/GyC8myVBqVSSuvIhRV0A/2YyAw44mk07CkeKlXphvb3dtL3ZKcHmd5R5R6GnIKGbAbQVZ/ncaVwukpo9Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743706790; c=relaxed/simple;
-	bh=6CfGUQI1hD4EaUW52YQ6sJ3ErXhwmEaa5YfDJzOh0Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgrLzphswW9XEsfft7IxNtHZ9G7cBi7UG3t6qFl0pXO3YvlZlz6SrRnyfyIOxNVBNWRf8q1+Eipgktupe0gipUexeXv6T/dplQriBqXb1dXnPDW7aItx9O53Mfd450pgZ8KkB4++DbXou7IBS0cRlE3ZKGtYSNB603Racu9z054=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZw5u8+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C509CC4CEE3;
-	Thu,  3 Apr 2025 18:59:49 +0000 (UTC)
+	s=arc-20240116; t=1743706938; c=relaxed/simple;
+	bh=4jPalTCX1rcN6gPwd8+l4zwythtZrx1tpKadoOQC8sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BlyTqBV2nz7E32yU97m/uDxgeBBTVhznsKlDozSXdyCvajqKZKKq7ACDX0xK6JETBH2sxLskOtHbyFbEOWbQDNudDGYTw1Bp8rAxGsfk3N+sX8r7K1Uk7X+37HNuVtG6Gum67KU4fyzBk7cW5NbxwgCdjZKAStNzW36X42E7YvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9n5dyQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC402C4CEE3;
+	Thu,  3 Apr 2025 19:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743706790;
-	bh=6CfGUQI1hD4EaUW52YQ6sJ3ErXhwmEaa5YfDJzOh0Gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZw5u8+YTSgB/geEfq2Qguz/4mFMTI4yg9I9FeNMUqGBSsETPIiSyxyyQauRAICfW
-	 e4bh+mknKeohOh6ttjGp4KqU7H7yjhbUuh6hTHjLRA4DvdI7x13r+xYrznNWooUgWS
-	 3Kwo2OQJsovk3jBXNZzvlDoIRtUnxHjCQ2mDFwZvxi6P1QGltbpanFHtTCb2BsteX7
-	 v6w1AvCFrbSqzjPgTCXhWKvEmC5neOVSY+6zfRDxl+frylU+gOgLLybifZbwn+m0/W
-	 LlTu1Y2k2Z5xwaAfkikMU/h8OWHy/TVHuMyJ0Z5g/iizhun6evtp0AFWP3eQquLB4c
-	 H2LXCgb9DUEog==
-Date: Thu, 3 Apr 2025 12:59:48 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kamaljit Singh <kamaljit.singh1@wdc.com>, axboe@kernel.dk,
-	sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, niklas.cassel@wdc.com,
-	damien.lemoal@wdc.com
-Subject: Re: [PATCH v1 1/1] nvme: add admin controller support. prohibit ioq
- creation for admin & disco ctrlrs
-Message-ID: <Z-7apFKJK5u-7xL9@kbusch-mbp>
-References: <20250328213640.798910-1-kamaljit.singh1@wdc.com>
- <20250328213640.798910-2-kamaljit.singh1@wdc.com>
- <Z-qur5YnK2ZtiRR3@kbusch-mbp.dhcp.thefacebook.com>
- <20250403044901.GD22803@lst.de>
+	s=k20201202; t=1743706935;
+	bh=4jPalTCX1rcN6gPwd8+l4zwythtZrx1tpKadoOQC8sc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U9n5dyQiEmIWvVcJB/xs6+knEcuDSOcEz8ORhy2J0ld5CLEjdIhDeA4RrZ13X4Td4
+	 AfhseBRtD+zp1T1aV3FJ1aUhteF26GlwqE6fyCP5qZ9amETpRO8SHJH1oRad/cdWR+
+	 kcRNOpUUfR1dLEmxsKp8Jb6gXCifd79/iNcFqbZFfTvGw2vJoJkKv5WsRzwGlA1esv
+	 9pd/0Ra0j0AzdqOqS8dj7WTQrIQ0yT+FqR2CovnYDh+18zlL6WL81awGH7SGLctPmg
+	 /c0t9rRYIGspUgEW+YLNJySqzxbkoET0tH9hPwt05g5vWG2UiFMpJVgIYQziT/iUlg
+	 YMg575j0N1uLw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dmitry Antipov <dmantipov@yandex.ru>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	nathan@kernel.org,
+	linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.14 01/54] wifi: ath9k: use unsigned long for activity check timestamp
+Date: Thu,  3 Apr 2025 15:01:16 -0400
+Message-Id: <20250403190209.2675485-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403044901.GD22803@lst.de>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 06:49:01AM +0200, Christoph Hellwig wrote:
-> On Mon, Mar 31, 2025 at 09:03:11AM -0600, Keith Busch wrote:
-> > On Fri, Mar 28, 2025 at 02:36:40PM -0700, Kamaljit Singh wrote:
-> > > -static inline bool nvme_discovery_ctrl(struct nvme_ctrl *ctrl)
-> > > -{
-> > > -	return ctrl->opts && ctrl->opts->discovery_nqn;
-> > > -}
-> > > -
-> > 
-> > I suppose it's fine to rename this function with an nvmf_ prefix, but
-> > it's not really related to the rest of the patch and makes the diff
-> > larger than necessary.
-> 
-> It isn't, nvmf_ is really for code in the fabrics library and not used
-> by core code.
+From: Dmitry Antipov <dmantipov@yandex.ru>
 
-Yes, I'm not suggesting to use "nvmf_" in the core. This function checks
-for ctrl->ops, which only applies to fabrics, so this is a fabrics
-specific function that could belong there instead of the core, is all
-I'm saying. Not that I'd recommend making such a move in this patch...
+[ Upstream commit 8fe64b0fedcb7348080529c46c71ae23f60c9d3e ]
+
+Since 'rx_active_check_time' of 'struct ath_softc' is in jiffies,
+prefer 'unsigned long' over 'u32' to avoid possible truncation in
+'ath_hw_rx_inactive_check()'. Found with clang's -Wshorten-64-to-32,
+compile tested only.
+
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Link: https://patch.msgid.link/20250115171750.259917-2-dmantipov@yandex.ru
+Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/ath/ath9k/ath9k.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/ath9k.h b/drivers/net/wireless/ath/ath9k/ath9k.h
+index a728cc0387df8..cbcf37008556f 100644
+--- a/drivers/net/wireless/ath/ath9k/ath9k.h
++++ b/drivers/net/wireless/ath/ath9k/ath9k.h
+@@ -1018,7 +1018,7 @@ struct ath_softc {
+ 
+ 	u8 gtt_cnt;
+ 	u32 intrstatus;
+-	u32 rx_active_check_time;
++	unsigned long rx_active_check_time;
+ 	u32 rx_active_count;
+ 	u16 ps_flags; /* PS_* */
+ 	bool ps_enabled;
+-- 
+2.39.5
+
 
