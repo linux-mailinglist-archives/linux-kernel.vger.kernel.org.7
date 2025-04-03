@@ -1,103 +1,102 @@
-Return-Path: <linux-kernel+bounces-586176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9CEA79C32
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:39:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207CEA79C37
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FB53B204F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:38:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B433B1E2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E0E1A3154;
-	Thu,  3 Apr 2025 06:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB21A23B8;
+	Thu,  3 Apr 2025 06:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdDW3wZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvEAX5al"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749171A0BCF;
-	Thu,  3 Apr 2025 06:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB4D18DB20;
+	Thu,  3 Apr 2025 06:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743662324; cv=none; b=LCE0NW2mVGBT3c5iSpcEeF96UPw8M5jlRRfCX6wo/UU2GgnTtVDrlfeiYhmiJ4xOTzj30zRv8xl3+9xdVQU/KHkrdh9TndC1iHRUHrdLSc/T1wkEm3zmhHzHbtR0RO9FbqPXmOCBBNWOEKe1azB/dh70ZKzR9/KNn67k6qKQtrc=
+	t=1743662433; cv=none; b=k/QRABpCKB97Yi7po3PxmTkxZb5WmlxMzGc9ZzE2uN12WlD6Qu+qeAGhsinNewS6FORX+mVIvK36k7VBfPVtFOhRxDv5ik6EyEFCM1rUnfQYHQibJuCEioYB0zupZ19XGE0mTkDEUArXDBHmJzs+jFuHiLfG+jT7ILWy68qZq1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743662324; c=relaxed/simple;
-	bh=YxNQgOwbq/vG85PIYBP1y2DGiGETcPpm5tCt19Qss54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U+PfJflEBVrFbu76Df89pnl+DZrw1WBqMwnaalN4qZLuYz34f9S6IaGC6Rc/kRD6UMbOK7aSe4ylytPYgD3fw13/uolArr7oJgKmJ3nITgmDwyXbrBMVbVgjv85UzRFq0mba/cJRi8g2rzvTMUjlkeUVB8OTkH+A9pq8OOaTk1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdDW3wZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A111CC4CEE3;
-	Thu,  3 Apr 2025 06:38:41 +0000 (UTC)
+	s=arc-20240116; t=1743662433; c=relaxed/simple;
+	bh=zq+3fMG2WfTVwYbK2Hp/ChQGKq4YepyOfpKgfVGzbIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IdllZBw2aJlpI1O2YMPEn7lvaEl/jgZJmoSdIJc1sYUsGiJOz/TYDHlmtBgOHRz+O3be5mkUN1MEZ14ToWkVtWFgNYrIx1JU404BETorPqa1EKjjtgPRYyBOspZDZDaVg3Vb9hsUUHt0MVs9V7yJ0wzTFK7iCbSx0ufMvbRmPkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvEAX5al; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2726C4CEE3;
+	Thu,  3 Apr 2025 06:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743662324;
-	bh=YxNQgOwbq/vG85PIYBP1y2DGiGETcPpm5tCt19Qss54=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rdDW3wZC8xXiJzAIqacq3AFyhV8SPL68kl/cC3n98UPqJaEyMqxcsIFykpUpS2qQX
-	 4sdSc+FGzw9BhHakkWWvvuXP7JxZyQR0g75qSEBS4iVubpp5eBw9rX5ID/8epJy+05
-	 /xo8CcQNgCzSgs5ejS7jBfvglyxNu34h6yUdFl1d22Nkd08exLRJYHBKn7HuEzZG3v
-	 TDLyw3sEM8PuS3ZN48IvXVuQPVX5UxnC7AP3Pj1pjo+VpZDj3T7hba+7W6tCittmBL
-	 i6zzVdOhsmwr0giUHa2HcuH5vjA22qXOpy/yzC9+QY5YF94R+796LuGY7DBleOF6y8
-	 kIEdrT7oOBfbQ==
-Message-ID: <4371c835-205e-4ec5-865b-ae01d87b7b70@kernel.org>
-Date: Thu, 3 Apr 2025 15:38:40 +0900
+	s=k20201202; t=1743662432;
+	bh=zq+3fMG2WfTVwYbK2Hp/ChQGKq4YepyOfpKgfVGzbIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TvEAX5alJ0pyklEN+W+WVFvswzDVLyXfkkWN9Uegofk47NUJAr+LkOoSw5+vW94Ta
+	 sxruJitJVTOVhVUtSIwGAQAG4uRth4nFdYVQb0MqTou9+I/KeYQeoVmFM6JKw35WUe
+	 b9pzU27cge0w+Bh5D6sK60Wm3E8iJ+PdrDfzXRvGNXetPn23eESjMA+mhHPgkMq4s0
+	 rUocnnJ1VDA8iwznZQ1qUG4QSv9lsKUQu8YpbtFuTKg/l22AJlhKYnVZKaTEvYDLit
+	 O3gX/bOHnU0vM3snDSS8RUdJbAZHfvKjQnDzFb+FuEWKqNhYjtTC9ATnqrO7k/sdcz
+	 BjqdbsGdf6hYw==
+Date: Thu, 3 Apr 2025 08:40:29 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: adi,adp5055-regulator:
+ Add adp5055 support
+Message-ID: <20250403-unselfish-thoughtful-wallaby-ccd38e@krzk-bin>
+References: <20250403-upstream-adp5055-v3-0-8eb170f4f94e@analog.com>
+ <20250403-upstream-adp5055-v3-1-8eb170f4f94e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: xilinx: Remove myself from maintainership
-To: Mubin Sayyed <mubin.sayyed@amd.com>, cassel@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
- brgl@bgdev.pl, michal.simek@amd.com, p.zabel@pengutronix.de,
- gregkh@linuxfoundation.org, radhey.shyam.pandey@amd.com
-Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, git@amd.com
-References: <20250403060836.2602361-1-mubin.sayyed@amd.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250403060836.2602361-1-mubin.sayyed@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250403-upstream-adp5055-v3-1-8eb170f4f94e@analog.com>
 
-On 4/3/25 15:08, Mubin Sayyed wrote:
-> As I am leaving AMD and will no longer be maintaining
-> these platform drivers, so removing myself from maintainership.
-> 
-> Signed-off-by: Mubin Sayyed <mubin.sayyed@amd.com>
-> ---
->  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml        | 1 -
->  .../devicetree/bindings/gpio/xlnx,zynqmp-gpio-modepin.yaml       | 1 -
->  Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.yaml   | 1 -
->  Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml           | 1 -
->  Documentation/devicetree/bindings/usb/microchip,usb5744.yaml     | 1 -
->  Documentation/devicetree/bindings/usb/xlnx,usb2.yaml             | 1 -
->  6 files changed, 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> index 6ad78429dc74..c92341888a28 100644
-> --- a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> +++ b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> @@ -7,7 +7,6 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Ceva AHCI SATA Controller
->  
->  maintainers:
-> -  - Mubin Sayyed <mubin.sayyed@amd.com>
->    - Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+On Thu, Apr 03, 2025 at 10:43:10AM +0800, Alexis Czezar Torreno wrote:
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^buck[0-2]$":
 
-Fine with me.
+If there is going to be new version, use consistent quotes, either " or '
 
-Acked-by: Damien Le Moal <dlemoal@kernel.org>
+...
 
-Not sure which tree will pick this up though ? linux-arm maybe ?
-If noone volunteers, I can take it.
+> +    type: object
+> +    $ref: regulator.yaml#
+> +    unevaluatedProperties: false
 
--- 
-Damien Le Moal
-Western Digital Research
+> +      adi,fast-transient:
+> +        description:
+> +          Configures the fast transient sensitivity for each regulator.
+> +          "none"    - No fast transient.
+> +          "3G_1.5%" - 1.5% window with 3*350uA/V
+> +          "5G_1.5%" - 1.5% window with 5*350uA/V
+> +          "5G_2.5%" - 2.5% window with 5*350uA/V
+> +        enum: [none, 3G_1.5%, 5G_1.5%, 5G_2.5%]
+> +        default: 5G_2.5
+
+Missing percent:
+5G_2.5%
+
+With this fixed:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
