@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-587416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E41A7AC9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB3EA7AC2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8E13B98BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:40:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730587A7CF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A502D27CCCC;
-	Thu,  3 Apr 2025 19:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D6D26A0F4;
+	Thu,  3 Apr 2025 19:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDu2PfD7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjyQtAk5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA1E27CB35;
-	Thu,  3 Apr 2025 19:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BE526A0D5;
+	Thu,  3 Apr 2025 19:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707265; cv=none; b=kH6qf/3tvLcGNHj/PkUiWoit42AEROLQBx2Div50FWul253cv1XfDepZiTlKR+JlP8JjX6xBXZiul3NzJJ3MDPGGKgEV5qqSaUROORnRg+DEbfk2TTwtBibZ3wFPKRSTeMkZvhnCJSCEUbk5pGxG8HYQzFWEtZ+BraeYNrvflQM=
+	t=1743707180; cv=none; b=CBfgCKUe5u+bHXSSreOWyv+f4KidGzCUjdyYmZUcAdRzbiug2XZDMeb4Dq+U9QE58VO1BjuvaG+kmVZmcUUJsHMNq9Dqfq4bJEQFVGZRQf1B14H1XkB/jWKdlndOMtLoEsOvxmS1aKVjtfb4g/9Vmj9PgbLND3uKzr0LCuEtnSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707265; c=relaxed/simple;
-	bh=sLGuf5qMyQRvYXekjBOQCrvBgQ4VbTNYdEKerVwGC04=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=etuPWjXMkTsCYu/eM3TADhJ7VoFJHf7FHCWABGJ8QJBXmZ+PfUpdjqizab23EuBWMIZIrDHJGuqkltDjeXIKWAyyTfUs34zIN5+uXespNtj6GDt4Fie9A3XnePo5YeTCPxI6qQxTXBOHDMx3sivtVd5QL8KVSuCwaRUBXsVfN5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDu2PfD7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C11C4CEE9;
-	Thu,  3 Apr 2025 19:07:43 +0000 (UTC)
+	s=arc-20240116; t=1743707180; c=relaxed/simple;
+	bh=oNNjA8EC+8Tze8+EjqGh3HwWCcanNkzZDN6YsmK0UfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lLZsd52AaE3T4lxeNFqMMSA3Y0bIB3Kh5qnibtXeeI1hnu9PpDeofy+hNlAue54VZe1n+q3QhcVXeA3Cyi0+5bA/5cUEdn9SlPO11VkNIF0dyG4bjwVt3nrzqHe0GWSvENASYsB7o4mz5lin7CgkN2AFiRh5kyHxppfJl9IQbQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjyQtAk5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E1BC4CEE8;
+	Thu,  3 Apr 2025 19:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707264;
-	bh=sLGuf5qMyQRvYXekjBOQCrvBgQ4VbTNYdEKerVwGC04=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cDu2PfD738NLql7VxGXc0+DaEkjQu9p6oMrnQTwv6lGGnVX6S2RAKqy4GyXbdr2VW
-	 xVUo+2SKLonRJJuplqortetHAfP6qZGD7Gv3ZWlpZHB8Yvz6+13G1LqbMCViPj4bpb
-	 sCRkPJr1AYtfUbxbojFZYDYZ3MCOa93SCQyHeORDhLn4yAF+eOTubyKHkz/QQUb72E
-	 +UXWYhUqFHBVBjkz5f7/ZMCTAHIJPDgj6/W3d6OaR82MNX0Eqp3O7FgNCd3MLF6zGz
-	 4L4qWkIS2pXXpnhRUskdnbrFS1hRnKc6qclocB7R/dWiUE65v+H9ebnRvXDFt0Ok82
-	 PKcDRHm+xZg7w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Pedro Nishiyama <nishiyama.pedro@gmail.com>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 47/47] Bluetooth: Add quirk for broken READ_PAGE_SCAN_TYPE
-Date: Thu,  3 Apr 2025 15:05:55 -0400
-Message-Id: <20250403190555.2677001-47-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403190555.2677001-1-sashal@kernel.org>
-References: <20250403190555.2677001-1-sashal@kernel.org>
+	s=k20201202; t=1743707180;
+	bh=oNNjA8EC+8Tze8+EjqGh3HwWCcanNkzZDN6YsmK0UfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sjyQtAk5SiQP0qmcsCbTK/1US2OVDIxOkxm4hOmOfP+0OKZNpm5TO04oiD6fEUo9m
+	 OkUMjeL+GrFSvLDWIy2N372ogBwF4dZJ3AI/jIun8Yb4gdKlhOoyKjP7Wh0CBjRVEy
+	 M5KsJuWXiIksRZBeVoB4P2HgGDk30tM0c7rzsvfnN1hn2agZgNHXGfsd21PUa8ChX7
+	 J9RZ+eH1bo5nKmsEwzh72UNKPE96x1aBUBduolDOQ+vFdrq+1Kegyv2RKHlom7Cxgq
+	 eU5wZdzgmQJxnzJM5bR5HEENjggrvE6KIT1ObuHMsZWvXO3HCstHt13Gx3vG+FTB93
+	 4pZrzh1E3TELw==
+Date: Thu, 3 Apr 2025 22:06:15 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
+	linux-integrity@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v6 4/4] x86/sev: register tpm-svsm platform device
+Message-ID: <Z-7cJyB1LXi75Z0F@kernel.org>
+References: <20250403100943.120738-1-sgarzare@redhat.com>
+ <20250403100943.120738-5-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.21
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403100943.120738-5-sgarzare@redhat.com>
 
-From: Pedro Nishiyama <nishiyama.pedro@gmail.com>
+On Thu, Apr 03, 2025 at 12:09:42PM +0200, Stefano Garzarella wrote:
+> From: Stefano Garzarella <sgarzare@redhat.com>
+> 
+> SNP platform can provide a vTPM device emulated by SVSM.
+> 
+> The "tpm-svsm" device can be handled by the platform driver added
+> by the previous commit in drivers/char/tpm/tpm_svsm.c
+> 
+> Register the device unconditionally. The support check (e.g. SVSM, cmd)
+> is in snp_svsm_vtpm_probe(), keeping all logic in one place.
+> This function is called during the driver's probe along with other
+> setup tasks like memory allocation.
+> 
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+> v6:
+> - added Tom's R-b
+> v4:
+> - explained better why we register it anyway in the commit message
+> ---
+>  arch/x86/coco/sev/core.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+> index efb43c9d3d30..acbd9bc526b1 100644
+> --- a/arch/x86/coco/sev/core.c
+> +++ b/arch/x86/coco/sev/core.c
+> @@ -2689,6 +2689,11 @@ static struct platform_device sev_guest_device = {
+>  	.id		= -1,
+>  };
+>  
+> +static struct platform_device tpm_svsm_device = {
+> +	.name		= "tpm-svsm",
+> +	.id		= -1,
+> +};
+> +
+>  static int __init snp_init_platform_device(void)
+>  {
+>  	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
+> @@ -2697,6 +2702,9 @@ static int __init snp_init_platform_device(void)
+>  	if (platform_device_register(&sev_guest_device))
+>  		return -ENODEV;
+>  
+> +	if (platform_device_register(&tpm_svsm_device))
+> +		return -ENODEV;
+> +
+>  	pr_info("SNP guest platform device initialized.\n");
+>  	return 0;
+>  }
+> -- 
+> 2.49.0
+> 
+> 
 
-[ Upstream commit 127881334eaad639e0a19a399ee8c91d6c9dc982 ]
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Some fake controllers cannot be initialized because they return a smaller
-report than expected for READ_PAGE_SCAN_TYPE.
-
-Signed-off-by: Pedro Nishiyama <nishiyama.pedro@gmail.com>
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/net/bluetooth/hci.h | 8 ++++++++
- net/bluetooth/hci_sync.c    | 3 ++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index dc8a3e4002e87..eb978a33a9d1d 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -361,6 +361,14 @@ enum {
- 	 * This quirk must be set before hci_register_dev is called.
- 	 */
- 	HCI_QUIRK_BROKEN_READ_VOICE_SETTING,
-+
-+	/* When this quirk is set, the HCI_OP_READ_PAGE_SCAN_TYPE command is
-+	 * skipped. This is required for a subset of the CSR controller clones
-+	 * which erroneously claim to support it.
-+	 *
-+	 * This quirk must be set before hci_register_dev is called.
-+	 */
-+	HCI_QUIRK_BROKEN_READ_PAGE_SCAN_TYPE,
- };
- 
- /* HCI device flags */
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index bb455e96a715a..cb4d47ae129e8 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -4156,7 +4156,8 @@ static int hci_read_page_scan_type_sync(struct hci_dev *hdev)
- 	 * support the Read Page Scan Type command. Check support for
- 	 * this command in the bit mask of supported commands.
- 	 */
--	if (!(hdev->commands[13] & 0x01))
-+	if (!(hdev->commands[13] & 0x01) ||
-+	    test_bit(HCI_QUIRK_BROKEN_READ_PAGE_SCAN_TYPE, &hdev->quirks))
- 		return 0;
- 
- 	return __hci_cmd_sync_status(hdev, HCI_OP_READ_PAGE_SCAN_TYPE,
--- 
-2.39.5
-
+BR, Jarkko
 
