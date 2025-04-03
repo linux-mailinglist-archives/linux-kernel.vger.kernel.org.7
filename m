@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-586947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A88A7A5A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:47:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498C2A7A59B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B45D7A601A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:46:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAD4166DBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9705225290F;
-	Thu,  3 Apr 2025 14:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B652505D2;
+	Thu,  3 Apr 2025 14:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dBrZPKlA"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aX3xf5ND"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E652517B6
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6724F5A6;
+	Thu,  3 Apr 2025 14:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743691539; cv=none; b=Av/6mkExdUF0PkvHw5+RWbWd2L6Go1vIPaCTcXXPX6NH88Lk1YOKh5rfS2dC666ZxAWFUqbPS145YShqv7b1ENhyiwPnrLJJ5U0GcqjWJpVuN4fzlQTGi056QNe5kJbRq7bvZZkldTzUEMiY1cT/4V5tr/cENo1ntS6cAayYZ+4=
+	t=1743691527; cv=none; b=jCmWiB6TlsZ9vd2eboJFoaN+xJU810ivDt/UBBVzOKtKNzHk+Uhm/YNHvyrWKVVROSO0hMoAmRICM4LkgJozQW/p2kaq5s+3AxKXlfrTGSynJleMBJVSbgstwg3DrkbXNrYKCaO+k7YaOcXyUZFko4Sv3l1clwo6FhcjHWx6eNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743691539; c=relaxed/simple;
-	bh=l4iJNAHptiuVKpCa07q2upOIZMfPgiV52LMmwgdvXhc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y1sd646ZxkHl3TXU6uIkkZx+D8wXDvBdinOgCp4Owi1MvkjdH0eBHFpPolEMioKgbV/5jjtIlC/Ozx++9cpdFfbqUZE5OZNzSrpKpl5OhghZ7WUSQFjz93Ce5OKVVBLlFjrOQ9mGW5AooF7R89bRuPmwB2LVHXifDN9pKXrKe0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dBrZPKlA; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso9666485e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:45:36 -0700 (PDT)
+	s=arc-20240116; t=1743691527; c=relaxed/simple;
+	bh=UTQihElZQ5slBzHwnMe9XjlMj4GC7cZtIpl186iaDmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tBeCigheZvdoScy1s4Xi4ZcpN55ojrvCEZx1/ShdxxuB1rym9WiYU7c65JSadYVc1aH1qjhoV2/2cZrKQWy4i0IyoWr46m/NpkeDzZVSrMho8jToc0xNQXWXbVipB8jD57OnnarfbN55jqoDq9uM5CVL9L8iWdPz+tLjp4n2MlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aX3xf5ND; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3914bc3e01aso673710f8f.2;
+        Thu, 03 Apr 2025 07:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743691535; x=1744296335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743691524; x=1744296324; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FZqArbq2CLhmn9uqH6RdF2eNuvNBqtoUAKfUBvHjG6s=;
-        b=dBrZPKlA46v29MHgh772KiqFFWUdJ7kYqtTPWHZH7ilu8C/Sh1dDayL5t3YpbetO5y
-         yQH2bUoVpJExvkj+IMh0UZaasiQ6WeTnfVymPqEcAuY4ndU9svAsQiXLdhTZ0HtWfOad
-         eFSKx2u2oAFfE5ReGiE1Tn5ro8tj0tZl5ROQmBa5Pwit27PvjDXduKawJsxa/v4qWn/x
-         0el2xS5l2lrD75njgKprNQBcdpLD3kV8GRCidgemRFO3VSq0ME/lSPQL9pzP7F6nqkBx
-         ctXlyO/xkAN0+TTiqDG9m4U9NtP7KcCsxoVRnxEqKd5WHLwlWEw0rHufTWtEbthH/BKN
-         +pBg==
+        bh=IAXcEeCo52+sxV42Segun77dZyr6wVKhub4LOcewIv0=;
+        b=aX3xf5NDwZPFHWpUirvRROnlQT91x5J5auqZxKIocjNNWqN6DGlrsQLTiK43cqmIbZ
+         lnAmOUzewEUvRqkZIzQMvhyuUm3DE2TbIrTw/rfyLqQtaGdaBJFk2E0IH/02d3TJGhd9
+         BoI+F4+UN5rCx5DorD50EoI7PZXyfkVZUsjMfdNqlpuZ5mSuS84b4uP3+HXp56TB3MX9
+         tDa/jbjpL2VwCp7eSnUlndt4VfGKg6cRArdf8OO+QC6y4e8uoLvaCpSF7CUWWd2XVeyQ
+         dZL9cVcI5MWarzJsfnXXFjjJiOHB4awIm9ZzhlF+5jOJupIWkhi5ANZk+qRdLSudGQUp
+         Mfwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743691535; x=1744296335;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1743691524; x=1744296324;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FZqArbq2CLhmn9uqH6RdF2eNuvNBqtoUAKfUBvHjG6s=;
-        b=eM73tCiqGa6HyxhZQ1wizqOcVCHTvz05ruJ2NH9lpLtVTy4ycjPn2KYSwjr57/j76H
-         M8GvA+/NWuUXezhWynPH+jx1H7Zni7YtFh8HcoLZH3wnttXete1b1bkc67IJ2+rqdvYx
-         iJ6CYixoqEhBk8T7MqRxnzNywFQdI9tX1ckibYo3wNeAIJqOArl9kQRYtmwD9/EDvW2z
-         0Ekl9jjXmUP9B6Mt4oiFOTWQYrKK3Is5FYghavOhpcCR+qZ+63fUoITbOkIuRjPb7J5v
-         RClOTxrZwkTGNo2HY1LdI9dogyDAc8ZAVHBQfs9Z82Ohnteh7MtaOG/xLqTFE6hFVBGU
-         gVeA==
-X-Gm-Message-State: AOJu0YzPt1mbaitN4lCXZr1G+jpGSzjsAANCKogwaysKdQZEe62VfgUw
-	bYmTOK/hZNN3XNBbC7e35AJoVTcautazI5IVaHjGwmYMT7kslxHWSJ3UBEylESLAnz28BomO8n5
-	UlSM=
-X-Gm-Gg: ASbGncun10HJ5VSkZrE1bVfJUi0+D7vtvjFEvvM3eCOBREiJ+yJ444vsJj4kGJxYqRf
-	AVzS4MxQn3jd5C+StR1MDpuYhBA9oYiNEJ7Lauvr8pEN4ohkAXUdMNqic38rGPgDaQQ5KPF09jC
-	MV/8GQw0IEvq97v8/+GXqwuWCV/1NxPoObcG5fRdyP3B8yLodKv7ABgEqf7AiSHwApueHCgEWEk
-	Tr5YNkD3IQYE4YF9t/r/Mm5bK3rwy4nyPVOQOCiCjrF2JRC2RoX3yXucmc8bI9JVlR2G6MZB3fL
-	FtH456NcJ88NbLaqFPLJRh8B/Ged+gQ+q0yxUETPrB1q+3kIbF5zMYkUxa/5VzyZ0KOvNg==
-X-Google-Smtp-Source: AGHT+IGHaZo46FQdOLZGvNflgqb+6QaWejJGL8oml5XkCKM6k/q5DM+3Nk52MHwVuDkrLGyzpz3vLQ==
-X-Received: by 2002:a05:6000:4021:b0:391:38a5:efa with SMTP id ffacd0b85a97d-39c120e07e4mr17272795f8f.23.1743691535378;
-        Thu, 03 Apr 2025 07:45:35 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d661sm2044374f8f.66.2025.04.03.07.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 07:45:34 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Rudraksha Gupta <guptarud@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v3 13/13] dt-bindings: nvmem: Add compatible for MSM8960
-Date: Thu,  3 Apr 2025 15:45:01 +0100
-Message-Id: <20250403144501.202742-14-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250403144501.202742-1-srinivas.kandagatla@linaro.org>
-References: <20250403144501.202742-1-srinivas.kandagatla@linaro.org>
+        bh=IAXcEeCo52+sxV42Segun77dZyr6wVKhub4LOcewIv0=;
+        b=f+GjX0sTVnulgN/Jv3Uvp1A7fzKZ4m5rNDbGqZka2Gz7Xua455QvPMokMQjjimn7C8
+         BkhD0V6KRK+wVr9HSyBIuKno77sqKK9ogDO4/RuZsfgexuWhZhYM13vrAZUsbBzW40Ij
+         NRRR7ZubRJXZvZKrLlX1G4CRPTbr3lUNh1z4o13bwxRObe2T8b8U7+M3GLMs6DpQaLJU
+         L7lZK2Zi+ULqCTrES7lET1lgu7n6vjKI4bverlECu3bp+44o1P02R7rwS8XdblySuNPW
+         8wfCb5DFAO2ebXBuGPKlE7TLXPDzTLd06GK8/W7lfmUbfkzsJp63cQo4Snnmv3UpGJn6
+         Jzdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUILjicIa6EvbOabgjjJlgTu2oRSArtuTVZVC6P4rmHSJvNDOYnszMyHu2B87hdNaLUJ+95a/lLRzPWUjRZ@vger.kernel.org, AJvYcCXUOfIicSlVPPe65qPmKUzomyhsfdaO3OqoLRca4xLaaa8H58lCCMQ89/djgcMTiZOzvUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy21/9XF9yeazPuc79S/ZAbnm3aYGJ62t8CX9ED57OaYyW69QlI
+	zrSdoIz+6Ps+YESeXCBDE1UdculbeKAmHfIYhdtnSBB3YpsTooVGNqX3hj2yZvs2vTiYC9AVYAv
+	HCY9iMFUg59qYr442vfxA6Jh18xs=
+X-Gm-Gg: ASbGncsllDFrdyei4yhBAcCo9cKGGvfpyRUrHfLElcbWIUNIo4XhQTMGl8hDoxRon4N
+	kz5JHs3BFAVqgfRKMnaFkGdAXYZGu8bsuicrcimgWDx5RJs+IhojAFRblgNtHyrJHIC+BVHX5KL
+	ht2Bhu/SzhqmAbfhS+9PoDFPjdDE2hPmMYTcIYh5AhSA==
+X-Google-Smtp-Source: AGHT+IEuDq2JeknkTgtYMJm0vZRlgjuGmVz91fqykITW03ONam2Owqld+Uik23to+hzCk0cHIhF++j0NsNzcXsg4WEY=
+X-Received: by 2002:a05:6000:1889:b0:390:fb37:1bd with SMTP id
+ ffacd0b85a97d-39c1211beabmr19748418f8f.46.1743691523922; Thu, 03 Apr 2025
+ 07:45:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=srinivas.kandagatla@linaro.org; h=from:subject; bh=FXEt/Kj/cOQDVL0xn0HFa2IaPATF3j89thQhbOzYB7o=; b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBn7p7kdWWgcoOaGztrTUxERMTUY/4sCVheFirnh 2g8KO+3G8OJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZ+6e5AAKCRB6of1ZxzRV NzJJB/4oKvA+6mt6SmXJ8sLPSChf+wE/8fNajDfOaVPn7IsWmQIrc+YWvgN6JfZfB5ou32RUuNg ktrgO23Qnxj/9eCtPmes54zDDYLJd0R/+P1voLWl2k4nm1qrZjBi/Km1SRL6tb6WZEHJKDsHx0a +1dUdf4NYCv7ydnUqKRPq5oAfYOyJVrTqplaw2kK58eaCFVmzKG2in57IH+VG6bGj8C8KsaZask QOb98FBkDcgP+pANL8ih5FxbFRUkhrYsQABp8BGoeyCzWCl4lkFZwoGtAngTcBsr1J5xjXwDDTh h7JOTH/AvDHyZK69kVPrEYUOLE3dRTjDjrHBFjEZwNL1b4kH
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp; fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
-Content-Transfer-Encoding: 8bit
+References: <20250401205245.70838-1-alexei.starovoitov@gmail.com>
+ <umfukiohyxcxxw5g6ca5g7stq7oonnr3sbvjyjshnbqalzffeq@2nrwqsmwcrug>
+ <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com> <78c2d3be-aa8e-4bb7-8883-7f144a06f866@suse.cz>
+In-Reply-To: <78c2d3be-aa8e-4bb7-8883-7f144a06f866@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 3 Apr 2025 07:45:12 -0700
+X-Gm-Features: ATxdqUE7tZW6yPfCiD1FSxwr1kqBj9tR4RS57JdjoIH8NsUBbesBsPHz1WvUpAo
+Message-ID: <CAADnVQ+m12aU3qWJMTECOTa=B7A_UFSLk4v8MAcr4ZaN5EHdNg@mail.gmail.com>
+Subject: Re: [PATCH v2] locking/local_lock, mm: Replace localtry_ helpers with
+ local_trylock_t type
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	bpf <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sebastian Sewior <bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+	Michal Hocko <mhocko@suse.com>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rudraksha Gupta <guptarud@gmail.com>
+On Thu, Apr 3, 2025 at 2:26=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+>
+> On 4/2/25 23:40, Alexei Starovoitov wrote:
+> > On Wed, Apr 2, 2025 at 1:56=E2=80=AFPM Shakeel Butt <shakeel.butt@linux=
+.dev> wrote:
+> >>
+> >> On Tue, Apr 01, 2025 at 01:52:45PM -0700, Alexei Starovoitov wrote:
+> >> > From: Alexei Starovoitov <ast@kernel.org>
+> >> >
+> >> > Partially revert commit 0aaddfb06882 ("locking/local_lock: Introduce=
+ localtry_lock_t").
+> >> > Remove localtry_*() helpers, since localtry_lock() name might
+> >> > be misinterpreted as "try lock".
+> >> >
+> >> > Introduce local_trylock[_irqsave]() helpers that only work
+> >> > with newly introduced local_trylock_t type.
+> >> > Note that attempt to use local_trylock[_irqsave]() with local_lock_t
+> >> > will cause compilation failure.
+> >> >
+> >> > Usage and behavior in !PREEMPT_RT:
+> >> >
+> >> > local_lock_t lock;                     // sizeof(lock) =3D=3D 0
+> >> > local_lock(&lock);                     // preempt disable
+> >> > local_lock_irqsave(&lock, ...);        // irq save
+> >> > if (local_trylock_irqsave(&lock, ...)) // compilation error
+> >> >
+> >> > local_trylock_t lock;                  // sizeof(lock) =3D=3D 4
+> >>
+> >> Is there a reason for this 'acquired' to be int? Can it be uint8_t? No
+> >> need to change anything here but I plan to change it later to compact =
+as
+> >> much as possible within one (or two) cachline for memcg stocks.
+> >
+> > I don't see any issue. I can make it u8 right away.
+>
+> Are you planning to put the lock near other <64bit sized values in memcg
+> stock? Otherwise it will be padded anyway?
+>
+> I hope it won't hurt the performance though, AFAIK at least sub-word atom=
+ics
+> are much slower than using a full word. But we use only read/write once f=
+or
+> acquired so hopefully it's fine?
 
-Document the QFPROM on MSM8960.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-index 69e3669f8178..fb4dfb1bfb4f 100644
---- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
-@@ -30,6 +30,7 @@ properties:
-           - qcom,msm8916-qfprom
-           - qcom,msm8917-qfprom
-           - qcom,msm8937-qfprom
-+          - qcom,msm8960-qfprom
-           - qcom,msm8974-qfprom
-           - qcom,msm8976-qfprom
-           - qcom,msm8996-qfprom
--- 
-2.25.1
-
+Sub-words atomics are slow, but these are not atomics.
+Just plain load/store of u8. Should be fine.
 
