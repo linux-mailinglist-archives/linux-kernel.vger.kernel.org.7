@@ -1,37 +1,79 @@
-Return-Path: <linux-kernel+bounces-586969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66A3A7A5F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3126A7A5FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F67A1891BA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732383ACE3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4189F2505AC;
-	Thu,  3 Apr 2025 15:07:17 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BB6250BF3;
+	Thu,  3 Apr 2025 15:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXkmIKKp"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F0B288A2;
-	Thu,  3 Apr 2025 15:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE39D2505DE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743692836; cv=none; b=jwCXaf3jRBGXYJrZDqI4DLr93n4hPiHjZnSfasaY8hFZRD1puUD3Vhvpuv6Zj9dAc1II0x6bmorNYK7bzjW2LR4QRkapgWT4RcQ/j0HgZh6rv68HBTBEpUtuBBh5FLU7XLxqkV/EkszBIYCWWF4i1wdAvIhjuDtHhzRQorjgIvI=
+	t=1743693015; cv=none; b=YzrT8VH1thdNSvIpTRmMCi/+Q3JhUkHlERye2iAzSitQ/ltbI5Jex07NlbRUT2w1Df+R3E6yXwKxwtcdvdvDK8ciZ0NoX0JM5EFLaOZ/tG0foWHRqbU4b7BbfZXvsGAtL6+5uzDp2BD2xzR1ODSpJbcBezSKXUziMCopUY9TQ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743692836; c=relaxed/simple;
-	bh=a+Elpo09uRi5kMrDgUVA8Gj+kzl67KA6NE7ixco4xPw=;
+	s=arc-20240116; t=1743693015; c=relaxed/simple;
+	bh=3xsuXjoivOlqLYm45J8XhER5c8e8iHHhlk5GjLRhsfg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mefXoe11pi+Y1KQmob3hX2EZwlUs0omrP2eD55dosioEW0zY91jdlLhSdn9CDHdS1B6bZQuwe4Nw+SYijqy2uAdL115vCE9pZbc68Aq9rUyjy1RQSPqUI5piGMhOC814e0tkAX8Fp7kTo2ECF3OQ4eJBVLkcVAxeH7U+1mNrMgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C8752442C9;
-	Thu,  3 Apr 2025 15:07:09 +0000 (UTC)
-Message-ID: <28018be2-eabc-4d6f-9bb1-913a1f0515db@ghiti.fr>
-Date: Thu, 3 Apr 2025 17:07:09 +0200
+	 In-Reply-To:Content-Type; b=b9ggsNGirNFhHHLsib0SuQeW37obG28+3ik9hEW82+P9m0CTc2flUn219WeHbtUa+3iHHGj2Gg/mOw+5zRDQkcX74+Vgaxw5mBDLBjO78bBMrHrR2YUUxc74NVIwYZ0b/gAUcA827Od10LjF4OWA2cbyZ5e8vFp932E4Xd0F0wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXkmIKKp; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso9958055e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 08:10:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743693012; x=1744297812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zhJ5g8kBFwNl+XQ2nWiu5GACX6MCWJ6Smtvjb3q8Bto=;
+        b=zXkmIKKpoWKGbFoYbwdGvthQe7yCka+T6ZN97cA73Bvd4VJqm4JxzdBhILlH9wQPiC
+         FA3DQQcR5Nghzb4xW7vcLEZvyWzwLxCJRv1I+NqFjTy27b6eYdBx8+YvuwHHZ+Vc5cDg
+         nK/TL584fOgLuBal/PBangJattCVGn5MW5FlwhMoYBdwkmOdvlFdomBqGOppI/39EbPA
+         k2EeHRQaoRjnC8/YbwfksUafBQs4wZ+wcz71bExzQKOkTCtIJBX12vxPEbpVgv940PC/
+         AureMuHS199yjTQXLbV5LFLIdmN/e4c21QpWtKfOzs9Bf5arg2mN2yFLJ2n5laAv247g
+         wCYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743693012; x=1744297812;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhJ5g8kBFwNl+XQ2nWiu5GACX6MCWJ6Smtvjb3q8Bto=;
+        b=BeZ3fLPwkF0s3APUnCKEP34W7mSOAaQRXN5ZPYTlzTFZtpY5zzIb+Q1P7RWoXRZUbE
+         UYxSM+/IOm1aK9gAdg4IwSV04eafnohhzg1poTzU9c/XxcDUVml137sThRvbdJ9CVGkd
+         6I//OVA7OcSbBUr7M9qOxCOHJ4Vqj03g9tdlwtfToWgQfLVldroh09zZsvGx40vAepIk
+         TYhGUZyNZbgjUsx9azKQklksDSu6SvNjeL0G30uJzL9L9yflH2GA5noIXof228cxMc1a
+         S4l+Nl5Boq2zCttJ74x3QZldOrUMv2ypizZWz6fDNzAqNsJNx4W4NIqyPJ6EomeNIenk
+         oQ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjcz3/hjScuYCH6LdY2PNtb2OVAgKmX3pgSupl59MyhYQ+ZGFOq5E0ulAsmDjFW96S/bKnTIYOKDlZbBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+SQSp+PFTE4VVxlaHmPhg11Mo2ItqZw2h+ijwyh+ex7dmmcf
+	ctK+BOtQ8Li8+fyFZvFgg3YCDdbLrKce0kMDBY/hALg9zzJHiQmHAukafdytqyM=
+X-Gm-Gg: ASbGncsM/lEtmjT2dr3q2ptqQ+mOfkkL4E+H3HY1fQBHYq/bCK6l67edurW5y73Ltu/
+	uHkF4RI6BZu6ZcFSFpdWDi89x+7wDrRm7oX8+wFutlTSyTXU+4O+FKo76fsN1y/YwAevTFJLXD/
+	2qrH2UDBYgEUsVdX9ksTaBKUbrwyRnMR3V9YAAsllstoueLx0dbS3pRZMaLipRIDWrdI7aBBM0x
+	Mx0y0f+ecX7Pn76xpH5BCxWabHu6QnOPebk2D4y2npV726W4/ChSHo4205kp6n5oS92F8Ukwg6Y
+	n6Ggy+ZBnVfA0FU7feIB6OXZY7zLVHg1Sj7QZ0f+Ms+1dgodFCFW4IkIZNLjIA1mZ1Xv1zQgfJ9
+	6vnKTyeIA
+X-Google-Smtp-Source: AGHT+IHDhBcexcgG0SxAh6e6AVDE03TCQZ+YSRRIFhr8aPiKmaRvD2AOaeBMWRz175FPNNgUcLCquQ==
+X-Received: by 2002:a05:600c:5486:b0:43c:f895:cb4e with SMTP id 5b1f17b1804b1-43db6249aefmr197046525e9.17.1743693012137;
+        Thu, 03 Apr 2025 08:10:12 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43ec16a5776sm24935105e9.22.2025.04.03.08.10.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Apr 2025 08:10:11 -0700 (PDT)
+Message-ID: <c570c99d-53f5-4f77-a730-42e5a2016dc5@linaro.org>
+Date: Thu, 3 Apr 2025 17:10:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,149 +81,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kbuild: Use --strip-unneeded with INSTALL_MOD_STRIP
+Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add NXP Software Watchdog
+ Timer
+To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ wim@linux-watchdog.org
+Cc: linux@roeck-us.net, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org, S32@nxp.com, ghennadi.procopciuc@nxp.com,
+ thomas.fossati@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ Vincent Guittot <vincent.guittot@linaro.org>
+References: <20250402154942.3645283-1-daniel.lezcano@linaro.org>
+ <20250402154942.3645283-2-daniel.lezcano@linaro.org>
+ <64b6d599-fe67-586a-e4b0-73d9b73499de@oss.nxp.com>
 Content-Language: en-US
-To: Masahiro Yamada <masahiroy@kernel.org>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
- <nicolas@fjasle.eu>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20250122-strip_unneeded-v1-1-ac29a726cb41@rivosinc.com>
- <20250131035245.GA47826@ax162> <Z5xzkwwZAWRRLCdj@ghost>
- <CAK7LNAR=1sNs+hOW8gL=7xOs=gHLToTAnAUTF1SizroYoui8sg@mail.gmail.com>
- <Z51BpVEkmVCg7gTX@ghost>
- <CAK7LNATs=c4J7mR69ec3scPqw6PK4SKTs-ixrQM_eRiz=EhS8A@mail.gmail.com>
- <Z6JcgeDmt63MupyW@ghost>
- <CAK7LNAS5RVtm078rLFJNxQwPf+1VH+zf12dQJ1Xh-Wc4_qFGTw@mail.gmail.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAK7LNAS5RVtm078rLFJNxQwPf+1VH+zf12dQJ1Xh-Wc4_qFGTw@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <64b6d599-fe67-586a-e4b0-73d9b73499de@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekkeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedtgeeuhffhveeujeetveevieekleekvdffudefleevgefgieekkefggefhtddtveenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeejtgduvdemfhhftdeimegufeegrgemugefvgelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeejtgduvdemfhhftdeimegufeegrgemugefvgelpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeejtgduvdemfhhftdeimegufeegrgemugefvgelngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpt
- hhtohepnhhitgholhgrshesfhhjrghslhgvrdgvuhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtoheplhhinhhugidqkhgsuhhilhgusehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Masahiro,
+On 03/04/2025 08:19, Ghennadi Procopciuc wrote:
+> On 4/2/2025 6:49 PM, Daniel Lezcano wrote:
+> [ ... ]
+>> +examples:
+>> +  - |
+>> +    watchdog@0x40100000 {
+>> +        compatible = "nxp,s32g2-swt";
+>> +        reg = <0x40100000 0x1000>;
+>> +        clocks = <&clks 0x3a>;
+>> +        timeout-sec = <10>;
+>> +    };
+> 
+> The S32G reference manual specifies two clocks for the SWT module: one
+> for the registers and another for the counter itself. Shouldn't both
+> clocks be represented in the bindings?
 
-On 05/02/2025 16:00, Masahiro Yamada wrote:
-> On Wed, Feb 5, 2025 at 3:29 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
->> On Tue, Feb 04, 2025 at 01:04:26PM +0900, Masahiro Yamada wrote:
->>> On Sat, Feb 1, 2025 at 6:33 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
->>>> On Sat, Feb 01, 2025 at 12:10:02AM +0900, Masahiro Yamada wrote:
->>>>> On Fri, Jan 31, 2025 at 3:54 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
->>>>>> On Thu, Jan 30, 2025 at 08:52:45PM -0700, Nathan Chancellor wrote:
->>>>>>> On Wed, Jan 22, 2025 at 07:17:26PM -0800, Charlie Jenkins wrote:
->>>>>>>> On riscv, kernel modules end up with a significant number of local
->>>>>>>> symbols. This becomes apparent when compiling modules with debug symbols
->>>>>>>> enabled. Using amdgpu.ko as an example of a large module, on riscv the
->>>>>>>> size is 754MB (no stripping), 53MB (--strip-debug), and 21MB
->>>>>>>> (--strip-unneeded). ON x86, amdgpu.ko is 482MB (no stripping), 21MB
->>>>>>>> (--strip-debug), and 20MB (--strip-unneeded).
->>>>>>>>
->>>>>>>> Use --strip-unneeded instead of --strip-debug to strip modules so
->>>>>>>> decrease the size of the resulting modules. This is particularly
->>>>>>>> relevant for riscv, but also marginally aids other architectures.
->>>>>>>>
->>>>>>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->>>>>>> Is there any sort of regression risk with this patch? If so, another
->>>>>>> option may be to give another level to INSTALL_MOD_STRIP like 2 so that
->>>>>>> INSTALL_MOD_STRIP=1 continues to behave as before but people can easily
->>>>>>> opt into this option. No strong opinion because I am not sure but was
->>>>>>> not sure if it was considered.
->>>>>> I do not believe this would cause regressions. The description on gnu
->>>>>> strip is:
->>>>>>
->>>>>> "Remove all symbols that are not needed for relocation processing in
->>>>>> addition to debugging symbols and sections stripped by --strip-debug."
->>>>>>
->>>>>> The description on llvm-strip is:
->>>>>>
->>>>>> "Remove from the output all local or undefined symbols that are not
->>>>>> required by relocations. Also remove all debug sections."
->>>>>>
->>>>>> gnu strip --strip-unneeded strips slightly more aggressively but it does
->>>>>> not appear this causes any issues.
->>>>>>
->>>>>>> Regardless:
->>>>>>>
->>>>>>> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
->>>>>> Thanks!
->>>>>>
->>>>>
->>>>> It is true --strip-unneeded drops a lot of compiler-generated symbols, but
->>>>> it also drops real symbols that originate in the source code.
->>>>>
->>>>> So, this would give user-visible changes for kallsyms at least.
->>>> Adding INSTALL_MOD_STRIP="--strip-unneeded" would be sufficient for
->>>> riscv. However, this has the downside that riscv will require different
->>>> flags than other architectures to get reasonably sized modules.
->>> You can use INSTALL_MOD_STRIP=--strip-unneeded for all architecture if you like.
->>>
->>> I assume this is a riscv issue. Specifically, riscv gcc.
->>> With LLVM=1, I see much smaller riscv modules using INSTALL_MOD_STRIP=1.
->>>
->>> --strip-unneeded is needlessly aggressive for other architectures,
->>> and I do not see a good reason to change the default.
->> Yes it is primarily an issue with riscv GCC. I was hoping for something
->> more standardized so that other people using riscv GCC wouldn't
->> encounter this. Would it be reasonable to add this flag by default only
->> for the riscv architecture, or do you think it's just better to leave it
->> up to the user's choice?
-> The latter.
->
-> INSTALL_MOD_STRIP=1 passes --strip-debug.
-> This is clearly documented in Documentation/kbuild/makefiles.rst
-> and it has worked like that for many years, with no exception.
->
-> If users want it to work differently, the flexibility is already there.
->
-> If INSTALL_MOD_STRIP=1 worked differently, silently only for riscv,
-> I would regard it as insane behavior.
->
->
+AFAICS, there are two clocks as described in the documentation for the 
+s32g2 page 846, section 23.7.3.3 SWT clocking.
 
-I find it a bit "harsh" for users to know that on riscv, they need to 
-set INSTALL_MOD_STRIP to have modules with a "normal" size.
+The module and the register clock are fed by the XBAR_DIV3_CLK which is 
+an system clock always-on.
 
-So I'd rather have it set by default for riscv, would the following be 
-acceptable for you?
+The counter is fed by the FIRC_CLK which described as "FIRC_CLK is the 
+default clock for the entire system at power-up."
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 13fbc0f942387..c49b9dda20cd1 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -6,6 +6,8 @@
-  # for more details.
-  #
+ From my understanding, we should not describe the XBAR_DIV3_CLK as it 
+is a system clock.
 
-+INSTALL_MOD_STRIP := --strip-unneeded
-+
-  LDFLAGS_vmlinux := -z norelro
-  ifeq ($(CONFIG_RELOCATABLE),y)
-         LDFLAGS_vmlinux += -shared -Bsymbolic -z notext --emit-relocs
-diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
-index 1628198f3e830..e60895761b73b 100644
---- a/scripts/Makefile.modinst
-+++ b/scripts/Makefile.modinst
-@@ -77,6 +77,8 @@ quiet_cmd_install = INSTALL $@
-  # are installed. If INSTALL_MOD_STRIP is '1', then the default option
-  # --strip-debug will be used. Otherwise, INSTALL_MOD_STRIP value will 
-be used
-  # as the options to the strip command.
-+# Read arch-specific Makefile to set INSTALL_MOD_STRIP as needed.
-+include $(srctree)/arch/$(SRCARCH)/Makefile
-  ifdef INSTALL_MOD_STRIP
-
-  ifeq ($(INSTALL_MOD_STRIP),1)
+And the FIRC_CLK is only there to get the clock rate in the driver.
 
 
-Thanks,
 
-Alex
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
