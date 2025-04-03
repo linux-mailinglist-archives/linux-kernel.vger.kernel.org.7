@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-586141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A4CA79BB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:03:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BC5A79BB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240DA3A753E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCFA418933AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E61A239D;
-	Thu,  3 Apr 2025 06:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD92119E98C;
+	Thu,  3 Apr 2025 06:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WPP0bDZK"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L3kSaRan"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B498CA6B;
-	Thu,  3 Apr 2025 06:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5AECA6B;
+	Thu,  3 Apr 2025 06:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743660142; cv=none; b=p4sfFHd9+kJL3f50t1VWdW12YAoWKvGSwO159N27wUsSr0104EF4FLPB5BazBdQyJiYSR+HZXTohbIxVWitIQxwDQgMruTJMzSyvUKohs8zlRCfMpIE+CXNnMA1KDYQ6cZcaZxY1N2h6TGC8Pl8XFUfQVev1GuZFC2hO4x2vjgE=
+	t=1743660103; cv=none; b=tO6m0DTU0caPEvWtb2Z44iaExD5a3RZ70FGs+km02h9H7i5Qe2BQs+G5LRBV6ruxnBfw+mRMzNuO8GylE4o/fxanxWWUv+Ys+GUVnNVqaf3CCNkKS+GM6MQdz8U6kFAEOVqeUjhWk83gmenKbCngklRFOfK/nw5+ggDWXjZezLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743660142; c=relaxed/simple;
-	bh=HBSjt3ceb+310hVs/mwgzhbbqG3Jl2AAvf0AdIVfBLA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=cqLCGjA2TT1uRNQ9h92X4RE/a1m0ws/XvpB5KSy/cK6dfrlCx13MyyAxWq78IG8YKInLGnsVU2Wz9bbZzB44Dlnw/t1sCpV5NgH0r95e3dty9OjBHWEBAEY7NXd6OptmLIb9jvMq8B5YCWTsYz5BAt3lhH7xQHrS9NRZ2B8AE5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WPP0bDZK; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 53361TVl369646
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 2 Apr 2025 23:01:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 53361TVl369646
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1743660093;
-	bh=dlct/QjME2ZRc2GbrZa4+YEUwLyiwmon1oWoqtApkXY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=WPP0bDZK1lApqNXdOtF12S5ARISaib9mLKSdGhnx3gf+KvTavErQMB5tHsDboEZaM
-	 dLsgA/Wr4k2VPAKvg4Q/jtE0gFB4ojRvE+oKmyqXmPeIVyoZtruCTjMkDVanwskwS+
-	 jiuGUYw2dmNjKOKZNCiNGXO9zxp8lWX1y5seDxftNeQHvt8RBeGECAiOxqTKUMgh1b
-	 zD9Kyl+NSFQ59y87oScNqVpMXyezROjMwevUzZS+FRy/CxOc3SftPfgsBUCB4x+623
-	 2LcVsu0VnYA1sp4yMqo6TRQHgTa6YRFjMp5wTke1MjTH1hw4LpEw+MZO87TrcY7Ja6
-	 ziwf36ftnA50g==
-Date: Wed, 02 Apr 2025 23:01:27 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Xin Li <xin@zytor.com>, Ingo Molnar <mingo@kernel.org>
-CC: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-edac@vger.kernel.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org, bpf@vger.kernel.org, llvm@lists.linux.dev,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, jgross@suse.com,
-        andrew.cooper3@citrix.com, peterz@infradead.org, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        wei.liu@kernel.org, ajay.kaher@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tony.luck@intel.com,
-        pbonzini@redhat.com, vkuznets@redhat.com, seanjc@google.com,
-        luto@kernel.org, boris.ostrovsky@oracle.com, kys@microsoft.com,
-        haiyangz@microsoft.com, decui@microsoft.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_v1_01/15=5D_x86/msr=3A_Re?=
- =?US-ASCII?Q?place_=5F=5Fwrmsr=28=29_with_native=5Fwrmsrl=28=29?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <c316a6c6-b97c-48b2-9598-d44e2ec72fbc@zytor.com>
-References: <20250331082251.3171276-1-xin@zytor.com> <20250331082251.3171276-2-xin@zytor.com> <Z-pruogreCuU66wm@gmail.com> <9D15DE81-2E68-4FCD-A133-4963602E18C9@zytor.com> <Z-ubVFyoOzwKhI53@gmail.com> <c316a6c6-b97c-48b2-9598-d44e2ec72fbc@zytor.com>
-Message-ID: <580DD4EE-8694-4525-AA73-A6823126FF9F@zytor.com>
+	s=arc-20240116; t=1743660103; c=relaxed/simple;
+	bh=9ppDOHTHCYYmi07M6kZ2vQUJDN2lf2V+QnXMNXpcfjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eO8wevfMdJ506t9aglEkK1+JscbmhZalGXuXnPzAwwCqXWXKzZgH3AvMfRNiqZcM9HX8+bS5roeJ2HVwLoDbQixpzinqGLWp38FSdMxJNRya6Przb170J8xQQejTQdx8m5LOke1B5eCne0qZIdbe+JGLdRQESUCS4AxDrKiojyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=L3kSaRan; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1743660095;
+	bh=rEE8qU6KIQ5XE+CnOZ9OsuoSiSCIErnkgNviCeOT2IE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L3kSaRannoqaJmNg4MogZFtuz37MUIbS9mugMaiVJQy/0LBOkr3Ll2NTue8u8D9jJ
+	 8Jc/1zlRBXmKOWWMC01L9LdPMhIxaC6kiDKcqnHKjMRZkt+4N4W3xw0ayvSL2zxnht
+	 EdxKvzZ7DmdeMmf78B40BgdNBTq9bfWCe/u7VWPbBcy0PFkgQWqr1HB6s+EtP5NsoL
+	 FVCE6Gc+pRuLj54Xbk6+96GLQd5zRpiicPtIRJHcXg2PamV5MgDKWBWTATjIk39D0d
+	 iLtlkDfoPr2yyhXCDwGXLTs/5nsjwYYHS0uoCExmva05Me/7qa84pkt7YBjeKv/f4I
+	 /aXuIq+OtFZog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZSrhv2gxxz4wyh;
+	Thu,  3 Apr 2025 17:01:35 +1100 (AEDT)
+Date: Thu, 3 Apr 2025 17:01:34 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Kaszewski, Dominik" <Dominik.Kaszewski@amd.com>
+Cc: Alex Deucher <alexdeucher@gmail.com>, "Deucher, Alexander"
+ <Alexander.Deucher@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the amdgpu tree
+Message-ID: <20250403170134.504f5801@canb.auug.org.au>
+In-Reply-To: <LV2PR12MB579836A210FC20C79513D268F0D92@LV2PR12MB5798.namprd12.prod.outlook.com>
+References: <20250319203449.386f9e00@canb.auug.org.au>
+	<LV2PR12MB579836A210FC20C79513D268F0D92@LV2PR12MB5798.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/70l9yCFt5q6cURZ2okGbR7W";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/70l9yCFt5q6cURZ2okGbR7W
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On April 2, 2025 10:09:21 PM PDT, Xin Li <xin@zytor=2Ecom> wrote:
->On 4/1/2025 12:52 AM, Ingo Molnar wrote:
->>> Should we rename the *msrl() functions to *msrq() as part of this
->>> overhaul?
->> Yeah, that's a good idea, and because talk is cheap I just implemented
->> this in the tip:WIP=2Ex86/msr branch with a couple of other cleanups in
->> this area (see the shortlog & diffstat below), but the churn is high:
->>=20
->>    144 files changed, 1034 insertions(+), 1034 deletions(-)
->
->Hi Ingo,
->
->I noticed that you keep the type of MSR index in these patches as
->"unsigned int"=2E
->
->I'm thinking would it be better to standardize it as "u32"?
->
->Because:
->1) MSR index is placed in ECX to execute MSR instructions, and the
->   high-order 32 bits of RCX are ignored on 64-bit=2E
->2) MSR index is encoded as a 32-bit immediate in the new immediate form
->   MSR instructions=2E
->
->Thanks!
->    Xin
+Hi Dominik,
 
-"unsigned int" and "u32" are synonymous, but the latter is more explicit a=
-nd would be better=2E
+On Wed, 19 Mar 2025 09:38:50 +0000 "Kaszewski, Dominik" <Dominik.Kaszewski@=
+amd.com> wrote:
+>
+> [AMD Official Use Only - AMD Internal Distribution Only]
+>=20
+> Hi,
+>=20
+> I don't understand this warning, the enum it cannot find has been introdu=
+ced in the same commit immediately below:
+>=20
+> +       /**
+> +        * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP Locality Chec=
+k FW
+> +        * path failure, retry using legacy SW path.
+> +        */
+> +       DC_HDCP_LC_ENABLE_SW_FALLBACK =3D 0x100000,
+>=20
+> Could it perhaps be about the missing colon before "If set"?
+
+Yes, probably could be.
+
+> -----Original Message-----
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Sent: Wednesday, March 19, 2025 10:35 AM
+> To: Alex Deucher <alexdeucher@gmail.com>
+> Cc: Deucher, Alexander <Alexander.Deucher@amd.com>; Kaszewski, Dominik <D=
+ominik.Kaszewski@amd.com>; Linux Kernel Mailing List <linux-kernel@vger.ker=
+nel.org>; Linux Next Mailing List <linux-next@vger.kernel.org>
+> Subject: linux-next: build warning after merge of the amdgpu tree
+>=20
+> Hi all,
+>=20
+> After merging the amdgpu tree, today's linux-next build (htmldocs) produc=
+ed this warning:
+>=20
+> drivers/gpu/drm/amd/include/amd_shared.h:369: warning: Incorrect use of k=
+ernel-doc format:          * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HD=
+CP Locality Check FW
+> drivers/gpu/drm/amd/include/amd_shared.h:369: warning: Incorrect use of k=
+ernel-doc format:          * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HD=
+CP Locality Check FW
+> drivers/gpu/drm/amd/include/amd_shared.h:373: warning: Enum value 'DC_HDC=
+P_LC_ENABLE_SW_FALLBACK' not described in enum 'DC_DEBUG_MASK'
+>=20
+> Introduced by commit
+>=20
+>   84ff5895399c ("drm/amdgpu: Add debug masks for HDCP LC FW testing")
+
+So, I am still seeing this warning and that commit is now in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/70l9yCFt5q6cURZ2okGbR7W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfuJD4ACgkQAVBC80lX
+0Gycpgf+OxqiuWJRI6yXUWbkga/3jV1zHI/NmSUvN3yzJZKVRsN7iSq/hq48zwYs
+oG1HjCFuMnaE5OF3EWnPpkhg9cr9c48vKQ57YQvBb9sH/+nEph1x84zj/rmAU/QS
+NV7LGF5caNGnJAUhXS9ehOT+q7IrsGDeVffTqkhAZ7B2wFzCxFTKND+SFenIWmgb
+opoXpCTnGCBDqCMeRRw6AOGcD3Asm6WIZZgcYSeSWhPIc0tATNFjgrt9cVhkmZ+L
+64QR6d/kgpv82zKJu+qThzmUosXivGYKLiBJrYUHXjPVDlxATAsfm1pzFO/ZzBCi
+xvnnTvJRDHUNi84s7cUrYMLOra0fJw==
+=dtoV
+-----END PGP SIGNATURE-----
+
+--Sig_/70l9yCFt5q6cURZ2okGbR7W--
 
