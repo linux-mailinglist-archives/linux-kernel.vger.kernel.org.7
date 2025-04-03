@@ -1,147 +1,160 @@
-Return-Path: <linux-kernel+bounces-586286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E75A79D4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A4DA79D52
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B7B1897BE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04303B7304
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9FB2417DE;
-	Thu,  3 Apr 2025 07:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0D924290D;
+	Thu,  3 Apr 2025 07:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gk1jHHo6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ET4z4w0P"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751491E9B1A;
-	Thu,  3 Apr 2025 07:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFFA241672
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743666332; cv=none; b=OsutC2Favq2i4qsYR4tx7LioTu+a+AyvkDBzYIcFxhtucVtcnyn9Lb9r5pAz7MeMHitzNN69fxtn1oC5k/sxQNBzLUVItMw9HJdpVH8LVHoWPo/Zi0A7IYTaSwV2qDxSejkjCv00eUriJLtHbIRYioOMWtZy453ch2ll5xcXl8A=
+	t=1743666344; cv=none; b=Pmx6dFVLtp8q74ZqytedWKA8p1zFM0rG0XK+IhFz7TdaVTv6gzjvPkrjgc0uDh/D6B/Z+1lV4bZqTrWhZCGGTXIjYaSQr62VH7ObbWTo/pkfsQeCkALmVbjhWUruVSZ/C3/jr2GShaYa0Mjc7m15u4+pdXBUJcChuGrSK/Z8COg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743666332; c=relaxed/simple;
-	bh=A03wrDYWnmPYNNfdVZ6NmbPrlqWAhypxVHx4h/4zM9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V5IRS1EYckWEBI+f0xNrHLT3p9kJTMrPSfh5maxCAAmbxUUpQpNm+H4uR2F0sJseBqosBwYKUxnoeCvmzjOo5gyz710jvcyw4RFeXGeAywthvo8Ui27Sy1/OFmRPyWmtJAiV5lK5S8dqRAsM+Xba/sXA1rv3nhXyWsYHsqtsDPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gk1jHHo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322F5C4CEE9;
-	Thu,  3 Apr 2025 07:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743666331;
-	bh=A03wrDYWnmPYNNfdVZ6NmbPrlqWAhypxVHx4h/4zM9o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gk1jHHo6QVDUUetLKNaQQzcYrrNKt2243VfA07O1kd5OxromHrg+GjL8PWstYB1ez
-	 lYyGq77xenWIrUx+b0s1ei5vb6oTVMnJLVXbBZyCPgf2Sy0Pf+JauSxVAL8L8kfDJg
-	 jDZ6t5jcvcAqB5dXFCP5WCLlPX+5RDK8MVSLNLv7cjlJB1msvgQaDGX1a6N6OjkC7V
-	 D3BuuJDT0rX7SvkKIbDw1xYjpAWKW/41v1w10o8S/olKg5XofMFyiP7cyRjv6p3D5K
-	 OntDybXLahtGon1M+StSjYCBk3ft8q1O+PUE3JWT3gY2ta4SaY8YJIBxMnOp2jjd+C
-	 0uyD8OA2QERMw==
-Message-ID: <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
-Date: Thu, 3 Apr 2025 09:45:24 +0200
+	s=arc-20240116; t=1743666344; c=relaxed/simple;
+	bh=hymi5Qn+fhcA2FOy03MhSS9012ysRlJkBS7t2tuXSxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5BHcFeRk6NUXeoB4BV3TRElRf9SMMfbrCL4f0gi6HKhHPCy24bjmFR+reBU9hBlOE0QtapijLykttCwnENBkMlMxLKJ7ExjBtT2q9t+qVEamJWH4sM04mTobdd4iAO0eBlNp+qIr4KvBzq7Raj2kqBTaZI/Pwz616aBSg5KgUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ET4z4w0P; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c266c2dd5so475398f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 00:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1743666340; x=1744271140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5VAk2UK6ZWJVQD+p+NwG0TWAjSp74Ywmjjho6zwF9q0=;
+        b=ET4z4w0PfYhS2Rvf/83e5Bbitm6mewBmMkETa2bIJFS38QcYekeoBswrWemSk4cJeM
+         4CsXIRg7ilN19cjXwDwziFGshVfbjRIkfZdLp/4HPfODhaj7I9EsEvkHJaTMdaPXdupM
+         0ZLxT/xBwe2MVkqmHJFSwqLFmUL3I1+veFdQxJqwSyFPkhlJZ0f1HdqygQ8bDqKRygQN
+         WRPGJFq07742vzswTgNeFSuXFyjhx/DH+w7WPjGh2Sn9+3nOO5cxqPsPe5XgqhGNXAFF
+         AmuD8bzThCKeAtRhTStCpgJYqf834TkVzKcfUvfP6MnSNC+o1zKrHr6e6YY6yqhk5cnd
+         pOzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743666340; x=1744271140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5VAk2UK6ZWJVQD+p+NwG0TWAjSp74Ywmjjho6zwF9q0=;
+        b=TthJqBBBPefego28a6RTC6F309qfOhsgnutGzuQG91UDzn9I1dQXtMyGO6wcnHQgoq
+         wxA9E5WXMhZuj5obaJtJICjcalQZ38/9HU3tSQ1JtfaA1m/1elRsLioVVqPKq+7E0AHJ
+         WbPvze2SLzyK78eIl2DEvRIq3a/mz+4C+Ka97J3HvQ8XD8MqAz4TH/9rDr8SHICSQkTv
+         3SkjgpziZnLlSfKSUlIW3OWPDFRhp1qo5lt05pCzzvlZoxhHzdOqQ3L1BUHiAyy6BqkP
+         4Z3BYBLcqQDT2Pncp9RHrGdk+AZWLa9D51La/8LVbp8ot+jRdKdhb9+uBHEvBmzWIa1C
+         /P+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9inWvcJtKLfNWitsPuSAVTuEGwxp1TypsVeunLC4kROhzSyRWY0ltwJIUW4cYaaHvtWeDdw6/BZFCEpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgyr0pf963ASZgG7w2AEoz5uYmRh2jsGCjLcka5mjKJrOFaxOa
+	rtHb2bToRJ0uR1Bumj1r+IVjvAjzr5KD9vWHnCHww7DEHq4jHLsal5QAC9mrO3s=
+X-Gm-Gg: ASbGncvDfu+vu3w6vYokd3E90fe9IXpghbuiUtLwXQ6wCcv1v8vwiT34kNYx/nLQds9
+	iaa9hgCAJlie4iwr91APoV36FmvkxK4C22nz5feLAl+DtDdpvfZnIItnyqJDqUwgTA3Z0Np1vcB
+	ELYYmJWdb7wSoGHqII25ATlWHa8csPu/HN6ikcJh6hWE0A2p+rwg2CM2Lxt5Men5pCcoEK7m1SA
+	6EPgSbJCxBUFt1aQEsof4A+nKkp7iHSGy9RXaB8mm40RAzHo79B5LgIkIERrJf2lQeLxxCadfLb
+	jW96GEYqAK7ZG8iKeZBZ9xdkHEY9aJZXrx7J6PS+bB546D5lPo/wx1g=
+X-Google-Smtp-Source: AGHT+IFVtsVP5aa9ArTL0eTRZ7z7nYosq4DIG82dzzri9OCIBx4/ZOUO1Sez8TySKMOSMj7BQjQj8A==
+X-Received: by 2002:a05:6000:1789:b0:39c:cc7:3c62 with SMTP id ffacd0b85a97d-39c1211b6edmr16117808f8f.51.1743666340279;
+        Thu, 03 Apr 2025 00:45:40 -0700 (PDT)
+Received: from localhost (109-81-82-69.rct.o2.cz. [109.81.82.69])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c301a79aasm1048844f8f.35.2025.04.03.00.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 00:45:39 -0700 (PDT)
+Date: Thu, 3 Apr 2025 09:45:38 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: vmalloc: simplify MEMCG_VMALLOC updates
+Message-ID: <Z-48ortj_IhiPxHg@tiehlicka>
+References: <20250403053326.26860-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/9] MAINTAINERS: add maintainer for the Ka-Ro
- tx8p-ml81 COM module
-To: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
- <20250402-initial_display-v4-3-9f898838a864@gocontroll.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250402-initial_display-v4-3-9f898838a864@gocontroll.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403053326.26860-1-shakeel.butt@linux.dev>
 
-On 02/04/2025 09:07, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
-> 
-> Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
-> module bindings.
-> 
-> This support is not officially done by Ka-Ro electronics, if they at
-> some point will supporting mainline, this should be changed to them.
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+On Wed 02-04-25 22:33:26, Shakeel Butt wrote:
+> The vmalloc region can either be charged to a single memcg or none. At
+> the moment kernel traverses all the pages backing the vmalloc region to
+> update the MEMCG_VMALLOC stat. However there is no need to look at all
+> the pages as all those pages will be charged to a single memcg or none.
+> Simplify the MEMCG_VMALLOC update by just looking at the first page of
+> the vmalloc region.
+
+I do not rememeber why this was done on page by page but I suspect
+originally we could have mixed more memcgs on one vm.
+
+The patch makes sense.
+
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
+
 > ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  mm/vmalloc.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 322ee00547f6e494a96d2495092f72148da22bd0..4b3864a9852f9fca2be48987d383c0671e668336 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12752,6 +12752,13 @@ S:	Maintained
->  F:	Documentation/hwmon/k8temp.rst
->  F:	drivers/hwmon/k8temp.c
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 3ed720a787ec..cdae76994488 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3370,12 +3370,12 @@ void vfree(const void *addr)
 >  
-> +KA-RO TX8P COM MODULE
-> +M:	Maud Spierings <maudspierings@gocontroll.com>
-> +L:	devicetree@vger.kernel.org
+>  	if (unlikely(vm->flags & VM_FLUSH_RESET_PERMS))
+>  		vm_reset_perms(vm);
+> +	if (vm->nr_pages && !(vm->flags & VM_MAP_PUT_PAGES))
+> +		mod_memcg_page_state(vm->pages[0], MEMCG_VMALLOC, -vm->nr_pages);
+>  	for (i = 0; i < vm->nr_pages; i++) {
+>  		struct page *page = vm->pages[i];
+>  
+>  		BUG_ON(!page);
+> -		if (!(vm->flags & VM_MAP_PUT_PAGES))
+> -			mod_memcg_page_state(page, MEMCG_VMALLOC, -1);
+>  		/*
+>  		 * High-order allocs for huge vmallocs are split, so
+>  		 * can be freed as an array of order-0 allocations
+> @@ -3671,12 +3671,9 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		node, page_order, nr_small_pages, area->pages);
+>  
+>  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+> -	if (gfp_mask & __GFP_ACCOUNT) {
+> -		int i;
+> -
+> -		for (i = 0; i < area->nr_pages; i++)
+> -			mod_memcg_page_state(area->pages[i], MEMCG_VMALLOC, 1);
+> -	}
+> +	if (gfp_mask & __GFP_ACCOUNT && area->nr_pages)
+> +		mod_memcg_page_state(area->pages[0], MEMCG_VMALLOC,
+> +				     area->nr_pages);
+>  
+>  	/*
+>  	 * If not enough pages were obtained to accomplish an
+> -- 
+> 2.47.1
 
-Drop
-
-> +L:	imx@lists.linux.dev
-
-I would say this as well, but not my subsystem to worry.
-
-Best regards,
-Krzysztof
+-- 
+Michal Hocko
+SUSE Labs
 
