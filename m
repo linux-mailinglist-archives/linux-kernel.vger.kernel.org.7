@@ -1,633 +1,335 @@
-Return-Path: <linux-kernel+bounces-586640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E67A7A1EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BCBA7A1F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1560F18974F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:31:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 824537A6A47
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195C924C074;
-	Thu,  3 Apr 2025 11:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04F224C080;
+	Thu,  3 Apr 2025 11:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5jvOCUU"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oQ6wmXag";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TTnzvejB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy4YDhnF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7IAPh+TM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC24245037;
-	Thu,  3 Apr 2025 11:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9D15D738
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 11:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743679880; cv=none; b=C0AORasceANSsokp6mso4VPUR89MmnO0B4JE1S6GsMfhGtHNpcvMD3cic2xA99mWTQceqara1VumB1VKADvvaH2/J+Qz/RxoyLZPtoiuXq7kgeOYaXVNF9w4S0QMm/6qxYLz/qukTAgYZ0h+OHd7QomqgqeyPByrJUTHm6qYXlY=
+	t=1743679992; cv=none; b=mpZRwS7DCqYrXsf5JO96FFKXZXZVgm0YUQu2+ZHu+UJYAcnco0Bo7mnWqQJBrehccffAcNf8wEFfB7r2K69W0ASDmYfC6+IP9PyLVdwXi9qX5uw+Ac2NmNjBIGmKva6DB7+BLYwSwwwE6YPRjSqDogSXticyW1gsKXiAK3zfCFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743679880; c=relaxed/simple;
-	bh=IWZEo3dZZCLrWe4ejhzdcEWNefowF1qQprRke5qovvI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WrXSidGjc24GLlbC06ttORX/RGDz19pQZEY9iONgT2t1knIWh7KBDhoAa+krdxayo4ZKiJfwuPDMg4fOuf4tnwQKGvgeDMxJHFLN5D1zaGYmayCXg9LviiXkn8MH+cNMatlzYisgamVvLiGxqppWrpSUYFJ0IBt/LUrAc1pOkv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5jvOCUU; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso5165245e9.1;
-        Thu, 03 Apr 2025 04:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743679873; x=1744284673; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=uEM6j6vU1OGCFDXxCLtGzyuhWBChSMAVnHaV/JJ1PMs=;
-        b=E5jvOCUUxhimjDlTcx8A+x9MqUqQJTjy6CrLIXCBPtUbYmbQC2c0oyEEjA3lHaFkpl
-         ZVdNelp0SOccaHCELMOa8v+Mz38WA/pTNTVgQScP/vuVfn8jo7pSpB14I5ksKfr5AzpH
-         SW58PS1D9RTuAmBrMNV82MZj0o8Kjg545ertnVmfuo8wQMqv1/dsym55J8jiXF17Dusl
-         opalCeFmAQZsvcIeOUA8tXl8clDO8TnVI0kqMAdl7uBcKj4zFl8Bip10mYB1QLf/BtWz
-         XNDeyHNfvUaSeulmfhZae79JlUICMSdltubNVmHvk9aCJN58WcMYkVjDXYMC2YSkxVnu
-         UICw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743679873; x=1744284673;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uEM6j6vU1OGCFDXxCLtGzyuhWBChSMAVnHaV/JJ1PMs=;
-        b=Org33ZYOyQkMwVJe6pSu4iARl3/1smXY2O05dkpTtazc+gu2xodB6uKZO/nOGYl0H3
-         VjB1mxhyc75YtiPq2ZQsp5tPyLMY3O7niOePXOU+gcaiUmEUlIz2+PvdhMeNy/AK/2fA
-         ylQ36RQeIs3QsuuNggIr2UGj7Mqn5UEDlmVkWRqHclmAvzUkuYxVdMo1fy5Za+EtqBwB
-         PC9bYIWVzHlP+rsfoj317Nzso5/FH0Ud1budmYeBgihGFjcCq5qBNZsn6Nn7iNnqE5i2
-         DLAhpnMr1b5IVMVw6E1kPYvQ3ByTFPRmax12vTeGq3vb0Se2sS2h2Mo4/O2GMwn36R4L
-         khKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjp8WsmgwBwVy7uTlVsOG8sycnJXXBQbiyt3pDfScSzppv44cPwULTI01yJH1sUkWUa1HuHt34ks8c@vger.kernel.org, AJvYcCXQflQYk8lgoonelQQoICMra7w+IVBPmJSttzsVAGmBO7o/Pd8FeGGsPkaBBx6X4nTu2faQ/0lPe08fM5B5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSEJJadI3N+NKdZxwpUi2TAKl/ExIVkfQzw6nxRMio3HzB4Uzl
-	8uey6kmOj5qvaHOrBYQbJ9YIWPW54z3Uq4TNTDSyvgSpUpDl/X/L
-X-Gm-Gg: ASbGncvvIUvfFqOZhBpYAp8g6MFgSCH692aceN/Rk6SkJKOobZGMs4jAlEwjYXv8/Yq
-	YvpW8VHRFg85MDWNQsw0wsQ4mqMp7ecbV+JGg9Yy3v2yphDplfTOHrkjexiH7Iz5fhhmKeLfoec
-	Ksw7IWo2iNTh/9OB2W3iDRCr0UUOgdS4q8JZ4McjxjFoteUAmQ9ehRTVqEJbsvcX7pEutQPzKV1
-	SxrgdTq27YuByoUGfIMdRkqBFIiZRqER/ka9ryFHZRbys58iQruDNDayzlGp7lq3U3nyz9fxSEO
-	8y4nFaVyXn1ADRy3tThSG1xnj19Mx//OtlVuDFylDHIOAsBbv+gWKsDv/UeeVmITsEwxNRotrnm
-	0CyDKuHCOgPU8FX4G
-X-Google-Smtp-Source: AGHT+IFuaMS8dOtow5Gv9FQ55z1SxFpiddL1Hvul1vcayfklxpFCWD0d7kj7VzjquBZnxBOsEInSeg==
-X-Received: by 2002:a05:600c:3d9a:b0:43c:eeee:b70a with SMTP id 5b1f17b1804b1-43ec14edf46mr20751645e9.22.1743679872706;
-        Thu, 03 Apr 2025 04:31:12 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec3669d0fsm15861045e9.36.2025.04.03.04.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 04:31:12 -0700 (PDT)
-Message-ID: <09c382682676e28c122118cca39c1e67ed842b0b.camel@gmail.com>
-Subject: Re: [PATCH v3 3/3] iio: dac: ad3530r: Add driver for AD3530R and
- AD3531R
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Kim Seer Paller <kimseer.paller@analog.com>, Jonathan Cameron	
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Date: Thu, 03 Apr 2025 12:31:12 +0100
-In-Reply-To: <20250403-togreg-v3-3-d4b06a4af5a9@analog.com>
-References: <20250403-togreg-v3-0-d4b06a4af5a9@analog.com>
-	 <20250403-togreg-v3-3-d4b06a4af5a9@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+	s=arc-20240116; t=1743679992; c=relaxed/simple;
+	bh=fvFNYyiL3jHgoGPm5sLJkOGdN7KGA8zjp3LJSrv2Ge0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9O0BnPHNyTOQzD0QJQmtjR0hnEUpe4sI0xFsC3EFEqPck+SEMVU/7sE7JslbPbNpmzvdazUVD/ukFeGc884hr6FQrQKkppltJjFlcOZa/G1wEw5OXAcX0gfqaSTekLzKvIajEyk1PMubElA1sTkAkq5LSk9I5aPzRmI9hmTSSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oQ6wmXag; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TTnzvejB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy4YDhnF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7IAPh+TM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ED307211CD;
+	Thu,  3 Apr 2025 11:33:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743679989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SRpp3RRIIbWts3o24hnHo7jwYeOjLd2wCZq6OBJgS0I=;
+	b=oQ6wmXag+GGi4pl28RKD7yhuDZFl1ICgqj4zSRdvkFa/5FWv9vyCoHy6/FxXX01PTgc+Lh
+	rknL4QfkGMfN/Qp0fQQfuiiJxsJtaV10ER3+JI04HVEl1cmxQAfT5Tay+Z9K8zRT+tSC90
+	ll/8KyRgmNGUY0dn3cKA6dIXGUS0iNA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743679989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SRpp3RRIIbWts3o24hnHo7jwYeOjLd2wCZq6OBJgS0I=;
+	b=TTnzvejBan7BxYRwe8CJyFuO90EsU4wS/afbdXlvaTjVCBV9Q36RQWR2jLSRElUEFa9H3X
+	1hpv3aFOQEDn2sCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743679988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SRpp3RRIIbWts3o24hnHo7jwYeOjLd2wCZq6OBJgS0I=;
+	b=Dy4YDhnFJV+td24a1iNw3W8ldpBj7U/9i0SEl3QQdPIQI5QplxvDJtlB0yTUuqlCMwYHjx
+	qgQbulmpi5N9m5WG4dzqJ+z4jiL9+0o0+8Xiv0wtekRzvpJgRNeIRORyPDh1geQ6HPz/OL
+	Q9ZNa3b+0ws3jeL7t0EkQRyvSi/ezYA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743679988;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SRpp3RRIIbWts3o24hnHo7jwYeOjLd2wCZq6OBJgS0I=;
+	b=7IAPh+TMOy8g8uJApAfp5FY3BESnAck5AtmpSlcpmFncszSPg4WsXiUO/VUyynuKrMlDFo
+	XRh4NMILjgVZfUAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D5D1D13A2C;
+	Thu,  3 Apr 2025 11:33:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PbkmNPRx7mckGwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Apr 2025 11:33:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8FD12A07E6; Thu,  3 Apr 2025 13:33:08 +0200 (CEST)
+Date: Thu, 3 Apr 2025 13:33:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Murad Masimov <m.masimov@mt-integration.ru>
+Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Jan Kara <jack@suse.cz>, ocfs2-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, 
+	syzbot+f59a1ae7b7227c859b8f@syzkaller.appspotmail.com
+Subject: Re: [PATCH 2/2] ocfs2: Fix deadlock in ocfs2_finish_quota_recovery
+Message-ID: <vrxva7wxxd4ajtkvrtltggqfhjvs34xtt7jyrney6g7tlmlw7n@dxwzinbmsumu>
+References: <20250402065628.706359-1-m.masimov@mt-integration.ru>
+ <20250402065628.706359-3-m.masimov@mt-integration.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402065628.706359-3-m.masimov@mt-integration.ru>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[f59a1ae7b7227c859b8f];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-On Thu, 2025-04-03 at 13:33 +0800, Kim Seer Paller wrote:
-> The AD3530/AD3530R (8-channel) and AD3531/AD3531R (4-channel) are
-> low-power, 16-bit, buffered voltage output DACs with software-
-> programmable gain controls, providing full-scale output spans of 2.5V or
-> 5V for reference voltages of 2.5V. These devices operate from a single
-> 2.7V to 5.5V supply and are guaranteed monotonic by design. The "R"
-> variants include a 2.5V, 5ppm/=C2=B0C internal reference, which is disabl=
-ed
-> by default.
->=20
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/dac/Kconfig=C2=A0=C2=A0 |=C2=A0 11 +
-> =C2=A0drivers/iio/dac/Makefile=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/dac/ad3530r.c | 514
-> ++++++++++++++++++++++++++++++++++++++++++++++
-> =C2=A04 files changed, 527 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index
-> 9deaf2561ade5b1319cef3cb31b997a4297c0cff..6e64525fadd4ab5fea20279ce6b5cd8=
-0ff4c
-> 749c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1295,6 +1295,7 @@ L:	linux-iio@vger.kernel.org
-> =C2=A0S:	Supported
-> =C2=A0W:	https://ez.analog.com/linux-software-drivers
-> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/adi,ad3530r.yaml
-> +F:	drivers/iio/dac/ad3530r.c
-> =C2=A0
-> =C2=A0ANALOG DEVICES INC AD3552R DRIVER
-> =C2=A0M:	Nuno S=C3=A1 <nuno.sa@analog.com>
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index
-> 4811ea973125a0dea1f8a9cdee1e0c045bc21981..e0996dc014a3d538ab6b4e0d50ff54e=
-de50f
-> 1527 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -6,6 +6,17 @@
-> =C2=A0
-> =C2=A0menu "Digital to analog converters"
-> =C2=A0
-> +config AD3530R
-> +	tristate "Analog Devices AD3530R and Similar DACs driver"
-> +	depends on SPI
-> +	select REGMAP_SPI
-> +	help
-> +	=C2=A0 Say yes here to build support for Analog Devices AD3530R, AD3531=
-R
-> +	=C2=A0 Digital to Analog Converter.
-> +
-> +	=C2=A0 To compile this driver as a module, choose M here: the
-> +	=C2=A0 module will be called ad3530r.
-> +
-> =C2=A0config AD3552R_HS
-> =C2=A0	tristate "Analog Devices AD3552R DAC High Speed driver"
-> =C2=A0	select AD3552R_LIB
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index
-> 8dd6cce81ed1152be4cf0af9ef877b5482ceb347..3684cd52b7fa9bc0ad9f855323dcbb2=
-e4965
-> c404 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -4,6 +4,7 @@
-> =C2=A0#
-> =C2=A0
-> =C2=A0# When adding new entries keep the list in alphabetical order
-> +obj-$(CONFIG_AD3530R) +=3D ad3530r.o
-> =C2=A0obj-$(CONFIG_AD3552R_HS) +=3D ad3552r-hs.o
-> =C2=A0obj-$(CONFIG_AD3552R_LIB) +=3D ad3552r-common.o
-> =C2=A0obj-$(CONFIG_AD3552R) +=3D ad3552r.o
-> diff --git a/drivers/iio/dac/ad3530r.c b/drivers/iio/dac/ad3530r.c
-> new file mode 100644
-> index
-> 0000000000000000000000000000000000000000..4b757e19f0c8349999f72e53abb1a4f=
-483a4
-> 4eb2
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad3530r.c
-> @@ -0,0 +1,514 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * AD3530R/AD3530 8-channel, 16-bit Voltage Output DAC Driver
-> + * AD3531R/AD3531 4-channel, 16-bit Voltage Output DAC Driver
-> + *
-> + * Copyright 2025 Analog Devices Inc.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/mutex.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
-> +
-> +#define AD3530R_INTERFACE_CONFIG_A		0x00
-> +#define AD3530R_OUTPUT_OPERATING_MODE_0		0x20
-> +#define AD3530R_OUTPUT_OPERATING_MODE_1		0x21
-> +#define AD3530R_OUTPUT_CONTROL_0		0x2A
-> +#define AD3530R_REFERENCE_CONTROL_0		0x3C
-> +#define AD3530R_SW_LDAC_TRIG_A			0xE5
-> +#define AD3530R_INPUT_CH(c)			(2 * (c) + 0xEB)
-> +
-> +#define AD3531R_SW_LDAC_TRIG_A			0xDD
-> +#define AD3531R_INPUT_CH(c)			(2 * (c) + 0xE3)
-> +
-> +#define AD3530R_SW_LDAC_TRIG_MASK		BIT(7)
-> +#define AD3530R_OUTPUT_CONTROL_MASK		BIT(2)
-> +#define AD3530R_REFERENCE_CONTROL_MASK		BIT(0)
-> +#define AD3530R_REG_VAL_MASK			GENMASK(15, 0)
-> +
-> +#define AD3530R_SW_RESET			(BIT(7) | BIT(0))
-> +#define AD3530R_MAX_CHANNELS			8
-> +#define AD3531R_MAX_CHANNELS			4
-> +#define AD3530R_CH(c)				(c)
-> +#define AD3530R_32KOHM_POWERDOWN_MODE		3
-> +#define AD3530R_INTERNAL_VREF_MV		2500
-> +#define AD3530R_LDAC_PULSE_US			100
-> +
-> +struct ad3530r_chan {
-> +	unsigned int powerdown_mode;
-> +	bool powerdown;
-> +};
-> +
-> +struct ad3530r_chip_info {
-> +	const char *name;
-> +	const struct iio_chan_spec *channels;
-> +	int (*input_ch_reg)(unsigned int c);
-> +	const int iio_chan;
-> +	unsigned int num_channels;
-> +	unsigned int sw_ldac_trig_reg;
-> +	bool internal_ref_support;
-> +};
-> +
-> +struct ad3530r_state {
-> +	struct regmap *regmap;
-> +	/* lock to protect against multiple access to the device and shared
-> data */
-> +	struct mutex lock;
-> +	struct ad3530r_chan chan[AD3530R_MAX_CHANNELS];
-> +	const struct ad3530r_chip_info *chip_info;
-> +	struct gpio_desc *ldac_gpio;
-> +	int vref_mv;
-> +	u8 ldac;
-> +	bool range_multiplier;
-> +};
-> +
-> +static int ad3530r_input_ch_reg(unsigned int c)
-> +{
-> +	return AD3530R_INPUT_CH(c);
-> +}
-> +
-> +static int ad3531r_input_ch_reg(unsigned int c)
-> +{
-> +	return AD3531R_INPUT_CH(c);
-> +}
-> +
-> +static const char * const ad3530r_powerdown_modes[] =3D {
-> +	"1kohm_to_gnd",
-> +	"7.7kohm_to_gnd",
-> +	"32kohm_to_gnd",
-> +};
-> +
-> +static int ad3530r_get_powerdown_mode(struct iio_dev *indio_dev,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&st->lock);
-> +	return st->chan[chan->channel].powerdown_mode - 1;
-> +}
-> +
-> +static int ad3530r_set_powerdown_mode(struct iio_dev *indio_dev,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int mode)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&st->lock);
-> +	st->chan[chan->channel].powerdown_mode =3D mode + 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct iio_enum ad3530r_powerdown_mode_enum =3D {
-> +	.items =3D ad3530r_powerdown_modes,
-> +	.num_items =3D ARRAY_SIZE(ad3530r_powerdown_modes),
-> +	.get =3D ad3530r_get_powerdown_mode,
-> +	.set =3D ad3530r_set_powerdown_mode,
-> +};
-> +
-> +static ssize_t ad3530r_get_dac_powerdown(struct iio_dev *indio_dev,
-> +					 uintptr_t private,
-> +					 const struct iio_chan_spec *chan,
-> +					 char *buf)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&st->lock);
-> +	return sysfs_emit(buf, "%d\n", st->chan[chan->channel].powerdown);
-> +}
-> +
-> +static ssize_t ad3530r_set_dac_powerdown(struct iio_dev *indio_dev,
-> +					 uintptr_t private,
-> +					 const struct iio_chan_spec *chan,
-> +					 const char *buf, size_t len)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +	int ret;
-> +	unsigned int mask, val;
-> +	bool powerdown;
-> +
-> +	ret =3D kstrtobool(buf, &powerdown);
-> +	if (ret)
-> +		return ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +	switch (chan->channel) {
-> +	case AD3530R_CH(0) ... AD3530R_CH(AD3531R_MAX_CHANNELS - 1):
-> +		mask =3D GENMASK(chan->channel * 2 + 1, chan->channel * 2);
-> +		val =3D (powerdown ? st->chan[chan->channel].powerdown_mode :
-> 0)
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 << (chan->channel * 2);
-> +
-> +		ret =3D regmap_update_bits(st->regmap,
-> +					 AD3530R_OUTPUT_OPERATING_MODE_0,
-> +					 mask, val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->chan[chan->channel].powerdown =3D powerdown;
-> +		return len;
-> +	case AD3530R_CH(AD3531R_MAX_CHANNELS) ...
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 AD3530R_CH(AD3530R_MAX_CHANNELS - 1):
-> +		mask =3D GENMASK((chan->channel - 4) * 2 + 1,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (chan->channel - 4) * 2);
-> +		val =3D (powerdown ? st->chan[chan->channel].powerdown_mode :
-> 0)
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 << ((chan->channel - 4) * 2);
-> +
-> +		ret =3D regmap_update_bits(st->regmap,
-> +					 AD3530R_OUTPUT_OPERATING_MODE_1,
-> +					 mask, val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		st->chan[chan->channel].powerdown =3D powerdown;
-> +		return len;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad3530r_trigger_hw_ldac(struct gpio_desc *ldac_gpio)
-> +{
-> +	gpiod_set_value_cansleep(ldac_gpio, 1);
-> +	fsleep(AD3530R_LDAC_PULSE_US);
-> +	gpiod_set_value_cansleep(ldac_gpio, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad3530r_dac_write(struct ad3530r_state *st, unsigned int chan=
-,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val)
-> +{
-> +	int ret;
-> +	__be16 reg_val;
-> +
-> +	guard(mutex)(&st->lock);
-> +	reg_val =3D cpu_to_be16(val);
-> +
-> +	ret =3D regmap_bulk_write(st->regmap, st->chip_info-
-> >input_ch_reg(chan),
-> +				&reg_val, sizeof(reg_val));
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (st->ldac_gpio)
-> +		return ad3530r_trigger_hw_ldac(st->ldac_gpio);
-> +
-> +	return regmap_update_bits(st->regmap, st->chip_info-
-> >sw_ldac_trig_reg,
-> +				=C2=A0 AD3530R_SW_LDAC_TRIG_MASK,
-> +				=C2=A0 FIELD_PREP(AD3530R_SW_LDAC_TRIG_MASK, 1));
-> +}
-> +
-> +static int ad3530r_read_raw(struct iio_dev *indio_dev,
-> +			=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> +			=C2=A0=C2=A0=C2=A0 int *val, int *val2, long info)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +	int ret;
-> +	__be16 reg_val;
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret =3D regmap_bulk_read(st->regmap,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->chip_info->input_ch_reg(cha=
-n-
-> >channel),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &reg_val, sizeof(reg_val));
-> +		if (ret)
-> +			return ret;
-> +
-> +		*val =3D FIELD_GET(AD3530R_REG_VAL_MASK, be16_to_cpu(reg_val));
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val =3D st->vref_mv;
-> +		*val2 =3D 16;
-> +
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad3530r_write_raw(struct iio_dev *indio_dev,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0 int val, int val2, long info)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		if (val < 0 || val > U16_MAX)
-> +			return -EINVAL;
-> +
-> +		return ad3530r_dac_write(st, chan->channel, val);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad3530r_reg_access(struct iio_dev *indio_dev, unsigned int re=
-g,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int writeval, unsigned int *r=
-eadval)
-> +{
-> +	struct ad3530r_state *st =3D iio_priv(indio_dev);
-> +
-> +	if (readval)
-> +		return regmap_read(st->regmap, reg, readval);
-> +
-> +	return regmap_write(st->regmap, reg, writeval);
-> +}
-> +
-> +#define AD3530R_CHAN_EXT_INFO(_name, _what, _shared, _read, _write) {	\
-> +	.name =3D (_name),						\
-> +	.read =3D (_read),						\
-> +	.write =3D (_write),						\
-> +	.private =3D (_what),						\
-> +	.shared =3D (_shared),						\
-> +}
-> +
-> +static const struct iio_chan_spec_ext_info ad3530r_ext_info[] =3D {
-> +	AD3530R_CHAN_EXT_INFO("powerdown", 0, IIO_SEPARATE,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ad3530r_get_dac_powerdown,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ad3530r_set_dac_powerdown),
-> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE,
-> &ad3530r_powerdown_mode_enum),
-> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
-> +			=C2=A0=C2=A0 &ad3530r_powerdown_mode_enum),
-> +	{ },
-> +};
-> +
-> +#define AD3530R_CHAN(_chan) {						\
-> +	.type =3D IIO_VOLTAGE,						\
-> +	.indexed =3D 1,							\
-> +	.channel =3D _chan,						\
-> +	.output =3D 1,							\
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |			\
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> BIT(IIO_CHAN_INFO_SCALE),			\
-> +	.ext_info =3D ad3530r_ext_info,					\
-> +}
-> +
-> +static const struct iio_chan_spec ad3530r_channels[] =3D {
-> +	AD3530R_CHAN(0),
-> +	AD3530R_CHAN(1),
-> +	AD3530R_CHAN(2),
-> +	AD3530R_CHAN(3),
-> +	AD3530R_CHAN(4),
-> +	AD3530R_CHAN(5),
-> +	AD3530R_CHAN(6),
-> +	AD3530R_CHAN(7),
-> +};
-> +
-> +static const struct iio_chan_spec ad3531r_channels[] =3D {
-> +	AD3530R_CHAN(0),
-> +	AD3530R_CHAN(1),
-> +	AD3530R_CHAN(2),
-> +	AD3530R_CHAN(3),
-> +};
-> +
-> +static const struct ad3530r_chip_info ad3530_chip =3D {
-> +	.name =3D "ad3530",
-> +	.channels =3D ad3530r_channels,
-> +	.num_channels =3D ARRAY_SIZE(ad3530r_channels),
-> +	.sw_ldac_trig_reg =3D AD3530R_SW_LDAC_TRIG_A,
-> +	.input_ch_reg =3D ad3530r_input_ch_reg,
-> +	.internal_ref_support =3D false,
-> +};
-> +
-> +static const struct ad3530r_chip_info ad3530r_chip =3D {
-> +	.name =3D "ad3530r",
-> +	.channels =3D ad3530r_channels,
-> +	.num_channels =3D ARRAY_SIZE(ad3530r_channels),
-> +	.sw_ldac_trig_reg =3D AD3530R_SW_LDAC_TRIG_A,
-> +	.input_ch_reg =3D ad3530r_input_ch_reg,
-> +	.internal_ref_support =3D true,
-> +};
-> +
-> +static const struct ad3530r_chip_info ad3531_chip =3D {
-> +	.name =3D "ad3531",
-> +	.channels =3D ad3531r_channels,
-> +	.num_channels =3D ARRAY_SIZE(ad3531r_channels),
-> +	.sw_ldac_trig_reg =3D AD3531R_SW_LDAC_TRIG_A,
-> +	.input_ch_reg =3D ad3531r_input_ch_reg,
-> +	.internal_ref_support =3D false,
-> +};
-> +
-> +static const struct ad3530r_chip_info ad3531r_chip =3D {
-> +	.name =3D "ad3531r",
-> +	.channels =3D ad3531r_channels,
-> +	.num_channels =3D ARRAY_SIZE(ad3531r_channels),
-> +	.sw_ldac_trig_reg =3D AD3531R_SW_LDAC_TRIG_A,
-> +	.input_ch_reg =3D ad3531r_input_ch_reg,
-> +	.internal_ref_support =3D true,
-> +};
-> +
-> +static int ad3530r_setup(struct ad3530r_state *st)
-> +{
-> +	const struct ad3530r_chip_info *chip_info =3D st->chip_info;
-> +	struct device *dev =3D regmap_get_device(st->regmap);
-> +	struct gpio_desc *reset_gpio;
-> +	int i, ret;
-> +
-> +	reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get reset GPIO\n");
-> +
-> +	if (reset_gpio) {
-> +		/* Perform hardware reset */
-> +		fsleep(1000);
-> +		gpiod_set_value_cansleep(reset_gpio, 0);
-> +	} else {
-> +		/* Perform software reset */
-> +		ret =3D regmap_update_bits(st->regmap,
-> AD3530R_INTERFACE_CONFIG_A,
-> +					 AD3530R_SW_RESET, AD3530R_SW_RESET);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	fsleep(10000);
-> +
-> +	/* Set operating mode to normal operation. */
-> +	ret =3D regmap_write(st->regmap, AD3530R_OUTPUT_OPERATING_MODE_0, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (chip_info->num_channels > AD3531R_MAX_CHANNELS) {
-> +		ret =3D regmap_write(st->regmap,
-> AD3530R_OUTPUT_OPERATING_MODE_1, 0);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	for (i =3D 0; i < chip_info->num_channels; i++)
-> +		st->chan[i].powerdown_mode =3D AD3530R_32KOHM_POWERDOWN_MODE;
-> +
-> +	st->ldac_gpio =3D devm_gpiod_get_optional(dev, "ldac", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(st->ldac_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(st->ldac_gpio),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get ldac GPIO\n");
-> +
-> +	if (device_property_present(dev, "adi,double-output-range")) {
-> +		st->range_multiplier =3D true;
-> +
-> +		return regmap_update_bits(st->regmap,
-> AD3530R_OUTPUT_CONTROL_0,
-> +					=C2=A0 AD3530R_OUTPUT_CONTROL_MASK,
-> +					=C2=A0
-> FIELD_PREP(AD3530R_OUTPUT_CONTROL_MASK, 1));
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct regmap_config ad3530r_regmap_config =3D {
-> +	.reg_bits =3D 16,
-> +	.val_bits =3D 8,
-> +};
-> +
-> +static const struct iio_info ad3530r_info =3D {
-> +	.read_raw =3D ad3530r_read_raw,
-> +	.write_raw =3D ad3530r_write_raw,
-> +	.debugfs_reg_access =3D &ad3530r_reg_access,
-> +};
+On Wed 02-04-25 09:56:28, Murad Masimov wrote:
+> When filesystem is unmounted all pending recovery work is processed. This
+> may lead to a deadlock in ocfs2_finish_quota_recovery() as it locks the
+> s_umount semaphore while it is already exclusively locked in
+> deactivate_super().
+> 
+> Use down_read_trylock() instead and return if it fails, since that possibly
+> means that unmount may be in progress so it is not possible to finish quota
+> recovery. According to the description of ocfs2_complete_recovery(), which
+> is the caller of ocfs2_finish_quota_recovery(), by the point this job is
+> started the node can already be considered recovered. There is also no
+> error handling in ocfs2_complete_recovery() which indicates that fail is
+> not critical in this context.
+> 
+> The following warning has been reported by Syzkaller:
+> 
+> ================================================================
+> WARNING: possible circular locking dependency detected
+> 6.14.0-rc6-syzkaller-00022-gb7f94fcf5546 #0 Not tainted
+> ------------------------------------------------------
+> kworker/u4:10/1087 is trying to acquire lock:
+> ffff88803c49e0e0 (&type->s_umount_key#42){++++}-{4:4}, at: ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
+> 
+> but task is already holding lock:
+> ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+> ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3319
+> 
+> which lock already depends on the new lock.
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        process_one_work kernel/workqueue.c:3214 [inline]
+>        process_scheduled_works+0x9e4/0x18e0 kernel/workqueue.c:3319
+>        worker_thread+0x870/0xd30 kernel/workqueue.c:3400
+>        kthread+0x7a9/0x920 kernel/kthread.c:464
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> -> #1 ((wq_completion)ocfs2_wq){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        touch_wq_lockdep_map+0xc7/0x170 kernel/workqueue.c:3907
+>        __flush_workqueue+0x14a/0x1280 kernel/workqueue.c:3949
+>        ocfs2_shutdown_local_alloc+0x109/0xa90 fs/ocfs2/localalloc.c:380
+>        ocfs2_dismount_volume+0x202/0x910 fs/ocfs2/super.c:1822
+>        generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+>        kill_block_super+0x44/0x90 fs/super.c:1710
+>        deactivate_locked_super+0xc4/0x130 fs/super.c:473
+>        cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1413
+>        task_work_run+0x24f/0x310 kernel/task_work.c:227
+>        resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>        exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>        exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>        __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>        syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+>        do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&type->s_umount_key#42){++++}-{4:4}:
+>        check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>        __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+>        ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
+>        ocfs2_complete_recovery+0x17c1/0x25c0 fs/ocfs2/journal.c:1357
+>        process_one_work kernel/workqueue.c:3238 [inline]
+>        process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
+>        worker_thread+0x870/0xd30 kernel/workqueue.c:3400
+>        kthread+0x7a9/0x920 kernel/kthread.c:464
+>        ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   &type->s_umount_key#42 --> (wq_completion)ocfs2_wq --> (work_completion)(&journal->j_recovery_work)
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock((work_completion)(&journal->j_recovery_work));
+>                                lock((wq_completion)ocfs2_wq);
+>                                lock((work_completion)(&journal->j_recovery_work));
+>   rlock(&type->s_umount_key#42);
+> 
+>  *** DEADLOCK ***
+> 
+> 2 locks held by kworker/u4:10/1087:
+>  #0: ffff8880403eb148 ((wq_completion)ocfs2_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
+>  #0: ffff8880403eb148 ((wq_completion)ocfs2_wq){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3319
+>  #1: ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+>  #1: ffffc900026ffc60 ((work_completion)(&journal->j_recovery_work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3319
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 1087 Comm: kworker/u4:10 Not tainted 6.14.0-rc6-syzkaller-00022-gb7f94fcf5546 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Workqueue: ocfs2_wq ocfs2_complete_recovery
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
+>  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
+>  check_prev_add kernel/locking/lockdep.c:3163 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+>  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
+>  __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
+>  down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+>  ocfs2_finish_quota_recovery+0x15c/0x22a0 fs/ocfs2/quota_local.c:603
+>  ocfs2_complete_recovery+0x17c1/0x25c0 fs/ocfs2/journal.c:1357
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
+>  worker_thread+0x870/0xd30 kernel/workqueue.c:3400
+>  kthread+0x7a9/0x920 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> ================================================================
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 5f530de63cfc ("ocfs2: Use s_umount for quota recovery protection")
+> Reported-by: syzbot+f59a1ae7b7227c859b8f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f59a1ae7b7227c859b8f
+> Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
 
-I'm not sure if this is what Jonathan had in mind but I think you need to
-implement .fwnode_xlate(). Not given too much thought on this but likely yo=
-u'll
-need more than one argument in your cells since you need to specify the typ=
-e of
-the channel (voltage, current or temperature).
+Thanks for looking into this. I have one comment:
 
-Moreover, if the consumer is asking for a voltage channel in the muxout pin=
- it
-should be straightforward. But if it is temperature or current I would expe=
-ct
-that to be expressed in your read/write_raw() implementation? But this MUXO=
-UT
-thing is only about monitoring right? So write_raw() is not allowed...
+> diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+> index e60383d6ecc1..d3304bb03163 100644
+> --- a/fs/ocfs2/quota_local.c
+> +++ b/fs/ocfs2/quota_local.c
+> @@ -600,7 +600,16 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
+>  	printk(KERN_NOTICE "ocfs2: Finishing quota recovery on device (%s) for "
+>  	       "slot %u\n", osb->dev_str, slot_num);
+> 
+> -	down_read(&sb->s_umount);
+> +	/*
+> +	 * We have to be careful here not to deadlock on s_umount as umount
+> +	 * disabling quotas may be in progress and it waits for this work to
+> +	 * complete. If trylock fails, we have to skip this step.
+> +	 */
+> +	if (!down_read_trylock(&sb->s_umount)) {
+> +		status = -ENOENT;
+> +		goto out;
+> +	}
 
+So this could skip recovering quotas when we are remounting the superblock
+as well and that would result in quotas being off (for modifications stored
+in unrecovered local quota file) for the duration of the mount. In fact, we
+almost don't need s_umount in ocfs2_finish_quota_recovery() so I think
+proper solution is actually to remove it. *But* there's one catch: we need
+to make sure quota recovery work cannot happen after ocfs2_disable_quotas()
+called from ocfs2_dismount_volume(). I have proposed a solution here [1]
+many years ago but it didn't work and then I never got to writing something
+better. Looking at it now I think we should implement disabling just quota
+recovery in the recovery thread. I've sent patches for that now [2]. I
+gave them some basic testing on local mode but that does not stress
+recovery code much. It would be great if someone could give them testing in
+cluster mode where nodes get killed and recovery happens (I currently don't
+have test setup for that).
 
-- Nuno S=C3=A1
+								Honza
+
+[1] https://lore.kernel.org/all/20180228111802.23967-1-jack@suse.cz/
+[2] https://lore.kernel.org/all/20250403112908.13750-1-jack@suse.cz/
+> +
+>  	for (type = 0; type < OCFS2_MAXQUOTAS; type++) {
+>  		if (list_empty(&(rec->r_list[type])))
+>  			continue;
+> @@ -608,7 +617,7 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
+>  		lqinode = ocfs2_get_system_file_inode(osb, ino[type], slot_num);
+>  		if (!lqinode) {
+>  			status = -ENOENT;
+> -			goto out;
+> +			goto out_up;
+>  		}
+>  		status = ocfs2_inode_lock_full(lqinode, NULL, 1,
+>  						       OCFS2_META_LOCK_NOQUEUE);
+> @@ -676,8 +685,9 @@ int ocfs2_finish_quota_recovery(struct ocfs2_super *osb,
+>  		if (status < 0)
+>  			break;
+>  	}
+> -out:
+> +out_up:
+>  	up_read(&sb->s_umount);
+> +out:
+>  	ocfs2_free_quota_recovery(rec);
+>  	return status;
+>  }
+> --
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
