@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-586281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765CAA79D45
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:45:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FBDA79D50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153CB3B68C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77AB1897B40
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B06241691;
-	Thu,  3 Apr 2025 07:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C887241CA6;
+	Thu,  3 Apr 2025 07:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cgyd9n3/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZvNMq/fP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFF524166F;
-	Thu,  3 Apr 2025 07:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E490E241684;
+	Thu,  3 Apr 2025 07:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743666273; cv=none; b=OLFgwrGlAckas78TEbxQlEXHefBUNx+5xmaJ/Onpo8TB0skrBPkZAF4d/FFUhSy5/NmcfvzO/Ic0UqealdHxqqrTtqkfj+ApCNQVFz6D5m4i116P4sxLAY2H9jZmDeDmiU7m46KDuHBpV3cRK/WpepoNvbPHbEcnEhNSvdpzd9M=
+	t=1743666333; cv=none; b=JoJCA3t0Di878TXJ74BeA5+xHiI0UmA+O8baxzo1uHAgNAFoozzTQgrD4VdDdqVvh0lA9ksHFNAA3Vv0H8e83rvgQlIoIu96xzwNzftxmJbMcBLjqpJg0kmFjGMUNjcG6kDCdaYPdo9nTRSWhBRfSEyt5fYo/2p9HoDQXoZLH7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743666273; c=relaxed/simple;
-	bh=PMFz1nH70HO50CCl8uliaiuKTdwXeTJzTjaAr0EqI+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VuyuqT3vUgoiCywa/OXCVVO0sLfB/fIRyUQ1XIJB4iKPD0aKGOdavJuOyH22wqEM9UwUEO7I0wlamhyjiyIjnYuZDoemdqxTfApIJA5QN6sSTZkigsaGeE+gyWliETSow8Cvl30lQnqZfPhBddYo+XzBjonz5H6ZQ5amhAgrVwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cgyd9n3/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22751C4CEE9;
-	Thu,  3 Apr 2025 07:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743666272;
-	bh=PMFz1nH70HO50CCl8uliaiuKTdwXeTJzTjaAr0EqI+0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cgyd9n3/bGX0J4N3KWFs1vJ17aXwZElge3/gVetF1jk5mGoJGzzhV2GHosw8DT9C6
-	 ueHTSe6eDPkBRwKUDanhpkqZyHZH+IdHmEL2iPBxZwVZFB/2THU3NaNqi2Otgb6Kmg
-	 BbL7TTvidVKgntUK3PePPzSC84t2wwGG3eQweyHLpGUsh7r8eWQH3pKUBKKAPqWZOj
-	 u6YpTF/qi+l3aBSEXj2Ukn9cRH1y8Z+3vKEWtP1KKmB69S4tuCCXNY+Qhh3i2/ilwY
-	 HrLS33QAueBkpvSPRD3TakerRy0/om74Q7ZXB5p/Z7lSTVKsLKAaESuTnL5KF4VGmp
-	 EPMWh52UX5xTg==
-Message-ID: <fa7cacf4-2809-4b43-8e2a-f4b040526681@kernel.org>
-Date: Thu, 3 Apr 2025 09:44:25 +0200
+	s=arc-20240116; t=1743666333; c=relaxed/simple;
+	bh=osvwpmSaeCnsa2oIl3mVNrpD251AR8ZQaiVxUgCaMak=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dnut3S9rinZxHaZYgFcL8Bs+DG8f7qQlT1HWtZAZw4GhZ34h4AUvoJ/FThVkOadsyDHoKLg/pZg1WSlZZjKwwDZ+QtB660TX2djFkOb9E/YH9q7KF+m4QYJN71uWb/LBqLI+xEniq4lJiQ+wLsPnUoG0hoOKNekkFx86Rh2BG0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZvNMq/fP; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743666329; x=1775202329;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=osvwpmSaeCnsa2oIl3mVNrpD251AR8ZQaiVxUgCaMak=;
+  b=ZvNMq/fPyPRwhsjWubaE6PiPvgOItSPS9c0uTg/Q+qs0uJbWpbeBPuCq
+   J/5LGm+IjBRy1ZNJh54rx6DNugU9KsW0tsugQfo3Gr2BRjSK5AjZZVV8i
+   jvcWf/Qeoru6twBF7RsHV4GhN38odxApEJ4D1zG5NDnvCr02bgBxhUeXX
+   VhQIhKyrn5SCGCiE5M+uBXSN4FqOaePyZoWeu//KTdTBAqKkY+cjlKkII
+   jXvKSao7MysRCoadz8O3/LA9lsKFdpB89M/5sgjP00iun6ooi65Nd/tpu
+   rpvpiretoD+TeRrS54KP/xOP9M1LZCWLKo5uwIMG5uBOKoajFAMhnC7kV
+   g==;
+X-CSE-ConnectionGUID: 4Uph/TVXTfm7bgyHXy026Q==
+X-CSE-MsgGUID: W+6VGDN9SwCRPJ5w6iJZsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="48721624"
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="48721624"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 00:45:28 -0700
+X-CSE-ConnectionGUID: c0HY7SxsRnyopPxLmYOGkw==
+X-CSE-MsgGUID: h+84VRRCSkCsIdZIPSZQSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="164159449"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by orviesa001.jf.intel.com with ESMTP; 03 Apr 2025 00:45:26 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: rafael@kernel.org,
+	mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	lukas.wunner@intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1] PCI/AER: Avoid power state transition during system suspend
+Date: Thu,  3 Apr 2025 13:14:25 +0530
+Message-Id: <20250403074425.1181053-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/9] MAINTAINERS: add maintainer for the GOcontroll
- Moduline controllersy
-To: Frank Li <Frank.li@nxp.com>, maudspierings@gocontroll.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
- <20250402-initial_display-v4-4-9f898838a864@gocontroll.com>
- <Z+2NNFyd3NmfeMSr@lizhi-Precision-Tower-5810>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Z+2NNFyd3NmfeMSr@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 02/04/2025 21:17, Frank Li wrote:
-> On Wed, Apr 02, 2025 at 09:07:07AM +0200, Maud Spierings via B4 Relay wrote:
->> From: Maud Spierings <maudspierings@gocontroll.com>
->>
->> Add a maintainer for the GOcontroll Moduline series of controllers.
->>
->> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
->> ---
->>  MAINTAINERS | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 4b3864a9852f9fca2be48987d383c0671e668336..7d4fbfdaaac1776fc7c4a569f7ab667f0a485eab 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -10043,6 +10043,12 @@ L:	linux-media@vger.kernel.org
->>  S:	Maintained
->>  F:	drivers/media/usb/go7007/
->>
->> +GOCONTROLL MODULINE CONTROLLERS
->> +M:	Maud Spierings <maudspierings@gocontroll.com>
->> +L:	devicetree@vger.kernel.org
+If an error is triggered while system suspend is in progress, any bus
+level power state transition will result in unpredictable error handling.
+Mark skip_bus_pm flag as true to avoid this.
 
-And this is not needed. Drop irrelevant entries.
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
 
-Best regards,
-Krzysztof
+Ideally we'd want to defer recovery until system resume, but this is
+good enough to prevent device suspend.
+
+More discussion at [1].
+[1] https://lore.kernel.org/r/Z-38rPeN_j7YGiEl@black.fi.intel.com
+
+ drivers/pci/pcie/aer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index 508474e17183..5acf4efc2df3 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -1108,6 +1108,12 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+ 
+ static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+ {
++	/*
++	 * Avoid any power state transition if an error is triggered during
++	 * system suspend.
++	 */
++	dev->skip_bus_pm = true;
++
+ 	cxl_rch_handle_error(dev, info);
+ 	pci_aer_handle_error(dev, info);
+ 	pci_dev_put(dev);
+-- 
+2.34.1
+
 
