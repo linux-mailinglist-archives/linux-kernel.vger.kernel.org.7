@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-586906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454B4A7A530
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:33:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C994A7A535
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EBA16BC7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0132016F547
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B732A24EF6B;
-	Thu,  3 Apr 2025 14:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD0F24EABE;
+	Thu,  3 Apr 2025 14:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOQ1ccF6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HtLx2qEg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FFA24BCF9;
-	Thu,  3 Apr 2025 14:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3DD224B0B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690570; cv=none; b=dfD+N/R0gkdgonD22FRK5t2L1x7KNAWckDxgE38axoD/jyLWonfDns+9gdT1hRParji9F5Z0LIaDH+rEfzzcoRmytt67XJii6AcnKiH6VQ52uqypkAHBtqB66ssN9y2d+u1dnpCyLPYf48pUMElDn4OAwj7mbE0I+huxFufL96M=
+	t=1743690657; cv=none; b=VlHHBiV5D07rqVcqBqigUorqqtPObWAEk/z6MMGop6z3lAtFukbShVmdbZLqxY3BW/DmysKFuoWaEJCkLZmGMtaoH5XFMfwi13ZUO0H9VAaFkgXJfHWNkQWt+JD3wBHHv8kRnTFY5uaLzbCPEaAe3dSFPZHh8hqnGtR6IYeszgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690570; c=relaxed/simple;
-	bh=vTwMHvOovCZ//ixEtEQTfu+/vKY6ddXQrx23wvtkghE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZPRl5dTu5LdiAfwsCOZEkhDoCo29KqveVLvrLbn8UYf1irN8M0qHq8ce9QJPRZBb0CwuEgqbznK+r+pVf2hmk81N3Zy0PlR6VeGySW/9aJNKksP5cBekbgKp2i1KC5DNmh3NWnReY+yusT5V2zc4e/DJA8KzqpdEuejTGbO8MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOQ1ccF6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC00C4CEE3;
-	Thu,  3 Apr 2025 14:29:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690569;
-	bh=vTwMHvOovCZ//ixEtEQTfu+/vKY6ddXQrx23wvtkghE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kOQ1ccF6zAtk8+uAHm9om+QfLiOLo9bCr0YBI2sXEyUyIcyvqTmExgKoOqnQV/KUI
-	 eyreS9A/pfL9+mUwDDaiAZ4quM6uauMhkL7z4oaroHhj89n0SQXXVdYPGsoCzzCpq5
-	 ioLOYzq9gN1o2dk6t3C5jUoATUvgHDvoB5Hdd0F3I967pAa/xusNl81EyLMOQ+egIO
-	 tYJX8ti9MUocytEeYn4L9YN6x/+R5ci8eRphHI678wg+kGCNe+0pIzpKUoNxt9kA+G
-	 FAwMRDfZJp6q8LnTZlflN0rT6YJdUKbYTW9xFrga1gI6vipGNs1Ipf0SeNWFAl/BEl
-	 fFd1X+gf0J0ag==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1u0LZW-0000000069e-2E6c;
-	Thu, 03 Apr 2025 16:29:35 +0200
-Date: Thu, 3 Apr 2025 16:29:34 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
-	krzk+dt@kernel.org, ivprusov@salutedevices.com,
-	luca.ceresoli@bootlin.com, zhoubinbin@loongson.cn,
-	paulha@opensource.cirrus.com, lgirdwood@gmail.com, robh@kernel.org,
-	conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz,
-	tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	johan+linaro@kernel.org,
-	Christopher Obbard <christopher.obbard@linaro.org>
-Subject: Re: [PATCH v6 5/6] ASoC: codecs: wcd938x: add mux control support
- for hp audio mux
-Message-ID: <Z-6bTj097a1LVn3X@hovoldconsulting.com>
-References: <20250327100633.11530-1-srinivas.kandagatla@linaro.org>
- <20250327100633.11530-6-srinivas.kandagatla@linaro.org>
- <Z-z_ZAyVBK5ui50k@hovoldconsulting.com>
- <8613cf45-d202-4577-868c-8caf771c7bc4@linaro.org>
+	s=arc-20240116; t=1743690657; c=relaxed/simple;
+	bh=8sUwQ/gR6C8FYDEcOLVuxKNcdIng4fl8px+2OUlTGhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nzeDnfTDg0VmCQMC6itE7/5mlsV7Is9lRqGVaO6Mqbinp1nFVYYQM13dXvWnI20rLGq6q8pqilnQaE+bnebDNhhvZZratoWbxJwrRKzcdPAf29OODS1lHVavFLfFsb8Y7rphXXd7hMsREXSx5DdLV/sdz+pnEB8nl+IfX0gcAw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HtLx2qEg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743690653;
+	bh=8sUwQ/gR6C8FYDEcOLVuxKNcdIng4fl8px+2OUlTGhE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HtLx2qEgGJInf+4mIwGxb640gJQ9G39la8nrlQu0ClhNa+EBad6jC+4e1IUJSwlEP
+	 wKTWcANYgo0Jy0D9nrRqiC9YhwXZwCFo0aYX5BRqLSzxV/dUGW+mT2LV4tZ4Em0mnC
+	 YuymkuX02tMkQp6kkiOfeKbLD2a7GidqGXXN7rRaZfxSOW40WmVQootpiHVfh7gN1D
+	 tyqnsPA1wnlzZZOdSHFPTL8YE75L7pgDYGxRdJtBWykgd6KVeroqTNSjJ8BNtrkVP6
+	 mkut3CqaTMscbi+fWiv97FYO2BkiUpMk7VAAY09rPL9hRgLOZpectai9G1A7m/lTnQ
+	 LfGuZELhvjV1g==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 08E1417E0391;
+	Thu,  3 Apr 2025 16:30:52 +0200 (CEST)
+Date: Thu, 3 Apr 2025 16:30:47 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, Lucas De Marchi
+ <lucas.demarchi@intel.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v1] drm/shmem-helper: Fix unsetting shmem vaddr while
+ vmap refcount > 0
+Message-ID: <20250403163047.63929f63@collabora.com>
+In-Reply-To: <20250403142633.484660-1-dmitry.osipenko@collabora.com>
+References: <20250403142633.484660-1-dmitry.osipenko@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8613cf45-d202-4577-868c-8caf771c7bc4@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 03, 2025 at 01:19:57PM +0100, Srinivas Kandagatla wrote:
-> On 02/04/2025 10:12, Johan Hovold wrote:
-> > On Thu, Mar 27, 2025 at 10:06:32AM +0000, Srinivas Kandagatla wrote:
-> >> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >>
-> >> On some platforms to minimise pop and click during switching between
-> >> CTIA and OMTP headset an additional HiFi mux is used. Most common
-> >> case is that this switch is switched on by default, but on some
-> >> platforms this needs a regulator enable.
-> >>
-> >> move to using mux control to enable both regulator and handle gpios,
-> >> deprecate the usage of gpio.
-> >>
-> >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
-> > 
-> >> @@ -3261,11 +3276,26 @@ static int wcd938x_populate_dt_data(struct wcd938x_priv *wcd938x, struct device
-> >>   		return dev_err_probe(dev, wcd938x->reset_gpio,
-> >>   				     "Failed to get reset gpio\n");
-> >>   
-> >> -	wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro",
-> >> -						GPIOD_OUT_LOW);
-> >> -	if (IS_ERR(wcd938x->us_euro_gpio))
-> >> -		return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
-> >> -				     "us-euro swap Control GPIO not found\n");
-> >> +	wcd938x->us_euro_mux = devm_mux_control_get(dev, NULL);
+On Thu,  3 Apr 2025 17:26:33 +0300
+Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
 
-> > Running with this patch on the CRD I noticed that this now prints an
-> > error as there is no optional mux (or gpio) defined:
-> > 
-> > 	wcd938x_codec audio-codec: /audio-codec: failed to get mux-control (0)
+> We switched to use refcount_t for vmaps and missed to change the vunmap
+> code to properly unset the vmap pointer, which is now cleared while vmap's
+> refcount > 0. Clear the cached vmap pointer only when refcounting drops to
+> zero to fix the bug.
 > 
-> This is not from codec driver, mux control is throwing up this.
+> Fixes: e1fc39a92332 ("drm/shmem-helper: Use refcount_t for vmap_use_count")
+> Reported-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> Closes: https://lore.kernel.org/dri-devel/20250403105053.788b0f6e@collabora.com/T/#m3dca6d81bedc8d6146a56b82694624fbc6fa4c96
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Yeah, the error is printed by the mux code, but it's this codec change
-that starts triggering it.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-> > You need to suppress that error in mux_get() to allow for optional muxes
-> > to be looked up like this.
-
-> I have a plan for this,
+> ---
+>  drivers/gpu/drm/drm_gem_shmem_helper.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> I proposed some changes to mux api for exclusive apis at 
-> https://lkml.org/lkml/2025/3/26/955
-> 
-> This should also allow us to easily add an optional api, which I plan to 
-> do once i get some feedback on this patch.
+> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> index 2d924d547a51..aa43265f4f4f 100644
+> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+> @@ -415,11 +415,11 @@ void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+>  
+>  		if (refcount_dec_and_test(&shmem->vmap_use_count)) {
+>  			vunmap(shmem->vaddr);
+> +			shmem->vaddr = NULL;
+> +
+>  			drm_gem_shmem_unpin_locked(shmem);
+>  		}
+>  	}
+> -
+> -	shmem->vaddr = NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gem_shmem_vunmap_locked);
+>  
 
-It may just be as simple as demoting that dev_err() in mux_get() to
-dev_dbg() and possibly make sure any callers log errors themselves.
-
-A quick grep shows there are only 12 users or so and most of them
-already seem to be logging mux lookup errors.
-
-Johan
 
