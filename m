@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-587075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18706A7A78B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B42A7A78D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 171FF3A61FB
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B8118857EF
 	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E17250C09;
-	Thu,  3 Apr 2025 16:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C962512D5;
+	Thu,  3 Apr 2025 16:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RmVlYlKe"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3e6gLeQ"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C1024EF7B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 16:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B30250C02;
+	Thu,  3 Apr 2025 16:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743696394; cv=none; b=Klzd9UGNvK5yAA5UQgVqJ6Y9tcU2NobQn2SdAl33r3s3NHixctScXYP0DNYpcN0OShcrsrUraDjUHI6dz2W6mABKVEBZCTT3q/HagIQQNUm6iYqDwRoBQ8KwEvcUwhF4BPf1I+yzueGI9Wy/aChhKDfyRpjWGCxNXHWs4ebFN5A=
+	t=1743696368; cv=none; b=KYoAsQPcO/hwpXVlMIvfyNOMZeU7FUy/0uOH50vAdYge/daRAbYO1J57QtXjOUPdjIQZTg9ssUvJsrbWY3+7JM4oNtemAy4yRN/1vNQnsEuZuxu6pkGbTQJGlfV32L2lHSnk1AKUO65I/+qhe53h8rd+5X/AbgT3cEkoIRVHvp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743696394; c=relaxed/simple;
-	bh=rrhANOPG/mURHbTGtrf3YMdkKB3nTA2YvICGzH9Kpbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BVCka1xKHBFbDOXkw2UJtKjQvrvZjuX7Tv1ylPpASOBiW7qYuLslK+ReWMF7CJ8W9I4FumsnmXkqpL0GV94FUmYtLlgmFVY0ZJ8Rk5wwMR0XQb5i0GrtTQP8zUbr18GDUbBcxlTLK6TB1aoOcmR45DMhOVNNdngdp+x4DPyK4S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RmVlYlKe; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac298c8fa50so181457266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:06:31 -0700 (PDT)
+	s=arc-20240116; t=1743696368; c=relaxed/simple;
+	bh=YjGjdrzIlECzocgsLLX2osfw8C9zWevju6nHuE11dbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZjwoAvVQa5hK62cEDUsVQpzviTj+QlqqnW/RFCPyWZg1nnUEA8tMbtEFhMDTsrqdH6ZOECbGKESlE+0y5uFscEU49x0hSQ3ClXtwR/moFmf42tJSHy0shr3kyg+ttk26/HTbeitAi4ZYzlJO8KD1cU1c169TSvOAn/H9pctiOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3e6gLeQ; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736ee709c11so996855b3a.1;
+        Thu, 03 Apr 2025 09:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743696390; x=1744301190; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPVI13HQrunGU/IvN8XS/1QE+4YARD/DsjfX5tTYxjw=;
-        b=RmVlYlKejb4tp0sKTn9hSfNLBzkllQpfbdCZUha91cEXWqrC7J3R9BzAaLA7H76zMv
-         KzkuNNEBbXW/Qzb7e29Jo5lBKClbllzRirc4CRGdrQUM8KjBMcSTIrqdKwp4tOZYIveC
-         WjLnmINqsm9bssy/yq9L0XwyN+ubSpTUgIyYA=
+        d=gmail.com; s=20230601; t=1743696366; x=1744301166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CUM1YGBsiV36kXf/ewqX0Mf86Kw8OHi0hTrNzy0FCQ=;
+        b=A3e6gLeQUQfUwEmR7vLNzul8A0YWMzx8NanbyERcUp8vB9o7UXJaYEY0d+fwdYrNIV
+         432orqrlW8OidnfIY5hv1zASHHbSRdyyEoUTIKKCSlj1tQQeFpaVK3zZIgYZAFCWpqqB
+         HhY2mVdY7Xdx0nZQTBR+394I/ccH0zpkHlzz88UPuMK/E69kOPQCj8zrcZP5fwyl16qe
+         A5/4xeR5kPgdSsxCc9MDUwT6pjlAHbn0KcthUkDuxPHCCOHxBiWbOzMwvn5D0fiash1l
+         cgveInlft3JA9yh5vyNU/mVnx9QnkYc/mgqMSXGlhRVnL+BrjQWXXJaH6ZWxJKCfHdR8
+         G8OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743696390; x=1744301190;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XPVI13HQrunGU/IvN8XS/1QE+4YARD/DsjfX5tTYxjw=;
-        b=aIGd9pKSqt38ES/32Ex0KrDq/tzOvFge4hjru8XaGBhznJ9dS3vG2ttnpOuvInMXxB
-         253JrqO4auCKYoxEjLV8yKgML8lFaILBWlU6uQPq0jDPo8fORCANTsBymJAJDkE+Ru1s
-         GCk8NFEnL9z14rzV/iiY6LIp5DJTZo6R0fMaiH9om5N7EdUShuh/NgL2tqAkywjwABbG
-         UOBzew286F44ZW/FAQfOjw1AIEJ1CW7KBFLufai3epPRLeTuIeG9+jGGtJ579PwTvwef
-         fdJqjAGzji2ZeF7hWmG6ulNsZPtgKaLTA6C3mT2gE62yOk13iegAoOzfTcD6c6YEpejV
-         Ts4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXUE3d2ert+YHJUB/tlw9vnicNpM0mPresPg1TxTJE2Um2IiWcC2RJZTRL2DmMSor/Auw2JlnQQjzIFkJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh0OPYxrmo0MANK1s60s6/B/4/muGwPYRRtel6BYsTXhfGK8BL
-	7JIeZKx2XPLS4pAwhO3wNJg2g3H4Kpgn+Apt4AnLTiQpuMpL2VD0nu+kYglBi0BVB+8LmLvNRLw
-	cZr0=
-X-Gm-Gg: ASbGncuFqTBnO2zfPSc568hjFAyho7K9wYZWF44+fGeYVDI9dhk3QO7tkHhux5lBKpW
-	8X/LN4xWicuvKk+Us7TJJPF7T0VWm19GOD5mNVxWBkJY/QRME93PQbUi5W51DVYnommeb4DHh0u
-	OprwqIlZJbU5bucWu1odeqXAvy9PpRo/YG7WKmQTlxP542qCgoT4OGIDh7u3xSC5OR4wMSz2oja
-	d6cbmZ89NkJynXRqS1IQgAKEfS6U5c40OFUnQpUzwU4CXH7HFqfGQR4ief/ilMbxhTbje9LiNol
-	2SS2ToYXj1YWJK1YKF1eAJPBlSrkbZ8/PSFLrRanMQeArLiu/pgk2ysRItwvbI5cRphait9zkoY
-	B2/oE7bEMW2C1eq0hYXAsGWh/doWIUw==
-X-Google-Smtp-Source: AGHT+IEjetBh5hDIC9bE5S1ss+O5S3H7Gk13DAiNIK+FCKVasvNoan8SIN+HqM3l1aJ1EQJH6ujpmQ==
-X-Received: by 2002:a17:907:1c27:b0:ac7:391b:e684 with SMTP id a640c23a62f3a-ac7d19fbafamr12613466b.58.1743696389812;
-        Thu, 03 Apr 2025 09:06:29 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f32csm112608566b.104.2025.04.03.09.06.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 09:06:28 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so1796260a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:06:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMXoCelcY9xnICJMj5rmj3tiDsfswVX/rYudgkJXqrmWHv2iwkq2Cah+svf0Gbfv3vB9APtaLtg38RBpM=@vger.kernel.org
-X-Received: by 2002:a17:907:970c:b0:ac7:970b:8ee5 with SMTP id
- a640c23a62f3a-ac7d17d1cb8mr16085266b.27.1743696387758; Thu, 03 Apr 2025
- 09:06:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743696366; x=1744301166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6CUM1YGBsiV36kXf/ewqX0Mf86Kw8OHi0hTrNzy0FCQ=;
+        b=DxhX1+4yxOJr59Dbo96PItwKvE2SmoFLWfyOBHDyDTCuzkRKZM9C5MXfI6bCYm6wk3
+         dh/BEyM/XumguKxuguFoJVxb+eqNABWXrwi/tf6XUCiMtzBUVQSTkfrlAYpHhvdJM/Cc
+         RxqAndsq8Hphf+2qzKWJOJTtIgI7cGUD/97VWhFbjPR7Z6/Xd0nYERmGB3DemjkuSE7k
+         QDNSg4Uasz9IPIP9nP9RsyxTZyhnU8dBD+36jwdAHf0ywn+4btzcwcYYTVDZsXeGybET
+         bxFBn/1OUyMsbE+HkGVtvc3HuCl2xnLTjCYYbKcNC4kYX/4tOhv4BYRLQcRQkvJD7aE7
+         adbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkU+4hnaLEVS7LEWuNhGI4eDRDeCNrcQKRXTynwVlExL5JnddIirpBepdt9Rb8uUVOZjkusKfYrz9SyjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlPVvJ2OBJuwUi26Lbrf05hEaNvcz2H5IbpHX5G6E6TVg8o/eZ
+	4RxpisnlH5q6bwuAXuaPvxMjv10UQuouOIzVxDEqWA4yFbeM1BId
+X-Gm-Gg: ASbGncsX7/t43yRyad1FwmGwDQcRLKE46A1pIVhFQ/wC6+q3vELs2ivXY+FWkGcn8x+
+	G0EpHaF3zgvPdf6ljtncFZLFPrLKLw6hEEQR0pfr/ci/+occG4XKRGK2RmvX+tLg9NhrJ6W+IP3
+	v2eMRZGrE5jgtoqiZEy54+HgZXXVFhCc5Hu6n4JF/EoylmgG01W6Lq7J8K5D6c5cZyDf2b6YUuW
+	kGnAufwe/ND+yC/Q43v/bcMu1tKF0PU796DzE+nV0rTrbGFrWkc5ywjDX8dxhJ2XnG6R+hr0Ai4
+	cNuujtHMMpcHebPhn0HIQ5f1SwrphdwTezyF8P6C/QD1ZzJxHT61qBM=
+X-Google-Smtp-Source: AGHT+IFuyj8PnUH67QJmQuVRh5chNtphraUZc7jj56nG+Xj2gh/lxU2i3HorqQk0IXcClAQRgY6fUg==
+X-Received: by 2002:a05:6a00:c8b:b0:736:3954:d78c with SMTP id d2e1a72fcca58-739e4b49da9mr162206b3a.6.1743696365725;
+        Thu, 03 Apr 2025 09:06:05 -0700 (PDT)
+Received: from localhost ([2804:30c:1f4f:6800:9245:316f:6226:cc1e])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-739d97effb7sm1736215b3a.60.2025.04.03.09.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 09:06:04 -0700 (PDT)
+Date: Thu, 3 Apr 2025 13:07:09 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
+	jic23@kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de
+Subject: Re: [PATCH v5] iio: frequency: ad9832: Use FIELD_PREP macro to set
+ bit fields
+Message-ID: <Z-6yLe1GyNsFJlph@debian-BULLSEYE-live-builder-AMD64>
+References: <20250330135402.105418-1-simeddon@gmail.com>
+ <Z-lm8l1ILFuJE5YS@debian-BULLSEYE-live-builder-AMD64>
+ <CAGd6pzPe71oY=+cy3WqKPyZ150q3pOM3LrPE0_ENeKgd+OvnfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z-xFKa5hiQ5urVwS@gmail.com> <CAHk-=wgqa0B9OV+EAQ34-VOUAeVB2o2bXnZXQDG7u+Z=4Cmw8w@mail.gmail.com>
- <n7p2rtrq6vvfteu5szlubng4wj6akgn45suekjdxojrpuxr6dp@oxjfxawkv3xs>
- <Z-6gyQk2WlHc4DNw@gmail.com> <aanudixqjhm7asrp5tzsx5vc7pctei5bskdhdxk5up2g6gvqbz@z7owxfn6krgt>
- <sqn3nlc6q26h5dnwnrsikg3mthxv4o7litoilsgufq4sdhcfqd@hp4goo43hdof>
-In-Reply-To: <sqn3nlc6q26h5dnwnrsikg3mthxv4o7litoilsgufq4sdhcfqd@hp4goo43hdof>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 3 Apr 2025 09:06:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh2WtMskQ7ASnDJ_n0ZJs4hueEXsurwQpEvzmx-aZKFag@mail.gmail.com>
-X-Gm-Features: ATxdqUH9TF0VFn6lpqQlCGjZDLtfDBGhFWPb8_gd-ivzU_3OWn_1FdBtxvqg61U
-Message-ID: <CAHk-=wh2WtMskQ7ASnDJ_n0ZJs4hueEXsurwQpEvzmx-aZKFag@mail.gmail.com>
-Subject: Re: [GIT PULL] objtool fixes
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <a.p.zijlstra@chello.nl>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGd6pzPe71oY=+cy3WqKPyZ150q3pOM3LrPE0_ENeKgd+OvnfQ@mail.gmail.com>
 
-On Thu, 3 Apr 2025 at 08:43, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> # OBJTOOL ANNOTATION
-> 911: .pushsection .discard.annotate_insn,"M",@progbits,8; .long 911b - .; .long 6; .popsection
+On 04/02, Siddharth Menon wrote:
+> On Sun, 30 Mar 2025 at 21:13, Marcelo Schmitt
+> <marcelo.schmitt1@gmail.com> wrote:
+> > The previous implementation would set ctrl_fp if val == 1 and unset it if val == 0.
+> > This patch seems to be doing the reverse (setting ctrl_fp if val == 0, and
+> > unsetting it if val != 0). Was the previous implementation potentially buggy?
+> 
+> My apologies, I seem to have made a mistake here.
 
-Josh, what's wrong with just disassembling the damn instruction?
+No worries. It's okay to change/update device drivers to make them better (e.g.
+implement new features, fix bugs). If the proposed change was fixing something,
+then it could be put into a separate patch with a Fixes tag. Though, I had
+another look at the datasheet and my understanding is that the freq bit (bit 11)
+should be set if the user writes 1 to out_altvoltageX_frequencysymbol (ABI
+documented in drivers/staging/iio/Documentation/sysfs-bus-iio-dds).
+By the way, I now think my suggestion of doing
+st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, !!val) was not a good idea since that
+wouldn't follow the proposed ABI.
+Anyway, it's okay to propose more changes/patches if you want. Just separate the
+patches according to their logical change if you make more changes to the driver.
 
-It's what objtool does.
-
-By all means add annotations for when the kernel does something
-*special*, and the annotation is "this violates the usual rules".
-Those kinds of annotations make perfect sense, and are a "don't
-complain about this, because I know I'm doing something odd".
-
-So annotations for things like non-standard stack frames etc are a good thing.
-
-But dammit, clac/stac is *not* that. Quite the reverse. clac/stac *is*
-the usual rule. clac/stac *is* the annotation.
-
-             Linus
+Regards,
+Marcelo
 
