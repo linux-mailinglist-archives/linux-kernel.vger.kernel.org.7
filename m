@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-586714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103AEA7A2EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:32:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C113A7A2EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213B6188BB55
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F823B5172
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5372C24DFE9;
-	Thu,  3 Apr 2025 12:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F0724C074;
+	Thu,  3 Apr 2025 12:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9Qonby/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ac78NlYG"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A922218DB10;
-	Thu,  3 Apr 2025 12:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40942A96
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 12:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743683467; cv=none; b=nzcfNBWFuBdNPevswGza3DRfYvPOpXE3NCTWZN9WR/x6pETSGXcYXGwzo1ObtMsgK4TQB1VdcAq7M87YGsVDRODxYlkO6GWtOnZtWcyod7UIYOzhWUUuQ/GqRrG04gfMm6iklHuIL/AF41VZhGaHAnlVopXUjJu/RGAYfa/Z8G8=
+	t=1743683589; cv=none; b=r0lkRJBFSEsPcWZKB9IKIntkgZLi/1M9VPbmIIxfFFa7pwvH5sD8izm39BTiKxE/wF68RF3Ut7kQvbykj9wWjHgqgpdFrxbFUpNl8INMZN0eYa6RyvbUnTBRVtCQB5GHH2EPZoz7mH0HcmySqn1RwBqtAstLu4edyiKvpQgYjho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743683467; c=relaxed/simple;
-	bh=CnLDYb7XZk5vPljE2pxTY39nAE8xucWgsLuFG2jWdfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PoXICnDT5nl+zPbms4GIozTYDgyGspZdQmxppujOx7fI+G4UgaJzjd1wylRQPGYCUwgmbR2pVFZEpKaPMf0wj7ECNg8PaWd+w/ipYd9AfqbNb0+kyKhSx+roXTJk2qHvo4h3M4WF1+UoyQuQCrQfh2w4XUjUHAls/Kw0Bb5j2M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9Qonby/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5ACC4CEE3;
-	Thu,  3 Apr 2025 12:31:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743683467;
-	bh=CnLDYb7XZk5vPljE2pxTY39nAE8xucWgsLuFG2jWdfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I9Qonby/7j19j+SswfqKWHC0aQs6UqsHf+JxuilqUVw+7fb2RYNWrQuJg25ADCyio
-	 Lu+wroI7lUcJJUf8GD49OVNn5AiM2qmqipnAx4BMAO9PQ2YQfgc2uyfGFD3iUG98dI
-	 2DLlPAgRLxNXTX4pMs/wGiMpUwN5dC/BdkKaF5igkRMHGLyY2/TWqFvcisvLyhFDzo
-	 mwCgOn9WwMaYNnhembITGhZ0LcTSgvkpZV3nBjWYh7ipLNEe5CrXvqcyZZSwrNKvkV
-	 b7VT8d0QoScZyCN9NAW2XtGUEacqRMbHQm1LJbHAtPWAM4YsqOwv6omYV//5l+/qF8
-	 ZQlTbfkeuoOhA==
-Date: Thu, 3 Apr 2025 14:31:02 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Philipp Stanner <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] drm/nouveau: Prevent signalled fences in pending list
-Message-ID: <Z-5_hh8kPv8btF6k@pollux>
-References: <20250403101353.42880-2-phasta@kernel.org>
- <c779bc2f-06af-4278-8bb5-08afc074b580@amd.com>
+	s=arc-20240116; t=1743683589; c=relaxed/simple;
+	bh=FnfbmfTyanL5Cun+dD1YcvoMBPjIcokYcufblH2DYy8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LYKhiEaJpJW92119686Nv1mZ8eHcZdzESQZ2sVzScNRwuTs7HO0S0YrRxdKypBgKkDhiH7cUp6jV4skEELfvZYCP3pqmjwKhVzhY4FUAXZ2pOSZcG8UTapzueyYfWVCKOdqyvCNYFIM8tN+syMDTQT7f9pr5PlvDIKSIg6mfAxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ac78NlYG; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54acc0cd458so1070229e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 05:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743683585; x=1744288385; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yE61JSZwEpUDFMjEkbmv0JwWRe8/NoxJlZul41Y8Z3k=;
+        b=ac78NlYGwC1bRQMdow7mnJIjrjmpVHXtvIKjDmtZPBGjdTshPHjvfWmAMQxLPYaDP0
+         nr7yif/ue3+RR2/lCDJeDoOwmDniYXwl2yFmRiC9Sgh4wMuBvG9jdapdciImJV+IhP/K
+         tEqLQ976jp2/IIqpLJ9Dm5HxKAqby6I7eK3xuQhquqa/c1fSyEzyji6Uas1CCFbPSv7B
+         +fRiXoRNeUsAF78mSXp80gvcohENWR+pXcPOkQo2QhbERgOlYH6Mexw2/tLvn56tLO5J
+         dlL4Da22+7NnedQkA+dUkFCqXDo++vWa1VwTpnOmPvYuB6bI3+I5py7Et85bSDoO/www
+         Wpiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743683585; x=1744288385;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yE61JSZwEpUDFMjEkbmv0JwWRe8/NoxJlZul41Y8Z3k=;
+        b=Ten16ZoxytJL8ZgLbGy/SPQvI5Plu9P1FhgkWdgoPQaRZXKs/XlLRp8hv0kJFd6VHy
+         aAxRSFowVrEOB5iFh9+UW4Jcs8R0FxOVMIqYpx3CTZ8R44gadL8wyPo5T1DPIjQuJIgw
+         O3f3XQKYfGQTYX5qw+P6yero7vZsW29NB7GktW6Yy2b0za91bO39LOzCMDdhrIl59aH4
+         /RyC3U+Xj6Ymt70HnRHfcgBCPHz8ApjVJaFTQynyxQ1xc/Rq1ZPynGc76ldeOrTUz7KJ
+         DSKd4O5s5v2G3qA/BCqsBsC3inOuhg+aVjtvp4//FnKI45KKSyUt6Ba1Q7mQl5GNXyJ1
+         FIsA==
+X-Gm-Message-State: AOJu0YzldqHbDJ1XFvD9xHn3MmhewynjC3qyqUO3knAGfKgJJUUaEoDR
+	I6rj7azZ9NkUCs8JzrUtGzaBqvr1ZCFZRZVlkWsh+kGhEPhj1v95M1zbeqTVD+XojtzyJmt4/rV
+	m/9o=
+X-Gm-Gg: ASbGnctciswA0eBj2pr7dkaj2TjThvOnwYeEFDCNH2CKNLKuYBb/eoecpsxiyzV9I/H
+	AfoAZ3yV26W8jjQUyuu0IF0R/a4Ef/LUZfap6cRX3bdDjkQRafmppHPIHWWlGQWaSKzKWPczAXR
+	HwhJHyVnbJ8QIHyhJv2e+5ZOosAQNacMMUndlaiJmUAiSNNZ+e77MJcZB972FxaorBanYO+LfWd
+	wci5xG1SyXr+FYKCAa1odjQwggKC2XuAO4lQ9yZy5n8rqBtd+mcBoOqqwSQqqV0h0pUxcBPfRP5
+	PwjOvCVZQwnW5ehO+ttMc+OvKf4yYLQAR7fHr0E7yiMKE1nrMuuj+tSB6Am8bWHRmg==
+X-Google-Smtp-Source: AGHT+IH9BkDSsdgdq+MeYUd/rPtLAfQk2repkN/tz0wrYeJgFu2fBJocqU+GW/LW3oTG1kQpXGdjUw==
+X-Received: by 2002:a05:651c:220d:b0:30b:b9e4:13c5 with SMTP id 38308e7fff4ca-30ef90ccfd1mr19259601fa.4.1743683584965;
+        Thu, 03 Apr 2025 05:33:04 -0700 (PDT)
+Received: from [192.168.1.140] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031bd00csm1978501fa.66.2025.04.03.05.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 05:33:04 -0700 (PDT)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 03 Apr 2025 14:33:03 +0200
+Subject: [PATCH] task_stack.h: remove obsolete __HAVE_ARCH_KSTACK_END check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c779bc2f-06af-4278-8bb5-08afc074b580@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250403-kstack-end-v1-1-7798e71f34d1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAP5/7mcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNj3eziksTkbN3UvBRdSwtDYxNDgzQLM4MUJaCGgqLUtMwKsGHRsbW
+ 1AO0RXTdcAAAA
+X-Change-ID: 20250403-kstack-end-9813410f860d
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, 
+ Pasha Tatashin <pasha.tatashin@soleen.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Apr 03, 2025 at 02:08:06PM +0200, Christian König wrote:
-> Am 03.04.25 um 12:13 schrieb Philipp Stanner:
-> 
-> > @@ -235,6 +227,19 @@ nouveau_fence_emit(struct nouveau_fence *fence)
-> >  			       &fctx->lock, fctx->context, ++fctx->sequence);
-> >  	kref_get(&fctx->fence_ref);
-> >  
-> > +	fence->cb.func = nouveau_fence_cleanup_cb;
-> > +	/* Adding a callback runs into __dma_fence_enable_signaling(), which will
-> > +	 * ultimately run into nouveau_fence_no_signaling(), where a WARN_ON
-> > +	 * would fire because the refcount can be dropped there.
-> > +	 *
-> > +	 * Increment the refcount here temporarily to work around that.
-> > +	 */
-> > +	dma_fence_get(&fence->base);
-> > +	ret = dma_fence_add_callback(&fence->base, &fence->cb, nouveau_fence_cleanup_cb);
-> 
-> That looks like a really really awkward approach. The driver basically uses a the DMA fence infrastructure as middle layer and callbacks into itself to cleanup it's own structures.
-> 
-> Additional to that we don't guarantee any callback order for the DMA fence and so it can be that mix cleaning up the callback with other work which is certainly not good when you want to guarantee that the cleanup happens under the same lock.
-> 
-> Instead the call to dma_fence_signal_locked() should probably be removed from nouveau_fence_signal() and into nouveau_fence_context_kill() and nouveau_fence_update().
-> 
-> This way nouveau_fence_is_signaled() can call this function as well.
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Yes, I think this would work as well. It wouldn't work if only
-dma_fence_signal() is called on this fence, but that should be fine.
+Remove __HAVE_ARCH_KSTACK_END as it has been osolete since removal of
+metag architecture in v4.17.
 
-So, I agree that's probably the better approach.
+Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Link: https://lore.kernel.org/20240311164638.2015063-2-pasha.tatashin@soleen.com
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Resending Pashas cleanup patch as it fell off the planet
+a year ago because it was part of a patch series that
+did not go anywhere at the time.
 
-> BTW: nouveau_fence_no_signaling() looks completely broken as well. It calls nouveau_fence_is_signaled() and then list_del() on the fence head.
+Andrew maybe you can pick this one up?
+---
+ include/linux/sched/task_stack.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-It does indeed look broken, as in the fence may not be signaled at all. If at
-all, it should call dma_fence_is_signaled() instead.
+diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+index cffad65bdc6a970084cbcfea1913ba53a12dbb4f..85c5a6392e02776e462b2b76e8e1aeb9e1f91af0 100644
+--- a/include/linux/sched/task_stack.h
++++ b/include/linux/sched/task_stack.h
+@@ -106,7 +106,6 @@ static inline unsigned long stack_not_used(struct task_struct *p)
+ #endif
+ extern void set_task_stack_end_magic(struct task_struct *tsk);
+ 
+-#ifndef __HAVE_ARCH_KSTACK_END
+ static inline int kstack_end(void *addr)
+ {
+ 	/* Reliable end of stack detection:
+@@ -114,6 +113,5 @@ static inline int kstack_end(void *addr)
+ 	 */
+ 	return !(((unsigned long)addr+sizeof(void*)-1) & (THREAD_SIZE-sizeof(void*)));
+ }
+-#endif
+ 
+ #endif /* _LINUX_SCHED_TASK_STACK_H */
 
-> As far as I can see that is completely superfluous and should probably be dropped. IIRC I once had a patch to clean that up but it was dropped for some reason.
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20250403-kstack-end-9813410f860d
 
-Agreed, to me it looks unnecessary as well.
+Best regards,
+-- 
+Linus Walleij <linus.walleij@linaro.org>
+
 
