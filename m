@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-586172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242E0A79C29
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E36B0A79C27
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537DC3B3407
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30945172F75
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C171A3161;
-	Thu,  3 Apr 2025 06:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79471BD9C6;
+	Thu,  3 Apr 2025 06:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJu6QJgW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="n2xxLicc"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A59190477;
-	Thu,  3 Apr 2025 06:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9121AC891
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743661999; cv=none; b=XAUe+geRr0dDV03iMVKyMO225ef3rDtxSwJCedKMQZr5FucBcOXLs/82yGmYL+k7MBkUhJGihDONR8yGG4XWptezERzqYW9DkdMJUREqNZcLVveDSVQIkbettBovfRSAvwhfJTRG2GJ4vsRXPGumQwyv5KubU4Q9CL9r9F7eRis=
+	t=1743662107; cv=none; b=kECCU+eyhRD+sgemAeW1SlH2bxHBvq0RIBb9JBiV/dVnj1ZzSEaq3X9L9zsYBQbCU55DyyH9U2EMencjvD6ASNz7+F8QnCcSKCzMSH+xImdIoLqOJ7djPgojO0dYRYeHDUToyNhov8tr4UPeXELoUu8XSTU3P5XYvngbf0sC/eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743661999; c=relaxed/simple;
-	bh=a791Ijrj4pxHIMDg2yMK6Vitj1r+VceYdbEDTVe5/A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwJQ2YMg6O2kM2rdHHa4R1vr2SmnWRgjM+Rm/HZGsLDazSLoihk2BHPWwlR1GqcHPrCrNbQyS2mVJOmXVQJEOSt7y1/Osr/6y4WP2+Dep+KiwGGOoWOt+ZwoZJBGqWVgaj8Zb9rcbvPA2gtfMPbg9RYb3hK75tQhdyBWiS8kChA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJu6QJgW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F83C4CEE3;
-	Thu,  3 Apr 2025 06:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743661999;
-	bh=a791Ijrj4pxHIMDg2yMK6Vitj1r+VceYdbEDTVe5/A8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rJu6QJgWYL9WFNVdajsNsrLzLm7FW+H1Ikd8jh5JYpgIRkXWUodRdIPFx3MpV/cdh
-	 ipDXi4FrROjgpyqKDUxz6SSchMaIPAmX+HwpnKA/TYBO116Z2XMqlnXKVC2PHEahh3
-	 TRCrHwxqiMB2BmOnfi9tmROfQO6g5bkL1eELg4lpZl1Q9Ovp/nyEQ0RNoEwWY5wtC4
-	 dJX2+3fsvuiu3KKXYfQmH1ljOejAd18F7EgwgBDY0VPlbQWVlv9p7mX2WdimBseuUf
-	 QhFQ9vPD3u14uiYect9zUo5uXofWle8riAO+4wxRT2r1HHDke6G60rDN7DUTwEgUG6
-	 ToeE42DDL0vvw==
-Date: Thu, 3 Apr 2025 08:33:15 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: David Heidelberg <david@ixit.cz>
-Cc: Kaustabh Chakraborty <kauschluss@disroot.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
-	Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Caleb Connolly <caleb.connolly@linaro.org>, 
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v4 1/7] dt-bindings: input: syna,rmi4: Document
- syna,rmi4-s3706b-i2c
-Message-ID: <20250403-savvy-inquisitive-tamarin-9c14cd@krzk-bin>
-References: <20250402-synaptics-rmi4-v4-0-1bb95959e564@ixit.cz>
- <20250402-synaptics-rmi4-v4-1-1bb95959e564@ixit.cz>
+	s=arc-20240116; t=1743662107; c=relaxed/simple;
+	bh=1JsCMyMtHNZEI+5vuESB4ZV9tP0Yf/T5eFYH1f3W3iQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nrzAvXZZ2lhDUhBZ+Lz7qfbuMAKE5vixX6+OB6t1CdUWR3454C1YrpIHqN0S1IP80zqvZ6TnI8sLBYZxEXonYQ73KKlkOIXO57jaj4ocy0jF0ihPGLEZbJlPhPEQzmo1EPaWUjX+7mc+8Fi4aiWyJluz/X5a6aTvIS7X6dNeM1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=n2xxLicc; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30db1bc464dso4892121fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 23:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743662103; x=1744266903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PwVbis7FD5WGTE3kHS18ntG8BxtaZlcsMBrF4lyJnN0=;
+        b=n2xxLiccuG8vsJ5RIDzmY5zehOua4Gobkrpe/P4f6ij0V7hQglsX1Eucwu+2udMBtK
+         ewVERc5J1qlJOevE6gGfmdEcvFNR5KThK1dVZJcV/yR6vu9FVrvlnDWWKjcnTqmWxot0
+         B/nMo56A5UiOeY00bjKachIgRw0UZuhqzhOV6TbqVLEygbcZrSsrziGPfw46tNdtSLZ1
+         J9a965UZS7mpTARf3+9zCuc/XsAF1xyYsgpcxE5dRG4lOl/EFA0/98ODiaUQGDFIG3dJ
+         9cjAdTnb+xaG3O9P3aHLZLt88JXO8sbW7yUTuyBaAgeisL3nOtDmb0dUpPbbX2tb7HBP
+         VNAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743662103; x=1744266903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PwVbis7FD5WGTE3kHS18ntG8BxtaZlcsMBrF4lyJnN0=;
+        b=jfcQvwB0bhLmwY+GSjDoeyKcZQ1CumvgrRgVzLv3tYQ9kdUHF/WqYdc2sJOhpBIwZl
+         Wf/emcQnuaw+CnNRn4Fjz8i6xRMrAzUGrWnkqbn/TUE9f/3QwILFNsK1PnFW4nVwi7B+
+         nmwKTawO4j6iiPkZ5S2XUGZsoiVITEVSNJmEN7WGIxkZmhg+iIPhxTE7DToDO/LeB9dN
+         ptdrzezP9LWy6TQYE7EUy357HijVLEQNKHcvJe5LC9WdxBNcI2yJ93uZxD8tUADlB/vF
+         l6bvHch+t4lLIvwAIW1CmRyd+yRdIOb3Z+bvczzRZfgxpDggCCpD7ADsmRdpU+j8EOOq
+         vDkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO81BX7fYKrJ4IZ1KlMt4DajIipU0Tv1+2qgFvW8miysI8fC03QBj8WHduVibmsCsg41GgClQ+p8kWKUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwImuGKyDUngOSOCeBETgDfrxAIm5zs8q4hueECB6RNgLrQM6mU
+	589bePNhwhLRhprDgdEBU3vsghjosthCZCsN4kaK8XtK527AByl9bzrVPJeDgiVJeKxnc603h78
+	jjwuqbbmoYELW+aF+wnP3f96UGQJWC8LbllELEw==
+X-Gm-Gg: ASbGnctgNpfdyFclFi1xPAdZfriDP+gqwcS2ZPNCNW7rUSnvE5wN78tNZQ5gAh7mAi7
+	rMpMXBuj1I3jhJIhVvMuhctnUd+hdAaQTsnjvhNOOsQWAbWPBIGpv6hzDBzKA8UVlGdOghKb9b1
+	0wfcjIklxC9DbOt2nM/qYBDCdwEyW45H/3rlIik4RjBAxqHCY6q901SOyVfqXgtISgCug=
+X-Google-Smtp-Source: AGHT+IEPn2huBHKsqDAGWpve5sAjpBNBnpMsrd2sYo/j2hYHK0dJ1WibZs+8/GvHbHlhvGsJDnxEjzhVpbqKnYaGX7E=
+X-Received: by 2002:a05:651c:144b:b0:30b:b987:b676 with SMTP id
+ 38308e7fff4ca-30ef90cd023mr19356701fa.2.1743662103234; Wed, 02 Apr 2025
+ 23:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250402-synaptics-rmi4-v4-1-1bb95959e564@ixit.cz>
+References: <20250403060836.2602361-1-mubin.sayyed@amd.com>
+In-Reply-To: <20250403060836.2602361-1-mubin.sayyed@amd.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 3 Apr 2025 08:34:52 +0200
+X-Gm-Features: AQ5f1Jo8XE_rqZUxS52BXanujb5HYu0Iq_OMLm_FELFmKt0f3v36UDRWRst9x2c
+Message-ID: <CAMRc=Mc2DKnc1AM2WSApZtwOKCFGNZ9WF6LzzkECaV91R5w-iQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: xilinx: Remove myself from maintainership
+To: Mubin Sayyed <mubin.sayyed@amd.com>
+Cc: dlemoal@kernel.org, cassel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linus.walleij@linaro.org, michal.simek@amd.com, 
+	p.zabel@pengutronix.de, gregkh@linuxfoundation.org, 
+	radhey.shyam.pandey@amd.com, linux-ide@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-usb@vger.kernel.org, git@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 02, 2025 at 08:44:52PM +0200, David Heidelberg wrote:
-> Mostly irrelevant for authentic Synaptics touchscreens, but very important
-> for applying workarounds to cheap TS knockoffs.
-> 
-> These knockoffs work well with the downstream driver, and since the user
-> has no way to distinguish them, later in this patch set, we introduce
-> workarounds to ensure they function as well as possible.
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
+On Thu, Apr 3, 2025 at 8:09=E2=80=AFAM Mubin Sayyed <mubin.sayyed@amd.com> =
+wrote:
+>
+> As I am leaving AMD and will no longer be maintaining
+> these platform drivers, so removing myself from maintainership.
+>
+> Signed-off-by: Mubin Sayyed <mubin.sayyed@amd.com>
 > ---
->  Documentation/devicetree/bindings/input/syna,rmi4.yaml | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/syna,rmi4.yaml b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> index b522c8d3ce0db719ff379f2fefbdca79e73d027c..855614718bfd1c6c41805d64e713cf5635c20f10 100644
-> --- a/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> +++ b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
-> @@ -18,9 +18,14 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - syna,rmi4-i2c
-> -      - syna,rmi4-spi
-> +    oneOf:
-> +      - enum:
-> +          - syna,rmi4-i2c
-> +          - syna,rmi4-spi
-> +      - items:
-> +          - enum:
-> +              - syna,rmi4-s3706b-i2c  # OnePlus 6/6T
+>  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml        | 1 -
+>  .../devicetree/bindings/gpio/xlnx,zynqmp-gpio-modepin.yaml       | 1 -
 
-Drop i2c suffix.
+For GPIO:
 
-With that:
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>  Documentation/devicetree/bindings/reset/xlnx,zynqmp-reset.yaml   | 1 -
+>  Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml           | 1 -
+>  Documentation/devicetree/bindings/usb/microchip,usb5744.yaml     | 1 -
+>  Documentation/devicetree/bindings/usb/xlnx,usb2.yaml             | 1 -
+>  6 files changed, 6 deletions(-)
+>
 
