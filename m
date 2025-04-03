@@ -1,185 +1,198 @@
-Return-Path: <linux-kernel+bounces-586982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E975A7A614
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:17:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF65A7A6A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39AB23B1BA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:16:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7FD8178D68
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65EC24EAB3;
-	Thu,  3 Apr 2025 15:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939042512F5;
+	Thu,  3 Apr 2025 15:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1vQiIOe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QiZ9KL90"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B524337D;
-	Thu,  3 Apr 2025 15:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC3524CEE5;
+	Thu,  3 Apr 2025 15:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693426; cv=none; b=ZQSHdyjKALIbMuwhi2S+D7dtUNaEuosCBF8uki0dZ0iHZVD1lsh4E9eOvnZU4rlqlTDRtgApwnX+Fj/RFexlWElHfHCXc2M+NaNKKyOH+tlHH9tHf4td5lcNMmKBPvAqz/UZF641mpmOp0jbDPvfo7Vu6rjlEHBCK439FXJ9a1U=
+	t=1743693800; cv=none; b=eGUKtxzXpxJNwAhrPPxuFvxrsGrmm62n68BgogqsIXFWNxzOv8dnScpfLomV2Er2kPEgf7FPiI9K5Kl8K38/W4RFUiU84/sA/Bd7r+lOQIzqK8+2EvX5mpdckwLQGuQf0MctcmBARj6Oq55o95Yf2OVlACyRCAmyMBrOSdQ29m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693426; c=relaxed/simple;
-	bh=m3kC4tz7noRERlVMyBS8eOyyMWXXtshmKA59iy5yIFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ISSgf4jYTX95KXGn9yvGMW3QDYEuNUtaM2zc00wPv2w1afESNGOPqQ1vgr0j5S0WOJJr0G2XeNmB5dVtxeRZ9QcowRjKxUCVS9U6N0S5ycRxNre+FSJaQ6W/kb2MM0Jal2djd69lBKCxo1uj3rOIX1YzZi4MHEbn1dkk+CGPOtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1vQiIOe; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743693424; x=1775229424;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=m3kC4tz7noRERlVMyBS8eOyyMWXXtshmKA59iy5yIFU=;
-  b=M1vQiIOeTQkxweY0aPxyXfadNxi17xL9prhz/x15FrL/Vn4ulvSf2NSY
-   kOxcNhEySO/CUfagJEXUEERvt/RXizgME9Eo8tpHuu5mC9v4NAiA+Abe6
-   efDXiaUq9xdyUtSVcr7aoK8tsNsXbCgl5Aaus5ez4g/kr3rKfRKeZrnLi
-   j1fd6k2U/SNOl9lS80XdPnMDqBVPCAcnU4cj4OcLkbEg95eOqAtGrGQ/0
-   /4Ti+/INUMCcbJDigZdYQQI+lknD4Uuma466t6HbKH1kON41/UW6oR7jJ
-   UcTMoAVOi38gZkwFJbZyywRBaqI/KIE/rhVqsSXLGvsVFM0+NoRiCz4ug
-   w==;
-X-CSE-ConnectionGUID: zDtoC5LVSGC6udWho5jzZA==
-X-CSE-MsgGUID: TCVLntgYQ1W+uKrWRTp35w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="48974788"
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="48974788"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 08:17:03 -0700
-X-CSE-ConnectionGUID: swrIOS9FSL2P447QyT0c2Q==
-X-CSE-MsgGUID: mWwZKqiiSqCw/9mtRwBuKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="131763763"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 08:17:03 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id C208F20B5736;
-	Thu,  3 Apr 2025 08:17:00 -0700 (PDT)
-Message-ID: <0924de97-67ec-4c8a-8c5c-66264bdd2748@linux.intel.com>
-Date: Thu, 3 Apr 2025 11:16:59 -0400
+	s=arc-20240116; t=1743693800; c=relaxed/simple;
+	bh=6ZFaM/Uvwrkarz4SIQ5+CwXUuMrp3QkS4FpU3Q8kCKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O0h6mcqovC3onpnvEQq/fMC86yECR4ZiWXaQNpi2rRp3i6r0rcmNkOBd55dd6JPvNgPXcmJUGLM/mNucc0Iwf41fUBgEHm7yLF8oHVZjFujZmV8fncQ0B1wYjpvZ+AZxtoW/3Bh/+b0XRBTbd9pmlw/JeCA+awi6ZfIXtUzpGZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QiZ9KL90; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE23C4CEE3;
+	Thu,  3 Apr 2025 15:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743693799;
+	bh=6ZFaM/Uvwrkarz4SIQ5+CwXUuMrp3QkS4FpU3Q8kCKU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QiZ9KL90481kNW4i2W9iQvuJzEvjruf/nTcf4kWgSxiANkHQnAB22hnblsFMLWW3D
+	 CBCT3rldjvvDOWz+P/aUgaTl2hNKUMD+64tlhkUOaF2qekmYxJw4ff8Qoha8BXttm8
+	 Agq5TMAhoBDM9zfWGYbEzS9tMfkIY1df+yrsmDcw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org
+Subject: [PATCH 6.1 00/22] 6.1.133-rc1 review
+Date: Thu,  3 Apr 2025 16:19:55 +0100
+Message-ID: <20250403151620.960551909@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] perf parse-events: Set is_pmu_core for legacy
- hardware events
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Leo Yan <leo.yan@arm.com>, Yoshihiro Furudera <fj5100bi@fujitsu.com>,
- Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>,
- James Clark <james.clark@linaro.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Yicong Yang <yangyicong@hisilicon.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250210183808.130522-1-irogers@google.com>
- <20250210183808.130522-4-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250210183808.130522-4-irogers@google.com>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.133-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.1.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.1.133-rc1
+X-KernelTest-Deadline: 2025-04-05T15:16+00:00
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+This is the start of the stable review cycle for the 6.1.133 release.
+There are 22 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Sat, 05 Apr 2025 15:16:11 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.133-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.1.133-rc1
+
+Stefan Eichenberger <stefan.eichenberger@toradex.com>
+    ARM: dts: imx6qdl-apalis: Fix poweroff on Apalis iMX6
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    media: i2c: et8ek8: Don't strip remove function when driver is builtin
+
+Andrei Kuchynski <akuchynski@chromium.org>
+    usb: typec: ucsi: Fix NULL pointer access
+
+Abhishek Tamboli <abhishektamboli9@gmail.com>
+    usb: gadget: uvc: Fix ERR_PTR dereference in uvc_v4l2.c
+
+John Keeping <jkeeping@inmusicbrands.com>
+    serial: 8250_dma: terminate correct DMA in tx_dma_flush()
+
+Luo Qiu <luoqiu@kylinsec.com.cn>
+    memstick: rtsx_usb_ms: Fix slab-use-after-free in rtsx_usb_ms_drv_remove
+
+Dominique Martinet <dominique.martinet@atmark-techno.com>
+    net: usb: usbnet: restore usb%d name exception for local mac addresses
+
+Fabio Porcedda <fabio.porcedda@gmail.com>
+    net: usb: qmi_wwan: add Telit Cinterion FE990B composition
+
+Fabio Porcedda <fabio.porcedda@gmail.com>
+    net: usb: qmi_wwan: add Telit Cinterion FN990B composition
+
+Cameron Williams <cang1@live.co.uk>
+    tty: serial: 8250: Add Brainboxes XC devices
+
+Cameron Williams <cang1@live.co.uk>
+    tty: serial: 8250: Add some more device IDs
+
+William Breathitt Gray <wbg@kernel.org>
+    counter: microchip-tcb-capture: Fix undefined counter channel state on probe
+
+Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+    counter: stm32-lptimer-cnt: fix error handling when enabling
+
+Dhruv Deshpande <dhrv.d@proton.me>
+    ALSA: hda/realtek: Support mute LED on HP Laptop 15s-du3xxx
+
+Maxim Mikityanskiy <maxtram95@gmail.com>
+    netfilter: socket: Lookup orig tuple for IPv6 SNAT
+
+Alex Hung <alex.hung@amd.com>
+    drm/amd/display: Check denominator crb_pipes before used
+
+Yanjun Yang <yangyj.ee@gmail.com>
+    ARM: Remove address checking for MMUless devices
+
+Kees Cook <keescook@chromium.org>
+    ARM: 9351/1: fault: Add "cut here" line for prefetch aborts
+
+Kees Cook <keescook@chromium.org>
+    ARM: 9350/1: fault: Implement copy_from_kernel_nofault_allowed()
+
+Minjoong Kim <pwn9uin@gmail.com>
+    atm: Fix NULL pointer dereference
+
+Terry Junge <linuxhid@cosmicgizmosystems.com>
+    HID: hid-plantronics: Add mic mute mapping and generalize quirks
+
+Terry Junge <linuxhid@cosmicgizmosystems.com>
+    ALSA: usb-audio: Add quirk for Plantronics headsets to fix control names
 
 
+-------------
 
-On 2025-02-10 1:38 p.m., Ian Rogers wrote:
-> Also set the CPU map to all online CPU maps. This is done so the
-> behavior of legacy hardware and hardware cache events better matches
-> that of sysfs and json events during
-> __perf_evlist__propagate_maps. Fix missing cpumap put in "Synthesize
-> attr update" test.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/event_update.c |  1 +
->  tools/perf/util/parse-events.c  | 37 ++++++++++++++++++++-------------
->  2 files changed, 24 insertions(+), 14 deletions(-)
-> 
-> diff --git a/tools/perf/tests/event_update.c b/tools/perf/tests/event_update.c
-> index d6b4ce3ef4ee..9301fde11366 100644
-> --- a/tools/perf/tests/event_update.c
-> +++ b/tools/perf/tests/event_update.c
-> @@ -109,6 +109,7 @@ static int test__event_update(struct test_suite *test __maybe_unused, int subtes
->  	TEST_ASSERT_VAL("failed to synthesize attr update name",
->  			!perf_event__synthesize_event_update_name(&tmp.tool, evsel, process_event_name));
->  
-> +	perf_cpu_map__put(evsel->core.own_cpus);
->  	evsel->core.own_cpus = perf_cpu_map__new("1,2,3");
->  
->  	TEST_ASSERT_VAL("failed to synthesize attr update cpus",
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index 6c36b98875bc..8cccf1e22cdf 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -231,21 +231,30 @@ __add_event(struct list_head *list, int *idx,
->  	    struct perf_cpu_map *cpu_list, u64 alternate_hw_config)
->  {
->  	struct evsel *evsel;
-> -	struct perf_cpu_map *cpus = perf_cpu_map__is_empty(cpu_list) && pmu ? pmu->cpus : cpu_list;
-> +	bool is_pmu_core;
-> +	struct perf_cpu_map *cpus;
->  
-> -	cpus = perf_cpu_map__get(cpus);
-> -	if (pmu)
-> +	if (pmu) {
-> +		is_pmu_core = pmu->is_core;
-> +		cpus = perf_cpu_map__get(perf_cpu_map__is_empty(cpu_list) ? pmu->cpus : cpu_list);
->  		perf_pmu__warn_invalid_formats(pmu);
-> -
-> -	if (pmu && (attr->type == PERF_TYPE_RAW || attr->type >= PERF_TYPE_MAX)) {
-> -		perf_pmu__warn_invalid_config(pmu, attr->config, name,
-> -					      PERF_PMU_FORMAT_VALUE_CONFIG, "config");
-> -		perf_pmu__warn_invalid_config(pmu, attr->config1, name,
-> -					      PERF_PMU_FORMAT_VALUE_CONFIG1, "config1");
-> -		perf_pmu__warn_invalid_config(pmu, attr->config2, name,
-> -					      PERF_PMU_FORMAT_VALUE_CONFIG2, "config2");
-> -		perf_pmu__warn_invalid_config(pmu, attr->config3, name,
-> -					      PERF_PMU_FORMAT_VALUE_CONFIG3, "config3");
-> +		if (attr->type == PERF_TYPE_RAW || attr->type >= PERF_TYPE_MAX) {
-> +			perf_pmu__warn_invalid_config(pmu, attr->config, name,
-> +						PERF_PMU_FORMAT_VALUE_CONFIG, "config");
-> +			perf_pmu__warn_invalid_config(pmu, attr->config1, name,
-> +						PERF_PMU_FORMAT_VALUE_CONFIG1, "config1");
-> +			perf_pmu__warn_invalid_config(pmu, attr->config2, name,
-> +						PERF_PMU_FORMAT_VALUE_CONFIG2, "config2");
-> +			perf_pmu__warn_invalid_config(pmu, attr->config3, name,
-> +						PERF_PMU_FORMAT_VALUE_CONFIG3, "config3");
-> +		}
-> +	} else {
-> +		is_pmu_core = (attr->type == PERF_TYPE_HARDWARE ||
-> +			       attr->type == PERF_TYPE_HW_CACHE);
-> +		if (perf_cpu_map__is_empty(cpu_list))
-> +			cpus = is_pmu_core ? perf_cpu_map__new_online_cpus() : NULL;
+Diffstat:
 
-All online CPUs? Is there a problem for hybrid?
+ Makefile                                           |   4 +-
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi              |  10 +-
+ arch/arm/mm/fault.c                                |   8 ++
+ drivers/counter/microchip-tcb-capture.c            |  19 +++
+ drivers/counter/stm32-lptimer-cnt.c                |  24 ++--
+ .../drm/amd/display/dc/dcn315/dcn315_resource.c    |   2 +-
+ drivers/hid/hid-plantronics.c                      | 144 ++++++++++-----------
+ drivers/media/i2c/et8ek8/et8ek8_driver.c           |   4 +-
+ drivers/memstick/host/rtsx_usb_ms.c                |   1 +
+ drivers/net/usb/qmi_wwan.c                         |   2 +
+ drivers/net/usb/usbnet.c                           |  21 ++-
+ drivers/tty/serial/8250/8250_dma.c                 |   2 +-
+ drivers/tty/serial/8250/8250_pci.c                 |  46 +++++++
+ drivers/usb/gadget/function/uvc_v4l2.c             |  12 +-
+ drivers/usb/typec/ucsi/ucsi.c                      |  13 +-
+ net/atm/mpc.c                                      |   2 +
+ net/ipv6/netfilter/nf_socket_ipv6.c                |  23 ++++
+ sound/pci/hda/patch_realtek.c                      |   1 +
+ sound/usb/mixer_quirks.c                           |  51 ++++++++
+ 19 files changed, 279 insertions(+), 110 deletions(-)
 
-Thanks,
-Kan> +		else
-> +			cpus = perf_cpu_map__get(cpu_list);
->  	}
->  	if (init_attr)
->  		event_attr_init(attr);
-> @@ -260,7 +269,7 @@ __add_event(struct list_head *list, int *idx,
->  	evsel->core.cpus = cpus;
->  	evsel->core.own_cpus = perf_cpu_map__get(cpus);
->  	evsel->core.requires_cpu = pmu ? pmu->is_uncore : false;
-> -	evsel->core.is_pmu_core = pmu ? pmu->is_core : false;
-> +	evsel->core.is_pmu_core = is_pmu_core;
->  	evsel->auto_merge_stats = auto_merge_stats;
->  	evsel->pmu = pmu;
->  	evsel->alternate_hw_config = alternate_hw_config;
 
 
