@@ -1,100 +1,193 @@
-Return-Path: <linux-kernel+bounces-586292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A866A79D5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52101A79D6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC571744D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA2516CCDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159AD23F417;
-	Thu,  3 Apr 2025 07:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501ED23F419;
+	Thu,  3 Apr 2025 07:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0Ia45so"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="BqJHnuA7"
+Received: from smtpcmd11116.aruba.it (smtpcmd11116.aruba.it [62.149.156.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EDB193402;
-	Thu,  3 Apr 2025 07:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A71E1A23B9
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743666532; cv=none; b=ryRx2RH3I8uPVDedqsfS0yJAmXqECfnw7Tjjw0NpURk8ZIFZzYZVZq5LbZMfAzUayMgcfVvHXxcIEhC30gNMC71m9wPAfII/GVb/XYHLEiB7Oky2voiTlHQPSRWuWAsnCxFtxFjJ3TXYf4zCCnVWrbwTSOtx0/FMHoRKDdDM6jE=
+	t=1743666741; cv=none; b=uRkDM3Ba1TcFk+Q6snaxwm8MBfO+xzXow8659+MB6KF2Cd6ivvJmQuTVIUqKbWSYXDu5hmPO2rZiKUXBXw5vAdbdpZZLKkW6ZB/Vb9QbX0GBkH5V2BfmK3P0c1ELZBYQWS9/msoiac4edtTcxLuHKzfiJ98fw/87rudMvxoIJAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743666532; c=relaxed/simple;
-	bh=JKHMbrz5aWBVgO+ChNZ07uaUlRSflD7s97HDUzhEB3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DeEA677KZ1gAIBPGDWEIJ5EhDww8gM9cR/vzrlv/4TTkGlFxngkQizDuZiEdEMjVnWNn3w77P2A3tyKxiwNAscqslkw01X9WxnujWhvgrpEWeAv5TwnASjBiw8zDtO1h80P8JMmC75cFOj0bsMBlaZs2D9WlZUly8Z4J3cE0I90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0Ia45so; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793BCC4CEE3;
-	Thu,  3 Apr 2025 07:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743666532;
-	bh=JKHMbrz5aWBVgO+ChNZ07uaUlRSflD7s97HDUzhEB3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f0Ia45so8yQhjiKBRJnbfuax9XzNHGF9hsy1x/8IX0y/A3bPQbDsO/hzujH5X5jfS
-	 AUs9+zbwAo/dDBDFFGz23Q5ap0LwsL+7QZFEsUjaiaHJ64ds1SWUBajKfj1pkenh5l
-	 D2IhLGzApxYtCwP57SDKO4ohE72kwHllaqQvc1fKUUolv4keY3lMSDiMQVB5VxtDEa
-	 S5cUsIAQQnFN4COfmpovvy6R8JT5cdlpfVuRrcq7FaciW3Yb5sfl86hBz3NamSD7D/
-	 lNj7Fh+0SIkwacVxZVYAb9/l8jS4+FPaXVFp3+Ej6B2UvT+F0LYLhq8pO/KlEvmGQK
-	 T+iFxTC3xnSeg==
-Date: Thu, 3 Apr 2025 00:48:49 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, amit@kernel.org, 
-	kvm@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de, 
-	tglx@linutronix.de, peterz@infradead.org, pawan.kumar.gupta@linux.intel.com, 
-	corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	seanjc@google.com, pbonzini@redhat.com, daniel.sneddon@linux.intel.com, 
-	kai.huang@intel.com, sandipan.das@amd.com, boris.ostrovsky@oracle.com, 
-	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk, 
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 6/6] x86/bugs: Add RSB mitigation document
-Message-ID: <pqwdrzrd7i34batgjm2edrbizl4z5oyjnmzzei2m6tn2cybzcm@sk2p4w2jrrxp>
-References: <cover.1743617897.git.jpoimboe@kernel.org>
- <d6c07c8ae337525cbb5d926d692e8969c2cf698d.1743617897.git.jpoimboe@kernel.org>
- <Z-35GYpMU0GJ5Z6j@archie.me>
+	s=arc-20240116; t=1743666741; c=relaxed/simple;
+	bh=7WkQ902+KCYS/p0UfE59EQX3GK8GAxuBezBGmDR/EAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xp+Aeko60NiVRhTCGN8tnll9AfMT6RaDpKHvc/ckQt4s/ZqjxIMnqsj5t2tGmZf+Tz4EofP4j36GnwKZ65f0d7NpbZtmXYIViRLb7K1Cg4z4hxcnBuLIHU6ck8XwdO/H1MEFE8dO0UasFtDtUn/OE2TuxvywiUbsc4sh7O6HwHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=BqJHnuA7; arc=none smtp.client-ip=62.149.156.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.57] ([79.0.204.227])
+	by Aruba SMTP with ESMTPSA
+	id 0FJzuSeGotr9d0FJzu8HdI; Thu, 03 Apr 2025 09:49:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1743666547; bh=7WkQ902+KCYS/p0UfE59EQX3GK8GAxuBezBGmDR/EAY=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=BqJHnuA7444KMjubVUqYpX9sHcg8hpddR5EO8zdlepOTWWF+gOmJwZHZKV/ZjLcfi
+	 AShhpDtyUGb1vQVvgApT4lSupdDDoExEhB06K5tHlb0svlYvqfom3BGg+X+DFw0+sF
+	 aUjiEgS99ZNL0QDziAjD1n92kx+jPNtO6AmBkHB+/rNBXsSH6MW00lcnqSjVrV/37+
+	 64/bjTRcxgIGG5cW31+eFppCFXRu4c8tGTJBNkR3AQZx6/yjtgFMH0vD8/HzgqugjL
+	 3TnpJJJukGhQn3vdEUkkLb20rkpieFAErPruFX3See1ve89VfghCCo+e504teTwSNE
+	 7EMtMNbu1iL0Q==
+Message-ID: <636c5ad9-25ad-44f7-9454-a7787de7a6aa@enneenne.com>
+Date: Thu, 3 Apr 2025 09:49:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-35GYpMU0GJ5Z6j@archie.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pps: fix poll support
+Content-Language: en-US
+To: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <0231dfc22dd34a5aaee09a6a19074de1@diehl.com>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <0231dfc22dd34a5aaee09a6a19074de1@diehl.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfHbkBv7pm3c1jDM4YSW1irVeFNQIfkTfP2aPCtOV7mxrFv9WPHTyKT8HvX83RNFMHyGcXnhHwV3EMk5qWnHEQOG7OKXpELlofHGp9qLwO/iyUsxzTZ85
+ 2A3DAozxNdQyhM7N3kBXg0XmlK7hWKxCzSn/7p/C58sSOgHpqGz6Pf4E3JHWVNksXQQZoNJw9yuUoweZtfG9AsUfcdcBtcM/qvAV3Zo1npT/v0A7plJ8G8NT
+ ew/PNAePSE/18uc2v0lbtGat8Aaeh7QEUEgfKfds74w=
 
-On Thu, Apr 03, 2025 at 09:57:29AM +0700, Bagas Sanjaya wrote:
-> On Wed, Apr 02, 2025 at 11:19:23AM -0700, Josh Poimboeuf wrote:
-> > +    Note that some Intel CPUs are susceptible to Post-barrier Return
-> > +    Stack Buffer Predictions (PBRSB)[#intel-pbrsb]_, where the last CALL
-> > +    from the guest can be used to predict the first unbalanced RET.  In
-> > +    this case the PBRSB mitigation is needed in addition to eIBRS.
+On 03/04/25 08:06, Denis OSTERLAND-HEIM wrote:
+> Hi Rodolfo,
 > 
-> I get Sphinx unreferenced footnote warning:
-> 
-> Documentation/admin-guide/hw-vuln/rsb.rst:221: WARNING: Footnote [#] is not referenced. [ref.footnote]
-> 
-> To fix that, I have to separate the footnote:
-> 
-> ---- >8 ----
-> diff --git a/Documentation/admin-guide/hw-vuln/rsb.rst b/Documentation/admin-guide/hw-vuln/rsb.rst
-> index 97bf75993d5d43..dd727048b00204 100644
-> --- a/Documentation/admin-guide/hw-vuln/rsb.rst
-> +++ b/Documentation/admin-guide/hw-vuln/rsb.rst
-> @@ -102,7 +102,7 @@ there are unbalanced CALLs/RETs after a context switch or VMEXIT.
->  	at the time of the VM exit." [#intel-eibrs-vmexit]_
->  
->      Note that some Intel CPUs are susceptible to Post-barrier Return
-> -    Stack Buffer Predictions (PBRSB)[#intel-pbrsb]_, where the last CALL
-> +    Stack Buffer Predictions (PBRSB) [#intel-pbrsb]_, where the last CALL
->      from the guest can be used to predict the first unbalanced RET.  In
->      this case the PBRSB mitigation is needed in addition to eIBRS.
+> Do you think that there is a chance that this patch make it in the current merge window?
 
-Fixed, thanks!
+Honestly, I don't know, it's up to Greg or Andrew to proceed for inclusion.
+
+Ciao,
+
+Rodolfo
+
+> -----Original Message-----
+> From: Rodolfo Giometti <giometti@enneenne.com>
+> Sent: Monday, March 3, 2025 12:54 PM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-kernel@vger.kernel.org; Denis OSTERLAND-HEIM <denis.osterland@diehl.com>; stable@vger.kernel.org
+> Subject: [EXT] Re: [PATCH] pps: fix poll support
+> 
+> [EXTERNAL EMAIL]
+>   
+> 
+> On 03/03/25 09:02, Denis OSTERLAND-HEIM wrote:
+>> [BUG]
+>> A user space program that calls select/poll get always an immediate data
+>> ready-to-read response. As a result the intended use to wait until next
+>> data becomes ready does not work.
+>>
+>> User space snippet:
+>>
+>>       struct pollfd pollfd = {
+>>         .fd = open("/dev/pps0", O_RDONLY),
+>>         .events = POLLIN|POLLERR,
+>>         .revents = 0 };
+>>       while(1) {
+>>         poll(&pollfd, 1, 2000/*ms*/); // returns immediate, but should wait
+>>         if(revents & EPOLLIN) { // always true
+>>           struct pps_fdata fdata;
+>>           memset(&fdata, 0, sizeof(memdata));
+>>           ioctl(PPS_FETCH, &fdata); // currently fetches data at max speed
+>>         }
+>>       }
+>>
+>> [CAUSE]
+>> pps_cdev_poll() returns unconditionally EPOLLIN.
+>>
+>> [FIX]
+>> Remember the last fetch event counter and compare this value in
+>> pps_cdev_poll() with most recent event counter
+>> and return 0 if they are equal.
+>>
+>> Signed-off-by: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+>> Co-developed-by: Rodolfo Giometti <giometti@enneenne.com>
+>> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
+> 
+> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+> 
+> If needed. :)
+> 
+>> Fixes: eae9d2ba0cfc ("LinuxPPS: core support")
+>> CC: stable@vger.linux.org # 5.4+
+>> ---
+>>    drivers/pps/pps.c          | 11 +++++++++--
+>>    include/linux/pps_kernel.h |  1 +
+>>    2 files changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+>> index 6a02245ea35f..9463232af8d2 100644
+>> --- a/drivers/pps/pps.c
+>> +++ b/drivers/pps/pps.c
+>> @@ -41,6 +41,9 @@ static __poll_t pps_cdev_poll(struct file *file, poll_table *wait)
+>>    
+>>    	poll_wait(file, &pps->queue, wait);
+>>    
+>> +	if (pps->last_fetched_ev == pps->last_ev)
+>> +		return 0;
+>> +
+>>    	return EPOLLIN | EPOLLRDNORM;
+>>    }
+>>    
+>> @@ -186,9 +189,11 @@ static long pps_cdev_ioctl(struct file *file,
+>>    		if (err)
+>>    			return err;
+>>    
+>> -		/* Return the fetched timestamp */
+>> +		/* Return the fetched timestamp and save last fetched event  */
+>>    		spin_lock_irq(&pps->lock);
+>>    
+>> +		pps->last_fetched_ev = pps->last_ev;
+>> +
+>>    		fdata.info.assert_sequence = pps->assert_sequence;
+>>    		fdata.info.clear_sequence = pps->clear_sequence;
+>>    		fdata.info.assert_tu = pps->assert_tu;
+>> @@ -272,9 +277,11 @@ static long pps_cdev_compat_ioctl(struct file *file,
+>>    		if (err)
+>>    			return err;
+>>    
+>> -		/* Return the fetched timestamp */
+>> +		/* Return the fetched timestamp and save last fetched event  */
+>>    		spin_lock_irq(&pps->lock);
+>>    
+>> +		pps->last_fetched_ev = pps->last_ev;
+>> +
+>>    		compat.info.assert_sequence = pps->assert_sequence;
+>>    		compat.info.clear_sequence = pps->clear_sequence;
+>>    		compat.info.current_mode = pps->current_mode;
+>> diff --git a/include/linux/pps_kernel.h b/include/linux/pps_kernel.h
+>> index c7abce28ed29..aab0aebb529e 100644
+>> --- a/include/linux/pps_kernel.h
+>> +++ b/include/linux/pps_kernel.h
+>> @@ -52,6 +52,7 @@ struct pps_device {
+>>    	int current_mode;			/* PPS mode at event time */
+>>    
+>>    	unsigned int last_ev;			/* last PPS event id */
+>> +	unsigned int last_fetched_ev;		/* last fetched PPS event id */
+>>    	wait_queue_head_t queue;		/* PPS event queue */
+>>    
+>>    	unsigned int id;			/* PPS source unique ID */
+> 
 
 -- 
-Josh
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
+
 
