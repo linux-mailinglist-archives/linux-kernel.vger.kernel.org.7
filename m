@@ -1,236 +1,130 @@
-Return-Path: <linux-kernel+bounces-586484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402B6A7A024
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1F1A7A026
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6BD3B5AC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3CDA3AA68B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95190241686;
-	Thu,  3 Apr 2025 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="etNWkVBK"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CC82CA6
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C319D245031;
+	Thu,  3 Apr 2025 09:36:13 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080EC241678
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672920; cv=none; b=SvAw3mkCiidhaXJJjtAX+7KUYNPjax1PjxiaZ64d55mszeGVHcmFDAJ04nGWhgqk5hHqvL/R6r9sGZ+8EGIURiGnalosxk45YtxBoVan3eoNCr6fWhYTK/WRw6zUbSBsIhgtpVOaF5mMRYFyWkIhNrntvBUHSS7wNob1gS7NXmE=
+	t=1743672973; cv=none; b=i2X/D1jtdP77VjNoTabiMvewQF1OvWGc6mWxJJepxLbsdwlzd6JDZfkTnC7k4Rh16FODRqYMgAqQBxyj6pdO686gEQIj6bCZ74mDeFFzGjlyr522rQyveUg4WrFbdUBVj0l66lZiAQadI+cxK/elB2qcPICBWpctBQ75PX0sD1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672920; c=relaxed/simple;
-	bh=hTv2KgFQ6mmvlFNOjF6EqimAnSbCYHjyBnJGv3GuL9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PF0WR+pj7yaDr1m6ENRw2hBhkjAm1Fp3qqMqrtkiaS6CUEbFsU/49IBFtz9Sn7OTGUFgTQR3+rYa6+PlVl6E7XBhasxjzWv11QO0YXZ8JTP+QzjUW06qBaLozHaAe2A3nb6MioV3WCJg37nuiMgQxf802aanGF8RTBp1+kEJCh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=etNWkVBK; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39bf44be22fso479794f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743672917; x=1744277717; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T5CAypoWaAtWtu473NN12TufcIHrlJkEOgdxMCUBBgo=;
-        b=etNWkVBK1y4jOgIUaK/ENK6ZkDzqf8YuE0+rlAXq4X87WSVqv8JmwJWaw3HOrJtG9B
-         qQBcjIWAzfMee7J4o5+hM0CTjWg+kB4GyFTSdUxj2X/gFa1TAxcExH9eMLf5sfF30Z7N
-         +xChYOhH0TCkAjMyMl7aXZ+z0mz8Rcp/B0z6mGzTSpD0XnYFKoeD3vT79Nc9LXefKKnX
-         8Chxxfl45vo/8kGhelSs5Qyc+dwZm8JiyXTsAfivo6WfjjKUTvF6bsjVPIxVH8SX6p+5
-         offW6M3fiYi2pf57nsWCXGotf4DEIH3rpw4V5pD/JPTuRuFPVp+rHLljEcB6MB46y3Xm
-         O3Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743672917; x=1744277717;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5CAypoWaAtWtu473NN12TufcIHrlJkEOgdxMCUBBgo=;
-        b=okUI1pLdw3l4VsqjAIdn7hvnCOQ3p5O6y0TqXYSs8mhfyOhFLDWELYoBke6uR4iiNu
-         Jy9ajLKPDAWUMQhPrNeRZIYF9zDmP8Rui5BqfSvEpV5S2WX0qiaQmRYE/QONpV0XVpaR
-         7ygYdMZejjPMhNJwWRTCOvTP9XlKv6ssSiqwhG+Zr+mns2XYW3W0/dhlwycm5zuLUUsh
-         xoUM8pq4w8WiXV22MiwGk90HOmcyx+sfevsDZ7dvr8bdFGd6m55K/pgv133Lvn1mqFfa
-         6Y+y55XDV297SQaJjR/XViOZ1nGQUhPTgDgvo/jOt7y4++WRknMp+hGoQReH5f9xMD/g
-         pggA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcdSApwOwJSZs6Vuhp6HnI/G1u6NZ+vgte6HMnJ8kr1vbrPbeHFFTfjZSQhKmaA2LoJpC8v01Scf4DX0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK0gMw6/RfzEAATzc8VqWNwimxxffGFthbxn5i8AnKvFAsxUGl
-	DGrmzFXrskn1SRxRXV83fmbgLDKLxVMwi+IYPA2gGLa4eY0dqTvrkud2d0wUh3U=
-X-Gm-Gg: ASbGncsPC5SMma/JL0sOwzLehRRIi3OamOqMIK4aMoO95NHROVh/aoXWCaF1k4pUyTG
-	anDvp7NKDs3ZIT9Q3xIkLagHTCib3L7woskrCkmQRe34z/PeC1cRncMpmgLiSAdjlAq8f9aV89R
-	e1hdFyheiZIPaofjSjVA9kARD8k2ThHkPqaBa+Tb9l7nyTOXk/YR3cPuWt1RxSwyZ5H5BaJVu3/
-	ASb0CljWM8XoG+uqqLZuwsOm76sA9EwWutA1VCRu9kUok5N4rb6+mabXRvpcFlq787TlMly+Es/
-	9khKKLtJMXhXkQO75bXqLNpz8x1ZUnJhwtwIAxP00SFipMaxZU3TfcEOtQJhM68=
-X-Google-Smtp-Source: AGHT+IEDow1XNrGFKRCrJe0HVDXIHcCY2J/XMVIEnBD6x/XU9lYgAvHJFWPEa5Ku+bo7CEPYTjTcEA==
-X-Received: by 2002:a05:6000:2913:b0:391:3988:1c7c with SMTP id ffacd0b85a97d-39c29754657mr4540681f8f.24.1743672917108;
-        Thu, 03 Apr 2025 02:35:17 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c301a7045sm1305774f8f.39.2025.04.03.02.35.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 02:35:16 -0700 (PDT)
-Message-ID: <56cbe0a0-048e-45a2-87f2-e2515c7e7414@linaro.org>
-Date: Thu, 3 Apr 2025 10:35:15 +0100
+	s=arc-20240116; t=1743672973; c=relaxed/simple;
+	bh=6tKPEyRrOoKoMd0e8cKWhIb4UdWyLCd4SdxpyxMSD7A=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=A3foFJVCWj6nneENWfHM8JQtsURLes2GwmHIBTIuxmjqSqU7E9f4jNYa+a5NHqRjZEvDlilwpNEfUEE4fb+Siv0YMKnv1EMzi8+gqAIWa2nsIyOh2q4M4dbaIS0wlWQtT32BxeDk5u3d3D5hIjKSVPrcqksj/Fqx1sy8MoqFrAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxqmqHVu5nOxewAA--.32885S3;
+	Thu, 03 Apr 2025 17:36:07 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMAxj8V3Vu5n9YBtAA--.1829S3;
+	Thu, 03 Apr 2025 17:35:52 +0800 (CST)
+Subject: Re: [linux-next:master 12681/13861] drivers/i2c/i2c-core-base.o:
+ warning: objtool: __i2c_transfer+0x120: stack state mismatch: reg1[24]=-1+0
+ reg2[24]=-2-24
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Philip Li <philip.li@intel.com>
+References: <202504011011.jyZ6NtXx-lkp@intel.com> <Z+ttzRArSBMqfABz@rli9-mobl>
+ <xqfrt2rueezh3upug2umvuw2r44luoaxfqycnmvkh5sezaosw6@h77yjfio4ws6>
+Cc: kernel test robot <lkp@intel.com>, Guenter Roeck <linux@roeck-us.net>,
+ oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Alessandro Carminati <acarmina@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <348cdb14-f8cf-1e7b-44b2-79dc4dda4e35@loongson.cn>
+Date: Thu, 3 Apr 2025 17:35:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] nvmem: patches (set 1) for 6.15
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-References: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
- <2025040143-espionage-poison-2345@gregkh>
- <47a3a851-f737-4772-87c6-98613347435c@linaro.org>
- <2025040230-showoff-spray-ac83@gregkh>
- <283ac88b-c8d4-47c8-9ff7-935770eca566@linaro.org>
- <b6e7abf3-b263-410a-8f4c-eb9a8e2efa2b@oss.qualcomm.com>
- <e8c91706-1a94-4e3d-b2a9-9d670021bbc8@linaro.org>
- <CAO9ioeVYYy-10ZBmNLMzZK2+mZ5mKf_ZtGwRVf__Dg8GA=Sf0Q@mail.gmail.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <CAO9ioeVYYy-10ZBmNLMzZK2+mZ5mKf_ZtGwRVf__Dg8GA=Sf0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <xqfrt2rueezh3upug2umvuw2r44luoaxfqycnmvkh5sezaosw6@h77yjfio4ws6>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMAxj8V3Vu5n9YBtAA--.1829S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Cr15Zw4fWw1rCrWUKr13ZFc_yoW8uw4xpa
+	y3Aa1vyr48Xry0q39rtas0ga1Dtr4DGw13WFyY9ryUZF42vry3uFyIyFZ8WF9FywnrC340
+	qrWSq3Z3tF4jv3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4YLvDUUUU
 
-
-
-On 03/04/2025 10:31, Dmitry Baryshkov wrote:
-> On Thu, 3 Apr 2025 at 12:27, Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> wrote:
->>
->>
->>
->> On 03/04/2025 10:25, Dmitry Baryshkov wrote:
->>> On 03/04/2025 12:18, Srinivas Kandagatla wrote:
->>>>
->>>>
->>>> On 02/04/2025 12:31, Greg KH wrote:
->>>>> On Wed, Apr 02, 2025 at 09:19:17AM +0100, Srinivas Kandagatla wrote:
->>>>>> HI Greg,
->>>>>>
->>>>>> On 01/04/2025 20:18, Greg KH wrote:
->>>>>>> On Sun, Mar 09, 2025 at 02:56:50PM +0000,
->>>>>>> srinivas.kandagatla@linaro.org wrote:
->>>>>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>>>>>>
->>>>>>>> Hi Greg,
->>>>>>>>
->>>>>>>> Here are few nvmem patches for 6.15, Could you queue
->>>>>>>> these for 6.15.
->>>>>>>>
->>>>>>>> patche include
->>>>>>>>      - updates to bindings to include MSM8960, X1E80100, MS8937,
->>>>>>>>        IPQ5018
->>>>>>>>      - add support to bit offsets for register strides exceeding
->>>>>>>>        single byte
->>>>>>>>      - add rockchip-otp variants.
->>>>>>>>      - Few enhancements in qfprom and rochchip nvmem providers.
->>>>>>>
->>>>>>> Ok, I wanted to apply these, and tried to, but they fail horribly
->>>>>>> because:
->>>>>>>
->>>>>>> Commit: 1b14625bd6d4 ("nvmem: qfprom: switch to 4-byte aligned reads")
->>>>>>>      Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's
->>>>>>> raw_len")
->>>>>>>      Has these problem(s):
->>>>>>>          - Target SHA1 does not exist
->>>>>>> Commit: a8a7c7e34093 ("nvmem: core: update raw_len if the bit
->>>>>>> reading is required")
->>>>>>>      Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's
->>>>>>> raw_len")
->>>>>>>      Has these problem(s):
->>>>>>>          - Target SHA1 does not exist
->>>>>>> Commit: d44f60348d8c ("nvmem: core: fix bit offsets of more than
->>>>>>> one byte")
->>>>>>>      Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's
->>>>>>> raw_len")
->>>>>>>      Has these problem(s):
->>>>>>>          - Target SHA1 does not exist
->>>>>>
->>>>>> Looks some of your scripts or b4 is picking up older version v1 of the
->>>>>> patchset
->>>>>>
->>>>>> None of the above patches have Fixes tags in the V2 patches that I
->>>>>> shared
->>>>>> aswell as patches in linux-next.
->>>>>
->>>>> Yes, that looks odd, it looks like b4 pulled in the wrong series, yes.
->>>>>
->>>>
->>>> Even that looked incorrect, as the v1 series only had one
->>>> patch("[PATCH 12/14] nvmem: make the misaligned raw_len non-fatal")
->>>> that had fixes tag. Not sure how these 3 patches are tagged as fixes.
->>>>
->>>>> But, that's even worse.  Those "fixes" are now not actually marked as
->>>>> fixes of the previous patch.  So that information is totally lost, and
->>>>
->>>> Its because this patch("PATCH 12/14] nvmem: make the misaligned
->>>> raw_len non-fatal") is taken as fixup patch and wrapped into the
->>>> original patch ("nvmem: core: verify cell's raw_len"), Also the sha
->>>> will not be valid for linus or char-misc tree.
->>>>
->>>>> again, the first commit here, "nvmem: core: verify cell's raw_len" is
->>>>> broken so much that it took 3 other changes to fix it, which implies
->>>>> that bisection would cause problems if you hit it in the middle here.
->>>>>
->>>>
->>>> All the patches related to this are enhancements to nvmem core to
->>>> allow specifying bit offsets for nvmem cell that have 4 bytes strides.
->>>>
->>>> Specially this check is also an additional check in core to make sure
->>>> that cell offsets are aligned to register strides.
->>>>
->>>>> While fixing patches is great, and something we do in the tree all the
->>>>> time, let's not purposefully break things and then fix them up in the
->>>>> same exact patch series please.  That's just sloppy engineering.
->>>>>
->>>>> Please redo this series completely.  I can take the "new device support"
->>>>
->>>> I can send them but its going to be exactly same series, I dont think
->>>> anything will change as all of these patches are enhancements and
->>>> there are no fixes.
->>>>
->>>> I hope this clarifies a bit, Please let me know if you still want me
->>>> to resend this series, which is going to be exactly same.
+On 04/02/2025 03:45 AM, Josh Poimboeuf wrote:
+> On Tue, Apr 01, 2025 at 12:38:37PM +0800, Philip Li wrote:
+>> On Tue, Apr 01, 2025 at 10:44:57AM +0800, kernel test robot wrote:
+>>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+>>> head:   405e2241def89c88f008dcb899eb5b6d4be8b43c
+>>> commit: 9016dad4dca4bbe61c48ffd5a273cad980caa0d1 [12681/13861] loongarch: add support for suppressing warning backtraces
+>>> config: loongarch-randconfig-001-20250401 (https://download.01.org/0day-ci/archive/20250401/202504011011.jyZ6NtXx-lkp@intel.com/config)
+>>> compiler: loongarch64-linux-gcc (GCC) 14.2.0
+>>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250401/202504011011.jyZ6NtXx-lkp@intel.com/reproduce)
 >>>
->>> I think Greg is asking to squash the fixup into the relevant patch.
->>
->> Its already squashed up in v2.
-> 
-> Then there should be no Fixes tags. Is the series that you are sending
-> visible somewhere?
-
-Yes, there is no fixes tags in v2 series,
-
-Here is what is sent to as v2:
-https://lore.kernel.org/lkml/47a3a851-f737-4772-87c6-98613347435c@linaro.org/T/#r01449e17cf6f9396967a822a0460ad4b1245e914
-
-
-thanks,
-Srini
-> 
->>
->> thanks,
->> Srini
+>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>>> the same patch/commit), kindly add following tags
+>>> | Reported-by: kernel test robot <lkp@intel.com>
+>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202504011011.jyZ6NtXx-lkp@intel.com/
 >>>
->>>>
->>>> --srini
->>>>> patches at any time, and really, those should be marked with Cc: stable
->>>>> to get backported, right?  The other ones are written as if they are
->>>>> fixes, so again, I can take them any time, no need to wait for the -rc1
->>>>> merge cycle.
->>>>>
->>>>> thanks,
->>>>>
->>>>> greg k-h
+>>> All warnings (new ones prefixed by >>):
 >>>
->>>
-> 
-> 
-> 
+>>>>> drivers/i2c/i2c-core-base.o: warning: objtool: __i2c_transfer+0x120: stack state mismatch: reg1[24]=-1+0 reg2[24]=-2-24
+>
+> Tiezhu, this looks like a loongarch GCC bug with asm goto, or am I
+> confused?  See analysis below.
+
+This is related with GCC optimization "-fshrink-wrap" which is default y
+on LoongArch, use "-fno-shrink-wrap" can avoid such issues, like this:
+
+---8<---
+
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index 0304eabbe606..2d5529322357 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -106,6 +106,7 @@ KBUILD_CFLAGS                       += 
+-mannotate-tablejump
+  else
+  KBUILD_CFLAGS                  += -fno-jump-tables # keep 
+compatibility with older compilers
+  endif
++KBUILD_CFLAGS                  += -fno-shrink-wrap
+  endif
+
+  KBUILD_RUSTFLAGS               += 
+--target=loongarch64-unknown-none-softfloat -Ccode-model=small
+
+If you are OK with this change, I will send a formal patch after the
+merge window.
+
+Thanks,
+Tiezhu
+
 
