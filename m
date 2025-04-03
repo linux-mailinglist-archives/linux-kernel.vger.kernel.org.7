@@ -1,178 +1,241 @@
-Return-Path: <linux-kernel+bounces-587661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D949EA7AF27
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41500A7AF59
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8D1188E825
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CDD3B5FF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CA9230251;
-	Thu,  3 Apr 2025 19:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFD925522E;
+	Thu,  3 Apr 2025 19:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3ekbNnb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="RPXWsdw0"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AA722FF2D;
-	Thu,  3 Apr 2025 19:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C202512CE;
+	Thu,  3 Apr 2025 19:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707953; cv=none; b=NJ3A/xxmUVgUVZml8oqq2Q3VyMYMoVX2s5Ii0xnS4PCO86nyI4nSvekfTdMqn5mC2lwfZ/5Ciwn3ozPJCfir9RM8/ecYiXJSMLVR3n8fVvF5DVOEyObswgqHf0U8TVHd1jjEaKGF2NlO4LfWvoNbHKmrXy53wkP1xFjBS5ZTdxE=
+	t=1743707992; cv=none; b=lIZRykkob9VKTaPcoCx7/u7hlc6g8x2aVwkJU2yIYpw4Esh7LTcCuxIX1lVuBJcoAD0t1R7BvZL2tVhDr+dKHBpxJuhjoWh5Vwng9zCkqC0tyfJMv3sg4uFP35dhQ+WVuZWfe6T6JTu8ejfaQRxkAKsdtquKqafhM6lkeiCHQdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707953; c=relaxed/simple;
-	bh=mBUu4pm+sHvPxcapb9L/4VvTmLov074qVOE6ZfKbcfU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jJc2UKxMrsvQYnl0+E7B3leiPask3dTtyLGAYZIJ5WrQ1QYORdrDuxXxuQQ8XyyKjMHgvQt7H2Wt/Lq6D7TXSuK4/WMwI/BhtCoH2J9Uu+L/xxLVMWjx3REUP6/PWm6Q2Ugctxn6jZlz4WmMO2VnwTrNAWuN/CPAddzVxWs/YwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3ekbNnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E736C4CEEA;
-	Thu,  3 Apr 2025 19:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707952;
-	bh=mBUu4pm+sHvPxcapb9L/4VvTmLov074qVOE6ZfKbcfU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C3ekbNnb+PX3PTXztbaT98GIQbJxIUcLCz87b/QJLH2t6Fjw7qGKb/S1ckEsOTXU6
-	 seoHkN46f3WGTPQpazXs3CybzO/65oG+a4kus/RlhRKAtL8MiGmwEBnzMNLj/Jvgu3
-	 4va8RpLVIlzlp8wdklYMBHzvql/+v2d1RIH64ISmxL09kCI9TIZpwDW+IbxawObMKV
-	 MUfOmcaMtroEI1jYe1jzcyscn6Nfv5U4JoNsqS7avJDvKpvLKfRH2vuBM2qHzSBpnd
-	 RoeWzI87uK/CAU6ih4R8MQnuFgsn5g1icv49s65sHwHeFmFkvNf7zr33soAS2AkSMH
-	 mbYyoWYVS+E8w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jonathan McDowell <noodles@meta.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	peterhuewe@gmx.de,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 23/23] tpm, tpm_tis: Workaround failed command reception on Infineon devices
-Date: Thu,  3 Apr 2025 15:18:16 -0400
-Message-Id: <20250403191816.2681439-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403191816.2681439-1-sashal@kernel.org>
-References: <20250403191816.2681439-1-sashal@kernel.org>
+	s=arc-20240116; t=1743707992; c=relaxed/simple;
+	bh=uPpUnikI6V5BZQyx2/t+prng46nejSRfS5Mgvb/auw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tFM2SiJ0ggqkSeQAyHppG7xqAJWTVQTIu1C1SjiQF36Fmq37M2DWon9BDzynggMGoXLY7EjQE0aiJ5tYlb0M7pUAp/IJKu0sPeo2IdYQClgvT1qo0qUKPWZJc3g7Voo/bsMlIr4/elwqVS2ET7CeXZ7GFCTCgipOS3KQY/W/XEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=RPXWsdw0; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id c2c9616ba3bbde8e; Thu, 3 Apr 2025 21:19:42 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 912619014E8;
+	Thu,  3 Apr 2025 21:19:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1743707982;
+	bh=uPpUnikI6V5BZQyx2/t+prng46nejSRfS5Mgvb/auw4=;
+	h=From:Subject:Date;
+	b=RPXWsdw0a+vIwjm/6lop6uh0ejJMTyc6IUyX1aVNUFzzfGYYerrcPdzZu/h2vbDnN
+	 LLcRRwSzUIVcMWE46NrL3Mhq7CzTZa+hO4NZDOvfKzdMe41ibGekEz6j9oVWAKA1du
+	 T2qCy3Ry65bip5gr/R0PwLEcxSUWECgZbiUEhKPX8wazD1FOF2YsqsWTF+KlKz9PbO
+	 BPEAeyaq4C/yAEvhBoU+Dx2NTjGzIy9dPzwnzR9wKErsmXGwB1Hlhv9Pn2zByvmnQk
+	 P/PrVlKDG88QER8dc6wTxasf9hXlp22ytX/QJf+ubGSsIEKnmq6Uq4W5ryWV8N6keM
+	 gtXfwgNboJKCA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Doug Smythies <dsmythies@telus.net>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>
+Subject: [PATCH v1 2/2] cpuidle: teo: Refine handling of short idle intervals
+Date: Thu, 03 Apr 2025 21:18:38 +0200
+Message-ID: <2239639.irdbgypaU6@rjwysocki.net>
+In-Reply-To: <4661520.LvFx2qVVIh@rjwysocki.net>
+References: <4661520.LvFx2qVVIh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.85
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeelfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-From: Jonathan McDowell <noodles@meta.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ Upstream commit de9e33df7762abbfc2a1568291f2c3a3154c6a9d ]
+Make teo take all recent wakeups (both timer and non-timer) into
+account when looking for a new candidate idle state in the cases
+when the majority of recent idle intervals are within the
+LATENCY_THRESHOLD_NS range or the latency limit is within the
+LATENCY_THRESHOLD_NS range.
 
-Some Infineon devices have a issue where the status register will get
-stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
-simply a matter of requiring a longer timeout; the work around is to
-retry the command submission. Add appropriate logic to do this in the
-send path.
+Since the tick_nohz_get_sleep_length() invocation is likely to be
+skipped in those cases, timer wakeups should arguably be taken into
+account somehow in case they are significant while the current code
+mostly looks at non-timer wakeups under the assumption that frequent
+timer wakeups are unlikely in the given idle duration range which
+may or may not be accurate.
 
-This is fixed in later firmware revisions, but those are not always
-available, and cannot generally be easily updated from outside a
-firmware environment.
+The most natural way to do that is to add the "hits" metric to the
+sums used during the new candidate idle state lookup which effectively
+means the above.
 
-Testing has been performed with a simple repeated loop of doing a
-TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
-at:
-
-  https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
-
-It can take several hours to reproduce, and several million operations.
-
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
- drivers/char/tpm/tpm_tis_core.h |  1 +
- include/linux/tpm.h             |  1 +
- 3 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/cpuidle/governors/teo.c |   99 ++++++++++++++++++++++------------------
+ 1 file changed, 55 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index f6aa0dfadb93e..7ade8bd12ab26 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -464,7 +464,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -261,11 +261,12 @@
  
- 		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
- 					&priv->int_queue, false) < 0) {
--			rc = -ETIME;
-+			if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
-+				rc = -EAGAIN;
-+			else
-+				rc = -ETIME;
- 			goto out_err;
- 		}
- 		status = tpm_tis_status(chip);
-@@ -481,7 +484,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ static int teo_get_candidate(struct cpuidle_driver *drv,
+ 			     struct cpuidle_device *dev,
+-			     struct teo_cpu *cpu_data,
+-			     int idx, unsigned int idx_intercepts)
++			     struct teo_cpu *cpu_data, int constraint_idx,
++			     int idx, unsigned int idx_events,
++			     bool count_all_events)
+ {
+ 	int first_suitable_idx = idx;
+-	unsigned int intercepts = 0;
++	unsigned int events = 0;
+ 	int i;
  
- 	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
- 				&priv->int_queue, false) < 0) {
--		rc = -ETIME;
-+		if (test_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags))
-+			rc = -EAGAIN;
-+		else
-+			rc = -ETIME;
- 		goto out_err;
- 	}
- 	status = tpm_tis_status(chip);
-@@ -546,9 +552,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		if (rc >= 0)
- 			/* Data transfer done successfully */
+ 	/*
+@@ -277,8 +278,11 @@
+ 	 * has been stopped already into account.
+ 	 */
+ 	for (i = idx - 1; i >= 0; i--) {
+-		intercepts += cpu_data->state_bins[i].intercepts;
+-		if (2 * intercepts > idx_intercepts) {
++		events += cpu_data->state_bins[i].intercepts;
++		if (count_all_events)
++			events += cpu_data->state_bins[i].hits;
++
++		if (2 * events > idx_events) {
+ 			/*
+ 			 * Use the current state unless it is too
+ 			 * shallow or disabled, in which case take the
+@@ -316,6 +320,12 @@
+ 		if (first_suitable_idx == idx)
  			break;
--		else if (rc != -EIO)
-+		else if (rc != -EAGAIN && rc != -EIO)
- 			/* Data transfer failed, not recoverable */
- 			return rc;
-+
-+		usleep_range(priv->timeout_min, priv->timeout_max);
+ 	}
++	/*
++	 * If there is a latency constraint, it may be necessary to select an
++	 * idle state shallower than the current candidate one.
++	 */
++	if (idx > constraint_idx)
++		return constraint_idx;
+ 
+ 	return idx;
+ }
+@@ -410,49 +420,50 @@
  	}
  
- 	/* go and do it */
-@@ -1147,6 +1155,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
- 	}
+ 	/*
+-	 * If the sum of the intercepts metric for all of the idle states
+-	 * shallower than the current candidate one (idx) is greater than the
+-	 * sum of the intercepts and hits metrics for the candidate state and
+-	 * all of the deeper states, a shallower idle state is likely to be a
+-	 * better choice.
+-	 */
+-	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum)
+-		idx = teo_get_candidate(drv, dev, cpu_data, idx, idx_intercept_sum);
+-
+-	/*
+-	 * If there is a latency constraint, it may be necessary to select an
+-	 * idle state shallower than the current candidate one.
+-	 */
+-	if (idx > constraint_idx)
+-		idx = constraint_idx;
+-
+-	/*
+-	 * If either the candidate state is state 0 or its target residency is
+-	 * low enough, there is basically nothing more to do, but if the sleep
+-	 * length is not updated, the subsequent wakeup will be counted as an
+-	 * "intercept" which may be problematic in the cases when timer wakeups
+-	 * are dominant.  Namely, it may effectively prevent deeper idle states
+-	 * from being selected at one point even if no imminent timers are
+-	 * scheduled.
+-	 *
+-	 * However, frequent timers in the RESIDENCY_THRESHOLD_NS range on one
+-	 * CPU are unlikely (user space has a default 50 us slack value for
+-	 * hrtimers and there are relatively few timers with a lower deadline
+-	 * value in the kernel), and even if they did happen, the potential
+-	 * benefit from using a deep idle state in that case would be
+-	 * questionable anyway for latency reasons.  Thus if the measured idle
+-	 * duration falls into that range in the majority of cases, assume
+-	 * non-timer wakeups to be dominant and skip updating the sleep length
+-	 * to reduce latency.
++	 * If the measured idle duration has fallen into the
++	 * RESIDENCY_THRESHOLD_NS range in the majority of recent cases, it is
++	 * likely to fall into that range next time, so it is better to avoid
++	 * adding latency to the idle state selection path.  Accordingly, aim
++	 * for skipping the sleep length update in that case.
+ 	 *
+ 	 * Also, if the latency constraint is sufficiently low, it will force
+ 	 * shallow idle states regardless of the wakeup type, so the sleep
+-	 * length need not be known in that case.
++	 * length need not be known in that case either.
+ 	 */
+-	if ((!idx || drv->states[idx].target_residency_ns < RESIDENCY_THRESHOLD_NS) &&
+-	    (2 * cpu_data->short_idles >= cpu_data->total ||
+-	     latency_req < LATENCY_THRESHOLD_NS))
+-		goto out_tick;
++	if (2 * cpu_data->short_idles >= cpu_data->total ||
++	    latency_req < LATENCY_THRESHOLD_NS) {
++		/*
++		 * Look for a new candidate idle state and use all events (both
++		 * "intercepts" and "hits") because the sleep length update is
++		 * likely to be skipped and timer wakeups need to be taken into
++		 * account in a different way in case they are significant.
++		 */
++		idx = teo_get_candidate(drv, dev, cpu_data, idx, constraint_idx,
++					idx_intercept_sum + idx_hit_sum, true);
++		/*
++		 * If the new candidate state is state 0 or its target residency
++		 * is low enough, return it right away without stopping the
++		 * scheduler tick.
++		 */
++		if (!idx || drv->states[idx].target_residency_ns < RESIDENCY_THRESHOLD_NS)
++			goto out_tick;
++	} else if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
++		/*
++		 * Look for a new candidate state because the current one is
++		 * likely too deep, but use the "intercepts" metric only because
++		 * the sleep length is going to be determined later and for now
++		 * it is only necessary to find a state that will be suitable
++		 * in case the CPU is "intercepted".
++		 */
++		idx = teo_get_candidate(drv, dev, cpu_data, idx, constraint_idx,
++					idx_intercept_sum, false);
++	} else if (idx > constraint_idx) {
++		/*
++		 * The current candidate state is too deep for the latency
++		 * constraint at hand, so change it to a suitable one.
++		 */
++		idx = constraint_idx;
++	}
  
-+	if (priv->manufacturer_id == TPM_VID_IFX)
-+		set_bit(TPM_TIS_STATUS_VALID_RETRY, &priv->flags);
-+
- 	if (is_bsw()) {
- 		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
- 					ILB_REMAP_SIZE);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 13e99cf65efe4..369496a6aebf1 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -89,6 +89,7 @@ enum tpm_tis_flags {
- 	TPM_TIS_INVALID_STATUS		= 1,
- 	TPM_TIS_DEFAULT_CANCELLATION	= 2,
- 	TPM_TIS_IRQ_TESTED		= 3,
-+	TPM_TIS_STATUS_VALID_RETRY	= 4,
- };
- 
- struct tpm_tis_data {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 4ee9d13749adc..5f4998626a988 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -272,6 +272,7 @@ enum tpm2_cc_attrs {
- #define TPM_VID_WINBOND  0x1050
- #define TPM_VID_STM      0x104A
- #define TPM_VID_ATML     0x1114
-+#define TPM_VID_IFX      0x15D1
- 
- enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
--- 
-2.39.5
+ 	duration_ns = tick_nohz_get_sleep_length(&delta_tick);
+ 	cpu_data->sleep_length_ns = duration_ns;
+
+
 
 
