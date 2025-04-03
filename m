@@ -1,42 +1,78 @@
-Return-Path: <linux-kernel+bounces-587228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D510A7A96D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D87A7A95D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45292178845
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:29:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F6E1885063
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B71625335B;
-	Thu,  3 Apr 2025 18:29:30 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EF0253325;
+	Thu,  3 Apr 2025 18:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZwuFLae"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E51253339;
-	Thu,  3 Apr 2025 18:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2435C8E0;
+	Thu,  3 Apr 2025 18:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743704969; cv=none; b=koJaPIqely8JMR5n1HLZ0c27QsuKqjn3DTWIOrwMNG/sNZbkWOqThhcTzSrEegKBScV5z2kUDkHRzRwuAiLO7g6kC5c/miCZJhVQUoJ+XKLTy9uZam0IZHEqsgbDlUaYmXVeNCkSosUKVrt8PMNo45kxXpPYaRM68xp/Ux9ciPI=
+	t=1743704945; cv=none; b=OkYjhuAzm+hPC1fbKgYilk8TpNbQISpO7laqJt3+KlOGomJyjqSQf99k9Xuifu77CySmX18T1+NLOMr8U3PpC/qwHI9V7lHG39zmo+CfcIhk0Fdu8b1A5RW+TXv2Mq6FdyGYrav5+Qd3QrWdpvh5MxE6pJQwcYlcuRpIV4G1rA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743704969; c=relaxed/simple;
-	bh=6NMfzsl+qbxslM1Q5CA3ElJX9ebSpetzhkAlaotbNOU=;
+	s=arc-20240116; t=1743704945; c=relaxed/simple;
+	bh=BJ6MF4X3xZZJF9aGkDdtTPJx0QtX8gqmfIDuSD47caI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MKyNAIOY5AXitLfwG5ZBe35RJzDF/Wh+UBkO1GN72AIeeIwcKWh7S4bLWE+KKErGeBuw4QJ4RORaDQ1M+qjTY2XCzmQgJ141WSELHRst+d1/V11C21g5T89w+ikoXg1MTpPFO6tItr+n3u09ldJXfB+427BZszDo3kipsYGQzKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.53] (ip5f5ae856.dynamic.kabel-deutschland.de [95.90.232.86])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9C67A61E647B3;
-	Thu, 03 Apr 2025 20:28:57 +0200 (CEST)
-Message-ID: <4e4640bd-0313-4594-9667-82340ed9368a@molgen.mpg.de>
-Date: Thu, 3 Apr 2025 20:28:56 +0200
+	 In-Reply-To:Content-Type; b=aS45SHz7fUwTFeeZkB2HaHVNan3NwMqbfO9euXKoxv9EUpF9MTjzFMdaHqYdHEHghu5f7mcNXayo+69yXAT/p3Q52yEzk/SW8Xa+y4EFcmFyevmpFFzMUa7Z+vdKPiQVAaDw1RDYfHA9X3PlTKlgabTJr4VjY9ybYAmE+YOtihE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZwuFLae; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so8564445e9.1;
+        Thu, 03 Apr 2025 11:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743704942; x=1744309742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l0xXXnmcQUMSAV1rDZydtKV9m1RhcaPoKdR17ygBDjk=;
+        b=mZwuFLaeOj4GM/hourMDy7pI6zSktu+gkXmQoiNqfIfx5LWsUZeQvcf3hXGrXrj9J+
+         oH7jktlNOnZ6SVzNX+8kQE+5ndql7PiY9ymIpyKX3qB0l7wzOKSDywTjS70gwvCBAczi
+         2Kt0PhY+zwTNXEyaScRvSwkcJdCfI61jHEkVIZaVG/TFFI2Wp9/vyJ4mUiSezqS9rwJm
+         pmCDGKMeEi30yzJ5Iox4FITjB4rG1Nz0/91VdPbl/dB5o/rEv6UECmhGDWnQFBp+ZzUe
+         JR1p0/KRff3xAVNJWWktDDYumldQxWW4lnyylr7sRVEagFXijmfweBB8VcgHB+37/Ptd
+         Fm9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743704942; x=1744309742;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0xXXnmcQUMSAV1rDZydtKV9m1RhcaPoKdR17ygBDjk=;
+        b=VtWixn7J6nNvCHs7IaZwPywR5fWrkIMUtlPHeDo8kvS0ENJ6F0cmvMpXF6RTEkf+8E
+         FB7S2SF98IaP+yA2WDBW7yIyFHnML16E1GzLfMvghvmMYMP5gQj4pLy6JJpe5zbqG2Nl
+         +KoA/8xZtvYDJUSgHyArH+TptkZOKKub/i0V06rZ/J4KMo/PHHE7+4N26s+FgfbVRD4p
+         i9o9PanI3HuEerHt3UEux7TiqhawFuBEO4/LUKLGWzFFm2pskoED78XqoRI/yY2pXLNZ
+         zU/EughUHpHnkxmMCF4nY+FAYg5UDJluj44g+P1m6Qg2bZUX53CRoMVKr/3NawESHsUx
+         MaJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQad/ERMSetDgZqJXlLbNVtNWzPSv9x1V3VrpOiCUVRyw3TbCrzBPlC1nEKS+7KLSpKLETQREt+/PH3A==@vger.kernel.org, AJvYcCXuUEZ8Bdoqiudv2f9zT4ibhJdib7ZH57pm3iH+j5JfJF7WB7Q1d4tl10eLR/yBW2iwjzrfhRZ+SfwRRWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd+K4zerJAb0/lhlzd3gqzpIYDW+3yHmvzHaz0DoiMJFveaU34
+	jg6AuTO6kOgb3gVhXyOJsVCEqSO4JwZbS5ybyEWaY9j+IX/qnjSb
+X-Gm-Gg: ASbGnct/36rqeHY8P6PVVXCnvQR1B87XR1avffVlVz/ommIYnvxC9Ju/1mNl5/5mw6e
+	G+Pel9aJ+pCWHD1dJjfsJsj/sPgwjlWTJN5I995X12hVNdH6THoOrJQP0JC8bVBWtBQ9ab/SQgJ
+	Mc5F1c7b9ofaNBlxT89Sy0YO+9ERAo9HSC70tSKiAbSQwF+GtJ9BB3j3MW9xk0R7/gLuRFm788D
+	KEwX00xdRyZDwQ8EoIAiXSKbcXnrUlXQL+OJCWF4gEfC+ygtytQAEb65UfRiezczdVSMqDsrnAE
+	4tWGDDPdvj8zHUNxofgkuDMeuQ42fUwu/vzukJ6XGys0TxfUMMPQZ5JcsqOgW0r5Qg==
+X-Google-Smtp-Source: AGHT+IH7ukEB039raJgrsIcDoJubZVtxahaG0Ai1QHumd2mPTT/OvQNVxuZUvzclFKZ2rMvZDmDwnw==
+X-Received: by 2002:a05:600c:46ca:b0:43d:54a:221c with SMTP id 5b1f17b1804b1-43ecfa45a81mr1044925e9.18.1743704941876;
+        Thu, 03 Apr 2025 11:29:01 -0700 (PDT)
+Received: from [172.27.62.155] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d943sm2459508f8f.74.2025.04.03.11.28.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Apr 2025 11:29:01 -0700 (PDT)
+Message-ID: <0e08292e-9280-4ef6-baf7-e9f642d33177@gmail.com>
+Date: Thu, 3 Apr 2025 21:28:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,77 +80,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm: tis: Increase the default for timeout B
-To: Michal Suchanek <msuchanek@suse.de>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jonathan McDowell <noodles@earth.li>
-References: <Z-6Gau3aCB7B3pB9@earth.li>
- <20250403182519.8412-1-msuchanek@suse.de>
+Subject: Re: [PATCH] net/mlx5e: fix potential null dereference in
+ mlx5e_tc_nic_create_miss_table
+To: Charles Han <hanchunchao@inspur.com>, saeedm@nvidia.com, leon@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, maord@nvidia.com, lariel@nvidia.com,
+ paulb@nvidia.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tariq Toukan <tariqt@nvidia.com>
+References: <20250402093221.3253-1-hanchunchao@inspur.com>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250403182519.8412-1-msuchanek@suse.de>
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250402093221.3253-1-hanchunchao@inspur.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Dear Michal,
+Content-Transfer-Encoding: 7bit
 
 
-Thank you for the patch. For the summary/title you could be more 
-specific by using *Double*:
 
-tpm: tis: Double default for timeout B to 4 s
-
-Am 03.04.25 um 20:25 schrieb Michal Suchanek:
-> With some Infineon chips the timeouts in tpm_tis_send_data (both B and
-> C) can reach up to about 2250 ms.
+On 02/04/2025 12:32, Charles Han wrote:
+> mlx5_get_flow_namespace() may return a NULL pointer, dereferencing it
+> without NULL check may lead to NULL dereference.
+> Add a NULL check for ns.
 > 
-> Timeout C is retried since
-> commit de9e33df7762 ("tpm, tpm_tis: Workaround failed command reception on Infineon devices")
-> 
-> Timeout B still needs to be extended.
-
-It’d be great if you could amend the commit message and add the Infinion 
-device you have problems with, and maybe also add the error behavior.
-
-> Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> Fixes: 66cb64e292d2 ("net/mlx5e: TC NIC mode, fix tc chains miss table")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
 > ---
-> V2: Only extend timeout B
-> ---
->   drivers/char/tpm/tpm_tis_core.h | 2 +-
->   include/linux/tpm.h             | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
+>   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-> index 970d02c337c7..c272c25eb9d4 100644
-> --- a/drivers/char/tpm/tpm_tis_core.h
-> +++ b/drivers/char/tpm/tpm_tis_core.h
-> @@ -54,7 +54,7 @@ enum tis_int_flags {
->   enum tis_defaults {
->   	TIS_MEM_LEN = 0x5000,
->   	TIS_SHORT_TIMEOUT = 750,	/* ms */
-> -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
-> +	TIS_LONG_TIMEOUT = 4000,	/* 4 sec */
->   	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
->   	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
->   };
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 6c3125300c00..3db0b6a87d45 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -224,7 +224,7 @@ enum tpm2_const {
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> index 9ba99609999f..9c524d8c0e5a 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> @@ -5216,6 +5216,10 @@ static int mlx5e_tc_nic_create_miss_table(struct mlx5e_priv *priv)
+>   	ft_attr.level = MLX5E_TC_MISS_LEVEL;
+>   	ft_attr.prio = 0;
+>   	ns = mlx5_get_flow_namespace(priv->mdev, MLX5_FLOW_NAMESPACE_KERNEL);
+> +	if (!ns) {
+> +		mlx5_core_warn(priv->mdev, "Failed to get flow namespace\n");
+
+In this function netdev_err API is being used for error prints.
+
+> +		return -EOPNOTSUPP;
+> +	}
 >   
->   enum tpm2_timeouts {
->   	TPM2_TIMEOUT_A          =    750,
-> -	TPM2_TIMEOUT_B          =   2000,
-> +	TPM2_TIMEOUT_B          =   4000,
->   	TPM2_TIMEOUT_C          =    200,
->   	TPM2_TIMEOUT_D          =     30,
->   	TPM2_DURATION_SHORT     =     20,
+>   	*ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
+>   	if (IS_ERR(*ft)) {
 
-
-Kind regards,
-
-Paul
 
