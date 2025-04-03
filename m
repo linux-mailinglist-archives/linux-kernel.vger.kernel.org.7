@@ -1,127 +1,237 @@
-Return-Path: <linux-kernel+bounces-586057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAE5A79AB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 05:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66669A79AAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 05:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFE8816FD5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 03:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE63C18906BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 03:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769271991B2;
-	Thu,  3 Apr 2025 03:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E6419992E;
+	Thu,  3 Apr 2025 03:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="esKLdExk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rTSlV94Q"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06DE2581;
-	Thu,  3 Apr 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C74190676
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 03:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743652776; cv=none; b=ZXcQ//wCu85a3kpGoXSH/2DFpF6aAlGhhzvfTKwIjCp2TX65o7t7+R6N5DpxikOmAhCQ1qwWibS5nT7Tcdyyg0ofxC6bs92/Bw2hJdx6mqv6JIPBgSNP+4SZoI/jYH2jRsq+/NaWE1PYL+Xx2WRNRx7E2OhBynpURr3mpBDY3lk=
+	t=1743652554; cv=none; b=l8U8ureYrWackW59q5+JoJh0ZWsvnmkA9U0R/R+X5YaF/STRJlaBAz+2Eg7yMOCROyA4/DYGWnXlQbHLKn+Zv31XrARDoPxQEIcgnXGNtI3T1xkFz7LMFm8P8vYTateHXCIC6Rr/wYUzLnx2yacjdNhs0epU0Jkj3rUng5fVBek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743652776; c=relaxed/simple;
-	bh=RE63XWPcYVjkIJVfd4rvnqu5gjt/U5Kzw79QJ0K1F/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7ws1Gi4SKeuKE6pweM3vbz+GGUHE/dnaaIeBczqUm0IJVo0Qp+LpnP4L+uivZBHqesGcK+7UjAPmq5MUYVTyyxGdEEx0Gh53p8F84PvriFCol8vOhoL7gUBasiGhmz5ijutjigcHzu8iqRI9GQg4d6EmFrwr1FGPelFPZTZU98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=esKLdExk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016ECC4CEE3;
-	Thu,  3 Apr 2025 03:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743652776;
-	bh=RE63XWPcYVjkIJVfd4rvnqu5gjt/U5Kzw79QJ0K1F/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=esKLdExk9Jk2zueFh+VKoVMh9S1UVSqbI45ipgmTzP24WXGSvjYNqOTEIQUfOwxZ9
-	 QLpRqWOTyvvww5ttciS9SH5jJOz+e5KVmSJaV0EEXAIW7ehvrrnDoH2akixY/yFgPy
-	 TNSS56AT9dawrAMaR55Q6+FdjuZZGyctiH1ErcpKZRqJir0xrw9P6FaizWEJzIEdxS
-	 /vamlqP3q6q8n7LeN1HQ2T1yPUQwFEe3c5Dn6tev57yp8ljxwI7cuxbnrsSAAZF+ts
-	 BPGezgSCISD8AlLMWrAnXBcQX5k2lJ5CwEf56SnO3WOw3w1i0pqjaL3HG4TLE2tZdJ
-	 zspnmrK2FbANQ==
-Date: Wed, 2 Apr 2025 20:59:34 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Banning crypto in hardirq context (was: [PATCH v2 0/9] crypto:
- x86 - stop using the SIMD helper)
-Message-ID: <20250403035934.GB129577@sol.localdomain>
-References: <Z-yrf_9D2rV1Q136@gondor.apana.org.au>
- <CAMj1kXEx__RLBriW0kVPrKnx6+DCpq8=6F-7Tmj2Us61gvGGaw@mail.gmail.com>
- <CAMj1kXE-vo7E1U++4mAqDH2SXfc=sRZs8KganedJk5z0QF49NA@mail.gmail.com>
- <Z-zzvXbjt3xzquXb@gondor.apana.org.au>
- <20250402171930.GD1235@sol.localdomain>
- <Z-3jkYNtZpTDtKGf@gondor.apana.org.au>
- <20250403021453.GA2872965@google.com>
- <Z-344xAsx1uTE9OK@gondor.apana.org.au>
- <20250403032008.GA129577@sol.localdomain>
- <Z-4DqsRApwQi6Xju@gondor.apana.org.au>
+	s=arc-20240116; t=1743652554; c=relaxed/simple;
+	bh=nqVB5uOqiFKCdpWccwDNjTPjd4j3yLd4tllbjZgjjLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=LTMslrsKgi1/CLtHW6qrPz996MOQ0RruftCgT+S2VRq5y65vmbZgBhUjf5mTNRv5JcpNWeBXI/pJAU/+Ex5yjBpM8i0mnq2ftOm3TXnakH9JushueXI684ZxxzE+f4byjtZwGURrzBdt0fqZAXl6Htk37xDGNmwiwYSq9c8PMz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rTSlV94Q; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250403035544epoutp049f98550963c05081d2db974d8abac006~yssBa9I_Z0400604006epoutp04X
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 03:55:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250403035544epoutp049f98550963c05081d2db974d8abac006~yssBa9I_Z0400604006epoutp04X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743652545;
+	bh=Ej6k3ZLWQF+05g7feuaoptHbKWegrmPgWjF8rs/7NXY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rTSlV94QRiaBjdMyRMI6WMQNRVVqeSCgMnBhmnBKB5ZENFjdIngWy9b98jCYPn6fh
+	 A4uZUjHHheJ8WzwPFlhlscNxGVzYH43TUj5FB+feDHNLLxsmVq1wul4FCHm01bcDKx
+	 Kdrdy2Av+9paiVxwqCfzc+iIfl3oqDOtkr7tAiPA=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250403035544epcas2p3c55ebdc995a32e86804f8b0b2caaf468~yssA2RRGP2105821058epcas2p3P;
+	Thu,  3 Apr 2025 03:55:44 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZSnvg4Yzkz3hhT8; Thu,  3 Apr
+	2025 03:55:43 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.F1.09780.FB60EE76; Thu,  3 Apr 2025 12:55:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250403035542epcas2p2da512aa29b7d9c68ad698399264e0d05~ysr-MEXyv2358523585epcas2p2o;
+	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250403035542epsmtrp11d576aabebb09abda82ace4d6ca4cbaf~ysr-KwEhN2942429424epsmtrp1t;
+	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
+X-AuditID: b6c32a43-9b7fe70000002634-99-67ee06bf3b1c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	78.8C.08766.EB60EE76; Thu,  3 Apr 2025 12:55:42 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250403035542epsmtip1b91f8b8759e4cc8898b6b6c78a09a97e~ysr_6KM960228602286epsmtip1g;
+	Thu,  3 Apr 2025 03:55:42 +0000 (GMT)
+Date: Thu, 3 Apr 2025 12:59:57 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: William McVicker <willmcvicker@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+	<will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Saravana
+	Kannan <saravanak@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Will Deacon
+	<willdeacon@google.com>, Youngmin Nam <youngmin.nam@samsung.com>
+Subject: Re: [PATCH v1 4/6] arm64: dts: exynos: gs101: Add
+ 'local-timer-stop' to cpuidle nodes
+Message-ID: <Z+4Hve9pQoLeh9sZ@perf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <Z-2zQ-PcvxFTBc6M@google.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHd/teX1/R6hsyvWGDsMfCBhmlRaAXoUQjP+rmHyRblm0o0LVv
+	LWlpS18LssTJJhOpG8IU0YYUHDAdMnEFShXBpZDA3KgjW2Ajjun8EagburIZRAtrebr43+ec
+	+/3ec88995JY+C9EJFlisDBmg1JPE2G4azgeJV4i5jWS824aXXO4CNTr68HR3S8/Bahr0MtD
+	joUo1DLi5SN3fwSas88QyHljko9+utBMoONXhnjo3PFlHK1cdAuQzRMgUI+zEUP+6UJUfTUV
+	1Ty4g6NO/wpAbd/6BVsjFK4BF1/R5egCilanVeHsrCUUVycvEop5r1eg6Gnfp6jr7QSKBWd0
+	vvBdXaaWUaoZcwxjUBnVJQaNnH79jaLtRalpEmmiNB3J6BiDspSR09k78xNzS/TBruiYcqXe
+	GkzlK1mWTsrKNButFiZGa2QtcpoxqfUmmUnMKktZq0EjNjCWLVKJJDk1KCzWaTv8Dbjp16g9
+	Cw92V4H7m2yAJCGVAq+4C2wgjAyn3AAunFjkc4EfQN/ElMAGhMHgPoCOWvMTQ1NAw2kGAfx4
+	aJDHBdcBPP+PAwsZcOolaHPdIUJMUInQNbYMQuYISgwffbInpMeoOT6sc82CkGYDVQwnhnz8
+	EIuoWNj8hZ/g+Fn43YmbeIiFVAL87VETCJkhNUtCn61n1QCpbHh4fITH8QboG+0VcBwJ5w4f
+	eMwsrPp9GuPM1QBenprFuIXN0H67ZvUUGKWFrmsTGNdmLByZxrn0OnhwOCDg0iJ48EA454yD
+	S0fPAY5fgANtpx/vqIB9Ky6Cu5QAgN9/8xCrB9H2p/qxP1WN41dh64CfsAdLYNTz8NQyyWE8
+	7L6Q1Ar4nWAjY2JLNYwq2ST9f7wqY6kTrD7xhO1u8HPLstgDeCTwAEhidISoLOEvTbhIraz8
+	gDEbi8xWPcN6QGpwOA1Y5HMqY/CPGCxF0pR0SUpamlSWnCqR0ZtEnr9vacIpjdLC6BjGxJif
+	+HikMLKKl5FmF93LKz+082561o8Sf/ylk+m5vMWKwEq1bFBEyq2LyYP98/va6u/pZIXOJDtR
+	836Bs6/2lSN5Hc3r+zdP3soOHMstbP8o8NnwM853dhQf2zKrut43HCj7M/brioeVom2qxu5F
+	+RE8J2djx9tzayQnp9ZWlGTERXkv94mLDuF5r/0QtvZme1ymsCFrvLpgfq9OUyleChuLq3Ps
+	cAhbG2+fbmz50JdztgCs7Goor19TfjZrf9TM1ow/0Hqc9+KbdflTZ6rYM1FhevM69UKTN/ut
+	vdHjL9e3qkfz/zWdQkdndnWTnqVAuXXs8/2ewq9wcWGatWwRvndjW/WEWNA8Cty7aZzVKqUJ
+	mJlV/gddt0+8awQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSnO4+tnfpBi/eSVk8mLeNzWLLq80s
+	Fu+X9TBarNl7jsli3mdZi/lHzrFa7NguYvFy1j02i02Pr7FaXN41h81ixvl9TBYbZvxjsfi/
+	Zwe7Rdehv2wWmzdNZbb4dCvOouWOqUX7z9csFqs+/We0WHzgE7uDiMe23dtYPdbMW8PosWBT
+	qcemVZ1sHneu7WHzeHfuHLvH5iX1Hn1bVjF6fN4kF8AZxWWTkpqTWZZapG+XwJWx/OZStoKZ
+	0hXdf46wNTCeF+1i5OCQEDCRmP43vYuRi0NIYDejxMy9J9m6GDmB4jISt1deZoWwhSXutxxh
+	hSi6zyjxbOp9FpAEi4CKRNe212ANbAK6EttO/GMEGSoioCfxp7UCpJ5Z4DOrxNaOo8wgNcIC
+	CRKXOm4zgdi8AsoScxZ9YoMY+p9R4uXdPVAJQYmTM5+ALWAW0JK48e8lE8hQZgFpieX/OEDC
+	nEDhu3+mM05gFJiFpGMWko5ZCB0LGJlXMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefnbmIE
+	R6KW5g7G7as+6B1iZOJgPMQowcGsJMJbqPU2XYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv+Ive
+	FCGB9MSS1OzU1ILUIpgsEwenVAMTa0723LM2WRcbVtzZz71RTCcrROzgC2azaxddOV6kvg+e
+	2ROhdfP0fXtZn7JLP/ucrjccf5PxbUb8pc/nqp1eLzc++lZq1kbbWabS7dsFlBgUkyUvb4k6
+	cLqENytlRcgpTzNVtodz39rt0G9qVJlb82Lu1LsMN3svpq7e/CfvQsuE1fdNHn+7fy2r7ki3
+	c6Wrxjf1r7O4qw1u/39fmrCpb0LnW+4pyzLrPnRMr1/WdeXttPl9xRUvqlLa2UT4+7cUT74g
+	ETWjr/pImUcXe2DL0llTc4QjPukfPRjrP9WZgT0s2bShV/bK9T2cf1JezPKrtLLQsLNKimE3
+	np3QlHD1/Ez32d8mcGZPcjrwtnmjEktxRqKhFnNRcSIAx5ywPTMDAAA=
+X-CMS-MailID: 20250403035542epcas2p2da512aa29b7d9c68ad698399264e0d05
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250331230151epcas2p486a7c6d7153737f4168cfef74249742f
+References: <20250331230034.806124-1-willmcvicker@google.com>
+	<CGME20250331230151epcas2p486a7c6d7153737f4168cfef74249742f@epcas2p4.samsung.com>
+	<20250331230034.806124-5-willmcvicker@google.com> <Z+y4zxfifkQqLxKF@perf>
+	<Z-2zQ-PcvxFTBc6M@google.com>
+
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Z-4DqsRApwQi6Xju@gondor.apana.org.au>
 
-On Thu, Apr 03, 2025 at 11:42:34AM +0800, Herbert Xu wrote:
-> On Wed, Apr 02, 2025 at 08:20:08PM -0700, Eric Biggers wrote:
-> >
-> > Also, riscv has scalar AES instructions.  (They aren't used by the kernel yet,
-> > but they could be.  The CRC code already uses scalar carryless multiplication.)
+On Wed, Apr 02, 2025 at 02:59:31PM -0700, William McVicker wrote:
+> Hi Youngmin,
 > 
-> It still doesn't mean that it's a good idea to use AES in a
-> hard IRQ handler, especially if the code is meant to be portable.
+> On 04/02/2025, Youngmin Nam wrote:
+> > On Mon, Mar 31, 2025 at 04:00:26PM -0700, Will McVicker wrote:
+> > > From: Will Deacon <willdeacon@google.com>
+> > > 
+> > > In preparation for switching to the architected timer as the primary
+> > > clockevents device, mark the cpuidle nodes with the 'local-timer-stop'
+> > > property to indicate that an alternative clockevents device must be
+> > > used for waking up from the "c2" idle state.
+> > > 
+> > > Signed-off-by: Will Deacon <willdeacon@google.com>
+> > > [Original commit from https://android.googlesource.com/kernel/gs/+/a896fd98638047989513d05556faebd28a62b27c]
+> > > Signed-off-by: Will McVicker <willmcvicker@google.com>
+> > > ---
+> > >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > index 3de3a758f113..fd0badf24e6f 100644
+> > > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > @@ -155,6 +155,7 @@ ananke_cpu_sleep: cpu-ananke-sleep {
+> > >  				idle-state-name = "c2";
+> > >  				compatible = "arm,idle-state";
+> > >  				arm,psci-suspend-param = <0x0010000>;
+> > > +				local-timer-stop;
+> > >  				entry-latency-us = <70>;
+> > >  				exit-latency-us = <160>;
+> > >  				min-residency-us = <2000>;
+> > > @@ -164,6 +165,7 @@ enyo_cpu_sleep: cpu-enyo-sleep {
+> > >  				idle-state-name = "c2";
+> > >  				compatible = "arm,idle-state";
+> > >  				arm,psci-suspend-param = <0x0010000>;
+> > > +				local-timer-stop;
+> > >  				entry-latency-us = <150>;
+> > >  				exit-latency-us = <190>;
+> > >  				min-residency-us = <2500>;
+> > > @@ -173,6 +175,7 @@ hera_cpu_sleep: cpu-hera-sleep {
+> > >  				idle-state-name = "c2";
+> > >  				compatible = "arm,idle-state";
+> > >  				arm,psci-suspend-param = <0x0010000>;
+> > > +				local-timer-stop;
+> > >  				entry-latency-us = <235>;
+> > >  				exit-latency-us = <220>;
+> > >  				min-residency-us = <3500>;
+> > > -- 
+> > > 2.49.0.472.ge94155a9ec-goog
+> > > 
+> > Hi Will.
+> > 
+> > Are you using this property in production?
+> > If so, have you noticed any performance improvements?
 > 
-> > Also, as I said already, x86 does support SIMD instructions in hardirq context
-> > in some cases.  Whether anyone actually uses that, I don't know, but it is
-> > explicitly supported.  Check out irq_fpu_usable().
+> On Pixel 6, I have only recently switched to using the arch_timer as the
+> default clocksource. I haven't noticed any major perf improvements to the main
+> benchmarks, but also haven't seen any regressions. Based on the ChromeOS perf
+> analysis in [1,2], there was a significant perf difference found.
 > 
-> This is more of an accident than some deliberate strategy of
-> supporting FPU usage in hard IRQs.  This test was initially
-> added for aesni:
+> [1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
+> [2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
 > 
-> commit 54b6a1bd5364aca95cd6ffae00f2b64c6511122c
-> Author: Ying Huang <huang.ying.caritas@gmail.com>
-> Date:   Sun Jan 18 16:28:34 2009 +1100
+> If it helps, I found that Pixel 8 and 9 devices (didn't check Pixel 7)
+> are already using the arch_timer with this 'local-timer-stop' as the default
+> clocksource in the production kernel.
 > 
->     crypto: aes-ni - Add support to Intel AES-NI instructions for x86_64 platform
+> Thanks,
+> Will
 > 
-> It was then improved by:
+> [...]
 > 
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Mon Feb 13 13:56:14 2012 -0800
-> 
->     i387: make irq_fpu_usable() tests more robust
->     
->     Some code - especially the crypto layer - wants to use the x86
->     FP/MMX/AVX register set in what may be interrupt (typically softirq)
->     context.
-> 
-> At no point was there any intention of using this in a hardirq
-> context.
-> 
-> Until such a time when you have a valid application for using
-> lib/crypto code in a hardirq context, I don't think we should
-> be supporting that at the expense of real users who are in
-> process/softirq context only.
 
-Whatever.  We agree that "crypto in hardirq" is not a good idea in general.  I'm
-just pointing out that there are certain cases, like SipHash used in a hash
-table, where it easily could happen and would be fine.  And all the shash and
-crypto library functions currently work in any context, unlike e.g. skcipher and
-aead which do not.  You seem to be trying to claim that it was never supported,
-but that is incorrect.  Making it unsupported would be a change that needs to be
-properly documented (the functions would no longer be simply "Any context")
-*and* have proper debug assertions added to enforce it and prevent usage errors.
-But in a lot of cases there is also no reason to even add that restriction.  I'm
-not sure why you're so eager to make the library functions harder to use.
+Hi Will,
 
-- Eric
+Thanks for sharing the status of Pixel devices.
+
+I agree that using the arch_timer as a clock source device brings significant benefits.
+The links you shared are definitely related to that.
+
+However, I would also like to know whether arch_timer is used as a clock event device in Pixel production.
+
+Thanks,
+Youngmin
+
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_
+Content-Type: text/plain; charset="utf-8"
+
+
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_81f4a_--
 
