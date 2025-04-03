@@ -1,143 +1,198 @@
-Return-Path: <linux-kernel+bounces-587015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94976A7A65A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D03FA7A6B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCAE7A35A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:22:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCC91773C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D27924C080;
-	Thu,  3 Apr 2025 15:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB4B2512CD;
+	Thu,  3 Apr 2025 15:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AhroqBEX"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is4MODbn"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C2924CEF8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0300A2505D6;
+	Thu,  3 Apr 2025 15:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693681; cv=none; b=kzu/UpuN7GGz7MaWxkACsy0KWF5vf4+ZZW/V14setCp4CRCJrkfZwmF6LbpfCKIRlOwVZgrWUVOYxGHfzKM8QVegwVwtCCyG7Qlz/Ecg8zNsKDmyw9/6HMj93mCFZi5eXhaYQvd3yquoPXzfQ4cwDSBzpyRLhcqQc/eemuEzers=
+	t=1743693825; cv=none; b=LDOwPLVG0kGytA2AceMewtQSaXL7D0Ml1qFJQuJspmlsngUzfsIiLAHGV8wMOfvIdf/tFElAqaw4GSPalmTedxyv04e+i30aYC2I9izs++rOUfHwDxmzKH5frXOTIY8/K939ETjlMtIg4FQGIq+xdUcqK6SSMb6EbNL0FrO5M8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693681; c=relaxed/simple;
-	bh=7BYAU7FWqgp7VAH8vNjlWZeSog6QTqHnJvWr0crzcfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l8vwm3Hbtxa7N7MOgEi3VAwxFd6OC7m9+CokXHdJphiAkPyBPt65VNdv4aJOK+vreIYF1KGGe21jOny8GPqClXbLo1jV1NGQ1IEzjMzoCLOBwHzj8AQIrsXL0rq72Fr4OP9pYwBhX8mNeIZz3ZPzUry1FWa7iRlmmNPWORA/XFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AhroqBEX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso10734215e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 08:21:19 -0700 (PDT)
+	s=arc-20240116; t=1743693825; c=relaxed/simple;
+	bh=0rzr3+1EKy2s0lYSqwKrAgJ24jrlfxrDyurHnT3rTjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MryQ+NkAHwaR+Xe29tYbpBeFqT72LI+vMlK/PmmHxPZzoTfsiUtbmwtk+G08JdFh+gO1Lz5gjF2ENHktA5efVYQqo+ejEejIa0BvP8myQgm8MGnnNw9IwnW51o4Ii3Aa4L9JcKTEp2AJLq3G1m39dBzjY/Nxm8Nm69xPPicV2eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is4MODbn; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3032aa1b764so829962a91.1;
+        Thu, 03 Apr 2025 08:23:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743693678; x=1744298478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LLzRxbLbGYqFEY7hyGVV9DDJqGfYqDcrqrelLGxLjeg=;
-        b=AhroqBEXbCFTlHKBfAgoMN0g5OWIMnoaPsVMASuHluxkFNWXLBthuR1n8IGtRLzwmQ
-         IYZl6Aex2c1DIvMtdWdYNMyegFPg0r6llYdXu2TuUba5pstb5B5lIdWcPWI51ydVG3qm
-         YwrcMNWiX0wKD3UqfpbZwm7tXG573ZrEpQWOzgu6b8qIHdOGfynIjgC0G5cD0QwfVrsg
-         yifvAude2NCcnH3FYyq+TeI1ipIfSZk2plZr8qyPg6rZFTWGYRbjK5HEmPqBu9pzwUhx
-         HvDDl/Ah6KgmQlkDpEag+86mZKjisQ1CG5OD5ClW58q80y2sA4+x8HEOzwjEo3ZJoAt3
-         PIvA==
+        d=gmail.com; s=20230601; t=1743693823; x=1744298623; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rdXwfXpVZ0DoDhTpXcomK86T+y8d/zsLL6G5IX+ENN4=;
+        b=is4MODbnqJ+hsJMF2UHBZ7ho+9pmNGZ3GBJDNATGBVzskn99ZW+OLsA16s7zRf15yC
+         60bFYIGR6ybMow7IfNT4FXJjabu1sP7BFbbDWal9XQzleOm54OIFhz8OqBrArKZaz1UE
+         uJpEq6OzLykGYpT4ddu8xNWZ0drcU9HIEdolSPdrCzF+4/pmZMjcTs6U4B7YlthgFej4
+         K06L+hYgnoaEfB+APAmSO7KEB+R3wdfbjf/1Yw1lAWuyWuv8Dr25vGknNZuWzpPwG0BO
+         CKEE8QQ+CChNVv0jJxFMdYdCbn/OkxTdypR1oJRkPgU1xllc20UOL68kIb1QWRykkJhb
+         vVxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743693678; x=1744298478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1743693823; x=1744298623;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLzRxbLbGYqFEY7hyGVV9DDJqGfYqDcrqrelLGxLjeg=;
-        b=S8DApI7ztyXq7izrwk6fhlHHUCIWoHgAIwjWNd6qoGwKlER54eolBmaBJVibgUDSGc
-         uFpqRKdgJlhTpcB4/8vdwdNyJ/u0bJY3oSlxPbAOmfcTi9nw3AuPN/P3TxgsxL6fM3jK
-         ixhopCasedx80UsXfrPROoFTXdiuH/Z52w1BfJuxFtokOK/mP6SJBoPkw1+pIe/V5Nib
-         d3K16hrJ/Er23zTXpZAoCehYwfVNfNMIGDxKVmKy5LmOZEnUtp9u71pzjgoSTrPZIdVL
-         3NzFqOXFWLDN0WfdR+NHb9pKsh0iWz4GHF/Mi7wNT1wtrgqUA/Vo+ElmXw24Zjh4oxFG
-         v5Jw==
-X-Gm-Message-State: AOJu0Yw9R00rKpUia2DDbnwNuECAiEBSNtfnb9oFYfkRmPzJY9EMMp5y
-	aJKQQNmQ9b6EAKdDw2mhYDfLJ0atD4meB6MYj559cNrlBYy5y4xHw3azh/fRmI8=
-X-Gm-Gg: ASbGncsisgaYBKVhlRcYjhd5Lhdi0MljBKuFIkUIp+x0Ian8FD3sThrYxRo5lJAIw5k
-	xf1VBat0SySYNbOtSC8lTsTRY2dx+wSHakr2ACGfpQITMkJl8qrxuINs9zj6zQBU7blFd8Wxkir
-	mFqbjDZyop4lg05snPplEHEyMFjr85W0EwNjFdhpHql4zyqhHC39t1MyE+B9sYR943CDSHfFKaK
-	y1okdbVrZTIlhn9xgtzwjwtMySLBhuRbdEvZhKgSgzDlQHeX7iDGksqk/4oc3hKKjJTyYcWdOAk
-	TjTHX+XQIQiLRN5OHBC0M1hvRqvCa4PnILVoNATodp9oCVQHqKEYUOqCzhBMCpPwBV6fMBdpQpw
-	Z1r5BzbaU
-X-Google-Smtp-Source: AGHT+IGw5ghzd9cHyGdFKWQ5WVPa7dVeNteHj1/e+hjpE89/v7AeOKF8SPeYMkbL/YLt+h17xVXsbA==
-X-Received: by 2002:a5d:5c84:0:b0:39c:1efd:ed8f with SMTP id ffacd0b85a97d-39c1efdedbemr11060254f8f.50.1743693678287;
-        Thu, 03 Apr 2025 08:21:18 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43ec34bbd9csm21302405e9.20.2025.04.03.08.21.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 08:21:17 -0700 (PDT)
-Message-ID: <67daf656-0e08-471d-afce-22ba8f2fa1f2@linaro.org>
-Date: Thu, 3 Apr 2025 17:21:16 +0200
+        bh=rdXwfXpVZ0DoDhTpXcomK86T+y8d/zsLL6G5IX+ENN4=;
+        b=VoP4RaYgWDgXOtRo6EWWN/b7BvBRHKgGuuTbi/Cqe3QHRwXAbaBnyjFkdGIuqoLBOE
+         PylH8DnzwoVzCam+XtT5cRXInIonw6I9UG0BH+VbLSmyq/PcwofypF4c7BCukr0rdUd/
+         RI67LareNnpSqYBR/ve0J5FSx7ZFH7v0rkPW0SJFHzPWw6l4K4+r3LV3wWyaqjR0uRU8
+         BuhD7ds0RUBSUZy0FYnr9EuspNNnRvEND7j0506YtuqAistHa3VfauWZFSajHjRRDb0p
+         wfFL3YDckDF1nITancoDtQ73jH/ML7XFyMgG9y83WGS6t/RFPMR/ah/FJsOBbA3q3coj
+         q65g==
+X-Forwarded-Encrypted: i=1; AJvYcCVo68Zun7MpjCqjawH5YNaEO+rQaftRxeJQ2HTroEHBG818CtxCv1MRIeI5psT0vBfxc+5lfhXSu/CFW7I=@vger.kernel.org, AJvYcCWYROlh6WUcG1sHFPR4qrufuf7I7pdYJ87QTd39bZb/pnzY9syJXFIYQ9D8+5bc9DRWFfBHDTrJX0UFRlkspAZ3Mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZprdn++pvrnxXzGHiDyIm7Lv9lH60/kg51C5K6jfxvHvj7suv
+	WLZSqMQDxpBbqUKkN8udDACyC+NICPPmNmLvRuEybyMWjZWBP1am
+X-Gm-Gg: ASbGncsBwhC4Kw43Qi+iABHWRuFotSoXXFuZXqAf4jij9RXrFDw8LWxsHWT2+1HLMNx
+	wEdPUQu4WwDBlHPUULu2Xe0xBMvTyYlkz5sGg1l78zEQSKGdA2MUJRu0GQ6kmBj4WwUtZV2LbkB
+	rOwvzCvZpDMe61g7mm0/XBJcdKkpaBYf6ckVTAWHNxUrfnNUU5AWDLxsoyKMrmtCD3HgAr94TFm
+	vXNRyRWNhrSeZOgs9dR/h7xtvY6bgokGdPQFcfk9eMKm8Vam5GXtt78LnxSCom7suOmOyn2WmAw
+	maB9zkMu+4VEKR6yfnthXTk7nGyoOaxwDfonQKoxa3qQ
+X-Google-Smtp-Source: AGHT+IGgDqNSkiZ/1y0n4ex34i9tdTgxiA1kQ24PuisY0GpK5fEv6qK05oKY6Sj+Y5rZ3NPeA8r9JQ==
+X-Received: by 2002:a17:90b:35c2:b0:2ee:d63f:d8f with SMTP id 98e67ed59e1d1-30531fa5fbcmr30989502a91.13.1743693822517;
+        Thu, 03 Apr 2025 08:23:42 -0700 (PDT)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30588a30f00sm1638289a91.26.2025.04.03.08.23.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 08:23:41 -0700 (PDT)
+Date: Thu, 3 Apr 2025 11:23:39 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, Kyle Meyer <kyle.meyer@hpe.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Aditya Gupta <adityag@linux.ibm.com>,
+	Eder Zulian <ezulian@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>, He Zhe <zhe.he@windriver.com>,
+	Dirk Gouders <dirk@gouders.net>, Brian Geffon <bgeffon@google.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jann Horn <jannh@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>, Hao Ge <gehao@kylinos.cn>,
+	Tengda Wu <wutengda@huaweicloud.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Casey Chen <cachen@purestorage.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Li Huafei <lihuafei1@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Levi Yun <yeoreum.yun@arm.com>, Weilin Wang <weilin.wang@intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Andrew Kreimer <algonell@gmail.com>,
+	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Junhao He <hejunhao3@huawei.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Steve Clevenger <scclevenger@os.amperecomputing.com>,
+	Zixian Cai <fzczx123@gmail.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Yujie Liu <yujie.liu@intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v1 02/48] tools headers: Silence -Wshorten-64-to-32
+ warnings
+Message-ID: <Z-6n-3ObiNNLQzFw@thinkpad>
+References: <20250401182347.3422199-1-irogers@google.com>
+ <20250401182347.3422199-3-irogers@google.com>
+ <Z-6WY4a6RV1bEbNU@thinkpad>
+ <Z-6aoJ3ohVHPsF0A@thinkpad>
+ <CAP-5=fU6E1_8Vzki1dVyb8hDEYOXaSNSrJJkR6AOU8xqvknT8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: timer: Add NXP System Timer Module
-To: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, thomas.fossati@linaro.org,
- Larisa.Grigore@nxp.com, ghennadi.procopciuc@nxp.com,
- krzysztof.kozlowski@linaro.org, S32@nxp.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>
-References: <20250402090714.3548055-1-daniel.lezcano@linaro.org>
- <20250402090714.3548055-2-daniel.lezcano@linaro.org>
- <2503deb2-b993-7fd1-adf3-cafa1e7bd2f4@oss.nxp.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2503deb2-b993-7fd1-adf3-cafa1e7bd2f4@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fU6E1_8Vzki1dVyb8hDEYOXaSNSrJJkR6AOU8xqvknT8w@mail.gmail.com>
 
-On 03/04/2025 08:33, Ghennadi Procopciuc wrote:
-> On 4/2/2025 12:07 PM, Daniel Lezcano wrote:
-> [ ... ]
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    timer@4011c000 {
->> +        compatible = "nxp,s32g2-stm";
->> +        reg = <0x4011c000 0x3000>;
->> +        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
->> +        clocks = <&clks 0x3b>;
->> +    };
+On Thu, Apr 03, 2025 at 07:52:45AM -0700, Ian Rogers wrote:
+> On Thu, Apr 3, 2025 at 7:26 AM Yury Norov <yury.norov@gmail.com> wrote:
+> >
+> > On Thu, Apr 03, 2025 at 10:08:39AM -0400, Yury Norov wrote:
+> > > On Tue, Apr 01, 2025 at 11:23:00AM -0700, Ian Rogers wrote:
+> > > > The clang warning -Wshorten-64-to-32 can be useful to catch
+> > > > inadvertent truncation. In some instances this truncation can lead to
+> > > > changing the sign of a result, for example, truncation to return an
+> > > > int to fit a sort routine. Silence the warning by making the implicit
+> > > > truncation explicit.
+> > > >
+> > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> >
+> > I'm the first person in the To list, but only a couple patches in the
+> > series are related to my area. If you want to move it with me, can you
+> > send bitmaps, bitfields etc. separately?
 > 
-> The S32G reference manual specifies two clocks for the STM module: one
-> for the registers and another for the counter itself. Shouldn't both
-> clocks be represented in the bindings?
+> Hi Yury,
+> 
+> If you think it is worthwhile. I did the series to see how prevalent a
+> bug was in perf's code - inspired by Leo Yan fixing an instance of it.
+> I would prefer not to be on the hook for all the kernel warnings :-)
+> Perhaps casts to avoid changing bitmap_weight's type. Unfortunately to
+> get to where the perf issues were I needed to clean up header files.
+> In the bitmap cases the change is just to make implicit casts explicit
+> and I don't know how much value you see in that.
 
-AFAICS, there are two clocks as described in the documentation for the 
-s32g2 page 843, section 23.7.3 Timer modules.
+Your changes  are technically correct (except for non-synced kernel and
+tools), make the code cleaner, at least to me, and address pretty valid
+compiler's concerns. To me, it's worth to apply.
 
-The module and the register clock are fed by the XBAR_DIV3_CLK which is 
-an system clock always-on.
-
-page 1994, 40.5.4 Clocking, the documentation says: "This module has no 
-clocking considerations."
-
- From my understanding, we should not describe the XBAR_DIV3_CLK as it 
-is a system clock.
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks,
+Yury
 
