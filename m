@@ -1,105 +1,183 @@
-Return-Path: <linux-kernel+bounces-586879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF71A7A4F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 435F3A7A618
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07943B9E99
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FF23B4804
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310FF2500BE;
-	Thu,  3 Apr 2025 14:15:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631AC2500AA;
-	Thu,  3 Apr 2025 14:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE2E24C080;
+	Thu,  3 Apr 2025 15:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hj6IaQft"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44EB24337D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689751; cv=none; b=vDu0kguJrsjcz6zI/bB8WCgGLXIeV6mRAk0Y7FeowueWaDj/KgC3DKEmuNafd+4x17m3p1MWhotEk47nmMU2AH0fHNTc2gs0z8Af7yHzu8EI8K0NWibf/VGyuIyqCBBx/Jrl8WCfyk43OEXq2c09JJPPVqkxf9pZKnXk5hRnXZw=
+	t=1743693474; cv=none; b=UTNf1rc7JdPdpxuM1YTQPCOlUQf0+pUD/tQ8lbB4+XZnmVSXQ6KU18OP883a1Q3UfdxwBoch+ZiHW06ZFrkWSdKof4KmYMqSX0+81z36dfteBZjUakilE1O7Z2dKIZvzQ8+wPKjUu300EdYwPnuupy0zpwBhlC83Wg9jCLSikvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689751; c=relaxed/simple;
-	bh=GmslQeJnel+/tjfSpT8PmCAKRMGRuhx9GKezcLoTBA8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UmbNObyMnAvvq/Eygwsd5FKdGE+9s2CQVCkPI5J1BK/iwxwBEi/0+2eFqu56Axi0kCDPTzPb9zugNLdjDxATxjKR8YCc2o7bxsTAuASIOUQ1OtNOd1AajPtOV0wD/vfDXLRtFm+Va3C5UuiCTp52RJLBeNDIUCHinnCTsT9u1ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65B3F1C00;
-	Thu,  3 Apr 2025 07:15:52 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0BB683F59E;
-	Thu,  3 Apr 2025 07:15:46 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	anshuman.khandual@arm.com,
-	joey.gouly@arm.com,
-	yury.khrustalev@arm.com,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	frederic@kernel.org,
-	shameerali.kolothum.thodi@huawei.com,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	huangxiaojia2@huawei.com,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	robin.murphy@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 3/3] Documentation/arm64: reflects FEAT_MTE_TAGGED_FAR description
-Date: Thu,  3 Apr 2025 15:15:35 +0100
-Message-Id: <20250403141535.23496-4-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250403141535.23496-1-yeoreum.yun@arm.com>
-References: <20250403141535.23496-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1743693474; c=relaxed/simple;
+	bh=2Qzt83/ngQEHCLu8BEV5TvgfhcfJXL98fFg73ZyxLQk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jg7XTkFbCPzChzQAWdlLxUg5xc2zDoIdCWcLPbO0SZDMIcaY0Labzd3Qn8dm2OoTPs5/MEChxdj1zs+YOGBzg57SbDuRwktCsVd6/v2U3cgUpKijY5vyhWt+BGNUWEO+atwRC+1DL3kuSHvkCGl9z8ngsSbBhuFw7BJXCdBL1YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hj6IaQft; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743693471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FHOzoCPihGTExJUSS35Q5qFYB4w7e9yK1puyfm64FGc=;
+	b=hj6IaQft4Fk5obaY30H1bGhEQBDAuSI/7TSkQGikw3zJfvBH2FGhyznlwfUNmLdh38fXgb
+	m4BoK2hNFgYc2NZ1iSNrFW9TAdpXiGCRwsr20nFuXplcMptSMS+0+EQwhX/d14EfRypF5U
+	FJGEPwujFCs0d3Btff/uOSna3XxourA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-470-hGowlwQQOBWi7fMbzZJ1_Q-1; Thu,
+ 03 Apr 2025 11:17:48 -0400
+X-MC-Unique: hGowlwQQOBWi7fMbzZJ1_Q-1
+X-Mimecast-MFC-AGG-ID: hGowlwQQOBWi7fMbzZJ1_Q_1743693466
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47D441955F34;
+	Thu,  3 Apr 2025 15:17:44 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 354081801752;
+	Thu,  3 Apr 2025 15:17:37 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Subject: [PATCH v2 00/30] drm/panel: Use refcounted allocation in place of
+ devm_kzalloc() - Part2
+Date: Thu, 03 Apr 2025 10:16:07 -0400
+Message-Id: <20250403-b4-drm_panel_mass_convert_part2-v2-0-260c8a44c56b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACeY7mcC/42NQQ6CMBAAv0L2bM1SqVpP/sMQUmCRJtKSbdNoS
+ P9u5QUeZw4zGwRiSwFu1QZMyQbrXQF5qGCYjXuSsGNhkCgVNihF34iRl241jl7dYkLoBu8ScSy
+ KoxRqkuraoyFFBkplZZrsez882sKzDdHzZx+m+mf/b6daoNB46i+otSZzvjONs4nHwS/Q5py/8
+ vXWI88AAAA=
+X-Change-ID: 20250402-b4-drm_panel_mass_convert_part2-5f258b0ae5ea
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Icenowy Zheng <icenowy@aosc.io>, Jagan Teki <jagan@amarulasolutions.com>, 
+ Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
+ Michael Trimarchi <michael@amarulasolutions.com>, 
+ Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Purism Kernel Team <kernel@puri.sm>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Jianhua Lu <lujianhua000@gmail.com>, Stefan Mavrodiev <stefan@olimex.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743689775; l=5387;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=2Qzt83/ngQEHCLu8BEV5TvgfhcfJXL98fFg73ZyxLQk=;
+ b=VnDbWg8Vi1y6AJlsO456Og9Iim6s3V6ccCu0L+H+DVRXgLdrtMHy1Gd/zeupWENoc6YqWa9Mf
+ nwrs6sMwxKwC3EnS5K3+W8dClWNdQxDY+m3PJjiK/zedXC4zbg5zkYk
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-When FEAT_MTE_TAGGED_FAR feature is supported, the value of address bits
-[63:60] is preserved on synchronous tag check fault.
+Start converting drivers to use the API - devm_drm_panel_alloc().
 
-This patch reflects the above feature in the documentation.
+Sending next 30 drivers. Sending in batches for easier review.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Part 1 of the series : https://patchwork.freedesktop.org/series/147082/
+
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- Documentation/arch/arm64/tagged-pointers.rst | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Changes in v2:
+- Remove drm_panel_init() from probe function in ilitek-ili9341 driver. 
+- Link to v1: https://lore.kernel.org/r/20250402-b4-drm_panel_mass_convert_part2-v1-0-903b70999ea6@redhat.com
 
-diff --git a/Documentation/arch/arm64/tagged-pointers.rst b/Documentation/arch/arm64/tagged-pointers.rst
-index 81b6c2a770dd..73c59a9c7a63 100644
---- a/Documentation/arch/arm64/tagged-pointers.rst
-+++ b/Documentation/arch/arm64/tagged-pointers.rst
-@@ -60,11 +60,12 @@ that signal handlers in applications making use of tags cannot rely
- on the tag information for user virtual addresses being maintained
- in these fields unless the flag was set.
- 
--Due to architecture limitations, bits 63:60 of the fault address
--are not preserved in response to synchronous tag check faults
--(SEGV_MTESERR) even if SA_EXPOSE_TAGBITS was set. Applications should
--treat the values of these bits as undefined in order to accommodate
--future architecture revisions which may preserve the bits.
-+If FEAT_MTE_TAGGED_FAR (Armv8.9) is supported, bits 63:60 of the fault address
-+are preserved in response to synchronous tag check faults (SEGV_MTESERR)
-+otherwise not preserved even if SA_EXPOSE_TAGBITS was set.
-+Applications should interpret the values of these bits based on
-+the support for the 'mte_far' hwcap. If the support is not present,
-+the values of these bits should be considered as undefined otherwise valid.
- 
- For signals raised in response to watchpoint debug exceptions, the
- tag information will be preserved regardless of the SA_EXPOSE_TAGBITS
+---
+Anusha Srivatsa (30):
+      panel/panel-elida-kd35t133: Refcounted allocation
+      panel/elida-kd35t133: Use refcounted allocation in place of devm_kzalloc()
+      panel/fy07024di26a30d: Use refcounted allocation in place of devm_kzalloc()
+      panel/himax-hx83112a: Use refcounted allocation in place of devm_kzalloc()
+      panel/himax-hx8394: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9322: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9341: Use refcounted allocation in place of devm_kzalloc()
+      panel/panel-ili9805: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9806e: Use refcounted allocation in place of devm_kzalloc()
+      panel/ilitek-ili9881c: Use refcounted allocation in place of devm_kzalloc()
+      panel/innolux-ej030na: Use refcounted allocation in place of devm_kzalloc()
+      panel/innolux-p079zca: Use refcounted allocation in place of devm_kzalloc()
+      panel/jadard-jd9365da-h3: Use refcounted allocation in place of devm_kzalloc()
+      panel/jdi-fhd-r63452: Use refcounted allocation in place of devm_kzalloc()
+      panel/ltk050h3146w: Use refcounted allocation in place of devm_kzalloc()
+      panel/ltk500hd1829: Use refcounted allocation in place of devm_kzalloc()
+      panel/lg-lg4573: Use refcounted allocation in place of devm_kzalloc()
+      panel/lincolntech-lcd197: Use refcounted allocation in place of devm_kzalloc()
+      panel/magnachip-d53e6ea8966: Use refcounted allocation in place of devm_kzalloc()
+      panel/mantix-mlaf057we51: Use refcounted allocation in place of devm_kzalloc()
+      panel/newvision-nv3051d: Use refcounted allocation in place of devm_kzalloc()
+      panel/newvision-nv3052c: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35510: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35560: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt35950: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt36523: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt36672e: Use refcounted allocation in place of devm_kzalloc()
+      panel/novatek-nt39016: Use refcounted allocation in place of devm_kzalloc()
+      panel/lcd-olinuxino: Use refcounted allocation in place of devm_kzalloc()
+      panel/orisetech-ota5601a: Use refcounted allocation in place of devm_kzalloc()
+
+ drivers/gpu/drm/panel/panel-elida-kd35t133.c          | 10 ++++------
+ drivers/gpu/drm/panel/panel-feixin-k101-im2ba02.c     | 11 +++++------
+ drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c | 10 ++++------
+ drivers/gpu/drm/panel/panel-himax-hx83112a.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-himax-hx8394.c            | 11 +++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c          | 10 ++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-ilitek-ili9805.c          | 12 ++++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9806e.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-innolux-ej030na.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c         | 11 +++++------
+ drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c      | 10 ++++------
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c          | 10 +++++-----
+ drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-lg-lg4573.c               | 11 +++++------
+ drivers/gpu/drm/panel/panel-lincolntech-lcd197.c      | 11 +++++------
+ drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c   | 11 +++++------
+ drivers/gpu/drm/panel/panel-mantix-mlaf057we51.c      | 11 +++++------
+ drivers/gpu/drm/panel/panel-newvision-nv3051d.c       | 11 +++++------
+ drivers/gpu/drm/panel/panel-newvision-nv3052c.c       | 10 ++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35510.c         | 12 ++++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35560.c         | 12 ++++++------
+ drivers/gpu/drm/panel/panel-novatek-nt35950.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-novatek-nt36523.c         |  9 +++++----
+ drivers/gpu/drm/panel/panel-novatek-nt36672e.c        | 10 +++++-----
+ drivers/gpu/drm/panel/panel-novatek-nt39016.c         | 10 ++++------
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c    | 11 +++++------
+ drivers/gpu/drm/panel/panel-orisetech-ota5601a.c      | 11 +++++------
+ 30 files changed, 145 insertions(+), 174 deletions(-)
+---
+base-commit: de04bb0089a96cc00d13b12cbf66a088befe3057
+change-id: 20250402-b4-drm_panel_mass_convert_part2-5f258b0ae5ea
+
+Best regards,
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+Anusha Srivatsa <asrivats@redhat.com>
 
 
