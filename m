@@ -1,170 +1,133 @@
-Return-Path: <linux-kernel+bounces-586732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAF6A7A322
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:51:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875FFA7A31E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E853B35A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167B91898271
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CDA24C084;
-	Thu,  3 Apr 2025 12:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4424DFE5;
+	Thu,  3 Apr 2025 12:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoVsJ7D7"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RT/jr3C0"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D81C2E3385
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 12:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EBF33981;
+	Thu,  3 Apr 2025 12:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743684678; cv=none; b=oqrfDO3O0Ksf6Tyx3rGnWQIfmEahx+cpxXutePUaw9Vc26c49poYWFTaUFTGifdKJVSJXmBeaeDmls3srDpMpUrQb1lRu8GE5IowbDj2Wc8Y9EawVzkLf0rq8N3OyG+3wvZqZ/w0fVyrC5Kk/2PXjB8JPOU0IpKLt+g+0ZsMRfc=
+	t=1743684565; cv=none; b=X8BZxhbjKxD71NwTGvnPxKyvWdptKtfhCIEU+uGwR/TQ9AbfgqcMLNeHUK2oeCBViUSLYE3b55eM3wP6w430ZcYra6W6TqpjvP4bc8UR1IkDynojgE+UHirGUq2yM+2n8RfPSKYWlupTtONjXdputHYgwTK2LjKXmDN2dKixNTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743684678; c=relaxed/simple;
-	bh=goDJOm2WtH3P76uOTy+Ogm1vvi1nHLbS9KmvqmiPc0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ft07t/TamytSI/JYAg9Gtn9mYughyFcT8DT3KfNYj6ziTktfeSFSMYH6KO2WxTGpkfdOMlqyeibvzkjJfYuRKsilGiuaqYhvTefhGmrZOg6KpcXifWTzrdjCX7A5c0+Eq+uBfgUX++WE3gEq3M9Jhz5CqJJRlOMDwTbjtYqMQ+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PoVsJ7D7; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1743684565; c=relaxed/simple;
+	bh=RxMLz6M+rqNa78DbwQakLvxhMZ+1yEief3w4mMeOKag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGSk7qcBPYOB/a3qIrLUrvKQlTsugxjQYSkUaTk7maWdCW4Mb11UWbhXw5cPL1GW62yk2HARz8GUywnCHHb5YJseHQ/XalZ/pfT6J4luC9yz8GvS0NSEYS3K0QEBK4SgkWpDYekd+Jb5LK0FEXKtfpayfI+EvuIDCbF4Ytzx+Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RT/jr3C0; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so161234366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 05:51:15 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so781243a91.1;
+        Thu, 03 Apr 2025 05:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743684674; x=1744289474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/HODa0fMEkQK7P4UL+fQYUBWzJ2WYl+i0BBb1rGI3xY=;
-        b=PoVsJ7D77KfZk5fjXcY7DVIO5Cs93w1Cu8eMaMPVcTzfJqpJAF3Y8ANei+AoJAUm6w
-         evapWHrDQMgcNSemm4yBcfxMNLKyJu/c7ZlL1Khd41sjmeIf6eecE2wk927pvczLtKi3
-         m4EKQL4xm/tPHuNV43LRB/xkGaWhVnVIA1Fe0XEYoWMy/tAgK7jEG5QqcL66zHdCU8Wc
-         iiNJp5mcBzyrBnujwpu45N3+jpW4/IfvhavjfRH/hLKYNw2cMtFWQRoV33a/2iAHF2TT
-         I4wQAQC9TSt8GnnFM14wMP67srByHNPxJdU7vdNri/T+5t9Eewqfv+7Wrq7QSW6HXN2r
-         kt+A==
+        d=gmail.com; s=20230601; t=1743684563; x=1744289363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=br0qzftHCKz3sbr3SzuiqhOwZoMQzE2LZ4g8CLoOd0Y=;
+        b=RT/jr3C0cNFjxcLOQZRBy2npcuO8nzHhGaHuROWvF2DwG2ZWcfgm5IRQ2/9OaYMkhs
+         MPWhVyHrUwuJp8BkkFQOu2XkRk3VKQH7p0sSyf6cWvvoAIcAPixDqyZpTcBxHKMBAiDd
+         cRsHu73bszNO4nJUjFK+X+xSlLt5EbavTnpuRPN6EhXHBAuJC9AqxSQJbVnE7jzJzk0r
+         edry5LHdg8pOnpounkzQ2s0UKBoOsLx0q0vnEMUeN+ohdU9FgFyQoS2M+LTchIgCdYiX
+         6fT6lsYgYsLy8HmMS1PtO4HrdTgB4MJ4o9ZRT4HXKXalq7cobFEw+/tfhGvigJ0PknOd
+         /HsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743684674; x=1744289474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/HODa0fMEkQK7P4UL+fQYUBWzJ2WYl+i0BBb1rGI3xY=;
-        b=UZsRdNz4A461Z3F8XtWp7MTzggaQ/HnL2bUQwXj+4T/TC7G1Rxz5uADLbA2NK+6V4m
-         Y9flSDvu4fwscYewcqc4OKTZaCKIC5zC2TktyDxhs2q4E8ZMprmvsUF6A9h/KRnWfPCg
-         4rF2Au+4hrhbFtj6zRxxa/ZqwrodNBw53CQQ4OiDE5OSpTekQVlrQTIMcyfPwN1ZY0nz
-         HfpufLYCzweVZQLeq7BbdtjcVIrips3/uHcH9NCaMSCU43m1SmTF5nPHYVghtNkklZah
-         uUww8Fw4hFz+NNna1HY3ZjyQGK6AYQSjXx0QPJkfgT/zor53AMT5obYSwU+l/PTk0yMK
-         omFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0rUPktn/k4kqZ4m7ldsuDvG6pwkYsD+Hul66BzLejoBMbschN6/ECiyKMYs5Gx3pjHefsPv6ZPCbRsGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUnaZ7OKAiocEFiojJI1VCeAxLfiy7+26scAr0FptV1VrDrC5p
-	q+HjbRrhqkLER4AjWJTozj2DDGICFqv0PehhgX6XjLk5/oV/oa1C
-X-Gm-Gg: ASbGncvVZcQZ9cvFY8k+OQ9BB8P7frdax+OP4iLj1dqAW/AtjGXTC8uvDXqmksmtMiw
-	g+4ukTs9zb/qfw3QmCSTr4NtqzqV3+yFabalv4OX0RWfQ4MSxLrv8Xt8Dwf2pHVsAYGbGR6hqj4
-	Tu2UaSQAc44uNlalPTQOJeKMKVRrqwZGnVHPKreOegU/NNoSMGRKzrBW0DhIAQL3lnnKJDTHHkT
-	6XRvs3lI8NxKEJnRSSuVEevJhy+wsIbcAY4/2lC2gejRqzmXYdLouznvpHsPOYlXVbH0nq0eACc
-	O9KSqkb2jky/3NkJy8XSpEcIL61pHf0/l4iR
-X-Google-Smtp-Source: AGHT+IGn8RWitN/YS5UgGxUr27qx/wG+Hd7bJ2UpBYOwe3t7/0//MWZ1nlKAp4++Py+28p/gXgEAwg==
-X-Received: by 2002:a17:907:2cc5:b0:ac3:3d10:6f with SMTP id a640c23a62f3a-ac7bc066a2dmr166310266b.8.1743684674287;
-        Thu, 03 Apr 2025 05:51:14 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe5d3d8sm89292966b.31.2025.04.03.05.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 05:51:13 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH -tip v3] x86/idle: Use MONITOR and MWAIT mnemonics in <asm/mwait.h>
-Date: Thu,  3 Apr 2025 14:50:45 +0200
-Message-ID: <20250403125111.429805-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1743684563; x=1744289363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=br0qzftHCKz3sbr3SzuiqhOwZoMQzE2LZ4g8CLoOd0Y=;
+        b=Ngs/PHTjL64+trMBS0YYwEtXF03CqJ7gFW0anKf/hIKQFJXvN3AZ+vKrr81Q3hpfPw
+         Fx+d/rQEo1JHdvg1NHiUp4+NseSmGkgalMf0oYZGecw2kgIl3k0ziUCHJCS3pdwkPxMm
+         z+/QyiJV7lVGEw6HBNjn2HbzywQUrBO1i9pGqvZarEgIfmErebh1PLYi6M953M1FeInJ
+         AAcrSFLwQkkhSspfXYTvoWgSuNbt8NV2Qul+VjOk9fmoyam0nMZ7ZtviEAW/MvrParbq
+         KOGovhdGxqDFJvnV/2lGUMihFVJTkQZfOhLE2pKBCJoblJxq3vf6rsa8Jx1nzrGi3qJX
+         IcxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGg2bKNZIaPP8FYi3ikptr7a3EGJyAqmxM3ODtV51PWSDdBLBDQR/Vkd7U/eyxeJefIHdt6ZIL6CGvwiuZ@vger.kernel.org, AJvYcCViRp+CqmCGvuSAEI1qb0WQwBYoZsvLcAWLVDZ10fPWowzE88qyyDYDBefCJgghoMXvE4zP+YvH0WiR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeXlW7EMLcFX/5kbnNJ3L6ESllt4QYYxkhOr7z1fAm6drwAeS1
+	JEggyPRfj3N8WtNM7P10TI/wrHOBpm8lF5a24Buh3gWCM0CndBekjDBKzG7v40DM7j1DDXnHDBM
+	dHOnKA6bQgkTKKVuKO/IOh4jWHpU=
+X-Gm-Gg: ASbGncs4AUuUDeDqs8ypAgeB+jl6CH30oNT/3EZ2FElfa1Tusv7+wRd1J768hcWY1Dw
+	lcTWHrqjxUMQSQlAwXfQnOuL6FCWMH3awdSoINiFSLcJwRbgGmOeiYfn4HSRACQwZiXgdgA1Abh
+	eEXVhc6yop+wl0hhV1EDG5ME0=
+X-Google-Smtp-Source: AGHT+IFYW9MnslIX+WD/W4yqFkahfmkMt3j4de0kYP5osy79qxqlNhQHimSlJ+WSDyjW98VqmFgbjK1vYEjgozBE86s=
+X-Received: by 2002:a17:90b:2644:b0:2ea:a9ac:eee1 with SMTP id
+ 98e67ed59e1d1-3056ee3148fmr8807692a91.10.1743684563426; Thu, 03 Apr 2025
+ 05:49:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
+ <20250402-initial_display-v4-3-9f898838a864@gocontroll.com> <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
+In-Reply-To: <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Thu, 3 Apr 2025 15:50:47 +0300
+X-Gm-Features: AQ5f1JpOn26KtD3CJ794gf42_16EcVqDVeshPu-zxnT2qzP-_yIum74GI60JHY4
+Message-ID: <CAEnQRZC9Exfb5FL+gpMuwU6jLP8vO9hjrxm1+OHQBeLy0J1Wsg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] MAINTAINERS: add maintainer for the Ka-Ro
+ tx8p-ml81 COM module
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current minimum required version of binutils is 2.25,
-which supports MONITOR and MWAIT instruction mnemonics.
+On Thu, Apr 3, 2025 at 10:45=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 02/04/2025 09:07, Maud Spierings via B4 Relay wrote:
+> > From: Maud Spierings <maudspierings@gocontroll.com>
+> >
+> > Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
+> > module bindings.
+> >
+> > This support is not officially done by Ka-Ro electronics, if they at
+> > some point will supporting mainline, this should be changed to them.
+> >
+> > Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> > ---
+> >  MAINTAINERS | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 322ee00547f6e494a96d2495092f72148da22bd0..4b3864a9852f9fca2be4898=
+7d383c0671e668336 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -12752,6 +12752,13 @@ S:   Maintained
+> >  F:   Documentation/hwmon/k8temp.rst
+> >  F:   drivers/hwmon/k8temp.c
+> >
+> > +KA-RO TX8P COM MODULE
+> > +M:   Maud Spierings <maudspierings@gocontroll.com>
+> > +L:   devicetree@vger.kernel.org
+>
+> Drop
+>
+> > +L:   imx@lists.linux.dev
+>
+> I would say this as well, but not my subsystem to worry.
 
-Replace the byte-wise specification of MONITOR and
-MWAIT with these proper mnemonics.
-
-No functional change intended.
-
-Note: LLVM assembler is not able to assemble correct forms of MONITOR
-and MWAIT instructions with explicit operands and reports [1]:
-
-  error: invalid operand for instruction
-          monitor %rax,%ecx,%edx
-                       ^~~~
-
-Use instruction mnemonics with implicit operands to
-work around this issue.
-
-[1] https://lore.kernel.org/oe-kbuild-all/202504030802.2lEVBSpN-lkp@intel.com/
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
-v3: Use instruction mnemonics with implicit operands.
----
- arch/x86/include/asm/mwait.h | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
-index 6a2ec2083043..26b68ee5b6a5 100644
---- a/arch/x86/include/asm/mwait.h
-+++ b/arch/x86/include/asm/mwait.h
-@@ -27,9 +27,9 @@
- 
- static __always_inline void __monitor(const void *eax, u32 ecx, u32 edx)
- {
--	/* "monitor %eax, %ecx, %edx;" */
--	asm volatile(".byte 0x0f, 0x01, 0xc8;"
--		     :: "a" (eax), "c" (ecx), "d"(edx));
-+	/* Use the instruction mnemonic with implicit operands, as the LLVM
-+	   assembler fails to assemble the mnemonic with explicit operands. */
-+	asm volatile("monitor" :: "a" (eax), "c" (ecx), "d" (edx));
- }
- 
- static __always_inline void __monitorx(const void *eax, u32 ecx, u32 edx)
-@@ -43,9 +43,9 @@ static __always_inline void __mwait(u32 eax, u32 ecx)
- {
- 	mds_idle_clear_cpu_buffers();
- 
--	/* "mwait %eax, %ecx;" */
--	asm volatile(".byte 0x0f, 0x01, 0xc9;"
--		     :: "a" (eax), "c" (ecx));
-+	/* Use the instruction mnemonic with implicit operands, as the LLVM
-+	   assembler fails to assemble the mnemonic with explicit operands. */
-+	asm volatile("mwait" :: "a" (eax), "c" (ecx));
- }
- 
- /*
-@@ -95,9 +95,8 @@ static __always_inline void __mwaitx(u32 eax, u32 ebx, u32 ecx)
- static __always_inline void __sti_mwait(u32 eax, u32 ecx)
- {
- 	mds_idle_clear_cpu_buffers();
--	/* "mwait %eax, %ecx;" */
--	asm volatile("sti; .byte 0x0f, 0x01, 0xc9;"
--		     :: "a" (eax), "c" (ecx));
-+
-+	asm volatile("sti; mwait" :: "a" (eax), "c" (ecx));
- }
- 
- /*
--- 
-2.49.0
-
+We don't actually mind to gather all i.MX based boards development on
+this mailinglist.
 
