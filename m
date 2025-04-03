@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-586184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BFCA79C4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E66A79C59
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D51416FA90
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148333B268A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE44419CCEA;
-	Thu,  3 Apr 2025 06:49:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FAB15575C
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA987206F03;
+	Thu,  3 Apr 2025 06:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fCYukXs5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76B81A5B91;
+	Thu,  3 Apr 2025 06:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743662947; cv=none; b=q8bXIAiJpW1oRQfu15LLSfDgi6s+VD6/xtJ0iQ+Gid26TViUTR0SLzPPsowe2huLbk1vfpzWl7CV+UcEXBAPHVW4LK4LQIchdpO3+SKN+S5m5LRcS9l/riYmK97lryR+D396McyN8EY+9fPranVIyEHQCiMRmqg2j7gtgRcorNk=
+	t=1743663041; cv=none; b=llZ422bqeFFBsq4sa4czonI9OshmaUCFxZ0s97Rswmq6pjt0kHDmdU0PickenzP1Fnh0A0b5e5Bi4IxydGsGKwIpJEyMibwoLXinhFavCKQ8HrvDCafsJeq+wLn9kj2AyT6UkjwX8mpegGIR258x42MCChhS3y/9xA0zKuXOXRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743662947; c=relaxed/simple;
-	bh=HdnJUqHmISB3FjuAikp1AtKeC/xQ9PigPiyQSezv5GQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dVEINns6R6Tf/YjsMhxRTDyTp6hVD8qgYMiV0g4nn8piaAhdVsArkxNalWQsNUliHvIHa8NuU0V0M7rESwYM4iUUY/6sZq0LtgKnVnp9fR1ZRFQFI8OcjA2b2jcMrGGZDoK/mr4cTKmtLhpw3uFKqqnlvi+sHXrRpuz2ENN5Dko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F605106F;
-	Wed,  2 Apr 2025 23:49:07 -0700 (PDT)
-Received: from [10.163.48.25] (unknown [10.163.48.25])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9444B3F59E;
-	Wed,  2 Apr 2025 23:48:59 -0700 (PDT)
-Message-ID: <5a8aaa17-cc36-4e03-95b3-24c3a16dd987@arm.com>
-Date: Thu, 3 Apr 2025 12:18:56 +0530
+	s=arc-20240116; t=1743663041; c=relaxed/simple;
+	bh=Jh/rY+EfIjSo98Z/ve5BziCFk7Rx6+VKfxCcaVbDtEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFd13bvK3E2ARUJ9SlhQfs++Tn3bIKsFldIGp8aXJnNW4a2jMGiWgJ7EE6ez7QSLUxtnTkrPKNkWidniip7SzVEdqJyfJTUCjVUxVzM2CV3kSNrpO2UnSCilYA0yW13LfNQtue0SLuJ4G6Q6yhAl5041ECnEBeKdV38YIkjXW7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fCYukXs5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66E5C4CEE8;
+	Thu,  3 Apr 2025 06:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743663040;
+	bh=Jh/rY+EfIjSo98Z/ve5BziCFk7Rx6+VKfxCcaVbDtEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fCYukXs5RtwOJrW0aHvACYhB+w3VtDovh0h0XSAhtrAwlJkHFzQeCCHaQraayIh3I
+	 dHdEbfeqNFPw1YeIa6iNSkmi8yws9CsIqRuoBjddeX78VdjQpufEHWDCXbxm0J1WD3
+	 2h82qoGnao1EdRCrUrGeUG54x30CxU0kNJqj5Dxo=
+Date: Thu, 3 Apr 2025 07:49:13 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Henry Martin <bsdhenrymartin@gmail.com>
+Cc: jirislaby@kernel.org, sugaya.taichi@socionext.com,
+	orito.takao@socionext.com, u.kleine-koenig@baylibre.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1] serial: Fix null-ptr-deref in mlb_usio_probe()
+Message-ID: <2025040301-unmanned-lapdog-5446@gregkh>
+References: <20250403062808.63428-1-bsdhenrymartin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/9] coresight: Avoid enable programming clock
- duplicately
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250327113803.1452108-1-leo.yan@arm.com>
- <20250327113803.1452108-6-leo.yan@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250327113803.1452108-6-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403062808.63428-1-bsdhenrymartin@gmail.com>
 
-
-
-On 3/27/25 17:07, Leo Yan wrote:
-> The programming clock is enabled by AMBA bus driver before a dynamic
-> probe.  As a result, a CoreSight driver may redundantly enable the same
-> clock.
+On Thu, Apr 03, 2025 at 02:28:08PM +0800, Henry Martin wrote:
+> devm_ioremap() returns NULL on error. Currently, mlb_usio_probe() does
+> not check for this case, which results in a NULL pointer dereference.
 > 
-> To avoid this, add a check for device type and skip enabling the
-> programming clock for AMBA devices.  The returned NULL pointer will be
-> tolerated by the drivers.
+> Add NULL check after devm_ioremap() to prevent this issue.
 > 
-> Fixes: 73d779a03a76 ("coresight: etm4x: Change etm4_platform_driver driver for MMIO devices")
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> Fixes: ba44dc043004 ("serial: Add Milbeaut serial control")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
 > ---
->  include/linux/coresight.h | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  drivers/tty/serial/milbeaut_usio.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index b888f6ed59b2..26eb4a61b992 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -476,15 +476,18 @@ static inline bool is_coresight_device(void __iomem *base)
->   * Returns:
->   *
->   * clk   - Clock is found and enabled
-> + * NULL  - Clock is not needed as it is managed by the AMBA bus driver
->   * ERROR - Clock is found but failed to enable
->   */
->  static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
->  {
-> -	struct clk *pclk;
-> +	struct clk *pclk = NULL;
->  
-> -	pclk = devm_clk_get_enabled(dev, "apb_pclk");
-> -	if (IS_ERR(pclk))
-> -		pclk = devm_clk_get_enabled(dev, "apb");
-> +	if (!dev_is_amba(dev)) {
-> +		pclk = devm_clk_get_enabled(dev, "apb_pclk");
-> +		if (IS_ERR(pclk))
-> +			pclk = devm_clk_get_enabled(dev, "apb");
+> diff --git a/drivers/tty/serial/milbeaut_usio.c b/drivers/tty/serial/milbeaut_usio.c
+> index 059bea18dbab..4e47dca2c4ed 100644
+> --- a/drivers/tty/serial/milbeaut_usio.c
+> +++ b/drivers/tty/serial/milbeaut_usio.c
+> @@ -523,7 +523,10 @@ static int mlb_usio_probe(struct platform_device *pdev)
+>  	}
+>  	port->membase = devm_ioremap(&pdev->dev, res->start,
+>  				resource_size(res));
+> -
+> +	if (!port->membase) {
+> +		ret = -ENOMEM;
+> +		goto failed;
 > +	}
+>  	ret = platform_get_irq_byname(pdev, "rx");
+>  	mlb_usio_irq[index][RX] = ret;
 >  
->  	return pclk;
->  }
+> -- 
+> 2.34.1
+> 
+> 
 
-coresight_get_enable_apb_pclk() mostly gets called in the platform driver
-probe paths but they are also present in some AMBA probe paths. Hence why
-cannot the callers in AMBA probe paths get fixed instead ? Besides return
-value never gets checked for NULL, which would have to be changed as well
-if coresight_get_enable_apb_pclk() starts returning NULL values for AMBA
-devices.
+Hi,
 
-	drvdata->pclk = coresight_get_enable_apb_pclk(&pdev->dev);
-	if (IS_ERR(drvdata->pclk))
-		return -ENODEV;
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-I guess this redundancy should be fixed at the AMBA probe callers.
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
