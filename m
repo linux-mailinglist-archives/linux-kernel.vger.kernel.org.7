@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-587073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55B42A7A78D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:07:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE207A7A78F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B8118857EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2F43AA49F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C962512D5;
-	Thu,  3 Apr 2025 16:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3e6gLeQ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6161250C08;
+	Thu,  3 Apr 2025 16:07:58 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B30250C02;
-	Thu,  3 Apr 2025 16:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E107E24EF66
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 16:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743696368; cv=none; b=KYoAsQPcO/hwpXVlMIvfyNOMZeU7FUy/0uOH50vAdYge/daRAbYO1J57QtXjOUPdjIQZTg9ssUvJsrbWY3+7JM4oNtemAy4yRN/1vNQnsEuZuxu6pkGbTQJGlfV32L2lHSnk1AKUO65I/+qhe53h8rd+5X/AbgT3cEkoIRVHvp8=
+	t=1743696478; cv=none; b=bq1bsswnaeSOj8+AQRhuKmuUjzQMRvzxul/419d9WrNAk/cKwKXkGUmQQCjdWJFD9EsoEtmC/0nqkClP2RqU7pGJmXJNf2swYb3FUNf92OKkfI1ji+EnxSnOP+W+qqt97XcHS4WCs3gAnrpCNLrkU6DE9tlIbOAehIh5gea6Goo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743696368; c=relaxed/simple;
-	bh=YjGjdrzIlECzocgsLLX2osfw8C9zWevju6nHuE11dbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZjwoAvVQa5hK62cEDUsVQpzviTj+QlqqnW/RFCPyWZg1nnUEA8tMbtEFhMDTsrqdH6ZOECbGKESlE+0y5uFscEU49x0hSQ3ClXtwR/moFmf42tJSHy0shr3kyg+ttk26/HTbeitAi4ZYzlJO8KD1cU1c169TSvOAn/H9pctiOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3e6gLeQ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-736ee709c11so996855b3a.1;
-        Thu, 03 Apr 2025 09:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743696366; x=1744301166; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6CUM1YGBsiV36kXf/ewqX0Mf86Kw8OHi0hTrNzy0FCQ=;
-        b=A3e6gLeQUQfUwEmR7vLNzul8A0YWMzx8NanbyERcUp8vB9o7UXJaYEY0d+fwdYrNIV
-         432orqrlW8OidnfIY5hv1zASHHbSRdyyEoUTIKKCSlj1tQQeFpaVK3zZIgYZAFCWpqqB
-         HhY2mVdY7Xdx0nZQTBR+394I/ccH0zpkHlzz88UPuMK/E69kOPQCj8zrcZP5fwyl16qe
-         A5/4xeR5kPgdSsxCc9MDUwT6pjlAHbn0KcthUkDuxPHCCOHxBiWbOzMwvn5D0fiash1l
-         cgveInlft3JA9yh5vyNU/mVnx9QnkYc/mgqMSXGlhRVnL+BrjQWXXJaH6ZWxJKCfHdR8
-         G8OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743696366; x=1744301166;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6CUM1YGBsiV36kXf/ewqX0Mf86Kw8OHi0hTrNzy0FCQ=;
-        b=DxhX1+4yxOJr59Dbo96PItwKvE2SmoFLWfyOBHDyDTCuzkRKZM9C5MXfI6bCYm6wk3
-         dh/BEyM/XumguKxuguFoJVxb+eqNABWXrwi/tf6XUCiMtzBUVQSTkfrlAYpHhvdJM/Cc
-         RxqAndsq8Hphf+2qzKWJOJTtIgI7cGUD/97VWhFbjPR7Z6/Xd0nYERmGB3DemjkuSE7k
-         QDNSg4Uasz9IPIP9nP9RsyxTZyhnU8dBD+36jwdAHf0ywn+4btzcwcYYTVDZsXeGybET
-         bxFBn/1OUyMsbE+HkGVtvc3HuCl2xnLTjCYYbKcNC4kYX/4tOhv4BYRLQcRQkvJD7aE7
-         adbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkU+4hnaLEVS7LEWuNhGI4eDRDeCNrcQKRXTynwVlExL5JnddIirpBepdt9Rb8uUVOZjkusKfYrz9SyjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlPVvJ2OBJuwUi26Lbrf05hEaNvcz2H5IbpHX5G6E6TVg8o/eZ
-	4RxpisnlH5q6bwuAXuaPvxMjv10UQuouOIzVxDEqWA4yFbeM1BId
-X-Gm-Gg: ASbGncsX7/t43yRyad1FwmGwDQcRLKE46A1pIVhFQ/wC6+q3vELs2ivXY+FWkGcn8x+
-	G0EpHaF3zgvPdf6ljtncFZLFPrLKLw6hEEQR0pfr/ci/+occG4XKRGK2RmvX+tLg9NhrJ6W+IP3
-	v2eMRZGrE5jgtoqiZEy54+HgZXXVFhCc5Hu6n4JF/EoylmgG01W6Lq7J8K5D6c5cZyDf2b6YUuW
-	kGnAufwe/ND+yC/Q43v/bcMu1tKF0PU796DzE+nV0rTrbGFrWkc5ywjDX8dxhJ2XnG6R+hr0Ai4
-	cNuujtHMMpcHebPhn0HIQ5f1SwrphdwTezyF8P6C/QD1ZzJxHT61qBM=
-X-Google-Smtp-Source: AGHT+IFuyj8PnUH67QJmQuVRh5chNtphraUZc7jj56nG+Xj2gh/lxU2i3HorqQk0IXcClAQRgY6fUg==
-X-Received: by 2002:a05:6a00:c8b:b0:736:3954:d78c with SMTP id d2e1a72fcca58-739e4b49da9mr162206b3a.6.1743696365725;
-        Thu, 03 Apr 2025 09:06:05 -0700 (PDT)
-Received: from localhost ([2804:30c:1f4f:6800:9245:316f:6226:cc1e])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-739d97effb7sm1736215b3a.60.2025.04.03.09.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 09:06:04 -0700 (PDT)
-Date: Thu, 3 Apr 2025 13:07:09 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Siddharth Menon <simeddon@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
-	jic23@kernel.org, Michael.Hennerich@analog.com, lars@metafoo.de
-Subject: Re: [PATCH v5] iio: frequency: ad9832: Use FIELD_PREP macro to set
- bit fields
-Message-ID: <Z-6yLe1GyNsFJlph@debian-BULLSEYE-live-builder-AMD64>
-References: <20250330135402.105418-1-simeddon@gmail.com>
- <Z-lm8l1ILFuJE5YS@debian-BULLSEYE-live-builder-AMD64>
- <CAGd6pzPe71oY=+cy3WqKPyZ150q3pOM3LrPE0_ENeKgd+OvnfQ@mail.gmail.com>
+	s=arc-20240116; t=1743696478; c=relaxed/simple;
+	bh=tf694kECYu/EWPbbQ45vsQ6LcGLLICsZok3e/DD7KDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JQYvQhiMuMTKolCOFt4EHzvG2OEtZ+WgTReXyxIWWgUfyIk75i2fypICUz0aw/qbFy2hWwDh7+Ub7tXzhXVgmPwdeadg5azr0Ym6R3sMavzxVHJU+ehhifAWDBFXiJcDtEPTvcXdHQhcg/xIXIO99fR4ras18cP0i2t0KKj+7Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [221.222.48.127])
+	by APP-05 (Coremail) with SMTP id zQCowAB3rgZRsu5nyDqHBQ--.49340S2;
+	Fri, 04 Apr 2025 00:07:46 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: kenneth.feng@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] drm/amd/pm/powerplay/smumgr/fiji_smumgr: Fix wrong return value of fiji_populate_smc_boot_level()
+Date: Fri,  4 Apr 2025 00:07:23 +0800
+Message-ID: <20250403160723.2400-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGd6pzPe71oY=+cy3WqKPyZ150q3pOM3LrPE0_ENeKgd+OvnfQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB3rgZRsu5nyDqHBQ--.49340S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF43Wr4xZw43CF4kCF47CFg_yoW5GF15pr
+	WDXrZIv39YyanrJrnrtFs2qr4S9FyxJFW8G3y7C34rZw1UtrW8Zr40ya4ayF48GFyIkws3
+	X342gFWUGr4Ika7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
+	4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVWUMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUjtx6UUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYBA2fuaKzRGAAAsM
 
-On 04/02, Siddharth Menon wrote:
-> On Sun, 30 Mar 2025 at 21:13, Marcelo Schmitt
-> <marcelo.schmitt1@gmail.com> wrote:
-> > The previous implementation would set ctrl_fp if val == 1 and unset it if val == 0.
-> > This patch seems to be doing the reverse (setting ctrl_fp if val == 0, and
-> > unsetting it if val != 0). Was the previous implementation potentially buggy?
-> 
-> My apologies, I seem to have made a mistake here.
+The return value of fiji_populate_smc_boot_level() is always 0, which
+represent the failure of the function. The result of phm_find_boot_level()
+should be recored and return. An error handling is also needed to
+phm_find_boot_level() to reset the boot level when the function fails.
+A proper implementation can be found in tonga_populate_smc_boot_level().
 
-No worries. It's okay to change/update device drivers to make them better (e.g.
-implement new features, fix bugs). If the proposed change was fixing something,
-then it could be put into a separate patch with a Fixes tag. Though, I had
-another look at the datasheet and my understanding is that the freq bit (bit 11)
-should be set if the user writes 1 to out_altvoltageX_frequencysymbol (ABI
-documented in drivers/staging/iio/Documentation/sysfs-bus-iio-dds).
-By the way, I now think my suggestion of doing
-st->ctrl_fp |= FIELD_PREP(AD9832_FREQ, !!val) was not a good idea since that
-wouldn't follow the proposed ABI.
-Anyway, it's okay to propose more changes/patches if you want. Just separate the
-patches according to their logical change if you make more changes to the driver.
+Fixes: dcaf3483ae46 ("drm/amd/pm/powerplay/smumgr/fiji_smumgr: Remove unused variable 'result'")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c | 23 +++++++++++++------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-Regards,
-Marcelo
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+index 5e43ad2b2956..7d0cb3741b94 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
+@@ -1600,19 +1600,28 @@ static int fiji_populate_smc_uvd_level(struct pp_hwmgr *hwmgr,
+ static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
+ 		struct SMU73_Discrete_DpmTable *table)
+ {
++	int result = 0;
+ 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
+ 
+ 	table->GraphicsBootLevel = 0;
+ 	table->MemoryBootLevel = 0;
+ 
+ 	/* find boot level from dpm table */
+-	phm_find_boot_level(&(data->dpm_table.sclk_table),
+-			    data->vbios_boot_state.sclk_bootup_value,
+-			    (uint32_t *)&(table->GraphicsBootLevel));
++	result = phm_find_boot_level(&(data->dpm_table.sclk_table),
++				     data->vbios_boot_state.sclk_bootup_value,
++				     (uint32_t *)&(table->GraphicsBootLevel));
++	if (result) {
++		table->GraphicsBootLevel = 0;
++		return 0;
++	}
+ 
+-	phm_find_boot_level(&(data->dpm_table.mclk_table),
+-			    data->vbios_boot_state.mclk_bootup_value,
+-			    (uint32_t *)&(table->MemoryBootLevel));
++	result = phm_find_boot_level(&(data->dpm_table.mclk_table),
++				     data->vbios_boot_state.mclk_bootup_value,
++				     (uint32_t *)&(table->MemoryBootLevel));
++	if (result) {
++		table->MemoryBootLevel = 0;
++		return 0;
++	}
+ 
+ 	table->BootVddc  = data->vbios_boot_state.vddc_bootup_value *
+ 			VOLTAGE_SCALE;
+@@ -1625,7 +1634,7 @@ static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
+ 	CONVERT_FROM_HOST_TO_SMC_US(table->BootVddci);
+ 	CONVERT_FROM_HOST_TO_SMC_US(table->BootMVdd);
+ 
+-	return 0;
++	return result;
+ }
+ 
+ static int fiji_populate_smc_initailial_state(struct pp_hwmgr *hwmgr)
+-- 
+2.42.0.windows.2
+
 
