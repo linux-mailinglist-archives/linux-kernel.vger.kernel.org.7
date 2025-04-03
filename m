@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-587591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724FBA7AE7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:28:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0830AA7AE98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A151763D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528D01B60B75
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67A02063C0;
-	Thu,  3 Apr 2025 19:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B450C20A5E0;
+	Thu,  3 Apr 2025 19:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KzcRrt6T"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYzd6ca/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0282B2040B9
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F640209F43;
+	Thu,  3 Apr 2025 19:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707795; cv=none; b=dZA6y/8eNH6+fonJ9qMxuG0x5lH0wmyv/Cm4K/DoIyfATg0UTaR5cC/dUuG46QzlgpIdW8VBXa8Kpnrl+Mp+5XsfZpz59E0aDFiz0Dqi8Qjd2d8kq5sXvWx2oUic47hCdVHzekZokPMom1kGSc5l+l/mDeLpHQ+oqpZ+jqNYVTI=
+	t=1743707826; cv=none; b=F5UiRJQR9bLCF/M1LW06DSVu0Z8cIvW5cSeY3uiZBye4GC+gPVEvNOfncB3LnDBG6MldyWUHUYfoxESCBU4JMMO+NmIoS+fQxKmyt4oJbjse5suH9ixqgEPiNTZc9VcdIk5W45Rv+yRTuxy28LqtGbTBT5/FWC+i7BjW/ZPiVIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707795; c=relaxed/simple;
-	bh=oIe/uWD/FQDzr1edh1CzgOk8NT19Av3Ax0Mu4QeYt0c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WhfXIpPx3Ve6EHRwyrAAZ9KHeUQJoj9FCzGpbMsssYFLzzJ5CAlWNXo/LETILnwSywXWaFKK29p3U+hDbwgufpMOZ6NzrT1Tq2SGABuPF+wcrFr9VDe5o/smPlD1fWasW5WaqiqurOvMR+FMW62EWZmGFFgGzmc5rZjDzaSQmeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KzcRrt6T; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5499659e669so1342448e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1743707791; x=1744312591; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dorrjSo0orF//5lS6H31AEnatOUG0VehlrElNg21OPo=;
-        b=KzcRrt6Tn4J4roTiElDsx6nBuxoqkw131eiq8KEj5G9YyO2hMWnVUXimaETLD+go38
-         8zmQjuyZ12i+Tow/1AKE/p/tPZLMpoTgwhacOV4EVTpyXKUGH/TLmrKD1uP866iZ9/xn
-         nH+JVdVFOpZ849qslDl0pHcfyaASPW8VTQ7+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743707791; x=1744312591;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dorrjSo0orF//5lS6H31AEnatOUG0VehlrElNg21OPo=;
-        b=mdpFQJSKjxytq4C+TFUMd5+Mb0xsNM/KhYIvj0xw9FETjJlJAN/qmMIgqSxhDkkFt+
-         MWddkp1QMb+UZtakRjhcZ79iZAhIJQqjX4GrQFoaAZWbg2xqgAiCvCj4YTsfpju3OY6/
-         FrgBqCXHH3A+nnaPCLvb7QCYJfnutK1EthpSXfZJ+qrKwCMXlCA5LmDkj79+NEvO7bXt
-         L6ohzEHOlPd/NSSnhGX8ZHg2wMGpKXysKVE7/KoQ16ltOr0RZQZKOVi2KtrwLR1hA2Uc
-         xnidmNJ9SsoywJGtbprdRy2haTG5KchinmRI5tEa2gxiAKDO6kgC75Rt4MgPKJ35mMdW
-         1xqw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2I036fIkfvGp9+bwceTCBxLaEedcCkCPUBGKgZE0rHpCrzt5StnEi22EME30YP3yWBysJL3rdL2aPkws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9zCi9JTo5qZRHpdoUCLQrtNtDK/Ba6eMlfSqBwYUH22rCXepz
-	ZX1uzfXUZ3f+8Moc2XgCd1p15D71g3jGo8Cc7iHZwEwtTc1PlAdR/Kpze0goxw==
-X-Gm-Gg: ASbGncsOf75hE0y32GDUu88F4pzM4S3b86V41pRGT99AbgPt+H0YUfpTx3ekWTa1YZJ
-	YlONb8sHnCWImrqY9woiWty2UrhdVQRzxSBiZzPtZsRlxSsTfuex/PSQ4zkQMG+eU+RZ0g+G9gI
-	TQ3vqnU3ROImjzM8MtDkQwAZKLCHFTuav1+0ypEu1JrIS9dezauwkxhAXDcWEfLOzPUIjbZXvP4
-	Rx6eXne9AVfXUS8+ZzEzkjqKFfyyb2zO0Z3qyntX99umUp/pMYdnwTL+sDrSRNBoTy5u59EP8nB
-	nd0laXqEXlMK5Q0ySWMMvC3ACdTn+vLLHlwXAyx1QoMIKUJXaZkI5fL5yFjssjT7XdLyy6ybEYY
-	01nJr5aUlApg8+LujAUCQKLWK
-X-Google-Smtp-Source: AGHT+IGVY3EFg5KnHKmHO2hTamBaTkRj2xwhuyk+NEFXhuefJ9O4PY6IbapG0I2fVQxVv80RmqRT3w==
-X-Received: by 2002:a05:6512:a91:b0:545:cd5:84d9 with SMTP id 2adb3069b0e04-54c2276e9b2mr115584e87.12.1743707790862;
-        Thu, 03 Apr 2025 12:16:30 -0700 (PDT)
-Received: from ribalda.c.googlers.com (216.148.88.34.bc.googleusercontent.com. [34.88.148.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e65d6b1sm230142e87.194.2025.04.03.12.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 12:16:29 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 03 Apr 2025 19:16:19 +0000
-Subject: [PATCH 8/8] media: uvcvideo: Do not create MC entities for virtual
- entities
+	s=arc-20240116; t=1743707826; c=relaxed/simple;
+	bh=AS4RaIshtcU30uLBqrbLWUqtMzDm0R+BHz6wn5S4PGo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oktfiI0yTAsoRwvoE0WN0dwmhWsVX0qWzE34/C7D3BqR+JrjOmhIci4tQ/q+6ROC9SqZIcB+83UHlFcs4C+2pXx2tif6OnRL9zdmZul4ytEOS93P7zFZiNMm1USXU7v/+dXtQe07psIBkQrlGxWYRHbZq5VPEM1OogF/hZp4oUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYzd6ca/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603C3C4CEE3;
+	Thu,  3 Apr 2025 19:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707824;
+	bh=AS4RaIshtcU30uLBqrbLWUqtMzDm0R+BHz6wn5S4PGo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RYzd6ca/Q6LpGHgN8dn+/15GDY6Sfxahu/v9J+88YvV7bEYWyJ6RJfozr9F2qMBM+
+	 WegpFYd8tGZQVxKrhufJeT32kmLqzgQ/zZTnzXdvtbJZtFXHZb0XnqMgxZRpdmAMa5
+	 Vj9V13/Dc43aeyH8vv5q+xeGq/Nrba9WXYJrqL3QyjLPhopIcW+T03YZ/F4GWnluKm
+	 eCOSZpCBNSWAPh/cDDy4VxkcfHLcaXR1yzE4gsiVqibv1yycduqCcuJ0Gp3wLqhg3d
+	 HztyFbZ7nX9ziwDJpQOpLBu0JmzTcJrwF2eIEgs5ypK0eBvXh0PnaRFMcl1/xrZ+9l
+	 LxqsTmwygN9zg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.12 01/33] drm: allow encoder mode_set even when connectors change for crtc
+Date: Thu,  3 Apr 2025 15:16:24 -0400
+Message-Id: <20250403191656.2680995-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-uvc-orientation-v1-8-1a0cc595a62d@chromium.org>
-References: <20250403-uvc-orientation-v1-0-1a0cc595a62d@chromium.org>
-In-Reply-To: <20250403-uvc-orientation-v1-0-1a0cc595a62d@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.21
+Content-Transfer-Encoding: 8bit
 
-Neither the GPIO nor the FWNODE entities form part of the device
-pipeline. We just create them to hold emulated uvc controls.
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-When the device initializes, a warning is thrown by the v4l2 core:
-uvcvideo 1-1:1.0: Entity type for entity FWNODE was not initialized!
+[ Upstream commit 7e182cb4f5567f53417b762ec0d679f0b6f0039d ]
 
-There are no entity function that matches what we are doing here, and
-it does not make to much sense to create a function for entities that
-do not really exist.
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
 
-Do not create MC entities for them and pretend nothing happened here.
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
+
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241211-abhinavk-modeset-fix-v3-1-0de4bf3e7c32@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_entity.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index 01eeba2f049e9ebb25e091340a133656acbf28ca..4a0a083b4f58f041023710207a73e8fede8526e0 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -72,6 +72,16 @@ static int uvc_mc_init_entity(struct uvc_video_chain *chain,
- {
- 	int ret;
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 5186d2114a503..32902f77f00dd 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1376,7 +1376,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
  
-+	/*
-+	 * Do not initialize virtual entities, they do not really exist
-+	 * and are not connected to any other entities.
-+	 */
-+	switch (UVC_ENTITY_TYPE(entity)) {
-+	case UVC_EXT_GPIO_UNIT:
-+	case UVC_FWNODE_UNIT:
-+		return 0;
-+	}
-+
- 	if (UVC_ENTITY_TYPE(entity) != UVC_TT_STREAMING) {
- 		u32 function;
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
  
-
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
 -- 
-2.49.0.504.g3bcea36a83-goog
+2.39.5
 
 
