@@ -1,88 +1,53 @@
-Return-Path: <linux-kernel+bounces-586889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EFFA7A514
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 849FFA7A51A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A4E3AE7DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C063B7F91
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2024EA96;
-	Thu,  3 Apr 2025 14:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365724EF86;
+	Thu,  3 Apr 2025 14:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aD9866Fi"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GU8llk2h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4862C24DFF6
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300F624EF7E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690076; cv=none; b=jeU9SsA97h6h1IsWQbzos7wr4g81fR5kAsa4WFDtxZ3k8BxNviaOgRQMwdL10N9aKRSas1/RC7O8yQ6eDXsY/4YbVxTi96bUHIkUQib6lmNuUYTIHxdvsnAI3ztlFdWDizY7cmiuPeRynX6oOU59EJk5PQ13SrDXhlQ2VZ4miO0=
+	t=1743690290; cv=none; b=i5LtSETvFlYGJQRtL38AsTAf6QQIQFQOlN9kciWC1+oDfjZN79W6obLpdixnBFrWqRe9uXgLx+lb7BcM81SMPbu6rezqhDp5YHqwC+M8OV7yarm9v/1FRzyvW2aJsczz60mxfM2rbpgU1iiqseR4/KlDoGHRrVGiEoQvCEC95jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690076; c=relaxed/simple;
-	bh=6bn6maREDF+L1e+/f66gyRIINYrf9kDWSpu9v95X1Og=;
+	s=arc-20240116; t=1743690290; c=relaxed/simple;
+	bh=ULh4LiwYDnoWTct7omJfi80raYIjgsafQ/+mOn4NKcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvh7qY1Sltsz28veHdScRIRDNFWvDv97RsUULM+fDnzZcCtqf1uqm72xA73l8GR0W/iK/Yo0MMI8DlwLZTHnvGRzxxajP8Ci2e0jV8nD5OvGj9pFjQwDKNQHTRjCdgQu99JWX+8SxHroxJ9CBuhbGn5TtWOVLVBRVJFDbi6h2rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aD9866Fi; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso1803213a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743690072; x=1744294872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RdKyMlf3QjSGqDaSEQwhmI34sCc+7J8IQI9BHCCFOAE=;
-        b=aD9866Fi8OBjbOemBtqeRTGT/a+iVv4wsBGkkhvdCsRTjFswiFoj5jTjph62w8EUvG
-         VzXElGeT3w9YuojSIAFDUGFvSIFJa3tSgSxoXreqHtehEPh2mxDnfAYbp+2ybSA8HzZf
-         iP69CnG2NcT4eYG7WsJguR3v+/kbQRTs5ymjELyrLNxslzM4g/FhlbExievmfxr8F/Ml
-         nyddEupYBhTLfkUveaYRZ38gZbCPgQCJU8cZErRd5HqAuxL1pw8/SlL80n6LCXSHOeqx
-         WOfAXeuNOc5j/yCr2D4TvXPdtKsN+kwXqjUX3EtnHdz6QjOS2eW9udl8Ve8IichVQ8BD
-         rFsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743690072; x=1744294872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RdKyMlf3QjSGqDaSEQwhmI34sCc+7J8IQI9BHCCFOAE=;
-        b=jimhEXBf7BzukcvKF2wDzGO4ra9haNq26keO93zST3R+T1W8ZCIrmCppJRMm4bhHv3
-         NHj1Mxk7oMSsccJwKDhBAlA12rY4cGTwfpzB4zbI8x2oCQTDD76VnZP3vQinOIUlDGfz
-         4NUD92ucL6pVJ2BMLZzlajj6yC4HdildXatAQiCX+oxULeEYsGKyYvoj0Khi8A7VGj3R
-         0LiThF+Ip8X0qhkU41p8ljdQB2kyYPPfNdbbQnQtHfmlwsiLKlZsIWdOHDnjeTXC/spy
-         sT3Vk4egq5TQxP3/Av1h6L08o0M+2V1SqTo9lHmxcBOEB5to646pKJ0ohcrX+LE2EmDL
-         CzQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqBbPE1o4HLJCJ3XeH6r01s5Ssub1ss/ymsRdXPAX/9DpzXWAMDRnvxvwBNSiP4fwZdpN/aQ35D3aFBHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6HJWI/lKbiV5Qfhqj0Pblo9uoPhYUGCEQO0Ocr+NWWefnUP4S
-	R1vDndMAlpC1tXU9Evn6zHzV/aZ9RqZRR6b6yoELlkTqWUpyAAxpN5FzPVCO+Q==
-X-Gm-Gg: ASbGnctLCvyp6RUNquua6GG8GqYoZPO6aaNOTnJwnnlavOFrg6K3WscPy8RA/Fk40nO
-	nifXMmpVpxgx3HuV8rDnTti+2E4KNoLZxp1CwWaY5RxkpRD96xCySAXccyvrAPIsnVMfRfQqoCQ
-	Q/eZGWGedPkrF7STuAWjTPmJKba6c6hZaX1Qf796J6FxjZscDySOrfScCBurQklAXHnc5lPiWe+
-	yhDFdsYnyM5XzxY0cTijIjnNya82cRsPdN4RJmPNUAHEK6FIU6n/6OUggCziXrvI7IMDF5uz8lt
-	yfkq0CHomMtkuwUs+S7hxKfy4fH8Q1X4JTpJynbyGlw+0+rABnM0a2iXJXFIOhi7zQvcOYVhcxH
-	HVZRoIg==
-X-Google-Smtp-Source: AGHT+IH9NWYIICiILBtI5t/w7XFm2+Ky2qyQvmJWj71kOjgDjuSgYqFoF+3azC8fuvUTcmLQ14dsAw==
-X-Received: by 2002:a17:907:97c9:b0:ac7:2f8b:6844 with SMTP id a640c23a62f3a-ac738a4b2a5mr2120901366b.23.1743690072237;
-        Thu, 03 Apr 2025 07:21:12 -0700 (PDT)
-Received: from google.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe5c599sm99498766b.6.2025.04.03.07.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 07:21:11 -0700 (PDT)
-Date: Thu, 3 Apr 2025 14:21:07 +0000
-From: Quentin Perret <qperret@google.com>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 8/9] KVM: arm64: Stage-2 huge mappings for np-guests
-Message-ID: <Z-6ZU7DWkxnVIbff@google.com>
-References: <20250306110038.3733649-1-vdonnefort@google.com>
- <20250306110038.3733649-9-vdonnefort@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DudAV0YXawpGP0iMNcWYaZMjN4rK+Iu+A72nBL4HrMWq6Ybrz0EYnd9hYrTH6y1o/y8wYyBZi2hMFm/yjCuHvltpov7o6ySOJROZ4O5BZ/vXRDY1l8liSKyIFw+pCD3GT/vSvLuMfh8A1dZtHQGSCUG4QPnAdnJ3di1euyKWOkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GU8llk2h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F36C4CEE7;
+	Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743690289;
+	bh=ULh4LiwYDnoWTct7omJfi80raYIjgsafQ/+mOn4NKcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GU8llk2h+13k4nu1+zl+CXUhQiNV9YWOcz87Pe/dPRmmRRnFqHZ5jHh6KiIQboJ8D
+	 iLfaolKJY4mUybcQ3e0NWxAEU1NQ2usHqWtkmYiz4JR86duS3N8nF4sI0Ofzju4qiV
+	 wiaYvT05X7hp4HT1oFzzh7QriKh8tEgHs1KSGGYw=
+Date: Thu, 3 Apr 2025 15:23:22 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
+Message-ID: <2025040343-vascular-swung-f124@gregkh>
+References: <20250403110053.1274521-1-raag.jadav@intel.com>
+ <2025040336-ethically-regulate-3594@gregkh>
+ <Z-6YU24dhxF5PRaw@smile.fi.intel.com>
+ <Z-6Y6lbLSbe46-uQ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,37 +56,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306110038.3733649-9-vdonnefort@google.com>
+In-Reply-To: <Z-6Y6lbLSbe46-uQ@smile.fi.intel.com>
 
-On Thursday 06 Mar 2025 at 11:00:37 (+0000), Vincent Donnefort wrote:
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index 1f55b0c7b11d..3143f3b52c93 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1525,7 +1525,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	 * logging_active is guaranteed to never be true for VM_PFNMAP
->  	 * memslots.
->  	 */
-> -	if (logging_active || is_protected_kvm_enabled()) {
-> +	if (logging_active) {
->  		force_pte = true;
->  		vma_shift = PAGE_SHIFT;
->  	} else {
-> @@ -1535,7 +1535,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	switch (vma_shift) {
->  #ifndef __PAGETABLE_PMD_FOLDED
->  	case PUD_SHIFT:
-> -		if (fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
-> +		if (is_protected_kvm_enabled() ||
-> +		    fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
+On Thu, Apr 03, 2025 at 05:19:22PM +0300, Andy Shevchenko wrote:
+> On Thu, Apr 03, 2025 at 05:16:51PM +0300, Andy Shevchenko wrote:
+> > On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
+> > > On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
+> 
+> ...
+> 
+> > > > 2. Should we allow auxiliary drivers to manage their own resources
+> > > >    (MEM, IO, IRQ etc)?
+> > > 
+> > > The resources are all shared by the "parent" device, that's what makes
+> > > aux drivers work, they need to handle this as there is no unique way to
+> > > carve up the resources here.
+> > > 
+> > > So I don't know how you would do this, sorry.
+> > 
+> > I think we should simply enforce the requirement that MFD on AUX bus must use
+> > regmap. This will solve the serialisation and common access to the resources.
+> 
+> That said, make an additional API call like
+> 
+> dev_mfd_add_aux_devices() which should enforce new infrastructure and convert
+> drivers one by one. Also with that you may add a warning to the existing (PCI)
+> drivers that are using old API
+> 
+> 	if (dev_is_pci(parent))
+> 		dev_warn(parent, "Uses old API, please switch to ...\n");
 
-Should this be
+Don't add "warnings" like this if you aren't also going to actually
+convert the code.  Just convert it, otherwise you pester users with
+problems that they have no idea how to fix.
 
-		if (!is_protected_kvm_enabled() &&
-		    fault_supports_stage2_huge_mapping(memslot, hva, PUD_SIZE))
+thanks,
 
-instead?
-
-Thanks,
-Quentin
+greg k-h
 
