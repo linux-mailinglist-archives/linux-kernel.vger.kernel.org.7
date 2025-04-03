@@ -1,182 +1,152 @@
-Return-Path: <linux-kernel+bounces-587174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332F0A7A8D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2278A7A8E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8078175EE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087A83B85C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAC12517A9;
-	Thu,  3 Apr 2025 17:46:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE13F253F24;
+	Thu,  3 Apr 2025 17:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="I1RUVEfj"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B842024397B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 17:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D90E25290F;
+	Thu,  3 Apr 2025 17:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743702388; cv=none; b=ED7UC4JslxjvucyaJw6sIsTpbrtWPrgF7rzXhtHy4hf4UKnar9qQiQ04UeFIhwVTS4xNPgtie+zvAMLYb4w0+BuT5nRLCmft6w/i0WX2zRRn8GSRz9veSGrx0BpWLHh7WoJlv6zPkxqtGTNrVDVEhVc6Z5IGAZ5TUozZm8VvVhA=
+	t=1743702448; cv=none; b=Sm8JwQJSRntlnZRAt6zqNFURgrNyQzyIjaCkt22xZQZfSPyR5xRYCJwK2BqwmhIsWqNdKRrBudhOPIe4LcV5a0sEBKJsJ1Oi2NoOQKGwEzSMq3NTSIKoGbzHnxJdCX3TdnVBYdgadEf6iX3nvhYtNhz+Pic3fZsk1FxEaOormjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743702388; c=relaxed/simple;
-	bh=7WAOF/PGgx1dnyD4FdX5UHymjIyHujyPwO0DPA9CwPw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=A2f+u75CyOE2z4JsezM44BfNy+T5ksMMAHGbP4uuoHlGH6LTE4eMojVGyff/pTCnItGyK7iFsfK/xzSimfLqPQ06GZL7LuDkXNfy3sFIflB/mqEMXi7zGCenwoxYOCmV3MjDvcEwyohj7/stktHEnLRtmueDfP8i7doQTBaaawU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so26807505ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 10:46:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743702386; x=1744307186;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5EIrOuna1iQfxkNQJAQ8SncT+rsXyyDd2SoWc/q5hWw=;
-        b=i94WX4/k/+xHsOSM7vecITXrQqF84gjHyKUBzukEXCEL56ylA9uY/13Mfgw5hUTcL4
-         dWuOHNUwVzPbVwJAUTeT20Unq8TuIAqFJf++UEugZzgFeoLqmeDlzQf66ME7I2KSkVXe
-         6B8thg4sI06Eisy1V7pyPuioBYPYF9uOw3PBzIx0QdAlb9pfH/kxTIhwkEeFbNfja5Zj
-         zGepq7uTKvbhHvMkftanrmHIgmFLpjz9c+Jx++O8PzVLY+kWGIrFiyNup590ifh8iBCh
-         CRxzoPFIpmRvx/uml8ZF12spFMbIMC4jCI+3CBPG+EvRqlEPvf6gKbSqBP9h62rwBdZQ
-         dFIw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/v58nsF0iPLAKKbcjpopW9I4kXll5Cl8z522a0524BPgZLbHPpBAU4a9Jl00hGN5whDRVuh+Tmqka20Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzorirQRFhpY7AMuJCauI2GNJVyhrKU5I++pvE6gmV0pSXzWInH
-	OwXsQFh9ZHw+8pFEHYaVwQ++yNz83d9yZLBhx0w/kKGiUEL6yTEUs1Vzb+L9NfyFJV7KlhIONvo
-	I/zfTogzipfmHBYou1Rf1m689zBiKJ9jFBVN4bkUwcyytNhQSwJy/8d4=
-X-Google-Smtp-Source: AGHT+IHWtvoebqXEf/sTd+fBUcKziDtr+u+YE5y3cCnRiTHmaZrtU4hS05fyA0dhX1z7XLJmJkbbUGj8wTAOQujs4kPyffWIZKSC
+	s=arc-20240116; t=1743702448; c=relaxed/simple;
+	bh=KnIkky881MVh3vPKqjE4oYQv0uJJfiv3nzCYlzLw3T4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZDU610VJs8QPlF6KinB653cQADFXouyyIf06qc3SweNC33l6Hk18r3X2G2u/+jLTHD2CNrJEQf7xKEv9HTtboFhcMUF9slxYKXJS9SGXYdYpc9fWWUUNbw7ZnsuLoWL2I8uMCwI0Wr3RJhDlX8ykbKPo/kNBCz47Vf7IWusoeZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=I1RUVEfj; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743702418; x=1744307218; i=frank.scheiner@web.de;
+	bh=H1sIW/fE2PWhkLk+OKhCS+zpamXiY+kKyuMISklWwjg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=I1RUVEfj6M/lrSVs2nXUN+F3Za0oLDTfoIUwyR6Bu/LpFTSVVYPEWG2SfVFyq95c
+	 787U9IXeSotxvVgAc4BABi6gFmZ8WEZpiiypd8fC46jeCY03yV5b0RFRHmWS412FT
+	 k54lKBckaqGH5m1NxtS0ZnCai28WcWeJVwN9VQ8S1CCFJqXtOTyWTwix8SLEAQGka
+	 GH8cmvRQF6HaRXhaIXCwlzH95HwJV8/qfJibrvHmeM3mNIxVdwhcLV/qneCnY7qaI
+	 p540z3cH0BZ+7+H2ToDBlg38AL7lb/KOMR2DNDUJiwHQtO8A55jL+LMRIS47vZXOG
+	 FS8Fh0iMQwQ+4468oQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([84.152.250.142]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPKB7-1tk7Fn0k6n-00WvM9; Thu, 03
+ Apr 2025 19:46:58 +0200
+Message-ID: <703d6f83-f054-48ec-a6da-6d0bbb9e65d4@web.de>
+Date: Thu, 3 Apr 2025 19:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a89:b0:3d0:4a82:3f43 with SMTP id
- e9e14a558f8ab-3d6e3eeab17mr5099515ab.5.1743702385834; Thu, 03 Apr 2025
- 10:46:25 -0700 (PDT)
-Date: Thu, 03 Apr 2025 10:46:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67eec971.050a0220.9040b.0207.GAE@google.com>
-Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in bch2_fs_release
-From: syzbot <syzbot+d35395c659ed8030c05d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Frank Scheiner <frank.scheiner@web.de>
+Subject: Re: [PATCH v6 04/10] genirq: Introduce common
+ irq_force_complete_move() implementation
+To: Thomas Gleixner <tglx@linutronix.de>, apatel@ventanamicro.com
+Cc: ajones@ventanamicro.com, andrew@lunn.ch, anup@brainfault.org,
+ atishp@atishpatra.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ gregory.clement@bootlin.com, hpa@zytor.com, imx@lists.linux.dev,
+ kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ maz@kernel.org, mingo@redhat.com, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, s.hauer@pengutronix.de,
+ sebastian.hesselbarth@gmail.com, shawnguo@kernel.org,
+ sunilvl@ventanamicro.com, x86@kernel.org, linux-ia64@vger.kernel.org
+References: <20250217085657.789309-5-apatel@ventanamicro.com>
+ <667d272f-2b51-49d6-84ea-1156027e00a7@web.de> <87plhtuw18.ffs@tglx>
+Content-Language: en-US
+In-Reply-To: <87plhtuw18.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6MNV5zoHY7hCQ09bvOvJwv3kuECz3WxUa2bfbadzKiu8Nz/PUk3
+ r4khTzLDonSLMS3CB0XogqYaE7OGkBBDVuYsfF7qkxe8x0p0ZXmBcDc+d+D3/cCMpa95o/j
+ UunubNqjcMWGWkDIi36mSeYWey1wj5Vc325jNhAElfvL0lItLmH5oJW4HJ5twGTwB3HdGoR
+ efZJC73+zd6VD6Ca/b8yQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vihVRggBLIw=;40mu8nvRzyn28pHYR+tyRa+glGA
+ L9dS9EZZnssU8CZpd3S0dRgfmlpEQMuKMP36srLrat7dg5KrFfS5QcrpJSNuOyhAv8VTFe4wi
+ eM5ASGmb4b5QPFNc64n1mPnJRMMnXF3OoAzouVuuussBJmCsgg1so5ORWeak/+WHLezyKpJic
+ jaATezrrWdJ0nig2NE3MOAwfQqd5v6gCARk8fafoldUX7MVaL9Q7SDYyFq8pdgHNG7hdU6z7J
+ njGKJCpE2tFVXuvZb/En9b24JwPRRbOBvQdat55Ww2oZGd3JKtzA/AYdHHailozKEDkiPX3rt
+ i8iNamTaevB0GZZFVK2HrRFWW96+lcMx4wcNNDK0f12+TDMKseXGzou55pLMupGdGoeXCc6/6
+ JTOyTCOl+soVnuCNxVuQHfhLbIHXRyRMj0tsAq53kgWxEAr+hiKOl5gLeC2RbPl6JBgWeAXFH
+ +ngvCfZWtwvqUmZLakj4oK7mRkJlcyy19zHS6Umr+McoUXVf0xm3AWpHTaVwvuoydLGiKXed8
+ R5dRi61Tpuk4p6X4Pbslq+PkNiecpXPYHqZkxUFZn2rgiV/f63abYRkHPFrkFVM11XmP/1jJZ
+ Dq11OJT/XaumPqPD+UoCq7AtjXnkmMYzPvwsNF2/LVNRGPRNK5HGz5hNCCpnc0nOcI5IiXzYR
+ Ph0nGHt85yOBMhE1bdwtb9tLpTECZ9v6Jd5MArIhEd4hAuofPQ11mNN2iM5t9U56JMVP1+ATc
+ TrAz8UmO1f1NH0GV20zn4+SYOWiu6YWGGvJFxjco7QworCrMR1mQlEaWMjRHWfcUSW6eRtPfM
+ 3MoF+2DBb+3E7G+hY7Oc7vzzEtckiRR3OzrYmOE1FokZgb71WdlLUDbdo1xHsnpKJZgKAyqfJ
+ 9fX78iSu0CNN/8We7scRn3oMFmpi1CsidTvnZMEeL91sKLGP0dnO3ilrb2UCDbVru0uCBjL1m
+ nOA+AWsMUTXmrTrczxCNEoXyE93d7wqj2y1xprwW8AEaLcrmJxGwrpRo/5CnY9MLet6uYYJWw
+ bUzI6SKOIrkZdJhURWeF/BJzhFokJLtc9N9XzoDf3HOc8klP1P335Ss/i+rxI52jA9VUZNFc3
+ qHQuKxHyyiSpE4Y/QQumO0K4y4Y06LGxpmmeXnhOXvuGGYqq7mCGw+ruDiovKdLg/usdctrsI
+ dWLoSkllh27rNJcFiCSIM0Yc9Rkge2gf5KphceWpSY2PWU0fGMp/awsUa7bu0Ffre5l6TfyUj
+ DyZQavkfN3Mlj7dDrPIapKO5jtRpoRYCXTLl/L6qeloJk4C3zRQJf2fMKOqjO6BuYfbZO3vOn
+ tCDlr4+pNXnGH59LWm3v32wIVYTpPn+zG6o0NGy5NW+qBTi0juCMJN3xnKTKuTe9ZjT9VW0Dd
+ 2FWe00Y0QziOltsETzc+OWc2wZ58YY0J0IUYZU/WcO2ZYprxjRmytNS282nz4TEdkGNtJ+VCp
+ C7w/BVQ==
 
-Hello,
+On 03.04.25 17:03, Thomas Gleixner wrote:
+> On Thu, Apr 03 2025 at 15:13, Frank Scheiner wrote:
+>> this change, specfically the introduction of irq_force_complete_move()
+>> to `kernel/irq/migration.c`, strangely breaks our builds for the hp-sim
+>> platform (i.e. Linux/ia64 for Ski):
+>
+> arch/itanic has hit the iceberg and sank with the release of v6.7...
 
-syzbot found the following issue on:
-
-HEAD commit:    d6b13dbd03b7 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1653f7b0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=114db1c77c985e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=d35395c659ed8030c05d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd0bf9e74cb0/disk-d6b13dbd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/50ade35a15e1/vmlinux-d6b13dbd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/986cdc664ca4/Image-d6b13dbd.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d35395c659ed8030c05d@syzkaller.appspotmail.com
-
-Unable to handle kernel paging request at virtual address e1ff9fffe0001864
-KASAN: maybe wild-memory-access in range [0x1000ffff0000c320-0x1000ffff0000c327]
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[e1ff9fffe0001864] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 6672 Comm: syz.4.10 Not tainted 6.14.0-syzkaller-gd6b13dbd03b7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-pstate: 804000c5 (Nzcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : __lock_acquire+0xfc/0x7904 kernel/locking/lockdep.c:5091
-lr : lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
-sp : ffff8000a46769a0
-x29: ffff8000a4676c60 x28: ffff80008036e1e8 x27: 0000000000000000
-x26: ffff0001b3737540 x25: 0000000000000000 x24: 0000000000000001
-x23: 0000000000000000 x22: 1ffff00011faa0cd x21: 1000ffff0000c322
-x20: 0000000000000001 x19: 0000000000000000 x18: 1fffe000366e6e86
-x17: ffff80008fd4d000 x16: ffff8000832bccd4 x15: 0000000000000001
-x14: 1ffff00011faa0cd x13: dfff800000000000 x12: ffff7000148ced5c
-x11: ffff80008046f030 x10: ffff80008fd50668 x9 : 00000000000000f3
-x8 : 02001fffe0001864 x7 : ffff80008036e1e8 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 1000ffff0000c322
-Call trace:
- __lock_acquire+0xfc/0x7904 kernel/locking/lockdep.c:5091 (P)
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0x58/0x70 kernel/locking/spinlock.c:170
- put_pwq_unlocked kernel/workqueue.c:1662 [inline]
- destroy_workqueue+0x8d8/0xdc0 kernel/workqueue.c:5911
- __bch2_fs_free fs/bcachefs/super.c:613 [inline]
- bch2_fs_release+0x64c/0x708 fs/bcachefs/super.c:624
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x2a8/0x41c lib/kobject.c:737
- bch2_fs_free+0x2c4/0x334 fs/bcachefs/super.c:686
- bch2_fs_alloc fs/bcachefs/super.c:963 [inline]
- bch2_fs_open+0x18ac/0x299c fs/bcachefs/super.c:2065
- bch2_fs_get_tree+0x58c/0x11d4 fs/bcachefs/fs.c:2190
- vfs_get_tree+0x90/0x28c fs/super.c:1814
- do_new_mount+0x278/0x900 fs/namespace.c:3560
- path_mount+0x590/0xe04 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount fs/namespace.c:4088 [inline]
- __arm64_sys_mount+0x4f4/0x5d0 fs/namespace.c:4088
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-Code: b007c708 b9466908 340090a8 d343fea8 (386d6908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	b007c708 	adrp	x8, 0xf8e1000
-   4:	b9466908 	ldr	w8, [x8, #1640]
-   8:	340090a8 	cbz	w8, 0x121c
-   c:	d343fea8 	lsr	x8, x21, #3
-* 10:	386d6908 	ldrb	w8, [x8, x13] <-- trapping instruction
+Ha, ha, not in our waters. :-) Still I'm glad I could help finding
+errors in Linux by building for ia64.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>> So I guess, either the requirement in `linux/include/linux/irq.h` needs
+>> to go, or the use of "d->parent_data" or the whole of
+>> irq_force_complete_move() and its use needs to be guarded as well.
+>
+> Guessing is not a really good approach to solve a technical problem :)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thanks for the advice, though guessing was not involved here. It's just
+a way to say that I'm not sure what the right solution might be in this
+case. And then I'd rather leave such fixes to the experts in the
+specific field.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> ---
+> --- a/kernel/irq/migration.c
+> +++ b/kernel/irq/migration.c
+> @@ -37,7 +37,7 @@ bool irq_fixup_move_pending(struct irq_d
+>
+>  void irq_force_complete_move(struct irq_desc *desc)
+>  {
+> -	for (struct irq_data *d =3D irq_desc_get_irq_data(desc); d; d =3D d->p=
+arent_data) {
+> +	for (struct irq_data *d =3D irq_desc_get_irq_data(desc); d; d =3D irqd=
+_get_parent_data(d)) {
+>  		if (d->chip && d->chip->irq_force_complete_move) {
+>  			d->chip->irq_force_complete_move(d);
+>  			return;
+>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+This fxes the build for me for that file. Much obliged.
+```
+  CC      kernel/irq/migration.o
+```
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Cheers,
+Frank
 
