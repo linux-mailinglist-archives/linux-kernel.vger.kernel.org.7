@@ -1,111 +1,233 @@
-Return-Path: <linux-kernel+bounces-587628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8CAA7AECF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:35:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919D6A7AFA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B0D1B609BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0BA16506D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7720224890;
-	Thu,  3 Apr 2025 19:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323FA253B77;
+	Thu,  3 Apr 2025 19:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/Qmducu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XUasF8mO"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210EB224253;
-	Thu,  3 Apr 2025 19:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40DD230985;
+	Thu,  3 Apr 2025 19:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707878; cv=none; b=F5uKadmcT6JhaLDh3bH+jY3cCcGvNIESoRbGimqfZ8cWBPh2G/d3mXw+oSxLVQdWkVTxz/siU+nTWBQkuQm6l/99jAcZtBRco/z54yMzqHvohFujQuuCq3CT4swHXtaecayNz/s5AYlInCvw9wl2dhPflTVNxXEncJMQb//oeYU=
+	t=1743708299; cv=none; b=WG2nDPWszn3DNlJnuu4jzTqM9XjqeGzdLA4dCRxtUb28GEYfl7qRzVygn80GlktUlZ292b467ecCBdQYLenUa+18eTHVG5MifGdTJzqleCsp2Ft836wzRek3lqYJ9JA6mn0EHTt6DM0FymlHyHNrwFK+Mw5x1eegf1FMRf35fxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707878; c=relaxed/simple;
-	bh=nRyx3VmQ3nHY0DNs36hSyb4Eipali8JfXysXiAvQ/38=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VOodLHeFrok8RPABxSaeEaDSS8TI8kVvUc+zM+YNMBczv4CahxVL6PajBzTk3Bqo2+kziC4gPj1JiHgCcrfQQiQS0hPriWR6VzQ9sN6q2u+MAGVninmumlawDnokm/3qPYT/IXpkj+pygARcyVT5yuOVP0KMukxY9JQ/IvdxDCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/Qmducu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2624DC4CEE8;
-	Thu,  3 Apr 2025 19:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707876;
-	bh=nRyx3VmQ3nHY0DNs36hSyb4Eipali8JfXysXiAvQ/38=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l/QmducuhDnXwuw2XWlLM3W82S0MiqlPyXSs97TsGVpplOH0Enaq/tt8tEZX+VRzj
-	 7AMbuXw0recVbEGOyyYLPrlaQW3DQnIGF/0j5DgtKoywGsqdGxlYHw/BQI0BQKiNSS
-	 /uzjxXFxrrBwelmZR0rCjjtFy0Y4zL7YzEjbkauL7J3wR7ylPuUNY6qzWKtT9bPcJ8
-	 xP01jAmvFvPLyi5cSjisqaxE3EuIO36cng7t/z4h5O+pm5OtRJo55NAB/FA+2L1Oes
-	 jT5dzU2Vk1G6vDGoO3+Kn1HCe+MyYJd1aUDEfcQ8K77H4LPSQKb17wXVIqDNXuqpz3
-	 Set2HtaQKTv+w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Wentao Liang <vulab@iscas.ac.cn>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kenneth.feng@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	sunil.khatri@amd.com,
-	boyuan.zhang@amd.com,
-	Jun.Ma2@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 23/33] drm/amdgpu: handle amdgpu_cgs_create_device() errors in amd_powerplay_create()
-Date: Thu,  3 Apr 2025 15:16:46 -0400
-Message-Id: <20250403191656.2680995-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403191656.2680995-1-sashal@kernel.org>
-References: <20250403191656.2680995-1-sashal@kernel.org>
+	s=arc-20240116; t=1743708299; c=relaxed/simple;
+	bh=M0B7DYBkTlQRKyQ+laESOGNy2whZ2BwQqOZRb/DqqjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O4+XmQlW7AIbJxejZJAzmMiKwQRzMZrxm+Iz9Nu8Cn6qcGILC91b6M6+cOLCY/Co1D28HJB0OB3XR0udwG/IPKOhjv1bi+NuQtlr2aL7xmzYEyZqafQon7N2V8M49w5PAcTvWU/PpDG7IUfnTVDudqzNudU5sfjL2hC4dMVgovs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XUasF8mO; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
+ id 07fea8c86a4f491e; Thu, 3 Apr 2025 21:24:54 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0E9B99014E8;
+	Thu,  3 Apr 2025 21:24:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1743708294;
+	bh=M0B7DYBkTlQRKyQ+laESOGNy2whZ2BwQqOZRb/DqqjE=;
+	h=From:Subject:Date;
+	b=XUasF8mOaPYG+wQJtAcQbKOaZX6/9wTo0gU4Cf/n3azEHJc8ejngA2aWYUKmamOe8
+	 PGCz41VFLrUY6klUoL7+OGckJW37SZRudnEVagSiJVaP7U9ypakfAQAHhlrqiNU+Ou
+	 MJAFnCzxK8HP7GGEYG7pa2K0v9IFjPfN+03XX4zsk5MiN9AEFYCm9jF5wHLcqcmlZP
+	 yuO+CFTtH8wYqwYNxODxvPKsxiFnXCkr5OBOsY3kPi5Camw4QTTPBYZ16j4bs3yU4v
+	 tNSAubaNznEbEks5HPTdznLonOS3/DVQFM2eThkN/Bt6jsSlTd39JY1oMeUpIUNkJ5
+	 yrqfSGVEe73pg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Doug Smythies <dsmythies@telus.net>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>
+Subject:
+ [PATCH v1 1/2] cpuidle: teo: Move candidate state lookup to separate function
+Date: Thu, 03 Apr 2025 21:16:47 +0200
+Message-ID: <4991828.GXAFRqVoOG@rjwysocki.net>
+In-Reply-To: <4661520.LvFx2qVVIh@rjwysocki.net>
+References: <4661520.LvFx2qVVIh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.21
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeelfeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
 
-From: Wentao Liang <vulab@iscas.ac.cn>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 1435e895d4fc967d64e9f5bf81e992ac32f5ac76 ]
+Move the code looking up a new candidate idle state in teo, after
+deciding that the initial candidate (the deepest enabled idle state) is
+likely too deep, into a separate function in preparation for subsequent
+changes.
 
-Add error handling to propagate amdgpu_cgs_create_device() failures
-to the caller. When amdgpu_cgs_create_device() fails, release hwmgr
-and return -ENOMEM to prevent null pointer dereference.
+No intentional functional impact.
 
-[v1]->[v2]: Change error code from -EINVAL to -ENOMEM. Free hwmgr.
-
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/cpuidle/governors/teo.c |  120 +++++++++++++++++++++-------------------
+ 1 file changed, 63 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c b/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
-index a71c6117d7e54..0115d26b5af92 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/amd_powerplay.c
-@@ -51,6 +51,11 @@ static int amd_powerplay_create(struct amdgpu_device *adev)
- 	hwmgr->adev = adev;
- 	hwmgr->not_vf = !amdgpu_sriov_vf(adev);
- 	hwmgr->device = amdgpu_cgs_create_device(adev);
-+	if (!hwmgr->device) {
-+		kfree(hwmgr);
-+		return -ENOMEM;
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -259,6 +259,67 @@
+ 	return state_idx;
+ }
+ 
++static int teo_get_candidate(struct cpuidle_driver *drv,
++			     struct cpuidle_device *dev,
++			     struct teo_cpu *cpu_data,
++			     int idx, unsigned int idx_intercepts)
++{
++	int first_suitable_idx = idx;
++	unsigned int intercepts = 0;
++	int i;
++
++	/*
++	 * Look for the deepest idle state whose target residency had
++	 * not exceeded the idle duration in over a half of the relevant
++	 * cases in the past.
++	 *
++	 * Take the possible duration limitation present if the tick
++	 * has been stopped already into account.
++	 */
++	for (i = idx - 1; i >= 0; i--) {
++		intercepts += cpu_data->state_bins[i].intercepts;
++		if (2 * intercepts > idx_intercepts) {
++			/*
++			 * Use the current state unless it is too
++			 * shallow or disabled, in which case take the
++			 * first enabled state that is deep enough.
++			 */
++			if (teo_state_ok(i, drv) && !dev->states_usage[i].disable) {
++				idx = i;
++				break;
++			}
++
++			idx = first_suitable_idx;
++			break;
++		}
++
++		if (dev->states_usage[i].disable)
++			continue;
++
++		if (teo_state_ok(i, drv)) {
++			/*
++			 * The current state is deep enough, but still
++			 * there may be a better one.
++			 */
++			first_suitable_idx = i;
++			continue;
++		}
++
++		/*
++		 * The current state is too shallow, so if no suitable
++		 * states other than the initial candidate have been
++		 * found, give up (the remaining states to check are
++		 * shallower still), but otherwise the first suitable
++		 * state other than the initial candidate may turn out
++		 * to be preferable.
++		 */
++		if (first_suitable_idx == idx)
++			break;
 +	}
 +
- 	mutex_init(&hwmgr->msg_lock);
- 	hwmgr->chip_family = adev->family;
- 	hwmgr->chip_id = adev->asic_type;
--- 
-2.39.5
++	return idx;
++}
++
+ /**
+  * teo_select - Selects the next idle state to enter.
+  * @drv: cpuidle driver containing state data.
+@@ -355,63 +416,8 @@
+ 	 * all of the deeper states, a shallower idle state is likely to be a
+ 	 * better choice.
+ 	 */
+-	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
+-		int first_suitable_idx = idx;
+-
+-		/*
+-		 * Look for the deepest idle state whose target residency had
+-		 * not exceeded the idle duration in over a half of the relevant
+-		 * cases in the past.
+-		 *
+-		 * Take the possible duration limitation present if the tick
+-		 * has been stopped already into account.
+-		 */
+-		intercept_sum = 0;
+-
+-		for (i = idx - 1; i >= 0; i--) {
+-			struct teo_bin *bin = &cpu_data->state_bins[i];
+-
+-			intercept_sum += bin->intercepts;
+-
+-			if (2 * intercept_sum > idx_intercept_sum) {
+-				/*
+-				 * Use the current state unless it is too
+-				 * shallow or disabled, in which case take the
+-				 * first enabled state that is deep enough.
+-				 */
+-				if (teo_state_ok(i, drv) &&
+-				    !dev->states_usage[i].disable) {
+-					idx = i;
+-					break;
+-				}
+-				idx = first_suitable_idx;
+-				break;
+-			}
+-
+-			if (dev->states_usage[i].disable)
+-				continue;
+-
+-			if (teo_state_ok(i, drv)) {
+-				/*
+-				 * The current state is deep enough, but still
+-				 * there may be a better one.
+-				 */
+-				first_suitable_idx = i;
+-				continue;
+-			}
+-
+-			/*
+-			 * The current state is too shallow, so if no suitable
+-			 * states other than the initial candidate have been
+-			 * found, give up (the remaining states to check are
+-			 * shallower still), but otherwise the first suitable
+-			 * state other than the initial candidate may turn out
+-			 * to be preferable.
+-			 */
+-			if (first_suitable_idx == idx)
+-				break;
+-		}
+-	}
++	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum)
++		idx = teo_get_candidate(drv, dev, cpu_data, idx, idx_intercept_sum);
+ 
+ 	/*
+ 	 * If there is a latency constraint, it may be necessary to select an
+
+
 
 
