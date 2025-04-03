@@ -1,290 +1,150 @@
-Return-Path: <linux-kernel+bounces-587353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26EFA7ABE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:28:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85924A7AC50
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654127A9889
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:23:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A30A7A3956
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66902676C5;
-	Thu,  3 Apr 2025 19:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAFF26B2D8;
+	Thu,  3 Apr 2025 19:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ik+7j6xB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ax6dyYym"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F276B2673A9;
-	Thu,  3 Apr 2025 19:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE52257432;
+	Thu,  3 Apr 2025 19:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707130; cv=none; b=c1QZEe+jXMh/wUqw/6ihJ3rPUTf0SgVci0mErxD8JYOQd4ui5fTA9pu+GwualqddJclC7pp5/UdmWZmFpL5jgbqzFu+c/b+vUcj7b+LeByi5RhSXFJdMiNIpbnQK/niZPCztCwhsZk6TpgVqU4pgL4ow72Dq2879oMVVVh4gDsY=
+	t=1743707199; cv=none; b=XU1KF6Bqzy5bSje+L4tSeGi3beolmh/ua9slg3xD34dZYhzRfu04PSC+MPyZXR/18m/DwmdMZOEDUTtCdyCeALy1RiiAZj52GqzlJBRUhTC1VOCnqWLrHjhHQyRpScnqJ7PxvHoE+a3erRgBV2ny3sFXf+4sB9xRygnDzzyra70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707130; c=relaxed/simple;
-	bh=UTSybPX9pm657Ejw52N4FlK3mRJy2RMZjRzMQdJm5jA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eklctM24GVIv3BM0e3asyoPxXd8wWJynZnro5GMCJPg6DduuSSnz18b8GiWFf30oC9cUKbq0B15vyn2IQspTt0yqtwRB9xQ/MZBMkygKhBZHxxxzqpp3ANGMXuo6utVzeHC1XFgeQus5pXsTAQNhcyHWYC7ssN+JaeC2Yo4YMdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ik+7j6xB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A68C4CEEA;
-	Thu,  3 Apr 2025 19:05:29 +0000 (UTC)
+	s=arc-20240116; t=1743707199; c=relaxed/simple;
+	bh=549qfMrQeuNBpSjztJHEajMHuoWAKsoH8OhuOMqkqwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aFJTJRJTdJxymWgGxnnGBZsbghsKhWGMBV4ryH95NkLOEYrq2Af8c1ydjhPS2VdTqE3vCFMg5mK0shldL1i73xyEIyd0lb1/yvJArU3jDx/PCUDmPn8wmA8yibxzORAx8zACwaXZHtBf63fAhDVRu2xkyfL0oeWPNMsNLX/Ctm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ax6dyYym; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF10C4CEE9;
+	Thu,  3 Apr 2025 19:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707129;
-	bh=UTSybPX9pm657Ejw52N4FlK3mRJy2RMZjRzMQdJm5jA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ik+7j6xBNMmfDLKfAD1G4fEuwhRJQMKS7xjMqFSfXvS7q92adp2GswnvSbxASXLyc
-	 //99URLK+hhRYo3DOjpa0+yOI0qnsGmbElzHc6G4pCHr1hwzJCRFZm9xVO+rh7JDSJ
-	 aWRzF/CrSkDkbwwurTSXvdIvOYcnsy/VPToR6ugZXbmWxFw2LQgG6t6lC6ImiDdxzs
-	 NBjxh0RlyrJ/2w6VbIk7oLmz9bU2GjE1zHG351R39S0Wk566+S+/R3jINZA1SFeOVS
-	 njJ9L6/cI2mwEVizO7JLbEu/L1ZH14eKsfP3Gcs54QaEyav5QGk7Y90vIBZSvbk6EP
-	 vVjNyZc39xBcg==
-Date: Thu, 3 Apr 2025 22:05:25 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
-	linux-integrity@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 3/4] tpm: add SNP SVSM vTPM driver
-Message-ID: <Z-7b9VPEhmVYHjbX@kernel.org>
-References: <20250403100943.120738-1-sgarzare@redhat.com>
- <20250403100943.120738-4-sgarzare@redhat.com>
+	s=k20201202; t=1743707199;
+	bh=549qfMrQeuNBpSjztJHEajMHuoWAKsoH8OhuOMqkqwY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ax6dyYymeASvcAsZqg6DYvF7ZXjGDEDayMEHkYmA/0k1IDj63JQeorq0nQKaGIdJ4
+	 o1dnPYtZFGcVcyJh6s5bX6R9jeWLJGR4rztX53TJhKw05GYpHj0578P2Sgr5SCpkvS
+	 Op5eOQPg/qraUIyHPehlSJcpBc5k0oXEUKcVBViou932CQhAtXxAX+XF+oyK3dyAuZ
+	 Q8854lH7uYCR1zZjltor4EehyGeLwMJAF+Rdo+ab5y6/e5uul6V+9gArngTMMtqhXm
+	 ubc+qgZVjPpNnruDWts5N6eESKei0R1BSaQocNT8r0aRr0svJx2R0Khp/Th1QznGfc
+	 OYQfd/PgwhcDQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com,
+	Dave Kleikamp <dave.kleikamp@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	shaggy@kernel.org,
+	aha310510@gmail.com,
+	dmantipov@yandex.ru,
+	eadavis@qq.com,
+	jfs-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 6.12 17/47] jfs: Fix uninit-value access of imap allocated in the diMount() function
+Date: Thu,  3 Apr 2025 15:05:25 -0400
+Message-Id: <20250403190555.2677001-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250403190555.2677001-1-sashal@kernel.org>
+References: <20250403190555.2677001-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403100943.120738-4-sgarzare@redhat.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.21
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 12:09:41PM +0200, Stefano Garzarella wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> Add driver for the vTPM defined by the AMD SVSM spec [1].
-> 
-> The specification defines a protocol that a SEV-SNP guest OS can use to
-> discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
-> in the guest context, but at a more privileged level (VMPL0).
-> 
-> The new tpm-svsm platform driver uses two functions exposed by x86/sev
-> to verify that the device is actually emulated by the platform and to
-> send commands and receive responses.
-> 
-> The device cannot be hot-plugged/unplugged as it is emulated by the
-> platform, so we can use module_platform_driver_probe(). The probe
-> function will only check whether in the current runtime configuration,
-> SVSM is present and provides a vTPM.
-> 
-> This device does not support interrupts and sends responses to commands
-> synchronously. In order to have .recv() called just after .send() in
-> tpm_try_transmit(), the .status() callback returns 0, and both
-> .req_complete_mask and .req_complete_val are set to 0.
-> 
-> [1] "Secure VM Service Module for SEV-SNP Guests"
->     Publication # 58019 Revision: 1.00
-> 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
-> v6:
-> - removed the `locality` field (set to 0) and the FIXME comment [Jarkko]
-> v5:
-> - removed cancel/status/req_* ops after rebase on master that cotains
->   commit 980a573621ea ("tpm: Make chip->{status,cancel,req_canceled} opt")
-> v4:
-> - moved "asm" includes after the "linux" includes [Tom]
-> - allocated buffer separately [Tom/Jarkko/Jason]
-> v3:
-> - removed send_recv() ops and followed the ftpm driver implementing .status,
->   .req_complete_mask, .req_complete_val, etc. [Jarkko]
-> - removed link to the spec because those URLs are unstable [Borislav]
-> ---
->  drivers/char/tpm/tpm_svsm.c | 128 ++++++++++++++++++++++++++++++++++++
->  drivers/char/tpm/Kconfig    |  10 +++
->  drivers/char/tpm/Makefile   |   1 +
->  3 files changed, 139 insertions(+)
->  create mode 100644 drivers/char/tpm/tpm_svsm.c
-> 
-> diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
-> new file mode 100644
-> index 000000000000..b9242c9eab87
-> --- /dev/null
-> +++ b/drivers/char/tpm/tpm_svsm.c
-> @@ -0,0 +1,128 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
-> + *
-> + * Driver for the vTPM defined by the AMD SVSM spec [1].
-> + *
-> + * The specification defines a protocol that a SEV-SNP guest OS can use to
-> + * discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
-> + * in the guest context, but at a more privileged level (usually VMPL0).
-> + *
-> + * [1] "Secure VM Service Module for SEV-SNP Guests"
-> + *     Publication # 58019 Revision: 1.00
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/tpm_svsm.h>
-> +
-> +#include <asm/sev.h>
-> +
-> +#include "tpm.h"
-> +
-> +struct tpm_svsm_priv {
-> +	void *buffer;
-> +};
-> +
-> +static int tpm_svsm_send(struct tpm_chip *chip, u8 *buf, size_t len)
-> +{
-> +	struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
-> +	int ret;
-> +
-> +	ret = svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, len);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * The SVSM call uses the same buffer for the command and for the
-> +	 * response, so after this call, the buffer will contain the response
-> +	 * that can be used by .recv() op.
-> +	 */
-> +	return snp_svsm_vtpm_send_command(priv->buffer);
-> +}
-> +
-> +static int tpm_svsm_recv(struct tpm_chip *chip, u8 *buf, size_t len)
-> +{
-> +	struct tpm_svsm_priv *priv = dev_get_drvdata(&chip->dev);
-> +
-> +	/*
-> +	 * The internal buffer contains the response after we send the command
-> +	 * to SVSM.
-> +	 */
-> +	return svsm_vtpm_cmd_response_parse(priv->buffer, buf, len);
-> +}
-> +
-> +static struct tpm_class_ops tpm_chip_ops = {
-> +	.flags = TPM_OPS_AUTO_STARTUP,
-> +	.recv = tpm_svsm_recv,
-> +	.send = tpm_svsm_send,
-> +};
-> +
-> +static int __init tpm_svsm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct tpm_svsm_priv *priv;
-> +	struct tpm_chip *chip;
-> +	int err;
-> +
-> +	if (!snp_svsm_vtpm_probe())
-> +		return -ENODEV;
-> +
-> +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * The maximum buffer supported is one page (see SVSM_VTPM_MAX_BUFFER
-> +	 * in tpm_svsm.h).
-> +	 */
-> +	priv->buffer = (void *)devm_get_free_pages(dev, GFP_KERNEL, 0);
-> +	if (!priv->buffer)
-> +		return -ENOMEM;
-> +
-> +	chip = tpmm_chip_alloc(dev, &tpm_chip_ops);
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	dev_set_drvdata(&chip->dev, priv);
-> +
-> +	err = tpm2_probe(chip);
-> +	if (err)
-> +		return err;
-> +
-> +	err = tpm_chip_register(chip);
-> +	if (err)
-> +		return err;
-> +
-> +	dev_info(dev, "SNP SVSM vTPM %s device\n",
-> +		 (chip->flags & TPM_CHIP_FLAG_TPM2) ? "2.0" : "1.2");
-> +
-> +	return 0;
-> +}
-> +
-> +static void __exit tpm_svsm_remove(struct platform_device *pdev)
-> +{
-> +	struct tpm_chip *chip = platform_get_drvdata(pdev);
-> +
-> +	tpm_chip_unregister(chip);
-> +}
-> +
-> +/*
-> + * tpm_svsm_remove() lives in .exit.text. For drivers registered via
-> + * module_platform_driver_probe() this is ok because they cannot get unbound
-> + * at runtime. So mark the driver struct with __refdata to prevent modpost
-> + * triggering a section mismatch warning.
-> + */
-> +static struct platform_driver tpm_svsm_driver __refdata = {
-> +	.remove = __exit_p(tpm_svsm_remove),
-> +	.driver = {
-> +		.name = "tpm-svsm",
-> +	},
-> +};
-> +
-> +module_platform_driver_probe(tpm_svsm_driver, tpm_svsm_probe);
-> +
-> +MODULE_DESCRIPTION("SNP SVSM vTPM Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:tpm-svsm");
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index fe4f3a609934..dddd702b2454 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -234,5 +234,15 @@ config TCG_FTPM_TEE
->  	help
->  	  This driver proxies for firmware TPM running in TEE.
->  
-> +config TCG_SVSM
-> +	tristate "SNP SVSM vTPM interface"
-> +	depends on AMD_MEM_ENCRYPT
-> +	help
-> +	  This is a driver for the AMD SVSM vTPM protocol that a SEV-SNP guest
-> +	  OS can use to discover and talk to a vTPM emulated by the Secure VM
-> +	  Service Module (SVSM) in the guest context, but at a more privileged
-> +	  level (usually VMPL0).  To compile this driver as a module, choose M
-> +	  here; the module will be called tpm_svsm.
-> +
->  source "drivers/char/tpm/st33zp24/Kconfig"
->  endif # TCG_TPM
-> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> index 2b004df8c04b..9de1b3ea34a9 100644
-> --- a/drivers/char/tpm/Makefile
-> +++ b/drivers/char/tpm/Makefile
-> @@ -45,3 +45,4 @@ obj-$(CONFIG_TCG_CRB) += tpm_crb.o
->  obj-$(CONFIG_TCG_ARM_CRB_FFA) += tpm_crb_ffa.o
->  obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
->  obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
-> +obj-$(CONFIG_TCG_SVSM) += tpm_svsm.o
-> -- 
-> 2.49.0
-> 
-> 
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+[ Upstream commit 9629d7d66c621671d9a47afe27ca9336bfc8a9ea ]
 
-BR, Jarkko
+syzbot reports that hex_dump_to_buffer is using uninit-value:
+
+=====================================================
+BUG: KMSAN: uninit-value in hex_dump_to_buffer+0x888/0x1100 lib/hexdump.c:171
+hex_dump_to_buffer+0x888/0x1100 lib/hexdump.c:171
+print_hex_dump+0x13d/0x3e0 lib/hexdump.c:276
+diFree+0x5ba/0x4350 fs/jfs/jfs_imap.c:876
+jfs_evict_inode+0x510/0x550 fs/jfs/inode.c:156
+evict+0x723/0xd10 fs/inode.c:796
+iput_final fs/inode.c:1946 [inline]
+iput+0x97b/0xdb0 fs/inode.c:1972
+txUpdateMap+0xf3e/0x1150 fs/jfs/jfs_txnmgr.c:2367
+txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+jfs_lazycommit+0x627/0x11d0 fs/jfs/jfs_txnmgr.c:2733
+kthread+0x6b9/0xef0 kernel/kthread.c:464
+ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+slab_post_alloc_hook mm/slub.c:4121 [inline]
+slab_alloc_node mm/slub.c:4164 [inline]
+__kmalloc_cache_noprof+0x8e3/0xdf0 mm/slub.c:4320
+kmalloc_noprof include/linux/slab.h:901 [inline]
+diMount+0x61/0x7f0 fs/jfs/jfs_imap.c:105
+jfs_mount+0xa8e/0x11d0 fs/jfs/jfs_mount.c:176
+jfs_fill_super+0xa47/0x17c0 fs/jfs/super.c:523
+get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+get_tree_bdev+0x37/0x50 fs/super.c:1659
+jfs_get_tree+0x34/0x40 fs/jfs/super.c:635
+vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+path_mount+0x742/0x1f10 fs/namespace.c:3887
+do_mount fs/namespace.c:3900 [inline]
+__do_sys_mount fs/namespace.c:4111 [inline]
+__se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+__x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
+=====================================================
+
+The reason is that imap is not properly initialized after memory
+allocation. It will cause the snprintf() function to write uninitialized
+data into linebuf within hex_dump_to_buffer().
+
+Fix this by using kzalloc instead of kmalloc to clear its content at the
+beginning in diMount().
+
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Reported-by: syzbot+df6cdcb35904203d2b6d@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/67b5d07e.050a0220.14d86d.00e6.GAE@google.com/
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/jfs/jfs_imap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index a360b24ed320c..cf16655cd26ba 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -102,7 +102,7 @@ int diMount(struct inode *ipimap)
+ 	 * allocate/initialize the in-memory inode map control structure
+ 	 */
+ 	/* allocate the in-memory inode map control structure. */
+-	imap = kmalloc(sizeof(struct inomap), GFP_KERNEL);
++	imap = kzalloc(sizeof(struct inomap), GFP_KERNEL);
+ 	if (imap == NULL)
+ 		return -ENOMEM;
+ 
+-- 
+2.39.5
+
 
