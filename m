@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-586467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C25A79FFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:25:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AC0A7A001
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C95D3B3910
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:25:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264CC7A56EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B586F24336B;
-	Thu,  3 Apr 2025 09:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272F324291C;
+	Thu,  3 Apr 2025 09:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oBYJSVhe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Go74T+tU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo5K1YJs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Go74T+tU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo5K1YJs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0029D1F236B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A2519340B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672326; cv=none; b=se2JPS9k+jgjVjo0qzRDRF1TGhtGiwRSZEalOuvKOh7+PEs5xmeDWQl1MuYaZvXmTE6pgpfiphpYpjXCOxrXx/6MVrrMONs+Vt3xEy0hS2D8bW4ZPVU07oxOjgZP7jAoPKicNbjkTUf/vORqDCDtkYseVZZh40sEWrvT74lzrm0=
+	t=1743672406; cv=none; b=V9WCGGp7AwPSFtJnUYkEIFMA3z1J5IHegrSE/mJ+5cYLhHDWw0cFdqpOHfMKSyjSXelt/6Bb3khqTdUYTXzz0o84HvIqFa7KDyYUFNVp5zAgSclr4XwymgOSjv8d5g+265uXvvgry1AoBlAcz4Gl1mBUQ51q1H+rxDTv+y4YTJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672326; c=relaxed/simple;
-	bh=v+yXhd3n199Tq6scR0gIFmMZ0TbnnNTcY8LWNdx4FOE=;
+	s=arc-20240116; t=1743672406; c=relaxed/simple;
+	bh=3kt8uZWFqgd+7TiQBoV1mBy2E5+2zlC3Ohx8tCaBTJg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O98iXkTfzPGl/7PN63kFLSLfaTxuO4bRr8mi+xKvqlBO88N9gfpLl2mRXAcZYJlFnMSfWBApTu4a34BEScE/uwmruEZ9BjchDdr+P0/FE0vJMFTfR7Z2mV3+smixNKEi+LFudEcoJl9szuGwUkZPX+eSHwPaPV/NDoLEaBQGCIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oBYJSVhe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53382oBO019895
-	for <linux-kernel@vger.kernel.org>; Thu, 3 Apr 2025 09:25:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	C0Vg33IwnJZ9MdiHdwgCrTwMljCHdTwbcvcaY9TkMxk=; b=oBYJSVheXTxlIFkm
-	uDzfSi3C8uG0CcQjjrqJcMSA4rzvzwV5wFDubayEpXv9XA6axcbeD8Iq6WVX/L1u
-	IKmemMEUS3BBurt/cBk4NgeUo1XtCkEO3vueT8NPQ3N0z7uTqk8YDfO3D182coQB
-	vIZPCyPvj8Ulg62vT2/9AVsOPz3MsObndDLdENaarfPsF3DfpVxHCXPcI8gsKa8k
-	hZ0lTc5wyDGpTzRzZp60v52jYX+mQ98/fnQQtSi9IUCVzW2aDJUcXwbSH1XiXN5e
-	09jEqO9tSfpLFoQ1cV83h82+YtZw17DIHD4di7BGBOAHuxWQN0CjKx8rteHvCSsr
-	mqA70Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45s36a34ru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:25:23 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c54767e507so110072785a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:25:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743672322; x=1744277122;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0Vg33IwnJZ9MdiHdwgCrTwMljCHdTwbcvcaY9TkMxk=;
-        b=U+8gddqTNyxW5S7yRmjpuwL3TzXa/U1xEIhIr3S1EZYoGsLzZrCycE53+NVqhjFnqb
-         FXD0DAL5fTW11zRyEJEmn70YGZnEOjpYbWpH555jwzwFD7My9iYIppPpKX7Va72stfjP
-         hXoceq3AUymXrf5sO5QKEpQsMhG3wwfmdC8ZACWgnaK7dtI2ydzZLggycdiZBSj3IjuN
-         REYQmuPZ6f5V4+rFf/zP1UDzakSVIkBZxgklurOHDPJ+h1FXug5bS8alluc2fziRuOKf
-         TXfqVq80TRS24IghVgeqLf2hb0mhy3pjwU5Chm7Vl1vs+5XrX1lKqBEWB38F6DsNK01z
-         Naag==
-X-Gm-Message-State: AOJu0YwKwX2dq7CzyfIX2QyGbmlJWKKx7MBasCbR2EGKZeYSvUElfNCL
-	wblWH6eApWFevJAfNH0szzukIopbLoTN+EfHp/VvZHj3yNyXpZmC3i39oTHfeUjvQoeqd59tNaM
-	pJXqssYgoWgG89ya7nmY22JbeHXeQnIzE87rYuVkKjDhtoDlZjCY8/bQIma9l3GJoByfvoio=
-X-Gm-Gg: ASbGncunROuRf2qcEgO9btjbuzl3rPIU7yNAKfK3FBq5I2vTCCy4/xUzvSaPQkdeiWv
-	FZp3S48ptoNr3vf1D1eD4CnUWuFkKjqDtp4zrw+4HoyZz9HWM6fkB0xTLZ7KEfd6mWEeBxbdFzY
-	RV5qp/b72AxSLCmG37sBLVPkNWHuUh7+VKAHN0vclISgR9Dsam95jaPKVrtX9aapUnHmdal0Wdb
-	TVbOXpJ8lSmQiZLPACnOJvUQI+Pf882IA1ZjnuUWVr6X1NxkPnfwGZgcZc+8sN6ZMyzss8+heMH
-	hfXgJoiATRzeXRnQDlPiGPy7nyGnXsZ6e11t70Dfei9aAlEm1pTI7tcSlFKBjlVsQpYD
-X-Received: by 2002:a05:620a:179f:b0:7c3:d7ef:f7f5 with SMTP id af79cd13be357-7c6865ea96dmr3052825085a.18.1743672321954;
-        Thu, 03 Apr 2025 02:25:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhv1b18a2Pk4OgOo06j00H+IcS8+nfs5vIx/e4kAhfZyohrHQiRNxvA3q/yVZTwLT25KQnRw==
-X-Received: by 2002:a05:620a:179f:b0:7c3:d7ef:f7f5 with SMTP id af79cd13be357-7c6865ea96dmr3052822485a.18.1743672321519;
-        Thu, 03 Apr 2025 02:25:21 -0700 (PDT)
-Received: from [10.151.160.223] (87-95-44-167.bb.dnainternet.fi. [87.95.44.167])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031ce93bsm1402841fa.103.2025.04.03.02.25.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 02:25:20 -0700 (PDT)
-Message-ID: <b6e7abf3-b263-410a-8f4c-eb9a8e2efa2b@oss.qualcomm.com>
-Date: Thu, 3 Apr 2025 12:25:19 +0300
+	 In-Reply-To:Content-Type; b=rfmy7qOSsh2Ra++uo7dpWCcNDKbNZMxJKaRRac+8jP8eoRxLvjRglyfiKeHE+coZBU/lF3OAbWbiTBSrHU2/GGgeBNjN2H0eNH5bNeZihZD6b3/sF3j1TkNOGuN4FJhipsNw/W8XkjAWiV+or2Yau4j0nHqF6sVKkKOjmuUxQmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Go74T+tU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo5K1YJs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Go74T+tU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo5K1YJs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3946C2119C;
+	Thu,  3 Apr 2025 09:26:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743672396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
+	b=Go74T+tUMTM6OYdgLA37QBOkBLwM+KvGmRKuScprELaI3wS+y+CEE0CAGHNeZpSu42E4HC
+	PS4zr7Qb+kuj+u0fqs7wZGYgJs+8ZJTPubY1mLgqZrdVKHNGouW1eOPXNA83eeDL7OXWaT
+	wz/auDH67aPVt+xsgV9PkVm2z0QNIrQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743672396;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
+	b=Yo5K1YJsEQjD37r4hoFAPojI/47BnHdlm4EGwH/fr7Ve751Vut4k5R/Mwyg8w3kGQRfuid
+	PkQezbA8/O+1sSCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743672396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
+	b=Go74T+tUMTM6OYdgLA37QBOkBLwM+KvGmRKuScprELaI3wS+y+CEE0CAGHNeZpSu42E4HC
+	PS4zr7Qb+kuj+u0fqs7wZGYgJs+8ZJTPubY1mLgqZrdVKHNGouW1eOPXNA83eeDL7OXWaT
+	wz/auDH67aPVt+xsgV9PkVm2z0QNIrQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743672396;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
+	b=Yo5K1YJsEQjD37r4hoFAPojI/47BnHdlm4EGwH/fr7Ve751Vut4k5R/Mwyg8w3kGQRfuid
+	PkQezbA8/O+1sSCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 146AD13A2C;
+	Thu,  3 Apr 2025 09:26:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JThnBExU7mdkbgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 03 Apr 2025 09:26:36 +0000
+Message-ID: <78c2d3be-aa8e-4bb7-8883-7f144a06f866@suse.cz>
+Date: Thu, 3 Apr 2025 11:26:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,141 +96,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] nvmem: patches (set 1) for 6.15
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20250309145703.12974-1-srinivas.kandagatla@linaro.org>
- <2025040143-espionage-poison-2345@gregkh>
- <47a3a851-f737-4772-87c6-98613347435c@linaro.org>
- <2025040230-showoff-spray-ac83@gregkh>
- <283ac88b-c8d4-47c8-9ff7-935770eca566@linaro.org>
+Subject: Re: [PATCH v2] locking/local_lock, mm: Replace localtry_ helpers with
+ local_trylock_t type
 Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <283ac88b-c8d4-47c8-9ff7-935770eca566@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, bpf
+ <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sebastian Sewior <bigeasy@linutronix.de>,
+ Steven Rostedt <rostedt@goodmis.org>, Michal Hocko <mhocko@suse.com>,
+ linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250401205245.70838-1-alexei.starovoitov@gmail.com>
+ <umfukiohyxcxxw5g6ca5g7stq7oonnr3sbvjyjshnbqalzffeq@2nrwqsmwcrug>
+ <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=W6M4VQWk c=1 sm=1 tr=0 ts=67ee5403 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=CnknO/h8B0MWpypvlE+5Zw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=MYKY4rXoaqJdCg_V_F0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: cH3tiXQG7rKCLaQoh4KZVNmt9_Okeklg
-X-Proofpoint-GUID: cH3tiXQG7rKCLaQoh4KZVNmt9_Okeklg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_03,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- adultscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 phishscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504030033
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.dev];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid,linux.dev:email]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On 03/04/2025 12:18, Srinivas Kandagatla wrote:
-> 
-> 
-> On 02/04/2025 12:31, Greg KH wrote:
->> On Wed, Apr 02, 2025 at 09:19:17AM +0100, Srinivas Kandagatla wrote:
->>> HI Greg,
->>>
->>> On 01/04/2025 20:18, Greg KH wrote:
->>>> On Sun, Mar 09, 2025 at 02:56:50PM +0000, 
->>>> srinivas.kandagatla@linaro.org wrote:
->>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>>>
->>>>> Hi Greg,
->>>>>
->>>>> Here are few nvmem patches for 6.15, Could you queue
->>>>> these for 6.15.
->>>>>
->>>>> patche include
->>>>>     - updates to bindings to include MSM8960, X1E80100, MS8937,
->>>>>       IPQ5018
->>>>>     - add support to bit offsets for register strides exceeding
->>>>>       single byte
->>>>>     - add rockchip-otp variants.
->>>>>     - Few enhancements in qfprom and rochchip nvmem providers.
->>>>
->>>> Ok, I wanted to apply these, and tried to, but they fail horribly
->>>> because:
->>>>
->>>> Commit: 1b14625bd6d4 ("nvmem: qfprom: switch to 4-byte aligned reads")
->>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
->>>> raw_len")
->>>>     Has these problem(s):
->>>>         - Target SHA1 does not exist
->>>> Commit: a8a7c7e34093 ("nvmem: core: update raw_len if the bit 
->>>> reading is required")
->>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
->>>> raw_len")
->>>>     Has these problem(s):
->>>>         - Target SHA1 does not exist
->>>> Commit: d44f60348d8c ("nvmem: core: fix bit offsets of more than one 
->>>> byte")
->>>>     Fixes tag: Fixes: 11ccaa312111 ("nvmem: core: verify cell's 
->>>> raw_len")
->>>>     Has these problem(s):
->>>>         - Target SHA1 does not exist
->>>
->>> Looks some of your scripts or b4 is picking up older version v1 of the
->>> patchset
->>>
->>> None of the above patches have Fixes tags in the V2 patches that I 
->>> shared
->>> aswell as patches in linux-next.
+On 4/2/25 23:40, Alexei Starovoitov wrote:
+> On Wed, Apr 2, 2025 at 1:56 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
 >>
->> Yes, that looks odd, it looks like b4 pulled in the wrong series, yes.
+>> On Tue, Apr 01, 2025 at 01:52:45PM -0700, Alexei Starovoitov wrote:
+>> > From: Alexei Starovoitov <ast@kernel.org>
+>> >
+>> > Partially revert commit 0aaddfb06882 ("locking/local_lock: Introduce localtry_lock_t").
+>> > Remove localtry_*() helpers, since localtry_lock() name might
+>> > be misinterpreted as "try lock".
+>> >
+>> > Introduce local_trylock[_irqsave]() helpers that only work
+>> > with newly introduced local_trylock_t type.
+>> > Note that attempt to use local_trylock[_irqsave]() with local_lock_t
+>> > will cause compilation failure.
+>> >
+>> > Usage and behavior in !PREEMPT_RT:
+>> >
+>> > local_lock_t lock;                     // sizeof(lock) == 0
+>> > local_lock(&lock);                     // preempt disable
+>> > local_lock_irqsave(&lock, ...);        // irq save
+>> > if (local_trylock_irqsave(&lock, ...)) // compilation error
+>> >
+>> > local_trylock_t lock;                  // sizeof(lock) == 4
 >>
+>> Is there a reason for this 'acquired' to be int? Can it be uint8_t? No
+>> need to change anything here but I plan to change it later to compact as
+>> much as possible within one (or two) cachline for memcg stocks.
 > 
-> Even that looked incorrect, as the v1 series only had one patch("[PATCH 
-> 12/14] nvmem: make the misaligned raw_len non-fatal") that had fixes 
-> tag. Not sure how these 3 patches are tagged as fixes.
-> 
->> But, that's even worse.  Those "fixes" are now not actually marked as
->> fixes of the previous patch.  So that information is totally lost, and
-> 
-> Its because this patch("PATCH 12/14] nvmem: make the misaligned raw_len 
-> non-fatal") is taken as fixup patch and wrapped into the original patch 
-> ("nvmem: core: verify cell's raw_len"), Also the sha will not be valid 
-> for linus or char-misc tree.
-> 
->> again, the first commit here, "nvmem: core: verify cell's raw_len" is
->> broken so much that it took 3 other changes to fix it, which implies
->> that bisection would cause problems if you hit it in the middle here.
->>
-> 
-> All the patches related to this are enhancements to nvmem core to allow 
-> specifying bit offsets for nvmem cell that have 4 bytes strides.
-> 
-> Specially this check is also an additional check in core to make sure 
-> that cell offsets are aligned to register strides.
-> 
->> While fixing patches is great, and something we do in the tree all the
->> time, let's not purposefully break things and then fix them up in the
->> same exact patch series please.  That's just sloppy engineering.
->>
->> Please redo this series completely.  I can take the "new device support"
-> 
-> I can send them but its going to be exactly same series, I dont think 
-> anything will change as all of these patches are enhancements and there 
-> are no fixes.
-> 
-> I hope this clarifies a bit, Please let me know if you still want me to 
-> resend this series, which is going to be exactly same.
+> I don't see any issue. I can make it u8 right away.
 
-I think Greg is asking to squash the fixup into the relevant patch.
+Are you planning to put the lock near other <64bit sized values in memcg
+stock? Otherwise it will be padded anyway?
 
+I hope it won't hurt the performance though, AFAIK at least sub-word atomics
+are much slower than using a full word. But we use only read/write once for
+acquired so hopefully it's fine?
+
+>> > local_lock(&lock);                     // preempt disable, acquired = 1
+>> > local_lock_irqsave(&lock, ...);        // irq save, acquired = 1
+>> > if (local_trylock(&lock))              // if (!acquired) preempt disable
+>> > if (local_trylock_irqsave(&lock, ...)) // if (!acquired) irq save
+>>
+>> For above two ", acquired = 1" as well.
 > 
-> --srini
->> patches at any time, and really, those should be marked with Cc: stable
->> to get backported, right?  The other ones are written as if they are
->> fixes, so again, I can take them any time, no need to wait for the -rc1
->> merge cycle.
+> I felt it would be too verbose and not accurate anyway,
+> since irq save will be done before the check.
+> It's a pseudo code.
+> But sure, I can add.
+> 
 >>
->> thanks,
+>> >
+>> > The existing local_lock_*() macros can be used either with
+>> > local_lock_t or local_trylock_t.
+>> > With local_trylock_t they set acquired = 1 while local_unlock_*() clears it.
+>> >
+>> > In !PREEMPT_RT local_lock_irqsave(local_lock_t *) disables interrupts
+>> > to protect critical section, but it doesn't prevent NMI, so the fully
+>> > reentrant code cannot use local_lock_irqsave(local_lock_t *) for
+>> > exclusive access.
+>> >
+>> > The local_lock_irqsave(local_trylock_t *) helper disables interrupts
+>> > and sets acquired=1, so local_trylock_irqsave(local_trylock_t *) from
+>> > NMI attempting to acquire the same lock will return false.
+>> >
+>> > In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
+>> > Map local_trylock_irqsave() to preemptible spin_trylock().
+>> > When in hard IRQ or NMI return false right away, since
+>> > spin_trylock() is not safe due to explicit locking in the underneath
+>> > rt_spin_trylock() implementation. Removing this explicit locking and
+>> > attempting only "trylock" is undesired due to PI implications.
+>> >
+>> > The local_trylock() without _irqsave can be used to avoid the cost of
+>> > disabling/enabling interrupts by only disabling preemption, so
+>> > local_trylock() in an interrupt attempting to acquire the same
+>> > lock will return false.
+>> >
+>> > Note there is no need to use local_inc for acquired variable,
+>> > since it's a percpu variable with strict nesting scopes.
+>> >
+>> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 >>
->> greg k-h
+>> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> Thanks!
 
-
--- 
-With best wishes
-Dmitry
 
