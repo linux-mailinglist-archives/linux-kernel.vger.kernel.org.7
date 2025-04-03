@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-586524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00DABA7A09D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10260A7A124
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 863D07A5556
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9E83B34E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2D424500A;
-	Thu,  3 Apr 2025 10:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TGMt9W7q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2324A071;
+	Thu,  3 Apr 2025 10:38:41 +0000 (UTC)
+Received: from mail-m3276.qiye.163.com (mail-m3276.qiye.163.com [220.197.32.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931C3C0B;
-	Thu,  3 Apr 2025 10:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C901F4619
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 10:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743674652; cv=none; b=VOai8XpGqcd10HO/KHkBhXGAFW8tnO7SjJG8zePhh0/TB70kLJgZS/Y9fYl2XfxN1hnzWJbj6+g/lRguh1bUf2d6TOYLBADqgBDPHRC5KQx50cW00YS99ILja9S7q0ci8b6uEPGjx8E8Am9zHBjID4aIn+lUa3lXORsn5fkUNmA=
+	t=1743676721; cv=none; b=bE8b3/t1q3VDRQT3/htalORXkE9rzeiIByERIbXCfTLjTwAYSV7Gx5gqpiRnZ8sFeR5teYcbzfFTC74t5RHhN/stc9zAln3zgXqOziiKN+5l+RjUXy8u5nLHh6yGQFCdMa+kNRgTiqZMNaUSvx3ZG2qefOte6eI4nTvig6h42mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743674652; c=relaxed/simple;
-	bh=ZiOGN/OBjYN9SLKaZnhOxhyU1UOpniwU2ApSXRy0phU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K6BJNriPRDh6xRwnC3ETHA2fMPofHx9XZ0x0umK3aIow33Y3mbFYO/xjS9DfCB4sP9kRR8QpE4kPY77o+KJ5l299bMUsq/1PWoYySmwCyK8sQJbMmZYONEPonvvMQT4GxXNFv7nq798nACSrMovOmSi6BHkwClloVOhftyqr1QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TGMt9W7q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339sEqC029964;
-	Thu, 3 Apr 2025 10:04:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZiOGN/OBjYN9SLKaZnhOxhyU1UOpniwU2ApSXRy0phU=; b=TGMt9W7qrlRXQzUI
-	XvGPhEWkGZNwQU8K9NNy+I5ltUafAokMz6sMKZ9bJeLPbY0ua+08ioAGyS0dYj2I
-	j/BbnbtG5SYc6EQKfSLklWH9P6/+WvGQmpKlN0dJFOYx6Vtrfur1h2u/2nMU0wFi
-	TBMUTrcH98yCf+qtnbwnS5naldC8AlF3d5IrOTAZ/OpA1yNdRy2ddokJUhwMtYeE
-	xbxwL4T0nUn77Q0fVUQRpymEua7sa4f0JuGZ9fcvBqEx0iLrKS5C5YktIakJt8k4
-	u0MOJzm8g1xEu5Ia0J/AjkiQwdEUXt8iohiYsOU+PNXooQmMarqcIFX75RMrlJ7z
-	ccuLHg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45rbpyycdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 10:04:04 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 533A43Jl016439
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Apr 2025 10:04:03 GMT
-Received: from [10.133.33.118] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 3 Apr 2025
- 03:04:00 -0700
-Message-ID: <b2f13a6d-e876-4cd2-b814-6cbc0b5f862e@quicinc.com>
-Date: Thu, 3 Apr 2025 18:03:57 +0800
+	s=arc-20240116; t=1743676721; c=relaxed/simple;
+	bh=TZuSjjPVVMh5QjkxWHiyyAQuAU1YntQa8GkY3GzIpsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=App2+zyDvzxo4gx8LBhVBps2H4IMxbUOGg3YT7oMrw/PAc4b5d0Ibl9YExMTpeSAKPThNxQm6x6cpTbH442jtqkKUz3+XJeczdUZIILTox8+dTFwlbYFvEXp4VBEX7k33Xdi/ryrYjUcFYCoWfLiYM/eFnLCV5dWuNk2klrQDO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=220.197.32.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
+Received: from localhost.localdomain (unknown [122.224.147.158])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 109206eca;
+	Thu, 3 Apr 2025 15:09:24 +0800 (GMT+08:00)
+From: Hongbo Yao <andy.xu@hj-micro.com>
+To: will@kernel.org,
+	robin.murphy@arm.com
+Cc: mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	andy.xu@hj-micro.com,
+	allen.wang@hj-micro.com,
+	peter.du@hj-micro.com
+Subject: [PATCH v3] perf: arm-ni: Unregister PMUs on probe failure
+Date: Thu,  3 Apr 2025 15:09:18 +0800
+Message-ID: <20250403070918.4153839-1-andy.xu@hj-micro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] device property: Add a note to the fwnode.h
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Heikki Krogerus
-	<heikki.krogerus@linux.intel.com>,
-        Sakari Ailus
-	<sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250331163540.280606-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20250331163540.280606-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xbljt1kvYHgqpeK5RPT4rt33JbyO5TAD
-X-Proofpoint-ORIG-GUID: xbljt1kvYHgqpeK5RPT4rt33JbyO5TAD
-X-Authority-Analysis: v=2.4 cv=ZNLXmW7b c=1 sm=1 tr=0 ts=67ee5d14 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=owBPNj5rwqKd82W3GFkA:9 a=QEXdDO2ut3YA:10 a=QYH75iMubAgA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_04,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 clxscore=1011 mlxscore=0 adultscore=0 mlxlogscore=733
- priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504030035
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZS0pCVhpLHRpDGE0dS01DGVYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a95fa7baff103afkunm109206eca
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBw6Mzo5FzJNKQIXFkkaURk5
+	GgMKCz1VSlVKTE9ITU1PSk1OQkxLVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
+	SklJVUlJT1VKT0xVSk5DWVdZCAFZQU9JS003Bg++
 
-On 4/1/2025 12:35 AM, Andy Shevchenko wrote:
-> + * Note, this header is not meant to be used by the leaf drivers.
-> + * It provides the low level data types and definitions for the firmware
-> + * and device property providers. The respective API headers should
-> + * guarantee all the required data types and definitions without including
-> + * this header directly into the driver.
-> + *
+When a resource allocation fails in one clock domain of an NI device,
+we need to properly roll back all previously registered perf PMUs in
+other clock domains of the same device.
 
-sorry, i don't understand both "leaf drivers" and "respective API
-headers". could you have examples ?
+Otherwise, it can lead to kernel panics.
 
+Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
+arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
+arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
+list_add corruption: next->prev should be prev (fffffd01e9698a18),
+but was 0000000000000000. (next=ffff10001a0decc8).
+pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : list_add_valid_or_report+0x7c/0xb8
+lr : list_add_valid_or_report+0x7c/0xb8
+Call trace:
+ __list_add_valid_or_report+0x7c/0xb8
+ perf_pmu_register+0x22c/0x3a0
+ arm_ni_probe+0x554/0x70c [arm_ni]
+ platform_probe+0x70/0xe8
+ really_probe+0xc6/0x4d8
+ driver_probe_device+0x48/0x170
+ __driver_attach+0x8e/0x1c0
+ bus_for_each_dev+0x64/0xf0
+ driver_add+0x138/0x260
+ bus_add_driver+0x68/0x138
+ __platform_driver_register+0x2c/0x40
+ arm_ni_init+0x14/0x2a [arm_ni]
+ do_init_module+0x36/0x298
+---[ end trace 0000000000000000 ]---
+Kernel panic - not syncing: Oops - BUG: Fatal exception
+SMP: stopping secondary CPUs
+
+Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
+---
+Changes in v3:
+ - Simplify the fix with the existing pmu_base logic. 
+ - v2: https://lore.kernel.org/linux-arm-kernel/a1cf32e8-c711-476d-a827-e3affedba780@hj-micro.com/T/#ma3347cf5dca2c3cedbfd475f76931ca7b2751019
+
+---
+ drivers/perf/arm-ni.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+index bdb9e6af8732..de7b6cce4d68 100644
+--- a/drivers/perf/arm-ni.c
++++ b/drivers/perf/arm-ni.c
+@@ -575,6 +575,23 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
+ 	return err;
+ }
+ 
++static void arm_ni_remove(struct platform_device *pdev)
++{
++	struct arm_ni *ni = platform_get_drvdata(pdev);
++
++	for (int i = 0; i < ni->num_cds; i++) {
++		struct arm_ni_cd *cd = ni->cds + i;
++
++		if (!cd->pmu_base)
++			continue;
++
++		writel_relaxed(0, cd->pmu_base + NI_PMCR);
++		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
++		perf_pmu_unregister(&cd->pmu);
++		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
++	}
++}
++
+ static void arm_ni_probe_domain(void __iomem *base, struct arm_ni_node *node)
+ {
+ 	u32 reg = readl_relaxed(base + NI_NODE_TYPE);
+@@ -657,8 +674,11 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 				reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
+ 				arm_ni_probe_domain(base + reg, &cd);
+ 				ret = arm_ni_init_cd(ni, &cd, res->start);
+-				if (ret)
++				if (ret) {
++					ni->cds[cd.id].pmu_base = NULL;
++					arm_ni_remove(pdev);
+ 					return ret;
++				}
+ 			}
+ 		}
+ 	}
+@@ -666,23 +686,6 @@ static int arm_ni_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static void arm_ni_remove(struct platform_device *pdev)
+-{
+-	struct arm_ni *ni = platform_get_drvdata(pdev);
+-
+-	for (int i = 0; i < ni->num_cds; i++) {
+-		struct arm_ni_cd *cd = ni->cds + i;
+-
+-		if (!cd->pmu_base)
+-			continue;
+-
+-		writel_relaxed(0, cd->pmu_base + NI_PMCR);
+-		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
+-		perf_pmu_unregister(&cd->pmu);
+-		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
+-	}
+-}
+-
+ #ifdef CONFIG_OF
+ static const struct of_device_id arm_ni_of_match[] = {
+ 	{ .compatible = "arm,ni-700" },
+-- 
+2.43.0
 
 
