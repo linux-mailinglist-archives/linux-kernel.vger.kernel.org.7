@@ -1,97 +1,156 @@
-Return-Path: <linux-kernel+bounces-586225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E33EA79CAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2B5A79C98
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8733B106E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6514E1896512
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05723F404;
-	Thu,  3 Apr 2025 07:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7AD23F271;
+	Thu,  3 Apr 2025 07:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Dy3xfI6Z"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVXmLeM6"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB52623F294
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8837C18732B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743664465; cv=none; b=TTqoyJ9ZdTFfFDU2ziHV6DrzCZS2tVWNGbj2PuKYQL59cHME7kOMNC744h2bheONc3v8HbGfxds8oQdB1QyJP6Rdq4gafqGMXir4RxpxuUpMg3o4FTlwfxgIbd7nC0cOSDTCEpvw0w89mfcNn7oMbNxP6BpAdTgsawrB8P0kxOg=
+	t=1743664158; cv=none; b=bc/xpRxDHeW4vmvEEYMQQ290Q0cV6S0MEfXegPaxLP4d8d9IhZ/heJ7HzZWGeeJB/DDvLxEntEIU7UF81nGc27rJE/jaGw0qauo/Q0icXvLey+tKXsSSatVIvrCF3FBt8S9M82HxtYfwIP8xEha2sEovhFFWWQP3SlZrT8pPrPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743664465; c=relaxed/simple;
-	bh=b0cOd9D0x0Kdaz1sApMlHu4zf5BC3nxYkE9+bZD3BT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7mmnPqMPYI5s1Y6ypHU1dy8klm6c5AzBWq4EHC+fOtRvJtyG4aA8xdekbAADEwtxpNMktAjcJ48pHw3hP4Bt+qOvmMxGdOQ3tMV5M/SgKhhpu+tS/rxSSapWVEotjeXeO+w9qKwiR272txek/gISTN6tirNVKhv7PVgp3RntlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Dy3xfI6Z; arc=none smtp.client-ip=43.163.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743664122; bh=GgThBuknXaD3lwbCXtPebulyQHktE8jqziVCkvGpKHg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Dy3xfI6ZXkUloVh53iGY/z/AmxkNZgqQ3G3gmUMTTbaJrnIq8D55iEuWwS0tyVABd
-	 teYESDBWtvtvx1q2Ne+bXoMDhUKulMPKddHfuiZREbNL2kwHI/uVD7Rt9ZOA/b/lc2
-	 TMdHmTx1hpLTGHjDIJmIEZq+5uc8s41uKNribvX0=
-Received: from [10.42.13.21] ([116.128.244.169])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 228A7AA3; Thu, 03 Apr 2025 15:08:40 +0800
-X-QQ-mid: xmsmtpt1743664120tjvpap32a
-Message-ID: <tencent_0B50E848464E942D6467F86F53C9DED88606@qq.com>
-X-QQ-XMAILINFO: OZZSS56D9fAjqmL7MHMzvCf4yMzMA6sLrx+XNuJIq/WDFmj19VAC4kGSYB/7QH
-	 QggSR3AujGjYwbL52QY+TV+B0Ithj54H3+ktR6TgNoX4DFiogfaRtnRhepCugfhfNXZfCK3TjlU0
-	 l+g18J4TBHWTlZUqOUGZ+B42osEFmv8SzZL5P+1umzFlAtEizNuRyux2CFzmQfkFDeA3HFyZuVPK
-	 gejinWdMxHKlZ/wPx2VhWqFdX6vis3LMNF0ixPXt2hZvjRZ9fWHAOu4UZMfXoF7aUaWVAEITkEQt
-	 DoIYwUjJ3PKXMVa1n0GqWhCSR5bp8KBIEyp8pqezKxGCTdppzRwRzv9QrK2qIXEW8Ha0U46ChP7X
-	 YqfqLLoUNtuFlKsWFLWeY77Z6fphU7j/Uq0n/HWI/ap2+d+0uJNCE+xqS9H/IjL7Mxamy6HYd1rU
-	 1JS3nrJl2LbLES3uEts+HoCby1O3OgLZJpf30R5w/DNeGINSH+PFhOe0q6uYbt5tQR3TXlVG8meJ
-	 dJA3mE5YIBU/yPRMFRWyjKprcR1UXMV3KHvZFQslMloY8zJE/CLdXn9f2bGyeTA9vM6YNqAGJzN8
-	 L8JDibWucgHIz+h9ZHMe/at1gq6afzDmVy7WddpvDczM7CsU9+ff5chuAUodROw1muGnM6JgGUJ6
-	 rgEBwh1omB03MCmowjaGXQ05KfWVK+PTfOiymz9jOFzTTmGj0yEjqXuyUw2d4Dd8NXiVmZQ7b5ie
-	 bUL8lG4Ff8ltbVmDY8DcpXRbvR9GEDDKjSIR7iixz/cRqjnY6qGlqOj/XhYkYBDtcdQreTypRN6R
-	 YO2ISJWNUXd9xb5iE0Ic9SRJC5ZTnD7InbDmGPLnvOjGc8lUoOfiCj4lyH1VhrydV1KGEl+UUyks
-	 OxnyevVhX3hOKKIXN7G/2hf9GHZLfhWlUDDqrF5RUjusW4QOMr6j4UKuqBgrTT/v9hcAF6WDOceu
-	 TIf2Z2J6zESpgxl/7TJKHl1q2DS4g1s8FH3JvXnRc=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-OQ-MSGID: <d7b88e2a-7090-40a0-8bdc-9b60678e204d@qq.com>
-Date: Thu, 3 Apr 2025 15:08:40 +0800
+	s=arc-20240116; t=1743664158; c=relaxed/simple;
+	bh=DHnHqc7xTPXIbcMBbnMmP6LtCGcfSw0B37npJ6vzXxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qdkzAXC5IJsg1T5skIXk4QgZnzzzvnWr0LaSokBsoR0QxZiLM7idtfLMIvA5QBtuHHUs5yTZHqP3swvsHb8ovojKaE9C4ept5OA6wFR/AksHxXKSV1gpkp9umfbOvFRMjzOPMlqCqx9PgUoG4mIZLMZQFLvKYLSzqdRsOhvhLik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVXmLeM6; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-523ee30e0d4so328869e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 00:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743664155; x=1744268955; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RFoq87g3RUpItgd7yRqH4elpvnagnn7yUoA5hke1FAM=;
+        b=iVXmLeM6OtKhJSq/8TFEXdeVWNLhOlE8+ec60ClNtqGZMZpE/H9/iXJ///JIc7ZnAj
+         k4SDo1VVUUF2oDJStJa4mzxHJboyNLudOH99s2tfpK+dB5blbZYNUFPQQJ2gQerok5nV
+         iaVpcXERjFZFgX9wPewW4y4VBXTLfLJ0MuDNOYmfieNZB7Ypdsbpdz7c0chO9X/CiSjf
+         COjP7DcyoEU+O1O+wezEa61D1wKUEIqkQ7mDnrGYLghelOuSG2O9phorPvAhw3rusRFe
+         hluMnFwooChhbPw1yrICxYFcSDiE3XJN0t3eSZ4rUrBKI7taOPL0bwy7hI769w5QkWHn
+         ku3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743664155; x=1744268955;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RFoq87g3RUpItgd7yRqH4elpvnagnn7yUoA5hke1FAM=;
+        b=MCLRtc2NH6LMOcmk32IC7N1uLgMFZijIMLaBKviqx2vX5D9oXxrCGQ+AsvoWWSWtyM
+         wLT5mqUp4MpjH6aqW5mCzT8KFcFs4X64zEDXrS3U0mDOl1FJrz29quzT5AMhw7Gxk/bk
+         bzWEjT8jcb38CTmsSRl8pqEP5b4VHPwPswG24Wsrbb/K55CaMs95pvqG8RL95y/qiaAl
+         TGOeLPSkuCnsgg8zjGrNREE43o65ysMvikCCKsEvkSv7GXOWy92/TnCBdDNEfB+QodY+
+         p0FlZUSTn2YbVW8KEZUzZKFpK8bo0ByuXRpEv7INVewo2GQlGFP1ba+JYcx6NRYDpEtr
+         59VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTJmVsR5EY9Kl/vlfk2VApj9x4e3Hf9MyNNPN3KKa4PUimqpSS8wSWlI/Z3Fw4COdcmDsHvcszSXOqz7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpKJuvo55abYqZC6jVE5w+MgEtTq3ztLb/Iko2h7Q7dVl1UDd8
+	IrRAKUlEfYY6siQlhKspCPYCKs1MHZQkNrnCqEcvVzYdA0VFAzYjx5tI/NpzskTxsp6Lu/fGPq7
+	2s3ZryqeR5sJGas1LqyfLASUTeOk=
+X-Gm-Gg: ASbGncvC7jQm7cs0CNm1Ane3Vl8Nak2E+8hsaBKqtDarAbSATjtjwhGJUcFDR3amZ0L
+	dOnv1RE+ikM4IejSaqhBPIWGYL/N+gbclafU6aIWn9aseGTWgACkSaQOfiBwg6qjgV3XpvB8dX2
+	0fjORCHDHjLvfmGSeKJYDX/sYHMVTfRO1jr6x/4L4=
+X-Google-Smtp-Source: AGHT+IFOYY8o5OXC7BNOpL314Y2KkesOlD1Thnx9JW0TD8ulbkyEzlFqBnntu4H/6eYSqGX7s/EYQq9bM8bUmRQAYio=
+X-Received: by 2002:a05:6122:8295:b0:525:aeb7:f22e with SMTP id
+ 71dfb90a1353d-52758da72d9mr1008296e0c.7.1743664155396; Thu, 03 Apr 2025
+ 00:09:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] nvme: Add warning for PST table memory allocation
- failure in nvme_configure_apst
-To: Christoph Hellwig <hch@lst.de>
-Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me,
- chaitanyak@nvidia.com, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>,
- Chaitanya Kulkarni <kch@nvidia.com>
-References: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
- <tencent_A06D513AE17E9D4B4AC66E84F447FE730C09@qq.com>
- <20250403042557.GD22360@lst.de>
-Content-Language: en-US
-From: Yaxiong Tian <iambestgod@qq.com>
-In-Reply-To: <20250403042557.GD22360@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <Z+05IEjV3pczMLNQ@HP-650> <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
+In-Reply-To: <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Thu, 3 Apr 2025 08:09:07 +0100
+X-Gm-Features: AQ5f1JpGQqeJrBUB-VvSXTgpFhMBgMWSpDUjQtsyK6vTde3Vr4caK-xmt4hx0DE
+Message-ID: <CADYq+fb04joR=8b3zERT-K41y-+Czo=U0_M8GsQWPZbpAov=0Q@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: modify struct field to use standard
+ bool type
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, outreachy@lists.linux.dev, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Apr 3, 2025 at 6:06=E2=80=AFAM Julia Lawall <julia.lawall@inria.fr>=
+ wrote:
+>
+>
+>
+> On Wed, 2 Apr 2025, Abraham Samuel Adekunle wrote:
+>
+> > The struct field uses the uint values 0 and 1 to represent false and
+> > true values respectively.
+> >
+> > Convert cases to use the bool type instead to conform to Linux
+> > coding styles and ensure consistency.
+>
+> This is vague.  Ensure consistency with what?  You can point out that tru=
+e
+> or false was already being used elsewhere in the code.
 
+Okay Noted.
+>
+> >
+> > reported by Coccinelle:
+> >
+> > Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+> > ---
+> >  drivers/staging/rtl8723bs/core/rtw_ap.c      | 2 +-
+> >  drivers/staging/rtl8723bs/include/sta_info.h | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/=
+rtl8723bs/core/rtw_ap.c
+> > index ed6942e289a5..82f54f769ed1 100644
+> > --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > @@ -389,7 +389,7 @@ void update_bmc_sta(struct adapter *padapter)
+> >               psta->qos_option =3D 0;
+> >               psta->htpriv.ht_option =3D false;
+> >
+> > -             psta->ieee8021x_blocked =3D 0;
+> > +             psta->ieee8021x_blocked =3D false;
+> >
+> >               memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo=
+_stats));
+> >
+> > diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/sta=
+ging/rtl8723bs/include/sta_info.h
+> > index b3535fed3de7..63343998266a 100644
+> > --- a/drivers/staging/rtl8723bs/include/sta_info.h
+> > +++ b/drivers/staging/rtl8723bs/include/sta_info.h
+> > @@ -86,7 +86,7 @@ struct sta_info {
+> >       uint qos_option;
+> >       u8 hwaddr[ETH_ALEN];
+> >
+> > -     uint    ieee8021x_blocked;      /* 0: allowed, 1:blocked */
+> > +     bool ieee8021x_blocked;
+>
+> This declaration doesn't have the same alignment as the others.
+>
+> You should also check whether this is a structure that is read from the
+> hardware.  In that case, it would be a concern if the bool field does not
+> have the same size as the uint one.
+>
+> julia
 
-在 2025/4/3 12:25, Christoph Hellwig 写道:
-> On Tue, Apr 01, 2025 at 05:26:52PM +0800, Yaxiong Tian wrote:
->> +		dev_warn(ctrl->device, "Failed to allocate pst table; not using APST\n");
-> 
-> Please avoid the overly long line:
-> 
-> 		dev_warn(ctrl->device,
-> 			"Failed to allocate pst table; not using APST\n");
+Thank you very much. I will confirm and effect the changes
 
-Thanks, I Will fix in v4.
-
+Adekunle
 
