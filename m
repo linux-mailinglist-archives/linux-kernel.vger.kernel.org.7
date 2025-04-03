@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-586534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8EDA7A0B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62F2A7A0B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDDA1897724
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC613B5712
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E03248893;
-	Thu,  3 Apr 2025 10:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BB124A043;
+	Thu,  3 Apr 2025 10:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JrpYDDl8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RvXf/cnK"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234D61494D8;
-	Thu,  3 Apr 2025 10:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D910513C67C;
+	Thu,  3 Apr 2025 10:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743675215; cv=none; b=qqQ4GjqCfZY8bi8mfd2Fw3DVJhgudK/br/sKFzNuopKL7CASWdzhUjh1GuQ4wziKcbCI9z38xAba5F9EFeQSgOIzjAk1F4+4ngtYKRrApURozHPd3CzJfsWI1gj5Jqun/JMNHXwtmREEodJfakVleY36un6ya/bykW3g+5WF4AE=
+	t=1743675237; cv=none; b=d6hvjFAiJ8ycvW6xx4xzrcQzbACXLDgdI3Ps2YJXe0BLhCM3zjNm8L/ZWYWCCOojxqrLIxHhy48gfFMchf00AtM9xbNt8ZripGV2G/oJ5ET6dhW6omoqYoTgf0UEukOiBK7yYcC5seHXoH81HDN2jA9dWTFPxnJHEvt8oR9HUFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743675215; c=relaxed/simple;
-	bh=01MeoMdgRxAVrAckVIAvBLc/gYcrfZ7ucXaVfCHHKug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O62yehQUIMNOrRueKmPKvXlwDypEnT1JCuMah+j2dvvlh45gSitsz9/M3hMV104f9YXkna9uem9bndI8y4spyqnSInfLjWOEVh7d49NmbwpDm0oaMeB5uJ/45efZhqliYMVqgdlNEpyVGANI09ZxiAdglj8j31wcYDd/7KNV7oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JrpYDDl8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339rw6f021462;
-	Thu, 3 Apr 2025 10:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+1tIqhAWCJvJ3CMT+y5CBlACyfbXSMkpcdM6/ucOvxU=; b=JrpYDDl8YNsCAZvc
-	gtCR8T7s2hvDqcMg6HzHwahmSP/aQWu7BMthXYHZHW4Y9uVnlbLt0lKEj86vHEaE
-	ieZApWzKyp36/eMKR2eMhtm1ojwsWT9JSSsgu2KQVNeLV8puf36Q2+vcwVqoMEvO
-	OmD3LVvXtyV+zgzf8Sg9FZ8Xo2/87f4rnCmeMg39noD1MaTakSOJclGgmXflwbB6
-	uJf9zlpg3+lk3tCkeNCDCrtGKrCRIGkulbLBTHTwOcGgiZOsx9dolrU6RT53nKPX
-	W5FpRpKBxOGRCoUYZqivdTheIsKvJ64Z2BddVoXHTzZ2G9bW9NtL+IFhnI9II1ch
-	YYONqg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45sbxy1qrm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 10:13:13 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 533ADCIq003801
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Apr 2025 10:13:12 GMT
-Received: from [10.133.33.118] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 3 Apr 2025
- 03:13:08 -0700
-Message-ID: <94dac340-2f92-40a3-be56-ba8bd2298328@quicinc.com>
-Date: Thu, 3 Apr 2025 18:13:05 +0800
+	s=arc-20240116; t=1743675237; c=relaxed/simple;
+	bh=iZfe9IKc/fwgyE69mtiki9lj76GS0qFqCnTdfkVXFfU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ue4se0wM3aHcetGAOnOxIpm2r3R82m1rl2+LO0N5Swwb6sdvGvlbavJX+zNlI6H2S9yhcpkv+PRjvAlwFeKDpYXQJZkQWpeGVBXVNs2MNScK0lYImStzzmFAt/hxQ+DDzow+xFY6CVoA+9VD2dEl7B4M7u54OeJrNEiwPyK/PP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RvXf/cnK; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743675213; x=1744280013; i=markus.elfring@web.de;
+	bh=CARrPYNC+39nu2aCcF5f+6rCXN+MipGAP0Rp28eM2S8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RvXf/cnK4bKjLf+iiCwbERJtPdoEvch2sZiwMwLxp1yaey4Lnbm2xmShYZIXpgRj
+	 SXeDrauR7IyfW4jwpUAGiLERFE1IOYHEn9VhiZJ0Duxt2bV7vUtk1FGV4m0OM/RuU
+	 mWNMtRqMcf3MZAqM5YROzC8hBOOvrEUTqoOWKGEGmwNc1Q2ktRacY/s9cszx42dQz
+	 LOWQVcX6BVRZFw+MFajHK9fnSxZ9+ZlXLbSVtYH3UDQIJwDCw/oLuvOmhyI1WDH1A
+	 yUaOzNI1MvxH8gorkBVlKowACVhzWKuuSVx8gvv0Gbd9BHeGW8cPlAS/6T1reIe0i
+	 Uc/LCL8s0C9ZuRbcFg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.50]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFaui-1ts2Ff2PrK-009QNs; Thu, 03
+ Apr 2025 12:13:33 +0200
+Message-ID: <db778d8c-0a56-4b01-b5b5-5610a68a4875@web.de>
+Date: Thu, 3 Apr 2025 12:13:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,122 +56,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] PCI: Remove pcim_iounmap_regions()
-To: Philipp Stanner <phasta@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Brown
-	<broonie@kernel.org>,
-        David Lechner <dlechner@baylibre.com>,
-        Philipp Stanner
-	<pstanner@redhat.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>,
-        Yang Yingliang
-	<yangyingliang@huawei.com>,
-        Hannes Reinecke <hare@suse.de>, Al Viro
-	<viro@zeniv.linux.org.uk>,
-        Li Zetao <lizetao1@huawei.com>, Anuj Gupta
-	<anuj20.g@samsung.com>
-CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20250327110707.20025-2-phasta@kernel.org>
- <20250327110707.20025-4-phasta@kernel.org>
-Content-Language: en-US
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20250327110707.20025-4-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3W9z93NkZwxm7a7kjWSLINJPYXmxd6Gc
-X-Proofpoint-ORIG-GUID: 3W9z93NkZwxm7a7kjWSLINJPYXmxd6Gc
-X-Authority-Analysis: v=2.4 cv=PNAP+eqC c=1 sm=1 tr=0 ts=67ee5f39 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=20KFwNOVAAAA:8 a=COk6AnOGAAAA:8 a=YDoAUpYN6iqzQeISu80A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_04,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 adultscore=0 phishscore=0 clxscore=1011 mlxscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504030036
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-wireless@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rex Lu <rex.lu@mediatek.com>,
+ Ryder Lee <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Shayne Chen <shayne.chen@mediatek.com>, Shengyu Qu <wiagn233@outlook.com>
+References: <20250403064344.64253-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH] wifi: mt76: mt7996: Fix null-ptr-deref in
+ mt7996_mmio_wed_init()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250403064344.64253-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FOtUCR65RPzrUtKtMJyZcNJ7HmqKEyao5W6mjn8SRcQgnfwYEcy
+ Vo9lS/Mm9+uxpZGS1jxjpgrm/Lwx8EDmB6Epp1Y7Da9+NUjuBH+Z+SJ6VV2MadoSvhaZeif
+ 040QMrQ9MFViVVPr/MuinG5f9ckItH7tO/YX3R5jQXIYkaESsA/mNxMIrtZ0dTWhGmyPFiK
+ /p7IWI3WNtszVi0Su5vIg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uDjs4CvjV+I=;wmRCD8VloVebfGs1/wtaZa1Jy7L
+ 0VFTlya2kWdcaD8Dj8w/1Izj7gU2p5NAt+6lSZwpAXX9c6GiFlqs8Y5oT3C7h/CiVsDql9dgC
+ lC5MmkYneB9E+orqTvaD29PoVqW493rJuft8/RHN49vxnDqKWw/61M081skmmgUbw7mieFh+i
+ St4zsIRVxZBJLLOAkAHeNcSGhNMmPthKuRi7eUsbL/+ekADDqzRcn0gbyVJPBZkHcQ2t3hO6K
+ r/OKZohys6m64AQFRDa4bARf1cR2Mb1G0j6wYJ7Gp6itDKB/eZaxwcRcBlnHZHEZeSChrTg7U
+ QVgcQX/E1IaQS5P94/cJ4AH6iUhy3U58hvQLdPd4Bvh0tAK9deJDHzxAbnAxasC5dnP66FUMS
+ rBYiZh+zlTOm3hkafqSPVk3S+rLM1EsRKW2mthCxB+ufYsOeawCLt6avyXpfPxjrcPmjyWlMO
+ 2wWO8lZ8RTre1+nFr7hXlywiD1ysAIHzL7yXft7cqaby4GhFnLG4JY4JAt8bbeEJMrAo0R8xn
+ 3xQuEaN+ITaoYcMALPFtAL752WQWr+gEKFXAXbHpK6ExpevEvltn2pXtGHt+JrI5lFhX/oBo7
+ g7+Vs6Q4GxbIwsS7+E6/q4CYIM/zJCFsIXoyt223uW0h5XZJVBl0Ad/dLtgT6MKCpkR7bUqmN
+ reAz0sqQXuFeWHCdfz+EUk4synUvwhbppfRPFmeQu+i09fUE9ZX7UYnWZTRqbRIHqDlG4h6Gn
+ 23YKEec49x80SoMQIW7K+WSMgx3qaJhAPph9vW+i1kVkPJbZAurBE3Etk42YUrylWm2lgqFaS
+ 9ceLCntgFQWN4tDZ5xQ/lTHftXNV64H2ZYmzk6IMw/PZHYQ1AOEkyFDdQxiglOjulBXzketsx
+ vdms2/H0fz1QwG8gEKoxmrDSi9jVUrIK0c19K8V7YPUWo0F6Wl49/WSvBb1YxrrFuXdxM18HC
+ f5Xx4Wk6O+HVt/JlbvbEHYck5Vz6cVxBdfOvJAMQvHljfKXu/ONrmXruxMLIRwYrAJESZPXl1
+ aF+zmfty7/riduIL+Ao8QJV8tXatzPeiCsJ+/fYdvhF3UOg9hmDjbTNUUHb2UXPHbsrW12ocj
+ 7Kp0C5huZMPnznzPUUQreQMW7eOanw1F9UlhbjDwGRtOVZJKB6q3K+nbjm2vn2sivkO81O9o8
+ E/Enofk/+b3xjvhq0nSUBP5iW/JX9sjMFMCFZ8EIcF7cFoe64vGCB6aIgPQjCDRNbfa3Q9I43
+ +iaeDaRDorYMbp4z+39bSwVRLpiBElEEAtXnKsZ0HSXtqDNRF38JpuTU7Ei3wd+hBXdyhpxpn
+ zHs0AyGN8jX+m/J06rNbPNcW/4r1wluIMFHGoNl2uhuzvpjh6R0cvyMUbZ4PsIlSLXdMLv1xT
+ 6NgfEKEf6mAFT8DZO8VuqzPkkqLapDW1pClSq9F4UT2wlnaLq19wV+nVbwIkhS401io4qDtqw
+ gdDOIGj9nmTsphSflT1GKud+KzdbTGSgUhqFW/+Dtz4tMdGzSF//xhGuyxnyz1psq8Yh3fA==
 
-On 3/27/2025 7:07 PM, Philipp Stanner wrote:
-> From: Philipp Stanner <pstanner@redhat.com>
-> 
-> All users of the deprecated function pcim_iounmap_regions() have been
-> ported by now. Remove it.
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  .../driver-api/driver-model/devres.rst        |  1 -
->  drivers/pci/devres.c                          | 24 -------------------
->  include/linux/pci.h                           |  1 -
->  3 files changed, 26 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-> index d75728eb05f8..601f1a74d34d 100644
-> --- a/Documentation/driver-api/driver-model/devres.rst
-> +++ b/Documentation/driver-api/driver-model/devres.rst
-> @@ -396,7 +396,6 @@ PCI
->    pcim_iomap_regions()		: do request_region() and iomap() on multiple BARs
->    pcim_iomap_table()		: array of mapped addresses indexed by BAR
->    pcim_iounmap()		: do iounmap() on a single BAR
-> -  pcim_iounmap_regions()	: do iounmap() and release_region() on multiple BARs
->    pcim_pin_device()		: keep PCI device enabled after release
->    pcim_set_mwi()		: enable Memory-Write-Invalidate PCI transaction
->  
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 3431a7df3e0d..c60441555758 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -946,30 +946,6 @@ int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
->  }
->  EXPORT_SYMBOL(pcim_request_all_regions);
->  
-> -/**
-> - * pcim_iounmap_regions - Unmap and release PCI BARs (DEPRECATED)
-> - * @pdev: PCI device to map IO resources for
-> - * @mask: Mask of BARs to unmap and release
-> - *
-> - * Unmap and release regions specified by @mask.
-> - *
-> - * This function is DEPRECATED. Do not use it in new code.
-> - * Use pcim_iounmap_region() instead.
-> - */
-> -void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> -		if (!mask_contains_bar(mask, i))
-> -			continue;
-> -
-> -		pcim_iounmap_region(pdev, i);
-> -		pcim_remove_bar_from_legacy_table(pdev, i);
-> -	}
-> -}
-> -EXPORT_SYMBOL(pcim_iounmap_regions);
-> -
->  /**
->   * pcim_iomap_range - Create a ranged __iomap mapping within a PCI BAR
->   * @pdev: PCI device to map IO resources for
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 47b31ad724fa..7661f10913ca 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -2323,7 +2323,6 @@ void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr);
->  void __iomem * const *pcim_iomap_table(struct pci_dev *pdev);
->  int pcim_request_region(struct pci_dev *pdev, int bar, const char *name);
->  int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name);
-> -void pcim_iounmap_regions(struct pci_dev *pdev, int mask);
->  void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
->  				unsigned long offset, unsigned long len);
->  
+=E2=80=A6
+> Add NULL check after devm_ioremap() to prevent this issue.
 
-Reviewed-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Can a summary phrase like =E2=80=9CPrevent null pointer dereference in mt7=
+996_mmio_wed_init()=E2=80=9D
+be a bit nicer?
+
+
+=E2=80=A6
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7996/mmio.c
+> @@ -323,6 +323,8 @@ int mt7996_mmio_wed_init(struct mt7996_dev *dev, voi=
+d *pdev_ptr,
+>  	wed->wlan.base =3D devm_ioremap(dev->mt76.dev,
+>  				      pci_resource_start(pci_dev, 0),
+>  				      pci_resource_len(pci_dev, 0));
+> +	if (!wed->wlan.base)
+> +		return -ENOMEM;
+
+Can a blank line be desirable after such a statement?
+
+Regards,
+Markus
 
