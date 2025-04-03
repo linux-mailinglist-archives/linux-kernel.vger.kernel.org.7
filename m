@@ -1,78 +1,38 @@
-Return-Path: <linux-kernel+bounces-586308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B473FA79D9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:04:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0777DA79E4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B893ADFF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC6C1895BD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A318F241689;
-	Thu,  3 Apr 2025 08:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RjnN8jxY"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D321EF399;
+	Thu,  3 Apr 2025 08:37:19 +0000 (UTC)
+Received: from mail-m15578.qiye.163.com (mail-m15578.qiye.163.com [101.71.155.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC231E7C27
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1100D2A8D0
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743667444; cv=none; b=kXoWvImyz1gyNUCEp2n+buh2HLppnS1eBQ/Pu5RWK488Dyf6yRj7ODwHl2q2mL3pbtaFrRKgD7W2NOwP4VMN+aUHDbXJAogGrp+gmBcrg30zDRzJbXvJjbe/RzBWY3Jaw8YjN2TyLED03gOBcawkIQpsgH6YGfeI1qguLLwDoSU=
+	t=1743669438; cv=none; b=hSctCohW5iUiOnTq/Me5mkvvJc3cyBDU9SGkYeShZMlyV5wMEY/xGsfZRzBQKTgVmC41h9sySVhRV+dWslG/k9Z+4MfvIa6NL53NCcay2R/IulI8wwyUCQufxAb7T6a5CCToflxuM5l3zYiw1STV2RFzeFn8PlTUva5BHj7zRFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743667444; c=relaxed/simple;
-	bh=4CDET8HY4bzxF7350jaD49xltN5LQM8HEsVV5xhKyec=;
+	s=arc-20240116; t=1743669438; c=relaxed/simple;
+	bh=4BS66JqLbbRS7wRo3uLWA63bxarxiz/nBvsKghwJprg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=euc0Rp7N/tGDOvGWLPjdxDM56MqjJR7RpZD/oWPV49JgSn36rXEvrzBojaf68rMS4eMA45Irk4zSw2oVqexot3WvYxO/xm5yi+8RxNc+FntnV2UPSmoyXeFEQJV/mr67AvHqz9OLrSQx41sFvGTrpEDd6JQ9n06TBh6WG+61vXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RjnN8jxY; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso5251765e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 01:04:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1743667441; x=1744272241; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4ODOqqsnViZ1sK0aQSYfZkG1OgH6kYCvoMC0DZ3dd3I=;
-        b=RjnN8jxYBKS1yhgpMTOWG/THFMI8b5ik2EcG1GKgiinUNHofP2aZYvqt4uYiRXIhME
-         dKFLEpRDy6ouozh9y5mdt0NLbBF33yt2L4IrnySAlZg3Gv/VQpQu9O5Xg+IIAP0q5FLw
-         nU3FPpaaKHIEgMU5l3WoAuRD5/0aJzvjQIhDx+koFREkSMNATE5tX0bJxGl5t47T53Fr
-         QtNW3FHxpVDac6fN8ci7ULPY4riT3iZdhHdE+hJ0MZLRCnulFV636gM5JWVuKBBGc8t5
-         XjBA4Y5p4QjfDhMdLKNTCc4aQOeJ7TMp52P1x79TK9H8JeGOmKz4KmEuuHFN0vcLvOWt
-         dDxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743667441; x=1744272241;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ODOqqsnViZ1sK0aQSYfZkG1OgH6kYCvoMC0DZ3dd3I=;
-        b=VHUJacaiYpE7V3l3R9jNwxvpu7R4r1YDDKrrJqvsQ8uQE4MlWU0NQxUFOyUtWC+BjB
-         GcRh2PlCfaSVK56fN+eQTyZWleipxxSCCgdL2vDxwSDVem/bbSGNSK0bbUaW/GEGidyM
-         rdPZZZcaRru+iFdl7xFGqWG3pVSl5EI7QwZNAAj7YBt3COEMcJxN0syj0329KqkZsFTx
-         CVq3Dzg8Ie8pqMrs6CNfO+hrjsHzCj6OUIPt+SuyegEqpxCj7m8Yiw94Suo6+67rWfXI
-         fDsA8Juja2/P3vopWTw6abEFbtIc6B5+MAfUgVtCVttvcFtm2AnnEHa+SvjnzKYiHq9y
-         Ibbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzPdhKPYXTg8ATmQGnh2SO2L6c0eg6WHwy5BN6BYr1KVzj12DP0Ir6XJlBE4gZjuts7Of/BnIhaJmhSpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2C8Ly9/ZYpWkxtyjtIIuGLdatUSnnuUpQPHnoaY9f7U+hpm5B
-	USK+Gkb40SxekrYe3VqE6BGJYITw6YQAd1uwtZb+S7NpKeRxvEYz+OVMLRroJhs=
-X-Gm-Gg: ASbGncujc6kD727d1Ac6T2hlhhigCHQiWeM1w6dyiVgjMYiZGJnJ5dzeIn0jVy19/Ov
-	J7cJh3RJZBbVv47YML7fBBEF9uuPBKJXMDI94/f62U+l/Ja/FukOt2rSpDRMShIiyNwdEWc6TO6
-	cvm0/XnIwhtH20IvltpD1RwLhrbG3HA098bb0ZqqtITXevEPblsxy5D6d3hihpOx/ffcl5u2+Ul
-	KdbQluWwUjs0H9uoJ9M6AH6TVDEkkJAxTPrFCocL+TVvuRTj7Y24XAY8XVafkFm3/SCx1WfHl8k
-	ZBNR73DcEmTQrUf3I8deUU9h+YUXiGT2RyLswXxH1dYv7T08KkFW
-X-Google-Smtp-Source: AGHT+IECVq2HRR1Nyv/1p/1GP+gWgvLkESx2Rr9YngJsLXpP3nOlkno+7eGPJSpNvzemFUEsWCN0zg==
-X-Received: by 2002:a05:600c:450f:b0:43c:efed:732d with SMTP id 5b1f17b1804b1-43ec13fc752mr14693545e9.16.1743667440603;
-        Thu, 03 Apr 2025 01:04:00 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096cc1sm1064581f8f.5.2025.04.03.01.03.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 01:04:00 -0700 (PDT)
-Message-ID: <8412725b-8d62-44a1-8929-7de7de8dfdbf@tuxon.dev>
-Date: Thu, 3 Apr 2025 11:03:58 +0300
+	 In-Reply-To:Content-Type; b=BmqE/7b58+PSYRMwS4+O+hZr0vRdfwsIbgmCe+0ANxm2fW2a1UWF+0XN/OR4ursFHdkSF7P8EQrtwrkvnnrlhSC6OHnXjFZQIANoofpSk+R2RoF3CeIdxPgUwkqrB/DftC7ltAUfl++L7JTHRk0PYtOysaOaZ7SY2KlUGQ5xKAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=101.71.155.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
+Received: from [172.21.129.240] (unknown [122.224.241.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1088f8c4a;
+	Thu, 3 Apr 2025 10:54:17 +0800 (GMT+08:00)
+Message-ID: <a1cf32e8-c711-476d-a827-e3affedba780@hj-micro.com>
+Date: Thu, 3 Apr 2025 10:53:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,163 +40,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] soc: renesas: rz-sysc: add syscon/regmap support
-To: John Madieu <john.madieu.xa@bp.renesas.com>, geert+renesas@glider.be,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org, rafael@kernel.org,
- daniel.lezcano@linaro.org
-Cc: magnus.damm@gmail.com, devicetree@vger.kernel.org, john.madieu@gmail.com,
- rui.zhang@intel.com, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, sboyd@kernel.org,
- biju.das.jz@bp.renesas.com, linux-pm@vger.kernel.org, lukasz.luba@arm.com
-References: <20250330214945.185725-1-john.madieu.xa@bp.renesas.com>
- <20250330214945.185725-2-john.madieu.xa@bp.renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250330214945.185725-2-john.madieu.xa@bp.renesas.com>
+Subject: Re: [PATCH v2] perf: arm-ni: Fix list_add() corruption in
+ arm_ni_probe()
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org
+Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, allen.wang@hj-micro.com, peter.du@hj-micro.com
+References: <20250331121536.2626552-1-andy.xu@hj-micro.com>
+ <2f594c55-6fce-445f-b838-ea518916103f@arm.com>
+From: Hongbo Yao <andy.xu@hj-micro.com>
+In-Reply-To: <2f594c55-6fce-445f-b838-ea518916103f@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQh0ZVhlNTENCGUIaQkodTFYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUlPSlVIT1lXWRYaDxIVHRRZQVlPS0hVSktJSEJIQ1VKS0
+	tVSkJLS1kG
+X-HM-Tid: 0a95f9921d4403afkunm1088f8c4a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBQ6Dgw6CzJMOQMIETAWPBFK
+	IgpPCzZVSlVKTE9ITU9DQ05DT05PVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
+	SklJVUlJT1VJT0pVSE9ZV1kIAVlBTk5ISDcG
 
-Hi, John,
 
-On 31.03.2025 00:49, John Madieu wrote:
-> The RZ/G3E system controller has various registers that control or report
-> some properties specific to individual IPs. The regmap is registered as a
-> syscon device to allow these IP drivers to access the registers through the
-> regmap API.
-> 
-> As other RZ SoCs might have custom read/write callbacks or max-offsets, let's
-> register a custom regmap configuration.
-> 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> ---
-> v1 -> v2: no changes
-> v2 -> v3: no changes
-> v3 -> v4: no changes
-> v4 -> v5: no changes
-> 
-> Note for Maintainers: There is a false positive warning reported by
-> checkpatch.pl on this patch patch stating that the regmap_config struct
-> should be const, despite the fact it's updated in probe().
-> 
->  drivers/soc/renesas/Kconfig         |  1 +
->  drivers/soc/renesas/r9a09g047-sys.c |  1 +
->  drivers/soc/renesas/rz-sysc.c       | 30 ++++++++++++++++++++++++++++-
->  drivers/soc/renesas/rz-sysc.h       |  2 ++
->  4 files changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> index 49648cf28bd2..3ffd3a4ca18d 100644
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -388,6 +388,7 @@ config RST_RCAR
->  
->  config SYSC_RZ
->  	bool "System controller for RZ SoCs" if COMPILE_TEST
-> +	select MFD_SYSCON
->  
->  config SYSC_R9A08G045
->  	bool "Renesas RZ/G3S System controller support" if COMPILE_TEST
-> diff --git a/drivers/soc/renesas/r9a09g047-sys.c b/drivers/soc/renesas/r9a09g047-sys.c
-> index cd2eb7782cfe..5b010a519fab 100644
-> --- a/drivers/soc/renesas/r9a09g047-sys.c
-> +++ b/drivers/soc/renesas/r9a09g047-sys.c
-> @@ -64,4 +64,5 @@ static const struct rz_sysc_soc_id_init_data rzg3e_sys_soc_id_init_data __initco
->  
->  const struct rz_sysc_init_data rzg3e_sys_init_data = {
->  	.soc_id_init_data = &rzg3e_sys_soc_id_init_data,
-> +	.max_register_offset = 0x170c,
->  };
-> diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
-> index 1c98da37b7d1..bcbc23da954b 100644
-> --- a/drivers/soc/renesas/rz-sysc.c
-> +++ b/drivers/soc/renesas/rz-sysc.c
-> @@ -6,8 +6,10 @@
->   */
->  
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->  #include <linux/sys_soc.h>
->  
->  #include "rz-sysc.h"
-> @@ -81,6 +83,14 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
->  	return 0;
->  }
->  
-> +static struct regmap_config rz_sysc_regmap = {
-> +	.name = "rz_sysc_regs",
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.fast_io = true,
-> +};
-> +
->  static const struct of_device_id rz_sysc_match[] = {
->  #ifdef CONFIG_SYSC_R9A08G045
->  	{ .compatible = "renesas,r9a08g045-sysc", .data = &rzg3s_sysc_init_data },
-> @@ -97,14 +107,21 @@ MODULE_DEVICE_TABLE(of, rz_sysc_match);
->  
->  static int rz_sysc_probe(struct platform_device *pdev)
->  {
-> +	const struct rz_sysc_init_data *data;
->  	const struct of_device_id *match;
->  	struct device *dev = &pdev->dev;
-> +	struct regmap *regmap;
->  	struct rz_sysc *sysc;
-> +	int ret;
->  
->  	match = of_match_node(rz_sysc_match, dev->of_node);
->  	if (!match)
->  		return -ENODEV;
->  
-> +	data = match->data;
-> +	if (!data)
-> +		return -EINVAL;
-> +
->  	sysc = devm_kzalloc(dev, sizeof(*sysc), GFP_KERNEL);
->  	if (!sysc)
->  		return -ENOMEM;
-> @@ -114,7 +131,18 @@ static int rz_sysc_probe(struct platform_device *pdev)
->  		return PTR_ERR(sysc->base);
->  
->  	sysc->dev = dev;
-> -	return rz_sysc_soc_init(sysc, match);
-> +	ret = rz_sysc_soc_init(sysc, match);
 
-The return value of rz_sysc_soc_init() is lost in case
-data->max_register_offset != 0. Is there a reason for this?
+在 2025/4/2 20:17, Robin Murphy 写道:
+> On 2025-03-31 1:15 pm, HongBo Yao wrote:
+>> From: Hongbo Yao <andy.xu@hj-micro.com>
+>>
+>> When a resource allocation fails in one clock domain of an NI device,
+>> we need to properly roll back all previously registered perf PMUs in
+>> other clock domains of the same device.
+>>
+>> Otherwise, it can lead to kernel panics.
+>>
+>> Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
+>> arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
+>> arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
+>> list_add corruption: next->prev should be prev (fffffd01e9698a18),
+>> but was 0000000000000000. (next=ffff10001a0decc8).
+>> pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>> pc : list_add_valid_or_report+0x7c/0xb8
+>> lr : list_add_valid_or_report+0x7c/0xb8
+>> Call trace:
+>>   __list_add_valid_or_report+0x7c/0xb8
+>>   perf_pmu_register+0x22c/0x3a0
+>>   arm_ni_probe+0x554/0x70c [arm_ni]
+>>   platform_probe+0x70/0xe8
+>>   really_probe+0xc6/0x4d8
+>>   driver_probe_device+0x48/0x170
+>>   __driver_attach+0x8e/0x1c0
+>>   bus_for_each_dev+0x64/0xf0
+>>   driver_add+0x138/0x260
+>>   bus_add_driver+0x68/0x138
+>>   __platform_driver_register+0x2c/0x40
+>>   arm_ni_init+0x14/0x2a [arm_ni]
+>>   do_init_module+0x36/0x298
+>> ---[ end trace 0000000000000000 ]---
+>> Kernel panic - not syncing: Oops - BUG: Fatal exception
+>> SMP: stopping secondary CPUs
+> 
+> This, and the subject, are really confusing, since apparent list
+> corruption is just one of many possible symptoms, and the fact that it
+> happens to be a second instance of arm_ni_probe() hitting it is pure
+> coincidence. The bug is that probe failure can lead to PMUs being freed
+> without being unregistered, which can obviously lead to all manner of
+> use-after-free conditions in the perf core.
+> 
+Hi, robin.
+Thank you for the feedback. I'll revise the title as suggested.
 
-> +
-> +	if (data->max_register_offset) {
-> +		rz_sysc_regmap.max_register = data->max_register_offset;
-> +		regmap = devm_regmap_init_mmio(dev, sysc->base, &rz_sysc_regmap);
-> +		if (IS_ERR(regmap))
-> +			return PTR_ERR(regmap);
-> +
-> +		ret = of_syscon_register_regmap(dev->of_node, regmap);
-> +	}
-> +
-> +	return ret;
->  }
->  
->  static struct platform_driver rz_sysc_driver = {
-> diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
-> index aa83948c5117..37a3bb2c87f8 100644
-> --- a/drivers/soc/renesas/rz-sysc.h
-> +++ b/drivers/soc/renesas/rz-sysc.h
-> @@ -34,9 +34,11 @@ struct rz_sysc_soc_id_init_data {
->  /**
->   * struct rz_sysc_init_data - RZ SYSC initialization data
->   * @soc_id_init_data: RZ SYSC SoC ID initialization data
-> + * @max_register_offset: Maximum SYSC register offset to be used by the regmap config
->   */
->  struct rz_sysc_init_data {
->  	const struct rz_sysc_soc_id_init_data *soc_id_init_data;
-> +	u32 max_register_offset;
->  };
->  
->  extern const struct rz_sysc_init_data rzg3e_sys_init_data;
+>> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+>> Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
+>> ---
+>>   drivers/perf/arm-ni.c | 44 +++++++++++++++++++++++++++++--------------
+>>   1 file changed, 30 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+>> index fd7a5e60e963..ee85577e86b9 100644
+>> --- a/drivers/perf/arm-ni.c
+>> +++ b/drivers/perf/arm-ni.c
+>> @@ -102,6 +102,7 @@ struct arm_ni_unit {
+>>   struct arm_ni_cd {
+>>       void __iomem *pmu_base;
+>>       u16 id;
+>> +    bool pmu_registered;
+>>       int num_units;
+>>       int irq;
+>>       int cpu;
+>> @@ -571,10 +572,31 @@ static int arm_ni_init_cd(struct arm_ni *ni,
+>> struct arm_ni_node *node, u64 res_s
+>>       err = perf_pmu_register(&cd->pmu, name, -1);
+>>       if (err)
+>>           cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd-
+>> >cpuhp_node);
+>> +    else
+>> +        cd->pmu_registered = true;
+>>         return err;
+>>   }
+>>   +static void arm_ni_remove_cds(struct arm_ni *ni)
+>> +{
+>> +    for (int i = 0; i < ni->num_cds; i++) {
+>> +        struct arm_ni_cd *cd = ni->cds + i;
+>> +
+>> +        if (!cd->pmu_base)
+>> +            continue;
+>> +
+>> +        if (!cd->pmu_registered)
+>> +            continue;
+> 
+> It's clearly redundant to have both checks here - TBH I'd be inclined to
+> just do the minimal fix with the existing pmu_base logic:
+> 
+> @@ -656,8 +673,11 @@ static int arm_ni_probe(struct platform_device *pdev)
+>                  reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
+>                  arm_ni_probe_domain(base + reg, &cd);
+>                  ret = arm_ni_init_cd(ni, &cd, res->start);
+> -                if (ret)
+> +                if (ret) {
+> +                    ni->cds[cd.id].pmu_base = NULL;
+> +                    arm_ni_remove(pdev);
+>                      return ret;
+> +                }
+>              }
+>          }
+>      }
+> 
+> ...however I'm not against replacing that use of pmu_base with an
+> explicit flag if you think that's nicer. As implied, though, I really
+> don't see any point in splitting up arm_ni_remove() itself, we can just
+> move the whole definition up and call it for this purpose too (with your
+> other drvdata fix).
+>
+You're right, i'll simplify the fix by leveraging the exisiting pmu_base
+logic and move the arm_ni_remove() definition up in the next version.
+Appreciate the guidance.
+
+Best regards,
+Hongbo.
+
+
+> Thanks,
+> Robin.
+> 
+> 
 
 
