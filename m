@@ -1,477 +1,203 @@
-Return-Path: <linux-kernel+bounces-586926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB02A7A592
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:45:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A80EA7A587
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4145A3B0425
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBE16E115
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B436224EF8A;
-	Thu,  3 Apr 2025 14:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0671C24F5B4;
+	Thu,  3 Apr 2025 14:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nKsHAfpr"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQhtYpCY"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349CC24EAB2;
-	Thu,  3 Apr 2025 14:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB42A24EF7D;
+	Thu,  3 Apr 2025 14:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743691229; cv=none; b=BJK/6CbzhyLJZBst62rAxCzr+ud5099hlFqNHdSoOVS086Kx/d3NQ+mknLiCGdhsHlWzMzCdTsfaUoCvWkNu7wq680+gPY5DpJy41ooM1a6+p+xa9V5M1Q0oRMFInqXbOgnhSm51galItni21338YkXaNXO2DSsPJ4mzLQNhW/E=
+	t=1743691342; cv=none; b=ICyYrfwEFo50LNkk1YjJ3dKSs3YQ8YSk783Xe/2n7L85ccRPVE7Hrhxp34IJQaA3j8AhSfVYo6sR5tMQYfRySnCaIyf2aVy3EFFseEZh2f0WNK4Kpn9ONKCqp/mkGmJoYJG9tK8856EobaFv6fNcAO5l0EyeN6K2vPcHpKKgzbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743691229; c=relaxed/simple;
-	bh=2HN9m5zBkG+YIttJR9oI2MrlLRnZLaPdjF0ROE5NSqk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hEjAeMa/+TwCT1N/ddmF1JEzLYsLLiB8qigpcUBOQPDy8KRHoSPwTpkDwK4UULmkmsfX4YsF2ORhn+EDQ2jBgE3zRkt5to6for4lK5TeWloHPTOfh1eiPYP0C+HoePoV+yNJNe9O94LrFJQOoUVzU0UoF5ehDFiOP4HwbKuhJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nKsHAfpr; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ZT4CW0YtFz9t7h;
-	Thu,  3 Apr 2025 16:40:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1743691223; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EotwNtCXeMJqVKkewQhAKZUbOMnZCRXe3XsN9jbimow=;
-	b=nKsHAfprMdINrpUEnwdMNEzZkg7X62u+AzLytnW8J3TCjcI5c9PIH1osyTtGsBi40Fgzfh
-	0BLeNwJoqPemqUM6+o7+Lqr+YbM+bbvlCBWhoxfcThRhlaKdclJMRxWg8zwaB0kvQvHflz
-	IPR2l8j2iMlK5kqRPBaEr7Se/ncMXFybCiOT6BwMrDsQj5p9zWpSZY/2VOYzb01Bj7pgqB
-	8BVpF4oZLiiJaAZSfY+GXrFbdxObZWFWXjGPlSO5VQW31sPR8Y/8Hyz5xR7hu4UCUEOO1M
-	7LXtS107dcJAqvV5QXgFfAsyfpTjBf/sHsuERzpEyoJ5avgR/8DiFPRD/37+Dw==
-Message-ID: <36b076dc17083f9edd9b100bd8fa57badde41158.camel@mailbox.org>
-Subject: Re: [PATCH v2] drm/nouveau: Prevent signalled fences in pending list
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
-	phasta@kernel.org, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
-	 <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
-	 <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, stable@vger.kernel.org
-Date: Thu, 03 Apr 2025 16:40:19 +0200
-In-Reply-To: <72156b6a-9a8b-4485-8091-95f02c96eba8@amd.com>
-References: <20250403101353.42880-2-phasta@kernel.org>
-	 <c779bc2f-06af-4278-8bb5-08afc074b580@amd.com>
-	 <2558c9cf0cf28867238eb21950ce2a3f862c15c3.camel@mailbox.org>
-	 <72156b6a-9a8b-4485-8091-95f02c96eba8@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1743691342; c=relaxed/simple;
+	bh=Zry1Yrol56/KX1aeEhCxv0Cg25fLUtDNop8HonNdjPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XMtiw2YCSTYjMG47BE9v5cWT4ovC8hf/xDJ/QogSbNMQwMX6yApPltNLjbRxkdUTL/+LUZ02L4Z564tqnVyG5l28J69Nd1mlcPl4Ux0bO5xzDRdJNGxbuLhcFKeMs52QekYDtRa4fbPl01Wp9nWEW/3t4MAeI1z0QTwdDBwJcec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQhtYpCY; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85d9a87660fso88182739f.1;
+        Thu, 03 Apr 2025 07:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743691340; x=1744296140; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zeoDb9T68HON4+pT2o4m+OL30KX0Z6zhqrCCdtzjaWI=;
+        b=BQhtYpCYRdqQhScW52gcZgDHo/5auY8GDde5ivG+tpeeFEKQZB/CFa1/IhAhehsapR
+         GDowryAeH/DuEJuC1nT4np75jaS8o9sY+1w2a43olEo4An6ht+JJUYyQ/vF3lgslb24c
+         upHMeouJnIBhyAMQ29eQap398rsmcffO8+w9qUgvt43cdgHtdLt9VcNIM0eoHz/tbieJ
+         YQ3LeFVHABEZq9m0GZKpr5Akgtp6BSRUSWY++cyvGvgZl0aw8TFyEK2Yp0e9OPp21lVq
+         ofSPCkSe9MH4Yq/cgaPj50ojOg7hncxt7pS0dI09fJjNvKr2BA8otPL/sn9J86k8TAf7
+         2ujw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743691340; x=1744296140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zeoDb9T68HON4+pT2o4m+OL30KX0Z6zhqrCCdtzjaWI=;
+        b=bC3Zs6BUCUUrKEHnn0BJULI2jG5bSj5r89VOdMZmjxb/StoMgo64Y67nh4jMm0AC3+
+         dGJ3byA7OydJdnYVqfCb/U4kggcbQOAd07by1HYeMmllUjgRmszvIk1J0FuM0nbs1WxH
+         4aZWEXD8W0Wch5X9vFE/Lw7GkWDfrIJjp3Z0cVgVcMfqje0qwRgBwHpl1QaakHHYVCwy
+         fuDhvnayI9O7oxnbH+juiVFkTgilHCFsLQvLrPWOEFS0HBDhfsM5TQtnKblXH0VBLHBS
+         ath39NjM8HDc2H48prDczRncsvPgJshNC6RbLBgLsvvUcsLjEGIVFAa+JgX9KX4gXo4U
+         Eugw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/kKh0odlXTDynai+yrkQcKAawUK9I9EeBVFr6vW4nHiDoQk+3YJMNCmJRPnH5zaTmsd5xiqPmHHxlExk=@vger.kernel.org, AJvYcCU3TKQ1IkHJ2ajPLk26UX2ARtb4YYVY7IQMozyjxgle4VYjtCpYDv3nns/DemTGeSkL4dL1uNixhwzqBg==@vger.kernel.org, AJvYcCUOx9wAftOQxRKmjfWP/i3lkLCtn8p3aV2DQUKcAygwHvv0TgTkXr+2MirsozjO1F8Oa6CY4q7C@vger.kernel.org, AJvYcCVBUyPMKsnlOdJE8l3RuqsGl95e19cbaXahXMMnUwOSjIG8U26Tq4L0zNy8J0DD47sEfUsFEcWL@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP5cDwBqSOfTLcWhZ6iGnhnNgOwpIvkQ1/rQaQs1QpTybGWdSK
+	T30yeBWD4dN5dE3J6/8pZ5WFp4AdEfGXgbbjPWF4RdK5Tzlwy70goYoH40GcIl25mKVAyQXMetP
+	hDl3HueZwwmuxYOEfDgeFJ2PO+pI=
+X-Gm-Gg: ASbGncsYJxVHC1hzxNXSDHFsq/5RJbK5ntvz/50NdOQHLRISp3VT1nbT8BwfpUNtC9Q
+	69fQT/OF+/IyEjuUsV7AOv75GPIG95V6nry+Z40RIkWrLnPuPw4Mt+SptEZjZD2xX1ho4Bm0nTu
+	Y2TBhPjrVMJ3JfOUq/XFQNR4DNqYHozP3hN3dYrvbFaCQMIh7WNzHBYV311OU=
+X-Google-Smtp-Source: AGHT+IGNRyxDi7DahaAnymdSbr7DQycN0ZdLw//2LEvSHgTrzxm8aOaPQKMKp2kUdY5SWnF/e0614nQcpCl/EzjRxG4=
+X-Received: by 2002:a05:6e02:12ec:b0:3d6:d179:a182 with SMTP id
+ e9e14a558f8ab-3d6dd824cb5mr37846045ab.20.1743691339808; Thu, 03 Apr 2025
+ 07:42:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: sm1sfzwzrrjcz69c5hiajc6rnxzujchn
-X-MBO-RS-ID: bd7fd8576ab2d4ccf54
+References: <20250402-kasan_slab-use-after-free_read_in_sctp_outq_select_transport-v1-1-da6f5f00f286@igalia.com>
+ <CADvbK_dTX3c9wgMa8bDW-Hg-5gGJ7sJzN5s8xtGwwYW9FE=rcg@mail.gmail.com> <87tt75efdj.fsf@igalia.com>
+In-Reply-To: <87tt75efdj.fsf@igalia.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Thu, 3 Apr 2025 10:42:08 -0400
+X-Gm-Features: ATxdqUHaFX6L76fecmJqYz3mIbUdj6YZ5tkatolAjwkKUce-j3bzGLhgqW-KjgY
+Message-ID: <CADvbK_c69AoVyFDX2YduebF9DG8YyZM7aP7aMrMyqJi7vMmiSA@mail.gmail.com>
+Subject: Re: [PATCH] sctp: check transport existence before processing a send primitive
+To: =?UTF-8?Q?Ricardo_Ca=C3=B1uelo_Navarro?= <rcn@igalia.com>
+Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, kernel-dev@igalia.com, linux-sctp@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-04-03 at 15:10 +0200, Christian K=C3=B6nig wrote:
-> =C2=A0Am 03.04.25 um 14:58 schrieb Philipp Stanner:
-> =C2=A0
-> > =C2=A0
-> > On Thu, 2025-04-03 at 14:08 +0200, Christian K=C3=B6nig wrote:
-> > =C2=A0
-> > > =C2=A0
-> > > Am 03.04.25 um 12:13 schrieb Philipp Stanner:
-> > > =C2=A0
-> > > > =C2=A0
-> > > > Nouveau currently relies on the assumption that dma_fences will
-> > > > only
-> > > > ever get signalled through nouveau_fence_signal(), which takes
-> > > > care
-> > > > of
-> > > > removing a signalled fence from the list
-> > > > nouveau_fence_chan.pending.
-> > > >=20
-> > > > This self-imposed rule is violated in nouveau_fence_done(),
-> > > > where
-> > > > dma_fence_is_signaled() can signal the fence without removing
-> > > > it
-> > > > from
-> > > > the list. This enables accesses to already signalled fences
-> > > > through
-> > > > the
-> > > > list, which is a bug.
-> > > >=20
-> > > > Furthermore, it must always be possible to use standard
-> > > > dma_fence
-> > > > methods an a dma_fence and observe valid behavior. The
-> > > > canonical
-> > > > way of
-> > > > ensuring that signalling a fence has additional effects is to
-> > > > add
-> > > > those
-> > > > effects to a callback and register it on that fence.
-> > > >=20
-> > > > Move the code from nouveau_fence_signal() into a dma_fence
-> > > > callback.
-> > > > Register that callback when creating the fence.
-> > > >=20
-> > > > Cc: <stable@vger.kernel.org> # 4.10+
-> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > > > ---
-> > > > Changes in v2:
-> > > > =C2=A0 - Remove Fixes: tag. (Danilo)
-> > > > =C2=A0 - Remove integer "drop" and call nvif_event_block() in the
-> > > > fence
-> > > > =C2=A0=C2=A0=C2=A0 callback. (Danilo)
-> > > > ---
-> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 52 +++++++++++++---=
--
-> > > > ----
-> > > > ----
-> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 +
-> > > > =C2=A02 files changed, 29 insertions(+), 24 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > > > b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > > > index 7cc84472cece..cf510ef9641a 100644
-> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > > > @@ -50,24 +50,24 @@ nouveau_fctx(struct nouveau_fence *fence)
-> > > > =C2=A0	return container_of(fence->base.lock, struct
-> > > > nouveau_fence_chan, lock);
-> > > > =C2=A0}
-> > > > =C2=A0
-> > > > -static int
-> > > > -nouveau_fence_signal(struct nouveau_fence *fence)
-> > > > +static void
-> > > > +nouveau_fence_cleanup_cb(struct dma_fence *dfence, struct
-> > > > dma_fence_cb *cb)
-> > > > =C2=A0{
-> > > > -	int drop =3D 0;
-> > > > +	struct nouveau_fence_chan *fctx;
-> > > > +	struct nouveau_fence *fence;
-> > > > +
-> > > > +	fence =3D container_of(dfence, struct nouveau_fence,
-> > > > base);
-> > > > +	fctx =3D nouveau_fctx(fence);
-> > > > =C2=A0
-> > > > -	dma_fence_signal_locked(&fence->base);
-> > > > =C2=A0	list_del(&fence->head);
-> > > > =C2=A0	rcu_assign_pointer(fence->channel, NULL);
-> > > > =C2=A0
-> > > > =C2=A0	if (test_bit(DMA_FENCE_FLAG_USER_BITS, &fence-
-> > > > =C2=A0
-> > > > > =C2=A0
-> > > > > base.flags)) {
-> > > > > =C2=A0
-> > > > =C2=A0
-> > > > -		struct nouveau_fence_chan *fctx =3D
-> > > > nouveau_fctx(fence);
-> > > > -
-> > > > =C2=A0		if (!--fctx->notify_ref)
-> > > > -			drop =3D 1;
-> > > > +			nvif_event_block(&fctx->event);
-> > > > =C2=A0	}
-> > > > =C2=A0
-> > > > =C2=A0	dma_fence_put(&fence->base);
-> > > > -	return drop;
-> > > > =C2=A0}
-> > > > =C2=A0
-> > > > =C2=A0static struct nouveau_fence *
-> > > > @@ -93,8 +93,7 @@ nouveau_fence_context_kill(struct
-> > > > nouveau_fence_chan *fctx, int error)
-> > > > =C2=A0		if (error)
-> > > > =C2=A0			dma_fence_set_error(&fence->base,
-> > > > error);
-> > > > =C2=A0
-> > > > -		if (nouveau_fence_signal(fence))
-> > > > -			nvif_event_block(&fctx->event);
-> > > > +		dma_fence_signal_locked(&fence->base);
-> > > > =C2=A0	}
-> > > > =C2=A0	fctx->killed =3D 1;
-> > > > =C2=A0	spin_unlock_irqrestore(&fctx->lock, flags);
-> > > > @@ -127,11 +126,10 @@ nouveau_fence_context_free(struct
-> > > > nouveau_fence_chan *fctx)
-> > > > =C2=A0	kref_put(&fctx->fence_ref, nouveau_fence_context_put);
-> > > > =C2=A0}
-> > > > =C2=A0
-> > > > -static int
-> > > > +static void
-> > > > =C2=A0nouveau_fence_update(struct nouveau_channel *chan, struct
-> > > > nouveau_fence_chan *fctx)
-> > > > =C2=A0{
-> > > > =C2=A0	struct nouveau_fence *fence;
-> > > > -	int drop =3D 0;
-> > > > =C2=A0	u32 seq =3D fctx->read(chan);
-> > > > =C2=A0
-> > > > =C2=A0	while (!list_empty(&fctx->pending)) {
-> > > > @@ -140,10 +138,8 @@ nouveau_fence_update(struct
-> > > > nouveau_channel
-> > > > *chan, struct nouveau_fence_chan *fc
-> > > > =C2=A0		if ((int)(seq - fence->base.seqno) < 0)
-> > > > =C2=A0			break;
-> > > > =C2=A0
-> > > > -		drop |=3D nouveau_fence_signal(fence);
-> > > > +		dma_fence_signal_locked(&fence->base);
-> > > > =C2=A0	}
-> > > > -
-> > > > -	return drop;
-> > > > =C2=A0}
-> > > > =C2=A0
-> > > > =C2=A0static void
-> > > > @@ -152,7 +148,6 @@ nouveau_fence_uevent_work(struct
-> > > > work_struct
-> > > > *work)
-> > > > =C2=A0	struct nouveau_fence_chan *fctx =3D container_of(work,
-> > > > struct nouveau_fence_chan,
-> > > > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > > uevent_work);
-> > > > =C2=A0	unsigned long flags;
-> > > > -	int drop =3D 0;
-> > > > =C2=A0
-> > > > =C2=A0	spin_lock_irqsave(&fctx->lock, flags);
-> > > > =C2=A0	if (!list_empty(&fctx->pending)) {
-> > > > @@ -161,11 +156,8 @@ nouveau_fence_uevent_work(struct
-> > > > work_struct
-> > > > *work)
-> > > > =C2=A0
-> > > > =C2=A0		fence =3D list_entry(fctx->pending.next,
-> > > > typeof(*fence), head);
-> > > > =C2=A0		chan =3D rcu_dereference_protected(fence-
-> > > > >channel,
-> > > > lockdep_is_held(&fctx->lock));
-> > > > -		if (nouveau_fence_update(chan, fctx))
-> > > > -			drop =3D 1;
-> > > > +		nouveau_fence_update(chan, fctx);
-> > > > =C2=A0	}
-> > > > -	if (drop)
-> > > > -		nvif_event_block(&fctx->event);
-> > > > =C2=A0
-> > > > =C2=A0	spin_unlock_irqrestore(&fctx->lock, flags);
-> > > > =C2=A0}
-> > > > @@ -235,6 +227,19 @@ nouveau_fence_emit(struct nouveau_fence
-> > > > *fence)
-> > > > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &fctx->lock, fctx->co=
-ntext,
-> > > > ++fctx-
-> > > > =C2=A0
-> > > > > =C2=A0
-> > > > > sequence);
-> > > > > =C2=A0
-> > > > =C2=A0
-> > > > =C2=A0	kref_get(&fctx->fence_ref);
-> > > > =C2=A0
-> > > > +	fence->cb.func =3D nouveau_fence_cleanup_cb;
-> > > > +	/* Adding a callback runs into
-> > > > __dma_fence_enable_signaling(), which will
-> > > > +	 * ultimately run into nouveau_fence_no_signaling(),
-> > > > where
-> > > > a WARN_ON
-> > > > +	 * would fire because the refcount can be dropped
-> > > > there.
-> > > > +	 *
-> > > > +	 * Increment the refcount here temporarily to work
-> > > > around
-> > > > that.
-> > > > +	 */
-> > > > +	dma_fence_get(&fence->base);
-> > > > +	ret =3D dma_fence_add_callback(&fence->base, &fence->cb,
-> > > > nouveau_fence_cleanup_cb);
-> > > > =C2=A0
-> > > =C2=A0
-> > > That looks like a really really awkward approach. The driver
-> > > basically uses a the DMA fence infrastructure as middle layer and
-> > > callbacks into itself to cleanup it's own structures.
-> > > =C2=A0
-> > =C2=A0
-> > What else are callbacks good for, if not to do something
-> > automatically
-> > when the fence gets signaled?
-> > =C2=A0
-> =C2=A0
-> =C2=A0Well if you add a callback for a signal you issued yourself then
-> that's kind of awkward.
-> =C2=A0
-> =C2=A0E.g. you call into the DMA fence code, just for the DMA fence code
-> to call yourself back again.
+On Thu, Apr 3, 2025 at 5:58=E2=80=AFAM Ricardo Ca=C3=B1uelo Navarro <rcn@ig=
+alia.com> wrote:
+>
+> Thanks for reviewing, answers below:
+>
+> On Wed, Apr 02 2025 at 15:40:56, Xin Long <lucien.xin@gmail.com> wrote:
+> > The data send path:
+> >
+> >   sctp_endpoint_lookup_assoc() ->
+> >   sctp_sendmsg_to_asoc()
+> >
+> > And the transport removal path:
+> >
+> >   sctp_sf_do_asconf() ->
+> >   sctp_process_asconf() ->
+> >   sctp_assoc_rm_peer()
+> >
+> > are both protected by the same socket lock.
+> >
+> > Additionally, when a path is removed, sctp_assoc_rm_peer() updates the
+> > transport of all existing chunks in the send queues (peer->transmitted
+> > and asoc->outqueue.out_chunk_list) to NULL.
+> >
+> > It will be great if you can reproduce the issue locally and help check
+> > how the potential race occurs.
+>
+> That's true but if there isn't enough space in the send buffer, then
+> sctp_sendmsg_to_asoc() will release the lock temporarily.
+>
+Oh right, I missed that. Thanks.
 
-Now we're entering CS-Philosophy, because it depends on who "you" and
-"yourself" are. In case of the driver, yes, naturally it registers a
-callback because at some other place (e.g., in the driver's interrupt
-handler) the fence will be signaled and the driver wants the callback
-stuff to be done.
+> The scenario that the reproducer generates is the following:
+>
+>         Thread A                                  Thread B
+>         --------------------                      --------------------
+> (1)     sctp_sendmsg()
+>           lock_sock()
+>           sctp_sendmsg_to_asoc()
+>             sctp_wait_for_sndbuf()
+>               release_sock()
+>                                                   sctp_setsockopt(SCTP_SO=
+CKOPT_BINDX_REM)
+>                                                     lock_sock()
+>                                                     sctp_setsockopt_bindx=
+()
+>                                                     sctp_send_asconf_del_=
+ip()
+>                                                       ...
+>                                                     release_sock()
+>                                                       process rcv backlog=
+:
+>                                                         sctp_do_sm()
+>                                                           sctp_sf_do_asco=
+nf()
+>                                                             ...
+>                                                               sctp_assoc_=
+rm_peer()
+>               lock_sock()
+> (2)          chunk->transport =3D transport
+>              sctp_primitive_SEND()
+>                ...
+>                sctp_outq_select_transport()
+> *BUG*            switch (new_transport->state)
+>
+>
+> Notes:
+> ------
+>
+> Both threads operate on the same socket.
+>
+> 1. Here, sctp_endpoint_lookup_assoc() finds and returns an existing
+> association and transport.
+>
+> 2. At this point, `transport` is already deleted. chunk->transport is
+> not set to NULL because sctp_assoc_rm_peer() ran _before_ the transport
+> was assigned to the chunk.
+>
+> > We should avoid an extra hashtable lookup on this hot TX path, as it wo=
+uld
+> > negatively impact performance.
+>
+> Good point. I can't really tell the performance impact of the lookup
+> here, my experience with the SCTP implementation is very limited. Do you
+> have any suggestions or alternatives about how to deal with this?
+>
+I think the correct approach is to follow how sctp_assoc_rm_peer()
+handles this.
 
-If that's not dma_fences' callbacks' purpose, then I'd be interested in
-knowing what their purpose is, because from my POV this discussion
-seems to imply that we effectively must never use them for anything.
+You can use asoc->peer.last_sent_to (which isn't really used elsewhere)
+to temporarily store the transport before releasing the socket lock and
+sleeping in sctp_sendmsg_to_asoc(). After waking up and reacquiring the
+lock, restore the transport back to asoc->peer.last_sent_to.
 
-How could it ever be different? Who, for example, registers dma_fence
-callbacks while not signaling them "himself"?
+Additionally, during an ASCONF update, ensure asoc->peer.last_sent_to
+is set to a valid transport if it matches the transport being removed.
 
+For example:
 
->=20
-> =C2=A0
-> =C2=A0
-> > =C2=A0
-> > > =C2=A0
-> > > Additional to that we don't guarantee any callback order for the
-> > > DMA
-> > > fence and so it can be that mix cleaning up the callback with
-> > > other
-> > > work which is certainly not good when you want to guarantee that
-> > > the
-> > > cleanup happens under the same lock.
-> > > =C2=A0
-> > =C2=A0
-> > Isn't my perception correct that the primary issue you have with
-> > this
-> > approach is that dma_fence_put() is called from within the
-> > callback? Or
-> > do you also take issue with deleting from the list?
-> > =C2=A0
-> =C2=A0
-> =C2=A0Well kind of both. The issue is that the caller of
-> dma_fence_signal() or dma_fence_signal_locked() must hold the
-> reference until the function returns.
-> =C2=A0
-> =C2=A0When you do the list cleanup and the drop inside the callback it is
-> perfectly possible that the fence pointer becomes stale before you
-> return and that's really not a good idea.
+in sctp_wait_for_sndbuf():
 
-In other words, you would prefer if this patch would have a function
-with my callback's code in a function, and that function would be
-called at every place where the driver signals a fence?
+    asoc->peer.last_sent_to =3D *tp;
+    release_sock(sk);
+    current_timeo =3D schedule_timeout(current_timeo);
+    lock_sock(sk);
+    *tp =3D asoc->peer.last_sent_to;
+    asoc->peer.last_sent_to =3D NULL;
 
-If that's your opinion, then, IOW, it would mean for us to go almost
-back to status quo, with nouveau_fence_signal2.0, but with the
-dma_fence_is_signaled() part fixed.
+in sctp_assoc_rm_peer():
 
-
-P.
-
-> =C2=A0
-> =C2=A0
-> > =C2=A0
-> >=20
-> > =C2=A0
-> > > =C2=A0
-> > > Instead the call to dma_fence_signal_locked() should probably be
-> > > removed from nouveau_fence_signal() and into
-> > > nouveau_fence_context_kill() and nouveau_fence_update().
-> > >=20
-> > > This way nouveau_fence_is_signaled() can call this function as
-> > > well.
-> > > =C2=A0
-> > =C2=A0
-> > Which "this function"? dma_fence_signal_locked()
-> > =C2=A0
-> =C2=A0
-> =C2=A0No the cleanup function for the list entry. Whatever you call that
-> then, the name nouveau_fence_signal() is probably not appropriate any
-> more.
-> =C2=A0
-> =C2=A0
-> > =C2=A0
-> >=20
-> > =C2=A0
-> > > =C2=A0
-> > > BTW: nouveau_fence_no_signaling() looks completely broken as
-> > > well. It
-> > > calls nouveau_fence_is_signaled() and then list_del() on the
-> > > fence
-> > > head.
-> > > =C2=A0
-> > =C2=A0
-> > I can assure you that a great many things in Nouveau look
-> > completely
-> > broken.
-> >=20
-> > The question for us is always the cost-benefit-ratio when fixing
-> > bugs.
-> > There are fixes that solve the bug with reasonable effort, and
-> > there
-> > are great reworks towards an ideal state.
-> > =C2=A0
-> =C2=A0
-> =C2=A0I would just simply drop that function. As far as I can see it
-> severs no purpose other than doing exactly what the common DMA fence
-> code does anyway.
-> =C2=A0
-> =C2=A0Just one less thing which could fail.
-> =C2=A0
-> =C2=A0Christian.
-> =C2=A0
-> =C2=A0
-> > =C2=A0
-> >=20
-> > P.
-> >=20
-> >=20
-> > =C2=A0
-> > > =C2=A0
-> > > As far as I can see that is completely superfluous and should
-> > > probably be dropped. IIRC I once had a patch to clean that up but
-> > > it
-> > > was dropped for some reason.
-> > >=20
-> > > Regards,
-> > > Christian.
-> > >=20
-> > >=20
-> > > =C2=A0
-> > > > =C2=A0
-> > > > +	dma_fence_put(&fence->base);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > =C2=A0	ret =3D fctx->emit(fence);
-> > > > =C2=A0	if (!ret) {
-> > > > =C2=A0		dma_fence_get(&fence->base);
-> > > > @@ -246,8 +251,7 @@ nouveau_fence_emit(struct nouveau_fence
-> > > > *fence)
-> > > > =C2=A0			return -ENODEV;
-> > > > =C2=A0		}
-> > > > =C2=A0
-> > > > -		if (nouveau_fence_update(chan, fctx))
-> > > > -			nvif_event_block(&fctx->event);
-> > > > +		nouveau_fence_update(chan, fctx);
-> > > > =C2=A0
-> > > > =C2=A0		list_add_tail(&fence->head, &fctx->pending);
-> > > > =C2=A0		spin_unlock_irq(&fctx->lock);
-> > > > @@ -270,8 +274,8 @@ nouveau_fence_done(struct nouveau_fence
-> > > > *fence)
-> > > > =C2=A0
-> > > > =C2=A0		spin_lock_irqsave(&fctx->lock, flags);
-> > > > =C2=A0		chan =3D rcu_dereference_protected(fence-
-> > > > >channel,
-> > > > lockdep_is_held(&fctx->lock));
-> > > > -		if (chan && nouveau_fence_update(chan, fctx))
-> > > > -			nvif_event_block(&fctx->event);
-> > > > +		if (chan)
-> > > > +			nouveau_fence_update(chan, fctx);
-> > > > =C2=A0		spin_unlock_irqrestore(&fctx->lock, flags);
-> > > > =C2=A0	}
-> > > > =C2=A0	return dma_fence_is_signaled(&fence->base);
-> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > > > b/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > > > index 8bc065acfe35..e6b2df7fdc42 100644
-> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > > > @@ -10,6 +10,7 @@ struct nouveau_bo;
-> > > > =C2=A0
-> > > > =C2=A0struct nouveau_fence {
-> > > > =C2=A0	struct dma_fence base;
-> > > > +	struct dma_fence_cb cb;
-> > > > =C2=A0
-> > > > =C2=A0	struct list_head head;
-> > > > =C2=A0
-> > > > =C2=A0
-> > > =C2=A0=C2=A0
-> > =C2=A0=C2=A0
-> =C2=A0
-> =C2=A0
-
+    if (asoc->peer.last_sent_to =3D=3D peer)
+        asoc->peer.last_sent_to =3D transport;
 
