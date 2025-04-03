@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-587535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80114A7AD9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:09:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED81A7AE07
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7464A7A3DEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:08:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE341694DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8D525E46A;
-	Thu,  3 Apr 2025 19:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38D51D2F42;
+	Thu,  3 Apr 2025 19:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+HmK8oH"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fH5BHpaT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A737294168;
-	Thu,  3 Apr 2025 19:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9541ACEC8;
+	Thu,  3 Apr 2025 19:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707667; cv=none; b=E0+dYmKRTcNNbJO31urjn/tDi4VvGpOaIMUsLFZtp9JnATbOIvD9EyAXYNoWJU7yp87pkaRA7Ta71qr2+YYvwpa0H6h99agD0useR3kLz6S7GzAnSjG3ZzbaDPk1l9faWdTEZPbjz27Fozj4GQ4S1dSxbYaT5fXHc2MLq4t3RUU=
+	t=1743707719; cv=none; b=Tv3nay0cv7k7Nr3UyDyyylvdmbdfMmBEWdwNhynZvgw0SirnYNqdXjsVRY2rD7CO1lF0cSdx++ORJB3JgfJTi+4QKkkkFfKYBSwxQREyqRddx+UXH8PFSKhXkAzG+WJax6D7CnrTGuT0x0pvNJ+0zw60LtURDJxz5vUFTXV7tjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707667; c=relaxed/simple;
-	bh=+pVrgwwEflxcv+fXpPVFmGLi+zNgmw2gau0oY0qWYyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IgbziKmLgyFb8NR90iR00qoUcvVTuGMuMugx5JSzkcc/+vs1ko+5oCzzG+CGMSbf/OMAPWWXqAc7SSEffphA/QKluPNvPwcIlyrVub/eGcdivM9JfCSDnCZUL3qgiNA+kVdaIjjFhiZqbFla5sGysGHkYNwRwspiCr4Q+FCGaRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+HmK8oH; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7376dd56f60so977213b3a.3;
-        Thu, 03 Apr 2025 12:14:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743707665; x=1744312465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRKzwJn+fllmtT/MCA+wLN8UzmoZF5DrIH265Xusm4A=;
-        b=E+HmK8oHmZhU0Al9+c1XLpA7NTsovJ9BNGfHzZpp1aajaZJtIgsMLGBpKYETo9r00y
-         0BRHc3AcOwzid1+mQnr49l/9k2bLEVaC+oMT4Mt7sUGj5FU0nqRI8EfMo6zpozRUvK61
-         +5uE0wxzEiptUStSCB3fttO4Y4b3lvrcjgAUd5cNE4SUQJqCxlzy9VeTO1X6aZsAczqv
-         Kt/wUJShDGTCnhQ/Iimj1Wx/7PdSIobvitwgvvoOYvIB9lcfEk2VcUwDKA1O4yp8fB5t
-         yqPQSyNC6apMGt2R5KQADa7+KzwDVUhuSmvvmU/rdE5gluc8HrUSJgfs13zNTPDXPTvu
-         fXtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743707665; x=1744312465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gRKzwJn+fllmtT/MCA+wLN8UzmoZF5DrIH265Xusm4A=;
-        b=KySKLg8TUzDSC5J32kRioprG3eYLjw2AZ51YdN1nYd5JgttYj1sABvosOU8X/pRbmT
-         TIk085l43jh9ywkkukD2rm0bLzIWtxF04cp0DlUpVXCBfxaaTiw0y0uoKGf7x5QDd/Cz
-         0r6oJfQONWNM537F/O9hXjlCR56gWOkeHwxKfkue5XiL+go1OCsyh3SvsFHOq5OmTSNH
-         wgnnUUp+GfILtacZ8tXN5nnYBN+6LO9Ytcc2HQVDrFAgEvcu9DLxGgM31bTMG9UOcMJ8
-         CePT8kyeM7TJUr0tEjZCxpQ1NJPXjz5615/byRf9sgiL+NSJ+Gy7vc4yWGQx2VR9dwPj
-         wZ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWIDH5ibWZwkHUNjVx3L+sOU8V3BNwAyfpw88nQgJ01MIsf9xuBUIjSUc8iXrwZPeepBV+zoazTdcL92vmbNkyCTsSC@vger.kernel.org, AJvYcCWU5ehUWqc98iSYcPkLgJ9xci9KfUKgrTnUdN4IhERbWTrg14pfQMOKwOf6vD8sc4UTBeZLgO1wHvPu79o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfybiGQaSS+jtlhlONlhv+ITDrmICdrhNefubF+LY8OyzdO3AT
-	OhcFijE8jXxjeXL2EjbkxJMxCpVmV8f0543Uee0gBV+TxkG+fhlI
-X-Gm-Gg: ASbGnctmOBgrRTHHzRu5GZkHA7akQDTQdbcZ9lKMfBu6B3HgrkEzIgcHYYtyh/jldg4
-	hPm1t8bPuOKlhnKrtES5eGtlLgqzEsnFLT6YBKC43CtcQRun0YY+LJmBz52Xxy3fhMXTFgfgY6p
-	TLbGfo76GND2ydn8QVoIaIFA2ZU91RSU+QcMatoBYsnGzuf8cp//30rSK4MOdLHmCPXRa68Nfqj
-	KxI+f8WxqFsU0//DC+Q/f/pWV2fm9yJtjhD05ogjnQG49WTt4SHFPDtnMDzmIKf8K9sAHRHZA3s
-	sW4VIOxnKIwXmV0zaSExSu2GVSg2hDNYRzbOnJsaDQ5b+iYaOhWjgqlHHg==
-X-Google-Smtp-Source: AGHT+IFr6ysq7gCQ8c6HOaSVn89IPRNEU7Nny10SY01fQus6+wqmBy1OpmOciwDWpGwWzJg/CoTjJg==
-X-Received: by 2002:a05:6a20:4312:b0:1fe:5921:44f2 with SMTP id adf61e73a8af0-2010462869cmr733614637.20.1743707665493;
-        Thu, 03 Apr 2025 12:14:25 -0700 (PDT)
-Received: from fedora.nitk.ac.in ([223.186.209.127])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af9bc351371sm1583046a12.40.2025.04.03.12.14.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 12:14:24 -0700 (PDT)
-From: Devaansh Kumar <devaanshk840@gmail.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: Devaansh Kumar <devaanshk840@gmail.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] tracing: Replace deprecated strncpy() with memcpy() for stack_trace_filter_buf
-Date: Fri,  4 Apr 2025 00:43:40 +0530
-Message-ID: <20250403191342.1244863-1-devaanshk840@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1743707719; c=relaxed/simple;
+	bh=AS4RaIshtcU30uLBqrbLWUqtMzDm0R+BHz6wn5S4PGo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T5yAOirEzvDhU6OPzMOF8X9c6KDv1w4XGYK8ezgtk6JMHfdYoaBlalmpVsWrac9srnr0lzAG1l2kMy5ug6VwN8ucKcNkLgYIfrgac04sde2k4fTI9fIQ7dbfEz3SQfyJBIq6E6UhkVxym3/mMwaryrtecwtsGuI3prXl8Llj5CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fH5BHpaT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A92C4CEE3;
+	Thu,  3 Apr 2025 19:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707719;
+	bh=AS4RaIshtcU30uLBqrbLWUqtMzDm0R+BHz6wn5S4PGo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fH5BHpaT0tWs6EfDEKYVvTfAKGUZ5bnsCie5C03zmog3HMr1qlTszJWVhu0X/qSVu
+	 i25LWx+JgVKZUkUkrgbBxQjsSw2s2SvSJgzBAQ8ndwYk2OSEq3FAvi/URCny8KgKpe
+	 P0Uo+50x8yvc8c+VAKJBaga5XKrC0vrVce9k4aqSDQOqoJ+45Kwl9hlCz4W3dy1Y8C
+	 9tfkBuK3ugiepaQRbJfe0Ywhq8kg4eRlSk8OPy14EkLQLT5V/aLBpvjteX+1MYN+1F
+	 0JhumqjZK6PbrKwHGkNywtqU/GXbeQA0N/oYpfV7j5BRIWNYQw5Xy06hI18JenHiFP
+	 EYKCXfkFZ25Eg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.13 01/37] drm: allow encoder mode_set even when connectors change for crtc
+Date: Thu,  3 Apr 2025 15:14:37 -0400
+Message-Id: <20250403191513.2680235-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.9
 Content-Transfer-Encoding: 8bit
 
-strncpy() is deprecated for NUL-terminated destination buffers and must
-be replaced by memcpy() for length bounded buffers.
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-See issue: https://github.com/KSPP/linux/issues/90
+[ Upstream commit 7e182cb4f5567f53417b762ec0d679f0b6f0039d ]
 
-Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
+
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
+
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
+
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241211-abhinavk-modeset-fix-v3-1-0de4bf3e7c32@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_stack.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 5a48dba912ea..427526fd2afd 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2008 Steven Rostedt <srostedt@redhat.com>
-  *
-  */
-+#include <linux/compiler_attributes.h>
- #include <linux/sched/task_stack.h>
- #include <linux/stacktrace.h>
- #include <linux/security.h>
-@@ -537,14 +538,16 @@ stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
- 	return ret;
- }
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 5186d2114a503..32902f77f00dd 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1376,7 +1376,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
  
--static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata;
-+static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata __nonstring;
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
  
- static __init int enable_stacktrace(char *str)
- {
- 	int len;
- 
--	if ((len = str_has_prefix(str, "_filter=")))
--		strncpy(stack_trace_filter_buf, str + len, COMMAND_LINE_SIZE);
-+	len = str_has_prefix(str, "_filter=");
-+
-+	if (len)
-+		memcpy(stack_trace_filter_buf, str + len, sizeof(stack_trace_filter_buf));
- 
- 	stack_tracer_enabled = 1;
- 	return 1;
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
 -- 
-2.47.1
+2.39.5
 
 
