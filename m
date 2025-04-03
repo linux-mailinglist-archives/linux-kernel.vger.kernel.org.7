@@ -1,100 +1,134 @@
-Return-Path: <linux-kernel+bounces-586628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F08A7A1CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:26:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D7BA7A1D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 817EB175D49
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9863B5FFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5F724BCF9;
-	Thu,  3 Apr 2025 11:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67624BC15;
+	Thu,  3 Apr 2025 11:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SpbDe2zX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I73Gcbmw"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AFF746E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 11:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71E2161320
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 11:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743679572; cv=none; b=mRC48Yc2VPjpHmQoFCiujoxibiFxDrXrfduy+wYFtKqH8C1ivdWT/AnNRI5ggk+0DqtQ8oyBxVT4AEHB+TjoCgDkc/RfrZMbWBttPZKvIu1ogzWU8Us4rxDuR06RgY7bKjGVmPyuGnx51ABxT4Drhm9A0Vu8qb2JSW9hDb/TyYw=
+	t=1743679634; cv=none; b=uDWkHQvVEKcaFylQhH5XRdzFs7klfMWVSk+w6oflvDaCCgUna9+Zb+UPTlpnLymam20822dsXaF/KvZa8ow96fGIn4Ckn/Fl3MJv7s5tG9Yc6SD4B7Ps1r+vPyDzWbboj442YgoCAbrwfqlBhBY+AgK4UbpvJvG4NeE6sxggfOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743679572; c=relaxed/simple;
-	bh=JSV35DhnKvLxdL79cciQOBuPD+T7aVlKbFdImsXeimM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Co9WUdmhEiXQgOsQdIqD7uB0nojWTfPetK6rWCsLtLVBW37g2vG7f5Om/FtVgoZCPMcD62uTai3zxED1DXnl7sHsFBwP10IGAjdffsTm4N36YIghqTPGnu7AXKJ8MyVJDjvxNwgaYxfw4TsXe2nocmC2DPchSt6t20/c0VOz+rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SpbDe2zX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0612040E023C;
-	Thu,  3 Apr 2025 11:26:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NAd6G61DjRS5; Thu,  3 Apr 2025 11:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1743679563; bh=R+WgVRoLy9Q4xKXjVtRETzCCZWHR1Ai2bOY2VSzi1hI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SpbDe2zXqZaicwZtO5flRCP0QUv2U8XzXlJ1egWVqrGFOf2w4/vuu8SSkoj/Io5bi
-	 XxF0489jRAh1GiwhaZ4JhRwuecDQWhT0bNB75th9eV7B8k7XszVgF8MfWi7j3xRasH
-	 pLVkMxl0MiObgnTbWIjluhxoIynFt4xFgJ4njt9eQaOXm0sQQA3nqSk8uJAeUlLIyt
-	 aUvXWQRMTVJpvEQ46fY+2yRbaJJ6w/aOxrddk25XvPMPXutbVhZ9fOBliM/xcqoxgS
-	 iV8T4edSrZMBQaQq80r53TBS9u2mzksXWxHHbcOMfhmR25bMYFRqlq700YMw/rjWWZ
-	 gbHyi+1/Rm4Q5iYpMUAyGi5y3Np9uQDCeLzZUVg8xTRlBXl7YmcyUr5j7OB3vk5p0/
-	 4cHyxtWZWLPn5AO8Qfs1xCA64sfWHwo+wca2BoDN2oZv8Sa1tYLf+KWT0iOxzec9/x
-	 uNd7AX815a5X1KPhi49EVYfNhAJnGAvpbzfFa/fEv03NeN7e8HJjicY1MNRtgna8x8
-	 I2PctvTEJFa1Af9YWlqOqSERqHSW+1hSbN0pWimwPVH6vENkpo3wz049Y8ZQ33bGV3
-	 D1pZmIZpGs65y8XSyL4TQ2CCGEDaK70BnOB4iX6WP4aMs+vH8ek6mg9crdYhoncYnp
-	 jN+hCISVJwo7Zsdzpdznedr4=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B821B40E021F;
-	Thu,  3 Apr 2025 11:25:55 +0000 (UTC)
-Date: Thu, 3 Apr 2025 13:25:54 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH -tip v2] x86/idle: Work around LLVM assembler bug with
- MONITOR and MWAIT insn
-Message-ID: <20250403112554.GDZ-5wQsu0CzMMpBpZ@fat_crate.local>
-References: <20250403091737.344149-1-ubizjak@gmail.com>
- <Z-5vAThgDL9gts35@gmail.com>
+	s=arc-20240116; t=1743679634; c=relaxed/simple;
+	bh=2gJ9YMvADs+Ckr8MjvuYDoJfEHRTKTBwC7wmPSCp1EI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BqizwJxX5/ZavQR+e2Mfq4/81oxvEzAVdgAg0M7syNduEEqvtVBIe3+bizS/v7jCDvJ/HsaNREWMv0WKoNufVidGsb5G8QXyMh3iKKxG9GB67cmolE+2FpLQnkRvjyxvqpfH0yVzFH1z+iVRVtGUlAkL+1X1OX16ao39d4HsESw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I73Gcbmw; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-af579e46b5dso517165a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 04:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743679632; x=1744284432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CiqmOnUNPKkUQrs/FCsSX+P5TPxGAsS5AllkVPo2fs=;
+        b=I73GcbmwiOFmIYmZXd8vf4zvtZ2h0BE0VIU1lFMmhGKosxdf0FJ9ha6S3Kgy0oJpeD
+         RfzcLLC0W3aeYYmIXl4Apy8d1dv5X2mAPixQZbiJ9WUJRg6XpFm/XzmFLFactLHO6O0x
+         3AexIJCNMWfIv5i4cF+A9GKAvKihgA9UZTP6+GbA0GKeYivjCWX6GnnamQBvqFT5Y6c1
+         runYzAjusi7bFvtXCodoYc6Sg8sTaRHOwhGjdpyElwDEPqyzQPWsFtWDnkdJIvawAVUq
+         L7/1+s5n488RMhVUNH9cSLRKRYMV7JaDk/Bj/2RUKIharO82zF36gdFSQIyM1hhe4/gk
+         FcYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743679632; x=1744284432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8CiqmOnUNPKkUQrs/FCsSX+P5TPxGAsS5AllkVPo2fs=;
+        b=iAX467QjBrmYNceVIBq4q5cIgYISOwmNO1kfExO0FfElIn4kFB1R0zl2Eo+JVq58I7
+         dad6IiIgc8OwXM0EOVRDmSSwlT8c8TBDXeC6NRczd5JHf3AH9Akq8aJSMIDvP5IeQgQ+
+         FZJAOzpHO69RWG2jbSB0iDIDlvNxpYkeLrplV/BMbuX5CLM7Ep+AKK3aRR56913oKtfY
+         iF+Bx8ORzM85hnSFvSRcBb3AYn3Sizn9M3cScY3xiHSA78i7EAhBbhN6B9inkYEddw+T
+         dPSbgiy6ykxz35cWFdzoKDpjqNIuzXL6FSDCr2Hyb77bYUmNNHJf9t6yaA1VtM3P1OE4
+         Cw4g==
+X-Gm-Message-State: AOJu0Yyu4x/oS03ft/PtTEa0d+UWtOVgov5AHqUlM1cSvnQAMfx5PvWj
+	5NnRWBrpVz2iQPlYSmDyG1jy/oGHyWpvub9/TOhlIqh9RjC+9VWA
+X-Gm-Gg: ASbGncu+xsrRhfeTbyORyrmjSxO0lx0TgpyLwHkJ7/+CC/LSHFG8bDILyIO0UQxWVGD
+	LLZrdcXIldvBplkk0aZ+N59fi0XeOYe+TAgNSdv5gLUPe5385RIPircqxyOXXgyv/Rw5865D8Ro
+	ad8oBBQ0NlNuGKxrwRPBOq6FP37aU75Bv0fKF6FfHhPh+q9Oyjs0vRvHI8fH92IczKx0+L/30ED
+	RqXnVISS+db9fyvVft2N+6gA30whDUcaf1peWaRXfvrZX6io8UY7m5lSJtnGlk3wk+cbGk5nCzX
+	90cvMTCD23xbcSJJv6UW14VarvPx/WR8eOqrWZ1mJdCNkl5ya7FPiwwZ6rw83zKoeq8n810L5wA
+	mixn63n1n3hLl9xydQ+NV3OUNDR0In0+3JNU5vw==
+X-Google-Smtp-Source: AGHT+IFqVMlM1m6lHGf9510XeU/c7RvU/k4qiI4dOuF9xl9mJ/NjNz6rztoXeWoPSDCnYRLuJbvdXQ==
+X-Received: by 2002:a17:90b:1b09:b0:2ef:67c2:4030 with SMTP id 98e67ed59e1d1-30532146ef2mr30265539a91.27.1743679631779;
+        Thu, 03 Apr 2025 04:27:11 -0700 (PDT)
+Received: from rota1001.localdomain (118-171-71-10.dynamic-ip.hinet.net. [118.171.71.10])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305983b9954sm1206097a91.32.2025.04.03.04.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 04:27:11 -0700 (PDT)
+From: Chisheng Chen <johnny1001s000602@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Chisheng Chen <johnny1001s000602@gmail.com>
+Subject: [PATCH] lib/rbtree.c: Fix the example typo
+Date: Thu,  3 Apr 2025 19:26:14 +0800
+Message-ID: <20250403112614.570140-1-johnny1001s000602@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-5vAThgDL9gts35@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 01:20:33PM +0200, Ingo Molnar wrote:
-> So I've zapped cd3b85b27542 instead - let's re-try it again and
-> see if there's any code generation tradeoffs vs. the byte encodings?
+Replace `sr` with `Sr`. The condition `!tmp1 || rb_is_black(tmp1)`
+ensures that `tmp1` (which is `sibling->rb_right`) is either NULL
+or a black node. Therefore, the right child of the sibling must be
+black, and the example should use `Sr` instead of `sr`.
 
-Please.
+Signed-off-by: Chisheng Chen <johnny1001s000602@gmail.com>
+---
+Commit cedb08caac58 ("lib/rbtree.c: fix the example typo") stated
+that the example was incorrect if `sl` and `N` did not have child
+nodes, and it changed `Sr` to `sr`. However, after further review,
+I do not see this issue.
 
-And give the test bots some time to chew on them before committing and/or
-build-test with clang too.
+ lib/rbtree.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thx.
-
+diff --git a/lib/rbtree.c b/lib/rbtree.c
+index 989c2d615f92..5114eda6309c 100644
+--- a/lib/rbtree.c
++++ b/lib/rbtree.c
+@@ -297,9 +297,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
+ 				 *   / \           / \
+ 				 *  N   S    -->  N   sl
+ 				 *     / \             \
+-				 *    sl  sr            S
++				 *    sl  Sr            S
+ 				 *                       \
+-				 *                        sr
++				 *                        Sr
+ 				 *
+ 				 * Note: p might be red, and then both
+ 				 * p and sl are red after rotation(which
+@@ -312,9 +312,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
+ 				 *   / \            /  \
+ 				 *  N   sl   -->   P    S
+ 				 *       \        /      \
+-				 *        S      N        sr
++				 *        S      N        Sr
+ 				 *         \
+-				 *          sr
++				 *          Sr
+ 				 */
+ 				tmp1 = tmp2->rb_right;
+ 				WRITE_ONCE(sibling->rb_left, tmp1);
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
