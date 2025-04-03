@@ -1,169 +1,126 @@
-Return-Path: <linux-kernel+bounces-586975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B118CA7A608
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:12:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0C5A7A603
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78D9B1896488
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074367A5E82
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF456250C0C;
-	Thu,  3 Apr 2025 15:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9BA2505C1;
+	Thu,  3 Apr 2025 15:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hp2b9VfH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rg+elceH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBB32505BF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88CD2505AE;
+	Thu,  3 Apr 2025 15:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693089; cv=none; b=ke5P723PRa1+dUyHbYD1BW3yZuUK37AEizsBOPGPs6JtaAZ2qKQAjJ9KzD+4VrIz9SpBF5uy+8yM9p4DmoPivHT4dX8qOosHPB5xNFL0Tpyvxs6t/Y0ll/NRmJOtymLHWn9viIGgd3nyHmZTMo3iHQKWdL1ah5RqC3tF3By+Esg=
+	t=1743693086; cv=none; b=TmshCc+2mVdPsQ5c5jKoe0T0yr/JfBsh2oX0fSSaJwB4JHA2Lcte4zDaFE5x4sjdkbASbmNGDCDyzKUc6BdacQMIX9bEhzhuJ08ImOq9f9Ecn4PielfDIlDn6yoYL2/AaIg4FTdMNZFaGd0qPh9ip2x+ePBDR8MF2xh/obHCphY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693089; c=relaxed/simple;
-	bh=pazXNSNFRwcbem0gEd5+HAWBBg0Pc62HTCAJjOo1360=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPuupLEAWahaiyLtWJfccAaZ2wWb61NQCWnLGBwLtoKhNiiLsZJDzhGQ0czrw/3qFt47CPIaObsKXaDj/RA9k7bamBZ1uOYYHryfXSIRBa603+f2LdkVksB44axFMKHEV/PJ1v7TQSGK+5khCufxITArtzGz9b+mVWnq0umQsJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hp2b9VfH; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743693088; x=1775229088;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pazXNSNFRwcbem0gEd5+HAWBBg0Pc62HTCAJjOo1360=;
-  b=Hp2b9VfHDx22SRBlSA7V83YRaF4PMtoErMOrVxH5xeUdZqQeabFUOJmn
-   9MlN2n7e4RCCa0KMVaEwFE3QD5tV9rPhEvGM5rESTlgE5A5n+tDa5eqJB
-   ggCDsRLFlXgnHFd4mp+MhWEhFEZgBLdTVy1WLxLZRTsPUHTHQ3N51PLbE
-   W5NGPoq3SviZDt8j9pl/Qb6ugx28Xs9+4+kTvEY6YGwRNyhQZ2kJP+5xt
-   YzQVD2k5k1XwNe1oQjG5KXaCc2naKBFN0R8WpbpYvcvHpqsa7LdLSH+x3
-   7Pgnmk663wC8OapL/r40PR3qxHFIbQToVYA5/UBuHVcLZuCkX6+NwVhnl
-   A==;
-X-CSE-ConnectionGUID: 9fhy7RIOTLCy95UKGLOc0Q==
-X-CSE-MsgGUID: X/KQEsIGTC+xEPdcJFgFTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="55738647"
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="55738647"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 08:11:25 -0700
-X-CSE-ConnectionGUID: TzyCgRpwS9Ci2czWVDkHYw==
-X-CSE-MsgGUID: ihRpxO2bRmmQt9iUym/Wvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="132242656"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 03 Apr 2025 08:11:22 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0MDu-0000V7-2v;
-	Thu, 03 Apr 2025 15:11:18 +0000
-Date: Thu, 3 Apr 2025 23:11:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: "yohan.joung" <yohan.joung@sk.com>, jaegeuk@kernel.org, chao@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, pilhyun.kim@sk.com,
-	yohan.joung@sk.com
-Subject: Re: [PATCH v4] f2fs: prevent the current section from being selected
- as a victim during GC
-Message-ID: <202504032206.xzJoHkRX-lkp@intel.com>
-References: <20250403071016.2940-1-yohan.joung@sk.com>
+	s=arc-20240116; t=1743693086; c=relaxed/simple;
+	bh=NIvLpPfAXrTuXtMOMB/pagZd8SPTLCI7I/aXMEmuZks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ht9EBlgBLHeBD0Jy2qXQSAAFLAnOj4tQ5KywXxNOy3b1OfICkFtAviphZ0oqGOou3vkWb2jR0SS7zO0aGyAMIDKldgrL0C105hienGJKNRchi8pfiLCUMlwRxxigemKCnBXjmw7uAPgR0pUicZlHR/AU46BVZ7A4vmzB/7JRQ4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rg+elceH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447E7C4CEEC;
+	Thu,  3 Apr 2025 15:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743693086;
+	bh=NIvLpPfAXrTuXtMOMB/pagZd8SPTLCI7I/aXMEmuZks=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rg+elceHnlADL1mNP5zqvH3MnNX1SQTBq0g1DCEixGhxkvzyh0bOPFJCkL0ALZKyt
+	 +VCgmEkvQMtKdswZTk0K56LU+TDECxM85B1covP7XNz/If7qqhoT5TvDrn7HLoN9pz
+	 Rl9qHuAxeZTqau7PVURw/Zhr6jlYiMbZFHuIQSXA7XwEXkvzOzZN8Bs4mvEwYi1P9h
+	 JCZmfN1+807U9Eh1iCW6I1FgfnputbMkqPL5r4VEmr2pLWoLP5E32HPSY3oWk8JCW7
+	 k/ven923jDB2Khmp8j0mO9NxvC06cxe1YwAFAJ+x7vwn3GtSsLLGjIG3Wr999oHAce
+	 Bzw+vV9ZBS2qg==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5499c5d9691so1191795e87.2;
+        Thu, 03 Apr 2025 08:11:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbM1lb2geESVF6jeqF5aWwtQJNfEv1lewfzicwOYIXPXydGnyMK3BV10zWefbVvaHZALHdmDVyGHVHmsk=@vger.kernel.org, AJvYcCVBRffez3cfrTeTRPLU84N90/PQe8mKC1wmW6aHydn1Am7eFBdufIvVdWGsJd6t+MWyV77eYIHWqYxXbakV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXs3c399O3E4NZg4Pp8azrR/fCRCC1cozJq1qhGIb0XnmFS5tK
+	I2LUX0k21x7c61WBVKRVBveyYKPq50Cmfvq7qirMXJVauSSO3nGk9vIm2cqJy3GuCZAKj2VkIQf
+	6xscxmbcI1YUGVEqaoOJ+f+KQrsQ=
+X-Google-Smtp-Source: AGHT+IGHaE5sR5WjLPaAAsOgHiAcSbArxim9/nuGpNofJcAx2t/1OKmIKbXzElP29VwvJc0LcNAX9hLMl1nwdhodQks=
+X-Received: by 2002:a05:6512:3b13:b0:549:5b54:2c5b with SMTP id
+ 2adb3069b0e04-54c1d8a6e03mr1065423e87.24.1743693084626; Thu, 03 Apr 2025
+ 08:11:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403071016.2940-1-yohan.joung@sk.com>
+References: <20250403134200.385077-1-alexghiti@rivosinc.com>
+In-Reply-To: <20250403134200.385077-1-alexghiti@rivosinc.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 3 Apr 2025 18:11:13 +0300
+X-Gmail-Original-Message-ID: <CAMj1kXGzrn6i20LvUBnz_mGi946=GCogNHHUL=mNsv513qYv7A@mail.gmail.com>
+X-Gm-Features: AQ5f1JoKfhV3MERR1uNecpsdZk0_Zd-PQo949ieFdRrYe-B6KsP3bxkK_BwZ46w
+Message-ID: <CAMj1kXGzrn6i20LvUBnz_mGi946=GCogNHHUL=mNsv513qYv7A@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts: Do not strip .rela.dyn section
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Charlie Jenkins <charlie@rivosinc.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi yohan.joung,
+On Thu, 3 Apr 2025 at 16:42, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
+>
+> riscv uses the .rela.dyn section to relocate the kernel at runtime but
+> that section is stripped from vmlinux. That prevents kexec to
+> successfully load vmlinux since it does not contain the relocations info
+> needed.
+>
 
-kernel test robot noticed the following build errors:
+Maybe explain that .rela.dyn contains runtime relocations, which are
+only emitted if they are actually needed - as opposed to the static
+relocations that are not emitted as SHF_ALLOC sections, and are not
+considered to be part of the runtime image in the first place. It
+would be nice if we could use --remove-relocations= here, which only
+removes static relocations, but unfortunately, llvm-objcopy does not
+support this.
 
-[auto build test ERROR on jaegeuk-f2fs/dev-test]
-[also build test ERROR on jaegeuk-f2fs/dev linus/master v6.14 next-20250403]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Also, I wonder if this should apply to all of .rel.dyn, .rela.dyn and
+.relr.dyn, as they all carry runtime relocations.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/yohan-joung/f2fs-prevent-the-current-section-from-being-selected-as-a-victim-during-GC/20250403-151057
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-patch link:    https://lore.kernel.org/r/20250403071016.2940-1-yohan.joung%40sk.com
-patch subject: [PATCH v4] f2fs: prevent the current section from being selected as a victim during GC
-config: i386-buildonly-randconfig-005-20250403 (https://download.01.org/0day-ci/archive/20250403/202504032206.xzJoHkRX-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250403/202504032206.xzJoHkRX-lkp@intel.com/reproduce)
+Finally, I'd be curious to know why RISC-V relies on --emit-relocs in
+the first place? Is the relocs check really needed? If not, it would
+be a nice opportunity to get rid of Makefile.postlink entirely.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504032206.xzJoHkRX-lkp@intel.com/
+In any case, for this change, or a variation along the lines of what I
+wrote above,
 
-All errors (new ones prefixed by >>):
-
-   In file included from fs/f2fs/checkpoint.c:20:
-   fs/f2fs/segment.h: In function '__set_test_and_free':
->> fs/f2fs/segment.h:480:81: error: macro "GET_SEC_FROM_SEG" requires 2 arguments, but only 1 given
-     480 |                                 if (GET_SEC_FROM_SEG(sbi->next_victim_seg[BG_GC]) == secno)
-         |                                                                                 ^
-   fs/f2fs/segment.h:105: note: macro "GET_SEC_FROM_SEG" defined here
-     105 | #define GET_SEC_FROM_SEG(sbi, segno)                            \
-         | 
->> fs/f2fs/segment.h:480:37: error: 'GET_SEC_FROM_SEG' undeclared (first use in this function)
-     480 |                                 if (GET_SEC_FROM_SEG(sbi->next_victim_seg[BG_GC]) == secno)
-         |                                     ^~~~~~~~~~~~~~~~
-   fs/f2fs/segment.h:480:37: note: each undeclared identifier is reported only once for each function it appears in
-   fs/f2fs/segment.h:483:81: error: macro "GET_SEC_FROM_SEG" requires 2 arguments, but only 1 given
-     483 |                                 if (GET_SEC_FROM_SEG(sbi->next_victim_seg[FG_GC]) == secno)
-         |                                                                                 ^
-   fs/f2fs/segment.h:105: note: macro "GET_SEC_FROM_SEG" defined here
-     105 | #define GET_SEC_FROM_SEG(sbi, segno)                            \
-         | 
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
 
-vim +/GET_SEC_FROM_SEG +480 fs/f2fs/segment.h
-
-   458	
-   459	static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
-   460			unsigned int segno, bool inmem)
-   461	{
-   462		struct free_segmap_info *free_i = FREE_I(sbi);
-   463		unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
-   464		unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
-   465		unsigned int next;
-   466		unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi);
-   467	
-   468		spin_lock(&free_i->segmap_lock);
-   469		if (test_and_clear_bit(segno, free_i->free_segmap)) {
-   470			free_i->free_segments++;
-   471	
-   472			if (!inmem && IS_CURSEC(sbi, secno))
-   473				goto skip_free;
-   474			next = find_next_bit(free_i->free_segmap,
-   475					start_segno + SEGS_PER_SEC(sbi), start_segno);
-   476			if (next >= start_segno + usable_segs) {
-   477				if (test_and_clear_bit(secno, free_i->free_secmap)) {
-   478					free_i->free_sections++;
-   479	
- > 480					if (GET_SEC_FROM_SEG(sbi->next_victim_seg[BG_GC]) == secno)
-   481						sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
-   482	
-   483					if (GET_SEC_FROM_SEG(sbi->next_victim_seg[FG_GC]) == secno)
-   484						sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
-   485				}
-   486			}
-   487		}
-   488	skip_free:
-   489		spin_unlock(&free_i->segmap_lock);
-   490	}
-   491	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Fixes: 71d815bf5dfd ("kbuild: Strip runtime const RELA sections correctly")
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  scripts/Makefile.lib | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index cad20f0e66ee..0a1f1e67a0ed 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -377,7 +377,7 @@ quiet_cmd_objcopy = OBJCOPY $@
+>  cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
+>
+>  quiet_cmd_strip_relocs = RSTRIP  $@
+> -cmd_strip_relocs = $(OBJCOPY) --remove-section='.rel*' $@
+> +cmd_strip_relocs = $(OBJCOPY) --remove-section='.rel*' --remove-section=!.rela.dyn $@
+>
+>  # Gzip
+>  # ---------------------------------------------------------------------------
+> --
+> 2.39.2
+>
 
