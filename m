@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-586409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87C5A79F72
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:04:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A609EA79F46
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07BF318970C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CB13B67AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982F12505A6;
-	Thu,  3 Apr 2025 08:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E70E24EA92;
+	Thu,  3 Apr 2025 08:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nCuKztsJ"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f8WdtEU9"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957C424BBE4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729A324A07A
 	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743670763; cv=none; b=e+8uKV8dVTdCvlCTCD4l3yIQkmKb1cDCe9o85gm2Sd6RhYF7+bj6HgNEh9TA3TxVuNno72lPCCsxGIus6FK2vdV3FNAwdYH6vCis9VcTBcaW3ab2ArUJE+TKQR6UNzTXYFRnqWZE3+qR/ZJGE8ySfcfE7vKjtkqIuVSRUbBZjvM=
+	t=1743670760; cv=none; b=QTp7I2nSs9EJiHUAb4yn665jT5JxP45UWlUDkaj4c0YVtybO1svdWMc7heFRbDRYZ20cOu4tR24CTVdDeoGSMraVF4XffIFJq42613Tz1u6Wp+DlPRiIiYTiYBWINVM6DRHY+4aNq2kemgUCM0V34B+GiyuTWAC9nq2BaGL4teU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743670763; c=relaxed/simple;
-	bh=MZ30T8KMJXBJoDDM3cr1kCmHXcpVB3LCx1uy4q775s8=;
+	s=arc-20240116; t=1743670760; c=relaxed/simple;
+	bh=kEDFa+8UVBQzgPmv5eunRw1YTfTPcSizj/QHfDecNE8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZTQDvQWzcXUBhKXUeMrpQOosKJ4plGUAeq0sNEjexuu+yLXNT522Nc9xRkHpcOXLFWIik3jP6EnKAAumFj4yANGXYasLzzXfYAB3lE9JXXoaoAXIv9DGpMrKXBl2NpS3BBlOw+qvaVSoYxMqDTveQHSqeGO2dSKNv44inc9CQxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nCuKztsJ; arc=none smtp.client-ip=209.85.208.51
+	 In-Reply-To:To:Cc; b=L8/0fz7zookOOk7WyhEJtoOtQP2VJ35GA79uFyd0EwRLd85OXbunpx9FJ/n/pKAP5I5DMa97Omj/h0VUuOIt05SbNFkgcYnwzpMc+LBwdKy8GMj/bTGsVFCJ47McPT2pzB6FYTOHLwXsFvbagaLHtBqfzjoZ5rdRI2wuUo36NhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f8WdtEU9; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso1352143a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 01:59:16 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso1228564a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 01:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1743670754; x=1744275554; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Op+5mEOgNYYFAMowJxBfybjaNESu4Eako9395vK9N0c=;
-        b=nCuKztsJOwVZ+l74OPqvInr+LbkOUaG+Mc4RjAlpXfS5WWYnf+BuuScaeLHNDUSoC+
-         ibAP8ek9/oeauOAuXstLsQeveROR5n7JQ9vBmCGo7GuQxi96/aP1wqA3wPifbgIbJ9hQ
-         qrKYL13b1wyjsr/b6n6jVAGV7JQCWXMJKxJwE2o1TY3DqeshHIiA4wYJO5SAEUSdpxBm
-         synGqyDxM0vEqLi0M4e86vXERFQe3OB3/w+u+/pUeOz0k/9ZRkR6tKgJwjiHOLFhWu/v
-         QFY3RRcIcA4vIBk5VVfmzcOoSZBymQ+UIijb4iTOtMF9uohzU79iDxHK+CwPGd4CkrhS
-         7Olw==
+        bh=zep9f0d4foFUFHvL7+wCfhcQlnrOmBCem8a0X84Q4jI=;
+        b=f8WdtEU9vO+BsAgldDW/lpOndPTa42kz0y+sHYdaQf5AqJBGzuENzPhiGdb/7TBlNg
+         mcqbzmsZtGLzYoH4qkKw/ExxjDY4a5fUn4BV9S9QYinkUtXM8l76t3vncInOVTJVe3sO
+         lavU/MyOYretXqAtBUsyfhuHHNjLOSWi5Wo5se+z+aEie9xvjLSjeMIIBSWdAIwwxWRA
+         70O7G+LSOdBauY6bI5R/b8Fur/ZZZ9cMJ8jMBOW1hDLNxp3PTG1WzgONdtnr8XCxvgfU
+         64tEBAQdjG2T3CVsPYwXzklq0C8S6haeaw7sWLWC9Mgr6BgzoY7V4pKlW3WDuEpdYWC3
+         nctA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1743670754; x=1744275554;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Op+5mEOgNYYFAMowJxBfybjaNESu4Eako9395vK9N0c=;
-        b=A2JV2Lnx23JnSbG8kpo330L8/Nqy9J77tvorwBrARghxUlArlDvpRs3giV2L4WjGpF
-         9kOvfbWTxq5vEF1roruy9GtVvdl3XQ/I/MHDXsVHXhyOhUl7FRyyIw0fOynuMsUDtDwb
-         hYTWqp5QCtTDJ12WeoApJ4gESJMgjETU3FA+L623ZVqyvtaWwMmFvHtws3Gbc3w3uXNi
-         tASDvUDhOc8FFBjuWTKROlqKpcNsz1HGmpTXGb2A2lSKwj1IpC47IAJdhWOodkmQ9FY1
-         +N64dvO1s8TXdXS3Z8O6LVCUOnH83F3LtFVcgqoMFOd2ytyB5PgmMz2zWBW8dfp61P+T
-         ZKEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv3qlkLhMfYP+fyiQ+qvAXW7nIjE3jL7Min2a9JYhwyMVqyWowTT/g2Ge40d4M3NJ6YPj5kcLwNCas2Is=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy10goFNo/Y5JTzztfTUfutyQzjYSJzbSd1d6zl7XlcE0sZulvg
-	/FGlVA90/YLTpcXCqau9hqqSKGPdvQqfVMkrvKH2frtDyKKBvbbZN8Y9bhAi0M0=
-X-Gm-Gg: ASbGncuaMNvFK+Mrbh4c/6zT6o+OZa829RTbe9v6G0BqZhEZ7Cpyx8azDz5axGSasC1
-	5Azl0evKo20eC4jD3pF2g3IDXb2Tn34NrAK0xhHxasAICkhG1p2GcrBnhNiuDI0fMUr5V1S9W4K
-	U+CHwAFDKwSmEHylnXMGl8eIQvRK1Ou16AnXceLdzEQOUQS2QLwzkNQ4pAEJS3NCx06t2AUuF9L
-	uzM9YQ53zB4aTrB6/vIaOAFPVEFjR4HDzALGGO/DsFBOAcdIc+tsYqIVVZNw8dAQQvr02CJl15w
-	2SkmFfWJ5vPBupdDMJBhtkjhbFCZq3p/T6H09oIVAXrTe4CXoAaOKz4QeeZxE7Y/yGzTfCnSCOt
-	3IaYceLOooD2p7C9A57OsSs5Z8pf0
-X-Google-Smtp-Source: AGHT+IHje6/Aj3m3WFy82BhNMOZ83g9HkkSQjWHGqlCFxMgpj6dst82siBK7kkVhW9a2sxdihxbs6A==
-X-Received: by 2002:a05:6402:4307:b0:5e7:b02b:6430 with SMTP id 4fb4d7f45d1cf-5f087224bedmr1275094a12.23.1743670753725;
-        Thu, 03 Apr 2025 01:59:13 -0700 (PDT)
+        bh=zep9f0d4foFUFHvL7+wCfhcQlnrOmBCem8a0X84Q4jI=;
+        b=oZkhS7f3PQ0werTXOHSJxS4l7PEK0wQ4VjCNUKLu7xEOWXdgPU8quKzZC3dEwDz+e3
+         WrRJXO0uwA/0ow/ujt3n/e0ssZahgOoJsemyN/jcJl/4ZRnqtJGEMCJ/oo0y76+KrJg0
+         SwdTAHKncSJEYAgkPcGXyjRHRrTtdCKtmpmqtFwiMYzg9glUsrHZYky4tT5CfkwNXLpb
+         uENMQmxZQI0yuUCedSWeReUlCuvT7WGaGzFRM/2FOYwAnh12f/RE7oYW4bXp+c3rrE4i
+         rWjscUthNEYG+EThGKy+JOn/ZIDmy3qisy1YwceEmeM1+S1PPtWCcJvzHXfsHjkgd8Iy
+         Sj5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMHVudpXD2ovRVj/zVEDL8VBvvOyaDV+u2Dcd0dUQHDs11g10RG3WrsiiNcle/B3ga6Kt41374AZkmLO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmDQHogdI7c4AEWnQF/IiQ6hAxGtSaGeHeYX4qfgdFORDn5bBA
+	GJ2RY0ihcEf4LxTbbDJYYbqCT0i6D3q2Nz1ZoadvQCS231Rc8q52xzDZ0KWBrKM=
+X-Gm-Gg: ASbGncuwmWW8Pty9gNe9JXjA3h46nVBMmkFxrbY4pbZklng6SJQn+VzUHHSK/OCfu4r
+	M2B09TObbuCEymmMGWLBHnqqMxIpi3+QnkCdvRJpFTQHFehyzIykkFkep2yYk8JsbF9QzXFoINT
+	qDSQgRTUlYyUY6QMI03nl04q5qihSn3eqhNS7QfomtDrod0tBQIIWPO8svwhlOApaITIF+aPne4
+	JJEhh8+Zj6hV0HGOWuYHzfuzULG96AOo1Z6eigJQhOeWOKwG69atw/i5AAWv2kMVmxDhY0niH12
+	9Cy5hXbgxtjylXsWtwjT+AiVRgf/y0ZEI0aJOJmxCXOGr0TqRbmq4x/49G70u2DrB4dRhnxVsGS
+	n4gCzeIFqOA3oFZoP5aDtqxv1j806
+X-Google-Smtp-Source: AGHT+IHPaEYedqVEDLo93ujbRrtVNCm/mxpEYABRhJlFkwLFXs8WrbrWDofWHLr/5jqHegGOehX8ag==
+X-Received: by 2002:a05:6402:5112:b0:5e6:17e6:9510 with SMTP id 4fb4d7f45d1cf-5edfcbe92b8mr15687119a12.6.1743670754243;
+        Thu, 03 Apr 2025 01:59:14 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880a535fsm637614a12.80.2025.04.03.01.59.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 03 Apr 2025 01:59:13 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 03 Apr 2025 09:59:14 +0100
-Subject: [PATCH v3 22/32] mfd: sec: convert to using REGMAP_IRQ_REG()
- macros
+Date: Thu, 03 Apr 2025 09:59:15 +0100
+Subject: [PATCH v3 23/32] mfd: sec: add myself as module author
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250403-s2mpg10-v3-22-b542b3505e68@linaro.org>
+Message-Id: <20250403-s2mpg10-v3-23-b542b3505e68@linaro.org>
 References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 In-Reply-To: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -104,381 +103,39 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-Use REGMAP_IRQ_REG macro helpers instead of open coding. This makes the
-code a bit shorter and more obvious.
+Add myself as module author, so people know whom to complain to about
+after the recent updates :-)
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/mfd/sec-irq.c | 343 +++++++++++---------------------------------------
- 1 file changed, 75 insertions(+), 268 deletions(-)
+ drivers/mfd/sec-common.c | 1 +
+ drivers/mfd/sec-i2c.c    | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-index 5cd9667a21e9e8b052b2ef0b5d2991369bffe8bb..a2c821704b771a9f8a10c7efc900812684771862 100644
---- a/drivers/mfd/sec-irq.c
-+++ b/drivers/mfd/sec-irq.c
-@@ -74,212 +74,68 @@ static const struct regmap_irq s2mpg10_irqs[] = {
- };
+diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
+index 448300ab547c10d81f9f2b2798d54c8a03c714d8..05658f05cb857a784c7d01b1cf25de4870e1a95e 100644
+--- a/drivers/mfd/sec-common.c
++++ b/drivers/mfd/sec-common.c
+@@ -293,6 +293,7 @@ static int sec_pmic_resume(struct device *dev)
+ DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_pmic_resume);
+ EXPORT_SYMBOL_GPL(sec_pmic_pm_ops);
  
- static const struct regmap_irq s2mps11_irqs[] = {
--	[S2MPS11_IRQ_PWRONF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONF_MASK,
--	},
--	[S2MPS11_IRQ_PWRONR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONR_MASK,
--	},
--	[S2MPS11_IRQ_JIGONBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBF_MASK,
--	},
--	[S2MPS11_IRQ_JIGONBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBR_MASK,
--	},
--	[S2MPS11_IRQ_ACOKBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBF_MASK,
--	},
--	[S2MPS11_IRQ_ACOKBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBR_MASK,
--	},
--	[S2MPS11_IRQ_PWRON1S] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRON1S_MASK,
--	},
--	[S2MPS11_IRQ_MRB] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_MRB_MASK,
--	},
--	[S2MPS11_IRQ_RTC60S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC60S_MASK,
--	},
--	[S2MPS11_IRQ_RTCA1] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA1_MASK,
--	},
--	[S2MPS11_IRQ_RTCA0] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA0_MASK,
--	},
--	[S2MPS11_IRQ_SMPL] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_SMPL_MASK,
--	},
--	[S2MPS11_IRQ_RTC1S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC1S_MASK,
--	},
--	[S2MPS11_IRQ_WTSR] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_WTSR_MASK,
--	},
--	[S2MPS11_IRQ_INT120C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT120C_MASK,
--	},
--	[S2MPS11_IRQ_INT140C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT140C_MASK,
--	},
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_PWRONF, 0, S2MPS11_IRQ_PWRONF_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_PWRONR, 0, S2MPS11_IRQ_PWRONR_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_JIGONBF, 0, S2MPS11_IRQ_JIGONBF_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_JIGONBR, 0, S2MPS11_IRQ_JIGONBR_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_ACOKBF, 0, S2MPS11_IRQ_ACOKBF_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_ACOKBR, 0, S2MPS11_IRQ_ACOKBR_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_PWRON1S, 0, S2MPS11_IRQ_PWRON1S_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_MRB, 0, S2MPS11_IRQ_MRB_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_RTC60S, 1, S2MPS11_IRQ_RTC60S_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_RTCA1, 1, S2MPS11_IRQ_RTCA1_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_RTCA0, 1, S2MPS11_IRQ_RTCA0_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_SMPL, 1, S2MPS11_IRQ_SMPL_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_RTC1S, 1, S2MPS11_IRQ_RTC1S_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_WTSR, 1, S2MPS11_IRQ_WTSR_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_INT120C, 2, S2MPS11_IRQ_INT120C_MASK),
-+	REGMAP_IRQ_REG(S2MPS11_IRQ_INT140C, 2, S2MPS11_IRQ_INT140C_MASK),
++MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
+ MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
+ MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+diff --git a/drivers/mfd/sec-i2c.c b/drivers/mfd/sec-i2c.c
+index 2ccb494c8c024361c78e92be71ce9c215757dd89..74fd28a6bc9a42879fc1eb05546777f60e0062e9 100644
+--- a/drivers/mfd/sec-i2c.c
++++ b/drivers/mfd/sec-i2c.c
+@@ -233,6 +233,7 @@ static struct i2c_driver sec_pmic_i2c_driver = {
  };
+ module_i2c_driver(sec_pmic_i2c_driver);
  
- static const struct regmap_irq s2mps14_irqs[] = {
--	[S2MPS14_IRQ_PWRONF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONF_MASK,
--	},
--	[S2MPS14_IRQ_PWRONR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONR_MASK,
--	},
--	[S2MPS14_IRQ_JIGONBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBF_MASK,
--	},
--	[S2MPS14_IRQ_JIGONBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBR_MASK,
--	},
--	[S2MPS14_IRQ_ACOKBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBF_MASK,
--	},
--	[S2MPS14_IRQ_ACOKBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBR_MASK,
--	},
--	[S2MPS14_IRQ_PWRON1S] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRON1S_MASK,
--	},
--	[S2MPS14_IRQ_MRB] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_MRB_MASK,
--	},
--	[S2MPS14_IRQ_RTC60S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC60S_MASK,
--	},
--	[S2MPS14_IRQ_RTCA1] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA1_MASK,
--	},
--	[S2MPS14_IRQ_RTCA0] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA0_MASK,
--	},
--	[S2MPS14_IRQ_SMPL] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_SMPL_MASK,
--	},
--	[S2MPS14_IRQ_RTC1S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC1S_MASK,
--	},
--	[S2MPS14_IRQ_WTSR] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_WTSR_MASK,
--	},
--	[S2MPS14_IRQ_INT120C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT120C_MASK,
--	},
--	[S2MPS14_IRQ_INT140C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT140C_MASK,
--	},
--	[S2MPS14_IRQ_TSD] = {
--		.reg_offset = 2,
--		.mask = S2MPS14_IRQ_TSD_MASK,
--	},
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_PWRONF, 0, S2MPS11_IRQ_PWRONF_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_PWRONR, 0, S2MPS11_IRQ_PWRONR_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_JIGONBF, 0, S2MPS11_IRQ_JIGONBF_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_JIGONBR, 0, S2MPS11_IRQ_JIGONBR_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_ACOKBF, 0, S2MPS11_IRQ_ACOKBF_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_ACOKBR, 0, S2MPS11_IRQ_ACOKBR_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_PWRON1S, 0, S2MPS11_IRQ_PWRON1S_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_MRB, 0, S2MPS11_IRQ_MRB_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_RTC60S, 1, S2MPS11_IRQ_RTC60S_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_RTCA1, 1, S2MPS11_IRQ_RTCA1_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_RTCA0, 1, S2MPS11_IRQ_RTCA0_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_SMPL, 1, S2MPS11_IRQ_SMPL_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_RTC1S, 1, S2MPS11_IRQ_RTC1S_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_WTSR, 1, S2MPS11_IRQ_WTSR_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_INT120C, 2, S2MPS11_IRQ_INT120C_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_INT140C, 2, S2MPS11_IRQ_INT140C_MASK),
-+	REGMAP_IRQ_REG(S2MPS14_IRQ_TSD, 2, S2MPS14_IRQ_TSD_MASK),
- };
- 
- static const struct regmap_irq s2mpu02_irqs[] = {
--	[S2MPU02_IRQ_PWRONF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONF_MASK,
--	},
--	[S2MPU02_IRQ_PWRONR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRONR_MASK,
--	},
--	[S2MPU02_IRQ_JIGONBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBF_MASK,
--	},
--	[S2MPU02_IRQ_JIGONBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_JIGONBR_MASK,
--	},
--	[S2MPU02_IRQ_ACOKBF] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBF_MASK,
--	},
--	[S2MPU02_IRQ_ACOKBR] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_ACOKBR_MASK,
--	},
--	[S2MPU02_IRQ_PWRON1S] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_PWRON1S_MASK,
--	},
--	[S2MPU02_IRQ_MRB] = {
--		.reg_offset = 0,
--		.mask = S2MPS11_IRQ_MRB_MASK,
--	},
--	[S2MPU02_IRQ_RTC60S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC60S_MASK,
--	},
--	[S2MPU02_IRQ_RTCA1] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA1_MASK,
--	},
--	[S2MPU02_IRQ_RTCA0] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTCA0_MASK,
--	},
--	[S2MPU02_IRQ_SMPL] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_SMPL_MASK,
--	},
--	[S2MPU02_IRQ_RTC1S] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_RTC1S_MASK,
--	},
--	[S2MPU02_IRQ_WTSR] = {
--		.reg_offset = 1,
--		.mask = S2MPS11_IRQ_WTSR_MASK,
--	},
--	[S2MPU02_IRQ_INT120C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT120C_MASK,
--	},
--	[S2MPU02_IRQ_INT140C] = {
--		.reg_offset = 2,
--		.mask = S2MPS11_IRQ_INT140C_MASK,
--	},
--	[S2MPU02_IRQ_TSD] = {
--		.reg_offset = 2,
--		.mask = S2MPS14_IRQ_TSD_MASK,
--	},
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_PWRONF, 0, S2MPS11_IRQ_PWRONF_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_PWRONR, 0, S2MPS11_IRQ_PWRONR_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_JIGONBF, 0, S2MPS11_IRQ_JIGONBF_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_JIGONBR, 0, S2MPS11_IRQ_JIGONBR_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_ACOKBF, 0, S2MPS11_IRQ_ACOKBF_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_ACOKBR, 0, S2MPS11_IRQ_ACOKBR_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_PWRON1S, 0, S2MPS11_IRQ_PWRON1S_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_MRB, 0, S2MPS11_IRQ_MRB_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_RTC60S, 1, S2MPS11_IRQ_RTC60S_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_RTCA1, 1, S2MPS11_IRQ_RTCA1_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_RTCA0, 1, S2MPS11_IRQ_RTCA0_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_SMPL, 1, S2MPS11_IRQ_SMPL_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_RTC1S, 1, S2MPS11_IRQ_RTC1S_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_WTSR, 1, S2MPS11_IRQ_WTSR_MASK),
-+
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_INT120C, 2, S2MPS11_IRQ_INT120C_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_INT140C, 2, S2MPS11_IRQ_INT140C_MASK),
-+	REGMAP_IRQ_REG(S2MPU02_IRQ_TSD, 2, S2MPS14_IRQ_TSD_MASK),
- };
- 
- static const struct regmap_irq s2mpu05_irqs[] = {
-@@ -303,74 +159,25 @@ static const struct regmap_irq s2mpu05_irqs[] = {
- };
- 
- static const struct regmap_irq s5m8767_irqs[] = {
--	[S5M8767_IRQ_PWRR] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_PWRR_MASK,
--	},
--	[S5M8767_IRQ_PWRF] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_PWRF_MASK,
--	},
--	[S5M8767_IRQ_PWR1S] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_PWR1S_MASK,
--	},
--	[S5M8767_IRQ_JIGR] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_JIGR_MASK,
--	},
--	[S5M8767_IRQ_JIGF] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_JIGF_MASK,
--	},
--	[S5M8767_IRQ_LOWBAT2] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_LOWBAT2_MASK,
--	},
--	[S5M8767_IRQ_LOWBAT1] = {
--		.reg_offset = 0,
--		.mask = S5M8767_IRQ_LOWBAT1_MASK,
--	},
--	[S5M8767_IRQ_MRB] = {
--		.reg_offset = 1,
--		.mask = S5M8767_IRQ_MRB_MASK,
--	},
--	[S5M8767_IRQ_DVSOK2] = {
--		.reg_offset = 1,
--		.mask = S5M8767_IRQ_DVSOK2_MASK,
--	},
--	[S5M8767_IRQ_DVSOK3] = {
--		.reg_offset = 1,
--		.mask = S5M8767_IRQ_DVSOK3_MASK,
--	},
--	[S5M8767_IRQ_DVSOK4] = {
--		.reg_offset = 1,
--		.mask = S5M8767_IRQ_DVSOK4_MASK,
--	},
--	[S5M8767_IRQ_RTC60S] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_RTC60S_MASK,
--	},
--	[S5M8767_IRQ_RTCA1] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_RTCA1_MASK,
--	},
--	[S5M8767_IRQ_RTCA2] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_RTCA2_MASK,
--	},
--	[S5M8767_IRQ_SMPL] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_SMPL_MASK,
--	},
--	[S5M8767_IRQ_RTC1S] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_RTC1S_MASK,
--	},
--	[S5M8767_IRQ_WTSR] = {
--		.reg_offset = 2,
--		.mask = S5M8767_IRQ_WTSR_MASK,
--	},
-+	REGMAP_IRQ_REG(S5M8767_IRQ_PWRR, 0, S5M8767_IRQ_PWRR_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_PWRF, 0, S5M8767_IRQ_PWRF_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_PWR1S, 0, S5M8767_IRQ_PWR1S_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_JIGR, 0, S5M8767_IRQ_JIGR_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_JIGF, 0, S5M8767_IRQ_JIGF_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_LOWBAT2, 0, S5M8767_IRQ_LOWBAT2_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_LOWBAT1, 0, S5M8767_IRQ_LOWBAT1_MASK),
-+
-+	REGMAP_IRQ_REG(S5M8767_IRQ_MRB, 1, S5M8767_IRQ_MRB_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_DVSOK2, 1, S5M8767_IRQ_DVSOK2_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_DVSOK3, 1, S5M8767_IRQ_DVSOK3_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_DVSOK4, 1, S5M8767_IRQ_DVSOK4_MASK),
-+
-+	REGMAP_IRQ_REG(S5M8767_IRQ_RTC60S, 2, S5M8767_IRQ_RTC60S_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_RTCA1, 2, S5M8767_IRQ_RTCA1_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_RTCA2, 2, S5M8767_IRQ_RTCA2_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_SMPL, 2, S5M8767_IRQ_SMPL_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_RTC1S, 2, S5M8767_IRQ_RTC1S_MASK),
-+	REGMAP_IRQ_REG(S5M8767_IRQ_WTSR, 2, S5M8767_IRQ_WTSR_MASK),
- };
- 
- static const struct regmap_irq_chip s2mpg10_irq_chip = {
++MODULE_AUTHOR("André Draszik <andre.draszik@linaro.org>");
+ MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+ MODULE_DESCRIPTION("I2C driver for the Samsung S5M");
+ MODULE_LICENSE("GPL");
 
 -- 
 2.49.0.472.ge94155a9ec-goog
