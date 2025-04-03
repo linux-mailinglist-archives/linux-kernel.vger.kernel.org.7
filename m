@@ -1,225 +1,229 @@
-Return-Path: <linux-kernel+bounces-587755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B282A7B000
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB68A7B026
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E8C161227
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BED53A5AB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAE62550C7;
-	Thu,  3 Apr 2025 20:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BFTpMUnR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73273268C44;
+	Thu,  3 Apr 2025 20:01:04 +0000 (UTC)
+Received: from webmail.webked.de (webmail.webked.de [159.69.203.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E121EB1B8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286D125B66B;
+	Thu,  3 Apr 2025 20:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.203.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743710442; cv=none; b=kC3BjA57PKw6QlVwh0xGSH2wJwO8Gth7UDTfBbJnEuH68safgFxJXJoV3ylsHenwNiWxP8jYRQPDYZGLzKVCx8Kho3LcBFyVcThMOMrL78/skui8IU4HA6msyC1etG7xeBYriGpWXYIh9HAY+jKmEcIYCaFeVUYGTfEORRu0Mj0=
+	t=1743710463; cv=none; b=NKEDUzHEsdcyuui/ZsKa3OtZyiZLDJQ+Xf/PjVA23H02IjH+gMYPp7QrvbnCPkbjDUx2mHwyQW2slkXuXzO+22XyHSBVTdDl/tRg/Ph/MRSAdJV6PEDRLd+upeE64tveoTHua4mUkoXCWIft+R7NlfcCFv+fhIOtHqewDRr6jyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743710442; c=relaxed/simple;
-	bh=/myFRG/nsVfvxlwyn4haCTUVlcewocEJodVCFIfmHas=;
+	s=arc-20240116; t=1743710463; c=relaxed/simple;
+	bh=kMfIya7ScfNwdTaHEWTPhlQ+/AUGAhAmh5I003G43+c=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nVu1ibYW28m0i6rVwlk4iAIpbAXhoGOGxaGPAbgjT038wGdXAMu9SGAkTgY/Ek9qC01V4JcgzBro/TD0MtNUL3xjEE/MNJX1oZuLpzIgc5L9TBi0oq15RGGb6VmJyzrJ+z0uR+b3bVMxYdHvGQQSZKAMNpg/OPNpRC6IGC0SR/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BFTpMUnR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743710439;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D3jepgq6mpSu+t7xHDXlZ7+DEihAAmM7cFMk5sO7ptU=;
-	b=BFTpMUnRg4J8mXgrIFojwbz3Yy5stjgMIZRmXn2oIqKqRAUOxvUfF63oJe6wDEeJNFX5Jd
-	77V7fWeZZXIuT8LKAfs1d3sBN2ufbP4Fv0qljkhyjY7lfipTQMrcANwPm4AVTx5hCVXmXj
-	Az62YxD+OKnNQZvrSb3jFUa+mON+PWo=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-RisOfsIVPqWrAUJMI5E0bQ-1; Thu, 03 Apr 2025 16:00:37 -0400
-X-MC-Unique: RisOfsIVPqWrAUJMI5E0bQ-1
-X-Mimecast-MFC-AGG-ID: RisOfsIVPqWrAUJMI5E0bQ_1743710437
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e8f9450b19so29359666d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:00:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743710437; x=1744315237;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D3jepgq6mpSu+t7xHDXlZ7+DEihAAmM7cFMk5sO7ptU=;
-        b=SxBXuLp5ooCAtdzh3GSm1hU+60gJ+vsBp12bHXudfb5D/reZKsa6c1psTShCOkigWT
-         nfy6rXnaa8t9nUnw8DZzUORkXS00vPd4hvRhSdQwazCPkId2Z2OCR/boCUG8196nSOEm
-         y0jSK3SEA8uGZk/CpxZkEEZQY18jX+vCD8Q2tJX6LXxiwcs/uJ0C6gHHBxxQSYwF2lHX
-         txj49ZSzmPrmRJdVvHJ3/xZWjwWdeX3cbfgzvUC1SRtpCM5d5drFT5vboegh0Oh9XSSA
-         gpuIZqMakldT+eiyymGTSscnX0r54xfx8OEAV8n1jpJnWMlposbjhIlEgFKEX96Zfy+N
-         N6OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1b3Gxt6YjCu5SkLh7BMijcL8VS5Zd9uTj7DSqGHiil9gxTvFKtHf8EzXV5aZhokDGwUP0WJAUSTkdFu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYFnlu3sIU3YzLPmQnC2+u5NRK6u233ZnO2DLGYWQmdPybBvMY
-	UEJ0chHk10uYu1yae1wlb43aAqxA+9OheV3A3Q//1d7Ji1U30U4HpYuNDNwl6Byo8tANpm6iXKd
-	tydbnz2K56ayGWUbmow+WL7DhWQPuBuprlCHChab9LphEi17ILxJN1xgZ8DY7RA==
-X-Gm-Gg: ASbGncsjX9xQXr/cqf6Utvque7m2TeT96uk/1LmhyTy2YC0eg2tM6JM+Xo3foUim0/+
-	u5R/U33I8/6U56h6vs/WS+lwRc1ZwerzvEcduj5uPTlefriwLfe8SnSn9mZpWw1gog43UXv7Ni3
-	ru01V2SXWneh0VDCCym4meQ5AmwnMCEfVouWXxiH33pOZcs1aclZIS/yx2FbP21DfWW50N3A9CN
-	ocltUsUnsFEks7EJuF8zhesS/V4eYJr6HINRuqNGNCCjJZzxSn+hhNwcItP5+g3cxVw9P4ksrRy
-	ErHkLXjG5L9VUtI=
-X-Received: by 2002:ad4:5946:0:b0:6e4:3478:8ea7 with SMTP id 6a1803df08f44-6efec7c5883mr9360966d6.4.1743710436953;
-        Thu, 03 Apr 2025 13:00:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhxVlTI5ZtwILKtPmNpkeVHykTY5ZSMDq9uRW77B59bcLV+ibcnF+bnMcoEIze83EEiT0Hmg==
-X-Received: by 2002:ad4:5946:0:b0:6e4:3478:8ea7 with SMTP id 6a1803df08f44-6efec7c5883mr9360516d6.4.1743710436562;
-        Thu, 03 Apr 2025 13:00:36 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f150213sm11211296d6.116.2025.04.03.13.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 13:00:36 -0700 (PDT)
-Message-ID: <2b040c2922dae99b42db7cc0bf5cc070607c3464.camel@redhat.com>
-Subject: Re: [RFC PATCH 03/24] KVM: SVM: Add helpers to set/clear ASID flush
- in VMCB
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
- Vitaly Kuznetsov <vkuznets@redhat.com>, Rik van Riel <riel@surriel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>,  x86@kernel.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 Apr 2025 16:00:35 -0400
-In-Reply-To: <20250326193619.3714986-4-yosry.ahmed@linux.dev>
-References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
-	 <20250326193619.3714986-4-yosry.ahmed@linux.dev>
+	 Content-Type:MIME-Version; b=rmUE2+QvkJMvIR+W/ngRsXD/Q8Yk2CYlZGvjgJrwaZVMKvK2xamA1wkfmN8Zl8Qgxv+2tydEKGr16g5YYVSMRhpzgXnKRv/K9aHDhhxPAnpnUy8aIlS/KniGI3nwbEuZZt0EnnRlx5Nc5RgOpn/2pSM+uPxpvSe+EeNmDA4jWiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=webked.de; spf=pass smtp.mailfrom=webked.de; arc=none smtp.client-ip=159.69.203.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=webked.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=webked.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3CB3562BD0;
+	Thu,  3 Apr 2025 22:00:42 +0200 (CEST)
+Message-ID: <95e53fe98502365948af60852dd6c70a1807b133.camel@webked.de>
+Subject: Re: [REGRESSION] Massive virtio-net throughput drop in guest VM
+ with Linux 6.8+
+From: Markus Fohrer <markus.fohrer@webked.de>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, "Michael S. Tsirkin"
+	 <mst@redhat.com>
+Cc: virtualization@lists.linux-foundation.org, jasowang@redhat.com, 
+	davem@davemloft.net, edumazet@google.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 03 Apr 2025 22:00:41 +0200
+In-Reply-To: <67ee9ab0a1665_136b7c29412@willemb.c.googlers.com.notmuch>
+References: <1d388413ab9cfd765cd2c5e05b5e69cdb2ec5a10.camel@webked.de>
+	 <20250403090001-mutt-send-email-mst@kernel.org>
+	 <f8909f5bbc2532ea234cdaa8dbdb46a48249803f.camel@webked.de>
+	 <20250403100206-mutt-send-email-mst@kernel.org>
+	 <67ee9ab0a1665_136b7c29412@willemb.c.googlers.com.notmuch>
+Organization: WEBKED IT Markus Fohrer
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 2025-03-26 at 19:35 +0000, Yosry Ahmed wrote:
-> Incoming changes will add more code paths that set tlb_ctl to
-> TLB_CONTROL_FLUSH_ASID, and will eliminate the use of
-> TLB_CONTROL_FLUSH_ALL_ASID except as fallback when FLUSHBYASID is not
-> available. Introduce set/clear helpers to set tlb_ctl to
-> TLB_CONTROL_FLUSH_ASID or TLB_CONTROL_DO_NOTHING.
-> 
-> Opportunistically move the TLB_CONTROL_* definitions to
-> arch/x86/kvm/svm/svm.h as they are not used outside of arch/x86/kvm/svm/.
+Am Donnerstag, dem 03.04.2025 um 10:26 -0400 schrieb Willem de Bruijn:
+> Michael S. Tsirkin wrote:
+> > On Thu, Apr 03, 2025 at 03:51:01PM +0200, Markus Fohrer wrote:
+> > > Am Donnerstag, dem 03.04.2025 um 09:04 -0400 schrieb Michael S.
+> > > Tsirkin:
+> > > > On Wed, Apr 02, 2025 at 11:12:07PM +0200, Markus Fohrer wrote:
+> > > > > Hi,
+> > > > >=20
+> > > > > I'm observing a significant performance regression in KVM
+> > > > > guest VMs
+> > > > > using virtio-net with recent Linux kernels (6.8.1+ and 6.14).
+> > > > >=20
+> > > > > When running on a host system equipped with a Broadcom
+> > > > > NetXtreme-E
+> > > > > (bnxt_en) NIC and AMD EPYC CPUs, the network throughput in
+> > > > > the
+> > > > > guest drops to 100=E2=80=93200 KB/s. The same guest configuration
+> > > > > performs
+> > > > > normally (~100 MB/s) when using kernel 6.8.0 or when the VM
+> > > > > is
+> > > > > moved to a host with Intel NICs.
+> > > > >=20
+> > > > > Test environment:
+> > > > > - Host: QEMU/KVM, Linux 6.8.1 and 6.14.0
+> > > > > - Guest: Linux with virtio-net interface
+> > > > > - NIC: Broadcom BCM57416 (bnxt_en driver, no issues at host
+> > > > > level)
+> > > > > - CPU: AMD EPYC
+> > > > > - Storage: virtio-scsi
+> > > > > - VM network: virtio-net, virtio-scsi (no CPU or IO
+> > > > > bottlenecks)
+> > > > > - Traffic test: iperf3, scp, wget consistently slow in guest
+> > > > >=20
+> > > > > This issue is not present:
+> > > > > - On 6.8.0=20
+> > > > > - On hosts with Intel NICs (same VM config)
+> > > > >=20
+> > > > > I have bisected the issue to the following upstream commit:
+> > > > >=20
+> > > > > =C2=A0 49d14b54a527 ("virtio-net: Suppress tx timeout warning for
+> > > > > small
+> > > > > tx")
+> > > > > =C2=A0 https://git.kernel.org/linus/49d14b54a527
+> > > >=20
+> > > > Thanks a lot for the info!
+> > > >=20
+> > > >=20
+> > > > both the link and commit point at:
+> > > >=20
+> > > > commit 49d14b54a527289d09a9480f214b8c586322310a
+> > > > Author: Eric Dumazet <edumazet@google.com>
+> > > > Date:=C2=A0=C2=A0 Thu Sep 26 16:58:36 2024 +0000
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0 net: test for not too small csum_start in
+> > > > virtio_net_hdr_to_skb()
+> > > > =C2=A0=C2=A0=C2=A0=20
+> > > >=20
+> > > > is this what you mean?
+> > > >=20
+> > > > I don't know which commit is "virtio-net: Suppress tx timeout
+> > > > warning
+> > > > for small tx"
+> > > >=20
+> > > >=20
+> > > >=20
+> > > > > Reverting this commit restores normal network performance in
+> > > > > affected guest VMs.
+> > > > >=20
+> > > > > I=E2=80=99m happy to provide more data or assist with testing a
+> > > > > potential
+> > > > > fix.
+> > > > >=20
+> > > > > Thanks,
+> > > > > Markus Fohrer
+> > > >=20
+> > > >=20
+> > > > Thanks! First I think it's worth checking what is the setup,
+> > > > e.g.
+> > > > which offloads are enabled.
+> > > > Besides that, I'd start by seeing what's doing on. Assuming I'm
+> > > > right
+> > > > about
+> > > > Eric's patch:
+> > > >=20
+> > > > diff --git a/include/linux/virtio_net.h
+> > > > b/include/linux/virtio_net.h
+> > > > index 276ca543ef44d8..02a9f4dc594d02 100644
+> > > > --- a/include/linux/virtio_net.h
+> > > > +++ b/include/linux/virtio_net.h
+> > > > @@ -103,8 +103,10 @@ static inline int
+> > > > virtio_net_hdr_to_skb(struct
+> > > > sk_buff *skb,
+> > > > =C2=A0
+> > > > =C2=A0		if (!skb_partial_csum_set(skb, start, off))
+> > > > =C2=A0			return -EINVAL;
+> > > > +		if (skb_transport_offset(skb) < nh_min_len)
+> > > > +			return -EINVAL;
+> > > > =C2=A0
+> > > > -		nh_min_len =3D max_t(u32, nh_min_len,
+> > > > skb_transport_offset(skb));
+> > > > +		nh_min_len =3D skb_transport_offset(skb);
+> > > > =C2=A0		p_off =3D nh_min_len + thlen;
+> > > > =C2=A0		if (!pskb_may_pull(skb, p_off))
+> > > > =C2=A0			return -EINVAL;
+> > > >=20
+> > > >=20
+> > > > sticking a printk before return -EINVAL to show the offset and
+> > > > nh_min_len
+> > > > would be a good 1st step. Thanks!
+> > > >=20
+> > >=20
+> > >=20
+> > > Hi Eric,
+> > >=20
+> > > thanks a lot for the quick response =E2=80=94 and yes, you're absolut=
+ely
+> > > right.
+> > >=20
+> > > Apologies for the confusion: I mistakenly wrote the wrong commit
+> > > description in my initial mail.
+> > >=20
+> > > The correct commit is indeed:
+> > >=20
+> > > commit 49d14b54a527289d09a9480f214b8c586322310a
+> > > Author: Eric Dumazet <edumazet@google.com>
+> > > Date:=C2=A0=C2=A0 Thu Sep 26 16:58:36 2024 +0000
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0 net: test for not too small csum_start in
+> > > virtio_net_hdr_to_skb()
+> > >=20
+> > > This is the one I bisected and which causes the performance
+> > > regression
+> > > in my environment.
+>=20
+> This commit is introduced in v6.12.
+>=20
+> You say 6.8 is good, but 6.8.1 is bad. This commit is not in 6.8.1.
+> Nor any virtio-net related change:
+>=20
+> $ git log --oneline linux/v6.8..linux/v6.8.1 --
+> include/linux/virtio_net.h drivers/net/virtio_net.c | wc -l
+> 0
+>=20
+> Is it perhaps a 6.8.1 derived distro kernel?
+>=20
+> That patch detects silly packets created by a fuzzer. It should not
+> affect sane traffic. Not saying your analysis is wrong. We just need
+> more data to understand the regression better.
 
-Same microscopic nitpick as in previous patch :) 
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/include/asm/svm.h |  5 -----
->  arch/x86/kvm/svm/nested.c  |  2 +-
->  arch/x86/kvm/svm/sev.c     |  2 +-
->  arch/x86/kvm/svm/svm.c     |  4 ++--
->  arch/x86/kvm/svm/svm.h     | 15 +++++++++++++++
->  5 files changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
-> index 9b7fa99ae9513..a97da63562eb3 100644
-> --- a/arch/x86/include/asm/svm.h
-> +++ b/arch/x86/include/asm/svm.h
-> @@ -171,11 +171,6 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
->  };
->  
->  
-> -#define TLB_CONTROL_DO_NOTHING 0
-> -#define TLB_CONTROL_FLUSH_ALL_ASID 1
-> -#define TLB_CONTROL_FLUSH_ASID 3
-> -#define TLB_CONTROL_FLUSH_ASID_LOCAL 7
-> -
->  #define V_TPR_MASK 0x0f
->  
->  #define V_IRQ_SHIFT 8
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 834b67672d50f..11b02a0340d9e 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -681,7 +681,7 @@ static void nested_vmcb02_prepare_control(struct vcpu_svm *svm,
->  	/* Done at vmrun: asid.  */
->  
->  	/* Also overwritten later if necessary.  */
-> -	vmcb02->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +	vmcb_clr_flush_asid(vmcb02);
->  
->  	/* nested_cr3.  */
->  	if (nested_npt_enabled(svm))
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 0bc708ee27887..d613f81addf1c 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3479,7 +3479,7 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
->  		return 0;
->  
->  	sd->sev_vmcbs[asid] = svm->vmcb;
-> -	svm->vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
-> +	vmcb_set_flush_asid(svm->vmcb);
->  	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
->  	return 0;
->  }
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 28a6d2c0f250f..0e302ae9a8435 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4006,7 +4006,7 @@ static void svm_flush_tlb_asid(struct kvm_vcpu *vcpu)
->  	 * VM-Exit (via kvm_mmu_reset_context()).
->  	 */
->  	if (static_cpu_has(X86_FEATURE_FLUSHBYASID))
-> -		svm->vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
-> +		vmcb_set_flush_asid(svm->vmcb);
->  	else
->  		svm->current_vmcb->asid_generation--;
->  }
-> @@ -4373,7 +4373,7 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->  		svm->nested.nested_run_pending = 0;
->  	}
->  
-> -	svm->vmcb->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +	vmcb_clr_flush_asid(svm->vmcb);
->  	vmcb_mark_all_clean(svm->vmcb);
->  
->  	/* if exit due to PF check for async PF */
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index d4490eaed55dd..d2c49cbfbf1ca 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -409,6 +409,21 @@ static inline bool vmcb_is_dirty(struct vmcb *vmcb, int bit)
->          return !test_bit(bit, (unsigned long *)&vmcb->control.clean);
->  }
->  
-> +#define TLB_CONTROL_DO_NOTHING 0
-> +#define TLB_CONTROL_FLUSH_ALL_ASID 1
-> +#define TLB_CONTROL_FLUSH_ASID 3
-> +#define TLB_CONTROL_FLUSH_ASID_LOCAL 7
-> +
-> +static inline void vmcb_set_flush_asid(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
-> +}
-> +
-> +static inline void vmcb_clr_flush_asid(struct vmcb *vmcb)
-> +{
-> +	vmcb->control.tlb_ctl = TLB_CONTROL_DO_NOTHING;
-> +}
-> +
->  static __always_inline struct vcpu_svm *to_svm(struct kvm_vcpu *vcpu)
->  {
->  	return container_of(vcpu, struct vcpu_svm, vcpu);
+thanks for the clarification =E2=80=94 you're right, my initial `git bisect=
+`
+was performed on Ubuntu's 6.8-based kernels (e.g. 6.8.0-31 to 6.8.0-
+53), so it likely included backports not present in upstream 6.8.1.
 
+This explains the confusion around commit 49d14b54a527 =E2=80=94 sorry abou=
+t
+that.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+To confirm: I can reproduce the regression using the mainline 6.14
+kernel from kernel.org. So the issue still exists upstream, even though
+the exact bisect result needs to be redone with mainline-only sources.
 
-Best regards,
-	Maxim Levitsky
+I=E2=80=99ll collect and share more information (device features, virtio st=
+ate,
+etc.) as you suggested to help narrow it down.
 
-
-
+Thanks again, =20
+Markus
 
