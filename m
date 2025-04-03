@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-587658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD68A7AF15
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E8BA7AF2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F31630A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12DB3B04AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F70022F17B;
-	Thu,  3 Apr 2025 19:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A415C230BE3;
+	Thu,  3 Apr 2025 19:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A4QKqm0D"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDBDUK36"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD35F22E403
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA742309A8;
+	Thu,  3 Apr 2025 19:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707950; cv=none; b=Keq/ftpMln2pYSfBABIBtGEJi+6zF3zYkduvTa+UFtXJHxWbXbYDfFPCHPiozZ1MlecXq2KpZq6LUJZolCzZoticylYBBPSMK5VgkPOfjAtM5xuY+JLFOenlENaf93MiCQJAldgRezg5tz+hDnUnKkz1T785kEjHHVb+/kJTqOc=
+	t=1743707959; cv=none; b=tnZyt4WKVnhg03Zu0d6qrzwRUp4qyD3AU6Y18mKanGxrNZSRnbjVHY+mbXQxkEXv9bH7DDQ0+Df9HspUzm9RUbugzddlWRoaDJ39wcSN2Tridoc4/nXPse1FTCDBveIg1MBGWSjdr/95UL1amOvYhExBwad9KSKpu5Xj59auwHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707950; c=relaxed/simple;
-	bh=T5uoDV9HKncHWI6WuWJr72wllf/CE9rQIuIo7jAU41E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sGfHdXqLfgs1GXItKwpyHrpUPKY+Sgmhp+nQNA4Omxzv8ueHBZsjOsQrY1tW152x9C+S2PCvh3vkTQQhRNQ+/MYpCxb6ZYcerFrmiX8hzjMgqzlCfMHQuJmnF3H/Em5HANRQ7mTcUD3+KKovwKG+hWqyE3TYQtU84GFr6qS8THQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A4QKqm0D; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so244677766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743707944; x=1744312744; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xOJ+a6c7HX+Aw8dr/wh7QGl7onl6cqWKpJLTwkfT2G8=;
-        b=A4QKqm0DKMkO8/9BQrvm3PoaYGAuSdnYKTO7weA7DN+7Ya0rqZPCMmWHmnPv/FBfx8
-         cWx7xoTDaPxSVbsC02Tb0OLWhh8Y6BKJMn5Fkayqtk3iF5pJiOLRPaEZqAW8LE2KPtnD
-         J8hL67DjpGQgms90Ys4QkJY8rlXN8JgEOCGek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743707944; x=1744312744;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xOJ+a6c7HX+Aw8dr/wh7QGl7onl6cqWKpJLTwkfT2G8=;
-        b=XkyVFuScgCGAnHiLooXCJPOg/zeeJEDHvMh1RNdXPQGgbjBsklXsbKFtKhw8XEzo0k
-         ZTljaWGzjmtEx/1pIpr/3Dnj1opx8kTNZ052T/1g5vQRj9LCrPGzkJqIOahOdcx0mp6x
-         7RGlAFfFsNa1m7e5oBhJk4brJkH8Y8MIFGkMsZ7mNCcr/RRCQOWxDmWFI/eltNQu9vet
-         ZVtP4MLRwRikZEEPRj4/jLm5IxNqW0zHWx133NnfqoTeSCINsPd0IUOJXnYeNVNbmcpA
-         qUe+5CCRa/OFxpwNgFA4LX2NmxnyhPD4TMHBcL4kt/hBw9P8FhxRmk46gl04BQqY4GbQ
-         1Afg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BqqO9lEyZyn7c8RiWoNFLJ/kYdttou/y1j0SpV0xRPv/8Rv86er/bMABeoENVKXl1Fl4R8qTfqSrGDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA+uUXrn9inDR/9FeNrY7duLb/TFy49HVg5H/ISonhrnLrD1IB
-	BK8KwGqoS2tOr0wLmCn++6KFIM9oGqziIwX60zFVmpEEnRvXAsOBqBXdCVutOq+/YYE8/rDJ9c2
-	lew0=
-X-Gm-Gg: ASbGncuqbdUmhunvOQR1kmXnN7Yp3l+8ILG/7nx//Ja0FC87/jYm61nd6lyT5Z0WD8p
-	mvSbcZYJJCipUOyoZrrLyVQPwd1rS3NU2D8f/rE/hp9ZXYJIIGPBcT5POuR4SFL7KO7Qs0FbnKZ
-	KTWPuzhvFnzgPO3RxNPAyY44b1OUW/sKu0xkUUikMWgpTbB5vvzLI66Txv/76vHAbif2WSfvwU3
-	52GQ4K2kn8/Go8raQBmI68v/JK1iuGnrPj8wb21bcwZBhIFTmCdzzQ9kpxhuRsVMbf/e8i0VJos
-	Aar9Mi13/nJgSN8FMF/IwBQVmmgHQn4wxH4xcg3vUvLrbNyV5fS+5MX/8epqiIHLTO1NUVbYPqY
-	MpV/OUU3ax1wXDtLcizI=
-X-Google-Smtp-Source: AGHT+IGwvElIm8guevE6awAaOwvOgMQ6K9RqPCXQEu66OA9uXOo81HHLqpnCNCqfBnA46lFPQ8+bfw==
-X-Received: by 2002:a17:906:c153:b0:ac7:364b:7ec6 with SMTP id a640c23a62f3a-ac7d1306b84mr72286166b.0.1743707943862;
-        Thu, 03 Apr 2025 12:19:03 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f660sm134197166b.89.2025.04.03.12.19.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 12:19:03 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso221577166b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:19:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXU12CJnpIbyrQ+d4cJbLQ0Aw66NPXhxrvCxCpvFHwoQpwsQXK+PF/3WQYmtA9Sp3tfmFy071vv8OUBKAU=@vger.kernel.org
-X-Received: by 2002:a17:907:9801:b0:ac7:33d0:dbe with SMTP id
- a640c23a62f3a-ac7d18cb7f9mr80311566b.33.1743707942619; Thu, 03 Apr 2025
- 12:19:02 -0700 (PDT)
+	s=arc-20240116; t=1743707959; c=relaxed/simple;
+	bh=aCUomGsdaP+/h1uVvks0w3gDQ3U8zxPSSxUAoF+OzKk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PXuFdC/XsxCdzYJy2nmuUIzfcIPbeIDrczJtWRL6m4NRIV9KhILf9wStw2z24gIdGWmwoXTJsoDNwuA3ysbUa9Q8s4qDhhz1hM/K4hy7oNgidFLh3J814EFXsjiGqfHaA/bYuoyXj3EPOEYAbZ8fChrDoi2XDOtT0gxtQ+OXQpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDBDUK36; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9040EC4CEE3;
+	Thu,  3 Apr 2025 19:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707958;
+	bh=aCUomGsdaP+/h1uVvks0w3gDQ3U8zxPSSxUAoF+OzKk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EDBDUK36LKpVZpOoPRU+g4EY83A1L1lMo4dzMqouI7u3BnBI228bsx7yhnBXOuVQi
+	 5HOU63nI9V2nwjrgq53bHK1CDampq7OQ2+rfoj4g1ykkmL0ja1/WcuEuUUgebnoTYx
+	 qvYAvGO3YGy4LTZ3HpYBWpsOTjDl7aAeIUFdk/ADzhEycFxSNX0Jrmwaffn9H6a80z
+	 NmZyYGTbqBdFZr+GjGb+3jAH4Ed/sNS6b3ICbpAxVre08nTvW5XRqjT/wiKDLfDRtC
+	 q0P4fjUOjHHvYOeEA5kZ87bHXgyGOKdmEaW5SNIeRIFxOtYtW6zP3iAuzGih9mWFih
+	 f9qSfjN4j8j/Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.1 01/20] drm: allow encoder mode_set even when connectors change for crtc
+Date: Thu,  3 Apr 2025 15:18:54 -0400
+Message-Id: <20250403191913.2681831-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322-vfs-mount-b08c842965f4@brauner> <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal> <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner> <20250403182455.GI84568@unreal>
-In-Reply-To: <20250403182455.GI84568@unreal>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 3 Apr 2025 12:18:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj7wDF1FQL4TG1Bf-LrDr1RrXNwu0-cnOd4ZQRjFZB43A@mail.gmail.com>
-X-Gm-Features: ATxdqUFMslVpxLZQwg1CWi9MwTwtlcmOR2f0G9_2Lk6dEltjaQ2iJobffD6Dc_o
-Message-ID: <CAHk-=wj7wDF1FQL4TG1Bf-LrDr1RrXNwu0-cnOd4ZQRjFZB43A@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs mount
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, pr-tracker-bot@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.132
+Content-Transfer-Encoding: 8bit
 
-On Thu, 3 Apr 2025 at 11:25, Leon Romanovsky <leon@kernel.org> wrote:
-> >
-> > -     scoped_guard(rwsem_read, &namespace_sem)
-> > +     guard(rwsem_read, &namespace_sem);
->
-> I'm looking at Linus's master commit a2cc6ff5ec8f ("Merge tag
-> 'firewire-updates-6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394")
-> and guard is declared as macro which gets only one argument: include/linux/cleanup.h
->   318 #define guard(_name) \
->   319         CLASS(_name, __UNIQUE_ID(guard))
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-Christian didn't test his patch, obviously.
+[ Upstream commit 7e182cb4f5567f53417b762ec0d679f0b6f0039d ]
 
-It should be
+In certain use-cases, a CRTC could switch between two encoders
+and because the mode being programmed on the CRTC remains
+the same during this switch, the CRTC's mode_changed remains false.
+In such cases, the encoder's mode_set also gets skipped.
 
-        guard(rwsem_read)(&namespace_sem);
+Skipping mode_set on the encoder for such cases could cause an issue
+because even though the same CRTC mode was being used, the encoder
+type could have changed like the CRTC could have switched from a
+real time encoder to a writeback encoder OR vice-versa.
 
-the guard() macro is kind of odd, but the oddity relates to how it
-kind of takes a "class" thing as it's argument, and that then expands
-to the constructor that may or may not take arguments itself.
+Allow encoder's mode_set to happen even when connectors changed on a
+CRTC and not just when the mode changed.
 
-That made some of the macros simpler, although in retrospect the odd
-syntax probably wasn't worth it.
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20241211-abhinavk-modeset-fix-v3-1-0de4bf3e7c32@quicinc.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/drm_atomic_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-            Linus
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index b097bff1cd18e..66d223c2d9ab9 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1389,7 +1389,7 @@ crtc_set_mode(struct drm_device *dev, struct drm_atomic_state *old_state)
+ 		mode = &new_crtc_state->mode;
+ 		adjusted_mode = &new_crtc_state->adjusted_mode;
+ 
+-		if (!new_crtc_state->mode_changed)
++		if (!new_crtc_state->mode_changed && !new_crtc_state->connectors_changed)
+ 			continue;
+ 
+ 		drm_dbg_atomic(dev, "modeset on [ENCODER:%d:%s]\n",
+-- 
+2.39.5
+
 
