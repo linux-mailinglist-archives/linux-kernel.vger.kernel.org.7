@@ -1,207 +1,143 @@
-Return-Path: <linux-kernel+bounces-587885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1E9A7B158
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:37:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3AAA7B17F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA2918992C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C463BC5E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1FB171E49;
-	Thu,  3 Apr 2025 21:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6431F1518;
+	Thu,  3 Apr 2025 21:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TR7qM9M1"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B5vuQkS/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7DD1DFF0
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22491EF0A3
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743715770; cv=none; b=k8z9NDmQOQ6Lr9dLZPkXWaWj1T+qfJOf/2l84fiG8n0iTYMymqx3DGgLZ1n8CgJ9taCPxb48IBpBgXc+fyh5KZwof4sbuvIYdna9NxdAKRn8QhdVJFE44dRaQFOuEsPpdLCxcvCXM2leDX7C5mZ7UsLK7dNPwGe81GmYScedRrY=
+	t=1743715890; cv=none; b=OQhIw5+yMxLyEFnMWbvoAltt6z250BEjNj0fzx5KigxBtWwmEAOaynvEeFpwwHRaEsu78h7l03ijipKWyfOvoDgYVbBX73UmCeW2r5jhYkObAD2AktiWcwQIPlpBCEL1iYIcvMeDDNP9D5nDhF+VCqSEyC+KeLU5kkCQPMql+WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743715770; c=relaxed/simple;
-	bh=nlwF+7zQGq2HUh16yYIyEZYJ+TKektWBRDNwXwNzVoQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rzuP7MSAXbdGMlRWEGPP80mhdOyLDQzrVWtBFyLCh9VMC8QVlHzg1LavR526RiXjrdbgYRpoxkPek1s5iKMv6jj08Lglg9nRFM+s+HJR1Opa+zKali6qTO8m1By825wl4lNE5XVJvv9ICtcpa5k9s0z3GD9TEaz/IVDGNUUHqj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TR7qM9M1; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225107fbdc7so13001765ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 14:29:29 -0700 (PDT)
+	s=arc-20240116; t=1743715890; c=relaxed/simple;
+	bh=wmH981GE7NB8avOxeQuOBjPEsDZkeKkAIkl4REbfjxM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UYQj2ncSNv++TQ/YTc6lGujP2qo4SeD8zuxUbNQewIBSSq1lYyqBwZoLQMisN33TF0+Sn/7W7syhzEv6gOfmQO7zDZoEbnLQuV/01nG6ZTgYr2kjftlz+wbwVJ9o5hsLoHwW9fvC6S5aT1IOMUAgEQGS+EDyYx5HnaKsZVv+EkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B5vuQkS/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-549946c5346so1583235e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 14:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743715768; x=1744320568; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=o0cnUQbWUsiUv5dGgvP3QCnvz4IYCWsIxDLFEGTUwHE=;
-        b=TR7qM9M15ZmRCZKmOPHJ88VMuP9GxN3mAue+N+19AM+cCiVhI6V4aoUqiEl0uWsJvm
-         UZ/JuGWEBGZMDxZpkqn7sthSMJH6MJypUT1Lxo2wu/zsr1Hy2RaYjhW4cf9jZ7A9IPJw
-         QZ7hCFqAXrzUvmDkklKrS7Jyn0Qzx5QeprPr3B6VzPVawIydAZ+jBPtAH+ed2t9EQ4V/
-         QS+zGGBqaoL7M8oqxLUHwsurVlzRa6W8fBaar/+ZltBS/58ZPTbtXzBn6V9tlmI57L7a
-         s433jzNySzEwzN3tpmbFgUtxGZue7SshgdFzNjszsWCp1I/Nm7fuXUfl8T8Ks0nbqlVW
-         0L4w==
+        d=chromium.org; s=google; t=1743715886; x=1744320686; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hjSF7rIGuoGtaKvs9zxkuKyK56xOJ/Ay8l6UKNTY2Eo=;
+        b=B5vuQkS/k/MYI4QvGeEVjT6XEvXOwnP4U5bJoMT3krrQ9O8CpXybI2JDfxZmWGlHjB
+         sVR7k1tvrdcj3PzTJ/dNVugZ3eK1dyhBD5DYH1HtDeToYoEjXrOjVc+UlOVhNqbSks7u
+         zY90pL0SXAxeS+V+Xv/qXn0+mriP7ylXLy5F4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743715768; x=1744320568;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o0cnUQbWUsiUv5dGgvP3QCnvz4IYCWsIxDLFEGTUwHE=;
-        b=Okuh/JuDGb4S9w4Znt06B9wtSSiE79Dwx0ECpMNIZ1qshKe0L8ZoKpuWadIhtTOFGs
-         GDXI6vzIoF2AHYK5+6W21FkQgU35b0EX3MgzA3n3fSJBalra8qjqGM5wvx3Z28OgU92T
-         l8htKtVEhRLBmwm0CtbORvyG7Q4WjeqpirQq5sKT3Z7vYm9ZYOUOaO53wX1UAus+4BIP
-         qYk6+aCHQGeU7VlJcrCSkmcj/NNDLO81Y+kD4+N2xJY5DzBy6f+PGFXcnVXfX8mJv8dQ
-         ZmJBT4VzZOyoQx56h62IcQTnD+DUu6zX5dg7ZNlR6BXY9TR3YpPAqDOy+CFaI4VVNd2a
-         Ou0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXS2ZX/p2ghO0Brv+ULWx7z2QiB0fWvr4aFwb0i2KC+M/UlD7mMnb7XRIICdITGk8zAsYeDgsrbhfgaWJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyidkEBNXBK9Us7A3MVCHRDTxAFzhbuffCy2todn3XV62iiTojt
-	EUWAq5CqX2SKYgUOslHTm5Qd7+QOc2++z8BC+eVD6RR25KaI+WIt/+rvlTA/Gpdv2J13zbmNwg+
-	cKLaY1OlC1w==
-X-Google-Smtp-Source: AGHT+IHPtQAcMp97iUwO+iKmkYZGdnjkx3hYPOwQLgDFnvdTsvGov+e4Tx0+KFjRc+ZlGneeC+uKFiwmQdRIHw==
-X-Received: from pfblg21.prod.google.com ([2002:a05:6a00:7095:b0:737:69cc:5b41])
- (user=ipylypiv job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f544:b0:21f:8453:7484 with SMTP id d9443c01a7336-22a8a87ec03mr5663175ad.30.1743715768494;
- Thu, 03 Apr 2025 14:29:28 -0700 (PDT)
-Date: Thu,  3 Apr 2025 14:29:24 -0700
+        d=1e100.net; s=20230601; t=1743715886; x=1744320686;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hjSF7rIGuoGtaKvs9zxkuKyK56xOJ/Ay8l6UKNTY2Eo=;
+        b=jPZ1BrpVWP45zglBwuc3p1bu9COWTP1i0ibU3x228F/POIB4pKaocK8sNpjDISTBWN
+         r67QMwFzZBen6zPQrZLJvIWvfHvpT6eQlfGbtK2zVkie5qwHWn06+Zv0eCLHlmc9ThFL
+         r+48Iv+bOt+/A08XFtrFOkzPnYGffTxiaqCTjGNd1xkj5x0UgyDWtY4Cof3ZDYqludau
+         Cly6CdzMfYtsQY7ij4jXBZFUb+uSpjYnfvmei56Cx+OwDQKFUmQJGDrTx0YPCt2TLqQ1
+         F/3Yc3mts3GoXOiwWTW+z8ksjp85y5DTQ9lrF8qls2orAR5gf14FxLstn7Hn2AFGyvGd
+         u8sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK+Yl2X7ql3tYKiOZXwR1CDb98Yv1dsAmGlhoFb1tF8sKoUb+tt1Hbh4JhD0gCYJygAigg5ecR891NAbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT1Kr7Y9AXuFr48xfgI4fi9M1qd+0LaJodXBabXReX1qyznj4d
+	k/CVjh4CGdXk2BmPwVAfWzjuDOFM0TZjd39RyLadqX4WJVEx96tNk9+K/OBRzpv151tZo7PexTw
+	=
+X-Gm-Gg: ASbGnctMcRKjg8ob8dpkqfxILG4QXFiZZP7YH1HnK4kCctI0loF1j8zO4UunPIYttsN
+	NTYTAKYVsJKzLtDcreXWJeUBYaoVhHwGTiFDMZsA6w0zIE8UdVAWKoNhp/aZ29gB8sW9p763rP0
+	I+pty28+uhCIoybF9bgVlhoCyV0s6HrSORF1fNlKQmSD1FkESZnkm205FyYUQF62YnGq3xAKKP+
+	I0O9pgWRQsNgyrxO+fXu5X4usfQxJGA0HOgBVDyBJm3bwapQBGsQCb4bUlgCUFBoVxB67lW+o+A
+	9MXLs2I/b2UBsQ1aJZphUBiz1N5aG0mCsz3WJqmud5IMSjJ4x5WEXqxRtHQ6hPz0z+gP6i4F+75
+	KtyMAOeom3nzuXOW3bfJPJRii
+X-Google-Smtp-Source: AGHT+IFGh41JyNQ0kY4SKRyKQPfhOBTc1Kd5OKVwu4LAE7c7CdYOFKWYEFFOQUbjdl57cF/YjkaUvQ==
+X-Received: by 2002:a05:6512:334e:b0:549:8963:eb05 with SMTP id 2adb3069b0e04-54c227dd3ddmr150486e87.37.1743715886542;
+        Thu, 03 Apr 2025 14:31:26 -0700 (PDT)
+Received: from ribalda.c.googlers.com (216.148.88.34.bc.googleusercontent.com. [34.88.148.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e65d6d5sm252938e87.181.2025.04.03.14.31.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 14:31:25 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v4 0/4] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5 + other meta fixes
+Date: Thu, 03 Apr 2025 21:31:23 +0000
+Message-Id: <20250403-uvc-meta-v4-0-877aa6475975@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250403212924.306782-1-ipylypiv@google.com>
-Subject: [PATCH v2] ata: libata-scsi: Set INFORMATION sense data field consistently
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACv+7mcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNj3dKyZN3c1JJE3VRTUzNzc+MUQ6PEVCWg8oKi1LTMCrBR0bG1tQD
+ z0bzRWgAAAA==
+X-Change-ID: 20250403-uvc-meta-e556773d12ae
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-The INFORMATION field is not set when sense data is obtained using
-ata_eh_request_sense(). Move the ata_scsi_set_sense_information() call
-to ata_scsi_qc_complete() to consistently set the INFORMATION field
-regardless of the way how the sense data is obtained.
+This series introduces a new metadata format for UVC cameras and adds a
+couple of improvements to the UVC metadata handling.
 
-This call should be limited to regular commands only, as the INFORMATION
-field is populated with different data for ATA PASS-THROUGH commands.
-
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
+Changes in v4:
+- Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
+- Flag the new format with a quirk.
+- Autodetect MSXU devices.
+- Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
+
+Changes in v3:
+- Fix doc syntax errors.
+- Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
 
 Changes in v2:
-- Rephrased commit message to make it clearer.
-- Dropped kernel-doc comment for the ata_scsi_set_sense_information().
+- Add metadata invalid fix
+- Move doc note to a separate patch
+- Introuce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+- Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
 
- drivers/ata/libata-sata.c |  2 --
- drivers/ata/libata-scsi.c | 31 ++++++++++++++-----------------
- drivers/ata/libata.h      |  3 ---
- 3 files changed, 14 insertions(+), 22 deletions(-)
+---
+Ricardo Ribalda (4):
+      media: uvcvideo: Do not mark valid metadata as invalid
+      media: Documentation: Add note about UVCH length field
+      media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+      media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
 
-diff --git a/drivers/ata/libata-sata.c b/drivers/ata/libata-sata.c
-index ba300cc0a3a3..b01b52e95352 100644
---- a/drivers/ata/libata-sata.c
-+++ b/drivers/ata/libata-sata.c
-@@ -1644,8 +1644,6 @@ void ata_eh_analyze_ncq_error(struct ata_link *link)
- 		if (ata_scsi_sense_is_valid(sense_key, asc, ascq)) {
- 			ata_scsi_set_sense(dev, qc->scsicmd, sense_key, asc,
- 					   ascq);
--			ata_scsi_set_sense_information(dev, qc->scsicmd,
--						       &qc->result_tf);
- 			qc->flags |= ATA_QCFLAG_SENSE_VALID;
- 		}
- 	}
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 2796c0da8257..ef117a0bc248 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -216,17 +216,21 @@ void ata_scsi_set_sense(struct ata_device *dev, struct scsi_cmnd *cmd,
- 	scsi_build_sense(cmd, d_sense, sk, asc, ascq);
- }
- 
--void ata_scsi_set_sense_information(struct ata_device *dev,
--				    struct scsi_cmnd *cmd,
--				    const struct ata_taskfile *tf)
-+static void ata_scsi_set_sense_information(struct ata_queued_cmd *qc)
- {
- 	u64 information;
- 
--	information = ata_tf_read_block(tf, dev);
-+	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-+		ata_dev_dbg(qc->dev,
-+			    "missing result TF: can't set INFORMATION sense field\n");
-+		return;
-+	}
-+
-+	information = ata_tf_read_block(&qc->result_tf, qc->dev);
- 	if (information == U64_MAX)
- 		return;
- 
--	scsi_set_sense_information(cmd->sense_buffer,
-+	scsi_set_sense_information(qc->scsicmd->sense_buffer,
- 				   SCSI_SENSE_BUFFERSIZE, information);
- }
- 
-@@ -971,8 +975,7 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
-  *	ata_gen_ata_sense - generate a SCSI fixed sense block
-  *	@qc: Command that we are erroring out
-  *
-- *	Generate sense block for a failed ATA command @qc.  Descriptor
-- *	format is used to accommodate LBA48 block address.
-+ *	Generate sense block for a failed ATA command @qc.
-  *
-  *	LOCKING:
-  *	None.
-@@ -982,8 +985,6 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
- 	struct ata_device *dev = qc->dev;
- 	struct scsi_cmnd *cmd = qc->scsicmd;
- 	struct ata_taskfile *tf = &qc->result_tf;
--	unsigned char *sb = cmd->sense_buffer;
--	u64 block;
- 	u8 sense_key, asc, ascq;
- 
- 	if (ata_dev_disabled(dev)) {
-@@ -1014,12 +1015,6 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
- 		ata_scsi_set_sense(dev, cmd, ABORTED_COMMAND, 0, 0);
- 		return;
- 	}
--
--	block = ata_tf_read_block(&qc->result_tf, dev);
--	if (block == U64_MAX)
--		return;
--
--	scsi_set_sense_information(sb, SCSI_SENSE_BUFFERSIZE, block);
- }
- 
- void ata_scsi_sdev_config(struct scsi_device *sdev)
-@@ -1679,8 +1674,10 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
- 		ata_scsi_set_passthru_sense_fields(qc);
- 		if (is_ck_cond_request)
- 			set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
--	} else if (is_error && !have_sense) {
--		ata_gen_ata_sense(qc);
-+	} else if (is_error) {
-+		if (!have_sense)
-+			ata_gen_ata_sense(qc);
-+		ata_scsi_set_sense_information(qc);
- 	}
- 
- 	ata_qc_done(qc);
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 0337be4faec7..ce5c628fa6fd 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -141,9 +141,6 @@ extern int ata_scsi_offline_dev(struct ata_device *dev);
- extern bool ata_scsi_sense_is_valid(u8 sk, u8 asc, u8 ascq);
- extern void ata_scsi_set_sense(struct ata_device *dev,
- 			       struct scsi_cmnd *cmd, u8 sk, u8 asc, u8 ascq);
--extern void ata_scsi_set_sense_information(struct ata_device *dev,
--					   struct scsi_cmnd *cmd,
--					   const struct ata_taskfile *tf);
- extern void ata_scsi_media_change_notify(struct ata_device *dev);
- extern void ata_scsi_hotplug(struct work_struct *work);
- extern void ata_scsi_dev_rescan(struct work_struct *work);
+ .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+ .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 ++++++
+ .../userspace-api/media/v4l/metafmt-uvc.rst        |  4 +-
+ MAINTAINERS                                        |  1 +
+ drivers/media/usb/uvc/uvc_metadata.c               | 96 ++++++++++++++++++++--
+ drivers/media/usb/uvc/uvc_video.c                  | 12 +--
+ drivers/media/usb/uvc/uvcvideo.h                   |  1 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+ include/linux/usb/uvc.h                            |  3 +
+ include/uapi/linux/videodev2.h                     |  1 +
+ 10 files changed, 130 insertions(+), 13 deletions(-)
+---
+base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+change-id: 20250403-uvc-meta-e556773d12ae
+
+Best regards,
 -- 
-2.49.0.504.g3bcea36a83-goog
+Ricardo Ribalda <ribalda@chromium.org>
 
 
