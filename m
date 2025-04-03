@@ -1,187 +1,137 @@
-Return-Path: <linux-kernel+bounces-586367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0777DA79E4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:37:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D1AA79DA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC6C1895BD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444B83AE209
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D321EF399;
-	Thu,  3 Apr 2025 08:37:19 +0000 (UTC)
-Received: from mail-m15578.qiye.163.com (mail-m15578.qiye.163.com [101.71.155.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19B24167F;
+	Thu,  3 Apr 2025 08:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btOCtacp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1100D2A8D0
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F10354F81;
+	Thu,  3 Apr 2025 08:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743669438; cv=none; b=hSctCohW5iUiOnTq/Me5mkvvJc3cyBDU9SGkYeShZMlyV5wMEY/xGsfZRzBQKTgVmC41h9sySVhRV+dWslG/k9Z+4MfvIa6NL53NCcay2R/IulI8wwyUCQufxAb7T6a5CCToflxuM5l3zYiw1STV2RFzeFn8PlTUva5BHj7zRFM=
+	t=1743667494; cv=none; b=IxVMRCd3a/r3hHnnhtUCNtupecLMR+MHmEPyirPQ5qD+YaUZx1Dzj3h4ZjeofcCQ6Cn+Jy4/1+Ft/+jQTeGGl364KFx5eah9nD3Ml7aSb4U0D2HUoBo9ZD4fyNUuOE7gKmcvQ+UhemrfU83A2yklmBh7hYtpHDeUF6jQ+pY+G9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743669438; c=relaxed/simple;
-	bh=4BS66JqLbbRS7wRo3uLWA63bxarxiz/nBvsKghwJprg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BmqE/7b58+PSYRMwS4+O+hZr0vRdfwsIbgmCe+0ANxm2fW2a1UWF+0XN/OR4ursFHdkSF7P8EQrtwrkvnnrlhSC6OHnXjFZQIANoofpSk+R2RoF3CeIdxPgUwkqrB/DftC7ltAUfl++L7JTHRk0PYtOysaOaZ7SY2KlUGQ5xKAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=101.71.155.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from [172.21.129.240] (unknown [122.224.241.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1088f8c4a;
-	Thu, 3 Apr 2025 10:54:17 +0800 (GMT+08:00)
-Message-ID: <a1cf32e8-c711-476d-a827-e3affedba780@hj-micro.com>
-Date: Thu, 3 Apr 2025 10:53:48 +0800
+	s=arc-20240116; t=1743667494; c=relaxed/simple;
+	bh=JVbI1Dn54KbuV9qUQjUy7ja97plsdfx1f9OQTp70h2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIgn9V45jydTaO1EbbDcpO/qKEegzdgVKr8kXKgQDCFAj+1YnXqbOaz+jmgx70EztxxrhQRepgdvq7wDdF/xv0qQZixnHhflLVNm7n99TK64m0ewQpzoGIhuEMSW05uhKAN6oqtu9OdvT1SfdJ5tGXJn2C0kMvkfAifxdsxnbUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btOCtacp; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743667493; x=1775203493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JVbI1Dn54KbuV9qUQjUy7ja97plsdfx1f9OQTp70h2g=;
+  b=btOCtacpaKDgye0y8FHFEkoQWFY2ivkEYOWFKEdX9ALWRrIiZTslbUp8
+   Al13I+R7hSs1q8saeN8TS4bnSZOPEr4xA8am9V4gz0rYW26sgRs8mc6UG
+   TX1jniaDKD0iADSM1YdlhZw9n7KUGOR+17Yx7GEPfOPR5I4DOJDiHHXiH
+   X4ujdLimmUNbCVoelx2Gq3k0VdUOAHqwq9ptiif12BrVl9VGO3oPsSWEx
+   ZuN2wu6ucs6jnPnFbPcmf3tkXVSLm1qQ87Jld90NJAnw+RiPyrhIm3nfD
+   Xt2eBn7U6ldR3eBLtcuzvq3FtrLMBPv/fmfToawCsdxd0Z5+kOT3xuLZ8
+   w==;
+X-CSE-ConnectionGUID: 0fGXLnF5QZ6Ni8hTTcub5Q==
+X-CSE-MsgGUID: tP7KPkyBSt6f5v37+01qog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44211356"
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="44211356"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 01:04:52 -0700
+X-CSE-ConnectionGUID: JkeVQOk4QEqt+esSEFzL+A==
+X-CSE-MsgGUID: XO1EVzt6RLary3QP7TaQZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="157893793"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 01:04:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u0FZ9-00000008jhr-180G;
+	Thu, 03 Apr 2025 11:04:47 +0300
+Date: Thu, 3 Apr 2025 11:04:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1 1/1] gpiolib: Make gpiod_put() error pointer aware
+Message-ID: <Z-5BHzTEed607Afz@smile.fi.intel.com>
+References: <20250402152000.1572764-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MfzRVy85NR_eSQc3ZX_OmgCRUKuBdd6TqCu=Adwh9drrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf: arm-ni: Fix list_add() corruption in
- arm_ni_probe()
-To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org
-Cc: mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, allen.wang@hj-micro.com, peter.du@hj-micro.com
-References: <20250331121536.2626552-1-andy.xu@hj-micro.com>
- <2f594c55-6fce-445f-b838-ea518916103f@arm.com>
-From: Hongbo Yao <andy.xu@hj-micro.com>
-In-Reply-To: <2f594c55-6fce-445f-b838-ea518916103f@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQh0ZVhlNTENCGUIaQkodTFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUlPSlVIT1lXWRYaDxIVHRRZQVlPS0hVSktJSEJIQ1VKS0
-	tVSkJLS1kG
-X-HM-Tid: 0a95f9921d4403afkunm1088f8c4a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBQ6Dgw6CzJMOQMIETAWPBFK
-	IgpPCzZVSlVKTE9ITU9DQ05DT05PVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
-	SklJVUlJT1VJT0pVSE9ZV1kIAVlBTk5ISDcG
+In-Reply-To: <CAMRc=MfzRVy85NR_eSQc3ZX_OmgCRUKuBdd6TqCu=Adwh9drrA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Apr 03, 2025 at 08:58:09AM +0200, Bartosz Golaszewski wrote:
+> On Wed, Apr 2, 2025 at 5:20 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > When non-optional GPIO is requested and failed, the variable that holds
+> > the (invalid) descriptor can contain an error pointer. However, gpiod_put()
+> > ignores that fact and tries to cleanup never requested descriptor.
+> > Make sure gpiod_put() ignores that as well.
+> >
+> > While at it, do the same for the gpiod_put_array().
+> >
+> > Note, it arguable needs to be present in the stubs as those are usually
+> > called when CONFIG_GPIOLIB=n and GPIOs are requested using gpiod_get_optional()
+> > or similar APIs.
 
+> I'm not a fan of this. Silently ignoring NULL makes sense in the
+> context of _optional() calls where we want to do nothing on GPIOs that
+> aren't there.
 
-在 2025/4/2 20:17, Robin Murphy 写道:
-> On 2025-03-31 1:15 pm, HongBo Yao wrote:
->> From: Hongbo Yao <andy.xu@hj-micro.com>
->>
->> When a resource allocation fails in one clock domain of an NI device,
->> we need to properly roll back all previously registered perf PMUs in
->> other clock domains of the same device.
->>
->> Otherwise, it can lead to kernel panics.
->>
->> Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
->> arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
->> arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
->> list_add corruption: next->prev should be prev (fffffd01e9698a18),
->> but was 0000000000000000. (next=ffff10001a0decc8).
->> pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
->> pc : list_add_valid_or_report+0x7c/0xb8
->> lr : list_add_valid_or_report+0x7c/0xb8
->> Call trace:
->>   __list_add_valid_or_report+0x7c/0xb8
->>   perf_pmu_register+0x22c/0x3a0
->>   arm_ni_probe+0x554/0x70c [arm_ni]
->>   platform_probe+0x70/0xe8
->>   really_probe+0xc6/0x4d8
->>   driver_probe_device+0x48/0x170
->>   __driver_attach+0x8e/0x1c0
->>   bus_for_each_dev+0x64/0xf0
->>   driver_add+0x138/0x260
->>   bus_add_driver+0x68/0x138
->>   __platform_driver_register+0x2c/0x40
->>   arm_ni_init+0x14/0x2a [arm_ni]
->>   do_init_module+0x36/0x298
->> ---[ end trace 0000000000000000 ]---
->> Kernel panic - not syncing: Oops - BUG: Fatal exception
->> SMP: stopping secondary CPUs
-> 
-> This, and the subject, are really confusing, since apparent list
-> corruption is just one of many possible symptoms, and the fact that it
-> happens to be a second instance of arm_ni_probe() hitting it is pure
-> coincidence. The bug is that probe failure can lead to PMUs being freed
-> without being unregistered, which can obviously lead to all manner of
-> use-after-free conditions in the perf core.
-> 
-Hi, robin.
-Thank you for the feedback. I'll revise the title as suggested.
+> But this encourages people to get sloppy and just ignore
+> error pointers returned from gpiod_get()?
 
->> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
->> Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
->> ---
->>   drivers/perf/arm-ni.c | 44 +++++++++++++++++++++++++++++--------------
->>   1 file changed, 30 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
->> index fd7a5e60e963..ee85577e86b9 100644
->> --- a/drivers/perf/arm-ni.c
->> +++ b/drivers/perf/arm-ni.c
->> @@ -102,6 +102,7 @@ struct arm_ni_unit {
->>   struct arm_ni_cd {
->>       void __iomem *pmu_base;
->>       u16 id;
->> +    bool pmu_registered;
->>       int num_units;
->>       int irq;
->>       int cpu;
->> @@ -571,10 +572,31 @@ static int arm_ni_init_cd(struct arm_ni *ni,
->> struct arm_ni_node *node, u64 res_s
->>       err = perf_pmu_register(&cd->pmu, name, -1);
->>       if (err)
->>           cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd-
->> >cpuhp_node);
->> +    else
->> +        cd->pmu_registered = true;
->>         return err;
->>   }
->>   +static void arm_ni_remove_cds(struct arm_ni *ni)
->> +{
->> +    for (int i = 0; i < ni->num_cds; i++) {
->> +        struct arm_ni_cd *cd = ni->cds + i;
->> +
->> +        if (!cd->pmu_base)
->> +            continue;
->> +
->> +        if (!cd->pmu_registered)
->> +            continue;
-> 
-> It's clearly redundant to have both checks here - TBH I'd be inclined to
-> just do the minimal fix with the existing pmu_base logic:
-> 
-> @@ -656,8 +673,11 @@ static int arm_ni_probe(struct platform_device *pdev)
->                  reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
->                  arm_ni_probe_domain(base + reg, &cd);
->                  ret = arm_ni_init_cd(ni, &cd, res->start);
-> -                if (ret)
-> +                if (ret) {
-> +                    ni->cds[cd.id].pmu_base = NULL;
-> +                    arm_ni_remove(pdev);
->                      return ret;
-> +                }
->              }
->          }
->      }
-> 
-> ...however I'm not against replacing that use of pmu_base with an
-> explicit flag if you think that's nicer. As implied, though, I really
-> don't see any point in splitting up arm_ni_remove() itself, we can just
-> move the whole definition up and call it for this purpose too (with your
-> other drvdata fix).
->
-You're right, i'll simplify the fix by leveraging the exisiting pmu_base
-logic and move the arm_ni_remove() definition up in the next version.
-Appreciate the guidance.
+From where did you come to this conclusion, please? We have many subsystems
+that ignore invalid resource on the release stage, starting from platform
+device driver core.
 
-Best regards,
-Hongbo.
+> Also: all other calls error out on IS_ERR(desc) so why would we make it an
+> exception?
 
+Because it's _release_ stage that participates in the cleaning up of
+the allocated resources in error paths. It's a common approach in
+the kernel. I would rather ask what makes GPIOLIB so special about it?
 
-> Thanks,
-> Robin.
-> 
-> 
+> If anything, the broadcom SPI driver this is about should store the return
+> value of gpiod_get() in a local variable, check it and then assign NULL to
+> the actual descriptor stored in the driver data.
+
+Broadcom SPI driver just reveals this disadvantage in GPIOLIB.
+
+> We return errors for a reason, I don't like the idea of just ignoring
+> them in gpiod_put().
+
+Yes, how does one links to the other, please?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
