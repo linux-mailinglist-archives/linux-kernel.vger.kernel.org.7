@@ -1,69 +1,61 @@
-Return-Path: <linux-kernel+bounces-586951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644D0A7A5AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6386CA7A5B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22B61676DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF203BB7D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ED724FC1F;
-	Thu,  3 Apr 2025 14:48:56 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD7A24EF97
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C334D2500CD;
+	Thu,  3 Apr 2025 14:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7Liz9Cc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2955124EF9A;
+	Thu,  3 Apr 2025 14:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743691736; cv=none; b=k9woDKs4B919HtvaWzUU9Bsj7Z2qvWgThotbft5KcKTdNiR92CsZi/+wlw2W6T+irgfRAiEScM0Cgctbqqlpv7F0ONrp11VoTyfD3eEV5tiVqVoY9yX440Y+h5vpmEWnKZxcllOKKGITh+RYKNVQgbW8gHVwosu/zxd1gWh5ogQ=
+	t=1743691687; cv=none; b=F1JA9wbFi7B5t654mURKtmHvLFii1B1wN+p/UD7VuiBaS7y36dYiX7/T7cSJgl9IPjw4TiDYKF5RmarbKWMDY/AmrIbqeavYSMZ/muWb2CFDirbjYhwQrYM3YGzaNmi+f/hbYIu7/CYKNbr4zj5ELyn1N7csE6yg6ufphE8RuBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743691736; c=relaxed/simple;
-	bh=i7yUaupibuWSPGZFLZN+xpqWLFpTgCZVc6sr3Uk5OcY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M7Bwm5kyAluv+PInzvhSh0Qr4cftnACeSjJEdEH8eRX1u89Z5pznTB6D2qCm6BZm8/fxdYZ1aJC2Cv6X57JyHDDt5oKZaUO9JMObe1sbgYtB+NIkR+AfuQDhLFAZ+JGa8suBxsv4kDC5aU9u9Fx9RdzVvxtSFmbCssvyNnsCGHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 22BE07C0112;
-	Thu,  3 Apr 2025 22:48:43 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (unknown [111.48.58.12])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1609374T281456773296496S1743691722030876_;
-	Thu, 03 Apr 2025 22:48:43 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:shaopeijie@cestc.cn
-X-SENDER:shaopeijie@cestc.cn
-X-LOGIN-NAME:shaopeijie@cestc.cn
-X-FST-TO:kbusch@kernel.org
-X-RCPT-COUNT:9
-X-LOCAL-RCPT-COUNT:3
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.58.12
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<a40d0e84f2240df21e6bc4039f702bdc>
-X-System-Flag:0
-From: shaopeijie@cestc.cn
-To: kbusch@kernel.org,
-	sagi@grimberg.me,
-	axboe@kernel.dk,
-	hch@lst.de
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	gechangzhong@cestc.cn,
-	zhang.guanghui@cestc.cn,
-	Peijie Shao <shaopeijie@cestc.cn>
-Subject: [PATCH v2] nvme-tcp: Fix netns UAF introduced by commit 1be52169c348
-Date: Thu,  3 Apr 2025 22:47:48 +0800
-Message-ID: <20250403144748.3399661-1-shaopeijie@cestc.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <bd5f2f8a-94f0-43b0-af02-565422d12032@cestc.cn>
-References: <bd5f2f8a-94f0-43b0-af02-565422d12032@cestc.cn>
+	s=arc-20240116; t=1743691687; c=relaxed/simple;
+	bh=RrOTQcuANEq2RAIgj9UZ3synNzyYf0fgpXeVeZABxAo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nADAjyXlugAMk0P+dPskWd/g++glVqZUsvdvI4cv0oMA9TDzVUd82p/vVlyOWSniRJmmviuyHlhV4FVMtmYKUy6FiA7U2DwaroDqVZPVpBa4beLcXEsvS3AM2AHlrez0pgydUfs/zz2SLS+uZLxl+aVBfUUuHTi7OJHVSo7VGwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7Liz9Cc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616A3C4CEE7;
+	Thu,  3 Apr 2025 14:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743691686;
+	bh=RrOTQcuANEq2RAIgj9UZ3synNzyYf0fgpXeVeZABxAo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q7Liz9CcnNg0gAkVAdZyi3RFCL4HagRv98rowwXJS9mRJRN74/Mi2z2qTb2RnFzGm
+	 GT481oqIW/8dLNPTWS0QlYdnOIupI6Z+b4lyVLQC+AHaMkoZeEccO3ebdWiPF/uFIe
+	 E2ouYwM1Iw1asTI3Kuv41gwH1bUJ2HZQnfbg7GqR32oGfhD1QYloC8bSk6wqdP8NHn
+	 I2RnqX7Zvjd6kHHk+74EIaS+rBkYlFVyZsOAkjIqSxu7BuYXEbpQTDWjKaOG9/a5Ip
+	 XB5KqmONckpRXOikeNGMLtfJdBSAIfe2o6LBRhRu2ChOmf9c5NzsbTCxqftcfupAB6
+	 Thmm7N1UndLqA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/hfi1: use a struct group to avoid warning
+Date: Thu,  3 Apr 2025 16:47:53 +0200
+Message-Id: <20250403144801.3779379-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,77 +64,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Peijie Shao <shaopeijie@cestc.cn>
+From: Arnd Bergmann <arnd@arndb.de>
 
-The patch is for nvme-tcp host side.
+On gcc-11 and earlier, the driver sometimes produces a warning
+for memset:
 
-commit 1be52169c348
-("nvme-tcp: fix selinux denied when calling sock_sendmsg")
-uses sock_create_kern instead of sock_create to solve SELinux
-problem, however sock_create_kern does not take a reference of
-the given netns, which results in a use-after-free when the
-non-init_net netns is destroyed before sock_release.
+In file included from include/linux/string.h:392,
+                 from drivers/infiniband/hw/hfi1/mad.c:6:
+In function 'fortify_memset_chk',
+    inlined from '__subn_get_opa_hfi1_cong_log' at drivers/infiniband/hw/hfi1/mad.c:3873:2,
+    inlined from 'subn_get_opa_sma' at drivers/infiniband/hw/hfi1/mad.c:4114:9:
+include/linux/fortify-string.h:480:4: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror]
+    __write_overflow_field(p_size_field, size);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For example: a container not share with host's network namespace
-doing a 'nvme connect', and is stopped without 'nvme disconnect'.
+This seems to be a false positive, and I found no nice way to rewrite
+the code to avoid the warning, but adding a a struct group works.
 
-The patch changes parameter current->nsproxy->net_ns to init_net,
-makes the socket always belongs to the host. It also naturally
-avoids changing sock's netns from previous creator's netns to
-init_net when sock is re-created by nvme recovery path
-(workqueue is in init_net namespace).
-
-Signed-off-by: Peijie Shao <shaopeijie@cestc.cn>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
+ drivers/infiniband/hw/hfi1/hfi.h | 6 ++++--
+ drivers/infiniband/hw/hfi1/mad.c | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Changes in v2:
-    1. Fix style problems reviewed by Christoph Hellwig, thanks!
-    2. Add 'nvme-tcp:' prefix for the patch.
-
-Version v1:
-Hi all,
-This is the v1 patch. Before this version, I tried to
-get_net(current->nsproxy->net_ns) in nvme_tcp_alloc_queue() to
-fix the issue, but failed to find a suitable placeto do
-put_net(). Because the socket is released by fput() internally.
-I think code like below:
-    nvme_tcp_free_queue() {
-        fput()
-        put_net()
-    }
-can not ensure the socket was released before put_net, since
-someone is still holding the file.
-
-So I would like to use the 'init_net' net namespace.
-
----
- drivers/nvme/host/tcp.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 26c459f0198d..9b1d0ad18b77 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1789,8 +1789,14 @@ static int nvme_tcp_alloc_queue(struct nvme_ctrl *nctrl, int qid,
- 		queue->cmnd_capsule_len = sizeof(struct nvme_command) +
- 						NVME_TCP_ADMIN_CCSZ;
+diff --git a/drivers/infiniband/hw/hfi1/hfi.h b/drivers/infiniband/hw/hfi1/hfi.h
+index cb630551cf1a..fca37eb167cc 100644
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -883,8 +883,10 @@ struct hfi1_pportdata {
+ 	 * cc_log_lock protects all congestion log related data
+ 	 */
+ 	spinlock_t cc_log_lock ____cacheline_aligned_in_smp;
+-	u8 threshold_cong_event_map[OPA_MAX_SLS / 8];
+-	u16 threshold_event_counter;
++	struct_group (zero_event_map,
++		u8 threshold_cong_event_map[OPA_MAX_SLS / 8];
++		u16 threshold_event_counter;
++	);
+ 	struct opa_hfi1_cong_log_event_internal cc_events[OPA_CONG_LOG_ELEMS];
+ 	int cc_log_idx; /* index for logging events */
+ 	int cc_mad_idx; /* index for reporting events */
+diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
+index b39f63ce6dfc..0dea8d01e868 100644
+--- a/drivers/infiniband/hw/hfi1/mad.c
++++ b/drivers/infiniband/hw/hfi1/mad.c
+@@ -3870,8 +3870,8 @@ static int __subn_get_opa_hfi1_cong_log(struct opa_smp *smp, u32 am,
+ 	 * Reset threshold_cong_event_map, and threshold_event_counter
+ 	 * to 0 when log is read.
+ 	 */
+-	memset(ppd->threshold_cong_event_map, 0x0,
+-	       sizeof(ppd->threshold_cong_event_map));
++	memset(&ppd->zero_event_map, 0x0,
++	       sizeof(ppd->zero_event_map));
+ 	ppd->threshold_event_counter = 0;
  
--	ret = sock_create_kern(current->nsproxy->net_ns,
--			ctrl->addr.ss_family, SOCK_STREAM,
-+	/*
-+	 * sock_create_kern() does not take a reference to
-+	 * current->nsproxy->net_ns, use init_net instead.
-+	 * This also avoid changing sock's netns from previous
-+	 * creator's netns to init_net when sock is re-created
-+	 * by nvme recovery path.
-+	 */
-+	ret = sock_create_kern(&init_net, ctrl->addr.ss_family, SOCK_STREAM,
- 			IPPROTO_TCP, &queue->sock);
- 	if (ret) {
- 		dev_err(nctrl->device,
+ 	spin_unlock_irq(&ppd->cc_log_lock);
 -- 
-2.43.0
-
-
+2.39.5
 
 
