@@ -1,122 +1,179 @@
-Return-Path: <linux-kernel+bounces-587822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13ABDA7B0EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE74BA7B0F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161ED1674C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BA63BDF57
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89F81AAA2F;
-	Thu,  3 Apr 2025 21:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D291E571A;
+	Thu,  3 Apr 2025 21:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufDflTsy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hjbi1ZNY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E51219E806
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508332E62CD
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743714881; cv=none; b=lIW6ZlERDRXOP3B8HRHFb3+n7ZzBfotBtuKjczqWuXH0C7iotJsXtRjhcb4hC7uGLJkjiCaLYOEiYLhz4nhBQA9BpoQP1CK836b590Px0P5wl/LTQY9T0YUsbOlFSmZG/Auy9ngEGJesysR6IBngFOh6TN0iEyCccoOeb0py7dc=
+	t=1743714917; cv=none; b=PYpRe6neiONGUuS6mrgsJLW/Y02uxb6vz54VWCzHFXcH4YHX7rcBaxXBGtBVDLpaOshKtYpjNyeSmBCUIdcDpgBPJps/mZa5dpvXSlpvzwIOJX7NS+VPLLJx+Vy57qLdyvUxuUMJFtE1SaVMI7QUTl5ww4JOz8isXeq+oVyL610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743714881; c=relaxed/simple;
-	bh=uLMQ/F/3ytathLIg7FLxMcw4+feD4cRHjtbUD2GmIWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=j2tiQFXoq+DZgRuaZEDwN5YeqgajzxT6zfMg9LxlXkxwo89v3SmVsCera+l0xTFRb05xsZwXJtbUdV0SkasNg42cn4eELwOF/9u3CbmrKXG1zMAMoxOQ3Y57+yaekV6Onn6Wa/SQIa+pa+Ly/GlO7elk+j9T+0uhzUYgHvHnKFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufDflTsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C383C4CEE9;
-	Thu,  3 Apr 2025 21:14:40 +0000 (UTC)
+	s=arc-20240116; t=1743714917; c=relaxed/simple;
+	bh=OW4XttqWZSi/Drj8Nfcb9nRfI0qLGHAcFUjx8HdvV4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XiPflhQwt3w2LoynLD9iZ2niTYBSCM/sRjlhoT2wgQMa2doThVWecKf375mNtQsv2eQZwbe/+L1hT1Ly2DblpU3vCZ0j+BQnH0hh9xGKPWhw5VNt/KqGmhCYimnJazedO5lDG34B2zS5aB6ip879qosr9RnmFOERx8xZxk2aOqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hjbi1ZNY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEC5C4CEE3;
+	Thu,  3 Apr 2025 21:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743714880;
-	bh=uLMQ/F/3ytathLIg7FLxMcw4+feD4cRHjtbUD2GmIWQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=ufDflTsyDG5ABL+nh72K0N6EvM38CMHMcK+BGqGw9Jb1L/J33rEohGC6Zl6zCOrEN
-	 sHGUVxln33vY7y1S3d0iE9ktRSWCmHvZMVpNRTeWS+SvRplWKPJZgVf0SJ0UCXQ/Eh
-	 pKIf6mT7mvi4TXlJHuK+zWahBCIQ1ySlNJ8HST3qGnaKQp0KCT6Tf3H4iAl4C02Nhi
-	 saLdmD4oOWw3CNnomJZZtGxo0tTtgjK2wocUht4YDgACqggZ3T1vtw8+jl7HVS8TbD
-	 fRvlenyX0cuF5nuXSqpDn5e3h8rvvkD5vsTVnXq/aAcjP7y3PFVyzgHsIhDVg98is0
-	 042MFpv7lcRJg==
+	s=k20201202; t=1743714916;
+	bh=OW4XttqWZSi/Drj8Nfcb9nRfI0qLGHAcFUjx8HdvV4A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Hjbi1ZNYculHh5SMK5Q/HDA7ENHNgtVcvanSBRChWUcYPYkYkpFxjkq5GybYSxaAU
+	 qrzJmKIV+LxoG4uK+Nk+4f8pvUI5tjG+aACsGTqKNB4wi1ll/KUM9vT4nLv2FYu+0g
+	 L/QY42Co4juZbu0f87DJqj6wvMeRyOibNmKJp8wY5+8msn2jSOAfZY5TDD5u9sM2Uk
+	 KElgs61KcyDeJFrC17JZZOer2MbyYJbP8YjMvwNOfvuBHFMWvpvMSn3EIlCQjATk/K
+	 XHo+V/ZX44dChaE2j1Z7hOonTlOQgVxhOOT8K2kOVoM2U4+eHkvDSvVbgRHLfWgToP
+	 C8PtIWe88z99g==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DF7AECE0799; Thu,  3 Apr 2025 14:14:38 -0700 (PDT)
-Date: Thu, 3 Apr 2025 14:14:38 -0700
+	id 96BE9CE0799; Thu,  3 Apr 2025 14:15:15 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
+Cc: kernel-team@meta.com,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>
-Subject: [PATCH RFC 0/9] Reduce ratelimit's false-positive misses
-Message-ID: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH RFC 1/9] ratelimit: Create functions to handle ratelimit_state internals
+Date: Thu,  3 Apr 2025 14:15:06 -0700
+Message-Id: <20250403211514.985900-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
+References: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+A number of ratelimit uses do open-coded access to the ratelimit_state
+structure's ->missed field.  This works, but is a bit messy and makes
+it more annoying to make changes to this field.
 
-This RFC series replaces open-coded uses of the ratelimit_state structure
-with formal APIs, counts all rate-limit misses, replaces jiffies=0
-special case with a flag, provides a ___ratelimit() lockless fastpath
-to (almost) eliminate false-positive misses, and adds a simple test.
-The lockless fastpath also provides a 10-20% speedup on my x86 laptop,
-though your mileage may vary.
+Therefore, provide a ratelimit_state_inc_miss() function that increments
+out the ->missed field ratelimit_state_get_miss() function that reads
+out the ->missed field of the specified ratelimit_state structure,
+and a ratelimit_state_reset_miss() function that reads out that field,
+but that also resets its value to zero.  These functions will replace
+client-code open-coded uses of ->miss.
 
-The key point of this series is the reduction of false-positive misses.
-Patches 4-7 move in this direction within the fully locked confines of
-the current design, and patch 8 introduces the lockless fastpath.
+In addition, a new ratelimit_state_reset_interval() encapsulates what
+was previously open-coded lock acquisition and resetting.
 
-The individual patches are as follows:
+[ paulmck: Apply kernel test robot feedback. ]
 
-1.	Create functions to handle ratelimit_state internals.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ include/linux/ratelimit.h | 40 ++++++++++++++++++++++++++++++++++-----
+ lib/ratelimit.c           |  8 ++++----
+ 2 files changed, 39 insertions(+), 9 deletions(-)
 
-2.	random: Avoid open-coded use of ratelimit_state structure's
-	->missed field.
+diff --git a/include/linux/ratelimit.h b/include/linux/ratelimit.h
+index b17e0cd0a30cf..8400c5356c187 100644
+--- a/include/linux/ratelimit.h
++++ b/include/linux/ratelimit.h
+@@ -22,16 +22,46 @@ static inline void ratelimit_default_init(struct ratelimit_state *rs)
+ 					DEFAULT_RATELIMIT_BURST);
+ }
+ 
++static inline void ratelimit_state_inc_miss(struct ratelimit_state *rs)
++{
++	rs->missed++;
++}
++
++static inline int ratelimit_state_get_miss(struct ratelimit_state *rs)
++{
++	return rs->missed;
++}
++
++static inline int ratelimit_state_reset_miss(struct ratelimit_state *rs)
++{
++	int ret = rs->missed;
++
++	rs->missed = 0;
++	return ret;
++}
++
++static inline void ratelimit_state_reset_interval(struct ratelimit_state *rs, int interval_init)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&rs->lock, flags);
++	rs->interval = interval_init;
++	rs->begin = 0;
++	rs->printed = 0;
++	ratelimit_state_reset_miss(rs);
++	raw_spin_unlock_irqrestore(&rs->lock, flags);
++}
++
+ static inline void ratelimit_state_exit(struct ratelimit_state *rs)
+ {
++	int m;
++
+ 	if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE))
+ 		return;
+ 
+-	if (rs->missed) {
+-		pr_warn("%s: %d output lines suppressed due to ratelimiting\n",
+-			current->comm, rs->missed);
+-		rs->missed = 0;
+-	}
++	m = ratelimit_state_reset_miss(rs);
++	if (m)
++		pr_warn("%s: %d output lines suppressed due to ratelimiting\n", current->comm, m);
+ }
+ 
+ static inline void
+diff --git a/lib/ratelimit.c b/lib/ratelimit.c
+index ce945c17980b9..85e22f00180c5 100644
+--- a/lib/ratelimit.c
++++ b/lib/ratelimit.c
+@@ -51,12 +51,12 @@ int ___ratelimit(struct ratelimit_state *rs, const char *func)
+ 		rs->begin = jiffies;
+ 
+ 	if (time_is_before_jiffies(rs->begin + interval)) {
+-		if (rs->missed) {
++		int m = ratelimit_state_reset_miss(rs);
++
++		if (m) {
+ 			if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
+ 				printk_deferred(KERN_WARNING
+-						"%s: %d callbacks suppressed\n",
+-						func, rs->missed);
+-				rs->missed = 0;
++						"%s: %d callbacks suppressed\n", func, m);
+ 			}
+ 		}
+ 		rs->begin   = jiffies;
+-- 
+2.40.1
 
-3.	drm/i915: Avoid open-coded use of ratelimit_state structure's
-	->missed field.
-
-4.	drm/amd/pm: Avoid open-coded use of ratelimit_state structure's
-	internals.
-
-5.	Convert the ->missed field to atomic_t.
-
-6.	Count misses due to lock contention.
-
-7.	Avoid jiffies=0 special case.
-
-8.	Reduce ratelimit's false-positive misses.
-
-9.	Add trivial kunit test for ratelimit.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/drivers/char/random.c              |    9 -
- b/drivers/gpu/drm/amd/pm/amdgpu_pm.c |   11 --
- b/drivers/gpu/drm/i915/i915_perf.c   |    8 -
- b/include/linux/ratelimit.h          |   40 ++++++-
- b/include/linux/ratelimit_types.h    |    2 
- b/lib/Kconfig.debug                  |   11 ++
- b/lib/Makefile                       |    1 
- b/lib/ratelimit.c                    |    8 -
- b/lib/test_ratelimit.c               |   77 ++++++++++++++
- include/linux/ratelimit.h            |   13 --
- include/linux/ratelimit_types.h      |    4 
- lib/ratelimit.c                      |  186 +++++++++++++++++++++++++++--------
- 12 files changed, 296 insertions(+), 74 deletions(-)
 
