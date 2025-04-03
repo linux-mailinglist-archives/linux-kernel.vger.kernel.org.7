@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-587181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E03CA7A8DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:50:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C45A7A8E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142C33B879F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54DA17770C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A1A253F06;
-	Thu,  3 Apr 2025 17:47:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F213F252906
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 17:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D986725290B;
+	Thu,  3 Apr 2025 17:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TntbLmk2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NXw6ETOn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65752250C16;
+	Thu,  3 Apr 2025 17:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743702446; cv=none; b=SK61I99gVu/XMBSbdk+hoTBbU/lprsHi1p693wn2NusUCSUwV//a/jVJdztc44wuGigfWiTHE/8n9WeGUK8lPrTA871R1uLJmfj8sYd0RXlqgHUO/iU4zKsB7V2HZ3NXemlrgXTuca29z7A/FFRyj+DAKZtPU2O+0jUS525cvkA=
+	t=1743702564; cv=none; b=EAOtmMyngcYNohHDBpO4kCdCLcLlyArmGYLiStBGT0hqYGvxmm7sp5MNQsxDx9iSyNalwbTfRpsnDFxUkZFUdRcmliXZ0eXvGskxgqVIfxbf4bS0JxsJTLAPqULSNu3PzX3DsbtcuVryWsZhlvYbTCOS3cX741KLDLO5cex22dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743702446; c=relaxed/simple;
-	bh=L0zaOj5o13xR5jbFWehlI7DGmTMxzyZwV/9ij8UcDas=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rlgBr7xWdA8jD5BpxaJgdkejTP1Etw8f7V+3MHyGCWx2BCO6TIcJ1SVZ3DhWaBXwwFsw7/Ada3A0EKDX9DL4MIX4VH3s0zlGGINrKD+eWctoVyZkFunBWmjhW0Q2J+bri8AWV79qG+3t1DtJ51M6JUiAO9KSAtbpE6XDgs7g/bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D923F15A1;
-	Thu,  3 Apr 2025 10:47:26 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 813793F63F;
-	Thu,  3 Apr 2025 10:47:20 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	anshuman.khandual@arm.com,
-	joey.gouly@arm.com,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	frederic@kernel.org,
-	james.morse@arm.com,
-	hardevsinh.palaniya@siliconsignals.io,
-	shameerali.kolothum.thodi@huawei.com,
-	huangxiaojia2@huawei.com,
-	mark.rutland@arm.com,
-	samuel.holland@sifive.com,
-	palmer@rivosinc.com,
-	charlie@rivosinc.com,
-	thiago.bauermann@linaro.org,
-	bgray@linux.ibm.com,
-	tglx@linutronix.de,
-	puranjay@kernel.org,
-	david@redhat.com,
-	yang@os.amperecomputing.com,
-	mbenes@suse.cz,
-	joel.granados@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	nd@arm.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v2 4/4] tools/kselftest: add MTE_STORE_ONLY feature hwcap test
-Date: Thu,  3 Apr 2025 18:47:01 +0100
-Message-Id: <20250403174701.74312-5-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250403174701.74312-1-yeoreum.yun@arm.com>
-References: <20250403174701.74312-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1743702564; c=relaxed/simple;
+	bh=uC8A235nV5hDJs26eYs9bsiXlIDfQqbrWSJ+0H8VMh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jae/0RkgLmEDNwlqWtm6Uf0eEgFamwkMrW4dEG01BjgVGyYfx9rjq7jLG3QuipU1tESmIrWovh5P4+RiMD5LYRwFBEuM6XELqPdcDhWBsxg9mon3u4EtigY1ePN2hDD2QKa4bfhzAZEPBcKFge5Mc/PC5t6mk1UDl8XON39G0Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TntbLmk2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NXw6ETOn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 3 Apr 2025 19:49:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743702558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x3miVKVcAqJiYVnZa0G3WVeXM1wcDhomDqNBC5jtQKs=;
+	b=TntbLmk2ICoXpOGltxhXn7TsZr9vndRCGVMtQq9v9A4aMUfYK5VRA1IlrrJmfk+A14SmOM
+	wZ2OP6HKwTXXebuuHvHRMTqodziWBt/fei1gUrOxWmdLcBseqRU0dTk6GZ7dQ+Mrabe2Tb
+	v6eZpuZtVlPb8DRl3yLMo/lwOoWbWySBYB37QemmoP3+oRbkXghOdgjM+eaARxjbQLQTxr
+	69cVbSM2bNts3UodDqGpUdlCKkA6HN6v6MPI2SJpxFl1h/ynKyYqhahfdEn6Nop4o1DGrq
+	E/pWzLzdrEchRLIAwUQXkvU6CrKbz1/+GiNGiw/qBAvE07CaeuZTz9WnhFgtyw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743702558;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x3miVKVcAqJiYVnZa0G3WVeXM1wcDhomDqNBC5jtQKs=;
+	b=NXw6ETOnxAJl6TipKslu2W01i4S8aiY9G/05eWVVQxIQoSxs7QnDURKhkS/2k9NiztUCz3
+	tuyjhgpRzEpAwtBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org, oleg@redhat.com,
+	mhiramat@kernel.org, ast@kernel.org
+Subject: Re: [PATCH tip/perf] uprobes: avoid false lockdep splat in uprobe
+ timer callback
+Message-ID: <20250403174917.OLHfwBp-@linutronix.de>
+References: <20250403171831.3803479-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250403171831.3803479-1-andrii@kernel.org>
 
-add MTE_STORE_ONLY feature hwcap test.
+On 2025-04-03 10:18:31 [-0700], Andrii Nakryiko wrote:
+> Avoid a false-positive lockdep warning in PREEMPT_RT configuration when
+> using write_seqcount_begin() in uprobe timer callback by using
+> raw_write_* APIs. Uprobe's use of timer callback is guaranteed to not
+> race with itself, and as such seqcount's insistence on having hardirqs
+preemption, not hardirqs
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- tools/testing/selftests/arm64/abi/hwcap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> disabled on the writer side is irrelevant. So switch to raw_ variants of
+> seqcount API instead of disabling hardirqs unnecessarily.
+> 
+> Also, point out in the comments more explicitly why we use seqcount
+> despite our reader side being rather simple and never retrying. We favor
+> well-maintained kernel primitive in favor of open-coding our own memory
+> barriers.
 
-diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
-index a539eeb0bfc0..32385f67498e 100644
---- a/tools/testing/selftests/arm64/abi/hwcap.c
-+++ b/tools/testing/selftests/arm64/abi/hwcap.c
-@@ -1104,6 +1104,12 @@ static const struct hwcap_data {
- 		.hwcap_bit = HWCAP3_MTE_FAR,
- 		.cpuinfo = "mte_far",
- 	},
-+	{
-+		.name = "MTE_STOREONLY",
-+		.at_hwcap = AT_HWCAP3,
-+		.hwcap_bit = HWCAP3_MTE_STORE_ONLY,
-+		.cpuinfo = "mte_store_only",
-+	},
- };
- 
- typedef void (*sighandler_fn)(int, siginfo_t *, void *);
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+Thank you.
 
+> Link: https://lore.kernel.org/bpf/CAADnVQLLOHZmPO4X_dQ+cTaSDvzdWHzA0qUqQDhLFYL3D6xPxg@mail.gmail.com/
+> Reported-by: Alexei Starovoitov <ast@kernel.org>
+> Suggested-by: Sebastian Sewior <bigeasy@linutronix.de>
+> Fixes: 8622e45b5da1 ("uprobes: Reuse return_instances between multiple uretprobes within task")
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 70c84b9d7be3..6d7e7da0fbbc 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1944,6 +1944,9 @@ static void free_ret_instance(struct uprobe_task *utask,
+>  	 * to-be-reused return instances for future uretprobes. If ri_timer()
+>  	 * happens to be running right now, though, we fallback to safety and
+>  	 * just perform RCU-delated freeing of ri.
+> +	 * Admittedly, this is a rather simple use of seqcount, but it nicely
+> +	 * abstracts away all the necessary memory barriers, so we use
+> +	 * a well-supported kernel primitive here.
+>  	 */
+>  	if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
+>  		/* immediate reuse of ri without RCU GP is OK */
+> @@ -2004,12 +2007,18 @@ static void ri_timer(struct timer_list *timer)
+>  	/* RCU protects return_instance from freeing. */
+>  	guard(rcu)();
+>  
+> -	write_seqcount_begin(&utask->ri_seqcount);
+
+> +	/* See free_ret_instance() for notes on seqcount use.
+
+This is not a proper multi line comment.
+
+> +	 * We also employ raw API variants to avoid lockdep false-positive
+> +	 * warning complaining about hardirqs not being disabled. We have
+
+s/hardirqs/preemption. The warning is about missing disabled preemption.
+
+> +	 * a guarantee that this timer callback won't race with itself, so no
+> +	 * need to disable hardirqs.
+
+The timer can only be invoked once for a uprobe_task. Therefore there
+can only be one writer. The reader does not require an even sequence
+count so it is okay to remain preemptible on PREEMPT_RT. 
+
+> +	 */
+> +	raw_write_seqcount_begin(&utask->ri_seqcount);
+>  
+>  	for_each_ret_instance_rcu(ri, utask->return_instances)
+>  		hprobe_expire(&ri->hprobe, false);
+>  
+> -	write_seqcount_end(&utask->ri_seqcount);
+> +	raw_write_seqcount_end(&utask->ri_seqcount);
+>  }
+>  
+>  static struct uprobe_task *alloc_utask(void)
+
+Sebastian
 
